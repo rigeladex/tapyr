@@ -55,9 +55,11 @@ class Do_While (TFL.SDG.C.Conditional, TFL.SDG.C.Block) :
     c_format             = "\n".join \
         ( ( """do"""
           , Ancestor._c_format.strip ()
-          , """while (%(::*condition:)s)"""
+          , """while (%(::*condition:)s);"""
           )
         )
+
+    trailer              = ""
 
 # end class Do_While
 

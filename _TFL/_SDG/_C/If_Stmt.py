@@ -34,6 +34,8 @@
 #     3-Aug-2004 (CT) `If.insert` simplified
 #     9-Aug-2004 (CT) `Conditional` factored
 #    10-Aug-2004 (MG) Missing import of `TFL.SDG.C.Statement` added
+#    24-Aug-2004 (CT) `_convert_then` factored and implemented to force
+#                     `self.then_class`
 #    ««revision-date»»···
 #--
 
@@ -57,6 +59,8 @@ class Else (TFL.SDG.C.Block) :
           )
         )
 
+    trailer              = ""
+
 # end class Else
 
 class Elseif (TFL.SDG.C.Conditional, TFL.SDG.C.Block) :
@@ -70,12 +74,22 @@ class Elseif (TFL.SDG.C.Conditional, TFL.SDG.C.Block) :
           , Ancestor._c_format
           )
         )
+
+    trailer              = ""
+
 # end class Elseif
+
+class Then (TFL.SDG.C.Block) :
+    """Then clause of If statement"""
+
+    trailer              = ""
+
+# end class Then
 
 class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
     """If statement"""
 
-    then_class           = TFL.SDG.C.Block
+    then_class           = Then
     else_class           = Else
     elif_class           = Elseif
 
@@ -86,7 +100,7 @@ class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
     front_args           = ("condition", "then")
 
     _autoconvert         = dict \
-        ( then           = lambda s, k, v : s._convert (v, s.then_class)
+        ( then           = lambda s, k, v : s._convert_then (v)
         )
 
     c_format             = "\n".join \
@@ -109,6 +123,12 @@ class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
         self.then._update_scope   (self.scope)
     # end def __init__
 
+    def formatted (self, format_name, * args, ** kw) :
+        last = self.else_children or self.elseif_children or self.then_children
+        last [-1].trailer = ";"
+        return self.__super.formatted (format_name, * args, ** kw)
+    # end def formatted
+
     def insert (self, child, index = None, delta = 0) :
         if not child :
             return
@@ -120,6 +140,12 @@ class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
             raise TFL.SDG.Invalid_Node, (self, child)
         self.__super.insert (child, index, delta)
     # end def insert
+
+    def _convert_then (self, v) :
+        if not isinstance (v, self.then_class) :
+            v = self.then_class (v)
+        return v
+    # end def _convert_then
 
 # end class If
 

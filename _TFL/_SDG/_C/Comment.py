@@ -34,6 +34,7 @@
 #    12-Aug-2004 (MG) `textwrap` added and new `comp_prec` format used
 #    13-Aug-2004 (MG) formats changed (use new attribte `ht_width` to ensure
 #                     alignment)
+#    24-Aug-2004 (CT) `formatted` redefined to guard with `level <= out_level`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,13 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
          """:@_description:)"""
             """-{output_width - indent_anchor - ht_width - stars*2 - 4}s"""
         )
+
+    def formatted (self, format_name, * args, ** kw) :
+        if self.level <= self.out_level :
+            return self.__super.formatted (format_name, * args, ** kw)
+        else :
+            return ()
+    # end def formatted
 
     def _convert_c_comment (self, name, value, ** kw) :
         return value ### avoid endless recursion

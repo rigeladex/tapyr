@@ -60,6 +60,8 @@
 #    23-Aug-2004 (CT) Code handling `rec_form` moved from
 #                     `_Recursive_Formatter_` to `_Recursive_Formatter_Node_`
 #    23-Aug-2004 (CT) `__str__` methods moved behind `__iter__` methods
+#    24-Aug-2004 (CT) `Multi_Line_Formatter.__call__` changed to protect `%s`
+#                     after interpolation
 #    ««revision-date»»···
 #--
 
@@ -330,7 +332,10 @@ class Multi_Line_Formatter (_Formatter_) :
                     yield "%s%s"  % (last, l % context)
                     last = ""
                 else :
-                    last = "%s%s" % (last, l % context)
+                    ### Protect `%` to avoid ValueErrors during next
+                    ### interpolation
+                    last = ( "%s%s" % (last, l % context)
+                           ).replace ("%", "%%")
                 i += 1
         if last :
             yield last

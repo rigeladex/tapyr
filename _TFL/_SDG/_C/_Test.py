@@ -34,6 +34,7 @@
 
 """
 >>> NL = chr (10)
+>>> C.Comment.out_level = 5
 >>> v = C.Var ("int", "test", 2)
 >>> print NL.join (v.as_c_code ())
 int test = 2;
@@ -57,7 +58,7 @@ int func
     , short bar
     )
 {
-}
+};
 
 >>> f = C.Function ( "int", "func", "int foo, short bar"
 ...                , description = "A function description"
@@ -71,7 +72,7 @@ int func
     /*** A function description                                            ***/
 {
     /*** A function explanation                                            ***/
-}
+};
 
 >>> f = C.Function ( "int", "func", "")
 >>> f.add (C.For ("i = 0", "i++", "i < 10"))
@@ -80,8 +81,8 @@ int func (void)
 {
     for (i = 0; i++; i < 10)
       {
-      }
-}
+      };
+};
 
 >>> print NL.join (f.as_h_code ()).strip ()
 int func (void);
@@ -97,13 +98,13 @@ int func (void)
     while (i < 10)
       {
         i++;
-      }
+      };
     do
       {
         i--;
       }
-    while (i > 0)
-}
+    while (i > 0);
+};
 
 >>> f = C.Function ( "int", "if_tests", "")
 >>> f.add (C.If ("i > 0", '''error ("i has the wrong value")'''))
@@ -121,7 +122,7 @@ int if_tests (void)
     if (i > 0)
       {
         error ("i has the wrong value");
-      }
+      };
     if (i < 0)
       {
         cont ();
@@ -130,7 +131,7 @@ int if_tests (void)
     else
       {
         error ("in else path");
-      }
+      };
     if (i < 0)
       {
         cont ();
@@ -142,8 +143,8 @@ int if_tests (void)
     else
       {
         error ("in else path");
-      }
-}
+      };
+};
 
 >>> f = C.Function ( "void", "switch_test", "")
 >>> f.add ( C.Switch ( "quuux"
@@ -167,8 +168,8 @@ void switch_test (void)
             break;
         default :
             hugo ();
-      }
-}
+      };
+};
 
 >>> t = C.Typedef ("unsigend long", "ubyte4")
 >>> print NL.join (t.as_c_code ()).strip ()
@@ -242,20 +243,20 @@ typedef struct _test_struct
 
 >>> d = C.Macro ("define foo", "", "line1", "line2")
 >>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
-#define foo  line1 \\
+#define foo line1 \\
 line2
 
->>> d = C.Define ("define foo", None, "line1")
+>>> d = C.Define ("foo", None, "line1")
 >>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
-#define define foo () line1
+#define foo() line1
 
->>> d = C.Define ("define foo", "arg1", "line1")
+>>> d = C.Define ("foo", "arg1", "line1")
 >>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
-#define define foo (arg1) line1
+#define foo(arg1) line1
 
->>> d = C.Define ("define foo", "arg1,arg2", "line1", "line2", "line3 long")
+>>> d = C.Define ("foo", "arg1,arg2", "line1", "line2", "line3 long")
 >>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
-#define define foo (arg1,arg2) line1 \\
+#define foo(arg1,arg2) line1 \\
 line2 \\
 line3 long
 
@@ -279,23 +280,23 @@ line3 long
 ...                )
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
 #if cond1
-  #define path  then
+  #define path then
 #elif cond2
-  #define path  elseif
+  #define path elseif
 #else
-  #define path  else
+  #define path else
 #endif /* if cond1 */
 
 >>> i = C.Macro_Ifdef ("cond1", C.Define ("path", "", "then"))
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
 #ifdef cond1
-  #define path  then
+  #define path then
 #endif /* ifdef cond1 */
 
 >>> i = C.Macro_Ifndef ("cond1", C.Define ("path", "", "then"))
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
 #ifndef cond1
-  #define path  then
+  #define path then
 #endif /* ifndef cond1 */
 
 >>> b=C.Documentation_Block ("line1", "line2", block_name = "aaa")

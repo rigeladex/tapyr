@@ -30,10 +30,13 @@
 #    12-Aug-2004 (MG) `cgi` set to `Decl`
 #    13-Aug-2004 (CT) `Include.c_format` simplified
 #                     (`%(filename)s` instead of `%(::.filename:)s`)
+#    24-Aug-2004 (CT) `fn_head` and `fn_tail` added
+#    24-Aug-2004 (CT) Append `.h` if necessary (using `Filename`)
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
+from   Filename          import Filename
 import _TFL._SDG._C.Node
 
 class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
@@ -45,11 +48,13 @@ class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
         )
     front_args             = ("filename", )
     _autoconvert           = dict \
-        ( filename         = lambda s, k, v : "<%s>" % (v, )
+        ( filename         = lambda s, k, v : Filename (v, ".h").name
         )
 
-    h_format = c_format    = """#include %(filename)s"""
+    h_format = c_format    = """#include %(fn_head)s%(filename)s%(fn_tail)s"""
 
+    fn_head                = '<'
+    fn_tail                = '>'
 # end class Include
 
 Sys_Include = Include
@@ -57,9 +62,8 @@ Sys_Include = Include
 class App_Include (Include) :
     """C-app-include statement"""
 
-    _autoconvert           = dict \
-        ( filename         = lambda s, k, v : '"%s"' % (v, )
-        )
+    fn_head = '"'
+    fn_tail = '"'
 
 # end class App_Include
 

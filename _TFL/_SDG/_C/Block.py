@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Jul-2004 (CT) Creation
+#    24-Aug-2004 (CT) `trailer` added
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,7 @@ class Block (TFL.SDG.C._Scope_) :
 
     cgi                  = TFL.SDG.C.Node.Body
     star_level           = 3
+    trailer              = ";"
 
     h_format             = ""
     _c_format = c_format = "".join \
@@ -46,7 +48,7 @@ class Block (TFL.SDG.C._Scope_) :
                 >>%(::*head_children:)s
                 >>%(::*body_children:)s
                 >>%(::*tail_children:)s
-                >}
+                >}%(trailer)s
             """
           )
         )

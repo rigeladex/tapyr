@@ -54,6 +54,8 @@
 #    23-Aug-2004 (CT) `repr` and `repr_format` changed to make it
 #                     doc-testable
 #    23-Aug-2004 (CT) Doc-string completed
+#    24-Aug-2004 (CT) `_init_kw` changed to protect `%s` inside strings
+#                     (which can be hidden in lists/tuples, <arrrgh>)
 #    ««revision-date»»···
 #--
 
@@ -510,6 +512,17 @@ class Node :
                 setattr (self, k, v)
         for k, v in kw.iteritems () :
             if k in self.init_arg_defaults :
+                ### protect `%` characters hidden inside `v` to avoid
+                ### ValueErrors during formatting
+                if isinstance (v, (str, unicode)) :
+                    v = v.replace ("%", "%%")
+                elif isinstance (v, (tuple, list)) :
+                    w = v
+                    v = []
+                    for x in w :
+                        if isinstance (x, (str, unicode)) :
+                            x = x.replace ("%", "%%")
+                        v.append (x)
                 if k in self._autoconvert :
                     v = self._autoconvert [k] (self, k, v)
                 setattr (self, k, v)

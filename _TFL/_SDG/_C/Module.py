@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
 #    12-Aug-2004 (MG) `Incl` group removed (nice try)
+#    24-Aug-2004 (CT) `header_comment_level` and `signature_level` added
 #    ««revision-date»»···
 #--
 
@@ -112,6 +113,8 @@ class Module (TFL.SDG.C._Scope_) :
         , Ancestor.Tail
         )
 
+    header_comment_level = signature_level = 0
+
     init_arg_defaults    = dict \
         ( author         = None
         , header_comment = ""
@@ -125,8 +128,8 @@ class Module (TFL.SDG.C._Scope_) :
     star_level           = 3
     pass_scope           = False
     _format_head         = """
-        %(::*signature:)s
         %(::*header_comment:)s
+        %(::*signature:)s
         %(::*description:)s
         %(::*explanation:)s
     """.strip ()

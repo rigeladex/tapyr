@@ -36,6 +36,7 @@
 #    12-Aug-2004 (MG) Formats of `Stmt_Group` changed
 #    13-Aug-2004 (CT) Formats of `Stmt_Group` corrected (removed undefined
 #                     children_groups)
+#    24-Aug-2004 (MG) `Stmt_Group.default_cgi` changed
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,8 @@ Stmt = Statement
 class Stmt_Group (_Statement_, TFL.SDG.C._Scope_) :
     """Group of C statements not enclosed in a block."""
 
+    Ancestor             = TFL.SDG.C._Scope_
+    default_cgi          = Ancestor.Body
     star_level           = 2
     _common_format       = """
         %(::*body_children:)s

@@ -105,7 +105,7 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
                 >>%(::*head_children:)s
                 >>%(::*body_children:)s
                 >>%(::*tail_children:)s
-                }
+                };
                 >
             """
           )

@@ -78,7 +78,7 @@ class Switch (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
         >{
         >>%(::*case_children:)s
         >>%(::*default_children:)s
-        >}
+        >};
     """
 
     children_group_names = \

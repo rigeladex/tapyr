@@ -33,6 +33,9 @@
 #    12-Aug-2004 (MG) `description` added to formats
 #    13-Aug-2004 (CT) `Macro.c_format` simplified
 #                     (`%(name)s` instead of `%(::.name:)s`)
+#    24-Aug-2004 (CT) Spurious space after macro name removed from `h_format`
+#                     and `c_format`
+#    24-Aug-2004 (MG) `Macro_Block.children_group_names` removed
 #    ««revision-date»»···
 #--
 
@@ -67,7 +70,7 @@ class Macro (_Macro_, TFL.SDG.Leaf) :
     rest_args              = "lines"
 
     h_format = c_format    = """
-        #%(name)s %(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
+        #%(name)s%(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
         >%(::*description:)s
     """
 
@@ -94,12 +97,6 @@ class Macro_Block (_Macro_, TFL.SDG.C.Stmt_Group) :
     """Block of macro definitions"""
 
     Ancestor             = TFL.SDG.C.Stmt_Group
-    children_group_names = \
-        ( Ancestor.Head
-        , Ancestor.Body
-        , Ancestor.Tail
-        , Ancestor.Decl
-        )
 
 # end class Macro_Block
 
