@@ -92,6 +92,11 @@ class Day (TFL.Meta.Object) :
         return self.date.formatted ("%Y/%m/%d")
     # end def __str__
 
+    def __repr__ (self) :
+        return """%s ("%s")""" % \
+               (self.__class__.__name__, self.date.formatted ("%Y/%m/%d"))
+    # end def __repr__
+
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
             return getattr (self.date, name)
@@ -122,6 +127,14 @@ class Week (TFL.Meta.Object) :
         return "%2.2d %s" % (self.number, line)
     # end def as_cal
 
+    def __str__ (self) :
+        return "week %2.2d" % (self.number, )
+    # end def __str__
+
+    def __repr__ (self) :
+        return "week %2.2d <%s to %s>" % (self.number, self.mon, self.sun)
+    # end def __repr__
+
 # end class Week
 
 class Month (TFL.Meta.Object) :
@@ -143,19 +156,27 @@ class Month (TFL.Meta.Object) :
         return len (self.days)
     # end def __len__
 
+    def __str__ (self) :
+        return self.head.formatted ("%Y/%m")
+    # end def __str__
+
+    def __repr__ (self) :
+        return "%s (%s, %s)" % (self.__class__.__name__, self.year, self.month)
+    # end def __repr__
+
 # end class Month
 
 class Year (TFL.Meta.Object) :
     """Model a single year in a calendar"""
 
-    def __init__ (self, year) :
-        self.year   = self.number = year
+    def __init__ (self, year = None) :
+        self.year   = self.number = y = year or Date ().year
         self.months = months = []
         self.days   = days   = []
         self.weeks  = weeks  = []
         self.map    = map    = {}
         for m in range (1, 13) :
-            month = Month (year, m)
+            month = Month (y, m)
             months.append (month)
             days.extend   (month.days)
         self.head = h = days [0]
@@ -211,6 +232,14 @@ class Year (TFL.Meta.Object) :
         for d in self.days :
             d.sort_appointments ()
     # end def sort_appointments
+
+    def __str__ (self) :
+        return "%s" % (self.year, )
+    # end def __str__
+
+    def __repr__ (self) :
+        return "%s (%s)" % (self.__class__.__name__, self.year)
+    # end def __repr__
 
 # end class Year
 

@@ -30,6 +30,10 @@
 #                     sequence for printed calendar when cut
 #    18-Apr-2003 (CT) `PDF_Plan` factored into separate module
 #    19-Apr-2003 (CT) `_add_appointment` added
+#     4-May-2003 (CT) Option `-Show` added
+#     4-May-2003 (CT) `_date_time` factored
+#     4-May-2003 (CT) `_day_generator` corrected (check year)
+#     4-May-2003 (CT) Pattern for `weekday` added
 #    ««revision-date»»···
 #--
 
@@ -52,11 +56,20 @@ day_sep       = Regexp ("^#", re.M)
 day_pat       = Regexp (r"^ (?P<day>\d{4}/\d{2}/\d{2}) ")
 app_date_pat  = Regexp \
     ( r"(?P<date>"
-          r"(?P<day> -? \d{1,2}) \."
-          r"(?: (?P<month> \d{1,2}) \."
-          r"  (?: (?P<year> \d{4}))?"
-          r")?"
-          r"[ ]+"
+        r"(?:"
+          r"(?:"
+            r"(?P<day> -? \d{1,2}) \."
+            r"(?: (?P<month> \d{1,2}) \."
+            r"  (?: (?P<year> \d{4}))?"
+            r")?"
+          r")"
+          r"|"
+          r"(?:"
+            r"(?P<weekday> Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
+            r"(?: [.#] (?P<week> [0-5]?\d))?"
+          r")"
+        r")"
+        r"[ ]+"
       r")?"
     , re.VERBOSE
     )
@@ -74,10 +87,10 @@ app_pat       = Regexp \
     , re.VERBOSE
     )
 
-def _day_generator (pat_match, day, month, year, Y, default_unit = "d") :
+def _day_generator (pat_match, day, month, year, Y) :
     delta     = int (pat_match.delta     or 0)
     how_often = int (pat_match.how_often or 1)
-    unit      = pat_match.unit or default_unit
+    unit      = pat_match.unit or ["d", "w"] [bool (pat_match.weekday)]
     if unit == "w" :
         delta *= 7
     elif unit == "m" and day < 0 :
@@ -95,14 +108,26 @@ def _day_generator (pat_match, day, month, year, Y, default_unit = "d") :
         else :
             D = D.date + delta
             day, month = D.day, D.month
+            if D.year != year :
+                raise StopIteration
 # end def _day_generator
 
-def _add_appointment (Y, arg, pat_match) :
+def _date_time (Y, pat_match) :
     if pat_match.date or pat_match.time :
         today = Date ()
-        day   = int  (pat_match.day   or today.day)
-        month = int  (pat_match.month or today.month)
-        year  = int  (pat_match.year  or today.year)
+        if pat_match.weekday :
+            wd = pat_match.weekday.lower ()
+            wk = int (pat_match.week or today.week)
+            d  = getattr (Y.weeks [wk - Y.weeks [0].number], wd).date
+            if (pat_match.week is None) and d.julian_day < today.julian_day :
+                d += 7
+            day   = d.day
+            month = d.month
+            year  = d.year
+        else :
+            day   = int  (pat_match.day   or today.day)
+            month = int  (pat_match.month or today.month)
+            year  = int  (pat_match.year  or today.year)
         time  = pat_match.time or ""
         if time :
             if pat_match.hh_head :
@@ -113,13 +138,18 @@ def _add_appointment (Y, arg, pat_match) :
                     hh   = int (pat_match.hh_tail)
                     mm   = int (pat_match.mm_tail or 0)
                     time = "%s-%2.2d:%2.2d" % (time, hh, mm)
-        app   = ( CAL.Appointment.format
-                % (time, pat_match.prio or " ", pat_match.activity)
-                )
-        for D in _day_generator (pat_match, day, month, year, Y) :
-            D.add_appointments (* CAL.appointments (app))
+        return day, month, year, time
     else :
         raise ValueError, "`%s` must specify either date or time"
+# end def _date_time
+
+def _add_appointment (Y, pat_match) :
+    day, month, year, time = _date_time (Y, pat_match)
+    app = ( CAL.Appointment.format
+          % (time, pat_match.prio or " ", pat_match.activity)
+          )
+    for D in _day_generator (pat_match, day, month, year, Y) :
+        D.add_appointments (* CAL.appointments (app))
 # end def _add_appointment
 
 def read_plan (Y, plan_file_name) :
@@ -159,6 +189,7 @@ def _command_spec (arg_array = None) :
             , "diary:S=~/diary?Path for calendar file"
             , "filename:S=plan?Filename of plan for `year`"
             , "replace:B?Replace old calendar with new file"
+            , "Show:B?Show days corresponding to arguments"
             , "sort:B?Sort calendar and write it back"
             , "year:I=%d?Year for which to process calendar" % (year, )
             )
@@ -199,7 +230,17 @@ def _main (cmd) :
         sort  = len (cmd.argv)
         for a in cmd.argv :
             if app_pat.match (a.strip ()) :
-                _add_appointment (Y, a, app_pat)
+                _add_appointment (Y, app_pat)
+            else :
+                print "%s doesn't match an appointment" % a
+    if cmd.Show :
+        for a in cmd.argv :
+            if app_pat.match (a.strip ()) :
+                print a
+                pat_match = app_pat
+                day, month, year, time = _date_time (Y, pat_match)
+                for D in _day_generator (pat_match, day, month, year, Y) :
+                    print "   ", D
             else :
                 print "%s doesn't match an appointment" % a
     if sort :
