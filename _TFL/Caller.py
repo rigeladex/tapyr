@@ -175,6 +175,7 @@ if __debug__ :
 ### end unit-test code ########################################################
 
 from _TFL import TFL
-TFL._Export_Module ()
+if __name__ != "__main__" :
+    TFL._Export_Module ()
 
 ### __END__ Caller
