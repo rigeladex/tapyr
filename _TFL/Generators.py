@@ -30,6 +30,7 @@
 #    18-Apr-2002 (CT) Creation
 #    19-Apr-2002 (CT) `Lazy_List` added
 #    29-Jul-2002 (CT) s/paired/paired_zip/
+#     6-Oct-2003 (CT) s/paired/paired_zip/ in doc-string, too
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ def pairwise (seq) :
 def paired_zip (s1, s2) :
     """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
 
-       >>> list (paired ("abc", range (4)))
+       >>> list (paired_zip ("abc", range (4)))
        [('a', 0), ('b', 1), ('c', 2)]
     """
     i, l = 0, min (len (s1), len (s2))
