@@ -64,6 +64,8 @@ class _TFL_Meta_Object_ (object) :
 
 # end class _TFL_Meta_Object_
 
+Object = _TFL_Meta_Object_
+
 if __name__ != "__main__" :
     TFL.Meta._Export ("Object")
 

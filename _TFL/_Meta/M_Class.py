@@ -34,6 +34,7 @@
 #     1-Apr-2003 (CT) `M_Class_SW` factored
 #     1-Apr-2003 (CT) `M_Autoproperty` removed from `M_Class`
 #                     (optimize, optimize)
+#    28-Apr-2003 (CT) `M_Autorename` changed to not manipulate `caller_globals`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,10 @@ class M_Autorename (_M_Type_) :
        The metaclass `M_Autorename` swaps `__name__` and `_real_name` before
        creating the class object. As this occurs after the name mangling done
        by Python (compiler), you can have your cake and eat it, too.
+
+       To make the class visible in the defining module under the
+       `_real_name` you'll have to add an explicit assignment after the class
+       definition.
     """
 
     def __new__ (meta, name, bases, dict) :
@@ -92,11 +97,8 @@ class M_Autorename (_M_Type_) :
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
-        real_name = cls.__name__
-        if real_name != dict ["__real_name"] :
-            from caller_globals import caller_globals
-            caller_globals () [real_name] = cls
-        super (M_Autorename, cls).__init__ (real_name, bases, dict)
+        ### Need to pass `cls.__name__` as it might defer from `name`
+        super (M_Autorename, cls).__init__ (cls.__name__, bases, dict)
     # end def __init__
 
     def _m_mangled_attr_name (cls, name) :
@@ -222,11 +224,13 @@ if __name__ == "__main__" :
            hugo          = 1
            __private     = 42
            _real_name    = "Y"
+        Y = _X_
 
         class _Y_ (_X_) :
             hugo         = 2
             __private    = 137
             _real_name   = "ZZZ"
+        ZZZ = _Y_
 
         class Metatest (M_Class) :
 
