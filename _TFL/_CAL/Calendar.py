@@ -77,6 +77,8 @@ class Calendar (TFL.Meta.Object) :
        Year (2004)
        >>> y is C.year [2004]
        True
+       >>> C.week [d.wk_ordinal] is y.weeks [d.week - 1]
+       True
        >>> C = Calendar ()
        >>> len (C.week)
        0
