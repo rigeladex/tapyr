@@ -36,11 +36,13 @@
 #    23-Oct-2004 (CT) `_new_object` redefined to handle negative values for
 #                     `day`
 #    26-Oct-2004 (CT) `is_weekday` added
+#     2-Nov-2004 (CT) `from_string` added
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 import _TFL._CAL._DTW_
+from   Regexp                  import *
 
 import datetime
 import operator
@@ -99,6 +101,20 @@ class Date (TFL.CAL._DTW_) :
        2004-01-31 2003-10-31
        >>> print d, d + Month_Delta (-11)
        2004-01-31 2003-02-28
+       >>> print Date.from_string ("20041102")
+       2004-11-02
+       >>> print Date.from_string ("2004/11/02")
+       2004-11-02
+       >>> print Date.from_string ("20041102")
+       2004-11-02
+       >>> print Date.from_string ("31.10.2004")
+       2004-10-31
+       >>> print Date.from_string ("31/10/2004")
+       2004-10-31
+       >>> print Date.from_string ("31.Oct.2004")
+       2004-10-31
+       >>> print Date.from_string ("Oct 5, 2004")
+       2004-10-05
     """
 
     months = \
@@ -122,6 +138,25 @@ class Date (TFL.CAL._DTW_) :
     _init_arg_names  = ("year", "month", "day")
     _timetuple_slice = lambda s, tt : tt [:3]
 
+    date_pattern     = Multi_Regexp \
+        ( r"(?P<year>  \d{4,4})"
+          r"([-/]?)"
+          r"(?P<month> \d{2,2})"
+          r"\2"
+          r"(?P<day>   \d{2,2})"
+        , r"(?P<day>   \d{1,2})"
+          r"([-./])"
+          r"(?P<month> \d{1,2} | [a-z]{3,3})"
+          r"\2"
+          r"(?P<year>  \d{4,4})?"
+        , r"(?P<month> [a-z]{3,})"
+          r"\s"
+          r"(?P<day>   \d{1,2})"
+          r",\s*"
+          r"(?P<year>  \d{4,4})"
+        , flags = re.VERBOSE | re.IGNORECASE
+        )
+
     day              = property (lambda s : s._body.day)
     is_weekday       = property (lambda s : s.weekday < 5)
     month            = property (lambda s : s._body.month)
@@ -130,6 +165,22 @@ class Date (TFL.CAL._DTW_) :
     yad              = None ### set for negative `day` arguments
 
     from _TFL._CAL.Delta import Date_Delta as Delta
+
+    def from_string (cls, s) :
+        match = cls.date_pattern.match (s)
+        if match :
+            kw = {}
+            for k, v in match.groupdict ().iteritems () :
+                v = v.lower ()
+                if k == "month" and v in cls.months :
+                    v = cls.months [v]
+                else :
+                    v = int (v)
+                kw [k] = v
+            return cls (** kw)
+        else :
+            raise ValueError, s
+    from_string = classmethod (from_string)
 
     def replace (self, ** kw) :
         if self.yad is None or "day" in kw :

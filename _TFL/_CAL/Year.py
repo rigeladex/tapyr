@@ -48,6 +48,7 @@
 #                     `lib/python/Date_Time`
 #    26-Oct-2004 (CT) `Year.__new__` added to cache years
 #    26-Oct-2004 (CT) `is_weekday` changed to just delegate to `Date`
+#     2-Nov-2004 (CT) Use `Date.from_string` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -80,7 +81,7 @@ class Day (TFL.Meta.Object) :
     def __new__ (cls, cal, date) :
         Table = cal._days
         if isinstance (date, (str, unicode)) :
-            date = TFL.CAL.Date (* [int (x) for x in date.split ("/")]) ### XXX
+            date = TFL.CAL.Date.from_string (date)
         id = date.ordinal
         if id in Table :
             return Table [id]
@@ -294,6 +295,7 @@ class Year (TFL.Meta.Object) :
     number          = property (lambda s : s.year)
 
     def __new__ (cls, year = None, cal = _Cal_, populate = False) :
+        D     = TFL.CAL.Date
         Table = cal._years
         if year is None :
             year = D ().year
@@ -306,7 +308,7 @@ class Year (TFL.Meta.Object) :
 
     def _init_ (self, year, cal, populate) :
         D           = TFL.CAL.Date
-        self.year   = year or D ().year
+        self.year   = year
         self.cal    = cal
         self.months = months = []
         self.weeks  = weeks  = []

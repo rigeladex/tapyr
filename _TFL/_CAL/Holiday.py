@@ -36,6 +36,7 @@
 #    15-Oct-2004 (CT) Use `TFL.CAL.Date` instead of `TFL.CAL.Date_Time`
 #    15-Oct-2004 (CT) `_main` and `_command_spec` added
 #    17-Oct-2004 (CT) Use `Date_Delta` instead of `Delta`
+#    31-Oct-2004 (CT) `_main` changed to display date, too
 #    ««revision-date»»···
 #--
 
@@ -144,9 +145,13 @@ def _command_spec (arg_array = None) :
 
 def _main (cmd) :
     from predicate import sorted
+    import _TFL._CAL.Year
     year = TFL.CAL.Date (cmd.year, 1, 1)
+    Y    = TFL.CAL.Year (cmd.year)
+    Y.populate ()
     for ordinal, name in sorted (holidays (year).iteritems ()) :
-        print "%3d %s" % (ordinal - year.ordinal + 1, name)
+        o = ordinal - year.ordinal + 1
+        print "%3d %s %s" % (o, Y.cal._days [ordinal], name)
 # end def _main
 
 if __name__ == "__main__" :
