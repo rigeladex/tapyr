@@ -31,13 +31,15 @@
 #     6-Feb-2004 (CT) Use (y, m, d) tuples instead of strings as dictionary
 #                     keys
 #     9-Feb-2004 (CT) Dependency on `Y.map` removed
+#     5-Jun-2004 (CT) `easter_date` implementation using Spencer Jones'
+#                     algorithm added
 #    ««revision-date»»···
 #--
 
 from   _TFL      import TFL
 from   Date_Time import *
 
-def easter_date (year) :
+def easter_date_gauss (year) :
     """Returns date of easter sunday computed by Gauß' rule as given by
        H.H.Voigt: `Abriß der Astronomie`.
     """
@@ -71,6 +73,23 @@ def easter_date (year) :
             ### print d, e, a, (d == 28, e == 6, a > 10)
             day -= 7
     return (year, month, day)
+# end def easter_date_gauss
+
+def easter_date (y) :
+    """Returns date of easter sunday computed by Spencer Jones algorithm as
+       given by Jean Meeus: Astronomical Algorithms.
+    """
+    a    = y % 19
+    b, c = divmod (y, 100)
+    d, e = divmod (b, 4)
+    f    = (b + 8) / 25
+    g    = (b - f + 1) / 3
+    h    = (19*a + b - d - g + 15) % 30
+    i, k = divmod (c, 4)
+    l    = (32 + 2*e + 2*i - h - k) % 7
+    m    = (a + 11*h + 22*l) / 451
+    n, p = divmod (h + l - 7*m + 114, 31)
+    return (y, n, p+1)
 # end def easter_date
 
 fixed_holidays = \
