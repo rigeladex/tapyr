@@ -49,6 +49,8 @@
 #    22-Feb-2005 (RSC) Fixed widget computation in insert_widget
 #    22-Feb-2005 (CT)  `left_gravity` added to `mark_at`
 #    22-Feb-2005 (CT)  `place_cursor` and `see` added
+#    23-Feb-2005 (RSC) added Scrolled_Text widget,
+#                      modified *_pos to return Tk magic value
 #    ««revision-date»»···
 #--
 
@@ -114,9 +116,9 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     Widget_Type = CTK.C_Text
 
-    bot_pos     = property (lambda s : s.wtk_widget.index (START))
-    current_pos = property (lambda s : s.wtk_widget.index (INSERT))
-    eot_pos     = property (lambda s : s.wtk_widget.index (END))
+    bot_pos     = property (lambda s : START)
+    current_pos = property (lambda s : INSERT)
+    eot_pos     = property (lambda s : END)
 
     def __init__ (self, AC = None, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
@@ -263,6 +265,12 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     # end def _tag
 
 Text = _Tk_Text_ # end class _Tk_Text_
+
+class Scrolled_Text (Text) :
+
+    Widget_Type = CTK.Scrolled_Text
+
+# end class Scrolled_Text
 
 __test__ = dict (interface_test = TFL.TKT.Text._interface_test)
 
