@@ -212,6 +212,8 @@ class TaT (TFL.Meta.Object) :
        >>> is_weekday = TaT_Conditioner (lambda d : d.is_weekday)
        >>> [str (t) for t in TaT (start, upper, dd2, conditioner = is_weekday)]
        ['2004-10-26', '2004-10-28', '2004-11-01', '2004-11-03']
+       >>> [str (t) for t in TaT (start + dd1, upper, dd2, conditioner = is_weekday)]
+       ['2004-10-27', '2004-10-29', '2004-11-02']
        >>> start -= dd1
        >>> upper += dd3
        >>> for t in TaT (start, upper, dd2, dd2, dd3) :
