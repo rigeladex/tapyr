@@ -272,7 +272,8 @@ class Package_Namespace :
                             self._import_1 \
                                 (mod, s, s, p, result, check_clashes)
                 else :
-                    import TFL.Module
+                    import TFL.Module ### XXX PNS remove after change to newstyle
+                    from TFL import TFL
                     for s in TFL.Module.names_of (mod) :
                         p = getattr (mod, s)
                         if not s.startswith ("_") :
