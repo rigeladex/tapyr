@@ -39,6 +39,8 @@
 #    11-Jan-2005 (CT) `CI_Toolbar` and `CI_Toolbar_Category` added
 #    12-Jan-2005 (CT) Factored to `TFL`
 #    12-Jan-2005 (CT) `_CI_Widget_` and `_CI_` used as ancestors
+#    12-Jan-2005 (CT) s/CI_Toolbar_Category/_CI_Toolbar_Group_/g
+#    12-Jan-2005 (CT) `CI_Event_Binder` and `_CI_Event_Binding_` added
 #    ««revision-date»»···
 #--
 
@@ -46,8 +48,11 @@ from   _TFL                 import TFL
 import _TFL._TKT.Command_Interfacer
 
 from   CTK                  import *
+from   NO_List              import *
 from   Regexp               import *
+
 import CTK_Toolbar
+import weakref
 
 class _CI_ (TFL.TKT.Command_Interfacer) :
 
@@ -70,6 +75,98 @@ class _CI_Widget_ (_CI_) :
     # end def destroy
 
 # end class _CI_Widget_
+
+class _CI_Event_Binding_ (_CI_) :
+    """Encapsulate a single event binding"""
+
+    def __init__ (self, ev_binder, name, callback, ev_name) :
+        self.ev_binder  = weakref.proxy (ev_binder)
+        self.name       = name
+        self.callback   = callback
+        self.ev_name    = ev_name
+        self.bindings   = {}
+    # end def __init__
+
+    def enable_entry (self, index) :
+        bindings = self.bindings
+        ev_name  = self.ev_name
+        callback = self.callback
+        for w in self.ev_binder.widgets :
+            bindings [w] = w.bind (ev_name, callback)
+    # end def enable
+
+    def disable_entry (self, index) :
+        ev_name  = self.ev_name
+        for w, binding in self.bindings.iteritems () :
+            w.unbind (ev_name, binding)
+    # end def disable_entry
+
+# end class _CI_Event_Binding_
+
+class CI_Event_Binder (_CI_) :
+    """Implement an event-bound interfacer for Tkinter (i.e., commands
+       triggered by key-presses, mouse-clicks and other such events)
+    """
+
+    def __init__ (self, * widgets) :
+        self.widgets  = dict_from_list (* widgets)
+        self.bindings = NO_List ()
+    # end def __init__
+
+    def add_widget (self, * widgets) :
+        for w in widgets :
+            self.widgets [w] = None
+    # end def add_widget
+
+    def remove_widget (self, * widgets) :
+        for w in widgets :
+            try :
+                del self.widgets [w]
+            except KeyError :
+                pass
+    # end def remove_widget
+
+    def destroy (self) :
+        for b in self.bindings :
+            b.disable_entry (b)
+        self.widgets  = None
+        self.bindings = None
+    # end def destroy
+
+    ### command specific methods
+    def add_command \
+            ( self, name, callback
+            , index           = None
+            , delta           = 0
+            , underline       = None
+            , accelerator     = None
+            , icon            = None
+            , info            = info
+            , as_check_button = False
+            , cmd_name        = None
+            , ** kw
+            ) :
+        result = _CI_Event_Binding_ (self, name, callback, info)
+        self.bindings [name] = result
+        return result
+    # end def add_command
+
+    def remove_command (self, index) :
+        binding = self.bindings [index]
+        bindings.disable_entry  (index)
+        del self.bindings       [index]
+    # end def remove_command
+
+    ### event specific methods
+    def enable_entry (self, index) :
+        self.bindings [index].enable_entry (index)
+    # end def enable
+
+    def disable_entry (self, index) :
+        self.bindings [index].disable_entry (index)
+    # end def disable_entry
+
+# end class CI_Event_Binder
 
 class CI_Menu (_CI_Widget_) :
     """Implement a menu command interfacer for Tkinter"""
@@ -208,7 +305,7 @@ class CI_Toolbar (_CI_Widget_) :
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
         self.widget.add_category (name, index, delta)
-        result = CI_Toolbar_Category (name, self)
+        result = _CI_Toolbar_Group_ (name, self)
         return result
     # end def add_group
 
@@ -223,7 +320,7 @@ class CI_Toolbar (_CI_Widget_) :
 
 # end class CI_Toolbar
 
-class CI_Toolbar_Category (_CI_) :
+class _CI_Toolbar_Group_ (_CI_) :
 
     def __init__ (self, category, widget) :
         self.widget   = widget
@@ -277,7 +374,7 @@ class CI_Toolbar_Category (_CI_) :
         self.widget.toolbar [self.name].disable_entry (name)
     # end def disable_entry
 
-# end class CI_Toolbar_Category
+# end class _CI_Toolbar_Group_
 
 if __name__ != "__main__" :
     TFL.TKT._Export ("*")
