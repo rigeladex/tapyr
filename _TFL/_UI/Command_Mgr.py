@@ -134,6 +134,8 @@
 #    17-Feb-2005 (MG) `Command` renamed to `Deaf_Command` and new `Command`
 #                     added
 #    18-Feb-2005 (CT) `Deaf_Command` added to `__all__`
+#    18-Feb-2005 (MG) Inheritance of `Command` and `Deaf_Command` switched
+#    18-Feb-2005 (MG) `__all__` removed (`_Command_`) added to `_Export`
 #    ««revision-date»»···
 #--
 
@@ -252,9 +254,9 @@ class _Command_ (TFL.Meta.Object) :
 
 # end class _Command_
 
-class Deaf_Command (_Command_) :
-    """Model a command of an interactive application which discards
-       arguments passed to `__call__`
+class Command (_Command_) :
+    """Model a command of an interactive application which pass all
+       arguments passed to `__call__` to the callback.
     """
 
     def __init__ (self, name, command, precondition = None, pv_callback = None, _doc = None, batchable = 1, Change_Action = None) :
@@ -327,8 +329,8 @@ class Deaf_Command (_Command_) :
         return self.command (* args, ** kw)
     # end def _run
 
-    def __call__ (self, event = None, * args, ** kw) :
-        return self.run ()
+    def __call__ (self, * args, ** kw) :
+        return self.run (* args, ** kw)
     # end def __call__
 
     def __repr__ (self) :
@@ -343,16 +345,18 @@ class Deaf_Command (_Command_) :
             return self.name
     # end def __str__
 
-# end class Deaf_Command
+# end class Command
 
-class Command (Deaf_Command) :
-    """Model a command of an interactive application which pass all
-       arguments passed to `__call__` to the callback.
+class Deaf_Command (Command) :
+    """Model a command of an interactive application which discards
+       arguments passed to `__call__`
     """
 
-    __call__ = Deaf_Command.run
+    def __call__ (self, event = None, * args, ** kw) :
+        return self.run ()
+    # end def __call__
 
-# end class Command
+# end class Deaf_Command
 
 class Dyn_Command (_Command_) :
     """Model a set of dynamically created commands of an interactive
@@ -1311,12 +1315,6 @@ cm.add_command   (Command ("Save", ""), if_names = ("mb", ))
 mb.activate ()
 """
 
-__all__ = ( "Command_Mgr", "Command_Group", "Command", "_Command_"
-          , "Deaf_Command", "Dyn_Command"
-          , "Precondition_Violation"
-          , "Command_Delegator", "Command_Delegator_UB"
-          )
-
 if __name__ != "__main__" :
-    TFL.UI._Export ("*")
+    TFL.UI._Export ("*", "_Command_")
 ### __END__ TFL.UI.Command_Mgr
