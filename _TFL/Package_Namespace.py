@@ -31,10 +31,14 @@
 #     2-Jul-2001 (CT) Docstring extended
 #     2-Jul-2001 (CT) Use `` instead of `' to quote inside docstrings and
 #                     comments 
+#    27-Jul-2001 (CT) `Import` changed to support `*`
+#    30-Jul-2001 (CT) `*` import corrected
+#    30-Jul-2001 (CT) `_import_1` and `_import_name` factored
 #    ««revision-date»»···
 #--
 
-from Caller import globals as _caller_globals
+from   Caller  import globals as _caller_globals
+import inspect
 
 class Package_Namespace :
     """Implement a namespace for python packages providing direct access to
@@ -135,13 +139,44 @@ class Package_Namespace :
             pkg = __import__ \
                 ("%s.%s" % (self._name, module_name), _caller_globals ())
             mod = getattr (pkg, module_name)
-            if symbols :
+            if len (symbols) == 1 and symbols [0] == "*" :
+                symbols = getattr (mod, "__all__", ())
+                if symbols :
+                    for s in symbols :
+                        try :
+                            self._import_1 (mod, s.__name__, s)
+                        except AttributeError :
+                            self._import_name (mod, s)
+                else :
+                    for s, p in mod.__dict__.items () :
+                        if inspect.getmodule (p) is mod :
+                            self._import_1 (mod, s, p)
+            elif symbols :
                 for s in symbols :
-                    self.__dict__ [s] = getattr (mod, s, mod)
+                    self._import_name (mod, s)
             else :
                 self.__dict__ [module_name] = mod
             self._seen [(module_name, symbols)] = 1
     # end def Import
+
+    def _import_name (self, mod, name) :
+        p = getattr (mod, name, None)
+        if p is not None :
+            self._import_1 (mod, name, p)
+    # end def _import_name    
+
+    def _import_1 (self, mod, name, object) :
+        if __debug__ :
+            if self.__dict__.get (name, object) is not object :
+                raise ImportError, "%s %s %s" % \
+                                   (name, object, self.__dict__.get (name))
+        self.__dict__ [name] = object
+        try :
+            if not hasattr (object, "Module") :
+                object.Module = mod
+        except TypeError :
+            pass
+    # end def _import_1
     
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
