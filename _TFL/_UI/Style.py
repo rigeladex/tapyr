@@ -41,6 +41,7 @@
 #    30-Mar-2005 (CT)  Doctests for style instances added
 #     1-Apr-2005 (CT)  `__new__` and `__call__` redefined to merge `callback`
 #                      dictionaries
+#     4-Apr-2005 (CED) `reversed` imported
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,7 @@ import _TFL._Meta.M_Data_Class
 import _TFL._Meta.Object
 import _TFL._UI
 
-from   _TFL.predicate          import dict_from_list
+from   _TFL.predicate          import dict_from_list, reversed
 
 class M_Style (TFL.Meta.M_Data_Class) :
     """Meta class used for generating style objects (which are implemented by
