@@ -775,8 +775,8 @@ class Node (TFL.UI.Mixin) :
 
 # end class Node
 
-
 class Node_Linked (Node) :
+
     def __init__ \
         ( self
         , browser                # browser widget containing the node
