@@ -38,6 +38,7 @@
 #    23-Jul-2004 (CT) `_M_Type_` added to `_Export`
 #    25-Jan-2005 (CT) `New` added
 #    10-Feb-2005 (MG) `_M_Type_.New`: `mangled_attributes` added
+#    28-Mar-2005 (CT) `M_Class_SWRP` added
 #    ««revision-date»»···
 #--
 
@@ -231,6 +232,10 @@ class M_Class_SW (M_Autosuper, M_Automethodwrap) :
 class M_Class (M_Autorename, M_Class_SW) :
     pass
 # end class M_Class
+
+class M_Class_SWRP (M_Autoproperty, M_Class) :
+    pass
+# end class M_Class_SWRP
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "_M_Type_")

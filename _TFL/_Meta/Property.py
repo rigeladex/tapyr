@@ -36,6 +36,7 @@
 #     3-Mar-2003 (CT) `Alias_Class_and_Instance_Method` added
 #     3-Mar-2003 (CT) `Alias_Meta_and_Class_Attribute` added
 #    15-Jul-2004 (CT) `Method_Descriptor` factored
+#    28-Mar-2005 (CT) `Lazy_Property` added
 #    ««revision-date»»···
 #--
 
@@ -317,6 +318,25 @@ class Alias_Meta_and_Class_Attribute (Class_Method) :
     # end def __get__
 
 # end class Alias_Meta_and_Class_Attribute
+
+class Lazy_Property (object) :
+    """Property caching a computed value"""
+
+    def __init__ (self, name, computer, doc = None) :
+        self.name     = name
+        self.computer = computer
+        self.__doc__  = doc
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            return self
+        result = self.computer (obj)
+        setattr (obj, self.name, result)
+        return result
+    # end def __get__
+
+# end class Lazy_Property
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "_Property_")
