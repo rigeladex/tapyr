@@ -14,6 +14,7 @@
 #    29-Aug-2003 (CT) `Timeline.length` added
 #    29-Aug-2003 (CT) `orig` added
 #    23-Sep-2003 (CT) `snip` added
+#    26-Sep-2003 (CED) `reset` added
 #    ««revision-date»»···
 #--
 
@@ -138,6 +139,10 @@ class Timeline (TFL.Meta.Object) :
     # end def cut
 
     length = property (lambda s : sum ([f.length for f in s.free], 0))
+
+    def reset (self) :
+        self.free = [NDT.Sched2.Span (self.orig.lower, self.orig.upper)]
+    # end def reset
 
     def snip (self, * spans) :
         ### XXX optimize to avoid repeated iteration over whole free list
