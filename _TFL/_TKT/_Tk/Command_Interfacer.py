@@ -51,6 +51,7 @@
 #    28-Jan-2005 (CT) `index` added
 #    31-Jan-2005 (CT) `_index_offset` factored and used consistently in
 #                     `CI_Menu`
+#     1-Feb-2005 (CT) Use `CTK.canonical_key_name`
 #    ««revision-date»»···
 #--
 
@@ -219,7 +220,7 @@ class CI_Menu (_CI_Widget_) :
             , label       = name
             , command     = callback
             , underline   = underline
-            , accelerator = accelerator
+            , accelerator = CTK.canonical_key_name (accelerator)
             , ** kw
             )
     # end def add_command
