@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    22-Mar-2005 (MG) Creation
+#    27-Mar-2005 (MG) `find_properties` fixed
+#    27-Mar-2005 (MG) Correct auto base name
+#    27-Mar-2005 (MG) Support for `SG_Object_Property` added
 #    ««revision-date»»···
 #--
 
@@ -37,6 +40,7 @@ import os
 import time
 
 from   _TFL.Command_Line import Command_Line
+from   _TFL.Regexp       import Regexp
 
 template = '''# -*- coding: iso-8859-1 -*-
 # Copyright (C) 2005 Martin Glück. All rights reserved
@@ -101,17 +105,20 @@ def find_properties (cls) :
                 mode += 1
             prop.append ((pn, p, mode))
     prop.sort ()
-    result = []
+    result     = []
+    gtk_object = gobject.type_from_name ("GtkObject")
     for name, p, mode in prop :
-        if mode == (p.flags & 0x03) :
-            cls = "GTK.SG_Property "
+        if gobject.type_is_a (p.value_type, gtk_object) :
+            cls = "GTK.SG_Object_Property "
+        elif mode == (p.flags & 0x03) :
+            cls = "GTK.SG_Property        "
         else :
-            cls = "GTK.Property    "
+            cls = "GTK.Property           "
         opt  = [""]
         if not p.flags & 0x01 :
-            opt += "get = None"
+            opt.append ("get = None")
         if not p.flags & 0x02 :
-            opt += "set = None"
+            opt.append ("set = None")
         element = '%s ("%s"%s)' % (cls, name, ", ".join (opt))
         result.append (element)
     return "\n        , ".join (result)
@@ -133,7 +140,8 @@ base       = cmd.base
 gtk_widget = cmd.gtk_widget or cmd.name.replace ("_", "")
 cls        = getattr (gtk, gtk_widget)
 if not base :
-    base = cls.mro () [1].__name__
+    pat  = Regexp ("([A-Z])")
+    base = pat.subn ("_\\1", cls.mro () [1].__name__) [0] [1:]
 
 d = dict \
     ( name       = cmd.name

@@ -20,38 +20,42 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Container
+#    TGL.TKT.GTK.Cell_Renderer
 #
 # Purpose
-#    Wrapper for the GTK widget Container
+#    Wrapper for the GTK widget CellRenderer
 #
 # Revision Dates
-#    22-Mar-2005 (MG) Automated creation
-#    22-Mar-2005 (MG) Creation continued
-#    27-Mar-2005 (MG) `add` and `remove` replaced by propper
-#                     `_wtk_delegation` entries
-#    27-Mar-2005 (MG) `children` converted to a `SG_Object_List_Property`
+#    27-Mar-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Widget
+import _TGL._TKT._GTK.Object
 
-class Container (GTK.Widget) :
-    """Wrapper for the GTK widget Container"""
+class Cell_Renderer (GTK.Object) :
+    """Wrapper for the GTK widget CellRenderer"""
 
-    GTK_Class        = GTK.gtk.Container
+    GTK_Class        = GTK.gtk.CellRenderer
     __gtk_properties = \
-        ( GTK.SG_Property             ("border_width")
-        , GTK.SG_Property             ("resize_mode")
-        , GTK.SG_Object_List_Property ("children", set = None)
+        ( GTK.Property     ("cell_background", get = None)
+        , GTK.Property     ("cell_background_gdk")
+        , GTK.Property     ("cell_background_set")
+        , GTK.Property     ("height")
+        , GTK.Property     ("is_expanded")
+        , GTK.Property     ("is_expander")
+        , GTK.Property     ("mode")
+        , GTK.Property     ("sensitive")
+        , GTK.Property     ("visible")
+        , GTK.Property     ("width")
+        , GTK.Property     ("xalign")
+        , GTK.Property     ("xpad")
+        , GTK.Property     ("yalign")
+        , GTK.Property     ("ypad")
         )
 
-    _wtk_delegation  = dict \
-        (add = GTK.FP_Object_Extract, remove = GTK.FP_Object_Extract)
-
-# end class Container
+# end class Cell_Renderer
 
 if __name__ != "__main__" :
-    GTK._Export ("Container")
-### __END__ TGL.TKT.GTK.Container
+    GTK._Export ("Cell_Renderer")
+### __END__ TGL.TKT.GTK.Cell_Renderer

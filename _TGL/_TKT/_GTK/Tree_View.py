@@ -26,7 +26,8 @@
 #    Wrapper for the GTK widget TreeView
 #
 # Revision Dates
-#    22-Mar-2005 (MG) Automated creation
+#    27-Mar-2005 (MG) Automated creation
+#    27-Mar-2005 (MG) `__init__` and test added
 #    ««revision-date»»···
 #--
 
@@ -38,23 +39,56 @@ class Tree_View (GTK.Container) :
 
     GTK_Class        = GTK.gtk.TreeView
     __gtk_properties = \
-        ( GTK.SG_Property  ("enable_search")
-        , GTK.SG_Property  ("expander_column")
-        , GTK.SG_Property  ("fixed_height_mode")
-        , GTK.SG_Property  ("hadjustment")
-        , GTK.Property     ("headers_clickable")
-        , GTK.SG_Property  ("headers_visible")
-        , GTK.SG_Property  ("hover_expand")
-        , GTK.SG_Property  ("hover_selection")
-        , GTK.SG_Property  ("model")
-        , GTK.SG_Property  ("reorderable")
-        , GTK.SG_Property  ("rules_hint")
-        , GTK.SG_Property  ("search_column")
-        , GTK.SG_Property  ("vadjustment")
+        ( GTK.SG_Property        ("enable_search")
+        , GTK.SG_Object_Property ("expander_column")
+        , GTK.SG_Property        ("fixed_height_mode")
+        , GTK.SG_Object_Property ("hadjustment")
+        , GTK.Property           ("headers_clickable")
+        , GTK.SG_Property        ("headers_visible")
+        , GTK.SG_Property        ("hover_expand")
+        , GTK.SG_Property        ("hover_selection")
+        , GTK.SG_Object_Property ("model")
+        , GTK.SG_Property        ("reorderable")
+        , GTK.SG_Property        ("rules_hint")
+        , GTK.SG_Property        ("search_column")
+        , GTK.SG_Object_Property ("vadjustment")
         )
+
+    _wtk_delegation = dict \
+        ( append_column = GTK.FP_Object_Extract
+        )
+    def __init__ (self, model = None, * args, ** kw) :
+        if model :
+            model = model.wtk_object
+        self.__super.__init__ (model, * args, ** kw)
+    # end def __init__
 
 # end class Tree_View
 
 if __name__ != "__main__" :
     GTK._Export ("Tree_View")
+else :
+    import _TGL._TKT._GTK.Test_Window
+    import _TGL._TKT._GTK.Model
+    import _TGL._TKT._GTK.Cell_Renderer_Text
+    import _TGL._TKT._GTK.Tree_View_Column
+
+    t  = GTK.Tree_Model          (str, float)
+    for i in range (10) :
+        t.add (("Row_%2d" % (i, ), i / 10.0))
+    v  = Tree_View               (t)
+    r1 = GTK.Cell_Renderer_Text  ()
+    c1 = GTK.Tree_View_Column    ("Text-Column", r1)
+    c1.set_attributes            (r1, text = 0)
+
+    r2 = GTK.Cell_Renderer_Text  ()
+    c2 = GTK.Tree_View_Column    ("Text-Column", r2)
+    c2.set_attributes            (0, text = 1)
+
+    v.append_column              (c1)
+    v.append_column              (c2)
+    w  = GTK.Test_Window         ("Tree-View Test")
+    w.add                        (v)
+    w.show_all                   ()
+    GTK.main                     ()
 ### __END__ TGL.TKT.GTK.Tree_View

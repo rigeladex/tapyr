@@ -28,13 +28,15 @@
 # Revision Dates
 #    22-Mar-2005 (MG) Automated creation
 #    22-Mar-2005 (MG) Creation continued
+#    27-Mar-2005 (MG) `Pack_Mixin` factored
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Container
+import _TGL._TKT._GTK.Pack_Mixin
 
-class Box (GTK.Container) :
+class Box (GTK.Container, GTK.Pack_Mixin) :
     """Wrapper for the GTK widget Box"""
 
     GTK_Class        = GTK.gtk.Box
@@ -42,14 +44,6 @@ class Box (GTK.Container) :
         ( GTK.SG_Property  ("homogeneous")
         , GTK.SG_Property  ("spacing")
         )
-
-    def pack (self, child, start = True, expand = True, fill = True) :
-        if start :
-            fct = self.wtk_object.pack_start
-        else :
-            fct = self.wtk_object.pack_end
-        return fct (child.wtk_object, expand = expand, fill = fill)
-    # end def pack
 
 # end class Box
 

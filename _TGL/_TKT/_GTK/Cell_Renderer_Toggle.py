@@ -20,38 +20,32 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Container
+#    TGL.TKT.GTK.Cell_Renderer_Toggle
 #
 # Purpose
-#    Wrapper for the GTK widget Container
+#    Wrapper for the GTK widget CellRendererToggle
 #
 # Revision Dates
-#    22-Mar-2005 (MG) Automated creation
-#    22-Mar-2005 (MG) Creation continued
-#    27-Mar-2005 (MG) `add` and `remove` replaced by propper
-#                     `_wtk_delegation` entries
-#    27-Mar-2005 (MG) `children` converted to a `SG_Object_List_Property`
+#    27-Mar-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Widget
+import _TGL._TKT._GTK.Cell_Renderer
 
-class Container (GTK.Widget) :
-    """Wrapper for the GTK widget Container"""
+class Cell_Renderer_Toggle (GTK.Cell_Renderer) :
+    """Wrapper for the GTK widget CellRendererToggle"""
 
-    GTK_Class        = GTK.gtk.Container
+    GTK_Class        = GTK.gtk.CellRendererToggle
     __gtk_properties = \
-        ( GTK.SG_Property             ("border_width")
-        , GTK.SG_Property             ("resize_mode")
-        , GTK.SG_Object_List_Property ("children", set = None)
+        ( GTK.Property            ("activatable")
+        , GTK.SG_Property         ("active")
+        , GTK.Property            ("inconsistent")
+        , GTK.SG_Property         ("radio")
         )
 
-    _wtk_delegation  = dict \
-        (add = GTK.FP_Object_Extract, remove = GTK.FP_Object_Extract)
-
-# end class Container
+# end class Cell_Renderer_Toggle
 
 if __name__ != "__main__" :
-    GTK._Export ("Container")
-### __END__ TGL.TKT.GTK.Container
+    GTK._Export ("Cell_Renderer_Toggle")
+### __END__ TGL.TKT.GTK.Cell_Renderer_Toggle

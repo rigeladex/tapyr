@@ -20,38 +20,30 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Container
+#    TGL.TKT.GTK.Test_Window
 #
 # Purpose
-#    Wrapper for the GTK widget Container
+#    A toplevel window which has a proper destroy callback
 #
 # Revision Dates
-#    22-Mar-2005 (MG) Automated creation
-#    22-Mar-2005 (MG) Creation continued
-#    27-Mar-2005 (MG) `add` and `remove` replaced by propper
-#                     `_wtk_delegation` entries
-#    27-Mar-2005 (MG) `children` converted to a `SG_Object_List_Property`
+#    27-Mar-2005 (MG) Creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Widget
+import _TGL._TKT._GTK.Window
+import _TGL._TKT._GTK.Signal
 
-class Container (GTK.Widget) :
-    """Wrapper for the GTK widget Container"""
+class Test_Window (GTK.Window) :
+    """Toplevel window with a proper destroy callback"""
 
-    GTK_Class        = GTK.gtk.Container
-    __gtk_properties = \
-        ( GTK.SG_Property             ("border_width")
-        , GTK.SG_Property             ("resize_mode")
-        , GTK.SG_Object_List_Property ("children", set = None)
-        )
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.bind_add (GTK.Signal.Destroy, GTK.quit)
+    # end def __init__
 
-    _wtk_delegation  = dict \
-        (add = GTK.FP_Object_Extract, remove = GTK.FP_Object_Extract)
-
-# end class Container
+# end class Test_Window
 
 if __name__ != "__main__" :
-    GTK._Export ("Container")
-### __END__ TGL.TKT.GTK.Container
+    GTK._Export ("Test_Window")
+### __END__ TGL.TKT.GTK.Test_Window

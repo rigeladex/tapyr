@@ -30,6 +30,9 @@
 #    25-Mar-2005 (CT) Moved to TGL
 #    26-Mar-2005 (MG) `num_opt_val` and `option_value` added
 #    26-Mar-2005 (MG) `*bind*` functions added
+#    27-Mar-2005 (MG) `SG_Object_*Property` added
+#    27-Mar-2005 (MG) `FP_Object_Extract` added and `__getattr__` changed to
+#                     support method wrappers
 #    ««revision-date»»···
 #--
 
@@ -38,6 +41,7 @@ from   _TGL                   import TGL
 import _TGL._TKT
 import _TGL._TKT.Mixin
 import _TGL._TKT._GTK
+import _TFL._Meta.Object
 import _TFL._Meta.M_Class
 import _TFL._Meta.M_Auto_Combine_Dicts
 
@@ -111,6 +115,37 @@ class SG_Property (property) :
 
 # end class SG_Property
 
+class SG_Object_Property (SG_Property) :
+    """Models a property with sets/returns a GTK object."""
+
+    def _default_set (self, name) :
+        return lambda s, v : getattr (s.wtk_object, name) (v and v.wtk_object)
+    # end def _default_set
+
+    def _default_get (self, name) :
+        return lambda s : self.widget (getattr (s.wtk_object, name) ())
+    # end def _default_get
+
+    def widget (self, widget) :
+        return widget and (widget.get_data ("ktw_object") or widget)
+    # end def widget
+
+# end class SG_Object_Property
+
+class SG_Object_List_Property (SG_Object_Property) :
+    """Models a property with sets/returns a GTK object."""
+
+    def _default_set (self, name) :
+        return lambda s, v : \
+            getattr (s.wtk_object, name) ([w.wtk_object for w in v])
+    # end def _default_set
+
+    def widget (self, values) :
+        return [w and (w.get_data ("ktw_object") or w) for w in values]
+    # end def widget
+
+# end class SG_Object_List_Property
+
 class List_Property (Property) :
     """Models a property which requires a list as parameter for the `set`
        function.
@@ -159,6 +194,21 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
 
 # end class _M_Object_
 
+class FP_Object_Extract (TFL.Meta.Object) :
+    """A call wrapper which extracts a `wtk_widget` from the first parameter"""
+
+    def __init__ (self, owner, method) :
+        self.owner  = weakref.proxy (owner)
+        self.method = method
+    # end def __init__
+
+    def __call__ (self, obj, * args, ** kw) :
+        obj = obj.wtk_object
+        return self.method (obj, * args, ** kw)
+    # end def __call__
+
+# end class FP_Object_Extract
+
 class Object (TGL.TKT.Mixin) :
     """Root class for all GTK related objects (TextBuffer, TreeModel, ...)
        and Widgets (TextView, TreeView, ...)
@@ -191,14 +241,6 @@ class Object (TGL.TKT.Mixin) :
         ### python wrapper !
         self.wtk_object.set_data ("ktw_object", weakref.proxy (self))
     # end def __init__
-
-    def __getattr__ (self, name) :
-        if name in self._wtk_delegation :
-            result = getattr (self.wtk_object, self._wtk_delegation [name])
-            setattr (self, name, result)
-            return result
-        raise AttributeError, name
-    # end def __getattr__
 
     def _bind_single_ (self, signal, connect, func, args, kw) :
         for cid in self._handlers.get (signal, ()) :
@@ -252,6 +294,18 @@ class Object (TGL.TKT.Mixin) :
     def option_value (self, name, default, separator = None) :
         return default
     # end def option_value
+
+    def __getattr__ (self, name) :
+        if name in self._wtk_delegation :
+            wrapper = self._wtk_delegation.get (name)
+            if not isinstance (wrapper, str) :
+                result = wrapper (self, getattr (self.wtk_object, name))
+            else :
+                result = getattr (self.wtk_object, wrapper)
+            setattr (self, name, result)
+            return result
+        raise AttributeError, name
+    # end def __getattr__
 
 # end class Object
 

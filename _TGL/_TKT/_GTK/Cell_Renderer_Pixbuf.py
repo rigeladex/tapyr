@@ -20,38 +20,34 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Container
+#    TGL.TKT.GTK.Cell_Renderer_Pixbuf
 #
 # Purpose
-#    Wrapper for the GTK widget Container
+#    Wrapper for the GTK widget CellRendererPixbuf
 #
 # Revision Dates
-#    22-Mar-2005 (MG) Automated creation
-#    22-Mar-2005 (MG) Creation continued
-#    27-Mar-2005 (MG) `add` and `remove` replaced by propper
-#                     `_wtk_delegation` entries
-#    27-Mar-2005 (MG) `children` converted to a `SG_Object_List_Property`
+#    27-Mar-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Widget
+import _TGL._TKT._GTK.CellRenderer
 
-class Container (GTK.Widget) :
-    """Wrapper for the GTK widget Container"""
+class Cell_Renderer_Pixbuf (GTK.CellRenderer) :
+    """Wrapper for the GTK widget CellRendererPixbuf"""
 
-    GTK_Class        = GTK.gtk.Container
+    GTK_Class        = GTK.gtk.CellRendererPixbuf
     __gtk_properties = \
-        ( GTK.SG_Property             ("border_width")
-        , GTK.SG_Property             ("resize_mode")
-        , GTK.SG_Object_List_Property ("children", set = None)
+        ( GTK.Property     ("pixbuf")
+        , GTK.Property     ("pixbuf_expander_closed")
+        , GTK.Property     ("pixbuf_expander_open")
+        , GTK.Property     ("stock_detail")
+        , GTK.Property     ("stock_id")
+        , GTK.Property     ("stock_size")
         )
 
-    _wtk_delegation  = dict \
-        (add = GTK.FP_Object_Extract, remove = GTK.FP_Object_Extract)
-
-# end class Container
+# end class Cell_Renderer_Pixbuf
 
 if __name__ != "__main__" :
-    GTK._Export ("Container")
-### __END__ TGL.TKT.GTK.Container
+    GTK._Export ("Cell_Renderer_Pixbuf")
+### __END__ TGL.TKT.GTK.Cell_Renderer_Pixbuf
