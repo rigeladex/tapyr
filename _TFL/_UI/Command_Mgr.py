@@ -140,7 +140,6 @@
 #--
 
 from   _TFL           import TFL
-
 from   Abbr_Key_Dict  import Abbr_Key_Dict
 from   NO_List        import NO_List
 from   Record         import Record
@@ -334,8 +333,8 @@ class Command (_Command_) :
     # end def __call__
 
     def __repr__ (self) :
-        return "<function %s at %x>" % \
-               (str (self), id (self.command or self))
+        return "<function %s at 0x%x>" % \
+               (str (self), long (id (self.command or self)))
     # end def __repr__
 
     def __str__ (self) :
