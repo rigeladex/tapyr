@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,6 +29,7 @@
 #     4-Sep-2001 (CT) Creation
 #     5-Sep-2001 (CT) Error messages for `TypeError` improved
 #    12-Aug-2003 (CT) doctest fixed
+#     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    ««revision-date»»···
 #--
 
@@ -167,8 +168,7 @@ if __debug__ :
     import U_Test
 
     def _doc_test () :
-        import Ratio
-        return U_Test.run_module_doc_tests (Ratio)
+        return U_Test.run_module_doc_tests ("_TFL.Ratio")
     # end def _doc_test
 
     if __name__ == "__main__" :

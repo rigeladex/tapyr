@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #    23-Feb-2004 (CT) `union`   added
 #     4-Mar-2004 (CED) `difference` fixed
 #     8-Mar-2004 (CED) Doctest fixed according to last change
+#     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    ««revision-date»»···
 #--
 
@@ -206,8 +207,7 @@ if __debug__ :
     import U_Test
 
     def _doc_test () :
-        import Numeric_Interval
-        return U_Test.run_module_doc_tests (Numeric_Interval)
+        return U_Test.run_module_doc_tests ("_TFL.Numeric_Interval")
     # end def _doc_test
 
     def _test () :

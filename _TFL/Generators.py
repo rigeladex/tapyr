@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #    19-Apr-2002 (CT) `Lazy_List` added
 #    29-Jul-2002 (CT) s/paired/paired_zip/
 #     6-Oct-2003 (CT) s/paired/paired_zip/ in doc-string, too
+#     9-Mar-2004 (CT) `_doc_test` changed to not use `import`
 #    ««revision-date»»···
 #--
 
@@ -154,8 +155,7 @@ if __debug__ :
     import U_Test
 
     def _doc_test () :
-        import Generators
-        return U_Test.run_module_doc_tests (Generators)
+        return U_Test.run_module_doc_tests ("_TFL.Generators")
     # end def _doc_test
 
     def _test () :

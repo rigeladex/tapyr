@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    25-Feb-2004 (CT) Creation
+#     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    ««revision-date»»···
 #--
 
@@ -133,8 +134,7 @@ if __debug__ :
     import U_Test
 
     def _doc_test () :
-        import binary_string
-        return U_Test.run_module_doc_tests (binary_string)
+        return U_Test.run_module_doc_tests ("_TFL.binary_string")
     # end def _doc_test
 
     def _test () :

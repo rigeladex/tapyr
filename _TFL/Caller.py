@@ -1,6 +1,5 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -50,6 +49,7 @@
 #     1-Jun-2002 (CT) Try `sys._getframe` in `frame` instead of raising
 #                     `AssertionError`
 #    12-Aug-2003 (CT) Error in `_doc_test` removed
+#     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    ««revision-date»»···
 #--
 
@@ -166,8 +166,7 @@ if __debug__ :
         pass
     else :
         def _doc_test () :
-            import Caller
-            return U_Test.run_module_doc_tests (Caller)
+            return U_Test.run_module_doc_tests ("_TFL.Caller")
         # end def _doc_test
 
         if __name__ == "__main__" :
