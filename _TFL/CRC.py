@@ -33,6 +33,9 @@
 #    10-Jan-2003 (AGO) `c_code` fixed
 #    30-Jan-2003 (AGO) Documentation clarified and extended
 #     4-Feb-2003 (AGO) Fixed C code generation
+#     7-Jan-2004 (MG)  Broken traceability comments fixed
+#    15-Jan-2004 (RMA) Corrected traceability comment
+#    15-Jan-2004 (RMA) Fixed spelling of Traceability
 #    21-Jan-2004 (CT)  `table` changed (`L` appended to avoid warnings from
 #                      Python 2.3: `FutureWarning: hex/oct constants >
 #                      sys.maxint will return positive values in Python 2.4
@@ -111,13 +114,19 @@ class _TD_CRC_ (object) :
                            , static  = 1
                            , const   = 1
                            )
+                 , C.New_Line ()
                  )
-        fct  = C.Function ( "ubyte4", "%s_calculation" % name
-                          , "ubyte4 crc, ubyte1 * data, ubyte4 len"
-                          , description =
-                              "Returns a 32 bit CRC over `len` number of "
-                              "bytes starting at `data`."
-                          )
+        fct  = C.Function \
+           ( "ubyte4", "%s_calculation" % name
+           , "ubyte4 crc, ubyte1 * data, ubyte4 len"
+           , description =
+               ( "Returns a 32 bit CRC over 'len' number of bytes starting "
+                 "at 'data'."
+               , ""
+               , "Traceability:"
+               , "  Config Check ROM D20, Config Check ROM D21"
+               )
+           )
         loop = C.While    ("len--")
         node.add ( fct)
         loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
@@ -151,7 +160,6 @@ class CRC32 (_TD_CRC_) :
     """
 
     mask  = 0x00FFFFFF
-
     table = \
     ( 0x00000000L, 0x77073096L, 0xee0e612cL, 0x990951baL, 0x076dc419L
     , 0x706af48fL, 0xe963a535L, 0x9e6495a3L, 0x0edb8832L, 0x79dcb8a4L
