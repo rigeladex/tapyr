@@ -40,6 +40,7 @@
 #    15-Sep-2004 (MG) `_description` use `max` instead of min
 #    24-Sep-2004 (MG) `_description`: `format_prec` minimum changed from `40`
 #                     to `4`
+#     8-Feb-2005 (CED) `apidoc_tex_format` defined here
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,11 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
          """:@_description:)"""
             """-{output_width - indent_anchor - ht_width - stars*2 - 4}s"""
         )
+
+    apidoc_tex_format    = \
+      ("""%(::>@_description:)"""
+       """-{output_width - indent_anchor - ht_width - 4}s"""
+      )
 
     def formatted (self, format_name, * args, ** kw) :
         if self.level <= self.out_level :

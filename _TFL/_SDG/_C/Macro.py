@@ -37,12 +37,15 @@
 #                     and `c_format`
 #    24-Aug-2004 (MG) `Macro_Block.children_group_names` removed
 #     7-Oct-2004 (CED) `Define_Constant` added
+#     8-Feb-2005 (CED) `apidoc_tex_format` defined here and necessary changes
+#                      made
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 import _TFL._SDG._C.Statement
+import textwrap
 
 class _Macro_ (TFL.SDG.C.Node) :
     """Base class of all preprocessor commands (defines, if, ifdef, ...)"""
@@ -69,9 +72,10 @@ class Macro (_Macro_, TFL.SDG.Leaf) :
         )
     front_args             = ("name", "args")
     rest_args              = "lines"
+    m_head                 = ""
 
     h_format = c_format    = """
-        #%(name)s%(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
+        #%(m_head)s%(name)s%(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
         >%(::*description:)s
     """
 
@@ -88,9 +92,69 @@ class Macro (_Macro_, TFL.SDG.Leaf) :
 class Define (Macro) :
     """A C-macro #define stament"""
 
-    _autoconvert         = dict \
-        ( name           = lambda s, k, v : "define %s" % (v, )
+    m_head                 = "define "
+
+    init_arg_defaults      = dict \
+        ( def_file         = "unknown"
+        , explanation      = ""
         )
+
+    _apidoc_head           = \
+        """%(::@_name_comment:)-{output_width - indent_anchor}s
+           \\hypertarget{%(name)s}{}
+           \\subsubsection{\\texttt{%(name)s}}
+           \\index{<FT-COM API>\\texttt{%(name)s}}
+           \\ttindex{%(name)s}
+           \\begin{description}
+           >\\item %(::*description:)s
+           >\\item \\textbf{File:} \\\\ \\texttt{%(def_file)s} \\\\
+        """
+
+    _apidoc_tail          = \
+        """>%(::>@_explanation:)-{output_width - indent_anchor}s
+           \\end{description}
+           >
+        """
+
+    _apidoc_middle       = \
+        """>\\item \\textbf{Function declaration:} \\\\
+           >>\\textttt{%(name)s %(::@_arglist:)s} \\\\
+        """
+
+    apidoc_tex_format    = "".join \
+        ( [ _apidoc_head
+          , _apidoc_middle
+          , _apidoc_tail
+          ]
+        )
+
+    def _arglist (self, ** kw) :
+        result = "(%s)" % self.args
+        return [result]
+    # end def _arglist
+
+    def _name_comment (self, ** kw) :
+        format_prec = int (kw ["format_prec"])
+        result = \
+            ( "%% --- %s %s"
+            % ( self.name
+              , "-" * ( format_prec - len (self.name) - 7
+                      )
+              )
+            )
+        return [result]
+    # end def _name_comment
+
+    def _explanation (self, ** kw) :
+        if not self.explanation :
+            yield ""
+            return
+        yield "\\item \\textbf{Description:}"
+        format_prec = max (int (kw ["format_prec"]), 4)
+        wrapper     = textwrap.TextWrapper (width = format_prec)
+        for l in wrapper.wrap (self.explanation) :
+            yield l
+    # end def _explanation
 
 # end class Define
 
@@ -107,9 +171,21 @@ class Define_Constant (Define) :
     front_args           = ("name", "value")
 
     h_format = c_format  = """
-        #%(name)s %(::.value:)s
+        #%(m_head)s%(name)s %(::.value:)s
         >%(::*description:)s
     """
+
+    _apidoc_middle       = \
+       """>\\item \\textbf{Value:} %(value)s
+       """
+
+    apidoc_tex_format    = "".join \
+        ( [ Define._apidoc_head
+          , _apidoc_middle
+          , Define._apidoc_tail
+          ]
+        )
+
 
 # end class Define_Constant
 
