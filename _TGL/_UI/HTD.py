@@ -88,6 +88,10 @@ class Node (TGL.UI.Mixin) :
         self._insert (self.tkt_text.current_pos)
     # end def __init__
 
+    def styled_text (self, value, style = None, style_dict = None) :
+        return Styled (value, self._style (style), style_dict)
+    # end def styled_text
+
     def _base_style (self, style, level) :
         result = getattr (self.Style, "level%s" % (level, ))
         if style is not None :
@@ -104,6 +108,12 @@ class Node (TGL.UI.Mixin) :
             tkt_text.insert (at_mark, "\n", self.style)
         self._tail_mark = tkt_text.mark_at (at_mark, left_gravity = False)
     # end def _display
+
+    def _style (self, style) :
+        if isinstance (style, str) :
+            style = getattr (self.Style, style)
+        return style
+    # end def _style
 
 # end class Node
 
@@ -241,6 +251,7 @@ class Top_Node (Node) :
                 , lmargin2  = lm2
                 )
             tabs.append (lm1 + d.indent)
+        Style.T = self.styled_text
     # end def _setup_styles
 
 # end class Top_Node
