@@ -1,4 +1,3 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -33,17 +32,17 @@
 #    14-Nov-2002 (AGO) `c_code` updated
 #    10-Jan-2003 (AGO) `c_code` fixed
 #    30-Jan-2003 (AGO) Documentation clarified and extended
-#     4-Feb-2003 (AGO) Fixed C code generation 
+#     4-Feb-2003 (AGO) Fixed C code generation
 #    ««revision-date»»···
 #--
 
 class _TD_CRC_ (object) :
     """Table driven CRC. Base class for all derived CRC classes.
     """
-    
+
     table = None
     mask  = 0
-    
+
     def __init__ (self, start_value = 0) :
         s = "Use a descendent of this class that implements a concrete " \
             "CRC algorithm, i.e. has `self.table` and `self.mask` defined."
@@ -120,7 +119,7 @@ class _TD_CRC_ (object) :
                  , "return crc"
                  )
     c_code = classmethod (c_code)
-    
+
 # end class _TD_CRC_
 
 class CRC32 (_TD_CRC_) :
@@ -128,7 +127,7 @@ class CRC32 (_TD_CRC_) :
        places within TTTech, primarily in bootloaders, the C2S and TTP-Load.
        The `table` is taken from RFC 1662, section C.3 and reflects the
        generator polynomial (also see appendix A in RFC 1570):
-           x**0  + x**1  + x**2  + x**4  + x**5  + x**7 +  x**8 + x**10 
+           x**0  + x**1  + x**2  + x**4  + x**5  + x**7 +  x**8 + x**10
          + x**11 + x**12 + x**16 + x**22 + x**23 + x**26 + x**32
 
        >>> import _TFL.CRC as CRC
@@ -141,7 +140,7 @@ class CRC32 (_TD_CRC_) :
        >>> c.crc_byte (x, 100)
        -859434483
     """
-    
+
     table = \
     ( 0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f
     , 0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988
@@ -187,23 +186,22 @@ class CRC32 (_TD_CRC_) :
     , 0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94
     , 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
     )
-    
+
     mask  = 0xFFFFFF
-    
+
 # end class CRC32
 
 __all__ = ["_TD_CRC_", "CRC32"]
 if __name__ != "__main__" :
     from _TFL import TFL
     TFL._Export ("*")
+else :
+    if __debug__ :
+        def test () :
+            import doctest, _TFL.CRC
+            return doctest.testmod (_TFL.CRC)
+        # end def test
 
-if __debug__ :
-    def test () :
-        import doctest, _TFL.CRC
-        return doctest.testmod (_TFL.CRC)
-    # end def test
-
-    if __name__ == "__main__" :
         test ()
 # end if __debug__
 
