@@ -29,6 +29,7 @@
 #    12-Jan-2005 (CT) Creation
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #     9-Feb-2005 (CT) `_pam` added
+#    14-Feb-2005 (CT) `__init__` changed to accept multiple mappings to `None`
 #    ««revision-date»»···
 #--
 
@@ -54,7 +55,7 @@ class _Eventname (TFL.TKT.Mixin) :
         self._map = dict (kw)
         self._pam = pam = {}
         for k, v in kw.iteritems () :
-            if v in pam :
+            if v is not None and v in pam :
                 raise ValueError, \
                     ( "Eventnames `%s` and `%s` point to same event: `%s`"
                     % (k, pam [v], v)
