@@ -29,6 +29,8 @@
 #    29-Jan-2004 (CT)  Creation
 #    11-May-2004 (RMA) Added tex_quoted_no_underscore and
 #                      tex_quoted_underscore_word_with_path
+#    01-Jun-2004 (RMA) Added {} to word boundaries to fix
+#                      tex_quoted_underscore_word_with_path
 #    ««revision-date»»
 #--
 
