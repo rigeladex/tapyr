@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    26-Mar-2005 (MG) Creation
+#    31-Mar-2005 (MG) `Key_Binding` added
+#    31-Mar-2005 (MG) `GDK_Signal`: `signal_name` corrected
+#    31-Mar-2005 (MG) Button signals added (*_Click_[123])
 #    ««revision-date»»···
 #--
 
@@ -127,7 +130,7 @@ class GDK_Signal (GTK_Signal) :
         signal_name       = kw.get ("signal_name")
         if not signal_name :
             kw ["signal_name"] = \
-                "%s-event" % (name.lower (), )
+                "%s_event" % (name.lower (), )
         self.__super.__init__ (name, * args, ** kw)
     # end def __init__
 
@@ -155,6 +158,7 @@ GTK_Signal ( "Edit")
 GTK_Signal ( "Edited", "path_string", "new_text")
 GTK_Signal ( "Enter")
 GTK_Signal ( "Handle_Moved", "gparamspec", signal_name = "notify::position")
+GTK_Signal ( "Key_Binding", "accel_id")
 GTK_Signal ( "Leave")
 GTK_Signal ( "Map")
 GTK_Signal ( "Orientation_Changed", "orientation")
@@ -169,10 +173,14 @@ GTK_Signal ( "Rows_Reordered")
 GTK_Signal ( "Size_Allocate", "allocation")
 GTK_Signal ( "Size_Request",  "requisition")
 GTK_Signal ( "Show")
+
 GDK_Signal ( "Button_Press")
 GDK_Signal ( "Button_Release")
 GDK_Signal ( "Configure")
 GDK_Signal ( "Delete")
+GDK_Signal ( "Double_Click_1")
+GDK_Signal ( "Double_Click_2")
+GDK_Signal ( "Double_Click_3")
 GDK_Signal ( "Enter_Notify")
 GDK_Signal ( "Expose")
 GDK_Signal ( "Focus_In")
@@ -180,7 +188,12 @@ GDK_Signal ( "Focus_Out")
 GDK_Signal ( "Key_Press")
 GDK_Signal ( "Leave_Notify")
 GDK_Signal ( "Motion_Notify")
-
+GDK_Signal ( "Single_Click_1")
+GDK_Signal ( "Single_Click_2")
+GDK_Signal ( "Single_Click_3")
+GDK_Signal ( "Triple_Click_1")
+GDK_Signal ( "Triple_Click_2")
+GDK_Signal ( "Triple_Click_3")
 ### special signals for TGW.Notebook
 GTK_Signal ( "Switch_Page", "page", "page_nr")
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-Mar-2005 (MG) Creation
 #    26-Mar-2005 (MG) `_wtk_delegation` and `__init__` added
+#    31-Mar-2005 (MG) Key binding and new button signals added
 #    ««revision-date»»···
 #--
 
@@ -70,13 +71,26 @@ class Widget (GTK.Object) :
         name = None
         if "name" in kw :
             name = kw ["name"]
-            del kw ["name"]
+            del kw    ["name"]
         self.__super.__init__ (* args, ** kw)
         if name :
-            self.name = name
+            self.name         = name
+        self._key_bindings    = {}
+        self._button_bindings = {}
     # end def __init__
 
 # end class Widget
+
+import gobject
+gobject.signal_new \
+    ( "key-binding", GTK.gtk.Widget, gobject.SIGNAL_ACTION
+    , bool, (int, )
+    )
+for kind in "single", "double", "triple" :
+    for number in 1, 2, 3 :
+        event = "%s-click-%d-event" % (kind, number)
+        gobject.signal_new \
+            (event, GTK.gtk.Widget, gobject.SIGNAL_RUN_LAST, bool, (object, ))
 
 if __name__ != "__main__" :
     GTK._Export ("Widget")

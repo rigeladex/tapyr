@@ -233,10 +233,10 @@ class Object (TGL.TKT.Mixin) :
         AC = None
         if "AC" in kw :
             AC = kw ["AC"]
-            del kw ["AC"]
+            del kw  ["AC"]
         self.__super.__init__ (AC = AC)
-        self.wtk_object = self.GTK_Class (* args, ** kw)
-        self._handlers  = {} ### holds all connected callback functions
+        self.wtk_object    = self.GTK_Class (* args, ** kw)
+        self._handlers     = {} ### holds all connected callback functions
         ### set the backref directly in the C-gtk object and not in the
         ### python wrapper !
         self.wtk_object.set_data ("ktw_object", weakref.proxy (self))
