@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    22-Sep-2004 (CT) Creation
+#    23-Sep-2004 (CT) Protect access to `func_code.co_flags` to allow any
+#                     callable to be wrapped without AttributeErrors
 #    ««revision-date»»···
 #--
 
@@ -122,7 +124,11 @@ class Wrapper (TFL.Meta.Object) :
     def _wrapped (self, cm, name) :
         qname = "%s.%s" % (cm.__name__, name)
         fct   = getattr (cm, name)
-        if fct.func_code.co_flags & CO_GENERATOR :
+        try :
+            co_flags = fct.func_code.co_flags
+        except AttributeError :
+            co_flags = None
+        if co_flags and (co_flags & CO_GENERATOR) :
             return self.Wrapped_Gen \
                 ( name, qname, fct, self.Wrapped_FM
                 , * self.wrapped_args, ** self.wrapped_kw

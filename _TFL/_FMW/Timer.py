@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    TFL.FMW.Execution_Timer
+#    TFL.FMW.Timer
 #
 # Purpose
 #    Measure execution time of functions and methods without changing the
@@ -37,22 +37,22 @@ import _TFL._FMW.Wrapper
 
 import time
 
-class Execution_Time_Recorder_F (TFL.FMW.File_Recorder) :
+class Time_Recorder_F (TFL.FMW.File_Recorder) :
     """Record execution time measurements into a file"""
 
     format = "%(wrapper)-40s : cpu = %(cpu)s, elapsed = %(elapsed)s\n"
 
-# end class Execution_Time_Recorder_F
+# end class Time_Recorder_F
 
-class Execution_Time_Recorder_D (TFL.FMW.Dict_Recorder) :
+class Time_Recorder_D (TFL.FMW.Dict_Recorder) :
     """Record execution time measurements into a dictionary"""
 
-# end class Execution_Time_Recorder_D
+# end class Time_Recorder_D
 
-class Execution_Time_Measurer (TFL.FMW.Wrapped_Recorder) :
+class Time_Measurer (TFL.FMW.Wrapped_Recorder) :
     """Measurer of execution time of a single function or method"""
 
-    Default_Recorder = Execution_Time_Recorder_F
+    Default_Recorder = Time_Recorder_F
 
     def __call__ (self, * args, ** kw) :
         start_clock = time.clock ()
@@ -68,17 +68,17 @@ class Execution_Time_Measurer (TFL.FMW.Wrapped_Recorder) :
         return result
     # end def __call__
 
-# end class Execution_Time_Measurer
+# end class Time_Measurer
 
-class Execution_Timer (TFL.FMW.Wrapper) :
+class Timer (TFL.FMW.Wrapper) :
     """Measure execution time of functions and methods without changing the
        source code of the measured components.
     """
 
-    Wrapped_FM = Execution_Time_Measurer
+    Wrapped_FM = Time_Measurer
 
-# end class Execution_Timer
+# end class Timer
 
 if __name__ != "__main__" :
     TFL.FMW._Export ("*")
-### __END__ TFL.FMW.Execution_Timer
+### __END__ TFL.FMW.Timer
