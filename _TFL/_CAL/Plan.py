@@ -36,6 +36,8 @@
 #     4-May-2003 (CT) `_day_generator` corrected (check year)
 #     4-May-2003 (CT) Pattern for `weekday` added
 #    11-Jan-2004 (CT) `holidays_too` added
+#     6-Feb-2004 (CT) Use (y, m, d) tuples instead of strings as dictionary
+#                     keys (for `Y.map`)
 #    ««revision-date»»···
 #--
 
@@ -101,7 +103,7 @@ def _day_generator (pat_match, day, month, year, Y) :
         d = day
         if day < 0 :
             d = Y.months [month - 1].days [day].number
-        D = Y.map.get ("%4.4d/%2.2d/%2.2d" % (year, month, d))
+        D = Y.dmap.get ((year, month, d))
         if not D :
             raise StopIteration
         yield D
@@ -167,7 +169,8 @@ def read_plan (Y, plan_file_name) :
         f.close ()
     for entry in day_sep.split (buffer) :
         if day_pat.match (entry) :
-            d = Y.map [day_pat.day]
+            id = tuple ([int (f) for f in day_pat.day.split ("/")])
+            d  = Y.dmap [id]
             head, tail = (entry.split ("\n", 1) + [""]) [:2]
             if tail :
                 d.add_appointments (* CAL.appointments (tail))

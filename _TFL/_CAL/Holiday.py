@@ -28,10 +28,14 @@
 #
 # Revision Dates
 #    20-Apr-2003 (CT) Creation
+#     6-Feb-2004 (CT) Use (y, m, d) tuples instead of strings as dictionary
+#                     keys
+#     9-Feb-2004 (CT) Dependency on `Y.map` removed
 #    ««revision-date»»···
 #--
 
-from _TFL import TFL
+from   _TFL      import TFL
+from   Date_Time import *
 
 def easter_date (year) :
     """Returns date of easter sunday computed by Gauß' rule as given by
@@ -66,24 +70,24 @@ def easter_date (year) :
         if day in (25, 26) and d == 28 and e == 6 and a > 10 :
             print d, e, a, (d == 28, e == 6, a > 10)
             day -= 7
-    return "%4.4d/%2.2d/%2.2d" % (year, month, day)
+    return (year, month, day)
 # end def easter_date
 
 fixed_holidays = \
-  { "01/01" : "Neujahr"
-  , "01/06" : "Hl. Drei Könige"
-  , "05/01" : "Mai-Feiertag"
-  , "08/15" : "Mariae Himmelfahrt"
-  , "10/26" : "Nationalfeiertag"
-  , "11/01" : "Allerheiligen"
-  , "12/08" : "Mariae Empfaengnis"
-  , "12/25" : "1. Weihnachtstag"
-  , "12/26" : "2. Weihnachtstag"
+  { ( 1,  1) : "Neujahr"
+  , ( 1,  6) : "Hl. Drei Könige"
+  , ( 5,  1) : "Mai-Feiertag"
+  , ( 8, 15) : "Mariae Himmelfahrt"
+  , (10, 26) : "Nationalfeiertag"
+  , (11,  1) : "Allerheiligen"
+  , (12,  8) : "Mariae Empfaengnis"
+  , (12, 25) : "1. Weihnachtstag"
+  , (12, 26) : "2. Weihnachtstag"
   }
 
 easter_dependent_holidays = \
-  { 0       : "Ostersonntag"
-  , 1       : "Ostermontag"
+  {  0      : "Ostersonntag"
+  ,  1      : "Ostermontag"
   , 39      : "Christi Himmelfahrt"
   , 49      : "Pfingstsonntag"
   , 50      : "Pfingstmontag"
@@ -91,16 +95,15 @@ easter_dependent_holidays = \
   }
 
 def holidays (Y) :
-    result = {}
-    year   = "%4.4d" % (Y.year, )
+    result  = {}
+    year    = Y.year
     for h, n in fixed_holidays.iteritems () :
-        result ["%s/%s" % (year, h)] = n
-    easter_day = easter_date (Y.year)
-    ED         = Y.map [easter_day]
-    easter_key = easter_day [5:]
+        result [(year, ) + h] = n
+    y, m, d = easter_date (year)
+    ED      = Date (Time_Tuple (year = y, month = m, day = d))
     for d, n in easter_dependent_holidays.iteritems () :
-        D = ED.date + d
-        result [D.formatted ("%Y/%m/%d")] = n
+        D = ED + d
+        result [D.tuple [:3]] = n
     return result
 # end def holidays
 
