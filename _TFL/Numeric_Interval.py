@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Nov-2003 (CT) Creation
+#    27-Nov-2003 (CT) `shifted` added
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,10 @@ class Numeric_Interval (TFL.Meta.Object) :
         self.lower += delta
         self.upper += delta
     # end def shift
+
+    def shifted (self, delta) :
+        return self.__class__ (self.lower + delta, self.upper + delta)
+    # end def shifted
 
     def __cmp__ (self, other) :
         try :
