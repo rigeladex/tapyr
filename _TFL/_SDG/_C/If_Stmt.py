@@ -29,6 +29,9 @@
 #    30-Jul-2004 (CT) Creation
 #     2-Aug-2004 (CT) Creation continued
 #     2-Aug-2004 (CT) `children_group_names` redefined
+#     3-Aug-2004 (CT) Don't redefine value of `Else`
+#     3-Aug-2004 (CT) children_group_names `Then` and `Elseif` added
+#     3-Aug-2004 (CT) `If.insert` simplified
 #    ««revision-date»»···
 #--
 
@@ -40,7 +43,10 @@ class Else (TFL.SDG.C.Block) :
     """Else clause of If statement"""
 
     Ancestor             = TFL.SDG.C.Block
-    name                 = "else"
+    cgi                  = TFL.SDG.C.Node.Else
+    init_arg_defaults    = dict \
+        ( name           = "else"
+        )
 
     c_format             = "\n".join \
         ( ( """else"""
@@ -54,6 +60,7 @@ class Elseif (TFL.SDG.C.Block) :
     """Else-If clause of If statement"""
 
     Ancestor             = TFL.SDG.C.Block
+    cgi                  = TFL.SDG.C.Node.Elseif
 
     init_arg_defaults    = dict \
         ( condition      = ""
@@ -95,49 +102,35 @@ class If (TFL.SDG.C._Statement_) :
 
     c_format             = "\n".join \
         ( ( """if (%(::*condition:)s)"""
-          , """%(::*then:)s"""
+          , """%(::*then_children:)s"""
+          , """%(::*elseif_children:)s"""
           , """%(::*else_children:)s"""
           )
         )
 
-    children_group_names = ( Else, ) = range (1)
-    then_children        = property (lambda s : (s.then, ))
-    else_children        = property (lambda s : s.children_groups [s.Else])
+    children_group_names = \
+        ( TFL.SDG.C.Node.Then
+        , TFL.SDG.C.Node.Elseif
+        , TFL.SDG.C.Node.Else
+        )
 
     def __init__ (self, * args, ** kw) :
-        self.__super.__init__ (* args, ** kw)
+        self.__super.__init__     (* args, ** kw)
+        self.then_children.append (self.then)
         self.then._update_scope   (self.scope)
     # end def __init__
 
     def insert (self, child, index = None, delta = 0) :
-        """Insert `child' to `self.children' at position `index'
-           (None means append).
-        """
         if not child :
             return
-        children  = self.else_children
-        child     = self._convert (child, self.else_class)
-        default_p = children and isinstance (children [-1], self.else_class)
-        if   isinstance (child, self.else_class) :
-            if default_p :
+        child = self._convert (child, self.else_class)
+        if isinstance (child, self.else_class) :
+            if self.else_children :
                 raise TFL.SDG.Invalid_Node, (self, child)
-            index = len (children)
-        elif isinstance (child, self.elif_class) :
-            if default_p :
-                if index is None :
-                    index = len (children) - 1
-                else :
-                    index = max (len (children) - 1, index)
-        else :
+        elif not isinstance (child, self.elif_class) :
             raise TFL.SDG.Invalid_Node, (self, child)
-        self._insert (child, index, children, delta)
+        self.__super.insert (child, index, delta)
     # end def insert
-
-    def _children_iter (self) :
-        yield self.then
-        for c in self.__super._children_iter ():
-            yield c
-    # end def _children_iter
 
 # end class If
 

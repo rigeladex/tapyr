@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
+#     3-Aug-2004 (CT) Don't redefine the value of `Decl`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ class Arg_List (TFL.SDG.C.Node) :
     """Model C argument lists"""
 
 
-    children_group_names = (Decl, ) = range (1)
+    children_group_names = (TFL.SDG.C.Node.Decl, )
 
     h_format = c_format  = \
         """%(:sep=%(base_indent2)s, :*decl_children:)s"""

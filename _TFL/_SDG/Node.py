@@ -33,6 +33,14 @@
 #    30-Jul-2004 (CT) `base_indent2` added
 #     2-Aug-2004 (CT) `_write_to_stream` added
 #     2-Aug-2004 (CT) Methods put into alphabetical order
+#     3-Aug-2004 (CT) `__repr__` changed to use `as_tree` (to make `as_tree`
+#                     work for cases where a node is stored as an attribute
+#                     instead of a child)
+#     3-Aug-2004 (CT) `__str__` added (using `as_repr`)
+#     3-Aug-2004 (CT) s/as_repr/as_str/  and s/repr_format/str_format/
+#     3-Aug-2004 (CT) s/as_tree/as_repr/ and s/tree_format/repr_format/
+#     3-Aug-2004 (CT) `base_indent` moved from `init_arg_defaults` to class
+#                     variable (save memory for spurious instance attribute)
 #    ««revision-date»»···
 #--
 
@@ -58,8 +66,8 @@ root = T_Node \
            )
     , name = "R"
     )
-print "\n".join (root.as_tree (base_indent = "  "))
 print "\n".join (root.as_repr (base_indent = "  "))
+print "\n".join (root.as_str  (base_indent = "  "))
 
 """
 
@@ -85,20 +93,21 @@ class Node :
     children_group_names = (Body, ) = range (1)
     body_children        = property (lambda s : s.children_groups [s.Body])
 
-    init_arg_defaults    = dict (name = "", cgi = 0, base_indent = "    ")
+    base_indent          = "    "
+    init_arg_defaults    = dict (name = "", cgi = 0)
     _autoconvert         = {}
     front_args           = ()
     rest_args            = None
 
-    _list_of_formats     = ("repr_format", "tree_format")
+    _list_of_formats     = ("repr_format", "str_format")
     repr_format          = """
-        Node %(name)-20.20s
-        >%(::*children:)s
-    """
-    tree_format          = """
         %(node_type)s \\
         >>( %(:sep=, :*children,@_formatted_attrs:)s
         >>)
+    """
+    str_format           = """
+        %(node_type)s %(name)-20.20s
+        >%(::*children:)s
     """
 
     def __init__ (self, * children, ** kw) :
@@ -139,9 +148,9 @@ class Node :
         return self.formatted ("repr_format", base_indent)
     # end def as_repr
 
-    def as_tree (self, base_indent = None) :
-        return self.formatted ("tree_format", base_indent)
-    # end def as_tree
+    def as_str (self, base_indent = None) :
+        return self.formatted ("str_format", base_indent)
+    # end def as_str
 
     def destroy (self) :
         for c in self.children :
@@ -261,15 +270,14 @@ class Node :
         return "\n".join (self.as_repr ())
     # end def __repr__
 
+    def __str__ (self) :
+        return "\n".join (self.as_str ())
+    # end def __str__
+
 # end class Node
 
 class Leaf (Node) :
     """Leaf node which doesn't have children"""
-
-    repr_format          = """
-        Leaf %(name)-20.20s
-        >%(::*children:)s
-    """
 
     children_group_names = () ### doesn't allow any children
 

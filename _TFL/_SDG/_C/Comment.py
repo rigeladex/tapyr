@@ -38,8 +38,8 @@ import _TFL._SDG._C.Node
 """
 from _TFL._SDG._C.Comment import *
 c = Comment ("abc", "def", "xyzzzzz")
-print "\n".join (c.as_h_code ())
-print "\n".join (c.as_tree   (base_indent = "  "))
+c.write_to_h_stream()
+print repr (c)
 
 """
 

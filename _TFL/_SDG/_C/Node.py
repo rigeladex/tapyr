@@ -32,6 +32,8 @@
 #     2-Aug-2004 (CT) `children_group_names` redefined
 #     2-Aug-2004 (CT) `write_to_c_stream` and `write_to_h_stream` added
 #     2-Aug-2004 (CT) Methods put into alphabetical order
+#     3-Aug-2004 (CT) `Then`, `Elseif`, and `Else` added (including their
+#                     respective `_children` properties)
 #    ««revision-date»»···
 #--
 
@@ -63,12 +65,18 @@ class _C_Node_ (TFL.SDG.Node) :
         , Head
         , Tail
         , Incl
-        )                = range (5)
+        , Then
+        , Elseif
+        , Else
+        )                = range (8)
     body_children        = property (lambda s : s.children_groups [s.Body])
     decl_children        = property (lambda s : s.children_groups [s.Decl])
     head_children        = property (lambda s : s.children_groups [s.Head])
     tail_children        = property (lambda s : s.children_groups [s.Tail])
     incl_children        = property (lambda s : s.children_groups [s.Incl])
+    then_children        = property (lambda s : s.children_groups [s.Then])
+    elseif_children      = property (lambda s : s.children_groups [s.Elseif])
+    else_children        = property (lambda s : s.children_groups [s.Else])
 
     init_arg_defaults    = dict \
         ( description    = ""

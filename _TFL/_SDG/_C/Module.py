@@ -61,6 +61,8 @@ m.add (Typedef  ("long signed int", "sint32"))
 m.add (Function ("int", "baz", "int x, int y"))
 m.write_to_c_stream()
 m.write_to_h_stream()
+print repr (m)
+print str  (m)
 
 """
 
