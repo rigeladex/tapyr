@@ -59,6 +59,8 @@
 #    25-Aug-2004 (CT) `_init_kw` changed again to protect `%` inside strings
 #                     hidden in `NO_List` <double arrrgh>
 #    25-Aug-2004 (MG) `insert`: guard agains `None` children added
+#    26-Aug-2004 (CT) `_convert` moved in here (from `C.Node`)
+#    26-Aug-2004 (CT) `NL` added
 #    ««revision-date»»···
 #--
 
@@ -377,6 +379,8 @@ class Node :
     body_children        = property (lambda s : s.children_groups [s.Body])
 
     base_indent          = "    "
+    NL                   = "\n"
+
     init_arg_defaults    = dict (name = "", cgi = 0)
     _autoconvert         = {}
     front_args           = ()
@@ -501,6 +505,12 @@ class Node :
             for c in group :
                 yield c
     # end def _children_iter
+
+    def _convert (self, value, Class, * args, ** kw) :
+        if value and isinstance (value, str) :
+            value = Class (value.strip (), * args, ** kw)
+        return value
+    # end def _convert
 
     def _formatted_attrs (self, format_name, * args, ** kw) :
         for k, v in sorted (self.init_arg_defaults.iteritems ()) :

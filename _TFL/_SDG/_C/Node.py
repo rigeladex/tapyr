@@ -40,6 +40,7 @@
 #                     from `""` to `None`
 #    12-Aug-2004 (MG) `Incl` group removed (nice try)
 #    12-Aug-2004 (MG) `formatted` pass * args and ** kw to super function
+#    26-Aug-2004 (CT)  `_convert` moved to `TFL.SDG.Node`
 #    ««revision-date»»···
 #--
 
@@ -133,12 +134,6 @@ class _C_Node_ (TFL.SDG.Node) :
     def write_to_h_stream (self, hstream = None, gauge = None) :
         self._write_to_stream (self.as_h_code (), hstream, gauge)
     # end def write_to_h_stream
-
-    def _convert (self, value, Class, * args, ** kw) :
-        if value and isinstance (value, str) :
-            value = Class (value.strip (), * args, ** kw)
-        return value
-    # end def _convert
 
     def _convert_c_comment (self, name, value, eol = 0, new_line_col = 0) :
         result = value

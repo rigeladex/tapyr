@@ -62,6 +62,7 @@
 #    23-Aug-2004 (CT) `__str__` methods moved behind `__iter__` methods
 #    24-Aug-2004 (CT) `Multi_Line_Formatter.__call__` changed to protect `%s`
 #                     after interpolation
+#    26-Aug-2004 (CT) `front0` and `rear0` added
 #    ««revision-date»»···
 #--
 
@@ -242,7 +243,9 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
         self.context = context
         self.empty   = self.x_forms.empty   % context
         self.front   = self.x_forms.front   % context
+        self.front0  = self.x_forms.front0  % context
         self.rear    = self.x_forms.rear    % context
+        self.rear0   = self.x_forms.rear0   % context
         self.sep     = self.x_forms.sep     % context
         self.sep_eol = self.x_forms.sep_eol % context
         return self
@@ -261,9 +264,13 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
                 (f (node, context, sep_form = self.x_forms.sep))
             for r in lines :
                 if formatters.is_finished and lines.is_finished :
-                    yield "%s%s%s" % (sep, r, self.rear)
+                    rear = self.rear
+                    if i == 0 :
+                        rear = self.rear0
+                        sep  = self.front0
+                    yield "%s%s%s" % (sep, r, rear)
                 else :
-                    yield "%s%s%s"   % (sep, r, eol)
+                    yield "%s%s%s" % (sep, r, eol)
                 sep = ""
                 i  += 1
             if i :
@@ -345,8 +352,10 @@ class Multi_Line_Formatter (_Formatter_) :
         result = Record \
             ( empty   = ""
             , front   = ""
+            , front0  = ""
             , head    = ""
             , rear    = ""
+            , rear0   = ""
             , sep     = ""
             , sep_eol = ""
             , tail    = ""
@@ -355,6 +364,10 @@ class Multi_Line_Formatter (_Formatter_) :
             for spec in x_forms.split ("¡") :
                 key, form = spec.split ("=", 1)
                 setattr (result, key, form)
+        if not result.front0 :
+            result.front0 = result.front
+        if not result.rear0 :
+            result.rear0  = result.rear
         return result
     # end def _x_forms
 

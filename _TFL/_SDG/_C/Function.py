@@ -29,6 +29,8 @@
 #    28-Jul-2004 (CT) Creation
 #    13-Aug-2004 (CT) `base_indent2` replaced by `base_indent * 2`
 #    25-Aug-2004 (MG) `*_common` formats added to allow reused in decentants
+#    26-Aug-2004 (CT) Use `NL` instead of `'''\\n'''`
+#    26-Aug-2004 (CT) `front0` and `rear0` used
 #    ««revision-date»»···
 #--
 
@@ -55,8 +57,10 @@ class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
 
     _h_format = _c_format  = \
         ( """%(::*return_type:)s %(name)s"""
-              """%(:front=%('''\\n''')s%(base_indent * 2)s( """
-                """¡rear=%('''\\n''')s%(base_indent * 2)s)"""
+              """%(:front=%(NL)s%(base_indent * 2)s( """
+                """¡rear=%(NL)s%(base_indent * 2)s)"""
+                """¡front0= ("""
+                """¡rear0=)"""
                 """¡empty= (void)"""
                 """:*arg_list"""
                 """:)s"""
@@ -91,7 +95,7 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
         ( ( _mod_format
           , _Function_._h_format
           , """%(:empty=;"""
-              """¡front=;%('''\\n''')s%(base_indent * 2)s"""
+              """¡front=;%(NL)s%(base_indent * 2)s"""
               """¡sep=%(base_indent * 2)s"""
               """:*description:)s
                >

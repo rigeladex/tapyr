@@ -156,6 +156,7 @@ f.add ( Do_While ("!p", "p++", "q++"))
 f.add ( For ("i = 0", "i < l", "i++", "google ()", "giggle ()"))
 m.add (Typedef  ("long signed int", "sint32"))
 m.add (Function ("int", "baz", "int x, int y"))
+m.add (Function ("int", "buz", "int x"))
 m.add (Array ("int", "ar", 2, init = (0, 1), static = True))
 m.add (Array ( "TDFT_Sign_Mask", "fubars", 2
              , init = [ dict (bit_mask = 57, extend_mask = 137)
