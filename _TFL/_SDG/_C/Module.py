@@ -47,6 +47,7 @@ from   _TFL._SDG._C.Block     import *
 from   _TFL._SDG._C.If_Stmt   import *
 from   _TFL._SDG._C.Switch    import *
 from   _TFL._SDG._C.While     import *
+from   _TFL._SDG._C.For_Stmt  import *
 m = Module (name = "test", header_comment = "A new comment", author = "FooBar")
 m.add ("x = 2;")
 m.add (Var ("int", "x", init="0", description = "hansi plapper"))
@@ -81,6 +82,7 @@ f.add ( Switch ( "quuux"
       )
 f.add ( While  ("p", "p++", "q++"))
 f.add ( Do_While ("!p", "p++", "q++"))
+f.add ( For ("i = 0", "i < l", "i++", "google ()", "giggle ()"))
 m.add (Typedef  ("long signed int", "sint32"))
 m.add (Function ("int", "baz", "int x, int y"))
 m.add (Array ("int", "ar", 2, init = (0, 1), static = True))

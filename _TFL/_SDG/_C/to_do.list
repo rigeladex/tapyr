@@ -9,7 +9,6 @@ class Macro_Ifndef (Macro_If)
 class Macro_Ifdef (Macro_If)
 class Macro (Macro_, Node_, Head_Obj_, Tail_Obj_)
 class Define (Macro)
-class For (Block)
 class Include (Node_, Head_Obj_)
 class App_Include (Include)
 
