@@ -28,6 +28,9 @@
 #
 # Revision Dates
 #     7-May-2001 (CT) Creation
+#     2-Jul-2001 (CT) Docstring extended
+#     2-Jul-2001 (CT) Use `` instead of `' to quote inside docstrings and
+#                     comments 
 #    ««revision-date»»···
 #--
 
@@ -37,7 +40,84 @@ class Package_Namespace :
     """Implement a namespace for python packages providing direct access to
        classes and functions implemented in the modules of the package.
 
-       This doesn't work for nested packages.
+       Caveat: this doesn't work for nested packages.
+
+       In the following, a package Foo_Package and module Bar are assumed as
+       example. 
+
+       A Python package encapsulates a number of module. Packages are useful
+       for avoiding name clashes between modules of different domains. For
+       instance, `Frame` might be used as module name by a GUI package and by
+       a communications package.
+
+       Many modules define a class or function with the same name as
+       the module name. There are different styles how to access such a
+       class::
+
+           #1
+           import Bar
+           instance = Bar.Bar ()
+
+           #2
+           from Bar import Bar
+           instance = Bar ()
+
+       Many Pythoneers use the `Bar.Bar` notation to refer to the class `Bar`
+       defined by module `Bar`. I strongly prefer to use `Bar` to refer to
+       the class.
+           
+       In the presence of packages, there are even more possibilities::
+
+           #3
+           import Foo_Package.Bar
+           instance = Foo_Package.Bar.Bar ()
+
+           #4
+           from Foo_Package import Bar
+           instance = Bar.Bar ()
+
+           #5
+           from Foo_Package.Bar import Bar
+           instance = Bar ()
+
+       If one wants to avoid name clashes only #3 is usable. Unfortunately,
+       this makes for very verbose and unreadable code. One way to avoid this
+       is to import all classes/functions of all modules of the package in
+       the `__init__.py`. The disadvantages of this approach are
+
+       - Import bloat. Importing the package will pull in the entire contents
+         of the package even if only a tiny part of it is needed.
+
+       - If the package qualifier is to used inside the package too (strongly
+         recommended), circular imports will result.
+
+         Using the package name to qualify class and function names defined
+         by the modules of the package considerably eases using grep for
+         finding occurences of their use.
+
+       `Package_Namespace` provides another option::
+
+           #6
+           from Foo_Package import Foo
+           instance = Foo.Bar ()
+
+       In order to support this, `Foo_Package/__init__.py` must export an
+       instance `Foo` of class `Package_Namespace`::
+
+           ### Foo_Package/__init__.py
+           from TFL.Package_Namespace import Package_Namespace
+           Foo = Package_Namespace ()
+
+       The Package_Namespace provides the `Import` method to import
+       classes/functions from a module into the namespace::
+
+           ### import `Bar` and `Baz` from Foo.Bar
+           Foo.Import ("Bar", "Bar", "Baz")
+           
+       To make up for the slight clumsiness of the `Import` call, the
+       Package_Namespace instance will automagically import any 
+       classes/modules into the namespace when an unknown attribute is
+       referenced via an expression like `Foo.Fubar`.       
     """
     
     def __init__ (self, name = None) :
@@ -48,8 +128,8 @@ class Package_Namespace :
     # end def __init__
     
     def Import (self, module_name, * symbols) :
-        """Import all `symbols' from module `module_name' of package
-           `self._name'.
+        """Import all `symbols` from module `module_name` of package
+           `self._name`.
         """
         if not self._seen.has_key ((module_name, symbols)) :
             pkg = __import__ \
