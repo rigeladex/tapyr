@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    20-Feb-2005 (CT) Creation
+#    21-Feb-2005 (CT) `push_style` and `pop_style` added
+#                     (stubs only for a start)
 #    ««revision-date»»···
 #--
 
@@ -34,9 +36,13 @@ from   _TFL                 import TFL
 import _TFL._TKT.Mixin
 import _TFL._TKT._Tk
 
-
 class Widget (TFL.TKT.Mixin) :
     """Model widget for Tkinter based GUI"""
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self._sty_stack = []
+    # end def __init__
 
     def apply_style (self, style, * args, ** kw) :
         w = self.wtk_widget
@@ -49,6 +55,16 @@ class Widget (TFL.TKT.Mixin) :
             ### XXX `busy_cursor`/`normal_cursor` ???
             pass ### XXX change cursor
     # end def apply_style
+
+    def pop_style (self) :
+        self.wtk_widget.configure (** self._sty_stack.pop ())
+    # end def pop_style
+
+    def push_style (self, style) :
+        assert style.callback is None
+        self._sty_stack.append (style) ### XXX need to invert before pushing
+        self.apply_style (style)
+    # end def push_style
 
     def remove_style (self, style) :
         ### XXX ??? does this make sense ???
