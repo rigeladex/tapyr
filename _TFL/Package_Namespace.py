@@ -61,6 +61,9 @@
 #                     underscores from `Package_Namespace.__name`
 #    22-Feb-2002 (CT) `_debug` added and used to guard `XXX PPP` prints
 #    25-Feb-2002 (CT) `_complain_implicit` factored
+#    25-Feb-2002 (CT) Kludge to add `FOO` alias to sys.modules for package
+#                     `_FOO` (otherwise binary databases with old-style
+#                     packages don't load <sigh>)
 #    ««revision-date»»···
 #--
 
@@ -195,6 +198,11 @@ class Package_Namespace :
         self.__name    = self._leading_underscores.sub ("", name)
         self.__modules = self._ = _Module_Space (name)
         self.__seen    = {}
+        ### XXX remove the following when all old databases with
+        ###     non-underscore package names are gone
+        if name != self.__name :
+            import sys
+            sys.modules [self.__name] = __import__ (name)
     # end def __init__
 
     def Import (self, module_name, * symbols) :
