@@ -47,6 +47,7 @@
 #    25-Feb-2005 (CT)  Doctests changed to use `_doctest_AC`
 #    25-Feb-2005 (RSC) left_gravity added to doctest with value False
 #    25-Feb-2005 (RSC) added mark_at tests with a mark as parameter
+#     2-Mar-2005 (RSC) added test for left_gravity mark insertion
 #    ««revision-date»»···
 #--
 
@@ -125,6 +126,12 @@ class Text (TFL.TKT.Mixin) :
         >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
         >>> print w.get ()
         HiHaHoHum
+         Dum
+
+        >>> w.insert (grmpf, "GRMPF", blue)
+        >>> w.insert (grmpf, "jup", blue)
+        >>> print w.get ()
+        HiHajupGRMPFHoHum
          Dum
 
         >>> t1 = Text (_doctest_AC ())
