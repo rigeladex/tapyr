@@ -64,6 +64,7 @@
 #    25-Feb-2002 (CT) Kludge to add `FOO` alias to sys.modules for package
 #                     `_FOO` (otherwise binary databases with old-style
 #                     packages don't load <sigh>)
+#    26-Feb-2002 (CT) `_debug` set to `__debug__`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,7 @@ from   caller_globals import caller_info    as _caller_info
 import inspect                              as _inspect
 from   Regexp         import Regexp
 
-_debug = 0 and __debug__
+_debug = __debug__
 
 def _complain_implicit (pns_name, module_name) :
     if _debug :
