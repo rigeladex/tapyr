@@ -129,6 +129,7 @@
 #     3-Apr-2005 (CT)  Use built-in `reversed` and `sorted` if any instead of
 #                      defining home-grown versions
 #     3-Apr-2005 (CT)  Base `dusort` on built-in `sorted` if available
+#     4-Apr-2005 (CED) `fit_to_ceil_in_cycle` moved to `Math_Func`
 #    ««revision-date»»···
 #--
 
@@ -364,19 +365,6 @@ def first (x, * args, ** kw) :
     """Returns the first argument unchanged"""
     return x
 # end def first
-
-### Gimme a better name, please, please
-def fit_to_ceil_in_cycle (n, ceil, cycle) :
-    """
-       >>> fit_to_ceil_in_cycle (3, 5, 10)
-       3
-       >>> fit_to_ceil_in_cycle (5, 3, 10)
-       -5
-    """
-    while (n > ceil) :
-        n -= cycle
-    return n
-# end def fit_to_ceil_in_cycle
 
 def flatten (* lists) :
     """Returns a list containing all the elements in `lists'.
