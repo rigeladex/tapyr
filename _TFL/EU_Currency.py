@@ -31,9 +31,15 @@
 #    31-Jan-1999 (CT) `__cmp__', `__neg__', `__pos__', and `__abs__' added
 #    27-Sep-1999 (CT) `command_spec' and `main' factored
 #    29-Sep-1999 (CT) Use `Opt_L' for `-source' and `-target'
+#     4-Jan-2000 (CT) `__float__' added
+#     4-Jan-2000 (CT) `sep_1000' added
 #    ««revision-date»»···
 #--
+import re
 import string
+
+### see Fri97, p.229, p.292
+sep_1000_pat = re.compile ("(\d{1,3}) (?= (?: \d\d\d)+ (?! \d) )", re.X)
 
 class EU_Currency :
     """Root class of currency hierarchy"""
@@ -44,6 +50,7 @@ class EU_Currency :
     name            = "EUR"
     sloppy_name     = "EUR"
     decimal_sign    = "."
+    sep_1000        = ","
 
     Table           = {}
     extension       = []
@@ -90,6 +97,16 @@ class EU_Currency :
         (amount, cent, target_currency) = self.as_target ()
         return "%d%s%02d" % (amount, target_currency.decimal_sign, cent)
     # end def as_string
+
+    def as_string_s (self) :
+        """Return result of `self.as_string ()' with 1000 separators"""
+        (amount, cent, target_currency) = self.as_target ()
+        result = "%d%s%02d" % (amount, target_currency.decimal_sign, cent)
+        result = sep_1000_pat.sub ( r"\g<1>%s"
+                                  % target_currency.sep_1000, result
+                                  )
+        return result
+    # end def as_string_s
     
     def rounded (self, amount) :
         """Return `amount' rounded to (euro, cent)."""
@@ -109,6 +126,16 @@ class EU_Currency :
         return "%d%s%02d %s" % (amount, decimal_sign, cent, name)
     # end def formatted
 
+    def __float__ (self) :
+        if self.target_currency :
+            target_currency = self.target_currency (0)
+            amount          = self.amount * target_currency.to_euro_factor
+        else :
+            target_currency = EU_Currency (0)
+            amount          = self.amount
+        return float (amount)
+    # end def __float__
+    
     def __add__ (self, rhs) :
         if isinstance (rhs, EU_Currency) : rhs = rhs.amount
         return EU_Currency (self.amount + rhs)
@@ -177,6 +204,7 @@ class ATS (EU_Currency) :
     name           = "ATS"
     sloppy_name    = "öS"
     decimal_sign    = ","
+    sep_1000        = "."
 # end class ATS
 
 class DEM (EU_Currency) :
@@ -302,4 +330,3 @@ def main (cmd) :
 
 if __name__ == "__main__":
     main (command_spec ())
-    
