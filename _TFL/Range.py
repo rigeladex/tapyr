@@ -1,4 +1,3 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -9,9 +8,9 @@
 #
 # Purpose
 #    Implement range generator
-#    
+#
 #    Blatantly stolen from a posting by "Andrew Dalke" <dalke@acm.org> in
-#    comp.lang.python on Wed, 9 May 2001 12:20:56 -0600, 
+#    comp.lang.python on Wed, 9 May 2001 12:20:56 -0600,
 #    Message-id: <9dc1se$tdn$1@nntp9.atl.mindspring.net>
 #    References: <mailman.989424256.5933.python-list@python.org>
 #
@@ -28,7 +27,7 @@ class _Range_ :
        `[]' and returns a list of indices as specified by the arguments.
 
        For instance,
-       
+
        >>> Range [1]
        [0]
        >>> Range [5]
@@ -54,7 +53,7 @@ class _Range_ :
                 result.extend (range (i))
         return result
     # end def __getitem__
-    
+
 # end class _Range_
 
 Range = _Range_ ()
@@ -76,6 +75,8 @@ if __debug__ :
 ### end unit-test code ########################################################
 
 from _TFL import TFL
-TFL._Export ("*")
+
+if __name__ != "__main__" :
+    TFL._Export ("*")
 
 ### __END__ Range

@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,15 +31,19 @@
 #     6-Mar-2003 (CT) `FN_Matcher_Grep` added
 #    10-Apr-2003 (CT) `FN_Matcher_Grep` changed to pass `re.M` to
 #                     `re.compile`
+#    12-Aug-2003 (CT)  Import for `StringIO` added
+#    12-Aug-2003 (CT)  `Alias_Property` replaced by explicit function
+#                      delegation to avoid doctest hiccups
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 import _TFL._Meta.Object
-import _TFL._Meta.Property
 
 import fnmatch
 import re
+
+from   StringIO import StringIO
 
 class FN_Matcher (TFL.Meta.Object) :
     """Filename matcher for regular expressions.
@@ -63,7 +66,12 @@ class FN_Matcher (TFL.Meta.Object) :
         return self.pattern.search (file_name)
     # end def matches
 
-    search = TFL.Meta.Alias_Property ("matches")
+    ### Alias_Property trips doctest
+    ### TypeError: Tester.run__test__: values in dict must be strings, functions or classes; <_TFL._Meta.Property.Alias_Property object at 0x819f28c>
+    #    search = TFL.Meta.Alias_Property ("matches")
+    def search (self, * args, ** kw) :
+        return self.matches (* args, ** kw)
+    # end def search
 
     def _Matcher (self, pattern) :
         if isinstance (pattern, FN_Matcher) :

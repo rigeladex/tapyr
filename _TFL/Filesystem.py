@@ -3,17 +3,17 @@
 # Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
 # version 2 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Library General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Library General Public
 # License along with this library; if not, write to the Free
 # Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -30,7 +30,7 @@
 #    29-Apr-2001 (CT) Creation
 #     3-May-2001 (CT) Doc-test framework added at end
 #     7-May-2001 (CT) `Filter' renamed to `Regexp_Filter' (and re.escape
-#                     removed) 
+#                     removed)
 #     7-May-2001 (CT) `Glob_Filter' added
 #    ««revision-date»»···
 #--
@@ -55,18 +55,18 @@ class File :
     """
 
     _stat_map = \
-        { "atime" : stat.ST_ATIME 
-        , "ctime" : stat.ST_CTIME 
-        , "dev"   : stat.ST_DEV 
-        , "gid"   : stat.ST_GID 
-        , "ino"   : stat.ST_INO 
-        , "mode"  : stat.ST_MODE 
-        , "mtime" : stat.ST_MTIME 
-        , "nlink" : stat.ST_NLINK 
-        , "size"  : stat.ST_SIZE 
-        , "uid"   : stat.ST_UID 
+        { "atime" : stat.ST_ATIME
+        , "ctime" : stat.ST_CTIME
+        , "dev"   : stat.ST_DEV
+        , "gid"   : stat.ST_GID
+        , "ino"   : stat.ST_INO
+        , "mode"  : stat.ST_MODE
+        , "mtime" : stat.ST_MTIME
+        , "nlink" : stat.ST_NLINK
+        , "size"  : stat.ST_SIZE
+        , "uid"   : stat.ST_UID
         }
-    
+
     def __init__ (self, name, parent = None, ** kw) :
         p, self.name = sos.path.split (name)
         assert not (p and parent)
@@ -81,14 +81,14 @@ class File :
         if sos.path.isdir (self.full_name) :
             self.__class__ = Directory
     # end def __init__
-    
+
     def __getattr__ (self, name) :
         if name == "full_name" :
             if self.parent :
                 result = sos.path.join (self.parent.full_name, self.name)
             else :
                 result = self.name
-            self.full_name = result 
+            self.full_name = result
             return result
         elif self._stat_map.has_key (name) :
             stat_info = sos.stat (self.full_name)
@@ -100,7 +100,7 @@ class File :
             return result
         raise AttributeError, name
     # end def __getattr__
-    
+
     def isdir (self) :
         """Returns true if `self' is a directory"""
         try :
@@ -108,7 +108,7 @@ class File :
         except OSError :
             return 0
     # end def isdir
-    
+
     def isfile (self) :
         """Returns true if `self' is a regular file"""
         try :
@@ -116,7 +116,7 @@ class File :
         except OSError :
             return 0
     # end def isfile
-    
+
     def islink (self) :
         """Returns true if `self' is a symbolic link"""
         try :
@@ -135,20 +135,20 @@ class File :
 
     def __repr__ (self) :
         return """%s ("%s")""" % (self.__class__.__name__, self.full_name)
-    # end def __repr__    
-    
+    # end def __repr__
+
 # end class File
 
 class Directory (File) :
     """Model a directory"""
-    
+
     _all_children = []
     _files        = []
     _subdirs      = []
     filter        = None
 
     File          = File
-    
+
     def files (self) :
         """Return all files in `self' matching `self.filter'"""
         all = dircache.listdir (self.full_name)
@@ -159,12 +159,12 @@ class Directory (File) :
             else :
                 F = sos.path.isfile
             result      = filter (F, all)
-            self._files = [ self.File (f, parent = self, filter = F) 
+            self._files = [ self.File (f, parent = self, filter = F)
                             for f in result
                           ]
         return self._files
     # end def files
-    
+
     def subdirectories (self) :
         """Return all subdirectories of `self'"""
         all = dircache.listdir (self.full_name)
@@ -178,37 +178,37 @@ class Directory (File) :
                             ]
         return self._subdirs
     # end def subdirectories
-    
+
     def __setattr__ (self, name, value) :
         if name == "filter" and value != self.filter :
             ### invalidate cached directory listing
             self._all_children = []
         self.__dict__ [name] = value
     # end def __setattr__
-    
+
 # end class Directory
 
 ### XXX support other OSes than Unix, too
 class Root (Directory) :
     """Model root of filesystem"""
-    
+
     parent = None
 
     def __init__ (self) :
         self.full_name = self.name = "/"
     # end def __init__
-    
+
 # end class Root
 
 class Regexp_Filter :
     """Filter using regular expressions"""
-    
+
     def __init__ (self, pattern) :
         if isinstance (pattern, type ("")) :
             pattern = re.compile (pattern)
         self.pattern = pattern
     # end def __init__
-    
+
     def __call__ (self, name) :
         return self.pattern.search (name)
     # end def __call__
@@ -221,18 +221,18 @@ class Regexp_Filter :
         return "%s (%r)" % \
                (self.__class__.__name__, self.pattern.pattern)
     # end def __repr__
-    
+
 # end class Regexp_Filter
 
 class Glob_Filter (Regexp_Filter) :
     """Filter using glob-style patterns"""
-    
+
     Ancestor = __Ancestor = Regexp_Filter
 
     def __init__ (self, pattern) :
         self.__Ancestor.__init__ (self, fnmatch.translate (pattern))
     # end def __init__
-        
+
 # end class Glob_Filter
 
 ### unit-test code ############################################################
@@ -252,6 +252,8 @@ if __debug__ :
 ### end unit-test code ########################################################
 
 from _TFL import TFL
-TFL._Export ("*")
+
+if __name__ != "__main__" :
+    TFL._Export ("*")
 
 ### __END__ Filesystem
