@@ -37,6 +37,7 @@
 #    24-Feb-2005 (CT)  `num_opt_val` and `option_value` added
 #    24-Feb-2005 (CT)  `busy_cursor` and `normal_cursor` added
 #    24-Feb-2005 (CT)  `__getattr__` for `ask_*` added
+#    24-Feb-2005 (CT)  `__getattr__` changed to delegate to `exposed_widget`
 #    ««revision-date»»···
 #--
 
@@ -140,7 +141,7 @@ class Widget (TFL.TKT.Mixin) :
 
     def __getattr__ (self, name) :
         if name.startswith ("ask_") :
-            return getattr (self.wtk_widget, name)
+            return getattr (self.exposed_widget, name)
         raise AttributeError, name
     # end def __getattr__
 
