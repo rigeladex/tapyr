@@ -71,6 +71,11 @@
 #    11-Mar-2005 (CT)  `_style` changed to use `un_nested` (ugly legacy lifter)
 #    11-Mar-2005 (CT)  `_tabs` moved to `styles` (after removing an overly
 #                      paranoid guard in `Style.__getattr__`)
+#    14-Mar-2005 (CT)  `Browser.__init__` changed to call `clear` at the very
+#                      end (otherwise, descendents redefining `clear` to
+#                      insert some text fail miserably)
+#    14-Mar-2005 (CT)  Child `Widget configuration` removed from `help`
+#                      (Tk-specific information)
 #    ««revision-date»»···
 #--
 
@@ -881,11 +886,11 @@ class Browser (TFL.UI.Mixin) :
         self.delete         = self.text.remove
         self.wtk_widget     = self.text.wtk_widget
         self.exposed_widget = self.text.exposed_widget
-        self.clear ()
         if not styles.has_key  ("active_node") :
             self._setup_styles ()
         self.text.apply_style  (styles.normal)
         self.text.set_tabs     (* styles._tabs)
+        self.clear             ()
     # end def __init__
 
     def _setup_styles (self) :
@@ -1266,49 +1271,6 @@ def help (browser) :
     n.new_child \
         ( "<End>"
         , "Show end of current element."
-        )
-    n = r.new_child \
-        ( "Widget configuration", ""
-        , "The " + name + " widget can be configured via the TK "
-          "resource database. The full semantics of the TK "
-          "resource database is described in the Tcl/TK "
-          "documentation. "
-          "\n\n"
-          "To configure all " + name + " widgets in an application, "
-          "you add statements like "
-          "\n\n"
-          "    `*" + name + "*activeBackground: yellow'"
-          "\n\n"
-          "to the configuration file of the application. "
-          "\n\n"
-          "To configure a specific " + name + " widget, "
-          "you add statements like "
-          "\n\n"
-          "    `*" + browser.name +  "*activeForeground: red'"
-          "\n\n"
-          "to the configuration file of the application. "
-          "\n\n"
-        )
-    n.new_child \
-        ( "indent", ""
-        , "The `indent' configuration parameter defines the amount "
-          "of indentation added for each hierarchy level. A pure "
-          "number specifies the indentation in pixels. By appending "
-          "`c', `m', or `i', you can specify the indentation in "
-          "centimeters, millimeters, or inches, respectively."
-          "\n"
-        )
-    n.new_child \
-        ( "indent_inc", ""
-        , "The `indent_inc' configuration parameter defines the "
-          "indentation added for wrapped lines. It is added to the "
-          "indent parameter."
-          "\n"
-        )
-    n.new_child \
-        ( "hFont", ""
-        , "The `hFont' configuration parameter specifies the font "
-          "used for the first line of an element. "
         )
     return r
 # end def help
