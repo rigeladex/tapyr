@@ -30,6 +30,7 @@
 #    20-Feb-2005 (CT)  Ancestor `Widget` and class `Styler` added,
 #                      `*_style` methods removed
 #    20-Feb-2005 (CT)  s/widget/wtk_widget/
+#    23-Feb-2005 (CT)  `exposed_widget` added
 #    ««revision-date»»···
 #--
 
@@ -88,7 +89,7 @@ class _Tk_Butcon_ (TFL.TKT.Tk.Widget, TFL.TKT.Butcon) :
         if wc :
             master = wc.wtk_widget
             bg     = master.cget ('background')
-        self.wtk_widget   = self.Widget_Type \
+        self.wtk_widget   = self.exposed_widget = self.Widget_Type \
             ( master      = master
             , name        = name
             , bitmap      = bitmap

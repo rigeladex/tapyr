@@ -55,6 +55,7 @@
 #                      changed doctest to (hopefully) work again.
 #    23-Feb-2005 (CT)  `_pos_at` factored and used internally everywhere
 #    23-Feb-2005 (CT)  s/widget/exposed_widget/
+#    23-Feb-2005 (CT)  Doctests for `place_cursor` and `see` added
 #    ««revision-date»»···
 #--
 
@@ -82,8 +83,11 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
        ('1.0', '2.0', '1.2', '1.0')
        >>> w.append ("Hum")
+       >>> w.place_cursor (w.bot_pos)
        >>> w.insert (w.bot_pos, "Hi")
        >>> w.insert (w.bot_pos, "Ho", delta = 2)
+       >>> w.pos_at (cur)
+       '1.4'
        >>> for t in "Ha", "He", "Hi", "Ho", "Hu" :
        ...     print t, w.find (t)
        ...
@@ -100,6 +104,8 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        >>> print w.get ()
        HiHoHaHum
        Diddle Dum
+       >>> w.see (w.eot_pos)
+       >>> w.see (w.bot_pos)
        >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
        >>> print w.get ()
        HiHoHaHum
@@ -219,7 +225,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     # end def mark_at
 
     def place_cursor (self, pos_or_mark, delta = 0) :
-        self.wtk_widget.place_cursor (self._pos_at (pos_or_mark, delta))
+        self.exposed_widget.place_cursor (self._pos_at (pos_or_mark, delta))
     # end def place_cursor
 
     def pos_at (self, pos_or_mark, delta = 0) :

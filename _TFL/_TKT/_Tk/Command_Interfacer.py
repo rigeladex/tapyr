@@ -60,6 +60,7 @@
 #    17-Feb-2005 (CT) s/widget/wtk_widget/g
 #    21-Feb-2005 (CT) `CI_Menu._index_offset` changed from `1` to `0` (and
 #                     `CI_Menubar._index_offset` redefined to `1`)
+#    23-Feb-2005 (CT) `exposed_widget` added
 #    ««revision-date»»···
 #--
 
@@ -87,13 +88,14 @@ class _CI_Widget_ (_CI_) :
 
     def __init__ (self, AC, parent, ** kw) :
         self.__super.__init__ (AC = AC, parent = parent, ** kw)
-        self.wtk_widget = self.Widget_Type (parent, ** kw)
+        self.wtk_widget = self.exposed_widget \
+                        = self.Widget_Type (parent, ** kw)
     # end def __init__
 
     def destroy (self) :
         if self.wtk_widget is not None :
             self.wtk_widget.destroy ()
-            self.wtk_widget = None
+            self.wtk_widget = self.exposed_widget = None
     # end def destroy
 
 # end class _CI_Widget_
@@ -385,9 +387,9 @@ class _CI_Toolbar_Group_ (_CI_) :
 
     def __init__ (self, AC, category, widget) :
         self.__super.__init__ (AC = AC)
-        self.category = category
-        self.wtk_widget   = widget
-        self.b_name   = {}
+        self.category   = category
+        self.wtk_widget = self.exposed_widget = widget
+        self.b_name     = {}
     # end def __init__
 
     ### command specific methods
