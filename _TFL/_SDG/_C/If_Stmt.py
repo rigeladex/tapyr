@@ -32,12 +32,13 @@
 #     3-Aug-2004 (CT) Don't redefine value of `Else`
 #     3-Aug-2004 (CT) children_group_names `Then` and `Elseif` added
 #     3-Aug-2004 (CT) `If.insert` simplified
+#     9-Aug-2004 (CT) `Conditional` factored
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Block
-import _TFL._SDG._C.Expression
+import _TFL._SDG._C.Conditional
 
 class Else (TFL.SDG.C.Block) :
     """Else clause of If statement"""
@@ -56,22 +57,11 @@ class Else (TFL.SDG.C.Block) :
 
 # end class Else
 
-class Elseif (TFL.SDG.C.Block) :
+class Elseif (TFL.SDG.C.Conditional, TFL.SDG.C.Block) :
     """Else-If clause of If statement"""
 
     Ancestor             = TFL.SDG.C.Block
     cgi                  = TFL.SDG.C.Node.Elseif
-
-    init_arg_defaults    = dict \
-        ( condition      = ""
-        )
-
-    front_args           = ("condition", )
-
-    _autoconvert         = dict \
-        ( condition      = lambda s, k, v
-              : s._convert (v, TFL.SDG.C.Expression)
-        )
 
     c_format             = "\n".join \
         ( ( """else if (%(::*condition:)s)"""
@@ -80,7 +70,7 @@ class Elseif (TFL.SDG.C.Block) :
         )
 # end class Elseif
 
-class If (TFL.SDG.C._Statement_) :
+class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
     """If statement"""
 
     then_class           = TFL.SDG.C.Block
@@ -88,16 +78,13 @@ class If (TFL.SDG.C._Statement_) :
     elif_class           = Elseif
 
     init_arg_defaults    = dict \
-        ( condition      = ""
-        , then           = ""
+        ( then           = ""
         )
 
     front_args           = ("condition", "then")
 
     _autoconvert         = dict \
-        ( condition      = lambda s, k, v
-              : s._convert (v, TFL.SDG.C.Expression)
-        , then           = lambda s, k, v : s._convert (v, s.then_class)
+        ( then           = lambda s, k, v : s._convert (v, s.then_class)
         )
 
     c_format             = "\n".join \

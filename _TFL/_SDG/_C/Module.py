@@ -40,12 +40,27 @@ from   _TFL._SDG._C.Module    import *
 from   _TFL._SDG._C.Statement import *
 from   _TFL._SDG._C.Function  import *
 from   _TFL._SDG._C.Var       import *
+from   _TFL._SDG._C.Struct    import *
+from   _TFL._SDG._C.Array     import *
 from   _TFL._SDG._C.Typedef   import *
 from   _TFL._SDG._C.Block     import *
-from   _TFL._SDG._C.If_Stmt import *
+from   _TFL._SDG._C.If_Stmt   import *
+from   _TFL._SDG._C.Switch    import *
+from   _TFL._SDG._C.While     import *
 m = Module (name = "test", header_comment = "A new comment", author = "FooBar")
 m.add ("x = 2;")
-m.add (Var ("int", "x", init="0"))
+m.add (Var ("int", "x", init="0", description = "hansi plapper"))
+m.add ( Struct ( "TDFT_Sign_Mask"
+               , "unsigned long bit_mask    = 42 // mask for value"
+               , "unsigned long extend_mask // mask for sign extension"
+               , standalone = True
+               )
+      )
+m.add ( Var ( "TDFT_Sign_Mask"
+            , "fubar"
+            , init_dict = dict (bit_mask = 57, extend_mask = 137)
+            )
+      )
 m.add (Multiple_Var ("float", "y", "z", "u", init="0.0"))
 m.add (Stmt_Group ("y = 42; ", "z = 0", cgi = TFL.SDG.C.Node.Tail))
 m.add ( Function ( "int", "bar", "void"
@@ -57,8 +72,24 @@ m.add ( Function ( "int", "bar", "void"
                       )
                  )
       )
+f=m.body_children ["bar"]
+f.add ( Switch ( "quuux"
+               , Case ("1", "a = 0; b = 2")
+               , Case ("2", "a = 10; b = 20")
+               , Default_Case ("hugo ()")
+               )
+      )
+f.add ( While  ("p", "p++", "q++"))
+f.add ( Do_While ("!p", "p++", "q++"))
 m.add (Typedef  ("long signed int", "sint32"))
 m.add (Function ("int", "baz", "int x, int y"))
+m.add (Array ("int", "ar", 2, init = (0, 1), static = True))
+m.add (Array ( "TDFT_Sign_Mask", "fubars", 2
+             , init = [ dict (bit_mask = 57, extend_mask = 137)
+                      , dict (bit_mask = 142, extend_mask = -1)
+                      ]
+             )
+      )
 m.write_to_c_stream()
 m.write_to_h_stream()
 print repr (m)

@@ -34,6 +34,10 @@
 #     2-Aug-2004 (CT) Methods put into alphabetical order
 #     3-Aug-2004 (CT) `Then`, `Elseif`, and `Else` added (including their
 #                     respective `_children` properties)
+#     9-Aug-2004 (CT) `Case` and `Default` added (including their
+#                     respective `_children` properties)
+#     9-Aug-2004 (CT) Defaults of `description` and `eol_desc` changed
+#                     from `""` to `None`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +72,9 @@ class _C_Node_ (TFL.SDG.Node) :
         , Then
         , Elseif
         , Else
-        )                = range (8)
+        , Case
+        , Default
+        )                = range (10)
     body_children        = property (lambda s : s.children_groups [s.Body])
     decl_children        = property (lambda s : s.children_groups [s.Decl])
     head_children        = property (lambda s : s.children_groups [s.Head])
@@ -77,10 +83,12 @@ class _C_Node_ (TFL.SDG.Node) :
     then_children        = property (lambda s : s.children_groups [s.Then])
     elseif_children      = property (lambda s : s.children_groups [s.Elseif])
     else_children        = property (lambda s : s.children_groups [s.Else])
+    case_children        = property (lambda s : s.children_groups [s.Case])
+    default_children     = property (lambda s : s.children_groups [s.Default])
 
     init_arg_defaults    = dict \
-        ( description    = ""
-        , eol_desc       = ""
+        ( description    = None
+        , eol_desc       = None
         , scope          = HC
         )
 

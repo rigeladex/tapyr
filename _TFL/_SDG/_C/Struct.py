@@ -1,0 +1,148 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
+#
+#++
+# Name
+#    TFL.SDG.C.Struct
+#
+# Purpose
+#    C structure declaration
+#
+# Revision Dates
+#     9-Aug-2004 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from   _TFL              import TFL
+import _TFL._SDG._C._Decl_
+import _TFL._SDG._C.Expression
+import _TFL._SDG._C.Type
+
+import weakref
+
+from   Regexp            import *
+
+class Struct (TFL.SDG.C._Decl_) :
+    """C structure declaration"""
+
+    extension              = {}
+
+    front_args             = ("name", )
+    init_arg_defaults      = dict \
+        ( desc_in_new_line = 0
+        , standalone       = False
+        )
+    _autoconvert         = dict \
+        ( standalone     = lambda s, k, v : v and ";" or ""
+        )
+
+    h_format = c_format  = """
+        struct _%(name)s
+        >{
+        >>%(::*decl_children:)s
+        >}%(standalone)s
+    """
+
+    field_pat            = Regexp \
+        ( r"""(?P<head>\s*)"""
+          r"""(?P<const>const \s+ )?"""
+          r"""(?P<struct>struct \s+ )?"""
+          r"""(?P<volat>volatile \s+ )?"""
+          r"""(?P<type> [a-zA-Z_][a-zA-Z0-9_]*"""
+          r"""  (?: \s+ [][a-zA-Z0-9_*]*)*"""
+          r""")"""
+          r"""\s+"""
+          r"""(?P<name> [a-zA-Z_][a-zA-Z0-9_:]*)"""
+          r"""\s*"""
+          r"""(?: (?P<bounds>\[[\w\[\]]+\]))?"""
+          r"""(?: = \s* (?P<init> .+))?"""
+          r"""\s*"""
+          r"""(?: //\s* (?P<desc> .*))?"""
+        , re.X
+        )
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        if self.name in self.extension :
+            raise KeyError, (self.name, self.extension [self.name])
+        self.extension [self.name] = weakref.proxy (self)
+    # end def __init__
+
+    def insert (self, child, index = None, delta = 0, cgi = None) :
+        """Insert `child' to `self.children' at position `index'
+           (`index is None' means append)
+           (None means append).
+        """
+        for c in self._convert_field (child) :
+            if cgi is not None :
+                c.cgi = cgi
+            self.__super.insert (c, index, delta)
+    # end def insert
+
+    def _convert_field (self, f) :
+        m = self.field_pat.match (f)
+        if not m :
+            print f
+            raise Invalid_Node, (self, f)
+        name   = m.group ("name").strip ()
+        type   = m.group ("type").strip ()
+        init   = (m.group ("init") or "").strip ()
+        desc   = (m.group ("desc") or "").strip ()
+        volat  = bool ((m.group ("volat")  or "").strip ())
+        const  = bool ((m.group ("const")  or "").strip ())
+        struct = bool ((m.group ("struct") or "").strip ())
+        if init :
+            init, desc = ([x.strip () for x in init.split ("//")] + [""]) [:2]
+        if not init :
+            init = None
+        if m.group ("bounds") :
+            bounds = m.group ("bounds") [1:-1].split ("][")
+            return TFL.SDG.C.Array \
+                ( type, name, bounds, init, description = desc
+                , new_line_col = self.desc_in_new_line
+                , const        = const
+                )
+        else :
+            return TFL.SDG.C.Var \
+                ( type, name, init, description = desc
+                , new_line_col = self.desc_in_new_line
+                , const        = const
+                , volatile     = volat
+                , struct       = struct
+                )
+    # end def _convert_field
+
+    def _setup_initializers (self, init_dict, description = None) :
+        result = TFL.SDG.C.Init_Comp (description = description)
+        for c in self.decl_children :
+            v = init_dict [c.name]
+            if isinstance (c, (TFL.SDG.C.Struct, TFL.SDG.C.Array)) :
+                i = c._setup_initializers (v)
+            else :
+                i = TFL.SDG.C.Init_Atom (v, description = c.name)
+            result.add (i)
+        return result
+    # end def _setup_initializers
+
+# end class Struct
+
+if __name__ != "__main__" :
+    TFL.SDG.C._Export ("*")
+### __END__ TFL.SDG.C.Struct

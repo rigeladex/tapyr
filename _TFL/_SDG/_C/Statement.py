@@ -28,6 +28,11 @@
 # Revision Dates
 #    27-Jul-2004 (MG) Creation
 #    28-Jul-2004 (CT) Creation continued
+#     9-Aug-2004 (CT) `children_group_names` redefined in `_Statement_` to
+#                     `Node.Body`, only
+#     9-Aug-2004 (CT) `Stmt_Group` changed to inherit from `_Statement_`
+#                     first, `_Scope_` second (instead of vice versa)
+#                     to get redefined `_Statement_.children_group_names`
 #    ««revision-date»»···
 #--
 
@@ -42,6 +47,11 @@ class _Statement_ (TFL.SDG.C.Node) :
     cgi                  = TFL.SDG.C.Node.Body
     trailing_semicol_pat = Regexp (r"""; *$""")
     scope                = TFL.SDG.C.C
+
+    children_group_names = \
+        ( TFL.SDG.C.Node.Body
+        ,
+        )
 
 # end class _Statement_
 
@@ -65,7 +75,7 @@ class Statement (TFL.SDG.Leaf, _Statement_) :
 
 Stmt = Statement
 
-class Stmt_Group (TFL.SDG.C._Scope_, _Statement_) :
+class Stmt_Group (_Statement_, TFL.SDG.C._Scope_) :
     """Group of C statements not enclosed in a block."""
 
     star_level           = 2

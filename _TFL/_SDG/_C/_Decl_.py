@@ -29,11 +29,13 @@
 #    28-Jul-2004 (CT) Creation
 #    30-Jul-2004 (CT) `Decl_Group` added
 #    30-Jul-2004 (CT) `Maybe_Const` added
+#     9-Aug-2004 (CT) `Maybe_Static` changed to call `_update_scope`
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
+import _TFL._SDG._C._Scope_
 
 class _Decl_ (TFL.SDG.C.Node) :
     """Root class for C declaration nodes"""
@@ -69,6 +71,12 @@ class Maybe_Static (_Decl_) :
     _autoconvert         = dict \
         ( static         = lambda s, k, v : v and "static "   or None
         )
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        if self.static :
+            self._update_scope (TFL.SDG.C.C)
+    # end def __init__
 
 # end class Maybe_Static
 
