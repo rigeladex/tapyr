@@ -36,6 +36,9 @@
 #    22-Jun-2004 (CT) Special casing for `_Plugins.__init__` added
 #    23-Jun-2004 (CT) `_setup_replacers` changed to not create replacement
 #                     pattern for `_Plugins` package itself
+#    23-Jun-2004 (CT) `_rewrite_package_derived` changed to import/del
+#                     `Derived_Package_Namespace` instead of
+#                     `Package_Namespace`
 #    ««revision-date»»···
 #--
 
@@ -169,6 +172,10 @@ class Plugin_Packager (TFL.Meta.Object) :
                   r"""import \s+ Package_Namespace"""
                 , r"""from _TFL.Package_Namespace import """
                   r"""Derived_Package_Namespace"""
+                )
+            , Replacer
+                ( r"""del \s+ Package_Namespace"""
+                , r"""del Derived_Package_Namespace"""
                 )
             ]
         self._rewrite_module (pym, self._m_replacers + repls)
