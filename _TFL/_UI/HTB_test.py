@@ -32,6 +32,8 @@
 #    14-Mar-2005 (RSC) wrapped-line test for non-root node.
 #    14-Mar-2005 (RSC) yet another test that now reproduces problem with
 #                      line-wrapping
+#    14-Mar-2005 (RSC) nowrap tags changed to wrap -- left only one
+#                      nowrap for testing.
 #    ««revision-date»»···
 #--
 
@@ -73,7 +75,7 @@ def insert_stuff (tb) :
     tb.insert            (tb.current_pos, "**           Test me           **\n")
     tn = TFL.UI.HTB.help (tb)
     tn.insert            (tb.current_pos, "rindent", "found")
-    tn = mknode          (tb, "n1", "nowrap", "found")
+    tn = mknode          (tb, "n1", "wrap", "found")
     x = mkchild          (tn, "s1")
     mkchild              (tn, "s2")
     nn = mkchild         (tn, "s3")
@@ -86,8 +88,8 @@ def insert_stuff (tb) :
         , "s-b, this is a very long name which should wrap\n"
           "and display an error in formatting..."
         )
-    s = " asii " * 100
-    c.new_child ("node3_with_line_break_tiii\nmytext_iii_line_asdf" + s, '', '')
+    s = " asii " * 100 + "END"
+    c.new_child ("node3_with_line_break_tiii\nmytext_iii_line_asdf" + s, '', s)
     tn.open              ()
     tn = mknode          (tb, "n3", "nowrap", "found")
     mkchild              (tn, "s-x")
@@ -96,7 +98,7 @@ def insert_stuff (tb) :
         ( tb
         , "n4, this is a very long name which should wrap\n"
           "and display an error in formatting..."
-        , "nowrap", "found"
+        , "wrap", "found"
         )
 # end def insert_stuff
 
