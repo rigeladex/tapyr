@@ -247,6 +247,15 @@ class Latex_Stream (Formatted_Stream) :
             tab_marker = "longtable"
         return tab_marker
 
+    def begin_table (self, placement = "htbp")  :
+        self._begin_block ("table", "[%s]" % placement)
+
+    def end_table (self, caption, label) :
+        self.putl (r"\caption{%s}" % caption)
+        self.putl (r"\label{%s}" % label)
+        self._end_block ("table")
+
+
     def begin_tabular (self, widths = None, tablespecs = None, headers = None, percentage = 0, longtable = 0):
         self.putw ("\\begin{%s}[t]{|" % self._tab_marker (longtable))
         if widths :
