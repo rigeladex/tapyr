@@ -29,6 +29,7 @@
 #    21-Dec-2004 (CT) Creation
 #    11-Jan-2005 (CT) Creation continued
 #    24-Feb-2005 (CT) `CI_Button_Box` added
+#    14-Mar-2005 (CT) `CI_Button_Box` added to `_Export` call, too
 #    ««revision-date»»···
 #--
 
@@ -44,5 +45,10 @@ CI_Toolbar       = TFL.TKT.Command_Interfacer
 
 if __name__ != "__main__" :
     TFL.TKT.Batch._Export \
-        ("CI_Eventbinder", "CI_Menu", "CI_Menubar", "CI_Toolbar")
+        ( "CI_Button_Box"
+        , "CI_Eventbinder"
+        , "CI_Menu"
+        , "CI_Menubar"
+        , "CI_Toolbar"
+        )
 ### __END__ Command_Interfacer
