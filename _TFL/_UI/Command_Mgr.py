@@ -214,8 +214,9 @@ class _Command_ (TFL.Meta.Object) :
         doc, desc          = self.par_pat.split (doc + "\n\n", 1)
         self.__doc__       = doc.strip  ()
         self.description   = desc.strip ()
-        if self.precondition :
-            p = self.precondition.im_func
+        p                  = self.precondition
+        if p :
+            p = getattr (p, "im_func", p) ### allow methods *and* functions
             if not hasattr (p, "__cooked") :
                 setattr (p, "__cooked", True)
                 if p.__doc__ :
