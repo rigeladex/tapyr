@@ -37,6 +37,7 @@
 #    21-Feb-2005 (CT)  `arrow` added to `_values.mouse_cursor`
 #    22-Feb-2005 (RSC) "wrap", "justify" and margins added to style _names
 #    22-Feb-2005 (RSC) margin names fixed (rmargin{1,2}->lmargin{1,2}).
+#    24-Feb-2005 (BRU) Added `font_weight`.
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ class M_Style (TFL.Meta.M_Data_Class) :
         font_family    = None
         font_size      = None
         font_style     = None
+        font_weight    = None
         foreground     = None # "red"   , "#FF2F1F"
         justify        = None
         lmargin1       = None
@@ -93,7 +95,13 @@ class M_Style (TFL.Meta.M_Data_Class) :
               , "large", "x-large", "xx-large"
               )
             )
-
+        font_weight    = dict_from_list \
+            ( ( "ultralight", "light"
+              , "normal"
+              , "bold", "ultrabold"
+              , "heavy"
+              )
+            )
         justify        = dict_from_list (("center", "left", "right"))
 
         mouse_cursor   = dict_from_list \
