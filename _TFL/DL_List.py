@@ -253,25 +253,6 @@ class DL_List_Counted (DL_List) :
 
 # end class DL_List_Counted
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        return U_Test.run_module_doc_tests ("_TFL.DL_List")
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 if __name__ != "__main__" :
     TFL._Export ("*")
 ### __END__ DL_List

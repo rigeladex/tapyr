@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    tex_quoted
+#    TFL.tex_quoted
 #
 # Purpose
 #    Quote TeX-critical characters
@@ -34,7 +34,8 @@
 #    ««revision-date»»
 #--
 
-from Regexp import *
+from _TFL        import TFL
+from _TFL.Regexp import Regexp, re
 
 _tex_pi_symbols = Regexp (r"[«»]", re.X)
 _tex_to_quote   = Regexp (r"([\\#~%&${}^])", re.X)
@@ -44,10 +45,8 @@ _tex_diacritics = Regexp (r"[äöüÄÖÜß«»]")
 
 _word_boundaries= "[^ ()}{,\t\n\r\f\v]"
 
-_tex_path_text  = Regexp (r"(%s*?[_]%s*)" \
-                         % (_word_boundaries, _word_boundaries)
-                         , re.X
-                         )
+_tex_path_text  = Regexp \
+    (r"(%s*?[_]%s*)"  % (_word_boundaries, _word_boundaries), re.X)
 
 def _tex_subs_pi_symbols (match) :
     m = match.group (0)
@@ -103,29 +102,6 @@ def tex_quoted_underscore_word_with_path (s) :
     return s
 # end def tex_quoted_underscore_word_with_path
 
-
-
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import tex_quoted
-        return U_Test.run_module_doc_tests (tex_quoted)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 if __name__ != "__main__" :
-    from _TFL import TFL
     TFL._Export ("tex_quoted")
-### __END__ tex_quoted
+### __END__ TFL.tex_quoted

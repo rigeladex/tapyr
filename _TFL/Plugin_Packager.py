@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -53,15 +53,16 @@
 from   _TFL import TFL
 
 import copy
-import sos
 import sys
+
 import _TFL.Import_Closure
 import _TFL.import_module
 import _TFL._Meta.Object
+import _TFL.sos
 
 from   Filename            import Filename, Dirname
-from   predicate           import *
-from   Regexp              import *
+from   _TFL.Regexp         import Regexp, re
+from   _TFL.predicate      import *
 
 class Replacer (TFL.Meta.Object) :
     """Replace a specific pattern in text"""
@@ -143,9 +144,9 @@ class Plugin_Packager (TFL.Meta.Object) :
     # end def _get_version
 
     def _make_target_dir (self, pym) :
-        pym_dir = sos.path.split (pym.target_path) [0]
-        if not sos.path.isdir (pym_dir) :
-            sos.mkdir_p (pym_dir)
+        pym_dir = TFL.sos.path.split (pym.target_path) [0]
+        if not TFL.sos.path.isdir (pym_dir) :
+            TFL.sos.mkdir_p (pym_dir)
     # end def _make_target_dir
 
     def _pns_from_pkg (self, pkg) :
@@ -209,7 +210,7 @@ class Plugin_Packager (TFL.Meta.Object) :
               ]
             )
         hide = copy.copy (pym)
-        hide.target_path = sos.path.join \
+        hide.target_path = TFL.sos.path.join \
             (Filename (hide.target_path).directory, "_Hide", "__init__.py")
         self._make_target_dir   (hide)
         self._write_target_file (hide, "")
@@ -302,8 +303,8 @@ class Plugin_Packager (TFL.Meta.Object) :
     def _setup_target_packages (self, pip) :
         Version = self._get_version (pip)
         dc      = self.delta_closure
-        path    = sos.path
-        sep     = sos.sep
+        path    = TFL.sos.path
+        sep     = TFL.sos.sep
         self.pym_dict    = pym_dict    = {}
         self.py_modules  = pyms        = []
         self.py_packages = pyps        = []
@@ -376,7 +377,8 @@ def command_spec (arg_array = None) :
 # end def command_spec
 
 def main (cmd) :
-    import_path = map (sos.expanded_path, cmd.import_path.split (cmd.Pathsep))
+    import_path = map \
+        (TFL.sos.expanded_path, cmd.import_path.split (cmd.Pathsep))
     ignore      = dict_from_list (cmd.ignore)
     if cmd.AP_Closure :
         assert not cmd.Diff

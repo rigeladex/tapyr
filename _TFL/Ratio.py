@@ -37,8 +37,8 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL      import TFL
-from   Regexp    import *
+from   _TFL           import TFL
+from   _TFL.Regexp    import Regexp, re
 
 import Math_Func
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,12 +31,9 @@
 #     6-Mar-2003 (CT) `FN_Matcher_Grep` added
 #    10-Apr-2003 (CT) `FN_Matcher_Grep` changed to pass `re.M` to
 #                     `re.compile`
-#    12-Aug-2003 (CT)  Import for `StringIO` added
-#    12-Aug-2003 (CT)  `Alias_Property` replaced by explicit function
-#                      delegation to avoid doctest hiccups
-#    26-Apr-2004 (AHE) Missing `()` added to `close`
-#    30-Apr-2004 (CED) `close` attribute check restored
-#    25-May-2004 (AHE) cosmetic changes to fit style guidelines
+#    12-Aug-2003 (CT) Import for `StringIO` added
+#    12-Aug-2003 (CT) `Alias_Property` replaced by explicit function
+#                     delegation to avoid doctest hiccups
 #    ««revision-date»»···
 #--
 
@@ -111,7 +108,7 @@ class FN_Matcher_Glob (FN_Matcher) :
     """
 
     def __init__ (self, pattern) :
-        FN_Matcher.__init__ (self, re.compile (fnmatch.translate (pattern)))
+        self.__super.__init__ (re.compile (fnmatch.translate (pattern)))
     # end def __init__
 
 # end class FN_Matcher_Glob
@@ -200,26 +197,6 @@ class FN_Matcher_Grep (FN_Matcher) :
 
 # end class FN_Matcher_Grep
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import FN_Matcher
-        return U_Test.run_module_doc_tests (FN_Matcher)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 if __name__ != "__main__" :
     TFL._Export ("*")
-### __END__ FN_Matcher
+### __END__ TFL.FN_Matcher

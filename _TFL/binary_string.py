@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    binary_string
+#    TFL.binary_string
 #
 # Purpose
 #    Convert integers to/from string in binary representation
@@ -30,6 +30,8 @@
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    ««revision-date»»···
 #--
+
+from   _TFL           import TFL
 
 _eight_bit_mask   = 0xFF
 _eight_bits_table = \
@@ -128,23 +130,6 @@ def binary_string_to_int (s) :
     return int (s, 2)
 # end def binary_string_to_int
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        return U_Test.run_module_doc_tests ("_TFL.binary_string")
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
-### __END__ binary_string
+if __name__ != "__main__" :
+    TFL._Export ("*")
+### __END__ TFL.binary_string

@@ -34,7 +34,7 @@ from   _TFL              import TFL
 import _TFL._Meta.Object
 
 from   Filename          import Filename
-from   Regexp            import *
+from   _TFL.Regexp       import Regexp, re
 
 class PMPP (TFL.Meta.Object) :
     """Poor-Man's Pre-Processor: rewrite a file according to preprocessor

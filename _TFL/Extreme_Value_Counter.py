@@ -4,7 +4,7 @@
 #
 #++
 # Name
-#    Extreme_Value_Counter
+#    TFL.Extreme_Value_Counter
 #
 # Purpose
 #    Classes for remembering the extreme values over a sequence of increments
@@ -103,29 +103,6 @@ class Minimum_Counter (Extreme_Counter) :
 
 # end class Minimum_Counter
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import Extreme_Value_Counter
-        return U_Test.run_module_doc_tests (Extreme_Value_Counter)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 if __name__ != "__main__" :
     TFL._Export ("*")
-
-### __END__ Extreme_Value_Counter
-
-
+### __END__ TFL.Extreme_Value_Counter

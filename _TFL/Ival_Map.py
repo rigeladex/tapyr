@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,10 +30,10 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL._Meta        import Meta
+from   _TFL               import TFL
+from   _TFL._Meta         import Meta
 import _TFL._Meta.Object
-
-from   predicate         import *
+import _TFL.predicate
 
 class Ival_Map (Meta.Object) :
     """Mapping of intervals to values.
@@ -59,7 +58,7 @@ class Ival_Map (Meta.Object) :
     """
 
     def __init__ (self, * iv_list) :
-        self.iv_map = sorted (iv_list)
+        self.iv_map = TFL.sorted (iv_list)
     # end def __init__
 
     def __getitem__ (self, key) :
@@ -79,24 +78,6 @@ class Ival_Map (Meta.Object) :
 
 # end class Ival_Map
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import Ival_Map
-        return U_Test.run_module_doc_tests (Ival_Map)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
+if __name__ != "__main__" :
+    TFL._Export ("*")
 ### __END__ Ival_Map

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    _test_import_module
+#    TFL._test_import_module
 #
 # Purpose
 #    Test if `import_module` works correctly
@@ -30,7 +30,8 @@
 #    ««revision-date»»···
 #--
 
-"""This module tests _TFL.import_module in two ways. The doctest tests the
+"""
+This module tests _TFL.import_module in two ways. The doctest tests the
 normal use of the module and can be triggered by running this module through
 /swing/python/run_doctest.py as in
 
@@ -51,14 +52,6 @@ a running python interpreter as in
 
 from _TFL.import_module import *
 
-import U_Test
-
-def _doc_test () :
-    return U_Test.run_module_doc_tests ("_TFL._test_import_module")
-# end def _doc_test
-
-_doc_test ()
-
 print "Importing ", import_module ("_TFL._test_import_module"), "works"
 try :
     import_module_brittle ("_TFL._test_import_module")
@@ -66,4 +59,4 @@ except ImportError, exc :
     print ("Importing _TFL._test_import_module with "
            "import_module_brittle fails as expected: \n    "
           ), exc
-### __END__ _test_import_module
+### __END__ TFL._test_import_module

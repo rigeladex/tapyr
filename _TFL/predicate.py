@@ -494,13 +494,13 @@ def paired (s1, s2) :
 def pairwise_circle (seq) :
     """Returns a list of pairs of a circle of sequence `seq`
 
-       >>> pairwise_circle ([1, 2, 3, 4, 5])
+       >>> list (pairwise_circle ([1, 2, 3, 4, 5]))
        [(1, 2), (2, 3), (3, 4), (4, 5), (5, 1)]
-       >>> pairwise_circle ([1, 2])
+       >>> list (pairwise_circle ([1, 2]))
        [(1, 2), (2, 1)]
-       >>> pairwise_circle ([1])
+       >>> list (pairwise_circle ([1]))
        [(1, 1)]
-       >>> pairwise_circle ([])
+       >>> list (pairwise_circle ([]))
        []
     """
     return TFL.pairwise (seq + seq [0:1])

@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,7 +20,7 @@
 #
 #++
 # Name
-#    bayesian
+#    TFL.bayesian
 #
 # Purpose
 #    Calculate conditional probabilities using Rev. Thomas Bayes' formula
@@ -96,23 +95,8 @@ def _main (cmd) :
     print "%5.3f" % bayesian (cmd.p_h, cmd.p_o_h, cmd.p_o_not_h)
 # end def _main
 
-### unit-test code ############################################################
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import bayesian
-        return U_Test.run_module_doc_tests (bayesian)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-# end if __debug__
-### end unit-test code ########################################################
-
 if __name__ == "__main__" :
     _main (_command_spec ())
 else :
     TFL._Export ("*")
-### __END__ bayesian
+### __END__ TFL.bayesian

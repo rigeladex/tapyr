@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,13 +32,16 @@
 #                     removed)
 #     7-May-2001 (CT) `Glob_Filter' added
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#    24-Mar-2005 (CT) Use `TFL.sos` instead of `sos`
 #    ««revision-date»»···
 #--
 
+from   _TFL      import TFL
+
+import _TFL.sos
 import dircache
 import fnmatch
 import re
-import sos
 import stat
 
 class File :
@@ -68,7 +71,7 @@ class File :
         }
 
     def __init__ (self, name, parent = None, ** kw) :
-        p, self.name = sos.path.split (name)
+        p, self.name = TFL.sos.path.split (name)
         assert not (p and parent)
         if p :
             if p != "/" : ### XXX support other OSes than Unix, too
@@ -78,20 +81,20 @@ class File :
         else :
             self.parent = parent
         self.__dict__.update (kw)
-        if sos.path.isdir (self.full_name) :
+        if TFL.sos.path.isdir (self.full_name) :
             self.__class__ = Directory
     # end def __init__
 
     def __getattr__ (self, name) :
         if name == "full_name" :
             if self.parent :
-                result = sos.path.join (self.parent.full_name, self.name)
+                result = TFL.sos.path.join (self.parent.full_name, self.name)
             else :
                 result = self.name
             self.full_name = result
             return result
         elif self._stat_map.has_key (name) :
-            stat_info = sos.stat (self.full_name)
+            stat_info = TFL.sos.stat (self.full_name)
             for k, v in self._stat_map.items () :
                 setattr (self, k, stat_info [v])
             return getattr (self, name)
@@ -157,7 +160,7 @@ class Directory (File) :
             if callable (self.filter) :
                 F = self.filter
             else :
-                F = sos.path.isfile
+                F = TFL.sos.path.isfile
             result      = filter (F, all)
             self._files = [ self.File (f, parent = self, filter = F)
                             for f in result
@@ -235,25 +238,6 @@ class Glob_Filter (Regexp_Filter) :
 
 # end class Glob_Filter
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import Filesystem
-        return U_Test.run_module_doc_tests (Filesystem)
-    # end def _doc_test
-
-    if __name__ == "__main__" :
-        _doc_test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
-from _TFL import TFL
-
 if __name__ != "__main__" :
     TFL._Export ("*")
-
 ### __END__ Filesystem

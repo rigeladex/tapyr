@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Import_Closure
+#    TFL.Import_Closure
 #
 # Purpose
 #    Find all files imported by a given python module residing in a list of
@@ -115,14 +115,14 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL         import TFL
-from   Filename     import Filename
-from   Regexp       import *
-from   predicate    import *
-import sos
+from   _TFL              import TFL
+from   _TFL.predicate    import *
+from   _TFL.Regexp       import Regexp, re
+from   Filename          import Filename
 import sys
 
 import _TFL._Meta.Object
+import _TFL.sos
 
 class P_M (TFL.Meta.Object) :
     """Encapsulate a python module found by Import_Closure"""
@@ -132,8 +132,8 @@ class P_M (TFL.Meta.Object) :
     def __init__ (self, rel_name, path_name, pkg) :
         self.rel_name     = rel_name
         self.path_name    = path_name
-        _, self.base_path = sos.path.split    (path_name)
-        self.base_name, _ = sos.path.splitext (self.base_path)
+        _, self.base_path = TFL.sos.path.split    (path_name)
+        self.base_name, _ = TFL.sos.path.splitext (self.base_path)
         self.pkg          = pkg
         self.level        = pkg.count (".")
     # end def __init__
@@ -280,19 +280,19 @@ class Import_Closure :
             package = self.pym_dict.get (imported)
             if modules and package :
                 for m in modules.split (".") :
-                    imported = sos.path.join (imported, m)
+                    imported = TFL.sos.path.join (imported, m)
                     if not self._find_import (imported, prefix) :
                         break
     # end def _import_module
 
     def _import_root (self, file_name) :
-        if file_name.startswith (sos.path.sep) :
+        if file_name.startswith (TFL.sos.path.sep) :
             for dir in self.import_path :
                 if file_name.startswith (dir) :
                     file_name = file_name [len (dir) + 1:]
                     break
-        base, _ = sos.path.splitext (file_name)
-        name    = base.replace (sos.path.sep, ".")
+        base, _ = TFL.sos.path.splitext (file_name)
+        name    = base.replace (TFL.sos.path.sep, ".")
         line    = "import %s" % (name, )
         match   = self.import_pat.match (line)
         if match :
@@ -316,7 +316,7 @@ class Import_Closure :
            `import_path' or `None'.
         """
         if prefix :
-            py_names = (py_name, sos.path.join (prefix, py_name))
+            py_names = (py_name, TFL.sos.path.join (prefix, py_name))
         else :
             py_names = (py_name, )
         for py_name in py_names :
@@ -327,14 +327,14 @@ class Import_Closure :
     # end def path_of
 
     def _path_of (self, dir, py_name) :
-        b_name = sos.path.join (dir, py_name)
+        b_name = TFL.sos.path.join (dir, py_name)
         m_name = b_name + ".py"
-        p_name = sos.path.join (b_name, "__init__.py")
-        if sos.path.isfile (m_name) :
-            prefix = ".".join (py_name.split (sos.sep) [:-1])
+        p_name = TFL.sos.path.join (b_name, "__init__.py")
+        if TFL.sos.path.isfile (m_name) :
+            prefix = ".".join (py_name.split (TFL.sos.sep) [:-1])
             return P_M (py_name, m_name, prefix)
-        if sos.path.isfile (p_name) :
-            prefix = ".".join (py_name.split (sos.sep))
+        if TFL.sos.path.isfile (p_name) :
+            prefix = ".".join (py_name.split (TFL.sos.sep))
             return P_P (py_name, p_name, prefix)
     # end def _path_of
 
@@ -396,7 +396,8 @@ def command_spec (arg_array = None) :
 # end def command_spec
 
 def main (cmd) :
-    import_path = map (sos.expanded_path, cmd.import_path.split (cmd.Pathsep))
+    import_path = map \
+        (TFL.sos.expanded_path, cmd.import_path.split (cmd.Pathsep))
     ignore      = dict_from_list (cmd.ignore)
     out_opts    = sum \
         ( [  bool (o) for o
@@ -436,4 +437,4 @@ if __name__ == "__main__":
     main (command_spec ())
 else :
     TFL._Export ("Import_Closure")
-### __END__ Import_Closure
+### __END__ TFL.Import_Closure

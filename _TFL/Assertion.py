@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,10 +27,13 @@
 #
 # Revision Dates
 #     8-Jul-2002 (CT) Creation (factored from U_Test.py)
+#    24-Mar-2005 (CT) Use `TFL.Caller.globals` instead of `caller_globals`
+#                     (and ditto for `locals`)
 #    ««revision-date»»···
 #--
 
-from caller_globals import caller_globals, caller_locals
+from   _TFL import TFL
+import _TFL.Caller
 
 def _test_assertion (expr, locals, msg = "", expression = None) :
     if not expr :
@@ -58,15 +60,14 @@ def Assertion (expression, msg = "") :
        - A false value of `__debug__' doesn't prevent the check of
          `expression'
     """
-    locals = caller_locals ()
+    locals = TFL.Caller.locals ()
     try :
-        result = eval (expression, caller_globals (), locals)
+        result = eval (expression, TFL.Caller.globals (), locals)
     except Exception, exc :
         _test_assertion (0,      locals, str (exc), expression)
     _test_assertion     (result, locals, msg,       expression)
 # end def Assertion
 
-from _TFL import TFL
-TFL._Export ("*")
-
-### __END__ Assertion
+if __name__ != "__main__" :
+    TFL._Export ("*")
+### __END__ TFL.Assertion

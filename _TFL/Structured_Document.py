@@ -1,10 +1,10 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
 #++
 # Name
-#    TFL/Structured_Document
+#    TFL.Structured_Document
 #
 # Purpose
 #    Classes for generation of structured documents
@@ -38,7 +38,8 @@ from   Formatted_Stream import *
 from   _TFL             import TFL
 from   NO_List          import NO_List
 from   types            import MethodType, FunctionType
-from   predicate        import un_nested
+
+import _TFL.predicate
 import re
 import string
 
@@ -143,7 +144,7 @@ class Doc_Node :
         if not self.name :
             self.name = "__%s_%d" % (self.__class__.__name__, self.id)
         self._reset_children ()
-        map                  (self.insert, un_nested (children))
+        map                  (self.insert, TFL.un_nested (children))
     # end def __init__
 
     def _init_kw (self, kw) :
@@ -178,7 +179,7 @@ class Doc_Node :
 
     def add (self, * children) :
         """Append all `children' to `self.children'"""
-        children = un_nested (children)
+        children = TFL.un_nested (children)
         if children :
             map (self.insert, children)
     # end def add
@@ -269,7 +270,7 @@ class Doc_Node :
                       , type, match, transitive
                       )
                 )
-        return un_nested (children)
+        return TFL.un_nested (children)
     # end def get_childrens
 
     def __getitem__ (self, index) :
@@ -366,5 +367,6 @@ class Doc_Node :
 
 # end class Doc_Node
 
-TFL._Export ("*")
-### __END__ TFL/Structured_Document
+if __name__ != "__main__" :
+    TFL._Export ("*")
+### __END__ TFL.Structured_Document

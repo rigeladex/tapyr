@@ -1,10 +1,10 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
 #++
 # Name
-#    Range
+#    TFL.Range
 #
 # Purpose
 #    Implement range generator
@@ -20,6 +20,8 @@
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
+
+from _TFL import TFL
 
 import types
 
@@ -59,25 +61,6 @@ class _Range_ :
 
 Range = _Range_ ()
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import Range
-        return U_Test.run_module_doc_tests (Range)
-    # end def _doc_test
-
-    if __name__ == "__main__" :
-        _doc_test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
-from _TFL import TFL
-
 if __name__ != "__main__" :
     TFL._Export ("*")
-
-### __END__ Range
+### __END__ TFL.Range

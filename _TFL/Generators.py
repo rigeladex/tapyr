@@ -167,9 +167,9 @@ def pairwise (seq) :
        [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e'), ('e', 'f')]
        >>> list (pairwise (range (4)))
        [(0, 1), (1, 2), (2, 3)]
-       >>> pairwise ([1])
+       >>> list (pairwise ([1]))
        []
-       >>> pairwise ([])
+       >>> list (pairwise ([]))
        []
     """
     lag = Look_Ahead_Gen (seq)

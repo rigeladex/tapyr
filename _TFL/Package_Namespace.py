@@ -358,7 +358,7 @@ class Package_Namespace :
     def _Reload (self, * modules) :
         old_reload = self.__reload
         if not modules :
-            from predicate import dusort
+            from _TFL.predicate import dusort
             second  = lambda (a, b) : b
             modules = \
                 [m for (m, i) in dusort (self.__modules.values (), second)]

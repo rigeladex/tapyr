@@ -30,8 +30,8 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL   import TFL
-from   Regexp import *
+from   _TFL        import TFL
+from   _TFL.Regexp import Regexp, re
 
 _diacrit_map    = \
     { u"À"      : u"A"
@@ -137,7 +137,7 @@ def sanitized_filename (s) :
       characters removed so that the result is usable as a filename.
 
        >>> sanitized_filename (
-       ...    u"überflüßig \000komplexer und $gefährlicher* Filename")
+       ...    u"überflüßig komplexer und $gefährlicher* Filename")
        'ueberfluessig_komplexer_und_gefaehrlicher_Filename'
    """
    s = sanitized_unicode  (s)

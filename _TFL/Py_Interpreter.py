@@ -32,7 +32,7 @@
 #
 
 from _TFL        import TFL
-from predicate   import *
+from _TFL.predicate   import *
 
 class Pycode_Compiler (object) :
     """A class to eval/exec python code lines."""
@@ -99,7 +99,4 @@ def complete_command (line, globals) :
 
 if __name__ != "__main__" :
     TFL._Export ("*")
-
 ### __END__ Py_Interpreter
-
-

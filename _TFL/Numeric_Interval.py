@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Numeric_Interval
+#    TFL.Numeric_Interval
 #
 # Purpose
 #    Model a numeric interval
@@ -37,10 +37,11 @@
 #--
 
 from   _TFL                 import TFL
-from   predicate            import *
 
 import _TFL.DL_List
+import _TFL.predicate
 import _TFL._Meta.Object
+
 import sys
 
 class Numeric_Interval (TFL.Meta.Object) :
@@ -186,13 +187,13 @@ class Numeric_Interval (TFL.Meta.Object) :
         """Returns a list of intervals with the union of `args`"""
         result = []
         p      = TFL.DL_List \
-            (* dusort (args, lambda i : (i.lower, i.upper))).head
+            (* TFL.dusort (args, lambda i : (i.lower, i.upper))).head
         while p :
             pv = p.value
             q  = p.next
             while q and pv.upper >= q.value.lower :
                 if pv.upper < q.value.upper :
-                    pv = (cls (pv.lower, q.value.upper))
+                    pv = cls (pv.lower, q.value.upper)
                 q = q.next
             result.append (pv)
             p = q
@@ -201,25 +202,6 @@ class Numeric_Interval (TFL.Meta.Object) :
 
 # end class Numeric_Interval
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        return U_Test.run_module_doc_tests ("_TFL.Numeric_Interval")
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 if __name__ != "__main__" :
     TFL._Export ("*")
-### __END__ Numeric_Interval
+### __END__ TFL.Numeric_Interval
