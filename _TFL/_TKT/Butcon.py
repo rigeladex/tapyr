@@ -29,6 +29,9 @@
 #    17-Feb-2005 (RSC) Creation
 #    25-Feb-2005 (ABR) Fixed doctest (uses png's instead of xbm's)
 #    25-Feb-2005 (RSC) Re-added bitmaps that fail TGW doctest
+#    25-Feb-2005 (RSC) Removed bitmaps for which no xbm exists -- Tk
+#                      can't read PNG. Now left one xbm to document
+#                      failing doctest of TGW.
 #    ««revision-date»»···
 #--
 
@@ -40,12 +43,10 @@ class Butcon (TFL.TKT.Mixin) :
 
     _interface_test   = """
         >>> w = Butcon ()
-        >>> w.apply_bitmap ('arrow_down')
-        >>> w.apply_bitmap ('arrow_left')
-        >>> w.apply_bitmap ('arrow_right')
         >>> w.apply_bitmap ('open_node')
         >>> w.apply_bitmap ('closed_node')
         >>> w.apply_bitmap ('circle')
+        >>> w.apply_bitmap ('small_circle')
     """
 
     def apply_bitmap (self, bitmap) :

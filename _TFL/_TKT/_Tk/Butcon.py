@@ -31,6 +31,7 @@
 #                      `*_style` methods removed
 #    20-Feb-2005 (CT)  s/widget/wtk_widget/
 #    23-Feb-2005 (CT)  `exposed_widget` added
+#    25-Feb-2005 (RSC) Added _interface_test
 #    ««revision-date»»···
 #--
 
@@ -113,7 +114,7 @@ class _Tk_Butcon_ (TFL.TKT.Tk.Widget, TFL.TKT.Butcon) :
 
 Butcon = _Tk_Butcon_ # end class _Tk_Butcon_
 
-#__test__ = dict (interface_test = TFL.TKT.Butcon._interface_test)
+__test__ = dict (interface_test = TFL.TKT.Butcon._interface_test)
 
 """
 from _TFL._TKT._Tk.Butcon    import *
@@ -129,6 +130,7 @@ w.apply_bitmap ('closed_node')
 w.apply_bitmap ('circle')
 
 """
+
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("*")
 ### __END__ TFL.TKT.Tk.Text
