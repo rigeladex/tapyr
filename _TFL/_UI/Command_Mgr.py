@@ -79,6 +79,13 @@
 #    21-Dec-2004 (CT) `Command_Group` factored from `Command_Mgr`
 #    21-Dec-2004 (CT) `menu` and `toolbar` replaced by `interfacers`
 #    21-Dec-2004 (CT) `_real_index` factored
+#     7-Jan-2005 (CT) `Command_Mgr.__init__` changed to set instance
+#                     attributes before chaining up
+#     7-Jan-2005 (CT) `cmd` added to allow attribute access to commands
+#                     without name clashes
+#     7-Jan-2005 (CT) add_command changed to not set `qname` to `.<name>` for
+#                     commands added directly to a command manager without a
+#                     name
 #    ««revision-date»»···
 #--
 
@@ -94,6 +101,7 @@ import _TFL._UI
 
 import re
 import traceback
+import weakref
 
 class Exception_Handled (Exception) :
     """Raised after an exception was already handled to bail out from an
@@ -288,6 +296,18 @@ class Command (_Command_) :
 
 # end class Command
 
+class _Command_Getattr_ (TFL.Meta.Object) :
+
+    def __init__ (self, group) :
+        self._group = weakref.proxy (group)
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        return self._group [name]
+    # end def __getattr__
+
+# end class _Command_Getattr_
+
 class Command_Group (_Command_) :
     """Manage a group of commands of an interactive application"""
 
@@ -296,16 +316,17 @@ class Command_Group (_Command_) :
 
     def __init__ (self, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
         self.__super.__init__ ()
+        self.cmd            = _Command_Getattr_ (self)
         self.name           = self.qname = name
         self.interfacers    = interfacers
         self.parent         = parent
         self.batchable      = batchable
         self.precondition   = precondition
-        self.description    = self._cooked_doc (desc, self.root.form_dict)
         if parent :
             self.root       = parent.root
             if parent.qname :
                 self.qname  = "%s.%s" % (parent.qname, name)
+        self.description    = self._cooked_doc (desc, self.root.form_dict)
         self._element       = NO_List       ()
         self._group         = NO_List       ()
         self.command        = Abbr_Key_Dict ()
@@ -326,7 +347,10 @@ class Command_Group (_Command_) :
             self._element.insert (index, cmd, delta)
             self.root._add_precondition (cmd)
             cmd.group_name = self.name
-            cmd.qname      = "%s.%s" % (self.qname, cmd.name)
+            if self.qname :
+                cmd.qname  = "%s.%s" % (self.qname, cmd.name)
+            else :
+                cmd.qname  = cmd.name
             cmd.batchable  = cmd.batchable and (self.batchable or batchable)
             cmd.appl       = self.root.appl
             if not cmd.pv_callback :
@@ -429,15 +453,15 @@ class Command_Mgr (Command_Group) :
     """Manage toplevel group of commands of an interactive application"""
 
     def __init__ (self, change_counter, interfacers, pv_callback = None, name = "", batch_mode = False, form_dict = {}, appl = None) :
-        self.__super.__init__ (name, interfacers, parent = None, batchable = True)
+        self.root           = self
         self.change_counter = change_counter
         self.pv_callback    = pv_callback
         self.batch_mode     = batch_mode
         self.form_dict      = form_dict
         self.appl           = appl
-        self.root           = self
         self.changes        = 0
         self._precondition  = {}
+        self.__super.__init__ (name, interfacers, parent = None, batchable = True)
         for i in interfacers :
             i.bind_to_sync (self.update_state)
     # end def __init__
