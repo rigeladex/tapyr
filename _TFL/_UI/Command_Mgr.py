@@ -109,6 +109,7 @@
 #    28-Jan-2005 (CT) `Dyn_Command` added (and necessary refactoring done)
 #    31-Jan-2005 (CT) Doc-test for `Dyn_Command` added and
 #                     `_handle_dyn_commands` fixed
+#    31-Jan-2005 (CT) `Command.interfacers` converted from list to dict
 #    ««revision-date»»···
 #--
 
@@ -146,7 +147,7 @@ class _Command_ (TFL.Meta.Object) :
     batchable   = False ### is the command batchable?
     batch_mode  = False ### are we running in batch_mode?
     description = ""
-    interfacers = ()
+    interfacers = {}
     button_name = None
     group_name  = None
 
@@ -155,10 +156,10 @@ class _Command_ (TFL.Meta.Object) :
     nam_pat     = re.compile (r"[Tt]his command")
 
     def disable (self) :
-        for i in self.interfacers :
+        for i in self.interfacers.itervalues () :
             try :
                 i.disable_entry (self.name)
-            except KeyboardInterrupt :
+            except (KeyboardInterrupt, SystemExit) :
                 raise
             except StandardError :
                 if __debug__ :
@@ -167,7 +168,7 @@ class _Command_ (TFL.Meta.Object) :
     # end def disable
 
     def enable (self) :
-        for i in self.interfacers :
+        for i in self.interfacers.itervalues () :
             try :
                 i.enable_entry (self.name)
             except KeyboardInterrupt :
@@ -237,7 +238,7 @@ class Command (_Command_) :
         self.batchable     = batchable
         self.Change_Action = Change_Action
         self._raw_doc      = _doc or command.__doc__ or ""
-        self.interfacers   = []
+        self.interfacers   = {}
     # end def __init__
 
     def check_precondition (self) :
@@ -564,7 +565,7 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
         for ( n, i, info, _ie, index
             ) in self._interfacers (if_names, index, delta) :
             _ie.insert             (index, cmd)
-            cmd.interfacers.append (i)
+            cmd.interfacers [n]    = i
             i.add_command \
                 ( name             = cmd.name
                 , callback         = cmd

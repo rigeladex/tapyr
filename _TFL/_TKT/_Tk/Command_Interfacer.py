@@ -62,6 +62,7 @@ from   NO_List              import *
 from   Regexp               import *
 
 import CTK_Toolbar
+import traceback
 import weakref
 
 class _CI_ (TFL.TKT.Command_Interfacer) :
@@ -272,11 +273,27 @@ class CI_Menu (_CI_Widget_) :
     # end def bind_to_widget
 
     def enable_entry (self, name) :
-        self.widget.enable_entry (name)
+        try :
+            self.widget.enable_entry (name)
+        except (KeyboardInterrupt, SystemExit) :
+            raise
+        except :
+            ### TclError is a string exception, arrrrgggg
+            if 0 and __debug__ :
+                traceback.print_exc ()
+                print "Enable_entry", self.widget, name
     # end def enable
 
     def disable_entry (self, name) :
-        self.widget.disable_entry (name)
+        try :
+            self.widget.disable_entry (name)
+        except (KeyboardInterrupt, SystemExit) :
+            raise
+        except :
+            ### TclError is a string exception, arrrrgggg
+            if 0 and __debug__ :
+                traceback.print_exc ()
+                print "Disable_entry", self.widget, name
     # end def disable_entry
 
     ### internals
@@ -349,6 +366,7 @@ class _CI_Toolbar_Group_ (_CI_) :
         self.__super.__init__ (AC = AC)
         self.category = category
         self.widget   = widget
+        self.b_name   = {}
     # end def __init__
 
     ### command specific methods
@@ -366,7 +384,7 @@ class _CI_Toolbar_Group_ (_CI_) :
             ) :
         if state_var is not None :
             raise NotImplementedError, "as_check_button"
-        b_name  = self.name_clean.sub ("_", name.lower ())
+        b_name  = self.b_name [name] = self.name_clean.sub ("_", name.lower ())
         im_name = icon or b_name
         return self.widget.add_button \
             ( category    = self.category
@@ -392,11 +410,11 @@ class _CI_Toolbar_Group_ (_CI_) :
 
     ### event specific methods
     def enable_entry (self, name) :
-        self.widget.toolbar [self.name].enable_entry (name)
+        self.widget [self.category].enable_entry (self.b_name [name])
     # end def enable
 
     def disable_entry (self, name) :
-        self.widget.toolbar [self.name].disable_entry (name)
+        self.widget [self.category].disable_entry (self.b_name [name])
     # end def disable_entry
 
 # end class _CI_Toolbar_Group_
