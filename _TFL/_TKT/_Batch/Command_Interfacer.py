@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Dec-2004 (CT) Creation
+#    11-Jan-2005 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -34,9 +35,12 @@ from   _TFL           import TFL
 import _TFL._TKT._Batch
 import _TFL._TKT.Command_Interfacer
 
-Menubar = TFL.TKT.Command_Interfacer
-Toolbar = TFL.TKT.Command_Interfacer
+CI_Eventbinder   = TFL.TKT.Command_Interfacer
+CI_Menu          = TFL.TKT.Command_Interfacer
+CI_Menubar       = TFL.TKT.Command_Interfacer
+CI_Toolbar       = TFL.TKT.Command_Interfacer
 
 if __name__ != "__main__" :
-    TFL.TKT.Batch._Export ("Menubar", "Toolbar")
+    TFL.TKT.Batch._Export \
+        ("CI_Eventbinder", "CI_Menu", "CI_Menubar", "CI_Toolbar")
 ### __END__ Command_Interfacer

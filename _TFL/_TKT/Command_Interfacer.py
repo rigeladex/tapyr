@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -28,6 +28,8 @@
 # Revision Dates
 #    21-Dec-2004 (CT) Creation
 #    10-Jan-2005 (CT) `destroy` added
+#    11-Jan-2005 (CT) `as_check_button` added to `add_command`
+#    11-Jan-2005 (CT) `bind_to_widget` added
 #    ««revision-date»»···
 #--
 
@@ -46,11 +48,14 @@ class Command_Interfacer (TFL.Meta.Object) :
     ### command specific methods
     def add_command \
             ( self, name, callback
-            , index       = None
-            , delta       = 0
-            , underline   = None
-            , accelerator = None
-            , icon        = None
+            , index           = None
+            , delta           = 0
+            , underline       = None
+            , accelerator     = None
+            , info            = info
+            , icon            = None
+            , as_check_button = False
+            , cmd_name        = None
             , ** kw
             ) :
         """Insert and return interface object for command `name` with action
@@ -111,6 +116,12 @@ class Command_Interfacer (TFL.Meta.Object) :
         """Bind `callback` to sync event"""
         pass
     # end def bind_to_sync
+
+    def bind_to_widget (self, widget) :
+        """Bind activation of `self` to `widget`.
+        """
+        pass
+    # end def bind_to_widget
 
     def enable_entry (self, index) :
         """Enable entry at `index` (which can be a name or a numeric index)"""

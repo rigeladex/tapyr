@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -88,6 +88,9 @@
 #                     name
 #    10-Jan-2005 (CT) `add_separator` completed (needs to go into `_element`)
 #    10-Jan-2005 (CT) `destroy` changed to call `destroy` of all interfacers
+#    11-Jan-2005 (CT) `add_separator` changed to be more similar to
+#                     `add_command` and `add_group`
+#    11-Jan-2005 (CT) `as_check_button` added to `add_command`
 #    ««revision-date»»···
 #--
 
@@ -336,7 +339,7 @@ class Command_Group (_Command_) :
         self.command        = Abbr_Key_Dict ()
     # end def __init__
 
-    def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0) :
+    def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
         """Add `cmd' to `group'"""
         cmd._cook_doc (self.root.form_dict)
         if group is not None :
@@ -366,13 +369,16 @@ class Command_Group (_Command_) :
             for i, info in self._interfacers (if_names) :
                 cmd.interfacers.append (i)
                 i.add_command \
-                    ( cmd.name, cmd
-                    , index       = index
-                    , delta       = delta
-                    , underline   = underline
-                    , accelerator = accelerator
-                    , icon        = icon
-                    , info        = info
+                    ( name            = cmd.name
+                    , callback        = cmd
+                    , index           = index
+                    , delta           = delta
+                    , underline       = underline
+                    , accelerator     = accelerator
+                    , icon            = icon
+                    , info            = info
+                    , as_check_button = as_check_button
+                    , cmd_name        = cmd.qname
                     )
     # end def add_command
 
@@ -398,15 +404,20 @@ class Command_Group (_Command_) :
         return group
     # end def add_group
 
-    def add_separator (self, name = None, group = None, index = None, delta = 0) :
+    def add_separator (self, name = None, group = None, if_names = [], index = None, delta = 0) :
         """Add separator to `group'"""
-        if not name :
-            name = "sep_%s" % (len (self._element), )
-        index    = self._real_index (index)
-        sep      = Record (name = name, destroy = lambda s : 1)
-        self._element.insert (index, sep, delta)
-        for i in self.interfacers.itervalues () :
-            i.add_separator  (name, index, delta)
+        if group is not None :
+            if isinstance (group, (str, unicode, int)) :
+                group = self._element [group]
+            return group.add_separator (name, None, if_names, index, delta)
+        else :
+            if not name :
+                name = "sep_%s" % (len (self._element), )
+            index    = self._real_index (index)
+            sep      = Record (name = name, destroy = lambda s : 1)
+            self._element.insert (index, sep, delta)
+            for i, info in self._interfacers (if_names) :
+                i.add_separator (name, index, delta)
     # end def add_separator
 
     def destroy (self) :
