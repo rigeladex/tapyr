@@ -33,6 +33,7 @@
 #    30-Jul-2004 (CT) Use `TFL.Look_Ahead_Gen` instead of home-grown code
 #     9-Aug-2004 (CT) `_Recursive_Formatter_Node_.__init__` changed to
 #                     discard `None` values
+#    11-Aug-2004 (MG) `sep_eol` added
 #    ««revision-date»»···
 #--
 
@@ -92,10 +93,11 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
     def __call__ (self, node, context) :
         self.node    = node
         self.context = context
-        self.empty   = self.x_forms.empty % context
-        self.front   = self.x_forms.front % context
-        self.rear    = self.x_forms.rear  % context
-        self.sep     = self.x_forms.sep   % context
+        self.empty   = self.x_forms.empty   % context
+        self.front   = self.x_forms.front   % context
+        self.rear    = self.x_forms.rear    % context
+        self.sep     = self.x_forms.sep     % context
+        self.sep_eol = self.x_forms.sep_eol % context
         return self
     # end def __call__
 
@@ -103,6 +105,7 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
         node       = self.node
         context    = self.context
         sep        = self.front
+        eol        = self.sep_eol
         i          = 0
         formatters = TFL.Look_Ahead_Gen (self.formatters)
         for f in formatters :
@@ -112,7 +115,7 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
                 if formatters.is_finished and lines.is_finished :
                     yield "%s%s%s" % (sep, r, self.rear)
                 else :
-                    yield "%s%s"   % (sep, r)
+                    yield "%s%s%s"   % (sep, r, eol)
                 sep = ""
                 i  += 1
             if i :
@@ -242,7 +245,14 @@ class Multi_Line_Formatter (_Formatter_) :
 
     def _x_forms (self, x_forms) :
         result = Record \
-            (empty = "", front = "", head = "", rear = "", sep = "", tail = "")
+            ( empty   = ""
+            , front   = ""
+            , head    = ""
+            , rear    = ""
+            , sep     = ""
+            , sep_eol = ""
+            , tail    = ""
+            )
         if x_forms :
             for spec in x_forms.split ("¡") :
                 key, form = spec.split ("=", 1)
