@@ -107,6 +107,8 @@
 #                     `Command_Mgr` put into alphabetical order
 #    28-Jan-2005 (CT) `Command.update_state` removed (wasn't used anywhere)
 #    28-Jan-2005 (CT) `Dyn_Command` added (and necessary refactoring done)
+#    31-Jan-2005 (CT) Doc-test for `Dyn_Command` added and
+#                     `_handle_dyn_commands` fixed
 #    ««revision-date»»···
 #--
 
@@ -591,20 +593,20 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
             if dc.name in elements :
                 i    = elements.n_index (dc.name)
                 if i == 0 :
-                    head = dpos = 0
+                    head  = dpos = 0
                 else :
-                    head = interfacer.index (elements [i-1].name) + 1
-                    dpos = head + 1
+                    head  = interfacer.index (elements [i-1].name) + 1
+                    dpos  = head + 1
                 tsep = i + 1 < len (elements)
                 if tsep :
-                    tail = interfacer.index (elements [i+1].name) - 1
+                    tail  = interfacer.index (elements [i+1].name) - 1
                 else :
-                    tail = interfacer.index (-1)
+                    tail  = interfacer.index (-1) - 1
                 for j in range (head, tail) :
                     interfacer.remove_command (dpos)
                 dyns = list (dc.command_gen ())
                 if dyns :
-                    j = head
+                    j = dpos
                     for name, cb, underline in dyns :
                         interfacer.add_command \
                             (name, cb
@@ -612,8 +614,14 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
                             , underline = underline
                             )
                         j += 1
-                    if tsep :
+                    if tsep and dpos :
                         interfacer.add_separator (index = j)
+                elif head <= tail and not tsep :
+                    ### removing the trailing separator of the `dc` makes
+                    ### life much more complicated because we would need to
+                    ### put that separator back when the `dc` grows some
+                    ### commands again
+                    pass ### interfacer.remove_command (head)
     # end def _handle_dyn_commands
 
     def _interfacers (self, interface_names, index, delta) :
@@ -724,6 +732,359 @@ class Command_Mgr (Command_Group) :
     # end def _add_precondition
 
 # end class Command_Mgr
+
+__test__ = dict \
+    ( dyn_trailing = """
+        >>> from _TFL._TKT.Command_Interfacer import _Test_CI_
+        >>> import _TFL._TKT._Batch
+        >>> import itertools
+        >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
+        >>> def dyn_1 () :
+        ...     for i in _d1.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> mb = interfacer = _Test_CI_ (None)
+        >>> cm = Command_Mgr (None, None, dict (mb = mb))
+        >>> cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
+        >>> cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
+        >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
+        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 1, name = Dyn-1)
+          4 : (callback = 2, name = Dyn-2)
+          5 : (callback = 3, name = Dyn-3)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 4, name = Dyn-4)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 5, name = Dyn-5)
+          4 : (callback = 6, name = Dyn-6)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 1, name = Dyn-1)
+          4 : (callback = 2, name = Dyn-2)
+          5 : (callback = 3, name = Dyn-3)
+        """
+    , dyn_middle = """
+        >>> from _TFL._TKT.Command_Interfacer import _Test_CI_
+        >>> import _TFL._TKT._Batch
+        >>> import itertools
+        >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
+        >>> def dyn_1 () :
+        ...     for i in _d1.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> mb = interfacer = _Test_CI_ (None)
+        >>> cm = Command_Mgr (None, None, dict (mb = mb))
+        >>> cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
+        >>> cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
+        >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
+        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 1, name = Dyn-1)
+          4 : (callback = 2, name = Dyn-2)
+          5 : (callback = 3, name = Dyn-3)
+          6 : (is_sep = --------------------, name = sep_7)
+          7 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 4, name = Dyn-4)
+          4 : (is_sep = --------------------, name = sep_5)
+          5 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 5, name = Dyn-5)
+          4 : (callback = 6, name = Dyn-6)
+          5 : (is_sep = --------------------, name = sep_6)
+          6 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 1, name = Dyn-1)
+          4 : (callback = 2, name = Dyn-2)
+          5 : (callback = 3, name = Dyn-3)
+          6 : (is_sep = --------------------, name = sep_7)
+          7 : (callback = Third, name = Third)
+        """
+    , dyn_only = """
+        >>> from _TFL._TKT.Command_Interfacer import _Test_CI_
+        >>> import _TFL._TKT._Batch
+        >>> import itertools
+        >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
+        >>> def dyn_1 () :
+        ...     for i in _d1.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> mb = interfacer = _Test_CI_ (None)
+        >>> cm = Command_Mgr (None, None, dict (mb = mb))
+        >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
+        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> mb.activate ()
+          0 : (callback = 1, name = Dyn-1)
+          1 : (callback = 2, name = Dyn-2)
+          2 : (callback = 3, name = Dyn-3)
+          3 : (is_sep = --------------------, name = Dyn-A)
+        >>> mb.activate ()
+          0 : (callback = 4, name = Dyn-4)
+          1 : (is_sep = --------------------, name = Dyn-A)
+        >>> mb.activate ()
+          0 : (callback = 5, name = Dyn-5)
+          1 : (callback = 6, name = Dyn-6)
+          2 : (is_sep = --------------------, name = Dyn-A)
+        >>> mb.activate ()
+          0 : (is_sep = --------------------, name = Dyn-A)
+        >>> mb.activate ()
+          0 : (callback = 1, name = Dyn-1)
+          1 : (callback = 2, name = Dyn-2)
+          2 : (callback = 3, name = Dyn-3)
+          3 : (is_sep = --------------------, name = Dyn-A)
+        """
+    , dyn_leading = """
+        >>> from _TFL._TKT.Command_Interfacer import _Test_CI_
+        >>> import _TFL._TKT._Batch
+        >>> import itertools
+        >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
+        >>> def dyn_1 () :
+        ...     for i in _d1.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> mb = interfacer = _Test_CI_ (None)
+        >>> cm = Command_Mgr (None, None, dict (mb = mb))
+        >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
+        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
+        >>> mb.activate ()
+          0 : (callback = 1, name = Dyn-1)
+          1 : (callback = 2, name = Dyn-2)
+          2 : (callback = 3, name = Dyn-3)
+          3 : (is_sep = --------------------, name = Dyn-A)
+          4 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (callback = 4, name = Dyn-4)
+          1 : (is_sep = --------------------, name = Dyn-A)
+          2 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (callback = 5, name = Dyn-5)
+          1 : (callback = 6, name = Dyn-6)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (is_sep = --------------------, name = Dyn-A)
+          1 : (callback = Third, name = Third)
+        >>> mb.activate ()
+          0 : (callback = 1, name = Dyn-1)
+          1 : (callback = 2, name = Dyn-2)
+          2 : (callback = 3, name = Dyn-3)
+          3 : (is_sep = --------------------, name = Dyn-A)
+          4 : (callback = Third, name = Third)
+        """
+    , dyn_2_middle = """
+        >>> from _TFL._TKT.Command_Interfacer import _Test_CI_
+        >>> import _TFL._TKT._Batch
+        >>> import itertools
+        >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
+        >>> def dyn_1 () :
+        ...     for i in _d1.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> _d2 = itertools.cycle ((["a"], ["b", "c", "d"], []))
+        >>> def dyn_2 () :
+        ...     for i in _d2.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> mb = interfacer = _Test_CI_ (None)
+        >>> cm = Command_Mgr (None, None, dict (mb = mb))
+        >>> cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
+        >>> cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
+        >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
+        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
+        >>> d2 = Dyn_Command ("Dyn-B", dyn_2)
+        >>> cm.add_command   (d2, if_names = ("mb", ))
+        >>> cm.add_command   (Command ("Fourt", "Fourt"), if_names = ("mb", ))
+        >>>
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 1, name = Dyn-1)
+          4 : (callback = 2, name = Dyn-2)
+          5 : (callback = 3, name = Dyn-3)
+          6 : (is_sep = --------------------, name = sep_9)
+          7 : (callback = Third, name = Third)
+          8 : (is_sep = --------------------, name = Dyn-B)
+          9 : (callback = a, name = Dyn-a)
+         10 : (is_sep = --------------------, name = sep_11)
+         11 : (callback = Fourt, name = Fourt)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 4, name = Dyn-4)
+          4 : (is_sep = --------------------, name = sep_9)
+          5 : (callback = Third, name = Third)
+          6 : (is_sep = --------------------, name = Dyn-B)
+          7 : (callback = b, name = Dyn-b)
+          8 : (callback = c, name = Dyn-c)
+          9 : (callback = d, name = Dyn-d)
+         10 : (is_sep = --------------------, name = sep_11)
+         11 : (callback = Fourt, name = Fourt)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 5, name = Dyn-5)
+          4 : (callback = 6, name = Dyn-6)
+          5 : (is_sep = --------------------, name = sep_12)
+          6 : (callback = Third, name = Third)
+          7 : (is_sep = --------------------, name = Dyn-B)
+          8 : (callback = Fourt, name = Fourt)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = Third, name = Third)
+          4 : (is_sep = --------------------, name = Dyn-B)
+          5 : (callback = a, name = Dyn-a)
+          6 : (is_sep = --------------------, name = sep_7)
+          7 : (callback = Fourt, name = Fourt)
+        >>> mb.activate ()
+          0 : (callback = First, name = First)
+          1 : (callback = Secnd, name = Secnd)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (callback = 1, name = Dyn-1)
+          4 : (callback = 2, name = Dyn-2)
+          5 : (callback = 3, name = Dyn-3)
+          6 : (is_sep = --------------------, name = sep_11)
+          7 : (callback = Third, name = Third)
+          8 : (is_sep = --------------------, name = Dyn-B)
+          9 : (callback = b, name = Dyn-b)
+         10 : (callback = c, name = Dyn-c)
+         11 : (callback = d, name = Dyn-d)
+         12 : (is_sep = --------------------, name = sep_13)
+         13 : (callback = Fourt, name = Fourt)
+        """
+    , dyn_2_only = """
+        >>> from _TFL._TKT.Command_Interfacer import _Test_CI_
+        >>> import _TFL._TKT._Batch
+        >>> import itertools
+        >>> _d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
+        >>> def dyn_1 () :
+        ...     for i in _d1.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> _d2 = itertools.cycle ((["a"], ["b", "c", "d"], []))
+        >>> def dyn_2 () :
+        ...     for i in _d2.next () :
+        ...         yield "Dyn-%s" % i, i, None
+        ...
+        >>> mb = interfacer = _Test_CI_ (None)
+        >>> cm = Command_Mgr (None, None, dict (mb = mb))
+        >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
+        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> d2 = Dyn_Command ("Dyn-B", dyn_2)
+        >>> cm.add_command   (d2, if_names = ("mb", ))
+        >>> mb.activate ()
+          0 : (callback = 1, name = Dyn-1)
+          1 : (callback = 2, name = Dyn-2)
+          2 : (callback = 3, name = Dyn-3)
+          3 : (is_sep = --------------------, name = Dyn-A)
+          4 : (is_sep = --------------------, name = Dyn-B)
+          5 : (callback = a, name = Dyn-a)
+        >>> mb.activate ()
+          0 : (callback = 4, name = Dyn-4)
+          1 : (is_sep = --------------------, name = Dyn-A)
+          2 : (is_sep = --------------------, name = Dyn-B)
+          3 : (callback = b, name = Dyn-b)
+          4 : (callback = c, name = Dyn-c)
+          5 : (callback = d, name = Dyn-d)
+        >>> mb.activate ()
+          0 : (callback = 5, name = Dyn-5)
+          1 : (callback = 6, name = Dyn-6)
+          2 : (is_sep = --------------------, name = Dyn-A)
+          3 : (is_sep = --------------------, name = Dyn-B)
+        >>> mb.activate ()
+          0 : (is_sep = --------------------, name = Dyn-A)
+          1 : (is_sep = --------------------, name = Dyn-B)
+          2 : (callback = a, name = Dyn-a)
+        >>> mb.activate ()
+          0 : (callback = 1, name = Dyn-1)
+          1 : (callback = 2, name = Dyn-2)
+          2 : (callback = 3, name = Dyn-3)
+          3 : (is_sep = --------------------, name = Dyn-A)
+          4 : (is_sep = --------------------, name = Dyn-B)
+          5 : (callback = b, name = Dyn-b)
+          6 : (callback = c, name = Dyn-c)
+          7 : (callback = d, name = Dyn-d)
+        """
+    )
+
+"""
+from _TFL._UI.Command_Mgr import *
+from _TFL._TKT.Command_Interfacer import _Test_CI_
+import _TFL._TKT._Batch
+import itertools
+_d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
+def dyn_1 () :
+    for i in _d1.next () :
+        yield "Dyn-%s" % i, i, None
+
+_d2 = itertools.cycle ((["a"], ["b", "c", "d"], []))
+def dyn_2 () :
+    for i in _d2.next () :
+        yield "Dyn-%s" % i, i, None
+
+mb = interfacer = _Test_CI_ (None)
+cm = Command_Mgr (None, None, dict (mb = mb))
+cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
+cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
+d1 = Dyn_Command ("Dyn-A", dyn_1)
+cm.add_command   (d1, if_names = ("mb", ))
+cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
+d2 = Dyn_Command ("Dyn-B", dyn_2)
+cm.add_command   (d2, if_names = ("mb", ))
+cm.add_command   (Command ("Fourt", "Fourt"), if_names = ("mb", ))
+
+mb.activate ()
+mb.activate ()
+mb.activate ()
+mb.activate ()
+mb.activate ()
+mb.activate ()
+
+elements = cm._epi ["mb"]
+for e in elements :
+    print e.name, elements.n_index (e.name), mb.index (e.name)
+
+"""
 
 __all__ = ( "Command_Mgr", "Command_Group", "Command", "_Command_"
           , "Dyn_Command"

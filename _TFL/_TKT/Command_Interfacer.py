@@ -35,6 +35,7 @@
 #    26-Jan-2005 (CT) s/as_check_button/state_var/
 #    26-Jan-2005 (CT) `add_group` changed to return self
 #    28-Jan-2005 (CT) `index` added
+#    31-Jan-2005 (CT) `_Test_CI_` added
 #    ««revision-date»»···
 #--
 
@@ -145,6 +146,81 @@ class Command_Interfacer (TFL.TKT.Mixin) :
     # end def disable_entry
 
 # end class Command_Interfacer
+
+class _Test_CI_ (Command_Interfacer) :
+
+    def __init__ (self, AC) :
+        from NO_List import NO_List
+        self.__super.__init__ (AC = AC)
+        self.elements   = NO_List ()
+        self.activation = []
+    # end def __init__
+
+    def index (self, name) :
+        if name == -1 :
+            return len (self.elements)
+        return self.elements.n_index (name)
+    # end def index
+
+    def add_command \
+            ( self, name, callback
+            , index           = None
+            , delta           = 0
+            , underline       = None
+            , accelerator     = None
+            , info            = None
+            , icon            = None
+            , state_var       = None
+            , cmd_name        = None
+            , ** kw
+            ) :
+        from Record import Record
+        self.elements.insert \
+            (index, Record (name = name, callback = callback))
+    # end def add_command
+
+    def remove_command (self, index) :
+        del self.elements [index]
+    # end def remove_command
+
+    ### group specific methods
+    def add_group (self, name, index = None, delta = 0, ** kw) :
+        from Record import Record
+        result = self.__class__ (self.AC)
+        self.elements.insert (index, Record (name = name, group = result))
+        return result
+    # end def add_group
+
+    def remove_group (self, index) :
+        del self.elements [index]
+    # end def remove_group
+
+    ### separator specific methods
+    def add_separator (self, name = None, index = None, delta = 0) :
+        from Record import Record
+        if name is None :
+            name = "sep_%d" % (len (self.elements), )
+        self.elements.insert (index, Record (name = name, is_sep = "-" * 20))
+    # end def add_separator
+
+    def remove_separator (self, index) :
+        del self.elements [index]
+    # end def remove_separator
+
+    def bind_to_activation (self, callback) :
+        self.activation.append (callback)
+    # end def bind_to_activation
+
+    def activate (self, prefix = "") :
+        for cb in self.activation :
+            cb ()
+        for i, e in enumerate (self.elements) :
+            print "%s%3d : %s" % (prefix, i, e)
+            if hasattr (e, "group") :
+                e.group.activate (prefix = prefix + "  ")
+    # end def activate
+
+# end class _Test_CI_
 
 if __name__ != "__main__" :
     TFL.TKT._Export ("*")
