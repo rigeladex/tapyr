@@ -31,6 +31,7 @@
 #    25-Aug-2004 (MG) `*_common` formats added to allow reused in decentants
 #    26-Aug-2004 (CT) Use `NL` instead of `'''\\n'''`
 #    26-Aug-2004 (CT) `front0` and `rear0` used
+#     1-Sep-2004 (MG) `Function.tail_char` added and used in format
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,7 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
     """C function definition"""
 
     cgi                  = TFL.SDG.C.Node.Body
+    tail_char            = ";"
     _mod_format          = """%(::.static:)s%(::.extern:)s"""
     h_format_common      = "".join \
         ( ( _mod_format
@@ -110,7 +112,7 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
                 >>%(::*head_children:)s
                 >>%(::*body_children:)s
                 >>%(::*tail_children:)s
-                };
+                }%(tail_char)s
                 >
             """
     c_format_common      = "".join \
