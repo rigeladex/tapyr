@@ -31,6 +31,7 @@
 #    17-Jan-2003 (CT) `Class_and_Instance_Method` added
 #    17-Jan-2003 (CT) `M_` prefixes added
 #    20-Jan-2003 (CT) `Class_Method` factored
+#    13-Feb-2003 (CT) `Alias_Property` added
 #    ««revision-date»»···
 #--
 
@@ -179,6 +180,47 @@ class Class_and_Instance_Method (Class_Method) :
     # end def __get__
 
 # end class Class_and_Instance_Method
+
+class Alias_Property (object) :
+    """Property defining an alias name for another attribute.
+
+       >>> class X (object) :
+       ...     def __init__ (self) :
+       ...         self.foo = 137
+       ...     def foo (self) :
+       ...         return 42
+       ...     foo = classmethod (foo)
+       ...     bar = Alias_Property ("foo")
+       ...
+       >>> X.bar
+       <bound method type.foo of <class '__main__.X'>>
+       >>> X.bar()
+       42
+       >>> x = X()
+       >>> x.bar
+       137
+       >>> x.bar=7
+       >>> x.bar
+       7
+       >>> X.bar()
+       42
+    """
+
+    def __init__ (self, aliased_name) :
+        self.aliased_name = aliased_name
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            obj = cls
+        return getattr (obj, self.aliased_name)
+    # end def __get__
+
+    def __set__ (self, obj, value) :
+        setattr (obj, self.aliased_name, value)
+    # end def __set__
+
+# end class Alias_Property
 
 if __name__ == "__main__" :
     ### unit-test code ############################################################

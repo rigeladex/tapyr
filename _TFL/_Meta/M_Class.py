@@ -85,7 +85,11 @@ class M_Autorename (_M_Type_) :
             del dict ["_real_name"]
         else :
             real_name = name
-        dict ["__real_name"] = real_name
+        try :
+            dict ["__real_name"] = real_name
+        except TypeError :
+            print name, bases, [id (b) for b in bases], type (dict)
+            raise
         result = super (M_Autorename, meta).__new__ (meta, name, bases, dict)
         return result
     # end def __new__
