@@ -72,10 +72,10 @@ fixed_holidays = \
   { "01/01" : "Neujahr"
   , "01/06" : "Hl. Drei Könige"
   , "05/01" : "Mai-Feiertag"
-  , "08/15" : "Mariä Himmelfahrt"
+  , "08/15" : "Mariae Himmelfahrt"
   , "10/26" : "Nationalfeiertag"
   , "11/01" : "Allerheiligen"
-  , "12/08" : "Mariä Empfängnis"
+  , "12/08" : "Mariae Empfaengnis"
   , "12/25" : "1. Weihnachtstag"
   , "12/26" : "2. Weihnachtstag"
   }
