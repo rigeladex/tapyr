@@ -85,7 +85,8 @@ class M_Autorename (_M_Type_) :
         else :
             real_name = name
         dict ["__real_name"] = real_name
-        return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
+        result = super (M_Autorename, meta).__new__ (meta, name, bases, dict)
+        return result
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
