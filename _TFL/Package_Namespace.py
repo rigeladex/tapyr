@@ -55,8 +55,11 @@ class Package_Namespace :
             pkg = __import__ \
                 ("%s.%s" % (self._name, module_name), _caller_globals ())
             mod = getattr (pkg, module_name)
-            for s in symbols or [module_name] :
-                self.__dict__ [s] = getattr (mod, s)
+            if symbols :
+                for s in symbols :
+                    self.__dict__ [s] = getattr (mod, s, mod)
+            else :
+                self.__dict__ [module_name] = mod
             self._seen [(module_name, symbols)] = 1
     # end def Import
     
