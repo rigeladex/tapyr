@@ -102,6 +102,7 @@
 #    16-Jun-2004 (CT)  `Package_Namespace._Load_Module` factored
 #     5-Jul-2004 (CT)  `__name__` set for `Package_Namespace` instances to
 #                      make them more similar to modules
+#     4-Aug-2004 (MG)  `Package_Namespace._Import_Module` added
 #    ««revision-date»»···
 #--
 
@@ -347,6 +348,12 @@ class Package_Namespace :
         import linecache
         linecache.clearcache ()
     # end def _Reload
+
+    def _Import_Module (self, * modules) :
+        import _TFL.import_module ### avoid circular imports !!!
+        for m in modules :
+            _TFL.import_module.import_module (".".join ((self.__pname, m)))
+    # end def _Import_Module
 
 # end class Package_Namespace
 
