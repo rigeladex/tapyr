@@ -281,7 +281,7 @@ class Doc_Node :
 
     def _write_to_stream_head (self, ostream) :
         """Redefine in descendents"""
-        print "kieselack >", self.__class__
+        ### print "kieselack >", self.__class__
         ostream.indent   ()
     # end def _write_to_stream_head
 
