@@ -65,6 +65,8 @@
 #    24-Feb-2005 (RSC) `set_tabs` added
 #    25-Feb-2005 (CT)  `AC` made required argument of `__init__` and
 #                      `_doctest_AC` added
+#    25-Feb-2005 (RSC) `set_tabs` corrected to require a list of things
+#                      convertable to int
 #    ««revision-date»»···
 #--
 
@@ -274,7 +276,8 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     # end def see
 
     def set_tabs (self, * tabs) :
-        self.wtk_widget.configure (tabs = " ".join ([`t` for t in tabs]))
+        self.wtk_widget.configure \
+            (tabs = " ".join (["%d" % int (t) for t in tabs]))
     # end def set_tabs
 
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
