@@ -63,6 +63,7 @@
 #    25-Jan-2004 (RMA) Improved end_tabular
 #    25-Jan-2004 (RMA) Added begin/end_chapter
 #    25-May-2004 (RMA) Fixed itemize_txt
+#    15-Feb-2005 (MG)  Use `isinstance` instead of `type`
 #    ««revision-date»»
 #--
 
@@ -220,7 +221,7 @@ class Latex_Stream (Formatted_Stream) :
 
     def item (self, item_name, text, item_length = 0, item_indent_only = None) :
         """Write a `item' statement for a block structure to the stream."""
-        if type (text) == type ("") :
+        if isinstance (text, string) :
             text = (text, )
         text = list (text)
         item = r"\item "
