@@ -30,6 +30,9 @@
 #    17-Oct-2004 (CT) `Time_Delta`, `Date_Delta`, and `Date_Time_Delta`
 #                     implemented
 #    17-Oct-2004 (CT) `Month_Delta` added
+#    17-Oct-2004 (CT) `Month_Delta` renamed to `MY_Delta` and `years` added
+#    17-Oct-2004 (CT) Getters of `Time_Delta` renamed to `h`, `m`, and `s` to
+#                     allow `seconds` to return `_body.seconds` unchanged
 #    ««revision-date»»···
 #--
 
@@ -99,20 +102,20 @@ class Time_Delta (_DT_Delta_) :
        >>> t = Time_Delta (3)
        >>> print t
        3:00:00
-       >>> t.hours, t.minutes, t.seconds
-       (3, 0, 0)
-       >>> hms = Time_Delta (2,15,42)
+       >>> t.h, t.m, t.s, t.seconds
+       (3, 0, 0, 10800)
+       >>> hms = Time_Delta (2, 15, 42)
        >>> print hms
        2:15:42
-       >>> hms.hours, hms.minutes, hms.seconds
-       (2, 15, 42)
+       >>> hms.h, hms.m, hms.s, hms.seconds
+       (2, 15, 42, 8142)
     """
 
-    seconds          = property (lambda s : s._body.seconds % 60)
+    seconds          = property (lambda s : s._body.seconds)
     microseconds     = property (lambda s : s._body.microseconds)
-    milliseconds     = property (lambda s : s._body.microseconds // 1000)
-    hours            = property (lambda s : s._body.seconds // 3600)
-    minutes          = property (lambda s : (s._body.seconds % 3600) // 60)
+    h                = property (lambda s : (s.seconds // 3600))
+    m                = property (lambda s : (s.seconds  % 3600) // 60)
+    s                = property (lambda s : (s.seconds  %   60))
 
     _init_arg_names  = \
         ("hours", "minutes", "seconds", "milliseconds", "microseconds")
@@ -147,7 +150,7 @@ class Date_Delta (_DT_Delta_) :
        42 days, 3:00:00
        >>> print s.__class__
        <class 'Delta.Date_Time_Delta'>
-       >>> s.days, s.hours, s.minutes, s.seconds
+       >>> s.days, s.h, s.m, s.s
        (42, 3, 0, 0)
     """
 
@@ -176,7 +179,7 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
        >>> d = Date_Time_Delta (5, 8, 3, 33)
        >>> print d
        5 days, 8:03:33
-       >>> d.days, d.hours, d.minutes, d.seconds
+       >>> d.days, d.h, d.m, d.s
        (5, 8, 3, 33)
     """
 
@@ -187,11 +190,28 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
 
 # end class Date_Time_Delta
 
-class Month_Delta (_Delta_) :
-    """Model month-stepping delta"""
+class MY_Delta (_Delta_) :
+    """Model month-stepping delta
 
-    def __init__ (self, months) :
+       >>> print MY_Delta (1)
+       +1 month
+       >>> print MY_Delta (2)
+       +2 months
+       >>> print MY_Delta (-3)
+       -3 months
+       >>> print MY_Delta (years = 1)
+       +1 year
+       >>> print MY_Delta (years = 5)
+       +5 years
+       >>> print MY_Delta (3, 1)
+       +3 months, +1 year
+       >>> print MY_Delta (1, 2)
+       +1 month, +2 years
+    """
+
+    def __init__ (self, months = 0, years = 0) :
         self.months = months
+        self.years  = years
     # end def __init__
 
     def dt_op (self, date, op) :
@@ -204,25 +224,33 @@ class Month_Delta (_Delta_) :
                 % (date, self.months)
                 )
         yd, m = divmod (date.month + self.months, 12)
-        return date.replace (month = m, year = date.year + yd)
+        return date.replace (month = m, year = date.year + self.years + yd)
     # end def dt_op
 
     def __cmp__ (self, rhs) :
-        return cmp (self.months, getattr (rhs, "months", rhs))
+        try :
+            rhs = rhs.years, rhs.months
+        except AttributeError :
+            pass
+        return cmp ((self.years, self.months), rhs)
     # end def __cmp__
 
     def __hash__ (self) :
-        return self.months
+        return hash ((self.years, self.months))
     # end def __hash__
 
     def __str__ (self) :
-        result = "%+d month" % (self.months)
-        if self.months != 1 :
-            result += "s"
-        return result
+        result = []
+        months = self.months
+        years  = self.years
+        if months :
+            result.append ("%+d month%s" % (months, ("", "s") [months != 1]))
+        if years :
+            result.append ("%+d year%s"  % (years,  ("", "s") [years  != 1]))
+        return ", ".join (result)
     # end def __str__
 
-# end class Month_Delta
+# end class MY_Delta
 
 Delta = Date_Time_Delta
 

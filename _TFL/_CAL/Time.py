@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Oct-2004 (CT) Creation
 #    17-Oct-2004 (CT) `Time.Delta` defined as `Time_Delta`
+#    17-Oct-2004 (CT) Adapted to renaming of accessor-functions of `Time_Delta`
 #    ««revision-date»»···
 #--
 
@@ -85,7 +86,7 @@ class Time (TFL.CAL._DTW_) :
     def __add__ (self, rhs) :
         result = self.as_delta () + self._delta (rhs)
         return self.__class__ \
-            (result.hours, result.minutes, result.seconds, result.microseconds)
+            (result.h, result.m, result.s, result.microseconds)
     # end def __add__
 
     def __sub__ (self, rhs) :
