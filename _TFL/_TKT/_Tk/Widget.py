@@ -33,12 +33,14 @@
 #                     to `_sty_map` index
 #    21-Feb-2005 (CT) `push_style` and `pop_style` implemented (and
 #                     `remove_style` removed as it doesn't work, anyway)
+#    21-Feb-2005 (RSC) added import of Eventname
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin
 import _TFL._TKT._Tk
+import _TFL._TKT._Tk.Eventname
 
 import weakref
 

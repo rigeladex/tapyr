@@ -26,9 +26,10 @@
 #    Provide symbolic names for Tkinter events (keys, mouse clicks, ...)
 #
 # Revision Dates
-#    13-Jan-2005 (CT) Creation
-#    24-Jan-2005 (CT) Creation continued
-#    17-Feb-2005 (MG) `double_click_*` added
+#    13-Jan-2005 (CT)  Creation
+#    24-Jan-2005 (CT)  Creation continued
+#    17-Feb-2005 (MG)  `double_click_*` added
+#    21-Feb-2005 (RSC) mouse_{enter,leave} focus_{enter,leave} added
 #    ««revision-date»»···
 #--
 
@@ -52,11 +53,15 @@ Eventname = TFL.TKT._Eventname \
     , double_click_3           = "<Double-Button-3>"
     , edit_schedule            = "<F4>"
     , exit                     = "<Control-Key-q>"
+    , focus_enter              = None
+    , focus_leave              = None
     , help                     = "<F1>"
     , history_complete         = "<Alt-q>"
     , history_next             = "<Alt-Down>"
     , history_previous         = "<Alt-Up>"
     , make_schedule            = "<F5>"
+    , mouse_enter              = "<Enter>"
+    , mouse_leave              = "<Leave>"
     , new                      = "<Control-Key-n>"
     , open                     = "<Control-Key-o>"
     , paste                    = "<Control-Key-v>"
