@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
+#    20-Oct-2004 (CT) Import for `Statement` added
 #    ««revision-date»»···
 #--
 
@@ -34,6 +35,7 @@ from   _TFL              import TFL
 import _TFL._SDG._C.Block
 import _TFL._SDG._C.Conditional
 import _TFL._SDG._C.Expression
+import _TFL._SDG._C.Statement
 
 class Case (TFL.SDG.C.Stmt_Group) :
     """Case clause of a switch statement"""

@@ -38,11 +38,13 @@
 #                     children_groups)
 #    24-Aug-2004 (MG) `Stmt_Group.default_cgi` changed
 #    25-Aug-2004 (MG) `Decl` added to `Stmt_Group`
+#    20-Oct-2004 (CT) Import for `_Scope_` added
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
+import _TFL._SDG._C._Scope_
 
 from   Regexp            import *
 

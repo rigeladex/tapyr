@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
+#    20-Oct-2004 (CT) `scope` set to `HC`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,8 @@ import _TFL._SDG._C.Node
 
 class Conditional (TFL.SDG.C.Node) :
     """Root class for conditional constructs"""
+
+    scope               = TFL.SDG.C.HC
 
     init_arg_defaults    = dict \
         ( condition      = ""

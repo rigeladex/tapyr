@@ -29,10 +29,12 @@
 #    30-Jul-2004 (CT) Creation
 #    12-Aug-2004 (MG) `description` and `eol_desc` added to formats
 #    23-Sep-2004 (MG) `vaps_channel_format` added
+#    20-Oct-2004 (CT) Import for `_Decl_` added
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
+import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Node
 
 class Typedef (TFL.SDG.C.Maybe_Const, TFL.SDG.Leaf) :

@@ -29,9 +29,13 @@
 #    11-Aug-2004 (MG) Creation
 #    13-Aug-2004 (CT) `Macro_If.c_format` simplified
 #                     (`%(if_tag)s` instead of `%(::.if_tag:)s`)
+#    20-Oct-2004 (CT) Imports for `Conditional` and `If_Stmt` added
 #    ««revision-date»»···
 #--
+
 from   _TFL                import TFL
+import _TFL._SDG._C.Conditional
+import _TFL._SDG._C.If_Stmt
 import _TFL._SDG._C.Macro
 
 class Macro_Else (TFL.SDG.C.Macro_Block) :
