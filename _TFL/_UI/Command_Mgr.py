@@ -113,6 +113,8 @@
 #     1-Feb-2005 (CT) `set_auto_short_cuts` added
 #     2-Feb-2005 (CT) `_Command_Group_` and `_add_group` factored
 #     2-Feb-2005 (CT) `Dyn_Group` and `add_dyn_group` added
+#     3-Feb-2005 (CT) `_cook_doc` changed to allow both functions and methods
+#                     (was up to now restricted to methods)
 #    ««revision-date»»···
 #--
 
