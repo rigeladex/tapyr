@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jan-2005 (CT) Creation
+#    24-Jan-2005 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -34,13 +35,21 @@ from   _TFL                 import TFL
 import _TFL._TKT._Tk
 import _TFL._TKT.Eventname
 
-Eventname = _Eventname \
-    ( click_1        = "<ButtonRelease-1>"
-    , click_2        = "<ButtonRelease-2>"
-    , click_3        = "<ButtonRelease-3>"
-    , copy           = "<Control-Key-c>"
-    , cut            = "<Control-Key-x>"
-    , paste          = "<Control-Key-v>"
+Eventname = TFL.TKT._Eventname \
+    ( click_1                  = "<ButtonRelease-1>"
+    , click_2                  = "<ButtonRelease-2>"
+    , click_3                  = "<ButtonRelease-3>"
+    , close                    = "<Control-Key-w>" ### XXX
+    , copy                     = "<Control-Key-c>"
+    , cut                      = "<Control-Key-x>"
+    , exit_after_save          = "<Control-Key-?>" ### XXX
+    , exit_without_save        = "<Control-Key-q>" ### XXX
+    , new                      = "<Control-Key-n>" ### XXX
+    , open                     = "<Control-Key-o>" ### XXX
+    , paste                    = "<Control-Key-v>"
+    , save                     = "<Control-Key-s>" ### XXX
+    , save_as                  = "<Control-Key-S>" ### XXX
+    , undo                     = "<Control-Key-z>"
     )
 
 if __name__ != "__main__" :

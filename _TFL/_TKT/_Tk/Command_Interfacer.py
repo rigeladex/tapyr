@@ -178,7 +178,7 @@ class CI_Event_Binder (_CI_) :
 class CI_Menu (_CI_Widget_) :
     """Implement a menu command interfacer for Tkinter"""
 
-    Widget_Type = CTK.Menu
+    Widget_Type = CTK.C_Menu
 
     ### command specific methods
     def add_command \
@@ -278,7 +278,7 @@ class CI_Menubar (CI_Menu) :
         parent.toplevel.configure (menu = self.widget)
         ### the following hacks around a bug in Tkinter 1.63 which doesn't
         ### correctly handle menus configured as menubar
-        hacked_name = string.replace (str (self.widget), ".", "#")
+        hacked_name = str (self.widget).replace (".", "#")
         parent.toplevel.children [hacked_name] = self.widget
     # end def __init__
 
@@ -386,5 +386,5 @@ class _CI_Toolbar_Group_ (_CI_) :
 # end class _CI_Toolbar_Group_
 
 if __name__ != "__main__" :
-    TFL.TKT._Export ("*")
+    TFL.TKT.Tk._Export ("*")
 ### __END__ TFL.TKT.Tk.Command_Interfacer

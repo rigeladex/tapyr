@@ -112,6 +112,9 @@
 #                     `Derived_Package_Namespace`
 #    20-Jan-2005 (CT) `_DPN_Auto_Importer_.__call__` changed to ignore
 #                     transitive import errors
+#    24-Jan-2005 (CT) Change of `20-Jan-2005` fixed
+#    24-Jan-2005 (CT) `_Import_Module` changed to return the imported module
+#                     (and rest-args removed)
 #    ««revision-date»»···
 #--
 
@@ -359,10 +362,10 @@ class Package_Namespace :
         linecache.clearcache ()
     # end def _Reload
 
-    def _Import_Module (self, * modules) :
+    def _Import_Module (self, module) :
         import _TFL.import_module ### avoid circular imports !!!
-        for m in modules :
-            _TFL.import_module.import_module (".".join ((self.__pname, m)))
+        return _TFL.import_module.import_module \
+            (".".join ((self.__pname, module)))
     # end def _Import_Module
 
 # end class Package_Namespace
@@ -391,16 +394,17 @@ class _DPN_Auto_Importer_ :
         try :
             return self._builtin_import (name, globals, locals, fromlist)
         except ImportError, exc :
-            if name in str (exc) :
+            msg = str (exc)
+            ns  = name.split (".")
+            mod = ns [-1]
+            if mod in msg :
                 ### <kludge-alert>
-                ###   Looking for `name` in `str (exc)` is fragile but I
+                ###   Looking for `mod` in `str (exc)` is fragile but I
                 ###   don't know what else to do here to find out if the
                 ###   impotr of `name` itself failed or if something imported
                 ###   by `name` failed
                 ### </kludge-alert>
                 ### ignore transitive ImportError's
-                ns  = name.split (".")
-                mod = ns [-1]
                 pkg = ".".join (ns [:-1])
                 if pkg and pkg in self._map :
                     import _TFL.import_module
