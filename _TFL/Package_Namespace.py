@@ -311,10 +311,10 @@ class Package_Namespace :
                             print s, p, mod
                             raise
                     if transitive or p_mod is mod :
-                        self._import_1 (mod, s, s, p, result, check_clashes)
+                        self._import_1 (mod, s, s, p, result, 1)
             symbols = symbols [1:]
         if symbols :
-            self._import_names (mod, symbols, result, check_clashes)
+            self._import_names (mod, symbols, result, 1)
     # end def _Export
     
 # end class Package_Namespace
