@@ -93,6 +93,7 @@
 #    28-Jul-2003 (CT) `_Reload` added
 #     1-Aug-2003 (CT) `_Reload` changed to reload in same sequence as
 #                     original import
+#    12-Sep-2003 (CT)  `_Reload` changed to clear the damned `linecache`
 #    ««revision-date»»···
 #--
 
@@ -343,6 +344,8 @@ class Package_Namespace :
             print "finished"
         finally :
             self.__reload = old_reload
+        import linecache
+        linecache.clearcache ()
     # end def _Reload
 
 # end class Package_Namespace

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Sep-2003 (CT) Creation
+#    12-Sep-2003 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -39,9 +40,7 @@ import _TFL._Meta.Object
 class DL_Item (TFL.Meta.Object) :
     """Item in a doubly linked list"""
 
-    _None = type ("Empty_Node", (), {})
-
-    def __init__ (self, value = _None, next = None, prev = None) :
+    def __init__ (self, value = None, next = None, prev = None) :
         self.value = value
         self.link_next (next)
         self.link_prev (prev)
@@ -59,8 +58,39 @@ class DL_Item (TFL.Meta.Object) :
             other.next = self
     # end def link_prev
 
+    def predecessors (self) :
+        """Iterator over predecessors of `self`."""
+        p = self
+        while p.prev :
+            p = p.prev
+            yield p
+    # end def predecessors
+
+    def successors (self) :
+        """Iterator over successors of `self`."""
+        p = self
+        while p.next :
+            p = p.next
+            yield p
+    # end def successors
+
+    def resplice (self, h, t) :
+        """Move DL_Items from `h` to `t` after `self` (removing that sequence
+           wherever it lived before).
+        """
+        h.prev.link_next (t.next)
+        t.link_next      (self.next)
+        self.link_next   (h)
+    # end def resplice
+
+    def __getattr__ (self, name) :
+        if name.startswith ("__") and name.endswith ("__") :
+            raise AttributeError, name
+        return getattr (self.value, name)
+    # end def __getattr__
+
     def __nonzero__ (self) :
-        return self.value is not self._None
+        return not (self.next is None or self.prev is None)
     # end def __nonzero__
 
     def __str__ (self) :
@@ -87,77 +117,130 @@ class DL_List (TFL.Meta.Object) :
        2
        3
        4
-       >>> dl.first
+       >>> dl.head
        0
-       >>> dl.last
+       >>> dl.tail
        4
     """
 
     def __init__ (self, * items) :
-        self.head = h = DL_Item ()
-        self.tail     = DL_Item (prev = h)
+        self._H = h = DL_Item ()
+        self._T     = DL_Item ()
+        self.clear  ()
         self.append (* items)
     # end def __init__
 
-    first = property (lambda s : s.head.next)
-    last  = property (lambda s : s.tail.prev)
+    head = property (lambda s : s._H.next)
+    tail = property (lambda s : s._T.prev)
 
     def append (self, * items) :
-        tail = self.tail
-        for item in items :
-            DL_Item (item, tail, tail.prev)
+        self._append (self._T.prev, * items)
     # end def append
 
+    def _append (self, p, * items) :
+        for item in items :
+            p = DL_Item (item, p.next, p)
+    # end def _append
+
     def clear (self) :
-        self.head.link_next (self.tail)
+        self._H.link_next (self._T)
     # end def clear
 
+    def item (self, index) :
+        if index >= 0 :
+            i = index
+            r = self.head
+            while i > 0 and r :
+                i -= 1
+                r  = r.next
+        else :
+            i = - index - 1
+            r = self.tail
+            while i > 0 and r :
+                i -= 1
+                r  = r.prev
+        if not r :
+            raise IndexError, index
+        return r
+    # end def item
+
     def __iter__ (self) :
-        p = self.head
-        while p.next :
-            yield p.next
-            p = p.next
+        return self._H.successors ()
     # end def __iter__
 
-    def itervalues (self) :
-        for item in iter (self) :
-            yield item.value
-    # end def itervalues
-
     def pop (self) :
-        last   = self.last
-        result = last.value
-        if last.prev is not None :
-            last.prev.link_next (self.tail)
-        return result
+        return self.remove (self.tail)
     # end def pop
 
     def pop_front (self) :
-        first  = self.first
-        result = first.value
-        if first.next is not None :
-            self.head.link_next (first.next)
-        return result
+        return self.remove (self.head)
     # end def pop_front
 
     def prepend (self, * items) :
-        p = self.head
-        for item in items :
-            p = DL_Item (item, p.next, p)
+        self._append (self._H, * items)
     # end def prepend
 
+    def remove (self, item) :
+        if item is self._H or item is self._T :
+            raise IndexError, error
+        item.prev.link_next (item.next)
+        return item.value
+    # end def remove
+
     def reverse_iter (self) :
-        p = self.tail
-        while p.prev :
-            yield p.prev
-            p = p.prev
+        return self._T.predecessors ()
     # end def reverse_iter
 
+    def reverse_values (self) :
+        for item in self.reverse_iter () :
+            yield item.value
+    # end def reverse_values
+
+    def values (self) :
+        for item in iter (self) :
+            yield item.value
+    # end def values
+
     def __nonzero__ (self) :
-        return self.head.next is not self.tail
+        return self._H.next is not self._T
     # end def __nonzero__
 
 # end class DL_List
+
+class DL_List_Counted (DL_List) :
+    """DL_List counting its elements
+
+       >>> dlc = DL_List_Counted (* range (5))
+       >>> dlc.count
+       5
+       >>> dlc.pop()
+       >>> len (dlc)
+       4
+       >>> dlc.append (42)
+       >>> len (dlc)
+       5
+    """
+
+    def _append (self, p, * items) :
+        self.__super._append (p, * items)
+        self.count += len (items)
+    # end def _append
+
+    def clear (self) :
+        self.__super.clear ()
+        self.count = 0
+    # end def clear
+
+    def remove (self, item) :
+        self.__super.remove (item)
+        self.count -= 1
+    # end def remove
+
+    def __len__ (self) :
+        return self.count
+    # end def __len__
+
+# end class DL_List_Counted
 
 ### unit-test code ############################################################
 
