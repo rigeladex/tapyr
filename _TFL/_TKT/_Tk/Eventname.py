@@ -33,6 +33,7 @@
 #    22-Feb-2005 (CT)  s/mouse_/any_/
 #    22-Feb-2005 (CT)  Binding for `focus_enter` and `focus_leave` added
 #    22-Feb-2005 (RSC) mouse_motion, cursor movement and open_ close_ events
+#    23-Feb-2005 (CT)  `mouse_enter` and `mouse_leave` reintroduced
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,8 @@ Eventname = TFL.TKT._Eventname \
     , history_next             = "<Alt-Down>"
     , history_previous         = "<Alt-Up>"
     , make_schedule            = "<F5>"
+    , mouse_enter              = "<Enter>" ### Matches more than just `mouse`
+    , mouse_leave              = "<Leave>" ### Matches more than just `mouse`
     , mouse_motion             = "<Motion>"
     , new                      = "<Control-Key-n>"
     , open                     = "<Control-Key-o>"
