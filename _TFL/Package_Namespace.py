@@ -117,6 +117,7 @@ class _Module_Space :
         # print "_Module_Space._load: __name      =", self.__name
         # print "                     module_name =", module_name
         q_name = "%s.%s" % (self.__name, module_name)
+        print "=== ", q_name
         module = __import__ (q_name, {}, {}, (module_name, ))
         # print "                     module      =", module
         setattr (self, module_name, module)
