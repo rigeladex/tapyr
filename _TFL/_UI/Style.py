@@ -29,6 +29,7 @@
 #    25-Jan-2005 (CT) Creation
 #    26-Jan-2005 (CT) `Style` converted from function to object to allow
 #                     `add` and `Style.xxx`
+#    26-Jan-2005 (BRU) Added style attributes to `_allowed`, comments
 #    ««revision-date»»···
 #--
 
@@ -45,14 +46,23 @@ class M_Style (TFL.Meta.M_Data_Class) :
     class _allowed (type) :
         ### this class must define the names of all valid style attributes
 
-        # colors
-        background     = None
-        foreground     = None
+        # callback function
+        callback       = None
+        
+        # colors              
+        background     = None # "orange", "#FF2F1F"
+        foreground     = None # "red"   , "#FFF"
 
         # font attributes
-        font           = None
-        fontsize       = None
+        font_family    = None # "Sans", ...
+        font_style     = None # 'normal', 'oblique', 'italic'
+        font_size      = None # "xx-small", ..."small", "medium", ..."xx-large"
+        underline      = None # 'single', 'double', 'low', 'none'
 
+        # misc
+        mouse_cursor   = None # 'crosshair', 'default', 'fleur', 'hand',
+                              # 'hourglass', 'text', 'watch'
+                      
     # end class _allowed
 
 # end class M_Style
