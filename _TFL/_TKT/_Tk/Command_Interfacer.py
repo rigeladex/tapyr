@@ -212,7 +212,10 @@ class CI_Menu (_CI_Widget_) :
     # end def index
 
     def set_auto_short_cuts (self) :
-        self.wtk_widget.set_auto_short_cuts ()
+        try :
+            self.wtk_widget.set_auto_short_cuts ()
+        except CTK.TclError :
+            pass
     # end def set_auto_short_cuts
 
     ### command specific methods
