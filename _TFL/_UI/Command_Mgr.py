@@ -125,6 +125,8 @@
 #     4-Feb-2005 (CT) `_Precondition_Checker_` simplified
 #    10-Feb-2005 (CT) Doctests adapted to change in returnvalue of
 #                     `add_command`
+#    10-Feb-2005 (MG) `Command_Delegator.__init__`: handling of
+#                     `evaluate_eagerly` added
 #    ««revision-date»»···
 #--
 
@@ -383,6 +385,8 @@ class Command_Delegator (Command) :
             precondition = lambda : precondition and self._check_precondition ()
         else :
             precondition = lambda : self._check_precondition ()
+        precondition.evaluate_eagerly = getattr \
+            (self.delegator_precondition, "evaluate_eagerly", False)
         self.__super.__init__ \
             (name, command = None, precondition = precondition, ** kw)
     # end def __init__
