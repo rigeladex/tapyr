@@ -31,6 +31,7 @@
 #    13-Aug-2004 (MG) Testcase update (new features in C-document)
 #    23-Sep-2004 (CT) Testcase update (cosmetic fixes in eol-comments)
 #    27-Sep-2004 (CT) Testcase for array with only a single element added
+#    21-Oct-2004 (CT) Testcase for Macro_If in headerfile added
 #    ««revision-date»»···
 #--
 
@@ -284,6 +285,15 @@ line3 long
 ...                , C.Macro_Else (C.Define ("path", "", "else"))
 ...                )
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+#if cond1
+  #define path then
+#elif cond2
+  #define path elseif
+#else
+  #define path else
+#endif /* if cond1 */
+
+>>> print NL.join ([l.rstrip () for l in i.as_h_code ()])
 #if cond1
   #define path then
 #elif cond2

@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
 #    20-Oct-2004 (CT) `scope` set to `HC`
+#    21-Oct-2004 (CT) `scope` argument passed to `_convert`
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ class Conditional (TFL.SDG.C.Node) :
 
     _autoconvert         = dict \
         ( condition      = lambda s, k, v
-              : s._convert (v, TFL.SDG.C.Expression)
+              : s._convert (v, TFL.SDG.C.Expression, scope = TFL.SDG.C.HC)
         )
 
 # end class Conditional
