@@ -49,9 +49,14 @@
 #     1-Jun-2002 (CT) Try `sys._getframe` in `frame` instead of raising
 #                     `AssertionError`
 #    12-Aug-2003 (CT) Error in `_doc_test` removed
-#     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
+#     9-Mar-2004 (CT) `_doc_test` changed to not use `import`
+#    13-Aug-2004 (CT) `Scope` derived from `TFL.Meta.Object`
+#    13-Aug-2004 (CT) `Object_Scope` dervied from `Scope`
 #    ««revision-date»»···
 #--
+
+from   _TFL import TFL
+import _TFL._Meta.Object
 
 import sys
 import traceback
@@ -108,7 +113,7 @@ def info (level = -3) :
     return traceback.extract_stack () [level] [:3]
 # end def info
 
-class Scope :
+class Scope (TFL.Meta.Object) :
     """Global and local variables visible in caller's scope.
 
        The variables are available as attributes and via the index operator.
@@ -157,6 +162,55 @@ class Scope :
 
 # end class Scope
 
+class Object_Scope (Scope) :
+    """Provide access to the caller's locals and globals and to the
+       attributes of the object passed in.
+
+       >>> from Filename import *
+       >>> f = Filename ("/foo/bar/baz.dat")
+       >>> c = Object_Scope  (f)
+       >>> c.f
+       Filename (/foo/bar/baz.dat)
+       >>> c.name
+       '/foo/bar/baz.dat'
+       >>> c.base
+       'baz'
+       >>> c.ext
+       '.dat'
+       >>> c.base_ext
+       'baz.dat'
+       >>> c.directory
+       '/foo/bar'
+       >>> c.directories
+       <bound method Filename.directories of Filename (/foo/bar/baz.dat)>
+       >>> c.directories()
+       ['foo', 'bar']
+    """
+
+    def __init__ (self, object) :
+        self.__super.__init__ (depth = 1, globs = object.__dict__)
+        self.object = object
+    # end def __init__
+
+    def __getitem__ (self, index) :
+        try :
+            return self.__super.__getitem__ (index)
+        except NameError :
+            o = self.object
+            for k in index.split (".") :
+                o = getattr (o, k)
+            return o
+    # end def __getitem__
+
+    def __getattr__ (self, name) :
+        try :
+            return self.__super.__getattr__ (name)
+        except AttributeError :
+            return getattr (self.object, name)
+    # end def __getattr__
+
+# end class Object_Scope
+
 ### unit-test code ############################################################
 
 if __debug__ :
@@ -175,9 +229,6 @@ if __debug__ :
 
 ### end unit-test code ########################################################
 
-from _TFL import TFL
-
 if __name__ != "__main__" :
     TFL._Export_Module ()
-
 ### __END__ Caller

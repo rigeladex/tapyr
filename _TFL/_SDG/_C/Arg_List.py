@@ -29,6 +29,7 @@
 #    28-Jul-2004 (CT) Creation
 #     3-Aug-2004 (CT) Don't redefine the value of `Decl`
 #    12-Aug-2004 (MG) `default_cgi` added
+#    13-Aug-2004 (CT) `base_indent2` replaced by `base_indent * 2`
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,7 @@ class Arg_List (TFL.SDG.C.Node) :
     children_group_names = (default_cgi, ) = (TFL.SDG.C.Node.Decl, )
 
     h_format = c_format  = \
-        """%(:sep=%(base_indent2)s, :*decl_children:)s"""
+        """%(:sep=%(base_indent * 2)s, :*decl_children:)s"""
 
     arg_pat              = Regexp \
         ( r"^"

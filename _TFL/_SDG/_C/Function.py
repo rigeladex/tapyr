@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
+#    13-Aug-2004 (CT) `base_indent2` replaced by `base_indent * 2`
 #    ««revision-date»»···
 #--
 
@@ -53,8 +54,8 @@ class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
 
     _h_format = _c_format  = \
         ( """%(::*return_type:)s %(name)s"""
-              """%(:front=%('''\\n''')s%(base_indent2)s( """
-                """¡rear=%('''\\n''')s%(base_indent2)s)"""
+              """%(:front=%('''\\n''')s%(base_indent * 2)s( """
+                """¡rear=%('''\\n''')s%(base_indent * 2)s)"""
                 """¡empty= (void)"""
                 """:*arg_list"""
                 """:)s"""
@@ -86,8 +87,8 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
         ( ( _mod_format
           , _Function_._h_format
           , """%(:empty=;"""
-              """¡front=;%('''\\n''')s%(base_indent2)s"""
-              """¡sep=%(base_indent2)s"""
+              """¡front=;%('''\\n''')s%(base_indent * 2)s"""
+              """¡sep=%(base_indent * 2)s"""
               """:*description:)s
                >
           """

@@ -46,35 +46,12 @@
 #    12-Aug-2004 (MG) `add`: unnest pass childrens (backward compatibility)
 #    12-Aug-2004 (CT) `indent_anchor` added
 #    13-Aug-2004 (MG) `formatted` Parameter `ht_width` added
+#    13-Aug-2004 (CT) `* args, ** kw` added to `_formatted_attrs`
+#    13-Aug-2004 (CT) Replaced `TFL.Caller.Scope` by `TFL.Caller.Object_Scope`
+#    13-Aug-2004 (CT) `node_type` removed
+#    13-Aug-2004 (CT) `base_indent2` removed
 #    ««revision-date»»···
 #--
-
-"""
-from _TFL._SDG.Node import *
-class T_Node (Node) :
-    init_arg_defaults = dict (hansi = "kieselack")
-
-root = T_Node \
-    ( T_Node ( Leaf ( name = "a.1")
-           , Leaf ( name = "a.2")
-           , name  = "a"
-           , hansi = "A"
-           )
-    , T_Node ( Node ( name = "b.x")
-           , T_Node ( Node ( name = "b.y.1")
-                  , Node ( name = "b.y.2")
-                  , name  = "b.y"
-                  , hansi = "B.Y"
-                  )
-           , Leaf ( name = "b.z")
-           , name = "b"
-           )
-    , name = "R"
-    )
-print "\n".join (root.as_repr (base_indent = "  "))
-print "\n".join (root.as_str  (base_indent = "  "))
-
-"""
 
 from   _TFL              import TFL
 import _TFL.Caller
@@ -90,7 +67,170 @@ class Invalid_Node (StandardError) :
 # end class Invalid_Node
 
 class Node :
-    """Node of a structured document"""
+    """Node of a structured document.
+
+       A node has attributes and children. Attributes specify information
+       about the node itself, e.g., name, type, children group index.
+       Children define lower-level nodes.
+
+       Attributes
+       ==========
+
+       Normally, attributes must be passed as keyword arguments to
+       `__init__`.
+
+       - `init_arg_defaults` defines which attribute names are allowed
+         for a specific node type and specify default values for these
+         attributes.
+
+       - `_autoconvert` is a dictionary mapping attribute names to
+         conversion functions called automatically during object
+         initialization for all attribute values specified by the
+         caller.
+
+       - `front_args` defines the names of attributes that can be
+         passed as normal arguments at the beginning of the argument
+         list.
+
+       - `rest_args` defines the name of a single attributes that
+         takes all non-named arguments which aren't `front_args`.
+
+       Children
+       ========
+
+       For non-leaf nodes, children can be passed to `__init__` behind
+       the `front_args` and keyword arguments if any (if `rest_args`
+       is defined, children cannot be passed to `__init__`).
+
+       Children can be split into different groups.
+
+       - Each node type defines a children group index `cgi` to be
+         used as default.
+
+         `default_cgi` of the parent will be used to add a node with a
+         `cgi` of None.
+
+       - `children_group_names` defines the names of the children
+         groups supported by a node type.
+
+         For Node, only the group `Body` is defined.
+
+       - For each children group xxx, a property xxx_children allows
+         access to the group's children.
+
+       - `children` iterates over all children of all groups in some
+         unspecified sequence.
+
+       Formats
+       =======
+
+       Formats define how to format a node and its children for a
+       specific purpose.
+
+       - `_list_of_formats` specifies the names of the applicable
+         formats.
+
+       - Each format is a string defined as a class variable.
+
+       - The meta class M_Node transforms the format strings into
+         lists of formatter objects.
+
+       - Each line of the format string is handled by a separate
+         formatter object that controls the indentation and other
+         aspects of the formatting process.
+
+       - A line of a format string can contain
+
+         * A leading indentation marker comprising zero or more `>`
+           characters. Each `<` corresponds to the number of spaces
+           specified by `base_indent`.
+
+           If base_indent is "  " (two spaces), a leading indentation
+           marker of `>>>` will result in an leading indentation of
+           six spaces for the line in question (relative to the other
+           lines of the format).
+
+         * Plain text.
+
+           This is put into the formatted representation of the node
+           as is.
+
+         * A format string as required by Python's dictionary
+           interpolation. This has the form
+           `%(<someexpression>)<format-spec>`.
+
+           `<someexpression>` is evaluated in the context of the node
+           object and its `formatted` operation. The result is put in
+           to the formatted representation of the node.
+
+           `<format-spec>` is documented in the Python Library
+           Reference manual, in the section `String Formatting
+           Operations`.
+
+           A simple example is `%(base_indent * 2)s` which will add
+           two times `node.base_indent` to the formatted representation.
+
+         * A complex SDG format specification. This has the form
+           `%(:<control>:<key-spec>:)<format-spec>` and is described
+           in more detail below.
+
+         * A format line containing a complex SDG format specification
+           can expand to more than a single line of output in the
+           formatted representation of a node.
+
+         * All other lines of a format specification must expand to a
+           single line of output (otherwise indentation is messed up).
+
+       Complex SDG format specifications
+       =================================
+
+       tdb
+
+       Example
+       =======
+
+       `str_format` is used to convert a node to a string when
+       `__str__` is called.
+
+           str_format           = '''
+               %(__class__.__name__)s %(name)s
+               >%(::*children:)s
+           '''
+
+       The first line of `str_format` contains two simple format
+       specifications which expand to the class-name and name of a
+       node. The second line starts with an indentation level marker
+       specifying a relative indentation of one `base_indent` followed
+       by a complex SDG format specification. `%(::*children:)s`
+       expands to a formatted representation of the children of the
+       node using the same format specification applied to the node
+       itself (in this case, `str_format`):
+
+       >>> class T_Node (Node) :
+       ...     init_arg_defaults = dict (hansi = "kieselack")
+       ...
+       >>> root = T_Node (
+       ...       T_Node ( Leaf ( name = "a.1")
+       ...              , Leaf ( name = "a.2")
+       ...              , name  = "a"
+       ...              , hansi = "A"
+       ...              )
+       ...     , T_Node ( Node ( name = "b.x")
+       ...              , Leaf ( name = "b.z")
+       ...              , name = "b"
+       ...              )
+       ...     , name = "R"
+       ...     )
+       >>> print root
+       T_Node R
+           T_Node a
+               Leaf a.1
+               Leaf a.2
+           T_Node b
+               Node b.x
+               Leaf b.z
+
+    """
 
     __metaclass__        = TFL.SDG.M_Node
 
@@ -107,19 +247,18 @@ class Node :
 
     _list_of_formats     = ("repr_format", "str_format")
     repr_format          = """
-        %(node_type)s \\
-        >>( %(:sep=, :*children,@_formatted_attrs:)s
-        >>)
+        %(__class__.__name__)s \\
+        >%(:front=( ¡sep=, :>*children,>@_formatted_attrs:)s
+        >)
     """
     str_format           = """
-        %(node_type)s %(name)-20.20s
+        %(__class__.__name__)s %(name)s
         >%(::*children:)s
     """
 
     def __init__ (self, * children, ** kw) :
-        self.parent    = None
-        self.node_type = nt = self.__class__.__name__
-        n              = len (children)
+        self.parent = None
+        n = len (children)
         for a in self.front_args :
             if children :
                 if a in kw :
@@ -139,7 +278,7 @@ class Node :
             children            = ()
         self._init_kw (kw)
         if not self.name :
-            self.name = "__%s_%d" % (nt, self.id)
+            self.name = "__%s_%d" % (self.__class__.__name__, self.id)
         self._reset_children ()
         self.add (* children)
     # end def __init__
@@ -175,7 +314,7 @@ class Node :
             , base_indent = base_indent
             , ** kw
             )
-        context = TFL.Caller.Scope (globs = self.__dict__)
+        context = TFL.Caller.Object_Scope (self)
         for f in format :
             indent = f.indent_level * base_indent
             indent_offset += len (indent)
@@ -225,7 +364,7 @@ class Node :
                 yield c
     # end def _children_iter
 
-    def _formatted_attrs (self, format_name, base_indent = None) :
+    def _formatted_attrs (self, format_name, * args, ** kw) :
         for k, v in sorted (self.init_arg_defaults.iteritems ()) :
             a = getattr (self, k)
             if a != v :
@@ -244,7 +383,6 @@ class Node :
                 setattr (self, k, v)
             else :
                 kw_err [k] = v
-        self.base_indent2 = self.base_indent * 2
         if kw_err :
             print self.__class__, self.init_arg_defaults
             raise TypeError, "unexpected keyword arguments: %s" % kw_err
@@ -291,7 +429,7 @@ class Node :
 # end class Node
 
 class Leaf (Node) :
-    """Leaf node which doesn't have children"""
+    """Leaf node which doesn't allow children"""
 
     children_group_names = () ### doesn't allow any children
 
@@ -300,6 +438,34 @@ class Leaf (Node) :
     # end def insert
 
 # end class Leaf
+
+### debugging code to be pasted into an interactive interpreter
+"""
+from _TFL._SDG.Node import *
+class T_Node (Node) :
+    init_arg_defaults = dict (hansi = "kieselack")
+
+root = T_Node \
+    ( T_Node ( Leaf ( name = "a.1")
+             , Leaf ( name = "a.2")
+             , name  = "a"
+             , hansi = "A"
+             )
+    , T_Node ( Node ( name = "b.x")
+             , T_Node ( Node ( name = "b.y.1")
+                      , Node ( name = "b.y.2")
+                      , name  = "b.y"
+                      , hansi = "B.Y"
+                      )
+             , Leaf ( name = "b.z")
+             , name = "b"
+             )
+    , name = "R"
+    )
+print root
+print repr (root)
+
+"""
 
 if __name__ != "__main__" :
     TFL.SDG._Export ("*")

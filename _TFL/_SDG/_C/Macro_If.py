@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    11-Aug-2004 (MG) Creation
+#    13-Aug-2004 (CT) `Macro_If.c_format` simplified
+#                     (`%(if_tag)s` instead of `%(::.if_tag:)s`)
 #    ««revision-date»»···
 #--
 from   _TFL                import TFL
@@ -62,11 +64,11 @@ class Macro_If (TFL.SDG.C._Macro_, TFL.SDG.C.If) :
     if_tag              = "if"
 
     h_format = c_format = "\n".join \
-        ( ( """#%(::.if_tag:)s %(::*condition:)s"""
+        ( ( """#%(if_tag)s %(::*condition:)s"""
           , """>%(::*then_children:)s"""
           , """%(::*elseif_children:)s"""
           , """%(::*else_children:)s"""
-          , """#endif /* %(::.if_tag:)s %(::*condition:)s */"""
+          , """#endif /* %(if_tag)s %(::*condition:)s */"""
           )
         )
 

@@ -27,7 +27,9 @@
 #
 # Revision Dates
 #    11-Aug-2004 (MG) Creation
-#    12-Aug-2004 (MG) `cgi` set to ßDecl`
+#    12-Aug-2004 (MG) `cgi` set to `Decl`
+#    13-Aug-2004 (CT) `Include.c_format` simplified
+#                     (`%(filename)s` instead of `%(::.filename:)s`)
 #    ««revision-date»»···
 #--
 
@@ -46,7 +48,7 @@ class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
         ( filename         = lambda s, k, v : "<%s>" % (v, )
         )
 
-    h_format = c_format    = """#include %(::.filename:)s"""
+    h_format = c_format    = """#include %(filename)s"""
 
 # end class Include
 
@@ -54,9 +56,11 @@ Sys_Include = Include
 
 class App_Include (Include) :
     """C-app-include statement"""
+
     _autoconvert           = dict \
         ( filename         = lambda s, k, v : '"%s"' % (v, )
         )
+
 # end class App_Include
 
 if __name__ != "__main__" :

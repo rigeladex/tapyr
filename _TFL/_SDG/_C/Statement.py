@@ -34,6 +34,8 @@
 #                     first, `_Scope_` second (instead of vice versa)
 #                     to get redefined `_Statement_.children_group_names`
 #    12-Aug-2004 (MG) Formats of `Stmt_Group` changed
+#    13-Aug-2004 (CT) Formats of `Stmt_Group` corrected (removed undefined
+#                     children_groups)
 #    ««revision-date»»···
 #--
 
@@ -81,10 +83,7 @@ class Stmt_Group (_Statement_, TFL.SDG.C._Scope_) :
 
     star_level           = 2
     _common_format       = """
-        %(::*decl_children:)s
-        %(::*head_children:)s
         %(::*body_children:)s
-        %(::*tail_children:)s
     """
     h_format = c_format  = _common_format
 

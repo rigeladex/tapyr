@@ -31,6 +31,8 @@
 #    12-Aug-2004 (MG) Convert the `args` paremeter from `None` to `""` and
 #                     from `""` to `None` for backward compatibility
 #    12-Aug-2004 (MG) `description` added to formats
+#    13-Aug-2004 (CT) `Macro.c_format` simplified
+#                     (`%(name)s` instead of `%(::.name:)s`)
 #    ««revision-date»»···
 #--
 
@@ -65,7 +67,7 @@ class Macro (_Macro_, TFL.SDG.Leaf) :
     rest_args              = "lines"
 
     h_format = c_format    = """
-        #%(::.name:)s %(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
+        #%(name)s %(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
         >%(::*description:)s
     """
 
@@ -100,7 +102,6 @@ class Macro_Block (_Macro_, TFL.SDG.C.Stmt_Group) :
         )
 
 # end class Macro_Block
-
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*", "_Macro_")

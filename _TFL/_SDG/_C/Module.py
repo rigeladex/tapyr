@@ -64,7 +64,7 @@ m.add ( Var ( "TDFT_Sign_Mask"
             )
       )
 m.add (Multiple_Var ("float", "y", "z", "u", init="0.0"))
-m.add (Stmt_Group ("y = 42; ", "z = 0", cgi = TFL.SDG.C.Node.Tail))
+m.add (Stmt_Group ("y = 42; ", "z = 0"))
 m.add ( Function ( "int", "bar", "void"
                  , "froppel ()"
                  , Block ("foobar ()", "zoppel ()")
