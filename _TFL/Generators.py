@@ -35,6 +35,8 @@
 #    30-Jul-2004 (CT) `pairwise` changed to use `Look_Ahead_Gen`
 #    12-Aug-2004 (CT) Additional doctest for `Look_Ahead_Gen` added to show
 #                     behavior for single element sequence
+#    21-Sep-2004 (CT) `Look_Ahead_Gen` changed to call `.next` lazily instead
+#                     of (over)-eagerly
 #    ««revision-date»»···
 #--
 
@@ -67,27 +69,28 @@ class Look_Ahead_Gen (object) :
 
     def __init__ (self, source) :
         self.source    = source    = iter (source)
-        self._sentinel = _sentinel = object ()
-        try :
-            self.succ  = source.next ()
-        except StopIteration :
-            self.succ  = _sentinel
+        self._sentinel = self.succ = object ()
     # end def __init__
 
     def __nonzero__ (self) :
-        return self.succ is not self._sentinel
+        try :
+            if self.succ is self._sentinel :
+                self.succ = self.source.next ()
+        except StopIteration :
+            return False
+        return True
     # end def __nonzero__
 
     def __iter__ (self) :
         source    = self.source
         _sentinel = self._sentinel
-        while self.succ is not _sentinel :
-            succ = self.succ
-            try :
-                self.succ = source.next ()
-            except StopIteration :
+        while True :
+            if self.succ is _sentinel :
+                next      = source.next ()
+            else :
+                next      = self.succ
                 self.succ = _sentinel
-            yield succ
+            yield next
     # end def __iter__
 
 # end class Look_Ahead_Gen
