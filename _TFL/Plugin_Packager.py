@@ -212,8 +212,8 @@ class Plugin_Packager (TFL.Meta.Object) :
         hide.target_path = sos.path.join \
             (Filename (hide.target_path).directory, "_Hide", "__init__.py")
         self._make_target_dir   (hide)
-        self.hides = [hide]
         self._write_target_file (hide, "")
+        self.hides = [hide]
     # end def _rewrite_package_plugin
 
     def _rewrite_packages (self) :
