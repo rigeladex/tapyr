@@ -29,6 +29,7 @@
 #    10-Nov-2004 (CT) Creation
 #    14-Nov-2004 (CT) `_new_week` added
 #    15-Nov-2004 (CT) More doctests added
+#    10-Dec-2004 (CT) Small fixes
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class _Cal_Dict_ (dict) :
             except KeyboardInterrupt :
                 raise
             except StandardError, exc :
-                print exc
+                print "_Cal_Dict_", self.creator, exc
                 raise KeyError, key
             else :
                 return result
@@ -74,7 +75,7 @@ class Calendar (TFL.Meta.Object) :
        >>> y = C.year [2004]
        >>> y
        Year (2004)
-       >>> y == C.year [2004]
+       >>> y is C.year [2004]
        True
        >>> C = Calendar ()
        >>> len (C.week)
@@ -89,7 +90,7 @@ class Calendar (TFL.Meta.Object) :
     week            = property (lambda s : s._weeks)
     year            = property (lambda s : s._years)
 
-    def __init__ (self, name = None) :
+    def __init__ (self, name = None, root_path = None) :
         self.name   = name
         self._days  = _Cal_Dict_ (self, self._new_day)
         self._weeks = _Cal_Dict_ (self, self._new_week)
@@ -97,7 +98,9 @@ class Calendar (TFL.Meta.Object) :
     # end def __init__
 
     def _new_day (self, date) :
-        return TFL.CAL.Day (self, date)
+        result = TFL.CAL.Day (self, date)
+        ### XXX read appointments
+        return result
     # end def _new_day
 
     def _new_week (self, wko) :
@@ -106,7 +109,7 @@ class Calendar (TFL.Meta.Object) :
         if wko not in self._weeks :
             if d.month == 1 :
                 y = self.year [d.year - 1]
-            elif month == 12 :
+            elif d.month == 12 :
                 y = self.year [d.year + 1]
         if wko in self._weeks :
             return self._weeks [wko]

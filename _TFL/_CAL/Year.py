@@ -58,6 +58,9 @@
 #    14-Nov-2004 (CT) `Day.wk_ordinal` added and used
 #    14-Nov-2004 (CT) `Year._init_` changed to put weeks into `cal._weeks`
 #    15-Nov-2004 (CT) `Day.wk_ordinal` moved to `Date`
+#    10-Dec-2004 (CT) `_Cal_` removed (always use `CAl.Calendar`)
+#    10-Dec-2004 (CT) Use `cal.day` to create days (instead of calling `Day`
+#                     directly)
 #    ««revision-date»»···
 #--
 
@@ -71,12 +74,6 @@ import _TFL.d_dict
 
 from   predicate import *
 import sos
-
-class _Cal_ (TFL.Meta.Object) :
-    _days  = {}
-    _weeks = {}
-    _years = {}
-# end class _Cal_
 
 class Day (TFL.Meta.Object) :
     """Model a single day in a calendar"""
@@ -194,7 +191,7 @@ class Week (TFL.Meta.Object) :
             d         = self.mon
             cal       = self.year.cal
             self.days = days = [d]
-            days.extend ([Day (cal, d.date + i) for i in range (1, 7)])
+            days.extend ([cal.day [d.date + i] for i in range (1, 7)])
     # end def populate
 
     def __cmp__ (self, rhs) :
@@ -323,7 +320,10 @@ class Year (TFL.Meta.Object) :
 
     number          = property (lambda s : s.year)
 
-    def __new__ (cls, year = None, cal = _Cal_, populate = False) :
+    def __new__ (cls, year = None, cal = None, populate = False) :
+        if cal is None :
+            import _TFL._CAL.Calendar
+            cal = TFL.CAL.Calendar ()
         D     = TFL.CAL.Date
         Table = cal._years
         if year is None :
@@ -346,8 +346,8 @@ class Year (TFL.Meta.Object) :
         for m in range (1, 13) :
             month   = mmap [m] = Month (self, m)
             months.append (month)
-        self.head   = h = Day (cal, D (year = year, month = 1,  day = 1))
-        self.tail   = t = Day (cal, D (year = year, month = 12, day = 31))
+        self.head   = h = cal.day [D (year = year, month = 1,  day = 1)]
+        self.tail   = t = cal.day [D (year = year, month = 12, day = 31)]
         for w, d in self._week_creation_iter (D, cal, year, h) :
             week = Week (self, w, d)
             wmap [week.number] = week
@@ -398,12 +398,12 @@ class Year (TFL.Meta.Object) :
         if h.weekday == 0 :
             d = h
         else :
-            d = Day (cal, h.date - h.weekday)
+            d = cal.day [h.date - h.weekday]
         yield h.week, d
-        d = Day (cal, d.date + 7)
+        d = cal.day [d.date + 7]
         while d.year == year :
             yield d.week, d
-            d = Day (cal, d.date + 7)
+            d = cal.day [d.date + 7]
     # end def _week_creation_iter
 
     def __getattr__ (self, name) :
