@@ -31,6 +31,9 @@
 #    17-Jan-2003 (CT) `M_` prefixes added
 #    20-Jan-2003 (CT) Docstring of `M_Automethodwrap` improved
 #     3-Feb-2003 (CT) File renamed from `Class.py` to `M_Class.py`
+#     1-Apr-2003 (CT) `M_Class_SW` factored
+#     1-Apr-2003 (CT) `M_Autoproperty` removed from `M_Class`
+#                     (optimize, optimize)
 #    ««revision-date»»···
 #--
 
@@ -80,18 +83,12 @@ class M_Autorename (_M_Type_) :
     """
 
     def __new__ (meta, name, bases, dict) :
-        if dict.has_key ("_real_name") :
-            name, real_name = dict ["_real_name"], name
+        real_name = name
+        if "_real_name" in dict :
+            name = dict ["_real_name"]
             del dict ["_real_name"]
-        else :
-            real_name = name
-        try :
-            dict ["__real_name"] = real_name
-        except TypeError :
-            print name, bases, [id (b) for b in bases], type (dict)
-            raise
-        result = super (M_Autorename, meta).__new__ (meta, name, bases, dict)
-        return result
+        dict ["__real_name"] = real_name
+        return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
@@ -210,7 +207,11 @@ class M_Automethodwrap (_M_Type_) :
 
 # end class M_Automethodwrap
 
-class M_Class (M_Autorename, M_Autosuper, M_Autoproperty, M_Automethodwrap) :
+class M_Class_SW (M_Autosuper, M_Automethodwrap) :
+    pass
+# end class M_Class_SW
+
+class M_Class (M_Autorename, M_Class_SW) :
     pass
 # end class M_Class
 
