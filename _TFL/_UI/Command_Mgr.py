@@ -115,6 +115,7 @@
 #     2-Feb-2005 (CT) `Dyn_Group` and `add_dyn_group` added
 #     3-Feb-2005 (CT) `_cook_doc` changed to allow both functions and methods
 #                     (was up to now restricted to methods)
+#     3-Feb-2005 (MG) Precondition handling for `Command_Delegator` fixed
 #    ««revision-date»»···
 #--
 
@@ -368,6 +369,11 @@ class Command_Delegator (Command) :
                              ### the addressee command manager
 
     def __init__ (self, name, precondition = None, ** kw) :
+        self.delegator_precondition = precondition
+        if precondition :
+            precondition = lambda : precondition and self._check_precondition ()
+        else :
+            precondition = lambda : self._check_precondition ()
         self.__super.__init__ \
             (name, command = None, precondition = precondition, ** kw)
     # end def __init__
@@ -387,8 +393,8 @@ class Command_Delegator (Command) :
     def _preconditions (self) :
         addressees = self.addressees ()
         if addressees :
-            if self.precondition :
-                yield self.precondition
+            if self.delegator_precondition :
+                yield self.delegator_precondition
             for a in addressees :
                 try :
                     p = getattr (a, self.cmd_mgr_name, {}) \
@@ -795,7 +801,10 @@ class Command_Mgr (Command_Group) :
         if self.changes != int (self.change_counter) :
             try :
                 for p, p_desc in self._precondition.items () :
-                    new_value = (not p) or p ()
+                    try :
+                        new_value = (not p) or p ()
+                    except Precondition_Violation :
+                        new_value = False
                     if new_value != p_desc.old_value :
                         p_desc.old_value = new_value
                         if new_value :
