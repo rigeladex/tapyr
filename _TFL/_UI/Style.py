@@ -58,28 +58,28 @@ class M_Style (TFL.Meta.M_Data_Class) :
     class _names (TFL.Meta.M_Data_Class._names) :
         ### this class must define the names of all valid style attributes
 
-        # callback function
-        callback       = None
-
-        # colors
         background     = None # "orange", "#FF2F1F"
-        foreground     = None # "red"   , "#FFF"
-
-        # font attributes
-        font_family    = None # "Sans", ...
-        font_style     = None # 'normal', 'oblique', 'italic'
-        font_size      = None # "xx-small", ..."small", "medium", ..."xx-large"
-        underline      = None # 'single', 'double', 'low', 'none'
-
-        # misc
-        mouse_cursor   = None # 'crosshair', 'default', 'fleur', 'hand',
-                              # 'hourglass', 'text', 'watch'
+        callback       = None
+        font_family    = None
+        font_size      = None
+        font_style     = None
+        foreground     = None # "red"   , "#FF2F1F"
+        mouse_cursor   = None 
+        underline      = None
 
     # end class _names
 
     class _values (TFL.Meta.M_Data_Class._values) :
 
+        font_family    = dict_from_list (("Monospace", "Sans"))
         font_style     = dict_from_list (("normal", "oblique", "italic"))
+        font_size      = dict_from_list \
+                             (( "xx-small", "x-small", "small", "medium"
+                              , "large", "x-large", "xx-large"))
+        mouse_cursor   = dict_from_list \
+                             (( "crosshair", "default", "fleur", "hand"
+                              , "hourglass", "text", "watch"))
+        underline      = dict_from_list (("single", "double", "low", "none"))
 
     # end class _values
 
