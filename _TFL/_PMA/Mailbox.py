@@ -45,6 +45,7 @@ from   predicate               import *
 from   Record                  import Record
 from   subdirs                 import subdirs
 
+import cPickle                 as     pickle
 import errno
 import sos
 import time
@@ -57,14 +58,21 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     _deliveries        = {} ### `time.time ()` : number of mails delivered
 
-    def __init__ (self, path, name = None) :
+    def __init__ (self, path, name = None, prefix = None) :
         if name is None :
             name       = sos.path.split (path) [-1]
+        if prefix is None :
+            qname      = name
+        else :
+            qname      = "/".join ((prefix, name))
         self.name      = name
+        self.qname     = qname
         self.path      = path
+        self._box_dict = {}
         self._messages = None
         self._msg_dict = {}
-        self._box_dict = {}
+        self._msg_stat = {}
+        self._read_msg_status (path)
     # end def __init__
 
     def md_name (cls, message = None) :
@@ -88,10 +96,12 @@ class _Mailbox_ (TFL.Meta.Object) :
     # end def summary
 
     def _add (self, * messages) :
-        md = self._msg_dict
-        for m in messages :
-            md [m.name] = m
         if messages :
+            md = self._msg_dict
+            ms = self._msg_stat
+            for m in messages :
+                md [m.name] = m
+                ms [m.name] = m.status
             self._messages = None
     # end def _add
 
@@ -119,8 +129,22 @@ class _Mailbox_ (TFL.Meta.Object) :
     _md_name = classmethod (_md_name)
 
     def _new_message (self, m) :
-        return TFL.PMA.Message (email = m, name = m._pma_path, mailbox = self)
+        name = m._pma_path
+        return TFL.PMA.Message \
+            ( email   = m
+            , name    = name
+            , mailbox = self
+            , status  = self._msg_stat.get (name)
+            )
     # end def _new_message
+
+    def _read_msg_status (self, path) :
+        pass
+    # end def _read_msg_status
+
+    def _save_msg_status (self) :
+        pass
+    # end def _save_msg_status
 
     def _sort (self, decorator = None) :
         if decorator is None :
@@ -150,20 +174,14 @@ class _Mailbox_ (TFL.Meta.Object) :
 class _Mailbox_in_Dir_ (_Mailbox_) :
     """Model directory-based mailbox"""
 
-    def __init__ (self, path) :
+    def __init__ (self, path, prefix = None) :
         if not sos.path.isdir (path) :
             sos.mkdir (path)
         self.parser = Lib.Parser ()
-        self.__super.__init__    (path)
-        for s in self._subdirs   (path) :
-            self.add_subbox (s)
+        self.__super.__init__ (path, prefix = prefix)
+        for s in self._subdirs (path) :
+            self._new_subbox (s)
     # end def __init__
-
-    def add_subbox (self, path) :
-        result = self.__class__ (path)
-        self._box_dict [result.name] = result
-        return result
-    # end def add_subbox
 
     def _copy_msg_file (self, message, target) :
         source = message.path
@@ -180,6 +198,40 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
         result._pma_parsed_body = False
         return result
     # end def _new_email
+
+    def _new_subbox (self, path) :
+        result = self.__class__ (path, prefix = self.qname)
+        self._box_dict [result.name] = result
+        return result
+    # end def _new_subbox
+
+    def _read_msg_status (self, path) :
+        msp = self._msg_stat_path = sos.path.join (path, ".status")
+        try :
+            f = open (msp)
+        except IOError :
+            pass
+        else :
+            try :
+                try :
+                    msg_stat = pickle.load (f)
+                except KeyboardInterrupt :
+                    raise
+                except StandardError :
+                    pass
+                else :
+                    self._msg_stat = msg_stat
+            finally :
+                f.close ()
+    # end def _read_msg_status
+
+    def _save_msg_status (self) :
+        if self._msg_stat :
+            print "Saving message status", self.name
+            f = open    (self._msg_stat_path, "wb")
+            pickle.dump (self._msg_stat, f, pickle.HIGHEST_PROTOCOL)
+            f.close     ()
+    # end def _save_msg_status
 
     def _setup_messages (self) :
         self._add \
@@ -325,7 +377,7 @@ class Maildir (_Mailbox_in_Dir_) :
                 sos.unlink (s)
                 m.name           = n
                 m.email._pma_dir = "cur"
-                m.path           = sos.path.join (path, "cur", n)
+                m.path           = join (path, "cur", n)
     # end def _setup_messages
 
     def _subdirs (self, path) :
@@ -352,7 +404,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
                 yield m
     MB_Type = classmethod (MB_Type)
 
-    def add (self, * messages) :
+    def add_messages (self, * messages) :
         if self._messages is None :
             ### get messages from disk first
             self._get_messages ()
@@ -370,18 +422,25 @@ class Mailbox (_Mailbox_in_Dir_S_) :
                 )
             self._add (new_m)
             old_box._copy_msg_file (message, sos.path.join (self.path, name))
-    # end def add
+    # end def add_messages
+
+    def add_subbox (self, b, transitive = False) :
+        print "Adding sub-box", b.qname
+        if b.name in self._box_dict :
+            s = self._box_dict  [b.name]
+        else :
+            s = self._new_subbox (sos.path.join (self.path, b.name))
+        s.add_messages (* b.messages)
+        if transitive :
+            for sb in b._box_dict.itervalues () :
+                s.add_subbox (sb, transitive)
+    # end def add_subbox
 
     def import_from_mailbox (self, mailbox, transitive = False) :
-        self.add (* mailbox.messages)
+        self.add_messages (* mailbox.messages)
         if transitive :
             for b in mailbox._box_dict.itervalues () :
-                print "Importing", b.path
-                if b.name in self._box_dict :
-                    s = self._box_dict  [b.name]
-                else :
-                    s = self.add_subbox (sos.path.join (self.path, b.name))
-                s.import_from_mailbox (b, transitive)
+                self.add_subbox (b, transitive)
     # end def import_from_mailbox
 
     def md_name (self, message = None) :
@@ -410,7 +469,7 @@ print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
 m = mb.messages [-3]
 tb = TFL.PMA.Mailbox ("/swing/private/tanzer/PMA/Testbox")
 tb.import_from_mailbox (mb, transitive = True)
-tb.add (m)
+tb.add_messages (m)
 print tb.summary ().encode ("iso-8859-1", "replace")
 sb = mb.sub_boxes[0]
 

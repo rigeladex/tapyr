@@ -42,6 +42,8 @@
 #                     each line yielded
 #    26-Nov-2004 (CT) `message_from_file` factored
 #    30-Nov-2004 (CT) `Message._get_header` robustified
+#     3-Jan-2005 (CT) `_Message_._setup_body` robustified
+#     4-Jan-2005 (CT) `Msg_Status` used
 #    ««revision-date»»···
 #--
 
@@ -50,6 +52,7 @@ from   _TFL._PMA               import Lib
 
 import _TFL.Ascii
 import _TFL._PMA.Mailcap
+import _TFL._PMA.Msg_Status
 import _TFL._Meta.Object
 
 from   Filename                import Filename
@@ -189,7 +192,9 @@ class _Message_ (TFL.Meta.Object) :
                 parts.append (PT (p, name = p_name))
                 i += 1
         else :
-            self.body = email.get_payload (decode = True).strip ()
+            payload = email.get_payload (decode = True)
+            if payload :
+                self.body = payload.strip ()
     # end def _setup_body
 
     def _temp_body (self) :
@@ -245,6 +250,8 @@ class Message (_Message_) :
     time             = property (lambda s : s._time    ())
 
     def __init__ (self, email, name = None, mailbox = None, status = None, number = None) :
+        if status is None :
+            status = TFL.PMA.Msg_Status ()
         self.__super.__init__ (email, "")
         self.name    = name
         self.mailbox = mailbox
@@ -254,6 +261,7 @@ class Message (_Message_) :
 
     def formatted (self, sep_length = 79) :
         email = self._reparsed ()
+        self.status.set_read   ()
         for h in self._formatted_headers () :
             yield h
         for l in self.__super.formatted (sep_length) :

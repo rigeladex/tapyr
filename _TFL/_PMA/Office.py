@@ -1,0 +1,119 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
+#
+#++
+# Name
+#    Office
+#
+# Purpose
+#    Model a personal post office which contains a delivery and a storage
+#    area
+#
+# Revision Dates
+#     3-Jan-2005 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from   _TFL                    import TFL
+from   _TFL._PMA               import Lib
+import _TFL._PMA.Mailbox
+import _TFL._Meta.Object
+
+import Environment
+import sos
+from   subdirs                 import subdirs
+
+class Office (TFL.Meta.Object) :
+    """Personal post office"""
+
+    def __init__ (self, root = None) :
+        self.path           = path = self.default_path  (root)
+        self.delivery_area  = da   = self.delivery_path (path)
+        self.storage_area   = sa   = self.storage_path  (path)
+        self.delivery_boxes = self._delivery_boxes      (da)
+        self.storage_boxes  = [TFL.PMA.Mailbox (sa)]
+    # end def __init__
+
+    def msg_boxes (self, transitive = False) :
+        for b in self.delivery_boxes + self.storage_boxes :
+            yield b
+            if transitive :
+                for sb in self.sub_boxes (b, transitive) :
+                    yield sb
+    # end def msg_boxes
+
+    def save_msg_status (self) :
+        for b in self.msg_boxes (transitive = True) :
+            b._save_msg_status ()
+    # end def save_msg_status
+
+    def sub_boxes (self, box, transitive = False) :
+        for sb in box.sub_boxes :
+            yield sb
+            if transitive :
+                for ssb in self.sub_boxes (sb, transitive) :
+                    yield ssb
+    # end def sub_boxes
+
+    def _delivery_boxes (self, da) :
+        dirs = subdirs (da)
+        if not dirs :
+            inbox = self._path (da, "inbox")
+            for d in "cur", "new", "tmp" :
+                self._path (inbox, d)
+            dirs.append (inbox)
+        return [TFL.PMA.Maildir (d) for d in dirs]
+    # end def _delivery_boxes
+
+    ### class methods
+    def default_path (cls, root = None) :
+        if root is None :
+            root = Environment.home_dir
+        return cls._path (root, "PMA")
+    default_path = classmethod (default_path)
+
+    def delivery_path (cls, root) :
+        return cls._path (root, "D")
+    delivery_path = classmethod (delivery_path)
+
+    def storage_path (cls, root) :
+        return cls._path (root, "S")
+    storage_path = classmethod (storage_path)
+
+    def _path (cls, root, stem) :
+        result = sos.path.join (root, stem)
+        if not sos.path.isdir (result) :
+            sos.mkdir (result)
+        return result
+    _path = classmethod (_path)
+
+# end class Office
+
+"""
+from _TFL._PMA.Office import *
+import _TFL._PMA.Mailbox
+o = Office ()
+mb=TFL.PMA.MH_Mailbox ("/swing/private/tanzer/MH/Firma")
+o.storage_boxes[0].add_subbox (mb, transitive = True)
+
+"""
+if __name__ != "__main__" :
+    TFL.PMA._Export ("*")
+### __END__ Office
