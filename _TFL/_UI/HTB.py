@@ -67,6 +67,8 @@
 #                      files)
 #    11-Mar-2005 (CT)  Call of `set_tabs` moved from `_setup_styles` to
 #                      `__init__` (must be done for *each* `Text` instance)
+#    11-Mar-2005 (CT)  `_style` call in `insert` fixed (`*`)
+#    11-Mar-2005 (CT)  `_style` changed to use `un_nested` (ugly legacy lifter)
 #    ««revision-date»»···
 #--
 
@@ -78,12 +80,15 @@ import _TFL._UI
 import _TFL._UI.Mixin
 from   _TFL._UI.Style import *
 
+from   predicate      import un_nested
+
 import sys
 
 callback_style = Style ("callback")
 
 class Styles_Cache (object) :
     """Used to store module-wide styles."""
+
     styles = {}
 
     def __getattr__ (self, name) :
@@ -99,9 +104,9 @@ class Styles_Cache (object) :
         return self.styles [name]
     # end def __getitem__
 
-    __setitem__ = __setattr__
+    __setitem__  = __setattr__
 
-    has_key     = styles.has_key
+    __contains__ = has_key = styles.has_key
 
 # end class Styles_Cache
 
@@ -932,9 +937,9 @@ class Browser (TFL.UI.Mixin) :
         title_font_family  = self.option_value \
             ("titleFontFamily",    "Sans")
         title_font_size    = self.option_value \
-            ("titleFontSize",      "xx-large")
+            ("titleFontSize",      "x-large")
         title_font_weight  = self.option_value \
-            ("titleFontWeight",    "bold")
+            ("titleFontWeight",    "normal")
         styles.active_node = Style \
             ( "active_node"
             , background   = active_bg
@@ -1043,17 +1048,17 @@ class Browser (TFL.UI.Mixin) :
 
     def _style (self, * tags) :
         """Implement style chaching"""
-        tags = [t for t in tags if styles.has_key (t)]
+        tags = [t for t in un_nested (tags) if t in styles]
         tags.reverse ()
-        tags.append ('normal')
+        tags.append  ('normal')
         tags = tuple (tags)
-        if not styles.has_key (tags) :
+        if tags not in styles :
             styles [tags] = Style (str (tags), * [styles [t] for t in tags])
         return styles [tags]
     # end def _style
 
     def insert (self, pos, text, * tags) :
-        self._insert (pos, text, self._style (tags))
+        self._insert (pos, text, self._style (* tags))
     # end def insert
 
     def option_value (self, name, default) :
