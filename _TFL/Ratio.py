@@ -54,7 +54,7 @@ class Ratio :
        >>> print Ratio (1,2) * Ratio (1,4)
        1 / 8
        >>> print Ratio (1,2) / Ratio (1,4)
-       4 / 2
+       2 / 1
        >>> print Ratio (1,2) * Ratio ("3")
        3 / 2
        >>> print Ratio (1,2) * 3
@@ -62,7 +62,7 @@ class Ratio :
        >>> print Ratio (1,2) * 3.
        3 / 2
        >>> print 6 * Ratio (1,2)
-       6 / 2
+       3 / 1
        >>> print 6 / Ratio (1,2)
        12 / 1
        >>> print Ratio (1,2) / 6
@@ -76,6 +76,8 @@ class Ratio :
        >>> print Ratio (6, 8).normalized ()
        3 / 4
        >>> print Ratio (1, -2).normalized ()
+       -1 / 2
+       >>> print Ratio (1, 2).inversed ()
        -1 / 2
        >>> print Ratio (1, 3) + Ratio (1, 4)
        7 / 12
@@ -123,6 +125,11 @@ class Ratio :
                 raise
     # end def __init__
 
+    def inversed (self) :
+        result = self.__class__ (- self.n, self.d)
+        return result
+    # end def inversed
+
     def reciprocal (self) :
         result = self.__class__ (self.d, self.n)
         return result
@@ -164,6 +171,7 @@ class Ratio :
             rhs = self.__class__ (rhs)
         self.n *= rhs.n
         self.d *= rhs.d
+        self.normalize ()
         return self
     # end def __imul__
 
@@ -178,8 +186,7 @@ class Ratio :
     def __idiv__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
             rhs = self.__class__ (rhs)
-        self.n *= rhs.d
-        self.d *= rhs.n
+        self   *= rhs.reciprocal ()
         return self
     # end def __idiv__
 
@@ -218,9 +225,7 @@ class Ratio :
     def __isub__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
             rhs = self.__class__ (rhs)
-        self.n  = (self.n * rhs.d) - (rhs.n * self.d)
-        self.d *= rhs.d
-        self.normalize ()
+        self   += rhs.inversed ()
         return self
     # end def __isub__
 
@@ -231,9 +236,7 @@ class Ratio :
     # end def __sub__
 
     def __rsub__ (self, lhs) :
-        inverse    = self.__class__ (self)
-        inverse.n *= -1
-        return lhs + inverse
+        return lhs + self.inversed ()
     # end def __rsub__
 
     def __cmp__ (self, rhs) :
