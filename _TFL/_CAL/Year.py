@@ -35,6 +35,7 @@
 #    19-Apr-2003 (CT) `add_appointments`  added to `Day`
 #    19-Apr-2003 (CT) `sort_appointments` added to `Day` and `Year`
 #    20-Apr-2003 (CT) `easter_date` added
+#    15-Dec-2003 (CT) Computation of `w_head` corrected in `Year.__init__`
 #    ««revision-date»»···
 #--
 
@@ -184,8 +185,8 @@ class Year (TFL.Meta.Object) :
         self.tail = t = days [-1]
         w_head = Week \
             ( h.week
-            , * ( [h.date - i for i in range (h.day + 1, 0, -1)]
-                + days [0 : 6 - h.day]
+            , * ( [h.date - i for i in range (h.weekday, 0, -1)]
+                + days [0 : 7 - h.weekday]
                 )
             )
         weeks.append (w_head)
