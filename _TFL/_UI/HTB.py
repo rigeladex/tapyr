@@ -79,6 +79,7 @@
 #    14-Mar-2005 (RSC) __getitem__ = __getattr in Styles_Cache
 #                      Fixed formatting of multi-line "name" of a node
 #                      (RUP 14228)
+#    14-Mar-2005 (RSC) Fixed auto-wrap of "name" line of a node.
 #    ««revision-date»»···
 #--
 
@@ -313,6 +314,7 @@ class Node (TFL.UI.Mixin) :
                 )
             )
         self.level_tag = "level" + `self.level`
+        self.head_tag  = self.level_tag + ':head'
         if browser.node_map.has_key (self.tag) :
             raise Name_Clash, self.tag
         browser.node_map [self.tag] = self
@@ -399,7 +401,7 @@ class Node (TFL.UI.Mixin) :
         self.body_mark = self.text.mark_at (body, left_gravity = True)
         self.tail_mark = self.text.mark_at (body)
         self.text.apply_style \
-            ( styles.noindent
+            ( styles [self.head_tag]
             , self.head_mark
             , self.text.eol_pos (self.head_mark)
             )
@@ -1045,11 +1047,17 @@ class Browser (TFL.UI.Mixin) :
             )
         tabs = styles._tabs = []
         for i in range (1, 16) :
-            level     = "level" + `i-1`
+            level = "level" + `i-1`
+            head  = level + ':head'
             styles [level] = Style \
                 ( level
                 , lmargin1  = i * indent
                 , lmargin2  = i * indent + indent_inc
+                )
+            styles [head] = Style \
+                ( head
+                , styles [level]
+                , lmargin1  = 0
                 )
             tabs.append (i * indent)
     # end def _setup_styles
