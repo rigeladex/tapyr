@@ -120,6 +120,8 @@
 #     3-Feb-2005 (CT) `_handle_dyn_command_group` factored and
 #                     `_handle_dyn_commands` changed to honor
 #                     `max_cmds_per_group`
+#     4-Feb-2005 (CT) `_Precondition_Checker_` factored
+#     4-Feb-2005 (CT) `_precondition_eager` added
 #    ««revision-date»»···
 #--
 
@@ -772,18 +774,46 @@ class Dyn_Group (_Command_Group_) :
 
 # end class Dyn_Group
 
+class _Precondition_Checker_ (TFL.Meta.Object) :
+
+    def __init__ (self, p, eager) :
+        self.precondition = p
+        self.eager        = eager
+        self.old_value    = None
+        self.command      = []
+    # end def __init__
+
+    def __call__ (self) :
+        p = self.precondition
+        try :
+            result = bool (p ())
+        except Precondition_Violation :
+            result = False
+        if self.eager or result != self.old_value :
+            self.old_value = result
+            if result :
+                for cmd in self.command :
+                    cmd.enable  ()
+            else :
+                for cmd in self.command :
+                    cmd.disable ()
+    # end def __call__
+
+# end class _Precondition_Checker_
+
 class Command_Mgr (Command_Group) :
     """Manage toplevel group of commands of an interactive application"""
 
     def __init__ (self, AC, change_counter, interfacers, pv_callback = None, name = "", batch_mode = False, form_dict = {}, appl = None) :
-        self.root           = self
-        self.change_counter = change_counter
-        self.pv_callback    = pv_callback
-        self.batch_mode     = batch_mode
-        self.form_dict      = form_dict
-        self.appl           = appl
-        self.changes        = 0
-        self._precondition  = {}
+        self.root                = self
+        self.change_counter      = change_counter
+        self.pv_callback         = pv_callback
+        self.batch_mode          = batch_mode
+        self.form_dict           = form_dict
+        self.appl                = appl
+        self.changes             = 0
+        self._precondition_lazy  = {}
+        self._precondition_eager = {}
         self.__super.__init__ \
             ( AC            = AC
             , name          = name
@@ -797,9 +827,13 @@ class Command_Mgr (Command_Group) :
 
     def destroy (self) :
         self.__super.destroy ()
-        for p in self._precondition.values () :
-            p.command = []
-        self.appl = self.pv_callback = s._precondition = None
+        for p in self._precondition_eager.itervalues () :
+            p.command = p.precondition = None
+        for p in self._precondition_lazy.itervalues () :
+            p.command = p.precondition = None
+        self.appl = self.pv_callback \
+                  = self._precondition_eager \
+                  = self._precondition_lazy = None
     # end def destroy
 
     def is_applicable (self, name) :
@@ -818,31 +852,25 @@ class Command_Mgr (Command_Group) :
 
     def update_state (self, event = None) :
         """Enable/disable all commands according to their preconditions"""
+        for p_checker in self._precondition_eager.itervalues () :
+            p_checker ()
         if self.changes != int (self.change_counter) :
             try :
-                for p, p_desc in self._precondition.items () :
-                    try :
-                        new_value = (not p) or p ()
-                    except Precondition_Violation :
-                        new_value = False
-                    if new_value != p_desc.old_value :
-                        p_desc.old_value = new_value
-                        if new_value :
-                            for cmd in p_desc.command :
-                                cmd.enable  ()
-                        else :
-                            for cmd in p_desc.command :
-                                cmd.disable ()
+                for p_checker in self._precondition_lazy.itervalues () :
+                    p_checker ()
             finally :
                 self.changes = int (self.change_counter)
     # end def update_state
 
     def _add_precondition (self, cmd) :
-        p     = cmd.precondition
-        dict  = self.root._precondition
-        if not dict.has_key (p) :
-            dict [p] = Record (old_value = "None", command = [])
-        dict [p].command.append (cmd)
+        p = cmd.precondition
+        if p :
+            eager = bool (getattr (p, "evaluate_eagerly", False))
+            root  = self.root
+            dict  = (root._precondition_lazy, root._precondition_eager) [eager]
+            if p not in dict :
+                dict [p] = _Precondition_Checker_ (p, eager)
+            dict [p].command.append (cmd)
     # end def _add_precondition
 
 # end class Command_Mgr
