@@ -324,6 +324,7 @@ class Package_Namespace :
             symbols = symbols [1:]
         if symbols :
             self._import_names (mod, symbols, result, 1)
+        self.__dict__.update (result)
     # end def _Export
 
 # end class Package_Namespace
