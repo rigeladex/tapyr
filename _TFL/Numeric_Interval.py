@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Nov-2003 (CT) Creation
 #    27-Nov-2003 (CT) `shifted` added
+#    20-Feb-2004 (CT) `doctest` added
 #    ««revision-date»»···
 #--
 
@@ -36,7 +37,32 @@ import _TFL._Meta.Object
 import sys
 
 class Numeric_Interval (TFL.Meta.Object) :
-    """Class for modelling a numeric interval."""
+    """Class for modelling a numeric interval.
+
+       >>> i = Numeric_Interval (0, 100)
+       >>> j = Numeric_Interval (100, 200)
+       >>> k = Numeric_Interval (20, 50)
+       >>> i, j, k
+       ((0, 100), (100, 200), (20, 50))
+       >>> i.after (i), i.after (j), j.after (j), j.after (i)
+       (False, False, False, True)
+       >>> i.before (i), i.before (j), j.before (j), j.before (i)
+       (False, True, False, False)
+       >>> i.contains (i), i.contains (j), i.contains (k), j.contains (k)
+       (True, False, True, False)
+       >>> i.contains_point (100), i.contains_point (20), j.contains_point (20)
+       (True, True, False)
+       >>> i.difference (i), i.difference (j), i.difference (k)
+       ([], [], [(0, 20), (50, 100)])
+       >>> i.intersection (i), i.intersection (j), i.intersection (k)
+       ((0, 100), (100, 100), (20, 50))
+       >>> i.overlaps (i), i.overlaps (j), i.overlaps (k), j.overlaps (k)
+       (True, False, True, False)
+       >>> i.shifted (20)
+       (20, 120)
+       >>> i [0], i [1]
+       (0, 100)
+    """
 
     format = "(%s, %s)"
 
@@ -135,6 +161,26 @@ class Numeric_Interval (TFL.Meta.Object) :
     # end def __setitem__
 
 # end class Numeric_Interval
+
+### unit-test code ############################################################
+
+if __debug__ :
+    import U_Test
+
+    def _doc_test () :
+        import Numeric_Interval
+        return U_Test.run_module_doc_tests (Numeric_Interval)
+    # end def _doc_test
+
+    def _test () :
+        _doc_test  ()
+    # end def _test
+
+    if __name__ == "__main__" :
+        _test ()
+# end if __debug__
+
+### end unit-test code ########################################################
 
 if __name__ != "__main__" :
     TFL._Export ("*")
