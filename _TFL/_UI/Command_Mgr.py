@@ -133,6 +133,7 @@
 #    16-Feb-2005 (MG) `Command_Mgr.bind_interfacers` and friends added
 #    17-Feb-2005 (MG) `Command` renamed to `Deaf_Command` and new `Command`
 #                     added
+#    18-Feb-2005 (CT) `Deaf_Command` added to `__all__`
 #    ««revision-date»»···
 #--
 
@@ -1311,7 +1312,7 @@ mb.activate ()
 """
 
 __all__ = ( "Command_Mgr", "Command_Group", "Command", "_Command_"
-          , "Dyn_Command"
+          , "Deaf_Command", "Dyn_Command"
           , "Precondition_Violation"
           , "Command_Delegator", "Command_Delegator_UB"
           )
