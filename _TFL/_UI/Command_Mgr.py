@@ -143,6 +143,8 @@
 #                         to be a 'instancemethod', not a 'instance'
 #                     (this was an optimization, fixing this would cost
 #                     performance, ...)
+#    24-Feb-2005 (MG) `Command_Delegator_UB`: allow `* args` for the
+#                     `precondition` to support recursive command delegators
 #    ««revision-date»»···
 #--
 
@@ -409,9 +411,17 @@ class Command_Delegator (Command) :
     def __init__ (self, name, precondition = None, ** kw) :
         self.delegator_precondition = precondition
         if precondition :
-            precondition = lambda : precondition and self._check_precondition ()
+            precondition = \
+                lambda * args : precondition and self._check_precondition ()
         else :
-            precondition = lambda : self._check_precondition ()
+            precondition = \
+                lambda * args : self._check_precondition ()
+        precondition.__doc__ = "\n".join \
+            ( filter (None, ("Delegator Precondition"
+                            , self.delegator_precondition.__doc__ or ""
+                            )
+                     )
+            )
         precondition.evaluate_eagerly = getattr \
             (self.delegator_precondition, "evaluate_eagerly", False)
         self.__super.__init__ \
