@@ -30,6 +30,7 @@
 #    27-Nov-2003 (CT) `shifted` added
 #    20-Feb-2004 (CT) `doctest` added
 #    23-Feb-2004 (CT) `union`   added
+#     4-Mar-2004 (CED) `difference` fixed
 #    ««revision-date»»···
 #--
 
@@ -120,6 +121,8 @@ class Numeric_Interval (TFL.Meta.Object) :
             r = self.__class__ (isect.upper, self.upper)
             if r :
                 result.append (r)
+        else :
+            result = [self]
         return result
     # end def difference
 
