@@ -27,11 +27,14 @@
 #
 # Revision Dates
 #    25-Jan-2005 (CT) Creation
+#    26-Jan-2005 (CT) `Style` converted from function to object to allow
+#                     `add` and `Style.xxx`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 import _TFL._Meta.M_Data_Class
+import _TFL._Meta.Object
 import _TFL._UI
 
 class M_Style (TFL.Meta.M_Data_Class) :
@@ -54,13 +57,30 @@ class M_Style (TFL.Meta.M_Data_Class) :
 
 # end class M_Style
 
-def Style (name, * parents, ** kw) :
-    """Define new style with `name` derived from `parents` with attributes
-       given by `kw`.
-    """
-    return M_Style (name, parents, kw)
-# end def Style
+class Style (TFL.Meta.Object) :
+
+    def __call__ (self, name, * parents, ** kw) :
+        """Returns new style with `name` derived from `parents` with attributes
+           given by `kw`.
+        """
+        return M_Style (name, parents, kw)
+    # end def __call__
+
+    def add (self, name, * parents, ** kw) :
+        """Add new style with `name` derived from `parents` with attributes
+           given by `kw`.
+        """
+        if hasattr (self, name) :
+            raise NameError, "Style %s already defined" % name
+        result = self (name, * parents, ** kw)
+        setattr (self, name, result)
+        return result
+    # end def add
+
+# end class Style
+
+Style = Style ()
 
 if __name__ != "__main__" :
-    TFL.UI._Export ("*")
+    TFL.UI._Export ("*", "Style")
 ### __END__ Style
