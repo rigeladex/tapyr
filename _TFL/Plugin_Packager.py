@@ -158,7 +158,7 @@ class Plugin_Packager (TFL.Meta.Object) :
             ( r"%s \s* = \s* Package_Namespace \s* \(\)" % (name, )
             , ( r"""from %s import %s"""
                  """\n"""
-                r"""%s = Derived_Package_Namespace ("%s")"""
+                r"""%s = Derived_Package_Namespace (%s)"""
               ) % (pym.pkg, name, name, name)
             )
         self._rewrite_module (pym, self._m_replacers + [repl])
