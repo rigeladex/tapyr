@@ -19,6 +19,7 @@
 #                      rounding errors
 #    23-Oct-2003 (CT)  Small changes to allow cutting of zero-length spans
 #     3-Nov-2003 (CT)  Inherit from `NDT.Sched2.Object`
+#     5-Apr-2004 (CED) `__str__` added
 #    ««revision-date»»···
 #--
 
@@ -161,11 +162,15 @@ class Timeline (NDT.Sched2.Object) :
             if s.length > 0 :
                 free, size = self.intersection (s)
                 if len (free) != 1 or abs (size - s.length) > self.epsilon :
-                    raise ValueError, (self.free, s, spans)
+                    raise ValueError, (self.free, s, spans, free)
                 f = free [0]
                 f.prepare_cut_l (size)
                 self.cut        (f)
     # end def snip
+
+    def __str__ (self) :
+        return "Timeline free: " + str (self.free)
+    # end def __str__
 
 # end class Timeline
 
