@@ -46,11 +46,17 @@
 #                      made text-widget non-editable :-)
 #    24-Feb-2005 (RSC) Tabs implemented.
 #    24-Feb-2005 (RSC) Print function fixed.
+#    25-Feb-2005 (RSC) Node_Linked added, minor corrections in string
+#                      searching, _apply_styles factored from
+#                      find_highlight and Node_Linked.activate_links,
+#                      mouse_cursor = "hand" added to hyper_link style,
+#                      find_highlight/unhighlight moved from Browser->Node
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
 from   Regexp       import Regexp
+from   Functor      import Functor
 
 import _TFL._UI
 import _TFL._UI.Mixin
@@ -229,11 +235,23 @@ class Node (TFL.UI.Mixin) :
         , name_tags     = ()     # additional tags for `name'
         , header_tags   = ()     # additional tags for `header'
         , contents_tags = ()     # additional tags for `contents'
+        , AC            = None   # for compatibility with __super
         ) :
         assert (  ((not parent) and (number is None))
                or ((parent)     and (number >= 0))
                )
-        self.__super.__init__ (AC = browser.AC)
+        self.__super.__init__ \
+            ( AC            = AC or browser.AC
+            , browser       = browser
+            , name          = name
+            , header        = header
+            , contents      = contents
+            , parent        = parent
+            , number        = number
+            , name_tags     = name_tags
+            , header_tags   = header_tags
+            , contents_tags = contents_tags
+            )
         self.browser   = browser
         self.text      = browser.text
         self.name      = name
@@ -686,7 +704,7 @@ class Node (TFL.UI.Mixin) :
         f    = self.cached_text
         tags = self.name_tags + self.header_tags + self.contents_tags
         if f :
-            if string.find (f, pattern) >= 0:
+            if f.find (pattern) >= 0 :
                 if (not tagged_as) or (tagged_as in tags) :
                     result.append ((self, pattern))
         for c in self.children :
@@ -703,7 +721,118 @@ class Node (TFL.UI.Mixin) :
             return self.search_string (pattern, tagged_as, result)
     # end def search
 
+    def _apply_styles (self, match, head, tail, * sty) :
+        pos = pos1 = self.text.find (match, head, tail)
+        while pos :
+            end = self.text.pos_at (pos, delta = len (match))
+            for s in sty :
+                self.text.apply_style (s, pos, end)
+            pos = self.text.find (match, end, tail)
+        return pos1
+    # end def _apply_styles
+
+    def find_highlight (self, match, apply_found_bg = 0) :
+        pos1 = self._apply_styles \
+            (match, self.head_mark, self.tail_mark, styles.found)
+        if pos1 :
+            if apply_found_bg :
+                self.text.apply_style (styles.found_bg, pos1, self.tail_mark)
+            self.text.see     (self.model.tail_mark)
+            self.text.see     (pos1)
+    # end def find_highlight
+
+    def find_unhighlight (self, match) :
+        """Quick & dirty way is to remove *all* found styles"""
+        self.text.remove_style (styles.found, self.text.bot_pos)
+        # XXXXX FIXME: does the above work? if yes remove following.
+#        m   = self.master
+#        pos = m.search (match, self.model.head_mark, self.model.tail_mark)
+#        if pos :
+#            try :
+#                m.tag_remove ("found_bg", pos, self.model.tail_mark)
+#            except TclError :
+#                pass
+#        while pos :
+#            end = "%s + %s chars" % (pos, len (match))
+#            m.tag_remove ("found", pos, end)
+#            pos = m.search (match, end, self.model.tail_mark)
+    # end def find_unhighlight
+
 # end class Node
+
+
+class Node_Linked (Node) :
+    def __init__ \
+        ( self
+        , browser                # browser widget containing the node
+        , name                   # unique name of node, used as tag
+        , header        = ""     # header-text of node
+        , contents      = ""     # contents-text of node
+        , parent        = None   # parent Node
+        , number        = None   # index of self in `parent.children'
+        , name_tags     = ()     # additional tags for `name'
+        , header_tags   = ()     # additional tags for `header'
+        , contents_tags = ()     # additional tags for `contents'
+        , o_links       = ()     # objects to hyper-link
+        , AC            = None   # for compatibility with __super
+        ) :
+        self.__super.__init__ \
+            ( browser       = browser
+            , name          = name
+            , header        = header
+            , contents      = contents
+            , parent        = parent
+            , number        = number
+            , name_tags     = name_tags
+            , header_tags   = header_tags
+            , contents_tags = contents_tags
+            , AC            = AC or browser.AC
+            )
+        self.o_links        = o_links
+    # end def __init__
+
+    def _insert_header (self, index) :
+        start = self.text.pos_at    (index)
+        self.__super._insert_header (index)
+        self.activate_links         (start, index)
+    # end def _insert_header
+
+    def _insert_contents (self, index) :
+        start = self.text.pos_at      (index)
+        self.__super._insert_contents (index)
+        self.activate_links           (start, index)
+    # end def _insert_contents
+
+    def _link_name (self, o) :
+        if hasattr (o, "name") :
+            nam = o.name
+        else :
+            nam = o
+        return nam
+    # end def _link_name
+
+    def activate_links (self, head, tail) :
+        hstyle = styles.hyper_link
+        for l in self.o_links :
+            if not isinstance (l, (list, tuple)) :
+                l = (l, )
+            for o in l :
+                nam = self._link_name  (o)
+                callback       = callback_style \
+                    ( callback = dict \
+                        ( click_1        = Functor
+                            (self.follow, head_args = (o, ))
+                        , double_click_1 = self.ignore
+                        )
+                    )
+                self._apply_styles (nam, head, tail, callback, hstyle)
+    # end def activate_links
+
+    def follow (self, o, event = None) :
+        return self.TNS.stop_cb_chaining
+    # end def follow
+
+# end class Node_Linked
 
 class Browser (TFL.UI.Mixin) :
     """Hierarchical Text Browser Widget"""
@@ -744,137 +873,138 @@ class Browser (TFL.UI.Mixin) :
     # end def __init__
 
     def _setup_styles (self) :
-        indent            = self.num_opt_val ("indent",     42)
-        indent_inc        = self.num_opt_val ("indent_inc",  0)
+        indent             = self.num_opt_val ("indent",     42)
+        indent_inc         = self.num_opt_val ("indent_inc",  0)
         # Colors
-        std_bg            = self.option_value \
+        std_bg             = self.option_value \
             ("Background",             "white")
-        std_fg            = self.option_value \
+        std_fg             = self.option_value \
             ("Foreground",             "black")
-        link_bg           = self.option_value \
+        link_bg            = self.option_value \
             ("hyperLinkBackground",    std_bg)
-        link_fg           = self.option_value \
+        link_fg            = self.option_value \
             ("hyperLinkForeground",    "blue")
-        found_fg          = self.option_value \
+        found_fg           = self.option_value \
             ("foundForeground",        "black")
-        found_bg          = self.option_value \
+        found_bg           = self.option_value \
             ("foundBackground",        "deep sky blue")
-        active_bg         = self.option_value \
+        active_bg          = self.option_value \
             ("activeBackground",       "yellow")
-        active_fg         = self.option_value \
+        active_fg          = self.option_value \
             ("activeForeground",       "red")
-        butt_bg           = self.option_value \
+        butt_bg            = self.option_value \
             ("activeButtonBackground", "red")
-        butt_fg           = self.option_value \
+        butt_fg            = self.option_value \
             ("activeButtonForeground", "yellow")
 
         # Fonts
         normal_font_family = self.option_value \
             ("normalFontFamily",   "Monospace")
-        normal_font_style = self.option_value \
+        normal_font_style  = self.option_value \
             ("normalFontStyle",    "normal")
-        normal_font_size = self.option_value \
+        normal_font_size   = self.option_value \
             ("normalFontSize",     "medium")
         normal_font_weight = self.option_value \
             ("normalFontWeight",   "normal")
-        cour_font_family  = self.option_value \
+        cour_font_family   = self.option_value \
             ("courierFontFamily",  "Monospace")
         header_font_family = self.option_value \
             ("headerFontFamily",   "Sans")
         header_font_size   = self.option_value \
             ("headerFontSize",     normal_font_size)
-        header_font_style   = self.option_value \
+        header_font_style  = self.option_value \
             ("headerFontStyle",    normal_font_style)
-        header_font_weight  = self.option_value \
+        header_font_weight = self.option_value \
             ("headerFontWeight",   "bold")
-        link_font_family  = self.option_value \
+        link_font_family   = self.option_value \
             ("linkFontFamily",     normal_font_family)
-        link_font_style   = self.option_value \
+        link_font_style    = self.option_value \
             ("linkFontStyle",      normal_font_style)
-        title_font_family = self.option_value \
+        title_font_family  = self.option_value \
             ("titleFontFamily",    "Sans")
-        title_font_size   = self.option_value \
+        title_font_size    = self.option_value \
             ("titleFontSize",      "large")
-        title_font_weight = self.option_value \
+        title_font_weight  = self.option_value \
             ("titleFontWeight",    "bold")
 
         styles.active_node = Style \
             ( "active_node"
-            , background  = active_bg
-            , foreground  = active_fg
+            , background   = active_bg
+            , foreground   = active_fg
             )
         styles.active_button = Style \
             ( "active_button"
-            , background  = butt_bg
-            , foreground  = butt_fg
+            , background   = butt_bg
+            , foreground   = butt_fg
             )
-        styles.arial      = Style \
+        styles.arial       = Style \
             ( "arial"
-            , font_family = "Sans"
+            , font_family  = "Sans"
             )
-        styles.center     = Style \
+        styles.center      = Style \
             ( "center"
-            , justify     = "center"
+            , justify      = "center"
             )
-        styles.courier    = Style \
+        styles.courier     = Style \
             ( "courier"
-            , font_family = cour_font_family
+            , font_family  = cour_font_family
             )
-        styles.found      = Style \
+        styles.found       = Style \
             ( "found"
-            , background  = found_bg
-            , foreground  = found_fg
+            , background   = found_bg
+            , foreground   = found_fg
             )
         # XXXXX FIXME: Hysterical raisins? why not use found_bg above?
-        styles.found_bg   = Style \
+        styles.found_bg    = Style \
             ( "found_bg"
-            , background  = "gray95"
+            , background   = "gray95"
             )
-        styles.hyper_link = Style \
+        styles.hyper_link  = Style \
             ( "hyper_link"
-            , background  = link_bg
-            , foreground  = link_fg
-            , font_family = link_font_family
-            , font_style  = link_font_style
-            , underline   = "single"
+            , background   = link_bg
+            , foreground   = link_fg
+            , font_family  = link_font_family
+            , font_style   = link_font_style
+            , underline    = "single"
+            , mouse_cursor = "hand"
             )
-        styles.normal     = Style \
+        styles.normal      = Style \
             ( "normal"
-            , background  = std_bg
-            , foreground  = std_fg
-            , font_family = normal_font_family
-            , font_size   = normal_font_size
-            , font_style  = normal_font_style
-            , font_weight = normal_font_weight
-            , wrap        = "word"
+            , background   = std_bg
+            , foreground   = std_fg
+            , font_family  = normal_font_family
+            , font_size    = normal_font_size
+            , font_style   = normal_font_style
+            , font_weight  = normal_font_weight
+            , wrap         = "word"
             )
-        styles.nowrap    = Style \
+        styles.nowrap      = Style \
             ( "nowrap"
-            , wrap       = "none"
+            , wrap         = "none"
             )
-        styles.quote     = Style \
+        styles.quote       = Style \
             ( "quote"
-            , rmargin    = indent
-            , lmargin1   = indent
-            , lmargin2   = indent
+            , rmargin      = indent
+            , lmargin1     = indent
+            , lmargin2     = indent
             )
-        styles.rindent   = Style \
+        styles.rindent     = Style \
             ( "rindent"
-            , rmargin    = indent
+            , rmargin      = indent
             )
-        styles.title      = Style \
+        styles.title       = Style \
             ( "title"
-            , font_family = title_font_family
-            , font_size   = title_font_size
-            , font_weight = title_font_weight
+            , font_family  = title_font_family
+            , font_size    = title_font_size
+            , font_weight  = title_font_weight
             )
-        styles.underline = Style \
+        styles.underline   = Style \
             ( "underline"
-            , underline  = "single"
+            , underline    = "single"
             )
-        styles.wrap      = Style \
+        styles.wrap        = Style \
             ( "wrap"
-            , wrap       = "word"
+            , wrap         = "word"
             )
 
         tabs = []
@@ -961,40 +1091,9 @@ class Browser (TFL.UI.Mixin) :
         self.open (node)
         node.find_highlight (match, apply_found_bg = 0)
     # end def _find_highlight
-
-    def find_highlight (self, match, apply_found_bg = 0) :
-        pos = pos1 = self.text.find \
-            (match, self.head_mark, self.tail_mark)
-        while pos :
-            end = self.text.pos_at (pos, delta = len (match))
-            self.text.apply_style (styles.found, pos, end)
-            pos = self.text.find (match, end, self.tail_mark)
-        if pos1 :
-            if apply_found_bg :
-                self.text.apply_style (styles.found_bg, pos1, self.tail_mark)
-            self.text.see     (self.model.tail_mark)
-            self.text.see     (pos1)
-    # end def _find_highlight
-
+    
     def _find_unhighlight (self, (node, match)) :
         node.find_unhighlight (match)
-    # end def _find_unhighlight
-
-    def find_unhighlight (self, match) :
-        """Quick & dirty way is to remove *all* found styles"""
-        self.text.remove_style (styles.found, self.text.bot_pos)
-        # XXXXX FIXME: does the above work? if yes remove following.
-#        m   = self.master
-#        pos = m.search (match, self.model.head_mark, self.model.tail_mark)
-#        if pos :
-#            try :
-#                m.tag_remove ("found_bg", pos, self.model.tail_mark)
-#            except TclError :
-#                pass
-#        while pos :
-#            end = "%s + %s chars" % (pos, len (match))
-#            m.tag_remove ("found", pos, end)
-#            pos = m.search (match, end, self.model.tail_mark)
     # end def _find_unhighlight
 
     def _find_equal (self, pattern) :

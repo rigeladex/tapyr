@@ -7,11 +7,27 @@ import _TFL._TKT._Tk
 import _TFL._TKT._Tk.Text
 import _TFL._TKT._Tk.Butcon
 
+class T :
+    name = "test"
+
+o = T ()
+
+class My_Linked (TFL.UI.HTB.Node_Linked) :
+    def follow (self, o, event = None) :
+        print "clicked: %s" % o.name
+        self.__super.follow (o, event)
+    # end def follow
+# end class My_Linked
+
 if __name__ == "__main__" :
     AC = App_Context (TFL)
     def mknode (tb, name) :
-        n = TFL.UI.HTB.Node \
-            (tb, name, "1. test line\n2. test line\n3. test line")
+        n = My_Linked \
+            ( tb
+            , name
+            , "1. test line\n2. test line\n3. test line"
+            , o_links = (o,)
+            )
         n.insert (tb.current_pos, "nowrap")
         return n
 
