@@ -37,6 +37,7 @@
 #    12-Sep-2004 (CT) Exception handler added to `Message._time`
 #                     (Man, do I hate spammers)
 #    15-Sep-2004 (CT) Creation continued....
+#    17-Nov-2004 (CT) `main` added
 #    ««revision-date»»···
 #--
 
@@ -347,6 +348,31 @@ class Message (_Message_) :
 
 # end class Message
 
+def command_spec (arg_array = None) :
+    from   Command_Line import Command_Line
+    return Command_Line \
+        ( arg_spec    = ("message:S?Message to print")
+        , option_spec =
+            (
+            )
+        , description = "Print mail messages"
+        , max_args    = 0
+        , arg_array   = arg_array
+        )
+# end def command_spec
+
+def main (cmd) :
+    parser = Lib.Parser ()
+    for m in cmd.argv :
+        fp    = open (m)
+        email = parser.parse (fp)
+        fp.close ()
+        msg   = Message (email)
+        print u"\n".join (msg.formatted ()).encode ("iso-8859-15", "replace")
+# end def main
+
 if __name__ != "__main__" :
     TFL.PMA._Export ("*")
+else :
+    main (command_spec ())
 ### __END__ Message
