@@ -29,6 +29,7 @@
 # Revision Dates
 #    26-Jan-2005 (CT) Creation
 #    17-Feb-2005 (MG) `double_click_*` added
+#    22-Feb-2005 (RSC) mouse_{enter,leave} focus_{enter,leave} added
 #    ««revision-date»»···
 #--
 
@@ -52,11 +53,15 @@ Eventname = TFL.TKT._Eventname \
     , double_click_3           = None
     , edit_schedule            = None
     , exit                     = None
+    , focus_enter              = None
+    , focus_leave              = None
     , help                     = None
     , history_complete         = None
     , history_next             = None
     , history_previous         = None
     , make_schedule            = None
+    , mouse_enter              = None
+    , mouse_leave              = None
     , new                      = None
     , open                     = None
     , paste                    = None
