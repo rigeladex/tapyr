@@ -39,6 +39,7 @@
 #                     for modules provided by the package from the namespace
 #                     for classes and functions provided by the package
 #     3-Aug-2001 (CT) `Import_Module` added
+#    16-Aug-2001 (CT) `_import_1` fixed to correctly check for name clashes
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ class Package_Namespace :
        In the following, a package Foo_Package and module Bar are assumed as
        example. 
 
-       A Python package encapsulates a number of module. Packages are useful
+       A Python package encapsulates a number of modules. Packages are useful
        for avoiding name clashes between modules of different domains. For
        instance, `Frame` might be used as module name by a GUI package and by
        a communications package.
@@ -141,7 +142,11 @@ class Package_Namespace :
        To make up for the slight clumsiness of the `Import` call, the
        Package_Namespace instance will automagically import any 
        classes/modules into the namespace when an unknown attribute is
-       referenced via an expression like `Foo.Fubar`.       
+       referenced via an expression like `Foo.Fubar`.
+
+       The modules of the package will be visible via the `_` attribute of
+       the package namespace. Modules can be imported explicitly into `_` by
+       calling `Import_Module`.
     """
     
     def __init__ (self, name = None) :
@@ -166,7 +171,7 @@ class Package_Namespace :
         """
         if not self.__seen.has_key ((module_name, symbols)) :
             self.__dict__.update \
-                (self._import_symbols (module_name, * symbols))
+                (self._import_symbols (module_name, 1, * symbols))
             self.__seen [(module_name, symbols)] = 1
     # end def Import
 
@@ -188,31 +193,31 @@ class Package_Namespace :
            `import foo as bar`)
         """
         _caller_globals ().update \
-            (self._import_symbols (module_name, * symbols))
+            (self._import_symbols (module_name, 0, * symbols))
     # end def From_Import
 
-    def _import_symbols (self, module_name, * symbols) :
+    def _import_symbols (self, module_name, check_clashes, * symbols) :
         result = {}
         mod    = getattr (self.__modules, module_name)
         star   = None
         if len (symbols) >= 1 and symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
-                self._import_names (mod, all_symbols, result)
+                self._import_names (mod, all_symbols, result, check_clashes)
             else :
                 for s, p in mod.__dict__.items () :
                     if _inspect.getmodule (p) is mod :
-                        self._import_1 (mod, s, s, p, result)
+                        self._import_1 (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
             star    = 1
         if symbols :
-            self._import_names (mod, symbols, result)
+            self._import_names (mod, symbols, result, check_clashes)
         elif not star :
-            self._import_names (mod, (module_name, ), result)
+            self._import_names (mod, (module_name, ), result, check_clashes)
         return result
     # end def _import_symbols    
     
-    def _import_names (self, mod, names, result) :
+    def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
             if isinstance (name, type ("")) :
                 name, as_name = name, name
@@ -220,14 +225,16 @@ class Package_Namespace :
                 name, as_name = name
             p = getattr (mod, name, None)
             if p is not None :
-                self._import_1 (mod, name, as_name, p, result)
+                self._import_1 (mod, name, as_name, p, result, check_clashes)
     # end def _import_names    
 
-    def _import_1 (self, mod, name, as_name, object, result) :
+    def _import_1 (self, mod, name, as_name, object, result, check_clashes) :
         if __debug__ :
-            if result.get (name, object) is not object :
-                raise ImportError, "%s %s %s" % \
-                                   (name, object, result.get (name))
+            if (   check_clashes
+               and self.__dict__.get (name, object) is not object
+               ) :
+                raise ImportError, ( "Ambiguous name %s refers to %s and %s"
+                                   ) % (name, object, self.__dict__.get (name))
         result [as_name] = object
     # end def _import_1
     
