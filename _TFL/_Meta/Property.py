@@ -87,7 +87,7 @@ from   _TFL import TFL
 import _TFL._Meta
 TFL.Meta._Export ("*")
 
-if 1 and __debug__ :
+if 0 and __debug__ :
     import _TFL._Meta.Class
     class T (object) :
         __metaclass__ = TFL.Meta.Class
@@ -98,7 +98,7 @@ if 1 and __debug__ :
 
     class U (T) :
         __properties = \
-          ( RW_Property ("x", 3.12415926, "redefined attribute")
+          ( RW_Property ("x", 3.1415926, "redefined attribute")
           , RO_Property ("z", "fubar")
           )
 

@@ -30,20 +30,20 @@
 #    ««revision-date»»···
 #--
 
+def _mangled_name (name, cls_name) :
+    if cls_name.startswith ("_") :
+        format = "%s__%s"
+    else :
+        format = "_%s__%s"
+    return format % (cls_name, name)
+# end def _mangled_name
+
 class _Type_ (type) :
     """Base class of TFL metaclasses."""
 
     def mangled_name (cls, name) :
-        return cls._mangled_name (name, cls.__name__)
+        return _mangled_name (name, cls.__name__)
     # end def mangled_name
-
-    def _mangled_name (self, name, cls_name) :
-        if cls_name.startswith ("_") :
-            format = "%s__%s"
-        else :
-            format = "_%s__%s"
-        return format % (cls_name, name)
-    # end def _mangled_name
 
 # end class _Type_
 
@@ -71,21 +71,19 @@ class Autorename (_Type_) :
     # end def __init__
 
     def mangled_name (cls, name) :
-        return cls._mangled_name (name, cls.__dict__ ["__real_name"])
+        return _mangled_name (name, cls.__dict__ ["__real_name"])
     # end def mangled_name
 
 # end class Autorename
 
 class Autosuper (_Type_) :
-    """Metaclass adding a private class variable containing `super (cls)`
-       (the name of that variable is taken from `_super_attr` of the class).
+    """Metaclass adding a private class variable `__super` containing
+       `super (cls)`.
     """
-
-    _super_attr = "super"
 
     def __init__ (cls, name, bases, dict) :
         super   (Autosuper, cls).__init__ (name, bases, dict)
-        setattr (cls, cls.mangled_name (cls._super_attr), super (cls))
+        setattr (cls, cls.mangled_name ("super"), super (cls))
     # end def __init__
 
 # end class Autosuper
@@ -133,13 +131,11 @@ if 0 and __debug__ :
        hugo          = 1
        __private     = 42
        _real_name    = "Y"
-       _super_attr   = "Ancestor"
 
     class _Y_ (_X_) :
         hugo         = 2
         __private    = 137
         _real_name   = "ZZZ"
-        _super_attr  = "super"
 
     class Metatest (Class) :
 
