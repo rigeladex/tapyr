@@ -193,7 +193,8 @@ class Ratio :
         ### XXX CED: Originally this one did not return a `Ratio` instance,
         ### XXX but tried to keep the type of `lhs` ?
         ### XXX If this would be preferable, all the other `__rXXX__`
-        ### XXX functions should do this also.
+        ### XXX functions should do this also. Therefore `__rmul__`
+        ### XXX and `__radd__` should be implemented
         return lhs * self.reciprocal ()
     # end def __rdiv__
 
