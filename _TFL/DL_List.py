@@ -82,23 +82,30 @@ class DL_Item (TFL.Meta.Object) :
         """Move DL_Items from `h` to `t` after `self` (removing that sequence
            wherever it lived before).
         """
+        assert bool (h) and (bool (t)), "resplice %s: %s %s" % (self, h, t)
         h.prev.link_next (t.next)
         t.link_next      (self.next)
         self.link_next   (h)
     # end def resplice
 
-    def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
-            raise AttributeError, name
-        return getattr (self.value, name)
-    # end def __getattr__
-
+#    def __getattr__ (self, name) :
+#        if name.startswith ("__") and name.endswith ("__") :
+#            raise AttributeError, name
+#        return getattr (self.value, name)
+#    # end def __getattr__
+#
     def __nonzero__ (self) :
         return not (self.next is None or self.prev is None)
     # end def __nonzero__
 
     def __str__ (self) :
-        return str (self.value)
+        if bool (self) :
+            return str (self.value)
+        else :
+            return "<%s at %s: %s, %s, %s>" % \
+                ( self.__class__, id (self)
+                , id (self.next), id (self.prev), self.value
+                )
     # end def __str__
 
     def __repr__ (self) :

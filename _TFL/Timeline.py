@@ -57,7 +57,6 @@ class Timeline (TFL.Meta.Object) :
     """Timeline for scheduling.
 
        >>> S = NDT.Sched2.Span
-       >>> S.format = "(%s, %s)"
        >>> tl = Timeline (0, 1000)
        >>> tl.free
        [(0, 1000)]
