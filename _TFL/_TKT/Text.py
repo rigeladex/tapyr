@@ -48,6 +48,9 @@
 #    25-Feb-2005 (RSC) left_gravity added to doctest with value False
 #    25-Feb-2005 (RSC) added mark_at tests with a mark as parameter
 #     2-Mar-2005 (RSC) added test for left_gravity mark insertion
+#     2-Mar-2005 (RSC) added test for current_pos insertion:
+#                      check that current_pos really returns a mark!
+#                      So two insertions at x=current_pos work...
 #    ««revision-date»»···
 #--
 
@@ -132,6 +135,19 @@ class Text (TFL.TKT.Mixin) :
         >>> w.insert (grmpf, "jup", blue)
         >>> print w.get ()
         HiHajupGRMPFHoHum
+         Dum
+
+        >>> w.insert (w.current_pos, "cp1", blue)
+        >>> w.insert (w.current_pos, "cp2", yell)
+        >>> print w.get ()
+        Hicp1cp2HajupGRMPFHoHum
+         Dum
+
+        >>> x = w.current_pos
+        >>> w.insert (x, "CP1", blue)
+        >>> w.insert (x, "CP2", yell)
+        >>> print w.get ()
+        Hicp1cp2CP1CP2HajupGRMPFHoHum
          Dum
 
         >>> t1 = Text (_doctest_AC ())
