@@ -302,7 +302,7 @@ class Package_Namespace :
         result     = {}
         mod        = self.__modules._load (module_name)
         primary    = getattr (mod, module_name, None)
-        if primary not is None :
+        if primary is not None :
             result [module_name] = primary
         if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
