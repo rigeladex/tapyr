@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Jul-2004 (CT) Creation
 #    26-Jul-2004 (CT) Creation continued
+#    27-Jul-2004 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,100 @@ class _Formatter_ (TFL.Meta.Object) :
     # end def __repr__
 
 # end class _Formatter_
+
+class _Recursive_Formatter_ (TFL.Meta.Object) :
+
+    def __init__ (self, key, format) :
+        self.key    = key
+        self.format = format
+    # end def __init__
+
+    def __call__ (self, node, context, sep) :
+        self.node    = node
+        self.context = context
+        self.sep     = sep
+        return self
+    # end def __call__
+
+# end class _Recursive_Formatter_
+
+class _Recursive_Formatters_ (TFL.Meta.Object) :
+
+    def __init__ (self, sep, * formatters) :
+        self.sep        = sep
+        self.formatters = formatters
+    # end def __init__
+
+    def __call__ (self, node, context) :
+        self.node    = node
+        self.context = context
+        return self
+    # end def __call__
+
+    def __iter__ (self) :
+        node     = self.node
+        context  = self.context
+        sep      = ""
+        i        = 0
+        for f in self.formatters :
+            for r in f (node, context, sep = self.sep) :
+                yield "%s%s" % (sep, r)
+                sep = ""
+                i  += 1
+            if i :
+                sep = self.sep
+    # end def __iter__
+
+# end class _Recursive_Formatters_
+
+class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
+
+    def __iter__ (self) :
+        format = self.format
+        sep    = ""
+        attr   = getattr (self.node, self.key, None)
+        if attr is not None :
+            if isinstance (attr, str) :
+                attr = (attr, )
+            for x in attr :
+                yield sep + (format % x)
+                sep = self.sep
+    # end def __iter__
+
+# end class _Recursive_Formatter_Attr_
+
+class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
+
+    def __iter__ (self) :
+        context = self.context
+        format  = self.format
+        rkw     = context.recurse_args
+        sep     = ""
+        result  = getattr (self.node, self.key) (** rkw)
+        if result is not None :
+            for x in result :
+                yield sep + (format % x)
+                sep = self.sep
+    # end def __iter__
+
+# end class _Recursive_Formatter_Method_
+
+class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
+
+    def __iter__ (self) :
+        context  = self.context
+        format   = self.format
+        recurser = context.recurser
+        rkw      = context.recurse_args
+        sep      = ""
+        for x in getattr (self.node, self.key) :
+            for y in getattr (x, recurser) (** rkw) :
+                yield sep + (format % y)
+                sep = ""
+            sep = self.sep
+    # end def __iter__
+
+# end class _Recursive_Formatter_Node_
 
 class Single_Line_Formatter (_Formatter_) :
     """Formatter generating a single line of output"""
@@ -79,6 +174,11 @@ class Multi_Line_Formatter (_Formatter_) :
           r""")"""
         , re.VERBOSE
         )
+    Formatters = \
+        { "." : _Recursive_Formatter_Attr_
+        , "@" : _Recursive_Formatter_Method_
+        , "*" : _Recursive_Formatter_Node_
+        }
 
     def __init__ (self, indent_level, format_line) :
         self.__super.__init__ (indent_level, format_line)
@@ -133,93 +233,12 @@ class Multi_Line_Formatter (_Formatter_) :
         formatters = []
         for key in keys :
             key = key.strip ()
-            if key [0] == "*" :
-                rf = _Recursive_Formatter_Attr_
-            elif key [0] == "@" :
-                rf = _Recursive_Formatter_Method_
-            else :
-                raise ValueError, match.group (0)
+            rf  = self.Formatters [key [0]]
             formatters.append (rf (key [1:], "%%%s" % (form, )))
         return _Recursive_Formatters_ (sep, * formatters)
     # end def _recursive_formatter
 
 # end class Multi_Line_Formatter
-
-class _Recursive_Formatter_ (TFL.Meta.Object) :
-
-    def __init__ (self, key, format) :
-        self.key    = key
-        self.format = format
-    # end def __init__
-
-    def __call__ (self, node, context, sep) :
-        self.node    = node
-        self.context = context
-        self.sep     = sep
-        return self
-    # end def __call__
-
-# end class _Recursive_Formatter_
-
-class _Recursive_Formatters_ (TFL.Meta.Object) :
-
-    def __init__ (self, sep, * formatters) :
-        self.sep        = sep
-        self.formatters = formatters
-    # end def __init__
-
-    def __call__ (self, node, context) :
-        self.node    = node
-        self.context = context
-        return self
-    # end def __call__
-
-    def __iter__ (self) :
-        node     = self.node
-        context  = self.context
-        sep      = ""
-        i        = 0
-        for f in self.formatters :
-            for r in f (node, context, sep = self.sep) :
-                yield "%s%s" % (sep, r)
-                sep = ""
-                i  += 1
-            if i :
-                sep = self.sep
-    # end def __iter__
-
-# end class _Recursive_Formatters_
-
-class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
-
-    def __iter__ (self) :
-        context  = self.context
-        format   = self.format
-        recurser = context.recurser
-        rkw      = context.recurse_args
-        sep      = ""
-        for x in getattr (self.node, self.key) :
-            for y in getattr (x, recurser) (** rkw) :
-                yield sep + (format % y)
-                sep = ""
-            sep = self.sep
-    # end def __iter__
-
-# end class _Recursive_Formatter_Attr_
-
-class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
-
-    def __iter__ (self) :
-        context  = self.context
-        format   = self.format
-        rkw      = context.recurse_args
-        sep      = ""
-        for x in getattr (self.node, self.key) (** rkw) :
-            yield sep + (format % x)
-            sep = self.sep
-    # end def __iter__
-
-# end class _Recursive_Formatter_Method_
 
 def Formatter (level, format_line) :
     if Multi_Line_Formatter.pattern.search (format_line) :

@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Jul-2004 (CT) Creation
 #    26-Jul-2004 (CT) Creation continued
+#    27-Jul-2004 (CT) Call to `_autoconvert` corrected (`self` passed)
 #    ««revision-date»»···
 #--
 
@@ -184,7 +185,7 @@ class Node :
         for k, v in kw.iteritems () :
             if k in self.init_arg_defaults :
                 if k in self._autoconvert :
-                    v = self._autoconvert [k] (v)
+                    v = self._autoconvert [k] (self, v)
                 setattr (self, k, v)
             else :
                 kw_err [k] = v

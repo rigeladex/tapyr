@@ -33,7 +33,7 @@
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 
-class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
+class Comment (TFL.SDG.C.Node) :
     """Comment in a C file"""
 
     init_arg_defaults    = dict \
@@ -49,6 +49,11 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     eol_comment_tail     = 79
     electric_break       = 1
 
+    h_format = c_format  = """
+        >/* %(:** :.description:)s
+        >*/
+    """
+
     def __init__ (self, * description, ** kw) :
         self.__super.__init__ (description = description, ** kw)
     # end def __init__
@@ -59,7 +64,6 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     # end def _convert_c_comment
 
 # end class Comment
-
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*")
