@@ -68,7 +68,7 @@ def easter_date (year) :
         day   = d + e - 9
         month = 4
         if day in (25, 26) and d == 28 and e == 6 and a > 10 :
-            print d, e, a, (d == 28, e == 6, a > 10)
+            ### print d, e, a, (d == 28, e == 6, a > 10)
             day -= 7
     return (year, month, day)
 # end def easter_date
