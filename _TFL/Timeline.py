@@ -103,10 +103,11 @@ class Timeline (TFL.Meta.Object) :
        AssertionError head = (215, 200), tail = (215, 500)
     """
 
+    epsilon = 0.0001
+
     def __init__ (self, lower, upper) :
         self.orig = NDT.Sched2.Span (lower, upper)
         self.free = [NDT.Sched2.Span (lower, upper)]
-        self.epsilon = 0.0001
     # end def __init__
 
     def intersection (self, span) :
