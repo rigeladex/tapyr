@@ -52,7 +52,7 @@
 #     1-Dec-2003 (MG)  Fixed `file_header`: if no `comment_char` is
 #                      specified, `comment_line_head` will be used
 #     1-Dec-2003 (RMA) Factorized _begin_section
-#     2-Dec-2003 (MG) `item` fixed
+#     2-Dec-2003 (MG) `item`: parameter `item_indent_only` extended
 #    ««revision-date»»···
 #--
 
