@@ -192,7 +192,7 @@ class Body_Part (_Pseudo_Part_) :
         self.__super.__init__ (email, "Body")
     # end def __init__
 
-    def formatted (self, sep_length = 79) :
+    def body_lines (self, sep_length = 79) :
         lines = None
         if self.body :
             type = self.content_type
@@ -210,9 +210,9 @@ class Body_Part (_Pseudo_Part_) :
             hp = Header_Part (self.email, self.headers_to_show)
             for l in hp.formatted (sep_length) :
                 yield l
-    # end def formatted
+    # end def body_lines
 
-    _formatted = formatted
+    formatted = _formatted = body_lines
 
     def _separators (self, sep_length) :
         if self.needs_sep :
@@ -238,12 +238,11 @@ class Header_Part (_Pseudo_Part_) :
         self.__super.__init__ (email, name or "Headers")
     # end def __init__
 
-    def formatted (self, sep_length = 79) :
-        for h in self._fh :
-            yield h
-    # end def formatted
+    def body_lines (self, sep_length = 79) :
+        return self._fh
+    # end def body_lines
 
-    _formatted = formatted
+    formatted = _formatted = body_lines
 
     def _separators (self, sep_length) :
         return ()
@@ -273,6 +272,10 @@ class _Message_ (_Msg_Part_) :
             for sp in p.all_parts () :
                 yield sp
     # end def all_parts
+
+    def body_lines (self, sep_length = 79) :
+        return ()
+    # end def body_lines
 
     def formatted (self, sep_length = 79) :
         for p in self.part_iter () :
