@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Command_Interfacer
+#    TFL.TKT.Command_Interfacer
 #
 # Purpose
 #    Model a toolkit command interface like menu, toolbar, etc.
@@ -120,4 +120,4 @@ class Command_Interfacer (TFL.Meta.Object) :
 
 if __name__ != "__main__" :
     TFL.TKT._Export ("*")
-### __END__ Command_Interfacer
+### __END__ TFL.TKT.Command_Interfacer
