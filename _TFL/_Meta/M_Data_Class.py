@@ -29,6 +29,11 @@
 #    25-Jan-2005 (CT) Creation
 #    27-Jan-2005 (CT) s/_allowed/_names/g
 #    27-Jan-2005 (CT) `_values` added and used
+#     4-Feb-2005 (CT) `__call__` added
+#     4-Feb-2005 (CT) Ancestor of `_names` and `_values` changed from `type`
+#                     to `object`
+#     4-Feb-2005 (CT) `__module__` set for newly created classes
+#     4-Feb-2005 (CT) `_check_dict` factored
 #    ««revision-date»»···
 #--
 
@@ -76,26 +81,46 @@ R4 = M_Record ("R4", (R2, R3), dict ())
 
 from   _TFL             import TFL
 import _TFL._Meta.M_Class
+import _TFL.Caller
 
 class M_Data_Class (TFL.Meta._M_Type_) :
     """Meta class supporting definition of classes holding data"""
 
-    class _names (type) :
+    class _names (object) :
         pass
     # end class _names
 
-    class _values (type) :
+    class _values (object) :
         pass
     # end class _values
 
     def __new__ (meta, name, bases, dict) :
         if not bases :
             bases = (meta._names, )
+        if "__module__" not in dict :
+            dict ["__module__"] = TFL.Caller.globals () ["__name__"]
         result = super (M_Data_Class, meta).__new__ (meta, name, bases, dict)
         return result
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
+        cls._check_dict (dict)
+        super (M_Data_Class, cls).__init__ (name, bases, dict)
+    # end def __init__
+
+    def __call__ (cls, ** kw) :
+        cls._check_dict        (kw)
+        result = cls.__new__   (cls)
+        result.__init__        ()
+        result.__dict__.update (kw)
+        return result
+    # end def __call__
+
+    def __repr__ (cls) :
+        return "<%s %s>" % (cls.__class__.__name__ [2:], cls.__name__)
+    # end def __repr__
+
+    def _check_dict (cls, dict) :
         _names  = cls._names.__dict__
         _values = cls._values.__dict__
         for k, v in dict.iteritems () :
@@ -105,12 +130,7 @@ class M_Data_Class (TFL.Meta._M_Type_) :
             if k in _values and v not in _values [k] :
                 raise ValueError, \
                     "%s doesn't allow value `%s` for `%s`" % (cls, v, k)
-        super (M_Data_Class, cls).__init__ (name, bases, dict)
-    # end def __init__
-
-    def __repr__ (cls) :
-        return "<%s %s>" % (cls.__class__.__name__ [2:], cls.__name__)
-    # end def __repr__
+    # end def _check_dict
 
 # end class M_Data_Class
 

@@ -122,6 +122,7 @@
 #                     `max_cmds_per_group`
 #     4-Feb-2005 (CT) `_Precondition_Checker_` factored
 #     4-Feb-2005 (CT) `_precondition_eager` added
+#     4-Feb-2005 (CT) `_Precondition_Checker_` simplified
 #    ««revision-date»»···
 #--
 
@@ -776,9 +777,8 @@ class Dyn_Group (_Command_Group_) :
 
 class _Precondition_Checker_ (TFL.Meta.Object) :
 
-    def __init__ (self, p, eager) :
+    def __init__ (self, p) :
         self.precondition = p
-        self.eager        = eager
         self.old_value    = None
         self.command      = []
     # end def __init__
@@ -789,7 +789,7 @@ class _Precondition_Checker_ (TFL.Meta.Object) :
             result = bool (p ())
         except Precondition_Violation :
             result = False
-        if self.eager or result != self.old_value :
+        if result != self.old_value :
             self.old_value = result
             if result :
                 for cmd in self.command :
@@ -869,7 +869,7 @@ class Command_Mgr (Command_Group) :
             root  = self.root
             dict  = (root._precondition_lazy, root._precondition_eager) [eager]
             if p not in dict :
-                dict [p] = _Precondition_Checker_ (p, eager)
+                dict [p] = _Precondition_Checker_ (p)
             dict [p].command.append (cmd)
     # end def _add_precondition
 
