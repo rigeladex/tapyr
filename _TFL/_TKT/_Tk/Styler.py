@@ -32,6 +32,7 @@
 #    21-Feb-2005 (CT)  `cursor` handling added
 #    24-Feb-2005 (CT)  `_font_weight_map` added and used
 #    24-Feb-2005 (RSC) font_weight computation fixed & tested
+#     1-Apr-2005 (CT)  s/__init__/_init_/
 #    ««revision-date»»···
 #--
 
@@ -78,8 +79,8 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
         ( underline   = lambda s, v : (False, True) [v != "none"]
         )
 
-    def __init__ (self, style) :
-        self.__super.__init__ (style)
+    def _init_ (self, style) :
+        self.__super._init_ (style)
         if "font" in self.Opts :
             f = style.font_family
             d = {}
@@ -97,7 +98,7 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
             c = style.mouse_cursor
             if c is not None :
                 self.option_dict ["cursor"] = self._cursor_map.get (c, c)
-    # end def __init__
+    # end def _init_
 
 Styler = _TKT_Tk_Styler_ # end class _TKT_Tk_Styler_
 

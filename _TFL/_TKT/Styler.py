@@ -28,16 +28,19 @@
 # Revision Dates
 #    18-Feb-2005 (CT) Creation
 #    21-Feb-2005 (CT) `__init__` changed to pass `self` to `_opt_mappers`
+#     1-Apr-2005 (CT) `style_dict` added
+#     1-Apr-2005 (CT) `__new__` and `_cache` added
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin
 import _TFL._Meta.M_Auto_Combine
+import _TFL._Meta.Object
 
 import weakref
 
-class _TKT_Styler_ (TFL.TKT.Mixin) :
+class _TKT_Styler_ (TFL.Meta.Object) :
     """Map a UI.Style object to a toolkit specific dictionary of options
 
 
@@ -47,7 +50,7 @@ class _TKT_Styler_ (TFL.TKT.Mixin) :
        ...     Opts = dict_from_list (
        ...         ("background", "foreground", "underline"))
        ...     _opt_mappers = dict (
-       ...           underline = lambda v : (False, True) [v != "none"]
+       ...           underline = lambda s, v : (False, True) [v != "none"]
        ...         )
        ...
        ...
@@ -75,17 +78,33 @@ class _TKT_Styler_ (TFL.TKT.Mixin) :
     _opt_mappers         = {} ### maps option names to functions transforming
                               ### option values into a toolkit specific form
 
-    def __init__ (self, style) :
+    _cache               = {} ### indexed by `self.__class__` and `style`
+
+    def __new__ (cls, style) :
+        if cls not in cls._cache :
+            cls._cache [cls] = weakref.WeakKeyDictionary ()
+        _cache = cls._cache [cls]
+        if style in _cache :
+            return _cache [style]
+        result = _cache [style] \
+               = super (_TKT_Styler_, cls).__new__ (cls, style)
+        result._init_ (style)
+        return result
+    # end def __new__
+
+    def _init_ (self, style) :
         self.style       = weakref.proxy (style)
+        self.style_dict  = s = {}
         self.option_dict = d = {}
         _opt_mappers     = self._opt_mappers
         for o in self.Opts :
             v = getattr (style, o, None)
             if v is not None :
+                s [o] = v
                 if o in _opt_mappers :
                     v = _opt_mappers [o] (self, v)
                 d [o] = v
-    # end def __init__
+    # end def _init_
 
 Styler = _TKT_Styler_ # end class _TKT_Styler_
 

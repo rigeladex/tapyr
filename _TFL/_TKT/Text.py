@@ -56,6 +56,9 @@
 #    10-Mar-2005 (RSC) `show' removed again. Use make_active instead!
 #    15-Mar-2005 (RSC) `lift` parameter added to `apply_style`
 #    15-Mar-2005 (RSC) Note added to docstring of `apply_style`
+#     1-Apr-2005 (CT)  Optional argument `tag` added to `apply_style` and
+#                      `_tag`
+#     1-Apr-2005 (CT)  `tags_at` added
 #    ««revision-date»»···
 #--
 
@@ -96,7 +99,10 @@ class Text (TFL.TKT.Mixin) :
         >>> w.place_cursor (w.bot_pos)
         >>> w.insert (w.current_pos, "Hi", yell)
         >>> w.insert (w.current_pos, "Ho", delta = 2)
-        >>> w.apply_style  (gray, w.bol_pos (hum_p), w.eol_pos (hum_p))
+        >>> w.apply_style  ( gray, w.bol_pos (hum_p), w.eol_pos (hum_p)
+        ...                , tag ="foo")
+        >>> print w.tags_at (hum_p)
+        ('foo',)
         >>> #applying an eventbinding is impossible here because this
         >>> #needs an app context for looking up the event name.
         >>> #w.apply_style  (cb,   w.bol_pos (hum_p), w.eol_pos (hum_p))
@@ -193,12 +199,11 @@ class Text (TFL.TKT.Mixin) :
         self.insert (self.eot_pos, text, style)
     # end def append
 
-    def apply_style \
-        (self, style, head = None, tail = None, delta = 0, lift = False) :
+    def apply_style (self, style, head = None, tail = None, delta = 0, lift = False, tag = None) :
         """Apply `style` from position/mark `head` (default: `self.bot_pos`)
            plus `delta` to position/mark `tail` (default: `self.eot_pos`).
            Parameter `lift` specifies that this style should have the
-           maximum priority.
+           maximum priority. If `tag` is specified, use its value as tag-name.
            Note: Due to implementation restrictions, lmargin1 and
            lmargin2 must alway be applied in the same style (this is an
            implementation restriction of GTK).
@@ -332,6 +337,14 @@ class Text (TFL.TKT.Mixin) :
         raise NotImplementedError, \
             "%s must define set_tabs" % (self.__class__.__name__, )
     # end def set_tabs
+
+    def tags_at (self, pos_or_mark) :
+        """Return the names of all tags active at position specified by
+           `pos_or_mark`.
+        """
+        raise NotImplementedError, \
+            "%s must define tags_at" % (self.__class__.__name__, )
+    # end def tags_at
 
 # end class Text
 

@@ -39,6 +39,7 @@
 #    24-Feb-2005 (CT)  `__getattr__` for `ask_*` added
 #    24-Feb-2005 (CT)  `__getattr__` changed to delegate to `exposed_widget`
 #     8-Mar-2005 (CT)  `make_active` added
+#     1-Apr-2005 (CT)  `_sty_map` removed (caching now done by `Styler` itself)
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,6 @@ import weakref
 class Widget (TFL.TKT.Mixin) :
     """Model widget for Tkinter based GUI"""
 
-    _sty_map     = {}
     widget_class = None ### redefine this if you want to change the `Class`
                         ### used for option lookup
 
@@ -137,15 +137,9 @@ class Widget (TFL.TKT.Mixin) :
     # end def _before_styler
 
     def _styler (self, style, Styler = None) :
-        sty_map = self._sty_map
         if Styler is None :
             Styler = self.Styler
-        if Styler not in sty_map :
-            sty_map [Styler] = weakref.WeakKeyDictionary ()
-        sty_map = sty_map [Styler]
-        if style not in sty_map :
-            sty_map [style] = Styler (style)
-        return sty_map [style]
+        return Styler (style)
     # end def _styler
 
     def __getattr__ (self, name) :

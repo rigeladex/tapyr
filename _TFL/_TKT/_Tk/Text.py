@@ -68,6 +68,9 @@
 #    25-Feb-2005 (RSC) `set_tabs` corrected to require a list of things
 #                      convertable to int
 #    15-Mar-2005 (RSC) `lift` parameter added to `apply_style`
+#     1-Apr-2005 (CT)  Optional argument `tag` added to `apply_style` and
+#                      `_tag`
+#     1-Apr-2005 (CT)  `tags_at` added
 #    ««revision-date»»···
 #--
 
@@ -161,18 +164,14 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
         self._mark_no   = 0
     # end def __init__
 
-    def apply_style \
-        (self, style, head = None, tail = None, delta = 0, lift = False) :
+    def apply_style (self, style, head = None, tail = None, delta = 0, lift = False, tag = None) :
         if head is None :
             self.__super.apply_style \
-                ( style, head = head, tail = tail, delta = delta)
+                (style, head = head, tail = tail, delta = delta)
         else :
-            tag = self._tag (style)
+            tag = self._tag (style, tag)
             self.wtk_widget.tag_add \
-                ( tag
-                , self._pos_at (head, delta)
-                , tail or self.eot_pos
-                )
+                (tag, self._pos_at (head, delta), tail or self.eot_pos)
             if lift :
                 self.wtk_widget.tag_raise (tag)
     # end def apply_style
@@ -285,6 +284,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
             (tabs = " ".join (["%d" % int (t) for t in tabs]))
     # end def set_tabs
 
+    def tags_at (self, pos_or_mark) :
+        return self.wtk_widget.tag_names (pos_or_mark)
+    # end def tags_at
+
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
         result = pos_or_mark
         if line_delta != 0 :
@@ -300,18 +303,22 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
         return result
     # end def _pos_at
 
-    def _tag (self, style) :
-        result = ()
+    def _tag (self, style, tag = None) :
+        result = () ### undefined tag must be empty tuple to please Tkinter
         if style is not None :
             if style not in self._tag_map :
-                tag                    = "tag:%s" % (self._tag_no, )
-                self._tag_no          += 1
-                self._tag_map [style]  = tag
+                if tag is None :
+                    tag = "tag:%s" % (self._tag_no, )
+                    self._tag_no += 1
+                self._tag_map [style] = result = tag
                 self.wtk_widget.tag_configure \
                     (tag, ** self._styler (style, self.Tag_Styler).option_dict)
                 self._apply_style_bindings \
                     (style, lambda e, b : self.wtk_widget.tag_bind (tag, e, b))
-            result = (self._tag_map [style])
+            elif tag is not None :
+                result = self._tag_map [style]
+                assert tag == result, \
+                    "Inconsistent tag-usage %s for style %s" % (tag, style)
         return result
     # end def _tag
 
