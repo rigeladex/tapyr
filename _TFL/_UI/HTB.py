@@ -44,6 +44,7 @@
 #                      cursor key movement corrected,
 #                      some styles corrected to fit old T_Browser
 #                      made text-widget non-editable :-)
+#    24-Feb-2005 (RSC) Tabs implemented.
 #    ««revision-date»»···
 #--
 
@@ -337,8 +338,6 @@ class Node (TFL.UI.Mixin) :
         """
         self.tags = filter (None, (self.tag, ) + tags)
         head = self.text.pos_at (mark)
-        # XXXXX FIXME
-        # The following should be done by the levelK:head style.
         if self.level :
             self._insert (mark, "\t" * self.level)
         self.butt_mark = self.text.mark_at (mark, left_gravity = True)
@@ -877,6 +876,7 @@ class Browser (TFL.UI.Mixin) :
             , wrap       = "word"
             )
 
+        tabs = []
         for i in range (1, 16) :
             level     = "level" + `i-1`
             head_name = level + ":head"
@@ -894,6 +894,9 @@ class Browser (TFL.UI.Mixin) :
                 , lmargin1  = i * indent
                 , lmargin2  = i * indent + indent_inc
                 )
+            tabs.append (i * indent)
+        self.text.set_tabs (* tabs)
+
     # end def _setup_styles
 
     def insert (self, pos, text, * styles) :
