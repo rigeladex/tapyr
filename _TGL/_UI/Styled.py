@@ -27,12 +27,13 @@
 #
 # Revision Dates
 #     1-Apr-2005 (CT) Creation
+#     2-Apr-2005 (MG) Import fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 from   _TGL                  import TGL
-import _TFL._Meta.Property
+import _TFL._Meta.Object
 
 class Styled (TFL.Meta.Object) :
     """Mode styled text object"""

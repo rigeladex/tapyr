@@ -31,6 +31,7 @@
 #     1-Apr-2005 (CT) Creation continued (style.callback handling corrected)
 #     1-Apr-2005 (CT) `Style.__init__` improved
 #     1-Apr-2005 (CT) `Styled` factored into a module of its own
+#     2-Apr-2005 (MG) Import fixed
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _TGL._UI.Styled       import Styled
 
 import _TFL._UI.Mixin
 import _TFL._UI.Style
+import _TFL._Meta.Property
 
 import _TGL._UI.Mixin
 import _TGL._UI.Style
