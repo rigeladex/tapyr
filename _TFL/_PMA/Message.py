@@ -38,6 +38,9 @@
 #                     (Man, do I hate spammers)
 #    15-Sep-2004 (CT) Creation continued....
 #    17-Nov-2004 (CT) `main` added
+#    26-Nov-2004 (CT) `_formatted_body` changed to apply `.rstrip ("\r")` to
+#                     each line yielded
+#    26-Nov-2004 (CT) `message_from_file` factored
 #    ««revision-date»»···
 #--
 
@@ -136,7 +139,7 @@ class _Message_ (TFL.Meta.Object) :
             if lines is not None :
                 charset = self.charset
                 for l in lines :
-                    yield l.decode (charset, "replace")
+                    yield l.decode (charset, "replace").rstrip ("\r")
     # end def _formatted_body
 
     def _formatted_headers (self, headers = None) :
@@ -348,6 +351,17 @@ class Message (_Message_) :
 
 # end class Message
 
+def message_from_file (filename, parser = None) :
+    if parser is None :
+        parser = Lib.Parser ()
+    fp = open (filename)
+    try :
+        email = parser.parse (fp)
+    finally :
+        fp.close ()
+    return Message (email)
+# end def message_from_file
+
 def command_spec (arg_array = None) :
     from   Command_Line import Command_Line
     return Command_Line \
@@ -364,10 +378,7 @@ def command_spec (arg_array = None) :
 def main (cmd) :
     parser = Lib.Parser ()
     for m in cmd.argv :
-        fp    = open (m)
-        email = parser.parse (fp)
-        fp.close ()
-        msg   = Message (email)
+        msg = message_from_file (m, parser)
         print u"\n".join (msg.formatted ()).encode ("iso-8859-15", "replace")
 # end def main
 
