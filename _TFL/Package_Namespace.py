@@ -2,17 +2,17 @@
 # Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
 # version 2 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Library General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Library General Public
 # License along with this library; if not, write to the Free
 # Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -30,7 +30,7 @@
 #     7-May-2001 (CT) Creation
 #     2-Jul-2001 (CT) Docstring extended
 #     2-Jul-2001 (CT) Use `` instead of `' to quote inside docstrings and
-#                     comments 
+#                     comments
 #    27-Jul-2001 (CT) `Import` changed to support `*`
 #    30-Jul-2001 (CT) `*` import corrected
 #    30-Jul-2001 (CT) `_import_1` and `_import_name` factored
@@ -41,7 +41,7 @@
 #     3-Aug-2001 (CT) `Import_Module` added
 #    16-Aug-2001 (CT) `_import_1` fixed to correctly check for name clashes
 #    19-Aug-2001 (CT) `_import_names` changed to raise `ImportError` if
-#                     necessary 
+#                     necessary
 #    19-Aug-2001 (CT) `__getattr__` raises `AttributeError` instead of
 #                     `ImportError` for `__*__`
 #    22-Aug-2001 (CT) `transitive` added
@@ -52,7 +52,7 @@
 #     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
 #     8-Nov-2001 (CT) `Essence` added to handle TOM.Class_Proxy correctly
 #    13-Nov-2001 (CT) `_import_symbols` corrected to handle empty `symbols`
-#                     correctly 
+#                     correctly
 #    13-Nov-2001 (CT) Unncessary restriction of nested packages removed
 #     5-Dec-2001 (MG) Special code for `Proxy_Type` changed
 #    20-Feb-2002 (CT) `_Export` and `XXX PPP` comments added
@@ -60,21 +60,28 @@
 #--
 
 from   caller_globals import caller_globals as _caller_globals
+from   caller_globals import caller_info    as _caller_info
 import inspect                              as _inspect
 
 class _Module_Space :
-    
+
     def __init__ (self, name) :
-        self.__name    = name
+        self.__name = name
     # end def __init__
-    
+
     def __getattr__ (self, module_name) :
+        print "XXX PNS Implicit import %s._.%s by %s" \
+              % (self.__name, module_name, _caller_info ())
+        return self._load (module_name)
+    # end def __getattr__
+
+    def _load (self, module_name) :
         module = __import__ \
             ("%s.%s" % (self.__name, module_name), {}, {}, (module_name, ))
         setattr (self, module_name, module)
         return module
-    # end def __getattr__
-    
+    # end def _load
+
 # end class _Module_Space
 
 class Package_Namespace :
@@ -82,7 +89,7 @@ class Package_Namespace :
        classes and functions implemented in the modules of the package.
 
        In the following, a package Foo_Package and module Bar are assumed as
-       example. 
+       example.
 
        A Python package encapsulates a number of modules. Packages are useful
        for avoiding name clashes between modules of different domains. For
@@ -104,7 +111,7 @@ class Package_Namespace :
        Many Pythoneers use the `Bar.Bar` notation to refer to the class `Bar`
        defined by module `Bar`. I strongly prefer to use `Bar` to refer to
        the class.
-           
+
        In the presence of packages, there are even more possibilities::
 
            #3
@@ -152,9 +159,9 @@ class Package_Namespace :
 
            ### import `Bar` and `Baz` from Foo.Bar
            Foo.Import ("Bar", "Bar", "Baz")
-           
+
        To make up for the slight clumsiness of the `Import` call, the
-       Package_Namespace instance will automagically import any 
+       Package_Namespace instance will automagically import any
        classes/modules into the namespace when an unknown attribute is
        referenced via an expression like `Foo.Fubar`.
 
@@ -162,7 +169,7 @@ class Package_Namespace :
        the package namespace. Modules can be imported explicitly into `_` by
        calling `Import_Module`.
     """
-    
+
     def __init__ (self, name = None) :
         if not name :
             name = _caller_globals () ["__name__"]
@@ -170,7 +177,7 @@ class Package_Namespace :
         self.__modules = self._ = _Module_Space (name)
         self.__seen    = {}
     # end def __init__
-    
+
     def Import (self, module_name, * symbols) :
         ### XXX PNS remove after Package_Namespace transition is complete
         """Import all `symbols` from module `module_name` of package
@@ -195,7 +202,7 @@ class Package_Namespace :
         """Import module `module_name` into `self._`."""
         return getattr (self.__modules, module_name)
     # end def Import_Module
-    
+
     def From_Import (self, module_name, * symbols, ** kw) :
         ### XXX PNS remove after Package_Namespace transition is complete
         """Import all `symbols` from module `module_name` of package
@@ -246,8 +253,8 @@ class Package_Namespace :
         if symbols :
             self._import_names (mod, symbols, result, check_clashes)
         return result
-    # end def _import_symbols    
-    
+    # end def _import_symbols
+
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
             if isinstance (name, type ("")) :
@@ -271,10 +278,11 @@ class Package_Namespace :
                                    ) % (name, object, self.__dict__.get (name))
         result [as_name] = object
     # end def _import_1
-    
+
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
-            print "XXX PNS Implicit import %s.%s" % (self.__name, name)
+            print "XXX PNS Implicit import %s.%s by %s" \
+                  % (self.__name, name, _caller_info ())
             self.Import (name, name)
             return self.__dict__ [name]
         raise AttributeError, name
@@ -316,7 +324,7 @@ class Package_Namespace :
         if symbols :
             self._import_names (mod, symbols, result, 1)
     # end def _Export
-    
+
 # end class Package_Namespace
 
 ### __END__ Package_Namespace
