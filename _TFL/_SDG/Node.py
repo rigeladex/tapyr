@@ -231,7 +231,7 @@ A complex format specification has the form::
   * `type` is one of `.`, `*`, of `@`.
 
     . `.` specifies that the following name refers to an attribute of
-      the node object. The value of that attribute must be Non, a
+      the node object. The value of that attribute must be None, a
       single string, or a sequence. If the value is None, the
       expansion is empty, if the value is a string, the expansion is a
       single line (with the formatted value of the string), otherwise
@@ -244,7 +244,7 @@ A complex format specification has the form::
       values.
 
     . `*` specifies that the following name refers to an attribute of
-      the node object which contains a (possible empty) list of
+      the node object which contains a (possibly empty) list of
       children nodes. If the name contains a dot, the first part
       specifies the child-bearing attribute and the second part
       specifies the format to be used for recursion over the children
