@@ -113,6 +113,13 @@ class Single_Line_Formatter (_Formatter_) :
 
     def __call__ (self, node, context) :
         context.locals ["indent_anchor"] = context.locals ["indent_offset"]
+        PRINT \
+            ( "%s «%s» : %d"
+            % ( self
+              , self.format_line % context
+              , context.locals ["indent_offset"]
+              )
+            )
         return (self.format_line % context, )
     # end def __call__
 
@@ -210,7 +217,7 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
         rkw      = self.recurse_kw
         sep      = ""
         nodes    = getattr (self.node, self.key)
-        PRINT (self, rkw)
+        PRINT (self, rkw, recurser)
         if nodes is not None :
             if isinstance (nodes, TFL.SDG.Node) :
                 nodes = (nodes, )
@@ -333,10 +340,10 @@ class Multi_Line_Formatter (_Formatter_) :
         last = ""
         PRINT (self, node.name, context.indent_anchor)
         for f in self.formatters :
+            PRINT ("  %s «%s» %d" % (f, last, context.indent_anchor))
             lines      = TFL.Look_Ahead_Gen (f (node, context))
             i          = 0
             add_indent = len (last)
-            PRINT ("  %s «%s»" % (f, last))
             for l in lines :
                 PRINT ("    Lines «%s:%s»" % (last, l), context.indent_anchor)
                 if i > 0 and f.anchor :

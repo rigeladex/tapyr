@@ -35,6 +35,8 @@
 #    13-Aug-2004 (MG) formats changed (use new attribte `ht_width` to ensure
 #                     alignment)
 #    24-Aug-2004 (CT) `formatted` redefined to guard with `level <= out_level`
+#    15-Sep-2004 (CT) `_description` changed to enforce minimum width for
+#                     textwrap.TextWrapper
 #    ««revision-date»»···
 #--
 
@@ -96,7 +98,7 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     # end def _convert_c_comment
 
     def _description (self, ** kw) :
-        format_prec = int (kw ["format_prec"])
+        format_prec = min (int (kw ["format_prec"]), 40)
         wrapper     = textwrap.TextWrapper (width = format_prec)
         for desc in self.description :
             for l in wrapper.wrap (desc) :
