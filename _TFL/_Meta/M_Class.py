@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Metaclass
+#    TFL.Meta.Class
 #
 # Purpose
 #    Provide custom metaclass for new-style Python classes
@@ -87,14 +87,33 @@ class Autosuper (type) :
 
 # end class Autosuper
 
-class Metaclass (Autorename, Autosuper) : pass
+class Class (Autorename, Autosuper) :
 
-from _TFL import TFL
-TFL._Export ("*")
+    def __init__ (cls, name, bases, dict) :
+        super (Class, cls).__init__ (name, bases, dict)
+        for p in dict.get ("_properties_", []) :
+            assert not dict.has_key (p.name)
+            setattr (cls, p.name, p)
+    # end def __init__
 
-if __debug__ :
+    def __call__ (cls, * args, ** kw) :
+        result = super (Class, cls).__call__ (* args, ** kw)
+        for p in cls.__dict__.get ("_properties_", []) :
+            init_instance = getattr (p, "init_instance", None)
+            if init_instance :
+                init_instance (result)
+        return result
+    # end def __call__
+
+# end class Class
+
+from   _TFL import TFL
+import _TFL._Meta
+TFL.Meta._Export ("*")
+
+if 0 and __debug__ :
     class _X_ (object) :
-       __metaclass__ = Metaclass
+       __metaclass__ = Class
        hugo          = 1
        __private     = 42
        _real_name    = "Y"
@@ -106,4 +125,26 @@ if __debug__ :
         _real_name   = "ZZZ"
         _super_attr  = "super"
 
-### __END__ Metaclass
+    class Metatest (Class) :
+
+        def __call__ (cls, * args, ** kw) :
+            print cls, "__call__", args, kw
+            return super (Metatest, cls).__call__ (* args, ** kw)
+        # end def __call__
+
+        def __init__ (cls, * args, ** kw) :
+            print cls, "__init__", args, kw
+            super (Metatest, cls).__init__ (* args, ** kw)
+        # end def __init__
+
+        def __new__ (cls, * args, ** kw) :
+            print cls, "__new__", args, kw
+            return super (Metatest, cls).__new__ (cls, * args, ** kw)
+        # end def __new__
+
+    # end class Metatest
+
+    class T (object) :
+        __metaclass__ = Metatest
+
+### __END__ Class
