@@ -45,6 +45,7 @@
 #                      some styles corrected to fit old T_Browser
 #                      made text-widget non-editable :-)
 #    24-Feb-2005 (RSC) Tabs implemented.
+#    24-Feb-2005 (RSC) Print function fixed.
 #    ««revision-date»»···
 #--
 
@@ -447,8 +448,8 @@ class Node (TFL.UI.Mixin) :
             parts.append ( self.contents_head
                          + self.contents + self.contents_tail
                          )
-        output = string.join (parts, "")
-        output = string.replace (output, "\n", "\n" + indent) + "\n"
+        output = "".join (parts)
+        output = output.replace ("\n", "\n" + indent) + "\n"
         file.write (output)
         if open :
             for c in self.children :
