@@ -58,15 +58,16 @@ class Element (TFL.SDG.Node) :
 
     _autoconvert         = dict \
         ( description    = lambda s, k, v : s._convert (v, TFL.SDG.XML.Comment)
-        , elem_type      = lambda s, k, v : s._checked_elem_type (v)
+        , elem_type      = lambda s, k, v : s._checked_xml_name (v)
         )
 
-    _elem_type_pattern   = Regexp ("[A-Za-z_:][-_:.A-Za-z0-9]*")
+    _xml_name_pat        = Regexp ("[A-Za-z_:][-_:.A-Za-z0-9]*")
 
     _list_of_formats     = TFL.SDG.Node._list_of_formats + \
         ( "xml_format", )
 
-    _special_char_pat    = Regexp ("[&<>]")
+    _special_char_pat    = Regexp \
+        ("[<>]|(&(?! %s;))" % _xml_name_pat.pattern, re.X)
     _special_quot_pat    = Regexp ("&(amp|lt|gt|apos|quot);")
 
     def as_xml (self, base_indent = None) :
@@ -87,12 +88,12 @@ class Element (TFL.SDG.Node) :
                 yield """%s = '%s'""" % (a, v)
     # end def _attr_values
 
-    def _checked_elem_type (self, value) :
-        if not self._elem_type_pattern.match (value) :
+    def _checked_xml_name (self, value) :
+        if not self._xml_name_pat.match (value) :
             raise ValueError, "`%s` doesn not match %s" % \
-                (value, self._elem_type_pattern.pattern.pattern)
+                (value, self._xml_name_pat.pattern)
         return value
-    # end def _checked_elem_type
+    # end def _checked_xml_name
 
     def _insert (self, child, index, children, delta = 0) :
         if child is not None :

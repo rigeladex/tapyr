@@ -40,6 +40,7 @@ class Document (TFL.SDG.XML.Element) :
 
        >>> d = Document ( "Memo", "First line of text"
        ...              , "& a second line of text"
+       ...              , "A third line of text &entity; including"
        ...              , doctype = "memo"
        ...              , description = "Just a test"
        ...              )
@@ -50,6 +51,7 @@ class Document (TFL.SDG.XML.Element) :
        <Memo>
          First line of text
          &amp; a second line of text
+         A third line of text &entity; including
        </Memo>
     """
 

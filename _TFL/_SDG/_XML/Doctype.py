@@ -38,16 +38,16 @@ from   Filename               import Filename
 class Doctype (TFL.SDG.XML.Element) :
     """Model the doctype declaration of a XML document
 
-       >>> from _TFL._SDG._XML.Elem_Type_Decl import *
+       >>> from _TFL._SDG._XML import Decl
        >>> dt = Doctype ( "Test"
-       ...              , Elem_Type_Decl ("Test", "(head, body, tail)")
-       ...              , Elem_Type_Decl ("head", "(title, author)")
-       ...              , Elem_Type_Decl ("body", "(\#PCDATA)")
-       ...              , Elem_Type_Decl ("tail", "(disclaimer)")
-       ...              , Attr_List_Decl ( "head"
-       ...                               , "Date CDATA \#REQUIRED"
-       ...                               , "Version CDATA \#REQUIRED"
-       ...                               )
+       ...              , Decl.Element ("Test", "(head, body, tail)")
+       ...              , Decl.Element ("head", "(title, author)")
+       ...              , Decl.Element ("body", "(\#PCDATA)")
+       ...              , Decl.Element ("tail", "(disclaimer)")
+       ...              , Decl.Attlist ( "head"
+       ...                             , "Date CDATA \#REQUIRED"
+       ...                             , "Version CDATA \#REQUIRED"
+       ...                             )
        ...              )
        >>> dt.write_to_xml_stream ()
        <!DOCTYPE Test SYSTEM 'Test.dtd'
@@ -91,16 +91,16 @@ class Doctype (TFL.SDG.XML.Element) :
 
 """
 from _TFL._SDG._XML.Doctype import *
-from _TFL._SDG._XML.Elem_Type_Decl import *
+from _TFL._SDG._XML         import Decl
 dt = Doctype ( "Test"
-             , Elem_Type_Decl ( "Test", "(head, body, tail)")
-             , Elem_Type_Decl ( "head", "(title, author)")
-             , Elem_Type_Decl ( "body", "(\#PCDATA)")
-             , Elem_Type_Decl ( "tail", "(disclaimer)")
-             , Attr_List_Decl ( "head"
-                              , "Date CDATA \#REQUIRED"
-                              , "Version CDATA \#REQUIRED"
-                              )
+             , Decl.Element ( "Test", "(head, body, tail)")
+             , Decl.Element ( "head", "(title, author)")
+             , Decl.Element ( "body", "(\#PCDATA)")
+             , Decl.Element ( "tail", "(disclaimer)")
+             , Decl.Attlist ( "head"
+                            , "Date CDATA \#REQUIRED"
+                            , "Version CDATA \#REQUIRED"
+                            )
              )
 dt.write_to_xml_stream ()
 """
