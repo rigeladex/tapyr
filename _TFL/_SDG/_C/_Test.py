@@ -29,6 +29,7 @@
 #    10-Aug-2004 (MG) Creation
 #    11-Aug-2004 (MG) Creation continued
 #    13-Aug-2004 (MG) Testcase update (new features in C-document)
+#    23-Sep-2004 (CT) Testcase update (cosmetic fixes in eol-comments)
 #    ««revision-date»»···
 #--
 
@@ -207,27 +208,25 @@ struct _my_struct_stand
 ...              )
 >>> print NL.join ([l.rstrip () for l in a1.as_c_code ()])
 static int ar [2] =
-  { 0 /* [0]                                                 */
-  , 1 /* [1]                                                 */
+  { 0 /* [0]                                                                 */
+  , 1 /* [1]                                                                 */
   };
 >>> print NL.join ([l.rstrip () for l in a2.as_c_code ()])
 TDFT_Sign_Mask fubars [2] =
-  {
-    { 57 /* bit_mask                               */
-    , 137 /* extend_mask                           */
-    } /* [0]                                       */
-  ,
-    { 142 /* bit_mask                                */
-    , -1 /* extend_mask                              */
-    } /* [1]                                         */
+  { { 57 /* bit_mask                                                         */
+    , 137 /* extend_mask                                                     */
+    } /* [0]                                                               */
+  , { 142 /* bit_mask                                                        */
+    , -1 /* extend_mask                                                      */
+    } /* [1]                                                               */
   };
 
 >>> d = dict (bit_mask = 42, extend_mask = 24)
 >>> v = C.Var (name = "stuct_var", type = "TDFT_Sign_Mask", init_dict = d)
 >>> print NL.join ([l.rstrip () for l in v.as_c_code ()])
 TDFT_Sign_Mask stuct_var =
-  { 42 /* bit_mask                                    */
-  , 24 /* extend_mask                                 */
+  { 42 /* bit_mask                                                           */
+  , 24 /* extend_mask                                                        */
   };
 
 >>> a = C.Array ("int", "int_array", bounds = 2)

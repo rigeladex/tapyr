@@ -299,7 +299,7 @@ the result of `repr` might be valid input to `eval`::
 
     repr_format          = '''
         %(__class__.__name__)s
-        >%(:front=( ¡sep=, :>*children,>@_formatted_attrs:)s
+        >%(:front=( ¡front0=(¡rear=%(NL)s)¡rear0=)¡sep=, :>*children,>@_formatted_attrs:)s
         >)
     '''
 
@@ -335,21 +335,17 @@ T_Node R
 T_Node
     ( T_Node
         ( Leaf
-            ( name = 'a.1'
-            )
+            (name = 'a.1')
         , Leaf
-            ( name = 'a.2'
-            )
+            (name = 'a.2')
         , hansi = 'A'
         , name = 'a'
         )
     , T_Node
         ( Node
-            ( name = 'b.x'
-            )
+            (name = 'b.x')
         , Leaf
-            ( name = 'b.z'
-            )
+            (name = 'b.z')
         , name = 'b'
         )
     , name = 'R'
@@ -390,8 +386,7 @@ class Node :
     _list_of_formats     = ("repr_format", "str_format")
     repr_format          = """
         %(__class__.__name__)s
-        >%(:front=( ¡sep=, :>*children,>@_formatted_attrs:)s
-        >)
+        >%(:front=( ¡front0=(¡rear=%(NL)s)¡rear0=)¡sep=, :>*children,>@_formatted_attrs:)s
     """
     str_format           = """
         %(__class__.__name__)s %(name)s
@@ -635,6 +630,17 @@ root = T_Node \
 print root
 print repr (root)
 
+from _TFL._SDG.Node import *
+class T_Node (Node) :
+    init_arg_defaults = dict (hansi = "kieselack")
+
+root = T_Node \
+    ( T_Node ( name  = "a"
+             , hansi = 42
+             )
+    , name = "R"
+    )
+print chr (10).join (root.as_repr ())
 """
 
 if __name__ != "__main__" :

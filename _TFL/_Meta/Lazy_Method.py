@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    15-Jul-2004 (CT) Creation
+#    23-Sep-2004 (CT) `_Lazy_Wrapper_.__getattr__` added to make wrapped
+#                     callables more similar to the real thing (e.g., avoid
+#                     an AttributeError from `wrapped.func_code`)
 #    ««revision-date»»···
 #--
 
@@ -55,6 +58,10 @@ class _Lazy_Wrapper_ (object) :
             self.changes = getattr (that, self.counter_name)
         return self.result
     # end def __call__
+
+    def __getattr__ (self, name) :
+        return getattr (self.fct, name)
+    # end def __getattr__
 
 # end class _Lazy_Wrapper_
 

@@ -51,7 +51,7 @@ class Element (TFL.SDG.Node) :
 
     _xml_format          = """
         %(::*description:)s
-        <%(elem_type)s%(:front= ¡rear0= ¡rear=%(NL)s%(" " * indent_offset)s¡sep= :>@_attr_values:)s>
+        <%(elem_type)s%(:head= ¡rear0= ¡rear=%(NL)s:>@_attr_values:)s>
         >%(::*body_children:)s
         </%(elem_type)s>
     """.strip ()
@@ -138,9 +138,7 @@ class Empty (Leaf) :
 
     xml_format           = \
         ( """<%(elem_type)s"""
-            """%(:front= ¡rear0= ¡rear=%(NL)s%(" " * indent_offset)s¡sep= """
-              """:>@_attr_values"""
-            """:)s"""
+            """%(:head= ¡rear0= ¡rear=%(NL)s:>@_attr_values:)s"""
           """/>"""
         )
 
