@@ -85,6 +85,8 @@
 #    11-Oct-2002 (CT) Change of `8-Oct-2002` backed out because it doesn't
 #                     work with McMillan
 #     4-Feb-2003 (CT) `Derived_Package_Namespace` added
+#     8-Apr-2003 (CT) `_leading_underscores` changed to consider `._` too
+#     8-Apr-2003 (CT) `qname` added
 #    ««revision-date»»···
 #--
 
@@ -210,12 +212,15 @@ class Package_Namespace :
        the package namespace.
     """
 
-    _leading_underscores = Regexp ("^_+")
+    _leading_underscores = Regexp (r"(\.|^)_+")
 
     def __init__ (self, name = None) :
         if not name :
             name = _caller_globals () ["__name__"]
-        self.__name    = self._leading_underscores.sub ("", name)
+        qname = self._leading_underscores.sub (r"\1", name) ### XXX s/\._/_/
+        bname = qname.split (".") [-1]
+        self.__name    = bname
+        self.__qname   = qname
         self.__modules = self._ = _Module_Space (name)
         self.__seen    = {}
         ### XXX remove the following when all old databases with
