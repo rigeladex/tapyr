@@ -59,7 +59,6 @@ ac  = App_Context (TGL)
 r   = Root (ac, nl.join (("R.line 1", "R.line 2")))
 t   = r.tkt_text
 t.exposed_widget.pack (expand = "yes", fill = "both")
-show (t)
 
 n1 = Node ( r
           , ( r.Style.T ("n1.line 1 ", "yellow")
@@ -73,7 +72,6 @@ n3 = Node_B2 ( r
                , ["n3 open line 1", nl, "n3 open line 2"])
              , r.Style.light_gray)
 n3.inc_state ()
-show (t)
 
 m1 = Node_B2 ( n3
              , (["m1 closed line 1"], ["m1 open line 1\nm1 open line 2"]))
