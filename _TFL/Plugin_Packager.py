@@ -33,6 +33,7 @@
 #    22-Jun-2004 (CT) Creation (repackaged)
 #    22-Jun-2004 (CT) Code for `-AP_Closure` changed to pass
 #                     `TFL._.Import_Closure.__dict__` to `eval`
+#    22-Jun-2004 (CT) Special casing for `_Plugins.__init__` added
 #    ««revision-date»»···
 #--
 
@@ -111,7 +112,6 @@ class Plugin_Packager (TFL.Meta.Object) :
         assert len (pi_packages) == 1
         self.pi_package = pip = pi_packages [0]
         assert dc.root_pym.pkg == pip.pkg, "%s:%s" % (dc.root_pym.pkg, pip.pkg)
-        dc.remove ("_Plugins")
         self._setup_target_packages (pip)
         self._setup_replacers       ()
         self._rewrite_modules       (self._m_replacers)
@@ -191,7 +191,7 @@ class Plugin_Packager (TFL.Meta.Object) :
         for pym in self.py_packages :
             if pym == pip :
                 self._rewrite_package_plugin (pym)
-            elif pym.pkg.startswith ("_Plugins") :
+            elif pym.pkg.startswith ("_Plugins") and pym.level > 1 :
                 raise NotImplementedError, \
                     ( "Inner packages under plugin package not yet "
                       "supported: %s"
@@ -281,7 +281,11 @@ class Plugin_Packager (TFL.Meta.Object) :
         self.target_path = target_path = path.join \
             (self.target_root.name, target_pkg.replace (".", sep))
         for pym in dc.pym_dict.itervalues () :
-            if pym.pkg.startswith (pip.pkg) :
+            if pym.rel_name == "_Plugins" :
+                pym.target_pkg  = pym.pkg
+                pym.target_path = path.join \
+                    (self.target_root.name, pym.pkg, pym.base_path)
+            elif pym.pkg.startswith (pip.pkg) :
                 if pym.pkg == pip.pkg :
                     pym.target_pkg  = target_pkg
                     pym.target_path = path.join (target_path, pym.base_path)
