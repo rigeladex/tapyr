@@ -45,8 +45,10 @@
 #    20-Feb-2005 (CT)  `Widget` factored to handle `style`
 #    21-Feb-2005 (CT)  `wtk_widget` set to `widget.body` (and `widget`
 #                      re-introduced to refer to `CTK.C_Text` instance)
-#    22-Feb-2005 (RSC) new tags (justify, wrap, margins) enabled.
-#    22-Feb-2005 (RSC) fixed widget computation in insert_widget
+#    22-Feb-2005 (RSC) New tags (justify, wrap, margins) enabled
+#    22-Feb-2005 (RSC) Fixed widget computation in insert_widget
+#    22-Feb-2005 (CT)  `left_gravity` added to `mark_at`
+#    22-Feb-2005 (CT)  `place_cursor` and `see` added
 #    ««revision-date»»···
 #--
 
@@ -197,13 +199,20 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
         return result
     # end def insert_widget
 
-    def mark_at (self, pos, delta = 0, name = None) :
+    def mark_at (self, pos, delta = 0, name = None, left_gravity = False) :
         if name is None :
             name = "mark%d" % (self._mark_no, )
             self._mark_no += 1
-        self.wtk_widget.mark_set (name, self.pos_at (pos, delta))
+        w = self.wtk_widget
+        w.mark_set (name, self.pos_at (pos, delta))
+        if left_gravity :
+            w.mark_gravity (name, CTK.LEFT)
         return name
     # end def mark_at
+
+    def place_cursor (self, pos_or_mark, delta = 0) :
+        self.wtk_widget.place_cursor (self.pos_at (pos_or_mark, delta))
+    # end def place_cursor
 
     def pos_at (self, pos_or_mark, delta = 0) :
         result = pos_or_mark
@@ -225,6 +234,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
             , tail or self.eot_pos
             )
     # end def remove_style
+
+    def see (self, pos_or_mark, delta = 0) :
+        self.wtk_widget.see (self.pos_at (pos_or_mark, delta))
+    # end def see
 
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
         result = pos_or_mark

@@ -37,6 +37,7 @@
 #    22-Feb-2005 (RSC) TODO list started.
 #    22-Feb-2005 (CT)  `push_style` and `pop_style` added
 #    22-Feb-2005 (CT)  `left_gravity` added to `mark_at`
+#    22-Feb-2005 (CT)  `place_cursor` and `see` added
 #    ««revision-date»»···
 #--
 
