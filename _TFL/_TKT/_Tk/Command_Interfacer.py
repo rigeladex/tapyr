@@ -55,6 +55,7 @@
 #     1-Feb-2005 (CT) `CI_Menu.index` changed again
 #     1-Feb-2005 (CT) `set_auto_short_cuts` added
 #     2-Feb-2005 (CT) `CI_Menu.index` changed again
+#    14-Feb-2005 (MG) Smaller bugs fixed
 #    ««revision-date»»···
 #--
 
@@ -62,8 +63,8 @@ from   _TFL                 import TFL
 import _TFL._TKT.Command_Interfacer
 
 from   CTK                  import *
-from   NO_List              import *
 from   Regexp               import *
+from   predicate            import dict_from_list
 
 import CTK_Toolbar
 import traceback
@@ -126,9 +127,9 @@ class CI_Event_Binder (_CI_) :
     """
 
     def __init__ (self, AC, * widgets) :
-        self.__super.__init__ (AC = AC)
-        self.widgets  = dict_from_list (* widgets)
-        self.bindings = NO_List ()
+        self.__super.__init__          (AC = AC)
+        self.widgets  = dict_from_list (widgets)
+        self.bindings = {}
     # end def __init__
 
     def add_widget (self, * widgets) :
@@ -145,7 +146,7 @@ class CI_Event_Binder (_CI_) :
     # end def remove_widget
 
     def destroy (self) :
-        for b in self.bindings :
+        for b in self.bindings.itervalues () :
             b.disable_entry (b)
         self.widgets  = None
         self.bindings = None
