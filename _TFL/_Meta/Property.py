@@ -32,6 +32,7 @@
 #    17-Jan-2003 (CT) `M_` prefixes added
 #    20-Jan-2003 (CT) `Class_Method` factored
 #    13-Feb-2003 (CT) `Alias_Property` added
+#    17-Feb-2003 (CT) `Alias_Attribute` added
 #    ««revision-date»»···
 #--
 
@@ -221,6 +222,19 @@ class Alias_Property (object) :
     # end def __set__
 
 # end class Alias_Property
+
+class Alias_Attribute (Alias_Property) :
+    """Property defining an attribute alias for a computed value"""
+
+    def __get__ (self, obj, cls = None) :
+        return super (Alias_Attribute, self).__get__ (obj, cls) ()
+    # end def __get__
+
+    def __set__ (self, obj, value) :
+        raise TypeError, "Cannot assign `%s` to object `%s`" % (value, object)
+    # end def __set__
+
+# end class Alias_Attribute
 
 if __name__ == "__main__" :
     ### unit-test code ############################################################
