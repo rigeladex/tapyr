@@ -49,6 +49,7 @@
 #    12-Mar-2002 (CT) `_Export_Module` added
 #     1-Jun-2002 (CT) Try `sys._getframe` in `frame` instead of raising
 #                     `AssertionError`
+#    12-Aug-2003 (CT) Error in `_doc_test` removed
 #    ««revision-date»»···
 #--
 
@@ -165,7 +166,7 @@ if __debug__ :
         pass
     else :
         def _doc_test () :
-            import _TFL.Caller
+            import Caller
             return U_Test.run_module_doc_tests (Caller)
         # end def _doc_test
 
@@ -176,6 +177,7 @@ if __debug__ :
 ### end unit-test code ########################################################
 
 from _TFL import TFL
+
 if __name__ != "__main__" :
     TFL._Export_Module ()
 
