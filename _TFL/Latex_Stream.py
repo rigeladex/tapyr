@@ -62,6 +62,7 @@
 #    20-Jan-2004 (RMA) Improved interface of begin_tabular
 #    25-Jan-2004 (RMA) Improved end_tabular
 #    25-Jan-2004 (RMA) Added begin/end_chapter
+#    25-May-2004 (RMA) Fixed itemize_txt
 #    ««revision-date»»
 #--
 
@@ -85,16 +86,14 @@ item_head_pat   = Regexp (r"^\s*- ", re.MULTILINE)
 item_tail_pat   = Regexp ( "(\n\n(?=[^- ])|$)")
 
 def itemize_txt (description) :
-    """
-    """
-
     desc      = description
     d         = "\n".join (desc)
     start     = 0
     desc      = []
     while item_head_pat.search (d, start) :
         item_tail_pat.search (d, item_head_pat.end ())
-        desc.append (d [start : item_head_pat.start () - 1])
+        print item_head_pat.start ()
+        desc.append (d [start : max (0, item_head_pat.start () - 1)])
         desc.append (r"\begin{itemize}")
         start = item_tail_pat.start ()
         items = "\n" + d [item_head_pat.start () : start]
