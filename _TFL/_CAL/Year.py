@@ -37,6 +37,8 @@
 #    20-Apr-2003 (CT) `easter_date` added
 #    15-Dec-2003 (CT) Computation of `w_head` corrected in `Year.__init__`
 #     5-Jan-2004 (CT) `Week.__int__` added
+#     8-Jan-2004 (CT) `Week.__nonzero__` and `Day.__nonzero__` added
+#     8-Jan-2004 (CT)  Doctest added to `Year`
 #    ««revision-date»»···
 #--
 
@@ -55,10 +57,11 @@ class Day (TFL.Meta.Object) :
 
     is_holiday = ""
 
-    def __init__ (self, date, appointments = None) :
+    def __init__ (self, date, appointments = None, same_year = True) :
         self.date         = Date (date)
         self.number       = self.date.day
         self.appointments = appointments or [] ### XXX use dict_from_list
+        self.same_year    = bool (same_year)
     # end def __init__
 
     def add_appointments (self, * apps) :
@@ -106,6 +109,10 @@ class Day (TFL.Meta.Object) :
         raise AttributeError
     # end def __getattr__
 
+    def __nonzero__ (self) :
+        return self.same_year
+    # end def __nonzero__
+
 # end class Day
 
 class Week (TFL.Meta.Object) :
@@ -142,6 +149,15 @@ class Week (TFL.Meta.Object) :
         return self.number
     # end def __int__
 
+    def __nonzero__ (self) :
+        n = self.number
+        return (   (n > 0)
+               and (  (n < 53)
+                   or (self.mon.year == self.thu.year)
+                   )
+               )
+    # end def __nonzero__
+
 # end class Week
 
 class Month (TFL.Meta.Object) :
@@ -174,7 +190,40 @@ class Month (TFL.Meta.Object) :
 # end class Month
 
 class Year (TFL.Meta.Object) :
-    """Model a single year in a calendar"""
+    """Model a single year in a calendar.
+
+       >>> for d in Year (2004).weeks [0].days :
+       ...   print d, bool (d)
+       ...
+       2003/12/29 0
+       2003/12/30 0
+       2003/12/31 0
+       2004/01/01 1
+       2004/01/02 1
+       2004/01/03 1
+       2004/01/04 1
+       >>> for d in Year (2004).weeks [-1].days :
+       ...   print d, bool (d)
+       ...
+       2004/12/27 1
+       2004/12/28 1
+       2004/12/29 1
+       2004/12/30 1
+       2004/12/31 1
+       2005/01/01 0
+       2005/01/02 0
+       >>> for y in range (2003, 2006) :
+       ...   Y  = Year (y)
+       ...   w0, w1 = Y.weeks [0], Y.weeks [-1]
+       ...   print "%r %s, %r %s" % (w0, bool (w0), w1, bool (w1))
+       ...
+       week 01 <2002/12/30 to 2003/01/05> 1, week 53 <2003/12/29 to 2004/01/04> 0
+       week 01 <2003/12/29 to 2004/01/04> 1, week 53 <2004/12/27 to 2005/01/02> 1
+       week 00 <2004/12/27 to 2005/01/02> 0, week 52 <2005/12/26 to 2006/01/01> 1
+    """
+
+    ### you can run the doctest with
+    ###     /swing/python/run_doctest.py -path ~/lib/python/_TFL/_CAL Year
 
     def __init__ (self, year = None) :
         self.year   = self.number = y = year or Date ().year
@@ -191,7 +240,9 @@ class Year (TFL.Meta.Object) :
         self.tail = t = days [-1]
         w_head = Week \
             ( h.week
-            , * ( [Day (h.date - i) for i in range (h.weekday, 0, -1)]
+            , * ( [Day (h.date - i, same_year = False)
+                   for i in range (h.weekday, 0, -1)
+                  ]
                 + days [0 : 7 - h.weekday]
                 )
             )
@@ -205,7 +256,7 @@ class Year (TFL.Meta.Object) :
                 (Week
                      ( weeks [-1].number + 1
                      , * ( days [i : i+7]
-                         + [Day (t.date + j)
+                         + [Day (t.date + j, same_year = False)
                             for j in range (1, 8 - (len(days) - i))
                            ]
                          ) [:8]
