@@ -75,11 +75,13 @@ from   Regexp         import Regexp
 
 _debug = __debug__
 
-def _complain_implicit (pns_name, module_name) :
+def _complain_implicit (pns_name, module_name, last_caller = [""]) :
     if _debug :
-        caller_info = _caller_info (-4)
-        print """%s\n    %s.Import ("%s")""" \
-              % (caller_info [0], pns_name, module_name)
+        caller = _caller_info (-4) [0]
+        if caller != last_caller [0] :
+            last_caller [0] = caller
+            print caller 
+        print """    %s.Import ("%s")""" % (pns_name, module_name)
 # end def _complain_implicit
 
 class _Module_Space :
