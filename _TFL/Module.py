@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,7 +20,7 @@
 #
 #++
 # Name
-#    Module
+#    TFL.Module
 #
 # Purpose
 #    Convenience functions for accessing features of python modules
@@ -34,7 +33,7 @@
 def module_of (object) :
     """Returns the name of the module defining `object`, if possible.
 
-       `module_of` works for classes, functions, and class proxies. 
+       `module_of` works for classes, functions, and class proxies.
     """
     try :
         object = object.__dict__ ["Essence"]
@@ -59,7 +58,7 @@ def defined_by (object, module) :
 
 def names_of (module) :
     """Returns the names of all functions and classes defined by `module`
-       itself. 
+       itself.
 
        Unfortunately, this currently only returns objects for which
        `module_of` returns a non-None result.
@@ -71,7 +70,7 @@ def names_of (module) :
     return result
 # end def names_of
 
-from _TFL import TFL
-TFL._Export_Module ()
-
-### __END__ Module
+if __name__ != "__main__" :
+    from _TFL import TFL
+    TFL._Export_Module ()
+### __END__ TFL.Module

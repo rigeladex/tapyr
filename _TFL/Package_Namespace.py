@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Package_Namespace
+#    TFL.Package_Namespace
 #
 # Purpose
 #    Implement a namespace for python packages providing direct access to
@@ -115,6 +115,8 @@
 #    24-Jan-2005 (CT) Change of `20-Jan-2005` fixed
 #    24-Jan-2005 (CT) `_Import_Module` changed to return the imported module
 #                     (and rest-args removed)
+#    10-Feb-2005 (CT) `_Export` changed to streamline `*` handling
+#    10-Feb-2005 (CT) More documentation added
 #    ««revision-date»»···
 #--
 
@@ -214,9 +216,14 @@ class Package_Namespace :
            ### Foo_Package.Bar puts `Bar` and `Baz` into the Package_Namespace
            Foo._Export ("Bar", "Baz")
 
-       If a module prefers to put itself instead of
-       functions/classes/whatever into the Package_Namespace, it can do so by
-       calling
+       `_Export` accepts "*" as a wild card and uses Python's rules to expand
+       that with the important caveat, that here "*" only includes functions
+       and classes defined by the calling module (i.e., "*" doesn't work
+       transitively).
+
+       If a module prefers to put itself instead of some of its attributes
+       (functions/classes/whatever) into the Package_Namespace, it can do so
+       by calling
 
            Foo._Export_Module ()
 
@@ -312,8 +319,8 @@ class Package_Namespace :
                 from   _TFL import TFL
                 import _TFL.Module
                 for s in TFL.Module.names_of (mod) :
-                    p = getattr (mod, s)
                     if not s.startswith ("_") :
+                        p = getattr (mod, s)
                         self._import_1 (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
         if symbols :
@@ -401,7 +408,7 @@ class _DPN_Auto_Importer_ :
                 ### <kludge-alert>
                 ###   Looking for `mod` in `str (exc)` is fragile but I
                 ###   don't know what else to do here to find out if the
-                ###   impotr of `name` itself failed or if something imported
+                ###   import of `name` itself failed or if something imported
                 ###   by `name` failed
                 ### </kludge-alert>
                 ### ignore transitive ImportError's
@@ -423,10 +430,41 @@ class _DPN_Auto_Importer_ :
         self._map [derived] = parent
     # end def register
 
-_DPN_AI = _DPN_Auto_Importer_ ()
+_DPN_AI = _DPN_Auto_Importer_ () # end class _DPN_Auto_Importer_
 
 class Derived_Package_Namespace (Package_Namespace) :
-    """Package_Namespace which adds to an existing Package_Namespace"""
+    """Implement a derived Package_Namespace which adds to an existing
+       Package_Namespace.
+
+       Derivation of Package_Namespaces is similar to inheritance between
+       classes -- the derived Package_Namespace
+
+       - can add new modules to the ones inherited
+
+       - can modify some properties of inherited modules (by defining a
+         module of the same name which defines sub-classes and/or
+         function replacements of the original classes and functions)
+
+       To transparently support inheritance-like import behavior,
+       Derived_Package_Namespace allows to import modules of the base
+       Package_Namespace through the Derived_Package_Namespace. For instance,
+       consider a package `_B` defining a Package_Namespace `B` and a
+       package `_D` defining a Derived_Package_Namespace `D` based on `B`::
+
+           ### _B/__init__.py  <---derived-from----  _D/__init__.py
+           ###    X.py                                  X.py
+           ###    Y.py
+           ###                                          Z.py
+
+           from   _D import D
+           import _D.X        ### imports from _D/X.py
+           import _D.Y        ### imports from _B/Y.py
+           import _D.Z        ### imports from _D/Z.py
+
+       For derived imports to work, the Derived_Package_Namespace must be
+       imported before the module needing import derivation is imported (this
+       only is important for nested Package_Namespaces).
+    """
 
     def __init__ (self, parent, name = None) :
         pname = _caller_globals () ["__name__"]
@@ -455,4 +493,4 @@ class Derived_Package_Namespace (Package_Namespace) :
 
 # end class Derived_Package_Namespace
 
-### __END__ Package_Namespace
+### __END__ TFL.Package_Namespace

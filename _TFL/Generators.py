@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Generators
+#    TFL.Generators
 #
 # Purpose
 #    Provide useful generators
@@ -342,4 +342,4 @@ if __name__ == "__main__" :
 else :
     from _TFL import TFL
     TFL._Export ("*")
-### __END__ Generators
+### __END__ TFL.Generators

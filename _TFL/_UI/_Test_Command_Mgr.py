@@ -18,9 +18,10 @@
 
 """
 >>> cmd_mgr = TFL.UI.Command_Mgr (
-...      1, dict ( menu_1 = CI_Menu ("menu_1")
-...              , menu_2 = CI_Menu ("menu_2")
-...              )
+...       None, None, 1
+...     , dict ( menu_1 = CI_Menu ("menu_1")
+...            , menu_2 = CI_Menu ("menu_2")
+...            )
 ...     )
 >>>
 >>> g1 = cmd_mgr.add_group ("Group_1", if_names = ("menu_1", ))

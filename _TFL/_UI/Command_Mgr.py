@@ -123,6 +123,8 @@
 #     4-Feb-2005 (CT) `_Precondition_Checker_` factored
 #     4-Feb-2005 (CT) `_precondition_eager` added
 #     4-Feb-2005 (CT) `_Precondition_Checker_` simplified
+#    10-Feb-2005 (CT) Doctests adapted to change in returnvalue of
+#                     `add_command`
 #    ««revision-date»»···
 #--
 
@@ -887,10 +889,10 @@ __test__ = dict \
         ...
         >>> mb = interfacer = _Test_CI_ (None)
         >>> cm = Command_Mgr (None, None, dict (mb = mb))
-        >>> cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
-        >>> cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
+        >>> c=cm.add_command   (Command ("First", "First"), if_names = ("mb",))
+        >>> c=cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb",))
         >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
-        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> c=cm.add_command   (d1, if_names = ("mb", ))
         >>> mb.activate ()
           0 : (callback = First, name = First)
           1 : (callback = Secnd, name = Secnd)
@@ -932,11 +934,11 @@ __test__ = dict \
         ...
         >>> mb = interfacer = _Test_CI_ (None)
         >>> cm = Command_Mgr (None, None, dict (mb = mb))
-        >>> cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
-        >>> cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
+        >>> c=cm.add_command   (Command ("First", "First"), if_names = ("mb",))
+        >>> c=cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb",))
         >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
-        >>> cm.add_command   (d1, if_names = ("mb", ))
-        >>> cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
+        >>> c=cm.add_command   (d1, if_names = ("mb", ))
+        >>> c=cm.add_command   (Command ("Third", "Third"), if_names = ("mb",))
         >>> mb.activate ()
           0 : (callback = First, name = First)
           1 : (callback = Secnd, name = Secnd)
@@ -988,7 +990,7 @@ __test__ = dict \
         >>> mb = interfacer = _Test_CI_ (None)
         >>> cm = Command_Mgr (None, None, dict (mb = mb))
         >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
-        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> c=cm.add_command   (d1, if_names = ("mb", ))
         >>> mb.activate ()
           0 : (callback = 1, name = Dyn-1)
           1 : (callback = 2, name = Dyn-2)
@@ -1021,8 +1023,8 @@ __test__ = dict \
         >>> mb = interfacer = _Test_CI_ (None)
         >>> cm = Command_Mgr (None, None, dict (mb = mb))
         >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
-        >>> cm.add_command   (d1, if_names = ("mb", ))
-        >>> cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
+        >>> c=cm.add_command   (d1, if_names = ("mb", ))
+        >>> c=cm.add_command   (Command ("Third", "Third"), if_names = ("mb",))
         >>> mb.activate ()
           0 : (callback = 1, name = Dyn-1)
           1 : (callback = 2, name = Dyn-2)
@@ -1064,14 +1066,14 @@ __test__ = dict \
         ...
         >>> mb = interfacer = _Test_CI_ (None)
         >>> cm = Command_Mgr (None, None, dict (mb = mb))
-        >>> cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
-        >>> cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
+        >>> c=cm.add_command   (Command ("First", "First"), if_names = ("mb",))
+        >>> c=cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb",))
         >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
-        >>> cm.add_command   (d1, if_names = ("mb", ))
-        >>> cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
+        >>> c=cm.add_command   (d1, if_names = ("mb", ))
+        >>> c=cm.add_command   (Command ("Third", "Third"), if_names = ("mb",))
         >>> d2 = Dyn_Command ("Dyn-B", dyn_2)
-        >>> cm.add_command   (d2, if_names = ("mb", ))
-        >>> cm.add_command   (Command ("Fourt", "Fourt"), if_names = ("mb", ))
+        >>> c=cm.add_command   (d2, if_names = ("mb", ))
+        >>> c=cm.add_command   (Command ("Fourt", "Fourt"), if_names = ("mb",))
         >>>
         >>> mb.activate ()
           0 : (callback = First, name = First)
@@ -1151,9 +1153,9 @@ __test__ = dict \
         >>> mb = interfacer = _Test_CI_ (None)
         >>> cm = Command_Mgr (None, None, dict (mb = mb))
         >>> d1 = Dyn_Command ("Dyn-A", dyn_1)
-        >>> cm.add_command   (d1, if_names = ("mb", ))
+        >>> c=cm.add_command   (d1, if_names = ("mb", ))
         >>> d2 = Dyn_Command ("Dyn-B", dyn_2)
-        >>> cm.add_command   (d2, if_names = ("mb", ))
+        >>> c=cm.add_command   (d2, if_names = ("mb", ))
         >>> mb.activate ()
           0 : (callback = 1, name = Dyn-1)
           1 : (callback = 2, name = Dyn-2)
