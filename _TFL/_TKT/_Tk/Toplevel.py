@@ -12,6 +12,8 @@
 # Revision Dates
 #     3-Mar-2005 (RSC) Creation
 #     3-Mar-2005 (RSC) added show
+#    10-Mar-2005 (CT)  Don't drop `cb_destroy` on the floor
+#    10-Mar-2005 (CT)  s/cb_destroy/cb_delete/
 #    ««revision-date»»···
 #--
 
@@ -27,20 +29,21 @@ class Toplevel (TFL.TKT.Mixin) :
 
     def __init__ \
         ( self
-        , menu = None
-        , statusbar = None
-        , title = ""
-        , toolbar = None
-        , name = ""
-        , cb_destroy = None  # callback for destroy event
+        , menu        = None
+        , statusbar   = None
+        , title       = ""
+        , toolbar     = None
+        , name        = ""
+        , cb_delete   = None  # callback for destroy event
         , win_expl_cb = None # callback (file_uri) if dnd received
-        , maximize = False
-        , AC = None
+        , maximize    = False
+        , AC          = None
         , *args
         , **kw
         ) :
         self.__super.__init__ (AC = AC)
-        self.wtk_widget = self.exposed_widget = CTK.Toplevel ()
+        self.wtk_widget = self.exposed_widget = CTK.Toplevel \
+            (destroy_cmd = cb_delete)
     # end def __init__
 
     def pack (self, widget, ** kw) :
