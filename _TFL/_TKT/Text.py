@@ -26,19 +26,27 @@
 #    Model simple text widget
 #
 # Revision Dates
-#    16-Feb-2005 (CT) Creation
-#    17-Feb-2005 (CT) `_interface_test` added
-#    17-Feb-2005 (CT) Test case added to `_interface_test`
-#    18-Feb-2005 (CT) `remove_style` added
-#    20-Feb-2005 (CT) Test cases for `style` added to `_interface_test`
-#    20-Feb-2005 (CT) Test case for two text widgets added (using `Apply_All')
-#    22-Feb-2005 (CT) Test cases for `push_style` and `pop_style` added to
-#                     `_interface_test`
+#    16-Feb-2005 (CT)  Creation
+#    17-Feb-2005 (CT)  `_interface_test` added
+#    17-Feb-2005 (CT)  Test case added to `_interface_test`
+#    18-Feb-2005 (CT)  `remove_style` added
+#    20-Feb-2005 (CT)  Test cases for `style` added to `_interface_test`
+#    20-Feb-2005 (CT)  Test case for two text widgets added (using `Apply_All')
+#    22-Feb-2005 (CT)  Test cases for `push_style` and `pop_style` added to
+#                      `_interface_test`
+#    22-Feb-2005 (RSC) TODO list started.
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin
+
+# TODO:
+# * method to set cursor position (suggested name: set_cursor)
+# * method for displaying possibly hidden part of the text, suggested name: see
+# * tab-handling. Suggest that positions are in pixels.
+#   API may be something like set_tabs (tab, tab, ...) or set_tabs (tablist)
+
 
 class Text (TFL.TKT.Mixin) :
     """Model simple text widget"""
