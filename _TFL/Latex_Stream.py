@@ -48,6 +48,7 @@
 #    11-Jun-2003 (CT)  s/!= None/is not None/
 #    14-Aug-2003 (RMA) Added paramter for begin_section
 #    10-Oct-2003 (RMA) Various new methods
+#     1-Dec-2003 (RMA) Fixed wrong comment char for file_header.
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ class Latex_Stream (Formatted_Stream) :
     # end def __init__
 
     def file_header (self, filetype, toolname = None, comment_char = "") :
+        comment_char = self.comment_line_head
         if toolname is None :
             toolname = sys.argv [0]
         user = " by user " + Environment.username
