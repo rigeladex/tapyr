@@ -62,7 +62,9 @@
 #    23-Feb-2005 (CT)  Style handling implemented for `insert_image` and
 #                      `insert_widget`
 #    24-Feb-2005 (CT)  s/bind_tag/tag_bind/
-#    24-Feb-2005 (RSC) set_tabs added.
+#    24-Feb-2005 (RSC) `set_tabs` added
+#    25-Feb-2005 (CT)  `AC` made required argument of `__init__` and
+#                      `_doctest_AC` added
 #    ««revision-date»»···
 #--
 
@@ -80,7 +82,7 @@ import weakref
 class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
 
-       >>> w = Text ()
+       >>> w = Text (_doctest_AC ())
        >>> w.exposed_widget.pack ()
        >>> eot = w.eot_pos
        >>> cur = w.current_pos
@@ -143,7 +145,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     current_pos = property (lambda s : INSERT)
     eot_pos     = property (lambda s : END)
 
-    def __init__ (self, AC = None, name = None, editable = True, wc = None) :
+    def __init__ (self, AC, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
         self.exposed_widget = w = self.Widget_Type \
             ( master    = wc and wc.wtk_widget
@@ -313,10 +315,18 @@ class Scrolled_Text (Text) :
 
 # end class Scrolled_Text
 
+def _doctest_AC () :
+    ### Restricted to doctest use, only
+    import _TFL._UI
+    import _TFL._UI.App_Context
+    return TFL.UI.App_Context (TFL)
+# end def _doctest_AC
+
 __test__ = dict (interface_test = TFL.TKT.Text._interface_test)
 
 """
 from _TFL._TKT._Tk.Text import *
+from _TFL._TKT._Tk.Text import _doctest_AC
 from _TFL._UI.Style     import *
 blue  = Style ("blue", background = "lightblue")
 yell  = Style ("yell", background = "yellow", foreground = "red")
@@ -324,7 +334,7 @@ gray  = Style ("gray", background = "gray80")
 hand  = Style ("hand", mouse_cursor = "hand")
 defa  = Style ("hand", mouse_cursor = "default")
 fleur = Style ("hand", mouse_cursor = "fleur")
-w = Text ()
+w = Text (_doctest_AC ())
 eot = w.eot_pos
 cur = w.current_pos
 w.exposed_widget.pack ()

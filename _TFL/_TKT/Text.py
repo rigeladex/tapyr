@@ -44,6 +44,7 @@
 #                      of an `image` argument
 #    24-Feb-2005 (RSC) `set_tabs' added. Minimal test for event bindings
 #                      added, more needs an app context.
+#    25-Feb-2005 (CT)  Doctests changed to use `_doctest_AC`
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ class Text (TFL.TKT.Mixin) :
         >>> gray = Style ("gray", background = "gray80")
         >>> hand = Style ("hand", mouse_cursor = "hand")
         >>> cb   = Style ("cb",   callback = {'click_1' : lambda x : 1})
-        >>> w = Text ()
+        >>> w = Text (_doctest_AC ())
         >>> w.set_tabs (42, 84)
         >>> w.pop_style ()
         Traceback (most recent call last):
@@ -122,8 +123,8 @@ class Text (TFL.TKT.Mixin) :
         HiHaHoHum
          Dum
 
-        >>> t1 = Text ()
-        >>> t2 = Text ()
+        >>> t1 = Text (_doctest_AC ())
+        >>> t2 = Text (_doctest_AC ())
         >>> from _TFL.Apply_All import *
         >>> all = Apply_All (t1, t2)
         >>> all.append ("Ha")
