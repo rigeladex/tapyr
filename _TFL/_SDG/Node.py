@@ -89,7 +89,7 @@ class Node :
     """
     tree_format          = """
         %(node_type)s \\
-        >>( %(:, :*children,@_formatted_attrs:)s
+        >>( %(:sep=, :*children,@_formatted_attrs:)s
         >>)
     """
 
@@ -185,7 +185,7 @@ class Node :
         for k, v in kw.iteritems () :
             if k in self.init_arg_defaults :
                 if k in self._autoconvert :
-                    v = self._autoconvert [k] (self, v)
+                    v = self._autoconvert [k] (self, k, v)
                 setattr (self, k, v)
             else :
                 kw_err [k] = v

@@ -46,7 +46,7 @@ class M_Node (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     """Meta class for SDG.Node classes"""
 
     __id              = 0
-    _dicts_to_combine = ("init_arg_defaults", )
+    _dicts_to_combine = ("init_arg_defaults", "_autoconvert")
 
     def __init__ (cls, name, bases, dict) :
         super (M_Node, cls).__init__ (name, bases, dict)

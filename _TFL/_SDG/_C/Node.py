@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    26-Jul-2004 (CT) Creation
+#    27-Jul-2004 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -48,8 +49,7 @@ class _C_Node_ (TFL.SDG.Node) :
     description_level    = 1
     eol_desc_level       = description_level + 4
     star_level           = 1
-    pass_scope           = 1
-    _end_with_bol        = 1
+    pass_scope           = True
     ( Body
     , Decl
     , Head
@@ -65,14 +65,24 @@ class _C_Node_ (TFL.SDG.Node) :
         )
 
     _autoconvert         = dict \
-        ( description    = lambda s, v : s._convert_c_comment (v, False)
-        , eol_desc       = lambda s, v : s._convert_c_comment (v, True)
+        ( description    =
+              lambda s, k, v : s._convert_c_comment (k, v, eol = False)
+        , eol_desc       =
+              lambda s, k, v : s._convert_c_comment (k, v, eol = True)
         )
 
     _list_of_formats     = TFL.SDG.Node._list_of_formats + \
         ( "h_format"
         , "c_format"
         )
+
+    def formatted (self, format_name, base_indent = None, ** kw) :
+        if format_name == "h_format" and not (self.scope & H) :
+            return ()
+        if format_name == "c_format" and not (self.scope & C) :
+            return ()
+        return self.__super.formatted (format_name, base_indent, ** kw)
+    # end def formatted
 
     def _update_scope (self, scope) :
         self.scope = self.scope & scope
@@ -104,25 +114,24 @@ class _C_Node_ (TFL.SDG.Node) :
         return value
     # end def _force
 
-    def _convert_c_comment (self, attr_name, eol = 0, new_line_col = 0) :
-        attr_val  = getattr (self, attr_name)
-        if attr_val  and isinstance (attr_val, str) :
-            attr_val = (attr_val, )
-        if attr_val and isinstance (attr_val, (tuple, list)) :
-            setattr ( self, attr_name
-                    , TFL.SDG.C.Comment
-                          ( *  attr_val
-                          , ** dict
-                              ( level        = getattr
-                                    ( self, "%s_level" % attr_name
-                                    , self.description_level
-                                    )
-                              , stars        = self.star_level
-                              , eol          = eol
-                              , new_line_col = new_line_col
-                              )
-                          )
-                    )
+    def _convert_c_comment (self, name, value, eol = 0, new_line_col = 0) :
+        result = value
+        if result  and isinstance (result, str) :
+            result = (result, )
+        if result and isinstance (result, (tuple, list)) :
+            result = TFL.SDG.C.Comment \
+                  ( *  result
+                  , ** dict
+                      ( level        = getattr
+                            ( self, "%s_level" % (name, )
+                            , self.description_level
+                            )
+                      , stars        = self.star_level
+                      , eol          = eol
+                      , new_line_col = new_line_col
+                      )
+                  )
+        return result
     # end def _convert_c_comment
 
     def _convert_c_stmt (self, value) :

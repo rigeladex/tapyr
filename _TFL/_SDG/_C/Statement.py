@@ -20,37 +20,38 @@
 #
 #++
 # Name
-#    TFL.SDG.C.New_Line
+#    TFL.SDG.C.Statment
 #
 # Purpose
-#    Model empty lines in the code in a C file
+#    Model simple statments in the code in a C file
 #
 # Revision Dates
-#    26-Jul-2004 (CT) Creation
+#    27-Jul-2004 (MG) Creation
 #    ««revision-date»»···
 #--
-
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 
-class New_Line (TFL.SDG.Leaf, TFL.SDG.C.Node) :
-    """Model an empty line in the code in a C file"""
+class _Statment_ (TFL.SDG.C.Node) :
+    """Model simple statment"""
+
+    trailing_semicol_pat = re.compile (r"""; *$""")
 
     init_arg_defaults    = dict \
-        ( lines          = 1
+        ( code           = ""
+        , scope          = TFL.SDG.C.C
         )
 
-    h_format = c_format  = """%('''\\n''' * lines)s"""
+    _autoconvert         = dict \
+        ( code           =
+              lambda s, k, v, pat = trailing_semicol_pat : pat.sub ("", v)
+        )
+    h_format             = c_format = """
+       %(code)s
+    """
 
-# end class New_Line
-
-class New_Page (TFL.SDG.Leaf, TFL.SDG.C.Node) :
-    """Adds a new page character (formfeed)."""
-
-    h_format = c_format  = """%('\f')s"""
-
-# end class New_Page
+# end class _Statment_
 
 if __name__ != "__main__" :
-    TFL.SDG.C._Export ("*")
-### __END__ TFL.SDG.C.New_Line
+    TFL.SDG.C._Export ("Statment")
+### __END__ TFL.SDG.C.Statment
