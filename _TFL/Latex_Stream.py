@@ -57,6 +57,7 @@
 #    11-Dec-2003 (RMA) Added cmacrodesc.
 #    23-Dec-2003 (RMA) Added sanatized_label
 #    29-Dec-2003 (RMA) Added begin_block and end_block
+#    05-Jan-2004 (RMA) Added itemize_txt
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,33 @@ slash_pat = Regexp (r"[/\\]")
 def sanatized_label (txt) :
     txt = slash_pat.sub ("", txt)
     return txt
+
+
+item_head_pat   = Regexp (r"^\s*- ", re.MULTILINE)
+item_tail_pat   = Regexp ( "(\n\n(?=[^- ])|$)")
+
+def itemize_txt (description) :
+    """
+    """
+
+    desc      = description
+    d         = "\n".join (desc)
+    start     = 0
+    desc      = []
+    while item_head_pat.search (d, start) :
+        item_tail_pat.search (d, item_head_pat.end ())
+        desc.append (d [start : item_head_pat.start () - 1])
+        desc.append (r"\begin{itemize}")
+        start = item_tail_pat.start ()
+        items = "\n" + d [item_head_pat.start () : start]
+        for item in filter (None, items.split ("\n- ")):
+            item_txt = " ".join (item.split ("\n"), )
+            if string.strip (item_txt) :
+                desc.append (r"  \item %s" % item_txt)
+        desc.append (r"\end{itemize}")
+    desc.append (d [start : ])
+    return desc
+
 
 
 class Latex_Stream (Formatted_Stream) :
