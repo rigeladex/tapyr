@@ -46,6 +46,7 @@
 #    10-Jun-2002 (RMA) Short name support
 #    11-Jun-2003 (CT)  s/== None/is None/
 #    11-Jun-2003 (CT)  s/!= None/is not None/
+#    14-Aug-2003 (RMA) Recent changes
 #    ««revision-date»»···
 #--
 
@@ -206,8 +207,8 @@ class Latex_Stream (Formatted_Stream) :
         self._end_block ("pspicture")
     # end def end_pspicture
 
-    def begin_figure (self, caption = None, label = None, shortlabel = None) :
-        self._begin_block ("figure", "[htp]")
+    def begin_figure (self, caption = None, label = None, shortlabel = None, position = "htp") :
+        self._begin_block ("figure", "[%s]" % position)
         self._caption_label (caption, label, shortlabel)
     # end def begin_figure
 
