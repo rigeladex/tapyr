@@ -37,6 +37,7 @@
 #    13-Aug-2004 (CT) Formats of `Stmt_Group` corrected (removed undefined
 #                     children_groups)
 #    24-Aug-2004 (MG) `Stmt_Group.default_cgi` changed
+#    25-Aug-2004 (MG) `Decl` added to `Stmt_Group`
 #    ««revision-date»»···
 #--
 
@@ -86,10 +87,12 @@ class Stmt_Group (_Statement_, TFL.SDG.C._Scope_) :
     default_cgi          = Ancestor.Body
     star_level           = 2
     _common_format       = """
+        %(::*decl_children:)s
         %(::*body_children:)s
     """
     h_format = c_format  = _common_format
 
+    children_group_names = (Ancestor.Body, Ancestor.Decl)
 # end class Stmt_Group
 
 if __name__ != "__main__" :

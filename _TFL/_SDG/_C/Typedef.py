@@ -45,8 +45,6 @@ class Typedef (TFL.SDG.C.Maybe_Const, TFL.SDG.Leaf) :
         ( type           = lambda s, k, v : s._convert (v, TFL.SDG.C.Type)
         )
 
-    front_args           = ("type", "name")
-
     _name_or_type        = property (lambda s : s.name or s.type.name)
 
     h_format = c_format  = "".join \
@@ -57,6 +55,12 @@ class Typedef (TFL.SDG.C.Maybe_Const, TFL.SDG.Leaf) :
             """
           )
         )
+
+    def __init__ (self, type, name = None, ** kw) :
+        if isinstance (type, TFL.SDG.C.Struct) and not name :
+            name = type.name
+        self.__super.__init__ (name = name, type = type, ** kw)
+    # end def __init__
 
 # end class Typedef
 

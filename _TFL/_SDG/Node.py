@@ -58,6 +58,7 @@
 #                     (which can be hidden in lists/tuples, <arrrgh>)
 #    25-Aug-2004 (CT) `_init_kw` changed again to protect `%` inside strings
 #                     hidden in `NO_List` <double arrrgh>
+#    25-Aug-2004 (MG) `insert`: guard agains `None` children added
 #    ««revision-date»»···
 #--
 
@@ -480,12 +481,13 @@ class Node :
         """Insert `child' to `self.children' at position `index'
            (None means append).
         """
-        cgi = child.cgi
-        if cgi is None :
-            cgi = self.default_cgi
-        else :
-            self.default_cgi = min (cgi, self.default_cgi)
-        self._insert (child, index, self.children_groups [cgi], delta)
+        if child is not None :
+            cgi = child.cgi
+            if cgi is None :
+                cgi = self.default_cgi
+            else :
+                self.default_cgi = min (cgi, self.default_cgi)
+            self._insert (child, index, self.children_groups [cgi], delta)
     # end def insert
 
     def _child_name (self, child_name) :

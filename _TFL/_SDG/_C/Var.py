@@ -116,7 +116,12 @@ class Var (_Var_) :
         )
 
     def __init__ (self, type, name, init = "", ** kw) :
+        ### redefine to allow optional positional argument `init`
         self.__super.__init__ (type, name, init = init, ** kw)
+    # end def __init__
+
+    def formatted (self, * args, ** kw) :
+        ### XXX add comment
         if self.init_dict :
             if not self._struct :
                 raise TFL.SDG.Invalid_Node (self, self.type, self.init_dict)
@@ -126,7 +131,8 @@ class Var (_Var_) :
             if self.init_dict :
                 raise TFL.SDG.Invalid_Node (self, self.init, self.init_dict)
             self.initializers = self.init
-    # end def __init__
+        return self.__super.formatted (* args, ** kw)
+    # end def formatted
 
 # end class Var
 

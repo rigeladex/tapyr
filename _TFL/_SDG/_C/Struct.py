@@ -82,9 +82,9 @@ class Struct (TFL.SDG.C._Decl_) :
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
-        if self.name in self.extension :
-            raise KeyError, (self.name, self.extension [self.name])
-        self.extension [self.name] = weakref.proxy (self)
+        #if self.name in self.extension :
+        #    raise KeyError, (self.name, self.extension [self.name])
+        self.extension [self.name] = self
     # end def __init__
 
     def insert (self, child, index = None, delta = 0, cgi = None) :
@@ -136,7 +136,16 @@ class Struct (TFL.SDG.C._Decl_) :
     def _setup_initializers (self, init_dict, description = None) :
         result = TFL.SDG.C.Init_Comp (description = description)
         for c in self.decl_children :
-            v = init_dict [c.name]
+            if c.name not in init_dict :
+                if c.init :
+                    v = c.init.init
+                else :
+                    msg = ( "No initialization value for `%s.%s`"
+                          % (self.name, c.name)
+                          )
+                    raise ValueError, msg
+            else :
+                v = init_dict [c.name]
             if isinstance (c, (TFL.SDG.C.Struct, TFL.SDG.C.Array)) :
                 i = c._setup_initializers (v)
             else :
