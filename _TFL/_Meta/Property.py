@@ -87,7 +87,7 @@ from   _TFL import TFL
 import _TFL._Meta
 TFL.Meta._Export ("*")
 
-if 0 and __debug__ :
+if 1 and __debug__ :
     import _TFL._Meta.Class
     class T (object) :
         __metaclass__ = TFL.Meta.Class

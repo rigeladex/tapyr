@@ -31,7 +31,7 @@
 #--
 
 class _Type_ (type) :
-    """Base class of TFL metaclasses """
+    """Base class of TFL metaclasses."""
 
     def mangled_name (cls, name) :
         return cls._mangled_name (name, cls.__name__)
@@ -97,20 +97,24 @@ class Autoproperty (_Type_) :
 
     def __init__ (cls, name, bases, dict) :
         super (Autoproperty, cls).__init__ (name, bases, dict)
-        classes = [cls] + list (bases)
+        prop_name  = cls.mangled_name ("properties")
+        properties = {}
+        classes    = [cls] + list (bases)
         classes.reverse ()
         for c in classes :
             mangled_name = getattr (c, "mangled_name", None)
             if mangled_name :
                 for p in getattr (c, mangled_name ("properties"), []) :
                     setattr (cls, p.name, p)
+                    properties [p.name] = p
+        setattr (cls, prop_name, properties.values ())
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
         result = super (Autoproperty, cls).__call__ (* args, ** kw)
         for p in cls.__dict__.get (cls.mangled_name ("properties"), []) :
             init_instance = getattr (p, "init_instance", None)
-            if init_instance :
+            if callable (init_instance) :
                 init_instance (result)
         return result
     # end def __call__
