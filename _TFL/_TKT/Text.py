@@ -101,8 +101,9 @@ class Text (TFL.TKT.Mixin) :
         >>> w.insert (w.current_pos, "Ho", delta = 2)
         >>> w.apply_style  ( gray, w.bol_pos (hum_p), w.eol_pos (hum_p)
         ...                , tag ="foo")
-        >>> print w.tags_at (hum_p)
-        ('foo',)
+        >>> tags = w.tags_at (hum_p)
+        >>> print len (tags), tags [0]
+        1 foo
         >>> #applying an eventbinding is impossible here because this
         >>> #needs an app context for looking up the event name.
         >>> #w.apply_style  (cb,   w.bol_pos (hum_p), w.eol_pos (hum_p))
