@@ -65,12 +65,15 @@ class Styled (TFL.Meta.Object) :
 class _Node_ (TGL.UI.Mixin) :
     """Base class for nodes of a hierarchical text display"""
 
+    callback_style      = TFL.UI.Style ("callback")
     children            = property (lambda s : s._children)
     contents            = property (lambda s : s._contents)
+    root                = TFL.Meta.Lazy_Property \
+        ("root",    lambda s : s.parent.root)
     Style               = TFL.Meta.Lazy_Property \
-        ("Style",    lambda s : s.parent.Style)
+        ("Style",    lambda s : s.root.Style)
     tkt_text            = TFL.Meta.Lazy_Property \
-        ("tkt_text", lambda s : s.parent.tkt_text)
+        ("tkt_text", lambda s : s.root.tkt_text)
 
     _level_inc          = 1
 
@@ -94,6 +97,8 @@ class _Node_ (TGL.UI.Mixin) :
         self.init_contents (* contents)
         if parent :
             parent._add_child (parent._tail_mark, self)
+            if self.root.active_node is None :
+                self.root.active_node = self
     # end def __init__
 
     def add_contents (self, * contents) :
@@ -104,6 +109,29 @@ class _Node_ (TGL.UI.Mixin) :
         tkt_text.free_mark            (at_mark)
     # end def add_contents
 
+    def dec_state (self, event = None) :
+        pass ### just for compatibility with stateful nodes
+    # end def dec_state
+
+    def goto (self, mark = None) :
+        tkt_text = self.tkt_text
+        if mark is None :
+            mark = self._head_pos ()
+        tkt_text.place_cursor (mark)
+        tkt_text.see          (mark)
+        self.mouse_enter      ()
+    # end def goto
+
+    def goto_child (self, n = 0) :
+        n = min (n, len (self.children) - 1)
+        if n >= 0 :
+            self.children [n].goto ()
+    # end def goto_child
+
+    def inc_state (self, event = None) :
+        pass ### just for compatibility with stateful nodes
+    # end def inc_state
+
     def init_children (self) :
         self._children  = []
     # end def init_children
@@ -113,13 +141,34 @@ class _Node_ (TGL.UI.Mixin) :
         self._add_contents (* contents)
     # end def init_contents
 
+    def mouse_enter (self, event = None) :
+        if self.root.active_node is not self :
+            self.root.active_node = self
+            tkt_text = self.tkt_text
+            head     = self._head_mark
+            tail     = tkt_text.bol_pos (head, line_delta = 1)
+            tkt_text.apply_style \
+                (self.Style.active_node, head, tail, lift = True)
+            return self.TNS.stop_cb_chaining
+    # end def mouse_enter
+
+    def mouse_leave (self, event = None) :
+        if self.root.active_node is self :
+            self.root.active_node = None
+            tkt_text = self.tkt_text
+            tkt_text.remove_style (self.Style.active_node, tkt_text.bot_pos)
+            return self.TNS.stop_cb_chaining
+    # end def mouse_leave
+
     def styled_text (self, value, style = None, style_dict = None) :
         return Styled (value, self._style (style), style_dict)
     # end def styled_text
 
     def _add_child (self, at_mark, * children) :
         add = self.children.append
-        for c in children :
+        off = len (self.children)
+        for i, c in enumerate (children) :
+            c.number = i + off
             add (c)
         self._insert_children (at_mark, * children)
     # end def _add_child
@@ -135,9 +184,15 @@ class _Node_ (TGL.UI.Mixin) :
     def _base_style (self, style, level) :
         result = getattr (self.Style, "level%s" % (level, ))
         if style is not None :
-            result = style (** self.TNS.Text.Tag_Styler (result).option_dict)
+            result = style (** self.tkt_text.Tag_Styler (result).option_dict)
+        if self.parent :
+            result = result (callback = self._tag_callback_dict ())
         return result
     # end def _base_style
+
+    def _head_pos (self) :
+        return self.tkt_text.pos_at (self._head_mark)
+    # end def _head_pos
 
     def _insert (self, at_mark) :
         tkt_text = self.tkt_text
@@ -173,6 +228,13 @@ class _Node_ (TGL.UI.Mixin) :
         return style
     # end def _style
 
+    def _tag_callback_dict (self) :
+        return dict \
+            ( any_enter = self.mouse_enter
+            , any_leave = self.mouse_leave
+            )
+    # end def _tag_callback_dict
+
 # end class _Node_
 
 class Node (_Node_) :
@@ -186,7 +248,6 @@ class Node_B (_Node_) :
     """Model a node with butcon of a hierarchical text display"""
 
     butcon_bitmap       = "circle"
-    callback_style      = TFL.UI.Style ("callback")
     _no_of_butcons      = 0
 
     def __init__ (self, * args, ** kw) :
@@ -200,18 +261,6 @@ class Node_B (_Node_) :
         return self.TNS.stop_cb_chaining
     # end def ignore
 
-    def mouse_enter (self, event = None) :
-        tkt_text = self.tkt_text
-        head     = self._head_mark
-        tail     = tkt_text.bol_pos (head, line_delta = 1)
-        tkt_text.apply_style (self.Style.active_node, head, tail, lift = True)
-    # end def mouse_enter
-
-    def mouse_leave (self, event = None) :
-        tkt_text = self.tkt_text
-        tkt_text.remove_style (self.Style.active_node, tkt_text.bot_pos)
-    # end def mouse_leave
-
     def _button_callback_dict (self) :
         ignore = self.ignore
         return dict \
@@ -222,6 +271,10 @@ class Node_B (_Node_) :
             , any_leave = self.mouse_leave
             )
     # end def _button_callback_dict
+
+    def _head_pos (self) :
+        return self.tkt_text.pos_at (self._butt_mark)
+    # end def _head_pos
 
     def _insert_butcon (self, at_mark) :
         tkt_text = self.tkt_text
@@ -235,10 +288,9 @@ class Node_B (_Node_) :
                 )
             b.apply_style \
                 ( self.callback_style
-                      (callback = self._button_callback_dict ())
+                    (callback = self._button_callback_dict ())
                 )
-            for s in self.Style.normal, self.style :
-                b.push_style (s)
+            b.push_style           (self.Style.normal)
             tkt_text.insert        (at_mark, "\t" * (self.level - 1))
             tkt_text.insert_widget (at_mark, self.butcon)
             tkt_text.insert        (at_mark, "\t")
@@ -267,18 +319,23 @@ class Node_Bs (Node_B) :
     no_of_states        = property (lambda s : len (s._butcon_bitmaps))
     state               = 0
 
+    def dec_state (self, event = None) :
+        """Decrement state to next state
+           (circles back from first to last state).
+        """
+        self._change_state (self.state - 1)
+    # end def dec_state
+
+    def goto_child (self, n = 0) :
+        if self.state == self.no_of_states - 1 :
+            self.__super.goto_child (n)
+    # end def goto_child
+
     def inc_state (self, event = None) :
         """Increment state to next state
            (circles back from last to first state).
         """
-        self.state = (self.state + 1) % self.no_of_states
-        tkt_text   = self.tkt_text
-        for c in self.children :
-            c.butcon = None
-        tail = tkt_text.pos_at   (self._tail_mark, delta = 1)
-        tkt_text.remove          (self._butt_mark, tail)
-        self._insert             (self._tail_mark)
-        self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
+        self._change_state (self.state + 1)
     # end def inc_state
 
     def init_contents (self, * contents_per_state) :
@@ -312,14 +369,33 @@ class Node_Bs (Node_B) :
     def _button_callback_dict (self) :
         return dict \
             ( self.__super._button_callback_dict ()
-            , click_1   = self.inc_state
+            , click_1        = self.inc_state
             )
     # end def _button_callback_dict
+
+    def _change_state (self, state) :
+        self.state = state % self.no_of_states
+        tkt_text   = self.tkt_text
+        for c in self.children :
+            c.butcon = None
+        tail = tkt_text.pos_at   (self._tail_mark, delta = 1)
+        tkt_text.remove          (self._butt_mark, tail)
+        self._insert             (self._tail_mark)
+        self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
+    # end def _change_state
 
     def _insert_children (self, at_mark, * children) :
         if self.state == self.no_of_states - 1 :
             self.__super._insert_children (at_mark, * children)
     # end def _insert_children
+
+    def _tag_callback_dict (self) :
+        return dict \
+            ( self.__super._tag_callback_dict ()
+            #, open_node      = self.inc_state
+            #, close_node     = self.dec_state
+            )
+    # end def _tag_callback_dict
 
 # end class Node_Bs
 
@@ -365,32 +441,104 @@ class Root (_Node_) :
         )
 
     def __init__ (self, AC, contents = (), style = None, name = None, wc = None, ** kw) :
-        self.name       = name
-        self.tkt_text   = tkt_text = self.get_TNS (AC).Scrolled_Text \
-            ( AC        = AC
-            , name      = name
-            , wc        = wc
-            , editable  = False
+        self.active_node = None
+        self.name        = name
+        self.number      = -1
+        self.root        = self
+        Style            = self.Style
+        self.tkt_text    = tkt_text = self.get_TNS (AC).Scrolled_Text \
+            ( AC         = AC
+            , name       = name
+            , wc         = wc
+            , editable   = False
             )
-        Style           = self.Style
         if not hasattr (Style, "active_node") :
             self._setup_styles (tkt_text)
         tkt_text.apply_style   (Style.normal)
         tkt_text.set_tabs      (* Style._tabs)
         self.__super.__init__ \
-            ( parent    = None
-            , contents  = contents
-            , style     = style
-            , AC        = AC
-            , name      = name
-            , wc        = wc
+            ( parent     = None
+            , contents   = contents
+            , style      = style
+            , AC         = AC
+            , name       = name
+            , wc         = wc
             , ** kw
             )
-        self._insert    (tkt_text.current_pos)
-        ### insert a blank line to avoid `_tail_mark` and `current_pos` to
-        ### coincide
-        tkt_text.insert (tkt_text.current_pos, "\n", self.style)
+        self._setup_bindings (tkt_text)
+        self._insert         (tkt_text.current_pos)
     # end def __init__
+
+    def _node_binding (method) :
+        def wrapper (self, event = None, node = None, ** kw) :
+            if node is None :
+                node = self.active_node
+            if node is not None :
+                method (self, node, ** kw)
+            return self.TNS.stop_cb_chaining
+        wrapper.__name__ = method.__name__
+        wrapper.__doc__  = method.__doc__
+        return wrapper
+    # end def _node_binding
+
+    @_node_binding
+    def close_node (self, node) :
+        node.dec_state ()
+    # end def close_node
+
+    @_node_binding
+    def go_down (self, node, count = 1) :
+        self._goto_sibling (node, + count)
+    # end def go_down
+
+    @_node_binding
+    def go_left (self, node) :
+        if node.parent :
+            node.mouse_leave ()
+            node.parent.goto ()
+    # end def go_left
+
+    @_node_binding
+    def go_right (self, node) :
+        if node.children :
+            node.goto_child  (0)
+    # end def go_right
+
+    @_node_binding
+    def go_up (self, node, count = 1) :
+        self._goto_sibling (node, - count)
+    # end def go_up
+
+    @_node_binding
+    def open_node (self, node) :
+        node.inc_state ()
+    # end def open_node
+
+    @_node_binding
+    def show_head (self, node) :
+        node.goto ()
+    # end def show_head
+
+    @_node_binding
+    def show_tail   (self, node) :
+        node.goto (node._tail_mark)
+    # end def show_tail
+
+    def _goto_sibling (self, node, dir) :
+        if node.parent :
+            siblings = node.parent.children
+        else :
+            siblings = node.children
+        n        = min (max ((node.number + dir), 0), len (siblings) - 1)
+        target   = siblings [n]
+        node.mouse_leave ()
+        target.goto      ()
+    # end def _goto_sibling
+
+    def _setup_bindings (self, w) :
+        w.apply_style \
+            (self.callback_style (callback = self._text_callback_dict ()))
+    # end def _setup_bindings
 
     def _setup_styles (self, w) :
         d = Record ()
@@ -472,6 +620,19 @@ class Root (_Node_) :
                 tabs.append (lm1)
         Style.T = self.styled_text
     # end def _setup_styles
+
+    def _text_callback_dict (self) :
+        return dict \
+            ( close_node     = self.close_node
+            , node_down      = self.go_down
+            , node_end       = self.show_tail
+            , node_home      = self.show_head
+            , node_left      = self.go_left
+            , node_right     = self.go_right
+            , node_up        = self.go_up
+            , open_node      = self.open_node
+            )
+    # end def _text_callback_dict
 
 # end class Root
 

@@ -39,7 +39,7 @@ HTD_interface_test = """
     ...     y = x.rstrip ()
     ...     for l in y.split (nl) :
     ...         print l.strip ()
-    ...     print "%s characters with %s trailing whitespace" % (
+    ...     print "%s characters with %s trailing whitespace chars" % (
     ...           len (x), len (x) - len (y))
     ...
     >>> ac  = App_Context (TGL)
@@ -49,7 +49,7 @@ HTD_interface_test = """
     >>> show (t)
     R.line 1
     R.line 2
-    19 characters with 2 trailing whitespace
+    18 characters with 1 trailing whitespace chars
     >>> n1 = Node ( r
     ...           , ( r.Style.T ("n1.line 1 ", "yellow")
     ...             , nl, "n1 line 2"
@@ -60,7 +60,7 @@ HTD_interface_test = """
     R.line 2
     n1.line 1
     n1 line 2continued
-    50 characters with 3 trailing whitespace
+    49 characters with 2 trailing whitespace chars
     >>> n2 = Node_B  (r, nl.join (("n2 line 1", "n2 line 2")))
     >>> show (t)
     R.line 1
@@ -69,7 +69,7 @@ HTD_interface_test = """
     n1 line 2continued
     n2 line 1
     n2 line 2
-    72 characters with 3 trailing whitespace
+    71 characters with 2 trailing whitespace chars
     >>> n3 = Node_B2 ( r
     ...              , ( ["n3 closed line 1"]
     ...                , ["n3 open line 1", nl, "n3 open line 2"])
@@ -82,7 +82,7 @@ HTD_interface_test = """
     n2 line 1
     n2 line 2
     n3 closed line 1
-    91 characters with 3 trailing whitespace
+    90 characters with 2 trailing whitespace chars
     >>> n3.inc_state ()
     >>> show (t)
     R.line 1
@@ -93,7 +93,7 @@ HTD_interface_test = """
     n2 line 2
     n3 open line 1
     n3 open line 2
-    104 characters with 3 trailing whitespace
+    103 characters with 2 trailing whitespace chars
     >>> m1 = Node_B2 ( n3
     ...              , ( ["m1 closed line 1"]
     ...                , ["m1 open line 1", nl, "m1 open line 2"]))
@@ -110,7 +110,7 @@ HTD_interface_test = """
     m1 closed line 1
     m2 line 1
     m2 line 2
-    145 characters with 4 trailing whitespace
+    144 characters with 3 trailing whitespace chars
     >>> m1.inc_state ()
     >>> show (t)
     R.line 1
@@ -125,7 +125,7 @@ HTD_interface_test = """
     m1 open line 2
     m2 line 1
     m2 line 2
-    158 characters with 4 trailing whitespace
+    157 characters with 3 trailing whitespace chars
     >>> m1.inc_state ()
     >>> show (t)
     R.line 1
@@ -139,7 +139,7 @@ HTD_interface_test = """
     m1 closed line 1
     m2 line 1
     m2 line 2
-    145 characters with 4 trailing whitespace
+    144 characters with 3 trailing whitespace chars
     >>> n3.inc_state ()
     >>> show (t)
     R.line 1
@@ -149,7 +149,7 @@ HTD_interface_test = """
     n2 line 1
     n2 line 2
     n3 closed line 1
-    91 characters with 3 trailing whitespace
+    90 characters with 2 trailing whitespace chars
     >>> n3.inc_state ()
     >>> show (t)
     R.line 1
@@ -163,7 +163,7 @@ HTD_interface_test = """
     m1 closed line 1
     m2 line 1
     m2 line 2
-    145 characters with 3 trailing whitespace
+    144 characters with 2 trailing whitespace chars
     >>> n4 = Node_B2 ( r, ( ["n4 closed line 1"]
     ...                   , ["n4 open line 1", nl, "n4 open line 2"])
     ...              , r.Style.light_blue)
@@ -180,7 +180,7 @@ HTD_interface_test = """
     m2 line 1
     m2 line 2
     n4 closed line 1
-    164 characters with 3 trailing whitespace
+    163 characters with 2 trailing whitespace chars
     """
 
 ### __END__ TGL.TKT._test_HTD

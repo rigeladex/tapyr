@@ -32,6 +32,7 @@
 
 import _TGL._TKT._Tk
 import _TGL._TKT._Tk.Butcon
+import _TGL._TKT._Tk.Eventname
 import _TGL._TKT._Tk.Text
 
 from _TGL._TKT._test_HTD import *
@@ -43,6 +44,7 @@ from   _TGL._UI.HTD import *
 from   _TFL._UI.App_Context import App_Context
 import _TGL._TKT._Tk
 import _TGL._TKT._Tk.Butcon
+import _TGL._TKT._Tk.Eventname
 import _TGL._TKT._Tk.Text
 
 def show (t) :
