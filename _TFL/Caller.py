@@ -46,6 +46,8 @@
 #    25-Feb-2002 (CT) `Caller.__getitem__` changed to allow nested format
 #                     expressions (stolen from Skip Montanaro <skip@pobox.com>)
 #    12-Mar-2002 (CT) `_Export_Module` added
+#     1-Jun-2002 (CT) Try `sys._getframe` in `frame` instead of raising
+#                     `AssertionError`
 #    ««revision-date»»···
 #--
 
@@ -57,15 +59,15 @@ def frame (depth = 0) :
        frame of the caller's caller's caller is returned, and so on).
     """
     try:
-        raise AssertionError
-    except AssertionError :
+        result = sys._getframe (2 + depth)
+    except AttributeError :
         result = sys.exc_traceback.tb_frame.f_back.f_back
         try :
             for i in range (depth) :
                 result = result.f_back
         except AttributeError :
             raise ValueError, "call stack is not deep enough: %d" % (depth, )
-        return result
+    return result
 # end def frame
 
 def globals (depth = 0) :
@@ -126,7 +128,7 @@ class Scope :
        >>> square = lambda n : n * n
        >>> "%(square (%(3*4)s))s" % Scope ()
        '144'
-       
+
     """
 
     def __init__ (self, depth = 0, globs = None, locls = None) :
