@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Feb-2005 (CT) Creation
+#    21-Feb-2005 (CT) `__init__` changed to pass `self` to `_opt_mappers`
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,7 @@ class _TKT_Styler_ (TFL.TKT.Mixin) :
             v = getattr (style, o, None)
             if v is not None :
                 if o in _opt_mappers :
-                    v = _opt_mappers [o] (v)
+                    v = _opt_mappers [o] (self, v)
                 d [o] = v
     # end def __init__
 

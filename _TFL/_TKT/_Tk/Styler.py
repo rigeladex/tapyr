@@ -29,6 +29,7 @@
 #    18-Feb-2005 (CT) Creation
 #    20-Feb-2005 (CT) Use `_real_name` to allow descendents to be named
 #                     `Styler`
+#    21-Feb-2005 (CT) `cursor` handling added
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,13 @@ import tkFont
 class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
 
     _real_name        = "Styler"
+
+    _cursor_map       = dict \
+        ( default     = None
+        , hand        = "hand2"
+        , hourglass   = "watch"
+        , text        = "xterm"
+        )
 
     _font_family_map  = dict \
         ( Monospace   = "courier"
@@ -60,7 +68,7 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
         )
 
     _opt_mappers      = dict \
-        ( underline   = lambda v : (False, True) [v != "none"]
+        ( underline   = lambda s, v : (False, True) [v != "none"]
         )
 
     def __init__ (self, style) :
@@ -74,6 +82,10 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
                 if s is not None :
                     d ["size"] = self._font_size_map [s]
                 self.option_dict ["font"] = tkFont.Font (** d)
+        if "cursor" in self.Opts :
+            c = style.mouse_cursor
+            if c is not None :
+                self.option_dict ["cursor"] = self._cursor_map.get (c, c)
     # end def __init__
 
 Styler = _TKT_Tk_Styler_ # end class _TKT_Tk_Styler_

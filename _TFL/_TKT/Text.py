@@ -46,7 +46,9 @@ class Text (TFL.TKT.Mixin) :
         >>> blue = Style ("blue", background = "lightblue")
         >>> yell = Style ("yell", background = "yellow", foreground = "red")
         >>> gray = Style ("gray", background = "gray80")
+        >>> hand = Style ("hand", mouse_cursor = "hand")
         >>> w = Text ()
+        >>> w.apply_style (hand)
         >>> w.get ()
         ''
         >>> w.append ("Ha")

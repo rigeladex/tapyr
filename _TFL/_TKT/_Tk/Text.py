@@ -61,7 +61,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
 
        >>> w = Text ()
-       >>> w.wtk_widget.pack ()
+       >>> w.widget.pack ()
        >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
        ('1.0', '2.0', '1.0', '1.0')
        >>> w.append ("Ha")
@@ -94,14 +94,17 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     _real_name  = "Text"
 
-    class Styler (TFL.TKT.Tk.Styler) :
-
+    class Tag_Styler (TFL.TKT.Tk.Styler) :
         Opts    = dict_from_list \
-            (( "background", "font", "foreground", "underline"
-             ### XXX
-             # "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
-            ))
+            ( ( "background", "font", "foreground", "underline"
+              ### XXX
+              # "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
+              )
+            )
+    # end class Tag_Styler
 
+    class Styler (Tag_Styler) :
+        Opts    = dict_from_list (("cursor", ))
     # end class Styler
 
     Widget_Type = CTK.C_Text
@@ -110,15 +113,14 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     current_pos = property (lambda s : s.wtk_widget.index (INSERT))
     eot_pos     = property (lambda s : s.wtk_widget.index (END))
 
-    _sty_map    = weakref.WeakKeyDictionary ()
-
     def __init__ (self, AC = None, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
-        self.wtk_widget = self.Widget_Type \
+        self.widget = self.Widget_Type \
             ( master    = wc
             , name      = name
             , state     = (DISABLED, NORMAL) [bool (editable)]
             )
+        self.wtk_widget = self.widget.body
         self._tag_map   = weakref.WeakKeyDictionary ()
         self._tag_no    = 0
         self._mark_no   = 0
@@ -237,7 +239,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
                 self._tag_no          += 1
                 self._tag_map [style]  = tag
                 self.wtk_widget.tag_configure \
-                    (tag, ** self._styler (style).option_dict)
+                    (tag, ** self._styler (style, self.Tag_Styler).option_dict)
                 self._apply_style_bindings \
                     (style, lambda e, b : self.wtk_widget.bind_tag (tag, e, b))
             result = (self._tag_map [style])
@@ -254,8 +256,10 @@ from _TFL._UI.Style     import *
 blue = Style ("blue", background = "lightblue")
 yell = Style ("yell", background = "yellow", foreground = "red")
 gray = Style ("gray", background = "gray80")
+hand = Style ("hand", mouse_cursor = "hand")
 w = Text ()
-w.wtk_widget.pack ()
+w.widget.pack ()
+w.apply_style (hand)
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
 w.append ("Ha")
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
