@@ -1,6 +1,5 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +31,7 @@
 #     7-May-2001 (CT) `Filter' renamed to `Regexp_Filter' (and re.escape
 #                     removed)
 #     7-May-2001 (CT) `Glob_Filter' added
+#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -204,7 +204,7 @@ class Regexp_Filter :
     """Filter using regular expressions"""
 
     def __init__ (self, pattern) :
-        if isinstance (pattern, type ("")) :
+        if isinstance (pattern, (str, unicode)) :
             pattern = re.compile (pattern)
         self.pattern = pattern
     # end def __init__

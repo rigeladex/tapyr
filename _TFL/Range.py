@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
 #++
@@ -17,6 +17,7 @@
 # Revision Dates
 #    10-May-2001 (CT) Creation
 #    21-Feb-2002 (CT) `Range_` renamed to `_Range_`
+#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -43,11 +44,11 @@ class _Range_ :
     """
 
     def __getitem__ (self, indices) :
-        if type (indices) != type (()) :
+        if not isinstance (indices, (list, tuple)) :
             indices = (indices, )
         result = []
         for i in indices :
-            if type (i) == types.SliceType :
+            if isinstance (i, types.SliceType) :
                 result.extend (range (i.start, i.stop, i.step or 1))
             else :
                 result.extend (range (i))
