@@ -165,7 +165,7 @@ class Automethodwrap (_Type_) :
     """Metaclass automatically wrapping the methods specified in `__autowrap`.
 
        `__autowrap` must map method names to wrapper functions/objects (e.g.,
-       to classmethod, staticmethod, or TFL.Meta.flexmethod).
+       to classmethod, staticmethod, or TFL.Meta.Class_and_Instance_Method).
     """
 
     def __init__ (cls, name, bases, dict) :

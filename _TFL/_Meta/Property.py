@@ -28,7 +28,7 @@
 # Revision Dates
 #    13-May-2002 (CT) Creation
 #    14-Jan-2002 (CT) _Property_ factored, Aesthetics
-#    17-Jan-2003 (CT) `flexmethod` added
+#    17-Jan-2003 (CT) `Class_and_Instance_Method` added
 #    ««revision-date»»···
 #--
 
@@ -102,7 +102,7 @@ class RW_Property (RO_Property) :
 
 # end class Read_Write
 
-class flexmethod (object) :
+class Class_and_Instance_Method (object) :
     """Flexible method wrapper: wrapped method can be used as class method
        and as instance method.
 
@@ -112,7 +112,7 @@ class flexmethod (object) :
        ...         self.foo = 137
        ...     def chameleon (soc) :
        ...         print type (soc), soc.foo
-       ...     chameleon = flexmethod (chameleon)
+       ...     chameleon = Class_and_Instance_Method (chameleon)
        ...
        >>> T.chameleon ()
        <type 'type'> 42
@@ -158,7 +158,7 @@ class flexmethod (object) :
         return self.Bound_Method (self.method, obj, self.cls or cls)
     # end def __get__
 
-# end class flexmethod
+# end class Class_and_Instance_Method
 
 if __name__ == "__main__" :
     ### unit-test code ############################################################
@@ -179,7 +179,7 @@ if __name__ == "__main__" :
         import _TFL.d_dict
         class T (object) :
             __metaclass__ = TFL.Meta.Automethodwrap
-            __autowrap    = TFL.d_dict (chameleon = flexmethod, piggy = flexmethod)
+            __autowrap    = TFL.d_dict (chameleon = Class_and_Instance_Method, piggy = Class_and_Instance_Method)
             foo = 42
             def __init__ (self) :
                 self.foo = 137
