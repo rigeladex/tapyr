@@ -185,7 +185,7 @@ class Year (TFL.Meta.Object) :
         self.tail = t = days [-1]
         w_head = Week \
             ( h.week
-            , * ( [h.date - i for i in range (h.weekday, 0, -1)]
+            , * ( [Day (h.date - i) for i in range (h.weekday, 0, -1)]
                 + days [0 : 7 - h.weekday]
                 )
             )
@@ -199,7 +199,9 @@ class Year (TFL.Meta.Object) :
                 (Week
                      ( weeks [-1].number + 1
                      , * ( days [i : i+7]
-                         + [t.date + j for j in range (1, 8 - (len(days) - i))]
+                         + [Day (t.date + j)
+                            for j in range (1, 8 - (len(days) - i))
+                           ]
                          ) [:8]
                      )
                 )
