@@ -59,6 +59,10 @@
 #                     `Message`
 #    28-Mar-2005 (CT) `_Msg_Part_` factored and `part_iter` added
 #    29-Mar-2005 (CT) `formatted` changed to use `part_iter`
+#    31-Mar-2005 (CT) `__str__` and `__repr__` factored up into `_Msg_Part_`
+#    31-Mar-2005 (CT) `Body_Part` changed to use a `name` passed by caller
+#                     and map `type` to `content_type` as supplied by `email`
+#    31-Mar-2005 (CT) `Header_Part` changed to use `X-PMA-Headers` as `type`
 #    ««revision-date»»···
 #--
 
@@ -84,16 +88,17 @@ now     = time.time ()
 
 class _Msg_Part_ (object) :
 
-    __metaclass__ = TFL.Meta.M_Class_SWRP
+    __metaclass__    = TFL.Meta.M_Class_SWRP
 
-    __properties  = \
+    __properties     = \
         ( TFL.Meta.Lazy_Property ("charset",  lambda s : s._charset  ())
         , TFL.Meta.Lazy_Property
             ("content_type", lambda s : s.email.get_content_type ())
         , TFL.Meta.Lazy_Property ("filename", lambda s : s._filename ())
         )
 
-    label_width   = 8
+    label_width      = 8
+    summary_format   = "%(name)-10s %(type)-20s %(filename)s"
 
     def __init__ (self, email, name) :
         self.email = email
@@ -170,6 +175,16 @@ class _Msg_Part_ (object) :
         return result
     # end def _temp_body
 
+    def __str__ (self) :
+        return self.summary_format % dict \
+            (name = self.name, type = self.type, filename = self.filename)
+    # end def __str__
+
+    def __repr__ (self) :
+        return "%s %s : %s" % \
+            (self.__class__.__name__, self.name, self.type)
+    # end def __repr__
+
 # end class _Msg_Part_
 
 class _Pseudo_Part_ (_Msg_Part_) :
@@ -186,10 +201,15 @@ class _Pseudo_Part_ (_Msg_Part_) :
 class Body_Part (_Pseudo_Part_) :
     """Model the body of an email as pseudo-part"""
 
-    def __init__ (self, email, needs_sep, headers_to_show) :
+    __properties  = \
+        ( TFL.Meta.Lazy_Property ("type", lambda s : s.content_type)
+        ,
+        )
+
+    def __init__ (self, email, name, needs_sep, headers_to_show) :
         self.needs_sep       = needs_sep
         self.headers_to_show = headers_to_show
-        self.__super.__init__ (email, "Body")
+        self.__super.__init__ (email, name)
     # end def __init__
 
     def body_lines (self, sep_length = 79) :
@@ -231,6 +251,8 @@ class Body_Part (_Pseudo_Part_) :
 
 class Header_Part (_Pseudo_Part_) :
     """Model the headers of an email as pseudo-part"""
+
+    type          = "X-PMA-Headers"
 
     def __init__ (self, email, headers_to_show, is_leaf = False, name = None) :
         self.headers_to_show = headers_to_show
@@ -289,7 +311,8 @@ class _Message_ (_Msg_Part_) :
         if is_msg :
             yield Header_Part (email, self.headers_to_show)
         if not email.is_multipart () :
-            yield Body_Part (email, is_msg, self.headers_to_show)
+            yield Body_Part \
+                (email, self.name or "Body", is_msg, self.headers_to_show)
         else :
             if self.type == "multipart/alternative" :
                 parts = self.parts [0:1] ### XXX return a MP_Alt_Part object
@@ -334,17 +357,6 @@ class Message_Part (_Message_) :
     """Model a part of a multi-part MIME message"""
 
     headers_to_show  = ("content-type", "content-disposition")
-    summary_format   = "%(name)-10s %(type)-20s %(filename)s"
-
-    def __str__ (self) :
-        return self.summary_format % dict \
-            (name = self.name, type = self.type, filename = self.filename)
-    # end def __str__
-
-    def __repr__ (self) :
-        return "%s %s : %s" % \
-            (self.__class__.__name__, self.name, self.type)
-    # end def __repr__
 
 # end class Message_Part
 

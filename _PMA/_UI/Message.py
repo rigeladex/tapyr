@@ -27,17 +27,18 @@
 #
 # Revision Dates
 #    29-Mar-2005 (CT) Creation
+#    31-Mar-2005 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
+from   _TGL                    import TGL
 from   _PMA                    import PMA
 
 import _PMA.Message
 import _PMA.Mailcap
 
 import _PMA._UI
-import _PMA._UI.HTB
+import _PMA._UI.HTD
 import _PMA._UI.Mixin
 
 class Message (PMA.UI.Mixin) :
@@ -50,11 +51,11 @@ class Message (PMA.UI.Mixin) :
             , summary_wc = summary_wc
             , ** kw
             )
-        self._display    = self.ANS.UI.HTB.Browser \
+        self._display    = self.ANS.UI.HTD.Root\
             ( AC         = AC
             , wc         = display_wc
             )
-        self._summary    = self.ANS.UI.HTB.Browser \
+        self._summary    = self.ANS.UI.HTD.Root \
             ( AC         = AC
             , wc         = summary_wc
             )
@@ -64,28 +65,33 @@ class Message (PMA.UI.Mixin) :
         """Display `msg` in `self.display` and `self.summary`"""
         display = self._display
         summary = self._summary
-        Node    = self.ANS.UI.HTB.Node
+        Node    = self.ANS.UI.HTD.Node
         display.clear ()
         summary.clear ()
         for p in msg.part_iter () :
-            print p.name, p.body_lines () [0:1]
             d = Node \
-                ( browser  = display
-                , name     = p.name
+                ( parent   = display
                 , contents = "\n".join (p.body_lines ())
                              ### XXX use type-specific renderer here
                 )
             self._add_parts (d, p)
-            d.open ()
     # end def display
 
     def _add_parts (self, node, msg) :
+        Node = self.ANS.UI.HTD.Node_B2
         for p in msg.part_iter () :
-            print p.name, list (p.body_lines ()) [0:1]
-            c = node.new_child \
-                ( name     = p.name
-                , contents = "\n".join (p.body_lines ())
+            type = p.type
+            if type.upper ().startswith ("X-PMA") :
+                type = ""
+            c = Node \
+                ( parent   = node
+                , contents =
+                    ( ("%s %s %s" % (p.name, type, p.filename), )
+                    , (u"\n".join (p.body_lines ()), )
+                    )
                 )
+            if type == "text/plain" :
+                c.inc_state ()
     # end def _add_parts
 
 # end class Message
@@ -96,13 +102,20 @@ from   _TFL._UI.App_Context import App_Context
 import _PMA._TKT._Tk
 import _PMA._UI.HTB
 import _PMA._TKT._Tk.Text
+import _PMA._TKT._Tk.Butcon
+import _PMA._TKT._Tk.Eventname
 
 from   CTK import *
 
 ac  = App_Context (PMA)
-msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
 mui = Message (ac)
-mui._display.text.exposed_widget.pack  (expand = YES, fill = BOTH)
+mui._display.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
+
+msg = PMA.message_from_file ("/swing/private/tanzer/MH/inbox/2")
+#msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
+mui.display (msg)
+
+msg = PMA.message_from_file ("/swing/private/tanzer/MH/A/70")
 mui.display (msg)
 
 """

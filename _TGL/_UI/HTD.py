@@ -93,8 +93,8 @@ class _Node_ (TGL.UI.Mixin) :
         self.style      = style = self._base_style (style, level)
         self.style_dict = sd = self.tkt_text.Tag_Styler (style).option_dict
         self._head_mark = self._midd_mark = self._tail_mark = None
-        self.init_children ()
-        self.init_contents (* contents)
+        self._init_children ()
+        self._init_contents (* contents)
         if parent :
             parent._add_child (parent._tail_mark, self)
             if self.root.active_node is None :
@@ -131,15 +131,6 @@ class _Node_ (TGL.UI.Mixin) :
     def inc_state (self, event = None) :
         pass ### just for compatibility with stateful nodes
     # end def inc_state
-
-    def init_children (self) :
-        self._children  = []
-    # end def init_children
-
-    def init_contents (self, * contents) :
-        self._contents = []
-        self._add_contents (* contents)
-    # end def init_contents
 
     def mouse_enter (self, event = None) :
         if self.root.active_node is not self :
@@ -193,6 +184,16 @@ class _Node_ (TGL.UI.Mixin) :
     def _head_pos (self) :
         return self.tkt_text.pos_at (self._head_mark)
     # end def _head_pos
+
+    def _init_children (self) :
+        self._children  = []
+    # end def _init_children
+
+    def _init_contents (self, * contents) :
+        self._contents = []
+        if contents :
+            self._add_contents (* contents)
+    # end def _init_contents
 
     def _insert (self, at_mark) :
         tkt_text = self.tkt_text
@@ -338,11 +339,6 @@ class Node_Bs (Node_B) :
         self._change_state (self.state + 1)
     # end def inc_state
 
-    def init_contents (self, * contents_per_state) :
-        self._contents  = [[] for i in range (self.no_of_states)]
-        self._add_contents (* contents_per_state)
-    # end def init_contents
-
     def mouse_enter (self, event = None) :
         self.__super.mouse_enter (event)
         self.butcon.push_style   (self._abs)
@@ -383,6 +379,11 @@ class Node_Bs (Node_B) :
         self._insert             (self._tail_mark)
         self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
     # end def _change_state
+
+    def _init_contents (self, * contents_per_state) :
+        self._contents  = [[] for i in range (self.no_of_states)]
+        self._add_contents (* contents_per_state)
+    # end def _init_contents
 
     def _insert_children (self, at_mark, * children) :
         if self.state == self.no_of_states - 1 :
@@ -469,71 +470,12 @@ class Root (_Node_) :
         self._insert         (tkt_text.current_pos)
     # end def __init__
 
-    def _node_binding (method) :
-        def wrapper (self, event = None, node = None, ** kw) :
-            if node is None :
-                node = self.active_node
-            if node is not None :
-                method (self, node, ** kw)
-            return self.TNS.stop_cb_chaining
-        wrapper.__name__ = method.__name__
-        wrapper.__doc__  = method.__doc__
-        return wrapper
-    # end def _node_binding
-
-    @_node_binding
-    def close_node (self, node) :
-        node.dec_state ()
-    # end def close_node
-
-    @_node_binding
-    def go_down (self, node, count = 1) :
-        self._goto_sibling (node, + count)
-    # end def go_down
-
-    @_node_binding
-    def go_left (self, node) :
-        if node.parent :
-            node.mouse_leave ()
-            node.parent.goto ()
-    # end def go_left
-
-    @_node_binding
-    def go_right (self, node) :
-        if node.children :
-            node.goto_child  (0)
-    # end def go_right
-
-    @_node_binding
-    def go_up (self, node, count = 1) :
-        self._goto_sibling (node, - count)
-    # end def go_up
-
-    @_node_binding
-    def open_node (self, node) :
-        node.inc_state ()
-    # end def open_node
-
-    @_node_binding
-    def show_head (self, node) :
-        node.goto ()
-    # end def show_head
-
-    @_node_binding
-    def show_tail   (self, node) :
-        node.goto (node._tail_mark)
-    # end def show_tail
-
-    def _goto_sibling (self, node, dir) :
-        if node.parent :
-            siblings = node.parent.children
-        else :
-            siblings = node.children
-        n        = min (max ((node.number + dir), 0), len (siblings) - 1)
-        target   = siblings [n]
-        node.mouse_leave ()
-        target.goto      ()
-    # end def _goto_sibling
+    def clear (self) :
+        self.active_node  = None
+        self.tkt_text.clear ()
+        self._init_contents ()
+        self._init_children ()
+    # end def clear
 
     def _setup_bindings (self, w) :
         w.apply_style \
@@ -633,6 +575,73 @@ class Root (_Node_) :
             , open_node      = self.open_node
             )
     # end def _text_callback_dict
+
+    ### event callbacks follow
+    def _node_binding (method) :
+        def wrapper (self, event = None, node = None, ** kw) :
+            if node is None :
+                node = self.active_node
+            if node is not None :
+                method (self, node, ** kw)
+            return self.TNS.stop_cb_chaining
+        wrapper.__name__ = method.__name__
+        wrapper.__doc__  = method.__doc__
+        return wrapper
+    # end def _node_binding
+
+    @_node_binding
+    def close_node (self, node) :
+        node.dec_state ()
+    # end def close_node
+
+    @_node_binding
+    def go_down (self, node, count = 1) :
+        self._goto_sibling (node, + count)
+    # end def go_down
+
+    @_node_binding
+    def go_left (self, node) :
+        if node.parent :
+            node.mouse_leave ()
+            node.parent.goto ()
+    # end def go_left
+
+    @_node_binding
+    def go_right (self, node) :
+        if node.children :
+            node.goto_child  (0)
+    # end def go_right
+
+    @_node_binding
+    def go_up (self, node, count = 1) :
+        self._goto_sibling (node, - count)
+    # end def go_up
+
+    @_node_binding
+    def open_node (self, node) :
+        node.inc_state ()
+    # end def open_node
+
+    @_node_binding
+    def show_head (self, node) :
+        node.goto ()
+    # end def show_head
+
+    @_node_binding
+    def show_tail   (self, node) :
+        node.goto (node._tail_mark)
+    # end def show_tail
+
+    def _goto_sibling (self, node, dir) :
+        if node.parent :
+            siblings = node.parent.children
+        else :
+            siblings = node.children
+        n        = min (max ((node.number + dir), 0), len (siblings) - 1)
+        target   = siblings [n]
+        node.mouse_leave ()
+        target.goto      ()
+    # end def _goto_sibling
 
 # end class Root
 
