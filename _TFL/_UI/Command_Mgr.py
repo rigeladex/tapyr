@@ -137,6 +137,7 @@
 #    18-Feb-2005 (MG) Inheritance of `Command` and `Deaf_Command` switched
 #    18-Feb-2005 (MG) `__all__` removed (`_Command_`) added to `_Export`
 #    21-Feb-2005 (CT) `id` removed from `__repr__`
+#    21-Feb-2005 (CT) `__repr__` fixed (removed too much)
 #    ««revision-date»»···
 #--
 
@@ -555,7 +556,7 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
     # end def __str__
 
     def __repr__ (self) :
-        return "<%s `%s'>" % (self.__class__.__name__, )
+        return "<%s `%s'>" % (self.__class__.__name__, self.name)
     # end def __repr__
 
 # end class _Command_Group_
@@ -757,7 +758,7 @@ class Command_Group (_Command_Group_) :
                     j = dpos
                     for name, cb, underline in dyns :
                         interfacer.add_command \
-                            (name, cb
+                            ( name, cb
                             , index     = j
                             , underline = underline
                             )

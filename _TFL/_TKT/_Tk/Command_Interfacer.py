@@ -58,6 +58,8 @@
 #    14-Feb-2005 (MG) Smaller bugs fixed
 #    16-Feb-2005 (MG) `bind_to_widget`: parameter `event_name` added
 #    17-Feb-2005 (CT) s/widget/wtk_widget/g
+#    21-Feb-2005 (CT) `CI_Menu._index_offset` changed from `1` to `0` (and
+#                     `CI_Menubar._index_offset` redefined to `1`)
 #    ««revision-date»»···
 #--
 
@@ -197,7 +199,7 @@ class CI_Menu (_CI_Widget_) :
     Widget_Type        = CTK.C_Menu
     max_cmds_per_group = 20
 
-    _index_offset      = 1
+    _index_offset      = 0
 
     def index (self, name) :
         if name == -1 :
@@ -317,6 +319,10 @@ class CI_Menu (_CI_Widget_) :
 
 class CI_Menubar (CI_Menu) :
     """Implement a menubar command interfacer for Tkinter"""
+
+    ### for some reason, `_index_offset` must be 1 for menus used as a
+    ### menubar (otherwise, the left most entry isn't displayed)
+    _index_offset       = 1
 
     def __init__ (self, AC, parent, ** kw) :
         self.__super.__init__ (AC = AC, parent = parent, ** kw)
