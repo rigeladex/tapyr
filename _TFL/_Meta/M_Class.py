@@ -31,6 +31,16 @@
 #--
 
 def _mangled_name (name, cls_name) :
+    """Returns `name` as mangled by Python for occurences of `__%s` % name
+       inside the definition of a class with name `cls_name`.
+
+       >>> _mangled_name ("foo", "Bar")
+       '_Bar__foo'
+       >>> _mangled_name ("foo", "_Bar")
+       '_Bar__foo'
+       >>> _mangled_name ("foo", "_Bar_")
+       '_Bar___foo'
+    """
     if cls_name.startswith ("_") :
         format = "%s__%s"
     else :
@@ -50,6 +60,16 @@ class _Type_ (type) :
 class Autorename (_Type_) :
     """Metaclass renaming the class to the value of the class attribute
        `_real_name` if existing.
+
+       Python will use the name following the `class` keyword for mangling of
+       private names. To avoid name clashes between private names of classes
+       with the same name (e.g., Package_A.Class and Package_B.Class), define
+       these classes with unique names and use `_real_name` to define the
+       name to be used by clients of the class.
+
+       The metaclass `Autorename` swaps `__name__` and `_real_name` before
+       creating the class object. As this occurs after the name mangling done
+       by Python (compiler), you can have your cake and eat it, too.
     """
 
     def __new__ (meta, name, bases, dict) :
@@ -79,6 +99,14 @@ class Autorename (_Type_) :
 class Autosuper (_Type_) :
     """Metaclass adding a private class variable `__super` containing
        `super (cls)`.
+
+       `__super` can be used for cooperative method calls. For instance:
+
+           def foo (self, bar, baz) :
+               ...
+               self.__super.foo (bar, baz)
+               ...
+           # end def foo
     """
 
     def __init__ (cls, name, bases, dict) :
@@ -91,6 +119,16 @@ class Autosuper (_Type_) :
 class Autoproperty (_Type_) :
     """Metaclass adding and initializing properties defined in
        `__properties`.
+
+       `Autoproperty` expects `__properties` to contain instances of
+       TFL.Meta.Property (or signature-compatible objects). For each element
+       `p` of `__properties`,
+
+       - `Autoproperty` will add a class attribute named `p.name` with value
+         `p` to the class.
+
+       - `Autoproperty` will add an instance attribute to all instances of
+         the class if `p` provides a callable `init_instance` attribute.
     """
 
     def __init__ (cls, name, bases, dict) :
