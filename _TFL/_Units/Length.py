@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
+#     9-Feb-2005 (CED) Some additional units added
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,9 @@ class Length (TFL.Units.Kind) :
         , Unit ("statute_mile",   1609.344,        "mi")
         , Unit ("nautical_mile",  1852.0,          "Nm")
         # physics units
+        , Unit ("lightyear",      9.4605e15,       "ly")
+        , Unit ("parsec",         3.0857e16,       "pc")
+        , Unit ("planck_length",  1.616e-35,       "pl")
         , Unit ("angstrom",       0.0000000001,    "A")
         )
 
