@@ -95,6 +95,7 @@
 #    19-Jan-2005 (CT) `_element` (NO_List) converted to `_epi` (dictionary of
 #                     NO_List indexed by interfacer) and handling of `index`
 #                     changed accordingly
+#    19-Jan-2005 (CT) Today's changes fixed
 #    ««revision-date»»···
 #--
 
@@ -371,7 +372,7 @@ class Command_Group (_Command_) :
                 self.command [cmd.name] = cmd
             cmd.interfacers = []
             for n, i, info in self._interfacers (if_names) :
-                _ie   = self._epi        [i.name]
+                _ie   = self._epi        [n]
                 index = self._real_index (_ie, index, delta)
                 _ie.insert               (index, cmd)
                 cmd.interfacers.append   (i)
@@ -393,10 +394,10 @@ class Command_Group (_Command_) :
         ifacers = {}
         to_do   = []
         for n, i, info in self._interfacers (if_names) :
-            _ie         = self._epi        [i.name]
+            _ie         = self._epi        [n]
             index       = self._real_index (_ie, index, delta)
             ifacers [n] = i.add_group      (name, index = index, info = info)
-            to_do.append  (_ie, index)
+            to_do.append  ((_ie, index))
         group = self.Group_Class \
             ( name          = name
             , interfacers   = ifacers
@@ -425,9 +426,9 @@ class Command_Group (_Command_) :
                 self.n_seps += 1
             sep = Record (name = name, destroy = lambda s : 1)
             for n, i, info in self._interfacers (if_names) :
-                _ie   = self._epi        [i.name]
+                _ie   = self._epi        [n]
                 index = self._real_index (_ie, index, delta)
-                _ie.insert               (index, cmd)
+                _ie.insert               (index, sep)
                 i.add_separator          (name, index)
     # end def add_separator
 
@@ -451,7 +452,7 @@ class Command_Group (_Command_) :
         interfacers = self.interfacers
         for n in interface_names :
             name, info = (n.split (":", 1) + [None]) [:2]
-            yield n, interfacers [name], info
+            yield name, interfacers [name], info
     # end def _interfacers
 
     def _real_index (self, element, index, delta) :

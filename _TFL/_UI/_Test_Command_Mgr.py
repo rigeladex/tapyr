@@ -11,13 +11,14 @@
 #
 # Revision Dates
 #    13-Jan-2005 (MG) Creation
+#    19-Jan-2005 (CT) Test fixed
 #    ««revision-date»»···
 #--
 
 """
 >>> cmd_mgr = TFL.UI.Command_Mgr (
-...      1, dict ( menu_1 = CI_Menu ()
-...              , menu_2 = CI_Menu ()
+...      1, dict ( menu_1 = CI_Menu ("menu_1")
+...              , menu_2 = CI_Menu ("menu_2")
 ...              )
 ...     )
 >>>
@@ -29,7 +30,7 @@
 >>> g2.add_command (TFL.UI.Command ("fct_3", fct_3), if_names = ("menu_2", ))
 >>> g2.add_command (TFL.UI.Command ("fct_4", fct_4), if_names = ("menu_2", ))
 >>> print cmd_mgr ["Group_1"].interfacers ['menu_1']
-Group_1 ['fct_1', 'fct_2']
+menu_1 ['fct_1', 'fct_2']
 >>> print cmd_mgr ["Group_1"].interfacers ['menu_2']
 Traceback (most recent call last):
   ...
@@ -39,7 +40,7 @@ Traceback (most recent call last):
   ...
 KeyError: 'menu_1'
 >>> print cmd_mgr ["Group_2"].interfacers ['menu_2']
-Group_2 ['fct_3', 'fct_4']
+menu_2 ['fct_3', 'fct_4']
 """
 
 from   _TFL                   import TFL
