@@ -92,6 +92,9 @@
 #                     `add_command` and `add_group`
 #    11-Jan-2005 (CT) `as_check_button` added to `add_command`
 #    13-Jan-2005 (MG) Minor fixes
+#    19-Jan-2005 (CT) `_element` (NO_List) converted to `_epi` (dictionary of
+#                     NO_List indexed by interfacer) and handling of `index`
+#                     changed accordingly
 #    ««revision-date»»···
 #--
 
@@ -334,10 +337,12 @@ class Command_Group (_Command_) :
             self.root       = parent.root
             if parent.qname :
                 self.qname  = "%s.%s" % (parent.qname, name)
+        self.n_seps         = 0
         self.description    = self._cooked_doc (desc, self.root.form_dict)
-        self._element       = NO_List       ()
-        self._group         = NO_List       ()
         self.command        = Abbr_Key_Dict ()
+        self._group         = NO_List       ()
+        self._epi           = dict \
+            ([(n, NO_List ()) for n in interfacers.keys ()])
     # end def __init__
 
     def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
@@ -345,14 +350,12 @@ class Command_Group (_Command_) :
         cmd._cook_doc (self.root.form_dict)
         if group is not None :
             if isinstance (group, (str, unicode, int)) :
-                group = self._element [group]
+                group = self._group [group]
             return group.add_command  \
                 ( cmd, None, if_names, icon
                 , index, delta, underline, accelerator, batchable
                 )
         else :
-            index = self._real_index (index)
-            self._element.insert (index, cmd, delta)
             self.root._add_precondition (cmd)
             cmd.group_name = self.name
             if self.qname :
@@ -368,12 +371,14 @@ class Command_Group (_Command_) :
                 self.command [cmd.name] = cmd
             cmd.interfacers = []
             for n, i, info in self._interfacers (if_names) :
-                cmd.interfacers.append (i)
+                _ie   = self._epi        [i.name]
+                index = self._real_index (_ie, index, delta)
+                _ie.insert               (index, cmd)
+                cmd.interfacers.append   (i)
                 i.add_command \
                     ( name            = cmd.name
                     , callback        = cmd
                     , index           = index
-                    , delta           = delta
                     , underline       = underline
                     , accelerator     = accelerator
                     , icon            = icon
@@ -385,21 +390,24 @@ class Command_Group (_Command_) :
 
     def add_group (self, name, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None, batchable = 0) :
         """Add command group `name'."""
-        index       = self._real_index (index)
-        interfacers = {}
+        ifacers = {}
+        to_do   = []
         for n, i, info in self._interfacers (if_names) :
-            interfacers [n] = i.add_group \
-                (name, index = index, delta = delta, info = info)
+            _ie         = self._epi        [i.name]
+            index       = self._real_index (_ie, index, delta)
+            ifacers [n] = i.add_group      (name, index = index, info = info)
+            to_do.append  (_ie, index)
         group = self.Group_Class \
             ( name          = name
-            , interfacers   = interfacers
+            , interfacers   = ifacers
             , parent        = self
             , batchable     = batchable
             , desc          = desc
             , precondition  = precondition
             )
-        self._element.insert   (index, group, delta)
-        self._group.append     (group)
+        self._group.append (group)
+        for _ie, index in to_do :
+            _ie.insert (index, group)
         if precondition :
             self.root._add_precondition (group)
         return group
@@ -409,23 +417,26 @@ class Command_Group (_Command_) :
         """Add separator to `group'"""
         if group is not None :
             if isinstance (group, (str, unicode, int)) :
-                group = self._element [group]
+                group = self._group [group]
             return group.add_separator (name, None, if_names, index, delta)
         else :
             if not name :
-                name = "sep_%s" % (len (self._element), )
-            index    = self._real_index (index)
-            sep      = Record (name = name, destroy = lambda s : 1)
-            self._element.insert (index, sep, delta)
+                name = "sep_%s" % (self.n_seps, )
+                self.n_seps += 1
+            sep = Record (name = name, destroy = lambda s : 1)
             for n, i, info in self._interfacers (if_names) :
-                i.add_separator (name, index, delta)
+                _ie   = self._epi        [i.name]
+                index = self._real_index (_ie, index, delta)
+                _ie.insert               (index, cmd)
+                i.add_separator          (name, index)
     # end def add_separator
 
     def destroy (self) :
         self.root = self.parent = self.interfacers = None
-        for e in self._element :
-            e.destroy ()
-        self._element = self._group = self.command = None
+        for i in self._epi.itervalues () :
+            for e in i :
+                e.destroy ()
+        self._epi = self._group = self.command = None
     # end def destroy
 
     def group (self, name) :
@@ -443,11 +454,11 @@ class Command_Group (_Command_) :
             yield n, interfacers [name], info
     # end def _interfacers
 
-    def _real_index (self, index) :
+    def _real_index (self, element, index, delta) :
         if index is None :
-            index = len (self._element)
+            index = len (element)
         if isinstance (index, (str, unicode)) :
-            index = self._element.n_index (index)
+            index = element.n_index (index) + delta
         return index
     # end def _real_index
 
