@@ -327,9 +327,10 @@ class Latex_Stream (Formatted_Stream) :
         self.putl     ()
 
 
-    def begin_cfuncdesc (self, ret_type, name, params, ret_desc = None) :
+    def _cfunc (self, macro, ret_type, name, params, ret_desc = None) :
+        environment = ("cfuncdesc", "cmacrodesc") [macro]
         self.putsl           (1)
-        self.putl            (r"\begin{cfuncdesc}")
+        self.putl            (r"\begin{%s}" % environment)
         self.indent          ()
         if ret_desc :
             self.putl        (r"[%s]" % ret_desc)
@@ -338,8 +339,17 @@ class Latex_Stream (Formatted_Stream) :
         self.putl            (r"{%s}" % params)
         self.putl            ("")
 
+    def begin_cfuncdesc (self, ret_type, name, params, ret_desc = None) :
+        self._cfunc (0, ret_type, name, params, ret_desc)
+
+    def begin_cmacrodesc (self, ret_type, name, params, ret_desc = None) :
+        self._cfunc (1, ret_type, name, params, ret_desc)
+
     def end_cfuncdesc (self) :
         self._end_block ("cfuncdesc")
+
+    def end_cmacrodesc (self) :
+        self._end_block ("cmacrodesc")
 
 
 # end class Latex_Stream
