@@ -31,6 +31,8 @@
 #                     (stubs only for a start)
 #    21-Feb-2005 (CT) `_sty_map` definition moved in here and `Styler` added
 #                     to `_sty_map` index
+#    21-Feb-2005 (CT) `push_style` and `pop_style` implemented (and
+#                     `remove_style` removed as it doesn't work, anyway)
 #    ««revision-date»»···
 #--
 
@@ -54,12 +56,6 @@ class Widget (TFL.TKT.Mixin) :
         w = self.wtk_widget
         w.configure (** self._styler (style).option_dict)
         self._apply_style_bindings   (style)
-        if style.mouse_cursor is not None :
-            ### `cursor` can be `configure`d with option `cursor`
-            ### XXX but should we support the `restore` cursor functionality
-            ### XXX supported by the CT_TK methods
-            ### XXX `busy_cursor`/`normal_cursor` ???
-            pass ### XXX change cursor
     # end def apply_style
 
     def pop_style (self) :
@@ -68,14 +64,11 @@ class Widget (TFL.TKT.Mixin) :
 
     def push_style (self, style) :
         assert style.callback is None
-        self._sty_stack.append (style) ### XXX need to invert before pushing
-        self.apply_style (style)
+        w      = self.wtk_widget
+        styler = self._styler  (style)
+        self._sty_stack.append (self._before_styler (w, styler))
+        w.configure            (** styler.option_dict)
     # end def push_style
-
-    def remove_style (self, style) :
-        ### XXX ??? does this make sense ???
-        pass
-    # end def apply_bitmap
 
     def _apply_style_bindings (self, style, binder = None) :
         if style is not None and style.callback :
@@ -84,6 +77,13 @@ class Widget (TFL.TKT.Mixin) :
             for name, cb in style.callback.iteritems () :
                 binder (getattr (self.TNS.Eventname, name), cb)
     # end def _apply_style_bindings
+
+    def _before_styler (self, w, styler) :
+        result = {}
+        for p in styler.option_dict.iterkeys () :
+            result [p] = w.cget (p)
+        return result
+    # end def _before_styler
 
     def _styler (self, style, Styler = None) :
         sty_map = self._sty_map
