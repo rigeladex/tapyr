@@ -34,6 +34,7 @@
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #    26-Jan-2005 (CT) s/as_check_button/state_var/
 #    26-Jan-2005 (CT) `add_group` changed to return self
+#    28-Jan-2005 (CT) `index` added
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,13 @@ class Command_Interfacer (TFL.TKT.Mixin) :
         """Destroy the command interfacer widget"""
         pass
     # end def destroy
+
+    def index (self, name) :
+        """Return the index of `name` in the interface. If you pass `-1` for
+           name, the index of the end is returned
+        """
+        return 0
+    # end def index
 
     ### command specific methods
     def add_command \

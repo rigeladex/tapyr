@@ -48,6 +48,7 @@
 #    26-Jan-2005 (CT) `Boolean_Variable` exported
 #    26-Jan-2005 (CT) `CI_Menu.add_group` changed to return a `CI_Menu`
 #                     instead of a `CTK.C_Menu`
+#    28-Jan-2005 (CT) `index` added
 #    ««revision-date»»···
 #--
 
@@ -183,6 +184,12 @@ class CI_Menu (_CI_Widget_) :
     """Implement a menu command interfacer for Tkinter"""
 
     Widget_Type = CTK.C_Menu
+
+    def index (self, name) :
+        if name == -1 :
+            name = END
+        return self.widget.index (name)
+    # end def index
 
     ### command specific methods
     def add_command \

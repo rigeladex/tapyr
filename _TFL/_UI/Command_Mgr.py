@@ -105,6 +105,7 @@
 #                     changes from 25-Jan-2005 greatly simplified
 #    28-Jan-2005 (CT) Methods of `Command`, `Command_Delegator`, and
 #                     `Command_Mgr` put into alphabetical order
+#    28-Jan-2005 (CT) `Command.update_state` removed (wasn't used anywhere)
 #    ««revision-date»»···
 #--
 
@@ -239,11 +240,11 @@ class Command (_Command_) :
 
     def is_applicable (self) :
         try :
-            self._check_precondition ()
+            result = self._check_precondition ()
         except Precondition_Violation :
             return False
         else :
-            return True
+            return result
     # end def is_applicable
 
     def run (self, * args, ** kw) :
@@ -257,14 +258,6 @@ class Command (_Command_) :
             print "Command %s canceled" % self.name
         return result
     # end def run
-
-    def update_state (self) :
-        p = self.precondition
-        if p and not p () :
-            self.disable ()
-        else :
-            self.enable  ()
-    # end def update_state
 
     def _check_precondition (self) :
         if self.batch_mode and not self.batchable :
