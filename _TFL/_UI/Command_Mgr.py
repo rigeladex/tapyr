@@ -116,6 +116,10 @@
 #     3-Feb-2005 (CT) `_cook_doc` changed to allow both functions and methods
 #                     (was up to now restricted to methods)
 #     3-Feb-2005 (MG) Precondition handling for `Command_Delegator` fixed
+#     3-Feb-2005 (CT) Unused `name_clean` removed
+#     3-Feb-2005 (CT) `_handle_dyn_command_group` factored and
+#                     `_handle_dyn_commands` changed to honor
+#                     `max_cmds_per_group`
 #    ««revision-date»»···
 #--
 
@@ -451,7 +455,6 @@ class _Command_Getattr_ (TFL.Meta.Object) :
 
 class _Command_Group_ (_Command_, TFL.UI.Mixin) :
 
-    name_clean = re.compile (r"[^a-zA-Z_0-9]+")
     nam_pat    = re.compile (r"[Tt]his (command )?group")
 
     def __init__ (self, AC, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
@@ -732,23 +735,40 @@ class Dyn_Group (_Command_Group_) :
             , precondition = precondition
             )
         self.command_gen   = command_gen
+        self._last_dyns    = []
         self._bind_dyn_cmd_handler ()
     # end def __init__
 
     def _handle_dyn_commands (self, if_name, interfacer) :
-        end = interfacer.index (-1)
-        if end is not None :
-            for j in range (end) :
-                interfacer.remove_command (0)
-        j = 0
-        for name, cb, underline in self.command_gen () :
-            interfacer.add_command \
-                ( name, cb
-                , index     = j
-                , underline = underline
-                )
-            j += 1
+        dyns = list (self.command_gen ())
+        if dyns != self._last_dyns :
+            self._last_dyns = dyns
+            end = interfacer.index (-1)
+            if end is not None :
+                for j in range (end) :
+                    interfacer.remove_command (0)
+            mcpg = interfacer.max_cmds_per_group
+            if len (dyns) <= mcpg :
+                self._handle_dyn_command_group (interfacer, dyns)
+            else :
+                j = 0
+                for i in range (0, len (dyns), mcpg) :
+                    d = dyns [i : i + mcpg]
+                    g = interfacer.add_group \
+                        ( name  = "%.8s .. %.8s" % (d [0] [0], d [-1] [0])
+                        , index = j
+                        )
+                    j += 1
+                    self._handle_dyn_command_group (g, d)
     # end def _handle_dyn_commands
+
+    def _handle_dyn_command_group (self, interfacer, dyns) :
+        j = 0
+        for name, cb, underline in dyns :
+            interfacer.add_command (name, cb, underline = underline, index = j)
+            j += 1
+        interfacer.set_auto_short_cuts ()
+    # end def _handle_dyn_command_group
 
 # end class Dyn_Group
 

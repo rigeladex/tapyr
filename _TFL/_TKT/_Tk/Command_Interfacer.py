@@ -190,9 +190,10 @@ class CI_Event_Binder (_CI_) :
 class CI_Menu (_CI_Widget_) :
     """Implement a menu command interfacer for Tkinter"""
 
-    Widget_Type   = CTK.C_Menu
+    Widget_Type        = CTK.C_Menu
+    max_cmds_per_group = 20
 
-    _index_offset = 1
+    _index_offset      = 1
 
     def index (self, name) :
         if name == -1 :
@@ -244,7 +245,7 @@ class CI_Menu (_CI_Widget_) :
     def add_group (self, name, index = None, delta = 0, ** kw) :
         result = CI_Menu \
             ( self.AC, self.widget
-            , name       = name.lower ()
+            , name       = self.name_clean.sub ("_", name.lower ())
             , balloon    = self.widget.balloon
             , help       = self.widget.help_widget
             , tearoff    = 0

@@ -36,14 +36,19 @@
 #    26-Jan-2005 (CT) `add_group` changed to return self
 #    28-Jan-2005 (CT) `index` added
 #    31-Jan-2005 (CT) `_Test_CI_` added
+#     3-Feb-2005 (CT) `max_cmds_per_group` added
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
 import _TFL._TKT.Mixin
 
+import sys
+
 class Command_Interfacer (TFL.TKT.Mixin) :
     """Model a toolkit command interface like menu, toolbar, etc."""
+
+    max_cmds_per_group = sys.maxint
 
     def destroy (self) :
         """Destroy the command interfacer widget"""
