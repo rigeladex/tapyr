@@ -61,6 +61,8 @@ class Timeline (TFL.Meta.Object) :
        >>> tl.cut (c)
        >>> tl.free
        [(0, 100), (150, 1000)]
+       >>> tl.intersection (S (80, 120))
+       ([(80, 100)], 20)
        >>> c = tl.intersection (S (70, 100)) [0] [0]
        >>> c.prepare_cut_u (15)
        (85, 100)
