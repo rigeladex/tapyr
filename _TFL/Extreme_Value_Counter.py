@@ -12,6 +12,7 @@
 #
 # Revision Dates
 #    19-Feb-2004 (CED) Creation
+#    26-Feb-2004 (CED) `set` added
 #    ««revision-date»»···
 #--
 #
@@ -34,9 +35,9 @@ class Extreme_Counter (object) :
        >>> ec.min_val
        -1
        >>> ec += 10
-       >>> ec -= 2
+       >>> ec.set (5)
        >>> ec.current_val
-       7
+       5
        >>> ec.max_val
        9
        >>> ec.min_val
@@ -75,6 +76,14 @@ class Extreme_Counter (object) :
         self.max_val     = self.init_val
         self.min_val     = self.init_val
     # end def reset
+
+    def set (self, value) :
+        self.current_val = value
+        if self.current_val < self.min_val :
+            self.min_val = self.current_val
+        if self.current_val > self.max_val :
+            self.max_val = self.current_val
+    # end def set
 
 # end class Extreme_Counter
 
