@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,6 +29,7 @@
 #    24-Jun-2002 (CT) Creation (factored from Two_Dim)
 #    24-Mar-2003 (CT) Converted to new-style class
 #    11-Jun-2003 (CT) s/!= None/is not None/
+#    11-Jun-2004 (GKH) deprecation warning removed (issue 10140)
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class Line (TFL.Meta.Object) :
        1
        >>> "%5.2f" % l.length ()
        ' 7.07'
-       >>> l.distance (D2.Point (5.0, 0.0)) - (l.length () / 2) < 1.e-12
+       >>> l.distance (D2.Point (5.0, 0.0)) - (l.length () // 2) < 1.e-12
        1
        >>> l.point (0.5)
        Point (2.5, 2.5)

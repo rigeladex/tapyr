@@ -31,6 +31,7 @@
 #    20-Apr-2003 (CT) `is_holiday` added
 #     1-Jan-2004 (CT) `PDF_Plan_L` and `-landscape` added
 #     1-Jan-2004 (CT) `_cooked` added and used
+#    11-Jun-2004 (GKH) deprecation warning removed (issue 10140)
 #    ««revision-date»»···
 #--
 
@@ -136,7 +137,7 @@ class PDF_Plan (TFL.Meta.Object) :
         c.line (x, y, x, yl - 1 * cm)
         y = y + 7 * ds
         c.line (x, y, xl, y)
-        c.setFont (font, ts / 2)
+        c.setFont (font, ts // 2)
         c.drawString (x  + 0.2 * cm, y + 0.2 * cm, "Week %2.2d" % w.number)
         if w.mon.month == w.sun.month :
             m_head = w.mon.formatted ("%B %Y")
@@ -158,7 +159,7 @@ class PDF_Plan (TFL.Meta.Object) :
             lines = ds / (ts + 2)
             yo    = y + ds - ts - 1
             ys    = [(yo - (l * (ts + 1))) for l in range (lines)]
-            for xo in [x, x + xl / 2] :
+            for xo in [x, x + xl // 2] :
                 for yo in ys :
                     yield xo + 0.1 * self.cm, yo + 1
         return _ ()
@@ -175,7 +176,7 @@ class PDF_Plan (TFL.Meta.Object) :
         if d.is_holiday :
             lg.next ()
             xo, yo = lg.next ()
-            c.setFont    (font, ts / 2)
+            c.setFont    (font, ts // 2)
             c.drawString (xo, yo, self._cooked (d.is_holiday) [:20])
             c.setFont    (font, ts / 5)
         for a in getattr (d, "appointments", []) :
