@@ -26,6 +26,8 @@
 #
 # Revision Dates
 #    13-Apr-2003 (CT) Creation
+#    17-Apr-2003 (CT) `seq_generator` added to `PDF_Plan` to get correct
+#                     sequence for printed calendar when cut
 #    ««revision-date»»···
 #--
 from   _TFL      import TFL
@@ -74,10 +76,25 @@ class PDF_Plan (TFL.Meta.Object) :
         self.pager  = p = self.page_generator (c)
         c.setPageCompression (0)
         c.setLineJoin        (2)
-        for w in Y.weeks [first_week : last_week] :
-            self.one_week (w, p.next ())
+        wpp = wpx * wpy
+        for w in self.seq_generator (first_week, last_week, wpp) :
+            page = p.next ()
+            if w is not None :
+                self.one_week (Y.weeks [w], page)
         c.save ()
     # end def __init__
+
+    def seq_generator (self, first_week, last_week, wpp) :
+        s, r   = divmod (last_week - first_week, wpp)
+        stride = s + (r > 0)
+        for w in range (first_week, first_week + stride) :
+            for i in range (wpp) :
+                d = i * stride
+                if w + d < last_week :
+                    yield w + d
+                else :
+                    yield None
+    # end def seq_generator
 
     def page_generator (self, c) :
         xo = self.xo
