@@ -106,6 +106,7 @@
 #    28-Jan-2005 (CT) Methods of `Command`, `Command_Delegator`, and
 #                     `Command_Mgr` put into alphabetical order
 #    28-Jan-2005 (CT) `Command.update_state` removed (wasn't used anywhere)
+#    28-Jan-2005 (CT) `Dyn_Command` added (and necessary refactoring done)
 #    ««revision-date»»···
 #--
 
@@ -142,7 +143,7 @@ class _Command_ (TFL.Meta.Object) :
 
     batchable   = False ### is the command batchable?
     batch_mode  = False ### are we running in batch_mode?
-
+    description = ""
     interfacers = ()
     button_name = None
     group_name  = None
@@ -202,22 +203,39 @@ class _Command_ (TFL.Meta.Object) :
         return doc
     # end def _cooked_doc
 
+    def _cook_doc (self, form_dict) :
+        doc                = self._cooked_doc (self._raw_doc, form_dict)
+        doc, desc          = self.par_pat.split (doc + "\n\n", 1)
+        self.__doc__       = doc.strip  ()
+        self.description   = desc.strip ()
+        if self.precondition :
+            p = self.precondition.im_func
+            if not hasattr (p, "__cooked") :
+                setattr (p, "__cooked", True)
+                if p.__doc__ :
+                    p.__doc__ = self._cooked_doc (p.__doc__, form_dict)
+    # end def _cook_doc
+
+    def __getattr__ (self, name) :
+        if name == "qname" :
+            return self.name
+        raise AttributeError, name
+    # end def __getattr__
+
 # end class _Command_
 
 class Command (_Command_) :
     """Model a command of an interactive application"""
 
-    description = ""
-
-    def __init__ (self, name, command, precondition = None, pv_callback = None, interfacers = None, _doc = None, batchable = 1, Change_Action = None) :
+    def __init__ (self, name, command, precondition = None, pv_callback = None, _doc = None, batchable = 1, Change_Action = None) :
         self.name          = name
         self.command       = command
         self.precondition  = precondition
         self.pv_callback   = pv_callback
-        self.interfacers   = interfacers or []
         self.batchable     = batchable
         self.Change_Action = Change_Action
-        self._raw_doc      = (_doc or command.__doc__ or "")
+        self._raw_doc      = _doc or command.__doc__ or ""
+        self.interfacers   = []
     # end def __init__
 
     def check_precondition (self) :
@@ -275,19 +293,6 @@ class Command (_Command_) :
         return not has_failed
     # end def _check_precondition_value
 
-    def _cook_doc (self, form_dict) :
-        doc                = self._cooked_doc (self._raw_doc, form_dict)
-        doc, desc          = self.par_pat.split (doc + "\n\n", 1)
-        self.__doc__       = doc.strip  ()
-        self.description   = desc.strip ()
-        if self.precondition :
-            p = self.precondition.im_func
-            if not hasattr (p, "__cooked") :
-                setattr (p, "__cooked", True)
-                if p.__doc__ :
-                    p.__doc__ = self._cooked_doc (p.__doc__, form_dict)
-    # end def _cook_doc
-
     def _run (self, * args, ** kw) :
         return self.command (* args, ** kw)
     # end def _run
@@ -295,12 +300,6 @@ class Command (_Command_) :
     def __call__ (self, event = None) :
         return self.run ()
     # end def __call__
-
-    def __getattr__ (self, name) :
-        if name == "qname" :
-            return self.name
-        raise AttributeError, name
-    # end def __getattr__
 
     def __repr__ (self) :
         return "<function %s at %x>" % \
@@ -315,6 +314,32 @@ class Command (_Command_) :
     # end def __str__
 
 # end class Command
+
+class Dyn_Command (_Command_) :
+    """Model a set of dynamically created commands of an interactive
+       application
+    """
+
+    precondition = None
+
+    def __init__ (self, name, command_gen, _doc = None) :
+        self.name          = name
+        self.command_gen   = command_gen
+        self._raw_doc      = _doc or command_gen.__doc__ or ""
+    # end def __init__
+
+    def is_applicable (self) :
+        return False
+    # end def is_applicable
+
+    def run (self, * args, ** kw) :
+        raise Precondition_Violation, \
+            ("Dynamic command", "cannot be used directly")
+    # end def run
+
+    check_precondition = _check_precondition = _run = __call__ = run
+
+# end class Dyn_Command
 
 class Command_Delegator (Command) :
     """A Command which delegates the callback and the precondition evaluation
@@ -430,6 +455,7 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
         self.n_seps         = 0
         self.description    = self._cooked_doc (desc, self.root.form_dict)
         self.command        = Abbr_Key_Dict ()
+        self._dyn_command   = NO_List       ()
         self._group         = NO_List       ()
         self._epi           = dict \
             ([(n, NO_List ()) for n in interfacers.keys ()])
@@ -446,38 +472,17 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
                 , index, delta, underline, accelerator, batchable
                 )
         else :
-            self.root._add_precondition (cmd)
             cmd.group_name = self.name
             if self.qname :
                 cmd.qname  = "%s.%s" % (self.qname, cmd.name)
             else :
                 cmd.qname  = cmd.name
-            cmd.batchable  = cmd.batchable and (self.batchable or batchable)
-            cmd.appl       = self.root.appl
-            cmd.state_var  = None
-            if as_check_button :
-                cmd.state_var   = self.TNS.Boolean_Variable ()
-            if not cmd.pv_callback :
-                cmd.pv_callback = self.root.pv_callback
-            self.root.command [cmd.qname] = cmd
-            if self.parent :
-                self.command [cmd.name] = cmd
-            cmd.interfacers = []
-            for n, i, info in self._interfacers (if_names) :
-                _ie   = self._epi        [n]
-                index = self._real_index (_ie, index, delta)
-                _ie.insert               (index, cmd)
-                cmd.interfacers.append   (i)
-                i.add_command \
-                    ( name            = cmd.name
-                    , callback        = cmd
-                    , index           = index
-                    , underline       = underline
-                    , accelerator     = accelerator
-                    , icon            = icon
-                    , info            = info
-                    , state_var       = cmd.state_var
-                    , cmd_name        = cmd.qname
+            if isinstance (cmd, Dyn_Command) :
+                self._add_dyn_command (cmd, if_names, index, delta)
+            else :
+                self._add_command \
+                    ( cmd, if_names, icon, index, delta
+                    , underline, accelerator, batchable, as_check_button
                     )
     # end def add_command
 
@@ -485,10 +490,9 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
         """Add command group `name'."""
         ifacers = {}
         to_do   = []
-        for n, i, info in self._interfacers (if_names) :
-            _ie         = self._epi        [n]
-            index       = self._real_index (_ie, index, delta)
-            ifacers [n] = i.add_group      (name, index = index, info = info)
+        for ( n, i, info, _ie, index
+            ) in self._interfacers (if_names, index, delta) :
+            ifacers [n] = i.add_group (name, index = index, info = info)
             to_do.append  ((_ie, index))
         group = self.Group_Class \
             ( AC            = self.AC
@@ -517,12 +521,14 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
             if not name :
                 name = "sep_%s" % (self.n_seps, )
                 self.n_seps += 1
-            sep = Record (name = name, destroy = lambda s : 1)
-            for n, i, info in self._interfacers (if_names) :
-                _ie   = self._epi        [n]
-                index = self._real_index (_ie, index, delta)
-                _ie.insert               (index, sep)
-                i.add_separator          (name, index)
+            result = []
+            sep    = Record (name = name, destroy = lambda s : 1)
+            for ( n, i, info, _ie, index
+                ) in self._interfacers (if_names, index, delta) :
+                _ie.insert      (index, sep)
+                i.add_separator (name,  index)
+                result.append   (i)
+            return result
     # end def add_separator
 
     def destroy (self) :
@@ -541,11 +547,83 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
         return self.command.keys ()
     # end def keys
 
-    def _interfacers (self, interface_names) :
+    def _add_command (self, cmd, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
+        self.root._add_precondition (cmd)
+        cmd.batchable  = cmd.batchable and (self.batchable or batchable)
+        cmd.appl       = self.root.appl
+        cmd.state_var  = None
+        if as_check_button :
+            cmd.state_var   = self.TNS.Boolean_Variable ()
+        if not cmd.pv_callback :
+            cmd.pv_callback = self.root.pv_callback
+        self.root.command [cmd.qname] = cmd
+        if self.parent :
+            self.command [cmd.name] = cmd
+        for ( n, i, info, _ie, index
+            ) in self._interfacers (if_names, index, delta) :
+            _ie.insert             (index, cmd)
+            cmd.interfacers.append (i)
+            i.add_command \
+                ( name             = cmd.name
+                , callback         = cmd
+                , index            = index
+                , underline        = underline
+                , accelerator      = accelerator
+                , icon             = icon
+                , info             = info
+                , state_var        = cmd.state_var
+                , cmd_name         = cmd.qname
+                )
+    # end def _add_command
+
+    def _add_dyn_command (self, cmd, if_names, index, delta) :
+        self.add_separator (cmd.name, None, if_names, index, delta)
+        if not self._dyn_command :
+            for n, i in self.interfacers.iteritems () :
+                i.bind_to_activation \
+                    (lambda * args, ** kw : self._handle_dyn_commands (n, i))
+        self._dyn_command.append (cmd)
+    # end def _add_dyn_command
+
+    def _handle_dyn_commands (self, if_name, interfacer) :
+        elements = self._epi [if_name]
+        for dc in self._dyn_command :
+            if dc.name in elements :
+                i    = elements.n_index (dc.name)
+                if i == 0 :
+                    head = dpos = 0
+                else :
+                    head = interfacer.index (elements [i-1].name) + 1
+                    dpos = head + 1
+                tsep = i + 1 < len (elements)
+                if tsep :
+                    tail = interfacer.index (elements [i+1].name) - 1
+                else :
+                    tail = interfacer.index (-1)
+                for j in range (head, tail) :
+                    interfacer.remove_command (dpos)
+                dyns = list (dc.command_gen ())
+                if dyns :
+                    j = head
+                    for name, cb, underline in dyns :
+                        interfacer.add_command \
+                            (name, cb
+                            , index     = j
+                            , underline = underline
+                            )
+                        j += 1
+                    if tsep :
+                        interfacer.add_separator (index = j)
+    # end def _handle_dyn_commands
+
+    def _interfacers (self, interface_names, index, delta) :
         interfacers = self.interfacers
+        _epi        = self._epi
         for n in interface_names :
             name, info = (n.split (":", 1) + [None]) [:2]
-            yield name, interfacers [name], info
+            _ie        = _epi [name]
+            real_index = self._real_index (_ie, index, delta)
+            yield name, interfacers [name], info, _ie, real_index
     # end def _interfacers
 
     def _real_index (self, element, index, delta) :
@@ -648,6 +726,7 @@ class Command_Mgr (Command_Group) :
 # end class Command_Mgr
 
 __all__ = ( "Command_Mgr", "Command_Group", "Command", "_Command_"
+          , "Dyn_Command"
           , "Precondition_Violation"
           , "Command_Delegator", "Command_Delegator_UB"
           )
