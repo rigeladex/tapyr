@@ -57,6 +57,7 @@
 #    10-Nov-2004 (CT) `Year._week_creation_iter` factored
 #    14-Nov-2004 (CT) `Day.wk_ordinal` added and used
 #    14-Nov-2004 (CT) `Year._init_` changed to put weeks into `cal._weeks`
+#    15-Nov-2004 (CT) `Day.wk_ordinal` moved to `Date`
 #    ««revision-date»»···
 #--
 
@@ -85,7 +86,6 @@ class Day (TFL.Meta.Object) :
     id         = property (lambda s : s.date.tuple [:3])
     is_weekday = property (lambda s : s.is_weekday)
     number     = property (lambda s : s.date.day)
-    wk_ordinal = property (lambda s : (s.ordinal - s.weekday) // 7)
 
     def __new__ (cls, cal, date) :
         Table = cal._days

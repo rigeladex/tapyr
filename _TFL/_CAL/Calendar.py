@@ -28,6 +28,7 @@
 # Revision Dates
 #    10-Nov-2004 (CT) Creation
 #    14-Nov-2004 (CT) `_new_week` added
+#    15-Nov-2004 (CT) More doctests added
 #    ««revision-date»»···
 #--
 
@@ -67,12 +68,21 @@ class _Cal_Dict_ (dict) :
 class Calendar (TFL.Meta.Object) :
     """Model a calendar used by a single person/group/project
 
+       >>> from _TFL._CAL.Date  import *
+       >>> d = Date (2004, 11, 15)
        >>> C = Calendar ()
        >>> y = C.year [2004]
        >>> y
        Year (2004)
        >>> y == C.year [2004]
        True
+       >>> C = Calendar ()
+       >>> len (C.week)
+       0
+       >>> C.week [d.wk_ordinal]
+       week 47 <2004/11/15 to 2004/11/21>
+       >>> len (C.week)
+       53
     """
 
     day             = property (lambda s : s._days)

@@ -38,6 +38,7 @@
 #    26-Oct-2004 (CT) `is_weekday` added
 #     2-Nov-2004 (CT) `from_string` added
 #    10-Nov-2004 (CT) `from_ordinal` added
+#    15-Nov-2004 (CT) `wk_ordinal` added
 #    ««revision-date»»···
 #--
 
@@ -161,6 +162,7 @@ class Date (TFL.CAL._DTW_) :
     day              = property (lambda s : s._body.day)
     is_weekday       = property (lambda s : s.weekday < 5)
     month            = property (lambda s : s._body.month)
+    wk_ordinal       = property (lambda s : (s.ordinal - s.weekday) // 7)
     year             = property (lambda s : s._body.year)
 
     yad              = None ### set for negative `day` arguments
