@@ -36,6 +36,7 @@
 #                     (optimize, optimize)
 #    28-Apr-2003 (CT) `M_Autorename` changed to not manipulate `caller_globals`
 #    23-Jul-2004 (CT) `_M_Type_` added to `_Export`
+#    25-Jan-2005 (CT) `New` added
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,16 @@ class _M_Type_ (type) :
     def _m_mangled_attr_name (cls, name) :
         return _m_mangled_attr_name (name, cls.__name__)
     # end def _m_mangled_attr_name
+
+    def New (cls, name_postfix = None, ** kw) :
+        """Returns a new class derived from `cls` with `kw` in __dict__"""
+        name = cls.__name__
+        if name_postfix :
+            name = "_".join ((name, name_postfix))
+        new_dict = dict (__module__ = cls.__module__)
+        new_dict.update (kw)
+        return type (cls) (name, (cls, ), new_dict)
+    # end def New
 
 # end class _M_Type_
 
