@@ -35,6 +35,7 @@
 #     4-May-2003 (CT) `_date_time` factored
 #     4-May-2003 (CT) `_day_generator` corrected (check year)
 #     4-May-2003 (CT) Pattern for `weekday` added
+#    11-Jan-2004 (CT) `holidays_too` added
 #    ««revision-date»»···
 #--
 
@@ -144,12 +145,14 @@ def _date_time (Y, pat_match) :
         raise ValueError, "`%s` must specify either date or time"
 # end def _date_time
 
-def _add_appointment (Y, pat_match) :
+def _add_appointment (Y, pat_match, holidays_too) :
     day, month, year, time = _date_time (Y, pat_match)
     app = ( CAL.Appointment.format
           % (time, pat_match.prio or " ", pat_match.activity)
           )
     for D in _day_generator (pat_match, day, month, year, Y) :
+        if D.is_holiday and not holidays_too :
+            continue
         D.add_appointments (* CAL.appointments (app))
 # end def _add_appointment
 
@@ -189,6 +192,7 @@ def _command_spec (arg_array = None) :
             ( "add_appointment:B?Add appointments specified by arguments"
             , "diary:S=~/diary?Path for calendar file"
             , "filename:S=plan?Filename of plan for `year`"
+            , "holidays_too:B?Add appointments to holidays, too"
             , "replace:B?Replace old calendar with new file"
             , "Show:B?Show days corresponding to arguments"
             , "sort:B?Sort calendar and write it back"
@@ -231,7 +235,7 @@ def _main (cmd) :
         sort  = len (cmd.argv)
         for a in cmd.argv :
             if app_pat.match (a.strip ()) :
-                _add_appointment (Y, app_pat)
+                _add_appointment (Y, app_pat, cmd.holidays_too)
             else :
                 print "%s doesn't match an appointment" % a
     if cmd.Show :
