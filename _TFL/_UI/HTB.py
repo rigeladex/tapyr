@@ -76,6 +76,9 @@
 #                      insert some text fail miserably)
 #    14-Mar-2005 (CT)  Child `Widget configuration` removed from `help`
 #                      (Tk-specific information)
+#    14-Mar-2005 (RSC) __getitem__ = __getattr in Styles_Cache
+#                      Fixed formatting of multi-line "name" of a node
+#                      (RUP 14228)
 #    ««revision-date»»···
 #--
 
@@ -106,9 +109,7 @@ class Styles_Cache (object) :
         self.styles [name] = value
     # end def __setattr__
 
-    def __getitem__ (self, name) :
-        return self.styles [name]
-    # end def __getitem__
+    __getitem__  = __getattr__
 
     __setitem__  = __setattr__
 
@@ -387,18 +388,25 @@ class Node (TFL.UI.Mixin) :
         if self.level :
             self._insert (mark, "\t" * self.level)
         self.butt_mark = self.text.mark_at (mark, left_gravity = True)
-        self._insert_button                ()
-        self._insert                       (mark, "\t")
-        self._insert_header                (mark)
-        body = self.text.pos_at            (mark)
-        self._insert                       (mark, "\n")
+        self._insert_button        ()
+        self._insert               (mark, "\t")
+        self._insert               (mark, self.name, "header", * self.name_tags)
+        hpos = self.text.pos_at    (mark)
+        self._insert_header        (mark)
+        body = self.text.pos_at    (mark)
+        self._insert               (mark, "\n")
         self.head_mark = self.text.mark_at (head, left_gravity = True)
         self.body_mark = self.text.mark_at (body, left_gravity = True)
         self.tail_mark = self.text.mark_at (body)
         self.text.apply_style \
-            ( styles [self.level_tag + ":head"]
+            ( styles.noindent
             , self.head_mark
             , self.text.eol_pos (self.head_mark)
+            )
+        self.text.apply_style \
+            ( styles [self.level_tag]
+            , self.text.bol_pos (self.head_mark, line_delta = 1)
+            , hpos
             )
     # end def insert
 
@@ -443,7 +451,6 @@ class Node (TFL.UI.Mixin) :
     print_content_head = "    " ### content indent per node   (print_contents)
 
     def _insert_header (self, index) :
-        self._insert (index, self.name, * self.name_tags)
         if self.header :
             self._insert \
                 ( index
@@ -1024,19 +1031,21 @@ class Browser (TFL.UI.Mixin) :
             ( "wrap"
             , wrap         = "word"
             )
+        styles.noindent    = Style \
+            ( "noindent"
+            , lmargin1     = 0
+            , lmargin2     = 0
+            )
+        styles.header      = Style \
+            ( "header"
+            , font_family  = header_font_family
+            , font_size    = header_font_size
+            , font_style   = header_font_style
+            , font_weight  = header_font_weight
+            )
         tabs = styles._tabs = []
         for i in range (1, 16) :
             level     = "level" + `i-1`
-            head_name = level + ":head"
-            styles [head_name] = Style \
-                ( head_name
-                , lmargin1    = 0
-                , lmargin2    = i * indent + indent_inc
-                , font_family = header_font_family
-                , font_size   = header_font_size
-                , font_style  = header_font_style
-                , font_weight = header_font_weight
-                )
             styles [level] = Style \
                 ( level
                 , lmargin1  = i * indent
