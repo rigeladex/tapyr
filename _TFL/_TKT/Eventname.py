@@ -68,7 +68,7 @@ class _Eventname (TFL.TKT.Mixin) :
         self.__super.__init__ (AC = AC)
         self._name = _name or TFL.Caller.globals ().get ("__name__")
         self._map  = dict (kw)
-        self._pam  = pam = {}
+        self._pam  = {}
         self.add (**kw)
     # end def __init__
 
