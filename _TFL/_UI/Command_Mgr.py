@@ -146,6 +146,8 @@
 #    24-Feb-2005 (MG) `Command_Delegator_UB`: allow `* args` for the
 #                     `precondition` to support recursive command delegators
 #     4-Mar-2005 (MG) `Command_Delegator`: `delegatee` added
+#    15-Mar-2005 (CT)  `_add_command` changed to set `cmd.AC`
+#    15-Mar-2005 (CT)  `_run` changed to call `AC.ui_state.gauge.deactivate`
 #    ««revision-date»»···
 #--
 
@@ -310,7 +312,15 @@ class Command (_Command_) :
         result = None
         try :
             if self.check_precondition () :
-                result = self._run (* args, ** kw)
+                try :
+                    result = self._run (* args, ** kw)
+                finally :
+                    try :
+                        self.AC.ui_state.gauge.deactivate (force = True)
+                    except KeyboardInterrupt :
+                        raise
+                    except StandardError :
+                        pass
         except Exception_Handled :
             pass
         except KeyboardInterrupt :
@@ -695,6 +705,7 @@ class Command_Group (_Command_Group_) :
         self.root._add_precondition (cmd)
         cmd.batchable  = cmd.batchable and (self.batchable or batchable)
         cmd.appl       = self.root.appl
+        cmd.AC         = self.AC
         cmd.state_var  = None
         if as_check_button :
             cmd.state_var   = self.TNS.Boolean_Variable ()
