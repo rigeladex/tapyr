@@ -30,6 +30,7 @@
 #     4-Sep-2004 (CT) Creation continued
 #    12-Sep-2004 (CT) Creation continued...
 #    15-Sep-2004 (CT) Creation continued....
+#    19-Sep-2004 (CT) Creation continued.....
 #    ««revision-date»»···
 #--
 
@@ -52,14 +53,18 @@ class _Mailbox_ (TFL.Meta.Object) :
     """Root class for mailbox classes"""
 
     messages           = property (lambda s : s._get_messages ())
+    sub_boxes          = property (lambda s : s._box_dict.values ())
 
     _deliveries        = {} ### `time.time ()` : number of mails delivered
 
-    def __init__ (self, path) :
+    def __init__ (self, path, name = None) :
+        if name is None :
+            name       = sos.path.split (path) [-1]
+        self.name      = name
         self.path      = path
         self._messages = None
         self._msg_dict = {}
-        self.sub_boxes = []
+        self._box_dict = {}
     # end def __init__
 
     def md_name (cls, message = None) :
@@ -132,11 +137,11 @@ class _Mailbox_ (TFL.Meta.Object) :
     def __repr__ (self) :
         if self._messages is None :
             return "%s %s: %d sub-boxes" % \
-                (self.__class__.__name__, self.path, len (self.sub_boxes))
+                (self.__class__.__name__, self.path, len (self._box_dict))
         else :
             return "%s %s: %d messages, %d sub-boxes" % \
                 ( self.__class__.__name__, self.path
-                , len (self._messages), len (self.sub_boxes)
+                , len (self._messages), len (self._box_dict)
                 )
     # end def __repr__
 
@@ -146,10 +151,19 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
     """Model directory-based mailbox"""
 
     def __init__ (self, path) :
+        if not sos.path.isdir (path) :
+            sos.mkdir (path)
         self.parser = Lib.Parser ()
-        self.__super.__init__ (path)
-        self.sub_boxes = [self.__class__ (s) for s in self._subdirs (path)]
+        self.__super.__init__    (path)
+        for s in self._subdirs   (path) :
+            self.add_subbox (s)
     # end def __init__
+
+    def add_subbox (self, path) :
+        result = self.__class__ (path)
+        self._box_dict [result.name] = result
+        return result
+    # end def add_subbox
 
     def _copy_msg_file (self, message, target) :
         source = message.path
@@ -358,6 +372,18 @@ class Mailbox (_Mailbox_in_Dir_S_) :
             old_box._copy_msg_file (message, sos.path.join (self.path, name))
     # end def add
 
+    def import_from_mailbox (self, mailbox, transitive = False) :
+        self.add (* mailbox.messages)
+        if transitive :
+            for b in mailbox._box_dict.itervalues () :
+                print "Importing", b.path
+                if b.name in self._box_dict :
+                    s = self._box_dict  [b.name]
+                else :
+                    s = self.add_subbox (sos.path.join (self.path, b.name))
+                s.import_from_mailbox (b, transitive)
+    # end def import_from_mailbox
+
     def md_name (self, message = None) :
         if message is None :
             return super (Mailbox, cls).md_name ()
@@ -382,9 +408,12 @@ m = mb.messages [60]
 print u"\n".join (list (m.formatted ()) [:100]).encode ("iso-8859-1", "replace")
 print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
 m = mb.messages [-3]
-tb = TFL.PMA.Mailbox ("/tmp/MPA/Testbox")
+tb = TFL.PMA.Mailbox ("/swing/private/tanzer/PMA/Testbox")
+tb.import_from_mailbox (mb, transitive = True)
 tb.add (m)
 print tb.summary ().encode ("iso-8859-1", "replace")
+sb = mb.sub_boxes[0]
+
 """
 
 if __name__ != "__main__" :
