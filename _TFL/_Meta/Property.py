@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    13-May-2002 (CT) Creation
+#    14-Jan-2002 (CT) _Property_ factored, Aesthetics
+#    17-Jan-2003 (CT) `flexmethod` added
 #    ««revision-date»»···
 #--
 
@@ -100,8 +102,108 @@ class RW_Property (RO_Property) :
 
 # end class Read_Write
 
+class flexmethod (object) :
+    """Flexible method wrapper: wrapped method can be used as class method
+       and as instance method.
+
+       >>> class T (object) :
+       ...     foo = 42
+       ...     def __init__ (self) :
+       ...         self.foo = 137
+       ...     def chameleon (soc) :
+       ...         print type (soc), soc.foo
+       ...     chameleon = flexmethod (chameleon)
+       ...
+       >>> T.chameleon ()
+       <type 'type'> 42
+       >>> T ().chameleon ()
+       <class 'Property.T'> 137
+       >>> class U (T) :
+       ...     foo = 84
+       ...     def __init__ (self) :
+       ...         self.foo = 2 * 137
+       ...
+       >>> U.chameleon ()
+       <type 'type'> 84
+       >>> U ().chameleon ()
+       <class 'Property.U'> 274
+    """
+
+    class Bound_Method (object) :
+        def __init__ (self, method, target, cls) :
+            self.method = method
+            self.target = target
+            self.cls    = cls
+        # end def __init__
+
+        def __call__ (self, * args, ** kw) :
+            return self.method (self.target, * args, ** kw)
+        # end def __call__
+
+        def __repr__ (self) :
+            return "<bound method %s.%s of %r>" % \
+                   (self.cls.__name__, self.method.__name__, self.target)
+        # end def __repr__
+
+    # end class Bound_Method
+
+    def __init__ (self, method, cls = None) :
+        self.method = method
+        self.cls    = cls
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            obj = cls
+        return self.Bound_Method (self.method, obj, self.cls or cls)
+    # end def __get__
+
+# end class flexmethod
+
 if __name__ == "__main__" :
+    ### unit-test code ############################################################
     if __debug__ :
+        import U_Test
+
+        def _doc_test () :
+            import Property
+            return U_Test.run_module_doc_tests (Property)
+        # end def _doc_test
+
+        def _test () :
+            _doc_test  ()
+        # end def _test
+
+        _test ()
+
+        import _TFL.d_dict
+        class T (object) :
+            __metaclass__ = TFL.Meta.Automethodwrap
+            __autowrap    = TFL.d_dict (chameleon = flexmethod, piggy = flexmethod)
+            foo = 42
+            def __init__ (self) :
+                self.foo = 137
+            def chameleon (soc) :
+                print "T.chameleon>", type (soc), soc.foo
+            def piggy (soc) :
+                print "T.piggy>", type (soc), soc.foo
+
+        T.chameleon ()
+        T ().chameleon ()
+        class U (T) :
+            foo = 84
+            __autowrap = TFL.d_dict (bar = classmethod)
+            def __init__ (self) :
+                self.foo = 2 * 137
+            def chameleon (soc) :
+                print "U.chameleon>", type (soc), soc.foo
+            def bar (cls) :
+                print "U.bar>", cls, "bar"
+        U.chameleon ()
+        U ().chameleon ()
+        U.bar       ()
+        U ().bar    ()
+
         class T (object) :
             __metaclass__ = TFL.Meta.Class
             __properties  = \
@@ -114,6 +216,9 @@ if __name__ == "__main__" :
               ( RW_Property ("x", 3.1415926, "redefined attribute")
               , RO_Property ("z", "fubar")
               )
+    # end if __debug__
+
+    ### end unit-test code ########################################################
 else :
     TFL.Meta._Export ("*", "_Property_")
 ### __END__ TFL.Meta.Property

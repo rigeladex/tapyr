@@ -27,8 +27,12 @@
 #
 # Revision Dates
 #    10-May-2002 (CT) Creation
+#    17-Jan-2003 (CT) `Automethodwrap` added
 #    ««revision-date»»···
 #--
+
+from   _TFL             import TFL
+import _TFL._Meta
 
 def _mangled_name (name, cls_name) :
     """Returns `name` as mangled by Python for occurences of `__%s` % name
@@ -157,44 +161,83 @@ class Autoproperty (_Type_) :
 
 # end class Autoproperty
 
-class Class (Autorename, Autosuper, Autoproperty) : pass
+class Automethodwrap (_Type_) :
+    """Metaclass automatically wrapping the methods specified in `__autowrap`.
 
-from   _TFL import TFL
-import _TFL._Meta
-TFL.Meta._Export ("*")
+       `__autowrap` must map method names to wrapper functions/objects (e.g.,
+       to classmethod, staticmethod, or TFL.Meta.flexmethod).
+    """
 
-if 0 and __debug__ :
-    class _X_ (object) :
-       __metaclass__ = Class
-       hugo          = 1
-       __private     = 42
-       _real_name    = "Y"
+    def __init__ (cls, name, bases, dict) :
+        super (Automethodwrap, cls).__init__ (name, bases, dict)
+        cls._autowrap (bases, dict)
+    # end def __init__
 
-    class _Y_ (_X_) :
-        hugo         = 2
-        __private    = 137
-        _real_name   = "ZZZ"
+    def _autowrap (cls, bases, dict) :
+        _aw = {}
+        bss = list (bases)
+        bss.reverse ()
+        for b in bss :
+            _aw.update (getattr (b, "__autowrap", {}))
+        _aw.update (dict.get (cls._mangled_name ("autowrap"), {}))
+        for name, wrapper in _aw.iteritems () :
+            if callable (wrapper) :
+                method = dict.get (name)
+                if method :
+                    ### this is tricky: we want to wrap the function found in
+                    ### the dictionary, but only if it is an unbound method
+                    ###     I didn't find any other way to check for
+                    ###     unboundedness than comparing the `im_self` of
+                    ###     `getattr (cls, name)` to `None`
+                    if getattr (getattr (cls, name), "im_self", 42) is None :
+                        try :
+                            ### TFL wrappers like to get the class, too
+                            setattr (cls, name, wrapper (method, cls))
+                        except TypeError :
+                            setattr (cls, name, wrapper (method))
+        setattr (cls, "__autowrap", _aw)
+    # end def _autowrap
 
-    class Metatest (Class) :
+# end class Automethodwrap
 
-        def __call__ (cls, * args, ** kw) :
-            print cls, "__call__", args, kw
-            return super (Metatest, cls).__call__ (* args, ** kw)
-        # end def __call__
+class Class (Autorename, Autosuper, Autoproperty, Automethodwrap) : pass
 
-        def __init__ (cls, * args, ** kw) :
-            print cls, "__init__", args, kw
-            super (Metatest, cls).__init__ (* args, ** kw)
-        # end def __init__
+if __name__ == "__main__" :
+    if __debug__ :
+        class _X_ (object) :
+           __metaclass__ = Class
+           hugo          = 1
+           __private     = 42
+           _real_name    = "Y"
 
-        def __new__ (meta, * args, ** kw) :
-            print meta, "__new__", args, kw
-            return super (Metatest, meta).__new__ (meta, * args, ** kw)
-        # end def __new__
+        class _Y_ (_X_) :
+            hugo         = 2
+            __private    = 137
+            _real_name   = "ZZZ"
 
-    # end class Metatest
+        class Metatest (Class) :
 
-    class T (object) :
-        __metaclass__ = Metatest
+            def __call__ (cls, * args, ** kw) :
+                print cls, "__call__", args, kw
+                return super (Metatest, cls).__call__ (* args, ** kw)
+            # end def __call__
 
+            def __init__ (cls, * args, ** kw) :
+                print cls, "__init__", args, kw
+                super (Metatest, cls).__init__ (* args, ** kw)
+            # end def __init__
+
+            def __new__ (meta, * args, ** kw) :
+                print meta, "__new__", args, kw
+                return super (Metatest, meta).__new__ (meta, * args, ** kw)
+            # end def __new__
+
+        # end class Metatest
+
+        class T (object) :
+            __metaclass__ = Metatest
+
+        T()
+else :
+    TFL.Meta._Export ("*")
 ### __END__ TFL.Meta.Class
