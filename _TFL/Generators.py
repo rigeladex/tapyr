@@ -31,10 +31,59 @@
 #    29-Jul-2002 (CT) s/paired/paired_zip/
 #     6-Oct-2003 (CT) s/paired/paired_zip/ in doc-string, too
 #     9-Mar-2004 (CT) `_doc_test` changed to not use `import`
+#    30-Jul-2004 (CT) `Look_Ahead_Gen` added
+#    30-Jul-2004 (CT) `pairwise` changed to use `Look_Ahead_Gen`
 #    ««revision-date»»···
 #--
 
 from __future__ import generators
+
+class Look_Ahead_Gen (object) :
+    """Wrap a generator/iterator to provide look ahead
+
+       >>> for i in Look_Ahead_Gen (range (3)) :
+       ...   print i
+       ...
+       0
+       1
+       2
+       >>> lag = Look_Ahead_Gen (range (3))
+       >>> for i in lag :
+       ...   print i, lag.is_finished
+       ...
+       0 False
+       1 False
+       2 True
+    """
+
+    is_finished        = property (lambda s : not s)
+
+    def __init__ (self, source) :
+        self.source    = source    = iter (source)
+        self._sentinel = _sentinel = object ()
+        try :
+            self.succ  = source.next ()
+        except StopIteration :
+            self.succ  = _sentinel
+    # end def __init__
+
+    def __nonzero__ (self) :
+        return self.succ is not self._sentinel
+    # end def __nonzero__
+
+    def __iter__ (self) :
+        source    = self.source
+        _sentinel = self._sentinel
+        while self.succ is not _sentinel :
+            succ = self.succ
+            try :
+                self.succ = source.next ()
+            except StopIteration :
+                self.succ = _sentinel
+            yield succ
+    # end def __iter__
+
+# end class Look_Ahead_Gen
 
 def Integers (n) :
     """Generates integers from 0 to `n`."""
@@ -69,14 +118,14 @@ def pairwise (seq) :
     """Generates a list of pairs `(seq [0:1], seq [1:2], ..., seq [n-1:n])'.
 
        >>> list (pairwise ("abcdef"))
-       ['ab', 'bc', 'cd', 'de', 'ef']
+       [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e'), ('e', 'f')]
        >>> list (pairwise (range (4)))
-       [[0, 1], [1, 2], [2, 3]]
+       [(0, 1), (1, 2), (2, 3)]
     """
-    i, l = 0, len (seq)
-    while i < l - 1 :
-        yield seq [i:i+2]
-        i += 1
+    lag = Look_Ahead_Gen (seq)
+    for h in lag :
+        if lag :
+            yield h, lag.succ
 # end def pairwise
 
 def paired_zip (s1, s2) :
@@ -85,10 +134,10 @@ def paired_zip (s1, s2) :
        >>> list (paired_zip ("abc", range (4)))
        [('a', 0), ('b', 1), ('c', 2)]
     """
-    i, l = 0, min (len (s1), len (s2))
-    while i < l :
-        yield s1 [i], s2 [i]
-        i += 1
+    s1 = iter (s1)
+    s2 = iter (s2)
+    while True :
+        yield s1.next (), s2.next ()
 # end def paired_zip
 
 def paired_map (s1, s2) :

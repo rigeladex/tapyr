@@ -30,12 +30,14 @@
 #    26-Jul-2004 (CT) Creation continued
 #    27-Jul-2004 (CT) Creation continued...
 #    28-Jul-2004 (CT) Creation continued....
+#    30-Jul-2004 (CT) Use `TFL.Look_Ahead_Gen` instead of home-grown code
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 import _TFL._Meta.Object
 import _TFL._SDG
+import _TFL.Generators
 
 from   Record             import Record
 from   Regexp             import *
@@ -96,23 +98,24 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
     # end def __call__
 
     def __iter__ (self) :
-        node     = self.node
-        context  = self.context
-        sep      = self.front
-        i        = 0
-        last     = None
-        for f in self.formatters :
-            for r in f (node, context, sep_form = self.x_forms.sep) :
-                if last is not None :
-                    yield last
-                last = "%s%s" % (sep, r)
+        node       = self.node
+        context    = self.context
+        sep        = self.front
+        i          = 0
+        formatters = TFL.Look_Ahead_Gen (self.formatters)
+        for f in formatters :
+            lines  = TFL.Look_Ahead_Gen \
+                (f (node, context, sep_form = self.x_forms.sep))
+            for r in lines :
+                if formatters.is_finished and lines.is_finished :
+                    yield "%s%s%s" % (sep, r, self.rear)
+                else :
+                    yield "%s%s"   % (sep, r)
                 sep = ""
                 i  += 1
             if i :
                 sep = self.sep
-        if last is not None :
-            yield "%s%s" % (last, self.rear)
-        elif self.empty :
+        if i == 0 and self.empty :
             yield self.empty
     # end def __iter__
 
@@ -121,10 +124,10 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
 class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
 
     def __iter__ (self) :
-        format = self.format
-        sep    = ""
-        attr   = getattr (self.node, self.key, None)
+        attr = getattr (self.node, self.key, None)
         if attr is not None :
+            format = self.format
+            sep    = ""
             if isinstance (attr, str) :
                 attr = (attr, )
             for x in attr :
@@ -137,12 +140,10 @@ class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
 class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
 
     def __iter__ (self) :
-        context = self.context
-        format  = self.format
-        rkw     = context.recurse_args
-        sep     = ""
-        result  = getattr (self.node, self.key) (** rkw)
+        result = getattr (self.node, self.key) (** self.context.recurse_args)
         if result is not None :
+            format = self.format
+            sep    = ""
             for x in result :
                 yield sep + (format % x)
                 sep = self.sep
