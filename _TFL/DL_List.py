@@ -30,6 +30,7 @@
 #    12-Sep-2003 (CT) Creation continued
 #    15-Sep-2003 (CT) s/_append/insert/g
 #    15-Sep-2003 (CT) `_new_item` factored
+#    29-Sep-2003 (CED) `list_of_preds`, `list_of_succs` added
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,20 @@ class DL_Item (TFL.Meta.Object) :
         if other is not None :
             other.next = self
     # end def link_prev
+
+    def list_of_preds (self) :
+        result = DL_List ()
+        for p in self.predecessors () :
+            result.prepend (p.value)
+        return result
+    # end def list_of_preds
+
+    def list_of_succs (self) :
+        result = DL_List ()
+        for s in self.successors () :
+            result.append (s.value)
+        return result
+    # end def list_of_succs
 
     def predecessors (self) :
         """Iterator over predecessors of `self`."""
