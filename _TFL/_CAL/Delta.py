@@ -35,6 +35,8 @@
 #                     allow `seconds` to return `_body.seconds` unchanged
 #    19-Oct-2004 (CT) s/MY_Delta/Month_Delta/
 #    23-Oct-2004 (CT) `__neg__` added
+#    25-Oct-2004 (CT) `__abs__` added
+#    26-Oct-2004 (CT) `__abs__` changed to return `self` for positive values
 #    ««revision-date»»···
 #--
 
@@ -56,6 +58,8 @@ class _DT_Delta_ (_Delta_) :
     _kind            = "delta"
     _timetuple_slice = lambda s, tt : (0, ) * len (s._init_arg_names)
 
+    Zero             = datetime.timedelta (0)
+
     def delta_op (self, rhs, op) :
         """Return result of `op` applied to `self` and delta `rhs`"""
         result = op (self._body, rhs._body)
@@ -69,6 +73,12 @@ class _DT_Delta_ (_Delta_) :
         result = op (dot._body, self._body)
         return dot.__class__ (** {dot._kind : result})
     # end def dt_op
+
+    def __abs__ (self) :
+        if self._body < self.Zero :
+            return self.__class__ (** {self._kind : abs (self._body)})
+        return self
+    # end def __abs__
 
     def __add__ (self, rhs) :
         if isinstance (rhs, _Delta_) :
@@ -110,6 +120,15 @@ class Time_Delta (_DT_Delta_) :
        3:00:00
        >>> t.h, t.m, t.s, t.seconds
        (3, 0, 0, 10800)
+       >>> abs (t) is t
+       True
+       >>> abs (t) == t
+       True
+       >>> t = Time_Delta (-3)
+       >>> abs (t) is t
+       False
+       >>> abs (t) == - t
+       True
        >>> hms = Time_Delta (2, 15, 42)
        >>> print hms
        2:15:42
@@ -218,6 +237,18 @@ class Month_Delta (_Delta_) :
        +1 month, +1 year
        >>> print md + 1
        +2 months, +1 year
+       >>> md = Month_Delta (1)
+       >>> abs (md) is md
+       True
+       >>> print abs (md)
+       +1 month
+       >>> md = Month_Delta (-1)
+       >>> abs (md) is md
+       False
+       >>> abs (md) == -md
+       True
+       >>> print md, abs (md)
+       -1 months +1 month
     """
 
     def __init__ (self, months = 0, years = 0) :
@@ -235,6 +266,12 @@ class Month_Delta (_Delta_) :
             yd, m = divmod (m, 12)
         return date.replace (month = m, year = date.year + yd)
     # end def dt_op
+
+    def __abs__ (self) :
+        if self.months < 0 :
+            return self.__class__ (abs (self.months))
+        return self
+    # end def __abs__
 
     def __add__ (self, rhs) :
         return self.__class__ (self.months + rhs)

@@ -37,10 +37,40 @@
 #                     behavior for single element sequence
 #    21-Sep-2004 (CT) `Look_Ahead_Gen` changed to call `.next` lazily instead
 #                     of (over)-eagerly
+#    26-Oct-2004 (CT) `alt_iter` added
 #    ««revision-date»»···
 #--
 
 from __future__ import generators
+
+def alt_iter (* iterables) :
+    """Alternating iterator
+
+       >>> s1 = range (4)
+       >>> s2 = [chr (i + 65) for i in range (3)]
+       >>> s3 = range (42, 55, 3)
+       >>> list (alt_iter ())
+       []
+       >>> list (alt_iter (s1))
+       [0, 1, 2, 3]
+       >>> list (alt_iter (s1, s2))
+       [0, 'A', 1, 'B', 2, 'C', 3]
+       >>> list (alt_iter (s2, s1))
+       ['A', 0, 'B', 1, 'C', 2, 3]
+       >>> list (alt_iter (s1, s2, s3))
+       [0, 'A', 42, 1, 'B', 45, 2, 'C', 48, 3, 51, 54]
+    """
+    iters = [iter (x) for x in iterables]
+    while iters :
+        i = 0
+        while i < len (iters) :
+            try :
+                yield iters [i].next ()
+            except StopIteration :
+                del iters [i]
+            else :
+                i += 1
+# end def alt_iter
 
 class Look_Ahead_Gen (object) :
     """Wrap a generator/iterator to provide look ahead
