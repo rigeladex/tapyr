@@ -248,7 +248,7 @@ class Package_Namespace :
             except AttributeError :
                 raise ImportError, ( "cannot import name %s from %s"
                                    ) % (name, mod.__name__)
-    # end def _import_names    
+    # end def _import_names
 
     def _import_1 (self, mod, name, as_name, object, result, check_clashes) :
         if __debug__ :
