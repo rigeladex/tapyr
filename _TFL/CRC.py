@@ -32,6 +32,7 @@
 #    14-Nov-2002 (AGO) `c_code` updated
 #    10-Jan-2003 (AGO) `c_code` fixed
 #    30-Jan-2003 (AGO) Documentation clarified and extended
+#     4-Feb-2003 (AGO) Fixed C code generation 
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,10 @@ class _TD_CRC_ (object) :
         node.add ( C.New_Line ()
                  , C.Define
                    ( name, "crc, item"
-                   , "crc_calculation (crc, (ubyte1 *) &(item), sizeof (item))"
+                   , ( "%s_calculation "
+                       "(crc, (ubyte1 *) &(item), sizeof (item))"
+                     % name
+                     )
                    )
                  , C.New_Line ()
                  , C.Array ( "ubyte4", "%s_polynome" % name
