@@ -13,6 +13,7 @@
 #    21-Aug-2003 (CT) Creation
 #    29-Aug-2003 (CT) `Timeline.length` added
 #    29-Aug-2003 (CT) `orig` added
+#    23-Sep-2003 (CT) `snip` added
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ class Timeline_Cut (NDT.Sched2.Span) :
 class Timeline (TFL.Meta.Object) :
     """Timeline for scheduling.
 
-       >>> tl = Timeline (1000)
+       >>> tl = Timeline (0, 1000)
        >>> tl.free
        [(0, 1000)]
        >>> S = NDT.Sched2.Span
@@ -99,7 +100,7 @@ class Timeline (TFL.Meta.Object) :
        AssertionError head = (215, 200), tail = (215, 500)
     """
 
-    def __init__ (self, upper, lower = 0) :
+    def __init__ (self, lower, upper) :
         self.orig = NDT.Sched2.Span (lower, upper)
         self.free = [NDT.Sched2.Span (lower, upper)]
     # end def __init__
@@ -137,6 +138,17 @@ class Timeline (TFL.Meta.Object) :
     # end def cut
 
     length = property (lambda s : sum ([f.length for f in s.free], 0))
+
+    def snip (self, * spans) :
+        ### XXX optimize to avoid repeated iteration over whole free list
+        for s in spans :
+            free, size = self.intersection (s)
+            if len (free) != 1 or size != s.length :
+                raise ValueError, (self.free, s, spans)
+            f = free [0]
+            f.prepare_cut_l (size)
+            self.cut        (f)
+    # end def snip
 
 # end class Timeline
 
