@@ -36,8 +36,10 @@ import _TFL._Meta.Object
 
 import new
 
-class Wrapped_FM (TFL.Meta.Object) :
-    """Model a wrapped function/method."""
+CO_GENERATOR = 0x0020 ### stolen from python/Include/compile.h
+
+class _Wrapped_ (TFL.Meta.Object) :
+    """Wrapped function/method/generator."""
 
     def __init__ (self, __name__, name, fct, * args, ** kw) :
         self.__name__ = __name__
@@ -48,12 +50,6 @@ class Wrapped_FM (TFL.Meta.Object) :
         self.kw       = kw
     # end def __init__
 
-    def __call__ (self, * args, ** kw) :
-        raise NotImplementedError, \
-            "%s.__call__ must be redefined" % self.__class__.__name__
-        return self.fct (* args, ** kw)
-    # end def __call__
-
     def __repr__ (self) :
         return "<%s for %r>" % (self.__class__.__name__, self.fct)
     # end def __repr__
@@ -62,10 +58,45 @@ class Wrapped_FM (TFL.Meta.Object) :
         return self.name
     # end def __str__
 
+# end class _Wrapped_
+
+class Wrapped_FM (_Wrapped_) :
+    """Wrapped function/method."""
+
+    def __call__ (self, * args, ** kw) :
+        raise NotImplementedError, \
+            "%s.__call__ must be redefined" % self.__class__.__name__
+        return self.fct (* args, ** kw)
+    # end def __call__
+
 # end class Wrapped_FM
+
+class Wrapped_Gen (_Wrapped_) :
+    """Wrapped generator"""
+
+    def __init__ (self, __name__, name, fct, Wrapped_FM, * args, ** kw) :
+        self.__super.__init__ (__name__, name, fct, * args, ** kw)
+        self.Wrapped_FM = Wrapped_FM
+    # end def __init__
+
+    def __call__ (self, * args, ** kw) :
+        g = self.fct (* args, ** kw)
+        w = self.Wrapped_FM \
+            ( self.__name__, self.name + ".next", g.next
+            , * (self.args + args), ** dict (self.kw, ** kw)
+            )
+        w.kw ["run"] = 0
+        while True :
+            yield w ()
+            w.kw ["run"] += 1
+    # end def __call__
+
+# end class Wrapped_Gen
 
 class Wrapper (TFL.Meta.Object) :
     """Provide wrappers for functions and methods"""
+
+    Wrapped_Gen = Wrapped_Gen
 
     def __init__ (self, * wrapped_args, ** wrapped_kw) :
         if wrapped_kw.get ("Wrapped_FM") is not None :
@@ -89,10 +120,16 @@ class Wrapper (TFL.Meta.Object) :
     # end def add_method
 
     def _wrapped (self, cm, name) :
-        qname  = "%s.%s" % (cm.__name__, name)
-        fct    = getattr (cm, name)
-        return self.Wrapped_FM \
-            (name, qname, fct, * self.wrapped_args, ** self.wrapped_kw)
+        qname = "%s.%s" % (cm.__name__, name)
+        fct   = getattr (cm, name)
+        if fct.func_code.co_flags & CO_GENERATOR :
+            return self.Wrapped_Gen \
+                ( name, qname, fct, self.Wrapped_FM
+                , * self.wrapped_args, ** self.wrapped_kw
+                )
+        else :
+            return self.Wrapped_FM \
+                (name, qname, fct, * self.wrapped_args, ** self.wrapped_kw)
     # end def _wrapped
 
 # end class Wrapper

@@ -31,7 +31,7 @@
 #--
 
 from   _TFL                   import TFL
-import _TFL._FMW
+import _TFL._FMW.Wrapper
 import _TFL._Meta.Object
 
 import sys
@@ -65,9 +65,21 @@ class Dict_Recorder (TFL.Meta.Object) :
 
 # end class Dict_Recorder
 
+class Wrapped_Recorder (TFL.FMW.Wrapped_FM) :
+    """Wrapper recording execution of a single function or method"""
+
+    def __init__ (self, * args, ** kw) :
+        try :
+            self.recorder = kw ["recorder"]
+        except KeyError :
+            self.recorder = self.Default_Recorder ()
+        else :
+            del kw ["recorder"]
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+# end class Wrapped_Recorder
+
 if __name__ != "__main__" :
     TFL.FMW._Export ("*")
 ### __END__ TFL.FMW.Recorder
-
-
-

@@ -20,11 +20,11 @@
 #
 #++
 # Name
-#    TFL.FMW.Execution_Timer
+#    TFL.FMW.Tracer
 #
 # Purpose
-#    Measure execution time of functions and methods without changing the
-#    source code of the measured components
+#    Provide tracing wrapper for methods and functions without changing the
+#    source code of the traced components
 #
 # Revision Dates
 #    22-Sep-2004 (CT) Creation
@@ -35,50 +35,50 @@ from   _TFL                   import TFL
 import _TFL._FMW.Recorder
 import _TFL._FMW.Wrapper
 
-import time
+class Trace_Recorder_F (TFL.FMW.File_Recorder) :
+    """Record trace information into a file"""
 
-class Execution_Time_Recorder_F (TFL.FMW.File_Recorder) :
-    """Record execution time measurements into a file"""
+    format = \
+        ( "%(indent)s%(wrapper)s"
+          "\n%(indent)s    %(args)s, %(kw)s\n"
+        )
 
-    format = "%(wrapper)-40s : cpu = %(cpu)s, elapsed = %(elapsed)s\n"
+# end class Trace_Recorder_F
 
-# end class Execution_Time_Recorder_F
+class Traced (TFL.FMW.Wrapped_Recorder) :
+    """Tracer of execution of a single function or method without changing the
+       source code of the measured component.
+    """
 
-class Execution_Time_Recorder_D (TFL.FMW.Dict_Recorder) :
-    """Record execution time measurements into a dictionary"""
-
-# end class Execution_Time_Recorder_D
-
-class Execution_Time_Measurer (TFL.FMW.Wrapped_Recorder) :
-    """Measurer of execution time of a single function or method"""
-
-    Default_Recorder = Execution_Time_Recorder_F
+    Default_Recorder = Trace_Recorder_F
+    level            = 0
 
     def __call__ (self, * args, ** kw) :
-        start_clock = time.clock ()
-        start_time  = time.time  ()
-        result      = self.fct   (* args, ** kw)
-        end_clock   = time.clock ()
-        end_time    = time.time  ()
+        indent = ". " * self.level
         self.recorder.record \
-            ( wrapper = self
-            , cpu     = end_clock - start_clock
-            , elapsed = end_time - start_time
+            ( wrapper   = self
+            , args      = args + self.args
+            , kw        = dict (kw, ** self.kw)
+            , indent    = indent
             )
+        self.__class__.level += 1
+        try :
+            result = self.fct (* args, ** kw)
+        finally :
+            self.__class__.level -= 1
         return result
     # end def __call__
 
-# end class Execution_Time_Measurer
+# end class Traced
 
-class Execution_Timer (TFL.FMW.Wrapper) :
-    """Measure execution time of functions and methods without changing the
-       source code of the measured components.
-    """
+class Tracer (TFL.FMW.Wrapper) :
+    """Trace execution of functions and methods without changing the
+       source code of the measured components."""
 
-    Wrapped_FM = Execution_Time_Measurer
+    Wrapped_FM = Traced
 
-# end class Execution_Timer
+# end class Tracer
 
 if __name__ != "__main__" :
     TFL.FMW._Export ("*")
-### __END__ TFL.FMW.Execution_Timer
+### __END__ TFL.FMW.Tracer
