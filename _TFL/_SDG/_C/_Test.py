@@ -335,33 +335,6 @@ line3 long
 ### missing tests
 ###
 
-import  U_Test
 from   _TFL._SDG._C.import_C import C
 
-def _unit_test () :
-    class Test_Case (U_Test.Case) :
-        ### Each test case is implemented by a method
-        ### starting with `check_'
-
-        def check_xxx (self) :
-            pass
-        # end def check_xxx
-
-    # end class Test_Case
-
-    ts = U_Test.make_suite (Test_Case, "check_")
-    U_Test.Runner ().run (ts)
-# end def _unit_test
-
-def _doc_test () :
-    return U_Test.run_module_doc_tests ("_TFL._SDG._C._Test")
-# end def _doc_test
-
-def _test () :
-    _unit_test ()
-    _doc_test  ()
-# end def _test
-
-if __name__ == "__main__" :
-    _test ()
 ### __END__ TFL.SDG.C._Test

@@ -135,25 +135,6 @@ class Lazy_Method_RNC (Lazy_Method_RLV) :
 Lazy_Method     = Lazy_Method_RLV ### provided for legacy, should not be used
                                   ### in new code !!!
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        return U_Test.run_module_doc_tests ("_TFL._Meta.Lazy_Method")
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "Lazy_Method")
 ### __END__ Lazy_Method

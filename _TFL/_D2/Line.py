@@ -179,27 +179,4 @@ class Line (TFL.Meta.Object) :
 
 if __name__ != "__main__" :
     D2._Export ("*")
-
-### unit-test code ############################################################
-
-if __debug__ :
-
-    import U_Test
-    from predicate      import sorted
-
-    def _doc_test () :
-        import Line
-        return U_Test.run_module_doc_tests (Line)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 ### __END__ Line

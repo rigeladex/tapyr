@@ -318,68 +318,6 @@ class Alias_Meta_and_Class_Attribute (Class_Method) :
 
 # end class Alias_Meta_and_Class_Attribute
 
-if __name__ == "__main__" :
-    ### unit-test code ############################################################
-    if __debug__ :
-        import U_Test
-
-        def _doc_test () :
-            import Property
-            return U_Test.run_module_doc_tests (Property)
-        # end def _doc_test
-
-        def _test () :
-            _doc_test  ()
-        # end def _test
-
-        _test ()
-
-        import _TFL.d_dict
-        class T (object) :
-            __metaclass__ = TFL.Meta.M_Automethodwrap
-            __autowrap    = TFL.d_dict \
-                ( chameleon = Class_and_Instance_Method
-                , piggy     = Class_and_Instance_Method
-                )
-            foo = 42
-            def __init__ (self) :
-                self.foo = 137
-            def chameleon (soc) :
-                print "T.chameleon>", type (soc), soc.foo
-            def piggy (soc) :
-                print "T.piggy>", type (soc), soc.foo
-
-        T.chameleon ()
-        T ().chameleon ()
-        class U (T) :
-            foo = 84
-            __autowrap = TFL.d_dict (bar = Class_Method)
-            def __init__ (self) :
-                self.foo = 2 * 137
-            def chameleon (soc) :
-                print "U.chameleon>", type (soc), soc.foo
-            def bar (cls) :
-                print "U.bar>", cls, "bar"
-        U.chameleon ()
-        U ().chameleon ()
-        U.bar       ()
-        U ().bar    ()
-
-        class T (object) :
-            __metaclass__ = TFL.Meta.M_Class
-            __properties  = \
-              ( RO_Property ("x", 42,  "readonly  property")
-              , RW_Property ("y", 137, "writeable property")
-              )
-
-        class U (T) :
-            __properties = \
-              ( RW_Property ("x", 3.1415926, "redefined attribute")
-              , RO_Property ("z", "fubar")
-              )
-    # end if __debug__
-
-    ### end unit-test code ########################################################
-else :
+if __name__ != "__main__" :
     TFL.Meta._Export ("*", "_Property_")
 ### __END__ TFL.Meta.Property

@@ -362,28 +362,4 @@ Pn = R_Point_nP
 
 if __name__ != "__main__" :
     D2._Export ("*", "P", "Pp", "Pl", "Pr", "Pn")
-
-### unit-test code ############################################################
-
-if __debug__ :
-
-    import U_Test
-    import _TFL._D2.Line
-    import _TFL._D2.Rect
-
-    def _doc_test () :
-        import Point
-        return U_Test.run_module_doc_tests (Point)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
 ### __END__ Point
