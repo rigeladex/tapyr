@@ -30,6 +30,7 @@
 #    10-Jan-2005 (CT) `destroy` added
 #    11-Jan-2005 (CT) `as_check_button` added to `add_command`
 #    11-Jan-2005 (CT) `bind_to_widget` added
+#    18-Jan-2005 (MG) `Command_Interfacer.add_command` fixed
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ class Command_Interfacer (TFL.Meta.Object) :
             , delta           = 0
             , underline       = None
             , accelerator     = None
-            , info            = info
+            , info            = None
             , icon            = None
             , as_check_button = False
             , cmd_name        = None
