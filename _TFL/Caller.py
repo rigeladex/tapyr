@@ -40,6 +40,8 @@
 #     2-Sep-2000 (CT) Simplified `caller_info' (try/except isn't necessary)
 #    18-May-2001 (CT) Renamed from caller_globals to TFL/Caller.py
 #    18-May-2001 (CT) `depth' added
+#    16-Sep-2001 (CT) Protect `import U_Test`
+#    18-Sep-2001 (CT) `globs` and `locls` arguments added to `Scope.__init__`
 #    ««revision-date»»···
 #--
 
@@ -120,9 +122,9 @@ class Scope :
        
     """
        
-    def __init__ (self, depth = 0) :
-        self.globals = globals (depth)
-        self.locals  = locals  (depth)
+    def __init__ (self, depth = 0, globs = None, locls = None) :
+        self.globals = globs or globals (depth)
+        self.locals  = locls or locals  (depth)
     # end def __init__
     
     def __getitem__ (self, index) :
@@ -144,15 +146,18 @@ class Scope :
 ### unit-test code ############################################################
 
 if __debug__ :
-    import U_Test
+    try :
+        import U_Test
+    except ImportError :
+        pass
+    else :
+        def _doc_test () :
+            import Caller
+            return U_Test.run_module_doc_tests (Caller)
+        # end def _doc_test
 
-    def _doc_test () :
-        import Caller
-        return U_Test.run_module_doc_tests (Caller)
-    # end def _doc_test
-
-    if __name__ == "__main__" :
-        _doc_test ()
+        if __name__ == "__main__" :
+            _doc_test ()
 # end if __debug__
 
 ### end unit-test code ########################################################
