@@ -125,6 +125,7 @@
 #     1-Dec-2004 (CED) `fit_to_ceil_in_cycle` added
 #    24-Mar-2005 (CT)  Moved into package `TFL` and removed
 #                      various cruft
+#    31-Mar-2005 (CED) `fit_to_ceil_in_cycle` re-added
 #    ««revision-date»»···
 #--
 
@@ -344,6 +345,19 @@ def first (x, * args, ** kw) :
     """Returns the first argument unchanged"""
     return x
 # end def first
+
+### Gimme a better name, please, please
+def fit_to_ceil_in_cycle (n, ceil, cycle) :
+    """
+       >>> fit_to_ceil_in_cycle (3, 5, 10)
+       3
+       >>> fit_to_ceil_in_cycle (5, 3, 10)
+       -5
+    """
+    while (n > ceil) :
+        n -= cycle
+    return n
+# end def fit_to_ceil_in_cycle
 
 def flatten (* lists) :
     """Returns a list containing all the elements in `lists'.
