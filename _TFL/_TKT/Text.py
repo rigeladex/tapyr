@@ -35,18 +35,21 @@
 #    22-Feb-2005 (CT)  Test cases for `push_style` and `pop_style` added to
 #                      `_interface_test`
 #    22-Feb-2005 (RSC) TODO list started.
+#    22-Feb-2005 (CT)  `push_style` and `pop_style` added
+#    22-Feb-2005 (CT)  `left_gravity` added to `mark_at`
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin
 
-# TODO:
-# * method to set cursor position (suggested name: set_cursor)
-# * method for displaying possibly hidden part of the text, suggested name: see
-# * tab-handling. Suggest that positions are in pixels.
-#   API may be something like set_tabs (tab, tab, ...) or set_tabs (tablist)
-
+### TODO:
+### - method to set cursor position (suggested name: set_cursor)
+### - method for displaying possibly hidden part of the text,
+###   suggested name: see
+### - tab-handling. Suggest that positions are in pixels.
+###   API may be something like set_tabs (tab, tab, ...) or set_tabs
+###   (tablist)
 
 class Text (TFL.TKT.Mixin) :
     """Model simple text widget"""
@@ -212,17 +215,40 @@ class Text (TFL.TKT.Mixin) :
             "%s must define insert_widget" % (self.__class__.__name__, )
     # end def insert_widget
 
-    def mark_at (self, pos, delta = 0, name = None) :
+    def mark_at (self, pos, delta = 0, name = None, left_gravity = False) :
         """Return a mark with `name` at position `pos` plus `delta`."""
         raise NotImplementedError, \
             "%s must define mark_at" % (self.__class__.__name__, )
     # end def mark_at
+
+    def place_cursor (self, pos_or_mark) :
+        """Move the insertion cursor to `pos_or_mark`"""
+        raise NotImplementedError, \
+            "%s must define place_cursor" % (self.__class__.__name__, )
+    # end def place_cursor
+
+    def pop_style (self) :
+        """Pop lastly pushed `style` (and remove its effect from
+           `self.wtk_widget`).
+        """
+        raise NotImplementedError, \
+            "%s must define pop_style" % (self.__class__.__name__, )
+    # end def pop_style
 
     def pos_at (self, pos, delta = 0) :
         """Return position `pos` plus `delta`."""
         raise NotImplementedError, \
             "%s must define pos_at" % (self.__class__.__name__, )
     # end def pos_at
+
+    def push_style (self, style) :
+        """Push `style` (i.e., apply it in a way that can be reversed by
+           calling `pop_style` later).
+        """
+        assert style.callback is None
+        raise NotImplementedError, \
+            "%s must define push_style" % (self.__class__.__name__, )
+    # end def push_style
 
     def remove (self, head, tail = None, delta = 0) :
         """Remove text between `head` and `tail` from buffer."""
@@ -237,6 +263,13 @@ class Text (TFL.TKT.Mixin) :
         raise NotImplementedError, \
             "%s must define remove_style" % (self.__class__.__name__, )
     # end def remove_style
+
+    def see (self, pos_or_mark) :
+        """Adjust view of `self` so that `pos_or_mark` is completely visible.
+        """
+        raise NotImplementedError, \
+            "%s must define see" % (self.__class__.__name__, )
+    # end def see
 
 # end class Text
 
