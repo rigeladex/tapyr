@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
+#    20-Sep-2004 (CT) `x_attrs` added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ class Element (TFL.SDG.Node) :
     init_arg_defaults    = dict \
         ( description    = None
         , elem_type      = None
+        , x_attrs        = {}
         )
 
     _xml_format          = """
@@ -81,8 +83,11 @@ class Element (TFL.SDG.Node) :
     # end def write_to_xml_stream
 
     def _attr_values (self, * args, ** kw) :
-        for a in self.attr_names :
-            v = getattr (self, a)
+        attr_values = \
+            ( [(a, getattr (self, a)) for a in self.attr_names]
+            + self.x_attrs.items ()
+            )
+        for a, v in attr_values :
             if v is not None :
                 v = str (v).replace ("'", "&apos;")
                 yield """%s = '%s'""" % (a, v)
@@ -141,7 +146,7 @@ class Empty (Leaf) :
 
 # end class Empty
 
-### for t in Cdata Comment Document Elem_Type ;
+### for t in Cdata Comment Doctype Document Elem_Type ;
 ###   do python /swing/python/run_doctest.py $t
 ###   -p /swing/private/tanzer/lib/python/_TFL/_SDG/_XML ; done
 

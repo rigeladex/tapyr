@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Aug-2004 (CT) Creation
+#    20-Sep-2004 (CT) Test for `x_attrs` added
 #    ««revision-date»»···
 #--
 """Usage example:
@@ -40,7 +41,7 @@
    >>> d.add (X ("A foo-carrying X", foo = "wibble"))
    >>> d.add (Y (bar = "wobble"))
    >>> d.add (X ("A bar-less X", bar = None))
-   >>> d.add (Y (baz = None))
+   >>> d.add (Y (baz = None, x_attrs = dict (qux = 84, quy = 85)))
    >>> d.write_to_xml_stream ()
    <?xml version='1.0' encoding='iso-8859-1' standalone='yes'?>
    <Test>
@@ -57,7 +58,10 @@
      <X baz = 'quuux' >
        A bar-less X
      </X>
-     <Y bar = '42' />
+     <Y bar = '42'
+        quy = '85'
+        qux = '84'
+     />
    </Test>
 
 """
