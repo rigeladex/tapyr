@@ -52,6 +52,8 @@
 #     9-Mar-2004 (CT) `_doc_test` changed to not use `import`
 #    13-Aug-2004 (CT) `Scope` derived from `TFL.Meta.Object`
 #    13-Aug-2004 (CT) `Object_Scope` derived from `Scope`
+#    17-Sep-2004 (CT) Optional argument `locls` added to `Object_Scope`
+#    17-Sep-2004 (CT) `Object_Scope.derived` added
 #    ««revision-date»»···
 #--
 
@@ -139,8 +141,12 @@ class Scope (TFL.Meta.Object) :
     """
 
     def __init__ (self, depth = 0, globs = None, locls = None) :
-        self.globals = globs or globals (depth)
-        self.locals  = locls or locals  (depth)
+        if globs is None :
+            globs = globals (depth)
+        if locls is None :
+            locls = locals  (depth)
+        self.globals = globs
+        self.locals  = locls
     # end def __init__
 
     def __getitem__ (self, index) :
@@ -187,10 +193,15 @@ class Object_Scope (Scope) :
        ['foo', 'bar']
     """
 
-    def __init__ (self, object) :
-        self.__super.__init__ (depth = 1, globs = object.__dict__)
+    def __init__ (self, object, locls = None) :
+        self.__super.__init__ \
+            (depth = 1, globs = object.__dict__, locls = locls)
         self.object = object
     # end def __init__
+
+    def derived (self, ** kw) :
+        return self.__class__ (self.object, locls = dict (self.locals, ** kw))
+    # end def derived
 
     def __getitem__ (self, index) :
         try :

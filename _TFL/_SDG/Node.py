@@ -61,6 +61,7 @@
 #    25-Aug-2004 (MG) `insert`: guard agains `None` children added
 #    26-Aug-2004 (CT) `_convert` moved in here (from `C.Node`)
 #    26-Aug-2004 (CT) `NL` added
+#    17-Sep-2004 (CT)  Argument `indent_anchor` added to `formatted`
 #    ««revision-date»»···
 #--
 
@@ -445,7 +446,15 @@ class Node :
         self.parent = None
     # end def destroy
 
-    def formatted (self, format_name, base_indent = None, output_width = 79, indent_offset = 0, ht_width = 0, ** kw) :
+    def formatted ( self, format_name
+                  , base_indent   = None
+                  , output_width  = 79
+                  , indent_offset = 0
+                  , indent_anchor = None
+                  , ht_width      = 0
+                  , ** kw
+                  ) :
+        #print >> sys.stderr, self.__class__.__name__, self.name, indent_offset, indent_anchor, ht_width
         if base_indent is None :
             base_indent = self.base_indent
         recurser   = "formatted"
@@ -459,8 +468,11 @@ class Node :
         for f in formatters :
             indent = f.indent_level * base_indent
             io     = indent_offset  + len (indent)
-            context.locals ["indent_offset"] = \
+            context.locals ["indent_offset"] = io
+            if indent_anchor is None :
                 context.locals ["indent_anchor"] = io
+            else :
+                context.locals ["indent_anchor"] = indent_anchor + len (indent)
             for l in f (self, context) :
                 yield indent + l
     # end def formatted

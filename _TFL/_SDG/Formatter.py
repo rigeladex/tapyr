@@ -69,6 +69,12 @@
 #                     of a single `%` something like `%%%%%%%%` can show up
 #                     in the output <arrrgh>)
 #    17-Sep-2004 (CT) `Partial_Line_Formatter` used instead of `lambda`
+#    17-Sep-2004 (CT) `percent_pat` moved from `Multi_Line_Formatter` to
+#                     module-scope, renamed to `_percent_pat` and used in
+#                     `Partial_Line_Formatter` and the recursive formatters
+#    17-Sep-2004 (CT) `Multi_Line_Formatter.__call__` changed (back and forth)
+#    17-Sep-2004 (CT) Pass both `indent_offset` and `indent_anchor` to
+#                     recursive calls
 #    ««revision-date»»···
 #--
 
@@ -81,6 +87,8 @@ from   Record             import Record
 from   Regexp             import *
 import sys
 from   predicate import relax
+
+_percent_pat = Regexp ("(?<!%)%(?!%)")
 
 def _print (* args) :
     for l in args :
@@ -113,15 +121,13 @@ class Partial_Line_Formatter (_Formatter_) :
     kind = "PLF"
 
     def __call__ (self, node, context) :
-        context.locals ["indent_anchor"] = context.locals ["indent_offset"]
         PRINT \
-            ( "%s «%s» : %d"
-            % ( self
-              , self.format_line % context
-              , context.locals ["indent_offset"]
+            ( "%s «%s» : %d, %s"
+            % ( self, self.format_line % context
+              , context.indent_offset, context.indent_anchor
               )
             )
-        return (self.format_line % context, )
+        return (_percent_pat.sub ("%%", self.format_line % context), )
     # end def __call__
 
 # end class Partial_Line_Formatter
@@ -133,10 +139,9 @@ class Single_Line_Formatter (_Formatter_) :
 
     def __call__ (self, node, context) :
         PRINT \
-            ( "%s «%s» : %d"
-            % ( self
-              , self.format_line % context
-              , context.locals ["indent_offset"]
+            ( "%s «%s» : %d, %d"
+            % ( self, self.format_line % context
+              , context.indent_offset, context.indent_anchor
               )
             )
         return (self.format_line % context, )
@@ -182,7 +187,7 @@ class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
             if isinstance (attr, (str, unicode)) :
                 attr = (attr, )
             for x in attr :
-                yield sep + (format % x)
+                yield sep + _percent_pat.sub ("%%", format % x)
                 sep = self.sep
     # end def __iter__
 
@@ -196,7 +201,8 @@ class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
 
     def __iter__ (self) :
         result = getattr (self.node, self.key) \
-            ( indent_offset = self.context.indent_anchor
+            ( indent_anchor = self.context.indent_anchor
+            , indent_offset = self.context.indent_offset
             , ht_width      = self.context.ht_width
             , ** self.recurse_kw
             )
@@ -204,7 +210,7 @@ class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
             format = self.format
             sep    = ""
             for x in result :
-                yield sep + (format % x)
+                yield sep + _percent_pat.sub ("%%", format % x)
                 sep = self.sep
     # end def __iter__
 
@@ -242,13 +248,14 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
                 nodes = (nodes, )
             for x in nodes :
                 if x is not None :
-                    meth = getattr (x, recurser)
-                    for y in meth \
-                        ( indent_offset = context.indent_anchor
+                    result = getattr (x, recurser) \
+                        ( indent_anchor = self.context.indent_anchor
+                        , indent_offset = self.context.indent_offset
                         , ht_width      = context.ht_width
                         , ** rkw
-                        ) :
-                        yield sep + (format % y)
+                        )
+                    for y in result :
+                        yield sep + _percent_pat.sub ("%%", format % y)
                         sep = ""
                     sep = self.sep
     # end def __iter__
@@ -296,10 +303,9 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
                     if i == 0 :
                         rear = self.rear0
                         sep  = self.front0
-                    result = "%s%s%s" % (sep, r, rear)
+                    result = "".join ((sep, r, rear))
                 else :
-                    result = "%s%s%s" % (sep, r, eol)
-                PRINT ("***", self, "«%s»" % (result, ))
+                    result = "".join ((sep, r, eol))
                 yield result
                 sep = ""
                 i  += 1
@@ -339,11 +345,12 @@ class Multi_Line_Formatter (_Formatter_) :
           r""")"""
         , re.VERBOSE
         )
+
     key_pattern = Regexp \
         ( r"""(?P<anchor> >?) (?P<type> [.*@]) (?P<name> .*)"""
         , re.VERBOSE
         )
-    percent_pat = Regexp ("(?<!%)%(?!%)")
+
     Formatters  = \
         { "." : _Recursive_Formatter_Attr_
         , "@" : _Recursive_Formatter_Method_
@@ -356,30 +363,28 @@ class Multi_Line_Formatter (_Formatter_) :
     # end def __init__
 
     def __call__ (self, node, context) :
-        last = ""
-        PRINT (self, node.name, context.indent_anchor)
+        head    = ""
+        PRINT (self, node.name, context.indent_offset, context.indent_anchor)
         for f in self.formatters :
-            PRINT ("  %s «%s» %d" % (f, last, context.indent_anchor))
+            PRINT ("  %s «%s» %d, %d" % (f, head, context.indent_offset, context.indent_anchor))
             lines      = TFL.Look_Ahead_Gen (f (node, context))
             i          = 0
-            add_indent = len (last)
+            add_indent = len (head)
             for l in lines :
-                PRINT ("    Lines «%s:%s»" % (last, l), context.indent_anchor)
+                PRINT ("    Lines «%s:%s»" % (head, l), context.indent_offset, context.indent_anchor)
                 if i > 0 and f.anchor :
-                    last = "%s%s" % (" " * add_indent, last)
+                    head = (" " * add_indent) + head
+                    context.locals ["indent_anchor"] = \
+                        context.locals ["indent_offset"] + len (head)
+                head += l % context
                 if not lines.is_finished :
-                    yield "%s%s"  % (last, l % context)
-                    last = ""
-                else :
-                    ### Protect `%` to avoid ValueErrors during next
-                    ### interpolation
-                    last = self.percent_pat.sub \
-                        ("%%", "%s%s" % (last, l % context))
+                    yield head
+                    head = ""
                 i += 1
                 context.locals ["indent_anchor"] = \
-                    len (last) + context.locals ["indent_offset"]
-        if last :
-            yield last
+                    context.locals ["indent_offset"] + len (head)
+        if head :
+            yield head
     # end def __call__
 
     def _x_forms (self, x_forms) :

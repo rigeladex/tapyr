@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
+#    17-Sep-2004 (CT) Doctest changed (added `%` to document text)
 #    ««revision-date»»···
 #--
 
@@ -39,8 +40,8 @@ class Document (TFL.SDG.XML.Element) :
     """Model a XML document (i.e., the root element)
 
        >>> d = Document ( "Memo", "First line of text"
-       ...              , "& a second line of text"
-       ...              , "A third line of text &entity; including"
+       ...              , "& a second line of %text"
+       ...              , "A third line of %text &entity; including"
        ...              , doctype = "memo"
        ...              , description = "Just a test"
        ...              )
@@ -50,8 +51,8 @@ class Document (TFL.SDG.XML.Element) :
        <!-- Just a test -->
        <Memo>
          First line of text
-         &amp; a second line of text
-         A third line of text &entity; including
+         &amp; a second line of %text
+         A third line of %text &entity; including
        </Memo>
     """
 
