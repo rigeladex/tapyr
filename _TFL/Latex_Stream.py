@@ -126,14 +126,14 @@ class Latex_Stream (Formatted_Stream) :
         self.putl (r"\end{%s}%s" % (name, attributes))
     # end def _begin_block
 
-    def begin_description (self) :
-        """Write the beginning of a Tdescription block."""
-        self._begin_block ("Tdescription")
+    def begin_description (self, environment = "description") :
+        """Write the beginning of a description block."""
+        self._begin_block (environment)
     # end def begin_description
 
-    def end_description (self) :
-        """Write the end of a Tdescription block"""
-        self._end_block ("Tdescription")
+    def end_description (self, environment = "description") :
+        """Write the end of a description block"""
+        self._end_block (environment)
     # end def end_description
 
     def begin_document (self) :
