@@ -32,6 +32,7 @@
 #    26-Aug-2004 (CT) Use `NL` instead of `'''\\n'''`
 #    26-Aug-2004 (CT) `front0` and `rear0` used
 #     1-Sep-2004 (MG) `Function.tail_char` added and used in format
+#    23-Feb-2005 (CED) `apidoc_tex_format` and friends defined
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ from   _TFL              import TFL
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Type
 import _TFL._SDG._C.Arg_List
+import textwrap
 
 class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
     """Root class for C function declarations and function definitions"""
@@ -90,8 +92,28 @@ class Fct_Decl (_Function_) :
 class Function (_Function_, TFL.SDG.C._Scope_) :
     """C function definition"""
 
+    init_arg_defaults      = dict \
+        ( def_file         = "unknown"
+        )
     cgi                  = TFL.SDG.C.Node.Body
     tail_char            = ";"
+
+    apidoc_tex_format    = \
+        """%(::@_name_comment:)-{output_width - indent_anchor}s
+           \\hypertarget{%(name)s}{}
+           \\subsubsection{\\texttt{%(name)s}}
+           \\index{FT-COM API\\texttt{%(name)s}}
+           \\ttindex{%(name)s}
+           \\begin{description}
+           >\\item %(::*description:)s \\\\
+           >\\item \\textbf{File:} \\\\ \\texttt{%(def_file)s} \\\\
+           >\\item \\textbf{Function declaration:} \\\\
+           >>\\texttt{""" + _Function_._h_format + """} \\\\
+           >%(::*explanation:)s
+           \\end{description}
+           >
+        """
+
     _mod_format          = """%(::.static:)s%(::.extern:)s"""
     h_format_common      = "".join \
         ( ( _mod_format
@@ -128,6 +150,18 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
     def _update_scope_child (self, child, scope) :
         child._update_scope (TFL.SDG.C.C)
     # end def _update_scope_child
+
+    def _name_comment (self, ** kw) :
+        format_prec = int (kw ["format_prec"])
+        result = \
+            ( "%% --- %s %s"
+            % ( self.name
+              , "-" * ( format_prec - len (self.name) - 7
+                      )
+              )
+            )
+        return [result]
+    # end def _name_comment
 
 # end class Function
 

@@ -35,6 +35,7 @@
 #    23-Sep-2004 (CT) `c_format` changed (`front0` added and `front` changed
 #                     to include `%(NL)s`)
 #    23-Sep-2004 (MG) `vaps_channel_format` added
+#    23-Feb-2005 (CED) `apidoc_tex_format` defined
 #    ««revision-date»»···
 #--
 
@@ -117,6 +118,8 @@ class Var (_Var_) :
           , Ancestor._common_tail
           )
         )
+
+    apidoc_tex_format   = """%(::*type:)s %(name)s"""
 
     vaps_channel_format = """
       %(name)s     1     %(::*type:)s

@@ -29,6 +29,7 @@
 #    27-Jul-2004 (CT) Creation
 #    23-Sep-2004 (MG) `vaps_channel_format` and friends added
 #    24-Sep-2004 (MG) `vaps_channel_format` simplified
+#    23-Feb-2005 (CED) `apidoc_tex_format` defined
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,8 @@ class Type (TFL.SDG.C.Node) :
                           }
 
     front_args          = ("name", )
-    h_format = c_format = "%(name)s"
+
+    h_format = c_format = apidoc_tex_format = "%(name)s"
 
     vaps_channel_format = """%(name)s"""
 
