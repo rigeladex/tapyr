@@ -80,6 +80,13 @@
 #                      Fixed formatting of multi-line "name" of a node
 #                      (RUP 14228)
 #    14-Mar-2005 (RSC) Fixed auto-wrap of "name" line of a node.
+#    15-Mar-2005 (RSC) Use `lift` parameter of Text.apply_style for
+#                      hyper-links, search results, and selected nodes
+#                      (in Node.enter)
+#    15-Mar-2005 (RSC) `_insert_header` now again formats the `name`
+#                      parameter of a node, now links in the name work
+#                      again because _insert_header was overridden in
+#                      Node_Linked.
 #    ««revision-date»»···
 #--
 
@@ -390,13 +397,11 @@ class Node (TFL.UI.Mixin) :
         if self.level :
             self._insert (mark, "\t" * self.level)
         self.butt_mark = self.text.mark_at (mark, left_gravity = True)
-        self._insert_button        ()
-        self._insert               (mark, "\t")
-        self._insert               (mark, self.name, "header", * self.name_tags)
-        hpos = self.text.pos_at    (mark)
-        self._insert_header        (mark)
-        body = self.text.pos_at    (mark)
-        self._insert               (mark, "\n")
+        self._insert_button                ()
+        self._insert                       (mark, "\t")
+        hpos = self._insert_header         (mark)
+        body = self.text.pos_at            (mark)
+        self._insert                       (mark, "\n")
         self.head_mark = self.text.mark_at (head, left_gravity = True)
         self.body_mark = self.text.mark_at (body, left_gravity = True)
         self.tail_mark = self.text.mark_at (body)
@@ -453,6 +458,8 @@ class Node (TFL.UI.Mixin) :
     print_content_head = "    " ### content indent per node   (print_contents)
 
     def _insert_header (self, index) :
+        self._insert            (index, self.name, "header", * self.name_tags)
+        hpos = self.text.pos_at (index)
         if self.header :
             self._insert \
                 ( index
@@ -460,6 +467,7 @@ class Node (TFL.UI.Mixin) :
                 , self.level_tag
                 , * self.header_tags
                 )
+        return hpos
     # end def _insert_header
 
     def _insert_contents (self, index) :
@@ -541,8 +549,9 @@ class Node (TFL.UI.Mixin) :
 
     def enter (self, event = None) :
         head = self.head_mark
+        bol  = self.text.bol_pos (head, line_delta = 1)
         self.text.apply_style \
-            (styles.active_node, head, self.text.bol_pos (head, line_delta = 1))
+            (styles.active_node, head, bol, lift = True)
         self.browser.current_node = self
     # end def enter
 
@@ -767,7 +776,7 @@ class Node (TFL.UI.Mixin) :
         while pos :
             end = self.text.pos_at (pos, delta = len (match))
             for s in sty :
-                self.text.apply_style (s, pos, end)
+                self.text.apply_style (s, pos, end, lift = True)
             pos = self.text.find (match, end, tail)
         return pos1
     # end def _apply_styles
@@ -821,9 +830,10 @@ class Node_Linked (Node) :
     # end def __init__
 
     def _insert_header (self, index) :
-        start = self.text.pos_at    (index)
-        self.__super._insert_header (index)
-        self.activate_links         (start, index)
+        start = self.text.pos_at            (index)
+        pos   = self.__super._insert_header (index)
+        self.activate_links                 (start, index)
+        return pos
     # end def _insert_header
 
     def _insert_contents (self, index) :
@@ -1066,7 +1076,8 @@ class Browser (TFL.UI.Mixin) :
         before = self.text.pos_at (pos)
         self.text.insert (pos, text)
         after  = self.text.eol_pos (pos)
-        for s in styles : self.text.apply_style (s, before, after)
+        for s in styles :
+            self.text.apply_style (s, before, after)
     # end def _insert
 
     def _style (self, * tags) :

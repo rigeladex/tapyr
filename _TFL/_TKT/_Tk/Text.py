@@ -67,6 +67,7 @@
 #                      `_doctest_AC` added
 #    25-Feb-2005 (RSC) `set_tabs` corrected to require a list of things
 #                      convertable to int
+#    15-Mar-2005 (RSC) `lift` parameter added to `apply_style`
 #    ««revision-date»»···
 #--
 
@@ -160,16 +161,20 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
         self._mark_no   = 0
     # end def __init__
 
-    def apply_style (self, style, head = None, tail = None, delta = 0) :
+    def apply_style \
+        (self, style, head = None, tail = None, delta = 0, lift = False) :
         if head is None :
             self.__super.apply_style \
                 ( style, head = head, tail = tail, delta = delta)
         else :
+            tag = self._tag (style)
             self.wtk_widget.tag_add \
-                ( self._tag    (style)
+                ( tag
                 , self._pos_at (head, delta)
                 , tail or self.eot_pos
                 )
+            if lift :
+                self.wtk_widget.tag_raise (tag)
     # end def apply_style
 
     def bol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :

@@ -29,11 +29,14 @@
 #    25-Feb-2005 (RSC) Creation from TFL.TKT.Tk.HTB_test
 #     7-Mar-2005 (RSC) Added background color (using "found" style)
 #    14-Mar-2005 (RSC) New test for a wrapped line
-#    14-Mar-2005 (RSC) wrapped-line test for non-root node.
-#    14-Mar-2005 (RSC) yet another test that now reproduces problem with
+#    14-Mar-2005 (RSC) Wrapped-line test for non-root node.
+#    14-Mar-2005 (RSC) Yet another test that now reproduces problem with
 #                      line-wrapping
-#    14-Mar-2005 (RSC) nowrap tags changed to wrap -- left only one
+#    14-Mar-2005 (RSC) `nowrap` tags changed to wrap -- left only one
 #                      nowrap for testing.
+#    15-Mar-2005 (RSC) Changed one test-case to get an auto-wrap for
+#                      testing lmargin1/lmargin2
+#    15-Mar-2005 (RSC) Added test for hyper-link in `name` of a node
 #    ««revision-date»»···
 #--
 
@@ -44,15 +47,24 @@ from   _TFL._UI.App_Context import App_Context
 
 class T :
     name = "test"
+    def __init__ (self, name = None) :
+        if name :
+            self.name = name
 # end class T
 
-o = T ()
+o = (T (), T ('s2'), T ('ss1'))
 
 class My_Linked (TFL.UI.HTB.Node_Linked) :
     def follow (self, o, event = None) :
         print "clicked: %s" % o.name
         self.__super.follow (o, event)
     # end def follow
+
+    def new_child (self, name, header = "", contents = "", o_links = ()) :
+        c = self.__super.new_child (name, header, contents)
+        c.o_links = o_links
+        return c
+    # end def new_child
 # end class My_Linked
 
 def mknode (tb, name, * tags) :
@@ -60,14 +72,14 @@ def mknode (tb, name, * tags) :
         ( tb
         , name
         , "1. test line\n2. test line\n3. test line"
-        , o_links = (o,)
+        , o_links = o
         )
     n.insert (tb.current_pos, * tags)
     return n
 # end def mknode
 
-def mkchild (tn, name) :
-    n = tn.new_child (name, "1. test line\n2. test line")
+def mkchild (tn, name, o_links = ()) :
+    n = tn.new_child (name, "1. test line\n2. test line", o_links = o_links)
     return n
 # end def mkchild
 
@@ -77,9 +89,9 @@ def insert_stuff (tb) :
     tn.insert            (tb.current_pos, "rindent", "found")
     tn = mknode          (tb, "n1", "wrap", "found")
     x = mkchild          (tn, "s1")
-    mkchild              (tn, "s2")
+    mkchild              (tn, "s2", o)
     nn = mkchild         (tn, "s3")
-    mkchild              (nn, "ss1")
+    mkchild              (nn, "ss1", o)
     nnn = mkchild        (nn, "ss2")
     tn = mknode          (tb, "n2", "wrap", "found")
     mkchild              (tn, "s-a")
@@ -96,7 +108,7 @@ def insert_stuff (tb) :
     mkchild              (tn, "s-y")
     tn = mknode \
         ( tb
-        , "n4, this is a very long name which should wrap\n"
+        , "n4, this is a very long name which should wrap "
           "and display an error in formatting..."
         , "wrap", "found"
         )
