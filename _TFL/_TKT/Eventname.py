@@ -26,13 +26,14 @@
 #    Provide symbolic names for GUI events (keys, mouse clicks, ...)
 #
 # Revision Dates
-#    12-Jan-2005 (CT) Creation
-#    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
-#     9-Feb-2005 (CT) `_pam` added
-#    14-Feb-2005 (CT) `__init__` changed to accept multiple mappings to `None`
-#    21-Feb-2005 (CT) `check_names` and doc-test added
-#     3-Feb-2005 (ABR, Factored out `add`
-#                 MGL)
+#    12-Jan-2005 (CT)  Creation
+#    18-Jan-2005 (CT)  Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
+#     9-Feb-2005 (CT)  `_pam` added
+#    14-Feb-2005 (CT)  `__init__` changed to accept multiple mappings to `None`
+#    21-Feb-2005 (CT)  `check_names` and doc-test added
+#     3-Feb-2005 (ABR) Factored out `add`
+#    31-Mar-2005 (CT)  Totally broken `add` fixed and (factored) `_check`
+#                      made informative instead of prescriptive
 #    ««revision-date»»···
 #--
 
@@ -67,20 +68,14 @@ class _Eventname (TFL.TKT.Mixin) :
     def __init__ (self, AC = None, _name = None, ** kw) :
         self.__super.__init__ (AC = AC)
         self._name = _name or TFL.Caller.globals ().get ("__name__")
-        self._map  = dict (kw)
+        self._map  = {}
         self._pam  = {}
-        self.add (**kw)
+        self.add (** kw)
     # end def __init__
 
-    def add (self, **kw) :
-        pam = self._pam
-        for k, v in kw.iteritems () :
-            if v is not None and v in pam :
-                raise ValueError, \
-                    ( "Eventnames `%s` and `%s` point to same event: `%s`"
-                    % (k, pam [v], v)
-                    )
-            pam [v] = k
+    def add (self, ** kw) :
+        self._map.update (kw)
+        self._check      (kw)
     # end def add
 
     def check_names (cls, evn_1, evn_2) :
@@ -104,6 +99,18 @@ class _Eventname (TFL.TKT.Mixin) :
         else :
             print "%s defines all names that %s defines" % (evn_2, evn_1)
     _check_difference = classmethod (_check_difference)
+
+    def _check (self, kw) :
+        if __debug__ :
+            pam = self._pam
+            for k, v in kw.iteritems () :
+                if v is not None and v in pam :
+                    print \
+                        ( "Eventnames `%s` and `%s` point to same event: `%s`"
+                        % (k, pam [v], v)
+                        )
+                pam [v] = k
+    # end def _check
 
     def __getattr__ (self, name) :
         try :
