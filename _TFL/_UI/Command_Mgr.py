@@ -127,6 +127,9 @@
 #                     `add_command`
 #    10-Feb-2005 (MG) `Command_Delegator.__init__`: handling of
 #                     `evaluate_eagerly` added
+#    14-Feb-2005 (CT) `_element` resurrected
+#    14-Feb-2005 (CT) `_real_index` changed to refuse to deal with numeric
+#                     indices
 #    ««revision-date»»···
 #--
 
@@ -478,8 +481,11 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
             if parent.qname :
                 self.qname  = "%s.%s" % (parent.qname, name)
         self.description    = self._cooked_doc (desc, self.root.form_dict)
+        ### `_element` contains all groups/commands managed by `self`
+        self._element       = NO_List ()
+        ### `_epi` contains all groups/commands per interfacer
         self._epi           = dict \
-            ([(n, NO_List ()) for n in interfacers.keys ()])
+            ([(n, NO_List ()) for n in interfacers.iterkeys ()])
     # end def __init__
 
     def destroy (self) :
@@ -487,7 +493,7 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
         for i in self._epi.itervalues () :
             for e in i :
                 e.destroy ()
-        self._epi = None
+        self._element = self._epi = None
     # end def destroy
 
     def set_auto_short_cuts (self) :
@@ -512,6 +518,9 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
     # end def _interfacers
 
     def _real_index (self, element, index, delta) :
+        if isinstance (index, (int, long)) :
+            raise KeyError, \
+                "Numeric indices like `%s` are not supported" % (index, )
         if index is None :
             index = len (element)
         if isinstance (index, (str, unicode)) :
@@ -566,6 +575,7 @@ class Command_Group (_Command_Group_) :
                     ( cmd, if_names, icon, index, delta
                     , underline, accelerator, batchable, as_check_button
                     )
+            self._add_element (cmd, index, delta)
         return cmd
     # end def add_command
 
@@ -608,16 +618,18 @@ class Command_Group (_Command_Group_) :
                 group = self._group [group]
             return group.add_separator (name, None, if_names, index, delta)
         else :
+            s_index = index
             if not name :
                 name = "sep_%s" % (self.n_seps, )
                 self.n_seps += 1
             result = []
             sep    = Record (name = name, destroy = lambda s : 1)
             for ( n, i, info, _ie, index
-                ) in self._interfacers (if_names, index, delta) :
+                ) in self._interfacers (if_names, s_index, delta) :
                 _ie.insert      (index, sep)
                 i.add_separator (name,  index)
                 result.append   (i)
+            self._add_element   (sep, s_index, delta)
             return result
     # end def add_separator
 
@@ -676,15 +688,23 @@ class Command_Group (_Command_Group_) :
         self._dyn_command.append (cmd)
     # end def _add_dyn_command
 
-    def _add_group (self, name, precondition, if_names, index, delta, group_creator) :
+    def _add_element (self, elm, index, delta) :
+        _element = self._element
+        if not elm.name in _element :
+            i = self._real_index (self._element, index, delta)
+            _element.insert (i, elm)
+    # end def _add_element
+
+    def _add_group (self, name, precondition, if_names, s_index, delta, group_creator) :
         ifacers = {}
         to_do   = []
         for ( n, i, info, _ie, index
-            ) in self._interfacers (if_names, index, delta) :
+            ) in self._interfacers (if_names, s_index, delta) :
             ifacers [n] = i.add_group (name, index = index, info = info)
             to_do.append  ((_ie, index))
         result  = group_creator (ifacers)
         self._group.append (result)
+        self._add_element  (result, s_index, delta)
         for _ie, index in to_do :
             _ie.insert (index, result)
         if precondition :
