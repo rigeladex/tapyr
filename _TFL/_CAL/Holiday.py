@@ -37,6 +37,7 @@
 #    15-Oct-2004 (CT) `_main` and `_command_spec` added
 #    17-Oct-2004 (CT) Use `Date_Delta` instead of `Delta`
 #    31-Oct-2004 (CT) `_main` changed to display date, too
+#     5-Nov-2004 (CT) Use `//` for int division
 #    ««revision-date»»···
 #--
 
@@ -87,12 +88,12 @@ def easter_date (y) :
     a    = y % 19
     b, c = divmod (y, 100)
     d, e = divmod (b, 4)
-    f    = (b + 8) / 25
-    g    = (b - f + 1) / 3
+    f    = (b + 8) // 25
+    g    = (b - f + 1) // 3
     h    = (19*a + b - d - g + 15) % 30
     i, k = divmod (c, 4)
     l    = (32 + 2*e + 2*i - h - k) % 7
-    m    = (a + 11*h + 22*l) / 451
+    m    = (a + 11*h + 22*l) // 451
     n, p = divmod (h + l - 7*m + 114, 31)
     return (y, n, p+1)
 # end def easter_date
