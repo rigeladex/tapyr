@@ -67,6 +67,8 @@
 #    26-Feb-2002 (CT) `_debug` set to `__debug__`
 #    26-Feb-2002 (CT) `_complain_implicit` changed to provide more useful
 #                     output (included addition of `last_caller`)
+#    27-Feb-2002 (CT) Argument `module_name` removed from `_Export` (get that
+#                     from `caller_globals`)
 #    ««revision-date»»···
 #--
 
@@ -321,14 +323,15 @@ class Package_Namespace :
                (self.__class__.__name__, self.__name, id (self))
     # end def __repr__
 
-    def _Export (self, module_name, * symbols, ** kw) :
-        """Called by module of Package_Namespace to inject their symbols into
-           the package namespace.
+    def _Export (self, * symbols, ** kw) :
+        """To be called by modules of Package_Namespace to inject their
+           symbols into the package namespace.
         """
-        transitive = kw.get ("transitive")
-        result     = {}
-        mod        = self.__modules._load (module_name)
-        primary    = getattr (mod, module_name, None)
+        module_name = _caller_globals () ["__name__"]
+        transitive  = kw.get ("transitive")
+        result      = {}
+        mod         = self.__modules._load (module_name)
+        primary     = getattr (mod, module_name, None)
         if primary is not None :
             result [module_name] = primary
         if symbols [0] == "*" :
