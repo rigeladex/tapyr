@@ -27,7 +27,6 @@ from   _TFL                 import TFL
 import _NDT._Sched2.Window
 import _TFL._Meta.Object
 
-
 from   predicate            import *
 
 class Timeline_Cut (NDT.Sched2.Span) :
