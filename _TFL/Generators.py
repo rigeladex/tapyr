@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Apr-2002 (CT) Creation
 #    19-Apr-2002 (CT) `Lazy_List` added
+#    29-Jul-2002 (CT) s/paired/paired_zip/
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ def pairwise (seq) :
         i += 1
 # end def pairwise
 
-def paired (s1, s2) :
+def paired_zip (s1, s2) :
     """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
 
        >>> list (paired ("abc", range (4)))
@@ -86,7 +87,7 @@ def paired (s1, s2) :
     while i < l :
         yield s1 [i], s2 [i]
         i += 1
-# end def paired
+# end def paired_zip
 
 def paired_map (s1, s2) :
     """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
