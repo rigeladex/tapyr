@@ -20,11 +20,11 @@
 #
 #++
 # Name
-#    TGW/_Keyname
+#    TGW/_Eventname
 #
 # Purpose
-#    Provides a mechanism for accessing the keyboard accelerators in a
-#    toolkit-independent way
+#    Provides a mechanism for accessing the keyboard accelerators and other
+#    kinds of actions in a toolkit-independent way
 #
 # Revision Dates
 #    10-Jan-2005 (ABR, Creation
@@ -36,19 +36,19 @@ from _TFL import TFL
 import _TFL._TKT
 import _TFL._Meta.Object
 
-class _Keyname (TFL.Meta.Object) :
+class _Eventname (TFL.Meta.Object) :
     """
-    >>> Keyname = _Keyname (copy = "Strg-C", paste = "Strg-V")
-    >>> print Keyname.copy
+    >>> Eventname = _Eventname (copy = "Strg-C", paste = "Strg-V")
+    >>> print Eventname.copy
     Strg-C
-    >>> print Keyname.paste
+    >>> print Eventname.paste
     Strg-V
-    >>> print Keyname.undefined
+    >>> print Eventname.undefined
     Traceback (most recent call last):
       File "/usr/local/lib/python2.3/doctest.py", line 442, in _run_examples_inner
         compileflags, 1) in globs
       File "<string>", line 1, in ?
-      File "./_Keyname.py", line 40, in __getattr__
+      File "./_Eventname.py", line 40, in __getattr__
         raise AttributeError, e
     AttributeError: 'undefined'
 
@@ -63,11 +63,11 @@ class _Keyname (TFL.Meta.Object) :
         except KeyError, e :
             raise AttributeError, e
     # end def __getattr__
-# end class _Keyname
+# end class _Eventname
 
 if __name__ != "__main__" :
     from _TFL._TKT import TKT
-    TKT._Export ("_Keyname")
+    TKT._Export ("_Eventname")
 
-### __END__ _TFL/_TKT/_Keyname
+### __END__ _TFL/_TKT/_Eventname
 
