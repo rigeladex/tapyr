@@ -26,25 +26,27 @@
 #    Package a plugin so that it can be added to a McMillanized application
 #
 # Revision Dates
-#    18-Jun-2004 (CT) Creation
-#    19-Jun-2004 (CT) Creation continued
-#    20-Jun-2004 (CT) Creation continued..
-#    21-Jun-2004 (CT) Creation continued....
-#    22-Jun-2004 (CT) Creation (repackaged)
-#    22-Jun-2004 (CT) Code for `-AP_Closure` changed to pass
-#                     `TFL._.Import_Closure.__dict__` to `eval`
-#    22-Jun-2004 (CT) Special casing for `_Plugins.__init__` added
-#    23-Jun-2004 (CT) `_setup_replacers` changed to not create replacement
-#                     pattern for `_Plugins` package itself
-#    23-Jun-2004 (CT) `_rewrite_package_derived` changed to import/del
-#                     `Derived_Package_Namespace` instead of
-#                     `Package_Namespace`
-#    24-Aug-2004 (CT) `_Hide` added to avoid `_import _XXX` to be interpreted
-#                     relatively instead of absolutely (RUP 11203)
-#    24-Aug-2004 (CT) Rewrite all occurrences of `pi_package.pkg` in
-#                     `__init__` instead of specific patterns only
+#    18-Jun-2004 (CT)  Creation
+#    19-Jun-2004 (CT)  Creation continued
+#    20-Jun-2004 (CT)  Creation continued..
+#    21-Jun-2004 (CT)  Creation continued....
+#    22-Jun-2004 (CT)  Creation (repackaged)
+#    22-Jun-2004 (CT)  Code for `-AP_Closure` changed to pass
+#                      `TFL._.Import_Closure.__dict__` to `eval`
+#    22-Jun-2004 (CT)  Special casing for `_Plugins.__init__` added
+#    23-Jun-2004 (CT)  `_setup_replacers` changed to not create replacement
+#                      pattern for `_Plugins` package itself
+#    23-Jun-2004 (CT)  `_rewrite_package_derived` changed to import/del
+#                      `Derived_Package_Namespace` instead of
+#                      `Package_Namespace`
+#    24-Aug-2004 (CT)  `_Hide` added to avoid `_import _XXX` to be interpreted
+#                      relatively instead of absolutely (RUP 11203)
+#    24-Aug-2004 (CT)  Rewrite all occurrences of `pi_package.pkg` in
+#                      `__init__` instead of specific patterns only
 #    28-Sep-2004 (CT)  Use `open` instead of `file` to open a file
 #    27-Oct-2004 (CED) `self.hides` saved
+#     4-Nov-2004 (CT)  `_make_target_dir` factored and called from
+#                      `_rewrite_package_plugin`
 #    ««revision-date»»···
 #--
 
@@ -140,6 +142,12 @@ class Plugin_Packager (TFL.Meta.Object) :
             sys.path = sys_path
     # end def _get_version
 
+    def _make_target_dir (self, pym) :
+        pym_dir = sos.path.split (pym.target_path) [0]
+        if not sos.path.isdir (pym_dir) :
+            sos.mkdir_p (pym_dir)
+    # end def _make_target_dir
+
     def _pns_from_pkg (self, pkg) :
         return ".".join \
             ([self._leading_underscore.sub ("", p) for p in pkg.split (".")])
@@ -203,6 +211,7 @@ class Plugin_Packager (TFL.Meta.Object) :
         hide = copy.copy (pym)
         hide.target_path = sos.path.join \
             (Filename (hide.target_path).directory, "_Hide", "__init__.py")
+        self._make_target_dir   (hide)
         self.hides = [hide]
         self._write_target_file (hide, "")
     # end def _rewrite_package_plugin
@@ -325,9 +334,7 @@ class Plugin_Packager (TFL.Meta.Object) :
             pym.source_pns = self._pns_from_pkg (pym.pkg)
             pym.target_pns = self._pns_from_pkg (pym.target_pkg)
             if pym.is_package :
-                pym_dir = path.split (pym.target_path) [0]
-                if not path.isdir (pym_dir) :
-                    sos.mkdir_p (pym_dir)
+                self._make_target_dir (pym)
                 pym.source_mod = pym.pkg
                 pym.target_mod = pym.target_pkg
                 pyps.append (pym)
