@@ -53,31 +53,31 @@ class Timeline (TFL.Meta.Object) :
        >>> tl.free
        [(0, 1000)]
        >>> S = NDT.Sched2.Span
-       >>> c = tl.intersection (S (100, 300)) [0]
+       >>> c = tl.intersection (S (100, 300)) [0] [0]
        >>> c.prepare_cut_l (50)
        (100, 150)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 100), (150, 1000)]
-       >>> c = tl.intersection (S (70, 100)) [0]
+       >>> c = tl.intersection (S (70, 100)) [0] [0]
        >>> c.prepare_cut_u (15)
        (85, 100)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 85), (150, 1000)]
-       >>> c = tl.intersection (S (150, 200)) [0]
+       >>> c = tl.intersection (S (150, 200)) [0] [0]
        >>> c.prepare_cut_l (50)
        (150, 200)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 85), (200, 1000)]
-       >>> c = tl.intersection (S (500, 600)) [0]
+       >>> c = tl.intersection (S (500, 600)) [0] [0]
        >>> c.prepare_cut_l (50)
        (500, 550)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 85), (200, 500), (550, 1000)]
-       >>> c1, c2 = tl.intersection (S (50, 300))
+       >>> c1, c2 = tl.intersection (S (50, 300)) [0]
        >>> c1, c2
        ((50, 85), (200, 300))
        >>> c1.prepare_cut_u (15)
@@ -100,12 +100,14 @@ class Timeline (TFL.Meta.Object) :
     # end def __init__
 
     def intersection (self, span) :
-        result = []
+        free = []
+        size = 0
         for i, f in enumerate (self.free) :
             cut = f.intersection (span)
             if cut :
-                result.append (Timeline_Cut (self, i, cut))
-        return result
+                free.append (Timeline_Cut (self, i, cut))
+                size += cut.length
+        return free, size
     # end def intersection
 
     def cut (self, * pieces) :
@@ -126,7 +128,7 @@ class Timeline (TFL.Meta.Object) :
                 assert head and tail, "head = %s, tail = %s" % (head, tail)
                 self.free [p.index : p.index + 1] = [head, tail]
             if not f :
-                del self.free [index]
+                del self.free [p.index]
     # end def cut
 
 # end class Timeline
