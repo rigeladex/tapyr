@@ -107,7 +107,7 @@ class Ratio :
                 self.n = int (self.pattern.group ("n"))
                 self.d = int (self.pattern.group ("d") or 1)
             else :
-                raise ValueError, "invalid literal for Range(): %s" % (n, )
+                raise ValueError, "invalid literal for Ratio(): %s" % (n, )
         elif isinstance (n, Ratio) :
             if not d is None :
                 raise TypeError, \
