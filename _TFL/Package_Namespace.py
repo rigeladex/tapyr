@@ -96,12 +96,17 @@
 #    12-Sep-2003 (CT)  `_Reload` changed to clear the damned `linecache`
 #    20-Nov-2003 (CT)  `_Export_Module` changed to take `mod` from `kw` if
 #                      there
+#    16-Jun-2004 (CT)  `_Module_Space._load` changed to
+#                      - use `sys.modules` instead of `__import__`
+#                      - accept `q_name` as argument
+#    16-Jun-2004 (CT)  `Package_Namespace._Load_Module` factored
 #    ««revision-date»»···
 #--
 
 from   caller_globals import caller_globals as _caller_globals
 from   caller_globals import caller_info    as _caller_info
 from   Regexp         import Regexp
+import sys
 
 class _Module_Space :
 
@@ -109,31 +114,8 @@ class _Module_Space :
         self.__name = name
     # end def __init__
 
-    def _load (self, module_name) :
-        ### >>> help(__import__ )
-        ### __import__(...)
-        ###     __import__(name, globals, locals, fromlist) -> module
-        ###
-        ### Import a module. The globals are only used to determine the
-        ### context; they are not modified. The locals are currently unused.
-        ### The fromlist should be a list of names to emulate ``from name
-        ### import ...'', or an empty list to emulate ``import name''.
-        ###
-        ### When importing a module from a package, note that
-        ### __import__('A.B', ...) returns package A when fromlist is empty,
-        ### but its submodule B when fromlist is not empty.
-        ###
-        ### ***
-        ### Caveat: doing the import right (like TFL.import_module does)
-        ### doesn't work here because the module in question is not *yet* in
-        ### it's package when this function is called due to a call to
-        ### `_Export`
-        ### ***
-        # print "_Module_Space._load: __name      =", self.__name
-        # print "                     module_name =", module_name
-        q_name = "%s.%s" % (self.__name, module_name)
-        module = __import__ (q_name, {}, {}, (module_name, ))
-        # print "                     module      =", module
+    def _load (self, q_name, module_name) :
+        module = sys.modules [q_name]
         setattr (self, module_name, module)
         return module
     # end def _load
@@ -283,8 +265,7 @@ class Package_Namespace :
 
     def _Add (self, ** kw) :
         """Add elements of `kw` to Package_Namespace `self`."""
-        module_name = _caller_globals () ["__name__"].split (".") [-1]
-        mod         = self.__module_space._load (module_name)
+        module_name, mod = self._Load_Module (_caller_globals ())
         self._Cache_Module (module_name, mod)
         for s, p in kw.items () :
             self._import_1 (mod, s, s, p, self.__dict__, 1)
@@ -294,14 +275,16 @@ class Package_Namespace :
         """To be called by modules of Package_Namespace to inject their
            symbols into the package namespace `self`.
         """
-        result        = {}
-        module_name   = _caller_globals () ["__name__"].split (".") [-1]
-        transitive    = kw.get ("transitive")
-        mod           = kw.get ("mod")
+        result         = {}
+        caller_globals = _caller_globals ()
+        transitive     = kw.get ("transitive")
+        mod            = kw.get ("mod")
         if mod is None :
-            mod       = self.__module_space._load (module_name)
-        primary       = getattr (mod, module_name, None)
-        check_clashes = not self.__reload
+            module_name, mod = self._Load_Module (caller_globals)
+        else :
+            module_name      = caller_globals ["__name__"].split (".") [-1]
+        primary        = getattr (mod, module_name, None)
+        check_clashes  = not self.__reload
         if primary is not None :
             result [module_name] = primary
         self._Cache_Module (module_name, mod)
@@ -326,8 +309,7 @@ class Package_Namespace :
         """To be called by modules to inject themselves into the package
            namespace `self`.
         """
-        module_name = _caller_globals () ["__name__"].split (".") [-1]
-        mod         = self.__module_space._load (module_name)
+        module_name, mod = self._Load_Module (_caller_globals ())
         if __debug__ :
             old = self.__dict__.get (module_name, mod)
             if old is not mod :
@@ -336,6 +318,12 @@ class Package_Namespace :
         self.__dict__  [module_name] = mod
         self._Cache_Module (module_name, mod)
     # end def _Export_Module
+
+    def _Load_Module (self, caller_globals) :
+        q_name = caller_globals ["__name__"]
+        b_name = q_name.split   (".") [-1]
+        return b_name, self.__module_space._load (q_name, b_name)
+    # end def _Load_Module
 
     def _Reload (self, * modules) :
         old_reload = self.__reload
