@@ -318,7 +318,6 @@ the result of `repr` might be valid input to `eval`::
     repr_format          = '''
         %(__class__.__name__)s
         >%(:front=( ¡front0=(¡rear=%(NL)s)¡rear0=)¡sep=, :>*children,>@_formatted_attrs:)s
-        >)
     '''
 
 The second line of `repr_format` contains a complex format
@@ -535,7 +534,7 @@ class Node :
         return value
     # end def _convert
 
-    def _formatted_attrs (self, format_name, * args, ** kw) :
+    def _formatted_attrs (self, * args, ** kw) :
         for k, v in sorted (self.init_arg_defaults.iteritems ()) :
             a = getattr (self, k)
             if a != v :
