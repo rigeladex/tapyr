@@ -59,6 +59,10 @@
 #                      of `apply_style' (and pop it when not needed)
 #     9-Mar-2005 (CT)  `destroy` exorcised of Tk-isms
 #     9-Mar-2005 (CT)  Fix of `destroy` fixed
+#    11-Mar-2005 (RSC) Fix for styles: Moved style caching from Node to
+#                      Browser. Now retain old "insert" interface in
+#                      Browser (using tags) and provide new _insert
+#                      interface (using styles).
 #    ««revision-date»»···
 #--
 
@@ -384,14 +388,7 @@ class Node (TFL.UI.Mixin) :
     # end def insert
 
     def _style (self, * tags) :
-        """Implement style chaching"""
-        tags = [t for t in self.tags + tags if styles.has_key (t)]
-        tags.reverse ()
-        tags.append ('normal')
-        tags = tuple (tags)
-        if not styles.has_key (tags) :
-            styles [tags] = Style (str (tags), * [styles [t] for t in tags])
-        return styles [tags]
+        return self.browser._style (* (self.tags + tags))
     # end def _style
 
     def _insert_button (self) :
@@ -410,7 +407,7 @@ class Node (TFL.UI.Mixin) :
     # end def _insert_button
 
     def _insert (self, index, text, * tags) :
-        self.browser.insert (index, text, self.callback, self._style (* tags))
+        self.browser._insert (index, text, self.callback, self._style (* tags))
     # end def _insert
 
     def _delete (self, head, tail = None) :
@@ -1040,13 +1037,26 @@ class Browser (TFL.UI.Mixin) :
 
     # end def _setup_styles
 
-    def insert (self, pos, text, * styles) :
+    def _insert (self, pos, text, * styles) :
         before = self.text.pos_at (pos)
         self.text.insert (pos, text)
         after  = self.text.eol_pos (pos)
-        ### XXX `styles` need processing before passin them on (traditional
-        ###     clients pass tags, here)
-        ### for s in styles : self.text.apply_style (s, before, after)
+        for s in styles : self.text.apply_style (s, before, after)
+    # end def _insert
+
+    def _style (self, * tags) :
+        """Implement style chaching"""
+        tags = [t for t in tags if styles.has_key (t)]
+        tags.reverse ()
+        tags.append ('normal')
+        tags = tuple (tags)
+        if not styles.has_key (tags) :
+            styles [tags] = Style (str (tags), * [styles [t] for t in tags])
+        return styles [tags]
+    # end def _style
+
+    def insert (self, pos, text, * tags) :
+        self._insert (pos, text, self._style (tags))
     # end def insert
 
     def option_value (self, name, default) :

@@ -53,6 +53,7 @@
 #                      So two insertions at x=current_pos work...
 #     2-Mar-2005 (RSC) Test that eot_pos is a mark.
 #    10-Mar-2005 (RSC) added `show'
+#    10-Mar-2005 (RSC) `show' removed again. Use make_active instead!
 #    ««revision-date»»···
 #--
 
@@ -323,11 +324,6 @@ class Text (TFL.TKT.Mixin) :
         raise NotImplementedError, \
             "%s must define set_tabs" % (self.__class__.__name__, )
     # end def set_tabs
-
-    def show (self) :
-        """Anything toolkit-specific needed for displaying window"""
-        pass
-    # end def show
 
 # end class Text
 
