@@ -73,6 +73,7 @@ class _Eventname (TFL.TKT.Mixin) :
     # end def __init__
 
     def add (self, **kw) :
+        pam = self._pam
         for k, v in kw.iteritems () :
             if v is not None and v in pam :
                 raise ValueError, \
