@@ -51,6 +51,8 @@
 #    22-Feb-2005 (CT)  `place_cursor` and `see` added
 #    23-Feb-2005 (RSC) added Scrolled_Text widget,
 #                      modified *_pos to return Tk magic value
+#    23-Feb-2005 (RSC) Changed pos_at to return real position
+#                      changed doctest to (hopefully) work again.
 #    ««revision-date»»···
 #--
 
@@ -70,10 +72,12 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
        >>> w = Text ()
        >>> w.widget.pack ()
-       >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+       >>> eot = w.eot_pos
+       >>> cur = w.current_pos
+       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
        ('1.0', '2.0', '1.0', '1.0')
        >>> w.append ("Ha")
-       >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
        ('1.0', '2.0', '1.2', '1.0')
        >>> w.append ("Hum")
        >>> w.insert (w.bot_pos, "Hi")
@@ -86,10 +90,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        Hi 1.0
        Ho 1.2
        Hu 1.6
-       >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
        ('1.0', '2.0', '1.9', '1.0')
        >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
-       >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
        ('1.0', '3.0', '2.10', '2.0')
        >>> print w.get ()
        HiHoHaHum
@@ -220,7 +224,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
         result = pos_or_mark
         if delta != 0 :
             result = "%s %+d chars" % (result, delta)
-        return result
+        return self.wtk_widget.index (result)
     # end def pos_at
 
     def remove (self, head, tail = None, delta = 0) :
@@ -284,11 +288,13 @@ hand  = Style ("hand", mouse_cursor = "hand")
 defa  = Style ("hand", mouse_cursor = "default")
 fleur = Style ("hand", mouse_cursor = "fleur")
 w = Text ()
+eot = w.eot_pos
+cur = w.current_pos
 w.widget.pack ()
 w.push_style  (hand)
-w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
 w.append ("Ha")
-w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
 w.append ("Hum", blue)
 w.insert (w.bot_pos, "Hi", yell)
 w.insert (w.bot_pos, "Ho", delta = 2)
@@ -297,11 +303,11 @@ w.remove_style (gray, w.bot_pos, w.eot_pos)
 for t in "Ha", "He", "Hi", "Ho", "Hu" :
     print t, w.find (t)
 
-w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
 w.insert (w.eot_pos, '''\nDiddle Dum''')
 w.apply_style (gray, w.bol_pos (w.current_pos), w.eol_pos (w.current_pos))
 w.remove_style (yell, w.bot_pos, w.eot_pos)
-w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
+w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
 w.get ()
 w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
 w.get ()
