@@ -42,6 +42,7 @@
 #    12-Jan-2005 (CT) s/CI_Toolbar_Category/_CI_Toolbar_Group_/g
 #    12-Jan-2005 (CT) `CI_Event_Binder` and `_CI_Event_Binding_` added
 #    13-Jan-2005 (CT) Small fixes
+#    18-Jan-2005 (CT) Small fixes
 #    ««revision-date»»···
 #--
 
@@ -183,7 +184,7 @@ class CI_Menu (_CI_Widget_) :
             , underline       = None
             , accelerator     = None
             , icon            = None
-            , info            = info
+            , info            = None
             , as_check_button = False
             , cmd_name        = None
             , ** kw
@@ -292,7 +293,7 @@ class CI_Toolbar (_CI_Widget_) :
             , underline       = None
             , accelerator     = None
             , icon            = None
-            , info            = info
+            , info            = None
             , as_check_button = False
             , cmd_name        = None
             , ** kw
@@ -337,7 +338,7 @@ class _CI_Toolbar_Group_ (_CI_) :
             , underline       = None
             , accelerator     = None
             , icon            = None
-            , info            = info
+            , info            = None
             , as_check_button = False
             , cmd_name        = None
             , ** kw
