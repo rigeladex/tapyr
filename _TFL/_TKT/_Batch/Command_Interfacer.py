@@ -28,7 +28,7 @@
 # Revision Dates
 #    21-Dec-2004 (CT) Creation
 #    11-Jan-2005 (CT) Creation continued
-#     1-Feb-2005 (CT) `set_auto_short_cuts` added
+#    24-Feb-2005 (CT) `CI_Button_Box` added
 #    ««revision-date»»···
 #--
 
@@ -36,6 +36,7 @@ from   _TFL           import TFL
 import _TFL._TKT._Batch
 import _TFL._TKT.Command_Interfacer
 
+CI_Button_Box    = TFL.TKT.Command_Interfacer
 CI_Eventbinder   = TFL.TKT.Command_Interfacer
 CI_Menu          = TFL.TKT.Command_Interfacer
 CI_Menubar       = TFL.TKT.Command_Interfacer

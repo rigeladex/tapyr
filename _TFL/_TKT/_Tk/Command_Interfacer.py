@@ -61,6 +61,7 @@
 #    21-Feb-2005 (CT) `CI_Menu._index_offset` changed from `1` to `0` (and
 #                     `CI_Menubar._index_offset` redefined to `1`)
 #    23-Feb-2005 (CT) `exposed_widget` added
+#    24-Feb-2005 (CT) `CI_Button_Box` added
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,67 @@ class _CI_Widget_ (_CI_) :
     # end def destroy
 
 # end class _CI_Widget_
+
+class CI_Button_Box (_CI_Widget_) :
+    """Implement a button box command interfacer for Tkinter"""
+
+    Widget_Type         = CTK.Buttongrid
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.b_name = {}
+    # end def __init__
+
+    ### command specific methods
+    def add_command \
+            ( self, name, callback
+            , index           = None
+            , delta           = 0
+            , underline       = None
+            , accelerator     = None
+            , icon            = None
+            , info            = None
+            , state_var       = None
+            , cmd_name        = None
+            , ** kw
+            ) :
+        b_name  = self.b_name [name] = self.name_clean.sub ("_", name.lower ())
+        im_name = icon or b_name
+        return self.wtk_widget.add \
+            ( button_name = b_name
+            , command     = callback
+            , image       = CTK.image_mgr.get (im_name)
+            , cmd_name    = name
+            )
+    # end def add_command
+
+    def remove_command (self, index) :
+        raise NotImplementedError, "Buttonbox.remove_command"
+    # end def remove_command
+
+    ### group specific methods
+    def add_group (self, name, index = None, delta = 0, ** kw) :
+        raise NotImplementedError, "Buttonbox.add_group"
+    # end def add_group
+
+    def remove_group (self, index) :
+        raise NotImplementedError, "Buttonbox.remove_group"
+    # end def remove_group
+
+    ### event specific methods
+    def enable_entry (self, name) :
+        self.wtk_widget.enable_entry (self.b_name [name])
+    # end def enable
+
+    def disable_entry (self, name) :
+        self.wtk_widget.disable_entry (self.b_name [name])
+    # end def disable_entry
+
+    def bind_to_sync (self, callback) :
+        self.wtk_widget.bind ("<Any-Enter>", callback)
+    # end def bind_to_sync
+
+# end class CI_Button_Box
 
 class _CI_Event_Binding_ (_CI_) :
     """Encapsulate a single event binding"""
