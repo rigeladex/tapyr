@@ -69,6 +69,8 @@
 #                      `__init__` (must be done for *each* `Text` instance)
 #    11-Mar-2005 (CT)  `_style` call in `insert` fixed (`*`)
 #    11-Mar-2005 (CT)  `_style` changed to use `un_nested` (ugly legacy lifter)
+#    11-Mar-2005 (CT)  `_tabs` moved to `styles` (after removing an overly
+#                      paranoid guard in `Style.__getattr__`)
 #    ««revision-date»»···
 #--
 
@@ -92,8 +94,7 @@ class Styles_Cache (object) :
     styles = {}
 
     def __getattr__ (self, name) :
-        if not name.startswith ('_') :
-            return self.styles [name]
+        return self.styles [name]
     # end def __getattr__
 
     def __setattr__ (self, name, value) :
@@ -884,7 +885,7 @@ class Browser (TFL.UI.Mixin) :
         if not styles.has_key  ("active_node") :
             self._setup_styles ()
         self.text.apply_style  (styles.normal)
-        self.text.set_tabs     (* self._tabs)
+        self.text.set_tabs     (* styles._tabs)
     # end def __init__
 
     def _setup_styles (self) :
@@ -1018,7 +1019,7 @@ class Browser (TFL.UI.Mixin) :
             ( "wrap"
             , wrap         = "word"
             )
-        tabs = self.__class__._tabs = []
+        tabs = styles._tabs = []
         for i in range (1, 16) :
             level     = "level" + `i-1`
             head_name = level + ":head"
