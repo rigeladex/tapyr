@@ -78,6 +78,8 @@
 #    18-Mar-2002 (MG) `_Add` added
 #    18-Mar-2002 (CT) `_complain_implicit` changed to write new syntax
 #    28-Mar-2002 (CT) Last remnants of implicit imports removed
+#     3-Sep-2002 (CT) Comment added to `_Module_Space._load` to explain why
+#                     `__import__` is used in the particular way it is
 #    ««revision-date»»···
 #--
 
@@ -92,8 +94,21 @@ class _Module_Space :
     # end def __init__
 
     def _load (self, module_name) :
-        module = __import__ \
-            ("%s.%s" % (self.__name, module_name), {}, {}, (module_name, ))
+        ### >>> help(__import__ )
+        ### __import__(...)
+        ###     __import__(name, globals, locals, fromlist) -> module
+        ###
+        ### Import a module. The globals are only used to determine the
+        ### context; they are not modified. The locals are currently unused.
+        ### The fromlist should be a list of names to emulate ``from name
+        ### import ...'', or an empty list to emulate ``import name''.
+        ###
+        ### When importing a module from a package, note that
+        ### __import__('A.B', ...) returns package A when fromlist is empty,
+        ### but its submodule B when fromlist is not empty.
+        ###
+        q_name = "%s.%s" % (self.__name, module_name)
+        module = __import__ (q_name, {}, {}, (module_name, ))
         setattr (self, module_name, module)
         return module
     # end def _load
