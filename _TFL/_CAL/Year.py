@@ -46,6 +46,8 @@
 #    11-Feb-2004 (MG) `_day_names` added
 #    15-Oct-2004 (CT) Adapted to use `TFL.CAL.Date` instead of
 #                     `lib/python/Date_Time`
+#    26-Oct-2004 (CT) `Year.__new__` added to cache years
+#    26-Oct-2004 (CT) `is_weekday` changed to just delegate to `Date`
 #    ««revision-date»»···
 #--
 
@@ -72,7 +74,7 @@ class Day (TFL.Meta.Object) :
     is_holiday = ""
 
     id         = property (lambda s : s.date.tuple [:3])
-    is_weekday = property (lambda s : s.date.weekday < 5)
+    is_weekday = property (lambda s : s.is_weekday)
     number     = property (lambda s : s.date.day)
 
     def __new__ (cls, cal, date) :
@@ -291,7 +293,18 @@ class Year (TFL.Meta.Object) :
 
     number          = property (lambda s : s.year)
 
-    def __init__ (self, year = None, cal = _Cal_, populate = False) :
+    def __new__ (cls, year = None, cal = _Cal_, populate = False) :
+        Table = cal._years
+        if year is None :
+            year = D ().year
+        if year in Table :
+            return Table [year]
+        self = Table [year] = TFL.Meta.Object.__new__ (cls)
+        self._init_ (year, cal, populate)
+        return self
+    # end def __new__
+
+    def _init_ (self, year, cal, populate) :
         D           = TFL.CAL.Date
         self.year   = year or D ().year
         self.cal    = cal
@@ -319,7 +332,7 @@ class Year (TFL.Meta.Object) :
         self.holidays = CAL.holidays (self)
         if populate :
             self.populate ()
-    # end def __init__
+    # end def _init_
 
     def as_plan (self) :
         return "\n\n".join \

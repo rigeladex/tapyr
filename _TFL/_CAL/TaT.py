@@ -32,6 +32,8 @@
 #                     and changed to use `shifters`
 #    25-Oct-2004 (CT) Doctests added
 #    26-Oct-2004 (CT) `alt_iter` factored
+#    26-Oct-2004 (CT) `TaT.__iter__` changed to handle `None` returned from
+#                     `conditioner` (and doctest for this added)
 #    ««revision-date»»···
 #--
 
@@ -200,6 +202,11 @@ class TaT (TFL.Meta.Object) :
        2004-11-01
        2004-11-29
        2005-01-03
+       >>> start = Date (2004, 10, 26)
+       >>> upper = Date (2004, 11, 3)
+       >>> is_weekday = TaT_Conditioner (lambda d : d.is_weekday))
+       >>> [str (t) for t in TaT (start, Date_Delta (2), upper, is_weekday]
+       ['2004-10-26', '2004-10-28', '2004-11-01', '2004-11-03']
     """
 
     def __init__ (self, start, delta, upper, conditioner = identity) :
@@ -214,11 +221,11 @@ class TaT (TFL.Meta.Object) :
         upper         = self.upper
         conditioner   = self.conditioner
         next          = self.start
-        while True :
+        while next <= upper :
             n = conditioner (next)
-            if n > upper :
-                break
-            yield n
+            if n is not None :
+                if n <= upper :
+                    yield n
             next = next + delta
     # end def __iter__
 

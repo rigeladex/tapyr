@@ -35,6 +35,7 @@
 #    23-Oct-2004 (CT) `_default_format` added
 #    23-Oct-2004 (CT) `_new_object` redefined to handle negative values for
 #                     `day`
+#    26-Oct-2004 (CT) `is_weekday` added
 #    ««revision-date»»···
 #--
 
@@ -121,9 +122,11 @@ class Date (TFL.CAL._DTW_) :
     _init_arg_names  = ("year", "month", "day")
     _timetuple_slice = lambda s, tt : tt [:3]
 
-    year             = property (lambda s : s._body.year)
-    month            = property (lambda s : s._body.month)
     day              = property (lambda s : s._body.day)
+    is_weekday       = property (lambda s : s.weekday < 5)
+    month            = property (lambda s : s._body.month)
+    year             = property (lambda s : s._body.year)
+
     yad              = None ### set for negative `day` arguments
 
     from _TFL._CAL.Delta import Date_Delta as Delta
