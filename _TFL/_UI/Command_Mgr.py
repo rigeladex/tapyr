@@ -130,6 +130,7 @@
 #    14-Feb-2005 (CT) `_element` resurrected
 #    14-Feb-2005 (CT) `_real_index` changed to refuse to deal with numeric
 #                     indices
+#    16-Feb-2005 (MG) `Command_Mgr.bind_interfacers` and friends added
 #    ««revision-date»»···
 #--
 
@@ -413,8 +414,8 @@ class Command_Delegator (Command) :
                 yield self.delegator_precondition
             for a in addressees :
                 try :
-                    p = getattr (a, self.cmd_mgr_name, {}) \
-                        [self.qname].precondition
+                    cmd_mgr = getattr (a, self.cmd_mgr_name, {})
+                    p       = cmd_mgr [self.qname].precondition
                     if p is not None :
                         yield self._delegator (a, p)
                 except KeyError, exc :
@@ -423,6 +424,10 @@ class Command_Delegator (Command) :
                             "  `%s`" % (a, )
                           )
                     raise Precondition_Violation (self, msg)
+                except Exception, exc:
+                    import traceback
+                    traceback.print_exc ()
+                    raise
     # end def _preconditions
 
     def _run (self, * args, ** kw) :
@@ -533,7 +538,7 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
     # end def __str__
 
     def __repr__ (self) :
-        return "<%s `%s' at %s>" % \
+        return "<%s `%s' at 0x%08X>" % \
             (self.__class__.__name__, self.name, id (self))
     # end def __repr__
 
@@ -702,6 +707,8 @@ class Command_Group (_Command_Group_) :
             ) in self._interfacers (if_names, s_index, delta) :
             ifacers [n] = i.add_group (name, index = index, info = info)
             to_do.append  ((_ie, index))
+            if info :
+                self.root._pending_interface_bindings.append ((i, info))
         result  = group_creator (ifacers)
         self._group.append (result)
         self._add_element  (result, s_index, delta)
@@ -830,16 +837,22 @@ class _Precondition_Checker_ (TFL.Meta.Object) :
 class Command_Mgr (Command_Group) :
     """Manage toplevel group of commands of an interactive application"""
 
-    def __init__ (self, AC, change_counter, interfacers, pv_callback = None, name = "", batch_mode = False, form_dict = {}, appl = None) :
-        self.root                = self
-        self.change_counter      = change_counter
-        self.pv_callback         = pv_callback
-        self.batch_mode          = batch_mode
-        self.form_dict           = form_dict
-        self.appl                = appl
-        self.changes             = 0
-        self._precondition_lazy  = {}
-        self._precondition_eager = {}
+    def __init__ (self, AC, change_counter, interfacers, pv_callback = None, name = "", batch_mode = False, form_dict = {}, appl = None, if_names = ()) :
+        self.root                        = self
+        self.change_counter              = change_counter
+        self.pv_callback                 = pv_callback
+        self.batch_mode                  = batch_mode
+        self.form_dict                   = form_dict
+        self.appl                        = appl
+        self.changes                     = 0
+        self._precondition_lazy          = {}
+        self._precondition_eager         = {}
+        self._pending_interface_bindings = []
+        for n in if_names :
+            iname, info = (n.split (":", 1) + [None]) [:2]
+            if info :
+                self._pending_interface_bindings.append \
+                    ((interfacers [iname], info))
         self.__super.__init__ \
             ( AC            = AC
             , name          = name
@@ -898,6 +911,12 @@ class Command_Mgr (Command_Group) :
                 dict [p] = _Precondition_Checker_ (p)
             dict [p].command.append (cmd)
     # end def _add_precondition
+
+    def bind_interfacers (self, widget) :
+        for interfacer, event_name in self.root._pending_interface_bindings :
+            interfacer.bind_to_widget (widget, event_name)
+        self.root._pending_interface_bindings = []
+    # end def bind_interfacers
 
 # end class Command_Mgr
 

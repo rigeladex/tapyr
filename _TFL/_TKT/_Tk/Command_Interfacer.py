@@ -56,6 +56,7 @@
 #     1-Feb-2005 (CT) `set_auto_short_cuts` added
 #     2-Feb-2005 (CT) `CI_Menu.index` changed again
 #    14-Feb-2005 (MG) Smaller bugs fixed
+#    16-Feb-2005 (MG) `bind_to_widget`: parameter `event_name` added
 #    ««revision-date»»···
 #--
 
@@ -283,8 +284,9 @@ class CI_Menu (_CI_Widget_) :
         self.widget.configure (postcommand = callback)
     # end def bind_to_sync
 
-    def bind_to_widget (self, widget) :
-        widget.bind ("<ButtonPress-3>", self.widget.post)
+    def bind_to_widget (self, widget, event_name) :
+        ### use Event_Name/Event_Binder for the event_name <-> event_name
+        widget.bind (event_name, self.widget.post)
     # end def bind_to_widget
 
     def enable_entry (self, name) :

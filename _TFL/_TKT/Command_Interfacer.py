@@ -37,6 +37,7 @@
 #    28-Jan-2005 (CT) `index` added
 #    31-Jan-2005 (CT) `_Test_CI_` added
 #     3-Feb-2005 (CT) `max_cmds_per_group` added
+#    16-Feb-2005 (MG) `bind_to_widget`: parameter `event_name` added
 #    ««revision-date»»···
 #--
 
@@ -138,7 +139,7 @@ class Command_Interfacer (TFL.TKT.Mixin) :
         pass
     # end def bind_to_sync
 
-    def bind_to_widget (self, widget) :
+    def bind_to_widget (self, widget, event_name) :
         """Bind activation of `self` to `widget`.
         """
         pass
