@@ -55,6 +55,7 @@
 #    10-Mar-2005 (RSC) added `show'
 #    10-Mar-2005 (RSC) `show' removed again. Use make_active instead!
 #    15-Mar-2005 (RSC) `lift` parameter added to `apply_style`
+#    15-Mar-2005 (RSC) Note added to docstring of `apply_style`
 #    ««revision-date»»···
 #--
 
@@ -198,6 +199,9 @@ class Text (TFL.TKT.Mixin) :
            plus `delta` to position/mark `tail` (default: `self.eot_pos`).
            Parameter `lift` specifies that this style should have the
            maximum priority.
+           Note: Due to implementation restrictions, lmargin1 and
+           lmargin2 must alway be applied in the same style (this is an
+           implementation restriction of GTK).
         """
         raise NotImplementedError, \
             "%s must define apply_style" % (self.__class__.__name__, )
