@@ -32,6 +32,7 @@
 #    25-Feb-2005 (RSC) Removed bitmaps for which no xbm exists -- Tk
 #                      can't read PNG. Now left one xbm to document
 #                      failing doctest of TGW.
+#    25-Feb-2005 (RSC) Added style-related doctests
 #    ««revision-date»»···
 #--
 
@@ -42,11 +43,20 @@ class Butcon (TFL.TKT.Mixin) :
     """Model simple Button Control widget."""
 
     _interface_test   = """
+        >>> from _TFL._UI.Style import *
         >>> w = Butcon ()
         >>> w.apply_bitmap ('open_node')
         >>> w.apply_bitmap ('closed_node')
         >>> w.apply_bitmap ('circle')
         >>> w.apply_bitmap ('small_circle')
+        >>> blue = Style ("blue", background = "lightblue")
+        >>> w.apply_style (blue)
+        >>> w.push_style  (blue)
+        >>> w.pop_style   ()
+        >>> w.pop_style   ()
+        Traceback (most recent call last):
+        ...
+        IndexError: pop from empty list
     """
 
     def apply_bitmap (self, bitmap) :
