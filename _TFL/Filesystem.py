@@ -151,7 +151,7 @@ class Directory (File) :
     def files (self) :
         """Return all files in `self' matching `self.filter'"""
         all = dircache.listdir (self.full_name)
-        if all != self._all_children :
+        if all != self._all_children or not self._files :
             self._all_children = all
             if callable (self.filter) :
                 F = self.filter
@@ -167,7 +167,7 @@ class Directory (File) :
     def subdirectories (self) :
         """Return all subdirectories of `self'"""
         all = dircache.listdir (self.full_name)
-        if all != self._all_children :
+        if all != self._all_children or not self._subdirs :
             self._all_children = all
             self._subdirs = [ self.File (d, parent = self, filter = self.filter)
                               for d in all
