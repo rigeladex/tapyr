@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    10-Aug-2004 (MG) Creation
+#    11-Aug-2004 (MG) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -235,16 +236,75 @@ typedef struct _test_struct
     ubyte1 field_1;
     int field_2 [2];
   } my_type;
+
+
+>>> d = C.Macro ("define foo", None, "line1", "line2")
+>>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+#define foo  line1 \\
+line2
+
+>>> d = C.Define ("define foo", "", "line1")
+>>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+#define define foo () line1
+
+>>> d = C.Define ("define foo", "arg1", "line1")
+>>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+#define define foo (arg1) line1
+
+>>> d = C.Define ("define foo", "arg1,arg2", "line1", "line2", "line3 long")
+>>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
+#define define foo (arg1,arg2) line1 \\
+line2 \\
+line3 long
+
+>>> i = C.Include ("define.h")
+>>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+#include <define.h>
+>>> i = C.Sys_Include ("define.h")
+>>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+#include <define.h>
+>>> i = C.App_Include ("define.h")
+>>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+#include "define.h"
+
+>>> i = C.Macro_If ( "cond1"
+...                , C.Define ("path", None, "then")
+...                , C.Macro_Elseif
+...                    ( "cond2"
+...                    , C.Macro ("define path", None, "elseif")
+...                    )
+...                , C.Macro_Else (C.Define ("path", None, "else"))
+...                )
+>>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+#if cond1
+  #define path  then
+#elif cond2
+  #define path  elseif
+#else
+  #define path  else
+#endif /* if cond1 */
+
+>>> i = C.Macro_Ifdef ("cond1", C.Define ("path", None, "then"))
+>>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+#ifdef cond1
+  #define path  then
+#endif /* ifdef cond1 */
+
+>>> i = C.Macro_Ifndef ("cond1", C.Define ("path", None, "then"))
+>>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
+#ifndef cond1
+  #define path  then
+#endif /* ifndef cond1 */
+
+>>> b=C.Documentation_Block ("line1", "line2", block_name = "aaa")
+>>> print NL.join ([l.rstrip () for l in b.as_c_code ()])
+/* aaa: */
+/*      line1 */
+/*      line2 */
 """
 
 ### missing tests
-###   - #Define
-###   - #Macro
-###   - #ifdef
-###   - #ifndef
-###   - Sys_Include/App_Include
-###   - #else
-###   - #elseif
+###
 
 import  U_Test
 from   _TFL._SDG._C.import_C import C
