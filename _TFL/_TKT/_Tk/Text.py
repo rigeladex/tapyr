@@ -38,6 +38,8 @@
 #    18-Feb-2005 (CT) `remove_style` added
 #    18-Feb-2005 (CT) `Text_Styler` added and `apply_style` (mostly)
 #                     implemented
+#    19-Feb-2005 (CT) `_tag_map` moved from class to instance (Tk tags are
+#                     specific to widget instances)
 #    ««revision-date»»···
 #--
 
@@ -106,17 +108,17 @@ class _Tk_Text_ (TFL.TKT.Text) :
     eot_pos     = property (lambda s : s.wtk_widget.index (END))
 
     _sty_map    = weakref.WeakKeyDictionary ()
-    _tag_map    = weakref.WeakKeyDictionary ()
-    _tag_no     = 0
 
     def __init__ (self, AC = None, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
-        self.wtk_widget   = self.Widget_Type \
-            ( master  = wc
-            , name    = name
-            , state   = (DISABLED, NORMAL) [bool (editable)]
+        self.wtk_widget = self.Widget_Type \
+            ( master    = wc
+            , name      = name
+            , state     = (DISABLED, NORMAL) [bool (editable)]
             )
-        self._mark_no = 0
+        self._tag_map   = weakref.WeakKeyDictionary ()
+        self._tag_no    = 0
+        self._mark_no   = 0
     # end def __init__
 
     def apply_style (self, style, head = None, tail = None, delta = 0) :
@@ -243,9 +245,9 @@ class _Tk_Text_ (TFL.TKT.Text) :
         result = ()
         if style is not None :
             if style not in self._tag_map :
-                tag = "tag:%s" % (self._tag_no, )
-                self.__class__._tag_no += 1
-                self._tag_map [style] = tag
+                tag                    = "tag:%s" % (self._tag_no, )
+                self._tag_no          += 1
+                self._tag_map [style]  = tag
                 self.wtk_widget.tag_configure \
                     (tag, ** self._styler (style).option_dict)
                 self._apply_style_bindings \
