@@ -38,6 +38,9 @@
 #    21-Sep-2004 (CT) `Look_Ahead_Gen` changed to call `.next` lazily instead
 #                     of (over)-eagerly
 #    26-Oct-2004 (CT) `alt_iter` added
+#     9-Feb-2005 (CED) `Lazy_List` fixed to handle step`ed slices and doctest
+#                      added
+#     9-Feb-2005 (CED) `Fibonacci`, `Primes` added (moved from _YAGNI to here)
 #    ««revision-date»»···
 #--
 
@@ -205,6 +208,37 @@ class Lazy_List :
     """List evalatuing a generator lazily.
 
        Idea stolen from Lib/test/test_generators.py of Python 2.2
+
+       >>> def ones () :
+       ...     while True :
+       ...         yield 1
+       ...
+       >>> ol = Lazy_List (ones ())
+       >>> ol [3]
+       1
+       >>> ol [0]
+       1
+       >>> ol [:7]
+       [1, 1, 1, 1, 1, 1, 1]
+       >>> ol [100:102]
+       [1, 1]
+       >>> def range_5 () :
+       ...     for i in range (5) :
+       ...         yield i
+       ...
+       >>> rl = Lazy_List (range_5 ())
+       >>> rl [3]
+       3
+       >>> try :
+       ...     rl [5]
+       ... except IndexError :
+       ...     print "OK"
+       ...
+       OK
+       >>> rl [::2]
+       [0, 2, 4]
+       >>> rl [-1]
+       4
     """
 
     def __init__ (self, generator) :
@@ -226,7 +260,7 @@ class Lazy_List :
                 self._get (last)
             except StopIteration :
                 pass
-            return self._data [i.start:i.stop]
+            return self._data [i.start:i.stop:i.step]
     # end def __getitem__
 
     def _get (self, last) :
@@ -237,6 +271,54 @@ class Lazy_List :
     # end def _get
 
 # end class Lazy_List
+
+def _fib () :
+    """Generator used to create a lazy evaluating list
+       of Fibonacci numbers
+
+       >>> Fibonacci [0:7]
+       [0, 1, 1, 2, 3, 5, 8]
+       >>> Fibonacci [25]
+       75025
+    """
+    x, y = 0, 1
+    while True :
+        yield x
+        x, y = y, x + y
+# end def _fib
+
+def _prime () :
+    """Generator used to create a lazy evaluating list
+       of Primes
+
+       >>> Primes [0:7]
+       [2, 3, 5, 7, 11, 13, 17]
+       >>> Primes [100]
+       547
+    """
+    yield 2
+    primes = [2, 3]
+    while True :
+        yield primes [-1]
+        candidate = primes [-1] + 2
+        while True :
+            is_prime = True
+            for p in primes :
+                if (candidate % p) == 0 :
+                    is_prime = False
+                    break
+                if (p*p > candidate) :
+                    break
+            if is_prime :
+                primes.append (candidate)
+                break
+            candidate += 2
+# end def _prime
+
+### Lazy evaluating list of Fibonacci numbers
+Fibonacci = Lazy_List (_fib   ())
+### Lazy evaluating list of Primes
+Primes    = Lazy_List (_prime ())
 
 ### unit-test code ############################################################
 
