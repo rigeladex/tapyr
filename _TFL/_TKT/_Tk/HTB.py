@@ -33,6 +33,7 @@
 #     4-Feb-2005 (RSC) renamed ui to model and made it a weakref
 #                      Node and Button now get a TKT.Tk.Node.
 #    17-Feb-2005 (RSC) Button implemented using ButCon, moved from TKT to UI
+#    21-Feb-2005 (RSC) renamed widget -> wtk_widget
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ class Node (TFL.TKT.Mixin) :
         self.__super.__init__ (AC = model.AC)
         self.model   = weakref.proxy (model)
         self.browser = browser
-        self.master  = browser.widget.body
+        self.master  = browser.wtk_widget.body
         if not self.model.parent and self.model.number == 0 :
             self.master.last_key = None
             self.master.bind ("<Motion>",         self.model.activate_mouse)
@@ -102,7 +103,7 @@ class Node (TFL.TKT.Mixin) :
     def _display_button (self) :
         self.master.window_create \
             ( self.model.butt_mark
-            , window = self.model.button.butcon.widget
+            , window = self.model.button.butcon.wtk_widget
             )
     # end def _display_button
 
@@ -282,11 +283,11 @@ class Browser (TFL.TKT.Mixin) :
     """Tk wrapper for Hierarchical browser widget."""
 
     def __init__ (self, master, name = None, state = None, ** kw) :
-        self.widget = _Tk_Browser_ (master, name, state, **kw)
+        self.wtk_widget = _Tk_Browser_ (master, name, state, **kw)
     # end def __init__
 
     def __getattr__ (self, name) :
-        result = getattr (self.widget, name)
+        result = getattr (self.wtk_widget, name)
         setattr (self, name, result)
         return result
     # end def __getattr__

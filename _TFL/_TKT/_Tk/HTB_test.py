@@ -19,7 +19,7 @@ if __name__ == "__main__" :
         return n
 
     tb  = TFL.UI.HTB.Browser (AC, root, 'huhu', state = NORMAL)
-    tb.tkt.widget.pack (expand = YES, fill = BOTH)
+    tb.tkt.wtk_widget.pack (expand = YES, fill = BOTH)
     tb.insert          (INSERT, "**             Test me             **\n")
 
     tn = TFL.UI.HTB.help (tb)
@@ -38,5 +38,5 @@ if __name__ == "__main__" :
     mkchild            (tn,     "s-x")
     mkchild            (tn,     "s-y")
     tn = mknode        (tb,     "n4")
-    tb.tkt.widget.mainloop ()
+    tb.tkt.wtk_widget.mainloop ()
 
