@@ -105,6 +105,10 @@
 #    20-Jun-2004 (CT) `base_name` added to `P_M`
 #    21-Jun-2004 (CT) `base_path` added and semantics of `base_name` changed
 #    22-Jun-2004 (CT) Creation (factored from find_import_closure.py)
+#    22-Jun-2004 (CT) `as_code` changed to package the `pyms` in a list to
+#                     avoid `more than 255 arguments` exception from `new`
+#    22-Jun-2004 (CT) `new` changed to expect list for `pyms` instead of
+#                     rest-arguments
 #    ««revision-date»»···
 #--
 
@@ -204,10 +208,14 @@ class Import_Closure :
               , "( %r"        % (self.root_pym, )
               , ", %r"        % (self.import_path, )
               , ", %r"        % (self.ignore, )
+              , ", ["
               ]
-            + sorted ([", %r" % (m, ) for m in pyps])
-            + sorted ([", %r" % (m, ) for m in pyms])
-            + [")"]
+            + sorted
+              (["%s   %r" % ([" ", ","] [i>0], m) for i,m in enumerate (pyps)])
+            + sorted ([",   %r" % (m, ) for m in pyms])
+            + [ "]"
+              , ")"
+              ]
             )
     # end def as_code
 
@@ -291,7 +299,7 @@ class Import_Closure :
             print name, "doesn't match import pattern"
     # end def _import_root
 
-    def new (cls, root_pym, import_path, ignore, * pyms) :
+    def new (cls, root_pym, import_path, ignore, pyms = ()) :
         result           = cls (import_path = import_path, ignore = ignore)
         result.root_pym  = root_pym
         result._add (root_pym)

@@ -31,6 +31,8 @@
 #    20-Jun-2004 (CT) Creation continued..
 #    21-Jun-2004 (CT) Creation continued....
 #    22-Jun-2004 (CT) Creation (repackaged)
+#    22-Jun-2004 (CT) Code for `-AP_Closure` changed to pass
+#                     `TFL._.Import_Closure.__dict__` to `eval`
 #    ««revision-date»»···
 #--
 
@@ -343,7 +345,8 @@ def main (cmd) :
     ignore      = dict_from_list (cmd.ignore)
     if cmd.AP_Closure :
         assert not cmd.Diff
-        ap_closure = eval (file (cmd.AP_Closure).read ())
+        ap_closure = eval \
+            (file (cmd.AP_Closure).read (), TFL._.Import_Closure.__dict__)
     elif cmd.Diff :
         ap_closure = TFL.Import_Closure \
             ( file_name   = cmd.Diff
@@ -356,7 +359,7 @@ def main (cmd) :
     packager = Plugin_Packager \
         (cmd.pi_root_name, ap_closure, import_path, cmd.target_root, ignore)
     #print packager.target_pkg, packager.target_path
-    if 0 :
+    if 1 :
         for pym in sorted (packager.delta_closure.pym_dict.itervalues ()) :
             print "tkdiff %-80s %s" % (pym.path_name, pym.target_path)
             #print "%-50s --> %s" % (pym.pkg, pym.target_pkg)
