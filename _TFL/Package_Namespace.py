@@ -105,6 +105,7 @@
 #     4-Aug-2004 (MG) `Package_Namespace._Import_Module` added
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    23-Oct-2004 (CT) `_check_clashes` added
+#    28-Oct-2004 (CT) `_Export_Module` changed to honor `_check_clashes`
 #    ««revision-date»»···
 #--
 
@@ -318,7 +319,8 @@ class Package_Namespace :
         module_name, mod = self._Load_Module (_caller_globals ())
         if __debug__ :
             old = self.__dict__.get (module_name, mod)
-            if old is not mod :
+            check_clashes = self._check_clashes and not self.__reload
+            if old is not mod and check_clashes :
                 raise ImportError, ( "ambiguous name %s refers to %s and %s"
                                    ) % (module_name, mod, old)
         self.__dict__  [module_name] = mod
