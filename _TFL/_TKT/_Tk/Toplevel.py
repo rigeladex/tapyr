@@ -17,6 +17,8 @@
 #    10-Mar-2005 (CT)  Use `CTK.C_Toplevel` instead of `CTK.Toplevel`
 #    11-Mar-2005 (CT)  `destroy` added and used
 #    11-Mar-2005 (CT)  `pack` changed to pass on its `kw` arguments
+#    11-Mar-2005 (CT)  `pack` changed to map True/False to values grokable by
+#                      Tk
 #    ««revision-date»»···
 #--
 
@@ -56,8 +58,12 @@ class Toplevel (TFL.TKT.Mixin) :
         self.wtk_widget.destroy ()
     # end def destroy
 
-    def pack (self, widget, ** kw) :
-        widget.pack (** kw)
+    def pack (self, widget, fill = None, ** kw) :
+        if fill == True :
+            fill = BOTH
+        elif fill == False :
+            fill = None
+        widget.pack (fill = fill, ** kw)
     # end def pack
 
     def show (self) :
