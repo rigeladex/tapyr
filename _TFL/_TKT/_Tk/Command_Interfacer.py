@@ -38,6 +38,7 @@
 #    11-Jan-2005 (CT) `CI_Menubar` added
 #    11-Jan-2005 (CT) `CI_Toolbar` and `CI_Toolbar_Category` added
 #    12-Jan-2005 (CT) Factored to `TFL`
+#    12-Jan-2005 (CT) `_CI_Widget_` and `_CI_` used as ancestors
 #    ««revision-date»»···
 #--
 
@@ -48,24 +49,29 @@ from   CTK                  import *
 from   Regexp               import *
 import CTK_Toolbar
 
-_name_clean = Regexp ("[^a-zA-Z_0-9]+")
-
-
 class _CI_ (TFL.TKT.Command_Interfacer) :
 
-    name_clean = _name_clean
+    name_clean = Regexp ("[^a-zA-Z_0-9]+")
+
+# end class _CI_
+
+class _CI_Widget_ (_CI_) :
+
+    widget = None
 
     def __init__ (self, parent, ** kw) :
         self.widget = self.Widget_Type (parent, ** kw)
     # end def __init__
 
     def destroy (self) :
-        self.widget.destroy ()
+        if self.widget is not None :
+            self.widget.destroy ()
+            self.widget = None
     # end def destroy
 
-# end class _CI_Mixin_
+# end class _CI_Widget_
 
-class CI_Menu (_CI_) :
+class CI_Menu (_CI_Widget_) :
     """Implement a menu command interfacer for Tkinter"""
 
     Widget_Type = CTK.Menu
@@ -174,7 +180,7 @@ class CI_Menubar (CI_Menu) :
 
 # end class CI_Menubar
 
-class CI_Toolbar (_CI_) :
+class CI_Toolbar (_CI_Widget_) :
     """Implement a toolbar command interfacer for Tkinter"""
 
     Widget_Type = CTK_Toolbar.Toolbar
@@ -217,9 +223,7 @@ class CI_Toolbar (_CI_) :
 
 # end class CI_Toolbar
 
-class CI_Toolbar_Category (TFL.TKT.Command_Interfacer) :
-
-    name_clean = _name_clean
+class CI_Toolbar_Category (_CI_) :
 
     def __init__ (self, category, widget) :
         self.widget   = widget
