@@ -94,6 +94,9 @@
 #    23-Sep-2004 (CT) `Multi_Line_Formatter.__call__` changed to update
 #                     `indent_anchor` (almost?) correctly
 #    23-Sep-2004 (CT) Debugging statements removed
+#    27-Sep-2004 (CT) Don't set/use `x_forms.front0` and `x_forms.rear0`
+#                     unless format specification contains at least one of
+#                     them
 #    ««revision-date»»···
 #--
 
@@ -276,19 +279,14 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
         x_forms      = self.x_forms
         self.empty   = x_forms.empty   % context
         self.front   = x_forms.front   % context
-        self.front0  = x_forms.front0  % context
         self.rear    = x_forms.rear    % context
-        self.rear0   = x_forms.rear0   % context
         self.sep     = x_forms.sep     % context
         self.sep_eol = x_forms.sep_eol % context
-        if x_forms.front_before_nl is None :
-            self.front_before_nl = None
-        else :
-            self.front_before_nl = x_forms.front_before_nl % context
-        if x_forms.rear_after_nl is None :
-            self.rear_after_nl   = None
-        else :
-            self.rear_after_nl   = x_forms.rear_after_nl   % context
+        for k in "front0", "front_before_nl", "rear0", "rear_after_nl" :
+            v = getattr (x_forms, k)
+            if v is not None :
+                v = v % context
+            setattr (self, k, v)
         return self
     # end def __call__
 
@@ -322,9 +320,11 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
             if i :
                 next_sep = self.sep
         if last is not None :
-            if i == 1 :
+            if i == 1 and self.front0 is not None :
                 yield "".join ((self.front0, last, self.rear0))
             else :
+                if fbnl is not None :
+                    yield fbnl
                 yield "".join ((sep, last, self.rear))
                 if self.rear_after_nl is not None :
                     yield self.rear_after_nl
@@ -426,10 +426,13 @@ class Multi_Line_Formatter (_Formatter_) :
             result.front_before_nl, result.front = result.front.split (nl)
         if nl in result.rear :
             result.rear, result.rear_after_nl    = result.rear.split (nl)
-        if result.front0 is None :
-            result.front0 = result.front
-        if result.rear0 is None :
-            result.rear0  = result.rear
+        if (result.front0 is not None) or (result.rear0 is not None) :
+            if result.front0 is None :
+                result.front0 = "".join \
+                    ((result.front_before_nl or "", result.front))
+            if result.rear0 is None :
+                result.rear0  = "".join \
+                    ((result.rear, result.rear_after_nl or ""))
         return result
     # end def _x_forms
 

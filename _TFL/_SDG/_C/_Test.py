@@ -30,6 +30,7 @@
 #    11-Aug-2004 (MG) Creation continued
 #    13-Aug-2004 (MG) Testcase update (new features in C-document)
 #    23-Sep-2004 (CT) Testcase update (cosmetic fixes in eol-comments)
+#    27-Sep-2004 (CT) Testcase for array with only a single element added
 #    ««revision-date»»···
 #--
 
@@ -200,17 +201,22 @@ struct _my_struct_stand
 ...              , "unsigned long bit_mask    = 42 // mask for value"
 ...              , "unsigned long extend_mask // mask for sign extension"
 ...              )
+>>> a0 = C.Array ("int", "test", 1, init = (0, ))
+>>> print NL.join ([l.rstrip () for l in a0.as_c_code ()])
+int test [1] =
+  { 0 /* [0]                                                                 */
+  };
 >>> a1 = C.Array ("int", "ar", 2, init = (0, 1), static = True)
->>> a2 = C.Array ( "TDFT_Sign_Mask", "fubars", 2
-...              , init = [ dict (bit_mask = 57, extend_mask = 137)
-...                       , dict (bit_mask = 142, extend_mask = -1)
-...                       ]
-...              )
 >>> print NL.join ([l.rstrip () for l in a1.as_c_code ()])
 static int ar [2] =
   { 0 /* [0]                                                                 */
   , 1 /* [1]                                                                 */
   };
+>>> a2 = C.Array ( "TDFT_Sign_Mask", "fubars", 2
+...              , init = [ dict (bit_mask = 57, extend_mask = 137)
+...                       , dict (bit_mask = 142, extend_mask = -1)
+...                       ]
+...              )
 >>> print NL.join ([l.rstrip () for l in a2.as_c_code ()])
 TDFT_Sign_Mask fubars [2] =
   { { 57 /* bit_mask                                                         */
