@@ -131,6 +131,8 @@
 #    14-Feb-2005 (CT) `_real_index` changed to refuse to deal with numeric
 #                     indices
 #    16-Feb-2005 (MG) `Command_Mgr.bind_interfacers` and friends added
+#    17-Feb-2005 (MG) `Command` renamed to `Deaf_Command` and new `Command`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -249,8 +251,10 @@ class _Command_ (TFL.Meta.Object) :
 
 # end class _Command_
 
-class Command (_Command_) :
-    """Model a command of an interactive application"""
+class Deaf_Command (_Command_) :
+    """Model a command of an interactive application which discards
+       arguments passed to `__call__`
+    """
 
     def __init__ (self, name, command, precondition = None, pv_callback = None, _doc = None, batchable = 1, Change_Action = None) :
         self.name          = name
@@ -322,7 +326,7 @@ class Command (_Command_) :
         return self.command (* args, ** kw)
     # end def _run
 
-    def __call__ (self, event = None) :
+    def __call__ (self, event = None, * args, ** kw) :
         return self.run ()
     # end def __call__
 
@@ -337,6 +341,15 @@ class Command (_Command_) :
         else :
             return self.name
     # end def __str__
+
+# end class Deaf_Command
+
+class Command (Deaf_Command) :
+    """Model a command of an interactive application which pass all
+       arguments passed to `__call__` to the callback.
+    """
+
+    __call__ = Deaf_Command.run
 
 # end class Command
 
