@@ -107,8 +107,11 @@ class _Module_Space :
         ### __import__('A.B', ...) returns package A when fromlist is empty,
         ### but its submodule B when fromlist is not empty.
         ###
+        # print "_Module_Space._load: __name      =", self.__name
+        # print "                     module_name =", module_name
         q_name = "%s.%s" % (self.__name, module_name)
         module = __import__ (q_name, {}, {}, (module_name, ))
+        # print "                     module      =", module
         setattr (self, module_name, module)
         return module
     # end def _load
