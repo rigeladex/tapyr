@@ -42,6 +42,13 @@
 #                     callers
 #     1-Jan-2002 (CT) `_formatted` factored
 #     5-Jan-2002 (CT) `EUR` alias added
+#    12-Feb-2002 (CT) Argument `round_to_euro` renamed to `round`
+#    12-Feb-2002 (CT) `rounded` corrected (must reset `cent` values < 50 for
+#                     true values of `round`)
+#    12-Feb-2002 (CT) `rounded_as_target` added
+#    12-Feb-2002 (CT) `__nonzero__` added
+#    13-Feb-2002 (CT) `rounded` corrected to handle negative numbers correctly
+#    13-Feb-2002 (CT) `rounded_as_target` simplified
 #    ««revision-date»»···
 #--
 import re
@@ -88,7 +95,7 @@ class EU_Currency :
                                )
     # end def __str__
 
-    def as_target (self, round_to_euro = 0, target_currency = None) :
+    def as_target (self, round = 0, target_currency = None) :
         target_currency = target_currency or self.target_currency
         if target_currency :
             target_currency = target_currency (0)
@@ -96,43 +103,48 @@ class EU_Currency :
         else :
             target_currency = EU_Currency (0)
             amount          = self.amount
-        (amount, cent) = target_currency.rounded (amount, round_to_euro)
+        (amount, cent) = target_currency.rounded (amount, round)
         return (amount, cent, target_currency)
     # end def as_target
 
-    def as_string (self, round_to_euro = 0) :
+    def rounded_as_target (self) :
+        (amount, cent, target_currency) = self.as_target (round = 1)
+        return target_currency.__class__ (amount)
+    # end def rounded_as_target
+
+    def as_string (self, round = 0) :
         """Return `self.amount' as string representation of
            `self.target_currency' (without currency name).
         """
-        (amount, cent, target_currency) = self.as_target (round_to_euro)
+        (amount, cent, target_currency) = self.as_target (round)
         return self._formatted \
-            (amount, cent, target_currency.decimal_sign, round_to_euro)
+            (amount, cent, target_currency.decimal_sign, round)
     # end def as_string
 
-    def as_string_s (self, round_to_euro = 0) :
+    def as_string_s (self, round = 0) :
         """Return result of `self.as_string ()' with 1000 separators"""
-        (amount, cent, target_currency) = self.as_target (round_to_euro)
+        (amount, cent, target_currency) = self.as_target (round)
         result = self._formatted \
-            (amount, cent, target_currency.decimal_sign, round_to_euro)
+            (amount, cent, target_currency.decimal_sign, round)
         result = sep_1000_pat.sub \
             (r"\g<1>%s" % target_currency.sep_1000, result)
         return result
     # end def as_string_s
 
-    def as_source_s (self, round_to_euro = 0) :
+    def as_source_s (self, round = 0) :
         """Return `self.amount` as string representation of `self.__class__`
            with 1000 separators.
         """
         (amount, cent, target_currency) = \
-                 self.as_target (round_to_euro, self.__class__)
+                 self.as_target (round, self.__class__)
         result = self._formatted \
-            (amount, cent, target_currency.decimal_sign, round_to_euro)
+            (amount, cent, target_currency.decimal_sign, round)
         result = sep_1000_pat.sub \
             (r"\g<1>%s" % target_currency.sep_1000, result)
         return result
     # end def as_source_s
 
-    def rounded (self, amount, round_to_euro = 0) :
+    def rounded (self, amount, round = 0) :
         """Return `amount' rounded to (euro, cent)."""
         euro = int (amount)
         cent = abs (int (((amount - euro) + 0.005) * 100))
@@ -142,8 +154,12 @@ class EU_Currency :
             ### print "%f, %d, %f, %d" % (amount, euro, (amount - euro), cent)
             euro += 1
             cent  = 0
-        if round_to_euro and cent >= 50 :
-            euro += 1
+        if round :
+            if cent >= 50 :
+                if euro >= 0 :
+                    euro += 1
+                else :
+                    euro -= 1
             cent  = 0
         return (euro, cent)
     # end def rounded
@@ -153,8 +169,8 @@ class EU_Currency :
         return "%d%s%02d %s" % (amount, decimal_sign, cent, name)
     # end def formatted
 
-    def _formatted (self, amount, cent, decimal_sign, round_to_euro) :
-        if round_to_euro :
+    def _formatted (self, amount, cent, decimal_sign, round) :
+        if round :
             return "%d"       % (amount, )
         else :
             return "%d%s%02d" % (amount, decimal_sign, cent)
@@ -252,6 +268,10 @@ class EU_Currency :
         self.amount /= rhs
         return self
     # end def __idiv__
+
+    def __nonzero__ (self) :
+        return self.amount != 0.0
+    # end def __nonzero__
 
 # end class EU_Currency
 
