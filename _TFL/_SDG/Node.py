@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Jul-2004 (CT) Creation
+#    26-Jul-2004 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,8 @@ root = Node \
            )
     , name = "R"
     )
-print "\n".join (root.as_repr(base_indent = "  "))
+print "\n".join (root.as_tree (base_indent = "  "))
+print "\n".join (root.as_repr (base_indent = "  "))
 
 """
 
@@ -70,17 +72,26 @@ class Node :
 
     base_indent       = "    "
     init_arg_defaults = dict (name = "")
-    _list_of_formats  = ("repr_format", )
+    _list_of_formats  = ("repr_format", "tree_format")
     repr_format       = """
         %(name)-20.20s
+        >>( %(@_formatted_attrs@)s
+        >>)
         >%(*children*)s
+    """
+    tree_format       = """
+        %(node_type)-20.20s
+        >( %(*children*)s
+        >, %(@_formatted_attrs@)s
+        >)
     """
 
     def __init__ (self, * children, ** kw) :
-        self.parent = None
+        self.parent    = None
+        self.node_type = nt = self.__class__.__name__
         self._init_kw (kw)
         if not self.name :
-            self.name = "__%s_%d" % (self.__class__.__name__, self.id)
+            self.name = "__%s_%d" % (nt, self.id)
         self._reset_children ()
         self.add (* children)
     # end def __init__
@@ -92,20 +103,12 @@ class Node :
     # end def add
 
     def as_repr (self, base_indent = None, gauge = None, head = "") :
-        if base_indent is None :
-            base_indent = self.base_indent
-        recurser = "as_repr"
-        recurse_args = dict \
-            ( base_indent = base_indent
-            , gauge       = gauge
-            , head        = head
-            )
-        context = TFL.Caller.Scope (globs = self.__dict__)
-        for f in self.repr_format :
-            indent = f.indent_level * base_indent
-            for l in f (self, context, head) :
-                yield "%s%s" % (indent, l)
+        return self.formatted (self.repr_format, base_indent, gauge, head)
     # end def as_repr
+
+    def as_tree (self, base_indent = None, gauge = None, head = "") :
+        return self.formatted (self.tree_format, base_indent, gauge, head)
+    # end def as_tree
 
     def destroy (self) :
         for c in self.children :
@@ -113,6 +116,31 @@ class Node :
         self._reset_children ()
         self.parent = None
     # end def destroy
+
+    def formatted (self, format, base_indent = None, gauge = None, head = "") :
+        if base_indent is None :
+            base_indent = self.base_indent
+        recurser = "formatted"
+        recurse_args = dict \
+            ( format      = format
+            , base_indent = base_indent
+            , gauge       = gauge
+            , head        = head
+            )
+        context = TFL.Caller.Scope (globs = self.__dict__)
+        for f in format :
+            indent = f.indent_level * base_indent
+            for l in f (self, context, head) :
+                yield "%s%s" % (indent, l)
+    # end def formatted
+
+    def _formatted_attrs (self, format, base_indent = None, gauge = None, head = "") :
+        for k, v in sorted (self.init_arg_defaults.iteritems ()) :
+            a = getattr (self, k)
+            if a != v :
+                yield "%s%s = %r" % (head, k, a)
+                head = ", "
+    # end def _formatted_attrs
 
     def get_child (self, child_name, transitive = True) :
         """Returns the child named `child_name' or `None' if no child with

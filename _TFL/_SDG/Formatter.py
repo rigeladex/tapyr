@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Jul-2004 (CT) Creation
+#    26-Jul-2004 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ class Multi_Line_Formatter (_Formatter_) :
 
     pattern = Regexp \
         ( r"""%"""
-          r"""\(\* (?P<key> .+) \*\)"""
+          r"""\( (?P<mark> [*@]) (?P<key> .+) (?P=mark) \)"""
           r"""(?P<form> """
               r"""(?P<flags>  [-+ #0]*)"""
               r"""(?P<mfw>    [0-9]*)"""
@@ -108,7 +109,14 @@ class Multi_Line_Formatter (_Formatter_) :
     def _recursive_formatter (self, match) :
         key  = match.group ("key")
         form = match.group ("form")
-        return _Recursive_Formatter_ (key, "%%%s" % (form, ))
+        mark = match.group ("mark")
+        if mark == "*" :
+            rf = _Recursive_Formatter_Attr_
+        elif mark == "@" :
+            rf = _Recursive_Formatter_Method_
+        else :
+            raise ValueError, match.group (0)
+        return rf (key, "%%%s" % (form, ))
     # end def _recursive_formatter
 
 # end class Multi_Line_Formatter
@@ -127,6 +135,10 @@ class _Recursive_Formatter_ (TFL.Meta.Object) :
         return self
     # end def __call__
 
+# end class _Recursive_Formatter_
+
+class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
+
     def __iter__ (self) :
         context  = self.context
         format   = self.format
@@ -137,7 +149,19 @@ class _Recursive_Formatter_ (TFL.Meta.Object) :
                 yield format % y
     # end def __iter__
 
-# end class _Recursive_Formatter_
+# end class _Recursive_Formatter_Attr_
+
+class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
+
+    def __iter__ (self) :
+        context  = self.context
+        format   = self.format
+        rkw      = context.recurse_args
+        for x in getattr (self.node, self.key) (** rkw) :
+            yield format % x
+    # end def __iter__
+
+# end class _Recursive_Formatter_Method_
 
 def Formatter (level, format_line) :
     if Multi_Line_Formatter.pattern.search (format_line) :
