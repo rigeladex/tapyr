@@ -98,8 +98,11 @@
 #    19-Jan-2005 (CT) Today's changes fixed
 #    21-Jan-2005 (MG) `Command.run` fixed to pass the result of the command
 #                     to the caller
+#    25-Jan-2005 (MG) `Command_Delegator` and `Command_Delegator_UB` added
 #    26-Jan-2005 (CT) Call to `Command_Interfacer.add_command` changed from
 #                     `as_check_button` to `state_var`
+#    27-Jan-2005 (CT) `_check_precondition_value` factored and
+#                     changes from 25-Jan-2005 greatly simplified
 #    ««revision-date»»···
 #--
 
@@ -169,8 +172,8 @@ class _Command_ (TFL.Meta.Object) :
                     print str (self), i.__class__, i
     # end def disable
 
-    def formatted_precondition (self) :
-        p = self.precondition
+    def formatted_precondition (self, p = None) :
+        p = p or self.precondition
         if p and p.__doc__ :
             result = self.nam_pat.sub ("`%s'" % self.qname, p.__doc__)
             return result
@@ -258,9 +261,9 @@ class Command (_Command_) :
         try :
             self._check_precondition ()
         except Precondition_Violation :
-            return 0
+            return False
         else :
-            return 1
+            return True
     # end def is_applicable
 
     def _check_precondition (self) :
@@ -268,11 +271,16 @@ class Command (_Command_) :
             msg = "Command %s cannot be used in batch mode" % self.qname
             raise Precondition_Violation, ("batchable", msg)
         p = self.precondition
-        if p and not p () :
-            msg = self.formatted_precondition ()
-            raise Precondition_Violation, (p.__name__, msg)
-        return 1
+        self._check_precondition_value (p, p and not p ())
+        return True
     # end def _check_precondition
+
+    def _check_precondition_value (self, p, has_failed) :
+        if has_failed :
+            msg = self.formatted_precondition (p)
+            raise Precondition_Violation, (p.__name__, msg)
+        return not has_failed
+    # end def _check_precondition_value
 
     def check_precondition (self) :
         try :
@@ -280,7 +288,7 @@ class Command (_Command_) :
         except Precondition_Violation, exc:
             if self.pv_callback :
                 self.pv_callback (exc.precondition, exc.msg)
-                return 0
+                return False
             else :
                 raise
     # end def check_precondition
@@ -312,6 +320,87 @@ class Command (_Command_) :
     # end def __getattr__
 
 # end class Command
+
+class Command_Delegator (Command) :
+    """A Command which delegates the callback and the precondition evaluation
+       to a different command manager.
+
+       Additionally, the command wrapper can have an own precondtion which
+       will be evaluation before the precondtion of the sub command will be
+       evaluated.
+    """
+
+
+    addressees   = None      ### a function which returns all objects which
+                             ### have a command_mgr containing a command with
+                             ### the same name. The precondtion and the
+                             ### callback of these command will be evaluated
+    cmd_mgr_name = "cmd_mgr" ### Name of the attribute holding a reference to
+                             ### the addressee command manager
+
+    def __init__ (self, name, precondition = None, ** kw) :
+        self.__super.__init__ \
+            (name, command = None, precondition = precondition, ** kw)
+    # end def __init__
+
+    def _delegator (self, addressee, fct) :
+        return fct
+    # end def _delegator
+
+    def _run (self, * args, ** kw) :
+        result = []
+        for a in self.addressees () :
+            cmd = getattr (a, self.cmd_mgr_name) [self.qname]
+            result.append (self._delegator (a, cmd._run) (* args, ** kw))
+        return result
+    # end def _run
+
+    def _preconditions (self) :
+        addressees = self.addressees ()
+        if addressees :
+            if self.precondition :
+                yield self.precondition
+            for a in addressees :
+                try :
+                    p = getattr (a, self.cmd_mgr_name, {}) \
+                        [self.qname].precondition
+                    if p is not None :
+                        yield self._delegator (a, p)
+                except KeyError, exc :
+                    msg = ( "This command is not applicable to the current "
+                            "selection.\n"
+                            "  `%s`" % (a, )
+                          )
+                    raise Precondition_Violation (self, msg)
+    # end def _preconditions
+
+    def _check_precondition (self) :
+        result = False ### in case there aren't any addressees
+        for p in self._preconditions () :
+            ### `_check_precondition_value` raises when violated
+            result = self._check_precondition_value (p, not p ())
+        return result
+    # end def _check_precondition
+
+# end class Command_Delegator
+
+class Command_Delegator_UB (Command_Delegator) :
+    """A special variant of the command delegator where the callback and the
+       precondition function of the addressees are unbound methods of the
+       calls of the addressee.
+
+       When the precondition and the callback is called, the addressee will
+       be passed as first parameter (which is the `self` instance in case of
+       method's).
+    """
+
+    def _delegator (self, addressee, fct) :
+        result = lambda * args, ** kw : fct (addressee, * args, ** kw)
+        result.__doc__ = fct.__doc__
+        return result
+    # end def _delegator
+
+# end class Command_Delegator_UB
 
 class _Command_Getattr_ (TFL.Meta.Object) :
 
@@ -565,6 +654,7 @@ class Command_Mgr (Command_Group) :
 
 __all__ = ( "Command_Mgr", "Command_Group", "Command", "_Command_"
           , "Precondition_Violation"
+          , "Command_Delegator", "Command_Delegator_UB"
           )
 
 if __name__ != "__main__" :
