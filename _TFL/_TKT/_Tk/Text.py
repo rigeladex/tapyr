@@ -61,6 +61,7 @@
 #                      of an `image` argument
 #    23-Feb-2005 (CT)  Style handling implemented for `insert_image` and
 #                      `insert_widget`
+#    24-Feb-2005 (CT)  s/bind_tag/tag_bind/
 #    ««revision-date»»···
 #--
 
@@ -294,7 +295,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
                 self.wtk_widget.tag_configure \
                     (tag, ** self._styler (style, self.Tag_Styler).option_dict)
                 self._apply_style_bindings \
-                    (style, lambda e, b : self.wtk_widget.bind_tag (tag, e, b))
+                    (style, lambda e, b : self.wtk_widget.tag_bind (tag, e, b))
             result = (self._tag_map [style])
         return result
     # end def _tag
