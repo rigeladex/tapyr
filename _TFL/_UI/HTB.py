@@ -36,6 +36,14 @@
 #    17-Feb-2005 (RSC) Button implemented using ButCon, moved from TKT to UI
 #    21-Feb-2005 (RSC) Use styles for the button
 #    23-Feb-2005 (RSC) Use TKT.Text, TKT.Tk.HTB is now obsolete
+#    24-Feb-2005 (RSC) Style cache implemented,
+#                      node_enter/leave functions of butcon removed to
+#                      restore old (better) behaviour of original T_Browser,
+#                      "break" replaced with self.TNS.stop_cb_chaining,
+#                      mouse and keyboard events bound,
+#                      cursor key movement corrected,
+#                      some styles corrected to fit old T_Browser
+#                      made text-widget non-editable :-)
 #    ««revision-date»»···
 #--
 
@@ -50,9 +58,30 @@ import sys
 
 callback_style = Style ("callback")
 
-class Styles :
+class Styles_Cache (object) :
     """Used to store module-wide styles."""
-    pass
+    styles = {}
+
+    def __getattr__ (self, name) :
+        if not name.startswith ('_') : 
+            return self.styles [name]
+    # end def __getattr__
+
+    def __setattr__ (self, name, value) :
+        self.styles [name] = value
+    # end def __setattr__
+
+    def __getitem__ (self, name) :
+        return self.styles [name]
+    # end def __getitem__
+
+    __setitem__ = __setattr__
+
+    has_key     = styles.has_key
+
+# end class Styles_Cache
+
+styles = Styles_Cache ()
 
 class Button (TFL.TKT.Mixin) :
 
@@ -91,21 +120,13 @@ class Button (TFL.TKT.Mixin) :
             self.make_leaf ()
         else :
             self.make_non_leaf ()
-        self.butcon.push_style (Styles.normal)
+        self.butcon.push_style (styles.normal)
     # end def __init__
-
-    def node_enter (self, event = None) :
-        self.butcon.push_style (Styles.active_node)
-    # end def node_enter
-
-    def node_leave (self, event = None) :
-        self.butcon.pop_style ()
-    # end def node_leave
 
     def mouse_enter (self, event = None) :
         self.node.mouse_enter (event)
         if not self.is_leaf :
-            self.butcon.push_style (Styles.active_button)
+            self.butcon.push_style (styles.active_button)
     # end def mouse_enter
 
     def mouse_leave (self, event = None) :
@@ -167,7 +188,7 @@ class Button (TFL.TKT.Mixin) :
     # end def close
 
     def ignore (self, event = None) :
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def ignore
 
     def make_leaf (self) :
@@ -237,7 +258,12 @@ class Node (TFL.UI.Mixin) :
             self.level      = parent.level + 1
         for clean, by in self.cleanup :
             self.tag   = clean.sub (by, self.tag)
-        self.bind_tag  = self.tag + "#bind"
+        self.callback  = callback_style \
+            ( callback = dict
+                ( any_enter = self.mouse_enter
+                , any_leave = self.mouse_leave
+                )
+            )
         self.level_tag = "level" + `self.level`
         if browser.node_map.has_key (self.tag) :
             raise Name_Clash, self.tag
@@ -277,12 +303,6 @@ class Node (TFL.UI.Mixin) :
                     )
                 )
             self.text.apply_style (browser_binding_style)
-            self.node_binding_style = callback_style \
-                ( callback = dict
-                    ( any_enter = self.mouse_enter
-                    , any_leave = self.mouse_leave
-                    )
-                )
     # end def __init__
 
     def is_open (self) :
@@ -306,7 +326,6 @@ class Node (TFL.UI.Mixin) :
             self.button.make_non_leaf ()
         if self.tags and not self.button.closed :
             child.insert (self.tail_mark, self.tags)
-            print "child.insert", self.tail_mark, self.text.pos_at (tail_mark)
     # end def _insert_child
 
     def insert (self, mark, * tags) :
@@ -316,8 +335,6 @@ class Node (TFL.UI.Mixin) :
            behaviour of the mark position (that it changes with
            insertions).
         """
-        print "Node.insert: %s: %s/%s" % \
-            (self.bid, mark, self.text.pos_at (mark))
         self.tags = filter (None, (self.tag, ) + tags)
         head = self.text.pos_at (mark)
         # XXXXX FIXME
@@ -334,17 +351,10 @@ class Node (TFL.UI.Mixin) :
         self.body_mark = self.text.mark_at (body, left_gravity = True)
         self.tail_mark = self.text.mark_at (body)
         self.text.apply_style \
-            ( getattr (Styles, self.level_tag + ":head")
+            ( styles [self.level_tag + ":head"]
             , self.head_mark
             , self.text.eol_pos (self.head_mark)
             )
-        for i in "head", "butt", "body", "tail" :
-            m = getattr (self, "%s_mark" % i)
-            print "\t%s: %s/%s " % (i, m, self.text.pos_at (m))
-        print "Node.insert: %s: %s/%s" % \
-            (self.bid, mark, self.text.pos_at (mark))
-        eot = self.text.eot_pos
-        print "eot: %s/%s" % (eot, self.text.pos_at (eot))
     # end def insert
 
     def _insert_button (self) :
@@ -360,8 +370,11 @@ class Node (TFL.UI.Mixin) :
     # end def _insert_button
 
     def _insert (self, index, text, * tags) :
-        tags = filter (None, self.tags + (self.bind_tag, ) + tags)
-        self.browser.insert (index, text, * tags)
+        n = styles ['normal']
+        tags = tuple ([t for t in self.tags + tags if styles.has_key (t)])
+        if not styles.has_key (tags) :
+            styles [tags] = Style (str (tags), n, * [styles [t] for t in tags])
+        self.browser.insert (index, text, self.callback, styles [tags])
     # end def _insert
 
     def _delete (self, head, tail = None) :
@@ -382,7 +395,6 @@ class Node (TFL.UI.Mixin) :
     print_content_head = "    " ### content indent per node   (print_contents)
 
     def _insert_header (self, index) :
-        print "_insert_header"
         self._insert (index, self.name, * self.name_tags)
         if self.header :
             self._insert \
@@ -394,7 +406,6 @@ class Node (TFL.UI.Mixin) :
     # end def _insert_header
 
     def _insert_contents (self, index) :
-        print "_insert_contents"
         if self.contents :
             self._insert \
                 ( index
@@ -407,7 +418,7 @@ class Node (TFL.UI.Mixin) :
     def print_node (self, event = None) :
         node = self._current_node ()
         if node :
-            file_name = self.browser.ask_save_file_name \
+            file_name = self.text.ask_save_file_name \
                 ( defaultextension  = ".txt"
                 , filetypes         = ( ("data files", "*.dat")
                                       , ("text files", "*.txt")
@@ -420,8 +431,7 @@ class Node (TFL.UI.Mixin) :
                 f = open (file_name, "w", -1)
                 node.print_contents (f)
                 f.close ()
-            ### else : node.print_contents ()
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def print_node
 
     def print_contents (self, file = sys.stdout) :
@@ -475,12 +485,12 @@ class Node (TFL.UI.Mixin) :
     def enter (self, event = None) :
         head = self.head_mark
         self.text.apply_style \
-            (Styles.active_node, head, self.text.bol_pos (head, line_delta = 1))
+            (styles.active_node, head, self.text.bol_pos (head, line_delta = 1))
         self.browser.current_node = self
     # end def enter
 
     def leave (self, event = None) :
-        self.text.remove_style (Styles.active_node, self.text.bot_pos)
+        self.text.remove_style (styles.active_node, self.text.bot_pos)
     # end def leave
 
     def _set_cursor (self, index, delta = None) :
@@ -490,12 +500,11 @@ class Node (TFL.UI.Mixin) :
     def mouse_enter (self, event = None) :
         if self.browser.mouse_act :
             self.enter             (event)
-        self.button.node_enter (event)
     # end def mouse_enter
 
     def mouse_leave (self, event = None) :
         self.leave             (event)
-        self.button.node_leave (event)
+    # end def mouse_leave
 
     def set_cursor (self, index) :
         self._set_cursor         (index)
@@ -513,10 +522,10 @@ class Node (TFL.UI.Mixin) :
 
     def ignore (self, event = None) :
         self.browser.mouse_act = 0
-        return "break"
+        return self.TNS.stop_cb_chaining
 # XXXXX FIXME
 #        key    = event.keysym
-#        result = "break"
+#        result = self.TNS.stop_cb_chaining
 #        if key in ("Control_L", "Control_R") : key = "Control"
 #        # print key
 #        if (  (self.master.last_key == "Control" and key in ("c", "C"))
@@ -532,7 +541,7 @@ class Node (TFL.UI.Mixin) :
         if node :
             node.open  (event, transitive)
             node.enter ()
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def expand
 
     def expand_1 (self, event = None) :
@@ -548,7 +557,7 @@ class Node (TFL.UI.Mixin) :
         if node :
             node.close (event, transitive)
             node.enter ()
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def collapse
 
     def collapse_1 (self, event = None) :
@@ -564,7 +573,7 @@ class Node (TFL.UI.Mixin) :
         if node :
             node.text.see (node.head_mark)
             node.enter    ()
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def show_head
 
     def show_tail   (self, event = None) :
@@ -572,13 +581,13 @@ class Node (TFL.UI.Mixin) :
         if node :
             node.text.see (node.tail_mark)
             node.enter    ()
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def show_tail
 
     def _go (self, event, node) :
         self.leave    (event)
-        self._set_cursor \
-            ("%s + %rchars" % (node.model.head_mark, node.model.level + 2))
+        self.text.place_cursor \
+            (self.text.pos_at (node.head_mark, delta = node.level + 2))
         node.enter    (event)
         node.text.see (node.head_mark)
     # end def _go
@@ -598,7 +607,7 @@ class Node (TFL.UI.Mixin) :
                 node._go (event, node.parent)
             else :
                 node.enter ()
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def go_left
 
     def go_right    (self, event = None) :
@@ -611,7 +620,7 @@ class Node (TFL.UI.Mixin) :
                     node.enter ()
             else :
                 node.enter ()
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def go_right
 
     def _go_up_down (self, dir, event = None) :
@@ -622,7 +631,7 @@ class Node (TFL.UI.Mixin) :
             else             : siblings = node.browser.nodes
             n = min  (max (n, 0), len (siblings) - 1)
             node._go (event, siblings [n])
-        return "break"
+        return self.TNS.stop_cb_chaining
     # end def _go_up_down
 
     def destroy (self) :
@@ -712,39 +721,31 @@ class Browser (TFL.UI.Mixin) :
         , wrap      = "wrap long lines"
         )
 
+    file_dialog_title = "Hierarchical browser filename"
+
     def __init__ (self, AC, wc = None, name = None, ** kw) :
         self.__super.__init__ (AC = AC)
         self.name         = name
         self.mouse_act    = 1
         self.current_node = None
-        self.text         = self.TNS.Scrolled_Text \
-            (AC = AC, name = name, wc = wc)
+        self.text              = self.TNS.Scrolled_Text \
+            (AC = AC, name = name, wc = wc, editable = False)
         # delegate some parts from our text:
         self.bot_pos      = self.text.bot_pos
         self.current_pos  = self.text.current_pos
         self.eot_pos      = self.text.eot_pos
-        #self.delete       = self.text.remove
+        self.delete       = self.text.remove
         self.clear ()
-        # XXXX FIXME: This should somehow be given to Text constructor
-        # (maybe it's the name??)
+        # XXXX FIXME:
         # For option lookup we should know our widget class (T_Browser?)
-        file_dialog_title = "Hierarchical browser filename"
 
-        if not hasattr (Styles, "active_node") :
+        if not styles.has_key ("active_node") :
             self._setup_styles ()
     # end def __init__
 
-    # XXXX FIXME: delegate this (but for now need printing)
-    def delete (self, head, tail) :
-        print "head", head, self.text.pos_at (head)
-        print "tail", tail, self.text.pos_at (tail)
-        self.text.remove (head, tail)
-
     def _setup_styles (self) :
-        # XXXXX FIXME:
-        # This should be computed from an option_value in a toolkit
-        # independent way.
-        indent = indent_inc = 23
+        indent            = self.num_opt_val ("indent",     42)
+        indent_inc        = self.num_opt_val ("indent_inc",  0)
         # Colors
         std_bg            = self.option_value \
             ("Background",             "white")
@@ -769,61 +770,67 @@ class Browser (TFL.UI.Mixin) :
 
         # Fonts
         normal_font_family = self.option_value \
-            ("normalFontFamily",  "Sans")
+            ("normalFontFamily",   "Monospace")
         normal_font_style = self.option_value \
-            ("normalFontStyle",   "normal")
+            ("normalFontStyle",    "normal")
         normal_font_size = self.option_value \
-            ("normalFontSize",    "medium")
+            ("normalFontSize",     "medium")
+        normal_font_weight = self.option_value \
+            ("normalFontWeight",   "normal")
         cour_font_family  = self.option_value \
-            ("courierFontFamily", "Monospace")
+            ("courierFontFamily",  "Monospace")
         header_font_family = self.option_value \
-            ("headerFontFamily",   normal_font_family)
+            ("headerFontFamily",   "Sans")
         header_font_size   = self.option_value \
             ("headerFontSize",     normal_font_size)
         header_font_style   = self.option_value \
             ("headerFontStyle",    normal_font_style)
+        header_font_weight  = self.option_value \
+            ("headerFontWeight",   "bold")
         link_font_family  = self.option_value \
-            ("linkFontFamily",    normal_font_family)
+            ("linkFontFamily",     normal_font_family)
         link_font_style   = self.option_value \
-            ("linkFontStyle",     normal_font_style)
+            ("linkFontStyle",      normal_font_style)
         title_font_family = self.option_value \
-            ("titleFontFamily",   "Sans")
+            ("titleFontFamily",    "Sans")
         title_font_size   = self.option_value \
-            ("titleFontSize",     "large")
+            ("titleFontSize",      "large")
+        title_font_weight = self.option_value \
+            ("titleFontWeight",    "bold")
 
-        Styles.active_node = Style \
+        styles.active_node = Style \
             ( "active_node"
             , background  = active_bg
             , foreground  = active_fg
             )
-        Styles.active_button = Style \
+        styles.active_button = Style \
             ( "active_button"
             , background  = butt_bg
             , foreground  = butt_fg
             )
-        Styles.arial      = Style \
+        styles.arial      = Style \
             ( "arial"
-            , font_family = normal_font_family
+            , font_family = "Sans"
             )
-        Styles.center     = Style \
+        styles.center     = Style \
             ( "center"
             , justify     = "center"
             )
-        Styles.courier    = Style \
+        styles.courier    = Style \
             ( "courier"
             , font_family = cour_font_family
             )
-        Styles.found      = Style \
+        styles.found      = Style \
             ( "found"
             , background  = found_bg
             , foreground  = found_fg
             )
         # XXXXX FIXME: Hysterical raisins? why not use found_bg above?
-        Styles.found_bg   = Style \
+        styles.found_bg   = Style \
             ( "found_bg"
             , background  = "gray95"
             )
-        Styles.hyper_link = Style \
+        styles.hyper_link = Style \
             ( "hyper_link"
             , background  = link_bg
             , foreground  = link_fg
@@ -831,38 +838,41 @@ class Browser (TFL.UI.Mixin) :
             , font_style  = link_font_style
             , underline   = "single"
             )
-        Styles.normal     = Style \
+        styles.normal     = Style \
             ( "normal"
             , background  = std_bg
             , foreground  = std_fg
             , font_family = normal_font_family
             , font_size   = normal_font_size
             , font_style  = normal_font_style
+            , font_weight = normal_font_weight
+            , wrap        = "word"
             )
-        Styles.nowrap    = Style \
+        styles.nowrap    = Style \
             ( "nowrap"
             , wrap       = "none"
             )
-        Styles.quote     = Style \
+        styles.quote     = Style \
             ( "quote"
             , rmargin    = indent
             , lmargin1   = indent
             , lmargin2   = indent
             )
-        Styles.rindent   = Style \
+        styles.rindent   = Style \
             ( "rindent"
             , rmargin    = indent
             )
-        Styles.title      = Style \
+        styles.title      = Style \
             ( "title"
             , font_family = title_font_family
             , font_size   = title_font_size
+            , font_weight = title_font_weight
             )
-        Styles.underline = Style \
+        styles.underline = Style \
             ( "underline"
             , underline  = "single"
             )
-        Styles.wrap      = Style \
+        styles.wrap      = Style \
             ( "wrap"
             , wrap       = "word"
             )
@@ -870,41 +880,35 @@ class Browser (TFL.UI.Mixin) :
         for i in range (1, 16) :
             level     = "level" + `i-1`
             head_name = level + ":head"
-            setattr \
-                ( Styles, head_name
-                , Style
-                    ( head_name
-                    , lmargin1    = 0
-                    , lmargin2    = i * indent + indent_inc
-                    , font_family = header_font_family
-                    , font_size   = header_font_size
-                    , font_style  = header_font_style
-                    )
+            styles [head_name] = Style \
+                ( head_name
+                , lmargin1    = 0
+                , lmargin2    = i * indent + indent_inc
+                , font_family = header_font_family
+                , font_size   = header_font_size
+                , font_style  = header_font_style
+                , font_weight = header_font_weight
                 )
-            setattr \
-                ( Styles, level
-                , Style
-                    ( level
-                    , lmargin1  = i * indent
-                    , lmargin2  = i * indent + indent_inc
-                    )
+            styles [level] = Style \
+                ( level
+                , lmargin1  = i * indent
+                , lmargin2  = i * indent + indent_inc
                 )
     # end def _setup_styles
 
-    def insert (self, pos, text, * tags) :
-        print "tags", tags
-        styles = [t for t in tags if hasattr (Styles, t)]
-        print "styles", styles
+    def insert (self, pos, text, * styles) :
+        before = self.text.pos_at (pos)
         self.text.insert (pos, text)
-        after_insert = self.text.eol_pos (pos)
-        for style in styles :
-            self.text.apply_style (getattr (Styles, style), pos, after_insert)
+        after  = self.text.eol_pos (pos)
+        for s in styles :
+            self.text.apply_style (s, before, after)
     # end def insert
 
     def option_value (self, name, default) :
         # XXXXX FIXME: should be defined toolkit independent
         return default
     # end def option_value
+    num_opt_val = option_value
 
     def print_nodes (self, file = None) :
         for n in self.nodes :
@@ -959,11 +963,11 @@ class Browser (TFL.UI.Mixin) :
             (match, self.head_mark, self.tail_mark)
         while pos :
             end = self.text.pos_at (pos, delta = len (match))
-            self.text.apply_style (Styles.found, pos, end)
+            self.text.apply_style (styles.found, pos, end)
             pos = self.text.find (match, end, self.tail_mark)
         if pos1 :
             if apply_found_bg :
-                self.text.apply_style (Styles.found_bg, pos1, self.tail_mark)
+                self.text.apply_style (styles.found_bg, pos1, self.tail_mark)
             self.text.see     (self.model.tail_mark)
             self.text.see     (pos1)
     # end def _find_highlight
@@ -974,7 +978,7 @@ class Browser (TFL.UI.Mixin) :
 
     def find_unhighlight (self, match) :
         """Quick & dirty way is to remove *all* found styles"""
-        self.text.remove_style (Styles.found, self.text.bot_pos)
+        self.text.remove_style (styles.found, self.text.bot_pos)
         # XXXXX FIXME: does the above work? if yes remove following.
 #        m   = self.master
 #        pos = m.search (match, self.model.head_mark, self.model.tail_mark)
