@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Apr-2005 (MG) Creation
+#     5-Apr-2005 (MG) `.png` support added
 #    ««revision-date»»···
 #--
 
@@ -144,6 +145,7 @@ class Image_Mgr (_Image_Mgr_):
 
     Image_class = { ".xbm" : GTK.Image
                   , ".gif" : GTK.Image
+                  , ".png" : GTK.Image
                   }
 
     def __init__ (self, * d) :

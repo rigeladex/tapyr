@@ -28,14 +28,24 @@
 # Revision Dates
 #    28-Mar-2005 (MG) Automated creation
 #     2-Apr-2005 (MG) `__init__` added
+#     5-Apr-2005 (MG) `Styler` and `background` property added
 #    ««revision-date»»···
 #--
 
-from   _TGL._TKT._GTK         import GTK
+from    predicate                import dict_from_list
+from   _TGL                      import TGL
 import _TGL._TKT._GTK.Container
+import _TGL._TKT._GTK.Styler
+import _TGL._TKT._GTK.Text_Buffer
+
+GTK = TGL.TKT.GTK
 
 class Text_View (GTK.Container) :
     """Wrapper for the GTK widget TextView"""
+
+    class Styler (TGL.TKT.GTK.Styler) :
+        Opts    = dict_from_list (("background", ))
+    # end class Styler
 
     GTK_Class        = GTK.gtk.TextView
     __gtk_properties = \
@@ -53,6 +63,7 @@ class Text_View (GTK.Container) :
         , GTK.SG_Property         ("right_margin")
         , GTK.SG_Property         ("tabs")
         , GTK.SG_Property         ("wrap_mode")
+        , GTK.Color_Property      ("background", "modify_base")
         )
 
     def __init__ (self, AC = None, ** kw) :

@@ -31,11 +31,37 @@
 #    31-Mar-2005 (MG) Key binding and new button signals added
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
 #     3-Apr-2005 (MG) First style properties added
+#     5-Apr-2005 (MG) `Color_Property` added and used for `foreground` and
+#                     `background`
+#     5-Apr-2005 (MG) Old style porperties removed
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Object
+
+class Color_Property (GTK.SG_Property) :
+    """A property which set's and get's a color of a widget."""
+
+    def __init__ (self, name, set_fct) :
+        self.__super.__init__ (name, get = self._get, set = self._set)
+        self._attr_name    = "_%s" % (name, )
+        self._set_fct_name = set_fct
+    # end def __init__
+
+    def _get (self, obj) :
+        return getattr (obj, self._attr_name, None)
+    # end def _get
+
+    def _set (self, obj, value) :
+        setattr (obj, self._attr_name, value)
+        if value :
+            value = GTK.gtk.gdk.color_parse (value)
+        getattr (obj.wtk_object, self._set_fct_name) \
+            (GTK.gtk.STATE_NORMAL, value)
+    # end def _set
+
+# end class Color_Property
 
 class Widget (GTK.Object) :
     """Base class for all real GTK widgets"""
@@ -63,10 +89,12 @@ class Widget (GTK.Object) :
         )
 
     _wtk_delegation = GTK.Delegation \
-        ( GTK.Delegator ("show")
-        , GTK.Delegator ("hide")
-        , GTK.Delegator ("show_all")
-        , GTK.Delegator ("hide_all")
+        ( GTK.Delegator  ("show")
+        , GTK.Delegator  ("hide")
+        , GTK.Delegator  ("show_all")
+        , GTK.Delegator  ("hide_all")
+        , Color_Property ("background", "modify_bg")
+        , Color_Property ("foreground", "modify_fg")
         )
 
     def __init__ (self, * args, ** kw) :
@@ -81,31 +109,6 @@ class Widget (GTK.Object) :
         self._button_bindings = {}
     # end def __init__
 
-    ### style properties
-    DEFAULT_STATE = GTK.gtk.STATE_NORMAL
-
-    def _set_color (self, color, fct) :
-        if color :
-            cm    = GTK.gtk.gdk.colormap_get_system ()
-            color = cm.alloc_color                  (color)
-        getattr (self.wtk_object, fct)              (self.DEFAULT_STATE, color)
-    # end def _set_color
-
-    def _get_color (self, what, gc) :
-        return getattr \
-            ( getattr (self.wtk_object.get_style (), gc) [self.DEFAULT_STATE]
-            , what, None
-            )
-    # end def _get_color
-
-    background = property \
-        ( lambda s    : s._get_color ("background", "fg_gc")
-        , lambda s, v : s._set_color (v,            "modify_bg")
-        )
-    foreground = property \
-        ( lambda s    : s._get_color ("foreground", "fg_gc")
-        , lambda s, v : s._set_color (v,            "modify_fg")
-        )
 # end class Widget
 
 import gobject
@@ -120,5 +123,5 @@ for kind in "single", "double", "triple" :
             (event, GTK.gtk.Widget, gobject.SIGNAL_RUN_LAST, bool, (object, ))
 
 if __name__ != "__main__" :
-    GTK._Export ("Widget")
+    GTK._Export ("Widget", "Color_Property")
 ### __END__ TGL.TKT.GTK.Widget

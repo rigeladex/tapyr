@@ -34,13 +34,14 @@
 #     3-Apr-2005 (MG) `insert_image` added
 #     3-Apr-2005 (MG)
 #     3-Apr-2005 (MG) `_tag`: pass `AC` to the tag creation
+#     5-Apr-2005 (MG) `mark_at` changed to allow `name` to be a mark which
+#                     shall be `moved`
+#     5-Apr-2005 (MG) `Styler` removed
 #    ««revision-date»»···
 #--
 
-from    predicate             import dict_from_list
 from   _TGL                   import TGL
 import _TGL._TKT._GTK.Object
-import _TGL._TKT._GTK.Styler
 import _TGL._TKT._GTK.Text_Tag
 import _TGL._TKT.Text
 import  weakref
@@ -55,10 +56,6 @@ gtk = GTK.gtk
 
 class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     """Wrapper for the GTK widget TextBuffer"""
-
-    class Styler (TGL.TKT.GTK.Styler) :
-        Opts    = dict_from_list (("cursor", ))
-    # end class Styler
 
     GTK_Class        = gtk.TextBuffer
     __gtk_properties = \
@@ -183,7 +180,10 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
 
     def mark_at (self, pos, delta = 0, name = None, left_gravity = False) :
         pos = self._move_iter (self._iter_from_pom (pos), delta)
-        return self.wtk_object.create_mark (name, pos, left_gravity)
+        if not isinstance (name, GTK.gtk.TextMark) :
+            return self.wtk_object.create_mark (name, pos, left_gravity)
+        self.wtk_object.move_mark (name, pos)
+        return name
     # end def mark_at
 
     def place_cursor (self, pos_or_mark) :

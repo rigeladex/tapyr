@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Apr-2005 (MG) Creation
+#     5-Apr-2005 (MG) Use `png` instead of `xbm` images
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ class _GTK_Butcon_ (GTK.Event_Box, TGL.TKT.Butcon) :
     # probably be done by framework
     def _get_bitmap (self, bitmap) :
         if not self.bitmaps.has_key (bitmap) :
-            GTK.image_mgr.add (bitmap + '.xbm')
+            GTK.image_mgr.add (bitmap + '.png')
             self.bitmaps [bitmap] = 1
         return GTK.image_mgr [bitmap]
     # end def _get_bitmap

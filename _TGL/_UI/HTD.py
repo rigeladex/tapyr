@@ -33,6 +33,7 @@
 #     1-Apr-2005 (CT) `Styled` factored into a module of its own
 #     2-Apr-2005 (CT) Small fixes
 #     2-Apr-2005 (CT) `id`, `id_tag`, and `id_style` added and used
+#     5-Apr-2005 (MG) Use `mouse_*` events instead of `any_*`
 #    ««revision-date»»···
 #--
 
@@ -222,8 +223,8 @@ class _Node_ (TGL.UI.Mixin) :
     def _tag_callback_dict (self, cb_dict = {}) :
         return dict \
             ( cb_dict
-            , any_enter = self.mouse_enter
-            , any_leave = self.mouse_leave
+            , mouse_enter = self.mouse_enter
+            , mouse_leave = self.mouse_leave
             )
     # end def _tag_callback_dict
 
@@ -257,11 +258,11 @@ class Node_B (_Node_) :
         ignore = self.ignore
         return dict \
             ( cb_dict
-            , click_1   = ignore
-            , click_2   = ignore
-            , click_3   = ignore
-            , any_enter = self.mouse_enter
-            , any_leave = self.mouse_leave
+            , click_1     = ignore
+            , click_2     = ignore
+            , click_3     = ignore
+            , mouse_enter = self.mouse_enter
+            , mouse_leave = self.mouse_leave
             )
     # end def _button_callback_dict
 

@@ -29,6 +29,7 @@
 #    28-Mar-2005 (MG) Automated creation
 #     2-Apr-2005 (MG) `Styler` added
 #     2-Apr-2005 (MG) `_sty_map` removed
+#     5-Apr-2005 (MG) New signals added
 #    ««revision-date»»···
 #--
 
@@ -36,8 +37,15 @@ from    predicate             import dict_from_list
 from   _TGL                   import TGL
 import _TGL._TKT._GTK.Object
 import _TGL._TKT._GTK.Styler
+import  gobject
 
 GTK = TGL.TKT.GTK
+
+for event_name in "enter-notify-event", "leave-notify-event" :
+    gobject.signal_new \
+        ( event_name, GTK.gtk.TextTag, gobject.SIGNAL_RUN_LAST
+        , bool, (object, )
+        )
 
 class Text_Tag (GTK.Object) :
     """Wrapper for the GTK widget TextTag"""
