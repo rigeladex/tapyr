@@ -63,6 +63,8 @@
 #                      Browser. Now retain old "insert" interface in
 #                      Browser (using tags) and provide new _insert
 #                      interface (using styles).
+#    11-Mar-2005 (CT)  `_setup_styles` fixed (same defaults as in old option
+#                      files)
 #    ««revision-date»»···
 #--
 
@@ -872,9 +874,6 @@ class Browser (TFL.UI.Mixin) :
         self.wtk_widget     = self.text.wtk_widget
         self.exposed_widget = self.text.exposed_widget
         self.clear ()
-        # XXXX FIXME:
-        # For option lookup we should know our widget class (T_Browser?)
-
         if not styles.has_key ("active_node") :
             self._setup_styles ()
     # end def __init__
@@ -884,7 +883,7 @@ class Browser (TFL.UI.Mixin) :
         indent_inc         = self.num_opt_val ("indent_inc",  0)
         # Colors
         std_bg             = self.option_value \
-            ("Background",             "white")
+            ("Background",             "lightyellow2")
         std_fg             = self.option_value \
             ("Foreground",             "black")
         link_bg            = self.option_value \
@@ -894,7 +893,7 @@ class Browser (TFL.UI.Mixin) :
         found_fg           = self.option_value \
             ("foundForeground",        "black")
         found_bg           = self.option_value \
-            ("foundBackground",        "deep sky blue")
+            ("foundBackground",        "light sky blue")
         active_bg          = self.option_value \
             ("activeBackground",       "yellow")
         active_fg          = self.option_value \
@@ -903,14 +902,13 @@ class Browser (TFL.UI.Mixin) :
             ("activeButtonBackground", "red")
         butt_fg            = self.option_value \
             ("activeButtonForeground", "yellow")
-
         # Fonts
         normal_font_family = self.option_value \
             ("normalFontFamily",   "Monospace")
         normal_font_style  = self.option_value \
             ("normalFontStyle",    "normal")
         normal_font_size   = self.option_value \
-            ("normalFontSize",     "medium")
+            ("normalFontSize",     "small")
         normal_font_weight = self.option_value \
             ("normalFontWeight",   "normal")
         cour_font_family   = self.option_value \
@@ -922,7 +920,7 @@ class Browser (TFL.UI.Mixin) :
         header_font_style  = self.option_value \
             ("headerFontStyle",    normal_font_style)
         header_font_weight = self.option_value \
-            ("headerFontWeight",   "bold")
+            ("headerFontWeight",   "normal")
         link_font_family   = self.option_value \
             ("linkFontFamily",     normal_font_family)
         link_font_style    = self.option_value \
@@ -930,10 +928,9 @@ class Browser (TFL.UI.Mixin) :
         title_font_family  = self.option_value \
             ("titleFontFamily",    "Sans")
         title_font_size    = self.option_value \
-            ("titleFontSize",      "large")
+            ("titleFontSize",      "xx-large")
         title_font_weight  = self.option_value \
             ("titleFontWeight",    "bold")
-
         styles.active_node = Style \
             ( "active_node"
             , background   = active_bg
@@ -961,7 +958,6 @@ class Browser (TFL.UI.Mixin) :
             , background   = found_bg
             , foreground   = found_fg
             )
-        # XXXXX FIXME: Hysterical raisins? why not use found_bg above?
         styles.found_bg    = Style \
             ( "found_bg"
             , background   = "gray95"
@@ -1013,7 +1009,6 @@ class Browser (TFL.UI.Mixin) :
             ( "wrap"
             , wrap         = "word"
             )
-
         tabs = []
         for i in range (1, 16) :
             level     = "level" + `i-1`
@@ -1034,7 +1029,6 @@ class Browser (TFL.UI.Mixin) :
                 )
             tabs.append (i * indent)
         self.text.set_tabs (* tabs)
-
     # end def _setup_styles
 
     def _insert (self, pos, text, * styles) :
@@ -1192,7 +1186,6 @@ class Browser (TFL.UI.Mixin) :
     # end def clear
 
 # end class Browser
-
 
 def help (browser) :
     """Returns a Node providing help on the usage of Browser `browser'."""
