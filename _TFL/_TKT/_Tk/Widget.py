@@ -38,6 +38,7 @@
 #    24-Feb-2005 (CT)  `busy_cursor` and `normal_cursor` added
 #    24-Feb-2005 (CT)  `__getattr__` for `ask_*` added
 #    24-Feb-2005 (CT)  `__getattr__` changed to delegate to `exposed_widget`
+#     8-Mar-2005 (CT)  `make_active` added
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,14 @@ class Widget (TFL.TKT.Mixin) :
         if gauge :
             gauge.activate ()
     # end def busy_cursor
+
+    def make_active (self) :
+        """Make widget `self` active"""
+        toplevel = self.exposed_widget.winfo_toplevel ()
+        toplevel.deiconify                            ()
+        toplevel.lift                                 ()
+        self.wtk_widget.focus_set                     ()
+    # end def make_active
 
     def normal_cursor (self, * args, ** kw) :
         """Legacy lifter de-activating gauge (ignores all arguments)"""

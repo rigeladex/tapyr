@@ -66,7 +66,7 @@ from   Functor      import Functor
 
 import _TFL._UI
 import _TFL._UI.Mixin
-from _TFL._UI.Style import *
+from   _TFL._UI.Style import *
 
 import sys
 
@@ -1052,8 +1052,9 @@ class Browser (TFL.UI.Mixin) :
         before = self.text.pos_at (pos)
         self.text.insert (pos, text)
         after  = self.text.eol_pos (pos)
-        for s in styles :
-            self.text.apply_style (s, before, after)
+        ### XXX `styles` need processing before passin them on (traditional
+        ###     clients pass tags, here)
+        ### for s in styles : self.text.apply_style (s, before, after)
     # end def insert
 
     def option_value (self, name, default) :
