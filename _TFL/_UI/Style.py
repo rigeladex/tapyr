@@ -36,6 +36,7 @@
 #    21-Feb-2005 (CT)  Fixed style crimes committed on 15-Feb-2005
 #    21-Feb-2005 (CT)  `arrow` added to `_values.mouse_cursor`
 #    22-Feb-2005 (RSC) "wrap", "justify" and margins added to style _names
+#    22-Feb-2005 (RSC) margin names fixed (rmargin{1,2}->lmargin{1,2}).
 #    ««revision-date»»···
 #--
 
@@ -73,10 +74,10 @@ class M_Style (TFL.Meta.M_Data_Class) :
         font_style     = None
         foreground     = None # "red"   , "#FF2F1F"
         justify        = None
-        lmargin        = None
+        lmargin1       = None
+        lmargin2       = None
         mouse_cursor   = None
-        rmargin1       = None
-        rmargin2       = None
+        rmargin        = None
         underline      = None
         wrap           = None
 
