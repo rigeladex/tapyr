@@ -34,6 +34,7 @@
 #    27-Jul-2001 (CT) `Import` changed to support `*`
 #    30-Jul-2001 (CT) `*` import corrected
 #    30-Jul-2001 (CT) `_import_1` and `_import_name` factored
+#    31-Jul-2001 (CT) `From_Import` added (and `_import_symbols` factored)
 #    ««revision-date»»···
 #--
 
@@ -136,41 +137,52 @@ class Package_Namespace :
            `self._name`.
         """
         if not self._seen.has_key ((module_name, symbols)) :
-            pkg = __import__ \
-                ("%s.%s" % (self._name, module_name), _caller_globals ())
-            mod = getattr (pkg, module_name)
-            if len (symbols) == 1 and symbols [0] == "*" :
-                symbols = getattr (mod, "__all__", ())
-                if symbols :
-                    for s in symbols :
-                        try :
-                            self._import_1 (mod, s.__name__, s)
-                        except AttributeError :
-                            self._import_name (mod, s)
-                else :
-                    for s, p in mod.__dict__.items () :
-                        if inspect.getmodule (p) is mod :
-                            self._import_1 (mod, s, p)
-            elif symbols :
-                for s in symbols :
-                    self._import_name (mod, s)
-            else :
-                self.__dict__ [module_name] = mod
+            self.__dict__.update \
+                (self._import_symbols (module_name, * symbols))
             self._seen [(module_name, symbols)] = 1
     # end def Import
 
-    def _import_name (self, mod, name) :
-        p = getattr (mod, name, None)
-        if p is not None :
-            self._import_1 (mod, name, p)
-    # end def _import_name    
+    def From_Import (self, module_name, * symbols) :
+        """Import all `symbols` from module `module_name` of package
+           `self._name` into caller's namespace.
+        """
+        _caller_globals ().update \
+            (self._import_symbols (module_name, * symbols))
+    # end def From_Import
 
-    def _import_1 (self, mod, name, object) :
+    def _import_symbols (self, module_name, * symbols) :
+        result = {}
+        pkg = __import__ \
+            ("%s.%s" % (self._name, module_name), _caller_globals (1))
+        mod = getattr (pkg, module_name)
+        if len (symbols) == 1 and symbols [0] == "*" :
+            symbols = getattr (mod, "__all__", ())
+            if symbols :
+                self._import_names (mod, symbols, result)
+            else :
+                for s, p in mod.__dict__.items () :
+                    if inspect.getmodule (p) is mod :
+                        self._import_1 (mod, s, p, result)
+        elif symbols :
+            self._import_names (mod, symbols, result)
+        else :
+            result [module_name] = mod
+        return result
+    # end def _import_symbols    
+    
+    def _import_names (self, mod, names, result) :
+        for name in names :
+            p = getattr (mod, name, None)
+            if p is not None :
+                self._import_1 (mod, name, p, result)
+    # end def _import_names    
+
+    def _import_1 (self, mod, name, object, result) :
         if __debug__ :
-            if self.__dict__.get (name, object) is not object :
+            if result.get (name, object) is not object :
                 raise ImportError, "%s %s %s" % \
-                                   (name, object, self.__dict__.get (name))
-        self.__dict__ [name] = object
+                                   (name, object, result.get (name))
+        result [name] = object
         try :
             if not hasattr (object, "Module") :
                 object.Module = mod
