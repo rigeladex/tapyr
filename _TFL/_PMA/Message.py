@@ -29,6 +29,13 @@
 #     3-Sep-2004 (CT) Creation
 #     4-Sep-2004 (CT) Creation continued
 #     6-Sep-2004 (CT) `Ascii.sanitized_filename` used in `_filename`
+#    12-Sep-2004 (CT) s/ignore/replace/ in `decode` calls
+#    12-Sep-2004 (CT) `_decoded_header` simplified and made more robust by
+#                     passing `replace` to `decode`
+#    12-Sep-2004 (CT) Exception handler added to `Message.summary` to avoid
+#                     spam mails to raise `LookupError` on `decode`
+#    12-Sep-2004 (CT) Exception handler added to `Message._time`
+#                     (Man, do I hate spammers)
 #    ««revision-date»»···
 #--
 
@@ -106,10 +113,7 @@ class _Message_ (TFL.Meta.Object) :
         result = []
         if header :
             for p, c in Lib.decode_header (header) :
-                if c :
-                    result.append (p.decode (c))
-                else :
-                    result.append (unicode (p))
+                result.append (p.decode (c or "us-ascii", "replace"))
         result = u" ".join (result)
         return result
     # end def _decoded_header
@@ -142,7 +146,7 @@ class _Message_ (TFL.Meta.Object) :
             if lines is not None :
                 charset = self.charset
                 for l in lines :
-                    yield l.decode (charset, "ignore")
+                    yield l.decode (charset, "replace")
     # end def _formatted_body
 
     def _formatted_headers (self, headers = None) :
@@ -259,11 +263,14 @@ class Message (_Message_) :
                 _pl = _pl.get_payload (0)
             body = _pl.get_payload (decode = True) or u""
             if isinstance (body, str) :
-                body = body.decode (self.charset, "ignore")
-                   ### XXX some emails trigger
-                   ### `UnicodeDecodeError: 'ascii' codec can't decode byte 0xe4`
-                   ### without `ignore` argument
-            body = _ws_pat.sub (u" ", body.strip ())
+                try :
+                    body = body.decode (self.charset, "replace")
+                       ### XXX some emails trigger
+                       ### `UnicodeDecodeError: 'ascii' codec can't decode
+                       ### byte 0xe4` without `replace` argument
+                except LookupError :
+                    body = body.decode ("us-ascii", "replace")
+            body = _ws_pat.sub (u" ", body.strip ()) or u"<empty>"
             return format % locals ()
     # end def summary
 
@@ -301,7 +308,10 @@ class Message (_Message_) :
                 if date :
                     parsed = Lib.parsedate_tz (date)
                     if parsed is not None :
-                        return Lib.mktime_tz (parsed)
+                        try :
+                            return Lib.mktime_tz (parsed)
+                        except (OverflowError, ValueError) :
+                            pass
     # end def _time
 
     def __str__ (self) :
