@@ -1,0 +1,319 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
+#
+#++
+# Name
+#    Message
+#
+# Purpose
+#    Model a mail message
+#
+# Revision Dates
+#     3-Sep-2004 (CT) Creation
+#     4-Sep-2004 (CT) Creation continued
+#     6-Sep-2004 (CT) `Ascii.sanitized_filename` used in `_filename`
+#    ««revision-date»»···
+#--
+
+from   _TFL                    import TFL
+from   _TFL._PMA               import Lib
+
+import _TFL.Ascii
+import _TFL._PMA.Mailcap
+import _TFL._Meta.Object
+
+from   Filename                import Filename
+from   Regexp                  import *
+import sos
+import time
+
+_ws_pat = Regexp    (r"\s+")
+now     = time.time ()
+
+class _Message_ (TFL.Meta.Object) :
+
+    label_width      = 8
+
+    charset          = property (lambda s : s._charset ())
+    filename         = property (lambda s : s._filename ())
+    type             = property (lambda s : s.email.get_content_type ())
+
+    def __init__ (self, email, name) :
+        self.email  = email
+        self.name   = name
+        self.parts  = parts = []
+        self.body   = None
+        if email.is_multipart () :
+            i = 1
+            for p in email.get_payload () :
+                if p.get_content_type () == "message/rfc822" :
+                    PT = Message
+                else :
+                    PT = Message_Part
+                p_name = ".".join (filter (None, (name, str (i))))
+                parts.append (PT (p, name = p_name))
+                i += 1
+        else :
+            self.body = email.get_payload (decode = True).strip ()
+    # end def __init__
+
+    def formatted (self, sep_length = 79) :
+        email = self.email
+        if email :
+            if self.body is not None :
+                if isinstance (self, Message) :
+                    for s in ("", "-" * sep_length, "") :
+                        yield s
+                for l in self._formatted_body () :
+                    yield l
+            else :
+                if self.type == "multipart/alternative" :
+                    parts = self.parts [0:1]
+                else :
+                    parts = self.parts
+                for p in parts :
+                    for l in self._formatted_part (p, sep_length) :
+                        yield l
+    # end def formatted
+
+    def _charset (self) :
+        email = self.email
+        if email :
+            result = email.get_charset ()
+            if result is None :
+                result = email.get_param ("charset", "us-ascii")
+            return result
+    # end def _charset
+
+    def _decoded_header (self, header) :
+        result = []
+        if header :
+            for p, c in Lib.decode_header (header) :
+                if c :
+                    result.append (p.decode (c))
+                else :
+                    result.append (unicode (p))
+        result = u" ".join (result)
+        return result
+    # end def _decoded_header
+
+    def _filename (self) :
+        email  = self.email
+        if email :
+            result = email.get_param \
+                ("filename", header = "Content-Disposition")
+            if not result :
+                result = email.get_param ("name")
+            if isinstance (result, tuple) :
+                result = unicode (result [2], result [0] or "us-ascii")
+            return TFL.Ascii.sanitized_filename (self._decoded_header (result))
+    # end def _filename
+
+    def _formatted_body (self) :
+        email = self.email
+        if email :
+            type  = self.type
+            lines = None
+            if type == "text/plain" :
+                lines = self.body.split ("\n")
+            else :
+                cap = TFL.PMA.Mailcap [type]
+                if cap :
+                    lines = cap.as_text (self._temp_body ())
+                for h in self._formatted_headers () :
+                    yield h
+            if lines is not None :
+                charset = self.charset
+                for l in lines :
+                    yield l.decode (charset, "ignore")
+    # end def _formatted_body
+
+    def _formatted_headers (self, headers = None) :
+        email = self.email
+        for n in (headers or self.headers_to_show) :
+            n, h = self._get_header (email, n)
+            if h :
+                yield "%-*s: %s" % \
+                    (self.label_width, n, self._decoded_header (h))
+    # end def _formatted_headers
+
+    def _formatted_part (self, p, sep_length) :
+        yield ""
+        yield ( "%s part %s %s" % ("-" * 4, p.name, "-" * sep_length)
+              ) [:sep_length]
+        for l in p.formatted (sep_length) :
+            yield l
+    # end def _formatted_part
+
+    def _get_header (self, email, name) :
+        if isinstance (name, tuple) :
+            for n in name :
+                result = email [n]
+                if result is not None :
+                    name = n
+                    break
+        else :
+            result = email [name]
+        return name.capitalize (), result
+    # end def _get_header
+
+    def _temp_body (self) :
+        result = Filename \
+            ( sos.tempfile_name ()
+            , (self.filename or "").encode ("us-ascii", "ignore")
+            ).name
+        f = open (result, "w")
+        try :
+            f.write (self.body)
+        finally :
+            f.close ()
+        return result
+    # end def _temp_body
+
+# end class _Message_
+
+class Message_Part (_Message_) :
+    """Model a part of a multi-part MIME message"""
+
+    headers_to_show  = ("content-type", "content-disposition")
+    summary_format   = "%(name)-10s %(type)-20s %(filename)s"
+
+    def __str__ (self) :
+        return self.summary_format % dict \
+            (name = self.name, type = self.type, filename = self.filename)
+    # end def __str__
+
+    def __repr__ (self) :
+        return "%s %s : %s" % \
+            (self.__class__.__name__, self.name, self.type)
+    # end def __repr__
+
+# end class Message_Part
+
+class Message (_Message_) :
+    """Model a mail message"""
+
+    headers_to_show  = \
+        ( ("date", "delivery-date")
+        , ("from", "reply-to", "return-path")
+        , ("to", "envelope-to")
+        , "cc"
+        , "subject"
+        )
+    summary_format   = unicode \
+        ( "%(number)4s %(date)-12.12s %(sender)-20.20s %(subject)-25.25s "
+          "[%(body)-50.50s"
+        )
+
+    date             = property (lambda s : s._date    ())
+    sender           = property (lambda s : s._sender  ())
+    time             = property (lambda s : s._time    ())
+
+    def __init__ (self, email = None, name = None, number = None, mailbox = None, status = None) :
+        if email is None :
+            email    = Lib.Message ()
+        self.__super.__init__ (email, "")
+        self.name    = name
+        self.number  = number
+        self.mailbox = mailbox
+        self.status  = status
+    # end def __init__
+
+    def formatted (self, sep_length = 79) :
+        email = self.email
+        if email :
+            for h in self._formatted_headers () :
+                yield h
+            for l in self.__super.formatted (sep_length) :
+                yield l
+    # end def formatted
+
+    def summary (self, format = None) :
+        email = self.email
+        if email :
+            if format is None :
+                format = self.summary_format
+            number     = self.number or u""
+            date       = self.date   or u""
+            sender     = self._sender () or u""
+            subject    = self._decoded_header (email ["subject"])
+            _pl        = email
+            while _pl.is_multipart () :
+                _pl = _pl.get_payload (0)
+            body = (_pl.get_payload (decode = True) or u""
+                   ).decode (self.charset, "ignore")
+                   ### XXX some emails trigger
+                   ### `UnicodeDecodeError: 'ascii' codec can't decode byte 0xe4`
+                   ### without `ignore` argument
+            body = _ws_pat.sub (u" ", body.strip ())
+            return format % locals ()
+    # end def summary
+
+    def _date (self, treshold = 86400 * 270) :
+        t = self.time
+        if t :
+            if now - t > treshold :
+                format = "%d-%b  %Y"
+            else :
+                format = "%d-%b %H:%M"
+            return time.strftime (format, time.localtime (t))
+    # end def _date
+
+    def _sender (self) :
+        email = self.email
+        if email :
+            sender     = \
+                (  email ["from"]
+                or email ["reply-to"]
+                or email ["return-path"]
+                or email.get_unixfrom ()
+                )
+            if sender :
+                sender = \
+                    (  filter (None, Lib.getaddresses ((sender, )) [0])
+                    or (None, )
+                    ) [0]
+                return self._decoded_header (sender)
+    # end def _sender
+
+    def _time (self) :
+        email = self.email
+        if email :
+            for date in email ["date"], email ["delivery-date"] :
+                if date :
+                    parsed = Lib.parsedate_tz (date)
+                    if parsed is not None :
+                        return Lib.mktime_tz (parsed)
+    # end def _time
+
+    def __str__ (self) :
+        return self.summary ()
+    # end def __str__
+
+    def __repr__ (self) :
+        return "%s %s:%s" % \
+            (self.__class__.__name__, self.mailbox.path, self.name)
+    # end def __repr__
+
+# end class Message
+
+if __name__ != "__main__" :
+    TFL.PMA._Export ("*")
+### __END__ Message
