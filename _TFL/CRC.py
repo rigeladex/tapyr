@@ -24,11 +24,14 @@
 #
 # Purpose
 #    Base class for handling CRC computations, as well as a concrete 32-bit
-#    CRC as defined by CCITT and also mentioned in RFC1662.
+#    CRC implementation using the CCITT CRC32 polynomial. This polynomial
+#    is (e.g.) also used in RFC 1662.
 #
 # Revision Dates
 #    13-Nov-2002 (AGO) Creation
 #    14-Nov-2002 (AGO) `c_code` updated
+#    10-Jan-2003 (AGO) `c_code` fixed
+#    30-Jan-2003 (AGO) Documentation clarified and extended
 #    ««revision-date»»···
 #--
 
@@ -36,8 +39,8 @@ class _TD_CRC_ (object) :
     """Table driven CRC. Base class for all derived CRC classes.
     """
     
-    table       = None
-    mask        = 0
+    table = None
+    mask  = 0
     
     def __init__ (self, start_value = 0) :
         s = "Use a descendent of this class that implements a concrete " \
@@ -105,8 +108,8 @@ class _TD_CRC_ (object) :
         loop = C.While    ("len--")
         node.add ( fct)
         loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
-                   "^ crc_polynome [((crc) ^ (*data++)) & 0xff])"
-                 % cls.mask
+                   "^ %s_polynome [((crc) ^ (*data++)) & 0xff])"
+                 % (cls.mask, name)
                  )
         fct.add  ( loop
                  , "return crc"
@@ -116,9 +119,12 @@ class _TD_CRC_ (object) :
 # end class _TD_CRC_
 
 class CRC32 (_TD_CRC_) :
-    """The 32-bit CRC table from CCITT as used in TTP.OS.CRC and many other
+    """The CCITT 32-bit CRC as used in TTP.OS.CRC and many other
        places within TTTech, primarily in bootloaders, the C2S and TTP-Load.
-       Also see RFC 1662.
+       The `table` is taken from RFC 1662, section C.3 and reflects the
+       generator polynomial (also see appendix A in RFC 1570):
+           x**0  + x**1  + x**2  + x**4  + x**5  + x**7 +  x**8 + x**10 
+         + x**11 + x**12 + x**16 + x**22 + x**23 + x**26 + x**32
 
        >>> import _TFL.CRC as CRC
        >>> c = CRC.CRC32 ()
