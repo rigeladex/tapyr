@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    TOM.TKT.Tk.Command_Interfacer
+#    TFL.TKT.Tk.Command_Interfacer
 #
 # Purpose
 #    Model command interface for Tkinter based GUI
@@ -37,12 +37,12 @@
 #    11-Jan-2005 (CT) `bind_to_widget` added
 #    11-Jan-2005 (CT) `CI_Menubar` added
 #    11-Jan-2005 (CT) `CI_Toolbar` and `CI_Toolbar_Category` added
+#    12-Jan-2005 (CT) Factored to `TFL`
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
-from   _TOM                 import TOM
-import _TOM._TKT.Command_Interfacer
+import _TFL._TKT.Command_Interfacer
 
 from   CTK                  import *
 from   Regexp               import *
@@ -51,7 +51,7 @@ import CTK_Toolbar
 _name_clean = Regexp ("[^a-zA-Z_0-9]+")
 
 
-class _CI_ (TOM.TKT.Command_Interfacer) :
+class _CI_ (TFL.TKT.Command_Interfacer) :
 
     name_clean = _name_clean
 
@@ -217,7 +217,7 @@ class CI_Toolbar (_CI_) :
 
 # end class CI_Toolbar
 
-class CI_Toolbar_Category (TOM.TKT.Command_Interfacer) :
+class CI_Toolbar_Category (TFL.TKT.Command_Interfacer) :
 
     name_clean = _name_clean
 
@@ -277,4 +277,4 @@ class CI_Toolbar_Category (TOM.TKT.Command_Interfacer) :
 
 if __name__ != "__main__" :
     TFL.TKT._Export ("*")
-### __END__ TOM.TKT.Tk.Command_Interfacer
+### __END__ TFL.TKT.Tk.Command_Interfacer
