@@ -46,7 +46,7 @@
 #    10-Jun-2002 (RMA) Short name support
 #    11-Jun-2003 (CT)  s/== None/is None/
 #    11-Jun-2003 (CT)  s/!= None/is not None/
-#    14-Aug-2003 (RMA) Recent changes
+#    14-Aug-2003 (RMA) Added paramter for begin_section
 #    10-Oct-2003 (RMA) Various new methods
 #    ««revision-date»»···
 #--
