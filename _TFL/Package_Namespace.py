@@ -40,6 +40,11 @@
 #                     for classes and functions provided by the package
 #     3-Aug-2001 (CT) `Import_Module` added
 #    16-Aug-2001 (CT) `_import_1` fixed to correctly check for name clashes
+#    19-Aug-2001 (CT) `_import_names` changed to raise `ImportError` if
+#                     necessary 
+#    19-Aug-2001 (CT) `__getattr__` raises `AttributeError` instead of
+#                     `ImportError` for `__*__`
+#    22-Aug-2001 (CT) `transitive` added
 #    ««revision-date»»···
 #--
 
@@ -180,7 +185,7 @@ class Package_Namespace :
         return getattr (self.__modules, module_name)
     # end def Import_Module
     
-    def From_Import (self, module_name, * symbols) :
+    def From_Import (self, module_name, * symbols, ** kw) :
         """Import all `symbols` from module `module_name` of package
            `self.__name` into caller's namespace. A `*` is supported as the
            first element of `symbols` and imports the contents of `__all__`
@@ -193,20 +198,21 @@ class Package_Namespace :
            `import foo as bar`)
         """
         _caller_globals ().update \
-            (self._import_symbols (module_name, 0, * symbols))
+            (self._import_symbols (module_name, 0, * symbols, ** kw))
     # end def From_Import
 
-    def _import_symbols (self, module_name, check_clashes, * symbols) :
-        result = {}
-        mod    = getattr (self.__modules, module_name)
-        star   = None
+    def _import_symbols (self, module_name, check_clashes, * symbols, ** kw) :
+        result     = {}
+        mod        = getattr (self.__modules, module_name)
+        star       = None
+        transitive = kw.get ("transitive")
         if len (symbols) >= 1 and symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
                 self._import_names (mod, all_symbols, result, check_clashes)
             else :
                 for s, p in mod.__dict__.items () :
-                    if _inspect.getmodule (p) is mod :
+                    if transitive or _inspect.getmodule (p) is mod :
                         self._import_1 (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
             star    = 1
@@ -223,9 +229,12 @@ class Package_Namespace :
                 name, as_name = name, name
             else :
                 name, as_name = name
-            p = getattr (mod, name, None)
-            if p is not None :
+            try :
+                p = getattr (mod, name)
                 self._import_1 (mod, name, as_name, p, result, check_clashes)
+            except AttributeError :
+                raise ImportError, ( "cannot import name %s from %s"
+                                   ) % (name, mod.__name__)
     # end def _import_names    
 
     def _import_1 (self, mod, name, as_name, object, result, check_clashes) :
@@ -233,7 +242,7 @@ class Package_Namespace :
             if (   check_clashes
                and self.__dict__.get (name, object) is not object
                ) :
-                raise ImportError, ( "Ambiguous name %s refers to %s and %s"
+                raise ImportError, ( "ambiguous name %s refers to %s and %s"
                                    ) % (name, object, self.__dict__.get (name))
         result [as_name] = object
     # end def _import_1
@@ -242,7 +251,7 @@ class Package_Namespace :
         if not (name.startswith ("__") and name.endswith ("__")) :
             self.Import (name, name)
             return self.__dict__ [name]
-        raise ImportError, "No module named %s.%s" % (self.__name, name)
+        raise AttributeError, name
     # end def __getattr__
 
     def __repr__ (self) :

@@ -29,6 +29,9 @@
 #     5-Feb-2001 (CT) Creation
 #    19-Jul-2001 (CT) Redefinition of `__call__` replaced by aliasing
 #                     `__call__` to `Class`
+#    17-Aug-2001 (CT) Define `__call__` as method instead of assigning it
+#                     to `_Class` inside `__init__` (otherwise, descendent
+#                     classes have a hard time redefining `__call__`)
 #    ««revision-date»»···
 #--
 
@@ -37,7 +40,6 @@ class Class_Proxy :
     
     def __init__ (self, Class) :
         self.__dict__ ["_Class"]   = Class
-        self.__dict__ ["__call__"] = Class
     # end def __init__
     
     def __getattr__ (self, name) :
@@ -46,6 +48,10 @@ class Class_Proxy :
         raise AttributeError, name
     # end def __getattr__
 
+    def __call__ (self, * args, ** kw) :
+        self._Class (* args, ** kw)
+    # end def __call__
+    
     def __hash__ (self) :
         return hash (self._Class)
     # end def __hash__
@@ -73,6 +79,7 @@ class Class_Proxy :
 # end class Class_Proxy
 
 import __builtin__
+
 def isinstance_cp (object, C, isinstance = __builtin__.isinstance) :
     ### print "isinstance", object, C
     ### from caller_globals import caller_info
