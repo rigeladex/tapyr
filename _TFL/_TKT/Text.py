@@ -46,6 +46,7 @@
 #                      added, more needs an app context.
 #    25-Feb-2005 (CT)  Doctests changed to use `_doctest_AC`
 #    25-Feb-2005 (RSC) left_gravity added to doctest with value False
+#    25-Feb-2005 (RSC) added mark_at tests with a mark as parameter
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,8 @@ class Text (TFL.TKT.Mixin) :
         >>> w.append ("Hum", blue)
         >>> hum_p = w.find ("Hum")
         >>> hum_m = w.mark_at (hum_p, left_gravity = False)
+        >>> grmpf = w.mark_at (hum_m, left_gravity = True)
+        >>> grmml = w.mark_at (w.pos_at (hum_m), left_gravity = True)
         >>> w.place_cursor (w.bot_pos)
         >>> w.insert (w.current_pos, "Hi", yell)
         >>> w.insert (w.current_pos, "Ho", delta = 2)
