@@ -148,6 +148,7 @@
 #     4-Mar-2005 (MG) `Command_Delegator`: `delegatee` added
 #    15-Mar-2005 (CT)  `_add_command` changed to set `cmd.AC`
 #    15-Mar-2005 (CT)  `_run` changed to call `AC.ui_state.gauge.deactivate`
+#    16-Mar-2005 (CT)  Argument `force_gauge_deactivate` added to `run`
 #    ««revision-date»»···
 #--
 
@@ -310,13 +311,16 @@ class Command (_Command_) :
 
     def run (self, * args, ** kw) :
         result = None
+        fgd    = kw.get ("force_gauge_deactivate", True)
+        if "force_gauge_deactivate" in kw :
+            del kw ["force_gauge_deactivate"]
         try :
             if self.check_precondition () :
                 try :
                     result = self._run (* args, ** kw)
                 finally :
                     try :
-                        self.AC.ui_state.gauge.deactivate (force = True)
+                        self.AC.ui_state.gauge.deactivate (force = fgd)
                     except KeyboardInterrupt :
                         raise
                     except StandardError :
