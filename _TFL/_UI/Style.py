@@ -35,6 +35,7 @@
 #    17-Feb-2005 (RSC) Added example doctest for callbacks
 #    21-Feb-2005 (CT)  Fixed style crimes committed on 15-Feb-2005
 #    21-Feb-2005 (CT)  `arrow` added to `_values.mouse_cursor`
+#    22-Feb-2005 (RSC) "wrap", "justify" and margins added to style _names
 #    ««revision-date»»···
 #--
 
@@ -71,8 +72,13 @@ class M_Style (TFL.Meta.M_Data_Class) :
         font_size      = None
         font_style     = None
         foreground     = None # "red"   , "#FF2F1F"
+        justify        = None
+        lmargin        = None
         mouse_cursor   = None
+        rmargin1       = None
+        rmargin2       = None
         underline      = None
+        wrap           = None
 
     # end class _names
 
@@ -87,6 +93,8 @@ class M_Style (TFL.Meta.M_Data_Class) :
               )
             )
 
+        justify        = dict_from_list (("center", "left", "right"))
+
         mouse_cursor   = dict_from_list \
             ( ( "arrow", "crosshair", "default", "fleur", "hand"
               , "hourglass", "text", "watch"
@@ -94,6 +102,7 @@ class M_Style (TFL.Meta.M_Data_Class) :
             )
 
         underline      = dict_from_list (("single", "double", "low", "none"))
+        wrap           = dict_from_list (("char", "none", "word"))
 
     # end class _values
 

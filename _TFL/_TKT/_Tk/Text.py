@@ -26,25 +26,26 @@
 #    Model simple text widget for Tkinter based GUI
 #
 # Revision Dates
-#    15-Feb-2005 (CT) Creation
-#    16-Feb-2005 (CT) Creation continued
-#    17-Feb-2005 (CT) `__test__` added and filled with
-#                     `TFL.TKT.Text._interface_test`
-#    17-Feb-2005 (CT) `get` changed to remove the last `\n` (which is created
-#                     by Tk)
-#    17-Feb-2005 (CT) `delta` made optional argument of `pos_at`
-#    17-Feb-2005 (CT) `_line_pos` corrected
-#    17-Feb-2005 (CT) s/widget/wtk_widget/g
-#    18-Feb-2005 (CT) `remove_style` added
-#    18-Feb-2005 (CT) `Text_Styler` added and `apply_style` (mostly)
-#                     implemented
-#    19-Feb-2005 (CT) `_tag_map` moved from class to instance (Tk tags are
-#                     specific to widget instances)
-#    20-Feb-2005 (CT) Small fixes to make `style` work
-#    20-Feb-2005 (CT) `Text_Styler` moved insed `Text` and renamed to `Styler`
-#    20-Feb-2005 (CT) `Widget` factored to handle `style`
-#    21-Feb-2005 (CT) `wtk_widget` set to `widget.body` (and `widget`
-#                     re-introduced to refer to `CTK.C_Text` instance)
+#    15-Feb-2005 (CT)  Creation
+#    16-Feb-2005 (CT)  Creation continued
+#    17-Feb-2005 (CT)  `__test__` added and filled with
+#                      `TFL.TKT.Text._interface_test`
+#    17-Feb-2005 (CT)  `get` changed to remove the last `\n` (which is created
+#                      by Tk)
+#    17-Feb-2005 (CT)  `delta` made optional argument of `pos_at`
+#    17-Feb-2005 (CT)  `_line_pos` corrected
+#    17-Feb-2005 (CT)  s/widget/wtk_widget/g
+#    18-Feb-2005 (CT)  `remove_style` added
+#    18-Feb-2005 (CT)  `Text_Styler` added and `apply_style` (mostly)
+#                      implemented
+#    19-Feb-2005 (CT)  `_tag_map` moved from class to instance (Tk tags are
+#                      specific to widget instances)
+#    20-Feb-2005 (CT)  Small fixes to make `style` work
+#    20-Feb-2005 (CT)  `Text_Styler` moved insed `Text` and renamed to `Styler`
+#    20-Feb-2005 (CT)  `Widget` factored to handle `style`
+#    21-Feb-2005 (CT)  `wtk_widget` set to `widget.body` (and `widget`
+#                      re-introduced to refer to `CTK.C_Text` instance)
+#    22-Feb-2005 (RSC) new tags (justify, wrap, margins) enabled.
 #    ««revision-date»»···
 #--
 
@@ -99,8 +100,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     class Tag_Styler (TFL.TKT.Tk.Styler) :
         Opts    = dict_from_list \
             ( ( "background", "font", "foreground", "underline"
-              ### XXX
-              # "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
+                "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
               )
             )
     # end class Tag_Styler

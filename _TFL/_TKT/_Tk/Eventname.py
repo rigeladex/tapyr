@@ -32,6 +32,7 @@
 #    21-Feb-2005 (RSC) mouse_{enter,leave}, focus_{enter,leave} added
 #    22-Feb-2005 (CT)  s/mouse_/any_/
 #    22-Feb-2005 (CT)  Binding for `focus_enter` and `focus_leave` added
+#    22-Feb-2005 (RSC) mouse_motion, cursor movement and open_ close_ events
 #    ««revision-date»»···
 #--
 
@@ -46,11 +47,20 @@ Eventname = TFL.TKT._Eventname \
     , click_1                  = "<ButtonRelease-1>"
     , click_2                  = "<ButtonRelease-2>"
     , click_3                  = "<ButtonRelease-3>"
+    , close_node_1             = "<Shift-Delete>"
+    , close_node_all           = "<Control-Delete>"
+    , close_node               = "<Delete>"
     , close_window             = "<Control-Key-w>"
     , commit                   = "<Control-Key-Return>"
     , complete                 = "<Alt-i>"
     , continue_scan            = "<B2-Motion>"
     , copy                     = "<Control-Key-c>"
+    , cursor_down              = "<Down>"
+    , cursor_end               = "<End>"
+    , cursor_home              = "<Home>"
+    , cursor_left              = "<Left>"
+    , cursor_right             = "<Right>"
+    , cursor_up                = "<Up>"
     , cut                      = "<Control-Key-x>"
     , double_click_1           = "<Double-Button-1>"
     , double_click_2           = "<Double-Button-2>"
@@ -64,8 +74,12 @@ Eventname = TFL.TKT._Eventname \
     , history_next             = "<Alt-Down>"
     , history_previous         = "<Alt-Up>"
     , make_schedule            = "<F5>"
+    , mouse_motion             = "<Motion>"
     , new                      = "<Control-Key-n>"
     , open                     = "<Control-Key-o>"
+    , open_node_1              = "<Shift-Insert>"
+    , open_node_all            = "<Control-Insert>"
+    , open_node                = "<Insert>"
     , paste                    = "<Control-Key-v>"
     , Print                    = "<Control-Key-p>"
     , redo                     = "<Control-Key-y>"

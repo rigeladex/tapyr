@@ -30,6 +30,7 @@
 #    26-Jan-2005 (CT) Creation
 #    17-Feb-2005 (MG) `double_click_*` added
 #    22-Feb-2005 (CT) Names `any_(enter|leave)` and `focus_(enter|leave)` added
+#    22-Feb-2005 (RSC) mouse_motion, cursor movement and open_ close_ events
 #    ««revision-date»»···
 #--
 
@@ -44,11 +45,20 @@ Eventname = TFL.TKT._Eventname \
     , click_1                  = None
     , click_2                  = None
     , click_3                  = None
+    , close_node_1             = None
+    , close_node_all           = None
+    , close_node               = None
     , close_window             = None
     , commit                   = None
     , complete                 = None
     , continue_scan            = None
     , copy                     = None
+    , cursor_down              = None
+    , cursor_end               = None
+    , cursor_home              = None
+    , cursor_left              = None
+    , cursor_right             = None
+    , cursor_up                = None
     , cut                      = None
     , double_click_1           = None
     , double_click_2           = None
@@ -62,7 +72,11 @@ Eventname = TFL.TKT._Eventname \
     , history_next             = None
     , history_previous         = None
     , make_schedule            = None
+    , mouse_motion             = None
     , new                      = None
+    , open_node_1              = None
+    , open_node_all            = None
+    , open_node                = None
     , open                     = None
     , paste                    = None
     , Print                    = None
