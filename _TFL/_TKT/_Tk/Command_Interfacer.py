@@ -316,8 +316,8 @@ class CI_Toolbar (_CI_Widget_) :
 
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
-        self.widget.add_category (name, index, delta)
-        result = _CI_Toolbar_Group_ (self.AC, name, self)
+        cat    = self.widget.add_category (name, index, delta)
+        result = _CI_Toolbar_Group_ (self.AC, cat, self.widget)
         return result
     # end def add_group
 
@@ -336,8 +336,8 @@ class _CI_Toolbar_Group_ (_CI_) :
 
     def __init__ (self, AC, category, widget) :
         self.__super.__init__ (AC = AC)
-        self.widget   = widget
         self.category = category
+        self.widget   = widget
     # end def __init__
 
     ### command specific methods
@@ -358,7 +358,7 @@ class _CI_Toolbar_Group_ (_CI_) :
         b_name  = self.name_clean.sub ("_", name.lower ())
         im_name = icon or b_name
         return self.widget.add_button \
-            ( category    = self.name
+            ( category    = self.category
             , name        = b_name
             , command     = callback
             , image       = CTK.image_mgr.get (im_name)
