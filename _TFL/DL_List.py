@@ -26,12 +26,13 @@
 #    Doubly linked list
 #
 # Revision Dates
-#    11-Sep-2003 (CT) Creation
-#    12-Sep-2003 (CT) Creation continued
-#    15-Sep-2003 (CT) s/_append/insert/g
-#    15-Sep-2003 (CT) `_new_item` factored
+#    11-Sep-2003 (CT)  Creation
+#    12-Sep-2003 (CT)  Creation continued
+#    15-Sep-2003 (CT)  s/_append/insert/g
+#    15-Sep-2003 (CT)  `_new_item` factored
 #    29-Sep-2003 (CED) `list_of_preds`, `list_of_succs` added
 #     7-Oct-2003 (CT)  `list_of_preds`, `list_of_succs` removed
+#     2-Dec-2003 (CT)  Already commented-out `__getattr__` finally removed
 #    ««revision-date»»···
 #--
 
@@ -88,12 +89,6 @@ class DL_Item (TFL.Meta.Object) :
         self.link_next   (h)
     # end def resplice
 
-#    def __getattr__ (self, name) :
-#        if name.startswith ("__") and name.endswith ("__") :
-#            raise AttributeError, name
-#        return getattr (self.value, name)
-#    # end def __getattr__
-#
     def __nonzero__ (self) :
         return not (self.next is None or self.prev is None)
     # end def __nonzero__
