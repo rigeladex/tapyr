@@ -34,7 +34,7 @@
 #--
 
 from   Formatted_Stream import *
-from   _TFL              import TFL
+from   _TFL             import TFL
 from   NO_List          import NO_List
 from   types            import MethodType, FunctionType
 from   predicate        import un_nested
@@ -359,5 +359,5 @@ class Doc_Node :
 
 # end class Doc_Node
 
-### __END__ TFL/Structured_Document
 TFL._Export ("*")
+### __END__ TFL/Structured_Document
