@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-Mar-2005 (MG) Automated creation
 #     3-Apr-2005 (MG) Creation continued
+#     5-Apr-2005 (MG) `pixbuf` property added
 #    ««revision-date»»···
 #--
 
@@ -51,9 +52,11 @@ class Image (GTK.Misc) :
         , GTK.Property            ("pixmap")
         , GTK.Property            ("stock")
         , GTK.SG_Property         ("storage_type", set = None)
+        , GTK.SG_Property
+            ("pixbuf", set_fct_name = "set_from_pixbuf")
         )
     _wtk_delegation = GTK.Delegation \
-        (load = GTK.Delegator ("set_from_file"))
+        ( load = GTK.Delegator ("set_from_file"))
 
     def __init__ (self, filename = None, ** kw) :
         self.__super.__init__ (** kw)

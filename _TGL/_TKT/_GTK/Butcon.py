@@ -28,6 +28,7 @@
 # Revision Dates
 #     3-Apr-2005 (MG) Creation
 #     5-Apr-2005 (MG) Use `png` instead of `xbm` images
+#     5-Apr-2005 (MG) Adapted to the changes of the `Image_Manager`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ from   _TGL                     import TGL
 import _TGL._TKT
 import _TGL._TKT._GTK.Event_Box ### do we realy need the event box????
 import _TGL._TKT._GTK.Image_Manager
+import _TGL._TKT._GTK.Image
 import _TGL._TKT._GTK.Styler
 import _TGL._TKT.Butcon
 
@@ -67,26 +69,24 @@ class _GTK_Butcon_ (GTK.Event_Box, TGL.TKT.Butcon) :
         # XXXX FIXME: bitmap_mgr add and caching of seen bitmaps should
         # probably be done by framework
         self.bitmaps = {}
-        self._image  = None
-        self.apply_bitmap (bitmap)
+        self._image  = GTK.Image ()
+        self.add                 (self._image)
+        self.apply_bitmap        (bitmap)
     # end def __init__
 
     # XXXX FIXME: bitmap_mgr add and caching of seen bitmaps should
     # probably be done by framework
     def _get_bitmap (self, bitmap) :
-        if not self.bitmaps.has_key (bitmap) :
-            GTK.image_mgr.add (bitmap + '.png')
-            self.bitmaps [bitmap] = 1
-        return GTK.image_mgr [bitmap]
+        if bitmap :
+            if not self.bitmaps.has_key (bitmap) :
+                GTK.image_mgr.add (bitmap + '.png')
+                self.bitmaps [bitmap] = 1
+            return GTK.image_mgr [bitmap]
+        return None
     # end def _get_bitmap
 
     def apply_bitmap (self, bitmap) :
-        if self._image :
-            self.remove                    (self._image)
-        if bitmap :
-            self._image = self._get_bitmap (bitmap)
-            self.add                       (self._image)
-            self._image.show_all           ()
+        self._image.pixbuf = self._get_bitmap (bitmap)
     # end def apply_bitmap
 
 Butcon = _GTK_Butcon_ # end class _GTK_Butcon_

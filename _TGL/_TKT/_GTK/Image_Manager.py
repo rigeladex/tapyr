@@ -28,6 +28,7 @@
 # Revision Dates
 #     3-Apr-2005 (MG) Creation
 #     5-Apr-2005 (MG) `.png` support added
+#     5-Apr-2005 (MG) Store gtk.Pixbuf object's instead of GTK.Image objects
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,7 @@ class _Image_Mgr_ (TFL.Meta.Object) :
        images (.gif)
     """
 
-    Image_class = { ".xbm" : GTK.Image}
+    Image_class = { ".xbm" : gtk.gdk.pixbuf_new_from_file}
 
     def __init__ (self, * d) :
         """Construct a Image_Mgr, looking in directories specified by `d' for
@@ -143,9 +144,9 @@ class Image_Mgr (_Image_Mgr_):
     """Provide management of a collection of bitmaps (.xbm) and images (.gif)
     """
 
-    Image_class = { ".xbm" : GTK.Image
-                  , ".gif" : GTK.Image
-                  , ".png" : GTK.Image
+    Image_class = { ".xbm" : gtk.gdk.pixbuf_new_from_file
+                  , ".gif" : gtk.gdk.pixbuf_new_from_file
+                  , ".png" : gtk.gdk.pixbuf_new_from_file
                   }
 
     def __init__ (self, * d) :
