@@ -53,6 +53,8 @@
 #                      find_highlight/unhighlight moved from Browser->Node
 #    25-Feb-2005 (RSC) `wtk_widget' and `exposed_widget' delegated from
 #                      Browser to its Text
+#     7-Mar-2005 (RSC) Corrected style-handling: Now the "normal" style
+#                      is alway last, butcon also gets correct color.
 #    ««revision-date»»···
 #--
 
@@ -377,6 +379,17 @@ class Node (TFL.UI.Mixin) :
             )
     # end def insert
 
+    def _style (self, * tags) :
+        """Implement style chaching"""
+        tags = [t for t in self.tags + tags if styles.has_key (t)]
+        tags.reverse ()
+        tags.append ('normal')
+        tags = tuple (tags)
+        if not styles.has_key (tags) :
+            styles [tags] = Style (str (tags), * [styles [t] for t in tags])
+        return styles [tags]
+    # end def _style
+
     def _insert_button (self) :
         if not self.button :
             self.button = Button \
@@ -387,14 +400,11 @@ class Node (TFL.UI.Mixin) :
             ( self.butt_mark
             , self.button.butcon
             )
+        self.button.butcon.apply_style (self._style ())
     # end def _insert_button
 
     def _insert (self, index, text, * tags) :
-        n = styles ['normal']
-        tags = tuple ([t for t in self.tags + tags if styles.has_key (t)])
-        if not styles.has_key (tags) :
-            styles [tags] = Style (str (tags), n, * [styles [t] for t in tags])
-        self.browser.insert (index, text, self.callback, styles [tags])
+        self.browser.insert (index, text, self.callback, self._style (* tags))
     # end def _insert
 
     def _delete (self, head, tail = None) :
