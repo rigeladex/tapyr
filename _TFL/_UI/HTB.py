@@ -34,6 +34,7 @@
 #                      see is now only used in tkt.
 #    17-Feb-2005 (RSC) Added auto-delegation to self.tkt for Node
 #    17-Feb-2005 (RSC) Button implemented using ButCon, moved from TKT to UI
+#    21-Feb-2005 (RSC) Use styles for the button
 #    ««revision-date»»···
 #--
 
@@ -42,11 +43,15 @@ from   Regexp       import Regexp
 
 import _TFL._UI
 import _TFL._UI.Mixin
-import _TFL._UI.Style
+from _TFL._UI.Style import *
+
 import sys
 
-busy_cursor   = TFL.UI.Style ('busy_cursor',   mouse_cursor = 'watch')
-normal_cursor = TFL.UI.Style ('normal_cursor', mouse_cursor = 'normal')
+callback_style = Style ("callback")
+
+class Styles :
+    """Used to store module-wide styles."""
+    pass
 
 class Button (TFL.TKT.Mixin) :
 
@@ -63,51 +68,55 @@ class Button (TFL.TKT.Mixin) :
         else       : bitmap = self.clsd_bitmap_name
         self.butcon = self.TNS.Butcon \
             ( self.AC
-            , name        = ":button:" + node.bid
-            , master      = node.browser
-            , bitmap      = bitmap
+            , name   = ":button:" + node.bid
+            , wc     = node.browser
+            , bitmap = bitmap
+            )
+        callback = dict \
+            ( click_1     = self.ignore
+            , click_2     = self.ignore
+            , click_3     = self.ignore
+            , mouse_enter = self.mouse_enter
+            , mouse_leave = self.mouse_leave
+            )
+        self.leaf_style = callback_style (callback = callback)
+        self.open_style = callback_style \
+            (callback = dict (callback, click_1 = self.node.close))
+        self.closed_style = callback_style \
+            ( callback = dict 
+                (callback, click_1 = self.t_open, click_3 = self.t_open_1)
             )
         if is_leaf :
             self.make_leaf ()
         else :
             self.make_non_leaf ()
-#        self.window.bind ("<Enter>", self.mouse_enter)
-#        self.window.bind ("<Leave>", self.mouse_leave)
-#        self.bg = node.master.cget ("background")
-#        self.fg = node.master.cget ("foreground")
+        self.butcon.push_style (Styles.normal)
     # end def __init__
 
     def mouse_enter (self, event = None) :
         if not self.is_leaf :
-            pass
-#            master = self.node.master
-#            self.bg = self.window.cget ("background")
-#            self.fg = self.window.cget ("foreground")
-#            self.window.configure \
-#                ( background  = master.button_bg
-#                , foreground  = master.button_fg
-#                )
+            self.butcon.push_style (Styles.active_button)
         self.node.mouse_enter (event)
     # end def mouse_enter
 
     def mouse_leave (self, event = None) :
         if not self.is_leaf :
-            pass
-#            self.window.configure \
-#                ( background  = self.bg
-#                , foreground  = self.fg
-#                )
+            self.butcon.pop_style ()
         self.node.mouse_leave (event)
     # end def mouse_leave
 
     def busy_cursor (self) :
-        self.butcon.apply_style ('busy_cursor')
-        self.node.browser._busy_cursor   (cursor, self.window)
+        # XXXX FIXME
+        #self.butcon.apply_style ('busy_cursor')
+        #self.node.browser._busy_cursor   (cursor, self.window)
+        pass
     # end def busy_cursor
 
     def normal_cursor (self) :
-        self.butcon.apply_style ('normal_cursor')
-        self.node.browser._normal_cursor (self.window)
+        # XXXX FIXME
+        #self.butcon.apply_style ('normal_cursor')
+        #self.node.browser._normal_cursor (self.window)
+        pass
     # end def normal_cursor
 
     def t_open (self, event = None) :
@@ -138,15 +147,14 @@ class Button (TFL.TKT.Mixin) :
         if self.closed and not self.is_leaf :
             self.closed = 0
             self.butcon.apply_bitmap (bitmap = self.open_bitmap_name)
-#            self.window.bind      ("<ButtonPress-1>", self.node.close)
+            self.butcon.apply_style  (self.open_style)
     # end def open
 
     def close (self, event = None) :
         if (not self.closed) and (not self.is_leaf) :
             self.closed = 1
             self.butcon.apply_bitmap (bitmap = self.clsd_bitmap_name)
-#            self.window.bind      ("<ButtonPress-1>", self.t_open)
-#            self.window.bind      ("<ButtonPress-3>", self.t_open_1)
+            self.butcon.apply_style  (self.closed_style)
     # end def close
 
     def ignore (self, event = None) :
@@ -158,9 +166,7 @@ class Button (TFL.TKT.Mixin) :
             self.is_leaf = 1
             self.closed  = 0
             self.butcon.apply_bitmap (bitmap = self.leaf_bitmap_name)
-#            self.window.bind      ("<ButtonPress-1>", self.ignore)
-#            self.window.bind      ("<ButtonPress-2>", self.ignore)
-#            self.window.bind      ("<ButtonPress-3>", self.ignore)
+            self.butcon.apply_style  (self.leaf_style)
     # end def make_leaf
 
     def make_non_leaf (self) :
@@ -600,7 +606,31 @@ class Browser (TFL.UI.Mixin) :
         self.tkt       = self.TNS.HTB.Browser (master, name, state, **kw)
         self.clear     ()
         self.mouse_act = 1
-    # end def __init__
+        std_bg   = self.option_value ("Background",             "white")
+        std_fg   = self.option_value ("Foreground",             "black")
+        link_bg  = self.option_value ("hyperLinkBackground",    std_bg)
+        link_fg  = self.option_value ("hyperLinkForeground",    "blue")
+        found_fg = self.option_value ("foundForeground",        "black")
+        found_bg = self.option_value ("foundBackground",        "deep sky blue")
+        actve_bg = self.option_value ("activeBackground",       "yellow")
+        actve_fg = self.option_value ("activeForeground",       "red")
+        butt_bg  = self.option_value ("activeButtonBackground", "red")
+        butt_fg  = self.option_value ("activeButtonForeground", "yellow")
+        Styles.normal = \
+            Style ("normal", background = std_bg,   foreground = std_fg)
+        Styles.link   = \
+            Style ("link",   background = link_bg,  foreground = link_fg)
+        Styles.found  = \
+            Style ("found",  background = found_bg, foreground = found_fg)
+        Styles.active = \
+            Style ("active", background = actve_bg, foreground = actve_fg)
+        Styles.active_button = \
+            Style ("button", background = butt_bg,  foreground = butt_fg)
+
+    def option_value (self, name, default) :
+        # XXXXX FIXME: should be defined toolkit independent
+        return default
+    # end def option_value
 
     def print_nodes (self, file = None) :
         for n in self.nodes :
