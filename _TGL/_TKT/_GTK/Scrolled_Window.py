@@ -20,49 +20,34 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Image
+#    TGL.TKT.GTK.Scrolled_Window
 #
 # Purpose
-#    Wrapper for the GTK widget Image
+#    Wrapper for the GTK widget ScrolledWindow
 #
 # Revision Dates
-#    28-Mar-2005 (MG) Automated creation
-#     3-Apr-2005 (MG) Creation continued
+#    03-Apr-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Misc
+import _TGL._TKT._GTK.Bin
 
-class Image (GTK.Misc) :
-    """Wrapper for the GTK widget Image"""
+class Scrolled_Window (GTK.Bin) :
+    """Wrapper for the GTK widget ScrolledWindow"""
 
-    GTK_Class        = GTK.gtk.Image
+    GTK_Class        = GTK.gtk.ScrolledWindow
     __gtk_properties = \
-        ( GTK.Property            ("file", get = None)
-        , GTK.Property            ("icon_name")
-        , GTK.Property            ("icon_set")
-        , GTK.Property            ("icon_size")
-        , GTK.Property            ("image")
-        , GTK.Property            ("mask")
-        , GTK.Property            ("pixbuf")
-        , GTK.Property            ("pixbuf_animation")
-        , GTK.SG_Property         ("pixel_size")
-        , GTK.Property            ("pixmap")
-        , GTK.Property            ("stock")
-        , GTK.SG_Property         ("storage_type", set = None)
+        ( GTK.SG_Object_Property  ("hadjustment")
+        , GTK.Property            ("hscrollbar_policy")
+        , GTK.SG_Property         ("shadow_type")
+        , GTK.SG_Object_Property  ("vadjustment")
+        , GTK.Property            ("vscrollbar_policy")
+        , GTK.Property            ("window_placement")
         )
-    _wtk_delegation = GTK.Delegation \
-        (load = GTK.Delegator ("set_from_file"))
 
-    def __init__ (self, filename = None, ** kw) :
-        self.__super.__init__ (** kw)
-        if filename :
-            self.load (filename)
-    # end def __init__
-
-# end class Image
+# end class Scrolled_Window
 
 if __name__ != "__main__" :
-    GTK._Export ("Image")
-### __END__ TGL.TKT.GTK.Image
+    GTK._Export ("Scrolled_Window")
+### __END__ TGL.TKT.GTK.Scrolled_Window

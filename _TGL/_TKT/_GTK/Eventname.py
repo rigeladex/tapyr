@@ -30,6 +30,7 @@
 #     1-Apr-2005 (CT) Beefed up
 #     2-Apr-2005 (MG) Key names corrected ("<Fx>" -> "Fx", "<Insert>" ->
 #                     "Insert", ...)
+#     3-Apr-2005 (MG) `Combined_Binder._call` typo fixed
 #    ««revision-date»»···
 #--
 
@@ -203,7 +204,7 @@ class Combined_Binder (TFL.Meta.Object) :
         self.binders = binders
     # end def __init__
 
-    def _call (self, method, widget, callback, args, k) :
+    def _call (self, method, widget, callback, args, kw) :
         return \
             [ getattr (binder, method) (widget, callback, args, kw)
                 for binder in self.binders

@@ -31,6 +31,9 @@
 #     2-Apr-2005 (MG) Optional argument `tag` added to `apply_style` and
 #                      `_tag`
 #     2-Apr-2005 (MG) `tags_at` added
+#     3-Apr-2005 (MG) `insert_image` added
+#     3-Apr-2005 (MG)
+#     3-Apr-2005 (MG) `_tag`: pass `AC` to the tag creation
 #    ««revision-date»»···
 #--
 
@@ -44,6 +47,11 @@ import  weakref
 
 GTK = TGL.TKT.GTK
 gtk = GTK.gtk
+
+# TODO: «text»
+# - add events to the Text_Tags
+# - add event distribution code to the Text_View to deleget the events to the
+#   `Text_Tags`
 
 class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     """Wrapper for the GTK widget TextBuffer"""
@@ -159,13 +167,18 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     # end def insert
 
     def insert_image (self, pos_or_mark, image_name, style = None, delta = 0) :
-        raise NotImplementedError, \
-            "%s must define insert_image" % (self.__class__.__name__, )
+        image  = GTK.image_mgr [image_name].get_pixbuf ()
+        start  = self._move_iter (self._iter_from_pom (pos_or_mark), delta)
+        self.wtk_object.insert_pixbuf (start, image)
+        if style :
+            end = self._iter_from_pom (self.current_pos)
+            self.wtk_object.apply_tag \
+                (self._tag (style).wtk_object, start, end)
     # end def insert_image
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
         raise NotImplementedError, \
-            "%s must define insert_widget" % (self.__class__.__name__, )
+            "insert_widget cannot be implemented for a Text-Buffer"
     # end def insert_widget
 
     def mark_at (self, pos, delta = 0, name = None, left_gravity = False) :
@@ -237,7 +250,7 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
         result = None
         if style is not None :
             if style not in self._tag_map :
-                self._tag_map [style]  = tag = GTK.Text_Tag (name)
+                self._tag_map [style]  = tag = GTK.Text_Tag (name, AC = self.AC)
                 tag.apply_style (style)
                 self.tag_table.add (tag.wtk_object)
             result = self._tag_map [style]

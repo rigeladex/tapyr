@@ -27,12 +27,16 @@
 #
 # Revision Dates
 #     2-Apr-2005 (MG) Creation
+#     3-Apr-2005 (MG) `Scrolled_Text` added
+#     3-Apr-2005 (MG) `apply_style` and `insert_widget` fixed
 #    ««revision-date»»···
 #--
 
 from   _TGL                     import TGL
 import _TGL._TKT._GTK.Text_View
 import _TGL._TKT._GTK.Text_Buffer
+import _TGL._TKT._GTK.Text_Tag
+import _TGL._TKT._GTK.Scrolled_Window
 import  pango
 
 GTK = TGL.TKT.GTK
@@ -41,6 +45,22 @@ class _GTK_Text_ (GTK.Text_View) :
     """Text view widget used by UI.HTB und UI.HTD"""
 
     _real_name = "Text"
+
+    Tag_Styler = GTK.Text_Tag.Styler
+
+    def __init__ (self, AC = None, editable = True, wc = None, ** kw) :
+        self.__super.__init__ (AC = AC, ** kw)
+        self.editable = int (editable)
+    # end def __init__
+
+    def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
+        iter   = self._move_iter (self._iter_from_pom (pos_or_mark), delta)
+        anchor = self._buffer.wtk_object.create_child_anchor (iter)
+        self.wtk_object.add_child_at_anchor (widget.wtk_object, anchor)
+        widget.show_all                     ()
+        if style :
+            self._buffer.apply_style (style, iter, delta = 1)
+    # end def insert_widget
 
     def see (self, pos_or_mark) :
         """Adjust view of `self` so that `pos_or_mark` is completely visible.
@@ -59,10 +79,12 @@ class _GTK_Text_ (GTK.Text_View) :
         self.tabs = tab_array
     # end def set_tabs
 
-    #### we must override tis function because we don't want the
+    #### we must override this function because we don't want the
     #### `apply_style` Function from the `Text_View` widget
-    def apply_style (self, * args, ** kw) :
-        return self._buffer.apply_style (* args, ** kw)
+    def apply_style (self, style, head = None, * args, ** kw) :
+        if head is None :
+            return self.__super.apply_style (style)
+        return self._buffer.apply_style (style, head, * args, ** kw)
     # end def apply_style
 
     def __getattr__ (self, name) :
@@ -72,6 +94,32 @@ class _GTK_Text_ (GTK.Text_View) :
     # end def __getattr__
 
 Text = _GTK_Text_ # end class _GTK_Text_
+
+class Scrolled_Text (GTK.Scrolled_Window) :
+    """A scrolled Text widget"""
+
+    def __init__ (self, AC = None, * args, ** kw) :
+        self.__super.__init__   (AC = AC)
+        self._text   = GTK.Text (AC = AC, * args, ** kw)
+        self.add                (self._text)
+    # end def __init__
+
+    #### we must override this function because we don't want the
+    #### `apply_style` Function from the `Text_View` widget
+    def apply_style (self, * args, ** kw) :
+        return self._text.apply_style (* args, ** kw)
+    # end def apply_style
+
+    def __getattr__ (self, name) :
+        if not name.startswith ("__") :
+            try :
+                return getattr (self._text, name)
+            except AttributeError :
+                return self.__super.__getattr__ (name)
+        raise AttributeError, name
+    # end def __getattr__
+
+# end class Scrolled_Text
 
 import _TGL._TKT.Text
 
@@ -94,7 +142,7 @@ gray  = Style ("gray", background = "gray80")
 hand  = Style ("hand", mouse_cursor = "hand")
 defa  = Style ("hand", mouse_cursor = "default")
 fleur = Style ("hand", mouse_cursor = "fleur")
-w = Text (_doctest_AC ())
+w = Scrolled_Text (_doctest_AC ())
 eot = w.eot_pos
 cur = w.current_pos
 w.push_style  (hand)
@@ -126,7 +174,7 @@ GTK.main          ()
 """
 
 if __name__ != "__main__" :
-    GTK._Export ("Text")
+    GTK._Export ("Text", "Scrolled_Text")
 ### __END__ TGL.TKT.GTK.Text
 
 

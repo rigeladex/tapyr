@@ -36,6 +36,7 @@
 #     1-Apr-2005 (MG) `_wtk_delegation` handling changed
 #     2-Apr-2005 (MG) Style handling added
 #     2-Apr-2005 (MG) `_styler`: caching removed (in now done by the `Styler`)
+#     3-Apr-2005 (MG) `_before_styler` corrected
 #    ««revision-date»»···
 #--
 
@@ -337,7 +338,7 @@ class Object (TGL.TKT.Mixin) :
 
     def _before_styler (self, styler) :
         return dict \
-            ([(p, getatt (self, p)) for p in styler.option_dict.iterkeys ()])
+            ([(p, getattr (self, p)) for p in styler.option_dict.iterkeys ()])
     # end def _before_styler
 
     def _styler (self, style, Styler = None) :
@@ -366,6 +367,7 @@ class Object (TGL.TKT.Mixin) :
             result.__name__ = name
             setattr (self, name, result)
             return result
+        print "No Attribute `%s` for `%r`" % (name, self)
         raise AttributeError, name
     # end def __getattr__
 

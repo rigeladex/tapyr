@@ -58,7 +58,7 @@ class Text_View (GTK.Container) :
     def __init__ (self, AC = None, ** kw) :
         if buffer not in kw :
             kw ["buffer"] = GTK.Text_Buffer (AC = AC)
-        ### ew need the `_buffer` reference to prevent that the garbage
+        ### we need the `_buffer` reference to prevent that the garbage
         ### collector destroys the `Text_Buffer`
         self._buffer      = b = kw ["buffer"]
         kw ["buffer"]     = b.wtk_object

@@ -30,6 +30,7 @@
 #    26-Mar-2005 (MG) `_wtk_delegation` and `__init__` added
 #    31-Mar-2005 (MG) Key binding and new button signals added
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
+#     3-Apr-2005 (MG) First style properties added
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,31 @@ class Widget (GTK.Object) :
         self._button_bindings = {}
     # end def __init__
 
+    ### style properties
+    DEFAULT_STATE = GTK.gtk.STATE_NORMAL
+
+    def _set_color (self, color, fct) :
+        if color :
+            cm    = GTK.gtk.gdk.colormap_get_system ()
+            color = cm.alloc_color                  (color)
+        getattr (self.wtk_object, fct)              (self.DEFAULT_STATE, color)
+    # end def _set_color
+
+    def _get_color (self, what, gc) :
+        return getattr \
+            ( getattr (self.wtk_object.get_style (), gc) [self.DEFAULT_STATE]
+            , what, None
+            )
+    # end def _get_color
+
+    background = property \
+        ( lambda s    : s._get_color ("background", "fg_gc")
+        , lambda s, v : s._set_color (v,            "modify_bg")
+        )
+    foreground = property \
+        ( lambda s    : s._get_color ("foreground", "fg_gc")
+        , lambda s, v : s._set_color (v,            "modify_fg")
+        )
 # end class Widget
 
 import gobject
