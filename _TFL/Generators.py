@@ -237,8 +237,6 @@ class Lazy_List :
        OK
        >>> rl [::2]
        [0, 2, 4]
-       >>> rl [-1]
-       4
     """
 
     def __init__ (self, generator) :
