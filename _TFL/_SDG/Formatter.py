@@ -31,6 +31,8 @@
 #    27-Jul-2004 (CT) Creation continued...
 #    28-Jul-2004 (CT) Creation continued....
 #    30-Jul-2004 (CT) Use `TFL.Look_Ahead_Gen` instead of home-grown code
+#     9-Aug-2004 (CT) `_Recursive_Formatter_Node_.__init__` changed to
+#                     discard `None` values
 #    ««revision-date»»···
 #--
 
@@ -160,13 +162,16 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
         rkw      = context.recurse_args
         sep      = ""
         nodes    = getattr (self.node, self.key)
-        if isinstance (nodes, TFL.SDG.Node) :
-            nodes = (nodes, )
-        for x in nodes :
-            for y in getattr (x, recurser) (** rkw) :
-                yield sep + (format % y)
-                sep = ""
-            sep = self.sep
+        if nodes is not None :
+            if isinstance (nodes, TFL.SDG.Node) :
+                nodes = (nodes, )
+            for x in nodes :
+                if x is not None :
+                    meth = getattr (x, recurser)
+                    for y in meth (** rkw) :
+                        yield sep + (format % y)
+                        sep = ""
+                    sep = self.sep
     # end def __iter__
 
 # end class _Recursive_Formatter_Node_
