@@ -17,6 +17,7 @@
 #    26-Sep-2003 (CED) `reset` added
 #     2-Oct-2003 (CED) `epsilon` introduced and used to avoid transient
 #                      rounding errors
+#    23-Oct-2003 (CT)  Small changes to allow cutting of zero-length spans
 #    ««revision-date»»···
 #--
 
@@ -55,10 +56,17 @@ class Timeline_Cut (NDT.Sched2.Span) :
 class Timeline (TFL.Meta.Object) :
     """Timeline for scheduling.
 
+       >>> S = NDT.Sched2.Span
+       >>> S.format = "(%s, %s)"
        >>> tl = Timeline (0, 1000)
        >>> tl.free
        [(0, 1000)]
-       >>> S = NDT.Sched2.Span
+       >>> c = tl.intersection (S (100, 100)) [0] [0]
+       >>> c.prepare_cut_l (0)
+       (100, 100)
+       >>> tl.cut (c)
+       >>> tl.free
+       [(0, 1000)]
        >>> c = tl.intersection (S (100, 300)) [0] [0]
        >>> c.prepare_cut_l (50)
        (100, 150)
@@ -115,7 +123,7 @@ class Timeline (TFL.Meta.Object) :
         size = 0
         for i, f in enumerate (self.free) :
             cut = f.intersection (span)
-            if cut :
+            if cut or (cut.length == span.length == 0) :
                 free.append (Timeline_Cut (self, i, cut))
                 size += cut.length
         return free, size
@@ -128,18 +136,19 @@ class Timeline (TFL.Meta.Object) :
            interleave calls to `intersection` with multiple calls to `cut`.
         """
         for p in dusort (pieces, lambda p : - p.index) :
-            f = self.free [p.index]
-            if abs (f.lower - p.to_cut.lower) < self.epsilon :
-                f.lower = p.to_cut.upper
-            elif abs (f.upper - p.to_cut.upper) < self.epsilon :
-                f.upper = p.to_cut.lower
-            else :
-                head = NDT.Sched2.Span (f.lower, p.to_cut.lower)
-                tail = NDT.Sched2.Span (p.to_cut.upper, f.upper)
-                assert head and tail, "head = %s, tail = %s" % (head, tail)
-                self.free [p.index : p.index + 1] = [head, tail]
-            if not f :
-                del self.free [p.index]
+            if p.to_cut :
+                f = self.free [p.index]
+                if abs (f.lower - p.to_cut.lower) < self.epsilon :
+                    f.lower = p.to_cut.upper
+                elif abs (f.upper - p.to_cut.upper) < self.epsilon :
+                    f.upper = p.to_cut.lower
+                else :
+                    head = NDT.Sched2.Span (f.lower, p.to_cut.lower)
+                    tail = NDT.Sched2.Span (p.to_cut.upper, f.upper)
+                    assert head and tail, "head = %s, tail = %s" % (head, tail)
+                    self.free [p.index : p.index + 1] = [head, tail]
+                if not f :
+                    del self.free [p.index]
     # end def cut
 
     length = property (lambda s : sum ([f.length for f in s.free], 0))
