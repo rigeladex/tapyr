@@ -29,6 +29,7 @@
 #    26-Sep-2001 (MG) Moved into package `TFL`
 #    29-Jan-2002 (MG) `get_childrens` added
 #    28-Feb-2002 (CT) Use `TFL.d_dict` instead of `D_Dict`
+#    12-Apr-2002 (CT) Use `StandardError` instead of `Exception`
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,7 @@ import string
 
 import _TFL.d_dict
 
-class Invalid_Node (Exception) : pass
+class Invalid_Node (StandardError) : pass
 
 class Doc_Node_Formatter_ :
     """Doc_Node_Formatter_ encapsulates a triple of functions necessary to
@@ -204,7 +205,7 @@ class Doc_Node :
                      )
         return filter (None, childs)
     # end def _transitive_child_search
-    
+
     def has_child (self, child_name, transitive = 1) :
         """Checks if this node or one of this childs has a node named
            `child_name'.
@@ -251,7 +252,7 @@ class Doc_Node :
                 fct =  ( lambda c, n = child_name, type = type
                        : (c.name == n) and isinstance (c, type)
                        )
-        else :           
+        else :
             fct     = ( lambda c, n = child_name : c.name == n)
         children    = filter (fct, self.children)
         if transitive :
@@ -263,11 +264,11 @@ class Doc_Node :
                 )
         return un_nested (children)
     # end def get_childrens
-    
+
     def __getitem__ (self, index) :
         return self.children [index]
     # end def __getitem__
-    
+
     def replace_child (self, index, new_child) :
         """Replaces the child at postion `index' in `self.children' by
            `new_child' and returns the removed child.
@@ -279,20 +280,20 @@ class Doc_Node :
         else :
             return None
     # end def replace_child
-    
+
     def remove_child (self, child_name) :
         """Checks if this node or one of this childs has a node named
            `child_name' and removes it.
         """
         child_name = self._child_name (child_name)
-            
+
         if self.children.has_key (child_name) :
             child = self.children [child_name]
             child.destroy ()
             del self.children [child]
             return 1
     # end def remove_child
-    
+
     def destroy (self) :
         for c in self.children :
             c.destroy        ()
