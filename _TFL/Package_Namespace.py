@@ -71,12 +71,13 @@
 #                     from `caller_globals`)
 #    12-Mar-2002 (CT) `_Export_Module` added
 #    12-Mar-2002 (CT) Use `TFL.Module.names_of` instead of half-broken
-#                     `inspect.getmodule` 
+#                     `inspect.getmodule`
 #    15-Mar-2002 (CT) `Import` renamed to `__Import`
 #                     `_import_symbols` renamed to `__import_symbols`
 #    15-Mar-2002 (CT) `From_Import` and `Import_Module` removed
 #    18-Mar-2002 (MG) `_Add` added
 #    18-Mar-2002 (CT) `_complain_implicit` changed to write new syntax
+#    28-Mar-2002 (CT) Last remnants of implicit imports removed
 #    ««revision-date»»···
 #--
 
@@ -84,27 +85,11 @@ from   caller_globals import caller_globals as _caller_globals
 from   caller_globals import caller_info    as _caller_info
 from   Regexp         import Regexp
 
-_debug = __debug__
-
-def _complain_implicit (pns_name, module_name, import_stmt = "Import", last_caller = [""]) :
-    if _debug :
-        caller = _caller_info (-4) [0]
-        if caller != last_caller [0] :
-            last_caller [0] = caller
-            print caller 
-        print """    import _%s.%s""" % (pns_name, module_name)
-# end def _complain_implicit
-
 class _Module_Space :
 
     def __init__ (self, name) :
         self.__name = name
     # end def __init__
-
-    def __getattr__ (self, module_name) :
-        _complain_implicit (self.__name, module_name, "Import_Module")
-        return self._load (module_name)
-    # end def __getattr__
 
     def _load (self, module_name) :
         module = __import__ \
@@ -199,7 +184,7 @@ class Package_Namespace :
            Foo._Export_Module ()
 
        The modules of the package can be accessed via the `_` attribute of
-       the package namespace. 
+       the package namespace.
     """
 
     _leading_underscores = Regexp ("^_+")
@@ -216,58 +201,6 @@ class Package_Namespace :
             import sys
             sys.modules [self.__name] = __import__ (name)
     # end def __init__
-
-    def __Import (self, module_name, * symbols) :
-        ### XXX PNS remove after Package_Namespace transition is complete
-        """Import all `symbols` from module `module_name` of package
-           `self.__name`. A `*` is supported as the first element of
-           `symbols` and imports the contents of `__all__` (if defined) or
-           all objects defined by the module itself (i.e., no transitive
-           imports).
-
-           The elements of `symbols` can be strings or 2-tuples. Each 2-tuple
-           specifies a named to be imported followed by the name used for the
-           imported object (i.e., `(foo, bar)` is analogous to
-           `import foo as bar`)
-        """
-        if not self.__seen.has_key ((module_name, symbols)) :
-            self.__dict__.update \
-                (self.__import_symbols (module_name, 1, * symbols))
-            self.__seen [(module_name, symbols)] = 1
-    # end def __Import
-
-    def __import_symbols (self, module_name, check_clashes, * symbols, ** kw) :
-        ### XXX PNS remove after Package_Namespace transition is complete
-        result     = {}
-        mod        = self.__modules._load (module_name)
-        star       = None
-        transitive = kw.get ("transitive")
-        if not symbols :
-            symbols = (module_name, )
-        if symbols [0] == "*" :
-            all_symbols = getattr (mod, "__all__", ())
-            if all_symbols :
-                self._import_names (mod, all_symbols, result, check_clashes)
-            else :
-                if transitive :
-                    for s, p in mod.__dict__.items () :
-                        if not s.startswith ("_") :
-                            self._import_1 \
-                                (mod, s, s, p, result, check_clashes)
-                else :
-                    import _TFL.Module ### XXX PNS remove after change to newstyle
-                    from _TFL import TFL
-                    for s in TFL.Module.names_of (mod) :
-                        p = getattr (mod, s)
-                        if not s.startswith ("_") :
-                            self._import_1 \
-                                (mod, s, s, p, result, check_clashes)
-            symbols = symbols [1:]
-            star    = 1
-        if symbols :
-            self._import_names (mod, symbols, result, check_clashes)
-        return result
-    # end def __import_symbols
 
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
@@ -292,14 +225,6 @@ class Package_Namespace :
         result [as_name] = object
     # end def _import_1
 
-    def __getattr__ (self, name) :
-        if not (name.startswith ("__") and name.endswith ("__")) :
-            _complain_implicit (self.__name, name)
-            self.__Import (name, name)
-            return self.__dict__ [name]
-        raise AttributeError, name
-    # end def __getattr__
-
     def __repr__ (self) :
         return "<%s %s at 0x%x>" % \
                (self.__class__.__name__, self.__name, id (self))
@@ -312,7 +237,7 @@ class Package_Namespace :
         for s, p in kw.items () :
             self._import_1 (mod, s, s, p, self.__dict__, 1)
     # end def _Add
-    
+
     def _Export (self, * symbols, ** kw) :
         """To be called by modules of Package_Namespace to inject their
            symbols into the package namespace `self`.
@@ -354,7 +279,7 @@ class Package_Namespace :
                                    ) % (module_name, mod, old)
         self.__dict__ [module_name] = mod
     # end def _Export_Module
-    
+
 # end class Package_Namespace
 
 ### __END__ Package_Namespace
