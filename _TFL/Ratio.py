@@ -31,10 +31,12 @@
 #    12-Aug-2003 (CT) doctest fixed
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#     8-Feb-2005 (CED) Various improvements
 #    ««revision-date»»···
 #--
 
-from Regexp import *
+from Regexp    import *
+from predicate import *
 
 class Ratio :
     """Model ratio of two integer numbers.
@@ -61,11 +63,25 @@ class Ratio :
        >>> print 6 * Ratio (1,2)
        6 / 2
        >>> print 6 / Ratio (1,2)
-       12
+       12 / 1
        >>> print Ratio (1,2) / 6
        1 / 12
        >>> print Ratio (1,2) / 6.
        1 / 12
+       >>> print 1 / Ratio (1, 2)
+       2 / 1
+       >>> print Ratio (3, 4).reciprocal ()
+       4 / 3
+       >>> print Ratio (6, 8).normalized ()
+       3 / 4
+       >>> print Ratio (1, -2).normalized ()
+       -1 / 2
+       >>> print Ratio (1, 3) + Ratio (1, 4)
+       7 / 12
+       >>> print Ratio (1, 3) - Ratio (1, 4)
+       1 / 12
+       >>> print 1 - Ratio (1, 3)
+       2 / 3
     """
 
     pattern = Regexp \
@@ -95,6 +111,8 @@ class Ratio :
                       "Ratio() 2nd argument not allowed when 1st is a Ratio"
             self.n = n.n
             self.d = n.d
+        elif d == 0 :
+            raise TypeError, "Ratio() zero not allowed for denominator"
         else :
             try :
                 self.n = int (n)
@@ -103,6 +121,26 @@ class Ratio :
                 print "invalid arguments for Ratio: (%r, %r)" % (n, d)
                 raise
     # end def __init__
+
+    def reciprocal (self) :
+        result = self.__class__ (self.d, self.n)
+        return result
+    # end def reciprocal
+
+    def normalize (self) :
+        b = gcd (self.n, self.d)
+        self.n //= b
+        self.d //= b
+        if self.d < 0 :
+            self.n *= -1
+            self.d *= -1
+    # end def normalize
+
+    def normalized (self) :
+        result = self.__class__ (self)
+        result.normalize ()
+        return result
+    # end def normalized
 
     def __int__ (self) :
         return int (self.n / self.d)
@@ -141,8 +179,12 @@ class Ratio :
         return self.__class__ (self.n * rhs.d, self.d * rhs.n)
     # end def __div__
 
-    def __rdiv__ (self, rhs) :
-        return (rhs * self.d) / self.n
+    def __rdiv__ (self, lhs) :
+        ### XXX CED: Originally this one did not return a `Ratio` instance,
+        ### XXX but tried to keep the type of `lhs` ?
+        ### XXX If this would be preferable, all the other `__rXXX__`
+        ### XXX functions should do this also.
+        return lhs * self.reciprocal ()
     # end def __rdiv__
 
     def __idiv__ (self, rhs) :
@@ -151,6 +193,52 @@ class Ratio :
         self.n *= rhs.d
         self.d *= rhs.n
     # end def __idiv__
+
+    def __add__ (self, rhs) :
+        if not isinstance (rhs, Ratio) :
+            rhs = self.__class__ (rhs)
+        result  = self.__class__ \
+            ( (self.n * rhs.d + rhs.n * self.d)
+            , self.d * rhs.d
+            )
+        result.normalize ()
+        return result
+    # end def __add__
+
+    __radd__ = __add__
+
+    def _iadd__ (self, rhs) :
+        if not isinstance (rhs, Ratio) :
+            rhs = self.__class__ (rhs)
+        self.n  = (self.n * rhs.d) + (rhs.n * self.d)
+        self.d *= rhs.d
+        self.normalize ()
+    # end def _iadd__
+
+    def __sub__ (self, rhs) :
+        if not isinstance (rhs, Ratio) :
+            rhs = self.__class__ (rhs)
+        result  = self.__class__ \
+            ( (self.n * rhs.d - rhs.n * self.d)
+            , self.d * rhs.d
+            )
+        result.normalize ()
+        return result
+    # end def __sub__
+
+    def __rsub__ (self, lhs) :
+        if not isinstance (lhs, Ratio) :
+            lhs = self.__class__ (lhs)
+        return lhs - self
+    # end def __rsub__
+
+    def __isub__ (self, rhs) :
+        if not isinstance (rhs, Ratio) :
+            rhs = self.__class__ (rhs)
+        self.n  = (self.n * rhs.d) - (rhs.n * self.d)
+        self.d *= rhs.d
+        self.normalize ()
+    # end def __isub__
 
     def __cmp__ (self, rhs) :
         if rhs is None :
