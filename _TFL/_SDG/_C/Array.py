@@ -35,6 +35,7 @@
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    27-Oct-2004 (MG)  Calculate the default of `bounds` based on the length
 #                      of `init` (to be backward compatible)
+#    16-Nov-2004 (MG) Multidimension array support added
 #    ««revision-date»»···
 #--
 
@@ -110,12 +111,22 @@ class Array (TFL.SDG.C._Var_) :
             if len (self.bounds) <= 1 :
                 Init = TFL.SDG.C.Init_Atom
             else :
-                raise NotImplementedError, \
-                    "Array._setup_initializers doesn't support multidimensions"
+                return self._apply_array_level (init_list, description or "")
         for k, v in enumerate (init_list) :
             result.add (Init (v, description = "[%s]" % k))
         return result
     # end def _setup_initializers
+
+    def _apply_array_level (self, init_list, level) :
+        result = TFL.SDG.C.Init_Comp (description = "%s" % (level, ))
+        for k, v in enumerate (init_list) :
+            desc = "%s[%d]" % (level, k)
+            if isinstance (v, (tuple, list)) :
+                result.add (self._apply_array_level (v, desc))
+            else :
+                result.add ( TFL.SDG.C.Init_Atom (v, description = desc))
+        return result
+    # end def _apply_array_level
 
 # end class Array
 
