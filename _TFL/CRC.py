@@ -45,6 +45,7 @@
 #    22-Jan-2004 (CT)  Change of `crc_byte` (mask with `&& 0xFFFFFFFFL`) --
 #                      is not necessary: the sole problem was to use decimal
 #                      instead of hexadecimal output in the unit test
+#    24-May-2004 (GWA) 'crc' optimized and processes also arrays
 #    ««revision-date»»···
 #--
 
@@ -67,9 +68,12 @@ class _TD_CRC_ (object) :
         """Compute the CRC of the string `data` by using
            `start_value` as initial.
         """
-        result = start_value or self.start_value
-        for d in data :
-            result = self.crc_byte (result, ord (d))
+        start_value = start_value or self.start_value
+        if isinstance (data, type ("")) :
+            _f = lambda x, y : self.crc_byte (x, ord (y))
+        else :
+            _f = lambda x, y : self.crc_byte (x, y)
+        result = reduce (_f, data, start_value)
         return result
     # end def crc_byte
     __call__ = crc
