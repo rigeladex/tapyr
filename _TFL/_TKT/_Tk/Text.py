@@ -28,6 +28,12 @@
 # Revision Dates
 #    15-Feb-2005 (CT) Creation
 #    16-Feb-2005 (CT) Creation continued
+#    17-Feb-2005 (CT) `__test__` added and filled with
+#                     `TFL.TKT.Text._interface_test`
+#    17-Feb-2005 (CT) `get` changed to remove the last `\n` (which is created
+#                     by Tk)
+#    17-Feb-2005 (CT) `delta` made optional argument of `pos_at`
+#    17-Feb-2005 (CT) `_line_pos` corrected
 #    ««revision-date»»···
 #--
 
@@ -40,7 +46,6 @@ from   CTK                  import *
 class _Tk_Text_ (TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
 
-       >>> from _TFL._TKT._Tk.Text import *
        >>> w = Text ()
        >>> w.widget.pack ()
        >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
@@ -64,11 +69,11 @@ class _Tk_Text_ (TFL.TKT.Text) :
        >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
        >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
        ('1.0', '3.0', '2.10', '2.0')
-       >>> print w.get () [:-1]
+       >>> print w.get ()
        HiHoHaHum
        Diddle Dum
        >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
-       >>> print w.get () [:-1]
+       >>> print w.get ()
        HiHoHaHum
         Dum
     """
@@ -122,11 +127,16 @@ class _Tk_Text_ (TFL.TKT.Text) :
         self.widget.mark_unset (* mark)
     # end def free_mark
 
-    def get (self, head = None, tail = None, delta= 0) :
-        return self.widget.get \
-            ( self.pos_at (head, delta) or self.bot_pos
-            , tail                      or self.eot_pos
-            )
+    def get (self, head = None, tail = None, delta = 0) :
+        widget = self.widget
+        if head is None :
+            head = self.bot_pos
+        if tail is None :
+            tail = self.eot_pos
+        result = widget.get (self.pos_at (head, delta), tail)
+        if widget.index (tail) == widget.index (self.eot_pos) :
+            result = result [:-1]
+        return result
     # end def get
 
     def insert (self, pos_or_mark, text, style = None, delta = 0) :
@@ -152,13 +162,13 @@ class _Tk_Text_ (TFL.TKT.Text) :
 
     def mark_at (self, pos, delta = 0, name = None) :
         if name is None :
-            name           = "mark%d" % (self._mark_no, )
+            name = "mark%d" % (self._mark_no, )
             self._mark_no += 1
         self.widget.mark_set (name, self.pos_at (pos, delta))
         return name
     # end def mark_at
 
-    def pos_at (self, pos_or_mark, delta) :
+    def pos_at (self, pos_or_mark, delta = 0) :
         result = pos_or_mark
         if delta != 0 :
             result = "%s %+d chars" % (result, delta)
@@ -172,9 +182,10 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def remove
 
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
-        result = "%s %s" % (self.pos_at (pos_or_mark, delta), mod)
+        result = pos_or_mark
         if line_delta != 0 :
-            result = "%s %+d lines" % (pos, line_delta)
+            result = "%s %+d lines" % (result, line_delta)
+        result = "%s %s" % (self.pos_at (result, delta), mod)
         return result
     # end def _line_pos
 
@@ -186,6 +197,8 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def _tag
 
 Text = _Tk_Text_ # end class _Tk_Text_
+
+__test__ = dict (interface_test = TFL.TKT.Text._interface_test)
 
 """
 from _TFL._TKT._Tk.Text import *

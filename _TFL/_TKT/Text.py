@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Feb-2005 (CT) Creation
+#    17-Feb-2005 (CT) `_interface_test` added
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,46 @@ import _TFL._TKT.Mixin
 
 class Text (TFL.TKT.Mixin) :
     """Model simple text widget"""
+
+    _interface_test   = """
+        >>> w = Text ()
+        >>> w.append ("Ha")
+        >>> w.append ("Hum")
+        >>> hum_p = w.find ("Hum")
+        >>> hum_m = w.mark_at (hum_p)
+        >>> w.insert (w.bot_pos, "Hi")
+        >>> w.insert (w.bot_pos, "Ho", delta = 2)
+        >>> print w.get (hum_p, w.pos_at (hum_p, 3))
+        HoH
+        >>> print w.get (hum_m, w.pos_at (hum_m, 3))
+        Hum
+        >>> for t in "Ha", "He", "Hi", "Ho", "Hu" :
+        ...     p = w.find (t)
+        ...     if p is not None :
+        ...         print t, "found", w.get (p, w.pos_at (p, delta = len (t)))
+        ...     else :
+        ...         print t, "not found"
+        ...
+        Ha found Ha
+        He not found
+        Hi found Hi
+        Ho found Ho
+        Hu found Hu
+        >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
+        >>> print w.get ()
+        HiHoHaHum
+        Diddle Dum
+        >>> print w.get (w.bol_pos (hum_m), w.eol_pos (hum_m))
+        HiHoHaHum
+        >>> print w.get ( w.bol_pos (hum_m, line_delta = 1)
+        ...             , w.eol_pos (hum_m, line_delta = 1))
+        Diddle Dum
+        >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
+        >>> print w.get ()
+        HiHoHaHum
+         Dum
+
+        """
 
     bot_pos           = None  ### descendents must redefine as property
     """Position of begin of buffer (use this to insert at the beginning).
