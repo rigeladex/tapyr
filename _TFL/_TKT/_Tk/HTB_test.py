@@ -19,7 +19,6 @@ if __name__ == "__main__" :
         n = tn.new_child (name, "1. test line\n2. test line")
         return n
 
-    #tb  = TFL.UI.HTB.Browser (AC, root, 'huhu')
     tb  = TFL.UI.HTB.Browser (AC, name = 'huhu')
     tb.text.exposed_widget.pack  (expand = YES, fill = BOTH)
 
