@@ -51,6 +51,8 @@
 #                      find_highlight and Node_Linked.activate_links,
 #                      mouse_cursor = "hand" added to hyper_link style,
 #                      find_highlight/unhighlight moved from Browser->Node
+#    25-Feb-2005 (RSC) `wtk_widget' and `exposed_widget' delegated from
+#                      Browser to its Text
 #    ««revision-date»»···
 #--
 
@@ -854,16 +856,18 @@ class Browser (TFL.UI.Mixin) :
 
     def __init__ (self, AC, wc = None, name = None, ** kw) :
         self.__super.__init__ (AC = AC)
-        self.name         = name
-        self.mouse_act    = 1
-        self.current_node = None
-        self.text              = self.TNS.Scrolled_Text \
+        self.name           = name
+        self.mouse_act      = 1
+        self.current_node   = None
+        self.text           = self.TNS.Scrolled_Text \
             (AC = AC, name = name, wc = wc, editable = False)
         # delegate some parts from our text:
-        self.bot_pos      = self.text.bot_pos
-        self.current_pos  = self.text.current_pos
-        self.eot_pos      = self.text.eot_pos
-        self.delete       = self.text.remove
+        self.bot_pos        = self.text.bot_pos
+        self.current_pos    = self.text.current_pos
+        self.eot_pos        = self.text.eot_pos
+        self.delete         = self.text.remove
+        self.wtk_widget     = self.text.wtk_widget
+        self.exposed_widget = self.text.exposed_widget
         self.clear ()
         # XXXX FIXME:
         # For option lookup we should know our widget class (T_Browser?)
