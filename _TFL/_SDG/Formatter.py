@@ -83,9 +83,9 @@ from   predicate import relax
 
 def _print (* args) :
     for l in args :
-        sys.stdout.write (str (l))
-        sys.stdout.write (" ")
-    sys.stdout.write ("\n")
+        sys.stderr.write (str (l))
+        sys.stderr.write (" ")
+    sys.stderr.write ("\n")
 # end def _print
 
 PRINT = _print
@@ -112,8 +112,7 @@ class Single_Line_Formatter (_Formatter_) :
     kind = "SLF"
 
     def __call__ (self, node, context) :
-        context.locals ["indent_anchor"] = \
-            context.locals ["indent_offset"]
+        context.locals ["indent_anchor"] = context.locals ["indent_offset"]
         return (self.format_line % context, )
     # end def __call__
 
@@ -271,9 +270,11 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
                     if i == 0 :
                         rear = self.rear0
                         sep  = self.front0
-                    yield "%s%s%s" % (sep, r, rear)
+                    result = "%s%s%s" % (sep, r, rear)
                 else :
-                    yield "%s%s%s" % (sep, r, eol)
+                    result = "%s%s%s" % (sep, r, eol)
+                PRINT ("***", self, "«%s»" % (result, ))
+                yield result
                 sep = ""
                 i  += 1
             if i :
@@ -335,8 +336,9 @@ class Multi_Line_Formatter (_Formatter_) :
             lines      = TFL.Look_Ahead_Gen (f (node, context))
             i          = 0
             add_indent = len (last)
+            PRINT ("  %s «%s»" % (f, last))
             for l in lines :
-                PRINT ("Lines: :%s::%s:" % (last, l),  context.indent_anchor)
+                PRINT ("    Lines «%s:%s»" % (last, l), context.indent_anchor)
                 if i > 0 and f.anchor :
                     last = "%s%s" % (" " * add_indent, last)
                 if not lines.is_finished :
@@ -348,6 +350,8 @@ class Multi_Line_Formatter (_Formatter_) :
                     last = self.percent_pat.sub \
                         ("%%", "%s%s" % (last, l % context))
                 i += 1
+                context.locals ["indent_anchor"] = \
+                    len (last) + context.locals ["indent_offset"]
         if last :
             yield last
     # end def __call__
