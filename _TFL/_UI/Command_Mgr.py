@@ -111,6 +111,8 @@
 #                     `_handle_dyn_commands` fixed
 #    31-Jan-2005 (CT) `Command.interfacers` converted from list to dict
 #     1-Feb-2005 (CT) `set_auto_short_cuts` added
+#     2-Feb-2005 (CT) `_Command_Group_` and `_add_group` factored
+#     2-Feb-2005 (CT) `Dyn_Group` and `add_dyn_group` added
 #    ««revision-date»»···
 #--
 
@@ -327,9 +329,9 @@ class Dyn_Command (_Command_) :
     precondition = None
 
     def __init__ (self, name, command_gen, _doc = None) :
-        self.name          = name
-        self.command_gen   = command_gen
-        self._raw_doc      = _doc or command_gen.__doc__ or ""
+        self.name        = name
+        self.command_gen = command_gen
+        self._raw_doc    = _doc or command_gen.__doc__ or ""
     # end def __init__
 
     def is_applicable (self) :
@@ -438,15 +440,13 @@ class _Command_Getattr_ (TFL.Meta.Object) :
 
 # end class _Command_Getattr_
 
-class Command_Group (_Command_, TFL.UI.Mixin) :
-    """Manage a group of commands of an interactive application"""
+class _Command_Group_ (_Command_, TFL.UI.Mixin) :
 
     name_clean = re.compile (r"[^a-zA-Z_0-9]+")
     nam_pat    = re.compile (r"[Tt]his (command )?group")
 
     def __init__ (self, AC, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
         self.__super.__init__ (AC = AC)
-        self.cmd            = _Command_Getattr_ (self)
         self.name           = self.qname = name
         self.interfacers    = interfacers
         self.parent         = parent
@@ -456,13 +456,70 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
             self.root       = parent.root
             if parent.qname :
                 self.qname  = "%s.%s" % (parent.qname, name)
-        self.n_seps         = 0
         self.description    = self._cooked_doc (desc, self.root.form_dict)
+        self._epi           = dict \
+            ([(n, NO_List ()) for n in interfacers.keys ()])
+    # end def __init__
+
+    def destroy (self) :
+        self.root = self.parent = self.interfacers = None
+        for i in self._epi.itervalues () :
+            for e in i :
+                e.destroy ()
+        self._epi = None
+    # end def destroy
+
+    def set_auto_short_cuts (self) :
+        for i in self.interfacers.itervalues () :
+            i.set_auto_short_cuts ()
+    # end def set_auto_short_cuts
+
+    def _bind_dyn_cmd_handler (self) :
+        for n, i in self.interfacers.iteritems () :
+            i.bind_to_activation \
+                (lambda * args, ** kw : self._handle_dyn_commands (n, i))
+    # end def _bind_dyn_cmd_handler
+
+    def _interfacers (self, interface_names, index, delta) :
+        interfacers = self.interfacers
+        _epi        = self._epi
+        for n in interface_names :
+            name, info = (n.split (":", 1) + [None]) [:2]
+            _ie        = _epi [name]
+            real_index = self._real_index (_ie, index, delta)
+            yield name, interfacers [name], info, _ie, real_index
+    # end def _interfacers
+
+    def _real_index (self, element, index, delta) :
+        if index is None :
+            index = len (element)
+        if isinstance (index, (str, unicode)) :
+            index = element.n_index (index) + delta
+        return index
+    # end def _real_index
+
+    def __str__ (self) :
+        return self.name
+    # end def __str__
+
+    def __repr__ (self) :
+        return "<%s `%s' at %s>" % \
+            (self.__class__.__name__, self.name, id (self))
+    # end def __repr__
+
+# end class _Command_Group_
+
+class Command_Group (_Command_Group_) :
+    """Manage a group of commands of an interactive application"""
+
+    def __init__ (self, AC, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
+        self.__super.__init__ \
+            (AC, name, interfacers, parent, batchable, desc, precondition)
+        self.cmd            = _Command_Getattr_ (self)
+        self.n_seps         = 0
         self.command        = Abbr_Key_Dict ()
         self._dyn_command   = NO_List       ()
         self._group         = NO_List       ()
-        self._epi           = dict \
-            ([(n, NO_List ()) for n in interfacers.keys ()])
     # end def __init__
 
     def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
@@ -490,29 +547,36 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
                     )
     # end def add_command
 
+    def add_dyn_group (self, name, command_gen, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None) :
+        """Add dynamic group `name`."""
+        return self._add_group \
+            ( name, precondition, if_names, index, delta
+            , lambda ifacers : Dyn_Group \
+                ( AC            = self.AC
+                , name          = name
+                , interfacers   = ifacers
+                , parent        = self
+                , command_gen   = command_gen
+                , desc          = desc or command_gen.__doc__ or ""
+                , precondition  = precondition
+                )
+            )
+    # end def add_dyn_group
+
     def add_group (self, name, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None, batchable = 0) :
         """Add command group `name'."""
-        ifacers = {}
-        to_do   = []
-        for ( n, i, info, _ie, index
-            ) in self._interfacers (if_names, index, delta) :
-            ifacers [n] = i.add_group (name, index = index, info = info)
-            to_do.append  ((_ie, index))
-        group = self.Group_Class \
-            ( AC            = self.AC
-            , name          = name
-            , interfacers   = ifacers
-            , parent        = self
-            , batchable     = batchable
-            , desc          = desc
-            , precondition  = precondition
+        return self._add_group \
+            ( name, precondition, if_names, index, delta
+            , lambda ifacers : self.Group_Class \
+                ( AC            = self.AC
+                , name          = name
+                , interfacers   = ifacers
+                , parent        = self
+                , batchable     = batchable
+                , desc          = desc
+                , precondition  = precondition
+                )
             )
-        self._group.append (group)
-        for _ie, index in to_do :
-            _ie.insert (index, group)
-        if precondition :
-            self.root._add_precondition (group)
-        return group
     # end def add_group
 
     def add_separator (self, name = None, group = None, if_names = [], index = None, delta = 0) :
@@ -536,11 +600,8 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
     # end def add_separator
 
     def destroy (self) :
-        self.root = self.parent = self.interfacers = None
-        for i in self._epi.itervalues () :
-            for e in i :
-                e.destroy ()
-        self._epi = self._group = self.command = None
+        self.__super.destroy ()
+        self._group = self.command = None
     # end def destroy
 
     def group (self, name) :
@@ -552,8 +613,7 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
     # end def keys
 
     def set_auto_short_cuts (self) :
-        for i in self.interfacers.itervalues () :
-            i.set_auto_short_cuts ()
+        self.__super.set_auto_short_cuts ()
         for g in self._group :
             g.set_auto_short_cuts ()
     # end def set_auto_short_cuts
@@ -590,11 +650,25 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
     def _add_dyn_command (self, cmd, if_names, index, delta) :
         self.add_separator (cmd.name, None, if_names, index, delta)
         if not self._dyn_command :
-            for n, i in self.interfacers.iteritems () :
-                i.bind_to_activation \
-                    (lambda * args, ** kw : self._handle_dyn_commands (n, i))
+            self._bind_dyn_cmd_handler ()
         self._dyn_command.append (cmd)
     # end def _add_dyn_command
+
+    def _add_group (self, name, precondition, if_names, index, delta, group_creator) :
+        ifacers = {}
+        to_do   = []
+        for ( n, i, info, _ie, index
+            ) in self._interfacers (if_names, index, delta) :
+            ifacers [n] = i.add_group (name, index = index, info = info)
+            to_do.append  ((_ie, index))
+        result  = group_creator (ifacers)
+        self._group.append (result)
+        for _ie, index in to_do :
+            _ie.insert (index, result)
+        if precondition :
+            self.root._add_precondition (result)
+        return result
+    # end def _add_group
 
     def _handle_dyn_commands (self, if_name, interfacer) :
         elements = self._epi [if_name]
@@ -627,42 +701,46 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
                         interfacer.add_separator (index = j)
     # end def _handle_dyn_commands
 
-    def _interfacers (self, interface_names, index, delta) :
-        interfacers = self.interfacers
-        _epi        = self._epi
-        for n in interface_names :
-            name, info = (n.split (":", 1) + [None]) [:2]
-            _ie        = _epi [name]
-            real_index = self._real_index (_ie, index, delta)
-            yield name, interfacers [name], info, _ie, real_index
-    # end def _interfacers
-
-    def _real_index (self, element, index, delta) :
-        if index is None :
-            index = len (element)
-        if isinstance (index, (str, unicode)) :
-            index = element.n_index (index) + delta
-        return index
-    # end def _real_index
-
     def __getitem__ (self, index) :
         if self._group.has_key (index) :
             return self._group [index]
         return self.command [index]
     # end def __getitem__
 
-    def __str__ (self) :
-        return self.name
-    # end def __str__
-
-    def __repr__ (self) :
-        return "<%s `%s' at %s>" % \
-            (self.__class__.__name__, self.name, id (self))
-    # end def __repr__
-
 # end class Command_Group
 
 Command_Group.Group_Class = Command_Group
+
+class Dyn_Group (_Command_Group_) :
+    """Manage a group of dynamic commands of an interactive application"""
+
+    def __init__ (self, AC, name, interfacers, parent, command_gen, desc, precondition = None) :
+        self.__super.__init__ \
+            ( AC, name, interfacers, parent
+            , batchable    = False
+            , desc         = desc
+            , precondition = precondition
+            )
+        self.command_gen   = command_gen
+        self._bind_dyn_cmd_handler ()
+    # end def __init__
+
+    def _handle_dyn_commands (self, if_name, interfacer) :
+        end = interfacer.index (-1)
+        if end is not None :
+            for j in range (end) :
+                interfacer.remove_command (0)
+        j = 0
+        for name, cb, underline in self.command_gen () :
+            interfacer.add_command \
+                ( name, cb
+                , index     = j
+                , underline = underline
+                )
+            j += 1
+    # end def _handle_dyn_commands
+
+# end class Dyn_Group
 
 class Command_Mgr (Command_Group) :
     """Manage toplevel group of commands of an interactive application"""

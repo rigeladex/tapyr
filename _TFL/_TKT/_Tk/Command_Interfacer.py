@@ -54,6 +54,7 @@
 #     1-Feb-2005 (CT) Use `CTK.canonical_key_name`
 #     1-Feb-2005 (CT) `CI_Menu.index` changed again
 #     1-Feb-2005 (CT) `set_auto_short_cuts` added
+#     2-Feb-2005 (CT) `CI_Menu.index` changed again
 #    ««revision-date»»···
 #--
 
@@ -195,9 +196,12 @@ class CI_Menu (_CI_Widget_) :
 
     def index (self, name) :
         if name == -1 :
-            ### don't ask why this is so ugly
-            return self.widget.index (END) + self._index_offset
-        return self.widget.index (name) - self._index_offset
+            result = self.widget.index (END)
+            if result is not None :
+                result += self._index_offset
+        else :
+            result = self.widget.index (name) - self._index_offset
+        return result
     # end def index
 
     def set_auto_short_cuts (self) :
