@@ -36,6 +36,7 @@
 #    21-Feb-2005 (RSC) Added import of Eventname
 #    24-Feb-2005 (CT)  `num_opt_val` and `option_value` added
 #    24-Feb-2005 (CT)  `busy_cursor` and `normal_cursor` added
+#    24-Feb-2005 (CT)  `__getattr__` for `ask_*` added
 #    ««revision-date»»···
 #--
 
@@ -136,6 +137,12 @@ class Widget (TFL.TKT.Mixin) :
             sty_map [style] = Styler (style)
         return sty_map [style]
     # end def _styler
+
+    def __getattr__ (self, name) :
+        if name.startswith ("ask_") :
+            return getattr (self.wtk_widget, name)
+        raise AttributeError, name
+    # end def __getattr__
 
 # end class Widget
 
