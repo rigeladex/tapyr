@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Mar-2005 (MG) Creation
+#    26-Mar-2005 (MG) `_wtk_delegation` and `__init__` added
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,23 @@ class Widget (GTK.Object) :
         , GTK.Property     ("visible")
         , GTK.Property     ("width_request")
         )
+
+    _wtk_delegation = dict \
+        ( show      = "show"
+        , hide      = "hide"
+        , show_all  = "show_all"
+        , hide_all  = "hide_all"
+        )
+
+    def __init__ (self, * args, ** kw) :
+        name = None
+        if "name" in kw :
+            name = kw ["name"]
+            del kw ["name"]
+        self.__super.__init__ (* args, ** kw)
+        if name :
+            self.name = name
+    # end def __init__
 
 # end class Widget
 

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Mar-2005 (MG) Automated creation
+#    22-Mar-2005 (MG) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -39,9 +40,24 @@ class Container (GTK.Widget) :
     GTK_Class        = GTK.gtk.Container
     __gtk_properties = \
         ( GTK.SG_Property  ("border_width")
-        , GTK.Property     ("child", get = None)
+        ###, GTK.Property     ("child", get = None)
         , GTK.SG_Property  ("resize_mode")
         )
+
+    def children (self) :
+        return \
+            [ w.get_data ("ktw_object")
+                for w in self.wtk_object.get_children ()
+            ]
+    children = property (children)
+
+    def add (self, child, ** kw) :
+        return self.wtk_object.add (child.wtk_object, ** kw)
+    # end def add
+
+    def remove (self, child, ** kw) :
+        return self.wtk_object.remove (child.wtk_object, ** kw)
+    # end def remove
 
 # end class Container
 

@@ -64,6 +64,12 @@ class Window (GTK.Bin) :
         , GTK.Property     ("window_position")
         )
 
+    def __init__ (self, title = None, ** kw) :
+        self.__super.__init__ (** kw)
+        if title :
+            self.title = title
+    # end def __init__
+
 # end class Window
 
 if __name__ != "__main__" :

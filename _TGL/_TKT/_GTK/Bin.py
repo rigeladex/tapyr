@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Mar-2005 (MG) Automated creation
+#    22-Mar-2005 (MG) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,19 @@ class Bin (GTK.Container) :
 
     GTK_Class        = GTK.gtk.Bin
     __gtk_properties = ()
+
+    def __init__ (self, child = None, ** kw) :
+        self.__super.__init__ (** kw)
+        if child :
+            self.add (child)
+    # end def __init__
+
+    def child (self) :
+        child = self.wtk_object.get_child ()
+        if child :
+            child = child.get_data ("ktw_object")
+        return child
+    child = property (child)
 
 # end class Bin
 

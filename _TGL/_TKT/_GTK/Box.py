@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Mar-2005 (MG) Automated creation
+#    22-Mar-2005 (MG) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,14 @@ class Box (GTK.Container) :
         ( GTK.SG_Property  ("homogeneous")
         , GTK.SG_Property  ("spacing")
         )
+
+    def pack (self, child, start = True, expand = True, fill = True) :
+        if start :
+            fct = self.wtk_object.pack_start
+        else :
+            fct = self.wtk_object.pack_end
+        return fct (child.wtk_object, expand = expand, fill = fill)
+    # end def pack
 
 # end class Box
 
