@@ -40,7 +40,7 @@ _tex_underscore = Regexp (r"([_])", re.X)
 _tex_tt_symbols = Regexp (r"[<>+*|]", re.X)
 _tex_diacritics = Regexp (r"[äöüÄÖÜß«»]")
 
-_word_boundaries= "[^ (),\t\n\r\f\v]"
+_word_boundaries= "[^ ()}{,\t\n\r\f\v]"
 
 _tex_path_text  = Regexp (r"(%s*?[_]%s*)" \
                          % (_word_boundaries, _word_boundaries)
@@ -71,7 +71,7 @@ def _tex_subs_diacritics (match) :
 # end def _tex_subs_diacritics
 
 def _tex_subs_to_path (match) :
-    return r"\small{\path|%s|}" % (match.group (0), )
+    return r"{\small\path|%s|}" % (match.group (0), )
 # end def _tex_subs_to_path
 
 def tex_quoted (s) :
