@@ -56,6 +56,7 @@
 #    23-Feb-2005 (CT)  `_pos_at` factored and used internally everywhere
 #    23-Feb-2005 (CT)  s/widget/exposed_widget/
 #    23-Feb-2005 (CT)  Doctests for `place_cursor` and `see` added
+#    23-Feb-2005 (CT)  `backwards` added to `find` and doctest
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        Hi 1.0
        Ho 1.2
        Hu 1.6
+       >>> w.find ("H", "1.3", "1.9")
+       '1.4'
+       >>> w.find ("H", "1.9", "1.3", backwards = True)
+       '1.6'
        >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
        ('1.0', '2.0', '1.4', '1.0')
        >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
@@ -167,12 +172,13 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
             (self._line_pos ("lineend", pos_or_mark, delta, line_delta))
     # end def eol_pos
 
-    def find (self, text, head = None, tail = None, delta = 0) :
+    def find (self, text, head = None, tail = None, delta = 0, backwards = False) :
         return self.wtk_widget.search \
             ( text, self._pos_at (head or self.bot_pos, delta)
-            , stopindex = tail
+            , backwards = backwards
             , nocase    = False
             , regexp    = False
+            , stopindex = tail
             ) or None
     # end def find
 

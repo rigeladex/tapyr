@@ -39,6 +39,7 @@
 #    22-Feb-2005 (CT)  `left_gravity` added to `mark_at`
 #    22-Feb-2005 (CT)  `place_cursor` and `see` added
 #    23-Feb-2005 (CT)  Doctests for `place_cursor` and `see` added
+#    23-Feb-2005 (CT)  `backwards` added to `find` and doctest
 #    ««revision-date»»···
 #--
 
@@ -46,9 +47,6 @@ from   _TFL                 import TFL
 import _TFL._TKT.Mixin
 
 ### TODO:
-### - method to set cursor position (suggested name: set_cursor)
-### - method for displaying possibly hidden part of the text,
-###   suggested name: see
 ### - tab-handling. Suggest that positions are in pixels.
 ###   API may be something like set_tabs (tab, tab, ...) or set_tabs
 ###   (tablist)
@@ -90,8 +88,9 @@ class Text (TFL.TKT.Mixin) :
         HaH
         >>> print w.get (hum_m, w.pos_at (hum_m, 3))
         Hum
+        >>> p = True
         >>> for t in "Ha", "He", "Hi", "Ho", "Hu" :
-        ...     p = w.find (t)
+        ...     p = w.find (t, backwards = not p)
         ...     if p is not None :
         ...         print t, "found", w.get (p, w.pos_at (p, delta = len (t)))
         ...     else :
@@ -179,7 +178,7 @@ class Text (TFL.TKT.Mixin) :
             "%s must define eol_pos" % (self.__class__.__name__, )
     # end def eol_pos
 
-    def find (self, text, head = None, tail = None, delta = 0) :
+    def find (self, text, head = None, tail = None, delta = 0, backwards = False) :
         """Return the position of (the first character of) `text` in the
            buffer between position/mark `head` (default: `self.bot_pos`) plus
            `delta` and position/mark `tail` (default: `self.eot_pos`).
