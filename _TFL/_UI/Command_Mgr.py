@@ -136,6 +136,7 @@
 #    18-Feb-2005 (CT) `Deaf_Command` added to `__all__`
 #    18-Feb-2005 (MG) Inheritance of `Command` and `Deaf_Command` switched
 #    18-Feb-2005 (MG) `__all__` removed (`_Command_`) added to `_Export`
+#    21-Feb-2005 (CT) `id` removed from `__repr__`
 #    ««revision-date»»···
 #--
 
@@ -333,8 +334,7 @@ class Command (_Command_) :
     # end def __call__
 
     def __repr__ (self) :
-        return "<function %s at 0x%x>" % \
-               (str (self), long (id (self.command or self)))
+        return "<Command %s>" % (str (self), )
     # end def __repr__
 
     def __str__ (self) :
@@ -555,8 +555,7 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
     # end def __str__
 
     def __repr__ (self) :
-        return "<%s `%s' at 0x%08X>" % \
-            (self.__class__.__name__, self.name, id (self))
+        return "<%s `%s'>" % (self.__class__.__name__, )
     # end def __repr__
 
 # end class _Command_Group_
