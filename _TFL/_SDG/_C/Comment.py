@@ -31,11 +31,13 @@
 #    28-Jul-2004 (CT) Creation continued...
 #    11-Aug-2004 (MG) `Documentation_Block` added
 #    12-Aug-2004 (MG) `cgi` set to None
+#    12-Aug-2004 (MG) `textwrap` added and new `comp_prec` format used
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
+import textwrap
 
 """
 from _TFL._SDG._C.Comment import *
@@ -72,13 +74,23 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
             %("*" * stars)s/
         """
 
-    h_format = c_format  = """
-        %(:head=/%("*" * stars)s ¡tail= %("*" * stars)s/:.description:)-70s
-    """
+    h_format = c_format  = \
+        ("""%(:head=/%("*" * stars)s """
+         """¡tail= %("*" * stars)s/"""
+         """:@_description:)-{output_width - indent_anchor - stars*2 - 4}s"""
+        )
 
     def _convert_c_comment (self, name, value, ** kw) :
         return value ### avoid endless recursion
     # end def _convert_c_comment
+
+    def _description (self, ** kw) :
+        format_prec = int (kw ["format_prec"])
+        wrapper     = textwrap.TextWrapper (width = format_prec)
+        for desc in self.description :
+            for l in wrapper.wrap (desc) :
+                yield l
+    # end def _description
 
 # end class Comment
 

@@ -36,6 +36,13 @@
 #    11-Aug-2004 (MG) `sep_eol` added
 #    12-Aug-2004 (CT) s/recurse_args/recurse_kw/g
 #    12-Aug-2004 (CT) `rec_form` added
+#    12-Aug-2004 (CT) `indent_anchor` added
+#    12-Aug-2004 (CT) `Multi_Line_Formatter.__call__` changed to use
+#                     `Look_Ahead_Gen`
+#    12-Aug-2004 (MG)  Various `__str__` added (to improve debugging
+#                      capabilities)
+#    12-Aug-2004 (CT) Complex format specification added (`comp_prec` and
+#                     `prec`)
 #    ««revision-date»»···
 #--
 
@@ -56,7 +63,7 @@ class _Formatter_ (TFL.Meta.Object) :
     # end def __init__
 
     def __repr__ (self) :
-        return "%s %s> '%1.20s'" % \
+        return "%s %s> '%s'" % \
                (self.kind, self.indent_level, self.format_line)
     # end def __repr__
 
@@ -76,11 +83,16 @@ class _Recursive_Formatter_ (TFL.Meta.Object) :
     def __call__ (self, node, context, sep_form) :
         self.node       = node
         self.context    = context
-        self.recurse_kw = context.recurse_kw.copy ()
+        self.recurse_kw = recurse_kw = context.recurse_kw.copy ()
         self.sep        = sep_form % context
+        _format         = self._format
+        if isinstance (_format, Record) :
+            prec        = _format.prec % context
+            _format     = "%%%s%s%s" % (_format.flags, prec, _format.type)
+            recurse_kw  ["format_prec"] = float (prec)
         self.format     = \
             ( self.head_form % context
-            + self._format
+            + _format
             + self.tail_form % context
             )
         if self.rec_form :
@@ -96,6 +108,10 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
         self.x_forms    = x_forms
         self.formatters = formatters
     # end def __init__
+
+    def __str__ (self) :
+        return "RFS (%s)" % (", ".join ([str (f) for f in self.formatters]), )
+    # end def __str__
 
     def __call__ (self, node, context) :
         self.node    = node
@@ -135,6 +151,10 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
 
 class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
 
+    def __str__ (self) :
+        return "RF_Attr %s" % (self.key)
+    # end def __str__
+
     def __iter__ (self) :
         attr = getattr (self.node, self.key, None)
         if attr is not None :
@@ -151,8 +171,13 @@ class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
 
 class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
 
+    def __str__ (self) :
+        return "RF_Meth %s" % (self.key)
+    # end def __str__
+
     def __iter__ (self) :
-        result = getattr (self.node, self.key) (** self.recurse_kw)
+        result = getattr (self.node, self.key) \
+            (indent_offset = self.context.indent_anchor, ** self.recurse_kw)
         if result is not None :
             format = self.format
             sep    = ""
@@ -165,10 +190,15 @@ class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
 
 class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
 
+    def __str__ (self) :
+        return "RF_Node %s" % (self.key)
+    # end def __str__
+
     def __iter__ (self) :
         context  = self.context
         format   = self.format
         recurser = context.recurser
+        ioffset  = context.indent_anchor
         rkw      = self.recurse_kw
         sep      = ""
         nodes    = getattr (self.node, self.key)
@@ -178,7 +208,7 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
             for x in nodes :
                 if x is not None :
                     meth = getattr (x, recurser)
-                    for y in meth (** rkw) :
+                    for y in meth (indent_offset = ioffset, ** rkw) :
                         yield sep + (format % y)
                         sep = ""
                     sep = self.sep
@@ -207,8 +237,16 @@ class Multi_Line_Formatter (_Formatter_) :
           r"""\( : (?P<x_forms> [^:]*) : (?P<key> [^:]+) : \)"""
           r"""(?P<form> """
               r"""(?P<flags>  [-+ #0]*)"""
-              r"""(?P<mfw>    [0-9]*)"""
-              r"""(?P<prec> \.[0-9]+)?"""
+              r"""(?:"""
+                  r"""(?:"""
+                      r"""(?P<mfw>    [0-9]*)"""
+                      r"""(?P<prec> \.[0-9]+)?"""
+                  r""")"""
+                  r"""|"""
+                  r"""(?:"""
+                      r"""\{ (?P<comp_prec> [^\}]+) \}"""
+                  r""")"""
+              r""")?"""
               r"""(?P<type>   [diouxXeEfFgGcrs])"""
           r""")"""
         , re.VERBOSE
@@ -225,30 +263,20 @@ class Multi_Line_Formatter (_Formatter_) :
     # end def __init__
 
     def __call__ (self, node, context) :
-        last = ""
+        last       = ""
         for f in self.formatters :
-            g     = iter (f (node, context))
-            first = self._first (g)
-            last  = "%s%s" % (last, first)
-            for l in g :
-                yield last % context
-                last = l
+            lines = TFL.Look_Ahead_Gen (f (node, context))
+            for l in lines :
+                context.locals ["indent_anchor"] = \
+                    len (last) + context.locals ["indent_anchor"]
+                if not lines.is_finished :
+                    yield "%s%s"  % (last, l % context)
+                    last = ""
+                else :
+                    last = "%s%s" % (last, l % context)
         if last :
-            try :
-                yield last % context
-            except :
-                print "__call__ `%s` %% `%s`" % (last, context)
-                raise
+            yield last
     # end def __call__
-
-    def _first (self, generator) :
-        try :
-            return generator.next ()
-        except StopIteration :
-            ### return an empty string so that preceding part of line
-            ### (`last`) doesn't get lost in `__call__`
-            return ""
-    # end def _first
 
     def _x_forms (self, x_forms) :
         result = Record \
@@ -289,13 +317,21 @@ class Multi_Line_Formatter (_Formatter_) :
     def _recursive_formatter (self, match) :
         x_forms    = self._x_forms (match.group ("x_forms"))
         keys       = match.group ("key").split (",")
-        form       = match.group ("form")
+        comp_prec  = match.group ("comp_prec")
+        if comp_prec :
+            form   = Record \
+                ( flags = match.group ("flags")
+                , prec  = "%%(%s)s" % (comp_prec, )
+                , type  = match.group ("type")
+                )
+        else :
+            form   = "%%%s" % (match.group ("form"), )
         formatters = []
         for key in keys :
             key    = key.strip ()
             rf     = self.Formatters [key [0]]
             formatters.append \
-                (rf (key [1:], "%%%s" % (form, ), x_forms.head, x_forms.tail))
+                (rf (key [1:], form, x_forms.head, x_forms.tail))
         return _Recursive_Formatters_ (x_forms, * formatters)
     # end def _recursive_formatter
 

@@ -39,6 +39,7 @@
 #     9-Aug-2004 (CT) Defaults of `description` and `eol_desc` changed
 #                     from `""` to `None`
 #    12-Aug-2004 (MG) `Incl` group removed (nice try)
+#    12-Aug-2004 (MG) `formatted` pass * args and ** kw to super function
 #    ««revision-date»»···
 #--
 
@@ -114,9 +115,9 @@ class _C_Node_ (TFL.SDG.Node) :
         return self.formatted ("h_format", base_indent)
     # end def as_h_code
 
-    def formatted (self, format_name, base_indent = None) :
+    def formatted (self, format_name, * args, ** kw) :
         if self.scope & self._scope_filter.get (format_name, 0xFF) :
-            return self.__super.formatted (format_name, base_indent)
+            return self.__super.formatted (format_name, * args, ** kw)
         else :
             return ()
     # end def formatted

@@ -44,6 +44,7 @@
 #    12-Aug-2004 (CT) s/recurse_args/recurse_kw/g
 #    12-Aug-2004 (MG) `default_cgi` added
 #    12-Aug-2004 (MG) `add`: unnest pass childrens (backward compatibility)
+#    12-Aug-2004 (CT) `indent_anchor` added
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,7 @@ class Node :
         self.parent = None
     # end def destroy
 
-    def formatted (self, format_name, base_indent = None, ** kw) :
+    def formatted (self, format_name, base_indent = None, output_width = 79, indent_offset = 0, ** kw) :
         if base_indent is None :
             base_indent = self.base_indent
         recurser   = "formatted"
@@ -176,9 +177,12 @@ class Node :
         context = TFL.Caller.Scope (globs = self.__dict__)
         for f in format :
             indent = f.indent_level * base_indent
-            context.locals ["indent_offset"] = len (indent)
+            indent_offset += len (indent)
+            context.locals ["indent_offset"] = \
+                context.locals ["indent_anchor"] = indent_offset
             for l in f (self, context) :
                 yield "%s%s" % (indent, l)
+            indent_offset -= len (indent)
     # end def formatted
 
     def has_child (self, child_name, transitive = True) :
