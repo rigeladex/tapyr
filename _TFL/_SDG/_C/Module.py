@@ -29,13 +29,82 @@
 #    28-Jul-2004 (CT) Creation
 #    12-Aug-2004 (MG) `Incl` group removed (nice try)
 #    24-Aug-2004 (CT) `header_comment_level` and `signature_level` added
+#    25-Aug-2004 (CT) `_autoconvert` for `name` added to keep only
+#                     `Filename (name).base`
 #    ««revision-date»»···
 #--
 
+from   Filename          import Filename
 from   _TFL              import TFL
 import _TFL._SDG._C._Scope_
 import _TFL._SDG._C.Comment
 import time
+
+class Module (TFL.SDG.C._Scope_) :
+    """Models a C module."""
+
+    Ancestor             = TFL.SDG.C._Scope_
+
+    children_group_names = \
+        ( Ancestor.Decl
+        , Ancestor.Head
+        , Ancestor.Body
+        , Ancestor.Tail
+        )
+
+    header_comment_level = signature_level = 0
+
+    init_arg_defaults    = dict \
+        ( author         = None
+        , header_comment = ""
+        )
+
+    _autoconvert         = dict \
+        ( header_comment =
+              lambda s, k, v : s._convert_c_comment (k, v, eol = False)
+        , name           = lambda s, k, v : Filename (v).base
+        )
+
+    star_level           = 3
+    pass_scope           = False
+    _format_head         = """
+        %(::*header_comment:)s
+        %(::*signature:)s
+        %(::*description:)s
+        %(::*explanation:)s
+    """.strip ()
+    _format_children     = """
+        %(::*decl_children:)s
+        %(::*head_children:)s
+        %(::*body_children:)s
+        %(::*tail_children:)s
+    """
+    c_format             = _format_head + """
+    """ + _format_children
+
+    h_format             = _format_head + """
+
+        #ifndef _%(name)s_h_
+        #define _%(name)s_h_ 1
+
+        """ + _format_children + """#endif /* _%(name)s_h_ */
+    """
+
+    def __init__ (self, * children, ** kw) :
+        self.__super.__init__ (* children, ** kw)
+        author = ""
+        if self.author :
+            author = " by %s" % self.author
+        self.signature = self._convert_c_comment \
+            ( "signature"
+            , "Module %s, written%s on %s"
+            % ( self.name, author, time.strftime
+                  ("%a %d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
+              )
+            )
+    # end def __init__
+
+# end class Module
 
 """
 from   _TFL._SDG._C.Module    import *
@@ -100,71 +169,6 @@ print repr (m)
 print str  (m)
 
 """
-
-class Module (TFL.SDG.C._Scope_) :
-    """Models a C module."""
-
-    Ancestor             = TFL.SDG.C._Scope_
-
-    children_group_names = \
-        ( Ancestor.Decl
-        , Ancestor.Head
-        , Ancestor.Body
-        , Ancestor.Tail
-        )
-
-    header_comment_level = signature_level = 0
-
-    init_arg_defaults    = dict \
-        ( author         = None
-        , header_comment = ""
-        )
-
-    _autoconvert         = dict \
-        ( header_comment =
-              lambda s, k, v : s._convert_c_comment (k, v, eol = False)
-        )
-
-    star_level           = 3
-    pass_scope           = False
-    _format_head         = """
-        %(::*header_comment:)s
-        %(::*signature:)s
-        %(::*description:)s
-        %(::*explanation:)s
-    """.strip ()
-    _format_children     = """
-        %(::*decl_children:)s
-        %(::*head_children:)s
-        %(::*body_children:)s
-        %(::*tail_children:)s
-    """
-    c_format             = _format_head + """
-    """ + _format_children
-
-    h_format             = _format_head + """
-
-        #ifndef _%(name)s_h_
-        #define _%(name)s_h_ 1
-
-        """ + _format_children + """#endif /* _%(name)s_h_ */
-    """
-
-    def __init__ (self, * children, ** kw) :
-        self.__super.__init__ (* children, ** kw)
-        author = ""
-        if self.author :
-            author = " by %s" % self.author
-        self.signature = self._convert_c_comment \
-            ( "signature"
-            , "Module %s, written%s on %s"
-            % ( self.name, author, time.strftime
-                  ("%a %d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
-              )
-            )
-    # end def __init__
-
-# end class Module
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("Module")

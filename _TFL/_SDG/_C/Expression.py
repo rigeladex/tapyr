@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
+#    25-Aug-2004 (CT) Add `H` to scope (otherwise `ifdef.condition` doesn't
+#                     work in header files)
 #    ««revision-date»»···
 #--
 
@@ -36,7 +38,7 @@ import _TFL._SDG._C.Node
 class Expression (TFL.SDG.C.Node) :
     """Model C expressions"""
 
-    scope               = TFL.SDG.C.C
+    scope               = TFL.SDG.C.C | TFL.SDG.C.H
 
     init_arg_defaults   = dict \
         ( code          = ""
