@@ -30,8 +30,10 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL         import TFL
-from   _TGL         import TGL
+from   _TFL                  import TFL
+from   _TGL                  import TGL
+
+from   Record                import Record
 
 import _TFL._Meta.Property
 import _TFL._UI.Mixin
@@ -39,8 +41,6 @@ import _TFL._UI.Style
 
 import _TGL._UI.Mixin
 import _TGL._UI.Style
-
-from   Record import Record
 
 class Styled (TFL.Meta.Object) :
     """Mode styled text object"""
@@ -64,6 +64,7 @@ class Styled (TFL.Meta.Object) :
 class Node (TGL.UI.Mixin) :
     """Model a simple node of a hierarchical text display"""
 
+    children            = property (lambda s : s._children)
     contents            = property (lambda s : s._contents)
     Style               = TFL.Meta.Lazy_Property \
         ("Style",    lambda s : s.parent.Style)
@@ -78,19 +79,53 @@ class Node (TGL.UI.Mixin) :
             , AC        = AC or parent.AC
             , ** kw
             )
+        if isinstance (contents, (str, unicode)) :
+            contents    = (contents, )
         self.parent     = parent
         self.level      = level = parent and (parent.level + 1) or 0
         self.style      = style = self._base_style (style, level)
         self.style_dict = sd = self.tkt_text.Tag_Styler (style).option_dict
-        if isinstance (contents, (str, unicode)) :
-            contents    = (contents, )
-        self._contents  = [Styled (c, style, sd) for c in (contents)]
-        self._insert (self.tkt_text.current_pos)
+        self.init_children ()
+        self.init_contents (* contents)
+        if parent :
+            parent.add_child (self)
     # end def __init__
+
+    def add_child (self, * children) :
+        add = self.children.append
+        for c in children :
+            add (c)
+        self._insert_children \
+            (self._tail_mark or self.tkt.current_pos, * children)
+    # end def add_child
+
+    def add_contents (self, * contents) :
+        style = self.style
+        sd    = self.style_dict
+        self.contents.extend (Styled (c, style, sd) for c in (contents))
+    # end def add_contents
+
+    def init_children (self) :
+        self._children  = []
+    # end def init_children
+
+    def init_contents (self, * contents) :
+        self._contents  = []
+        self.add_contents (* contents)
+    # end def init_contents
 
     def styled_text (self, value, style = None, style_dict = None) :
         return Styled (value, self._style (style), style_dict)
     # end def styled_text
+
+    def _add_contents (self, at_mark, * contents) :
+        if contents :
+            tkt_text = self.tkt_text
+            for c in contents :
+                tkt_text.insert (at_mark, c.value, c.style)
+            if not c.value.endswith ("\n") :
+                tkt_text.insert (at_mark, "\n", self.style)
+    # end def _add_contents
 
     def _base_style (self, style, level) :
         result = getattr (self.Style, "level%s" % (level, ))
@@ -102,12 +137,20 @@ class Node (TGL.UI.Mixin) :
     def _insert (self, at_mark) :
         tkt_text = self.tkt_text
         self._head_mark = tkt_text.mark_at (at_mark, left_gravity = True)
-        for c in self.contents :
-            tkt_text.insert (at_mark, c.value, c.style)
-        if not c.value.endswith ("\n") :
-            tkt_text.insert (at_mark, "\n", self.style)
+        self._insert_contents              (at_mark, * self.contents)
+        self._midd_mark = tkt_text.mark_at (at_mark, left_gravity = True)
+        self._insert_children              (at_mark, * self.children)
         self._tail_mark = tkt_text.mark_at (at_mark, left_gravity = False)
     # end def _display
+
+    def _insert_children (self, at_mark, * children) :
+        for c in children :
+            c._insert (at_mark)
+    # end def _insert_children
+
+    def _insert_contents (self, at_mark, * contents) :
+        self._add_contents (at_mark, * contents)
+    # end def _insert_contents
 
     def _style (self, style) :
         if isinstance (style, str) :
@@ -116,6 +159,131 @@ class Node (TGL.UI.Mixin) :
     # end def _style
 
 # end class Node
+
+class Node_B (Node) :
+    """Model a node with butcon of a hierarchical text display"""
+
+    butcon_bitmap       = "circle"
+    callback_style      = TFL.UI.Style ("callback")
+    _no_of_butcons      = 0
+
+    def __init__ (self, * args, ** kw) :
+        self.butcon = None
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def ignore (self, event = None) :
+        return self.TNS.stop_cb_chaining
+    # end def ignore
+
+    def mouse_enter (self, event = None) :
+        self.butcon.push_style (self.Style.active_button)
+    # end def mouse_enter
+
+    def mouse_leave (self, event = None) :
+        self.butcon.pop_style  ()
+    # end def mouse_leave
+
+    def _button_callback_dict (self) :
+        ignore = self.ignore
+        return dict \
+            ( click_1   = ignore
+            , click_2   = ignore
+            , click_3   = ignore
+            , any_enter = ignore
+            , any_leave = ignore
+            )
+    # end def _button_callback_dict
+
+    def _insert_butcon (self, at_mark) :
+        tkt_text = self.tkt_text
+        if self.butcon is None :
+            self.__class__._no_of_butcons += 1
+            self.butcon  = b = self.TNS.Butcon \
+                ( AC     = self.AC
+                , wc     = tkt_text
+                , bitmap = self.butcon_bitmap
+                , name   = "b%s" % (self.__class__._no_of_butcons, )
+                )
+            b.apply_style \
+                ( self.callback_style
+                      (callback = self._button_callback_dict ())
+                )
+            for s in self.Style.normal, self.style :
+                b.push_style (s)
+        tkt_text.insert        (at_mark, "\t" * (self.level - 1))
+        tkt_text.insert_widget (at_mark, self.butcon)
+        tkt_text.insert        (at_mark, "\t")
+        tkt_text.apply_style \
+            ( getattr (self.Style, "level%sButtonLine" % (self.level, ))
+            , self._head_mark, at_mark
+            )
+    # end def _insert_butcon
+
+    def _insert_contents (self, at_mark, * contents) :
+        self._insert_butcon           (at_mark)
+        self.__super._insert_contents (at_mark, * contents)
+    # end def _insert_contents
+
+# end class Node_B
+
+class Node_Bs (Node_B) :
+    """Model a multi-state node with butcon of a hierarchical text display"""
+
+    butcon_bitmap       = property \
+        (lambda s : s._butcon_bitmaps [s.state])
+    contents            = property \
+        (lambda s : s._contents [s.state])
+    no_of_states        = property (lambda s : len (s._butcon_bitmaps))
+    state               = 0
+
+    def add_contents (self, * contents_per_state) :
+        old_state = self.state
+        try :
+            for self.state, contents in enumerate (contents_per_state) :
+                if isinstance (contents, (str, unicode)) :
+                    contents = (contents, )
+                self.__super.add_contents (* contents)
+        finally :
+            self.state = old_state
+    # end def add_contents
+
+    def inc_state (self, event = None) :
+        """Increment state to next state
+           (circles back from last to first state).
+        """
+        self.state = (self.state + 1) % self.no_of_states
+        tkt_text   = self.tkt_text
+        tkt_text.remove          (self._head_mark, self._tail_mark)
+        self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
+        self._insert             (self._tail_mark)
+    # end def inc_state
+
+    def init_contents (self, * contents_per_state) :
+        self._contents  = [[] for i in range (self.no_of_states)]
+        self.add_contents (* contents_per_state)
+    # end def init_contents
+
+    def _button_callback_dict (self) :
+        return dict \
+            ( self.__super._button_callback_dict ()
+            , click_1 = self.inc_state
+            )
+    # end def _button_callback_dict
+
+    def _insert_children (self, at_mark, * children) :
+        if self.state == self.no_of_states - 1 :
+            self.__super._insert_children (at_mark, * children)
+    # end def _insert_children
+
+# end class Node_Bs
+
+class Node_B2 (Node_Bs) :
+    """Model a two-state node with butcon of a hierarchical text display"""
+
+    _butcon_bitmaps     = ("closed_node", "open_node")
+
+# end class Node_B2
 
 class Top_Node (Node) :
     """Model the toplevel node of a hierarchical text display"""
@@ -136,7 +304,7 @@ class Top_Node (Node) :
         , hyperLinkBackground    = "lightyellow2"
         , hyperLinkCursor        = "hand"
         , hyperLinkForeground    = "blue"
-        , indent                 = 11 # 22
+        , indent                 = 22
         , indent_inc             = 0
         , linkFontFamily         = "Monospace"
         , linkFontStyle          = "normal"
@@ -171,6 +339,7 @@ class Top_Node (Node) :
             , wc        = wc
             , ** kw
             )
+        self._insert (tkt_text.current_pos)
     # end def __init__
 
     def _setup_styles (self, w) :
@@ -246,11 +415,10 @@ class Top_Node (Node) :
             level = "level%s" % (i, )
             lm1   = i   * d.indent
             lm2   = lm1 + d.indent_inc
-            add ( level
-                , lmargin1  = lm1
-                , lmargin2  = lm2
-                )
-            tabs.append (lm1 + d.indent)
+            add (level, lmargin1 = lm1, lmargin2 = lm2)
+            if i :
+                add ("%sButtonLine" % level, lmargin1 = 0, lmargin2 = lm2)
+                tabs.append (lm1)
         Style.T = self.styled_text
     # end def _setup_styles
 
@@ -260,21 +428,26 @@ class Top_Node (Node) :
 from   _TGL._UI.HTD import *
 from   _TFL._UI.App_Context import App_Context
 import _TGL._TKT._Tk
+import _TGL._TKT._Tk.Butcon
 import _TGL._TKT._Tk.Text
 ac  = App_Context (TGL)
 
-tn = Top_Node (ac, "First try")
+tn = Top_Node (ac, "First try", name = "HTDtest")
 tn.tkt_text.exposed_widget.pack (expand = "yes", fill = "both")
-tn.tkt_text.pos_at (tn.tkt_text.eot_pos), tn.tkt_text.pos_at (tn.tkt_text.current_pos)
-tc = Node ( tn
-          , ( Styled ("Second try", Top_Node.Style.red)
+
+cn = Node ( tn
+          , ( tn.Style.T ("Second try", "yellow")
             , "\n", "third line"
-            , Styled ("fourth line", Top_Node.Style.blue)
+            , Styled ("fourth line", tn.Style.blue)
             )
           )
-tn.tkt_text.pos_at (tn.tkt_text.eot_pos), tn.tkt_text.pos_at (tn.tkt_text.current_pos)
+
+
+cb = Node_B  (tn, "Just a single button in front of a line\nand another one")
+c2 = Node_B2 (tn, (["closed node"], ["open node"]), tn.Style.light_gray)
 
 """
+
 if __name__ != "__main__" :
     TGL.UI._Export_Module ()
 ### __END__ TGL.UI.HTD
