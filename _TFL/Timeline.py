@@ -35,11 +35,13 @@ class Timeline_Cut (NDT.Sched2.Span) :
     def prepare_cut_l (self, size) :
         lower       = self.cut.lower
         self.to_cut = NDT.Sched2.Span (lower, lower + size)
+        return self.to_cut
     # end def prepare_cut_l
 
     def prepare_cut_u (self, size) :
         upper       = self.cut.upper
         self.to_cut = NDT.Sched2.Span (upper - size, upper)
+        return self.to_cut
     # end def prepare_cut_u
 
 # end class Timeline_Cut
@@ -53,21 +55,25 @@ class Timeline (TFL.Meta.Object) :
        >>> S = NDT.Sched2.Span
        >>> c = tl.intersection (S (100, 300)) [0]
        >>> c.prepare_cut_l (50)
+       (100, 150)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 100), (150, 1000)]
        >>> c = tl.intersection (S (70, 100)) [0]
        >>> c.prepare_cut_u (15)
+       (85, 100)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 85), (150, 1000)]
        >>> c = tl.intersection (S (150, 200)) [0]
        >>> c.prepare_cut_l (50)
+       (150, 200)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 85), (200, 1000)]
        >>> c = tl.intersection (S (500, 600)) [0]
        >>> c.prepare_cut_l (50)
+       (500, 550)
        >>> tl.cut (c)
        >>> tl.free
        [(0, 85), (200, 500), (550, 1000)]
@@ -75,7 +81,9 @@ class Timeline (TFL.Meta.Object) :
        >>> c1, c2
        ((50, 85), (200, 300))
        >>> c1.prepare_cut_u (15)
+       (70, 85)
        >>> c2.prepare_cut_l (15)
+       (200, 215)
        >>> tl.cut (c1, c2)
        >>> tl.free
        [(0, 70), (215, 500), (550, 1000)]
