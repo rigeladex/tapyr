@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #    22-Apr-2003 (CT) Moved to package `TFL.FDB`
 #    22-Apr-2003 (CT) `field_pat` changed to allow for `key` and modifier
 #    22-Apr-2003 (CT) `_split` changed to populate `_keys`
+#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,7 @@ class Record :
     def write (self, path = None) :
         """Write `str (self)' to `path or self._path'"""
         path = path or self._path
-        if type (path) == type ("") :
+        if isinstance (path, str) :
             file = open (path, "w")
             self._write (file)
             file.close  ()
@@ -110,7 +111,7 @@ class Record :
         for f, p in field_pats.items () :
             v = getattr (self, f, "")
             if v :
-                if type (v) == type ([]) :
+                if isinstance (v, (list, tuple)) :
                     for w in v :
                         test (f, w, p, result)
                 else :
@@ -138,7 +139,7 @@ class Record :
     # end def __getattr__
 
     def __getitem__ (self, index) :
-        if type (index) == type ("") :
+        if isinstance (index, str) :
             return self._fields [index]
         else :
             return self._fields [self._seq [index]]
@@ -169,7 +170,7 @@ class Record :
         width  = max (map (lambda k : len (k), self.keys ()) + [0])
         format = "%%-%ds : %%s" % (width, )
         for n, v in self.items () :
-            if type (v) == type ([]) :
+            if isinstance (v, (list, tuple)) :
                 for w in v :
                     r = self.field_sep.sub ("\n    ", format % (n, w))
                     result.append (r)

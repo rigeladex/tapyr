@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,6 +29,7 @@
 #    24-Jun-2002 (CT) Creation
 #     9-Apr-2003 (MG) `point_in_rect` added
 #    11-Jun-2003 (CT) s/!= None/is not None/
+#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -124,9 +125,9 @@ class Rect (TFL.Meta.Object) :
         }
 
     def __init__ (self, top_left = (0.0, 0.0), size = (1.0, 1.0)) :
-        if isinstance (top_left, type (())) :
+        if isinstance (top_left, (list, tuple)) :
             top_left  = D2.Point (* top_left)
-        if isinstance (size, type (())) :
+        if isinstance (size, (list, tuple)) :
             size      = D2.Point (* size)
         self.top_left = top_left
         self.size     = size
@@ -162,7 +163,7 @@ class Rect (TFL.Meta.Object) :
     # end def connection_point
 
     def point_in_rect (self, point) :
-        if isinstance (point, (type (()), type ([]))) :
+        if isinstance (point, (list, tuple)) :
             point = D2.Point (* point)
         tl = self.top_left
         br = tl + self.size

@@ -26,10 +26,11 @@
 #    Classes modeling lines in 2D space
 #
 # Revision Dates
-#    24-Jun-2002 (CT) Creation (factored from Two_Dim)
-#    24-Mar-2003 (CT) Converted to new-style class
-#    11-Jun-2003 (CT) s/!= None/is not None/
-#    11-Jun-2004 (GKH) deprecation warning removed (issue 10140)
+#    24-Jun-2002 (CT)  Creation (factored from Two_Dim)
+#    24-Mar-2003 (CT)  Converted to new-style class
+#    11-Jun-2003 (CT)  s/!= None/is not None/
+#    11-Jun-2004 (GKH) Deprecation warning removed (issue 10140)
+#    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -102,9 +103,9 @@ class Line (TFL.Meta.Object) :
     """
 
     def __init__ (self, head = (0.0, 0.0), tail = (1.0, 1.0)) :
-        if isinstance (head, type (())) :
+        if isinstance (head, (list, tuple)) :
             head = D2.Point (* head)
-        if isinstance (tail, type (())) :
+        if isinstance (tail, (list, tuple)) :
             tail = D2.Point (* tail)
         self.head = head
         self.tail = tail

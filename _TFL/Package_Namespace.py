@@ -103,6 +103,7 @@
 #     5-Jul-2004 (CT)  `__name__` set for `Package_Namespace` instances to
 #                      make them more similar to modules
 #     4-Aug-2004 (MG)  `Package_Namespace._Import_Module` added
+#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -232,7 +233,7 @@ class Package_Namespace :
 
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
-            if isinstance (name, type ("")) :
+            if isinstance (name, str) :
                 name, as_name = name, name
             else :
                 name, as_name = name

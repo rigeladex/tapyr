@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -28,6 +27,7 @@
 #
 # Revision Dates
 #    25-May-2002 (CT) Creation
+#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -40,7 +40,7 @@ class Field_Reader :
         self.field_types = field_types
         self._file       = kw.get ("file",      sys.stdin)
         splitargs        = kw.get ("splitargs", ())
-        if isinstance (splitargs, type ("")) :
+        if isinstance (splitargs, str) :
             splitargs    = (splitargs, )
         self.splitargs   = splitargs
     # end def __init__

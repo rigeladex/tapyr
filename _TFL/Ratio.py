@@ -30,6 +30,7 @@
 #     5-Sep-2001 (CT) Error messages for `TypeError` improved
 #    12-Aug-2003 (CT) doctest fixed
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
+#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    ««revision-date»»···
 #--
 
@@ -79,7 +80,7 @@ class Ratio :
         )
 
     def __init__ (self, n, d = None) :
-        if isinstance (n, type ("")) :
+        if isinstance (n, str) :
             if not d is None :
                 raise TypeError, \
                       "Ratio() 2nd argument not allowed when 1st is a string"
