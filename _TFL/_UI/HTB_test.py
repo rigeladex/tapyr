@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    25-Feb-2005 (RSC) Creation from TFL.TKT.Tk.HTB_test
+#     7-Mar-2005 (RSC) Added background color (using "found" style)
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ def mknode (tb, name) :
         , "1. test line\n2. test line\n3. test line"
         , o_links = (o,)
         )
-    n.insert (tb.current_pos, "nowrap")
+    n.insert (tb.current_pos, "nowrap", "found")
     return n
 # end def mknode
 
@@ -67,7 +68,7 @@ def mkchild (tn, name) :
 def insert_stuff (tb) :
     tb.insert            (tb.current_pos, "**           Test me           **\n")
     tn = TFL.UI.HTB.help (tb)
-    tn.insert            (tb.current_pos, "rindent")
+    tn.insert            (tb.current_pos, "rindent", "found")
     tn = mknode          (tb, "n1")
     x = mkchild          (tn, "s1")
     mkchild              (tn, "s2")
