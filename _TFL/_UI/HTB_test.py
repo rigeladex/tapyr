@@ -37,6 +37,7 @@
 #    15-Mar-2005 (RSC) Changed one test-case to get an auto-wrap for
 #                      testing lmargin1/lmargin2
 #    15-Mar-2005 (RSC) Added test for hyper-link in `name` of a node
+#    21-Mar-2005 (RSC) Added test for `head_open` parameter
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ def mknode (tb, name, * tags) :
         ( tb
         , name
         , "1. test line\n2. test line\n3. test line"
+        , head_open = "4. test Line\n5. test Line\n6. test Line"
         , o_links = o
         )
     n.insert (tb.current_pos, * tags)

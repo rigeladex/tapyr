@@ -87,6 +87,12 @@
 #                      parameter of a node, now links in the name work
 #                      again because _insert_header was overridden in
 #                      Node_Linked.
+#    21-Mar-2005 (RSC) Introduced anonymous nodes that consist only of a
+#                      header, this gets rid of the body of a node and
+#                      does everything with anonymous nodes.
+#                      Now an open node may optionally have a different
+#                      header when opened/closed (new optional argument
+#                      `head_open`)
 #    ««revision-date»»···
 #--
 
@@ -271,6 +277,7 @@ class Node (TFL.UI.Mixin) :
         , name_tags     = ()     # additional tags for `name'
         , header_tags   = ()     # additional tags for `header'
         , contents_tags = ()     # additional tags for `contents'
+        , head_open     = None   # header-text of open node
         , AC            = None   # for compatibility with __super
         ) :
         assert (  ((not parent) and (number is None))
@@ -287,15 +294,17 @@ class Node (TFL.UI.Mixin) :
             , name_tags     = name_tags
             , header_tags   = header_tags
             , contents_tags = contents_tags
+            , head_open     = head_open
             )
         self.browser   = browser
         self.text      = browser.text
         self.name      = name
         self.header    = header
-        self.contents  = contents
+        self.head_open = head_open or header
         self.parent    = parent
         self.number    = number
         self.bid_seed  = 0
+        self.anonymous = header and not (head_open or contents or name)
         if not self.parent :
             self.level       = 0
             self.number      = len (self.browser.nodes)
@@ -325,21 +334,18 @@ class Node (TFL.UI.Mixin) :
         if browser.node_map.has_key (self.tag) :
             raise Name_Clash, self.tag
         browser.node_map [self.tag] = self
-        self.children  = []
-        self.tags      = ()
-        self.head_mark = None
-        self.body_mark = None
-        self.butt_mark = None
-        self.tail_mark = None
-        self.button    = None
+        self.children               = []
+        self.tags                   = ()
+        self.head_mark              = None
+        self.body_mark              = None
+        self.butt_mark              = None
+        self.tail_mark              = None
+        self.button                 = None
         if name_tags     : self.name_tags     = filter (None, name_tags)
         if header_tags   : self.header_tags   = filter (None, header_tags)
         if contents_tags : self.contents_tags = filter (None, contents_tags)
-        self.cached_text = ("%s" * 7) % \
-           ( self.name
-           , self.header_head,   self.header,   self.header_tail
-           , self.contents_head, self.contents, self.contents_tail
-           )
+        self.cached_text = ("%s" * 4) % \
+           ( self.name, self.header_head,   self.header,   self.header_tail)
         if not self.parent and self.number == 0 :
             browser_binding_style    = callback_style \
                 ( callback = dict
@@ -360,18 +366,46 @@ class Node (TFL.UI.Mixin) :
                     )
                 )
             self.text.apply_style (browser_binding_style)
+        if contents :
+            self.add_contents (contents)
     # end def __init__
 
     def is_open (self) :
         return self.button and not self.button.closed
     # end def is_open
 
+    def add_contents (self, contents) :
+        """Add an anonymous child inheriting several attributes from the
+           parent to guarantee correct formatting as a contents node.
+        """
+        number = len              (self.children)
+        child  = self.__class__ \
+            ( self.browser
+            , ''
+            , contents
+            , ''
+            , self
+            , number
+            , header_tags = self.contents_tags
+            )
+        self._insert_child        (child)
+        child.header_head = self.contents_head
+        child.header_tail = self.contents_tail
+        child.level_tag   = self.level_tag
+        child.head_tag    = self.level_tag
+        # Delegate enter/leave events to parent
+        child.enter       = self.enter
+        child.leave       = self.leave
+        return child
+    # end def add_contents
+
     def new_child (self, name, header = "", contents = "") :
         """Add child named `name' to `self'."""
         number = len              (self.children)
-        child  = self.__class__   ( self.browser, name
-                                  , header, contents, self, number
-                                  )
+        child  = self.__class__   \
+            ( self.browser, name
+            , header, contents, self, number
+            )
         self._insert_child        (child)
         return child
     # end def new_child
@@ -394,17 +428,20 @@ class Node (TFL.UI.Mixin) :
         """
         self.tags = filter (None, (self.tag, ) + tags)
         head = self.text.pos_at (mark)
-        if self.level :
-            self._insert (mark, "\t" * self.level)
-        self.butt_mark = self.text.mark_at (mark, left_gravity = True)
-        self._insert_button                ()
-        self._insert                       (mark, "\t")
-        hpos = self._insert_header         (mark)
-        body = self.text.pos_at            (mark)
-        self._insert                       (mark, "\n")
-        self.head_mark = self.text.mark_at (head, left_gravity = True)
-        self.body_mark = self.text.mark_at (body, left_gravity = True)
-        self.tail_mark = self.text.mark_at (body)
+        if not self.anonymous :
+            if self.level :
+                self._insert (mark, "\t" * self.level)
+            self.butt_mark   = self.text.mark_at (mark, left_gravity = True)
+            self._insert_button                  ()
+            self._insert                         (mark, "\t")
+            self._insert_name                    (mark)
+        body = self.text.pos_at                  (mark)
+        self._insert_header                      (mark)
+        tail = self.text.pos_at                  (mark)
+        self._insert                             (mark, "\n")
+        self.head_mark       = self.text.mark_at (head, left_gravity = True)
+        self.body_mark       = self.text.mark_at (body, left_gravity = True)
+        self.tail_mark       = self.text.mark_at (tail)
         self.text.apply_style \
             ( styles [self.head_tag]
             , self.head_mark
@@ -413,7 +450,7 @@ class Node (TFL.UI.Mixin) :
         self.text.apply_style \
             ( styles [self.level_tag]
             , self.text.bol_pos (self.head_mark, line_delta = 1)
-            , hpos
+            , body
             )
     # end def insert
 
@@ -425,7 +462,7 @@ class Node (TFL.UI.Mixin) :
         if not self.button :
             self.button = Button \
                 ( self
-                , is_leaf = not (self.children or self.contents)
+                , is_leaf = not self.children
                 )
         else :
             self.button.butcon.pop_style ()
@@ -457,28 +494,26 @@ class Node (TFL.UI.Mixin) :
     print_level_head   = ".   " ### level indent per node     (print_contents)
     print_content_head = "    " ### content indent per node   (print_contents)
 
+    def _insert_name (self, index) :
+        if not self.anonymous :
+            self._insert (index, self.name, "header", * self.name_tags)
+    # end def _insert_name
+
     def _insert_header (self, index) :
-        self._insert            (index, self.name, "header", * self.name_tags)
-        hpos = self.text.pos_at (index)
         if self.header :
+            ins = self.header
+            if (   self.button
+               and not self.button.is_leaf
+               and not self.button.closed
+               ) :
+                ins = self.head_open
             self._insert \
                 ( index
-                , self.header_head + self.header + self.header_tail
+                , self.header_head + ins + self.header_tail
                 , self.level_tag
                 , * self.header_tags
                 )
-        return hpos
     # end def _insert_header
-
-    def _insert_contents (self, index) :
-        if self.contents :
-            self._insert \
-                ( index
-                , self.contents_head + self.contents + self.contents_tail
-                , self.level_tag
-                , * self.contents_tags
-                )
-    # end def _insert_contents
 
     def print_node (self, event = None) :
         node = self._current_node ()
@@ -507,12 +542,6 @@ class Node (TFL.UI.Mixin) :
         parts.append (head + self.name)
         if self.header :
             parts.append (self.header_head + self.header + self.header_tail)
-        if open and self.contents :
-            if (parts [-1] [-1] != "\n") and (self.contents_head != "\n") :
-                parts.append ("\n")
-            parts.append ( self.contents_head
-                         + self.contents + self.contents_tail
-                         )
         output = "".join (parts)
         output = output.replace ("\n", "\n" + indent) + "\n"
         file.write (output)
@@ -525,8 +554,9 @@ class Node (TFL.UI.Mixin) :
         if self.button and not self.button.is_leaf :
             if self.button.closed :
                 self.button.open ()
-                self._insert          (self.tail_mark, "\n")
-                self._insert_contents (self.tail_mark)
+                self._delete        (self.body_mark, self.tail_mark)
+                self._insert_header (self.tail_mark)
+                self._insert        (self.tail_mark, "\n")
                 for c in self.children :
                     c.insert (self.tail_mark, * self.tags)
             if transitive :
@@ -541,8 +571,9 @@ class Node (TFL.UI.Mixin) :
                     c.close  (event, transitive = 0)
                     c.tags   = ()
                     c.button = None
-                self.button.close ()
-                self._delete      (self.body_mark, self.tail_mark)
+                self.button.close   ()
+                self._delete        (self.body_mark, self.tail_mark)
+                self._insert_header (self.tail_mark)
             if transitive and self.parent :
                 self.parent.close (event, transitive - 1)
     # end def close
@@ -812,8 +843,10 @@ class Node_Linked (Node) :
         , header_tags   = ()     # additional tags for `header'
         , contents_tags = ()     # additional tags for `contents'
         , o_links       = ()     # objects to hyper-link
+        , head_open     = None   # different header for opened node
         , AC            = None   # for compatibility with __super
         ) :
+        self.o_links        = o_links
         self.__super.__init__ \
             ( browser       = browser
             , name          = name
@@ -824,23 +857,22 @@ class Node_Linked (Node) :
             , name_tags     = name_tags
             , header_tags   = header_tags
             , contents_tags = contents_tags
+            , head_open     = head_open
             , AC            = AC or browser.AC
             )
-        self.o_links        = o_links
     # end def __init__
 
-    def _insert_header (self, index) :
-        start = self.text.pos_at            (index)
-        pos   = self.__super._insert_header (index)
-        self.activate_links                 (start, index)
-        return pos
-    # end def _insert_header
+    def _insert_name (self, index) :
+        start = self.text.pos_at    (index)
+        self.__super._insert_name   (index)
+        self.activate_links         (start, index)
+    # end def _insert_name
 
-    def _insert_contents (self, index) :
-        start = self.text.pos_at      (index)
-        self.__super._insert_contents (index)
-        self.activate_links           (start, index)
-    # end def _insert_contents
+    def _insert_header (self, index) :
+        start = self.text.pos_at    (index)
+        self.__super._insert_header (index)
+        self.activate_links         (start, index)
+    # end def _insert_header
 
     def _link_name (self, o) :
         if hasattr (o, "name") :
@@ -866,6 +898,14 @@ class Node_Linked (Node) :
                     )
                 self._apply_styles (nam, head, tail, callback, hstyle)
     # end def activate_links
+
+    def add_contents (self, contents) :
+        """Add an anonymous child inheriting several attributes from the
+           parent to guarantee correct formatting as a contents node.
+        """
+        child = self.__super.add_contents (contents)
+        child.o_links = self.o_links
+    # end def add_contents
 
     def follow (self, o, event = None) :
         return self.TNS.stop_cb_chaining
