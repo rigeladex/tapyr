@@ -38,31 +38,34 @@ class Property (property) :
     def __init__ (self, name, doc = None) :
         self.name = name
         super (Property, self).__init__ \
-            (self._get_value, self._set, self._del_value, doc)
+            (self._get_value, self._set, self._del, doc)
     # end def __init__
 
+    def _prop_name (self, obj) :
+        return obj.__class__.mangled_name (self.name)
+    # end def _prop_name
+
     def _set_value (self, obj, value) :
-        name = obj.__class__._mangled_name (self.name)
-        return setattr (obj, name, value)
+        return setattr (obj, self._prop_name (obj), value)
     # end def _set_value
 
     def _get_value (self, obj) :
-        name = obj.__class__._mangled_name (self.name)
-        return getattr (obj, name)
+        return getattr (obj, self._prop_name (obj))
     # end def _get_value
 
     def _del_value (self, obj) :
-        name = obj.__class__._mangled_name (self.name)
-        return delattr (obj, name)
+        return delattr (obj, self._prop_name (obj))
     # end def _del_value
 
 # end class Property
 
-class Autoinit (Property) :
-    """Property which is automatically initialized for each instance."""
+class RO_Property (Property) :
+    """Readonly property which is automatically initialized for each
+       instance.
+    """
 
     def __init__ (self, name, init_value = None, doc = None) :
-        super (Autoinit, self).__init__ (name, doc)
+        super (RO_Property, self).__init__ (name, doc)
         self._init_value = init_value
     # end def __init__
 
@@ -70,23 +73,33 @@ class Autoinit (Property) :
         self._set_value (obj, self._init_value)
     # end def init_instance
 
-# end class Autoinit
+# end class RO_Property
 
-class RW_Property (Autoinit) :
-    _set = Autoinit._set_value
+class RW_Property (RO_Property) :
+    """Read/write property automatically initialized for each instance"""
+
+    _del = RO_Property._del_value
+    _set = RO_Property._set_value
+
 # end class Read_Write
 
 from   _TFL import TFL
 import _TFL._Meta
 TFL.Meta._Export ("*")
 
-if __debug__ :
+if 0 and __debug__ :
     import _TFL._Meta.Class
     class T (object) :
         __metaclass__ = TFL.Meta.Class
-        _properties_  = \
-          ( Autoinit    ("x", 42,  "readonly  property")
+        __properties  = \
+          ( RO_Property ("x", 42,  "readonly  property")
           , RW_Property ("y", 137, "writeable property")
           )
 
-### __END__ Property
+    class U (T) :
+        __properties = \
+          ( RW_Property ("x", 3.12415926, "redefined attribute")
+          , RO_Property ("z", "fubar")
+          )
+
+### __END__ TFL.Meta.Property

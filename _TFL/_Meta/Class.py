@@ -30,19 +30,36 @@
 #    ««revision-date»»···
 #--
 
-class Autorename (type) :
+class _Type_ (type) :
+    """Base class of TFL metaclasses """
+
+    def mangled_name (cls, name) :
+        return cls._mangled_name (name, cls.__name__)
+    # end def mangled_name
+
+    def _mangled_name (self, name, cls_name) :
+        if cls_name.startswith ("_") :
+            format = "%s__%s"
+        else :
+            format = "_%s__%s"
+        return format % (cls_name, name)
+    # end def _mangled_name
+
+# end class _Type_
+
+class Autorename (_Type_) :
     """Metaclass renaming the class to the value of the class attribute
        `_real_name` if existing.
     """
 
-    def __new__ (cls, name, bases, dict) :
+    def __new__ (meta, name, bases, dict) :
         if dict.has_key ("_real_name") :
             name, real_name = dict ["_real_name"], name
             del dict ["_real_name"]
         else :
             real_name = name
         dict ["__real_name"] = real_name
-        return super (Autorename, cls).__new__ (cls, name, bases, dict)
+        return super (Autorename, meta).__new__ (meta, name, bases, dict)
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
@@ -53,18 +70,13 @@ class Autorename (type) :
         super (Autorename, cls).__init__ (real_name, bases, dict)
     # end def __init__
 
-    def _mangled_name (cls, name) :
-        cls_name = cls.__dict__ ["__real_name"]
-        if cls_name.startswith ("_") :
-            format = "%s__%s"
-        else :
-            format = "_%s__%s"
-        return format % (cls_name, name)
-    # end def _mangled_name
+    def mangled_name (cls, name) :
+        return cls._mangled_name (name, cls.__dict__ ["__real_name"])
+    # end def mangled_name
 
 # end class Autorename
 
-class Autosuper (type) :
+class Autosuper (_Type_) :
     """Metaclass adding a private class variable containing `super (cls)`
        (the name of that variable is taken from `_super_attr` of the class).
     """
@@ -73,39 +85,39 @@ class Autosuper (type) :
 
     def __init__ (cls, name, bases, dict) :
         super   (Autosuper, cls).__init__ (name, bases, dict)
-        setattr (cls, cls._mangled_name (cls._super_attr), super (cls))
+        setattr (cls, cls.mangled_name (cls._super_attr), super (cls))
     # end def __init__
-
-    def _mangled_name (cls, name) :
-        cls_name = cls.__name__
-        if cls_name.startswith ("_") :
-            format = "%s__%s"
-        else :
-            format = "_%s__%s"
-        return format % (cls_name, name)
-    # end def _mangled_name
 
 # end class Autosuper
 
-class Class (Autorename, Autosuper) :
+class Autoproperty (_Type_) :
+    """Metaclass adding and initializing properties defined in
+       `__properties`.
+    """
 
     def __init__ (cls, name, bases, dict) :
-        super (Class, cls).__init__ (name, bases, dict)
-        for p in dict.get ("_properties_", []) :
-            assert not dict.has_key (p.name)
-            setattr (cls, p.name, p)
+        super (Autoproperty, cls).__init__ (name, bases, dict)
+        classes = [cls] + list (bases)
+        classes.reverse ()
+        for c in classes :
+            mangled_name = getattr (c, "mangled_name", None)
+            if mangled_name :
+                for p in getattr (c, mangled_name ("properties"), []) :
+                    setattr (cls, p.name, p)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        result = super (Class, cls).__call__ (* args, ** kw)
-        for p in cls.__dict__.get ("_properties_", []) :
+        result = super (Autoproperty, cls).__call__ (* args, ** kw)
+        for p in cls.__dict__.get (cls.mangled_name ("properties"), []) :
             init_instance = getattr (p, "init_instance", None)
             if init_instance :
                 init_instance (result)
         return result
     # end def __call__
 
-# end class Class
+# end class Autoproperty
+
+class Class (Autorename, Autosuper, Autoproperty) : pass
 
 from   _TFL import TFL
 import _TFL._Meta
@@ -137,9 +149,9 @@ if 0 and __debug__ :
             super (Metatest, cls).__init__ (* args, ** kw)
         # end def __init__
 
-        def __new__ (cls, * args, ** kw) :
-            print cls, "__new__", args, kw
-            return super (Metatest, cls).__new__ (cls, * args, ** kw)
+        def __new__ (meta, * args, ** kw) :
+            print meta, "__new__", args, kw
+            return super (Metatest, meta).__new__ (meta, * args, ** kw)
         # end def __new__
 
     # end class Metatest
@@ -147,4 +159,4 @@ if 0 and __debug__ :
     class T (object) :
         __metaclass__ = Metatest
 
-### __END__ Class
+### __END__ TFL.Meta.Class
