@@ -31,6 +31,7 @@
 #    17-Feb-2005 (CT) Test case added to `_interface_test`
 #    18-Feb-2005 (CT) `remove_style` added
 #    20-Feb-2005 (CT) Test cases for `style` added to `_interface_test`
+#    20-Feb-2005 (CT) Test case for two text widgets added (using `Apply_All')
 #    ««revision-date»»···
 #--
 
@@ -88,6 +89,18 @@ class Text (TFL.TKT.Mixin) :
         HiHoHaHum
          Dum
 
+        >>> t1 = Text ()
+        >>> t2 = Text ()
+        >>> from _TFL.Apply_All import *
+        >>> all = Apply_All (t1, t2)
+        >>> all.append ("Ha")
+        >>> all.append ("Hum", blue)
+        >>> all.insert (t1.bot_pos, "Hi", yell)
+        >>> all.insert (t1.bot_pos, "Ho", delta = 2)
+        >>> all.apply_style (gray, t1.bol_pos (t1.current_pos), t1.eol_pos (t1.current_pos))
+        >>> t1.remove_style (gray, t1.bot_pos, t1.eot_pos)
+
+        ### check styles of t1 and t2 (`t2` still should have style `gray`)
         """
 
     bot_pos           = None  ### descendents must redefine as property
