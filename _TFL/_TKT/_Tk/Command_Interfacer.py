@@ -45,6 +45,7 @@
 #    18-Jan-2005 (CT) Small fixes
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #    26-Jan-2005 (CT) s/as_check_button/state_var/
+#    26-Jan-2005 (CT) `Boolean_Variable` exported
 #    ««revision-date»»···
 #--
 
@@ -388,5 +389,5 @@ class _CI_Toolbar_Group_ (_CI_) :
 # end class _CI_Toolbar_Group_
 
 if __name__ != "__main__" :
-    TFL.TKT.Tk._Export ("*")
+    TFL.TKT.Tk._Export ("*", "Boolean_Variable")
 ### __END__ TFL.TKT.Tk.Command_Interfacer

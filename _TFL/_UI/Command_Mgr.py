@@ -98,6 +98,8 @@
 #    19-Jan-2005 (CT) Today's changes fixed
 #    21-Jan-2005 (MG) `Command.run` fixed to pass the result of the command
 #                     to the caller
+#    26-Jan-2005 (CT) Call to `Command_Interfacer.add_command` changed from
+#                     `as_check_button` to `state_var`
 #    ««revision-date»»···
 #--
 
@@ -367,6 +369,9 @@ class Command_Group (_Command_) :
                 cmd.qname  = cmd.name
             cmd.batchable  = cmd.batchable and (self.batchable or batchable)
             cmd.appl       = self.root.appl
+            cmd.state_var  = None
+            if as_check_button :
+                cmd.state_var   = self.TNS.Boolean_Variable ()
             if not cmd.pv_callback :
                 cmd.pv_callback = self.root.pv_callback
             self.root.command [cmd.qname] = cmd
@@ -386,7 +391,7 @@ class Command_Group (_Command_) :
                     , accelerator     = accelerator
                     , icon            = icon
                     , info            = info
-                    , as_check_button = as_check_button
+                    , state_var       = cmd.state_var
                     , cmd_name        = cmd.qname
                     )
     # end def add_command
