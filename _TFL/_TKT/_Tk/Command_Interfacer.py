@@ -60,6 +60,7 @@
 #--
 
 from   _TFL                 import TFL
+import _TFL._TKT._Tk
 import _TFL._TKT.Command_Interfacer
 
 from   CTK                  import *
