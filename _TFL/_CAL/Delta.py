@@ -37,6 +37,7 @@
 #    23-Oct-2004 (CT) `__neg__` added
 #    25-Oct-2004 (CT) `__abs__` added
 #    26-Oct-2004 (CT) `__abs__` changed to return `self` for positive values
+#    12-Dec-2004 (CT) `_init_arg_map` added
 #    ««revision-date»»···
 #--
 
@@ -144,6 +145,11 @@ class Time_Delta (_DT_Delta_) :
 
     _init_arg_names  = \
         ("hours", "minutes", "seconds", "milliseconds", "microseconds")
+    _init_arg_map    = dict \
+        ( hours      = "h"
+        , minutes    = "m"
+        , seconds    = "s"
+        )
     _kind            = "time_delta"
 
     def delta_op (self, rhs, op) :

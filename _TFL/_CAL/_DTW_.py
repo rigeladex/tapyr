@@ -31,6 +31,7 @@
 #    17-Oct-2004 (CT) `_delta` changed to not look at `_body`
 #    23-Oct-2004 (CT) `formatted` changed to use `_default_format`
 #    23-Oct-2004 (CT) `_new_object` factored
+#    12-Dec-2004 (CT) `__repr__` added
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ class _DTW_ (TFL.Meta.Object) :
     _default_format  = None
     _kind            = None
     _init_arg_names  = ()
+    _init_arg_map    = {}
     _timetuple_slice = None
 
     _body            = property \
@@ -92,6 +94,10 @@ class _DTW_ (TFL.Meta.Object) :
         return result
     # end def _delta
 
+    def _init_arg (self, name) :
+        return getattr (self, self._init_arg_map.get (name, name), 0)
+    # end def _init_arg
+
     def _new_object (self, ** kw) :
         return self._Type (** kw)
     # end def _new_object
@@ -103,6 +109,14 @@ class _DTW_ (TFL.Meta.Object) :
     def __hash__ (self) :
         return id (self)
     # end def __hash__
+
+    def __repr__ (self) :
+        return "%s (%s)" % \
+            ( self.__class__.__name__
+            , ", ".join
+                  ([repr (self._init_arg (a)) for a in self._init_arg_names])
+            )
+    # end def __repr__
 
     def __str__ (self) :
         return str (self._body)
