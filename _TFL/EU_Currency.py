@@ -33,6 +33,7 @@
 #    29-Sep-1999 (CT) Use `Opt_L' for `-source' and `-target'
 #     4-Jan-2000 (CT) `__float__' added
 #     4-Jan-2000 (CT) `sep_1000' added
+#    29-Jul-2001 (CT) Inplace operators added
 #    ««revision-date»»···
 #--
 import re
@@ -139,51 +140,74 @@ class EU_Currency :
     def __add__ (self, rhs) :
         if isinstance (rhs, EU_Currency) : rhs = rhs.amount
         return EU_Currency (self.amount + rhs)
+    # end def __add__
 
     __radd__ = __add__
 
     def __sub__ (self, rhs) :
         if isinstance (rhs, EU_Currency) : rhs = rhs.amount
         return EU_Currency (self.amount - rhs)
+    # end def __sub__
 
     __rsub__ = __sub__
                                
     def __mul__ (self, rhs) :
         if isinstance (rhs, EU_Currency) : rhs = rhs.amount
         return EU_Currency (self.amount * rhs)   
-
+    # end def __mul__
+    
     __rmul__ = __mul__
     
     def __div__ (self, rhs) :
         if isinstance (rhs, EU_Currency) : rhs = rhs.amount
         return EU_Currency (self.amount / rhs)
-
+    # end def __div__
+    
     __rdiv__ = __div__
 
     def __mod__ (self, rhs) :
         if isinstance (rhs, EU_Currency) : rhs = rhs.amount
         return EU_Currency (self.amount % rhs)
+    # end def __mod__
 
     __rmod__ = __mod__
-
-    def __divmod__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return EU_Currency (divmod (self.amount, rhs))
-
-    __rdivmod__ = __divmod__
 
     def __cmp__ (self, rhs) :
         if isinstance (rhs, EU_Currency) : rhs = rhs.amount
         return cmp (self.amount, rhs)
+    # end def __cmp__
 
     def __neg__ (self) :
         return EU_Currency (- self.amount)
+    # end def __neg__
     
     def __pos__ (self) :
         return EU_Currency (self.amount)
+    # end def __pos__
     
     def __abs__ (self) :
         return EU_Currency (abs (self.amount))
+    # end def __abs__
+
+    def __iadd__ (self, rhs) :
+        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
+        self.amount += rhs
+    # end def __iadd__
+
+    def __isub__ (self, rhs) :
+        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
+        self.amount -= rhs
+    # end def __isub__
+
+    def __imul__ (self, rhs) :
+        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
+        self.amount *= rhs
+    # end def __imul__
+
+    def __idiv__ (self, rhs) :
+        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
+        self.amount /= rhs
+    # end def __idiv__
     
 # end class EU_Currency
 
