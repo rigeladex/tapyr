@@ -63,7 +63,7 @@ class Comment (TFL.SDG.XML.Leaf) :
         )
 
     def _convert_text (self, v) :
-        if v and isinstance (v, str) :
+        if v and isinstance (v, (str, unicode)) :
             v = v.replace ("--", "···").split ("\n")
         return v
     # end def _convert_text

@@ -75,7 +75,7 @@ class M_Node (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     def _normalize_formats (cls) :
         for fn in cls._list_of_formats :
             f = getattr (cls, fn, None)
-            if isinstance (f, str) :
+            if isinstance (f, (str, unicode)) :
                 cls._normalize_format (fn, f)
     # end def _normalize_formats
 

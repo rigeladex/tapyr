@@ -109,11 +109,11 @@ class _C_Node_ (TFL.SDG.Node) :
         )
 
     def as_c_code (self, base_indent = None) :
-        return self.formatted ("c_format", base_indent)
+        return self.formatted ("c_format", base_indent = base_indent)
     # end def as_c_code
 
     def as_h_code (self, base_indent = None) :
-        return self.formatted ("h_format", base_indent)
+        return self.formatted ("h_format", base_indent = base_indent)
     # end def as_h_code
 
     def formatted (self, format_name, * args, ** kw) :
@@ -137,7 +137,7 @@ class _C_Node_ (TFL.SDG.Node) :
 
     def _convert_c_comment (self, name, value, eol = 0, new_line_col = 0) :
         result = value
-        if result  and isinstance (result, str) :
+        if result  and isinstance (result, (str, unicode)) :
             result = (result, )
         if result and isinstance (result, (tuple, list)) :
             result = TFL.SDG.C.Comment \
@@ -156,7 +156,7 @@ class _C_Node_ (TFL.SDG.Node) :
     # end def _convert_c_comment
 
     def _convert_c_stmt (self, value) :
-        if value and isinstance (value, str) :
+        if value and isinstance (value, (str, unicode)) :
             result = []
             for s in value.split (";") :
                 stmt = self._convert (s.strip (), TFL.SDG.C.Statement)

@@ -20,62 +20,49 @@
 #
 #++
 # Name
-#    TFL.SDG.XML.Cdata
+#    TFL.SDG.XML.Char_Data
 #
 # Purpose
-#    Model a CDATA section of a XML document
+#    Model character data of a XML element
 #
 # Revision Dates
-#    26-Aug-2004 (CT) Creation
+#    27-Aug-2004 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Element
 
-class Cdata (TFL.SDG.XML.Leaf) :
-    """Model a CDATA section of a XML document
+class Char_Data (TFL.SDG.XML.Leaf) :
+    """Model character data of a XML element"""
 
-       >>> c = Cdata ('''<?xml version="1.0"?>
-       ... <!DOCTYPE memo SYSTEM "memo.dtd">
-       ... <Memo>
-       ... </Memo>
-       ... ''')
-       >>> print chr (10).join (c.formatted ("xml_format"))
-       <![CDATA[
-         <?xml version="1.0"?>
-         <!DOCTYPE memo SYSTEM "memo.dtd">
-         <Memo>
-         </Memo>
-       ]]>
-    """
-
-    front_args           = ("data", )
     init_arg_defaults    = dict \
-        ( data           = None
+        ( text           = None
         )
 
-    elem_type            = "CDATA"
+    front_args           = ()
+    rest_args            = "text"
 
-    xml_format           = """
-        <![CDATA[
-        >%(::.data:)s
-        ]]>
-    """
+    xml_format           = """%(::.text:)s"""
 
     _autoconvert         = dict \
-        ( data           = lambda s, k, v : s._convert_data (v)
+        ( text           = lambda s, k, v : s._convert_text (v)
         )
 
-    def _convert_data (self, v) :
-        if v and isinstance (v, (str, unicode)) :
-            assert "]]>" not in v
-            v = v.split ("\n")
-        return v
-    # end def _convert_data
+    def _convert_text (self, args) :
+        result = []
+        for a in args :
+            if a and isinstance (a, (str, unicode)) :
+                a = self._special_char_pat.sub \
+                    (self._special_char_replacer, a).split ("\n")
+                result.extend (a)
+            else :
+                result.append (a)
+        return result
+    # end def _convert_text
 
-# end class Cdata
+# end class Char_Data
 
 if __name__ != "__main__" :
     TFL.SDG.XML._Export ("*")
-### __END__ TFL.SDG.XML.Cdata
+### __END__ TFL.SDG.XML.Char_Data

@@ -486,7 +486,7 @@ class Node :
            (None means append).
         """
         if child is not None :
-            cgi = child.cgi
+            cgi = getattr (child, "cgi", None)
             if cgi is None :
                 cgi = self.default_cgi
             else :
@@ -507,7 +507,7 @@ class Node :
     # end def _children_iter
 
     def _convert (self, value, Class, * args, ** kw) :
-        if value and isinstance (value, str) :
+        if value and isinstance (value, (str, unicode)) :
             value = Class (value.strip (), * args, ** kw)
         return value
     # end def _convert

@@ -65,11 +65,11 @@ class Arg_List (TFL.SDG.C.Node) :
     # end def __init__
 
     def _convert_children (self, children) :
-        if len (children) == 1 and isinstance (children [0], str) :
+        if len (children) == 1 and isinstance (children [0], (str, unicode)) :
             children = [c.strip () for c in children [0].split (",")]
         result = []
         for c in children :
-            if isinstance (c, str) :
+            if isinstance (c, (str, unicode)) :
                 if self.arg_pat.match (c) :
                     if self.arg_pat.void :
                         c = TFL.SDG.C.Expression (self.arg_pat.void)

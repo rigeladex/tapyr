@@ -78,10 +78,8 @@ from   predicate import relax
 
 def _print (* args) :
     for l in args :
-        if not isinstance (l, str) :
-            l = str (l)
-        sys.stdout.write(l)
-        sys.stdout.write(" ")
+        sys.stdout.write (str (l))
+        sys.stdout.write (" ")
     sys.stdout.write ("\n")
 # end def _print
 
@@ -151,7 +149,7 @@ class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
         if attr is not None :
             format = self.format
             sep    = ""
-            if isinstance (attr, str) :
+            if isinstance (attr, (str, unicode)) :
                 attr = (attr, )
             for x in attr :
                 yield sep + (format % x)
@@ -352,10 +350,10 @@ class Multi_Line_Formatter (_Formatter_) :
         result = Record \
             ( empty   = ""
             , front   = ""
-            , front0  = ""
+            , front0  = None
             , head    = ""
             , rear    = ""
-            , rear0   = ""
+            , rear0   = None
             , sep     = ""
             , sep_eol = ""
             , tail    = ""
@@ -364,9 +362,9 @@ class Multi_Line_Formatter (_Formatter_) :
             for spec in x_forms.split ("¡") :
                 key, form = spec.split ("=", 1)
                 setattr (result, key, form)
-        if not result.front0 :
+        if result.front0 is None :
             result.front0 = result.front
-        if not result.rear0 :
+        if result.rear0 is None :
             result.rear0  = result.rear
         return result
     # end def _x_forms

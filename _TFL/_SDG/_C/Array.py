@@ -84,7 +84,7 @@ class Array (TFL.SDG.C._Var_) :
     # end def __init__
 
     def _convert_bounds (self, bounds) :
-        if isinstance (bounds, (str, int)) :
+        if isinstance (bounds, (str, unicode, int, long)) :
             bounds = (bounds, )
         return [str (b) for b in bounds]
     # end def _convert_bounds

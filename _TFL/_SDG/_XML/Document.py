@@ -38,12 +38,18 @@ import _TFL._SDG._XML.Element
 class Document (TFL.SDG.XML.Element) :
     """Model a XML document (i.e., the root element)
 
-       >>> d = Document ("Memo", doctype = "memo", description = "Just a test")
+       >>> d = Document ( "Memo", "First line of text"
+       ...              , "& a second line of text"
+       ...              , doctype = "memo"
+       ...              , description = "Just a test"
+       ...              )
        >>> print chr (10).join (d.formatted ("xml_format"))
        <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
        <!DOCTYPE memo SYSTEM "memo.dtd">
        <!-- Just a test -->
        <Memo>
+         First line of text
+         &amp; a second line of text
        </Memo>
     """
 
@@ -71,12 +77,21 @@ class Document (TFL.SDG.XML.Element) :
                            } [v]
         )
 
+    def formatted (self, format_name, * args, ** kw) :
+        for r in self.__super.formatted (format_name, * args, ** kw) :
+            if isinstance (r, unicode) :
+                r = r.encode (self.encoding, 'xmlcharrefreplace')
+            yield r
+    # end def formatted
+
 # end class Document
 
 """
-d = Document ("Memo", doctype = "memo")
+from _TFL._SDG._XML.Document import *
+d = Document ("Memo", u"Just a single line of töxt", doctype = "memo", encoding = "utf-8")
 print "\n".join (d.formatted ("xml_format"))
 """
+
 if __name__ != "__main__" :
     TFL.SDG.XML._Export ("*")
 ### __END__ TFL.SDG.XML.Document

@@ -49,7 +49,7 @@ class Element (TFL.SDG.Node) :
 
     _xml_format          = """
         %(::*description:)s
-        <%(elem_type)s%(:front= :>@_attr_values:)s>
+        <%(elem_type)s%(:front= ¡rear0= ¡rear=%(NL)s¡sep= :>@_attr_values:)s>
         >%(::*body_children:)s
         </%(elem_type)s>
     """.strip ()
@@ -66,14 +66,25 @@ class Element (TFL.SDG.Node) :
     _list_of_formats     = TFL.SDG.Node._list_of_formats + \
         ( "xml_format", )
 
-    _specials_pattern    = Regexp ("[&<>]")
+    _special_char_pat    = Regexp ("[&<>]")
+    _special_quot_pat    = Regexp ("&(amp|lt|gt|apos|quot);")
+
+    def as_xml (self, base_indent = None) :
+        return self.formatted ("xml_format", base_indent = base_indent)
+    # end def as_xml
+
+    def write_to_xml_stream (self, stream = None, gauge = None) :
+        """Write `self' and all elements in `self.children' to `stream'.
+        """
+        self._write_to_stream (self.as_xml (), stream, gauge)
+    # end def write_to_xml_stream
 
     def _attr_values (self, * args, ** kw) :
         for a in self.attr_names :
             v = getattr (self, a)
             if v is not None :
                 v = str (v).replace ("'", "&apos;")
-                yield """%s = '%s' """ % (a, v)
+                yield """%s = '%s'""" % (a, v)
     # end def _attr_values
 
     def _checked_elem_type (self, value) :
@@ -83,21 +94,47 @@ class Element (TFL.SDG.Node) :
         return value
     # end def _checked_elem_type
 
+    def _insert (self, child, index, children, delta = 0) :
+        if child is not None :
+            if isinstance (child, (str, unicode)) :
+                import _TFL._SDG._XML.Char_Data
+                child = TFL.SDG.XML.Char_Data (child)
+            self.__super._insert (child, index, children, delta)
+    # end def _insert
+
+    def _special_char_replacer (self, match) :
+        return { "&"      : "&amp;"
+               , "<"      : "&lt;"
+               , ">"      : "&gt;"
+               , "'"      : "&apos;"
+               , '"'      : "&quot;"
+               } [match.group (0)]
+    # end def _special_char_replacer
+
+    def _special_quot_replacer (self, match) :
+        return { "&amp;"  : "&"
+               , "&lt;"   : "<"
+               , "&gt;"   : ">"
+               , "&apos;" : "'"
+               , "&quot;" : '"'
+               } [match.group (0)]
+    # end def _special_quot_replacer
+
 # end class Element
 
-class Empty (TFL.SDG.Leaf, Element) :
+class Leaf (TFL.SDG.Leaf, Element) :
+    """Model a leaf element of a XML document"""
+
+# end class Leaf
+
+class Empty (Leaf) :
     """Model an empty element of a XML document"""
 
     xml_format           = """
-        <%(elem_type)s>%(:sep= ¡rear= :>@_attr_values:)s/>
+        <%(elem_type)s>%(:front= ¡rear0= ¡rear=%(NL)s¡sep= :>@_attr_values:)s/>
     """
 
 # end class Empty
-
-class Leaf (TFL.SDG.Leaf, Element) :
-    """Model a non-empty leave element of a XML document"""
-
-# end class Leaf
 
 if __name__ != "__main__" :
     TFL.SDG.XML._Export ("*")
