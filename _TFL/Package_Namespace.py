@@ -60,6 +60,7 @@
 #    22-Feb-2002 (CT) `_leading_underscores` added and used to remove leading
 #                     underscores from `Package_Namespace.__name`
 #    22-Feb-2002 (CT) `_debug` added and used to guard `XXX PPP` prints
+#    25-Feb-2002 (CT) `_complain_implicit` factored
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,14 @@ from   Regexp         import Regexp
 
 _debug = 0 and __debug__
 
+def _complain_implicit (pns_name, module_name) :
+    if _debug :
+        caller_info = _caller_info (-4)
+        print "%s %s._.%s XXX PNS Implicit import" \
+              % (pns_name, module_name, caller_info [0])
+# end def _complain_implicit
+
+
 class _Module_Space :
 
     def __init__ (self, name) :
@@ -77,7 +86,8 @@ class _Module_Space :
     # end def __init__
 
     def __getattr__ (self, module_name) :
-        if _debug :
+        _complain_implicit (self.__name, module_name)
+        if 0 and _debug :
             print "XXX PNS Implicit import %s._.%s by %s" \
                   % (self.__name, module_name, _caller_info ())
         return self._load (module_name)
@@ -291,7 +301,8 @@ class Package_Namespace :
 
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
-            if _debug :
+            _complain_implicit (self.__name, name)
+            if 0 and _debug :
                 print "XXX PNS Implicit import %s.%s by %s" \
                       % (self.__name, name, _caller_info ())
             self.Import (name, name)
