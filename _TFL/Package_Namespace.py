@@ -94,6 +94,8 @@
 #     1-Aug-2003 (CT) `_Reload` changed to reload in same sequence as
 #                     original import
 #    12-Sep-2003 (CT)  `_Reload` changed to clear the damned `linecache`
+#    20-Nov-2003 (CT)  `_Export_Module` changed to take `mod` from `kw` if
+#                      there
 #    ««revision-date»»···
 #--
 
@@ -286,15 +288,17 @@ class Package_Namespace :
         """To be called by modules of Package_Namespace to inject their
            symbols into the package namespace `self`.
         """
+        result        = {}
         module_name   = _caller_globals () ["__name__"].split (".") [-1]
         transitive    = kw.get ("transitive")
-        result        = {}
-        mod           = self.__module_space._load (module_name)
-        self._Cache_Module (module_name, mod)
+        mod           = kw.get ("mod")
+        if mod is None :
+            mod       = self.__module_space._load (module_name)
         primary       = getattr (mod, module_name, None)
         check_clashes = not self.__reload
         if primary is not None :
             result [module_name] = primary
+        self._Cache_Module (module_name, mod)
         if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
