@@ -29,6 +29,9 @@
 #    22-Sep-2004 (CT) Creation
 #    23-Sep-2004 (CT) Protect access to `func_code.co_flags` to allow any
 #                     callable to be wrapped without AttributeErrors
+#    23-Sep-2004 (CT) `_Wrapped_.__getattr__` added to make wrapped
+#                     callables more similar to the real thing (e.g., avoid
+#                     an AttributeError from `wrapped.func_code`)
 #    ««revision-date»»···
 #--
 
@@ -51,6 +54,10 @@ class _Wrapped_ (TFL.Meta.Object) :
         self.args     = args
         self.kw       = kw
     # end def __init__
+
+    def __getattr__ (self, name) :
+        return getattr (self.fct, name)
+    # end def __getattr__
 
     def __repr__ (self) :
         return "<%s for %r>" % (self.__class__.__name__, self.fct)
