@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #     1-Apr-2003 (CT) `M_Autoproperty` removed from `M_Class`
 #                     (optimize, optimize)
 #    28-Apr-2003 (CT) `M_Autorename` changed to not manipulate `caller_globals`
+#    23-Jul-2004 (CT) `_M_Type_` added to `_Export`
 #    ««revision-date»»···
 #--
 
@@ -217,7 +218,9 @@ class M_Class (M_Autorename, M_Class_SW) :
     pass
 # end class M_Class
 
-if __name__ == "__main__" :
+if __name__ != "__main__" :
+    TFL.Meta._Export ("*", "_M_Type_")
+else :
     if __debug__ :
         class _X_ (object) :
            __metaclass__ = M_Class
@@ -255,6 +258,4 @@ if __name__ == "__main__" :
             __metaclass__ = Metatest
 
         T()
-else :
-    TFL.Meta._Export ("*")
 ### __END__ TFL.Meta.M_Class
