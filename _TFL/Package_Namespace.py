@@ -56,6 +56,7 @@
 #    13-Nov-2001 (CT) Unncessary restriction of nested packages removed
 #     5-Dec-2001 (MG) Special code for `Proxy_Type` changed
 #    20-Feb-2002 (CT) `_Export` and `XXX PPP` comments added
+#    21-Feb-2002 (CT) `_Module_Space._load` factored
 #    ««revision-date»»···
 #--
 
@@ -200,7 +201,7 @@ class Package_Namespace :
     def Import_Module (self, module_name) :
         ### XXX PNS remove after Package_Namespace transition is complete
         """Import module `module_name` into `self._`."""
-        return getattr (self.__modules, module_name)
+        return self.__modules._load (module_name)
     # end def Import_Module
 
     def From_Import (self, module_name, * symbols, ** kw) :
@@ -223,7 +224,7 @@ class Package_Namespace :
     def _import_symbols (self, module_name, check_clashes, * symbols, ** kw) :
         ### XXX PNS remove after Package_Namespace transition is complete
         result     = {}
-        mod        = getattr (self.__modules, module_name)
+        mod        = self.__modules._load (module_name)
         star       = None
         transitive = kw.get ("transitive")
         if not symbols :
@@ -299,7 +300,7 @@ class Package_Namespace :
         """
         transitive = kw.get ("transitive")
         result     = {}
-        mod        = getattr (self.__modules, module_name)
+        mod        = self.__modules._load (module_name)
         if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
