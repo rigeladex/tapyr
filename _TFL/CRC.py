@@ -45,7 +45,8 @@
 #    22-Jan-2004 (CT)  Change of `crc_byte` (mask with `&& 0xFFFFFFFFL`) --
 #                      is not necessary: the sole problem was to use decimal
 #                      instead of hexadecimal output in the unit test
-#    24-May-2004 (GWA) 'crc' optimized and processes also arrays
+#    24-May-2004 (GWA) `crc` optimized and processes also arrays
+#    25-May-2004 (GWA) type ("") -> str, `crc_bytelist` became alias of `crc`
 #    ««revision-date»»···
 #--
 
@@ -69,27 +70,18 @@ class _TD_CRC_ (object) :
            `start_value` as initial.
         """
         start_value = start_value or self.start_value
-        if isinstance (data, type ("")) :
+        if isinstance (data, str) :
             _f = lambda x, y : self.crc_byte (x, ord (y))
         else :
-            _f = lambda x, y : self.crc_byte (x, y)
-        result = reduce (_f, data, start_value)
-        return result
+            _f = self.crc_byte
+        return reduce (_f, data, start_value)
     # end def crc_byte
-    __call__ = crc
+    __call__ = crc_bytelist = crc
 
     def crc_byte (self, crc, byte) :
         """Add `byte` to `crc` and return the resulting CRC.
         """
         return ((crc >> 8) & self.mask) ^ (self.table [(crc ^ byte) & 0xFF])
-    # end def crc_byte
-
-    def crc_bytelist (self, bytelist, start_value = None) :
-        """Compute the CRC of `bytelist` by using
-           `start_value` as initial.
-        """
-        start_value = start_value or self.start_value
-        return reduce (self.crc_byte, bytelist, start_value)
     # end def crc_byte
 
     def reset (self, start_value = 0) :
