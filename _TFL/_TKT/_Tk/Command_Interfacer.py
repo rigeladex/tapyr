@@ -227,7 +227,7 @@ class CI_Menu (_CI_Widget_) :
         else :
             fct = self.widget.insert_command
         return fct \
-            ( index + delta + self._index_offset
+            ( index       = index + delta + self._index_offset
             , label       = name
             , command     = callback
             , underline   = underline

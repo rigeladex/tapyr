@@ -545,6 +545,7 @@ class Command_Group (_Command_Group_) :
                     ( cmd, if_names, icon, index, delta
                     , underline, accelerator, batchable, as_check_button
                     )
+        return cmd
     # end def add_command
 
     def add_dyn_group (self, name, command_gen, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None) :
