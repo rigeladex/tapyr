@@ -174,7 +174,7 @@ class Object_Scope (Scope) :
     """Provide access to the caller's locals and globals and to the
        attributes of the object passed in.
 
-       >>> from _FTL.Filename import *
+       >>> from _TFL.Filename import *
        >>> f = Filename ("/foo/bar/baz.dat")
        >>> c = Object_Scope  (f)
        >>> c.f

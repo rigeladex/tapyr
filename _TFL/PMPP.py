@@ -34,7 +34,7 @@
 from   _TFL              import TFL
 import _TFL._Meta.Object
 
-from   _FTL.Filename     import Filename
+from   _TFL.Filename     import Filename
 from   _TFL.Regexp       import Regexp, re
 
 class PMPP (TFL.Meta.Object) :

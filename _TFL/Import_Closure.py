@@ -119,7 +119,7 @@
 from   _TFL              import TFL
 from   _TFL.predicate    import *
 from   _TFL.Regexp       import Regexp, re
-from   _FTL.Filename     import Filename
+from   _TFL.Filename     import Filename
 import sys
 
 import _TFL._Meta.Object
