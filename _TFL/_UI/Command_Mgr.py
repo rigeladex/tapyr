@@ -149,6 +149,7 @@
 #    15-Mar-2005 (CT)  `_add_command` changed to set `cmd.AC`
 #    15-Mar-2005 (CT)  `_run` changed to call `AC.ui_state.gauge.deactivate`
 #    16-Mar-2005 (CT)  Argument `force_gauge_deactivate` added to `run`
+#    18-Mar-2005 (CT)  Attribute `if_names` added to `group`
 #    ««revision-date»»···
 #--
 
@@ -758,7 +759,8 @@ class Command_Group (_Command_Group_) :
             to_do.append  ((_ie, index))
             if info :
                 self.root._pending_interface_bindings.append ((i, info))
-        result  = group_creator (ifacers)
+        result          = group_creator (ifacers)
+        result.if_names = if_names
         self._group.append (result)
         self._add_element  (result, s_index, delta)
         for _ie, index in to_do :
