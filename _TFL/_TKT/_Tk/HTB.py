@@ -26,28 +26,30 @@
 #    Hierarchical Text Browser, Tk-specific part
 #
 # Revision Dates
-#    02-Feb-2005 (RSC) Creation, refactored from lib/python/T_Browser
+#     2-Feb-2005 (RSC) Creation, refactored from lib/python/T_Browser
+#     3-Feb-2005 (CT)  Superflous imports removed
+#     3-Feb-2005 (CT)  Stylistic improvements of ancient code
+#     3-Feb-2005 (CT)  `Browser` streamlined by auto-delegation (__getattr__)
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
-from   CT_TK        import Scrolled_Text, NORMAL, Label, CENTER, NONE, WORD, INSERT, LEFT, bitmap_mgr, START, END
-from   D_Dict       import D_Dict
-from   Functor      import Functor
-from   Regexp       import *
 import _TFL._TKT._Tk
 import _TFL._TKT.Mixin
+
+from   CT_TK        import Scrolled_Text, NORMAL, Label, CENTER, NONE, WORD, INSERT, LEFT, bitmap_mgr, START, END
+from   Regexp       import *
 import sys
 
-
 class Button (TFL.TKT.Mixin) :
+
     clsd_bitmap_name = "closed_node"
     leaf_bitmap_name = "circle"
     open_bitmap_name = "open_node"
 
     def __init__ (self, node, is_leaf = 1) :
         self.__super.__init__ (AC = node.AC)
-        self.node     = node
+        self.node     = node ### XXX should point to self.TNS.node
         self.is_leaf  = not is_leaf ### negate for `make_[non_]leaf'
         self.closed   = 0
         self.c_bitmap = bitmap_mgr [self.clsd_bitmap_name]
@@ -63,43 +65,43 @@ class Button (TFL.TKT.Mixin) :
             , background  = node.ui.master.cget ("background")
             )
         if is_leaf :
-            self.make_leaf    ()
+            self.make_leaf ()
         else :
-            self.make_non_leaf()
-        self.window.bind      ("<Enter>",         self.mouse_enter)
-        self.window.bind      ("<Leave>",         self.mouse_leave)
+            self.make_non_leaf ()
+        self.window.bind ("<Enter>", self.mouse_enter)
+        self.window.bind ("<Leave>", self.mouse_leave)
         self.bg = node.ui.master.cget ("background")
         self.fg = node.ui.master.cget ("foreground")
     # end def __init__
 
     def mouse_enter (self, event = None) :
         if not self.is_leaf :
-            master = self.node.ui.master
+            master = self.node.ui.master ### XXX
             self.bg = self.window.cget ("background")
             self.fg = self.window.cget ("foreground")
-            self.window.configure ( background  = master.button_bg
-                                  , foreground  = master.button_fg
-                                  )
+            self.window.configure \
+                ( background  = master.button_bg
+                , foreground  = master.button_fg
+                )
         self.node.mouse_enter (event)
     # end def mouse_enter
 
     def mouse_leave (self, event = None) :
         if not self.is_leaf :
-            self.window.configure ( background  = self.bg
-                                  , foreground  = self.fg
-                                  )
+            self.window.configure \
+                ( background  = self.bg
+                , foreground  = self.fg
+                )
         self.node.mouse_leave (event)
     # end def mouse_leave
 
     def busy_cursor (self, cursor = "watch") :
-        self.node.browser.busy_cursor    (cursor)
-        # Igitt: FIXME
-        self.node.browser.ui.browser._busy_cursor   (cursor, self.window)
+        self.node.browser.busy_cursor   (cursor)
+        self.node.browser.ui.browser._busy_cursor  (cursor, self.window)
     # end def busy_cursor
 
     def normal_cursor (self) :
         self.node.browser.normal_cursor  ()
-        # Igitt: FIXME
         self.node.browser.ui.browser._normal_cursor (self.window)
     # end def normal_cursor
 
@@ -140,7 +142,6 @@ class Button (TFL.TKT.Mixin) :
             self.window.configure (bitmap = self.c_bitmap)
             self.window.bind      ("<ButtonPress-1>", self.t_open)
             self.window.bind      ("<ButtonPress-3>", self.t_open_1)
-            #self.window.bind      ("<ButtonPress-3>", self.t_open_all)
     # end def close
 
     def ignore (self, event = None) :
@@ -166,6 +167,7 @@ class Button (TFL.TKT.Mixin) :
 # end class Button
 
 class Node (TFL.TKT.Mixin) :
+
     def __init__ (self, ui, browser) :
         self.__super.__init__ (AC = ui.AC)
         self.ui      = ui
@@ -225,7 +227,7 @@ class Node (TFL.TKT.Mixin) :
     def enter (self, event = None) :
         mark = self.ui.head_mark
         self.master.tag_add \
-          ("active_node", mark, mark + " lineend +1 char")
+            ("active_node", mark, mark + " lineend +1 char")
         self.master.tag_lower ("active_node")
     # end def enter
 
@@ -240,9 +242,9 @@ class Node (TFL.TKT.Mixin) :
         ### The newest version of TK shows:
         ###     tk::TextSetCursor %W [tk::TextUpDownLine %W -1]
         try :
-            self.master.tk.call ("tk::TextSetCursor",  self.master._w, index)
+            self.master.tk.call ("tk::TextSetCursor", self.master._w, index)
         except TclError :
-            self.master.tk.call ("tkTextSetCursor",  self.master._w, index)
+            self.master.tk.call ("tkTextSetCursor",   self.master._w, index)
     # end def _set_cursor
 
     def _go (self, event, node) :
@@ -310,7 +312,7 @@ class Node (TFL.TKT.Mixin) :
 
 # end class Node
 
-class _Browser (Scrolled_Text) :
+class _Tk_Browser_ (Scrolled_Text) :
     """Tk part of Hierarchical browser widget."""
 
     widget_class = "T_Browser"
@@ -332,23 +334,24 @@ class _Browser (Scrolled_Text) :
             ("activeButtonBackground", "red")
         self.body.button_fg = self.option_value \
             ("activeButtonForeground", "yellow")
-
         indent     = self.winfo_pixels (self.option_value ("indent",     "1c"))
         indent_inc = self.winfo_pixels (self.option_value ("indent_inc", "2m"))
         h_font     = self.option_value ("hFont", "")
         tabs       = []
         for i in range (1, 16) :
             level = "level" + `i-1`
-            self.body.tag_configure    ( level + ":head"
-                                       , lmargin1  = 0
-                                       , lmargin2  = i * indent + indent_inc
-                                       , font      = h_font
-                                       )
-            self.body.tag_configure    ( level
-                                       , lmargin1  = i * indent
-                                       , lmargin2  = i * indent + indent_inc
-                                       )
-            tabs.append                (`i * indent`)
+            self.body.tag_configure \
+                ( level + ":head"
+                , lmargin1  = 0
+                , lmargin2  = i * indent + indent_inc
+                , font      = h_font
+                )
+            self.body.tag_configure \
+                ( level
+                , lmargin1  = i * indent
+                , lmargin2  = i * indent + indent_inc
+                )
+            tabs.append (`i * indent`)
         link_bg    = self.option_value ("hyperLinkBackground", "")
         link_fg    = self.option_value ("hyperLinkForeground", "blue")
         link_font  = self.option_value ("hyperLinkFont",       "")
@@ -389,28 +392,21 @@ class _Browser (Scrolled_Text) :
         self.body.configure            (tabs = " ".join (tabs))
     # end def __init__
 
-# end class _Browser
+# end class _Tk_Browser_
 
 class Browser (TFL.TKT.Mixin) :
     """Tk wrapper for Hierarchical browser widget."""
 
     def __init__ (self, master, name = None, state = None, ** kw) :
-        self.browser = _Browser (master, name, state, **kw)
+        self.browser = _Tk_Browser_ (master, name, state, **kw)
     # end def __init__
 
-    def clear         (self)       : self.browser.clear         ()
-    def disable       (self)       : self.browser.disable       ()
-    def normal_cursor (self)       :
-        self.browser.normal_cursor  ()
+    def __getattr__ (self, name) :
+        result = getattr (self.browser, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
 
-    def busy_cursor (self, cursor) :
-        self.browser.busy_cursor  (cursor)
-
-    def insert (self, idx, txt, * tags) :
-        self.browser.insert  (idx, txt, * tags)
-
-    def delete (self, head, tail) :
-        self.browser.delete  (head, tail)
 # end class Browser
 
 for n in ( Button.clsd_bitmap_name
@@ -419,5 +415,6 @@ for n in ( Button.clsd_bitmap_name
          ) :
     bitmap_mgr.add (n + ".xbm")
 
-
-TFL.TKT.Tk._Export_Module ()
+if __name__ != "__main__" :
+    TFL.TKT.Tk._Export_Module ()
+### __END__ TFL.TKT.Tk.HTB

@@ -26,21 +26,18 @@
 #    Hierarchical Text Browser, UI-specific part
 #
 # Revision Dates
-#    02-Feb-2005 (RSC) Creation, refactored from lib/python/T_Browser
+#     2-Feb-2005 (RSC) Creation, refactored from lib/python/T_Browser
+#     3-Feb-2005 (CT)  Superflous imports removed
+#     3-Feb-2005 (CT)  Stylistic improvements of ancient code
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
-from   CT_TK        import Scrolled_Text
-from   D_Dict       import D_Dict
 from   Regexp       import Regexp
 
-
-import _TFL._Meta.Object
 import _TFL._UI
 import _TFL._UI.Mixin
 import sys
-
 
 class Node (TFL.UI.Mixin) :
     """ Model one node of a hierarchical browser."""
@@ -63,7 +60,6 @@ class Node (TFL.UI.Mixin) :
         , header_tags   = ()     # additional tags for `header'
         , contents_tags = ()     # additional tags for `contents'
         ) :
-        
         assert (  ((not parent) and (number is None))
                or ((parent)     and (number >= 0))
                )
@@ -97,7 +93,6 @@ class Node (TFL.UI.Mixin) :
         if browser.node_map.has_key (self.tag) :
             raise Name_Clash, self.tag
         browser.node_map [self.tag] = self
-
         self.children  = []
         self.tags      = ()
         self.head_mark = self.tag + ":head"
@@ -113,10 +108,9 @@ class Node (TFL.UI.Mixin) :
            , self.header_head,   self.header,   self.header_tail
            , self.contents_head, self.contents, self.contents_tail
            )
-
         self.ui        = self.TNS.HTB.Node (self, browser)
     # end def __init__
-    
+
     def is_open (self) :
         return self.button and not self.button.closed
     # end def is_open
@@ -139,11 +133,11 @@ class Node (TFL.UI.Mixin) :
         if self.tags and not self.button.closed :
             child.insert (self.tail_mark, self.tags)
     # end def _insert_child
-    
+
     def insert (self, index, * tags) :
         self.ui.insert (index, * tags)
     # end def insert
-    
+
     def _insert_button (self) :
         if not self.button :
             self.button = self.TNS.HTB.Button \
@@ -453,7 +447,7 @@ class Node (TFL.UI.Mixin) :
 class Browser (TFL.UI.Mixin) :
     """Hierarchical Text Browser Widget"""
 
-    user_tags    = D_Dict \
+    user_tags    = dict \
       ( arial     = "use arial font"
       , center    = "center text"
       , courier   = "use courier font"
@@ -478,7 +472,7 @@ class Browser (TFL.UI.Mixin) :
         for n in self.nodes :
             n.print_contents (file or sys.stdout)
     # end def print_nodes
-    
+
     def open_nodes (self) :
         """Open all nodes transitively"""
         try     :
@@ -732,4 +726,6 @@ def help (browser) :
     return r
 # end def help
 
-
+if __name__ != "__main__" :
+    TFL.UI._Export_Module ()
+### __END__ TFL.UI.HTB

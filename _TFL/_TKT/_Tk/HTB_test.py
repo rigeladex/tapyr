@@ -1,27 +1,29 @@
 from   CT_TK                import root, NORMAL, YES, BOTH, INSERT
 from   _TFL                 import TFL
-from   _TFL._UI.HTB         import Node, Browser, help
+import _TFL._UI.HTB
 from   _TFL._UI.App_Context import App_Context
 
 import _TFL._TKT._Tk
 import _TFL._TKT._Tk.HTB
 
-
 if __name__ == "__main__" :
     AC = App_Context (TFL)
     def mknode (tb, name) :
-        n = Node (tb, name, "1. test line\n2. test line\n3. test line")
-        n.insert   (INSERT, "nowrap")
+        n = TFL.UI.HTB.Node \
+            ( tb, name, "1. test line\n2. test line\n3. test line"
+            , "\n"
+            )
+        n.insert (INSERT, "nowrap")
         return n
 
     def mkchild (tn, name) :
         n = tn.new_child (name, "head", "1. test line\n2. test line")
         return n
 
-    tb  = Browser (AC, root, 'huhu', state = NORMAL)
+    tb  = TFL.UI.HTB.Browser (AC, root, 'huhu', state = NORMAL)
     tb.ui.browser.pack (expand = YES, fill = BOTH)
     tb.insert          (INSERT, "**             Test me             **\n")
-    tn = help          (tb)
+    tn = TFL.UI.HTB.help (tb)
     tn.insert          (INSERT, "rindent")
     tn = mknode        (tb,     "n1")
     print "1", tn
