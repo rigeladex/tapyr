@@ -30,6 +30,8 @@
 #     3-Feb-2005 (CT)  Superflous imports removed
 #     3-Feb-2005 (CT)  Stylistic improvements of ancient code
 #     3-Feb-2005 (CT)  `Browser` streamlined by auto-delegation (__getattr__)
+#     4-Feb-2005 (RSC) renamed ui to model and made it a weakref
+#                      Node and Button now get a TKT.Tk.Node.
 #    ««revision-date»»···
 #--
 
@@ -40,6 +42,7 @@ import _TFL._TKT.Mixin
 from   CT_TK        import Scrolled_Text, NORMAL, Label, CENTER, NONE, WORD, INSERT, LEFT, bitmap_mgr, START, END
 from   Regexp       import *
 import sys
+import weakref
 
 class Button (TFL.TKT.Mixin) :
 
@@ -49,7 +52,7 @@ class Button (TFL.TKT.Mixin) :
 
     def __init__ (self, node, is_leaf = 1) :
         self.__super.__init__ (AC = node.AC)
-        self.node     = node ### XXX should point to self.TNS.node
+        self.node     = node
         self.is_leaf  = not is_leaf ### negate for `make_[non_]leaf'
         self.closed   = 0
         self.c_bitmap = bitmap_mgr [self.clsd_bitmap_name]
@@ -58,11 +61,11 @@ class Button (TFL.TKT.Mixin) :
         if is_leaf : bitmap = self.l_bitmap
         else       : bitmap = self.c_bitmap
         self.window   = Label \
-            ( node.ui.master
-            , name        = ":button:" + node.bid
+            ( node.master
+            , name        = ":button:" + node.model.bid
             , bitmap      = bitmap
             , borderwidth = 0
-            , background  = node.ui.master.cget ("background")
+            , background  = node.master.cget ("background")
             )
         if is_leaf :
             self.make_leaf ()
@@ -70,20 +73,20 @@ class Button (TFL.TKT.Mixin) :
             self.make_non_leaf ()
         self.window.bind ("<Enter>", self.mouse_enter)
         self.window.bind ("<Leave>", self.mouse_leave)
-        self.bg = node.ui.master.cget ("background")
-        self.fg = node.ui.master.cget ("foreground")
+        self.bg = node.master.cget ("background")
+        self.fg = node.master.cget ("foreground")
     # end def __init__
 
     def mouse_enter (self, event = None) :
         if not self.is_leaf :
-            master = self.node.ui.master ### XXX
+            master = self.node.master
             self.bg = self.window.cget ("background")
             self.fg = self.window.cget ("foreground")
             self.window.configure \
                 ( background  = master.button_bg
                 , foreground  = master.button_fg
                 )
-        self.node.mouse_enter (event)
+        self.node.model.mouse_enter (event)
     # end def mouse_enter
 
     def mouse_leave (self, event = None) :
@@ -92,23 +95,23 @@ class Button (TFL.TKT.Mixin) :
                 ( background  = self.bg
                 , foreground  = self.fg
                 )
-        self.node.mouse_leave (event)
+        self.node.model.mouse_leave (event)
     # end def mouse_leave
 
     def busy_cursor (self, cursor = "watch") :
-        self.node.browser.busy_cursor   (cursor)
-        self.node.browser.ui.browser._busy_cursor  (cursor, self.window)
+        self.node.model.browser.busy_cursor    (cursor)
+        self.node.model.browser._busy_cursor   (cursor, self.window)
     # end def busy_cursor
 
     def normal_cursor (self) :
-        self.node.browser.normal_cursor  ()
-        self.node.browser.ui.browser._normal_cursor (self.window)
+        self.node.model.browser.normal_cursor  ()
+        self.node.model.browser._normal_cursor (self.window)
     # end def normal_cursor
 
     def t_open (self, event = None) :
         try     :
             self.busy_cursor     ()
-            self.node.open       (event)
+            self.node.model.open (event)
         finally :
             self.normal_cursor   ()
     # end def t_open
@@ -116,7 +119,7 @@ class Button (TFL.TKT.Mixin) :
     def t_open_1 (self, event = None) :
         try     :
             self.busy_cursor     ()
-            self.node.open       (event, 1)
+            self.node.model.open (event, 1)
         finally :
             self.normal_cursor   ()
     # end def t_open_1
@@ -124,7 +127,7 @@ class Button (TFL.TKT.Mixin) :
     def t_open_all (self, event = None) :
         try     :
             self.busy_cursor     ()
-            self.node.open       (event, 1 << 30)
+            self.node.model.open (event, 1 << 30)
         finally :
             self.normal_cursor   ()
     # end def t_open_all
@@ -133,7 +136,7 @@ class Button (TFL.TKT.Mixin) :
         if self.closed and not self.is_leaf :
             self.closed = 0
             self.window.configure (bitmap = self.o_bitmap)
-            self.window.bind      ("<ButtonPress-1>", self.node.close)
+            self.window.bind      ("<ButtonPress-1>", self.node.model.close)
     # end def open
 
     def close (self, event = None) :
@@ -168,64 +171,66 @@ class Button (TFL.TKT.Mixin) :
 
 class Node (TFL.TKT.Mixin) :
 
-    def __init__ (self, ui, browser) :
-        self.__super.__init__ (AC = ui.AC)
-        self.ui      = ui
+    def __init__ (self, model, browser) :
+        self.__super.__init__ (AC = model.AC)
+        self.model   = weakref.proxy (model)
         self.browser = browser
-        self.master  = browser.ui.browser.body
-        if not self.ui.parent and self.ui.number == 0 :
+        self.master  = browser.widget.body
+        if not self.model.parent and self.model.number == 0 :
             self.master.last_key = None
-            self.master.bind ("<Motion>",         self.ui.activate_mouse)
-            self.master.bind ("<Up>",             self.ui.go_up)
-            self.master.bind ("<Down>",           self.ui.go_down)
-            self.master.bind ("<Left>",           self.ui.go_left)
-            self.master.bind ("<Right>",          self.ui.go_right)
-            self.master.bind ("<Insert>",         self.ui.expand)
-            self.master.bind ("<Shift-Insert>",   self.ui.expand_1)
-            self.master.bind ("<Control Insert>", self.ui.expand_all)
-            self.master.bind ("<Delete>",         self.ui.collapse)
-            self.master.bind ("<Shift-Delete>",   self.ui.collapse_1)
-            self.master.bind ("<Control Delete>", self.ui.collapse_all)
-            self.master.bind ("<Home>",           self.ui.show_head)
-            self.master.bind ("<End>",            self.ui.show_tail)
-            self.master.bind ("<<print>>",        self.ui.print_node)
-        self.master.tag_bind (self.ui.bind_tag, "<Enter>", self.ui.mouse_enter)
-        self.master.tag_bind (self.ui.bind_tag, "<Leave>", self.ui.mouse_leave)
-        #print "Tk.Node", self.AC, ui, browser
+            self.master.bind ("<Motion>",         self.model.activate_mouse)
+            self.master.bind ("<Up>",             self.model.go_up)
+            self.master.bind ("<Down>",           self.model.go_down)
+            self.master.bind ("<Left>",           self.model.go_left)
+            self.master.bind ("<Right>",          self.model.go_right)
+            self.master.bind ("<Insert>",         self.model.expand)
+            self.master.bind ("<Shift-Insert>",   self.model.expand_1)
+            self.master.bind ("<Control Insert>", self.model.expand_all)
+            self.master.bind ("<Delete>",         self.model.collapse)
+            self.master.bind ("<Shift-Delete>",   self.model.collapse_1)
+            self.master.bind ("<Control Delete>", self.model.collapse_all)
+            self.master.bind ("<Home>",           self.model.show_head)
+            self.master.bind ("<End>",            self.model.show_tail)
+            self.master.bind ("<<print>>",        self.model.print_node)
+        self.master.tag_bind \
+            (self.model.bind_tag, "<Enter>", self.model.mouse_enter)
+        self.master.tag_bind \
+            (self.model.bind_tag, "<Leave>", self.model.mouse_leave)
     # end def __init__
 
     def insert (self, index, * tags) :
         """Insert `self' into widget `self.master' at position `index'."""
-        head = self.master.index (index)
-        if self.ui.level :
-            self.ui._insert      (index, "\t" * self.ui.level)
-        self.master.mark_set     (self.ui.butt_mark, index)
-        self.master.mark_gravity (self.ui.butt_mark, LEFT)
-        self.ui._insert_button   ()
-        self.ui._insert          (index, "\t")
-        self.ui._insert_header   (index)
+        head = self.master.index  (index)
+        if self.model.level :
+            self.model._insert    (index, "\t" * self.model.level)
+        self.master.mark_set      (self.model.butt_mark, index)
+        self.master.mark_gravity  (self.model.butt_mark, LEFT)
+        self.model._insert_button ()
+        self.model._insert        (index, "\t")
+        self.model._insert_header (index)
         body = tail = self.master.index (index)
-        self.ui._insert          (index, "\n")
-        self.master.mark_set     (self.ui.head_mark, head)
-        self.master.mark_set     (self.ui.body_mark, body)
-        self.master.mark_set     (self.ui.tail_mark, tail)
-        self.master.mark_gravity (self.ui.head_mark, LEFT)
-        self.master.mark_gravity (self.ui.body_mark, LEFT)
-        self.master.tag_add      ( self.ui.level_tag + ":head"
-                                 , self.ui.head_mark
-                                 , self.ui.head_mark + " lineend"
-                                 )
+        self.model._insert        (index, "\n")
+        self.master.mark_set      (self.model.head_mark, head)
+        self.master.mark_set      (self.model.body_mark, body)
+        self.master.mark_set      (self.model.tail_mark, tail)
+        self.master.mark_gravity  (self.model.head_mark, LEFT)
+        self.master.mark_gravity  (self.model.body_mark, LEFT)
+        self.master.tag_add \
+            ( self.model.level_tag + ":head"
+            , self.model.head_mark
+            , self.model.head_mark + " lineend"
+            )
     # end def insert
 
     def _display_button (self) :
         self.master.window_create \
-            ( self.ui.butt_mark
-            , window = self.ui.button.window
+            ( self.model.butt_mark
+            , window = self.model.button.window
             )
     # end def _display_button
 
     def enter (self, event = None) :
-        mark = self.ui.head_mark
+        mark = self.model.head_mark
         self.master.tag_add \
             ("active_node", mark, mark + " lineend +1 char")
         self.master.tag_lower ("active_node")
@@ -248,10 +253,11 @@ class Node (TFL.TKT.Mixin) :
     # end def _set_cursor
 
     def _go (self, event, node) :
-        self.ui.leave      (event)
-        self._set_cursor   ("%s + %rchars" % (node.head_mark, node.level + 2))
-        node.enter         (event)
-        node.ui.master.see (node.head_mark)
+        self.leave      (event)
+        self._set_cursor \
+            ("%s + %rchars" % (node.model.head_mark, node.model.level + 2))
+        node.enter      (event)
+        node.master.see (node.model.head_mark)
     # end def _go
 
     def _current_node (self) :
@@ -284,30 +290,31 @@ class Node (TFL.TKT.Mixin) :
 
     def find_highlight (self, match, apply_found_bg = 0) :
         m   = self.master
-        pos = pos1 = m.search (match, self.ui.head_mark, self.ui.tail_mark)
+        pos = pos1 = m.search \
+            (match, self.model.head_mark, self.model.tail_mark)
         while pos :
             end = "%s + %s chars" % (pos, len (match))
             m.tag_add ("found", pos, end)
-            pos = m.search (match, end, self.ui.tail_mark)
+            pos = m.search (match, end, self.model.tail_mark)
         if pos1 :
             if apply_found_bg :
-                m.tag_add ("found_bg", pos1, self.ui.tail_mark)
-            m.see     (self.ui.tail_mark)
+                m.tag_add ("found_bg", pos1, self.model.tail_mark)
+            m.see     (self.model.tail_mark)
             m.see     (pos1)
     # end def _find_highlight
 
     def find_unhighlight (self, match) :
         m   = self.master
-        pos = m.search (match, self.ui.head_mark, self.ui.tail_mark)
+        pos = m.search (match, self.model.head_mark, self.model.tail_mark)
         if pos :
             try :
-                m.tag_remove ("found_bg", pos, self.ui.tail_mark)
+                m.tag_remove ("found_bg", pos, self.model.tail_mark)
             except TclError :
                 pass
         while pos :
             end = "%s + %s chars" % (pos, len (match))
             m.tag_remove ("found", pos, end)
-            pos = m.search (match, end, self.ui.tail_mark)
+            pos = m.search (match, end, self.model.tail_mark)
     # end def _find_unhighlight
 
 # end class Node
@@ -398,11 +405,11 @@ class Browser (TFL.TKT.Mixin) :
     """Tk wrapper for Hierarchical browser widget."""
 
     def __init__ (self, master, name = None, state = None, ** kw) :
-        self.browser = _Tk_Browser_ (master, name, state, **kw)
+        self.widget = _Tk_Browser_ (master, name, state, **kw)
     # end def __init__
 
     def __getattr__ (self, name) :
-        result = getattr (self.browser, name)
+        result = getattr (self.widget, name)
         setattr (self, name, result)
         return result
     # end def __getattr__

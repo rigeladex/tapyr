@@ -29,6 +29,9 @@
 #     2-Feb-2005 (RSC) Creation, refactored from lib/python/T_Browser
 #     3-Feb-2005 (CT)  Superflous imports removed
 #     3-Feb-2005 (CT)  Stylistic improvements of ancient code
+#     4-Feb-2005 (RSC) renamed ui to tkt, tkt constructors get self.tkt
+#                      fixed update of "tags" variable in insert
+#                      see is now only used in tkt.
 #    ««revision-date»»···
 #--
 
@@ -73,7 +76,6 @@ class Node (TFL.UI.Mixin) :
         self.bid_seed  = 0
         if not self.parent :
             self.level       = 0
-            #print "UI.Node '%s' '%s' '%s'" % (self.AC, self, browser)
             self.number      = len (self.browser.nodes)
             self.bid         = `self.browser.bid_seed`
             self.tag         = self.name + "::" + self.bid
@@ -108,7 +110,7 @@ class Node (TFL.UI.Mixin) :
            , self.header_head,   self.header,   self.header_tail
            , self.contents_head, self.contents, self.contents_tail
            )
-        self.ui        = self.TNS.HTB.Node (self, browser)
+        self.tkt = self.TNS.HTB.Node (self, browser)
     # end def __init__
 
     def is_open (self) :
@@ -135,16 +137,17 @@ class Node (TFL.UI.Mixin) :
     # end def _insert_child
 
     def insert (self, index, * tags) :
-        self.ui.insert (index, * tags)
+        self.tags = filter (None, (self.tag, ) + tags)
+        self.tkt.insert (index, * tags)
     # end def insert
 
     def _insert_button (self) :
         if not self.button :
             self.button = self.TNS.HTB.Button \
-                ( self
+                ( self.tkt
                 , is_leaf = not (self.children or self.contents)
                 )
-            self.ui._display_button ()
+            self.tkt._display_button ()
     # end def _insert_button
 
     def _insert (self, index, text, * tags) :
@@ -264,9 +267,6 @@ class Node (TFL.UI.Mixin) :
 
     def mouse_leave (self, event = None) : self.leave (event)
 
-    def enter (self, event = None) : self.ui.enter (event)
-    def leave (self, event = None) : self.ui.leave (event)
-
     def set_cursor (self, index) :
         self._set_cursor         (index)
         self.browser.focus_force ()
@@ -274,7 +274,7 @@ class Node (TFL.UI.Mixin) :
 
     def _current_node (self) :
         self.browser.mouse_act = 0
-        return self.ui._current_node ()
+        return self.tkt._current_node ()
     # end def _current_node
 
     def activate_mouse (self, event = None) :
@@ -283,7 +283,7 @@ class Node (TFL.UI.Mixin) :
 
     def ignore (self, event = None) :
         self.browser.mouse_act = 0
-        return self.ui.ignore (event)
+        return self.tkt.ignore (event)
     # end def _current_node
 
     def expand (self, event = None, transitive = 0) :
@@ -317,8 +317,6 @@ class Node (TFL.UI.Mixin) :
     def collapse_all (self, event = None) :
         return self.collapse (event, transitive = 1 << 30)
     # end def collapse_all
-
-    def see (self) : self.ui.see ()
 
     def show_head   (self, event = None) :
         node = self._current_node ()
@@ -442,6 +440,9 @@ class Node (TFL.UI.Mixin) :
             return self.search_string (pattern, tagged_as, result)
     # end def search
 
+    def enter (self, event = None) : self.tkt.enter (event)
+    def leave (self, event = None) : self.tkt.leave (event)
+
 # end class Node
 
 class Browser (TFL.UI.Mixin) :
@@ -463,7 +464,7 @@ class Browser (TFL.UI.Mixin) :
     def __init__ (self, AC, master, name = None, state = None, ** kw) :
         self.__super.__init__ (AC = AC)
         self.name      = name
-        self.ui        = self.TNS.HTB.Browser (master, name, state, **kw)
+        self.tkt       = self.TNS.HTB.Browser (master, name, state, **kw)
         self.clear     ()
         self.mouse_act = 1
     # end def __init__
@@ -584,7 +585,7 @@ class Browser (TFL.UI.Mixin) :
     # end def find_prev
 
     def clear (self) :
-        self.ui.clear        ()
+        self.tkt.clear       ()
         self.node_map      = {}
         self.nodes         = []
         self.bid_seed      = 0
@@ -594,17 +595,12 @@ class Browser (TFL.UI.Mixin) :
         self._find_pattern = None
     # end def clear
 
-    # hackish
-    def delete  (self, head, tail) :
-        self.ui.delete (head, tail)
-
-    def insert  (self, idx, txt, * tags) :
-        self.ui.insert (idx, txt, * tags)
-
-    def disable       (self) : self.ui.disable       ()
-    def normal_cursor (self) : self.ui.normal_cursor ()
-    def busy_cursor   (self, cursor) :
-        self.ui.busy_cursor (cursor)
+    # delegate to our tkt:
+    def __getattr__ (self, name) :
+        result = getattr (self.tkt, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
 
 # end class Browser
 

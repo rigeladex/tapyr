@@ -10,26 +10,22 @@ if __name__ == "__main__" :
     AC = App_Context (TFL)
     def mknode (tb, name) :
         n = TFL.UI.HTB.Node \
-            ( tb, name, "1. test line\n2. test line\n3. test line"
-            , "\n"
-            )
+            (tb, name, "1. test line\n2. test line\n3. test line")
         n.insert (INSERT, "nowrap")
         return n
 
     def mkchild (tn, name) :
-        n = tn.new_child (name, "head", "1. test line\n2. test line")
+        n = tn.new_child (name, "1. test line\n2. test line")
         return n
 
     tb  = TFL.UI.HTB.Browser (AC, root, 'huhu', state = NORMAL)
-    tb.ui.browser.pack (expand = YES, fill = BOTH)
+    tb.tkt.widget.pack (expand = YES, fill = BOTH)
     tb.insert          (INSERT, "**             Test me             **\n")
+
     tn = TFL.UI.HTB.help (tb)
     tn.insert          (INSERT, "rindent")
     tn = mknode        (tb,     "n1")
-    print "1", tn
     x = mkchild        (tn,     "s1")
-    y = tn.new_child ("huhu", "haha", "hihi")
-    print "2", tn, x, y
     mkchild            (tn,     "s2")
     nn = mkchild       (tn,     "s3")
     mkchild            (nn,     "ss1")
@@ -42,5 +38,5 @@ if __name__ == "__main__" :
     mkchild            (tn,     "s-x")
     mkchild            (tn,     "s-y")
     tn = mknode        (tb,     "n4")
-    tb.ui.browser.mainloop ()
+    tb.tkt.widget.mainloop ()
 
