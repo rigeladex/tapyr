@@ -53,6 +53,12 @@
 #     6-Jan-2005 (CT) `Message.__init__` changed to pass `name` instead of
 #                     `""` to `__super.__init__`
 #     6-Jan-2005 (CT) `Message.__repr__` robustified
+#    28-Mar-2005 (CT) `_formatted_body` changed to handle `text/x-*`
+#                     mime-types better
+#    28-Mar-2005 (CT) Redundant definition of `all_parts` removed from
+#                     `Message`
+#    28-Mar-2005 (CT) `_Msg_Part_` factored and `part_iter` added
+#    29-Mar-2005 (CT) `formatted` changed to use `part_iter`
 #    ««revision-date»»···
 #--
 
@@ -60,60 +66,43 @@ from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 
-import _TFL.Ascii
 import _PMA.Mailcap
 import _PMA.Msg_Status
-import _TFL._Meta.Object
+import _TFL.Ascii
+import _TFL.Filename
+import _TFL._Meta.M_Class
+import _TFL._Meta.Property
 
-from   Filename                import Filename
-from   Regexp                  import *
+from   _TFL.predicate          import dict_from_list
+from   _TFL.Regexp             import *
+
 import sos
 import time
 
 _ws_pat = Regexp    (r"\s+")
 now     = time.time ()
 
-class _Message_ (TFL.Meta.Object) :
+class _Msg_Part_ (object) :
 
-    label_width      = 8
+    __metaclass__ = TFL.Meta.M_Class_SWRP
 
-    charset          = property (lambda s : s._charset ())
-    filename         = property (lambda s : s._filename ())
-    type             = property (lambda s : s.email.get_content_type ())
+    __properties  = \
+        ( TFL.Meta.Lazy_Property ("charset",  lambda s : s._charset  ())
+        , TFL.Meta.Lazy_Property
+            ("content_type", lambda s : s.email.get_content_type ())
+        , TFL.Meta.Lazy_Property ("filename", lambda s : s._filename ())
+        )
+
+    label_width   = 8
 
     def __init__ (self, email, name) :
-        self.email  = email
-        self.name   = name
-        self.path   = None
+        self.email = email
+        self.name  = name
+        self.path  = None
+        self.body  = None
+        self.parts = []
         self._setup_body (email)
     # end def __init__
-
-    def all_parts (self) :
-        for p in self.parts :
-            yield p
-            for sp in p.all_parts () :
-                yield sp
-    # end def all_parts
-
-    def formatted (self, sep_length = 79) :
-        email = self.email
-        if email :
-            if self.body is not None :
-                if isinstance (self, Message) :
-                    for s in ("", "-" * sep_length, "") :
-                        yield s
-                for l in self._formatted_body () :
-                    yield l
-            else :
-                if self.type == "multipart/alternative" :
-                    parts = self.parts [0:1]
-                else :
-                    parts = self.parts
-                show_sep = len (parts) > 1
-                for p in parts :
-                    for l in self._formatted_part (p, sep_length, show_sep) :
-                        yield l
-    # end def formatted
 
     def _charset (self) :
         email = self.email
@@ -145,25 +134,6 @@ class _Message_ (TFL.Meta.Object) :
             return TFL.Ascii.sanitized_filename (self._decoded_header (result))
     # end def _filename
 
-    def _formatted_body (self) :
-        email = self.email
-        if email :
-            type  = self.type
-            lines = None
-            if type == "text/plain" :
-                lines = self.body.split ("\n")
-            else :
-                cap = PMA.Mailcap [type]
-                if cap :
-                    lines = cap.as_text (self._temp_body ())
-                for h in self._formatted_headers () :
-                    yield h
-            if lines is not None :
-                charset = self.charset
-                for l in lines :
-                    yield l.decode (charset, "replace").rstrip ("\r")
-    # end def _formatted_body
-
     def _formatted_headers (self, headers = None) :
         email = self.email
         for n in (headers or self.headers_to_show) :
@@ -172,15 +142,6 @@ class _Message_ (TFL.Meta.Object) :
                 yield "%-*s: %s" % \
                     (self.label_width, n, self._decoded_header (h))
     # end def _formatted_headers
-
-    def _formatted_part (self, p, sep_length, show_sep = True) :
-        if show_sep :
-            yield ""
-            yield ( "%s part %s %s" % ("-" * 4, p.name, "-" * sep_length)
-                  ) [:sep_length]
-        for l in p.formatted (sep_length) :
-            yield l
-    # end def _formatted_part
 
     def _get_header (self, email, name) :
         if isinstance (name, tuple) :
@@ -195,6 +156,153 @@ class _Message_ (TFL.Meta.Object) :
             result = email [name]
         return name.capitalize (), result
     # end def _get_header
+
+    def _temp_body (self) :
+        result = TFL.Filename \
+            ( sos.tempfile_name ()
+            , (self.filename or "").encode ("us-ascii", "ignore")
+            ).name
+        f = open (result, "w")
+        try :
+            f.write (self.body)
+        finally :
+            f.close ()
+        return result
+    # end def _temp_body
+
+# end class _Msg_Part_
+
+class _Pseudo_Part_ (_Msg_Part_) :
+
+    type          = "text/plain"
+
+    def part_iter (self) :
+        for p in self.parts :
+            yield p
+    # end def part_iter
+
+# end class _Pseudo_Part_
+
+class Body_Part (_Pseudo_Part_) :
+    """Model the body of an email as pseudo-part"""
+
+    def __init__ (self, email, needs_sep, headers_to_show) :
+        self.needs_sep       = needs_sep
+        self.headers_to_show = headers_to_show
+        self.__super.__init__ (email, "Body")
+    # end def __init__
+
+    def formatted (self, sep_length = 79) :
+        lines = None
+        if self.body :
+            type = self.content_type
+            if type == "text/plain" or type.startswith ("text/x-") :
+                lines = self.body.split ("\n")
+            else :
+                cap = PMA.Mailcap [type]
+                if cap :
+                    lines = cap.as_text (self._temp_body ())
+        if lines is not None :
+            charset = self.charset
+            for l in lines :
+                yield l.decode (charset, "replace").rstrip ("\r")
+        else :
+            hp = Header_Part (self.email, self.headers_to_show)
+            for l in hp.formatted (sep_length) :
+                yield l
+    # end def formatted
+
+    _formatted = formatted
+
+    def _separators (self, sep_length) :
+        if self.needs_sep :
+            for s in ("", "-" * sep_length, "") :
+                yield s
+    # end def _separators
+
+    def _setup_body (self, email) :
+        payload = email.get_payload (decode = True)
+        if payload :
+            self.body = payload.strip ()
+            ### XXX put full-quotes-at-end into `self.parts [0]`
+    # end def _setup_body
+
+# end class Body_Part
+
+class Header_Part (_Pseudo_Part_) :
+    """Model the headers of an email as pseudo-part"""
+
+    def __init__ (self, email, headers_to_show, is_leaf = False, name = None) :
+        self.headers_to_show = headers_to_show
+        self.is_leaf         = is_leaf
+        self.__super.__init__ (email, name or "Headers")
+    # end def __init__
+
+    def formatted (self, sep_length = 79) :
+        for h in self._fh :
+            yield h
+    # end def formatted
+
+    _formatted = formatted
+
+    def _separators (self, sep_length) :
+        return ()
+    # end def _separators
+
+    def _setup_body (self, email) :
+        self._fh  = list (self._formatted_headers (self.headers_to_show))
+        self.body = "\n".join (self._fh)
+        if not self.is_leaf :
+            hts        = dict_from_list (self.headers_to_show)
+            hth        = [k for k in email.keys () if k not in hts]
+            self.parts = [Header_Part (email, hth, True, "More headers")]
+    # end def _setup_body
+
+# end class Header_Part
+
+class _Message_ (_Msg_Part_) :
+
+    __properties  = \
+        ( TFL.Meta.Lazy_Property ("type", lambda s : s.content_type)
+        ,
+        )
+
+    def all_parts (self) :
+        for p in self.parts :
+            yield p
+            for sp in p.all_parts () :
+                yield sp
+    # end def all_parts
+
+    def formatted (self, sep_length = 79) :
+        for p in self.part_iter () :
+            for l in p.formatted (sep_length) :
+                yield l
+    # end def formatted
+
+    def part_iter (self) :
+        email  = self.email
+        is_msg = isinstance (self, Message)
+        if is_msg :
+            yield Header_Part (email, self.headers_to_show)
+        if not email.is_multipart () :
+            yield Body_Part (email, is_msg, self.headers_to_show)
+        else :
+            if self.type == "multipart/alternative" :
+                parts = self.parts [0:1] ### XXX return a MP_Alt_Part object
+            else :
+                parts = self.parts
+            for p in parts :
+                yield p
+    # end def part_iter
+
+    _formatted = formatted
+
+    def _separators (self, sep_length) :
+        yield ""
+        yield ( "%s part %s %s" % ("-" * 4, self.name, "-" * sep_length)
+              ) [:sep_length]
+    # end def _separators
 
     def _setup_body (self, email) :
         name       = self.name
@@ -216,19 +324,6 @@ class _Message_ (TFL.Meta.Object) :
             if payload :
                 self.body = payload.strip ()
     # end def _setup_body
-
-    def _temp_body (self) :
-        result = Filename \
-            ( sos.tempfile_name ()
-            , (self.filename or "").encode ("us-ascii", "ignore")
-            ).name
-        f = open (result, "w")
-        try :
-            f.write (self.body)
-        finally :
-            f.close ()
-        return result
-    # end def _temp_body
 
 # end class _Message_
 
@@ -278,21 +373,20 @@ class Message (_Message_) :
         self.number  = number
     # end def __init__
 
-    def all_parts (self) :
-        for p in self.parts :
-            yield p
-            for sp in p.all_parts () :
-                yield sp
-    # end def all_parts
-
     def formatted (self, sep_length = 79) :
-        email = self._reparsed ()
         self.status.set_read   ()
-        for h in self._formatted_headers () :
-            yield h
-        for l in self.__super.formatted (sep_length) :
-            yield l
+        for p in self.part_iter () :
+            for s in p._separators (sep_length) :
+                yield s
+            for l in p._formatted  (sep_length) :
+                yield l
     # end def formatted
+
+    def part_iter (self) :
+        email = self._reparsed ()
+        for p in self.__super.part_iter () :
+            yield p
+    # end def part_iter
 
     def summary (self, format = None) :
         email = self.email
