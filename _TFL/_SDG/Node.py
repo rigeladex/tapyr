@@ -33,17 +33,22 @@
 
 """
 from _TFL._SDG.Node import *
-root = Node \
-    ( Node ( Node ( name = "a.1")
-           , Node ( name = "a.2")
-           , name = "a"
+class T_Node (Node) :
+    init_arg_defaults = dict (hansi = "kieselack")
+
+root = T_Node \
+    ( T_Node ( Leaf ( name = "a.1")
+           , Leaf ( name = "a.2")
+           , name  = "a"
+           , hansi = "A"
            )
-    , Node ( Node ( name = "b.x")
-           , Node ( Node ( name = "b.y.1")
+    , T_Node ( Node ( name = "b.x")
+           , T_Node ( Node ( name = "b.y.1")
                   , Node ( name = "b.y.2")
-                  , name = "b.y"
+                  , name  = "b.y"
+                  , hansi = "B.Y"
                   )
-           , Node ( name = "b.z")
+           , Leaf ( name = "b.z")
            , name = "b"
            )
     , name = "R"
@@ -68,22 +73,23 @@ class Invalid_Node (StandardError) :
 class Node :
     """Node of a structured document"""
 
-    __metaclass__     = TFL.SDG.M_Node
+    __metaclass__        = TFL.SDG.M_Node
 
-    base_indent       = "    "
-    init_arg_defaults = dict (name = "")
-    _list_of_formats  = ("repr_format", "tree_format")
-    repr_format       = """
-        %(name)-20.20s
-        >>( %(@_formatted_attrs@)s
-        >>)
-        >%(*children*)s
+    children             = property (lambda s : s._children_iter ())
+    children_group_names = (Body, ) = range (1)
+
+    init_arg_defaults    = dict (name = "", cgi = 0, base_indent = "    ")
+    _autoconvert         = {}
+
+    _list_of_formats     = ("repr_format", "tree_format")
+    repr_format          = """
+        Node %(name)-20.20s
+        >%(::*children:)s
     """
-    tree_format       = """
-        %(node_type)-20.20s
-        >( %(*children*)s
-        >, %(@_formatted_attrs@)s
-        >)
+    tree_format          = """
+        %(node_type)s \\
+        >>( %(:, :*children,@_formatted_attrs:)s
+        >>)
     """
 
     def __init__ (self, * children, ** kw) :
@@ -102,12 +108,12 @@ class Node :
             self.insert (c)
     # end def add
 
-    def as_repr (self, base_indent = None, gauge = None, head = "") :
-        return self.formatted (self.repr_format, base_indent, gauge, head)
+    def as_repr (self, base_indent = None) :
+        return self.formatted ("repr_format", base_indent)
     # end def as_repr
 
-    def as_tree (self, base_indent = None, gauge = None, head = "") :
-        return self.formatted (self.tree_format, base_indent, gauge, head)
+    def as_tree (self, base_indent = None) :
+        return self.formatted ("tree_format", base_indent)
     # end def as_tree
 
     def destroy (self) :
@@ -117,53 +123,40 @@ class Node :
         self.parent = None
     # end def destroy
 
-    def formatted (self, format, base_indent = None, gauge = None, head = "") :
+    def formatted (self, format_name, base_indent = None, ** kw) :
         if base_indent is None :
             base_indent = self.base_indent
         recurser = "formatted"
+        format   = getattr (self, format_name)
         recurse_args = dict \
-            ( format      = format
+            ( format_name = format_name
             , base_indent = base_indent
-            , gauge       = gauge
-            , head        = head
+            , ** kw
             )
         context = TFL.Caller.Scope (globs = self.__dict__)
         for f in format :
             indent = f.indent_level * base_indent
-            for l in f (self, context, head) :
+            context.locals ["indent_offset"] = len (indent)
+            for l in f (self, context) :
                 yield "%s%s" % (indent, l)
     # end def formatted
 
-    def _formatted_attrs (self, format, base_indent = None, gauge = None, head = "") :
+    def _formatted_attrs (self, format_name, base_indent = None) :
         for k, v in sorted (self.init_arg_defaults.iteritems ()) :
             a = getattr (self, k)
             if a != v :
-                yield "%s%s = %r" % (head, k, a)
-                head = ", "
+                yield "%s = %r" % (k, a)
     # end def _formatted_attrs
-
-    def get_child (self, child_name, transitive = True) :
-        """Returns the child named `child_name' or `None' if no child with
-           the specifed name exists.
-        """
-        child_name = self._child_name (child_name)
-        if child_name in self.children :
-            return self.children [child_name]
-        elif transitive :
-            for c in self.children :
-                r = c.get_child (child_name, transitive = True)
-                if r is not None :
-                    return r
-    # end def get_child
 
     def has_child (self, child_name, transitive = True) :
         """Checks if this node or one of this childs has a node named
            `child_name'.
         """
         child_name = self._child_name (child_name)
-        if child_name in self.children :
-            return True
-        elif transitive :
+        for children in self.children_groups.itervalues () :
+            if child_name in children :
+                return True
+        if transitive :
             for c in self.children :
                 if c.has_child (child_name, transitive = True) :
                     return True
@@ -174,11 +167,11 @@ class Node :
         """Insert `child' to `self.children' at position `index'
            (None means append).
         """
-        self._insert (child, index, self.children, delta)
+        self._insert (child, index, self.children_groups [child.cgi], delta)
     # end def insert
 
     def _child_name (self, child_name) :
-        if isinstance (child_name, Doc_Node) :
+        if isinstance (child_name, Node) :
             child_name = child_name.name
         return child_name
     # end def _child_name
@@ -190,6 +183,8 @@ class Node :
                 setattr (self, k, v)
         for k, v in kw.iteritems () :
             if k in self.init_arg_defaults :
+                if k in self._autoconvert :
+                    v = self._autoconvert [k] (v)
                 setattr (self, k, v)
             else :
                 kw_err [k] = v
@@ -199,21 +194,23 @@ class Node :
     # end def _init_kw
 
     def _insert (self, child, index, children, delta = 0) :
-        if not child :
-            return
-        if index is None :
-            index = len (children)
-        child.parent = self
-        children.insert (index, child, delta)
+        if child :
+            if index is None :
+                index = len (children)
+            child.parent = self
+            children.insert (index, child, delta)
     # end def _insert
 
-    def _reset_children (self) :
-        self.children = NO_List ()
-    # end def _reset_children
+    def _children_iter (self) :
+        for group in self.children_groups.itervalues () :
+            for c in group :
+                yield c
+    # end def _children_iter
 
-    def __getitem__ (self, index) :
-        return self.children [index]
-    # end def __getitem__
+    def _reset_children (self) :
+        self.children_groups = dict \
+            ([(i, NO_List ()) for i in self.children_group_names])
+    # end def _reset_children
 
     def __iter__ (self) :
         yield self
@@ -231,15 +228,16 @@ class Node :
 class Leaf (Node) :
     """Leaf node which doesn't have children"""
 
-    children = NO_List ()
+    repr_format          = """
+        Leaf %(name)-20.20s
+        >%(::*children:)s
+    """
+
+    children_group_names = () ### doesn't allow any children
 
     def insert (self, child, index = None, delta = 0) :
         raise Invalid_Node, (self, child)
     # end def insert
-
-    def _reset_children (self) :
-        pass
-    # end def _reset_children
 
 # end class Leaf
 

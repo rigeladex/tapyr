@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Jul-2004 (CT) Creation
+#    26-Jul-2004 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,7 @@ class M_Node (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     def _normalize_format (cls, fn, f) :
         format_lines = []
         for line in f.strip ().split ("\n") :
-            line  = line.strip ()
+            line  = line.strip ().replace ("\\n", "\n")
             level = _indent_pat.match (line).end ()
             cf    = line [level:]
             format_lines.append (TFL.SDG.Formatter (level, cf))
