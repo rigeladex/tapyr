@@ -77,6 +77,23 @@
 #                     recursive calls
 #    21-Sep-2004 (CT) Argument `sep_form` of `_Recursive_Formatter_` changed
 #                     to `sep`
+#    22-Sep-2004 (CT) `front_before_nl` and `rear_after_nl` added
+#    22-Sep-2004 (CT) Define `__repr__` instead of `__str__` for the various
+#                     formatter classes
+#    22-Sep-2004 (CT) `_Recursive_Formatters_.__iter__` changed to not use
+#                     `Look_Ahead_Gen` (unfortunately, looking ahead leads to
+#                     premature expansion)
+#    23-Sep-2004 (CT) `_Recursive_Formatters_.__iter__` changed to delay
+#                     expansion of `front_before_nl` until second iteration
+#    23-Sep-2004 (CT) `_Recursive_Formatters_.__iter__` changed to use
+#                     `next_sep` and `sep` to keep track of the necessary
+#                     separators (this complication is necessary for
+#                     supporting multiple `key-specs`)
+#    23-Sep-2004 (CT) `Multi_Line_Formatter.__call__` changed to add
+#                     indentation for `anchor` only when necessary
+#    23-Sep-2004 (CT) `Multi_Line_Formatter.__call__` changed to update
+#                     `indent_anchor` (almost?) correctly
+#    23-Sep-2004 (CT) Debugging statements removed
 #    ««revision-date»»···
 #--
 
@@ -303,7 +320,6 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
                 last = line
                 i   += 1
             if i :
-                ### ??? doesn't work for multiple elements in self.formatters
                 next_sep = self.sep
         if last is not None :
             if i == 1 :

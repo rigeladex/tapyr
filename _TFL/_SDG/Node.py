@@ -62,6 +62,7 @@
 #    26-Aug-2004 (CT) `_convert` moved in here (from `C.Node`)
 #    26-Aug-2004 (CT) `NL` added
 #    17-Sep-2004 (CT)  Argument `indent_anchor` added to `formatted`
+#    27-Sep-2004 (CT)  Doc-string improved
 #    ««revision-date»»···
 #--
 
@@ -85,9 +86,9 @@ Normally, attributes must be passed as keyword arguments to
   attribute values specified by the caller.
 
 - `front_args` defines the names of attributes that must be passed as
-  normal (positional) arguments at the beginning of the argument list.
+  required (positional) arguments at the beginning of the argument list.
 
-- `rest_args` defines the name of a single attributes that takes all
+- `rest_args` defines the name of a single attribute that takes all
   non-named arguments which aren't `front_args`.
 
 Children
@@ -108,13 +109,14 @@ Children can be split into different groups.
 - `children_group_names` defines the names of the children groups
   supported by a node type.
 
-  For Node, only the group `Body` is defined.
+  For `Node`, only the group `Body` is defined.
 
 - For each children group xxx, a property xxx_children allows access
   to the group's children.
 
 - `children` iterates over all children of all groups in some
-  unspecified sequence.
+  unspecified sequence (i.e., don't use `children` if you care about
+  order).
 
 Formats
 =======
@@ -123,11 +125,12 @@ Formats define how to format a node and its children for a specific
 purpose.
 
 - `_list_of_formats` specifies the names of the applicable formats for
-  the node-type in question.
+  the node-type in question (used by metaclass; therefore, it must be
+  defined by class body).
 
 - Each format is a string defined as a class variable.
 
-- The meta class M_Node transforms the format strings into lists of
+- The meta class `M_Node` transforms the format strings into lists of
   formatter objects.
 
 - Each line of the format string is handled by a separate formatter
@@ -140,7 +143,7 @@ purpose.
     characters. Each single `>` corresponds to the number of spaces
     specified by `base_indent`.
 
-    If base_indent is " " (two spaces), a leading indentation marker
+    If base_indent is "  " (two spaces), a leading indentation marker
     of `>>>` will result in an leading indentation of six spaces for
     the line in question (relative to the other lines of the format).
 
@@ -201,11 +204,25 @@ A complex format specification has the form::
   * `front`: format to be used once at the front of the expansion of
     `key-specs` (before `head` of the first line).
 
+    . The expansion of `front` can contain a single newline. To avoid
+      messing up the indentation of the following lines, such a
+      newline must be specified as `%(NL)s`.
+
+  * `front0`: format to be used instead of `front` if `key-specs`
+    yields only a single item (i.e., *no* newline).
+
   * `head`: format to be used at the beginning of every line of the
     expansion of `key-specs` (but after `sep`).
 
   * `rear`: format to be used once at the back of the expansion of
     `key-specs` (after `tail` of the last line).
+
+    . The expansion of `rear` can contain a single newline. To avoid
+      messing up the indentation of the following lines, such a
+      newline must be specified as `%(NL)s`.
+
+  * `rear0`: format to be used instead of `rear` if `key-specs`
+    yields only a single item (i.e., *no* newline).
 
   * `sep`: format to be used as separator between the lines of the
     expansion of `key-specs` (it will be inserted between the
@@ -272,7 +289,8 @@ A complex format specification has the form::
   of the node object and its `formatted` operation.
 
   A `{}` expression might want to use values like `indent_anchor`,
-  `output_width`, and `ht_width` and can be an arithmetic expression.
+  `indent_offset`, `output_width`, and `ht_width` and can be an
+  arithmetic expression.
 
 Examples
 ========
@@ -304,9 +322,9 @@ the result of `repr` might be valid input to `eval`::
     '''
 
 The second line of `repr_format` contains a complex format
-specification with `front` and `sep` values and key specifications for
-recursive iteration over `children` followed by a method call to
-`_formatted_attrs`.
+specification with `front`, `rear`, and `sep` values and key
+specifications for recursive iteration over `children` followed by a
+method call to `_formatted_attrs`.
 
 >>> class T_Node (Node) :
 ...     init_arg_defaults = dict (hansi = "kieselack")
@@ -449,7 +467,6 @@ class Node :
                   , ht_width      = 0
                   , ** kw
                   ) :
-        #print >> sys.stderr, self.__class__.__name__, self.name, indent_offset, indent_anchor, ht_width
         if base_indent is None :
             base_indent = self.base_indent
         recurser   = "formatted"

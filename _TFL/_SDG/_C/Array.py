@@ -28,6 +28,10 @@
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
 #    12-Aug-2004 (MG) Format changed
+#    21-Sep-2004 (CT) `c_format` changed (use `head` instead of `front` for
+#                     `description`)
+#    23-Sep-2004 (CT) `c_format` changed (total revamp of `x_forms` for
+#                     `initializers`)
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    ««revision-date»»···
 #--

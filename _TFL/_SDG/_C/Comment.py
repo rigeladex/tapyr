@@ -38,6 +38,8 @@
 #    15-Sep-2004 (CT) `_description` changed to enforce minimum width for
 #                     textwrap.TextWrapper
 #    15-Sep-2004 (MG) `_description` use `max` instead of min
+#    24-Sep-2004 (MG) `_description`: `format_prec` minimum changed from `40`
+#                     to `4`
 #    ««revision-date»»···
 #--
 
@@ -89,7 +91,6 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
 
     def formatted (self, format_name, * args, ** kw) :
         if self.level <= self.out_level :
-#            print kw ["indent_anchor"], kw ["ht_width"], kw ["indent_anchor"] + kw ["ht_width"] + 2 + 4, self.description
             return self.__super.formatted (format_name, * args, ** kw)
         else :
             return ()

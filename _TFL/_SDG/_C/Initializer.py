@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
+#    21-Sep-2004 (CT) `Init_Atom.c_format` changed (s/front/head/)
+#    23-Sep-2004 (CT) `Init_Comp.c_format` changed (total revamp)
 #    ««revision-date»»···
 #--
 

@@ -32,6 +32,8 @@
 #     9-Aug-2004 (CT) `Initializer` handling added
 #     9-Aug-2004 (CT) `_Var_` factored
 #    12-Aug-2004 (MG) Formats changed
+#    23-Sep-2004 (CT) `c_format` changed (`front0` added and `front` changed
+#                     to include `%(NL)s`)
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    ««revision-date»»···
 #--
