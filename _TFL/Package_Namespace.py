@@ -93,17 +93,18 @@
 #    28-Jul-2003 (CT) `_Reload` added
 #     1-Aug-2003 (CT) `_Reload` changed to reload in same sequence as
 #                     original import
-#    12-Sep-2003 (CT)  `_Reload` changed to clear the damned `linecache`
-#    20-Nov-2003 (CT)  `_Export_Module` changed to take `mod` from `kw` if
-#                      there
-#    16-Jun-2004 (CT)  `_Module_Space._load` changed to
-#                      - use `sys.modules` instead of `__import__`
-#                      - accept `q_name` as argument
-#    16-Jun-2004 (CT)  `Package_Namespace._Load_Module` factored
-#     5-Jul-2004 (CT)  `__name__` set for `Package_Namespace` instances to
-#                      make them more similar to modules
-#     4-Aug-2004 (MG)  `Package_Namespace._Import_Module` added
+#    12-Sep-2003 (CT) `_Reload` changed to clear the damned `linecache`
+#    20-Nov-2003 (CT) `_Export_Module` changed to take `mod` from `kw` if
+#                     there
+#    16-Jun-2004 (CT) `_Module_Space._load` changed to
+#                     - use `sys.modules` instead of `__import__`
+#                     - accept `q_name` as argument
+#    16-Jun-2004 (CT) `Package_Namespace._Load_Module` factored
+#     5-Jul-2004 (CT) `__name__` set for `Package_Namespace` instances to
+#                     make them more similar to modules
+#     4-Aug-2004 (MG) `Package_Namespace._Import_Module` added
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#    23-Oct-2004 (CT) `_check_clashes` added
 #    ««revision-date»»···
 #--
 
@@ -214,6 +215,7 @@ class Package_Namespace :
     """
 
     _leading_underscores = Regexp (r"(\.|^)_+")
+    _check_clashes       = True
 
     def __init__ (self, name = None, pname = None) :
         if not pname :
@@ -272,7 +274,7 @@ class Package_Namespace :
         module_name, mod = self._Load_Module (_caller_globals ())
         self._Cache_Module (module_name, mod)
         for s, p in kw.items () :
-            self._import_1 (mod, s, s, p, self.__dict__, 1)
+            self._import_1 (mod, s, s, p, self.__dict__, self._check_clashes)
     # end def _Add
 
     def _Export (self, * symbols, ** kw) :
@@ -288,7 +290,7 @@ class Package_Namespace :
         else :
             module_name      = caller_globals ["__name__"].split (".") [-1]
         primary        = getattr (mod, module_name, None)
-        check_clashes  = not self.__reload
+        check_clashes  = self._check_clashes and not self.__reload
         if primary is not None :
             result [module_name] = primary
         self._Cache_Module (module_name, mod)
@@ -334,9 +336,8 @@ class Package_Namespace :
         if not modules :
             from predicate import dusort
             second  = lambda (a, b) : b
-            modules = [m
-                       for (m, i) in dusort (self.__modules.values (), second)
-                      ]
+            modules = \
+                [m for (m, i) in dusort (self.__modules.values (), second)]
         try :
             self.__reload = 1
             print "Reloading", self.__name,

@@ -29,6 +29,8 @@
 #    14-Oct-2004 (CT) Creation
 #    17-Oct-2004 (CT) Use `self.Delta` instead of import
 #    17-Oct-2004 (CT) `_delta` changed to not look at `_body`
+#    23-Oct-2004 (CT) `formatted` changed to use `_default_format`
+#    23-Oct-2004 (CT) `_new_object` factored
 #    ««revision-date»»···
 #--
 
@@ -43,6 +45,7 @@ class _DTW_ (TFL.Meta.Object) :
     """Root for `datetime` wrappers"""
 
     _Type            = None
+    _default_format  = None
     _kind            = None
     _init_arg_names  = ()
     _timetuple_slice = None
@@ -52,7 +55,7 @@ class _DTW_ (TFL.Meta.Object) :
         , lambda self, value : setattr (self, self._kind, value)
         )
 
-    formatted = strftime = property (lambda s: s._body.strftime)
+    strftime         = property (lambda s: s._body.strftime)
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (** kw)
@@ -69,8 +72,14 @@ class _DTW_ (TFL.Meta.Object) :
                     attrs [name] = kw [name]
                 else :
                     attrs [name] = args [i]
-            self._body = self._Type (** attrs)
+            self._body = self._new_object (** attrs)
     # end def __init__
+
+    def formatted (self, format = None) :
+        if format is None :
+            format = self._default_format
+        return self.strftime (format)
+    # end def formatted
 
     def replace (self, ** kw) :
         return self.__class__ (** {self._kind : self._body.replace (** kw)})
@@ -82,6 +91,10 @@ class _DTW_ (TFL.Meta.Object) :
             result = self.Delta (delta)
         return result
     # end def _delta
+
+    def _new_object (self, ** kw) :
+        return self._Type (** kw)
+    # end def _new_object
 
     def __cmp__ (self, rhs) :
         return cmp (self._body, getattr (rhs, self._kind, rhs))

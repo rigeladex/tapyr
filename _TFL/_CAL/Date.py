@@ -32,6 +32,9 @@
 #    17-Oct-2004 (CT) Doctest for `Month_Delta` added
 #    17-Oct-2004 (CT) s/Month_Delta/MY_Delta/
 #    19-Oct-2004 (CT) s/MY_Delta/Month_Delta/
+#    23-Oct-2004 (CT) `_default_format` added
+#    23-Oct-2004 (CT) `_new_object` redefined to handle negative values for
+#                     `day`
 #    ««revision-date»»···
 #--
 
@@ -67,10 +70,34 @@ class Date (TFL.CAL._DTW_) :
        2004-10-10 2004-09-10
        >>> print d, d + Month_Delta (-12)
        2004-10-10 2003-10-10
+       >>> d = Date (day = 1, month = 1, year = 2004)
+       >>> print d, d + Month_Delta (11)
+       2004-01-01 2004-12-01
        >>> d1 = Date (2004, 10, 14)
        >>> d2 = Date (2004, 10, 16)
        >>> print d1 - d2
        -2 days, 0:00:00
+       >>> d = Date (day = -1, month = 1, year = 2004)
+       >>> print d, d + Month_Delta (1)
+       2004-01-31 2004-02-29
+       >>> print d, d + Month_Delta (2)
+       2004-01-31 2004-03-31
+       >>> print d, d + Month_Delta (3)
+       2004-01-31 2004-04-30
+       >>> print d, d + Month_Delta (11)
+       2004-01-31 2004-12-31
+       >>> print d, d + Month_Delta (12)
+       2004-01-31 2005-01-31
+       >>> print d, d + Month_Delta (13)
+       2004-01-31 2005-02-28
+       >>> print d, d + Month_Delta (-1)
+       2004-01-31 2003-12-31
+       >>> print d, d + Month_Delta (-2)
+       2004-01-31 2003-11-30
+       >>> print d, d + Month_Delta (-3)
+       2004-01-31 2003-10-31
+       >>> print d, d + Month_Delta (-11)
+       2004-01-31 2003-02-28
     """
 
     months = \
@@ -88,18 +115,44 @@ class Date (TFL.CAL._DTW_) :
         , 'dec' : 12, 'december'  :  12, 12 : "dec"
         }
 
-    day_per_month   = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
     _Type            = datetime.date
-    _init_arg_names  = ("year", "month", "day")
+    _default_format  = "%d-%m-%Y"
     _kind            = "date"
+    _init_arg_names  = ("year", "month", "day")
     _timetuple_slice = lambda s, tt : tt [:3]
 
     year             = property (lambda s : s._body.year)
     month            = property (lambda s : s._body.month)
     day              = property (lambda s : s._body.day)
+    yad              = None ### set for negative `day` arguments
 
     from _TFL._CAL.Delta import Date_Delta as Delta
+
+    def replace (self, ** kw) :
+        if self.yad is None or "day" in kw :
+            result      = self.__super.replace (** kw)
+        else :
+            kw ["day"]   = 1
+            yad          = self.yad
+            result       = self.__super.replace (** kw)
+            result._body = result._body.replace \
+                (day = self._day_from_end (yad, result.month, result.year))
+            result.yad   = yad
+        return result
+    # end def replace
+
+    def _day_from_end (self, yad, month, year) :
+        from _TFL._CAL.Year import Year
+        return Year (year).mmap [month].days [yad].number
+    # end def _day_from_end
+
+    def _new_object (self, ** kw) :
+        d = kw ["day"]
+        if d < 0 :
+            kw ["day"] = self._day_from_end (d, kw ["month"], kw ["year"])
+            self.yad   = d
+        return self.__super._new_object (** kw)
+    # end def _new_object
 
     def __getattr__ (self, name) :
         if name == "month_name" :

@@ -34,6 +34,7 @@
 #    17-Oct-2004 (CT) Getters of `Time_Delta` renamed to `h`, `m`, and `s` to
 #                     allow `seconds` to return `_body.seconds` unchanged
 #    19-Oct-2004 (CT) s/MY_Delta/Month_Delta/
+#    23-Oct-2004 (CT) `__neg__` added
 #    ««revision-date»»···
 #--
 
@@ -86,6 +87,10 @@ class _DT_Delta_ (_Delta_) :
         result = self._body * rhs
         return self.__class__ (** {self._kind : result})
     # end def __mul__
+
+    def __neg__ (self) :
+        return self.__class__ (** {self._kind : - self._body})
+    # end def __neg__
 
     def __sub__ (self, rhs) :
         if isinstance (rhs, _Delta_) :
@@ -223,12 +228,11 @@ class Month_Delta (_Delta_) :
         """Return result of `op` applied to date(_time) value `date` and delta
            `self`
         """
-        if date.day > 28 :
-            raise OverflowError, \
-                ( "Cannot increase/decrease %s by %s months"
-                % (date, self.months)
-                )
-        yd, m = divmod (date.month + self.months, 12)
+        yd, m = 0, date.month + self.months
+        if m == 0 :
+            yd, m = -1, 12
+        elif not (1 <= m <= 12) :
+            yd, m = divmod (m, 12)
         return date.replace (month = m, year = date.year + yd)
     # end def dt_op
 
@@ -247,6 +251,10 @@ class Month_Delta (_Delta_) :
     def __hash__ (self) :
         return hash (self.months)
     # end def __hash__
+
+    def __neg__ (self) :
+        return self.__class__ (months = - self.months)
+    # end def __neg__
 
     def __str__ (self) :
         result = []

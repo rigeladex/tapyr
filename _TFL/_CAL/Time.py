@@ -65,8 +65,9 @@ class Time (TFL.CAL._DTW_) :
     """
 
     _Type            = datetime.time
-    _init_arg_names  = ("hour", "minute", "second", "microsecond")
+    _default_format  = "%T"
     _kind            = "time"
+    _init_arg_names  = ("hour", "minute", "second", "microsecond")
     _timetuple_slice = lambda s, tt : tt [3:6] + (0, )
 
     hour             = property (lambda s: s._body.hour)
