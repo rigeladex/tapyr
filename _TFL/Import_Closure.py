@@ -109,6 +109,9 @@
 #                     avoid `more than 255 arguments` exception from `new`
 #    22-Jun-2004 (CT) `new` changed to expect list for `pyms` instead of
 #                     rest-arguments
+#     7-Oct-2004 (CT) `__sub__` changed to include parent packages into
+#                     result (otherwise result contains X.Y.Z, but not X.Y,
+#                     if difference doesn't contain any module of X.Y)
 #    ««revision-date»»···
 #--
 
@@ -355,6 +358,13 @@ class Import_Closure :
                 pn = pym.pkg
                 if pn in self.pkg_dict and pn not in result.pkg_dict :
                     result._add (self.pkg_dict [pn])
+                if pym.is_package and not pym.is_toplevel :
+                    ### make sure that parent packages are part of `result`
+                    ### even if none of their modules but only sub-packages
+                    ### are in difference
+                    pn = ".".join (pn.split (".") [:-1])
+                    if pn not in result.pkg_dict :
+                        result._add (self.pkg_dict [pn])
         return result
     # end def __sub__
 
