@@ -28,6 +28,9 @@
 #
 # Revision Dates
 #    26-Jan-2002 (CT) Creation
+#    20-Aug-2003 (CT) s/\n/\\n/ to avoid
+#                         `ValueError: inconsistent leading whitespace`
+#                     from the $%&@*$ doc-test
 #    ««revision-date»»···
 #--
 
@@ -59,10 +62,10 @@ def swap_2strings (s1, s2, text) :
 
        >>> swap_2strings ("a", "b", "ab" * 5)
        'bababababa'
-       >>> swap_2strings ("sda", "sdb", "/dev/sda1 /  \n/dev/sdb1 /alt  ")
-       '/dev/sdb1 /  \n/dev/sda1 /alt  '
-       >>> swap_2strings ("sda", "sdb", "/dev/sda2 /b \n/dev/sdb2 /alt/b")
-       '/dev/sdb2 /b \n/dev/sda2 /alt/b'
+       >>> swap_2strings ("sda", "sdb", "/dev/sda1 /  \\n/dev/sdb1 /alt  ")
+       '/dev/sdb1 /  \\n/dev/sda1 /alt  '
+       >>> swap_2strings ("sda", "sdb", "/dev/sda2 /b \\n/dev/sdb2 /alt/b")
+       '/dev/sdb2 /b \\n/dev/sda2 /alt/b'
     """
     return String_Swapper (s1, s2) (text)
 # end def swap_2strings
