@@ -20,41 +20,43 @@
 #
 #++
 # Name
-#    TFL.SDG.C.import_C
+#    TFL.SDG.C.Include
 #
 # Purpose
-#    Provide all import needed to create a C-document.
-#
-#    Usage:
-#        from _TFL._SDG._C.import_C import C
-#
-#        module = C.Module (...)
-#        module.add (C.If (...))
-#        [...]
+#    C-include statements
 #
 # Revision Dates
-#    10-Aug-2004 (MG) Creation
-#    11-Aug-2004 (MG) Creation continued
+#    11-Aug-2004 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from   _TFL._SDG._C                     import C
-import _TFL._SDG._C.Array
-import _TFL._SDG._C.Block
-import _TFL._SDG._C.Comment
-import _TFL._SDG._C.For_Stmt
-import _TFL._SDG._C.Function
-import _TFL._SDG._C.If_Stmt
-import _TFL._SDG._C.Include
-import _TFL._SDG._C.Macro
-import _TFL._SDG._C.Macro_If
-import _TFL._SDG._C.Module
-import _TFL._SDG._C.New_Line
-import _TFL._SDG._C.Statement
-import _TFL._SDG._C.Struct
-import _TFL._SDG._C.Switch
-import _TFL._SDG._C.Typedef
-import _TFL._SDG._C.Var
-import _TFL._SDG._C.While
+from   _TFL              import TFL
+import _TFL._SDG._C.Node
 
-### __END__ TFL.SDG.C.import_C
+class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
+    """C-include statements"""
+
+    init_arg_defaults      = dict \
+        ( filename         = ""
+        )
+    front_args             = ("filename", )
+    _autoconvert           = dict \
+        ( filename         = lambda s, k, v : "<%s>" % (v, )
+        )
+
+    h_format = c_format    = """#include %(::.filename:)s"""
+
+# end class Include
+
+Sys_Include = Include
+
+class App_Include (Include) :
+    """C-app-include statement"""
+    _autoconvert           = dict \
+        ( filename         = lambda s, k, v : '"%s"' % (v, )
+        )
+# end class App_Include
+
+if __name__ != "__main__" :
+    TFL.SDG.C._Export ("*", "Sys_Include")
+### __END__ TFL.SDG.C.Include

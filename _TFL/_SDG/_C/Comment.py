@@ -29,6 +29,7 @@
 #    26-Jul-2004 (CT) Creation
 #    27-Jul-2004 (CT) Creation continued
 #    28-Jul-2004 (CT) Creation continued...
+#    11-Aug-2004 (MG) `Documentation_Block` added
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,24 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     # end def _convert_c_comment
 
 # end class Comment
+
+class Documentation_Block (Comment) :
+    """A block used for the automatic documentation generation"""
+
+    init_arg_defaults    = dict \
+        ( block_name     = "Description"
+        )
+
+    _autoconvert         = dict \
+        ( block_name     = lambda s, k, v : v and "%s:" % (v, ) or None
+        )
+
+    h_format = c_format  = """
+        %(:head=/%("*" * stars)s ¡tail= %("*" * stars)s/:.block_name:)s
+        %(:head=/%("*" * stars)s      ¡tail= %("*" * stars)s/:.description:)s
+    """
+
+# end class Documentation_Block
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*")

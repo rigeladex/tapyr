@@ -1,0 +1,82 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2004 TTTech Computertechnik AG. All rights reserved
+# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
+#
+#++
+# Name
+#    TFL.SDG.C.Macro
+#
+# Purpose
+#    C-macro definitions
+#
+# Revision Dates
+#    11-Aug-2004 (MG) Creation
+#    ««revision-date»»···
+#--
+
+from   _TFL              import TFL
+import _TFL._SDG._C.Node
+import _TFL._SDG._C.Statement
+
+class _Macro_ (TFL.SDG.C.Node) :
+    """Base class of all preprocessor commands (defines, if, ifdef, ...)"""
+
+    def _update_scope (self, scope) :
+        ### why do we need this ???? MGL, 11-Aug-2004
+        self.scope = scope
+        for c in self.children :
+            c._update_scope (scope)
+    # end def _update_scope
+
+# end class _Macro_
+
+class Macro (TFL.SDG.Leaf, _Macro_) :
+    """C-macro defintion"""
+
+    init_arg_defaults      = dict \
+        ( name_len         = 0
+        , scope            = TFL.SDG.C.C
+        , args             = None
+        , lines            = None
+        )
+    front_args             = ("name", "args")
+    rest_args              = "lines"
+
+    h_format = c_format    = """
+        #%(::.name:)s %(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
+    """
+# end class Macro
+
+class Define (Macro) :
+    """A C-macro #define stament"""
+
+    _autoconvert         = dict \
+        ( name           = lambda s, k, v : "define %s" % (v, )
+        )
+
+# end class Define
+
+class Macro_Block (_Macro_, TFL.SDG.C.Stmt_Group) :
+    """Block of macro definitions"""
+# end class Macro_Block
+
+
+if __name__ != "__main__" :
+    TFL.SDG.C._Export ("*", "_Macro_")
+### __END__ TFL.SDG.C.Macro

@@ -225,10 +225,27 @@ TDFT_Sign_Mask stuct_var =
   { 42 /* bit_mask                                                               */
   , 24 /* extend_mask                                                            */
   };
+
+>>> a = C.Array ("int", "int_array", bounds = 2)
+>>> s = C.Struct ("test_struct", "ubyte1 field_1", "int field_2 [2]")
+>>> t = C.Typedef (s, "my_type")
+>>> print NL.join ([l.rstrip () for l in t.as_c_code ()])
+typedef struct _test_struct
+  {
+    ubyte1 field_1;
+    int field_2 [2];
+  } my_type;
 """
 
 ### missing tests
-###   - struct var with array field and init
+###   - #Define
+###   - #Macro
+###   - #ifdef
+###   - #ifndef
+###   - Sys_Include/App_Include
+###   - #else
+###   - #elseif
+
 import  U_Test
 from   _TFL._SDG._C.import_C import C
 
