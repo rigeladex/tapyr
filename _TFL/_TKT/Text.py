@@ -38,6 +38,7 @@
 #    22-Feb-2005 (CT)  `push_style` and `pop_style` added
 #    22-Feb-2005 (CT)  `left_gravity` added to `mark_at`
 #    22-Feb-2005 (CT)  `place_cursor` and `see` added
+#    23-Feb-2005 (CT)  Doctests for `place_cursor` and `see` added
 #    ««revision-date»»···
 #--
 
@@ -79,13 +80,14 @@ class Text (TFL.TKT.Mixin) :
         >>> w.append ("Hum", blue)
         >>> hum_p = w.find ("Hum")
         >>> hum_m = w.mark_at (hum_p)
-        >>> w.insert (w.bot_pos, "Hi", yell)
-        >>> w.insert (w.bot_pos, "Ho", delta = 2)
+        >>> w.place_cursor (w.bot_pos)
+        >>> w.insert (w.current_pos, "Hi", yell)
+        >>> w.insert (w.current_pos, "Ho", delta = 2)
         >>> w.apply_style  (gray, w.bol_pos (hum_p), w.eol_pos (hum_p))
         >>> w.remove_style (gray, w.bot_pos, w.eot_pos)
 
         >>> print w.get (hum_p, w.pos_at (hum_p, 3))
-        HoH
+        HaH
         >>> print w.get (hum_m, w.pos_at (hum_m, 3))
         Hum
         >>> for t in "Ha", "He", "Hi", "Ho", "Hu" :
@@ -103,16 +105,18 @@ class Text (TFL.TKT.Mixin) :
         >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
         >>> w.apply_style (gray, w.bol_pos (w.eot_pos), w.eol_pos (w.eot_pos))
         >>> print w.get ()
-        HiHoHaHum
+        HiHaHoHum
         Diddle Dum
         >>> print w.get (w.bol_pos (hum_m), w.eol_pos (hum_m))
-        HiHoHaHum
+        HiHaHoHum
         >>> print w.get ( w.bol_pos (hum_m, line_delta = 1)
         ...             , w.eol_pos (hum_m, line_delta = 1))
         Diddle Dum
+        >>> w.see (w.eot_pos)
+        >>> w.see (w.bot_pos)
         >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
         >>> print w.get ()
-        HiHoHaHum
+        HiHaHoHum
          Dum
 
         >>> t1 = Text ()

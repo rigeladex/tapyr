@@ -97,10 +97,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        Ho 1.2
        Hu 1.6
        >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
-       ('1.0', '2.0', '1.9', '1.0')
+       ('1.0', '2.0', '1.4', '1.0')
        >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
        >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
-       ('1.0', '3.0', '2.10', '2.0')
+       ('1.0', '3.0', '1.4', '1.0')
        >>> print w.get ()
        HiHoHaHum
        Diddle Dum
