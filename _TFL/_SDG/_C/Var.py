@@ -72,7 +72,7 @@ class _Var_ ( TFL.SDG.C.Maybe_Const
          """%(::*type:)s %(name)s"""
         )
     _common_tail        = \
-        """%(trailer)s%(:head= :*eol_desc:)s
+        """%(trailer)s%(:head= :>*eol_desc:)s
            >>%(::*description:)s
         """
 
