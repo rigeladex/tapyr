@@ -53,6 +53,7 @@
 #                      specified, `comment_line_head` will be used
 #     1-Dec-2003 (RMA) Factorized _begin_section
 #     2-Dec-2003 (MG) `item`: parameter `item_indent_only` extended
+#     9-Dec-2003 (RMA) Added define and cfunctiondesc
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,8 @@ class Latex_Stream (Formatted_Stream) :
         """Write the end `\end {}' statement for a block-statement.
         """
         self.deindent ()
-        self.putl (r"\end{%s}%s" % (name, attributes))
+        self.putl     (r"\end{%s}%s" % (name, attributes))
+        self.putsl    (1)
     # end def _begin_block
 
     def begin_description (self, environment = "description") :
@@ -317,6 +319,27 @@ class Latex_Stream (Formatted_Stream) :
         self.deindent ()
         self.putl ("\\end{%s}" % self._tab_marker (longtable))
     # end def end_tabular
+
+    def define (self, name, code, eol_comment = "") :
+        self.putw (r"\def\%s/{%s}" % (name, code))
+        if eol_comment :
+            self.putw ("%%")
+        self.putl     ()
+
+
+    def begin_cfuncdesc (self, ret_type, name, params, ret_desc = None) :
+        self.putsl           (1)
+        self.putl            (r"\begin{cfuncdesc}")
+        self.indent          ()
+        if ret_desc :
+            self.putl        (r"[%s]" % ret_desc)
+        self.putl            (r"{%s}" % ret_type)
+        self.putl            (r"{%s}" % name)
+        self.putl            (r"{%s}" % params)
+        self.putl            ("")
+
+    def end_cfuncdesc (self) :
+        self._end_block ("cfuncdesc")
 
 
 # end class Latex_Stream
