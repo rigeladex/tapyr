@@ -443,7 +443,7 @@ class Derived_Package_Namespace (Package_Namespace) :
 
        - can modify some properties of inherited modules (by defining a
          module of the same name which defines sub-classes and/or
-         function replacements of the original classes and functions)
+         functions overriding the original functions)
 
        To transparently support inheritance-like import behavior,
        Derived_Package_Namespace allows to import modules of the base
