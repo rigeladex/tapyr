@@ -177,7 +177,7 @@ class Package_Namespace :
        instance `Foo` of class `Package_Namespace`::
 
            ### Foo_Package/__init__.py
-           from TFL.Package_Namespace import Package_Namespace
+           from _TFL.Package_Namespace import Package_Namespace
            Foo = Package_Namespace ()
 
        The Package_Namespace provides the `Import` method to import
@@ -272,8 +272,8 @@ class Package_Namespace :
                             self._import_1 \
                                 (mod, s, s, p, result, check_clashes)
                 else :
-                    import TFL.Module ### XXX PNS remove after change to newstyle
-                    from TFL import TFL
+                    import _TFL.Module ### XXX PNS remove after change to newstyle
+                    from _TFL import TFL
                     for s in TFL.Module.names_of (mod) :
                         p = getattr (mod, s)
                         if not s.startswith ("_") :
@@ -338,8 +338,8 @@ class Package_Namespace :
             if all_symbols :
                 self._import_names (mod, all_symbols, result, 1)
             else :
-                import TFL.Module ### XXX PNS remove after change to newstyle
-                from TFL import TFL
+                import _TFL.Module ### XXX PNS remove after change to newstyle
+                from _TFL import TFL
                 for s in TFL.Module.names_of (mod) :
                     p = getattr (mod, s)
                     if not s.startswith ("_") :

@@ -76,4 +76,7 @@ def d_dict (* ancestors, ** kw) :
     return result
 # end def d_dict
 
+from _TFL import TFL
+TFL._Export ("*")
+
 ### __END__ d_dict

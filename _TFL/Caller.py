@@ -162,7 +162,7 @@ if __debug__ :
         pass
     else :
         def _doc_test () :
-            import TFL.Caller
+            import _TFL.Caller
             return U_Test.run_module_doc_tests (Caller)
         # end def _doc_test
 
@@ -172,7 +172,7 @@ if __debug__ :
 
 ### end unit-test code ########################################################
 
-from TFL import TFL
+from _TFL import TFL
 TFL._Export_Module ()
 
 ### __END__ Caller

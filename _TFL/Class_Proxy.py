@@ -129,4 +129,7 @@ del __builtin__
 ### _fix_builtins ()
 ### del _fix_builtins
 
+from _TFL import TFL
+TFL._Export ("*")
+
 ### __END__ Class_Proxy

@@ -70,7 +70,7 @@ def names_of (module) :
     return result
 # end def names_of
 
-from TFL import TFL
+from _TFL import TFL
 TFL._Export_Module ()
 
 ### __END__ Module

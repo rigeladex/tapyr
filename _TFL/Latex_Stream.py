@@ -439,3 +439,5 @@ for c in _commands3 :
   exec (s)
 
 ### __END__ TFL/Latex_Stream
+from _TFL import TFL
+TFL._Export ("*")

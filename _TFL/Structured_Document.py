@@ -33,14 +33,14 @@
 #--
 
 from   Formatted_Stream import *
-from   TFL              import TFL
+from   _TFL              import TFL
 from   NO_List          import NO_List
 from   types            import MethodType, FunctionType
 from   predicate        import un_nested
 import re
 import string
 
-TFL.Import ("d_dict")
+import _TFL.d_dict
 
 class Invalid_Node (Exception) : pass
 
@@ -359,3 +359,4 @@ class Doc_Node :
 # end class Doc_Node
 
 ### __END__ TFL/Structured_Document
+TFL._Export ("*")

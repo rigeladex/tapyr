@@ -74,4 +74,7 @@ if __debug__ :
 
 ### end unit-test code ########################################################
 
+from _TFL import TFL
+TFL._Export ("*")
+
 ### __END__ Range
