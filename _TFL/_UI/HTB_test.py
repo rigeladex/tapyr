@@ -28,6 +28,7 @@
 # Revision Dates
 #    25-Feb-2005 (RSC) Creation from TFL.TKT.Tk.HTB_test
 #     7-Mar-2005 (RSC) Added background color (using "found" style)
+#    14-Mar-2005 (RSC) New test for a wrapped line
 #    ««revision-date»»···
 #--
 
@@ -49,14 +50,14 @@ class My_Linked (TFL.UI.HTB.Node_Linked) :
     # end def follow
 # end class My_Linked
 
-def mknode (tb, name) :
+def mknode (tb, name, * tags) :
     n = My_Linked \
         ( tb
         , name
         , "1. test line\n2. test line\n3. test line"
         , o_links = (o,)
         )
-    n.insert (tb.current_pos, "nowrap", "found")
+    n.insert (tb.current_pos, * tags)
     return n
 # end def mknode
 
@@ -69,20 +70,25 @@ def insert_stuff (tb) :
     tb.insert            (tb.current_pos, "**           Test me           **\n")
     tn = TFL.UI.HTB.help (tb)
     tn.insert            (tb.current_pos, "rindent", "found")
-    tn = mknode          (tb, "n1")
+    tn = mknode          (tb, "n1", "nowrap", "found")
     x = mkchild          (tn, "s1")
     mkchild              (tn, "s2")
     nn = mkchild         (tn, "s3")
     mkchild              (nn, "ss1")
     nnn = mkchild        (nn, "ss2")
-    tn = mknode          (tb, "n2")
+    tn = mknode          (tb, "n2", "nowrap", "found")
     mkchild              (tn, "s-a")
     mkchild              (tn, "s-b")
     tn.open              ()
-    tn = mknode          (tb, "n3")
+    tn = mknode          (tb, "n3", "nowrap", "found")
     mkchild              (tn, "s-x")
     mkchild              (tn, "s-y")
-    tn = mknode          (tb, "n4")
+    tn = mknode \
+        ( tb
+        , "n4, this is a very long name which should wrap\n"
+          "and display an error in formatting..."
+        , "nowrap", "found", "arial"
+        )
 # end def insert_stuff
 
 """
