@@ -15,6 +15,8 @@
 #    29-Aug-2003 (CT) `orig` added
 #    23-Sep-2003 (CT) `snip` added
 #    26-Sep-2003 (CED) `reset` added
+#     2-Oct-2003 (CED) `epsilon` introduced and used to avoid transient
+#                      rounding errors
 #    ««revision-date»»···
 #--
 
@@ -104,6 +106,7 @@ class Timeline (TFL.Meta.Object) :
     def __init__ (self, lower, upper) :
         self.orig = NDT.Sched2.Span (lower, upper)
         self.free = [NDT.Sched2.Span (lower, upper)]
+        self.epsilon = 0.0001
     # end def __init__
 
     def intersection (self, span) :
@@ -125,9 +128,9 @@ class Timeline (TFL.Meta.Object) :
         """
         for p in dusort (pieces, lambda p : - p.index) :
             f = self.free [p.index]
-            if f.lower == p.to_cut.lower :
+            if abs (f.lower - p.to_cut.lower) < self.epsilon :
                 f.lower = p.to_cut.upper
-            elif f.upper == p.to_cut.upper :
+            elif abs (f.upper - p.to_cut.upper) < self.epsilon :
                 f.upper = p.to_cut.lower
             else :
                 head = NDT.Sched2.Span (f.lower, p.to_cut.lower)
@@ -148,7 +151,7 @@ class Timeline (TFL.Meta.Object) :
         ### XXX optimize to avoid repeated iteration over whole free list
         for s in spans :
             free, size = self.intersection (s)
-            if len (free) != 1 or size != s.length :
+            if len (free) != 1 or abs (size - s.length) > self.epsilon :
                 raise ValueError, (self.free, s, spans)
             f = free [0]
             f.prepare_cut_l (size)
