@@ -35,15 +35,15 @@ def module_of (object) :
 
        `module_of` works for classes, functions, and class proxies. 
     """
+    try :
+        object = object.__dict__ ["Essence"]
+    except (AttributeError, KeyError, TypeError) :
+        pass
     result = getattr (object, "__module__", None)
     if not result :
         globals = getattr (object, "func_globals", None)
         if globals :
             result = globals.get ("__name__")
-    if not result :
-        Essence = getattr (object, "Essence", None)
-        if Essence :
-            result = getattr (Essence, "__module__", None)
     return result
 # end def module_of
 
