@@ -32,142 +32,19 @@
 #     3-Feb-2005 (CT)  `Browser` streamlined by auto-delegation (__getattr__)
 #     4-Feb-2005 (RSC) renamed ui to model and made it a weakref
 #                      Node and Button now get a TKT.Tk.Node.
+#    17-Feb-2005 (RSC) Button implemented using ButCon, moved from TKT to UI
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
 import _TFL._TKT._Tk
 import _TFL._TKT.Mixin
+import _TFL._TKT._Tk.Butcon
 
-from   CT_TK        import Scrolled_Text, NORMAL, Label, CENTER, NONE, WORD, INSERT, LEFT, bitmap_mgr, START, END
+from   CT_TK        import Scrolled_Text, NORMAL, Label, CENTER, NONE, WORD, INSERT, LEFT, START, END
 from   Regexp       import *
 import sys
 import weakref
-
-class Button (TFL.TKT.Mixin) :
-
-    clsd_bitmap_name = "closed_node"
-    leaf_bitmap_name = "circle"
-    open_bitmap_name = "open_node"
-
-    def __init__ (self, node, is_leaf = 1) :
-        self.__super.__init__ (AC = node.AC)
-        self.node     = node
-        self.is_leaf  = not is_leaf ### negate for `make_[non_]leaf'
-        self.closed   = 0
-        self.c_bitmap = bitmap_mgr [self.clsd_bitmap_name]
-        self.l_bitmap = bitmap_mgr [self.leaf_bitmap_name]
-        self.o_bitmap = bitmap_mgr [self.open_bitmap_name]
-        if is_leaf : bitmap = self.l_bitmap
-        else       : bitmap = self.c_bitmap
-        self.window   = Label \
-            ( node.master
-            , name        = ":button:" + node.model.bid
-            , bitmap      = bitmap
-            , borderwidth = 0
-            , background  = node.master.cget ("background")
-            )
-        if is_leaf :
-            self.make_leaf ()
-        else :
-            self.make_non_leaf ()
-        self.window.bind ("<Enter>", self.mouse_enter)
-        self.window.bind ("<Leave>", self.mouse_leave)
-        self.bg = node.master.cget ("background")
-        self.fg = node.master.cget ("foreground")
-    # end def __init__
-
-    def mouse_enter (self, event = None) :
-        if not self.is_leaf :
-            master = self.node.master
-            self.bg = self.window.cget ("background")
-            self.fg = self.window.cget ("foreground")
-            self.window.configure \
-                ( background  = master.button_bg
-                , foreground  = master.button_fg
-                )
-        self.node.model.mouse_enter (event)
-    # end def mouse_enter
-
-    def mouse_leave (self, event = None) :
-        if not self.is_leaf :
-            self.window.configure \
-                ( background  = self.bg
-                , foreground  = self.fg
-                )
-        self.node.model.mouse_leave (event)
-    # end def mouse_leave
-
-    def busy_cursor (self, cursor = "watch") :
-        self.node.model.browser.busy_cursor    (cursor)
-        self.node.model.browser._busy_cursor   (cursor, self.window)
-    # end def busy_cursor
-
-    def normal_cursor (self) :
-        self.node.model.browser.normal_cursor  ()
-        self.node.model.browser._normal_cursor (self.window)
-    # end def normal_cursor
-
-    def t_open (self, event = None) :
-        try     :
-            self.busy_cursor     ()
-            self.node.model.open (event)
-        finally :
-            self.normal_cursor   ()
-    # end def t_open
-
-    def t_open_1 (self, event = None) :
-        try     :
-            self.busy_cursor     ()
-            self.node.model.open (event, 1)
-        finally :
-            self.normal_cursor   ()
-    # end def t_open_1
-
-    def t_open_all (self, event = None) :
-        try     :
-            self.busy_cursor     ()
-            self.node.model.open (event, 1 << 30)
-        finally :
-            self.normal_cursor   ()
-    # end def t_open_all
-
-    def open (self, event = None) :
-        if self.closed and not self.is_leaf :
-            self.closed = 0
-            self.window.configure (bitmap = self.o_bitmap)
-            self.window.bind      ("<ButtonPress-1>", self.node.model.close)
-    # end def open
-
-    def close (self, event = None) :
-        if (not self.closed) and (not self.is_leaf) :
-            self.closed = 1
-            self.window.configure (bitmap = self.c_bitmap)
-            self.window.bind      ("<ButtonPress-1>", self.t_open)
-            self.window.bind      ("<ButtonPress-3>", self.t_open_1)
-    # end def close
-
-    def ignore (self, event = None) :
-        return "break"
-    # end def ignore
-
-    def make_leaf (self) :
-        if not self.is_leaf :
-            self.is_leaf = 1
-            self.closed  = 0
-            self.window.configure (bitmap = self.l_bitmap)
-            self.window.bind      ("<ButtonPress-1>", self.ignore)
-            self.window.bind      ("<ButtonPress-2>", self.ignore)
-            self.window.bind      ("<ButtonPress-3>", self.ignore)
-    # end def make_leaf
-
-    def make_non_leaf (self) :
-        if self.is_leaf :
-            self.is_leaf = self.closed = 0
-            self.close ()
-    # end def make_non_leaf
-
-# end class Button
 
 class Node (TFL.TKT.Mixin) :
 
@@ -225,7 +102,7 @@ class Node (TFL.TKT.Mixin) :
     def _display_button (self) :
         self.master.window_create \
             ( self.model.butt_mark
-            , window = self.model.button.window
+            , window = self.model.button.butcon.widget
             )
     # end def _display_button
 
@@ -415,12 +292,6 @@ class Browser (TFL.TKT.Mixin) :
     # end def __getattr__
 
 # end class Browser
-
-for n in ( Button.clsd_bitmap_name
-         , Button.leaf_bitmap_name
-         , Button.open_bitmap_name
-         ) :
-    bitmap_mgr.add (n + ".xbm")
 
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export_Module ()

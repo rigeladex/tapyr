@@ -33,6 +33,7 @@
 #                      fixed update of "tags" variable in insert
 #                      see is now only used in tkt.
 #    17-Feb-2005 (RSC) Added auto-delegation to self.tkt for Node
+#    17-Feb-2005 (RSC) Button implemented using ButCon, moved from TKT to UI
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,134 @@ from   Regexp       import Regexp
 
 import _TFL._UI
 import _TFL._UI.Mixin
+import _TFL._UI.Style
 import sys
+
+busy_cursor   = TFL.UI.Style ('busy_cursor',   mouse_cursor = 'watch')
+normal_cursor = TFL.UI.Style ('normal_cursor', mouse_cursor = 'normal')
+
+class Button (TFL.TKT.Mixin) :
+
+    clsd_bitmap_name = "closed_node"
+    leaf_bitmap_name = "circle"
+    open_bitmap_name = "open_node"
+
+    def __init__ (self, node, is_leaf = 1) :
+        self.__super.__init__ (AC = node.AC)
+        self.node     = node
+        self.is_leaf  = not is_leaf ### negate for `make_[non_]leaf'
+        self.closed   = 0
+        if is_leaf : bitmap = self.leaf_bitmap_name
+        else       : bitmap = self.clsd_bitmap_name
+        self.butcon = self.TNS.Butcon \
+            ( self.AC
+            , name        = ":button:" + node.bid
+            , master      = node.browser
+            , bitmap      = bitmap
+            )
+        if is_leaf :
+            self.make_leaf ()
+        else :
+            self.make_non_leaf ()
+#        self.window.bind ("<Enter>", self.mouse_enter)
+#        self.window.bind ("<Leave>", self.mouse_leave)
+#        self.bg = node.master.cget ("background")
+#        self.fg = node.master.cget ("foreground")
+    # end def __init__
+
+    def mouse_enter (self, event = None) :
+        if not self.is_leaf :
+            pass
+#            master = self.node.master
+#            self.bg = self.window.cget ("background")
+#            self.fg = self.window.cget ("foreground")
+#            self.window.configure \
+#                ( background  = master.button_bg
+#                , foreground  = master.button_fg
+#                )
+        self.node.mouse_enter (event)
+    # end def mouse_enter
+
+    def mouse_leave (self, event = None) :
+        if not self.is_leaf :
+            pass
+#            self.window.configure \
+#                ( background  = self.bg
+#                , foreground  = self.fg
+#                )
+        self.node.mouse_leave (event)
+    # end def mouse_leave
+
+    def busy_cursor (self) :
+        self.butcon.apply_style ('busy_cursor')
+        self.node.browser._busy_cursor   (cursor, self.window)
+    # end def busy_cursor
+
+    def normal_cursor (self) :
+        self.butcon.apply_style ('normal_cursor')
+        self.node.browser._normal_cursor (self.window)
+    # end def normal_cursor
+
+    def t_open (self, event = None) :
+        try     :
+            self.busy_cursor     ()
+            self.node.open (event)
+        finally :
+            self.normal_cursor   ()
+    # end def t_open
+
+    def t_open_1 (self, event = None) :
+        try     :
+            self.busy_cursor     ()
+            self.node.open (event, 1)
+        finally :
+            self.normal_cursor   ()
+    # end def t_open_1
+
+    def t_open_all (self, event = None) :
+        try     :
+            self.busy_cursor     ()
+            self.node.open (event, 1 << 30)
+        finally :
+            self.normal_cursor   ()
+    # end def t_open_all
+
+    def open (self, event = None) :
+        if self.closed and not self.is_leaf :
+            self.closed = 0
+            self.butcon.apply_bitmap (bitmap = self.open_bitmap_name)
+#            self.window.bind      ("<ButtonPress-1>", self.node.close)
+    # end def open
+
+    def close (self, event = None) :
+        if (not self.closed) and (not self.is_leaf) :
+            self.closed = 1
+            self.butcon.apply_bitmap (bitmap = self.clsd_bitmap_name)
+#            self.window.bind      ("<ButtonPress-1>", self.t_open)
+#            self.window.bind      ("<ButtonPress-3>", self.t_open_1)
+    # end def close
+
+    def ignore (self, event = None) :
+        return "break"
+    # end def ignore
+
+    def make_leaf (self) :
+        if not self.is_leaf :
+            self.is_leaf = 1
+            self.closed  = 0
+            self.butcon.apply_bitmap (bitmap = self.leaf_bitmap_name)
+#            self.window.bind      ("<ButtonPress-1>", self.ignore)
+#            self.window.bind      ("<ButtonPress-2>", self.ignore)
+#            self.window.bind      ("<ButtonPress-3>", self.ignore)
+    # end def make_leaf
+
+    def make_non_leaf (self) :
+        if self.is_leaf :
+            self.is_leaf = self.closed = 0
+            self.close ()
+    # end def make_non_leaf
+
+# end class Button
 
 class Node (TFL.UI.Mixin) :
     """ Model one node of a hierarchical browser."""
@@ -144,8 +272,8 @@ class Node (TFL.UI.Mixin) :
 
     def _insert_button (self) :
         if not self.button :
-            self.button = self.TNS.HTB.Button \
-                ( self.tkt
+            self.button = Button \
+                ( self
                 , is_leaf = not (self.children or self.contents)
                 )
             self.tkt._display_button ()
@@ -454,17 +582,17 @@ class Browser (TFL.UI.Mixin) :
     """Hierarchical Text Browser Widget"""
 
     user_tags    = dict \
-      ( arial     = "use arial font"
-      , center    = "center text"
-      , courier   = "use courier font"
-      , nowrap    = "don't wrap long lines"
-      , quote     = "use left and right margin " \
-                    "with size of standard indentation"
-      , rindent   = "use right margin with size of standard indentation"
-      , title     = "use title font"
-      , underline = "underline text"
-      , wrap      = "wrap long lines"
-      )
+        ( arial     = "use arial font"
+        , center    = "center text"
+        , courier   = "use courier font"
+        , nowrap    = "don't wrap long lines"
+        , quote     = "use left and right margin " \
+                      "with size of standard indentation"
+        , rindent   = "use right margin with size of standard indentation"
+        , title     = "use title font"
+        , underline = "underline text"
+        , wrap      = "wrap long lines"
+        )
 
     def __init__ (self, AC, master, name = None, state = None, ** kw) :
         self.__super.__init__ (AC = AC)

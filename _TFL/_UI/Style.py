@@ -32,12 +32,16 @@
 #    26-Jan-2005 (BRU) Added style attributes to `_allowed`, comments
 #    27-Jan-2005 (CT)  s/_allowed/_names/g
 #    15-Feb-2005 (BRU) Added allowed values to `_values` where appropriate
+#    17-Feb-2005 (RSC) Added example doctest for callbacks
 #    ««revision-date»»···
 #--
 
 """
 >>> Style ("foo", font_style = "normal")
 <Style foo>
+>>> cb = lambda x : 1
+>>> Style ("rightclick", callback = {'click3' : cb })
+<Style rightclick>
 >>> Style ("fool", font_style = "normalique")
 Traceback (most recent call last):
   ...
