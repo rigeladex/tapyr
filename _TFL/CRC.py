@@ -39,6 +39,9 @@
 #                      and up`)
 #    21-Jan-2004 (CT)  `crc_byte` changed to mask with `&& 0xFFFFFFFFL`
 #    21-Jan-2004 (CT)  Unit test fixed (use hexadecimal output)
+#    22-Jan-2004 (CT)  Change of `crc_byte` (mask with `&& 0xFFFFFFFFL`) --
+#                      is not necessary: the sole problem was to use decimal
+#                      instead of hexadecimal output in the unit test
 #    ««revision-date»»···
 #--
 
@@ -71,10 +74,7 @@ class _TD_CRC_ (object) :
     def crc_byte (self, crc, byte) :
         """Add `byte` to `crc` and return the resulting CRC.
         """
-        return \
-            ( ((crc >> 8) & self.mask) ^ (self.table [(crc ^ byte) & 0xFF])
-            & 0xFFFFFFFFL
-            )
+        return ((crc >> 8) & self.mask) ^ (self.table [(crc ^ byte) & 0xFF])
     # end def crc_byte
 
     def crc_bytelist (self, bytelist, start_value = None) :
@@ -150,6 +150,8 @@ class CRC32 (_TD_CRC_) :
        '0xCCC6120D'
     """
 
+    mask  = 0x00FFFFFF
+
     table = \
     ( 0x00000000L, 0x77073096L, 0xee0e612cL, 0x990951baL, 0x076dc419L
     , 0x706af48fL, 0xe963a535L, 0x9e6495a3L, 0x0edb8832L, 0x79dcb8a4L
@@ -204,8 +206,6 @@ class CRC32 (_TD_CRC_) :
     , 0x5d681b02L, 0x2a6f2b94L, 0xb40bbe37L, 0xc30c8ea1L, 0x5a05df1bL
     , 0x2d02ef8dL
     )
-
-    mask  = 0xFFFFFF
 
 # end class CRC32
 
