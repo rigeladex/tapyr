@@ -28,10 +28,12 @@
 # Revision Dates
 #    24-Jun-2002 (CT) Creation
 #    25-Jun-2002 (CT) Classes for relative Points renamed
+#    26-Jun-2002 (CT) `R_Point_nP` added
 #    ««revision-date»»···
 #--
 
 from    _TFL._D2 import D2
+import  operator
 
 class _Point_ :
     """Base class for points in 2D space."""
@@ -115,9 +117,11 @@ class Point (_Point_) :
 
     def __div__  (self, right) :
         try :
-            return self.__class__ (float (self.x) / right.x, float (self.y) / right.y)
+            return self.__class__ \
+                (float (self.x) / right.x, float (self.y) / right.y)
         except AttributeError :
-            return self.__class__ (float (self.x) / right,   float (self.y) / right)
+            return self.__class__ \
+                (float (self.x) / right,   float (self.y) / right)
     # end def __div__
 
     def __rdiv__ (self, left) :
@@ -300,29 +304,62 @@ class R_Point_R (_R_Point_) :
 
 # end class R_Point_R
 
-class R_Point_2P (_R_Point_) :
-    """Point positioned relative to (linear combination of) two other points."""
+class R_Point_nP (_R_Point_) :
+    """Point positioned relative to (linear combination of) n other points.
+
+       >>> p = Point     (5, 42)
+       >>> q = R_Point_P (p, Point (3, 7))
+       >>> a = R_Point_nP ((p, q), (0.5, 0.5), (1.0, 0.0))
+       >>> print p, q, a
+       (5, 42) (8, 49) (6.5, 42.0)
+       >>> b = R_Point_nP ((p, q, a), (0., 0., 1.0), (0.3, 0.4, 0.3))
+       >>> print p, q, a, b
+       (5, 42) (8, 49) (6.5, 42.0) (6.5, 44.8)
+    """
 
     Ancestor = __Ancestor = _R_Point_
 
     def __init__ \
-        ( self, ref_a, ref_b, ref_a_scale, ref_b_scale
+        ( self, ref_points, x_weights, y_weights
         , offset = None, scale = None
         ) :
-        self._ref_a       = ref_a
-        self._ref_b       = ref_b
-        self._ref_a_scale = ref_a_scale
-        self._ref_b_scale = ref_b_scale
+        if not (len (ref_points) == len (x_weights) == len (y_weights)) :
+            raise ValueError, \
+                ( "%s must haveequal length"
+                % ((ref_points, x_weights, y_weights), )
+                )
+        self._ref_points  = ref_points
+        self._x_weights   = x_weights
+        self._y_weights   = y_weights
         self.__Ancestor.__init__ (self, offset, scale)
     # end def __init__
 
     def _reference (self) :
-        ### XXX ???
-        return (self._ref_a, self._ref_b, self.ref_a_scale, self.ref_b_scale)
+        return (self._ref_points, self._x_weights, self._y_weights)
     # end def _reference
 
-    ### XXX
-# end class R_Point_2P
+    def __getattr__ (self, name) :
+        if name == "_ref_point" :
+            return self._calc_ref_point ()
+        return self.__Ancestor.__getattr__ (self, name)
+    # end def __getattr__
+
+    def _calc_ref_point (self) :
+        return Point \
+            ( reduce ( operator.add
+                     , [ (p.x * w) for (p, w)
+                         in zip (self._ref_points, self._x_weights)
+                       ]
+                     )
+            , reduce ( operator.add
+                     , [ (p.y * w) for (p, w)
+                         in zip (self._ref_points, self._y_weights)
+                       ]
+                     )
+            )
+    # end def _calc_ref_point
+
+# end class R_Point_nP
 
 if __name__ != "__main__" :
     D2._Export ("*", "Point")
