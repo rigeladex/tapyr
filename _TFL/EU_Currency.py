@@ -28,6 +28,9 @@
 # Revision Dates
 #    28-Dec-1998 (CT) Creation
 #    31-Dec-1998 (CT) Rates entered
+#    31-Jan-1999 (CT) `__cmp__', `__neg__', `__pos__', and `__abs__' added
+#    27-Sep-1999 (CT) `command_spec' and `main' factored
+#    29-Sep-1999 (CT) Use `Opt_L' for `-source' and `-target'
 #    ««revision-date»»···
 #--
 import string
@@ -61,6 +64,15 @@ class EU_Currency :
         """Return `self.amount' as string representation of 
            `self.target_currency'.
         """
+        (amount, cent, target_currency) = self.as_target ()
+        return "%d%s%02d %s" % ( amount
+                               , target_currency.decimal_sign
+                               , cent
+                               , target_currency.sloppy_name
+                               )
+    # end def __str__
+    
+    def as_target (self) :
         if self.target_currency :
             target_currency = self.target_currency (0)
             amount          = self.amount * target_currency.to_euro_factor
@@ -68,11 +80,16 @@ class EU_Currency :
             target_currency = EU_Currency (0)
             amount          = self.amount
         (amount, cent) = target_currency.rounded (amount)
-        return self.formatted ( amount, cent
-                              , target_currency.sloppy_name
-                              , target_currency.decimal_sign
-                              )
-    # end def __str__
+        return (amount, cent, target_currency)
+    # end def as_target    
+        
+    def as_string (self) :
+        """Return `self.amount' as string representation of
+           `self.target_currency' (without currency name).
+        """
+        (amount, cent, target_currency) = self.as_target ()
+        return "%d%s%02d" % (amount, target_currency.decimal_sign, cent)
+    # end def as_string
     
     def rounded (self, amount) :
         """Return `amount' rounded to (euro, cent)."""
@@ -128,6 +145,19 @@ class EU_Currency :
 
     __rdivmod__ = __divmod__
 
+    def __cmp__ (self, rhs) :
+        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
+        return cmp (self.amount, rhs)
+
+    def __neg__ (self) :
+        return EU_Currency (- self.amount)
+    
+    def __pos__ (self) :
+        return EU_Currency (self.amount)
+    
+    def __abs__ (self) :
+        return EU_Currency (abs (self.amount))
+    
 # end class EU_Currency
 
 def register (currency) :
@@ -233,15 +263,43 @@ for c in EU_Currency, ATS, DEM, FRF, ITL, BEF, NLG, ESP, PTE, FIM, IEP, LUF :
     register (c)
 EU_Currency.extension.sort (lambda l, r : cmp (l.name, r.name))
 
-if __name__ == "__main__":
-    from Command_Line import Command_Line
-    cmd = Command_Line (option_spec = ("source=ATS", "target=EUR"))
+def command_spec (arg_array = None) :
+    from   Command_Line import Command_Line, Opt_L
+    from   predicate    import sorted
+    currencies = sorted (EU_Currency.Table.keys ())
+    return Command_Line ( option_spec =
+                            ( Opt_L ( selection   = currencies
+                                    , name        = "source"
+                                    , type        = "S"
+                                    , default     = "ATS"
+                                    , description = "Source currency"
+                                    )
+                            , Opt_L ( selection   = currencies
+                                    , name        = "target"
+                                    , type        = "S"
+                                    , default     = "EUR"
+                                    , description = "Target currency"
+                                    )
+                            )
+                        , arg_spec    = ("amount:S?Amount to convert", )
+                        , description = "Convert between two Euro currencies"
+                        , arg_array   = arg_array
+                        )
+# end def command_spec
+
+def main (cmd) :
     Table                       = EU_Currency.Table
     source                      = Table [cmd.option ["source"].value_1 ()]
     EU_Currency.target_currency = Table [cmd.option ["target"].value_1 ()]
     s = source (0)
     for a in cmd.argv.body :
+        if not a : continue
         c = source (eval (a))
         print "%s %s = %s" % (a, source.sloppy_name, c)
         s = s + c
-    print "Total : %s" % s
+    if s != 0 : print "Total : %s" % s
+# end def 
+
+if __name__ == "__main__":
+    main (command_spec ())
+    
