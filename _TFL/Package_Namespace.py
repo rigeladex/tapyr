@@ -84,6 +84,7 @@
 #                     annoying Gordon McMillan
 #    11-Oct-2002 (CT) Change of `8-Oct-2002` backed out because it doesn't
 #                     work with McMillan
+#     4-Feb-2003 (CT) `Derived_Package_Namespace` added
 #    ««revision-date»»···
 #--
 
@@ -303,5 +304,23 @@ class Package_Namespace :
     # end def _Export_Module
 
 # end class Package_Namespace
+
+class Derived_Package_Namespace (Package_Namespace) :
+    """Package_Namespace which adds to an existing Package_Namespace"""
+
+    def __init__ (self, parent, name = None) :
+        if not name :
+            name = _caller_globals () ["__name__"]
+        Package_Namespace.__init__ (self, name)
+        self._parent = parent
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        result  = getattr (self._parent, name)
+        setattr (self, name, result)
+        return  result
+    # end def __getattr__
+
+# end class Derived_Package_Namespace
 
 ### __END__ Package_Namespace
