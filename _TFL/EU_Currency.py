@@ -49,13 +49,16 @@
 #    12-Feb-2002 (CT) `__nonzero__` added
 #    13-Feb-2002 (CT) `rounded` corrected to handle negative numbers correctly
 #    13-Feb-2002 (CT) `rounded_as_target` simplified
+#    18-Jun-2003 (CT) `comma_dec_pat` added and used
 #    ««revision-date»»···
 #--
 import re
 import string
 
 ### see Fri97, p.229, p.292
-sep_1000_pat = re.compile ("(\d{1,3}) (?= (?: \d\d\d)+ (?! \d) )", re.X)
+sep_1000_pat   = re.compile ("(\d{1,3}) (?= (?: \d\d\d)+ (?! \d) )", re.X)
+comma_dec_pat  = re.compile ("([0-9.]+) , (\d{2})$",                 re.X)
+period_dec_pat = re.compile ("([0-9,]+) \. (\d{2})$",                re.X)
 
 class EU_Currency :
     """Root class of currency hierarchy"""
@@ -415,7 +418,13 @@ def main (cmd) :
     EU_Currency.target_currency = Table [cmd.target]
     s = source (0)
     for a in cmd.argv.body :
-        if not a : continue
+        a = a.strip ()
+        if not a :
+            continue
+        if comma_dec_pat.match (a) :
+            a = comma_dec_pat.sub (r"\g<1>.\g<2>", a.replace (".", ""))
+        elif period_dec_pat.match (a) :
+            a = a.replace (",", "")
         b = eval   (a)
         c = source (b)
         if str (b) != a :
