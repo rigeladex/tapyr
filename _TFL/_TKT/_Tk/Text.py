@@ -53,6 +53,7 @@
 #                      modified *_pos to return Tk magic value
 #    23-Feb-2005 (RSC) Changed pos_at to return real position
 #                      changed doctest to (hopefully) work again.
+#    23-Feb-2005 (CT)  `_pos_at` factored and used internally everywhere
 #    ««revision-date»»···
 #--
 
@@ -143,8 +144,8 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
                 ( style, head = head, tail = tail, delta = delta)
         else :
             self.wtk_widget.tag_add \
-                ( self._tag (style)
-                , self.pos_at (head, delta)
+                ( self._tag    (style)
+                , self._pos_at (head, delta)
                 , tail or self.eot_pos
                 )
     # end def apply_style
@@ -161,7 +162,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     def find (self, text, head = None, tail = None, delta = 0) :
         return self.wtk_widget.search \
-            ( text, self.pos_at (head or self.bot_pos, delta)
+            ( text, self._pos_at (head or self.bot_pos, delta)
             , stopindex = tail
             , nocase    = False
             , regexp    = False
@@ -178,7 +179,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
             head = self.bot_pos
         if tail is None :
             tail = self.eot_pos
-        result = widget.get (self.pos_at (head, delta), tail)
+        result = widget.get (self._pos_at (head, delta), tail)
         if widget.index (tail) == widget.index (self.eot_pos) :
             result = result [:-1]
         return result
@@ -186,12 +187,12 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     def insert (self, pos_or_mark, text, style = None, delta = 0) :
         return self.wtk_widget.insert \
-            (self.pos_at (pos_or_mark, delta), text, self._tag (style))
+            (self._pos_at (pos_or_mark, delta), text, self._tag (style))
     # end def insert
 
     def insert_image (self, pos_or_mark, image, style = None, delta = 0) :
         result = self.wtk_widget.image_create \
-            (self.pos_at (pos_or_mark, delta), image = image)
+            (self._pos_at (pos_or_mark, delta), image = image)
         if style is not None :
             pass ### XXX
         return result
@@ -199,7 +200,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
         result = self.wtk_widget.window_create \
-            (self.pos_at (pos_or_mark, delta), window = widget.wtk_widget)
+            (self._pos_at (pos_or_mark, delta), window = widget.wtk_widget)
         if style is not None :
             pass ### XXX
         return result
@@ -210,48 +211,52 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
             name = "mark%d" % (self._mark_no, )
             self._mark_no += 1
         w = self.wtk_widget
-        w.mark_set (name, self.pos_at (pos, delta))
+        w.mark_set (name, self._pos_at (pos, delta))
         if left_gravity :
             w.mark_gravity (name, CTK.LEFT)
         return name
     # end def mark_at
 
     def place_cursor (self, pos_or_mark, delta = 0) :
-        self.wtk_widget.place_cursor (self.pos_at (pos_or_mark, delta))
+        self.wtk_widget.place_cursor (self._pos_at (pos_or_mark, delta))
     # end def place_cursor
 
     def pos_at (self, pos_or_mark, delta = 0) :
-        result = pos_or_mark
-        if delta != 0 :
-            result = "%s %+d chars" % (result, delta)
-        return self.wtk_widget.index (result)
+        return self.wtk_widget.index (self._pos_at (pos_or_mark, delta))
     # end def pos_at
 
     def remove (self, head, tail = None, delta = 0) :
         if tail is None :
-            tail = self.pos_at (head, delta)
+            tail = self._pos_at (head, delta)
         self.wtk_widget.delete (head, tail)
     # end def remove
 
     def remove_style (self, style, head, tail = None, delta = 0) :
         self.wtk_widget.tag_remove \
             ( self._tag_map [style]
-            , self.pos_at (head, delta)
+            , self._pos_at  (head, delta)
             , tail or self.eot_pos
             )
     # end def remove_style
 
     def see (self, pos_or_mark, delta = 0) :
-        self.wtk_widget.see (self.pos_at (pos_or_mark, delta))
+        self.wtk_widget.see (self._pos_at (pos_or_mark, delta))
     # end def see
 
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
         result = pos_or_mark
         if line_delta != 0 :
             result = "%s %+d lines" % (result, line_delta)
-        result = "%s %s" % (self.pos_at (result, delta), mod)
+        result = "%s %s" % (self._pos_at (result, delta), mod)
         return result
     # end def _line_pos
+
+    def _pos_at (self, pos_or_mark, delta = 0) :
+        result = pos_or_mark
+        if delta != 0 :
+            result = "%s %+d chars" % (result, delta)
+        return result
+    # end def _pos_at
 
     def _tag (self, style) :
         result = ()
