@@ -65,6 +65,7 @@ else :
     from _TGL._TKT._GTK import GTK
     import _TGL._TKT._GTK.V_Box
     import _TGL._TKT._GTK.Window
+    import _TGL._TKT._GTK.Signal
 
     b        = GTK.V_Box ()
     l1       = Label     ("Foo Bar")
@@ -75,6 +76,7 @@ else :
     b.pack         (l2, expand = False, fill = True)
     w = GTK.Window (title = "Test Label", child = b)
     w.show_all     ()
+    w.bind_add     (GTK.Signal.Destroy, GTK.quit)
     GTK.main       ()
 
 ### __END__ TGL.TKT.GTK.Label

@@ -28,6 +28,8 @@
 # Revision Dates
 #    21-Mar-2005 (MG) Creation
 #    25-Mar-2005 (CT) Moved to TGL
+#    26-Mar-2005 (MG) `num_opt_val` and `option_value` added
+#    26-Mar-2005 (MG) `*bind*` functions added
 #    ««revision-date»»···
 #--
 
@@ -184,6 +186,7 @@ class Object (TGL.TKT.Mixin) :
             del kw ["AC"]
         self.__super.__init__ (AC = AC)
         self.wtk_object = self.GTK_Class (* args, ** kw)
+        self._handlers  = {} ### holds all connected callback functions
         ### set the backref directly in the C-gtk object and not in the
         ### python wrapper !
         self.wtk_object.set_data ("ktw_object", weakref.proxy (self))
@@ -196,6 +199,59 @@ class Object (TGL.TKT.Mixin) :
             return result
         raise AttributeError, name
     # end def __getattr__
+
+    def _bind_single_ (self, signal, connect, func, args, kw) :
+        for cid in self._handlers.get (signal, ()) :
+            signal.disconnect (self.wtk_object, id)
+            self._handlers [signal] = []
+        return self._bind_ (signal, connect, func, args, kw)
+    # end def _bind_single_
+
+    def _bind_ (self, signal, connect_name, func, args, kw) :
+        cid = getattr (signal, connect_name) (self.wtk_object, func, args, kw)
+        self._handlers.setdefault (signal, []).append (cid)
+        return cid
+    # end def _bind_
+
+    def bind_replace (self, signal, func, * args, ** kw) :
+        return self._bind_single_ (signal, "connect", func, args, kw)
+    # end def bind
+
+    def bind_after_replace (self, signal, func, * args, ** kw) :
+        return self._bind_single_ (signal, "connect_after", func, args, kw)
+    # end def bind_after
+
+    def bind_add (self, signal, func, * args, ** kw) :
+        """Connect TGW or GTK signal to `func`. `signal` is a string for
+           GTK-signals, or a `TGW.Signal` object for TGW-signals.
+        """
+        return self._bind_ (signal, "connect", func, args, kw)
+    # end def bind_add
+
+    def bind_after_add (self, signal, func, * args, ** kw) :
+        """Connect TGW or GTK signal to `func`. `signal` is a string for
+           GTK-signals, or a `TGW.Signal` object for TGW-signals.
+        """
+        return self._bind_ (signal, "connect_after", func, args, kw)
+    # end def bind_after_add
+
+    def unbind (self, signal, cid) :
+        self._handlers [signal].remove (cid)
+        return signal.disconnect (self.wtk_object, cid)
+    # end def unbind
+
+    def emit (self, signal, * args) :
+        return signal.emit (self.wtk_object, * args)
+    # end def emit
+
+    ### XXX implement me, please !!!
+    def num_opt_val (self, name, default) :
+        return default
+    # end def num_opt_val
+
+    def option_value (self, name, default, separator = None) :
+        return default
+    # end def option_value
 
 # end class Object
 
