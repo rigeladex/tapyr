@@ -41,6 +41,7 @@
 #    12-Aug-2004 (MG) `Incl` group removed (nice try)
 #    12-Aug-2004 (MG) `formatted` pass * args and ** kw to super function
 #    26-Aug-2004 (CT)  `_convert` moved to `TFL.SDG.Node`
+#    23-Sep-2004 (MG) `vaps_channel_format` and friends added
 #    ««revision-date»»···
 #--
 
@@ -101,12 +102,14 @@ class _C_Node_ (TFL.SDG.Node) :
         )
 
     _list_of_formats     = TFL.SDG.Node._list_of_formats + \
-        ( "c_format", "h_format")
+        ( "c_format", "h_format", "vaps_channel_format")
 
     _scope_filter        = dict \
         ( c_format       = C
         , h_format       = H
         )
+
+    vaps_channel_format  = "" ### not implemented for all types
 
     def as_c_code (self, base_indent = None) :
         return self.formatted ("c_format", base_indent = base_indent)
@@ -115,6 +118,11 @@ class _C_Node_ (TFL.SDG.Node) :
     def as_h_code (self, base_indent = None) :
         return self.formatted ("h_format", base_indent = base_indent)
     # end def as_h_code
+
+    def as_vaps_channel (self, base_indent = None) :
+        return self.formatted \
+            ("vaps_channel_format", base_indent = base_indent)
+    # end def as_c_code
 
     def formatted (self, format_name, * args, ** kw) :
         if self.scope & self._scope_filter.get (format_name, 0xFF) :
@@ -134,6 +142,10 @@ class _C_Node_ (TFL.SDG.Node) :
     def write_to_h_stream (self, hstream = None, gauge = None) :
         self._write_to_stream (self.as_h_code (), hstream, gauge)
     # end def write_to_h_stream
+
+    def write_to_vaps_channel (self, stream = None, gauge = None) :
+        self._write_to_stream (self.as_vaps_channel (), stream, gauge)
+    # end def write_to_vaps_channel
 
     def _convert_c_comment (self, name, value, eol = 0, new_line_col = 0) :
         result = value

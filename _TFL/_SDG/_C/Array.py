@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
 #    12-Aug-2004 (MG) Format changed
+#    23-Sep-2004 (MG) `vaps_channel_format` added
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,9 @@ class Array (TFL.SDG.C._Var_) :
           )
         )
 
+    vaps_channel_format = """
+        %(name)s     %(::._bounds:)s     %(::*type:)s
+        """
     ### to be able to use `Ancestor._common_format` which references `struct`
     struct               = None
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Jul-2004 (CT) Creation
 #    12-Aug-2004 (MG) `description` and `eol_desc` added to formats
+#    23-Sep-2004 (MG) `vaps_channel_format` added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,11 @@ class Typedef (TFL.SDG.C.Maybe_Const, TFL.SDG.Leaf) :
             """
           )
         )
+    vaps_channel_format = """
+        SCOPE      SESSION
+        TYPE       FAST
+        %(::*type:)s
+        """
 
     def __init__ (self, type, name = None, ** kw) :
         if isinstance (type, TFL.SDG.C.Struct) and not name :

@@ -29,6 +29,7 @@
 #     9-Aug-2004 (CT) Creation
 #    12-Aug-2004 (MG) Formats changed (always use `h_format` for the
 #                     `decl_children`)
+#    23-Sep-2004 (MG) `vaps_channel_format` added
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,9 @@ class Struct (TFL.SDG.C._Decl_) :
         >}%(standalone)s
     """
 
+    vaps_channel_format = """
+        %(::*decl_children:)s
+        """
     field_pat            = Regexp \
         ( r"""(?P<head>\s*)"""
           r"""(?P<const>const \s+ )?"""

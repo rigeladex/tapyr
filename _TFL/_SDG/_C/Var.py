@@ -32,6 +32,7 @@
 #     9-Aug-2004 (CT) `Initializer` handling added
 #     9-Aug-2004 (CT) `_Var_` factored
 #    12-Aug-2004 (MG) Formats changed
+#    23-Sep-2004 (MG) `vaps_channel_format` added
 #    ««revision-date»»···
 #--
 
@@ -114,6 +115,10 @@ class Var (_Var_) :
           , Ancestor._common_tail
           )
         )
+
+    vaps_channel_format = """
+      %(name)s     1     %(::*type:)s
+    """
 
     def __init__ (self, type, name, init = "", ** kw) :
         ### redefine to allow optional positional argument `init`
