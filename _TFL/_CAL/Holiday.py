@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,11 +33,13 @@
 #     5-Jun-2004 (CT) `easter_date` implementation using Spencer Jones'
 #                     algorithm added
 #    10-Oct-2004 (MG) Use new `TFL.CAL.Date_Time` module instead of `Date_Time`
+#    15-Oct-2004 (CT) Use `TFL.CAL.Date` instead of `TFL.CAL.Date_Time`
+#    15-Oct-2004 (CT) `_main` and `_command_spec` added
 #    ««revision-date»»···
 #--
 
 from   _TFL            import TFL
-import _TFL._CAL.Date_Time
+import _TFL._CAL.Date
 
 def easter_date_gauss (year) :
     """Returns date of easter sunday computed by Gauß' rule as given by
@@ -118,15 +119,36 @@ def holidays (Y) :
     result  = {}
     year    = Y.year
     for h, n in fixed_holidays.iteritems () :
-        result [TFL.CAL.Date (year, * h).rgd] = n
+        result [TFL.CAL.Date (year, * h).ordinal] = n
     y, m, d = easter_date (year)
-    ED      = TFL.CAL.Date (year = y, month = m, day = d)
+    ED      = TFL.CAL.Date (y, m, d)
     for d, n in easter_dependent_holidays.iteritems () :
         D = ED + TFL.CAL.Delta (days = d)
-        result [D.rgd] = n
+        result [D.ordinal] = n
     return result
 # end def holidays
 
-if __name__ != "__main__" :
+def _command_spec (arg_array = None) :
+    from Command_Line import Command_Line
+    today    = TFL.CAL.Date ()
+    year     = today.year
+    return Command_Line \
+        ( arg_spec   =
+            ( "year:I=%d?Year for which to show holidays" % (year, )
+            )
+        , arg_array   = arg_array
+        )
+# end def _command_spec
+
+def _main (cmd) :
+    from predicate import sorted
+    year = TFL.CAL.Date (cmd.year, 1, 1)
+    for ordinal, name in sorted (holidays (year).iteritems ()) :
+        print "%3d %s" % (ordinal - year.ordinal + 1, name)
+# end def _main
+
+if __name__ == "__main__" :
+    _main (_command_spec ())
+else :
     TFL.CAL._Export ("*")
 ### __END__ TFL.CAL.Holiday

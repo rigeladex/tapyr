@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Plan
+#    TFL.CAL.Plan
 #
 # Purpose
 #    Model a yearly calendar with appointments
@@ -46,15 +46,15 @@ from   __future__            import generators
 from   _TFL                  import TFL
 from   _TFL._CAL             import CAL
 from   _TFL._CAL.Appointment import prio_pat, time_pat
-from   Date_Time             import *
+import _TFL._CAL.Appointment
+import _TFL._CAL.Date
+import _TFL._CAL.Year
+import _TFL._Meta.Object
+
 from   Filename              import *
 from   predicate             import *
 from   Regexp                import *
-
 import sos
-import _TFL._Meta.Object
-import _TFL._CAL.Appointment
-import _TFL._CAL.Year
 
 day_sep       = Regexp ("^#", re.M)
 day_pat       = Regexp (r"^ (?P<day>\d{4}/\d{2}/\d{2}) ")
@@ -118,12 +118,12 @@ def _day_generator (pat_match, day, month, year, Y) :
 
 def _date_time (Y, pat_match) :
     if pat_match.date or pat_match.time :
-        today = Date ()
+        today = CAL.Date ()
         if pat_match.weekday :
             wd = pat_match.weekday.lower ()
             wk = int (pat_match.week or today.week)
             d  = getattr (Y.weeks [wk - Y.weeks [0].number], wd).date
-            if (pat_match.week is None) and d.julian_day < today.julian_day :
+            if (pat_match.week is None) and d.rjd < today.rjd :
                 d += 7
             day   = d.day
             month = d.month
@@ -177,7 +177,7 @@ def read_plan (Y, plan_file_name) :
 # end def read_plan
 
 def write_plan (Y, plan_file_name, replace = 0) :
-    today = Date ()
+    today = CAL.Date ()
     tail  = today.formatted ("%d.%m.%Y.%H:%M")
     if replace :
         sos.rename (plan_file_name, "%s-%s" % (plan_file_name, tail))
@@ -188,7 +188,7 @@ def write_plan (Y, plan_file_name, replace = 0) :
 
 def _command_spec (arg_array = None) :
     from Command_Line import Command_Line
-    today    = Date ()
+    today    = CAL.Date ()
     year     = today.year
     return Command_Line \
         ( option_spec =
@@ -260,4 +260,4 @@ if __name__ == "__main__" :
     _main (_command_spec ())
 else :
     TFL.CAL._Export ("*")
-### __END__ Plan
+### __END__ TFL.CAL.Plan

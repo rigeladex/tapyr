@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Year
+#    TFL.CAL.Year
 #
 # Purpose
 #    Class modelling a calendar year
@@ -44,21 +44,23 @@
 #                     same calendar (concerns weeks 0, 1, 52, 53)
 #     9-Feb-2004 (CT) Made `Month` and `Year` lazy, too
 #    11-Feb-2004 (MG) `_day_names` added
+#    15-Oct-2004 (CT) Adapted to use `TFL.CAL.Date` instead of
+#                     `lib/python/Date_Time`
 #    ««revision-date»»···
 #--
 
 from   _TFL      import TFL
 from   _TFL._CAL import CAL
-from   Date_Time import *
-from   predicate import *
-
-import sos
 import _TFL._Meta.Object
 import _TFL._CAL.Appointment
+import _TFL._CAL.Date
 import _TFL._CAL.Holiday
 import _TFL.d_dict
 
-class _Cal_ :
+from   predicate import *
+import sos
+
+class _Cal_ (TFL.Meta.Object) :
     _days  = {}
     _weeks = {}
     _years = {}
@@ -69,10 +71,14 @@ class Day (TFL.Meta.Object) :
 
     is_holiday = ""
 
+    id         = property (lambda s : s.date.tuple [:3])
+    number     = property (lambda s : s.date.day)
+
     def __new__ (cls, cal, date) :
         Table = cal._days
-        date  = Date (date)
-        id    = date.tuple [:3]
+        if isinstance (date, (str, unicode)) :
+            date = TFL.CAL.Date (* [int (x) for x in date.split ("/")]) ### XXX
+        id = date.ordinal
         if id in Table :
             return Table [id]
         self = Table [id] = TFL.Meta.Object.__new__ (cls)
@@ -81,9 +87,9 @@ class Day (TFL.Meta.Object) :
     # end def __new__
 
     def _init_ (self, id, date) :
-        self.id     = id
-        self.date   = Date (date)
-        self.number = self.date.day
+        self.date         = date
+        self.appointments = []
+        self._utilization = []
     # end def __init__
 
     def add_appointments (self, * apps) :
@@ -93,7 +99,7 @@ class Day (TFL.Meta.Object) :
     def as_plan (self) :
         self.sort_appointments ()
         d = self.date
-        l = Date ("%s/12/31" % (d.year, ))
+        l = TFL.CAL.Date (d.year, 12, 31)
         holi = self.is_holiday
         if holi :
             holi = "%26s" % ("=%s=" % (holi, ), )
@@ -103,8 +109,8 @@ class Day (TFL.Meta.Object) :
                 , d.formatted ("%a")
                 , d.week
                 , d.formatted ("%d-%b-%Y")
-                , d.julian_day
-                , l.julian_day - d.julian_day + 1
+                , d.rjd
+                , l.rjd - d.rjd + 1
                 , holi
                 )
               ]
@@ -126,9 +132,7 @@ class Day (TFL.Meta.Object) :
     # end def __repr__
 
     def __getattr__ (self, name) :
-        if not (name.startswith ("__") and name.endswith ("__")) :
-            return getattr (self.date, name)
-        raise AttributeError
+        return getattr (self.date, name)
     # end def __getattr__
 
 # end class Day
@@ -136,15 +140,12 @@ class Day (TFL.Meta.Object) :
 class Week (TFL.Meta.Object) :
     """Model a single week in a calendar"""
 
-    _day_index = TFL.d_dict \
-        ( mon  = 0
-        , tue  = 1
-        , wed  = 2
-        , thu  = 3
-        , fri  = 4
-        , sat  = 5
-        , sun  = 6
-        )
+    tue = property (lambda s : s.days [1])
+    wed = property (lambda s : s.days [2])
+    thu = property (lambda s : s.days [3])
+    fri = property (lambda s : s.days [4])
+    sat = property (lambda s : s.days [5])
+    sun = property (lambda s : s.days [6])
 
     _day_names = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "So")
 
@@ -152,6 +153,10 @@ class Week (TFL.Meta.Object) :
         self.year   = year
         self.number = number
         self.mon    = mon
+        if number == 1 and int (year) != int (self.thu.year) :
+            self.number = 53
+        elif number == 53 and int (year) != int (self.thu.year) :
+            self.number = 0
     # end def _init_
 
     def as_cal (self) :
@@ -171,8 +176,6 @@ class Week (TFL.Meta.Object) :
         if name == "days" :
             self.populate ()
             return self.days
-        elif name in self._day_index :
-            return self.days [self._day_index [name]]
         raise AttributeError, name
     # end def __getattr__
 
@@ -192,7 +195,7 @@ class Week (TFL.Meta.Object) :
         n = self.number
         return (   (n > 0)
                and (  (n < 53)
-                   or (self.mon.year == self.thu.year)
+                   or (int (self.year) == int (self.thu.year))
                    )
                )
     # end def __nonzero__
@@ -202,20 +205,21 @@ class Week (TFL.Meta.Object) :
 class Month (TFL.Meta.Object) :
     """Model a single month in a calendar"""
 
-    head = property (lambda s : s.days [0])
-    tail = property (lambda s : s.days [-1])
+    head   = property (lambda s : s.days [0])
+    number = property (lambda s : s.month)
+    tail   = property (lambda s : s.days [-1])
 
     def __init__ (self, year, month) :
         self.year  = year
-        self.month = self.number = month
+        self.month = month
     # end def __init__
 
     def populate (self) :
         if "days" not in self.__dict__ :
             Y = self.year
-            n = self.number
+            n = self.month
             d = Y.dmap [(Y.number, n, 1)]
-            i = d.julian_day - 1
+            i = d.rjd - 1
             self.days = days = []
             while d.month == n :
                 days.append (d)
@@ -254,38 +258,41 @@ class Year (TFL.Meta.Object) :
        >>> for d in Year (2004).weeks [0].days :
        ...   print d, d.year == 2004
        ...
-       2003/12/29 0
-       2003/12/30 0
-       2003/12/31 0
-       2004/01/01 1
-       2004/01/02 1
-       2004/01/03 1
-       2004/01/04 1
+       2003/12/29 False
+       2003/12/30 False
+       2003/12/31 False
+       2004/01/01 True
+       2004/01/02 True
+       2004/01/03 True
+       2004/01/04 True
        >>> for d in Year (2004).weeks [-1].days :
        ...   print d, d.year == 2004
        ...
-       2004/12/27 1
-       2004/12/28 1
-       2004/12/29 1
-       2004/12/30 1
-       2004/12/31 1
-       2005/01/01 0
-       2005/01/02 0
+       2004/12/27 True
+       2004/12/28 True
+       2004/12/29 True
+       2004/12/30 True
+       2004/12/31 True
+       2005/01/01 False
+       2005/01/02 False
        >>> for y in range (2003, 2006) :
        ...   Y  = Year (y)
        ...   w0, w1 = Y.weeks [0], Y.weeks [-1]
        ...   print "%4.4d: %r %s, %r %s" % (y, w0, bool (w0), w1, bool (w1))
        ...
-       2003: week 01 <2002/12/30 to 2003/01/05> 1, week 53 <2003/12/29 to 2004/01/04> 0
-       2004: week 01 <2003/12/29 to 2004/01/04> 1, week 53 <2004/12/27 to 2005/01/02> 1
-       2005: week 00 <2004/12/27 to 2005/01/02> 0, week 52 <2005/12/26 to 2006/01/01> 1
+       2003: week 01 <2002/12/30 to 2003/01/05> True, week 53 <2003/12/29 to 2004/01/04> False
+       2004: week 01 <2003/12/29 to 2004/01/04> True, week 53 <2004/12/27 to 2005/01/02> True
+       2005: week 00 <2004/12/27 to 2005/01/02> False, week 52 <2005/12/26 to 2006/01/01> True
     """
 
     ### you can run the doctest with
     ###     /swing/python/run_doctest.py -path ~/lib/python/_TFL/_CAL Year
 
+    number          = property (lambda s : s.year)
+
     def __init__ (self, year = None, cal = _Cal_, populate = False) :
-        self.year   = self.number = y = year or Date ().year
+        D           = TFL.CAL.Date
+        self.year   = year or D ().year
         self.cal    = cal
         self.months = months = []
         self.weeks  = weeks  = []
@@ -294,9 +301,8 @@ class Year (TFL.Meta.Object) :
         for m in range (1, 13) :
             month   = mmap [m] = Month (self, m)
             months.append (month)
-        TT          = Time_Tuple
-        self.head   = h = Day (cal, TT (year = year, month = 1,  day = 1))
-        self.tail   = t = Day (cal, TT (year = year, month = 12, day = 31))
+        self.head   = h = Day (cal, D (year = year, month = 1,  day = 1))
+        self.tail   = t = Day (cal, D (year = year, month = 12, day = 31))
         if h.weekday == 0 :
             d = h
         else :
@@ -304,7 +310,7 @@ class Year (TFL.Meta.Object) :
         w_head = w = wmap [h.week] = Week (self, h.week, d)
         weeks.append (w_head)
         d = Day (cal, d.date + 7)
-        while d.year == y :
+        while d.year == year :
             w = Week (self, d.week, d)
             wmap [w.number] = w
             weeks.append (w)
@@ -313,30 +319,6 @@ class Year (TFL.Meta.Object) :
         if populate :
             self.populate ()
     # end def __init__
-
-    def populate (self) :
-        self.days = days \
-                  =  [d for d in self.weeks  [0].days [self.head.weekday:]]
-        for w in self.weeks [1:-1] :
-            days.extend (w.days)
-        days.extend ([d for d in self.weeks [-1].days [:self.tail.weekday+1]])
-        self.dmap = dmap = {}
-        for d in days :
-            dmap [d.id] = d
-        for h, n in self.holidays.iteritems () :
-            dmap [h].is_holiday = n
-    # end def populate
-
-    def __getattr__ (self, name) :
-        if name in ("days", "dmap") :
-            self.populate ()
-            return getattr (self, name)
-        raise AttributeError, name
-    # end def __getattr__
-
-    def __len__ (self) :
-        return len (self.days)
-    # end def __len__
 
     def as_plan (self) :
         return "\n\n".join \
@@ -353,10 +335,40 @@ class Year (TFL.Meta.Object) :
         return "\n".join (result)
     # end def as_cal
 
+    def populate (self) :
+        self.days = days \
+                  =  [d for d in self.weeks  [0].days [self.head.weekday:]]
+        for w in self.weeks [1:-1] :
+            days.extend (w.days)
+        days.extend \
+            ([d for d in self.weeks [-1].days [:self.tail.weekday + 1]])
+        self.dmap = dmap = {}
+        for d in days :
+            dmap [d.id] = d
+        dmap = self.cal._days
+        for ord, name in self.holidays.iteritems () :
+            dmap [ord].is_holiday = name
+    # end def populate
+
     def sort_appointments (self) :
         for d in self.days :
             d.sort_appointments ()
     # end def sort_appointments
+
+    def __getattr__ (self, name) :
+        if name in ("days", "dmap") :
+            self.populate ()
+            return getattr (self, name)
+        raise AttributeError, name
+    # end def __getattr__
+
+    def __int__ (self) :
+        return self.year
+    # end def __int__
+
+    def __len__ (self) :
+        return len (self.days)
+    # end def __len__
 
     def __str__ (self) :
         return "%s" % (self.year, )
@@ -390,7 +402,7 @@ def write_year (Yf, file_name, force = 0) :
 
 def _command_spec (arg_array = None) :
     from Command_Line import Command_Line
-    today    = Date ()
+    today    = TFL.CAL.Date ()
     year     = today.year
     return Command_Line \
         ( option_spec =
@@ -429,4 +441,4 @@ if __name__ == "__main__" :
     _main (_command_spec ())
 else :
     TFL.CAL._Export ("*")
-### __END__ Year
+### __END__ TFL.CAL.Year
