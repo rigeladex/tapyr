@@ -257,8 +257,9 @@ class Message (_Message_) :
             _pl        = email
             while _pl.is_multipart () :
                 _pl = _pl.get_payload (0)
-            body = (_pl.get_payload (decode = True) or u""
-                   ).decode (self.charset, "ignore")
+            body = _pl.get_payload (decode = True) or u""
+            if isinstance (body, str) :
+                body = body.decode (self.charset, "ignore")
                    ### XXX some emails trigger
                    ### `UnicodeDecodeError: 'ascii' codec can't decode byte 0xe4`
                    ### without `ignore` argument
