@@ -27,11 +27,12 @@
 #
 # Revision Dates
 #    14-Oct-2004 (CT) Creation
+#    17-Oct-2004 (CT) Use `self.Delta` instead of import
+#    17-Oct-2004 (CT) `_delta` changed to not look at `_body`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
-from   _TFL._CAL.Delta         import Delta
 import _TFL._Meta.Object
 import  datetime
 import  time
@@ -76,9 +77,7 @@ class _DTW_ (TFL.Meta.Object) :
     def _delta (self, delta) :
         result = delta
         if isinstance (delta, (int, long, float)) :
-            result = Delta (delta)
-        if isinstance (delta, _DTW_) :
-            result = delta._body
+            result = self.Delta (delta)
         return result
     # end def _delta
 

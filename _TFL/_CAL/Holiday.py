@@ -35,11 +35,13 @@
 #    10-Oct-2004 (MG) Use new `TFL.CAL.Date_Time` module instead of `Date_Time`
 #    15-Oct-2004 (CT) Use `TFL.CAL.Date` instead of `TFL.CAL.Date_Time`
 #    15-Oct-2004 (CT) `_main` and `_command_spec` added
+#    17-Oct-2004 (CT) Use `Date_Delta` instead of `Delta`
 #    ««revision-date»»···
 #--
 
 from   _TFL            import TFL
 import _TFL._CAL.Date
+import _TFL._CAL.Delta
 
 def easter_date_gauss (year) :
     """Returns date of easter sunday computed by Gauß' rule as given by
@@ -123,7 +125,7 @@ def holidays (Y) :
     y, m, d = easter_date (year)
     ED      = TFL.CAL.Date (y, m, d)
     for d, n in easter_dependent_holidays.iteritems () :
-        D = ED + TFL.CAL.Delta (days = d)
+        D = ED + TFL.CAL.Date_Delta (days = d)
         result [D.ordinal] = n
     return result
 # end def holidays

@@ -224,6 +224,8 @@ class Month_Delta (_Delta_) :
 
 # end class Month_Delta
 
+Delta = Date_Time_Delta
+
 if __name__ != "__main__" :
-    TFL.CAL._Export ("*", "_Delta_")
+    TFL.CAL._Export ("*", "_Delta_", "Delta")
 ### __END__ TFL.CAL.Delta

@@ -27,11 +27,11 @@
 #
 # Revision Dates
 #    15-Oct-2004 (CT) Creation
+#    17-Oct-2004 (CT) `Time.Delta` defined as `Time_Delta`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
-from   _TFL._CAL.Delta         import Delta
 import _TFL._CAL._DTW_
 
 import  datetime
@@ -54,6 +54,7 @@ class Time (TFL.CAL._DTW_) :
        2:00:00
        >>> print t2 + d
        18:30:00
+       >>> from _TFL._CAL.Delta import Time_Delta as Delta
        >>> try :
        ...     t1 + Delta (hours = 10)
        ... except OverflowError, exc :
@@ -72,21 +73,19 @@ class Time (TFL.CAL._DTW_) :
     second           = property (lambda s: s._body.second)
     microsecond      = property (lambda s: s._body.microsecond)
 
+    from _TFL._CAL.Delta import Time_Delta as Delta
+
     def as_delta (self) :
-        return TFL.CAL.Delta \
+        return self.Delta \
             ( hours = self.hour, minutes = self.minute, seconds = self.second
             , microseconds = self.microsecond
             )
     # end def as_delta
 
     def __add__ (self, rhs) :
-        result = self.as_delta () + rhs
-        if result.days :
-            raise OverflowError, result
-        seconds = result.seconds
-        hour,   seconds = divmod (seconds, 3600)
-        minute, second  = divmod (seconds, 60)
-        return self.__class__ (hour, minute, second, result.microseconds)
+        result = self.as_delta () + self._delta (rhs)
+        return self.__class__ \
+            (result.hours, result.minutes, result.seconds, result.microseconds)
     # end def __add__
 
     def __sub__ (self, rhs) :
