@@ -36,16 +36,31 @@
 #    17-Feb-2005 (CT) `_line_pos` corrected
 #    17-Feb-2005 (CT) s/widget/wtk_widget/g
 #    18-Feb-2005 (CT) `remove_style` added
+#    18-Feb-2005 (CT) `Text_Styler` added and `apply_style` (mostly)
+#                     implemented
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk
+import _TFL._TKT._Tk.Styler
 import _TFL._TKT.Text
 
 from   CTK                  import *
+from   predicate            import *
 
 import weakref
+
+class Text_Styler (TFL.TKT.Tk.Styler) :
+
+    Opts         = dict_from_list \
+        ( "background", "font", "foreground", "underline"
+        ### XXX
+        # "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
+        )
+
+# end class Text_Styler
+
 
 class _Tk_Text_ (TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
@@ -90,6 +105,7 @@ class _Tk_Text_ (TFL.TKT.Text) :
     current_pos = property (lambda s : s.wtk_widget.index (INSERT))
     eot_pos     = property (lambda s : s.wtk_widget.index (END))
 
+    _sty_map    = weakref.WeakKeyDictionary ()
     _tag_map    = weakref.WeakKeyDictionary ()
     _tag_no     = 0
 
@@ -104,10 +120,14 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def __init__
 
     def apply_style (self, style, head = None, tail = None, delta = 0) :
+        w = self.wtk_widget
         if head is None :
-            pass ### XXX
+            w.configure (** self._styler (style).option_dict)
+            self._apply_style_bindings (style, w.bind)
+            if style.mouse_cursor is not None :
+                pass ### XXX change cursor
         else :
-            self.wtk_widget.tag_add \
+            w.tag_add \
                 ( self._tag (style)
                 , self.pos_at (head, delta)
                 , tail or self.eot_pos
@@ -199,6 +219,12 @@ class _Tk_Text_ (TFL.TKT.Text) :
             )
     # end def remove_style
 
+    def _apply_style_bindings (self, style, binder) :
+        if style.callbacks is not None :
+            for name, cb in style.callbacks.iteritems () :
+                binder (getattr (self.TNS.Eventname, name), cb)
+    # end def _apply_style_bindings
+
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
         result = pos_or_mark
         if line_delta != 0 :
@@ -208,7 +234,9 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def _line_pos
 
     def _styler (self, style) :
-        pass ### XXX
+        if style not in self._sty_map :
+            self._sty_map [style] = Text_Styler (style)
+        return self._sty_map [style]
     # end def _styler
 
     def _tag (self, style) :
@@ -220,6 +248,8 @@ class _Tk_Text_ (TFL.TKT.Text) :
                 self._tag_map [style] = tag
                 self.wtk_widget.tag_configure \
                     (tag, ** self._styler (style).option_dict)
+                self._apply_style_bindings \
+                    (style, lambda e, b : self.wtk_widget.bind_tag (tag, e, b))
             result = (self._tag_map [style])
         return result
     # end def _tag

@@ -36,14 +36,40 @@ import _TFL._Meta.M_Auto_Combine
 
 import weakref
 
-class Styler (TFL.TKT.Mixin) :
-    """Map a UI.Style object to a toolkit specific dictionary of options"""
+class _TKT_Styler_ (TFL.TKT.Mixin) :
+    """Map a UI.Style object to a toolkit specific dictionary of options
 
+
+       >>> from _TFL._UI.Style import *
+       >>> from predicate import *
+       >>> class Test_Styler (Styler) :
+       ...     Opts = dict_from_list (
+       ...         ("background", "foreground", "underline"))
+       ...     _opt_mappers = dict (
+       ...           underline = lambda v : (False, True) [v != "none"]
+       ...         )
+       ...
+       ...
+       >>> s1 = Style ("s1", foreground = "yellow")
+       >>> s2 = Style ("s2", background = "red")
+       >>> s3 = Style ("s3", s1, s2)
+       >>> s4 = Style ("s4", s1, underline = "double")
+       >>> s5 = Style ("s5", s4, underline = "none")
+       >>> for s in s1, s2, s3, s4, s5 :
+       ...     print s, sorted (Test_Styler (s).option_dict.iteritems ())
+       ...
+       <Style s1> [('foreground', 'yellow')]
+       <Style s2> [('background', 'red')]
+       <Style s3> [('background', 'red'), ('foreground', 'yellow')]
+       <Style s4> [('foreground', 'yellow'), ('underline', True)]
+       <Style s5> [('foreground', 'yellow'), ('underline', False)]
+    """
+
+    _real_name           = "Styler"
     __metaclass__        = TFL.Meta.M_Auto_Combine
-    _lists_to_combine    = ("Opts", )
-    _dicts_to_combine    = ("_opt_mappers", )
+    _dicts_to_combine    = ("Opts", "_opt_mappers")
 
-    Opts                 = () ### contains all options of interest to a
+    Opts                 = {} ### contains all options of interest to a
                               ### specific TKT specific widget type
     _opt_mappers         = {} ### maps option names to functions transforming
                               ### option values into a toolkit specific form
@@ -60,7 +86,7 @@ class Styler (TFL.TKT.Mixin) :
                 d [o] = v
     # end def __init__
 
-# end class Styler
+Styler = _TKT_Styler_ # end class _TKT_Styler_
 
 if __name__ != "__main__" :
     TFL.TKT._Export ("*")
