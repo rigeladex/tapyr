@@ -327,7 +327,7 @@ class Package_Namespace :
         """To be called by modules of Package_Namespace to inject their
            symbols into the package namespace.
         """
-        module_name = _caller_globals () ["__name__"]
+        module_name = _caller_globals () ["__name__"].split (".") [-1]
         transitive  = kw.get ("transitive")
         result      = {}
         mod         = self.__modules._load (module_name)

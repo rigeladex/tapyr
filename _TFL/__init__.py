@@ -28,6 +28,8 @@
 # Revision Dates
 #     3-Jul-2001 (CT) Creation (of comment)
 #    22-Feb-2002 (CT) `_Export` for `Package_Namespace` added
+#    27-Feb-2002 (CT) `TFL.Package_Namespace` assigned instead of using
+#                     `_Export` (which leads to circular import again) 
 #    ««revision-date»»···
 #--
 
@@ -35,9 +37,9 @@ from Package_Namespace import Package_Namespace
 
 TFL = Package_Namespace ()
 
-### this one module must be be exported here instead of in
-### Package_Namespace.py to break the chicken-egg cycle
-TFL._Export ("Package_Namespace", "Package_Namespace")
+### We Package_Namespace to `TFL` to avoid circular imports between TFL and
+### Package_Namespace 
+TFL.Package_Namespace = Package_Namespace
 
 del Package_Namespace
 
