@@ -30,6 +30,7 @@
 #    11-Jan-2005 (CT) Creation continued
 #    24-Feb-2005 (CT) `CI_Button_Box` added
 #    14-Mar-2005 (CT) `CI_Button_Box` added to `_Export` call, too
+#    14-Mar-2005 (CT) `Boolean_Variable` added
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,9 @@ from   _TFL           import TFL
 import _TFL._TKT._Batch
 import _TFL._TKT.Command_Interfacer
 
+from   Black_Hole     import black_hole
+
+Boolean_Variable = black_hole
 CI_Button_Box    = TFL.TKT.Command_Interfacer
 CI_Eventbinder   = TFL.TKT.Command_Interfacer
 CI_Menu          = TFL.TKT.Command_Interfacer
@@ -45,7 +49,8 @@ CI_Toolbar       = TFL.TKT.Command_Interfacer
 
 if __name__ != "__main__" :
     TFL.TKT.Batch._Export \
-        ( "CI_Button_Box"
+        ( "Boolean_Variable"
+        , "CI_Button_Box"
         , "CI_Eventbinder"
         , "CI_Menu"
         , "CI_Menubar"
