@@ -918,7 +918,7 @@ class Browser (TFL.UI.Mixin) :
         normal_font_style  = self.option_value \
             ("normalFontStyle",    "normal")
         normal_font_size   = self.option_value \
-            ("normalFontSize",     "small")
+            ("normalFontSize",     "medium")
         normal_font_weight = self.option_value \
             ("normalFontWeight",   "normal")
         cour_font_family   = self.option_value \
