@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +31,11 @@
 #     1-Jan-2004 (CT) `PDF_Plan_L` and `-landscape` added
 #     1-Jan-2004 (CT) `_cooked` added and used
 #    11-Jun-2004 (GKH) deprecation warning removed (issue 10140)
+#    19-Dec-2004 (CT)  Small fixes to make it work again
 #    ««revision-date»»···
 #--
 
 from   _TFL      import TFL
-from   _TFL._CAL import CAL
-from   Date_Time import *
 from   Filename  import *
 from   predicate import *
 from   Regexp    import *
@@ -47,6 +45,7 @@ import sos
 import _TFL._Meta.Object
 import _TFL._CAL.Plan
 import _TFL._CAL.Year
+import _TFL._CAL.Date
 
 _non_ascii = Regexp (r"[äöüßÄÖÜ]")
 _to_ascii  = \
@@ -208,7 +207,7 @@ class PDF_Plan_L (PDF_Plan) :
 
 def _command_spec (arg_array = None) :
     from Command_Line import Command_Line
-    today    = Date ()
+    today    = TFL.CAL.Date ()
     year     = today.year
     return Command_Line \
         ( option_spec =
@@ -232,12 +231,12 @@ def _main (cmd) :
     head      = cmd.head_week
     tail      = cmd.tail_week
     path      = sos.path.join (sos.expanded_path (cmd.diary), "%4.4d" % year)
-    Y         = CAL.Year      (year)
+    Y         = TFL.CAL.Year  (year)
     wd        = Y.weeks [0].number
     if tail < 0 :
         tail += len (Y.weeks)
     file_name = sos.path.join (path, cmd.filename)
-    CAL.read_plan             (Y, file_name)
+    TFL.CAL.read_plan         (Y, file_name)
     pdf_name = Filename       (cmd.pdf, ".pdf").name
     if cmd.landscape :
         PDF_Plan_L (Y, pdf_name, head - wd, tail + 1 - wd, 3, 1)
@@ -246,6 +245,10 @@ def _main (cmd) :
     print Y.weeks [0].number, cmd.head_week, head - wd, cmd.tail_week, tail + 1 - wd
 # end def _main
 
+"""
+$ python pdf.py -year 2005 -landscape
+### generates a
+"""
 if __name__ == "__main__" :
     _main (_command_spec ())
 else :
