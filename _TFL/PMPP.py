@@ -27,13 +27,14 @@
 #
 # Revision Dates
 #     6-Feb-2005 (CT) Creation
+#    25-Mar-2005 (MG) Import of `Filename` changed
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._Meta.Object
 
-from   Filename          import Filename
+from   _FTL.Filename     import Filename
 from   _TFL.Regexp       import Regexp, re
 
 class PMPP (TFL.Meta.Object) :

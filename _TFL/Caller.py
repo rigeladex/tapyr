@@ -55,6 +55,7 @@
 #    17-Sep-2004 (CT) Optional argument `locls` added to `Object_Scope`
 #    17-Sep-2004 (CT) `Object_Scope.derived` added
 #    24-Mar-2005 (CT) `U_Test` scaffolding removed (use `run_doctest` instead)
+#    25-Mar-2005 (MG) Import of `Filename` changed
 #    ««revision-date»»···
 #--
 
@@ -173,7 +174,7 @@ class Object_Scope (Scope) :
     """Provide access to the caller's locals and globals and to the
        attributes of the object passed in.
 
-       >>> from Filename import *
+       >>> from _FTL.Filename import *
        >>> f = Filename ("/foo/bar/baz.dat")
        >>> c = Object_Scope  (f)
        >>> c.f

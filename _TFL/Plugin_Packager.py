@@ -47,6 +47,7 @@
 #    27-Oct-2004 (CED) `self.hides` saved
 #     4-Nov-2004 (CT)  `_make_target_dir` factored and called from
 #                      `_rewrite_package_plugin`
+#    25-Mar-2005 (MG) Import of `Filename` changed
 #    ««revision-date»»···
 #--
 
@@ -60,7 +61,7 @@ import _TFL.import_module
 import _TFL._Meta.Object
 import _TFL.sos
 
-from   Filename            import Filename, Dirname
+from   _TFL.Filename       import Filename, Dirname
 from   _TFL.Regexp         import Regexp, re
 from   _TFL.predicate      import *
 

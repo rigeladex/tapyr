@@ -112,13 +112,14 @@
 #     7-Oct-2004 (CT) `__sub__` changed to include parent packages into
 #                     result (otherwise result contains X.Y.Z, but not X.Y,
 #                     if difference doesn't contain any module of X.Y)
+#    25-Mar-2005 (MG) Import of `Filename` changed
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 from   _TFL.predicate    import *
 from   _TFL.Regexp       import Regexp, re
-from   Filename          import Filename
+from   _FTL.Filename     import Filename
 import sys
 
 import _TFL._Meta.Object
