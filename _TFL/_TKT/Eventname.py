@@ -31,6 +31,8 @@
 #     9-Feb-2005 (CT) `_pam` added
 #    14-Feb-2005 (CT) `__init__` changed to accept multiple mappings to `None`
 #    21-Feb-2005 (CT) `check_names` and doc-test added
+#     3-Feb-2005 (ABR, Factored out `add`
+#                 MGL)
 #    ««revision-date»»···
 #--
 
@@ -67,6 +69,10 @@ class _Eventname (TFL.TKT.Mixin) :
         self._name = _name or TFL.Caller.globals ().get ("__name__")
         self._map  = dict (kw)
         self._pam  = pam = {}
+        self.add (**kw)
+    # end def __init__
+
+    def add (self, **kw) :
         for k, v in kw.iteritems () :
             if v is not None and v in pam :
                 raise ValueError, \
@@ -74,7 +80,7 @@ class _Eventname (TFL.TKT.Mixin) :
                     % (k, pam [v], v)
                     )
             pam [v] = k
-    # end def __init__
+    # end def add
 
     def check_names (cls, evn_1, evn_2) :
         """Checks if `evn_1` and `evn_2` define the same event names"""
