@@ -30,6 +30,8 @@
 #    21-Feb-2005 (CT) `__init__` changed to pass `self` to `_opt_mappers`
 #     1-Apr-2005 (CT) `style_dict` added
 #     1-Apr-2005 (CT) `__new__` and `_cache` added
+#     2-Apr-2005 (MG) `__init__` changed to allow renaming of a `style`
+#                     property
 #    ««revision-date»»···
 #--
 
@@ -97,14 +99,14 @@ class _TKT_Styler_ (TFL.Meta.Object) :
         self.style_dict  = s = {}
         self.option_dict = d = {}
         _opt_mappers     = self._opt_mappers
-        for o in self.Opts :
-            v = getattr (style, o, None)
+        for style_name, tkt_name in self.Opts.iteritems () :
+            v        = getattr (style, style_name, None)
             if v is not None :
-                s [o] = v
-                if o in _opt_mappers :
-                    v = _opt_mappers [o] (self, v)
-                d [o] = v
-    # end def _init_
+                s [style_name] = v
+                if style_name in _opt_mappers :
+                    v = _opt_mappers [style_name] (self, v)
+                d [tkt_name or style_name] = v
+    # end def __init__
 
 Styler = _TKT_Styler_ # end class _TKT_Styler_
 

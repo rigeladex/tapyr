@@ -40,6 +40,7 @@
 #    24-Feb-2005 (CT)  `__getattr__` changed to delegate to `exposed_widget`
 #     8-Mar-2005 (CT)  `make_active` added
 #     1-Apr-2005 (CT)  `_sty_map` removed (caching now done by `Styler` itself)
+#     2-Apr-2005 (MG)  `_before_styler` simplified
 #    ««revision-date»»···
 #--
 
@@ -130,9 +131,8 @@ class Widget (TFL.TKT.Mixin) :
     # end def _apply_style_bindings
 
     def _before_styler (self, w, styler) :
-        result = {}
-        for p in styler.option_dict.iterkeys () :
-            result [p] = w.cget (p)
+        return dict \
+            ([(p, w.cget (p)) for p in styler.option_dict.iterkeys ()])
         return result
     # end def _before_styler
 
