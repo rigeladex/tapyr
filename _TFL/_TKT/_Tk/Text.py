@@ -35,6 +35,7 @@
 #    17-Feb-2005 (CT) `delta` made optional argument of `pos_at`
 #    17-Feb-2005 (CT) `_line_pos` corrected
 #    17-Feb-2005 (CT) s/widget/wtk_widget/g
+#    18-Feb-2005 (CT) `remove_style` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,8 @@ import _TFL._TKT._Tk
 import _TFL._TKT.Text
 
 from   CTK                  import *
+
+import weakref
 
 class _Tk_Text_ (TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
@@ -87,6 +90,9 @@ class _Tk_Text_ (TFL.TKT.Text) :
     current_pos = property (lambda s : s.wtk_widget.index (INSERT))
     eot_pos     = property (lambda s : s.wtk_widget.index (END))
 
+    _tag_map    = weakref.WeakKeyDictionary ()
+    _tag_no     = 0
+
     def __init__ (self, AC = None, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
         self.wtk_widget   = self.Widget_Type \
@@ -98,11 +104,14 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def __init__
 
     def apply_style (self, style, head = None, tail = None, delta = 0) :
-        self.wtk_widget.tag_add \
-            ( self._tag (style)
-            , self.pos_at (head or self.bot_pos, delta)
-            , tail or self.eot_pos
-            )
+        if head is None :
+            pass ### XXX
+        else :
+            self.wtk_widget.tag_add \
+                ( self._tag (style)
+                , self.pos_at (head, delta)
+                , tail or self.eot_pos
+                )
     # end def apply_style
 
     def bol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
@@ -182,6 +191,14 @@ class _Tk_Text_ (TFL.TKT.Text) :
         self.wtk_widget.delete (head, tail)
     # end def remove
 
+    def remove_style (self, style, head, tail = None, delta = 0) :
+        self.wtk_widget.tag_remove \
+            ( self._tag_map [style]
+            , self.pos_at (head, delta)
+            , tail or self.eot_pos
+            )
+    # end def remove_style
+
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
         result = pos_or_mark
         if line_delta != 0 :
@@ -190,10 +207,20 @@ class _Tk_Text_ (TFL.TKT.Text) :
         return result
     # end def _line_pos
 
+    def _styler (self, style) :
+        pass ### XXX
+    # end def _styler
+
     def _tag (self, style) :
         result = ()
         if style is not None :
-            pass ### XXX
+            if style not in self._tag_map :
+                tag = "tag:%s" % (self._tag_no, )
+                self.__class__._tag_no += 1
+                self._tag_map [style] = tag
+                self.wtk_widget.tag_configure \
+                    (tag, ** self._styler (style).option_dict)
+            result = (self._tag_map [style])
         return result
     # end def _tag
 

@@ -29,6 +29,7 @@
 #    16-Feb-2005 (CT) Creation
 #    17-Feb-2005 (CT) `_interface_test` added
 #    17-Feb-2005 (CT) Test case added to `_interface_test`
+#    18-Feb-2005 (CT) `remove_style` added
 #    ««revision-date»»···
 #--
 
@@ -184,6 +185,14 @@ class Text (TFL.TKT.Mixin) :
         raise NotImplementedError, \
             "%s must define remove" % (self.__class__.__name__, )
     # end def remove
+
+    def remove_style (self, style, head, tail = None, delta = 0) :
+        """Remove `style` from position/mark `head` plus `delta` to
+           position/mark `tail` (default: `self.eot_pos`).
+        """
+        raise NotImplementedError, \
+            "%s must define remove_style" % (self.__class__.__name__, )
+    # end def remove_style
 
 # end class Text
 
