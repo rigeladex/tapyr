@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Jun-2002 (CT) Creation
+#    25-Jun-2002 (CT) Classes for relative Points renamed
 #    ««revision-date»»···
 #--
 
@@ -201,11 +202,11 @@ class _R_Point_ (_Point_) :
 
 # end class _R_Point_
 
-class R_Point (_R_Point_) :
+class R_Point_P (_R_Point_) :
     """Point positioned relative to another point.
 
-       >>> p = Point (5,42)
-       >>> q = R_Point (p, Point (3,7))
+       >>> p = Point     (5, 42)
+       >>> q = R_Point_P (p, Point (3, 7))
        >>> print p, q
        (5, 42) (8, 49)
        >>> p.scale (Point (2, 0.5))
@@ -213,7 +214,7 @@ class R_Point (_R_Point_) :
        >>> print p, q
        (10, 21.0) (13, 28.0)
        >>> q.scale (Point (3, 2))
-       R_Point (39, 56.0)
+       R_Point_P (39, 56.0)
        >>> print p, q
        (10, 21.0) (39, 56.0)
     """
@@ -229,13 +230,13 @@ class R_Point (_R_Point_) :
         return (self._ref_point, )
     # end def _reference
 
-# end class R_Point
+# end class R_Point_P
 
-class RL_Point (_R_Point_) :
+class R_Point_L (_R_Point_) :
     """Point positioned relative to a line.
 
-       >>> l = D2.Line (Point (0, 0), Point (20, 10))
-       >>> q = RL_Point (l, 0.5, Point (2, 2))
+       >>> l = D2.Line   (Point (0, 0), Point (20, 10))
+       >>> q = R_Point_L (l, 0.5, Point (2, 2))
        >>> r = -q
        >>> print l, q, r
        ((0, 0), (20, 10)) (12.0, 7.0) (-12.0, -7.0)
@@ -263,13 +264,13 @@ class RL_Point (_R_Point_) :
         return self.__Ancestor.__getattr__ (self, name)
     # end def __getattr__
 
-# end class RL_Point
+# end class R_Point_L
 
-class RR_Point (_R_Point_) :
+class R_Point_R (_R_Point_) :
     """Point positioned relative to a rectangle.
 
-       >>> r = D2.Rect  (Point (0, 10), Point (20, 0))
-       >>> p = RR_Point (r, D2.Rect.Center_Top, Point (0,2))
+       >>> r = D2.Rect   (Point (0, 10), Point (20, 0))
+       >>> p = R_Point_R (r, D2.Rect.Center_Top, Point (0,2))
        >>> print r, p
        ((0, 10), (20.0, 10.0)) (10.0, 12.0)
        >>> r.shift (Point (5.0, 5.0))
@@ -297,7 +298,31 @@ class RR_Point (_R_Point_) :
         return self.__Ancestor.__getattr__ (self, name)
     # end def __getattr__
 
-# end class RR_Point
+# end class R_Point_R
+
+class R_Point_2P (_R_Point_) :
+    """Point positioned relative to (linear combination of) two other points."""
+
+    Ancestor = __Ancestor = _R_Point_
+
+    def __init__ \
+        ( self, ref_a, ref_b, ref_a_scale, ref_b_scale
+        , offset = None, scale = None
+        ) :
+        self._ref_a       = ref_a
+        self._ref_b       = ref_b
+        self._ref_a_scale = ref_a_scale
+        self._ref_b_scale = ref_b_scale
+        self.__Ancestor.__init__ (self, offset, scale)
+    # end def __init__
+
+    def _reference (self) :
+        ### XXX ???
+        return (self._ref_a, self._ref_b, self.ref_a_scale, self.ref_b_scale)
+    # end def _reference
+
+    ### XXX
+# end class R_Point_2P
 
 if __name__ != "__main__" :
     D2._Export ("*", "Point")
