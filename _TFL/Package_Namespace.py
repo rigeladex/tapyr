@@ -110,6 +110,8 @@
 #                     values of `id`
 #    14-Jan-2005 (CT) `_DPN_Auto_Importer_` added and called by
 #                     `Derived_Package_Namespace`
+#    20-Jan-2005 (CT) `_DPN_Auto_Importer_.__call__` changed to ignore
+#                     transitive import errors
 #    ««revision-date»»···
 #--
 
@@ -388,18 +390,26 @@ class _DPN_Auto_Importer_ :
     def __call__ (self, name, globals = None, locals = None, fromlist = None) :
         try :
             return self._builtin_import (name, globals, locals, fromlist)
-        except ImportError :
-            ns  = name.split (".")
-            mod = ns [-1]
-            pkg = ".".join (ns [:-1])
-            if pkg and pkg in self._map :
-                import _TFL.import_module
-                parent = ".".join ((self._map [pkg], mod))
-                result = self (parent, globals, locals, fromlist)
-                sys.modules [name] = _TFL.import_module.import_module (parent)
-                return result
-            else :
-                raise
+        except ImportError, exc :
+            if name in str (exc) :
+                ### <kludge-alert>
+                ###   Looking for `name` in `str (exc)` is fragile but I
+                ###   don't know what else to do here to find out if the
+                ###   impotr of `name` itself failed or if something imported
+                ###   by `name` failed
+                ### </kludge-alert>
+                ### ignore transitive ImportError's
+                ns  = name.split (".")
+                mod = ns [-1]
+                pkg = ".".join (ns [:-1])
+                if pkg and pkg in self._map :
+                    import _TFL.import_module
+                    parent = ".".join ((self._map [pkg], mod))
+                    result = self (parent, globals, locals, fromlist)
+                    sys.modules [name] = _TFL.import_module.import_module \
+                        (parent)
+                    return result
+            raise
     # end def __call__
 
     def register (self, derived, parent) :
