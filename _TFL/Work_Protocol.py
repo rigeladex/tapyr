@@ -83,5 +83,3 @@ def wp_lines (wp, lines, field_sep = "&", cat_sep = ":") :
 ««py-test-def»»···
 ««py-script-code»»
 ### __END__ Work_Protocol
-
-
