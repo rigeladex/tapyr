@@ -53,6 +53,10 @@ inheritance.
 >>> R4 = M_Record ("R4", (R2, R3), dict ())
 >>> print R4, R4.foo, R4.bar, R4.baz
 <Record R4> 1 2 3
+>>> R5 = M_Record ("R5", (R1, ),   dict (bauz = 5))
+Traceback (most recent call last):
+  ...
+TypeError: <Record R5> doesn't allow attribute bauz=5
 
 
 from _TFL._Meta.M_Data_Class import *
