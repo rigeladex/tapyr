@@ -47,6 +47,7 @@
 #                      instead of hexadecimal output in the unit test
 #    24-May-2004 (GWA) `crc` optimized and processes also arrays
 #    25-May-2004 (GWA) type ("") -> str, `crc_bytelist` became alias of `crc`
+#    27-May-2004 (HKR) Issue9651
 #    ««revision-date»»···
 #--
 
@@ -101,37 +102,37 @@ class _TD_CRC_ (object) :
                      % name
                      )
                    )
-                 , C.New_Line ()
-                 , C.Array ( "ubyte4", "%s_polynome" % name
-                           , len (cls.table)
-                           , cls.table
-                           , fmt     = "0x%08X"
-                           , per_row = 6
-                           , static  = 1
-                           , const   = 1
-                           )
-                 , C.New_Line ()
+#                 , C.New_Line ()
+#                 , C.Array ( "ubyte4", "%s_polynome" % name
+#                           , len (cls.table)
+#                           , cls.table
+#                           , fmt     = "0x%08X"
+#                           , per_row = 6
+#                           , static  = 1
+#                           , const   = 1
+#                           )
+#                 , C.New_Line ()
                  )
-        fct  = C.Function \
-           ( "ubyte4", "%s_calculation" % name
-           , "ubyte4 crc, ubyte1 * data, ubyte4 len"
-           , description =
-               ( "Returns a 32 bit CRC over 'len' number of bytes starting "
-                 "at 'data'."
-               , ""
-               , "Traceability:"
-               , "  Config Check ROM D20, Config Check ROM D21"
-               )
-           )
-        loop = C.While    ("len--")
-        node.add ( fct)
-        loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
-                   "^ %s_polynome [((crc) ^ (*data++)) & 0xff])"
-                 % (cls.mask, name)
-                 )
-        fct.add  ( loop
-                 , "return crc"
-                 )
+#        fct  = C.Function \
+#           ( "ubyte4", "%s_calculation" % name
+#           , "ubyte4 crc, ubyte1 * data, ubyte4 len"
+#           , description =
+#               ( "Returns a 32 bit CRC over 'len' number of bytes starting "
+#                 "at 'data'."
+#               , ""
+#               , "Traceability:"
+#               , "  Config Check ROM D20, Config Check ROM D21"
+#               )
+#           )
+#        loop = C.While    ("len--")
+#        node.add ( fct)
+#        loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
+#                   "^ %s_polynome [((crc) ^ (*data++)) & 0xff])"
+#                 % (cls.mask, name)
+#                 )
+#        fct.add  ( loop
+#                 , "return crc"
+#                 )
     c_code = classmethod (c_code)
 
 # end class _TD_CRC_
