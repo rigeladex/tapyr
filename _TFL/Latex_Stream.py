@@ -54,6 +54,7 @@
 #     1-Dec-2003 (RMA) Factorized _begin_section
 #     2-Dec-2003 (MG) `item`: parameter `item_indent_only` extended
 #     9-Dec-2003 (RMA) Added define and cfunctiondesc
+#    11-Dec-2003 (RMA) Added cmacrodesc.
 #    ««revision-date»»···
 #--
 
