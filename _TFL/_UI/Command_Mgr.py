@@ -145,6 +145,7 @@
 #                     performance, ...)
 #    24-Feb-2005 (MG) `Command_Delegator_UB`: allow `* args` for the
 #                     `precondition` to support recursive command delegators
+#     4-Mar-2005 (MG) `Command_Delegator`: `delegatee` added
 #    ««revision-date»»···
 #--
 
@@ -408,7 +409,7 @@ class Command_Delegator (Command) :
     cmd_mgr_name = "cmd_mgr" ### Name of the attribute holding a reference to
                              ### the addressee command manager
 
-    def __init__ (self, name, precondition = None, ** kw) :
+    def __init__ (self, name, precondition = None, delegatee = None, ** kw) :
         self.delegator_precondition = precondition
         if precondition :
             precondition = \
@@ -426,6 +427,7 @@ class Command_Delegator (Command) :
             (self.delegator_precondition, "evaluate_eagerly", False)
         self.__super.__init__ \
             (name, command = None, precondition = precondition, ** kw)
+        self.delegatee              = delegatee or self.qname
     # end def __init__
 
     def _check_precondition (self) :
@@ -448,7 +450,7 @@ class Command_Delegator (Command) :
             for a in addressees :
                 try :
                     cmd_mgr = getattr (a, self.cmd_mgr_name, {})
-                    p       = cmd_mgr [self.qname].precondition
+                    p       = cmd_mgr [self.delegatee].precondition
                     if p is not None :
                         yield self._delegator (a, p)
                 except KeyError, exc :
@@ -466,7 +468,7 @@ class Command_Delegator (Command) :
     def _run (self, * args, ** kw) :
         result = []
         for a in self.addressees () :
-            cmd = getattr (a, self.cmd_mgr_name) [self.qname]
+            cmd = getattr (a, self.cmd_mgr_name) [self.delegatee]
             result.append (self._delegator (a, cmd._run) (* args, ** kw))
         return result
     # end def _run
