@@ -29,6 +29,7 @@
 #    12-Jan-2005 (CT) Creation
 #    18-Jan-2005 (CT) Set `TFL.TKT.Mixin.TNS_name` instead of calling
 #                     `TFL.UI.set_TKT`
+#    23-Feb-2005 (CT) `stop_cb_chaining` added
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,8 @@ import _TFL._TKT
 
 Tk = Package_Namespace ()
 TFL.TKT._Export ("Tk")
+
+Tk.stop_cb_chaining = "break"
 
 import _TFL._TKT.Mixin
 TFL.TKT.Mixin.TNS_name = "Tk"

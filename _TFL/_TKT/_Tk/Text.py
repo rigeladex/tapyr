@@ -57,6 +57,10 @@
 #    23-Feb-2005 (CT)  s/widget/exposed_widget/
 #    23-Feb-2005 (CT)  Doctests for `place_cursor` and `see` added
 #    23-Feb-2005 (CT)  `backwards` added to `find` and doctest
+#    23-Feb-2005 (CT)  `insert_image` changed to take an `image_name` instead
+#                      of an `image` argument
+#    23-Feb-2005 (CT)  Style handling implemented for `insert_image` and
+#                      `insert_widget`
 #    ««revision-date»»···
 #--
 
@@ -203,19 +207,28 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
             (self._pos_at (pos_or_mark, delta), text, self._tag (style))
     # end def insert
 
-    def insert_image (self, pos_or_mark, image, style = None, delta = 0) :
-        result = self.wtk_widget.image_create \
-            (self._pos_at (pos_or_mark, delta), image = image)
+    def insert_image (self, pos_or_mark, image_name, style = None, delta = 0) :
+        try :
+            image = CTK.image_mgr  [image_name]
+        except KeyError :
+            image = CTK.bitmap_mgr [image_name]
+        option_dict = {}
         if style is not None :
-            pass ### XXX
+            option_dict = self._styler (style, self.Tag_Styler).option_dict
+        result = self.wtk_widget.image_create \
+            (self._pos_at (pos_or_mark, delta), image = image, ** option_dict)
         return result
     # end def insert_image
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
-        result = self.wtk_widget.window_create \
-            (self._pos_at (pos_or_mark, delta), window = widget.wtk_widget)
+        option_dict = {}
         if style is not None :
-            pass ### XXX
+            option_dict = self._styler (style, self.Tag_Styler).option_dict
+        result = self.wtk_widget.window_create \
+            ( self._pos_at (pos_or_mark, delta)
+            , window = widget.wtk_widget
+            , ** option_dict
+            )
         return result
     # end def insert_widget
 

@@ -40,6 +40,8 @@
 #    22-Feb-2005 (CT)  `place_cursor` and `see` added
 #    23-Feb-2005 (CT)  Doctests for `place_cursor` and `see` added
 #    23-Feb-2005 (CT)  `backwards` added to `find` and doctest
+#    23-Feb-2005 (CT)  `insert_image` changed to take an `image_name` instead
+#                      of an `image` argument
 #    ««revision-date»»···
 #--
 
@@ -207,8 +209,10 @@ class Text (TFL.TKT.Mixin) :
             "%s must define insert" % (self.__class__.__name__, )
     # end def insert
 
-    def insert_image (self, pos_or_mark, image, style = None, delta = 0) :
-        """Insert `image` at `pos_or_mark` plus `delta`with `style`."""
+    def insert_image (self, pos_or_mark, image_name, style = None, delta = 0) :
+        """Insert image with name `image_name` at `pos_or_mark` plus
+           `delta` with `style`.
+        """
         raise NotImplementedError, \
             "%s must define insert_image" % (self.__class__.__name__, )
     # end def insert_image
