@@ -29,6 +29,7 @@
 #     3-Sep-2004 (CT) Creation
 #     4-Sep-2004 (CT) Creation continued
 #    12-Sep-2004 (CT) Creation continued...
+#    15-Sep-2004 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,7 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     messages           = property (lambda s : s._get_messages ())
 
-    _deliveries        = {}
+    _deliveries        = {} ### `time.time ()` : number of mails delivered
 
     def __init__ (self, path) :
         self.path      = path
@@ -71,11 +72,10 @@ class _Mailbox_ (TFL.Meta.Object) :
     md_name = classmethod (md_name)
 
     def sort (self, decorator = None) :
-        if decorator is None :
-            decorator = lambda m : m.time
-        self._messages = dusort (self.messages, decorator)
-        for i, m in enumerate (self._messages) :
-            m.number = i + 1
+        if self._messages is None :
+            self._get_messages () ### calls self._sort
+        else :
+            self._sort ()
     # end def sort
 
     def summary (self, format = "%-99.99s") :
@@ -90,13 +90,20 @@ class _Mailbox_ (TFL.Meta.Object) :
             self._messages = None
     # end def _add
 
+    def _copy_msg_file (self, message, target) :
+        f = open (target, "w")
+        try :
+            f.write (message.email.as_string ())
+        finally :
+            f.close ()
+    # end def _copy_msg_file
+
     def _get_messages (self) :
         if self._messages is None :
-            if self._msg_dict :
-                self._messages = self._msg_dict.values ()
-            else :
+            if not self._msg_dict :
                 self._setup_messages ()
-            self.sort ()
+            self._messages = self._msg_dict.values ()
+            self._sort ()
         return self._messages
     # end def _get_messages
 
@@ -106,21 +113,17 @@ class _Mailbox_ (TFL.Meta.Object) :
         return "%s.%s_%s.%s" % (B64.itoa (t), B64.itoa (p), B64.itoa (n), h)
     _md_name = classmethod (_md_name)
 
-    def _new_email (self, fp) :
-        return Lib.message_from_file (fp)
-    # end def _new_email
-
     def _new_message (self, m) :
         return TFL.PMA.Message (email = m, name = m._pma_path, mailbox = self)
     # end def _new_message
 
-    def _copy_msg_file (self, message, target) :
-        f = open (target, "w")
-        try :
-            f.write (message.email.as_string ())
-        finally :
-            f.close ()
-    # end def _copy_msg_file
+    def _sort (self, decorator = None) :
+        if decorator is None :
+            decorator = lambda m : m.time
+        self._messages = dusort (self._messages, decorator)
+        for i, m in enumerate (self._messages) :
+            m.number = i
+    # end def _sort
 
     def __str__ (self) :
         return self.summary ()
@@ -142,16 +145,14 @@ class _Mailbox_ (TFL.Meta.Object) :
 class _Mailbox_in_Dir_ (_Mailbox_) :
     """Model directory-based mailbox"""
 
-    CUR = ""
-
     def __init__ (self, path) :
+        self.parser = Lib.Parser ()
         self.__super.__init__ (path)
         self.sub_boxes = [self.__class__ (s) for s in self._subdirs (path)]
     # end def __init__
 
     def _copy_msg_file (self, message, target) :
-        source = sos.path.join \
-            (self.path, self.CUR, message.name)
+        source = message.path
         try :
             sos.link (source, target)
         except OSError, exc :
@@ -159,6 +160,12 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
                 raise
             self.__super._copy_msg_file (message, target)
     # end def _copy_msg_file
+
+    def _new_email (self, fp) :
+        result = self.parser.parse (fp, headersonly = True)
+        result._pma_parsed_body = False
+        return result
+    # end def _new_email
 
     def _setup_messages (self) :
         self._add \
@@ -178,10 +185,17 @@ class _Mailbox_in_Dir_S_ (_Mailbox_in_Dir_) :
     """Model simple directory-based mailbox"""
 
     def _new_email (self, fp) :
-        result = self.__super._new_email (fp)
-        result._pma_path = sos.path.split (fp.name) [1]
+        result = self.__super._new_email   (fp)
+        result._pma_path  = sos.path.split (fp.name) [1]
+        result._pma_dir   = None
         return result
     # end def _new_email
+
+    def _new_message (self, m) :
+        result = self.__super._new_message (m)
+        result.path = sos.path.join (self.path, result.name)
+        return result
+    # end def _new_message
 
 # end class _Mailbox_in_Dir_S_
 
@@ -189,9 +203,11 @@ class _Mailbox_in_File_ (_Mailbox_) :
     """Model file-based mailbox"""
 
     def _new_email (self, fp) :
-        result  = self.__super._new_email (fp)
+        result  = Lib.message_from_file (fp)
+        result._pma_parsed_body = True
         self.n += 1
         result._pma_path = str (self.n)
+        result._pma_dir  = None
         return result
     # end def _new_email
 
@@ -228,7 +244,6 @@ class Maildir (_Mailbox_in_Dir_) :
     """Model a Maildir style mailbox"""
 
     MB_Type = Lib.mailbox.Maildir
-    CUR     = "cur"
 
     def md_name (cls, message = None) :
         if message is None :
@@ -272,10 +287,16 @@ class Maildir (_Mailbox_in_Dir_) :
         result = self.__super._new_email (fp)
         d, n   = sos.path.split (fp.name)
         _, d   = sos.path.split (d)
-        result._pma_path = n
-        result._pma_dir  = d
+        result._pma_path  = n
+        result._pma_dir   = d
         return result
     # end def _new_email
+
+    def _new_message (self, m) :
+        result = self.__super._new_message (m)
+        result.path = sos.path.join (self.path, "cur", result.name)
+        return result
+    # end def _new_message
 
     def _setup_messages (self) :
         self.__super._setup_messages ()
@@ -290,10 +311,11 @@ class Maildir (_Mailbox_in_Dir_) :
                 sos.unlink (s)
                 m.name           = n
                 m.email._pma_dir = "cur"
+                m.path           = sos.path.join (path, "cur", n)
     # end def _setup_messages
 
     def _subdirs (self, path) :
-        ### XXX for nested subfolders this doesn't work
+        ### XXX for nested subfolders this doesn't work properly
         ### XXX don't want to waste time on that braindead scheme right now
         return [d for d in self.__super._subdirs (path) if d.startswith (".")]
     # end def _subdirs
@@ -317,15 +339,21 @@ class Mailbox (_Mailbox_in_Dir_S_) :
     MB_Type = classmethod (MB_Type)
 
     def add (self, * messages) :
-        self._get_messages ()
+        if self._messages is None :
+            ### get messages from disk first
+            self._get_messages ()
         for message in messages :
             old_box = message.mailbox
             if old_box is not None :
                 name = old_box.md_name (message)
             else :
-                name = self.md_name (message)
+                name = self.md_name    (message)
             new_m = TFL.PMA.Message \
-                (email = message.email, name = name, mailbox = self)
+                ( email   = message.email
+                , name    = name
+                , mailbox = self
+                , status  = message.status
+                )
             self._add (new_m)
             old_box._copy_msg_file (message, sos.path.join (self.path, name))
     # end def add
@@ -349,8 +377,10 @@ mb=TFL.PMA.MH_Mailbox ("/swing/private/tanzer/MH/CT")
 mb=TFL.PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
 print mb.summary ().encode ("iso-8859-1", "replace")
 m = mb.messages [-3]
-m = mb.messages [62]
-print u"\n".join (m.formatted()).encode ("iso-8859-1", "replace")
+mb=TFL.PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
+m = mb.messages [60]
+print u"\n".join (list (m.formatted ()) [:100]).encode ("iso-8859-1", "replace")
+print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
 m = mb.messages [-3]
 tb = TFL.PMA.Mailbox ("/tmp/MPA/Testbox")
 tb.add (m)

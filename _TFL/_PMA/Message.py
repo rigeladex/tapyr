@@ -36,6 +36,7 @@
 #                     spam mails to raise `LookupError` on `decode`
 #    12-Sep-2004 (CT) Exception handler added to `Message._time`
 #                     (Man, do I hate spammers)
+#    15-Sep-2004 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -65,20 +66,8 @@ class _Message_ (TFL.Meta.Object) :
     def __init__ (self, email, name) :
         self.email  = email
         self.name   = name
-        self.parts  = parts = []
-        self.body   = None
-        if email.is_multipart () :
-            i = 1
-            for p in email.get_payload () :
-                if p.get_content_type () == "message/rfc822" :
-                    PT = Message
-                else :
-                    PT = Message_Part
-                p_name = ".".join (filter (None, (name, str (i))))
-                parts.append (PT (p, name = p_name))
-                i += 1
-        else :
-            self.body = email.get_payload (decode = True).strip ()
+        self.path   = None
+        self._setup_body (email)
     # end def __init__
 
     def formatted (self, sep_length = 79) :
@@ -178,6 +167,24 @@ class _Message_ (TFL.Meta.Object) :
         return name.capitalize (), result
     # end def _get_header
 
+    def _setup_body (self, email) :
+        name       = self.name
+        self.parts = parts = []
+        self.body  = None
+        if email.is_multipart () :
+            i = 1
+            for p in email.get_payload () :
+                if p.get_content_type () == "message/rfc822" :
+                    PT = Message
+                else :
+                    PT = Message_Part
+                p_name = ".".join (filter (None, (name, str (i))))
+                parts.append (PT (p, name = p_name))
+                i += 1
+        else :
+            self.body = email.get_payload (decode = True).strip ()
+    # end def _setup_body
+
     def _temp_body (self) :
         result = Filename \
             ( sos.tempfile_name ()
@@ -230,48 +237,46 @@ class Message (_Message_) :
     sender           = property (lambda s : s._sender  ())
     time             = property (lambda s : s._time    ())
 
-    def __init__ (self, email = None, name = None, number = None, mailbox = None, status = None) :
-        if email is None :
-            email    = Lib.Message ()
+    def __init__ (self, email, name = None, mailbox = None, status = None, number = None) :
         self.__super.__init__ (email, "")
         self.name    = name
-        self.number  = number
         self.mailbox = mailbox
         self.status  = status
+        self.number  = number
     # end def __init__
 
     def formatted (self, sep_length = 79) :
-        email = self.email
-        if email :
-            for h in self._formatted_headers () :
-                yield h
-            for l in self.__super.formatted (sep_length) :
-                yield l
+        email = self._reparsed ()
+        for h in self._formatted_headers () :
+            yield h
+        for l in self.__super.formatted (sep_length) :
+            yield l
     # end def formatted
 
     def summary (self, format = None) :
         email = self.email
-        if email :
-            if format is None :
-                format = self.summary_format
-            number     = self.number or u""
-            date       = self.date   or u""
-            sender     = self._sender () or u""
-            subject    = self._decoded_header (email ["subject"])
-            _pl        = email
-            while _pl.is_multipart () :
-                _pl = _pl.get_payload (0)
-            body = _pl.get_payload (decode = True) or u""
-            if isinstance (body, str) :
-                try :
-                    body = body.decode (self.charset, "replace")
-                       ### XXX some emails trigger
-                       ### `UnicodeDecodeError: 'ascii' codec can't decode
-                       ### byte 0xe4` without `replace` argument
-                except LookupError :
-                    body = body.decode ("us-ascii", "replace")
-            body = _ws_pat.sub (u" ", body.strip ()) or u"<empty>"
-            return format % locals ()
+        if format is None :
+            format = self.summary_format
+        number     = self.number
+        if number is None :
+            number = u""
+        date       = self.date or u""
+        sender     = self._sender () or u""
+        subject    = self._decoded_header (email ["subject"])
+        _pl        = email
+        while _pl.is_multipart () :
+            _pl = _pl.get_payload (0)
+        body = _pl.get_payload (decode = True) or u""
+        if isinstance (body, str) :
+            try :
+                body = body.decode (self.charset, "replace")
+                   ### XXX some emails trigger
+                   ### `UnicodeDecodeError: 'ascii' codec can't decode
+                   ### byte 0xe4` without `replace` argument
+            except LookupError :
+                body = body.decode ("us-ascii", "replace")
+        body = _ws_pat.sub (u" ", body.strip ()) or u"<empty>"
+        return format % locals ()
     # end def summary
 
     def _date (self, treshold = 86400 * 270) :
@@ -284,34 +289,51 @@ class Message (_Message_) :
             return time.strftime (format, time.localtime (t))
     # end def _date
 
+    def _reparsed (self) :
+        result = self.email
+        if self.path and not result._pma_parsed_body :
+            if self.mailbox :
+                parser = self.mailbox.parser.parse
+            else :
+                parser = Lib.message_from_file
+            fp = open (self.path, "r")
+            try :
+                result = self.email = parser (fp)
+            finally :
+                fp.close ()
+            result._pma_dir         = getattr (self.email, "_pma_dir",  None)
+            result._pma_path        = getattr (self.email, "_pma_path", None)
+            result._pma_parsed_body = True
+            self._setup_body (result)
+        return result
+    # end def _reparsed
+
     def _sender (self) :
-        email = self.email
-        if email :
-            sender     = \
-                (  email ["from"]
-                or email ["reply-to"]
-                or email ["return-path"]
-                or email.get_unixfrom ()
-                )
-            if sender :
-                sender = \
-                    (  filter (None, Lib.getaddresses ((sender, )) [0])
-                    or (None, )
-                    ) [0]
-                return self._decoded_header (sender)
+        email  = self.email
+        sender = \
+            (  email ["from"]
+            or email ["reply-to"]
+            or email ["return-path"]
+            or email.get_unixfrom ()
+            )
+        if sender :
+            sender = \
+                (  filter (None, Lib.getaddresses ((sender, )) [0])
+                or (None, )
+                ) [0]
+            return self._decoded_header (sender)
     # end def _sender
 
     def _time (self) :
         email = self.email
-        if email :
-            for date in email ["date"], email ["delivery-date"] :
-                if date :
-                    parsed = Lib.parsedate_tz (date)
-                    if parsed is not None :
-                        try :
-                            return Lib.mktime_tz (parsed)
-                        except (OverflowError, ValueError) :
-                            pass
+        for date in email ["date"], email ["delivery-date"] :
+            if date :
+                parsed = Lib.parsedate_tz (date)
+                if parsed is not None :
+                    try :
+                        return Lib.mktime_tz (parsed)
+                    except (OverflowError, ValueError) :
+                        pass
     # end def _time
 
     def __str__ (self) :
