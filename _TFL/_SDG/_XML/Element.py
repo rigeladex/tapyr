@@ -130,9 +130,13 @@ class Leaf (TFL.SDG.Leaf, Element) :
 class Empty (Leaf) :
     """Model an empty element of a XML document"""
 
-    xml_format           = """
-        <%(elem_type)s%(:front= ¡rear0= ¡rear=%(NL)s%(" " * indent_offset)s¡sep= :>@_attr_values:)s/>
-    """
+    xml_format           = \
+        ( """<%(elem_type)s"""
+            """%(:front= ¡rear0= ¡rear=%(NL)s%(" " * indent_offset)s¡sep= """
+              """:>@_attr_values"""
+            """:)s"""
+          """/>"""
+        )
 
 # end class Empty
 

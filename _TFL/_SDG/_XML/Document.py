@@ -44,8 +44,8 @@ class Document (TFL.SDG.XML.Element) :
        ...              , description = "Just a test"
        ...              )
        >>> print chr (10).join (d.formatted ("xml_format"))
-       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
-       <!DOCTYPE memo SYSTEM "memo.dtd">
+       <?xml version='1.0' encoding='iso-8859-1' standalone='yes'?>
+       <!DOCTYPE memo SYSTEM 'memo.dtd'>
        <!-- Just a test -->
        <Memo>
          First line of text
@@ -63,7 +63,7 @@ class Document (TFL.SDG.XML.Element) :
         )
 
     xml_format           = """
-        <?xml version="%(xml_version)s" encoding="%(encoding)s" standalone="%(standalone)s"?>
+        <?xml version='%(xml_version)s' encoding='%(encoding)s' standalone='%(standalone)s'?>
         %(::*doctype:)s
     """ + Ancestor._xml_format
 

@@ -35,28 +35,75 @@ import _TFL._SDG._XML.Element
 
 from   Filename               import Filename
 
-class Doctype (TFL.SDG.XML.Leaf) :
-    """Model the doctype declaration of a XML document"""
+class Doctype (TFL.SDG.XML.Element) :
+    """Model the doctype declaration of a XML document
+
+       >>> from _TFL._SDG._XML.Elem_Type_Decl import *
+       >>> dt = Doctype ( "Test"
+       ...              , Elem_Type_Decl ("Test", "(head, body, tail)")
+       ...              , Elem_Type_Decl ("head", "(title, author)")
+       ...              , Elem_Type_Decl ("body", "(\#PCDATA)")
+       ...              , Elem_Type_Decl ("tail", "(disclaimer)")
+       ...              , Attr_List_Decl ( "head"
+       ...                               , "Date CDATA \#REQUIRED"
+       ...                               , "Version CDATA \#REQUIRED"
+       ...                               )
+       ...              )
+       >>> dt.write_to_xml_stream ()
+       <!DOCTYPE Test SYSTEM 'Test.dtd'
+           <!ELEMENT Test (head, body, tail) >
+           <!ELEMENT head (title, author) >
+           <!ELEMENT body (\#PCDATA) >
+           <!ELEMENT tail (disclaimer) >
+           <!ATTLIST head Date CDATA \#REQUIRED
+                      Version CDATA \#REQUIRED >
+       >
+    """
+
+    kind                 = "SYSTEM"
 
     init_arg_defaults    = dict \
         ( doctype        = None
         , dtd            = None
-        , kind           = "SYSTEM"
         )
 
     elem_type            = "DOCTYPE"
 
-    xml_format           = """<!DOCTYPE %(doctype)s %(kind)s "%(dtd)s">"""
+    xml_format           = \
+        ( """<!DOCTYPE %(doctype)s %(kind)s '%(dtd)s'"""
+            """%(:front=%(NL)s%(" " * (indent_offset + 4))s"""
+              """¡rear=%(NL)s%(" " * indent_offset)s"""
+              """¡sep=%(" " * (indent_offset + 4))s"""
+              """:*body_children"""
+              """:)s"""
+          """>"""
+        )
 
-    def __init__ (self, doctype, dtd = None, ** kw) :
+    def __init__ (self, doctype, * etd, ** kw) :
         assert "elem_type" not in kw
         doctype = Filename (doctype).base
-        dtd     = Filename (dtd or "", doctype, ".dtd").name
+        dtd     = Filename (kw.get ("dtd", ""), doctype, ".dtd").name
         self.__super.__init__ \
-            (self.elem_type, doctype = doctype, dtd = dtd, ** kw)
+            (self.elem_type, doctype = doctype, dtd = dtd, * etd, ** kw)
     # end def __init__
 
 # end class Doctype
+
+"""
+from _TFL._SDG._XML.Doctype import *
+from _TFL._SDG._XML.Elem_Type_Decl import *
+dt = Doctype ( "Test"
+             , Elem_Type_Decl ( "Test", "(head, body, tail)")
+             , Elem_Type_Decl ( "head", "(title, author)")
+             , Elem_Type_Decl ( "body", "(\#PCDATA)")
+             , Elem_Type_Decl ( "tail", "(disclaimer)")
+             , Attr_List_Decl ( "head"
+                              , "Date CDATA \#REQUIRED"
+                              , "Version CDATA \#REQUIRED"
+                              )
+             )
+dt.write_to_xml_stream ()
+"""
 
 if __name__ != "__main__" :
     TFL.SDG.XML._Export ("*")
