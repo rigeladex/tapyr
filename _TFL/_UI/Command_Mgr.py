@@ -91,6 +91,7 @@
 #    11-Jan-2005 (CT) `add_separator` changed to be more similar to
 #                     `add_command` and `add_group`
 #    11-Jan-2005 (CT) `as_check_button` added to `add_command`
+#    13-Jan-2005 (MG) Minor fixes
 #    ««revision-date»»···
 #--
 
@@ -366,7 +367,7 @@ class Command_Group (_Command_) :
             if self.parent :
                 self.command [cmd.name] = cmd
             cmd.interfacers = []
-            for i, info in self._interfacers (if_names) :
+            for n, i, info in self._interfacers (if_names) :
                 cmd.interfacers.append (i)
                 i.add_command \
                     ( name            = cmd.name
@@ -385,10 +386,10 @@ class Command_Group (_Command_) :
     def add_group (self, name, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None, batchable = 0) :
         """Add command group `name'."""
         index       = self._real_index (index)
-        interfacers = []
-        for i, info in self._interfacers (if_names) :
-            interfacers.append \
-                (i.add_group (name, index = index, delta = delta, info = info))
+        interfacers = {}
+        for n, i, info in self._interfacers (if_names) :
+            interfacers [n] = i.add_group \
+                (name, index = index, delta = delta, info = info)
         group = self.Group_Class \
             ( name          = name
             , interfacers   = interfacers
@@ -416,7 +417,7 @@ class Command_Group (_Command_) :
             index    = self._real_index (index)
             sep      = Record (name = name, destroy = lambda s : 1)
             self._element.insert (index, sep, delta)
-            for i, info in self._interfacers (if_names) :
+            for n, i, info in self._interfacers (if_names) :
                 i.add_separator (name, index, delta)
     # end def add_separator
 
@@ -438,8 +439,8 @@ class Command_Group (_Command_) :
     def _interfacers (self, interface_names) :
         interfacers = self.interfacers
         for n in interface_names :
-            name, info = n.split (":", 1)
-            yield interfacers [name], info
+            name, info = (n.split (":", 1) + [None]) [:2]
+            yield n, interfacers [name], info
     # end def _interfacers
 
     def _real_index (self, index) :
@@ -482,7 +483,7 @@ class Command_Mgr (Command_Group) :
         self.changes        = 0
         self._precondition  = {}
         self.__super.__init__ (name, interfacers, parent = None, batchable = True)
-        for i in interfacers :
+        for i in interfacers.itervalues () :
             i.bind_to_sync (self.update_state)
     # end def __init__
 
