@@ -106,6 +106,8 @@
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    23-Oct-2004 (CT) `_check_clashes` added
 #    28-Oct-2004 (CT) `_Export_Module` changed to honor `_check_clashes`
+#    10-Jan-2005 (CT) `__repr__` changed to not future warn about negative
+#                     values of `id`
 #    ««revision-date»»···
 #--
 
@@ -258,8 +260,8 @@ class Package_Namespace :
     # end def _import_1
 
     def __repr__ (self) :
-        return "<%s %s at 0x%x>" % \
-               (self.__class__.__name__, self.__name, id (self))
+        return "<%s %s>" % \
+               (self.__class__.__name__, self.__name)
     # end def __repr__
 
     def _Cache_Module (self, module_name, mod) :
