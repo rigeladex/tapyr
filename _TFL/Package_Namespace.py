@@ -301,6 +301,9 @@ class Package_Namespace :
         transitive = kw.get ("transitive")
         result     = {}
         mod        = self.__modules._load (module_name)
+        primary    = getattr (mod, module_name, None)
+        if primary not is None :
+            result [module_name] = primary
         if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
