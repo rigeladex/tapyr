@@ -27,6 +27,7 @@
 #    27-Oct-2000 (MG) `un_nested' of children added to `__init__' of
 #                     `Doc_Node'
 #    26-Sep-2001 (MG) Moved into package `TFL`
+#    29-Jan-2002 (MG) `get_childrens` added
 #    ««revision-date»»···
 #--
 
@@ -190,13 +191,12 @@ class Doc_Node :
         return child_name
     # end def _child_name
 
-    def _transitive_child_search (self, children, fct, name) :
+    def _transitive_child_search (self, children, fct, * args) :
         """Calls the memberfunction `fct' for all childrens in `children'
            with the parameter `name' and returns a list of all result which
            are `TRUE'.
         """
-        childs = map ( lambda c, name = name, fct = fct
-                     : getattr (c, fct) (name)
+        childs = map ( lambda c, p = args, fct = fct : getattr (c, fct) (* p)
                      , children
                      )
         return filter (None, childs)
@@ -236,6 +236,31 @@ class Doc_Node :
         return child
     # end def get_child
 
+    def get_childrens (self, child_name, type = None, match = 0, transitive = 1) :
+        """XXX"""
+        child_name  = self._child_name (child_name)
+        if type :
+            if match :
+                fct =  ( lambda c, n = child_name, type = type
+                       : (c.name == n) and (c.__class__ == type)
+                       )
+            else :
+                fct =  ( lambda c, n = child_name, type = type
+                       : (c.name == n) and isinstance (c, type)
+                       )
+        else :           
+            fct     = ( lambda c, n = child_name : c.name == n)
+        children    = filter (fct, self.children)
+        if transitive :
+            children.extend \
+                ( self._transitive_child_search
+                      ( self.children, "get_childrens", child_name
+                      , type, match, transitive
+                      )
+                )
+        return un_nested (children)
+    # end def get_childrens
+    
     def __getitem__ (self, index) :
         return self.children [index]
     # end def __getitem__
