@@ -34,6 +34,7 @@
 #    12-Aug-2003 (CT)  Import for `StringIO` added
 #    12-Aug-2003 (CT)  `Alias_Property` replaced by explicit function
 #                      delegation to avoid doctest hiccups
+#    26-Apr-2004 (AHE) RUP#5047 real .close() made
 #    ««revision-date»»···
 #--
 
@@ -188,7 +189,7 @@ class FN_Matcher_Grep (FN_Matcher) :
                     return self.predicate (result)
                 finally :
                     try :
-                        file.close
+                        file.close()
                     except AttributeError :
                         pass
                     else :
