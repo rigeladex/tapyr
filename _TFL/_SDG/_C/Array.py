@@ -33,6 +33,8 @@
 #    23-Sep-2004 (CT) `c_format` changed (total revamp of `x_forms` for
 #                     `initializers`)
 #    23-Sep-2004 (MG) `vaps_channel_format` added
+#    27-Oct-2004 (MG)  Calculate the default of `bounds` based on the length
+#                      of `init` (to be backward compatible)
 #    ««revision-date»»···
 #--
 
@@ -84,7 +86,9 @@ class Array (TFL.SDG.C._Var_) :
     ### to be able to use `Ancestor._common_format` which references `struct`
     struct               = None
 
-    def __init__ (self, type, name, bounds = 0, init = (), ** kw) :
+    def __init__ (self, type, name, bounds = None, init = (), ** kw) :
+        if bounds is None :
+            bounds = len (init)
         self.__super.__init__ \
             (type, name, bounds = bounds, init = init, ** kw)
         if self.init :
