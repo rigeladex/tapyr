@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    17-Feb-2003 (CT) `Alias_Attribute` added
 #     3-Mar-2003 (CT) `Alias_Class_and_Instance_Method` added
 #     3-Mar-2003 (CT) `Alias_Meta_and_Class_Attribute` added
+#    15-Jul-2004 (CT) `Method_Descriptor` factored
 #    ««revision-date»»···
 #--
 
@@ -108,17 +109,8 @@ class RW_Property (RO_Property) :
 
 # end class Read_Write
 
-class Class_Method (object) :
-    """Method wrapper for class methods. This class can be used just like the
-       built-in `classmethod`.
-
-       If the optional argument `cls` is passed to the `__init__` call, it
-       will provide better introspection, though (by showing which class
-       actually defined a class method).
-
-       Normally, it is best to use `TFL.Meta.M_Automethodwrap` as metaclass,
-       which does everything the right way.
-    """
+class Method_Descriptor (object) :
+    """Descriptor for special method types."""
 
     class Bound_Method (object) :
         def __init__ (self, method, target, cls) :
@@ -144,12 +136,32 @@ class Class_Method (object) :
     # end def __init__
 
     def __get__ (self, obj, cls = None) :
+        if obj is None :
+            return self.method
+        return self.Bound_Method (self.method, obj, self.cls or cls)
+    # end def __get__
+
+# end class Method_Descriptor
+
+class Class_Method (Method_Descriptor) :
+    """Method wrapper for class methods. This class can be used just like the
+       built-in `classmethod`.
+
+       If the optional argument `cls` is passed to the `__init__` call, it
+       will provide better introspection, though (by showing which class
+       actually defined a class method).
+
+       Normally, it is best to use `TFL.Meta.M_Automethodwrap` as metaclass,
+       which does everything the right way.
+    """
+
+    def __get__ (self, obj, cls = None) :
         return self.Bound_Method (self.method, cls, self.cls or cls)
     # end def __get__
 
 # end class Class_Method
 
-class Class_and_Instance_Method (Class_Method) :
+class Class_and_Instance_Method (Method_Descriptor) :
     """Flexible method wrapper: wrapped method can be used as class method
        and as instance method.
 

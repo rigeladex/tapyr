@@ -28,12 +28,17 @@
 #
 # Revision Dates
 #     5-Jul-2004 (CT) Creation
+#    15-Jul-2004 (CT) `Execution_Timer.add_method` changed to use
+#                     `new.instancemethod` instead of an ad-hoc function
+#    15-Jul-2004 (CT) `Execution_Timer._measurer` factored from `add_method`
+#                     and `add_function`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 import _TFL._Meta.Object
 
+import new
 import sys
 import time
 
@@ -71,7 +76,9 @@ class Execution_Time_Recorder_D (TFL.Meta.Object) :
 class Execution_Time_Measurer (TFL.Meta.Object) :
     """Measurer of execution time of a single function or method"""
 
-    def __init__ (self, name, fct, recorder) :
+    def __init__ (self, __name__, name, fct, recorder) :
+        self.__name__ = __name__
+        self.__doc__  = getattr (fct, "__doc__", None)
         self.name     = name
         self.fct      = fct
         self.recorder = recorder
@@ -98,28 +105,27 @@ class Execution_Timer (TFL.Meta.Object) :
     def __init__ (self, recorder = None) :
         if recorder is None :
             recorder = Execution_Time_Recorder_F ()
-        self.recorder  = recorder
+        self.recorder = recorder
     # end def __init__
-
-    def add_method (self, cls, name) :
-        """Add measurer for method with `name` of class `cls`"""
-        qname    = "%s.%s" % (cls.__name__, name)
-        fct      = getattr (cls, name)
-        measurer = Execution_Time_Measurer (qname, fct, self.recorder)
-        def _ (this, * args, ** kw) :
-            return measurer (this, * args, ** kw)
-        setattr (cls, name, _)
-    # end def add_method
 
     def add_function (self, module, name) :
         """Add measurer for function with `name` of module od package-namespace
            `module`.
         """
-        qname    = "%s.%s" % (module.__name__, name)
-        fct      = getattr (module, name)
-        measurer = Execution_Time_Measurer (qname, fct, self.recorder)
-        setattr (module, name, measurer)
+        setattr (module, name, self._measurer (module, name))
     # end def add_function
+
+    def add_method (self, cls, name) :
+        """Add measurer for method with `name` of class `cls`"""
+        measurer = self._measurer (cls, name)
+        setattr (cls, name, new.instancemethod (measurer, None, cls))
+    # end def add_method
+
+    def _measurer (self, cm, name) :
+        qname  = "%s.%s" % (cm.__name__, name)
+        fct    = getattr (cm, name)
+        return Execution_Time_Measurer (name, qname, fct, self.recorder)
+    # end def _measurer
 
 # end class Execution_Timer
 
