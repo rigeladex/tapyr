@@ -75,7 +75,7 @@ KeyError: 'berties'
 """
 
 from   _TFL      import TFL
-from   predicate import sorted, matches
+import _TFL.predicate
 
 class Ambiguous_Key (KeyError) :
     pass
@@ -102,7 +102,7 @@ class Abbr_Key_Dict (dict) :
         if abbr in self :
             return [abbr]
         elif isinstance (abbr, str) :
-            return matches (sorted (self.iterkeys ()), abbr)
+            return TFL.matches (TFL.sorted (self.iterkeys ()), abbr)
         return []
     # end def matching_keys
 
