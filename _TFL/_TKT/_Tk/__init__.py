@@ -37,8 +37,8 @@ import _TOM._TKT
 Tk = Package_Namespace ()
 TOM.TKT._Export ("Tk")
 
-import _TOM._GUI
-TOM.GUI.set_TKT (Tk)
+import _TOM._UI
+TOM.UI.set_TKT (Tk)
 
 del Package_Namespace
 
