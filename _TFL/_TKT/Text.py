@@ -45,6 +45,7 @@
 #    24-Feb-2005 (RSC) `set_tabs' added. Minimal test for event bindings
 #                      added, more needs an app context.
 #    25-Feb-2005 (CT)  Doctests changed to use `_doctest_AC`
+#    25-Feb-2005 (RSC) left_gravity added to doctest with value False
 #    ««revision-date»»···
 #--
 
@@ -79,7 +80,7 @@ class Text (TFL.TKT.Mixin) :
         >>> w.append ("Ha")
         >>> w.append ("Hum", blue)
         >>> hum_p = w.find ("Hum")
-        >>> hum_m = w.mark_at (hum_p)
+        >>> hum_m = w.mark_at (hum_p, left_gravity = False)
         >>> w.place_cursor (w.bot_pos)
         >>> w.insert (w.current_pos, "Hi", yell)
         >>> w.insert (w.current_pos, "Ho", delta = 2)
