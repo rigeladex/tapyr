@@ -45,11 +45,13 @@ class Mixin (TFL.Meta.Object) :
        instead of using literal names for the package name spaces.
     """
 
-    ANS      = TFL
-    TNS_name = None
+    AC       = None     ### application context
+    ANS      = TFL      ### application specific package name space
+    TNS_name = None     ### toolkit     specific package name space
 
     def __init__ (self, AC = None, ** kw) :
         if AC is not None :
+            self.AC  = AC
             self.ANS = AC.ANS
             if self.TNS_name is not None :
                 tns = AC.ANS

@@ -152,8 +152,8 @@ class CI_Event_Binder (_CI_) :
             , cmd_name        = None
             , ** kw
             ) :
-        ev_name = getattr (TFL.TKT.Tk.Eventname, (info or name).lower ())
-        result  = _CI_Event_Binding_ (self, name, callback, ev_name)
+        ev_name = getattr (self.TNS.Eventname, (info or name).lower ())
+        result  = _CI_Event_Binding_ (self.AC, self, name, callback, ev_name)
         self.bindings [name] = result
         return result
     # end def add_command
@@ -312,7 +312,7 @@ class CI_Toolbar (_CI_Widget_) :
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
         self.widget.add_category (name, index, delta)
-        result = _CI_Toolbar_Group_ (name, self)
+        result = _CI_Toolbar_Group_ (self.AC, name, self)
         return result
     # end def add_group
 
