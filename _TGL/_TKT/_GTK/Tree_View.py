@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Mar-2005 (MG) Automated creation
 #    27-Mar-2005 (MG) `__init__` and test added
+#     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    ««revision-date»»···
 #--
 
@@ -54,9 +55,10 @@ class Tree_View (GTK.Container) :
         , GTK.SG_Object_Property ("vadjustment")
         )
 
-    _wtk_delegation = dict \
-        ( append_column = GTK.FP_Object_Extract
+    _wtk_delegation = GTK.Delegation \
+        ( GTK.Delegator_O ("append_column")
         )
+
     def __init__ (self, model = None, * args, ** kw) :
         if model :
             model = model.wtk_object

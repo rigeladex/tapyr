@@ -27,7 +27,8 @@
 #
 # Revision Dates
 #    28-Mar-2005 (MG) Automated creation
-#    ««revision-date
+#     2-Apr-2005 (MG) `__init__` added
+#    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
@@ -53,6 +54,17 @@ class Text_View (GTK.Container) :
         , GTK.SG_Property         ("tabs")
         , GTK.SG_Property         ("wrap_mode")
         )
+
+    def __init__ (self, AC = None, ** kw) :
+        if buffer not in kw :
+            kw ["buffer"] = GTK.Text_Buffer (AC = AC)
+        ### ew need the `_buffer` reference to prevent that the garbage
+        ### collector destroys the `Text_Buffer`
+        self._buffer      = b = kw ["buffer"]
+        kw ["buffer"]     = b.wtk_object
+        self.__super.__init__ (** kw)
+    # end def __init__
+
 
 # end class Text_View
 

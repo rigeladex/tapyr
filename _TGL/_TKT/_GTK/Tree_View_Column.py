@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Mar-2005 (MG) Automated creation
 #    27-Mar-2005 (MG) Creation continued
+#     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    ««revision-date»»···
 #--
 
@@ -35,15 +36,16 @@ from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Object
 import _TGL._TKT._GTK.Pack_Mixin
 
-class Renderer_Wrapper (GTK.FP_Object_Extract) :
+class Delegator_R (GTK.Delegator_O) :
     """Converts the first parameter from an int to a Cell_Renderer object"""
 
-    def __call__ (self, renderer, ** kw) :
+    def __call__ (self, this, renderer, ** kw) :
         if isinstance (renderer, int) :
-            renderer = self.owner.renderers [renderer]
-        return self.__super.__call__ (renderer, ** kw)
+            renderer = this.renderers [renderer]
+        return self.__super.__call__ (this, renderer, ** kw)
     # end def __call__
-# end class Renderer_Wrapper
+
+# end class Delegator_R
 
 class Tree_View_Column (GTK.Object, GTK.Pack_Mixin) :
     """Wrapper for the GTK widget TreeViewColumn"""
@@ -67,13 +69,13 @@ class Tree_View_Column (GTK.Object, GTK.Pack_Mixin) :
         , GTK.SG_Property  ("widget")
         , GTK.SG_Property  ("width", set = None)
         , GTK.SG_Object_List_Property
-            ( "renderers", set = None, get_fct_name = "get_cell_renderers")
+            ("renderers", set = None, get_fct_name = "get_cell_renderers")
         )
 
-    _wtk_delegation = dict \
-        ( set_attributes = Renderer_Wrapper
-        , add_attribute  = Renderer_Wrapper
-        , clear          = "clear"
+    _wtk_delegation = GTK.Delegation \
+        ( Delegator_R   ("set_attributes")
+        , Delegator_R   ("add_attribute")
+        , GTK.Delegator ("clear")
         )
 
     def __init__ (self, title = None, renderer = None, * args, ** kw) :

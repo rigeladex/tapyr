@@ -31,6 +31,7 @@
 #    27-Mar-2005 (MG) `add` and `remove` replaced by propper
 #                     `_wtk_delegation` entries
 #    27-Mar-2005 (MG) `children` converted to a `SG_Object_List_Property`
+#     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    ««revision-date»»···
 #--
 
@@ -47,8 +48,8 @@ class Container (GTK.Widget) :
         , GTK.SG_Object_List_Property ("children", set = None)
         )
 
-    _wtk_delegation  = dict \
-        (add = GTK.FP_Object_Extract, remove = GTK.FP_Object_Extract)
+    _wtk_delegation  = GTK.Delegation \
+        (GTK.Delegator_O ("add"), GTK.Delegator_O ("remove"))
 
 # end class Container
 

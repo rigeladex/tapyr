@@ -27,21 +27,220 @@
 #
 # Revision Dates
 #    28-Mar-2005 (MG) Automated creation
+#     2-Apr-2005 (MG) `TFL.TKT.Text` interface implemented
 #    ««revision-date»»···
 #--
 
-from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.G_Object
+from    predicate             import dict_from_list
+from   _TGL                   import TGL
+import _TGL._TKT._GTK.Object
+import _TGL._TKT._GTK.Styler
+import _TGL._TKT._GTK.Text_Tag
+import _TGL._TKT.Text
+import  weakref
 
-class Text_Buffer (GTK.G_Object) :
+GTK = TGL.TKT.GTK
+gtk = GTK.gtk
+
+class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     """Wrapper for the GTK widget TextBuffer"""
 
-    GTK_Class        = GTK.gtk.TextBuffer
+    class Styler (TGL.TKT.GTK.Styler) :
+        Opts    = dict_from_list (("cursor", ))
+    # end class Styler
+
+    GTK_Class        = gtk.TextBuffer
     __gtk_properties = \
         ( GTK.Property            ("tag_table")
+        ,
         )
 
+    def __init__ (self, AC = None) :
+        self.__super.__init__ (AC = AC)
+        self._tag_map   = weakref.WeakKeyDictionary ()
+    # end def __init__
+
+    bot_iter    = property (lambda s : s.wtk_object.get_start_iter ())
+    eot_iter    = property (lambda s : s.wtk_object.get_end_iter   ())
+
+    bot_pos     = 0
+    #bot_pos     = property (lambda s : s.bot_iter.get_offset ())
+    current_pos = property \
+        ( lambda s :
+            s.wtk_object.get_iter_at_mark
+                (s.wtk_object.get_insert ()).get_offset ()
+        )
+    current_pos = property \
+        (lambda s : s.wtk_object.get_insert ())
+    eot_pos     = property (lambda s : s.wtk_object.get_char_count ())
+    #eot_pos     = property (lambda s : s.eot_iter.get_offset ())
+
+    def apply_style (self, style, head = None, tail = None, delta = 0, lift = False) :
+        if head is None :
+            ### head is None -> apply the style to the complete widget
+            ### instead of a text range
+            self.__super.apply_style (style)
+        else :
+            tag = self._tag (style)
+            self.wtk_object.apply_tag \
+                ( tag.wtk_object
+                , self._move_iter     (self._iter_from_pom (head), delta)
+                , self._iter_from_pom (tail or self.eot_pos)
+                )
+            if lift :
+                tag.priority = self.tag_table.get_size ()
+    # end def apply_style
+
+    def delete (self, start = None, end = None) :
+        self.wtk_object.delete (start or self.bot_iter, end or self.eot_iter)
+    # end def delete
+
+    def bol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
+        pos = self._iter_from_pom (pos_or_mark)
+        ### move iter to start of line
+        self._move_iter           (pos, delta, line_delta)
+        pos.set_line_offset       (0)
+        return pos.get_offset     ()
+    # end def bol_pos
+
+    clear = delete
+
+    def eol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
+        pos = self._iter_from_pom (pos_or_mark)
+        ### move iter to end of line
+        self._move_iter           (pos, delta, line_delta).get_offset ()
+        pos.forward_to_line_end   ()
+        return pos.get_offset     ()
+    # end def eol_pos
+
+    def find (self, text, head = None, tail = None, delta = 0, backwards = False) :
+        start = (self.bot_iter, self.eot_iter) [backwards]
+        head  = self._move_iter (self._iter_from_pom (head or start), delta)
+        if tail :
+            tail = self._iter_from_pom (tail, copy_pos = False)
+        search   = (head.forward_search, head.backward_search) [backwards]
+        result   = search \
+            ( text
+            , limit = tail
+            , flags = gtk.TEXT_SEARCH_VISIBLE_ONLY | gtk.TEXT_SEARCH_TEXT_ONLY
+            )
+        return result and result [0].get_offset ()
+    # end def find
+
+    def free_mark (self, * mark) :
+        for m in mark :
+            self.wtk_object.delete_mark (m)
+    # end def free_mark
+
+    def get (self, head = None, tail = None, delta= 0) :
+        head = self._iter_from_pom (head or self.bot_iter)
+        tail = self._iter_from_pom (tail or self.eot_iter, copy_pos = False)
+        head = self._move_iter (head, delta)
+        return self.wtk_object.get_text (head, tail)
+    # end def get
+
+    def insert (self, pos_or_mark, text, style = None, delta = 0) :
+        head = self._move_iter (self._iter_from_pom (pos_or_mark), delta)
+        tag  = self._tag (style)
+        if tag :
+            return self.wtk_object.insert_with_tags \
+                (head, text, tag.wtk_object)
+        return self.wtk_object.insert_with_tags (head, text)
+    # end def insert
+
+    def insert_image (self, pos_or_mark, image_name, style = None, delta = 0) :
+        raise NotImplementedError, \
+            "%s must define insert_image" % (self.__class__.__name__, )
+    # end def insert_image
+
+    def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
+        raise NotImplementedError, \
+            "%s must define insert_widget" % (self.__class__.__name__, )
+    # end def insert_widget
+
+    def mark_at (self, pos, delta = 0, name = None, left_gravity = False) :
+        pos = self._move_iter (self._iter_from_pom (pos), delta)
+        return self.wtk_object.create_mark (name, pos, left_gravity)
+    # end def mark_at
+
+    def place_cursor (self, pos_or_mark) :
+        return self.wtk_object.place_cursor \
+            (self._iter_from_pom (pos_or_mark, copy_pos = False))
+    # end def place_cursor
+
+    def pos_at (self, pos, delta = 0) :
+        return self._move_iter (self._iter_from_pom (pos), delta)
+    # end def pos_at
+
+    def remove (self, head, tail = None, delta = 0) :
+        head = self._iter_from_pom (head, copy_pos = False)
+        if tail is None :
+            tail = self._move_iter     (head.copy (), delta)
+        else :
+            tail = self._iter_from_pom (tail)
+        return self.delete (head, tail)
+    # end def remove
+
+    def remove_style (self, style, head, tail = None, delta = 0) :
+        self.wtk_object.remove_tag \
+            ( self._tag_map [style].wtk_object
+            , self._move_iter     (self._iter_from_pom (head), delta)
+            , self._iter_from_pom (tail or self.eot_pos)
+            )
+    # end def remove_style
+
+    def see (self, pos_or_mark) :
+        raise NotImplementedError, \
+            "`see` cannot be implemented by a Text-Buffer"
+    # end def see
+
+    def set_tabs (self, * tabs) :
+        raise NotImplementedError, \
+            "`set_tabs` cannot be implemented by a Text-Buffer"
+    # end def set_tabs
+
+    ### only internal functions
+    def _move_iter (self, iter, delta = 0, line_delta = 0) :
+        if delta :
+            iter.forward_chars (delta)
+        if line_delta :
+            iter.forward_lines (line_delta)
+        return iter
+    # end def _move_iter
+
+    def _iter_from_pom (self, pos_or_mark, copy_pos = True) :
+        if isinstance (pos_or_mark, GTK.gtk.TextMark) :
+            return self.wtk_object.get_iter_at_mark (pos_or_mark)
+        elif isinstance (pos_or_mark, gtk.TextIter) :
+            if copy_pos :
+                return pos_or_mark.copy ()
+            return pos_or_mark
+        return self.wtk_object.get_iter_at_offset (pos_or_mark)
+    # end def _iter_from_pom
+
+    def _tag (self, style) :
+        result = None
+        if style is not None :
+            if style not in self._tag_map :
+                self._tag_map [style]  = tag = GTK.Text_Tag ()
+                tag.apply_style (style)
+                self.tag_table.add (tag.wtk_object)
+            result = self._tag_map [style]
+        return result
+    # end def _tag
+
 # end class Text_Buffer
+
+Text = Text_Buffer
+
+def _doctest_AC () :
+    ### Restricted to doctest use, only
+    import _TGL._UI
+    import _TGL._UI.App_Context
+    return TGL.UI.App_Context (TGL)
+# end def _doctest_AC
+
+__test__ = dict (interface_test = TGL.TKT.Text._interface_test)
 
 if __name__ != "__main__" :
     GTK._Export ("Text_Buffer")

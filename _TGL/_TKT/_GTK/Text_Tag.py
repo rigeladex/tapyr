@@ -27,15 +27,55 @@
 #
 # Revision Dates
 #    28-Mar-2005 (MG) Automated creation
+#     2-Apr-2005 (MG) `Styler` added
 #    ««revision-date»»···
 #--
 
-from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.G_Object
+from    predicate             import dict_from_list
+from   _TGL                   import TGL
+import _TGL._TKT._GTK.Object
+import _TGL._TKT._GTK.Styler
 
-class Text_Tag (GTK.G_Object) :
+GTK = TGL.TKT.GTK
+
+class Text_Tag (GTK.Object) :
     """Wrapper for the GTK widget TextTag"""
 
+
+    class Styler (TGL.TKT.GTK.Styler) :
+        Opts    = dict \
+            ( dict_from_list
+                ( ( "background", "font", "foreground", "underline"
+                  , "justify", "wrap"
+                  )
+                )
+            , lmargin1  = "indent"
+            , lmargin2  = "left_margin"
+            , rmargin   = "right_margin"
+            )
+
+        # GTK uses left-margin to indent the whole paragraph. If we
+        # want a negative indent (for the first line) it adds the
+        # absolute value of the negative indent to the left margin,
+        # so we have to subtract it again here....
+        def _correct_left_margin (self, value) :
+            indent   = self.style.lmargin1 - value
+            if indent < 0 :
+                return value + indent
+            return value
+        # end def _correct_left_margin
+
+        def _correct_indent (self, value) :
+            return self.style.lmargin2 - value
+        # end def _correct_indent
+
+        _opt_mappers    = dict \
+            ( lmargin1  = _correct_indent
+            , lmargin2  = _correct_left_margin
+            )
+    # end class Styler
+
+    _sty_map         = {}
     GTK_Class        = GTK.gtk.TextTag
     __gtk_properties = \
         ( GTK.Property            ("background", get = None)

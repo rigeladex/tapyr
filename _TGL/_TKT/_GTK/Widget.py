@@ -29,6 +29,7 @@
 #    21-Mar-2005 (MG) Creation
 #    26-Mar-2005 (MG) `_wtk_delegation` and `__init__` added
 #    31-Mar-2005 (MG) Key binding and new button signals added
+#     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    ««revision-date»»···
 #--
 
@@ -60,11 +61,11 @@ class Widget (GTK.Object) :
         , GTK.Property     ("width_request")
         )
 
-    _wtk_delegation = dict \
-        ( show      = "show"
-        , hide      = "hide"
-        , show_all  = "show_all"
-        , hide_all  = "hide_all"
+    _wtk_delegation = GTK.Delegation \
+        ( GTK.Delegator ("show")
+        , GTK.Delegator ("hide")
+        , GTK.Delegator ("show_all")
+        , GTK.Delegator ("hide_all")
         )
 
     def __init__ (self, * args, ** kw) :

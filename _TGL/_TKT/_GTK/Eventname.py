@@ -28,6 +28,8 @@
 # Revision Dates
 #    31-Mar-2005 (MG) Creation
 #     1-Apr-2005 (CT) Beefed up
+#     2-Apr-2005 (MG) Key names corrected ("<Fx>" -> "Fx", "<Insert>" ->
+#                     "Insert", ...)
 #    ««revision-date»»···
 #--
 
@@ -56,7 +58,10 @@ import _TFL._Meta.Object
 import _TGL._TKT
 import _TGL._TKT.Eventname
 import _TGL._TKT._GTK.Signal
-import _TGL._TKT._GTK.Widget
+
+import  pygtk
+pygtk.require ("2.0")
+import gtk
 
 class Key_Binder (TFL.Meta.Object) :
     """Binder used to connect a keyboard `shortcut` to a callback."""
@@ -65,12 +70,12 @@ class Key_Binder (TFL.Meta.Object) :
 
     def __init__ (self, key_name) :
         self.name           = key_name
-        self.key_spec       = kv, km = GTK.gtk.accelerator_parse (key_name)
+        self.key_spec       = kv, km = gtk.accelerator_parse (key_name)
         self._connects      = {}
         self._id            = self.__id
         self.__class__.__id = self._id + 1
-        GTK.gtk.binding_entry_add_signal \
-            (GTK.gtk.Widget, kv, km, "key-binding", int, self._id)
+        gtk.binding_entry_add_signal \
+            (gtk.Widget, kv, km, "key-binding", int, self._id)
     # end def __init__
 
     def connect (self, widget, callback, args, kw) :
@@ -139,15 +144,15 @@ class Button_Signal_Binder (Signal_Binder) :
     """
 
     delegation_map = \
-        { (1, GTK.gtk.gdk.  BUTTON_PRESS) : GTK.Signal.Single_Click_1
-        , (2, GTK.gtk.gdk.  BUTTON_PRESS) : GTK.Signal.Single_Click_2
-        , (3, GTK.gtk.gdk.  BUTTON_PRESS) : GTK.Signal.Single_Click_3
-        , (1, GTK.gtk.gdk._2BUTTON_PRESS) : GTK.Signal.Double_Click_1
-        , (2, GTK.gtk.gdk._2BUTTON_PRESS) : GTK.Signal.Double_Click_2
-        , (3, GTK.gtk.gdk._2BUTTON_PRESS) : GTK.Signal.Double_Click_3
-        , (1, GTK.gtk.gdk._3BUTTON_PRESS) : GTK.Signal.Triple_Click_1
-        , (2, GTK.gtk.gdk._3BUTTON_PRESS) : GTK.Signal.Triple_Click_2
-        , (3, GTK.gtk.gdk._3BUTTON_PRESS) : GTK.Signal.Triple_Click_3
+        { (1, gtk.gdk.  BUTTON_PRESS) : GTK.Signal.Single_Click_1
+        , (2, gtk.gdk.  BUTTON_PRESS) : GTK.Signal.Single_Click_2
+        , (3, gtk.gdk.  BUTTON_PRESS) : GTK.Signal.Single_Click_3
+        , (1, gtk.gdk._2BUTTON_PRESS) : GTK.Signal.Double_Click_1
+        , (2, gtk.gdk._2BUTTON_PRESS) : GTK.Signal.Double_Click_2
+        , (3, gtk.gdk._2BUTTON_PRESS) : GTK.Signal.Double_Click_3
+        , (1, gtk.gdk._3BUTTON_PRESS) : GTK.Signal.Triple_Click_1
+        , (2, gtk.gdk._3BUTTON_PRESS) : GTK.Signal.Triple_Click_2
+        , (3, gtk.gdk._3BUTTON_PRESS) : GTK.Signal.Triple_Click_3
         }
 
     def __init__ (self, name, real_signal) :
@@ -243,7 +248,7 @@ Eventname = TGL.TKT._Eventname \
     , click_1           = BSB           ("Single_Click_1", "Button_Press")
     , click_2           = BSB           ("Single_Click_2", "Button_Press")
     , click_3           = BSB           ("Single_Click_3", "Button_Press")
-    , close_node        = Key_Binder    ("<Delete>")
+    , close_node        = Key_Binder    ("Delete")
     , close_node_1      = Key_Binder    ("<Shift>Delete")
     , close_node_all    = Key_Binder    ("<Ctrl>Delete")
     , close_window      = Key_Binder    ("<Ctrl>w")
@@ -264,7 +269,7 @@ Eventname = TGL.TKT._Eventname \
     , exit              = Key_Binder    ("<Ctrl>q")
     , focus_enter       = Signal_Binder ("Focus_In")
     , focus_leave       = Signal_Binder ("Focus_Out")
-    , help              = Key_Binder    ("<F1>")
+    , help              = Key_Binder    ("F1")
     , history_complete  = Key_Binder    ("<Alt>q")
     , history_next      = Key_Binder    ("<Alt>Down")
     , history_previous  = Key_Binder    ("<Alt>Up")
@@ -279,19 +284,19 @@ Eventname = TGL.TKT._Eventname \
     , node_right        = Key_Binder    ("<Alt>f")
     , node_up           = Key_Binder    ("<Alt>p")
     , open              = Key_Binder    ("<Ctrl>o")
-    , open_node         = Key_Binder    ("<Insert>")
+    , open_node         = Key_Binder    ("Insert")
     , open_node_1       = Key_Binder    ("<Shift>Insert")
     , open_node_all     = Key_Binder    ("<Ctrl>Insert")
     , paste             = Key_Binder    ("<Ctrl>v")
     , Print             = Key_Binder    ("<Ctrl>p")
     , Print_all         = None
     , redo              = Key_Binder    ("<Ctrl>y")
-    , rename            = Key_Binder    ("<F2>")
+    , rename            = Key_Binder    ("F2")
     , save              = Key_Binder    ("<Ctrl>s")
     , save_and_exit     = Key_Binder    ("<Ctrl>e")
     , save_as           = Key_Binder    ("<Ctrl><Shift>s")
     , search            = Key_Binder    ("<Ctrl>f")
-    , search_next       = Key_Binder    ("<F3>")
+    , search_next       = Key_Binder    ("F3")
     , search_prev       = Key_Binder    ("<Shift>F3")
     , select_all        = Key_Binder    ("<Ctrl>a")
     , start_scan        = None ### XXX ??? Signal_Binder ("<Mouse><Press>2")

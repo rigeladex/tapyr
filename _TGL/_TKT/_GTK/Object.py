@@ -33,6 +33,8 @@
 #    27-Mar-2005 (MG) `SG_Object_*Property` added
 #    27-Mar-2005 (MG) `FP_Object_Extract` added and `__getattr__` changed to
 #                     support method wrappers
+#     1-Apr-2005 (MG) `_wtk_delegation` handling changed
+#     2-Apr-2005 (MG) Style handling added
 #    ««revision-date»»···
 #--
 
@@ -44,6 +46,7 @@ import _TGL._TKT._GTK
 import _TFL._Meta.Object
 import _TFL._Meta.M_Class
 import _TFL._Meta.M_Auto_Combine_Dicts
+import _TGL._TKT._GTK.Eventname
 
 import  pygtk
 pygtk.require ("2.0")
@@ -194,20 +197,35 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
 
 # end class _M_Object_
 
-class FP_Object_Extract (TFL.Meta.Object) :
-    """A call wrapper which extracts a `wtk_widget` from the first parameter"""
+class Delegator (TFL.Meta.Object) :
+    """Simple function delegator"""
 
-    def __init__ (self, owner, method) :
-        self.owner  = weakref.proxy (owner)
-        self.method = method
+    def __init__ (self, name) :
+        self.name = name
     # end def __init__
 
-    def __call__ (self, obj, * args, ** kw) :
-        obj = obj.wtk_object
-        return self.method (obj, * args, ** kw)
+    def __call__ (self, this,  * args, ** kw) :
+        return getattr (this.wtk_object, self.name) (* args, ** kw)
     # end def __call__
 
-# end class FP_Object_Extract
+# end class Delegator
+
+class Delegator_O (Delegator) :
+    """Delegator for a function of the `wtk_object` and extract the
+       `wtk_object` from the first parameter
+    """
+
+    def __call__ (self, this, obj, * args, ** kw) :
+        return self.__super.__call__ (this, obj.wtk_object, * args, ** kw)
+    # end def __call__
+
+# end class Delegator_O
+
+def Delegation (* args, ** kw) :
+    for arg in args :
+        kw [arg.name] = arg
+    return kw
+# end def Delegation
 
 class Object (TGL.TKT.Mixin) :
     """Root class for all GTK related objects (TextBuffer, TreeModel, ...)
@@ -224,6 +242,7 @@ class Object (TGL.TKT.Mixin) :
     __metaclass__    = _M_Object_
     __gtk_properties = ()
     _wtk_delegation  = {}
+    _sty_map         = {}
 
     ### `Class_Name` is the name of the new generated GTK-type
     ### `Signals`    is a dictionary describing the signals of the new GTK-type
@@ -240,6 +259,7 @@ class Object (TGL.TKT.Mixin) :
         ### set the backref directly in the C-gtk object and not in the
         ### python wrapper !
         self.wtk_object.set_data ("ktw_object", weakref.proxy (self))
+        self._sty_stack = []
     # end def __init__
 
     def _bind_single_ (self, signal, connect, func, args, kw) :
@@ -257,7 +277,7 @@ class Object (TGL.TKT.Mixin) :
 
     def bind_replace (self, signal, func, * args, ** kw) :
         return self._bind_single_ (signal, "connect", func, args, kw)
-    # end def bind
+    # end def bindDelegator
 
     def bind_after_replace (self, signal, func, * args, ** kw) :
         return self._bind_single_ (signal, "connect_after", func, args, kw)
@@ -286,22 +306,70 @@ class Object (TGL.TKT.Mixin) :
         return signal.emit (self.wtk_object, * args)
     # end def emit
 
+    ### style API
+    def _set_style (self, v) :
+        return self.__setattr__ (* v)
+    # end def _set_style
+
+    def apply_style (self, style, * args, ** kw) :
+        map (self._set_style, self._styler (style).option_dict.iteritems())
+        self._apply_style_bindings   (style)
+    # end def apply_style
+
+    def pop_style (self) :
+        map (self._set_style, self._sty_stack.pop ().iteritems ())
+    # end def pop_style
+
+    def push_style (self, style) :
+        assert style.callback is None
+        styler = self._styler  (style)
+        self._sty_stack.append (self._before_styler (styler))
+        map (self._set_style, styler.option_dict.iteritems ())
+    # end def push_style
+
+    def _apply_style_bindings (self, style, binder = None) :
+        if style is not None and style.callback :
+            if binder is None :
+                binder = self.bind_add
+            for name, cb in style.callback.iteritems () :
+                binder (getattr (self.TNS.Eventname, name), cb)
+    # end def _apply_style_bindings
+
+    def _before_styler (self, styler) :
+        return dict \
+            ([(p, getatt (self, p)) for p in styler.option_dict.iterkeys ()])
+    # end def _before_styler
+
+    def _styler (self, style, Styler = None) :
+        sty_map = self._sty_map
+        if Styler is None :
+            Styler = self.Styler
+        if Styler not in sty_map :
+            sty_map [Styler] = weakref.WeakKeyDictionary ()
+        sty_map = sty_map [Styler]
+        if style not in sty_map :
+            sty_map [style] = Styler (style)
+        return sty_map [style]
+    # end def _styler
+
     ### XXX implement me, please !!!
     def num_opt_val (self, name, default) :
         return default
     # end def num_opt_val
 
+    ### XXX implement me, please !!!
     def option_value (self, name, default, separator = None) :
         return default
     # end def option_value
 
+    ##XXX # replace me using meta class trickery
     def __getattr__ (self, name) :
         if name in self._wtk_delegation :
-            wrapper = self._wtk_delegation [name]
-            if not isinstance (wrapper, str) :
-                result = wrapper (self, getattr (self.wtk_object, name))
-            else :
-                result = getattr (self.wtk_object, wrapper)
+            result = \
+                (  lambda * args, ** kw
+                : self._wtk_delegation [name] (self, * args, ** kw)
+                )
+            result.__name__ = name
             setattr (self, name, result)
             return result
         raise AttributeError, name
