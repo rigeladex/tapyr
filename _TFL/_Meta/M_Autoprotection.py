@@ -27,7 +27,7 @@
 #    access-protected attributes
 #
 # Revision Dates
-#    20-Feb-2004 (CED) Creation
+#    20-Feb-2004 (CED, ABR) Creation
 #    ««revision-date»»···
 #--
 #
