@@ -39,6 +39,7 @@
 #     2-Nov-2004 (CT) `from_string` added
 #    10-Nov-2004 (CT) `from_ordinal` added
 #    15-Nov-2004 (CT) `wk_ordinal` added
+#     6-Jan-2005 (CT) `__main__` script added
 #    ««revision-date»»···
 #--
 
@@ -268,4 +269,27 @@ class Date_M (TFL.CAL._Mutable_DTW_) :
 
 if __name__ != "__main__" :
     TFL.CAL._Export ("*")
+else :
+    from Command_Line import Command_Line
+    cmd = Command_Line \
+        ( arg_spec    =
+              ( "base_date:S=%s" % Date ()
+              ,
+              )
+        , option_spec =
+              ( "-delta_to:S?Print `base_date - delta`"
+              , "-format:S=%Y%m%d?Format for date"
+              , "-offset:I=0?delta to `base_date` in days"
+              )
+        , max_args    = 1
+        )
+    base_date = Date.from_string (cmd.base_date)
+    if cmd.offset :
+        base_date += cmd.offset
+    if cmd.delta_to :
+        delta_to  = Date.from_string (cmd.delta_to)
+        print (base_date - delta_to).days
+    else :
+        format = cmd.format
+        print base_date.formatted (format)
 ### __END__ TFL.CAL.Date

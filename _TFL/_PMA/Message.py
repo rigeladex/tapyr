@@ -44,6 +44,15 @@
 #    30-Nov-2004 (CT) `Message._get_header` robustified
 #     3-Jan-2005 (CT) `_Message_._setup_body` robustified
 #     4-Jan-2005 (CT) `Msg_Status` used
+#     6-Jan-2005 (CT) `all_parts` added
+#     6-Jan-2005 (CT) `formatted` changed to only `show_sep` if there is more
+#                     than one part
+#     6-Jan-2005 (CT) Argument `show_sep` added to `_formatted_part`
+#     6-Jan-2005 (CT) `_setup_body` changed to handle `message/rfc822`
+#                     correctly
+#     6-Jan-2005 (CT) `Message.__init__` changed to pass `name` instead of
+#                     `""` to `__super.__init__`
+#     6-Jan-2005 (CT) `Message.__repr__` robustified
 #    ««revision-date»»···
 #--
 
@@ -78,6 +87,13 @@ class _Message_ (TFL.Meta.Object) :
         self._setup_body (email)
     # end def __init__
 
+    def all_parts (self) :
+        for p in self.parts :
+            yield p
+            for sp in p.all_parts () :
+                yield sp
+    # end def all_parts
+
     def formatted (self, sep_length = 79) :
         email = self.email
         if email :
@@ -92,8 +108,9 @@ class _Message_ (TFL.Meta.Object) :
                     parts = self.parts [0:1]
                 else :
                     parts = self.parts
+                show_sep = len (parts) > 1
                 for p in parts :
-                    for l in self._formatted_part (p, sep_length) :
+                    for l in self._formatted_part (p, sep_length, show_sep) :
                         yield l
     # end def formatted
 
@@ -155,10 +172,11 @@ class _Message_ (TFL.Meta.Object) :
                     (self.label_width, n, self._decoded_header (h))
     # end def _formatted_headers
 
-    def _formatted_part (self, p, sep_length) :
-        yield ""
-        yield ( "%s part %s %s" % ("-" * 4, p.name, "-" * sep_length)
-              ) [:sep_length]
+    def _formatted_part (self, p, sep_length, show_sep = True) :
+        if show_sep :
+            yield ""
+            yield ( "%s part %s %s" % ("-" * 4, p.name, "-" * sep_length)
+                  ) [:sep_length]
         for l in p.formatted (sep_length) :
             yield l
     # end def _formatted_part
@@ -182,15 +200,16 @@ class _Message_ (TFL.Meta.Object) :
         self.parts = parts = []
         self.body  = None
         if email.is_multipart () :
-            i = 1
-            for p in email.get_payload () :
-                if p.get_content_type () == "message/rfc822" :
-                    PT = Message
-                else :
-                    PT = Message_Part
-                p_name = ".".join (filter (None, (name, str (i))))
-                parts.append (PT (p, name = p_name))
-                i += 1
+            payload = email.get_payload ()
+            if email.get_content_type () == "message/rfc822" :
+                p, = payload
+                parts.append (Message (p, name = name))
+            else :
+                i = 1
+                for p in payload :
+                    p_name = ".".join (filter (None, (name, str (i))))
+                    parts.append (Message_Part (p, name = p_name))
+                    i += 1
         else :
             payload = email.get_payload (decode = True)
             if payload :
@@ -252,12 +271,18 @@ class Message (_Message_) :
     def __init__ (self, email, name = None, mailbox = None, status = None, number = None) :
         if status is None :
             status = TFL.PMA.Msg_Status ()
-        self.__super.__init__ (email, "")
-        self.name    = name
+        self.__super.__init__ (email, name)
         self.mailbox = mailbox
         self.status  = status
         self.number  = number
     # end def __init__
+
+    def all_parts (self) :
+        for p in self.parts :
+            yield p
+            for sp in p.all_parts () :
+                yield sp
+    # end def all_parts
 
     def formatted (self, sep_length = 79) :
         email = self._reparsed ()
@@ -356,8 +381,12 @@ class Message (_Message_) :
     # end def __str__
 
     def __repr__ (self) :
-        return "%s %s:%s" % \
-            (self.__class__.__name__, self.mailbox.path, self.name)
+        if self.mailbox :
+            result = "%s %s:%s" % \
+                (self.__class__.__name__, self.mailbox.path, self.name)
+        else :
+            result = "%s %s" % (self.__class__.__name__, self.name)
+        return result
     # end def __repr__
 
 # end class Message
@@ -370,7 +399,7 @@ def message_from_file (filename, parser = None) :
         email = parser.parse (fp)
     finally :
         fp.close ()
-    return Message (email)
+    return Message (email, sos.path.split (filename) [-1])
 # end def message_from_file
 
 def command_spec (arg_array = None) :
@@ -392,6 +421,17 @@ def main (cmd) :
         msg = message_from_file (m, parser)
         print u"\n".join (msg.formatted ()).encode ("iso-8859-15", "replace")
 # end def main
+
+"""
+import _TFL._PMA.Mailbox
+mb=TFL.PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
+print mb.summary ().encode ("iso-8859-1", "replace")
+m = mb.messages [-1]
+m._reparsed ()
+for p in m.all_parts () :
+  print type (p), p.name
+
+"""
 
 if __name__ != "__main__" :
     TFL.PMA._Export ("*")
