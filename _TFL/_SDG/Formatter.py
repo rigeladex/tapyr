@@ -75,8 +75,6 @@
 #    17-Sep-2004 (CT) `Multi_Line_Formatter.__call__` changed (back and forth)
 #    17-Sep-2004 (CT) Pass both `indent_offset` and `indent_anchor` to
 #                     recursive calls
-#    21-Sep-2004 (CT) Argument `sep_form` of `_Recursive_Formatter_` changed
-#                     to `sep`
 #    ««revision-date»»···
 #--
 
@@ -161,20 +159,19 @@ class _Recursive_Formatter_ (TFL.Meta.Object) :
         self.anchor    = anchor
     # end def __init__
 
-    def __call__ (self, node, context, sep) :
+    def __call__ (self, node, context, sep_form) :
         self.node       = node
         self.context    = context
         self.recurse_kw = recurse_kw = context.recurse_kw.copy ()
-        self.sep        = sep
-        head            = self.head_form % context
-        tail            = self.tail_form % context
+        self.sep        = sep_form % context
         _format         = self._format
         if isinstance (_format, Record) :
             prec        = _format.prec % context
             _format     = "%%%s%s%s" % (_format.flags, prec, _format.type)
             recurse_kw  ["format_prec"] = float (prec)
+        head, tail      = self.head_form % context, self.tail_form % context
         self.format     = head + _format + tail
-        context.locals ["ht_width"] = len (head) + len (tail) + len (self.sep)
+        context.locals ["ht_width"] = len (head) + len (tail)
         return self
     # end def __call__
 
@@ -231,8 +228,8 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
         self.__super.__init__ (key, format, head_form, tail_form, anchor)
     # end def __init__
 
-    def __call__ (self, node, context, sep) :
-        result = self.__super.__call__ (node, context, sep)
+    def __call__ (self, node, context, sep_form) :
+        result = self.__super.__call__ (node, context, sep_form)
         if self.rec_form :
             self.recurse_kw ["format_name"] = self.rec_form
         return result
@@ -279,22 +276,13 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
     def __call__ (self, node, context) :
         self.node    = node
         self.context = context
-        x_forms      = self.x_forms
-        self.empty   = x_forms.empty   % context
-        self.front   = x_forms.front   % context
-        self.front0  = x_forms.front0  % context
-        self.rear    = x_forms.rear    % context
-        self.rear0   = x_forms.rear0   % context
-        self.sep     = x_forms.sep     % context
-        self.sep_eol = x_forms.sep_eol % context
-        if x_forms.front_before_nl is None :
-            self.front_before_nl = None
-        else :
-            self.front_before_nl = x_forms.front_before_nl % context
-        if x_forms.rear_after_nl is None :
-            self.rear_after_nl   = None
-        else :
-            self.rear_after_nl   = x_forms.rear_after_nl   % context
+        self.empty   = self.x_forms.empty   % context
+        self.front   = self.x_forms.front   % context
+        self.front0  = self.x_forms.front0  % context
+        self.rear    = self.x_forms.rear    % context
+        self.rear0   = self.x_forms.rear0   % context
+        self.sep     = self.x_forms.sep     % context
+        self.sep_eol = self.x_forms.sep_eol % context
         return self
     # end def __call__
 
@@ -302,33 +290,29 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
         node       = self.node
         context    = self.context
         sep        = self.front
-        eol = rear = self.sep_eol
+        eol        = self.sep_eol
         i          = 0
         formatters = TFL.Look_Ahead_Gen (self.formatters)
         for f in formatters :
             self.anchor = f.anchor
-            lines  = TFL.Look_Ahead_Gen (f (node, context, sep = self.sep))
+            lines  = TFL.Look_Ahead_Gen \
+                (f (node, context, sep_form = self.x_forms.sep))
             for r in lines :
                 if formatters.is_finished and lines.is_finished :
                     rear = self.rear
                     if i == 0 :
                         rear = self.rear0
                         sep  = self.front0
+                    result = "".join ((sep, r, rear))
                 else :
-                    if i == 0 and self.front_before_nl is not None :
-                        yield self.front_before_nl
-                        context.locals ["indent_anchor"] = \
-                            context.indent_offset
-                yield "".join ((sep, r, rear))
+                    result = "".join ((sep, r, eol))
+                yield result
                 sep = ""
                 i  += 1
             if i :
                 sep = self.sep
-        if i == 0 :
-            if self.empty :
-                yield self.empty
-        elif self.rear_after_nl is not None :
-            yield self.rear_after_nl
+        if i == 0 and self.empty :
+            yield self.empty
     # end def __iter__
 
     def __str__ (self) :
@@ -387,7 +371,7 @@ class Multi_Line_Formatter (_Formatter_) :
             i          = 0
             add_indent = len (head)
             for l in lines :
-                PRINT ("    Lines `%s:%s`" % (head, l), context.indent_offset, context.indent_anchor)
+                PRINT ("    Lines «%s:%s»" % (head, l), context.indent_offset, context.indent_anchor)
                 if i > 0 and f.anchor :
                     head = (" " * add_indent) + head
                     context.locals ["indent_anchor"] = \
@@ -405,27 +389,20 @@ class Multi_Line_Formatter (_Formatter_) :
 
     def _x_forms (self, x_forms) :
         result = Record \
-            ( empty           = ""
-            , front           = ""
-            , front_before_nl = None
-            , front0          = None
-            , head            = ""
-            , rear            = ""
-            , rear_after_nl   = None
-            , rear0           = None
-            , sep             = ""
-            , sep_eol         = ""
-            , tail            = ""
+            ( empty   = ""
+            , front   = ""
+            , front0  = None
+            , head    = ""
+            , rear    = ""
+            , rear0   = None
+            , sep     = ""
+            , sep_eol = ""
+            , tail    = ""
             )
         if x_forms :
             for spec in x_forms.split ("¡") :
                 key, form = spec.split ("=", 1)
                 setattr (result, key, form)
-        nl = "%(NL)s"
-        if nl in result.front :
-            result.front_before_nl, result.front = result.front.split (nl)
-        if nl in result.rear :
-            result.rear, result.rear_after_nl    = result.rear.split (nl)
         if result.front0 is None :
             result.front0 = result.front
         if result.rear0 is None :

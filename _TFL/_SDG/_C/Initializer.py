@@ -41,7 +41,7 @@ class Init_Atom (TFL.SDG.C.Node) :
         )
     front_args           = ("init", )
 
-    c_format             = """%(init)s%(:head= :*description:)s"""
+    c_format             = """%(init)s%(:front= :*description:)s"""
 
 # end class Init_Atom
 
@@ -49,7 +49,9 @@ class Init_Comp (TFL.SDG.C.Node) :
     """Initializer for composite variables/fields"""
 
     c_format             = """
-        { %(:rear=%(NL)s}¡sep=, :>*body_children:)s%(:head= :*description:)s
+        >
+        >{ %(:sep=, :*body_children:)s
+        >}%(:front= :*description:)s
     """
 
 # end class Init_Comp

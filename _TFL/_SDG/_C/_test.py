@@ -5,7 +5,6 @@ c = C.Comment ("This is a comment", stars = 2)
 s = C.Struct ( "TDFT_Sign_Mask"
              , "unsigned long bit_mask    = 42 // mask for value"
              , "unsigned long extend_mask // mask for sign extension"
-             , "char qux = 040"
              )
 t = C.Struct ( "TDFT_Sign_Mask2"
              , "unsigned long bit_mask    = 42 // mask for value"
@@ -21,10 +20,9 @@ t = C.Struct ( "TDFT_Sign_Mask2"
                  )
              )
 a1 = C.Array ("int", "ar", 2, init = (0, 1), static = True)
-a2 = C.Array ( "TDFT_Sign_Mask", "fubars", 3
-             , init = [ dict (bit_mask = "57 % 2",  extend_mask = 137, qux = 040)
-                      , dict (bit_mask = "142 % 4", extend_mask = -1, qux = 060)
-                      , dict (bit_mask = "95",      extend_mask = 0, qux = 077)
+a2 = C.Array ( "TDFT_Sign_Mask", "fubars", 2
+             , init = [ dict (bit_mask = "57 % 2",  extend_mask = 137)
+                      , dict (bit_mask = "142 % 4", extend_mask = -1)
                       ]
              )
 #c.write_to_c_stream (); s.write_to_c_stream  ();

@@ -67,10 +67,9 @@ class Array (TFL.SDG.C._Var_) :
 
     c_format             = "".join \
         ( ( _common_format
-          , """%(:front= =%(NL)s%(base_indent)s:*initializers:)s"""
-          #, """%(:front= =%(NL)s..:*initializers:)s"""
+          , """%(:front= = :*initializers:)s"""
           , ";"
-          , """%(:head= :*description:)s"""
+          , """%(:front= :*description:)s"""
           )
         )
 

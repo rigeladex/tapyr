@@ -110,7 +110,7 @@ class Var (_Var_) :
 
     c_format             = "".join \
         ( ( Ancestor._common_head
-          , """%(:front= =%(NL)s:*initializers:)s"""
+          , """%(:front= = :*initializers:)s"""
           , Ancestor._common_tail
           )
         )
