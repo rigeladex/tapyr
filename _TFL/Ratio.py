@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     4-Sep-2001 (CT) Creation
+#     5-Sep-2001 (CT) Error messages for `TypeError` improved
 #    ««revision-date»»···
 #--
 
@@ -78,7 +79,8 @@ class Ratio :
     def __init__ (self, n, d = None) :
         if isinstance (n, type ("")) :
             if not d is None :
-                raise TypeError, "Ratio() takes only 1 string argument"
+                raise TypeError, \
+                      "Ratio() 2nd argument not allowed when 1st is a string"
             if self.pattern.match (n) :
                 self.n = int (self.pattern.group ("n"))
                 self.d = int (self.pattern.group ("d") or 1)
@@ -86,7 +88,8 @@ class Ratio :
                 raise ValueError, "invalid literal for Range(): %s" % (n, )
         elif isinstance (n, Ratio) :
             if not d is None :
-                raise TypeError, "Ratio() takes only 1 Ratio argument"
+                raise TypeError, \
+                      "Ratio() 2nd argument not allowed when 1st is a Ratio"
             self.n = n.n
             self.d = n.d
         else :
