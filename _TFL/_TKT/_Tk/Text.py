@@ -71,6 +71,7 @@
 #     1-Apr-2005 (CT)  Optional argument `tag` added to `apply_style` and
 #                      `_tag`
 #     1-Apr-2005 (CT)  `tags_at` added
+#     2-Apr-2005 (CT)  `_tag` changed to fix bug introduced yesterday
 #    ««revision-date»»···
 #--
 
@@ -315,10 +316,11 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
                     (tag, ** self._styler (style, self.Tag_Styler).option_dict)
                 self._apply_style_bindings \
                     (style, lambda e, b : self.wtk_widget.tag_bind (tag, e, b))
-            elif tag is not None :
+            else :
                 result = self._tag_map [style]
-                assert tag == result, \
-                    "Inconsistent tag-usage %s for style %s" % (tag, style)
+                if tag is not None :
+                    assert tag == result, \
+                        "Inconsistent tag-usage %s for style %s" % (tag, style)
         return result
     # end def _tag
 
