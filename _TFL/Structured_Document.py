@@ -28,16 +28,19 @@
 #                     `Doc_Node'
 #    26-Sep-2001 (MG) Moved into package `TFL`
 #    29-Jan-2002 (MG) `get_childrens` added
+#    28-Feb-2002 (CT) Use `TFL.d_dict` instead of `D_Dict`
 #    ««revision-date»»···
 #--
 
 from   Formatted_Stream import *
-from   D_Dict           import D_Dict
+from   TFL              import TFL
 from   NO_List          import NO_List
 from   types            import MethodType, FunctionType
 from   predicate        import un_nested
 import re
 import string
+
+TFL.Import ("d_dict")
 
 class Invalid_Node (Exception) : pass
 
@@ -117,7 +120,7 @@ class Doc_Node_Formatter_Guarded_ :
 
 # end class Doc_Node_Formatter_Guarded_
 
-Init_Arg_Dict = D_Dict
+Init_Arg_Dict = TFL.d_dict
 
 class Doc_Node :
     """Node of a structured document"""
