@@ -56,6 +56,7 @@
 #     9-Dec-2003 (RMA) Added define and cfunctiondesc
 #    11-Dec-2003 (RMA) Added cmacrodesc.
 #    23-Dec-2003 (RMA) Added sanatized_label
+#    29-Dec-2003 (RMA) Added begin_block and end_block
 #    ««revision-date»»···
 #--
 
@@ -142,6 +143,8 @@ class Latex_Stream (Formatted_Stream) :
         self.indent ()
     # end def _begin_block
 
+    begin_block = _begin_block
+
     def _end_block (self, name, attributes = "") :
         """Write the end `\end {}' statement for a block-statement.
         """
@@ -149,6 +152,8 @@ class Latex_Stream (Formatted_Stream) :
         self.putl     (r"\end{%s}%s" % (name, attributes))
         self.putsl    (1)
     # end def _begin_block
+
+    end_block = _end_block
 
     def begin_description (self, environment = "description") :
         """Write the beginning of a description block."""
