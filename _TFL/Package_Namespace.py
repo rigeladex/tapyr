@@ -35,17 +35,36 @@
 #    30-Jul-2001 (CT) `*` import corrected
 #    30-Jul-2001 (CT) `_import_1` and `_import_name` factored
 #    31-Jul-2001 (CT) `From_Import` added (and `_import_symbols` factored)
+#     2-Aug-2001 (CT) `_Module_Space` added and used to separate namespace
+#                     for modules provided by the package from the namespace
+#                     for classes and functions provided by the package
+#     3-Aug-2001 (CT) `Import_Module` added
 #    ««revision-date»»···
 #--
 
 from   Caller  import globals as _caller_globals
-import inspect
+import inspect                as _inspect
+
+class _Module_Space :
+    
+    def __init__ (self, name) :
+        self.__name    = name
+    # end def __init__
+    
+    def __getattr__ (self, module_name) :
+        module = __import__ \
+            ("%s.%s" % (self.__name, module_name), {}, {}, (module_name, ))
+        setattr (self, module_name, module)
+        return module
+    # end def __getattr__
+    
+# end class _Module_Space
 
 class Package_Namespace :
     """Implement a namespace for python packages providing direct access to
        classes and functions implemented in the modules of the package.
 
-       Caveat: this doesn't work for nested packages.
+       Caveat: this currently doesn't work for nested packages.
 
        In the following, a package Foo_Package and module Bar are assumed as
        example. 
@@ -128,23 +147,45 @@ class Package_Namespace :
     def __init__ (self, name = None) :
         if not name :
             name = _caller_globals () ["__name__"]
-        self._name = name
-        self._seen = {}
+        self.__name    = name
+        self.__modules = self._ = _Module_Space (name)
+        self.__seen    = {}
     # end def __init__
     
     def Import (self, module_name, * symbols) :
         """Import all `symbols` from module `module_name` of package
-           `self._name`.
+           `self.__name`. A `*` is supported as the first element of
+           `symbols` and imports the contents of `__all__` (if defined) or
+           all objects defined by the module itself (i.e., no transitive
+           imports).
+
+           The elements of `symbols` can be strings or 2-tuples. Each 2-tuple
+           specifies a named to be imported followed by the name used for the
+           imported object (i.e., `(foo, bar)` is analogous to
+           `import foo as bar`)
         """
-        if not self._seen.has_key ((module_name, symbols)) :
+        if not self.__seen.has_key ((module_name, symbols)) :
             self.__dict__.update \
                 (self._import_symbols (module_name, * symbols))
-            self._seen [(module_name, symbols)] = 1
+            self.__seen [(module_name, symbols)] = 1
     # end def Import
 
+    def Import_Module (self, module_name) :
+        """Import module `module_name` into `self._`."""
+        return getattr (self.__modules, module_name)
+    # end def Import_Module
+    
     def From_Import (self, module_name, * symbols) :
         """Import all `symbols` from module `module_name` of package
-           `self._name` into caller's namespace.
+           `self.__name` into caller's namespace. A `*` is supported as the
+           first element of `symbols` and imports the contents of `__all__`
+           (if defined) or all objects defined by the module itself (i.e., no
+           transitive imports).
+
+           The elements of `symbols` can be strings or 2-tuples. Each 2-tuple
+           specifies a named to be imported followed by the name used for the
+           imported object (i.e., `(foo, bar)` is analogous to
+           `import foo as bar`)
         """
         _caller_globals ().update \
             (self._import_symbols (module_name, * symbols))
@@ -152,54 +193,54 @@ class Package_Namespace :
 
     def _import_symbols (self, module_name, * symbols) :
         result = {}
-        pkg = __import__ \
-            ("%s.%s" % (self._name, module_name), _caller_globals (1))
-        mod = getattr (pkg, module_name)
-        if len (symbols) == 1 and symbols [0] == "*" :
-            symbols = getattr (mod, "__all__", ())
-            if symbols :
-                self._import_names (mod, symbols, result)
+        mod    = getattr (self.__modules, module_name)
+        star   = None
+        if len (symbols) >= 1 and symbols [0] == "*" :
+            all_symbols = getattr (mod, "__all__", ())
+            if all_symbols :
+                self._import_names (mod, all_symbols, result)
             else :
                 for s, p in mod.__dict__.items () :
-                    if inspect.getmodule (p) is mod :
-                        self._import_1 (mod, s, p, result)
-        elif symbols :
+                    if _inspect.getmodule (p) is mod :
+                        self._import_1 (mod, s, s, p, result)
+            symbols = symbols [1:]
+            star    = 1
+        if symbols :
             self._import_names (mod, symbols, result)
-        else :
-            result [module_name] = mod
+        elif not star :
+            self._import_names (mod, (module_name, ), result)
         return result
     # end def _import_symbols    
     
     def _import_names (self, mod, names, result) :
         for name in names :
+            if isinstance (name, type ("")) :
+                name, as_name = name, name
+            else :
+                name, as_name = name
             p = getattr (mod, name, None)
             if p is not None :
-                self._import_1 (mod, name, p, result)
+                self._import_1 (mod, name, as_name, p, result)
     # end def _import_names    
 
-    def _import_1 (self, mod, name, object, result) :
+    def _import_1 (self, mod, name, as_name, object, result) :
         if __debug__ :
             if result.get (name, object) is not object :
                 raise ImportError, "%s %s %s" % \
                                    (name, object, result.get (name))
-        result [name] = object
-        try :
-            if not hasattr (object, "Module") :
-                object.Module = mod
-        except TypeError :
-            pass
+        result [as_name] = object
     # end def _import_1
     
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
             self.Import (name, name)
             return self.__dict__ [name]
-        raise AttributeError, name
+        raise ImportError, "No module named %s.%s" % (self.__name, name)
     # end def __getattr__
 
     def __repr__ (self) :
         return "<%s %s at 0x%x>" % \
-               (self.__class__.__name__, self._name, id (self))
+               (self.__class__.__name__, self.__name, id (self))
     # end def __repr__
     
 # end class Package_Namespace
