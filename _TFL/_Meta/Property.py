@@ -30,6 +30,7 @@
 #    14-Jan-2002 (CT) _Property_ factored, Aesthetics
 #    17-Jan-2003 (CT) `Class_and_Instance_Method` added
 #    17-Jan-2003 (CT) `M_` prefixes added
+#    20-Jan-2003 (CT) `Class_Method` factored
 #    ««revision-date»»···
 #--
 
@@ -103,7 +104,48 @@ class RW_Property (RO_Property) :
 
 # end class Read_Write
 
-class Class_and_Instance_Method (object) :
+class Class_Method (object) :
+    """Method wrapper for class methods. This class can be used just like the
+       built-in `classmethod`.
+
+       If the optional argument `cls` is passed to the `__init__` call, it
+       will provide better introspection, though (by showing which class
+       actually defined a class method).
+
+       Normally, it is best to use `TFL.Meta.M_Automethodwrap` as metaclass,
+       which does everything the right way.
+    """
+
+    class Bound_Method (object) :
+        def __init__ (self, method, target, cls) :
+            self.method = method
+            self.target = target
+            self.cls    = cls
+        # end def __init__
+
+        def __call__ (self, * args, ** kw) :
+            return self.method (self.target, * args, ** kw)
+        # end def __call__
+
+        def __repr__ (self) :
+            return "<bound method %s.%s of %r>" % \
+                   (self.cls.__name__, self.method.__name__, self.target)
+        # end def __repr__
+
+    # end class Bound_Method
+
+    def __init__ (self, method, cls = None) :
+        self.method = method
+        self.cls    = cls
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        return self.Bound_Method (self.method, cls, self.cls or cls)
+    # end def __get__
+
+# end class Class_Method
+
+class Class_and_Instance_Method (Class_Method) :
     """Flexible method wrapper: wrapped method can be used as class method
        and as instance method.
 
@@ -129,29 +171,6 @@ class Class_and_Instance_Method (object) :
        >>> U ().chameleon ()
        <class 'Property.U'> 274
     """
-
-    class Bound_Method (object) :
-        def __init__ (self, method, target, cls) :
-            self.method = method
-            self.target = target
-            self.cls    = cls
-        # end def __init__
-
-        def __call__ (self, * args, ** kw) :
-            return self.method (self.target, * args, ** kw)
-        # end def __call__
-
-        def __repr__ (self) :
-            return "<bound method %s.%s of %r>" % \
-                   (self.cls.__name__, self.method.__name__, self.target)
-        # end def __repr__
-
-    # end class Bound_Method
-
-    def __init__ (self, method, cls = None) :
-        self.method = method
-        self.cls    = cls
-    # end def __init__
 
     def __get__ (self, obj, cls = None) :
         if obj is None :
@@ -196,7 +215,7 @@ if __name__ == "__main__" :
         T ().chameleon ()
         class U (T) :
             foo = 84
-            __autowrap = TFL.d_dict (bar = classmethod)
+            __autowrap = TFL.d_dict (bar = Class_Method)
             def __init__ (self) :
                 self.foo = 2 * 137
             def chameleon (soc) :

@@ -29,6 +29,7 @@
 #    10-May-2002 (CT) Creation
 #    17-Jan-2003 (CT) `M_Automethodwrap` added
 #    17-Jan-2003 (CT) `M_` prefixes added
+#    20-Jan-2003 (CT) Docstring of `M_Automethodwrap` improved
 #    ««revision-date»»···
 #--
 
@@ -167,7 +168,8 @@ class M_Automethodwrap (_M_Type_) :
     """Metaclass automatically wrapping the methods specified in `__autowrap`.
 
        `__autowrap` must map method names to wrapper functions/objects (e.g.,
-       to classmethod, staticmethod, or TFL.Meta.Class_and_Instance_Method).
+       to staticmethod, TFL.Meta.Class_Method (a TFL replacement to
+       classmethod), or TFL.Meta.Class_and_Instance_Method).
     """
 
     def __init__ (cls, name, bases, dict) :
