@@ -96,6 +96,8 @@
 #                     NO_List indexed by interfacer) and handling of `index`
 #                     changed accordingly
 #    19-Jan-2005 (CT) Today's changes fixed
+#    21-Jan-2005 (MG) `Command.run` fixed to pass the result of the command
+#                     to the caller
 #    ««revision-date»»···
 #--
 
@@ -237,7 +239,7 @@ class Command (_Command_) :
         result = None
         try :
             if self.check_precondition () :
-                self._run (* args, ** kw)
+                result = self._run (* args, ** kw)
         except Exception_Handled :
             pass
         except KeyboardInterrupt :
