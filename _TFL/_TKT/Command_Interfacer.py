@@ -31,14 +31,14 @@
 #    11-Jan-2005 (CT) `as_check_button` added to `add_command`
 #    11-Jan-2005 (CT) `bind_to_widget` added
 #    18-Jan-2005 (MG) `Command_Interfacer.add_command` fixed
+#    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
-import _TFL._Meta.Object
-import _TFL._TKT
+import _TFL._TKT.Mixin
 
-class Command_Interfacer (TFL.Meta.Object) :
+class Command_Interfacer (TFL.TKT.Mixin) :
     """Model a toolkit command interface like menu, toolbar, etc."""
 
     def destroy (self) :

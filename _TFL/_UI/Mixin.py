@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -20,28 +20,21 @@
 #
 #++
 # Name
-#    TFL.TKT.Batch.__init__
+#    TFL.UI.Mixin
 #
 # Purpose
-#    Package providing Batch toolkit support for TFL
+#    Mixin for TFL.UI classes
 #
 # Revision Dates
-#    20-Dec-2004 (CT) Creation
-#    18-Jan-2005 (CT) Set `TFL.TKT.Mixin.TNS_name` instead of calling
-#                     `TFL.UI.set_TKT`
+#    18-Jan-2005 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   _TFL.Package_Namespace import Package_Namespace
-from   _TFL                   import TFL
-import _TFL._TKT
+from   _TFL            import TFL
+from   _TFL._TKT.Mixin import Mixin
 
-Batch = Package_Namespace ()
-TFL.TKT._Export ("Batch")
+import _TFL._UI
 
-import _TFL._TKT.Mixin
-TFL.TKT.Mixin.TNS_name = "Batch"
-
-del Package_Namespace
-
-### __END__ TFL.TKT.Batch.__init__
+if __name__ != "__main__" :
+    TFL.UI._Export ("Mixin")
+### __END__ TFL.UI.Mixin

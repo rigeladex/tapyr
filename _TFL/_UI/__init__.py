@@ -27,21 +27,12 @@
 #
 # Revision Dates
 #    20-Dec-2004 (CT) Creation
+#    18-Jan-2005 (CT) `set_TKT` removed
 #    ««revision-date»»···
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace
 from   _TFL                   import TFL
-
-def _set_TKT (tkt) :
-    if hasattr (UI, "TKT") :
-        raise RuntimeError, "Cannot change toolkit from %s to %s" % \
-            (UI.TKT, tkt)
-    UI.TKT = tkt
-# end def _set_TKT
-
-UI = Package_Namespace ()
-UI.set_TKT = _set_TKT
 
 TFL._Export ("UI")
 

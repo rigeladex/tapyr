@@ -43,6 +43,7 @@
 #    12-Jan-2005 (CT) `CI_Event_Binder` and `_CI_Event_Binding_` added
 #    13-Jan-2005 (CT) Small fixes
 #    18-Jan-2005 (CT) Small fixes
+#    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #    ««revision-date»»···
 #--
 
@@ -66,7 +67,8 @@ class _CI_Widget_ (_CI_) :
 
     widget = None
 
-    def __init__ (self, parent, ** kw) :
+    def __init__ (self, AC, parent, ** kw) :
+        self.__super.__init__ (AC = AC, parent = parent, ** kw)
         self.widget = self.Widget_Type (parent, ** kw)
     # end def __init__
 
@@ -81,7 +83,8 @@ class _CI_Widget_ (_CI_) :
 class _CI_Event_Binding_ (_CI_) :
     """Encapsulate a single event binding"""
 
-    def __init__ (self, ev_binder, name, callback, ev_name) :
+    def __init__ (self, AC, ev_binder, name, callback, ev_name) :
+        self.__super.__init__ (AC = AC)
         self.ev_binder  = weakref.proxy (ev_binder)
         self.name       = name
         self.callback   = callback
@@ -110,7 +113,8 @@ class CI_Event_Binder (_CI_) :
        triggered by key-presses, mouse-clicks and other such events)
     """
 
-    def __init__ (self, * widgets) :
+    def __init__ (self, AC, * widgets) :
+        self.__super.__init__ (AC = AC)
         self.widgets  = dict_from_list (* widgets)
         self.bindings = NO_List ()
     # end def __init__
@@ -269,8 +273,8 @@ class CI_Menu (_CI_Widget_) :
 class CI_Menubar (CI_Menu) :
     """Implement a menubar command interfacer for Tkinter"""
 
-    def __init__ (self, parent, ** kw) :
-        self.__super.__init__ (parent, ** kw)
+    def __init__ (self, AC, parent, ** kw) :
+        self.__super.__init__ (AC = AC, parent = parent, ** kw)
         parent.toplevel.configure (menu = self.widget)
         ### the following hacks around a bug in Tkinter 1.63 which doesn't
         ### correctly handle menus configured as menubar
@@ -325,7 +329,8 @@ class CI_Toolbar (_CI_Widget_) :
 
 class _CI_Toolbar_Group_ (_CI_) :
 
-    def __init__ (self, category, widget) :
+    def __init__ (self, AC, category, widget) :
+        self.__super.__init__ (AC = AC)
         self.widget   = widget
         self.category = category
     # end def __init__

@@ -27,14 +27,14 @@
 #
 # Revision Dates
 #    12-Jan-2005 (CT) Creation
+#    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
-import _TFL._TKT
-import _TFL._Meta.Object
+import _TFL._TKT.Mixin
 
-class _Eventname (TFL.Meta.Object) :
+class _Eventname (TFL.TKT.Mixin) :
     """Provide symbolic names for GUI events (keys, mouse clicks, ...)
 
        >>> Eventname = _Eventname (copy = "<Control C>", save = "<Control S>")
@@ -48,7 +48,8 @@ class _Eventname (TFL.Meta.Object) :
        AttributeError: 'Eventname' object has no attribute 'cut'
     """
 
-    def __init__ (self, ** kw) :
+    def __init__ (self, AC = None, ** kw) :
+        self.__super.__init__ (AC = AC)
         self._map = dict (kw)
     # end def __init__
 

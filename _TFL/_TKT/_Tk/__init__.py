@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    12-Jan-2005 (CT) Creation
+#    18-Jan-2005 (CT) Set `TFL.TKT.Mixin.TNS_name` instead of calling
+#                     `TFL.UI.set_TKT`
 #    ««revision-date»»···
 #--
 
@@ -37,8 +39,8 @@ import _TFL._TKT
 Tk = Package_Namespace ()
 TFL.TKT._Export ("Tk")
 
-import _TFL._UI
-TFL.UI.set_TKT (Tk)
+import _TFL._TKT.Mixin
+TFL.TKT.Mixin.TNS_name = "Tk"
 
 del Package_Namespace
 
