@@ -89,6 +89,7 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
 
     def formatted (self, format_name, * args, ** kw) :
         if self.level <= self.out_level :
+#            print kw ["indent_anchor"], kw ["ht_width"], kw ["indent_anchor"] + kw ["ht_width"] + 2 + 4, self.description
             return self.__super.formatted (format_name, * args, ** kw)
         else :
             return ()
