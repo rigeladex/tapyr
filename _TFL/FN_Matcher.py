@@ -144,31 +144,31 @@ class FN_Matcher_Grep (FN_Matcher) :
        pattern.
 
        >>> names = ["abcd.x", "abcd.y", "cdef.x", "cdef.y", "rstu.x", "rstu.y"]
-       >>> FN_Matcher_Grep ("cd", "*.x", open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*.x", _open = StringIO) (names)
        ['abcd.x', 'cdef.x']
-       >>> FN_Matcher_Grep ("cd", "*.y", open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*.y", _open = StringIO) (names)
        ['abcd.y', 'cdef.y']
-       >>> FN_Matcher_Grep ("cd", "*", open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*", _open = StringIO) (names)
        ['abcd.x', 'abcd.y', 'cdef.x', 'cdef.y']
-       >>> FN_Matcher_Grep ("u", "*", open = StringIO) (names)
+       >>> FN_Matcher_Grep ("u", "*", _open = StringIO) (names)
        ['rstu.x', 'rstu.y']
-       >>> FN_Matcher_Grep ("cd", "*.x", predicate = lambda x : not x, open = StringIO) (names)
+       >>> FN_Matcher_Grep ("cd", "*.x", predicate = lambda x : not x, _open = StringIO) (names)
        ['rstu.x']
     """
 
-    def __init__ (self, grep_pattern, name_pattern, predicate = lambda x : x, open = open) :
+    def __init__ (self, grep_pattern, name_pattern, predicate = lambda x : x, _open = open) :
         if isinstance (grep_pattern, (str, unicode)) :
             grep_pattern  = re.compile (grep_pattern)
         self.grep_pattern = grep_pattern
         self.pattern      = self._Matcher (name_pattern)
         self.predicate    = predicate
-        self.open         = open
+        self._open        = _open ### just for unit testing
     # end def __init__
 
     def matches (self, file_name) :
         if self.pattern.matches (file_name) :
             try :
-                file = self.open (file_name)
+                file = self._open (file_name)
             except IOError :
                 pass
             else :
