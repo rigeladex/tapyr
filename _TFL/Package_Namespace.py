@@ -59,6 +59,7 @@
 #    21-Feb-2002 (CT) `_Module_Space._load` factored
 #    22-Feb-2002 (CT) `_leading_underscores` added and used to remove leading
 #                     underscores from `Package_Namespace.__name`
+#    22-Feb-2002 (CT) `_debug` added and used to guard `XXX PPP` prints
 #    ««revision-date»»···
 #--
 
@@ -67,7 +68,7 @@ from   caller_globals import caller_info    as _caller_info
 import inspect                              as _inspect
 from   Regexp         import Regexp
 
-_debug = 0
+_debug = 0 and __debug__
 
 class _Module_Space :
 
