@@ -87,6 +87,9 @@
 #     4-Feb-2003 (CT) `Derived_Package_Namespace` added
 #     8-Apr-2003 (CT) `_leading_underscores` changed to consider `._` too
 #     8-Apr-2003 (CT) `qname` added
+#     8-Apr-2003 (CT) `pname` added
+#     8-Apr-2003 (CT) Compatibility kludge of putting `Package_Namespace`
+#                     into `sys.modules` removed (it was too smelly)
 #    ««revision-date»»···
 #--
 
@@ -214,20 +217,18 @@ class Package_Namespace :
 
     _leading_underscores = Regexp (r"(\.|^)_+")
 
-    def __init__ (self, name = None) :
+    def __init__ (self, name = None, pname = None) :
+        if not pname :
+            pname = _caller_globals () ["__name__"]
         if not name :
-            name = _caller_globals () ["__name__"]
+            name = pname
         qname = self._leading_underscores.sub (r"\1", name) ### XXX s/\._/_/
         bname = qname.split (".") [-1]
         self.__name    = bname
         self.__qname   = qname
-        self.__modules = self._ = _Module_Space (name)
+        self.__pname   = pname
+        self.__modules = self._ = _Module_Space (pname)
         self.__seen    = {}
-        ### XXX remove the following when all old databases with
-        ###     non-underscore package names are gone
-        if name != self.__name :
-            import sys
-            sys.modules [self.__name] = __import__ (name)
     # end def __init__
 
     def _import_names (self, mod, names, result, check_clashes) :
@@ -314,9 +315,10 @@ class Derived_Package_Namespace (Package_Namespace) :
     """Package_Namespace which adds to an existing Package_Namespace"""
 
     def __init__ (self, parent, name = None) :
+        pname = _caller_globals () ["__name__"]
         if not name :
-            name = _caller_globals () ["__name__"]
-        Package_Namespace.__init__ (self, name)
+            name = pname
+        Package_Namespace.__init__ (self, name, pname)
         self._parent = parent
     # end def __init__
 
