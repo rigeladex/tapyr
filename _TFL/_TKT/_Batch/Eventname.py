@@ -32,6 +32,7 @@
 #    22-Feb-2005 (CT) Names `any_(enter|leave)` and `focus_(enter|leave)` added
 #    22-Feb-2005 (RSC) mouse_motion, cursor movement and open_ close_ events
 #    23-Feb-2005 (CT)  `mouse_enter` and `mouse_leave` reintroduced
+#     3-Mar-2005 (RSC) `Print_all` added
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,7 @@ Eventname = TFL.TKT._Eventname \
     , open                     = None
     , paste                    = None
     , Print                    = None
+    , Print_all                = None
     , redo                     = None
     , rename                   = None
     , save                     = None

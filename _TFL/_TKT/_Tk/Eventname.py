@@ -34,6 +34,7 @@
 #    22-Feb-2005 (CT)  Binding for `focus_enter` and `focus_leave` added
 #    22-Feb-2005 (RSC) mouse_motion, cursor movement and open_ close_ events
 #    23-Feb-2005 (CT)  `mouse_enter` and `mouse_leave` reintroduced
+#     3-Mar-2005 (RSC) `Print_all` added
 #    ««revision-date»»···
 #--
 
@@ -85,6 +86,7 @@ Eventname = TFL.TKT._Eventname \
     , open_node                = "<Insert>"
     , paste                    = "<Control-Key-v>"
     , Print                    = "<Control-Key-p>"
+    , Print_all                = None
     , redo                     = "<Control-Key-y>"
     , rename                   = "<F2>"
     , save                     = "<Control-Key-s>"
