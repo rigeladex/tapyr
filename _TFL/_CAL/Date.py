@@ -31,6 +31,7 @@
 #    17-Oct-2004 (CT) `__add__` and `__sub__` changed to use `Delta.dt_op`
 #    17-Oct-2004 (CT) Doctest for `Month_Delta` added
 #    17-Oct-2004 (CT) s/Month_Delta/MY_Delta/
+#    19-Oct-2004 (CT) s/MY_Delta/Month_Delta/
 #    ««revision-date»»···
 #--
 
@@ -55,16 +56,16 @@ class Date (TFL.CAL._DTW_) :
        >>> d = d - 1
        >>> d.year, d.month, d.day, d.date, d.week, d.weekday, d.ordinal
        (2004, 10, 10, datetime.date(2004, 10, 10), 41, 6, 731864)
-       >>> from _TFL._CAL.Delta import MY_Delta
-       >>> print d, d + MY_Delta (1)
+       >>> from _TFL._CAL.Delta import Month_Delta
+       >>> print d, d + Month_Delta (1)
        2004-10-10 2004-11-10
-       >>> print d, d + MY_Delta (3)
+       >>> print d, d + Month_Delta (3)
        2004-10-10 2005-01-10
-       >>> print d, d + MY_Delta (12)
+       >>> print d, d + Month_Delta (12)
        2004-10-10 2005-10-10
-       >>> print d, d + MY_Delta (-1)
+       >>> print d, d + Month_Delta (-1)
        2004-10-10 2004-09-10
-       >>> print d, d + MY_Delta (-12)
+       >>> print d, d + Month_Delta (-12)
        2004-10-10 2003-10-10
        >>> d1 = Date (2004, 10, 14)
        >>> d2 = Date (2004, 10, 16)

@@ -33,6 +33,7 @@
 #    17-Oct-2004 (CT) `Month_Delta` renamed to `MY_Delta` and `years` added
 #    17-Oct-2004 (CT) Getters of `Time_Delta` renamed to `h`, `m`, and `s` to
 #                     allow `seconds` to return `_body.seconds` unchanged
+#    19-Oct-2004 (CT) s/MY_Delta/Month_Delta/
 #    ««revision-date»»···
 #--
 
@@ -190,28 +191,32 @@ class Date_Time_Delta (Date_Delta, Time_Delta) :
 
 # end class Date_Time_Delta
 
-class MY_Delta (_Delta_) :
+class Month_Delta (_Delta_) :
     """Model month-stepping delta
 
-       >>> print MY_Delta (1)
+       >>> print Month_Delta (1)
        +1 month
-       >>> print MY_Delta (2)
+       >>> print Month_Delta (2)
        +2 months
-       >>> print MY_Delta (-3)
+       >>> print Month_Delta (-3)
        -3 months
-       >>> print MY_Delta (years = 1)
+       >>> print Month_Delta (years = 1)
        +1 year
-       >>> print MY_Delta (years = 5)
+       >>> print Month_Delta (years = 5)
        +5 years
-       >>> print MY_Delta (3, 1)
+       >>> print Month_Delta (3, 1)
        +3 months, +1 year
-       >>> print MY_Delta (1, 2)
+       >>> print Month_Delta (1, 2)
        +1 month, +2 years
+       >>> md = Month_Delta (13)
+       >>> print md
+       +1 month, +1 year
+       >>> print md + 1
+       +2 months, +1 year
     """
 
     def __init__ (self, months = 0, years = 0) :
-        self.months = months
-        self.years  = years
+        self.months = months + years * 12
     # end def __init__
 
     def dt_op (self, date, op) :
@@ -224,33 +229,43 @@ class MY_Delta (_Delta_) :
                 % (date, self.months)
                 )
         yd, m = divmod (date.month + self.months, 12)
-        return date.replace (month = m, year = date.year + self.years + yd)
+        return date.replace (month = m, year = date.year + yd)
     # end def dt_op
+
+    def __add__ (self, rhs) :
+        return self.__class__ (self.months + rhs)
+    # end def __add__
 
     def __cmp__ (self, rhs) :
         try :
-            rhs = rhs.years, rhs.months
+            rhs = rhs.months
         except AttributeError :
             pass
-        return cmp ((self.years, self.months), rhs)
+        return cmp (self.months, rhs)
     # end def __cmp__
 
     def __hash__ (self) :
-        return hash ((self.years, self.months))
+        return hash (self.months)
     # end def __hash__
 
     def __str__ (self) :
         result = []
-        months = self.months
-        years  = self.years
+        sign   = cmp (self.months, 0)
+        years, months = divmod (abs (self.months), 12)
         if months :
+            months *= sign
             result.append ("%+d month%s" % (months, ("", "s") [months != 1]))
         if years :
+            years  *= sign
             result.append ("%+d year%s"  % (years,  ("", "s") [years  != 1]))
         return ", ".join (result)
     # end def __str__
 
-# end class MY_Delta
+    def __sub__ (self, rhs) :
+        return self.__class__ (self.months - rhs)
+    # end def __sub__
+
+# end class Month_Delta
 
 Delta = Date_Time_Delta
 
