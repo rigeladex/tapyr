@@ -41,6 +41,7 @@
 #     9-Feb-2005 (CED) `Lazy_List` fixed to handle step`ed slices and doctest
 #                      added
 #     9-Feb-2005 (CED) `Fibonacci`, `Primes` added (moved from _YAGNI to here)
+#    15-Feb-2005 (CED) `Faculties` added (moved from _YAGNI to here)
 #    ««revision-date»»···
 #--
 
@@ -270,6 +271,22 @@ class Lazy_List :
 
 # end class Lazy_List
 
+def _faculty () :
+    """Generator used to create a lazy evaluating list
+       of Faculties
+
+       >>> Faculties [3]
+       6
+       >>> Faculties [5]
+       120
+    """
+    yield 0
+    x, y = 1, 2
+    while True :
+        yield x
+        x, y = x * y, y + 1
+# end def _faculty
+
 def _fib () :
     """Generator used to create a lazy evaluating list
        of Fibonacci numbers
@@ -317,7 +334,8 @@ def _prime () :
 Fibonacci = Lazy_List (_fib   ())
 ### Lazy evaluating list of Primes
 Primes    = Lazy_List (_prime ())
-
+### Lazy evaluating list of Faculties
+Faculties = Lazy_List (_faculty ())
 ### unit-test code ############################################################
 
 if __debug__ :
