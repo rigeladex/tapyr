@@ -56,4 +56,8 @@ class _TFL_Meta_Object_ (object) :
 
 # end class _TFL_Meta_Object_
 
+from   _TFL import TFL
+import _TFL._Meta
+TFL.Meta._Export ("Object")
+
 ### __END__ Object
