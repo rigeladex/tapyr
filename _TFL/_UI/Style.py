@@ -31,6 +31,7 @@
 #                      `add` and `Style.xxx`
 #    26-Jan-2005 (BRU) Added style attributes to `_allowed`, comments
 #    27-Jan-2005 (CT)  s/_allowed/_names/g
+#    15-Feb-2005 (BRU) Added allowed values to `_values` where appropriate
 #    ««revision-date»»···
 #--
 
