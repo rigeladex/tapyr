@@ -30,14 +30,15 @@
 #
 # Revision Dates
 #    11-Sep-2001 (CT) Creation (factored from `D_Dict`)
+#    16-Jan-2003 (CT) Aesthetics
 #    ««revision-date»»···
 #--
 
 def d_dict (* ancestors, ** kw) :
-    """Returns a dictionary, 
+    """Returns a dictionary,
 
        `d_dict` adds just a bit of syntactic sugar for the initialization of
-       dictionary objects: 
+       dictionary objects:
 
        - a new dictionary can be initialized with the contents of any number
          of existing dictionaries (the values from the existing dictionaries
@@ -68,11 +69,12 @@ def d_dict (* ancestors, ** kw) :
            d3.update (d1)
            d3.update ({"foo" : "bar", "spam" : 0})
     """
-    result    = {}
-    ancestors = list  (ancestors)
-    ancestors.reverse ()
-    map               (result.update, ancestors)
-    result.update     (kw)
+    result = {}
+    if ancestors :
+        ancestors = list  (ancestors)
+        ancestors.reverse ()
+        map               (result.update, ancestors)
+    result.update (kw)
     return result
 # end def d_dict
 
