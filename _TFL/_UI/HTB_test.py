@@ -29,6 +29,7 @@
 #    25-Feb-2005 (RSC) Creation from TFL.TKT.Tk.HTB_test
 #     7-Mar-2005 (RSC) Added background color (using "found" style)
 #    14-Mar-2005 (RSC) New test for a wrapped line
+#    14-Mar-2005 (RSC) wrapped-line test for non-root node.
 #    ««revision-date»»···
 #--
 
@@ -76,9 +77,13 @@ def insert_stuff (tb) :
     nn = mkchild         (tn, "s3")
     mkchild              (nn, "ss1")
     nnn = mkchild        (nn, "ss2")
-    tn = mknode          (tb, "n2", "nowrap", "found")
+    tn = mknode          (tb, "n2", "nowrap", "found", "arial")
     mkchild              (tn, "s-a")
-    mkchild              (tn, "s-b")
+    mkchild \
+        ( tn
+        , "s-b, this is a very long name which should wrap\n"
+          "and display an error in formatting..."
+        )
     tn.open              ()
     tn = mknode          (tb, "n3", "nowrap", "found")
     mkchild              (tn, "s-x")
