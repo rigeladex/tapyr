@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -100,6 +100,8 @@
 #                      - use `sys.modules` instead of `__import__`
 #                      - accept `q_name` as argument
 #    16-Jun-2004 (CT)  `Package_Namespace._Load_Module` factored
+#     5-Jul-2004 (CT)  `__name__` set for `Package_Namespace` instances to
+#                      make them more similar to modules
 #    ««revision-date»»···
 #--
 
@@ -219,7 +221,7 @@ class Package_Namespace :
         qname = self._leading_underscores.sub (r"\1", name) ### XXX s/\._/_/
         bname = qname.split (".") [-1]
         self.__name         = bname
-        self.__qname        = qname
+        self.__qname        = self.__name__ = qname
         self.__pname        = pname
         self.__module_space = self._ = _Module_Space (pname)
         self.__modules      = {}
