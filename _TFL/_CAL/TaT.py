@@ -34,6 +34,7 @@
 #    26-Oct-2004 (CT) `alt_iter` factored
 #    26-Oct-2004 (CT) `TaT.__iter__` changed to handle `None` returned from
 #                     `conditioner` (and doctest for this added)
+#    28-Oct-2004 (CT) `TaT` changed to allow multiple deltas
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ from   _TFL                    import TFL
 import _TFL._CAL
 import _TFL._Meta.Object
 
+import itertools
 from   predicate               import identity, alt_iter
 
 class TaT_Shifter (TFL.Meta.Object) :
@@ -173,20 +175,23 @@ class TaT (TFL.Meta.Object) :
 
        >>> from _TFL._CAL.Date  import *
        >>> from _TFL._CAL.Delta import *
+       >>> dd1   = Date_Delta (1)
+       >>> dd2   = Date_Delta (2)
+       >>> dd3   = Date_Delta (3)
        >>> upper = Date (2004, 12, 31)
        >>> start = Date (2004, 10, 23)
-       >>> [str (t) for t in TaT (start, Month_Delta (1), upper)]
+       >>> [str (t) for t in TaT (start, upper, Month_Delta (1))]
        ['2004-10-23', '2004-11-23', '2004-12-23']
-       >>> [str (t) for t in TaT (start, Month_Delta (2), upper)]
+       >>> [str (t) for t in TaT (start, upper, Month_Delta (2))]
        ['2004-10-23', '2004-12-23']
-       >>> ts_1_3  = TaT_Shifter (Date_Delta (days =  1), Date_Delta (days = 3))
-       >>> ts__1_3  = TaT_Shifter (Date_Delta (days =  -1), Date_Delta (days = 3))
-       >>> tas = TaT_Alt_Shifter (ts_1_3, ts__1_3)
+       >>> ts_1_3   = TaT_Shifter (  dd1, dd3)
+       >>> ts__1_3  = TaT_Shifter (- dd1, dd3)
+       >>> tas = TaT_Alt_Shifter  (ts_1_3, ts__1_3)
        >>> md = Month_Delta (1)
        >>> start = Date (2004, 1, 1)
        >>> upper = Date (2005, 1, 5)
        >>> is_monday = TaT_Conditioner (lambda d : d.weekday == 0, tas)
-       >>> for x in TaT (start, md, upper, is_monday) :
+       >>> for x in TaT (start, upper, md, conditioner = is_monday) :
        ...     print x
        ...
        2003-12-29
@@ -204,20 +209,31 @@ class TaT (TFL.Meta.Object) :
        2005-01-03
        >>> start = Date (2004, 10, 26)
        >>> upper = Date (2004, 11, 3)
-       >>> is_weekday = TaT_Conditioner (lambda d : d.is_weekday))
-       >>> [str (t) for t in TaT (start, Date_Delta (2), upper, is_weekday]
+       >>> is_weekday = TaT_Conditioner (lambda d : d.is_weekday)
+       >>> [str (t) for t in TaT (start, upper, dd2, conditioner = is_weekday)]
        ['2004-10-26', '2004-10-28', '2004-11-01', '2004-11-03']
+       >>> start -= dd1
+       >>> upper += dd3
+       >>> for t in TaT (start, upper, dd2, dd2, dd3) :
+       ...     print t.formatted ("%a %F")
+       ...
+       Mon 2004-10-25
+       Wed 2004-10-27
+       Fri 2004-10-29
+       Mon 2004-11-01
+       Wed 2004-11-03
+       Fri 2004-11-05
     """
 
-    def __init__ (self, start, delta, upper, conditioner = identity) :
+    def __init__ (self, start, upper, * deltas, ** kw) :
         self.start         = start
-        self.delta         = delta
+        self.deltas        = deltas
         self.upper         = upper
-        self.conditioner   = conditioner
+        self.conditioner   = kw.get ("conditioner", identity)
     # end def __init__
 
     def __iter__ (self) :
-        delta         = self.delta
+        deltas        = itertools.cycle (self.deltas)
         upper         = self.upper
         conditioner   = self.conditioner
         next          = self.start
@@ -226,7 +242,7 @@ class TaT (TFL.Meta.Object) :
             if n is not None :
                 if n <= upper :
                     yield n
-            next = next + delta
+            next = next + deltas.next ()
     # end def __iter__
 
 # end class TaT
