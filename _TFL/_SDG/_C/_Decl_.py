@@ -30,6 +30,7 @@
 #    30-Jul-2004 (CT) `Decl_Group` added
 #    30-Jul-2004 (CT) `Maybe_Const` added
 #     9-Aug-2004 (CT) `Maybe_Static` changed to call `_update_scope`
+#    12-Aug-2004 (MG) `Incl` group removed (nice try)
 #    ««revision-date»»···
 #--
 
@@ -98,7 +99,6 @@ class Decl_Group (_Decl_, TFL.SDG.C._Scope_) :
     h_format = c_format  = """
         %(::*description:)s
         %(::*explanation:)s
-        %(::*incl_children:)s
         %(::*decl_children:)s
         %(::*head_children:)s
         %(::*body_children:)s

@@ -38,6 +38,7 @@
 #                     respective `_children` properties)
 #     9-Aug-2004 (CT) Defaults of `description` and `eol_desc` changed
 #                     from `""` to `None`
+#    12-Aug-2004 (MG) `Incl` group removed (nice try)
 #    ««revision-date»»···
 #--
 
@@ -68,18 +69,16 @@ class _C_Node_ (TFL.SDG.Node) :
         , Decl
         , Head
         , Tail
-        , Incl
         , Then
         , Elseif
         , Else
         , Case
         , Default
-        )                = range (10)
+        )                = range (9)
     body_children        = property (lambda s : s.children_groups [s.Body])
     decl_children        = property (lambda s : s.children_groups [s.Decl])
     head_children        = property (lambda s : s.children_groups [s.Head])
     tail_children        = property (lambda s : s.children_groups [s.Tail])
-    incl_children        = property (lambda s : s.children_groups [s.Incl])
     then_children        = property (lambda s : s.children_groups [s.Then])
     elseif_children      = property (lambda s : s.children_groups [s.Elseif])
     else_children        = property (lambda s : s.children_groups [s.Else])

@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
+#    12-Aug-2004 (MG) Formats changed (always use `h_format` for the
+#                     `decl_children`)
 #    ««revision-date»»···
 #--
 
@@ -56,7 +58,7 @@ class Struct (TFL.SDG.C._Decl_) :
     h_format = c_format  = """
         struct _%(name)s
         >{
-        >>%(::*decl_children:)s
+        >>%(::*decl_children.h_format:)s
         >}%(standalone)s
     """
 
@@ -117,13 +119,13 @@ class Struct (TFL.SDG.C._Decl_) :
         if m.group ("bounds") :
             bounds = m.group ("bounds") [1:-1].split ("][")
             return TFL.SDG.C.Array \
-                ( type, name, bounds, init, description = desc
+                ( type, name, bounds, description = desc
                 , new_line_col = self.desc_in_new_line
                 , const        = const
                 )
         else :
             return TFL.SDG.C.Var \
-                ( type, name, init, description = desc
+                ( type, name, description = desc
                 , new_line_col = self.desc_in_new_line
                 , const        = const
                 , volatile     = volat

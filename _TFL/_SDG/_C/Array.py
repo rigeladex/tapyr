@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
+#    12-Aug-2004 (MG) Format changed
 #    ««revision-date»»···
 #--
 
@@ -54,7 +55,7 @@ class Array (TFL.SDG.C._Var_) :
         )
     _bounds              = property (lambda s : "][".join (s.bounds))
     _common_format       = "".join \
-        ( ( Ancestor._common_format
+        ( ( Ancestor._common_head
           , """ [%(::._bounds:)s]"""
           )
         )

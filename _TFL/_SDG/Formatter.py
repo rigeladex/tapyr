@@ -34,6 +34,8 @@
 #     9-Aug-2004 (CT) `_Recursive_Formatter_Node_.__init__` changed to
 #                     discard `None` values
 #    11-Aug-2004 (MG) `sep_eol` added
+#    12-Aug-2004 (CT) s/recurse_args/recurse_kw/g
+#    12-Aug-2004 (CT) `rec_form` added
 #    ««revision-date»»···
 #--
 
@@ -63,21 +65,26 @@ class _Formatter_ (TFL.Meta.Object) :
 class _Recursive_Formatter_ (TFL.Meta.Object) :
 
     def __init__ (self, key, format, head_form, tail_form) :
+        key, rec_form  = (key.split (".", 1) + [None]) [:2]
         self.key       = key
+        self.rec_form  = rec_form
         self._format   = format
         self.head_form = head_form
         self.tail_form = tail_form
     # end def __init__
 
     def __call__ (self, node, context, sep_form) :
-        self.node      = node
-        self.context   = context
-        self.sep       = sep_form % context
-        self.format    = \
+        self.node       = node
+        self.context    = context
+        self.recurse_kw = context.recurse_kw.copy ()
+        self.sep        = sep_form % context
+        self.format     = \
             ( self.head_form % context
             + self._format
             + self.tail_form % context
             )
+        if self.rec_form :
+            self.recurse_kw ["format_name"] = self.rec_form
         return self
     # end def __call__
 
@@ -145,7 +152,7 @@ class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
 class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
 
     def __iter__ (self) :
-        result = getattr (self.node, self.key) (** self.context.recurse_args)
+        result = getattr (self.node, self.key) (** self.recurse_kw)
         if result is not None :
             format = self.format
             sep    = ""
@@ -162,7 +169,7 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
         context  = self.context
         format   = self.format
         recurser = context.recurser
-        rkw      = context.recurse_args
+        rkw      = self.recurse_kw
         sep      = ""
         nodes    = getattr (self.node, self.key)
         if nodes is not None :
@@ -285,8 +292,8 @@ class Multi_Line_Formatter (_Formatter_) :
         form       = match.group ("form")
         formatters = []
         for key in keys :
-            key = key.strip ()
-            rf  = self.Formatters [key [0]]
+            key    = key.strip ()
+            rf     = self.Formatters [key [0]]
             formatters.append \
                 (rf (key [1:], "%%%s" % (form, ), x_forms.head, x_forms.tail))
         return _Recursive_Formatters_ (x_forms, * formatters)

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Jul-2004 (CT) Creation
+#    12-Aug-2004 (MG) `default_cgi` added
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ class _Scope_ (TFL.SDG.C.Node) :
 
     children_group_names = \
         ( Ancestor.Head, Ancestor.Body, Ancestor.Tail, Ancestor.Decl)
-
+    default_cgi          = Ancestor.Decl
     explanation_level    = Ancestor.description_level + 2
 
     def insert (self, child, index = None, delta = 0, cgi = None) :

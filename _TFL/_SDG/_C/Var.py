@@ -31,6 +31,7 @@
 #    30-Jul-2004 (CT) `Multiple_Var` added
 #     9-Aug-2004 (CT) `Initializer` handling added
 #     9-Aug-2004 (CT) `_Var_` factored
+#    12-Aug-2004 (MG) Formats changed
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,7 @@ class _Var_ ( TFL.SDG.C.Maybe_Const
 
     front_args           = ("type", "name")
 
-    _common_format       = \
+    _common_head         = \
         ("""%(::.extern:)s"""
          """%(::.static:)s"""
          """%(::.volatile:)s"""
@@ -70,6 +71,10 @@ class _Var_ ( TFL.SDG.C.Maybe_Const
          """%(::.struct:)s"""
          """%(::*type:)s %(name)s"""
         )
+    _common_tail        = \
+        """%(trailer)s%(:head= :*eol_desc:)s
+           >>%(::*description:)s
+        """
 
     def _convert_type (self, v) :
         result = self._convert (v, TFL.SDG.C.Type)
@@ -98,16 +103,15 @@ class Var (_Var_) :
         )
 
     h_format             = "".join \
-        ( ( Ancestor._common_format
-          , "%(trailer)s"
+        ( ( Ancestor._common_head
+          , Ancestor._common_tail
           )
         )
 
     c_format             = "".join \
-        ( ( Ancestor._common_format
+        ( ( Ancestor._common_head
           , """%(:front= = :*initializers:)s"""
-          , """%(trailer)s"""
-          , """%(:head= :*description:)s"""
+          , Ancestor._common_tail
           )
         )
 
@@ -136,17 +140,17 @@ class Multiple_Var (Var) :
         )
 
     h_format             = "".join \
-        ( ( Ancestor._common_format
+        ( ( Ancestor._common_head
           , """%(:front=, :._var_names:)s"""
-          , """%(trailer)s"""
+          , Ancestor._common_tail
           )
         )
 
     c_format             = "".join \
-        ( ( Ancestor._common_format
+        ( ( Ancestor._common_head
           , """%(:front=, :._var_names:)s"""
           , """%(:head= = :*init:)s"""
-          , """%(trailer)s"""
+          , Ancestor._common_tail
           )
         )
 

@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    26-Jul-2004 (CT) Creation
+#    12-Aug-2004 (MG) formats changed
+#    12-Aug-2004 (MG) `cgi` added
 #    ««revision-date»»···
 #--
 
@@ -36,17 +38,18 @@ import _TFL._SDG._C.Node
 class New_Line (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     """Model an empty line in the code in a C file"""
 
+    cgi                  = None
     init_arg_defaults    = dict \
         ( lines          = 1
         )
-
-    h_format = c_format  = """%('''\\n''' * lines)s"""
+    h_format = c_format  = """%('''\\n''' * (lines - 1))s"""
 
 # end class New_Line
 
 class New_Page (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     """Adds a new page character (formfeed)."""
 
+    cgi                  = None
     h_format = c_format  = """%('\f')s"""
 
 # end class New_Page

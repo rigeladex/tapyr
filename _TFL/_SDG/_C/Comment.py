@@ -30,6 +30,7 @@
 #    27-Jul-2004 (CT) Creation continued
 #    28-Jul-2004 (CT) Creation continued...
 #    11-Aug-2004 (MG) `Documentation_Block` added
+#    12-Aug-2004 (MG) `cgi` set to None
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,7 @@ print repr (c)
 class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     """Comment in a C file"""
 
+    cgi                  = None
     rest_args            = "description"
 
     init_arg_defaults    = dict \

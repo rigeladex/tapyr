@@ -41,6 +41,9 @@
 #     3-Aug-2004 (CT) s/as_tree/as_repr/ and s/tree_format/repr_format/
 #     3-Aug-2004 (CT) `base_indent` moved from `init_arg_defaults` to class
 #                     variable (save memory for spurious instance attribute)
+#    12-Aug-2004 (CT) s/recurse_args/recurse_kw/g
+#    12-Aug-2004 (MG) `default_cgi` added
+#    12-Aug-2004 (MG) `add`: unnest pass childrens (backward compatibility)
 #    ««revision-date»»···
 #--
 
@@ -91,6 +94,7 @@ class Node :
 
     children             = property (lambda s : s._children_iter ())
     children_group_names = (Body, ) = range (1)
+    default_cgi          = Body
     body_children        = property (lambda s : s.children_groups [s.Body])
 
     base_indent          = "    "
@@ -140,7 +144,7 @@ class Node :
 
     def add (self, * children) :
         """Append all `children' to `self.children'"""
-        for c in children :
+        for c in un_nested (children) :
             self.insert (c)
     # end def add
 
@@ -162,9 +166,9 @@ class Node :
     def formatted (self, format_name, base_indent = None, ** kw) :
         if base_indent is None :
             base_indent = self.base_indent
-        recurser = "formatted"
-        format   = getattr (self, format_name)
-        recurse_args = dict \
+        recurser   = "formatted"
+        format     = getattr (self, format_name)
+        recurse_kw = dict \
             ( format_name = format_name
             , base_indent = base_indent
             , ** kw
@@ -196,7 +200,12 @@ class Node :
         """Insert `child' to `self.children' at position `index'
            (None means append).
         """
-        self._insert (child, index, self.children_groups [child.cgi], delta)
+        cgi = child.cgi
+        if cgi is None :
+            cgi = self.default_cgi
+        else :
+            self.default_cgi = min (cgi, self.default_cgi)
+        self._insert (child, index, self.children_groups [cgi], delta)
     # end def insert
 
     def _child_name (self, child_name) :

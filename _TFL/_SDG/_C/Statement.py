@@ -33,6 +33,7 @@
 #     9-Aug-2004 (CT) `Stmt_Group` changed to inherit from `_Statement_`
 #                     first, `_Scope_` second (instead of vice versa)
 #                     to get redefined `_Statement_.children_group_names`
+#    12-Aug-2004 (MG) Formats of `Stmt_Group` changed
 #    ««revision-date»»···
 #--
 
@@ -79,7 +80,13 @@ class Stmt_Group (_Statement_, TFL.SDG.C._Scope_) :
     """Group of C statements not enclosed in a block."""
 
     star_level           = 2
-    h_format = c_format  = """%(::*children:)s"""
+    _common_format       = """
+        %(::*decl_children:)s
+        %(::*head_children:)s
+        %(::*body_children:)s
+        %(::*tail_children:)s
+    """
+    h_format = c_format  = _common_format
 
 # end class Stmt_Group
 

@@ -35,6 +35,7 @@
 # Revision Dates
 #    10-Aug-2004 (MG) Creation
 #    11-Aug-2004 (MG) Creation continued
+#    12-Aug-2004 (MG) Backward compatibility added
 #    ««revision-date»»···
 #--
 
@@ -57,4 +58,8 @@ import _TFL._SDG._C.Typedef
 import _TFL._SDG._C.Var
 import _TFL._SDG._C.While
 
+### backward compatibility
+from Formatted_Stream import Formatted_C_Stream, Formatted_Stream
+C.Formatted_Stream   = Formatted_Stream
+C.Formatted_C_Stream = Formatted_C_Stream
 ### __END__ TFL.SDG.C.import_C

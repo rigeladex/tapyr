@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Aug-2004 (MG) Creation
+#    12-Aug-2004 (MG) `cgi` set to ßDecl`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ import _TFL._SDG._C.Node
 class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     """C-include statements"""
 
+    cgi                    = TFL.SDG.C.Node.Decl
     init_arg_defaults      = dict \
         ( filename         = ""
         )

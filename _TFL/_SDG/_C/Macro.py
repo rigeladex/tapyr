@@ -27,6 +27,10 @@
 #
 # Revision Dates
 #    11-Aug-2004 (MG) Creation
+#    12-Aug-2004 (MG) `Macro_Block.children_group_names` added
+#    12-Aug-2004 (MG) Convert the `args` paremeter from `None` to `""` and
+#                     from `""` to `None` for backward compatibility
+#    12-Aug-2004 (MG) `description` added to formats
 #    ««revision-date»»···
 #--
 
@@ -37,6 +41,8 @@ import _TFL._SDG._C.Statement
 class _Macro_ (TFL.SDG.C.Node) :
     """Base class of all preprocessor commands (defines, if, ifdef, ...)"""
 
+    cgi       = None
+
     def _update_scope (self, scope) :
         ### why do we need this ???? MGL, 11-Aug-2004
         self.scope = scope
@@ -46,7 +52,7 @@ class _Macro_ (TFL.SDG.C.Node) :
 
 # end class _Macro_
 
-class Macro (TFL.SDG.Leaf, _Macro_) :
+class Macro (_Macro_, TFL.SDG.Leaf) :
     """C-macro defintion"""
 
     init_arg_defaults      = dict \
@@ -60,7 +66,17 @@ class Macro (TFL.SDG.Leaf, _Macro_) :
 
     h_format = c_format    = """
         #%(::.name:)s %(:head=(¡tail=):.args:)s %(:sep_eol= \\:.lines:)s
+        >%(::*description:)s
     """
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        if self.args is None :
+            self.args = ""
+        elif self.args == "" :
+            self.args = None
+    # end def __init__
+
 # end class Macro
 
 class Define (Macro) :
@@ -74,6 +90,15 @@ class Define (Macro) :
 
 class Macro_Block (_Macro_, TFL.SDG.C.Stmt_Group) :
     """Block of macro definitions"""
+
+    Ancestor             = TFL.SDG.C.Stmt_Group
+    children_group_names = \
+        ( Ancestor.Head
+        , Ancestor.Body
+        , Ancestor.Tail
+        , Ancestor.Decl
+        )
+
 # end class Macro_Block
 
 

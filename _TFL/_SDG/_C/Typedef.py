@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Jul-2004 (CT) Creation
+#    12-Aug-2004 (MG) `description` and `eol_desc` added to formats
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,9 @@ class Typedef (TFL.SDG.C.Maybe_Const, TFL.SDG.Leaf) :
     h_format = c_format  = "".join \
         ( ( """typedef """
           , """%(::.const:)s"""
-          , """%(::*type:)s %(::._name_or_type:)s; """
+          , """%(::*type:)s %(::._name_or_type:)s; %(::*eol_desc:)s
+               >%(::*description:)s
+            """
           )
         )
 

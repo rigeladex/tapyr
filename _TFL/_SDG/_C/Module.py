@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
+#    12-Aug-2004 (MG) `Incl` group removed (nice try)
 #    ««revision-date»»···
 #--
 
@@ -105,8 +106,7 @@ class Module (TFL.SDG.C._Scope_) :
     Ancestor             = TFL.SDG.C._Scope_
 
     children_group_names = \
-        ( Ancestor.Incl
-        , Ancestor.Decl
+        ( Ancestor.Decl
         , Ancestor.Head
         , Ancestor.Body
         , Ancestor.Tail
@@ -131,7 +131,6 @@ class Module (TFL.SDG.C._Scope_) :
         %(::*explanation:)s
     """.strip ()
     _format_children     = """
-        %(::*incl_children:)s
         %(::*decl_children:)s
         %(::*head_children:)s
         %(::*body_children:)s
