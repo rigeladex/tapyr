@@ -374,7 +374,7 @@ class _DPN_Auto_Importer_ :
        >>> import _TOM._UI.Command_Mgr
        >>> import _TOM._TKT
        >>> import _TOM._TKT.Eventname
-       >>> sys.modules["_TOM._TKT.Eventname"].__name__
+       >>> sys.modules ["_TOM._TKT.Eventname"].__name__
        '_TFL._TKT.Eventname'
        >>> TOM.TKT._Eventname
        <class '_TFL._TKT.Eventname._Eventname'>
