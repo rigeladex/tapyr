@@ -46,6 +46,7 @@
 #    21-Feb-2005 (CT)  `wtk_widget` set to `widget.body` (and `widget`
 #                      re-introduced to refer to `CTK.C_Text` instance)
 #    22-Feb-2005 (RSC) new tags (justify, wrap, margins) enabled.
+#    22-Feb-2005 (RSC) fixed widget computation in insert_widget
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
         result = self.wtk_widget.window_create \
-            (self.pos_at (pos_or_mark, delta), window = window)
+            (self.pos_at (pos_or_mark, delta), window = widget.wtk_widget)
         if style is not None :
             pass ### XXX
         return result
