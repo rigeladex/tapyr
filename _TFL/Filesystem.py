@@ -1,4 +1,5 @@
 #! /usr/bin/python
+# -*- coding: iso-8859-1 -*-
 # Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
