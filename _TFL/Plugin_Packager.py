@@ -39,11 +39,16 @@
 #    23-Jun-2004 (CT) `_rewrite_package_derived` changed to import/del
 #                     `Derived_Package_Namespace` instead of
 #                     `Package_Namespace`
+#    24-Aug-2004 (CT) `_Hide` added to avoid `_import _XXX` to be interpreted
+#                     relatively instead of absolutely (RUP 11203)
+#    24-Aug-2004 (CT) Rewrite all occurrences of `pi_package.pkg` in
+#                     `__init__` instead of specific patterns only
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 
+import copy
 import sos
 import sys
 import _TFL.Import_Closure
@@ -112,7 +117,7 @@ class Plugin_Packager (TFL.Meta.Object) :
         self.delta_closure = dc = self.pi_closure - ap_closure
         pi_packages        = \
             [ p for p in dc.pkg_dict.itervalues ()
-                if p.pkg.startswith ("_Plugins") and p.level == 1
+                if  p.pkg.startswith ("_Plugins") and p.level == 1
             ]
         assert len (pi_packages) == 1
         self.pi_package = pip = pi_packages [0]
@@ -182,25 +187,21 @@ class Plugin_Packager (TFL.Meta.Object) :
     # end def _rewrite_package_derived
 
     def _rewrite_package_plugin (self, pym) :
-        name = pym.pkg.split (".") [-1] [1:]
-        repl = Replacer \
-            ( r"%s \s* = \s* Package_Namespace \s* \(\)" % (name, )
-            , r"""%s_%s = Package_Namespace ()""" % (name, self.target_vrsn)
-            )
+        old_name = pym.pkg.split (".") [-1] [1:]
+        new_name = "%s_%s" % (old_name, self.target_vrsn)
         self._rewrite_module \
             ( pym
             , self._m_replacers
             + [ Replacer
-                  ( r"%s \s* = \s* Package_Namespace \s* \(\)" % (name, )
-                  , r"""%s_%s = Package_Namespace ()"""
-                    % (name, self.target_vrsn)
-                  )
-              , Replacer
-                  ( r"""\._Export \s*\("%s"\)""" % (name, )
-                  , r"""._Export ("%s_%s")"""    % (name, self.target_vrsn)
+                  ( r"(\W)%s(\W)" % (old_name, )
+                  , r"\1%s\2"     % (new_name, )
                   )
               ]
             )
+        hide = copy.copy (pym)
+        hide.target_path = sos.path.join \
+            (Filename (hide.target_path).directory, "_Hide", "__init__.py")
+        self._write_target_file (hide, "")
     # end def _rewrite_package_plugin
 
     def _rewrite_packages (self) :
@@ -250,7 +251,7 @@ class Plugin_Packager (TFL.Meta.Object) :
             )
         add ( Replacer
                 ( self._pns_import_pat % ("|".join (tlp_pns), )
-                , r"\g<head>%s._\g<pns> \g<midd>\g<pns>" % (tpkg, )
+                , r"\g<head>%s._Hide._\g<pns> \g<midd>\g<pns>" % (tpkg, )
                 )
             )
         add ( Replacer
@@ -262,12 +263,12 @@ class Plugin_Packager (TFL.Meta.Object) :
             )
         add ( Replacer
                 ( self._mod_import_pat % ("|".join (modules), )
-                , r"\g<head>%s.\g<module>" % (tpkg, )
+                , r"\g<head>%s._Hide.\g<module>" % (tpkg, )
                 )
             )
         add ( Replacer
                 ( self._mod_from_import_pat % ("|".join (modules), )
-                , r"\g<head>%s.\g<module>\g<midd>" % (tpkg, )
+                , r"\g<head>%s._Hide.\g<module>\g<midd>" % (tpkg, )
                 )
             )
         add ( Replacer
@@ -313,9 +314,11 @@ class Plugin_Packager (TFL.Meta.Object) :
                     pym.target_path = path.join \
                         (target_path, pn.replace (".", sep), pym.base_path)
             else :
-                pym.target_pkg  = ".".join ((target_pkg, pym.pkg))
+                pym.target_pkg  = ".".join ((target_pkg, "_Hide", pym.pkg))
                 pym.target_path = path.join \
-                    (target_path, pym.pkg.replace (".", sep), pym.base_path)
+                    ( target_path, "_Hide"
+                    , pym.pkg.replace (".", sep), pym.base_path
+                    )
             pym.source_pns = self._pns_from_pkg (pym.pkg)
             pym.target_pns = self._pns_from_pkg (pym.target_pkg)
             if pym.is_package :
@@ -381,7 +384,7 @@ def main (cmd) :
     packager = Plugin_Packager \
         (cmd.pi_root_name, ap_closure, import_path, cmd.target_root, ignore)
     #print packager.target_pkg, packager.target_path
-    if 1 :
+    if 0 :
         for pym in sorted (packager.delta_closure.pym_dict.itervalues ()) :
             print "tkdiff %-80s %s" % (pym.path_name, pym.target_path)
             #print "%-50s --> %s" % (pym.pkg, pym.target_pkg)
