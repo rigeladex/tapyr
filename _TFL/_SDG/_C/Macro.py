@@ -39,6 +39,7 @@
 #     7-Oct-2004 (CED) `Define_Constant` added
 #     8-Feb-2005 (CED) `apidoc_tex_format` defined here and necessary changes
 #                      made
+#     9-Feb-2005 (MBM/CED) formal changes to `apidoc_tex_format`
 #    ««revision-date»»···
 #--
 
@@ -106,7 +107,7 @@ class Define (Macro) :
            \\index{<FT-COM API>\\texttt{%(name)s}}
            \\ttindex{%(name)s}
            \\begin{description}
-           >\\item %(::*description:)s
+           >\\item %(::*description:)s \\\\
            >\\item \\textbf{File:} \\\\ \\texttt{%(def_file)s} \\\\
         """
 
@@ -118,7 +119,7 @@ class Define (Macro) :
 
     _apidoc_middle       = \
         """>\\item \\textbf{Function declaration:} \\\\
-           >>\\textttt{%(name)s (%(args)s)} \\\\
+           >>\\texttt{%(name)s (%(args)s)} \\\\
         """
 
     apidoc_tex_format    = "".join \
@@ -144,7 +145,7 @@ class Define (Macro) :
         if not self.explanation :
             yield ""
             return
-        yield "\\item \\textbf{Description:}"
+        yield "\\item \\textbf{Description:} \\\\"
         format_prec = max (int (kw ["format_prec"]), 4)
         wrapper     = textwrap.TextWrapper (width = format_prec)
         for l in wrapper.wrap (self.explanation) :
