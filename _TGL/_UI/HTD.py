@@ -31,7 +31,8 @@
 #     1-Apr-2005 (CT) Creation continued (style.callback handling corrected)
 #     1-Apr-2005 (CT) `Style.__init__` improved
 #     1-Apr-2005 (CT) `Styled` factored into a module of its own
-#     2-Apr-2005 (MG) Import fixed
+#     2-Apr-2005 (CT) Small fixes
+#     2-Apr-2005 (CT) `id`, `id_tag`, and `id_style` added and used
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ from   _TFL                  import TFL
 from   _TGL                  import TGL
 from   _TGL._UI.Styled       import Styled
 
+import _TFL._Meta.Property
 import _TFL._UI.Mixin
 import _TFL._UI.Style
 import _TFL._Meta.Property
@@ -77,6 +79,7 @@ class _Node_ (TGL.UI.Mixin) :
         self.style      = style  = self._base_style (style, level)
         self.styler     = styler = self.tkt_text.Tag_Styler (style)
         self._head_mark = self._midd_mark = self._tail_mark = None
+        self.id_style   = TFL.UI.Style ("id")
         self._init_children ()
         self._init_contents (* contents)
         if parent :
@@ -140,10 +143,12 @@ class _Node_ (TGL.UI.Mixin) :
     # end def styled_text
 
     def _add_child (self, at_mark, * children) :
-        add = self.children.append
-        off = len (self.children)
+        add    = self.children.append
+        off    = len (self.children)
         for i, c in enumerate (children) :
-            c.number = i + off
+            c.number = n= i + off
+            c.id     = ":".join ((self.id, str (n)))
+            c.id_tag = "HTD::%s" % (c.id, )
             add (c)
         self._insert_children (at_mark, * children)
     # end def _add_child
@@ -179,17 +184,19 @@ class _Node_ (TGL.UI.Mixin) :
     # end def _init_contents
 
     def _insert (self, at_mark) :
-        tkt_text = self.tkt_text
-        self._head_mark = tkt_text.mark_at \
+        self.root._id_map [self.id_tag] = self
+        tkt_text        = self.tkt_text
+        self._head_mark = hm = tkt_text.mark_at \
             (at_mark, left_gravity = True, name = self._head_mark)
         self._insert_contents (at_mark, * self.contents)
         self._midd_mark = tkt_text.mark_at \
             (at_mark, left_gravity = True, name = self._midd_mark)
+        tkt_text.apply_style  (self.id_style, hm, at_mark, tag = self.id_tag)
         self._insert_children (at_mark, * self.children)
         self._tail_mark = tkt_text.mark_at \
             (at_mark, delta = -1, name = self._tail_mark)
             ### `delta = -1` keeps the marks from overlapping
-    # end def _display
+    # end def _insert
 
     def _insert_children (self, at_mark, * children) :
         tkt_text = self.tkt_text
@@ -389,6 +396,9 @@ class Root (_Node_) :
 
     Style               = TFL.UI.Style.__class__ ()
 
+    id                  = "0"
+    id_tag              = "HDT::0"
+
     _style_defaults     = dict \
         ( Background             = "lightyellow2"
         , Foreground             = "black"
@@ -423,6 +433,7 @@ class Root (_Node_) :
         self.name        = name
         self.number      = -1
         self.root        = self
+        self._id_map     = {}
         Style            = self.Style
         self.tkt_text    = tkt_text = self.get_TNS (AC).Scrolled_Text \
             ( AC         = AC
@@ -449,6 +460,7 @@ class Root (_Node_) :
 
     def clear (self) :
         self.active_node  = None
+        self._id_map      = {}
         self.tkt_text.clear ()
         self._init_contents ()
         self._init_children ()
@@ -558,10 +570,19 @@ class Root (_Node_) :
     ### event callbacks follow
     def _node_binding (method) :
         def wrapper (self, event = None, node = None, ** kw) :
+            tkt_text = self.tkt_text
+            pos      = tkt_text.bol_pos (tkt_text.current_pos)
             if node is None :
-                node = self.active_node
+                tags = tkt_text.tags_at (pos)
+                for t in reversed (tags) :
+                    if t.startswith ("HTD::") :
+                        node = self._id_map [t]
+                        break
+                else :
+                    node = self.root.active_node
             if node is not None :
                 method (self, node, ** kw)
+                tkt_text.place_cursor (pos)
             return self.TNS.stop_cb_chaining
         wrapper.__name__ = method.__name__
         wrapper.__doc__  = method.__doc__

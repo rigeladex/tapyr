@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #     1-Apr-2005 (CT) Creation
-#     2-Apr-2005 (MG) Import fixed
+#     2-Apr-2005 (CT) Import fixed
 #    ««revision-date»»···
 #--
 
