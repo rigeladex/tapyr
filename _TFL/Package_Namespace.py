@@ -82,6 +82,8 @@
 #                     `__import__` is used in the particular way it is
 #     8-Oct-2002 (CT) Pass `None` as fourth argument to `__import__` to avoid
 #                     annoying Gordon McMillan
+#    11-Oct-2002 (CT) Change of `8-Oct-2002` backed out because it doesn't
+#                     work with McMillan
 #    ««revision-date»»···
 #--
 
@@ -112,7 +114,7 @@ class _Module_Space :
         # print "_Module_Space._load: __name      =", self.__name
         # print "                     module_name =", module_name
         q_name = "%s.%s" % (self.__name, module_name)
-        module = __import__ (q_name, {}, {}, ("None", ))
+        module = __import__ (q_name, {}, {}, (module_name, ))
         # print "                     module      =", module
         setattr (self, module_name, module)
         return module
