@@ -36,22 +36,53 @@ import _TFL._TKT._Tk
 import _TFL._TKT.Eventname
 
 Eventname = TFL.TKT._Eventname \
-    ( click_1                  = "<ButtonRelease-1>"
+    ( check_everything         = "<F7>"
+    , click_1                  = "<ButtonRelease-1>"
     , click_2                  = "<ButtonRelease-2>"
     , click_3                  = "<ButtonRelease-3>"
-    , close                    = "<Control-Key-w>" ### XXX
+    , close_window             = "<Control-Key-w>"
+    , commit                   = "<Control-Key-Return>"
+    , complete                 = "<Alt-i>"
+    , continue_scan            = "<B2-Motion>"
     , copy                     = "<Control-Key-c>"
     , cut                      = "<Control-Key-x>"
-    , exit_after_save          = "<Control-Key-?>" ### XXX
-    , exit_without_save        = "<Control-Key-q>" ### XXX
-    , new                      = "<Control-Key-n>" ### XXX
-    , open                     = "<Control-Key-o>" ### XXX
+    , edit_schedule            = "<F4>"
+    , exit                     = "<Control-Key-q>"
+    , help                     = "<F1>"
+    , history_complete         = "<Alt-q>"
+    , history_next             = "<Alt-Down>"
+    , history_previous         = "<Alt-Up>"
+    , make_schedule            = "<F5>"
+    , new                      = "<Control-Key-n>"
+    , open                     = "<Control-Key-o>"
     , paste                    = "<Control-Key-v>"
-    , save                     = "<Control-Key-s>" ### XXX
-    , save_as                  = "<Control-Key-S>" ### XXX
+    , Print                    = "<Control-Key-p>"
+    , redo                     = "<Control-Key-y>"
+    , rename                   = "<F2>"
+    , save                     = "<Control-Key-s>"
+    , save_and_exit            = "<Control-Key-e>"
+    , save_as                  = "<Control-Key-S>"
+    , search                   = "<Control-Key-f>"
+    , search_next              = "<F3>"
+    , search_prev              = "<Shift-F3>"
+    , select_all               = "<Control-Key-a>"
+    , start_scan               = "<ButtonPress-2>"
     , undo                     = "<Control-Key-z>"
     )
 
+"""
+How to check consistency of names:
+
+import _TOM._TKT._TGW.Eventname
+import _TOM._TKT._Tk.Eventname
+from _TFL import TFL
+from _TOM import TOM
+a=sorted (TFL.TKT.Tk.Eventname._map.iterkeys())
+b=sorted (TOM.TKT.TGW.Eventname._map.iterkeys())
+a == b
+
+
+"""
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("Eventname")
 ### __END__ TFL.TKT.Tk.Eventname

@@ -36,19 +36,37 @@ import _TFL._TKT._Batch
 import _TFL._TKT.Eventname
 
 Eventname = TFL.TKT._Eventname \
-    ( click_1                  = None
+    ( check_everything         = None
+    , click_1                  = None
     , click_2                  = None
     , click_3                  = None
-    , close                    = None
+    , close_window             = None
+    , commit                   = None
+    , complete                 = None
+    , continue_scan            = None
     , copy                     = None
     , cut                      = None
-    , exit_after_save          = None
-    , exit_without_save        = None
+    , edit_schedule            = None
+    , exit                     = None
+    , help                     = None
+    , history_complete         = None
+    , history_next             = None
+    , history_previous         = None
+    , make_schedule            = None
     , new                      = None
     , open                     = None
     , paste                    = None
+    , Print                    = None
+    , redo                     = None
+    , rename                   = None
     , save                     = None
+    , save_and_exit            = None
     , save_as                  = None
+    , search                   = None
+    , search_next              = None
+    , search_prev              = None
+    , select_all               = None
+    , start_scan               = None
     , undo                     = None
     )
 
