@@ -47,7 +47,7 @@ class Struct (TFL.SDG.C._Decl_) :
     front_args             = ("name", )
     init_arg_defaults      = dict \
         ( desc_in_new_line = 0
-        , standalone       = False
+        , standalone       = ""
         )
     _autoconvert         = dict \
         ( standalone     = lambda s, k, v : v and ";" or ""
@@ -97,6 +97,8 @@ class Struct (TFL.SDG.C._Decl_) :
     # end def insert
 
     def _convert_field (self, f) :
+        if isinstance (f, TFL.SDG.C.Node) :
+            return f
         m = self.field_pat.match (f)
         if not m :
             print f

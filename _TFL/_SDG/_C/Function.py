@@ -52,10 +52,10 @@ class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
     star_level           = 3
 
     _h_format = _c_format  = \
-        ( """%(::*return_type:)s %(name)s """
+        ( """%(::*return_type:)s %(name)s"""
               """%(:front=%('''\\n''')s%(base_indent2)s( """
                 """¡rear=%('''\\n''')s%(base_indent2)s)"""
-                """¡empty=(void)"""
+                """¡empty= (void)"""
                 """:*arg_list"""
                 """:)s"""
         )
@@ -85,7 +85,10 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
     h_format             = "".join \
         ( ( _mod_format
           , _Function_._h_format
-          , """;
+          , """%(:empty=;"""
+              """¡front=;%('''\\n''')s%(base_indent2)s"""
+              """¡sep=%(base_indent2)s"""
+              """:*description:)s
                >
           """
           )
@@ -94,7 +97,9 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
         ( ( _mod_format
           , _Function_._c_format
           , """
+                >>%(::*description:)s
                 {
+                >>%(::*explanation:)s
                 >>%(::*decl_children:)s
                 >>%(::*head_children:)s
                 >>%(::*body_children:)s

@@ -33,12 +33,14 @@
 #     3-Aug-2004 (CT) children_group_names `Then` and `Elseif` added
 #     3-Aug-2004 (CT) `If.insert` simplified
 #     9-Aug-2004 (CT) `Conditional` factored
+#    10-Aug-2004 (MG) Missing import of `TFL.SDG.C.Statement` added
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Block
 import _TFL._SDG._C.Conditional
+import _TFL._SDG._C.Statement
 
 class Else (TFL.SDG.C.Block) :
     """Else clause of If statement"""
