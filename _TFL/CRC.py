@@ -37,6 +37,8 @@
 #                      Python 2.3: `FutureWarning: hex/oct constants >
 #                      sys.maxint will return positive values in Python 2.4
 #                      and up`)
+#    21-Jan-2004 (CT)  `crc_byte` changed to mask with `&& 0xFFFFFFFFL`
+#    21-Jan-2004 (CT)  Unit test fixed (use hexadecimal output)
 #    ««revision-date»»···
 #--
 
@@ -69,7 +71,10 @@ class _TD_CRC_ (object) :
     def crc_byte (self, crc, byte) :
         """Add `byte` to `crc` and return the resulting CRC.
         """
-        return ((crc >> 8) & self.mask) ^ self.table [(crc ^ byte) & 0xFF]
+        return \
+            ( ((crc >> 8) & self.mask) ^ (self.table [(crc ^ byte) & 0xFF])
+            & 0xFFFFFFFFL
+            )
     # end def crc_byte
 
     def crc_bytelist (self, bytelist, start_value = None) :
@@ -136,13 +141,13 @@ class CRC32 (_TD_CRC_) :
 
        >>> import _TFL.CRC as CRC
        >>> c = CRC.CRC32 ()
-       >>> c.crc ("abcd")
-       -859434483
-       >>> c.crc_bytelist ([97, 98, 99, 100])
-       -859434483
+       >>> "0x%08X" % c.crc ("abcd")
+       '0xCCC6120D'
+       >>> "0x%08X" % c.crc_bytelist ([97, 98, 99, 100])
+       '0xCCC6120D'
        >>> x = c.crc_bytelist ([97, 98, 99])
-       >>> c.crc_byte (x, 100)
-       -859434483
+       >>> "0x%08X" % c.crc_byte (x, 100)
+       '0xCCC6120D'
     """
 
     table = \
