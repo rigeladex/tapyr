@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    19-Apr-2004 (CT) Creation
+#    20-Apr-2004 (CT) Magic name check removed from `__getattr__` (for
+#                     new-style classes, Python doesn't look at instance for
+#                     magic methods)
 #    ««revision-date»»···
 #--
 
@@ -44,10 +47,9 @@ class Proxy (TFL.Meta.Object) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        if name.startswith ("__") and name.endswith ("__") :
-            raise AttributeError, name
         return getattr (self._proxied, name)
     # end def __getattr__
+
 # end class Proxy
 
 if __name__ != "__main__" :
