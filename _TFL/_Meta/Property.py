@@ -36,7 +36,7 @@
 
 from   _TFL             import TFL
 import _TFL._Meta
-import _TFL._Meta.Class
+import _TFL._Meta.M_Class
 
 class _Property_ (property) :
 

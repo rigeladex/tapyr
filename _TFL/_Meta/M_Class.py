@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    TFL.Meta.Class
+#    TFL.Meta.M_Class
 #
 # Purpose
 #    Provide custom metaclass for new-style Python classes
@@ -30,6 +30,7 @@
 #    17-Jan-2003 (CT) `M_Automethodwrap` added
 #    17-Jan-2003 (CT) `M_` prefixes added
 #    20-Jan-2003 (CT) Docstring of `M_Automethodwrap` improved
+#     3-Feb-2003 (CT) File renamed from `Class.py` to `M_Class.py`
 #    ««revision-date»»···
 #--
 
@@ -247,4 +248,4 @@ if __name__ == "__main__" :
         T()
 else :
     TFL.Meta._Export ("*")
-### __END__ TFL.Meta.Class
+### __END__ TFL.Meta.M_Class

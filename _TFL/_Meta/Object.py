@@ -32,7 +32,7 @@
 #--
 
 from   _TFL import TFL
-import _TFL._Meta.Class
+import _TFL._Meta.M_Class
 
 class _TFL_Meta_Object_ (object) :
     """Base class using TFL.Meta.Class as metaclass."""
