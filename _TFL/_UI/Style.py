@@ -39,6 +39,8 @@
 #    22-Feb-2005 (RSC) margin names fixed (rmargin{1,2}->lmargin{1,2}).
 #    24-Feb-2005 (BRU) Added `font_weight`.
 #    30-Mar-2005 (CT)  Doctests for style instances added
+#     1-Apr-2005 (CT)  `__new__` and `__call__` redefined to merge `callback`
+#                      dictionaries
 #    ««revision-date»»···
 #--
 
@@ -46,7 +48,7 @@
 >>> Style ("foo", font_style = "normal")
 <Style foo>
 >>> cb = lambda x : 1
->>> Style ("rightclick", callback = {'click3' : cb })
+>>> Style ("rightclick", callback = {'click_3' : cb })
 <Style rightclick>
 >>> Style ("fool", font_style = "normalique")
 Traceback (most recent call last):
@@ -126,6 +128,23 @@ class M_Style (TFL.Meta.M_Data_Class) :
         wrap           = dict_from_list (("char", "none", "word"))
 
     # end class _values
+
+    def __new__ (meta, name, bases, dict) :
+        cbd = {}
+        for b in reversed (bases) :
+            cbd.update (b.callback or {})
+        if cbd :
+            cbd.update (dict.get ("callback", {}))
+            dict ["callback"] = cbd
+        return super (M_Style, meta).__new__ (meta, name, bases, dict)
+    # end def __new__
+
+    def __call__ (cls, name = None, ** kw) :
+        if "callback" in kw and cls.callback:
+            kw ["callback"] = dict (cls.callback, ** kw ["callback"])
+        result = super (M_Style, cls).__call__ (name, ** kw)
+        return result
+    # end def __call__
 
 # end class M_Style
 
