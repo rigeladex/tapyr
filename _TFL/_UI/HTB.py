@@ -58,6 +58,7 @@
 #     8-Mar-2005 (RSC) `push_style' to butcon in _insert_button instead
 #                      of `apply_style' (and pop it when not needed)
 #     9-Mar-2005 (CT)  `destroy` exorcised of Tk-isms
+#     9-Mar-2005 (CT)  Fix of `destroy` fixed
 #    ««revision-date»»···
 #--
 
@@ -675,7 +676,7 @@ class Node (TFL.UI.Mixin) :
             c.destroy ()
         if self.level == 0 :
             text = self.browser.text
-            tail = text.eol_pos (self.tail_mark, delta = 1)
+            tail = text.pos_at (text.eol_pos (self.tail_mark), delta = 1)
             self._delete (self.head_mark, tail)
             self.browser.nodes.remove (self)
         if self.browser.node_map.has_key (self.tag) :
