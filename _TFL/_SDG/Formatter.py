@@ -103,6 +103,8 @@ class Single_Line_Formatter (_Formatter_) :
     kind = "SLF"
 
     def __call__ (self, node, context) :
+        context.locals ["indent_anchor"] = \
+            context.locals ["indent_offset"]
         return (self.format_line % context, )
     # end def __call__
 
@@ -318,8 +320,6 @@ class Multi_Line_Formatter (_Formatter_) :
                 else :
                     last = "%s%s" %  (last, l % context)
                 i += 1
-                context.locals ["indent_anchor"] = \
-                    len (last) + context.locals ["indent_offset"]
         if last :
             yield last
     # end def __call__
