@@ -33,7 +33,9 @@
 #                     to `_sty_map` index
 #    21-Feb-2005 (CT) `push_style` and `pop_style` implemented (and
 #                     `remove_style` removed as it doesn't work, anyway)
-#    21-Feb-2005 (RSC) added import of Eventname
+#    21-Feb-2005 (RSC) Added import of Eventname
+#    24-Feb-2005 (CT)  `num_opt_val` and `option_value` added
+#    24-Feb-2005 (CT)  `busy_cursor` and `normal_cursor` added
 #    ««revision-date»»···
 #--
 
@@ -47,7 +49,9 @@ import weakref
 class Widget (TFL.TKT.Mixin) :
     """Model widget for Tkinter based GUI"""
 
-    _sty_map    = {}
+    _sty_map     = {}
+    widget_class = None ### redefine this if you want to change the `Class`
+                        ### used for option lookup
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
@@ -59,6 +63,40 @@ class Widget (TFL.TKT.Mixin) :
         w.configure (** self._styler (style).option_dict)
         self._apply_style_bindings   (style)
     # end def apply_style
+
+    def busy_cursor (self, * args, ** kw) :
+        """Legacy lifter activating gauge (ignores all arguments)"""
+        gauge = self.AC.ui_state.gauge
+        if gauge :
+            gauge.activate ()
+    # end def busy_cursor
+
+    def normal_cursor (self, * args, ** kw) :
+        """Legacy lifter de-activating gauge (ignores all arguments)"""
+        if gauge :
+            gauge.deactivate ()
+    # end def normal_cursor
+
+    def num_opt_val (self, name, default) :
+        """Return numeric value of option `name` or `default` if that option
+           isn't defined (`default` isn't converted, so it'd better be
+           numeric).
+        """
+        return self.wtk_widget.num_opt_val \
+            (name, default, className = self.widget_class)
+    # end def num_opt_val
+
+    def option_value (self, name, default, separator = None) :
+        """Return value of option `name` or `default` if that option isn't
+           defined. If `separator` is specified, the option value (but not
+           the default) is split by it.
+        """
+        return self.wtk_widget.option_value \
+            ( name, default
+            , className = self.widget_class
+            , separator = separator
+            )
+    # end def option_value
 
     def pop_style (self) :
         self.wtk_widget.configure (** self._sty_stack.pop ())
