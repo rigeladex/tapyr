@@ -30,7 +30,8 @@
 #    ««revision-date»»···
 #--
 
-from   _TGL._UI.HTD import *
+from   _TGL._UI.HTD    import *
+from   _TGL._UI.Styled import Styled
 
 HTD_interface_test = """
     >>> from   _TFL._UI.App_Context import App_Context

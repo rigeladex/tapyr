@@ -30,40 +30,19 @@
 #    31-Mar-2005 (CT) Creation continued
 #     1-Apr-2005 (CT) Creation continued (style.callback handling corrected)
 #     1-Apr-2005 (CT) `Style.__init__` improved
+#     1-Apr-2005 (CT) `Styled` factored into a module of its own
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 from   _TGL                  import TGL
+from   _TGL._UI.Styled       import Styled
 
-from   Record                import Record
-
-import _TFL._Meta.Property
 import _TFL._UI.Mixin
 import _TFL._UI.Style
 
 import _TGL._UI.Mixin
 import _TGL._UI.Style
-
-class Styled (TFL.Meta.Object) :
-    """Mode styled text object"""
-
-    def __init__ (self, value, style = None, style_dict = None) :
-        if isinstance (value, Styled) :
-            if value.style :
-                style = value.style
-                if style_dict :
-                    style = style (** style_dict)
-            value = value.value
-        self.value = value
-        self.style = style
-    # end def __init__
-
-    def __str__ (self) :
-        return self.value
-    # end def __str__
-
-# end class Styled
 
 class _Node_ (TGL.UI.Mixin) :
     """Base class for nodes of a hierarchical text display"""
@@ -93,8 +72,8 @@ class _Node_ (TGL.UI.Mixin) :
         self.parent     = parent
         self.level      = level \
                         = parent and (parent.level + self._level_inc) or 0
-        self.style      = style = self._base_style (style, level)
-        self.style_dict = sd = self.tkt_text.Tag_Styler (style).option_dict
+        self.style      = style  = self._base_style (style, level)
+        self.styler     = styler = self.tkt_text.Tag_Styler (style)
         self._head_mark = self._midd_mark = self._tail_mark = None
         self._init_children ()
         self._init_contents (* contents)
@@ -154,8 +133,8 @@ class _Node_ (TGL.UI.Mixin) :
             return self.TNS.stop_cb_chaining
     # end def mouse_leave
 
-    def styled_text (self, value, style = None, style_dict = None) :
-        return Styled (value, self._style (style), style_dict)
+    def styled_text (self, value, style = None, styler = None) :
+        return Styled (value, self._style (style), styler)
     # end def styled_text
 
     def _add_child (self, at_mark, * children) :
@@ -168,11 +147,7 @@ class _Node_ (TGL.UI.Mixin) :
     # end def _add_child
 
     def _add_contents (self, * contents) :
-        ### XXX looses `callback` of `style`
-        ### XXX
-        style  = self.style
-        sd     = self.style_dict
-        result = [Styled (c, style, sd) for c in (contents)]
+        result = [Styled (c, self.style, self.styler) for c in (contents)]
         self.contents.extend (result)
         return result
     # end def _add_contents
@@ -181,12 +156,9 @@ class _Node_ (TGL.UI.Mixin) :
         result  = getattr (self.Style, "level%s" % (level, ))
         cb_dict = {}
         if style is not None :
-            ### XXX `option_dict` doesn't work (it's already transformed)
-            ### XXX change Styler to store original values
-            result  = style (** self.tkt_text.Tag_Styler (result).option_dict)
-            cb_dict = style.callback or {}
+            result  = style (** self.tkt_text.Tag_Styler (result).style_dict)
         if self.parent :
-            result = result (callback = self._tag_callback_dict (cb_dict))
+            result = result (callback = self._tag_callback_dict ())
         return result
     # end def _base_style
 
@@ -486,6 +458,7 @@ class Root (_Node_) :
     # end def _setup_bindings
 
     def _setup_styles (self, w) :
+        from Record import Record
         d = Record ()
         for name, default in self._style_defaults.iteritems () :
             if isinstance (default, (str)) :
