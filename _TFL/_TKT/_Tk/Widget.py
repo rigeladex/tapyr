@@ -93,7 +93,7 @@ class Widget (TFL.TKT.Mixin) :
            isn't defined (`default` isn't converted, so it'd better be
            numeric).
         """
-        return self.wtk_widget.num_opt_val \
+        return self.exposed_widget.num_opt_val \
             (name, default, className = self.widget_class)
     # end def num_opt_val
 
@@ -102,7 +102,7 @@ class Widget (TFL.TKT.Mixin) :
            defined. If `separator` is specified, the option value (but not
            the default) is split by it.
         """
-        return self.wtk_widget.option_value \
+        return self.exposed_widget.option_value \
             ( name, default
             , className = self.widget_class
             , separator = separator

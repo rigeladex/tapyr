@@ -29,11 +29,16 @@
 #    25-Jan-2005 (CT) Creation
 #    27-Jan-2005 (CT) s/_allowed/_names/g
 #    27-Jan-2005 (CT) `_values` added and used
-#     4-Feb-2005 (CT) `__call__` added
+#     4-Feb-2005 (CT) `__call__` added to allow instance derivation from
+#                     data-classes
 #     4-Feb-2005 (CT) Ancestor of `_names` and `_values` changed from `type`
 #                     to `object`
 #     4-Feb-2005 (CT) `__module__` set for newly created classes
 #     4-Feb-2005 (CT) `_check_dict` factored
+#    30-Mar-2005 (CT) `__call__` and `__repr__` added to `_names` to allow
+#                     instance derivation from instances, too
+#    30-Mar-2005 (CT) Optional argument `name` added to `M_Data_Class.__call__`
+#    30-Mar-2005 (CT) `_check_dict` changed to ignore magic names
 #    ««revision-date»»···
 #--
 
@@ -43,10 +48,11 @@ exclusively data in the form of class attributes with full support for
 inheritance.
 
 >>> class M_Record (M_Data_Class) :
-...     class _names (type) :
-...         foo = None
-...         bar = 42
-...         baz = 137
+...     class _names (M_Data_Class._names) :
+...         foo  = None
+...         bar  = 42
+...         baz  = 137
+...         quux = None
 ...
 >>> R1 = M_Record ("R1", (), dict (foo = 1))
 >>> print R1, R1.foo, R1.bar, R1.baz
@@ -64,19 +70,38 @@ inheritance.
 Traceback (most recent call last):
   ...
 TypeError: <Record R5> doesn't allow attribute bauz=5
+>>> r1  = R1 (name = "r1",  quux = 1)
+>>> print r1, r1.foo, r1.bar, r1.baz, r1.quux
+<Record instance r1> 1 42 137 1
+>>> r11 = r1 (name = "r11", foo  = 2)
+>>> print r11, r11.foo, r11.bar, r11.baz, r11.quux
+<Record instance r11> 2 42 137 1
+>>> r12 = r1 (name = "r12", foo  = 3, quux = 13)
+>>> print r12, r12.foo, r12.bar, r12.baz, r12.quux
+<Record instance r12> 3 42 137 13
 
 
 from _TFL._Meta.M_Data_Class import *
 class M_Record (M_Data_Class) :
-    class _names (type) :
-        foo = None
-        bar = 42
-        baz = 137
+    class _names (M_Data_Class._names) :
+        foo  = None
+        bar  = 42
+        baz  = 137
+        quux = None
 
 R1 = M_Record ("R1", (),       dict (foo = 1))
 R2 = M_Record ("R2", (R1, ),   dict (bar = 2))
 R3 = M_Record ("R3", (R1, ),   dict (baz = 3))
 R4 = M_Record ("R4", (R2, R3), dict ())
+
+r1  = R1 (name = "r1",  quux = 1)
+r11 = r1 (name = "r11", foo  = 2)
+r12 = r1 (name = "r12", foo  = 3, quux = 13)
+
+print r1, r1.foo, r1.bar, r1.baz, r1.quux
+print r11, r11.foo, r11.bar, r11.baz, r11.quux
+print r12, r12.foo, r12.bar, r12.baz, r12.quux
+
 """
 
 from   _TFL             import TFL
@@ -87,7 +112,20 @@ class M_Data_Class (TFL.Meta._M_Type_) :
     """Meta class supporting definition of classes holding data"""
 
     class _names (object) :
-        pass
+
+        def __call__ (self, ** kw) :
+            ### Allow creation of instances derived from data-class instances
+            ### with new instance attributes specified by `kw`
+            return self.__class__ (** dict (self.__dict__, ** kw))
+        # end def __call__
+
+        def __repr__ (self) :
+            return "<%s instance %s>" % \
+                ( self.__class__.__class__.__name__ [2:]
+                , getattr (self, "name", self.__class__.__name__)
+                )
+        # end def __repr__
+
     # end class _names
 
     class _values (object) :
@@ -108,11 +146,15 @@ class M_Data_Class (TFL.Meta._M_Type_) :
         super (M_Data_Class, cls).__init__ (name, bases, dict)
     # end def __init__
 
-    def __call__ (cls, ** kw) :
+    def __call__ (cls, name = None, ** kw) :
+        ### Allow creation of instances derived from data-class with instance
+        ### attributes specified by `kw`
         cls._check_dict        (kw)
         result = cls.__new__   (cls)
         result.__init__        ()
         result.__dict__.update (kw)
+        if name is not None :
+            result.name = name
         return result
     # end def __call__
 
@@ -124,12 +166,13 @@ class M_Data_Class (TFL.Meta._M_Type_) :
         _names  = cls._names.__dict__
         _values = cls._values.__dict__
         for k, v in dict.iteritems () :
-            if k not in _names :
-                raise TypeError, \
-                    "%s doesn't allow attribute %s=%r" % (cls, k, v)
-            if k in _values and v not in _values [k] :
-                raise ValueError, \
-                    "%s doesn't allow value `%s` for `%s`" % (cls, v, k)
+            if not k.startswith ("__") :
+                if k not in _names :
+                    raise TypeError, \
+                        "%s doesn't allow attribute %s=%r" % (cls, k, v)
+                if k in _values and v not in _values [k] :
+                    raise ValueError, \
+                        "%s doesn't allow value `%s` for `%s`" % (cls, v, k)
     # end def _check_dict
 
 # end class M_Data_Class

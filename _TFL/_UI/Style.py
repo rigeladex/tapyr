@@ -38,6 +38,7 @@
 #    22-Feb-2005 (RSC) "wrap", "justify" and margins added to style _names
 #    22-Feb-2005 (RSC) margin names fixed (rmargin{1,2}->lmargin{1,2}).
 #    24-Feb-2005 (BRU) Added `font_weight`.
+#    30-Mar-2005 (CT)  Doctests for style instances added
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,17 @@
 Traceback (most recent call last):
   ...
 ValueError: <Style fool> doesn't allow value `normalique` for `font_style`
+
+>>> s = Style ("a", background = "red")
+>>> t = s (foreground = "yellow")
+>>> u = t (name = "c", background = "pink")
+>>> print s, s.foreground, s.background
+<Style a> None red
+>>> print t, t.foreground, t.background
+<Style instance a> yellow red
+>>> print u, u.foreground, u.background
+<Style instance c> yellow pink
+
 """
 
 from   _TFL                    import TFL
@@ -58,7 +70,7 @@ import _TFL._Meta.M_Data_Class
 import _TFL._Meta.Object
 import _TFL._UI
 
-from   predicate               import dict_from_list
+from   _TFL.predicate          import dict_from_list
 
 class M_Style (TFL.Meta.M_Data_Class) :
     """Meta class used for generating style objects (which are implemented by
