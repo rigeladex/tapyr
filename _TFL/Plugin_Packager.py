@@ -34,6 +34,8 @@
 #    22-Jun-2004 (CT) Code for `-AP_Closure` changed to pass
 #                     `TFL._.Import_Closure.__dict__` to `eval`
 #    22-Jun-2004 (CT) Special casing for `_Plugins.__init__` added
+#    23-Jun-2004 (CT) `_setup_replacers` changed to not create replacement
+#                     pattern for `_Plugins` package itself
 #    ««revision-date»»···
 #--
 
@@ -211,6 +213,7 @@ class Plugin_Packager (TFL.Meta.Object) :
         tlp_pns           = sorted \
             ( [ pym.source_pns
                 for pym in self.delta_closure.tlp_dict.itervalues ()
+                if  pym.rel_name != "_Plugins"
               ]
             )
         modules           = dusort \
