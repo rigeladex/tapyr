@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
 #    13-Aug-2004 (CT) `base_indent2` replaced by `base_indent * 2`
+#    25-Aug-2004 (MG) `*_common` formats added to allow reused in decentants
 #    ««revision-date»»···
 #--
 
@@ -73,8 +74,11 @@ class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
 class Fct_Decl (_Function_) :
     """C function declaration"""
 
-    h_format             = _Function_._h_format + ";"
-    c_format             = _Function_._c_format + ";"
+    h_format_common      = _Function_._h_format + ";"
+    c_format_common      = _Function_._c_format + ";"
+
+    h_format             = h_format_common
+    c_format             = c_format_common
 
 # end class Fct_Decl
 
@@ -83,7 +87,7 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
 
     cgi                  = TFL.SDG.C.Node.Body
     _mod_format          = """%(::.static:)s%(::.extern:)s"""
-    h_format             = "".join \
+    h_format_common      = "".join \
         ( ( _mod_format
           , _Function_._h_format
           , """%(:empty=;"""
@@ -94,10 +98,7 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
           """
           )
         )
-    c_format             = "".join \
-        ( ( _mod_format
-          , _Function_._c_format
-          , """
+    body_format          = """
                 >>%(::*description:)s
                 {
                 >>%(::*explanation:)s
@@ -108,8 +109,15 @@ class Function (_Function_, TFL.SDG.C._Scope_) :
                 };
                 >
             """
+    c_format_common      = "".join \
+        ( ( _mod_format
+          , _Function_._c_format
+          , body_format
           )
         )
+
+    h_format             = h_format_common
+    c_format             = c_format_common
 
     def _update_scope_child (self, child, scope) :
         child._update_scope (TFL.SDG.C.C)
