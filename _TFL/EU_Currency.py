@@ -1,6 +1,5 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -51,6 +50,8 @@
 #    13-Feb-2002 (CT) `rounded` corrected to handle negative numbers correctly
 #    13-Feb-2002 (CT) `rounded_as_target` simplified
 #    18-Jun-2003 (CT) `comma_dec_pat` added and used
+#     5-Dec-2004 (CT) `to_euro_factor` changed from `1` to `1.0` to avoid
+#                     `DeprecationWarning: classic int division`
 #    ««revision-date»»···
 #--
 import re
@@ -66,7 +67,7 @@ class EU_Currency :
 
     ### if `target_currency' is not set, output is done in Euro
     target_currency = None
-    to_euro_factor  = 1
+    to_euro_factor  = 1.0
     name            = "EUR"
     sloppy_name     = "EUR"
     decimal_sign    = "."
@@ -439,3 +440,4 @@ def main (cmd) :
 
 if __name__ == "__main__":
     main (command_spec ())
+### __END__ EU_Currency
