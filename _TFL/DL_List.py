@@ -28,6 +28,8 @@
 # Revision Dates
 #    11-Sep-2003 (CT) Creation
 #    12-Sep-2003 (CT) Creation continued
+#    15-Sep-2003 (CT) s/_append/insert/g
+#    15-Sep-2003 (CT) `_new_item` factored
 #    ««revision-date»»···
 #--
 
@@ -134,17 +136,17 @@ class DL_List (TFL.Meta.Object) :
     tail = property (lambda s : s._T.prev)
 
     def append (self, * items) :
-        self._append (self._T.prev, * items)
+        self.insert (self._T.prev, * items)
     # end def append
-
-    def _append (self, p, * items) :
-        for item in items :
-            p = DL_Item (item, p.next, p)
-    # end def _append
 
     def clear (self) :
         self._H.link_next (self._T)
     # end def clear
+
+    def insert (self, pred, * items) :
+        for item in items :
+            pred = self._new_item (pred, item)
+    # end def insert
 
     def item (self, index) :
         if index >= 0 :
@@ -168,6 +170,10 @@ class DL_List (TFL.Meta.Object) :
         return self._H.successors ()
     # end def __iter__
 
+    def _new_item (self, pred, item) :
+        return DL_Item (item, pred.next, pred)
+    # end def _new_item
+
     def pop (self) :
         return self.remove (self.tail)
     # end def pop
@@ -177,7 +183,7 @@ class DL_List (TFL.Meta.Object) :
     # end def pop_front
 
     def prepend (self, * items) :
-        self._append (self._H, * items)
+        self.insert (self._H, * items)
     # end def prepend
 
     def remove (self, item) :
@@ -221,15 +227,15 @@ class DL_List_Counted (DL_List) :
        5
     """
 
-    def _append (self, p, * items) :
-        self.__super._append (p, * items)
-        self.count += len (items)
-    # end def _append
-
     def clear (self) :
         self.__super.clear ()
         self.count = 0
     # end def clear
+
+    def insert (self, pred, * items) :
+        self.__super.insert (pred, * items)
+        self.count += len   (items)
+    # end def insert
 
     def remove (self, item) :
         self.__super.remove (item)
