@@ -50,6 +50,7 @@
 #    20-Sep-2001 (CT) Change of MG revoked
 #    20-Sep-2001 (CT) Don't *-import names with leading underscores
 #     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
+#     8-Nov-2001 (CT) `Essence` added to handle TOM.Class_Proxy correctly
 #    ««revision-date»»···
 #--
 
@@ -220,6 +221,9 @@ class Package_Namespace :
                     if s.startswith ("_") :
                         continue
                     p_mod = _inspect.getmodule (p)
+                    if p_mod is None :
+                        ### handle Class_Proxy correctly
+                        p_mod = _inspect.getmodule (getattr (p, "Essence", p))
                     if transitive or p_mod is mod :
                         self._import_1 (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
