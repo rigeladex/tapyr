@@ -33,6 +33,7 @@
 #    18-Jan-2005 (MG) `Command_Interfacer.add_command` fixed
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #    26-Jan-2005 (CT) s/as_check_button/state_var/
+#    26-Jan-2005 (CT) `add_group` changed to return self
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,7 @@ class Command_Interfacer (TFL.TKT.Mixin) :
            entry name or a numeric index; if it isn't specified, the group is
            appended to the list)
         """
-        pass
+        return self
     # end def add_group
 
     def remove_group (self, index) :
