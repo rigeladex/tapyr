@@ -29,6 +29,8 @@
 # Revision Dates
 #    18-Apr-2003 (CT) Creation
 #    20-Apr-2003 (CT) `is_holiday` added
+#     1-Jan-2004 (CT) `PDF_Plan_L` and `-landscape` added
+#     1-Jan-2004 (CT) `_cooked` added and used
 #    ««revision-date»»···
 #--
 
@@ -44,6 +46,17 @@ import sos
 import _TFL._Meta.Object
 import _TFL._CAL.Plan
 import _TFL._CAL.Year
+
+_non_ascii = Regexp (r"[äöüßÄÖÜ]")
+_to_ascii  = \
+  { "ä" : "ae"
+  , "ö" : "oe"
+  , "ü" : "ue"
+  , "ß" : "ss"
+  , "Ä" : "Ae"
+  , "Ö" : "Oe"
+  , "Ü" : "Ue"
+  }
 
 class PDF_Plan (TFL.Meta.Object) :
 
@@ -163,17 +176,34 @@ class PDF_Plan (TFL.Meta.Object) :
             lg.next ()
             xo, yo = lg.next ()
             c.setFont    (font, ts / 2)
-            c.drawString (xo, yo, d.is_holiday [:20])
+            c.drawString (xo, yo, self._cooked (d.is_holiday) [:20])
             c.setFont    (font, ts / 5)
         for a in getattr (d, "appointments", []) :
             try :
                  xo, yo = lg.next ()
             except StopIteration :
                 break
-            c.drawString (xo, yo, ("%s %s" % (a.time or ">", a.activity))[:40])
+            txt = ("%s %s" % (a.time or ">", self._cooked (a.activity))) [:40]
+            c.drawString (xo, yo, txt)
     # end def one_day
 
+    def _cooked (self, text) :
+        return _non_ascii.sub \
+            ( lambda m : _to_ascii.get (m.group (0), "?")
+            , text
+            )
+    # end def _cooked
+
 # end class PDF_Plan
+
+class PDF_Plan_L (PDF_Plan) :
+
+    cm   = PDF_Plan.cm
+    xsiz = 29.7 * cm
+    ysiz = 21.0 * cm
+    xo   = 0.9  * cm
+
+# end class PDF_Plan_L
 
 def _command_spec (arg_array = None) :
     from Command_Line import Command_Line
@@ -184,6 +214,7 @@ def _command_spec (arg_array = None) :
             ( "diary:S=~/diary?Path for calendar file"
             , "filename:S=plan?Filename of plan for `year`"
             , "head_week:I=0?Number of first week to process"
+            , "landscape:B?Print in landscape format"
             , "pdf:S=plan_%s.pdf?Generate PDF file with plan" % (year, )
             , "tail_week:I=-1"
                 "?Number of last week to process (negative numbers "
@@ -207,7 +238,10 @@ def _main (cmd) :
     file_name = sos.path.join (path, cmd.filename)
     CAL.read_plan             (Y, file_name)
     pdf_name = Filename       (cmd.pdf, ".pdf").name
-    PDF_Plan                  (Y, pdf_name, head - wd, tail + 1 - wd)
+    if cmd.landscape :
+        PDF_Plan_L (Y, pdf_name, head - wd, tail + 1 - wd, 3, 1)
+    else :
+        PDF_Plan   (Y, pdf_name, head - wd, tail + 1 - wd)
     print Y.weeks [0].number, cmd.head_week, head - wd, cmd.tail_week, tail + 1 - wd
 # end def _main
 

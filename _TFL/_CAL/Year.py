@@ -177,6 +177,7 @@ class Year (TFL.Meta.Object) :
         self.days   = days   = []
         self.weeks  = weeks  = []
         self.map    = map    = {}
+        self.wmap   = wmap   = {}
         for m in range (1, 13) :
             month = Month (y, m)
             months.append (month)
@@ -211,6 +212,8 @@ class Year (TFL.Meta.Object) :
         self.holidays = holidays = CAL.holidays (self)
         for h, n in holidays.iteritems () :
             map [h].is_holiday = n
+        for w in weeks :
+            wmap [w.number] = w
     # end def __init__
 
     def __len__ (self) :
