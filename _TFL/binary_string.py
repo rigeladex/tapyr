@@ -98,8 +98,8 @@ _eight_bits_table = \
     , "11111100", "11111101", "11111110", "11111111"
     )
 
-def int_to_binary_string (integer) :
-    """Returns a string representing `integer` in binary.
+def int_to_binary_string (i) :
+    """Returns a string representing the integer `i` in binary.
 
        >>> int_to_binary_string (0)
        '00000000'
@@ -114,7 +114,6 @@ def int_to_binary_string (integer) :
        [True, True, True, True, True, True, True, True]
     """
     result = []
-    i      = integer
     while i > 0 :
         k = i &  _eight_bit_mask
         i = i >> 8
@@ -123,9 +122,9 @@ def int_to_binary_string (integer) :
     return "".join (result or _eight_bits_table [0])
 # end def int_to_binary_string
 
-def binary_string_to_int (string) :
-    """Returns the integer represented by `string` in binary form"""
-    return int (string, 2)
+def binary_string_to_int (s) :
+    """Returns the integer represented by string `s` in binary form"""
+    return int (s, 2)
 # end def binary_string_to_int
 
 ### unit-test code ############################################################
