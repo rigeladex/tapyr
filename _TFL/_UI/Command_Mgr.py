@@ -616,12 +616,6 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
                         j += 1
                     if tsep and dpos :
                         interfacer.add_separator (index = j)
-                elif head <= tail and not tsep :
-                    ### removing the trailing separator of the `dc` makes
-                    ### life much more complicated because we would need to
-                    ### put that separator back when the `dc` grows some
-                    ### commands again
-                    pass ### interfacer.remove_command (head)
     # end def _handle_dyn_commands
 
     def _interfacers (self, interface_names, index, delta) :
