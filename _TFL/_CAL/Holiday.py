@@ -21,7 +21,7 @@
 #
 #++
 # Name
-#    Holiday
+#    TFL.CAL.Holiday
 #
 # Purpose
 #    Provide information about fixed and moving Austrian holidays
@@ -33,11 +33,12 @@
 #     9-Feb-2004 (CT) Dependency on `Y.map` removed
 #     5-Jun-2004 (CT) `easter_date` implementation using Spencer Jones'
 #                     algorithm added
+#    10-Oct-2004 (MG) Use new `TFL.CAL.Date_Time` module instead of `Date_Time`
 #    ««revision-date»»···
 #--
 
-from   _TFL      import TFL
-from   Date_Time import *
+from   _TFL            import TFL
+import _TFL._CAL.Date_Time
 
 def easter_date_gauss (year) :
     """Returns date of easter sunday computed by Gauß' rule as given by
@@ -117,17 +118,15 @@ def holidays (Y) :
     result  = {}
     year    = Y.year
     for h, n in fixed_holidays.iteritems () :
-        result [(year, ) + h] = n
+        result [TFL.CAL.Date (year, * h).rgd] = n
     y, m, d = easter_date (year)
-    ED      = Date (Time_Tuple (year = y, month = m, day = d))
+    ED      = TFL.CAL.Date (year = y, month = m, day = d)
     for d, n in easter_dependent_holidays.iteritems () :
-        D = ED + d
-        result [D.tuple [:3]] = n
+        D = ED + TFL.CAL.Delta (days = d)
+        result [D.rgd] = n
     return result
 # end def holidays
 
-if __name__ == "__main__" :
-    pass
-else :
+if __name__ != "__main__" :
     TFL.CAL._Export ("*")
-### __END__ Holiday
+### __END__ TFL.CAL.Holiday

@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2004 Martin Glück. All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
+# Langstrasse 4, A--2244 Spannberg, Austria. lucky@spannberg.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -23,258 +23,309 @@
 #    TFL.CAL.GTK.Week
 #
 # Purpose
-#    Displays the weeknumber and the month/days of one week (depending on the
-#    display detail level of the week).
+#    Handle the display of one week of a calendar
 #
 # Revision Dates
-#    11-Feb-2004 (MG) Creation
+#    03-Oct-2004 (MGL) Creation
 #    ««revision-date»»···
 #--
 import  pygtk
 pygtk.require ("2.0")
 import  gtk
-from   _TFL                         import TFL
-from    Date_Time                   import Time_Tuple
-import _TFL._CAL._GTK.Drawing_Area
 
-class Week_Number (TFL.CAL.GTK.Drawing_Area) :
-    """Displays the week number"""
+from   _TFL                    import TFL
+from    Regexp                 import Regexp
+import _TFL._Meta.Object
+import _TFL._CAL._GTK.Color
+import _TFL._CAL._GTK.Event
+import _TFL._CAL._GTK.Text_Property
 
-    event_binding     = TFL.d_dict \
-        ( expose      = "_expose"
-        , button_down = "_button_down"
-        )
+class Event_Display (object) :
+    """Handles the height requests for a certain event for all the possible
+       states.
+    """
 
-    height_small = None
-    height_large = None
-    width_number = None
+    slice_pat = Regexp ("\[(.*):(.*)\]")
+    span_pat  = Regexp ("(style|weight|variant)=([^, ]+)")
 
-    month_markup = """<span size="small">%s</span>"""
-    month_format = "%s%02d"
-    year_modulo  = 100
-
-    def __init__ (self, week) :
-        self.week   = week
-        self.number = None
-        self.__super.__init__ ("02", wrap = False, border = True)
-        self.border_width = self.border_width * self.border
-        if not self.width_number :
-            width, height = self.layout.get_pixel_extents () [1] [2:]
-            self.__class__.width_number = width  + 2 * self.border_width
-            self.__class__.height_small = height + 2 * self.border_width
-        self.set_size_request (self.width_number, self.height_small)
+    def __init__ (self, event, width, detail = 0) :
+        self._event       = event
+        self._detail      = detail - 1
+        self._height_dict = {}
+        self.next_detail    (width)
     # end def __init__
 
-    def _expose (self, widget, event) :
-        if not self.number :
-            w           = self.week
-            self.number = w.thu.week
-            self.month  = w.mon.month
-            self.short  = "%02d" % (self.number, )
-            self.long   = self.month_markup % \
-                "\n".join \
-                ( self.month_format
-                % ( Time_Tuple.months [self.month].capitalize ()
-                  , w.mon.year % self.year_modulo
-                  )
-                )
-            if self.month != w.sun.month :
-                m         = w.sun.month
-                y         = w.sun.year
-                self.last = self.month_markup % \
-                    "\n".join \
-                    ( self.month_format
-                    % ( Time_Tuple.months [m].capitalize ()
-                      , y % self.year_modulo
-                      )
-                    )
-            else :
-                self.last = None
-            self.bgcolor  = self._colors.colors.get \
-                (("even_month", "odd_month") [self.month % 2])
-        self.__super._expose (widget, event)
-    # end def _expose
+    def next_detail (self, width) :
+        self._detail  = (self._detail + 1) % self._event.gtk_levels
+        self.height, self._display = self._height (self._detail, width)
+    # end def next_detail
 
-    def _draw_content (self, x, y, width, height) :
-        x += 1
-        y += 1
-        self.gc.foreground = self._colors.day_text
-        self.layout.set_markup (self.short)
-        self.draw_layout       (x, y)
-        if not self.border_state :
-            y += self.height_small
-            if not self.last :
-                y += (height - y - self.month_height) // 2
-            #else :
-            #    y += self.height_small // 2
-            x += self.width_number // 4
-            self.layout.set_markup (self.long)
-            self.draw_layout       (x, y)
-            if self.last :
-                y = height - self.month_height
-                self.layout.set_markup (self.last)
-                self.draw_layout       (x, y)
-    # end def _draw_content
+    def _height (self, detail, width) :
+        if detail not in self._height_dict :
+            format = []
+            h      = 0
+            for line_formats in self._event.gtk_display  [self._detail] :
+                line_format = []
+                lx          = 0
+                lh          = 0
+                for f in line_formats :
+                    text = f (self._event)
+                    if f.width is None :
+                        width = width
+                    else :
+                        width = f.width
+                    lx, lh = TFL.CAL.GTK.Text_Handling.instance.set_layout \
+                        (text, x = lx, y = 0, lh = lh, width = width)
+                    line_format.append ((text, f.x, f.width))
+                h += lh
+                format.append (line_format)
+            self._height_dict [detail] = (h, format)
+        return self._height_dict [detail]
+    # end def _height
+
+    def draw (self, window, gc, color, x, y, width) :
+        txp = TFL.CAL.GTK.Text_Handling.instance
+        for line_format in self._display :
+            lw = x
+            lh = 0
+            for text, xadd, ww in line_format :
+                lw += xadd
+                if ww is None :
+                    ww = width
+                lw, lh = txp.set_layout \
+                    (text, window, gc, lw, y, lh, draw = True, width = ww)
+            y += lh
+    # end def draw
+
+# end class Event_Display
+
+class Day_Display (object) :
+    """Handles the height control of all event display of one day."""
+
+    def __init__ (self, day, width, details = None) :
+        details          = details or [0] * len (day.appointments)
+        self.day         = day
+        self.min_height  = TFL.CAL.GTK.Text_Handling.week_day_h
+        self.width       = width
+        self._events     = \
+            [ Event_Display (e, self.width, details [i])
+                  for i, e in enumerate (day.appointments)
+            ]
+        self.height      = max \
+            ( reduce (lambda l, r : l + r.height, self._events, 0)
+            + len (self._events) - 1
+            , self.min_height
+            )
+    # end def __init__
+
+    def button_down (self, x, y) :
+        end = 0
+        for e in self._events :
+            end += e.height
+            if y <= end :
+                break
+        else :
+            ### event not in this day
+            return None, None
+        e.next_detail (self.width)
+        self.height = max \
+            ( reduce (lambda l, r : l + r.height, self._events, 0)
+            + len (self._events) - 1
+            , self.min_height
+            )
+        return self.day, e
+    # end def button_down
+
+    def draw_events (self, window, gc, color, x, y, width) :
+        old_fg        = gc.foreground
+        first         = True
+        for e in self._events :
+            if not first :
+                gc.foreground = color.white
+                window.draw_line (gc, x + 2, y, x + width - 4, y)
+                y            += 1
+                gc.foreground = old_fg
+            e.draw (window, gc, color, x, y, width)
+            y     += e.height
+            first  = False
+        if not first :
+            txp = TFL.CAL.GTK.Text_Handling.instance
+            txp.layout.set_width (-1)
+            txp.wrap_width = -1
+    # end def draw_events
+
+# end class Day_Display
+
+class Week (TFL.Meta.Object, gtk.DrawingArea) :
+    """Display a week in all the different state`s
+       - simple, all days in one row
+       - expanded, one day in one row
+         * events in the different states
+    """
+
+    day_detail = None
+
+    def __init__ (self, week, day_display = None, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.week        = week
+        self.day_display = day_display
+        self.color       = TFL.CAL.GTK.Color         (self)
+        txp              = TFL.CAL.GTK.Text_Handling (self)
+        self.connect    ("expose-event",       self._expose)
+        self.connect    ("button-press-event", self._button_down)
+        self.set_events (gtk.gdk.EXPOSURE_MASK | gtk.gdk.BUTTON_PRESS_MASK)
+        self.month    = TFL.Time_Tuple.months [week.sun.month].capitalize ()
+        self.week_no  = "%02d" % (self.week.number, )
+        self.bgcolor  = self.color.color_of_day (self.week.mon, today = False)
+        self.overview = True
+        self.set_size_request (-1, txp.week_no_h)
+        self.show             ()
+    # end def __init__
 
     def _button_down (self, widget, event) :
-        if event.button == 1:
-            self.border_state = not self.border_state
-            if not (self.border_state or self.height_large) :
-                self.layout.set_markup (self.long)
-                self.__class__.month_height = \
-                    self.layout.get_pixel_extents () [1] [3]
-                self.__class__.height_large = \
-                    (self.height_small * 2 + self.month_height * 2)
-                self.__class__.height_large += 2 * self.border_width
-            self.set_size_request \
-                ( self.width_number
-                , (self.height_large, self.height_small) [self.border_state]
-                )
+        txp = TFL.CAL.GTK.Text_Handling.instance
+        if event.button == 1 and event.type == gtk.gdk.BUTTON_PRESS :
+            if not self.overview :
+                week_no = txp.week_no_w
+                day     = None
+                if event.x <= week_no :
+                    self.overview = True
+                    self.set_size_request (-1, txp.week_no_h)
+                    return
+                if event.x >= (week_no * 2) :
+                    x, y      = event.x, event.y
+                    day_start = 1
+                    for dd in self.day_detail :
+                        day_end = day_start + dd.height
+                        if day_start <= y < day_end :
+                            day, app = dd.button_down (x, y - day_start)
+                            break
+                        day_start  = day_end
+                    else :
+                        return
+                if day :
+                    self.set_size_request \
+                        ( -1
+                         , txp.week_no_h
+                         + reduce ( lambda l, r : l + r.height
+                                  , self.day_detail
+                                  , 0
+                                  )
+                        )
+            else :
+                self.overview = False
+                if not self.day_detail :
+                    width = self.get_allocation ().width
+                    self.day_detail = \
+                        [Day_Display (d, width, None) for d in self.week.days]
+                self.set_size_request \
+                    ( -1
+                    , txp.week_no_h
+                    + reduce (lambda l, r : l + r.height, self.day_detail, 0)
+                    )
     # end def _button_down
 
-# end class Week_Number
-
-class _Month_Day_ (TFL.CAL.GTK.Drawing_Area) :
-    """Root class for the Month/Day display widget.
-       They have a common ancestor because they should have the same width!
-       """
-
-    fixed_width  = None
-    day_markup   = """<span size="small">%s</span>"""
-    month_markup = """<span size="x-small">%s</span>"""
-
-    def __init__ (self, text, day, border = False, wrap = False, * args, ** kw) :
-        kw ["bgcolor"] = ("even_month", "odd_month") [day.month % 2]
-        self.__super.__init__ (border = border, wrap = wrap, * args, ** kw)
-        if not self.fixed_width :
-            self.layout.set_markup (self.day_markup % "Mo\n29")
-            ( width_0
-            , self.__class__.day_height
-            ) = self.layout.get_pixel_extents () [0] [2:]
-            self.layout.set_markup (self.month_markup % "Mar")
-            ( width_1
-            , self.__class__.month_height
-            ) = self.layout.get_pixel_extents () [0] [2:]
-            self.__class__.day_height += 1
-            self.__class__.fixed_width   = max (width_0, width_1) + 2
-        self.layout.set_markup (text)
-    # end def __init__
-
-# end class _Month_Day_
-
-class Month (_Month_Day_) :
-    """Displays the name of the month."""
-
-    def __init__ (self, week) :
-        m = ( self.month_markup
-            % Time_Tuple.months [week.mon.month].capitalize ()
-            )
-        self.__super.__init__ (m, week.mon)
-        self.set_size_request  (self.fixed_width, self.month_height)
-    # end def __init__
-
-    def _draw_content (self, x, y, width, height) :
-        y = (height - self.month_height) // 4
-        self.__super._draw_content (-1, y, width, height)
-    # end def _draw_content
-
-# end class Month
-
-class Day_Name (_Month_Day_) :
-    """Display the name and day number of a day"""
-
-    def __init__ (self, day) :
-        text = ( self.day_markup
-               % "%s\n%02d" % (TFL.CAL.Week._day_names [day.weekday], day.day)
-               )
-        self.__super.__init__  (text, day)
-        self.set_size_request  (self.fixed_width, self.day_height)
-    # end def __init__
-
-# end class Day_Name
-
-class Week (TFL.Meta.Object) :
-    """Handels the displaying of one week"""
-
-    def __init__ (self, week, table, row) :
-        self.table         = table
-        self.row           = row
-        self.week_number   = Week_Number (week)
-        self.days          = []
-        self.month         = None
-        self.display_level = 0
-        table.attach \
-            ( self.week_number, 0, 1, row, row + 7
-            , yoptions = gtk.FILL
-            , xoptions = gtk.FILL
-            )
-        self.week_number.register_callback ("button_down", self._expand_week)
-        self.week_number.register_callback ("expose", self._expose_week_no)
-    # end def __init__
-
-    def _expose_week_no (self, widget, event) :
-        if not self.month :
-            self.month = Month (self.week_number.week)
-            self.table.attach \
-                ( self.month, 1, 2, self.row, self.row + 7
-                , yoptions = gtk.FILL
-                , xoptions = gtk.FILL
-                )
-    # end def _expose_week_no
-
-    def _expand_week (self, widget, event) :
-        row = self.row
-        self.display_level = not self.display_level
-        if self.display_level :
-            self.table.remove (self.month)
-            if not self.days :
-                self._create_days ()
-            for day_name, day_events in self.days :
-                self.table.attach \
-                    ( day_name, 1, 2, row, row + 1
-                    , yoptions = gtk.FILL
-                    , xoptions = gtk.FILL
-                    )
-                ### self.table.remove (day_events)
-                row += 1
+    def _expose (self, widget, event) :
+        alloc         = self.get_allocation ()
+        width, height = alloc.width, alloc.height
+        gc            = widget.get_style ().fg_gc [gtk.STATE_NORMAL]
+        x             = y = 0
+        old_fg        = gc.foreground
+        gc.foreground = self.bgcolor
+        widget.window.draw_rectangle (gc, True, x, y, width, height)
+        gc.foreground = old_fg
+        if self.overview :
+            self._draw_overview (widget.window, gc, x, y, width, height)
         else :
-            for day_name, day_events in self.days :
-                self.table.remove (day_name)
-                ### self.table.remove (day_events)
-            self.table.attach \
-                ( self.month, 1, 2, row, row + 7
-                , yoptions = gtk.FILL
-                , xoptions = gtk.FILL
-                )
-    # end def _expand_week
+            self._draw_detail   (widget.window, gc, x, y, width, height)
+    # end def _expose
 
-    def _create_days (self) :
-        for day in self.week_number.week.days :
-            day_name   = Day_Name (day)
-            day_events = None ### XXX
-            self.days.append ((day_name, day_events))
-    # end def _create_days
+    def _draw_overview (self, window, gc, x, y, width, height) :
+        txp           = TFL.CAL.GTK.Text_Handling.instance
+        old_fg        = gc.foreground
+        gc.foreground = self.color.week_number
+        window.draw_rectangle (gc, True, x, y, width, height)
+        gc.foreground = self.color.white
+        txp.draw_text (self.week_no, window, gc, x, y)
+        x     += txp.week_no_w
+        width -= txp.month_w - 1
+        txp.draw_text (self.month, window, gc, width + 1, y)
+        day_width = (width -x) / 7.0
+        for day in self.week.days :
+            next_day = int (x + day_width)
+            if day.date.weekday () == 6 :
+                dw   = width - x
+            else :
+                dw   = next_day - x
+            gc.foreground = self.color.color_of_day (day.date)
+            window.draw_rectangle (gc, True, x, y, dw, height)
+            gc.foreground = old_fg
+            txp.draw_text \
+                ( "%02d" % day.number, window, gc
+                , x + (dw - txp.week_no_w) // 2, y
+                )
+            x        = next_day
+    # end def _draw_overview
+
+    def _draw_detail (self, window, gc, x, y, width, height) :
+        txp = TFL.CAL.GTK.Text_Handling.instance
+        old_fg        = gc.foreground
+        dw            = width - x
+        y            += self._draw_week_description (window, gc, x, y, height)
+        for dd in self.day_detail :
+            gc.foreground = self.color.white
+            window.draw_line (gc, x, y, x + dw, y)
+            x  = txp.week_no_w + 2
+            dw = width - x
+            y += 1
+            dh = dd.height
+            gc.foreground = self.color.color_of_day (dd.day.date)
+            window.draw_rectangle (gc, True, x, y, dw, dh)
+            gc.foreground = old_fg
+            txp.draw_text \
+                ( "%s\n%02d"
+                % (self.week._day_names [dd.day.weekday ()], dd.day.number)
+                , window, gc
+                , x, y
+                )
+            dd.draw_events (window, gc, self.color, 2 * x, y, dw - x)
+            y += dh
+    # end def _draw_detail
+
+    def _draw_week_description (self, window, gc, x, y, height) :
+        w    = self.week
+        txp  = TFL.CAL.GTK.Text_Handling.instance
+        text = ( '<span weight="bold">KW%02d   </span>'
+                 '<span style="italic">%02d.%s %d .. %02d.%s %d</span>'
+               % ( w.number
+                 , w.mon.day
+                 , TFL.Time_Tuple.months [w.mon.month].capitalize ()
+                 , w.mon.year
+                 , w.sun.day, self.month, w.sun.year
+                 )
+               )
+        txp.draw_text (text, window, gc, x, y + 1)
+        return txp.week_no_h
+    # end def _draw_week_description
 
 # end class Week
 
-if __name__ == "__main__" :
+if __name__ != "__main__" :
+    TFL.CAL.GTK._Export ("*")
+else :
     import _TFL._CAL.Year
-    y = TFL.CAL.Year       (2004)
+    import _TFL._CAL.Event
+    cal   = TFL.CAL.Calendar ("Lucky's Calendar", directory = (r"f:\tmp", ))
+    y     = cal.add_year     (2004)
     w = gtk.Window         ()
     w.connect              ("delete-event", gtk.mainquit)
     w.show                 ()
-    w.set_size_request     (240, 320)
-    t = gtk.Table          (len (y.weeks) * 7, 3, False)
-    t.show                 ()
-    s = gtk.ScrolledWindow ()
-    s.show                 ()
-    w.add                  (s)
-    s.add_with_viewport    (t)
-    row = 0
-    for w in y.weeks :#[:10] :
-        week = Week (w, t, row)
-        row += 7
+    #w.set_size_request     (240, 320)
+    c = gtk.VBox           ()
+    c.show                 ()
+    w.add                  (c)
+    for w in y.weeks [:5] :
+        week = Week        (w)
+        c.add              (week)
     gtk.mainloop           ()
 ### __END__ TFL.CAL.GTK.Week
-
-
