@@ -29,6 +29,7 @@
 #    24-Jun-2002 (CT) Creation
 #    25-Jun-2002 (CT) Classes for relative Points renamed
 #    26-Jun-2002 (CT) `R_Point_nP` added
+#    22-Aug-2002 (CT) s/KeyError/IndexError/ for `__.etitem__` methods
 #    ««revision-date»»···
 #--
 
@@ -38,11 +39,11 @@ import  operator
 class _Point_ :
     """Base class for points in 2D space."""
 
-    def __getitem__ (self, item) :
-        """Returns `x' for `item == 0' and `y' for `item == 1'"""
-        if   item == 0 : return self.x
-        elif item == 1 : return self.y
-        else           : raise  KeyError, item
+    def __getitem__ (self, index) :
+        """Returns `x' for `index == 0' and `y' for `index == 1'"""
+        if   index == 0 : return self.x
+        elif index == 1 : return self.y
+        else            : raise  IndexError, index
     # end def __getitem__
 
     def __len__ (self) :
@@ -128,11 +129,11 @@ class Point (_Point_) :
         return self.__class__ (float (self.x) / left, float (self.y) / left)
     # end def __rdiv__
 
-    def __setitem__ (self, item, value) :
-        """Set `x' (for `item == 0') or `y' (for `item == 1') to `value'."""
-        if   item == 0 : self.x = value
-        elif item == 1 : self.y = value
-        else           : raise  KeyError, item
+    def __setitem__ (self, index, value) :
+        """Set `x' (for `index == 0') or `y' (for `index == 1') to `value'."""
+        if   index == 0 : self.x = value
+        elif index == 1 : self.y = value
+        else            : raise IndexError, index
     # end def __setitem__
 
 # end class Point
@@ -274,7 +275,7 @@ class R_Point_R (_R_Point_) :
     """Point positioned relative to a rectangle.
 
        >>> r = D2.Rect   (Point (0, 10), Point (20, 0))
-       >>> p = R_Point_R (r, D2.Rect.Center_Top, Point (0,2))
+       >>> p = R_Point_R (r, D2.Rect.Center_Top, Point (0, 2))
        >>> print r, p
        ((0, 10), (20.0, 10.0)) (10.0, 12.0)
        >>> r.shift (Point (5.0, 5.0))
@@ -361,8 +362,14 @@ class R_Point_nP (_R_Point_) :
 
 # end class R_Point_nP
 
+P  = Point
+Pp = R_Point_P
+Pl = R_Point_L
+Pr = R_Point_R
+Pn = R_Point_nP
+
 if __name__ != "__main__" :
-    D2._Export ("*", "Point")
+    D2._Export ("*", "P", "Pp", "Pl", "Pr", "Pn")
 
 ### unit-test code ############################################################
 

@@ -152,7 +152,8 @@ class Rect :
         line = D2.Line (point_1, point_2)
         for side in (self.bottom, self.left, self.right, self.top) :
             cp = side.intersection (line)
-            if cp != None : return cp
+            if cp != None :
+                return cp
         return None
     # end def connection_point
 
