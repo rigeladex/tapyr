@@ -45,6 +45,7 @@
 #     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
 #    25-Feb-2002 (CT) `Caller.__getitem__` changed to allow nested format
 #                     expressions (stolen from Skip Montanaro <skip@pobox.com>)
+#    12-Mar-2002 (CT) `_Export_Module` added
 #    ««revision-date»»···
 #--
 
@@ -170,5 +171,8 @@ if __debug__ :
 # end if __debug__
 
 ### end unit-test code ########################################################
+
+from TFL import TFL
+TFL._Export_Module ()
 
 ### __END__ Caller

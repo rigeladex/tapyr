@@ -69,12 +69,14 @@
 #                     output (included addition of `last_caller`)
 #    27-Feb-2002 (CT) Argument `module_name` removed from `_Export` (get that
 #                     from `caller_globals`)
+#    12-Mar-2002 (CT) `_Export_Module` added
+#    12-Mar-2002 (CT) Use `TFL.Module.names_of` instead of half-broken
+#                     `inspect.getmodule` 
 #    ««revision-date»»···
 #--
 
 from   caller_globals import caller_globals as _caller_globals
 from   caller_globals import caller_info    as _caller_info
-import inspect                              as _inspect
 from   Regexp         import Regexp
 
 _debug = __debug__
@@ -264,21 +266,18 @@ class Package_Namespace :
             if all_symbols :
                 self._import_names (mod, all_symbols, result, check_clashes)
             else :
-                for s, p in mod.__dict__.items () :
-                    if s.startswith ("_") :
-                        continue
-                    p_mod = _inspect.getmodule (p)
-                    if p_mod is None :
-                        ### handle Class_Proxy correctly
-                        try :
-                            if isinstance (p, type (self)) :
-                                p_mod = _inspect.getmodule \
-                                    (p.__dict__.get ("Essence", p))
-                        except :
-                            print s, p, mod
-                            raise
-                    if transitive or p_mod is mod :
-                        self._import_1 (mod, s, s, p, result, check_clashes)
+                if transitive :
+                    for s, p in mod.__dict__.items () :
+                        if not s.startswith ("_") :
+                            self._import_1 \
+                                (mod, s, s, p, result, check_clashes)
+                else :
+                    import TFL.Module
+                    for s in TFL.Module.names_of (mod) :
+                        p = getattr (mod, s)
+                        if not s.startswith ("_") :
+                            self._import_1 \
+                                (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
             star    = 1
         if symbols :
@@ -302,11 +301,10 @@ class Package_Namespace :
 
     def _import_1 (self, mod, name, as_name, object, result, check_clashes) :
         if __debug__ :
-            if (   check_clashes
-               and self.__dict__.get (name, object) is not object
-               ) :
+            old = self.__dict__.get (name, object)
+            if check_clashes and old is not object :
                 raise ImportError, ( "ambiguous name %s refers to %s and %s"
-                                   ) % (name, object, self.__dict__.get (name))
+                                   ) % (name, object, old)
         result [as_name] = object
     # end def _import_1
 
@@ -325,7 +323,7 @@ class Package_Namespace :
 
     def _Export (self, * symbols, ** kw) :
         """To be called by modules of Package_Namespace to inject their
-           symbols into the package namespace.
+           symbols into the package namespace `self`.
         """
         module_name = _caller_globals () ["__name__"].split (".") [-1]
         transitive  = kw.get ("transitive")
@@ -339,20 +337,10 @@ class Package_Namespace :
             if all_symbols :
                 self._import_names (mod, all_symbols, result, 1)
             else :
-                for s, p in mod.__dict__.items () :
-                    if s.startswith ("_") :
-                        continue
-                    p_mod = _inspect.getmodule (p)
-                    if p_mod is None :
-                        ### handle Class_Proxy correctly
-                        try :
-                            if isinstance (p, type (self)) :
-                                p_mod = _inspect.getmodule \
-                                    (p.__dict__.get ("Essence", p))
-                        except :
-                            print s, p, mod
-                            raise
-                    if transitive or p_mod is mod :
+                import TFL.Module
+                for s in TFL.Module.names_of (mod) :
+                    p = getattr (mod, s)
+                    if not s.startswith ("_") :
                         self._import_1 (mod, s, s, p, result, 1)
             symbols = symbols [1:]
         if symbols :
@@ -360,6 +348,20 @@ class Package_Namespace :
         self.__dict__.update (result)
     # end def _Export
 
+    def _Export_Module (self) :
+        """To be called by modules to inject themselves into the package
+           namespace `self`.
+        """
+        module_name = _caller_globals () ["__name__"].split (".") [-1]
+        mod         = self.__modules._load (module_name)
+        if __debug__ :
+            old = self.__dict__.get (module_name, mod)
+            if old is not mod :
+                raise ImportError, ( "ambiguous name %s refers to %s and %s"
+                                   ) % (module_name, mod, old)
+        self.__dict__ [module_name] = mod
+    # end def _Export_Module
+    
 # end class Package_Namespace
 
 ### __END__ Package_Namespace
