@@ -283,10 +283,7 @@ class CI_Menu (_CI_Widget_) :
     def enable_entry (self, name) :
         try :
             self.widget.enable_entry (name)
-        except (KeyboardInterrupt, SystemExit) :
-            raise
-        except :
-            ### TclError is a string exception, arrrrgggg
+        except CTK.TclError :
             if 0 and __debug__ :
                 traceback.print_exc ()
                 print "Enable_entry", self.widget, name
@@ -295,10 +292,7 @@ class CI_Menu (_CI_Widget_) :
     def disable_entry (self, name) :
         try :
             self.widget.disable_entry (name)
-        except (KeyboardInterrupt, SystemExit) :
-            raise
-        except :
-            ### TclError is a string exception, arrrrgggg
+        except CTK.TclError :
             if 0 and __debug__ :
                 traceback.print_exc ()
                 print "Disable_entry", self.widget, name
