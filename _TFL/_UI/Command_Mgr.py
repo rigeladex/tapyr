@@ -103,6 +103,8 @@
 #                     `as_check_button` to `state_var`
 #    27-Jan-2005 (CT) `_check_precondition_value` factored and
 #                     changes from 25-Jan-2005 greatly simplified
+#    28-Jan-2005 (CT) Methods of `Command`, `Command_Delegator`, and
+#                     `Command_Mgr` put into alphabetical order
 #    ««revision-date»»···
 #--
 
@@ -148,18 +150,6 @@ class _Command_ (TFL.Meta.Object) :
     par_pat     = re.compile (r"\n *\n")
     nam_pat     = re.compile (r"[Tt]his command")
 
-    def enable (self) :
-        for i in self.interfacers :
-            try :
-                i.enable_entry (self.name)
-            except KeyboardInterrupt :
-                raise
-            except StandardError :
-                if __debug__ :
-                    traceback.print_exc ()
-                    print str (self), i.__class__, i
-    # end def enable
-
     def disable (self) :
         for i in self.interfacers :
             try :
@@ -171,6 +161,18 @@ class _Command_ (TFL.Meta.Object) :
                     traceback.print_exc ()
                     print str (self), i.__class__, i
     # end def disable
+
+    def enable (self) :
+        for i in self.interfacers :
+            try :
+                i.enable_entry (self.name)
+            except KeyboardInterrupt :
+                raise
+            except StandardError :
+                if __debug__ :
+                    traceback.print_exc ()
+                    print str (self), i.__class__, i
+    # end def enable
 
     def formatted_precondition (self, p = None) :
         p = p or self.precondition
@@ -217,18 +219,16 @@ class Command (_Command_) :
         self._raw_doc      = (_doc or command.__doc__ or "")
     # end def __init__
 
-    def _cook_doc (self, form_dict) :
-        doc                = self._cooked_doc (self._raw_doc, form_dict)
-        doc, desc          = self.par_pat.split (doc + "\n\n", 1)
-        self.__doc__       = doc.strip  ()
-        self.description   = desc.strip ()
-        if self.precondition :
-            p = self.precondition.im_func
-            if not hasattr (p, "__cooked") :
-                setattr (p, "__cooked", True)
-                if p.__doc__ :
-                    p.__doc__ = self._cooked_doc (p.__doc__, form_dict)
-    # end def _cook_doc
+    def check_precondition (self) :
+        try :
+            return self._check_precondition ()
+        except Precondition_Violation, exc:
+            if self.pv_callback :
+                self.pv_callback (exc.precondition, exc.msg)
+                return False
+            else :
+                raise
+    # end def check_precondition
 
     def destroy (self) :
         for i in self.interfacers.itervalues () :
@@ -237,9 +237,14 @@ class Command (_Command_) :
                          = self.pv_callback = None
     # end def destroy
 
-    def __call__ (self, event = None) :
-        return self.run ()
-    # end def __call__
+    def is_applicable (self) :
+        try :
+            self._check_precondition ()
+        except Precondition_Violation :
+            return False
+        else :
+            return True
+    # end def is_applicable
 
     def run (self, * args, ** kw) :
         result = None
@@ -253,18 +258,13 @@ class Command (_Command_) :
         return result
     # end def run
 
-    def _run (self, * args, ** kw) :
-        return self.command (* args, ** kw)
-    # end def _run
-
-    def is_applicable (self) :
-        try :
-            self._check_precondition ()
-        except Precondition_Violation :
-            return False
+    def update_state (self) :
+        p = self.precondition
+        if p and not p () :
+            self.disable ()
         else :
-            return True
-    # end def is_applicable
+            self.enable  ()
+    # end def update_state
 
     def _check_precondition (self) :
         if self.batch_mode and not self.batchable :
@@ -282,24 +282,37 @@ class Command (_Command_) :
         return not has_failed
     # end def _check_precondition_value
 
-    def check_precondition (self) :
-        try :
-            return self._check_precondition ()
-        except Precondition_Violation, exc:
-            if self.pv_callback :
-                self.pv_callback (exc.precondition, exc.msg)
-                return False
-            else :
-                raise
-    # end def check_precondition
+    def _cook_doc (self, form_dict) :
+        doc                = self._cooked_doc (self._raw_doc, form_dict)
+        doc, desc          = self.par_pat.split (doc + "\n\n", 1)
+        self.__doc__       = doc.strip  ()
+        self.description   = desc.strip ()
+        if self.precondition :
+            p = self.precondition.im_func
+            if not hasattr (p, "__cooked") :
+                setattr (p, "__cooked", True)
+                if p.__doc__ :
+                    p.__doc__ = self._cooked_doc (p.__doc__, form_dict)
+    # end def _cook_doc
 
-    def update_state (self) :
-        p = self.precondition
-        if p and not p () :
-            self.disable ()
-        else :
-            self.enable  ()
-    # end def update_state
+    def _run (self, * args, ** kw) :
+        return self.command (* args, ** kw)
+    # end def _run
+
+    def __call__ (self, event = None) :
+        return self.run ()
+    # end def __call__
+
+    def __getattr__ (self, name) :
+        if name == "qname" :
+            return self.name
+        raise AttributeError, name
+    # end def __getattr__
+
+    def __repr__ (self) :
+        return "<function %s at %x>" % \
+               (str (self), id (self.command or self))
+    # end def __repr__
 
     def __str__ (self) :
         if self.command :
@@ -307,17 +320,6 @@ class Command (_Command_) :
         else :
             return self.name
     # end def __str__
-
-    def __repr__ (self) :
-        return "<function %s at %x>" % \
-               (str (self), id (self.command or self))
-    # end def __repr__
-
-    def __getattr__ (self, name) :
-        if name == "qname" :
-            return self.name
-        raise AttributeError, name
-    # end def __getattr__
 
 # end class Command
 
@@ -343,17 +345,17 @@ class Command_Delegator (Command) :
             (name, command = None, precondition = precondition, ** kw)
     # end def __init__
 
+    def _check_precondition (self) :
+        result = False ### in case there aren't any addressees
+        for p in self._preconditions () :
+            ### `_check_precondition_value` raises when violated
+            result = self._check_precondition_value (p, not p ())
+        return result
+    # end def _check_precondition
+
     def _delegator (self, addressee, fct) :
         return fct
     # end def _delegator
-
-    def _run (self, * args, ** kw) :
-        result = []
-        for a in self.addressees () :
-            cmd = getattr (a, self.cmd_mgr_name) [self.qname]
-            result.append (self._delegator (a, cmd._run) (* args, ** kw))
-        return result
-    # end def _run
 
     def _preconditions (self) :
         addressees = self.addressees ()
@@ -374,13 +376,13 @@ class Command_Delegator (Command) :
                     raise Precondition_Violation (self, msg)
     # end def _preconditions
 
-    def _check_precondition (self) :
-        result = False ### in case there aren't any addressees
-        for p in self._preconditions () :
-            ### `_check_precondition_value` raises when violated
-            result = self._check_precondition_value (p, not p ())
+    def _run (self, * args, ** kw) :
+        result = []
+        for a in self.addressees () :
+            cmd = getattr (a, self.cmd_mgr_name) [self.qname]
+            result.append (self._delegator (a, cmd._run) (* args, ** kw))
         return result
-    # end def _check_precondition
+    # end def _run
 
 # end class Command_Delegator
 
@@ -603,10 +605,12 @@ class Command_Mgr (Command_Group) :
             i.bind_to_sync (self.update_state)
     # end def __init__
 
-    def run (self, name, * args, ** kw) :
-        """Run the command named by `name'"""
-        return self.command [name].run (* args, ** kw)
-    # end def run
+    def destroy (self) :
+        self.__super.destroy ()
+        for p in self._precondition.values () :
+            p.command = []
+        self.appl = self.pv_callback = s._precondition = None
+    # end def destroy
 
     def is_applicable (self, name) :
         """Returns true if command name by `name' is currently applicable."""
@@ -617,20 +621,10 @@ class Command_Mgr (Command_Group) :
         return self.command.keys ()
     # end def keys
 
-    def destroy (self) :
-        self.__super.destroy ()
-        for p in self._precondition.values () :
-            p.command = []
-        self.appl = self.pv_callback = s._precondition = None
-    # end def destroy
-
-    def _add_precondition (self, cmd) :
-        p     = cmd.precondition
-        dict  = self.root._precondition
-        if not dict.has_key (p) :
-            dict [p] = Record (old_value = "None", command = [])
-        dict [p].command.append (cmd)
-    # end def _add_precondition
+    def run (self, name, * args, ** kw) :
+        """Run the command named by `name'"""
+        return self.command [name].run (* args, ** kw)
+    # end def run
 
     def update_state (self, event = None) :
         """Enable/disable all commands according to their preconditions"""
@@ -649,6 +643,14 @@ class Command_Mgr (Command_Group) :
             finally :
                 self.changes = int (self.change_counter)
     # end def update_state
+
+    def _add_precondition (self, cmd) :
+        p     = cmd.precondition
+        dict  = self.root._precondition
+        if not dict.has_key (p) :
+            dict [p] = Record (old_value = "None", command = [])
+        dict [p].command.append (cmd)
+    # end def _add_precondition
 
 # end class Command_Mgr
 
