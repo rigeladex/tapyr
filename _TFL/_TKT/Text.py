@@ -42,16 +42,13 @@
 #    23-Feb-2005 (CT)  `backwards` added to `find` and doctest
 #    23-Feb-2005 (CT)  `insert_image` changed to take an `image_name` instead
 #                      of an `image` argument
+#    24-Feb-2005 (RSC) `set_tabs' added. Minimal test for event bindings
+#                      added, more needs an app context.
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin
-
-### TODO:
-### - tab-handling. Suggest that positions are in pixels.
-###   API may be something like set_tabs (tab, tab, ...) or set_tabs
-###   (tablist)
 
 class Text (TFL.TKT.Mixin) :
     """Model simple text widget"""
@@ -62,7 +59,9 @@ class Text (TFL.TKT.Mixin) :
         >>> yell = Style ("yell", background = "yellow", foreground = "red")
         >>> gray = Style ("gray", background = "gray80")
         >>> hand = Style ("hand", mouse_cursor = "hand")
+        >>> cb   = Style ("cb",   callback = {'click_1' : lambda x : 1})
         >>> w = Text ()
+        >>> w.set_tabs (42, 84)
         >>> w.pop_style ()
         Traceback (most recent call last):
           ...
@@ -84,6 +83,9 @@ class Text (TFL.TKT.Mixin) :
         >>> w.insert (w.current_pos, "Hi", yell)
         >>> w.insert (w.current_pos, "Ho", delta = 2)
         >>> w.apply_style  (gray, w.bol_pos (hum_p), w.eol_pos (hum_p))
+        >>> #applying an eventbinding is impossible here because this
+        >>> #needs an app context for looking up the event name.
+        >>> #w.apply_style  (cb,   w.bol_pos (hum_p), w.eol_pos (hum_p))
         >>> w.remove_style (gray, w.bot_pos, w.eot_pos)
 
         >>> print w.get (hum_p, w.pos_at (hum_p, 3))
@@ -278,6 +280,12 @@ class Text (TFL.TKT.Mixin) :
         raise NotImplementedError, \
             "%s must define see" % (self.__class__.__name__, )
     # end def see
+
+    def set_tabs (self, * tabs) :
+        """Set tabulator positions. Unit is pixels."""
+        raise NotImplementedError, \
+            "%s must define set_tabs" % (self.__class__.__name__, )
+    # end def set_tabs
 
 # end class Text
 
