@@ -34,12 +34,16 @@ from   _TFL                 import TFL
 import _TFL._Meta.Object
 import _TFL._UI
 
+from   Record               import Record
+
 class App_Context (TFL.Meta.Object) :
     """Application context"""
 
     def __init__ (self, ANS, memory = None, ui_state = None) :
         self.ANS      = ANS
         self.memory   = memory
+        if ui_state is None :
+            ui_state  = Record ()
         self.ui_state = ui_state
     # end def __init__
 
