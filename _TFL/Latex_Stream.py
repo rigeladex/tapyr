@@ -253,15 +253,17 @@ class Latex_Stream (Formatted_Stream) :
 
     def begin_table (self, placement = "htbp")  :
         self._begin_block ("table", "[%s]" % placement)
+    # end def begin_table
 
     def end_table (self, caption, label) :
         self.putl (r"\caption{%s}" % caption)
         self.putl (r"\label{%s}" % label)
         self._end_block ("table")
+    # end def end_table
 
-
-    def begin_tabular (self, widths = None, tablespecs = None, headers = None, percentage = 0, longtable = 0):
-        self.putw ("\\begin{%s}[t]{|" % self._tab_marker (longtable))
+    def begin_tabular (self, widths = None, tablespecs = None, headers = None, percentage = 0, longtable = 0, colsep = "|"):
+        self.putw \
+            ("\\begin{%s}[t]{%s" % (self._tab_marker (longtable), colsep))
         if widths :
             self.columns = len (widths)
             if percentage :
@@ -270,17 +272,16 @@ class Latex_Stream (Formatted_Stream) :
                 widths  = map (lambda x: "%fcm" % x , widths)
 
             for w in widths :
-                self.putw ("p{%s}|" % w)
+                self.putw ("p{%s}%s" % (w, colsep))
         elif tablespecs :
             self.columns = len (tablespecs)
             for w in tablespecs :
-                self.putw ("%s|" % w)
+                self.putw ("%s%s" % (w, colsep))
         else :
             assert (0) # Neither widths nor tablespecs provided
 
         self.putl ("}")
         self.h_line ()
-
         if headers:
             entries = map (lambda x: textbf (x), headers)
             self.tabular_entry (entries)
@@ -288,9 +289,9 @@ class Latex_Stream (Formatted_Stream) :
             self.h_line ()
             self.putl ("\\endhead")
         self.indent ()
+    # end __init__
 
     def tabular_entry (self, entries, format_fn = None) :
-
         if (len (entries) <> self.columns) :
             print "len (entries): %d" % len (entries)
             print "self.columns:  %d" % self.columns
@@ -307,16 +308,15 @@ class Latex_Stream (Formatted_Stream) :
                 column += 1
             entries = new_entries
 
-
         self.putw (string.join (entries, " & "))
-        self.putl (" \\\\")
+        self.putl (" \\CR")
         self.h_line ()
+    # end def tabular_entry
 
     def end_tabular (self, longtable = 0):
         self.deindent ()
         self.putl ("\\end{%s}" % self._tab_marker (longtable))
-
-
+    # end def end_tabular
 
 
 # end class Latex_Stream
