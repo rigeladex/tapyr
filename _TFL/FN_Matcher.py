@@ -29,6 +29,8 @@
 #    30-Oct-2002 (CT) Creation
 #     6-Mar-2003 (CT) Inherit from `TFL.Meta.Object`
 #     6-Mar-2003 (CT) `FN_Matcher_Grep` added
+#    10-Apr-2003 (CT) `FN_Matcher_Grep` changed to pass `re.M` to
+#                     `re.compile`
 #    ««revision-date»»···
 #--
 
@@ -158,7 +160,7 @@ class FN_Matcher_Grep (FN_Matcher) :
 
     def __init__ (self, grep_pattern, name_pattern, predicate = lambda x : x, _open = open) :
         if isinstance (grep_pattern, (str, unicode)) :
-            grep_pattern  = re.compile (grep_pattern)
+            grep_pattern  = re.compile (grep_pattern, re.M)
         self.grep_pattern = grep_pattern
         self.pattern      = self._Matcher (name_pattern)
         self.predicate    = predicate
@@ -169,12 +171,12 @@ class FN_Matcher_Grep (FN_Matcher) :
         if self.pattern.matches (file_name) :
             try :
                 file = self._open (file_name)
-            except IOError :
+            except IOError, exc :
                 pass
             else :
                 try :
-                    return self.predicate \
-                        (self.grep_pattern.search (file.read ()))
+                    result = self.grep_pattern.search (file.read ())
+                    return self.predicate (result)
                 finally :
                     try :
                         file.close
