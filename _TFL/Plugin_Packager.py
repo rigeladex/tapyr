@@ -44,6 +44,7 @@
 #    24-Aug-2004 (CT) Rewrite all occurrences of `pi_package.pkg` in
 #                     `__init__` instead of specific patterns only
 #    28-Sep-2004 (CT)  Use `open` instead of `file` to open a file
+#    27-Oct-2004 (CED) `self.hides` saved
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,7 @@ class Plugin_Packager (TFL.Meta.Object) :
         hide = copy.copy (pym)
         hide.target_path = sos.path.join \
             (Filename (hide.target_path).directory, "_Hide", "__init__.py")
+        self.hides = [hide]
         self._write_target_file (hide, "")
     # end def _rewrite_package_plugin
 
