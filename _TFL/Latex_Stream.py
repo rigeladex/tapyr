@@ -59,6 +59,7 @@
 #    29-Dec-2003 (RMA) Added begin_block and end_block
 #    05-Jan-2004 (RMA) Added itemize_txt
 #    15-Jan-2004 (RMA) Improved define
+#    20-Jan-2004 (RMA) Improved interface of begin_tabular
 #    ««revision-date»»···
 #--
 
@@ -308,7 +309,12 @@ class Latex_Stream (Formatted_Stream) :
         self._end_block ("table")
     # end def end_table
 
-    def begin_tabular (self, widths = None, tablespecs = None, headers = None, percentage = 0, longtable = 0, colsep = "|"):
+    def begin_tabular (self, widths = None, tablespecs = None, headers = None, percentage = 0, **kw):
+        colsep      = kw.get ("colsep",     "|")
+        longtable   = kw.get ("longtable",  "0")
+        endfoot     = kw.get ("endfoot",     None)
+        endlastfoot = kw.get ("endlastfoot", None)
+
         self.putw \
             ("\\begin{%s}[t]{%s" % (self._tab_marker (longtable), colsep))
         if widths :
@@ -334,7 +340,9 @@ class Latex_Stream (Formatted_Stream) :
             self.tabular_entry (entries)
             self.h_line ()
             self.h_line ()
-            self.putl ("\\endhead")
+            self.putl (r"\endhead")
+        if endfoot:     self.putl (endfoot,     r"\endfoot")
+        if endlastfoot: self.putl (endlastfoot, r"\endlastfoot")
         self.indent ()
     # end __init__
 
