@@ -51,11 +51,14 @@
 #    20-Sep-2001 (CT) Don't *-import names with leading underscores
 #     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
 #     8-Nov-2001 (CT) `Essence` added to handle TOM.Class_Proxy correctly
+#    13-Nov-2001 (CT) `_import_symbols` corrected to handle empty `symbols`
+#                     correctly 
+#    13-Nov-2001 (CT) Unncessary restriction of nested packages removed
 #    ««revision-date»»···
 #--
 
 from   TFL.Caller  import globals as _caller_globals
-import inspect        as _inspect
+import inspect                    as _inspect
 
 class _Module_Space :
     
@@ -75,8 +78,6 @@ class _Module_Space :
 class Package_Namespace :
     """Implement a namespace for python packages providing direct access to
        classes and functions implemented in the modules of the package.
-
-       Caveat: this currently doesn't work for nested packages.
 
        In the following, a package Foo_Package and module Bar are assumed as
        example. 
@@ -212,7 +213,9 @@ class Package_Namespace :
         mod        = getattr (self.__modules, module_name)
         star       = None
         transitive = kw.get ("transitive")
-        if len (symbols) >= 1 and symbols [0] == "*" :
+        if not symbols :
+            symbols = (module_name, )
+        if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
                 self._import_names (mod, all_symbols, result, check_clashes)
@@ -230,8 +233,6 @@ class Package_Namespace :
             star    = 1
         if symbols :
             self._import_names (mod, symbols, result, check_clashes)
-        elif not star :
-            self._import_names (mod, (module_name, ), result, check_clashes)
         return result
     # end def _import_symbols    
     
