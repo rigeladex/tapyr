@@ -57,6 +57,9 @@
 #    13-Aug-2004 (MG) `_Recursive_Formatter_Method_.__iter__`,
 #                     `_Recursive_Formatter_Node_.__iter__` pass `ht_width`
 #                     to the method/recurse function
+#    23-Aug-2004 (CT) Code handling `rec_form` moved from
+#                     `_Recursive_Formatter_` to `_Recursive_Formatter_Node_`
+#    23-Aug-2004 (CT) `__str__` methods moved behind `__iter__` methods
 #    ««revision-date»»···
 #--
 
@@ -113,13 +116,11 @@ class Single_Line_Formatter (_Formatter_) :
 class _Recursive_Formatter_ (TFL.Meta.Object) :
 
     def __init__ (self, key, format, head_form, tail_form, anchor) :
-        key, rec_form   = (key.split (".", 1) + [None]) [:2]
-        self.key        = key
-        self.rec_form   = rec_form
-        self._format    = format
-        self.head_form  = head_form
-        self.tail_form  = tail_form
-        self.anchor     = anchor
+        self.key       = key
+        self._format   = format
+        self.head_form = head_form
+        self.tail_form = tail_form
+        self.anchor    = anchor
     # end def __init__
 
     def __call__ (self, node, context, sep_form) :
@@ -135,18 +136,12 @@ class _Recursive_Formatter_ (TFL.Meta.Object) :
         head, tail      = self.head_form % context, self.tail_form % context
         self.format     = head + _format + tail
         context.locals ["ht_width"] = len (head) + len (tail)
-        if self.rec_form :
-            self.recurse_kw ["format_name"] = self.rec_form
         return self
     # end def __call__
 
 # end class _Recursive_Formatter_
 
 class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
-
-    def __str__ (self) :
-        return "RF_Attr %s" % (self.key)
-    # end def __str__
 
     def __iter__ (self) :
         attr = getattr (self.node, self.key, None)
@@ -160,13 +155,13 @@ class _Recursive_Formatter_Attr_ (_Recursive_Formatter_) :
                 sep = self.sep
     # end def __iter__
 
+    def __str__ (self) :
+        return "RF_Attr %s" % (self.key)
+    # end def __str__
+
 # end class _Recursive_Formatter_Attr_
 
 class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
-
-    def __str__ (self) :
-        return "RF_Meth %s" % (self.key)
-    # end def __str__
 
     def __iter__ (self) :
         result = getattr (self.node, self.key) \
@@ -182,13 +177,26 @@ class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
                 sep = self.sep
     # end def __iter__
 
+    def __str__ (self) :
+        return "RF_Meth %s" % (self.key)
+    # end def __str__
+
 # end class _Recursive_Formatter_Method_
 
 class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
 
-    def __str__ (self) :
-        return "RF_Node %s" % (self.key)
-    # end def __str__
+    def __init__ (self, key, format, head_form, tail_form, anchor) :
+        key, rec_form = (key.split (".", 1) + [None]) [:2]
+        self.rec_form = rec_form
+        self.__super.__init__ (key, format, head_form, tail_form, anchor)
+    # end def __init__
+
+    def __call__ (self, node, context, sep_form) :
+        result = self.__super.__call__ (node, context, sep_form)
+        if self.rec_form :
+            self.recurse_kw ["format_name"] = self.rec_form
+        return result
+    # end def __call__
 
     def __iter__ (self) :
         context  = self.context
@@ -214,6 +222,10 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
                     sep = self.sep
     # end def __iter__
 
+    def __str__ (self) :
+        return "RF_Node %s" % (self.key)
+    # end def __str__
+
 # end class _Recursive_Formatter_Node_
 
 class _Recursive_Formatters_ (TFL.Meta.Object) :
@@ -222,10 +234,6 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
         self.x_forms    = x_forms
         self.formatters = formatters
     # end def __init__
-
-    def __str__ (self) :
-        return "RFS (%s)" % (", ".join ([str (f) for f in self.formatters]), )
-    # end def __str__
 
     def __call__ (self, node, context) :
         self.node    = node
@@ -262,6 +270,10 @@ class _Recursive_Formatters_ (TFL.Meta.Object) :
             yield self.empty
     # end def __iter__
 
+    def __str__ (self) :
+        return "RFS (%s)" % (", ".join ([str (f) for f in self.formatters]), )
+    # end def __str__
+
 # end class _Recursive_Formatters_
 
 class Multi_Line_Formatter (_Formatter_) :
@@ -289,7 +301,7 @@ class Multi_Line_Formatter (_Formatter_) :
         , re.VERBOSE
         )
     key_pattern = Regexp \
-        ( r"""(?P<anchor> >?) (?P<ftyp> [.*@]) (?P<name> .*)"""
+        ( r"""(?P<anchor> >?) (?P<type> [.*@]) (?P<name> .*)"""
         , re.VERBOSE
         )
     Formatters  = \
@@ -304,7 +316,7 @@ class Multi_Line_Formatter (_Formatter_) :
     # end def __init__
 
     def __call__ (self, node, context) :
-        last       = ""
+        last = ""
         PRINT (self, node.name, context.indent_anchor)
         for f in self.formatters :
             lines      = TFL.Look_Ahead_Gen (f (node, context))
@@ -318,7 +330,7 @@ class Multi_Line_Formatter (_Formatter_) :
                     yield "%s%s"  % (last, l % context)
                     last = ""
                 else :
-                    last = "%s%s" %  (last, l % context)
+                    last = "%s%s" % (last, l % context)
                 i += 1
         if last :
             yield last
@@ -378,9 +390,9 @@ class Multi_Line_Formatter (_Formatter_) :
             k_match = self.key_pattern.match (key)
             if k_match :
                 anchor = bool (k_match.group ("anchor"))
-                ftyp   = k_match.group ("ftyp")
+                type   = k_match.group ("type")
                 name   = k_match.group ("name")
-                rf     = self.Formatters [ftyp]
+                rf     = self.Formatters [type]
                 formatters.append \
                     (rf (name, form, x_forms.head, x_forms.tail, anchor))
             else :
