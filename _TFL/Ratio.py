@@ -32,6 +32,7 @@
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #     8-Feb-2005 (CED) Various improvements
+#     9-Feb-2005 (CED) Some simplifications done
 #    ««revision-date»»···
 #--
 
@@ -158,25 +159,34 @@ class Ratio :
         return "Ratio (%r)" % (str (self), )
     # end def __repr__
 
-    def __mul__ (self, rhs) :
-        if not isinstance (rhs, Ratio) :
-            rhs = self.__class__ (rhs)
-        return self.__class__ (self.n * rhs.n, self.d * rhs.d)
-    # end def __mul__
-
-    __rmul__ = __mul__
-
     def __imul__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
             rhs = self.__class__ (rhs)
         self.n *= rhs.n
         self.d *= rhs.d
+        return self
     # end def __imul__
 
-    def __div__ (self, rhs) :
+    def __mul__ (self, rhs) :
+        result  = self.__class__ (self)
+        result *= rhs
+        return result
+    # end def __mul__
+
+    __rmul__ = __mul__
+
+    def __idiv__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
             rhs = self.__class__ (rhs)
-        return self.__class__ (self.n * rhs.d, self.d * rhs.n)
+        self.n *= rhs.d
+        self.d *= rhs.n
+        return self
+    # end def __idiv__
+
+    def __div__ (self, rhs) :
+        result  = self.__class__ (self)
+        result /= rhs
+        return result
     # end def __div__
 
     def __rdiv__ (self, lhs) :
@@ -187,50 +197,22 @@ class Ratio :
         return lhs * self.reciprocal ()
     # end def __rdiv__
 
-    def __idiv__ (self, rhs) :
-        if not isinstance (rhs, Ratio) :
-            rhs = self.__class__ (rhs)
-        self.n *= rhs.d
-        self.d *= rhs.n
-    # end def __idiv__
-
-    def __add__ (self, rhs) :
-        if not isinstance (rhs, Ratio) :
-            rhs = self.__class__ (rhs)
-        result  = self.__class__ \
-            ( (self.n * rhs.d + rhs.n * self.d)
-            , self.d * rhs.d
-            )
-        result.normalize ()
-        return result
-    # end def __add__
-
-    __radd__ = __add__
-
-    def _iadd__ (self, rhs) :
+    def __iadd__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
             rhs = self.__class__ (rhs)
         self.n  = (self.n * rhs.d) + (rhs.n * self.d)
         self.d *= rhs.d
         self.normalize ()
-    # end def _iadd__
+        return self
+    # end def __iadd__
 
-    def __sub__ (self, rhs) :
-        if not isinstance (rhs, Ratio) :
-            rhs = self.__class__ (rhs)
-        result  = self.__class__ \
-            ( (self.n * rhs.d - rhs.n * self.d)
-            , self.d * rhs.d
-            )
-        result.normalize ()
+    def __add__ (self, rhs) :
+        result  = self.__class__ (self)
+        result += rhs
         return result
-    # end def __sub__
+    # end def __add__
 
-    def __rsub__ (self, lhs) :
-        if not isinstance (lhs, Ratio) :
-            lhs = self.__class__ (lhs)
-        return lhs - self
-    # end def __rsub__
+    __radd__ = __add__
 
     def __isub__ (self, rhs) :
         if not isinstance (rhs, Ratio) :
@@ -238,7 +220,20 @@ class Ratio :
         self.n  = (self.n * rhs.d) - (rhs.n * self.d)
         self.d *= rhs.d
         self.normalize ()
+        return self
     # end def __isub__
+
+    def __sub__ (self, rhs) :
+        result  = self.__class__ (self)
+        result -= rhs
+        return result
+    # end def __sub__
+
+    def __rsub__ (self, lhs) :
+        inverse    = self.__class__ (self)
+        inverse.n *= -1
+        return lhs + inverse
+    # end def __rsub__
 
     def __cmp__ (self, rhs) :
         if rhs is None :
