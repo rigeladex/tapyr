@@ -88,6 +88,12 @@ class Line :
        ' 7.07'
        >>> l.distance (D2.Point (5.0, 0.0)) - (l.length () / 2) < 1.e-12
        1
+       >>> l.point (0.5)
+       Point (2.5, 2.5)
+       >>> l.tail * 0.5
+       Point (2.5, 2.5)
+       >>> l.tail + l.tail
+       Point (10.0, 10.0)
     """
 
     def __init__ (self, head = (0.0, 0.0), tail = (1.0, 1.0)) :

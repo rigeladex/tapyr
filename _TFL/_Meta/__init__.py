@@ -30,7 +30,7 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   _TFL                   import TFL
 from   _TFL.Package_Namespace import Package_Namespace
 
 Meta = Package_Namespace ()

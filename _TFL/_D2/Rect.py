@@ -1,0 +1,236 @@
+#! /swing/bin/python
+# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
+#
+#++
+# Name
+#    TFL.D2.Rect
+#
+# Purpose
+#    Classes modeling rectangles in 2D space
+#
+# Revision Dates
+#    24-Jun-2002 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from    _TFL._D2       import D2
+import  _TFL._D2.Point
+import  _TFL._D2.Line
+import  math
+
+class Rect :
+    """Model an axes-parallel rectangle in 2D space.
+
+       >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (2.0, 1.0))
+       >>> rect_points (q)
+       bottom_left          : (1.0, 2.0)
+       bottom_right         : (3.0, 2.0)
+       center               : (2.0, 1.5)
+       center_bottom        : (2.0, 2.0)
+       center_left          : (1.0, 1.5)
+       center_right         : (3.0, 1.5)
+       center_top           : (2.0, 1.0)
+       top_left             : (1.0, 1.0)
+       top_right            : (3.0, 1.0)
+       >>> q.scale (2)
+       Rect ((1.0, 1.0), (5.0, 3.0))
+       >>> rect_points (q)
+       bottom_left          : (1.0, 3.0)
+       bottom_right         : (5.0, 3.0)
+       center               : (3.0, 2.0)
+       center_bottom        : (3.0, 3.0)
+       center_left          : (1.0, 2.0)
+       center_right         : (5.0, 2.0)
+       center_top           : (3.0, 1.0)
+       top_left             : (1.0, 1.0)
+       top_right            : (5.0, 1.0)
+       >>> q.shift (D2.Point (1, 1))
+       Rect ((2.0, 2.0), (6.0, 4.0))
+       >>> rect_points (q)
+       bottom_left          : (2.0, 4.0)
+       bottom_right         : (6.0, 4.0)
+       center               : (4.0, 3.0)
+       center_bottom        : (4.0, 4.0)
+       center_left          : (2.0, 3.0)
+       center_right         : (6.0, 3.0)
+       center_top           : (4.0, 2.0)
+       top_left             : (2.0, 2.0)
+       top_right            : (6.0, 2.0)
+       >>> rect_sides (q)
+       bottom               : ((2.0, 4.0), (6.0, 4.0))
+       left                 : ((2.0, 2.0), (2.0, 4.0))
+       right                : ((6.0, 4.0), (6.0, 2.0))
+       top                  : ((6.0, 2.0), (2.0, 2.0))
+       >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (1.0, 1.0))
+       >>> connection_points (q)
+       (1.0, 0.5) : (1.25, 1.0)
+       (0.5, 1.0) : (1.0, 1.25)
+       (2.0, 0.5) : (1.75, 1.0)
+       (2.5, 1.0) : (2.0, 1.25)
+       (1.0, 2.5) : (1.25, 2.0)
+       (0.5, 2.0) : (1.0, 1.75)
+       (2.0, 2.5) : (1.75, 2.0)
+       (2.5, 2.0) : (2.0, 1.75)
+    """
+
+    Bottom_Left   = D2.Point (0.0, 1.0)
+    Bottom_Right  = D2.Point (1.0, 1.0)
+    Center        = D2.Point (0.5, 0.5)
+    Center_Bottom = D2.Point (0.5, 1.0)
+    Center_Left   = D2.Point (0.0, 0.5)
+    Center_Right  = D2.Point (1.0, 0.5)
+    Center_Top    = D2.Point (0.5, 0.0)
+    Top_Left      = D2.Point (0.0, 0.0)
+    Top_Right     = D2.Point (1.0, 0.0)
+
+    corner_dict   = \
+        { "bottom_left"   : Bottom_Left
+        , "bottom_right"  : Bottom_Right
+        , "center"        : Center
+        , "center_bottom" : Center_Bottom
+        , "center_left"   : Center_Left
+        , "center_right"  : Center_Right
+        , "center_top"    : Center_Top
+        , "top_left"      : Top_Left
+        , "top_right"     : Top_Right
+        }
+
+    side_dict = \
+        { "bottom" : (lambda r : D2.Line (r.bottom_left,  r.bottom_right))
+        , "left"   : (lambda r : D2.Line (r.top_left,     r.bottom_left))
+        , "right"  : (lambda r : D2.Line (r.bottom_right, r.top_right))
+        , "top"    : (lambda r : D2.Line (r.top_right,    r.top_left))
+        }
+
+    def __init__ (self, top_left = (0.0, 0.0), size = (1.0, 1.0)) :
+        if isinstance (top_left, type (())) :
+            top_left  = D2.Point (* top_left)
+        if isinstance (size, type (())) :
+            size      = D2.Point (* size)
+        self.top_left = top_left
+        self.size     = size
+    # end def __init__
+
+    def point (self, p = Center) :
+        """Return point at position `p' relative to the rectangle."""
+        return self.top_left + (self.size * p)
+    # end def point
+
+    def shift (self, right) :
+        self.top_left.shift (right)
+        return self
+    # end def shift
+
+    def scale (self, right) :
+        self.size.scale (right)
+        return self
+    # end def scale
+
+    def connection_point (self, point_1, point_2) :
+        """Returns the intersection point between the rectangle and the line
+           between `point_1' and `point_2'. If no intersection exists
+           (both points are either inside or outside) than
+           None is returned.
+        """
+        line = D2.Line (point_1, point_2)
+        for side in (self.bottom, self.left, self.right, self.top) :
+            cp = side.intersection (line)
+            if cp != None : return cp
+        return None
+    # end def connection_point
+
+    def __str__ (self) :
+        return "(%s, %s)" % (self.top_left, self.bottom_right)
+    # end def __str__
+
+    def __repr__ (self) :
+        return "%s %s" % (self.__class__.__name__, str (self))
+    # end def __repr__
+
+    def __getattr__ (self, name) :
+        """Return the point or side `name'. The possible names are defined by
+           `corner_dict' and `side_dict'.
+        """
+        if   self.corner_dict.has_key (name) :
+            return self.point (self.corner_dict [name])
+        elif self.side_dict.has_key   (name) :
+            return self.side_dict [name] (self)
+        else :
+            raise  AttributeError, name
+    # end def __getattr__
+
+# end class Rect
+
+def rectangle (x, y, w, h) :
+    """Return a `Rect' at position `(x, y)' with size `(x, h)'"""
+    return Rect (D2.Point (x, y), D2.Point (w, h))
+# end def rectangle
+
+if __name__ != "__main__" :
+    D2._Export ("*")
+
+### unit-test code ############################################################
+
+if __debug__ :
+
+    import U_Test
+    from predicate      import sorted
+
+    def rect_points (r) :
+        for p in sorted (r.corner_dict.keys ()) :
+            print "%-20s : %s" % (p, getattr (r, p))
+    # end def rect_points
+
+    def rect_sides (r) :
+        for s in sorted (r.side_dict.keys ()) :
+            print "%-20s : %s" % (s, getattr (r, s))
+    # end def rect_sides
+
+    def connection_points (r) :
+        P = D2.Point
+        for p, off in ( (r.top_left,     P ( 0.0, -0.5))
+                      , (r.top_left,     P (-0.5,  0.0))
+                      , (r.top_right,    P ( 0.0, -0.5))
+                      , (r.top_right,    P ( 0.5,  0.0))
+                      , (r.bottom_left,  P ( 0.0,  0.5))
+                      , (r.bottom_left,  P (-0.5,  0.0))
+                      , (r.bottom_right, P ( 0.0,  0.5))
+                      , (r.bottom_right, P ( 0.5,  0.0))
+                      ) :
+                q = p + off
+                print "%s : %s" % (q, r.connection_point (q, r.center))
+    # end def connection_points
+
+    def _doc_test () :
+        import Rect
+        return U_Test.run_module_doc_tests (Rect)
+    # end def _doc_test
+
+    def _test () :
+        _doc_test  ()
+    # end def _test
+
+    if __name__ == "__main__" :
+        _test ()
+# end if __debug__
+
+### end unit-test code ########################################################
+
+### __END__ Rect
