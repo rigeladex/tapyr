@@ -62,6 +62,7 @@
 #    23-Feb-2005 (CT)  Style handling implemented for `insert_image` and
 #                      `insert_widget`
 #    24-Feb-2005 (CT)  s/bind_tag/tag_bind/
+#    24-Feb-2005 (RSC) set_tabs added.
 #    ««revision-date»»···
 #--
 
@@ -269,6 +270,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     def see (self, pos_or_mark, delta = 0) :
         self.wtk_widget.see (self._pos_at (pos_or_mark, delta))
     # end def see
+
+    def set_tabs (self, * tabs) :
+        self.wtk_widget.configure (tabs = " ".join ([`t` for t in tabs]))
+    # end def set_tabs
 
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
         result = pos_or_mark
