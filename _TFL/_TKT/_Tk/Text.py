@@ -34,6 +34,7 @@
 #                     by Tk)
 #    17-Feb-2005 (CT) `delta` made optional argument of `pos_at`
 #    17-Feb-2005 (CT) `_line_pos` corrected
+#    17-Feb-2005 (CT) s/widget/wtk_widget/g
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,7 @@ class _Tk_Text_ (TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
 
        >>> w = Text ()
-       >>> w.widget.pack ()
+       >>> w.wtk_widget.pack ()
        >>> w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
        ('1.0', '2.0', '1.0', '1.0')
        >>> w.append ("Ha")
@@ -82,14 +83,14 @@ class _Tk_Text_ (TFL.TKT.Text) :
 
     Widget_Type = CTK.C_Text
 
-    bot_pos     = property (lambda s : s.widget.index (START))
-    current_pos = property (lambda s : s.widget.index (INSERT))
-    eot_pos     = property (lambda s : s.widget.index (END))
+    bot_pos     = property (lambda s : s.wtk_widget.index (START))
+    current_pos = property (lambda s : s.wtk_widget.index (INSERT))
+    eot_pos     = property (lambda s : s.wtk_widget.index (END))
 
-    def __init__ (self, AC = None, name = None, editable = True) :
+    def __init__ (self, AC = None, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
-        self.widget   = self.Widget_Type \
-            ( master  = None
+        self.wtk_widget   = self.Widget_Type \
+            ( master  = wc
             , name    = name
             , state   = (DISABLED, NORMAL) [bool (editable)]
             )
@@ -97,7 +98,7 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def __init__
 
     def apply_style (self, style, head = None, tail = None, delta = 0) :
-        self.widget.tag_add \
+        self.wtk_widget.tag_add \
             ( self._tag (style)
             , self.pos_at (head or self.bot_pos, delta)
             , tail or self.eot_pos
@@ -105,17 +106,17 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def apply_style
 
     def bol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
-        return self.widget.index \
+        return self.wtk_widget.index \
             (self._line_pos ("linestart", pos_or_mark, delta, line_delta))
     # end def bol_pos
 
     def eol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
-        return self.widget.index \
+        return self.wtk_widget.index \
             (self._line_pos ("lineend", pos_or_mark, delta, line_delta))
     # end def eol_pos
 
     def find (self, text, head = None, tail = None, delta = 0) :
-        return self.widget.search \
+        return self.wtk_widget.search \
             ( text, self.pos_at (head or self.bot_pos, delta)
             , stopindex = tail
             , nocase    = False
@@ -124,11 +125,11 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def find
 
     def free_mark (self, * mark) :
-        self.widget.mark_unset (* mark)
+        self.wtk_widget.mark_unset (* mark)
     # end def free_mark
 
     def get (self, head = None, tail = None, delta = 0) :
-        widget = self.widget
+        widget = self.wtk_widget
         if head is None :
             head = self.bot_pos
         if tail is None :
@@ -140,12 +141,12 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def get
 
     def insert (self, pos_or_mark, text, style = None, delta = 0) :
-        return self.widget.insert \
+        return self.wtk_widget.insert \
             (self.pos_at (pos_or_mark, delta), text, self._tag (style))
     # end def insert
 
     def insert_image (self, pos_or_mark, image, style = None, delta = 0) :
-        result = self.widget.image_create \
+        result = self.wtk_widget.image_create \
             (self.pos_at (pos_or_mark, delta), image = image)
         if style is not None :
             pass ### XXX
@@ -153,7 +154,7 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def insert_image
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
-        result = self.widget.window_create \
+        result = self.wtk_widget.window_create \
             (self.pos_at (pos_or_mark, delta), window = window)
         if style is not None :
             pass ### XXX
@@ -164,7 +165,7 @@ class _Tk_Text_ (TFL.TKT.Text) :
         if name is None :
             name = "mark%d" % (self._mark_no, )
             self._mark_no += 1
-        self.widget.mark_set (name, self.pos_at (pos, delta))
+        self.wtk_widget.mark_set (name, self.pos_at (pos, delta))
         return name
     # end def mark_at
 
@@ -178,7 +179,7 @@ class _Tk_Text_ (TFL.TKT.Text) :
     def remove (self, head, tail = None, delta = 0) :
         if tail is None :
             tail = self.pos_at (head, delta)
-        self.widget.delete (head, tail)
+        self.wtk_widget.delete (head, tail)
     # end def remove
 
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
@@ -203,7 +204,7 @@ __test__ = dict (interface_test = TFL.TKT.Text._interface_test)
 """
 from _TFL._TKT._Tk.Text import *
 w = Text ()
-w.widget.pack ()
+w.wtk_widget.pack ()
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
 w.append ("Ha")
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)

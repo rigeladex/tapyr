@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Feb-2005 (CT) Creation
 #    17-Feb-2005 (CT) `_interface_test` added
+#    17-Feb-2005 (CT) Test case added to `_interface_test`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,8 @@ class Text (TFL.TKT.Mixin) :
 
     _interface_test   = """
         >>> w = Text ()
+        >>> w.get ()
+        ''
         >>> w.append ("Ha")
         >>> w.append ("Hum")
         >>> hum_p = w.find ("Hum")

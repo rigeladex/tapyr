@@ -57,6 +57,7 @@
 #     2-Feb-2005 (CT) `CI_Menu.index` changed again
 #    14-Feb-2005 (MG) Smaller bugs fixed
 #    16-Feb-2005 (MG) `bind_to_widget`: parameter `event_name` added
+#    17-Feb-2005 (CT) s/widget/wtk_widget/g
 #    ««revision-date»»···
 #--
 
@@ -84,13 +85,13 @@ class _CI_Widget_ (_CI_) :
 
     def __init__ (self, AC, parent, ** kw) :
         self.__super.__init__ (AC = AC, parent = parent, ** kw)
-        self.widget = self.Widget_Type (parent, ** kw)
+        self.wtk_widget = self.Widget_Type (parent, ** kw)
     # end def __init__
 
     def destroy (self) :
-        if self.widget is not None :
-            self.widget.destroy ()
-            self.widget = None
+        if self.wtk_widget is not None :
+            self.wtk_widget.destroy ()
+            self.wtk_widget = None
     # end def destroy
 
 # end class _CI_Widget_
@@ -200,16 +201,16 @@ class CI_Menu (_CI_Widget_) :
 
     def index (self, name) :
         if name == -1 :
-            result = self.widget.index (END)
+            result = self.wtk_widget.index (END)
             if result is not None :
                 result += self._index_offset
         else :
-            result = self.widget.index (name) - self._index_offset
+            result = self.wtk_widget.index (name) - self._index_offset
         return result
     # end def index
 
     def set_auto_short_cuts (self) :
-        self.widget.set_auto_short_cuts ()
+        self.wtk_widget.set_auto_short_cuts ()
     # end def set_auto_short_cuts
 
     ### command specific methods
@@ -226,10 +227,10 @@ class CI_Menu (_CI_Widget_) :
             , ** kw
             ) :
         if state_var is not None :
-            fct = self.widget.insert_checkbutton
+            fct = self.wtk_widget.insert_checkbutton
             kw  = dict (variable = state_var, ** kw)
         else :
-            fct = self.widget.insert_command
+            fct = self.wtk_widget.insert_command
         return fct \
             ( index       = index + delta + self._index_offset
             , label       = name
@@ -247,16 +248,16 @@ class CI_Menu (_CI_Widget_) :
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
         result = CI_Menu \
-            ( self.AC, self.widget
+            ( self.AC, self.wtk_widget
             , name       = self.name_clean.sub ("_", name.lower ())
-            , balloon    = self.widget.balloon
-            , help       = self.widget.help_widget
+            , balloon    = self.wtk_widget.balloon
+            , help       = self.wtk_widget.help_widget
             , tearoff    = 0
             )
-        self.widget.insert_cascade \
+        self.wtk_widget.insert_cascade \
             ( index + delta + self._index_offset
             , label      = name
-            , menu       = result.widget
+            , menu       = result.wtk_widget
             , underline  = kw.get ("underline")
             )
         return result
@@ -268,7 +269,7 @@ class CI_Menu (_CI_Widget_) :
 
     ### separator specific methods
     def add_separator (self, name = None, index = None, delta = 0) :
-        self.widget.insert_separator (index + delta + self._index_offset)
+        self.wtk_widget.insert_separator (index + delta + self._index_offset)
     # end def add_separator
 
     def remove_separator (self, index) :
@@ -277,39 +278,39 @@ class CI_Menu (_CI_Widget_) :
 
     ### event specific methods
     def bind_to_activation (self, callback) :
-        self.widget.configure (postcommand = callback)
+        self.wtk_widget.configure (postcommand = callback)
     # end def bind_to_activation
 
     def bind_to_sync (self, callback) :
-        self.widget.configure (postcommand = callback)
+        self.wtk_widget.configure (postcommand = callback)
     # end def bind_to_sync
 
     def bind_to_widget (self, widget, event_name) :
         ### use Event_Name/Event_Binder for the event_name <-> event_name
-        widget.bind (event_name, self.widget.post)
+        widget.bind (event_name, self.wtk_widget.post)
     # end def bind_to_widget
 
     def enable_entry (self, name) :
         try :
-            self.widget.enable_entry (name)
+            self.wtk_widget.enable_entry (name)
         except CTK.TclError :
             if 0 and __debug__ :
                 traceback.print_exc ()
-                print "Enable_entry", self.widget, name
+                print "Enable_entry", self.wtk_widget, name
     # end def enable
 
     def disable_entry (self, name) :
         try :
-            self.widget.disable_entry (name)
+            self.wtk_widget.disable_entry (name)
         except CTK.TclError :
             if 0 and __debug__ :
                 traceback.print_exc ()
-                print "Disable_entry", self.widget, name
+                print "Disable_entry", self.wtk_widget, name
     # end def disable_entry
 
     ### internals
     def _remove (self, index) :
-        self.widget.delete (index)
+        self.wtk_widget.delete (index)
     # end def _remove
 
 # end class CI_Menu
@@ -319,11 +320,11 @@ class CI_Menubar (CI_Menu) :
 
     def __init__ (self, AC, parent, ** kw) :
         self.__super.__init__ (AC = AC, parent = parent, ** kw)
-        parent.toplevel.configure (menu = self.widget)
+        parent.toplevel.configure (menu = self.wtk_widget)
         ### the following hacks around a bug in Tkinter 1.63 which doesn't
         ### correctly handle menus configured as menubar
-        hacked_name = str (self.widget).replace (".", "#")
-        parent.toplevel.children [hacked_name] = self.widget
+        hacked_name = str (self.wtk_widget).replace (".", "#")
+        parent.toplevel.children [hacked_name] = self.wtk_widget
     # end def __init__
 
 # end class CI_Menubar
@@ -355,8 +356,8 @@ class CI_Toolbar (_CI_Widget_) :
 
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
-        cat    = self.widget.add_category (name, index, delta)
-        result = _CI_Toolbar_Group_ (self.AC, cat, self.widget)
+        cat    = self.wtk_widget.add_category (name, index, delta)
+        result = _CI_Toolbar_Group_ (self.AC, cat, self.wtk_widget)
         return result
     # end def add_group
 
@@ -366,7 +367,7 @@ class CI_Toolbar (_CI_Widget_) :
 
     ### event specific methods
     def bind_to_sync (self, callback) :
-        self.widget.bind ("<Any-Enter>", callback)
+        self.wtk_widget.bind ("<Any-Enter>", callback)
     # end def bind_to_sync
 
 # end class CI_Toolbar
@@ -376,7 +377,7 @@ class _CI_Toolbar_Group_ (_CI_) :
     def __init__ (self, AC, category, widget) :
         self.__super.__init__ (AC = AC)
         self.category = category
-        self.widget   = widget
+        self.wtk_widget   = widget
         self.b_name   = {}
     # end def __init__
 
@@ -397,7 +398,7 @@ class _CI_Toolbar_Group_ (_CI_) :
             raise NotImplementedError, "as_check_button"
         b_name  = self.b_name [name] = self.name_clean.sub ("_", name.lower ())
         im_name = icon or b_name
-        return self.widget.add_button \
+        return self.wtk_widget.add_button \
             ( category    = self.category
             , name        = b_name
             , command     = callback
@@ -421,11 +422,11 @@ class _CI_Toolbar_Group_ (_CI_) :
 
     ### event specific methods
     def enable_entry (self, name) :
-        self.widget [self.category].enable_entry (self.b_name [name])
+        self.wtk_widget [self.category].enable_entry (self.b_name [name])
     # end def enable
 
     def disable_entry (self, name) :
-        self.widget [self.category].disable_entry (self.b_name [name])
+        self.wtk_widget [self.category].disable_entry (self.b_name [name])
     # end def disable_entry
 
 # end class _CI_Toolbar_Group_
