@@ -83,3 +83,13 @@ def insert_stuff (tb) :
     mkchild              (tn, "s-y")
     tn = mknode          (tb, "n4")
 # end def insert_stuff
+
+"""
+from _TFL._UI.HTB_test import *
+import _TFL._TKT._Tk.Text
+import _TFL._TKT._Tk.Butcon
+tb = TFL.UI.HTB.Browser (TFL.UI.App_Context (TFL), name = "Foo")
+tb.exposed_widget.pack  ()
+insert_stuff (tb)
+
+"""

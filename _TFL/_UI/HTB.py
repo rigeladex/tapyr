@@ -73,7 +73,7 @@ class Styles_Cache (object) :
     styles = {}
 
     def __getattr__ (self, name) :
-        if not name.startswith ('_') : 
+        if not name.startswith ('_') :
             return self.styles [name]
     # end def __getattr__
 
@@ -123,7 +123,7 @@ class Button (TFL.TKT.Mixin) :
         self.open_style = callback_style \
             (callback = dict (callback, click_1 = self.node.close))
         self.closed_style = callback_style \
-            ( callback = dict 
+            ( callback = dict
                 (callback, click_1 = self.t_open, click_3 = self.t_open_1)
             )
         if is_leaf :
@@ -307,7 +307,7 @@ class Node (TFL.UI.Mixin) :
            )
         if not self.parent and self.number == 0 :
             browser_binding_style    = callback_style \
-                ( callback = dict 
+                ( callback = dict
                     ( mouse_motion   = self.activate_mouse
                     , cursor_up      = self.go_up
                     , cursor_down    = self.go_down
@@ -877,7 +877,7 @@ class Browser (TFL.UI.Mixin) :
     # end def __init__
 
     def _setup_styles (self) :
-        indent             = self.num_opt_val ("indent",     42)
+        indent             = self.num_opt_val ("indent",     22)
         indent_inc         = self.num_opt_val ("indent_inc",  0)
         # Colors
         std_bg             = self.option_value \
@@ -1095,7 +1095,7 @@ class Browser (TFL.UI.Mixin) :
         self.open (node)
         node.find_highlight (match, apply_found_bg = 0)
     # end def _find_highlight
-    
+
     def _find_unhighlight (self, (node, match)) :
         node.find_unhighlight (match)
     # end def _find_unhighlight
