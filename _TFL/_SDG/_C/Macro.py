@@ -41,6 +41,7 @@
 #                      made
 #     9-Feb-2005 (MBM/CED) formal changes to `apidoc_tex_format`
 #    22-Feb-2005 (MBM) Removed <> from index entry
+#    24-Feb-2005 (MBM) Changed index entry structure
 #    ««revision-date»»···
 #--
 
@@ -105,7 +106,7 @@ class Define (Macro) :
         """%(::@_name_comment:)-{output_width - indent_anchor}s
            \\hypertarget{%(name)s}{}
            \\subsubsection{\\texttt{%(name)s}}
-           \\index{FT-COM API\\texttt{%(name)s}}
+           \\index{FT-COM API>\\texttt{%(name)s}}
            \\ttindex{%(name)s}
            \\begin{description}
            >\\item %(::*description:)s \\\\
