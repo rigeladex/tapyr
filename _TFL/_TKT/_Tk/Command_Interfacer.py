@@ -27,6 +27,11 @@
 #
 # Revision Dates
 #    22-Dec-2004 (CT) Creation
+#    10-Jan-2005 (CT) `CI_Menu.add_group` completed
+#    10-Jan-2005 (CT) `CI_Menu.add_separator` added
+#    10-Jan-2005 (CT) `remove_command`, `remove_group`, and
+#                     `remove_separator` of `CI_Menu` added
+#    10-Jan-2005 (CT) `enable_entry` and `disable_entry` of `CI_Menu` added
 #    ««revision-date»»···
 #--
 
@@ -42,6 +47,10 @@ class CI_Menu (TOM.TKT.Command_Interfacer) :
     def __init__ (self, widget) :
         self.widget = widget
     # end def __init__
+
+    def destroy (self) :
+        self.widget.destroy ()
+    # end def destroy
 
     ### command specific methods
     def add_command \
@@ -63,7 +72,7 @@ class CI_Menu (TOM.TKT.Command_Interfacer) :
     # end def add_command
 
     def remove_command (self, index) :
-        pass ### XXX
+        self._remove (index)
     # end def remove_command
 
     ### group specific methods
@@ -75,20 +84,26 @@ class CI_Menu (TOM.TKT.Command_Interfacer) :
             , help       = self.widget.help_widget
             , tearoff    = 0
             )
+        self.widget.insert_cascade \
+            ( index + delta + 1
+            , label      = name
+            , menu       = result
+            , underline  = kw.get ("underline")
+            )
         return result
     # end def add_group
 
     def remove_group (self, index) :
-        pass ### XXX
+        self._remove (index)
     # end def remove_group
 
     ### separator specific methods
     def add_separator (self, name = None, index = None, delta = 0) :
-        pass ### XXX
+        self.widget.insert_separator (index + delta + 1)
     # end def add_separator
 
     def remove_separator (self, index) :
-        pass ### XXX
+        self._remove (index)
     # end def remove_separator
 
     ### event specific methods
@@ -101,13 +116,18 @@ class CI_Menu (TOM.TKT.Command_Interfacer) :
         pass ### XXX
     # end def bind_to_sync
 
-    def enable_entry (self, index) :
-        pass ### XXX
+    def enable_entry (self, name) :
+        self.widget.enable_entry (name)
     # end def enable
 
-    def disable_entry (self, index) :
-        pass ### XXX
+    def disable_entry (self, name) :
+        self.widget.disable_entry (name)
     # end def disable_entry
+
+    ### internals
+    def _remove (self, index) :
+        self.widget.delete (index)
+    # end def _remove
 
 # end class CI_Menu
 

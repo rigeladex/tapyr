@@ -83,9 +83,11 @@
 #                     attributes before chaining up
 #     7-Jan-2005 (CT) `cmd` added to allow attribute access to commands
 #                     without name clashes
-#     7-Jan-2005 (CT) add_command changed to not set `qname` to `.<name>` for
+#     7-Jan-2005 (CT) `add_command` changed to not set `qname` to `.<name>` for
 #                     commands added directly to a command manager without a
 #                     name
+#    10-Jan-2005 (CT) `add_separator` completed (needs to go into `_element`)
+#    10-Jan-2005 (CT) `destroy` changed to call `destroy` of all interfacers
 #    ««revision-date»»···
 #--
 
@@ -213,6 +215,8 @@ class Command (_Command_) :
     # end def _cook_doc
 
     def destroy (self) :
+        for i in self.interfacers.itervalues () :
+            i.destroy ()
         self.interfacers = self.command = self.precondition \
                          = self.pv_callback = None
     # end def destroy
@@ -396,8 +400,13 @@ class Command_Group (_Command_) :
 
     def add_separator (self, name = None, group = None, index = None, delta = 0) :
         """Add separator to `group'"""
+        if not name :
+            name = "sep_%s" % (len (self._element), )
+        index    = self._real_index (index)
+        sep      = Record (name = name, destroy = lambda s : 1)
+        self._element.insert (index, sep, delta)
         for i in self.interfacers.itervalues () :
-            i.add_separator (name, index, delta)
+            i.add_separator  (name, index, delta)
     # end def add_separator
 
     def destroy (self) :

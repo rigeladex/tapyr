@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Dec-2004 (CT) Creation
+#    10-Jan-2005 (CT) `destroy` added
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,11 @@ import _TFL._TKT
 
 class Command_Interfacer (TFL.Meta.Object) :
     """Model a toolkit command interface like menu, toolbar, etc."""
+
+    def destroy (self) :
+        """Destroy the command interfacer widget"""
+        pass
+    # end def destroy
 
     ### command specific methods
     def add_command \
