@@ -30,6 +30,8 @@
 #     7-Mar-2005 (RSC) Added background color (using "found" style)
 #    14-Mar-2005 (RSC) New test for a wrapped line
 #    14-Mar-2005 (RSC) wrapped-line test for non-root node.
+#    14-Mar-2005 (RSC) yet another test that now reproduces problem with
+#                      line-wrapping
 #    ««revision-date»»···
 #--
 
@@ -77,13 +79,15 @@ def insert_stuff (tb) :
     nn = mkchild         (tn, "s3")
     mkchild              (nn, "ss1")
     nnn = mkchild        (nn, "ss2")
-    tn = mknode          (tb, "n2", "nowrap", "found", "arial")
+    tn = mknode          (tb, "n2", "wrap", "found")
     mkchild              (tn, "s-a")
-    mkchild \
+    c = mkchild \
         ( tn
         , "s-b, this is a very long name which should wrap\n"
           "and display an error in formatting..."
         )
+    s = " asii " * 100
+    c.new_child ("node3_with_line_break_tiii\nmytext_iii_line_asdf" + s, '', '')
     tn.open              ()
     tn = mknode          (tb, "n3", "nowrap", "found")
     mkchild              (tn, "s-x")
@@ -92,7 +96,7 @@ def insert_stuff (tb) :
         ( tb
         , "n4, this is a very long name which should wrap\n"
           "and display an error in formatting..."
-        , "nowrap", "found", "arial"
+        , "nowrap", "found"
         )
 # end def insert_stuff
 
