@@ -74,19 +74,6 @@ Eventname = TFL.TKT._Eventname \
     , undo                     = "<Control-Key-z>"
     )
 
-"""
-How to check consistency of names:
-
-import _TOM._TKT._TGW.Eventname
-import _TOM._TKT._Tk.Eventname
-from _TFL import TFL
-from _TOM import TOM
-a=sorted (TFL.TKT.Tk.Eventname._map.iterkeys())
-b=sorted (TOM.TKT.TGW.Eventname._map.iterkeys())
-a == b
-
-
-"""
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("Eventname")
 ### __END__ TFL.TKT.Tk.Eventname

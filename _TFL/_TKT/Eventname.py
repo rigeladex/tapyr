@@ -30,10 +30,22 @@
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #     9-Feb-2005 (CT) `_pam` added
 #    14-Feb-2005 (CT) `__init__` changed to accept multiple mappings to `None`
+#    21-Feb-2005 (CT) `check_names` and doc-test added
 #    ««revision-date»»···
 #--
 
+"""
+Consistency check:
+
+>>> import _TFL._TKT._Tk.Eventname
+>>> import _TFL._TKT._Batch.Eventname
+>>> TFL.TKT._Eventname.check_names (TFL.TKT.Batch.Eventname, TFL.TKT.Tk.Eventname)
+_TFL._TKT._Tk.Eventname defines all names that _TFL._TKT._Batch.Eventname defines
+_TFL._TKT._Batch.Eventname defines all names that _TFL._TKT._Tk.Eventname defines
+"""
+
 from   _TFL                 import TFL
+import _TFL.Caller
 import _TFL._TKT.Mixin
 
 class _Eventname (TFL.TKT.Mixin) :
@@ -50,10 +62,11 @@ class _Eventname (TFL.TKT.Mixin) :
        AttributeError: 'Eventname' object has no attribute 'cut'
     """
 
-    def __init__ (self, AC = None, ** kw) :
+    def __init__ (self, AC = None, _name = None, ** kw) :
         self.__super.__init__ (AC = AC)
-        self._map = dict (kw)
-        self._pam = pam = {}
+        self._name = _name or TFL.Caller.globals ().get ("__name__")
+        self._map  = dict (kw)
+        self._pam  = pam = {}
         for k, v in kw.iteritems () :
             if v is not None and v in pam :
                 raise ValueError, \
@@ -63,6 +76,28 @@ class _Eventname (TFL.TKT.Mixin) :
             pam [v] = k
     # end def __init__
 
+    def check_names (cls, evn_1, evn_2) :
+        """Checks if `evn_1` and `evn_2` define the same event names"""
+        try :
+            set
+        except NameError :
+            ### legacy lifter (`set` was added as builtin in 2.4)
+            ### XXX remove me, please after 2.3 is history
+            from sets import Set as set
+        s1 = set (evn_1._map.iterkeys ())
+        s2 = set (evn_2._map.iterkeys ())
+        cls._check_difference (evn_1, evn_2, s1 - s2)
+        cls._check_difference (evn_2, evn_1, s2 - s1)
+    check_names = classmethod (check_names)
+
+    def _check_difference (cls, evn_1, evn_2, diff) :
+        if diff :
+            for n in diff :
+                print "%s defines %s, while %s doesn't"  % (evn_1, n, evn_2)
+        else :
+            print "%s defines all names that %s defines" % (evn_2, evn_1)
+    _check_difference = classmethod (_check_difference)
+
     def __getattr__ (self, name) :
         try :
             return self._map [name]
@@ -70,6 +105,10 @@ class _Eventname (TFL.TKT.Mixin) :
             raise AttributeError, \
                 "'Eventname' object has no attribute '%s'" % (name, )
     # end def __getattr__
+
+    def __repr__ (self) :
+        return self._name
+    # end def __repr__
 
 # end class _Eventname
 
