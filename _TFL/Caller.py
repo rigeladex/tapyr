@@ -54,6 +54,7 @@
 #    13-Aug-2004 (CT) `Object_Scope` derived from `Scope`
 #    17-Sep-2004 (CT) Optional argument `locls` added to `Object_Scope`
 #    17-Sep-2004 (CT) `Object_Scope.derived` added
+#    24-Mar-2005 (CT) `U_Test` scaffolding removed (use `run_doctest` instead)
 #    ««revision-date»»···
 #--
 
@@ -221,24 +222,6 @@ class Object_Scope (Scope) :
     # end def __getattr__
 
 # end class Object_Scope
-
-### unit-test code ############################################################
-
-if __debug__ :
-    try :
-        import U_Test
-    except ImportError :
-        pass
-    else :
-        def _doc_test () :
-            return U_Test.run_module_doc_tests ("_TFL.Caller")
-        # end def _doc_test
-
-        if __name__ == "__main__" :
-            _doc_test ()
-# end if __debug__
-
-### end unit-test code ########################################################
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

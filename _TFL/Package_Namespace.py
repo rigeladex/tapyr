@@ -117,13 +117,19 @@
 #                     (and rest-args removed)
 #    10-Feb-2005 (CT) `_Export` changed to streamline `*` handling
 #    10-Feb-2005 (CT) More documentation added
+#    24-Mar-2005 (CT) Dependencies on non-standard-lib modules removed
+#                     - Use `re` instead of `Regexp`
+#                     - Unused import of `caller_info` removed
+#                     - Import of `caller_globals` replaced by home-grown code
 #    ««revision-date»»···
 #--
 
-from   caller_globals import caller_globals as _caller_globals
-from   caller_globals import caller_info    as _caller_info
-from   Regexp         import Regexp
+import re
 import sys
+
+def _caller_globals () :
+    return sys._getframe (1).f_back.f_globals
+# end def _caller_globals
 
 class _Module_Space :
 
@@ -231,7 +237,7 @@ class Package_Namespace :
        the package namespace.
     """
 
-    _leading_underscores = Regexp (r"(\.|^)_+")
+    _leading_underscores = re.compile (r"(\.|^)_+")
     _check_clashes       = True
 
     def __init__ (self, name = None, pname = None) :

@@ -42,10 +42,12 @@
 #                      added
 #     9-Feb-2005 (CED) `Fibonacci`, `Primes` added (moved from _YAGNI to here)
 #    15-Feb-2005 (CED) `Faculties` added (moved from _YAGNI to here)
+#    24-Mar-2005 (CT)  Cruft removed (recent additions by CED and Python
+#                      legacies)
 #    ««revision-date»»···
 #--
 
-from __future__ import generators
+from _TFL import TFL
 
 def alt_iter (* iterables) :
     """Alternating iterator
@@ -165,6 +167,10 @@ def pairwise (seq) :
        [('a', 'b'), ('b', 'c'), ('c', 'd'), ('d', 'e'), ('e', 'f')]
        >>> list (pairwise (range (4)))
        [(0, 1), (1, 2), (2, 3)]
+       >>> pairwise ([1])
+       []
+       >>> pairwise ([])
+       []
     """
     lag = Look_Ahead_Gen (seq)
     for h in lag :
@@ -271,93 +277,6 @@ class Lazy_List :
 
 # end class Lazy_List
 
-def _faculty () :
-    """Generator used to create a lazy evaluating list
-       of Faculties
-
-       >>> Faculties [3]
-       6
-       >>> Faculties [5]
-       120
-    """
-    yield 0
-    x, y = 1, 2
-    while True :
-        yield x
-        x, y = x * y, y + 1
-# end def _faculty
-
-def _fib () :
-    """Generator used to create a lazy evaluating list
-       of Fibonacci numbers
-
-       >>> Fibonacci [0:7]
-       [0, 1, 1, 2, 3, 5, 8]
-       >>> Fibonacci [25]
-       75025
-    """
-    x, y = 0, 1
-    while True :
-        yield x
-        x, y = y, x + y
-# end def _fib
-
-def _prime () :
-    """Generator used to create a lazy evaluating list
-       of Primes
-
-       >>> Primes [0:7]
-       [2, 3, 5, 7, 11, 13, 17]
-       >>> Primes [100]
-       547
-    """
-    yield 2
-    primes = [2, 3]
-    while True :
-        yield primes [-1]
-        candidate = primes [-1] + 2
-        while True :
-            is_prime = True
-            for p in primes :
-                if (candidate % p) == 0 :
-                    is_prime = False
-                    break
-                if (p*p > candidate) :
-                    break
-            if is_prime :
-                primes.append (candidate)
-                break
-            candidate += 2
-# end def _prime
-
-### Lazy evaluating list of Fibonacci numbers
-Fibonacci = Lazy_List (_fib   ())
-### Lazy evaluating list of Primes
-Primes    = Lazy_List (_prime ())
-### Lazy evaluating list of Faculties
-Faculties = Lazy_List (_faculty ())
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        return U_Test.run_module_doc_tests ("_TFL.Generators")
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
-if __name__ == "__main__" :
-    pass
-else :
-    from _TFL import TFL
+if __name__ != "__main__" :
     TFL._Export ("*")
 ### __END__ TFL.Generators

@@ -26,24 +26,26 @@
 #    Model ratio of two integer numbers
 #
 # Revision Dates
-#     4-Sep-2001 (CT) Creation
-#     5-Sep-2001 (CT) Error messages for `TypeError` improved
-#    12-Aug-2003 (CT) doctest fixed
+#     4-Sep-2001 (CT)  Creation
+#     5-Sep-2001 (CT)  Error messages for `TypeError` improved
+#    12-Aug-2003 (CT)  doctest fixed
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
-#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     8-Feb-2005 (CED) Various improvements
 #     9-Feb-2005 (CED) Some simplifications done
+#    24-Mar-2005 (CT)  Use `Math_Func.gcd` instead of `predicate.gcd`
 #    ««revision-date»»···
 #--
 
-from Regexp    import *
-from predicate import *
+from   _TFL      import TFL
+from   Regexp    import *
+
+import Math_Func
 
 class Ratio :
     """Model ratio of two integer numbers.
 
-
-       >>> print Ratio (1,2)
+       >>> print Ratio (1, 2)
        1 / 2
        >>> print Ratio (2)
        2 / 1
@@ -51,23 +53,23 @@ class Ratio :
        3 / 4
        >>> print Ratio ("3")
        3 / 1
-       >>> print Ratio (1,2) * Ratio (1,4)
+       >>> print Ratio (1, 2) * Ratio (1, 4)
        1 / 8
-       >>> print Ratio (1,2) / Ratio (1,4)
+       >>> print Ratio (1, 2) / Ratio (1, 4)
        2 / 1
-       >>> print Ratio (1,2) * Ratio ("3")
+       >>> print Ratio (1, 2) * Ratio ("3")
        3 / 2
-       >>> print Ratio (1,2) * 3
+       >>> print Ratio (1, 2) * 3
        3 / 2
-       >>> print Ratio (1,2) * 3.
+       >>> print Ratio (1, 2) * 3.
        3 / 2
-       >>> print 6 * Ratio (1,2)
+       >>> print 6 * Ratio (1, 2)
        3 / 1
-       >>> print 6 / Ratio (1,2)
+       >>> print 6 / Ratio (1, 2)
        12 / 1
-       >>> print Ratio (1,2) / 6
+       >>> print Ratio (1, 2) / 6
        1 / 12
-       >>> print Ratio (1,2) / 6.
+       >>> print Ratio (1, 2) / 6.
        1 / 12
        >>> print 1 / Ratio (1, 2)
        2 / 1
@@ -102,7 +104,7 @@ class Ratio :
         if isinstance (n, str) :
             if not d is None :
                 raise TypeError, \
-                      "Ratio() 2nd argument not allowed when 1st is a string"
+                    "Ratio() 2nd argument not allowed when 1st is a string"
             if self.pattern.match (n) :
                 self.n = int (self.pattern.group ("n"))
                 self.d = int (self.pattern.group ("d") or 1)
@@ -111,7 +113,7 @@ class Ratio :
         elif isinstance (n, Ratio) :
             if not d is None :
                 raise TypeError, \
-                      "Ratio() 2nd argument not allowed when 1st is a Ratio"
+                    "Ratio() 2nd argument not allowed when 1st is a Ratio"
             self.n = n.n
             self.d = n.d
         elif d == 0 :
@@ -136,7 +138,7 @@ class Ratio :
     # end def reciprocal
 
     def normalize (self) :
-        b = gcd (self.n, self.d)
+        b = Math_Func.gcd (self.n, self.d)
         self.n //= b
         self.d //= b
         if self.d < 0 :
@@ -250,23 +252,6 @@ class Ratio :
 
 # end class Ratio
 
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        return U_Test.run_module_doc_tests ("_TFL.Ratio")
-    # end def _doc_test
-
-    if __name__ == "__main__" :
-        _doc_test ()
-# end if __debug__
-
-### end unit-test code ########################################################
-
-from _TFL import TFL
 if __name__ != "__main__" :
     TFL._Export ("*")
-
 ### __END__ Ratio
