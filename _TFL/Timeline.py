@@ -11,6 +11,8 @@
 #
 # Revision Dates
 #    21-Aug-2003 (CT) Creation
+#    29-Aug-2003 (CT) `Timeline.length` added
+#    29-Aug-2003 (CT) `orig` added
 #    ««revision-date»»···
 #--
 
@@ -96,6 +98,7 @@ class Timeline (TFL.Meta.Object) :
     """
 
     def __init__ (self, upper, lower = 0) :
+        self.orig = NDT.Sched2.Span (lower, upper)
         self.free = [NDT.Sched2.Span (lower, upper)]
     # end def __init__
 
@@ -130,6 +133,8 @@ class Timeline (TFL.Meta.Object) :
             if not f :
                 del self.free [p.index]
     # end def cut
+
+    length = property (lambda s : sum ([f.length for f in s.free], 0))
 
 # end class Timeline
 
