@@ -55,6 +55,8 @@
 #                      Browser to its Text
 #     7-Mar-2005 (RSC) Corrected style-handling: Now the "normal" style
 #                      is alway last, butcon also gets correct color.
+#     8-Mar-2005 (RSC) `push_style' to butcon in _insert_button instead
+#                      of `apply_style' (and pop it when not needed)
 #    ««revision-date»»···
 #--
 
@@ -396,11 +398,13 @@ class Node (TFL.UI.Mixin) :
                 ( self
                 , is_leaf = not (self.children or self.contents)
                 )
+        else :
+            self.button.butcon.pop_style ()
         self.text.insert_widget \
             ( self.butt_mark
             , self.button.butcon
             )
-        self.button.butcon.apply_style (self._style ())
+        self.button.butcon.push_style (self._style ())
     # end def _insert_button
 
     def _insert (self, index, text, * tags) :
