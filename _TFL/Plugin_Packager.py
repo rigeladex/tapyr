@@ -155,15 +155,23 @@ class Plugin_Packager (TFL.Meta.Object) :
     # end def _rewrite_modules
 
     def _rewrite_package_derived (self, pym) :
-        name = pym.pkg.split (".") [-1] [1:]
-        repl = Replacer \
-            ( r"%s \s* = \s* Package_Namespace \s* \(\)" % (name, )
-            , ( r"""from %s import %s"""
-                 """\n"""
-                r"""%s = Derived_Package_Namespace (%s)"""
-              ) % (pym.pkg, name, name, name)
-            )
-        self._rewrite_module (pym, self._m_replacers + [repl])
+        name  = pym.pkg.split (".") [-1] [1:]
+        repls = \
+            [ Replacer
+                ( r"%s \s* = \s* Package_Namespace \s* \(\)" % (name, )
+                , ( r"""from %s import %s"""
+                     """\n"""
+                    r"""%s = Derived_Package_Namespace (%s)"""
+                  ) % (pym.pkg, name, name, name)
+                )
+            , Replacer
+                ( r"""from \s+ _TFL.Package_Namespace \s+ """
+                  r"""import \s+ Package_Namespace"""
+                , r"""from _TFL.Package_Namespace import """
+                  r"""Derived_Package_Namespace"""
+                )
+            ]
+        self._rewrite_module (pym, self._m_replacers + repls)
     # end def _rewrite_package_derived
 
     def _rewrite_package_plugin (self, pym) :
