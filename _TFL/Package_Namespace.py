@@ -72,6 +72,11 @@
 #    12-Mar-2002 (CT) `_Export_Module` added
 #    12-Mar-2002 (CT) Use `TFL.Module.names_of` instead of half-broken
 #                     `inspect.getmodule` 
+#    15-Mar-2002 (CT) `Import` renamed to `__Import`
+#                     `_import_symbols` renamed to `__import_symbols`
+#    15-Mar-2002 (CT) `From_Import` and `Import_Module` removed
+#    18-Mar-2002 (MG) `_Add` added
+#    18-Mar-2002 (CT) `_complain_implicit` changed to write new syntax
 #    ««revision-date»»···
 #--
 
@@ -87,7 +92,7 @@ def _complain_implicit (pns_name, module_name, import_stmt = "Import", last_call
         if caller != last_caller [0] :
             last_caller [0] = caller
             print caller 
-        print """    %s.%s ("%s")""" % (pns_name, import_stmt, module_name)
+        print """    import _%s.%s""" % (pns_name, module_name)
 # end def _complain_implicit
 
 class _Module_Space :
@@ -170,7 +175,8 @@ class Package_Namespace :
        `Package_Namespace` provides another option::
 
            #6
-           from Foo_Package import Foo
+           from   Foo_Package import Foo
+           import Foo_Package.Bar
            instance = Foo.Bar ()
 
        In order to support this, `Foo_Package/__init__.py` must export an
@@ -180,20 +186,20 @@ class Package_Namespace :
            from _TFL.Package_Namespace import Package_Namespace
            Foo = Package_Namespace ()
 
-       The Package_Namespace provides the `Import` method to import
-       classes/functions from a module into the namespace::
+       The Package_Namespace provides the `_Export` method called by modules
+       of the package to export classes/functions module into the namespace::
 
-           ### import `Bar` and `Baz` from Foo.Bar
-           Foo.Import ("Bar", "Bar", "Baz")
+           ### Foo_Package.Bar puts `Bar` and `Baz` into the Package_Namespace
+           Foo._Export ("Bar", "Baz")
 
-       To make up for the slight clumsiness of the `Import` call, the
-       Package_Namespace instance will automagically import any
-       classes/modules into the namespace when an unknown attribute is
-       referenced via an expression like `Foo.Fubar`.
+       If a module prefers to put itself instead of
+       functions/classes/whatever into the Package_Namespace, it can do so by
+       calling
 
-       The modules of the package will be visible via the `_` attribute of
-       the package namespace. Modules can be imported explicitly into `_` by
-       calling `Import_Module`.
+           Foo._Export_Module ()
+
+       The modules of the package can be accessed via the `_` attribute of
+       the package namespace. 
     """
 
     _leading_underscores = Regexp ("^_+")
@@ -211,7 +217,7 @@ class Package_Namespace :
             sys.modules [self.__name] = __import__ (name)
     # end def __init__
 
-    def Import (self, module_name, * symbols) :
+    def __Import (self, module_name, * symbols) :
         ### XXX PNS remove after Package_Namespace transition is complete
         """Import all `symbols` from module `module_name` of package
            `self.__name`. A `*` is supported as the first element of
@@ -226,34 +232,11 @@ class Package_Namespace :
         """
         if not self.__seen.has_key ((module_name, symbols)) :
             self.__dict__.update \
-                (self._import_symbols (module_name, 1, * symbols))
+                (self.__import_symbols (module_name, 1, * symbols))
             self.__seen [(module_name, symbols)] = 1
-    # end def Import
+    # end def __Import
 
-    def Import_Module (self, module_name) :
-        ### XXX PNS remove after Package_Namespace transition is complete
-        """Import module `module_name` into `self._`."""
-        return self.__modules._load (module_name)
-    # end def Import_Module
-
-    def From_Import (self, module_name, * symbols, ** kw) :
-        ### XXX PNS remove after Package_Namespace transition is complete
-        """Import all `symbols` from module `module_name` of package
-           `self.__name` into caller's namespace. A `*` is supported as the
-           first element of `symbols` and imports the contents of `__all__`
-           (if defined) or all objects defined by the module itself (i.e., no
-           transitive imports).
-
-           The elements of `symbols` can be strings or 2-tuples. Each 2-tuple
-           specifies a named to be imported followed by the name used for the
-           imported object (i.e., `(foo, bar)` is analogous to
-           `import foo as bar`)
-        """
-        _caller_globals ().update \
-            (self._import_symbols (module_name, 0, * symbols, ** kw))
-    # end def From_Import
-
-    def _import_symbols (self, module_name, check_clashes, * symbols, ** kw) :
+    def __import_symbols (self, module_name, check_clashes, * symbols, ** kw) :
         ### XXX PNS remove after Package_Namespace transition is complete
         result     = {}
         mod        = self.__modules._load (module_name)
@@ -284,7 +267,7 @@ class Package_Namespace :
         if symbols :
             self._import_names (mod, symbols, result, check_clashes)
         return result
-    # end def _import_symbols
+    # end def __import_symbols
 
     def _import_names (self, mod, names, result, check_clashes) :
         for name in names :
@@ -312,7 +295,7 @@ class Package_Namespace :
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
             _complain_implicit (self.__name, name)
-            self.Import (name, name)
+            self.__Import (name, name)
             return self.__dict__ [name]
         raise AttributeError, name
     # end def __getattr__
@@ -322,6 +305,14 @@ class Package_Namespace :
                (self.__class__.__name__, self.__name, id (self))
     # end def __repr__
 
+    def _Add (self, ** kw) :
+        """Add elements of `kw` to Package_Namespace `self`."""
+        module_name = _caller_globals () ["__name__"].split (".") [-1]
+        mod         = self.__modules._load (module_name)
+        for s, p in kw.items () :
+            self._import_1 (mod, s, s, p, self.__dict__, 1)
+    # end def _Add
+    
     def _Export (self, * symbols, ** kw) :
         """To be called by modules of Package_Namespace to inject their
            symbols into the package namespace `self`.
@@ -338,8 +329,8 @@ class Package_Namespace :
             if all_symbols :
                 self._import_names (mod, all_symbols, result, 1)
             else :
-                import _TFL.Module ### XXX PNS remove after change to newstyle
-                from _TFL import TFL
+                from   _TFL import TFL
+                import _TFL.Module
                 for s in TFL.Module.names_of (mod) :
                     p = getattr (mod, s)
                     if not s.startswith ("_") :
