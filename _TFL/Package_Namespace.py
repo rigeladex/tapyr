@@ -65,6 +65,8 @@
 #                     `_FOO` (otherwise binary databases with old-style
 #                     packages don't load <sigh>)
 #    26-Feb-2002 (CT) `_debug` set to `__debug__`
+#    26-Feb-2002 (CT) `_complain_implicit` changed to provide more useful
+#                     output (included addition of `last_caller`)
 #    ««revision-date»»···
 #--
 
@@ -75,13 +77,13 @@ from   Regexp         import Regexp
 
 _debug = __debug__
 
-def _complain_implicit (pns_name, module_name, last_caller = [""]) :
+def _complain_implicit (pns_name, module_name, import_stmt = "Import", last_caller = [""]) :
     if _debug :
         caller = _caller_info (-4) [0]
         if caller != last_caller [0] :
             last_caller [0] = caller
             print caller 
-        print """    %s.Import ("%s")""" % (pns_name, module_name)
+        print """    %s.%s ("%s")""" % (pns_name, import_stmt, module_name)
 # end def _complain_implicit
 
 class _Module_Space :
@@ -91,10 +93,7 @@ class _Module_Space :
     # end def __init__
 
     def __getattr__ (self, module_name) :
-        _complain_implicit (self.__name, module_name)
-        if 0 and _debug :
-            print "XXX PNS Implicit import %s._.%s by %s" \
-                  % (self.__name, module_name, _caller_info ())
+        _complain_implicit (self.__name, module_name, "Import_Module")
         return self._load (module_name)
     # end def __getattr__
 
@@ -312,9 +311,6 @@ class Package_Namespace :
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
             _complain_implicit (self.__name, name)
-            if 0 and _debug :
-                print "XXX PNS Implicit import %s.%s by %s" \
-                      % (self.__name, name, _caller_info ())
             self.Import (name, name)
             return self.__dict__ [name]
         raise AttributeError, name
