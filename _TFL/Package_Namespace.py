@@ -121,6 +121,7 @@
 #                     - Use `re` instead of `Regexp`
 #                     - Unused import of `caller_info` removed
 #                     - Import of `caller_globals` replaced by home-grown code
+#    30-Mar-2005 (CED) `_name`, `_qname` added to `_Module_Space`
 #    ««revision-date»»···
 #--
 
@@ -133,8 +134,9 @@ def _caller_globals () :
 
 class _Module_Space :
 
-    def __init__ (self, name) :
-        self.__name = name
+    def __init__ (self, name, qname) :
+        self.__name = self._name = name
+        self._qname              = qname
     # end def __init__
 
     def _load (self, q_name, module_name) :
@@ -142,6 +144,7 @@ class _Module_Space :
         setattr (self, module_name, module)
         return module
     # end def _load
+
 
 # end class _Module_Space
 
@@ -250,7 +253,7 @@ class Package_Namespace :
         self.__name         = bname
         self.__qname        = self.__name__ = qname
         self.__pname        = pname
-        self.__module_space = self._ = _Module_Space (pname)
+        self.__module_space = self._ = _Module_Space (pname, qname)
         self.__modules      = {}
         self.__seen         = {}
         self.__reload       = 0
