@@ -23,7 +23,7 @@
 #    import_module
 #
 # Purpose
-#    «text»···
+#    Import a module of specified name
 #
 # Revision Dates
 #     9-Dec-2003 (CT) Creation
