@@ -35,6 +35,7 @@
 #    17-Feb-2005 (RSC) Added auto-delegation to self.tkt for Node
 #    17-Feb-2005 (RSC) Button implemented using ButCon, moved from TKT to UI
 #    21-Feb-2005 (RSC) Use styles for the button
+#    23-Feb-2005 (RSC) Use TKT.Text, TKT.Tk.HTB is now obsolete
 #    ««revision-date»»···
 #--
 
@@ -69,15 +70,15 @@ class Button (TFL.TKT.Mixin) :
         self.butcon = self.TNS.Butcon \
             ( self.AC
             , name   = ":button:" + node.bid
-            , wc     = node.browser
+            , wc     = node.text
             , bitmap = bitmap
             )
         callback = dict \
-            ( click_1     = self.ignore
-            , click_2     = self.ignore
-            , click_3     = self.ignore
-            , mouse_enter = self.mouse_enter
-            , mouse_leave = self.mouse_leave
+            ( click_1   = self.ignore
+            , click_2   = self.ignore
+            , click_3   = self.ignore
+            , any_enter = self.mouse_enter
+            , any_leave = self.mouse_leave
             )
         self.leaf_style = callback_style (callback = callback)
         self.open_style = callback_style \
@@ -94,7 +95,7 @@ class Button (TFL.TKT.Mixin) :
     # end def __init__
 
     def node_enter (self, event = None) :
-        self.butcon.push_style (Styles.active)
+        self.butcon.push_style (Styles.active_node)
     # end def node_enter
 
     def node_leave (self, event = None) :
@@ -211,6 +212,7 @@ class Node (TFL.UI.Mixin) :
                )
         self.__super.__init__ (AC = browser.AC)
         self.browser   = browser
+        self.text      = browser.text
         self.name      = name
         self.header    = header
         self.contents  = contents
@@ -225,7 +227,9 @@ class Node (TFL.UI.Mixin) :
             browser.bid_seed = browser.bid_seed + 1
             browser.nodes.append (self)
             if self.number == 0 :
-                self.browser.disable ()
+                # XXXXX FIXME:
+                # self.browser.disable ()
+                pass
         else :
             self.bid        = "%s:%d" % (parent.bid, parent.bid_seed)
             self.tag        = "%s::%s" % (self.bid, self.name)
@@ -240,10 +244,10 @@ class Node (TFL.UI.Mixin) :
         browser.node_map [self.tag] = self
         self.children  = []
         self.tags      = ()
-        self.head_mark = self.tag + ":head"
-        self.body_mark = self.tag + ":body"
-        self.butt_mark = self.tag + ":butt"
-        self.tail_mark = self.tag + ":tail"
+        self.head_mark = None
+        self.body_mark = None
+        self.butt_mark = None
+        self.tail_mark = None
         self.button    = None
         if name_tags     : self.name_tags     = filter (None, name_tags)
         if header_tags   : self.header_tags   = filter (None, header_tags)
@@ -253,7 +257,32 @@ class Node (TFL.UI.Mixin) :
            , self.header_head,   self.header,   self.header_tail
            , self.contents_head, self.contents, self.contents_tail
            )
-        self.tkt = self.TNS.HTB.Node (self, browser)
+        if not self.parent and self.number == 0 :
+            browser_binding_style    = callback_style \
+                ( callback = dict 
+                    ( mouse_motion   = self.activate_mouse
+                    , cursor_up      = self.go_up
+                    , cursor_down    = self.go_down
+                    , cursor_left    = self.go_left
+                    , cursor_right   = self.go_right
+                    , cursor_home    = self.show_head
+                    , cursor_end     = self.show_tail
+                    , open_node      = self.expand
+                    , open_node_1    = self.expand_1
+                    , open_node_all  = self.expand_all
+                    , close_node     = self.collapse
+                    , close_node_1   = self.collapse_1
+                    , close_node_all = self.collapse_all
+                    , Print          = self.print_node
+                    )
+                )
+            self.text.apply_style (browser_binding_style)
+            self.node_binding_style = callback_style \
+                ( callback = dict
+                    ( any_enter = self.mouse_enter
+                    , any_leave = self.mouse_leave
+                    )
+                )
     # end def __init__
 
     def is_open (self) :
@@ -277,11 +306,45 @@ class Node (TFL.UI.Mixin) :
             self.button.make_non_leaf ()
         if self.tags and not self.button.closed :
             child.insert (self.tail_mark, self.tags)
+            print "child.insert", self.tail_mark, self.text.pos_at (tail_mark)
     # end def _insert_child
 
-    def insert (self, index, * tags) :
+    def insert (self, mark, * tags) :
+        """Insert `self' into widget `self.text' at position `mark'.
+           Note that `mark' *must* be a mark with right gravity, e.g.,
+           the current_pos in the text widget. We depend on the magic
+           behaviour of the mark position (that it changes with
+           insertions).
+        """
+        print "Node.insert: %s: %s/%s" % \
+            (self.bid, mark, self.text.pos_at (mark))
         self.tags = filter (None, (self.tag, ) + tags)
-        self.tkt.insert (index, * tags)
+        head = self.text.pos_at (mark)
+        # XXXXX FIXME
+        # The following should be done by the levelK:head style.
+        if self.level :
+            self._insert (mark, "\t" * self.level)
+        self.butt_mark = self.text.mark_at (mark, left_gravity = True)
+        self._insert_button                ()
+        self._insert                       (mark, "\t")
+        self._insert_header                (mark)
+        body = self.text.pos_at            (mark)
+        self._insert                       (mark, "\n")
+        self.head_mark = self.text.mark_at (head, left_gravity = True)
+        self.body_mark = self.text.mark_at (body, left_gravity = True)
+        self.tail_mark = self.text.mark_at (body)
+        self.text.apply_style \
+            ( getattr (Styles, self.level_tag + ":head")
+            , self.head_mark
+            , self.text.eol_pos (self.head_mark)
+            )
+        for i in "head", "butt", "body", "tail" :
+            m = getattr (self, "%s_mark" % i)
+            print "\t%s: %s/%s " % (i, m, self.text.pos_at (m))
+        print "Node.insert: %s: %s/%s" % \
+            (self.bid, mark, self.text.pos_at (mark))
+        eot = self.text.eot_pos
+        print "eot: %s/%s" % (eot, self.text.pos_at (eot))
     # end def insert
 
     def _insert_button (self) :
@@ -290,12 +353,15 @@ class Node (TFL.UI.Mixin) :
                 ( self
                 , is_leaf = not (self.children or self.contents)
                 )
-            self.tkt._display_button ()
+        self.text.insert_widget \
+            ( self.butt_mark
+            , self.button.butcon
+            )
     # end def _insert_button
 
     def _insert (self, index, text, * tags) :
         tags = filter (None, self.tags + (self.bind_tag, ) + tags)
-        self.browser.insert (index, text, tags)
+        self.browser.insert (index, text, * tags)
     # end def _insert
 
     def _delete (self, head, tail = None) :
@@ -316,6 +382,7 @@ class Node (TFL.UI.Mixin) :
     print_content_head = "    " ### content indent per node   (print_contents)
 
     def _insert_header (self, index) :
+        print "_insert_header"
         self._insert (index, self.name, * self.name_tags)
         if self.header :
             self._insert \
@@ -327,6 +394,7 @@ class Node (TFL.UI.Mixin) :
     # end def _insert_header
 
     def _insert_contents (self, index) :
+        print "_insert_contents"
         if self.contents :
             self._insert \
                 ( index
@@ -404,6 +472,21 @@ class Node (TFL.UI.Mixin) :
                 self.parent.close (event, transitive - 1)
     # end def close
 
+    def enter (self, event = None) :
+        head = self.head_mark
+        self.text.apply_style \
+            (Styles.active_node, head, self.text.bol_pos (head, line_delta = 1))
+        self.browser.current_node = self
+    # end def enter
+
+    def leave (self, event = None) :
+        self.text.remove_style (Styles.active_node, self.text.bot_pos)
+    # end def leave
+
+    def _set_cursor (self, index, delta = None) :
+        self.text.place_cursor (self, index, delta)
+    # end def _set_cursor
+
     def mouse_enter (self, event = None) :
         if self.browser.mouse_act :
             self.enter             (event)
@@ -421,7 +504,7 @@ class Node (TFL.UI.Mixin) :
 
     def _current_node (self) :
         self.browser.mouse_act = 0
-        return self.tkt._current_node ()
+        return self.browser.current_node
     # end def _current_node
 
     def activate_mouse (self, event = None) :
@@ -430,8 +513,19 @@ class Node (TFL.UI.Mixin) :
 
     def ignore (self, event = None) :
         self.browser.mouse_act = 0
-        return self.tkt.ignore (event)
-    # end def _current_node
+        return "break"
+# XXXXX FIXME
+#        key    = event.keysym
+#        result = "break"
+#        if key in ("Control_L", "Control_R") : key = "Control"
+#        # print key
+#        if (  (self.master.last_key == "Control" and key in ("c", "C"))
+#           or (key in ("Control", "Next", "Prior"))
+#           ) :
+#            result = ""
+#        self.master.last_key = key
+#        return result
+    # end def ignore
 
     def expand (self, event = None, transitive = 0) :
         node = self._current_node ()
@@ -468,21 +562,34 @@ class Node (TFL.UI.Mixin) :
     def show_head   (self, event = None) :
         node = self._current_node ()
         if node :
-            node.see   (node.head_mark)
-            node.enter ()
+            node.text.see (node.head_mark)
+            node.enter    ()
         return "break"
     # end def show_head
 
     def show_tail   (self, event = None) :
         node = self._current_node ()
         if node :
-            node.see   (node.tail_mark)
-            node.enter ()
+            node.text.see (node.tail_mark)
+            node.enter    ()
         return "break"
     # end def show_tail
 
-    def go_up       (self, event = None) : return self._go_up_down (-1, event)
-    def go_down     (self, event = None) : return self._go_up_down (+1, event)
+    def _go (self, event, node) :
+        self.leave    (event)
+        self._set_cursor \
+            ("%s + %rchars" % (node.model.head_mark, node.model.level + 2))
+        node.enter    (event)
+        node.text.see (node.head_mark)
+    # end def _go
+
+    def go_up       (self, event = None) :
+        return self._go_up_down (-1, event)
+    # end def go_up
+
+    def go_down     (self, event = None) :
+        return self._go_up_down (+1, event)
+    # end def go_down
 
     def go_left     (self, event = None) :
         node = self._current_node ()
@@ -587,13 +694,6 @@ class Node (TFL.UI.Mixin) :
             return self.search_string (pattern, tagged_as, result)
     # end def search
 
-    # delegate to our tkt:
-    def __getattr__ (self, name) :
-        result = getattr (self.tkt, name)
-        setattr (self, name, result)
-        return result
-    # end def __getattr__
-
 # end class Node
 
 class Browser (TFL.UI.Mixin) :
@@ -612,32 +712,194 @@ class Browser (TFL.UI.Mixin) :
         , wrap      = "wrap long lines"
         )
 
-    def __init__ (self, AC, master, name = None, state = None, ** kw) :
+    def __init__ (self, AC, wc = None, name = None, ** kw) :
         self.__super.__init__ (AC = AC)
-        self.name      = name
-        self.tkt       = self.TNS.HTB.Browser (master, name, state, **kw)
-        self.clear     ()
-        self.mouse_act = 1
-        std_bg   = self.option_value ("Background",             "white")
-        std_fg   = self.option_value ("Foreground",             "black")
-        link_bg  = self.option_value ("hyperLinkBackground",    std_bg)
-        link_fg  = self.option_value ("hyperLinkForeground",    "blue")
-        found_fg = self.option_value ("foundForeground",        "black")
-        found_bg = self.option_value ("foundBackground",        "deep sky blue")
-        actve_bg = self.option_value ("activeBackground",       "yellow")
-        actve_fg = self.option_value ("activeForeground",       "red")
-        butt_bg  = self.option_value ("activeButtonBackground", "red")
-        butt_fg  = self.option_value ("activeButtonForeground", "yellow")
-        Styles.normal = \
-            Style ("normal", background = std_bg,   foreground = std_fg)
-        Styles.link   = \
-            Style ("link",   background = link_bg,  foreground = link_fg)
-        Styles.found  = \
-            Style ("found",  background = found_bg, foreground = found_fg)
-        Styles.active = \
-            Style ("active", background = actve_bg, foreground = actve_fg)
-        Styles.active_button = \
-            Style ("button", background = butt_bg,  foreground = butt_fg)
+        self.name         = name
+        self.mouse_act    = 1
+        self.current_node = None
+        self.text         = self.TNS.Scrolled_Text \
+            (AC = AC, name = name, wc = wc)
+        # delegate some parts from our text:
+        self.bot_pos      = self.text.bot_pos
+        self.current_pos  = self.text.current_pos
+        self.eot_pos      = self.text.eot_pos
+        #self.delete       = self.text.remove
+        self.clear ()
+        # XXXX FIXME: This should somehow be given to Text constructor
+        # (maybe it's the name??)
+        # For option lookup we should know our widget class (T_Browser?)
+        file_dialog_title = "Hierarchical browser filename"
+
+        if not hasattr (Styles, "active_node") :
+            self._setup_styles ()
+    # end def __init__
+
+    # XXXX FIXME: delegate this (but for now need printing)
+    def delete (self, head, tail) :
+        print "head", head, self.text.pos_at (head)
+        print "tail", tail, self.text.pos_at (tail)
+        self.text.remove (head, tail)
+
+    def _setup_styles (self) :
+        # XXXXX FIXME:
+        # This should be computed from an option_value in a toolkit
+        # independent way.
+        indent = indent_inc = 23
+        # Colors
+        std_bg            = self.option_value \
+            ("Background",             "white")
+        std_fg            = self.option_value \
+            ("Foreground",             "black")
+        link_bg           = self.option_value \
+            ("hyperLinkBackground",    std_bg)
+        link_fg           = self.option_value \
+            ("hyperLinkForeground",    "blue")
+        found_fg          = self.option_value \
+            ("foundForeground",        "black")
+        found_bg          = self.option_value \
+            ("foundBackground",        "deep sky blue")
+        active_bg         = self.option_value \
+            ("activeBackground",       "yellow")
+        active_fg         = self.option_value \
+            ("activeForeground",       "red")
+        butt_bg           = self.option_value \
+            ("activeButtonBackground", "red")
+        butt_fg           = self.option_value \
+            ("activeButtonForeground", "yellow")
+
+        # Fonts
+        normal_font_family = self.option_value \
+            ("normalFontFamily",  "Sans")
+        normal_font_style = self.option_value \
+            ("normalFontStyle",   "normal")
+        normal_font_size = self.option_value \
+            ("normalFontSize",    "medium")
+        cour_font_family  = self.option_value \
+            ("courierFontFamily", "Monospace")
+        header_font_family = self.option_value \
+            ("headerFontFamily",   normal_font_family)
+        header_font_size   = self.option_value \
+            ("headerFontSize",     normal_font_size)
+        header_font_style   = self.option_value \
+            ("headerFontStyle",    normal_font_style)
+        link_font_family  = self.option_value \
+            ("linkFontFamily",    normal_font_family)
+        link_font_style   = self.option_value \
+            ("linkFontStyle",     normal_font_style)
+        title_font_family = self.option_value \
+            ("titleFontFamily",   "Sans")
+        title_font_size   = self.option_value \
+            ("titleFontSize",     "large")
+
+        Styles.active_node = Style \
+            ( "active_node"
+            , background  = active_bg
+            , foreground  = active_fg
+            )
+        Styles.active_button = Style \
+            ( "active_button"
+            , background  = butt_bg
+            , foreground  = butt_fg
+            )
+        Styles.arial      = Style \
+            ( "arial"
+            , font_family = normal_font_family
+            )
+        Styles.center     = Style \
+            ( "center"
+            , justify     = "center"
+            )
+        Styles.courier    = Style \
+            ( "courier"
+            , font_family = cour_font_family
+            )
+        Styles.found      = Style \
+            ( "found"
+            , background  = found_bg
+            , foreground  = found_fg
+            )
+        # XXXXX FIXME: Hysterical raisins? why not use found_bg above?
+        Styles.found_bg   = Style \
+            ( "found_bg"
+            , background  = "gray95"
+            )
+        Styles.hyper_link = Style \
+            ( "hyper_link"
+            , background  = link_bg
+            , foreground  = link_fg
+            , font_family = link_font_family
+            , font_style  = link_font_style
+            , underline   = "single"
+            )
+        Styles.normal     = Style \
+            ( "normal"
+            , background  = std_bg
+            , foreground  = std_fg
+            , font_family = normal_font_family
+            , font_size   = normal_font_size
+            , font_style  = normal_font_style
+            )
+        Styles.nowrap    = Style \
+            ( "nowrap"
+            , wrap       = "none"
+            )
+        Styles.quote     = Style \
+            ( "quote"
+            , rmargin    = indent
+            , lmargin1   = indent
+            , lmargin2   = indent
+            )
+        Styles.rindent   = Style \
+            ( "rindent"
+            , rmargin    = indent
+            )
+        Styles.title      = Style \
+            ( "title"
+            , font_family = title_font_family
+            , font_size   = title_font_size
+            )
+        Styles.underline = Style \
+            ( "underline"
+            , underline  = "single"
+            )
+        Styles.wrap      = Style \
+            ( "wrap"
+            , wrap       = "word"
+            )
+
+        for i in range (1, 16) :
+            level     = "level" + `i-1`
+            head_name = level + ":head"
+            setattr \
+                ( Styles, head_name
+                , Style
+                    ( head_name
+                    , lmargin1    = 0
+                    , lmargin2    = i * indent + indent_inc
+                    , font_family = header_font_family
+                    , font_size   = header_font_size
+                    , font_style  = header_font_style
+                    )
+                )
+            setattr \
+                ( Styles, level
+                , Style
+                    ( level
+                    , lmargin1  = i * indent
+                    , lmargin2  = i * indent + indent_inc
+                    )
+                )
+    # end def _setup_styles
+
+    def insert (self, pos, text, * tags) :
+        print "tags", tags
+        styles = [t for t in tags if hasattr (Styles, t)]
+        print "styles", styles
+        self.text.insert (pos, text)
+        after_insert = self.text.eol_pos (pos)
+        for style in styles :
+            self.text.apply_style (getattr (Styles, style), pos, after_insert)
+    # end def insert
 
     def option_value (self, name, default) :
         # XXXXX FIXME: should be defined toolkit independent
@@ -692,8 +954,39 @@ class Browser (TFL.UI.Mixin) :
         node.find_highlight (match, apply_found_bg = 0)
     # end def _find_highlight
 
+    def find_highlight (self, match, apply_found_bg = 0) :
+        pos = pos1 = self.text.find \
+            (match, self.head_mark, self.tail_mark)
+        while pos :
+            end = self.text.pos_at (pos, delta = len (match))
+            self.text.apply_style (Styles.found, pos, end)
+            pos = self.text.find (match, end, self.tail_mark)
+        if pos1 :
+            if apply_found_bg :
+                self.text.apply_style (Styles.found_bg, pos1, self.tail_mark)
+            self.text.see     (self.model.tail_mark)
+            self.text.see     (pos1)
+    # end def _find_highlight
+
     def _find_unhighlight (self, (node, match)) :
         node.find_unhighlight (match)
+    # end def _find_unhighlight
+
+    def find_unhighlight (self, match) :
+        """Quick & dirty way is to remove *all* found styles"""
+        self.text.remove_style (Styles.found, self.text.bot_pos)
+        # XXXXX FIXME: does the above work? if yes remove following.
+#        m   = self.master
+#        pos = m.search (match, self.model.head_mark, self.model.tail_mark)
+#        if pos :
+#            try :
+#                m.tag_remove ("found_bg", pos, self.model.tail_mark)
+#            except TclError :
+#                pass
+#        while pos :
+#            end = "%s + %s chars" % (pos, len (match))
+#            m.tag_remove ("found", pos, end)
+#            pos = m.search (match, end, self.model.tail_mark)
     # end def _find_unhighlight
 
     def _find_equal (self, pattern) :
@@ -760,7 +1053,7 @@ class Browser (TFL.UI.Mixin) :
     # end def find_prev
 
     def clear (self) :
-        self.tkt.clear       ()
+        self.text.clear      ()
         self.node_map      = {}
         self.nodes         = []
         self.bid_seed      = 0
@@ -769,13 +1062,6 @@ class Browser (TFL.UI.Mixin) :
         self._find_current = None
         self._find_pattern = None
     # end def clear
-
-    # delegate to our tkt:
-    def __getattr__ (self, name) :
-        result = getattr (self.tkt, name)
-        setattr (self, name, result)
-        return result
-    # end def __getattr__
 
 # end class Browser
 
