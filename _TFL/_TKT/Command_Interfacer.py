@@ -38,6 +38,7 @@
 #    31-Jan-2005 (CT) `_Test_CI_` added
 #     3-Feb-2005 (CT) `max_cmds_per_group` added
 #    16-Feb-2005 (MG) `bind_to_widget`: parameter `event_name` added
+#     6-Apr-2005 (CT) `clear` added
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,11 @@ class Command_Interfacer (TFL.TKT.Mixin) :
     """Model a toolkit command interface like menu, toolbar, etc."""
 
     max_cmds_per_group = sys.maxint
+
+    def clear (self) :
+        """Remove all commands/groups/separators from command interfacer"""
+        pass
+    # end def clear
 
     def destroy (self) :
         """Destroy the command interfacer widget"""

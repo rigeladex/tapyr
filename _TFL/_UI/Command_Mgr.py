@@ -150,6 +150,8 @@
 #    15-Mar-2005 (CT)  `_run` changed to call `AC.ui_state.gauge.deactivate`
 #    16-Mar-2005 (CT)  Argument `force_gauge_deactivate` added to `run`
 #    18-Mar-2005 (CT)  Attribute `if_names` added to `group`
+#     6-Apr-2005 (CT) `Dyn_Group._handle_dyn_commands` changed to use
+#                     `interfacer.clear` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -826,11 +828,8 @@ class Dyn_Group (_Command_Group_) :
     # end def __init__
 
     def _handle_dyn_commands (self, if_name, interfacer) :
+        interfacer.clear ()
         dyns = list (self.command_gen ())
-        end  = interfacer.index (-1)
-        if end is not None :
-            for j in range (end) :
-                interfacer.remove_command (0)
         mcpg = interfacer.max_cmds_per_group
         if len (dyns) <= mcpg :
             self._handle_dyn_command_group (interfacer, dyns)

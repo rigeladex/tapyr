@@ -93,6 +93,10 @@ class _CI_Widget_ (_CI_) :
                         = self.Widget_Type (parent, ** kw)
     # end def __init__
 
+    def clear (self) :
+        raise NotImplementedError, "%s.clear" % (self.__class__.__name__ [3:])
+    # end def clear
+
     def destroy (self) :
         if self.wtk_widget is not None :
             self.wtk_widget.destroy ()
@@ -264,6 +268,10 @@ class CI_Menu (_CI_Widget_) :
     max_cmds_per_group = 20
 
     _index_offset      = 0
+
+    def clear (self) :
+        self.wtk_widget.clear ()
+    # end def clear
 
     def index (self, name) :
         if name == -1 :
