@@ -32,6 +32,7 @@
 #    23-Sep-2004 (CT) Testcase update (cosmetic fixes in eol-comments)
 #    27-Sep-2004 (CT) Testcase for array with only a single element added
 #    21-Oct-2004 (CT) Testcase for Macro_If in headerfile added
+#    16-Nov-2004 (MG) Testcase for multidimensional arrays added
 #    ««revision-date»»···
 #--
 
@@ -228,6 +229,16 @@ TDFT_Sign_Mask fubars [2] =
     } /* [1]                                                               */
   };
 
+>>> a = C.Array ("ubyte2", "aa", (2,2), ((0,1),(2,3)))
+>>> print NL.join (a.as_c_code ())
+ubyte2 aa [2][2] =
+  { { 0 /* [0][0]                                                            */
+    , 1 /* [0][1]                                                            */
+    } /* [0]                                                               */
+  , { 2 /* [1][0]                                                            */
+    , 3 /* [1][1]                                                            */
+    } /* [1]                                                               */
+  };
 >>> d = dict (bit_mask = 42, extend_mask = 24)
 >>> v = C.Var (name = "stuct_var", type = "TDFT_Sign_Mask", init_dict = d)
 >>> print NL.join ([l.rstrip () for l in v.as_c_code ()])
