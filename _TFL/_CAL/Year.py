@@ -26,6 +26,11 @@
 #
 # Revision Dates
 #     5-Apr-2003 (CT) Creation
+#    13-Apr-2003 (CT) `Year.as_cal` changed
+#    13-Apr-2003 (CT) `Day.as_plan` changed
+#    13-Apr-2003 (CT) `create_diary` added
+#    13-Apr-2003 (CT) `write_year` factored
+#    13-Apr-2003 (CT) `-force` and guard against inadvertent overwriting added
 #    ««revision-date»»···
 #--
 
@@ -36,23 +41,31 @@ from   predicate import *
 import sos
 import _TFL._Meta.Object
 import _TFL._CAL
+import _TFL._CAL.Appointment
 
 class Day (TFL.Meta.Object) :
     """Model a single day in a calendar"""
 
-    def __init__ (self, date) :
+    def __init__ (self, date, appointments = None) :
         self.date         = Date (date)
-        self.appointments = []
+        self.appointments = appointments or []
     # end def __init__
 
     def as_plan (self) :
         d = self.date
+        l = Date ("%s/12/31" % (d.year, ))
         return "\n".join \
-            ( [ "# %s      %s#%2.2d"
-              % (self, d.formatted ("%a"), d.week)
+            ( [ "# %s      %s#%2.2d, %s, day %d/-%d"
+              % ( self
+                , d.formatted ("%a")
+                , d.week
+                , d.formatted ("%d-%b-%Y")
+                , d.julian_day
+                , l.julian_day - d.julian_day + 1
+                )
               ]
-            + [a.as_plan for a in self.appointments]
-            + [""]
+            + (map (str, self.appointments) or [""])
+            #+ [""]
             )
     # end def as_plan
 
@@ -121,6 +134,7 @@ class Year (TFL.Meta.Object) :
         self.months = months = []
         self.days   = days   = []
         self.weeks  = weeks  = []
+        self.map    = map    = {}
         for m in range (1, 13) :
             month = Month (year, m)
             months.append (month)
@@ -135,18 +149,21 @@ class Year (TFL.Meta.Object) :
             )
         weeks.append (w_head)
         i = w_head.sun.julian_day
-        for w in range (w_head.number + 1, 53) :
+        for w in range (w_head.number + 1, 52) :
             weeks.append (Week (w, * days [i : i+7]))
             i += 7
-        if i < len (days) :
+        while i < len (days) :
             weeks.append \
                 (Week
                      ( weeks [-1].number + 1
-                     , * ( days [i : ]
+                     , * ( days [i : i+7]
                          + [t.date + j for j in range (1, 8 - (len(days) - i))]
-                         )
+                         ) [:8]
                      )
                 )
+            i += 7
+        for d in days :
+            map [str (d)] = d
     # end def __init__
 
     def __len__ (self) :
@@ -157,30 +174,38 @@ class Year (TFL.Meta.Object) :
         return "\n\n".join \
             ( ["###  Plan for %s %s" % (self.year, "#" * 35)]
             + [d.as_plan () for d in self.days]
-            + ["### End of plan for %s %s" % (self.year, "#" * 33)]
+            + ["### End of plan for %s %s\n" % (self.year, "#" * 35)]
             )
     # end def as_plan
 
     def as_cal (self) :
-        lines  = [w.as_cal () for w in self.weeks]
-        month  = 12
-        result = []
-        tail   = ""
-        for w, l in zip (self.weeks, lines) :
-            d  = w.sun
-            if d.month != month :
-                month = d.month
-                tail  = d.formatted ("%b")
-                l     = "%s %s %s" % (l, tail [0], d.formatted ("%m"))
-            else :
-                l     = "%s %s   " % (l, tail [0:1] or ".")
-            tail      = tail [1:]
-            result.append (l)
-        result.append (" ")
+        result = [   "%s %s" % (w.as_cal (), w.sun.formatted ("%b"))
+                 for w in self.weeks
+                 ] + [""]
         return "\n".join (result)
     # end def as_cal
 
 # end class Year
+
+def create_diary (Y, path) :
+    for m in Y.months :
+        mp = sos.path.join (path, "%2.2d" % (m.number, ))
+        if not sos.path.isdir (mp) :
+            sos.mkdir (mp)
+            for d in m.days :
+                f = sos.path.join (mp, "%2.2d.%s" % (d.day, "diary"))
+                if not sos.path.isfile (f) :
+                    open (f, "w").close ()
+# end def create_diary
+
+def write_year (Yf, file_name, force = 0) :
+    if sos.path.isfile (file_name) and not force:
+        print "%s already exists, not overwritten" %(file_name, )
+    else :
+        f = file (file_name, "w")
+        f.write  (Yf ())
+        f.close  ()
+# end def write_year
 
 def command_spec (arg_array = None) :
     from Command_Line import Command_Line
@@ -188,10 +213,12 @@ def command_spec (arg_array = None) :
     year     = today.year
     return Command_Line \
         ( option_spec =
-            ( "path:S=~/diary?Path for calendar files"
+            ( "create:B?Write files"
+            , "diary:B?Create a diary file per day"
+            , "force:B?Overwrite existing files if any"
+            , "path:S=~/diary?Path for calendar files"
             , "Plan:S=plan?Filename of plan for `year`"
             , "View:S=view?Filename of view for `year`"
-            , "write:B?Write files"
             , "year:I=%d?Year for which to process calendar" % (year, )
             )
         , max_args    = 0
@@ -205,15 +232,16 @@ def main (cmd) :
     Y    = Year (year)
     pfil = sos.path.join (path, cmd.Plan)
     vfil = sos.path.join (path, cmd.View)
-    if cmd.write :
-        if cmd.Plan :
-            f = file (pfil, "w")
-            f.write  (Y.as_plan ())
-            f.close  ()
-        if cmd.View :
-            f = file (vfil, "w")
-            f.write  (Y.as_cal ())
-            f.close  ()
+    if cmd.create or cmd.diary :
+        if not sos.path.isdir (path) :
+            sos.mkdir (path)
+        if cmd.diary :
+            create_diary (Y, path)
+        if cmd.create :
+            if cmd.Plan :
+                write_year (Y.as_plan, pfil, cmd.force)
+            if cmd.View :
+                write_year (Y.as_cal,  vfil, cmd.force)
 # end def main
 
 if __name__ == "__main__" :
