@@ -151,12 +151,13 @@ class Timeline (TFL.Meta.Object) :
     def snip (self, * spans) :
         ### XXX optimize to avoid repeated iteration over whole free list
         for s in spans :
-            free, size = self.intersection (s)
-            if len (free) != 1 or abs (size - s.length) > self.epsilon :
-                raise ValueError, (self.free, s, spans)
-            f = free [0]
-            f.prepare_cut_l (size)
-            self.cut        (f)
+            if s.length > 0 :
+                free, size = self.intersection (s)
+                if len (free) != 1 or abs (size - s.length) > self.epsilon :
+                    raise ValueError, (self.free, s, spans)
+                f = free [0]
+                f.prepare_cut_l (size)
+                self.cut        (f)
     # end def snip
 
 # end class Timeline
