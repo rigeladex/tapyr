@@ -29,7 +29,7 @@
 # Revision Dates
 #    26-Jan-2005 (CT) Creation
 #    17-Feb-2005 (MG) `double_click_*` added
-#    22-Feb-2005 (RSC) mouse_{enter,leave} focus_{enter,leave} added
+#    22-Feb-2005 (CT) Names `any_(enter|leave)` and `focus_(enter|leave)` added
 #    ««revision-date»»···
 #--
 
@@ -38,7 +38,9 @@ import _TFL._TKT._Batch
 import _TFL._TKT.Eventname
 
 Eventname = TFL.TKT._Eventname \
-    ( check_everything         = None
+    ( any_enter                = None
+    , any_leave                = None
+    , check_everything         = None
     , click_1                  = None
     , click_2                  = None
     , click_3                  = None
@@ -60,8 +62,6 @@ Eventname = TFL.TKT._Eventname \
     , history_next             = None
     , history_previous         = None
     , make_schedule            = None
-    , mouse_enter              = None
-    , mouse_leave              = None
     , new                      = None
     , open                     = None
     , paste                    = None

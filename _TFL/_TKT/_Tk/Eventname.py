@@ -29,7 +29,9 @@
 #    13-Jan-2005 (CT)  Creation
 #    24-Jan-2005 (CT)  Creation continued
 #    17-Feb-2005 (MG)  `double_click_*` added
-#    21-Feb-2005 (RSC) mouse_{enter,leave} focus_{enter,leave} added
+#    21-Feb-2005 (RSC) mouse_{enter,leave}, focus_{enter,leave} added
+#    22-Feb-2005 (CT)  s/mouse_/any_/
+#    22-Feb-2005 (CT)  Binding for `focus_enter` and `focus_leave` added
 #    ««revision-date»»···
 #--
 
@@ -38,7 +40,9 @@ import _TFL._TKT._Tk
 import _TFL._TKT.Eventname
 
 Eventname = TFL.TKT._Eventname \
-    ( check_everything         = "<F7>"
+    ( any_enter                = "<Any-Enter>"
+    , any_leave                = "<Any-Leave>"
+    , check_everything         = "<F7>"
     , click_1                  = "<ButtonRelease-1>"
     , click_2                  = "<ButtonRelease-2>"
     , click_3                  = "<ButtonRelease-3>"
@@ -53,15 +57,13 @@ Eventname = TFL.TKT._Eventname \
     , double_click_3           = "<Double-Button-3>"
     , edit_schedule            = "<F4>"
     , exit                     = "<Control-Key-q>"
-    , focus_enter              = None
-    , focus_leave              = None
+    , focus_enter              = "<FocusIn>"
+    , focus_leave              = "<FocusOut>"
     , help                     = "<F1>"
     , history_complete         = "<Alt-q>"
     , history_next             = "<Alt-Down>"
     , history_previous         = "<Alt-Up>"
     , make_schedule            = "<F5>"
-    , mouse_enter              = "<Enter>"
-    , mouse_leave              = "<Leave>"
     , new                      = "<Control-Key-n>"
     , open                     = "<Control-Key-o>"
     , paste                    = "<Control-Key-v>"
