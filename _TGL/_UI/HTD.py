@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Mar-2005 (CT) Creation (based loosely on T_Browser and TFL.UI.HTB)
 #    31-Mar-2005 (CT) Creation continued
+#     1-Apr-2005 (CT) Creation continued (style.callback handling corrected)
 #    ««revision-date»»···
 #--
 
@@ -173,11 +174,13 @@ class _Node_ (TGL.UI.Mixin) :
     # end def _add_contents
 
     def _base_style (self, style, level) :
-        result = getattr (self.Style, "level%s" % (level, ))
+        result  = getattr (self.Style, "level%s" % (level, ))
+        cb_dict = {}
         if style is not None :
-            result = style (** self.tkt_text.Tag_Styler (result).option_dict)
+            result  = style (** self.tkt_text.Tag_Styler (result).option_dict)
+            cb_dict = style.callback or {}
         if self.parent :
-            result = result (callback = self._tag_callback_dict ())
+            result = result (callback = self._tag_callback_dict (cb_dict))
         return result
     # end def _base_style
 
@@ -229,9 +232,10 @@ class _Node_ (TGL.UI.Mixin) :
         return style
     # end def _style
 
-    def _tag_callback_dict (self) :
+    def _tag_callback_dict (self, cb_dict = {}) :
         return dict \
-            ( any_enter = self.mouse_enter
+            ( cb_dict
+            , any_enter = self.mouse_enter
             , any_leave = self.mouse_leave
             )
     # end def _tag_callback_dict
@@ -262,10 +266,11 @@ class Node_B (_Node_) :
         return self.TNS.stop_cb_chaining
     # end def ignore
 
-    def _button_callback_dict (self) :
+    def _button_callback_dict (self, cb_dict = {}) :
         ignore = self.ignore
         return dict \
-            ( click_1   = ignore
+            ( cb_dict
+            , click_1   = ignore
             , click_2   = ignore
             , click_3   = ignore
             , any_enter = self.mouse_enter
@@ -362,9 +367,9 @@ class Node_Bs (Node_B) :
             self.state = old_state
     # end def _add_contents
 
-    def _button_callback_dict (self) :
+    def _button_callback_dict (self, cb_dict = {}) :
         return dict \
-            ( self.__super._button_callback_dict ()
+            ( self.__super._button_callback_dict (cb_dict)
             , click_1        = self.inc_state
             )
     # end def _button_callback_dict
@@ -389,14 +394,6 @@ class Node_Bs (Node_B) :
         if self.state == self.no_of_states - 1 :
             self.__super._insert_children (at_mark, * children)
     # end def _insert_children
-
-    def _tag_callback_dict (self) :
-        return dict \
-            ( self.__super._tag_callback_dict ()
-            #, open_node      = self.inc_state
-            #, close_node     = self.dec_state
-            )
-    # end def _tag_callback_dict
 
 # end class Node_Bs
 
@@ -563,9 +560,10 @@ class Root (_Node_) :
         Style.T = self.styled_text
     # end def _setup_styles
 
-    def _text_callback_dict (self) :
+    def _text_callback_dict (self, cb_dict = {}) :
         return dict \
-            ( close_node     = self.close_node
+            ( cb_dict
+            , close_node     = self.close_node
             , node_down      = self.go_down
             , node_end       = self.show_tail
             , node_home      = self.show_head

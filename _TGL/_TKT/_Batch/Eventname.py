@@ -20,52 +20,38 @@
 #
 #++
 # Name
-#    TGL.TKT.Tk.Eventname
+#    TGL.TKT.Batch.Eventname
 #
 # Purpose
-#    Provide symbolic names for Tkinter events (keys, mouse clicks, ...)
+#    Provide symbolic names for UI events (even if none are needed in batch
+#    mode)
 #
 # Revision Dates
-#    31-Mar-2005 (CT) Creation
-#     1-Apr-2005 (CT) Bindings changed to use `Alt-<letter>` instead of
-#                     `Alt-Cursor` keys
+#     1-Apr-2005 (CT) Creation
 #    ««revision-date»»···
 #--
 
-"""
-Consistency check:
-
->>> from   _TGL                       import TGL
->>> import _TGL._TKT
->>> import _TGL._TKT.Eventname
->>> import _TGL._TKT._Batch.Eventname
->>> import _TGL._TKT._Tk.Eventname
->>> TGL.TKT._Eventname.check_names (TGL.TKT.Batch.Eventname, TGL.TKT.Tk.Eventname)
-_TGL._TKT._Tk.Eventname defines all names that _TGL._TKT._Batch.Eventname defines
-_TGL._TKT._Batch.Eventname defines all names that _TGL._TKT._Tk.Eventname defines
-
-"""
-
 from   _TFL                 import TFL
 from   _TGL                 import TGL
-import _TFL._TKT._Tk.Eventname
-import _TGL._TKT._Tk
+import _TFL._TKT._Batch.Eventname
+import _TGL._TKT._Batch
 
 Eventname = TFL.TKT._Eventname \
     (  ** dict \
-        ( TFL.TKT.Tk.Eventname._map
-        , node_down            = "<Alt-n>"
-        , node_end             = "<Alt-e>"
-        , node_home            = "<Alt-a>"
-        , node_left            = "<Alt-b>"
-        , node_right           = "<Alt-f>"
-        , node_up              = "<Alt-p>"
-        , triple_click_1       = "<Triple-Button-1>"
-        , triple_click_2       = "<Triple-Button-2>"
-        , triple_click_3       = "<Triple-Button-3>"
+        ( TFL.TKT.Batch.Eventname._map
+        , node_down            = None
+        , node_end             = None
+        , node_home            = None
+        , node_left            = None
+        , node_right           = None
+        , node_up              = None
+        , triple_click_1       = None
+        , triple_click_2       = None
+        , triple_click_3       = None
         )
     )
 
 if __name__ != "__main__" :
-    TGL.TKT.Tk._Export ("Eventname")
-### __END__ TGL.TKT.Tk.Eventname
+    TGL.TKT.Batch._Export ("Eventname")
+### __END__ TGL.TKT.Batch.Eventname
+

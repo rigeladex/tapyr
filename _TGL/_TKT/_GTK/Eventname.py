@@ -23,12 +23,31 @@
 #    TGL.TKT.GTK.Eventname
 #
 # Purpose
-#    «text
+#    Provide symbolic names for GTK events (keys, mouse clicks, ...)
 #
 # Revision Dates
 #    31-Mar-2005 (MG) Creation
+#     1-Apr-2005 (CT) Beefed up
 #    ««revision-date»»···
 #--
+
+"""
+Consistency check:
+
+>>> from   _TGL                       import TGL
+>>> import _TGL._TKT
+>>> import _TGL._TKT.Eventname
+>>> import _TGL._TKT._Batch.Eventname
+>>> import _TGL._TKT._Tk.Eventname
+>>> import _TGL._TKT._GTK.Eventname
+>>> TGL.TKT._Eventname.check_names (TGL.TKT.GTK.Eventname, TGL.TKT.Tk.Eventname)
+_TGL._TKT._Tk.Eventname defines all names that _TGL._TKT._GTK.Eventname defines
+_TGL._TKT._GTK.Eventname defines all names that _TGL._TKT._Tk.Eventname defines
+>>> TGL.TKT._Eventname.check_names (TGL.TKT.GTK.Eventname, TGL.TKT.Batch.Eventname)
+_TGL._TKT._Batch.Eventname defines all names that _TGL._TKT._GTK.Eventname defines
+_TGL._TKT._GTK.Eventname defines all names that _TGL._TKT._Batch.Eventname defines
+
+"""
 
 from   _TGL._TKT._GTK         import GTK
 from   _TGL                   import TGL
@@ -213,29 +232,73 @@ BSB = Button_Signal_Binder
 Eventname = TGL.TKT._Eventname \
     ( any_enter         = Combined_Binder
           ( "Any_Enter"
-          , Signal_Binder ("Focus_In")
           , Signal_Binder ("Enter_Notify")
+          , Signal_Binder ("Focus_In")
           )
     , any_leave         = Combined_Binder
           ( "Any_Leave"
           , Signal_Binder ("Focus_Out")
           , Signal_Binder ("Leave_Notify")
           )
-    , cursor_down       = Key_Binder ("Down")
-    , cursor_end        = Key_Binder ("End")
-    , cursor_home       = Key_Binder ("Home")
-    , cursor_left       = Key_Binder ("Left")
-    , cursor_right      = Key_Binder ("Right")
-    , cursor_up         = Key_Binder ("Up")
-    , click_1           = BSB        ("Single_Click_1", "Button_Press")
-    , click_2           = BSB        ("Single_Click_2", "Button_Press")
-    , click_3           = BSB        ("Single_Click_3", "Button_Press")
-    , double_click_1    = BSB        ("Double_Click_1", "Button_Press")
-    , double_click_2    = BSB        ("Double_Click_2", "Button_Press")
-    , double_click_3    = BSB        ("Double_Click_3", "Button_Press")
-    , triple_click_1    = BSB        ("Triple_Click_1", "Button_Press")
-    , triple_click_2    = BSB        ("Triple_Click_2", "Button_Press")
-    , triple_click_3    = BSB        ("Triple_Click_3", "Button_Press")
+    , click_1           = BSB           ("Single_Click_1", "Button_Press")
+    , click_2           = BSB           ("Single_Click_2", "Button_Press")
+    , click_3           = BSB           ("Single_Click_3", "Button_Press")
+    , close_node        = Key_Binder    ("<Delete>")
+    , close_node_1      = Key_Binder    ("<Shift>Delete")
+    , close_node_all    = Key_Binder    ("<Ctrl>Delete")
+    , close_window      = Key_Binder    ("<Ctrl>w")
+    , commit            = Key_Binder    ("<Ctrl>Return")
+    , complete          = Key_Binder    ("<Alt>i")
+    , continue_scan     = None ### XXX ??? Signal_Binder ("<Mouse><Move>2")
+    , copy              = Key_Binder    ("<Ctrl>c")
+    , cursor_down       = Key_Binder    ("Down")
+    , cursor_end        = Key_Binder    ("End")
+    , cursor_home       = Key_Binder    ("Home")
+    , cursor_left       = Key_Binder    ("Left")
+    , cursor_right      = Key_Binder    ("Right")
+    , cursor_up         = Key_Binder    ("Up")
+    , cut               = Key_Binder    ("<Ctrl>x")
+    , double_click_1    = BSB           ("Double_Click_1", "Button_Press")
+    , double_click_2    = BSB           ("Double_Click_2", "Button_Press")
+    , double_click_3    = BSB           ("Double_Click_3", "Button_Press")
+    , exit              = Key_Binder    ("<Ctrl>q")
+    , focus_enter       = Signal_Binder ("Focus_In")
+    , focus_leave       = Signal_Binder ("Focus_Out")
+    , help              = Key_Binder    ("<F1>")
+    , history_complete  = Key_Binder    ("<Alt>q")
+    , history_next      = Key_Binder    ("<Alt>Down")
+    , history_previous  = Key_Binder    ("<Alt>Up")
+    , mouse_enter       = Signal_Binder ("Enter_Notify")
+    , mouse_leave       = Signal_Binder ("Leave_Notify")
+    , mouse_motion      = Signal_Binder ("Motion_Notify")
+    , new               = Key_Binder    ("<Ctrl>n")
+    , node_down         = Key_Binder    ("<Alt>n")
+    , node_end          = Key_Binder    ("<Alt>e")
+    , node_home         = Key_Binder    ("<Alt>a")
+    , node_left         = Key_Binder    ("<Alt>b")
+    , node_right        = Key_Binder    ("<Alt>f")
+    , node_up           = Key_Binder    ("<Alt>p")
+    , open              = Key_Binder    ("<Ctrl>o")
+    , open_node         = Key_Binder    ("<Insert>")
+    , open_node_1       = Key_Binder    ("<Shift>Insert")
+    , open_node_all     = Key_Binder    ("<Ctrl>Insert")
+    , paste             = Key_Binder    ("<Ctrl>v")
+    , Print             = Key_Binder    ("<Ctrl>p")
+    , Print_all         = None
+    , redo              = Key_Binder    ("<Ctrl>y")
+    , rename            = Key_Binder    ("<F2>")
+    , save              = Key_Binder    ("<Ctrl>s")
+    , save_and_exit     = Key_Binder    ("<Ctrl>e")
+    , save_as           = Key_Binder    ("<Ctrl><Shift>s")
+    , search            = Key_Binder    ("<Ctrl>f")
+    , search_next       = Key_Binder    ("<F3>")
+    , search_prev       = Key_Binder    ("<Shift>F3")
+    , select_all        = Key_Binder    ("<Ctrl>a")
+    , start_scan        = None ### XXX ??? Signal_Binder ("<Mouse><Press>2")
+    , triple_click_1    = BSB           ("Triple_Click_1", "Button_Press")
+    , triple_click_2    = BSB           ("Triple_Click_2", "Button_Press")
+    , triple_click_3    = BSB           ("Triple_Click_3", "Button_Press")
+    , undo              = Key_Binder    ("<Ctrl>z")
     )
 
 if __name__ != "__main__" :
