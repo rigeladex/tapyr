@@ -49,6 +49,7 @@
 #    26-Oct-2004 (CT) `Year.__new__` added to cache years
 #    26-Oct-2004 (CT) `is_weekday` changed to just delegate to `Date`
 #     2-Nov-2004 (CT) Use `Date.from_string` instead of home-grown code
+#     4-Nov-2004 (CT) `Week.ordinal` added
 #    ««revision-date»»···
 #--
 
@@ -144,12 +145,14 @@ class Day (TFL.Meta.Object) :
 class Week (TFL.Meta.Object) :
     """Model a single week in a calendar"""
 
-    tue = property (lambda s : s.days [1])
-    wed = property (lambda s : s.days [2])
-    thu = property (lambda s : s.days [3])
-    fri = property (lambda s : s.days [4])
-    sat = property (lambda s : s.days [5])
-    sun = property (lambda s : s.days [6])
+    tue        = property (lambda s : s.days [1])
+    wed        = property (lambda s : s.days [2])
+    thu        = property (lambda s : s.days [3])
+    fri        = property (lambda s : s.days [4])
+    sat        = property (lambda s : s.days [5])
+    sun        = property (lambda s : s.days [6])
+
+    ordinal    = property (lambda s : s.mon.ordinal // 7)
 
     _day_names = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "So")
 

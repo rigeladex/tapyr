@@ -42,7 +42,7 @@ class Scheduled (TFL.Meta.Object) :
     prototype         = None
     attr_defaults     = dict \
         ( alarm       = None
-        # deadline    = None ### only for To_Do
+        , deadline    = None
         , description = None
         , duration    = None
         , format      = None
