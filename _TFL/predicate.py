@@ -126,6 +126,9 @@
 #    24-Mar-2005 (CT)  Moved into package `TFL` and removed
 #                      various cruft
 #    31-Mar-2005 (CED) `fit_to_ceil_in_cycle` re-added
+#     3-Apr-2005 (CT)  Use built-in `reversed` and `sorted` if any instead of
+#                      defining home-grown versions
+#     3-Apr-2005 (CT)  Base `dusort` on built-in `sorted` if available
 #    ««revision-date»»···
 #--
 
@@ -292,17 +295,33 @@ def cross_sum (seq, fct = None) :
     return sum ([fct (x) for x in seq])
 # end def cross_sum
 
-def dusort (seq, decorator) :
-    """Returns a sorted copy of `seq`. The sorting is done over a decoration
-       of the form `decorator (p), i, p for (i, p) in enumerate (seq)`.
+try :
+    sorted
+except NameError :
+    def dusort (seq, decorator) :
+        """Returns a sorted copy of `seq`. The sorting is done over a
+           decoration of the form `decorator (p), i, p for (i, p) in
+           enumerate (seq)`.
 
-       >>> dusort ([1, 3, 5, 2, 4], lambda e : -e)
-       [5, 4, 3, 2, 1]
-    """
-    temp = [(decorator (p), i, p) for (i, p) in enumerate (seq)]
-    temp.sort ()
-    return [p [-1] for p in temp]
-# end def dusort
+           >>> dusort ([1, 3, 5, 2, 4], lambda e : -e)
+           [5, 4, 3, 2, 1]
+        """
+        temp = [(decorator (p), i, p) for (i, p) in enumerate (seq)]
+        temp.sort ()
+        return [p [-1] for p in temp]
+    # end def dusort
+else :
+    def dusort (seq, decorator, reverse=False) :
+        """Wrapper around built-in sorted that is backwards compatible to
+           home-grown `dusort`
+
+           >>> dusort ([1, 3, 5, 2, 4], lambda e : -e)
+           [5, 4, 3, 2, 1]
+           >>> dusort ([1, 3, 5, 2, 4], lambda e : e, reverse = True)
+           [5, 4, 3, 2, 1]
+        """
+        return sorted (seq, key = decorator, reverse = reverse)
+    # end def dusort
 
 def dusplit (seq, decorator, min_result_size = 1) :
     """Returns a list of lists each containing the elements of `seq'
@@ -537,20 +556,25 @@ def relax (* args, ** kw) :
     pass
 # end def relax
 
-def reversed (seq) :
+def reversed_list (seq) :
     """Returns a reversed copy of `seq'.
 
-       >>> reversed ([1, 2, 3, 4, 5])
+       >>> reversed_list ([1, 2, 3, 4, 5])
        [5, 4, 3, 2, 1]
-       >>> reversed ([1])
+       >>> reversed_list ([1])
        [1]
-       >>> reversed ([])
+       >>> reversed_list ([])
        []
     """
     result = list (seq)
     result.reverse ()
     return result
-# end def reversed
+# end def reversed_list
+
+try :
+    reversed = reversed
+except NameError :
+    reversed = reversed_list
 
 def re_matches (list, pat) :
     """Returns all strings in `list' matching the regular expression `pat'."""
@@ -625,22 +649,25 @@ def second (x, y, * args, ** kw) :
     return y
 # end def second
 
-def sorted (seq, pred = cmp) :
-    """Returns a sorted copy of `seq'.
+try :
+    sorted = sorted
+except NameError :
+    def sorted (seq, pred = cmp) :
+        """Returns a sorted copy of `seq'.
 
-       >>> sorted ([1, 3, 5, 2, 4])
-       [1, 2, 3, 4, 5]
-       >>> sorted ([1, 3, 5, 2, 4], lambda l, r : cmp (-l, -r))
-       [5, 4, 3, 2, 1]
-       >>> sorted ([1, 2, 2, 1])
-       [1, 1, 2, 2]
-       >>> sorted ([])
-       []
-    """
-    result = list (seq)
-    result.sort (pred)
-    return result
-# end def sorted
+           >>> sorted ([1, 3, 5, 2, 4])
+           [1, 2, 3, 4, 5]
+           >>> sorted ([1, 3, 5, 2, 4], lambda l, r : cmp (-l, -r))
+           [5, 4, 3, 2, 1]
+           >>> sorted ([1, 2, 2, 1])
+           [1, 1, 2, 2]
+           >>> sorted ([])
+           []
+        """
+        result = list (seq)
+        result.sort (pred)
+        return result
+    # end def sorted
 
 def split_by_key (seq, key_cmp, min_result_size = 1) :
     """Returns a list of lists each containing the elements of `seq' with a
@@ -754,5 +781,5 @@ def xored_string (source, salt = "ß") :
 # end def xored_string
 
 if __name__ != "__main__" :
-    TFL._Export ("*")
+    TFL._Export ("*", "sorted", "reversed")
 ### __END__ TFL.predicate
