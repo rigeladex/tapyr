@@ -57,6 +57,10 @@ class Command_Interfacer (TFL.TKT.Mixin) :
         return 0
     # end def index
 
+    def set_auto_short_cuts (self) :
+        pass
+    # end def set_auto_short_cuts
+
     ### command specific methods
     def add_command \
             ( self, name, callback

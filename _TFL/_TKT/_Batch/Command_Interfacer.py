@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-Dec-2004 (CT) Creation
 #    11-Jan-2005 (CT) Creation continued
+#     1-Feb-2005 (CT) `set_auto_short_cuts` added
 #    ««revision-date»»···
 #--
 

@@ -110,6 +110,7 @@
 #    31-Jan-2005 (CT) Doc-test for `Dyn_Command` added and
 #                     `_handle_dyn_commands` fixed
 #    31-Jan-2005 (CT) `Command.interfacers` converted from list to dict
+#     1-Feb-2005 (CT) `set_auto_short_cuts` added
 #    ««revision-date»»···
 #--
 
@@ -549,6 +550,13 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
     def keys (self) :
         return self.command.keys ()
     # end def keys
+
+    def set_auto_short_cuts (self) :
+        for i in self.interfacers.itervalues () :
+            i.set_auto_short_cuts ()
+        for g in self._group :
+            g.set_auto_short_cuts ()
+    # end def set_auto_short_cuts
 
     def _add_command (self, cmd, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
         self.root._add_precondition (cmd)
