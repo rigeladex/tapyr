@@ -49,6 +49,8 @@
 #    26-Jan-2005 (CT) `CI_Menu.add_group` changed to return a `CI_Menu`
 #                     instead of a `CTK.C_Menu`
 #    28-Jan-2005 (CT) `index` added
+#    31-Jan-2005 (CT) `_index_offset` factored and used consistently in
+#                     `CI_Menu`
 #    ««revision-date»»···
 #--
 
@@ -183,12 +185,14 @@ class CI_Event_Binder (_CI_) :
 class CI_Menu (_CI_Widget_) :
     """Implement a menu command interfacer for Tkinter"""
 
-    Widget_Type = CTK.C_Menu
+    Widget_Type   = CTK.C_Menu
+
+    _index_offset = 1
 
     def index (self, name) :
         if name == -1 :
             name = END
-        return self.widget.index (name)
+        return self.widget.index (name) - self._index_offset
     # end def index
 
     ### command specific methods
@@ -210,7 +214,7 @@ class CI_Menu (_CI_Widget_) :
         else :
             fct = self.widget.insert_command
         return fct \
-            ( index + delta + 1
+            ( index + delta + self._index_offset
             , label       = name
             , command     = callback
             , underline   = underline
@@ -220,7 +224,7 @@ class CI_Menu (_CI_Widget_) :
     # end def add_command
 
     def remove_command (self, index) :
-        self._remove (index)
+        self._remove (index + self._index_offset)
     # end def remove_command
 
     ### group specific methods
@@ -233,7 +237,7 @@ class CI_Menu (_CI_Widget_) :
             , tearoff    = 0
             )
         self.widget.insert_cascade \
-            ( index + delta + 1
+            ( index + delta + self._index_offset
             , label      = name
             , menu       = result.widget
             , underline  = kw.get ("underline")
@@ -242,16 +246,16 @@ class CI_Menu (_CI_Widget_) :
     # end def add_group
 
     def remove_group (self, index) :
-        self._remove (index)
+        self._remove (index + self._index_offset)
     # end def remove_group
 
     ### separator specific methods
     def add_separator (self, name = None, index = None, delta = 0) :
-        self.widget.insert_separator (index + delta + 1)
+        self.widget.insert_separator (index + delta + self._index_offset)
     # end def add_separator
 
     def remove_separator (self, index) :
-        self._remove (index)
+        self._remove (index + self._index_offset)
     # end def remove_separator
 
     ### event specific methods

@@ -1078,6 +1078,30 @@ elements = cm._epi ["mb"]
 for e in elements :
     print e.name, elements.n_index (e.name), mb.index (e.name)
 
+from _TFL._UI.Command_Mgr import *
+from _TFL._TKT.Command_Interfacer import _Test_CI_
+import _TFL._TKT._Batch
+import itertools
+_d1 = itertools.cycle (([1, 2], ))
+def dyn_1 () :
+    for i in _d1.next () :
+        n = "%s Dyn-command" % i
+        yield n, n, None
+
+mb = interfacer = _Test_CI_ (None)
+cm = Command_Mgr (None, None, dict (mb = mb))
+cm.add_command   (Command ("New cluster",  ""), if_names = ("mb", ))
+cm.add_command   (Command ("Load cluster", ""), if_names = ("mb", ))
+cm.add_command   (Command ("Close",        ""), if_names = ("mb", ))
+cm.add_separator (if_names = ("mb", ))
+cm.add_command   (Command ("Save cluster", ""), if_names = ("mb", ))
+cm.add_command   (Command ("Save cluster as text", ""), if_names = ("mb", ))
+cm.add_command   (Command ("Save cluster as ...", ""), if_names = ("mb", ))
+d1 = Dyn_Command ("Dyn-A", dyn_1)
+cm.add_command   (d1, if_names = ("mb", ))
+cm.add_command   (Command ("Save and exit", ""), if_names = ("mb", ))
+cm.add_command   (Command ("Save", ""), if_names = ("mb", ))
+mb.activate ()
 """
 
 __all__ = ( "Command_Mgr", "Command_Group", "Command", "_Command_"
