@@ -383,7 +383,7 @@ def write_year (Yf, file_name, force = 0) :
     if sos.path.isfile (file_name) and not force:
         print "%s already exists, not overwritten" %(file_name, )
     else :
-        f = file (file_name, "w")
+        f = open (file_name, "w")
         f.write  (Yf ())
         f.close  ()
 # end def write_year

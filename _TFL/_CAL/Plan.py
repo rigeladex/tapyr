@@ -162,7 +162,7 @@ def read_plan (Y, plan_file_name) :
     """Read information from file named `plan_file_name` and put appointments
        into `Y`
     """
-    f = file (plan_file_name)
+    f = open (plan_file_name)
     try :
         buffer = f.read ()
     finally :

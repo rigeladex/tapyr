@@ -43,6 +43,7 @@
 #                     relatively instead of absolutely (RUP 11203)
 #    24-Aug-2004 (CT) Rewrite all occurrences of `pi_package.pkg` in
 #                     `__init__` instead of specific patterns only
+#    28-Sep-2004 (CT)  Use `open` instead of `file` to open a file
 #    ««revision-date»»···
 #--
 
@@ -144,7 +145,7 @@ class Plugin_Packager (TFL.Meta.Object) :
     # end def _pns_from_pkg
 
     def _read_source_file (self, pym) :
-        source = file        (pym.path_name)
+        source = open        (pym.path_name)
         code   = source.read ()
         source.close         ()
         return code
@@ -336,7 +337,7 @@ class Plugin_Packager (TFL.Meta.Object) :
     # end def _setup_target_packages
 
     def _write_target_file (self, pym, code) :
-        target = file (pym.target_path, "w")
+        target = open (pym.target_path, "w")
         target.write  (code)
         target.close  ()
     # end def _write_target_file
@@ -371,7 +372,7 @@ def main (cmd) :
     if cmd.AP_Closure :
         assert not cmd.Diff
         ap_closure = eval \
-            (file (cmd.AP_Closure).read (), TFL._.Import_Closure.__dict__)
+            (open (cmd.AP_Closure).read (), TFL._.Import_Closure.__dict__)
     elif cmd.Diff :
         ap_closure = TFL.Import_Closure \
             ( file_name   = cmd.Diff
