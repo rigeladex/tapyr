@@ -35,6 +35,7 @@
 #                     support method wrappers
 #     1-Apr-2005 (MG) `_wtk_delegation` handling changed
 #     2-Apr-2005 (MG) Style handling added
+#     2-Apr-2005 (MG) `_styler`: caching removed (in now done by the `Styler`)
 #    ««revision-date»»···
 #--
 
@@ -242,7 +243,6 @@ class Object (TGL.TKT.Mixin) :
     __metaclass__    = _M_Object_
     __gtk_properties = ()
     _wtk_delegation  = {}
-    _sty_map         = {}
 
     ### `Class_Name` is the name of the new generated GTK-type
     ### `Signals`    is a dictionary describing the signals of the new GTK-type
@@ -341,15 +341,9 @@ class Object (TGL.TKT.Mixin) :
     # end def _before_styler
 
     def _styler (self, style, Styler = None) :
-        sty_map = self._sty_map
         if Styler is None :
             Styler = self.Styler
-        if Styler not in sty_map :
-            sty_map [Styler] = weakref.WeakKeyDictionary ()
-        sty_map = sty_map [Styler]
-        if style not in sty_map :
-            sty_map [style] = Styler (style)
-        return sty_map [style]
+        return Styler (style)
     # end def _styler
 
     ### XXX implement me, please !!!

@@ -28,6 +28,9 @@
 # Revision Dates
 #    28-Mar-2005 (MG) Automated creation
 #     2-Apr-2005 (MG) `TFL.TKT.Text` interface implemented
+#     2-Apr-2005 (MG) Optional argument `tag` added to `apply_style` and
+#                      `_tag`
+#     2-Apr-2005 (MG) `tags_at` added
 #    ««revision-date»»···
 #--
 
@@ -75,13 +78,20 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     eot_pos     = property (lambda s : s.wtk_object.get_char_count ())
     #eot_pos     = property (lambda s : s.eot_iter.get_offset ())
 
-    def apply_style (self, style, head = None, tail = None, delta = 0, lift = False) :
+    def apply_style ( self
+                    , style
+                    , head  = None
+                    , tail  = None
+                    , delta = 0
+                    , lift  = False
+                    , tag   = None
+                    ) :
         if head is None :
             ### head is None -> apply the style to the complete widget
             ### instead of a text range
             self.__super.apply_style (style)
         else :
-            tag = self._tag (style)
+            tag = self._tag (style, tag)
             self.wtk_object.apply_tag \
                 ( tag.wtk_object
                 , self._move_iter     (self._iter_from_pom (head), delta)
@@ -199,6 +209,11 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
             "`set_tabs` cannot be implemented by a Text-Buffer"
     # end def set_tabs
 
+    def tags_at (self, pos_or_mark) :
+        iter = self._iter_from_pom (pos_or_mark)
+        return [t.get_property ("name") for t in iter.get_tags ()]
+    # end def tags_at
+
     ### only internal functions
     def _move_iter (self, iter, delta = 0, line_delta = 0) :
         if delta :
@@ -218,11 +233,11 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
         return self.wtk_object.get_iter_at_offset (pos_or_mark)
     # end def _iter_from_pom
 
-    def _tag (self, style) :
+    def _tag (self, style, name = None) :
         result = None
         if style is not None :
             if style not in self._tag_map :
-                self._tag_map [style]  = tag = GTK.Text_Tag ()
+                self._tag_map [style]  = tag = GTK.Text_Tag (name)
                 tag.apply_style (style)
                 self.tag_table.add (tag.wtk_object)
             result = self._tag_map [style]

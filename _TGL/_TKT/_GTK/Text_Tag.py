@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-Mar-2005 (MG) Automated creation
 #     2-Apr-2005 (MG) `Styler` added
+#     2-Apr-2005 (MG) `_sty_map` removed
 #    ««revision-date»»···
 #--
 
@@ -75,7 +76,6 @@ class Text_Tag (GTK.Object) :
             )
     # end class Styler
 
-    _sty_map         = {}
     GTK_Class        = GTK.gtk.TextTag
     __gtk_properties = \
         ( GTK.Property            ("background", get = None)
