@@ -30,32 +30,49 @@
 #    ««revision-date»»···
 #--
 
-class Property (property) :
+from   _TFL             import TFL
+import _TFL._Meta
+import _TFL._Meta.Class
 
-    _del = None
-    _set = None
+class _Property_ (property) :
 
-    def __init__ (self, name, doc = None) :
-        self.name = name
-        super (Property, self).__init__ \
-            (self._get_value, self._set, self._del, doc)
+    __metaclass__ = TFL.Meta.Class
+
+    def __init__ (self) :
+        self.__super.__init__ (self._get, self._set, self._del)
     # end def __init__
 
-    def _prop_name (self, obj) :
-        return obj.__class__.mangled_name (self.name)
-    # end def _prop_name
+    def del_value (self, obj) :
+        return delattr (obj, self.mangled_name)
+    # end def del_value
 
-    def _set_value (self, obj, value) :
-        return setattr (obj, self._prop_name (obj), value)
-    # end def _set_value
+    def get_value (self, obj) :
+        return getattr (obj, self.mangled_name)
+    # end def get_value
 
-    def _get_value (self, obj) :
-        return getattr (obj, self._prop_name (obj))
-    # end def _get_value
+    def set_value (self, obj, value) :
+        return setattr (obj, self.mangled_name, value)
+    # end def set_value
 
-    def _del_value (self, obj) :
-        return delattr (obj, self._prop_name (obj))
-    # end def _del_value
+    def set_doc (self, doc) :
+        self.__doc__ = doc
+    # end def set_doc
+
+    _del = None
+    _get = get_value
+    _set = None
+
+# end class _Property_
+
+class Property (_Property_) :
+
+    def __init__ (self, name, doc = None) :
+        self.name         = name
+        self.mangled_name = "__%s" % name
+        self.__super.__init__ ()
+        if doc :
+            self.set_doc (doc)
+    # end def __init__
 
 # end class Property
 
@@ -65,12 +82,12 @@ class RO_Property (Property) :
     """
 
     def __init__ (self, name, init_value = None, doc = None) :
-        super (RO_Property, self).__init__ (name, doc)
-        self._init_value = init_value
+        self.init_value = init_value
+        self.__super.__init__ (name, doc)
     # end def __init__
 
     def init_instance (self, obj) :
-        self._set_value (obj, self._init_value)
+        self.set_value (obj, self.init_value)
     # end def init_instance
 
 # end class RO_Property
@@ -78,28 +95,25 @@ class RO_Property (Property) :
 class RW_Property (RO_Property) :
     """Read/write property automatically initialized for each instance"""
 
-    _del = RO_Property._del_value
-    _set = RO_Property._set_value
+    _del = RO_Property.del_value
+    _set = RO_Property.set_value
 
 # end class Read_Write
 
-from   _TFL import TFL
-import _TFL._Meta
-TFL.Meta._Export ("*")
+if __name__ == "__main__" :
+    if __debug__ :
+        class T (object) :
+            __metaclass__ = TFL.Meta.Class
+            __properties  = \
+              ( RO_Property ("x", 42,  "readonly  property")
+              , RW_Property ("y", 137, "writeable property")
+              )
 
-if 0 and __debug__ :
-    import _TFL._Meta.Class
-    class T (object) :
-        __metaclass__ = TFL.Meta.Class
-        __properties  = \
-          ( RO_Property ("x", 42,  "readonly  property")
-          , RW_Property ("y", 137, "writeable property")
-          )
-
-    class U (T) :
-        __properties = \
-          ( RW_Property ("x", 3.1415926, "redefined attribute")
-          , RO_Property ("z", "fubar")
-          )
-
+        class U (T) :
+            __properties = \
+              ( RW_Property ("x", 3.1415926, "redefined attribute")
+              , RO_Property ("z", "fubar")
+              )
+else :
+    TFL.Meta._Export ("*", "_Property_")
 ### __END__ TFL.Meta.Property

@@ -51,9 +51,9 @@ def _mangled_name (name, cls_name) :
 class _Type_ (type) :
     """Base class of TFL metaclasses."""
 
-    def mangled_name (cls, name) :
+    def _mangled_name (cls, name) :
         return _mangled_name (name, cls.__name__)
-    # end def mangled_name
+    # end def _mangled_name
 
 # end class _Type_
 
@@ -90,9 +90,9 @@ class Autorename (_Type_) :
         super (Autorename, cls).__init__ (real_name, bases, dict)
     # end def __init__
 
-    def mangled_name (cls, name) :
+    def _mangled_name (cls, name) :
         return _mangled_name (name, cls.__dict__ ["__real_name"])
-    # end def mangled_name
+    # end def _mangled_name
 
 # end class Autorename
 
@@ -111,7 +111,7 @@ class Autosuper (_Type_) :
 
     def __init__ (cls, name, bases, dict) :
         super   (Autosuper, cls).__init__ (name, bases, dict)
-        setattr (cls, cls.mangled_name ("super"), super (cls))
+        setattr (cls, cls._mangled_name ("super"), super (cls))
     # end def __init__
 
 # end class Autosuper
@@ -133,12 +133,12 @@ class Autoproperty (_Type_) :
 
     def __init__ (cls, name, bases, dict) :
         super (Autoproperty, cls).__init__ (name, bases, dict)
-        prop_name  = cls.mangled_name ("properties")
+        prop_name  = cls._mangled_name ("properties")
         properties = {}
         classes    = [cls] + list (bases)
         classes.reverse ()
         for c in classes :
-            mangled_name = getattr (c, "mangled_name", None)
+            mangled_name = getattr (c, "_mangled_name", None)
             if mangled_name :
                 for p in getattr (c, mangled_name ("properties"), []) :
                     setattr (cls, p.name, p)
@@ -148,7 +148,7 @@ class Autoproperty (_Type_) :
 
     def __call__ (cls, * args, ** kw) :
         result = super (Autoproperty, cls).__call__ (* args, ** kw)
-        for p in cls.__dict__.get (cls.mangled_name ("properties"), []) :
+        for p in cls.__dict__.get (cls._mangled_name ("properties"), []) :
             init_instance = getattr (p, "init_instance", None)
             if callable (init_instance) :
                 init_instance (result)
