@@ -59,13 +59,15 @@ class Date_Time (TFL.CAL.Date, TFL.CAL.Time) :
        >>> d1 += 1
        >>> id (d1) == id (d2)
        False
+       >>> d2 - d1
+       datetime.timedelta(-1)
     """
 
     _Type            = datetime.datetime
     _init_arg_names  = \
         TFL.CAL.Date._init_arg_names + TFL.CAL.Time._init_arg_names
     _kind            = "datetime"
-    _timetuple_slice = lambda s, tt : tt [:6]
+    _timetuple_slice = lambda s, tt : tt [:6] + (0, )
 
 # end class Date_Time
 

@@ -47,17 +47,51 @@ class Time (TFL.CAL._DTW_) :
        >>> t2 = Time (22, 47, 13)
        >>> print t2
        22:47:13
+       >>> t1 = Time (14, 30, 0)
+       >>> t2 = Time (16, 30, 0)
+       >>> d  = t2 - t1
+       >>> print d
+       2:00:00
+       >>> print t2 + d
+       18:30:00
+       >>> try :
+       ...     t1 + Delta (hours = 10)
+       ... except OverflowError, exc :
+       ...     print exc
+       ...
+       1 day, 0:30:00
     """
 
     _Type            = datetime.time
-    _init_arg_names  = ("hour", "minute", "second")
+    _init_arg_names  = ("hour", "minute", "second", "microsecond")
     _kind            = "time"
-    _timetuple_slice = lambda s, tt : tt [3:6]
+    _timetuple_slice = lambda s, tt : tt [3:6] + (0, )
 
     hour             = property (lambda s: s._body.hour)
     minute           = property (lambda s: s._body.minute)
     second           = property (lambda s: s._body.second)
     microsecond      = property (lambda s: s._body.microsecond)
+
+    def as_delta (self) :
+        return TFL.CAL.Delta \
+            ( hours = self.hour, minutes = self.minute, seconds = self.second
+            , microseconds = self.microsecond
+            )
+    # end def as_delta
+
+    def __add__ (self, rhs) :
+        result = self.as_delta () + rhs
+        if result.days :
+            raise OverflowError, result
+        seconds = result.seconds
+        hour,   seconds = divmod (seconds, 3600)
+        minute, second  = divmod (seconds, 60)
+        return self.__class__ (hour, minute, second, result.microseconds)
+    # end def __add__
+
+    def __sub__ (self, rhs) :
+        return self.as_delta () - rhs.as_delta ()
+    # end def __sub__
 
 # end class Time
 

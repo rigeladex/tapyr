@@ -72,6 +72,7 @@ class Day (TFL.Meta.Object) :
     is_holiday = ""
 
     id         = property (lambda s : s.date.tuple [:3])
+    is_weekday = property (lambda s : s.date.weekday < 5)
     number     = property (lambda s : s.date.day)
 
     def __new__ (cls, cal, date) :

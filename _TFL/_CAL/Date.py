@@ -51,6 +51,10 @@ class Date (TFL.CAL._DTW_) :
        >>> d = d - 1
        >>> d.year, d.month, d.day, d.date, d.week, d.weekday, d.ordinal
        (2004, 10, 10, datetime.date(2004, 10, 10), 41, 6, 731864)
+       >>> d1 = Date (2004, 10, 14)
+       >>> d2 = Date (2004, 10, 16)
+       >>> d1 - d2
+       datetime.timedelta(-2)
     """
 
     months = \
@@ -98,13 +102,19 @@ class Date (TFL.CAL._DTW_) :
     # end def __getattr__
 
     def __add__ (self, rhs) :
-        return self.__class__ \
-            (** {self._kind : self._body + self._delta (rhs)})
+        delta  = self._delta (rhs)
+        result = self._body + delta
+        if isinstance (delta, TFL.CAL.Delta) :
+            result = self.__class__ (** {self._kind : result})
+        return result
     # end def __add__
 
     def __sub__ (self, rhs) :
-        return self.__class__ \
-            (** {self._kind : self._body - self._delta (rhs)})
+        delta  = self._delta (rhs)
+        result = self._body - delta
+        if isinstance (delta, TFL.CAL.Delta) :
+            result = self.__class__ (** {self._kind : result})
+        return result
     # end def __sub__
 
 # end class Date
