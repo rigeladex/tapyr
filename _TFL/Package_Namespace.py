@@ -123,6 +123,12 @@ class _Module_Space :
         ### __import__('A.B', ...) returns package A when fromlist is empty,
         ### but its submodule B when fromlist is not empty.
         ###
+        ### ***
+        ### Caveat: doing the import right (like TFL.import_module does)
+        ### doesn't work here because the module in question is not *yet* in
+        ### it's package when this function is called due to a call to
+        ### `_Export`
+        ### ***
         # print "_Module_Space._load: __name      =", self.__name
         # print "                     module_name =", module_name
         q_name = "%s.%s" % (self.__name, module_name)
