@@ -148,17 +148,21 @@ class Doc_Node :
     def _init_kw (self, kw) :
         kw = kw.copy ()
         map ( lambda (k, v), s = self :
-                  hasattr (s, k) or setattr (s, k, v)
+                  hasattr (s, k) or s._set_attr_value (k, v)
             , self._init_arg_dict.items ()
             )
         for k, v in kw.items () :
             if self._init_arg_dict.has_key (k) :
-                setattr (self, k, v)
+                self._set_attr_value (k, v)
                 del kw [k]
         if kw :
             print self.__class__, self._init_arg_dict
             raise TypeError, "unexpected keyword arguments: %s" % kw
     # end def _init_kw
+
+    def _set_attr_value (self, name, value) :
+        setattr (self, name, value)
+    # end def _set_attr_value
 
     def _reset_children (self) :
         self.children = NO_List ()
