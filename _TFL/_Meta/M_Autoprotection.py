@@ -88,7 +88,7 @@ class Private_Descriptor (_Protected_Descriptor_) :
            ) :
             return
         raise AttributeError, \
-            ( "Illegal acces to %s member %s of class %s from "
+            ( "Illegal access to %s member %s of class %s from "
               "%s"
             % ( self._kind, self._name, self._def_cls.__name__
               , caller_fct.co_name
@@ -110,7 +110,7 @@ class Protected_Descriptor (Private_Descriptor) :
         if caller_obj and self._def_cls in caller_obj.__class__.__mro__ :
             return
         raise AttributeError, \
-            ( "Illegal acces to %s member %s of class %s from "
+            ( "Illegal access to %s member %s of class %s from "
               "%s"
             % ( self._kind, self._name, self._def_cls.__name__
               , caller_fct.co_name
@@ -134,14 +134,12 @@ class M_Autoprotection (TFL.Meta.M_Class) :
 
     def _setup_class_protections (cls, name, dict) :
         cls._func_object= {}
+        cls._file = None
         for n, v in dict.items () :
             if callable (v) and n != "__metaclass__" :
                 cls._func_object [v.func_code.co_firstlineno] = True
                 cls._file = v.func_code.co_filename
-            if v.__class__ is Private_Descriptor :
-                v._def_cls = cls
-                v._name    = n
-            elif v.__class__ is Protected_Descriptor :
+            if isinstance (v, _Protected_Descriptor_) :
                 v._def_cls = cls
                 v._name    = n
     # end def _setup_class_protections
