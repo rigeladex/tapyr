@@ -90,6 +90,8 @@
 #     8-Apr-2003 (CT) Compatibility kludge of putting `Package_Namespace`
 #                     into `sys.modules` removed (it was too smelly)
 #    28-Jul-2003 (CT) `_Reload` added
+#     1-Aug-2003 (CT) `_Reload` changed to reload in same sequence as
+#                     original import
 #    ««revision-date»»···
 #--
 
@@ -261,11 +263,19 @@ class Package_Namespace :
                (self.__class__.__name__, self.__name, id (self))
     # end def __repr__
 
+    def _Cache_Module (self, module_name, mod) :
+        if not module_name in self.__modules :
+            p = len (self.__modules)
+        else :
+            m, p = self.__modules [module_name]
+        self.__modules [module_name] = (mod, p)
+    # end def _Cache_Module
+
     def _Add (self, ** kw) :
         """Add elements of `kw` to Package_Namespace `self`."""
         module_name = _caller_globals () ["__name__"].split (".") [-1]
         mod         = self.__module_space._load (module_name)
-        self.__modules [module_name] = mod
+        self._Cache_Module (module_name, mod)
         for s, p in kw.items () :
             self._import_1 (mod, s, s, p, self.__dict__, 1)
     # end def _Add
@@ -278,7 +288,7 @@ class Package_Namespace :
         transitive    = kw.get ("transitive")
         result        = {}
         mod           = self.__module_space._load (module_name)
-        self.__modules [module_name] = mod
+        self._Cache_Module (module_name, mod)
         primary       = getattr (mod, module_name, None)
         check_clashes = not self.__reload
         if primary is not None :
@@ -311,17 +321,25 @@ class Package_Namespace :
             if old is not mod :
                 raise ImportError, ( "ambiguous name %s refers to %s and %s"
                                    ) % (module_name, mod, old)
-        self.__dict__ [module_name] = self.__modules [module_name] = mod
+        self.__dict__  [module_name] = mod
+        self._Cache_Module (module_name, mod)
     # end def _Export_Module
 
     def _Reload (self, * modules) :
         old_reload = self.__reload
         if not modules :
-            modules = self.__modules.itervalues ()
+            from predicate import dusort
+            second  = lambda (a, b) : b
+            modules = [m
+                       for (m, i) in dusort (self.__modules.values (), second)
+                      ]
         try :
             self.__reload = 1
+            print "Reloading", self.__name,
             for m in modules :
+                print m.__name__,
                 reload (m)
+            print "finished"
         finally :
             self.__reload = old_reload
     # end def _Reload
