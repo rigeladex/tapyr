@@ -49,6 +49,10 @@ class Week_Number (TFL.CAL.GTK.Drawing_Area) :
     height_large = None
     width_number = None
 
+    month_markup = """<span size="small">%s</span>"""
+    month_format = "%s%02d"
+    year_modulo  = 100
+
     def __init__ (self, week) :
         self.week   = week
         self.number = None
@@ -67,18 +71,22 @@ class Week_Number (TFL.CAL.GTK.Drawing_Area) :
             self.number = w.thu.week
             self.month  = w.mon.month
             self.short  = "%02d" % (self.number, )
-            self.long   = "\n".join \
-                ( "%s%04d" % ( Time_Tuple.months [self.month].capitalize ()
-                              , w.mon.year #% 100
-                              )
+            self.long   = self.month_markup % \
+                "\n".join \
+                ( self.month_format
+                % ( Time_Tuple.months [self.month].capitalize ()
+                  , w.mon.year % self.year_modulo
+                  )
                 )
             if self.month != w.sun.month :
                 m         = w.sun.month
                 y         = w.sun.year
-                self.last = "\n".join \
-                    ( "%s%04d" % ( Time_Tuple.months [m].capitalize ()
-                                  , y #% 100
-                                  )
+                self.last = self.month_markup % \
+                    "\n".join \
+                    ( self.month_format
+                    % ( Time_Tuple.months [m].capitalize ()
+                      , y % self.year_modulo
+                      )
                     )
             else :
                 self.last = None
@@ -97,13 +105,13 @@ class Week_Number (TFL.CAL.GTK.Drawing_Area) :
             y += self.height_small
             if not self.last :
                 y += (height - y - self.month_height) // 2
-            else :
-                y += self.height_small // 2
+            #else :
+            #    y += self.height_small // 2
             x += self.width_number // 4
             self.layout.set_markup (self.long)
             self.draw_layout       (x, y)
             if self.last :
-                y = height - self.month_height - self.height_small // 2
+                y = height - self.month_height
                 self.layout.set_markup (self.last)
                 self.draw_layout       (x, y)
     # end def _draw_content
@@ -116,7 +124,7 @@ class Week_Number (TFL.CAL.GTK.Drawing_Area) :
                 self.__class__.month_height = \
                     self.layout.get_pixel_extents () [1] [3]
                 self.__class__.height_large = \
-                    (self.height_small * 3 + self.month_height * 2)
+                    (self.height_small * 2 + self.month_height * 2)
                 self.__class__.height_large += 2 * self.border_width
             self.set_size_request \
                 ( self.width_number
@@ -131,21 +139,24 @@ class _Month_Day_ (TFL.CAL.GTK.Drawing_Area) :
        They have a common ancestor because they should have the same width!
        """
 
-    fixed_width = None
+    fixed_width  = None
+    day_markup   = """<span size="small">%s</span>"""
+    month_markup = """<span size="x-small">%s</span>"""
 
     def __init__ (self, text, day, border = False, wrap = False, * args, ** kw) :
         kw ["bgcolor"] = ("even_month", "odd_month") [day.month % 2]
         self.__super.__init__ (border = border, wrap = wrap, * args, ** kw)
         if not self.fixed_width :
-            self.layout.set_markup ("Th\n29")
+            self.layout.set_markup (self.day_markup % "Mo\n29")
             ( width_0
             , self.__class__.day_height
-            ) = self.layout.get_pixel_extents () [1] [2:]
-            self.layout.set_markup ("""<span size="x-small">Mar</span>""")
+            ) = self.layout.get_pixel_extents () [0] [2:]
+            self.layout.set_markup (self.month_markup % "Mar")
             ( width_1
             , self.__class__.month_height
-            ) = self.layout.get_pixel_extents () [1] [2:]
-            self.__class__.fixed_width = max (width_0, width_1)
+            ) = self.layout.get_pixel_extents () [0] [2:]
+            self.__class__.day_height += 1
+            self.__class__.fixed_width   = max (width_0, width_1) + 2
         self.layout.set_markup (text)
     # end def __init__
 
@@ -155,7 +166,7 @@ class Month (_Month_Day_) :
     """Displays the name of the month."""
 
     def __init__ (self, week) :
-        m = ( """<span size="small">%s</span>"""
+        m = ( self.month_markup
             % Time_Tuple.months [week.mon.month].capitalize ()
             )
         self.__super.__init__ (m, week.mon)
@@ -163,8 +174,8 @@ class Month (_Month_Day_) :
     # end def __init__
 
     def _draw_content (self, x, y, width, height) :
-        y = (height - self.month_height) // 2
-        self.__super._draw_content (x, y, width, height)
+        y = (height - self.month_height) // 4
+        self.__super._draw_content (-1, y, width, height)
     # end def _draw_content
 
 # end class Month
@@ -173,8 +184,10 @@ class Day_Name (_Month_Day_) :
     """Display the name and day number of a day"""
 
     def __init__ (self, day) :
-        text = "%s\n%02d" % (TFL.CAL.Week._day_names [day.weekday], day.day)
-        self.__super.__init__  (text, day, x = 1, y = 1)
+        text = ( self.day_markup
+               % "%s\n%02d" % (TFL.CAL.Week._day_names [day.weekday], day.day)
+               )
+        self.__super.__init__  (text, day)
         self.set_size_request  (self.fixed_width, self.day_height)
     # end def __init__
 
@@ -250,7 +263,7 @@ if __name__ == "__main__" :
     w = gtk.Window         ()
     w.connect              ("delete-event", gtk.mainquit)
     w.show                 ()
-    w.set_size_request     (240, 100)
+    w.set_size_request     (240, 320)
     t = gtk.Table          (len (y.weeks) * 7, 3, False)
     t.show                 ()
     s = gtk.ScrolledWindow ()

@@ -146,7 +146,7 @@ class Week (TFL.Meta.Object) :
         , sun  = 6
         )
 
-    _day_names = ("MO", "TU", "WE", "TH", "FR", "SA", "SO")
+    _day_names = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "So")
 
     def __init__ (self, year, number, mon) :
         self.year   = year
