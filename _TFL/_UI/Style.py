@@ -26,30 +26,42 @@
 #    Provide style objects for abstract UI
 #
 # Revision Dates
-#    25-Jan-2005 (CT) Creation
-#    26-Jan-2005 (CT) `Style` converted from function to object to allow
-#                     `add` and `Style.xxx`
+#    25-Jan-2005 (CT)  Creation
+#    26-Jan-2005 (CT)  `Style` converted from function to object to allow
+#                      `add` and `Style.xxx`
 #    26-Jan-2005 (BRU) Added style attributes to `_allowed`, comments
+#    27-Jan-2005 (CT)  s/_allowed/_names/g
 #    ««revision-date»»···
 #--
+
+"""
+>>> Style ("foo", font_style = "normal")
+<Style foo>
+>>> Style ("fool", font_style = "normalique")
+Traceback (most recent call last):
+  ...
+ValueError: <Style fool> doesn't allow value `normalique` for `font_style`
+"""
 
 from   _TFL                    import TFL
 import _TFL._Meta.M_Data_Class
 import _TFL._Meta.Object
 import _TFL._UI
 
+from   predicate               import dict_from_list
+
 class M_Style (TFL.Meta.M_Data_Class) :
     """Meta class used for generating style objects (which are implemented by
        real classes).
     """
 
-    class _allowed (type) :
+    class _names (TFL.Meta.M_Data_Class._names) :
         ### this class must define the names of all valid style attributes
 
         # callback function
         callback       = None
-        
-        # colors              
+
+        # colors
         background     = None # "orange", "#FF2F1F"
         foreground     = None # "red"   , "#FFF"
 
@@ -62,8 +74,14 @@ class M_Style (TFL.Meta.M_Data_Class) :
         # misc
         mouse_cursor   = None # 'crosshair', 'default', 'fleur', 'hand',
                               # 'hourglass', 'text', 'watch'
-                      
-    # end class _allowed
+
+    # end class _names
+
+    class _values (TFL.Meta.M_Data_Class._values) :
+
+        font_style     = dict_from_list (("normal", "oblique", "italic"))
+
+    # end class _values
 
 # end class M_Style
 

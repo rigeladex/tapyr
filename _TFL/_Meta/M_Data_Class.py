@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    25-Jan-2005 (CT) Creation
+#    27-Jan-2005 (CT) s/_allowed/_names/g
+#    27-Jan-2005 (CT) `_values` added and used
 #    ««revision-date»»···
 #--
 
@@ -36,7 +38,7 @@ exclusively data in the form of class attributes with full support for
 inheritance.
 
 >>> class M_Record (M_Data_Class) :
-...     class _allowed (type) :
+...     class _names (type) :
 ...         foo = None
 ...         bar = 42
 ...         baz = 137
@@ -61,7 +63,7 @@ TypeError: <Record R5> doesn't allow attribute bauz=5
 
 from _TFL._Meta.M_Data_Class import *
 class M_Record (M_Data_Class) :
-    class _allowed (type) :
+    class _names (type) :
         foo = None
         bar = 42
         baz = 137
@@ -78,23 +80,31 @@ import _TFL._Meta.M_Class
 class M_Data_Class (TFL.Meta._M_Type_) :
     """Meta class supporting definition of classes holding data"""
 
-    class _allowed (type) :
+    class _names (type) :
         pass
-    # end class _allowed
+    # end class _names
+
+    class _values (type) :
+        pass
+    # end class _values
 
     def __new__ (meta, name, bases, dict) :
         if not bases :
-            bases = (meta._allowed, )
+            bases = (meta._names, )
         result = super (M_Data_Class, meta).__new__ (meta, name, bases, dict)
         return result
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
-        _allowed = cls._allowed.__dict__
+        _names  = cls._names.__dict__
+        _values = cls._values.__dict__
         for k, v in dict.iteritems () :
-            if k not in _allowed :
+            if k not in _names :
                 raise TypeError, \
                     "%s doesn't allow attribute %s=%r" % (cls, k, v)
+            if k in _values and v not in _values [k] :
+                raise ValueError, \
+                    "%s doesn't allow value `%s` for `%s`" % (cls, v, k)
         super (M_Data_Class, cls).__init__ (name, bases, dict)
     # end def __init__
 
