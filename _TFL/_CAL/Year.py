@@ -50,6 +50,13 @@
 #    26-Oct-2004 (CT) `is_weekday` changed to just delegate to `Date`
 #     2-Nov-2004 (CT) Use `Date.from_string` instead of home-grown code
 #     4-Nov-2004 (CT) `Week.ordinal` added
+#    10-Nov-2004 (CT) `Day.__new__` changed to use `from_ordinal` to convert
+#                     int/long to `datetime.date`
+#    10-Nov-2004 (CT) `__cmp__` and `__hash__` added to `Day`
+#    10-Nov-2004 (CT) `__cmp__` and `__hash__` added to `Week`
+#    10-Nov-2004 (CT) `Year._week_creation_iter` factored
+#    14-Nov-2004 (CT) `Day.wk_ordinal` added and used
+#    14-Nov-2004 (CT) `Year._init_` changed to put weeks into `cal._weeks`
 #    ««revision-date»»···
 #--
 
@@ -78,11 +85,14 @@ class Day (TFL.Meta.Object) :
     id         = property (lambda s : s.date.tuple [:3])
     is_weekday = property (lambda s : s.is_weekday)
     number     = property (lambda s : s.date.day)
+    wk_ordinal = property (lambda s : (s.ordinal - s.weekday) // 7)
 
     def __new__ (cls, cal, date) :
         Table = cal._days
         if isinstance (date, (str, unicode)) :
             date = TFL.CAL.Date.from_string (date)
+        elif isinstance (date, (int, long)) :
+            date = TFL.CAL.Date.from_ordinal (date)
         id = date.ordinal
         if id in Table :
             return Table [id]
@@ -127,6 +137,18 @@ class Day (TFL.Meta.Object) :
         self.appointments.sort ()
     # end def sort_appointments
 
+    def __cmp__ (self, rhs) :
+        return cmp (self.ordinal, getattr (rhs, "ordinal", rhs))
+    # end def __cmp__
+
+    def __getattr__ (self, name) :
+        return getattr (self.date, name)
+    # end def __getattr__
+
+    def __hash__ (self) :
+        return hash (self.ordinal)
+    # end def __hash__
+
     def __str__ (self) :
         return self.date.formatted ("%Y/%m/%d")
     # end def __str__
@@ -135,10 +157,6 @@ class Day (TFL.Meta.Object) :
         return """%s ("%s")""" % \
                (self.__class__.__name__, self.date.formatted ("%Y/%m/%d"))
     # end def __repr__
-
-    def __getattr__ (self, name) :
-        return getattr (self.date, name)
-    # end def __getattr__
 
 # end class Day
 
@@ -152,7 +170,7 @@ class Week (TFL.Meta.Object) :
     sat        = property (lambda s : s.days [5])
     sun        = property (lambda s : s.days [6])
 
-    ordinal    = property (lambda s : s.mon.ordinal // 7)
+    ordinal    = property (lambda s : s.mon.wk_ordinal)
 
     _day_names = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "So")
 
@@ -179,6 +197,10 @@ class Week (TFL.Meta.Object) :
             days.extend ([Day (cal, d.date + i) for i in range (1, 7)])
     # end def populate
 
+    def __cmp__ (self, rhs) :
+        return cmp (self.ordinal, getattr (rhs, "ordinal", rhs))
+    # end def __cmp__
+
     def __getattr__ (self, name) :
         if name == "days" :
             self.populate ()
@@ -186,13 +208,9 @@ class Week (TFL.Meta.Object) :
         raise AttributeError, name
     # end def __getattr__
 
-    def __str__ (self) :
-        return "week %2.2d" % (self.number, )
-    # end def __str__
-
-    def __repr__ (self) :
-        return "week %2.2d <%s to %s>" % (self.number, self.mon, self.sun)
-    # end def __repr__
+    def __hash__ (self) :
+        return hash (self.ordinal)
+    # end def __hash__
 
     def __int__ (self) :
         return self.number
@@ -206,6 +224,14 @@ class Week (TFL.Meta.Object) :
                    )
                )
     # end def __nonzero__
+
+    def __str__ (self) :
+        return "week %2.2d" % (self.number, )
+    # end def __str__
+
+    def __repr__ (self) :
+        return "week %2.2d <%s to %s>" % (self.number, self.mon, self.sun)
+    # end def __repr__
 
 # end class Week
 
@@ -322,18 +348,12 @@ class Year (TFL.Meta.Object) :
             months.append (month)
         self.head   = h = Day (cal, D (year = year, month = 1,  day = 1))
         self.tail   = t = Day (cal, D (year = year, month = 12, day = 31))
-        if h.weekday == 0 :
-            d = h
-        else :
-            d = Day (cal, h.date - h.weekday)
-        w_head = w = wmap [h.week] = Week (self, h.week, d)
-        weeks.append (w_head)
-        d = Day (cal, d.date + 7)
-        while d.year == year :
-            w = Week (self, d.week, d)
-            wmap [w.number] = w
-            weeks.append (w)
-            d = Day (cal, d.date + 7)
+        for w, d in self._week_creation_iter (D, cal, year, h) :
+            week = Week (self, w, d)
+            wmap [week.number] = week
+            weeks.append (week)
+            if week :
+                cal._weeks [week.ordinal] = week
         self.holidays = CAL.holidays (self)
         if populate :
             self.populate ()
@@ -373,6 +393,18 @@ class Year (TFL.Meta.Object) :
         for d in self.days :
             d.sort_appointments ()
     # end def sort_appointments
+
+    def _week_creation_iter (self, D, cal, year, h) :
+        if h.weekday == 0 :
+            d = h
+        else :
+            d = Day (cal, h.date - h.weekday)
+        yield h.week, d
+        d = Day (cal, d.date + 7)
+        while d.year == year :
+            yield d.week, d
+            d = Day (cal, d.date + 7)
+    # end def _week_creation_iter
 
     def __getattr__ (self, name) :
         if name in ("days", "dmap") :

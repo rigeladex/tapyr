@@ -37,6 +37,7 @@
 #                     `day`
 #    26-Oct-2004 (CT) `is_weekday` added
 #     2-Nov-2004 (CT) `from_string` added
+#    10-Nov-2004 (CT) `from_ordinal` added
 #    ««revision-date»»···
 #--
 
@@ -165,6 +166,10 @@ class Date (TFL.CAL._DTW_) :
     yad              = None ### set for negative `day` arguments
 
     from _TFL._CAL.Delta import Date_Delta as Delta
+
+    def from_ordinal (cls, ordinal) :
+        return cls (date = datetime.date.fromordinal (ordinal))
+    from_ordinal = classmethod (from_ordinal)
 
     def from_string (cls, s) :
         match = cls.date_pattern.match (s)
