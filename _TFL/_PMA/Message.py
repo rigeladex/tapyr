@@ -41,6 +41,7 @@
 #    26-Nov-2004 (CT) `_formatted_body` changed to apply `.rstrip ("\r")` to
 #                     each line yielded
 #    26-Nov-2004 (CT) `message_from_file` factored
+#    30-Nov-2004 (CT) `Message._get_header` robustified
 #    ««revision-date»»···
 #--
 
@@ -166,6 +167,8 @@ class _Message_ (TFL.Meta.Object) :
                 if result is not None :
                     name = n
                     break
+            else :
+                name = ""
         else :
             result = email [name]
         return name.capitalize (), result
