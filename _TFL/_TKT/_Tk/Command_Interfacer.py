@@ -41,6 +41,7 @@
 #    12-Jan-2005 (CT) `_CI_Widget_` and `_CI_` used as ancestors
 #    12-Jan-2005 (CT) s/CI_Toolbar_Category/_CI_Toolbar_Group_/g
 #    12-Jan-2005 (CT) `CI_Event_Binder` and `_CI_Event_Binding_` added
+#    13-Jan-2005 (CT) Small fixes
 #    ««revision-date»»···
 #--
 
@@ -141,12 +142,13 @@ class CI_Event_Binder (_CI_) :
             , underline       = None
             , accelerator     = None
             , icon            = None
-            , info            = info
+            , info            = None
             , as_check_button = False
             , cmd_name        = None
             , ** kw
             ) :
-        result = _CI_Event_Binding_ (self, name, callback, info)
+        ev_name = getattr (TFL.TKT.Tk.Eventname, (info or name).lower ())
+        result  = _CI_Event_Binding_ (self, name, callback, ev_name)
         self.bindings [name] = result
         return result
     # end def add_command
@@ -342,12 +344,13 @@ class _CI_Toolbar_Group_ (_CI_) :
             ) :
         if as_check_button :
             raise NotImplementedError, "as_check_button"
-        b_name = self.name_clean.sub ("_", name.lower ())
+        b_name  = self.name_clean.sub ("_", name.lower ())
+        im_name = icon or b_name
         return self.widget.add_button \
             ( category    = self.name
             , name        = b_name
             , command     = callback
-            , image       = icon         ### XXX ???
+            , image       = CTK.image_mgr.get (im_name)
             , cmd_name    = cmd_name
             )
     # end def add_command
