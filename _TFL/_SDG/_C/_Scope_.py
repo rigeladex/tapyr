@@ -32,7 +32,6 @@
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
-import  time
 
 class _Scope_ (TFL.SDG.C.Node) :
     """Root class for all scope-like C document nodes"""
@@ -48,7 +47,7 @@ class _Scope_ (TFL.SDG.C.Node) :
         )
 
     children_group_names = \
-        ( Anncestor.Head, Ancestor.Body, Ancestor.Tail, Ancestor.Decl)
+        ( Ancestor.Head, Ancestor.Body, Ancestor.Tail, Ancestor.Decl)
 
     explanation_level    = Ancestor.description_level + 2
 
@@ -77,55 +76,6 @@ class _Scope_ (TFL.SDG.C.Node) :
 
 # end class _Scope_
 
-"""
-from   _TFL                 import TFL
-from   _TFL._SDG._C._Scope_ import *
-import _TFL._SDG._C.Comment
-m = Module (name = "test", header_comment = "A new comment", author = "FooBar")
-print "\n".join (m.formatted ("c_format"))
-"""
-
-class Module (_Scope_) :
-    """Models a C module."""
-
-    init_arg_defaults    = dict \
-        ( author         = None
-        , header_comment = ""
-        )
-
-    _autoconvert         = dict \
-        ( header_comment =
-              lambda s, k, v : s._convert_c_comment (k, v, eol = False)
-        )
-
-    star_level           = 3
-    pass_scope           = False
-    _common              = """
-        /*** Module %(name)s, written%(:head= by :.author:)s on %(date)s ***/
-        %(::*header_comment:)s
-        %(::*description:)s
-        %(::*explanation:)s
-    """.strip ()
-
-    c_format             = _common + """
-    """
-
-    h_format             = _common + """
-
-        #ifndef _%(name)s_h_
-        #define _%(name)s_h_ 1
-
-        #endif /* _%(name)s_h_ */
-    """
-
-    def __init__ (self, * children, ** kw) :
-        self.__super.__init__ (* children, ** kw)
-        self.date = time.strftime \
-            ("%a %d-%b-%Y %H:%M:%S", time.localtime (time.time ()))
-    # end def __init__
-
-# end class Module
-
 if __name__ != "__main__" :
-    TFL.SDG.C._Export ("_Scope_", "Module")
+    TFL.SDG.C._Export ("_Scope_")
 ### __END__ TFL.SDG.C._Scope_

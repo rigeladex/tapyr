@@ -29,6 +29,7 @@
 #    23-Jul-2004 (CT) Creation
 #    26-Jul-2004 (CT) Creation continued
 #    27-Jul-2004 (CT) Call to `_autoconvert` corrected (`self` passed)
+#    28-Jul-2004 (CT) `front_args` and `rest_args` added to `__init__`
 #    ««revision-date»»···
 #--
 
@@ -78,9 +79,12 @@ class Node :
 
     children             = property (lambda s : s._children_iter ())
     children_group_names = (Body, ) = range (1)
+    body_children        = property (lambda s : s.children_groups [s.Body])
 
     init_arg_defaults    = dict (name = "", cgi = 0, base_indent = "    ")
     _autoconvert         = {}
+    front_args           = ()
+    rest_args            = None
 
     _list_of_formats     = ("repr_format", "tree_format")
     repr_format          = """
@@ -96,6 +100,24 @@ class Node :
     def __init__ (self, * children, ** kw) :
         self.parent    = None
         self.node_type = nt = self.__class__.__name__
+        n              = len (children)
+        for a in self.front_args :
+            if children :
+                if a in kw :
+                    raise TypeError, \
+                        ( "%s() got multiple values for keyword argument %s"
+                        % (self.__class__.__name__, a)
+                        )
+                kw [a]   = children [0]
+                children = children [1:]
+            elif a not in kw :
+                raise TypeError, \
+                    ( "%s() takes exactly %s arguments (%s given)"
+                    % (self.__class__.__name__, len (self.front_args), n)
+                    )
+        if self.rest_args and children :
+            kw [self.rest_args] = children
+            children            = ()
         self._init_kw (kw)
         if not self.name :
             self.name = "__%s_%d" % (nt, self.id)

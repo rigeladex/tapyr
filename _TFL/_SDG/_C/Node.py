@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Jul-2004 (CT) Creation
 #    27-Jul-2004 (CT) Creation continued
+#    28-Jul-2004 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,7 @@ from   _TFL              import TFL
 import _TFL._SDG._C
 import _TFL._SDG.Node
 
+from   NO_List           import NO_List
 from   predicate         import *
 
 H  = 1
@@ -46,17 +48,23 @@ class _C_Node_ (TFL.SDG.Node) :
 
     _real_name           = "Node"
 
+    base_indent          = "  "
     description_level    = 1
     eol_desc_level       = description_level + 4
     star_level           = 1
     pass_scope           = True
+
     ( Body
     , Decl
     , Head
     , Tail
-    , Args
     , Incl
-    )                    = range (6)
+    )                    = range (5)
+    body_children        = property (lambda s : s.children_groups [s.Body])
+    decl_children        = property (lambda s : s.children_groups [s.Decl])
+    head_children        = property (lambda s : s.children_groups [s.Head])
+    tail_children        = property (lambda s : s.children_groups [s.Tail])
+    incl_children        = property (lambda s : s.children_groups [s.Incl])
 
     init_arg_defaults    = dict \
         ( description    = ""
@@ -72,16 +80,26 @@ class _C_Node_ (TFL.SDG.Node) :
         )
 
     _list_of_formats     = TFL.SDG.Node._list_of_formats + \
-        ( "h_format"
-        , "c_format"
+        ( "c_format", "h_format")
+
+    _scope_filter        = dict \
+        ( c_format       = C
+        , h_format       = H
         )
 
-    def formatted (self, format_name, base_indent = None, ** kw) :
-        if format_name == "h_format" and not (self.scope & H) :
+    def as_c_code (self, base_indent = None) :
+        return self.formatted ("c_format", base_indent)
+    # end def as_c_code
+
+    def as_h_code (self, base_indent = None) :
+        return self.formatted ("h_format", base_indent)
+    # end def as_h_code
+
+    def formatted (self, format_name, base_indent = None) :
+        if self.scope & self._scope_filter.get (format_name, 0xFF) :
+            return self.__super.formatted (format_name, base_indent)
+        else :
             return ()
-        if format_name == "c_format" and not (self.scope & C) :
-            return ()
-        return self.__super.formatted (format_name, base_indent, ** kw)
     # end def formatted
 
     def _update_scope (self, scope) :
@@ -101,8 +119,7 @@ class _C_Node_ (TFL.SDG.Node) :
 
     def _convert (self, value, Class, * args, ** kw) :
         if value and isinstance (value, str) :
-            value = string.strip (value)
-            value = Class (value, * args, ** kw)
+            value = Class (value.strip (), * args, ** kw)
         return value
     # end def _convert
 

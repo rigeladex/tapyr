@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Jul-2004 (CT) Creation
 #    27-Jul-2004 (CT) Creation continued
+#    28-Jul-2004 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -36,14 +37,16 @@ import _TFL._SDG._C.Node
 
 """
 from _TFL._SDG._C.Comment import *
-c = Comment ("abc", "def", "xyz")
-print "\n".join (c.formatted ("h_format"))
-print "\n".join (c.as_tree (base_indent = "  "))
+c = Comment ("abc", "def", "xyzzzzz")
+print "\n".join (c.as_h_code ())
+print "\n".join (c.as_tree   (base_indent = "  "))
 
 """
 
 class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     """Comment in a C file"""
+
+    rest_args            = "description"
 
     init_arg_defaults    = dict \
         ( level          = 1
@@ -67,15 +70,8 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
         """
 
     h_format = c_format  = """
-        %(:head=/%("*" * stars)s ¡tail= %("*" * stars)s/:.description:)s
+        %(:head=/%("*" * stars)s ¡tail= %("*" * stars)s/:.description:)-70s
     """
-
-    def __init__ (self, * description, ** kw) :
-        if description :
-            self.__super.__init__ (description = description, ** kw)
-        else :
-            self.__super.__init__ (** kw)
-    # end def __init__
 
     def _convert_c_comment (self, name, value, ** kw) :
         return value ### avoid endless recursion

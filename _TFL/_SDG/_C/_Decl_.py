@@ -20,61 +20,56 @@
 #
 #++
 # Name
-#    TFL.SDG.C.Statement
+#    TFL.SDG.C._Decl_
 #
 # Purpose
-#    Model simple statements in the code in a C file
+#    Model C declarations
 #
 # Revision Dates
-#    27-Jul-2004 (MG) Creation
-#    28-Jul-2004 (CT) Creation continued
+#    28-Jul-2004 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 
-from   Regexp            import *
+class _Decl_ (TFL.SDG.C.Node) :
+    """Root class for C declaration nodes"""
 
-class _Statement_ (TFL.SDG.C.Node) :
-    """Model simple statement"""
+    cgi                  = TFL.SDG.C.Node.Decl
 
-    trailing_semicol_pat = Regexp (r"""; *$""")
+# end class _Decl_
 
-    init_arg_defaults    = dict \
-        ( scope          = TFL.SDG.C.C
-        )
+class Maybe_Extern (_Decl_) :
+    """Mixin for node types that may be declared extern"""
 
-# end class _Statement_
-
-class Statement (TFL.SDG.Leaf, _Statement_) :
-    """Generic C statement"""
-
-    init_arg_defaults    = dict \
-        ( code           = ""
-        )
-
+    init_arg_defaults    = dict (extern = None)
     _autoconvert         = dict \
-        ( code           =
-            lambda s, k, v : s.trailing_semicol_pat.sub ("", v)
+        ( extern         = lambda s, k, v : v and "extern "   or None
         )
 
-    front_args           = ("code", )
+# end class Maybe_Extern
 
-    h_format = c_format  = """%(code)s; """
+class Maybe_Static (_Decl_) :
+    """Mixin for node types that may be declared static"""
 
-# end class Statement
+    init_arg_defaults    = dict (static = None)
+    _autoconvert         = dict \
+        ( static         = lambda s, k, v : v and "static "   or None
+        )
 
-Stmt = Statement
+# end class Maybe_Static
 
-class Stmt_Group (TFL.SDG.C._Scope_, _Statement_) :
-    """Group of C statements not enclosed in a block."""
+class Maybe_Volatile (_Decl_) :
+    """Mixin for node types that may be declared volatile"""
 
-    star_level           = 2
-    h_format = c_format  = """%(::*children:)s"""
+    init_arg_defaults    = dict (volatile = None)
+    _autoconvert         = dict \
+        ( volatile       = lambda s, k, v : v and "volatile "   or None
+        )
 
-# end class Stmt_Group
+# end class Maybe_Volatile
 
 if __name__ != "__main__" :
-    TFL.SDG.C._Export ("*", "Stmt")
-### __END__ TFL.SDG.C.Statement
+    TFL.SDG.C._Export ("*", "_Decl_")
+### __END__ TFL.SDG.C._Decl_

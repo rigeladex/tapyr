@@ -29,6 +29,7 @@
 #    23-Jul-2004 (CT) Creation
 #    26-Jul-2004 (CT) Creation continued
 #    27-Jul-2004 (CT) Creation continued...
+#    28-Jul-2004 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ from   _TFL               import TFL
 import _TFL._Meta.Object
 import _TFL._SDG
 
+from   Record             import Record
 from   Regexp             import *
 
 class _Formatter_ (TFL.Meta.Object) :
@@ -78,30 +80,40 @@ class _Recursive_Formatter_ (TFL.Meta.Object) :
 
 class _Recursive_Formatters_ (TFL.Meta.Object) :
 
-    def __init__ (self, sep_form, * formatters) :
-        self.sep_form   = sep_form
+    def __init__ (self, x_forms, * formatters) :
+        self.x_forms    = x_forms
         self.formatters = formatters
     # end def __init__
 
     def __call__ (self, node, context) :
         self.node    = node
         self.context = context
-        self.sep     = self.sep_form % context
+        self.empty   = self.x_forms.empty % context
+        self.front   = self.x_forms.front % context
+        self.rear    = self.x_forms.rear  % context
+        self.sep     = self.x_forms.sep   % context
         return self
     # end def __call__
 
     def __iter__ (self) :
         node     = self.node
         context  = self.context
-        sep      = ""
+        sep      = self.front
         i        = 0
+        last     = None
         for f in self.formatters :
-            for r in f (node, context, sep_form = self.sep_form) :
-                yield "%s%s" % (sep, r)
+            for r in f (node, context, sep_form = self.x_forms.sep) :
+                if last is not None :
+                    yield last
+                last = "%s%s" % (sep, r)
                 sep = ""
                 i  += 1
             if i :
                 sep = self.sep
+        if last is not None :
+            yield "%s%s" % (last, self.rear)
+        elif self.empty :
+            yield self.empty
     # end def __iter__
 
 # end class _Recursive_Formatters_
@@ -146,7 +158,10 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
         recurser = context.recurser
         rkw      = context.recurse_args
         sep      = ""
-        for x in getattr (self.node, self.key) :
+        nodes    = getattr (self.node, self.key)
+        if isinstance (nodes, TFL.SDG.Node) :
+            nodes = (nodes, )
+        for x in nodes :
             for y in getattr (x, recurser) (** rkw) :
                 yield sep + (format % y)
                 sep = ""
@@ -173,7 +188,7 @@ class Multi_Line_Formatter (_Formatter_) :
 
     pattern = Regexp \
         ( r"""%"""
-          r"""\( : (?P<sht_forms> [^:]*) : (?P<key> [^:]+) : \)"""
+          r"""\( : (?P<x_forms> [^:]*) : (?P<key> [^:]+) : \)"""
           r"""(?P<form> """
               r"""(?P<flags>  [-+ #0]*)"""
               r"""(?P<mfw>    [0-9]*)"""
@@ -203,7 +218,11 @@ class Multi_Line_Formatter (_Formatter_) :
                 yield last % context
                 last = l
         if last :
-            yield last % context
+            try :
+                yield last % context
+            except :
+                print "__call__ `%s` %% `%s`" % (last, context)
+                raise
     # end def __call__
 
     def _first (self, generator) :
@@ -215,14 +234,15 @@ class Multi_Line_Formatter (_Formatter_) :
             return ""
     # end def _first
 
-    def _sht_formats (self, sht_forms) :
-        result = dict (sep = "", head = "", tail = "")
-        if sht_forms :
-            for spec in sht_forms.split ("¡") :
+    def _x_forms (self, x_forms) :
+        result = Record \
+            (empty = "", front = "", head = "", rear = "", sep = "", tail = "")
+        if x_forms :
+            for spec in x_forms.split ("¡") :
                 key, form = spec.split ("=", 1)
-                result [key] = form
-        return result ["sep"], result ["head"], result ["tail"]
-    # end def _formats
+                setattr (result, key, form)
+        return result
+    # end def _x_forms
 
     def _setup_formatters (self, format_line) :
         self.formatters = formatters = []
@@ -244,15 +264,16 @@ class Multi_Line_Formatter (_Formatter_) :
     # end def _setup_formatters
 
     def _recursive_formatter (self, match) :
-        sf, hf, tf = self._sht_formats (match.group ("sht_forms"))
+        x_forms    = self._x_forms (match.group ("x_forms"))
         keys       = match.group ("key").split (",")
         form       = match.group ("form")
         formatters = []
         for key in keys :
             key = key.strip ()
             rf  = self.Formatters [key [0]]
-            formatters.append (rf (key [1:], "%%%s" % (form, ), hf, tf))
-        return _Recursive_Formatters_ (sf, * formatters)
+            formatters.append \
+                (rf (key [1:], "%%%s" % (form, ), x_forms.head, x_forms.tail))
+        return _Recursive_Formatters_ (x_forms, * formatters)
     # end def _recursive_formatter
 
 # end class Multi_Line_Formatter

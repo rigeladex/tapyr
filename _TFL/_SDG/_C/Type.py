@@ -20,61 +20,27 @@
 #
 #++
 # Name
-#    TFL.SDG.C.Statement
+#    TFL.SDG.C.Type
 #
 # Purpose
-#    Model simple statements in the code in a C file
+#    Model C types
 #
 # Revision Dates
-#    27-Jul-2004 (MG) Creation
-#    28-Jul-2004 (CT) Creation continued
+#    27-Jul-2004 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 
-from   Regexp            import *
+class Type (TFL.SDG.C.Node) :
+    """Model C types"""
 
-class _Statement_ (TFL.SDG.C.Node) :
-    """Model simple statement"""
+    front_args          = ("name", )
+    h_format = c_format = "%(name)s"
 
-    trailing_semicol_pat = Regexp (r"""; *$""")
-
-    init_arg_defaults    = dict \
-        ( scope          = TFL.SDG.C.C
-        )
-
-# end class _Statement_
-
-class Statement (TFL.SDG.Leaf, _Statement_) :
-    """Generic C statement"""
-
-    init_arg_defaults    = dict \
-        ( code           = ""
-        )
-
-    _autoconvert         = dict \
-        ( code           =
-            lambda s, k, v : s.trailing_semicol_pat.sub ("", v)
-        )
-
-    front_args           = ("code", )
-
-    h_format = c_format  = """%(code)s; """
-
-# end class Statement
-
-Stmt = Statement
-
-class Stmt_Group (TFL.SDG.C._Scope_, _Statement_) :
-    """Group of C statements not enclosed in a block."""
-
-    star_level           = 2
-    h_format = c_format  = """%(::*children:)s"""
-
-# end class Stmt_Group
+# end class Type
 
 if __name__ != "__main__" :
-    TFL.SDG.C._Export ("*", "Stmt")
-### __END__ TFL.SDG.C.Statement
+    TFL.SDG.C._Export ("*")
+### __END__ TFL.SDG.C.Type
