@@ -54,6 +54,7 @@ class _TD_CRC_ (object) :
             result = self.crc_byte (result, ord (d))
         return result
     # end def crc_byte
+    __call__ = crc
 
     def crc_byte (self, crc, byte) :
         """Add `byte` to `crc` and return the resulting CRC.
