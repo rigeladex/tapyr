@@ -1,5 +1,4 @@
-#! /usr/bin/python
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2003 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -90,6 +89,7 @@
 #     8-Apr-2003 (CT) `pname` added
 #     8-Apr-2003 (CT) Compatibility kludge of putting `Package_Namespace`
 #                     into `sys.modules` removed (it was too smelly)
+#    28-Jul-2003 (CT) `_Reload` added
 #    ««revision-date»»···
 #--
 
@@ -224,11 +224,13 @@ class Package_Namespace :
             name = pname
         qname = self._leading_underscores.sub (r"\1", name) ### XXX s/\._/_/
         bname = qname.split (".") [-1]
-        self.__name    = bname
-        self.__qname   = qname
-        self.__pname   = pname
-        self.__modules = self._ = _Module_Space (pname)
-        self.__seen    = {}
+        self.__name         = bname
+        self.__qname        = qname
+        self.__pname        = pname
+        self.__module_space = self._ = _Module_Space (pname)
+        self.__modules      = {}
+        self.__seen         = {}
+        self.__reload       = 0
     # end def __init__
 
     def _import_names (self, mod, names, result, check_clashes) :
@@ -262,7 +264,8 @@ class Package_Namespace :
     def _Add (self, ** kw) :
         """Add elements of `kw` to Package_Namespace `self`."""
         module_name = _caller_globals () ["__name__"].split (".") [-1]
-        mod         = self.__modules._load (module_name)
+        mod         = self.__module_space._load (module_name)
+        self.__modules [module_name] = mod
         for s, p in kw.items () :
             self._import_1 (mod, s, s, p, self.__dict__, 1)
     # end def _Add
@@ -271,27 +274,29 @@ class Package_Namespace :
         """To be called by modules of Package_Namespace to inject their
            symbols into the package namespace `self`.
         """
-        module_name = _caller_globals () ["__name__"].split (".") [-1]
-        transitive  = kw.get ("transitive")
-        result      = {}
-        mod         = self.__modules._load (module_name)
-        primary     = getattr (mod, module_name, None)
+        module_name   = _caller_globals () ["__name__"].split (".") [-1]
+        transitive    = kw.get ("transitive")
+        result        = {}
+        mod           = self.__module_space._load (module_name)
+        self.__modules [module_name] = mod
+        primary       = getattr (mod, module_name, None)
+        check_clashes = not self.__reload
         if primary is not None :
             result [module_name] = primary
         if symbols [0] == "*" :
             all_symbols = getattr (mod, "__all__", ())
             if all_symbols :
-                self._import_names (mod, all_symbols, result, 1)
+                self._import_names (mod, all_symbols, result, check_clashes)
             else :
                 from   _TFL import TFL
                 import _TFL.Module
                 for s in TFL.Module.names_of (mod) :
                     p = getattr (mod, s)
                     if not s.startswith ("_") :
-                        self._import_1 (mod, s, s, p, result, 1)
+                        self._import_1 (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
         if symbols :
-            self._import_names (mod, symbols, result, 1)
+            self._import_names (mod, symbols, result, check_clashes)
         self.__dict__.update (result)
     # end def _Export
 
@@ -300,14 +305,26 @@ class Package_Namespace :
            namespace `self`.
         """
         module_name = _caller_globals () ["__name__"].split (".") [-1]
-        mod         = self.__modules._load (module_name)
+        mod         = self.__module_space._load (module_name)
         if __debug__ :
             old = self.__dict__.get (module_name, mod)
             if old is not mod :
                 raise ImportError, ( "ambiguous name %s refers to %s and %s"
                                    ) % (module_name, mod, old)
-        self.__dict__ [module_name] = mod
+        self.__dict__ [module_name] = self.__modules [module_name] = mod
     # end def _Export_Module
+
+    def _Reload (self, * modules) :
+        old_reload = self.__reload
+        if not modules :
+            modules = self.__modules.itervalues ()
+        try :
+            self.__reload = 1
+            for m in modules :
+                reload (m)
+        finally :
+            self.__reload = old_reload
+    # end def _Reload
 
 # end class Package_Namespace
 
@@ -319,14 +336,24 @@ class Derived_Package_Namespace (Package_Namespace) :
         if not name :
             name = pname
         Package_Namespace.__init__ (self, name, pname)
-        self._parent = parent
+        self._parent  = parent
+        self.__cached = {}
     # end def __init__
 
     def __getattr__ (self, name) :
         result  = getattr (self._parent, name)
+        self.__cached [name] = result
         setattr (self, name, result)
         return  result
     # end def __getattr__
+
+    def _Reload (self, * modules) :
+        for c in self.__cached.iterkeys () :
+            delattr (self, c)
+        self.__cached = {}
+        self._parent._Reload ()
+        Package_Namespace._Reload (self, * modules)
+    # end def _Reload
 
 # end class Derived_Package_Namespace
 
