@@ -27,43 +27,68 @@
 #
 # Revision Dates
 #    17-Feb-2005 (RSC) Creation
+#    20-Feb-2005 (CT)  Ancestor `Widget` and class `Styler` added,
+#                      `*_style` methods removed
+#    20-Feb-2005 (CT)  s/widget/wtk_widget/
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk
+import _TFL._TKT._Tk.Styler
+import _TFL._TKT._Tk.Widget
 import _TFL._TKT.Butcon
 
 from   CTK                  import *
+from   predicate            import dict_from_list
 
-class _Tk_Butcon_ (TFL.TKT.Butcon) :
+import weakref
+
+class _Tk_Butcon_ (TFL.TKT.Tk.Widget, TFL.TKT.Butcon) :
     """Model simple Button Control widget for Tkinter based GUI.
        to test: from _TFL._TKT._Tk.Butcon import *
 
+       >>> from _TFL._UI.Style     import *
+       >>> blue = Style ("blue", background = "lightblue")
+       >>> yell = Style ("yell", background = "yellow", foreground = "red")
+       >>> gray = Style ("gray", background = "gray80")
        >>> w = Butcon ()
-       >>> w.widget.pack ()
+       >>> w.wtk_widget.pack ()
        >>> w.apply_bitmap ('open_node')
+       >>> w.apply_style (yell)
        >>> w.apply_bitmap ('closed_node')
        >>> w.apply_bitmap ('circle')
+       >>> w.apply_style (gray)
     """
 
     _real_name  = "Butcon"
 
+    class Styler (TFL.TKT.Tk.Styler) :
+
+        Opts    = dict_from_list \
+            (( "background", "font", "foreground"
+             ### XXX any more ???
+            ))
+
+    # end class Styler
+
     Widget_Type = CTK.Label
+
+    _sty_map    = weakref.WeakKeyDictionary ()
 
     def __init__ (self, AC = None, name = None, wc = None, bitmap = None) :
         self.__super.__init__ (AC = AC, name = name, wc = wc, bitmap = bitmap)
         # XXXX FIXME: bitmap_mgr add and caching of seen bitmaps should
         # probably be done by framework
         self.bitmaps = {}
-        if bitmap : bitmap = self._get_bitmap (bitmap)
+        if bitmap :
+            bitmap = self._get_bitmap (bitmap)
         master = None
         bg     = None
         if wc :
-            master = wc.widget
+            master = wc.wtk_widget
             bg     = master.cget ('background')
-
-        self.widget       = self.Widget_Type \
+        self.wtk_widget   = self.Widget_Type \
             ( master      = master
             , name        = name
             , bitmap      = bitmap
@@ -82,21 +107,27 @@ class _Tk_Butcon_ (TFL.TKT.Butcon) :
     # end def _get_bitmap
 
     def apply_bitmap (self, bitmap) :
-        self.widget.configure (bitmap = self._get_bitmap (bitmap))
-    # end def apply_bitmap
-
-    def apply_style (self, style) :
-        pass
-    # end def apply_bitmap
-
-    def remove_style (self, style) :
-        pass
+        self.wtk_widget.configure (bitmap = self._get_bitmap (bitmap))
     # end def apply_bitmap
 
 Butcon = _Tk_Butcon_ # end class _Tk_Butcon_
 
 #__test__ = dict (interface_test = TFL.TKT.Butcon._interface_test)
 
+"""
+from _TFL._TKT._Tk.Butcon    import *
+from _TFL._UI.Style     import *
+blue = Style ("blue", background = "lightblue")
+yell = Style ("yell", background = "yellow", foreground = "red")
+gray = Style ("gray", background = "gray80")
+w = Butcon ()
+w.wtk_widget.pack ()
+w.apply_bitmap ('open_node')
+w.apply_style (yell)
+w.apply_bitmap ('closed_node')
+w.apply_bitmap ('circle')
+
+"""
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("*")
 ### __END__ TFL.TKT.Tk.Text

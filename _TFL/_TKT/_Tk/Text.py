@@ -40,12 +40,16 @@
 #                     implemented
 #    19-Feb-2005 (CT) `_tag_map` moved from class to instance (Tk tags are
 #                     specific to widget instances)
+#    20-Feb-2005 (CT) Small fixes to make `style` work
+#    20-Feb-2005 (CT) `Text_Styler` moved insed `Text` and renamed to `Styler`
+#    20-Feb-2005 (CT) `Widget` factored to handle `style`
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk
 import _TFL._TKT._Tk.Styler
+import _TFL._TKT._Tk.Widget
 import _TFL._TKT.Text
 
 from   CTK                  import *
@@ -53,18 +57,7 @@ from   predicate            import *
 
 import weakref
 
-class Text_Styler (TFL.TKT.Tk.Styler) :
-
-    Opts         = dict_from_list \
-        ( "background", "font", "foreground", "underline"
-        ### XXX
-        # "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
-        )
-
-# end class Text_Styler
-
-
-class _Tk_Text_ (TFL.TKT.Text) :
+class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
 
        >>> w = Text ()
@@ -101,6 +94,16 @@ class _Tk_Text_ (TFL.TKT.Text) :
 
     _real_name  = "Text"
 
+    class Styler (TFL.TKT.Tk.Styler) :
+
+        Opts    = dict_from_list \
+            (( "background", "font", "foreground", "underline"
+             ### XXX
+             # "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
+            ))
+
+    # end class Styler
+
     Widget_Type = CTK.C_Text
 
     bot_pos     = property (lambda s : s.wtk_widget.index (START))
@@ -122,14 +125,11 @@ class _Tk_Text_ (TFL.TKT.Text) :
     # end def __init__
 
     def apply_style (self, style, head = None, tail = None, delta = 0) :
-        w = self.wtk_widget
         if head is None :
-            w.configure (** self._styler (style).option_dict)
-            self._apply_style_bindings (style, w.bind)
-            if style.mouse_cursor is not None :
-                pass ### XXX change cursor
+            self.__super.apply_style \
+                ( style, head = head, tail = tail, delta = delta)
         else :
-            w.tag_add \
+            self.wtk_widget.tag_add \
                 ( self._tag (style)
                 , self.pos_at (head, delta)
                 , tail or self.eot_pos
@@ -221,12 +221,6 @@ class _Tk_Text_ (TFL.TKT.Text) :
             )
     # end def remove_style
 
-    def _apply_style_bindings (self, style, binder) :
-        if style.callbacks is not None :
-            for name, cb in style.callbacks.iteritems () :
-                binder (getattr (self.TNS.Eventname, name), cb)
-    # end def _apply_style_bindings
-
     def _line_pos (self, mod, pos_or_mark, delta = 0, line_delta = 0) :
         result = pos_or_mark
         if line_delta != 0 :
@@ -234,12 +228,6 @@ class _Tk_Text_ (TFL.TKT.Text) :
         result = "%s %s" % (self.pos_at (result, delta), mod)
         return result
     # end def _line_pos
-
-    def _styler (self, style) :
-        if style not in self._sty_map :
-            self._sty_map [style] = Text_Styler (style)
-        return self._sty_map [style]
-    # end def _styler
 
     def _tag (self, style) :
         result = ()
@@ -262,19 +250,27 @@ __test__ = dict (interface_test = TFL.TKT.Text._interface_test)
 
 """
 from _TFL._TKT._Tk.Text import *
+from _TFL._UI.Style     import *
+blue = Style ("blue", background = "lightblue")
+yell = Style ("yell", background = "yellow", foreground = "red")
+gray = Style ("gray", background = "gray80")
 w = Text ()
 w.wtk_widget.pack ()
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
 w.append ("Ha")
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
-w.append ("Hum")
-w.insert (w.bot_pos, "Hi")
+w.append ("Hum", blue)
+w.insert (w.bot_pos, "Hi", yell)
 w.insert (w.bot_pos, "Ho", delta = 2)
+w.apply_style  (gray, w.bol_pos (w.current_pos), w.eol_pos (w.current_pos))
+w.remove_style (gray, w.bot_pos, w.eot_pos)
 for t in "Ha", "He", "Hi", "Ho", "Hu" :
     print t, w.find (t)
 
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
 w.insert (w.eot_pos, '''\nDiddle Dum''')
+w.apply_style (gray, w.bol_pos (w.current_pos), w.eol_pos (w.current_pos))
+w.remove_style (yell, w.bot_pos, w.eot_pos)
 w.bot_pos, w.eot_pos, w.current_pos, w.bol_pos (w.current_pos)
 w.get ()
 w.remove  (w.find ("Diddle"), delta = len ("Diddle"))

@@ -30,6 +30,7 @@
 #    17-Feb-2005 (CT) `_interface_test` added
 #    17-Feb-2005 (CT) Test case added to `_interface_test`
 #    18-Feb-2005 (CT) `remove_style` added
+#    20-Feb-2005 (CT) Test cases for `style` added to `_interface_test`
 #    ««revision-date»»···
 #--
 
@@ -40,15 +41,22 @@ class Text (TFL.TKT.Mixin) :
     """Model simple text widget"""
 
     _interface_test   = """
+        >>> from _TFL._UI.Style import *
+        >>> blue = Style ("blue", background = "lightblue")
+        >>> yell = Style ("yell", background = "yellow", foreground = "red")
+        >>> gray = Style ("gray", background = "gray80")
         >>> w = Text ()
         >>> w.get ()
         ''
         >>> w.append ("Ha")
-        >>> w.append ("Hum")
+        >>> w.append ("Hum", blue)
         >>> hum_p = w.find ("Hum")
         >>> hum_m = w.mark_at (hum_p)
-        >>> w.insert (w.bot_pos, "Hi")
+        >>> w.insert (w.bot_pos, "Hi", yell)
         >>> w.insert (w.bot_pos, "Ho", delta = 2)
+        >>> w.apply_style  (gray, w.bol_pos (hum_p), w.eol_pos (hum_p))
+        >>> w.remove_style (gray, w.bot_pos, w.eot_pos)
+
         >>> print w.get (hum_p, w.pos_at (hum_p, 3))
         HoH
         >>> print w.get (hum_m, w.pos_at (hum_m, 3))
@@ -66,6 +74,7 @@ class Text (TFL.TKT.Mixin) :
         Ho found Ho
         Hu found Hu
         >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
+        >>> w.apply_style (gray, w.bol_pos (w.eot_pos), w.eol_pos (w.eot_pos))
         >>> print w.get ()
         HiHoHaHum
         Diddle Dum

@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    18-Feb-2005 (CT) Creation
+#    20-Feb-2005 (CT) Use `_real_name` to allow descendents to be named
+#                     `Styler`
 #    ««revision-date»»···
 #--
 
@@ -36,7 +38,9 @@ import _TFL._TKT.Styler
 
 import tkFont
 
-class Styler (TFL.TKT.Styler) :
+class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
+
+    _real_name        = "Styler"
 
     _font_family_map  = dict \
         ( Monospace   = "courier"
@@ -69,10 +73,10 @@ class Styler (TFL.TKT.Styler) :
                 s = style.font_size
                 if s is not None :
                     d ["size"] = self._font_size_map [s]
-            self.option_dict ["font"] = tkFont.Font (** d)
+                self.option_dict ["font"] = tkFont.Font (** d)
     # end def __init__
 
-# end class Styler
+Styler = _TKT_Tk_Styler_ # end class _TKT_Tk_Styler_
 
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("*")
