@@ -1,5 +1,4 @@
-#! /swing/bin/python
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +27,7 @@
 # Revision Dates
 #    24-Jun-2002 (CT) Creation
 #     9-Apr-2003 (MG) `point_in_rect` added
+#    11-Jun-2003 (CT) s/!= None/is not None/
 #    ««revision-date»»···
 #--
 
@@ -155,7 +155,7 @@ class Rect (TFL.Meta.Object) :
         line = D2.Line (point_1, point_2)
         for side in (self.bottom, self.left, self.right, self.top) :
             cp = side.intersection (line)
-            if cp != None :
+            if cp is not None :
                 return cp
         return None
     # end def connection_point

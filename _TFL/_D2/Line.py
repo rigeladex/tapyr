@@ -1,5 +1,4 @@
-#! /swing/bin/python
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +27,7 @@
 # Revision Dates
 #    24-Jun-2002 (CT) Creation (factored from Two_Dim)
 #    24-Mar-2003 (CT) Converted to new-style class
+#    11-Jun-2003 (CT) s/!= None/is not None/
 #    ««revision-date»»···
 #--
 
@@ -159,7 +159,7 @@ class Line (TFL.Meta.Object) :
 
     def intersection (self, other) :
         p = Normal_Form (self).intersection (Normal_Form (other))
-        if p != None :
+        if p is not None :
             if self._contains (p) and other._contains (p) : return p
         return None
     # end def intersection

@@ -1,5 +1,4 @@
-#! /usr/bin/python
-# Copyright (C) 1999 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2003 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
 #++
@@ -30,6 +29,7 @@
 #    29-Jan-2002 (MG) `get_childrens` added
 #    28-Feb-2002 (CT) Use `TFL.d_dict` instead of `D_Dict`
 #    12-Apr-2002 (CT) Use `StandardError` instead of `Exception`
+#    11-Jun-2003 (CT) s/== None/is None/
 #    ««revision-date»»···
 #--
 
@@ -183,8 +183,10 @@ class Doc_Node :
     # end def add
 
     def _insert (self, child, index, children, delta = 0) :
-        if not child     : return
-        if index == None : index = len (children)
+        if not child :
+            return
+        if index is None :
+            index = len (children)
         child.parent = self
         children.insert (index, child, delta)
     # end def _insert
