@@ -40,14 +40,23 @@ class Doctype (TFL.SDG.XML.Element) :
 
        >>> from _TFL._SDG._XML import Decl
        >>> dt = Doctype ( "Test"
-       ...              , Decl.Element ("Test", "(head, body, tail)")
-       ...              , Decl.Element ("head", "(title, author)")
-       ...              , Decl.Element ("body", "(\#PCDATA)")
-       ...              , Decl.Element ("tail", "(disclaimer)")
-       ...              , Decl.Attlist ( "head"
-       ...                             , "Date CDATA \#REQUIRED"
-       ...                             , "Version CDATA \#REQUIRED"
-       ...                             )
+       ...              , Decl.Element  ("Test", "(head, body, tail)")
+       ...              , Decl.Element  ("head", "(title, author)")
+       ...              , Decl.Element  ("body", "(\#PCDATA)")
+       ...              , Decl.Element  ("tail", "(disclaimer)")
+       ...              , Decl.Attlist  ( "head"
+       ...                              , "Date CDATA \#REQUIRED"
+       ...                              , "Version CDATA \#REQUIRED"
+       ...                              )
+       ...              , Decl.Notation ( "GIF", "SYSTEM '/usr/bin/display'")
+       ...              , Decl.Entity   ( "entity"
+       ...                              , "'An internal general parsed entity'"
+       ...                              )
+       ...              , Decl.Parameter( "parameter", "<!ELEMENT SAMPLE ANY>")
+       ...              , Decl.Unparsed ( "unparsed"
+       ...                              , "SYSTEM '/var/local/fubar.gif'"
+       ...                              , "GIF"
+       ...                              )
        ...              )
        >>> dt.write_to_xml_stream ()
        <!DOCTYPE Test SYSTEM 'Test.dtd'
@@ -57,6 +66,10 @@ class Doctype (TFL.SDG.XML.Element) :
            <!ELEMENT tail (disclaimer) >
            <!ATTLIST head Date CDATA \#REQUIRED
                       Version CDATA \#REQUIRED >
+           <!NOTATION GIF SYSTEM '/usr/bin/display' >
+           <!ENTITY entity 'An internal general parsed entity' >
+           <!ENTITY % parameter <!ELEMENT SAMPLE ANY> >
+           <!ENTITY unparsed SYSTEM '/var/local/fubar.gif' NDATA GIF >
        >
     """
 
@@ -93,14 +106,17 @@ class Doctype (TFL.SDG.XML.Element) :
 from _TFL._SDG._XML.Doctype import *
 from _TFL._SDG._XML         import Decl
 dt = Doctype ( "Test"
-             , Decl.Element ( "Test", "(head, body, tail)")
-             , Decl.Element ( "head", "(title, author)")
-             , Decl.Element ( "body", "(\#PCDATA)")
-             , Decl.Element ( "tail", "(disclaimer)")
-             , Decl.Attlist ( "head"
-                            , "Date CDATA \#REQUIRED"
-                            , "Version CDATA \#REQUIRED"
-                            )
+             , Decl.Element  ( "Test", "(head, body, tail)")
+             , Decl.Element  ( "head", "(title, author)")
+             , Decl.Element  ( "body", "(\#PCDATA)")
+             , Decl.Element  ( "tail", "(disclaimer)")
+             , Decl.Attlist  ( "head"
+                             , "Date CDATA \#REQUIRED"
+                             , "Version CDATA \#REQUIRED"
+                             )
+             , Decl.Notation ( "GIF", "SYSTEM 'display")
+             , Decl.Entity   ( "entity", "'An internal general parsed entity'")
+             , Decl.Unparsed ( "unpe", "/var/local/fubar.gif", "GIF")
              )
 dt.write_to_xml_stream ()
 """

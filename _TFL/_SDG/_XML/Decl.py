@@ -35,26 +35,24 @@ import _TFL._SDG._XML.Element
 
 class _Decl_ (TFL.SDG.XML.Leaf) :
 
+    front_args           = ("name", "value")
+
     init_arg_defaults    = dict \
         ( name           = None
         , value          = None
         )
 
-    xml_format           = """<%(elem_type)s %(name)s %(::>.value:)s >"""
+    percent_head         = ""
+
+    _xml_format_body     = \
+        """%(elem_type)s %(percent_head)s%(name)s %(::>.value:)s"""
+    xml_format           = "".join (("<", _xml_format_body, " >"))
 
     _autoconvert         = dict \
         ( name           = lambda s, k, v : s._checked_xml_name (v)
         )
 
 # end class _Decl_
-
-class Element (_Decl_) :
-    """Model an element type declaration of a XML document"""
-
-    elem_type            = "!ELEMENT"
-    front_args           = ("name", "value")
-
-# end class Element
 
 class Attlist (_Decl_) :
     """Model an attribute list declaration of a XML document"""
@@ -64,6 +62,58 @@ class Attlist (_Decl_) :
     rest_args            = "value"
 
 # end class Attlist
+
+class Element (_Decl_) :
+    """Model an element type declaration of a XML document"""
+
+    elem_type            = "!ELEMENT"
+
+# end class Element
+
+class Entity (_Decl_) :
+    """Model an entity declaration of a XML document"""
+
+    elem_type            = "!ENTITY"
+
+# end class Entity
+
+class Notation (_Decl_) :
+    """Model a notation declaration of a XML document"""
+
+    elem_type            = "!NOTATION"
+
+# end class Notation
+
+class Parameter_Entity (Entity) :
+    """Model a parameter entity declaration of a XML document"""
+
+    percent_head         = "%% "
+
+# end class Parameter_Entity
+
+class Unparsed_Entity (Entity) :
+    """Model an unparsed entity declaration of a XML document"""
+
+    Ancestor             = Entity
+
+    front_args           = ("name", "value", "notation")
+
+    init_arg_defaults    = dict \
+        ( notation       = None
+        )
+
+    xml_format           = "".join \
+        ( ("<", Ancestor._xml_format_body, " NDATA %(notation)s >")
+        )
+
+    _autoconvert         = dict \
+        ( notation       = lambda s, k, v : s._checked_xml_name (v)
+        )
+
+# end class Unparsed_Entity
+
+Parameter = Parameter_Entity
+Unparsed  = Unparsed_Entity
 
 if __name__ != "__main__" :
     TFL.SDG.XML._Export_Module ()

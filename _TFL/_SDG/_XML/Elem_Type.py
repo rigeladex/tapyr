@@ -42,7 +42,7 @@
    >>> d.add (X ("A bar-less X", bar = None))
    >>> d.add (Y (baz = None))
    >>> d.write_to_xml_stream ()
-   <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+   <?xml version='1.0' encoding='iso-8859-1' standalone='yes'?>
    <Test>
      Test for TFL.SDG.XML.Elem_Type creation and use
      <X bar = '42'

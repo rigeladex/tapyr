@@ -63,6 +63,11 @@
 #    24-Aug-2004 (CT) `Multi_Line_Formatter.__call__` changed to protect `%s`
 #                     after interpolation
 #    26-Aug-2004 (CT) `front0` and `rear0` added
+#    27-Aug-2004 (CT) `Multi_Line_Formatter.__call__` changed to use
+#                     `percent_pat.sub` instead of string-replace to protect
+#                     `%s` characters after interpolation (otherwise, instead
+#                     of a single `%` something like `%%%%%%%%` can show up
+#                     in the output <arrrgh>)
 #    ««revision-date»»···
 #--
 
@@ -311,6 +316,7 @@ class Multi_Line_Formatter (_Formatter_) :
         ( r"""(?P<anchor> >?) (?P<type> [.*@]) (?P<name> .*)"""
         , re.VERBOSE
         )
+    percent_pat = Regexp ("(?<!%)%(?!%)")
     Formatters  = \
         { "." : _Recursive_Formatter_Attr_
         , "@" : _Recursive_Formatter_Method_
@@ -339,8 +345,8 @@ class Multi_Line_Formatter (_Formatter_) :
                 else :
                     ### Protect `%` to avoid ValueErrors during next
                     ### interpolation
-                    last = ( "%s%s" % (last, l % context)
-                           ).replace ("%", "%%")
+                    last = self.percent_pat.sub \
+                        ("%%", "%s%s" % (last, l % context))
                 i += 1
         if last :
             yield last
