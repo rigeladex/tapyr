@@ -32,6 +32,8 @@
 #    18-Feb-2005 (CT) `remove_style` added
 #    20-Feb-2005 (CT) Test cases for `style` added to `_interface_test`
 #    20-Feb-2005 (CT) Test case for two text widgets added (using `Apply_All')
+#    22-Feb-2005 (CT) Test cases for `push_style` and `pop_style` added to
+#                     `_interface_test`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +50,16 @@ class Text (TFL.TKT.Mixin) :
         >>> gray = Style ("gray", background = "gray80")
         >>> hand = Style ("hand", mouse_cursor = "hand")
         >>> w = Text ()
+        >>> w.pop_style ()
+        Traceback (most recent call last):
+          ...
+        IndexError: pop from empty list
+        >>> w.push_style (hand)
+        >>> w.pop_style ()
+        >>> w.pop_style ()
+        Traceback (most recent call last):
+          ...
+        IndexError: pop from empty list
         >>> w.apply_style (hand)
         >>> w.get ()
         ''
