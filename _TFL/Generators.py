@@ -33,6 +33,8 @@
 #     9-Mar-2004 (CT) `_doc_test` changed to not use `import`
 #    30-Jul-2004 (CT) `Look_Ahead_Gen` added
 #    30-Jul-2004 (CT) `pairwise` changed to use `Look_Ahead_Gen`
+#    12-Aug-2004 (CT) Additional doctest for `Look_Ahead_Gen` added to show
+#                     behavior for single element sequence
 #    ««revision-date»»···
 #--
 
@@ -47,6 +49,11 @@ class Look_Ahead_Gen (object) :
        0
        1
        2
+       >>> lag = Look_Ahead_Gen (range (1))
+       >>> for i in lag :
+       ...   print i, lag.is_finished
+       ...
+       0 True
        >>> lag = Look_Ahead_Gen (range (3))
        >>> for i in lag :
        ...   print i, lag.is_finished
