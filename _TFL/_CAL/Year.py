@@ -36,6 +36,7 @@
 #    19-Apr-2003 (CT) `sort_appointments` added to `Day` and `Year`
 #    20-Apr-2003 (CT) `easter_date` added
 #    15-Dec-2003 (CT) Computation of `w_head` corrected in `Year.__init__`
+#     5-Jan-2004 (CT) `Week.__int__` added
 #    ««revision-date»»···
 #--
 
@@ -136,6 +137,10 @@ class Week (TFL.Meta.Object) :
     def __repr__ (self) :
         return "week %2.2d <%s to %s>" % (self.number, self.mon, self.sun)
     # end def __repr__
+
+    def __int__ (self) :
+        return self.number
+    # end def __int__
 
 # end class Week
 
