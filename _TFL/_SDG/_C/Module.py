@@ -59,8 +59,8 @@ m.add ( Function ( "int", "bar", "void"
       )
 m.add (Typedef  ("long signed int", "sint32"))
 m.add (Function ("int", "baz", "int x, int y"))
-print "\n".join (m.as_c_code ())
-print "\n".join (m.as_h_code ())
+m.write_to_c_stream()
+m.write_to_h_stream()
 
 """
 

@@ -29,6 +29,9 @@
 #    26-Jul-2004 (CT) Creation
 #    27-Jul-2004 (CT) Creation continued
 #    28-Jul-2004 (CT) Creation continued...
+#     2-Aug-2004 (CT) `children_group_names` redefined
+#     2-Aug-2004 (CT) `write_to_c_stream` and `write_to_h_stream` added
+#     2-Aug-2004 (CT) Methods put into alphabetical order
 #    ««revision-date»»···
 #--
 
@@ -54,12 +57,13 @@ class _C_Node_ (TFL.SDG.Node) :
     star_level           = 1
     pass_scope           = True
 
-    ( Body
-    , Decl
-    , Head
-    , Tail
-    , Incl
-    )                    = range (5)
+    children_group_names = \
+        ( Body
+        , Decl
+        , Head
+        , Tail
+        , Incl
+        )                = range (5)
     body_children        = property (lambda s : s.children_groups [s.Body])
     decl_children        = property (lambda s : s.children_groups [s.Decl])
     head_children        = property (lambda s : s.children_groups [s.Head])
@@ -102,34 +106,23 @@ class _C_Node_ (TFL.SDG.Node) :
             return ()
     # end def formatted
 
-    def _update_scope (self, scope) :
-        self.scope = self.scope & scope
-    # end def _update_scope
+    def write_to_c_stream (self, cstream = None, gauge = None) :
+        """Write `self' and all elements in `self.children' to `cstream'.
+        """
+        self._write_to_stream (self.as_c_code (), cstream, gauge)
+    # end def write_to_c_stream
 
-    def _update_scope_child (self, child, scope) :
-        if self.pass_scope :
-            child._update_scope (self.scope)
-    # end def _update_scope_child
+    write_to_stream = write_to_c_stream
 
-    def _insert (self, child, index, children, delta = 0) :
-        if child :
-            self._update_scope_child (child, self.scope)
-            self.__super._insert (child, index, children, delta)
-    # end def _insert
+    def write_to_h_stream (self, hstream = None, gauge = None) :
+        self._write_to_stream (self.as_h_code (), hstream, gauge)
+    # end def write_to_h_stream
 
     def _convert (self, value, Class, * args, ** kw) :
         if value and isinstance (value, str) :
             value = Class (value.strip (), * args, ** kw)
         return value
     # end def _convert
-
-    def _force (self, value, Class, * args, ** kw) :
-        """Comverts `value' to an instance of `Class'."""
-        value = self._convert (value, Class, * args, ** kw)
-        if not isinstance (value, Class) :
-            value = Class (value, * args, ** kw)
-        return value
-    # end def _force
 
     def _convert_c_comment (self, name, value, eol = 0, new_line_col = 0) :
         result = value
@@ -165,6 +158,29 @@ class _C_Node_ (TFL.SDG.Node) :
                 result = [value]
         return result
     # end def _convert_c_stmt
+
+    def _force (self, value, Class, * args, ** kw) :
+        """Comverts `value' to an instance of `Class'."""
+        value = self._convert (value, Class, * args, ** kw)
+        if not isinstance (value, Class) :
+            value = Class (value, * args, ** kw)
+        return value
+    # end def _force
+
+    def _insert (self, child, index, children, delta = 0) :
+        if child :
+            self._update_scope_child (child, self.scope)
+            self.__super._insert (child, index, children, delta)
+    # end def _insert
+
+    def _update_scope (self, scope) :
+        self.scope = self.scope & scope
+    # end def _update_scope
+
+    def _update_scope_child (self, child, scope) :
+        if self.pass_scope :
+            child._update_scope (self.scope)
+    # end def _update_scope_child
 
 # end class _C_Node_
 

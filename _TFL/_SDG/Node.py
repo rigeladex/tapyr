@@ -31,6 +31,8 @@
 #    27-Jul-2004 (CT) Call to `_autoconvert` corrected (`self` passed)
 #    28-Jul-2004 (CT) `front_args` and `rest_args` added to `__init__`
 #    30-Jul-2004 (CT) `base_indent2` added
+#     2-Aug-2004 (CT) `_write_to_stream` added
+#     2-Aug-2004 (CT) Methods put into alphabetical order
 #    ««revision-date»»···
 #--
 
@@ -68,6 +70,7 @@ import _TFL._SDG.M_Node
 
 from   NO_List           import NO_List
 from   predicate         import *
+import sys
 
 class Invalid_Node (StandardError) :
     pass
@@ -165,13 +168,6 @@ class Node :
                 yield "%s%s" % (indent, l)
     # end def formatted
 
-    def _formatted_attrs (self, format_name, base_indent = None) :
-        for k, v in sorted (self.init_arg_defaults.iteritems ()) :
-            a = getattr (self, k)
-            if a != v :
-                yield "%s = %r" % (k, a)
-    # end def _formatted_attrs
-
     def has_child (self, child_name, transitive = True) :
         """Checks if this node or one of this childs has a node named
            `child_name'.
@@ -200,6 +196,19 @@ class Node :
         return child_name
     # end def _child_name
 
+    def _children_iter (self) :
+        for group in self.children_groups.itervalues () :
+            for c in group :
+                yield c
+    # end def _children_iter
+
+    def _formatted_attrs (self, format_name, base_indent = None) :
+        for k, v in sorted (self.init_arg_defaults.iteritems ()) :
+            a = getattr (self, k)
+            if a != v :
+                yield "%s = %r" % (k, a)
+    # end def _formatted_attrs
+
     def _init_kw (self, kw) :
         kw_err = {}
         for k, v in self.init_arg_defaults.iteritems () :
@@ -226,16 +235,20 @@ class Node :
             children.insert (index, child, delta)
     # end def _insert
 
-    def _children_iter (self) :
-        for group in self.children_groups.itervalues () :
-            for c in group :
-                yield c
-    # end def _children_iter
-
     def _reset_children (self) :
         self.children_groups = dict \
             ([(i, NO_List ()) for i in self.children_group_names])
     # end def _reset_children
+
+    def _write_to_stream (self, gen, stream, gauge = None) :
+        if stream is None :
+            stream = sys.stdout
+        for x in gen :
+            stream.write  (x)
+            stream.write  ("\n")
+            if gauge is not None :
+                gauge.inc ()
+    # end def _write_to_stream
 
     def __iter__ (self) :
         yield self

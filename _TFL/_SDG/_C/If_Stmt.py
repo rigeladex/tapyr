@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    30-Jul-2004 (CT) Creation
+#     2-Aug-2004 (CT) Creation continued
+#     2-Aug-2004 (CT) `children_group_names` redefined
 #    ««revision-date»»···
 #--
 
@@ -98,8 +100,7 @@ class If (TFL.SDG.C._Statement_) :
           )
         )
 
-    ( Else,
-    )                    = range (1)
+    children_group_names = ( Else, ) = range (1)
     then_children        = property (lambda s : s.then)
     else_children        = property (lambda s : s.children_groups [s.Else])
 
@@ -131,6 +132,12 @@ class If (TFL.SDG.C._Statement_) :
             raise TFL.SDG.Invalid_Node, (self, child)
         self._insert (child, index, children, delta)
     # end def insert
+
+    def _children_iter (self) :
+        yield self.then
+        for c in self.__super._children_iter ():
+            yield c
+    # end def _children_iter
 
 # end class If
 
