@@ -57,12 +57,15 @@
 #     5-Dec-2001 (MG) Special code for `Proxy_Type` changed
 #    20-Feb-2002 (CT) `_Export` and `XXX PPP` comments added
 #    21-Feb-2002 (CT) `_Module_Space._load` factored
+#    22-Feb-2002 (CT) `_leading_underscores` added and used to remove leading
+#                     underscores from `Package_Namespace.__name`
 #    ««revision-date»»···
 #--
 
 from   caller_globals import caller_globals as _caller_globals
 from   caller_globals import caller_info    as _caller_info
 import inspect                              as _inspect
+from   Regexp         import Regexp
 
 class _Module_Space :
 
@@ -171,10 +174,12 @@ class Package_Namespace :
        calling `Import_Module`.
     """
 
+    _leading_underscores = Regexp ("^_+")
+
     def __init__ (self, name = None) :
         if not name :
             name = _caller_globals () ["__name__"]
-        self.__name    = name
+        self.__name    = self._leading_underscores.sub ("", name)
         self.__modules = self._ = _Module_Space (name)
         self.__seen    = {}
     # end def __init__
@@ -283,7 +288,7 @@ class Package_Namespace :
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
             print "XXX PNS Implicit import %s.%s by %s" \
-                  % (self.__name, name, _caller_info ())
+                  % (self._.__name, name, _caller_info ())
             self.Import (name, name)
             return self.__dict__ [name]
         raise AttributeError, name
