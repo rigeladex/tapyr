@@ -79,12 +79,7 @@ class Elseif (TFL.SDG.C.Conditional, TFL.SDG.C.Block) :
 
 # end class Elseif
 
-class Then (TFL.SDG.C.Block) :
-    """Then clause of If statement"""
-
-    trailer              = ""
-
-# end class Then
+Then = TFL.SDG.C.Block
 
 class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
     """If statement"""
@@ -138,12 +133,14 @@ class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
                 raise TFL.SDG.Invalid_Node, (self, child)
         elif not isinstance (child, self.elif_class) :
             raise TFL.SDG.Invalid_Node, (self, child)
+        child.trailer = ""
         self.__super.insert (child, index, delta)
     # end def insert
 
     def _convert_then (self, v) :
         if not isinstance (v, self.then_class) :
             v = self.then_class (v)
+        v.trailer = ""
         return v
     # end def _convert_then
 

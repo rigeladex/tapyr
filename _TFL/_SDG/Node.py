@@ -54,8 +54,10 @@
 #    23-Aug-2004 (CT) `repr` and `repr_format` changed to make it
 #                     doc-testable
 #    23-Aug-2004 (CT) Doc-string completed
-#    24-Aug-2004 (CT) `_init_kw` changed to protect `%s` inside strings
+#    24-Aug-2004 (CT) `_init_kw` changed to protect `%` inside strings
 #                     (which can be hidden in lists/tuples, <arrrgh>)
+#    25-Aug-2004 (CT) `_init_kw` changed again to protect `%` inside strings
+#                     hidden in `NO_List` <double arrrgh>
 #    ««revision-date»»···
 #--
 
@@ -516,10 +518,10 @@ class Node :
                 ### ValueErrors during formatting
                 if isinstance (v, (str, unicode)) :
                     v = v.replace ("%", "%%")
-                elif isinstance (v, (tuple, list)) :
-                    w = v
-                    v = []
-                    for x in w :
+                elif isinstance (v, (tuple, list, NO_List)) :
+                    vin = v
+                    v   = []
+                    for x in vin :
                         if isinstance (x, (str, unicode)) :
                             x = x.replace ("%", "%%")
                         v.append (x)
