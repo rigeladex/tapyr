@@ -67,6 +67,8 @@ from   caller_globals import caller_info    as _caller_info
 import inspect                              as _inspect
 from   Regexp         import Regexp
 
+_debug = 0
+
 class _Module_Space :
 
     def __init__ (self, name) :
@@ -74,8 +76,9 @@ class _Module_Space :
     # end def __init__
 
     def __getattr__ (self, module_name) :
-        print "XXX PNS Implicit import %s._.%s by %s" \
-              % (self.__name, module_name, _caller_info ())
+        if _debug :
+            print "XXX PNS Implicit import %s._.%s by %s" \
+                  % (self.__name, module_name, _caller_info ())
         return self._load (module_name)
     # end def __getattr__
 
@@ -287,8 +290,9 @@ class Package_Namespace :
 
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
-            print "XXX PNS Implicit import %s.%s by %s" \
-                  % (self.__name, name, _caller_info ())
+            if _debug :
+                print "XXX PNS Implicit import %s.%s by %s" \
+                      % (self.__name, name, _caller_info ())
             self.Import (name, name)
             return self.__dict__ [name]
         raise AttributeError, name
