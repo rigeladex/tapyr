@@ -55,11 +55,12 @@
 #                     correctly 
 #    13-Nov-2001 (CT) Unncessary restriction of nested packages removed
 #     5-Dec-2001 (MG) Special code for `Proxy_Type` changed
+#    20-Feb-2002 (CT) `_Export` and `XXX PPP` comments added
 #    ««revision-date»»···
 #--
 
-from   TFL.Caller  import globals as _caller_globals
-import inspect                    as _inspect
+from   caller_globals import caller_globals as _caller_globals
+import inspect                              as _inspect
 
 class _Module_Space :
     
@@ -171,6 +172,7 @@ class Package_Namespace :
     # end def __init__
     
     def Import (self, module_name, * symbols) :
+        ### XXX PNS remove after Package_Namespace transition is complete
         """Import all `symbols` from module `module_name` of package
            `self.__name`. A `*` is supported as the first element of
            `symbols` and imports the contents of `__all__` (if defined) or
@@ -189,11 +191,13 @@ class Package_Namespace :
     # end def Import
 
     def Import_Module (self, module_name) :
+        ### XXX PNS remove after Package_Namespace transition is complete
         """Import module `module_name` into `self._`."""
         return getattr (self.__modules, module_name)
     # end def Import_Module
     
     def From_Import (self, module_name, * symbols, ** kw) :
+        ### XXX PNS remove after Package_Namespace transition is complete
         """Import all `symbols` from module `module_name` of package
            `self.__name` into caller's namespace. A `*` is supported as the
            first element of `symbols` and imports the contents of `__all__`
@@ -210,6 +214,7 @@ class Package_Namespace :
     # end def From_Import
 
     def _import_symbols (self, module_name, check_clashes, * symbols, ** kw) :
+        ### XXX PNS remove after Package_Namespace transition is complete
         result     = {}
         mod        = getattr (self.__modules, module_name)
         star       = None
@@ -269,6 +274,7 @@ class Package_Namespace :
     
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
+            print "XXX PNS Implicit import %s.%s" % (self.__name, name)
             self.Import (name, name)
             return self.__dict__ [name]
         raise AttributeError, name
@@ -278,6 +284,38 @@ class Package_Namespace :
         return "<%s %s at 0x%x>" % \
                (self.__class__.__name__, self.__name, id (self))
     # end def __repr__
+
+    def _Export (self, module_name, * symbols, ** kw) :
+        """Called by module of Package_Namespace to inject their symbols into
+           the package namespace.
+        """
+        transitive = kw.get ("transitive")
+        result     = {}
+        mod        = getattr (self.__modules, module_name)
+        if symbols [0] == "*" :
+            all_symbols = getattr (mod, "__all__", ())
+            if all_symbols :
+                self._import_names (mod, all_symbols, result, 1)
+            else :
+                for s, p in mod.__dict__.items () :
+                    if s.startswith ("_") :
+                        continue
+                    p_mod = _inspect.getmodule (p)
+                    if p_mod is None :
+                        ### handle Class_Proxy correctly
+                        try :
+                            if isinstance (p, type (self)) :
+                                p_mod = _inspect.getmodule \
+                                    (p.__dict__.get ("Essence", p))
+                        except :
+                            print s, p, mod
+                            raise
+                    if transitive or p_mod is mod :
+                        self._import_1 (mod, s, s, p, result, check_clashes)
+            symbols = symbols [1:]
+        if symbols :
+            self._import_names (mod, symbols, result, check_clashes)
+    # end def _Export
     
 # end class Package_Namespace
 
