@@ -49,11 +49,12 @@
 #                     modul to be imported or if `getmodule` returns `None`
 #    20-Sep-2001 (CT) Change of MG revoked
 #    20-Sep-2001 (CT) Don't *-import names with leading underscores
+#     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
 #    ««revision-date»»···
 #--
 
-from   Caller  import globals as _caller_globals
-import inspect                as _inspect
+from   TFL.Caller  import globals as _caller_globals
+import inspect        as _inspect
 
 class _Module_Space :
     

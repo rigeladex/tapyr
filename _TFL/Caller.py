@@ -42,6 +42,7 @@
 #    18-May-2001 (CT) `depth' added
 #    16-Sep-2001 (CT) Protect `import U_Test`
 #    18-Sep-2001 (CT) `globs` and `locls` arguments added to `Scope.__init__`
+#     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
 #    ««revision-date»»···
 #--
 
@@ -152,7 +153,7 @@ if __debug__ :
         pass
     else :
         def _doc_test () :
-            import Caller
+            import TFL.Caller
             return U_Test.run_module_doc_tests (Caller)
         # end def _doc_test
 
