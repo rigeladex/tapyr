@@ -101,7 +101,7 @@ class If (TFL.SDG.C._Statement_) :
         )
 
     children_group_names = ( Else, ) = range (1)
-    then_children        = property (lambda s : s.then)
+    then_children        = property (lambda s : (s.then, ))
     else_children        = property (lambda s : s.children_groups [s.Else])
 
     def __init__ (self, * args, ** kw) :
