@@ -65,6 +65,8 @@
 #                      interface (using styles).
 #    11-Mar-2005 (CT)  `_setup_styles` fixed (same defaults as in old option
 #                      files)
+#    11-Mar-2005 (CT)  Call of `set_tabs` moved from `_setup_styles` to
+#                      `__init__` (must be done for *each* `Text` instance)
 #    ««revision-date»»···
 #--
 
@@ -874,8 +876,10 @@ class Browser (TFL.UI.Mixin) :
         self.wtk_widget     = self.text.wtk_widget
         self.exposed_widget = self.text.exposed_widget
         self.clear ()
-        if not styles.has_key ("active_node") :
+        if not styles.has_key  ("active_node") :
             self._setup_styles ()
+        self.text.apply_style  (styles.normal)
+        self.text.set_tabs     (* self._tabs)
     # end def __init__
 
     def _setup_styles (self) :
@@ -1009,7 +1013,7 @@ class Browser (TFL.UI.Mixin) :
             ( "wrap"
             , wrap         = "word"
             )
-        tabs = []
+        tabs = self.__class__._tabs = []
         for i in range (1, 16) :
             level     = "level" + `i-1`
             head_name = level + ":head"
@@ -1028,7 +1032,6 @@ class Browser (TFL.UI.Mixin) :
                 , lmargin2  = i * indent + indent_inc
                 )
             tabs.append (i * indent)
-        self.text.set_tabs (* tabs)
     # end def _setup_styles
 
     def _insert (self, pos, text, * styles) :
