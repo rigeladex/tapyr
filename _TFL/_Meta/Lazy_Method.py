@@ -31,13 +31,17 @@
 #                     callables more similar to the real thing (e.g., avoid
 #                     an AttributeError from `wrapped.func_code`)
 #    24-Jan-2005 (MG) `_Lazy_Wrapper_.__call__`: conversion to an int added
+#     2-Feb-2005 (MG) `_Lazy_Wrapper_.__call__`: store `int` of the change
+#                     counter instead of the change object itself
+#     2-Feb-2005 (MG) `_Lazy_Wrapper_RNC_` and `Lazy_Method_RNC` added,
+#                     `Lazy_Method` renamed to `Lazy_Method_RLV`
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL._Meta.Property
 
-class _Lazy_Wrapper_ (object) :
+class _Lazy_Wrapper_RLV_ (object) :
 
     ### `counter_name` is the name of the attribute which contains the number
     ### of changes to be considered by the lazy mechanism
@@ -56,7 +60,7 @@ class _Lazy_Wrapper_ (object) :
     def __call__ (self, that, * args, ** kw) :
         if self.changes != int (getattr (that, self.counter_name)) :
             self.result  = self.fct (that, * args, ** kw)
-            self.changes = getattr (that, self.counter_name)
+            self.changes = int (getattr (that, self.counter_name))
         return self.result
     # end def __call__
 
@@ -64,11 +68,24 @@ class _Lazy_Wrapper_ (object) :
         return getattr (self.fct, name)
     # end def __getattr__
 
-# end class _Lazy_Wrapper_
+# end class _Lazy_Wrapper_RLV_
 
-class Lazy_Method (TFL.Meta.Method_Descriptor) :
+class _Lazy_Wrapper_RNC_ (_Lazy_Wrapper_RLV_) :
+
+    def __call__ (self, that, * args, ** kw) :
+        if self.changes != int (getattr (that, self.counter_name)) :
+            self.result  = self.fct (that, * args, ** kw)
+            self.changes = int (getattr (that, self.counter_name))
+            return self.result
+        return Lazy_Method.NC
+    # end def __call__
+
+# end class _Lazy_Wrapper_RNC_
+
+class Lazy_Method_RLV (TFL.Meta.Method_Descriptor) :
     """Lazy evaluation wrapper: the wrapped method is executed only if the
-       the object changed since the last call.
+       the object changed since the last call. In any case, the result of the
+       last successfull run will be returned
 
        Note that this wrapper is only applicable to methods which result does
        *not* depend on the arguments passed to the method.
@@ -93,12 +110,30 @@ class Lazy_Method (TFL.Meta.Method_Descriptor) :
        >>> Test.test (t)
     """
 
+    NC = object ()
+
+    wrapper = _Lazy_Wrapper_RLV_
+
     def __init__ (self, method, cls = None, counter_name = None) :
         super (Lazy_Method, self).__init__ \
-            (_Lazy_Wrapper_ (method, counter_name), cls)
+            (self.wrapper (method, counter_name), cls)
     # end def __init__
 
-# end class Lazy_Method
+# end class Lazy_Method_RLV
+
+class Lazy_Method_RNC (Lazy_Method_RLV) :
+    """Lazy evaluation wrapper: the wrapped method is executed only if the
+       the object changed since the last call. In case that the wrapped
+       function has not been executed, the unique object
+       `TFL.Meta.Lazy_Method_RNC.NC` will be return.
+    """
+
+    wrapper = _Lazy_Wrapper_RNC_
+
+# end class Lazy_Method_RNC
+
+Lazy_Method     = Lazy_Method_RLV ### provided for legacy, should not be used
+                                  ### in new code !!!
 
 ### unit-test code ############################################################
 
@@ -120,5 +155,5 @@ if __debug__ :
 ### end unit-test code ########################################################
 
 if __name__ != "__main__" :
-    TFL.Meta._Export ("*")
+    TFL.Meta._Export ("*", "Lazy_Method")
 ### __END__ Lazy_Method
