@@ -297,7 +297,7 @@ class Object (TGL.TKT.Mixin) :
 
     def __getattr__ (self, name) :
         if name in self._wtk_delegation :
-            wrapper = self._wtk_delegation.get (name)
+            wrapper = self._wtk_delegation [name]
             if not isinstance (wrapper, str) :
                 result = wrapper (self, getattr (self.wtk_object, name))
             else :

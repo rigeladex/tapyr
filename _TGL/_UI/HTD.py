@@ -29,6 +29,7 @@
 #    30-Mar-2005 (CT) Creation (based loosely on T_Browser and TFL.UI.HTB)
 #    31-Mar-2005 (CT) Creation continued
 #     1-Apr-2005 (CT) Creation continued (style.callback handling corrected)
+#     1-Apr-2005 (CT) `Style.__init__` improved
 #    ««revision-date»»···
 #--
 
@@ -48,11 +49,12 @@ class Styled (TFL.Meta.Object) :
     """Mode styled text object"""
 
     def __init__ (self, value, style = None, style_dict = None) :
-        if not isinstance (value, (str, unicode)) :
-            style = value.style or style
+        if isinstance (value, Styled) :
+            if value.style :
+                style = value.style
+                if style_dict :
+                    style = style (** style_dict)
             value = value.value
-            if style_dict :
-                style = style (** style_dict)
         self.value = value
         self.style = style
     # end def __init__
@@ -166,6 +168,8 @@ class _Node_ (TGL.UI.Mixin) :
     # end def _add_child
 
     def _add_contents (self, * contents) :
+        ### XXX looses `callback` of `style`
+        ### XXX
         style  = self.style
         sd     = self.style_dict
         result = [Styled (c, style, sd) for c in (contents)]
@@ -177,6 +181,8 @@ class _Node_ (TGL.UI.Mixin) :
         result  = getattr (self.Style, "level%s" % (level, ))
         cb_dict = {}
         if style is not None :
+            ### XXX `option_dict` doesn't work (it's already transformed)
+            ### XXX change Styler to store original values
             result  = style (** self.tkt_text.Tag_Styler (result).option_dict)
             cb_dict = style.callback or {}
         if self.parent :
