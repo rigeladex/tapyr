@@ -61,6 +61,7 @@
 #    15-Jan-2004 (RMA) Improved define
 #    20-Jan-2004 (RMA) Improved interface of begin_tabular
 #    25-Jan-2004 (RMA) Improved end_tabular
+#    25-Jan-2004 (RMA) Added begin/end_chapter
 #    ««revision-date»»
 #--
 
@@ -146,6 +147,12 @@ class Latex_Stream (Formatted_Stream) :
         if insert_newline :
             self.put_soft_line ()
         self.indent ()
+
+
+    def begin_chapter (self, name, attributes = "", insert_newline = 1) :
+        self._begin_section ("chapter", name, attributes, insert_newline)
+
+    end_chapter = Formatted_Stream.deindent
 
     def begin_section (self, name, attributes = "", insert_newline = 1) :
         self._begin_section ("section", name, attributes, insert_newline)
