@@ -29,6 +29,7 @@
 #    13-May-2002 (CT) Creation
 #    14-Jan-2002 (CT) _Property_ factored, Aesthetics
 #    17-Jan-2003 (CT) `Class_and_Instance_Method` added
+#    17-Jan-2003 (CT) `M_` prefixes added
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ import _TFL._Meta.Class
 
 class _Property_ (property) :
 
-    __metaclass__ = TFL.Meta.Class
+    __metaclass__ = TFL.Meta.M_Class
 
     def __init__ (self) :
         self.__super.__init__ (self._get, self._set, self._del)
@@ -178,8 +179,11 @@ if __name__ == "__main__" :
 
         import _TFL.d_dict
         class T (object) :
-            __metaclass__ = TFL.Meta.Automethodwrap
-            __autowrap    = TFL.d_dict (chameleon = Class_and_Instance_Method, piggy = Class_and_Instance_Method)
+            __metaclass__ = TFL.Meta.M_Automethodwrap
+            __autowrap    = TFL.d_dict \
+                ( chameleon = Class_and_Instance_Method
+                , piggy     = Class_and_Instance_Method
+                )
             foo = 42
             def __init__ (self) :
                 self.foo = 137
@@ -205,7 +209,7 @@ if __name__ == "__main__" :
         U ().bar    ()
 
         class T (object) :
-            __metaclass__ = TFL.Meta.Class
+            __metaclass__ = TFL.Meta.M_Class
             __properties  = \
               ( RO_Property ("x", 42,  "readonly  property")
               , RW_Property ("y", 137, "writeable property")

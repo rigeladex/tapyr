@@ -27,22 +27,23 @@
 #
 # Revision Dates
 #    10-May-2002 (CT) Creation
-#    17-Jan-2003 (CT) `Automethodwrap` added
+#    17-Jan-2003 (CT) `M_Automethodwrap` added
+#    17-Jan-2003 (CT) `M_` prefixes added
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL._Meta
 
-def _mangled_name (name, cls_name) :
+def _m_mangled_attr_name (name, cls_name) :
     """Returns `name` as mangled by Python for occurences of `__%s` % name
        inside the definition of a class with name `cls_name`.
 
-       >>> _mangled_name ("foo", "Bar")
+       >>> _m_mangled_attr_name ("foo", "Bar")
        '_Bar__foo'
-       >>> _mangled_name ("foo", "_Bar")
+       >>> _m_mangled_attr_name ("foo", "_Bar")
        '_Bar__foo'
-       >>> _mangled_name ("foo", "_Bar_")
+       >>> _m_mangled_attr_name ("foo", "_Bar_")
        '_Bar___foo'
     """
     if cls_name.startswith ("_") :
@@ -50,18 +51,18 @@ def _mangled_name (name, cls_name) :
     else :
         format = "_%s__%s"
     return format % (cls_name, name)
-# end def _mangled_name
+# end def _m_mangled_attr_name
 
-class _Type_ (type) :
+class _M_Type_ (type) :
     """Base class of TFL metaclasses."""
 
-    def _mangled_name (cls, name) :
-        return _mangled_name (name, cls.__name__)
-    # end def _mangled_name
+    def _m_mangled_attr_name (cls, name) :
+        return _m_mangled_attr_name (name, cls.__name__)
+    # end def _m_mangled_attr_name
 
-# end class _Type_
+# end class _M_Type_
 
-class Autorename (_Type_) :
+class M_Autorename (_M_Type_) :
     """Metaclass renaming the class to the value of the class attribute
        `_real_name` if existing.
 
@@ -71,7 +72,7 @@ class Autorename (_Type_) :
        these classes with unique names and use `_real_name` to define the
        name to be used by clients of the class.
 
-       The metaclass `Autorename` swaps `__name__` and `_real_name` before
+       The metaclass `M_Autorename` swaps `__name__` and `_real_name` before
        creating the class object. As this occurs after the name mangling done
        by Python (compiler), you can have your cake and eat it, too.
     """
@@ -83,7 +84,7 @@ class Autorename (_Type_) :
         else :
             real_name = name
         dict ["__real_name"] = real_name
-        return super (Autorename, meta).__new__ (meta, name, bases, dict)
+        return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
@@ -91,16 +92,16 @@ class Autorename (_Type_) :
         if real_name != dict ["__real_name"] :
             from caller_globals import caller_globals
             caller_globals () [real_name] = cls
-        super (Autorename, cls).__init__ (real_name, bases, dict)
+        super (M_Autorename, cls).__init__ (real_name, bases, dict)
     # end def __init__
 
-    def _mangled_name (cls, name) :
-        return _mangled_name (name, cls.__dict__ ["__real_name"])
-    # end def _mangled_name
+    def _m_mangled_attr_name (cls, name) :
+        return _m_mangled_attr_name (name, cls.__dict__ ["__real_name"])
+    # end def _m_mangled_attr_name
 
-# end class Autorename
+# end class M_Autorename
 
-class Autosuper (_Type_) :
+class M_Autosuper (_M_Type_) :
     """Metaclass adding a private class variable `__super` containing
        `super (cls)`.
 
@@ -114,35 +115,35 @@ class Autosuper (_Type_) :
     """
 
     def __init__ (cls, name, bases, dict) :
-        super   (Autosuper, cls).__init__ (name, bases, dict)
-        setattr (cls, cls._mangled_name ("super"), super (cls))
+        super   (M_Autosuper, cls).__init__ (name, bases, dict)
+        setattr (cls, cls._m_mangled_attr_name ("super"), super (cls))
     # end def __init__
 
-# end class Autosuper
+# end class M_Autosuper
 
-class Autoproperty (_Type_) :
+class M_Autoproperty (_M_Type_) :
     """Metaclass adding and initializing properties defined in
        `__properties`.
 
-       `Autoproperty` expects `__properties` to contain instances of
+       `M_Autoproperty` expects `__properties` to contain instances of
        TFL.Meta.Property (or signature-compatible objects). For each element
        `p` of `__properties`,
 
-       - `Autoproperty` will add a class attribute named `p.name` with value
+       - `M_Autoproperty` will add a class attribute named `p.name` with value
          `p` to the class.
 
-       - `Autoproperty` will add an instance attribute to all instances of
+       - `M_Autoproperty` will add an instance attribute to all instances of
          the class if `p` provides a callable `init_instance` attribute.
     """
 
     def __init__ (cls, name, bases, dict) :
-        super (Autoproperty, cls).__init__ (name, bases, dict)
-        prop_name  = cls._mangled_name ("properties")
+        super (M_Autoproperty, cls).__init__ (name, bases, dict)
+        prop_name  = cls._m_mangled_attr_name ("properties")
         properties = {}
         classes    = [cls] + list (bases)
         classes.reverse ()
         for c in classes :
-            mangled_name = getattr (c, "_mangled_name", None)
+            mangled_name = getattr (c, "_m_mangled_attr_name", None)
             if mangled_name :
                 for p in getattr (c, mangled_name ("properties"), []) :
                     setattr (cls, p.name, p)
@@ -151,17 +152,18 @@ class Autoproperty (_Type_) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        result = super (Autoproperty, cls).__call__ (* args, ** kw)
-        for p in cls.__dict__.get (cls._mangled_name ("properties"), []) :
+        result = super (M_Autoproperty, cls).__call__ (* args, ** kw)
+        props  = cls.__dict__.get (cls._m_mangled_attr_name ("properties"), [])
+        for p in props :
             init_instance = getattr (p, "init_instance", None)
             if callable (init_instance) :
                 init_instance (result)
         return result
     # end def __call__
 
-# end class Autoproperty
+# end class M_Autoproperty
 
-class Automethodwrap (_Type_) :
+class M_Automethodwrap (_M_Type_) :
     """Metaclass automatically wrapping the methods specified in `__autowrap`.
 
        `__autowrap` must map method names to wrapper functions/objects (e.g.,
@@ -169,17 +171,17 @@ class Automethodwrap (_Type_) :
     """
 
     def __init__ (cls, name, bases, dict) :
-        super (Automethodwrap, cls).__init__ (name, bases, dict)
-        cls._autowrap (bases, dict)
+        super (M_Automethodwrap, cls).__init__ (name, bases, dict)
+        cls._m_autowrap (bases, dict)
     # end def __init__
 
-    def _autowrap (cls, bases, dict) :
+    def _m_autowrap (cls, bases, dict) :
         _aw = {}
         bss = list (bases)
         bss.reverse ()
         for b in bss :
             _aw.update (getattr (b, "__autowrap", {}))
-        _aw.update (dict.get (cls._mangled_name ("autowrap"), {}))
+        _aw.update (dict.get (cls._m_mangled_attr_name ("autowrap"), {}))
         for name, wrapper in _aw.iteritems () :
             if callable (wrapper) :
                 method = dict.get (name)
@@ -196,16 +198,18 @@ class Automethodwrap (_Type_) :
                         except TypeError :
                             setattr (cls, name, wrapper (method))
         setattr (cls, "__autowrap", _aw)
-    # end def _autowrap
+    # end def _m_autowrap
 
-# end class Automethodwrap
+# end class M_Automethodwrap
 
-class Class (Autorename, Autosuper, Autoproperty, Automethodwrap) : pass
+class M_Class (M_Autorename, M_Autosuper, M_Autoproperty, M_Automethodwrap) :
+    pass
+# end class M_Class
 
 if __name__ == "__main__" :
     if __debug__ :
         class _X_ (object) :
-           __metaclass__ = Class
+           __metaclass__ = M_Class
            hugo          = 1
            __private     = 42
            _real_name    = "Y"
@@ -215,7 +219,7 @@ if __name__ == "__main__" :
             __private    = 137
             _real_name   = "ZZZ"
 
-        class Metatest (Class) :
+        class Metatest (M_Class) :
 
             def __call__ (cls, * args, ** kw) :
                 print cls, "__call__", args, kw

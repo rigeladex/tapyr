@@ -27,15 +27,17 @@
 #
 # Revision Dates
 #    13-May-2002 (CT) Creation
+#    17-Jan-2003 (CT) `M_` prefixes added
 #    ««revision-date»»···
 #--
+
 from   _TFL import TFL
 import _TFL._Meta.Class
 
 class _TFL_Meta_Object_ (object) :
     """Base class using TFL.Meta.Class as metaclass."""
 
-    __metaclass__ = TFL.Meta.Class
+    __metaclass__ = TFL.Meta.M_Class
     """TFL.Meta.Class is used as metaclass for this class and all its
        dependents (which don't override the metaclass)
        """
