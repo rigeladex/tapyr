@@ -44,6 +44,7 @@
 #    13-Jan-2005 (CT) Small fixes
 #    18-Jan-2005 (CT) Small fixes
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
+#    26-Jan-2005 (CT) s/as_check_button/state_var/
 #    ««revision-date»»···
 #--
 
@@ -148,7 +149,7 @@ class CI_Event_Binder (_CI_) :
             , accelerator     = None
             , icon            = None
             , info            = None
-            , as_check_button = False
+            , state_var       = None
             , cmd_name        = None
             , ** kw
             ) :
@@ -189,12 +190,13 @@ class CI_Menu (_CI_Widget_) :
             , accelerator     = None
             , icon            = None
             , info            = None
-            , as_check_button = False
+            , state_var       = None
             , cmd_name        = None
             , ** kw
             ) :
-        if as_check_button :
+        if state_var is not None :
             fct = self.widget.insert_checkbutton
+            kw  = dict (variable = state_var, ** kw)
         else :
             fct = self.widget.insert_command
         return fct \
@@ -298,7 +300,7 @@ class CI_Toolbar (_CI_Widget_) :
             , accelerator     = None
             , icon            = None
             , info            = None
-            , as_check_button = False
+            , state_var       = None
             , cmd_name        = None
             , ** kw
             ) :
@@ -344,11 +346,11 @@ class _CI_Toolbar_Group_ (_CI_) :
             , accelerator     = None
             , icon            = None
             , info            = None
-            , as_check_button = False
+            , state_var       = None
             , cmd_name        = None
             , ** kw
             ) :
-        if as_check_button :
+        if state_var is not None :
             raise NotImplementedError, "as_check_button"
         b_name  = self.name_clean.sub ("_", name.lower ())
         im_name = icon or b_name

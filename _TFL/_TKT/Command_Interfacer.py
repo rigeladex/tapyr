@@ -32,6 +32,7 @@
 #    11-Jan-2005 (CT) `bind_to_widget` added
 #    18-Jan-2005 (MG) `Command_Interfacer.add_command` fixed
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
+#    26-Jan-2005 (CT) s/as_check_button/state_var/
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ class Command_Interfacer (TFL.TKT.Mixin) :
             , accelerator     = None
             , info            = None
             , icon            = None
-            , as_check_button = False
+            , state_var       = None
             , cmd_name        = None
             , ** kw
             ) :
