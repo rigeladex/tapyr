@@ -141,6 +141,10 @@ class Empty (Leaf) :
 
 # end class Empty
 
+### for t in Cdata Comment Document Elem_Type ;
+###   do python /swing/python/run_doctest.py $t
+###   -p /swing/private/tanzer/lib/python/_TFL/_SDG/_XML ; done
+
 if __name__ != "__main__" :
     TFL.SDG.XML._Export ("*")
 ### __END__ TFL.SDG.XML.Element
