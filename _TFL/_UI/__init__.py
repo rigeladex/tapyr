@@ -28,12 +28,14 @@
 # Revision Dates
 #    20-Dec-2004 (CT) Creation
 #    18-Jan-2005 (CT) `set_TKT` removed
+#    19-Jan-2005 (MG) `Package_Namespace` `UI` re-added
 #    ««revision-date»»···
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace
 from   _TFL                   import TFL
 
+UI = Package_Namespace ()
 TFL._Export ("UI")
 
 del Package_Namespace
