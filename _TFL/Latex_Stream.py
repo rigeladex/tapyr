@@ -47,6 +47,7 @@
 #    11-Jun-2003 (CT)  s/== None/is None/
 #    11-Jun-2003 (CT)  s/!= None/is not None/
 #    14-Aug-2003 (RMA) Recent changes
+#    10-Oct-2003 (RMA) Various new methods
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,7 @@ class Latex_Stream (Formatted_Stream) :
         self.put_soft_line ()
     # end def file_header
 
-    def begin_section (self, name, attributes = "") :
+    def begin_section (self, name, attributes = "", insert_newline = 1) :
         """Begin of new section"""
         self.putl   ("", r"\section{%s}%s" % (name, attributes))
         if insert_newline :
@@ -216,6 +217,81 @@ class Latex_Stream (Formatted_Stream) :
         self._caption_label (caption, label, shortlabel)
         self._end_block ("figure")
     # end def end_figure
+
+    def h_line (self):
+        self.putl ("\\hline")
+
+    def begin_landscape (self) :
+        self._begin_block ("landscape")
+
+    def end_landscape (self) :
+        self._end_block ("landscape")
+
+
+    def _tab_marker (self, longtable) :
+        tab_marker = "tabular"
+        if longtable :
+            tab_marker = "longtable"
+        return tab_marker
+
+    def begin_tabular (self, widths = None, tablespecs = None, headers = None, percentage = 0, longtable = 0):
+        self.putw ("\\begin{%s}[t]{|" % self._tab_marker (longtable))
+        if widths :
+            self.columns = len (widths)
+            if percentage :
+                widths  = map (lambda x: "%f\\linewidth" % x , widths)
+            else :
+                widths  = map (lambda x: "%fcm" % x , widths)
+
+            for w in widths :
+                self.putw ("p{%s}|" % w)
+        elif tablespecs :
+            self.columns = len (tablespecs)
+            for w in tablespecs :
+                self.putw ("%s|" % w)
+        else :
+            assert (0) # Neither widths nor tablespecs provided
+
+        self.putl ("}")
+        self.h_line ()
+
+        if headers:
+            entries = map (lambda x: textbf (x), headers)
+            self.tabular_entry (entries)
+            self.h_line ()
+            self.h_line ()
+            self.putl ("\\endhead")
+        self.indent ()
+
+    def tabular_entry (self, entries, format_fn = None) :
+
+        if (len (entries) <> self.columns) :
+            print "len (entries): %d" % len (entries)
+            print "self.columns:  %d" % self.columns
+            assert (len (entries) == self.columns)
+
+        if format_fn :
+            new_entries = []
+            column = 0
+
+            for e in entries :
+                if format_fn :
+                    new_e = format_fn (self, column, e)
+                new_entries.append (new_e)
+                column += 1
+            entries = new_entries
+
+
+        self.putw (string.join (entries, " & "))
+        self.putl (" \\\\")
+        self.h_line ()
+
+    def end_tabular (self, longtable = 0):
+        self.deindent ()
+        self.putl ("\\end{%s}" % self._tab_marker (longtable))
+
+
+
 
 # end class Latex_Stream
 
@@ -405,6 +481,9 @@ def uput (angle, x, y, text) :
 #----------------------------------------------------------------------
 
 
+_commands0          = [ "clearpage", "smallskip" ]
+
+
 # Commands with one parameter
 _commands1          = [ "textsf", "texttt", "textbf", "centering"
                       , "tiny",   "footnotesize", "small", "smaller"
@@ -423,6 +502,11 @@ _commands3          = [ "ncangles", "ncarc", "ncloop", "ncline"
                       ]
 
 #----------------------------------------------------------------------
+for c in _commands0 :
+  s = "def %s () : " \
+      "  return \"\\%s\"" % (c, c)
+  exec (s)
+
 
 for c in _commands1 :
   s = "def %s (p, options = None) : " \
