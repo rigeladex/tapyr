@@ -57,6 +57,7 @@
 #                      is alway last, butcon also gets correct color.
 #     8-Mar-2005 (RSC) `push_style' to butcon in _insert_button instead
 #                      of `apply_style' (and pop it when not needed)
+#     9-Mar-2005 (CT)  `destroy` exorcised of Tk-isms
 #    ««revision-date»»···
 #--
 
@@ -673,7 +674,9 @@ class Node (TFL.UI.Mixin) :
         for c in self.children :
             c.destroy ()
         if self.level == 0 :
-            self._delete (self.head_mark, self.tail_mark + " lineend +1 char")
+            text = self.browser.text
+            tail = text.eol_pos (self.tail_mark, delta = 1)
+            self._delete (self.head_mark, tail)
             self.browser.nodes.remove (self)
         if self.browser.node_map.has_key (self.tag) :
             del self.browser.node_map [self.tag]
@@ -760,18 +763,6 @@ class Node (TFL.UI.Mixin) :
     def find_unhighlight (self, match) :
         """Quick & dirty way is to remove *all* found styles"""
         self.text.remove_style (styles.found, self.text.bot_pos)
-        # XXXXX FIXME: does the above work? if yes remove following.
-#        m   = self.master
-#        pos = m.search (match, self.model.head_mark, self.model.tail_mark)
-#        if pos :
-#            try :
-#                m.tag_remove ("found_bg", pos, self.model.tail_mark)
-#            except TclError :
-#                pass
-#        while pos :
-#            end = "%s + %s chars" % (pos, len (match))
-#            m.tag_remove ("found", pos, end)
-#            pos = m.search (match, end, self.model.tail_mark)
     # end def find_unhighlight
 
 # end class Node
