@@ -34,7 +34,7 @@
 #    ««revision-date»»···
 #--
 
-from caller_globals import caller_globals as _caller_globals
+from Caller import globals as _caller_globals
 
 class Package_Namespace :
     """Implement a namespace for python packages providing direct access to
