@@ -60,7 +60,8 @@
 #    05-Jan-2004 (RMA) Added itemize_txt
 #    15-Jan-2004 (RMA) Improved define
 #    20-Jan-2004 (RMA) Improved interface of begin_tabular
-#    ««revision-date»»···
+#    25-Jan-2004 (RMA) Improved end_tabular
+#    ««revision-date»»
 #--
 
 from    Formatted_Stream import Formatted_Stream
@@ -283,7 +284,7 @@ class Latex_Stream (Formatted_Stream) :
     # end def end_figure
 
     def h_line (self):
-        self.putl ("\\hline")
+        self.putl (r"\hline")
 
     def begin_landscape (self) :
         self._begin_block ("landscape")
@@ -368,9 +369,14 @@ class Latex_Stream (Formatted_Stream) :
         self.h_line ()
     # end def tabular_entry
 
-    def end_tabular (self, longtable = 0):
+    def end_tabular (self, longtable = 0, **kw):
+        caption     = kw.get ("caption",     None)
+        label       = kw.get ("label",       None)
+        shortname   = kw.get ("shortname",       None)
+
+        self._caption_label (caption, label, shortname)
         self.deindent ()
-        self.putl ("\\end{%s}" % self._tab_marker (longtable))
+        self.putl (r"\end{%s}" % self._tab_marker (longtable))
     # end def end_tabular
 
     def define (self, name, code, eol_comment = "", params = 0) :
