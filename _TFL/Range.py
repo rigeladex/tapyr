@@ -16,12 +16,13 @@
 #
 # Revision Dates
 #    10-May-2001 (CT) Creation
+#    21-Feb-2002 (CT) `Range_` renamed to `_Range_`
 #    ««revision-date»»···
 #--
 
 import types
 
-class Range_ :
+class _Range_ :
     """Range generator: takes integers and slices as arguments to
        `[]' and returns a list of indices as specified by the arguments.
 
@@ -53,9 +54,9 @@ class Range_ :
         return result
     # end def __getitem__
     
-# end class Range_
+# end class _Range_
 
-Range = Range_ ()
+Range = _Range_ ()
 
 ### unit-test code ############################################################
 
