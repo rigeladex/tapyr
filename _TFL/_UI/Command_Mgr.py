@@ -76,6 +76,9 @@
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    14-Dec-2004 (CT) Small corrections
 #    20-Dec-2004 (CT) Factored from TOM
+#    21-Dec-2004 (CT) `Command_Group` factored from `Command_Mgr`
+#    21-Dec-2004 (CT) `menu` and `toolbar` replaced by `interfacers`
+#    21-Dec-2004 (CT) `_real_index` factored
 #    ««revision-date»»···
 #--
 
@@ -87,6 +90,8 @@ from   Record         import Record
 from   predicate      import *
 
 import _TFL._Meta.Object
+import _TFL._UI
+
 import re
 import traceback
 
@@ -118,27 +123,27 @@ class _Command_ (TFL.Meta.Object) :
     nam_pat     = re.compile (r"[Tt]his command")
 
     def enable (self) :
-        for i, n in self.interfacers :
+        for i in self.interfacers :
             try :
-                i.enable_entry  (n)
+                i.enable_entry (self.name)
             except KeyboardInterrupt :
                 raise
             except StandardError :
                 if __debug__ :
                     traceback.print_exc ()
-                    print str (self), i.__class__, i, n
+                    print str (self), i.__class__, i
     # end def enable
 
     def disable (self) :
-        for i, n in self.interfacers :
+        for i in self.interfacers :
             try :
-                i.disable_entry (n)
+                i.disable_entry (self.name)
             except KeyboardInterrupt :
                 raise
             except StandardError :
                 if __debug__ :
                     traceback.print_exc ()
-                    print str (self), i.__class__, i, n
+                    print str (self), i.__class__, i
     # end def disable
 
     def formatted_precondition (self) :
@@ -283,45 +288,159 @@ class Command (_Command_) :
 
 # end class Command
 
-class Command_Mgr (_Command_) :
+class Command_Group (_Command_) :
     """Manage a group of commands of an interactive application"""
 
+    name_clean = re.compile (r"[^a-zA-Z_0-9]+")
     nam_pat    = re.compile (r"[Tt]his (command )?group")
 
-    def __init__ (self, change_counter, menu = None, toolbar = None, pv_callback = None, name = "", parent = None, batchable = 0, batch_mode = 0, form_dict = {}, appl = None) :
-        if batch_mode :
-            _Command_.batch_mode  = batch_mode
-        self.change_counter = change_counter
-        self.menu           = menu
-        self.toolbar        = toolbar
-        self.pv_callback    = pv_callback
+    def __init__ (self, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
+        self.__super.__init__ ()
         self.name           = self.qname = name
+        self.interfacers    = interfacers
         self.parent         = parent
         self.batchable      = batchable
-        self.form_dict      = form_dict
-        self.appl           = appl
+        self.precondition   = precondition
+        self.description    = self._cooked_doc (desc, self.root.form_dict)
+        if parent :
+            self.root       = parent.root
+            if parent.qname :
+                self.qname  = "%s.%s" % (parent.qname, name)
         self._element       = NO_List       ()
         self._group         = NO_List       ()
         self.command        = Abbr_Key_Dict ()
-        self._precondition  = {}
-        if not parent :
-            self.root       = self
-            self.changes    = 0
-        else :
-            if parent.qname :
-                self.qname  = "%s.%s" % (parent.qname, name)
-            self.root       = parent.root
     # end def __init__
+
+    def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0) :
+        """Add `cmd' to `group'"""
+        cmd._cook_doc (self.root.form_dict)
+        if group is not None :
+            if isinstance (group, (str, unicode, int)) :
+                group = self._element [group]
+            return group.add_command  \
+                ( cmd, None, if_names, icon
+                , index, delta, underline, accelerator, batchable
+                )
+        else :
+            index = self._real_index (index)
+            self._element.insert (index, cmd, delta)
+            self.root._add_precondition (cmd)
+            cmd.group_name = self.name
+            cmd.qname      = "%s.%s" % (self.qname, cmd.name)
+            cmd.batchable  = cmd.batchable and (self.batchable or batchable)
+            cmd.appl       = self.root.appl
+            if not cmd.pv_callback :
+                cmd.pv_callback = self.root.pv_callback
+            self.root.command [cmd.qname] = cmd
+            if self.parent :
+                self.command [cmd.name] = cmd
+            cmd.interfacers = []
+            for i, info in self._interfacers (if_names) :
+                cmd.interfacers.append (i)
+                i.add_command \
+                    ( cmd.name, cmd
+                    , index       = index
+                    , delta       = delta
+                    , underline   = underline
+                    , accelerator = accelerator
+                    , icon        = icon
+                    , info        = info
+                    )
+    # end def add_command
+
+    def add_group (self, name, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None, batchable = 0) :
+        """Add command group `name'."""
+        index       = self._real_index (index)
+        interfacers = []
+        for i, info in self._interfacers (if_names) :
+            interfacers.append \
+                (i.add_group (name, index = index, delta = delta, info = info))
+        group = self.Group_Class \
+            ( name          = name
+            , interfacers   = interfacers
+            , parent        = self
+            , batchable     = batchable
+            , desc          = desc
+            , precondition  = precondition
+            )
+        self._element.insert   (index, group, delta)
+        self._group.append     (group)
+        if precondition :
+            self.root._add_precondition (group)
+        return group
+    # end def add_group
+
+    def add_separator (self, name = None, group = None, index = None, delta = 0) :
+        """Add separator to `group'"""
+        for i in self.interfacers.itervalues () :
+            i.add_separator (name, index, delta)
+    # end def add_separator
+
+    def destroy (self) :
+        self.root = self.parent = self.interfacers = None
+        for e in self._element :
+            e.destroy ()
+        self._element = self._group = self.command = None
+    # end def destroy
 
     def group (self, name) :
         return self._group [name]
     # end def group
+
+    def keys (self) :
+        return self.command.keys ()
+    # end def keys
+
+    def _interfacers (self, interface_names) :
+        interfacers = self.interfacers
+        for n in interface_names :
+            name, info = n.split (":", 1)
+            yield interfacers [name], info
+    # end def _interfacers
+
+    def _real_index (self, index) :
+        if index is None :
+            index = len (self._element)
+        if isinstance (index, (str, unicode)) :
+            index = self._element.n_index (index)
+        return index
+    # end def _real_index
 
     def __getitem__ (self, index) :
         if self._group.has_key (index) :
             return self._group [index]
         return self.command [index]
     # end def __getitem__
+
+    def __str__ (self) :
+        return self.name
+    # end def __str__
+
+    def __repr__ (self) :
+        return "<%s `%s' at %s>" % \
+            (self.__class__.__name__, self.name, id (self))
+    # end def __repr__
+
+# end class Command_Group
+
+Command_Group.Group_Class = Command_Group
+
+class Command_Mgr (Command_Group) :
+    """Manage toplevel group of commands of an interactive application"""
+
+    def __init__ (self, change_counter, interfacers, pv_callback = None, name = "", batch_mode = False, form_dict = {}, appl = None) :
+        self.__super.__init__ (name, interfacers, parent = None, batchable = True)
+        self.change_counter = change_counter
+        self.pv_callback    = pv_callback
+        self.batch_mode     = batch_mode
+        self.form_dict      = form_dict
+        self.appl           = appl
+        self.root           = self
+        self.changes        = 0
+        self._precondition  = {}
+        for i in interfacers :
+            i.bind_to_sync (self.update_state)
+    # end def __init__
 
     def run (self, name, * args, ** kw) :
         """Run the command named by `name'"""
@@ -338,76 +457,11 @@ class Command_Mgr (_Command_) :
     # end def keys
 
     def destroy (self) :
-        self.root = self.parent = self.menu = self.toolbar \
-                  = self.pv_callback = self.appl = None
-        for e in self._element :
-            e.destroy ()
+        self.__super.destroy ()
         for p in self._precondition.values () :
             p.command = []
-        self._element = self._group = self.command = s._precondition = None
+        self.appl = self.pv_callback = s._precondition = None
     # end def destroy
-
-    def add_group (self, name, desc = None, precondition = None, add_to_menu = 0, add_to_toolbar = 0, index = None, delta = 0, underline = None, batchable = 0) :
-        """Add command group `name'."""
-        if index is None :
-            index = c_index = len (self._element)
-        if isinstance (index, (str, unicode)) :
-            c_index = self._group.n_index   (index)
-            index   = self._element.n_index (index)
-        group = self.__class__ ( name           = name
-                               , parent         = self
-                               , change_counter = self.change_counter
-                               , pv_callback    = self.pv_callback
-                               , menu           = add_to_menu
-                               , toolbar        = add_to_toolbar
-                               , batchable      = batchable
-                               , form_dict      = self.form_dict
-                               , appl           = self.appl
-                               )
-        group.precondition     = precondition
-        group.description      = self._cooked_doc (desc, self.form_dict)
-        group.c_index          = c_index
-        self._element.insert   (index, group, delta)
-        self._group.append     (group)
-        if precondition :
-            self._add_precondition (group)
-        return group
-    # end def add_group
-
-    name_clean = re.compile ("[^a-zA-Z_0-9]+")
-
-    def add_command (self, cmd, group = None, add_to_menu = 1, image = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0) :
-        """Add `cmd' to `group'"""
-        cmd._cook_doc (self.form_dict)
-        if group is not None :
-            if isinstance (group, (str, unicode, int)) :
-                group = self._element [group]
-            return group.add_command  ( cmd, None, add_to_menu, image
-                                      , index, delta, underline, accelerator
-                                      )
-        else :
-            if index is None :
-                index = len (self._element)
-            if isinstance (index, (str, unicode)) :
-                index = self._element.n_index (index)
-            self._element.insert   (index, cmd, delta)
-            self._add_precondition (cmd)
-            cmd.index      = index
-            cmd.group_name = self.name
-            cmd.qname      = "%s.%s" % (self.qname, cmd.name)
-            cmd.batchable  = cmd.batchable and (self.batchable or batchable)
-            cmd.appl       = self.appl
-            if not cmd.pv_callback :
-                cmd.pv_callback = self.pv_callback
-            self.root.command [cmd.qname] = cmd
-            if self.parent :
-                self.command [cmd.name] = cmd
-    # end def add_command
-
-    def add_separator (self, name = None, group = None, index = None, delta = 0) :
-        """Add separator to `group'"""
-        pass
-    # end def add_separator
 
     def _add_precondition (self, cmd) :
         p     = cmd.precondition
@@ -419,7 +473,7 @@ class Command_Mgr (_Command_) :
 
     def update_state (self, event = None) :
         """Enable/disable all commands according to their preconditions"""
-        if self.root.changes != int (self.change_counter) :
+        if self.changes != int (self.change_counter) :
             try :
                 for p, p_desc in self._precondition.items () :
                     new_value = (not p) or p ()
@@ -432,26 +486,15 @@ class Command_Mgr (_Command_) :
                             for cmd in p_desc.command :
                                 cmd.disable ()
             finally :
-                self.root.changes = int (self.change_counter)
+                self.changes = int (self.change_counter)
     # end def update_state
-
-    def set_auto_short_cuts (self) :
-        pass
-    # end def set_auto_short_cuts
-
-    def __str__ (self) :
-        return self.name
-    # end def __str__
-
-    def __repr__ (self) :
-        return "<Command_Mgr `%s' at %s>" % (self.name, id (self))
-    # end def __repr__
 
 # end class Command_Mgr
 
-__all__ = ("Command_Mgr", "Command", "_Command_", "Precondition_Violation")
+__all__ = ( "Command_Mgr", "Command_Group", "Command", "_Command_"
+          , "Precondition_Violation"
+          )
 
 if __name__ != "__main__" :
     TFL.UI._Export ("*")
-
 ### __END__ TFL.UI.Command_Mgr
