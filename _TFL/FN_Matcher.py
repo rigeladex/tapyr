@@ -27,18 +27,24 @@
 #
 # Revision Dates
 #    30-Oct-2002 (CT) Creation
+#     6-Mar-2003 (CT) Inherit from `TFL.Meta.Object`
+#     6-Mar-2003 (CT) `FN_Matcher_Grep` added
 #    ««revision-date»»···
 #--
+
+from   _TFL import TFL
+import _TFL._Meta.Object
+import _TFL._Meta.Property
 
 import fnmatch
 import re
 
-class FN_Matcher :
+class FN_Matcher (TFL.Meta.Object) :
     """Filename matcher for regular expressions.
 
        >>> names = ["%s.%s" % (a,b) for a in ("a","b","c","d","e") \
                                     for b in ("x","y","z")]
-       >>> FN_Matcher (re.compile ("[a-c]\.[^x]"))  (names)
+       >>> FN_Matcher (re.compile ("[a-c]\.[^x]")) (names)
        ['a.y', 'a.z', 'b.y', 'b.z', 'c.y', 'c.z']
     """
 
@@ -54,7 +60,17 @@ class FN_Matcher :
         return self.pattern.search (file_name)
     # end def matches
 
-    search = matches
+    search = TFL.Meta.Alias_Property ("matches")
+
+    def _Matcher (self, pattern) :
+        if isinstance (pattern, FN_Matcher) :
+            return pattern
+        elif isinstance (pattern, (str, unicode)) :
+            return FN_Matcher_Glob (pattern)
+        else :
+            return FN_Matcher (pattern)
+    # end def _Matcher
+
 # end class FN_Matcher
 
 class FN_Matcher_Glob (FN_Matcher) :
@@ -93,7 +109,7 @@ class FN_Matchers (FN_Matcher) :
                                     for b in ("x","y","z")]
        >>> qnames = ["/u/v/w/%s.%s" % (a,b) for a in ("a","b","c","d","e") \
                                             for b in ("x","y","z")]
-       >>> FN_Matchers ("*.x", "a.*")  (names)
+       >>> FN_Matchers ("*.x", "a.*") (names)
        ['a.x', 'a.y', 'a.z', 'b.x', 'c.x', 'd.x', 'e.x']
        >>> FN_Matchers  ("*.a") (names)
        []
@@ -109,14 +125,9 @@ class FN_Matchers (FN_Matcher) :
 
     def __init__ (self, * patterns) :
         self.patterns = []
-        add           = self.patterns.append
+        add = self.patterns.append
         for p in patterns :
-            if isinstance (p, FN_Matcher) :
-                add (p)
-            elif isinstance (p, str) :
-                add (FN_Matcher_Glob (p))
-            else :
-                add (FN_Matcher (p))
+            add (self._Matcher (p))
     # end def __init__
 
     def matches (self, file_name) :
@@ -126,8 +137,54 @@ class FN_Matchers (FN_Matcher) :
                 return m
     # end def matches
 
-    search = matches
 # end class FN_Matchers
+
+class FN_Matcher_Grep (FN_Matcher) :
+    """Filename matcher returning all files containing a match to a grep
+       pattern.
+
+       >>> names = ["abcd.x", "abcd.y", "cdef.x", "cdef.y", "rstu.x", "rstu.y"]
+       >>> FN_Matcher_Grep ("cd", "*.x", open = StringIO) (names)
+       ['abcd.x', 'cdef.x']
+       >>> FN_Matcher_Grep ("cd", "*.y", open = StringIO) (names)
+       ['abcd.y', 'cdef.y']
+       >>> FN_Matcher_Grep ("cd", "*", open = StringIO) (names)
+       ['abcd.x', 'abcd.y', 'cdef.x', 'cdef.y']
+       >>> FN_Matcher_Grep ("u", "*", open = StringIO) (names)
+       ['rstu.x', 'rstu.y']
+       >>> FN_Matcher_Grep ("cd", "*.x", predicate = lambda x : not x, open = StringIO) (names)
+       ['rstu.x']
+    """
+
+    def __init__ (self, grep_pattern, name_pattern, predicate = lambda x : x, open = open) :
+        if isinstance (grep_pattern, (str, unicode)) :
+            grep_pattern  = re.compile (grep_pattern)
+        self.grep_pattern = grep_pattern
+        self.pattern      = self._Matcher (name_pattern)
+        self.predicate    = predicate
+        self.open         = open
+    # end def __init__
+
+    def matches (self, file_name) :
+        if self.pattern.matches (file_name) :
+            try :
+                file = self.open (file_name)
+            except IOError :
+                pass
+            else :
+                try :
+                    return self.predicate \
+                        (self.grep_pattern.search (file.read ()))
+                finally :
+                    try :
+                        file.close
+                    except AttributeError :
+                        pass
+                    else :
+                        file.close ()
+    # end def matches
+
+# end class FN_Matcher_Grep
 
 ### unit-test code ############################################################
 
@@ -150,6 +207,5 @@ if __debug__ :
 ### end unit-test code ########################################################
 
 if __name__ != "__main__" :
-    from _TFL import TFL
     TFL._Export ("*")
 ### __END__ FN_Matcher
