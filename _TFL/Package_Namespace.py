@@ -47,6 +47,8 @@
 #    22-Aug-2001 (CT) `transitive` added
 #    20-Sep-2001 (MG) `_import_names`: import name they are defined in the
 #                     modul to be imported or if `getmodule` returns `None`
+#    20-Sep-2001 (CT) Change of MG revoked
+#    20-Sep-2001 (CT) Don't *-import names with leading underscores
 #    ««revision-date»»···
 #--
 
@@ -214,8 +216,10 @@ class Package_Namespace :
                 self._import_names (mod, all_symbols, result, check_clashes)
             else :
                 for s, p in mod.__dict__.items () :
+                    if s.startswith ("_") :
+                        continue
                     p_mod = _inspect.getmodule (p)
-                    if transitive or p_mod == None or p_mod is mod :
+                    if transitive or p_mod is mod :
                         self._import_1 (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
             star    = 1
