@@ -28,12 +28,14 @@
 #
 # Revision Dates
 #    13-Nov-2002 (AGO) Creation
+#    14-Nov-2002 (AGO) `c_code` updated
 #    ««revision-date»»···
 #--
 
 class _TD_CRC_ (object) :
     """Table driven CRC. Base class for all derived CRC classes.
     """
+    
     table       = None
     mask        = 0
     
@@ -78,7 +80,6 @@ class _TD_CRC_ (object) :
         """Add a C-function and the CRC table to `node` calculating the
            same CRC as `cls.crc_bytelist`.
         """
-        ### XXX not tested
         name = cls.__name__
         node.add ( C.New_Line ()
                  , C.Define
@@ -87,8 +88,8 @@ class _TD_CRC_ (object) :
                    )
                  , C.New_Line ()
                  , C.Array ( "ubyte4", "%s_polynome" % name
-                           , len (cls._crc_polynom_table)
-                           , cls._crc_polynom_table
+                           , len (cls.table)
+                           , cls.table
                            , fmt     = "0x%08X"
                            , per_row = 6
                            , static  = 1
@@ -103,8 +104,9 @@ class _TD_CRC_ (object) :
                           )
         loop = C.While    ("len--")
         node.add ( fct)
-        loop.add ( "crc = (((crc) >> 8) "
+        loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
                    "^ crc_polynome [((crc) ^ (*data++)) & 0xff])"
+                 % cls.mask
                  )
         fct.add  ( loop
                  , "return crc"
@@ -128,6 +130,7 @@ class CRC32 (_TD_CRC_) :
        >>> c.crc_byte (x, 100)
        -859434483
     """
+    
     table = \
     ( 0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f
     , 0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988
@@ -173,7 +176,9 @@ class CRC32 (_TD_CRC_) :
     , 0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94
     , 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
     )
+    
     mask  = 0xFFFFFF
+    
 # end class CRC32
 
 __all__ = ["_TD_CRC_", "CRC32"]
