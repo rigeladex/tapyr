@@ -407,7 +407,8 @@ class Command_Group (_Command_, TFL.UI.Mixin) :
             ifacers [n] = i.add_group      (name, index = index, info = info)
             to_do.append  ((_ie, index))
         group = self.Group_Class \
-            ( name          = name
+            ( AC            = self.AC
+            , name          = name
             , interfacers   = ifacers
             , parent        = self
             , batchable     = batchable
