@@ -29,14 +29,18 @@
 #     2-Apr-2005 (MG) Creation
 #     3-Apr-2005 (MG) `Scrolled_Text` added
 #     3-Apr-2005 (MG) `apply_style` and `insert_widget` fixed
+#     5-Apr-2005 (MG) Synthetization of the `Enter_Notify` and `Leave_Notify`
+#                     events for the tags added
 #    ««revision-date»»···
 #--
 
+from   _TFL.predicate           import dict_from_list
 from   _TGL                     import TGL
 import _TGL._TKT._GTK.Text_View
 import _TGL._TKT._GTK.Text_Buffer
 import _TGL._TKT._GTK.Text_Tag
 import _TGL._TKT._GTK.Scrolled_Window
+import _TGL._TKT._GTK.Signal
 import  pango
 
 GTK = TGL.TKT.GTK
@@ -50,7 +54,13 @@ class _GTK_Text_ (GTK.Text_View) :
 
     def __init__ (self, AC = None, editable = True, wc = None, ** kw) :
         self.__super.__init__ (AC = AC, ** kw)
-        self.editable = int (editable)
+        self.editable          = int (editable)
+        self.height_request    = self.width_request = 100
+        self._mouse_focus_tags = {}
+        self.bind_add \
+            (self.TNS.Signal.Motion_Notify, self._synthesize_focus_events)
+        self.bind_add \
+            (self.TNS.Signal.Leave_Notify,  self._mouse_leave_text)
     # end def __init__
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
@@ -78,6 +88,34 @@ class _GTK_Text_ (GTK.Text_View) :
             tab_array.set_tab (pos, pango.TAB_LEFT, tab)
         self.tabs = tab_array
     # end def set_tabs
+
+    def _synthesize_focus_events (self, event) :
+        wtk        = self.wtk_object
+        x, y, mask = wtk.window.get_pointer ()
+        iter = wtk.get_iter_at_location \
+            (* wtk.window_to_buffer_coords
+                (TGL.TKT.GTK.gtk.TEXT_WINDOW_TEXT, x, y)
+            )
+        tags  = dict_from_list (iter.get_tags ())
+        ftags = self._mouse_focus_tags
+        fout  = [tag for tag in ftags if tag not in  tags]
+        fin   = [tag for tag in tags  if tag not in ftags]
+        self._emit_signal (self.TNS.Signal.Leave_Notify, fout)
+        self._emit_signal (self.TNS.Signal.Enter_Notify, fin)
+        self._mouse_focus_tags = tags
+    # end def _synthesize_focus_events
+
+    def _mouse_leave_text (self, event) :
+        self._emit_signal \
+            (self.TNS.Signal.Leave_Notify, self._mouse_leave_text.iterkeys ())
+        self._mouse_focus_tags = {}
+    # end def _mouse_leave_text
+
+    def _emit_signal (self, signal, tags) :
+        for tag in tags :
+            if tag.get_data ("ktw_object").emit (signal, None) :
+                break
+    # end def _emit_signal
 
     #### we must override this function because we don't want the
     #### `apply_style` Function from the `Text_View` widget

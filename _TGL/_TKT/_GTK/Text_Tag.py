@@ -30,6 +30,7 @@
 #     2-Apr-2005 (MG) `Styler` added
 #     2-Apr-2005 (MG) `_sty_map` removed
 #     5-Apr-2005 (MG) New signals added
+#     5-Apr-2005 (MG) `_correct_indent` fixed
 #    ««revision-date»»···
 #--
 
@@ -70,18 +71,19 @@ class Text_Tag (GTK.Object) :
         def _correct_left_margin (self, value) :
             indent   = self.style.lmargin1 - value
             if indent < 0 :
-                return value + indent
+                value += indent
             return value
         # end def _correct_left_margin
 
         def _correct_indent (self, value) :
-            return self.style.lmargin2 - value
+            return value - self.style.lmargin2
         # end def _correct_indent
 
         _opt_mappers    = dict \
             ( lmargin1  = _correct_indent
             , lmargin2  = _correct_left_margin
             )
+
     # end class Styler
 
     GTK_Class        = GTK.gtk.TextTag
