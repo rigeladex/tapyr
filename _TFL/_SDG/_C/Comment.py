@@ -32,6 +32,8 @@
 #    11-Aug-2004 (MG) `Documentation_Block` added
 #    12-Aug-2004 (MG) `cgi` set to None
 #    12-Aug-2004 (MG) `textwrap` added and new `comp_prec` format used
+#    13-Aug-2004 (MG) formats changed (use new attribte `ht_width` to ensure
+#                     alignment)
 #    ««revision-date»»···
 #--
 
@@ -77,7 +79,8 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     h_format = c_format  = \
         ("""%(:head=/%("*" * stars)s """
          """¡tail= %("*" * stars)s/"""
-         """:@_description:)-{output_width - indent_anchor - stars*2 - 4}s"""
+         """:@_description:)"""
+            """-{output_width - indent_anchor - ht_width - stars*2 - 4}s"""
         )
 
     def _convert_c_comment (self, name, value, ** kw) :

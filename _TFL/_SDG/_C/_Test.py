@@ -28,6 +28,7 @@
 # Revision Dates
 #    10-Aug-2004 (MG) Creation
 #    11-Aug-2004 (MG) Creation continued
+#    13-Aug-2004 (MG) Testcase update (new features in C-document)
 #    ««revision-date»»···
 #--
 
@@ -38,15 +39,16 @@
 int test = 2;
 >>> v = C.Var (name = "test", type = "short", description = "desc")
 >>> print NL.join (v.as_c_code ())
-short test; /* desc                                                                   */
+short test;
+    /* desc                                                                  */
 
 >>> c = C.Comment ("This is a comment", stars = 2)
 >>> print NL.join (c.as_c_code ())
-/** This is a comment                                                      **/
+/** This is a comment                                                       **/
 >>> c = C.Comment ("And now a multi line", "comment with 3 stars", stars = 3)
 >>> print NL.join (c.as_c_code ())
-/*** And now a multi line                                                   ***/
-/*** comment with 3 stars                                                   ***/
+/*** And now a multi line                                                  ***/
+/*** comment with 3 stars                                                  ***/
 
 >>> f = C.Function ("int", "func", "int foo, short bar")
 >>> print NL.join (f.as_c_code ()).strip ()
@@ -66,9 +68,9 @@ int func
     ( int foo
     , short bar
     )
-    /*** A function description                                                 ***/
+    /*** A function description                                            ***/
 {
-    /*** A function explanation                                                 ***/
+    /*** A function explanation                                            ***/
 }
 
 >>> f = C.Function ( "int", "func", "")
@@ -204,27 +206,27 @@ struct _my_struct_stand
 ...              )
 >>> print NL.join ([l.rstrip () for l in a1.as_c_code ()])
 static int ar [2] =
-  { 0 /* [0]                                                                    */
-  , 1 /* [1]                                                                    */
+  { 0 /* [0]                                                 */
+  , 1 /* [1]                                                 */
   };
 >>> print NL.join ([l.rstrip () for l in a2.as_c_code ()])
 TDFT_Sign_Mask fubars [2] =
   {
-    { 57 /* bit_mask                                                               */
-    , 137 /* extend_mask                                                            */
-    } /* [0]                                                                    */
+    { 57 /* bit_mask                               */
+    , 137 /* extend_mask                           */
+    } /* [0]                                       */
   ,
-    { 142 /* bit_mask                                                               */
-    , -1 /* extend_mask                                                            */
-    } /* [1]                                                                    */
+    { 142 /* bit_mask                                */
+    , -1 /* extend_mask                              */
+    } /* [1]                                         */
   };
 
 >>> d = dict (bit_mask = 42, extend_mask = 24)
 >>> v = C.Var (name = "stuct_var", type = "TDFT_Sign_Mask", init_dict = d)
 >>> print NL.join ([l.rstrip () for l in v.as_c_code ()])
 TDFT_Sign_Mask stuct_var =
-  { 42 /* bit_mask                                                               */
-  , 24 /* extend_mask                                                            */
+  { 42 /* bit_mask                                    */
+  , 24 /* extend_mask                                 */
   };
 
 >>> a = C.Array ("int", "int_array", bounds = 2)
@@ -238,12 +240,12 @@ typedef struct _test_struct
   } my_type;
 
 
->>> d = C.Macro ("define foo", None, "line1", "line2")
+>>> d = C.Macro ("define foo", "", "line1", "line2")
 >>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
 #define foo  line1 \\
 line2
 
->>> d = C.Define ("define foo", "", "line1")
+>>> d = C.Define ("define foo", None, "line1")
 >>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
 #define define foo () line1
 
@@ -268,12 +270,12 @@ line3 long
 #include "define.h"
 
 >>> i = C.Macro_If ( "cond1"
-...                , C.Define ("path", None, "then")
+...                , C.Define ("path", "", "then")
 ...                , C.Macro_Elseif
 ...                    ( "cond2"
-...                    , C.Macro ("define path", None, "elseif")
+...                    , C.Macro ("define path", "", "elseif")
 ...                    )
-...                , C.Macro_Else (C.Define ("path", None, "else"))
+...                , C.Macro_Else (C.Define ("path", "", "else"))
 ...                )
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
 #if cond1
@@ -284,13 +286,13 @@ line3 long
   #define path  else
 #endif /* if cond1 */
 
->>> i = C.Macro_Ifdef ("cond1", C.Define ("path", None, "then"))
+>>> i = C.Macro_Ifdef ("cond1", C.Define ("path", "", "then"))
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
 #ifdef cond1
   #define path  then
 #endif /* ifdef cond1 */
 
->>> i = C.Macro_Ifndef ("cond1", C.Define ("path", None, "then"))
+>>> i = C.Macro_Ifndef ("cond1", C.Define ("path", "", "then"))
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
 #ifndef cond1
   #define path  then

@@ -47,6 +47,16 @@
 #    13-Aug-2004 (CT) `add_indent` added to `Multi_Line_Formatter.__call__`
 #                     and used to implement `anchor`ed recursions
 #    13-Aug-2004 (CT) Sequence of class declarations changed
+#    13-Aug-2004 (MG) `_print` and `PRINT` added for debugging (should be
+#                     removed once we have finished the implemetation)
+#    13-Aug-2004 (MG) `Multi_Line_Formatter.__call__`: update of the
+#                     `indent_anchor` changed and moved to the end of the for
+#                     loop
+#    13-Aug-2004 (MG) `_Recursive_Formatter_.__class__`: `ht_width` added to
+#                     the context
+#    13-Aug-2004 (MG) `_Recursive_Formatter_Method_.__iter__`,
+#                     `_Recursive_Formatter_Node_.__iter__` pass `ht_width`
+#                     to the method/recurse function
 #    ««revision-date»»···
 #--
 
@@ -57,6 +67,20 @@ import _TFL.Generators
 
 from   Record             import Record
 from   Regexp             import *
+import sys
+from   predicate import relax
+
+def _print (* args) :
+    for l in args :
+        if not isinstance (l, str) :
+            l = str (l)
+        sys.stdout.write(l)
+        sys.stdout.write(" ")
+    sys.stdout.write ("\n")
+# end def _print
+
+PRINT = _print
+PRINT = relax
 
 class _Formatter_ (TFL.Meta.Object) :
     """Root class of SDG formatters"""
@@ -106,11 +130,9 @@ class _Recursive_Formatter_ (TFL.Meta.Object) :
             prec        = _format.prec % context
             _format     = "%%%s%s%s" % (_format.flags, prec, _format.type)
             recurse_kw  ["format_prec"] = float (prec)
-        self.format     = \
-            ( self.head_form % context
-            + _format
-            + self.tail_form % context
-            )
+        head, tail      = self.head_form % context, self.tail_form % context
+        self.format     = head + _format + tail
+        context.locals ["ht_width"] = len (head) + len (tail)
         if self.rec_form :
             self.recurse_kw ["format_name"] = self.rec_form
         return self
@@ -146,7 +168,10 @@ class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
 
     def __iter__ (self) :
         result = getattr (self.node, self.key) \
-            (indent_offset = self.context.indent_anchor, ** self.recurse_kw)
+            ( indent_offset = self.context.indent_anchor
+            , ht_width      = self.context.ht_width
+            , ** self.recurse_kw
+            )
         if result is not None :
             format = self.format
             sep    = ""
@@ -167,17 +192,21 @@ class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
         context  = self.context
         format   = self.format
         recurser = context.recurser
-        ioffset  = context.indent_anchor
         rkw      = self.recurse_kw
         sep      = ""
         nodes    = getattr (self.node, self.key)
+        PRINT (self, rkw)
         if nodes is not None :
             if isinstance (nodes, TFL.SDG.Node) :
                 nodes = (nodes, )
             for x in nodes :
                 if x is not None :
                     meth = getattr (x, recurser)
-                    for y in meth (indent_offset = ioffset, ** rkw) :
+                    for y in meth \
+                        ( indent_offset = context.indent_anchor
+                        , ht_width      = context.ht_width
+                        , ** rkw
+                        ) :
                         yield sep + (format % y)
                         sep = ""
                     sep = self.sep
@@ -274,13 +303,13 @@ class Multi_Line_Formatter (_Formatter_) :
 
     def __call__ (self, node, context) :
         last       = ""
+        PRINT (self, node.name, context.indent_anchor)
         for f in self.formatters :
             lines      = TFL.Look_Ahead_Gen (f (node, context))
             i          = 0
             add_indent = len (last)
             for l in lines :
-                context.locals ["indent_anchor"] = \
-                    len (last) + context.locals ["indent_anchor"]
+                PRINT ("Lines: :%s::%s:" % (last, l),  context.indent_anchor)
                 if i > 0 and f.anchor :
                     last = "%s%s" % (" " * add_indent, last)
                 if not lines.is_finished :
@@ -289,6 +318,8 @@ class Multi_Line_Formatter (_Formatter_) :
                 else :
                     last = "%s%s" %  (last, l % context)
                 i += 1
+                context.locals ["indent_anchor"] = \
+                    len (last) + context.locals ["indent_offset"]
         if last :
             yield last
     # end def __call__

@@ -45,6 +45,7 @@
 #    12-Aug-2004 (MG) `default_cgi` added
 #    12-Aug-2004 (MG) `add`: unnest pass childrens (backward compatibility)
 #    12-Aug-2004 (CT) `indent_anchor` added
+#    13-Aug-2004 (MG) `formatted` Parameter `ht_width` added
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,7 @@ class Node :
         self.parent = None
     # end def destroy
 
-    def formatted (self, format_name, base_indent = None, output_width = 79, indent_offset = 0, ** kw) :
+    def formatted (self, format_name, base_indent = None, output_width = 79, indent_offset = 0, ht_width = 0, ** kw) :
         if base_indent is None :
             base_indent = self.base_indent
         recurser   = "formatted"
