@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
+#    30-Jul-2004 (CT) `Maybe_Const` factored
+#    30-Jul-2004 (CT) `Multiple_Var` added
 #    ««revision-date»»···
 #--
 
@@ -35,7 +37,8 @@ import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Expression
 import _TFL._SDG._C.Type
 
-class Var ( TFL.SDG.C.Maybe_Extern
+class Var ( TFL.SDG.C.Maybe_Const
+          , TFL.SDG.C.Maybe_Extern
           , TFL.SDG.C.Maybe_Static
           , TFL.SDG.C.Maybe_Volatile
           , TFL.SDG.Leaf
@@ -43,8 +46,7 @@ class Var ( TFL.SDG.C.Maybe_Extern
     """Model C variables"""
 
     init_arg_defaults    = dict \
-        ( const          = None
-        , struct         = None
+        ( struct         = None
         , type           = ""
         , init           = None
         , init_dict      = {}
@@ -52,12 +54,10 @@ class Var ( TFL.SDG.C.Maybe_Extern
         )
 
     _autoconvert         = dict \
-        ( const          = lambda s, k, v : v and "const "   or None
-        , init           = lambda s, k, v
-              : self._convert
-                    ( isinstance (v, int) and str (v) or v
-                    , TFL.SDG.C.Expression
-                    )
+        ( init           = lambda s, k, v
+              : s._convert ( isinstance (v, int) and str (v) or v
+                           , TFL.SDG.C.Expression
+                           )
         , struct         = lambda s, k, v : v and "struct "   or None
         , type           = lambda s, k, v : s._convert (v, TFL.SDG.C.Type)
         )
@@ -71,18 +71,53 @@ class Var ( TFL.SDG.C.Maybe_Extern
          """%(::.volatile:)s"""
          """%(::.const:)s"""
          """%(::.struct:)s"""
-         """%(::*type:)s %(name)s """
+         """%(::*type:)s %(name)s"""
         )
-    h_format             = _common_format + "%(trailer)s"
-    c_format             = "".join \
+
+    h_format             = "".join \
         ( ( _common_format
-          , """%(:head= = :.init:)s"""
-          ### XXX , """%(:head= = :*init_dict:)s"""
           , "%(trailer)s"
           )
         )
 
+    c_format             = "".join \
+        ( ( _common_format
+          , """%(:head= = :.*init:)s"""
+          ### XXX , """%(:head= = :*init_dict:)s"""
+          , """%(trailer)s"""
+          )
+        )
+
 # end class Var
+
+class Multiple_Var (Var) :
+    """Declaration for multiple variables"""
+
+    init_arg_defaults    = dict \
+        ( var_names      = ""
+        )
+
+    rest_args            = "var_names"
+
+    h_format             = "".join \
+        ( ( Var._common_format
+          , """%(:front=, :._var_names:)s"""
+          , """%(trailer)s"""
+          )
+        )
+
+    c_format             = "".join \
+        ( ( Var._common_format
+          , """%(:front=, :._var_names:)s"""
+          , """%(:head= = :*init:)s"""
+          ### XXX , """%(:head= = :*init_dict:)s"""
+          , """%(trailer)s"""
+          )
+        )
+
+    _var_names           = property (lambda s : ", ".join (s.var_names))
+
+# end class Multiple_Var
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*")

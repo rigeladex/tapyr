@@ -30,6 +30,7 @@
 #    26-Jul-2004 (CT) Creation continued
 #    27-Jul-2004 (CT) Call to `_autoconvert` corrected (`self` passed)
 #    28-Jul-2004 (CT) `front_args` and `rest_args` added to `__init__`
+#    30-Jul-2004 (CT) `base_indent2` added
 #    ««revision-date»»···
 #--
 
@@ -211,6 +212,7 @@ class Node :
                 setattr (self, k, v)
             else :
                 kw_err [k] = v
+        self.base_indent2 = self.base_indent * 2
         if kw_err :
             print self.__class__, self.init_arg_defaults
             raise TypeError, "unexpected keyword arguments: %s" % kw_err

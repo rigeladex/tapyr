@@ -36,13 +36,28 @@ import _TFL._SDG._C.Comment
 import time
 
 """
-from   _TFL._SDG._C.Module import *
+from   _TFL._SDG._C.Module    import *
 from   _TFL._SDG._C.Statement import *
-from   _TFL._SDG._C.Function import *
+from   _TFL._SDG._C.Function  import *
+from   _TFL._SDG._C.Var       import *
+from   _TFL._SDG._C.Typedef   import *
+from   _TFL._SDG._C.Block     import *
+from   _TFL._SDG._C.If_Stmt import *
 m = Module (name = "test", header_comment = "A new comment", author = "FooBar")
 m.add ("x = 2;")
-m.add (Stmt_Group ("y = 42; ", "z = 0"))
-m.add (Function ("int", "bar", "void"))
+m.add (Var ("int", "x", init="0"))
+m.add (Multiple_Var ("float", "y", "z", "u", init="0.0"))
+m.add (Stmt_Group ("y = 42; ", "z = 0", cgi = TFL.SDG.C.Node.Tail))
+m.add ( Function ( "int", "bar", "void"
+                 , "froppel ()"
+                 , Block ("foobar ()", "zoppel ()")
+                 , If ( "fizzle==42", "x=2; y = 25"
+                      , Elseif ("x==2", "frupple", "badauz()")
+                      , Else   ("frupple", "badauz()")
+                      )
+                 )
+      )
+m.add (Typedef  ("long signed int", "sint32"))
 m.add (Function ("int", "baz", "int x, int y"))
 print "\n".join (m.as_c_code ())
 print "\n".join (m.as_h_code ())
@@ -79,7 +94,6 @@ class Module (TFL.SDG.C._Scope_) :
         %(::*header_comment:)s
         %(::*description:)s
         %(::*explanation:)s
-
     """.strip ()
     _format_children     = """
         %(::*incl_children:)s
@@ -89,7 +103,6 @@ class Module (TFL.SDG.C._Scope_) :
         %(::*tail_children:)s
     """
     c_format             = _format_head + """
-
     """ + _format_children
 
     h_format             = _format_head + """
@@ -97,8 +110,7 @@ class Module (TFL.SDG.C._Scope_) :
         #ifndef _%(name)s_h_
         #define _%(name)s_h_ 1
 
-        """ + _format_children + """
-        #endif /* _%(name)s_h_ */
+        """ + _format_children + """#endif /* _%(name)s_h_ */
     """
 
     def __init__ (self, * children, ** kw) :

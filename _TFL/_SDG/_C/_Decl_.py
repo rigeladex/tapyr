@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    28-Jul-2004 (CT) Creation
+#    30-Jul-2004 (CT) `Decl_Group` added
+#    30-Jul-2004 (CT) `Maybe_Const` added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +41,16 @@ class _Decl_ (TFL.SDG.C.Node) :
     cgi                  = TFL.SDG.C.Node.Decl
 
 # end class _Decl_
+
+class Maybe_Const (_Decl_) :
+    """Mixin for node types that may be declared const"""
+
+    init_arg_defaults    = dict (const = None)
+    _autoconvert         = dict \
+        ( const          = lambda s, k, v : v and "const "    or None
+        )
+
+# end class Maybe_Const
 
 class Maybe_Extern (_Decl_) :
     """Mixin for node types that may be declared extern"""
@@ -69,6 +81,23 @@ class Maybe_Volatile (_Decl_) :
         )
 
 # end class Maybe_Volatile
+
+class Decl_Group (_Decl_, TFL.SDG.C._Scope_) :
+    """Group of C declarations not enclosed in a block."""
+
+    scope                = TFL.SDG.C.C
+    star_level           = 2
+    h_format = c_format  = """
+        %(::*description:)s
+        %(::*explanation:)s
+        %(::*incl_children:)s
+        %(::*decl_children:)s
+        %(::*head_children:)s
+        %(::*body_children:)s
+        %(::*tail_children:)s
+    """
+
+# end class Decl_Group
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*", "_Decl_")

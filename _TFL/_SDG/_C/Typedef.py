@@ -20,59 +20,43 @@
 #
 #++
 # Name
-#    TFL.SDG.C.Statement
+#    TFL.SDG.C.Typedef
 #
 # Purpose
-#    Model simple statements in the code in a C file
+#    Model C typedef declarations
 #
 # Revision Dates
-#    27-Jul-2004 (MG) Creation
-#    28-Jul-2004 (CT) Creation continued
+#    30-Jul-2004 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 
-from   Regexp            import *
-
-class _Statement_ (TFL.SDG.C.Node) :
-    """Model simple statement"""
-
-    cgi                  = TFL.SDG.C.Node.Body
-    trailing_semicol_pat = Regexp (r"""; *$""")
-    scope                = TFL.SDG.C.C
-
-# end class _Statement_
-
-class Statement (TFL.SDG.Leaf, _Statement_) :
-    """Generic C statement"""
+class Typedef (TFL.SDG.C.Maybe_Const, TFL.SDG.Leaf) :
+    """Model C typedef declarations"""
 
     init_arg_defaults    = dict \
-        ( code           = ""
+        ( type           = ""
         )
 
     _autoconvert         = dict \
-        ( code           =
-            lambda s, k, v : s.trailing_semicol_pat.sub ("", v)
+        ( type           = lambda s, k, v : s._convert (v, TFL.SDG.C.Type)
         )
 
-    front_args           = ("code", )
+    front_args           = ("type", "name")
 
-    h_format = c_format  = """%(code)s; """
+    _name_or_type        = property (lambda s : s.name or s.type.name)
 
-# end class Statement
+    h_format = c_format  = "".join \
+        ( ( """typedef """
+          , """%(::.const:)s"""
+          , """%(::*type:)s %(::._name_or_type:)s; """
+          )
+        )
 
-Stmt = Statement
-
-class Stmt_Group (TFL.SDG.C._Scope_, _Statement_) :
-    """Group of C statements not enclosed in a block."""
-
-    star_level           = 2
-    h_format = c_format  = """%(::*children:)s"""
-
-# end class Stmt_Group
+# end class Typedef
 
 if __name__ != "__main__" :
-    TFL.SDG.C._Export ("*", "_Statement_", "Stmt")
-### __END__ TFL.SDG.C.Statement
+    TFL.SDG.C._Export ("*")
+### __END__ TFL.SDG.C.Typedef

@@ -53,8 +53,8 @@ class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
 
     _h_format = _c_format  = \
         ( """%(::*return_type:)s %(name)s """
-              """%(:front=%('''\\n''')s%(base_indent)s( """
-                """¡rear=%('''\\n''')s%(base_indent)s)"""
+              """%(:front=%('''\\n''')s%(base_indent2)s( """
+                """¡rear=%('''\\n''')s%(base_indent2)s)"""
                 """¡empty=(void)"""
                 """:*arg_list"""
                 """:)s"""
@@ -80,23 +80,27 @@ class Fct_Decl (_Function_) :
 class Function (_Function_, TFL.SDG.C._Scope_) :
     """C function definition"""
 
+    cgi                  = TFL.SDG.C.Node.Body
     _mod_format          = """%(::.static:)s%(::.extern:)s"""
     h_format             = "".join \
         ( ( _mod_format
           , _Function_._h_format
-          , ";"
+          , """;
+               >
+          """
           )
         )
     c_format             = "".join \
         ( ( _mod_format
           , _Function_._c_format
           , """
-                >{
+                {
                 >>%(::*decl_children:)s
                 >>%(::*head_children:)s
                 >>%(::*body_children:)s
                 >>%(::*tail_children:)s
-                >};
+                }
+                >
             """
           )
         )

@@ -43,7 +43,8 @@ class Arg_List (TFL.SDG.C.Node) :
 
     children_group_names = (Decl, ) = range (1)
 
-    h_format = c_format  = """%(:sep=%(base_indent)s, :*decl_children:)s"""
+    h_format = c_format  = \
+        """%(:sep=%(base_indent2)s, :*decl_children:)s"""
 
     arg_pat              = Regexp \
         ( r"^"
@@ -59,12 +60,6 @@ class Arg_List (TFL.SDG.C.Node) :
         children = self._convert_children (children)
         self.__super.__init__ (* children, ** kw)
     # end def __init__
-
-    def add (self, * children) :
-        """Append all `children' to `self.children'"""
-        print self.children_groups
-        return self.__super.add (* children)
-    # end def add
 
     def _convert_children (self, children) :
         if len (children) == 1 and isinstance (children [0], str) :
