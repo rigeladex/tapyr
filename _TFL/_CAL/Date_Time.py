@@ -27,11 +27,11 @@
 #
 # Revision Dates
 #    15-Oct-2004 (CT) Creation
+#    17-Oct-2004 (CT) Adapted to changes in `_DTW_` and `Delta`
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
-from   _TFL._CAL.Delta         import Delta
 import _TFL._CAL.Date
 import _TFL._CAL.Time
 
@@ -40,6 +40,7 @@ import  datetime
 class Date_Time (TFL.CAL.Date, TFL.CAL.Time) :
     """Model a (gregorian) date plus time.
 
+       >>> from _TFL._CAL.Delta import Date_Time_Delta as Delta
        >>> d = Date_Time (2004, 10, 15, 16, 03, 14)
        >>> print d
        2004-10-15 16:03:14
@@ -59,8 +60,8 @@ class Date_Time (TFL.CAL.Date, TFL.CAL.Time) :
        >>> d1 += 1
        >>> id (d1) == id (d2)
        False
-       >>> d2 - d1
-       datetime.timedelta(-1)
+       >>> print d2 - d1
+       -1 day, 0:00:00
     """
 
     _Type            = datetime.datetime
@@ -68,6 +69,8 @@ class Date_Time (TFL.CAL.Date, TFL.CAL.Time) :
         TFL.CAL.Date._init_arg_names + TFL.CAL.Time._init_arg_names
     _kind            = "datetime"
     _timetuple_slice = lambda s, tt : tt [:6] + (0, )
+
+    from _TFL._CAL.Delta import Date_Time_Delta as Delta
 
 # end class Date_Time
 

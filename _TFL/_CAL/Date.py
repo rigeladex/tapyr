@@ -28,18 +28,21 @@
 # Revision Dates
 #    14-Oct-2004 (CT) Creation
 #                     (derived from MG's TFL.CAL.Date_Time and CT's Date_Time)
+#    17-Oct-2004 (CT) `__add__` and `__sub__` changed to use `Delta.dt_op`
+#    17-Oct-2004 (CT) Doctest for `Month_Delta` added
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
-from   _TFL._CAL.Delta         import Delta
 import _TFL._CAL._DTW_
 
-import  datetime
+import datetime
+import operator
 
 class Date (TFL.CAL._DTW_) :
     """Model a (gregorian) date.
 
+       >>> from _TFL._CAL.Delta import Date_Delta as Delta
        >>> d = Date (2004, 10, 14)
        >>> print d
        2004-10-14
@@ -51,10 +54,21 @@ class Date (TFL.CAL._DTW_) :
        >>> d = d - 1
        >>> d.year, d.month, d.day, d.date, d.week, d.weekday, d.ordinal
        (2004, 10, 10, datetime.date(2004, 10, 10), 41, 6, 731864)
+       >>> from _TFL._CAL.Delta import Month_Delta
+       >>> print d, d + Month_Delta (1)
+       2004-10-10 2004-11-10
+       >>> print d, d + Month_Delta (3)
+       2004-10-10 2005-01-10
+       >>> print d, d + Month_Delta (12)
+       2004-10-10 2005-10-10
+       >>> print d, d + Month_Delta (-1)
+       2004-10-10 2004-09-10
+       >>> print d, d + Month_Delta (-12)
+       2004-10-10 2003-10-10
        >>> d1 = Date (2004, 10, 14)
        >>> d2 = Date (2004, 10, 16)
-       >>> d1 - d2
-       datetime.timedelta(-2)
+       >>> print d1 - d2
+       -2 days, 0:00:00
     """
 
     months = \
@@ -83,6 +97,8 @@ class Date (TFL.CAL._DTW_) :
     month            = property (lambda s : s._body.month)
     day              = property (lambda s : s._body.day)
 
+    from _TFL._CAL.Delta import Date_Delta as Delta
+
     def __getattr__ (self, name) :
         if name == "month_name" :
             result = self.month_name = self.strftime ("%b")
@@ -103,17 +119,17 @@ class Date (TFL.CAL._DTW_) :
 
     def __add__ (self, rhs) :
         delta  = self._delta (rhs)
-        result = self._body + delta
-        if isinstance (delta, TFL.CAL.Delta) :
-            result = self.__class__ (** {self._kind : result})
-        return result
+        return delta.dt_op (self, operator.add)
     # end def __add__
 
     def __sub__ (self, rhs) :
-        delta  = self._delta (rhs)
-        result = self._body - delta
-        if isinstance (delta, TFL.CAL.Delta) :
-            result = self.__class__ (** {self._kind : result})
+        delta = self._delta (rhs)
+        if isinstance (delta, TFL.CAL._Delta_) :
+            result = delta.dt_op (self, operator.sub)
+        else :
+            if hasattr (rhs, "_body") :
+                rhs = rhs._body
+            result = self.Delta (** {self.Delta._kind : self._body - rhs})
         return result
     # end def __sub__
 
