@@ -14,6 +14,7 @@
 #     3-Mar-2005 (RSC) added show
 #    10-Mar-2005 (CT)  Don't drop `cb_destroy` on the floor
 #    10-Mar-2005 (CT)  s/cb_destroy/cb_delete/
+#    10-Mar-2005 (CT)  Use `CTK.C_Toplevel` instead of `CTK.Toplevel`
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,7 @@ class Toplevel (TFL.TKT.Mixin) :
         , **kw
         ) :
         self.__super.__init__ (AC = AC)
-        self.wtk_widget = self.exposed_widget = CTK.Toplevel \
+        self.wtk_widget = self.exposed_widget = CTK.C_Toplevel \
             (destroy_cmd = cb_delete)
     # end def __init__
 
