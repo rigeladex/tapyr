@@ -20,26 +20,26 @@
 #
 #++
 # Name
-#    TOM.TKT.Tk.__init__
+#    TFL.TKT.Tk.__init__
 #
 # Purpose
-#    Package providing Tk toolkit support for TOM
+#    Package providing Tk toolkit support for TFL
 #
 # Revision Dates
-#    14-Dec-2004 (CT) Creation
+#    12-Jan-2005 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace
-from   _TOM                   import TOM
-import _TOM._TKT
+from   _TFL                   import TFL
+import _TFL._TKT
 
 Tk = Package_Namespace ()
-TOM.TKT._Export ("Tk")
+TFL.TKT._Export ("Tk")
 
-import _TOM._UI
-TOM.UI.set_TKT (Tk)
+import _TFL._UI
+TFL.UI.set_TKT (Tk)
 
 del Package_Namespace
 
-### __END__ TOM.TKT.Tk.__init__
+### __END__ TFL.TKT.Tk.__init__
