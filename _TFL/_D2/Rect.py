@@ -43,6 +43,26 @@ import  math
 class Rect (TFL.Meta.Object) :
     """Model an axes-parallel rectangle in 2D space.
 
+
+       >>> def rect_points (r) :
+       ...     for p in sorted (r.corner_dict.keys ()) :
+       ...         print "%-20s : %s" % (p, getattr (r, p))
+       >>> def rect_sides (r) :
+       ...     for s in sorted (r.side_dict.keys ()) :
+       ...         print "%-20s : %s" % (s, getattr (r, s))
+       >>> def connection_points (r) :
+       ...     P = D2.Point
+       ...     for p, off in ( (r.top_left,     P ( 0.0, -0.5))
+       ...                   , (r.top_left,     P (-0.5,  0.0))
+       ...                   , (r.top_right,    P ( 0.0, -0.5))
+       ...                   , (r.top_right,    P ( 0.5,  0.0))
+       ...                   , (r.bottom_left,  P ( 0.0,  0.5))
+       ...                   , (r.bottom_left,  P (-0.5,  0.0))
+       ...                   , (r.bottom_right, P ( 0.0,  0.5))
+       ...                   , (r.bottom_right, P ( 0.5,  0.0))
+       ...                   ) :
+       ...         q = p + off
+       ...         print "%s : %s" % (q, r.connection_point (q, r.center))
        >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (2.0, 1.0))
        >>> rect_points (q)
        bottom_left          : (1.0, 2.0)

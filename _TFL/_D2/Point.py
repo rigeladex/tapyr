@@ -34,6 +34,7 @@
 #    24-Mar-2003 (CT) `__radd__` and `__rsub__` added
 #    24-Mar-2003 (CT) `__rmul__` changed to alias of `__mul__`
 #    24-Mar-2003 (CT) `__rdiv__` removed
+#     5-Apr-2005 (CT) `import _TFL._D2.Rect` added to doctest of `R_Point_R`
 #    ««revision-date»»···
 #--
 
@@ -270,6 +271,7 @@ class R_Point_L (_R_Point_) :
 class R_Point_R (_R_Point_) :
     """Point positioned relative to a rectangle.
 
+       >>> import _TFL._D2.Rect
        >>> r = D2.Rect   (Point (0, 10), Point (20, 0))
        >>> p = R_Point_R (r, D2.Rect.Center_Top, Point (0, 2))
        >>> print r, p

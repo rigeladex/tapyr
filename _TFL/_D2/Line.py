@@ -31,6 +31,7 @@
 #    11-Jun-2003 (CT)  s/!= None/is not None/
 #    11-Jun-2004 (GKH) Deprecation warning removed (issue 10140)
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
+#     5-Apr-2005 (CT)  Breakage in unit-test introduced by GKH removed
 #    ««revision-date»»···
 #--
 
@@ -92,7 +93,7 @@ class Line (TFL.Meta.Object) :
        1
        >>> "%5.2f" % l.length ()
        ' 7.07'
-       >>> l.distance (D2.Point (5.0, 0.0)) - (l.length () // 2) < 1.e-12
+       >>> l.distance (D2.Point (5.0, 0.0)) - (l.length () / 2) < 1.e-12
        1
        >>> l.point (0.5)
        Point (2.5, 2.5)
