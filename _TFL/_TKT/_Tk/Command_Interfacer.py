@@ -46,6 +46,8 @@
 #    18-Jan-2005 (CT) Derive from `TFL.TKT.Mixin` instead of `TFL.Meta.Object`
 #    26-Jan-2005 (CT) s/as_check_button/state_var/
 #    26-Jan-2005 (CT) `Boolean_Variable` exported
+#    26-Jan-2005 (CT) `CI_Menu.add_group` changed to return a `CI_Menu`
+#                     instead of a `CTK.C_Menu`
 #    ««revision-date»»···
 #--
 
@@ -216,8 +218,8 @@ class CI_Menu (_CI_Widget_) :
 
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
-        result = CTK.C_Menu \
-            ( self.widget
+        result = CI_Menu \
+            ( self.AC, self.widget
             , name       = name.lower ()
             , balloon    = self.widget.balloon
             , help       = self.widget.help_widget
@@ -226,7 +228,7 @@ class CI_Menu (_CI_Widget_) :
         self.widget.insert_cascade \
             ( index + delta + 1
             , label      = name
-            , menu       = result
+            , menu       = result.widget
             , underline  = kw.get ("underline")
             )
         return result
@@ -389,5 +391,6 @@ class _CI_Toolbar_Group_ (_CI_) :
 # end class _CI_Toolbar_Group_
 
 if __name__ != "__main__" :
-    TFL.TKT.Tk._Export ("*", "Boolean_Variable")
+    TFL.TKT.Tk._Export ("*")
+    TFL.TKT.Tk.Boolean_Variable = CTK.Boolean_Variable
 ### __END__ TFL.TKT.Tk.Command_Interfacer

@@ -112,6 +112,7 @@ from   predicate      import *
 
 import _TFL._Meta.Object
 import _TFL._UI
+import _TFL._UI.Mixin
 
 import re
 import traceback
@@ -324,14 +325,14 @@ class _Command_Getattr_ (TFL.Meta.Object) :
 
 # end class _Command_Getattr_
 
-class Command_Group (_Command_) :
+class Command_Group (_Command_, TFL.UI.Mixin) :
     """Manage a group of commands of an interactive application"""
 
     name_clean = re.compile (r"[^a-zA-Z_0-9]+")
     nam_pat    = re.compile (r"[Tt]his (command )?group")
 
-    def __init__ (self, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
-        self.__super.__init__ ()
+    def __init__ (self, AC, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
+        self.__super.__init__ (AC = AC)
         self.cmd            = _Command_Getattr_ (self)
         self.name           = self.qname = name
         self.interfacers    = interfacers
@@ -492,7 +493,7 @@ Command_Group.Group_Class = Command_Group
 class Command_Mgr (Command_Group) :
     """Manage toplevel group of commands of an interactive application"""
 
-    def __init__ (self, change_counter, interfacers, pv_callback = None, name = "", batch_mode = False, form_dict = {}, appl = None) :
+    def __init__ (self, AC, change_counter, interfacers, pv_callback = None, name = "", batch_mode = False, form_dict = {}, appl = None) :
         self.root           = self
         self.change_counter = change_counter
         self.pv_callback    = pv_callback
@@ -501,7 +502,13 @@ class Command_Mgr (Command_Group) :
         self.appl           = appl
         self.changes        = 0
         self._precondition  = {}
-        self.__super.__init__ (name, interfacers, parent = None, batchable = True)
+        self.__super.__init__ \
+            ( AC            = AC
+            , name          = name
+            , interfacers   = interfacers
+            , parent        = None
+            , batchable     = True
+            )
         for i in interfacers.itervalues () :
             i.bind_to_sync (self.update_state)
     # end def __init__
