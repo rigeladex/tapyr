@@ -26,11 +26,12 @@
 #    Map a UI.Style object to a TK specific dictionary of options
 #
 # Revision Dates
-#    18-Feb-2005 (CT) Creation
-#    20-Feb-2005 (CT) Use `_real_name` to allow descendents to be named
-#                     `Styler`
-#    21-Feb-2005 (CT) `cursor` handling added
-#    24-Feb-2005 (CT) `_font_weight_map` added and used
+#    18-Feb-2005 (CT)  Creation
+#    20-Feb-2005 (CT)  Use `_real_name` to allow descendents to be named
+#                      `Styler`
+#    21-Feb-2005 (CT)  `cursor` handling added
+#    24-Feb-2005 (CT)  `_font_weight_map` added and used
+#    24-Feb-2005 (RSC) font_weight computation fixed & tested
 #    ««revision-date»»···
 #--
 
@@ -69,9 +70,9 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
         )
 
     _font_weight_map  = dict \
-        ( bold        = "BOLD"
-        , ultrabold   = "BOLD"
-        , heavy       = "BOLD"
+        ( bold        = "bold"
+        , ultrabold   = "bold"
+        , heavy       = "bold"
         )
     _opt_mappers      = dict \
         ( underline   = lambda s, v : (False, True) [v != "none"]
@@ -89,7 +90,7 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
                 d ["size"] = self._font_size_map [s]
             w = style.font_weight
             if w is not None :
-                d ["weight"] = self._font_weight_map.get (s, "NORMAL")
+                d ["weight"] = self._font_weight_map.get (w, "normal")
             if d :
                 self.option_dict ["font"] = tkFont.Font (** d)
         if "cursor" in self.Opts :
