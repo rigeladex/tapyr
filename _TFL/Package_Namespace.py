@@ -288,7 +288,7 @@ class Package_Namespace :
     def __getattr__ (self, name) :
         if not (name.startswith ("__") and name.endswith ("__")) :
             print "XXX PNS Implicit import %s.%s by %s" \
-                  % (self._.__name, name, _caller_info ())
+                  % (self.__name, name, _caller_info ())
             self.Import (name, name)
             return self.__dict__ [name]
         raise AttributeError, name
