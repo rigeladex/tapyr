@@ -29,6 +29,8 @@
 #    20-Feb-2005 (CT) Creation
 #    21-Feb-2005 (CT) `push_style` and `pop_style` added
 #                     (stubs only for a start)
+#    21-Feb-2005 (CT) `_sty_map` definition moved in here and `Styler` added
+#                     to `_sty_map` index
 #    ««revision-date»»···
 #--
 
@@ -36,8 +38,12 @@ from   _TFL                 import TFL
 import _TFL._TKT.Mixin
 import _TFL._TKT._Tk
 
+import weakref
+
 class Widget (TFL.TKT.Mixin) :
     """Model widget for Tkinter based GUI"""
+
+    _sty_map    = {}
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
@@ -79,10 +85,15 @@ class Widget (TFL.TKT.Mixin) :
                 binder (getattr (self.TNS.Eventname, name), cb)
     # end def _apply_style_bindings
 
-    def _styler (self, style) :
+    def _styler (self, style, Styler = None) :
         sty_map = self._sty_map
+        if Styler is None :
+            Styler = self.Styler
+        if Styler not in sty_map :
+            sty_map [Styler] = weakref.WeakKeyDictionary ()
+        sty_map = sty_map [Styler]
         if style not in sty_map :
-            sty_map [style] = self.Styler (style)
+            sty_map [style] = Styler (style)
         return sty_map [style]
     # end def _styler
 

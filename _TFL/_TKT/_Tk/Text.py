@@ -43,6 +43,8 @@
 #    20-Feb-2005 (CT) Small fixes to make `style` work
 #    20-Feb-2005 (CT) `Text_Styler` moved insed `Text` and renamed to `Styler`
 #    20-Feb-2005 (CT) `Widget` factored to handle `style`
+#    21-Feb-2005 (CT) `wtk_widget` set to `widget.body` (and `widget`
+#                     re-introduced to refer to `CTK.C_Text` instance)
 #    ««revision-date»»···
 #--
 

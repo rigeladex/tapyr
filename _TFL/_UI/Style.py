@@ -33,6 +33,8 @@
 #    27-Jan-2005 (CT)  s/_allowed/_names/g
 #    15-Feb-2005 (BRU) Added allowed values to `_values` where appropriate
 #    17-Feb-2005 (RSC) Added example doctest for callbacks
+#    21-Feb-2005 (CT)  Fixed style crimes committed on 15-Feb-2005
+#    21-Feb-2005 (CT)  `arrow` added to `_values.mouse_cursor`
 #    ««revision-date»»···
 #--
 
@@ -69,7 +71,7 @@ class M_Style (TFL.Meta.M_Data_Class) :
         font_size      = None
         font_style     = None
         foreground     = None # "red"   , "#FF2F1F"
-        mouse_cursor   = None 
+        mouse_cursor   = None
         underline      = None
 
     # end class _names
@@ -79,11 +81,18 @@ class M_Style (TFL.Meta.M_Data_Class) :
         font_family    = dict_from_list (("Monospace", "Sans"))
         font_style     = dict_from_list (("normal", "oblique", "italic"))
         font_size      = dict_from_list \
-                             (( "xx-small", "x-small", "small", "medium"
-                              , "large", "x-large", "xx-large"))
+            ( ( "xx-small", "x-small", "small"
+              , "medium"
+              , "large", "x-large", "xx-large"
+              )
+            )
+
         mouse_cursor   = dict_from_list \
-                             (( "crosshair", "default", "fleur", "hand"
-                              , "hourglass", "text", "watch"))
+            ( ( "arrow", "crosshair", "default", "fleur", "hand"
+              , "hourglass", "text", "watch"
+              )
+            )
+
         underline      = dict_from_list (("single", "double", "low", "none"))
 
     # end class _values
