@@ -43,6 +43,7 @@
 #     6-Feb-2004 (CT) Made `Day` shared between weeks of different years in
 #                     same calendar (concerns weeks 0, 1, 52, 53)
 #     9-Feb-2004 (CT) Made `Month` and `Year` lazy, too
+#    11-Feb-2004 (MG) `_day_names` added
 #    ««revision-date»»···
 #--
 
@@ -144,6 +145,8 @@ class Week (TFL.Meta.Object) :
         , sat  = 5
         , sun  = 6
         )
+
+    _day_names = ("MO", "TU", "WE", "TH", "FR", "SA", "SO")
 
     def __init__ (self, year, number, mon) :
         self.year   = year
