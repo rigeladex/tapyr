@@ -11,6 +11,7 @@
 #
 # Revision Dates
 #     3-Mar-2005 (RSC) Creation
+#     3-Mar-2005 (RSC) added show
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,10 @@ class Toplevel (TFL.TKT.Mixin) :
 
     def pack (self, widget, ** kw) :
         widget.pack ()
+    # end def pack
+
+    def show (self) :
+        pass
     # end def pack
 
     def __getattr__ (self, name) :
