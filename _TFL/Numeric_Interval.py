@@ -31,6 +31,7 @@
 #    20-Feb-2004 (CT) `doctest` added
 #    23-Feb-2004 (CT) `union`   added
 #     4-Mar-2004 (CED) `difference` fixed
+#     8-Mar-2004 (CED) Doctest fixed according to last change
 #    ««revision-date»»···
 #--
 
@@ -61,7 +62,7 @@ class Numeric_Interval (TFL.Meta.Object) :
        >>> i.contains_point (100), i.contains_point (20), j.contains_point (20)
        (True, True, False)
        >>> i.difference (i), i.difference (j), i.difference (k)
-       ([], [], [(0, 20), (50, 100)])
+       ([], [(0, 100)], [(0, 20), (50, 100)])
        >>> i.intersection (i), i.intersection (j), i.intersection (k)
        ((0, 100), (100, 100), (20, 50))
        >>> i.overlaps (i), i.overlaps (j), i.overlaps (k), j.overlaps (k)
