@@ -55,16 +55,25 @@
 #     2-Dec-2003 (MG) `item`: parameter `item_indent_only` extended
 #     9-Dec-2003 (RMA) Added define and cfunctiondesc
 #    11-Dec-2003 (RMA) Added cmacrodesc.
+#    23-Dec-2003 (RMA) Added sanatized_label
 #    ««revision-date»»···
 #--
 
 from    Formatted_Stream import Formatted_Stream
+from    Regexp           import *
 import  re
 import  time
 import  sys
 import  sos
 import  string
 import  Environment
+
+slash_pat = Regexp (r"[/\\]")
+
+def sanatized_label (txt) :
+    txt = slash_pat.sub ("", txt)
+    return txt
+
 
 class Latex_Stream (Formatted_Stream) :
     """Formatted output stream fot a LaText source file."""
@@ -258,9 +267,10 @@ class Latex_Stream (Formatted_Stream) :
         self._begin_block ("table", "[%s]" % placement)
     # end def begin_table
 
+
     def end_table (self, caption, label) :
         self.putl (r"\caption{%s}" % caption)
-        self.putl (r"\label{%s}" % label)
+        self.putl (r"\label{%s}" % sanatized_label (label))
         self._end_block ("table")
     # end def end_table
 
