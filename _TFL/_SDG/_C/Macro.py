@@ -118,7 +118,7 @@ class Define (Macro) :
 
     _apidoc_middle       = \
         """>\\item \\textbf{Function declaration:} \\\\
-           >>\\textttt{%(name)s %(::@_arglist:)s} \\\\
+           >>\\textttt{%(name)s (%(args)s)} \\\\
         """
 
     apidoc_tex_format    = "".join \
@@ -127,11 +127,6 @@ class Define (Macro) :
           , _apidoc_tail
           ]
         )
-
-    def _arglist (self, ** kw) :
-        result = "(%s)" % self.args
-        return [result]
-    # end def _arglist
 
     def _name_comment (self, ** kw) :
         format_prec = int (kw ["format_prec"])
