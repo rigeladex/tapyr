@@ -93,6 +93,16 @@
 #                      Now an open node may optionally have a different
 #                      header when opened/closed (new optional argument
 #                      `head_open`)
+#    29-Mar-2005 (CT)  `add_contents` changed to pass named arguments to
+#                      `self.__class__`
+#    29-Mar-2005 (CT)  `_insert` changed to accept optional arguments
+#                      `head_text` and `tail_text`
+#    29-Mar-2005 (CT)  `_insert_header` streamlined and changed to use
+#                      `head_text` and `tail_text`
+#    29-Mar-2005 (CT)  `Browser._insert` changed to allow a callable for `text`
+#    29-Mar-2005 (CT)  s/head_open/header_open/g
+#    29-Mar-2005 (CT)  Handling of `header_open` changed to allow `""` for it
+#                      (i.e., to treat `None` and `""` differently)
 #    ««revision-date»»···
 #--
 
@@ -277,7 +287,7 @@ class Node (TFL.UI.Mixin) :
         , name_tags     = ()     # additional tags for `name'
         , header_tags   = ()     # additional tags for `header'
         , contents_tags = ()     # additional tags for `contents'
-        , head_open     = None   # header-text of open node
+        , header_open   = None   # header-text of open node
         , AC            = None   # for compatibility with __super
         ) :
         assert (  ((not parent) and (number is None))
@@ -294,17 +304,19 @@ class Node (TFL.UI.Mixin) :
             , name_tags     = name_tags
             , header_tags   = header_tags
             , contents_tags = contents_tags
-            , head_open     = head_open
+            , header_open   = header_open
             )
-        self.browser   = browser
-        self.text      = browser.text
-        self.name      = name
-        self.header    = header
-        self.head_open = head_open or header
-        self.parent    = parent
-        self.number    = number
-        self.bid_seed  = 0
-        self.anonymous = header and not (head_open or contents or name)
+        if header_open is None :
+            header_open  = header
+        self.browser     = browser
+        self.text        = browser.text
+        self.name        = name
+        self.header      = header
+        self.header_open = header_open
+        self.parent      = parent
+        self.number      = number
+        self.bid_seed    = 0
+        self.anonymous   = header and not (contents or name)
         if not self.parent :
             self.level       = 0
             self.number      = len (self.browser.nodes)
@@ -317,7 +329,7 @@ class Node (TFL.UI.Mixin) :
                 # self.browser.disable ()
                 pass
         else :
-            self.bid        = "%s:%d" % (parent.bid, parent.bid_seed)
+            self.bid        = "%s:%d"  % (parent.bid, parent.bid_seed)
             self.tag        = "%s::%s" % (self.bid, self.name)
             parent.bid_seed = parent.bid_seed + 1
             self.level      = parent.level + 1
@@ -378,17 +390,17 @@ class Node (TFL.UI.Mixin) :
         """Add an anonymous child inheriting several attributes from the
            parent to guarantee correct formatting as a contents node.
         """
-        number = len              (self.children)
+        number = len (self.children)
         child  = self.__class__ \
-            ( self.browser
-            , ''
-            , contents
-            , ''
-            , self
-            , number
+            ( browser     = self.browser
+            , name        = ''
+            , header      = contents
+            , contents    = ''
+            , parent      = self
+            , number      = number
             , header_tags = self.contents_tags
             )
-        self._insert_child        (child)
+        self._insert_child  (child)
         child.header_head = self.contents_head
         child.header_tail = self.contents_tail
         child.level_tag   = self.level_tag
@@ -473,8 +485,9 @@ class Node (TFL.UI.Mixin) :
         self.button.butcon.push_style (self._style ())
     # end def _insert_button
 
-    def _insert (self, index, text, * tags) :
-        self.browser._insert (index, text, self.callback, self._style (* tags))
+    def _insert (self, index, text, * tags, ** kw) :
+        self.browser._insert \
+            (index, text, self.callback, self._style (* tags), ** kw)
     # end def _insert
 
     def _delete (self, head, tail = None) :
@@ -500,18 +513,20 @@ class Node (TFL.UI.Mixin) :
     # end def _insert_name
 
     def _insert_header (self, index) :
-        if self.header :
-            ins = self.header
-            if (   self.button
-               and not self.button.is_leaf
-               and not self.button.closed
-               ) :
-                ins = self.head_open
+        header = self.header
+        if (   self.button
+           and not self.button.is_leaf
+           and not self.button.closed
+           ) :
+            header = self.header_open
+        if header :
             self._insert \
-                ( index
-                , self.header_head + ins + self.header_tail
-                , self.level_tag
+                ( index, header, self.level_tag
                 , * self.header_tags
+                , ** dict
+                      ( head_text = self.header_head
+                      , tail_text = self.header_tail
+                      )
                 )
     # end def _insert_header
 
@@ -843,7 +858,7 @@ class Node_Linked (Node) :
         , header_tags   = ()     # additional tags for `header'
         , contents_tags = ()     # additional tags for `contents'
         , o_links       = ()     # objects to hyper-link
-        , head_open     = None   # different header for opened node
+        , header_open   = None   # different header for opened node
         , AC            = None   # for compatibility with __super
         ) :
         self.o_links        = o_links
@@ -857,7 +872,7 @@ class Node_Linked (Node) :
             , name_tags     = name_tags
             , header_tags   = header_tags
             , contents_tags = contents_tags
-            , head_open     = head_open
+            , header_open   = header_open
             , AC            = AC or browser.AC
             )
     # end def __init__
@@ -1112,10 +1127,14 @@ class Browser (TFL.UI.Mixin) :
             tabs.append (i * indent)
     # end def _setup_styles
 
-    def _insert (self, pos, text, * styles) :
+    def _insert (self, pos, text, * styles, ** kw) :
         before = self.text.pos_at (pos)
-        self.text.insert (pos, text)
-        after  = self.text.eol_pos (pos)
+        for t in kw.get ("head_text"), text, kw.get ("tail_text") :
+            if callable (t) :
+                t (self.text, pos)
+            elif t :
+                self.text.insert (pos, t)
+        after = self.text.eol_pos (pos)
         for s in styles :
             self.text.apply_style (s, before, after)
     # end def _insert

@@ -38,6 +38,8 @@
 #                      testing lmargin1/lmargin2
 #    15-Mar-2005 (RSC) Added test for hyper-link in `name` of a node
 #    21-Mar-2005 (RSC) Added test for `head_open` parameter
+#    29-Mar-2005 (CT)  s/head_open/header_open/g
+#    29-Mar-2005 (CT)  `mknode_2` added and used to test empty `header_open`
 #    ««revision-date»»···
 #--
 
@@ -73,12 +75,24 @@ def mknode (tb, name, * tags) :
         ( tb
         , name
         , "1. test line\n2. test line\n3. test line"
-        , head_open = "4. test Line\n5. test Line\n6. test Line"
+        , header_open = "4. test Line\n5. test Line\n6. test Line"
         , o_links = o
         )
     n.insert (tb.current_pos, * tags)
     return n
 # end def mknode
+
+def mknode_2 (tb, name, * tags) :
+    n = My_Linked \
+        ( tb
+        , name
+        , "1. test line\n2. test line\n3. test line"
+        , header_open = ""
+        , o_links = o
+        )
+    n.insert (tb.current_pos, * tags)
+    return n
+# end def mknode_2
 
 def mkchild (tn, name, o_links = ()) :
     n = tn.new_child (name, "1. test line\n2. test line", o_links = o_links)
@@ -95,7 +109,7 @@ def insert_stuff (tb) :
     nn = mkchild         (tn, "s3")
     mkchild              (nn, "ss1", o)
     nnn = mkchild        (nn, "ss2")
-    tn = mknode          (tb, "n2", "wrap", "found")
+    tn = mknode_2        (tb, "n2", "wrap", "found")
     mkchild              (tn, "s-a")
     c = mkchild \
         ( tn
