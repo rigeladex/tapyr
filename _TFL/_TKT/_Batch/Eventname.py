@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    26-Jan-2005 (CT) Creation
+#    17-Feb-2005 (MG) `double_click_*` added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,9 @@ Eventname = TFL.TKT._Eventname \
     , continue_scan            = None
     , copy                     = None
     , cut                      = None
+    , double_click_1           = None
+    , double_click_2           = None
+    , double_click_3           = None
     , edit_schedule            = None
     , exit                     = None
     , help                     = None

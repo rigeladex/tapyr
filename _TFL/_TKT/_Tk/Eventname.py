@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-Jan-2005 (CT) Creation
 #    24-Jan-2005 (CT) Creation continued
+#    17-Feb-2005 (MG) `double_click_*` added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,9 @@ Eventname = TFL.TKT._Eventname \
     , continue_scan            = "<B2-Motion>"
     , copy                     = "<Control-Key-c>"
     , cut                      = "<Control-Key-x>"
+    , double_click_1           = "<Double-Button-1>"
+    , double_click_2           = "<Double-Button-2>"
+    , double_click_3           = "<Double-Button-3>"
     , edit_schedule            = "<F4>"
     , exit                     = "<Control-Key-q>"
     , help                     = "<F1>"
