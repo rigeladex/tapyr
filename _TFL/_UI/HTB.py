@@ -32,6 +32,7 @@
 #     4-Feb-2005 (RSC) renamed ui to tkt, tkt constructors get self.tkt
 #                      fixed update of "tags" variable in insert
 #                      see is now only used in tkt.
+#    17-Feb-2005 (RSC) Added auto-delegation to self.tkt for Node
 #    ««revision-date»»···
 #--
 
@@ -440,8 +441,12 @@ class Node (TFL.UI.Mixin) :
             return self.search_string (pattern, tagged_as, result)
     # end def search
 
-    def enter (self, event = None) : self.tkt.enter (event)
-    def leave (self, event = None) : self.tkt.leave (event)
+    # delegate to our tkt:
+    def __getattr__ (self, name) :
+        result = getattr (self.tkt, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
 
 # end class Node
 
