@@ -54,7 +54,7 @@
 #    13-Nov-2001 (CT) `_import_symbols` corrected to handle empty `symbols`
 #                     correctly 
 #    13-Nov-2001 (CT) Unncessary restriction of nested packages removed
-#     5-Dec-2001 (MG) Speical code for `Proxy_Type` changed
+#     5-Dec-2001 (MG) Special code for `Proxy_Type` changed
 #    ««revision-date»»···
 #--
 
