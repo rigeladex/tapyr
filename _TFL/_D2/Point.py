@@ -1,5 +1,4 @@
-#! /swing/bin/python
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,13 +29,19 @@
 #    25-Jun-2002 (CT) Classes for relative Points renamed
 #    26-Jun-2002 (CT) `R_Point_nP` added
 #    22-Aug-2002 (CT) s/KeyError/IndexError/ for `__.etitem__` methods
+#    24-Mar-2003 (CT) Converted to new-style class
+#    24-Mar-2003 (CT) `__radd__` and `__rsub__` added
+#    24-Mar-2003 (CT) `__rmul__` changed to alias of `__mul__`
+#    24-Mar-2003 (CT) `__rdiv__` removed
 #    ««revision-date»»···
 #--
 
+from    _TFL     import TFL
 from    _TFL._D2 import D2
+import  _TFL._Meta.Object
 import  operator
 
-class _Point_ :
+class _Point_ (TFL.Meta.Object) :
     """Base class for points in 2D space."""
 
     def __getitem__ (self, index) :
@@ -67,18 +72,16 @@ class _Point_ :
 class Point (_Point_) :
     """Model a point in rectangular, 2-dimensional space."""
 
-    Ancestor = __Ancestor = _Point_
-
     def __init__ (self, x = 0, y = 0) :
         (self.x, self.y) = (x, y)
     # end def __init__
 
-    def shift    (self, right) :
+    def shift (self, right) :
         (self.x, self.y) = (self.x + right.x, self.y + right.y)
         return self
     # end def shift
 
-    def scale    (self, right) :
+    def scale (self, right) :
         """Scale by point or number `right'"""
         try :
             (self.x, self.y) = (self.x * right.x, self.y * right.y)
@@ -98,12 +101,16 @@ class Point (_Point_) :
             return self.__class__ (self.x + right,   self.y + right)
     # end def __add__
 
+    __radd__ = __add__
+
     def __sub__  (self, right) :
         try :
             return self.__class__ (self.x - right.x, self.y - right.y)
         except AttributeError :
             return self.__class__ (self.x - right,   self.y - right)
     # end def __sub__
+
+    __rsub__ = __sub__
 
     def __mul__  (self, right) :
         try :
@@ -112,9 +119,7 @@ class Point (_Point_) :
             return self.__class__ (self.x * right,   self.y * right)
     # end def __mul__
 
-    def __rmul__ (self, left) :
-        return self.__class__ (self.x * left, self.y * left)
-    # end def __rmul__
+    __rmul__ = __mul__
 
     def __div__  (self, right) :
         try :
@@ -124,10 +129,6 @@ class Point (_Point_) :
             return self.__class__ \
                 (float (self.x) / right,   float (self.y) / right)
     # end def __div__
-
-    def __rdiv__ (self, left) :
-        return self.__class__ (float (self.x) / left, float (self.y) / left)
-    # end def __rdiv__
 
     def __setitem__ (self, index, value) :
         """Set `x' (for `index == 0') or `y' (for `index == 1') to `value'."""
@@ -140,8 +141,6 @@ class Point (_Point_) :
 
 class _R_Point_ (_Point_) :
     """Base class for Points positioned relative to another point."""
-
-    Ancestor = __Ancestor = _Point_
 
     def __init__ (self, offset = None, scale = None) :
         self._offset = offset or Point (0, 0)
@@ -224,11 +223,9 @@ class R_Point_P (_R_Point_) :
        (10, 21.0) (39, 56.0)
     """
 
-    Ancestor = __Ancestor = _R_Point_
-
     def __init__ (self, ref_point, offset = None, scale = None) :
         self._ref_point = ref_point
-        self.__Ancestor.__init__ (self, offset, scale)
+        self.__super.__init__ (offset, scale)
     # end def __init__
 
     def _reference (self) :
@@ -251,12 +248,10 @@ class R_Point_L (_R_Point_) :
        ((5, 5), (25, 15)) (17.0, 12.0) (-17.0, -12.0)
     """
 
-    Ancestor = __Ancestor = _R_Point_
-
     def __init__ (self, ref_line, shift, offset = None, scale = None) :
         self._ref_line = ref_line
         self._shift    = shift
-        self.__Ancestor.__init__ (self, offset, scale)
+        self.__super.__init__ (offset, scale)
     # end def __init__
 
     def _reference (self) :
@@ -266,7 +261,7 @@ class R_Point_L (_R_Point_) :
     def __getattr__ (self, name) :
         if name == "_ref_point" :
             return self._ref_line.point (self._shift)
-        return self.__Ancestor.__getattr__ (self, name)
+        return self.__super.__getattr__ (name)
     # end def __getattr__
 
 # end class R_Point_L
@@ -284,13 +279,11 @@ class R_Point_R (_R_Point_) :
        ((5.0, 15.0), (25.0, 15.0)) (15.0, 17.0)
     """
 
-    Ancestor = __Ancestor = _R_Point_
-
     def __init__ \
         (self, ref_rectangle, rect_point, offset = None, scale = None) :
         self._ref_rectangle = ref_rectangle
         self._rect_point    = rect_point
-        self.__Ancestor.__init__ (self, offset, scale)
+        self.__super.__init__ (offset, scale)
     # end def __init__
 
     def _reference (self) :
@@ -300,7 +293,7 @@ class R_Point_R (_R_Point_) :
     def __getattr__ (self, name) :
         if name == "_ref_point" :
             return self._ref_rectangle.point (self._rect_point)
-        return self.__Ancestor.__getattr__ (self, name)
+        return self.__super.__getattr__ (name)
     # end def __getattr__
 
 # end class R_Point_R
@@ -318,21 +311,19 @@ class R_Point_nP (_R_Point_) :
        (5, 42) (8, 49) (6.5, 42.0) (6.5, 44.8)
     """
 
-    Ancestor = __Ancestor = _R_Point_
-
     def __init__ \
         ( self, ref_points, x_weights, y_weights
         , offset = None, scale = None
         ) :
         if not (len (ref_points) == len (x_weights) == len (y_weights)) :
             raise ValueError, \
-                ( "%s must haveequal length"
+                ( "%s must have equal length"
                 % ((ref_points, x_weights, y_weights), )
                 )
         self._ref_points  = ref_points
         self._x_weights   = x_weights
         self._y_weights   = y_weights
-        self.__Ancestor.__init__ (self, offset, scale)
+        self.__super.__init__ (offset, scale)
     # end def __init__
 
     def _reference (self) :
@@ -342,7 +333,7 @@ class R_Point_nP (_R_Point_) :
     def __getattr__ (self, name) :
         if name == "_ref_point" :
             return self._calc_ref_point ()
-        return self.__Ancestor.__getattr__ (self, name)
+        return self.__super.__getattr__ (name)
     # end def __getattr__
 
     def _calc_ref_point (self) :

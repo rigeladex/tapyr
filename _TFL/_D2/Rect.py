@@ -30,12 +30,14 @@
 #    ««revision-date»»···
 #--
 
+from    _TFL           import TFL
 from    _TFL._D2       import D2
 import  _TFL._D2.Point
 import  _TFL._D2.Line
+import  _TFL._Meta.Object
 import  math
 
-class Rect :
+class Rect (TFL.Meta.Object) :
     """Model an axes-parallel rectangle in 2D space.
 
        >>> q = Rect (D2.Point (1.0, 1.0), D2.Point (2.0, 1.0))

@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-May-2002 (CT) Creation
 #    17-Jan-2003 (CT) `M_` prefixes added
+#    24-Mar-2003 (CT) Delegation for `__init__` added
 #    ««revision-date»»···
 #--
 
@@ -56,10 +57,14 @@ class _TFL_Meta_Object_ (object) :
        with it).
        """
 
+    def __init__ (self, * args, ** kw) :
+        ### delegate to `__super` to accomodate multiple inheritance
+        return self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
 # end class _TFL_Meta_Object_
 
-from   _TFL import TFL
-import _TFL._Meta
-TFL.Meta._Export ("Object")
+if __name__ != "__main__" :
+    TFL.Meta._Export ("Object")
 
 ### __END__ Object

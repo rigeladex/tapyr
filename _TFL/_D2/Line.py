@@ -27,14 +27,17 @@
 #
 # Revision Dates
 #    24-Jun-2002 (CT) Creation (factored from Two_Dim)
+#    24-Mar-2003 (CT) Converted to new-style class
 #    ««revision-date»»···
 #--
 
+from    _TFL           import TFL
 from    _TFL._D2       import D2
 import  _TFL._D2.Point
+import  _TFL._Meta.Object
 import  math
 
-class Normal_Form :
+class Normal_Form (TFL.Meta.Object) :
     """Normal form of straight line: `a*x + b*y + c = 0'"""
 
     def __init__ (self, line) :
@@ -67,7 +70,7 @@ class Normal_Form :
 
 # end class Normal_Form
 
-class Line :
+class Line (TFL.Meta.Object) :
     """Model a finite straight line in 2-dimensional space.
 
        >>> l = Line (D2.Point (0.0, 0.0), D2.Point (5.0, 5.0))
