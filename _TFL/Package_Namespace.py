@@ -108,6 +108,8 @@
 #    28-Oct-2004 (CT) `_Export_Module` changed to honor `_check_clashes`
 #    10-Jan-2005 (CT) `__repr__` changed to not future warn about negative
 #                     values of `id`
+#    14-Jan-2005 (CT) `_DPN_Auto_Importer_` added and called by
+#                     `Derived_Package_Namespace`
 #    ««revision-date»»···
 #--
 
@@ -363,6 +365,52 @@ class Package_Namespace :
 
 # end class Package_Namespace
 
+class _DPN_Auto_Importer_ :
+    """_DPN_Auto_Importer_ is used to automagically import a module of a
+       parent package-namespace when someone tries to import it via a derived
+       package-namespace.
+
+       >>> from _TOM import TOM
+       >>> import _TOM._UI.Command_Mgr
+       >>> import _TOM._TKT
+       >>> import _TOM._TKT.Eventname
+       >>> sys.modules["_TOM._TKT.Eventname"].__name__
+       '_TFL._TKT.Eventname'
+       >>> TOM.TKT._Eventname
+       <class '_TFL._TKT.Eventname._Eventname'>
+    """
+
+    def __init__ (self) :
+        self._map = {}
+        self._builtin_import = __import__
+    # end def __init__
+
+    def __call__ (self, name, globals = None, locals = None, fromlist = None) :
+        try :
+            return self._builtin_import (name, globals, locals, fromlist)
+        except ImportError :
+            ns  = name.split (".")
+            mod = ns [-1]
+            pkg = ".".join (ns [:-1])
+            if pkg and pkg in self._map :
+                import _TFL.import_module
+                parent = ".".join ((self._map [pkg], mod))
+                result = self (parent, globals, locals, fromlist)
+                sys.modules [name] = _TFL.import_module.import_module (parent)
+                return result
+            else :
+                raise
+    # end def __call__
+
+    def register (self, derived, parent) :
+        if not self._map :
+            import __builtin__
+            __builtin__.__import__ = self.__call__
+        self._map [derived] = parent
+    # end def register
+
+_DPN_AI = _DPN_Auto_Importer_ ()
+
 class Derived_Package_Namespace (Package_Namespace) :
     """Package_Namespace which adds to an existing Package_Namespace"""
 
@@ -373,6 +421,7 @@ class Derived_Package_Namespace (Package_Namespace) :
         Package_Namespace.__init__ (self, name, pname)
         self._parent  = parent
         self.__cached = {}
+        _DPN_AI.register (pname, getattr (parent, "_Package_Namespace__pname"))
     # end def __init__
 
     def __getattr__ (self, name) :
