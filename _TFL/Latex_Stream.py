@@ -51,6 +51,7 @@
 #     1-Dec-2003 (RMA) Fixed wrong comment char for file_header.
 #     1-Dec-2003 (MG)  Fixed `file_header`: if no `comment_char` is
 #                      specified, `comment_line_head` will be used
+#     1-Dec-2003 (RMA) Factorized _begin_section
 #    ««revision-date»»···
 #--
 
@@ -93,25 +94,32 @@ class Latex_Stream (Formatted_Stream) :
         self.put_soft_line ()
     # end def file_header
 
-    def begin_section (self, name, attributes = "", insert_newline = 1) :
+    def _begin_section (self, level, name, attributes = "", insert_newline = 1) :
         """Begin of new section"""
-        self.putl   ("", r"\section{%s}%s" % (name, attributes))
+        if not self.at_bol :
+            self.putl ()
+        self.putl   ("", r"\%s{%s}%s" % (level, name, attributes))
         if insert_newline :
             self.put_soft_line ()
         self.indent ()
+
+    def begin_section (self, name, attributes = "", insert_newline = 1) :
+        self._begin_section ("section", name, attributes, insert_newline)
     # end def begin_section
 
     end_section  = Formatted_Stream.deindent
 
-    def begin_subsection (self, name, attributes = "") :
-        """Begin of a new subsection"""
-        if not self.at_bol :
-            self.putl ()
-        self.putl   ("", r"\subsection{%s}%s" % (name, attributes), "")
-        self.indent ()
+    def begin_subsection (self, name, attributes = "", insert_newline = 1) :
+        self._begin_section ("subsection", name, attributes, insert_newline)
     # end def begin_subsection
 
     end_subsection  = Formatted_Stream.deindent
+
+    def begin_subsubsection (self, name, attributes = "", insert_newline = 1) :
+        self._begin_section ("subsubsection", name, attributes, insert_newline)
+    # end def begin_susubbsection
+
+    end_subsubsection  = Formatted_Stream.deindent
 
     def _begin_block (self, name, attributes = "") :
         """Write the beginning `\begin {}' statement for a block-statement.
