@@ -58,6 +58,7 @@
 #    23-Dec-2003 (RMA) Added sanatized_label
 #    29-Dec-2003 (RMA) Added begin_block and end_block
 #    05-Jan-2004 (RMA) Added itemize_txt
+#    15-Jan-2004 (RMA) Improved define
 #    ««revision-date»»···
 #--
 
@@ -364,8 +365,14 @@ class Latex_Stream (Formatted_Stream) :
         self.putl ("\\end{%s}" % self._tab_marker (longtable))
     # end def end_tabular
 
-    def define (self, name, code, eol_comment = "") :
-        self.putw (r"\def\%s/{%s}" % (name, code))
+    def define (self, name, code, eol_comment = "", params = 0) :
+        param_txt = "/"
+        if params :
+            _params   = ["#%i" % (i + 1) for i in range (params)]
+            param_txt = string.join (_params, "")
+        self.putw   (r"\def\%s%s{%s}"
+                    % (name, param_txt, code)
+                    )
         if eol_comment :
             self.putw ("%%")
         self.putl     ()
