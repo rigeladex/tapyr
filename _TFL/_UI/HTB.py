@@ -93,16 +93,24 @@ class Button (TFL.TKT.Mixin) :
         self.butcon.push_style (Styles.normal)
     # end def __init__
 
+    def node_enter (self, event = None) :
+        self.butcon.push_style (Styles.active)
+    # end def node_enter
+
+    def node_leave (self, event = None) :
+        self.butcon.pop_style ()
+    # end def node_leave
+
     def mouse_enter (self, event = None) :
+        self.node.mouse_enter (event)
         if not self.is_leaf :
             self.butcon.push_style (Styles.active_button)
-        self.node.mouse_enter (event)
     # end def mouse_enter
 
     def mouse_leave (self, event = None) :
+        self.node.mouse_leave (event)
         if not self.is_leaf :
             self.butcon.pop_style ()
-        self.node.mouse_leave (event)
     # end def mouse_leave
 
     def busy_cursor (self) :
@@ -397,10 +405,14 @@ class Node (TFL.UI.Mixin) :
     # end def close
 
     def mouse_enter (self, event = None) :
-        if self.browser.mouse_act        : self.enter (event)
+        if self.browser.mouse_act :
+            self.enter             (event)
+        self.button.node_enter (event)
     # end def mouse_enter
 
-    def mouse_leave (self, event = None) : self.leave (event)
+    def mouse_leave (self, event = None) :
+        self.leave             (event)
+        self.button.node_leave (event)
 
     def set_cursor (self, index) :
         self._set_cursor         (index)
