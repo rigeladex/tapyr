@@ -18,6 +18,7 @@
 #     2-Oct-2003 (CED) `epsilon` introduced and used to avoid transient
 #                      rounding errors
 #    23-Oct-2003 (CT)  Small changes to allow cutting of zero-length spans
+#     3-Nov-2003 (CT)  Inherit from `NDT.Sched2.Object`
 #    ««revision-date»»···
 #--
 
@@ -25,7 +26,7 @@ from   _NDT                 import NDT
 from   _TFL                 import TFL
 
 import _NDT._Sched2.Window
-import _TFL._Meta.Object
+import _NDT._Sched2.Object
 
 from   predicate            import *
 
@@ -53,7 +54,7 @@ class Timeline_Cut (NDT.Sched2.Span) :
 
 # end class Timeline_Cut
 
-class Timeline (TFL.Meta.Object) :
+class Timeline (NDT.Sched2.Object) :
     """Timeline for scheduling.
 
        >>> S = NDT.Sched2.Span
@@ -109,8 +110,6 @@ class Timeline (TFL.Meta.Object) :
        ...
        AssertionError head = (215, 200), tail = (215, 500)
     """
-
-    epsilon = 0.0001
 
     def __init__ (self, lower, upper) :
         self.orig = NDT.Sched2.Span (lower, upper)
