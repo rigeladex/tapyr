@@ -449,21 +449,20 @@ class Node :
         if base_indent is None :
             base_indent = self.base_indent
         recurser   = "formatted"
-        format     = getattr (self, format_name)
+        formatters = getattr (self, format_name)
         recurse_kw = dict \
             ( format_name = format_name
             , base_indent = base_indent
             , ** kw
             )
         context = TFL.Caller.Object_Scope (self)
-        for f in format :
+        for f in formatters :
             indent = f.indent_level * base_indent
-            indent_offset += len (indent)
+            io     = indent_offset  + len (indent)
             context.locals ["indent_offset"] = \
-                context.locals ["indent_anchor"] = indent_offset
+                context.locals ["indent_anchor"] = io
             for l in f (self, context) :
-                yield "%s%s" % (indent, l)
-            indent_offset -= len (indent)
+                yield indent + l
     # end def formatted
 
     def has_child (self, child_name, transitive = True) :

@@ -68,6 +68,7 @@
 #                     `%s` characters after interpolation (otherwise, instead
 #                     of a single `%` something like `%%%%%%%%` can show up
 #                     in the output <arrrgh>)
+#    17-Sep-2004 (CT) `Partial_Line_Formatter` used instead of `lambda`
 #    ««revision-date»»···
 #--
 
@@ -106,13 +107,31 @@ class _Formatter_ (TFL.Meta.Object) :
 
 # end class _Formatter_
 
+class Partial_Line_Formatter (_Formatter_) :
+    """Formatter generating part of a single line of output"""
+
+    kind = "PLF"
+
+    def __call__ (self, node, context) :
+        context.locals ["indent_anchor"] = context.locals ["indent_offset"]
+        PRINT \
+            ( "%s «%s» : %d"
+            % ( self
+              , self.format_line % context
+              , context.locals ["indent_offset"]
+              )
+            )
+        return (self.format_line % context, )
+    # end def __call__
+
+# end class Partial_Line_Formatter
+
 class Single_Line_Formatter (_Formatter_) :
     """Formatter generating a single line of output"""
 
     kind = "SLF"
 
     def __call__ (self, node, context) :
-        context.locals ["indent_anchor"] = context.locals ["indent_offset"]
         PRINT \
             ( "%s «%s» : %d"
             % ( self
@@ -393,16 +412,12 @@ class Multi_Line_Formatter (_Formatter_) :
             s = match.start (0)
             if pos < s :
                 formatters.append \
-                    ( lambda node, context, result = (format_line [pos:s], )
-                      : result
-                    )
+                    (Partial_Line_Formatter (0, format_line [pos:s]))
             formatters.append (self._recursive_formatter (match))
             pos = match.end (0)
         if pos < len (format_line) :
             formatters.append \
-                ( lambda node, context, result = (format_line [pos:], )
-                  : result
-                )
+                (Partial_Line_Formatter (0, format_line [pos:]))
     # end def _setup_formatters
 
     def _recursive_formatter (self, match) :
