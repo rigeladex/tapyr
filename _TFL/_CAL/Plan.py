@@ -28,15 +28,20 @@
 #    13-Apr-2003 (CT) Creation
 #    17-Apr-2003 (CT) `seq_generator` added to `PDF_Plan` to get correct
 #                     sequence for printed calendar when cut
+#    18-Apr-2003 (CT) `PDF_Plan` factored into separate module
+#    19-Apr-2003 (CT) `_add_appointment` added
 #    ««revision-date»»···
 #--
-from   _TFL      import TFL
-from   _TFL._CAL import CAL
-from   Date_Time import *
-from   Filename  import *
-from   predicate import *
-from   Regexp    import *
-from __future__  import generators
+
+from   __future__            import generators
+
+from   _TFL                  import TFL
+from   _TFL._CAL             import CAL
+from   _TFL._CAL.Appointment import prio_pat, time_pat
+from   Date_Time             import *
+from   Filename              import *
+from   predicate             import *
+from   Regexp                import *
 
 import sos
 import _TFL._Meta.Object
@@ -45,128 +50,77 @@ import _TFL._CAL.Year
 
 day_sep       = Regexp ("^#", re.M)
 day_pat       = Regexp (r"^ (?P<day>\d{4}/\d{2}/\d{2}) ")
+app_date_pat  = Regexp \
+    ( r"(?P<date>"
+          r"(?P<day> -? \d{1,2}) \."
+          r"(?: (?P<month> \d{1,2}) \."
+          r"  (?: (?P<year> \d{4}))?"
+          r")?"
+          r"[ ]+"
+      r")?"
+    , re.VERBOSE
+    )
+app_pat       = Regexp \
+    ( app_date_pat.pattern
+    + r"(?P<repeat> "
+    +   r"\+ (?P<delta> \d+) (?P<unit> d|w|m)? "
+    +   r"(?: [ ]* \* (?P<how_often> \d+))?"
+    +   r"[ ]+"
+    + r")?"
+    + time_pat.pattern                  + r"?"
+    + r"(?: [ ]* = " + prio_pat.pattern + r")?"
+    + r"[ ]+"
+    + r"(?P<activity> .+)"
+    , re.VERBOSE
+    )
 
-class PDF_Plan (TFL.Meta.Object) :
-
-    inch = INCH = 72
-    cm   = inch / 2.54
-    mm   = 0.1 * cm
-
-    xsiz = 21.0 * cm
-    ysiz = 29.7 * cm
-    xo   = 0.5  * cm
-    yo   = 0.5  * cm
-    ts   = 30
-    lw   = 1.0
-    font = "Helvetica"
-
-    def __init__ ( self, Y, filename
-                 , first_week = 0, last_week = 53, wpx = 2, wpy = 2
-                 , linewidth  = 0.6
-                 ) :
-        from pdfgen import Canvas
-        self.Y          = Y
-        self.filename   = filename
-        self.first_week = first_week
-        self.last_week  = last_week
-        self.wpx        = wpx
-        self.wpy        = wpy
-        self.linewidth  = linewidth
-        self.canvas = c = Canvas (filename, pagesize = (self.xsiz, self.ysiz))
-        self.pager  = p = self.page_generator (c)
-        c.setPageCompression (0)
-        c.setLineJoin        (2)
-        wpp = wpx * wpy
-        for w in self.seq_generator (first_week, last_week, wpp) :
-            page = p.next ()
-            if w is not None :
-                self.one_week (Y.weeks [w], page)
-        c.save ()
-    # end def __init__
-
-    def seq_generator (self, first_week, last_week, wpp) :
-        s, r   = divmod (last_week - first_week, wpp)
-        stride = s + (r > 0)
-        for w in range (first_week, first_week + stride) :
-            for i in range (wpp) :
-                d = i * stride
-                if w + d < last_week :
-                    yield w + d
-                else :
-                    yield None
-    # end def seq_generator
-
-    def page_generator (self, c) :
-        xo = self.xo
-        yo = self.yo
-        xl = (self.xsiz - xo) / self.wpx
-        yl = (self.ysiz - yo) / self.wpy
-        ds = (yl - self.yo - 1 * self.cm) / 7
-        xs = [(xo + i * xl) for i in range (self.wpx)]
-        ys = [(yo + i * yl) for i in range (self.wpy)]
-        ys.reverse ()
-        while 1 :
-            for y in ys :
-                for x in xs :
-                    yield (x, x + xl - xo), (y + 0.3, y + 0.3 + yl - yo), ds
-            c.showPage ()
-    # end def page_generator
-
-    def one_week (self, w, ((x, xl), (y, yl), ds)) :
-        c    = self.canvas
-        cm   = self.cm
-        mm   = self.mm
-        font = self.font
-        ts   = self.ts
-        c.setLineWidth (self.linewidth)
-        c.line (x, y, x, yl - 1 * cm)
-        y = y + 7 * ds
-        c.line (x, y, xl, y)
-        c.setFont (font, ts / 2)
-        c.drawString (x  + 0.2 * cm, y + 0.2 * cm, "Week %2.2d" % w.number)
-        if w.mon.month == w.sun.month :
-            m_head = w.mon.formatted ("%B %Y")
+def _day_generator (pat_match, day, month, year, Y, default_unit = "d") :
+    delta     = int (pat_match.delta     or 0)
+    how_often = int (pat_match.how_often or 1)
+    unit      = pat_match.unit or default_unit
+    if unit == "w" :
+        delta *= 7
+    elif unit == "m" and day < 0 :
+        delta  = - delta
+    for i in range (how_often) :
+        d = day
+        if day < 0 :
+            d = Y.months [month - 1].days [day].number
+        D = Y.map.get ("%4.4d/%2.2d/%2.2d" % (year, month, d))
+        if not D :
+            raise StopIteration
+        yield D
+        if unit == "m" :
+            month += delta
         else :
-            if w.mon.year == w.sun.year :
-                mon_format = "%b"
-            else :
-                mon_format = "%b %Y"
-            m_head = "%s/%s" % \
-                (w.mon.formatted (mon_format), w.sun.formatted ("%b %Y"))
-        c.drawRightString (xl - 0.2 * cm, y + 0.2 * cm, m_head)
-        for d in w.days :
-            y -= ds
-            self.one_day (c, d, ds, x, xl, y, yl, font, ts, cm, mm)
-    # end def one_week
+            D = D.date + delta
+            day, month = D.day, D.month
+# end def _day_generator
 
-    def line_generator (self, ds, x, xl, y, ts) :
-        def _ () :
-            lines = ds / (ts + 2)
-            yo    = y + ds - ts - 1
-            ys    = [(yo - (l * (ts + 1))) for l in range (lines)]
-            for xo in [x, x + xl / 2] :
-                for yo in ys :
-                    yield xo + 0.1 * self.cm, yo + 1
-        return _ ()
-    # end def line_generator
-
-    def one_day (self, c, d, ds, x, xl, y, yl, font, ts, cm, mm) :
-        xo = xl - 0.2 * cm
-        c.line (x, y, xl, y)
-        c.setFont (font, ts)
-        c.drawRightString (xo, y + ds * 0.95 - ts, d.formatted ("%d"))
-        c.setFont (font, ts / 5)
-        c.drawRightString (xo, y + mm,             d.formatted ("%A"))
-        lg = self.line_generator (ds, x, xo - 0.15 * (xl - x), y, ts / 5)
-        for a in getattr (d, "appointments", []) :
-            try :
-                 xo, yo = lg.next ()
-            except StopIteration :
-                break
-            c.drawString (xo, yo, ("%s %s" % (a.time or ">", a.activity))[:40])
-    # end def one_day
-
-# end class PDF_Plan
+def _add_appointment (Y, arg, pat_match) :
+    if pat_match.date or pat_match.time :
+        today = Date ()
+        day   = int  (pat_match.day   or today.day)
+        month = int  (pat_match.month or today.month)
+        year  = int  (pat_match.year  or today.year)
+        time  = pat_match.time or ""
+        if time :
+            if pat_match.hh_head :
+                hh   = int (pat_match.hh_head)
+                mm   = int (pat_match.mm_head or 0)
+                time = "%2.2d:%2.2d" % (hh, mm)
+                if pat_match.hh_tail :
+                    hh   = int (pat_match.hh_tail)
+                    mm   = int (pat_match.mm_tail or 0)
+                    time = "%s-%2.2d:%2.2d" % (time, hh, mm)
+        app   = ( CAL.Appointment.format
+                % (time, pat_match.prio or " ", pat_match.activity)
+                )
+        for D in _day_generator (pat_match, day, month, year, Y) :
+            D.add_appointments (* CAL.appointments (app))
+    else :
+        raise ValueError, "`%s` must specify either date or time"
+# end def _add_appointment
 
 def read_plan (Y, plan_file_name) :
     """Read information from file named `plan_file_name` and put appointments
@@ -182,8 +136,7 @@ def read_plan (Y, plan_file_name) :
             d = Y.map [day_pat.day]
             head, tail = (entry.split ("\n", 1) + [""]) [:2]
             if tail :
-                a = CAL.appointments (tail)
-                d.appointments += a
+                d.add_appointments (* CAL.appointments (tail))
 # end def read_plan
 
 def write_plan (Y, plan_file_name, replace = 0) :
@@ -196,41 +149,66 @@ def write_plan (Y, plan_file_name, replace = 0) :
     CAL.write_year (Y.as_plan, plan_file_name, force = replace)
 # end def write_plan
 
-def command_spec (arg_array = None) :
+def _command_spec (arg_array = None) :
     from Command_Line import Command_Line
     today    = Date ()
     year     = today.year
     return Command_Line \
         ( option_spec =
-            ( "diary:S=~/diary?Path for calendar file"
+            ( "add_appointment:B?Add appointments specified by arguments"
+            , "diary:S=~/diary?Path for calendar file"
             , "filename:S=plan?Filename of plan for `year`"
-            , "pdf:S?Generate PDF file with plan"
             , "replace:B?Replace old calendar with new file"
             , "sort:B?Sort calendar and write it back"
             , "year:I=%d?Year for which to process calendar" % (year, )
             )
-        , max_args    = 0
+        , description =
+          """Manage appointments/activities in a yearly calendar.
+
+             The arguments specify appointments. Examples of arguments:
+
+             '7.1. +1w*52 14:30-15 =j SW-Jour-Fixe'
+             '21.6. +1*8 =V Vacation'
+
+             Argument syntax:
+
+             <DD>.<MM>. +<delta><unit>*<how_often>
+                 <hh>:<mm>-<hh>:<mm> =<Prio> <Activity/Appointment>
+
+             Date, repeat-info, time, and priority are all optional, but at
+             least one field of date or time must be specified. Missing date
+             fields are replaced by the current day/month.
+
+             The delta-unit can be specified as `d` for days (default), `w`
+             for weeks, or `m` for months.
+
+             The priority is a single letter (upper or lowercase) or number.
+          """
         , arg_array   = arg_array
         )
-# end def command_spec
+# end def _command_spec
 
-def main (cmd) :
+def _main (cmd) :
     year      = cmd.year
     path      = sos.path.join (sos.expanded_path (cmd.diary), "%4.4d" % year)
     Y         = CAL.Year      (year)
     file_name = sos.path.join (path, cmd.filename)
+    sort      = cmd.sort
     read_plan   (Y, file_name)
-    if cmd.sort :
-        for d in Y.days :
-            d.appointments.sort ()
+    if cmd.add_appointment :
+        sort  = len (cmd.argv)
+        for a in cmd.argv :
+            if app_pat.match (a.strip ()) :
+                _add_appointment (Y, a, app_pat)
+            else :
+                print "%s doesn't match an appointment" % a
+    if sort :
+        Y.sort_appointments ()
         write_plan (Y, file_name, cmd.replace)
-    if cmd.pdf :
-        pdf_name = Filename (cmd.pdf, ".pdf").name
-        PDF_Plan (Y, pdf_name)
-# end def main
+# end def _main
 
 if __name__ == "__main__" :
-    main (command_spec ())
+    _main (_command_spec ())
 else :
     TFL.CAL._Export ("*")
 ### __END__ Plan

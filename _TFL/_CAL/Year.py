@@ -31,43 +31,62 @@
 #    13-Apr-2003 (CT) `create_diary` added
 #    13-Apr-2003 (CT) `write_year` factored
 #    13-Apr-2003 (CT) `-force` and guard against inadvertent overwriting added
+#    19-Apr-2003 (CT) `add_appointments`  added to `Day`
+#    19-Apr-2003 (CT) `sort_appointments` added to `Day` and `Year`
+#    20-Apr-2003 (CT) `easter_date` added
 #    ««revision-date»»···
 #--
 
 from   _TFL      import TFL
+from   _TFL._CAL import CAL
 from   Date_Time import *
 from   predicate import *
 
 import sos
 import _TFL._Meta.Object
-import _TFL._CAL
 import _TFL._CAL.Appointment
+import _TFL._CAL.Holiday
 
 class Day (TFL.Meta.Object) :
     """Model a single day in a calendar"""
 
+    is_holiday = ""
+
     def __init__ (self, date, appointments = None) :
         self.date         = Date (date)
-        self.appointments = appointments or []
+        self.number       = self.date.day
+        self.appointments = appointments or [] ### XXX use dict_from_list
     # end def __init__
 
+    def add_appointments (self, * apps) :
+        self.appointments.extend (apps)
+    # end def add_appointments
+
     def as_plan (self) :
+        self.sort_appointments ()
         d = self.date
         l = Date ("%s/12/31" % (d.year, ))
+        holi = self.is_holiday
+        if holi :
+            holi = "%26s" % ("=%s=" % (holi, ), )
         return "\n".join \
-            ( [ "# %s      %s#%2.2d, %s, day %d/-%d"
+            ( [ "# %s      %s#%2.2d, %s, day %d/-%d %s"
               % ( self
                 , d.formatted ("%a")
                 , d.week
                 , d.formatted ("%d-%b-%Y")
                 , d.julian_day
                 , l.julian_day - d.julian_day + 1
+                , holi
                 )
               ]
             + (map (str, self.appointments) or [""])
-            #+ [""]
             )
     # end def as_plan
+
+    def sort_appointments (self) :
+        self.appointments.sort ()
+    # end def sort_appointments
 
     def __str__ (self) :
         return self.date.formatted ("%Y/%m/%d")
@@ -164,6 +183,9 @@ class Year (TFL.Meta.Object) :
             i += 7
         for d in days :
             map [str (d)] = d
+        self.holidays = holidays = CAL.holidays (self)
+        for h, n in holidays.iteritems () :
+            map [h].is_holiday = n
     # end def __init__
 
     def __len__ (self) :
@@ -184,6 +206,11 @@ class Year (TFL.Meta.Object) :
                  ] + [""]
         return "\n".join (result)
     # end def as_cal
+
+    def sort_appointments (self) :
+        for d in self.days :
+            d.sort_appointments ()
+    # end def sort_appointments
 
 # end class Year
 
@@ -207,7 +234,7 @@ def write_year (Yf, file_name, force = 0) :
         f.close  ()
 # end def write_year
 
-def command_spec (arg_array = None) :
+def _command_spec (arg_array = None) :
     from Command_Line import Command_Line
     today    = Date ()
     year     = today.year
@@ -224,9 +251,9 @@ def command_spec (arg_array = None) :
         , max_args    = 0
         , arg_array   = arg_array
         )
-# end def command_spec
+# end def _command_spec
 
-def main (cmd) :
+def _main (cmd) :
     year = cmd.year
     path = sos.path.join (sos.expanded_path (cmd.path), "%4.4d" % year)
     Y    = Year (year)
@@ -242,10 +269,10 @@ def main (cmd) :
                 write_year (Y.as_plan, pfil, cmd.force)
             if cmd.View :
                 write_year (Y.as_cal,  vfil, cmd.force)
-# end def main
+# end def _main
 
 if __name__ == "__main__" :
-    main (command_spec ())
+    _main (_command_spec ())
 else :
     TFL.CAL._Export ("*")
 ### __END__ Year
