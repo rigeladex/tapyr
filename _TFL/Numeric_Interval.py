@@ -29,10 +29,14 @@
 #    18-Nov-2003 (CT) Creation
 #    27-Nov-2003 (CT) `shifted` added
 #    20-Feb-2004 (CT) `doctest` added
+#    23-Feb-2004 (CT) `union`   added
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
+from   predicate            import *
+
+import _TFL.DL_List
 import _TFL._Meta.Object
 import sys
 
@@ -42,6 +46,9 @@ class Numeric_Interval (TFL.Meta.Object) :
        >>> i = Numeric_Interval (0, 100)
        >>> j = Numeric_Interval (100, 200)
        >>> k = Numeric_Interval (20, 50)
+       >>> l = Numeric_Interval (210, 250)
+       >>> m = Numeric_Interval (240, 260)
+       >>> n = Numeric_Interval (280, 300)
        >>> i, j, k
        ((0, 100), (100, 200), (20, 50))
        >>> i.after (i), i.after (j), j.after (j), j.after (i)
@@ -62,6 +69,16 @@ class Numeric_Interval (TFL.Meta.Object) :
        (20, 120)
        >>> i [0], i [1]
        (0, 100)
+       >>> Numeric_Interval.union ()
+       []
+       >>> Numeric_Interval.union (m)
+       [(240, 260)]
+       >>> Numeric_Interval.union (i, k)
+       [(0, 100)]
+       >>> i, j, k, l, m, n
+       ((0, 100), (100, 200), (20, 50), (210, 250), (240, 260), (280, 300))
+       >>> Numeric_Interval.union (i, j, k, l, m, n)
+       [(0, 200), (210, 260), (280, 300)]
     """
 
     format = "(%s, %s)"
@@ -159,6 +176,23 @@ class Numeric_Interval (TFL.Meta.Object) :
     def __setitem__ (self, key, value) :
         setattr (self, ("lower", "upper") [key], value)
     # end def __setitem__
+
+    def union (cls, * args) :
+        """Returns a list of intervals with the union of `args`"""
+        result = []
+        p      = TFL.DL_List \
+            (* dusort (args, lambda i : (i.lower, i.upper))).head
+        while p :
+            pv = p.value
+            q  = p.next
+            while q and pv.upper >= q.value.lower :
+                if pv.upper < q.value.upper :
+                    pv = (cls (pv.lower, q.value.upper))
+                q = q.next
+            result.append (pv)
+            p = q
+        return result
+    union = classmethod (union)
 
 # end class Numeric_Interval
 
