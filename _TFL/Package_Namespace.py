@@ -54,6 +54,7 @@
 #    13-Nov-2001 (CT) `_import_symbols` corrected to handle empty `symbols`
 #                     correctly 
 #    13-Nov-2001 (CT) Unncessary restriction of nested packages removed
+#     5-Dec-2001 (MG) Speical code for `Proxy_Type` changed
 #    ««revision-date»»···
 #--
 
@@ -226,7 +227,13 @@ class Package_Namespace :
                     p_mod = _inspect.getmodule (p)
                     if p_mod is None :
                         ### handle Class_Proxy correctly
-                        p_mod = _inspect.getmodule (getattr (p, "Essence", p))
+                        try :
+                            if isinstance (p, type (self)) :
+                                p_mod = _inspect.getmodule \
+                                    (p.__dict__.get ("Essence", p))
+                        except :
+                            print s, p, mod
+                            raise
                     if transitive or p_mod is mod :
                         self._import_1 (mod, s, s, p, result, check_clashes)
             symbols = symbols [1:]
