@@ -49,11 +49,12 @@
 #    22-Feb-2005 (RSC) Fixed widget computation in insert_widget
 #    22-Feb-2005 (CT)  `left_gravity` added to `mark_at`
 #    22-Feb-2005 (CT)  `place_cursor` and `see` added
-#    23-Feb-2005 (RSC) added Scrolled_Text widget,
+#    23-Feb-2005 (RSC) Added Scrolled_Text widget,
 #                      modified *_pos to return Tk magic value
 #    23-Feb-2005 (RSC) Changed pos_at to return real position
 #                      changed doctest to (hopefully) work again.
 #    23-Feb-2005 (CT)  `_pos_at` factored and used internally everywhere
+#    23-Feb-2005 (CT)  s/widget/exposed_widget/
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     """Model simple text widget for Tkinter based GUI.
 
        >>> w = Text ()
-       >>> w.widget.pack ()
+       >>> w.exposed_widget.pack ()
        >>> eot = w.eot_pos
        >>> cur = w.current_pos
        >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
@@ -127,12 +128,12 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     def __init__ (self, AC = None, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
-        self.widget = self.Widget_Type \
-            ( master    = wc
+        self.exposed_widget = w = self.Widget_Type \
+            ( master    = wc and wc.wtk_widget
             , name      = name
             , state     = (DISABLED, NORMAL) [bool (editable)]
             )
-        self.wtk_widget = self.widget.body
+        self.wtk_widget = w.body
         self._tag_map   = weakref.WeakKeyDictionary ()
         self._tag_no    = 0
         self._mark_no   = 0
@@ -295,7 +296,7 @@ fleur = Style ("hand", mouse_cursor = "fleur")
 w = Text ()
 eot = w.eot_pos
 cur = w.current_pos
-w.widget.pack ()
+w.exposed_widget.pack ()
 w.push_style  (hand)
 w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
 w.append ("Ha")
