@@ -23,7 +23,7 @@
 #    TFL.SDG.C.import_C
 #
 # Purpose
-#    Provide all import needed to create a C-document.
+#    Provide all imports needed to create a C-document.
 #
 #    Usage:
 #        from _TFL._SDG._C.import_C import C
