@@ -33,6 +33,8 @@
 #    20-Jan-2003 (CT) `Class_Method` factored
 #    13-Feb-2003 (CT) `Alias_Property` added
 #    17-Feb-2003 (CT) `Alias_Attribute` added
+#     3-Mar-2003 (CT) `Alias_Class_and_Instance_Method` added
+#     3-Mar-2003 (CT) `Alias_Meta_and_Class_Attribute` added
 #    ««revision-date»»···
 #--
 
@@ -194,7 +196,7 @@ class Alias_Property (object) :
        ...     bar = Alias_Property ("foo")
        ...
        >>> X.bar
-       <bound method type.foo of <class '__main__.X'>>
+       <bound method type.foo of <class 'Property.X'>>
        >>> X.bar()
        42
        >>> x = X()
@@ -235,6 +237,74 @@ class Alias_Attribute (Alias_Property) :
     # end def __set__
 
 # end class Alias_Attribute
+
+class Alias_Class_and_Instance_Method (Class_Method) :
+    """Property defining an alias name for a instance-method/class-method
+       pair with different definitions.
+
+       >>> class T (object) :
+       ...   chameleon = Alias_Class_and_Instance_Method ("foo")
+       ...   class __metaclass__ (TFL.Meta.M_Class) :
+       ...     def foo (cls) :
+       ...       print "Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__)
+       ...   def foo (self) :
+       ...     print "Instance method foo <%s>" % (self.__class__.__name__, )
+       ...
+       >>> T.chameleon()
+       Class method foo <T.__metaclass__>
+       >>> T ().chameleon ()
+       Instance method foo <T>
+       >>> class U(T) :
+       ...   pass
+       ...
+       >>> U.chameleon()
+       Class method foo <U.__metaclass__>
+       >>> U().chameleon()
+       Instance method foo <U>
+    """
+
+    def __init__ (self, aliased_name, cls = None) :
+        self.aliased_name = aliased_name
+        self.cls          = cls
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            obj = cls
+            cls = cls.__class__
+        return self.Bound_Method (getattr (cls, self.aliased_name), obj, cls)
+    # end def __get__
+
+# end class Alias_Class_and_Instance_Method
+
+class Alias_Meta_and_Class_Attribute (Class_Method) :
+    """Property defining an alias name for a instance-method/class-method
+       pair with different definitions.
+
+       >>> class T (object) :
+       ...   chameleon = Alias_Meta_and_Class_Attribute ("foo")
+       ...   class __metaclass__ (TFL.Meta.M_Class) :
+       ...     foo = 42
+       ...   foo = 137
+       ...
+       >>> T.chameleon
+       42
+       >>> T ().chameleon
+       137
+    """
+
+    def __init__ (self, aliased_name, cls = None) :
+        self.aliased_name = aliased_name
+        self.cls          = cls
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            cls = cls.__class__
+        return getattr (cls, self.aliased_name)
+    # end def __get__
+
+# end class Alias_Meta_and_Class_Attribute
 
 if __name__ == "__main__" :
     ### unit-test code ############################################################
