@@ -78,7 +78,7 @@ _debug = __debug__
 def _complain_implicit (pns_name, module_name) :
     if _debug :
         caller_info = _caller_info (-4)
-        print "%s %s.%s XXX PNS Implicit import" \
+        print """%s\n    %s.Import ("%s")""" \
               % (caller_info [0], pns_name, module_name)
 # end def _complain_implicit
 
