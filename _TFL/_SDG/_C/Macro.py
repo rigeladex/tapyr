@@ -36,6 +36,7 @@
 #    24-Aug-2004 (CT) Spurious space after macro name removed from `h_format`
 #                     and `c_format`
 #    24-Aug-2004 (MG) `Macro_Block.children_group_names` removed
+#     7-Oct-2004 (CED) `Define_Constant` added
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,25 @@ class Define (Macro) :
         )
 
 # end class Define
+
+class Define_Constant (Define) :
+    """A C-macro #define stament, defining a constant value"""
+
+    init_arg_defaults      = dict \
+        ( name_len         = 0
+        , scope            = TFL.SDG.C.C
+        , name             = None
+        , value            = None
+        )
+
+    front_args           = ("name", "value")
+
+    h_format = c_format  = """
+        #%(name)s %(::.value:)s
+        >%(::*description:)s
+    """
+
+# end class Define_Constant
 
 class Macro_Block (_Macro_, TFL.SDG.C.Stmt_Group) :
     """Block of macro definitions"""

@@ -42,6 +42,7 @@
 #    12-Aug-2004 (MG) `formatted` pass * args and ** kw to super function
 #    26-Aug-2004 (CT)  `_convert` moved to `TFL.SDG.Node`
 #    23-Sep-2004 (MG) `vaps_channel_format` and friends added
+#     7-Oct-2004 (CED) `apidoc_tex_format` and friends added
 #    ««revision-date»»···
 #--
 
@@ -102,7 +103,7 @@ class _C_Node_ (TFL.SDG.Node) :
         )
 
     _list_of_formats     = TFL.SDG.Node._list_of_formats + \
-        ( "c_format", "h_format", "vaps_channel_format")
+        ( "c_format", "h_format", "vaps_channel_format", "apidoc_tex_format")
 
     _scope_filter        = dict \
         ( c_format       = C
@@ -110,6 +111,7 @@ class _C_Node_ (TFL.SDG.Node) :
         )
 
     vaps_channel_format  = "" ### not implemented for all types
+    apidoc_tex_format    = "" ### not implemented for all types
 
     def as_c_code (self, base_indent = None) :
         return self.formatted ("c_format", base_indent = base_indent)
@@ -123,6 +125,11 @@ class _C_Node_ (TFL.SDG.Node) :
         return self.formatted \
             ("vaps_channel_format", base_indent = base_indent)
     # end def as_c_code
+
+    def as_apidoc (self, base_indent = None) :
+        return self.formatted \
+            ("apidoc_tex_format", base_indent = base_indent)
+    # end def as_apidoc
 
     def formatted (self, format_name, * args, ** kw) :
         if self.scope & self._scope_filter.get (format_name, 0xFF) :
@@ -146,6 +153,10 @@ class _C_Node_ (TFL.SDG.Node) :
     def write_to_vaps_channel (self, stream = None, gauge = None) :
         self._write_to_stream (self.as_vaps_channel (), stream, gauge)
     # end def write_to_vaps_channel
+
+    def write_to_apidoc (self, stream = None, gauge = None) :
+        self._write_to_stream (self.as_apidoc (), stream, gauge)
+    # end def write_to_apidoc
 
     def _convert_c_comment (self, name, value, eol = 0, new_line_col = 0) :
         result = value
