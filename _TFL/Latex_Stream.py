@@ -52,6 +52,7 @@
 #     1-Dec-2003 (MG)  Fixed `file_header`: if no `comment_char` is
 #                      specified, `comment_line_head` will be used
 #     1-Dec-2003 (RMA) Factorized _begin_section
+#     2-Dec-2003 (MG) `item` fixed
 #    ««revision-date»»···
 #--
 
@@ -165,9 +166,12 @@ class Latex_Stream (Formatted_Stream) :
 
     def item (self, item_name, text, item_length = 0, item_indent_only = None) :
         """Write a `item' statement for a block structure to the stream."""
+        if type (text) == type ("") :
+            text = (text, )
+        text = list (text)
         item = r"\item "
-        if item_indent_only and len (text) == 1 :
-            text      = "%s %s" % (item_name, text [0])
+        if item_indent_only :
+            text[0]   = "%s %s" % (item_name, text [0])
             item_name = item
         else :
             item_name = item + item_name + " "
