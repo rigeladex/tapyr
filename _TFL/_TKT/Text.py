@@ -51,6 +51,7 @@
 #     2-Mar-2005 (RSC) added test for current_pos insertion:
 #                      check that current_pos really returns a mark!
 #                      So two insertions at x=current_pos work...
+#     2-Mar-2005 (RSC) Test that eot_pos is a mark.
 #    ««revision-date»»···
 #--
 
@@ -149,6 +150,13 @@ class Text (TFL.TKT.Mixin) :
         >>> print w.get ()
         Hicp1cp2CP1CP2HajupGRMPFHoHum
          Dum
+
+        >>> x = w.eot_pos
+        >>> w.insert (x, "X1", blue)
+        >>> w.insert (x, "Y2", yell)
+        >>> print w.get ()
+        Hicp1cp2CP1CP2HajupGRMPFHoHum
+         DumX1Y2
 
         >>> t1 = Text (_doctest_AC ())
         >>> t2 = Text (_doctest_AC ())
