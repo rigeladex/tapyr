@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Aug-2004 (CT) Creation
 #    20-Sep-2004 (CT) Test for `x_attrs` added
+#    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #    ««revision-date»»···
 #--
 """Usage example:
@@ -43,24 +44,24 @@
    >>> d.add (X ("A bar-less X", bar = None))
    >>> d.add (Y (baz = None, x_attrs = dict (qux = 84, quy = 85)))
    >>> d.write_to_xml_stream ()
-   <?xml version='1.0' encoding='iso-8859-1' standalone='yes'?>
+   <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
    <Test>
      Test for TFL.SDG.XML.Elem_Type creation and use
-     <X bar = '42'
-        baz = 'quuux'
-        foo = 'wibble'
+     <X bar = "42"
+        baz = "quuux"
+        foo = "wibble"
      >
        A foo-carrying X
      </X>
-     <Y bar = 'wobble'
-        baz = 'quuux'
+     <Y bar = "wobble"
+        baz = "quuux"
      />
-     <X baz = 'quuux' >
+     <X baz = "quuux" >
        A bar-less X
      </X>
-     <Y bar = '42'
-        quy = '85'
-        qux = '84'
+     <Y bar = "42"
+        quy = "85"
+        qux = "84"
      />
    </Test>
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
 #    17-Sep-2004 (CT) Doctest changed (added `%` to document text)
+#    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #    ««revision-date»»···
 #--
 
@@ -46,8 +47,8 @@ class Document (TFL.SDG.XML.Element) :
        ...              , description = "Just a test"
        ...              )
        >>> print chr (10).join (d.formatted ("xml_format"))
-       <?xml version='1.0' encoding='iso-8859-1' standalone='yes'?>
-       <!DOCTYPE memo SYSTEM 'memo.dtd'>
+       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       <!DOCTYPE memo SYSTEM "memo.dtd">
        <!-- Just a test -->
        <Memo>
          First line of text
@@ -66,7 +67,7 @@ class Document (TFL.SDG.XML.Element) :
         )
 
     xml_format           = """
-        <?xml version='%(xml_version)s' encoding='%(encoding)s' standalone='%(standalone)s'?>
+        <?xml version="%(xml_version)s" encoding="%(encoding)s" standalone="%(standalone)s"?>
         %(::*doctype:)s
     """ + Ancestor._xml_format
 
@@ -83,7 +84,7 @@ class Document (TFL.SDG.XML.Element) :
     def formatted (self, format_name, * args, ** kw) :
         for r in self.__super.formatted (format_name, * args, ** kw) :
             if isinstance (r, unicode) :
-                r = r.encode (self.encoding, 'xmlcharrefreplace')
+                r = r.encode (self.encoding, "xmlcharrefreplace")
             yield r
     # end def formatted
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
 #    20-Sep-2004 (CT) `x_attrs` added
+#    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #    ««revision-date»»···
 #--
 
@@ -89,8 +90,8 @@ class Element (TFL.SDG.Node) :
             )
         for a, v in attr_values :
             if v is not None :
-                v = str (v).replace ("'", "&apos;")
-                yield """%s = '%s'""" % (a, v)
+                v = str (v).replace ("'", "&quot;")
+                yield '''%s = "%s"''' % (a, v)
     # end def _attr_values
 
     def _checked_xml_name (self, value) :

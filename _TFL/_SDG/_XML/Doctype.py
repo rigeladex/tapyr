@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
+#    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ class Doctype (TFL.SDG.XML.Element) :
        ...                              )
        ...              )
        >>> dt.write_to_xml_stream ()
-       <!DOCTYPE Test SYSTEM 'Test.dtd'
+       <!DOCTYPE Test SYSTEM "Test.dtd"
            <!ELEMENT Test (head, body, tail) >
            <!ELEMENT head (title, author) >
            <!ELEMENT body (\#PCDATA) >
@@ -83,7 +84,7 @@ class Doctype (TFL.SDG.XML.Element) :
     elem_type            = "DOCTYPE"
 
     xml_format           = \
-        ( """<!DOCTYPE %(doctype)s %(kind)s '%(dtd)s'"""
+        ( '''<!DOCTYPE %(doctype)s %(kind)s "%(dtd)s"'''
             """%(:front=%(NL)s%(" " * (indent_offset + 4))s"""
               """¡rear=%(NL)s%(" " * indent_offset)s"""
               """¡sep=%(" " * (indent_offset + 4))s"""
