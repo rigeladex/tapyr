@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Jun-2002 (CT) Creation
+#     9-Apr-2003 (MG) `point_in_rect` added
 #    ««revision-date»»···
 #--
 
@@ -158,6 +159,18 @@ class Rect (TFL.Meta.Object) :
                 return cp
         return None
     # end def connection_point
+
+    def point_in_rect (self, point) :
+        if isinstance (point, (type (()), type ([]))) :
+            point = D2.Point (* point)
+        tl = self.top_left
+        br = tl + self.size
+        if (  (point.x < tl.x) or (point.x > br.x)
+           or (point.y < tl.y) or (point.y > br.y)
+           ) :
+            return None
+        return 1
+    # end def point_in_rect
 
     def __str__ (self) :
         return "(%s, %s)" % (self.top_left, self.bottom_right)
