@@ -100,7 +100,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     class Tag_Styler (TFL.TKT.Tk.Styler) :
         Opts    = dict_from_list \
             ( ( "background", "font", "foreground", "underline"
-                "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
+              , "justify", "lmargin1", "lmargin2", "rmargin", "wrap"
               )
             )
     # end class Tag_Styler
