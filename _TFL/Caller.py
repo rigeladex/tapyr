@@ -51,7 +51,7 @@
 #    12-Aug-2003 (CT) Error in `_doc_test` removed
 #     9-Mar-2004 (CT) `_doc_test` changed to not use `import`
 #    13-Aug-2004 (CT) `Scope` derived from `TFL.Meta.Object`
-#    13-Aug-2004 (CT) `Object_Scope` dervied from `Scope`
+#    13-Aug-2004 (CT) `Object_Scope` derived from `Scope`
 #    ««revision-date»»···
 #--
 
