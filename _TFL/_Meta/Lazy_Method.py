@@ -30,6 +30,7 @@
 #    23-Sep-2004 (CT) `_Lazy_Wrapper_.__getattr__` added to make wrapped
 #                     callables more similar to the real thing (e.g., avoid
 #                     an AttributeError from `wrapped.func_code`)
+#    24-Jan-2005 (MG) `_Lazy_Wrapper_.__call__`: conversion to an int added
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ class _Lazy_Wrapper_ (object) :
     # end def __init__
 
     def __call__ (self, that, * args, ** kw) :
-        if self.changes != getattr (that, self.counter_name) :
+        if self.changes != int (getattr (that, self.counter_name)) :
             self.result  = self.fct (that, * args, ** kw)
             self.changes = getattr (that, self.counter_name)
         return self.result
