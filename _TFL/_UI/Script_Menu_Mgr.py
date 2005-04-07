@@ -24,6 +24,7 @@
 #    29-Jan-2004 (CT) `echo` calls moved to `Script.__call__`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #     2-Feb-2005 (CT) Moved to `TFL.UI` and refactored
+#     7-Apr-2005 (CT) Don't add category to `cmd_grp` when it's emtpy
 #    ««revision-date»»···
 #--
 
@@ -114,15 +115,16 @@ class Script_Menu_Mgr (TFL.UI.Mixin) :
             ( self.AC, cat_dir
             , self.application.globals (), self.local_dict, name, doc
             )
-        self.cmd_grp.add_dyn_group \
-            ( name          = cat.name.capitalize ()
-            , command_gen   = cat._post_cb
-            , precondition  = cat.is_applicable
-            , desc          = cat.doc
-            , if_names      = self.if_names
-            ### XXX , help          = self.AC.ui_state.help
-            )
-        self.category [cat.name] = cat
+        if cat.scripts :
+            self.cmd_grp.add_dyn_group \
+                ( name          = cat.name.capitalize ()
+                , command_gen   = cat._post_cb
+                , precondition  = cat.is_applicable
+                , desc          = cat.doc
+                , if_names      = self.if_names
+                ### XXX , help          = self.AC.ui_state.help
+                )
+            self.category [cat.name] = cat
     # end def add_category
 
     def run_script (self) :
