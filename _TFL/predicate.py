@@ -130,6 +130,7 @@
 #                      defining home-grown versions
 #     3-Apr-2005 (CT)  Base `dusort` on built-in `sorted` if available
 #     4-Apr-2005 (CED) `fit_to_ceil_in_cycle` moved to `Math_Func`
+#     7-Apr-2005 (CED) `is_contiguous` made more robust
 #    ««revision-date»»···
 #--
 
@@ -454,7 +455,10 @@ def is_contiguous (seq) :
        False
     """
     for l, r in TFL.pairwise (sorted (seq)) :
-        if (r - l) != 1 :
+        try :
+            if (r - l) != 1 :
+                return False
+        except TypeError :
             return False
     return True
 # end def is_contiguous
