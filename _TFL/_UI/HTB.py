@@ -103,6 +103,8 @@
 #    29-Mar-2005 (CT)  s/head_open/header_open/g
 #    29-Mar-2005 (CT)  Handling of `header_open` changed to allow `""` for it
 #                      (i.e., to treat `None` and `""` differently)
+#     8-Apr-2005 (CT)  `Node.add_contents` changed to call `Node` instead of
+#                      `self.__class__`
 #    ««revision-date»»···
 #--
 
@@ -391,7 +393,9 @@ class Node (TFL.UI.Mixin) :
            parent to guarantee correct formatting as a contents node.
         """
         number = len (self.children)
-        child  = self.__class__ \
+        ### XXX used to call `self.__class__` nut that fails for some derived
+        ###     classes
+        child  = Node \
             ( browser     = self.browser
             , name        = ''
             , header      = contents
