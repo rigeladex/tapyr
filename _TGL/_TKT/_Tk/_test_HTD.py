@@ -39,47 +39,49 @@ from _TGL._TKT._test_HTD import *
 
 __test__ = dict (interface_test = HTD_interface_test)
 
-"""
 from   _TGL._UI.HTD import *
-from   _TFL._UI.App_Context import App_Context
-import _TGL._TKT._Tk
-import _TGL._TKT._Tk.Butcon
-import _TGL._TKT._Tk.Eventname
-import _TGL._TKT._Tk.Text
 
-def show (t) :
-    x = t.get    ()
-    y = x.rstrip ()
-    print y
-    print "%s characters with %s trailing whitespace" % \
-          (len (x), len (x) - len (y))
+def t () :
+    from   _TFL._UI.App_Context import App_Context
+    import _TGL._TKT._Tk
+    import _TGL._TKT._Tk.Butcon
+    import _TGL._TKT._Tk.Eventname
+    import _TGL._TKT._Tk.Text
 
-nl  = chr (10)
-ac  = App_Context (TGL)
-r   = Root (ac, nl.join (("R.line 1", "R.line 2")))
-t   = r.tkt_text
-t.exposed_widget.pack (expand = "yes", fill = "both")
+    def show (t) :
+        x = t.get    ()
+        y = x.rstrip ()
+        print y
+        print "%s characters with %s trailing whitespace" % \
+              (len (x), len (x) - len (y))
 
-n1 = Node ( r
-          , ( r.Style.T ("n1.line 1 ", "yellow")
-            , nl, "n1 line 2"
-            , Styled ("continued", r.Style.blue)
-            ))
+    nl  = chr (10)
+    ac  = App_Context (TGL)
+    r   = Root (ac, nl.join (("R.line 1", "R.line 2")))
+    t   = r.tkt_text
+    t.exposed_widget.pack (expand = "yes", fill = "both")
 
-n2 = Node_B  (r, nl.join (("n2 line 1", "n2 line 2")))
-n3 = Node_B2 ( r
-             , ( ["n3 closed line 1"]
-               , ["n3 open line 1", nl, "n3 open line 2"])
-             , r.Style.light_gray)
-n3.inc_state ()
+    n1 = Node ( r
+              , ( r.Style.T ("n1.line 1 ", "yellow")
+                , nl, "n1 line 2"
+                , Styled ("continued", r.Style.blue)
+                ))
 
-m1 = Node_B2 ( n3
-             , (["m1 closed line 1"], ["m1 open line 1\nm1 open line 2"]))
-m2 = Node    ( n3, ("m2 line 1", nl, "m2 line 2"))
-n4 = Node_B2 ( r, ( ["n4 closed line 1"]
-                  , ["n4 open line 1", nl, "n4 open line 2"])
-             , r.Style.light_blue)
+    n2 = Node_B  (r, nl.join (("n2 line 1", "n2 line 2")))
+    n3 = Node_B2 ( r
+                 , ( ["n3 closed line 1"]
+                   , ["n3 open line 1", nl, "n3 open line 2"])
+                 , r.Style.light_gray)
+    n3.inc_state ()
 
-"""
+    m1 = Node_B2 ( n3
+                 , (["m1 closed line 1"], ["m1 open line 1\nm1 open line 2"]))
+    m2 = Node    ( n3, ("m2 line 1", nl, "m2 line 2"))
+    n4 = Node_B2 ( r, ( ["n4 closed line 1"]
+                      , ["n4 open line 1", nl, "n4 open line 2"])
+                 , r.Style.light_blue)
+    return t
 
+if __name__ == "__main__" :
+    t ().wtk_widget.mainloop ()
 ### __END__ TGL.TKT.Tk._test_HTD
