@@ -62,6 +62,8 @@
 #                     `CI_Menubar._index_offset` redefined to `1`)
 #    23-Feb-2005 (CT) `exposed_widget` added
 #    24-Feb-2005 (CT) `CI_Button_Box` added
+#     8-Apr-2005 (CT) `_CI_Toolbar_Group_.add_command` changed to pass
+#                     `before = index + delta` to toolbar widget
 #    ««revision-date»»···
 #--
 
@@ -485,6 +487,7 @@ class _CI_Toolbar_Group_ (_CI_) :
             , command     = callback
             , image       = CTK.image_mgr.get (im_name)
             , cmd_name    = cmd_name
+            , before      = index + delta
             )
     # end def add_command
 
