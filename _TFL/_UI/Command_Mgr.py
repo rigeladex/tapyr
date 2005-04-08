@@ -152,6 +152,9 @@
 #    18-Mar-2005 (CT)  Attribute `if_names` added to `group`
 #     6-Apr-2005 (CT) `Dyn_Group._handle_dyn_commands` changed to use
 #                     `interfacer.clear` instead of home-grown code
+#     8-Apr-2005 (CT) `_insert_dyn_commands` factored and changed to disable
+#                     dynamic commands with no callback
+#     8-Apr-2005 (CT) `bind_interfacers` streamlined
 #    ««revision-date»»···
 #--
 
@@ -564,6 +567,15 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
                 (lambda * args, ** kw : self._handle_dyn_commands (n, i))
     # end def _bind_dyn_cmd_handler
 
+    def _insert_dyn_commands (self, interfacer, dyns, j = 0) :
+        for name, cb, underline in dyns :
+            interfacer.add_command (name, cb, underline = underline, index = j)
+            if cb is None :
+                interfacer.disable_entry (name)
+            j += 1
+        return j
+    # end def _insert_dyn_commands
+
     def _interfacers (self, interface_names, index, delta) :
         interfacers = self.interfacers
         _epi        = self._epi
@@ -776,29 +788,22 @@ class Command_Group (_Command_Group_) :
         elements = self._epi [if_name]
         for dc in self._dyn_command :
             if dc.name in elements :
-                i    = elements.n_index (dc.name)
+                i = elements.n_index (dc.name)
                 if i == 0 :
-                    head  = dpos = 0
+                    head = dpos = 0
                 else :
-                    head  = interfacer.index (elements [i-1].name) + 1
-                    dpos  = head + 1
+                    head = interfacer.index (elements [i-1].name) + 1
+                    dpos = head + 1
                 tsep = i + 1 < len (elements)
                 if tsep :
-                    tail  = interfacer.index (elements [i+1].name) - 1
+                    tail = interfacer.index (elements [i+1].name) - 1
                 else :
-                    tail  = interfacer.index (-1) - 1
+                    tail = interfacer.index (-1) - 1
                 for j in range (head, tail) :
                     interfacer.remove_command (dpos)
                 dyns = list (dc.command_gen ())
                 if dyns :
-                    j = dpos
-                    for name, cb, underline in dyns :
-                        interfacer.add_command \
-                            ( name, cb
-                            , index     = j
-                            , underline = underline
-                            )
-                        j += 1
+                    j = self._insert_dyn_commands (interfacer, dyns, dpos)
                     if tsep and dpos :
                         interfacer.add_separator (index = j)
     # end def _handle_dyn_commands
@@ -846,10 +851,7 @@ class Dyn_Group (_Command_Group_) :
     # end def _handle_dyn_commands
 
     def _handle_dyn_command_group (self, interfacer, dyns) :
-        j = 0
-        for name, cb, underline in dyns :
-            interfacer.add_command (name, cb, underline = underline, index = j)
-            j += 1
+        self._insert_dyn_commands      (interfacer, dyns)
         interfacer.set_auto_short_cuts ()
     # end def _handle_dyn_command_group
 
@@ -911,6 +913,12 @@ class Command_Mgr (Command_Group) :
             i.bind_to_sync (self.update_state)
     # end def __init__
 
+    def bind_interfacers (self, widget) :
+        for interfacer, event_name in self._pending_interface_bindings :
+            interfacer.bind_to_widget (widget, event_name)
+        self._pending_interface_bindings = []
+    # end def bind_interfacers
+
     def destroy (self) :
         self.__super.destroy ()
         for p in self._precondition_eager.itervalues () :
@@ -958,12 +966,6 @@ class Command_Mgr (Command_Group) :
                 dict [p] = _Precondition_Checker_ (p)
             dict [p].command.append (cmd)
     # end def _add_precondition
-
-    def bind_interfacers (self, widget) :
-        for interfacer, event_name in self.root._pending_interface_bindings :
-            interfacer.bind_to_widget (widget, event_name)
-        self.root._pending_interface_bindings = []
-    # end def bind_interfacers
 
 # end class Command_Mgr
 
