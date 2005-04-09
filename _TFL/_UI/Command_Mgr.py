@@ -156,6 +156,9 @@
 #                     dynamic commands with no callback
 #     8-Apr-2005 (CT) `bind_interfacers` streamlined
 #     8-Apr-2005 (CT) `Command_Group.dyn_cmd_gen` added
+#     9-Apr-2005 (MG) `_add_group`_ add newly created interfacer group
+#                     to the `_pending_interface_bindings` list instead fo
+#                     the original interfacer
 #    ««revision-date»»···
 #--
 
@@ -785,10 +788,10 @@ class Command_Group (_Command_Group_) :
         to_do   = []
         for ( n, i, info, _ie, index
             ) in self._interfacers (if_names, s_index, delta) :
-            ifacers [n] = i.add_group (name, index = index, info = info)
+            ifacers [n] = ig = i.add_group (name, index = index, info = info)
             to_do.append  ((_ie, index))
             if info :
-                self.root._pending_interface_bindings.append ((i, info))
+                self.root._pending_interface_bindings.append ((ig, info))
         result          = group_creator (ifacers)
         result.if_names = if_names
         self._group.append (result)
