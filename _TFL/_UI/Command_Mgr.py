@@ -155,6 +155,7 @@
 #     8-Apr-2005 (CT) `_insert_dyn_commands` factored and changed to disable
 #                     dynamic commands with no callback
 #     8-Apr-2005 (CT) `bind_interfacers` streamlined
+#     8-Apr-2005 (CT) `Command_Group.dyn_cmd_gen` added
 #    ««revision-date»»···
 #--
 
@@ -194,6 +195,7 @@ class _Command_ (TFL.Meta.Object) :
     interfacers = {}
     button_name = None
     group_name  = None
+    underline   = None
 
     indent_pat  = re.compile (r"\n( +)")
     par_pat     = re.compile (r"\n *\n")
@@ -706,6 +708,19 @@ class Command_Group (_Command_Group_) :
         self._group = self.command = None
     # end def destroy
 
+    def dyn_cmd_gen (self, if_name = None) :
+        """Usable as `command_gen` function for dynamic commands/groups"""
+        if if_name is None :
+            list = self._element
+        else :
+            list = self._epi [if_name]
+        for c in list :
+            cb = None
+            if c.is_applicable () :
+                cb = c
+            yield c.name, cb, c.underline
+    # end def dyn_cmd_gen
+
     def group (self, name) :
         return self._group [name]
     # end def group
@@ -726,6 +741,7 @@ class Command_Group (_Command_Group_) :
         cmd.appl       = self.root.appl
         cmd.AC         = self.AC
         cmd.state_var  = None
+        cmd.underline  = underline
         if as_check_button :
             cmd.state_var   = self.TNS.Boolean_Variable ()
         if not cmd.pv_callback :
