@@ -37,6 +37,7 @@
 #     5-Apr-2005 (MG) `mark_at` changed to allow `name` to be a mark which
 #                     shall be `moved`
 #     5-Apr-2005 (MG) `Styler` removed
+#     7-Apr-2005 (MG) `eot_pos` changed to use internal created `__END__` mark
 #    ««revision-date»»···
 #--
 
@@ -48,11 +49,6 @@ import  weakref
 
 GTK = TGL.TKT.GTK
 gtk = GTK.gtk
-
-# TODO: «text»
-# - add events to the Text_Tags
-# - add event distribution code to the Text_View to deleget the events to the
-#   `Text_Tags`
 
 class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     """Wrapper for the GTK widget TextBuffer"""
@@ -66,22 +62,16 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     def __init__ (self, AC = None) :
         self.__super.__init__ (AC = AC)
         self._tag_map   = weakref.WeakKeyDictionary ()
+        self._end_mark  = self.mark_at \
+            (0, left_gravity = False, name = "__END__")
     # end def __init__
 
     bot_iter    = property (lambda s : s.wtk_object.get_start_iter ())
     eot_iter    = property (lambda s : s.wtk_object.get_end_iter   ())
 
     bot_pos     = 0
-    #bot_pos     = property (lambda s : s.bot_iter.get_offset ())
-    current_pos = property \
-        ( lambda s :
-            s.wtk_object.get_iter_at_mark
-                (s.wtk_object.get_insert ()).get_offset ()
-        )
-    current_pos = property \
-        (lambda s : s.wtk_object.get_insert ())
-    eot_pos     = property (lambda s : s.wtk_object.get_char_count ())
-    #eot_pos     = property (lambda s : s.eot_iter.get_offset ())
+    current_pos = property (lambda s : s.wtk_object.get_insert ())
+    eot_pos     = property (lambda s : s._end_mark)
 
     def apply_style ( self
                     , style

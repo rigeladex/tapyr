@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# Copyright (C) 2005 Martin Glück. All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or

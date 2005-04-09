@@ -30,6 +30,8 @@
 #    31-Mar-2005 (MG) `Key_Binding` added
 #    31-Mar-2005 (MG) `GDK_Signal`: `signal_name` corrected
 #    31-Mar-2005 (MG) Button signals added (*_Click_[123])
+#     9-Apr-2005 (MG) `_Event_` exported
+#     9-Apr-2005 (MG) New Signals `Select` and `Deselect` added
 #    ««revision-date»»···
 #--
 
@@ -144,6 +146,7 @@ GTK_Signal ( "Activate")
 GTK_Signal ( "Changed")
 GTK_Signal ( "Clicked")
 GTK_Signal ( "Cursor_Changed")
+GTK_Signal ( "Deselect")
 GTK_Signal ( "Destroy")
 GTK_Signal ( "Drag_Begin",    "drag_context")
 GTK_Signal ( "Drag_Data_Get", "drag_context", "selection", "info", "timestamp")
@@ -167,6 +170,7 @@ GTK_Signal ( "Pressed")
 GTK_Signal ( "Pushed")
 GTK_Signal ( "Popped")
 GTK_Signal ( "Released")
+GTK_Signal ( "Select")
 GTK_Signal ( "Toggled")
 GTK_Signal ( "Value_Changed")
 GTK_Signal ( "Rows_Reordered")
@@ -208,5 +212,5 @@ GTK_Signal ( "Text_Drop",            "ui_target", "ui_source", "text")
 GTK_Signal ( "Tree_Cursor_Position_Changed")
 
 if __name__ != "__main__" :
-    GTK._Export ("Signal")
+    GTK._Export ("Signal", "_Event_")
 ### __END__ TGL.TKT.GTK.Signal

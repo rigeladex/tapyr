@@ -20,26 +20,38 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Styler
+#    TGL.TKT.GTK.Menu_Item
 #
 # Purpose
-#    Base styler for GTK
+#    Wrapper for the GTK widget MenuItem
 #
 # Revision Dates
-#     2-Apr-2005 (MG) Creation
+#    07-Apr-2005 (MG) Automated creation
+#     7-Apr-2005 (MG) Properties `submenu` and `right_justified` added
+#     8-Apr-2005 (MG) `_set_submenu` added
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-from   _TFL                   import TFL
-import _TFL._TKT.Styler
+import _TGL._TKT._GTK.Item
 
-class _TKT_GTK_Styler_ (TFL.TKT.Styler) :
+class Menu_Item (GTK.Item) :
+    """Wrapper for the GTK widget MenuItem"""
 
-    _real_name = "Styler"
+    def _set_submenu (self, submenu) :
+        self.wtk_object.set_submenu (submenu and submenu.wtk_object)
+        if submenu :
+            submenu.item = self
+    # end def _set_submenu
 
-Styler = _TKT_GTK_Styler_ # end class _TKT_GTK_Styler_
+    GTK_Class        = GTK.gtk.MenuItem
+    __gtk_properties = \
+        ( GTK.SG_Object_Property ("submenu", set = _set_submenu)
+        , GTK.SG_Property        ("right_justified")
+        )
+
+# end class Menu_Item
 
 if __name__ != "__main__" :
-    GTK._Export ("Styler")
-### __END__ TGL.TKT.GTK.Styler
+    GTK._Export ("Menu_Item")
+### __END__ TGL.TKT.GTK.Menu_Item

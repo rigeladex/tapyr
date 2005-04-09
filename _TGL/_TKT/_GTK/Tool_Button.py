@@ -20,26 +20,43 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Styler
+#    TGL.TKT.GTK.Tool_Button
 #
 # Purpose
-#    Base styler for GTK
+#    Wrapper for the GTK widget ToolButton
 #
 # Revision Dates
-#     2-Apr-2005 (MG) Creation
+#    09-Apr-2005 (MG) Automated creation
+#     9-Apr-2005 (MG) Support for icons added
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-from   _TFL                   import TFL
-import _TFL._TKT.Styler
+import _TGL._TKT._GTK.Tool_Item
 
-class _TKT_GTK_Styler_ (TFL.TKT.Styler) :
+class Tool_Button (GTK.Tool_Item) :
+    """Wrapper for the GTK widget ToolButton"""
 
-    _real_name = "Styler"
+    GTK_Class        = GTK.gtk.ToolButton
+    __gtk_properties = \
+        ( GTK.SG_Object_Property  ("icon_widget")
+        , GTK.SG_Property         ("label")
+        , GTK.SG_Object_Property  ("label_widget")
+        , GTK.SG_Property         ("stock_id")
+        , GTK.SG_Property         ("use_underline")
+        )
 
-Styler = _TKT_GTK_Styler_ # end class _TKT_GTK_Styler_
+    def __init__ (self, label = None, icon = None, stock = None, ** kw) :
+        if not stock :
+            if icon :
+                icon = icon.wtk_object
+            self.__super.__init__ (label = label, icon_widget = icon, ** kw)
+        else :
+            self.__super.__init__ (stock = stock_id, ** kw)
+    # end def __init__
+
+# end class Tool_Button
 
 if __name__ != "__main__" :
-    GTK._Export ("Styler")
-### __END__ TGL.TKT.GTK.Styler
+    GTK._Export ("Tool_Button")
+### __END__ TGL.TKT.GTK.Tool_Button

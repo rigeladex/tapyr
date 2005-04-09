@@ -20,26 +20,34 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Styler
+#    TGL.TKT.GTK.Toolbar
 #
 # Purpose
-#    Base styler for GTK
+#    Wrapper for the GTK widget Toolbar
 #
 # Revision Dates
-#     2-Apr-2005 (MG) Creation
+#    09-Apr-2005 (MG) Automated creation
+#     9-Apr-2005 (MG) `insert` added to`_wtk_delegation`
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-from   _TFL                   import TFL
-import _TFL._TKT.Styler
+import _TGL._TKT._GTK.Container
 
-class _TKT_GTK_Styler_ (TFL.TKT.Styler) :
+class Toolbar (GTK.Container) :
+    """Wrapper for the GTK widget Toolbar"""
 
-    _real_name = "Styler"
+    GTK_Class        = GTK.gtk.Toolbar
+    __gtk_properties = \
+        ( GTK.SG_Property         ("orientation")
+        , GTK.SG_Property         ("show_arrow")
+        , GTK.Property            ("toolbar_style")
+        )
+    _wtk_delegation  = GTK.Delegation \
+        ( GTK.Delegator_O ("insert"))
 
-Styler = _TKT_GTK_Styler_ # end class _TKT_GTK_Styler_
+# end class Toolbar
 
 if __name__ != "__main__" :
-    GTK._Export ("Styler")
-### __END__ TGL.TKT.GTK.Styler
+    GTK._Export ("Toolbar")
+### __END__ TGL.TKT.GTK.Toolbar

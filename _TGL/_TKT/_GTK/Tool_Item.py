@@ -20,26 +20,31 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Styler
+#    TGL.TKT.GTK.Tool_Item
 #
 # Purpose
-#    Base styler for GTK
+#    Wrapper for the GTK widget ToolItem
 #
 # Revision Dates
-#     2-Apr-2005 (MG) Creation
+#    09-Apr-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-from   _TFL                   import TFL
-import _TFL._TKT.Styler
+import _TGL._TKT._GTK.Bin
 
-class _TKT_GTK_Styler_ (TFL.TKT.Styler) :
+class Tool_Item (GTK.Bin) :
+    """Wrapper for the GTK widget ToolItem"""
 
-    _real_name = "Styler"
+    GTK_Class        = GTK.gtk.ToolItem
+    __gtk_properties = \
+        ( GTK.SG_Property         ("is_important")
+        , GTK.SG_Property         ("visible_horizontal")
+        , GTK.SG_Property         ("visible_vertical")
+        )
 
-Styler = _TKT_GTK_Styler_ # end class _TKT_GTK_Styler_
+# end class Tool_Item
 
 if __name__ != "__main__" :
-    GTK._Export ("Styler")
-### __END__ TGL.TKT.GTK.Styler
+    GTK._Export ("Tool_Item")
+### __END__ TGL.TKT.GTK.Tool_Item

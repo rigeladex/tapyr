@@ -20,26 +20,30 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Styler
+#    TGL.TKT.GTK.Separator_Tool_Item
 #
 # Purpose
-#    Base styler for GTK
+#    Wrapper for the GTK widget SeparatorToolItem
 #
 # Revision Dates
-#     2-Apr-2005 (MG) Creation
+#    09-Apr-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-from   _TFL                   import TFL
-import _TFL._TKT.Styler
+import _TGL._TKT._GTK.Tool_Item
 
-class _TKT_GTK_Styler_ (TFL.TKT.Styler) :
+class Separator_Tool_Item (GTK.Tool_Item) :
+    """Wrapper for the GTK widget SeparatorToolItem"""
 
-    _real_name = "Styler"
+    GTK_Class        = GTK.gtk.SeparatorToolItem
+    __gtk_properties = \
+        ( GTK.SG_Property         ("draw")
+        ,
+        )
 
-Styler = _TKT_GTK_Styler_ # end class _TKT_GTK_Styler_
+# end class Separator_Tool_Item
 
 if __name__ != "__main__" :
-    GTK._Export ("Styler")
-### __END__ TGL.TKT.GTK.Styler
+    GTK._Export ("Separator_Tool_Item")
+### __END__ TGL.TKT.GTK.Separator_Tool_Item

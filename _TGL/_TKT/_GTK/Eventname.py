@@ -31,6 +31,7 @@
 #     2-Apr-2005 (MG) Key names corrected ("<Fx>" -> "Fx", "<Insert>" ->
 #                     "Insert", ...)
 #     3-Apr-2005 (MG) `Combined_Binder._call` typo fixed
+#     7-Apr-2005 (MG) `s/Button_Signal_Binder/Mouse_Button_Binder/g`
 #    ««revision-date»»···
 #--
 
@@ -139,7 +140,7 @@ class Signal_Binder (TFL.Meta.Object) :
 
 # end class Signal_Binder
 
-class Button_Signal_Binder (Signal_Binder) :
+class Mouse_Button_Binder (Signal_Binder) :
     """A binder which mapps the button-press-event of GTK to new created
        signal for the seperate buttons and event type (single, double, ...)
     """
@@ -194,7 +195,7 @@ class Button_Signal_Binder (Signal_Binder) :
         return self.signal.disconnect (widget, cid)
     # end def disconnect
 
-# end class Button_Signal_Binder
+# end class Mouse_Button_Binder
 
 class Combined_Binder (TFL.Meta.Object) :
     """Allows to create events that combine several signals into one"""
@@ -233,7 +234,7 @@ class Combined_Binder (TFL.Meta.Object) :
 
 # end class Combined_Binder
 
-BSB = Button_Signal_Binder
+MBB = Mouse_Button_Binder
 
 Eventname = TGL.TKT._Eventname \
     ( any_enter         = Combined_Binder
@@ -246,9 +247,9 @@ Eventname = TGL.TKT._Eventname \
           , Signal_Binder ("Focus_Out")
           , Signal_Binder ("Leave_Notify")
           )
-    , click_1           = BSB           ("Single_Click_1", "Button_Press")
-    , click_2           = BSB           ("Single_Click_2", "Button_Press")
-    , click_3           = BSB           ("Single_Click_3", "Button_Press")
+    , click_1           = MBB           ("Single_Click_1", "Button_Press")
+    , click_2           = MBB           ("Single_Click_2", "Button_Press")
+    , click_3           = MBB           ("Single_Click_3", "Button_Press")
     , close_node        = Key_Binder    ("Delete")
     , close_node_1      = Key_Binder    ("<Shift>Delete")
     , close_node_all    = Key_Binder    ("<Ctrl>Delete")
@@ -264,9 +265,9 @@ Eventname = TGL.TKT._Eventname \
     , cursor_right      = Key_Binder    ("Right")
     , cursor_up         = Key_Binder    ("Up")
     , cut               = Key_Binder    ("<Ctrl>x")
-    , double_click_1    = BSB           ("Double_Click_1", "Button_Press")
-    , double_click_2    = BSB           ("Double_Click_2", "Button_Press")
-    , double_click_3    = BSB           ("Double_Click_3", "Button_Press")
+    , double_click_1    = MBB           ("Double_Click_1", "Button_Press")
+    , double_click_2    = MBB           ("Double_Click_2", "Button_Press")
+    , double_click_3    = MBB           ("Double_Click_3", "Button_Press")
     , exit              = Key_Binder    ("<Ctrl>q")
     , focus_enter       = Signal_Binder ("Focus_In")
     , focus_leave       = Signal_Binder ("Focus_Out")
@@ -301,9 +302,9 @@ Eventname = TGL.TKT._Eventname \
     , search_prev       = Key_Binder    ("<Shift>F3")
     , select_all        = Key_Binder    ("<Ctrl>a")
     , start_scan        = None ### XXX ??? Signal_Binder ("<Mouse><Press>2")
-    , triple_click_1    = BSB           ("Triple_Click_1", "Button_Press")
-    , triple_click_2    = BSB           ("Triple_Click_2", "Button_Press")
-    , triple_click_3    = BSB           ("Triple_Click_3", "Button_Press")
+    , triple_click_1    = MBB           ("Triple_Click_1", "Button_Press")
+    , triple_click_2    = MBB           ("Triple_Click_2", "Button_Press")
+    , triple_click_3    = MBB           ("Triple_Click_3", "Button_Press")
     , undo              = Key_Binder    ("<Ctrl>z")
     )
 

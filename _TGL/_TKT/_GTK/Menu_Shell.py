@@ -20,26 +20,32 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Styler
+#    TGL.TKT.GTK.Menu_Shell
 #
 # Purpose
-#    Base styler for GTK
+#    Wrapper for the GTK widget MenuShell
 #
 # Revision Dates
-#     2-Apr-2005 (MG) Creation
+#    07-Apr-2005 (MG) Automated creation
+#     9-Apr-2005 (MG) `insert` added to`_wtk_delegation`
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-from   _TFL                   import TFL
-import _TFL._TKT.Styler
+import _TGL._TKT._GTK.Container
 
-class _TKT_GTK_Styler_ (TFL.TKT.Styler) :
+class Menu_Shell (GTK.Container) :
+    """Wrapper for the GTK widget MenuShell"""
 
-    _real_name = "Styler"
+    GTK_Class        = GTK.gtk.MenuShell
+    __gtk_properties = \
+        (
+        )
+    _wtk_delegation  = GTK.Delegation \
+        ( GTK.Delegator_O ("insert"))
 
-Styler = _TKT_GTK_Styler_ # end class _TKT_GTK_Styler_
+# end class Menu_Shell
 
 if __name__ != "__main__" :
-    GTK._Export ("Styler")
-### __END__ TGL.TKT.GTK.Styler
+    GTK._Export ("Menu_Shell")
+### __END__ TGL.TKT.GTK.Menu_Shell

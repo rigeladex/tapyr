@@ -367,7 +367,6 @@ class Object (TGL.TKT.Mixin) :
             result.__name__ = name
             setattr (self, name, result)
             return result
-        print "No Attribute `%s` for `%r`" % (name, self)
         raise AttributeError, name
     # end def __getattr__
 

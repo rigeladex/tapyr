@@ -29,6 +29,7 @@
 #    28-Mar-2005 (MG) Automated creation
 #     3-Apr-2005 (MG) Creation continued
 #     5-Apr-2005 (MG) `pixbuf` property added
+#     9-Apr-2005 (MG) Stock icon support added
 #    ««revision-date»»···
 #--
 
@@ -58,10 +59,12 @@ class Image (GTK.Misc) :
     _wtk_delegation = GTK.Delegation \
         ( load = GTK.Delegator ("set_from_file"))
 
-    def __init__ (self, filename = None, ** kw) :
+    def __init__ (self, filename = None, stock_id = None, size = 0, ** kw) :
         self.__super.__init__ (** kw)
         if filename :
             self.load (filename)
+        elif stock_id :
+            self.wtk_object.set_from_stock (stock_id, size)
     # end def __init__
 
 # end class Image
