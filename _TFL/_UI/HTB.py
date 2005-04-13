@@ -105,8 +105,9 @@
 #                      (i.e., to treat `None` and `""` differently)
 #     8-Apr-2005 (CT)  `Node.add_contents` changed to call `Node` instead of
 #                      `self.__class__`
-#    11-Apr-2005 (MZO) implmented xml_node, cmd_mgr
+#    11-Apr-2005 (MZO) implemented xml_node, cmd_mgr
 #    13-Apr-2005 (BRU) call `self.__class__` again in `add_contents`
+#    12-Apr-2005 (MZO) removed TGW imports. UI shall tk-independ, i14841
 #    ««revision-date»»···
 #--
 
@@ -125,9 +126,6 @@ import sys
 from   _TFL._SDG._XML import XML
 import _TFL._SDG._XML.Document
 import _TFL._SDG._XML.Elem_Type
-from _TGW import TGW
-import _TGW._TPW
-import _TGW._TPW.PDF_Creator
 
 import _TFL.Environment
 
@@ -1387,6 +1385,7 @@ class Browser (TFL.UI.Mixin) :
             , "Commands which are applied to the edit menu"
             , if_names = if_n
             )
+        ### XXX FIXME - no pdf for TK toolkit    
         file_g.add_command \
             ( self.ANS.UI.Command ( "Generate_PDF"
                                   , self._cb_generate_pdf
@@ -1441,7 +1440,7 @@ class Browser (TFL.UI.Mixin) :
         parent_node = TFL.SDG.XML.Document \
             ("root_node", encoding = "utf-8")
         self._generate_xml (parent_node)
-        pdf = TGW.TPW.PDF_Creator \
+        pdf = self.TNS.PDF_Creator \
             (parent_node.formatted ("xml_format"), self.text)
         pdf.open_pdf ()
         self.hide_gauge ()
