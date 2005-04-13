@@ -19,6 +19,7 @@
 #    11-Mar-2005 (CT)  `pack` changed to pass on its `kw` arguments
 #    11-Mar-2005 (CT)  `pack` changed to map True/False to values grokable by
 #                      Tk
+#    13-Apr-2005 (MZO) implemented new_menubar
 #    ««revision-date»»···
 #--
 
@@ -26,6 +27,8 @@ from _TFL import TFL
 from CTK  import *
 
 import _TFL._TKT.Mixin
+import _TFL._TKT._Tk
+import _TFL._TKT._Tk.Command_Interfacer
 
 class Toplevel (TFL.TKT.Mixin) :
     """A toplevel window -- no optional toolbar etc. yet"""
@@ -69,13 +72,26 @@ class Toplevel (TFL.TKT.Mixin) :
     def show (self) :
         pass
     # end def pack
+    
+    def new_menubar (self) : 
+        return None
+        # Tk allows only one menubar in the application
+        # XXX (MZO), 13-Apr-2005, TODO: 1) pack like in CT_TK.BB_Toplevel 
+        #     2) ignore add_group instead of raise notimplementederror
+        # bb = self.TNS.CI_Button_Box (self.AC, self, name = "mb")
+        # return bb
+    # end def new_menubar
+    
+    def new_context_menu (self) : 
+        return None
+    # end def new_context_menu
 
     def __getattr__ (self, name) :
         res = getattr (self.wtk_widget, name)
         setattr (self, name, res)
         return res
     # end def __getattr__
-
+    
 # end class Toplevel
 
 Focused_Toplevel = Toplevel
