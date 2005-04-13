@@ -106,6 +106,7 @@
 #     8-Apr-2005 (CT)  `Node.add_contents` changed to call `Node` instead of
 #                      `self.__class__`
 #    11-Apr-2005 (MZO) implmented xml_node, cmd_mgr
+#    13-Apr-2005 (BRU) call `self.__class__` again in `add_contents`
 #    ««revision-date»»···
 #--
 
@@ -403,9 +404,7 @@ class Node (TFL.UI.Mixin) :
            parent to guarantee correct formatting as a contents node.
         """
         number = len (self.children)
-        ### XXX used to call `self.__class__` nut that fails for some derived
-        ###     classes
-        child  = Node \
+        child = self.__class__ \
             ( browser     = self.browser
             , name        = ''
             , header      = contents
