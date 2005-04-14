@@ -59,6 +59,9 @@
 #     1-Apr-2005 (CT)  Optional argument `tag` added to `apply_style` and
 #                      `_tag`
 #     1-Apr-2005 (CT)  `tags_at` added
+#    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
+#                      `buffer_head`, `buffer_tail`, and `insert_mark`,
+#                      respectively
 #    ««revision-date»»···
 #--
 
@@ -96,9 +99,9 @@ class Text (TFL.TKT.Mixin) :
         >>> hum_m = w.mark_at (hum_p, left_gravity = False)
         >>> grmpf = w.mark_at (hum_m, left_gravity = True)
         >>> grmml = w.mark_at (w.pos_at (hum_m), left_gravity = True)
-        >>> w.place_cursor (w.bot_pos)
-        >>> w.insert (w.current_pos, "Hi", yell)
-        >>> w.insert (w.current_pos, "Ho", delta = 2)
+        >>> w.place_cursor (w.buffer_head)
+        >>> w.insert (w.insert_mark, "Hi", yell)
+        >>> w.insert (w.insert_mark, "Ho", delta = 2)
         >>> w.apply_style  ( gray, w.bol_pos (hum_p), w.eol_pos (hum_p)
         ...                , tag ="foo")
         >>> tags = w.tags_at (hum_p)
@@ -107,7 +110,7 @@ class Text (TFL.TKT.Mixin) :
         >>> #applying an eventbinding is impossible here because this
         >>> #needs an app context for looking up the event name.
         >>> #w.apply_style  (cb,   w.bol_pos (hum_p), w.eol_pos (hum_p))
-        >>> w.remove_style (gray, w.bot_pos, w.eot_pos)
+        >>> w.remove_style (gray, w.buffer_head, w.buffer_tail)
 
         >>> print w.get (hum_p, w.pos_at (hum_p, 3))
         HaH
@@ -126,8 +129,8 @@ class Text (TFL.TKT.Mixin) :
         Hi found Hi
         Ho found Ho
         Hu found Hu
-        >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
-        >>> w.apply_style (gray, w.bol_pos (w.eot_pos), w.eol_pos (w.eot_pos))
+        >>> w.insert (w.buffer_tail, chr (10) + "Diddle Dum")
+        >>> w.apply_style (gray, w.bol_pos (w.buffer_tail), w.eol_pos (w.buffer_tail))
         >>> print w.get ()
         HiHaHoHum
         Diddle Dum
@@ -136,8 +139,8 @@ class Text (TFL.TKT.Mixin) :
         >>> print w.get ( w.bol_pos (hum_m, line_delta = 1)
         ...             , w.eol_pos (hum_m, line_delta = 1))
         Diddle Dum
-        >>> w.see (w.eot_pos)
-        >>> w.see (w.bot_pos)
+        >>> w.see (w.buffer_tail)
+        >>> w.see (w.buffer_head)
         >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
         >>> print w.get ()
         HiHaHoHum
@@ -149,20 +152,20 @@ class Text (TFL.TKT.Mixin) :
         HiHajupGRMPFHoHum
          Dum
 
-        >>> w.insert (w.current_pos, "cp1", blue)
-        >>> w.insert (w.current_pos, "cp2", yell)
+        >>> w.insert (w.insert_mark, "cp1", blue)
+        >>> w.insert (w.insert_mark, "cp2", yell)
         >>> print w.get ()
         Hicp1cp2HajupGRMPFHoHum
          Dum
 
-        >>> x = w.current_pos
+        >>> x = w.insert_mark
         >>> w.insert (x, "CP1", blue)
         >>> w.insert (x, "CP2", yell)
         >>> print w.get ()
         Hicp1cp2CP1CP2HajupGRMPFHoHum
          Dum
 
-        >>> x = w.eot_pos
+        >>> x = w.buffer_tail
         >>> w.insert (x, "X1", blue)
         >>> w.insert (x, "Y2", yell)
         >>> print w.get ()
@@ -175,36 +178,38 @@ class Text (TFL.TKT.Mixin) :
         >>> all = Apply_All (t1, t2)
         >>> all.append ("Ha")
         >>> all.append ("Hum", blue)
-        >>> all.insert (t1.bot_pos, "Hi", yell)
-        >>> all.insert (t1.bot_pos, "Ho", delta = 2)
-        >>> all.apply_style (gray, t1.bol_pos (t1.current_pos), t1.eol_pos (t1.current_pos))
-        >>> t1.remove_style (gray, t1.bot_pos, t1.eot_pos)
+        >>> all.insert (t1.buffer_head, "Hi", yell)
+        >>> all.insert (t1.buffer_head, "Ho", delta = 2)
+        >>> all.apply_style (gray, t1.bol_pos (t1.insert_mark), t1.eol_pos (t1.insert_mark))
+        >>> t1.remove_style (gray, t1.buffer_head, t1.buffer_tail)
 
         ### check styles of t1 and t2 (`t2` still should have style `gray`)
         """
 
-    bot_pos           = None  ### descendents must redefine as property
+    buffer_head       = None  ### descendents must redefine as property
     """Position of begin of buffer (use this to insert at the beginning).
        """
 
-    current_pos       = None  ### descendents must redefine as property
-    """Current position in the text buffer.
+    buffer_tail       = None  ### descendents must redefine as property
+    """Mark at end of buffer (use this to insert at the end).
        """
 
-    eot_pos           = None  ### descendents must redefine as property
-    """Position of end of buffer (use this to insert at the end).
+    insert_mark       = None  ### descendents must redefine as property
+    """Mark of insert position in the text buffer.
        """
 
     def append (self, text, style = None) :
         """Append `text` with `style` to buffer."""
-        self.insert (self.eot_pos, text, style)
+        self.insert (self.buffer_tail, text, style)
     # end def append
 
     def apply_style (self, style, head = None, tail = None, delta = 0, lift = False, tag = None) :
-        """Apply `style` from position/mark `head` (default: `self.bot_pos`)
-           plus `delta` to position/mark `tail` (default: `self.eot_pos`).
-           Parameter `lift` specifies that this style should have the
-           maximum priority. If `tag` is specified, use its value as tag-name.
+        """Apply `style` from position/mark `head` (default:
+           `self.buffer_head`) plus `delta` to position/mark `tail` (default:
+           `self.buffer_tail`). Parameter `lift` specifies that this style
+           should have the maximum priority. If `tag` is specified, use its
+           value as tag-name.
+
            Note: Due to implementation restrictions, lmargin1 and
            lmargin2 must alway be applied in the same style (this is an
            implementation restriction of GTK).
@@ -223,7 +228,7 @@ class Text (TFL.TKT.Mixin) :
 
     def clear (self) :
         """Remove all text from buffer."""
-        self.remove (self.bot_pos, self.eot_pos)
+        self.remove (self.buffer_head, self.buffer_tail)
     # end def clear
 
     def eol_pos (self, pos_or_mark, delta = 0, line_delta = 0) :
@@ -236,8 +241,8 @@ class Text (TFL.TKT.Mixin) :
 
     def find (self, text, head = None, tail = None, delta = 0, backwards = False) :
         """Return the position of (the first character of) `text` in the
-           buffer between position/mark `head` (default: `self.bot_pos`) plus
-           `delta` and position/mark `tail` (default: `self.eot_pos`).
+           buffer between position/mark `head` (default: `self.buffer_head`)
+           plus `delta` and position/mark `tail` (default: `self.buffer_tail`).
         """
         raise NotImplementedError, \
             "%s must define find" % (self.__class__.__name__, )
@@ -251,8 +256,8 @@ class Text (TFL.TKT.Mixin) :
 
     def get (self, head = None, tail = None, delta= 0) :
         """Return `text` between position/mark `head` (default:
-           `self.bot_pos`) plus `delta` to position/mark `tail` (default:
-           `self.eot_pos`)."""
+           `self.buffer_head`) plus `delta` to position/mark `tail` (default:
+           `self.buffer_tail`)."""
         raise NotImplementedError, \
             "%s must define get" % (self.__class__.__name__, )
     # end def get
@@ -320,7 +325,7 @@ class Text (TFL.TKT.Mixin) :
 
     def remove_style (self, style, head, tail = None, delta = 0) :
         """Remove `style` from position/mark `head` plus `delta` to
-           position/mark `tail` (default: `self.eot_pos`).
+           position/mark `tail` (default: `self.buffer_tail`).
         """
         raise NotImplementedError, \
             "%s must define remove_style" % (self.__class__.__name__, )

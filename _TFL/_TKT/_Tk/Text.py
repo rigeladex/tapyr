@@ -72,6 +72,9 @@
 #                      `_tag`
 #     1-Apr-2005 (CT)  `tags_at` added
 #     2-Apr-2005 (CT)  `_tag` changed to fix bug introduced yesterday
+#    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
+#                      `buffer_head`, `buffer_tail`, and `insert_mark`,
+#                      respectively
 #    ««revision-date»»···
 #--
 
@@ -91,17 +94,17 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
        >>> w = Text (_doctest_AC ())
        >>> w.exposed_widget.pack ()
-       >>> eot = w.eot_pos
-       >>> cur = w.current_pos
-       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+       >>> eot = w.buffer_tail
+       >>> cur = w.insert_mark
+       >>> w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
        ('1.0', '2.0', '1.0', '1.0')
        >>> w.append ("Ha")
-       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+       >>> w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
        ('1.0', '2.0', '1.2', '1.0')
        >>> w.append ("Hum")
-       >>> w.place_cursor (w.bot_pos)
-       >>> w.insert (w.bot_pos, "Hi")
-       >>> w.insert (w.bot_pos, "Ho", delta = 2)
+       >>> w.place_cursor (w.buffer_head)
+       >>> w.insert (w.buffer_head, "Hi")
+       >>> w.insert (w.buffer_head, "Ho", delta = 2)
        >>> w.pos_at (cur)
        '1.4'
        >>> for t in "Ha", "He", "Hi", "Ho", "Hu" :
@@ -116,16 +119,16 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
        '1.4'
        >>> w.find ("H", "1.9", "1.3", backwards = True)
        '1.6'
-       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+       >>> w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
        ('1.0', '2.0', '1.4', '1.0')
-       >>> w.insert (w.eot_pos, chr (10) + "Diddle Dum")
-       >>> w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+       >>> w.insert (w.buffer_tail, chr (10) + "Diddle Dum")
+       >>> w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
        ('1.0', '3.0', '1.4', '1.0')
        >>> print w.get ()
        HiHoHaHum
        Diddle Dum
-       >>> w.see (w.eot_pos)
-       >>> w.see (w.bot_pos)
+       >>> w.see (w.buffer_tail)
+       >>> w.see (w.buffer_head)
        >>> w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
        >>> print w.get ()
        HiHoHaHum
@@ -148,9 +151,9 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     Widget_Type = CTK.C_Text
 
-    bot_pos     = property (lambda s : START)
-    current_pos = property (lambda s : INSERT)
-    eot_pos     = property (lambda s : END)
+    buffer_head = property (lambda s : START)
+    buffer_tail = property (lambda s : END)
+    insert_mark = property (lambda s : INSERT)
 
     def __init__ (self, AC, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
@@ -172,7 +175,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
         else :
             tag = self._tag (style, tag)
             self.wtk_widget.tag_add \
-                (tag, self._pos_at (head, delta), tail or self.eot_pos)
+                (tag, self._pos_at (head, delta), tail or self.buffer_tail)
             if lift :
                 self.wtk_widget.tag_raise (tag)
     # end def apply_style
@@ -189,7 +192,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     def find (self, text, head = None, tail = None, delta = 0, backwards = False) :
         return self.wtk_widget.search \
-            ( text, self._pos_at (head or self.bot_pos, delta)
+            ( text, self._pos_at (head or self.buffer_head, delta)
             , backwards = backwards
             , nocase    = False
             , regexp    = False
@@ -204,11 +207,11 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     def get (self, head = None, tail = None, delta = 0) :
         widget = self.wtk_widget
         if head is None :
-            head = self.bot_pos
+            head = self.buffer_head
         if tail is None :
-            tail = self.eot_pos
+            tail = self.buffer_tail
         result = widget.get (self._pos_at (head, delta), tail)
-        if widget.index (tail) == widget.index (self.eot_pos) :
+        if widget.index (tail) == widget.index (self.buffer_tail) :
             result = result [:-1]
         return result
     # end def get
@@ -272,7 +275,7 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
         self.wtk_widget.tag_remove \
             ( self._tag_map [style]
             , self._pos_at  (head, delta)
-            , tail or self.eot_pos
+            , tail or self.buffer_tail
             )
     # end def remove_style
 
@@ -352,26 +355,26 @@ hand  = Style ("hand", mouse_cursor = "hand")
 defa  = Style ("hand", mouse_cursor = "default")
 fleur = Style ("hand", mouse_cursor = "fleur")
 w = Text (_doctest_AC ())
-eot = w.eot_pos
-cur = w.current_pos
+eot = w.buffer_tail
+cur = w.insert_mark
 w.exposed_widget.pack ()
 w.push_style  (hand)
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
 w.append ("Ha")
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
 w.append ("Hum", blue)
-w.insert (w.bot_pos, "Hi", yell)
-w.insert (w.bot_pos, "Ho", delta = 2)
-w.apply_style  (gray, w.bol_pos (w.current_pos), w.eol_pos (w.current_pos))
-w.remove_style (gray, w.bot_pos, w.eot_pos)
+w.insert (w.buffer_head, "Hi", yell)
+w.insert (w.buffer_head, "Ho", delta = 2)
+w.apply_style  (gray, w.bol_pos (w.insert_mark), w.eol_pos (w.insert_mark))
+w.remove_style (gray, w.buffer_head, w.buffer_tail)
 for t in "Ha", "He", "Hi", "Ho", "Hu" :
     print t, w.find (t)
 
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
-w.insert (w.eot_pos, '''\nDiddle Dum''')
-w.apply_style (gray, w.bol_pos (w.current_pos), w.eol_pos (w.current_pos))
-w.remove_style (yell, w.bot_pos, w.eot_pos)
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
+w.insert (w.buffer_tail, '''\nDiddle Dum''')
+w.apply_style (gray, w.bol_pos (w.insert_mark), w.eol_pos (w.insert_mark))
+w.remove_style (yell, w.buffer_head, w.buffer_tail)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
 w.get ()
 w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
 w.get ()

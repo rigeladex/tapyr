@@ -40,6 +40,9 @@
 #    21-Mar-2005 (RSC) Added test for `head_open` parameter
 #    29-Mar-2005 (CT)  s/head_open/header_open/g
 #    29-Mar-2005 (CT)  `mknode_2` added and used to test empty `header_open`
+#    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
+#                      `buffer_head`, `buffer_tail`, and `insert_mark`,
+#                      respectively
 #    ««revision-date»»···
 #--
 
@@ -78,7 +81,7 @@ def mknode (tb, name, * tags) :
         , header_open = "4. test Line\n5. test Line\n6. test Line"
         , o_links = o
         )
-    n.insert (tb.current_pos, * tags)
+    n.insert (tb.insert_mark, * tags)
     return n
 # end def mknode
 
@@ -90,7 +93,7 @@ def mknode_2 (tb, name, * tags) :
         , header_open = ""
         , o_links = o
         )
-    n.insert (tb.current_pos, * tags)
+    n.insert (tb.insert_mark, * tags)
     return n
 # end def mknode_2
 
@@ -100,9 +103,9 @@ def mkchild (tn, name, o_links = ()) :
 # end def mkchild
 
 def insert_stuff (tb) :
-    tb.insert            (tb.current_pos, "**           Test me           **\n")
+    tb.insert            (tb.insert_mark, "**           Test me           **\n")
     tn = TFL.UI.HTB.help (tb)
-    tn.insert            (tb.current_pos, "rindent", "found")
+    tn.insert            (tb.insert_mark, "rindent", "found")
     tn = mknode          (tb, "n1", "wrap", "found")
     x = mkchild          (tn, "s1")
     mkchild              (tn, "s2", o)

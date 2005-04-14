@@ -109,6 +109,9 @@
 #    13-Apr-2005 (BRU) call `self.__class__` again in `add_contents`
 #    12-Apr-2005 (MZO) removed TGW imports. UI shall tk-independ, i14841
 #    14-Apr-2005 (MZO) fixed i14841 - TOM._TKT.Mixin => UI.Mixin
+#    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
+#                      `buffer_head`, `buffer_tail`, and `insert_mark`,
+#                      respectively
 #    ««revision-date»»···
 #--
 
@@ -446,7 +449,7 @@ class Node (TFL.UI.Mixin) :
     def insert (self, mark, * tags) :
         """Insert `self' into widget `self.text' at position `mark'.
            Note that `mark' *must* be a mark with right gravity, e.g.,
-           the current_pos in the text widget. We depend on the magic
+           the insert_mark in the text widget. We depend on the magic
            behaviour of the mark position (that it changes with
            insertions).
         """
@@ -579,24 +582,24 @@ class Node (TFL.UI.Mixin) :
 
     def xml_node (self, parent_node) :
         parts = []
-        if self.button is None : 
+        if self.button is None :
             node_state = "none"
-        elif self.button.is_leaf : 
+        elif self.button.is_leaf :
             node_state = "leaf"
-        elif self.button.closed : 
+        elif self.button.closed :
             node_state = "closed"
-        else : 
+        else :
             node_state = "open"
-        if node_state == "none" :   # content; description 
-            new_xml_node_content = TFL.SDG.XML.Elem_Type ("node_content")        
+        if node_state == "none" :   # content; description
+            new_xml_node_content = TFL.SDG.XML.Elem_Type ("node_content")
             nc = new_xml_node_content (self.header)
-            parent_node.add (nc)            
+            parent_node.add (nc)
             return parent_node     # no subchild; put on same level
         new_xml_node_name = TFL.SDG.XML.Elem_Type \
-            ("node_name", state = node_state)        
+            ("node_name", state = node_state)
         n = new_xml_node_name (self.name)
         if self.header :
-            new_xml_node_header = TFL.SDG.XML.Elem_Type ("node_header")        
+            new_xml_node_header = TFL.SDG.XML.Elem_Type ("node_header")
             nh = new_xml_node_header (self.header)
             n.add (nh)
         parent_node.add (n)
@@ -643,7 +646,7 @@ class Node (TFL.UI.Mixin) :
     # end def enter
 
     def leave (self, event = None) :
-        self.text.remove_style (styles.active_node, self.text.bot_pos)
+        self.text.remove_style (styles.active_node, self.text.buffer_head)
     # end def leave
 
     def _set_cursor (self, index, delta = None) :
@@ -880,7 +883,7 @@ class Node (TFL.UI.Mixin) :
 
     def find_unhighlight (self, match) :
         """Quick & dirty way is to remove *all* found styles"""
-        self.text.remove_style (styles.found, self.text.bot_pos)
+        self.text.remove_style (styles.found, self.text.buffer_head)
     # end def find_unhighlight
 
 # end class Node
@@ -997,13 +1000,13 @@ class Browser (TFL.UI.Mixin) :
         self.text           = self.TNS.Scrolled_Text \
             (AC = AC, name = name, wc = wc, editable = False)
         self._setup_command_mgr  (AC, self.TNS)
-        if self._ci_context_menu is not None : 
+        if self._ci_context_menu is not None :
             sig_binder = self.TNS.Eventname.click_3
             sig_binder.bind_add (self.text.wtk_widget, self._cb_context_menu)
         # delegate some parts from our text:
-        self.bot_pos        = self.text.bot_pos
-        self.current_pos    = self.text.current_pos
-        self.eot_pos        = self.text.eot_pos
+        self.buffer_head    = self.text.buffer_head
+        self.insert_mark    = self.text.insert_mark
+        self.buffer_tail    = self.text.buffer_tail
         self.delete         = self.text.remove
         self.wtk_widget     = self.text.wtk_widget
         self.exposed_widget = self.text.exposed_widget
@@ -1347,7 +1350,7 @@ class Browser (TFL.UI.Mixin) :
         self._find_bakward = []
         self._find_current = None
         self._find_pattern = None
-        self.cmd_mgr.update_state ()       
+        self.cmd_mgr.update_state ()
     # end def clear
 
     def _setup_command_mgr (self, AC, TNS) :
@@ -1355,14 +1358,14 @@ class Browser (TFL.UI.Mixin) :
         """
         if hasattr (self._parent, "new_menubar") : # wc = Toplevel
             self._ci_mb           = self._parent.new_menubar ()
-        else : 
+        else :
             self._ci_mb           = None
         if hasattr (self.text, "new_context_menu") : # context menu from text
             self._ci_context_menu = self.text.new_context_menu ()
-        else : 
+        else :
             self._ci_context_menu = None
         interfacers   = dict \
-            ( [ (name, i) 
+            ( [ (name, i)
                 for (name, i) in
                     [ ( "cm", self._ci_context_menu), ("mb", self._ci_mb) ]
                     if i is not None
@@ -1386,7 +1389,7 @@ class Browser (TFL.UI.Mixin) :
             , "Commands which are applied to the edit menu"
             , if_names = if_n
             )
-        ### XXX FIXME - no pdf for TK toolkit    
+        ### XXX FIXME - no pdf for TK toolkit
         file_g.add_command \
             ( self.ANS.UI.Command ( "Generate_PDF"
                                   , self._cb_generate_pdf
@@ -1405,12 +1408,12 @@ class Browser (TFL.UI.Mixin) :
         self.cmd_mgr.set_auto_short_cuts ()
     # end def _setup_command_mgr
 
-    def _pre_generate_pdf (self) : 
+    def _pre_generate_pdf (self) :
         return TFL.Environment.system == "win32" and self._pre_has_nodes ()
     # end def _pre_generate_pdf
     _pre_generate_pdf.evaluate_eagerly = True
 
-    def _pre_has_nodes (self) : 
+    def _pre_has_nodes (self) :
         return self.nodes
     # end def _pre_has_nodes
     _pre_has_nodes.evaluate_eagerly = True
@@ -1422,21 +1425,21 @@ class Browser (TFL.UI.Mixin) :
         return self.TNS.stop_cb_chaining
     # end def _cb_context_menu
 
-    def _generate_xml (self, parent_node = None) : 
-        if parent_node is None : 
+    def _generate_xml (self, parent_node = None) :
+        if parent_node is None :
             parent_node = TFL.SDG.XML.Document \
                 ("root_node", encoding = "utf-8")
         widget_node = TFL.SDG.XML.Elem_Type \
-            ("widget", name = self.name, class_type = "HTB")        
+            ("widget", name = self.name, class_type = "HTB")
         widget_node_inst = widget_node ()
         parent_node.add (widget_node_inst)
-        xml_node = TFL.SDG.XML.Elem_Type ("content")        
+        xml_node = TFL.SDG.XML.Elem_Type ("content")
         n = xml_node ()
         widget_node_inst.add (n)
         self.xml_nodes (parent_node = n)
     # end def _generate_xml
 
-    def _cb_generate_pdf (self, event = None) : 
+    def _cb_generate_pdf (self, event = None) :
         self.show_gauge ()
         parent_node = TFL.SDG.XML.Document \
             ("root_node", encoding = "utf-8")
