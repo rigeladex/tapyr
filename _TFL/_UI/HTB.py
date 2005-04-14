@@ -112,6 +112,7 @@
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
+#    14-Apr-2005 (BRU) Fixed gauge activation.
 #    ««revision-date»»···
 #--
 
@@ -321,6 +322,10 @@ class Node (TFL.UI.Mixin) :
             , contents_tags = contents_tags
             , header_open   = header_open
             )
+        if AC is not None :
+            self.gauge      = AC.ui_state.gauge
+        else :
+            self.gauge      = None
         if header_open is None :
             header_open  = header
         self.browser     = browser
@@ -609,8 +614,10 @@ class Node (TFL.UI.Mixin) :
         return n
     # end def xml_node
 
-    def open (self, event = None, transitive = 0) :
+    def open (self, event = None, transitive = 0, show_gauge = False) :
         if self.button and not self.button.is_leaf :
+            if show_gauge and self.gauge :
+                self.gauge.pulse ()        
             if self.button.closed :
                 self.button.open ()
                 self._delete        (self.body_mark, self.tail_mark)
@@ -620,7 +627,7 @@ class Node (TFL.UI.Mixin) :
                     c.insert (self.tail_mark, * self.tags)
             if transitive :
                 for c in self.children :
-                    c.open (event, transitive - 1)
+                    c.open (event, transitive - 1, show_gauge = show_gauge)
     # end def open
 
     def close (self, event = None, transitive = 0) :
@@ -992,6 +999,7 @@ class Browser (TFL.UI.Mixin) :
 
     def __init__ (self, AC, wc = None, name = None, ** kw) :
         self.__super.__init__ (AC = AC)
+        self.gauge          = AC.ui_state.gauge
         self._parent        = wc
         self.name           = name
         self.mouse_act      = 1
@@ -1224,22 +1232,13 @@ class Browser (TFL.UI.Mixin) :
 
     def open_nodes (self, event = None) :
         """Open all nodes transitively"""
+        self._activate_gauge (label = "Opening nodes")
         try     :
-            self.show_gauge ()
             for n in self.nodes :
-                self.AC.ui_state.gauge.pulse ()
-                n.open (transitive = True)
+                n.open (transitive = 1, show_gauge = True)
         finally :
-            self.hide_gauge ()
+            self._deactivate_gauge ()
     # end def open_nodes
-
-    def show_gauge (self) :
-        self.AC.ui_state.gauge.activate_activity_mode ()
-    # end def show_gauge
-
-    def hide_gauge (self) :
-        self.AC.ui_state.gauge.deactivate ()
-    # end def hide_gauge
 
     def open (self, node) :
         """Open `node' and all its `parent' nodes."""
@@ -1268,6 +1267,17 @@ class Browser (TFL.UI.Mixin) :
             n.search (pattern, tagged_as, result)
         return result
     # end def search
+
+    def _activate_gauge (self, label = "") :
+        self.gauge.activate_activity_mode \
+            ( title = self.AC.ANS.Version.productname
+            , label = label
+            )
+    # end def _activate_gauge
+
+    def _deactivate_gauge (self) :
+        self.gauge.deactivate ()
+    # end def _deactivate_gauge
 
     def _find_highlight (self, (node, match), apply_found_bg = 0) :
         self.open (node)
@@ -1440,14 +1450,14 @@ class Browser (TFL.UI.Mixin) :
     # end def _generate_xml
 
     def _cb_generate_pdf (self, event = None) :
-        self.show_gauge ()
+        self._activate_gauge (label = "Generating PDF")
         parent_node = TFL.SDG.XML.Document \
             ("root_node", encoding = "utf-8")
         self._generate_xml (parent_node)
         pdf = self.TNS.PDF_Creator \
             (parent_node.formatted ("xml_format"), self.text)
         pdf.open_pdf ()
-        self.hide_gauge ()
+        self._deactivate_gauge ()
     # end def _cb_generate_pdf
 
 # end class Browser
