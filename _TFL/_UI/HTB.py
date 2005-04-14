@@ -999,7 +999,7 @@ class Browser (TFL.UI.Mixin) :
 
     def __init__ (self, AC, wc = None, name = None, ** kw) :
         self.__super.__init__ (AC = AC)
-        self.gauge          = AC.ui_state.gauge
+        self.gauge      = AC.ui_state.gauge
         self._parent        = wc
         self.name           = name
         self.mouse_act      = 1
