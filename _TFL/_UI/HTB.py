@@ -108,6 +108,7 @@
 #    11-Apr-2005 (MZO) implemented xml_node, cmd_mgr
 #    13-Apr-2005 (BRU) call `self.__class__` again in `add_contents`
 #    12-Apr-2005 (MZO) removed TGW imports. UI shall tk-independ, i14841
+#    14-Apr-2005 (MZO) fixed i14841 - TOM._TKT.Mixin => UI.Mixin
 #    ««revision-date»»···
 #--
 
@@ -154,7 +155,7 @@ class Styles_Cache (object) :
 
 styles = Styles_Cache ()
 
-class Button (TFL.TKT.Mixin) :
+class Button (TFL.UI.Mixin) :
 
     clsd_bitmap_name = "closed_node"
     leaf_bitmap_name = "circle"
