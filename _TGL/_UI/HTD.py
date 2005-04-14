@@ -34,6 +34,10 @@
 #     2-Apr-2005 (CT) Small fixes
 #     2-Apr-2005 (CT) `id`, `id_tag`, and `id_style` added and used
 #     5-Apr-2005 (MG) Use `mouse_*` events instead of `any_*`
+#    10-Apr-2005 (CT) `_insert_contents` changed to handle `callable` contents
+#    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
+#                      `buffer_head`, `buffer_tail`, and `insert_mark`,
+#                      respectively
 #    ««revision-date»»···
 #--
 
@@ -135,7 +139,8 @@ class _Node_ (TGL.UI.Mixin) :
         if self.root.active_node is self :
             self.root.active_node = None
             tkt_text = self.tkt_text
-            tkt_text.remove_style (self.Style.active_node, tkt_text.bot_pos)
+            tkt_text.remove_style \
+                (self.Style.active_node, tkt_text.buffer_head)
             return self.TNS.stop_cb_chaining
     # end def mouse_leave
 
@@ -210,7 +215,13 @@ class _Node_ (TGL.UI.Mixin) :
         if contents :
             tkt_text = self.tkt_text
             for c in contents :
-                tkt_text.insert (at_mark, c.value, c.style)
+                if callable (c.value) :
+                    for v, s in c.value () :
+                        p = tkt_text.pos_at  (at_mark)
+                        tkt_text.insert      (at_mark, v, c.style)
+                        tkt_text.apply_style (s, p, at_mark)
+                else :
+                    tkt_text.insert (at_mark, c.value, c.style)
             tkt_text.insert (at_mark, " ", self.Style.normal)
     # end def _insert_contents
 
@@ -456,7 +467,7 @@ class Root (_Node_) :
             , ** kw
             )
         self._setup_bindings (tkt_text)
-        self._insert         (tkt_text.current_pos)
+        self._insert         (tkt_text.insert_mark)
     # end def __init__
 
     def clear (self) :
@@ -572,7 +583,7 @@ class Root (_Node_) :
     def _node_binding (method) :
         def wrapper (self, event = None, node = None, ** kw) :
             tkt_text = self.tkt_text
-            pos      = tkt_text.bol_pos (tkt_text.current_pos)
+            pos      = tkt_text.bol_pos (tkt_text.insert_mark)
             if node is None :
                 tags = tkt_text.tags_at (pos)
                 for t in reversed (tags) :

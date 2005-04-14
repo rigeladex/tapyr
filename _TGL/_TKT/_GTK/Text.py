@@ -31,6 +31,9 @@
 #     3-Apr-2005 (MG) `apply_style` and `insert_widget` fixed
 #     5-Apr-2005 (MG) Synthetization of the `Enter_Notify` and `Leave_Notify`
 #                     events for the tags added
+#    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
+#                      `buffer_head`, `buffer_tail`, and `insert_mark`,
+#                      respectively
 #    ««revision-date»»···
 #--
 
@@ -181,25 +184,25 @@ hand  = Style ("hand", mouse_cursor = "hand")
 defa  = Style ("hand", mouse_cursor = "default")
 fleur = Style ("hand", mouse_cursor = "fleur")
 w = Scrolled_Text (_doctest_AC ())
-eot = w.eot_pos
-cur = w.current_pos
+eot = w.buffer_tail
+cur = w.insert_mark
 w.push_style  (hand)
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
 w.append ("Ha")
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
 w.append ("Hum", blue)
-w.insert (w.bot_pos, "Hi", yell)
-w.insert (w.bot_pos, "Ho", delta = 2)
-w.apply_style  (gray, w.bol_pos (w.current_pos), w.eol_pos (w.current_pos))
-w.remove_style (gray, w.bot_pos, w.eot_pos)
+w.insert (w.buffer_head, "Hi", yell)
+w.insert (w.buffer_head, "Ho", delta = 2)
+w.apply_style  (gray, w.bol_pos (w.insert_mark), w.eol_pos (w.insert_mark))
+w.remove_style (gray, w.buffer_head, w.buffer_tail)
 for t in "Ha", "He", "Hi", "Ho", "Hu" :
     print t, w.find (t)
 
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
-w.insert (w.eot_pos, '''\nDiddle Dum''')
-w.apply_style (gray, w.bol_pos (w.current_pos), w.eol_pos (w.current_pos))
-#w.remove_style (yell, w.bot_pos, w.eot_pos)
-w.bot_pos, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.current_pos)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
+w.insert (w.buffer_tail, '''\nDiddle Dum''')
+w.apply_style (gray, w.bol_pos (w.insert_mark), w.eol_pos (w.insert_mark))
+#w.remove_style (yell, w.buffer_head, w.buffer_tail)
+w.buffer_head, w.pos_at (eot), w.pos_at (cur), w.bol_pos (w.insert_mark)
 w.get ()
 w.remove  (w.find ("Diddle"), delta = len ("Diddle"))
 w.get ()

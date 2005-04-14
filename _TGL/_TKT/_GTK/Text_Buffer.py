@@ -38,6 +38,9 @@
 #                     shall be `moved`
 #     5-Apr-2005 (MG) `Styler` removed
 #     7-Apr-2005 (MG) `eot_pos` changed to use internal created `__END__` mark
+#    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
+#                      `buffer_head`, `buffer_tail`, and `insert_mark`,
+#                      respectively
 #    ««revision-date»»···
 #--
 
@@ -69,9 +72,9 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     bot_iter    = property (lambda s : s.wtk_object.get_start_iter ())
     eot_iter    = property (lambda s : s.wtk_object.get_end_iter   ())
 
-    bot_pos     = 0
-    current_pos = property (lambda s : s.wtk_object.get_insert ())
-    eot_pos     = property (lambda s : s._end_mark)
+    buffer_head = 0
+    buffer_tail = property (lambda s : s._end_mark)
+    insert_mark = property (lambda s : s.wtk_object.get_insert ())
 
     def apply_style ( self
                     , style
@@ -90,7 +93,7 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
             self.wtk_object.apply_tag \
                 ( tag.wtk_object
                 , self._move_iter     (self._iter_from_pom (head), delta)
-                , self._iter_from_pom (tail or self.eot_pos)
+                , self._iter_from_pom (tail or self.buffer_tail)
                 )
             if lift :
                 tag.priority = self.tag_table.get_size ()
@@ -158,7 +161,7 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
         start  = self._move_iter (self._iter_from_pom (pos_or_mark), delta)
         self.wtk_object.insert_pixbuf (start, image)
         if style :
-            end = self._iter_from_pom (self.current_pos)
+            end = self._iter_from_pom (self.insert_mark)
             self.wtk_object.apply_tag \
                 (self._tag (style).wtk_object, start, end)
     # end def insert_image
@@ -198,7 +201,7 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
         self.wtk_object.remove_tag \
             ( self._tag_map [style].wtk_object
             , self._move_iter     (self._iter_from_pom (head), delta)
-            , self._iter_from_pom (tail or self.eot_pos)
+            , self._iter_from_pom (tail or self.buffer_tail)
             )
     # end def remove_style
 
