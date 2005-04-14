@@ -31,6 +31,7 @@
 #    28-Feb-2002 (CT) Use `TFL.d_dict` instead of `D_Dict`
 #    12-Apr-2002 (CT) Use `StandardError` instead of `Exception`
 #    11-Jun-2003 (CT) s/== None/is None/
+#    14-Apr-2005 (CT) Use `isinstance` instead of `type` comparison
 #    ««revision-date»»···
 #--
 
@@ -60,8 +61,9 @@ class Doc_Node_Formatter_ :
     # end def __init__
 
     def _function_name (self, fct) :
-        if not fct : return None
-        if type (fct) in (MethodType, FunctionType) :
+        if not fct :
+            return None
+        if isinstance (fct, (MethodType, FunctionType)) :
             fct = fct.__name__
         return fct
     # end def _function_name
