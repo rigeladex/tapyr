@@ -41,6 +41,7 @@
 #     8-Mar-2005 (CT)  `make_active` added
 #     1-Apr-2005 (CT)  `_sty_map` removed (caching now done by `Styler` itself)
 #     2-Apr-2005 (MG)  `_before_styler` simplified
+#    19-Apr-2005 (CT)  `make_active` changed to delegate to `exposed_widget`
 #    ««revision-date»»···
 #--
 
@@ -77,10 +78,7 @@ class Widget (TFL.TKT.Mixin) :
 
     def make_active (self) :
         """Make widget `self` active"""
-        toplevel = self.exposed_widget.winfo_toplevel ()
-        toplevel.deiconify                            ()
-        toplevel.lift                                 ()
-        self.wtk_widget.focus_set                     ()
+        self.exposed_widget.make_active ()
     # end def make_active
 
     def normal_cursor (self, * args, ** kw) :
