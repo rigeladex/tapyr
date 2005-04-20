@@ -114,11 +114,12 @@
 #                      respectively
 #    14-Apr-2005 (BRU) Fixed gauge activation.
 #    20-Apr-2005 (MZO) Moved pdf geneartion to X4T._U2X.HTB_as_XML
+#    20-Apr-2005 (BRU) Added search to command manager, various fixes.
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
-from   Regexp       import Regexp
+from   Regexp       import Regexp, re_RegexObject
 from   Functor      import Functor
 
 import _TFL._UI
@@ -864,8 +865,8 @@ class Node (TFL.UI.Mixin) :
         if pos1 :
             if apply_found_bg :
                 self.text.apply_style (styles.found_bg, pos1, self.tail_mark)
-            self.text.see     (self.model.tail_mark)
-            self.text.see     (pos1)
+            self.text.see (self.tail_mark)
+            self.text.see (pos1)
     # end def find_highlight
 
     def find_unhighlight (self, match) :
@@ -979,7 +980,8 @@ class Browser (TFL.UI.Mixin) :
 
     def __init__ (self, AC, wc = None, name = None, ** kw) :
         self.__super.__init__ (AC = AC)
-        self.gauge      = AC.ui_state.gauge
+        self.gauge          = AC.ui_state.gauge
+        self._dialog_title  = AC.ANS.Version.productname
         self._parent        = wc
         self.name           = name
         self.mouse_act      = 1
@@ -1249,7 +1251,7 @@ class Browser (TFL.UI.Mixin) :
 
     def _activate_gauge (self, label = "") :
         self.gauge.activate_activity_mode \
-            ( title = self.AC.ANS.Version.productname
+            ( title = self._dialog_title
             , label = label
             )
     # end def _activate_gauge
@@ -1380,28 +1382,88 @@ class Browser (TFL.UI.Mixin) :
             , if_names = if_n
             )
         ### XXX FIXME - no pdf for TK toolkit
+        Cmd = self.ANS.UI.Command
         file_g.add_command \
-            ( self.ANS.UI.Command ( "Generate_PDF"
-                                  , self._cb_generate_pdf
-                                  , precondition = self._pre_generate_pdf
-                                  )
+            ( Cmd ( "Generate_PDF"
+                  , self._cb_generate_pdf
+                  , precondition = self._pre_generate_pdf
+                  )
             , if_names     = if_n
             )
         # insert clipboard cmds.....
         edit_g.add_command \
-            ( self.ANS.UI.Command ( "Expand All"
-                                  , self.open_nodes
-                                  , precondition = self._pre_has_nodes
-                                  )
-            , if_names = if_n
+            ( Cmd ( "Expand All"
+                  , self.open_nodes
+                  , precondition = self._pre_has_nodes
+                  )
+            , if_names     = if_n
             )
+        edit_g.add_command \
+            ( Cmd ( "Find"
+                  , self._ask_find
+                  , precondition = self._pre_has_find
+                  )
+            , if_names     = if_n
+            , underline    = 0
+            , accelerator  = self.TNS.Eventname.search
+            )
+        edit_g.add_command \
+            ( Cmd ( "Find next"
+                  , self._do_find_next
+                  , precondition = self._pre_has_find_next
+                  )
+            , if_names     = if_n
+            , underline    = 5
+            , accelerator  = self.TNS.Eventname.search_next
+            )
+        edit_g.add_command \
+            ( Cmd ( "Find previous"
+                  , self._do_find_prev
+                  , precondition = self._pre_has_find_prev
+                  )
+            , if_names     = if_n
+            , underline    = 5
+            , accelerator  = self.TNS.Eventname.search_prev
+            )                   
         cmd_mgr.set_auto_short_cuts ()
     # end def _setup_command_mgr
+
+    def _ask_find (self) :
+        # XXX extend to present dialog with search options
+        pattern = self.text.ask_string \
+            (title = self._dialog_title, prompt = "Search for:")
+        self._do_find (self.find, pattern)
+    # end def _ask_find
+
+    def _do_find (self, func, *args) :
+        result = func (*args)
+        if result is None :
+            print "%s not found" % self._find_pattern
+    # end def _do_find
+
+    def _do_find_next (self) :
+        self._do_find (self.find_next)
+    # end def _do_find_next
+
+    def _do_find_prev (self) :
+        self._do_find (self.find_prev)
+    # end def _do_find_prev
 
     def _pre_generate_pdf (self, *args) : 
         return TFL.Environment.system == "win32" and self._pre_has_nodes ()
     # end def _pre_generate_pdf
     _pre_generate_pdf.evaluate_eagerly = True
+
+    def _pre_has_find (self) :
+        return (self.text.pos_at (self.text.buffer_tail) > 0)
+    # end def _pre_has_find
+    _pre_has_find.evaluate_eagerly = True
+
+    def _pre_has_find_next (self) :
+        return self._find_pattern is not None
+    # end def _pre_has_find_next
+    _pre_has_find_next.evaluate_eagerly = True
+    _pre_has_find_prev = _pre_has_find_next
 
     def _pre_has_nodes (self) :
         return self.nodes
