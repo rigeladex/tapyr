@@ -116,6 +116,7 @@
 #    20-Apr-2005 (MZO) Moved pdf geneartion to X4T._U2X.HTB_as_XML
 #    20-Apr-2005 (BRU) Added search to command manager, various fixes.
 #    20-Apr-2005 (MZO) added tail/head_contents
+#    20-Apr-2005 (BRU) Fixed `_pre_has_find`
 #    ««revision-date»»···
 #--
 
@@ -1478,7 +1479,9 @@ class Browser (TFL.UI.Mixin) :
     _pre_generate_pdf.evaluate_eagerly = True
 
     def _pre_has_find (self) :
-        return (self.text.pos_at (self.text.buffer_tail) > 0)
+        # allow to search only when there is text in the buffer
+        t = self.text
+        return (t.pos_at (t.buffer_tail) != t.pos_at (t.buffer_head))
     # end def _pre_has_find
     _pre_has_find.evaluate_eagerly = True
 
