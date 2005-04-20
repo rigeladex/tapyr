@@ -113,6 +113,7 @@
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
 #    14-Apr-2005 (BRU) Fixed gauge activation.
+#    20-Apr-2005 (MZO) Moved pdf geneartion to X4T._U2X.HTB_as_XML
 #    ««revision-date»»···
 #--
 
@@ -127,10 +128,13 @@ from   _TFL._UI.Style import *
 from   predicate      import un_nested
 
 import sys
+import sos
 
-from   _TFL._SDG._XML import XML
-import _TFL._SDG._XML.Document
-import _TFL._SDG._XML.Elem_Type
+from   _X4T         import X4T
+import _X4T._U2X
+import _X4T._U2X.HTB_as_XML
+import _X4T._X2P
+import _X4T._X2P.XML_to_PDF
 
 import _TFL.Environment
 
@@ -285,6 +289,10 @@ class Button (TFL.UI.Mixin) :
 
 class Node (TFL.UI.Mixin) :
     """ Model one node of a hierarchical browser."""
+
+    eager_pre                  = lambda *args : True
+    eager_pre.evaluate_eagerly = True
+
 
     cleanup = ( (Regexp (r"[-+\s]+"),         r"_")
               , (Regexp (r"^([^a-zA-Z]*\d)"), r"A\1")
@@ -585,34 +593,6 @@ class Node (TFL.UI.Mixin) :
                 c.print_contents (file)
     # end def print_contents
 
-    def xml_node (self, parent_node) :
-        parts = []
-        if self.button is None :
-            node_state = "none"
-        elif self.button.is_leaf :
-            node_state = "leaf"
-        elif self.button.closed :
-            node_state = "closed"
-        else :
-            node_state = "open"
-        if node_state == "none" :   # content; description
-            new_xml_node_content = TFL.SDG.XML.Elem_Type ("node_content")
-            nc = new_xml_node_content (self.header)
-            parent_node.add (nc)
-            return parent_node     # no subchild; put on same level
-        new_xml_node_name = TFL.SDG.XML.Elem_Type \
-            ("node_name", state = node_state)
-        n = new_xml_node_name (self.name)
-        if self.header :
-            new_xml_node_header = TFL.SDG.XML.Elem_Type ("node_header")
-            nh = new_xml_node_header (self.header)
-            n.add (nh)
-        parent_node.add (n)
-        if self.is_open () :
-            for c in self.children :
-                c.xml_node (n)
-        return n
-    # end def xml_node
 
     def open (self, event = None, transitive = 0, show_gauge = False) :
         if self.button and not self.button.is_leaf :
@@ -1017,13 +997,17 @@ class Browser (TFL.UI.Mixin) :
         self.buffer_tail    = self.text.buffer_tail
         self.delete         = self.text.remove
         self.wtk_widget     = self.text.wtk_widget
+
+        self.wtk_widget.ui = self   # back reference
+
+
         self.exposed_widget = self.text.exposed_widget
         if not styles.has_key  ("active_node") :
             self._setup_styles ()
         self.text.apply_style  (styles.normal)
         self.text.set_tabs     (* styles._tabs)
         self.clear ()
-        self.cmd_mgr.update_state        ()
+        self.cmd_mgr_widget.update_state        ()
     # end def __init__
 
     def _setup_styles (self) :
@@ -1196,7 +1180,7 @@ class Browser (TFL.UI.Mixin) :
         after = self.text.eol_pos (pos)
         for s in styles :
             self.text.apply_style (s, before, after)
-        self.cmd_mgr.update_state ()
+        self.cmd_mgr_widget.update_state ()
     # end def _insert
 
     def _style (self, * tags) :
@@ -1224,11 +1208,6 @@ class Browser (TFL.UI.Mixin) :
         for n in self.nodes :
             n.print_contents (file or sys.stdout)
     # end def print_nodes
-
-    def xml_nodes (self, event = None, parent_node = None) :
-        for n in self.nodes :
-            n.xml_node (parent_node)
-    # end def xml_nodes
 
     def open_nodes (self, event = None) :
         """Open all nodes transitively"""
@@ -1360,7 +1339,7 @@ class Browser (TFL.UI.Mixin) :
         self._find_bakward = []
         self._find_current = None
         self._find_pattern = None
-        self.cmd_mgr.update_state ()
+        self.cmd_mgr_widget.update_state ()       
     # end def clear
 
     def _setup_command_mgr (self, AC, TNS) :
@@ -1384,17 +1363,18 @@ class Browser (TFL.UI.Mixin) :
         if_n = interfacers.keys ()
         ANS = AC.ANS
         self.change_counter  = ANS.UI.Change_Counter (scope = None)
-        self.cmd_mgr         = ANS.UI.Command_Mgr \
+        self.cmd_mgr_widget  = ANS.UI.Command_Mgr \
             ( AC             = AC
             , change_counter = self.change_counter
             , interfacers    = interfacers
             )
-        file_g = self.cmd_mgr.add_group \
+        cmd_mgr = self.cmd_mgr_widget
+        file_g = cmd_mgr.add_group \
             ( "File"
             , "Commands which are applied to the file menu"
             , if_names = if_n
             )
-        edit_g = self.cmd_mgr.add_group \
+        edit_g = cmd_mgr.add_group \
             ( "Edit"
             , "Commands which are applied to the edit menu"
             , if_names = if_n
@@ -1415,10 +1395,10 @@ class Browser (TFL.UI.Mixin) :
                                   )
             , if_names = if_n
             )
-        self.cmd_mgr.set_auto_short_cuts ()
+        cmd_mgr.set_auto_short_cuts ()
     # end def _setup_command_mgr
 
-    def _pre_generate_pdf (self) :
+    def _pre_generate_pdf (self, *args) : 
         return TFL.Environment.system == "win32" and self._pre_has_nodes ()
     # end def _pre_generate_pdf
     _pre_generate_pdf.evaluate_eagerly = True
@@ -1431,33 +1411,21 @@ class Browser (TFL.UI.Mixin) :
     def _cb_context_menu (self, event) :
         """ cb mouse pressed => popup context menu
         """
-        self.cmd_mgr.interfacers ["cm"].popup (event)
+        self.cmd_mgr_widget.interfacers ["cm"].popup (event)
         return self.TNS.stop_cb_chaining
     # end def _cb_context_menu
 
-    def _generate_xml (self, parent_node = None) :
-        if parent_node is None :
-            parent_node = TFL.SDG.XML.Document \
-                ("root_node", encoding = "utf-8")
-        widget_node = TFL.SDG.XML.Elem_Type \
-            ("widget", name = self.name, class_type = "HTB")
-        widget_node_inst = widget_node ()
-        parent_node.add (widget_node_inst)
-        xml_node = TFL.SDG.XML.Elem_Type ("content")
-        n = xml_node ()
-        widget_node_inst.add (n)
-        self.xml_nodes (parent_node = n)
-    # end def _generate_xml
-
-    def _cb_generate_pdf (self, event = None) :
-        self._activate_gauge (label = "Generating PDF")
-        parent_node = TFL.SDG.XML.Document \
-            ("root_node", encoding = "utf-8")
-        self._generate_xml (parent_node)
-        pdf = self.TNS.PDF_Creator \
-            (parent_node.formatted ("xml_format"), self.text)
-        pdf.open_pdf ()
-        self._deactivate_gauge ()
+    def _cb_generate_pdf (self, event = None) : 
+        self._activate_gauge (label = "Generate PDF")
+        try :
+            xml = X4T.U2X.HTB_as_XML (self)
+            filename = "".join ([sos.tempfile_name (), ".pdf"])
+            message_win = self.AC.ui_state.message
+            message_win.write ("Create file: %s\n" % filename)
+            pdf = X4T.X2P.XML_to_PDF (xml, filename = filename, gui = self.text)
+            pdf.open_pdf ()
+        finally :
+            self._deactivate_gauge ()
     # end def _cb_generate_pdf
 
 # end class Browser

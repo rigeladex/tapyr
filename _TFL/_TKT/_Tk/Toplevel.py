@@ -20,6 +20,7 @@
 #    11-Mar-2005 (CT)  `pack` changed to map True/False to values grokable by
 #                      Tk
 #    13-Apr-2005 (MZO) implemented new_menubar
+#    20-Apr-2005 (MZO) Focused_Toplevel return none - like TGW.Focused_Toplevel
 #    ««revision-date»»···
 #--
 
@@ -94,7 +95,13 @@ class Toplevel (TFL.TKT.Mixin) :
     
 # end class Toplevel
 
-Focused_Toplevel = Toplevel
+def Focused_Toplevel () :
+    # return focused widget of current active toplevel
+    return None
+# end def Focused_Toplevel
+
+
+
 
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("Toplevel", "Focused_Toplevel")

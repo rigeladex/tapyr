@@ -43,6 +43,7 @@
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
+#    20-Apr-2005 (MZO) update doctest (added necessary imports)
 #    ««revision-date»»···
 #--
 
@@ -134,11 +135,19 @@ def insert_stuff (tb) :
 # end def insert_stuff
 
 """
+from _TFL import TFL
+import _TFL._UI
+import _TFL._UI.Command_Mgr
+from _TOM import TOM
+import _TOM._UI
+import _TOM._UI.Change_Counter
+TFL.UI.Change_Counter = TOM.UI.Change_Counter
 from _TFL._UI.HTB_test import *
 import _TFL._TKT._Tk.Text
 import _TFL._TKT._Tk.Butcon
-tb = TFL.UI.HTB.Browser (TFL.UI.App_Context (TFL), name = "Foo")
+AC = TFL.UI.App_Context (TFL)
+AC.ui_state.gauge = None
+tb = TFL.UI.HTB.Browser (AC, name = "Foo")
 tb.exposed_widget.pack  ()
 insert_stuff (tb)
-
 """
