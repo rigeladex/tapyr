@@ -115,6 +115,7 @@
 #    14-Apr-2005 (BRU) Fixed gauge activation.
 #    20-Apr-2005 (MZO) Moved pdf geneartion to X4T._U2X.HTB_as_XML
 #    20-Apr-2005 (BRU) Added search to command manager, various fixes.
+#    20-Apr-2005 (MZO) added tail/head_contents
 #    ««revision-date»»···
 #--
 
@@ -1196,7 +1197,29 @@ class Browser (TFL.UI.Mixin) :
         return styles [tags]
     # end def _style
 
+    def head_contents (self) : 
+        # return text before first node
+        # MZO 20-Apr-2005 future : adapt anonymous nodes (handle text between 
+        #     nodes... Currently anonymous nodes designed for content 
+        #     i.e. as child (has parent node) and nodes always appended.
+        mark_0   = self.text.buffer_head
+        mark_end = None  
+        if self.nodes :  
+            mark_end = self.nodes[0].head_mark
+        return self.text.get (mark_0, mark_end)
+    # end def head_contents
+        
+    def tail_contents (self) : 
+        # return text after last node or "\n"
+        mark_0   = None
+        mark_end = self.text.buffer_tail
+        if self.nodes :  
+            mark_0 = self.nodes[-1].tail_mark
+        return self.text.get (mark_0, mark_end)
+    # end def tail_contents
+    
     def insert (self, pos, text, * tags) :
+        # ?? expected pos START, INSERT, END
         self._insert (pos, text, self._style (* tags))
     # end def insert
 
