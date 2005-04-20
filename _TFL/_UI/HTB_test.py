@@ -44,6 +44,7 @@
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
 #    20-Apr-2005 (MZO) update doctest (added necessary imports)
+#    20-Apr-2005 (MZO) update test - tail/head_contents
 #    ««revision-date»»···
 #--
 
@@ -125,6 +126,8 @@ def insert_stuff (tb) :
     tn.open              ()
     tn = mknode          (tb, "n3", "nowrap", "found")
     mkchild              (tn, "s-x")
+    # ignored by save, print, tail/head_contents
+    tb.insert            (tb.insert_mark, "Middle **        Test me      **\n")
     mkchild              (tn, "s-y")
     tn = mknode \
         ( tb
@@ -132,7 +135,10 @@ def insert_stuff (tb) :
           "and display an error in formatting..."
         , "wrap", "found"
         )
+    tb.insert            (tb.insert_mark, "END **           Test me   **\n")
 # end def insert_stuff
+
+## TGW test: see _TOM/_TKT/_TGW/HTB_test.py
 
 """
 from _TFL import TFL
@@ -150,4 +156,6 @@ AC.ui_state.gauge = None
 tb = TFL.UI.HTB.Browser (AC, name = "Foo")
 tb.exposed_widget.pack  ()
 insert_stuff (tb)
+tb.head_contents ()
+tb.tail_contents ()
 """
