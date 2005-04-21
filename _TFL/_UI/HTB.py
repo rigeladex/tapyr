@@ -118,6 +118,7 @@
 #    20-Apr-2005 (MZO) added tail/head_contents
 #    20-Apr-2005 (BRU) Fixed `_pre_has_find`
 #    21-Apr-2005 (MZO) fixed i15075, moved pdf-stuff to AC.ui_state.pdf_writer
+#    21-Apr-2005 (BRU) Fixed `open_all`
 #    ««revision-date»»···
 #--
 
@@ -1235,7 +1236,7 @@ class Browser (TFL.UI.Mixin) :
         self._activate_gauge (label = "Opening nodes")
         try     :
             for n in self.nodes :
-                n.open (transitive = 1, show_gauge = True)
+                n.open (transitive = 1 << 30, show_gauge = True)
         finally :
             self._deactivate_gauge ()
     # end def open_nodes
