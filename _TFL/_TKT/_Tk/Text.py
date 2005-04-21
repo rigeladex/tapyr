@@ -75,6 +75,7 @@
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
+#    21-Apr-2005 (BRU) Introduced property `buffer_empty` (dummy only)
 #    ««revision-date»»···
 #--
 
@@ -151,9 +152,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     Widget_Type = CTK.C_Text
 
-    buffer_head = property (lambda s : START)
-    buffer_tail = property (lambda s : END)
-    insert_mark = property (lambda s : INSERT)
+    buffer_empty = property (lambda s : True) # XXX
+    buffer_head  = property (lambda s : START)
+    buffer_tail  = property (lambda s : END)
+    insert_mark  = property (lambda s : INSERT)
 
     def __init__ (self, AC, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)
