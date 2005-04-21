@@ -62,6 +62,7 @@
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
+#    21-Apr-2005 (BRU) Introduced property `buffer_empty`.
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,8 @@ class Text (TFL.TKT.Mixin) :
         >>> hand = Style ("hand", mouse_cursor = "hand")
         >>> cb   = Style ("cb",   callback = {'click_1' : lambda x : 1})
         >>> w = Text (_doctest_AC ())
+        >>> w.buffer_empty
+        True
         >>> w.set_tabs (42, 84)
         >>> w.pop_style ()
         Traceback (most recent call last):
@@ -94,6 +97,8 @@ class Text (TFL.TKT.Mixin) :
         >>> w.get ()
         ''
         >>> w.append ("Ha")
+        >>> w.buffer_empty
+        False
         >>> w.append ("Hum", blue)
         >>> hum_p = w.find ("Hum")
         >>> hum_m = w.mark_at (hum_p, left_gravity = False)
@@ -185,6 +190,10 @@ class Text (TFL.TKT.Mixin) :
 
         ### check styles of t1 and t2 (`t2` still should have style `gray`)
         """
+
+    buffer_empty      = None  ### descendents must redefine as property
+    """Returns `True` if the buffer is empty, `False` otherwise.
+       """
 
     buffer_head       = None  ### descendents must redefine as property
     """Position of begin of buffer (use this to insert at the beginning).
