@@ -117,6 +117,7 @@
 #    20-Apr-2005 (BRU) Added search to command manager, various fixes.
 #    20-Apr-2005 (MZO) added tail/head_contents
 #    20-Apr-2005 (BRU) Fixed `_pre_has_find`
+#    21-Apr-2005 (MZO) fixed i15075, moved pdf-stuff to AC.ui_state.pdf_writer
 #    ««revision-date»»···
 #--
 
@@ -132,12 +133,6 @@ from   predicate      import un_nested
 
 import sys
 import sos
-
-from   _X4T         import X4T
-import _X4T._U2X
-import _X4T._U2X.HTB_as_XML
-import _X4T._X2P
-import _X4T._X2P.XML_to_PDF
 
 import _TFL.Environment
 
@@ -1405,15 +1400,17 @@ class Browser (TFL.UI.Mixin) :
             , "Commands which are applied to the edit menu"
             , if_names = if_n
             )
-        ### XXX FIXME - no pdf for TK toolkit
         Cmd = self.ANS.UI.Command
-        file_g.add_command \
-            ( Cmd ( "Generate_PDF"
-                  , self._cb_generate_pdf
-                  , precondition = self._pre_generate_pdf
-                  )
-            , if_names     = if_n
-            )
+        if (   hasattr (AC.ui_state, "pdf_writer") 
+           and AC.ui_state.pdf_writer is not None
+           ) : 
+            file_g.add_command \
+                ( Cmd ( "Generate_PDF"
+                      , self._cb_generate_pdf
+                      , precondition = self._pre_generate_pdf
+                      )
+                , if_names     = if_n
+                )
         # insert clipboard cmds.....
         edit_g.add_command \
             ( Cmd ( "Expand All"
@@ -1504,16 +1501,8 @@ class Browser (TFL.UI.Mixin) :
     # end def _cb_context_menu
 
     def _cb_generate_pdf (self, event = None) : 
-        self._activate_gauge (label = "Generate PDF")
-        try :
-            xml = X4T.U2X.HTB_as_XML (self)
-            filename = "".join ([sos.tempfile_name (), ".pdf"])
-            message_win = self.AC.ui_state.message
-            message_win.write ("Create file: %s\n" % filename)
-            pdf = X4T.X2P.XML_to_PDF (xml, filename = filename, gui = self.text)
-            pdf.open_pdf ()
-        finally :
-            self._deactivate_gauge ()
+        pdf_writer = self.AC.ui_state.pdf_writer
+        pdf_writer.generate_pdf (type = pdf_writer.TYPE_HTB, widget = self)
     # end def _cb_generate_pdf
 
 # end class Browser
