@@ -76,6 +76,8 @@
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
 #    21-Apr-2005 (BRU) Introduced property `buffer_empty` (dummy only)
+#    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
+#    25-Apr-2005 (CT)  `is_empty` implemented properly (it was a dumb dummy)
 #    ««revision-date»»···
 #--
 
@@ -152,10 +154,12 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
 
     Widget_Type = CTK.C_Text
 
-    buffer_empty = property (lambda s : True) # XXX
     buffer_head  = property (lambda s : START)
     buffer_tail  = property (lambda s : END)
     insert_mark  = property (lambda s : INSERT)
+
+    is_empty     = property \
+        (lambda s : s.pos_at (START, delta = 1) == s.pos_at (END))
 
     def __init__ (self, AC, name = None, editable = True, wc = None) :
         self.__super.__init__ (AC = AC, name = name, editable = editable)

@@ -119,6 +119,7 @@
 #    20-Apr-2005 (BRU) Fixed `_pre_has_find`
 #    21-Apr-2005 (MZO) fixed i15075, moved pdf-stuff to AC.ui_state.pdf_writer
 #    21-Apr-2005 (BRU) Fixed `open_all`, fixed `_pre_has_find` once more
+#    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
 #    ««revision-date»»···
 #--
 
@@ -1477,7 +1478,7 @@ class Browser (TFL.UI.Mixin) :
 
     def _pre_has_find (self) :
         # allow to search only when there is text in the buffer
-        return not self.text.buffer_empty
+        return not self.text.is_empty
     # end def _pre_has_find
     _pre_has_find.evaluate_eagerly = True
 

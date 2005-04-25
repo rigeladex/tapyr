@@ -63,6 +63,7 @@
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
 #    21-Apr-2005 (BRU) Introduced property `buffer_empty`.
+#    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
 #    ««revision-date»»···
 #--
 
@@ -80,7 +81,7 @@ class Text (TFL.TKT.Mixin) :
         >>> hand = Style ("hand", mouse_cursor = "hand")
         >>> cb   = Style ("cb",   callback = {'click_1' : lambda x : 1})
         >>> w = Text (_doctest_AC ())
-        >>> w.buffer_empty
+        >>> w.is_empty
         True
         >>> w.set_tabs (42, 84)
         >>> w.pop_style ()
@@ -97,7 +98,7 @@ class Text (TFL.TKT.Mixin) :
         >>> w.get ()
         ''
         >>> w.append ("Ha")
-        >>> w.buffer_empty
+        >>> w.is_empty
         False
         >>> w.append ("Hum", blue)
         >>> hum_p = w.find ("Hum")
@@ -191,10 +192,6 @@ class Text (TFL.TKT.Mixin) :
         ### check styles of t1 and t2 (`t2` still should have style `gray`)
         """
 
-    buffer_empty      = None  ### descendents must redefine as property
-    """Returns `True` if the buffer is empty, `False` otherwise.
-       """
-
     buffer_head       = None  ### descendents must redefine as property
     """Position of begin of buffer (use this to insert at the beginning).
        """
@@ -206,6 +203,8 @@ class Text (TFL.TKT.Mixin) :
     insert_mark       = None  ### descendents must redefine as property
     """Mark of insert position in the text buffer.
        """
+
+    is_empty          = False ### descendents must redefine as property
 
     def append (self, text, style = None) :
         """Append `text` with `style` to buffer."""
