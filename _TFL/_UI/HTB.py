@@ -1335,9 +1335,7 @@ class Browser (TFL.UI.Mixin) :
     # end def find_next
 
     def find_prev (self) :
-        """
-            Find previous occurence of `pattern' passed to last call of
-            `find'.
+        """Find previous occurence of `pattern' passed to last call of `find'.
         """
         result = None
         if self._find_current :
