@@ -592,11 +592,10 @@ class Node (TFL.UI.Mixin) :
                 c.print_contents (file)
     # end def print_contents
 
-
     def open (self, event = None, transitive = 0, show_gauge = False) :
         if self.button and not self.button.is_leaf :
             if show_gauge and self.gauge :
-                self.gauge.pulse ()        
+                self.gauge.pulse ()
             if self.button.closed :
                 self.button.open ()
                 self._delete        (self.body_mark, self.tail_mark)
@@ -1194,27 +1193,27 @@ class Browser (TFL.UI.Mixin) :
         return styles [tags]
     # end def _style
 
-    def head_contents (self) : 
+    def head_contents (self) :
         # return text before first node
-        # MZO 20-Apr-2005 future : adapt anonymous nodes (handle text between 
-        #     nodes... Currently anonymous nodes designed for content 
+        # MZO 20-Apr-2005 future : adapt anonymous nodes (handle text between
+        #     nodes... Currently anonymous nodes designed for content
         #     i.e. as child (has parent node) and nodes always appended.
         mark_0   = self.text.buffer_head
-        mark_end = None  
-        if self.nodes :  
+        mark_end = None
+        if self.nodes :
             mark_end = self.nodes[0].head_mark
         return self.text.get (mark_0, mark_end)
     # end def head_contents
-        
-    def tail_contents (self) : 
+
+    def tail_contents (self) :
         # return text after last node or "\n"
         mark_0   = None
         mark_end = self.text.buffer_tail
-        if self.nodes :  
+        if self.nodes :
             mark_0 = self.nodes[-1].tail_mark
         return self.text.get (mark_0, mark_end)
     # end def tail_contents
-    
+
     def insert (self, pos, text, * tags) :
         # ?? expected pos START, INSERT, END
         self._insert (pos, text, self._style (* tags))
@@ -1361,7 +1360,7 @@ class Browser (TFL.UI.Mixin) :
         self._find_bakward = []
         self._find_current = None
         self._find_pattern = None
-        self.cmd_mgr_widget.update_state ()       
+        self.cmd_mgr_widget.update_state ()
     # end def clear
 
     def _setup_command_mgr (self, AC, TNS) :
@@ -1402,9 +1401,9 @@ class Browser (TFL.UI.Mixin) :
             , if_names = if_n
             )
         Cmd = self.ANS.UI.Command
-        if (   hasattr (AC.ui_state, "pdf_writer") 
+        if (   hasattr (AC.ui_state, "pdf_writer")
            and AC.ui_state.pdf_writer is not None
-           ) : 
+           ) :
             file_g.add_command \
                 ( Cmd ( "Generate_PDF"
                       , self._cb_generate_pdf
@@ -1446,7 +1445,7 @@ class Browser (TFL.UI.Mixin) :
             , if_names     = if_n
             , underline    = 5
             , accelerator  = self.TNS.Eventname.search_prev
-            )                   
+            )
         cmd_mgr.set_auto_short_cuts ()
     # end def _setup_command_mgr
 
@@ -1471,7 +1470,7 @@ class Browser (TFL.UI.Mixin) :
         self._do_find (self.find_prev)
     # end def _do_find_prev
 
-    def _pre_generate_pdf (self, *args) : 
+    def _pre_generate_pdf (self, *args) :
         return TFL.Environment.system == "win32" and self._pre_has_nodes ()
     # end def _pre_generate_pdf
     _pre_generate_pdf.evaluate_eagerly = True
@@ -1500,7 +1499,7 @@ class Browser (TFL.UI.Mixin) :
         return self.TNS.stop_cb_chaining
     # end def _cb_context_menu
 
-    def _cb_generate_pdf (self, event = None) : 
+    def _cb_generate_pdf (self, event = None) :
         pdf_writer = self.AC.ui_state.pdf_writer
         pdf_writer.generate_pdf (type = pdf_writer.TYPE_HTB, widget = self)
     # end def _cb_generate_pdf
