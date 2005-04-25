@@ -120,6 +120,13 @@
 #    21-Apr-2005 (MZO) fixed i15075, moved pdf-stuff to AC.ui_state.pdf_writer
 #    21-Apr-2005 (BRU) Fixed `open_all`, fixed `_pre_has_find` once more
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
+#    25-Apr-2005 (CT)  `_setup_command_mgr` changed to use
+#                      `setup_context_menu` (unconditionally) instead of
+#                      `new_context_menu` (conditionally)
+#    25-Apr-2005 (CT)  Use `cmd_mgr.bind_interfacers` instead of the
+#                      toolkit-dependent `sig_binder.bind_add`
+#    25-Apr-2005 (CT)  `_cb_context_menu` removed (toolkit-dependent, needless
+#                      indirection)
 #    ««revision-date»»···
 #--
 
@@ -988,26 +995,20 @@ class Browser (TFL.UI.Mixin) :
         self.text           = self.TNS.Scrolled_Text \
             (AC = AC, name = name, wc = wc, editable = False)
         self._setup_command_mgr  (AC, self.TNS)
-        if self._ci_context_menu is not None :
-            sig_binder = self.TNS.Eventname.click_3
-            sig_binder.bind_add (self.text.wtk_widget, self._cb_context_menu)
         # delegate some parts from our text:
         self.buffer_head    = self.text.buffer_head
         self.insert_mark    = self.text.insert_mark
         self.buffer_tail    = self.text.buffer_tail
         self.delete         = self.text.remove
         self.wtk_widget     = self.text.wtk_widget
-
-        self.wtk_widget.ui = self   # back reference
-
-
+        self.wtk_widget.ui  = self   # back reference
         self.exposed_widget = self.text.exposed_widget
         if not styles.has_key  ("active_node") :
             self._setup_styles ()
         self.text.apply_style  (styles.normal)
         self.text.set_tabs     (* styles._tabs)
         self.clear ()
-        self.cmd_mgr_widget.update_state        ()
+        self.cmd_mgr_widget.update_state ()
     # end def __init__
 
     def _setup_styles (self) :
@@ -1365,30 +1366,26 @@ class Browser (TFL.UI.Mixin) :
     def _setup_command_mgr (self, AC, TNS) :
         """ create und setup command_mgr
         """
+        if_n = ["cm:click_3"]
         if hasattr (self._parent, "new_menubar") : # wc = Toplevel
-            self._ci_mb           = self._parent.new_menubar ()
+            self._ci_mb = self._parent.new_menubar ()
+            if self._ci_mb is not None :
+                if_n.append ("mb")
         else :
-            self._ci_mb           = None
-        if hasattr (self.text, "new_context_menu") : # context menu from text
-            self._ci_context_menu = self.text.new_context_menu ()
-        else :
-            self._ci_context_menu = None
-        interfacers   = dict \
-            ( [ (name, i)
-                for (name, i) in
-                    [ ( "cm", self._ci_context_menu), ("mb", self._ci_mb) ]
-                    if i is not None
-              ]
-            )
-        if_n = interfacers.keys ()
+            self._ci_mb = None
+        if_k = [n.split (":") [0] for n in if_n]
+        self._ci_context_menu = self.text.setup_context_menu ()
+        interfacers = dict (zip (if_k, [self._ci_context_menu, self._ci_mb]))
         ANS = AC.ANS
         self.change_counter  = ANS.UI.Change_Counter (scope = None)
         self.cmd_mgr_widget  = ANS.UI.Command_Mgr \
             ( AC             = AC
             , change_counter = self.change_counter
             , interfacers    = interfacers
+            , if_names       = if_n
             )
         cmd_mgr = self.cmd_mgr_widget
+        cmd_mgr.bind_interfacers (self.text.wtk_widget)
         file_g = cmd_mgr.add_group \
             ( "File"
             , "Commands which are applied to the file menu"
@@ -1490,13 +1487,6 @@ class Browser (TFL.UI.Mixin) :
         return self.nodes
     # end def _pre_has_nodes
     _pre_has_nodes.evaluate_eagerly = True
-
-    def _cb_context_menu (self, event) :
-        """ cb mouse pressed => popup context menu
-        """
-        self.cmd_mgr_widget.interfacers ["cm"].popup (event)
-        return self.TNS.stop_cb_chaining
-    # end def _cb_context_menu
 
     def _cb_generate_pdf (self, event = None) :
         pdf_writer = self.AC.ui_state.pdf_writer

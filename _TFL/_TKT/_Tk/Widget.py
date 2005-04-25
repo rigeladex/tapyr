@@ -42,6 +42,7 @@
 #     1-Apr-2005 (CT)  `_sty_map` removed (caching now done by `Styler` itself)
 #     2-Apr-2005 (MG)  `_before_styler` simplified
 #    19-Apr-2005 (CT)  `make_active` changed to delegate to `exposed_widget`
+#    25-Apr-2005 (CT)  `setup_context_menu` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,8 @@ import weakref
 
 class Widget (TFL.TKT.Mixin) :
     """Model widget for Tkinter based GUI"""
+
+    context_menu = None
 
     widget_class = None ### redefine this if you want to change the `Class`
                         ### used for option lookup
@@ -120,6 +123,16 @@ class Widget (TFL.TKT.Mixin) :
         w.configure            (** styler.option_dict)
     # end def push_style
 
+    def setup_context_menu (self) :
+        assert self.context_menu is None
+        result = self.context_menu = self.TNS.CI_Menu \
+            ( AC      = self.AC
+            , parent  = self.exposed_widget
+            , tearoff = False
+            )
+        return result
+    # end def setup_context_menu
+
     def _apply_style_bindings (self, style, binder = None) :
         if style is not None and style.callback :
             if binder is None :
@@ -143,7 +156,7 @@ class Widget (TFL.TKT.Mixin) :
     def __getattr__ (self, name) :
         if name.startswith ("ask_") :
             return getattr (self.exposed_widget, name)
-        raise AttributeError, name
+        raise AttributeError, "%s: %s" % (self, name)
     # end def __getattr__
 
 # end class Widget

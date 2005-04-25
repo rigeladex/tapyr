@@ -21,6 +21,7 @@
 #                      Tk
 #    13-Apr-2005 (MZO) implemented new_menubar
 #    20-Apr-2005 (MZO) Focused_Toplevel return none - like TGW.Focused_Toplevel
+#    25-Apr-2005 (CT)  `new_context_menu` removed (wrong name, wrong place)
 #    ««revision-date»»···
 #--
 
@@ -73,26 +74,22 @@ class Toplevel (TFL.TKT.Mixin) :
     def show (self) :
         pass
     # end def pack
-    
-    def new_menubar (self) : 
+
+    def new_menubar (self) :
         return None
         # Tk allows only one menubar in the application
-        # XXX (MZO), 13-Apr-2005, TODO: 1) pack like in CT_TK.BB_Toplevel 
+        # XXX (MZO), 13-Apr-2005, TODO: 1) pack like in CT_TK.BB_Toplevel
         #     2) ignore add_group instead of raise notimplementederror
         # bb = self.TNS.CI_Button_Box (self.AC, self, name = "mb")
         # return bb
     # end def new_menubar
-    
-    def new_context_menu (self) : 
-        return None
-    # end def new_context_menu
 
     def __getattr__ (self, name) :
         res = getattr (self.wtk_widget, name)
         setattr (self, name, res)
         return res
     # end def __getattr__
-    
+
 # end class Toplevel
 
 def Focused_Toplevel () :
