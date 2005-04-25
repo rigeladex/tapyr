@@ -159,6 +159,7 @@
 #     9-Apr-2005 (MG) `_add_group`_ add newly created interfacer group
 #                     to the `_pending_interface_bindings` list instead fo
 #                     the original interfacer
+#    25-Apr-2005 (PGO) `Command_Mgr` sets `batchable` of `_Command_` class
 #    ««revision-date»»···
 #--
 
@@ -345,7 +346,7 @@ class Command (_Command_) :
 
     def _check_precondition (self) :
         if self.batch_mode and not self.batchable :
-            msg = "Command %s cannot be used in batch mode" % self.qname
+            msg = "Command '%s' cannot be used in batch mode" % self.qname
             raise Precondition_Violation, ("batchable", msg)
         p = self.precondition
         self._check_precondition_value (p, p and not p ())
@@ -909,7 +910,7 @@ class Command_Mgr (Command_Group) :
         self.root                        = self
         self.change_counter              = change_counter
         self.pv_callback                 = pv_callback
-        self.batch_mode                  = batch_mode
+        _Command_.batch_mode             = batch_mode
         self.form_dict                   = form_dict
         self.appl                        = appl
         self.changes                     = 0
