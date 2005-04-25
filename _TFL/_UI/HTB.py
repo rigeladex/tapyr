@@ -127,6 +127,9 @@
 #                      toolkit-dependent `sig_binder.bind_add`
 #    25-Apr-2005 (CT)  `_cb_context_menu` removed (toolkit-dependent, needless
 #                      indirection)
+#    25-Apr-2005 (CT)  `gauge.activate_activity_mode` and `gauge.pulse`
+#                      replaced by toolkit-independent `gauge.activate` and
+#                      `gauge.inc`
 #    ««revision-date»»···
 #--
 
@@ -603,7 +606,7 @@ class Node (TFL.UI.Mixin) :
     def open (self, event = None, transitive = 0, show_gauge = False) :
         if self.button and not self.button.is_leaf :
             if show_gauge and self.gauge :
-                self.gauge.pulse ()
+                self.gauge.inc ()
             if self.button.closed :
                 self.button.open ()
                 self._delete        (self.body_mark, self.tail_mark)
@@ -1271,9 +1274,11 @@ class Browser (TFL.UI.Mixin) :
     # end def search
 
     def _activate_gauge (self, label = "") :
-        self.gauge.activate_activity_mode \
-            ( title = self._dialog_title
-            , label = label
+        self.gauge.activate \
+            ( title   = self._dialog_title
+            , label   = label
+            , g_delta = 5
+            , cycle   = True
             )
     # end def _activate_gauge
 
