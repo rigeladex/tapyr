@@ -160,6 +160,7 @@
 #                     to the `_pending_interface_bindings` list instead fo
 #                     the original interfacer
 #    25-Apr-2005 (PGO) `Command_Mgr` sets `batchable` of `_Command_` class
+#    26-Apr-2005 (CT)  Attribute `accelerator` added to `Command`
 #    ««revision-date»»···
 #--
 
@@ -282,6 +283,8 @@ class Command (_Command_) :
     """Model a command of an interactive application which pass all
        arguments passed to `__call__` to the callback.
     """
+
+    accelerator = None
 
     def __init__ (self, name, command, precondition = None, pv_callback = None, _doc = None, batchable = 1, Change_Action = None) :
         self.name          = name
@@ -645,6 +648,8 @@ class Command_Group (_Command_Group_) :
             if isinstance (cmd, Dyn_Command) :
                 self._add_dyn_command (cmd, if_names, index, delta)
             else :
+                if accelerator and not cmd.accelerator :
+                    cmd.accelerator = accelerator
                 self._add_command \
                     ( cmd, if_names, icon, index, delta
                     , underline, accelerator, batchable, as_check_button
