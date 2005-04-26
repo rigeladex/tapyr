@@ -64,6 +64,8 @@
 #    24-Feb-2005 (CT) `CI_Button_Box` added
 #     8-Apr-2005 (CT) `_CI_Toolbar_Group_.add_command` changed to pass
 #                     `before = index + delta` to toolbar widget
+#    26-Apr-2005 (CT) `CI_Menu.bind_to_widget` fixed (translate `event_name`
+#                     via `Eventname`)
 #    ««revision-date»»···
 #--
 
@@ -365,8 +367,8 @@ class CI_Menu (_CI_Widget_) :
     # end def bind_to_sync
 
     def bind_to_widget (self, widget, event_name) :
-        ### use Event_Name/Event_Binder for the event_name <-> event_name
-        widget.bind (event_name, self.wtk_widget.post)
+        ev_name = getattr (self.TNS.Eventname, (event_name).lower ())
+        widget.bind (ev_name, self.wtk_widget.popup)
     # end def bind_to_widget
 
     def enable_entry (self, name) :
