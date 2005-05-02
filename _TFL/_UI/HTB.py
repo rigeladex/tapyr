@@ -130,6 +130,7 @@
 #    25-Apr-2005 (CT)  `gauge.activate_activity_mode` and `gauge.pulse`
 #                      replaced by toolkit-independent `gauge.activate` and
 #                      `gauge.inc`
+#    30-Apr-2005 (MZO) improved as introduced in issue15075, pdf_writer => cmd
 #    ««revision-date»»···
 #--
 
@@ -146,7 +147,6 @@ from   predicate      import un_nested
 import sys
 import sos
 
-import _TFL.Environment
 
 callback_style = Style ("callback")
 
@@ -1402,12 +1402,15 @@ class Browser (TFL.UI.Mixin) :
             , if_names = if_n
             )
         Cmd = self.ANS.UI.Command
-        if (   hasattr (AC.ui_state, "pdf_writer")
-           and AC.ui_state.pdf_writer is not None
-           ) :
+        pdf_writer = getattr (AC.ui_state, "pdf_writer", None)
+        if pdf_writer is not None and pdf_writer.allow_generate_pdf () :
             file_g.add_command \
                 ( Cmd ( "Generate_PDF"
-                      , self._cb_generate_pdf
+                      , pdf_writer \
+                            ( pdf_writer.TYPE_HTB
+                            , self
+                            , "Generate PDF from current content"
+                            )
                       , precondition = self._pre_generate_pdf
                       )
                 , if_names     = if_n
@@ -1472,7 +1475,7 @@ class Browser (TFL.UI.Mixin) :
     # end def _do_find_prev
 
     def _pre_generate_pdf (self, *args) :
-        return TFL.Environment.system == "win32" and self._pre_has_nodes ()
+        return self._pre_has_nodes ()
     # end def _pre_generate_pdf
     _pre_generate_pdf.evaluate_eagerly = True
 
@@ -1492,11 +1495,6 @@ class Browser (TFL.UI.Mixin) :
         return self.nodes
     # end def _pre_has_nodes
     _pre_has_nodes.evaluate_eagerly = True
-
-    def _cb_generate_pdf (self, event = None) :
-        pdf_writer = self.AC.ui_state.pdf_writer
-        pdf_writer.generate_pdf (type = pdf_writer.TYPE_HTB, widget = self)
-    # end def _cb_generate_pdf
 
 # end class Browser
 
