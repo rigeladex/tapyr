@@ -131,6 +131,7 @@
 #                      replaced by toolkit-independent `gauge.activate` and
 #                      `gauge.inc`
 #    30-Apr-2005 (MZO) improved as introduced in issue15075, pdf_writer => cmd
+#    30-Apr-2005 (MZO) issue15075, put file menu creation into if
 #    ««revision-date»»···
 #--
 
@@ -1391,23 +1392,17 @@ class Browser (TFL.UI.Mixin) :
             )
         cmd_mgr = self.cmd_mgr_widget
         cmd_mgr.bind_interfacers (self.text.wtk_widget)
-        file_g = cmd_mgr.add_group \
-            ( "File"
-            , "Commands which are applied to the file menu"
-            , if_names = if_n
-            )
-        edit_g = cmd_mgr.add_group \
-            ( "Edit"
-            , "Commands which are applied to the edit menu"
-            , if_names = if_n
-            )
         Cmd = self.ANS.UI.Command
         pdf_writer = getattr (AC.ui_state, "pdf_writer", None)
         if pdf_writer is not None and pdf_writer.allow_generate_pdf () :
+            file_g = cmd_mgr.add_group \
+                ( "File"
+                , if_names = if_n
+                )
             file_g.add_command \
                 ( Cmd ( "Generate_PDF"
                       , pdf_writer \
-                            ( pdf_writer.TYPE_HTB
+                            ( pdf_writer.XTYPE.HTB
                             , self
                             , "Generate PDF from current content"
                             )
@@ -1415,6 +1410,10 @@ class Browser (TFL.UI.Mixin) :
                       )
                 , if_names     = if_n
                 )
+        edit_g = cmd_mgr.add_group \
+            ( "Edit"
+            , if_names = if_n
+            )
         # insert clipboard cmds.....
         edit_g.add_command \
             ( Cmd ( "Expand All"
