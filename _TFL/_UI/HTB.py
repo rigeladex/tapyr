@@ -134,6 +134,8 @@
 #    30-Apr-2005 (MZO) issue15075, put file menu creation into if
 #     3-May-2005 (MZO, added/used `_pdf_writer` method
 #                 ABR)
+#     3-May-2005 (MZO, i15334, Refactored _pdf_writer
+#                 ABR)
 #    ««revision-date»»···
 #--
 
@@ -1371,13 +1373,6 @@ class Browser (TFL.UI.Mixin) :
         self.cmd_mgr_widget.update_state ()
     # end def clear
 
-    def _pdf_writer (self) : 
-        pdf_writer = getattr (self.AC.ui_state, "pdf_writer", None)
-        if pdf_writer is not None and pdf_writer.allow_generate_pdf () :
-            return pdf_writer
-        return None
-    # end def _pdf_writer
-
     def _setup_command_mgr (self, AC, TNS) :
         """ create und setup command_mgr
         """
@@ -1402,24 +1397,24 @@ class Browser (TFL.UI.Mixin) :
         cmd_mgr = self.cmd_mgr_widget
         cmd_mgr.bind_interfacers (self.text.wtk_widget)
         Cmd = self.ANS.UI.Command
-
-        pdf_writer = self._pdf_writer ()
-        if pdf_writer :
+        pdf_writer = getattr (self.AC.ui_state, "pdf_writer", None)
+        if self._ci_mb or pdf_writer : 
             file_g = cmd_mgr.add_group \
                 ( "File"
                 , if_names = if_n
                 )
-            file_g.add_command \
-                ( Cmd ( "Generate_PDF"
-                      , pdf_writer \
-                            ( pdf_writer.XTYPE.HTB
-                            , self
-                            , "Generate PDF from current content"
-                            )
-                      , precondition = self._pre_generate_pdf
-                      )
-                , if_names     = if_n
-                )
+            if pdf_writer :
+                file_g.add_command \
+                    ( Cmd ( "Generate_PDF"
+                          , pdf_writer \
+                                ( pdf_writer.XTYPE.HTB
+                                , self
+                                , "Generate PDF from current content"
+                                )
+                          , precondition = self._pre_generate_pdf
+                          )
+                    , if_names     = if_n
+                    )
         edit_g = cmd_mgr.add_group \
             ( "Edit"
             , if_names = if_n
