@@ -132,6 +132,8 @@
 #                      `gauge.inc`
 #    30-Apr-2005 (MZO) improved as introduced in issue15075, pdf_writer => cmd
 #    30-Apr-2005 (MZO) issue15075, put file menu creation into if
+#     3-May-2005 (MZO, added/used `_pdf_writer` method
+#                 ABR)
 #    ««revision-date»»···
 #--
 
@@ -1369,6 +1371,13 @@ class Browser (TFL.UI.Mixin) :
         self.cmd_mgr_widget.update_state ()
     # end def clear
 
+    def _pdf_writer (self) : 
+        pdf_writer = getattr (self.AC.ui_state, "pdf_writer", None)
+        if pdf_writer is not None and pdf_writer.allow_generate_pdf () :
+            return pdf_writer
+        return None
+    # end def _pdf_writer
+
     def _setup_command_mgr (self, AC, TNS) :
         """ create und setup command_mgr
         """
@@ -1393,8 +1402,9 @@ class Browser (TFL.UI.Mixin) :
         cmd_mgr = self.cmd_mgr_widget
         cmd_mgr.bind_interfacers (self.text.wtk_widget)
         Cmd = self.ANS.UI.Command
-        pdf_writer = getattr (AC.ui_state, "pdf_writer", None)
-        if pdf_writer is not None and pdf_writer.allow_generate_pdf () :
+
+        pdf_writer = self._pdf_writer ()
+        if pdf_writer :
             file_g = cmd_mgr.add_group \
                 ( "File"
                 , if_names = if_n
