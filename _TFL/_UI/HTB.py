@@ -136,6 +136,7 @@
 #                 ABR)
 #     3-May-2005 (MZO, i15334, Refactored _pdf_writer
 #                 ABR)
+#     3-May-2005 (MZO) i15334, Moved extend_cmd_mgr from Report => HTB
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ from   Functor      import Functor
 import _TFL._UI
 import _TFL._UI.Mixin
 from   _TFL._UI.Style import *
+import _TFL._UI.Command_Mgr
 
 from   predicate      import un_nested
 
@@ -1387,10 +1389,9 @@ class Browser (TFL.UI.Mixin) :
         self._ci_context_menu = self.text.setup_context_menu ()
         interfacers = dict (zip (if_k, [self._ci_context_menu, self._ci_mb]))
         ANS = AC.ANS
-        self.change_counter  = ANS.UI.Change_Counter (scope = None)
         self.cmd_mgr_widget  = ANS.UI.Command_Mgr \
             ( AC             = AC
-            , change_counter = self.change_counter
+            , change_counter = 0   # evaluate all cmds eagerly
             , interfacers    = interfacers
             , if_names       = if_n
             )
@@ -1398,23 +1399,38 @@ class Browser (TFL.UI.Mixin) :
         cmd_mgr.bind_interfacers (self.text.wtk_widget)
         Cmd = self.ANS.UI.Command
         pdf_writer = getattr (self.AC.ui_state, "pdf_writer", None)
-        if self._ci_mb or pdf_writer : 
+        if pdf_writer or  self._ci_mb :
             file_g = cmd_mgr.add_group \
                 ( "File"
                 , if_names = if_n
                 )
-            if pdf_writer :
-                file_g.add_command \
-                    ( Cmd ( "Generate_PDF"
-                          , pdf_writer \
-                                ( pdf_writer.XTYPE.HTB
-                                , self
-                                , "Generate PDF from current content"
-                                )
-                          , precondition = self._pre_generate_pdf
-                          )
-                    , if_names     = if_n
-                    )
+        if pdf_writer :
+            file_g.add_command \
+                ( Cmd ( "Generate_PDF"
+                      , pdf_writer \
+                            ( pdf_writer.XTYPE.HTB
+                            , self
+                            , "Generate PDF from current content"
+                            )
+                      , precondition = self._pre_generate_pdf
+                      )
+                , if_names     = if_n
+                )
+        if self._ci_mb : 
+            file_g.add_command \
+                ( ANS.UI.Command ( "Save"
+                                 , self._print_report_cb
+                                 , precondition = self._pre_has_nodes
+                                 )
+                , if_names     = file_g.if_names
+                )
+            file_g.add_command \
+                ( ANS.UI.Command ( "Close"
+                                 , self._close_window
+                                 )
+                , if_names     = ("mb", )
+                )
+                
         edit_g = cmd_mgr.add_group \
             ( "Edit"
             , if_names = if_n
@@ -1464,6 +1480,10 @@ class Browser (TFL.UI.Mixin) :
         self._do_find (self.find, pattern)
     # end def _ask_find
 
+    def _close_window (self, event = None) :
+        self._parent.destroy ()    # destory window
+    # end def _close_window
+
     def _do_find (self, func, *args) :
         result = func (*args)
         if result is None :
@@ -1499,6 +1519,24 @@ class Browser (TFL.UI.Mixin) :
         return self.nodes
     # end def _pre_has_nodes
     _pre_has_nodes.evaluate_eagerly = True
+    
+    def _print_report_cb (self, event = None) :
+        if self.nodes :
+            file_name = self.text.ask_save_file_name \
+                ( defaultextension  = ".txt"
+                , filetypes         = ( ("text files", "*.txt")
+                                      , ("list files", "*.list")
+                                      , ("data files", "*.dat")
+                                      , ("all  files", "*")
+                                      )
+                , title             = self.file_dialog_title
+                )
+            if file_name :
+                f = open (file_name, "w", -1)
+                self.print_nodes (f)
+                f.close ()
+        return self.TNS.stop_cb_chaining
+    # end def _print_report_cb
 
 # end class Browser
 
