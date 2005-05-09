@@ -137,6 +137,7 @@
 #     3-May-2005 (MZO, i15334, Refactored _pdf_writer
 #                 ABR)
 #     3-May-2005 (MZO) i15334, Moved extend_cmd_mgr from Report => HTB
+#     9-May-2005 (MZO) added setup_edit/file_menu
 #    ««revision-date»»···
 #--
 
@@ -148,6 +149,7 @@ import _TFL._UI
 import _TFL._UI.Mixin
 from   _TFL._UI.Style import *
 import _TFL._UI.Command_Mgr
+import _TOM._UI.Change_Counter
 
 from   predicate      import un_nested
 
@@ -1018,7 +1020,7 @@ class Browser (TFL.UI.Mixin) :
         self.text.apply_style  (styles.normal)
         self.text.set_tabs     (* styles._tabs)
         self.clear ()
-        self.cmd_mgr_widget.update_state ()
+        self._update_cmd_mgr ()
     # end def __init__
 
     def _setup_styles (self) :
@@ -1191,7 +1193,7 @@ class Browser (TFL.UI.Mixin) :
         after = self.text.eol_pos (pos)
         for s in styles :
             self.text.apply_style (s, before, after)
-        self.cmd_mgr_widget.update_state ()
+        self._update_cmd_mgr ()
     # end def _insert
 
     def _style (self, * tags) :
@@ -1243,7 +1245,8 @@ class Browser (TFL.UI.Mixin) :
     # end def print_nodes
 
     def open_nodes (self, event = None) :
-        """Open all nodes transitively"""
+        """ Expand all elements, if possible. """
+        ###  """Open all nodes transitively"""
         self._activate_gauge (label = "Opening nodes")
         try     :
             for n in self.nodes :
@@ -1261,6 +1264,7 @@ class Browser (TFL.UI.Mixin) :
             parent = parent.parent
         for n in nodes :
             n.open (transitive = 0)
+        self._change_counter.inc ()
     # end def open
 
     def search (self, pattern, tagged_as = None, in_nodes = ()) :
@@ -1324,7 +1328,9 @@ class Browser (TFL.UI.Mixin) :
            `pattern' can be a string or a regular expression object.
         """
         result = [None, None]
-        if not pattern : return result
+        if not pattern :
+            self._find_pattern = pattern    
+            return result
         if not (self._find_equal (pattern) and self._find_forward) :
             self._find_pattern = pattern
             self._find_forward = self.search (pattern, tagged_as, in_nodes)
@@ -1372,155 +1378,155 @@ class Browser (TFL.UI.Mixin) :
         self._find_bakward = []
         self._find_current = None
         self._find_pattern = None
-        self.cmd_mgr_widget.update_state ()
+        self._update_cmd_mgr ()
     # end def clear
 
     def _setup_command_mgr (self, AC, TNS) :
         """ create und setup command_mgr
         """
-        if_n = ["cm:click_3"]
-        if hasattr (self._parent, "new_menubar") : # wc = Toplevel
-            self._ci_mb = self._parent.new_menubar ()
-            if self._ci_mb is not None :
-                if_n.append ("mb")
-        else :
-            self._ci_mb = None
-        if_k = [n.split (":") [0] for n in if_n]
-        self._ci_context_menu = self.text.setup_context_menu ()
-        interfacers = dict (zip (if_k, [self._ci_context_menu, self._ci_mb]))
         ANS = AC.ANS
+        self._change_counter = ANS.UI.Change_Counter ()
+        (interfacers, if_n)  = self._setup_interfacer ()
         self.cmd_mgr_widget  = ANS.UI.Command_Mgr \
             ( AC             = AC
-            , change_counter = 0   # evaluate all cmds eagerly
+            , change_counter = self._change_counter
             , interfacers    = interfacers
             , if_names       = if_n
             )
         cmd_mgr = self.cmd_mgr_widget
+        add_group = cmd_mgr.add_group
         cmd_mgr.bind_interfacers (self.text.wtk_widget)
-        Cmd = self.ANS.UI.Command
+        add_group ( "File"
+                  , if_names = if_n
+                  )
+        add_group ( "Edit"
+                  , if_names = if_n
+                  )
+        self._setup_file_menu () 
+        self._setup_edit_menu () 
+        cmd_mgr.set_auto_short_cuts ()
+    # end def _setup_command_mgr
+    
+    def _setup_file_menu (self) : 
+        cmd_mgr    = self.cmd_mgr_widget
+        group      = cmd_mgr.group ("File")
+        Cmd        = self.ANS.UI.Command
+        add_cmd    = group.add_command
+        if_n       = group.if_names
         pdf_writer = getattr (self.AC.ui_state, "pdf_writer", None)
-        if pdf_writer or  self._ci_mb :
-            file_g = cmd_mgr.add_group \
-                ( "File"
-                , if_names = if_n
-                )
         if pdf_writer :
-            file_g.add_command \
-                ( Cmd ( "Generate_PDF"
-                      , pdf_writer \
-                            ( pdf_writer.XTYPE.HTB
-                            , self
-                            , "Generate PDF from current content"
-                            )
-                      , precondition = self._pre_generate_pdf
+            add_cmd ( Cmd ( "Generate_PDF"
+                          , pdf_writer \
+                              ( pdf_writer.XTYPE.HTB
+                              , self
+                              , "Save current content as PDF file."
+                              )
+                          , precondition = self.has_elements
+                          )
+                    , if_names = if_n
+                    )
+        add_cmd  ( Cmd ( "Save"
+                       , self._print_report_cb
+                       , precondition = self.has_elements
+                       )
+                 , if_names = if_n
+                 )
+    # end def _setup_file_menu
+
+    def _setup_edit_menu (self) : 
+        # insert clipboard cmds.....
+        cmd_mgr  = self.cmd_mgr_widget
+        group    = cmd_mgr.group ("Edit")
+        add_cmd  = group.add_command
+        Cmd      = self.ANS.UI.Command
+        if_n     = group.if_names
+        add_cmd ( Cmd ( "Expand All"
+                      , self.open_nodes
+                      , precondition = self.has_elements
                       )
                 , if_names     = if_n
                 )
-        if self._ci_mb : 
-            file_g.add_command \
-                ( ANS.UI.Command ( "Save"
-                                 , self._print_report_cb
-                                 , precondition = self._pre_has_nodes
-                                 )
-                , if_names     = file_g.if_names
+        add_cmd ( Cmd ( "Find"          
+                      , self._ask_find
+                      )
+                , if_names     = if_n
+                , underline    = 0
+                , accelerator  = self.TNS.Eventname.search
                 )
-            file_g.add_command \
-                ( ANS.UI.Command ( "Close"
-                                 , self._close_window
-                                 )
-                , if_names     = ("mb", )
+        add_cmd ( Cmd ( "Find next"
+                      , self._do_find_next
+                      , precondition = self.is_search_pattern_defined
+                      )
+                , if_names     = if_n
+                , underline    = 5
+                , accelerator  = self.TNS.Eventname.search_next
                 )
-                
-        edit_g = cmd_mgr.add_group \
-            ( "Edit"
-            , if_names = if_n
-            )
-        # insert clipboard cmds.....
-        edit_g.add_command \
-            ( Cmd ( "Expand All"
-                  , self.open_nodes
-                  , precondition = self._pre_has_nodes
-                  )
-            , if_names     = if_n
-            )
-        edit_g.add_command \
-            ( Cmd ( "Find"
-                  , self._ask_find
-                  , precondition = self._pre_has_find
-                  )
-            , if_names     = if_n
-            , underline    = 0
-            , accelerator  = self.TNS.Eventname.search
-            )
-        edit_g.add_command \
-            ( Cmd ( "Find next"
-                  , self._do_find_next
-                  , precondition = self._pre_has_find_next
-                  )
-            , if_names     = if_n
-            , underline    = 5
-            , accelerator  = self.TNS.Eventname.search_next
-            )
-        edit_g.add_command \
-            ( Cmd ( "Find previous"
-                  , self._do_find_prev
-                  , precondition = self._pre_has_find_prev
-                  )
-            , if_names     = if_n
-            , underline    = 5
-            , accelerator  = self.TNS.Eventname.search_prev
-            )
-        cmd_mgr.set_auto_short_cuts ()
-    # end def _setup_command_mgr
+        add_cmd ( Cmd ( "Find previous"
+                      , self._do_find_prev
+                      , precondition = self.is_search_pattern_defined
+                      )
+                , if_names     = if_n
+                , underline    = 5
+                , accelerator  = self.TNS.Eventname.search_prev
+                )
+    # end def _setup_edit_menu
 
+    def _setup_interfacer (self) :
+        self._ci_context_menu = self.text.setup_context_menu ()
+        interfacers = dict ([("cm", self._ci_context_menu)])
+        if_n = ["cm:click_3"]
+        return (interfacers, if_n)
+    # end def _setup_interfacer
+
+    def _update_cmd_mgr (self) :
+         # XXX Currently inc always. Find places, where  inc () is necessary
+        self._change_counter.inc ()
+        self.cmd_mgr_widget.update_state ()
+    # end def _update_cmd_mgr
+
+    #  -------------- preconditions ---------------
+
+    def has_elements (self, *args) :    # Help text calls node "element"
+        """ The Browser is not empty. """
+        # if we can print title add self.text.is_empty
+        return self.nodes
+    # end def has_elements
+    
+    def is_search_pattern_defined (self, *args) :
+        """ The search pattern is definded. """
+        return self._find_pattern is not None
+    # end def is_search_pattern_defined
+
+    #  --------------  callbacks ---------------
+    
     def _ask_find (self) :
+        """ Ask search pattern and find first match. """
         # XXX extend to present dialog with search options
         pattern = self.text.ask_string \
             (title = self._dialog_title, prompt = "Search for:")
         self._do_find (self.find, pattern)
+        self._update_cmd_mgr ()
     # end def _ask_find
 
-    def _close_window (self, event = None) :
-        self._parent.destroy ()    # destory window
-    # end def _close_window
-
     def _do_find (self, func, *args) :
+        """ find match """
         result = func (*args)
         if result is None :
             print "%s not found" % self._find_pattern
     # end def _do_find
 
     def _do_find_next (self) :
+        """ Find next match of the current search pattern. """
         self._do_find (self.find_next)
     # end def _do_find_next
 
     def _do_find_prev (self) :
+        """ Find previous match of the current search pattern. """
         self._do_find (self.find_prev)
     # end def _do_find_prev
 
-    def _pre_generate_pdf (self, *args) :
-        return self._pre_has_nodes ()
-    # end def _pre_generate_pdf
-    _pre_generate_pdf.evaluate_eagerly = True
-
-    def _pre_has_find (self) :
-        # allow to search only when there is text in the buffer
-        return not self.text.is_empty
-    # end def _pre_has_find
-    _pre_has_find.evaluate_eagerly = True
-
-    def _pre_has_find_next (self) :
-        return self._find_pattern is not None
-    # end def _pre_has_find_next
-    _pre_has_find_next.evaluate_eagerly = True
-    _pre_has_find_prev = _pre_has_find_next
-
-    def _pre_has_nodes (self) :
-        return self.nodes
-    # end def _pre_has_nodes
-    _pre_has_nodes.evaluate_eagerly = True
-    
     def _print_report_cb (self, event = None) :
+        """ Save current content as plain text file. """
         if self.nodes :
             file_name = self.text.ask_save_file_name \
                 ( defaultextension  = ".txt"
