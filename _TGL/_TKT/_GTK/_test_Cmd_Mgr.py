@@ -51,46 +51,61 @@ bo.pack               (bu1, start = False)
 win.add               (bo)
 
 def _dummy (* args) :
-    print args
+    print "Dummy", args
 
 AC      = App_Context (TGL)
 inter   = dict \
-    ( cm = GTK.CI_Menu    (AC = AC)
-    , mb = GTK.CI_Menubar (AC = AC)
-    , tb = GTK.CI_Toolbar (AC = AC)
+    ( cm = GTK.CI_Menu       (AC = AC)
+    , mb = GTK.CI_Menubar    (AC = AC)
+    , tb = GTK.CI_Toolbar    (AC = AC)
+    , bb = GTK.CI_Button_Box (AC = AC)
     )
 bo.pack (inter ["tb"])
 bo.pack (inter ["mb"])
+bo.pack (inter ["bb"])#, where = GTK.END)
 cmd_mgr = TGL.UI.Command_Mgr (AC, 0, inter)
 g1      = cmd_mgr.add_group \
-    ("File", if_names = ("cm:click_3", "mb", "tb"))
+    ("File", if_names = ("cm:click_3", "mb", "tb", "bb"))
 cmd_mgr.bind_interfacers (bu1)
 g2      = cmd_mgr.add_group \
-    ("Edit", if_names = ("cm:click_3", "mb", "tb"))
+    ("Edit", if_names = ("cm:click_3", "mb", "tb", "bb"))
 cmd_mgr.bind_interfacers (bu2)
-prec = lambda * args : False
-prec.evaluate_eagerly = True
-for n, i in ("Open", "gtk-open"), ("Save", "gtk-save"), (None, ""), ("Exit", "gtk-quit") :
-    if not n :
-        g1.add_separator (if_names = ("cm", "mb", "tb"))
-    else :
-        g1.add_command \
-            ( TGL.UI.Command (n, _dummy, precondition = prec)
-            , if_names = ("cm", "mb", "tb")
-            , icon     = i
-            )
-    prec = lambda * args : True
-    prec.evaluate_eagerly = True
-for n, i in ("Copy", "gtk-copy"), ("Cut", "gtk-cut"), ("Paste", "gtk-paste") :
-    g2.add_command \
-        ( TGL.UI.Command (n, _dummy, precondition = prec)
-        , if_names = ("cm", "mb", "tb")
-        , icon     = i
-        )
+for g, spec in ( (g1, ( ("Open", "gtk-open")
+                      , ("Save", "gtk-save")
+                      , (None,   "")
+                      , ("Exit", "gtk-quit")
+                      )
+                  )
+               , (g2, ( ("Copy",  "gtk-copy")
+                      , ("Cut",   "gtk-cut")
+                      , ("Paste", "gtk-paste")
+                      , (None,    "")
+                      , ("Select", "gtk-find")
+                      )
+                 )
+               ) :
     prec = lambda * args : False
     prec.evaluate_eagerly = True
+    for n, i in  spec :
+        if not n :
+            g.add_separator (if_names = ("cm", "mb", "tb", "bb"))
+        else :
+            if i == "gtk-find" :
+                as_check_button = True
+                cmd             = None
+            else :
+                as_check_button = False
+                cmd             = _dummy
+            g.add_command \
+                ( TGL.UI.Command (n, cmd, precondition = prec)
+                , if_names        = ("cm", "mb", "tb", "bb")
+                , icon            = i
+                , as_check_button = as_check_button
+                )
+        prec = lambda * args : True
+        prec.evaluate_eagerly = True
 
 cmd_mgr.update_state     ()
 win.show_all             ()
-GTK.main    ()
+GTK.main                 ()
 ### __END__ TGL.TKT.GTK._test_Cmd_Mgr

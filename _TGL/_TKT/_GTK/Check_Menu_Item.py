@@ -20,47 +20,31 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Tool_Button
+#    TGL.TKT.GTK.Check_Menu_Item
 #
 # Purpose
-#    Wrapper for the GTK widget ToolButton
+#    Wrapper for the GTK widget CheckMenuItem
 #
 # Revision Dates
-#    09-Apr-2005 (MG) Automated creation
-#     9-Apr-2005 (MG) Support for icons added
-#     9-May-2005 (MG) `_init_attrs` factored from `__init__`
+#    09-May-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Tool_Item
+import _TGL._TKT._GTK.Menu_Item
 
-class Tool_Button (GTK.Tool_Item) :
-    """Wrapper for the GTK widget ToolButton"""
+class Check_Menu_Item (GTK.Menu_Item) :
+    """Wrapper for the GTK widget CheckMenuItem"""
 
-    GTK_Class        = GTK.gtk.ToolButton
+    GTK_Class        = GTK.gtk.CheckMenuItem
     __gtk_properties = \
-        ( GTK.SG_Object_Property  ("icon_widget")
-        , GTK.SG_Property         ("label")
-        , GTK.SG_Object_Property  ("label_widget")
-        , GTK.SG_Property         ("stock_id")
-        , GTK.SG_Property         ("use_underline")
+        ( GTK.SG_Property         ("active")
+        , GTK.SG_Property         ("draw_as_radio")
+        , GTK.SG_Property         ("inconsistent")
         )
 
-    def __init__ (self, label = None, icon = None, stock = None, ** kw) :
-        if not stock :
-            self.__super.__init__ (** self._init_attrs (label, ** kw))
-            self.icon_widget = icon
-        else :
-            self.__super.__init__ (stock = stock_id, ** kw)
-    # end def __init__
-
-    def _init_attrs (self, label, ** kw) :
-        return dict (kw, label = label, icon_widget = None)
-    # end def _init_attrs
-
-# end class Tool_Button
+# end class Check_Menu_Item
 
 if __name__ != "__main__" :
-    GTK._Export ("Tool_Button")
-### __END__ TGL.TKT.GTK.Tool_Button
+    GTK._Export ("Check_Menu_Item")
+### __END__ TGL.TKT.GTK.Check_Menu_Item

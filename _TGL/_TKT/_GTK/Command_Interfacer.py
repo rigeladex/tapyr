@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     8-Apr-2005 (MG) Creation
+#     9-May-2005 (MG) Check items (toolbar, menu) added
+#     9-May-2005 (MG) `CI_Button_Box` added
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -38,12 +40,20 @@ import _TGL._TKT.Command_Interfacer
 import _TGL._TKT._GTK.Menu
 import _TGL._TKT._GTK.Menu_Bar
 import _TGL._TKT._GTK.Menu_Item
+import _TGL._TKT._GTK.Check_Menu_Item
 import _TGL._TKT._GTK.Separator_Menu_Item
 
 import _TGL._TKT._GTK.Toolbar
 import _TGL._TKT._GTK.Tool_Button
+import _TGL._TKT._GTK.Toggle_Tool_Button
 import _TGL._TKT._GTK.Separator_Tool_Item
 import _TGL._TKT._GTK.Image
+
+import _TGL._TKT._GTK.Frame
+import _TGL._TKT._GTK.H_Button_Box
+import _TGL._TKT._GTK.Button
+import _TGL._TKT._GTK.Toggle_Button
+import _TGL._TKT._GTK.Constants
 
 import  weakref
 import  traceback
@@ -52,18 +62,17 @@ GTK = TGL.TKT.GTK
 
 ### todo
 ### - icon support for images
-### - toggle support
 ### - groups inside a toolbar group
-### - Implement CI_Button_Box
+### - Fix problems with CI_Button_Box
 
 class Boolean_Variable (object) :
     """Variable used by the Command Manager for a checkbox style command
        interfacer element.
     """
 
-    def __init__ (self, default = True, states = (False, True)) :
+    def __init__ (self, default = False, states = (False, True)) :
         self._state            = default
-        self._clients          = weakref.WeakKeyDictionary
+        self._clients          = weakref.WeakKeyDictionary ()
     # end def __init__
 
     def register (self, client) :
@@ -78,7 +87,7 @@ class Boolean_Variable (object) :
         if self._state != state :
             self._state = state
             for c in self._clients.iterkeys () :
-                c.state = state
+                c.active = state
     # end def _set_state
 
     state = property (lambda s : s._state, _set_state)
@@ -98,12 +107,187 @@ class _CI_ (TFL.TKT.Command_Interfacer) :
 
 # end class _CI_
 
-class CI_Button_Box (_CI_) :
+class _CI_Item_Mixin_ (_CI_) :
+    """Base class for all command interfacers using a `NO_List` to store the
+       position of the `child`
+    """
+
+    def __init__ (self, balloon = None, help = None, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self._items      = NO_List ()
+        self.balloon     = balloon
+        self.help_widget = help
+    # end def __init__
+
+    def index (self, name) :
+        return self._items [name]
+    # end def index
+
+    ### command specific methods
+    def add_command ( self, name, callback
+                    , index           = None
+                    , delta           = 0
+                    , underline       = None
+                    , accelerator     = None
+                    , icon            = None
+                    , info            = None
+                    , state_var       = None
+                    , cmd_name        = None
+                    , ** kw
+                    ) :
+        if state_var is not None :
+            fct = self._new_check_item
+            kw ["variable"] = state_var
+        else :
+            fct = self._new_item
+        return self._insert_item \
+            ( index, delta
+            , fct
+                ( label       = name
+                , command     = callback
+                , underline   = underline
+                , icon        = icon
+                , accelerator = accelerator
+                , ** kw
+                )
+            )
+    # end def add_command
+
+    def remove_command (self, index) :
+        self._remove (index)
+    # end def remove_command
+
+    ### group specific methods
+    def add_group (self, name, index = None, delta = 0, ** kw) :
+        item, result = self._new_group (name)
+        self._insert_item              (index, delta, item)
+        return result
+    # end def add_group
+
+    def remove_group (self, index) :
+        self._remove (index)
+    # end def remove_group
+
+    ### separator specific methods
+    def add_separator (self, name = None, index = None, delta = 0) :
+        item =  self.Separator_Class ()
+        return self._insert_item     (index, delta, item)
+    # end def add_separator
+
+    def remove_separator (self, index) :
+        self._remove (index)
+    # end def remove_separator
+
+    def enable_entry (self, name) :
+        try :
+            self._items [name].sensitive = True
+        except (KeyError, AttributeError) :
+            if 1 and __debug__ :
+                traceback.print_exc ()
+                print "Enable_entry", self, name, self._items.keys ()
+    # end def enable
+
+    def disable_entry (self, name) :
+        try :
+            self._items [name].sensitive = False
+        except (KeyError, AttributeError) :
+            if 1 and __debug__ :
+                traceback.print_exc ()
+                print "Disable_entry", self, name, self._items.keys ()
+    # end def disable_entry
+
+# end class _CI_Item_Mixin_
+
+class CI_Button_Box (_CI_Item_Mixin_, GTK.H_Button_Box) :
     """Implement a button box command interfacer for GTK"""
 
-    def __init__ (self, * args, ** kw) :
-        raise NotImplementedError
-    # end def __init__
+    def _new_group (self, name) :
+        item              = CI_Button_Box   (AC = self.AC)
+        frame             = self.TNS.Frame  (AC = self.AC, name = name)
+        frame.shadow_type = self.TNS.SHADOW_OUT
+        frame.add (item)
+        item.show ()
+        return frame, item
+    # end def _new_group
+
+    def _insert_item (self, index, delta, item) :
+        self._items.insert (index, item, delta)
+        self.pack          (item, fill = True, expand = True)
+        item.show          ()
+        print item.name, [ x.name for x in self._items]
+        return item
+    # end def _insert_item
+
+    def add_separator (self, * args, ** kw) :
+        return None
+    # end def add_separator
+
+    def _button_box_item ( self
+                         , cls
+                         , label
+                         , command     = None
+                         , underline   = None
+                         , icon        = None
+                         , accelerator = None
+                         , ** kw
+                         ) :
+        item = cls (label = label, name = label)
+        if command :
+            item.bind_add (self.TNS.Signal.Clicked, command)
+        if self.help_widget :
+            item.bind_add (self.TNS.Signal.Enter_Notify, self._push_help)
+            item.bind_add (self.TNS.Signal.Leave_Notify, self._pop_help)
+        return item
+    # end def _button_box_item
+
+    def _new_item ( self
+                  , label
+                  , command     = None
+                  , underline   = None
+                  , icon        = None
+                  , accelerator = None
+                  , ** kw
+                  ) :
+        return self._button_box_item \
+            ( GTK.Button
+            , label       = label
+            , command     = command
+            , underline   = underline
+            , icon        = icon
+            , accelerator = accelerator
+            , ** kw
+            )
+    # end def _new_item
+
+    def _new_check_item ( self
+                        , label
+                        , command     = None
+                        , underline   = None
+                        , icon        = None
+                        , accelerator = None
+                        , variable    = None
+                        , ** kw
+                         ) :
+        item = self._button_box_item \
+            ( GTK.Toggle_Button
+            , label       = label
+            , command     = command
+            , underline   = underline
+            , icon        = icon
+            , accelerator = accelerator
+            , ** kw
+            )
+        item.stock_id = icon
+        item.variable = variable
+        variable.register (item)
+        item.bind_add (self.TNS.Signal.Toggled, self._update_variable)
+        return item
+    # end def _new_check_item
+
+    def _update_variable (self, event) :
+        item                = event.widget
+        item.variable.state = item.active
+    # end def _update_variable
 
 # end class CI_Button_Box
 
@@ -185,97 +369,6 @@ class CI_Event_Binder (_CI_) :
 
 # end class CI_Event_Binder
 
-class _CI_Item_Mixin_ (_CI_) :
-    """Base class for all command interfacers using a `NO_List` to store the
-       position of the `child`
-    """
-
-    def __init__ (self, balloon = None, help = None, * args, ** kw) :
-        self.__super.__init__ (* args, ** kw)
-        self._items      = NO_List ()
-        self.balloon     = balloon
-        self.help_widget = help
-    # end def __init__
-
-    def index (self, name) :
-        return self._items [name]
-    # end def index
-
-    ### command specific methods
-    def add_command ( self, name, callback
-                    , index           = None
-                    , delta           = 0
-                    , underline       = None
-                    , accelerator     = None
-                    , icon            = None
-                    , info            = None
-                    , state_var       = None
-                    , cmd_name        = None
-                    , ** kw
-                    ) :
-        if state_var is not None :
-            fct = self._new_check_item
-            kw ["variable"] = state_var
-        else :
-            fct = self._new_item
-        return self._insert_item \
-            ( index, delta
-            , fct
-                ( label       = name
-                , command     = callback
-                , underline   = underline
-                , icon        = icon
-                , accelerator = accelerator
-                , ** kw
-                )
-            )
-    # end def add_command
-
-    def remove_command (self, index) :
-        self._remove (index)
-    # end def remove_command
-
-    ### group specific methods
-    def add_group (self, name, index = None, delta = 0, ** kw) :
-        item, result = self._new_group (name)
-        self._insert_item              (index, delta, item)
-        return result
-    # end def add_group
-
-    def remove_group (self, index) :
-        self._remove (index)
-    # end def remove_group
-
-    ### separator specific methods
-    def add_separator (self, name = None, index = None, delta = 0) :
-        item =  self.Separator_Class ()
-        return self._insert_item     (index, delta, item)
-    # end def add_separator
-
-    def remove_separator (self, index) :
-        self._remove (index)
-    # end def remove_separator
-
-    def enable_entry (self, name) :
-        try :
-            self._items [name].sensitive = True
-        except (KeyError, AttributeError) :
-            if 1 and __debug__ :
-                traceback.print_exc ()
-                print "Enable_entry", self, name
-    # end def enable
-
-    def disable_entry (self, name) :
-        try :
-            self._items [name].sensitive = False
-        except (KeyError, AttributeError) :
-            if 1 and __debug__ :
-                traceback.print_exc ()
-                print "Disable_entry", self, name
-    # end def disable_entry
-
-# end class _CI_Item_Mixin_
-
 class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
     """Mixin for menu and menubar"""
 
@@ -296,6 +389,25 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
         return item, menu
     # end def _new_group
 
+    def _menu_item ( self
+                   , cls
+                   , label
+                   , command     = None
+                   , underline   = None
+                   , icon        = None
+                   , accelerator = None
+                   , ** kw
+                   ) :
+        ### handle underline, icon, and accelerator
+        item = cls (label = label, name = label)
+        if command :
+            item.bind_add (self.TNS.Signal.Activate, command)
+        if self.help_widget :
+            item.bind_add (self.TNS.Signal.Select,   self._push_help)
+            item.bind_add (self.TNS.Signal.Deselect, self._pop_help)
+        return item
+    # end def _menu_item
+
     def _new_item ( self
                   , label
                   , command     = None
@@ -304,15 +416,45 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
                   , accelerator = None
                   , ** kw
                   ) :
-        ### handle underline, icon, and accelerator
-        item = GTK.Menu_Item (label = label, name = label)
-        if command :
-            item.bind_add (self.TNS.Signal.Activate, command)
-        if self.help_widget :
-            item.bind_add (self.TNS.Signal.Select,   self._push_help)
-            item.bind_add (self.TNS.Signal.Deselect, self._pop_help)
-        return item
+        return self._menu_item \
+            ( GTK.Menu_Item
+            , label       = label
+            , command     = command
+            , underline   = underline
+            , icon        = icon
+            , accelerator = accelerator
+            , ** kw
+            )
     # end def _new_item
+
+    def _new_check_item ( self
+                        , label
+                        , command     = None
+                        , underline   = None
+                        , icon        = None
+                        , accelerator = None
+                        , variable    = None
+                        , ** kw
+                        ) :
+        item = self._menu_item \
+            ( GTK.Check_Menu_Item
+            , label       = label
+            , command     = command
+            , underline   = underline
+            , icon        = icon
+            , accelerator = accelerator
+            , ** kw
+            )
+        item.variable = variable
+        variable.register (item)
+        item.bind_add (self.TNS.Signal.Toggled, self._update_variable)
+        return item
+    # end def _new_check_item
+
+    def _update_variable (self, event) :
+        item                = event.widget
+        item.variable.state = item.active
+    # end def _update_variable
 
     def _insert_item (self, index, delta, item) :
         ### insert the new item to the `_items` NO-list and add the new item
@@ -393,7 +535,8 @@ class _CI_Toolbar_Mixin_ (_CI_Item_Mixin_) :
         self.remove (item)
     # end def _remove
 
-    def _new_item ( self
+    def _toolbar_item ( self
+                  , cls
                   , label
                   , command     = None
                   , underline   = None
@@ -405,14 +548,64 @@ class _CI_Toolbar_Mixin_ (_CI_Item_Mixin_) :
             icon = GTK.Image \
                 (stock_id = icon, size = GTK.gtk.ICON_SIZE_SMALL_TOOLBAR)
             icon.show ()
-        item = GTK.Tool_Button (icon= icon, label = label, name = label)
+        item = cls (icon = icon, label = label, name = label)
         if command :
             item.bind_add (self.TNS.Signal.Clicked, command)
         if self.help_widget :
             item.bind_add (self.TNS.Signal.Enter_Notify, self._push_help)
             item.bind_add (self.TNS.Signal.Leave_Notify, self._pop_help)
         return item
+    # end def _toolbar_item
+
+    def _new_item ( self
+                  , label
+                  , command     = None
+                  , underline   = None
+                  , icon        = None
+                  , accelerator = None
+                  , ** kw
+                  ) :
+        return self._toolbar_item \
+            ( GTK.Tool_Button
+            , label       = label
+            , command     = command
+            , underline   = underline
+            , icon        = icon
+            , accelerator = accelerator
+            , ** kw
+            )
     # end def _new_item
+
+    def _new_check_item ( self
+                        , label
+                        , command     = None
+                        , underline   = None
+                        , icon        = None
+                        , accelerator = None
+                        , variable    = None
+                        , ** kw
+                         ) :
+        item = self._toolbar_item \
+            ( GTK.Toggle_Tool_Button
+              #GTK.Tool_Button
+            , label       = label
+            , command     = command
+            , underline   = underline
+            , icon        = icon
+            , accelerator = accelerator
+            , ** kw
+            )
+        item.stock_id = icon
+        item.variable = variable
+        variable.register (item)
+        item.bind_add (self.TNS.Signal.Toggled, self._update_variable)
+        return item
+    # end def _new_check_item
+
+    def _update_variable (self, event) :
+        item                = event.widget
+        item.variable.state = item.active
+    # end def _update_variable
 
 # end class _CI_Toolbar_Mixin_
 
