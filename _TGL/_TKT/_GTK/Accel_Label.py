@@ -20,30 +20,30 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Menu_Tool_Button
+#    TGL.TKT.GTK.Accel_Label
 #
 # Purpose
-#    Wrapper for the GTK widget MenuToolButton
+#    Wrapper for the GTK widget AccelLabel
 #
 # Revision Dates
-#    09-May-2005 (MG) Automated creation
+#    12-May-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Tool_Button
+import _TGL._TKT._GTK.Label
 
-class Menu_Tool_Button (GTK.Tool_Button) :
-    """Wrapper for the GTK widget MenuToolButton"""
+class Accel_Label (GTK.Label) :
+    """Wrapper for the GTK widget AccelLabel"""
 
-    GTK_Class        = GTK.gtk.MenuToolButton
+    GTK_Class        = GTK.gtk.AccelLabel
     __gtk_properties = \
-        ( GTK.SG_Object_Property  ("menu")
-        ,
+        ( GTK.Property            ("accel_closure")
+        , GTK.SG_Object_Property  ("accel_widget")
         )
 
-# end class Menu_Tool_Button
+# end class Accel_Label
 
 if __name__ != "__main__" :
-    GTK._Export ("Menu_Tool_Button")
-### __END__ TGL.TKT.GTK.Menu_Tool_Button
+    GTK._Export ("Accel_Label")
+### __END__ TGL.TKT.GTK.Accel_Label

@@ -88,7 +88,7 @@ for g, spec in ( (g1, ( ("Open", "gtk-open")
     prec.evaluate_eagerly = True
     for n, i in  spec :
         if not n :
-            g.add_separator (if_names = ("cm", "mb", "tb", "bb"))
+            g.add_separator (if_names = ("cm", "mb", "tb"))
         else :
             if i == "gtk-find" :
                 as_check_button = True
@@ -105,6 +105,19 @@ for g, spec in ( (g1, ( ("Open", "gtk-open")
         prec = lambda * args : True
         prec.evaluate_eagerly = True
 
+g3 = g2.add_group ("Submenu", if_names = ("mb", "cm", "tb"), icon = "gtk-apply")
+def _dummy (* args) :
+    print "Submenu"
+# end def _dummy
+
+g3.add_command \
+    ( TGL.UI.Command ("Item 1", _dummy, precondition = prec)
+    , if_names = ("mb", "cm", "tb")
+    )
+g3.add_command \
+    ( TGL.UI.Command ("Item 2", _dummy, precondition = prec)
+    , if_names = ("mb", "cm", "tb")
+    )
 cmd_mgr.update_state     ()
 win.show_all             ()
 GTK.main                 ()

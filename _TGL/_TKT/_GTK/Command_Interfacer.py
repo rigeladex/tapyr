@@ -29,6 +29,8 @@
 #     8-Apr-2005 (MG) Creation
 #     9-May-2005 (MG) Check items (toolbar, menu) added
 #     9-May-2005 (MG) `CI_Button_Box` added
+#    12-May-2005 (MG) Icon support for menus added
+#    12-May-2005 (MG) Group support added to `_CI_Toolbar_Group_`
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -40,12 +42,14 @@ import _TGL._TKT.Command_Interfacer
 import _TGL._TKT._GTK.Menu
 import _TGL._TKT._GTK.Menu_Bar
 import _TGL._TKT._GTK.Menu_Item
+import _TGL._TKT._GTK.Image_Menu_Item
 import _TGL._TKT._GTK.Check_Menu_Item
 import _TGL._TKT._GTK.Separator_Menu_Item
 
 import _TGL._TKT._GTK.Toolbar
 import _TGL._TKT._GTK.Tool_Button
 import _TGL._TKT._GTK.Toggle_Tool_Button
+import _TGL._TKT._GTK.Menu_Tool_Button
 import _TGL._TKT._GTK.Separator_Tool_Item
 import _TGL._TKT._GTK.Image
 
@@ -61,9 +65,8 @@ import  traceback
 GTK = TGL.TKT.GTK
 
 ### todo
-### - icon support for images
-### - groups inside a toolbar group
-### - Fix problems with CI_Button_Box
+### - `underline` in menus
+### - `accelerators` in menus
 
 class Boolean_Variable (object) :
     """Variable used by the Command Manager for a checkbox style command
@@ -158,8 +161,8 @@ class _CI_Item_Mixin_ (_CI_) :
     # end def remove_command
 
     ### group specific methods
-    def add_group (self, name, index = None, delta = 0, ** kw) :
-        item, result = self._new_group (name)
+    def add_group (self, name, index = None, delta = 0, icon = None, ** kw) :
+        item, result = self._new_group (name, icon)
         self._insert_item              (index, delta, item)
         return result
     # end def add_group
@@ -201,7 +204,7 @@ class _CI_Item_Mixin_ (_CI_) :
 class CI_Button_Box (_CI_Item_Mixin_, GTK.H_Button_Box) :
     """Implement a button box command interfacer for GTK"""
 
-    def _new_group (self, name) :
+    def _new_group (self, name, icon = None) :
         item              = CI_Button_Box   (AC = self.AC)
         frame             = self.TNS.Frame  (AC = self.AC, name = name)
         frame.shadow_type = self.TNS.SHADOW_OUT
@@ -214,7 +217,6 @@ class CI_Button_Box (_CI_Item_Mixin_, GTK.H_Button_Box) :
         self._items.insert (index, item, delta)
         self.pack          (item, fill = True, expand = True)
         item.show          ()
-        print item.name, [ x.name for x in self._items]
         return item
     # end def _insert_item
 
@@ -231,7 +233,7 @@ class CI_Button_Box (_CI_Item_Mixin_, GTK.H_Button_Box) :
                          , accelerator = None
                          , ** kw
                          ) :
-        item = cls (label = label, name = label)
+        item = cls (label = label, name = label, AC = self.AC)
         if command :
             item.bind_add (self.TNS.Signal.Clicked, command)
         if self.help_widget :
@@ -249,7 +251,7 @@ class CI_Button_Box (_CI_Item_Mixin_, GTK.H_Button_Box) :
                   , ** kw
                   ) :
         return self._button_box_item \
-            ( GTK.Button
+            ( self.TNS.Button
             , label       = label
             , command     = command
             , underline   = underline
@@ -269,7 +271,7 @@ class CI_Button_Box (_CI_Item_Mixin_, GTK.H_Button_Box) :
                         , ** kw
                          ) :
         item = self._button_box_item \
-            ( GTK.Toggle_Button
+            ( self.TNS.Toggle_Button
             , label       = label
             , command     = command
             , underline   = underline
@@ -374,11 +376,20 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
 
     Separator_Class = GTK.Separator_Menu_Item
 
-    def _new_group (self, name) :
-        item             = self.TNS.Menu_Item \
-            ( label      = name
-            # XXX underline
-            )
+    def _new_group (self, name, icon = None) :
+        if icon :
+            item         = self.TNS.Image_Menu_Item \
+                ( label  = name
+                , icon   = icon
+                , AC     = self.AC
+                # XXX underline
+                )
+        else :
+            item         = self.TNS.Menu_Item \
+                ( label  = name
+                , AC     = self.AC
+                # XXX underline
+                )
         item.submenu = menu = CI_Menu \
             ( AC         = self.AC
             , name       = name
@@ -394,12 +405,11 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
                    , label
                    , command     = None
                    , underline   = None
-                   , icon        = None
                    , accelerator = None
                    , ** kw
                    ) :
-        ### handle underline, icon, and accelerator
-        item = cls (label = label, name = label)
+        ### handle underline, and accelerator
+        item = cls (label = label, name = label, AC = self.AC, ** kw)
         if command :
             item.bind_add (self.TNS.Signal.Activate, command)
         if self.help_widget :
@@ -416,12 +426,16 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
                   , accelerator = None
                   , ** kw
                   ) :
+        if icon :
+            cls         = self.TNS.Image_Menu_Item
+            kw ["icon"] = icon
+        else :
+            cls = self.TNS.Menu_Item
         return self._menu_item \
-            ( GTK.Menu_Item
+            ( cls
             , label       = label
             , command     = command
             , underline   = underline
-            , icon        = icon
             , accelerator = accelerator
             , ** kw
             )
@@ -437,11 +451,10 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
                         , ** kw
                         ) :
         item = self._menu_item \
-            ( GTK.Check_Menu_Item
+            ( self.TNS.Check_Menu_Item
             , label       = label
             , command     = command
             , underline   = underline
-            , icon        = icon
             , accelerator = accelerator
             , ** kw
             )
@@ -506,7 +519,7 @@ class _CI_Toolbar_Mixin_ (_CI_Item_Mixin_) :
     def _insert_item (self, index, delta, item, correction = 0) :
         self._items.insert        (index, item, delta)
         pos = self._items.n_index (item.name)
-        if isinstance (item, GTK.Tool_Item) :
+        if isinstance (item, self.TNS.Tool_Item) :
             self.insert    (item, pos + correction)
             item.show      ()
         else :
@@ -545,10 +558,13 @@ class _CI_Toolbar_Mixin_ (_CI_Item_Mixin_) :
                   , ** kw
                   ) :
         if icon :
-            icon = GTK.Image \
-                (stock_id = icon, size = GTK.gtk.ICON_SIZE_SMALL_TOOLBAR)
+            icon = self.TNS.Image \
+                ( stock_id = icon
+                , size     = GTK.gtk.ICON_SIZE_SMALL_TOOLBAR
+                , AC       = self.AC
+                )
             icon.show ()
-        item = cls (icon = icon, label = label, name = label)
+        item = cls (icon = icon, label = label, name = label, AC = self.AC)
         if command :
             item.bind_add (self.TNS.Signal.Clicked, command)
         if self.help_widget :
@@ -566,7 +582,7 @@ class _CI_Toolbar_Mixin_ (_CI_Item_Mixin_) :
                   , ** kw
                   ) :
         return self._toolbar_item \
-            ( GTK.Tool_Button
+            ( self.TNS.Tool_Button
             , label       = label
             , command     = command
             , underline   = underline
@@ -586,8 +602,7 @@ class _CI_Toolbar_Mixin_ (_CI_Item_Mixin_) :
                         , ** kw
                          ) :
         item = self._toolbar_item \
-            ( GTK.Toggle_Tool_Button
-              #GTK.Tool_Button
+            ( self.TNS.Toggle_Tool_Button
             , label       = label
             , command     = command
             , underline   = underline
@@ -618,7 +633,7 @@ class CI_Toolbar (_CI_Toolbar_Mixin_, GTK.Toolbar) :
         self.bind_replace (self.TNS.Signal.Enter_Notify, callback)
     # end def bind_to_sync
 
-    def _new_group (self, name) :
+    def _new_group (self, name, icon = None) :
         group = _CI_Toolbar_Group_ \
             ( name    = name
             , toolbar = self
@@ -649,6 +664,22 @@ class _CI_Toolbar_Group_ (_CI_Toolbar_Mixin_) :
         result = self.__super._insert_item (index, delta, item, correction)
         return result
     # end def _insert_item
+
+    def _new_group (self, name, icon = None) :
+        item             = self._toolbar_item \
+            ( self.TNS.Menu_Tool_Button
+            , label      = name
+            , icon       = icon
+            )
+        item.menu = menu = CI_Menu \
+            ( AC         = self.AC
+            , name       = name
+            , balloon    = self.balloon
+            , help       = self.help_widget
+            )
+        menu.show         ()
+        return item, menu
+    # end def _new_group
 
     def __len__ (self) : return len (self._items)
 

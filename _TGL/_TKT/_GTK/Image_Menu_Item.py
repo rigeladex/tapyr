@@ -20,30 +20,45 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Menu_Tool_Button
+#    TGL.TKT.GTK.Image_Menu_Item
 #
 # Purpose
-#    Wrapper for the GTK widget MenuToolButton
+#    Wrapper for the GTK widget ImageMenuItem
 #
 # Revision Dates
-#    09-May-2005 (MG) Automated creation
+#    12-May-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Tool_Button
+import _TGL._TKT._GTK.Menu_Item
+import _TGL._TKT._GTK.Accel_Label
+import _TGL._TKT._GTK.Image
 
-class Menu_Tool_Button (GTK.Tool_Button) :
-    """Wrapper for the GTK widget MenuToolButton"""
+class Image_Menu_Item (GTK.Menu_Item) :
+    """Wrapper for the GTK widget ImageMenuItem"""
 
-    GTK_Class        = GTK.gtk.MenuToolButton
+    GTK_Class        = GTK.gtk.ImageMenuItem
     __gtk_properties = \
-        ( GTK.SG_Object_Property  ("menu")
+        ( GTK.SG_Object_Property  ("image")
         ,
         )
 
-# end class Menu_Tool_Button
+    def __init__ (self, label = None, icon = None, name = None, AC = None) :
+        self.__super.__init__ (AC = AC, name = name)
+        if label :
+            label = self.TNS.Accel_Label (label)
+            label.show                   ()
+            self.add                     (label)
+        if icon :
+            icon = self.TNS.Image \
+                (stock_id = icon, size = GTK.gtk.ICON_SIZE_MENU)
+            icon.show ()
+            self.image = icon
+    # end def __init__
+
+# end class Image_Menu_Item
 
 if __name__ != "__main__" :
-    GTK._Export ("Menu_Tool_Button")
-### __END__ TGL.TKT.GTK.Menu_Tool_Button
+    GTK._Export ("Image_Menu_Item")
+### __END__ TGL.TKT.GTK.Image_Menu_Item
