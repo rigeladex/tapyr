@@ -374,14 +374,16 @@ class Node_Bs (Node_B) :
     # end def _button_callback_dict
 
     def _change_state (self, state) :
-        self.state = state % self.no_of_states
-        tkt_text   = self.tkt_text
-        for c in self.children :
-            c.butcon = None
-        tail = tkt_text.pos_at   (self._tail_mark, delta = 1)
-        tkt_text.remove          (self._butt_mark, tail)
-        self._insert             (self._tail_mark)
-        self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
+        if self._head_mark :
+            ### only do this if node is already displayed
+            self.state = state % self.no_of_states
+            tkt_text   = self.tkt_text
+            for c in self.children :
+                c.butcon = None
+            tail = tkt_text.pos_at   (self._tail_mark, delta = 1)
+            tkt_text.remove          (self._butt_mark, tail)
+            self._insert             (self._tail_mark)
+            self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
     # end def _change_state
 
     def _init_contents (self, * contents_per_state) :

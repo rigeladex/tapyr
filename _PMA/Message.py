@@ -109,6 +109,13 @@ class _Msg_Part_ (object) :
         self._setup_body (email)
     # end def __init__
 
+    def summary (self, summary_format = None) :
+        if summary_format is None :
+            summary_format = self.summary_format
+        return summary_format % dict \
+            (name = self.name, type = self.type, filename = self.filename)
+    # end def summary
+
     def _charset (self) :
         email = self.email
         if email :
@@ -209,26 +216,32 @@ class Body_Part (_Pseudo_Part_) :
     def __init__ (self, email, name, needs_sep, headers_to_show) :
         self.needs_sep       = needs_sep
         self.headers_to_show = headers_to_show
+        self.lines           = None
         self.__super.__init__ (email, name)
     # end def __init__
 
     def body_lines (self, sep_length = 79) :
-        lines = None
-        if self.body :
-            type = self.content_type
-            if type == "text/plain" or type.startswith ("text/x-") :
-                lines = self.body.split ("\n")
-            else :
-                cap = PMA.Mailcap [type]
-                if cap :
-                    lines = cap.as_text (self._temp_body ())
+        lines = self.lines
+        if lines is None :
+            if self.body :
+                type = self.content_type
+                if type == "text/plain" or type.startswith ("text/x-") :
+                    lines = self.body.split ("\n")
+                    ### XXX put full-quotes-at-end into `self.parts [0]`
+                else :
+                    cap = PMA.Mailcap [type]
+                    if cap :
+                        lines = cap.as_text (self._temp_body ())
+                if lines is not None :
+                    self.lines = lines
         if lines is not None :
             charset = self.charset
             for l in lines :
                 yield l.decode (charset, "replace").rstrip ("\r")
         else :
             hp = Header_Part (self.email, self.headers_to_show)
-            for l in hp.formatted (sep_length) :
+            self.lines = lines = list (hp.formatted (sep_length))
+            for l in lines :
                 yield l
     # end def body_lines
 
@@ -244,7 +257,6 @@ class Body_Part (_Pseudo_Part_) :
         payload = email.get_payload (decode = True)
         if payload :
             self.body = payload.strip ()
-            ### XXX put full-quotes-at-end into `self.parts [0]`
     # end def _setup_body
 
 # end class Body_Part
@@ -252,11 +264,11 @@ class Body_Part (_Pseudo_Part_) :
 class Header_Part (_Pseudo_Part_) :
     """Model the headers of an email as pseudo-part"""
 
-    type          = "X-PMA-Headers"
-
-    def __init__ (self, email, headers_to_show, is_leaf = False, name = None) :
+    def __init__ (self, email, headers_to_show, is_leaf = False, name = None, type = None) :
         self.headers_to_show = headers_to_show
         self.is_leaf         = is_leaf
+        if type is not None :
+            self.type        = type
         self.__super.__init__ (email, name or "Headers")
     # end def __init__
 
@@ -275,8 +287,11 @@ class Header_Part (_Pseudo_Part_) :
         self.body = "\n".join (self._fh)
         if not self.is_leaf :
             hts        = dict_from_list (self.headers_to_show)
-            hth        = [k for k in email.keys () if k not in hts]
-            self.parts = [Header_Part (email, hth, True, "More headers")]
+            hth        = sorted ([k for k in email.keys () if k not in hts])
+            self.parts = \
+                [ Header_Part
+                    (email, hth, True, "More headers", type = "X-PMA-Headers")
+                ]
     # end def _setup_body
 
 # end class Header_Part
@@ -535,13 +550,19 @@ def main (cmd) :
 """
 from   _PMA                    import PMA
 import _PMA.Mailbox
-mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/inbox")
+mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
 print mb.summary ().encode ("iso-8859-1", "replace")
 m = mb.messages [-1]
 m._reparsed ()
 for p in m.all_parts () :
   print type (p), p.name
 
+def show (m, head = "") :
+    for p in m.part_iter () :
+        print head, type (p), p.name
+        show (p, head + " ")
+
+show (m)
 """
 
 if __name__ != "__main__" :

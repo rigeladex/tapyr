@@ -69,29 +69,47 @@ class Message (PMA.UI.Mixin) :
         display.clear ()
         summary.clear ()
         for p in msg.part_iter () :
-            d = Node \
-                ( parent   = display
-                , contents = "\n".join (p.body_lines ())
-                             ### XXX use type-specific renderer here
-                )
-            self._add_parts (d, p)
+            body = p.body_lines ()
+            if body == () :
+                d, s = display, summary
+            else :
+                d = Node \
+                    ( parent   = display
+                    , contents = "\n".join (body)
+                        ### XXX use type-specific renderer here
+                    )
+                s = Node \
+                    ( parent   = summary
+                    , contents = p.summary ()
+                    )
+            self._add_parts (d, s, p)
     # end def display
 
-    def _add_parts (self, node, msg) :
+    def _add_parts (self, disp, summ, msg) :
         Node = self.ANS.UI.HTD.Node_B2
         for p in msg.part_iter () :
             type = p.type
             if type.upper ().startswith ("X-PMA") :
                 type = ""
-            c = Node \
-                ( parent   = node
-                , contents =
-                    ( ("%s %s %s" % (p.name, type, p.filename), )
-                    , (u"\n".join (p.body_lines ()), )
+            body = p.body_lines ()
+            if body == () :
+                d, s = disp, summ
+            else :
+                d = Node \
+                    ( parent   = disp
+                    , contents =
+                        ### XXX use type-specific renderer here
+                        ( ("%s %s %s" % (p.name, type, p.filename), )
+                        , (u"\n".join (body), )
+                        )
                     )
-                )
+                s = Node \
+                    ( parent   = summ
+                    , contents = p.summary ()
+                    )
             if type == "text/plain" :
-                c.inc_state ()
+                d.inc_state ()
+            self._add_parts (d, s, p)
     # end def _add_parts
 
 # end class Message
@@ -110,6 +128,9 @@ from   CTK import *
 ac  = App_Context (PMA)
 mui = Message (ac)
 mui._display.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
+mui._summary.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
+msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
+mui.display (msg)
 
 msg = PMA.message_from_file ("/swing/private/tanzer/MH/inbox/2")
 #msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
