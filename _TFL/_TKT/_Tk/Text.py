@@ -78,6 +78,7 @@
 #    21-Apr-2005 (BRU) Introduced property `buffer_empty` (dummy only)
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
 #    25-Apr-2005 (CT)  `is_empty` implemented properly (it was a dumb dummy)
+#    13-May-2005 (CT)  `remove_style` robustified
 #    ««revision-date»»···
 #--
 
@@ -278,11 +279,10 @@ class _Tk_Text_ (TFL.TKT.Tk.Widget, TFL.TKT.Text) :
     # end def remove
 
     def remove_style (self, style, head, tail = None, delta = 0) :
-        self.wtk_widget.tag_remove \
-            ( self._tag_map [style]
-            , self._pos_at  (head, delta)
-            , tail or self.buffer_tail
-            )
+        tag = self._tag_map.get (style)
+        if tag :
+            self.wtk_widget.tag_remove \
+                (tag, self._pos_at  (head, delta), tail or self.buffer_tail)
     # end def remove_style
 
     def see (self, pos_or_mark, delta = 0) :
