@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Sep-2004 (CT) Creation
+#    13-May-2005 (CT) Call to `strip` added to `sanitized_filename`
 #    ««revision-date»»···
 #--
 
@@ -140,7 +141,7 @@ def sanitized_filename (s) :
        ...    u"überflüßig komplexer und $gefährlicher* Filename")
        'ueberfluessig_komplexer_und_gefaehrlicher_Filename'
    """
-   s = sanitized_unicode  (s)
+   s = sanitized_unicode  (s.strip ())
    s = _non_print_pat.sub ("",  s)
    s = _graph_pat.sub     ("_", s)
    return s
