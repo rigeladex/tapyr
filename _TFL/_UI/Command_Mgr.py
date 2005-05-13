@@ -161,6 +161,8 @@
 #                     the original interfacer
 #    25-Apr-2005 (PGO) `Command_Mgr` sets `batchable` of `_Command_` class
 #    26-Apr-2005 (CT)  Attribute `accelerator` added to `Command`
+#     9-May-2005 (MG) `_Command_._run`: `callable` check added
+#    12-May-2005 (MG) `icon` parameter added to `add_group`
 #    ««revision-date»»···
 #--
 
@@ -364,7 +366,8 @@ class Command (_Command_) :
     # end def _check_precondition_value
 
     def _run (self, * args, ** kw) :
-        return self.command (* args, ** kw)
+        if callable (self.command) :
+            return self.command (* args, ** kw)
     # end def _run
 
     def __call__ (self, * args, ** kw) :
@@ -674,7 +677,7 @@ class Command_Group (_Command_Group_) :
             )
     # end def add_dyn_group
 
-    def add_group (self, name, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None, batchable = 0) :
+    def add_group (self, name, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None, batchable = 0, icon = None) :
         """Add command group `name'."""
         return self._add_group \
             ( name, precondition, if_names, index, delta
@@ -687,6 +690,7 @@ class Command_Group (_Command_Group_) :
                 , desc          = desc
                 , precondition  = precondition
                 )
+            , icon          = icon
             )
     # end def add_group
 
@@ -789,12 +793,13 @@ class Command_Group (_Command_Group_) :
             _element.insert (i, elm)
     # end def _add_element
 
-    def _add_group (self, name, precondition, if_names, s_index, delta, group_creator) :
+    def _add_group (self, name, precondition, if_names, s_index, delta, group_creator, icon = None) :
         ifacers = {}
         to_do   = []
         for ( n, i, info, _ie, index
             ) in self._interfacers (if_names, s_index, delta) :
-            ifacers [n] = ig = i.add_group (name, index = index, info = info)
+            ifacers [n] = ig = i.add_group \
+                (name, index = index, info = info, icon = icon)
             to_do.append  ((_ie, index))
             if info :
                 self.root._pending_interface_bindings.append ((ig, info))
