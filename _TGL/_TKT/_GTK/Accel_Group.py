@@ -20,48 +20,29 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.Image_Menu_Item
+#    TGL.TKT.GTK.Accel_Group
 #
 # Purpose
-#    Wrapper for the GTK widget ImageMenuItem
+#    Wrapper for the GTK widget AccelGroup
 #
 # Revision Dates
-#    12-May-2005 (MG) Automated creation
-#    15-May-2005 (MG) Accelerator support added
+#    13-May-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
-import _TGL._TKT._GTK.Menu_Item
-import _TGL._TKT._GTK.Accel_Label
-import _TGL._TKT._GTK.Image
+import _TGL._TKT._GTK.Object
 
-class Image_Menu_Item (GTK.Menu_Item) :
-    """Wrapper for the GTK widget ImageMenuItem"""
+class Accel_Group (GTK.Object) :
+    """Wrapper for the GTK widget AccelGroup"""
 
-    GTK_Class        = GTK.gtk.ImageMenuItem
+    GTK_Class        = GTK.gtk.AccelGroup
     __gtk_properties = \
-        ( GTK.SG_Object_Property  ("image")
-        ,
+        (
         )
 
-    def __init__ (self, label = None, icon = None, name = None, AC = None) :
-        self.__super.__init__ (AC = AC, name = name)
-        if label :
-            label = self.TNS.Accel_Label (label)
-            label.set_accel_widget       (self)
-            label.xalign = 0.0
-            label.show                   ()
-            self.add                     (label)
-        if icon :
-            icon = self.TNS.Image \
-                (stock_id = icon, size = GTK.gtk.ICON_SIZE_MENU)
-            icon.show ()
-            self.image = icon
-    # end def __init__
-
-# end class Image_Menu_Item
+# end class Accel_Group
 
 if __name__ != "__main__" :
-    GTK._Export ("Image_Menu_Item")
-### __END__ TGL.TKT.GTK.Image_Menu_Item
+    GTK._Export ("Accel_Group")
+### __END__ TGL.TKT.GTK.Accel_Group

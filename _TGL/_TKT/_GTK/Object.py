@@ -37,6 +37,7 @@
 #     2-Apr-2005 (MG) Style handling added
 #     2-Apr-2005 (MG) `_styler`: caching removed (in now done by the `Styler`)
 #     3-Apr-2005 (MG) `_before_styler` corrected
+#    15-May-2005 (MG) `Delegator_2O` added
 #    ««revision-date»»···
 #--
 
@@ -222,6 +223,17 @@ class Delegator_O (Delegator) :
     # end def __call__
 
 # end class Delegator_O
+
+class Delegator_2O (Delegator) :
+    """Delegator for a function of the `wtk_object` and extract the
+       `wtk_object` from the second parameter
+    """
+
+    def __call__ (self, this, a1, obj, * args, ** kw) :
+        return self.__super.__call__ (this, a1, obj.wtk_object, * args, ** kw)
+    # end def __call__
+
+# end class Delegator_2O
 
 def Delegation (* args, ** kw) :
     for arg in args :

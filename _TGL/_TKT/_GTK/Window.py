@@ -28,18 +28,24 @@
 # Revision Dates
 #    22-Mar-2005 (MG) Automated creation
 #    22-Mar-2005 (MG) Creation continued
+#    13-May-2005 (MG) `accel_group` and friends added
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Bin
+import _TGL._TKT._GTK.Accel_Group
 
 class Window (GTK.Bin) :
     """Wrapper for the GTK widget Window"""
 
     GTK_Class        = GTK.gtk.Window
     __gtk_properties = \
-        ( GTK.SG_Property  ("accept_focus")
+        ( GTK.Property     ( "accel_group"
+                           , get = lambda s :s._accel_group
+                           , set = None
+                           )
+        , GTK.SG_Property  ("accept_focus")
         , GTK.Property     ("allow_grow")
         , GTK.Property     ("allow_shrink")
         , GTK.SG_Property  ("decorated")
@@ -64,10 +70,17 @@ class Window (GTK.Bin) :
         , GTK.Property     ("window_position")
         )
 
+    _wtk_delegation  = GTK.Delegation \
+        ( GTK.Delegator_O ("add_accel_group")
+        , GTK.Delegator_O ("remove_accel_group")
+        )
+
     def __init__ (self, title = None, ** kw) :
         self.__super.__init__ (** kw)
         if title :
             self.title = title
+        self._accel_group = self.TNS.Accel_Group ()
+        self.add_accel_group                     (self._accel_group)
     # end def __init__
 
 # end class Window

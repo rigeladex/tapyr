@@ -34,6 +34,10 @@
 #     5-Apr-2005 (MG) `Color_Property` added and used for `foreground` and
 #                     `background`
 #     5-Apr-2005 (MG) Old style porperties removed
+#    13-May-2005 (MG) `toplevel` added
+#    13-May-2005 (MG) `Color_Property` moved from `_wtk_delegation` to
+#                     `__gtk_properties`
+#    15-May-2005 (MG) `add_accelerator` added
 #    ««revision-date»»···
 #--
 
@@ -68,33 +72,35 @@ class Widget (GTK.Object) :
 
     GTK_Class        = GTK.gtk.Widget
     __gtk_properties = \
-        ( GTK.Property     ("app_paintable")
-        , GTK.Property     ("can_default")
-        , GTK.Property     ("can_focus")
-        , GTK.Property     ("composite_child", set = None)
-        , GTK.SG_Property  ("events")
-        , GTK.SG_Property  ("extension_events")
-        , GTK.Property     ("has_default")
-        , GTK.Property     ("has_focus")
-        , GTK.Property     ("height_request")
-        , GTK.Property     ("is_focus")
-        , GTK.SG_Property  ("name")
-        , GTK.SG_Property  ("no_show_all")
-        , GTK.SG_Property  ("parent")
-        , GTK.Property     ("receives_default")
-        , GTK.Property     ("sensitive")
-        , GTK.SG_Property  ("style")
-        , GTK.Property     ("visible")
-        , GTK.Property     ("width_request")
+        ( GTK.Property           ("app_paintable")
+        , GTK.Property           ("can_default")
+        , GTK.Property           ("can_focus")
+        , GTK.Property           ("composite_child", set = None)
+        , GTK.SG_Property        ("events")
+        , GTK.SG_Property        ("extension_events")
+        , GTK.Property           ("has_default")
+        , GTK.Property           ("has_focus")
+        , GTK.Property           ("height_request")
+        , GTK.Property           ("is_focus")
+        , GTK.SG_Property        ("name")
+        , GTK.SG_Property        ("no_show_all")
+        , GTK.SG_Property        ("parent")
+        , GTK.Property           ("receives_default")
+        , GTK.Property           ("sensitive")
+        , GTK.SG_Property        ("style")
+        , GTK.Property           ("visible")
+        , GTK.SG_Object_Property ("toplevel", set = False)
+        , GTK.Property           ("width_request")
+        , Color_Property         ("background", "modify_bg")
+        , Color_Property         ("foreground", "modify_fg")
         )
 
     _wtk_delegation = GTK.Delegation \
-        ( GTK.Delegator  ("show")
-        , GTK.Delegator  ("hide")
-        , GTK.Delegator  ("show_all")
-        , GTK.Delegator  ("hide_all")
-        , Color_Property ("background", "modify_bg")
-        , Color_Property ("foreground", "modify_fg")
+        ( GTK.Delegator          ("show")
+        , GTK.Delegator          ("hide")
+        , GTK.Delegator          ("show_all")
+        , GTK.Delegator          ("hide_all")
+        , GTK.Delegator_2O       ("add_accelerator")
         )
 
     def __init__ (self, * args, ** kw) :

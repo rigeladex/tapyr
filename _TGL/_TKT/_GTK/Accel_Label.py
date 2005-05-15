@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    12-May-2005 (MG) Automated creation
+#    15-May-2005 (MG) `set_accel_widget` added
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,10 @@ class Accel_Label (GTK.Label) :
     __gtk_properties = \
         ( GTK.Property            ("accel_closure")
         , GTK.SG_Object_Property  ("accel_widget")
+        )
+
+    _wtk_delegation = GTK.Delegation \
+        ( GTK.Delegator_O         ("set_accel_widget")
         )
 
 # end class Accel_Label

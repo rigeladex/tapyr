@@ -31,6 +31,7 @@
 #     9-May-2005 (MG) `CI_Button_Box` added
 #    12-May-2005 (MG) Icon support for menus added
 #    12-May-2005 (MG) Group support added to `_CI_Toolbar_Group_`
+#    15-May-2005 (MG) `accelerator` support added
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -378,23 +379,24 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
 
     def _new_group (self, name, icon = None) :
         if icon :
-            item         = self.TNS.Image_Menu_Item \
-                ( label  = name
-                , icon   = icon
-                , AC     = self.AC
+            item          = self.TNS.Image_Menu_Item \
+                ( label   = name
+                , icon    = icon
+                , AC      = self.AC
                 # XXX underline
                 )
         else :
-            item         = self.TNS.Menu_Item \
-                ( label  = name
-                , AC     = self.AC
+            item          = self.TNS.Menu_Item \
+                ( label   = name
+                , AC      = self.AC
                 # XXX underline
                 )
-        item.submenu = menu = CI_Menu \
-            ( AC         = self.AC
-            , name       = name
-            , balloon    = self.balloon
-            , help       = self.help_widget
+        item.submenu      = menu = CI_Menu \
+            ( AC          = self.AC
+            , name        = name
+            , balloon     = self.balloon
+            , help        = self.help_widget
+            , accel_group = self.accel_group
             )
         menu.show         ()
         return item, menu
@@ -415,6 +417,10 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
         if self.help_widget :
             item.bind_add (self.TNS.Signal.Select,   self._push_help)
             item.bind_add (self.TNS.Signal.Deselect, self._pop_help)
+        if accelerator and self.accel_group :
+            kv, km = GTK.gtk.accelerator_parse (accelerator)
+            item.add_accelerator \
+                ("activate", self.accel_group, kv, km, self.TNS.ACCEL_VISIBLE)
         return item
     # end def _menu_item
 
@@ -489,6 +495,11 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
 class CI_Menu (_CI_Menu_Mixin_, GTK.Menu) :
     """Implement a menu command interfacer for GTK"""
 
+    def __init__ (self, accel_group = None, ** kw) :
+        self.__super.__init__ (** kw)
+        self.accel_group = accel_group
+    # end def __init__
+
     ### event specific methods
     def bind_to_activation (self, callback) :
         self.wtk_object.bind_add (self.TNS.Realize, callback)
@@ -504,6 +515,11 @@ class CI_Menu (_CI_Menu_Mixin_, GTK.Menu) :
 
 class CI_Menubar (_CI_Menu_Mixin_, GTK.Menu_Bar) :
     """Implement a menubar command interfacer for GTK"""
+
+    def __init__ (self, accel_group = None, ** kw) :
+        self.__super.__init__ (** kw)
+        self.accel_group = accel_group
+    # end def __init__
 
     def bind_to_sync (self, callback) :
         self.bind_replace (self.TNS.Signal.Enter_Notify, callback)

@@ -41,8 +41,9 @@ import _TGL._TKT._GTK.V_Box
 
 
 GTK = TGL.TKT.GTK
+AC  = App_Context (TGL)
 
-win = GTK.Test_Window ("Test the Command Interfacers")
+win = GTK.Test_Window ("Test the Command Interfacers", AC = AC)
 bo  = GTK.V_Box       ()
 bu1 = GTK.Button      (label = "Dummy 1")
 bu2 = GTK.Button      (label = "Dummy 2")
@@ -53,10 +54,9 @@ win.add               (bo)
 def _dummy (* args) :
     print "Dummy", args
 
-AC      = App_Context (TGL)
 inter   = dict \
-    ( cm = GTK.CI_Menu       (AC = AC)
-    , mb = GTK.CI_Menubar    (AC = AC)
+    ( cm = GTK.CI_Menu       (AC = AC, accel_group = win.accel_group)
+    , mb = GTK.CI_Menubar    (AC = AC, accel_group = win.accel_group)
     , tb = GTK.CI_Toolbar    (AC = AC)
     , bb = GTK.CI_Button_Box (AC = AC)
     )
@@ -70,23 +70,23 @@ cmd_mgr.bind_interfacers (bu1)
 g2      = cmd_mgr.add_group \
     ("Edit", if_names = ("cm:click_3", "mb", "tb", "bb"))
 cmd_mgr.bind_interfacers (bu2)
-for g, spec in ( (g1, ( ("Open", "gtk-open")
-                      , ("Save", "gtk-save")
-                      , (None,   "")
-                      , ("Exit", "gtk-quit")
+for g, spec in ( (g1, ( ("Open", "gtk-open", "<Ctrl>O")
+                      , ("Save", "gtk-save", "<Ctrl>s")
+                      , (None,   "",         None)
+                      , ("Exit", "gtk-quit", None)
                       )
                   )
-               , (g2, ( ("Copy",  "gtk-copy")
-                      , ("Cut",   "gtk-cut")
-                      , ("Paste", "gtk-paste")
-                      , (None,    "")
-                      , ("Select", "gtk-find")
+               , (g2, ( ("Copy",  "gtk-copy",  None)
+                      , ("Cut",   "gtk-cut",   None)
+                      , ("Paste", "gtk-paste", None)
+                      , (None,    "",          None)
+                      , ("Select", "gtk-find", None)
                       )
                  )
                ) :
     prec = lambda * args : False
     prec.evaluate_eagerly = True
-    for n, i in  spec :
+    for n, i, a in  spec :
         if not n :
             g.add_separator (if_names = ("cm", "mb", "tb"))
         else :
@@ -101,6 +101,7 @@ for g, spec in ( (g1, ( ("Open", "gtk-open")
                 , if_names        = ("cm", "mb", "tb", "bb")
                 , icon            = i
                 , as_check_button = as_check_button
+                , accelerator     = a
                 )
         prec = lambda * args : True
         prec.evaluate_eagerly = True
