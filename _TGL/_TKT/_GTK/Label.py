@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Mar-2005 (MG) Automated creation
+#    15-May-2005 (MG) `mnemonic_widget` corrected
 #    ««revision-date»»···
 #--
 
@@ -38,23 +39,23 @@ class Label (GTK.Misc) :
 
     GTK_Class        = GTK.gtk.Label
     __gtk_properties = \
-        ( GTK.SG_Property  ("angle")
-        , GTK.SG_Property  ("attributes")
-        , GTK.Property     ("cursor_position", set = None)
-        , GTK.SG_Property  ("ellipsize")
-        , GTK.SG_Property  ("justify")
-        , GTK.SG_Property  ("label")
-        , GTK.SG_Property  ("max_width_chars")
-        , GTK.SG_Property  ("mnemonic_keyval", set = None)
-        , GTK.SG_Property  ("mnemonic_widget")
-        , GTK.SG_Property  ("pattern", get = None)
-        , GTK.SG_Property  ("selectable")
-        , GTK.Property     ("selection_bound", set = None)
-        , GTK.SG_Property  ("single_line_mode")
-        , GTK.SG_Property  ("use_markup")
-        , GTK.SG_Property  ("use_underline")
-        , GTK.SG_Property  ("width_chars")
-        , GTK.Property     ("wrap")
+        ( GTK.SG_Property         ("angle")
+        , GTK.SG_Property         ("attributes")
+        , GTK.Property            ("cursor_position", set = None)
+        , GTK.SG_Property         ("ellipsize")
+        , GTK.SG_Property         ("justify")
+        , GTK.SG_Property         ("label")
+        , GTK.SG_Property         ("max_width_chars")
+        , GTK.SG_Property         ("mnemonic_keyval", set = None)
+        , GTK.SG_Object_Property  ("mnemonic_widget")
+        , GTK.SG_Property         ("pattern", get = None)
+        , GTK.SG_Property         ("selectable")
+        , GTK.Property            ("selection_bound", set = None)
+        , GTK.SG_Property         ("single_line_mode")
+        , GTK.SG_Property         ("use_markup")
+        , GTK.SG_Property         ("use_underline")
+        , GTK.SG_Property         ("width_chars")
+        , GTK.Property            ("wrap")
         )
 
 # end class Label

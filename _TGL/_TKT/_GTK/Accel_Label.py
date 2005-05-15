@@ -28,6 +28,7 @@
 # Revision Dates
 #    12-May-2005 (MG) Automated creation
 #    15-May-2005 (MG) `set_accel_widget` added
+#    15-May-2005 (MG) `Mnemonic` support added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,24 @@ class Accel_Label (GTK.Label) :
     _wtk_delegation = GTK.Delegation \
         ( GTK.Delegator_O         ("set_accel_widget")
         )
+
+    def __init__ (self, label = None, underline = None, widget = None, AC = None) :
+        self.__super.__init__ ("", AC = AC)
+        self.update_label     (label, underline)
+        if widget :
+            self.set_accel_widget                 (self)
+            self.mnemonic_widget = widget
+    # end def __init__
+
+    def update_label (self, label, underline = None) :
+        if underline is None :
+            label = label.replace ("_", "__")
+        else :
+            head  = label [:underline].replace ("_", "__")
+            h_len = len (head)
+            label = "%s_%s" % (head, label [h_len:].replace ("_", "__"))
+        self.wtk_object.set_text_with_mnemonic              (label)
+    # end def update_label
 
 # end class Accel_Label
 

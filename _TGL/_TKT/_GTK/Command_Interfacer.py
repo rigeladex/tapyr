@@ -32,6 +32,7 @@
 #    12-May-2005 (MG) Icon support for menus added
 #    12-May-2005 (MG) Group support added to `_CI_Toolbar_Group_`
 #    15-May-2005 (MG) `accelerator` support added
+#    15-May-2005 (MG) `underline` support added
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -64,10 +65,6 @@ import  weakref
 import  traceback
 
 GTK = TGL.TKT.GTK
-
-### todo
-### - `underline` in menus
-### - `accelerators` in menus
 
 class Boolean_Variable (object) :
     """Variable used by the Command Manager for a checkbox style command
@@ -377,26 +374,31 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
 
     Separator_Class = GTK.Separator_Menu_Item
 
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self._short_map          = {}
+        self._pending_short_cuts = {}
+    # end def __init__
+
     def _new_group (self, name, icon = None) :
         if icon :
-            item          = self.TNS.Image_Menu_Item \
-                ( label   = name
-                , icon    = icon
-                , AC      = self.AC
-                # XXX underline
+            item            = self.TNS.Image_Menu_Item \
+                ( label     = name
+                , icon      = icon
+                , AC        = self.AC
                 )
         else :
-            item          = self.TNS.Menu_Item \
-                ( label   = name
-                , AC      = self.AC
-                # XXX underline
+            item            = self.TNS.Menu_Item \
+                ( label     = name
+                , AC        = self.AC
                 )
-        item.submenu      = menu = CI_Menu \
-            ( AC          = self.AC
-            , name        = name
-            , balloon     = self.balloon
-            , help        = self.help_widget
-            , accel_group = self.accel_group
+        self._handle_shortcut (item, name, None)
+        item.submenu        = menu = CI_Menu \
+            ( AC            = self.AC
+            , name          = name
+            , balloon       = self.balloon
+            , help          = self.help_widget
+            , accel_group   = self.accel_group
             )
         menu.show         ()
         return item, menu
@@ -410,8 +412,13 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
                    , accelerator = None
                    , ** kw
                    ) :
-        ### handle underline, and accelerator
-        item = cls (label = label, name = label, AC = self.AC, ** kw)
+        item = cls \
+            ( label     = label
+            , name      = label
+            , underline = underline
+            , AC        = self.AC
+            , ** kw
+            )
         if command :
             item.bind_add (self.TNS.Signal.Activate, command)
         if self.help_widget :
@@ -421,6 +428,7 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
             kv, km = GTK.gtk.accelerator_parse (accelerator)
             item.add_accelerator \
                 ("activate", self.accel_group, kv, km, self.TNS.ACCEL_VISIBLE)
+        self._handle_shortcut (item, label, underline)
         return item
     # end def _menu_item
 
@@ -489,6 +497,69 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
         del self._items    [index]
         self.remove (item)
     # end def _remove
+
+    def _handle_shortcut (self, item, label, underline) :
+        if underline is not None :
+            short_cut = label [underline]
+            if (   self._short_map.has_key (short_cut)
+               and not short_cut.isdigit ()
+               ) :
+                msg = ( "Duplicate short cut `%s' for "
+                        "menu entries `%s' and `%s'"
+                      )
+                print msg % (short_cut, self._short_map [short_cut], label)
+                self._add_pending_short_cut (item, short_cut, label)
+            else :
+                self._short_map [short_cut] = label
+        else :
+            sc, i = self._letter_shortcut (label, label [0], 0)
+            if sc :
+                self._add_pending_short_cut (item, sc, label)
+    # end def _handle_shortcut
+
+    def _letter_shortcut (self, label, sc, i) :
+        while not sc.isalpha () :
+            i = i + 1
+            if i > len (label) : return None, None
+            sc = label [i]
+        return sc, i
+    # end def _letter_shortcut
+
+    def _add_pending_short_cut (self, item, short_cut, label) :
+        self._pending_short_cuts.setdefault \
+            (short_cut.lower (), []).append ((item, label))
+    # end def _add_pending_short_cut
+
+    def set_auto_short_cuts (self) :
+        """Set short cuts automatically for all menu entries for which no
+           unique short cut was explicitly set.
+        """
+        items = sorted \
+            ( self._pending_short_cuts.items ()
+            , lambda (scl,  ll), (scr, lr) :
+                  cmp (scl, scr) or cmp (len (ll), len (lr))
+            )
+        for sc, labels in items :
+            del self._pending_short_cuts [sc]
+            for (item, label) in labels :
+                i     = label.lower ().index (sc)
+                sc, i = self._unique_short_cut (label, sc, i)
+                if sc is not None :
+                    self._short_map [sc] = label
+                    item.update_label (label, i)
+    # end def set_auto_short_cuts
+
+    def _unique_short_cut (self, label, sc, i) :
+        sc, i = self._letter_shortcut (label, sc, i)
+        if sc and self._short_map.has_key (sc) :
+            for i in range (i, len (label)) :
+                sc = label [i].lower ()
+                if not sc.isalpha ()                : continue
+                if not self._short_map.has_key (sc) : return sc, i
+            return None, None
+        else :
+            return sc, i
+    # end def _unique_short_cut
 
 # end class _CI_Menu_Mixin_
 

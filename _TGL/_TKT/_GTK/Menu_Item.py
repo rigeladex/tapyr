@@ -29,6 +29,8 @@
 #    07-Apr-2005 (MG) Automated creation
 #     7-Apr-2005 (MG) Properties `submenu` and `right_justified` added
 #     8-Apr-2005 (MG) `_set_submenu` added
+#    15-May-2005 (MG) `__init__` added to support `underline`
+#    15-May-2005 (MG) `update_label` added
 #    ««revision-date»»···
 #--
 
@@ -49,6 +51,25 @@ class Menu_Item (GTK.Item) :
         ( GTK.SG_Object_Property ("submenu", set = _set_submenu)
         , GTK.SG_Property        ("right_justified")
         )
+
+    def __init__ ( self
+                 , label     = None
+                 , name      = None
+                 , underline = None
+                 , AC        = None
+                 ) :
+        self.__super.__init__ (AC = AC, name = name)
+        if label :
+            self.label = label = self.TNS.Accel_Label \
+                (label, underline, self, AC = self.AC)
+            label.show ()
+            self.add   (label)
+            label.xalign = 0.0
+    # end def __init__
+
+    def update_label (self, label, underline = None) :
+        self.label.update_label (label, underline)
+    # end def update_label
 
 # end class Menu_Item
 

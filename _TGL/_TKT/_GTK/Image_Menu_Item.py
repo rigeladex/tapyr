@@ -28,6 +28,7 @@
 # Revision Dates
 #    12-May-2005 (MG) Automated creation
 #    15-May-2005 (MG) Accelerator support added
+#    15-May-2005 (MG) `label` handling moved into `Menu_Item`
 #    ««revision-date»»···
 #--
 
@@ -45,14 +46,15 @@ class Image_Menu_Item (GTK.Menu_Item) :
         ,
         )
 
-    def __init__ (self, label = None, icon = None, name = None, AC = None) :
-        self.__super.__init__ (AC = AC, name = name)
-        if label :
-            label = self.TNS.Accel_Label (label)
-            label.set_accel_widget       (self)
-            label.xalign = 0.0
-            label.show                   ()
-            self.add                     (label)
+    def __init__ ( self
+                 , label     = None
+                 , icon      = None
+                 , name      = None
+                 , underline = None
+                 , AC        = None
+                 ) :
+        self.__super.__init__ \
+            (label = label, underline = underline, name = name, AC = AC)
         if icon :
             icon = self.TNS.Image \
                 (stock_id = icon, size = GTK.gtk.ICON_SIZE_MENU)
