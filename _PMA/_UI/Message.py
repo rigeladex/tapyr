@@ -128,10 +128,10 @@ from   CTK import *
 ac  = App_Context (PMA)
 mui = Message (ac)
 mui._display.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
-mui._summary.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
-msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
+msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/1")
 mui.display (msg)
 
+mui._summary.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
 msg = PMA.message_from_file ("/swing/private/tanzer/MH/inbox/2")
 #msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
 mui.display (msg)

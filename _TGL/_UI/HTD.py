@@ -434,7 +434,7 @@ class Root (_Node_) :
         , linkFontFamily         = "Monospace"
         , linkFontStyle          = "normal"
         , normalFontFamily       = "Monospace"
-        , normalFontSize         = "medium"
+        , normalFontSize         = "medium" # Tk needs large
         , normalFontStyle        = "normal"
         , normalFontWeight       = "normal"
         , titleFontFamily        = "Sans"
