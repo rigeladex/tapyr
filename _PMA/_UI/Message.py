@@ -28,6 +28,8 @@
 # Revision Dates
 #    29-Mar-2005 (CT) Creation
 #    31-Mar-2005 (CT) Creation continued
+#    16-May-2005 (CT) s/summary/outline/
+#    16-May-2005 (CT) Use `Node_C` for `outline`
 #    ««revision-date»»···
 #--
 
@@ -44,56 +46,59 @@ import _PMA._UI.Mixin
 class Message (PMA.UI.Mixin) :
     """Abstract user interface for PMA.Message"""
 
-    def __init__ (self, AC, display_wc = None, summary_wc = None, ** kw) :
+    def __init__ (self, AC, display_wc = None, outline_wc = None, ** kw) :
         self.__super.__init__ \
             ( AC         = AC
             , display_wc = display_wc
-            , summary_wc = summary_wc
+            , outline_wc = outline_wc
             , ** kw
             )
         self._display    = self.ANS.UI.HTD.Root\
             ( AC         = AC
             , wc         = display_wc
             )
-        self._summary    = self.ANS.UI.HTD.Root \
+        self._outline    = self.ANS.UI.HTD.Root \
             ( AC         = AC
-            , wc         = summary_wc
+            , wc         = outline_wc
             )
     # end def __init__
 
     def display (self, msg) :
-        """Display `msg` in `self.display` and `self.summary`"""
+        """Display `msg` in `self.display` and `self.outline`"""
         display = self._display
-        summary = self._summary
+        outline = self._outline
         Node    = self.ANS.UI.HTD.Node
+        Node_C  = self.ANS.UI.HTD.Node_C
         display.clear ()
-        summary.clear ()
+        outline.clear ()
         for p in msg.part_iter () :
             body = p.body_lines ()
             if body == () :
-                d, s = display, summary
+                d, o = display, outline
             else :
                 d = Node \
                     ( parent   = display
                     , contents = "\n".join (body)
                         ### XXX use type-specific renderer here
                     )
-                s = Node \
-                    ( parent   = summary
-                    , contents = p.summary ()
+                o = Node_C \
+                    ( controlled = d
+                    , parent     = outline
+                    , contents   = p.summary ()
                     )
-            self._add_parts (d, s, p)
+            self._add_parts (d, o, p)
     # end def display
 
-    def _add_parts (self, disp, summ, msg) :
-        Node = self.ANS.UI.HTD.Node_B2
+    def _add_parts (self, disp, outl, msg) :
+        Node    = self.ANS.UI.HTD.Node_B2
+        Node_C  = self.ANS.UI.HTD.Node_C
         for p in msg.part_iter () :
             type = p.type
             if type.upper ().startswith ("X-PMA") :
                 type = ""
             body = p.body_lines ()
             if body == () :
-                d, s = disp, summ
+                d, o = disp, outl
             else :
                 d = Node \
                     ( parent   = disp
@@ -103,13 +108,14 @@ class Message (PMA.UI.Mixin) :
                         , (u"\n".join (body), )
                         )
                     )
-                s = Node \
-                    ( parent   = summ
-                    , contents = p.summary ()
+                o = Node_C \
+                    ( controlled = d
+                    , parent     = outl
+                    , contents   = p.summary ()
                     )
             if type == "text/plain" :
                 d.inc_state ()
-            self._add_parts (d, s, p)
+            self._add_parts (d, o, p)
     # end def _add_parts
 
 # end class Message
@@ -128,10 +134,10 @@ from   CTK import *
 ac  = App_Context (PMA)
 mui = Message (ac)
 mui._display.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
+mui._outline.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
 msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/1")
 mui.display (msg)
 
-mui._summary.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
 msg = PMA.message_from_file ("/swing/private/tanzer/MH/inbox/2")
 #msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
 mui.display (msg)

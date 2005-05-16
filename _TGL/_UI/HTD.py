@@ -38,6 +38,10 @@
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
+#    16-May-2005 (CT) `Observer` added
+#    16-May-2005 (CT) `Node_C` added
+#    16-May-2005 (CT) `_Node_Bs_` factored
+#    16-May-2005 (CT) `_remove*` factored
 #    ««revision-date»»···
 #--
 
@@ -53,6 +57,8 @@ import _TFL._Meta.Property
 import _TGL._UI.Mixin
 import _TGL._UI.Style
 
+import weakref
+
 class _Node_ (TGL.UI.Mixin) :
     """Base class for nodes of a hierarchical text display"""
 
@@ -67,6 +73,41 @@ class _Node_ (TGL.UI.Mixin) :
         ("tkt_text", lambda s : s.root.tkt_text)
 
     _level_inc          = 1
+
+    ### for compatibility with multi-state nodes
+    butcon_bitmap       = None
+    no_of_states        = 1
+    state               = 0
+
+    class Observer (TFL.Meta.Object) :
+        """Model an observer of a node"""
+
+        def dec_state (self, observed) :
+            """Called whenever `observed.dec_state` is called"""
+            pass
+        # end def dec_state
+
+        def goto (self, observed) :
+            """Called whenever `observed.goto` is called"""
+            pass
+        # end def goto
+
+        def inc_state (self, observed) :
+            """Called whenever `observed.inc_state` is called"""
+            pass
+        # end def inc_state
+
+        def mouse_enter (self, observed) :
+            """Called whenever `observed.mouse_enter` is called"""
+            pass
+        # end def mouse_enter
+
+        def mouse_leave (self, observed) :
+            """Called whenever `observed.mouse_leave` is called"""
+            pass
+        # end def mouse_leave
+
+    # end class Observer
 
     def __init__ (self, parent, contents = (), style = None, AC = None, ** kw) :
         self.__super.__init__ \
@@ -84,6 +125,7 @@ class _Node_ (TGL.UI.Mixin) :
         self.style      = style  = self._base_style (style, level)
         self.styler     = styler = self.tkt_text.Tag_Styler (style)
         self._head_mark = self._midd_mark = self._tail_mark = None
+        self._observers = []
         self.id_style   = TFL.UI.Style ("id")
         self._init_children ()
         self._init_contents (* contents)
@@ -101,8 +143,13 @@ class _Node_ (TGL.UI.Mixin) :
         tkt_text.free_mark            (at_mark)
     # end def add_contents
 
+    def add_observer (self, o) :
+        self._observers.append (weakref.proxy (o))
+    # end def add_observer
+
     def dec_state (self, event = None) :
-        pass ### just for compatibility with stateful nodes
+        for o in self._observers :
+            o.dec_state (self)
     # end def dec_state
 
     def goto (self, mark = None) :
@@ -110,8 +157,10 @@ class _Node_ (TGL.UI.Mixin) :
         if mark is None :
             mark = self._head_pos ()
         tkt_text.place_cursor (mark)
-        tkt_text.see          (mark)
-        self.mouse_enter      ()
+        self.see (mark)
+        for o in self._observers :
+            o.goto (self)
+        self.mouse_enter ()
     # end def goto
 
     def goto_child (self, n = 0) :
@@ -121,7 +170,8 @@ class _Node_ (TGL.UI.Mixin) :
     # end def goto_child
 
     def inc_state (self, event = None) :
-        pass ### just for compatibility with stateful nodes
+        for o in self._observers :
+            o.inc_state (self)
     # end def inc_state
 
     def mouse_enter (self, event = None) :
@@ -132,6 +182,8 @@ class _Node_ (TGL.UI.Mixin) :
             tail     = tkt_text.bol_pos (head, line_delta = 1)
             tkt_text.apply_style \
                 (self.Style.active_node, head, tail, lift = True)
+            for o in self._observers :
+                o.mouse_enter (self)
             return self.TNS.stop_cb_chaining
     # end def mouse_enter
 
@@ -141,8 +193,16 @@ class _Node_ (TGL.UI.Mixin) :
             tkt_text = self.tkt_text
             tkt_text.remove_style \
                 (self.Style.active_node, tkt_text.buffer_head)
+            for o in self._observers :
+                o.mouse_leave (self)
             return self.TNS.stop_cb_chaining
     # end def mouse_leave
+
+    def see (self, * marks) :
+        tkt_text = self.tkt_text
+        for m in marks :
+            tkt_text.see (m)
+    # end def see
 
     def styled_text (self, value, style = None, styler = None) :
         return Styled (value, self._style (style), styler)
@@ -225,6 +285,25 @@ class _Node_ (TGL.UI.Mixin) :
             tkt_text.insert (at_mark, " ", self.Style.normal)
     # end def _insert_contents
 
+    def _remove (self, head = None) :
+        self._remove_children ()
+        self._remove_contents (head)
+    # end def _remove
+
+    def _remove_children (self) :
+        pass
+    # end def _remove_children
+
+    def _remove_contents (self, head = None) :
+        ### only do this if node is already displayed
+        if self._head_mark :
+            tkt_text = self.tkt_text
+            if head is None :
+                head = self._head_mark
+            tail     = tkt_text.pos_at (self._tail_mark, delta = 1)
+            tkt_text.remove (head, self._tail_mark)
+    # end def _remove_contents
+
     def _style (self, style) :
         if isinstance (style, str) :
             style = getattr (self.Style, style)
@@ -282,8 +361,8 @@ class Node_B (_Node_) :
     # end def _head_pos
 
     def _insert_butcon (self, at_mark) :
-        tkt_text = self.tkt_text
         if self.butcon is None :
+            tkt_text = self.tkt_text
             self.__class__._no_of_butcons += 1
             self.butcon  = b = self.TNS.Butcon \
                 ( AC     = self.AC
@@ -312,36 +391,14 @@ class Node_B (_Node_) :
         self.__super._insert_contents (at_mark, * contents)
     # end def _insert_contents
 
+    def _remove_children (self) :
+        for c in self.children :
+            c.butcon = c._butt_mark = None
+    # end def _remove_children
+
 # end class Node_B
 
-class Node_Bs (Node_B) :
-    """Model a multi-state node with butcon of a hierarchical text display"""
-
-    butcon_bitmap       = property \
-        (lambda s : s._butcon_bitmaps [s.state])
-    contents            = property \
-        (lambda s : s._contents [s.state])
-    no_of_states        = property (lambda s : len (s._butcon_bitmaps))
-    state               = 0
-
-    def dec_state (self, event = None) :
-        """Decrement state to next state
-           (circles back from first to last state).
-        """
-        self._change_state (self.state - 1)
-    # end def dec_state
-
-    def goto_child (self, n = 0) :
-        if self.state == self.no_of_states - 1 :
-            self.__super.goto_child (n)
-    # end def goto_child
-
-    def inc_state (self, event = None) :
-        """Increment state to next state
-           (circles back from last to first state).
-        """
-        self._change_state (self.state + 1)
-    # end def inc_state
+class _Node_Bs_ (Node_B) :
 
     def mouse_enter (self, event = None) :
         self.__super.mouse_enter (event)
@@ -355,6 +412,60 @@ class Node_Bs (Node_B) :
         self.tkt_text.pop_style  ()
     # end def mouse_leave
 
+    def _button_callback_dict (self, cb_dict = {}) :
+        return dict \
+            ( self.__super._button_callback_dict (cb_dict)
+            , click_1        = self.inc_state
+            )
+    # end def _button_callback_dict
+
+    def _change_state (self, state) :
+        ### only do this if node is already displayed
+        if self._head_mark :
+            self.state = state % self.no_of_states
+            self._remove (self._butt_mark)
+            self._insert (self._tail_mark)
+            self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
+            self.see (self._tail_mark, self._head_mark)
+    # end def _change_state
+
+    def _insert_children (self, at_mark, * children) :
+        if self.state != self.no_of_states - 1 :
+            children = ()
+        self.__super._insert_children (at_mark, * children)
+    # end def _insert_children
+
+# end class _Node_Bs_
+
+class Node_Bs (_Node_Bs_) :
+    """Model a multi-state node with butcon of a hierarchical text display"""
+
+    butcon_bitmap       = property (lambda s : s._butcon_bitmaps [s.state])
+    contents            = property (lambda s : s._contents       [s.state])
+    no_of_states        = property (lambda s : len (s._butcon_bitmaps))
+    state               = 0
+
+    def dec_state (self, event = None) :
+        """Decrement state to next state
+           (circles back from first to last state).
+        """
+        self._change_state     (self.state - 1)
+        self.__super.dec_state (event)
+    # end def dec_state
+
+    def goto_child (self, n = 0) :
+        if self.state == self.no_of_states - 1 :
+            self.__super.goto_child (n)
+    # end def goto_child
+
+    def inc_state (self, event = None) :
+        """Increment state to next state
+           (circles back from last to first state).
+        """
+        self._change_state     (self.state + 1)
+        self.__super.inc_state (event)
+    # end def inc_state
+
     def _add_contents (self, * contents_per_state) :
         old_state = self.state
         try :
@@ -366,35 +477,10 @@ class Node_Bs (Node_B) :
             self.state = old_state
     # end def _add_contents
 
-    def _button_callback_dict (self, cb_dict = {}) :
-        return dict \
-            ( self.__super._button_callback_dict (cb_dict)
-            , click_1        = self.inc_state
-            )
-    # end def _button_callback_dict
-
-    def _change_state (self, state) :
-        if self._head_mark :
-            ### only do this if node is already displayed
-            self.state = state % self.no_of_states
-            tkt_text   = self.tkt_text
-            for c in self.children :
-                c.butcon = None
-            tail = tkt_text.pos_at   (self._tail_mark, delta = 1)
-            tkt_text.remove          (self._butt_mark, tail)
-            self._insert             (self._tail_mark)
-            self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
-    # end def _change_state
-
     def _init_contents (self, * contents_per_state) :
         self._contents  = [[] for i in range (self.no_of_states)]
         self._add_contents (* contents_per_state)
     # end def _init_contents
-
-    def _insert_children (self, at_mark, * children) :
-        if self.state == self.no_of_states - 1 :
-            self.__super._insert_children (at_mark, * children)
-    # end def _insert_children
 
 # end class Node_Bs
 
@@ -411,6 +497,79 @@ class Node_B8 (Node_Bs) :
     _butcon_bitmaps     = ["node_s%d" % i for i in range (1, 9)]
 
 # end class Node_B2
+
+class Node_C (_Node_Bs_) :
+    """Model a node controlling another node (living in a different
+       HTD.root).
+    """
+
+    class Observer (_Node_Bs_.Observer) :
+
+        def __init__ (self, observer) :
+            self.observer = weakref.proxy (observer)
+        # end def __init__
+
+        def dec_state (self, observed) :
+            self.observer._dec_state ()
+        # end def dec_state
+
+        def goto (self, observed) :
+            self.observer._goto ()
+        # end def goto
+
+        def inc_state (self, observed) :
+            self.observer._inc_state ()
+        # end def inc_state
+
+        def mouse_enter (self, observed) :
+            observer = self.observer
+            for o in observer, observed :
+                o.see (o._tail_mark, o._head_mark)
+            self.observer._mouse_enter ()
+        # end def mouse_enter
+
+        def mouse_leave (self, observed) :
+            self.observer._mouse_leave ()
+        # end def mouse_leave
+
+    # end class Observer
+
+    butcon_bitmap       = property (lambda s : s.controlled.butcon_bitmap)
+    dec_state           = property (lambda s : s.controlled.dec_state)
+    goto                = property (lambda s : s.controlled.goto)
+    inc_state           = property (lambda s : s.controlled.inc_state)
+    mouse_enter         = property (lambda s : s.controlled.mouse_enter)
+    mouse_leave         = property (lambda s : s.controlled.mouse_leave)
+    no_of_states        = property (lambda s : s.controlled.no_of_states)
+    state               = property \
+        (lambda s : s.controlled.state, lambda s, v : True)
+
+    def __init__ (self, controlled, * args, ** kw) :
+        self.controlled = weakref.proxy (controlled)
+        self._observer  = o = self.Observer (self)
+        self.__super.__init__   (* args, ** kw)
+        controlled.add_observer (o)
+    # end def __init__
+
+    def _dec_state (self) :
+        self._change_state (self.state)
+    # end def _dec_state
+
+    def _goto (self) :
+        self.__super.goto ()
+    # end def _goto
+
+    _inc_state = _dec_state
+
+    def _mouse_enter (self) :
+        self.__super.mouse_enter ()
+    # end def _mouse_enter
+
+    def _mouse_leave (self) :
+        self.__super.mouse_leave ()
+    # end def _mouse_leave
+
+# end class Node_C
 
 class Root (_Node_) :
     """Model the root node of a hierarchical text display"""

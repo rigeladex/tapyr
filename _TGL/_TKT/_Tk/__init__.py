@@ -41,11 +41,4 @@ TGL.TKT._Export ("Tk")
 
 del Derived_Package_Namespace
 
-import CT_TK
-import Environment
-import sos
-CT_TK._std_pathes.insert \
-    ( 0, sos.path.join
-             (sos.path.dirname (Environment.module_path ("_TGL")), "-Images")
-    )
 ### __END__ TGL.TKT.Tk.__init__

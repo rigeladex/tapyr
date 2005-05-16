@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    31-Mar-2005 (CT) Creation
+#    16-May-2005 (CT) Test for `Node_C` added to `t`
 #    ««revision-date»»···
 #--
 
@@ -58,8 +59,11 @@ def t () :
     nl  = chr (10)
     ac  = App_Context (TGL)
     r   = Root (ac, nl.join (("R.line 1", "R.line 2")))
+    s   = Root (ac)
     t   = r.tkt_text
+    u   = s.tkt_text
     t.exposed_widget.pack (expand = "yes", fill = "both")
+    u.exposed_widget.pack (expand = "yes", fill = "both")
 
     n1 = Node ( r
               , ( r.Style.T ("n1.line 1 ", "yellow")
@@ -72,10 +76,12 @@ def t () :
                  , ( ["n3 closed line 1"]
                    , ["n3 open line 1", nl, "n3 open line 2"])
                  , r.Style.light_gray)
+    k3 = Node_C  ( n3, s, "n3 closed line 1")
     n3.inc_state ()
 
     m1 = Node_B2 ( n3
                  , (["m1 closed line 1"], ["m1 open line 1\nm1 open line 2"]))
+    l1 = Node_C  ( m1, k3, "m1 closed line 1")
     m2 = Node    ( n3, ("m2 line 1", nl, "m2 line 2"))
     n4 = Node_B2 ( r, ( ["n4 closed line 1"]
                       , ["n4 open line 1", nl, "n4 open line 2"])
@@ -83,7 +89,5 @@ def t () :
     return t
 
 if __name__ == "__main__" :
-    import CT_TK
-    print CT_TK._std_pathes
     t ().wtk_widget.mainloop ()
 ### __END__ TGL.TKT.Tk._test_HTD
