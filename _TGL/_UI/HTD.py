@@ -251,7 +251,7 @@ class Node (_Node_) :
 class Node_B (_Node_) :
     """Model a node with butcon of a hierarchical text display"""
 
-    butcon_bitmap       = "circle"
+    butcon_bitmap       = "node_leaf"
     _no_of_butcons      = 0
 
     def __init__ (self, * args, ** kw) :
@@ -401,7 +401,14 @@ class Node_Bs (Node_B) :
 class Node_B2 (Node_Bs) :
     """Model a two-state node with butcon of a hierarchical text display"""
 
-    _butcon_bitmaps     = ("closed_node", "open_node")
+    _butcon_bitmaps     = ("node_closed", "node_open")
+
+# end class Node_B2
+
+class Node_B8 (Node_Bs) :
+    """Model a two-state node with butcon of a hierarchical text display"""
+
+    _butcon_bitmaps     = ["node_s%d" % i for i in range (1, 9)]
 
 # end class Node_B2
 
@@ -429,7 +436,7 @@ class Root (_Node_) :
         , hyperLinkBackground    = "lightyellow2"
         , hyperLinkCursor        = "hand"
         , hyperLinkForeground    = "blue"
-        , indent                 = 22
+        , indent                 = 15
         , indent_inc             = 0
         , linkFontFamily         = "Monospace"
         , linkFontStyle          = "normal"

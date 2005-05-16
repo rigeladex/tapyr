@@ -83,5 +83,7 @@ def t () :
     return t
 
 if __name__ == "__main__" :
+    import CT_TK
+    print CT_TK._std_pathes
     t ().wtk_widget.mainloop ()
 ### __END__ TGL.TKT.Tk._test_HTD
