@@ -38,6 +38,7 @@
 #     2-Apr-2005 (MG) `_styler`: caching removed (in now done by the `Styler`)
 #     3-Apr-2005 (MG) `_before_styler` corrected
 #    15-May-2005 (MG) `Delegator_2O` added
+#    16-May-2005 (MG) Support for the defintion of new GTK properties added
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,46 @@ def Signal_Spec ( sig_type       = gobject.SIGNAL_RUN_LAST
     return (sig_type, sig_return, sig_parameters)
 # end def Signal_Spec
 
+min_max_values = dict \
+   ( [ (k, (-2**x, 2**x - 1))
+           for (k, x) in ( (gobject.TYPE_CHAR,   7)
+                         , (gobject.TYPE_INT,   15)
+                         , (gobject.TYPE_LONG,  31)
+                         , (gobject.TYPE_INT64, 63)
+                         )
+     ] +
+     [ (k, (0, 2**x - 1))
+           for (k, x) in ( (gobject.TYPE_UCHAR,   8)
+                         , (gobject.TYPE_UINT,   16)
+                         , (gobject.TYPE_ULONG,  32)
+                         , (gobject.TYPE_UINT64, 64)
+                         )
+     ]
+   )
+
+def Number_Property ( p_type
+                    , default     = 0
+                    , kind        = gobject.PARAM_READWRITE
+                    , nick        = ""
+                    , description = ""
+                    , min_value   = None
+                    , max_value   = None) :
+    min_d, max_d = min_max_values.get (p_type)
+    if min_value is None : min_value = min_d
+    if max_value is None : max_value = max_d
+    return \
+        ( p_type, nick, description, min_value, max_value, default, kind)
+# end def Number_Property
+
+def Simple_Property ( p_type
+                    , kind        = gobject.PARAM_READWRITE
+                    , default     = True
+                    , nick        = ""
+                    , description = ""
+                    ) :
+    return (p_type, nick, description, default, kind)
+# end def Simple_Property
+
 class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     """Metaclass which generates the new GTK types if a `Class_Name` is
        specified. Additionally, this metaclass will create properties for all
@@ -179,12 +220,33 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     GTK_Classes       = {}
     _dicts_to_combine = ("_wtk_delegation", )
 
+    @staticmethod
+    def _get_property (self, property) :
+        return getattr (self, property.name)
+    # end def _get_property
+
+    @staticmethod
+    def _set_property (self, property, value) :
+        setattr (self, property.name, value)
+    # end def _set_property
+
     def __new__ (cls, name, bases, dict) :
         Class_Name = dict.get ("Class_Name", None)
         if Class_Name and Class_Name not in cls.GTK_Classes :
             gtk_base  = gtk_class = dict ["GTK_Class"]
+            props     = dict.get ("Properties", {})
             gtk_base  = cls.GTK_Classes.get (gtk_base, gtk_base)
-            d         = {"__gsignals__" : dict.get ("Signals", {})}
+            d         = { "__gsignals__"    : dict.get ("Signals", {})
+                        , "__gproperties__" : props
+                        , "do_get_property" : cls._get_property
+                        , "do_set_property" : cls._set_property
+                        }
+            attr  = "_%s__gtk_properties" % (name, )
+            old_p = list (dict.get (attr, ()))
+            for pname, pspec in props.iteritems () :
+                d [pname] = pspec [3]
+                old_p.append (Property (pname))
+            dict [attr] = old_p
             gtk_class = type      (Class_Name, (gtk_base, ), d)
             gobject.type_register (gtk_class)
             cls.GTK_Classes [Class_Name] = dict ["GTK_Class"] = gtk_class
@@ -389,4 +451,24 @@ quit = gtk.main_quit
 
 if __name__ != "__main__" :
     TGL.TKT.GTK._Export ("*", "gtk", "main", "quit")
+else :
+    class New_Object (Object) :
+
+        Class_Name = "New_Object"
+        GTK_Class = gtk.Label
+
+        Properties = dict \
+            ( foo      = Simple_Property (str,               default = "bar")
+            , boolprop = Simple_Property (bool,              default = False)
+            , number   = Number_Property (gobject.TYPE_UINT, default = 0)
+            )
+    # end class New_Object
+
+    x = New_Object ()
+
+    print x.wtk_object.get_property ("foo")
+    print x.wtk_object.get_property ("boolprop")
+    print x.wtk_object.set_property ("foo", "AAA")
+    print x.wtk_object.get_property ("foo")
+    print x.wtk_object.get_property ("boolprop")
 ### __END__ TGL.TKT.GTK.Object

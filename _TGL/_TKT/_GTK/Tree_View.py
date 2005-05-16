@@ -29,6 +29,7 @@
 #    27-Mar-2005 (MG) Automated creation
 #    27-Mar-2005 (MG) `__init__` and test added
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
+#    16-May-2005 (MG) Test case for generic cell renderer added
 #    ««revision-date»»···
 #--
 
@@ -73,11 +74,53 @@ else :
     import _TGL._TKT._GTK.Test_Window
     import _TGL._TKT._GTK.Model
     import _TGL._TKT._GTK.Cell_Renderer_Text
+    import _TGL._TKT._GTK.Generic_Cell_Renderer
     import _TGL._TKT._GTK.Tree_View_Column
+    from   _TGL._UI.App_Context   import App_Context
+    from   _TGL                   import TGL
+    AC  = App_Context (TGL)
+    gtk = GTK.gtk
+    import gobject
 
-    t  = GTK.Tree_Model          (str, float)
+    class Cell_Renderer (GTK.Generic_Cell_Renderer) :
+
+        layout      = None
+        Class_Name  = "Day_Renderer"
+        GTK_Class   = GTK.CustomCellRenderer
+        Properties  = dict \
+            (day = GTK.Number_Property (gobject.TYPE_UINT, default = 0))
+
+        __gtk_properties = {}
+        def size_request (self, tree_view, cell_area = None) :
+            if not self.layout :
+                self.__class__.layout = tree_view.create_pango_layout ("")
+            self.layout.set_text ("99")
+            w, h = self.layout.get_pixel_extents () [0] [2:]
+            return (w, 6, w, h)
+        # end def size_request
+
+        def render ( self
+                   , window
+                   , tree_view
+                   , bg_area
+                   , cell_area
+                   , expose_area
+                   , flags
+                   ) :
+            self.layout.set_text ("%02d - %d" % (flags, self.day))
+            gc = tree_view.get_style ().fg_gc  [flags]
+            window.draw_layout \
+                ( gc
+                , cell_area.x, cell_area.y
+                , self.layout
+                )
+        # end def render
+
+    # end class Cell_Renderer
+
+    t  = GTK.Tree_Model          (str, float, gobject.TYPE_UINT)
     for i in range (10) :
-        t.add (("Row_%2d" % (i, ), i / 10.0))
+        t.add (("Row_%2d" % (i, ), i / 10.0, i))
     v  = Tree_View               (t)
     r1 = GTK.Cell_Renderer_Text  ()
     c1 = GTK.Tree_View_Column    ("Text-Column", r1)
@@ -87,9 +130,15 @@ else :
     c2 = GTK.Tree_View_Column    ("Text-Column", r2)
     c2.set_attributes            (0, text = 1)
 
+    r3 = Cell_Renderer           ()
+    c3 = GTK.Tree_View_Column    ("Custom-Column", r3)
+    c3.set_attributes            (0, day  = 2)
+
+
     v.append_column              (c1)
     v.append_column              (c2)
-    w  = GTK.Test_Window         ("Tree-View Test")
+    v.append_column              (c3)
+    w  = GTK.Test_Window         ("Tree-View Test", AC = AC)
     w.add                        (v)
     w.show_all                   ()
     GTK.main                     ()

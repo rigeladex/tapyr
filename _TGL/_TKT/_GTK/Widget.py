@@ -38,6 +38,7 @@
 #    13-May-2005 (MG) `Color_Property` moved from `_wtk_delegation` to
 #                     `__gtk_properties`
 #    15-May-2005 (MG) `add_accelerator` added
+#    16-May-2005 (MG) `create_pango_layout` added
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,7 @@ class Widget (GTK.Object) :
         , GTK.Delegator          ("hide")
         , GTK.Delegator          ("show_all")
         , GTK.Delegator          ("hide_all")
+        , GTK.Delegator          ("create_pango_layout")
         , GTK.Delegator_2O       ("add_accelerator")
         )
 

@@ -29,6 +29,7 @@
 #     3-Apr-2005 (MG) Creation
 #     5-Apr-2005 (MG) `.png` support added
 #     5-Apr-2005 (MG) Store gtk.Pixbuf object's instead of GTK.Image objects
+#    16-May-2005 (MG) `std_pathes` changed
 #    ««revision-date»»···
 #--
 
@@ -57,12 +58,17 @@ def std_pathes () :
     if _std_pathes is None :
         p           = path ()
         _std_pathes = []
+        _img_pathes = []
         seen        = {}
+        for s in sys.path :
+            si = sos.path.join (s, "-Images")
+            if sos.path.isdir (si) :
+                _img_pathes.append (si)
         for q in ( p
                  , sos.path.join (p, "-Images")
                  , Environment.default_dir
                  , Environment.home_dir
-                 ) :
+                 ) + tuple (_img_pathes) :
             if q not in seen :
                 _std_pathes.append (q)
                 seen [q] = True
