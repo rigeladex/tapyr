@@ -30,6 +30,7 @@
 #    27-Mar-2005 (MG) `__init__` and test added
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    16-May-2005 (MG) Test case for generic cell renderer added
+#    16-May-2005 (MG) `children` redefined, `selected_iters` added
 #    ««revision-date»»···
 #--
 
@@ -41,19 +42,21 @@ class Tree_View (GTK.Container) :
 
     GTK_Class        = GTK.gtk.TreeView
     __gtk_properties = \
-        ( GTK.SG_Property        ("enable_search")
-        , GTK.SG_Object_Property ("expander_column")
-        , GTK.SG_Property        ("fixed_height_mode")
-        , GTK.SG_Object_Property ("hadjustment")
-        , GTK.Property           ("headers_clickable")
-        , GTK.SG_Property        ("headers_visible")
-        , GTK.SG_Property        ("hover_expand")
-        , GTK.SG_Property        ("hover_selection")
-        , GTK.SG_Object_Property ("model")
-        , GTK.SG_Property        ("reorderable")
-        , GTK.SG_Property        ("rules_hint")
-        , GTK.SG_Property        ("search_column")
-        , GTK.SG_Object_Property ("vadjustment")
+        ( GTK.SG_Object_List_Property
+            ("children", set = None, get_fct_name = "get_columns")
+        , GTK.SG_Property             ("enable_search")
+        , GTK.SG_Object_Property      ("expander_column")
+        , GTK.SG_Property             ("fixed_height_mode")
+        , GTK.SG_Object_Property      ("hadjustment")
+        , GTK.Property                ("headers_clickable")
+        , GTK.SG_Property             ("headers_visible")
+        , GTK.SG_Property             ("hover_expand")
+        , GTK.SG_Property             ("hover_selection")
+        , GTK.SG_Object_Property      ("model")
+        , GTK.SG_Property             ("reorderable")
+        , GTK.SG_Property             ("rules_hint")
+        , GTK.SG_Property             ("search_column")
+        , GTK.SG_Object_Property      ("vadjustment")
         )
 
     _wtk_delegation = GTK.Delegation \
@@ -65,6 +68,15 @@ class Tree_View (GTK.Container) :
             model = model.wtk_object
         self.__super.__init__ (model, * args, ** kw)
     # end def __init__
+
+    def selected_iters (self) :
+        selection     = self.wtk_object.get_selection ()
+        result        = []
+        model, pathes = selection.get_selected_rows ()
+        for sel_path in pathes :
+            result.append (model.get_iter (sel_path))
+        return result
+    # end def selected_iters
 
 # end class Tree_View
 

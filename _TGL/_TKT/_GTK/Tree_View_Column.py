@@ -29,6 +29,7 @@
 #    27-Mar-2005 (MG) Automated creation
 #    27-Mar-2005 (MG) Creation continued
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
+#    16-May-2005 (MG) `sort_column_id` added
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ class Tree_View_Column (GTK.Object, GTK.Pack_Mixin) :
         , GTK.SG_Property  ("reorderable")
         , GTK.SG_Property  ("resizable")
         , GTK.SG_Property  ("sizing")
+        , GTK.SG_Property  ("sort_column_id")
         , GTK.SG_Property  ("sort_indicator")
         , GTK.SG_Property  ("sort_order")
         , GTK.SG_Property  ("spacing")

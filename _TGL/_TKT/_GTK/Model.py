@@ -27,11 +27,14 @@
 #
 # Revision Dates
 #    27-Mar-2005 (MG) Creation
+#    16-May-2005 (MG) `Sort_Model` added
+#    16-May-2005 (MG) `iter_to_object` added
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Object
+import _TGL._TKT._GTK.Constants
 
 class Dict_Mapper (dict) :
     """Maps an TGL.UI element to a GTK-TreeIter objects"""
@@ -76,12 +79,11 @@ class _Model_ (GTK.Object) :
        )
 
     def __init__ (self, * column_types, ** kw) :
-        ui_column = kw.get ("ui_column", None)
+        self.ui_column = kw.get ("ui_column", None)
         if "ui_column" in kw :
             del kw ["ui_column"]
         self.__super.__init__        (* column_types, ** kw)
         self.iter      = {}
-        self.ui_column = ui_column
     # end def __init__
 
     def add (self, row, after = None, ** kw) :
@@ -129,6 +131,11 @@ class _Model_ (GTK.Object) :
             result.extend (self._format_row (r, sep, intend + 2))
         return result
     # end def _format_row
+
+    def iter_to_object (self, iter) :
+        if self.ui_column is not None :
+            return self.wtk_object [iter] [self.ui_column]
+    # end def iter_to_object
 
 # end class _Model_
 
@@ -204,6 +211,57 @@ class Tree_Model (_Model_) :
 
 # end class Tree_Model
 
+class Sort_Model (GTK.Object) :
+    """Sorts a child model"""
+
+    GTK_Class = GTK.gtk.TreeModelSort
+
+    sort_order    = property \
+        (lambda s    : s._order,  lambda s, v : s._set_order  (v))
+    sort_column   = property \
+        (lambda s    : s._column, lambda s, v : s._set_column (v))
+
+    def __init__ (self, child_model, order = GTK.SORT_ASCENDING, column = 0) :
+        self.__super.__init__ (child_model.wtk_object)
+        self.model      = child_model
+        self._order     = order
+        self._column    = column
+        self._functions = {}
+    # end def __init__
+
+    def _set_sort_column (self, column) :
+        self._column = column
+        self.wtk_object.set_sort_column_id (self._column, self._order)
+    # end def _set_sort_column
+
+    def _set_sort_order (self, order) :
+        self._order = order
+        self.wtk_object.set_sort_column_id (self._column, self._order)
+    # end def _set_sort_order
+
+    def set_sort_funcion (self, id, fct, data = None, destroy = None) :
+        """The sort function must accept the following parameter:
+             treemodel, iter1, iter2, user_data
+        """
+        if fct is None :
+            if id in self._functions :
+                del self._functions [id]
+        else :
+            self._functions [id] = (fct, data, destroy)
+        self.wtk_object.set_sort_func (id, fct, data, destroy)
+    # end def set_sort_funcion
+
+    def sort_function (self, id) :
+        return self._functions [id]
+    # end def sort_function
+
+    def iter_to_object (self, iter) :
+        return self.model.iter_to_object \
+            (self.wtk_object.convert_iter_to_child_iter (None, iter))
+    # end def iter_to_object
+
+# end class Sort_Model
+
 if __name__ != "__main__" :
-    GTK._Export ("Tree_Model")
+    GTK._Export ("List_Model", "Tree_Model", "Sort_Model")
 ### __END__ TGL.TKT.GTK.Model

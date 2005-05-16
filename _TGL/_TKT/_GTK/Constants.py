@@ -11,6 +11,7 @@
 #
 # Revision Dates
 #     8-Apr-2005 (MG) Creation
+#    16-May-2005 (MG) New `SORT_*` constants added
 #    ««revision-date»»···
 #--
 
@@ -126,6 +127,9 @@ GTK._Add \
     , WINDOW_TYPE_NORMAL       = gtk.gdk.WINDOW_TYPE_HINT_NORMAL
     , WINDOW_TYPE_UTILITY      = gtk.gdk.WINDOW_TYPE_HINT_UTILITY
     , WINDOW_TYPE_SPLASHSCREEN = gtk.gdk.WINDOW_TYPE_HINT_SPLASHSCREEN
+    # sort order
+    , SORT_ASCENDING           = gtk.SORT_ASCENDING
+    , SORT_DESCENDING          = gtk.SORT_DESCENDING
     )
 
 ### __END__ TGL.TKT.GTK.Constants
