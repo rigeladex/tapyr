@@ -196,8 +196,6 @@ class _Msg_Part_ (object) :
 
 class _Pseudo_Part_ (_Msg_Part_) :
 
-    type          = "text/plain"
-
     def part_iter (self) :
         for p in self.parts :
             yield p
@@ -264,6 +262,8 @@ class Body_Part (_Pseudo_Part_) :
 class Header_Part (_Pseudo_Part_) :
     """Model the headers of an email as pseudo-part"""
 
+    type = "X-PMA/Headers"
+
     def __init__ (self, email, headers_to_show, is_leaf = False, name = None, type = None) :
         self.headers_to_show = headers_to_show
         self.is_leaf         = is_leaf
@@ -290,7 +290,9 @@ class Header_Part (_Pseudo_Part_) :
             hth        = sorted ([k for k in email.keys () if k not in hts])
             self.parts = \
                 [ Header_Part
-                    (email, hth, True, "More headers", type = "X-PMA-Headers")
+                    ( email, hth, True, "More headers"
+                    , type = "X-PMA/More-Headers"
+                    )
                 ]
     # end def _setup_body
 
@@ -420,6 +422,8 @@ class Message (_Message_) :
 
     def summary (self, format = None) :
         email = self.email
+        name  = self.name
+        type  = self.type
         if format is None :
             format = self.summary_format
         number     = self.number

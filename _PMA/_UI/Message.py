@@ -30,6 +30,7 @@
 #    31-Mar-2005 (CT) Creation continued
 #    16-May-2005 (CT) s/summary/outline/
 #    16-May-2005 (CT) Use `Node_C` for `outline`
+#    17-May-2005 (CT) `PMA.UI.Msg_Display` factored
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,7 @@ import _PMA.Mailcap
 import _PMA._UI
 import _PMA._UI.HTD
 import _PMA._UI.Mixin
+import _PMA._UI.Msg_Display
 
 class Message (PMA.UI.Mixin) :
     """Abstract user interface for PMA.Message"""
@@ -53,70 +55,22 @@ class Message (PMA.UI.Mixin) :
             , outline_wc = outline_wc
             , ** kw
             )
-        self._display    = self.ANS.UI.HTD.Root\
+        self._display    = self.ANS.UI.MD_Root\
             ( AC         = AC
             , wc         = display_wc
             )
-        self._outline    = self.ANS.UI.HTD.Root \
-            ( AC         = AC
+        self._outline    = self.ANS.UI.MO_Root \
+            ( controlled = self._display
+            , AC         = AC
             , wc         = outline_wc
             )
     # end def __init__
 
     def display (self, msg) :
         """Display `msg` in `self.display` and `self.outline`"""
-        display = self._display
-        outline = self._outline
-        Node    = self.ANS.UI.HTD.Node
-        Node_C  = self.ANS.UI.HTD.Node_C
-        display.clear ()
-        outline.clear ()
-        for p in msg.part_iter () :
-            body = p.body_lines ()
-            if body == () :
-                d, o = display, outline
-            else :
-                d = Node \
-                    ( parent   = display
-                    , contents = "\n".join (body)
-                        ### XXX use type-specific renderer here
-                    )
-                o = Node_C \
-                    ( controlled = d
-                    , parent     = outline
-                    , contents   = p.summary ()
-                    )
-            self._add_parts (d, o, p)
+        self._display.display (msg)
+        self._outline.display ()
     # end def display
-
-    def _add_parts (self, disp, outl, msg) :
-        Node    = self.ANS.UI.HTD.Node_B2
-        Node_C  = self.ANS.UI.HTD.Node_C
-        for p in msg.part_iter () :
-            type = p.type
-            if type.upper ().startswith ("X-PMA") :
-                type = ""
-            body = p.body_lines ()
-            if body == () :
-                d, o = disp, outl
-            else :
-                d = Node \
-                    ( parent   = disp
-                    , contents =
-                        ### XXX use type-specific renderer here
-                        ( ("%s %s %s" % (p.name, type, p.filename), )
-                        , (u"\n".join (body), )
-                        )
-                    )
-                o = Node_C \
-                    ( controlled = d
-                    , parent     = outl
-                    , contents   = p.summary ()
-                    )
-            if type == "text/plain" :
-                d.inc_state ()
-            self._add_parts (d, o, p)
-    # end def _add_parts
 
 # end class Message
 

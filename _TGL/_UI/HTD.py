@@ -43,6 +43,12 @@
 #    16-May-2005 (CT) `_Node_Bs_` factored
 #    16-May-2005 (CT) `_remove*` factored
 #    17-May-2005 (CT) `node_at` factored
+#    17-May-2005 (CT) `_insert_children` changed to not inster a leading `\n`
+#                     into an empty `tkt_text`
+#    17-May-2005 (CT) `_insert_butcon` changed to increment
+#                     `Node_B._no_of_butcons` instead of
+#                     `self.__class__._no_of_butcons` (which fails miserably
+#                     when multiple derived classes are used in the same HDT)
 #    ««revision-date»»···
 #--
 
@@ -123,6 +129,7 @@ class _Node_ (TGL.UI.Mixin) :
         self.parent     = parent
         self.level      = level \
                         = parent and (parent.level + self._level_inc) or 0
+        self.u_style    = style
         self.style      = style  = self._base_style (style, level)
         self.styler     = styler = self.tkt_text.Tag_Styler (style)
         self._head_mark = self._midd_mark = self._tail_mark = None
@@ -268,7 +275,8 @@ class _Node_ (TGL.UI.Mixin) :
     def _insert_children (self, at_mark, * children) :
         tkt_text = self.tkt_text
         for c in children :
-            tkt_text.insert (at_mark, "\n", self.Style.normal)
+            if not tkt_text.is_empty :
+                tkt_text.insert (at_mark, "\n", self.Style.normal)
             c._insert       (at_mark)
     # end def _insert_children
 
@@ -364,12 +372,12 @@ class Node_B (_Node_) :
     def _insert_butcon (self, at_mark) :
         if self.butcon is None :
             tkt_text = self.tkt_text
-            self.__class__._no_of_butcons += 1
+            Node_B._no_of_butcons += 1
             self.butcon  = b = self.TNS.Butcon \
                 ( AC     = self.AC
                 , wc     = tkt_text
                 , bitmap = self.butcon_bitmap
-                , name   = "b%s" % (self.__class__._no_of_butcons, )
+                , name   = "b%s" % (self._no_of_butcons, )
                 )
             b.apply_style \
                 ( self.callback_style
@@ -596,12 +604,12 @@ class Root (_Node_) :
         , hyperLinkBackground    = "lightyellow2"
         , hyperLinkCursor        = "hand"
         , hyperLinkForeground    = "blue"
-        , indent                 = 15
+        , indent                 = 16
         , indent_inc             = 0
         , linkFontFamily         = "Monospace"
         , linkFontStyle          = "normal"
         , normalFontFamily       = "Monospace"
-        , normalFontSize         = "medium" # Tk needs large
+        , normalFontSize         = "medium"
         , normalFontStyle        = "normal"
         , normalFontWeight       = "normal"
         , titleFontFamily        = "Sans"
@@ -733,7 +741,7 @@ class Root (_Node_) :
         for color in "yellow", "green", "gray", "cyan" :
             add (color, background = color)
         add ("light_gray", background = "gray90")
-        for color in "red", "blue", "black" :
+        for color in "red", "orange", "blue", "black" :
             add (color, foreground = color)
         add ("light_blue", foreground = "deep sky blue")
         tabs = Style._tabs = []
