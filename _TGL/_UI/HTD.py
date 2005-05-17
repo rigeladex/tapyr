@@ -42,6 +42,7 @@
 #    16-May-2005 (CT) `Node_C` added
 #    16-May-2005 (CT) `_Node_Bs_` factored
 #    16-May-2005 (CT) `_remove*` factored
+#    17-May-2005 (CT) `node_at` factored
 #    ««revision-date»»···
 #--
 
@@ -646,6 +647,20 @@ class Root (_Node_) :
         self._init_children ()
     # end def clear
 
+    def node_at (self, pos = None) :
+        tkt_text = self.tkt_text
+        if pos is None :
+            pos = tkt_text.bol_pos (tkt_text.insert_mark)
+        tags = tkt_text.tags_at (pos)
+        for t in reversed (tags) :
+            if t.startswith ("HTD::") :
+                result = self._id_map [t]
+                break
+        else :
+            result = self.root.active_node
+        return result
+    # end def node_at
+
     def _setup_bindings (self, w) :
         w.apply_style \
             (self.callback_style (callback = self._text_callback_dict ()))
@@ -753,13 +768,7 @@ class Root (_Node_) :
             tkt_text = self.tkt_text
             pos      = tkt_text.bol_pos (tkt_text.insert_mark)
             if node is None :
-                tags = tkt_text.tags_at (pos)
-                for t in reversed (tags) :
-                    if t.startswith ("HTD::") :
-                        node = self._id_map [t]
-                        break
-                else :
-                    node = self.root.active_node
+                node = self.node_at (pos)
             if node is not None :
                 method (self, node, ** kw)
                 tkt_text.place_cursor (pos)
