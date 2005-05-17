@@ -164,6 +164,7 @@
 #     9-May-2005 (MG)  `_Command_._run`: `callable` check added
 #    12-May-2005 (MG)  `icon` parameter added to `add_group`
 #    17-May-2005 (CT)  `LB_Command` added
+#    17-May-2005 (CT)  `LB_Command` improved
 #    ««revision-date»»···
 #--
 
@@ -404,38 +405,39 @@ class LB_Command (Command) :
 
     addressees = None
 
-    def __init__ (self, name, cmd_name, cmd_desc, pre_name, pre_desc, addressees = None, ** kw) :
+    def __init__ (self, name, cmd_name, cmd_desc, pre_name, pre_desc, pre_eager = False, addressees = None, ** kw) :
         if addressees is not None :
             self.addressees = addressees
         self.__super.__init__ \
             ( name         = name
             , command      = self._setup_cmd (cmd_name, cmd_desc)
-            , precondition = self._setup_pre (cmd_name, pre_name, pre_desc)
+            , precondition = self._setup_pre
+                  (cmd_name, pre_name, pre_desc, pre_eager)
             , ** kw
             )
     # end def __init__
 
     def _setup_cmd (self, cmd_name, cmd_desc) :
         def _ (* args, ** kw) :
-            result = []
-            add    = result.append
-            for a in self.addressees () :
-                add (getattr (a, cmd_name) (* args, ** kw))
-            return result
+            return \
+                [   getattr (a, cmd_name) (* args, ** kw)
+                for a in self.addressees ()
+                ]
         _.__name__ = cmd_name
         _.__doc__  = cmd_desc
         return _
     # end def _setup_cmd
 
-    def _setup_pre (self, cmd_name, pre_name, pre_desc) :
+    def _setup_pre (self, cmd_name, pre_name, pre_desc, pre_eager) :
         def _ () :
             for a in self.addressees () :
                 p = getattr (a, pre_name, None)
-                if not (callable (p) and getattr (a, cmd_name, 0) and p ()) :
+                if not (callable (p) and p () and getattr (a, cmd_name, 0)) :
                     return False
             return True
-        _.__name__ = pre_name
-        _.__doc__  = pre_desc
+        _.__name__         = pre_name
+        _.__doc__          = pre_desc
+        _.evaluate_eagerly = pre_eager
         return _
     # end def _setup_pre
 

@@ -62,12 +62,12 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
     _font_size_map    = dict \
         ( { "xx-small"  : 6
           , "x-small"   : 7
-          , "x-large"   : 14
-          , "xx-large"  : 16
+          , "x-large"   : 12
+          , "xx-large"  : 14
           }
         , small       = 8
-        , medium      = 10
-        , large       = 12
+        , medium      = 9
+        , large       = 10
         )
 
     _font_weight_map  = dict \
