@@ -161,8 +161,9 @@
 #                     the original interfacer
 #    25-Apr-2005 (PGO) `Command_Mgr` sets `batchable` of `_Command_` class
 #    26-Apr-2005 (CT)  Attribute `accelerator` added to `Command`
-#     9-May-2005 (MG) `_Command_._run`: `callable` check added
-#    12-May-2005 (MG) `icon` parameter added to `add_group`
+#     9-May-2005 (MG)  `_Command_._run`: `callable` check added
+#    12-May-2005 (MG)  `icon` parameter added to `add_group`
+#    17-May-2005 (CT)  `LB_Command` added
 #    ««revision-date»»···
 #--
 
@@ -286,7 +287,7 @@ class Command (_Command_) :
        arguments passed to `__call__` to the callback.
     """
 
-    accelerator = None
+    accelerator   = None
 
     def __init__ (self, name, command, precondition = None, pv_callback = None, _doc = None, batchable = 1, Change_Action = None) :
         self.name          = name
@@ -397,6 +398,52 @@ class Deaf_Command (Command) :
     # end def __call__
 
 # end class Deaf_Command
+
+class LB_Command (Command) :
+    """Model a command bound at call-time"""
+
+    addressees = None
+
+    def __init__ (self, name, cmd_name, cmd_desc, pre_name, pre_desc, addressees = None, ** kw) :
+        if addressees is not None :
+            self.addressees = addressees
+        self.__super.__init__ \
+            ( name         = name
+            , command      = self._setup_cmd (cmd_name, cmd_desc)
+            , precondition = self._setup_pre (cmd_name, pre_name, pre_desc)
+            , ** kw
+            )
+    # end def __init__
+
+    def _setup_cmd (self, cmd_name, cmd_desc) :
+        def _ (* args, ** kw) :
+            result = []
+            add    = result.append
+            for a in self.addressees () :
+                add (getattr (a, cmd_name) (* args, ** kw))
+            return result
+        _.__name__ = cmd_name
+        _.__doc__  = cmd_desc
+        return _
+    # end def _setup_cmd
+
+    def _setup_pre (self, cmd_name, pre_name, pre_desc) :
+        def _ () :
+            for a in self.addressees () :
+                p = getattr (a, pre_name, None)
+                if not (callable (p) and getattr (a, cmd_name, 0) and p ()) :
+                    return False
+            return True
+        _.__name__ = pre_name
+        _.__doc__  = pre_desc
+        return _
+    # end def _setup_pre
+
+# end class LB_Command
+
+class LB_Deaf_Command (Deaf_Command, LB_Command) :
+    pass
+# end class LB_Deaf_Command
 
 class Dyn_Command (_Command_) :
     """Model a set of dynamically created commands of an interactive
