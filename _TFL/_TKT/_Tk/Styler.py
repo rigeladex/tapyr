@@ -33,14 +33,18 @@
 #    24-Feb-2005 (CT)  `_font_weight_map` added and used
 #    24-Feb-2005 (RSC) font_weight computation fixed & tested
 #     1-Apr-2005 (CT)  s/__init__/_init_/
+#    18-May-2005 (CT)  `_font_size_map` replaced by `font_size_base` and
+#                      `_font_size_factor`
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk
 import _TFL._TKT.Styler
-
+import math
 import tkFont
+
+_sqrt_1_2 = math.sqrt (1.2)
 
 class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
 
@@ -59,16 +63,18 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
         , Sans        = "arial"
         )
 
-    _font_size_map    = dict \
-        ( { "xx-small"  : 6
-          , "x-small"   : 7
-          , "x-large"   : 12
-          , "xx-large"  : 14
+    font_size_base    = 9
+    _font_size_factor = dict \
+        ( { "xx-small"  : 1.0 / (1.2 * 1.2)
+          , "x-small"   : 1.0 / 1.2
+          , "x-large"   : 1.2
+          , "xx-large"  : 1.2 * 1.2
           }
-        , small       = 8
-        , medium      = 9
-        , large       = 10
+        , small       = 1.0 / _sqrt_1_2
+        , medium      = 1.0
+        , large       = _sqrt_1_2
         )
+
 
     _font_weight_map  = dict \
         ( bold        = "bold"
@@ -88,7 +94,7 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
                 d ["family"] = self._font_family_map [f]
             s = style.font_size
             if s is not None :
-                d ["size"] = self._font_size_map [s]
+                d ["size"] = self._font_size (s)
             w = style.font_weight
             if w is not None :
                 d ["weight"] = self._font_weight_map.get (w, "normal")
@@ -99,6 +105,11 @@ class _TKT_Tk_Styler_ (TFL.TKT.Styler) :
             if c is not None :
                 self.option_dict ["cursor"] = self._cursor_map.get (c, c)
     # end def _init_
+
+    def _font_size (self, name) :
+        return int \
+            (round (self.font_size_base * self._font_size_factor [name]))
+    # end def _font_size
 
 Styler = _TKT_Tk_Styler_ # end class _TKT_Tk_Styler_
 
