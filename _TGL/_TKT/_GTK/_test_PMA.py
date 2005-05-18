@@ -20,34 +20,47 @@
 #
 #++
 # Name
-#    Pack_Mixin
+#    _test_PMA
 #
 # Purpose
-#    A mixin providing the `pack` function used by boxes and tree view cells
+#    Test the PMA stuff for GTK
 #
 # Revision Dates
-#    27-Mar-2005 (MG) Creation
-#    18-May-2005 (MG) Use `child.exposed_widget`
+#    18-May-2005 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from _TGL._TKT._GTK import GTK
+from   _TGL                   import TGL
+from   _PMA                   import PMA
+import _PMA._UI
+import _PMA._TKT
+import _PMA._UI.Message
+import _PMA.Mailbox
 
-class Pack_Mixin (object) :
-    """Mixin providing the `pack` function"""
-    def pack (self, child, start = True, expand = True, fill = True) :
-        if start :
-            fct = self.wtk_object.pack_start
-        else :
-            fct = self.wtk_object.pack_end
-        return fct \
-            (child.exposed_widget.wtk_object, expand = expand, fill = fill)
-    # end def pack
+from   _TGL._UI.App_Context   import App_Context
+import _TGL._TKT._GTK.V_Box
+import _PMA._UI.HTB
+import _PMA._TKT._GTK.Text
+import _PMA._TKT._GTK.Butcon
+import _PMA._TKT._GTK.Eventname
+import _PMA._TKT._GTK.Test_Window
 
-# end class Pack_Mixin
+GTK = TGL.TKT.GTK
 
-if __name__ != "__main__" :
-    GTK._Export ("Pack_Mixin")
-### __END__ Pack_Mixin
+AC  = App_Context     (PMA)
+win = GTK.Test_Window ("PMA Test", AC = AC)
+b   = GTK.V_Box       ()
+win.add               (b)
+b.show                ()
+
+mui = PMA.UI.Message (AC)
+b.pack (mui._display.tkt_text.exposed_widget)
+b.pack (mui._outline.tkt_text.exposed_widget )
+
+msg = PMA.message_from_file ("/home/lucky/PMA_Test/MH/customer/HS/3")
+mui.display (msg)
+win.show_all              ()
+GTK.main              ()
+### __END__ _test_PMA
 
 

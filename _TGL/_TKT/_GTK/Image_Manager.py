@@ -40,6 +40,8 @@ import _TGL._TKT._GTK.Image
 import  Environment
 import _TFL.sos      as     sos
 from   _TFL.Filename import Filename
+import  sys
+
 GTK = TGL.TKT.GTK
 gtk = GTK.gtk
 
@@ -65,7 +67,6 @@ def std_pathes () :
             if sos.path.isdir (si) :
                 _img_pathes.append (si)
         for q in ( p
-                 , sos.path.join (p, "-Images")
                  , Environment.default_dir
                  , Environment.home_dir
                  ) + tuple (_img_pathes) :

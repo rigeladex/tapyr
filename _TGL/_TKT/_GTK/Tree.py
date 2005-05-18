@@ -20,34 +20,35 @@
 #
 #++
 # Name
-#    Pack_Mixin
+#    TGL.TKT.GTK.Tree
 #
 # Purpose
-#    A mixin providing the `pack` function used by boxes and tree view cells
+#    Tree_View widget contained in a scrolled window.
 #
 # Revision Dates
-#    27-Mar-2005 (MG) Creation
-#    18-May-2005 (MG) Use `child.exposed_widget`
+#    18-May-2005 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from _TGL._TKT._GTK import GTK
+from   _TGL._TKT._GTK         import GTK
+import _TGL._TKT._GTK.Tree_View
+import _TGL._TKT._GTK.Scrolled_Window
 
-class Pack_Mixin (object) :
-    """Mixin providing the `pack` function"""
-    def pack (self, child, start = True, expand = True, fill = True) :
-        if start :
-            fct = self.wtk_object.pack_start
-        else :
-            fct = self.wtk_object.pack_end
-        return fct \
-            (child.exposed_widget.wtk_object, expand = expand, fill = fill)
-    # end def pack
+class Tree (GTK.Tree_View) :
+    """A scrollable tree view widget"""
 
-# end class Pack_Mixin
+    exposed_widget = None ### required to override the property
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.exposed_widget = self.TNS.Scrolled_Window ()
+        ###cannot use the default add here !!! (will add itself or None)
+        self.exposed_widget.wtk_object.add             (self.wtk_object)
+        self.exposed_widget.show                       ()
+    # end def __init__
+
+# end class Tree
 
 if __name__ != "__main__" :
-    GTK._Export ("Pack_Mixin")
-### __END__ Pack_Mixin
-
-
+    GTK._Export ("Tree")
+### __END__ TGL.TKT.GTK.Tree

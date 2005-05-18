@@ -20,34 +20,32 @@
 #
 #++
 # Name
-#    Pack_Mixin
+#    TGL.TKT.GTK.Paned
 #
 # Purpose
-#    A mixin providing the `pack` function used by boxes and tree view cells
+#    Wrapper for the GTK widget Paned
 #
 # Revision Dates
-#    27-Mar-2005 (MG) Creation
-#    18-May-2005 (MG) Use `child.exposed_widget`
+#    18-May-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
-from _TGL._TKT._GTK import GTK
+from   _TGL._TKT._GTK         import GTK
+import _TGL._TKT._GTK.Container
 
-class Pack_Mixin (object) :
-    """Mixin providing the `pack` function"""
-    def pack (self, child, start = True, expand = True, fill = True) :
-        if start :
-            fct = self.wtk_object.pack_start
-        else :
-            fct = self.wtk_object.pack_end
-        return fct \
-            (child.exposed_widget.wtk_object, expand = expand, fill = fill)
-    # end def pack
+class Paned (GTK.Container) :
+    """Wrapper for the GTK widget Paned"""
 
-# end class Pack_Mixin
+    GTK_Class        = GTK.gtk.Paned
+    __gtk_properties = \
+        ( GTK.Property            ("max_position", set = None)
+        , GTK.Property            ("min_position", set = None)
+        , GTK.SG_Property         ("position")
+        , GTK.Property            ("position_set")
+        )
+
+# end class Paned
 
 if __name__ != "__main__" :
-    GTK._Export ("Pack_Mixin")
-### __END__ Pack_Mixin
-
-
+    GTK._Export ("Paned")
+### __END__ TGL.TKT.GTK.Paned

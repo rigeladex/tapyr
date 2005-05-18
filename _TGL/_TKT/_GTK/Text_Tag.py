@@ -31,6 +31,7 @@
 #     2-Apr-2005 (MG) `_sty_map` removed
 #     5-Apr-2005 (MG) New signals added
 #     5-Apr-2005 (MG) `_correct_indent` fixed
+#    18-May-2005 (MG) Button signal handling added
 #    ««revision-date»»···
 #--
 
@@ -42,11 +43,18 @@ import  gobject
 
 GTK = TGL.TKT.GTK
 
-for event_name in "enter-notify-event", "leave-notify-event" :
+for event_name in ( "enter-notify-event", "leave-notify-event"
+                  , "button-press-event", "button-release-event"
+                  ) :
     gobject.signal_new \
         ( event_name, GTK.gtk.TextTag, gobject.SIGNAL_RUN_LAST
         , bool, (object, )
         )
+for kind in "single", "double", "triple" :
+    for number in 1, 2, 3 :
+        event = "%s-click-%d-event" % (kind, number)
+        gobject.signal_new \
+            (event, GTK.gtk.TextTag, gobject.SIGNAL_RUN_LAST, bool, (object, ))
 
 class Text_Tag (GTK.Object) :
     """Wrapper for the GTK widget TextTag"""
@@ -150,6 +158,31 @@ class Text_Tag (GTK.Object) :
         , GTK.Property            ("wrap_mode")
         , GTK.Property            ("wrap_mode_set")
         )
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self._button_bindings = {}
+        self._event_bindings  = None
+    # end def __init__
+
+    def bind_add (self, signal, callback, * args, ** kw) :
+        if isinstance (signal, self.TNS.Mouse_Button_Binder) :
+            if not self._event_bindings :
+                self._event_bindings = self.wtk_object.connect \
+                    ("event", self._event)
+        return self.__super.bind_add (signal, callback, * args, ** kw)
+    # end def bind_add
+
+    button_events = \
+        { GTK.gtk.gdk.BUTTON_PRESS   : True
+        , GTK.gtk.gdk._2BUTTON_PRESS : True
+        , GTK.gtk.gdk._3BUTTON_PRESS : True
+        }
+
+    def _event (self, tag, view, event, iter) :
+        if event.type in self.button_events :
+            self.emit (self.TNS.Signal.Button_Press, event)
+    # end def _event
 
 # end class Text_Tag
 

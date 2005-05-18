@@ -309,5 +309,5 @@ Eventname = TGL.TKT._Eventname \
     )
 
 if __name__ != "__main__" :
-    GTK._Export ("Eventname")
+    GTK._Export ("Eventname", "Mouse_Button_Binder")
 ### __END__ TGL.TKT.GTK.Eventname

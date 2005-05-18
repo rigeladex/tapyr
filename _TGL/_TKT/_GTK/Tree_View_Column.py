@@ -30,6 +30,8 @@
 #    27-Mar-2005 (MG) Creation continued
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    16-May-2005 (MG) `sort_column_id` added
+#    18-May-2005 (MG) Don't used `Pack_Mixin` (pack does not support the
+#                     `fill` property)
 #    ««revision-date»»···
 #--
 
@@ -48,7 +50,7 @@ class Delegator_R (GTK.Delegator_O) :
 
 # end class Delegator_R
 
-class Tree_View_Column (GTK.Object, GTK.Pack_Mixin) :
+class Tree_View_Column (GTK.Object) :
     """Wrapper for the GTK widget TreeViewColumn"""
 
     GTK_Class        = GTK.gtk.TreeViewColumn
@@ -85,6 +87,14 @@ class Tree_View_Column (GTK.Object, GTK.Pack_Mixin) :
             renderer = renderer.wtk_object
         self.__super.__init__ (title, renderer, * args, ** kw)
     # end def __init__
+
+    def pack (self, child, start = True, expand = True) :
+        if start :
+            fct = self.wtk_object.pack_start
+        else :
+            fct = self.wtk_object.pack_end
+        return fct (child.wtk_object, expand = expand)
+    # end def pack
 
 # end class Tree_View_Column
 

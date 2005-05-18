@@ -32,6 +32,7 @@
 #                     `_wtk_delegation` entries
 #    27-Mar-2005 (MG) `children` converted to a `SG_Object_List_Property`
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
+#    18-May-2005 (MG) Use new `Delegator_EO`
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@ class Container (GTK.Widget) :
         )
 
     _wtk_delegation  = GTK.Delegation \
-        (GTK.Delegator_O ("add"), GTK.Delegator_O ("remove"))
+        (GTK.Delegator_EO ("add"), GTK.Delegator_EO ("remove"))
 
 # end class Container
 

@@ -39,6 +39,7 @@
 #                     `__gtk_properties`
 #    15-May-2005 (MG) `add_accelerator` added
 #    16-May-2005 (MG) `create_pango_layout` added
+#    18-May-2005 (MG) `exposed_widget` added
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,8 @@ class Widget (GTK.Object) :
         , GTK.Delegator          ("create_pango_layout")
         , GTK.Delegator_2O       ("add_accelerator")
         )
+
+    exposed_widget = property (lambda s : s)
 
     def __init__ (self, * args, ** kw) :
         name = None

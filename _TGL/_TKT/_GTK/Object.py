@@ -39,6 +39,7 @@
 #     3-Apr-2005 (MG) `_before_styler` corrected
 #    15-May-2005 (MG) `Delegator_2O` added
 #    16-May-2005 (MG) Support for the defintion of new GTK properties added
+#    18-May-2005 (MG) `Delegator_EO` added
 #    ««revision-date»»···
 #--
 
@@ -274,6 +275,18 @@ class Delegator (TFL.Meta.Object) :
     # end def __call__
 
 # end class Delegator
+
+class Delegator_EO (Delegator) :
+    """Delegator for a function of the `wtk_object` and extract the
+       `exposed_widget` from the first parameter
+    """
+
+    def __call__ (self, this, obj, * args, ** kw) :
+        return self.__super.__call__ \
+            (this, obj.exposed_widget.wtk_object, * args, ** kw)
+    # end def __call__
+
+# end class Delegator_EO
 
 class Delegator_O (Delegator) :
     """Delegator for a function of the `wtk_object` and extract the
