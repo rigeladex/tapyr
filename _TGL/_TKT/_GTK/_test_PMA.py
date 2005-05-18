@@ -32,6 +32,7 @@
 
 from   _TGL                   import TGL
 from   _PMA                   import PMA
+from   _TFL.Command_Line      import Command_Line
 import _PMA._UI
 import _PMA._TKT
 import _PMA._UI.Message
@@ -44,22 +45,79 @@ import _PMA._TKT._GTK.Text
 import _PMA._TKT._GTK.Butcon
 import _PMA._TKT._GTK.Eventname
 import _PMA._TKT._GTK.Test_Window
+import _PMA._TKT._GTK.Paned
+import _PMA._TKT._GTK.Tree
+import _PMA._TKT._GTK.Tree_View_Column
+import _PMA._TKT._GTK.Cell_Renderer_Text
+import _PMA._TKT._GTK.Model
+import _PMA._TKT.Tree_Adapter
+
+class Folder_Tree (PMA.TKT.Tree_Adapter) :
+
+    schema = \
+        ( PMA.TKT.Column
+            ("Folder", PMA.TKT.Text_Cell ("name"))
+        ,
+        )
+
+    def has_children (self, element) :
+        return element.sub_boxes
+    # end def has_children
+
+    def children (self, element) :
+        return element.sub_boxes
+    # end def children
+
+# end class Folder_Tree
+
+class Folder_Summary (PMA.TKT.Tree_Adapter) :
+
+    schema = \
+        ( PMA.TKT.Column
+            ("No", PMA.TKT.Text_Cell ("number"))
+        , PMA.TKT.Column
+            ("Sender", PMA.TKT.Text_Cell ("sender"))
+        #, PMA.TKT.Column
+        #    ("Subject", PMA.TKT.Text_Cell ("from"))
+        , PMA.TKT.Column
+            ("Date", PMA.TKT.Text_Cell ("date"))
+        )
+
+    def has_children (self, element) :
+        return False
+    # end def has_children
+
+    def children (self, element) :
+        return element.messages
+    # end def children
+
+# end class Folder_Summary
 
 GTK = TGL.TKT.GTK
 
 AC  = App_Context     (PMA)
 win = GTK.Test_Window ("PMA Test", AC = AC)
-b   = GTK.V_Box       ()
-win.add               (b)
-b.show                ()
+psd = GTK.V_Paned     (AC = AC)
+pfo = GTK.V_Paned     (AC = AC)
+p_h = GTK.H_Paned     (pfo, psd, False, False, AC = AC)
+win.add               (p_h)
 
 mui = PMA.UI.Message (AC)
-b.pack (mui._display.tkt_text.exposed_widget)
-b.pack (mui._outline.tkt_text.exposed_widget )
+psd.pack_bottom (mui._display.tkt_text.exposed_widget)
+pfo.pack_bottom (mui._outline.tkt_text.exposed_widget )
 
-msg = PMA.message_from_file ("/home/lucky/PMA_Test/MH/customer/HS/3")
-mui.display (msg)
-win.show_all              ()
+cmd = Command_Line (option_spec = ("mailbox:S=/home/lucky/PMA_Test/Testbox", ))
+mb  = PMA.Mailbox  (cmd.mailbox)
+
+ft = Folder_Tree   (mb, AC = AC, lazy = False)
+fs = Folder_Summary(mb.sub_boxes [1], AC = AC, lazy = False)
+pfo.pack_top (ft.tkt)
+psd.pack_top (fs.tkt)
+
+
+msg = mb.messages [0]
+mui.display           (msg)
+win.show_all          ()
 GTK.main              ()
 ### __END__ _test_PMA
 

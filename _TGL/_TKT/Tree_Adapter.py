@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    17-May-2005 (MG) Creation
+#    18-May-2005 (MG) `_setup_model` use `self.children` for the loop
 #    ««revision-date»»···
 #--
 
@@ -203,8 +204,8 @@ class Tree_Adapter (TGL.TKT.Mixin) :
         ui_column = len            (column_types)
         column_types.append        (object)
         model = self.TNS.Tree_Model \
-            (AC = AC, ui_column = ui_column, * column_types)
-        for ui in ui_model :
+            (AC = self.AC, ui_column = ui_column, * column_types)
+        for ui in self.children (ui_model) :
             self._add_row (model, ui, None, lazy)
         return model
     # end def _setup_model
