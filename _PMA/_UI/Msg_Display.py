@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-May-2005 (CT) Creation
+#    18-May-2005 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -90,33 +91,20 @@ class _Generic_Node_ (_MD_Node_B2_) :
 class _Header_Node_ (_MD_Node_B2_) :
 
     def __init__ (self, msg, parent) :
-        body = u"\n".join (msg.body_lines ())
+        S    = _Root_.Style
+        head = S.T (u"\n".join (msg.body_lines      ()), S.headers)
+        more = S.T (u"\n".join (msg.more_body_lines ()), S.more_headers)
         self.__super.__init__ \
             ( msg
             , parent   = parent
             , contents =
-                ( (body, )
-                , (body, )
+                ( ( head, )
+                , ( head, "\n", more)
                 )
-            , style    = _Root_.Style.headers
             )
     # end def __init__
 
 # end class _Header_Node_
-
-class _More_Header_Node_ (_MD_Node_B2_) :
-
-    def __init__ (self, msg, parent) :
-        body = u"\n".join (msg.body_lines ())
-        self.__super.__init__ \
-            ( msg
-            , parent   = parent
-            , contents = (("More headers", ), (body, ))
-            , style    = _Root_.Style.more_headers
-            )
-    # end def __init__
-
-# end class _More_Header_Node_
 
 class _Text_Node_ (_MD_Node_B2_) :
 
@@ -136,12 +124,32 @@ class _Text_Node_ (_MD_Node_B2_) :
 
 # end class _Text_Node_
 
+### http://www.faqs.org/rfcs/rfc2046.html
+### http://www.iana.org/assignments/media-types/
 _mime_map = \
-    { "application"        : _Generic_Node_
-    , "message"            : _Generic_Node_
-    , "text"               : _Text_Node_
-    , "x-pma/headers"      : _Header_Node_
-    , "x-pma/more-headers" : _More_Header_Node_
+    { "application"              : _Generic_Node_
+    , "audio"                    : _Generic_Node_
+    , "image"                    : _Generic_Node_
+    , "message"                  : _Generic_Node_
+    , "message/external-body"    : _Generic_Node_ ### XXX
+    , "message/partial"          : _Generic_Node_ ### XXX
+    , "message/rfc822"           : _Generic_Node_ ### XXX
+    , "multipart"                : _Generic_Node_
+    , "multipart/alternative"    : _Generic_Node_ ### XXX
+    , "multipart/digest"         : _Generic_Node_
+    , "multipart/encrypted"      : _Generic_Node_ ### XXX rfc1847
+    , "multipart/form-data"      : _Generic_Node_ ### XXX rfc2388
+    , "multipart/mixed"          : _Generic_Node_
+    , "multipart/parallel"       : _Generic_Node_
+    , "multipart/related"        : _Generic_Node_ ### XXX rfc2387
+    , "multipart/signed"         : _Generic_Node_ ### XXX rfc1847
+    , "text"                     : _Text_Node_
+    , "text/calendar"            : _Text_Node_    ### XXX rfc2445
+    , "text/directory"           : _Text_Node_    ### XXX rfc2425
+    , "text/enriched"            : _Text_Node_    ### XXX rfc1896
+    , "text/html"                : _Generic_Node_ ### XXX rfc2854
+    , "video"                    : _Generic_Node_
+    , "x-pma/headers"            : _Header_Node_
     }
 
 class _Root_ (TGL.UI.HTD.Root) :
@@ -149,7 +157,7 @@ class _Root_ (TGL.UI.HTD.Root) :
     Style               = TGL.UI.Style.__class__ ()
     _style_defaults     = dict \
         ( TGL.UI.HTD.Root._style_defaults
-        , courierFontFamily      = "Monospace" ### XXX ??? what font exmh ???
+        , courierFontFamily      = "Monospace"
         , titleFontSize          = "medium"
         )
 
@@ -184,7 +192,7 @@ class MD_Root (_Root_) :
     def _add_parts (self, disp, msg) :
         for p in msg.part_iter () :
             body = p.body_lines ()
-            if body == () :
+            if p.type.startswith ("multipart/") :
                 d = disp
             else :
                 d = self._mime_node (p) (p, disp)

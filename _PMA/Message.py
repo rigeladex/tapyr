@@ -63,6 +63,14 @@
 #    31-Mar-2005 (CT) `Body_Part` changed to use a `name` passed by caller
 #                     and map `type` to `content_type` as supplied by `email`
 #    31-Mar-2005 (CT) `Header_Part` changed to use `X-PMA-Headers` as `type`
+#    18-May-2005 (CT) s/Header_Part/Message_Header/
+#    18-May-2005 (CT) s/Body_Part/Message_Body/
+#    18-May-2005 (CT) `_setup_body` changed to but `Message_Body` into `parts`
+#    18-May-2005 (CT) `_formatted_headers` changed to yield `name` and
+#                     formatted header line
+#    18-May-2005 (CT) `more_body_lines` added to `Message_Header` and
+#                     separate `Message_Header` instance for `more headers`
+#                     removed
 #    ««revision-date»»···
 #--
 
@@ -151,7 +159,7 @@ class _Msg_Part_ (object) :
         for n in (headers or self.headers_to_show) :
             n, h = self._get_header (email, n)
             if h :
-                yield "%-*s: %s" % \
+                yield n, "%-*s: %s" % \
                     (self.label_width, n, self._decoded_header (h))
     # end def _formatted_headers
 
@@ -168,6 +176,12 @@ class _Msg_Part_ (object) :
             result = email [name]
         return name.capitalize (), result
     # end def _get_header
+
+    def _separators (self, sep_length) :
+        yield ""
+        yield ( "%s part %s %s" % ("-" * 4, self.name, "-" * sep_length)
+              ) [:sep_length]
+    # end def _separators
 
     def _temp_body (self) :
         result = TFL.Filename \
@@ -203,16 +217,16 @@ class _Pseudo_Part_ (_Msg_Part_) :
 
 # end class _Pseudo_Part_
 
-class Body_Part (_Pseudo_Part_) :
-    """Model the body of an email as pseudo-part"""
+class Message_Body (_Pseudo_Part_) :
+    """Model the body of a (non multi-part) message or message-part"""
 
     __properties  = \
         ( TFL.Meta.Lazy_Property ("type", lambda s : s.content_type)
         ,
         )
 
-    def __init__ (self, email, name, needs_sep, headers_to_show) :
-        self.needs_sep       = needs_sep
+    def __init__ (self, email, name, headers_to_show) :
+        assert not email.is_multipart ()
         self.headers_to_show = headers_to_show
         self.lines           = None
         self.__super.__init__ (email, name)
@@ -237,7 +251,7 @@ class Body_Part (_Pseudo_Part_) :
             for l in lines :
                 yield l.decode (charset, "replace").rstrip ("\r")
         else :
-            hp = Header_Part (self.email, self.headers_to_show)
+            hp = Message_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
             for l in lines :
                 yield l
@@ -246,9 +260,12 @@ class Body_Part (_Pseudo_Part_) :
     formatted = _formatted = body_lines
 
     def _separators (self, sep_length) :
-        if self.needs_sep :
-            for s in ("", "-" * sep_length, "") :
-                yield s
+        if self.name == "Body" :
+            seps = ("", "-" * sep_length, "")
+        else :
+            seps = self.__super._separators (sep_length)
+        for s in seps :
+            yield s
     # end def _separators
 
     def _setup_body (self, email) :
@@ -257,18 +274,15 @@ class Body_Part (_Pseudo_Part_) :
             self.body = payload.strip ()
     # end def _setup_body
 
-# end class Body_Part
+# end class Message_Body
 
-class Header_Part (_Pseudo_Part_) :
+class Message_Header (_Pseudo_Part_) :
     """Model the headers of an email as pseudo-part"""
 
     type = "X-PMA/Headers"
 
-    def __init__ (self, email, headers_to_show, is_leaf = False, name = None, type = None) :
+    def __init__ (self, email, headers_to_show, name = None) :
         self.headers_to_show = headers_to_show
-        self.is_leaf         = is_leaf
-        if type is not None :
-            self.type        = type
         self.__super.__init__ (email, name or "Headers")
     # end def __init__
 
@@ -278,25 +292,33 @@ class Header_Part (_Pseudo_Part_) :
 
     formatted = _formatted = body_lines
 
+    def more_body_lines (self, sep_length = 79) :
+        return self._mh
+    # end def more_body_lines
+
     def _separators (self, sep_length) :
         return ()
     # end def _separators
 
     def _setup_body (self, email) :
-        self._fh  = list (self._formatted_headers (self.headers_to_show))
-        self.body = "\n".join (self._fh)
-        if not self.is_leaf :
-            hts        = dict_from_list (self.headers_to_show)
-            hth        = sorted ([k for k in email.keys () if k not in hts])
-            self.parts = \
-                [ Header_Part
-                    ( email, hth, True, "More headers"
-                    , type = "X-PMA/More-Headers"
-                    )
-                ]
+        self._fh  = _fh = []
+        add       = _fh.append
+        _hn       = {}
+        for n, h in self._formatted_headers (self.headers_to_show) :
+            add (h)
+            _hn [n] = h
+        self.body = "\n".join (_fh)
+        mhn       = sorted ([k for k in email.keys () if k not in _hn])
+        self._mh  = []
+        add       = self._mh.append
+        seen      = {}
+        for n, h in self._formatted_headers (mhn) :
+            if not h in seen :
+                add  (h)
+                seen [h] = True
     # end def _setup_body
 
-# end class Header_Part
+# end class Message_Header
 
 class _Message_ (_Msg_Part_) :
 
@@ -324,28 +346,17 @@ class _Message_ (_Msg_Part_) :
 
     def part_iter (self) :
         email  = self.email
-        is_msg = isinstance (self, Message)
-        if is_msg :
-            yield Header_Part (email, self.headers_to_show)
-        if not email.is_multipart () :
-            yield Body_Part \
-                (email, self.name or "Body", is_msg, self.headers_to_show)
+        if isinstance (self, Message) :
+            yield Message_Header (email, self.headers_to_show)
+        if self.type == "multipart/alternative" :
+            parts = self.parts [0:1] ### XXX return a MP_Alt_Part object
         else :
-            if self.type == "multipart/alternative" :
-                parts = self.parts [0:1] ### XXX return a MP_Alt_Part object
-            else :
-                parts = self.parts
-            for p in parts :
-                yield p
+            parts = self.parts
+        for p in parts :
+            yield p
     # end def part_iter
 
     _formatted = formatted
-
-    def _separators (self, sep_length) :
-        yield ""
-        yield ( "%s part %s %s" % ("-" * 4, self.name, "-" * sep_length)
-              ) [:sep_length]
-    # end def _separators
 
     def _setup_body (self, email) :
         name       = self.name
@@ -355,17 +366,25 @@ class _Message_ (_Msg_Part_) :
             payload = email.get_payload ()
             if email.get_content_type () == "message/rfc822" :
                 p, = payload
-                parts.append (Message (p, name = name))
+                parts.append (Message (p, name))
             else :
                 i = 1
+                headers_to_show = Message_Part.headers_to_show
                 for p in payload :
                     p_name = ".".join (filter (None, (name, str (i))))
-                    parts.append (Message_Part (p, name = p_name))
+                    if p.is_multipart () :
+                        m = Message_Part (p, p_name)
+                    else :
+                        m = Message_Body (p, p_name, headers_to_show)
+                    parts.append (m)
                     i += 1
         else :
-            payload = email.get_payload (decode = True)
-            if payload :
-                self.body = payload.strip ()
+            name = self.name
+            if isinstance (self, Message) or not name :
+                name = "Body"
+            b = Message_Body (email, name, self.headers_to_show)
+            parts.append     (b)
+            ### XXX needed ??? 18-May-2005 ??? self.body = b.body
     # end def _setup_body
 
 # end class _Message_
@@ -563,7 +582,7 @@ for p in m.all_parts () :
 
 def show (m, head = "") :
     for p in m.part_iter () :
-        print head, type (p), p.name
+        print head, type (p), p.name, p.type, id (p.email), p.email.is_multipart()
         show (p, head + " ")
 
 show (m)

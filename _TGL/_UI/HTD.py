@@ -49,6 +49,11 @@
 #                     `Node_B._no_of_butcons` instead of
 #                     `self.__class__._no_of_butcons` (which fails miserably
 #                     when multiple derived classes are used in the same HDT)
+#    18-May-2005 (CT) `Node_C.Observer.mouse_enter` changed to not scroll
+#                     `observed`
+#    18-May-2005 (CT) `Node_C._tag_callback_dict` added
+#    18-May-2005 (CT) `click_3` added to `_Node_Bs_._button_callback_dict`
+#    18-May-2005 (CT) `see` changed to use `_head_mark` if no arguments passed
 #    ««revision-date»»···
 #--
 
@@ -208,6 +213,8 @@ class _Node_ (TGL.UI.Mixin) :
 
     def see (self, * marks) :
         tkt_text = self.tkt_text
+        if self._head_mark and not marks :
+            marks = (self._head_mark, )
         for m in marks :
             tkt_text.see (m)
     # end def see
@@ -425,6 +432,7 @@ class _Node_Bs_ (Node_B) :
         return dict \
             ( self.__super._button_callback_dict (cb_dict)
             , click_1        = self.inc_state
+            , click_3        = self.dec_state
             )
     # end def _button_callback_dict
 
@@ -531,10 +539,8 @@ class Node_C (_Node_Bs_) :
         # end def inc_state
 
         def mouse_enter (self, observed) :
-            observer = self.observer
-            for o in observer, observed :
-                o.see (o._tail_mark, o._head_mark)
             self.observer._mouse_enter ()
+            self.observer.see ()
         # end def mouse_enter
 
         def mouse_leave (self, observed) :
@@ -577,6 +583,14 @@ class Node_C (_Node_Bs_) :
     def _mouse_leave (self) :
         self.__super.mouse_leave ()
     # end def _mouse_leave
+
+    def _tag_callback_dict (self, cb_dict = {}) :
+        return dict \
+            ( self.__super._tag_callback_dict (cb_dict)
+            , click_1        = lambda event = None : self.controlled.see ()
+            , double_click_1 = self.inc_state
+            )
+    # end def _tag_callback_dict
 
 # end class Node_C
 
