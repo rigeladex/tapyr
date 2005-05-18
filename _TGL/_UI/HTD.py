@@ -54,6 +54,7 @@
 #    18-May-2005 (CT) `Node_C._tag_callback_dict` added
 #    18-May-2005 (CT) `click_3` added to `_Node_Bs_._button_callback_dict`
 #    18-May-2005 (CT) `see` changed to use `_head_mark` if no arguments passed
+#    18-May-2005 (CT) `Node_B3` added
 #    ««revision-date»»···
 #--
 
@@ -507,6 +508,13 @@ class Node_B2 (Node_Bs) :
     _butcon_bitmaps     = ("node_closed", "node_open")
 
 # end class Node_B2
+
+class Node_B3 (Node_Bs) :
+    """Model a three-state node with butcon of a hierarchical text display"""
+
+    _butcon_bitmaps     = ("node_closed", "node_half_open", "node_open")
+
+# end class Node_B3
 
 class Node_B8 (Node_Bs) :
     """Model a two-state node with butcon of a hierarchical text display"""

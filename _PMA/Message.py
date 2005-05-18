@@ -71,6 +71,9 @@
 #    18-May-2005 (CT) `more_body_lines` added to `Message_Header` and
 #                     separate `Message_Header` instance for `more headers`
 #                     removed
+#    18-May-2005 (CT) `email_summary` (and `_date`, `_sender`, and `_time`)
+#                     factored up
+#    18-May-2005 (CT) `Part_Header` factored
 #    ««revision-date»»···
 #--
 
@@ -106,6 +109,7 @@ class _Msg_Part_ (object) :
         )
 
     label_width      = 8
+    number           = None
     summary_format   = "%(name)-10s %(type)-20s %(filename)s"
 
     def __init__ (self, email, name) :
@@ -116,6 +120,34 @@ class _Msg_Part_ (object) :
         self.parts = []
         self._setup_body (email)
     # end def __init__
+
+    def email_summary (self, email, format = None) :
+        name  = self.name
+        type  = self.content_type
+        if format is None :
+            format = self.summary_format
+        number     = self.number
+        if number is None :
+            number = u""
+        date       = self._date   (email) or u""
+        sender     = self._sender (email) or u""
+        subject    = self._decoded_header (email ["subject"])
+        if "%(body)" in format :
+            _pl = email
+            while _pl.is_multipart () :
+                _pl = _pl.get_payload (0)
+            body = _pl.get_payload (decode = True) or u""
+            if isinstance (body, str) :
+                try :
+                    body = body.decode (self.charset, "replace")
+                       ### XXX some emails trigger
+                       ### `UnicodeDecodeError: 'ascii' codec can't decode
+                       ### byte 0xe4` without `replace` argument
+                except LookupError :
+                    body = body.decode ("us-ascii", "replace")
+            body = _ws_pat.sub (u" ", body.strip ()) or u"<empty>"
+        return format % locals ()
+    # end def summary
 
     def summary (self, summary_format = None) :
         if summary_format is None :
@@ -132,6 +164,16 @@ class _Msg_Part_ (object) :
                 result = email.get_param ("charset", "us-ascii")
             return result
     # end def _charset
+
+    def _date (self, email, treshold = 86400 * 270) :
+        t = self._time (email)
+        if t :
+            if now - t > treshold :
+                format = "%d-%b  %Y"
+            else :
+                format = "%d-%b %H:%M"
+            return time.strftime (format, time.localtime (t))
+    # end def _date
 
     def _decoded_header (self, header) :
         result = []
@@ -177,6 +219,21 @@ class _Msg_Part_ (object) :
         return name.capitalize (), result
     # end def _get_header
 
+    def _sender (self, email) :
+        sender = \
+            (  email ["from"]
+            or email ["reply-to"]
+            or email ["return-path"]
+            or email.get_unixfrom ()
+            )
+        if sender :
+            sender = \
+                (  filter (None, Lib.getaddresses ((sender, )) [0])
+                or (None, )
+                ) [0]
+            return self._decoded_header (sender)
+    # end def _sender
+
     def _separators (self, sep_length) :
         yield ""
         yield ( "%s part %s %s" % ("-" * 4, self.name, "-" * sep_length)
@@ -195,6 +252,17 @@ class _Msg_Part_ (object) :
             f.close ()
         return result
     # end def _temp_body
+
+    def _time (self, email) :
+        for date in email ["date"], email ["delivery-date"] :
+            if date :
+                parsed = Lib.parsedate_tz (date)
+                if parsed is not None :
+                    try :
+                        return Lib.mktime_tz (parsed)
+                    except (OverflowError, ValueError) :
+                        pass
+    # end def _time
 
     def __str__ (self) :
         return self.summary_format % dict \
@@ -251,7 +319,7 @@ class Message_Body (_Pseudo_Part_) :
             for l in lines :
                 yield l.decode (charset, "replace").rstrip ("\r")
         else :
-            hp = Message_Header (self.email, self.headers_to_show)
+            hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
             for l in lines :
                 yield l
@@ -276,14 +344,14 @@ class Message_Body (_Pseudo_Part_) :
 
 # end class Message_Body
 
-class Message_Header (_Pseudo_Part_) :
-    """Model the headers of an email as pseudo-part"""
+class Part_Header (_Pseudo_Part_) :
+    """Model the headers of a message part as pseudo-part"""
 
-    type = "X-PMA/Headers"
+    type = "X-PMA/Part-Headers"
 
-    def __init__ (self, email, headers_to_show, name = None) :
+    def __init__ (self, email, headers_to_show) :
         self.headers_to_show = headers_to_show
-        self.__super.__init__ (email, name or "Headers")
+        self.__super.__init__ (email, "Headers")
     # end def __init__
 
     def body_lines (self, sep_length = 79) :
@@ -318,6 +386,18 @@ class Message_Header (_Pseudo_Part_) :
                 seen [h] = True
     # end def _setup_body
 
+# end class Part_Header
+
+class Message_Header (Part_Header) :
+    """Model the headers of an email as pseudo-part"""
+
+    type = "X-PMA/Headers"
+
+    def __init__ (self, email, headers_to_show, summary) :
+        self.summary_line = summary
+        self.__super.__init__ (email, headers_to_show)
+    # end def __init__
+
 # end class Message_Header
 
 class _Message_ (_Msg_Part_) :
@@ -345,9 +425,12 @@ class _Message_ (_Msg_Part_) :
     # end def formatted
 
     def part_iter (self) :
-        email  = self.email
+        email = self.email
         if isinstance (self, Message) :
-            yield Message_Header (email, self.headers_to_show)
+            yield Message_Header \
+                ( email, self.headers_to_show
+                , self.summary (self.short_summary_format)
+                )
         if self.type == "multipart/alternative" :
             parts = self.parts [0:1] ### XXX return a MP_Alt_Part object
         else :
@@ -406,14 +489,17 @@ class Message (_Message_) :
         , "cc"
         , "subject"
         )
+    short_summary_format = unicode \
+        ( "%(name)s %(date).12s %(sender).20s %(subject).45s "
+        )
     summary_format   = unicode \
         ( "%(number)4s %(date)-12.12s %(sender)-20.20s %(subject)-25.25s "
           "[%(body)-50.50s"
         )
 
-    date             = property (lambda s : s._date    ())
-    sender           = property (lambda s : s._sender  ())
-    time             = property (lambda s : s._time    ())
+    date             = property (lambda s : s._date   (s.email))
+    sender           = property (lambda s : s._sender (s.email))
+    time             = property (lambda s : s._time   (s.email))
 
     def __init__ (self, email, name = None, mailbox = None, status = None, number = None) :
         if status is None :
@@ -440,42 +526,8 @@ class Message (_Message_) :
     # end def part_iter
 
     def summary (self, format = None) :
-        email = self.email
-        name  = self.name
-        type  = self.type
-        if format is None :
-            format = self.summary_format
-        number     = self.number
-        if number is None :
-            number = u""
-        date       = self.date or u""
-        sender     = self._sender () or u""
-        subject    = self._decoded_header (email ["subject"])
-        _pl        = email
-        while _pl.is_multipart () :
-            _pl = _pl.get_payload (0)
-        body = _pl.get_payload (decode = True) or u""
-        if isinstance (body, str) :
-            try :
-                body = body.decode (self.charset, "replace")
-                   ### XXX some emails trigger
-                   ### `UnicodeDecodeError: 'ascii' codec can't decode
-                   ### byte 0xe4` without `replace` argument
-            except LookupError :
-                body = body.decode ("us-ascii", "replace")
-        body = _ws_pat.sub (u" ", body.strip ()) or u"<empty>"
-        return format % locals ()
+        return self.email_summary (self.email, format)
     # end def summary
-
-    def _date (self, treshold = 86400 * 270) :
-        t = self.time
-        if t :
-            if now - t > treshold :
-                format = "%d-%b  %Y"
-            else :
-                format = "%d-%b %H:%M"
-            return time.strftime (format, time.localtime (t))
-    # end def _date
 
     def _reparsed (self) :
         result = self.email
@@ -495,34 +547,6 @@ class Message (_Message_) :
             self._setup_body (result)
         return result
     # end def _reparsed
-
-    def _sender (self) :
-        email  = self.email
-        sender = \
-            (  email ["from"]
-            or email ["reply-to"]
-            or email ["return-path"]
-            or email.get_unixfrom ()
-            )
-        if sender :
-            sender = \
-                (  filter (None, Lib.getaddresses ((sender, )) [0])
-                or (None, )
-                ) [0]
-            return self._decoded_header (sender)
-    # end def _sender
-
-    def _time (self) :
-        email = self.email
-        for date in email ["date"], email ["delivery-date"] :
-            if date :
-                parsed = Lib.parsedate_tz (date)
-                if parsed is not None :
-                    try :
-                        return Lib.mktime_tz (parsed)
-                    except (OverflowError, ValueError) :
-                        pass
-    # end def _time
 
     def __str__ (self) :
         return self.summary ()

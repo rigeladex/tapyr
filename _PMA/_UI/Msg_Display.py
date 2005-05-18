@@ -64,6 +64,10 @@ class _MD_Node_B2_ (_Node_Mixin_, TGL.UI.HTD.Node_B2) :
     pass
 # end class _MD_Node_B2_
 
+class _MD_Node_B3_ (_Node_Mixin_, TGL.UI.HTD.Node_B3) :
+    pass
+# end class _MD_Node_B3_
+
 class _MD_Node_B8_ (_Node_Mixin_, TGL.UI.HTD.Node_B8) :
     pass
 # end class _MD_Node_B8_
@@ -88,7 +92,50 @@ class _Generic_Node_ (_MD_Node_B2_) :
 
 # end class _Generic_Node_
 
-class _Header_Node_ (_MD_Node_B2_) :
+class _Header_Node_ (_MD_Node_B3_) :
+
+    def __init__ (self, msg, parent) :
+        S    = _Root_.Style
+        n    = 78 - (parent.level * 3)
+        summ = S.T (msg.summary_line [: n] ,             S.headers)
+        head = S.T (u"\n".join (msg.body_lines      ()), S.headers)
+        more = S.T (u"\n".join (msg.more_body_lines ()), S.more_headers)
+        self.__super.__init__ \
+            ( msg
+            , parent   = parent
+            , contents =
+                ( ( summ, )
+                , ( head, )
+                , ( head, "\n", more)
+                )
+            )
+    # end def __init__
+
+# end class _Header_Node_
+
+class _Message_Node_ (_MD_Node_B2_) :
+
+    summary_format      = unicode \
+        ( "%(name)s %(date).12s %(sender).20s %(subject)s "
+        )
+
+    def __init__ (self, msg, parent) :
+        email = msg.parts [0]
+        n     = 78 - (parent.level * 3)
+        self.__super.__init__ \
+            ( msg
+            , parent   = parent
+            , contents =
+                ( (email.summary (self.summary_format) [: n], )
+                , ("%s %s %s" % (msg.name, msg.type, msg.filename), )
+                )
+            )
+        self.inc_state ()
+    # end def __init__
+
+# end class _Message_Node_
+
+class _Part_Header_Node_ (_MD_Node_B2_) :
 
     def __init__ (self, msg, parent) :
         S    = _Root_.Style
@@ -104,7 +151,7 @@ class _Header_Node_ (_MD_Node_B2_) :
             )
     # end def __init__
 
-# end class _Header_Node_
+# end class _Part_Header_Node_
 
 class _Text_Node_ (_MD_Node_B2_) :
 
@@ -133,7 +180,7 @@ _mime_map = \
     , "message"                  : _Generic_Node_
     , "message/external-body"    : _Generic_Node_ ### XXX
     , "message/partial"          : _Generic_Node_ ### XXX
-    , "message/rfc822"           : _Generic_Node_ ### XXX
+    , "message/rfc822"           : _Message_Node_
     , "multipart"                : _Generic_Node_
     , "multipart/alternative"    : _Generic_Node_ ### XXX
     , "multipart/digest"         : _Generic_Node_
@@ -150,6 +197,7 @@ _mime_map = \
     , "text/html"                : _Generic_Node_ ### XXX rfc2854
     , "video"                    : _Generic_Node_
     , "x-pma/headers"            : _Header_Node_
+    , "x-pma/part-headers"       : _Part_Header_Node_
     }
 
 class _Root_ (TGL.UI.HTD.Root) :
