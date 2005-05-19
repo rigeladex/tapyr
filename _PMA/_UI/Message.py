@@ -89,7 +89,7 @@ ac  = App_Context (PMA)
 mui = Message (ac)
 mui._display.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
 mui._outline.tkt_text.exposed_widget.pack  (expand = YES, fill = BOTH)
-msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/1")
+msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/2")
 mui.display (msg)
 
 msg = PMA.message_from_file ("/swing/private/tanzer/MH/inbox/2")

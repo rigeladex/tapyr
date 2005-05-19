@@ -55,6 +55,9 @@
 #    18-May-2005 (CT) `click_3` added to `_Node_Bs_._button_callback_dict`
 #    18-May-2005 (CT) `see` changed to use `_head_mark` if no arguments passed
 #    18-May-2005 (CT) `Node_B3` added
+#    19-May-2005 (CT) Use `self.style` instead of `self.Style.normal` or
+#                     nothing for inserting whitespace around nodes/children
+#    19-May-2005 (CT) Handling of callable `contents` simplified
 #    ««revision-date»»···
 #--
 
@@ -284,7 +287,7 @@ class _Node_ (TGL.UI.Mixin) :
         tkt_text = self.tkt_text
         for c in children :
             if not tkt_text.is_empty :
-                tkt_text.insert (at_mark, "\n", self.Style.normal)
+                tkt_text.insert (at_mark, "\n", self.style)
             c._insert       (at_mark)
     # end def _insert_children
 
@@ -292,14 +295,11 @@ class _Node_ (TGL.UI.Mixin) :
         if contents :
             tkt_text = self.tkt_text
             for c in contents :
-                if callable (c.value) :
-                    for v, s in c.value () :
-                        p = tkt_text.pos_at  (at_mark)
-                        tkt_text.insert      (at_mark, v, c.style)
-                        tkt_text.apply_style (s, p, at_mark)
-                else :
-                    tkt_text.insert (at_mark, c.value, c.style)
-            tkt_text.insert (at_mark, " ", self.Style.normal)
+                v = c.value
+                if callable (v) :
+                    v = v ()
+                tkt_text.insert (at_mark, v, c.style)
+            tkt_text.insert (at_mark, " ", self.style) # self.Style.normal
     # end def _insert_contents
 
     def _remove (self, head = None) :
@@ -392,9 +392,10 @@ class Node_B (_Node_) :
                     (callback = self._button_callback_dict ())
                 )
             b.push_style           (self.Style.normal)
-            tkt_text.insert        (at_mark, "\t" * (self.level - 1))
+            tkt_text.insert        \
+                (at_mark, "\t" * (self.level - 1), self.style)
             tkt_text.insert_widget (at_mark, self.butcon)
-            tkt_text.insert        (at_mark, "\t")
+            tkt_text.insert        (at_mark, "\t", self.style)
             self._butt_mark = tkt_text.mark_at \
                 (at_mark, left_gravity = True, name = self._butt_mark)
             tkt_text.apply_style \

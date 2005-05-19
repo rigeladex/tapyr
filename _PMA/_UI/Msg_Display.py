@@ -28,6 +28,7 @@
 # Revision Dates
 #    17-May-2005 (CT) Creation
 #    18-May-2005 (CT) Creation continued
+#    19-May-2005 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,8 @@ import _PMA._UI.HTD
 import _PMA._UI.Mixin
 
 import _TGL._UI.HTD
+
+import itertools
 
 class _Node_Mixin_ (PMA.UI.Mixin) :
 
@@ -78,15 +81,16 @@ class _Node_C_ (_Node_Mixin_, TGL.UI.HTD.Node_C) :
 
 class _Generic_Node_ (_MD_Node_B2_) :
 
-    def __init__ (self, msg, parent) :
-        body = u"\n".join (msg.body_lines ())
+    def __init__ (self, msg, parent, ** kw) :
+        summary = "%s %s %s" % (msg.name, msg.type, msg.filename)
         self.__super.__init__ \
             ( msg
             , parent   = parent
             , contents =
-                ( ("%s %s %s" % (msg.name, msg.type, msg.filename), )
-                , (body, )
+                ( (summary, )
+                , (lambda : u"\n".join (msg.body_lines ()) or summary, )
                 )
+            , ** kw
             )
     # end def __init__
 
@@ -94,7 +98,7 @@ class _Generic_Node_ (_MD_Node_B2_) :
 
 class _Header_Node_ (_MD_Node_B3_) :
 
-    def __init__ (self, msg, parent) :
+    def __init__ (self, msg, parent, ** kw) :
         S    = _Root_.Style
         n    = 78 - (parent.level * 3)
         summ = S.T (msg.summary_line [: n] ,             S.headers)
@@ -108,6 +112,7 @@ class _Header_Node_ (_MD_Node_B3_) :
                 , ( head, )
                 , ( head, "\n", more)
                 )
+            , ** kw
             )
     # end def __init__
 
@@ -119,7 +124,7 @@ class _Message_Node_ (_MD_Node_B2_) :
         ( "%(name)s %(date).12s %(sender).20s %(subject)s "
         )
 
-    def __init__ (self, msg, parent) :
+    def __init__ (self, msg, parent, ** kw) :
         email = msg.parts [0]
         n     = 78 - (parent.level * 3)
         self.__super.__init__ \
@@ -129,15 +134,37 @@ class _Message_Node_ (_MD_Node_B2_) :
                 ( (email.summary (self.summary_format) [: n], )
                 , ("%s %s %s" % (msg.name, msg.type, msg.filename), )
                 )
+            , ** kw
             )
         self.inc_state ()
     # end def __init__
 
 # end class _Message_Node_
 
+class _MPA_Node_ (_MD_Node_B8_) :
+
+    no_of_states        = property (lambda s : s._no_of_states)
+    type                = "multipart/alternative"
+
+    def __init__ (self, msg, parent, ** kw) :
+        self._no_of_states = len (msg.altp) + 1
+        self.__super.__init__ \
+            ( msg
+            , parent   = parent
+            , contents =
+                [ (u"\n".join (msg.parts [0].body_lines ()), )
+                ] + [   (lambda : u"\n".join (p.body_lines ()), )
+                    for p in msg.altp
+                    ]
+            , ** kw
+            )
+    # end def __init__
+
+# end class _MPA_Node_
+
 class _Part_Header_Node_ (_MD_Node_B2_) :
 
-    def __init__ (self, msg, parent) :
+    def __init__ (self, msg, parent, ** kw) :
         S    = _Root_.Style
         head = S.T (u"\n".join (msg.body_lines      ()), S.headers)
         more = S.T (u"\n".join (msg.more_body_lines ()), S.more_headers)
@@ -148,6 +175,7 @@ class _Part_Header_Node_ (_MD_Node_B2_) :
                 ( ( head, )
                 , ( head, "\n", more)
                 )
+            , ** kw
             )
     # end def __init__
 
@@ -155,15 +183,15 @@ class _Part_Header_Node_ (_MD_Node_B2_) :
 
 class _Text_Node_ (_MD_Node_B2_) :
 
-    def __init__ (self, msg, parent) :
-        body = u"\n".join (msg.body_lines ())
+    def __init__ (self, msg, parent, ** kw) :
         self.__super.__init__ \
             ( msg
             , parent   = parent
             , contents =
                 ( ("%s %s %s" % (msg.name, msg.type, msg.filename), )
-                , (body, )
+                , (lambda : u"\n".join (msg.body_lines ()), )
                 )
+            , ** kw
             )
         if msg.type == "text/plain" :
             self.inc_state ()
@@ -182,7 +210,7 @@ _mime_map = \
     , "message/partial"          : _Generic_Node_ ### XXX
     , "message/rfc822"           : _Message_Node_
     , "multipart"                : _Generic_Node_
-    , "multipart/alternative"    : _Generic_Node_ ### XXX
+    , "multipart/alternative"    : _Generic_Node_
     , "multipart/digest"         : _Generic_Node_
     , "multipart/encrypted"      : _Generic_Node_ ### XXX rfc1847
     , "multipart/form-data"      : _Generic_Node_ ### XXX rfc2388
@@ -197,6 +225,7 @@ _mime_map = \
     , "text/html"                : _Generic_Node_ ### XXX rfc2854
     , "video"                    : _Generic_Node_
     , "x-pma/headers"            : _Header_Node_
+    , "x-pma/mpa"                : _MPA_Node_
     , "x-pma/part-headers"       : _Part_Header_Node_
     }
 
@@ -223,18 +252,10 @@ class MD_Root (_Root_) :
     def display (self, msg) :
         self.clear ()
         self.msg = msg
-        if 0 :
-            _MD_Node_ \
-                ( msg
-                , parent   = self
-                , contents = msg.summary (self.summary_format)
-                , style    = self.Style.title
-                    ( background = "gray90"
-                    , foreground = "deep sky blue"
-                    , wrap       = "none"
-                    )
-                )
-        self._add_parts (self, msg)
+        self._add_parts \
+            ( self, msg
+            , itertools.cycle ((self.Style.bg_even, self.Style.bg_odd))
+            )
     # end def display
 
     def _add_parts (self, disp, msg) :
@@ -243,12 +264,13 @@ class MD_Root (_Root_) :
             if p.type.startswith ("multipart/") :
                 d = disp
             else :
-                d = self._mime_node (p) (p, disp)
-            self._add_parts (d, p)
+                d = self._mime_node (p) (p, disp, style = cycle.next ())
+            if p.type != "x-pma/mpa" :
+                self._add_parts (d, p, cycle)
     # end def _add_parts
 
     def _mime_node (self, msg) :
-        type = msg.type.lower ()
+        type = msg.type
         base = type.split ("/") [0]
         return (_mime_map.get (type, _mime_map.get (base, _Generic_Node_)))
     # end def _mime_node
@@ -265,14 +287,18 @@ class MD_Root (_Root_) :
             , foreground = "gray30"
             , font_size  = "small"
             )
+        add ( "bg_even"
+            , background = "lightyellow1"
+            )
+        add ( "bg_odd"
+            , background = "lightyellow2"
+            )
     # end def _setup_styles
 
 # end class MD_Root
 
 class MO_Root (_Root_) :
     """Root node of message outline"""
-
-    summary_format      = unicode ("%(name)-10s %(type)-20.20s")
 
     _style_defaults     = dict \
         ( _Root_._style_defaults
@@ -294,11 +320,13 @@ class MO_Root (_Root_) :
     def _add_parts (self, disp, controlled) :
         Node = _Node_C_
         for c in controlled.children :
+            m = c.msg
             o = Node \
-                ( msg        = c.msg
+                ( msg        = m
                 , controlled = c
                 , parent     = disp
-                , contents   = c.msg.summary (self.summary_format)
+                , contents   =
+                    "%-10s %-20.20s" % (m.name, getattr (c, "type", m.type))
                 , style      = c.u_style
                 )
             self._add_parts (o, c)
