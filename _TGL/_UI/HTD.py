@@ -295,11 +295,17 @@ class _Node_ (TGL.UI.Mixin) :
         if contents :
             tkt_text = self.tkt_text
             for c in contents :
-                v = c.value
-                if callable (v) :
-                    v = v ()
-                tkt_text.insert (at_mark, v, c.style)
-            tkt_text.insert (at_mark, " ", self.style) # self.Style.normal
+                if callable (c.value) :
+                    r = c.value ()
+                    if isinstance (r, (str, unicode, Styled)) :
+                        c = Styled (r, self.style, self.styler)
+                    else :
+                        for d in r :
+                            d = Styled      (d, self.style, self.styler)
+                            tkt_text.insert (at_mark, d.value, d.style)
+                        continue
+                tkt_text.insert (at_mark, c.value, c.style)
+            tkt_text.insert (at_mark, " ", self.style)
     # end def _insert_contents
 
     def _remove (self, head = None) :
@@ -773,8 +779,8 @@ class Root (_Node_) :
             lm1   = i   * d.indent
             lm2   = lm1 + d.indent_inc
             add (level, lmargin1 = lm1, lmargin2 = lm2)
+            add ("%sButtonLine" % level, lmargin1 = 0, lmargin2 = lm2)
             if i :
-                add ("%sButtonLine" % level, lmargin1 = 0, lmargin2 = lm2)
                 tabs.append (lm1)
         Style.T = self.styled_text
     # end def _setup_styles

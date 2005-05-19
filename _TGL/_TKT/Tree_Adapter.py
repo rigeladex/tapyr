@@ -47,7 +47,7 @@ class Cell (TFL.Meta.Object) :
     def __init__ (self, * attributes, ** options) :
         self.__super.__init__ ()
         if len (attributes) > len (self.renderer_attributes) :
-            raise TypeError, "Too much renderer attributes specified"
+            raise TypeError, "Too many renderer attributes specified"
         self.attr_map = {}
         for ui, rend in zip (attributes, self.renderer_attributes) :
             if not isinstance (ui, (list, tuple)) :

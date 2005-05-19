@@ -73,14 +73,10 @@ class Folder_Tree (PMA.TKT.Tree_Adapter) :
 class Folder_Summary (PMA.TKT.Tree_Adapter) :
 
     schema = \
-        ( PMA.TKT.Column
-            ("No", PMA.TKT.Text_Cell ("number"))
-        , PMA.TKT.Column
-            ("Sender", PMA.TKT.Text_Cell ("sender"))
-        #, PMA.TKT.Column
-        #    ("Subject", PMA.TKT.Text_Cell ("from"))
-        , PMA.TKT.Column
-            ("Date", PMA.TKT.Text_Cell ("date"))
+        ( PMA.TKT.Column ("No",      PMA.TKT.Text_Cell ("number"))
+        , PMA.TKT.Column ("Sender",  PMA.TKT.Text_Cell ("sender"))
+        , PMA.TKT.Column ("Subject", PMA.TKT.Text_Cell ("subject"))
+        , PMA.TKT.Column ("Date",    PMA.TKT.Text_Cell ("date"))
         )
 
     def has_children (self, element) :
@@ -99,7 +95,7 @@ AC  = App_Context     (PMA)
 win = GTK.Test_Window ("PMA Test", AC = AC)
 psd = GTK.V_Paned     (AC = AC)
 pfo = GTK.V_Paned     (AC = AC)
-p_h = GTK.H_Paned     (pfo, psd, False, False, AC = AC)
+p_h = GTK.H_Paned     (pfo, psd, AC = AC)
 win.add               (p_h)
 
 mui = PMA.UI.Message (AC)

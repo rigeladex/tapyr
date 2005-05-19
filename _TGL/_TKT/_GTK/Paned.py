@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-May-2005 (MG) Automated creation
 #    18-May-2005 (MG) Simplified (o;
+#    19-May-2005 (CT) Simplified more drastically
 #    ««revision-date»»···
 #--
 
@@ -47,18 +48,32 @@ class Paned (GTK.Container) :
         , GTK.Property            ("position_set")
         )
 
-    def _pack (self, where, child, resize = False, shrink = True) :
-        pack  = getattr (self.wtk_object, "pack%d"   % (where, ))
-        frame = getattr (self,            "frame_%d" % (where, ))
-        if frame and not isinstance (child, GTK.Frame) :
+    def __init__ (self, one = None, two = None, AC = None) :
+        self.__super.__init__ (AC = AC)
+        if one is not None :
+            self.pack_1 (one)
+        if two is not None :
+            self.pack_2 (two)
+    # end def __init__
+
+    def _pack (self, child) :
+        if not isinstance (child, (GTK.Frame, Paned)) :
             f = self.TNS.Frame ()
-            f.shadow_type = frame
             f.show ()
             f.add  (child)
             child = f
-        pack \
-            (child.exposed_widget.wtk_object, resize = resize, shrink = shrink)
+        return child
     # end def _pack
+
+    def pack_1 (self, child, ** kw) :
+        child = self._pack (child)
+        return self.wtk_object.pack1 (child.exposed_widget.wtk_object, ** kw)
+    # end def pack_1
+
+    def pack_2 (self, child, ** kw) :
+        child = self._pack (child)
+        return self.wtk_object.pack2 (child.exposed_widget.wtk_object, ** kw)
+    # end def pack_2
 
 # end class Paned
 
@@ -66,33 +81,12 @@ class H_Paned (Paned) :
 
     GTK_Class        = GTK.gtk.HPaned
 
-    frame_1 = GTK.SHADOW_IN  ### left
-    frame_2 = GTK.SHADOW_IN  ### right
-
-    def __init__ ( self
-                 , left          = None
-                 , right         = None
-                 , left_frame    = None
-                 , right_frame   = None
-                 , AC           = None
-                 ) :
-        self.__super.__init__ (AC = AC)
-        for v, a, n, c in ( (left_frame,  "frame_1", 1, left)
-                          , (right_frame, "frame_2", 2, right)
-                          ) :
-            if v is not None :
-                setattr (self, a, v)
-            if c :
-                self._pack (n, c)
+    def __init__ (self, left = None, right = None, AC = None) :
+        self.__super.__init__ (left, right, AC)
     # end def __init__
 
-    def pack_left (self, child, ** kw) :
-        return self._pack (1, child, ** kw)
-    # end def pack_left
-
-    def pack_right (self, child, ** kw) :
-        return self._pack (2, child, ** kw)
-    # end def pack_right
+    pack_left  = Paned.pack_1
+    pack_right = Paned.pack_2
 
 # end class H_Paned
 
@@ -100,33 +94,12 @@ class V_Paned (Paned) :
 
     GTK_Class        = GTK.gtk.VPaned
 
-    frame_1 = GTK.SHADOW_IN  ### top
-    frame_2 = GTK.SHADOW_IN  ### bottom
-
-    def __init__ ( self
-                 , top          = None
-                 , bottom       = None
-                 , top_frame    = None
-                 , bottom_frame = None
-                 , AC           = None
-                 ) :
-        self.__super.__init__ (AC = AC)
-        for v, a, n, c in ( (top_frame,    "frame_1", 1, top)
-                          , (bottom_frame, "frame_2", 2, bottom)
-                          ) :
-            if v is not None :
-                setattr (self, a, v)
-            if c :
-                self._pack (n, c)
+    def __init__ (self, top = None, bottom = None, AC = None) :
+        self.__super.__init__ (top, bottom, AC)
     # end def __init__
 
-    def pack_top (self, child, ** kw) :
-        return self._pack (1, child, ** kw)
-    # end def pack_top
-
-    def pack_bottom (self, child, ** kw) :
-        return self._pack (2, child, ** kw)
-    # end def pack_bottom
+    pack_top    = Paned.pack_1
+    pack_bottom = Paned.pack_2
 
 # end class V_Paned
 

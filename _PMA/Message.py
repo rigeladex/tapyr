@@ -83,6 +83,7 @@
 #    19-May-2005 (CT) `Message_MPA` added and `_Message_._setup_body` changed
 #                     to call it for "multipart/alternative"
 #    19-May-2005 (CT) `all_parts` removed
+#    19-May-2005 (CT) Property for `subject` added
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,8 @@ class _Msg_Part_ (object) :
         , TFL.Meta.Lazy_Property
             ("content_type", lambda s : s._get_content_type ())
         , TFL.Meta.Lazy_Property ("filename", lambda s : s._filename ())
+        , TFL.Meta.Lazy_Property \
+            ("subject",  lambda s : self._decoded_header (email ["subject"]))
         , TFL.Meta.Lazy_Property ("type",     lambda s : s.content_type)
         )
 
@@ -143,7 +146,7 @@ class _Msg_Part_ (object) :
             number = u""
         date       = self._date   (email) or u""
         sender     = self._sender (email) or u""
-        subject    = self._decoded_header (email ["subject"])
+        subject    = self.subject
         if "%(body)" in format :
             _pl = email
             while _pl.is_multipart () :

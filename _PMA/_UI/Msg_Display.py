@@ -42,11 +42,16 @@ import _PMA._UI
 import _PMA._UI.HTD
 import _PMA._UI.Mixin
 
+from   _TFL.Regexp             import *
+
 import _TGL._UI.HTD
+from   _TGL._UI.Styled         import Styled
 
 import itertools
 
 class _Node_Mixin_ (PMA.UI.Mixin) :
+
+    _level_inc = 0
 
     def __init__ (self, msg, * args, ** kw) :
         self.msg = msg
@@ -76,7 +81,7 @@ class _MD_Node_B8_ (_Node_Mixin_, TGL.UI.HTD.Node_B8) :
 # end class _MD_Node_B8_
 
 class _Node_C_ (_Node_Mixin_, TGL.UI.HTD.Node_C) :
-    pass
+    _level_inc = 1
 # end class _Node_C_
 
 class _Generic_Node_ (_MD_Node_B2_) :
@@ -184,20 +189,82 @@ class _Part_Header_Node_ (_MD_Node_B2_) :
 class _Text_Node_ (_MD_Node_B2_) :
 
     def __init__ (self, msg, parent, ** kw) :
+        if msg.body :
+            body = self._body
+            head = "%s %s %s" % (msg.name, msg.type, msg.filename)
+        else :
+            body = ""
+            head = "%s %s %s" % (msg.name, msg.type, "<empty body>")
         self.__super.__init__ \
             ( msg
             , parent   = parent
-            , contents =
-                ( ("%s %s %s" % (msg.name, msg.type, msg.filename), )
-                , (lambda : u"\n".join (msg.body_lines ()), )
-                )
+            , contents = ((head, ), (body, ))
             , ** kw
             )
-        if msg.type == "text/plain" :
+        if msg.body and msg.type == "text/plain" :
             self.inc_state ()
     # end def __init__
 
+    def _body (self) :
+        return u"\n".join (self.msg.body_lines ())
+    # end def _body
+
 # end class _Text_Node_
+
+class _Plain_Text_Node (_Text_Node_) :
+
+    _block_patterns = \
+        ( ( Regexp ( r"(^--[-\s]*$)|(^(?: - \s)+ \s*$)", re.VERBOSE), "sig1")
+        , ( Regexp ( r"(^_+\s*$)",                       re.VERBOSE), "sig2")
+        )
+
+    _line_patterns  = \
+        ( ( Regexp ( r"^\+", re.VERBOSE), "diff_new")
+        , ( Regexp ( r"^\-", re.VERBOSE), "diff_old")
+        , ( Regexp ( r"^\s* [A-Za-z]* \s* (?P<q> >(?: [\s>]*))", re.VERBOSE)
+          , lambda p : "quote%s" % (min (p.q.count (">"), 5), )
+          )
+        )
+
+    def _body (self) :
+        for block, style in self._style_block (self.msg.body_lines ()) :
+            block.append ("")
+            yield Styled ("\n".join (block), style)
+    # end def _body
+
+    def _match_style (self, l, patterns) :
+        for p, s in patterns :
+            if p.match (l) :
+                if callable (s) :
+                    s = s (p)
+                return getattr (_Root_.Style, s)
+    # end def _match_style
+
+    def _style_block (self, lines) :
+        Style      = _Root_.Style
+        block      = []
+        in_block   = False
+        last_line  = None
+        last_style = None
+        for l in lines :
+            if not in_block :
+                style = self._match_style (l, self._line_patterns)
+            if last_line == "" :
+                s = self._match_style (l, self._block_patterns)
+                if s is not None :
+                    in_block = True
+                    style    = s
+            if block and style != last_style :
+                yield block, last_style
+                block = []
+            block.append (l)
+            last_line  = l.strip ()
+            last_style = style
+        if block :
+            yield block, last_style
+    # end def _style_block
+
+# end class _Plain_Text_Node
 
 ### http://www.faqs.org/rfcs/rfc2046.html
 ### http://www.iana.org/assignments/media-types/
@@ -223,6 +290,7 @@ _mime_map = \
     , "text/directory"           : _Text_Node_    ### XXX rfc2425
     , "text/enriched"            : _Text_Node_    ### XXX rfc1896
     , "text/html"                : _Generic_Node_ ### XXX rfc2854
+    , "text/plain"               : _Plain_Text_Node
     , "video"                    : _Generic_Node_
     , "x-pma/headers"            : _Header_Node_
     , "x-pma/mpa"                : _MPA_Node_
@@ -258,7 +326,7 @@ class MD_Root (_Root_) :
             )
     # end def display
 
-    def _add_parts (self, disp, msg) :
+    def _add_parts (self, disp, msg, cycle) :
         for p in msg.part_iter () :
             body = p.body_lines ()
             if p.type.startswith ("multipart/") :
@@ -287,12 +355,17 @@ class MD_Root (_Root_) :
             , foreground = "gray30"
             , font_size  = "small"
             )
-        add ( "bg_even"
-            , background = "lightyellow1"
-            )
-        add ( "bg_odd"
-            , background = "lightyellow2"
-            )
+        add ("bg_even",   background = "lightyellow1")
+        add ("bg_odd",    background = "lightyellow2")
+        add ("diff_new",  foreground = "red")
+        add ("diff_old",  foreground = "blue")
+        add ("quote1",    foreground = "DeepPink3")
+        add ("quote2",    foreground = "DeepPink2")
+        add ("quote3",    foreground = "DeepPink1")
+        add ("quote4",    foreground = "HotPink3")
+        add ("quote5",    foreground = "HotPink2")
+        add ("sig1",      foreground = "magenta2")
+        add ("sig2",      foreground = "cornflower blue")
     # end def _setup_styles
 
 # end class MD_Root
