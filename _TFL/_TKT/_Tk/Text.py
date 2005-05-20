@@ -79,6 +79,8 @@
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
 #    25-Apr-2005 (CT)  `is_empty` implemented properly (it was a dumb dummy)
 #    13-May-2005 (CT)  `remove_style` robustified
+#    20-May-2005 (CT)  `Scrolled_Text` changed to set `x_scroll_default` to
+#                      False
 #    ««revision-date»»···
 #--
 
@@ -337,7 +339,9 @@ Text = _Tk_Text_ # end class _Tk_Text_
 
 class Scrolled_Text (Text) :
 
-    Widget_Type = CTK.Scrolled_Text
+    class Widget_Type (CTK.Scrolled_Text) :
+        x_scroll_default = False
+    # end class Widget_Type
 
 # end class Scrolled_Text
 

@@ -37,6 +37,8 @@
 #     3-Mar-2003 (CT) `Alias_Meta_and_Class_Attribute` added
 #    15-Jul-2004 (CT) `Method_Descriptor` factored
 #    28-Mar-2005 (CT) `Lazy_Property` added
+#    20-May-2005 (CT) `init_instance` changed to call `_set_value` instead of
+#                     `set_value`
 #    ««revision-date»»···
 #--
 
@@ -68,9 +70,10 @@ class _Property_ (property) :
         self.__doc__ = doc
     # end def set_doc
 
-    _del = None
-    _get = get_value
-    _set = None
+    _del       = None
+    _get       = get_value
+    _set       = None
+    _set_value = set_value
 
 # end class _Property_
 
@@ -97,7 +100,7 @@ class RO_Property (Property) :
     # end def __init__
 
     def init_instance (self, obj) :
-        self.set_value (obj, self.init_value)
+        self._set_value (obj, self.init_value)
     # end def init_instance
 
 # end class RO_Property
@@ -108,7 +111,7 @@ class RW_Property (RO_Property) :
     _del = RO_Property.del_value
     _set = RO_Property.set_value
 
-# end class Read_Write
+# end class RW_Property
 
 class Method_Descriptor (object) :
     """Descriptor for special method types."""
