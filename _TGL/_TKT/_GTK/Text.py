@@ -35,6 +35,7 @@
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
 #    20-May-2005 (MG) `V_Scrolled_Text` added
+#    20-May-2005 (MG) `Styler` added to support `wrap` property
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,12 @@ class _GTK_Text_ (GTK.Text_View) :
     _real_name = "Text"
 
     Tag_Styler = GTK.Text_Tag.Styler
+
+    class Styler (TGL.TKT.GTK.Styler) :
+
+        Opts    = dict ( wrap = "wrap_mode")
+
+    # end class Styler
 
     def __init__ (self, AC = None, editable = True, wc = None, ** kw) :
         self.__super.__init__ (AC = AC, ** kw)
