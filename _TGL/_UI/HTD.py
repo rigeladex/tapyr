@@ -58,6 +58,8 @@
 #    19-May-2005 (CT) Use `self.style` instead of `self.Style.normal` or
 #                     nothing for inserting whitespace around nodes/children
 #    19-May-2005 (CT) Handling of callable `contents` simplified
+#    20-May-2005 (CT) `_tag_callback_dict` setting of `double_click_1`
+#                     factored up into `_Node_Bs_` (from `Node_C`)
 #    ««revision-date»»···
 #--
 
@@ -432,8 +434,13 @@ class _Node_Bs_ (Node_B) :
 
     def mouse_leave (self, event = None) :
         self.__super.mouse_leave (event)
-        self.butcon.pop_style    ()
-        self.tkt_text.pop_style  ()
+        for w in self.butcon, self.tkt_text :
+            try :
+                w.pop_style ()
+            except IndexError :
+                ### can have too many `mouse_leave` calls if we are called by
+                ### a `mouse_leave` event and by a key binding
+                pass
     # end def mouse_leave
 
     def _button_callback_dict (self, cb_dict = {}) :
@@ -459,6 +466,13 @@ class _Node_Bs_ (Node_B) :
             children = ()
         self.__super._insert_children (at_mark, * children)
     # end def _insert_children
+
+    def _tag_callback_dict (self, cb_dict = {}) :
+        return dict \
+            ( self.__super._tag_callback_dict (cb_dict)
+            , double_click_1 = self.inc_state
+            )
+    # end def _tag_callback_dict
 
 # end class _Node_Bs_
 
@@ -602,8 +616,7 @@ class Node_C (_Node_Bs_) :
     def _tag_callback_dict (self, cb_dict = {}) :
         return dict \
             ( self.__super._tag_callback_dict (cb_dict)
-            , click_1        = lambda event = None : self.controlled.see ()
-            , double_click_1 = self.inc_state
+            , click_1 = lambda event = None : self.controlled.see ()
             )
     # end def _tag_callback_dict
 

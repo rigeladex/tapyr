@@ -44,6 +44,7 @@ import _PMA._UI.Mixin
 
 from   _TFL.Regexp             import *
 
+import _TGL._UI
 import _TGL._UI.HTD
 from   _TGL._UI.Styled         import Styled
 
@@ -213,18 +214,27 @@ class _Text_Node_ (_MD_Node_B2_) :
 
 class _Plain_Text_Node (_Text_Node_) :
 
-    _block_patterns = \
-        ( ( Regexp ( r"(^--[-\s]*$)|(^(?: - \s)+ \s*$)", re.VERBOSE), "sig1")
-        , ( Regexp ( r"(^_+\s*$)",                       re.VERBOSE), "sig2")
+    _block_patterns   = \
+        ( ( Regexp ( r"(^_+\s*$)", re.VERBOSE), "sig2")
+        ,
         )
 
-    _line_patterns  = \
+    _block_patterns_s = \
+        ( ( Regexp ( r"(^--[-\s]*$)|(^(?: - \s)+ \s*$)", re.VERBOSE), "sig1")
+        ,
+        )
+
+    _line_patterns    = \
         ( ( Regexp ( r"^\+", re.VERBOSE), "diff_new")
-        , ( Regexp ( r"^\-", re.VERBOSE), "diff_old")
+        , ( Regexp ( r"^-",  re.VERBOSE), "diff_old")
+        , ( Regexp ( r"^\s*\#", re.VERBOSE), "comment")
+        , ( Regexp ( r"^\s*:", re.VERBOSE), "colonade")
         , ( Regexp ( r"^\s* [A-Za-z]* \s* (?P<q> >(?: [\s>]*))", re.VERBOSE)
           , lambda p : "quote%s" % (min (p.q.count (">"), 5), )
           )
         )
+
+    ### XXX add style for urls (send to browser, copy into clipboard)
 
     def _body (self) :
         for block, style in self._style_block (self.msg.body_lines ()) :
@@ -232,12 +242,13 @@ class _Plain_Text_Node (_Text_Node_) :
             yield Styled ("\n".join (block), style)
     # end def _body
 
-    def _match_style (self, l, patterns) :
-        for p, s in patterns :
-            if p.match (l) :
-                if callable (s) :
-                    s = s (p)
-                return getattr (_Root_.Style, s)
+    def _match_style (self, l, patterns, guard = True) :
+        if guard :
+            for p, s in patterns :
+                if p.match (l) :
+                    if callable (s) :
+                        s = s (p)
+                    return getattr (_Root_.Style, s)
     # end def _match_style
 
     def _style_block (self, lines) :
@@ -249,11 +260,13 @@ class _Plain_Text_Node (_Text_Node_) :
         for l in lines :
             if not in_block :
                 style = self._match_style (l, self._line_patterns)
-            if last_line == "" :
-                s = self._match_style (l, self._block_patterns)
-                if s is not None :
-                    in_block = True
-                    style    = s
+            s = (  self._match_style (l, self._block_patterns)
+                or self._match_style
+                       (l, self._block_patterns_s, last_line == "")
+                )
+            if s is not None :
+                in_block = True
+                style    = s
             if block and style != last_style :
                 yield block, last_style
                 block = []
@@ -348,7 +361,7 @@ class MD_Root (_Root_) :
         Style = self.Style
         add   = Style.add
         add ( "headers"
-            , foreground = "red"
+            , foreground = "orange"
             , font_size  = "medium"
             )
         add ( "more_headers"
@@ -357,6 +370,8 @@ class MD_Root (_Root_) :
             )
         add ("bg_even",   background = "lightyellow1")
         add ("bg_odd",    background = "lightyellow2")
+        add ("colonade",  foreground = "rosy brown")
+        add ("comment",   foreground = "firebrick")
         add ("diff_new",  foreground = "red")
         add ("diff_old",  foreground = "blue")
         add ("quote1",    foreground = "DeepPink3")
@@ -366,6 +381,7 @@ class MD_Root (_Root_) :
         add ("quote5",    foreground = "HotPink2")
         add ("sig1",      foreground = "magenta2")
         add ("sig2",      foreground = "cornflower blue")
+        ### other colors: "forest green", "purple"
     # end def _setup_styles
 
 # end class MD_Root
