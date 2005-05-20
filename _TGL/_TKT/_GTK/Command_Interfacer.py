@@ -33,6 +33,9 @@
 #    12-May-2005 (MG) Group support added to `_CI_Toolbar_Group_`
 #    15-May-2005 (MG) `accelerator` support added
 #    15-May-2005 (MG) `underline` support added
+#    20-May-2005 (MG) `_menu_item`: added support for `Key_Binder` objects as
+#                     accelerator
+#    20-May-2005 (MG) `_push_help` and `_pop_help` impelented
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -98,12 +101,28 @@ class Boolean_Variable (object) :
 class _CI_ (TFL.TKT.Command_Interfacer) :
     """Base class for all command interfacers"""
 
-    def _push_help (self, event = None) :
-        print "Push Help for", self
+    active_help = None
+
+    def _push_help (self, event = None, item = None) :
+        ### XXX is this the correct way to find the help ???
+        cmd   = getattr (item, "_command", None)
+        msg   = cmd.__doc__
+        label = item.label.label
+        if cmd :
+            try :
+                if hasattr (cmd, "im_self") :
+                    msg = cmd.im_self.menu_help (label, cmd, msg)
+                else :
+                    msg = cmd.menu_help         (label, cmd, msg)
+            except (SystemExit, KeyboardInterrupt), exc :
+                raise
+            except :
+                pass
+        self.help_widget.push_help (msg)
     # end def _push_help
 
     def _pop_help (self, event = None) :
-        print "Pop Help for", self
+        self.help_widget.pop_help ()
     # end def _pop_help
 
 # end class _CI_
@@ -141,17 +160,16 @@ class _CI_Item_Mixin_ (_CI_) :
             kw ["variable"] = state_var
         else :
             fct = self._new_item
-        return self._insert_item \
-            ( index, delta
-            , fct
-                ( label       = name
-                , command     = callback
-                , underline   = underline
-                , icon        = icon
-                , accelerator = accelerator
-                , ** kw
-                )
+        item = fct \
+            ( label       = name
+            , command     = callback
+            , underline   = underline
+            , icon        = icon
+            , accelerator = accelerator
+            , ** kw
             )
+        item._command = callback
+        return self._insert_item (index, delta, item)
     # end def add_command
 
     def remove_command (self, index) :
@@ -422,10 +440,13 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
         if command :
             item.bind_add (self.TNS.Signal.Activate, command)
         if self.help_widget :
-            item.bind_add (self.TNS.Signal.Select,   self._push_help)
+            item.bind_add (self.TNS.Signal.Select,   self._push_help, item)
             item.bind_add (self.TNS.Signal.Deselect, self._pop_help)
         if accelerator and self.accel_group :
-            kv, km = GTK.gtk.accelerator_parse (accelerator)
+            if isinstance (accelerator, str) :
+                kv, km = GTK.gtk.accelerator_parse (accelerator)
+            else :
+                kv, km = accelerator.key_spec
             item.add_accelerator \
                 ("activate", self.accel_group, kv, km, self.TNS.ACCEL_VISIBLE)
         self._handle_shortcut (item, label, underline)

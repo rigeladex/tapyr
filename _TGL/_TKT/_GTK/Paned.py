@@ -29,6 +29,8 @@
 #    18-May-2005 (MG) Automated creation
 #    18-May-2005 (MG) Simplified (o;
 #    19-May-2005 (CT) Simplified more drastically
+#    20-May-2005 (MG) Pass `AC` to the new `Frame` instances
+#    20-May-2005 (MG) `** kw` added to all constructors
 #    ««revision-date»»···
 #--
 
@@ -48,8 +50,10 @@ class Paned (GTK.Container) :
         , GTK.Property            ("position_set")
         )
 
-    def __init__ (self, one = None, two = None, AC = None) :
-        self.__super.__init__ (AC = AC)
+    memory_attributes = ("position", )
+
+    def __init__ (self, one = None, two = None, AC = None, ** kw) :
+        self.__super.__init__ (AC = AC, ** kw)
         if one is not None :
             self.pack_1 (one)
         if two is not None :
@@ -58,7 +62,7 @@ class Paned (GTK.Container) :
 
     def _pack (self, child) :
         if not isinstance (child, (GTK.Frame, Paned)) :
-            f = self.TNS.Frame ()
+            f = self.TNS.Frame (AC = self.AC)
             f.show ()
             f.add  (child)
             child = f
@@ -81,8 +85,8 @@ class H_Paned (Paned) :
 
     GTK_Class        = GTK.gtk.HPaned
 
-    def __init__ (self, left = None, right = None, AC = None) :
-        self.__super.__init__ (left, right, AC)
+    def __init__ (self, left = None, right = None, AC = None, ** kw) :
+        self.__super.__init__ (left, right, AC, ** kw)
     # end def __init__
 
     pack_left  = Paned.pack_1
@@ -94,8 +98,8 @@ class V_Paned (Paned) :
 
     GTK_Class        = GTK.gtk.VPaned
 
-    def __init__ (self, top = None, bottom = None, AC = None) :
-        self.__super.__init__ (top, bottom, AC)
+    def __init__ (self, top = None, bottom = None, AC = None, ** kw) :
+        self.__super.__init__ (top, bottom, AC, ** kw)
     # end def __init__
 
     pack_top    = Paned.pack_1

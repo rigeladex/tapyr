@@ -29,6 +29,9 @@
 #    22-Mar-2005 (MG) Automated creation
 #    22-Mar-2005 (MG) Creation continued
 #    13-May-2005 (MG) `accel_group` and friends added
+#    20-May-2005 (MG) New properties `size` and `position` added,
+#                     `memory_attributes` added
+#    20-May-2005 (MG) `present` added
 #    ««revision-date»»···
 #--
 
@@ -59,9 +62,13 @@ class Window (GTK.Bin) :
         , GTK.SG_Property  ("icon_name")
         , GTK.Property     ("is_active", set = None)
         , GTK.SG_Property  ("modal")
+        , GTK.SG_Property
+            ("position", set = lambda s, v : s.wtk_object.move (* v))
         , GTK.SG_Property  ("resizable")
         , GTK.SG_Property  ("role")
         , GTK.SG_Property  ("screen")
+        , GTK.SG_Property
+            ("size", set = lambda s, v : s.wtk_object.set_default_size (* v))
         , GTK.SG_Property  ("skip_pager_hint")
         , GTK.SG_Property  ("skip_taskbar_hint")
         , GTK.SG_Property  ("title")
@@ -73,7 +80,10 @@ class Window (GTK.Bin) :
     _wtk_delegation  = GTK.Delegation \
         ( GTK.Delegator_O ("add_accel_group")
         , GTK.Delegator_O ("remove_accel_group")
+        , GTK.Delegator   ("present")
         )
+
+    memory_attributes = ("size", "position")
 
     def __init__ (self, title = None, ** kw) :
         self.__super.__init__ (** kw)

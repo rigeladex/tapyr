@@ -214,7 +214,7 @@ class Application (PMA.UI.Mixin) :
         return False ### XXX
     # end def pending_changes
 
-    def quit (self) :
+    def quit (self, event = None) :
         """Terminate %(name)s without committing pending mailbox changes."""
         self._quit (self._try_quit)
     # end def quit

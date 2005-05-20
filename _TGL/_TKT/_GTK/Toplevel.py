@@ -20,32 +20,32 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.__init__
+#    TGL.TKT.GTK.Toplevel
 #
 # Purpose
-#    Package providing GTK toolkit support for TGL
+#    A Toplevel window for applications.
 #
 # Revision Dates
-#    21-Mar-2005 (MG) Creation
-#    25-Mar-2005 (CT) Moved to `TGL`
-#    20-May-2005 (MG) `Error` added
+#    20-May-2005 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from   _TFL                   import TFL
-from   _TGL                   import TGL
-from   _TFL.Package_Namespace import Package_Namespace
-import _TGL._TKT
+from   _TGL._TKT._GTK         import GTK
+import _TGL._TKT._GTK.Window
+import _TGL._TKT._GTK.Signal
 
-GTK = Package_Namespace ()
-TGL.TKT._Export         ("GTK")
+class Toplevel (GTK.Window) :
+    """A toplevel window for applications."""
 
-GTK.stop_cb_chaining = True
-GTK.Error            = Exception
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        #self.bind_add (GTK.Signal.Destroy, GTK.quit)
+    # end def __init__
 
-import _TGL._TKT.Mixin
-TGL.TKT.Mixin.TNS_name = "GTK"
+# end class Toplevel
 
-del Package_Namespace
+if __name__ != "__main__" :
+    GTK._Export ("Toplevel")
+### __END__ Toplevel
 
-### __END__ TGL.TKT.GTK.__init__
+

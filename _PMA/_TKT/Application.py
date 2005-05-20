@@ -58,7 +58,8 @@ class _Application_ (PMA.TKT.Mixin) :
     # end def echo
 
     def _destroy (self) :
-        self.queued_stdout.destroy ()
+        if self.queued_stdout :
+            self.queued_stdout.destroy ()
     # end def _destroy
 
     def _kill_interact (self, event = None) :

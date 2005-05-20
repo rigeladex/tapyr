@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Mar-2005 (MG) Creation
+#    20-May-2005 (MG) Widget memory support added
 #    ««revision-date»»···
 #--
 
@@ -39,8 +40,15 @@ class Test_Window (GTK.Window) :
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
+        self.bind_add (GTK.Signal.Delete, self._quit)
         self.bind_add (GTK.Signal.Destroy, GTK.quit)
     # end def __init__
+
+    def _quit (self, event) :
+        if self.AC and hasattr (self.AC, "memory") :
+            self.save_widget_memory (True)
+            self.AC.memory.dump     ()
+    # end def _quit
 
 # end class Test_Window
 

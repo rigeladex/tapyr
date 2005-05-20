@@ -20,32 +20,38 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.__init__
+#    TGL.TKT.GTK.Progress_Bar
 #
 # Purpose
-#    Package providing GTK toolkit support for TGL
+#    Wrapper for the GTK widget ProgressBar
 #
 # Revision Dates
-#    21-Mar-2005 (MG) Creation
-#    25-Mar-2005 (CT) Moved to `TGL`
-#    20-May-2005 (MG) `Error` added
+#    20-May-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
-from   _TFL                   import TFL
-from   _TGL                   import TGL
-from   _TFL.Package_Namespace import Package_Namespace
-import _TGL._TKT
+from   _TGL._TKT._GTK         import GTK
+import _TGL._TKT._GTK.Progress
 
-GTK = Package_Namespace ()
-TGL.TKT._Export         ("GTK")
+class Progress_Bar (GTK.Progress) :
+    """Wrapper for the GTK widget ProgressBar"""
 
-GTK.stop_cb_chaining = True
-GTK.Error            = Exception
+    GTK_Class        = GTK.gtk.ProgressBar
+    __gtk_properties = \
+        ( GTK.Property            ("activity_blocks")
+        , GTK.Property            ("activity_step")
+        , GTK.SG_Object_Property  ("adjustment")
+        , GTK.Property            ("bar_style")
+        , GTK.Property            ("discrete_blocks")
+        , GTK.SG_Property         ("ellipsize")
+        , GTK.SG_Property         ("fraction")
+        , GTK.SG_Property         ("orientation")
+        , GTK.SG_Property         ("pulse_step")
+        , GTK.SG_Property         ("text")
+        )
 
-import _TGL._TKT.Mixin
-TGL.TKT.Mixin.TNS_name = "GTK"
+# end class Progress_Bar
 
-del Package_Namespace
-
-### __END__ TGL.TKT.GTK.__init__
+if __name__ != "__main__" :
+    GTK._Export ("Progress_Bar")
+### __END__ TGL.TKT.GTK.Progress_Bar

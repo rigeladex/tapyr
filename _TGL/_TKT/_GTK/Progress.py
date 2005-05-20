@@ -20,32 +20,32 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.__init__
+#    TGL.TKT.GTK.Progress
 #
 # Purpose
-#    Package providing GTK toolkit support for TGL
+#    Wrapper for the GTK widget Progress
 #
 # Revision Dates
-#    21-Mar-2005 (MG) Creation
-#    25-Mar-2005 (CT) Moved to `TGL`
-#    20-May-2005 (MG) `Error` added
+#    20-May-2005 (MG) Automated creation
 #    ««revision-date»»···
 #--
 
-from   _TFL                   import TFL
-from   _TGL                   import TGL
-from   _TFL.Package_Namespace import Package_Namespace
-import _TGL._TKT
+from   _TGL._TKT._GTK         import GTK
+import _TGL._TKT._GTK.Widget
 
-GTK = Package_Namespace ()
-TGL.TKT._Export         ("GTK")
+class Progress (GTK.Widget) :
+    """Wrapper for the GTK widget Progress"""
 
-GTK.stop_cb_chaining = True
-GTK.Error            = Exception
+    GTK_Class        = GTK.gtk.Progress
+    __gtk_properties = \
+        ( GTK.Property            ("activity_mode")
+        , GTK.Property            ("show_text")
+        , GTK.Property            ("text_xalign")
+        , GTK.Property            ("text_yalign")
+        )
 
-import _TGL._TKT.Mixin
-TGL.TKT.Mixin.TNS_name = "GTK"
+# end class Progress
 
-del Package_Namespace
-
-### __END__ TGL.TKT.GTK.__init__
+if __name__ != "__main__" :
+    GTK._Export ("Progress")
+### __END__ TGL.TKT.GTK.Progress

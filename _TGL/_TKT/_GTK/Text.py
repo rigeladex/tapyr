@@ -36,6 +36,8 @@
 #                      respectively
 #    20-May-2005 (MG) `V_Scrolled_Text` added
 #    20-May-2005 (MG) `Styler` added to support `wrap` property
+#    20-May-2005 (MG) `V_Scrolled_Text` removed
+#    20-May-2005 (MG) `show` methods added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +48,7 @@ import _TGL._TKT._GTK.Text_Buffer
 import _TGL._TKT._GTK.Text_Tag
 import _TGL._TKT._GTK.Scrolled_Window
 import _TGL._TKT._GTK.Signal
+import _TGL._TKT._GTK.Constants
 import  pango
 
 GTK = TGL.TKT.GTK
@@ -136,6 +139,10 @@ class _GTK_Text_ (GTK.Text_View) :
         return self._buffer.apply_style (style, head, * args, ** kw)
     # end def apply_style
 
+    def show (self) :
+        self.wtk_object.show ()
+    # end def show
+
     def __getattr__ (self, name) :
         if not name.startswith ("__") :
             return getattr (self._buffer, name)
@@ -151,6 +158,7 @@ class Scrolled_Text (GTK.Scrolled_Window) :
         self.__super.__init__   (AC = AC)
         self._text   = GTK.Text (AC = AC, * args, ** kw)
         self.add                (self._text)
+        self.hscrollbar_policy = self.TNS.NEVER
     # end def __init__
 
     #### we must override this function because we don't want the
@@ -159,30 +167,10 @@ class Scrolled_Text (GTK.Scrolled_Window) :
         return self._text.apply_style (* args, ** kw)
     # end def apply_style
 
-    def __getattr__ (self, name) :
-        if not name.startswith ("__") :
-            try :
-                return getattr (self._text, name)
-            except AttributeError :
-                return self.__super.__getattr__ (name)
-        raise AttributeError, name
-    # end def __getattr__
-
-# end class Scrolled_Text
-
-class V_Scrolled_Text (Scrolled_Text) :
-    """A scrolled Text widget with has only a vertical scrollbar"""
-
-    def __init__ (self, * args, ** kw) :
-        self.__super.__init__   (* args, ** kw)
-        self.hscrollbar_policy = self.TNS.POLICY_NEVER
-    # end def __init__
-
-    #### we must override this function because we don't want the
-    #### `apply_style` Function from the `Text_View` widget
-    def apply_style (self, * args, ** kw) :
-        return self._text.apply_style (* args, ** kw)
-    # end def apply_style
+    def show (self) :
+        self.wtk_object.show ()
+        self._text.show      ()
+    # end def show
 
     def __getattr__ (self, name) :
         if not name.startswith ("__") :
@@ -248,7 +236,7 @@ GTK.main          ()
 """
 
 if __name__ != "__main__" :
-    GTK._Export ("Text", "Scrolled_Text", "V_Scrolled_Text")
+    GTK._Export ("Text", "Scrolled_Text")
 ### __END__ TGL.TKT.GTK.Text
 
 

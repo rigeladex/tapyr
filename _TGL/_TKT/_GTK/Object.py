@@ -41,6 +41,8 @@
 #    16-May-2005 (MG) Support for the defintion of new GTK properties added
 #    18-May-2005 (MG) `Delegator_EO` added
 #    20-May-2005 (MG) `weakref` attribute added
+#    20-May-2005 (MG) Widget memory support added
+#    20-May-2005 (MG) `idle_add`, `idle_remove`, and `update_idletasks` added
 #    ««revision-date»»···
 #--
 
@@ -155,7 +157,7 @@ class SG_Object_List_Property (SG_Object_Property) :
 
 # end class SG_Object_List_Property
 
-class List_Property (Property) :
+class List_Property (SG_Property) :
     """Models a property which requires a list as parameter for the `set`
        function.
     """
@@ -329,10 +331,11 @@ class Object (TGL.TKT.Mixin) :
        <class 'Object.Hansi'>
     """
 
-    __metaclass__    = _M_Object_
-    __gtk_properties = ()
-    _wtk_delegation  = {}
-    weakref          = True
+    __metaclass__     = _M_Object_
+    __gtk_properties  = ()
+    _wtk_delegation   = {}
+    weakref           = False
+    memory_attributes = ()
 
     ### `Class_Name` is the name of the new generated GTK-type
     ### `Signals`    is a dictionary describing the signals of the new GTK-type
@@ -359,6 +362,37 @@ class Object (TGL.TKT.Mixin) :
     def _del_wtk (self, event) :
         self.wtk_object.set_data ("ktw_object", None)
     # end def _del_wtk
+
+    def dump_widget_memory (self, recurse = True, ** data) :
+        if self.AC and self.name :
+            dump = dict \
+                ([(n, getattr (self, n)) for n in self.memory_attributes])
+            dump.update (data)
+            if dump :
+                self.AC.memory.state ["window_geometry"] [self.name] = dump
+            if recurse :
+                for child in getattr (self, "children", ()) :
+                    child.dump_widget_memory (recurse = recurse)
+    # end def dump_widget_memory
+
+    def read_widget_memory (self) :
+        if self.AC and self.name :
+            dump = self.AC.memory.state ["window_geometry"].get (self.name, {})
+            if dump :
+                for name in self.memory_attributes :
+                    value = dump.get (name, None)
+                    if value is not None :
+                        setattr (self, name, value)
+                    del dump [name]
+            return dump
+        return {}
+    # end def read_widget_memory
+
+    def save_widget_memory (self, recurse = True) :
+        if self.AC and hasattr (self.AC, "memory") :
+            self.dump_widget_memory (recurse = recurse)
+            self.AC.memory.dump     ()
+    # end def save_widget_memory
 
     def _bind_single_ (self, signal, connect, func, args, kw) :
         for cid in self._handlers.get (signal, ()) :
@@ -466,6 +500,23 @@ class Object (TGL.TKT.Mixin) :
             return result
         raise AttributeError, name
     # end def __getattr__
+
+    @staticmethod
+    def idle_add (callback, * args) :
+        return gobject.idle_add (callback, args)
+    # end def idle_add
+
+    @staticmethod
+    def idle_remove (idle_id) :
+        return gobject.source_remove (idle_id)
+    # end def idle_remove
+
+    @staticmethod
+    def update_idletasks () :
+        """Update pending GUI-Events"""
+        while gtk.events_pending ():
+            gtk.main_iteration (block = False)
+    # end def update_idletasks
 
 # end class Object
 

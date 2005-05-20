@@ -31,6 +31,7 @@
 #--
 
 from   _TGL                   import TGL
+from   _TFL                   import TFL
 from   _PMA                   import PMA
 from   _TFL.Command_Line      import Command_Line
 import _PMA._UI
@@ -41,6 +42,7 @@ import _PMA.Mailbox
 from   _TGL._UI.App_Context   import App_Context
 import _TGL._TKT._GTK.V_Box
 import _PMA._UI.HTB
+import _TFL.App_State
 import _PMA._TKT._GTK.Text
 import _PMA._TKT._GTK.Butcon
 import _PMA._TKT._GTK.Eventname
@@ -91,11 +93,17 @@ class Folder_Summary (PMA.TKT.Tree_Adapter) :
 
 GTK = TGL.TKT.GTK
 
-AC  = App_Context     (PMA)
-win = GTK.Test_Window ("PMA Test", AC = AC)
-psd = GTK.V_Paned     (AC = AC)
-pfo = GTK.V_Paned     (AC = AC)
-p_h = GTK.H_Paned     (pfo, psd, AC = AC)
+class State (TFL.App_State) :
+    product_name = "PMA"
+# end class State
+
+state = State (window_geometry = {})
+AC  = App_Context     (PMA, memory = state)
+state.load ()
+win = GTK.Test_Window ("PMA Test", AC = AC, name = "main_window")
+psd = GTK.V_Paned     (AC = AC, name = "summary_display")
+pfo = GTK.V_Paned     (AC = AC, name = "folder_outline")
+p_h = GTK.H_Paned     (pfo, psd, AC = AC, name = "folder_summery")
 win.add               (p_h)
 
 mui = PMA.UI.Message (AC)
@@ -112,9 +120,9 @@ psd.pack_top (fs.tkt)
 
 
 msg = mb.messages [0]
-mui.display           (msg)
-win.show_all          ()
-GTK.main              ()
+mui.display            (msg)
+win.show_all           ()
+GTK.main               ()
 ### __END__ _test_PMA
 
 

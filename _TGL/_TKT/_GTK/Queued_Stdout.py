@@ -20,32 +20,36 @@
 #
 #++
 # Name
-#    TGL.TKT.GTK.__init__
+#    TGL.TKT.GTK.Queued_Stdout
 #
 # Purpose
-#    Package providing GTK toolkit support for TGL
+#    Provide thread-safe redirection of stdout for GTK toolkit wrapper
 #
 # Revision Dates
-#    21-Mar-2005 (MG) Creation
-#    25-Mar-2005 (CT) Moved to `TGL`
-#    20-May-2005 (MG) `Error` added
+#    20-May-2005 (MG) Creation
 #    ««revision-date»»···
 #--
-
-from   _TFL                   import TFL
-from   _TGL                   import TGL
-from   _TFL.Package_Namespace import Package_Namespace
+#
+from   _TGL           import TGL
 import _TGL._TKT
+import _TGL._TKT.Queued_Stdout
 
-GTK = Package_Namespace ()
-TGL.TKT._Export         ("GTK")
+class Queued_Stdout (TGL.TKT.Queued_Stdout) :
+    """Thread-safe redirection of stdout for GTK"""
 
-GTK.stop_cb_chaining = True
-GTK.Error            = Exception
+    def _cancel_pending (self) :
+        if self.out_widget and self._pending is not None :
+            self.out_widget.idle_remove (self._pending)
+    # end def _cancel_pending
 
-import _TGL._TKT.Mixin
-TGL.TKT.Mixin.TNS_name = "GTK"
+    def _schedule_pending (self) :
+        return self.out_widget.idle_add (self.update)
+    # end def _schedule_pending
 
-del Package_Namespace
+# end class Queued_Stdout
 
-### __END__ TGL.TKT.GTK.__init__
+
+if __name__ != "__main__" :
+    from   _TGL._TKT._GTK import GTK
+    GTK._Export ("Queued_Stdout")
+### __END__ TGL.TKT.GTK.Queued_Stdout
