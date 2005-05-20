@@ -34,6 +34,7 @@
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
+#    20-May-2005 (MG) `V_Scrolled_Text` added
 #    ««revision-date»»···
 #--
 
@@ -143,6 +144,31 @@ class Scrolled_Text (GTK.Scrolled_Window) :
         self.__super.__init__   (AC = AC)
         self._text   = GTK.Text (AC = AC, * args, ** kw)
         self.add                (self._text)
+    # end def __init__
+
+    #### we must override this function because we don't want the
+    #### `apply_style` Function from the `Text_View` widget
+    def apply_style (self, * args, ** kw) :
+        return self._text.apply_style (* args, ** kw)
+    # end def apply_style
+
+    def __getattr__ (self, name) :
+        if not name.startswith ("__") :
+            try :
+                return getattr (self._text, name)
+            except AttributeError :
+                return self.__super.__getattr__ (name)
+        raise AttributeError, name
+    # end def __getattr__
+
+# end class Scrolled_Text
+
+class V_Scrolled_Text (Scrolled_Text) :
+    """A scrolled Text widget with has only a vertical scrollbar"""
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__   (* args, ** kw)
+        self.hscrollbar_policy = self.TNS.POLICY_NEVER
     # end def __init__
 
     #### we must override this function because we don't want the

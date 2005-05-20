@@ -84,6 +84,7 @@
 #                     to call it for "multipart/alternative"
 #    19-May-2005 (CT) `all_parts` removed
 #    19-May-2005 (CT) Property for `subject` added
+#    20-May-2005 (MG) Property `subject` fixed
 #    ««revision-date»»···
 #--
 
@@ -117,7 +118,7 @@ class _Msg_Part_ (object) :
             ("content_type", lambda s : s._get_content_type ())
         , TFL.Meta.Lazy_Property ("filename", lambda s : s._filename ())
         , TFL.Meta.Lazy_Property \
-            ("subject",  lambda s : self._decoded_header (email ["subject"]))
+            ("subject",  lambda s : s._decoded_header (s.email ["subject"]))
         , TFL.Meta.Lazy_Property ("type",     lambda s : s.content_type)
         )
 

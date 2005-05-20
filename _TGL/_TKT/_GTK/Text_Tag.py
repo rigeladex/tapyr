@@ -32,6 +32,7 @@
 #     5-Apr-2005 (MG) New signals added
 #     5-Apr-2005 (MG) `_correct_indent` fixed
 #    18-May-2005 (MG) Button signal handling added
+#    20-May-2005 (MG) Don't use `weakref`
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,7 @@ for kind in "single", "double", "triple" :
 class Text_Tag (GTK.Object) :
     """Wrapper for the GTK widget TextTag"""
 
+    weakref = False
 
     class Styler (TGL.TKT.GTK.Styler) :
         Opts    = dict \

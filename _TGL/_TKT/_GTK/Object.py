@@ -40,6 +40,7 @@
 #    15-May-2005 (MG) `Delegator_2O` added
 #    16-May-2005 (MG) Support for the defintion of new GTK properties added
 #    18-May-2005 (MG) `Delegator_EO` added
+#    20-May-2005 (MG) `weakref` attribute added
 #    ««revision-date»»···
 #--
 
@@ -331,6 +332,7 @@ class Object (TGL.TKT.Mixin) :
     __metaclass__    = _M_Object_
     __gtk_properties = ()
     _wtk_delegation  = {}
+    weakref          = True
 
     ### `Class_Name` is the name of the new generated GTK-type
     ### `Signals`    is a dictionary describing the signals of the new GTK-type
@@ -346,9 +348,17 @@ class Object (TGL.TKT.Mixin) :
         self._handlers     = {} ### holds all connected callback functions
         ### set the backref directly in the C-gtk object and not in the
         ### python wrapper !
-        self.wtk_object.set_data ("ktw_object", weakref.proxy (self))
+        if self.weakref :
+            self.wtk_object.set_data ("ktw_object", weakref.proxy (self))
+        else :
+            self.wtk_object.set_data ("ktw_object", self)
+            #self.bind_add            (self.TNS.Signal.Destroy, self._del_wtk)
         self._sty_stack = []
     # end def __init__
+
+    def _del_wtk (self, event) :
+        self.wtk_object.set_data ("ktw_object", None)
+    # end def _del_wtk
 
     def _bind_single_ (self, signal, connect, func, args, kw) :
         for cid in self._handlers.get (signal, ()) :
