@@ -29,6 +29,7 @@
 #    17-May-2005 (CT) Creation
 #    18-May-2005 (CT) Creation continued
 #    19-May-2005 (CT) Creation continued...
+#    20-May-2005 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -107,7 +108,7 @@ class _Header_Node_ (_MD_Node_B3_) :
     def __init__ (self, msg, parent, ** kw) :
         S    = _Root_.Style
         n    = 78 - (parent.level * 3)
-        summ = S.T (msg.summary_line [: n] ,             S.headers)
+        summ = S.T (msg.summary_line [: n],              S.headers)
         head = S.T (u"\n".join (msg.body_lines      ()), S.headers)
         more = S.T (u"\n".join (msg.more_body_lines ()), S.more_headers)
         self.__super.__init__ \
@@ -121,6 +122,15 @@ class _Header_Node_ (_MD_Node_B3_) :
             , ** kw
             )
     # end def __init__
+
+    def _insert (self, at_mark) :
+        self.__super._insert (at_mark)
+        if self.state == 0 :
+            style = _Root_.Style.nowrap
+        else :
+            style = _Root_.Style.wrap
+        self.apply_style (style)
+    # end def _insert_contents
 
 # end class _Header_Node_
 
@@ -407,7 +417,8 @@ class MO_Root (_Root_) :
     # end def display
 
     def _add_parts (self, disp, controlled) :
-        Node = _Node_C_
+        Node  = _Node_C_
+        Style = self.Style
         for c in controlled.children :
             m = c.msg
             o = Node \
@@ -418,6 +429,7 @@ class MO_Root (_Root_) :
                     "%-10s %-20.20s" % (m.name, getattr (c, "type", m.type))
                 , style      = c.u_style
                 )
+            o.apply_style   (Style.nowrap)
             self._add_parts (o, c)
     # end def _add_parts
 

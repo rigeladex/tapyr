@@ -96,6 +96,11 @@ class Application (PMA.TKT.Application) :
         model.ipreter.focus_set ()
     # end def interact
 
+    def pack (self, parent, child) :
+        child = getattr (child, "exposed_widget", child)
+        child.pack (expand = YES, fill = BOTH)
+    # end def pack
+
     def set_title (self, title = "") :
         self.toplevel.title (title)
     # end def set_title
@@ -122,18 +127,26 @@ class Application (PMA.TKT.Application) :
 
     def start_mainloop (self, after_mainloop_cb) :
         w = self.gui
+        self._after_mainloop_cb = after_mainloop_cb
         self.model.cmd_mgr.set_auto_short_cuts ()
         w.update_idletasks ()
         w.winfo_toplevel   ().deiconify ()
         w.tkraise          ()
         w.focus_force      ()
-        w.after_idle       (after_mainloop_cb)
+        w.after_idle       (self._after_mainloop)
         w.mainloop         ()
     # end def start_mainloop
 
     def virtual_key_name (self, name) :
         return CTK.virtual_key_name (name)
     # end def virtual_key_name
+
+    def _after_mainloop (self,) :
+        self.body.change_size   (frac = 0.25)
+        self.body_l.change_size (frac = 0.70)
+        self.body_r.change_size (frac = 0.35)
+        self._after_mainloop_cb ()
+    # end def _after_mainloop
 
     def _destroy (self) :
         self.__super._destroy ()
@@ -192,7 +205,8 @@ class Application (PMA.TKT.Application) :
     # end def _setup_context_menu
 
     def _setup_geometry (self) :
-        self.pane_mgr.pack           (expand = YES, fill = BOTH)
+        for p in self.o_pane, self.body_l, self.body_r :
+            p.pack                   (expand = YES, fill = BOTH)
         self.toolbar_frame.pack      (expand = NO,  fill = X)
         self.toolbar.wtk_widget.pack (expand = NO,  fill = X,    side = LEFT)
         self.message.pack        \
@@ -205,9 +219,9 @@ class Application (PMA.TKT.Application) :
             )
         self.body.pack (expand = YES, fill = BOTH)
         limit = 60
-        self.pane_mgr.lower_limit_pixl = self.min_y - limit
-        self.pane_mgr.upper_limit_pixl = limit
-        self.pane_mgr.divide (1)
+        self.o_pane.lower_limit_pixl = self.min_y - limit
+        self.o_pane.upper_limit_pixl = limit
+        self.o_pane.divide (1)
     # end def _setup_geometry
 
     def _setup_menubar (self) :
@@ -221,9 +235,9 @@ class Application (PMA.TKT.Application) :
     # end def _setup_menubar
 
     def _setup_panes (self) :
-        self.pane_mgr = CTK.V_Panedwindow    ( self.gui, name = "panes")
-        upper         = self.pane_mgr.upper
-        lower         = self.pane_mgr.lower
+        self.o_pane   = CTK.V_Panedwindow ( self.gui, name = "opanes")
+        upper         = self.o_pane.upper
+        lower         = self.o_pane.lower
         self.message  = self.AC.ui_state.message = CTK.Message_Window \
             ( lower
             , name    = "status"
@@ -237,14 +251,17 @@ class Application (PMA.TKT.Application) :
             )
         self.gauge    = self.AC.ui_state.gauge = Gauge_Logger \
             ( gauge, log = self.model.verbose)
-        self.body     = CTK.C_Frame  \
-            ( upper
-            , name    = "notebook"
-            ) ### XXX
+        self.body     = CTK.H_Panedwindow ( upper,           name = "bpanes")
+        self.body_l   = CTK.V_Panedwindow ( self.body.left,  name = "lpanes")
+        self.body_r   = CTK.V_Panedwindow ( self.body.right, name = "rpanes")
+        self.wc_msg_display = self.body_r.lower
+        self.wc_msg_outline = self.body_l.lower
+        self.wc_folder_view = self.body_r.upper
+        self.wc_folder_tree = self.body_l.upper
     # end def _setup_panes
 
     def _setup_toolbar (self) :
-        self.toolbar_frame    = CTK.C_Frame (self.pane_mgr.upper)
+        self.toolbar_frame    = CTK.C_Frame (self.o_pane.upper)
         result = self.toolbar = self.TNS.CI_Toolbar \
             ( self.AC, self.toolbar_frame
             , name            = "toolbar"
@@ -260,7 +277,7 @@ class Application (PMA.TKT.Application) :
             (master, name = self.model.product_name)
         self.gui.manager  = self
         self.set_maxsize                      ()
-        self.pack                             ( expand = YES, fill = BOTH)
+        self.gui.pack                         ( expand = YES, fill = BOTH)
         self.toplevel    = gui.toplevel \
                          = gui.winfo_toplevel ()
         self.spec_width  = gui.num_opt_val    ( "width",     600)

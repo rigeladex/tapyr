@@ -60,6 +60,8 @@
 #    19-May-2005 (CT) Handling of callable `contents` simplified
 #    20-May-2005 (CT) `_tag_callback_dict` setting of `double_click_1`
 #                     factored up into `_Node_Bs_` (from `Node_C`)
+#    20-May-2005 (CT) `apply_style` added
+#    20-May-2005 (CT) `override` added to `Styled` and `styled_text`
 #    ««revision-date»»···
 #--
 
@@ -166,6 +168,11 @@ class _Node_ (TGL.UI.Mixin) :
         self._observers.append (weakref.proxy (o))
     # end def add_observer
 
+    def apply_style (self, style) :
+        if self._head_mark :
+            self.tkt_text.apply_style (style, self._head_mark, self._midd_mark)
+    # end def apply_style
+
     def dec_state (self, event = None) :
         for o in self._observers :
             o.dec_state (self)
@@ -225,8 +232,8 @@ class _Node_ (TGL.UI.Mixin) :
             tkt_text.see (m)
     # end def see
 
-    def styled_text (self, value, style = None, styler = None) :
-        return Styled (value, self._style (style), styler)
+    def styled_text (self, value, style = None, styler = None, ** override) :
+        return Styled (value, self._style (style), styler, ** override)
     # end def styled_text
 
     def _add_child (self, at_mark, * children) :

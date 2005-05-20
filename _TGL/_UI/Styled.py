@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Apr-2005 (CT) Creation
 #     2-Apr-2005 (CT) Import fixed
+#    20-May-2005 (CT) `override` added
 #    ««revision-date»»···
 #--
 
@@ -38,15 +39,20 @@ import _TFL._Meta.Object
 class Styled (TFL.Meta.Object) :
     """Mode styled text object"""
 
-    def __init__ (self, value, style = None, styler = None) :
+    def __init__ (self, value, style = None, styler = None, ** override) :
         if isinstance (value, Styled) :
+            if value.override :
+                override = dict (value.override, ** override)
             if value.style :
                 style = value.style
                 if styler :
                     style = style (** styler.style_dict)
+                    if override :
+                        style.__dict__.update (override)
             value = value.value
-        self.value = value
-        self.style = style
+        self.value    = value
+        self.style    = style
+        self.override = override
     # end def __init__
 
     def __str__ (self) :

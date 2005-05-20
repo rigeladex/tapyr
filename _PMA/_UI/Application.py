@@ -115,7 +115,7 @@ class Application (PMA.UI.Mixin) :
     _started_quit        = False
 
     _File_Cmd_Group      = Record \
-        ( name           = "Office"
+        ( name           = "File"
         , if_names       = ("mb", "tb", "cm:click_3")
         , batchable      = True
         , precondition   = None
@@ -182,6 +182,7 @@ class Application (PMA.UI.Mixin) :
         tkt._setup_geometry                         ()
         tkt._setup_stdout_redirect                  ()
         self._setup_cmd_mgr                         ()
+        self._setup_office                          ()
         tkt.bind_to_sync                            (self.cmd_mgr.update_state)
     # end def __init__
 
@@ -389,6 +390,24 @@ class Application (PMA.UI.Mixin) :
         self.cmd_mgr.update_state ()
     # end def _setup_cmd_mgr
 
+    def _setup_file_group (self, group) :
+        Cmd     = self.ANS.UI.Deaf_Command
+        Dyn     = self.ANS.UI.Dyn_Command
+        add_cmd = group.add_command
+        add_sep = group.add_separator
+        #add_sep (if_names = ("mb", ))
+        add_cmd ( Cmd ("Commit and exit", self.exit)
+                , if_names    = ("mb", )
+                , underline   = 11
+                , accelerator = self.TNS.Eventname.save_and_exit
+                )
+        add_cmd ( Cmd ("Exit", self.quit)
+                , if_names    = ("mb", )
+                , underline   = 1
+                , accelerator = self.TNS.Eventname.exit
+                )
+    # end def _setup_file_group
+
     def _setup_help_group (self, group) :
         Cmd     = self.ANS.UI.Deaf_Command
         Dyn     = self.ANS.UI.Dyn_Command
@@ -413,23 +432,18 @@ class Application (PMA.UI.Mixin) :
         #add_sep (if_names = ("mb", ))
     # end def _setup_message_group
 
-    def _setup_office_group (self, group) :
-        Cmd     = self.ANS.UI.Deaf_Command
-        Dyn     = self.ANS.UI.Dyn_Command
-        add_cmd = group.add_command
-        add_sep = group.add_separator
-        #add_sep (if_names = ("mb", ))
-        add_cmd ( Cmd ("Commit and exit", self.exit)
-                , if_names    = ("mb", )
-                , underline   = 11
-                , accelerator = self.TNS.Eventname.save_and_exit
-                )
-        add_cmd ( Cmd ("Exit", self.quit)
-                , if_names    = ("mb", )
-                , underline   = 1
-                , accelerator = self.TNS.Eventname.exit
-                )
-    # end def _setup_office_group
+    def _setup_office (self) :
+        tkt = self.tkt
+        self.msg_display = md = self.ANS.UI.Message \
+            ( AC         = self.AC
+            , display_wc = tkt.wc_msg_display
+            , outline_wc = tkt.wc_msg_outline
+            )
+        tkt.pack (tkt.wc_msg_display, md._display.tkt_text)
+        tkt.pack (tkt.wc_msg_outline, md._outline.tkt_text)
+        msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/12")
+        md.display (msg)
+    # end def _setup_office
 
     def _setup_scripts_group (self, group) :
         Cmd     = self.ANS.UI.Deaf_Command
