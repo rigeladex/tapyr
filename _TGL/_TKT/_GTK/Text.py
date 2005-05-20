@@ -241,7 +241,7 @@ GTK.main          ()
 """
 
 if __name__ != "__main__" :
-    GTK._Export ("Text", "Scrolled_Text")
+    GTK._Export ("Text", "Scrolled_Text", "V_Scrolled_Text")
 ### __END__ TGL.TKT.GTK.Text
 
 
