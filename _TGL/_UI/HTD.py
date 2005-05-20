@@ -62,7 +62,8 @@
 #                     factored up into `_Node_Bs_` (from `Node_C`)
 #    20-May-2005 (CT) `apply_style` added
 #    20-May-2005 (CT) `override` added to `Styled` and `styled_text`
-#    ««revision-date»»···
+#    20-May-2005 (CT) `self.see (self._tail_mark)` removed from
+#                     `_change_state` to avoid scrolling out the left edge
 #--
 
 from   _TFL                  import TFL
@@ -465,7 +466,7 @@ class _Node_Bs_ (Node_B) :
             self._remove (self._butt_mark)
             self._insert (self._tail_mark)
             self.butcon.apply_bitmap (bitmap = self.butcon_bitmap)
-            self.see (self._tail_mark, self._head_mark)
+            self.see (self._head_mark)
     # end def _change_state
 
     def _insert_children (self, at_mark, * children) :

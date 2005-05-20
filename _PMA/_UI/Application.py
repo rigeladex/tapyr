@@ -441,8 +441,9 @@ class Application (PMA.UI.Mixin) :
             )
         tkt.pack (tkt.wc_msg_display, md._display.tkt_text)
         tkt.pack (tkt.wc_msg_outline, md._outline.tkt_text)
-        msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/12")
-        md.display (msg)
+        if TFL.Environment.username == "tanzer" :
+            msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/12")
+            md.display (msg)
     # end def _setup_office
 
     def _setup_scripts_group (self, group) :
