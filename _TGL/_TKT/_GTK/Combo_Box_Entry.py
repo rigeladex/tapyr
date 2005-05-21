@@ -27,7 +27,8 @@
 #
 # Revision Dates
 #    21-May-2005 (MG) Automated creation
-#    ««revision-date»»···
+#    21-May-2005 (MG) `get` and `set` added
+#    ««revision-date
 #--
 
 from   _TGL._TKT._GTK         import GTK
@@ -41,6 +42,14 @@ class Combo_Box_Entry (GTK.Combo_Box) :
         ( GTK.SG_Property         ("text_column")
         ,
         )
+
+    def get (self) :
+        return self.wtk_object.child.get_text ()
+    # end def get
+
+    def set (self, text) :
+        return self.wtk_object.child.set_text (text)
+    # end def set
 
 # end class Combo_Box_Entry
 

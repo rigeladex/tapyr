@@ -161,7 +161,7 @@ class Scrolled_Text (GTK.Scrolled_Window) :
         self.hscrollbar_policy = self.TNS.NEVER
     # end def __init__
 
-    #### we must override this function because we don't want the
+    #### we must o     verride this function because we don't want the
     #### `apply_style` Function from the `Text_View` widget
     def apply_style (self, * args, ** kw) :
         return self._text.apply_style (* args, ** kw)

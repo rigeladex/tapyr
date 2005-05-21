@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-May-2005 (CT) Creation
 #    21-May-2005 (MG) Allow `event` parameter for `commit_all`
+#    21-May-2005 (MG) Interpreter added to menu and toolbar
 #    ««revision-date»»···
 #--
 
@@ -114,6 +115,7 @@ class Application (PMA.UI.Mixin) :
     product_name         = "PMA"
     startup_cmds         = []
     _started_quit        = False
+    ipreter              = None
 
     _File_Cmd_Group      = Record \
         ( name           = "File"
@@ -414,7 +416,7 @@ class Application (PMA.UI.Mixin) :
         Dyn     = self.ANS.UI.Dyn_Command
         add_cmd = group.add_command
         add_sep = group.add_separator
-        #add_sep (if_names = ("mb", ))
+        #add_sep (If_Names = ("mb", ))
         add_cmd \
             ( Cmd ("Interpreter", self.interact)
             , if_names  = ("mb", "tb")

@@ -269,12 +269,13 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
 class Delegator (TFL.Meta.Object) :
     """Simple function delegator"""
 
-    def __init__ (self, name) :
-        self.name = name
+    def __init__ (self, name, gtk_name = None) :
+        self.name     = name
+        self.gtk_name = gtk_name or name
     # end def __init__
 
     def __call__ (self, this,  * args, ** kw) :
-        return getattr (this.wtk_object, self.name) (* args, ** kw)
+        return getattr (this.wtk_object, self.gtk_name) (* args, ** kw)
     # end def __call__
 
 # end class Delegator

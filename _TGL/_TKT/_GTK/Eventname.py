@@ -76,6 +76,7 @@ class Key_Binder (TFL.Meta.Object) :
         self._connects      = {}
         self._id            = self.__id
         self.__class__.__id = self._id + 1
+        assert kv
         gtk.binding_entry_add_signal \
             (gtk.Widget, kv, km, "key-binding", int, self._id)
     # end def __init__
@@ -309,5 +310,5 @@ Eventname = TGL.TKT._Eventname \
     )
 
 if __name__ != "__main__" :
-    GTK._Export ("Eventname", "Mouse_Button_Binder")
+    GTK._Export ("*")
 ### __END__ TGL.TKT.GTK.Eventname

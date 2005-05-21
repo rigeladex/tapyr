@@ -47,6 +47,7 @@ import _PMA._TKT._GTK.Progress_Window
 import _PMA._TKT._GTK.Paned
 import _PMA._TKT._GTK.H_Box
 import _PMA._TKT._GTK.V_Box
+import _PMA._TKT._GTK.Interpreter_Window
 
 from   Gauge_Logger         import Gauge_Logger
 from   Script_Menu_Mgr      import Script_Menu_Mgr
@@ -59,7 +60,6 @@ from   glob                 import glob
 
 ### XXX todo
 ### - Cilpboard
-### - Power_User_Window
 ### - Fileview Widget
 ### - virtual_key_name ???
 ### - pane: .divide, lower/upper limit
@@ -85,17 +85,17 @@ class Application (PMA.TKT.Application) :
     def interact (self) :
         """Provide interactive access to python interpreter."""
         model = self.model
-        if not getattr (model, "ipreter") :
-            from _TFL.Power_User_Window import Power_User_Window ### XXX
-            model.ipreter = Power_User_Window \
-                ( self.gui
-                , globals      = TFL.d_dict
-                      (model.script_locals, model.globals ())
+        if not model.ipreter :
+            model.ipreter = self.TNS.Interpreter_Window \
+                ( self
+                , global_dict  = TFL.d_dict
+                      (model.globals (), Main_Widget = self) # model.script_locals
                 , name         = "interpreter"
-                , master_gauge = self.gauge
+                , AC           = self.AC
+                ,# master_gauge = self.gauge
                 )
-            #model.ipreter.protocol ("WM_DELETE_WINDOW", self._kill_interact)
-        model.ipreter.present ()
+            model.ipreter.bind_add (self.TNS.Signal.Delete, self._kill_interact)
+        model.ipreter.present      ()
     # end def interact
 
     def pack (self, parent, child) :

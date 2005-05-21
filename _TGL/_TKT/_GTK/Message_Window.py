@@ -29,6 +29,9 @@
 #    20-May-2005 (MG) Creation
 #    21-May-2005 (MG) `write` added, `editable` set to `False`, scrolling
 #                     after `push_help`
+#    21-May-2005 (MG) `push_style` and `pop_style` added, `write` changed to
+#                     use current style
+#    21-May-2005 (MG) `see` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +46,7 @@ class Message_Window (GTK.Scrolled_Text) :
         self.__super.__init__ (* args, ** kw)
         self._text.editable = False
         self.help_marks     = []
+        self.styles         = []
     # end def __init__
 
     def clear_help (self) :
@@ -55,6 +59,10 @@ class Message_Window (GTK.Scrolled_Text) :
             wtk.delete (i_start, i_end)
         self.help_marks = []
     # end def clear_help
+
+    def put (self, text, style = None) :
+        self._text.insert      (self._text.buffer_tail, text, style)
+    # end def put
 
     def put_help (self, text) :
         self.clear_help ()
@@ -74,6 +82,10 @@ class Message_Window (GTK.Scrolled_Text) :
 
     push_err_msg = push_help
 
+    def push_style (self, style) :
+        self.styles.append (style)
+    # end def push_style
+
     def pop (self) :
         if self.help_marks :
             wtk        = self._text._buffer.wtk_object
@@ -88,8 +100,21 @@ class Message_Window (GTK.Scrolled_Text) :
 
     pop_help = pop_err_msg = pop
 
+    def pop_style (self) :
+        if self.styles :
+            return self.styles.pop ()
+    # end def pop_style
+
+    def see (self, pos_or_mark = None) :
+        self._text.see (pos_or_mark or self._text.insert_mark)
+    # end def see
+
     def write (self, text) :
-        self._text.insert      (self._text.buffer_tail, text)
+        if self.styles :
+            style = self.styles [-1]
+        else :
+            style = None
+        self._text.insert      (self._text.buffer_tail, text, style)
     # end def write
 
 # end class Message_Window
