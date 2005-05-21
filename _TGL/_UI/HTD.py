@@ -64,6 +64,9 @@
 #    20-May-2005 (CT) `override` added to `Styled` and `styled_text`
 #    20-May-2005 (CT) `self.see (self._tail_mark)` removed from
 #                     `_change_state` to avoid scrolling out the left edge
+#    21-May-2005 (CT) `lift = True` added to `apply_style`
+#    21-May-2005 (CT) `apply_style_to_match` added
+#    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
@@ -171,8 +174,23 @@ class _Node_ (TGL.UI.Mixin) :
 
     def apply_style (self, style) :
         if self._head_mark :
-            self.tkt_text.apply_style (style, self._head_mark, self._midd_mark)
+            self.tkt_text.apply_style \
+                (style, self._head_mark, self._midd_mark, lift = True)
     # end def apply_style
+
+    def apply_style_to_match (self, match, * styles) :
+        ### XXX factor `find_all` to `Text` (from TFL.UI.HTB, too)
+        head = self._head_mark
+        tail = self._midd_mark
+        text = self.tkt_text
+        pos  = pos1 = text.find (match, head, tail)
+        while pos :
+            end = text.pos_at (pos, delta = len (match))
+            for style in styles :
+                text.apply_style (style, pos, end, lift = True)
+            pos = text.find (match, end, tail)
+        return pos1
+    # end def apply_style_to_match
 
     def dec_state (self, event = None) :
         for o in self._observers :

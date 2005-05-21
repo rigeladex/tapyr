@@ -30,6 +30,7 @@
 #    18-May-2005 (CT) Creation continued
 #    19-May-2005 (CT) Creation continued...
 #    20-May-2005 (CT) Creation continued....
+#    21-May-2005 (CT) Creation continued.....
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ import _PMA._UI
 import _PMA._UI.HTD
 import _PMA._UI.Mixin
 
+from   _TFL.predicate          import *
 from   _TFL.Regexp             import *
 
 import _TGL._UI
@@ -95,7 +97,7 @@ class _Generic_Node_ (_MD_Node_B2_) :
             , parent   = parent
             , contents =
                 ( (summary, )
-                , (lambda : u"\n".join (msg.body_lines ()) or summary, )
+                , (lambda : u"\n".join (msg.formatted ()) or summary, )
                 )
             , ** kw
             )
@@ -168,8 +170,8 @@ class _MPA_Node_ (_MD_Node_B8_) :
             ( msg
             , parent   = parent
             , contents =
-                [ (u"\n".join (msg.parts [0].body_lines ()), )
-                ] + [   (lambda : u"\n".join (p.body_lines ()), )
+                [ (u"\n".join (msg.parts [0].formatted ()), )
+                ] + [   (lambda : u"\n".join (p.formatted ()), )
                     for p in msg.altp
                     ]
             , ** kw
@@ -199,6 +201,15 @@ class _Part_Header_Node_ (_MD_Node_B2_) :
 
 class _Text_Node_ (_MD_Node_B2_) :
 
+    _http_exp_pat = Regexp \
+        ( r"< (?P<url> https?: [^>]+ ) >"
+        , re.VERBOSE | re.MULTILINE | re.IGNORECASE
+        )
+    _http_imp_pat = Regexp \
+        ( r"[^<] (?P<url> https?: [^\s]+ )"
+        , re.VERBOSE | re.MULTILINE | re.IGNORECASE
+        )
+
     def __init__ (self, msg, parent, ** kw) :
         if msg.body :
             body = self._body
@@ -217,8 +228,54 @@ class _Text_Node_ (_MD_Node_B2_) :
     # end def __init__
 
     def _body (self) :
-        return u"\n".join (self.msg.body_lines ())
+        return u"\n".join (self.msg.formatted ())
     # end def _body
+
+    def _follow (self, url) :
+        print "kieselack", url
+        if 0 :
+            import webbrowser
+            webbrowser.open (url, new = 1)
+    # end def _follow
+
+    def _insert (self, at_mark) :
+        self.__super._insert (at_mark)
+        tkt_text = self.tkt_text
+        style    = _Root_.Style.http
+        buffer   = tkt_text.get (self._butt_mark, self._midd_mark)
+        https    = dict_from_list \
+            ([m.group ("url") for m in self._http_exp_pat.search_all (buffer)])
+        https.update \
+            ( dict_from_list
+                ([ m.group ("url")
+                   for m in self._http_imp_pat.search_all (buffer)
+                 ]
+                )
+            )
+        for http in https :
+            cb_style = self.callback_style \
+                ( callback = dict
+                    ( click_1     = lambda event = None, h = http
+                                    : self._follow (h)
+                    , mouse_enter = self._mouse_enter_http
+                    , mouse_leave = self._mouse_leave_http
+                    )
+                )
+            self.apply_style_to_match (http, style, cb_style)
+    # end def _insert_contents
+
+    def _mouse_enter_http (self, event = None) :
+        self.tkt_text.push_style (self.Style.active_cursor)
+    # end def _mouse_enter_http
+
+    def _mouse_leave_http (self, event = None) :
+        try :
+            self.tkt_text.pop_style ()
+        except IndexError :
+            ### can have too many `mouse_leave` calls if we are called by
+            ### a `mouse_leave` event and by a key binding
+            pass
+    # end def _mouse_leave_http
 
 # end class _Text_Node_
 
@@ -247,7 +304,7 @@ class _Plain_Text_Node (_Text_Node_) :
     ### XXX add style for urls (send to browser, copy into clipboard)
 
     def _body (self) :
-        for block, style in self._style_block (self.msg.body_lines ()) :
+        for block, style in self._style_block (self.msg.formatted ()) :
             block.append ("")
             yield Styled ("\n".join (block), style)
     # end def _body
@@ -351,7 +408,6 @@ class MD_Root (_Root_) :
 
     def _add_parts (self, disp, msg, cycle) :
         for p in msg.part_iter () :
-            body = p.body_lines ()
             if p.type.startswith ("multipart/") :
                 d = disp
             else :
@@ -384,6 +440,7 @@ class MD_Root (_Root_) :
         add ("comment",   foreground = "firebrick")
         add ("diff_new",  foreground = "red")
         add ("diff_old",  foreground = "blue")
+        add ("http",      background = "gray90", foreground = "purple")
         add ("quote1",    foreground = "DeepPink3")
         add ("quote2",    foreground = "DeepPink2")
         add ("quote3",    foreground = "DeepPink1")
