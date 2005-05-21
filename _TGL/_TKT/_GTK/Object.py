@@ -369,15 +369,17 @@ class Object (TGL.TKT.Mixin) :
                 ([(n, getattr (self, n)) for n in self.memory_attributes])
             dump.update (data)
             if dump :
-                self.AC.memory.state ["window_geometry"] [self.name] = dump
+                self.AC.memory.state ["widget_memory"] [self.name] = dump
             if recurse :
                 for child in getattr (self, "children", ()) :
-                    child.dump_widget_memory (recurse = recurse)
+                    if hasattr (child, "dump_widget_memory") :
+                        child.dump_widget_memory (recurse = recurse)
     # end def dump_widget_memory
 
     def read_widget_memory (self) :
         if self.AC and self.name :
-            dump = self.AC.memory.state ["window_geometry"].get (self.name, {})
+            dump = self.AC.memory.state.get ("widget_memory", {}).get \
+                (self.name, {})
             if dump :
                 for name in self.memory_attributes :
                     value = dump.get (name, None)
@@ -390,6 +392,8 @@ class Object (TGL.TKT.Mixin) :
 
     def save_widget_memory (self, recurse = True) :
         if self.AC and hasattr (self.AC, "memory") :
+            if not hasattr (self.AC.memory.state, "widget_memory") :
+                self.AC.memory.state ["widget_memory"] = {}
             self.dump_widget_memory (recurse = recurse)
             self.AC.memory.dump     ()
     # end def save_widget_memory

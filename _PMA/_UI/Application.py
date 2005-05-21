@@ -415,6 +415,11 @@ class Application (PMA.UI.Mixin) :
         add_cmd = group.add_command
         add_sep = group.add_separator
         #add_sep (if_names = ("mb", ))
+        add_cmd \
+            ( Cmd ("Interpreter", self.interact)
+            , if_names  = ("mb", "tb")
+            , underline = 5
+            )
     # end def _setup_help_group
 
     def _setup_mailbox_group (self, group) :

@@ -85,7 +85,7 @@ class Application (PMA.TKT.Application) :
     def interact (self) :
         """Provide interactive access to python interpreter."""
         model = self.model
-        if not model.ipreter :
+        if not getattr (model, "ipreter") :
             from _TFL.Power_User_Window import Power_User_Window ### XXX
             model.ipreter = Power_User_Window \
                 ( self.gui
@@ -213,7 +213,6 @@ class Application (PMA.TKT.Application) :
     # end def _setup_menubar
 
     def _setup_panes (self) :
-        ### XXX
         TNS           = self.TNS
         self.main     = TNS.V_Box   (AC = self.AC)
         self.message  = self.AC.ui_state.message = TNS.Message_Window \
