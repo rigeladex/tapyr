@@ -36,6 +36,8 @@
 #    20-May-2005 (MG) `_menu_item`: added support for `Key_Binder` objects as
 #                     accelerator
 #    20-May-2005 (MG) `_push_help` and `_pop_help` impelented
+#    21-May-2005 (MG) `_CI_Menu_Mixin_._new_group`: right align hack for
+#                     `Help` added
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -410,6 +412,8 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
                 ( label     = name
                 , AC        = self.AC
                 )
+        if name == "Help" :
+            item.right_justified = True
         self._handle_shortcut (item, name, None)
         item.submenu        = menu = CI_Menu \
             ( AC            = self.AC

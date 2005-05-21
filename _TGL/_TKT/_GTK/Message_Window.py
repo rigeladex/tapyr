@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    20-May-2005 (MG) Creation
+#    21-May-2005 (MG) `write` added, `editable` set to `False`, scrolling
+#                     after `push_help`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +41,8 @@ class Message_Window (GTK.Scrolled_Text) :
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
-        self.help_marks = []
+        self._text.editable = False
+        self.help_marks     = []
     # end def __init__
 
     def clear_help (self) :
@@ -66,6 +69,7 @@ class Message_Window (GTK.Scrolled_Text) :
         start    = tw.mark_at  (tw.insert_mark, left_gravity = True)
         self._text.insert      (self._text.buffer_tail, text)
         self.help_marks.append ((start, tw.mark_at (tw.insert_mark)))
+        self._text.see (start)
     # end def push_help
 
     push_err_msg = push_help
@@ -83,6 +87,10 @@ class Message_Window (GTK.Scrolled_Text) :
     # end def pop
 
     pop_help = pop_err_msg = pop
+
+    def write (self, text) :
+        self._text.insert      (self._text.buffer_tail, text)
+    # end def write
 
 # end class Message_Window
 

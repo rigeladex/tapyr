@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-May-2005 (CT) Creation
+#    21-May-2005 (MG) Allow `event` parameter for `commit_all`
 #    ««revision-date»»···
 #--
 
@@ -186,7 +187,7 @@ class Application (PMA.UI.Mixin) :
         tkt.bind_to_sync                            (self.cmd_mgr.update_state)
     # end def __init__
 
-    def commit_all (self) :
+    def commit_all (self, event = None) :
         """Commit all pending changes of mailboxes"""
         return True ### XXX
     # end def commit_all

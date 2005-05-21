@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-May-2005 (CT) Creation
+#    21-May-2005 (MG) `batch` command line option replaced by `interface`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ from   _TFL.Command_Line      import Command_Line, Opt, Arg
 from   _TFL.Filename          import Filename
 
 import _TFL.Environment
+import _TFL.Abbr_Key_Dict
 
 import sys
 import traceback
@@ -54,14 +56,14 @@ class Starter (PMA.UI.Mixin) :
 
     __metaclass__        = TFL.Meta.M_Auto_Combine
     _lists_to_combine    = ("Args", "Opts")
-    _gui_toolkit_name    = "Tk"
-
+    toolkits             = TFL.Abbr_Key_Dict \
+        ( Batch = "Batch", GTK = "GTK", Tk = "Tk")
     cmd_description      = ""
     min_args             = 0
     max_args             = 1
     process_keywords     = True
     Opts                 = \
-        [ "-batch:B?Run tool in batch mode without any GUI."
+        [ "-interface:S=Tk?Run the tool using this toolkit for the GUI"
         , "-commands:S,?"
             """Command(s) to run after mailboxes are loaded."""
         , "-prescripts:S,?"
@@ -119,13 +121,13 @@ class Starter (PMA.UI.Mixin) :
     # end def _do_import
 
     def _do_imports (self, cmd) :
-        ANS = self.ANS
+        ANS           = self.ANS
         self._globals = _g = {}
-        if cmd.batch or "_batch" in TFL.Environment.script_name ().lower () :
-            cmd.batch = True
-            TNS_name  = "Batch"
-        else :
-            TNS_name = self._gui_toolkit_name
+        TNS_name      = self.toolkits [cmd.interface]
+        cmd.batch     = \
+            ( TNS_name == "Batch"
+            or "_batch" in TFL.Environment.script_name ().lower ()
+            )
         for PNS, module in self.implicit_imports (ANS, TNS_name) :
             _g.update (self._do_import (PNS, module))
     # end def _do_imports
