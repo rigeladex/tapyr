@@ -440,7 +440,7 @@ class MD_Root (_Root_) :
         add ("comment",   foreground = "firebrick")
         add ("diff_new",  foreground = "red")
         add ("diff_old",  foreground = "blue")
-        add ("http",      background = "gray90", foreground = "purple")
+        add ("http",      background = "blue", foreground = "gray80")
         add ("quote1",    foreground = "DeepPink3")
         add ("quote2",    foreground = "DeepPink2")
         add ("quote3",    foreground = "DeepPink1")
