@@ -66,6 +66,7 @@
 #                     `_change_state` to avoid scrolling out the left edge
 #    21-May-2005 (CT) `lift = True` added to `apply_style`
 #    21-May-2005 (CT) `apply_style_to_match` added
+#    22-May-2005 (CT) `real_level` added
 #    ««revision-date»»···
 #--
 
@@ -146,6 +147,7 @@ class _Node_ (TGL.UI.Mixin) :
         self.parent     = parent
         self.level      = level \
                         = parent and (parent.level + self._level_inc) or 0
+        self.real_level = parent and (parent.real_level + 1) or 0
         self.u_style    = style
         self.style      = style  = self._base_style (style, level)
         self.styler     = styler = self.tkt_text.Tag_Styler (style)

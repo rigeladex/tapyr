@@ -32,6 +32,11 @@
 #    20-May-2005 (CT) Creation continued....
 #    21-May-2005 (CT) Creation continued.....
 #    22-May-2005 (CT) Creation continued......
+#    22-May-2005 (CT) `_Header_Node_Mixin_` factored (to implement
+#                     `_header_styles`)
+#    22-May-2005 (CT) `_Node_C_._insert` redefined to `apply_style` `nowrap`
+#    22-May-2005 (CT) `_Node_C_._level_inc` removed and `MO_Root._add_parts`
+#                     changed to add a `\t` per level
 #    ««revision-date»»···
 #--
 
@@ -86,7 +91,12 @@ class _MD_Node_B8_ (_Node_Mixin_, TGL.UI.HTD.Node_B8) :
 # end class _MD_Node_B8_
 
 class _Node_C_ (_Node_Mixin_, TGL.UI.HTD.Node_C) :
-    _level_inc = 1
+
+    def _insert (self, at_mark) :
+        self.__super._insert (at_mark)
+        self.apply_style     (_Root_.Style.nowrap)
+    # end def _insert
+
 # end class _Node_C_
 
 class _Generic_Node_ (_MD_Node_B2_) :
@@ -106,21 +116,61 @@ class _Generic_Node_ (_MD_Node_B2_) :
 
 # end class _Generic_Node_
 
-class _Header_Node_ (_MD_Node_B3_) :
+class _Header_Node_Mixin_ (TFL.Meta.Object) :
+
+    _header_style_pat   = Regexp \
+        ( r"(^(cc|Content-|Envelope|List-|Message-Id|Received"
+            r"|References|Resent-|Return-Path|Sender|X-spam))"
+          r"|reply-to"
+        , re.VERBOSE | re.IGNORECASE
+        )
+
+    _header_styles      = \
+        { "cc"          : "H_cc"
+        , "content-"    : "H_content"
+        , "envelope"    : "H_envelope"
+        , "message-id"  : "H_id"
+        , "list-"       : "H_list"
+        , "received"    : "H_received"
+        , "references"  : "H_id"
+        , "reply-to"    : "H_content"
+        , "resent-"     : "H_resent"
+        , "return-path" : "H_sender"
+        , "sender"      : "H_sender"
+        , "x-spam"      : "H_spam"
+        }
+
+    def _header_lines (self, lines, default) :
+        return [self._styled_header (l, default) for l in lines]
+    # end def _header_lines
+
+    def _styled_header (self, l, default) :
+        S = _Root_.Style
+        p = self._header_style_pat
+        n = default
+        if p.search (l) :
+            n = p.group (0).lower ()
+        s = self._header_styles.get (n, default)
+        return S.T (l + "\n", getattr (S, s))
+    # end def _styled_header
+
+# end class _Header_Node_Mixin_
+
+class _Header_Node_ (_Header_Node_Mixin_, _MD_Node_B3_) :
 
     def __init__ (self, msg, parent, ** kw) :
         S    = _Root_.Style
         n    = 78 - (parent.level * 3)
-        summ = S.T (msg.summary_line [: n],              S.headers)
-        head = S.T (u"\n".join (msg.body_lines      ()), S.headers)
-        more = S.T (u"\n".join (msg.more_body_lines ()), S.more_headers)
+        summ = S.T (msg.summary_line [: n], S.H_show)
+        head = lambda : self._header_lines (msg.body_lines      (), "H_show")
+        more = lambda : self._header_lines (msg.more_body_lines (), "H_more")
         self.__super.__init__ \
             ( msg
             , parent   = parent
             , contents =
-                ( ( summ, )
-                , ( head, )
-                , ( head, "\n", more)
+                ( (summ, )
+                , (head, )
+                , (head, "\n", more)
                 )
             , ** kw
             )
@@ -181,12 +231,12 @@ class _MPA_Node_ (_MD_Node_B8_) :
 
 # end class _MPA_Node_
 
-class _Part_Header_Node_ (_MD_Node_B2_) :
+class _Part_Header_Node_ (_Header_Node_Mixin_, _MD_Node_B2_) :
 
     def __init__ (self, msg, parent, ** kw) :
         S    = _Root_.Style
-        head = S.T (u"\n".join (msg.body_lines      ()), S.headers)
-        more = S.T (u"\n".join (msg.more_body_lines ()), S.more_headers)
+        head = lambda : self._header_lines (msg.body_lines      (), "H_show")
+        more = lambda : self._header_lines (msg.more_body_lines (), "H_more")
         self.__super.__init__ \
             ( msg
             , parent   = parent
@@ -242,10 +292,10 @@ class _Text_Node_ (_MD_Node_B2_) :
         tkt_text = self.tkt_text
         style    = _Root_.Style.http
         buffer   = tkt_text.get (self._butt_mark, self._midd_mark)
-        https    = dict_from_list \
+        https    = dict.fromkeys \
             ([m.group ("url") for m in self._http_exp_pat.search_all (buffer)])
         https.update \
-            ( dict_from_list
+            ( dict.fromkeys
                 ([ m.group ("url")
                    for m in self._http_imp_pat.search_all (buffer)
                  ]
@@ -299,8 +349,6 @@ class _Plain_Text_Node (_Text_Node_) :
           , lambda p : "quote%s" % (min (p.q.count (">"), 5), )
           )
         )
-
-    ### XXX add style for urls (send to browser, copy into clipboard)
 
     def _body (self) :
         for block, style in self._style_block (self.msg.formatted ()) :
@@ -424,29 +472,35 @@ class MD_Root (_Root_) :
     def _setup_styles (self, w) :
         self.__super._setup_styles (w)
         Style = self.Style
-        add   = Style.add
-        add ( "headers"
-            , foreground = "orange"
-            , font_size  = "medium"
+        add   = \
+            ( lambda n, fg = None, bg = None, ** kw
+              : Style.add (n, foreground = fg, background = bg, ** kw)
             )
-        add ( "more_headers"
-            , foreground = "gray30"
-            , font_size  = "small"
-            )
-        add ("bg_even",   background = "lightyellow1")
-        add ("bg_odd",    background = "lightyellow2")
-        add ("colonade",  foreground = "rosy brown")
-        add ("comment",   foreground = "firebrick")
-        add ("diff_new",  foreground = "red")
-        add ("diff_old",  foreground = "blue")
-        add ("http",      background = "deep sky blue", foreground = "gray90")
-        add ("quote1",    foreground = "DeepPink3")
-        add ("quote2",    foreground = "DeepPink2")
-        add ("quote3",    foreground = "DeepPink1")
-        add ("quote4",    foreground = "HotPink3")
-        add ("quote5",    foreground = "HotPink2")
-        add ("sig1",      foreground = "magenta2")
-        add ("sig2",      foreground = "cornflower blue")
+        add ("H_cc",       fg = "magenta3",        font_size  = "medium")
+        add ("H_content",  fg = "orange",          font_size  = "small")
+        add ("H_envelope", fg = "goldenrod1",      font_size  = "small")
+        add ("H_id",       fg = "blue",            font_size  = "small")
+        add ("H_list",     fg = "cornflower blue", font_size  = "small")
+        add ("H_more",     fg = "gray30",          font_size  = "small")
+        add ("H_received", fg = "purple1",         font_size  = "small")
+        add ("H_resent",   fg = "forest green",    font_size  = "small")
+        add ("H_sender",   fg = "magenta1",        font_size  = "small")
+        add ("H_show",     fg = "orange",          font_size  = "medium")
+        add ("H_spam",     fg = "orange red",      font_size  = "small")
+        add ("bg_even",    bg = "lightyellow1")
+        add ("bg_odd",     bg = "lightyellow2")
+        add ("colonade",   fg = "rosy brown")
+        add ("comment",    fg = "firebrick")
+        add ("diff_new",   fg = "red")
+        add ("diff_old",   fg = "blue")
+        add ("http",       bg = "deep sky blue",   fg = "gray90")
+        add ("quote1",     fg = "DeepPink3")
+        add ("quote2",     fg = "DeepPink2")
+        add ("quote3",     fg = "DeepPink1")
+        add ("quote4",     fg = "HotPink3")
+        add ("quote5",     fg = "HotPink2")
+        add ("sig1",       fg = "magenta2")
+        add ("sig2",       fg = "cornflower blue")
         ### other colors: "forest green", "purple"
     # end def _setup_styles
 
@@ -477,15 +531,15 @@ class MO_Root (_Root_) :
         Style = self.Style
         for c in controlled.children :
             m = c.msg
+            l = c.real_level - 1
             o = Node \
                 ( msg        = m
                 , controlled = c
                 , parent     = disp
-                , contents   =
-                    "%-10s %-20.20s" % (m.name, getattr (c, "type", m.type))
+                , contents   = "%s%-10s %-20.20s"
+                  % ("\t" * l, m.name, getattr (c, "type", m.type))
                 , style      = c.u_style
                 )
-            o.apply_style   (Style.nowrap)
             self._add_parts (o, c)
     # end def _add_parts
 

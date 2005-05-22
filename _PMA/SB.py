@@ -38,7 +38,7 @@ import _TFL._Meta.Object
 try :
     import spambayes           as     sb
 except ImportError :
-    from Black_Hole            import black_hole as SB
+    SB = None
 else :
     import spambayes.hammie
     import spambayes.Options

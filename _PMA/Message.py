@@ -86,6 +86,9 @@
 #    19-May-2005 (CT) Property for `subject` added
 #    20-May-2005 (MG) Property `subject` fixed
 #    22-May-2005 (CT) `save` (and `_save`) added
+#    22-May-2005 (CT) `_reparsed` changed to use `PMA.Sb` if available
+#    22-May-2005 (CT) s/_get_header/_get_headers/ (and changed to return all
+#                     headers)
 #    ««revision-date»»···
 #--
 
@@ -95,12 +98,13 @@ from   _PMA                    import Lib
 
 import _PMA.Mailcap
 import _PMA.Msg_Status
+import _PMA.SB
+
 import _TFL.Ascii
 import _TFL.Filename
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
 
-from   _TFL.predicate          import dict_from_list
 from   _TFL.Regexp             import *
 
 import sos
@@ -212,8 +216,7 @@ class _Msg_Part_ (object) :
     def _formatted_headers (self, headers = None) :
         email = self.email
         for n in (headers or self.headers_to_show) :
-            n, h = self._get_header (email, n)
-            if h :
+            for n, h in self._get_headers (email, n) :
                 yield n, "%-*s: %s" % \
                     (self.label_width, n, self._decoded_header (h))
     # end def _formatted_headers
@@ -233,18 +236,20 @@ class _Msg_Part_ (object) :
         return self.email.get_content_type ().lower ()
     # end def _get_content_type
 
-    def _get_header (self, email, name) :
+    def _get_headers (self, email, name) :
         if isinstance (name, tuple) :
             for n in name :
-                result = email [n]
-                if result is not None :
+                result = email.get_all (n, ())
+                if result :
                     name = n
                     break
             else :
                 name = ""
         else :
-            result = email [name]
-        return name.capitalize (), result
+            result = email.get_all (name, ())
+        name = name.capitalize ()
+        for r in result :
+            yield name, r
     # end def _get_header
 
     def _save (self, filename, body) :
@@ -443,12 +448,13 @@ class Part_Header (_Msg_Part_) :
             add (h)
             _hn [n] = h
         self.body = "\n".join (_fh)
-        mhn       = sorted ([k for k in email.keys () if k not in _hn])
+        mhn       = sorted \
+            (dict.fromkeys ([k for k in email.keys () if k not in _hn]))
         self._mh  = []
         add       = self._mh.append
         seen      = {}
         for n, h in self._formatted_headers (mhn) :
-            if not h in seen :
+            if h not in seen :
                 add  (h)
                 seen [h] = True
     # end def _setup_body
@@ -564,6 +570,7 @@ class Message (_Message_) :
         , ("to", "envelope-to")
         , "cc"
         , "subject"
+        , "X-spambayes-classification"
         )
     short_summary_format = unicode \
         ( "%(name)s %(date).12s %(sender).20s %(subject).45s "
@@ -613,7 +620,13 @@ class Message (_Message_) :
     def _reparsed (self) :
         result = self.email
         if self.path and not result._pma_parsed_body :
-            if self.mailbox :
+            if PMA.SB is not None :
+                if self.mailbox :
+                    _parse = self.mailbox.parser.parsestr
+                else :
+                    _parse = Lib.message_from_string
+                parser = lambda fp : _parse (PMA.SB.filter (fp))
+            elif self.mailbox :
                 parser = self.mailbox.parser.parse
             else :
                 parser = Lib.message_from_file
@@ -650,6 +663,7 @@ def message_from_file (filename, parser = None) :
     fp = open (filename)
     try :
         email = parser.parse (fp)
+        email._pma_parsed_body = True
     finally :
         fp.close ()
     return Message (email, sos.path.split (filename) [-1])

@@ -465,6 +465,10 @@ class Mailbox (_Mailbox_in_Dir_S_) :
 """
 from   _PMA                    import PMA
 import _PMA.Mailbox
+mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
+print mb.summary ().encode ("iso-8859-1", "replace")
+m = mb.messages [-4]
+print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
 #mb=PMA.Maildir ("/swing/private/.Tanzer/Maildir")
 mb=PMA.Maildir ("/tmp/Maildir")
 mb=PMA.Unix_Mailbox ("/var/mail/appoyer")
