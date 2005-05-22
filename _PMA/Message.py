@@ -85,6 +85,7 @@
 #    19-May-2005 (CT) `all_parts` removed
 #    19-May-2005 (CT) Property for `subject` added
 #    20-May-2005 (MG) Property `subject` fixed
+#    22-May-2005 (CT) `save` (and `_save`) added
 #    ««revision-date»»···
 #--
 
@@ -246,6 +247,19 @@ class _Msg_Part_ (object) :
         return name.capitalize (), result
     # end def _get_header
 
+    def _save (self, filename, body) :
+        if body :
+            charset = self.charset
+            f       = open (filename, "wb")
+            try :
+                try :
+                    f.write (body)
+                except UnicodeError :
+                    f.write (body.encode (charset, "replace"))
+            finally :
+                f.close ()
+    # end def _save
+
     def _sender (self, email) :
         sender = \
             (  email ["from"]
@@ -349,6 +363,11 @@ class Message_Body (_Msg_Part_) :
 
     formatted = _formatted = body_lines
 
+    def save (self, filename) :
+        """Save message/part body to file with `filename`"""
+        self._save (filename, self.body)
+    # end def save
+
     def _get_content_type (self) :
         result = self.__super._get_content_type ()
         if result == "application/octet-stream" :
@@ -406,6 +425,12 @@ class Part_Header (_Msg_Part_) :
         return self._mh
     # end def more_body_lines
 
+    def save (self, filename) :
+        """Save message/part headers to file with `filename`"""
+        self._save \
+            (filename, "\n".join ("\n".join (self._fh), "\n".join (self._mh)))
+    # end def save
+
     def _separators (self, sep_length) :
         return ()
     # end def _separators
@@ -456,6 +481,11 @@ class _Message_ (_Msg_Part_) :
             for l in p.formatted (sep_length) :
                 yield l
     # end def formatted
+
+    def save (self, filename) :
+        """Save message to file with `filename`"""
+        self._save (filename, self.email.as_string ())
+    # end def save
 
     _formatted = formatted
 

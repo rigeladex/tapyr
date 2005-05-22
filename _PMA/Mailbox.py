@@ -31,6 +31,9 @@
 #    12-Sep-2004 (CT) Creation continued...
 #    15-Sep-2004 (CT) Creation continued....
 #    19-Sep-2004 (CT) Creation continued.....
+#    22-May-2005 (CT) `delete` added
+#    22-May-2005 (CT) `_copy_msg_file` changed to use `message.save` instead
+#                     of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -107,11 +110,7 @@ class _Mailbox_ (TFL.Meta.Object) :
     # end def _add
 
     def _copy_msg_file (self, message, target) :
-        f = open (target, "w")
-        try :
-            f.write (message.email.as_string ())
-        finally :
-            f.close ()
+        message.save (target)
     # end def _copy_msg_file
 
     def _get_messages (self) :
@@ -183,6 +182,16 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
         for s in self._subdirs (path) :
             self._new_subbox (s)
     # end def __init__
+
+    def delete (self, * messages) :
+        try :
+            for m in messages :
+                sos.unlink (m.path)
+                del self._msg_dict [m.name]
+                del self._msg_stat [m.name]
+        finally :
+            self._messages = None
+    # end def delete
 
     def _copy_msg_file (self, message, target) :
         source = message.path
@@ -468,7 +477,7 @@ m = mb.messages [60]
 print u"\n".join (list (m.formatted ()) [:100]).encode ("iso-8859-1", "replace")
 print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
 m = mb.messages [-3]
-tb = PMA.Mailbox ("/swing/private/tanzer/PMA/Testbox")
+tb = PMA.Mailbox ("/swing/private/tanzer/PMA/S")
 tb.import_from_mailbox (mb, transitive = True)
 tb.add_messages (m)
 print tb.summary ().encode ("iso-8859-1", "replace")

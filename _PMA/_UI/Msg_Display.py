@@ -31,6 +31,7 @@
 #    19-May-2005 (CT) Creation continued...
 #    20-May-2005 (CT) Creation continued....
 #    21-May-2005 (CT) Creation continued.....
+#    22-May-2005 (CT) Creation continued......
 #    ««revision-date»»···
 #--
 
@@ -232,10 +233,8 @@ class _Text_Node_ (_MD_Node_B2_) :
     # end def _body
 
     def _follow (self, url) :
-        print "kieselack", url
-        if 0 :
-            import webbrowser
-            webbrowser.open (url, new = 1)
+        import webbrowser
+        webbrowser.open (url, new = False)
     # end def _follow
 
     def _insert (self, at_mark) :
@@ -440,7 +439,7 @@ class MD_Root (_Root_) :
         add ("comment",   foreground = "firebrick")
         add ("diff_new",  foreground = "red")
         add ("diff_old",  foreground = "blue")
-        add ("http",      background = "blue", foreground = "gray80")
+        add ("http",      background = "deep sky blue", foreground = "gray90")
         add ("quote1",    foreground = "DeepPink3")
         add ("quote2",    foreground = "DeepPink2")
         add ("quote3",    foreground = "DeepPink1")
