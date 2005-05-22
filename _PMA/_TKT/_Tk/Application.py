@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-May-2005 (CT) Creation
+#    22-May-2005 (CT) `virtual_key_name` removed
 #    ««revision-date»»···
 #--
 
@@ -136,10 +137,6 @@ class Application (PMA.TKT.Application) :
         w.after_idle       (self._after_mainloop)
         w.mainloop         ()
     # end def start_mainloop
-
-    def virtual_key_name (self, name) :
-        return CTK.virtual_key_name (name)
-    # end def virtual_key_name
 
     def _after_mainloop (self,) :
         self.body.change_size   (frac = 0.25)
@@ -275,7 +272,6 @@ class Application (PMA.TKT.Application) :
     def _setup_toplevel (self, master = None) :
         self.gui = gui = self.C_Frame \
             (master, name = self.model.product_name)
-        self.gui.manager  = self
         self.set_maxsize                      ()
         self.gui.pack                         ( expand = YES, fill = BOTH)
         self.toplevel    = gui.toplevel \

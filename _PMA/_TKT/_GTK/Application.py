@@ -23,10 +23,11 @@
 #    PMA.TKT.GTK.Application
 #
 # Purpose
-#    Implement Tkinter-specific functionality of PMA
+#    Implement GTK-specific functionality of PMA
 #
 # Revision Dates
 #    20-May-2005 (MG) Creation
+#    22-May-2005 (CT) `virtual_key_name` removed, spelling
 #    ««revision-date»»···
 #--
 
@@ -57,11 +58,9 @@ import _TFL.Environment
 from   _TFL                 import sos
 from   glob                 import glob
 
-
 ### XXX todo
-### - Cilpboard
+### - Clipboard
 ### - Fileview Widget
-### - virtual_key_name ???
 ### - pane: .divide, lower/upper limit
 ### - balloon for toolbar and application ???
 ### - dialogs ???
@@ -133,11 +132,6 @@ class Application (PMA.TKT.Application) :
         w.idle_add                             (self.after_mainloop_cb)
         self.TNS.main                          ()
     # end def start_mainloop
-
-    def virtual_key_name (self, name) :
-        return name ### XXX
-        return CTK.virtual_key_name (name)
-    # end def virtual_key_name
 
     def after_mainloop_cb (self, * args) :
         #self.body.change_size   (frac = 0.25)
