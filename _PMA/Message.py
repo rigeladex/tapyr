@@ -89,6 +89,7 @@
 #    22-May-2005 (CT) `_reparsed` changed to use `PMA.Sb` if available
 #    22-May-2005 (CT) s/_get_header/_get_headers/ (and changed to return all
 #                     headers)
+#    22-May-2005 (CT) `pending` and `_Pending_Action_` added
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,7 @@ from   _TFL.Regexp             import *
 
 import sos
 import time
+import weakref
 
 _ws_pat = Regexp    (r"\s+")
 now     = time.time ()
@@ -585,12 +587,14 @@ class Message (_Message_) :
     time             = property (lambda s : s._time   (s.email))
 
     def __init__ (self, email, name = None, mailbox = None, status = None, number = None) :
-        if status is None :
-            status = PMA.Msg_Status ()
         self.__super.__init__ (email, name)
-        self.mailbox = mailbox
-        self.status  = status
-        self.number  = number
+        self.mailbox     = mailbox
+        self.status      = status
+        self.number      = number
+        if mailbox :
+            self.pending = _Pending_Action_ (self)
+        if status is None :
+            status       = PMA.Msg_Status ()
     # end def __init__
 
     def formatted (self, sep_length = 79) :
@@ -656,6 +660,74 @@ class Message (_Message_) :
     # end def __repr__
 
 # end class Message
+
+class _Pending_Action_ (TFL.Meta.Object) :
+
+    can_move          = property \
+        (lambda s : (not s._delete) or len (s._targets) <= 1)
+    msg               = property (lambda s : s._msg)
+
+    def __init__ (self, msg) :
+        self._msg = weakref.proxy (msg)
+        self._reset ()
+    # end def __init__
+
+    def commit (self) :
+        """Commit all pending actions of message in mailbox `source`"""
+        msg = self._msg
+        for t in self._targets :
+            t.add_messages (msg)
+        source = self._delete
+        if hasattr (source, "delete") :
+            source.delete (msg)
+        self._reset ()
+    # end def commit
+
+    def copy (self, target) :
+        """Copy message into mailbox `target` (cancels `delete` if `target`
+           is the `source` passed to `delete`).
+        """
+        if target is self._delete :
+            self._delete = None
+        else :
+            if not self._targets :
+                self._delete = None
+            self._targets [target] = True
+    # end def copy
+
+    def delete (self, source) :
+        """Delete message from mailbox `source`"""
+        self._delete  = source
+        self._targets = {}
+    # end def delete
+
+    def move (self, source, target) :
+        """Move message into mailbox `source` into mailbox `target`"""
+        assert self.can_move
+        self._delete = self._targets [target] = source
+    # end def move
+
+    def _reset (self) :
+        self._delete  = None
+        self._targets = {}
+    # end def _reset
+
+    def __nonzero__ (self) :
+        return self._delete or self._targets
+    # end def __nonzero__
+
+    def __str__ (self) :
+        result = ["%s" % self._msg.name]
+        if self :
+            if self._delete :
+                result.append ("delete from %s" % self._delete.path)
+            result.extend (["copy to %s" % t.path for t in self._targets])
+        else :
+            result.append ("no actions pending")
+        return ":".join (result)
+    # end def __str__
+
+# end class _Pending_Action_
 
 def message_from_file (filename, parser = None) :
     if parser is None :

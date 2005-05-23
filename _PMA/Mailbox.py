@@ -34,6 +34,7 @@
 #    22-May-2005 (CT) `delete` added
 #    22-May-2005 (CT) `_copy_msg_file` changed to use `message.save` instead
 #                     of home-grown code
+#    22-May-2005 (CT) `commit` and `commit_all` added
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,19 @@ class _Mailbox_ (TFL.Meta.Object) :
         self._msg_stat = {}
         self._read_msg_status (path)
     # end def __init__
+
+    def commit (self, msg) :
+        """Commit the pending actions of `msg`"""
+        if msg.pending :
+            msg.pending.commit (self)
+    # end def commit
+
+    def commit_all (self) :
+        """Commit the pending actions all messages"""
+        for msg in self._msg_dict.itervalues () :
+            if msg.pending :
+                msg.pending.commit (self)
+    # end def commit_all
 
     def md_name (cls, message = None) :
         t = int (time.time ())
