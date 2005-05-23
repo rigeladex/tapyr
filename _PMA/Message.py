@@ -90,6 +90,9 @@
 #    22-May-2005 (CT) s/_get_header/_get_headers/ (and changed to return all
 #                     headers)
 #    22-May-2005 (CT) `pending` and `_Pending_Action_` added
+#    23-May-2005 (CT) `_Pending_Action_` changed to treat `move` as another
+#                     `copy` if there is more than one `_targets` already
+#                     (instead of forbidding that)
 #    ««revision-date»»···
 #--
 
@@ -663,8 +666,6 @@ class Message (_Message_) :
 
 class _Pending_Action_ (TFL.Meta.Object) :
 
-    can_move          = property \
-        (lambda s : (not s._delete) or len (s._targets) <= 1)
     msg               = property (lambda s : s._msg)
 
     def __init__ (self, msg) :
@@ -703,8 +704,10 @@ class _Pending_Action_ (TFL.Meta.Object) :
 
     def move (self, source, target) :
         """Move message into mailbox `source` into mailbox `target`"""
-        assert self.can_move
-        self._delete = self._targets [target] = source
+        if len (self._targets) == 1 :
+            self._targets = {}
+        self._delete           = source
+        self._targets [target] = True
     # end def move
 
     def _reset (self) :
