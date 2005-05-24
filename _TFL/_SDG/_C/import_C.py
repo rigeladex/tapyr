@@ -33,9 +33,10 @@
 #        [...]
 #
 # Revision Dates
-#    10-Aug-2004 (MG) Creation
-#    11-Aug-2004 (MG) Creation continued
-#    12-Aug-2004 (MG) Backward compatibility added
+#    10-Aug-2004 (MG)  Creation
+#    11-Aug-2004 (MG)  Creation continued
+#    12-Aug-2004 (MG)  Backward compatibility added
+#    24-May-2005 (CED) Import of `Enum` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _TFL._SDG._C                     import C
 import _TFL._SDG._C.Array
 import _TFL._SDG._C.Block
 import _TFL._SDG._C.Comment
+import _TFL._SDG._C.Enum
 import _TFL._SDG._C.For_Stmt
 import _TFL._SDG._C.Function
 import _TFL._SDG._C.If_Stmt

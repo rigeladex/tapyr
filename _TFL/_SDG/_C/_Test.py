@@ -33,6 +33,7 @@
 #    27-Sep-2004 (CT) Testcase for array with only a single element added
 #    21-Oct-2004 (CT) Testcase for Macro_If in headerfile added
 #    16-Nov-2004 (MG) Testcase for multidimensional arrays added
+#    24-May-2005 (CED) Test of `Enum` added
 #    ««revision-date»»···
 #--
 
@@ -257,6 +258,19 @@ typedef struct _test_struct
     int field_2 [2];
   } my_type;
 
+>>> e1 = C.Enum ("foobar", ["VALUE_A", "VALUE_B = 2", "VALUE_C"])
+>>> e2 = C.Enum ("foobaz", ["VALUE_D"])
+>>> t1 = C.Typedef (e1, "foobar")
+>>> t2 = C.Typedef (e2, "foobaz")
+>>> print NL.join ([l.rstrip () for l in t1.as_c_code ()])
+typedef enum _foobar
+  { VALUE_A
+  , VALUE_B = 2
+  , VALUE_C
+  } foobar;
+
+>>> print NL.join ([l.rstrip () for l in t2.as_c_code ()])
+typedef enum _foobaz {VALUE_D} foobaz;
 
 >>> d = C.Macro ("define foo", "", "line1", "line2")
 >>> print NL.join ([l.rstrip () for l in d.as_c_code ()])
