@@ -93,6 +93,7 @@
 #    23-May-2005 (CT) `_Pending_Action_` changed to treat `move` as another
 #                     `copy` if there is more than one `_targets` already
 #                     (instead of forbidding that)
+#    25-May-2005 (CT) Bug fix `self.status` initialization
 #    ««revision-date»»···
 #--
 
@@ -592,12 +593,12 @@ class Message (_Message_) :
     def __init__ (self, email, name = None, mailbox = None, status = None, number = None) :
         self.__super.__init__ (email, name)
         self.mailbox     = mailbox
-        self.status      = status
         self.number      = number
         if mailbox :
             self.pending = _Pending_Action_ (self)
         if status is None :
             status       = PMA.Msg_Status ()
+        self.status      = status
     # end def __init__
 
     def formatted (self, sep_length = 79) :
