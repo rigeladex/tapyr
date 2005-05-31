@@ -43,6 +43,7 @@
 #     2-Apr-2005 (MG)  `_before_styler` simplified
 #    19-Apr-2005 (CT)  `make_active` changed to delegate to `exposed_widget`
 #    25-Apr-2005 (CT)  `setup_context_menu` added
+#    31-May-2005 (CT)  `normal_cursor` fixed
 #    ««revision-date»»···
 #--
 
@@ -86,6 +87,7 @@ class Widget (TFL.TKT.Mixin) :
 
     def normal_cursor (self, * args, ** kw) :
         """Legacy lifter de-activating gauge (ignores all arguments)"""
+        gauge = self.AC.ui_state.gauge
         if gauge :
             gauge.deactivate ()
     # end def normal_cursor
