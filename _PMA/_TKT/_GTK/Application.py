@@ -29,6 +29,7 @@
 #    20-May-2005 (MG) Creation
 #    22-May-2005 (CT) `virtual_key_name` removed, spelling
 #     3-Jun-2005 (MG) `show_*` and some `ask_*` functions added
+#     3-Jun-2005 (MG) Ask functions for filenames and and directorynames added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ import _PMA._TKT._GTK.V_Box
 import _PMA._TKT._GTK.Interpreter_Window
 import _PMA._TKT._GTK.Dialog
 import _PMA._TKT._GTK.Message_Dialog
+import _PMA._TKT._GTK.File_Chooser_Dialog
 
 from   Gauge_Logger         import Gauge_Logger
 from   Script_Menu_Mgr      import Script_Menu_Mgr
@@ -326,13 +328,12 @@ class Application (PMA.TKT.Application) :
 ### XXX    ask_list_element         = CTK_Dialog.ask_list_element
 ### XXX    ask_list_element_combo   = CTK_Dialog.ask_list_element_combo
 ### XXX    ask_list_element_spinner = CTK_Dialog.ask_list_element_spinner
-### XXX
-### XXX    ### these must be wrapped, because they don't accept `self' as argument
-### XXX    ask_open_file_name       = staticmethod (CTK_Dialog.ask_open_file_name)
-### XXX    ask_save_file_name       = staticmethod (CTK_Dialog.ask_save_file_name)
-### XXX    ask_dir_name             = staticmethod (CTK_Dialog.ask_dir_name)
-### XXX    ask_open_dir_name        = staticmethod (CTK_Dialog.ask_open_dir_name)
-### XXX    ask_save_dir_name        = staticmethod (CTK_Dialog.ask_save_dir_name)
+
+    ask_open_file_name       = staticmethod (PMA.TKT.GTK.ask_open_file_name)
+    ask_save_file_name       = staticmethod (PMA.TKT.GTK.ask_save_file_name)
+    ask_dir_name             = staticmethod (PMA.TKT.GTK.ask_dir_name)
+    ask_open_dir_name        = staticmethod (PMA.TKT.GTK.ask_open_dir_name)
+    ask_save_dir_name        = staticmethod (PMA.TKT.GTK.ask_save_dir_name)
 
 # end class Application
 

@@ -27,22 +27,166 @@
 #
 # Revision Dates
 #    03-Jun-2005 (MG) Automated creation
+#     3-Jun-2005 (MG) Creation continued
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Dialog
+import _TGL._TKT._GTK.File_Filter
+import _TGL._TKT._GTK.Message_Dialog
+import _TFL.sos               as os
 
-class File_Chooser_Dialog (GTK.Dialog) :
+class File_Chooser_Dialog (GTK.Dialog.Dialog) :
     """Wrapper for the GTK widget FileChooserDialog"""
 
     GTK_Class        = GTK.gtk.FileChooserDialog
     __gtk_properties = \
-        ( 
+        ( GTK.SG_Property
+            ("selection", set = False, get_fct_name = "get_filename")
+        ,
         )
 
 # end class File_Chooser_Dialog
 
+class File_Open_Dialog (File_Chooser_Dialog) :
+    """Select an existing file."""
+
+    action         = GTK.gtk.FILE_CHOOSER_ACTION_OPEN
+    action_buttons = \
+        ( "gtk-cancel", GTK.RESPONSE_CANCEL
+        , "gtk-open",   GTK.RESPONSE_OK
+        )
+
+    _wtk_delegation = GTK.Delegation \
+        ( GTK.Delegator_O ("add_filter")
+        )
+
+    def __init__ ( self
+                 , parent    = None
+                 , title     = None
+                 , filetypes = ()
+                 , init_val  = None
+                 , AC        = None
+                 ) :
+        self.__super.__init__ \
+            ( title   = title
+            , parent  = parent
+            , action  = self.action
+            , buttons = self.action_buttons
+            , AC      = AC
+            )
+        for name, pattern in filetypes :
+            filter = self.TNS.File_Filter (name, pattern, AC = self.AC)
+            self.add_filter               (filter)
+        if init_val :
+            self.wtk_object.set_filename            (init_val)
+    # end def __init__
+
+# end class File_Open_Dialog
+
+class File_Save_Dialog (File_Open_Dialog) :
+    """Select a new file name."""
+
+    action         = GTK.gtk.FILE_CHOOSER_ACTION_SAVE
+    action_buttons = \
+        ( "gtk-cancel", GTK.RESPONSE_CANCEL
+        , "gtk-save",   GTK.RESPONSE_OK
+        )
+    exist_check    = staticmethod (os.path.isfile)
+    kind           = "file"
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        initialdir, initialfile = os.path.split (kw.get ("init_val", ""))
+        if initialfile :
+            self.wtk_object.set_current_name (initialfile)
+    # end def __init__
+
+    def run (self, overwrite_warning = True) :
+        while 1 :
+            response = self.wtk_object.run ()
+            if not overwrite_warning or response != GTK.RESPONSE_OK :
+                return response
+            selected = self.selection
+            if self.exist_check (selected) :
+                d = self.TNS.Yes_No_Cancel_Question \
+                    ( title   = self.title
+                    , message =
+                        ( "The %s `%s` already exists!\n\n"
+                          "Do you realy want to overwrite it?"
+                        ) % (self.kind, selected)
+                    , AC      = AC
+                    )
+                over = d.run     ()
+                d.destroy        ()
+                if over == GTK.RESPONSE_CANCEL :
+                    return over
+                elif over == GTK.RESPONSE_YES :
+                    return GTK.RESPONSE_OK
+            else :
+                return response
+        return response
+    # end def run
+
+# end class File_Save_Dialog
+
+class Folder_Select_Dialog (File_Open_Dialog) :
+    """Select a new file name."""
+
+    action         = GTK.gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER
+
+# end class Folder_Select_Dialog
+
+class Folder_Create_Dialog (File_Save_Dialog) :
+    """Select a new file name."""
+
+    action         = GTK.gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER
+    exist_check    = staticmethod (os.path.isdir)
+    kind           = "directory"
+
+# end class Folder_Create_Dialog
+
+def _ask_dialog (cls, args = (), kw = {}) :
+    d = cld (* args, ** kw)
+    if d.run () == GTK.RESPONSE_CANCEL :
+        return None
+    return d.selection
+# end def _ask_dialog
+
+def ask_open_file_name (* args, ** kw) :
+    return _ask_dialog (File_Open_Dialog, args, kw)
+# end def ask_open_file_name
+
+def ask_save_file_name (* args, ** kw) :
+    return _ask_dialog (File_Save_Dialog, args, kw)
+# end def ask_save_file_name
+
+def ask_dir_name (** kw) :
+    return _ask_dialog (Folder_Select_Dialog, args, kw)
+# end def ask_dir_name
+
+def ask_open_dir_name (** kw) :
+    return _ask_dialog (Folder_Select_Dialog, args, kw)
+# end def ask_open_dir_name
+
+def ask_save_dir_name (** kw) :
+    return _ask_dialog (Folder_Create_Dialog, args, kw)
+# end def ask_save_dir_name
+
 if __name__ != "__main__" :
-    GTK._Export ("File_Chooser_Dialog")
+    GTK._Export ("*")
+else :
+    from _TGL import TGL
+    from   _TGL._UI.App_Context   import App_Context
+    AC  = App_Context     (TGL)
+
+    fo = File_Save_Dialog \
+        ( title     = "Test file save"
+        , filetypes = (("All Files", "*"), ("Python Files", "*.py"))
+        , init_val  = ("/home/lucky/x.py")
+        , AC        = AC
+        )
+    print fo.run               ()
+    print fo.selection
 ### __END__ TGL.TKT.GTK.File_Chooser_Dialog
