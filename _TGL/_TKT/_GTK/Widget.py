@@ -42,6 +42,7 @@
 #    18-May-2005 (MG) `exposed_widget` added
 #    20-May-2005 (MG) `__init__`: call to `read_widget_memory` added
 #    20-May-2005 (MG) `grab_*` added
+#     3-Jun-2005 (MG) `destroy` added
 #    ««revision-date»»···
 #--
 
@@ -108,6 +109,7 @@ class Widget (GTK.Object) :
         , GTK.Delegator_2O       ("add_accelerator")
         , GTK.Delegator          ("grab_add")
         , GTK.Delegator          ("grab_remove")
+        , GTK.Delegator          ("destroy")
         )
 
     exposed_widget = property (lambda s : s)

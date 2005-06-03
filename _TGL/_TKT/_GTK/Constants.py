@@ -12,6 +12,7 @@
 # Revision Dates
 #     8-Apr-2005 (MG) Creation
 #    16-May-2005 (MG) New `SORT_*` constants added
+#     3-Jun-2005 (MG) Dialog response constants added
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,19 @@ GTK._Add \
     , WRAP_CHAR               = gtk.WRAP_CHAR
     , WRAP_NONE               = gtk.WRAP_NONE
     , WRAP_WORD               = gtk.WRAP_WORD
+    # Responses for dialogs :
+    , RESPONSE_ACCEPT         = gtk.RESPONSE_ACCEPT
+    , RESPONSE_APPLY          = gtk.RESPONSE_APPLY
+    , RESPONSE_CANCEL         = gtk.RESPONSE_CANCEL
+    , RESPONSE_CLOSE          = gtk.RESPONSE_CLOSE
+    , RESPONSE_DELETE_EVENT   = gtk.RESPONSE_DELETE_EVENT
+    , RESPONSE_HELP           = gtk.RESPONSE_HELP
+    , RESPONSE_NO             = gtk.RESPONSE_NO
+    , RESPONSE_NONE           = gtk.RESPONSE_NONE
+    , RESPONSE_OK             = gtk.RESPONSE_OK
+    , RESPONSE_REJECT         = gtk.RESPONSE_REJECT
+    , RESPONSE_YES            = gtk.RESPONSE_YES
+    #, RESPONSE_RETRY          = gtk.RESPONSE_RETRY
     # Message types for dialogs :
     , MESSAGE_ERROR           = gtk.MESSAGE_ERROR
     , MESSAGE_INFO            = gtk.MESSAGE_INFO

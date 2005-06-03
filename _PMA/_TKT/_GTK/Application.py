@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-May-2005 (MG) Creation
 #    22-May-2005 (CT) `virtual_key_name` removed, spelling
+#     3-Jun-2005 (MG) `show_*` and some `ask_*` functions added
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,8 @@ import _PMA._TKT._GTK.Paned
 import _PMA._TKT._GTK.H_Box
 import _PMA._TKT._GTK.V_Box
 import _PMA._TKT._GTK.Interpreter_Window
+import _PMA._TKT._GTK.Dialog
+import _PMA._TKT._GTK.Message_Dialog
 
 from   Gauge_Logger         import Gauge_Logger
 from   Script_Menu_Mgr      import Script_Menu_Mgr
@@ -275,11 +278,51 @@ class Application (PMA.TKT.Application) :
             return getattr (self.gui, name)
     # end def __getattr__
 
+    def _show_dialog_ (self, cls, * args, ** kw) :
+        kw ["AC"] = AC
+        dialog    = cls    (* args, ** kw)
+        return dialog.run  ()
+    # end def _show_dialog_
+
+    def show_error (self, * args, ** kw) :
+        return self._show_dialog_ (self.TNS.Error_Dialog, * args, ** kw)
+    # end def show_error
+
+    def show_warning (self, * args, ** kw) :
+        return self._show_dialog_ (self.TNS.Warning_Dialog, * args, ** kw)
+    # end def show_warning
+
+    def show_info (self, * args, ** kw) :
+        return self._show_dialog_ (self.TNS.Info_Dialog, * args, ** kw)
+    # end def show_info
+
+    def ask_question (self, * args, ** kw) :
+        return self._show_dialog_ (self.TNS.Error_Dialog, * arg, ** kw)
+    # end def ask_question
+
+    def ask_ok_cancel (self, * args, ** kw) :
+        return self._show_dialog_ (self.TNS.OK_Cancel_Question, * args, ** kw)
+    # end def ask_ok_cancel
+
+    def ask_yes_no (self, * args, ** kw) :
+        return self._show_dialog_ (self.TNS.Yes_No_Question, * args, ** kw)
+    # end def ask_ok_cancel
+
+    def ask_yes_no_cancel (self, * args, ** kw) :
+        return self._show_dialog_ \
+            (self.TNS.Yes_No_Cancel_Question, * args, ** kw)
+    # end def ask_yes_no_cancel
+
+    def ask_retry_cancel (self, * args, ** kw) :
+        return self._show_dialog_ \
+            (self.TNS.Cancel_Retry_Question, * args, ** kw)
+    # end def ask_retry_cancel
+
     ### provide CTK_Dialog.ask_* functions as member functions, too
     ### `self' will be passed as argument `master'
-### XXX    ask_string               = CTK_Dialog.ask_string
-### XXX    ask_integer              = CTK_Dialog.ask_integer
-### XXX    ask_float                = CTK_Dialog.ask_float
+    ask_string               = PMA.TKT.GTK.Dialog.ask_string
+    ask_integer              = PMA.TKT.GTK.Dialog.ask_integer
+    ask_float                = PMA.TKT.GTK.Dialog.ask_float
 ### XXX    ask_list_element         = CTK_Dialog.ask_list_element
 ### XXX    ask_list_element_combo   = CTK_Dialog.ask_list_element_combo
 ### XXX    ask_list_element_spinner = CTK_Dialog.ask_list_element_spinner

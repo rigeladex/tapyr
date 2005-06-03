@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-May-2005 (MG) Automated creation
+#     3-Jun-2005 (MG) `get` added
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,10 @@ class Entry (GTK.Widget) :
         , GTK.SG_Property         ("width_chars")
         , GTK.Property            ("xalign")
         )
+
+    def get (self) :
+        return self.text
+    # end def get
 
 # end class Entry
 
