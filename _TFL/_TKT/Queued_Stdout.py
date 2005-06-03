@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Feb-2005 (CT) Creation (factored from CTK_Queued_Stdout)
+#     3-Jun-2005 (MG) `event` parameter added to `update`
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ class _Queued_Stdout_ (TFL.TKT.Mixin) :
             self._pending = self._schedule_pending ()
     # end def write
 
-    def update (self) :
+    def update (self, event = None) :
         pending = None
         try :
             out_widget = self.out_widget

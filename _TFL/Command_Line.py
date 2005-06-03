@@ -152,6 +152,8 @@
 #                     option values if specified as `-option=-value`
 #    24-Oct-2004 (CT) `T` added to `type_specifiers` dict
 #    24-Mar-2005 (CT) Moved into package `TFL`
+#     3-Jun-2005 (MG) `_usage`: missing call parameter `result` added to the
+#                     call of `_add_rest_args`
 #    ««revision-date»»···
 #--
 
@@ -529,7 +531,7 @@ class _Help_ :
                 result.append (self._fmt_arg_usage (cmd, a.name, i))
             self._add_rest_args (cmd, result)
         elif cmd._min_args > 0 or cmd._max_args > 0 :
-            self._add_rest_args (cmd)
+            self._add_rest_args (cmd, result)
         return self.usage_sep.join (result)
     # end def _usage
 
