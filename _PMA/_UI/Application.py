@@ -452,6 +452,10 @@ class Application (PMA.UI.Mixin) :
         if TFL.Environment.username == "tanzer" :
             msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
             md.display (msg)
+        elif TFL.Environment.username == "lucky" :
+            msg = PMA.message_from_file \
+                ("/home/lucky/PMA_Test/MH/customer/HS/17")
+            md.display (msg)
     # end def _setup_office
 
     def _setup_scripts_group (self, group) :

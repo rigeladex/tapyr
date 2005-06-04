@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    TGL.TKT.Tree_Adapter
+#    TGL.UI.Tree_Adapter
 #
 # Purpose
 #    Base class used for the creation of an TKT.Tree out of any tree/list
@@ -29,13 +29,15 @@
 # Revision Dates
 #    17-May-2005 (MG) Creation
 #    18-May-2005 (MG) `_setup_model` use `self.children` for the loop
+#     3-Jun-2005 (MG) Move from `TKT` package into the `UI` package
+#     3-Jun-2005 (MG) `TGL.UI.Tree` factored
 #    ««revision-date»»···
 #--
 
 from   _TGL                import TGL
 from   _TFL                import TFL
-import _TGL._TKT
-import _TGL._TKT.Mixin
+import _TGL._UI
+import _TGL._UI.Mixin
 import _TFL._Meta.Object
 
 class Cell (TFL.Meta.Object) :
@@ -119,7 +121,7 @@ class Column (TFL.Meta.Object) :
         , clickable     = True
         , resizable     = True
         , reorderable   = True
-        , alignment     = 0.6
+        , alignment     = 0.5
         , header_widget = None
         , sort_function = None
         )
@@ -171,21 +173,10 @@ class Column (TFL.Meta.Object) :
 
 # end class Column
 
-class Tree_Adapter (TGL.TKT.Mixin) :
+class Tree_Adapter (TGL.UI.Mixin) :
     """Base class for the TKT.<TNS>.Tree creation."""
 
     schema = () ### to be defined by descendents
-
-    def __init__ (self, ui_model, model = None, lazy = True, AC = None) :
-        self.__super.__init__    (AC = AC)
-        self.ui_model = ui_model
-        if not model :
-            model  = self._setup_model  (ui_model, lazy)
-        self.model = model
-        self.tkt   = self.TNS.Tree (self.model, AC = AC)
-        for col in self.schema :
-            col.add_column (self.tkt)
-    # end def __init__
 
     def has_children (self, element) :
         ### must return wether the `element` has childrens or not
@@ -197,110 +188,42 @@ class Tree_Adapter (TGL.TKT.Mixin) :
         raise NotImplementedError
     # end def children
 
-    def _setup_model (self, ui_model, lazy) :
+    def create_model (self) :
         column_types = []
         for col in self.schema :
             col.setup_column_types (column_types)
         ui_column = len            (column_types)
         column_types.append        (object)
-        model = self.TNS.Tree_Model \
+        return self.TNS.Tree_Model \
             (AC = self.AC, ui_column = ui_column, * column_types)
-        for ui in self.children (ui_model) :
-            self._add_row (model, ui, None, lazy)
-        return model
-    # end def _setup_model
+    # end def create_model
 
-    def _add_row (self, model, ui, parent, lazy) :
-        row = []
-        for column in self.schema :
-            column.add_row_data (ui, row)
-        row.append              (ui)
-        node = model.add        (row, parent = parent)
-        if self.has_children (ui) :
-            if not lazy :
-                for cui in self.children (ui) :
-                    self._add_row (model, cui, node, lazy)
-            else :
-                print "Add sub element", ui
-    # end def _add_row
+    def create_filter_model (self, model, filter) :
+        ### XXX use filter to setup the filter function
+        return self.TNS.Filter_Model (model)
+    # end def create_filter_model
+
+    def create_sort_model (self, model, sort) :
+        ### XXX use sort to setup the sort function
+        return self.TNS.Sort_Model (model)
+    # end def create_sort_model
+
+    def create_view (self, tkt) :
+        for col in self.schema :
+            col.add_column (tkt)
+    # end def create_view
+
+    def row_data (self, element, row = None) :
+        if row is None :
+            row = []
+            for column in self.schema :
+                column.add_row_data (element, row)
+        row.append                  (element)
+        return row
+    # end def row_data
 
 # end class Tree_Adapter
 
 if __name__ != "__main__" :
-    TGL.TKT._Export ("*")
-else :
-    from   _TGL._UI.App_Context   import App_Context
-    from    Record                import Record
-    import _TGL._TKT._GTK.Model
-    import _TGL._TKT._GTK.Cell_Renderer_Text
-    import _TGL._TKT._GTK.Tree_View_Column
-    import _TGL._TKT._GTK.Tree
-    import _TGL._TKT._GTK.Test_Window
-    GTK = TGL.TKT.GTK
-
-    AC    = App_Context     (TGL)
-    class Test_Adapter (Tree_Adapter) :
-
-        schema = \
-            ( Column ( "Name"
-                     , Text_Cell_Styled ("first_name")
-                     , Text_Cell_Styled ("last_name")
-                     )
-            , Column ( "Age"
-                     , Text_Cell        (("age", int))
-                     )
-            , Column ( "Male"
-                     , Text_Cell        (("gender", bool))
-                     )
-            )
-
-        def has_children (self, element) :
-            return element.children
-        # end def has_children
-
-        def children (self, element) :
-            return element.children
-        # end def children
-
-    # end class Test_Adapter
-
-    class Person (object) :
-
-        def __init__ (self, first_name, last_name, age, gender = 0) :
-            self.first_name = first_name
-            self.last_name  = last_name
-            self.age        = age
-            self.gender     = gender
-            self.style      = Record \
-                (background = "white", foreground = "red")
-            self.children   = []
-        # end def __init__
-
-    # end class Person
-
-    ui_model = \
-        ( Person ("Herbert", "Glueck",    56)
-        , Person ("Eduard",  "Wiesinger", 52)
-        , Person ("Hans",    "Herbert",    2)
-        )
-    ui_model [0].children = \
-        ( Person ("Martin",  "Glueck",    29)
-        , Person ("Ines",    "Glueck",    31, 1)
-        )
-    ui_model [0].children [1].children = \
-        ( Person ("Celina",  "Glueck", 4)
-        ,
-        )
-    ui_model [1].children = \
-        ( Person ("Mathias", "Wiesinger", 23)
-        ,
-        )
-    win     = GTK.Test_Window (title = "Tree Adapter Test", AC = AC)
-    adapter = Test_Adapter    (ui_model, lazy = False, AC = AC)
-    adapter.tkt.show          ()
-    win.add                   (adapter.tkt)
-    win.default_height = 150
-    win.default_width  = 250
-    win.show                  ()
-    GTK.main                  ()
-### __END__ TGL.TKT.Tree_Adapter
+    TGL.UI._Export ("*")
+### __END__ TGL.UI.Tree_Adapter

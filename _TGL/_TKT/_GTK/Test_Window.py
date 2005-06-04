@@ -28,6 +28,8 @@
 # Revision Dates
 #    27-Mar-2005 (MG) Creation
 #    20-May-2005 (MG) Widget memory support added
+#     4-Jun-2005 (MG) `_quit`: dump widget memory only if `AC.memory` is nt
+#                     None
 #    ««revision-date»»···
 #--
 
@@ -45,7 +47,7 @@ class Test_Window (GTK.Window) :
     # end def __init__
 
     def _quit (self, event) :
-        if self.AC and hasattr (self.AC, "memory") :
+        if self.AC and getattr (self.AC, "memory", None) :
             self.save_widget_memory (True)
             self.AC.memory.dump     ()
     # end def _quit
