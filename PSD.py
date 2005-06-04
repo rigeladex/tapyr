@@ -45,6 +45,11 @@ import sos, sys, time
 class ACPI_Updater (TFL.Meta.Object) :
     """Update ACPI-related status"""
 
+    alarm_color   = "orange"
+    low_color     = "yellow"
+    normal_color  = "light green"
+    online_color  = "Deep Sky blue"
+
     _acpi_pattern = Regexp \
         ( r"^ \s* Battery \s+ \#\d \s+ : \s+ "
               r"(?P<bat_status> [^,]+),  \s+ "
@@ -70,9 +75,10 @@ class ACPI_Updater (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, status) :
-        pipe = os.popen ("acpitool")
-        l = pipe.read   ()
-        pipe.close      ()
+        status.acpi = None
+        pipe = sos.popen ("acpitool")
+        l = pipe.read    ()
+        pipe.close       ()
         p = self._acpi_pattern
         if p.search (l) :
             if p.hours is not None :
@@ -94,18 +100,26 @@ class ACPI_Updater (TFL.Meta.Object) :
                    ) :
                     self.last_bat_status    = bat_status
                     self.last_status_change = now
+            color = self.normal_color
+            if ac_status == "on" :
+                color = self.online_color
+            else :
+                if percent < 40 :
+                    color = self.low_color
+                if percent <= 5 :
+                    color = self.alarm_color
             same_status_duration = (now - self.last_status_change) // 60
             status.acpi = Record \
                 ( ac_status            = ac_status
                 , bat_minutes          = minutes
                 , bat_percent          = percent
                 , bat_status           = bat_status
+                , color                = color
                 , same_status_duration = same_status_duration
                 , speed                = speed
                 , temperature          = temperature
                 , time                 = now
                 )
-        status.acpi = None
     # end def __call__
 
     def _get_speed (self) :
@@ -130,12 +144,13 @@ class ACPI_Updater (TFL.Meta.Object) :
 class Entry (TFL.Meta.Object) :
     """One entry of a status display"""
 
-    background   = "gray77"
+    background   = "black"
+    spacer       = 1
     updater      = None
 
     def __init__ (self, canvas, pos, width) :
         self.canvas = canvas
-        self.pos    = pos
+        self.pos    = D2.Point (pos.x, pos.y + self.spacer)
         self.size   = size = D2.Point (width, self.height)
         self.rect   = rect = D2.Rect  (pos,  size)
         self.widget = CTK.Rectangle \
@@ -161,16 +176,20 @@ class Entry (TFL.Meta.Object) :
 
 class _Text_Entry_ (Entry) :
 
+    background   = "gray20"
     height       = 14
+    text_color   = "white"
     text_font    = "6x13"
 
     def _new_text (self, canvas, pos, offset, anchor, tag) :
+        p = pos + offset
         return CTK.CanvasText \
-            ( canvas, (pos + offset).list ()
+            ( canvas, p.list ()
             , anchor   = anchor
-            , text     = ""
-            , tags     = tag
+            , fill     = self.text_color
             , font     = self.text_font
+            , tags     = tag
+            , text     = ""
             )
     # end def _new_text
 
@@ -183,7 +202,7 @@ class Text_C_Entry (_Text_Entry_) :
         self.__super.__init__ (canvas, ** kw)
         x = self.size.x // 2
         self.l_text = self._new_text \
-            (canvas, self.pos, D2.Point (x, -1), CTK.N, self.c_tag)
+            (canvas, self.pos, D2.Point (x, 0), CTK.N, self.c_tag)
     # end def __init__
 
 # end class Text_C_Entry
@@ -193,8 +212,9 @@ class Text_L_Entry (_Text_Entry_) :
 
     def __init__ (self, canvas, ** kw) :
         self.__super.__init__ (canvas, ** kw)
+        rect = self.rect
         self.l_text = self._new_text \
-            (canvas, self.pos, D2.Point (1, -1), CTK.NE, self.l_tag)
+            (canvas, rect.top_left, D2.Point (1, +1), CTK.NW, self.l_tag)
     # end def __init__
 
 # end class Text_L_Entry
@@ -204,8 +224,9 @@ class Text_R_Entry (_Text_Entry_) :
 
     def __init__ (self, canvas, ** kw) :
         self.__super.__init__ (canvas, ** kw)
+        rect = self.rect
         self.r_text = self._new_text \
-            (canvas, self.pos, D2.Point (-1, -1), CTK.NE, self.r_tag)
+            (canvas, rect.top_right, D2.Point (-1, +1), CTK.NE, self.r_tag)
     # end def __init__
 
 # end class Text_R_Entry
@@ -215,23 +236,18 @@ class Text_LR_Entry (Text_L_Entry, Text_R_Entry) :
 
 # end class Text_LR_Entry
 
-class _ACPI_Entry_ (Entry) :
+_acpi_updater = ACPI_Updater ()
 
-    updater      = ACPI_Updater ()
-
-# end class _ACPI_Entry_
-
-class ACPI_Entry (_ACPI_Entry_, Text_LR_Entry) :
+class ACPI_Entry (Text_LR_Entry) :
     """Entry displaying ACPI information"""
 
-    alarm_color  = "orange"
-    low_color    = "yellow"
-    normal_color = "light green"
-    online_color = "deep sky blue"
+    text_color   = "black"
 
     l_tag        = "acpistatus"
     r_tag        = "acpivalue"
     rect_tag     = "acpientry"
+
+    updater      = _acpi_updater
 
     def update (self, status) :
         s = status.acpi
@@ -239,8 +255,8 @@ class ACPI_Entry (_ACPI_Entry_, Text_LR_Entry) :
             canvas     = self.canvas
             remaining  = self._formatted_minutes (s.bat_minutes, head = " ")
             bat_status = s.bat_status
+            color      = s.color
             if s.ac_status == "on" :
-                color    = self.online_color
                 s_format = "%s%s%s"
                 if bat_status == "charging" :
                     status = ""
@@ -248,13 +264,8 @@ class ACPI_Entry (_ACPI_Entry_, Text_LR_Entry) :
                     status = "->"
                 remaining = ""
             else :
-                color    = self.normal_color
                 status   = ""
                 s_format = "%s%s%2.2s"
-                if s.bat_percent < 40 :
-                    color = self.low_color
-                if s.bat_percent <= 5 :
-                    color = self.alarm_color
                 if bat_status == "discharging" :
                     bat_status = ""
             status = \
@@ -262,30 +273,75 @@ class ACPI_Entry (_ACPI_Entry_, Text_LR_Entry) :
                 % (status, s.same_status_duration, bat_status.capitalize ())
                 )
             value  = "%s%%%s" % (s.bat_percent, remaining)
-            canvas.itemconfigure (self.l_tag,    text = status)
-            canvas.itemconfigure (self.r_tag,    text = value)
-            canvas.itemconfigure (self.rect_tag, bg   = color)
+            tcolor = self.text_color
+            self.widget.config (fill = color)
+            self.l_text.config (fill = tcolor, text = status)
+            self.r_text.config (fill = tcolor, text = value)
+            return status, value
     # end def update
 
 # end class ACPI_Entry
 
-class ACPI_Gauge (_ACPI_Entry_) :
+class ACPI_Gauge (Entry) :
     """Entry displaying ACPI as gauge"""
 
-    height   = 5
-    rect_tag = "acpibar"
+    background   = "black"
+    gauge_tag    = "acpigauge"
+    height       = 5
+    rect_tag     = "acpirect"
+    spacer       = 0
+
+    updater      = _acpi_updater
+
+    def __init__ (self, canvas, ** kw) :
+        self.__super.__init__ (canvas, ** kw)
+        rect = self.rect
+        self.gauge = CTK.Rectangle \
+            ( canvas, rect.top_left.list (), rect.bottom_right.list ()
+            , fill    = self.background
+            , outline = ""
+            , width   = 0
+            , tags    = self.gauge_tag
+            )
+    # end def __init__
 
     def update (self, status) :
-        if status.acpi :
-            percent = status.acpi.bat_percent
+        s = status.acpi
+        if s :
+            percent = s.bat_percent
+            size    = self.size
+            rect    = D2.Rect \
+                ( self.pos, D2.Point (0.01 * percent * size.x, size.y))
             self.canvas.coords \
-                ( self.rect_tag
-                , 0,                            0
-                , 0.01 * percent * self.size.x, self.size.y
+                ( self.gauge_tag
+                , * (rect.top_left.list () + rect.bottom_right.list ())
                 )
+            self.widget.config (fill = s.color)
     # end def update
 
 # end class ACPI_Gauge
+
+class CPU_Entry (Text_LR_Entry) :
+    """Entry displaying CPU information"""
+
+    l_tag        = "cputemp"
+    r_tag        = "cpuspeed"
+    rect_tag     = "cpuentry"
+
+    updater      = _acpi_updater
+
+    def update (self, status) :
+        s = status.acpi
+        if s :
+            canvas     = self.canvas
+            if s.temperature :
+                self.l_text.config (text = "%s C"   % s.temperature)
+            if s.speed :
+                self.r_text.config (text = "%s MHz" % s.speed)
+
+    # end def update
+
+# end class CPU_Entry
 
 class Date_Entry (Text_C_Entry) :
     """Entry displaying the date"""
@@ -322,51 +378,92 @@ class Display (TFL.Meta.Object) :
     pad_y        = 3
     period       = 1000
     relief       = CTK.RAISED
-    spacer       = 1
     widget_class = "PSD_Display"
+
+    class _TL_ (CTK.C_Toplevel) :
+        widget_class = "APM_Display"
 
     def __init__ (self, kind, width, * entry_t) :
         updaters      = {}
         self.entries  = entries  = []
         self.status   = Record ()
-        self.toplevel = toplevel = CTK.C_Toplevel.__init__ \
-            ( self
-            , bg                 = self.background
+        self.toplevel = toplevel = self._TL_ \
+            ( bg                 = self.background
             , class_             = self.widget_class
             , relief             = self.relief
             , title              = "%s Status" % (kind, )
             )
         self.canvas   = canvas   = CTK.Canvas \
             ( toplevel
+            , background         = "black"
             , name               = "canvas"
             , highlightthickness = 0
-            , width              = width
-            , bg                 = self.foreground
             )
         canvas.pack (padx = self.pad_x, pady = self.pad_y)
-        pos = D2.Point (self.spacer, 0)
+        pos = D2.Point (0, 0)
         w   = width - 2 * self.pad_x
         for e in entry_t :
-            o = entry_t    (canvas, pos, width)
+            pos.y += 2 * e.spacer
+            o = e (canvas, pos = pos, width = width)
             entries.append (o)
             if o.updater is not None and o.updater not in updaters :
                 updaters [o.updater] = len (updaters)
-            pos.y += o.size.y + self.spacer
-        self.size = D2.Point (width, pos.y + self.spacer + 2 * self.pad_y)
+            pos.y += o.size.y
+        self.size = D2.Point (width, pos.y * self.pad_y)
         self.updaters = \
             [u [0] for u in dusort (updaters.iteritems (), lambda (k, v) : v)]
-        self.after_idle (self.update)
+        canvas.configure (height = pos.y, width = width)
+        toplevel.after_idle (self.update)
     # end def __init__
+
+    def destroy (self, event = None) :
+        self.toplevel.destroy ()
+    # end def destroy
+
+    def mainloop (self) :
+        self.toplevel.mainloop ()
+    # end def mainloop
 
     def update (self, event = None) :
         status = self.status
         for u in self.updaters :
             u (status)
         for e in self.entries :
-            e.updater (status)
-        self.after (self.period, self.update_apm)
+            e.update (status)
+        self.toplevel.after (self.period, self.update)
     # end def update
 
 # end class Display
 
+def command_spec (arg_array = None) :
+    from   Command_Line import Command_Line
+    return Command_Line ( option_spec =
+                            ( "pos:S?Position of display in geometry-format"
+                            , "width:I=100?Width of display"
+                            )
+                        , arg_array   = arg_array
+                        )
+# end def command_spec
+
+def main (cmd) :
+    a = Display \
+        ( "ACPI", cmd.width
+        , Date_Entry, Time_Entry, ACPI_Entry, ACPI_Gauge, CPU_Entry
+        )
+    if cmd.pos :
+        a.geometry (cmd.pos)
+    CTK.root.withdraw ()
+    try :
+        try :
+            a.mainloop ()
+        finally :
+            CTK.root.destroy ()
+    except KeyboardInterrupt :
+        raise SystemExit
+    except StandardError :
+        pass
+# end def main
+
+if __name__ == "__main__":
+    main (command_spec ())
 ### __END__ PSD
