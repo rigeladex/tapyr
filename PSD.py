@@ -31,17 +31,92 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
-from   CTK               import *
-from   Record            import Record
-from   _TFL.predicate    import *
-from   _TFL.Regexp       import *
-from   _TFL._D2          import D2
+from   _TFL                  import TFL
+from   CTK                   import *
+from   Record                import Record
+from   _TFL.Numeric_Interval import Numeric_Interval as Ival
+from   _TFL.predicate        import *
+from   _TFL.Regexp           import *
+from   _TFL._D2              import D2
 import _TFL._D2.Point
 import _TFL._D2.Rect
 import _TFL._Meta.Object
 
 import sos, sys, time
+
+class R_Map (TFL.Meta.Object) :
+    """Map one range into another"""
+
+    def __init__ (self, source, target) :
+        self.source = source
+        self.target = target
+        self.s_len  = source.upper - source.lower
+        self.t_len  = target.upper - target.lower
+    # end def __init__
+
+    def __call__ (self, value) :
+        s_percentage = float (value - self.source.lower) / self.s_len
+        return s_percentage * self.t_len + self.target.lower
+    # end def __call__
+
+# end class R_Map
+
+class _Bar_ (TFL.Meta.Object) :
+
+    def __init__ (self, canvas, rect, background, tag, source_ival) :
+        self.canvas     = canvas
+        self.background = background
+        self.rect       = rect
+        self.tag        = tag
+        self.widget     = CTK.Rectangle \
+            ( canvas, rect.top_left.list (), rect.bottom_right.list ()
+            , fill    = background
+            , outline = ""
+            , width   = 0
+            , tags    = tag
+            )
+    # end def __init__
+
+    def update (self, value) :
+        rect = self._scaled_rect (self.rect, value)
+        self.canvas.coords \
+            ( self.tag
+            , * (rect.top_left.list () + rect.bottom_right.list ())
+            )
+    # end def update
+
+# end class _Bar_
+
+class H_Bar (_Bar_) :
+    """Horizontal bar"""
+
+    def __init__ (self, canvas, rect, background, tag, source_ival) :
+        self.r_map = R_Map (source_ival, Ival (0, rect.size.x))
+        self.__super.__init__ (canvas, rect, background, tag, source_ival)
+    # end def __init__
+
+    def _scaled_rect (self, rect, value) :
+        v = self.r_map (value)
+        return D2.Rect (rect.top_left, D2.Point (v, rect.size.y))
+    # end def _scaled_rect
+
+# end class H_Bar
+
+class V_Bar (_Bar_) :
+    """Vertical bar"""
+
+    def __init__ (self, canvas, rect, background, tag, source_ival) :
+        self.r_map = R_Map (source_ival, Ival (0, rect.size.y))
+        self.__super.__init__ (canvas, rect, background, tag, source_ival)
+    # end def __init__
+
+    def _scaled_rect (self, rect, value) :
+        v = self.r_map (value)
+        return D2.Rect \
+            (rect.bottom_left - D2.Point (0, v), D2.Point (rect.size.x, v))
+    # end def _scaled_pos
+
+# end class V_Bar
 
 class ACPI_Updater (TFL.Meta.Object) :
     """Update ACPI-related status"""
@@ -152,8 +227,8 @@ class Entry (TFL.Meta.Object) :
     def __init__ (self, canvas, pos, width) :
         self.canvas = canvas
         self.pos    = D2.Point (pos.x, pos.y + self.spacer)
-        self.size   = size = D2.Point (width, self.height)
-        self.rect   = rect = D2.Rect  (pos,  size)
+        self.size   = size = D2.Point (width,    self.height)
+        self.rect   = rect = D2.Rect  (self.pos, size)
         self.widget = CTK.Rectangle \
             ( canvas, rect.top_left.list (), rect.bottom_right.list ()
             , fill    = self.background
@@ -211,7 +286,7 @@ class Text_C_Entry (_Text_Entry_) :
 class Text_L_Entry (_Text_Entry_) :
     """One entry of a status display with text at left"""
 
-    l_offset = D2.Point (1, +1)
+    l_offset = D2.Point (1, 0)
 
     def __init__ (self, canvas, ** kw) :
         self.__super.__init__ (canvas, ** kw)
@@ -225,7 +300,7 @@ class Text_L_Entry (_Text_Entry_) :
 class Text_R_Entry (_Text_Entry_) :
     """One entry of a status display with text at right"""
 
-    r_offset = D2.Point (-1, +1)
+    r_offset = D2.Point (-1, 0)
 
     def __init__ (self, canvas, ** kw) :
         self.__super.__init__ (canvas, ** kw)
@@ -299,27 +374,14 @@ class ACPI_Gauge (Entry) :
 
     def __init__ (self, canvas, ** kw) :
         self.__super.__init__ (canvas, ** kw)
-        rect       = self.rect
-        self.gauge = CTK.Rectangle \
-            ( canvas, rect.top_left.list (), rect.bottom_right.list ()
-            , fill    = self.background
-            , outline = ""
-            , width   = 0
-            , tags    = self.gauge_tag
-            )
+        self.gauge = H_Bar \
+            (canvas, self.rect, self.background, self.gauge_tag, Ival (0, 100))
     # end def __init__
 
     def update (self, status) :
         s = status.acpi
         if s :
-            percent = s.bat_percent
-            size    = self.size
-            rect    = D2.Rect \
-                ( self.pos, D2.Point (0.01 * percent * size.x, size.y))
-            self.canvas.coords \
-                ( self.gauge_tag
-                , * (rect.top_left.list () + rect.bottom_right.list ())
-                )
+            self.gauge.update  (s.bat_percent)
             self.widget.config (fill = s.color)
     # end def update
 
@@ -364,19 +426,15 @@ class CPU_Entry (Text_LR_Entry) :
             , width   = 0
             , tags    = "speedgauge"
             )
-        self.sb_size  = bs = D2.Point (self.speed_width, self.height - 2)
-        self.sb_rect  = br = D2.Rect  \
-            ( rect.bottom_right - bs - D2.Point (1, 1), bs)
-        self.s_bar    = CTK.Rectangle \
-            ( canvas, br.top_left.list (), br.bottom_right.list ()
-            , fill    = self.speed_color
-            , outline = ""
-            , width   = 0
-            , tags    = "speedbar"
-            )
-        self.min_speed   = self._get_speed ("min")
-        self.max_speed   = self._get_speed ("max")
-        self.speed_range = (self.max_speed or 0) - (self.min_speed or 0)
+        min_speed     = self._get_speed ("min")
+        max_speed     = self._get_speed ("max")
+        if min_speed is not None and max_speed is not None :
+            bs = D2.Point (self.speed_width, self.height - 2)
+            br = D2.Rect  (rect.bottom_right - bs - D2.Point (1, 1), bs)
+            self.s_bar = V_Bar \
+                (canvas, br, self.speed_color, "speedbar", Ival (0, max_speed))
+        else :
+            self.s_bar = None
     # end def __init__
 
     def update (self, status) :
@@ -391,16 +449,8 @@ class CPU_Entry (Text_LR_Entry) :
                 self.widget.config  (fill = t_colors [i])
             if s.speed :
                 self.r_text.config  (text = "%s MHz" % s.speed)
-                if self.speed_range :
-                    v = ( float (s.speed - self.min_speed) / self.speed_range
-                        ) * self.sb_size.y
-                    d = D2.Point (0,              v)
-                    s = D2.Point (self.sb_size.x, v)
-                    r = D2.Rect  (self.sb_rect.bottom_left - d, s)
-                    self.canvas.coords \
-                        ( self.s_bar
-                        , * (r.top_left.list () + r.bottom_right.list ())
-                        )
+                if self.s_bar :
+                    self.s_bar.update (s.speed)
     # end def update
 
     def _get_speed (self, name) :
