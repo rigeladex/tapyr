@@ -30,6 +30,7 @@
 #     9-Apr-2003 (MG) `point_in_rect` added
 #    11-Jun-2003 (CT) s/!= None/is not None/
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#     4-Jun-2005 (CT) `str` added to show `size` instead of `bottom_right`
 #    ««revision-date»»···
 #--
 
@@ -75,7 +76,7 @@ class Rect (TFL.Meta.Object) :
        top_left             : (1.0, 1.0)
        top_right            : (3.0, 1.0)
        >>> q.scale (2)
-       Rect ((1.0, 1.0), (5.0, 3.0))
+       Rect ((1.0, 1.0), (4.0, 2.0))
        >>> rect_points (q)
        bottom_left          : (1.0, 3.0)
        bottom_right         : (5.0, 3.0)
@@ -87,7 +88,7 @@ class Rect (TFL.Meta.Object) :
        top_left             : (1.0, 1.0)
        top_right            : (5.0, 1.0)
        >>> q.shift (D2.Point (1, 1))
-       Rect ((2.0, 2.0), (6.0, 4.0))
+       Rect ((2.0, 2.0), (4.0, 2.0))
        >>> rect_points (q)
        bottom_left          : (2.0, 4.0)
        bottom_right         : (6.0, 4.0)
@@ -195,7 +196,7 @@ class Rect (TFL.Meta.Object) :
     # end def point_in_rect
 
     def __str__ (self) :
-        return "(%s, %s)" % (self.top_left, self.bottom_right)
+        return "(%s, %s)" % (self.top_left, self.size)
     # end def __str__
 
     def __repr__ (self) :

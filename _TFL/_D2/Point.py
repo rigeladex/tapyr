@@ -35,6 +35,7 @@
 #    24-Mar-2003 (CT) `__rmul__` changed to alias of `__mul__`
 #    24-Mar-2003 (CT) `__rdiv__` removed
 #     5-Apr-2005 (CT) `import _TFL._D2.Rect` added to doctest of `R_Point_R`
+#     4-Jun-2005 (CT) `__getitem__` simplified
 #    ««revision-date»»···
 #--
 
@@ -48,9 +49,7 @@ class _Point_ (TFL.Meta.Object) :
 
     def __getitem__ (self, index) :
         """Returns `x' for `index == 0' and `y' for `index == 1'"""
-        if   index == 0 : return self.x
-        elif index == 1 : return self.y
-        else            : raise  IndexError, index
+        return (self.x, self.y) [index]
     # end def __getitem__
 
     def __len__ (self) :
