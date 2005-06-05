@@ -43,6 +43,7 @@
 #    20-May-2005 (MG) `weakref` attribute added
 #    20-May-2005 (MG) Widget memory support added
 #    20-May-2005 (MG) `idle_add`, `idle_remove`, and `update_idletasks` added
+#     5-Jun-2005 (MG) `_Object_` factored, `Object_Wrapper` added
 #    ««revision-date»»···
 #--
 
@@ -320,7 +321,7 @@ def Delegation (* args, ** kw) :
     return kw
 # end def Delegation
 
-class Object (TGL.TKT.Mixin) :
+class _Object_ (TGL.TKT.Mixin) :
     """Root class for all GTK related objects (TextBuffer, TreeModel, ...)
        and Widgets (TextView, TreeView, ...)
 
@@ -342,13 +343,8 @@ class Object (TGL.TKT.Mixin) :
     ### `Signals`    is a dictionary describing the signals of the new GTK-type
     GTK_Class        = gtk.Object
 
-    def __init__ (self, * args, ** kw) :
-        AC = None
-        if "AC" in kw :
-            AC = kw ["AC"]
-            del kw  ["AC"]
+    def __init__ (self, AC = None) :
         self.__super.__init__ (AC = AC)
-        self.wtk_object    = self.GTK_Class (* args, ** kw)
         self._handlers     = {} ### holds all connected callback functions
         ### set the backref directly in the C-gtk object and not in the
         ### python wrapper !
@@ -523,7 +519,42 @@ class Object (TGL.TKT.Mixin) :
             gtk.main_iteration (block = False)
     # end def update_idletasks
 
+# end class _Object_
+
+class Object (_Object_) :
+    """Root class for all GTK related objects (TextBuffer, TreeModel, ...)
+       and Widgets (TextView, TreeView, ...)
+
+       >>> class Dummy (Object) :
+       ...     Class_Name = "Hansi"
+       ...     GTK_Class  = gtk.HBox
+       ...
+       >>> Dummy.GTK_Class
+       <class 'Object.Hansi'>
+    """
+
+    def __init__ (self, * args, ** kw) :
+        AC = None
+        if "AC" in kw :
+            AC = kw ["AC"]
+            del kw  ["AC"]
+        self.wtk_object    = self.GTK_Class (* args, ** kw)
+        self.__super.__init__ (AC = AC)
+    # end def __init__
+
 # end class Object
+
+class Object_Wrapper (_Object_) :
+    """Base class with alows the wrapping of an already existing GTK object
+       passed as the first parameter to the constructor of the class,
+    """
+
+    def __init__ (self, wtk_object, AC = None) :
+        self.wtk_object    = wtk_object
+        self.__super.__init__ (AC = AC)
+    # end def __init__
+
+# end class Object_Wrapper
 
 main = gtk.main
 quit = gtk.main_quit

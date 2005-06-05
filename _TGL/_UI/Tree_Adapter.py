@@ -31,6 +31,7 @@
 #    18-May-2005 (MG) `_setup_model` use `self.children` for the loop
 #     3-Jun-2005 (MG) Move from `TKT` package into the `UI` package
 #     3-Jun-2005 (MG) `TGL.UI.Tree` factored
+#     5-Jun-2005 (MG) Parameter `sort` removed from `create_sort_model`
 #    ««revision-date»»···
 #--
 
@@ -199,12 +200,10 @@ class Tree_Adapter (TGL.UI.Mixin) :
     # end def create_model
 
     def create_filter_model (self, model, filter) :
-        ### XXX use filter to setup the filter function
-        return self.TNS.Filter_Model (model)
+        return self.TNS.Filter_Model (model, filter)
     # end def create_filter_model
 
-    def create_sort_model (self, model, sort) :
-        ### XXX use sort to setup the sort function
+    def create_sort_model (self, model) :
         return self.TNS.Sort_Model (model)
     # end def create_sort_model
 

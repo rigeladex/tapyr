@@ -29,47 +29,22 @@
 #    27-Mar-2005 (MG) Creation
 #    16-May-2005 (MG) `Sort_Model` added
 #    16-May-2005 (MG) `iter_to_object` added
+#     5-Jun-2005 (MG) `iter_to_object` removed, `ui_object` added
+#     5-Jun-2005 (MG) `Dict_Mapper` and `Model_Proxy_Mapper` removed
+#     5-Jun-2005 (MG) `add_empty` added
+#     5-Jun-2005 (MG) `Filter_Model` and friends added
+#     5-Jun-2005 (MG) `Sort_Model` streamlined
 #    ««revision-date»»···
 #--
 
+from   _TFL                   import TFL
 from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Object
 import _TGL._TKT._GTK.Constants
 
-class Dict_Mapper (dict) :
-    """Maps an TGL.UI element to a GTK-TreeIter objects"""
-
-    def __init__ (self, model) :
-        pass ### no need for the model parameter
-    # end def __init__
-
-# end class Dict_Mapper
-
-class Model_Proxy_Mapper (object) :
-    """Maps a TGL.UI elements to GTK-TreeIter objects"""
-
-    def __init__ (self, model) :
-        self.model = model
-    # end def __init__
-
-    def __getitem__ (self, key) :
-        return self.model.iter [key]
-    # end def __getitem__
-
-    def __setitem__ (self, key, value) :
-        raise RuntimeError, "Set opertion ot allowed for a Procy"
-    # end def __setitem__
-
-    def get (self, key, default = None) :
-        return self.model.iter, get (key, default)
-    # end def get
-
-# end class Model_Proxy_Mapper
-
 class _Model_ (GTK.Object) :
     """Root class for all `Model` (Tree/List Model, FilterModel, SortModel)"""
 
-    Iter_Mapper      = Dict_Mapper
     GTK_Class        = None
 
     __gtk_properties = \
@@ -87,12 +62,26 @@ class _Model_ (GTK.Object) :
     # end def __init__
 
     def add (self, row, after = None, ** kw) :
-        after_iter     = self.iter.get (after, after)
-        iter           = self._add (row, after_iter = after_iter, ** kw)
+        iter = self._add \
+            (row, after_iter = self.iter.get (after, after), ** kw)
         if self.ui_column is not None :
             self.iter [row [self.ui_column]] = iter
         return iter
     # end def add
+
+    def add_empty (self, reference = None, after = None, ** kw) :
+        iter = self._add \
+            (None, after_iter = self.iter.get (after, after), ** kw)
+        if reference and self.ui_column is not None :
+            self.wtk_object.set (iter, self.ui_column, reference)
+        return iter
+    # end def add_empty
+
+    def ui_object (self, iter) :
+        if self.ui_column is not None :
+            return self.wtk_object [iter] [self.ui_column]
+        return None
+    # end def ui_object
 
     def remove (self, node) :
         iter  = self.iter.get (node, node)
@@ -131,11 +120,6 @@ class _Model_ (GTK.Object) :
             result.extend (self._format_row (r, sep, intend + 2))
         return result
     # end def _format_row
-
-    def iter_to_object (self, iter) :
-        if self.ui_column is not None :
-            return self.wtk_object [iter] [self.ui_column]
-    # end def iter_to_object
 
 # end class _Model_
 
@@ -211,33 +195,23 @@ class Tree_Model (_Model_) :
 
 # end class Tree_Model
 
-class Sort_Model (GTK.Object) :
+class _Proxy_Model_ (TFL.Meta.Object) :
+    """Root class for all kinds of `proxy` models (sort, filter, ...)"""
+
+    ui_column = property ( lambda s : s.model.ui_column)
+
+# end class _Proxy_Model_
+
+class Sort_Model (_Proxy_Model_, GTK.Object) :
     """Sorts a child model"""
 
     GTK_Class = GTK.gtk.TreeModelSort
 
-    sort_order    = property \
-        (lambda s    : s._order,  lambda s, v : s._set_order  (v))
-    sort_column   = property \
-        (lambda s    : s._column, lambda s, v : s._set_column (v))
-
-    def __init__ (self, child_model, order = GTK.SORT_ASCENDING, column = 0) :
+    def __init__ (self, child_model) :
         self.__super.__init__ (child_model.wtk_object)
         self.model      = child_model
-        self._order     = order
-        self._column    = column
         self._functions = {}
     # end def __init__
-
-    def _set_sort_column (self, column) :
-        self._column = column
-        self.wtk_object.set_sort_column_id (self._column, self._order)
-    # end def _set_sort_column
-
-    def _set_sort_order (self, order) :
-        self._order = order
-        self.wtk_object.set_sort_column_id (self._column, self._order)
-    # end def _set_sort_order
 
     def set_sort_funcion (self, id, fct, data = None, destroy = None) :
         """The sort function must accept the following parameter:
@@ -255,13 +229,58 @@ class Sort_Model (GTK.Object) :
         return self._functions [id]
     # end def sort_function
 
-    def iter_to_object (self, iter) :
-        return self.model.iter_to_object \
+    def ui_object (self, iter) :
+        return self.model.ui_object \
             (self.wtk_object.convert_iter_to_child_iter (None, iter))
-    # end def iter_to_object
+    # end def ui_object
 
 # end class Sort_Model
 
+class Filter_Model (_Proxy_Model_, GTK.Object_Wrapper) :
+    """Apply a filter function on the proxied model."""
+
+    GTK_Class       = GTK.gtk.TreeModelFilter
+
+    _wtk_delegation = GTK.Delegation \
+        ( GTK.Delegator ("refilter")
+        )
+    def __init__ ( self
+                 , child_model
+                 , filter_function
+                 , root       = None
+                 , row_filter = False
+                 ) :
+        wtk_object = child_model.wtk_object.filter_new (root)
+        self.model = child_model
+        self.__super.__init__ (wtk_object)
+        self.filter_function = filter_function
+        row_filter           = row_filter or self.ui_column is None
+        filter_fct           = \
+            (self._filter_ui, self._filter_row) [row_filter]
+        self.wtk_object.set_visible_func (filter_fct)
+    # end def __init__
+
+    def _filter_row (self, wtk_model, iter, data = None) :
+        row = [col for col in wtk_model [iter]]
+        return self.filter_function (row)
+    # end def _filter_row
+
+    def _filter_ui (self, wtk_model, iter, data = None) :
+        model = wtk_model.get_data ("ktw_object")
+        ui    = model.ui_object (iter)
+        if ui is None :
+            ### I don't know how this is possible, but it is !
+            return False
+        return self.filter_function (ui)
+    # end def _filter_ui
+
+    def ui_object (self, iter) :
+        return self.model.ui_object \
+            (self.wtk_object.convert_iter_to_child_iter (iter))
+    # end def ui_object
+
+# end class Filter_Model
+
 if __name__ != "__main__" :
-    GTK._Export ("List_Model", "Tree_Model", "Sort_Model")
+    GTK._Export ("*")
 ### __END__ TGL.TKT.GTK.Model
