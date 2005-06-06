@@ -253,8 +253,8 @@ class Application (PMA.TKT.Application) :
         self.body_r   = CTK.V_Panedwindow ( self.body.right, name = "rpanes")
         self.wc_msg_display = self.body_r.lower
         self.wc_msg_outline = self.body_l.lower
-        self.wc_folder_view = self.body_r.upper
-        self.wc_folder_tree = self.body_l.upper
+        self.wc_mb_msg_view = self.body_r.upper
+        self.wc_po_box_view = self.body_l.upper
     # end def _setup_panes
 
     def _setup_toolbar (self) :

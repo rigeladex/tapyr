@@ -31,7 +31,9 @@
 #--
 
 from   _TGL._TKT._GTK         import GTK
+import _TGL._TKT._GTK.Cell_Renderer_Text
 import _TGL._TKT._GTK.Tree_View
+import _TGL._TKT._GTK.Tree_View_Column
 import _TGL._TKT._GTK.Scrolled_Window
 
 class Tree (GTK.Tree_View) :

@@ -586,6 +586,7 @@ class Message (_Message_) :
           "[%(body)-50.50s"
         )
 
+    body_start       = property (lambda s : "<Not yet implemented>")
     date             = property (lambda s : s._date   (s.email))
     sender           = property (lambda s : s._sender (s.email))
     time             = property (lambda s : s._time   (s.email))

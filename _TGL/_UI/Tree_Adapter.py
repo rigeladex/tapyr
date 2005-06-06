@@ -32,6 +32,7 @@
 #     3-Jun-2005 (MG) Move from `TKT` package into the `UI` package
 #     3-Jun-2005 (MG) `TGL.UI.Tree` factored
 #     5-Jun-2005 (MG) Parameter `sort` removed from `create_sort_model`
+#     6-Jun-2005 (CT) `root_children` added
 #    ««revision-date»»···
 #--
 
@@ -211,6 +212,11 @@ class Tree_Adapter (TGL.UI.Mixin) :
         for col in self.schema :
             col.add_column (tkt)
     # end def create_view
+
+    def root_children (self, root) :
+        ### returns all child elements of `root`
+        return self.children (root)
+    # end def root_children
 
     def row_data (self, element, row = None) :
         if row is None :

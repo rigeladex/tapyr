@@ -304,7 +304,7 @@ class _Text_Node_ (_MD_Node_B2_) :
         for http in https :
             cb_style = self.callback_style \
                 ( callback = dict
-                    ( click_1     = lambda event = None, h = http
+                    ( click_3     = lambda event = None, h = http
                                     : self._follow (h)
                     , mouse_enter = self._mouse_enter_http
                     , mouse_leave = self._mouse_leave_http

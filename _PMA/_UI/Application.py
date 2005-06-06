@@ -47,6 +47,8 @@ import _TGL._UI
 import _PMA._UI
 import _PMA._UI.Command_Mgr
 import _PMA._UI.HTD
+import _PMA._UI.Mailbox_BV
+import _PMA._UI.Mailbox_MV
 import _PMA._UI.Message
 import _PMA._UI.Msg_Display
 import _PMA._UI.Mixin
@@ -442,7 +444,8 @@ class Application (PMA.UI.Mixin) :
 
     def _setup_office (self) :
         tkt = self.tkt
-        self.msg_display = md = self.ANS.UI.Message \
+        UI  = self.ANS.UI
+        self.msg_display = md = UI.Message \
             ( AC         = self.AC
             , display_wc = tkt.wc_msg_display
             , outline_wc = tkt.wc_msg_outline
@@ -456,6 +459,19 @@ class Application (PMA.UI.Mixin) :
             msg = PMA.message_from_file \
                 ("/home/lucky/PMA_Test/MH/customer/HS/17")
             md.display (msg)
+        mb = PMA.MH_Mailbox ("%s/MH/inbox" % TFL.Environment.home_dir)
+        try :
+            self.mb_msg_view = mmv = UI.Mailbox_MV \
+                ( mb
+                , sort = True
+                , AC   = self.AC
+                )
+        except AttributeError :
+            import traceback
+            traceback.print_exc ()
+            pass
+        else :
+            tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
     # end def _setup_office
 
     def _setup_scripts_group (self, group) :

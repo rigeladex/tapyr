@@ -30,6 +30,7 @@
 #    22-May-2005 (CT) `virtual_key_name` removed, spelling
 #     3-Jun-2005 (MG) `show_*` and some `ask_*` functions added
 #     3-Jun-2005 (MG) Ask functions for filenames and and directorynames added
+#     6-Jun-2005 (CT) Superfluous `staticmethod`s removed
 #    ««revision-date»»···
 #--
 
@@ -41,19 +42,20 @@ import _PMA._TKT._GTK
 import _PMA._TKT._GTK.Butcon
 ### XXX import _PMA._TKT._GTK.Clipboard
 import _PMA._TKT._GTK.Command_Interfacer
+import _PMA._TKT._GTK.Dialog
 import _PMA._TKT._GTK.Eventname
+import _PMA._TKT._GTK.File_Chooser_Dialog
+import _PMA._TKT._GTK.H_Box
+import _PMA._TKT._GTK.Interpreter_Window
+import _PMA._TKT._GTK.Message_Dialog
+import _PMA._TKT._GTK.Message_Window
+import _PMA._TKT._GTK.Paned
+import _PMA._TKT._GTK.Progress_Window
 import _PMA._TKT._GTK.Queued_Stdout
 import _PMA._TKT._GTK.Text
+import _PMA._TKT._GTK.Tree
 import _PMA._TKT._GTK.Toplevel
-import _PMA._TKT._GTK.Message_Window
-import _PMA._TKT._GTK.Progress_Window
-import _PMA._TKT._GTK.Paned
-import _PMA._TKT._GTK.H_Box
 import _PMA._TKT._GTK.V_Box
-import _PMA._TKT._GTK.Interpreter_Window
-import _PMA._TKT._GTK.Dialog
-import _PMA._TKT._GTK.Message_Dialog
-import _PMA._TKT._GTK.File_Chooser_Dialog
 
 from   Gauge_Logger         import Gauge_Logger
 from   Script_Menu_Mgr      import Script_Menu_Mgr
@@ -130,6 +132,7 @@ class Application (PMA.TKT.Application) :
 
     def start_mainloop (self, after_mainloop_cb) :
         w = self.gui
+        w.show_all () ### XXX
         self._after_mainloop_cb = after_mainloop_cb
         self.model.cmd_mgr.set_auto_short_cuts ()
         w.update_idletasks                     ()
@@ -191,7 +194,9 @@ class Application (PMA.TKT.Application) :
         self.main.pack          (self.menubar, expand = False)
         self.main.pack          (self.toolbar, expand = False)
         self.main.pack          (self.o_pane)
+        self.body_r.pack_top    (self.wc_mb_msg_view)
         self.body_r.pack_bottom (self.wc_msg_display)
+        self.body_l.pack_top    (self.wc_po_box_view)
         self.body_l.pack_bottom (self.wc_msg_outline)
         return
         limit = 60
@@ -222,10 +227,13 @@ class Application (PMA.TKT.Application) :
             (self.body_l, self.body_r, name = "bpanes", AC = self.AC)
         self.wc_msg_display = TNS.Frame (AC = self.AC)
         self.wc_msg_outline = TNS.Frame (AC = self.AC)
+        self.wc_mb_msg_view = TNS.Frame (AC = self.AC)
+        self.wc_po_box_view = TNS.Frame (AC = self.AC)
         self.o_pane   = TNS.V_Paned \
             (self.body, self.message, name = "panes",  AC = self.AC)
         for w in ( self.o_pane, self.body, self.body_l, self.body_r
                  , self.main, self.wc_msg_outline, self.wc_msg_display
+                 , self.wc_mb_msg_view, self.wc_po_box_view
                  , self.message
                  ) :
             w.show ()
@@ -329,11 +337,11 @@ class Application (PMA.TKT.Application) :
 ### XXX    ask_list_element_combo   = CTK_Dialog.ask_list_element_combo
 ### XXX    ask_list_element_spinner = CTK_Dialog.ask_list_element_spinner
 
-    ask_open_file_name       = staticmethod (PMA.TKT.GTK.ask_open_file_name)
-    ask_save_file_name       = staticmethod (PMA.TKT.GTK.ask_save_file_name)
-    ask_dir_name             = staticmethod (PMA.TKT.GTK.ask_dir_name)
-    ask_open_dir_name        = staticmethod (PMA.TKT.GTK.ask_open_dir_name)
-    ask_save_dir_name        = staticmethod (PMA.TKT.GTK.ask_save_dir_name)
+    ask_open_file_name       = PMA.TKT.GTK.ask_open_file_name
+    ask_save_file_name       = PMA.TKT.GTK.ask_save_file_name
+    ask_dir_name             = PMA.TKT.GTK.ask_dir_name
+    ask_open_dir_name        = PMA.TKT.GTK.ask_open_dir_name
+    ask_save_dir_name        = PMA.TKT.GTK.ask_save_dir_name
 
 # end class Application
 

@@ -23,13 +23,14 @@
 #    TGL.UI.Tree
 #
 # Purpose
-#    «text»···
+#    Abstract user interface for Tree
 #
 # Revision Dates
 #     3-Jun-2005 (MG) Creation
 #     5-Jun-2005 (MG) Lazy population added
 #     5-Jun-2005 (MG) Basic sort implemented
 #     5-Jun-2005 (MG) Filter support added
+#     6-Jun-2005 (CT) `_Tree_` and `Rooted_Tree` factored
 #    ««revision-date»»···
 #--
 
@@ -50,21 +51,20 @@ class Dummy_Entry (object) :
 
 # end class Dummy_Entry
 
-class Tree (TGL.UI.Mixin) :
-    """Base class for trees and lists"""
+class _Tree_ (TGL.UI.Mixin) :
+
+    Adapter = None ### redefine in descendents
 
     def __init__ ( self
                  , ui_model
-                 , adapter
                  , lazy     = True
                  , sort     = None
                  , filter   = None
-                 , root     = False
                  , AC       = None
                  ) :
         self.__super.__init__ (AC = AC)
+        self.adapter         = adapter = self.Adapter (AC = AC)
         self.ui_model        = ui_model
-        self.adapter         = adapter
         self.tkt_model       = self.t_model = adapter.create_model ()
         if filter :
             self.tkt_f_model = adapter.create_filter_model \
@@ -72,24 +72,17 @@ class Tree (TGL.UI.Mixin) :
             self.t_model     = self.tkt_f_model
         if sort is not None :
             if sort is True :
-                sort = xrange (len (self.tkt.children))
+                sort = () ### xrange (len (self.tkt.children))
             self.tkt_s_model = adapter.create_sort_model (self.t_model)
             self.t_model     = self.tkt_s_model
         self.tkt             = self._create_tkt_tree     (lazy, sort)
         self._lazy_bind      = None
-        self._model_populate (root, lazy)
+        self._model_populate (lazy)
     # end def __init__
 
-    def _model_populate (self, root, lazy) :
+    def _model_populate (self, lazy, parent = None) :
         self._pending_populates = {}
-        adapter                 = self.adapter
-        tkt_model               = self.tkt_model
-        if root :
-            parent              = self.ui_model
-            tkt_model.add (adapter.row_data (parent), parent = None)
-        else :
-            parent              = None
-        for element in adapter.children (self.ui_model) :
+        for element in self.adapter.root_children (self.ui_model) :
             self._add_element (element, parent, lazy)
     # end def _model_populate
 
@@ -132,6 +125,22 @@ class Tree (TGL.UI.Mixin) :
             if not self._pending_populates :
                 self.tkt.unbind (self.TNS.Signal.Row_Expanded, self._lazy_bind)
     # end def _populate_row
+
+# end class _Tree_
+
+class Rooted_Tree (_Tree_) :
+    """Base class for trees displaying the root"""
+
+    def _model_populate (self, lazy) :
+        parent = self.ui_model
+        self.tkt_model.add (self.adapter.row_data (parent), parent = None)
+        self.__super._model_populate (lazy, parent)
+    # end def _model_populate
+
+# end class Rooted_Tree
+
+class Tree (_Tree_) :
+    """Base class for trees and lists (not displaying the root)"""
 
 # end class Tree
 
