@@ -20,13 +20,14 @@
 #
 #++
 # Name
-#    Mailbox_MV
+#    PMA.UI.Mailbox_MV
 #
 # Purpose
 #    Abstract user interface for message-view of PMA.Mailbox
 #
 # Revision Dates
 #     6-Jun-2005 (CT) Creation
+#     6-Jun-2005 (MG) `_MB_TA_`: methods converted to classmethods
 #    ««revision-date»»···
 #--
 
@@ -52,24 +53,30 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
                         )
         , TGL.UI.Column ( "Sender"
                         , TGL.UI.Text_Cell ("sender")
+                        , alignment = 0
                         )
         , TGL.UI.Column ( "Subject"
                         , TGL.UI.Text_Cell ("subject")
+                        , alignment = 0
                         )
         , TGL.UI.Column ( "Body"
                         , TGL.UI.Text_Cell ("body_start")
+                        , alignment = 0
                         )
         )
 
-    def has_children (self, message) :
+    @classmethod
+    def has_children (cls, message) :
         return False ### XXX threaded mails
     # end def has_children
 
-    def children (self, message) :
+    @classmethod
+    def children (cls, message) :
         return () ### XXX threaded mails
     # end def children
 
-    def root_children (self, mailbox) :
+    @classmethod
+    def root_children (cls, mailbox) :
         return mailbox.messages
     # end def root_children
 
@@ -84,4 +91,4 @@ class Mailbox_MV (PMA.UI.Tree) :
 
 if __name__ != "__main__" :
     PMA.UI._Export ("*")
-### __END__ Mailbox_MV
+### __END__ PMA.UI.Mailbox_MV

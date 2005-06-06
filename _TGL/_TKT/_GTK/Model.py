@@ -34,6 +34,7 @@
 #     5-Jun-2005 (MG) `add_empty` added
 #     5-Jun-2005 (MG) `Filter_Model` and friends added
 #     5-Jun-2005 (MG) `Sort_Model` streamlined
+#     6-Jun-2005 (MG) `AC` added to `Sort_Model` and `Filter_Model`
 #    ««revision-date»»···
 #--
 
@@ -207,8 +208,8 @@ class Sort_Model (_Proxy_Model_, GTK.Object) :
 
     GTK_Class = GTK.gtk.TreeModelSort
 
-    def __init__ (self, child_model) :
-        self.__super.__init__ (child_model.wtk_object)
+    def __init__ (self, child_model, AC = None) :
+        self.__super.__init__ (child_model.wtk_object, AC = AC)
         self.model      = child_model
         self._functions = {}
     # end def __init__
@@ -249,10 +250,11 @@ class Filter_Model (_Proxy_Model_, GTK.Object_Wrapper) :
                  , filter_function
                  , root       = None
                  , row_filter = False
+                 , AC         = None
                  ) :
         wtk_object = child_model.wtk_object.filter_new (root)
         self.model = child_model
-        self.__super.__init__ (wtk_object)
+        self.__super.__init__ (wtk_object, AC = AC)
         self.filter_function = filter_function
         row_filter           = row_filter or self.ui_column is None
         filter_fct           = \

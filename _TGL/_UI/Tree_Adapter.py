@@ -33,6 +33,8 @@
 #     3-Jun-2005 (MG) `TGL.UI.Tree` factored
 #     5-Jun-2005 (MG) Parameter `sort` removed from `create_sort_model`
 #     6-Jun-2005 (CT) `root_children` added
+#     6-Jun-2005 (MG) Convert all methods of `Tree_Adapter` into static- or
+#                     classmethods
 #    ««revision-date»»···
 #--
 
@@ -180,48 +182,56 @@ class Tree_Adapter (TGL.UI.Mixin) :
 
     schema = () ### to be defined by descendents
 
-    def has_children (self, element) :
+    @classmethod
+    def has_children (cls, element) :
         ### must return wether the `element` has childrens or not
         raise NotImplementedError
     # end def has_children
 
-    def children (self, element) :
+    @classmethod
+    def children (cls, element) :
         ### returns all child elements of `element`
         raise NotImplementedError
     # end def children
 
-    def create_model (self) :
+    @classmethod
+    def create_model (cls, TNS, AC) :
         column_types = []
-        for col in self.schema :
+        for col in cls.schema :
             col.setup_column_types (column_types)
         ui_column = len            (column_types)
         column_types.append        (object)
-        return self.TNS.Tree_Model \
-            (AC = self.AC, ui_column = ui_column, * column_types)
+        return TNS.Tree_Model \
+            (AC = AC, ui_column = ui_column, * column_types)
     # end def create_model
 
-    def create_filter_model (self, model, filter) :
-        return self.TNS.Filter_Model (model, filter)
+    @staticmethod
+    def create_filter_model (TNS, AC, model, filter) :
+        return TNS.Filter_Model (model, filter, AC = AC)
     # end def create_filter_model
 
-    def create_sort_model (self, model) :
-        return self.TNS.Sort_Model (model)
+    @staticmethod
+    def create_sort_model (TNS, AC, model) :
+        return TNS.Sort_Model (model, AC = AC)
     # end def create_sort_model
 
-    def create_view (self, tkt) :
-        for col in self.schema :
+    @classmethod
+    def create_view (cls, tkt) :
+        for col in cls.schema :
             col.add_column (tkt)
     # end def create_view
 
-    def root_children (self, root) :
+    @classmethod
+    def root_children (cls, root) :
         ### returns all child elements of `root`
-        return self.children (root)
+        return cls.children (root)
     # end def root_children
 
-    def row_data (self, element, row = None) :
+    @classmethod
+    def row_data (cls, element, row = None) :
         if row is None :
             row = []
-            for column in self.schema :
+            for column in cls.schema :
                 column.add_row_data (element, row)
         row.append                  (element)
         return row

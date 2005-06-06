@@ -452,6 +452,7 @@ class Application (PMA.UI.Mixin) :
             )
         tkt.pack (tkt.wc_msg_display, md._display.tkt_text)
         tkt.pack (tkt.wc_msg_outline, md._outline.tkt_text)
+        mb = None
         if TFL.Environment.username == "tanzer" :
             msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
             md.display (msg)
@@ -459,19 +460,20 @@ class Application (PMA.UI.Mixin) :
             msg = PMA.message_from_file \
                 ("/home/lucky/PMA_Test/MH/customer/HS/17")
             md.display (msg)
-        mb = PMA.MH_Mailbox ("%s/MH/inbox" % TFL.Environment.home_dir)
+            mb = PMA.Mailbox ("/home/lucky/PMA_Test/Testbox")
+        box = PMA.MH_Mailbox ("%s/MH/inbox" % TFL.Environment.home_dir)
         try :
             self.mb_msg_view = mmv = UI.Mailbox_MV \
-                ( mb
-                , sort = True
-                , AC   = self.AC
-                )
+                (box, sort = True, AC = self.AC)
+            if mb :
+                self.mb_box_view = mbv = UI.Mailbox_BV (mb, AC = self.AC)
         except AttributeError :
             import traceback
             traceback.print_exc ()
             pass
         else :
             tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
+            tkt.pack (tkt.wc_po_box_view, mbv.tkt)
     # end def _setup_office
 
     def _setup_scripts_group (self, group) :

@@ -31,6 +31,8 @@
 #     5-Jun-2005 (MG) Basic sort implemented
 #     5-Jun-2005 (MG) Filter support added
 #     6-Jun-2005 (CT) `_Tree_` and `Rooted_Tree` factored
+#     6-Jun-2005 (MG) Changed to new structure of `Tree_Adapter`
+#     6-Jun-2005 (MG) Sort bug fixed
 #    ««revision-date»»···
 #--
 
@@ -63,17 +65,17 @@ class _Tree_ (TGL.UI.Mixin) :
                  , AC       = None
                  ) :
         self.__super.__init__ (AC = AC)
-        self.adapter         = adapter = self.Adapter (AC = AC)
-        self.ui_model        = ui_model
-        self.tkt_model       = self.t_model = adapter.create_model ()
+        TNS             = self.TNS
+        Adapter         = self.Adapter
+        self.ui_model   = ui_model
+        self.tkt_model  = self.t_model = Adapter.create_model (TNS, AC)
         if filter :
-            self.tkt_f_model = adapter.create_filter_model \
-                (self.t_model, filter)
+            self.tkt_f_model = Adapter.create_filter_model \
+                (TNS, AC, self.t_model, filter)
             self.t_model     = self.tkt_f_model
         if sort is not None :
-            if sort is True :
-                sort = () ### xrange (len (self.tkt.children))
-            self.tkt_s_model = adapter.create_sort_model (self.t_model)
+            self.tkt_s_model = Adapter.create_sort_model \
+                (TNS, AC, self.t_model)
             self.t_model     = self.tkt_s_model
         self.tkt             = self._create_tkt_tree     (lazy, sort)
         self._lazy_bind      = None
@@ -82,15 +84,15 @@ class _Tree_ (TGL.UI.Mixin) :
 
     def _model_populate (self, lazy, parent = None) :
         self._pending_populates = {}
-        for element in self.adapter.root_children (self.ui_model) :
+        for element in self.Adapter.root_children (self.ui_model) :
             self._add_element (element, parent, lazy)
     # end def _model_populate
 
     def _add_element (self, element, parent, lazy) :
-        adapter = self.adapter
+        Adapter = self.Adapter
         model   = self.tkt_model
-        model.add (adapter.row_data (element), parent = parent)
-        if adapter.has_children (element) :
+        model.add (Adapter.row_data (element), parent = parent)
+        if Adapter.has_children (element) :
             if lazy :
                 self._pending_populates [element] = model.add_empty \
                     (Dummy_Entry (element), parent = element)
@@ -98,14 +100,16 @@ class _Tree_ (TGL.UI.Mixin) :
                     self._lazy_bind = self.tkt.bind_add \
                         (self.TNS.Signal.Row_Expanded, self._populate_row)
             else :
-                for child in adapter.children (element) :
+                for child in Adapter.children (element) :
                     self._add_element (child, element, lazy)
     # end def _add_element
 
     def _create_tkt_tree (self, lazy, sort) :
         tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
-        self.adapter.create_view (tkt)
+        self.Adapter.create_view (tkt)
         if sort :
+            if sort is True :
+                sort = xrange (len (tkt.children))
             for col in sort :
                 tkt.children [col].sort_column_id = col
         return tkt
@@ -118,7 +122,7 @@ class _Tree_ (TGL.UI.Mixin) :
         else :
             element = reference
         if element in self._pending_populates :
-            for child in self.adapter.children (element) :
+            for child in self.Adapter.children (element) :
                 self._add_element (child, element, True)
             self.tkt_model.remove (self._pending_populates [element])
             del self._pending_populates [element]
@@ -133,8 +137,11 @@ class Rooted_Tree (_Tree_) :
 
     def _model_populate (self, lazy) :
         parent = self.ui_model
-        self.tkt_model.add (self.adapter.row_data (parent), parent = None)
-        self.__super._model_populate (lazy, parent)
+        self.tkt_model.add (self.Adapter.row_data (parent), parent = None)
+        super (Rooted_Tree, self)._model_populate (lazy, parent)
+        # XXX why does this `__super` call not work -> calls
+        # `_model_populate` form this class instead of the super class ???
+        #self.__super._model_populate (lazy, parent)
     # end def _model_populate
 
 # end class Rooted_Tree
@@ -175,11 +182,13 @@ else :
                             )
             )
 
-        def has_children (self, element) :
+        @classmethod
+        def has_children (cls, element) :
             return element.children
         # end def has_children
 
-        def children (self, element) :
+        @classmethod
+        def children (cls, element) :
             return element.children
         # end def children
 
@@ -225,6 +234,7 @@ else :
         ,
         )
     win     = GTK.Test_Window (title = "Tree Adapter Test", AC = AC)
+
     def gender_filter (ui) :
         ### a row filter example:
         ### return not ui [7]
@@ -233,11 +243,10 @@ else :
         return not ui.gender
     # end def gender_filter
 
-    tree    = Tree  \
+    My_Tree = Rooted_Tree.New (Adapter = Test_Adapter)
+    tree    = My_Tree \
         ( root
-        , Test_Adapter (AC = AC)
         , lazy    = True
-        , root    = True
         , filter  = gender_filter
         , sort    = (0, 1, 2)
         , AC      = AC

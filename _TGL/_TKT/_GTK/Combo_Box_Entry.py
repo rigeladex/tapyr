@@ -28,7 +28,8 @@
 # Revision Dates
 #    21-May-2005 (MG) Automated creation
 #    21-May-2005 (MG) `get` and `set` added
-#    ««revision-date
+#     6-Jun-2005 (MG) Set the cursor position at the after a `set`
+#    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
@@ -48,7 +49,9 @@ class Combo_Box_Entry (GTK.Combo_Box) :
     # end def get
 
     def set (self, text) :
-        return self.wtk_object.child.set_text (text)
+        result = self.wtk_object.child.set_text (text)
+        self.wtk_object.child.set_position      (-1)
+        return result
     # end def set
 
 # end class Combo_Box_Entry

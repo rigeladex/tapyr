@@ -20,13 +20,14 @@
 #
 #++
 # Name
-#    Mailbox_BV
+#    PMA.UI.Mailbox_BV
 #
 # Purpose
 #    Abstract user interface for box-view of PMA.Mailbox
 #
 # Revision Dates
 #     6-Jun-2005 (CT) Creation
+#     6-Jun-2005 (MG) `_MB_TA_`: methods converted to classmethods
 #    ««revision-date»»···
 #--
 
@@ -51,10 +52,12 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
         ,
         )
 
+    @classmethod
     def has_children (self, mailbox) :
         return bool (mailbox._box_dict)
     # end def has_children
 
+    @classmethod
     def children (self, mailbox) :
         return mailbox.sub_boxes
     # end def children
@@ -70,6 +73,4 @@ class Mailbox_BV (PMA.UI.Rooted_Tree) :
 
 if __name__ != "__main__" :
     PMA.UI._Export ("*")
-### __END__ Mailbox_BV
-
-
+### __END__ PMA.UI.Mailbox_BV
