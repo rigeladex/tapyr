@@ -28,6 +28,8 @@
 # Revision Dates
 #     3-Jun-2005 (CT) Creation
 #     4-Jun-2005 (CT) Creation continued
+#     7-Jun-2005 (CT) `_get_temperatures` added to remember
+#                     `/proc/acpi/ibm/thermal`
 #    ««revision-date»»···
 #--
 
@@ -214,6 +216,16 @@ class ACPI_Updater (TFL.Meta.Object) :
             except (ValueError, TypeError) :
                 pass
     # end def _get_speed
+
+    def _get_temperatures (self) :
+        pass
+        ### XXX /proc/acpi/ibm/thermal
+        ### (/usr/share/doc/ibm-acpi-0.11-r1/README.gz)
+        ### Alas: the sensors seem to be wired differently in different
+        ### models (e.g., for my X40 hddtemp shows a totally different
+        ### temperature than field 3 of /proc/acpi/ibm/thermal)
+        ### Googling didn't turn up any more information about it
+    # end def _get_temperatures
 
 # end class ACPI_Updater
 
