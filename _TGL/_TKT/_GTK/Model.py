@@ -35,6 +35,7 @@
 #     5-Jun-2005 (MG) `Filter_Model` and friends added
 #     5-Jun-2005 (MG) `Sort_Model` streamlined
 #     6-Jun-2005 (MG) `AC` added to `Sort_Model` and `Filter_Model`
+#     7-Jun-2005 (MG) `clear` added and `remove` fixed
 #    ««revision-date»»···
 #--
 
@@ -78,25 +79,33 @@ class _Model_ (GTK.Object) :
         return iter
     # end def add_empty
 
+    def clear (self) :
+        for row in self.wtk_object :
+            self.remove (row.iter)
+    # end def clear
+
+    def remove (self, node) :
+        iter  = self.iter.get (node, node)
+        ui    = self.wtk_object.get_value (iter, self.ui_column)
+        child = self.wtk_object.iter_children (iter)
+        while child :
+            n_child = self.wtk_object.iter_next (child)
+            self.remove (child)
+            child = n_child
+        if (   isinstance (node, GTK.gtk.TreeIter)
+           and (self.ui_column is not None)
+           ) :
+            node = self.wtk_object.get_value (iter, self.ui_column)
+        if node in self.iter :
+            del self.iter    [node]
+        self.wtk_object.remove (iter)
+    # end def remove
+
     def ui_object (self, iter) :
         if self.ui_column is not None :
             return self.wtk_object [iter] [self.ui_column]
         return None
     # end def ui_object
-
-    def remove (self, node) :
-        iter  = self.iter.get (node, node)
-        child = self.wtk_object.iter_children (iter)
-        while child :
-            if self.ui_column is not None :
-                self.remove (self.wtk_object.get (child, self.ui_column))
-            else :
-                self.remove (child)
-            child = self.wtk_object.iter_next (child)
-        if node in self.iter :
-            del self.iter    [name]
-        self.wtk_object.remove (iter)
-    # end def remove
 
     def __getitem__ (self, key) :
         return self.wtk_object [key]

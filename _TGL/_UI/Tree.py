@@ -33,6 +33,9 @@
 #     6-Jun-2005 (CT) `_Tree_` and `Rooted_Tree` factored
 #     6-Jun-2005 (MG) Changed to new structure of `Tree_Adapter`
 #     6-Jun-2005 (MG) Sort bug fixed
+#     7-Jun-2005 (MG) `show_header` added
+#     7-Jun-2005 (MG) Test code moved into a new file `_test_Tree`
+#     7-Jun-2005 (MG) `update_model` added
 #    ««revision-date»»···
 #--
 
@@ -58,16 +61,17 @@ class _Tree_ (TGL.UI.Mixin) :
     Adapter = None ### redefine in descendents
 
     def __init__ ( self
-                 , ui_model
-                 , lazy     = True
-                 , sort     = None
-                 , filter   = None
-                 , AC       = None
+                 , ui_model    = None
+                 , lazy        = True
+                 , sort        = None
+                 , filter      = None
+                 , show_header = True
+                 , AC          = None
                  ) :
         self.__super.__init__ (AC = AC)
         TNS             = self.TNS
         Adapter         = self.Adapter
-        self.ui_model   = ui_model
+        self.ui_model   = None
         self.tkt_model  = self.t_model = Adapter.create_model (TNS, AC)
         if filter :
             self.tkt_f_model = Adapter.create_filter_model \
@@ -77,10 +81,19 @@ class _Tree_ (TGL.UI.Mixin) :
             self.tkt_s_model = Adapter.create_sort_model \
                 (TNS, AC, self.t_model)
             self.t_model     = self.tkt_s_model
-        self.tkt             = self._create_tkt_tree     (lazy, sort)
+        self.tkt             = self._create_tkt_tree (lazy, sort, show_header)
         self._lazy_bind      = None
-        self._model_populate (lazy)
+        self.lazy            = lazy
+        if ui_model :
+            self.update_model (ui_model)
     # end def __init__
+
+    def update_model (self, ui_model) :
+        if self.ui_model :
+            pass ### XXX clear old content of the model
+        self.ui_model = ui_model
+        self._model_populate (self.lazy)
+    # end def update_model
 
     def _model_populate (self, lazy, parent = None) :
         self._pending_populates = {}
@@ -104,8 +117,9 @@ class _Tree_ (TGL.UI.Mixin) :
                     self._add_element (child, element, lazy)
     # end def _add_element
 
-    def _create_tkt_tree (self, lazy, sort) :
+    def _create_tkt_tree (self, lazy, sort, show_header) :
         tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
+        tkt.headers_visible = show_header
         self.Adapter.create_view (tkt)
         if sort :
             if sort is True :
@@ -153,112 +167,4 @@ class Tree (_Tree_) :
 
 if __name__ != "__main__" :
     TGL.UI._Export ("*")
-else :
-    from   _TGL._UI.App_Context   import App_Context
-    import _TGL._UI.Tree_Adapter
-    from    Record                import Record
-    import _TGL._TKT._GTK.Model
-    import _TGL._TKT._GTK.Cell_Renderer_Text
-    import _TGL._TKT._GTK.Tree_View_Column
-    import _TGL._TKT._GTK.Tree
-    import _TGL._TKT._GTK.Test_Window
-    import _TGL._TKT._GTK.Interpreter_Window
-    GTK   = TGL.TKT.GTK
-
-    AC    = App_Context     (TGL)
-
-    class Test_Adapter (TGL.UI.Tree_Adapter) :
-
-        schema = \
-            ( TGL.UI.Column ( "Age"
-                            , TGL.UI.Text_Cell        (("age", int))
-                            )
-            , TGL.UI.Column ( "Name"
-                            , TGL.UI.Text_Cell_Styled ("first_name")
-                            , TGL.UI.Text_Cell_Styled ("last_name")
-                            )
-            , TGL.UI.Column ( "Male"
-                            , TGL.UI.Text_Cell        (("gender", bool))
-                            )
-            )
-
-        @classmethod
-        def has_children (cls, element) :
-            return element.children
-        # end def has_children
-
-        @classmethod
-        def children (cls, element) :
-            return element.children
-        # end def children
-
-    # end class Test_Adapter
-
-    class Person (object) :
-
-        def __init__ (self, first_name, last_name, age, gender = 0) :
-            self.first_name = first_name
-            self.last_name  = last_name
-            self.age        = age
-            self.gender     = gender
-            self.style      = Record \
-                (background = None, foreground = "red")
-            self.children   = []
-        # end def __init__
-
-    # end class Person
-
-    root = Person ("Adam", "", 2000)
-    root.children = \
-        ( Person ("Herbert",  "Glueck",    56)
-        , Person ("Eduard",   "Wiesinger", 52)
-        , Person ("Hans",     "Herbert",    2)
-        , Person ("Kurt",     "Herbert",    2)
-        , Person ("Franz",    "Herbert",    5)
-        , Person ("Jimy",     "Herbert",   10)
-        , Person ("Karin",    "Herbert",   19, 1)
-        , Person ("Julia",    "Herbert",   56, 1)
-        , Person ("Helen",    "Herbert",    8, 1)
-        , Person ("Stefanie", "Herbert",    2, 1)
-        )
-    root.children [0].children = \
-        ( Person ("Martin",  "Glueck",    29)
-        , Person ("Ines",    "Glueck",    31, 1)
-        )
-    root.children [0].children [1].children = \
-        ( Person ("Celina",  "Glueck", 4, 1)
-        ,
-        )
-    root.children [1].children = \
-        ( Person ("Mathias", "Wiesinger", 23)
-        ,
-        )
-    win     = GTK.Test_Window (title = "Tree Adapter Test", AC = AC)
-
-    def gender_filter (ui) :
-        ### a row filter example:
-        ### return not ui [7]
-        if isinstance (ui, Dummy_Entry) :
-            return True
-        return not ui.gender
-    # end def gender_filter
-
-    My_Tree = Rooted_Tree.New (Adapter = Test_Adapter)
-    tree    = My_Tree \
-        ( root
-        , lazy    = True
-        , filter  = gender_filter
-        , sort    = (0, 1, 2)
-        , AC      = AC
-        )
-    tree.tkt.show   ()
-    #tree.tkt.hover_expand    = True
-    #tree.tkt.hover_selection = True
-    win.add         (tree.tkt)
-    win.default_height = 150
-    win.default_width  = 250
-    win.show                   ()
-    #w = GTK.Interpreter_Window (win, global_dict = globals (), AC = AC)
-    #w.show                     ()
-    GTK.main                   ()
 ### __END__ TGL.UI.Tree

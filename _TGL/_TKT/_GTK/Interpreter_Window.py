@@ -224,7 +224,6 @@ else :
     w = Interpreter_Window (global_dict = globals (), AC = AC)
     w.show                 ()
     GTK.main               ()
-
 ### __END__ TGL.TKT.GTK.Interpreter_Window
 
 

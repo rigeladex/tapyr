@@ -466,7 +466,8 @@ class Application (PMA.UI.Mixin) :
             self.mb_msg_view = mmv = UI.Mailbox_MV \
                 (box, sort = True, AC = self.AC)
             if mb :
-                self.mb_box_view = mbv = UI.Mailbox_BV (mb, AC = self.AC)
+                self.mb_box_view = mbv = UI.Mailbox_BV \
+                   (mb, AC = self.AC, show_header = False)
         except AttributeError :
             import traceback
             traceback.print_exc ()
