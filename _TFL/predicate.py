@@ -131,6 +131,10 @@
 #     3-Apr-2005 (CT)  Base `dusort` on built-in `sorted` if available
 #     4-Apr-2005 (CED) `fit_to_ceil_in_cycle` moved to `Math_Func`
 #     7-Apr-2005 (CED) `is_contiguous` made more robust
+#     8-Jun-2005 (CT)  Home-grown `sorted` and `dusort` factored
+#                      to `_sorted` and `_dusort` and made
+#                      API-compatible to Python-2.4's builtin
+#                      `sorted` and `dusort`
 #    ««revision-date»»···
 #--
 
@@ -297,23 +301,28 @@ def cross_sum (seq, fct = None) :
     return sum ([fct (x) for x in seq])
 # end def cross_sum
 
+def _dusort (seq, decorator, reverse = False) :
+    """Returns a sorted copy of `seq`. The sorting is done over a
+       decoration of the form `decorator (p), i, p for (i, p) in
+       enumerate (seq)`.
+
+       >>> _dusort ([1, 3, 5, 2, 4], lambda e : -e)
+       [5, 4, 3, 2, 1]
+    """
+    temp = [(decorator (p), i, p) for (i, p) in enumerate (seq)]
+    temp.sort ()
+    result = [p [-1] for p in temp]
+    if reverse :
+        result.reverse ()
+    return result
+# end def _dusort
+
 try :
     sorted
 except NameError :
-    def dusort (seq, decorator) :
-        """Returns a sorted copy of `seq`. The sorting is done over a
-           decoration of the form `decorator (p), i, p for (i, p) in
-           enumerate (seq)`.
-
-           >>> dusort ([1, 3, 5, 2, 4], lambda e : -e)
-           [5, 4, 3, 2, 1]
-        """
-        temp = [(decorator (p), i, p) for (i, p) in enumerate (seq)]
-        temp.sort ()
-        return [p [-1] for p in temp]
-    # end def dusort
+    dusort = _dusort
 else :
-    def dusort (seq, decorator, reverse=False) :
+    def dusort (seq, decorator, reverse = False) :
         """Wrapper around built-in sorted that is backwards compatible to
            home-grown `dusort`
 
@@ -641,25 +650,31 @@ def second (x, y, * args, ** kw) :
     return y
 # end def second
 
+def _sorted (seq, pred = cmp, key = None, reverse = False) :
+    """Returns a sorted copy of `seq'.
+
+       >>> _sorted ([1, 3, 5, 2, 4])
+       [1, 2, 3, 4, 5]
+       >>> _sorted ([1, 3, 5, 2, 4], lambda l, r : cmp (-l, -r))
+       [5, 4, 3, 2, 1]
+       >>> _sorted ([1, 2, 2, 1])
+       [1, 1, 2, 2]
+       >>> _sorted ([])
+       []
+    """
+    if key is not None :
+        return _dusort (seq, key, reverse)
+    result = list (seq)
+    result.sort (pred)
+    if reverse :
+        result.reverse ()
+    return result
+# end def _sorted
+
 try :
     sorted = sorted
 except NameError :
-    def sorted (seq, pred = cmp) :
-        """Returns a sorted copy of `seq'.
-
-           >>> sorted ([1, 3, 5, 2, 4])
-           [1, 2, 3, 4, 5]
-           >>> sorted ([1, 3, 5, 2, 4], lambda l, r : cmp (-l, -r))
-           [5, 4, 3, 2, 1]
-           >>> sorted ([1, 2, 2, 1])
-           [1, 1, 2, 2]
-           >>> sorted ([])
-           []
-        """
-        result = list (seq)
-        result.sort (pred)
-        return result
-    # end def sorted
+    sorted = _sorted
 
 def split_by_key (seq, key_cmp, min_result_size = 1) :
     """Returns a list of lists each containing the elements of `seq' with a
