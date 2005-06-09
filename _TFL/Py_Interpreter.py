@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Mar-2005 (CED) Creation (moved multiple implemented stuff into here)
+#     9-Jun-2005 (CED) `locals` added to `__call__`
 #    ««revision-date»»···
 #--
 #
@@ -51,17 +52,19 @@ class Pycode_Compiler (object) :
             self.can_eval = False
     # end def __init__
 
-    def __call__ (self, globals) :
+    def __call__ (self, globals, locals = None) :
         if self.can_eval :
-            print eval (self.code, globals)
+            print eval (self.code, globals, locals or {})
         else :
-            exec self.code in globals
+            exec self.code in globals, locals or {}
     # end def __call__
 
 # end class Pycode_Compiler
 
-def complete_command (line, globals) :
+def complete_command (line, globals, locals = None) :
     ### XXX beautify and refactor me
+    if locals is None :
+        locals = {}
     base_obj  = None
     start     = line.split (" ")
     if len (start) > 1 :
@@ -73,14 +76,17 @@ def complete_command (line, globals) :
     base = ".".join (line.split (".")[:-1])
     try :
         if base :
-           base_obj = eval (base, globals)
+           base_obj = eval (base, globals, locals)
         if base_obj :
            list  = [s for s in dir (base_obj) if s.startswith (tail)]
            mc = getattr (base_obj, "__metaclass__", None)
            if mc :
               list += [s for s in dir (mc) if s.startswith (tail)]
         else :
-           list = [s for s in globals.keys () if s.startswith (tail)]
+           list = \
+               [ s for s in globals.keys () + locals.keys ()
+                 if s.startswith (tail)
+               ]
     except (NameError, AttributeError, SyntaxError) :
         list = []
     if not list :
