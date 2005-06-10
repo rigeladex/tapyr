@@ -35,6 +35,7 @@
 #     6-Jun-2005 (CT) `root_children` added
 #     6-Jun-2005 (MG) Convert all methods of `Tree_Adapter` into static- or
 #                     classmethods
+#     7-Jun-2005 (MG) Changed to use `__autowrap`
 #    ««revision-date»»···
 #--
 
@@ -180,15 +181,18 @@ class Column (TFL.Meta.Object) :
 class Tree_Adapter (TGL.UI.Mixin) :
     """Base class for the TKT.<TNS>.Tree creation."""
 
-    schema = () ### to be defined by descendents
+    schema     = () ### to be defined by descendents
+    __autowrap = dict \
+        ( root_children = classmethod
+        , children      = classmethod
+        , has_children  = classmethod
+        )
 
-    @classmethod
     def has_children (cls, element) :
         ### must return wether the `element` has childrens or not
         raise NotImplementedError
     # end def has_children
 
-    @classmethod
     def children (cls, element) :
         ### returns all child elements of `element`
         raise NotImplementedError
@@ -221,7 +225,6 @@ class Tree_Adapter (TGL.UI.Mixin) :
             col.add_column (tkt)
     # end def create_view
 
-    @classmethod
     def root_children (cls, root) :
         ### returns all child elements of `root`
         return cls.children (root)

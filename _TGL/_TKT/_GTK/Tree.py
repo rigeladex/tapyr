@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-May-2005 (MG) Creation
+#    10-Jun-2005 (MG) `scroll_policies` added
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,15 @@ class Tree (GTK.Tree_View) :
         self.exposed_widget.wtk_object.add             (self.wtk_object)
         self.exposed_widget.show                       ()
     # end def __init__
+
+    def scroll_policies (self, b = None, h = None, v = None) :
+        if b is not None :
+            v = h = b
+        if h is not None :
+            self.exposed_widget.hscrollbar_policy = h
+        if v is not None :
+            self.exposed_widget.vscrollbar_policy = v
+    # end def scroll_policies
 
 # end class Tree
 

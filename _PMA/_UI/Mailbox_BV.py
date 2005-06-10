@@ -28,6 +28,7 @@
 # Revision Dates
 #     6-Jun-2005 (CT) Creation
 #     6-Jun-2005 (MG) `_MB_TA_`: methods converted to classmethods
+#     7-Jun-2005 (MG) Superfluous `@classmethod` removed
 #    ««revision-date»»···
 #--
 
@@ -52,12 +53,10 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
         ,
         )
 
-    @classmethod
     def has_children (self, mailbox) :
         return bool (mailbox._box_dict)
     # end def has_children
 
-    @classmethod
     def children (self, mailbox) :
         return mailbox.sub_boxes
     # end def children

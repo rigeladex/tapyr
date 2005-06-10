@@ -38,6 +38,9 @@
 #    20-May-2005 (MG) `_push_help` and `_pop_help` impelented
 #    21-May-2005 (MG) `_CI_Menu_Mixin_._new_group`: right align hack for
 #                     `Help` added
+#    10-Jun-2005 (MG) Test for automatic menu item activation
+#    10-Jun-2005 (MG) Allow signal's for `Event_Binder`
+#    10-Jun-2005 (MG) `Event_Binder` corrected
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -359,7 +362,8 @@ class CI_Event_Binder (_CI_) :
             , ** kw
             ) :
         info                 = info or name
-        event                = getattr (self.TNS.Eventname, info)
+        event                = getattr \
+            (self.TNS.Eventname, info, getattr (self.TNS.Signal, info))
         self.bindings [name] = [event, callback, []]
         ### all other command interfacers (menu, toolbar) are enabled by
         ### default -> enable the binding as well
@@ -377,13 +381,13 @@ class CI_Event_Binder (_CI_) :
         self.disable_entry (index)
         conn_ids = self.bindings [index] [-1]
         for w in self.widgets :
-            conn_ids.append ((w, signal.bind_add (w, callback)))
+            conn_ids.append ((w, w.bind_add (signal, callback)))
     # end def enable
 
     def disable_entry (self, index) :
         signal, callback, conn_ids = self.bindings [index]
         for w, cid in conn_ids :
-            signal.unbind (w, cid)
+            w.unbind (signal, cid)
         self.bindings [index] [-1] = []
     # end def disable_entry
 
@@ -401,30 +405,43 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
     # end def __init__
 
     def _new_group (self, name, icon = None) :
+        TNS = self.TNS
+        AC  = self.AC
         if icon :
-            item            = self.TNS.Image_Menu_Item \
+            item            = TNS.Image_Menu_Item \
                 ( label     = name
                 , icon      = icon
-                , AC        = self.AC
+                , AC        = AC
                 )
         else :
-            item            = self.TNS.Menu_Item \
+            item            = TNS.Menu_Item \
                 ( label     = name
-                , AC        = self.AC
+                , AC        = AC
                 )
         if name == "Help" :
             item.right_justified = True
         self._handle_shortcut (item, name, None)
         item.submenu        = menu = CI_Menu \
-            ( AC            = self.AC
+            ( AC            = AC
             , name          = name
             , balloon       = self.balloon
             , help          = self.help_widget
             , accel_group   = self.accel_group
             )
         menu.show         ()
+        #item.bind_add (TNS.Signal.Activate, self._activate_menuentry)
         return item, menu
     # end def _new_group
+
+    def _activate_menuentry (self, event) :
+        menu    = event.widget.submenu
+        print menu.wtk_object.child_focus (self.TNS.gtk.DIR_DOWN)
+        default = [c for c in menu.children if c.sensitive]
+        if 0 and default :
+            w = default [0].wtk_object
+            print w.child_focus (self.TNS.gtk.DIR_DOWN)
+            w.grab_focus ()
+    # end def _activate_menuentry
 
     def _menu_item ( self
                    , cls

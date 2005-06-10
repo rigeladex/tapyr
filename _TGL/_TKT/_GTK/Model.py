@@ -86,7 +86,6 @@ class _Model_ (GTK.Object) :
 
     def remove (self, node) :
         iter  = self.iter.get (node, node)
-        ui    = self.wtk_object.get_value (iter, self.ui_column)
         child = self.wtk_object.iter_children (iter)
         while child :
             n_child = self.wtk_object.iter_next (child)

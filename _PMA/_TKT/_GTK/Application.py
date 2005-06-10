@@ -49,6 +49,7 @@ import _PMA._TKT._GTK.H_Box
 import _PMA._TKT._GTK.Interpreter_Window
 import _PMA._TKT._GTK.Message_Dialog
 import _PMA._TKT._GTK.Message_Window
+import _PMA._TKT._GTK.Office
 import _PMA._TKT._GTK.Paned
 import _PMA._TKT._GTK.Progress_Window
 import _PMA._TKT._GTK.Queued_Stdout

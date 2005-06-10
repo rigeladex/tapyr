@@ -36,6 +36,7 @@
 #     7-Jun-2005 (MG) `show_header` added
 #     7-Jun-2005 (MG) Test code moved into a new file `_test_Tree`
 #     7-Jun-2005 (MG) `update_model` added
+#    10-Jun-2005 (MG) `update_model`: clearing of old model added
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class _Tree_ (TGL.UI.Mixin) :
 
     def update_model (self, ui_model) :
         if self.ui_model :
-            pass ### XXX clear old content of the model
+            self.tkt_model.clear ()
         self.ui_model = ui_model
         self._model_populate (self.lazy)
     # end def update_model
@@ -120,6 +121,7 @@ class _Tree_ (TGL.UI.Mixin) :
     def _create_tkt_tree (self, lazy, sort, show_header) :
         tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
         tkt.headers_visible = show_header
+        tkt.rules_hint      = True
         self.Adapter.create_view (tkt)
         if sort :
             if sort is True :

@@ -31,6 +31,7 @@
 #     1-Apr-2005 (MG) `_wtk_delegation` changed
 #    16-May-2005 (MG) Test case for generic cell renderer added
 #    16-May-2005 (MG) `children` redefined, `selected_iters` added
+#    10-Jun-2005 (MG) `selection` and `clear_selection` added
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,18 @@ class Tree_View (GTK.Container) :
             result.append (model.get_iter (sel_path))
         return result
     # end def selected_iters
+
+    def selection (self) :
+        selection = self.selected_iters ()
+        model     = self.model
+        if model.ui_column is not None :
+            return [model.ui_object (i) for i in selection]
+        return selection
+    # end def selection
+
+    def clear_selection (self) :
+        self.wtk_object.get_selection ().unselect_all ()
+    # end def clear_selection
 
 # end class Tree_View
 

@@ -29,6 +29,8 @@
 #    20-May-2005 (CT) Creation
 #    21-May-2005 (MG) Allow `event` parameter for `commit_all`
 #    21-May-2005 (MG) Interpreter added to menu and toolbar
+#     7-Jun-2005 (MG) `_read_settings` added
+#    10-Jun-2005 (MG) Use of `UI.Office` added
 #    ««revision-date»»···
 #--
 
@@ -47,11 +49,10 @@ import _TGL._UI
 import _PMA._UI
 import _PMA._UI.Command_Mgr
 import _PMA._UI.HTD
-import _PMA._UI.Mailbox_BV
-import _PMA._UI.Mailbox_MV
 import _PMA._UI.Message
 import _PMA._UI.Msg_Display
 import _PMA._UI.Mixin
+import _PMA._UI.Office
 
 import sys
 
@@ -292,6 +293,19 @@ class Application (PMA.UI.Mixin) :
                 raise RuntimeError, "Quit called reentrantly"
     # end def _quit
 
+    def _read_settings (self) :
+        settings       = dict \
+            (inboxes   = [], mailboxes = [])
+        home           = TFL.Environment.home_dir
+        filename = "%s/.pma" % (home, )
+        if TFL.sos.path.isfile (filename) :
+            execfile (filename, globals (), settings)
+        self.inboxes   = settings ["inboxes"]
+        self.mailboxes = settings ["mailboxes"]
+        if not self.inboxes :
+            self.inboxes = (PMA.MH_Mailbox ("%s/MH/inbox" % (home, )), )
+    # end def _read_settings
+
     def _run_postscripts (self) :
         self._run_scripts (self._startup_scripts ())
     # end def _run_postscripts
@@ -443,8 +457,9 @@ class Application (PMA.UI.Mixin) :
     # end def _setup_message_group
 
     def _setup_office (self) :
-        tkt = self.tkt
-        UI  = self.ANS.UI
+        tkt              = self.tkt
+        UI               = self.ANS.UI
+        self._read_settings ()
         self.msg_display = md = UI.Message \
             ( AC         = self.AC
             , display_wc = tkt.wc_msg_display
@@ -452,7 +467,8 @@ class Application (PMA.UI.Mixin) :
             )
         tkt.pack (tkt.wc_msg_display, md._display.tkt_text)
         tkt.pack (tkt.wc_msg_outline, md._outline.tkt_text)
-        mb = None
+        self.office = UI.Office \
+            (self, self.inboxes, self.mailboxes, AC = self.AC)
         if TFL.Environment.username == "tanzer" :
             msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
             md.display (msg)
@@ -460,21 +476,6 @@ class Application (PMA.UI.Mixin) :
             msg = PMA.message_from_file \
                 ("/home/lucky/PMA_Test/MH/customer/HS/17")
             md.display (msg)
-            mb = PMA.Mailbox ("/home/lucky/PMA_Test/Testbox")
-        box = PMA.MH_Mailbox ("%s/MH/inbox" % TFL.Environment.home_dir)
-        try :
-            self.mb_msg_view = mmv = UI.Mailbox_MV \
-                (box, sort = True, AC = self.AC)
-            if mb :
-                self.mb_box_view = mbv = UI.Mailbox_BV \
-                   (mb, AC = self.AC, show_header = False)
-        except AttributeError :
-            import traceback
-            traceback.print_exc ()
-            pass
-        else :
-            tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
-            tkt.pack (tkt.wc_po_box_view, mbv.tkt)
     # end def _setup_office
 
     def _setup_scripts_group (self, group) :
