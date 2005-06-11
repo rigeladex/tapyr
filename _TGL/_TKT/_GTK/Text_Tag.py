@@ -33,6 +33,7 @@
 #     5-Apr-2005 (MG) `_correct_indent` fixed
 #    18-May-2005 (MG) Button signal handling added
 #    20-May-2005 (MG) Don't use `weakref`
+#    10-Jun-2005 (MG) Map `wrap` to `wrap_mode`
 #    ««revision-date»»···
 #--
 
@@ -66,9 +67,10 @@ class Text_Tag (GTK.Object) :
         Opts    = dict \
             ( dict_from_list
                 ( ( "background", "font", "foreground", "underline"
-                  , "justify", "wrap"
+                  , "justify"
                   )
                 )
+            , wrap      = "wrap_mode"
             , lmargin1  = "indent"
             , lmargin2  = "left_margin"
             , rmargin   = "right_margin"

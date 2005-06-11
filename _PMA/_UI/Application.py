@@ -31,6 +31,7 @@
 #    21-May-2005 (MG) Interpreter added to menu and toolbar
 #     7-Jun-2005 (MG) `_read_settings` added
 #    10-Jun-2005 (MG) Use of `UI.Office` added
+#    10-Jun-2005 (MG) Exception handler for the UI.Office creation added
 #    ««revision-date»»···
 #--
 
@@ -467,14 +468,14 @@ class Application (PMA.UI.Mixin) :
             )
         tkt.pack (tkt.wc_msg_display, md._display.tkt_text)
         tkt.pack (tkt.wc_msg_outline, md._outline.tkt_text)
-        self.office = UI.Office \
-            (self, self.inboxes, self.mailboxes, AC = self.AC)
+        try :
+            self.office = UI.Office \
+                (self, self.inboxes, self.mailboxes, AC = self.AC)
+        except :
+            import traceback
+            traceback.print_exc ()
         if TFL.Environment.username == "tanzer" :
             msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
-            md.display (msg)
-        elif TFL.Environment.username == "lucky" :
-            msg = PMA.message_from_file \
-                ("/home/lucky/PMA_Test/MH/customer/HS/17")
             md.display (msg)
     # end def _setup_office
 

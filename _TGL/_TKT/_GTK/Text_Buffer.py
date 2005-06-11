@@ -41,6 +41,8 @@
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
+#    10-Jun-2005 (MG) `_tag`: delete tag if a tag with the passed name
+#                     already exists
 #    ««revision-date»»···
 #--
 
@@ -243,6 +245,11 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
         result = None
         if style is not None :
             if style not in self._tag_map :
+                if name :
+                    tt  = self.tag_table
+                    tag = tt.lookup (name)
+                    if tag :
+                        tt.remove (tag)
                 self._tag_map [style]  = tag = GTK.Text_Tag (name, AC = self.AC)
                 tag.apply_style (style)
                 self.tag_table.add (tag.wtk_object)

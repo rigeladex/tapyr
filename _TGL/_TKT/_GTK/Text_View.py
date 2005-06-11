@@ -76,7 +76,6 @@ class Text_View (GTK.Container) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-
 # end class Text_View
 
 if __name__ != "__main__" :

@@ -91,10 +91,6 @@ class _Style_Mixin_ (TFL.Meta.Object) :
         , foreground    = ("foreground", str)
         )
 
-    def __init__ (self, * attributes, ** options) :
-        self.__super.__init__ (* attributes, ** options)
-    # end def __init__
-
     def setup_column_types (self, column_types) :
         self.__super.setup_column_types (column_types)
         index                   = len (column_types)

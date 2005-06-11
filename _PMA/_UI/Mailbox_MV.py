@@ -29,6 +29,7 @@
 #     6-Jun-2005 (CT) Creation
 #     6-Jun-2005 (MG) `_MB_TA_`: methods converted to classmethods
 #     7-Jun-2005 (MG) Superfluous `@classmethod` removed
+#    11-Jun-2005 (MG) `Message_Cell` added and used
 #    ««revision-date»»···
 #--
 
@@ -42,26 +43,48 @@ import _PMA._UI.Mixin
 import _PMA._UI.Tree
 import _PMA._UI.Tree_Adapter
 
+class Message_Cell (TGL.UI.Text_Cell) :
+    """A cell which uses attributes of a PMA.Message object to set style
+       related attributes (background, foreground, ...)
+    """
+
+    def setup_column_types (self, column_types) :
+        self.__super.setup_column_types (column_types)
+        index                   = len (column_types)
+        column_types.append (int)
+        self.renderer_attr_dict ["weight"] = index
+        self.attr_order.append (("weight", self._get_weight))
+        index += 1
+    # end def setup_column_types
+
+    def _get_weight (self, message, attr) :
+        if message.status.unseen :
+            return 800
+        return 400
+    # end def _get_weight
+
+# end class Message_Cell
+
 class _MB_TA_ (PMA.UI.Tree_Adapter) :
     """Tree adapter for mailbox"""
 
     schema = \
         ( TGL.UI.Column ( "No"
-                        , TGL.UI.Text_Cell (("number", int))
+                        , Message_Cell (("number", int))
                         )
         , TGL.UI.Column ( "Date"
-                        , TGL.UI.Text_Cell ("date")
+                        , Message_Cell ("date")
                         )
         , TGL.UI.Column ( "Sender"
-                        , TGL.UI.Text_Cell ("sender")
+                        , Message_Cell ("sender")
                         , alignment = 0
                         )
         , TGL.UI.Column ( "Subject"
-                        , TGL.UI.Text_Cell ("subject")
+                        , Message_Cell ("subject")
                         , alignment = 0
                         )
         , TGL.UI.Column ( "Body"
-                        , TGL.UI.Text_Cell ("body_start")
+                        , Message_Cell ("body_start")
                         , alignment = 0
                         )
         )

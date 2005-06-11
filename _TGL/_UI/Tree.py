@@ -37,6 +37,7 @@
 #     7-Jun-2005 (MG) Test code moved into a new file `_test_Tree`
 #     7-Jun-2005 (MG) `update_model` added
 #    10-Jun-2005 (MG) `update_model`: clearing of old model added
+#    11-Jun-2005 (MG) `clear_selection`, `selection` and `update` added
 #    ««revision-date»»···
 #--
 
@@ -89,12 +90,25 @@ class _Tree_ (TGL.UI.Mixin) :
             self.update_model (ui_model)
     # end def __init__
 
+    def update (self, element) :
+        return self.tkt_model.update \
+            (element, (self.Adapter.row_data (element)))
+    # end def update
+
     def update_model (self, ui_model) :
         if self.ui_model :
             self.tkt_model.clear ()
         self.ui_model = ui_model
         self._model_populate (self.lazy)
     # end def update_model
+
+    def selection (self) :
+        return self.tkt.selection ()
+    # end def selection
+
+    def clear_selection (self) :
+        return self.tkt.clear_selection ()
+    # end def clear_selection
 
     def _model_populate (self, lazy, parent = None) :
         self._pending_populates = {}

@@ -36,6 +36,7 @@
 #     5-Jun-2005 (MG) `Sort_Model` streamlined
 #     6-Jun-2005 (MG) `AC` added to `Sort_Model` and `Filter_Model`
 #     7-Jun-2005 (MG) `clear` added and `remove` fixed
+#    11-Jun-2005 (MG) `update` added
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,12 @@ class _Model_ (GTK.Object) :
             return self.wtk_object [iter] [self.ui_column]
         return None
     # end def ui_object
+
+    def update (self, ui, row) :
+        iter = self.iter.get (ui, ui)
+        for index, value in enumerate (row) :
+            self.wtk_object.set_value (iter, index, value)
+    # end def update
 
     def __getitem__ (self, key) :
         return self.wtk_object [key]
