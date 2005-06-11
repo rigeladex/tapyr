@@ -32,6 +32,7 @@
 #     7-Jun-2005 (MG) `_read_settings` added
 #    10-Jun-2005 (MG) Use of `UI.Office` added
 #    10-Jun-2005 (MG) Exception handler for the UI.Office creation added
+#    11-Jun-2005 (MG) `_read_settings` removed and use `PMA.Office` instead
 #    ««revision-date»»···
 #--
 
@@ -294,19 +295,6 @@ class Application (PMA.UI.Mixin) :
                 raise RuntimeError, "Quit called reentrantly"
     # end def _quit
 
-    def _read_settings (self) :
-        settings       = dict \
-            (inboxes   = [], mailboxes = [])
-        home           = TFL.Environment.home_dir
-        filename = "%s/.pma" % (home, )
-        if TFL.sos.path.isfile (filename) :
-            execfile (filename, globals (), settings)
-        self.inboxes   = settings ["inboxes"]
-        self.mailboxes = settings ["mailboxes"]
-        if not self.inboxes :
-            self.inboxes = (PMA.MH_Mailbox ("%s/MH/inbox" % (home, )), )
-    # end def _read_settings
-
     def _run_postscripts (self) :
         self._run_scripts (self._startup_scripts ())
     # end def _run_postscripts
@@ -458,9 +446,9 @@ class Application (PMA.UI.Mixin) :
     # end def _setup_message_group
 
     def _setup_office (self) :
+        self.office      = self.ANS.Office ()
         tkt              = self.tkt
         UI               = self.ANS.UI
-        self._read_settings ()
         self.msg_display = md = UI.Message \
             ( AC         = self.AC
             , display_wc = tkt.wc_msg_display
@@ -469,8 +457,7 @@ class Application (PMA.UI.Mixin) :
         tkt.pack (tkt.wc_msg_display, md._display.tkt_text)
         tkt.pack (tkt.wc_msg_outline, md._outline.tkt_text)
         try :
-            self.office = UI.Office \
-                (self, self.inboxes, self.mailboxes, AC = self.AC)
+            self.ui_office = UI.Office (self, AC = self.AC)
         except :
             import traceback
             traceback.print_exc ()

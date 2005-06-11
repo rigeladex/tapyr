@@ -30,6 +30,7 @@
 #    10-Jun-2005 (MG) Exception handler removed
 #    10-Jun-2005 (MG) Message selection handling added
 #    11-Jun-2005 (MG) `select_message`: Update of mailbox tree added
+#    11-Jun-2005 (MG) Changed to use `PMA.Office`
 #    ««revision-date»»···
 #--
 
@@ -40,37 +41,33 @@ import _PMA._UI
 import _PMA._UI.Mixin
 import _PMA._UI.Mailbox_BV
 import _PMA._UI.Mailbox_MV
+import _PMA.Office
 
 class Office (PMA.UI.Mixin) :
     """Abstract user interface for PMA office."""
 
-    def __init__ ( self
-                 , model
-                 , inboxes   = ()
-                 , mailboxes = ()
-                 , AC        = None
-                 ) :
+    def __init__ ( self, model, AC = None) :
         self.__super.__init__ (AC = AC)
-        UI                   = self.ANS.UI
-        TNS                  = self.TNS
-        self.inboxes         = inboxes
-        self.mailboxes       = mailboxes
-        self.model           = model
-        self.box_views       = {}
-        self.inbox_views     = []
-        self.mailbox_views   = []
-        self.current_folder  = None, ()
-        self.current_message = None
-        for boxes, l in ( (inboxes,   self.inbox_views)
-                        , (mailboxes, self.mailbox_views)
+        self.office            = office = model.office
+        self.model             = model
+        self.box_views         = {}
+        self.delivery_views    = []
+        self.storage_views     = []
+        memory                 = self.AC
+        memory.current_folder  = (None, ())
+        memory.current_message = None
+        UI                     = self.ANS.UI
+        TNS                    = self.TNS
+        for boxes, l in ( (office.storage_boxes,  self.storage_views)
+                        , (office.delivery_boxes, self.delivery_views)
                         ) :
             for box in boxes :
-                bv = UI.Mailbox_BV \
-                    (AC = self.AC, show_header = False)
-                bv.update_model (box)
-                l.append        (bv)
+                bv = UI.Mailbox_BV (AC = self.AC, show_header = False)
+                bv.update_model    (box)
+                l.append           (bv)
                 self.box_views [box] = bv
-        self.tkt = TNS.Office (self.inbox_views, self.mailbox_views, AC = AC)
+        self.tkt = TNS.Office \
+            (self.delivery_views, self.storage_views, AC = AC)
         self.mb_msg_view = mmv = UI.Mailbox_MV \
             (sort = True, AC = self.AC)
         mmv.tkt.scroll_policies (TNS.AUTOMATIC)
@@ -104,12 +101,13 @@ class Office (PMA.UI.Mixin) :
     # end def _setup_bv_cmd_mgr
 
     def select_folder (self, event = None) :
-        tree = event.widget
-        old_tree, selection = self.current_folder
+        tree    = event.widget
+        memory  = self.AC
+        old_tree, selection = memory.current_folder
         if old_tree and old_tree is not tree :
             old_tree.clear_selection ()
-        folder = tree.selection ()
-        self.current_folder = tree, folder
+        folder                = tree.selection ()
+        memory.current_folder = tree, folder
         self.mb_msg_view.update_model (folder [0])
     # end def
 
@@ -137,14 +135,15 @@ class Office (PMA.UI.Mixin) :
     def select_message (self, event = None) :
         tree    = self.mb_msg_view
         message = (tree.selection () or (None, )) [0]
-        if message and message is not self.current_message :
+        memory  = self.AC
+        if message and message is not memory.current_message :
             message.status.set_read ()
             mailbox = message.mailbox
             root    = mailbox.root
             if root in self.box_views :
                 self.box_views [root].update (mailbox)
             self.mb_msg_view.update (message)
-            self.current_message = message
+            memory.current_message = message
             self.model.msg_display.display (message)
     # end def select_message
 
