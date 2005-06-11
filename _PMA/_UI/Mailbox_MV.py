@@ -43,7 +43,7 @@ import _PMA._UI.Mixin
 import _PMA._UI.Tree
 import _PMA._UI.Tree_Adapter
 
-class Message_Cell (TGL.UI.Text_Cell) :
+class Message_Cell (PMA.UI.Text_Cell) :
     """A cell which uses attributes of a PMA.Message object to set style
        related attributes (background, foreground, ...)
     """

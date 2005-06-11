@@ -29,6 +29,7 @@
 #     8-Jun-2005 (MG) Creation
 #    10-Jun-2005 (MG) Exception handler removed
 #    10-Jun-2005 (MG) Message selection handling added
+#    11-Jun-2005 (MG) `select_message`: Update of mailbox tree added
 #    ««revision-date»»···
 #--
 
@@ -139,8 +140,9 @@ class Office (PMA.UI.Mixin) :
         if message and message is not self.current_message :
             message.status.set_read ()
             mailbox = message.mailbox
-            #if mailbox in self.box_views :
-            #    self.box_views [mailbox].update (message)
+            root    = mailbox.root
+            if root in self.box_views :
+                self.box_views [root].update (mailbox)
             self.mb_msg_view.update (message)
             self.current_message = message
             self.model.msg_display.display (message)

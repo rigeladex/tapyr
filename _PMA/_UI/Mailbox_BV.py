@@ -29,6 +29,7 @@
 #     6-Jun-2005 (CT) Creation
 #     6-Jun-2005 (MG) `_MB_TA_`: methods converted to classmethods
 #     7-Jun-2005 (MG) Superfluous `@classmethod` removed
+#    11-Jun-2005 (MG) `Folder_Cell` added and used
 #    ««revision-date»»···
 #--
 
@@ -42,14 +43,44 @@ import _PMA._UI.Mixin
 import _PMA._UI.Tree
 import _PMA._UI.Tree_Adapter
 
+class Folder_Cell (PMA.UI.Cell) :
+    """Get the name of the folder from a `mailbox` object"""
+
+    renderer_class      = ("Cell_Renderer_Text")
+
+    def setup_column_types (self, column_types) :
+        self.__super.setup_column_types (column_types)
+        index                   = len (column_types)
+        column_types.append (str)
+        self.renderer_attr_dict ["text"] = index
+        self.attr_order.append (("name", self._get_name))
+        index += 1
+        column_types.append (int)
+        self.renderer_attr_dict ["weight"] = index
+        self.attr_order.append (("weight", self._get_weight))
+        index += 1
+    # end def setup_column_types
+
+    def _get_name (self, mailbox, attr) :
+        text = mailbox.name
+        if mailbox.unseen :
+            return "%s (%s)" % (text, mailbox.unseen)
+        return text
+    # end def _get_name
+
+    def _get_weight (self, mailbox, attr) :
+        if mailbox.unseen :
+            return 800
+        return 400
+    # end def _get_weight
+
+# end class Folder_Cell
+
 class _MB_TA_ (PMA.UI.Tree_Adapter) :
     """Tree adapter for mailbox"""
 
     schema = \
-        ( TGL.UI.Column
-            ( "Name"
-            , TGL.UI.Text_Cell ("name")
-            )
+        ( TGL.UI.Column ("Name", Folder_Cell ())
         ,
         )
 

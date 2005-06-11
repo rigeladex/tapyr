@@ -35,6 +35,8 @@
 #    22-May-2005 (CT) `_copy_msg_file` changed to use `message.save` instead
 #                     of home-grown code
 #    22-May-2005 (CT) `commit` and `commit_all` added
+#    11-Jun-2005 (MG) `root` added to _Mailbox_` and add_subbox
+#    11-Jun-2005 (MG) Property `unseen` added
 #    ««revision-date»»···
 #--
 
@@ -60,10 +62,12 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     messages           = property (lambda s : s._get_messages ())
     sub_boxes          = property (lambda s : s._box_dict.values ())
+    unseen             = property \
+        (lambda s : sum ([m.status.unseen for m in s._get_messages ()]))
 
     _deliveries        = {} ### `time.time ()` : number of mails delivered
 
-    def __init__ (self, path, name = None, prefix = None) :
+    def __init__ (self, path, name = None, prefix = None, root = None) :
         if name is None :
             name       = sos.path.split (path) [-1]
         if prefix is None :
@@ -73,6 +77,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         self.name      = name
         self.qname     = qname
         self.path      = path
+        self.root      = root or self
         self._box_dict = {}
         self._messages = None
         self._msg_dict = {}
@@ -188,11 +193,11 @@ class _Mailbox_ (TFL.Meta.Object) :
 class _Mailbox_in_Dir_ (_Mailbox_) :
     """Model directory-based mailbox"""
 
-    def __init__ (self, path, prefix = None) :
+    def __init__ (self, path, prefix = None, root = None) :
         if not sos.path.isdir (path) :
             sos.mkdir (path)
         self.parser = Lib.Parser ()
-        self.__super.__init__ (path, prefix = prefix)
+        self.__super.__init__ (path, prefix = prefix, root = root)
         for s in self._subdirs (path) :
             self._new_subbox (s)
     # end def __init__
@@ -224,7 +229,7 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
     # end def _new_email
 
     def _new_subbox (self, path) :
-        result = self.__class__ (path, prefix = self.qname)
+        result = self.__class__ (path, prefix = self.qname, root = self.root)
         self._box_dict [result.name] = result
         return result
     # end def _new_subbox
