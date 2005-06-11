@@ -165,6 +165,8 @@
 #    12-May-2005 (MG)  `icon` parameter added to `add_group`
 #    17-May-2005 (CT)  `LB_Command` added
 #    17-May-2005 (CT)  `LB_Command` improved
+#    11-Jun-2005 (MG)  `bind_interfacers` changed to allow multiple widgets
+#                      as paramete
 #    ««revision-date»»···
 #--
 
@@ -992,9 +994,10 @@ class Command_Mgr (Command_Group) :
             i.bind_to_sync (self.update_state)
     # end def __init__
 
-    def bind_interfacers (self, widget) :
+    def bind_interfacers (self, * widgets) :
         for interfacer, event_name in self._pending_interface_bindings :
-            interfacer.bind_to_widget (widget, event_name)
+            for widget in widgets :
+                interfacer.bind_to_widget (widget, event_name)
         self._pending_interface_bindings = []
     # end def bind_interfacers
 
