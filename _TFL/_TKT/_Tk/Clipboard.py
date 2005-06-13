@@ -11,55 +11,71 @@
 #
 # Revision Dates
 #    13-May-2005 (MZO) Creation
+#    13-Jun-2005 (CT)  Some ballast removed
+#    13-Jun-2005 (CT)  Tk-exploring prints added
 #    ««revision-date»»···
 #--
 
 from _TFL import TFL
 import _TFL._TKT.Mixin
 
-class Clipboard (TFL.TKT.Mixin) :
+from CTK import *
 
-    def __init__ (self, AC = None) : 
-        self.AC = AC
-        self.__super.__init__ (AC = self.AC)
-    # end def __init__
+class Clipboard (TFL.TKT.Mixin) :
 
     def copyable (self, *args) :
         """Current content is copyable.
         """
+        #w = CTK.root; print "copyable", w, w.focus_get ()
         return True
     # end def copyable
-    # copyable.evaluate_eagerly = True
-    
+    copyable.evaluate_eagerly = True
+
     def cutable (self, *args) :
         """Current content is cutable.
         """
+        #w = CTK.root; print "cutable", w, w.focus_get ()
         return True
     # end def cutable
-    # cutable.evaluate_eagerly = True
-    
+    cutable.evaluate_eagerly = True
+
     def pasteable (self, *args) :
         """Current content is pasteable.
         """
+        #w = CTK.root; print "pasteable", w, w.focus_get ()
         return True
     # end def pasteable
-    #pasteable.evaluate_eagerly = True
+    pasteable.evaluate_eagerly = True
 
     def menu_copy_cmd (self, event = None) :
         """Copy selection.
         """
+        w = getattr (event, "widget", CTK.root)
+        #print "copy", w, w.focus_get ()
+        try :
+            s = w.selection_get (selection = "PRIMARY")
+        except CTK.TclError:
+            pass
+        else :
+            w.clipboard_clear  ()
+            w.clipboard_append (s)
+            #print "   ", s
         pass   # XXX implement for Tk
     # end def menu_cut_cmd
 
     def menu_cut_cmd (self, event = None) :
         """Cut selection.
         """
+        w = getattr (event, "widget", CTK.root)
+        #print "cut", w, w.focus_get ()
         pass   # XXX implement for Tk
     # end def menu_cut_cmd
 
     def menu_paste_cmd (self, event = None) :
         """Paste selection.
         """
+        w = getattr (event, "widget", CTK.root)
+        #print "paste", w, w.focus_get ()
         pass   # XXX implement for Tk
     # end def menu_cut_cmd
 
