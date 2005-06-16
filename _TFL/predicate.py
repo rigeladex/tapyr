@@ -135,6 +135,7 @@
 #                      to `_sorted` and `_dusort` and made
 #                      API-compatible to Python-2.4's builtin
 #                      `sorted` and `dusort`
+#    16-Jun-2005 (CT)  `list_difference` changed to use `set`
 #    ««revision-date»»···
 #--
 
@@ -482,8 +483,8 @@ def list_difference (l, r) :
        >>> list_difference (range (10), range (3))
        [3, 4, 5, 6, 7, 8, 9]
     """
-    tab = dict_from_list (r)
-    return [y for y in l if not tab.has_key (y) ]
+    rs = set (r)
+    return [y for y in l if y not in rs]
 # end def list_difference
 
 def lists_equal (l, r) :
