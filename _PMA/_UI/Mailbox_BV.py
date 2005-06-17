@@ -30,6 +30,7 @@
 #     6-Jun-2005 (MG) `_MB_TA_`: methods converted to classmethods
 #     7-Jun-2005 (MG) Superfluous `@classmethod` removed
 #    11-Jun-2005 (MG) `Folder_Cell` added and used
+#    17-Jun-2005 (MG) `Folder_Cell` changed: Use new `auto_attributes` feature
 #    ««revision-date»»···
 #--
 
@@ -47,19 +48,11 @@ class Folder_Cell (PMA.UI.Cell) :
     """Get the name of the folder from a `mailbox` object"""
 
     renderer_class      = ("Cell_Renderer_Text")
-
-    def setup_column_types (self, column_types) :
-        self.__super.setup_column_types (column_types)
-        index                   = len (column_types)
-        column_types.append (str)
-        self.renderer_attr_dict ["text"] = index
-        self.attr_order.append (("name", self._get_name))
-        index += 1
-        column_types.append (int)
-        self.renderer_attr_dict ["weight"] = index
-        self.attr_order.append (("weight", self._get_weight))
-        index += 1
-    # end def setup_column_types
+    auto_attributes     = dict \
+        ( PMA.UI.Cell.auto_attributes
+        , name   = ("text",   str, "_get_name")
+        , weight = ("weight", int, "_get_weight")
+        )
 
     def _get_name (self, mailbox, attr) :
         text = mailbox.name

@@ -20,13 +20,14 @@
 #
 #++
 # Name
-#    _test_Tree
+#    TGL.UI._test_Tree
 #
 # Purpose
 #    A test for the TGL.UI.Tree and firends
 #
 # Revision Dates
 #     7-Jun-2005 (MG) Creation (factored from TGL.UI.Tree)
+#    17-Jun-2005 (MG) `Lazy_Cell` added
 #    ««revision-date»»···
 #--
 #
@@ -50,6 +51,22 @@ GTK   = TGL.TKT.GTK
 
 AC    = App_Context     (TGL)
 
+class Lazy_Cell (TGL.UI.Cell) :
+
+    renderer_class      = "Cell_Renderer_Text"
+    auto_attributes     = dict \
+        ( lazy = ("text", str, "_get_text")
+        )
+    lazy                = True
+    c                   = 0
+
+    def _get_text (self, obj, attr_name) :
+        self.c += 1
+        return "Lazy %d" % (self.c, )
+    # end def _get_text
+
+# end class Lazy_Cell
+
 class Test_Adapter (TGL.UI.Tree_Adapter) :
     schema = \
         ( TGL.UI.Column ( "Age"
@@ -62,15 +79,17 @@ class Test_Adapter (TGL.UI.Tree_Adapter) :
         , TGL.UI.Column ( "Male"
                         , TGL.UI.Text_Cell        (("gender", bool))
                         )
+        , TGL.UI.Column ( "Lazy", Lazy_Cell ())
         )
-    @classmethod
+
     def has_children (cls, element) :
         return element.children
     # end def has_children
-    @classmethod
+
     def children (cls, element) :
         return element.children
     # end def children
+
 # end class Test_Adapter
 
 class Person (object) :
@@ -139,8 +158,6 @@ win.default_width  = 250
 win.show                   ()
 #w = GTK.Interpreter_Window (win, global_dict = globals (), AC = AC)
 #w.show                     ()
-#GTK.main                   ()
+GTK.main                   ()
 
-### __END__ _test_Tree
-
-
+### __END__ TGL.UI._test_Tree

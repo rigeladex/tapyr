@@ -32,6 +32,7 @@
 #    21-May-2005 (MG) `push_style` and `pop_style` added, `write` changed to
 #                     use current style
 #    21-May-2005 (MG) `see` added
+#    17-Jun-2005 (MG) `write` missing `see` call added
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,7 @@ class Message_Window (GTK.Scrolled_Text) :
         else :
             style = None
         self._text.insert      (self._text.buffer_tail, text, style)
+        self._text.see         (self._text.buffer_tail)
     # end def write
 
 # end class Message_Window

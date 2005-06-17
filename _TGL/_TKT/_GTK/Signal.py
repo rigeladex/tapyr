@@ -32,6 +32,8 @@
 #    31-Mar-2005 (MG) Button signals added (*_Click_[123])
 #     9-Apr-2005 (MG) `_Event_` exported
 #     9-Apr-2005 (MG) New Signals `Select` and `Deselect` added
+#    17-Jun-2005 (MG) New Signal `Move_Cursor` added, exception handler for
+#                     faild connects added
 #    ««revision-date»»···
 #--
 
@@ -103,8 +105,12 @@ class GTK_Signal (Signal) :
     # end def __call__
 
     def connect (self, gtk_widget, callback, args, kw) :
-        return gtk_widget.connect \
-            (self._signal_name, self, callback, args, kw)
+        try :
+            return gtk_widget.connect \
+                (self._signal_name, self, callback, args, kw)
+        except TypeError :
+            print gtk_widget, self._signal_name
+            raise
     # end def connect
 
     def connect_after (self, gtk_widget, callback, args, kw) :
@@ -202,6 +208,7 @@ GDK_Signal ( "Triple_Click_3")
 GTK_Signal ( "Switch_Page", "page", "page_nr")
 
 ### special signals for Tree's
+GTK_Signal ( "Row_Actvaited",          "tree_path", "tree_iter")
 GTK_Signal ( "Row_Changed",          "tree_path", "tree_iter")
 GTK_Signal ( "Row_Expanded",         "tree_iter", "tree_path")
 GTK_Signal ( "Row_Collapsed",        "tree_iter", "tree_path")
@@ -210,6 +217,7 @@ GTK_Signal ( "Tree_Entry_Collapsed", "ui_entry")
 GTK_Signal ( "Cell_Renamed",         "new_name")
 GTK_Signal ( "Text_Drop",            "ui_target", "ui_source", "text")
 GTK_Signal ( "Tree_Cursor_Position_Changed")
+GTK_Signal ( "Move_Cursor",          "move_type", "move_count")
 
 if __name__ != "__main__" :
     GTK._Export ("Signal", "_Event_")

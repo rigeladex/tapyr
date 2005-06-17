@@ -44,6 +44,8 @@
 #    20-May-2005 (MG) Widget memory support added
 #    20-May-2005 (MG) `idle_add`, `idle_remove`, and `update_idletasks` added
 #     5-Jun-2005 (MG) `_Object_` factored, `Object_Wrapper` added
+#    17-Jun-2005 (MG) `String_Property` and `Object_Property` added
+#    17-Jun-2005 (MG) `_get_property` chabged to return `None` as default
 #    ««revision-date»»···
 #--
 
@@ -207,6 +209,21 @@ def Number_Property ( p_type
         ( p_type, nick, description, min_value, max_value, default, kind)
 # end def Number_Property
 
+def String_Property ( default     = ""
+                    , kind        = gobject.PARAM_READWRITE
+                    , nick        = ""
+                    , description = ""
+                    ) :
+    return (gobject.TYPE_STRING, nick, description, default, kind)
+# end def String_Property
+
+def Object_Property ( kind        = gobject.PARAM_READWRITE
+                    , nick        = ""
+                    , description = ""
+                    ) :
+    return (gobject.TYPE_PYOBJECT, nick, description, kind)
+# end def Object_Property
+
 def Simple_Property ( p_type
                     , kind        = gobject.PARAM_READWRITE
                     , default     = True
@@ -227,7 +244,7 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
 
     @staticmethod
     def _get_property (self, property) :
-        return getattr (self, property.name)
+        return getattr (self, property.name, None)
     # end def _get_property
 
     @staticmethod
@@ -249,7 +266,6 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
             attr  = "_%s__gtk_properties" % (name, )
             old_p = list (dict.get (attr, ()))
             for pname, pspec in props.iteritems () :
-                d [pname] = pspec [3]
                 old_p.append (Property (pname))
             dict [attr] = old_p
             gtk_class = type      (Class_Name, (gtk_base, ), d)

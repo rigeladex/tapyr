@@ -43,6 +43,7 @@
 #    20-May-2005 (MG) `__init__`: call to `read_widget_memory` added
 #    20-May-2005 (MG) `grab_*` added
 #     3-Jun-2005 (MG) `destroy` added
+#    17-Jun-2005 (MG) `colormap` added
 #    ««revision-date»»···
 #--
 
@@ -80,6 +81,7 @@ class Widget (GTK.Object) :
         ( GTK.Property           ("app_paintable")
         , GTK.Property           ("can_default")
         , GTK.Property           ("can_focus")
+        , GTK.SG_Property        ("colormap", set = None)
         , GTK.Property           ("composite_child", set = None)
         , GTK.SG_Property        ("events")
         , GTK.SG_Property        ("extension_events")

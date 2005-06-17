@@ -36,6 +36,10 @@
 #     6-Jun-2005 (MG) Convert all methods of `Tree_Adapter` into static- or
 #                     classmethods
 #     7-Jun-2005 (MG) Changed to use `__autowrap`
+#    17-Jun-2005 (MG) `auto_attributes` added and used, `_Style_Mixin_`
+#                     changed to use new `auto_attributes` feature
+#    17-Jun-2005 (MG) Support for `lazy` cells added
+#    17-Jun-2005 (MG) Class variables `Model_Type` and `rules_hint` added
 #    ««revision-date»»···
 #--
 
@@ -50,18 +54,35 @@ class Cell (TFL.Meta.Object) :
     """
 
     renderer_attributes = ()
+    auto_attributes     = dict () ### can be defined by descendents
+    lazy                = False
 
     def __init__ (self, * attributes, ** options) :
         self.__super.__init__ ()
+        if "lazy" in options :
+            self.lazy = options ["lazy"]
+            del options ["lazy"]
         if len (attributes) > len (self.renderer_attributes) :
             raise TypeError, "Too many renderer attributes specified"
         self.attr_map = {}
-        for ui, rend in zip (attributes, self.renderer_attributes) :
-            if not isinstance (ui, (list, tuple)) :
-                mt = str
+        aa            = self.auto_attributes
+        for ui_attr, (rend_attr, tkt_type, get_fct) in aa .iteritems () :
+            if not callable (get_fct) :
+                get_fct                        = getattr (self, get_fct)
+            self.attr_map [ui_attr]            = rend_attr, tkt_type, get_fct
+        for ui_attr, rend_attr in zip (attributes, self.renderer_attributes) :
+            if not isinstance (ui_attr, (list, tuple)) :
+                tkt_type                       = str
+                get_fct                        = getattr
             else :
-                ui, mt = ui
-            self.attr_map [ui] = rend, mt
+                if len (ui_attr) > 2 :
+                    ui_attr, tkt_type, get_fct = ui_attr
+                else :
+                    ui_attr, tkt_type          = ui_attr
+                    get_fct                    = getattr
+            if not callable (get_fct) :
+                get_fct                        = getattr (self, get_fct)
+            self.attr_map [ui_attr]            = rend_attr, tkt_type, get_fct
         self.attr_map.update (options)
     # end def __init__
 
@@ -69,16 +90,24 @@ class Cell (TFL.Meta.Object) :
         self.start_index = index = len (column_types)
         self.renderer_attr_dict  = {}
         self.attr_order          = []
-        for ui, (rend, mt) in self.attr_map.iteritems () :
-            column_types.append    (mt)
-            self.attr_order.append ((ui, getattr))
-            self.renderer_attr_dict [rend] = index
-            index += 1
+        if not self.lazy :
+            am = self.attr_map
+            for ui_attr, (rend_attr, tkt_type, get_fct) in am.iteritems () :
+                column_types.append    (tkt_type)
+                self.attr_order.append ((ui_attr, get_fct))
+                self.renderer_attr_dict [rend_attr] = index
+                index += 1
     # end def setup_column_types
 
     def add_data (self, ui) :
         return [f (ui, n) for (n, f) in self.attr_order]
     # end def add_data
+
+    def _lazy_populate (self, ui, renderer) :
+        attr_map = self.attr_map
+        for ui_attr, (rend_attr, tkt_type, get_fct) in attr_map.iteritems () :
+            setattr (renderer, rend_attr, get_fct (ui, ui_attr))
+    # end def _lazy_populate
 
 # end class Cell
 
@@ -86,21 +115,14 @@ class _Style_Mixin_ (TFL.Meta.Object) :
     """Extends a normal cell to use some of the attributes out of style object
     """
 
-    style_map           = dict \
-        ( background    = ("background", str)
-        , foreground    = ("foreground", str)
-        )
+    def _style_get (self, obj, attr_name) :
+        return getattr (obj.style, attr_name)
+    # end def _style_get
 
-    def setup_column_types (self, column_types) :
-        self.__super.setup_column_types (column_types)
-        index                   = len (column_types)
-        style_get_attr          = lambda o, n : getattr (o.style, n)
-        for ui, (rend, mt) in self.style_map.iteritems () :
-            column_types.append    (mt)
-            self.renderer_attr_dict [rend] = index
-            self.attr_order.append ((ui, style_get_attr))
-            index += 1
-    # end def setup_column_types
+    auto_attributes     = dict \
+        ( background    = ("background", str, "_style_get")
+        , foreground    = ("foreground", str, "_style_get")
+        )
 
 # end class _Style_Mixin_
 
@@ -108,7 +130,7 @@ class Text_Cell (Cell) :
     """A cell with uses a normal text renderer"""
 
     renderer_attributes = ("text", )
-    renderer_class      = ("Cell_Renderer_Text")
+    renderer_class      = "Cell_Renderer_Text"
 
 # end class Text_Cell
 
@@ -157,7 +179,14 @@ class Column (TFL.Meta.Object) :
         for cell in self.cells :
             renderer = getattr    (tree.TNS, cell.renderer_class) ()
             column.pack           (renderer)
-            column.set_attributes (renderer, ** cell.renderer_attr_dict)
+            if cell.lazy :
+                column.set_cell_function \
+                    ( renderer
+                    , column.set_renderer_attributes
+                    , cell
+                    )
+            else :
+                column.set_attributes (renderer, ** cell.renderer_attr_dict)
     # end def add_column
 
     def add_row_data (self, ui, row) :
@@ -177,12 +206,15 @@ class Column (TFL.Meta.Object) :
 class Tree_Adapter (TGL.UI.Mixin) :
     """Base class for the TKT.<TNS>.Tree creation."""
 
+    Model_Type = "Tree_Model"
+
     schema     = () ### to be defined by descendents
     __autowrap = dict \
         ( root_children = classmethod
         , children      = classmethod
         , has_children  = classmethod
         )
+    rules_hint          = True
 
     def has_children (cls, element) :
         ### must return wether the `element` has childrens or not
@@ -201,7 +233,7 @@ class Tree_Adapter (TGL.UI.Mixin) :
             col.setup_column_types (column_types)
         ui_column = len            (column_types)
         column_types.append        (object)
-        return TNS.Tree_Model \
+        return getattr (TNS, cls.Model_Type) \
             (AC = AC, ui_column = ui_column, * column_types)
     # end def create_model
 

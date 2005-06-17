@@ -37,6 +37,7 @@
 #     6-Jun-2005 (MG) `AC` added to `Sort_Model` and `Filter_Model`
 #     7-Jun-2005 (MG) `clear` added and `remove` fixed
 #    11-Jun-2005 (MG) `update` added
+#    17-Jun-2005 (MG) `List_Model._add` allow `parent` as parameter
 #    ««revision-date»»···
 #--
 
@@ -160,7 +161,7 @@ class List_Model (_Model_) :
 
     GTK_Class    = GTK.gtk.ListStore
 
-    def _add (self, row, after_iter) :
+    def _add (self, row, after_iter, parent = None) :
         if after_iter :
             return self.wtk_object.insert_after (after_iter, row)
         else :

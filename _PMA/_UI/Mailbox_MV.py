@@ -30,6 +30,8 @@
 #     6-Jun-2005 (MG) `_MB_TA_`: methods converted to classmethods
 #     7-Jun-2005 (MG) Superfluous `@classmethod` removed
 #    11-Jun-2005 (MG) `Message_Cell` added and used
+#    17-Jun-2005 (MG) `Message_Cell` changed: Use new `auto_attributes` feature
+#    17-Jun-2005 (MG) `Body` cell made lazy (performance reasons)
 #    ««revision-date»»···
 #--
 
@@ -48,14 +50,11 @@ class Message_Cell (PMA.UI.Text_Cell) :
        related attributes (background, foreground, ...)
     """
 
-    def setup_column_types (self, column_types) :
-        self.__super.setup_column_types (column_types)
-        index                   = len (column_types)
-        column_types.append (int)
-        self.renderer_attr_dict ["weight"] = index
-        self.attr_order.append (("weight", self._get_weight))
-        index += 1
-    # end def setup_column_types
+
+    auto_attributes     = dict \
+        ( PMA.UI.Cell.auto_attributes
+        , weight = ("weight", int, "_get_weight")
+        )
 
     def _get_weight (self, message, attr) :
         if message.status.unseen :
@@ -84,7 +83,7 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
                         , alignment = 0
                         )
         , TGL.UI.Column ( "Body"
-                        , Message_Cell ("body_start")
+                        , Message_Cell ("body_start", lazy = True)
                         , alignment = 0
                         )
         )

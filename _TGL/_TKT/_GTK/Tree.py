@@ -59,6 +59,13 @@ class Tree (GTK.Tree_View) :
             self.exposed_widget.vscrollbar_policy = v
     # end def scroll_policies
 
+    def see (self, model, iter, column = 0) :
+        self.wtk_object.scroll_to_cell \
+            ( model.wtk_object.get_path (iter)
+            , self.children [column].wtk_object
+            )
+    # end def see
+
 # end class Tree
 
 if __name__ != "__main__" :

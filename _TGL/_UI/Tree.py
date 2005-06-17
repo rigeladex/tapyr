@@ -38,6 +38,8 @@
 #     7-Jun-2005 (MG) `update_model` added
 #    10-Jun-2005 (MG) `update_model`: clearing of old model added
 #    11-Jun-2005 (MG) `clear_selection`, `selection` and `update` added
+#    17-Jun-2005 (MG) Use `Adapter.rules_hint`
+#    17-Jun-2005 (MG) `see` added
 #    ««revision-date»»···
 #--
 
@@ -110,6 +112,11 @@ class _Tree_ (TGL.UI.Mixin) :
         return self.tkt.clear_selection ()
     # end def clear_selection
 
+    def see (self, element) :
+        element = self.tkt_model.iter [element]
+        self.tkt.see (self.tkt_model, element)
+    # end def see
+
     def _model_populate (self, lazy, parent = None) :
         self._pending_populates = {}
         for element in self.Adapter.root_children (self.ui_model) :
@@ -135,7 +142,7 @@ class _Tree_ (TGL.UI.Mixin) :
     def _create_tkt_tree (self, lazy, sort, show_header) :
         tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
         tkt.headers_visible = show_header
-        tkt.rules_hint      = True
+        tkt.rules_hint      = self.Adapter.rules_hint
         self.Adapter.create_view (tkt)
         if sort :
             if sort is True :

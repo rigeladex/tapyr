@@ -32,6 +32,7 @@
 #    16-May-2005 (MG) `sort_column_id` added
 #    18-May-2005 (MG) Don't used `Pack_Mixin` (pack does not support the
 #                     `fill` property)
+#    17-Jun-2005 (MG) `set_cell_function` and `set_renderer_attributes` added
 #    ««revision-date»»···
 #--
 
@@ -77,9 +78,10 @@ class Tree_View_Column (GTK.Object) :
         )
 
     _wtk_delegation = GTK.Delegation \
-        ( Delegator_R   ("set_attributes")
-        , Delegator_R   ("add_attribute")
-        , GTK.Delegator ("clear")
+                          ( Delegator_R   ("set_attributes")
+        , Delegator_R     ("add_attribute")
+        , GTK.Delegator   ("clear")
+        , GTK.Delegator_O ("set_cell_function", "set_cell_data_func")
         )
 
     def __init__ (self, title = None, renderer = None, * args, ** kw) :
@@ -95,6 +97,18 @@ class Tree_View_Column (GTK.Object) :
             fct = self.wtk_object.pack_end
         return fct (child.wtk_object, expand = expand)
     # end def pack
+
+    def set_renderer_attributes ( self
+                                , tree_view_column
+                                , cell_renderer
+                                , model
+                                , iter
+                                , cell
+                                ) :
+        model = model.get_data ("ktw_object")
+        ui = model.ui_object (iter)
+        cell._lazy_populate (ui, cell_renderer.get_data ("ktw_object"))
+    # end def set_renderer_attributes
 
 # end class Tree_View_Column
 

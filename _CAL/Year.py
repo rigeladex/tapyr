@@ -61,6 +61,7 @@
 #    10-Dec-2004 (CT) `_Cal_` removed (always use `CAl.Calendar`)
 #    10-Dec-2004 (CT) Use `cal.day` to create days (instead of calling `Day`
 #                     directly)
+#    17-Jun-2005 (MG) `Day.is_weekday` fixed
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ class Day (TFL.Meta.Object) :
     is_holiday = ""
 
     id         = property (lambda s : s.date.tuple [:3])
-    is_weekday = property (lambda s : s.is_weekday)
+    is_weekday = property (lambda s : s.date.is_weekday)
     number     = property (lambda s : s.date.day)
 
     def __new__ (cls, cal, date) :
