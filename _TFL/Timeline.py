@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2003-2005 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -20,6 +20,7 @@
 #    23-Oct-2003 (CT)  Small changes to allow cutting of zero-length spans
 #     3-Nov-2003 (CT)  Inherit from `NDT.Sched2.Object`
 #     5-Apr-2004 (CED) `__str__` added
+#    29-Jun-2005 (CT)  Test scaffolding dumped
 #    ««revision-date»»···
 #--
 
@@ -173,26 +174,6 @@ class Timeline (NDT.Sched2.Object) :
     # end def __str__
 
 # end class Timeline
-
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import Timeline
-        return U_Test.run_module_doc_tests (Timeline)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
 
 if __name__ != "__main__" :
     NDT.Sched2._Export ("*")
