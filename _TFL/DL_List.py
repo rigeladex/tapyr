@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DL_List
+#    TFL.DL_List
 #
 # Purpose
 #    Doubly linked list
@@ -34,10 +34,9 @@
 #     7-Oct-2003 (CT)  `list_of_preds`, `list_of_succs` removed
 #     2-Dec-2003 (CT)  Already commented-out `__getattr__` finally removed
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
+#    30-Jun-2005 (CT)  Style improvements
 #    ««revision-date»»···
 #--
-
-from   __future__  import generators
 
 from   _TFL        import TFL
 
@@ -84,7 +83,7 @@ class DL_Item (TFL.Meta.Object) :
         """Move DL_Items from `h` to `t` after `self` (removing that sequence
            wherever it lived before).
         """
-        assert bool (h) and (bool (t)), "resplice %s: %s %s" % (self, h, t)
+        assert bool (h) and bool (t), "resplice %s: %s %s" % (self, h, t)
         h.prev.link_next (t.next)
         t.link_next      (self.next)
         self.link_next   (h)
@@ -130,15 +129,15 @@ class DL_List (TFL.Meta.Object) :
        4
     """
 
+    head = property (lambda s : s._H.next)
+    tail = property (lambda s : s._T.prev)
+
     def __init__ (self, * items) :
-        self._H = h = DL_Item ()
-        self._T     = DL_Item ()
+        self._H = DL_Item ()
+        self._T = DL_Item ()
         self.clear  ()
         self.append (* items)
     # end def __init__
-
-    head = property (lambda s : s._H.next)
-    tail = property (lambda s : s._T.prev)
 
     def append (self, * items) :
         self.insert (self._T.prev, * items)
@@ -212,6 +211,8 @@ class DL_List (TFL.Meta.Object) :
             yield item.value
     # end def values
 
+    itervalues = values ### compatibility to `dict`
+
     def __nonzero__ (self) :
         return self._H.next is not self._T
     # end def __nonzero__
@@ -255,4 +256,4 @@ class DL_List_Counted (DL_List) :
 
 if __name__ != "__main__" :
     TFL._Export ("*")
-### __END__ DL_List
+### __END__ TFL.DL_List
