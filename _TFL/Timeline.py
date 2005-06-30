@@ -10,10 +10,10 @@
 #    Timeline for scheduling
 #
 # Revision Dates
-#    21-Aug-2003 (CT) Creation
-#    29-Aug-2003 (CT) `Timeline.length` added
-#    29-Aug-2003 (CT) `orig` added
-#    23-Sep-2003 (CT) `snip` added
+#    21-Aug-2003 (CT)  Creation
+#    29-Aug-2003 (CT)  `Timeline.length` added
+#    29-Aug-2003 (CT)  `orig` added
+#    23-Sep-2003 (CT)  `snip` added
 #    26-Sep-2003 (CED) `reset` added
 #     2-Oct-2003 (CED) `epsilon` introduced and used to avoid transient
 #                      rounding errors
@@ -21,6 +21,7 @@
 #     3-Nov-2003 (CT)  Inherit from `NDT.Sched2.Object`
 #     5-Apr-2004 (CED) `__str__` added
 #    29-Jun-2005 (CT)  Test scaffolding dumped
+#    30-Jun-2005 (CT)  Style improvements
 #    ««revision-date»»···
 #--
 
@@ -111,7 +112,11 @@ class Timeline (NDT.Sched2.Object) :
        ...   print exc.__class__.__name__, exc
        ...
        AssertionError head = (215, 200), tail = (215, 500)
+
+       XXX add doctest for `snip`
     """
+
+    length = property (lambda s : sum ([f.length for f in s.free], 0))
 
     def __init__ (self, lower, upper) :
         self.orig = NDT.Sched2.Span (lower, upper)
@@ -150,8 +155,6 @@ class Timeline (NDT.Sched2.Object) :
                 if not f :
                     del self.free [p.index]
     # end def cut
-
-    length = property (lambda s : sum ([f.length for f in s.free], 0))
 
     def reset (self) :
         self.free = [NDT.Sched2.Span (self.orig.lower, self.orig.upper)]
