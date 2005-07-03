@@ -136,6 +136,11 @@
 #                      API-compatible to Python-2.4's builtin
 #                      `sorted` and `dusort`
 #    16-Jun-2005 (CT)  `list_difference` changed to use `set`
+#     1-Jul-2005 (CT)  Renamed `first`, `second`, `third` by
+#                      `first_arg`, `second_arg`, `third_arg`
+#     1-Jul-2005 (CT)  `first` added
+#     1-Jul-2005 (CT)  `predecessor_of` and `successor_of` added
+#     1-Jul-2005 (CT)  `pairwise_circle` moved to `Generators`
 #    ««revision-date»»···
 #--
 
@@ -145,6 +150,7 @@ import _TFL.Generators
 ### legacy aliases
 IV_Pairs       = enumerate
 dict_from_list = dict.fromkeys
+pairwise       = TFL.pairwise
 
 def all_true (seq) :
     """Returns True if all elements of `seq` are true,
@@ -372,10 +378,18 @@ def extender (l, tail) :
     return l
 # end def extender
 
-def first (x, * args, ** kw) :
+def first (iterable) :
+    """Return first element of iterable"""
+    try :
+        return iter (iterable).next ()
+    except StopIteration :
+        raise IndexError
+# end def first
+
+def first_arg (x, * args, ** kw) :
     """Returns the first argument unchanged"""
     return x
-# end def first
+# end def first_arg
 
 def flatten (* lists) :
     """Returns a list containing all the elements in `lists'.
@@ -526,20 +540,13 @@ def paired (s1, s2) :
     return map (None, s1, s2)
 # end def paired
 
-def pairwise_circle (seq) :
-    """Returns a list of pairs of a circle of sequence `seq`
-
-       >>> list (pairwise_circle ([1, 2, 3, 4, 5]))
-       [(1, 2), (2, 3), (3, 4), (4, 5), (5, 1)]
-       >>> list (pairwise_circle ([1, 2]))
-       [(1, 2), (2, 1)]
-       >>> list (pairwise_circle ([1]))
-       [(1, 1)]
-       >>> list (pairwise_circle ([]))
-       []
-    """
-    return TFL.pairwise (seq + seq [0:1])
-# end def pairwise_circle
+def predecessor_of (element, iterable, pairwise = pairwise) :
+    """Returns the predecessor of `element` in `iterable`"""
+    for (l, r) in pairwise (iterable) :
+        if r == element :
+            return l
+    raise IndexError
+# end def successor_of
 
 def random_string (length, char_range = 127, char_offset = 128) :
     """Returns a string of `length' random characters in the interval
@@ -646,10 +653,10 @@ def rounded_up (value, granularity) :
     return value + ((granularity - value) % granularity)
 # end def rounded_up
 
-def second (x, y, * args, ** kw) :
+def second_arg (x, y, * args, ** kw) :
     """Returns the second argument unchanged"""
     return y
-# end def second
+# end def second_arg
 
 def _sorted (seq, pred = cmp, key = None, reverse = False) :
     """Returns a sorted copy of `seq'.
@@ -700,6 +707,14 @@ def string_cross_sum (string) :
     return cross_sum (string, ord)
 # end def string_cross_sum
 
+def successor_of (element, iterable, pairwise = pairwise) :
+    """Returns the successor of `element` in `iterable`"""
+    for (l, r) in pairwise (iterable) :
+        if l == element :
+            return r
+    raise IndexError
+# end def successor_of
+
 def tail_slices (l) :
     """Returns the list of all slices anchored at tail of `l'
 
@@ -709,10 +724,10 @@ def tail_slices (l) :
     return map (lambda i, l = l : l [i:], range (len (l)))
 # end def tail_slices
 
-def third (x, y, z, * args, ** kw) :
+def third_arg (x, y, z, * args, ** kw) :
     """Returns the third argument unchanged"""
     return z
-# end def third
+# end def third_arg
 
 def tupelize (l) :
     """Converts every occurance of a list to a tuple. Afterwards `l` should

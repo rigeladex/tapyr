@@ -44,6 +44,7 @@
 #    15-Feb-2005 (CED) `Faculties` added (moved from _YAGNI to here)
 #    24-Mar-2005 (CT)  Cruft removed (recent additions by CED and Python
 #                      legacies)
+#     1-Jul-2005 (CT)  `pairwise_circle` defined here
 #    ««revision-date»»···
 #--
 
@@ -177,6 +178,27 @@ def pairwise (seq) :
         if lag :
             yield h, lag.succ
 # end def pairwise
+
+def pairwise_circle (seq) :
+    """Generates a list of pairs of a circle of iterable `seq`
+
+       >>> list (pairwise_circle ([1, 2, 3, 4, 5]))
+       [(1, 2), (2, 3), (3, 4), (4, 5), (5, 1)]
+       >>> list (pairwise_circle ([1, 2]))
+       [(1, 2), (2, 1)]
+       >>> list (pairwise_circle ([1]))
+       [(1, 1)]
+       >>> list (pairwise_circle ([]))
+       []
+    """
+    lag = Look_Ahead_Gen (seq)
+    if lag :
+        head = lag.succ
+        for h in lag :
+            if lag :
+                yield h, lag.succ
+        yield h, head ### close circle
+# end def pairwise_circle
 
 def paired_zip (s1, s2) :
     """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
