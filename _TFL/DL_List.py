@@ -124,9 +124,6 @@ class _DL_Chain_ (TFL.Meta.Object) :
 
     DL_Item = DL_Item
 
-    head = property (lambda s : s._H.next)
-    tail = property (lambda s : s._T.prev)
-
     def __init__ (self, * items) :
         self.clear  ()
         self.append (* items)

@@ -546,7 +546,7 @@ def predecessor_of (element, iterable, pairwise = pairwise) :
         if r == element :
             return l
     raise IndexError
-# end def successor_of
+# end def predecessor_of
 
 def random_string (length, char_range = 127, char_offset = 128) :
     """Returns a string of `length' random characters in the interval
