@@ -44,6 +44,8 @@
 #    19-Apr-2005 (CT)  `make_active` changed to delegate to `exposed_widget`
 #    25-Apr-2005 (CT)  `setup_context_menu` added
 #    31-May-2005 (CT)  `normal_cursor` fixed
+#    11-Jul-2005 (CT)  `__getattr__` changed to look in `CTK_Dialog` for
+#                      `ask_` functions, too
 #    ««revision-date»»···
 #--
 
@@ -52,6 +54,7 @@ import _TFL._TKT.Mixin
 import _TFL._TKT._Tk
 import _TFL._TKT._Tk.Eventname
 
+import CTK_Dialog
 import weakref
 
 class Widget (TFL.TKT.Mixin) :
@@ -157,7 +160,10 @@ class Widget (TFL.TKT.Mixin) :
 
     def __getattr__ (self, name) :
         if name.startswith ("ask_") :
-            return getattr (self.exposed_widget, name)
+            try :
+                return getattr (self.exposed_widget, name)
+            except AttributeError :
+                return getattr (CTK_Dialog, name)
         raise AttributeError, "%s: %s" % (self, name)
     # end def __getattr__
 
