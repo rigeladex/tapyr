@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Jul-2005 (MG) Creation (Factored from TTA.FTC.TDFT_Data)
+#    12-Jul-2005 (MG) Classmethod `add_type_mapping` added
 #    ««revision-date»»···
 #--
 
@@ -61,14 +62,6 @@ class Struct_Field (TFL.Meta.Object):
         , "unsigned long long"         : "ullong"
         , "ushort"                     : "unsigned short"
         , "void*"                      : "void *"
-        # Specific for the TDFT ( XXX how can we handle this ?)
-        #, "TDFT_Bit_Copy_Spec_Ref"     : "long"
-        #, "TDFT_Byte_Copy_Spec_Ref"    : "long"
-        #, "TDFT_Msg_in_Frame_Ref"      : "long"
-        #, "TDFT_Msg_in_R_Slot_Ref"     : "long"
-        #, "TDFT_Msg_in_Round_Ref"      : "long"
-        #, "TDFT_Msg_part_Desc_Ref"     : "long"
-        #, "TDFT_Msg_part_in_Frame_Ref" : "long"
         }
 
     def __init__ (self, type, name, desc, init = None, user_code = None, bounds = None) :
@@ -79,6 +72,22 @@ class Struct_Field (TFL.Meta.Object):
         self.user_code = user_code
         self.bounds    = bounds
     # end def __init__
+
+    @classmethod
+    def add_type_mapping (cls, ** kw) :
+        for new_type, maps_to_type in kw.iteritems () :
+            if new_type in cls.type_map :
+                if maps_to_type != cls.type_map [new_type] :
+                    msg = "\n".join \
+                        ( ( "A mapping f0r type `%s` already exists:"
+                            % (new_type, )
+                          , "old mapping: `%s`" % (cls.type_map [new_type], )
+                          , "new mapping: `%s`" % (maps_to_type, )
+                          )
+                        )
+                    raise ValueError, msg
+            cls.type_map [new_type] = maps_to_type
+    # end def add_type_mapping
 
     def as_c_code (self, C) :
         """Returns an object which can be passed as `field' to
