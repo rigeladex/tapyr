@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -97,6 +97,7 @@
 #    27-Sep-2004 (CT) Don't set/use `x_forms.front0` and `x_forms.rear0`
 #                     unless format specification contains at least one of
 #                     them
+#    13-Jul-2005 (CT) Style
 #    ««revision-date»»···
 #--
 
@@ -122,7 +123,7 @@ class _Formatter_ (TFL.Meta.Object) :
 
     def __repr__ (self) :
         return "%s %s> '%s'" % \
-               (self.kind, self.indent_level, self.format_line)
+            (self.kind, self.indent_level, self.format_line)
     # end def __repr__
 
 # end class _Formatter_
@@ -438,17 +439,16 @@ class Multi_Line_Formatter (_Formatter_) :
 
     def _setup_formatters (self, format_line) :
         self.formatters = formatters = []
+        add = formatters.append
         pos = 0
         for match in self.pattern.search_iter (format_line) :
             s = match.start (0)
             if pos < s :
-                formatters.append \
-                    (Partial_Line_Formatter (0, format_line [pos:s]))
-            formatters.append (self._recursive_formatter (match))
+                add (Partial_Line_Formatter (0, format_line [pos:s]))
+            add (self._recursive_formatter (match))
             pos = match.end (0)
         if pos < len (format_line) :
-            formatters.append \
-                (Partial_Line_Formatter (0, format_line [pos:]))
+            add (Partial_Line_Formatter (0, format_line [pos:]))
     # end def _setup_formatters
 
     def _recursive_formatter (self, match) :
