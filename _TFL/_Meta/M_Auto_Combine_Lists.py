@@ -27,7 +27,8 @@
 #    ancestors
 #
 # Revision Dates
-#    23-Jul-2004 (CT) Creation (factored from TOM.Meta.M_Auto_Combine)
+#    23-Jul-2004 (CT)  Creation (factored from TOM.Meta.M_Auto_Combine)
+#    13-Jul-2005 (CED) Use sets instead of dicts
 #    ««revision-date»»···
 #--
 
@@ -83,22 +84,17 @@ class M_Auto_Combine_Lists (TFL.Meta._M_Type_) :
     def _m_combine_lists (cls, bases, dict) :
         for ltc in cls._lists_to_combine :
             n   = "__%s" % ltc
-            set = {}
+            s   = set ()
             for b in bases :
-                ltc_dict = getattr (b, n, {})
-                if ltc_dict :
-                    set.update (ltc_dict)
-                else :
-                    for x in getattr (b, ltc, []) :
-                        set [x] = 1
-            for x in dict.get (ltc, []) :
-                try :
-                    set [x] = 1
-                except TypeError :
-                    print cls, x, type (x)
-                    raise
-            setattr (cls, n,   set)
-            setattr (cls, ltc, sorted (set.keys ()))
+                ltc_set = getattr (b, n, getattr (b, ltc, []))
+                s.update (ltc_set)
+            try :
+                s.update (dict.get (ltc, []))
+            except TypeError :
+                print cls, [(x, type (x)) for x in dict.get (ltc, [])]
+                raise
+            setattr (cls, n,   s)
+            setattr (cls, ltc, sorted (s))
     # end def _m_combine_lists
 
 # end class M_Auto_Combine_Lists

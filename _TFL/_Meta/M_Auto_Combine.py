@@ -23,8 +23,8 @@
 #    TFL.Meta.Auto_Combine
 #
 # Purpose
-#    Metaclass for autocombining lists and dictionaries between a class and
-#    its ancestors
+#    Metaclass for autocombining lists, dictionaries and sets between a class
+#    and its ancestors
 #
 # Revision Dates
 #    13-Jan-2003 (CT)  Creation (factored from TOM.Meta.ATS_Type.py)
@@ -37,6 +37,7 @@
 #    23-Jul-2004 (CT)  `TFL.Meta.M_Auto_Combine_Dicts` and
 #                      `TFL.Meta.M_Auto_Combine_Lists` factored
 #    18-Feb-2005 (CT)  Moved to `TFL.Meta`
+#    13-Jul-2005 (CED) `M_Auto_Combine_Sets` added to bases
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ import _TFL._Meta.M_Class
 
 class M_Auto_Combine ( TFL.Meta.M_Auto_Combine_Dicts
                      , TFL.Meta.M_Auto_Combine_Lists
+                     , TFL.Meta.M_Auto_Combine_Sets
                      , TFL.Meta.M_Class
                      ) :
     """Meta class for auto-combining
@@ -55,6 +57,8 @@ class M_Auto_Combine ( TFL.Meta.M_Auto_Combine_Dicts
        * the list-attributes mentioned in `_lists_to_combine`
 
        * the dict-attributes mentioned in `_dicts_to_combine`
+
+       * the set-attributes  mentioned in `_sets_to_combine`
 
        between a class and its ancestors.
     """
