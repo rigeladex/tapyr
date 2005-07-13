@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Formatter
+#    TFL.SDG.Formatter
 #
 # Purpose
 #    Formatter objects for SDG
@@ -381,7 +381,7 @@ class Multi_Line_Formatter (_Formatter_) :
     # end def __init__
 
     def __call__ (self, node, context) :
-        head    = ""
+        head = ""
         for f in self.formatters :
             lines      = TFL.Look_Ahead_Gen (f (node, context))
             i          = 0
@@ -491,4 +491,4 @@ def Formatter (level, format_line) :
 
 if __name__ != "__main__" :
     TFL.SDG._Export ("Formatter")
-### __END__ Formatter
+### __END__ TFL.SDG.Formatter
