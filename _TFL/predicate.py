@@ -141,6 +141,8 @@
 #     1-Jul-2005 (CT)  `first` added
 #     1-Jul-2005 (CT)  `predecessor_of` and `successor_of` added
 #     1-Jul-2005 (CT)  `pairwise_circle` moved to `Generators`
+#    13-Jul-2005 (CED) `lists_equal` changed to use sets, `intersection_n`
+#                      changed to use generator instead of list-comprehension
 #    ««revision-date»»···
 #--
 
@@ -455,9 +457,8 @@ def intersection_n (* lists) :
     for l in lists :
         for x in l :
             tab [x] = tab.get (x, 0) + 1
-    result = [x for (x, n) in tab.items () if n == N]
-    result.sort ()
-    return result
+    result = (x for (x, n) in tab.items () if n == N)
+    return sorted (result)
 # end def intersection_n
 
 def intersection_ns (lists) :
@@ -511,7 +512,7 @@ def lists_equal (l, r) :
        >>> lists_equal (l, r)
        True
     """
-    return dict_from_list (l) == dict_from_list (r)
+    return set (l) == set (r)
 # end def lists_equal
 
 def matches (list, txt, prefix = "^") :
