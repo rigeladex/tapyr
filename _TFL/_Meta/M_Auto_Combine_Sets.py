@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jul-2005 (CED) Creation (stolen from M_Auto_Combine_Dicts)
+#    13-Jul-2005 (CED) Export added
 #    ««revision-date»»···
 #--
 #
@@ -72,6 +73,8 @@ class M_Auto_Combine_Sets (TFL.Meta._M_Type_) :
 
 # end class M_Auto_Combine_Sets
 
+if __name__ != "__main__" :
+    TFL.Meta._Export ("*")
 ### __END__ M_Auto_Combine_Sets
 
 

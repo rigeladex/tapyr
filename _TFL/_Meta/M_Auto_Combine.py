@@ -38,6 +38,7 @@
 #                      `TFL.Meta.M_Auto_Combine_Lists` factored
 #    18-Feb-2005 (CT)  Moved to `TFL.Meta`
 #    13-Jul-2005 (CED) `M_Auto_Combine_Sets` added to bases
+#    13-Jul-2005 (CED) Missing import added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ from   _TFL                import TFL
 
 import _TFL._Meta.M_Auto_Combine_Dicts
 import _TFL._Meta.M_Auto_Combine_Lists
+import _TFL._Meta.M_Auto_Combine_Sets
 import _TFL._Meta.M_Class
 
 class M_Auto_Combine ( TFL.Meta.M_Auto_Combine_Dicts
