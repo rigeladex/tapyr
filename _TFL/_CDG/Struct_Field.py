@@ -28,17 +28,24 @@
 # Revision Dates
 #    11-Jul-2005 (MG) Creation (Factored from TTA.FTC.TDFT_Data)
 #    12-Jul-2005 (MG) Classmethod `add_type_mapping` added
+#    12-Jul-2005 (MG) `as_c_code`: `desc` formatted
+#    14-Jul-2005 (MG) `add_type_mapping` removed
+#    14-Jul-2005 (MG) `format_code` simplified
+#    14-Jul-2005 (MG) `Reference_Struct_Field` added
 #    ««revision-date»»···
 #--
 
 from   _TFL                           import TFL
 import _TFL._Meta.Object
+import _TFL._SDG._C
 import operator
 import struct
 import traceback
 
 class Struct_Field (TFL.Meta.Object):
     """Model a single field of a C struct."""
+
+    typedef  = None
 
     fmt_code = \
         { "char"                  : "c", "unsigned char"         : "B"
@@ -64,49 +71,56 @@ class Struct_Field (TFL.Meta.Object):
         , "void*"                      : "void *"
         }
 
-    def __init__ (self, type, name, desc, init = None, user_code = None, bounds = None) :
-        self.type      = self.type_map.get (type, type)
-        self.name      = name
-        self.desc      = desc
-        self.init      = init
-        self.user_code = user_code
-        self.bounds    = bounds
+    def __init__ ( self, type, name, desc
+                 , init        = None
+                 , user_code   = None
+                 , bounds      = None
+                 , ** kw ### ignore additional parameters
+                 ) :
+        self.type        = self.type_map.get (type, type)
+        self.name        = name
+        self.desc        = desc
+        self.init        = init
+        self.user_code   = user_code
+        self.bounds      = bounds
     # end def __init__
-
-    @classmethod
-    def add_type_mapping (cls, ** kw) :
-        for new_type, maps_to_type in kw.iteritems () :
-            if new_type in cls.type_map :
-                if maps_to_type != cls.type_map [new_type] :
-                    msg = "\n".join \
-                        ( ( "A mapping f0r type `%s` already exists:"
-                            % (new_type, )
-                          , "old mapping: `%s`" % (cls.type_map [new_type], )
-                          , "new mapping: `%s`" % (maps_to_type, )
-                          )
-                        )
-                    raise ValueError, msg
-            cls.type_map [new_type] = maps_to_type
-    # end def add_type_mapping
 
     def as_c_code (self, C) :
         """Returns an object which can be passed as `field' to
            `C.Struct'.
         """
+        desc = "\n".join \
+            ( [ p.strip ()
+                  for p in " ".join
+                      ( [s.strip () or "\n" for s in self.desc.splitlines ()]
+                      ).splitlines ()
+              ]
+            )
         if not self.bounds :
             if self.init is not None :
                 init = "= %s " % self.init
             else :
                 init = ""
-            return "%s %s %s// %s" % (self.type, self.name, init, self.desc)
+            return "%s %s %s// %s" % (self.type, self.name, init, desc)
         else :
-            return C.Array ( self.type, self.name, self.bounds
-                           , eol_desc = self.desc
-                           )
+            return C.Array \
+                (self.type, self.name, self.bounds, eol_desc = desc)
     # end def as_c_code
 
+    def as_typedef (self, C = TFL.SDG.C, c_node = None, ** kw) :
+        """Returns a typedef for a struct-object (using `C` as name-space for
+           the C classes. `C` should be a subclass of `TFL.SDG.C`).
+
+           If a `c_node` is passed in, the `result` will be added to it.
+        """
+        result = C.Typedef (self.typedef, self.type, ** kw)
+        if c_node :
+            c_node.add (result)
+        return result
+    # end def as_typedef
+
     def __str__ (self) :
-        return "(%s, %s, %s, %s, %s)" % \
+        return "(%r, %r, %r, %r, %r)" % \
                (self.type, self.name, self.desc, self.init, self.user_code)
     # end def __str__
 
@@ -129,13 +143,7 @@ class Struct_Field (TFL.Meta.Object):
     # end def packed
 
     def format_code (self) :
-        if not self.user_code :
-            if self.fmt_code.has_key (self.type) :
-                result = self.fmt_code [self.type]
-            else :
-                result = None
-        else :
-            result = self.user_code
+        result = self.user_code or self.fmt_code.get (self.type, None)
         if self.bounds and result :
             if isinstance (self.bounds, (list, tuple)) :
                 result = "%d%s" % (reduce (operator.mul, self.bounds), result)
@@ -145,6 +153,18 @@ class Struct_Field (TFL.Meta.Object):
     # end def format_code
 
 # end class Struct_Field
+
+class Reference_Struct_Field (Struct_Field) :
+    """A struct field which references a other `Struct_Field`."""
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.typedef   = kw.get ("typedef")
+        if self.typedef and not self.user_code :
+            self.user_code = self.fmt_code.get (self.typedef, None)
+    # end def __init__
+
+# end class Reference_Struct_Field
 
 if __name__ != "__main__" :
     import _TFL._CDG

@@ -27,6 +27,10 @@
 #
 # Revision Dates
 #    11-Jul-2005 (MG) Creation (Factored from TTA.FTC.TDFT_Data)
+#    12-Jul-2005 (MG) `__new__`: use `super` for upchaining
+#    14-Jul-2005 (MG) `Typedef` added
+#    14-Jul-2005 (MG) `__new__` changed to use `super`
+#    14-Jul-2005 (MG) `add_typedef` added
 #    ««revision-date»»···
 #--
 
@@ -34,6 +38,29 @@ from   _TFL                           import TFL
 import _TFL._Meta.Object
 import _TFL._Meta.Property
 import _TFL._SDG._C
+import  struct
+
+class Typedef (TFL.Meta.Object) :
+    """Generate a new typedef used by the data structures."""
+
+    def __init__ (self, type, name) :
+        self.type = type
+        self.name = name
+    # end def __init__
+
+    def as_typedef (self, C = TFL.SDG.C, c_node = None, ** kw) :
+        """Returns a typedef (using `C` as name-space for the C classes. `C`
+           should be a subpackage of `TFL.SDG.C`).
+
+           If a `c_node` is passed in, the `result` will be added to it.
+        """
+        result = C.Typedef (self.type, self.name, ** kw)
+        if c_node :
+            c_node.add (result)
+        return result
+    # end def as_typedef
+
+# end class Typedef
 
 class Struct (TFL.Meta.Object) :
     """Root class for classes modelling C structs of the table-driven FT-Com
@@ -43,16 +70,17 @@ class Struct (TFL.Meta.Object) :
        `Struct_Field' instances.
     """
 
-    ### Set the __metaclass__ attribute a new Meta_Struct class, e.g.:
-    ### __metaclass__      = TFL.CDG.Meta_Struct.New ("TDFT")
+    ### Set the __metaclass__ attribute a new M_Struct class, e.g.:
+    ### __metaclass__      = TFL.CDG.M_Struct.New ("TDFT")
 
-    __autowrap         = TFL.d_dict \
+    __autowrap             = dict \
       ( as_forward_typedef = TFL.Meta.Class_Method
       , as_typedef         = TFL.Meta.Class_Method
       , as_c_code          = TFL.Meta.Class_Method
       , _struct_fields     = staticmethod
       )
 
+    reference_fields   = ()
     struct_fields      = ()
 
     uses_global_buffer = 0
@@ -60,7 +88,7 @@ class Struct (TFL.Meta.Object) :
     const              = 1
 
     def __new__ (cls, * args, ** kw) :
-        result = object.__new__ (cls, * args, ** kw)
+        result        = super (Struct, cls).__new__ (cls, * args,  ** kw)
         for sf in result.struct_fields :
             setattr (result, sf.name, sf.init)
         return result
@@ -79,6 +107,16 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def as_forward_typedef
 
+    def as_c_code (cls, C = TFL.SDG.C, ** kw) :
+        """Returns c-code for the definition of C.Struct for `self`"""
+        return C.Struct \
+            ( cls.__name__
+            , [f.as_c_code (C) for f in cls.struct_fields]
+            , description = cls.__doc__
+            , ** kw
+            )
+    # end def as_c_code
+
     def as_typedef (cls, C = TFL.SDG.C, c_node = None, ** kw) :
         """Returns a typedef for a struct-object (using `C` as name-space for
            the C classes. `C` should be a subclass of `TFL.SDG.C`).
@@ -91,15 +129,10 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def as_typedef
 
-    def as_c_code (cls, C = TFL.SDG.C, ** kw) :
-        """Returns c-code for the definition of C.Struct for `self`"""
-        return C.Struct \
-            ( cls.__name__
-            , [f.as_c_code (C) for f in cls.struct_fields]
-            , description = cls.__doc__
-            , ** kw
-            )
-    # end def as_c_code
+    @classmethod
+    def add_typedef (cls, type, name) :
+        cls.needs_typedef.append (Typedef (type, name))
+    # end def add_typedef
 
     def packed (self) :
         """Returns a string containing a binary representation of the actual

@@ -13,6 +13,8 @@
 #     2-Dec-2003 (CT)  Creation (factored from `Error_Code.py`)
 #    11-Jul-2005 (MG)  Move from the TTA.FTC package to the TFL.CDG package
 #    11-Jul-2005 (MG)  `New` added
+#    14-Jul-2005 (MG)  `reset_all` changed to a `classmethod`
+#    14-Jul-2005 (MG)  `reference_field` handling added
 #    ««revision-date»»···
 #--
 
@@ -21,7 +23,7 @@ import _TFL._Meta.M_Class
 
 ### each `project` (e.g.: table driven FT-Com layer, table driven Com-Layer,
 ### ...) has to define it's own meta class which can be created using the
-### `New` function of `M_Struct`
+### `New` function of tghis module.
 
 class M_Struct (TFL.Meta.M_Class) :
     """Meta class for CDG Struct classes"""
@@ -61,6 +63,9 @@ class M_Struct (TFL.Meta.M_Class) :
                     , ("offset_field_name", "%s_offset" % (cls.field_name))
                     ) :
                     setattr (cls, attr_name, value)
+            ref_field = getattr (cls, "reference_field", None)
+            if ref_field and ref_field.typedef :
+                cls.needs_typedef.append (ref_field)
     # end def _add_class
 
     def reset_extension (cls) :
@@ -68,10 +73,11 @@ class M_Struct (TFL.Meta.M_Class) :
         cls.count     = 0
     # end def reset_extension
 
-    def reset_all () :
-        for c in M_Struct.classes.values () :
+    @classmethod
+    def reset_all (cls) :
+        for c in cls.classes.values () :
             c.reset_extension ()
-    reset_all = staticmethod (reset_all)
+    # end def reset_all
 
 # end class M_Struct
 
@@ -80,6 +86,7 @@ def New (name_postfix) :
     d   = dict \
         ( uses_global_buffers = []
         , needs_struct        = []
+        , needs_typedef       = []
         , classes             = {}
         , prefix              = "%s_" % (name_postfix, )
         )

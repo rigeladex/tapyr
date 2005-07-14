@@ -30,6 +30,7 @@
 #    12-Aug-2004 (MG) Formats changed (always use `h_format` for the
 #                     `decl_children`)
 #    23-Sep-2004 (MG) `vaps_channel_format` added
+#    12-Jul-2005 (MG) `description` added to `[ch]_format`
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,7 @@ class Struct (TFL.SDG.C._Decl_) :
         >{
         >>%(::*decl_children.h_format:)s
         >}%(standalone)s
+        >%(::*description:)s
     """
 
     vaps_channel_format = """

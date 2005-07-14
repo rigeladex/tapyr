@@ -36,6 +36,8 @@
 #                     to include `%(NL)s`)
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
+#    13-Jul-2005 (MG)  Parameter `type_name_length` added and used in
+#                      `h_format`
 #    ««revision-date»»···
 #--
 
@@ -52,10 +54,11 @@ class _Var_ ( TFL.SDG.C.Maybe_Const
             , TFL.SDG.Leaf
             ) :
 
-    init_arg_defaults    = dict \
-        ( type           = ""
-        , init           = None
-        , new_line_col   = 0
+    init_arg_defaults      = dict \
+        ( type             = ""
+        , init             = None
+        , new_line_col     = 0
+        , type_name_length = 0
         )
 
     initializers         = None
@@ -73,8 +76,9 @@ class _Var_ ( TFL.SDG.C.Maybe_Const
          """%(::.volatile:)s"""
          """%(::.const:)s"""
          """%(::.struct:)s"""
-         """%(::*type:)s %(name)s"""
+         """%(::*type:)-{type_name_length}s %(name)s"""
         )
+
     _common_tail        = \
         """%(trailer)s%(:head= :>*eol_desc:)s
            >>%(::*description:)s
