@@ -144,6 +144,8 @@
 #    13-Jul-2005 (CED) `lists_equal` changed to use sets, `intersection_n`
 #                      changed to use generator instead of list-comprehension
 #    19-Jul-2005 (CT)  `union` changed to use `set`
+#    19-Jul-2005 (CT)  `union` streamlined (thanks for pointing out the
+#                      braino, CED)
 #    ««revision-date»»···
 #--
 
@@ -772,11 +774,10 @@ def union (* lists) :
        >>> union (range (3), range (42, 45))
        [0, 1, 2, 42, 43, 44]
     """
-    s = set ()
+    result = set ()
     for l in lists :
-        for x in l :
-            s.add (x)
-    return list (s)
+        result.update (l)
+    return list (result)
 # end def union
 
 def un_nested (l) :
