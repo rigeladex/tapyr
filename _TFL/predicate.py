@@ -422,7 +422,8 @@ def flattened (* lists) :
        [0, 1, 2, 0, 1]
     """
     result = []
-    map (lambda l : extender (result, l), un_nested (lists))
+    for l in un_nested (lists) :
+        extender (result, l)
     return result
 # end def flattened
 
