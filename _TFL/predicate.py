@@ -146,6 +146,8 @@
 #    19-Jul-2005 (CT)  `union` changed to use `set`
 #    19-Jul-2005 (CT)  `union` streamlined (thanks for pointing out the
 #                      braino, CED)
+#    19-Jul-2005 (CT)  Style improvements
+#    19-Jul-2005 (CT)  Historical ballast removed (`map`, `apply`)
 #    ««revision-date»»···
 #--
 
@@ -378,8 +380,7 @@ def extender (l, tail) :
        >>> extender ([], [1])
        [1]
     """
-
-    l [len (l):] = list (tail)
+    l.extend (tail)
     return l
 # end def extender
 
@@ -421,8 +422,8 @@ def flattened (* lists) :
        [0, 1, 2, 0, 1]
     """
     result = []
-    map      (lambda l, r = result : extender (r, l), un_nested (lists))
-    return   result
+    map (lambda l : extender (result, l), un_nested (lists))
+    return result
 # end def flattened
 
 def has_substr (s, subs) :
@@ -436,7 +437,7 @@ def head_slices (l) :
        >>> head_slices ("abcdef")
        ['a', 'ab', 'abc', 'abcd', 'abcde', 'abcdef']
     """
-    return map (lambda i, l = l : l [:i], range (1, len (l) + 1))
+    return [l [:i] for i in range (1, len (l) + 1)]
 # end def head_slices
 
 def identity (x) :
@@ -558,9 +559,8 @@ def random_string (length, char_range = 127, char_offset = 128) :
     """
     from random import random
     return "".join \
-        ( [   chr (int (random () * char_range + char_offset))
-          for c in range (length)
-          ]
+        (   chr (int (random () * char_range + char_offset))
+        for c in range (length)
         )
 # end def random_string
 
@@ -594,9 +594,8 @@ def re_matches (list, pat) :
     if isinstance (pat, (str, unicode)) :
         import re
         pat = re.compile (pat)
-    return [ s for s in list
-               if  isinstance (s, (str, unicode)) and pat.search (s)
-           ]
+    return \
+        [s for s in list if isinstance (s, (str, unicode)) and pat.search (s)]
 # end def re_matches
 
 def rotate_l (sequence) :
@@ -725,7 +724,7 @@ def tail_slices (l) :
        >>> tail_slices ("abcdef")
        ['abcdef', 'bcdef', 'cdef', 'def', 'ef', 'f']
     """
-    return map (lambda i, l = l : l [i:], range (len (l)))
+    return [l [i:] for i in range (len (l))]
 # end def tail_slices
 
 def third_arg (x, y, z, * args, ** kw) :
@@ -763,7 +762,7 @@ def tupled (* seqs) :
        >>> tupled ()
     """
     if seqs :
-        return apply (map, (None, ) + seqs)
+        return map (None, * seqs)
     else :
         return None
 # end def tupled
@@ -794,17 +793,14 @@ def un_nested (l) :
        >>> un_nested ([range (3), range (2)])
        [[0, 1, 2], [0, 1]]
     """
-    if (   l
-       and len  (l) == 1
-       and isinstance (l [0], (list, tuple))
-       ) :
+    if l and len (l) == 1 and isinstance (l [0], (list, tuple)) :
         l = l [0]
     return l
 # end def un_nested
 
 def xored_string (source, salt = "ß") :
     salt = ord (salt)
-    return "".join ([chr (ord (c) ^ salt) for c in source])
+    return "".join (chr (ord (c) ^ salt) for c in source)
 # end def xored_string
 
 if __name__ != "__main__" :
