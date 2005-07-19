@@ -143,6 +143,7 @@
 #     1-Jul-2005 (CT)  `pairwise_circle` moved to `Generators`
 #    13-Jul-2005 (CED) `lists_equal` changed to use sets, `intersection_n`
 #                      changed to use generator instead of list-comprehension
+#    19-Jul-2005 (CT)  `union` changed to use `set`
 #    ««revision-date»»···
 #--
 
@@ -771,10 +772,11 @@ def union (* lists) :
        >>> union (range (3), range (42, 45))
        [0, 1, 2, 42, 43, 44]
     """
-    tab = {}
+    s = set ()
     for l in lists :
-        map (lambda x, tab = tab : tab.update  ({x : 1}), l)
-    return tab.keys ()
+        for x in l :
+            s.add (x)
+    return list (s)
 # end def union
 
 def un_nested (l) :
