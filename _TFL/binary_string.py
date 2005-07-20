@@ -28,6 +28,8 @@
 # Revision Dates
 #    25-Feb-2004 (CT) Creation
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
+#    20-Jul-2005 (GKH) `int_to_binary_string` with additional parameter 
+#                      `min_digits` (RUP 16885)
 #    ««revision-date»»···
 #--
 
@@ -101,7 +103,7 @@ _eight_bits_table = \
     , "11111100", "11111101", "11111110", "11111111"
     )
 
-def int_to_binary_string (i) :
+def int_to_binary_string (i, min_digits = 8) :
     """Returns a string representing the integer `i` in binary.
 
        >>> int_to_binary_string (0)
@@ -116,13 +118,17 @@ def int_to_binary_string (i) :
        ... for i in (0, 1, 42, 255, 256, 1023, 100000, 1000000)]
        [True, True, True, True, True, True, True, True]
     """
-    result = []
+    bits = []
     while i > 0 :
         k = i &  _eight_bit_mask
         i = i >> 8
-        result.append (_eight_bits_table [k])
-    result.reverse ()
-    return "".join (result or _eight_bits_table [0])
+        bits.append (_eight_bits_table [k])
+    bits.reverse ()
+    result = "".join (bits or _eight_bits_table [0])
+    if len (result) < min_digits :
+        return "0" * (min_digits - len (result)) + result
+    else :
+        return result
 # end def int_to_binary_string
 
 def binary_string_to_int (s) :
