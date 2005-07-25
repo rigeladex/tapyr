@@ -31,6 +31,8 @@
 #    10-Jun-2005 (MG) Message selection handling added
 #    11-Jun-2005 (MG) `select_message`: Update of mailbox tree added
 #    11-Jun-2005 (MG) Changed to use `PMA.Office`
+#    25-Jul-2005 (CT) `select_folder` changed to call `msg_display.clear`
+#    25-Jul-2005 (CT) `select_message` simplified
 #    ««revision-date»»···
 #--
 
@@ -109,7 +111,20 @@ class Office (PMA.UI.Mixin) :
         folder                = tree.selection ()
         memory.current_folder = tree, folder
         self.mb_msg_view.update_model (folder [0])
-    # end def
+        self.model.msg_display.clear  ()
+    # end def select_folder
+
+    def select_message (self, event = None) :
+        tree    = self.mb_msg_view
+        message = (tree.selection () or (None, )) [0]
+        memory  = self.AC
+        if message and message is not memory.current_message :
+            memory.current_message = message
+            mailbox                = message.mailbox
+            self.model.msg_display.display       (message)
+            self.mb_msg_view.update              (message)
+            self.box_views [mailbox.root].update (mailbox)
+    # end def select_message
 
     def _setup_mv_cmd_mgr (self, model) :
         AC          = self.AC
@@ -131,21 +146,6 @@ class Office (PMA.UI.Mixin) :
             )
         self.mv_cmd.bind_interfacers (self.mb_msg_view.tkt)
     # end def _setup_bv_cmd_mgr
-
-    def select_message (self, event = None) :
-        tree    = self.mb_msg_view
-        message = (tree.selection () or (None, )) [0]
-        memory  = self.AC
-        if message and message is not memory.current_message :
-            message.status.set_read ()
-            mailbox = message.mailbox
-            root    = mailbox.root
-            if root in self.box_views :
-                self.box_views [root].update (mailbox)
-            self.mb_msg_view.update (message)
-            memory.current_message = message
-            self.model.msg_display.display (message)
-    # end def select_message
 
 # end class Office
 

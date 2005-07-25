@@ -591,19 +591,22 @@ class Message (_Message_) :
     sender           = property (lambda s : s._sender (s.email))
     time             = property (lambda s : s._time   (s.email))
 
-    def __init__ (self, email, name = None, mailbox = None, status = None, number = None) :
+    def __init__ (self, email, name = None, mailbox = None, number = None) :
         self.__super.__init__ (email, name)
-        self.mailbox     = mailbox
-        self.number      = number
+        self.mailbox = mailbox
+        self.number  = number
+        self.status  = None
         if mailbox :
             self.pending = _Pending_Action_ (self)
-        if status is None :
-            status       = PMA.Msg_Status ()
-        self.status      = status
+            if mailbox.supports_status :
+                mdn = mailbox.md_name (self)
+                self.status = PMA.Msg_Status.new (mdn)
+        if self.status is None :
+            self.status = PMA.Msg_Status ()
     # end def __init__
 
     def formatted (self, sep_length = 79) :
-        self.status.set_read   ()
+        self.status.set_read ()
         for p in self.part_iter () :
             for s in p._separators (sep_length) :
                 yield s

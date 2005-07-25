@@ -37,6 +37,9 @@
 #    22-May-2005 (CT) `commit` and `commit_all` added
 #    11-Jun-2005 (MG) `root` added to _Mailbox_` and add_subbox
 #    11-Jun-2005 (MG) Property `unseen` added
+#    25-Jul-2005 (CT) `_Table` and `instance` added
+#    25-Jul-2005 (CT) `@classmethod` instead of DRY-violation
+#    25-Jul-2005 (CT) `Msg_Status` handling moved to `Msg_Status`
 #    ««revision-date»»···
 #--
 
@@ -52,7 +55,6 @@ from   predicate               import *
 from   Record                  import Record
 from   subdirs                 import subdirs
 
-import cPickle                 as     pickle
 import errno
 import sos
 import time
@@ -62,10 +64,13 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     messages           = property (lambda s : s._get_messages ())
     sub_boxes          = property (lambda s : s._box_dict.values ())
+    supports_status    = False
     unseen             = property \
         (lambda s : sum ([m.status.unseen for m in s._get_messages ()]))
 
     _deliveries        = {} ### `time.time ()` : number of mails delivered
+
+    _Table             = {} ### dictionary of `_Mailbox_` instances
 
     def __init__ (self, path, name = None, prefix = None, root = None) :
         if name is None :
@@ -81,8 +86,11 @@ class _Mailbox_ (TFL.Meta.Object) :
         self._box_dict = {}
         self._messages = None
         self._msg_dict = {}
-        self._msg_stat = {}
-        self._read_msg_status (path)
+        if qname not in self._Table :
+            self._Table [qname] = self
+        else :
+            raise KeyError, "Duplicate mailbox name %s <-> %s" % \
+                (self.path, self._Table [qname].path)
     # end def __init__
 
     def commit (self, msg) :
@@ -98,6 +106,12 @@ class _Mailbox_ (TFL.Meta.Object) :
                 msg.pending.commit (self)
     # end def commit_all
 
+    @classmethod
+    def instance (cls, qname) :
+        return cls._Table [qname]
+    # end def instance
+
+    @classmethod
     def md_name (cls, message = None) :
         t = int (time.time ())
         p = sos.getpid ()
@@ -105,7 +119,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         h = Environment.hostname
         cls._deliveries [t] += 1
         return cls._md_name (t, p, n, h)
-    md_name = classmethod (md_name)
+    # end def md_name
 
     def sort (self, decorator = None) :
         if self._messages is None :
@@ -121,10 +135,8 @@ class _Mailbox_ (TFL.Meta.Object) :
     def _add (self, * messages) :
         if messages :
             md = self._msg_dict
-            ms = self._msg_stat
             for m in messages :
                 md [m.name] = m
-                ms [m.name] = m.status
             self._messages = None
     # end def _add
 
@@ -141,29 +153,16 @@ class _Mailbox_ (TFL.Meta.Object) :
         return self._messages
     # end def _get_messages
 
+    @classmethod
     def _md_name (cls, t, p, n, h) :
         ### use `B64.itoa` to make name short enough to fit into 80-column
         ### xterm with `ls -l`
         return "%s.%s_%s.%s" % (B64.itoa (t), B64.itoa (p), B64.itoa (n), h)
-    _md_name = classmethod (_md_name)
+    # end def _md_name
 
     def _new_message (self, m) :
-        name = m._pma_path
-        return PMA.Message \
-            ( email   = m
-            , name    = name
-            , mailbox = self
-            , status  = self._msg_stat.get (name)
-            )
+        return PMA.Message (email = m, name = m._pma_path, mailbox = self)
     # end def _new_message
-
-    def _read_msg_status (self, path) :
-        pass
-    # end def _read_msg_status
-
-    def _save_msg_status (self) :
-        pass
-    # end def _save_msg_status
 
     def _sort (self, decorator = None) :
         if decorator is None :
@@ -207,7 +206,6 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
             for m in messages :
                 sos.unlink (m.path)
                 del self._msg_dict [m.name]
-                del self._msg_stat [m.name]
         finally :
             self._messages = None
     # end def delete
@@ -233,34 +231,6 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
         self._box_dict [result.name] = result
         return result
     # end def _new_subbox
-
-    def _read_msg_status (self, path) :
-        msp = self._msg_stat_path = sos.path.join (path, ".status")
-        try :
-            f = open (msp)
-        except IOError :
-            pass
-        else :
-            try :
-                try :
-                    msg_stat = pickle.load (f)
-                except KeyboardInterrupt :
-                    raise
-                except StandardError :
-                    pass
-                else :
-                    self._msg_stat = msg_stat
-            finally :
-                f.close ()
-    # end def _read_msg_status
-
-    def _save_msg_status (self) :
-        if self._msg_stat :
-            print "Saving message status", self.name
-            f = open    (self._msg_stat_path, "wb")
-            pickle.dump (self._msg_stat, f, pickle.HIGHEST_PROTOCOL)
-            f.close     ()
-    # end def _save_msg_status
 
     def _setup_messages (self) :
         self._add \
@@ -338,8 +308,11 @@ class MH_Mailbox (_Mailbox_in_Dir_S_) :
 class Maildir (_Mailbox_in_Dir_) :
     """Model a Maildir style mailbox"""
 
+    supports_status = True
+
     MB_Type = Lib.mailbox.Maildir
 
+    @classmethod
     def md_name (cls, message = None) :
         if message is None :
             return super (Maildir, cls).md_name ()
@@ -359,8 +332,9 @@ class Maildir (_Mailbox_in_Dir_) :
                 n = cls._deliveries.setdefault (t, 0)
                 cls._deliveries [t] += 1
             return cls._md_name (t, p, n, r.host or Environment.hostname)
-    md_name = classmethod (md_name)
+    # end def md_name
 
+    @classmethod
     def name_split (cls, name) :
         """Return parts of `name`.
 
@@ -376,7 +350,7 @@ class Maildir (_Mailbox_in_Dir_) :
             else :
                 i = None
         return Record (time = t, proc = p, deli = d, host = h, info = i)
-    name_split = classmethod (name_split)
+    # end def name_split
 
     def _new_email (self, fp) :
         result = self.__super._new_email (fp)
@@ -422,6 +396,9 @@ class Mailbox (_Mailbox_in_Dir_S_) :
        Maildir-like messages naming.
     """
 
+    supports_status = True
+
+    @classmethod
     def MB_Type (cls, path, factory) :
         for f in sos.listdir_full (path) :
             if not (f.startswith (".") or sos.path.isdir (f)) :
@@ -431,7 +408,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
                 finally :
                     fp.close ()
                 yield m
-    MB_Type = classmethod (MB_Type)
+    # end def MB_Type
 
     def add_messages (self, * messages) :
         if self._messages is None :
@@ -444,11 +421,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
             else :
                 name = self.md_name    (message)
             new_m = PMA.Message \
-                ( email   = message.email
-                , name    = name
-                , mailbox = self
-                , status  = message.status
-                )
+                (email = message.email, name = name, mailbox = self)
             self._add (new_m)
             old_box._copy_msg_file (message, sos.path.join (self.path, name))
     # end def add_messages
@@ -472,7 +445,8 @@ class Mailbox (_Mailbox_in_Dir_S_) :
                 self.add_subbox (b, transitive)
     # end def import_from_mailbox
 
-    def md_name (self, message = None) :
+    @classmethod
+    def md_name (cls, message = None) :
         if message is None :
             return super (Mailbox, cls).md_name ()
         else :
@@ -500,7 +474,8 @@ m = mb.messages [60]
 print u"\n".join (list (m.formatted ()) [:100]).encode ("iso-8859-1", "replace")
 print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
 m = mb.messages [-3]
-tb = PMA.Mailbox ("/swing/private/tanzer/PMA/S")
+tb = PMA.Mailbox ("/swing/private/tan
+zer/PMA/S")
 tb.import_from_mailbox (mb, transitive = True)
 tb.add_messages (m)
 print tb.summary ().encode ("iso-8859-1", "replace")

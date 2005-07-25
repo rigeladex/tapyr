@@ -31,6 +31,8 @@
 #    16-May-2005 (CT) s/summary/outline/
 #    16-May-2005 (CT) Use `Node_C` for `outline`
 #    17-May-2005 (CT) `PMA.UI.Msg_Display` factored
+#    25-Jul-2005 (CT) `clear` added
+#    25-Jul-2005 (CT) `display` changed to call `msg.status.set_read`
 #    ««revision-date»»···
 #--
 
@@ -66,8 +68,15 @@ class Message (PMA.UI.Mixin) :
             )
     # end def __init__
 
+    def clear (self) :
+        """Clear `self._display` and `self._outline`"""
+        for w in self._display, self._outline :
+            w.clear ()
+    # end def clear
+
     def display (self, msg) :
-        """Display `msg` in `self.display` and `self.outline`"""
+        """Display `msg` in `self._display` and `self._outline`"""
+        msg.status.set_read   ()
         self._display.display (msg)
         self._outline.display ()
     # end def display

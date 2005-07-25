@@ -28,6 +28,9 @@
 #
 # Revision Dates
 #     3-Jan-2005 (CT) Creation
+#    25-Jul-2005 (CT) `_storage_boxes` factored and changed to look at all
+#                     toplevel directories except for the `delivery_area`
+#    25-Jul-2005 (CT) s/save_msg_status/save_status/
 #    ««revision-date»»···
 #--
 
@@ -47,9 +50,10 @@ class Office (TFL.Meta.Object) :
     def __init__ (self, root = None) :
         self.path           = path = self.default_path  (root)
         self.delivery_area  = da   = self.delivery_path (path)
-        self.storage_area   = sa   = self.storage_path  (path)
+        self.msg_status_fn  = msfn = sos.path.join      (path, ".msg.status")
+        PMA.Msg_Status.load                             (msfn)
         self.delivery_boxes = self._delivery_boxes      (da)
-        self.storage_boxes  = [PMA.Mailbox (sa)]
+        self.storage_boxes  = self._storage_boxes       (path, da)
     # end def __init__
 
     def msg_boxes (self, transitive = False) :
@@ -60,10 +64,9 @@ class Office (TFL.Meta.Object) :
                     yield sb
     # end def msg_boxes
 
-    def save_msg_status (self) :
-        for b in self.msg_boxes (transitive = True) :
-            b._save_msg_status ()
-    # end def save_msg_status
+    def save_status (self) :
+        PMA.Msg_Status.save (self.msg_status_fn)
+    # end def save_status
 
     def sub_boxes (self, box, transitive = False) :
         for sb in box.sub_boxes :
@@ -74,14 +77,19 @@ class Office (TFL.Meta.Object) :
     # end def sub_boxes
 
     def _delivery_boxes (self, da) :
-        dirs = subdirs (da)
+        prefix = sos.path.split (da) [-1]
+        dirs   = subdirs (da)
         if not dirs :
             inbox = self._path (da, "inbox")
             for d in "cur", "new", "tmp" :
                 self._path (inbox, d)
             dirs.append (inbox)
-        return [PMA.Maildir (d) for d in dirs]
+        return [PMA.Maildir (d, prefix = prefix) for d in dirs]
     # end def _delivery_boxes
+
+    def _storage_boxes (self, path, da) :
+        return [PMA.Mailbox (sa) for sa in subdirs (path) if sa != da]
+    # end def _storage_boxes
 
     ### class methods
     def default_path (cls, root = None) :

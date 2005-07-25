@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-May-2005 (MG) Creation
+#    25-Jul-2005 (CT) `locals` added
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ class Interpreter_Window (GTK.Window) :
     complete_key = GTK.Key_Binder ("<Alt>d")
 
     def __init__ (self, master, global_dict = None, AC = None, ** kw) :
-        self.__super.__init__                 (AC = AC, ** kw)
+        self.__super.__init__ (AC = AC, ** kw)
         TNS            = self.TNS
         Signal         = TNS.Signal
         Style          = self.ANS.UI.Style
@@ -72,6 +73,7 @@ class Interpreter_Window (GTK.Window) :
             global_dict = globals ().copy ()
             global_dict.update    (vars ())
         self.globals  = global_dict
+        self.locals   = {}
         self._history = []
         self._histptr = 0
         self.vbox     = TNS.V_Box           (AC = AC)
@@ -145,7 +147,7 @@ class Interpreter_Window (GTK.Window) :
         cmd = self.entry.get ()
         if not cmd : return
         if not self._history or cmd != self._history [-1] :
-           self._history.append (cmd)
+           self._history.append   (cmd)
            self.entry.append_text (cmd)
         self._histptr = len (self._history)
         stdout = sys.stdout
@@ -157,18 +159,18 @@ class Interpreter_Window (GTK.Window) :
                     ( "_last_shell_output = sos.popen ('%s').read (); "
                       "print _last_shell_output" % cmd
                     )
-            obj    = TFL.Pycode_Compiler (cmd)
+            obj        = TFL.Pycode_Compiler (cmd)
             sys.stdout = self.output
             self.output.put (echo_cmd + "\n", self.cmd_style)
             try :
-                obj (self.globals)
+                obj (self.globals, self.locals)
             except (SystemExit, KeyboardInterrupt), exc :
                 raise
             except :
                 self.output.push_style (self.err_style)
                 print "Exception during execution of %s" % (cmd, )
-                traceback.print_exc ()
-                self.output.pop_style     ()
+                traceback.print_exc   ()
+                self.output.pop_style ()
             self.entry.set  ("")
             self.output.see ()
         finally :

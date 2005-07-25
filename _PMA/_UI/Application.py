@@ -33,6 +33,7 @@
 #    10-Jun-2005 (MG) Use of `UI.Office` added
 #    10-Jun-2005 (MG) Exception handler for the UI.Office creation added
 #    11-Jun-2005 (MG) `_read_settings` removed and use `PMA.Office` instead
+#    25-Jul-2005 (CT) `_quit` changed to call `office.save_status`
 #    ««revision-date»»···
 #--
 
@@ -287,7 +288,8 @@ class Application (PMA.UI.Mixin) :
                     self.tkt._quit  ()
                 finally :
                     try :
-                        self.State.dump ()
+                        self.office.save_status ()
+                        self.State.dump         ()
                     finally :
                         self._destroy   ()
                         print >> sys.__stdout__, "Leaving PMA, good bye"
@@ -461,9 +463,6 @@ class Application (PMA.UI.Mixin) :
         except :
             import traceback
             traceback.print_exc ()
-        if TFL.Environment.username == "tanzer" :
-            msg = PMA.message_from_file ("/swing/private/tanzer/MH/PMA/5")
-            md.display (msg)
     # end def _setup_office
 
     def _setup_scripts_group (self, group) :
