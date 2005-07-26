@@ -28,6 +28,7 @@
 # Revision Dates
 #     8-Mar-2005 (CED) Creation (moved multiple implemented stuff into here)
 #     9-Jun-2005 (CED) `locals` added to `__call__`
+#    25-Jul-2005 (CT)  `__call__` fixed (`or {}` considered harmful)
 #    ««revision-date»»···
 #--
 #
@@ -53,10 +54,12 @@ class Pycode_Compiler (object) :
     # end def __init__
 
     def __call__ (self, globals, locals = None) :
+        if locals is None :
+            locals = {}
         if self.can_eval :
-            print eval (self.code, globals, locals or {})
+            print eval (self.code, globals, locals)
         else :
-            exec self.code in globals, locals or {}
+            exec self.code in globals, locals
     # end def __call__
 
 # end class Pycode_Compiler
