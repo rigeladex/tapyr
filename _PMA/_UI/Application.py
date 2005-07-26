@@ -101,12 +101,12 @@ class UI_State (TFL.Meta.Object) :
 
     # end class Counting_Property
 
-    __properties = \
-        ( Counting_Property ("current_mailbox")
-        , Counting_Property ("current_message")
-        , Counting_Property ("message_selection")
-        , Counting_Property ("target_mailbox")
-        )
+#    __properties = \
+#        ( Counting_Property ("current_mailbox")
+#        , Counting_Property ("current_message")
+#        , Counting_Property ("message_selection")
+#        , Counting_Property ("target_mailbox")
+#        )
 
     def __init__ (self, ** kw) :
         self.__dict__.update   (kw)

@@ -32,16 +32,52 @@
 #    16-May-2005 (MG) Test case for generic cell renderer added
 #    16-May-2005 (MG) `children` redefined, `selected_iters` added
 #    10-Jun-2005 (MG) `selection` and `clear_selection` added
+#    26-Jul-2005 (MG) Selction handling changed by introducing `Tree_Selection`
+#    26-Jul-2005 (MG) New signal `Select` added
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Container
+import  gobject
+
+class Tree_Selection (GTK.Object_Wrapper) :
+    """Wrapper for the tree selection object."""
+
+    def set (self, selection) :
+        model = self.wtk_object.get_tree_view ().get_model ().get_data \
+            ("ktw_object")
+        if not isinstance (selection, (tuple, list)) :
+            selection = (selection, )
+        self.wtk_object.unselect_all ()
+        for element in selection :
+            self.wtk_object.select_iter (model.iter (element))
+    # end def set
+
+    def __iter__ (self) :
+        model, pathes = self.wtk_object.get_selected_rows ()
+        if pathes :
+            wtk_model = model.get_data                     ("ktw_object")
+            for p in pathes :
+                yield wtk_model.ui_object (model.get_iter (p))
+    # end def __iter__
+
+    def __getitem__ (self, index) :
+        return tuple (self) [index]
+    # end def __getitem__
+
+    def __len__ (self) :
+        return len (tuple (self))
+    # end def __len__
+
+# end class Tree_Selection
 
 class Tree_View (GTK.Container) :
     """Wrapper for the GTK widget TreeView"""
 
     GTK_Class        = GTK.gtk.TreeView
+    Class_Name       = "Tree_View"
+
     __gtk_properties = \
         ( GTK.SG_Object_List_Property
             ("children", set = None, get_fct_name = "get_columns")
@@ -58,38 +94,36 @@ class Tree_View (GTK.Container) :
         , GTK.SG_Property             ("rules_hint")
         , GTK.SG_Property             ("search_column")
         , GTK.SG_Object_Property      ("vadjustment")
+        , GTK.SG_Property
+            ( "selection_mode"
+            , get = lambda s    : s._selection.wtk_object.get_mode ()
+            , set = lambda s, v : s._selection.wtk_object.set_mode (v)
+            )
         )
 
     _wtk_delegation = GTK.Delegation \
         ( GTK.Delegator_O ("append_column")
         )
 
+    Signals = dict \
+        ( select = (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
+        )
+
     def __init__ (self, model = None, * args, ** kw) :
         if model :
             model = model.wtk_object
         self.__super.__init__ (model, * args, ** kw)
+        self._selection = Tree_Selection (self.wtk_object.get_selection ())
+        self._selection.bind_add \
+            ( self.TNS.Signal.Changed
+            , lambda * a : self.emit (self.TNS.Signal.Select)
+            )
     # end def __init__
 
-    def selected_iters (self) :
-        selection     = self.wtk_object.get_selection ()
-        result        = []
-        model, pathes = selection.get_selected_rows ()
-        for sel_path in pathes :
-            result.append (model.get_iter (sel_path))
-        return result
-    # end def selected_iters
-
-    def selection (self) :
-        selection = self.selected_iters ()
-        model     = self.model
-        if model.ui_column is not None :
-            return [model.ui_object (i) for i in selection]
-        return selection
-    # end def selection
-
-    def clear_selection (self) :
-        self.wtk_object.get_selection ().unselect_all ()
-    # end def clear_selection
+    selection = property \
+        ( lambda s    : s._selection
+        , lambda s, v : s._selection.set (v)
+        )
 
 # end class Tree_View
 

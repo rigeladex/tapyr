@@ -38,6 +38,8 @@
 #     7-Jun-2005 (MG) `clear` added and `remove` fixed
 #    11-Jun-2005 (MG) `update` added
 #    17-Jun-2005 (MG) `List_Model._add` allow `parent` as parameter
+#    26-Jul-2005 (MG) Internal dict `iter` renamed to `_iter` and method
+#                     `iter` added
 #    ««revision-date»»···
 #--
 
@@ -62,20 +64,20 @@ class _Model_ (GTK.Object) :
         if "ui_column" in kw :
             del kw ["ui_column"]
         self.__super.__init__        (* column_types, ** kw)
-        self.iter      = {}
+        self._iter      = {}
     # end def __init__
 
     def add (self, row, after = None, ** kw) :
         iter = self._add \
-            (row, after_iter = self.iter.get (after, after), ** kw)
+            (row, after_iter = self._iter.get (after, after), ** kw)
         if self.ui_column is not None :
-            self.iter [row [self.ui_column]] = iter
+            self._iter [row [self.ui_column]] = iter
         return iter
     # end def add
 
     def add_empty (self, reference = None, after = None, ** kw) :
         iter = self._add \
-            (None, after_iter = self.iter.get (after, after), ** kw)
+            (None, after_iter = self._iter.get (after, after), ** kw)
         if reference and self.ui_column is not None :
             self.wtk_object.set (iter, self.ui_column, reference)
         return iter
@@ -86,8 +88,12 @@ class _Model_ (GTK.Object) :
             self.remove (row.iter)
     # end def clear
 
+    def iter (self, obj) :
+        return self._iter.get (obj)
+    # end def iter
+
     def remove (self, node) :
-        iter  = self.iter.get (node, node)
+        iter  = self._iter.get (node, node)
         child = self.wtk_object.iter_children (iter)
         while child :
             n_child = self.wtk_object.iter_next (child)
@@ -97,19 +103,19 @@ class _Model_ (GTK.Object) :
            and (self.ui_column is not None)
            ) :
             node = self.wtk_object.get_value (iter, self.ui_column)
-        if node in self.iter :
-            del self.iter    [node]
+        if node in self._iter :
+            del self._iter    [node]
         self.wtk_object.remove (iter)
     # end def remove
 
     def ui_object (self, iter) :
         if self.ui_column is not None :
             return self.wtk_object [iter] [self.ui_column]
-        return None
+        return iter
     # end def ui_object
 
     def update (self, ui, row) :
-        iter = self.iter.get (ui, ui)
+        iter = self._iter.get (ui, ui)
         for index, value in enumerate (row) :
             self.wtk_object.set_value (iter, index, value)
     # end def update
@@ -198,7 +204,7 @@ class Tree_Model (_Model_) :
     GTK_Class    = GTK.gtk.TreeStore
 
     def _add (self, row, after_iter, parent = None) :
-        par_iter = self.iter.get  (parent, parent)
+        par_iter = self._iter.get  (parent, parent)
         if after_iter :
             return self.wtk_object.insert_after (par_iter, after_iter, row)
         else :
@@ -206,7 +212,7 @@ class Tree_Model (_Model_) :
     # end def _add
 
     def has_children (self, node) :
-        iter = self.iter.get (node, node)
+        iter = self._iter.get (node, node)
         return self.wtk_object.iter_has_child (iter)
     # end def has_children
 
@@ -247,9 +253,20 @@ class Sort_Model (_Proxy_Model_, GTK.Object) :
     # end def sort_function
 
     def ui_object (self, iter) :
+        """Converts `iter` from the an tree iter of the sort model to
+           an iter of the proxied model.
+        """
         return self.model.ui_object \
             (self.wtk_object.convert_iter_to_child_iter (None, iter))
     # end def ui_object
+
+    def iter (self, iter) :
+        """Converts `iter` from the an tree iter of the proxied model to
+           an iter of the sort model.
+        """
+        return self.wtk_object.convert_child_iter_to_iter \
+            (None, self.model.iter (iter))
+    # end def iter
 
 # end class Sort_Model
 

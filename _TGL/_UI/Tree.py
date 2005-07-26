@@ -40,6 +40,8 @@
 #    11-Jun-2005 (MG) `clear_selection`, `selection` and `update` added
 #    17-Jun-2005 (MG) Use `Adapter.rules_hint`
 #    17-Jun-2005 (MG) `see` added
+#    26-Jul-2005 (MG) Selection handling changed
+#    26-Jul-2005 (MG) `multiselection` added
 #    ««revision-date»»···
 #--
 
@@ -65,12 +67,13 @@ class _Tree_ (TGL.UI.Mixin) :
     Adapter = None ### redefine in descendents
 
     def __init__ ( self
-                 , ui_model    = None
-                 , lazy        = True
-                 , sort        = None
-                 , filter      = None
-                 , show_header = True
-                 , AC          = None
+                 , ui_model       = None
+                 , lazy           = True
+                 , sort           = None
+                 , filter         = None
+                 , show_header    = True
+                 , multiselection = False
+                 , AC             = None
                  ) :
         self.__super.__init__ (AC = AC)
         TNS             = self.TNS
@@ -85,7 +88,8 @@ class _Tree_ (TGL.UI.Mixin) :
             self.tkt_s_model = Adapter.create_sort_model \
                 (TNS, AC, self.t_model)
             self.t_model     = self.tkt_s_model
-        self.tkt             = self._create_tkt_tree (lazy, sort, show_header)
+        self.tkt             = self._create_tkt_tree \
+            (lazy, sort, show_header, multiselection)
         self._lazy_bind      = None
         self.lazy            = lazy
         if ui_model :
@@ -104,13 +108,18 @@ class _Tree_ (TGL.UI.Mixin) :
         self._model_populate (self.lazy)
     # end def update_model
 
-    def selection (self) :
-        return self.tkt.selection ()
-    # end def selection
+    def __getattr__ (self, name) :
+        if not name.startswith ("__") :
+            return getattr (self.tkt, name)
+        raise AttributeError, name
+    # end def __getattr__
 
-    def clear_selection (self) :
-        return self.tkt.clear_selection ()
-    # end def clear_selection
+    def __setattr__ (self, name, value) :
+        if name == "selection" :
+            self.tkt.selection = value
+        else :
+            self.__dict__ [name] = value
+    # end def __setattr__
 
     def see (self, element) :
         element = self.tkt_model.iter [element]
@@ -139,7 +148,7 @@ class _Tree_ (TGL.UI.Mixin) :
                     self._add_element (child, element, lazy)
     # end def _add_element
 
-    def _create_tkt_tree (self, lazy, sort, show_header) :
+    def _create_tkt_tree (self, lazy, sort, show_header, multiselection) :
         tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
         tkt.headers_visible = show_header
         tkt.rules_hint      = self.Adapter.rules_hint
@@ -149,6 +158,8 @@ class _Tree_ (TGL.UI.Mixin) :
                 sort = xrange (len (tkt.children))
             for col in sort :
                 tkt.children [col].sort_column_id = col
+        if multiselection :
+            tkt.selection_mode = self.TNS.SELECTION_MULTIPLE
         return tkt
     # end def _create_tkt_tree
 

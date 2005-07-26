@@ -37,6 +37,9 @@
 #                     `mailbox.status.current_message`
 #    26-Jul-2005 (CT) `select_folder` changed to set
 #                     `office.status.current_box`
+#    26-Jul-2005 (MG) `select_folder` and `select_message` changed
+#    26-Jul-2005 (MG) `s/select_folder/select_box/g`
+#    26-Jul-2005 (MG) Allow multiselection of messages
 #    ««revision-date»»···
 #--
 
@@ -59,23 +62,21 @@ class Office (PMA.UI.Mixin) :
         self.box_views         = {}
         self.delivery_views    = []
         self.storage_views     = []
-        memory                 = self.AC
-        memory.current_folder  = (None, ())
-        memory.current_message = None
         UI                     = self.ANS.UI
         TNS                    = self.TNS
-        for boxes, l in ( (office.storage_boxes,  self.storage_views)
-                        , (office.delivery_boxes, self.delivery_views)
-                        ) :
+        AC                     = self.AC
+        for boxes, views in ( (office.storage_boxes,  self.storage_views)
+                        ,     (office.delivery_boxes, self.delivery_views)
+                            ) :
             for box in boxes :
-                bv = UI.Mailbox_BV (AC = self.AC, show_header = False)
+                box._ui_tree = bv = UI.Mailbox_BV (AC = AC, show_header = False)
                 bv.update_model    (box)
-                l.append           (bv)
+                views.append       (bv)
                 self.box_views [box] = bv
         self.tkt = TNS.Office \
             (self.delivery_views, self.storage_views, AC = AC)
         self.mb_msg_view = mmv = UI.Mailbox_MV \
-            (sort = True, AC = self.AC)
+            (sort = True, multiselection = True, AC = self.AC)
         mmv.tkt.scroll_policies (TNS.AUTOMATIC)
         tkt = model.tkt
         tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
@@ -84,30 +85,40 @@ class Office (PMA.UI.Mixin) :
         self._setup_mv_cmd_mgr (model)
     # end def __init__
 
-    def select_folder (self, event = None) :
+    def select_box (self, event = None) :
         tree    = event.widget
-        memory  = self.AC
-        old_tree, selection = memory.current_folder
-        if old_tree and old_tree is not tree :
-            old_tree.clear_selection ()
-        folder                = tree.selection ()
-        memory.current_folder = tree, folder
-        self.office.status.current_box = folder [0]
-        self.mb_msg_view.update_model (folder [0])
-        self.model.msg_display.clear  ()
-    # end def select_folder
+        box     = tree.selection [0]
+        self.office.status.current_box = box
+        self.mb_msg_view.update_model (box)
+        if box.status.current_message :
+            ### display the previous selected message
+            self.mb_msg_view.selection = box.status.current_message
+            self._display_message         (box)
+        else :
+            self.model.msg_display.clear  ()
+    # end def select_box
 
     def select_message (self, event = None) :
-        tree    = self.mb_msg_view
-        message = (tree.selection () or (None, )) [0]
-        memory  = self.AC
-        if message and message is not memory.current_message :
-            mailbox                = message.mailbox
-            memory.current_message = mailbox.status.current_message = message
-            self.model.msg_display.display       (message)
-            self.mb_msg_view.update              (message)
-            self.box_views [mailbox.root].update (mailbox)
+        selection = self.mb_msg_view.selection
+        if not selection or len (selection) > 1:
+            ### clear message display in case of multi message selection or
+            ### if no message is selected in this box
+            self.model.msg_display.clear  ()
+        else :
+            ### display the selected message
+            message = selection [0]
+            mailbox = message.mailbox
+            if mailbox.status.current_message != message :
+                mailbox.status.current_message = message
+                self._display_message (mailbox)
     # end def select_message
+
+    def _display_message (self, mailbox) :
+        message = mailbox.status.current_message
+        self.model.msg_display.display       (message)
+        self.mb_msg_view.update              (message)
+        self.box_views [mailbox.root].update (mailbox)
+    # end def _display_message
 
     def _setup_bv_cmd_mgr (self, model) :
         AC          = self.AC
@@ -125,8 +136,8 @@ class Office (PMA.UI.Mixin) :
             , AC             = AC
             )
         self.bv_cmd.add_command \
-            ( UI.Command ("Select", self.select_folder)
-            , if_names = ("cm", "ev:Cursor_Changed")
+            ( UI.Command ("Select", self.select_box)
+            , if_names = ("cm", "ev:Select")
             )
         self.bv_cmd.bind_interfacers (* tkt_trees)
     # end def _setup_bv_cmd_mgr
@@ -147,7 +158,7 @@ class Office (PMA.UI.Mixin) :
             )
         self.mv_cmd.add_command \
             ( UI.Command ("Select", self.select_message)
-            , if_names = ("cm", "ev:Cursor_Changed")
+            , if_names = ("cm", "ev:Select")
             )
         self.mv_cmd.bind_interfacers (self.mb_msg_view.tkt)
     # end def _setup_bv_cmd_mgr
