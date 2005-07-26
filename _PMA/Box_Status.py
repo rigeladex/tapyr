@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -20,38 +20,45 @@
 #
 #++
 # Name
-#    PMA.Msg_Status
+#    PMA.Box_Status
 #
 # Purpose
-#    Encapsulate status of mail message
+#    Encapsulate status of mailbox
 #
 # Revision Dates
-#     4-Jan-2005 (CT) Creation
-#    25-Jul-2005 (CT) `new` and `_Table` added (plus `load` and `save`)
-#    25-Jul-2005 (CT) `_Status_` factored
-#    26-Jul-2005 (CT) `load` and `save` moved back in here from `_Status_`
+#    26-Jul-2005 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
+from   _TFL._Meta.Property     import prop
 from   _PMA                    import PMA
 import _PMA._Status_
 
 import cPickle                 as     pickle
 
-import time
+class Box_Status (PMA._Status_) :
+    """Status of mailbox"""
 
-class Msg_Status (PMA._Status_) :
-    """Status of mail message"""
+    def __init__ (self, box, * attr) :
+        self.__dict__ ["box"] = box
+        self.__super.__init__ (* attr)
+    # end def __init__
 
-    first_read = property (lambda s : s._attr.get ("first_read"))
-    last_read  = property (lambda s : s._attr.get ("last_read"))
-    unseen     = property (lambda s : s.first_read is None)
+    @prop
+    def current_message () :
+        def get (self) :
+            result = None
+            cmn    = self._attr.get ("current_message")
+            if cmn is not None :
+                result = self.box.msg_dict.get (cmn)
+            return result
+        def set (self, cm) :
+            self._set_attr (current_message = cm and cm.name)
+        return get, set
+    # end def current_message
 
-    _Table     = {}
-
-    @classmethod
-    def load (cls, filename) :
+    def load (self, filename) :
         try :
             f = open (filename)
         except IOError :
@@ -59,40 +66,25 @@ class Msg_Status (PMA._Status_) :
         else :
             try :
                 try :
-                    cls._Table = pickle.load (f)
+                    attrs = pickle.load (f)
                 except EOFError :
                     pass
+                else :
+                    if attrs :
+                        print self.box.qname, attrs
+                    self._set_attr (** attrs)
             finally :
                 f.close ()
     # end def load
 
-    @classmethod
-    def new (cls, name) :
-        result = cls._Table.get (name)
-        if result is None :
-            result = cls._Table [name] = cls ()
-        return result
-    # end def new
-
-    @classmethod
-    def save (cls, filename) :
+    def save (self, filename) :
         f = open    (filename, "wb")
-        pickle.dump (cls._Table, f, pickle.HIGHEST_PROTOCOL)
+        pickle.dump (self._attr, f, pickle.HIGHEST_PROTOCOL)
         f.close     ()
     # end def save
 
-    def set_read (self, t = None) :
-        if t is None :
-            t = time.time ()
-        _attr = self._attr
-        if self.unseen :
-            _attr ["first_read"] = t
-        _attr ["last_read"] = t
-        return t
-    # end def set_read
-
-# end class Msg_Status
+# end class Box_Status
 
 if __name__ != "__main__" :
     PMA._Export ("*")
-### __END__ PMA.Msg_Status
+### __END__ PMA.Box_Status

@@ -33,6 +33,8 @@
 #    11-Jun-2005 (MG) Changed to use `PMA.Office`
 #    25-Jul-2005 (CT) `select_folder` changed to call `msg_display.clear`
 #    25-Jul-2005 (CT) `select_message` simplified
+#    26-Jul-2005 (CT) `select_message` changed to set
+#                     `mailbox.status.current_message`
 #    ««revision-date»»···
 #--
 
@@ -119,8 +121,8 @@ class Office (PMA.UI.Mixin) :
         message = (tree.selection () or (None, )) [0]
         memory  = self.AC
         if message and message is not memory.current_message :
-            memory.current_message = message
             mailbox                = message.mailbox
+            memory.current_message = mailbox.status.current_message = message
             self.model.msg_display.display       (message)
             self.mb_msg_view.update              (message)
             self.box_views [mailbox.root].update (mailbox)

@@ -31,6 +31,8 @@
 #    25-Jul-2005 (CT) `_storage_boxes` factored and changed to look at all
 #                     toplevel directories except for the `delivery_area`
 #    25-Jul-2005 (CT) s/save_msg_status/save_status/
+#    26-Jul-2005 (CT) `save_status` changed to call `save_status` of each
+#                     mailbox
 #    ««revision-date»»···
 #--
 
@@ -66,6 +68,8 @@ class Office (TFL.Meta.Object) :
 
     def save_status (self) :
         PMA.Msg_Status.save (self.msg_status_fn)
+        for b in self.msg_boxes (transitive = True) :
+            b.save_status ()
     # end def save_status
 
     def sub_boxes (self, box, transitive = False) :

@@ -40,13 +40,19 @@
 #    25-Jul-2005 (CT) `_Table` and `instance` added
 #    25-Jul-2005 (CT) `@classmethod` instead of DRY-violation
 #    25-Jul-2005 (CT) `Msg_Status` handling moved to `Msg_Status`
+#    26-Jul-2005 (CT) `Mailbox.MB_Type` changed to really ignore names
+#                     starting with `.`
+#    26-Jul-2005 (CT) `status` (`Box_Status`) added
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
+
+import _PMA.Box_Status
 import _PMA.Message
+
 import _TFL._Meta.Object
 import _TFL.B64 as B64
 
@@ -63,12 +69,14 @@ class _Mailbox_ (TFL.Meta.Object) :
     """Root class for mailbox classes"""
 
     messages           = property (lambda s : s._get_messages ())
+    msg_dict           = property \
+        (lambda s : (s._get_messages (), s._msg_dict) [-1])
     sub_boxes          = property (lambda s : s._box_dict.values ())
     supports_status    = False
     unseen             = property \
         (lambda s : sum ([m.status.unseen for m in s._get_messages ()]))
 
-    _deliveries        = {} ### `time.time ()` : number of mails delivered
+    _deliveries        = {} ### `time.time ()` -> number of mails delivered
 
     _Table             = {} ### dictionary of `_Mailbox_` instances
 
@@ -91,6 +99,10 @@ class _Mailbox_ (TFL.Meta.Object) :
         else :
             raise KeyError, "Duplicate mailbox name %s <-> %s" % \
                 (self.path, self._Table [qname].path)
+        self.status    = status = PMA.Box_Status (self)
+        if self.supports_status :
+            self.status_fn = fn = sos.path.join (path, ".status")
+            status.load (fn)
     # end def __init__
 
     def commit (self, msg) :
@@ -120,6 +132,11 @@ class _Mailbox_ (TFL.Meta.Object) :
         cls._deliveries [t] += 1
         return cls._md_name (t, p, n, h)
     # end def md_name
+
+    def save_status (self) :
+        if self.supports_status :
+            self.status.save (self.status_fn)
+    # end def save_status
 
     def sort (self, decorator = None) :
         if self._messages is None :
@@ -401,7 +418,8 @@ class Mailbox (_Mailbox_in_Dir_S_) :
     @classmethod
     def MB_Type (cls, path, factory) :
         for f in sos.listdir_full (path) :
-            if not (f.startswith (".") or sos.path.isdir (f)) :
+            d, n = sos.path.split (f)
+            if not (n.startswith (".") or sos.path.isdir (f)) :
                 fp = open (f)
                 try :
                     m = factory (fp)

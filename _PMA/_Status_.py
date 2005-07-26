@@ -26,7 +26,10 @@
 #    Root class for various status encapsulators
 #
 # Revision Dates
-#    25-Jul-2005 (CT) Creation
+#    25-Jul-2005 (CT) Creation (factored from `Msg_Status`)
+#    26-Jul-2005 (CT) `__setattr__` fixed to handle `property` properly
+#    26-Jul-2005 (CT) `load` and `save` moved back to `Msg_Status`
+#    26-Jul-2005 (CT) `_ini_attr` added
 #    ««revision-date»»···
 #--
 
@@ -34,39 +37,18 @@ from   _TFL                    import TFL
 from   _PMA                    import PMA
 import _TFL._Meta.Object
 
-import cPickle                 as     pickle
-
 class _Status_ (TFL.Meta.Object) :
 
     def __init__ (self, ** attr) :
-        self._set_attr (** attr)
+        self._ini_attr (** attr)
     # end def __init__
 
-    @classmethod
-    def load (cls, filename) :
-        try :
-            f = open (filename)
-        except IOError :
-            pass
-        else :
-            try :
-                try :
-                    cls._Table = pickle.load (f)
-                except EOFError :
-                    pass
-            finally :
-                f.close ()
-    # end def load
-
-    @classmethod
-    def save (cls, filename) :
-        f = open    (filename, "wb")
-        pickle.dump (cls._Table, f, pickle.HIGHEST_PROTOCOL)
-        f.close     ()
-    # end def save
+    def _ini_attr (self, ** attr) :
+        self.__dict__ ["_attr"] = dict (** attr)
+    # end def _ini_attr
 
     def _set_attr (self, ** attr) :
-        self.__dict__ ["_attr"] = dict (** attr)
+        self.__dict__ ["_attr"].update (attr)
     # end def _set_attr
 
     def __contains__ (self, item) :
@@ -96,8 +78,11 @@ class _Status_ (TFL.Meta.Object) :
     # end def __nonzero__
 
     def __setattr__ (self, name, value) :
-        if name not in self.__class__.__dict__ :
-            self._attr [name] = value
+        p = self.__class__.__dict__.get (name, None)
+        if p is None :
+            self._set_attr (** {name : value})
+        elif isinstance (p, property) :
+            p.__set__ (self, value)
         else :
             raise AttributeError, \
                 "can't set attribute %s to %s" % (name, value)
@@ -112,5 +97,3 @@ class _Status_ (TFL.Meta.Object) :
 if __name__ != "__main__" :
     PMA._Export ("_Status_")
 ### __END__ PMA._Status_
-
-
