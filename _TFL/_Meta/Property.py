@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #    28-Mar-2005 (CT) `Lazy_Property` added
 #    20-May-2005 (CT) `init_instance` changed to call `_set_value` instead of
 #                     `set_value`
+#    26-Jul-2005 (CT) `prop` added
 #    ««revision-date»»···
 #--
 
@@ -340,6 +341,22 @@ class Lazy_Property (object) :
     # end def __get__
 
 # end class Lazy_Property
+
+def prop (wrapper) :
+    """Property decorator as proposed by Alex Martelli (and propably others).
+
+       Usage example:
+
+          @prop
+          def foo () :
+              def get (self) :
+                  return getattr (self, "_foo", 42)
+              def set (self, value) :
+                  self._foo = value
+              return get, set
+    """
+    return property (* wrapper ())
+# end def prop
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "_Property_")
