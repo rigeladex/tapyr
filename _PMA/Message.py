@@ -94,6 +94,7 @@
 #                     `copy` if there is more than one `_targets` already
 #                     (instead of forbidding that)
 #    25-May-2005 (CT) Bug fix `self.status` initialization
+#    26-Jul-2005 (CT) `Msg_Scope` added and used
 #    ««revision-date»»···
 #--
 
@@ -106,6 +107,7 @@ import _PMA.Msg_Status
 import _PMA.SB
 
 import _TFL.Ascii
+import _TFL.Caller
 import _TFL.Filename
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
@@ -118,6 +120,45 @@ import weakref
 
 _ws_pat = Regexp    (r"\s+")
 now     = time.time ()
+
+class Msg_Scope (TFL.Caller.Scope) :
+    """Provide access to the caller's locals and to the message object passed
+       in.
+    """
+
+    _map = dict \
+        ( delivery_date = ("Delivery-date")
+        , in_reply_to   = ("In-reply-to", )
+        , message_date  = ("Date", "Delivery-date")
+        , message_id    = ("Message-id", "References")
+        , reply_to      =
+            ( "Mail-followup-to"
+            , "X-mailing-list"
+            , "Reply-To"
+            , "From"
+            , "Sender"
+            , "Return-path"
+            )
+        )
+
+    def __init__ (self, msg, locls = None) :
+        self.__super.__init__ (depth = 1, locls = locls)
+        self.msg = msg
+    # end def __init__
+
+    def __getitem__ (self, index) :
+        try :
+            return self.__super.__getitem__ (index)
+        except NameError :
+            for n in self._map.get (index, (index, )) :
+                try :
+                    return self.msg.email [n]
+                except KeyError :
+                    pass
+                raise KeyError, index
+    # end def __getitem__
+
+# end class Msg_Scope
 
 class _Msg_Part_ (object) :
 
@@ -173,7 +214,7 @@ class _Msg_Part_ (object) :
                 except LookupError :
                     body = body.decode ("us-ascii", "replace")
             body = _ws_pat.sub (u" ", body.strip ()) or u"<empty>"
-        return format % locals ()
+        return format % Msg_Scope (self, locals ())
     # end def email_summary
 
     def part_iter (self) :
