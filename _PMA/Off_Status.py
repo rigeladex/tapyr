@@ -20,44 +20,49 @@
 #
 #++
 # Name
-#    PMA.Box_Status
+#    PMA.Off_Status
 #
 # Purpose
-#    Encapsulate status of mailbox
+#    Encapsulate status of office
 #
 # Revision Dates
 #    26-Jul-2005 (CT) Creation
-#    26-Jul-2005 (CT) `_Status_I_` factored
 #    ««revision-date»»···
 #--
 
-from   _TFL._Meta.Property     import prop
 from   _PMA                    import PMA
+import _PMA.Mailbox
 import _PMA._Status_
 
-class Box_Status (PMA._Status_I_) :
+class Off_Status (PMA._Status_I_) :
     """Status of mailbox"""
 
-    def __init__ (self, box, * attr) :
-        self.__dict__ ["box"] = box
+    def __init__ (self, office, * attr) :
+        self.__dict__ ["office"] = office
         self.__super.__init__ (* attr)
     # end def __init__
 
-    @prop
-    def current_message () :
+    def _box_prop (f) :
+        name = f.__name__
         def get (self) :
             result = None
-            cmn    = self._attr.get ("current_message")
-            if cmn is not None :
-                result = self.box.msg_dict.get (cmn)
+            bn     = self._attr.get (name)
+            if bn is not None :
+                result = PMA.Mailbox._Table.get (bn)
             return result
-        def set (self, cm) :
-            self._set_attr (current_message = cm and cm.name)
-        return get, set
-    # end def current_message
+        def set (self, box) :
+            self._set_attr (** {name : box and box.qname})
+        return property (get, set)
+    # end def _box_prop
 
-# end class Box_Status
+    @_box_prop
+    def current_box () : pass
+
+    @_box_prop
+    def target_box  () : pass
+
+# end class Off_Status
 
 if __name__ != "__main__" :
     PMA._Export ("*")
-### __END__ PMA.Box_Status
+### __END__ PMA.Off_Status

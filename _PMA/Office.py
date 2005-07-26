@@ -33,6 +33,7 @@
 #    25-Jul-2005 (CT) s/save_msg_status/save_status/
 #    26-Jul-2005 (CT) `save_status` changed to call `save_status` of each
 #                     mailbox
+#    26-Jul-2005 (CT) `load_status` factored and handling of `Off_Status` added
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 import _PMA.Mailbox
+import _PMA.Off_Status
 import _TFL._Meta.Object
 
 import Environment
@@ -52,11 +54,18 @@ class Office (TFL.Meta.Object) :
     def __init__ (self, root = None) :
         self.path           = path = self.default_path  (root)
         self.delivery_area  = da   = self.delivery_path (path)
-        self.msg_status_fn  = msfn = sos.path.join      (path, ".msg.status")
-        PMA.Msg_Status.load                             (msfn)
+        self.load_status                                (path)
         self.delivery_boxes = self._delivery_boxes      (da)
         self.storage_boxes  = self._storage_boxes       (path, da)
     # end def __init__
+
+    def load_status (self, path) :
+        self.status         = stat = PMA.Off_Status (self)
+        self.status_fn      = stfn = sos.path.join  (path, ".status")
+        self.msg_status_fn  = msfn = sos.path.join  (path, ".msg.status")
+        stat.load           (stfn)
+        PMA.Msg_Status.load (msfn)
+    # end def load_status
 
     def msg_boxes (self, transitive = False) :
         for b in self.delivery_boxes + self.storage_boxes :
@@ -67,6 +76,7 @@ class Office (TFL.Meta.Object) :
     # end def msg_boxes
 
     def save_status (self) :
+        self.status.save    (self.status_fn)
         PMA.Msg_Status.save (self.msg_status_fn)
         for b in self.msg_boxes (transitive = True) :
             b.save_status ()

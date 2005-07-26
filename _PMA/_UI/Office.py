@@ -35,6 +35,8 @@
 #    25-Jul-2005 (CT) `select_message` simplified
 #    26-Jul-2005 (CT) `select_message` changed to set
 #                     `mailbox.status.current_message`
+#    26-Jul-2005 (CT) `select_folder` changed to set
+#                     `office.status.current_box`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +84,31 @@ class Office (PMA.UI.Mixin) :
         self._setup_mv_cmd_mgr (model)
     # end def __init__
 
+    def select_folder (self, event = None) :
+        tree    = event.widget
+        memory  = self.AC
+        old_tree, selection = memory.current_folder
+        if old_tree and old_tree is not tree :
+            old_tree.clear_selection ()
+        folder                = tree.selection ()
+        memory.current_folder = tree, folder
+        self.office.status.current_box = folder [0]
+        self.mb_msg_view.update_model (folder [0])
+        self.model.msg_display.clear  ()
+    # end def select_folder
+
+    def select_message (self, event = None) :
+        tree    = self.mb_msg_view
+        message = (tree.selection () or (None, )) [0]
+        memory  = self.AC
+        if message and message is not memory.current_message :
+            mailbox                = message.mailbox
+            memory.current_message = mailbox.status.current_message = message
+            self.model.msg_display.display       (message)
+            self.mb_msg_view.update              (message)
+            self.box_views [mailbox.root].update (mailbox)
+    # end def select_message
+
     def _setup_bv_cmd_mgr (self, model) :
         AC          = self.AC
         UI          = self.ANS.UI
@@ -103,30 +130,6 @@ class Office (PMA.UI.Mixin) :
             )
         self.bv_cmd.bind_interfacers (* tkt_trees)
     # end def _setup_bv_cmd_mgr
-
-    def select_folder (self, event = None) :
-        tree    = event.widget
-        memory  = self.AC
-        old_tree, selection = memory.current_folder
-        if old_tree and old_tree is not tree :
-            old_tree.clear_selection ()
-        folder                = tree.selection ()
-        memory.current_folder = tree, folder
-        self.mb_msg_view.update_model (folder [0])
-        self.model.msg_display.clear  ()
-    # end def select_folder
-
-    def select_message (self, event = None) :
-        tree    = self.mb_msg_view
-        message = (tree.selection () or (None, )) [0]
-        memory  = self.AC
-        if message and message is not memory.current_message :
-            mailbox                = message.mailbox
-            memory.current_message = mailbox.status.current_message = message
-            self.model.msg_display.display       (message)
-            self.mb_msg_view.update              (message)
-            self.box_views [mailbox.root].update (mailbox)
-    # end def select_message
 
     def _setup_mv_cmd_mgr (self, model) :
         AC          = self.AC

@@ -30,18 +30,16 @@
 #    25-Jul-2005 (CT) `new` and `_Table` added (plus `load` and `save`)
 #    25-Jul-2005 (CT) `_Status_` factored
 #    26-Jul-2005 (CT) `load` and `save` moved back in here from `_Status_`
+#    26-Jul-2005 (CT) `_Status_C_` factored
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
 from   _PMA                    import PMA
 import _PMA._Status_
 
-import cPickle                 as     pickle
-
 import time
 
-class Msg_Status (PMA._Status_) :
+class Msg_Status (PMA._Status_C_) :
     """Status of mail message"""
 
     first_read = property (lambda s : s._attr.get ("first_read"))
@@ -49,37 +47,6 @@ class Msg_Status (PMA._Status_) :
     unseen     = property (lambda s : s.first_read is None)
 
     _Table     = {}
-
-    @classmethod
-    def load (cls, filename) :
-        try :
-            f = open (filename)
-        except IOError :
-            pass
-        else :
-            try :
-                try :
-                    cls._Table = pickle.load (f)
-                except EOFError :
-                    pass
-            finally :
-                f.close ()
-    # end def load
-
-    @classmethod
-    def new (cls, name) :
-        result = cls._Table.get (name)
-        if result is None :
-            result = cls._Table [name] = cls ()
-        return result
-    # end def new
-
-    @classmethod
-    def save (cls, filename) :
-        f = open    (filename, "wb")
-        pickle.dump (cls._Table, f, pickle.HIGHEST_PROTOCOL)
-        f.close     ()
-    # end def save
 
     def set_read (self, t = None) :
         if t is None :

@@ -30,12 +30,15 @@
 #    26-Jul-2005 (CT) `__setattr__` fixed to handle `property` properly
 #    26-Jul-2005 (CT) `load` and `save` moved back to `Msg_Status`
 #    26-Jul-2005 (CT) `_ini_attr` added
+#    26-Jul-2005 (CT) `_Status_C_` and `_Status_I_` factored
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
 import _TFL._Meta.Object
+
+import cPickle                 as     pickle
 
 class _Status_ (TFL.Meta.Object) :
 
@@ -94,6 +97,68 @@ class _Status_ (TFL.Meta.Object) :
 
 # end class _Status_
 
+class _Status_C_ (_Status_) :
+
+    @classmethod
+    def load (cls, filename) :
+        try :
+            f = open (filename)
+        except IOError :
+            pass
+        else :
+            try :
+                try :
+                    cls._Table = pickle.load (f)
+                except EOFError :
+                    pass
+            finally :
+                f.close ()
+    # end def load
+
+    @classmethod
+    def new (cls, name) :
+        result = cls._Table.get (name)
+        if result is None :
+            result = cls._Table [name] = cls ()
+        return result
+    # end def new
+
+    @classmethod
+    def save (cls, filename) :
+        f = open    (filename, "wb")
+        pickle.dump (cls._Table, f, pickle.HIGHEST_PROTOCOL)
+        f.close     ()
+    # end def save
+
+# end class _Status_C_
+
+class _Status_I_ (_Status_) :
+
+    def load (self, filename) :
+        try :
+            f = open (filename)
+        except IOError :
+            pass
+        else :
+            try :
+                try :
+                    attrs = pickle.load (f)
+                except EOFError :
+                    pass
+                else :
+                    self._set_attr (** attrs)
+            finally :
+                f.close ()
+    # end def load
+
+    def save (self, filename) :
+        f = open    (filename, "wb")
+        pickle.dump (self._attr, f, pickle.HIGHEST_PROTOCOL)
+        f.close     ()
+    # end def save
+
+# end class _Status_I_
+
 if __name__ != "__main__" :
-    PMA._Export ("_Status_")
+    PMA._Export ("_Status_", "_Status_C_", "_Status_I_")
 ### __END__ PMA._Status_
