@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    26-Jul-2005 (CT) Creation
+#    27-Jul-2005 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,9 @@ from   _PMA                    import Lib
 import _PMA.Message
 import _TFL._Meta.Object
 
-from   smtplib     import SMTP
+from   _TFL.Regexp             import *
+
+from   smtplib                 import SMTP
 import sos
 import threading
 
@@ -54,7 +57,6 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
         self.finish_callback = finish_callback
         self.__super.__init__ \
             ( group  = None
-            , target = command
             , name   = name
             , args   = args
             , kwargs = kw
@@ -63,9 +65,10 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
 
     def run (self) :
         bfn    = self._write_buffer (self.buffer)
-        sos.system                  ("%s %s" % (self.editor, bfn))
+        cmd    = "%s %s" % (self.editor, bfn)
+        sos.system                  (cmd)
         result = self._read_buffer  (bfn)
-        if result != buffer :
+        if result != self.buffer :
             self.finish_callback    (result)
     # end def run
 
@@ -79,7 +82,8 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
             try :
                 result = f.read ()
             finally :
-                f.close ()
+                f.close    ()
+                sos.unlink (bfn)
         return result
     # end def _read_buffer
 
@@ -111,9 +115,9 @@ class Sender (TFL.Meta.Object) :
     reply_format   = "\n".join \
         ( ( """From:        %(user)s@%(domain)s"""
           , """To:          """
-          , """Subject:     """
+          , """Subject:     Re: %(subject)s"""
           , """X-mailer:    PMA"""
-          , """In-reply-to: Your message of "%(message_date)s." """
+          , """In-reply-to: Your message of "%(message_date)s" """
           , """             %(message_id)s"""
           , """References:  %(message_id)s"""
           , """--text follows this line--"""
@@ -121,6 +125,9 @@ class Sender (TFL.Meta.Object) :
           , """"""
           )
         )
+
+    _reply_subject_prefix_pat = Regexp \
+        ("^(Subject: *)(Re|AW): *((Re|AW): *)+", re.IGNORECASE | re.MULTILINE)
 
     def __init__ (self, editor, user, domain, mail_host, send_cb = None) :
         self.editor    = editor
@@ -138,13 +145,20 @@ class Sender (TFL.Meta.Object) :
 
     def reply (self, msg) :
         """Compose and send a reply to `msg`."""
-        self._send (self.reply_format   % Msg_Scope (msg, self.locals))
+        buffer = self.reply_format % PMA.Msg_Scope (msg, self.locals)
+        if self._reply_subject_prefix_pat.search (buffer) :
+            buffer = self._reply_subject_prefix_pat.sub (r"\1Re: ", buffer)
+        self._send (buffer)
     # end def reply
 
     def _finish_edit (self, buffer) :
         if buffer :
-            buffer.replace ("--text follows this line--", "")
-            msg = Lib.message_from_string (buffer)
+            buffer = buffer.replace ("--text follows this line--", "")
+            msg    = Lib.message_from_string (buffer)
+            if not "Date" in msg :
+                del msg ["Date"]
+                msg ["Date"] = Lib.formatdate ()
+            subject = msg.get ("Subject")
             ### XXX process X-PMA-attach headers
         if self.send_cb is not None :
             msg = self.send_cb (msg)
@@ -154,23 +168,50 @@ class Sender (TFL.Meta.Object) :
 
     def _send (self, buffer) :
         editor = Editor_Thread (buffer, self.editor, self._finish_edit)
+        editor.start ()
     # end def _send
 
     def _smtp_send (self, msg) :
         to = msg ["To"].split (",")
         for k in "cc", "bcc", "dcc" :
-            if header_dict.has_key (k) :
-                for h in msg.get_all (k, []) :
-                    to.extend (h.split (","))
-                if k != "cc" :
-                    del msg [k]
+            for h in msg.get_all (k, []) :
+                to.extend (h.split (","))
+            if k != "cc" :
+                del msg [k]
         server = SMTP   (self.mail_host)
-        server.connect  ()
-        server.sendmail (msg ["From"], to, mail.as_string ())
-        server.close    ()
+        server.helo     ()
+        server.sendmail (msg ["From"], to, msg.as_string ())
+        server.quit     ()
     # end def _smtp_send
 
 # end class Sender
+
+def command_spec (arg_array = None) :
+    from   Command_Line import Command_Line
+    import Environment
+    return Command_Line \
+        ( option_spec =
+            ( "-domain:S=%s?Domain of sender"
+              % open ("/etc/mailname").read ().strip ()
+            , "-editor:S=emacsclient?Command used to start editor"
+            , "-mail_host:S=mails?Name of SMTP server to use"
+            , "-reply:S?Message to reply to"
+            , "-user:S=%s?Name of sender" % (Environment.username, )
+            )
+        , description =
+          "Send mail message (newly composed or reply to existing email)"
+        , max_args    = 0
+        , arg_array   = arg_array
+        )
+# end def command_spec
+
+def main (cmd) :
+    s = Sender    (cmd.editor, cmd.user, cmd.domain, cmd.mail_host)
+    if cmd.reply :
+        s.reply   (PMA.message_from_file (cmd.reply))
+    else :
+        s.compose ()
+# end def main
 
 _emacs_compose_buffer = """
 To:          «text»
@@ -218,4 +259,6 @@ From:        tanzer@swing.cluster (Christian Tanzer)
 
 if __name__ != "__main__" :
     PMA._Export ("*")
+else :
+    main (command_spec ())
 ### __END__ PMA.Sender

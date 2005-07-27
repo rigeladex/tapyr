@@ -95,6 +95,7 @@
 #                     (instead of forbidding that)
 #    25-May-2005 (CT) Bug fix `self.status` initialization
 #    26-Jul-2005 (CT) `Msg_Scope` added and used
+#    27-Jul-2005 (CT) `Msg_Scope.__getitem__` improved
 #    ««revision-date»»···
 #--
 
@@ -150,12 +151,15 @@ class Msg_Scope (TFL.Caller.Scope) :
         try :
             return self.__super.__getitem__ (index)
         except NameError :
+            email = self.msg.email
             for n in self._map.get (index, (index, )) :
                 try :
-                    return self.msg.email [n]
+                    result = email [n]
+                    if result is not None :
+                        return result
                 except KeyError :
                     pass
-                raise KeyError, index
+            return "<unknown %s>" % index
     # end def __getitem__
 
 # end class Msg_Scope
