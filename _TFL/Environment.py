@@ -46,6 +46,7 @@
 #     7-Mar-2005 (MG)  `curdir_pat` fixed
 #                      (the old pattern replaces `../../` -> `...`)
 #    24-Mar-2005 (CT)  Moved into package `TFL`
+#    28-Jul-2005 (CT)  `mailname` added
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,19 @@ if not hostname :
         hostname = TFL.sos.uname () [1]
     except :
         pass
+
+def mailname () :
+    """Returns the mailname of the system the script is running on."""
+    try :
+        f = open ("/etc/mailname")
+    except (IOError, TFL.sos.error) :
+        pass
+    else :
+        try :
+            return f.read ().strip ()
+        except (IOError, TFL.sos.error) :
+            pass
+# end def mailname
 
 def script_name () :
     """Returns the name of the currently running python script."""

@@ -171,7 +171,7 @@ class Scope (TFL.Meta.Object) :
 # end class Scope
 
 class Object_Scope (Scope) :
-    """Provide access to the caller's locals and globals and to the
+    """Provide access to the caller's locals and to the
        attributes of the object passed in.
 
        >>> from _TFL.Filename import *
