@@ -28,12 +28,14 @@
 # Revision Dates
 #    31-Aug-2004 (CT) Creation
 #     3-Sep-2004 (CT) Creation continued
+#    28-Jul-2005 (CT) `encode_base64` added
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
 
 from   email                   import message_from_string, message_from_file
+from   email.Encoders          import encode_base64
 from   email.Generator         import *
 from   email.Header            import *
 from   email.Message           import *
