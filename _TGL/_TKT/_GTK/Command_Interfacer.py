@@ -41,6 +41,7 @@
 #    10-Jun-2005 (MG) Test for automatic menu item activation
 #    10-Jun-2005 (MG) Allow signal's for `Event_Binder`
 #    10-Jun-2005 (MG) `Event_Binder` corrected
+#    27-Jul-2005 (MG) `CI_Event_Binder.add_widget` type corrected
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -329,7 +330,7 @@ class CI_Event_Binder (_CI_) :
         for w in widgets :
             self.widgets [w] = None
         ### a new widget has been added -> enable the bindings
-        for name in sekf.bindings.iterkeys () :
+        for name in self.bindings.iterkeys () :
             self.enable_entry (name)
     # end def add_widget
 

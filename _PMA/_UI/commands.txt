@@ -1,0 +1,69 @@
+Office (menu only):
+- new delivery/storage box
+- sync
+- next/prev (unseen)  messages
+
+bv
+- next/prev (unseen) message
+- new subbox
+- import
+- delete box
+- rename box
+- commit
+- move (selection or select default target) 
+- sync
+
+mv
+- display (seleted messages)
+- commit (box)
+- select all
+- next/prev (unseen) message
+- selection
+  . delete
+  . copy
+  . move
+  . commit
+  . print
+  . save (ask for dir)
+  . forward
+  . pass to external command
+  . span/unspam
+  . ham/unham
+  . auto move
+mo
+- next/prev (unseen) message
+- print
+- save
+- delete
+- externalize 
+- purge (delete and add new header)
+- mime commands (sub menu, dyn menu)(start bowser, start
+  openoffice, ...) 
+- edit
+
+md
+- next/prev (unseen) message
+- display
+- delete
+- copy
+- move
+- commit
+- print
+- save
+- reply/forward/bounce
+- pass to external command
+- edit
+- span/unspam
+- ham/unham
+- auto move
+
+
+focus chain:
+- BV-tree (delivery)
+- BV-tree (storage)
+- MV
+- MD
+- MO
+
+Tree:
+- enter -> expand

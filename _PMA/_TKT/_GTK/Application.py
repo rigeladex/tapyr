@@ -31,6 +31,9 @@
 #     3-Jun-2005 (MG) `show_*` and some `ask_*` functions added
 #     3-Jun-2005 (MG) Ask functions for filenames and and directorynames added
 #     6-Jun-2005 (CT) Superfluous `staticmethod`s removed
+#    27-Jul-2005 (MG) `_setup_context_menu` changed to return a dict of
+#                     context menus
+#    27-Jul-2005 (MG) `_setup_event_binder` added
 #    ««revision-date»»···
 #--
 
@@ -183,12 +186,26 @@ class Application (PMA.TKT.Application) :
     # end def _quit
 
     def _setup_context_menu (self) :
-        result = self.context_menu = self.TNS.CI_Menu \
-            ( AC      = self.AC
+        CI_Menu = self.TNS.CI_Menu
+        AC      = self.AC
+        return dict \
+            ( cm_bv      = CI_Menu (name = "cm_bv",      AC = AC)
+            , cm_mv      = CI_Menu (name = "cm_mv",      AC = AC)
+            , cm_md      = CI_Menu (name = "cm_md",      AC = AC)
+            , cm_mo      = CI_Menu (name = "cm_mo",      AC = AC)
+            , cm_status  = CI_Menu (name = "cm_status",  AC = AC)
             )
-        return result
     # end def _setup_context_menu
 
+    def _setup_event_binder (self) :
+        CI_Event_Binder = self.TNS.CI_Event_Binder
+        AC              = self.AC
+        return dict \
+            ( ev_bv = CI_Event_Binder (AC = AC)
+            , ev_mv = CI_Event_Binder (AC = AC)
+            )
+    # end def _setup_event_binder
+    
     def _setup_geometry (self) :
         ### XXX
         self.gui.add            (self.main)

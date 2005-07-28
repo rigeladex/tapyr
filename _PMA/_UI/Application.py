@@ -39,6 +39,8 @@
 #    28-Jul-2005 (MG) `s/Changes.changes/Changes.value/g`
 #    28-Jul-2005 (MG) `Changes.__cmp__` and `Changes.__str__` added
 #    28-Jul-2005 (CT) `_extend_status_props` and `_extend_status_prop` added
+#    27-Jul-2005 (MG) `self.event_binders` added
+#    27-Jul-2005 (MG) New command groups and commands added
 #    ««revision-date»»···
 #--
 
@@ -140,15 +142,23 @@ class Application (PMA.UI.Mixin) :
 
     _File_Cmd_Group      = Record \
         ( name           = "File"
-        , if_names       = ("mb", "tb", "cm:click_3")
+        , if_names       = ("mb", "tb")
         , batchable      = True
         , precondition   = None
         , description    =
           "This group provides commands for managing the forest of mailboxes"
         )
+    _Office_Cmd_Group    = Record \
+        ( name           = "Office"
+        , if_names       = ("mb", "tb")
+        , batchable      = True
+        , precondition   = None
+        , description    =
+          "This group provides commands for managing the office"
+        )
     _Mbox_Cmd_Group      = Record \
         ( name           = "Mailbox"
-        , if_names       = ("mb", "tb", "cm:click_3")
+        , if_names       = ("mb", "tb", "cm_bv", "cm_mv", "ev_bv", "ev_mv")
         , batchable      = True
         , precondition   = None
         , description    =
@@ -157,12 +167,21 @@ class Application (PMA.UI.Mixin) :
         )
     _Message_Cmd_Group   = Record \
         ( name           = "Message"
-        , if_names       = ("mb", "tb", "cm:click_3")
+        , if_names       = ("mb", "tb", "cm_md", "cm_mv", "ev_mv")
         , batchable      = True
         , precondition   = None
         , description    =
           "This group provides commands for managing the currently "
           "selected message(s)"
+        )
+    _Outline_Cmd_Group   = Record \
+        ( name           = "Outline"
+        , if_names       = ("cm_mo", )
+        , batchable      = True
+        , precondition   = None
+        , description    =
+          "This group provides commands for managing the currently "
+          "selected message via the outline display"
         )
     _Scripts_Cmd_Group   = Record \
         ( name             = "Scripts"
@@ -183,6 +202,8 @@ class Application (PMA.UI.Mixin) :
         )
     Command_Groups       = \
         ( "_File_Cmd_Group"
+        , "_Office_Cmd_Group"
+        , "_Outline_Cmd_Group"
         , "_Mbox_Cmd_Group"
         , "_Message_Cmd_Group"
         , "_Scripts_Cmd_Group"
@@ -191,23 +212,24 @@ class Application (PMA.UI.Mixin) :
 
     def __init__ (self, AC, cmd, _globals = {}) :
         self.__super.__init__ (AC = AC, cmd = cmd, _globals = _globals)
-        self._globals     = _globals
-        ANS               = self.ANS
-        TNS               = self.TNS
-        AC.ui_state       = UI_State                ()
-        self.changes      = AC.ui_state.changes
-        AC.memory         = _App_State_             (window_geometry = {})
-        AC.memory.load                              ()
-        self._interpret_cmd_line                    (cmd, TNS)
-        self.tkt = tkt    = TNS.Application         (self)
-        self.menubar      = tkt._setup_menubar      ()
-        self.toolbar      = tkt._setup_toolbar      ()
-        self.context_menu = tkt._setup_context_menu ()
-        tkt._setup_geometry                         ()
-        tkt._setup_stdout_redirect                  ()
-        self._setup_cmd_mgr                         ()
-        self._setup_office                          ()
-        tkt.bind_to_sync                            (self.cmd_mgr.update_state)
+        self._globals      = _globals
+        ANS                = self.ANS
+        TNS                = self.TNS
+        AC.ui_state        = UI_State                ()
+        self.changes       = AC.ui_state.changes
+        AC.memory          = _App_State_             (window_geometry = {})
+        AC.memory.load                               ()
+        self._interpret_cmd_line                     (cmd, TNS)
+        self.tkt = tkt     = TNS.Application         (self)
+        self.menubar       = tkt._setup_menubar      ()
+        self.toolbar       = tkt._setup_toolbar      ()
+        self.context_menus = tkt._setup_context_menu ()
+        self.event_binders = tkt._setup_event_binder ()
+        tkt._setup_geometry                          ()
+        tkt._setup_stdout_redirect                   ()
+        self._setup_cmd_mgr                          ()
+        self._setup_office                           ()
+        tkt.bind_to_sync                             (self.cmd_mgr.update_state)
     # end def __init__
 
     def commit_all (self, event = None) :
@@ -263,13 +285,15 @@ class Application (PMA.UI.Mixin) :
     # end def _after_start_mainloop
 
     def _create_command_mgr (self) :
+        
         self.cmd_mgr = self.AC.ui_state.cmd_mgr = self.ANS.UI.Command_Mgr \
             ( AC             = self.AC
             , change_counter = self.changes
             , interfacers    = dict
-                ( mb         = self.menubar
+                ( self.context_menus
+                , mb         = self.menubar
                 , tb         = self.toolbar
-                , cm         = self.context_menu
+                , ** self.event_binders
                 )
             , pv_callback    = self._show_precondition_violation
             , batch_mode     = self.batch_mode

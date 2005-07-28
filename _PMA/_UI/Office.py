@@ -42,6 +42,9 @@
 #    26-Jul-2005 (MG) Allow multiselection of messages
 #    28-Jul-2005 (MG) New commands added
 #    28-Jul-2005 (CT) s/next_unseen_message/next_unseen/
+#    27-Jul-2005 (MG) Handling of commands changed (use command manager of
+#                     main application instead of defining new command
+#                     managers)
 #    ««revision-date»»···
 #--
 
@@ -88,19 +91,22 @@ class Office (PMA.UI.Mixin) :
         tkt = model.tkt
         tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
         tkt.pack (tkt.wc_po_box_view, self.tkt)
-        self._setup_bv_cmd_mgr (model)
-        self._setup_mv_cmd_mgr (model)
+        self._setup_common_cmds ()
+        self._setup_bv_commands ()
+        self._setup_mv_commands ()
     # end def __init__
 
     def select_box (self, event = None) :
-        tree      = event.widget
+        for tree in self.box_views.itervalues () :
+            if tree.selection :
+                break
         selection = tree.selection
         if not selection :
             ### ignore the callback if the slection has be canceled
             return
         box      = selection [0]
         curr_box = self.office.status.current_box
-        if curr_box.root != box.root :
+        if curr_box and curr_box.root != box.root :
            self.box_views [curr_box.root].selection = ()
         self.office.status.current_box = box
         self.mb_msg_view.update_model (box)
@@ -158,62 +164,49 @@ class Office (PMA.UI.Mixin) :
         self.box_views [mailbox.root].update (mailbox)
     # end def _display_message
 
-    def _setup_bv_cmd_mgr (self, model) :
-        AC          = self.AC
-        UI          = self.ANS.UI
-        TNS         = self.TNS
-        tkt_trees   = [b.tkt for b in self.box_views.itervalues ()]
-        interfacers = dict \
-            ( cm = TNS.CI_Menu         (name = "context_menu", AC = AC)
-            , ev = TNS.CI_Event_Binder (AC, * tkt_trees)
+    def _setup_bv_commands (self) :
+        Cmd    = self.ANS.UI.Command
+        grp    = self.model.cmd_mgr.cmd.Mailbox
+        grp.add_command \
+            ( Cmd ("Select", self.select_box)
+            , if_names = ("cm_bv", "ev_bv:Select")
             )
-        self.bv_cmd = UI.Command_Mgr \
-            ( change_counter = model.changes
-            , interfacers    = interfacers
-            , if_names       = ("cm:click_3", )
-            , AC             = AC
-            )
-        Cmd  = UI.Command
-        add  = self.bv_cmd.add_command
-        add (Cmd ("Select", self.select_box), if_names = ("ev:Select", ))
-        self._setup_message_commands (self.bv_cmd)
-        self.bv_cmd.bind_interfacers (* tkt_trees)
-    # end def _setup_bv_cmd_mgr
+        event_binder = grp.interfacers ["ev_bv"]
+        cm           = grp.interfacers ["cm_bv"]
+        for w in (b.tkt for b in self.box_views.itervalues ()) :
+            cm.bind_to_widget       (w, "click_3")
+            event_binder.add_widget (w)
+    # end def _setup_bv_commands
+    
+    def _setup_common_cmds (self) :
+        Cmd    = self.ANS.UI.Command
+        cmd    = self.model.cmd_mgr.cmd
+        for grp, cms, evb in ( (cmd.Office,  ("mb", "tb"),             ())
+                             , (cmd.Mailbox, ("mb", "cm_mv", "cm_bv"), "ev_bv")
+                             , (cmd.Message, ("mb", "cm_md", "cm_mv"), "ev_mv")
+                             ) :
+            add  = grp.add_command
+            for name, callback, ev_name in \
+                ( ( "Next Message",       self.show_next_message, "next_message")
+                , ( "Previous Message",   self.show_prev_message, "prev_message")
+                , ( "Next Useen Message", self.show_next_unseen,  "next_unseen")
+                ) :
+                if evb :
+                    ev_bind = ("%s:%s" % (evb, ev_name), )
+                else :
+                    ev_bind = ()
+                add (Cmd (name, callback), if_names = cms + ev_bind)
+    # end def _setup_common_cmds
 
-    def _setup_mv_cmd_mgr (self, model) :
-        AC          = self.AC
-        UI          = self.ANS.UI
-        TNS         = self.TNS
-        interfacers = dict \
-            ( cm = TNS.CI_Menu         (name = "context_menu", AC = AC)
-            , ev = TNS.CI_Event_Binder (AC, self.mb_msg_view.tkt)
-            )
-        self.mv_cmd = UI.Command_Mgr \
-            ( change_counter = model.changes
-            , interfacers    = interfacers
-            , if_names       = ("cm:click_3", )
-            , AC             = AC
-            )
-        Cmd  = UI.Command
-        add  = self.mv_cmd.add_command
-        add (Cmd ("Select", self.show_message), if_names = ("ev:Select", ))
-        self._setup_message_commands (self.mv_cmd)
-        self.mv_cmd.bind_interfacers (self.mb_msg_view.tkt)
-    # end def _setup_bv_cmd_mgr
-
-    def _setup_message_commands (self, cmd_mgr) :
-        Cmd  = self.ANS.UI.Command
-        add  = cmd_mgr.add_command
-        for name, callback, ev_name in \
-            ( ( "Next Message",       self.show_next_message, "next_message")
-            , ( "Previous Message",   self.show_prev_message, "prev_message")
-            , ( "Next Useen Message", self.show_next_unseen,  "next_unseen")
-            ) :
-            add ( Cmd (name, callback)
-                , if_names = ("cm", "ev:%s" % (ev_name, ))
-                )
-    # end def _setup_message_commands
-
+    def _setup_mv_commands (self) :
+        Cmd    = self.ANS.UI.Command
+        grp    = self.model.cmd_mgr.cmd.Message
+        grp.add_command \
+            (Cmd ("Select", self.show_message), if_names = ("ev_mv:Select", ))
+        grp.interfacers ["cm_mv"].bind_to_widget (self.mb_msg_view, "click_3")
+        grp.interfacers ["ev_mv"].add_widget     (self.mb_msg_view)
+    # end def _setup_mv_commands
+    
     def _select_message (self, msg) :
         if msg :
             box                        = msg.mailbox
