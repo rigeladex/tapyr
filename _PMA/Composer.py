@@ -240,10 +240,11 @@ class Composer (TFL.Meta.Object) :
                         for k, v in email.items () :
                             if k not in ignore :
                                 mp [k] = v
+                        cs = email.get_charset () or PMA.Mime.default_charset
                         mp.attach \
                             ( Lib.MIMEText
                                 ( email.get_payload (decode = True)
-                                , _charset = email.get_charset ()
+                                , _charset = cs
                                 )
                             )
                         email = mp

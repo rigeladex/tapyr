@@ -41,6 +41,7 @@ from   _TFL.Regexp             import *
 
 import mimetypes
 
+default_charset      = "iso-8859-1"
 default_type         = "application/octet-stream"
 unencoded_mime_types = ("text/plain", "message/rfc822")
 
@@ -104,10 +105,9 @@ class _M_Type_Msg_ (_M_Type_) :
 class _M_Type_Text_ (_M_Type_) :
 
     mode    = "r"
-    charset = "iso-8859-1"
 
     def _new (self, mt, st, b) :
-        return self.MIME (b, _subtype = st, _charset = self.charset)
+        return self.MIME (b, _subtype = st, _charset = default_charset)
     # end def _new
 
 # end class _M_Type_Text_
