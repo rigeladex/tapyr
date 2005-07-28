@@ -31,6 +31,8 @@
 #     7-Jun-2005 (MG) Superfluous `@classmethod` removed
 #    11-Jun-2005 (MG) `Folder_Cell` added and used
 #    17-Jun-2005 (MG) `Folder_Cell` changed: Use new `auto_attributes` feature
+#    28-Jul-2005 (MG) `s/Folder_Cell/Box_Cell/s`
+#    28-Jul-2005 (MG) `Box_Cell` style handling changed
 #    ««revision-date»»···
 #--
 
@@ -43,16 +45,29 @@ import _PMA._UI
 import _PMA._UI.Mixin
 import _PMA._UI.Tree
 import _PMA._UI.Tree_Adapter
+import _PMA._UI.Mailbox_MV
 
-class Folder_Cell (PMA.UI.Cell) :
+class Box_Cell (PMA.UI.Message_Cell) :
     """Get the name of the folder from a `mailbox` object"""
+
+    Ancestor = PMA.UI.Message_Cell
 
     renderer_class      = ("Cell_Renderer_Text")
     auto_attributes     = dict \
-        ( PMA.UI.Cell.auto_attributes
+        ( Ancestor.auto_attributes
         , name   = ("text",   str, "_get_name")
-        , weight = ("weight", int, "_get_weight")
         )
+
+    Unseen              = PMA.UI.Style \
+        ( "unseen", Ancestor.Normal
+        , foreground    = "red"
+        )
+
+    def _style (self, mailbox) :
+        if mailbox.unseen :
+            return self.Unseen
+        return self.Normal
+    # end def _style
 
     def _get_name (self, mailbox, attr) :
         text = mailbox.name
@@ -61,19 +76,13 @@ class Folder_Cell (PMA.UI.Cell) :
         return text
     # end def _get_name
 
-    def _get_weight (self, mailbox, attr) :
-        if mailbox.unseen :
-            return 800
-        return 400
-    # end def _get_weight
-
-# end class Folder_Cell
+# end class Box_Cell
 
 class _MB_TA_ (PMA.UI.Tree_Adapter) :
     """Tree adapter for mailbox"""
 
     schema = \
-        ( TGL.UI.Column ("Name", Folder_Cell ())
+        ( TGL.UI.Column ("Name", Box_Cell ())
         ,
         )
 

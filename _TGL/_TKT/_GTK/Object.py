@@ -405,7 +405,7 @@ class _Object_ (TGL.TKT.Mixin) :
 
     def save_widget_memory (self, recurse = True) :
         if self.AC and hasattr (self.AC, "memory") :
-            if not hasattr (self.AC.memory.state, "widget_memory") :
+            if "widget_memory" not in self.AC.memory.state :
                 self.AC.memory.state ["widget_memory"] = {}
             self.dump_widget_memory (recurse = recurse)
             self.AC.memory.dump     ()

@@ -40,6 +40,7 @@
 #    17-Jun-2005 (MG) `List_Model._add` allow `parent` as parameter
 #    26-Jul-2005 (MG) Internal dict `iter` renamed to `_iter` and method
 #                     `iter` added
+#    28-Jul-2005 (MG) `_Iter_Mixin_` added
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,26 @@ from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Object
 import _TGL._TKT._GTK.Constants
 
-class _Model_ (GTK.Object) :
+class _Iter_Mixin_ (object) :
+
+    def iter_delta (self, iter, delta) :
+        model = self.wtk_object
+        if delta < 0 :
+            path = model.get_path (iter)
+            new  = path [-1] + delta
+            if new < 0 :
+                return None
+            return model.get_iter (path [:-1] + (new, ))
+        else :
+            while delta and iter:
+                iter   = model.iter_next (iter)
+                delta -= 1
+            return iter
+    # end def iter_delta
+
+# end class _Iter_Mixin_
+
+class _Model_ (GTK.Object, _Iter_Mixin_) :
     """Root class for all `Model` (Tree/List Model, FilterModel, SortModel)"""
 
     GTK_Class        = None
@@ -218,7 +238,7 @@ class Tree_Model (_Model_) :
 
 # end class Tree_Model
 
-class _Proxy_Model_ (TFL.Meta.Object) :
+class _Proxy_Model_ (TFL.Meta.Object, _Iter_Mixin_) :
     """Root class for all kinds of `proxy` models (sort, filter, ...)"""
 
     ui_column = property ( lambda s : s.model.ui_column)

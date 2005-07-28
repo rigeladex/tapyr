@@ -32,6 +32,7 @@
 #    11-Jun-2005 (MG) `Message_Cell` added and used
 #    17-Jun-2005 (MG) `Message_Cell` changed: Use new `auto_attributes` feature
 #    17-Jun-2005 (MG) `Body` cell made lazy (performance reasons)
+#    28-Jul-2005 (MG) `Message_Cell` style handling changed
 #    ««revision-date»»···
 #--
 
@@ -50,17 +51,29 @@ class Message_Cell (PMA.UI.Text_Cell) :
        related attributes (background, foreground, ...)
     """
 
+    Normal = TGL.UI.Style ("Normal")
+    Unseen = TGL.UI.Style \
+        ( "Unseen"
+        , Normal
+        , foreground = "red"
+        , background = "yellow"
+        )
 
     auto_attributes     = dict \
         ( PMA.UI.Cell.auto_attributes
-        , weight = ("weight", int, "_get_weight")
+        , foreground    = ("foreground", str, "_style_get")
+        , background    = ("background", str, "_style_get")
         )
 
-    def _get_weight (self, message, attr) :
+    def _style (self, message) :
         if message.status.unseen :
-            return 800
-        return 400
-    # end def _get_weight
+            return self.Unseen
+        return self.Normal
+    # end def _style
+
+    def _style_get (self, message, attr_name) :
+        return getattr (self._style (message), attr_name)
+    # end def _style_get
 
 # end class Message_Cell
 

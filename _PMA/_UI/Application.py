@@ -34,6 +34,10 @@
 #    10-Jun-2005 (MG) Exception handler for the UI.Office creation added
 #    11-Jun-2005 (MG) `_read_settings` removed and use `PMA.Office` instead
 #    25-Jul-2005 (CT) `_quit` changed to call `office.save_status`
+#    28-Jul-2005 (MG) `UI_State.__init__`: overwriting of status properties
+#                     added, `Counting_Property` removed
+#    28-Jul-2005 (MG) `s/Changes.changes/Changes.value/g`
+#    28-Jul-2005 (MG) `Changes.__cmp__` and `Changes.__str__` added
 #    ««revision-date»»···
 #--
 
@@ -68,49 +72,58 @@ class _App_State_ (TFL.App_State) :
 class Changes (TFL.Meta.Object) :
 
     def __init__ (self) :
-        self.changes = 0
+        self.value = 0
     # end def __init__
 
     def inc (self) :
-        self.changes += 1
+        self.value += 1
     # end def inc
 
     def __iadd__ (self, value) :
-        self.changes += value
+        self.value += value
     # end def __iadd__
 
     def __int__ (self) :
-        return self.changes
+        return self.value
     # end def __int__
+
+    def __str__ (self) :
+        return str (self.value)
+    # end def __str__
+
+    def __cmp__ (self, rhs) :
+        return cmp (self.value, int (rhs))
+    # end def __cmp__
 
 # end class Changes
 
 class UI_State (TFL.Meta.Object) :
 
-    __metaclass__ = TFL.Meta.M_Class_SWRP
-
-    class Counting_Property (TFL.Meta.RW_Property) :
-
-        def set_value (self, obj, value) :
-            if self.get_value (obj) != value :
-                obj.changes += 1
-            self.__super.set_value (obj, value)
-        # end def set_value
-
-        _set = set_value
-
-    # end class Counting_Property
-
-#    __properties = \
-#        ( Counting_Property ("current_mailbox")
-#        , Counting_Property ("current_message")
-#        , Counting_Property ("message_selection")
-#        , Counting_Property ("target_mailbox")
-#        )
-
     def __init__ (self, ** kw) :
         self.__dict__.update   (kw)
-        self.changes = Changes ()
+        self.changes = changes = Changes ()
+
+        ### define new properties for the status class to update the change
+        ### counter of the application
+        return
+        for cls, properties in \
+            ( (PMA.Off_Status, ("current_box", "target_box"))
+            , (PMA.Box_Status, ("current_message", ))
+            ) :
+            for prop_name in properties :
+                prop = getattr (cls, prop_name)
+                def _set (obj, value) :
+                    prop.fset   (obj, value)
+                    changes.inc ()
+                # end def _set
+                setattr (cls, prop_name, property (prop.fget, _set, prop.fdel))
+        for cls, properties in \
+            ( (PMA.Off_Status, ("current_box", "target_box"))
+            , (PMA.Box_Status, ("current_message", ))
+            ) :
+            for prop_name in properties :
+                prop = getattr (cls, prop_name)
+                print prop_name, prop, prop.fset
     # end def __init__
 
 # end class UI_State

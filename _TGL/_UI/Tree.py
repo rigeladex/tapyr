@@ -42,6 +42,7 @@
 #    17-Jun-2005 (MG) `see` added
 #    26-Jul-2005 (MG) Selection handling changed
 #    26-Jul-2005 (MG) `multiselection` added
+#    28-Jul-2005 (MG) `quick_search` added
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,7 @@ class _Tree_ (TGL.UI.Mixin) :
                  , filter         = None
                  , show_header    = True
                  , multiselection = False
+                 , quick_search   = True
                  , AC             = None
                  ) :
         self.__super.__init__ (AC = AC)
@@ -89,7 +91,7 @@ class _Tree_ (TGL.UI.Mixin) :
                 (TNS, AC, self.t_model)
             self.t_model     = self.tkt_s_model
         self.tkt             = self._create_tkt_tree \
-            (lazy, sort, show_header, multiselection)
+            (lazy, sort, show_header, multiselection, quick_search)
         self._lazy_bind      = None
         self.lazy            = lazy
         if ui_model :
@@ -122,7 +124,7 @@ class _Tree_ (TGL.UI.Mixin) :
     # end def __setattr__
 
     def see (self, element) :
-        element = self.tkt_model.iter [element]
+        element = self.tkt_model.iter (element)
         self.tkt.see (self.tkt_model, element)
     # end def see
 
@@ -148,10 +150,11 @@ class _Tree_ (TGL.UI.Mixin) :
                     self._add_element (child, element, lazy)
     # end def _add_element
 
-    def _create_tkt_tree (self, lazy, sort, show_header, multiselection) :
+    def _create_tkt_tree (self, lazy, sort, show_header, multiselection, quick_search) :
         tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
         tkt.headers_visible = show_header
         tkt.rules_hint      = self.Adapter.rules_hint
+        tkt.enable_search   = quick_search
         self.Adapter.create_view (tkt)
         if sort :
             if sort is True :

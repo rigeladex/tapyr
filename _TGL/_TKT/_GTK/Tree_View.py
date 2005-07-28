@@ -34,6 +34,7 @@
 #    10-Jun-2005 (MG) `selection` and `clear_selection` added
 #    26-Jul-2005 (MG) Selction handling changed by introducing `Tree_Selection`
 #    26-Jul-2005 (MG) New signal `Select` added
+#    28-Jul-2005 (MG) `Tree_Selection.next` added
 #    ««revision-date»»···
 #--
 
@@ -44,9 +45,13 @@ import  gobject
 class Tree_Selection (GTK.Object_Wrapper) :
     """Wrapper for the tree selection object."""
 
+    def __init__ (self, wtk_model, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.wtk_model = wtk_model
+    # end def __init__
+
     def set (self, selection) :
-        model = self.wtk_object.get_tree_view ().get_model ().get_data \
-            ("ktw_object")
+        model = self.wtk_model
         if not isinstance (selection, (tuple, list)) :
             selection = (selection, )
         self.wtk_object.unselect_all ()
@@ -54,12 +59,15 @@ class Tree_Selection (GTK.Object_Wrapper) :
             self.wtk_object.select_iter (model.iter (element))
     # end def set
 
-    def __iter__ (self) :
+    def _tree_iters (self) :
         model, pathes = self.wtk_object.get_selected_rows ()
         if pathes :
-            wtk_model = model.get_data                     ("ktw_object")
             for p in pathes :
-                yield wtk_model.ui_object (model.get_iter (p))
+                yield model.get_iter (p)
+    # end def _tree_iters
+
+    def __iter__ (self) :
+        return (self.wtk_model.ui_object (i) for i in self._tree_iters ())
     # end def __iter__
 
     def __getitem__ (self, index) :
@@ -69,6 +77,26 @@ class Tree_Selection (GTK.Object_Wrapper) :
     def __len__ (self) :
         return len (tuple (self))
     # end def __len__
+
+    def next (self, delta = 1) :
+        ### returns the object after the current selection, or None if
+        ### the selection oject is the last
+        selection = tuple (self._tree_iters ())
+        if selection :
+            iter = self.wtk_model.iter_delta (selection [-1], delta)
+            if iter :
+                return self.wtk_model.ui_object (iter)
+    # end def next
+
+    def prev (self, delta = 1) :
+        ### returns the object before the current selection, or None if
+        ### the selection oject is the last
+        selection = tuple (self._tree_iters ())
+        if selection :
+            iter = self.wtk_model.iter_delta (selection [0], -delta)
+            if iter :
+                return self.wtk_model.ui_object (iter)
+    # end def prev
 
 # end class Tree_Selection
 
@@ -110,10 +138,10 @@ class Tree_View (GTK.Container) :
         )
 
     def __init__ (self, model = None, * args, ** kw) :
-        if model :
-            model = model.wtk_object
-        self.__super.__init__ (model, * args, ** kw)
-        self._selection = Tree_Selection (self.wtk_object.get_selection ())
+        gtk_model = model and model.wtk_object
+        self.__super.__init__ (gtk_model, * args, ** kw)
+        self._selection = Tree_Selection \
+            (model, self.wtk_object.get_selection ())
         self._selection.bind_add \
             ( self.TNS.Signal.Changed
             , lambda * a : self.emit (self.TNS.Signal.Select)

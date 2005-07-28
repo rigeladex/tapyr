@@ -40,6 +40,7 @@
 #    26-Jul-2005 (MG) `select_folder` and `select_message` changed
 #    26-Jul-2005 (MG) `s/select_folder/select_box/g`
 #    26-Jul-2005 (MG) Allow multiselection of messages
+#    28-Jul-2005 (MG) New commands added
 #    ««revision-date»»···
 #--
 
@@ -69,14 +70,19 @@ class Office (PMA.UI.Mixin) :
                         ,     (office.delivery_boxes, self.delivery_views)
                             ) :
             for box in boxes :
-                box._ui_tree = bv = UI.Mailbox_BV (AC = AC, show_header = False)
+                box._ui_tree = bv = UI.Mailbox_BV \
+                    (AC = AC, show_header = False, quick_search = False)
                 bv.update_model    (box)
                 views.append       (bv)
                 self.box_views [box] = bv
         self.tkt = TNS.Office \
             (self.delivery_views, self.storage_views, AC = AC)
         self.mb_msg_view = mmv = UI.Mailbox_MV \
-            (sort = True, multiselection = True, AC = self.AC)
+            ( sort           = True
+            , multiselection = True
+            , quick_search   = False
+            , AC             = self.AC
+            )
         mmv.tkt.scroll_policies (TNS.AUTOMATIC)
         tkt = model.tkt
         tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
@@ -86,19 +92,25 @@ class Office (PMA.UI.Mixin) :
     # end def __init__
 
     def select_box (self, event = None) :
-        tree    = event.widget
-        box     = tree.selection [0]
+        tree      = event.widget
+        selection = tree.selection
+        if not selection :
+            ### ignore the callback if the slection has be canceled
+            return
+        box      = selection [0]
+        curr_box = self.office.status.current_box
+        if curr_box.root != box.root :
+           self.box_views [curr_box.root].selection = ()
         self.office.status.current_box = box
         self.mb_msg_view.update_model (box)
         if box.status.current_message :
-            ### display the previous selected message
-            self.mb_msg_view.selection = box.status.current_message
-            self._display_message         (box)
+            ### select and display the previous selected message
+            self._select_message          (box.status.current_message)
         else :
             self.model.msg_display.clear  ()
     # end def select_box
 
-    def select_message (self, event = None) :
+    def show_message (self, event = None) :
         selection = self.mb_msg_view.selection
         if not selection or len (selection) > 1:
             ### clear message display in case of multi message selection or
@@ -111,7 +123,32 @@ class Office (PMA.UI.Mixin) :
             if mailbox.status.current_message != message :
                 mailbox.status.current_message = message
                 self._display_message (mailbox)
-    # end def select_message
+    # end def show_message
+
+    def show_next_message (self, event = None) :
+        """Show the next message of the current folder"""
+        self._select_message (self.mb_msg_view.tkt._selection.next ())
+    # end def show_next_message
+
+    def show_prev_message (self, event = None) :
+        """Show the previous message of the current folder"""
+        self._select_message (self.mb_msg_view.tkt._selection.prev ())
+    # end def show_prev_message
+
+    def show_next_folder (self, event = None) :
+        """Show the next folder"""
+        print "N", event.widget
+    # end def show_next_folder
+
+    def show_prev_folder (self, event = None) :
+        """Show the previous folder"""
+        print "P", event.widget
+    # end def show_prev_folder
+
+    def show_next_unseen_message (self, event = None) :
+        """Show the next unseen message."""
+        print "Unseen"
+    # end def show_next_unseen_message
 
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
@@ -135,10 +172,10 @@ class Office (PMA.UI.Mixin) :
             , if_names       = ("cm:click_3", )
             , AC             = AC
             )
-        self.bv_cmd.add_command \
-            ( UI.Command ("Select", self.select_box)
-            , if_names = ("cm", "ev:Select")
-            )
+        Cmd  = UI.Command
+        add  = self.bv_cmd.add_command
+        add (Cmd ("Select", self.select_box), if_names = ("ev:Select", ))
+        self._setup_message_commands (self.bv_cmd)
         self.bv_cmd.bind_interfacers (* tkt_trees)
     # end def _setup_bv_cmd_mgr
 
@@ -156,12 +193,39 @@ class Office (PMA.UI.Mixin) :
             , if_names       = ("cm:click_3", )
             , AC             = AC
             )
-        self.mv_cmd.add_command \
-            ( UI.Command ("Select", self.select_message)
-            , if_names = ("cm", "ev:Select")
-            )
+        Cmd  = UI.Command
+        add  = self.mv_cmd.add_command
+        add (Cmd ("Select", self.show_message), if_names = ("ev:Select", ))
+        self._setup_message_commands (self.mv_cmd)
         self.mv_cmd.bind_interfacers (self.mb_msg_view.tkt)
     # end def _setup_bv_cmd_mgr
+
+    def _setup_message_commands (self, cmd_mgr) :
+        Cmd  = self.ANS.UI.Command
+        add  = cmd_mgr.add_command
+        for name, callback, ev_name in \
+            ( ( "Next Message"
+              , self.show_next_message, "next_message"
+              )
+            , ( "Previous Message"
+              , self.show_prev_message, "prev_message"
+              )
+            , ( "Next Useen Message"
+              , self.show_next_unseen_message, "next_unseen_message"
+              )
+            ) :
+            add ( Cmd (name, callback)
+                , if_names = ("cm", "ev:%s" % (ev_name, ))
+                )
+    # end def _setup_message_commands
+
+    def _select_message (self, msg) :
+        if msg :
+            box                        = msg.mailbox
+            box.status.current_message = self.mb_msg_view.selection = msg
+            self.mb_msg_view.see  (msg)
+            self._display_message (box)
+    # end def _select_message
 
 # end class Office
 

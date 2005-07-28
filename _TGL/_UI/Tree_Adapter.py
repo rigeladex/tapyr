@@ -66,7 +66,7 @@ class Cell (TFL.Meta.Object) :
             raise TypeError, "Too many renderer attributes specified"
         self.attr_map = {}
         aa            = self.auto_attributes
-        for ui_attr, (rend_attr, tkt_type, get_fct) in aa .iteritems () :
+        for ui_attr, (rend_attr, tkt_type, get_fct) in aa.iteritems () :
             if not callable (get_fct) :
                 get_fct                        = getattr (self, get_fct)
             self.attr_map [ui_attr]            = rend_attr, tkt_type, get_fct

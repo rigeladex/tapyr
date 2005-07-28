@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-May-2005 (MG) Creation
 #    25-Jul-2005 (CT) `locals` added
+#    27-Jul-2005 (MG) Smaller issue fixed
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,12 @@ MAX_HIST  = 5000
 class Interpreter_Window (GTK.Window) :
     """Widget providing interactive access to the Python interpreter."""
 
+    complete_key = GTK.Combined_Binder \
+        ( GTK.Key_Binder ("<Alt>d")
+        , GTK.Key_Binder ("Tab")
+        )
     complete_key = GTK.Key_Binder ("<Alt>d")
+    #complete_key = GTK.Key_Binder ("Tab")
 
     def __init__ (self, master, global_dict = None, AC = None, ** kw) :
         self.__super.__init__ (AC = AC, ** kw)
@@ -89,13 +95,15 @@ class Interpreter_Window (GTK.Window) :
             w.show ()
         self.add (self.vbox)
         self.entry.focus_on_click = False
+        #self.entry.bind_add (Signal.Changed, self._value_changed)
         real_entry = self.entry.wtk_object.child
         real_entry.connect        ("activate", self.execute)
-        real_entry.set_data       ("ktw_object", self)
-        self.bind_add             (Signal.Destroy, self.destroy)
-        self.complete_key.connect (real_entry, self.complete, (), {})
+        self.bind_add             (Signal.Delete, self.close_window)
+        self.entry.bind_add       (self.complete_key, self.complete)
         self.output.apply_style   (normal)
         self.read_history         ()
+        self.read_widget_memory   ()
+        self.wtk_object.set_focus (real_entry)
     # end def __init__
 
     def clear_output (self, event = None) :
@@ -177,9 +185,10 @@ class Interpreter_Window (GTK.Window) :
             sys.stdout = stdout
     # end def execute
 
-    def destroy (self, * args, ** kw) :
+    def close_window (self, * args, ** kw) :
         self.save_history       ()
-    # end def destroy
+        self.save_widget_memory ()
+    # end def close_window
 
     def compacted_history (self) :
         _hist = [s.replace ("\n", "#<NL>") for s in self._history]
@@ -213,6 +222,10 @@ class Interpreter_Window (GTK.Window) :
         except IOError :
             pass
     # end def save_into_history
+
+    def _value_changed (self, event) :
+        self.entry.wtk_object.child.set_position (-1)
+    # end def _value_changed
 
 # end class Interpreter_Window
 

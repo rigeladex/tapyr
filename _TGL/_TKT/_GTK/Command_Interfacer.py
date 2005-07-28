@@ -363,7 +363,7 @@ class CI_Event_Binder (_CI_) :
             ) :
         info                 = info or name
         event                = getattr \
-            (self.TNS.Eventname, info, getattr (self.TNS.Signal, info))
+            (self.TNS.Eventname, info, getattr (self.TNS.Signal, info, None))
         self.bindings [name] = [event, callback, []]
         ### all other command interfacers (menu, toolbar) are enabled by
         ### default -> enable the binding as well

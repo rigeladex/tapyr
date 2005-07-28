@@ -32,6 +32,7 @@
 #    20-May-2005 (MG) New properties `size` and `position` added,
 #                     `memory_attributes` added
 #    20-May-2005 (MG) `present` added
+#    27-Jul-2005 (MG) Property `focus` added
 #    ««revision-date»»···
 #--
 
@@ -44,37 +45,38 @@ class Window (GTK.Bin) :
 
     GTK_Class        = GTK.gtk.Window
     __gtk_properties = \
-        ( GTK.Property     ( "accel_group"
-                           , get = lambda s :s._accel_group
-                           , set = None
-                           )
-        , GTK.SG_Property  ("accept_focus")
-        , GTK.Property     ("allow_grow")
-        , GTK.Property     ("allow_shrink")
-        , GTK.SG_Property  ("decorated")
-        , GTK.Property     ("default_height")
-        , GTK.Property     ("default_width")
-        , GTK.SG_Property  ("destroy_with_parent")
-        , GTK.SG_Property  ("focus_on_map")
-        , GTK.SG_Property  ("gravity")
-        , GTK.Property     ("has_toplevel_focus", set = None)
-        , GTK.SG_Property  ("icon")
-        , GTK.SG_Property  ("icon_name")
-        , GTK.Property     ("is_active", set = None)
-        , GTK.SG_Property  ("modal")
+        ( GTK.Property            ( "accel_group"
+                                  , get = lambda s :s._accel_group
+                                  , set = None
+                                  )
+        , GTK.SG_Property         ("accept_focus")
+        , GTK.Property            ("allow_grow")
+        , GTK.Property            ("allow_shrink")
+        , GTK.SG_Property         ("decorated")
+        , GTK.Property            ("default_height")
+        , GTK.Property            ("default_width")
+        , GTK.SG_Property         ("destroy_with_parent")
+        , GTK.SG_Object_Property  ("focus")
+        , GTK.SG_Property         ("focus_on_map")
+        , GTK.SG_Property         ("gravity")
+        , GTK.Property            ("has_toplevel_focus", set = None)
+        , GTK.SG_Property         ("icon")
+        , GTK.SG_Property         ("icon_name")
+        , GTK.Property            ("is_active", set = None)
+        , GTK.SG_Property         ("modal")
         , GTK.SG_Property
             ("position", set = lambda s, v : s.wtk_object.move (* v))
-        , GTK.SG_Property  ("resizable")
-        , GTK.SG_Property  ("role")
-        , GTK.SG_Property  ("screen")
+        , GTK.SG_Property         ("resizable")
+        , GTK.SG_Property         ("role")
+        , GTK.SG_Property         ("screen")
         , GTK.SG_Property
             ("size", set = lambda s, v : s.wtk_object.set_default_size (* v))
-        , GTK.SG_Property  ("skip_pager_hint")
-        , GTK.SG_Property  ("skip_taskbar_hint")
-        , GTK.SG_Property  ("title")
-        , GTK.Property     ("type")
-        , GTK.SG_Property  ("type_hint")
-        , GTK.Property     ("window_position")
+        , GTK.SG_Property         ("skip_pager_hint")
+        , GTK.SG_Property         ("skip_taskbar_hint")
+        , GTK.SG_Property         ("title")
+        , GTK.Property            ("type")
+        , GTK.SG_Property         ("type_hint")
+        , GTK.Property            ("window_position")
         )
 
     _wtk_delegation  = GTK.Delegation \
