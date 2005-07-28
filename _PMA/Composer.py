@@ -111,8 +111,9 @@ class Composer (TFL.Meta.Object) :
     domain         = TFL.Environment.mailname ()
     user           = TFL.Environment.username
 
-    bounce_format  = "\n".join \
-        ( ( """To:          """
+    resend_format  = "\n".join \
+        ( ( """From:        %(user)s@%(domain)s"""
+          , """To:          """
           , """Cc:          """
           , """Bcc:         """
           )
@@ -156,6 +157,14 @@ class Composer (TFL.Meta.Object) :
         self.locals  = dict (domain = self.domain, user = self.user)
     # end def __init__
 
+    def resend (self, msg) :
+        """Resend `msg` to other addresses unchanged (except for `Resent-`
+           headers).
+        """
+        buffer = self.resend_format % PMA.Msg_Scope (msg, self.locals)
+        self._send (buffer, lambda b : self._finish_resend (msg, b))
+    # end def resend
+
     def compose (self) :
         """Compose and send a new email."""
         self._send (self.compose_format % self.locals, self._finish_edit)
@@ -168,10 +177,6 @@ class Composer (TFL.Meta.Object) :
             buffer = self._reply_subject_prefix_pat.sub (r"\1Re: ", buffer)
         self._send (buffer, self._finish_edit)
     # end def reply
-
-    def _finish_bounce (self, msg, buffer) :
-        pass # «py-statement»···
-    # end def _finish_bounce
 
     def _finish_edit (self, buffer) :
         if buffer :
@@ -186,8 +191,30 @@ class Composer (TFL.Meta.Object) :
         if self.send_cb is not None :
             email = self.send_cb (email)
         if email and self.smtp :
-            self.smtp (email)
+            self.smtp (email, send_cb = self.send_cb)
     # end def _finish_edit
+
+    def _finish_resend (self, msg, buffer) :
+        if buffer :
+            email    = msg.email
+            envelope = Lib.message_from_string (buffer)
+            for k in envelope.keys () :
+                if k.lower () not in ("bcc", "dcc") :
+                    n = "Resent-%s" % k
+                    for h in envelope.get_all (k, []) :
+                        if h :
+                            email [n] = h
+            email ["Resent-date"]       = Lib.formatdate ()
+            email ["Resent-message-id"] = Lib.make_msgid ()
+            self.smtp (email, envelope)
+    # end def _finish_resend
+
+    def _finish__send (self, email, envelope = None, send_cb = None) :
+        if send_cb is not None :
+            email = send_cb (email)
+        if email and self.smtp :
+            self.smtp (email, envelope)
+    # end def _finish__send
 
     def _send (self, buffer, finish_cb) :
         Editor_Thread (buffer, self.editor, finish_cb).start ()
@@ -203,6 +230,7 @@ def command_spec (arg_array = None) :
             , "-editor:S?Command used to start editor"
             , "-mail_host:S=mails?Name of SMTP server to use"
             , "-reply:S?Message to reply to"
+            , "-Resend:S?Message to resend"
             , "-user:S?Name of sender"
             )
         , description =
@@ -218,6 +246,8 @@ def main (cmd) :
     comp = Composer   (cmd.editor, cmd.user, cmd.domain, smtp)
     if cmd.reply :
         comp.reply    (PMA.message_from_file (cmd.reply))
+    if cmd.Resend :
+        comp.resend   (PMA.message_from_file (cmd.Resend))
     else :
         comp.compose  ()
 # end def main
@@ -238,7 +268,7 @@ Reply-to:    tanzer@swing.cluster (Christian Tanzer)
 Christian Tanzer                                    http://www.c-tanzer.at/
 """
 
-_exmh_bounce_buffer  = """
+_exmh_resend_buffer  = """
 Resent-To:
 Resent-cc:
 Resent-fcc:

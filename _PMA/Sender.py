@@ -53,7 +53,8 @@ class Sender (TFL.Meta.Object) :
         to = envelope ["To"].split (",")
         for k in "cc", "bcc", "dcc" :
             for h in envelope.get_all (k, []) :
-                to.extend (h.split (","))
+                if h :
+                    to.extend (h.split (","))
             if k != "cc" :
                 del email [k]
         self.send (envelope ["From"], to, email.as_string ())

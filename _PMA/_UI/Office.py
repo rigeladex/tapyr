@@ -71,7 +71,7 @@ class Office (PMA.UI.Mixin) :
         TNS                    = self.TNS
         AC                     = self.AC
         for boxes, views in ( (office.storage_boxes,  self.storage_views)
-                        ,     (office.delivery_boxes, self.delivery_views)
+                            , (office.delivery_boxes, self.delivery_views)
                             ) :
             for box in boxes :
                 box._ui_tree = bv = UI.Mailbox_BV \
@@ -177,7 +177,7 @@ class Office (PMA.UI.Mixin) :
             cm.bind_to_widget       (w, "click_3")
             event_binder.add_widget (w)
     # end def _setup_bv_commands
-    
+
     def _setup_common_cmds (self) :
         Cmd    = self.ANS.UI.Command
         cmd    = self.model.cmd_mgr.cmd
@@ -187,14 +187,13 @@ class Office (PMA.UI.Mixin) :
                              ) :
             add  = grp.add_command
             for name, callback, ev_name in \
-                ( ( "Next Message",       self.show_next_message, "next_message")
-                , ( "Previous Message",   self.show_prev_message, "prev_message")
-                , ( "Next Useen Message", self.show_next_unseen,  "next_unseen")
+                ( ( "Next Message",     self.show_next_message, "next_message")
+                , ( "Previous Message", self.show_prev_message, "prev_message")
+                , ( "Next Unseen",      self.show_next_unseen,  "next_unseen")
                 ) :
+                ev_bind = ()
                 if evb :
                     ev_bind = ("%s:%s" % (evb, ev_name), )
-                else :
-                    ev_bind = ()
                 add (Cmd (name, callback), if_names = cms + ev_bind)
     # end def _setup_common_cmds
 
@@ -206,7 +205,7 @@ class Office (PMA.UI.Mixin) :
         grp.interfacers ["cm_mv"].bind_to_widget (self.mb_msg_view, "click_3")
         grp.interfacers ["ev_mv"].add_widget     (self.mb_msg_view)
     # end def _setup_mv_commands
-    
+
     def _select_message (self, msg) :
         if msg :
             box                        = msg.mailbox

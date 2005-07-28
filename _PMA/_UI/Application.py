@@ -146,7 +146,7 @@ class Application (PMA.UI.Mixin) :
         , batchable      = True
         , precondition   = None
         , description    =
-          "This group provides commands for managing the forest of mailboxes"
+          "XXX"
         )
     _Office_Cmd_Group    = Record \
         ( name           = "Office"
@@ -174,14 +174,14 @@ class Application (PMA.UI.Mixin) :
           "This group provides commands for managing the currently "
           "selected message(s)"
         )
-    _Outline_Cmd_Group   = Record \
-        ( name           = "Outline"
-        , if_names       = ("cm_mo", )
+    _Msg_Part_Cmd_Group   = Record \
+        ( name           = "Message-Part"
+        , if_names       = ("mb", "cm_mo", )
         , batchable      = True
         , precondition   = None
         , description    =
           "This group provides commands for managing the currently "
-          "selected message via the outline display"
+          "selected message via the message outline display"
         )
     _Scripts_Cmd_Group   = Record \
         ( name             = "Scripts"
@@ -203,9 +203,9 @@ class Application (PMA.UI.Mixin) :
     Command_Groups       = \
         ( "_File_Cmd_Group"
         , "_Office_Cmd_Group"
-        , "_Outline_Cmd_Group"
         , "_Mbox_Cmd_Group"
         , "_Message_Cmd_Group"
+        , "_Msg_Part_Cmd_Group"
         , "_Scripts_Cmd_Group"
         , "_Help_Cmd_Group"
         )
@@ -285,7 +285,7 @@ class Application (PMA.UI.Mixin) :
     # end def _after_start_mainloop
 
     def _create_command_mgr (self) :
-        
+
         self.cmd_mgr = self.AC.ui_state.cmd_mgr = self.ANS.UI.Command_Mgr \
             ( AC             = self.AC
             , change_counter = self.changes

@@ -10,7 +10,7 @@ bv
 - delete box
 - rename box
 - commit
-- move (selection or select default target) 
+- move (selection or select default target)
 - sync
 
 mv
@@ -35,10 +35,10 @@ mo
 - print
 - save
 - delete
-- externalize 
+- externalize
 - purge (delete and add new header)
 - mime commands (sub menu, dyn menu)(start bowser, start
-  openoffice, ...) 
+  openoffice, ...)
 - edit
 
 md
@@ -50,7 +50,7 @@ md
 - commit
 - print
 - save
-- reply/forward/bounce
+- reply/forward/resend  ### BEWARE: s/bounce/resend/
 - pass to external command
 - edit
 - span/unspam
