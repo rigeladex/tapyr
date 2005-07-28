@@ -38,6 +38,7 @@
 #                     added, `Counting_Property` removed
 #    28-Jul-2005 (MG) `s/Changes.changes/Changes.value/g`
 #    28-Jul-2005 (MG) `Changes.__cmp__` and `Changes.__str__` added
+#    28-Jul-2005 (CT) `_extend_status_props` and `_extend_status_prop` added
 #    ««revision-date»»···
 #--
 
@@ -100,31 +101,32 @@ class Changes (TFL.Meta.Object) :
 class UI_State (TFL.Meta.Object) :
 
     def __init__ (self, ** kw) :
-        self.__dict__.update   (kw)
+        self.__dict__.update (kw)
         self.changes = changes = Changes ()
+        self._extend_status_props (changes)
+    # end def __init__
 
+    def _extend_status_props (self, changes) :
         ### define new properties for the status class to update the change
         ### counter of the application
-        return
         for cls, properties in \
             ( (PMA.Off_Status, ("current_box", "target_box"))
             , (PMA.Box_Status, ("current_message", ))
             ) :
-            for prop_name in properties :
-                prop = getattr (cls, prop_name)
-                def _set (obj, value) :
-                    prop.fset   (obj, value)
-                    changes.inc ()
-                # end def _set
-                setattr (cls, prop_name, property (prop.fget, _set, prop.fdel))
-        for cls, properties in \
-            ( (PMA.Off_Status, ("current_box", "target_box"))
-            , (PMA.Box_Status, ("current_message", ))
-            ) :
-            for prop_name in properties :
-                prop = getattr (cls, prop_name)
-                print prop_name, prop, prop.fset
-    # end def __init__
+            for name in properties :
+                self._extend_status_prop (cls, name, changes)
+    # end def _extend_status_props
+
+    def _extend_status_prop (self, cls, name, changes) :
+        prop       = getattr (cls, name)
+        _old_set   = prop.fset
+        def _set (obj, value) :
+            result = _old_set (obj, value)
+            changes.inc ()
+            return result
+        setattr \
+            (cls, name, property (prop.fget, _set, prop.fdel, prop.__doc__))
+    # end def _extend_status_prop
 
 # end class UI_State
 

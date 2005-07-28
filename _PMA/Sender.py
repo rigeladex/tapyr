@@ -28,6 +28,7 @@
 # Revision Dates
 #    26-Jul-2005 (CT) Creation
 #    27-Jul-2005 (CT) Creation continued
+#    28-Jul-2005 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -153,17 +154,17 @@ class Sender (TFL.Meta.Object) :
 
     def _finish_edit (self, buffer) :
         if buffer :
-            buffer = buffer.replace ("--text follows this line--", "")
-            msg    = Lib.message_from_string (buffer)
-            if not "Date" in msg :
-                del msg ["Date"]
-                msg ["Date"] = Lib.formatdate ()
-            subject = msg.get ("Subject")
+            email = Lib.message_from_string \
+                (buffer.replace ("--text follows this line--", ""))
+            if not "Date" in email :
+                del email ["Date"]
+                email ["Date"] = Lib.formatdate ()
+            subject = email.get ("Subject")
             ### XXX process X-PMA-attach headers
         if self.send_cb is not None :
-            msg = self.send_cb (msg)
-        if msg :
-            self._smtp_send (msg)
+            email = self.send_cb (email)
+        if email :
+            self._smtp_send (email)
     # end def _finish_edit
 
     def _send (self, buffer) :
@@ -171,16 +172,16 @@ class Sender (TFL.Meta.Object) :
         editor.start ()
     # end def _send
 
-    def _smtp_send (self, msg) :
-        to = msg ["To"].split (",")
+    def _smtp_send (self, email) :
+        to = email ["To"].split (",")
         for k in "cc", "bcc", "dcc" :
-            for h in msg.get_all (k, []) :
+            for h in email.get_all (k, []) :
                 to.extend (h.split (","))
             if k != "cc" :
-                del msg [k]
+                del email [k]
         server = SMTP   (self.mail_host)
         server.helo     ()
-        server.sendmail (msg ["From"], to, msg.as_string ())
+        server.sendmail (email ["From"], to, email.as_string ())
         server.quit     ()
     # end def _smtp_send
 

@@ -41,6 +41,7 @@
 #    26-Jul-2005 (MG) `s/select_folder/select_box/g`
 #    26-Jul-2005 (MG) Allow multiselection of messages
 #    28-Jul-2005 (MG) New commands added
+#    28-Jul-2005 (CT) s/next_unseen_message/next_unseen/
 #    ««revision-date»»···
 #--
 
@@ -145,10 +146,10 @@ class Office (PMA.UI.Mixin) :
         print "P", event.widget
     # end def show_prev_folder
 
-    def show_next_unseen_message (self, event = None) :
+    def show_next_unseen (self, event = None) :
         """Show the next unseen message."""
         print "Unseen"
-    # end def show_next_unseen_message
+    # end def show_next_unseen
 
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
@@ -204,15 +205,9 @@ class Office (PMA.UI.Mixin) :
         Cmd  = self.ANS.UI.Command
         add  = cmd_mgr.add_command
         for name, callback, ev_name in \
-            ( ( "Next Message"
-              , self.show_next_message, "next_message"
-              )
-            , ( "Previous Message"
-              , self.show_prev_message, "prev_message"
-              )
-            , ( "Next Useen Message"
-              , self.show_next_unseen_message, "next_unseen_message"
-              )
+            ( ( "Next Message",       self.show_next_message, "next_message")
+            , ( "Previous Message",   self.show_prev_message, "prev_message")
+            , ( "Next Useen Message", self.show_next_unseen,  "next_unseen")
             ) :
             add ( Cmd (name, callback)
                 , if_names = ("cm", "ev:%s" % (ev_name, ))
@@ -232,5 +227,3 @@ class Office (PMA.UI.Mixin) :
 if __name__ != "__main__" :
     PMA.UI._Export ("*")
 ### __END__ PMA.UI.Office
-
-
