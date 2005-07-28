@@ -492,8 +492,7 @@ m = mb.messages [60]
 print u"\n".join (list (m.formatted ()) [:100]).encode ("iso-8859-1", "replace")
 print u"\n".join (m.formatted ()).encode ("iso-8859-1", "replace")
 m = mb.messages [-3]
-tb = PMA.Mailbox ("/swing/private/tan
-zer/PMA/S")
+tb = PMA.Mailbox ("/swing/private/tanzer/PMA/S")
 tb.import_from_mailbox (mb, transitive = True)
 tb.add_messages (m)
 print tb.summary ().encode ("iso-8859-1", "replace")
