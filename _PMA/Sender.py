@@ -50,14 +50,14 @@ class Sender (TFL.Meta.Object) :
     def __call__ (self, email, envelope = None) :
         if envelope is None :
             envelope = email
-        to = envelope ["To"].split (",")
+        to = set (t.strip () for t in envelope ["To"].split (","))
         for k in "cc", "bcc", "dcc" :
             for h in envelope.get_all (k, []) :
                 if h :
-                    to.extend (h.split (","))
+                    to.update (t.strip () for t in h.split (","))
             if k != "cc" :
                 del email [k]
-        self.send (envelope ["From"], to, email.as_string ())
+        self.send (envelope ["From"], list (to), email.as_string ())
     # end def __call__
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :

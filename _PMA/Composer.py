@@ -249,7 +249,7 @@ class Composer (TFL.Meta.Object) :
                             )
                         email = mp
                     email.attach (p)
-        del email ["ah"]
+        del email [ah]
         return email
     # end def _process_attachement_headers
 
