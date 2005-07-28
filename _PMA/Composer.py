@@ -40,6 +40,7 @@ from   _PMA                    import PMA
 from   _PMA                    import Lib
 
 import _PMA.Message
+import _PMA.Mime
 import _TFL._Meta.Object
 import _TFL.Environment
 
@@ -47,6 +48,7 @@ from   _TFL.Regexp             import *
 
 from   smtplib                 import SMTP
 import sos
+import textwrap
 import threading
 
 class Editor_Thread (TFL.Meta.Object, threading.Thread) :
@@ -107,22 +109,15 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
 class Composer (TFL.Meta.Object) :
     """Support interactive sending of emails"""
 
-    editor         = "emacsclient --alternate-editor vi"
     domain         = TFL.Environment.mailname ()
+    editor         = "emacsclient --alternate-editor vi"
     user           = TFL.Environment.username
-
-    resend_format  = "\n".join \
-        ( ( """From:        %(user)s@%(domain)s"""
-          , """To:          """
-          , """Cc:          """
-          , """Bcc:         """
-          )
-        )
 
     compose_format = "\n".join \
         ( ( """From:        %(user)s@%(domain)s"""
           , """To:          """
           , """Subject:     """
+          , """Bcc:         %(user)s@%(domain)s"""
           , """X-mailer:    PMA"""
           , """--text follows this line--"""
           , """"""
@@ -133,6 +128,7 @@ class Composer (TFL.Meta.Object) :
         ( ( """From:        %(user)s@%(domain)s"""
           , """To:          """
           , """Subject:     Re: %(subject)s"""
+          , """Bcc:         %(user)s@%(domain)s"""
           , """X-mailer:    PMA"""
           , """In-reply-to: Your message of "%(message_date)s" """
           , """             %(message_id)s"""
@@ -143,6 +139,15 @@ class Composer (TFL.Meta.Object) :
           )
         )
 
+    resend_format  = "\n".join \
+        ( ( """From:        %(user)s@%(domain)s"""
+          , """To:          """
+          , """Cc:          """
+          , """Bcc:         """
+          )
+        )
+
+    _attachement_header       = "PMA-Attach-File"
     _reply_subject_prefix_pat = Regexp \
         ( "^(Subject: *)(Re|AW|FW): *((Re|AW|FW): *)+"
         , re.IGNORECASE | re.MULTILINE
@@ -187,11 +192,11 @@ class Composer (TFL.Meta.Object) :
                 del email ["Date"]
                 email ["Date"] = Lib.formatdate ()
             subject = email.get ("Subject")
-            ### XXX process X-PMA-attach headers
+            email   = self._process_attachement_headers (email)
         if self.send_cb is not None :
             email = self.send_cb (email)
         if email and self.smtp :
-            self.smtp (email, send_cb = self.send_cb)
+            self._finish__send (email, send_cb = self.send_cb)
     # end def _finish_edit
 
     def _finish_resend (self, msg, buffer) :
@@ -206,7 +211,7 @@ class Composer (TFL.Meta.Object) :
                             email [n] = h
             email ["Resent-date"]       = Lib.formatdate ()
             email ["Resent-message-id"] = Lib.make_msgid ()
-            self.smtp (email, envelope)
+            self._finish__send (email, envelope = envelope)
     # end def _finish_resend
 
     def _finish__send (self, email, envelope = None, send_cb = None) :
@@ -215,6 +220,37 @@ class Composer (TFL.Meta.Object) :
         if email and self.smtp :
             self.smtp (email, envelope)
     # end def _finish__send
+
+    def _process_attachement_headers (self, email) :
+        ah = self._attachement_header
+        for value in email.get_all (ah, []) :
+            if value :
+                if "\n" in value :
+                    name, rest  = value.split ("\n", 1)
+                    add_headers = Lib.message_from_string \
+                        (textwrap.dedent (rest))
+                else :
+                    name        = value
+                    add_headers = None
+                p = PMA.Mime.Part (name.strip (";"), add_headers)
+                if p :
+                    if not email.is_multipart () :
+                        mp = Lib.MIMEMultipart ()
+                        ignore = set (mp.keys ())
+                        for k, v in email.items () :
+                            if k not in ignore :
+                                mp [k] = v
+                        mp.attach \
+                            ( Lib.MIMEText
+                                ( email.get_payload (decode = True)
+                                , _charset = email.get_charset ()
+                                )
+                            )
+                        email = mp
+                    email.attach (p)
+        del email ["ah"]
+        return email
+    # end def _process_attachement_headers
 
     def _send (self, buffer, finish_cb) :
         Editor_Thread (buffer, self.editor, finish_cb).start ()
