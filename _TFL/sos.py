@@ -53,6 +53,7 @@
 #                     `os.makedirs` instead of home grown code
 #    25-Jan-2005 (CT) `expanded_globs` added
 #    24-Mar-2005 (CT)  Moved into package `TFL`
+#    29-Jul-2005 (CT) Optional argument `create_dir` added to `tempfile_name`
 #    ««revision-date»»···
 #--
 
@@ -104,7 +105,7 @@ if (name == "nt") or (name == "win32") :
     # end if not hasattr (path, "samefile")
 # end if (name == "nt") or (name == "win32")
 
-def tempfile_name (in_dir = None) :
+def tempfile_name (in_dir = None, create_dir = False) :
     """Return a unqiue temporary filename. If `in_dir' is specified, the
        filename returned resides in the directory `in_dir'.
     """
@@ -112,6 +113,8 @@ def tempfile_name (in_dir = None) :
     try :
         if in_dir :
             tempdir, tempfile.tempdir = tempfile.tempdir, in_dir
+            if create_dir and not path.isdir (in_dir) :
+                mkdir (in_dir)
         result = tempfile.mktemp ()
     finally :
         if in_dir :
