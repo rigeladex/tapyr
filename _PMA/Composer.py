@@ -39,6 +39,8 @@
 #    29-Jul-2005 (CT) `locals` extended
 #    29-Jul-2005 (CT) `sos.unlink` of temporary file moved to avoid deletion
 #                     in case of exceptions
+#    29-Jul-2005 (CT) Use `subprocess.call` instead of `sos.system`
+#    29-Jul-2005 (CT) `forward` changed to allow multiple messages
 #    ««revision-date»»···
 #--
 
@@ -56,6 +58,7 @@ from   _TFL.Regexp             import *
 import _TFL.sos
 
 from   smtplib                 import SMTP
+import subprocess
 import textwrap
 import threading
 
@@ -70,6 +73,7 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
         self.buffer          = buffer
         self.editor          = editor
         self.finish_callback = finish_callback
+        #print "Editor_Thread.__init__"
         self.__super.__init__ \
             ( group  = None
             , name   = name
@@ -79,9 +83,11 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
     # end def __init__
 
     def run (self) :
-        bfn    = self._write_buffer (self.buffer)
-        cmd    = "%s %s" % (self.editor, bfn)
-        TFL.sos.system              (cmd)
+        bfn = self._write_buffer (self.buffer)
+        cmd = "%s %s" % (self.editor, bfn)
+        #print "Editor_Thread.run", bfn
+        subprocess.call (cmd, shell  = True)
+        #print "Editor_Thread.run after subprocess"
         result = self._read_buffer  (bfn)
         if result != self.buffer :
             self.finish_callback    (result, bfn)
@@ -200,10 +206,11 @@ class Composer (TFL.Meta.Object) :
         self._send (self._formatted (self.compose_format), self._finish_edit)
     # end def compose
 
-    def forward (self, msg) :
+    def forward (self, msg, * more_msgs) :
         """Forward `msg` as attachement of a new email."""
         buffer = self._formatted (self.forward_format, msg)
-        self._send (buffer, lambda * a : self._finish_forward (msg, * a))
+        self._send \
+            (buffer, lambda * a : self._finish_forward (msg, more_msgs, * a))
     # end def forward
 
     def reply (self, msg) :
@@ -258,11 +265,13 @@ class Composer (TFL.Meta.Object) :
         TFL.sos.unlink (bfn)
     # end def _finish_edit
 
-    def _finish_forward (self, msg, buffer, bfn) :
+    def _finish_forward (self, msg, more_msgs, buffer, bfn) :
         if buffer :
             email    = msg.email
             envelope = self._as_multipart (self._as_message (buffer))
-            envelope.attach    (Lib.MIMEMessage (email))
+            envelope.attach (Lib.MIMEMessage (email))
+            for m in more_msgs :
+                envelope.attach (Lib.MIMEMessage (m.email))
             self._finish__send (envelope)
         TFL.sos.unlink (bfn)
     # end def _finish_forward
