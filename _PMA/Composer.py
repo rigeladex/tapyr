@@ -53,9 +53,9 @@ import _TFL._Meta.Object
 import _TFL.Environment
 
 from   _TFL.Regexp             import *
+import _TFL.sos
 
 from   smtplib                 import SMTP
-import sos
 import textwrap
 import threading
 
@@ -81,19 +81,19 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
     def run (self) :
         bfn    = self._write_buffer (self.buffer)
         cmd    = "%s %s" % (self.editor, bfn)
-        sos.system                  (cmd)
+        TFL.sos.system              (cmd)
         result = self._read_buffer  (bfn)
         if result != self.buffer :
             self.finish_callback    (result, bfn)
         else :
-            sos.unlink              (bfn)
+            TFL.sos.unlink          (bfn)
     # end def run
 
     def _read_buffer (self, bfn) :
         result = None
         try :
             f = open (bfn)
-        except (IOError, sos.error) :
+        except (IOError, TFL.sos.error) :
             pass
         else :
             try :
@@ -104,8 +104,8 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
     # end def _read_buffer
 
     def _write_buffer (self, buffer) :
-        result = sos.tempfile_name \
-            (sos.expanded_path ("~/PMA/.drafts"), create_dir = True)
+        result = TFL.sos.tempfile_name \
+            (TFL.sos.expanded_path ("~/PMA/.drafts"), create_dir = True)
         f = open (result, "w")
         try :
             f.write (buffer)
@@ -255,7 +255,7 @@ class Composer (TFL.Meta.Object) :
             email   = self._process_attachement_headers (email)
         if email and self.smtp :
             self._finish__send (email, send_cb = self.send_cb)
-        sos.unlink (bfn)
+        TFL.sos.unlink (bfn)
     # end def _finish_edit
 
     def _finish_forward (self, msg, buffer, bfn) :
@@ -264,7 +264,7 @@ class Composer (TFL.Meta.Object) :
             envelope = self._as_multipart (self._as_message (buffer))
             envelope.attach    (Lib.MIMEMessage (email))
             self._finish__send (envelope)
-        sos.unlink (bfn)
+        TFL.sos.unlink (bfn)
     # end def _finish_forward
 
     def _finish_resend (self, msg, buffer, bfn) :
@@ -280,7 +280,7 @@ class Composer (TFL.Meta.Object) :
             email ["Resent-date"]       = Lib.formatdate ()
             email ["Resent-message-id"] = Lib.make_msgid ()
             self._finish__send (email, envelope = envelope)
-        sos.unlink (bfn)
+        TFL.sos.unlink (bfn)
     # end def _finish_resend
 
     def _finish__send (self, email, envelope = None, send_cb = None) :
@@ -309,7 +309,8 @@ class Composer (TFL.Meta.Object) :
                 else :
                     name        = value
                     add_headers = None
-                p = PMA.Mime.Part (name.strip (";"), add_headers)
+                p = PMA.Mime.Part \
+                    (TFL.sos.expand_path (name.strip (";")), add_headers)
                 if p :
                     if not email.is_multipart () :
                         email = self._as_multipart (email)
