@@ -37,6 +37,8 @@
 #    28-Jul-2005 (MG) `_Export`: onyl export `Composer` (if `*` is used, `main`
 #                     would be exported too)
 #    29-Jul-2005 (CT) Creation continued..... (forward)
+#    29-Jul-2005 (CT) `main` and `command_spec` renamed to `_main` and
+#                     `_command_spec` to avoid name clashes in PMA namespace
 #    ««revision-date»»···
 #--
 
@@ -46,6 +48,7 @@ from   _PMA                    import Lib
 
 import _PMA.Message
 import _PMA.Mime
+import _PMA.Sender
 import _TFL._Meta.Object
 import _TFL.Environment
 
@@ -118,12 +121,13 @@ class Composer (TFL.Meta.Object) :
     domain         = TFL.Environment.mailname ()
     editor         = "emacsclient --alternate-editor vi"
     user           = TFL.Environment.username
+    email_address  = "%s@%s" % (user, domain)
 
     compose_format = "\n".join \
-        ( ( """From:        %(user)s@%(domain)s"""
+        ( ( """From:        %(email_address)s"""
           , """To:          """
           , """Subject:     """
-          , """Bcc:         %(user)s@%(domain)s"""
+          , """Bcc:         %(email_address)s"""
           , """X-mailer:    PMA"""
           , body_marker
           , """"""
@@ -131,11 +135,11 @@ class Composer (TFL.Meta.Object) :
         )
 
     forward_format = "\n".join \
-        ( ( """From:        %(user)s@%(domain)s"""
+        ( ( """From:        %(email_address)s"""
           , """To:          """
           , """Subject:     FW: %(subject)s"""
           , """Cc:          """
-          , """Bcc:         %(user)s@%(domain)s"""
+          , """Bcc:         %(email_address)s"""
           , body_marker
           , """see attached mail"""
           , """"""
@@ -143,10 +147,10 @@ class Composer (TFL.Meta.Object) :
         )
 
     reply_format   = "\n".join \
-        ( ( """From:        %(user)s@%(domain)s"""
+        ( ( """From:        %(email_address)s"""
           , """To:          """
           , """Subject:     Re: %(subject)s"""
-          , """Bcc:         %(user)s@%(domain)s"""
+          , """Bcc:         %(email_address)s"""
           , """X-mailer:    PMA"""
           , """In-reply-to: Your message of "%(message_date)s" """
           , """             %(message_id)s"""
@@ -158,7 +162,7 @@ class Composer (TFL.Meta.Object) :
         )
 
     resend_format  = "\n".join \
-        ( ( """From:        %(user)s@%(domain)s"""
+        ( ( """From:        %(email_address)s"""
           , """To:          """
           , """Cc:          """
           , """Bcc:         """
@@ -298,7 +302,7 @@ class Composer (TFL.Meta.Object) :
 
 # end class Composer
 
-def command_spec (arg_array = None) :
+def _command_spec (arg_array = None) :
     from _TFL.Command_Line import Command_Line
     return Command_Line \
         ( option_spec =
@@ -315,10 +319,9 @@ def command_spec (arg_array = None) :
         , max_args    = 0
         , arg_array   = arg_array
         )
-# end def command_spec
+# end def _command_spec
 
-def main (cmd) :
-    import _PMA.Sender
+def _main (cmd) :
     smtp = PMA.Sender (cmd.mail_host)
     comp = Composer   (cmd.editor, cmd.user, cmd.domain, smtp)
     if cmd.forward :
@@ -329,60 +332,11 @@ def main (cmd) :
         comp.resend   (PMA.message_from_file (cmd.Resend))
     else :
         comp.compose  ()
-# end def main
-
-_emacs_compose_buffer = """
-To:          «text»
-Subject:     «text»
-BCC:         tanzer@swing.cluster
-««mail-cc»»
-««mail-bcc»»
-««mail-from»»
-Reply-to:    tanzer@swing.cluster (Christian Tanzer)
---text follows this line--
-
-«text»
-
---
-Christian Tanzer                                    http://www.c-tanzer.at/
-"""
-
-_exmh_resend_buffer  = """
-Resent-To:
-Resent-cc:
-Resent-fcc:
-"""
-
-_exmh_compose_buffer = """
-To:          «text»
-Subject:     «text»
-From:        tanzer@swing.cluster (Christian Tanzer)
-Reply-to:    tanzer@swing.cluster (Christian Tanzer)
-DCC:         tanzer@swing.cluster (Christian Tanzer)
-««mail-cc»»
-««mail-bcc»»
---------
-
-«text»
-"""
-
-_exmh_reply_buffer = """
-To:          "Pichler Fruhstorfer" <pichler.fruhstorfer@chello.at>
-Subject:     Re: LV 7/05
-In-reply-to: Your message of "Mon, 18 Jul 2005 15:44:02 +0200."
-             <GEEMLHOFMGMPMIIOKFNLOEJJCHAA.pichler.fruhstorfer@chello.at>
-DCC:         tanzer@swing.co.at
-Reply-to:    tanzer@swing.co.at
-From:        tanzer@swing.cluster (Christian Tanzer)
-««mail-cc»»
-««mail-bcc»»
---------
-
-«text»
-"""
+# end def _main
 
 if __name__ != "__main__" :
     PMA._Export ("Composer")
 else :
-    main (command_spec ())
+    PMA.load_user_config ()
+    _main (_command_spec ())
 ### __END__ PMA.Composer

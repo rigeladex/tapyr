@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-May-2005 (CT) Creation
+#    29-Jul-2005 (CT) Call to `load_user_config` added
 #    ««revision-date»»···
 #--
 
@@ -34,6 +35,7 @@ from   _PMA import PMA
 import _PMA._UI.Starter
 
 def main () :
+    PMA.load_user_config ()
     cmd = PMA.UI.Starter.command_spec ()
     PMA.UI.Starter (PMA, cmd)
 # end def main

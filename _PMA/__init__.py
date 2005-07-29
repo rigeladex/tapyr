@@ -28,6 +28,8 @@
 # Revision Dates
 #    31-Aug-2004 (CT) Creation
 #    22-Mar-2005 (CT) Moved from lib/python/_TFL to svn repository
+#    29-Jul-2005 (CT) `default_charset` and `load_user_config` added
+#    29-Jul-2005 (CT) `version` and `authors` added
 #    ««revision-date»»···
 #--
 
@@ -35,6 +37,22 @@ from   _TFL.Package_Namespace import Package_Namespace
 
 PMA = Package_Namespace ()
 
+PMA.authors         = ["Christian Tanzer", "Martin Glueck"]
+PMA.major_version   = _M = 0
+PMA.minor_version   = _m = 5
+PMA.patchlevel      = _p = 0
+PMA.version         = __version__ = "%s.%s.%s" % (_M, _m, _p)
+PMA.default_charset = "us-ascii"
+
+def load_user_config (config_fn = "~/PMA/.config.py") :
+    import sos
+    try :
+        execfile (sos.expanded_path (config_fn), dict (PMA = PMA))
+    except IOError :
+        pass
+PMA.load_user_config = load_user_config
+
+del load_user_config
 del Package_Namespace
 
 ### __END__ PMA.__init__

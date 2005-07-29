@@ -34,6 +34,7 @@
 #    26-Jul-2005 (CT) `save_status` changed to call `save_status` of each
 #                     mailbox
 #    26-Jul-2005 (CT) `load_status` factored and handling of `Off_Status` added
+#    29-Jul-2005 (CT) `storage_path` removed (dead code)
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,9 @@ from   subdirs                 import subdirs
 
 class Office (TFL.Meta.Object) :
     """Personal post office"""
+
+    top_name           = "PMA"
+    delivery_area_name = "Delivery"
 
     def __init__ (self, root = None) :
         self.path           = path = self.default_path  (root)
@@ -105,27 +109,25 @@ class Office (TFL.Meta.Object) :
         return [PMA.Mailbox (sa) for sa in subdirs (path) if sa != da]
     # end def _storage_boxes
 
-    ### class methods
+    @classmethod
     def default_path (cls, root = None) :
         if root is None :
             root = Environment.home_dir
-        return cls._path (root, "PMA")
-    default_path = classmethod (default_path)
+        return cls._path (root, cls.top_name)
+    # end def default_path
 
+    @classmethod
     def delivery_path (cls, root) :
-        return cls._path (root, "D")
-    delivery_path = classmethod (delivery_path)
+        return cls._path (root, cls.delivery_area_name)
+    # end def delivery_path
 
-    def storage_path (cls, root) :
-        return cls._path (root, "S")
-    storage_path = classmethod (storage_path)
-
+    @classmethod
     def _path (cls, root, stem) :
         result = sos.path.join (root, stem)
         if not sos.path.isdir (result) :
             sos.mkdir (result)
         return result
-    _path = classmethod (_path)
+    # end def _path
 
 # end class Office
 

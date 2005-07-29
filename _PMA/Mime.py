@@ -41,7 +41,6 @@ from   _TFL.Regexp             import *
 
 import mimetypes
 
-default_charset      = "iso-8859-1"
 default_type         = "application/octet-stream"
 unencoded_mime_types = ("text/plain", "message/rfc822")
 
@@ -50,16 +49,16 @@ mh_pat               = Regexp (r"%sMH%s.*%s\d+$" % (_sep, _sep, _sep))
 
 extension_map        = {}
 
-def _add_extensions (typ, enc, * extensions) :
+def add_extensions (typ, enc, * extensions) :
     for ext in extensions :
         extension_map [ext] = (typ, enc)
-# end def _add_extensions
+# end def add_extensions
 
-_add_extensions \
+add_extensions \
     ("text/plain", None, ".pl", ".c", ".cc", ".h", ".el", ".lse", ".txt")
-_add_extensions \
+add_extensions \
     ("text/x-python", None, ".py")
-_add_extensions \
+add_extensions \
     ("application/gzip", "base64", ".gz", ".tgz")
 
 class _M_Type_ (TFL.Meta.Object) :
@@ -107,7 +106,7 @@ class _M_Type_Text_ (_M_Type_) :
     mode    = "r"
 
     def _new (self, mt, st, b) :
-        return self.MIME (b, _subtype = st, _charset = default_charset)
+        return self.MIME (b, _subtype = st, _charset = PMA.default_charset)
     # end def _new
 
 # end class _M_Type_Text_

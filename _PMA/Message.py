@@ -96,6 +96,8 @@
 #    25-May-2005 (CT) Bug fix `self.status` initialization
 #    26-Jul-2005 (CT) `Msg_Scope` added and used
 #    27-Jul-2005 (CT) `Msg_Scope.__getitem__` improved
+#    29-Jul-2005 (CT) `main` and `command_spec` renamed to `_main` and
+#                     `_command_spec` to avoid name clashes in PMA namespace
 #    ««revision-date»»···
 #--
 
@@ -794,7 +796,7 @@ def message_from_file (filename, parser = None) :
     return Message (email, sos.path.split (filename) [-1])
 # end def message_from_file
 
-def command_spec (arg_array = None) :
+def _command_spec (arg_array = None) :
     from   Command_Line import Command_Line
     return Command_Line \
         ( arg_spec    = ("message:S?Message to print")
@@ -805,14 +807,15 @@ def command_spec (arg_array = None) :
         , max_args    = 0
         , arg_array   = arg_array
         )
-# end def command_spec
+# end def _command_spec
 
-def main (cmd) :
+def _main (cmd) :
     parser = Lib.Parser ()
     for m in cmd.argv :
         msg = message_from_file (m, parser)
-        print u"\n".join (msg.formatted ()).encode ("iso-8859-15", "replace")
-# end def main
+        print u"\n".join \
+            (msg.formatted ()).encode (PMA.default_charset, "replace")
+# end def _main
 
 """
 from   _PMA                    import PMA
@@ -832,5 +835,6 @@ show (m)
 if __name__ != "__main__" :
     PMA._Export ("*")
 else :
-    main (command_spec ())
+    PMA.load_user_config ()
+    _main (_command_spec ())
 ### __END__ PMA.Message
