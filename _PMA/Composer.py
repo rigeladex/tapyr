@@ -31,7 +31,8 @@
 #    28-Jul-2005 (CT) Creation continued...
 #    28-Jul-2005 (CT) Renamed from `Sender` to `Composer`
 #    28-Jul-2005 (CT) `Sender` factored
-#    28-Jul-2005 (CT) Creation continued....
+#    28-Jul-2005 (CT) Creation continued.... (resend, attachements)
+#    29-Jul-2005 (CT) Creation continued..... (forward)
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,7 @@ class Editor_Thread (TFL.Meta.Object, threading.Thread) :
 class Composer (TFL.Meta.Object) :
     """Support interactive sending of emails"""
 
+    body_marker    = "--text follows this line--"
     domain         = TFL.Environment.mailname ()
     editor         = "emacsclient --alternate-editor vi"
     user           = TFL.Environment.username
@@ -119,7 +121,19 @@ class Composer (TFL.Meta.Object) :
           , """Subject:     """
           , """Bcc:         %(user)s@%(domain)s"""
           , """X-mailer:    PMA"""
-          , """--text follows this line--"""
+          , body_marker
+          , """"""
+          )
+        )
+
+    forward_format = "\n".join \
+        ( ( """From:        %(user)s@%(domain)s"""
+          , """To:          """
+          , """Subject:     FW: %(subject)s"""
+          , """Cc:          """
+          , """Bcc:         %(user)s@%(domain)s"""
+          , body_marker
+          , """see attached mail"""
           , """"""
           )
         )
@@ -133,7 +147,7 @@ class Composer (TFL.Meta.Object) :
           , """In-reply-to: Your message of "%(message_date)s" """
           , """             %(message_id)s"""
           , """References:  %(message_id)s"""
-          , """--text follows this line--"""
+          , body_marker
           , """%(From)s wrote at %(message_date)s:"""
           , """"""
           )
@@ -162,18 +176,16 @@ class Composer (TFL.Meta.Object) :
         self.locals  = dict (domain = self.domain, user = self.user)
     # end def __init__
 
-    def resend (self, msg) :
-        """Resend `msg` to other addresses unchanged (except for `Resent-`
-           headers).
-        """
-        buffer = self.resend_format % PMA.Msg_Scope (msg, self.locals)
-        self._send (buffer, lambda b : self._finish_resend (msg, b))
-    # end def resend
-
     def compose (self) :
         """Compose and send a new email."""
         self._send (self.compose_format % self.locals, self._finish_edit)
     # end def compose
+
+    def forward (self, msg) :
+        """Forward `msg` as attachement of a new email."""
+        buffer = self.forward_format % PMA.Msg_Scope (msg, self.locals)
+        self._send (buffer, lambda b : self._finish_forward (msg, b))
+    # end def forward
 
     def reply (self, msg) :
         """Compose and send a reply to `msg`."""
@@ -183,10 +195,39 @@ class Composer (TFL.Meta.Object) :
         self._send (buffer, self._finish_edit)
     # end def reply
 
+    def resend (self, msg) :
+        """Resend `msg` to other addresses unchanged (except for `Resent-`
+           headers).
+        """
+        buffer = self.resend_format % PMA.Msg_Scope (msg, self.locals)
+        self._send (buffer, lambda b : self._finish_resend (msg, b))
+    # end def resend
+
+    def _as_message (self, buffer) :
+        return Lib.message_from_string (buffer.replace (self.body_marker, ""))
+    # end def _as_message
+
+    def _as_multipart (self, email) :
+        result = email
+        if not email.is_multipart () :
+            result = Lib.MIMEMultipart ()
+            ignore = set (result.keys ())
+            for k, v in email.items () :
+                if k not in ignore :
+                    result [k] = v
+            cs = email.get_charset () or PMA.Mime.default_charset
+            result.attach \
+                ( Lib.MIMEText
+                    ( email.get_payload (decode = True)
+                    , _charset = cs
+                    )
+                )
+        return result
+    # end def _as_multipart
+
     def _finish_edit (self, buffer) :
         if buffer :
-            email = Lib.message_from_string \
-                (buffer.replace ("--text follows this line--", ""))
+            email = self._as_message (buffer)
             if email.get ("Date", None) is None :
                 ### just to be safe (del of non-existing key is a no-op)
                 del email ["Date"]
@@ -199,10 +240,18 @@ class Composer (TFL.Meta.Object) :
             self._finish__send (email, send_cb = self.send_cb)
     # end def _finish_edit
 
+    def _finish_forward (self, msg, buffer) :
+        if buffer :
+            email    = msg.email
+            envelope = self._as_multipart (self._as_message (buffer))
+            envelope.attach    (Lib.MIMEMessage (email))
+            self._finish__send (envelope)
+    # end def _finish_forward
+
     def _finish_resend (self, msg, buffer) :
         if buffer :
             email    = msg.email
-            envelope = Lib.message_from_string (buffer)
+            envelope = self._as_message (buffer)
             for k in envelope.keys () :
                 if k.lower () not in ("bcc", "dcc") :
                     n = "Resent-%s" % k
@@ -235,19 +284,7 @@ class Composer (TFL.Meta.Object) :
                 p = PMA.Mime.Part (name.strip (";"), add_headers)
                 if p :
                     if not email.is_multipart () :
-                        mp = Lib.MIMEMultipart ()
-                        ignore = set (mp.keys ())
-                        for k, v in email.items () :
-                            if k not in ignore :
-                                mp [k] = v
-                        cs = email.get_charset () or PMA.Mime.default_charset
-                        mp.attach \
-                            ( Lib.MIMEText
-                                ( email.get_payload (decode = True)
-                                , _charset = cs
-                                )
-                            )
-                        email = mp
+                        email = self._as_multipart (email)
                     email.attach (p)
         del email [ah]
         return email
@@ -265,6 +302,7 @@ def command_spec (arg_array = None) :
         ( option_spec =
             ( "-domain:S?Domain of sender"
             , "-editor:S?Command used to start editor"
+            , "-forward:S?Message to forward"
             , "-mail_host:S=mails?Name of SMTP server to use"
             , "-reply:S?Message to reply to"
             , "-Resend:S?Message to resend"
@@ -281,9 +319,11 @@ def main (cmd) :
     import _PMA.Sender
     smtp = PMA.Sender (cmd.mail_host)
     comp = Composer   (cmd.editor, cmd.user, cmd.domain, smtp)
-    if cmd.reply :
+    if cmd.forward :
+        comp.forward  (PMA.message_from_file (cmd.forward))
+    elif cmd.reply :
         comp.reply    (PMA.message_from_file (cmd.reply))
-    if cmd.Resend :
+    elif cmd.Resend :
         comp.resend   (PMA.message_from_file (cmd.Resend))
     else :
         comp.compose  ()
