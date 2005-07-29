@@ -52,9 +52,12 @@
 #    29-Jul-2005 (MG) Update of box views after adding/deleting of a sub box
 #    29-Jul-2005 (MG) `_restore_selection`: allow restoration of a delivery
 #                     box
+#    29-Jul-2005 (MG) `new_message` changed and `_mail_sent` added
+#    29-Jul-2005 (MG) Icons for commands added
 #    ««revision-date»»···
 #--
 
+from   _TFL                    import TFL
 from   _TGL                    import TGL
 from   _PMA                    import PMA
 
@@ -66,7 +69,8 @@ import _PMA.Office
 import _PMA.Composer
 import _PMA.Sender
 
-import  sos
+import _TFL.sos
+import time
 
 class Office (PMA.UI.Mixin) :
     """Abstract user interface for PMA office."""
@@ -123,7 +127,7 @@ class Office (PMA.UI.Mixin) :
     def _delete_box (self, box) :
         for sb in box.sub_boxes :
             self._delete_box (sb)
-        parent = PMA.Mailbox.instance (sos.path.split (box.qname) [0])
+        parent = PMA.Mailbox.instance (TFL.sos.path.split (box.qname) [0])
         parent.delete_subbox (box)
     # end def _delete_box
 
@@ -133,9 +137,24 @@ class Office (PMA.UI.Mixin) :
         """
         ANS  = self.ANS
         smtp = ANS.Sender     ()
-        comp = ANS.Composer   (smtp = smtp)
+        comp = ANS.Composer   (smtp = smtp, send_cb = self._mail_sent)
         comp.compose          ()
+        time.sleep            (0.1)
+        print "Starting editor for Send..."
     # end def new_message
+
+    def _mail_sent (self, email) :
+        receivers = set ()
+        for kind in "to", "cc", "bcc" :
+            recs = email [kind]
+            if recs :
+                for r in recs.split (",") :
+                    receivers.add (r)
+        time.sleep (0.1)
+        print "Mail sent to %s" % (", ".join (receivers))
+        time.sleep (0.1)
+        return email
+    # end def _mail_sent
 
     def new_subbox (self, event = None) :
         """Create a new subbox below the currently selected mailbox"""
@@ -152,7 +171,7 @@ class Office (PMA.UI.Mixin) :
             tree = event.widget
         else :
             if curr_box :
-                tree = self.box_views [curr_box.root]
+                tree = keyboard-quitself.box_views [curr_box.root]
             else :
                 return
         selection = tree.selection
@@ -218,8 +237,8 @@ class Office (PMA.UI.Mixin) :
         if box :
             name  = ""
             view  = self.box_views [box.root]
-            for b_name in box.qname.split (sos.path.sep) :
-                name = sos.path.join        (name, b_name)
+            for b_name in box.qname.split (TFL.sos.path.sep) :
+                name = TFL.sos.path.join  (name, b_name)
                 try :
                     box  = PMA.Mailbox.instance (name)
                     view.see                    (box)
@@ -263,16 +282,27 @@ class Office (PMA.UI.Mixin) :
                              , (cmd.Message, ("mb", "cm_md", "cm_mv"), "ev_mv")
                              ) :
             add  = grp.add_command
-            for name, callback, ev_name in \
-                ( ( "Next Message",     self.show_next_message, "next_message")
-                , ( "Previous Message", self.show_prev_message, "prev_message")
-                , ( "Next Unseen",      self.show_next_unseen,  "next_unseen")
-                , ( "Previous Unseen",  self.show_prev_unseen,  "prev_unseen")
+            for name, callback, ev_name, icon in \
+                ( ( "Previous Message", self.show_prev_message
+                  , "prev_message", "gtk-media-previous"
+                  )
+                , ( "Next Message",     self.show_next_message
+                  , "next_message", "gtk-media-next"
+                  )
+                , ( "Previous Unseen",  self.show_prev_unseen
+                  ,  "prev_unseen", "gtk-media-rewind"
+                  )
+                , ( "Next Unseen",      self.show_next_unseen
+                  , "next_unseen", "gtk-media-forward"
+                  )
                 ) :
                 ev_bind = ()
                 if evb :
                     ev_bind = ("%s:%s" % (evb, ev_name), )
-                add (Cmd (name, callback), if_names = cms + ev_bind)
+                add ( Cmd (name, callback)
+                    , if_names = cms + ev_bind
+                    , icon = icon
+                    )
     # end def _setup_common_cmds
 
     def _setup_msg_commands (self) :
@@ -290,12 +320,15 @@ class Office (PMA.UI.Mixin) :
         grp    = self.model.cmd_mgr.cmd.Office
         grp.add_separator (if_names = ("mb", ))
         grp.add_command \
-            (Cmd ("New Message", self.new_message), if_names = ("mb", ))
+            ( Cmd ("New Message", self.new_message)
+            , if_names = ("mb", "tb"), icon = "gtk-new"
+            )
         grp.add_separator (if_names = ("mb", ))
         grp.add_command \
             ( UI.Deaf_Command ("Commit and exit", self.model.exit)
             , if_names    = ("mb", )
             , underline   = 0
+            , icon        = "gtk-quit"
             , accelerator = self.TNS.Eventname.save_and_exit
             )
         grp.add_command \
