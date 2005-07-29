@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-May-2005 (MG) Creation
 #    10-Jun-2005 (MG) `scroll_policies` added
+#    29-Jul-2005 (MG) `see` changed to expand the row which shall be seen
 #    ««revision-date»»···
 #--
 
@@ -59,11 +60,18 @@ class Tree (GTK.Tree_View) :
             self.exposed_widget.vscrollbar_policy = v
     # end def scroll_policies
 
-    def see (self, model, iter, column = 0) :
-        self.wtk_object.scroll_to_cell \
-            ( model.wtk_object.get_path (iter)
-            , self.children [column].wtk_object
-            )
+    def see (self, model, iter, column = None) :
+        if column is not None :
+            column = self.children [column].wtk_object
+        pathes     = []
+        get_path   = model.wtk_object.get_path
+        while iter :
+            pathes.append                       (get_path (iter))
+            iter = model.wtk_object.iter_parent (iter)
+        if pathes :
+            for p in reversed (pathes) :
+                self.wtk_object.expand_row (p, False)
+            self.wtk_object.scroll_to_cell (p, column)
     # end def see
 
 # end class Tree

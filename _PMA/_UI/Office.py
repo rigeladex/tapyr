@@ -45,6 +45,10 @@
 #    27-Jul-2005 (MG) Handling of commands changed (use command manager of
 #                     main application instead of defining new command
 #                     managers)
+#    28-Jul-2005 (MG) `_setup_office_commands` added,
+#                     `s/_setup_bv_cmmands/_setup_box_cmmands/g` and
+#                     `s/_setup_mv_cmmands/_setup_msg_cmmands/g`
+#    29-Jul-2005 (MG) Restoring of old selected box and message added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +60,10 @@ import _PMA._UI.Mixin
 import _PMA._UI.Mailbox_BV
 import _PMA._UI.Mailbox_MV
 import _PMA.Office
+import _PMA.Composer
+import _PMA.Sender
+
+import  sos
 
 class Office (PMA.UI.Mixin) :
     """Abstract user interface for PMA office."""
@@ -67,6 +75,8 @@ class Office (PMA.UI.Mixin) :
         self.box_views         = {}
         self.delivery_views    = []
         self.storage_views     = []
+        ### XXX replace me, please (o;
+        # execfile ("/home/lucky/PMA/.config.py", dict (PMA = PMA))
         UI                     = self.ANS.UI
         TNS                    = self.TNS
         AC                     = self.AC
@@ -91,21 +101,54 @@ class Office (PMA.UI.Mixin) :
         tkt = model.tkt
         tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
         tkt.pack (tkt.wc_po_box_view, self.tkt)
-        self._setup_common_cmds ()
-        self._setup_bv_commands ()
-        self._setup_mv_commands ()
+        self._setup_common_cmds     ()
+        self._setup_office_commands ()
+        self._setup_box_commands    ()
+        self._setup_msg_commands    ()
+        self._restore_selection     ()
     # end def __init__
 
+    def delete_subbox (self, event = None) :
+        """Delete the currently selected subbox and all messages in this
+           subbox
+        """
+        cb     = self.office.status.current_box
+        parent = PMA.Mailbox.instance (sos.path.split (cb.qname) [0])
+        parent.delete_subbox (cb)
+    # end def delete_subbox
+
+    def new_message (self, event = None) :
+        """Start the default editor with a new message and send this message
+           after finishing of editing.
+        """
+        ANS  = self.ANS
+        smtp = ANS.Sender     ()
+        comp = ANS.Composer   (smtp = smtp)
+        comp.compose          ()
+    # end def new_message
+
+    def new_subbox (self, event = None) :
+        """Create a new subbox below the currently selected mailbox"""
+        name = self.model.ask_string (title = "Add new subbox", prompt = "Name")
+        print "New SB", self.office.status.current_box.qname, name
+        if name :
+            self.office.status.current_box.add_subbox (name)
+    # end def new_subbox
+
     def select_box (self, event = None) :
-        for tree in self.box_views.itervalues () :
-            if tree.selection :
-                break
+        curr_box = self.office.status.current_box
+        if event and isinstance (event.widget, self.TNS.Tree) :
+            tree = event.widget
+        else :
+            if curr_box :
+                tree = self.box_views [curr_box.root]
+            else :
+                return
         selection = tree.selection
         if not selection :
             ### ignore the callback if the slection has be canceled
             return
         box      = selection [0]
-        curr_box = self.office.status.current_box
         if curr_box and curr_box.root != box.root :
            self.box_views [curr_box.root].selection = ()
         self.office.status.current_box = box
@@ -142,20 +185,15 @@ class Office (PMA.UI.Mixin) :
         self._select_message (self.mb_msg_view.tkt._selection.prev ())
     # end def show_prev_message
 
-    def show_next_folder (self, event = None) :
-        """Show the next folder"""
-        print "N", event.widget
-    # end def show_next_folder
-
-    def show_prev_folder (self, event = None) :
-        """Show the previous folder"""
-        print "P", event.widget
-    # end def show_prev_folder
-
     def show_next_unseen (self, event = None) :
         """Show the next unseen message."""
-        print "Unseen"
+        print "Unseen N"
     # end def show_next_unseen
+
+    def show_prev_unseen (self, event = None) :
+        """Show the previous unseen message."""
+        print "Unseen P"
+    # end def show_prev_unseen
 
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
@@ -164,19 +202,42 @@ class Office (PMA.UI.Mixin) :
         self.box_views [mailbox.root].update (mailbox)
     # end def _display_message
 
-    def _setup_bv_commands (self) :
-        Cmd    = self.ANS.UI.Command
-        grp    = self.model.cmd_mgr.cmd.Mailbox
-        grp.add_command \
-            ( Cmd ("Select", self.select_box)
-            , if_names = ("cm_bv", "ev_bv:Select")
+    def _restore_selection (self) :
+        box   = self.office.status.current_box
+        if box :
+            name  = ""
+            view  = self.box_views [box.root]
+            for b_name in box.qname.split (sos.path.sep) :
+                name = sos.path.join        (name, b_name)
+                box  = PMA.Mailbox.instance (name)
+                view.see                    (box)
+            view.selection = box
+    # end def _restore_selection
+
+    def _setup_box_commands (self) :
+        Cmd     = self.ANS.UI.Deaf_Command
+        grp     = self.model.cmd_mgr.cmd.Mailbox
+        add_cmd = grp.add_command
+        add_sep = grp.add_separator
+        add_cmd \
+            ( self.ANS.UI.Command
+               ("Select", self.select_box), if_names = ("ev_bv:Select", )
+            )
+        add_sep (if_names = ("cm_bv", "mb"))
+        add_cmd \
+            ( Cmd ("New Subbox", self.new_subbox)
+            , if_names = ("cm_bv", "mb")
+            )
+        add_cmd \
+            ( Cmd ("Delete Subbox", self.delete_subbox)
+            , if_names = ("cm_bv", "mb")
             )
         event_binder = grp.interfacers ["ev_bv"]
         cm           = grp.interfacers ["cm_bv"]
         for w in (b.tkt for b in self.box_views.itervalues ()) :
             cm.bind_to_widget       (w, "click_3")
             event_binder.add_widget (w)
-    # end def _setup_bv_commands
+    # end def _setup_box_commands
 
     def _setup_common_cmds (self) :
         Cmd    = self.ANS.UI.Command
@@ -190,6 +251,7 @@ class Office (PMA.UI.Mixin) :
                 ( ( "Next Message",     self.show_next_message, "next_message")
                 , ( "Previous Message", self.show_prev_message, "prev_message")
                 , ( "Next Unseen",      self.show_next_unseen,  "next_unseen")
+                , ( "Previous Unseen",  self.show_prev_unseen,  "prev_unseen")
                 ) :
                 ev_bind = ()
                 if evb :
@@ -197,14 +259,36 @@ class Office (PMA.UI.Mixin) :
                 add (Cmd (name, callback), if_names = cms + ev_bind)
     # end def _setup_common_cmds
 
-    def _setup_mv_commands (self) :
+    def _setup_msg_commands (self) :
         Cmd    = self.ANS.UI.Command
         grp    = self.model.cmd_mgr.cmd.Message
         grp.add_command \
             (Cmd ("Select", self.show_message), if_names = ("ev_mv:Select", ))
         grp.interfacers ["cm_mv"].bind_to_widget (self.mb_msg_view, "click_3")
         grp.interfacers ["ev_mv"].add_widget     (self.mb_msg_view)
-    # end def _setup_mv_commands
+    # end def _setup_msg_commands
+
+    def _setup_office_commands (self) :
+        UI     = self.ANS.UI
+        Cmd    = UI.Command
+        grp    = self.model.cmd_mgr.cmd.Office
+        grp.add_separator (if_names = ("mb", ))
+        grp.add_command \
+            (Cmd ("New Message", self.new_message), if_names = ("mb", ))
+        grp.add_separator (if_names = ("mb", ))
+        grp.add_command \
+            ( UI.Deaf_Command ("Commit and exit", self.model.exit)
+            , if_names    = ("mb", )
+            , underline   = 0
+            , accelerator = self.TNS.Eventname.save_and_exit
+            )
+        grp.add_command \
+            ( UI.Deaf_Command ("Exit", self.model.quit)
+            , if_names    = ("mb", )
+            , underline   = 1
+            , accelerator = self.TNS.Eventname.exit
+            )
+    # end def _setup_office_commands
 
     def _select_message (self, msg) :
         if msg :

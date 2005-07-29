@@ -34,6 +34,8 @@
 #    27-Jul-2005 (MG) `_setup_context_menu` changed to return a dict of
 #                     context menus
 #    27-Jul-2005 (MG) `_setup_event_binder` added
+#    28-Jul-2005 (MG) `_setup_toplevel`: read of style file added
+#    28-Jul-2005 (MG) `ask_*` function handling changed
 #    ««revision-date»»···
 #--
 
@@ -205,7 +207,7 @@ class Application (PMA.TKT.Application) :
             , ev_mv = CI_Event_Binder (AC = AC)
             )
     # end def _setup_event_binder
-    
+
     def _setup_geometry (self) :
         ### XXX
         self.gui.add            (self.main)
@@ -283,7 +285,8 @@ class Application (PMA.TKT.Application) :
             ( name = self.model.product_name
             , AC   = self.AC
             )
-        self.toplevel.bind_add (self.TNS.Signal.Delete, self.model.quit)
+        self.gui.read_style_file ("PMA.rc", search = True)
+        self.toplevel.bind_add   (self.TNS.Signal.Delete, self.model.quit)
         self.gui.manager = self
         self.spec_width  = gui.num_opt_val    ( "width",     600)
         self.spec_height = gui.num_opt_val    ( "height",    800)
@@ -347,19 +350,47 @@ class Application (PMA.TKT.Application) :
     # end def ask_retry_cancel
 
     ### provide CTK_Dialog.ask_* functions as member functions, too
-    ### `self' will be passed as argument `master'
-    ask_string               = PMA.TKT.GTK.Dialog.ask_string
-    ask_integer              = PMA.TKT.GTK.Dialog.ask_integer
-    ask_float                = PMA.TKT.GTK.Dialog.ask_float
+    def _wrap_function (f) :
+        name = f.__name__
+        def _prep_args (self, * args, ** kw) :
+            return getattr (PMA.TKT.GTK.Dialog, name) \
+                (self.toplevel.wtk_object, AC = self.AC, * args, ** kw)
+        _prep_args.__name__ = f.__name__
+        _prep_args.__doc__  = f.__doc__
+        return _prep_args
+    # end def _wrap_function
+
+    @_wrap_function
+    def ask_string  () : pass
+    @_wrap_function
+    def ask_integer () : pass
+    @_wrap_function
+    def ask_float   () : pass
+
 ### XXX    ask_list_element         = CTK_Dialog.ask_list_element
 ### XXX    ask_list_element_combo   = CTK_Dialog.ask_list_element_combo
 ### XXX    ask_list_element_spinner = CTK_Dialog.ask_list_element_spinner
 
-    ask_open_file_name       = PMA.TKT.GTK.ask_open_file_name
-    ask_save_file_name       = PMA.TKT.GTK.ask_save_file_name
-    ask_dir_name             = PMA.TKT.GTK.ask_dir_name
-    ask_open_dir_name        = PMA.TKT.GTK.ask_open_dir_name
-    ask_save_dir_name        = PMA.TKT.GTK.ask_save_dir_name
+    def _wrap_function (f) :
+        name = f.__name__
+        def _prep_args (self, * args, ** kw) :
+            return getattr (PMA.TKT.GTK, name) \
+                (self.toplevel.wtk_object, AC = self.AC, * args, ** kw)
+        _prep_args.__name__ = f.__name__
+        _prep_args.__doc__  = f.__doc__
+        return _prep_args
+    # end def _wrap_function
+
+    @_wrap_function
+    def ask_open_file_name () : pass
+    @_wrap_function
+    def ask_save_file_name () : pass
+    @_wrap_function
+    def ask_dir_name ()       : pass
+    @_wrap_function
+    def ask_open_dir_name ()  : pass
+    @_wrap_function
+    def ask_save_dir_name ()  : pass
 
 # end class Application
 

@@ -28,6 +28,8 @@
 # Revision Dates
 #    22-May-2005 (MG) Automated creation
 #     3-Jun-2005 (MG) Creation continued
+#    28-Jul-2005 (MG) Missing import of `TGL.TKT.GTK.Entry` added,
+#                     `Dialog.run` fixed
 #    ««revision-date»»···
 #--
 
@@ -46,6 +48,7 @@ from   _TGL._TKT._GTK         import GTK
 import _TGL._TKT._GTK.Window
 import _TGL._TKT._GTK.Constants
 import _TGL._TKT._GTK.H_Box
+import _TGL._TKT._GTK.Entry
 import _TGL._TKT._GTK.Label
 
 class Dialog (GTK.Window) :
@@ -103,7 +106,8 @@ class _Input_Dialog_ (Dialog) :
                 break
             value = self.get ()
             if value is not None :
-                return value
+                break
+        self.destroy ()
         return value
     # end def run
 

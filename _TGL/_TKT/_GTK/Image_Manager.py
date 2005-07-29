@@ -30,6 +30,7 @@
 #     5-Apr-2005 (MG) `.png` support added
 #     5-Apr-2005 (MG) Store gtk.Pixbuf object's instead of GTK.Image objects
 #    16-May-2005 (MG) `std_pathes` changed
+#    28-Jul-2005 (MG) `std_pathes` moved to `TGL.TKT.GTK.Object`
 #    ««revision-date»»···
 #--
 
@@ -45,37 +46,6 @@ import  sys
 GTK = TGL.TKT.GTK
 gtk = GTK.gtk
 
-def path () :
-    """Returns path where module resides"""
-    return Environment.module_path ("CT_TK")
-# end def path
-
-_std_pathes = None
-
-def std_pathes () :
-    """Returns standards pathes where to look for auxiliary files like option
-       files and bitmaps.
-    """
-    global _std_pathes
-    if _std_pathes is None :
-        p           = path ()
-        _std_pathes = []
-        _img_pathes = []
-        seen        = {}
-        for s in sys.path :
-            si = sos.path.join (s, "-Images")
-            if sos.path.isdir (si) :
-                _img_pathes.append (si)
-        for q in ( p
-                 , Environment.default_dir
-                 , Environment.home_dir
-                 ) + tuple (_img_pathes) :
-            if q not in seen :
-                _std_pathes.append (q)
-                seen [q] = True
-    return _std_pathes
-# end def std_pathes
-
 class _Image_Mgr_ (TFL.Meta.Object) :
     """Root class for management of a collection of bitmaps (.xbm) and/or
        images (.gif)
@@ -89,7 +59,7 @@ class _Image_Mgr_ (TFL.Meta.Object) :
         """
         self.x_map  = {}
         self.files  = {}
-        self.pathes = list (d) + std_pathes ()
+        self.pathes = list (d) + GTK.Image.std_pathes ()
     # end def __init__
 
     def add (self, filename, name = None, ** kw) :

@@ -41,6 +41,7 @@
 #    28-Jul-2005 (CT) `_extend_status_props` and `_extend_status_prop` added
 #    27-Jul-2005 (MG) `self.event_binders` added
 #    27-Jul-2005 (MG) New command groups and commands added
+#    28-Jul-2005 (MG) `File` menu removed, `_setup_*_menu` functions removed
 #    ««revision-date»»···
 #--
 
@@ -140,14 +141,6 @@ class Application (PMA.UI.Mixin) :
     _started_quit        = False
     ipreter              = None
 
-    _File_Cmd_Group      = Record \
-        ( name           = "File"
-        , if_names       = ("mb", "tb")
-        , batchable      = True
-        , precondition   = None
-        , description    =
-          "XXX"
-        )
     _Office_Cmd_Group    = Record \
         ( name           = "Office"
         , if_names       = ("mb", "tb")
@@ -201,8 +194,7 @@ class Application (PMA.UI.Mixin) :
           "about various aspects of %(name)s."
         )
     Command_Groups       = \
-        ( "_File_Cmd_Group"
-        , "_Office_Cmd_Group"
+        ( "_Office_Cmd_Group"
         , "_Mbox_Cmd_Group"
         , "_Message_Cmd_Group"
         , "_Msg_Part_Cmd_Group"
@@ -439,24 +431,6 @@ class Application (PMA.UI.Mixin) :
         self.cmd_mgr.update_state ()
     # end def _setup_cmd_mgr
 
-    def _setup_file_group (self, group) :
-        Cmd     = self.ANS.UI.Deaf_Command
-        Dyn     = self.ANS.UI.Dyn_Command
-        add_cmd = group.add_command
-        add_sep = group.add_separator
-        #add_sep (if_names = ("mb", ))
-        add_cmd ( Cmd ("Commit and exit", self.exit)
-                , if_names    = ("mb", )
-                , underline   = 11
-                , accelerator = self.TNS.Eventname.save_and_exit
-                )
-        add_cmd ( Cmd ("Exit", self.quit)
-                , if_names    = ("mb", )
-                , underline   = 1
-                , accelerator = self.TNS.Eventname.exit
-                )
-    # end def _setup_file_group
-
     def _setup_help_group (self, group) :
         Cmd     = self.ANS.UI.Deaf_Command
         Dyn     = self.ANS.UI.Dyn_Command
@@ -469,22 +443,6 @@ class Application (PMA.UI.Mixin) :
             , underline = 5
             )
     # end def _setup_help_group
-
-    def _setup_mailbox_group (self, group) :
-        Cmd     = self.ANS.UI.Deaf_Command
-        Dyn     = self.ANS.UI.Dyn_Command
-        add_cmd = group.add_command
-        add_sep = group.add_separator
-        #add_sep (if_names = ("mb", ))
-    # end def _setup_mailbox_group
-
-    def _setup_message_group (self, group) :
-        Cmd     = self.ANS.UI.Deaf_Command
-        Dyn     = self.ANS.UI.Dyn_Command
-        add_cmd = group.add_command
-        add_sep = group.add_separator
-        #add_sep (if_names = ("mb", ))
-    # end def _setup_message_group
 
     def _setup_office (self) :
         self.office      = self.ANS.Office ()

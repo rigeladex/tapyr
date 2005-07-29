@@ -43,6 +43,9 @@
 #    26-Jul-2005 (CT) `Mailbox.MB_Type` changed to really ignore names
 #                     starting with `.`
 #    26-Jul-2005 (CT) `status` (`Box_Status`) added
+#    28-Jul-2005 (MG) `Mailbox.add_subbox` changed to allow a simple string
+#                     as parameter
+#    28-Jul-2005 (MG) `delete_subbox` added
 #    ««revision-date»»···
 #--
 
@@ -161,6 +164,14 @@ class _Mailbox_ (TFL.Meta.Object) :
         message.save (target)
     # end def _copy_msg_file
 
+    def delete_subbox (self, subbox) :
+        """Delete this subbox and all messages contained inthis subbox."""
+        subbox.delete ()
+        if subbox.supports_status :
+            sos.unlink (subbox.status_fn)
+        del self._box_dict [subbox.name]
+    # end def delete_subbox
+
     def _get_messages (self) :
         if self._messages is None :
             if not self._msg_dict :
@@ -226,6 +237,11 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
         finally :
             self._messages = None
     # end def delete
+
+    def delete_subbox (self, subbox) :
+        self.__super.delete_subbox (subbox)
+        sos.rmdir                  (subbox.path)
+    # end def delete_subbox
 
     def _copy_msg_file (self, message, target) :
         source = message.path
@@ -445,15 +461,18 @@ class Mailbox (_Mailbox_in_Dir_S_) :
     # end def add_messages
 
     def add_subbox (self, b, transitive = False) :
-        print "Adding sub-box", b.qname
-        if b.name in self._box_dict :
-            s = self._box_dict  [b.name]
+        if isinstance (b, (str, unicode)) :
+            b = self._new_subbox (sos.path.join (self.path, b))
         else :
-            s = self._new_subbox (sos.path.join (self.path, b.name))
-        s.add_messages (* b.messages)
-        if transitive :
-            for sb in b._box_dict.itervalues () :
-                s.add_subbox (sb, transitive)
+            print "Adding sub-box", b.qname
+            if b.name in self._box_dict :
+                s = self._box_dict  [b.name]
+            else :
+                s = self._new_subbox (sos.path.join (self.path, b.name))
+            s.add_messages (* b.messages)
+            if transitive :
+                for sb in b._box_dict.itervalues () :
+                    s.add_subbox (sb, transitive)
     # end def add_subbox
 
     def import_from_mailbox (self, mailbox, transitive = False) :

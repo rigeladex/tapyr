@@ -32,6 +32,10 @@
 #    28-Jul-2005 (CT) Renamed from `Sender` to `Composer`
 #    28-Jul-2005 (CT) `Sender` factored
 #    28-Jul-2005 (CT) Creation continued.... (resend, attachements)
+#    28-Jul-2005 (MG) `_finish_edit`: call of `send_cb` removed (will be
+#                     called in `_finish__send`)
+#    28-Jul-2005 (MG) `_Export`: onyl export `Composer` (if `*` is used, `main`
+#                     would be exported too)
 #    29-Jul-2005 (CT) Creation continued..... (forward)
 #    ««revision-date»»···
 #--
@@ -234,8 +238,6 @@ class Composer (TFL.Meta.Object) :
                 email ["Date"] = Lib.formatdate ()
             subject = email.get ("Subject")
             email   = self._process_attachement_headers (email)
-        if self.send_cb is not None :
-            email = self.send_cb (email)
         if email and self.smtp :
             self._finish__send (email, send_cb = self.send_cb)
     # end def _finish_edit
@@ -380,7 +382,7 @@ From:        tanzer@swing.cluster (Christian Tanzer)
 """
 
 if __name__ != "__main__" :
-    PMA._Export ("*")
+    PMA._Export ("Composer")
 else :
     main (command_spec ())
 ### __END__ PMA.Composer
