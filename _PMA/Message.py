@@ -98,6 +98,9 @@
 #    27-Jul-2005 (CT) `Msg_Scope.__getitem__` improved
 #    29-Jul-2005 (CT) `main` and `command_spec` renamed to `_main` and
 #                     `_command_spec` to avoid name clashes in PMA namespace
+#    29-Jul-2005 (CT) `_Message_._decoded_header` moved to module-level
+#                     `decoded_header`
+#    29-Jul-2005 (CT) `Msg_Scope` changed to use `decoded_header`
 #    ««revision-date»»···
 #--
 
@@ -124,6 +127,15 @@ import weakref
 _ws_pat = Regexp    (r"\s+")
 now     = time.time ()
 
+def decoded_header (header) :
+    result = []
+    if header :
+        for p, c in Lib.decode_header (header) :
+            result.append (p.decode (c or "us-ascii", "replace"))
+    result = u" ".join (result)
+    return result
+# end def decoded_header
+
 class Msg_Scope (TFL.Caller.Scope) :
     """Provide access to the caller's locals and to the message object passed
        in.
@@ -134,7 +146,7 @@ class Msg_Scope (TFL.Caller.Scope) :
         , in_reply_to   = ("In-reply-to", )
         , message_date  = ("Date", "Delivery-date")
         , message_id    = ("Message-id", "References")
-        , reply_to      =
+        , reply_address =
             ( "Mail-followup-to"
             , "X-mailing-list"
             , "Reply-To"
@@ -142,6 +154,7 @@ class Msg_Scope (TFL.Caller.Scope) :
             , "Sender"
             , "Return-path"
             )
+        , sender        = ("From", "Reply-To", "Sender", "Return-path")
         )
 
     def __init__ (self, msg, locls = None) :
@@ -154,11 +167,11 @@ class Msg_Scope (TFL.Caller.Scope) :
             return self.__super.__getitem__ (index)
         except NameError :
             email = self.msg.email
-            for n in self._map.get (index, (index, )) :
+            for n in self._map.get (index.lower (), (index, )) :
                 try :
                     result = email [n]
                     if result is not None :
-                        return result
+                        return decoded_header (result)
                 except KeyError :
                     pass
             return "<unknown %s>" % index
@@ -176,7 +189,7 @@ class _Msg_Part_ (object) :
             ("content_type", lambda s : s._get_content_type ())
         , TFL.Meta.Lazy_Property ("filename", lambda s : s._filename ())
         , TFL.Meta.Lazy_Property \
-            ("subject",  lambda s : s._decoded_header (s.email ["subject"]))
+            ("subject",  lambda s : decoded_header (s.email ["subject"]))
         , TFL.Meta.Lazy_Property ("type",     lambda s : s.content_type)
         )
 
@@ -245,15 +258,6 @@ class _Msg_Part_ (object) :
             return time.strftime (format, time.localtime (t))
     # end def _date
 
-    def _decoded_header (self, header) :
-        result = []
-        if header :
-            for p, c in Lib.decode_header (header) :
-                result.append (p.decode (c or "us-ascii", "replace"))
-        result = u" ".join (result)
-        return result
-    # end def _decoded_header
-
     def _filename (self) :
         email  = self.email
         if email :
@@ -263,7 +267,7 @@ class _Msg_Part_ (object) :
                 result = email.get_param ("name")
             if isinstance (result, tuple) :
                 result = unicode (result [2], result [0] or "us-ascii")
-            return TFL.Ascii.sanitized_filename (self._decoded_header (result))
+            return TFL.Ascii.sanitized_filename (decoded_header (result))
     # end def _filename
 
     def _formatted_headers (self, headers = None) :
@@ -271,7 +275,7 @@ class _Msg_Part_ (object) :
         for n in (headers or self.headers_to_show) :
             for n, h in self._get_headers (email, n) :
                 yield n, "%-*s: %s" % \
-                    (self.label_width, n, self._decoded_header (h))
+                    (self.label_width, n, decoded_header (h))
     # end def _formatted_headers
 
     def _get_charset (self) :
@@ -330,7 +334,7 @@ class _Msg_Part_ (object) :
                 (  filter (None, Lib.getaddresses ((sender, )) [0])
                 or (None, )
                 ) [0]
-            return self._decoded_header (sender)
+            return decoded_header (sender)
     # end def _sender
 
     def _separators (self, sep_length) :
@@ -793,7 +797,7 @@ def message_from_file (filename, parser = None) :
         email._pma_parsed_body = True
     finally :
         fp.close ()
-    return Message (email, sos.path.split (filename) [-1])
+    return PMA.Message (email, sos.path.split (filename) [-1])
 # end def message_from_file
 
 def _command_spec (arg_array = None) :
@@ -812,7 +816,7 @@ def _command_spec (arg_array = None) :
 def _main (cmd) :
     parser = Lib.Parser ()
     for m in cmd.argv :
-        msg = message_from_file (m, parser)
+        msg = PMA.message_from_file (m, parser)
         print u"\n".join \
             (msg.formatted ()).encode (PMA.default_charset, "replace")
 # end def _main
@@ -835,6 +839,7 @@ show (m)
 if __name__ != "__main__" :
     PMA._Export ("*")
 else :
+    import _PMA.Message
     PMA.load_user_config ()
     _main (_command_spec ())
 ### __END__ PMA.Message
