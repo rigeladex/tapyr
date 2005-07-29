@@ -43,6 +43,7 @@
 #    26-Jul-2005 (MG) Selection handling changed
 #    26-Jul-2005 (MG) `multiselection` added
 #    28-Jul-2005 (MG) `quick_search` added
+#    29-Jul-2005 (MG) `add` and `remove` added
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,7 @@ class _Tree_ (TGL.UI.Mixin) :
         TNS             = self.TNS
         Adapter         = self.Adapter
         self.ui_model   = None
+        self.lazy       = lazy
         self.tkt_model  = self.t_model = Adapter.create_model (TNS, AC)
         if filter :
             self.tkt_f_model = Adapter.create_filter_model \
@@ -91,12 +93,21 @@ class _Tree_ (TGL.UI.Mixin) :
                 (TNS, AC, self.t_model)
             self.t_model     = self.tkt_s_model
         self.tkt             = self._create_tkt_tree \
-            (lazy, sort, show_header, multiselection, quick_search)
+            (sort, show_header, multiselection, quick_search)
         self._lazy_bind      = None
-        self.lazy            = lazy
         if ui_model :
             self.update_model (ui_model)
     # end def __init__
+
+    def add (self, element, parent = None) :
+        result = self._add_element (element, parent = parent, lazy = self.lazy)
+        self.see (result)
+        return result
+    # end def add
+
+    def remove (self, element) :
+        return self.tkt_model.remove (element)
+    # end def remove
 
     def update (self, element) :
         return self.tkt_model.update \
@@ -107,7 +118,7 @@ class _Tree_ (TGL.UI.Mixin) :
         if self.ui_model :
             self.tkt_model.clear ()
         self.ui_model = ui_model
-        self._model_populate (self.lazy)
+        self._model_populate     ()
     # end def update_model
 
     def __getattr__ (self, name) :
@@ -128,10 +139,10 @@ class _Tree_ (TGL.UI.Mixin) :
         self.tkt.see (self.tkt_model, element)
     # end def see
 
-    def _model_populate (self, lazy, parent = None) :
+    def _model_populate (self, parent = None) :
         self._pending_populates = {}
         for element in self.Adapter.root_children (self.ui_model) :
-            self._add_element (element, parent, lazy)
+            self._add_element (element, parent, self.lazy)
     # end def _model_populate
 
     def _add_element (self, element, parent, lazy) :
@@ -150,7 +161,7 @@ class _Tree_ (TGL.UI.Mixin) :
                     self._add_element (child, element, lazy)
     # end def _add_element
 
-    def _create_tkt_tree (self, lazy, sort, show_header, multiselection, quick_search) :
+    def _create_tkt_tree (self, sort, show_header, multiselection, quick_search) :
         tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
         tkt.headers_visible = show_header
         tkt.rules_hint      = self.Adapter.rules_hint
@@ -186,10 +197,10 @@ class _Tree_ (TGL.UI.Mixin) :
 class Rooted_Tree (_Tree_) :
     """Base class for trees displaying the root"""
 
-    def _model_populate (self, lazy) :
+    def _model_populate (self) :
         parent = self.ui_model
         self.tkt_model.add (self.Adapter.row_data (parent), parent = None)
-        super (Rooted_Tree, self)._model_populate (lazy, parent)
+        super (Rooted_Tree, self)._model_populate (parent)
         # XXX why does this `__super` call not work -> calls
         # `_model_populate` form this class instead of the super class ???
         #self.__super._model_populate (lazy, parent)

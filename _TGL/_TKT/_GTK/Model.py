@@ -41,6 +41,7 @@
 #    26-Jul-2005 (MG) Internal dict `iter` renamed to `_iter` and method
 #                     `iter` added
 #    28-Jul-2005 (MG) `_Iter_Mixin_` added
+#    29-Jul-2005 (MG) `_Proxy_Model_`: `add` and `remove` added
 #    ««revision-date»»···
 #--
 
@@ -242,6 +243,14 @@ class _Proxy_Model_ (TFL.Meta.Object, _Iter_Mixin_) :
     """Root class for all kinds of `proxy` models (sort, filter, ...)"""
 
     ui_column = property ( lambda s : s.model.ui_column)
+
+    def add (self, * args, ** kw) :
+        return self.model.add (* args, ** kw)
+    # end def add
+
+    def remove (self, * args, ** kw) :
+        return self.model.remove (* args, ** kw)
+    # end def remove
 
 # end class _Proxy_Model_
 

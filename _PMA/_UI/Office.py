@@ -49,6 +49,9 @@
 #                     `s/_setup_bv_cmmands/_setup_box_cmmands/g` and
 #                     `s/_setup_mv_cmmands/_setup_msg_cmmands/g`
 #    29-Jul-2005 (MG) Restoring of old selected box and message added
+#    29-Jul-2005 (MG) Update of box views after adding/deleting of a sub box
+#    29-Jul-2005 (MG) `_restore_selection`: allow restoration of a delivery
+#                     box
 #    ««revision-date»»···
 #--
 
@@ -113,9 +116,16 @@ class Office (PMA.UI.Mixin) :
            subbox
         """
         cb     = self.office.status.current_box
-        parent = PMA.Mailbox.instance (sos.path.split (cb.qname) [0])
-        parent.delete_subbox (cb)
+        self.box_views [cb.root].remove (cb)
+        self._delete_box (cb)
     # end def delete_subbox
+
+    def _delete_box (self, box) :
+        for sb in box.sub_boxes :
+            self._delete_box (sb)
+        parent = PMA.Mailbox.instance (sos.path.split (box.qname) [0])
+        parent.delete_subbox (box)
+    # end def _delete_box
 
     def new_message (self, event = None) :
         """Start the default editor with a new message and send this message
@@ -130,9 +140,10 @@ class Office (PMA.UI.Mixin) :
     def new_subbox (self, event = None) :
         """Create a new subbox below the currently selected mailbox"""
         name = self.model.ask_string (title = "Add new subbox", prompt = "Name")
-        print "New SB", self.office.status.current_box.qname, name
         if name :
-            self.office.status.current_box.add_subbox (name)
+            cb   = self.office.status.current_box
+            box  = cb.add_subbox (name)
+            self.box_views [cb.root].add (box, parent = cb)
     # end def new_subbox
 
     def select_box (self, event = None) :
@@ -209,8 +220,13 @@ class Office (PMA.UI.Mixin) :
             view  = self.box_views [box.root]
             for b_name in box.qname.split (sos.path.sep) :
                 name = sos.path.join        (name, b_name)
-                box  = PMA.Mailbox.instance (name)
-                view.see                    (box)
+                try :
+                    box  = PMA.Mailbox.instance (name)
+                    view.see                    (box)
+                except KeyError :
+                    ### ignore parts of the box path which don't have it's
+                    ### own mailbox object
+                    pass
             view.selection = box
     # end def _restore_selection
 

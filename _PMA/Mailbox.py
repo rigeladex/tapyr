@@ -46,6 +46,7 @@
 #    28-Jul-2005 (MG) `Mailbox.add_subbox` changed to allow a simple string
 #                     as parameter
 #    28-Jul-2005 (MG) `delete_subbox` added
+#    29-Jul-2005 (MG) `add_subbox` now returns the new created subbox
 #    ««revision-date»»···
 #--
 
@@ -167,7 +168,9 @@ class _Mailbox_ (TFL.Meta.Object) :
     def delete_subbox (self, subbox) :
         """Delete this subbox and all messages contained inthis subbox."""
         subbox.delete ()
-        if subbox.supports_status :
+        if subbox.supports_status and sos.path.isfile (subbox.status_fn) :
+            ### a newly created mailbox which closing the application has no
+            ### status file
             sos.unlink (subbox.status_fn)
         del self._box_dict [subbox.name]
     # end def delete_subbox
@@ -462,9 +465,8 @@ class Mailbox (_Mailbox_in_Dir_S_) :
 
     def add_subbox (self, b, transitive = False) :
         if isinstance (b, (str, unicode)) :
-            b = self._new_subbox (sos.path.join (self.path, b))
+            s = self._new_subbox (sos.path.join (self.path, b))
         else :
-            print "Adding sub-box", b.qname
             if b.name in self._box_dict :
                 s = self._box_dict  [b.name]
             else :
@@ -473,6 +475,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
             if transitive :
                 for sb in b._box_dict.itervalues () :
                     s.add_subbox (sb, transitive)
+        return s
     # end def add_subbox
 
     def import_from_mailbox (self, mailbox, transitive = False) :

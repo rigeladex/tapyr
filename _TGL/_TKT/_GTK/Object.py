@@ -529,7 +529,7 @@ class _Object_ (TGL.TKT.Mixin) :
     def path (cls) :
         """Returns path where module resides"""
         return TFL.Filename \
-            (Environment.module_path ("_TFL.Filename")).directory
+            (Environment.module_path ("_PMA.Office")).directory
     # end def path
 
     _std_pathes = None

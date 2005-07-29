@@ -29,6 +29,7 @@
 #    18-May-2005 (MG) Creation
 #    10-Jun-2005 (MG) `scroll_policies` added
 #    29-Jul-2005 (MG) `see` changed to expand the row which shall be seen
+#    29-Jul-2005 (MG) `add` and `remove` added
 #    ««revision-date»»···
 #--
 
@@ -46,10 +47,18 @@ class Tree (GTK.Tree_View) :
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
         self.exposed_widget = self.TNS.Scrolled_Window ()
-        ###cannot use the default add here !!! (will add itself or None)
+        ### cannot use the default add here !!! (will add itself or None)
         self.exposed_widget.wtk_object.add             (self.wtk_object)
         self.exposed_widget.show                       ()
     # end def __init__
+
+    def add (self, element, parent = None) :
+        self.model.add (element, parent = None)
+    # end def add
+
+    def remove (self, element) :
+        self.model.remove (element)
+    # end def remove
 
     def scroll_policies (self, b = None, h = None, v = None) :
         if b is not None :
