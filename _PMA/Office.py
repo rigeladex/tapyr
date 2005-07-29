@@ -35,6 +35,7 @@
 #                     mailbox
 #    26-Jul-2005 (CT) `load_status` factored and handling of `Off_Status` added
 #    29-Jul-2005 (CT) `storage_path` removed (dead code)
+#    29-Jul-2005 (CT) Ignore directories starting with `.`
 #    ««revision-date»»···
 #--
 
@@ -96,7 +97,10 @@ class Office (TFL.Meta.Object) :
 
     def _delivery_boxes (self, da) :
         prefix = sos.path.split (da) [-1]
-        dirs   = subdirs (da)
+        dirs   = \
+            [ d for d in subdirs (da)
+                if  not sos.path.split (d) [-1].startswith (".")
+            ]
         if not dirs :
             inbox = self._path (da, "inbox")
             for d in "cur", "new", "tmp" :
@@ -106,7 +110,11 @@ class Office (TFL.Meta.Object) :
     # end def _delivery_boxes
 
     def _storage_boxes (self, path, da) :
-        return [PMA.Mailbox (sa) for sa in subdirs (path) if sa != da]
+        return \
+            [   PMA.Mailbox (sa)
+            for sa in subdirs (path) if sa != da
+            if  not sos.path.split (sa) [-1].startswith (".")
+            ]
     # end def _storage_boxes
 
     @classmethod
