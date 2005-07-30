@@ -131,7 +131,10 @@ class _Model_ (GTK.Object, _Iter_Mixin_) :
 
     def ui_object (self, iter) :
         if self.ui_column is not None :
-            return self.wtk_object [iter] [self.ui_column]
+            try :
+                return self.wtk_object [iter] [self.ui_column]
+            except TypeError :
+                print "==>", iter, self.ui_column
         return iter
     # end def ui_object
 

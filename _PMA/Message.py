@@ -107,6 +107,8 @@
 #                     and `moved` added
 #    30-Jul-2005 (MG) `_Pending_Action_.commit`: retur all mailboxes which
 #                     have been changed
+#    30-Jul-2005 (MG) s/_reset/reset/g
+#    30-Jul-2005 (MG) `_Pending_Action_.__len__` added
 #    ««revision-date»»···
 #--
 
@@ -735,7 +737,7 @@ class _Pending_Action_ (TFL.Meta.Object) :
 
     def __init__ (self, msg) :
         self._msg = weakref.proxy (msg)
-        self._reset ()
+        self.reset ()
     # end def __init__
 
     def commit (self) :
@@ -749,7 +751,7 @@ class _Pending_Action_ (TFL.Meta.Object) :
         if hasattr (source, "delete") :
             source.delete (msg)
             affected_boxes.add (source)
-        self._reset ()
+        self.reset ()
         return affected_boxes
     # end def commit
 
@@ -779,10 +781,14 @@ class _Pending_Action_ (TFL.Meta.Object) :
         self._targets [target] = True
     # end def move
 
-    def _reset (self) :
+    def reset (self) :
         self._delete  = None
         self._targets = {}
-    # end def _reset
+    # end def reset
+
+    def __len__ (self) :
+        return self.__nonzero__ ()
+    # end def __len__
 
     def __nonzero__ (self) :
         return bool (self._delete or self._targets)

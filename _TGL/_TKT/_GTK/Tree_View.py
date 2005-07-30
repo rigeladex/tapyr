@@ -35,6 +35,7 @@
 #    26-Jul-2005 (MG) Selction handling changed by introducing `Tree_Selection`
 #    26-Jul-2005 (MG) New signal `Select` added
 #    28-Jul-2005 (MG) `Tree_Selection.next` added
+#    30-Jul-2005 (MG) `select_all` added
 #    ««revision-date»»···
 #--
 
@@ -97,6 +98,10 @@ class Tree_Selection (GTK.Object_Wrapper) :
             if iter :
                 return self.wtk_model.ui_object (iter)
     # end def prev
+
+    def all (self) :
+        return self.wtk_object.select_all ()
+    # end def all
 
 # end class Tree_Selection
 

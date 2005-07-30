@@ -42,15 +42,21 @@ Key_Binder      = TGL.TKT.GTK.Key_Binder
 Combined_Binder = TGL.TKT.GTK.Combined_Binder
 
 Eventname.add \
-    ( commit_message = Key_Binder      ("<Alt>Return")
-    , copy_message   = Key_Binder      ("c")
-#    , delete_message = Combined_Binder (Key_Binder ("d"), Key_Binder ("Delete"))
-    , delete_message = Key_Binder      ("d")
-    , move_message   = Key_Binder      ("m")
-    , next_message   = Key_Binder      ("n")
-    , next_unseen    = Key_Binder      ("<Shift>n")
-    , prev_message   = Key_Binder      ("p")
-    , prev_unseen    = Key_Binder      ("<Shift>p")
+    ( commit_box      = Key_Binder      ("<Alt>Return")
+    , commit_message  = Key_Binder      ("<Control>Return")
+    , copy_message    = Key_Binder      ("c")
+#    , delete_message  = Combined_Binder (Key_Binder ("d"), Key_Binder ("Delete"))
+    , delete_message  = Key_Binder      ("d")
+    , forward_message = Key_Binder      ("f")
+    , move_message    = Key_Binder      ("m")
+    , next_message    = Key_Binder      ("n")
+    , next_unseen     = Key_Binder      ("<Shift>n")
+    , prev_message    = Key_Binder      ("p")
+    , prev_unseen     = Key_Binder      ("<Shift>p")
+    , reply           = Key_Binder      ("r")
+    , resend_message  = Key_Binder      ("<Shift>r")
+    , select_all      = Key_Binder      ("<Control>a")
+    , unmark_message  = Key_Binder      ("u")
     )
 
 if __name__ != "__main__" :

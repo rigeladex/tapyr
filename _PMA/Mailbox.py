@@ -48,6 +48,8 @@
 #    28-Jul-2005 (MG) `delete_subbox` added
 #    29-Jul-2005 (MG) `add_subbox` returns the added  subbox
 #    30-Jul-2005 (MG) `commit_all`: fixed and parameter `transitive` added
+#    30-Jul-2005 (MG) `_Mailbox_.pending` added
+#    30-Jul-2005 (MG) `Mailbox.add_messages`: set `path` of the new message
 #    ««revision-date»»···
 #--
 
@@ -80,6 +82,8 @@ class _Mailbox_ (TFL.Meta.Object) :
     supports_status    = False
     unseen             = property \
         (lambda s : sum ([m.status.unseen for m in s._get_messages ()]))
+    pending            = property \
+        (lambda s : sum ([len (m.pending) for m in s._get_messages ()]))
 
     _deliveries        = {} ### `time.time ()` -> number of mails delivered
 
@@ -464,7 +468,8 @@ class Mailbox (_Mailbox_in_Dir_S_) :
             new_m = PMA.Message \
                 (email = message.email, name = name, mailbox = self)
             self._add (new_m)
-            old_box._copy_msg_file (message, sos.path.join (self.path, name))
+            new_m.path = sos.path.join (self.path, name)
+            old_box._copy_msg_file (message, new_m.path)
     # end def add_messages
 
     def add_subbox (self, b, transitive = False) :

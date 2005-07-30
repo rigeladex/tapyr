@@ -1,13 +1,14 @@
 Office (menu only):
+- [D] new message
 - new delivery/storage box
 - sync
 - next/prev (unseen)  messages
 
 bv
 - next/prev (unseen) message
-- new subbox
+- [D] new subbox
 - import
-- delete box
+- [D] delete box
 - rename box
 - commit
 - move (selection or select default target)

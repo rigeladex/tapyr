@@ -56,6 +56,7 @@
 #    29-Jul-2005 (MG) Icons for commands added
 #    30-Jul-2005 (MG) New commands
 #    30-Jul-2005 (MG) `Command_Definition` added and used (for all commands)
+#    30-Jul-2005 (MG) New commands (continued)
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,8 @@ class Command_Definition (object) :
         # end def __init__
 
         def command_interfacers (self, eventname = None) :
+            if not eventname :
+                return self.ci
             return self.ci + tuple ("%s:%s" % (ev, eventname) for ev in self.ev)
         # end def command_interfacers
 
@@ -151,7 +154,7 @@ class Office (PMA.UI.Mixin) :
     CD = Command_Definition
 
     ### command definition
-    box_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_bv")), )
+    box_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_bv"), "ev_bv"), )
     msg_cmd_grps     = (CD.Group ("Message", ("mb", "cm_mv"), "ev_mv"), )
     off_cmd_grps     = (CD.Group ("Office",  ("mb", "tb")), )
     box_msg_cmd_grps = \
@@ -183,6 +186,12 @@ class Office (PMA.UI.Mixin) :
              )
           ### mailbox commands
         , Separator (* box_cmd_grps)
+        , CD ( "Commit", "commit_box"
+             , icon      = "gtk-apply"
+             , eventname = "commit_box"
+             , * box_cmd_grps
+             )
+        , Separator (* box_cmd_grps)
         , CD ( "New Subbox",         "new_subbox"
              , * box_cmd_grps
              )
@@ -192,7 +201,24 @@ class Office (PMA.UI.Mixin) :
         , CD ( "Set target mailbox", "set_target_mailbox"
              , * box_cmd_grps
              )
+
           ### message commands
+        , Separator (CD.Group ("Message", "cm_mv"))
+        , CD ( "Reply",          "reply"
+             , eventname = "reply"
+             , underline = 0
+             , * msg_cmd_grps
+             )
+        , CD ( "Forward Message", "forward_message"
+             , eventname = "forward_message"
+             , * msg_cmd_grps
+             )
+        , CD ( "Resend Message", "resend_message"
+             , eventname = "resend_message"
+             , underline = 2
+             , * msg_cmd_grps
+             )
+        , Separator (CD.Group ("Message", ("cm_mv", "mb")))
         , CD ( "Copy to subbox", "copy_message"
              , eventname = "copy_message"
              , * msg_cmd_grps
@@ -207,6 +233,19 @@ class Office (PMA.UI.Mixin) :
              )
         , CD ( "Commit",         "commit_message"
              , eventname = "commit_message"
+             , * msg_cmd_grps
+             )
+        , CD ( "Unmark",         "unmark_message"
+             , eventname = "unmark_message"
+             , * msg_cmd_grps
+             )
+        , Separator (CD.Group ("Message", ("cm_mv", "mb")))
+        , CD ( "Select All",     "select_all_messages"
+             , eventname = "select_all"
+             , * msg_cmd_grps
+             )
+        , CD ( "Commit All",     "commit_box"
+             , eventname = "commit_box"
              , * msg_cmd_grps
              )
           ### office  commands
@@ -280,7 +319,7 @@ class Office (PMA.UI.Mixin) :
     # end def __init__
 
     def copy_message (self, event = None) :
-        """Copy the currently selected message into the default target
+        """Copy the currently selected message to the default target
            mailbox.
         """
         self._message_command \
@@ -290,6 +329,12 @@ class Office (PMA.UI.Mixin) :
             , self.office.status.target_box
             )
     # end def copy_message
+
+    def commit_box (self, event = None) :
+        """Commit all pending actions of the currently selected box."""
+        box = self.office.status.current_box
+        self._commit (m for m in box.messages if m.pending)
+    # end def commit_box
 
     def commit_message (self, event = None) :
         """Commit all pending changes of the currently selected message."""
@@ -302,12 +347,14 @@ class Office (PMA.UI.Mixin) :
         text     = []
         for msg in messages :
             text.append ("%s:%s" % (msg.mailbox.qname, msg.number))
-            view = self.mb_msg_view
+            view   = self.mb_msg_view
+            update = True
             if msg.pending.deleted or msg.pending.moved :
+                update = False
                 view.remove (msg)
-            else :
-                view.update (msg)
             boxes.update (msg.pending.commit ())
+            if update :
+                view.update (msg)
         for box in boxes :
             self.box_views [box.root].update (box)
         print "%s committed" % ", ".join (text)
@@ -317,7 +364,7 @@ class Office (PMA.UI.Mixin) :
         """Delete the currently selected message from this mailbox."""
         self._message_command \
             ( "delete"
-            , "[M] Delte message `%(cb_qname)s:%(msg_no)d`"
+            , "[M] Delete message `%(cb_qname)s:%(msg_no)d`"
             , self.office.status.current_box
             )
     # end def delete_message
@@ -350,16 +397,22 @@ class Office (PMA.UI.Mixin) :
         parent.delete_subbox (box)
     # end def _delete_box
 
+    def forward_message (self, event = None) :
+        """Forward the selected message."""
+        msg  = self.office.status.current_box.status.current_message
+        self._mail_compose \
+            ( "forward"
+            , "Start editor for forwarding the message `%s`"
+            % (msg.subject [:30])
+            , msg
+            )
+    # end def forward_message
+
     def new_message (self, event = None) :
         """Start the default editor with a new message and send this message
            after finishing of editing.
         """
-        ANS  = self.ANS
-        smtp = ANS.Sender     ()
-        comp = ANS.Composer   (smtp = smtp, send_cb = self._mail_sent)
-        comp.compose          ()
-        time.sleep            (0.1)
-        print "Starting editor for Send..."
+        self._mail_compose ("compose", "Starting editor with a new message...")
     # end def new_message
 
     def _mail_sent (self, email) :
@@ -383,6 +436,43 @@ class Office (PMA.UI.Mixin) :
             box  = cb.add_subbox (name)
             self.box_views [cb.root].add (box, parent = cb)
     # end def new_subbox
+
+    def reply (self, event = None) :
+        """Reply to the selected message."""
+        msg  = self.office.status.current_box.status.current_message
+        self._mail_compose \
+            ( "reply"
+            , "Start editor for a reply to message `%s`" % (msg.subject [:30])
+            , msg
+            )
+    # end def reply
+
+    def resend_message (self, event = None) :
+        """Resend the selected message."""
+        msg  = self.office.status.current_box.status.current_message
+        self._mail_compose \
+            ( "resend"
+            , "Start editor for resending the message `%s`"
+            % (msg.subject [:30])
+            , msg
+            )
+    # end def resend_message
+
+    def _mail_compose (self, cmd, text, * args) :
+        ANS    = self.ANS
+        smtp   = ANS.Sender     ()
+        comp   = ANS.Composer   (smtp = smtp, send_cb = self._mail_sent)
+        result = getattr        (comp, cmd) (* args)
+        time.sleep (0.1)
+        print text
+        time.sleep (0.1)
+        return result
+    # end def _mail_compose
+
+    def select_all_messages (self, event = None) :
+        """Select all message of the current mailbox."""
+        self.mb_msg_view.selection.all ()
+    # end def select_all_messages
 
     def select_box (self, event = None) :
         curr_box = self.office.status.current_box
@@ -456,19 +546,23 @@ class Office (PMA.UI.Mixin) :
     # end def show_prev_unseen
 
     def _message_command (self, cmd, text, * args) :
-        status = self.office.status
-        msg    = status.current_box.status.current_message
-        result = getattr (msg.pending, cmd) (* args)
-        print text % dict \
-            ( cb_qname = status.current_box.qname
-            , msg_no   = msg.number
-            , tb_qname = status.target_box.qname
-            )
-        view = self.mb_msg_view
-        view.update                (msg)
-        next           = view.next ()
-        view.see                   (next)
-        view.selection = next
+        status   = self.office.status
+        view     = self.mb_msg_view
+        messages = self.mb_msg_view.selection
+        if not len (messages) :
+            messages = (status.current_box.status.current_message, )
+        for msg in messages :
+            result = getattr (msg.pending, cmd) (* args)
+            print text % dict \
+                ( cb_qname = status.current_box.qname
+                , msg_no   = msg.number
+                , tb_qname = status.target_box.qname
+                )
+            view.update  (msg)
+        next = view.next ()
+        if next :
+            view.see               (next)
+            view.selection = next
         return result
     # end def _message_command
 
@@ -479,6 +573,14 @@ class Office (PMA.UI.Mixin) :
     def model_quit (self, * args, ** kw) :
         return self.model.quit (* args, ** kw)
     # end def model_quit
+
+    def unmark_message (self, event = None) :
+        """Reset all pending actions for the selected message."""
+        self._message_command \
+            ( "reset"
+            , "Unmark message `%(cb_qname)s:%(msg_no)d`"
+            )
+    # end def unmark_message
 
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
