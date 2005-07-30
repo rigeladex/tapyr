@@ -32,6 +32,7 @@
 #                     "Insert", ...)
 #     3-Apr-2005 (MG) `Combined_Binder._call` typo fixed
 #     7-Apr-2005 (MG) `s/Button_Signal_Binder/Mouse_Button_Binder/g`
+#    30-Jul-2005 (MG) Debug output added
 #    ««revision-date»»···
 #--
 
@@ -72,11 +73,15 @@ class Key_Binder (TFL.Meta.Object) :
 
     def __init__ (self, key_name) :
         self.name           = key_name
-        self.key_spec       = kv, km = gtk.accelerator_parse (key_name)
+        try :
+            self.key_spec   = kv, km = gtk.accelerator_parse (key_name)
+        except :
+            print key_name
+            raise
         self._connects      = {}
         self._id            = self.__id
         self.__class__.__id = self._id + 1
-        assert kv
+        assert kv, "%s %s %s" % (key_name, kv, km)
         gtk.binding_entry_add_signal \
             (gtk.Widget, kv, km, "key-binding", int, self._id)
     # end def __init__

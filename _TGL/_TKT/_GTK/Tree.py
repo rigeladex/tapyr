@@ -30,6 +30,7 @@
 #    10-Jun-2005 (MG) `scroll_policies` added
 #    29-Jul-2005 (MG) `see` changed to expand the row which shall be seen
 #    29-Jul-2005 (MG) `add` and `remove` added
+#    29-Jul-2005 (MG) `next` and `prev` added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,14 @@ class Tree (GTK.Tree_View) :
         self.model.add (element, parent = None)
     # end def add
 
+    def next (self) :
+        return self._selection.next ()
+    # end def next
+
+    def prev (self) :
+        return self._selection.prev ()
+    # end def prev
+    
     def remove (self, element) :
         self.model.remove (element)
     # end def remove

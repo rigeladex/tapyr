@@ -40,6 +40,7 @@
 #                     changed to use new `auto_attributes` feature
 #    17-Jun-2005 (MG) Support for `lazy` cells added
 #    17-Jun-2005 (MG) Class variables `Model_Type` and `rules_hint` added
+#    30-Jul-2005 (MG) Allow `kw` for `row_data`
 #    ««revision-date»»···
 #--
 
@@ -99,8 +100,8 @@ class Cell (TFL.Meta.Object) :
                 index += 1
     # end def setup_column_types
 
-    def add_data (self, ui) :
-        return [f (ui, n) for (n, f) in self.attr_order]
+    def add_data (self, ui, kw) :
+        return [f (ui, n, ** kw) for (n, f) in self.attr_order]
     # end def add_data
 
     def _lazy_populate (self, ui, renderer) :
@@ -115,7 +116,7 @@ class _Style_Mixin_ (TFL.Meta.Object) :
     """Extends a normal cell to use some of the attributes out of style object
     """
 
-    def _style_get (self, obj, attr_name) :
+    def _style_get (self, obj, attr_name, ** kw) :
         return getattr (obj.style, attr_name)
     # end def _style_get
 
@@ -189,9 +190,9 @@ class Column (TFL.Meta.Object) :
                 column.set_attributes (renderer, ** cell.renderer_attr_dict)
     # end def add_column
 
-    def add_row_data (self, ui, row) :
+    def add_row_data (self, ui, row, kw) :
         for cell in self.cells :
-            row.extend (cell.add_data (ui))
+            row.extend (cell.add_data (ui, kw))
     # end def add_row_data
 
     def __str__ (self) :
@@ -259,11 +260,11 @@ class Tree_Adapter (TGL.UI.Mixin) :
     # end def root_children
 
     @classmethod
-    def row_data (cls, element, row = None) :
+    def row_data (cls, element, kw = {}, row = None) :
         if row is None :
             row = []
             for column in cls.schema :
-                column.add_row_data (element, row)
+                column.add_row_data (element, row, kw)
         row.append                  (element)
         return row
     # end def row_data

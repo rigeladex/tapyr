@@ -101,6 +101,12 @@
 #    29-Jul-2005 (CT) `_Message_._decoded_header` moved to module-level
 #                     `decoded_header`
 #    29-Jul-2005 (CT) `Msg_Scope` changed to use `decoded_header`
+#    29-Jul-2005 (MG) `_Pending_Action_.__nonzero__` fixed (must return bool,
+#                     not dict)
+#    30-Jul-2005 (MG) `_Pending_Action_`: Properties `copyied`, "deleted",
+#                     and `moved` added
+#    30-Jul-2005 (MG) `_Pending_Action_.commit`: retur all mailboxes which
+#                     have been changed
 #    ««revision-date»»···
 #--
 
@@ -722,7 +728,10 @@ class Message (_Message_) :
 
 class _Pending_Action_ (TFL.Meta.Object) :
 
-    msg               = property (lambda s : s._msg)
+    msg     = property (lambda s : s._msg)
+    copied  = property (lambda s : bool (    s._targets and not s._delete))
+    deleted = property (lambda s : bool (not s._targets and     s._delete))
+    moved   = property (lambda s : bool (    s._targets and     s._delete))
 
     def __init__ (self, msg) :
         self._msg = weakref.proxy (msg)
@@ -731,13 +740,17 @@ class _Pending_Action_ (TFL.Meta.Object) :
 
     def commit (self) :
         """Commit all pending actions of message in mailbox `source`"""
+        affected_boxes = set ()
         msg = self._msg
         for t in self._targets :
-            t.add_messages (msg)
+            t.add_messages     (msg)
+            affected_boxes.add (t)
         source = self._delete
         if hasattr (source, "delete") :
             source.delete (msg)
+            affected_boxes.add (source)
         self._reset ()
+        return affected_boxes
     # end def commit
 
     def copy (self, target) :
@@ -772,7 +785,7 @@ class _Pending_Action_ (TFL.Meta.Object) :
     # end def _reset
 
     def __nonzero__ (self) :
-        return self._delete or self._targets
+        return bool (self._delete or self._targets)
     # end def __nonzero__
 
     def __str__ (self) :

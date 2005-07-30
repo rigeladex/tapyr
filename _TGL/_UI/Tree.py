@@ -44,6 +44,8 @@
 #    26-Jul-2005 (MG) `multiselection` added
 #    28-Jul-2005 (MG) `quick_search` added
 #    29-Jul-2005 (MG) `add` and `remove` added
+#    29-Jul-2005 (MG) `adapter_kw` added and used
+#    29-Jul-2005 (MG) `next` and `prev` added
 #    ««revision-date»»···
 #--
 
@@ -76,6 +78,7 @@ class _Tree_ (TGL.UI.Mixin) :
                  , show_header    = True
                  , multiselection = False
                  , quick_search   = True
+                 , adapter_kw     = {}
                  , AC             = None
                  ) :
         self.__super.__init__ (AC = AC)
@@ -83,6 +86,7 @@ class _Tree_ (TGL.UI.Mixin) :
         Adapter         = self.Adapter
         self.ui_model   = None
         self.lazy       = lazy
+        self.adapter_kw = adapter_kw
         self.tkt_model  = self.t_model = Adapter.create_model (TNS, AC)
         if filter :
             self.tkt_f_model = Adapter.create_filter_model \
@@ -105,13 +109,21 @@ class _Tree_ (TGL.UI.Mixin) :
         return result
     # end def add
 
+    def next (self) :
+        return self.tkt.next ()
+    # end def next
+
+    def prev (self) :
+        return self.tkt.prev ()
+    # end def prev
+    
     def remove (self, element) :
         return self.tkt_model.remove (element)
     # end def remove
 
     def update (self, element) :
         return self.tkt_model.update \
-            (element, (self.Adapter.row_data (element)))
+            (element, (self.Adapter.row_data (element, self.adapter_kw)))
     # end def update
 
     def update_model (self, ui_model) :
@@ -148,7 +160,8 @@ class _Tree_ (TGL.UI.Mixin) :
     def _add_element (self, element, parent, lazy) :
         Adapter = self.Adapter
         model   = self.tkt_model
-        model.add (Adapter.row_data (element), parent = parent)
+        model.add \
+            (Adapter.row_data (element, self.adapter_kw), parent = parent)
         if Adapter.has_children (element) :
             if lazy :
                 self._pending_populates [element] = model.add_empty \
@@ -199,7 +212,8 @@ class Rooted_Tree (_Tree_) :
 
     def _model_populate (self) :
         parent = self.ui_model
-        self.tkt_model.add (self.Adapter.row_data (parent), parent = None)
+        self.tkt_model.add \
+            (self.Adapter.row_data (parent, self.adapter_kw), parent = None)
         super (Rooted_Tree, self)._model_populate (parent)
         # XXX why does this `__super` call not work -> calls
         # `_model_populate` form this class instead of the super class ???

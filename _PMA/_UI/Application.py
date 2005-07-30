@@ -440,6 +440,7 @@ class Application (PMA.UI.Mixin) :
         add_cmd \
             ( Cmd ("Interpreter", self.interact)
             , if_names  = ("mb", "tb")
+            , icon      = "gtk-harddisk"
             , underline = 5
             )
     # end def _setup_help_group

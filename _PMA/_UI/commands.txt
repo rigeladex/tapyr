@@ -12,13 +12,16 @@ bv
 - commit
 - move (selection or select default target)
 - sync
+- unmark
 
 mv
 - display (seleted messages)
 - commit (box)
+- unmark
 - select all
 - next/prev (unseen) message
 - selection
+  . unmark
   . delete
   . copy
   . move
@@ -48,6 +51,7 @@ md
 - copy
 - move
 - commit
+- unmark
 - print
 - save
 - reply/forward/resend  ### BEWARE: s/bounce/resend/

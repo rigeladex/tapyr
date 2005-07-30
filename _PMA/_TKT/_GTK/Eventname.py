@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    28-Jul-2005 (CT) Creation
+#    30-Jul-2005 (MG) New commands added
 #    ««revision-date»»···
 #--
 
@@ -36,13 +37,20 @@ from   _TGL                        import TGL
 import _TGL._TKT._GTK
 import _TGL._TKT._GTK.Eventname
 
-Eventname = TGL.TKT.GTK.Eventname
+Eventname       = TGL.TKT.GTK.Eventname
+Key_Binder      = TGL.TKT.GTK.Key_Binder
+Combined_Binder = TGL.TKT.GTK.Combined_Binder
 
 Eventname.add \
-    ( next_message = TGL.TKT.GTK.Key_Binder ("n")
-    , next_unseen  = TGL.TKT.GTK.Key_Binder ("<Shift>n")
-    , prev_message = TGL.TKT.GTK.Key_Binder ("p")
-    , prev_unseen  = TGL.TKT.GTK.Key_Binder ("<Shift>p")
+    ( commit_message = Key_Binder      ("<Alt>Return")
+    , copy_message   = Key_Binder      ("c")
+#    , delete_message = Combined_Binder (Key_Binder ("d"), Key_Binder ("Delete"))
+    , delete_message = Key_Binder      ("d")
+    , move_message   = Key_Binder      ("m")
+    , next_message   = Key_Binder      ("n")
+    , next_unseen    = Key_Binder      ("<Shift>n")
+    , prev_message   = Key_Binder      ("p")
+    , prev_unseen    = Key_Binder      ("<Shift>p")
     )
 
 if __name__ != "__main__" :

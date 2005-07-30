@@ -33,6 +33,7 @@
 #    17-Jun-2005 (MG) `Message_Cell` changed: Use new `auto_attributes` feature
 #    17-Jun-2005 (MG) `Body` cell made lazy (performance reasons)
 #    28-Jul-2005 (MG) `Message_Cell` style handling changed
+#    30-Jul-2005 (MG) New styles added and used
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,22 @@ class Message_Cell (PMA.UI.Text_Cell) :
         , foreground = "red"
         , background = "yellow"
         )
+    Copied = TGL.UI.Style \
+        ( "Copied"
+        , Normal
+        , background = "blue"
+        )
+    Deleted = TGL.UI.Style \
+        ( "Unseen"
+        , Normal
+        , foreground = "white"
+        , background = "red"
+        )
+    Moved  = TGL.UI.Style \
+        ( "Unseen"
+        , Copied
+        , foreground = "white"
+        )
 
     auto_attributes     = dict \
         ( PMA.UI.Cell.auto_attributes
@@ -65,14 +82,20 @@ class Message_Cell (PMA.UI.Text_Cell) :
         , background    = ("background", str, "_style_get")
         )
 
-    def _style (self, message) :
+    def _style (self, message, office = None) :
         if message.status.unseen :
             return self.Unseen
+        if message.pending.deleted :
+            return self.Deleted
+        if message.pending.copied :
+            return self.Copied
+        if message.pending.moved:
+            return self.Moved
         return self.Normal
     # end def _style
 
-    def _style_get (self, message, attr_name) :
-        return getattr (self._style (message), attr_name)
+    def _style_get (self, message, attr_name, office = None) :
+        return getattr (self._style (message, office), attr_name)
     # end def _style_get
 
 # end class Message_Cell
@@ -80,7 +103,9 @@ class Message_Cell (PMA.UI.Text_Cell) :
 class _MB_TA_ (PMA.UI.Tree_Adapter) :
     """Tree adapter for mailbox"""
 
-    schema = \
+    Model_Type = "List_Model"
+    rules_hint = False
+    schema     = \
         ( TGL.UI.Column ( "No"
                         , Message_Cell (("number", int))
                         )
