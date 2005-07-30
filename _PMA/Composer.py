@@ -319,7 +319,7 @@ class Composer (TFL.Meta.Object) :
                     name        = value
                     add_headers = None
                 p = PMA.Mime.Part \
-                    (TFL.sos.expand_path (name.strip (";")), add_headers)
+                    (TFL.sos.expanded_path (name.strip (";")), add_headers)
                 if p :
                     if not email.is_multipart () :
                         email = self._as_multipart (email)
