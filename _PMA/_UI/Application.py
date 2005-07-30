@@ -230,7 +230,7 @@ class Application (PMA.UI.Mixin) :
         try :
             self.office.commit ()
             return True
-        else :
+        except :
             return False
     # end def commit_all
 
