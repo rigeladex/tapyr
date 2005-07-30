@@ -34,6 +34,8 @@
 #    17-Jun-2005 (MG) `Body` cell made lazy (performance reasons)
 #    28-Jul-2005 (MG) `Message_Cell` style handling changed
 #    30-Jul-2005 (MG) New styles added and used
+#    30-Jul-2005 (MG) `Message_Cell`: new property `no_wrap` added,
+#                     `Message_Cell_FW` added and used
 #    ««revision-date»»···
 #--
 
@@ -78,8 +80,9 @@ class Message_Cell (PMA.UI.Text_Cell) :
 
     auto_attributes     = dict \
         ( PMA.UI.Cell.auto_attributes
-        , foreground    = ("foreground", str, "_style_get")
-        , background    = ("background", str, "_style_get")
+        , foreground    = ("foreground",            str,  "_style_get")
+        , background    = ("background",            str,  "_style_get")
+        , no_wrap       = ("single-paragraph-mode", bool, True)
         )
 
     def _style (self, message, office = None) :
@@ -100,6 +103,18 @@ class Message_Cell (PMA.UI.Text_Cell) :
 
 # end class Message_Cell
 
+class Message_Cell_FW (Message_Cell):
+
+    width               = 15
+
+    auto_attributes     = dict \
+        ( Message_Cell.auto_attributes
+        , ellipsize     = ("ellipsize",             int,  3)
+        , width         = ("width-chars",           int,  "width")
+        )
+
+# end class Message_Cell_FW
+
 class _MB_TA_ (PMA.UI.Tree_Adapter) :
     """Tree adapter for mailbox"""
 
@@ -107,21 +122,21 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
     rules_hint = False
     schema     = \
         ( TGL.UI.Column ( "No"
-                        , Message_Cell (("number", int))
+                        , Message_Cell    (("number", int))
                         )
         , TGL.UI.Column ( "Date"
-                        , Message_Cell ("date")
+                        , Message_Cell    ("date")
                         )
         , TGL.UI.Column ( "Sender"
-                        , Message_Cell ("sender")
+                        , Message_Cell_FW ("sender")
                         , alignment = 0
                         )
         , TGL.UI.Column ( "Subject"
-                        , Message_Cell ("subject")
+                        , Message_Cell_FW ("subject", width = 35)
                         , alignment = 0
                         )
         , TGL.UI.Column ( "Body"
-                        , Message_Cell ("body_start", lazy = True)
+                        , Message_Cell    ("body_start", lazy = True)
                         , alignment = 0
                         )
         )

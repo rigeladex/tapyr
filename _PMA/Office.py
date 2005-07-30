@@ -36,6 +36,7 @@
 #    26-Jul-2005 (CT) `load_status` factored and handling of `Off_Status` added
 #    29-Jul-2005 (CT) `storage_path` removed (dead code)
 #    29-Jul-2005 (CT) Ignore directories starting with `.`
+#    30-Jul-2005 (MG) `commit` added
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,12 @@ class Office (TFL.Meta.Object) :
         self.delivery_boxes = self._delivery_boxes      (da)
         self.storage_boxes  = self._storage_boxes       (path, da)
     # end def __init__
+
+    def commit (self) :
+        for kind in self.delivery_boxes, self.storage_boxes :
+            for box in kind :
+                box.commit_all (transitive = True)
+    # end def commit
 
     def load_status (self, path) :
         self.status         = stat = PMA.Off_Status (self)

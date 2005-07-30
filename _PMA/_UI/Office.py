@@ -55,6 +55,7 @@
 #    29-Jul-2005 (MG) `new_message` changed and `_mail_sent` added
 #    29-Jul-2005 (MG) Icons for commands added
 #    30-Jul-2005 (MG) New commands
+#    30-Jul-2005 (MG) `Command_Definition` added and used (for all commands)
 #    ««revision-date»»···
 #--
 
@@ -73,8 +74,171 @@ import _PMA.Sender
 import _TFL.sos
 import time
 
+class Command_Definition (object) :
+
+    precondition = None
+    batchable    = True
+    icon         = None
+    eventname    = None
+    accelerator  = None
+    underline    = None
+
+    class Group (object) :
+        def __init__ (self, name, ci = (), ev = ()) :
+            self.name = name
+            if not isinstance (ci, (list, tuple)) :
+                ci = (ci, )
+            if not isinstance (ev, (list, tuple)) :
+                ev = (ev, )
+            self.ci = ci
+            self.ev = ev
+        # end def __init__
+
+        def command_interfacers (self, eventname = None) :
+            return self.ci + tuple ("%s:%s" % (ev, eventname) for ev in self.ev)
+        # end def command_interfacers
+
+    # end class Group
+
+    def __init__ (self, name, callback, * group_spec, ** kw) :
+        self.name         = name
+        self.callback     = callback
+        self.group_spec   = group_spec
+        self.__dict__.update (kw)
+    # end def __init__
+
+    def __call__ (self, Cmd, cmd_mgr, obj = None) :
+        callback = self.callback
+        if not callable (callback) :
+            callback = getattr (obj, callback)
+        cmd_dict = dict \
+            ( precondition = self.precondition
+            , batchable    = self.batchable
+            )
+        for group in self.group_spec :
+            acc = self.accelerator
+            if acc is not None :
+                acc = getattr (obj.TNS.Eventname, acc)
+            getattr (cmd_mgr.cmd, group.name).add_command \
+                ( Cmd (self.name, callback, ** cmd_dict)
+                , accelerator = acc
+                , icon        = self.icon
+                , if_names    = group.command_interfacers (self.eventname)
+                , underline   = self.underline
+                )
+    # end def __call__
+
+# end class Command_Definition
+
+class Separator (object) :
+
+    def __init__ (self, * group_spec) :
+        self.group_spec = group_spec
+    # end def __init__
+
+
+    def __call__ (self, Cmd, cmd_mgr, obj = None) :
+        for group in self.group_spec :
+            getattr (cmd_mgr.cmd, group.name).add_separator \
+                (if_names = group.command_interfacers ())
+    # end def __call__
+
+# end class Separator
+
 class Office (PMA.UI.Mixin) :
     """Abstract user interface for PMA office."""
+
+    CD = Command_Definition
+
+    ### command definition
+    box_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_bv")), )
+    msg_cmd_grps     = (CD.Group ("Message", ("mb", "cm_mv"), "ev_mv"), )
+    off_cmd_grps     = (CD.Group ("Office",  ("mb", "tb")), )
+    box_msg_cmd_grps = \
+        ( CD.Group ("Mailbox", ("mb", "tb", "cm_bv"), "ev_bv")
+        , CD.Group ("Message", "cm_mv",               "ev_mv")
+        )
+
+    deaf_commands = \
+        ( ### mailbox/message commands
+          CD ( "Previous Message", "show_prev_message"
+             , eventname = "prev_message"
+             , icon      = "gtk-media-previous"
+             , * box_msg_cmd_grps
+             )
+        , CD ( "Next Message",     "show_next_message"
+             , eventname = "next_message"
+             , icon      = "gtk-media-next"
+             , * box_msg_cmd_grps
+             )
+        , CD ( "Previous Unseen",  "show_prev_unseen"
+             , eventname = "prev_unseen"
+             , icon      = "gtk-media-rewind"
+             , * box_msg_cmd_grps
+             )
+        , CD ( "Next Unseen",      "show_next_unseen"
+             , eventname = "next_unseen"
+             , icon      = "gtk-media-forward"
+             , * box_msg_cmd_grps
+             )
+          ### mailbox commands
+        , Separator (* box_cmd_grps)
+        , CD ( "New Subbox",         "new_subbox"
+             , * box_cmd_grps
+             )
+        , CD ( "Delete Subbox",      "delete_subbox"
+             , * box_cmd_grps
+             )
+        , CD ( "Set target mailbox", "set_target_mailbox"
+             , * box_cmd_grps
+             )
+          ### message commands
+        , CD ( "Copy to subbox", "copy_message"
+             , eventname = "copy_message"
+             , * msg_cmd_grps
+             )
+        , CD ( "Move to subbox", "move_message"
+             , eventname = "move_message"
+             , * msg_cmd_grps
+             )
+        , CD ( "Delete",         "delete_message"
+             , eventname = "delete_message"
+             , * msg_cmd_grps
+             )
+        , CD ( "Commit",         "commit_message"
+             , eventname = "commit_message"
+             , * msg_cmd_grps
+             )
+          ### office  commands
+        , CD ( "New Message", "new_message"
+             , icon = "gtk-new"
+             ,  * off_cmd_grps
+             )
+        , Separator (* off_cmd_grps)
+        , CD ( "Commit and exit", "model_exit"
+             , CD.Group ("Office", ("mb", "tb"))
+             , accelerator = "save_and_exit"
+             , icon        = "gtk-quit"
+             , underline   = 0
+             )
+        , CD ( "Exit", "model_quit"
+             , CD.Group ("Office", "mb")
+             , accelerator = "exit"
+             , underline   = 1
+             )
+        )
+
+    commands = \
+        ( ### mailbox commands
+          CD ( "Select", "select_box"
+             , CD.Group ("Mailbox", ev = "ev_bv")
+             , eventname = "Select"
+             )
+        , CD ( "Select", "show_message"
+             , CD.Group ("Message", ev = "ev_mv")
+             , eventname = "Select"
+             )
+        )
 
     def __init__ ( self, model, AC = None) :
         self.__super.__init__ (AC = AC)
@@ -111,11 +275,8 @@ class Office (PMA.UI.Mixin) :
         tkt = model.tkt
         tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
         tkt.pack (tkt.wc_po_box_view, self.tkt)
-        self._setup_common_cmds     ()
-        self._setup_office_commands ()
-        self._setup_box_commands    ()
-        self._setup_msg_commands    ()
-        self._restore_selection     ()
+        self._setup_commands    ()
+        self._restore_selection ()
     # end def __init__
 
     def copy_message (self, event = None) :
@@ -305,9 +466,19 @@ class Office (PMA.UI.Mixin) :
             )
         view = self.mb_msg_view
         view.update                (msg)
-        view.selection = view.next ()
+        next           = view.next ()
+        view.see                   (next)
+        view.selection = next
         return result
     # end def _message_command
+
+    def model_exit (self, * args, ** kw) :
+        return self.model.exit (* args, ** kw)
+    # end def model_exit
+
+    def model_quit (self, * args, ** kw) :
+        return self.model.quit (* args, ** kw)
+    # end def model_quit
 
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
@@ -333,106 +504,24 @@ class Office (PMA.UI.Mixin) :
             view.selection = box
     # end def _restore_selection
 
-    def _setup_box_commands (self) :
-        Cmd     = self.ANS.UI.Deaf_Command
-        grp     = self.model.cmd_mgr.cmd.Mailbox
-        add_cmd = grp.add_command
-        add_sep = grp.add_separator
-        add_cmd \
-            ( self.ANS.UI.Command
-               ("Select", self.select_box), if_names = ("ev_bv:Select", )
-            )
-        add_sep (if_names = ("cm_bv", "mb"))
-        for name, callback in \
-            ( ("New Subbox",             self.new_subbox)
-            , ("Delete Subbox",          self.delete_subbox)
-            , ("Set target mailbox",     self.set_target_mailbox)
-            ) :
-            add_cmd (Cmd (name, callback), if_names = ("mb", "cm_bv"))
-        event_binder = grp.interfacers ["ev_bv"]
-        cm           = grp.interfacers ["cm_bv"]
+    def _setup_commands (self) :
+        Cmd     = self.ANS.UI.Command
+        Def_Cmd = self.ANS.UI.Deaf_Command
+        cmd_mgr = self.model.cmd_mgr
+
+        for cmd in self.deaf_commands :
+            cmd (Def_Cmd, cmd_mgr, self)
+        for cd in self.commands :
+            cd (Cmd, cmd_mgr, self)
+        interfacers = cmd_mgr.cmd.Message.interfacers
+        interfacers ["cm_mv"].bind_to_widget (self.mb_msg_view, "click_3")
+        interfacers ["ev_mv"].add_widget     (self.mb_msg_view)
+        event_binder = cmd_mgr.cmd.Mailbox.interfacers ["ev_bv"]
+        cm           = cmd_mgr.cmd.Mailbox.interfacers ["cm_bv"]
         for w in (b.tkt for b in self.box_views.itervalues ()) :
             cm.bind_to_widget       (w, "click_3")
             event_binder.add_widget (w)
-    # end def _setup_box_commands
-
-    def _setup_common_cmds (self) :
-        Cmd    = self.ANS.UI.Command
-        cmd    = self.model.cmd_mgr.cmd
-        for grp, cms, evb in ( (cmd.Office,  ("mb", "tb"),             ())
-                             , (cmd.Mailbox, ("mb", "cm_mv", "cm_bv"), "ev_bv")
-                             , (cmd.Message, ("mb", "cm_md", "cm_mv"), "ev_mv")
-                             ) :
-            add  = grp.add_command
-            for name, callback, ev_name, icon in \
-                ( ( "Previous Message", self.show_prev_message
-                  , "prev_message", "gtk-media-previous"
-                  )
-                , ( "Next Message",     self.show_next_message
-                  , "next_message", "gtk-media-next"
-                  )
-                , ( "Previous Unseen",  self.show_prev_unseen
-                  ,  "prev_unseen", "gtk-media-rewind"
-                  )
-                , ( "Next Unseen",      self.show_next_unseen
-                  , "next_unseen", "gtk-media-forward"
-                  )
-                ) :
-                ev_bind = ()
-                if evb :
-                    ev_bind = ("%s:%s" % (evb, ev_name), )
-                add ( Cmd (name, callback)
-                    , if_names = cms + ev_bind
-                    , icon = icon
-                    )
-    # end def _setup_common_cmds
-
-    def _setup_msg_commands (self) :
-        Cmd    = self.ANS.UI.Deaf_Command
-        grp    = self.model.cmd_mgr.cmd.Message
-        add_cmd = grp.add_command
-        add_sep = grp.add_separator
-        add_cmd \
-            (Cmd ("Select", self.show_message), if_names = ("ev_mv:Select", ))
-        add_sep (if_names = ("mb", "cm_mv"))
-        for name, callback, evn in \
-            ( ("Copy to subbox", self.copy_message,    "copy_message")
-            , ("Move to subbox", self.move_message,    "move_message")
-            , ("Delete",         self.delete_message,  "delete_message")
-            , ("Commit",         self.commit_message,  "commit_message")
-            ) :
-            add_cmd \
-                ( Cmd (name, callback)
-                , if_names = ("mb", "cm_mv", "ev_mv:%s" % (evn, ))
-                )
-        grp.interfacers ["cm_mv"].bind_to_widget (self.mb_msg_view, "click_3")
-        grp.interfacers ["ev_mv"].add_widget     (self.mb_msg_view)
-    # end def _setup_msg_commands
-
-    def _setup_office_commands (self) :
-        UI     = self.ANS.UI
-        Cmd    = UI.Command
-        grp    = self.model.cmd_mgr.cmd.Office
-        grp.add_separator (if_names = ("mb", ))
-        grp.add_command \
-            ( Cmd ("New Message", self.new_message)
-            , if_names = ("mb", "tb"), icon = "gtk-new"
-            )
-        grp.add_separator (if_names = ("mb", ))
-        grp.add_command \
-            ( UI.Deaf_Command ("Commit and exit", self.model.exit)
-            , if_names    = ("mb", )
-            , underline   = 0
-            , icon        = "gtk-quit"
-            , accelerator = self.TNS.Eventname.save_and_exit
-            )
-        grp.add_command \
-            ( UI.Deaf_Command ("Exit", self.model.quit)
-            , if_names    = ("mb", )
-            , underline   = 1
-            , accelerator = self.TNS.Eventname.exit
-            )
-    # end def _setup_office_commands
+    # end def _setup_commands
 
     def _select_message (self, msg) :
         if msg :

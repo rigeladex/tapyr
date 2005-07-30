@@ -226,7 +226,12 @@ class Application (PMA.UI.Mixin) :
 
     def commit_all (self, event = None) :
         """Commit all pending changes of mailboxes"""
-        return True ### XXX
+        ### XXX
+        try :
+            self.office.commit ()
+            return True
+        else :
+            return False
     # end def commit_all
 
     def exit (self) :

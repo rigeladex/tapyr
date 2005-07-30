@@ -46,7 +46,8 @@
 #    28-Jul-2005 (MG) `Mailbox.add_subbox` changed to allow a simple string
 #                     as parameter
 #    28-Jul-2005 (MG) `delete_subbox` added
-#    29-Jul-2005 (MG) `add_subbox` now returns the new created subbox
+#    29-Jul-2005 (MG) `add_subbox` returns the added  subbox
+#    30-Jul-2005 (MG) `commit_all`: fixed and parameter `transitive` added
 #    ««revision-date»»···
 #--
 
@@ -115,11 +116,14 @@ class _Mailbox_ (TFL.Meta.Object) :
             msg.pending.commit (self)
     # end def commit
 
-    def commit_all (self) :
+    def commit_all (self, transitive = False) :
         """Commit the pending actions all messages"""
         for msg in self._msg_dict.itervalues () :
             if msg.pending :
-                msg.pending.commit (self)
+                msg.pending.commit ()
+        if transitive :
+            for sb in self.sub_boxes :
+                sb.commit_all (transitive)
     # end def commit_all
 
     @classmethod

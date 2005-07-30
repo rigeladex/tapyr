@@ -41,6 +41,7 @@
 #    17-Jun-2005 (MG) Support for `lazy` cells added
 #    17-Jun-2005 (MG) Class variables `Model_Type` and `rules_hint` added
 #    30-Jul-2005 (MG) Allow `kw` for `row_data`
+#    30-Jul-2005 (MG) Support fixed value attributes for renderer attributes
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,7 @@ class Cell (TFL.Meta.Object) :
 
     def __init__ (self, * attributes, ** options) :
         self.__super.__init__ ()
+        self.__dict__.update  (options)
         if "lazy" in options :
             self.lazy = options ["lazy"]
             del options ["lazy"]
@@ -68,9 +70,9 @@ class Cell (TFL.Meta.Object) :
         self.attr_map = {}
         aa            = self.auto_attributes
         for ui_attr, (rend_attr, tkt_type, get_fct) in aa.iteritems () :
-            if not callable (get_fct) :
-                get_fct                        = getattr (self, get_fct)
-            self.attr_map [ui_attr]            = rend_attr, tkt_type, get_fct
+            if not callable (get_fct) and isinstance (get_fct, (str, unicode)):
+                get_fct             = getattr (self, get_fct, get_fct)
+            self.attr_map [ui_attr] = rend_attr, tkt_type, get_fct
         for ui_attr, rend_attr in zip (attributes, self.renderer_attributes) :
             if not isinstance (ui_attr, (list, tuple)) :
                 tkt_type                       = str
@@ -84,7 +86,6 @@ class Cell (TFL.Meta.Object) :
             if not callable (get_fct) :
                 get_fct                        = getattr (self, get_fct)
             self.attr_map [ui_attr]            = rend_attr, tkt_type, get_fct
-        self.attr_map.update (options)
     # end def __init__
 
     def setup_column_types (self, column_types) :
@@ -101,13 +102,23 @@ class Cell (TFL.Meta.Object) :
     # end def setup_column_types
 
     def add_data (self, ui, kw) :
-        return [f (ui, n, ** kw) for (n, f) in self.attr_order]
+        row = []
+        for (n, f) in self.attr_order :
+            if callable (f) :
+                row.append (f (ui, n, ** kw))
+            else :
+                row.append (f)
+        return row
     # end def add_data
 
     def _lazy_populate (self, ui, renderer) :
         attr_map = self.attr_map
         for ui_attr, (rend_attr, tkt_type, get_fct) in attr_map.iteritems () :
-            setattr (renderer, rend_attr, get_fct (ui, ui_attr))
+            if callable (get_fct) :
+                value = get_fct (ui, ui_attr)
+            else :
+                value = get_fct
+            setattr (renderer, rend_attr, value)
     # end def _lazy_populate
 
 # end class Cell
