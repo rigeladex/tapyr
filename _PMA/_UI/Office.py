@@ -57,6 +57,10 @@
 #    30-Jul-2005 (MG) New commands
 #    30-Jul-2005 (MG) `Command_Definition` added and used (for all commands)
 #    30-Jul-2005 (MG) New commands (continued)
+#    31-Jul-2005 (CT) `set_target_mailbox` protected against undefined
+#                     `status.current_box`
+#    31-Jul-2005 (CT) `_message_command` protected against undefined
+#                     `target_box`
 #    ««revision-date»»···
 #--
 
@@ -507,7 +511,8 @@ class Office (PMA.UI.Mixin) :
         old               = status.target_box
         status.target_box = status.current_box
         for box in old, status.current_box :
-            self.box_views [box.root].update (box)
+            if box is not None :
+                self.box_views [box.root].update (box)
     # end def set_target_mailbox
 
     def show_message (self, event = None) :
@@ -556,7 +561,7 @@ class Office (PMA.UI.Mixin) :
             print text % dict \
                 ( cb_qname = status.current_box.qname
                 , msg_no   = msg.number
-                , tb_qname = status.target_box.qname
+                , tb_qname = getattr (status.target_box, "qname", "")
                 )
             view.update  (msg)
         next = view.next ()
