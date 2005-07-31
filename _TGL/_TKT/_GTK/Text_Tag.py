@@ -34,6 +34,8 @@
 #    18-May-2005 (MG) Button signal handling added
 #    20-May-2005 (MG) Don't use `weakref`
 #    10-Jun-2005 (MG) Map `wrap` to `wrap_mode`
+#    31-Jul-2005 (MG) New properties `paragraph_background*` added and used
+#                     in `Styler` (requires new GTK+)
 #    ««revision-date»»···
 #--
 
@@ -66,14 +68,15 @@ class Text_Tag (GTK.Object) :
     class Styler (TGL.TKT.GTK.Styler) :
         Opts    = dict \
             ( dict_from_list
-                ( ( "background", "font", "foreground", "underline"
+                ( ( "font", "foreground", "underline"
                   , "justify"
                   )
                 )
-            , wrap      = "wrap_mode"
-            , lmargin1  = "indent"
-            , lmargin2  = "left_margin"
-            , rmargin   = "right_margin"
+            , background = "paragraph_background"
+            , wrap       = "wrap_mode"
+            , lmargin1   = "indent"
+            , lmargin2   = "left_margin"
+            , rmargin    = "right_margin"
             )
 
         # GTK uses left-margin to indent the whole paragraph. If we
@@ -130,6 +133,9 @@ class Text_Tag (GTK.Object) :
         , GTK.Property            ("left_margin")
         , GTK.Property            ("left_margin_set")
         , GTK.Property            ("name")
+        , GTK.Property            ("paragraph_background", get = None)
+        , GTK.Property            ("paragraph_background_gdk")
+        , GTK.Property            ("paragraph_background_set")
         , GTK.Property            ("pixels_above_lines")
         , GTK.Property            ("pixels_above_lines_set")
         , GTK.Property            ("pixels_below_lines")

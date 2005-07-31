@@ -36,6 +36,7 @@
 #    30-Jul-2005 (MG) New styles added and used
 #    30-Jul-2005 (MG) `Message_Cell`: new property `no_wrap` added,
 #                     `Message_Cell_FW` added and used
+#    31-Jul-2005 (MG) Styles changed
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,9 @@ import _PMA._UI
 import _PMA._UI.Mixin
 import _PMA._UI.Tree
 import _PMA._UI.Tree_Adapter
+
+#  * Current message    gray92    background
+# must be changed in the RC-File -> but I don't know how )o:
 
 class Message_Cell (PMA.UI.Text_Cell) :
     """A cell which uses attributes of a PMA.Message object to set style
@@ -64,18 +68,18 @@ class Message_Cell (PMA.UI.Text_Cell) :
     Copied = TGL.UI.Style \
         ( "Copied"
         , Normal
-        , background = "blue"
+        , background = "gray92"
+        , foreground = "VioletRed"
         )
     Deleted = TGL.UI.Style \
         ( "Unseen"
         , Normal
-        , foreground = "white"
-        , background = "red"
+        , background = "grey76"
         )
     Moved  = TGL.UI.Style \
         ( "Unseen"
-        , Copied
-        , foreground = "white"
+        , Normal
+        , background = "cyan"
         )
 
     auto_attributes     = dict \

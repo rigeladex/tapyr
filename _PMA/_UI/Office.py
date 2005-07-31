@@ -61,6 +61,7 @@
 #                     `status.current_box`
 #    31-Jul-2005 (CT) `_message_command` protected against undefined
 #                     `target_box`
+#    31-Jul-2005 (MG) Commands changes/added
 #    ««revision-date»»···
 #--
 
@@ -191,9 +192,13 @@ class Office (PMA.UI.Mixin) :
           ### mailbox commands
         , Separator (* box_cmd_grps)
         , CD ( "Commit", "commit_box"
-             , icon      = "gtk-apply"
              , eventname = "commit_box"
              , * box_cmd_grps
+             )
+        , CD ( "Delete Message", "delete_message"
+             , CD.Group ("Mailbox", "cm_bv", "ev_bv")
+             , eventname = "delete_message"
+             , icon      = "gtk-delete"
              )
         , Separator (* box_cmd_grps)
         , CD ( "New Subbox",         "new_subbox"
@@ -225,22 +230,27 @@ class Office (PMA.UI.Mixin) :
         , Separator (CD.Group ("Message", ("cm_mv", "mb")))
         , CD ( "Copy to subbox", "copy_message"
              , eventname = "copy_message"
+             , icon      = "gtk-copy"
              , * msg_cmd_grps
              )
         , CD ( "Move to subbox", "move_message"
              , eventname = "move_message"
+             , icon      = "gtk-cut"
              , * msg_cmd_grps
              )
         , CD ( "Delete",         "delete_message"
              , eventname = "delete_message"
+             , icon      = "gtk-delete"
              , * msg_cmd_grps
              )
         , CD ( "Commit",         "commit_message"
              , eventname = "commit_message"
+             , icon      = "gtk-apply"
              , * msg_cmd_grps
              )
         , CD ( "Unmark",         "unmark_message"
              , eventname = "unmark_message"
+             , icon      = "gtk-cancel"
              , * msg_cmd_grps
              )
         , Separator (CD.Group ("Message", ("cm_mv", "mb")))

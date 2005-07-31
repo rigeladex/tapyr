@@ -29,6 +29,7 @@
 # Revision Dates
 #    28-Jul-2005 (CT) Creation
 #    30-Jul-2005 (MG) New commands added
+#    31-Jul-2005 (MG) New commands added
 #    ««revision-date»»···
 #--
 
@@ -42,19 +43,20 @@ Key_Binder      = TGL.TKT.GTK.Key_Binder
 Combined_Binder = TGL.TKT.GTK.Combined_Binder
 
 Eventname.add \
-    ( commit_box      = Key_Binder      ("<Alt>Return")
-    , commit_message  = Key_Binder      ("<Control>Return")
+    ( commit_box      = Key_Binder      ("<Control>Return")
+    , commit_message  = Key_Binder      ("<Alt>Return")
     , copy_message    = Key_Binder      ("c")
 #    , delete_message  = Combined_Binder (Key_Binder ("d"), Key_Binder ("Delete"))
     , delete_message  = Key_Binder      ("d")
-    , forward_message = Key_Binder      ("f")
+    , forward_message = Key_Binder      ("<Shift>f")
     , move_message    = Key_Binder      ("m")
     , next_message    = Key_Binder      ("n")
     , next_unseen     = Key_Binder      ("<Shift>n")
     , prev_message    = Key_Binder      ("p")
     , prev_unseen     = Key_Binder      ("<Shift>p")
     , reply           = Key_Binder      ("r")
-    , resend_message  = Key_Binder      ("<Shift>r")
+    , reply_all       = Key_Binder      ("<Shift>r")
+    , resend_message  = Key_Binder      ("f")
     , select_all      = Key_Binder      ("<Control>a")
     , unmark_message  = Key_Binder      ("u")
     )
