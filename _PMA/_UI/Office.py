@@ -62,6 +62,7 @@
 #    31-Jul-2005 (CT) `_message_command` protected against undefined
 #                     `target_box`
 #    31-Jul-2005 (MG) Commands changes/added
+#    31-Jul-2005 (MG) Commands changes/added
 #    ««revision-date»»···
 #--
 
@@ -216,6 +217,11 @@ class Office (PMA.UI.Mixin) :
         , CD ( "Reply",          "reply"
              , eventname = "reply"
              , underline = 0
+             , * msg_cmd_grps
+             )
+        , CD ( "Reply All",          "reply_all"
+             , eventname = "reply_all"
+             , underline = 6
              , * msg_cmd_grps
              )
         , CD ( "Forward Message", "forward_message"
@@ -460,6 +466,17 @@ class Office (PMA.UI.Mixin) :
             , msg
             )
     # end def reply
+
+    def reply_all (self, event = None) :
+        """Reply to the selected message."""
+        msg  = self.office.status.current_box.status.current_message
+        self._mail_compose \
+            ( "reply_all"
+            , "Start editor for a reply all to message `%s`"
+            % (msg.subject [:30])
+            , msg
+            )
+    # end def reply_all
 
     def resend_message (self, event = None) :
         """Resend the selected message."""
