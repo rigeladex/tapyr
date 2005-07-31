@@ -41,6 +41,7 @@
 #                     in case of exceptions
 #    29-Jul-2005 (CT) Use `subprocess.call` instead of `sos.system`
 #    29-Jul-2005 (CT) `forward` changed to allow multiple messages
+#    31-Jul-2005 (CT) `reply_all` added
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,12 @@ class Composer (TFL.Meta.Object) :
           )
         )
 
+    reply_all_format = "\n".join \
+        ( ( """Cc:          %(reply_address_cc)s"""
+          , reply_format
+          )
+        )
+
     resend_format  = "\n".join \
         ( ( """From:        %(email_address)s"""
           , """To:          """
@@ -213,13 +220,18 @@ class Composer (TFL.Meta.Object) :
             (buffer, lambda * a : self._finish_forward (msg, more_msgs, * a))
     # end def forward
 
-    def reply (self, msg) :
+    def reply (self, msg, _format = None) :
         """Compose and send a reply to `msg`."""
-        buffer = self._formatted (self.reply_format, msg)
+        buffer = self._formatted (_format or self.reply_format, msg)
         if self._reply_subject_prefix_pat.search (buffer) :
             buffer = self._reply_subject_prefix_pat.sub (r"\1Re: ", buffer)
         self._send (buffer, self._finish_edit)
     # end def reply
+
+    def reply_all (self, msg) :
+        """Compose and send a reply to all receviers of `msg`."""
+        return self.reply (msg, self.reply_all_format)
+    # end def reply_all
 
     def resend (self, msg) :
         """Resend `msg` to other addresses unchanged (except for `Resent-`
@@ -338,12 +350,13 @@ def _command_spec (arg_array = None) :
     from _TFL.Command_Line import Command_Line
     return Command_Line \
         ( option_spec =
-            ( "-domain:S?Domain of sender"
+            ( "-bounce:S?Message to resend"
+            , "-domain:S?Domain of sender"
             , "-editor:S?Command used to start editor"
             , "-forward:S?Message to forward"
             , "-mail_host:S?Name of SMTP server to use"
             , "-reply:S?Message to reply to"
-            , "-Resend:S?Message to resend"
+            , "-Reply_all:S?Message to reply to"
             , "-user:S?Name of sender"
             )
         , description =
@@ -360,8 +373,10 @@ def _main (cmd) :
         comp.forward    (PMA.message_from_file (cmd.forward))
     elif cmd.reply :
         comp.reply      (PMA.message_from_file (cmd.reply))
-    elif cmd.Resend :
-        comp.resend     (PMA.message_from_file (cmd.Resend))
+    elif cmd.Reply_all :
+        comp.reply_all  (PMA.message_from_file (cmd.Reply_all))
+    elif cmd.bounce :
+        comp.resend     (PMA.message_from_file (cmd.bounce))
     else :
         comp.compose    ()
 # end def _main

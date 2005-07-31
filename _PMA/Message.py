@@ -149,7 +149,7 @@ class Msg_Scope (TFL.Caller.Scope) :
        in.
     """
 
-    _map = dict \
+    _header_map = dict \
         ( delivery_date = ("Delivery-date")
         , in_reply_to   = ("In-reply-to", )
         , message_date  = ("Date", "Delivery-date")
@@ -170,19 +170,32 @@ class Msg_Scope (TFL.Caller.Scope) :
         self.msg = msg
     # end def __init__
 
+    def _get_reply_address_cc (self) :
+        email  = self.msg.email
+        result = []
+        for key in "to", "cc" :
+            result.extend (decoded_header (r) for r in email.get_all (key, []))
+        return ", \n             ".join (r for r in result if r)
+    # end def _get_reply_address_cc
+
     def __getitem__ (self, index) :
         try :
             return self.__super.__getitem__ (index)
         except NameError :
-            email = self.msg.email
-            for n in self._map.get (index.lower (), (index, )) :
-                try :
-                    result = email [n]
-                    if result is not None :
-                        return decoded_header (result)
-                except KeyError :
-                    pass
-            return "<unknown %s>" % index
+            email  = self.msg.email
+            key    = index.lower ()
+            getter = getattr (self, "_get_%s" % key, None)
+            if callable (getter) :
+                return getter ()
+            else :
+                for n in self._header_map.get (key, (index, )) :
+                    try :
+                        result = email [n]
+                        if result is not None :
+                            return decoded_header (result)
+                    except KeyError :
+                        pass
+            return ""
     # end def __getitem__
 
 # end class Msg_Scope
