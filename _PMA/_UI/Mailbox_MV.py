@@ -37,6 +37,7 @@
 #    30-Jul-2005 (MG) `Message_Cell`: new property `no_wrap` added,
 #                     `Message_Cell_FW` added and used
 #    31-Jul-2005 (MG) Styles changed
+#    31-Jul-2005 (CT) Styles changed (and style names fixed)
 #    ««revision-date»»···
 #--
 
@@ -60,25 +61,20 @@ class Message_Cell (PMA.UI.Text_Cell) :
 
     Normal = TGL.UI.Style ("Normal")
     Unseen = TGL.UI.Style \
-        ( "Unseen"
-        , Normal
+        ( "Unseen", Normal
         , foreground = "red"
         , background = "yellow"
         )
     Copied = TGL.UI.Style \
-        ( "Copied"
-        , Normal
-        , background = "gray92"
-        , foreground = "VioletRed"
+        ( "Copied", Normal
+        , background = "MediumAquamarine"
         )
     Deleted = TGL.UI.Style \
-        ( "Unseen"
-        , Normal
+        ( "Deleted", Normal
         , background = "grey76"
         )
     Moved  = TGL.UI.Style \
-        ( "Unseen"
-        , Normal
+        ( "Moved", Normal
         , background = "cyan"
         )
 

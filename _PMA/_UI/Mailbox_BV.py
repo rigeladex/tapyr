@@ -34,6 +34,8 @@
 #    28-Jul-2005 (MG) `s/Folder_Cell/Box_Cell/s`
 #    28-Jul-2005 (MG) `Box_Cell` style handling changed
 #    30-Jul-2005 (MG) New styles added and used
+#    31-Jul-2005 (CT) Style `Target` changed to match `Copied` of `Mailbox_MV`
+#    31-Jul-2005 (CT) `_style` fixed (superfluous `return` removed)
 #    ««revision-date»»···
 #--
 
@@ -56,9 +58,9 @@ class Box_Cell (PMA.UI.Message_Cell) :
     renderer_class      = ("Cell_Renderer_Text")
     auto_attributes     = dict \
         ( Ancestor.auto_attributes
-        , name        = ("text",       str, "_get_name")
-        , font_weight = ("weight",     int, "_get_font_weight")
-        , font_style  = ("style",      int, "_get_font_style")
+        , name          = ("text",       str, "_get_name")
+        , font_weight   = ("weight",     int, "_get_font_weight")
+        , font_style    = ("style",      int, "_get_font_style")
         )
 
     Unseen              = PMA.UI.Style \
@@ -67,14 +69,11 @@ class Box_Cell (PMA.UI.Message_Cell) :
         )
     Target              = PMA.UI.Style \
         ( "target", Ancestor.Normal
-        , font_weight   = "bold"
-        , font_style    = "italic"
+        , background    = "cyan"
         )
 
     Unseen_Target       = PMA.UI.Style \
-        ( "unseen_target"
-        , Unseen, Target
-        )
+        ( "unseen_target", Unseen, Target)
 
     def _style (self, mailbox, office = None) :
         style = []
@@ -82,7 +81,6 @@ class Box_Cell (PMA.UI.Message_Cell) :
             style.append ("Unseen")
         if office.status.target_box is mailbox :
             style.append ("Target")
-            return self.Target
         if style :
             return getattr (self, "_".join (style))
         return self.Normal
