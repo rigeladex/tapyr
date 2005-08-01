@@ -29,7 +29,7 @@ class Clipboard (TFL.TKT.Mixin) :
         #w = CTK.root; print "copyable", w, w.focus_get ()
         return True
     # end def copyable
-    copyable.evaluate_eagerly = True
+    #copyable.evaluate_eagerly = True
 
     def cutable (self, *args) :
         """Current content is cutable.
@@ -37,7 +37,7 @@ class Clipboard (TFL.TKT.Mixin) :
         #w = CTK.root; print "cutable", w, w.focus_get ()
         return True
     # end def cutable
-    cutable.evaluate_eagerly = True
+    #cutable.evaluate_eagerly = True
 
     def pasteable (self, *args) :
         """Current content is pasteable.
@@ -45,7 +45,7 @@ class Clipboard (TFL.TKT.Mixin) :
         #w = CTK.root; print "pasteable", w, w.focus_get ()
         return True
     # end def pasteable
-    pasteable.evaluate_eagerly = True
+    #pasteable.evaluate_eagerly = True
 
     def menu_copy_cmd (self, event = None) :
         """Copy selection.
