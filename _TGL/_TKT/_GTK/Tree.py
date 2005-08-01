@@ -31,6 +31,7 @@
 #    29-Jul-2005 (MG) `see` changed to expand the row which shall be seen
 #    29-Jul-2005 (MG) `add` and `remove` added
 #    29-Jul-2005 (MG) `next` and `prev` added
+#     1-Aug-2005 (MG) `see`: add `set_cursor'
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,7 @@ class Tree (GTK.Tree_View) :
             for p in reversed (pathes) :
                 self.wtk_object.expand_row (p, False)
             self.wtk_object.scroll_to_cell (p, column)
+            self.wtk_object.set_cursor     (p, column, False)
     # end def see
 
 # end class Tree

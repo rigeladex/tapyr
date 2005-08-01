@@ -63,6 +63,10 @@
 #                     `target_box`
 #    31-Jul-2005 (MG) Commands changes/added
 #    31-Jul-2005 (MG) Commands changes/added
+#     1-Aug-2005 (MG) `_commit` clear the selection bofore the commit
+#                     (objects which are selected could be removed)
+#     1-Aug-2005 (MG) `select_box`: only `change` the box if a new box has
+#                     been selected
 #    ««revision-date»»···
 #--
 
@@ -365,6 +369,7 @@ class Office (PMA.UI.Mixin) :
     def _commit (self, messages) :
         boxes    = set ()
         text     = []
+        self.mb_msg_view.selection = ()
         for msg in messages :
             text.append ("%s:%s" % (msg.mailbox.qname, msg.number))
             view   = self.mb_msg_view
@@ -521,13 +526,14 @@ class Office (PMA.UI.Mixin) :
         box      = selection [0]
         if curr_box and curr_box.root != box.root :
            self.box_views [curr_box.root].selection = ()
-        self.office.status.current_box = box
-        self.mb_msg_view.update_model (box)
-        if box.status.current_message :
-            ### select and display the previous selected message
-            self._select_message          (box.status.current_message)
-        else :
-            self.model.msg_display.clear  ()
+        if self.office.status.current_box != box :
+            self.office.status.current_box = box
+            self.mb_msg_view.update_model (box)
+            if box.status.current_message :
+                ### select and display the previous selected message
+                self._select_message          (box.status.current_message)
+            else :
+                self.model.msg_display.clear  ()
     # end def select_box
 
     def set_target_mailbox (self, event = None) :
@@ -547,7 +553,8 @@ class Office (PMA.UI.Mixin) :
         if not selection or len (selection) > 1:
             ### clear message display in case of multi message selection or
             ### if no message is selected in this box
-            self.model.msg_display.clear  ()
+            #self.model.msg_display.clear  ()
+            pass
         else :
             ### display the selected message
             message = selection [0]

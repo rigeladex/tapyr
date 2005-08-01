@@ -46,6 +46,7 @@
 #    29-Jul-2005 (MG) `add` and `remove` added
 #    29-Jul-2005 (MG) `adapter_kw` added and used
 #    29-Jul-2005 (MG) `next` and `prev` added
+#     1-Aug-2005 (MG) `update_model`: clearing of selection added
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,8 @@ class _Tree_ (TGL.UI.Mixin) :
 
     def update_model (self, ui_model) :
         if self.ui_model :
+            ### clear the old selection before clearing the model
+            self.tkt.selection = ()
             self.tkt_model.clear ()
         self.ui_model = ui_model
         self._model_populate     ()
