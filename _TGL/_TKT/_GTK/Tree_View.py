@@ -36,6 +36,8 @@
 #    26-Jul-2005 (MG) New signal `Select` added
 #    28-Jul-2005 (MG) `Tree_Selection.next` added
 #    30-Jul-2005 (MG) `select_all` added
+#     3-Aug-2005 (MG) `__len__`: performance improoved (use GTK internal
+#                     function) 
 #    ««revision-date»»···
 #--
 
@@ -76,7 +78,7 @@ class Tree_Selection (GTK.Object_Wrapper) :
     # end def __getitem__
 
     def __len__ (self) :
-        return len (tuple (self))
+        return self.wtk_object.count_selected_rows ()
     # end def __len__
 
     def next (self, delta = 1) :

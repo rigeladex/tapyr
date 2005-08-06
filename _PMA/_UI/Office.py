@@ -553,8 +553,7 @@ class Office (PMA.UI.Mixin) :
         if not selection or len (selection) > 1:
             ### clear message display in case of multi message selection or
             ### if no message is selected in this box
-            #self.model.msg_display.clear  ()
-            pass
+            self.model.msg_display.clear  ()
         else :
             ### display the selected message
             message = selection [0]
