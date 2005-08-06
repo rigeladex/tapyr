@@ -109,6 +109,7 @@
 #                     have been changed
 #    30-Jul-2005 (MG) s/_reset/reset/g
 #    30-Jul-2005 (MG) `_Pending_Action_.__len__` added
+#     1-Aug-2005 (MG) `message_from_string` added
 #    ««revision-date»»···
 #--
 
@@ -831,6 +832,14 @@ def message_from_file (filename, parser = None) :
         fp.close ()
     return PMA.Message (email, sos.path.split (filename) [-1])
 # end def message_from_file
+
+def message_from_string (msg, parser = None) :
+    if parser is None :
+        parser = Lib.Parser ()
+    email = parser.parsestr (msg)
+    email._pma_parsed_body = True
+    return PMA.Message (email)
+# end def message_from_string
 
 def _command_spec (arg_array = None) :
     from   Command_Line import Command_Line

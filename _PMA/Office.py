@@ -44,6 +44,7 @@ from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 import _PMA.Mailbox
+import _PMA.Pop3_Mailbox
 import _PMA.Off_Status
 import _TFL._Meta.Object
 
@@ -113,7 +114,8 @@ class Office (TFL.Meta.Object) :
             for d in "cur", "new", "tmp" :
                 self._path (inbox, d)
             dirs.append (inbox)
-        return [PMA.Maildir (d, prefix = prefix) for d in dirs]
+        return [ PMA.Maildir (d, prefix = prefix) for d in dirs
+               ] + [PMA.Pop3_Mailbox ("mx.wavenet.at", "g9505a00", "5secyba3")]
     # end def _delivery_boxes
 
     def _storage_boxes (self, path, da) :

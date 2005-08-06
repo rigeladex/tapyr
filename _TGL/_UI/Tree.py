@@ -47,6 +47,7 @@
 #    29-Jul-2005 (MG) `adapter_kw` added and used
 #    29-Jul-2005 (MG) `next` and `prev` added
 #     1-Aug-2005 (MG) `update_model`: clearing of selection added
+#     6-Aug-2005 (MG) Basic DND handling added
 #    ««revision-date»»···
 #--
 
@@ -83,12 +84,14 @@ class _Tree_ (TGL.UI.Mixin) :
                  , AC             = None
                  ) :
         self.__super.__init__ (AC = AC)
-        TNS             = self.TNS
-        Adapter         = self.Adapter
-        self.ui_model   = None
-        self.lazy       = lazy
-        self.adapter_kw = adapter_kw
-        self.tkt_model  = self.t_model = Adapter.create_model (TNS, AC)
+        TNS              = self.TNS
+        Adapter          = self.Adapter
+        self.ui_model    = None
+        self.lazy        = lazy
+        self.dnd_sources = []
+        self.dnd_targets = []
+        self.adapter_kw  = adapter_kw
+        self.tkt_model   = self.t_model = Adapter.create_model (TNS, AC)
         if filter :
             self.tkt_f_model = Adapter.create_filter_model \
                 (TNS, AC, self.t_model, filter)
@@ -110,6 +113,31 @@ class _Tree_ (TGL.UI.Mixin) :
         return result
     # end def add
 
+    def add_dnd_source (self, button, action, * sources) :
+        for src in sources :
+            if isinstance (src, (tuple, list)) :
+                dnd = self.TNS.DND_Type (* src)
+            else :
+                dnd = self.TNS.DND_Type (src)
+            self.dnd_sources.append     (dnd)
+        self.tkt.set_dnd_sources        (button, action, self.dnd_sources)
+    # end def add_dnd_source
+
+    def add_dnd_target (self, actions, * targets, ** kw) :
+        flags = kw.get ("flags", 0)
+        for trg in targets :
+            if isinstance (trg, (tuple, list)) :
+                dnd = self.TNS.DND_Type (* trg)
+            else :
+                dnd = self.TNS.DND_Type (trg)
+            self.dnd_targets.append     (dnd)
+        self.tkt.set_dnd_targets        (flags, self.dnd_targets, actions)
+    # end def add_dnd_target
+
+    def clear_dnd_sources (self) :
+        self.tkt.clear_dnd_sources ()
+    # end def clear_dnd_sources
+
     def next (self) :
         return self.tkt.next ()
     # end def next
@@ -117,7 +145,7 @@ class _Tree_ (TGL.UI.Mixin) :
     def prev (self) :
         return self.tkt.prev ()
     # end def prev
-    
+
     def remove (self, element) :
         return self.tkt_model.remove (element)
     # end def remove
@@ -149,9 +177,9 @@ class _Tree_ (TGL.UI.Mixin) :
             self.__dict__ [name] = value
     # end def __setattr__
 
-    def see (self, element) :
+    def see (self, element, halign = None, valign = None) :
         element = self.tkt_model.iter (element)
-        self.tkt.see (self.tkt_model, element)
+        self.tkt.see (self.tkt_model, element, halign, valign)
     # end def see
 
     def _model_populate (self, parent = None) :

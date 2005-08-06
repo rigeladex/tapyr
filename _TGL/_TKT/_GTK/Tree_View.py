@@ -37,7 +37,9 @@
 #    28-Jul-2005 (MG) `Tree_Selection.next` added
 #    30-Jul-2005 (MG) `select_all` added
 #     3-Aug-2005 (MG) `__len__`: performance improoved (use GTK internal
-#                     function) 
+#                     function)
+#     6-Aug-2005 (MG) `Selection.extend` factored
+#     6-Aug-2005 (MG) Basic DND handling added
 #    ««revision-date»»···
 #--
 
@@ -54,13 +56,18 @@ class Tree_Selection (GTK.Object_Wrapper) :
     # end def __init__
 
     def set (self, selection) :
+        self.wtk_object.unselect_all ()
+        self._select                 (selection)
+    # end def set
+
+    def extend (self, selection) :
         model = self.wtk_model
         if not isinstance (selection, (tuple, list)) :
             selection = (selection, )
-        self.wtk_object.unselect_all ()
-        for element in selection :
+        for element in filter (None, selection) :
+            print element, model.iter (element)
             self.wtk_object.select_iter (model.iter (element))
-    # end def set
+    # end def extend
 
     def _tree_iters (self) :
         model, pathes = self.wtk_object.get_selected_rows ()
@@ -141,7 +148,9 @@ class Tree_View (GTK.Container) :
         )
 
     Signals = dict \
-        ( select = (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
+        ( select       = (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ())
+        , dnd_motion   =
+            (gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, (object, ))
         )
 
     def __init__ (self, model = None, * args, ** kw) :
@@ -159,6 +168,31 @@ class Tree_View (GTK.Container) :
         ( lambda s    : s._selection
         , lambda s, v : s._selection.set (v)
         )
+
+    def _bind_ (self, signal, * args, ** kw) :
+        result = self.__super._bind_ (signal, * args, ** kw)
+        if signal is self.TNS.Signal.DND_Motion :
+            self._dnd_cid = self.bind_add \
+                (self.TNS.Signal.Drag_Motion, self._dnd_motion)
+        return result
+    # end def _bind_
+
+    def _dnd_motion (self, event) :
+        drop_info = self.wtk_object.get_dest_row_at_pos (event.x, event.y)
+        if drop_info :
+            model = self.model.wtk_object
+            iter  = model.get_iter (drop_info [0])
+            if iter :
+                self.emit (self.TNS.Signal.DND_Motion, self.model.ui_object (iter))
+    # end def _dnd_motion
+
+    def unbind (self, signal, * args, ** kw) :
+        result     = self.__super.unbind (signal, * args, ** kw)
+        dnd_motion = self.TNS.Signal.DND_Motion
+        if signal is dnd_motion and not self._handlers [signal] :
+            self.unbind (dnd_motion, self._dnd_cid)
+        return result
+    # end def unbind
 
 # end class Tree_View
 

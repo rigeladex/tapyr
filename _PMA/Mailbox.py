@@ -50,6 +50,7 @@
 #    30-Jul-2005 (MG) `commit_all`: fixed and parameter `transitive` added
 #    30-Jul-2005 (MG) `_Mailbox_.pending` added
 #    30-Jul-2005 (MG) `Mailbox.add_messages`: set `path` of the new message
+#     1-Aug-2005 (MG) `Maildir.add_messages` added
 #    ««revision-date»»···
 #--
 
@@ -356,6 +357,26 @@ class Maildir (_Mailbox_in_Dir_) :
 
     MB_Type = Lib.mailbox.Maildir
 
+    def add_messages (self, * messages) :
+        if self._messages is None :
+            ### get messages from disk first
+            self._get_messages ()
+        for message in messages :
+            old_box = message.mailbox
+            if old_box is not None :
+                name = old_box.md_name (message)
+            else :
+                name = self.md_name    ()
+            new_m = PMA.Message \
+                (email = message.email, name = name, mailbox = self)
+            self._add (new_m)
+            new_m.path = sos.path.join (self.path, "cur", name)
+            if old_box :
+                old_box._copy_msg_file (message, new_m.path)
+            else :
+                new_m.save (new_m.path)
+    # end def add_messages
+
     @classmethod
     def md_name (cls, message = None) :
         if message is None :
@@ -532,5 +553,5 @@ sb = mb.sub_boxes[0]
 """
 
 if __name__ != "__main__" :
-    PMA._Export ("*")
+    PMA._Export ("*", "_Mailbox_")
 ### __END__ PMA.Mailbox

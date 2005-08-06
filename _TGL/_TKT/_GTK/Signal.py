@@ -34,6 +34,7 @@
 #     9-Apr-2005 (MG) New Signals `Select` and `Deselect` added
 #    17-Jun-2005 (MG) New Signal `Move_Cursor` added, exception handler for
 #                     faild connects added
+#     6-Aug-2005 (MG) `DND_Motion` and `Drag_Motion` added
 #    ««revision-date»»···
 #--
 
@@ -163,6 +164,8 @@ GTK_Signal ( "Drag_Data_Received"
            , "info"
            , "timestamp"
            )
+GTK_Signal ( "Drag_Motion", "drag_context", "x", "y", "time")
+GTK_Signal ( "DND_Motion",  "object")
 GTK_Signal ( "Edit")
 GTK_Signal ( "Edited", "path_string", "new_text")
 GTK_Signal ( "Enter")

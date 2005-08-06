@@ -13,6 +13,7 @@
 #     8-Apr-2005 (MG) Creation
 #    16-May-2005 (MG) New `SORT_*` constants added
 #     3-Jun-2005 (MG) Dialog response constants added
+#     6-Aug-2005 (MG) DND constants added
 #    ««revision-date»»···
 #--
 
@@ -144,6 +145,17 @@ GTK._Add \
     # sort order
     , SORT_ASCENDING           = gtk.SORT_ASCENDING
     , SORT_DESCENDING          = gtk.SORT_DESCENDING
+
+    # dnd constants
+    , BUTTON1_MASK             = gtk.gdk.BUTTON1_MASK
+    , BUTTON2_MASK             = gtk.gdk.BUTTON2_MASK
+    , BUTTON3_MASK             = gtk.gdk.BUTTON3_MASK
+    , DND_ACTION_DEFAULT       = gtk.gdk.ACTION_DEFAULT
+    , DND_ACTION_COPY          = gtk.gdk.ACTION_COPY
+    , DND_ACTION_MOVE          = gtk.gdk.ACTION_MOVE
+    , DND_ACTION_LINK          = gtk.gdk.ACTION_LINK
+    , DND_ACTION_PRIVATE       = gtk.gdk.ACTION_PRIVATE
+    , DND_ACTION_ASK           = gtk.gdk.ACTION_ASK
     )
 
 ### __END__ TGL.TKT.GTK.Constants
