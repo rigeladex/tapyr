@@ -30,6 +30,7 @@
 #    22-Mar-2005 (CT) Moved from lib/python/_TFL to svn repository
 #    29-Jul-2005 (CT) `default_charset` and `load_user_config` added
 #    29-Jul-2005 (CT) `version` and `authors` added
+#     7-Aug-2005 (CT) `patchlevel` increased to 1
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,7 @@ PMA = Package_Namespace ()
 PMA.authors         = ["Christian Tanzer", "Martin Glueck"]
 PMA.major_version   = _M = 0
 PMA.minor_version   = _m = 5
-PMA.patchlevel      = _p = 0
+PMA.patchlevel      = _p = 1
 PMA.version         = __version__ = "%s.%s.%s" % (_M, _m, _p)
 PMA.default_charset = "us-ascii"
 

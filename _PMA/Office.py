@@ -37,6 +37,8 @@
 #    29-Jul-2005 (CT) `storage_path` removed (dead code)
 #    29-Jul-2005 (CT) Ignore directories starting with `.`
 #    30-Jul-2005 (MG) `commit` added
+#     7-Aug-2005 (CT) `extra_delivery_boxes` added and import of
+#                     `Pop3_Mailbox` removed (let ~/PMA/.config.py do that)
 #    ««revision-date»»···
 #--
 
@@ -44,7 +46,6 @@ from   _TFL                    import TFL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 import _PMA.Mailbox
-import _PMA.Pop3_Mailbox
 import _PMA.Off_Status
 import _TFL._Meta.Object
 
@@ -55,8 +56,10 @@ from   subdirs                 import subdirs
 class Office (TFL.Meta.Object) :
     """Personal post office"""
 
-    top_name           = "PMA"
-    delivery_area_name = "Delivery"
+    top_name             = "PMA"
+    delivery_area_name   = "Delivery"
+
+    extra_delivery_boxes = []
 
     def __init__ (self, root = None) :
         self.path           = path = self.default_path  (root)
@@ -114,8 +117,10 @@ class Office (TFL.Meta.Object) :
             for d in "cur", "new", "tmp" :
                 self._path (inbox, d)
             dirs.append (inbox)
-        return [ PMA.Maildir (d, prefix = prefix) for d in dirs
-               ] + [PMA.Pop3_Mailbox ("mx.wavenet.at", "g9505a00", "5secyba3")]
+        return \
+            ( self.extra_delivery_boxes
+            + [PMA.Maildir (d, prefix = prefix) for d in dirs]
+            )
     # end def _delivery_boxes
 
     def _storage_boxes (self, path, da) :
