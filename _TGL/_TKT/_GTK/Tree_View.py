@@ -40,6 +40,7 @@
 #                     function)
 #     6-Aug-2005 (MG) `Selection.extend` factored
 #     6-Aug-2005 (MG) Basic DND handling added
+#     7-Aug-2005 (MG) Debug print removed, `s/_select/extend/g`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class Tree_Selection (GTK.Object_Wrapper) :
 
     def set (self, selection) :
         self.wtk_object.unselect_all ()
-        self._select                 (selection)
+        self.extend                  (selection)
     # end def set
 
     def extend (self, selection) :
@@ -65,7 +66,6 @@ class Tree_Selection (GTK.Object_Wrapper) :
         if not isinstance (selection, (tuple, list)) :
             selection = (selection, )
         for element in filter (None, selection) :
-            print element, model.iter (element)
             self.wtk_object.select_iter (model.iter (element))
     # end def extend
 
