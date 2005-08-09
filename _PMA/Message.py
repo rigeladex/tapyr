@@ -112,6 +112,7 @@
 #     1-Aug-2005 (MG) `message_from_string` added
 #     9-Aug-2005 (CT) Use of `PMA.default_charset` increased
 #     9-Aug-2005 (CT) Use `PMA.file_system_encoding` instead of `us-ascii`
+#     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    ««revision-date»»···
 #--
 
@@ -142,7 +143,7 @@ def decoded_header (header) :
     result = []
     if header :
         for p, c in Lib.decode_header (header) :
-            result.append (p.decode (c or PMA.default_charset, "replace"))
+            result.append (p.decode (c or PMA.default_encoding, "replace"))
     result = u" ".join (result)
     return result
 # end def decoded_header
@@ -340,7 +341,7 @@ class _Msg_Part_ (object) :
                 try :
                     f.write (body)
                 except UnicodeError :
-                    f.write (body.encode (PMA.default_charset, "replace"))
+                    f.write (body.encode (PMA.default_encoding, "replace"))
             finally :
                 f.close ()
     # end def _save
@@ -438,7 +439,7 @@ class Message_Body (_Msg_Part_) :
                     self.lines = lines
         if lines is not None :
             for l in lines :
-                yield l.decode (PMA.default_charset, "replace").rstrip ("\r")
+                yield l.decode (PMA.default_encoding, "replace").rstrip ("\r")
         else :
             hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
@@ -860,14 +861,14 @@ def _main (cmd) :
     for m in cmd.argv :
         msg = PMA.message_from_file (m, parser)
         print u"\n".join \
-            (msg.formatted ()).encode (PMA.default_charset, "replace")
+            (msg.formatted ()).encode (PMA.default_encoding, "replace")
 # end def _main
 
 """
 from   _PMA                    import PMA
 import _PMA.Mailbox
 mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
-print mb.summary ().encode (PMA.default_charset, "replace")
+print mb.summary ().encode (PMA.default_encoding, "replace")
 m = mb.messages [-1]
 m._reparsed ()
 def show (m, head = "") :

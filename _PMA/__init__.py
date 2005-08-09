@@ -34,6 +34,7 @@
 #     9-Aug-2005 (CT) `locale.getpreferredencoding` used
 #     9-Aug-2005 (CT) `file_system_encoding` added
 #     9-Aug-2005 (CT) `patchlevel` increased to 2
+#     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    ««revision-date»»···
 #--
 
@@ -48,7 +49,7 @@ PMA.major_version        = _M = 0
 PMA.minor_version        = _m = 5
 PMA.patchlevel           = _p = 2
 PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
-PMA.default_charset      = locale.getpreferredencoding () or "us-ascii"
+PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
 PMA.file_system_encoding = sys.getfilesystemencoding ()
 
 def load_user_config (config_fn = "~/PMA/.config.py") :

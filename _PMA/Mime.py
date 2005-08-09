@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jul-2005 (CT) Creation
+#     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    ««revision-date»»···
 #--
 
@@ -106,7 +107,7 @@ class _M_Type_Text_ (_M_Type_) :
     mode    = "r"
 
     def _new (self, mt, st, b) :
-        return self.MIME (b, _subtype = st, _charset = PMA.default_charset)
+        return self.MIME (b, _subtype = st, _charset = PMA.default_encoding)
     # end def _new
 
 # end class _M_Type_Text_

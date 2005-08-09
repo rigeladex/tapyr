@@ -42,6 +42,7 @@
 #    29-Jul-2005 (CT) Use `subprocess.call` instead of `sos.system`
 #    29-Jul-2005 (CT) `forward` changed to allow multiple messages
 #    31-Jul-2005 (CT) `reply_all` added
+#     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    ««revision-date»»···
 #--
 
@@ -253,7 +254,7 @@ class Composer (TFL.Meta.Object) :
             for k, v in email.items () :
                 if k not in ignore :
                     result [k] = v
-            cs = email.get_charset () or PMA.default_charset
+            cs = email.get_charset () or PMA.default_encoding
             result.attach \
                 ( Lib.MIMEText
                     (email.get_payload (decode = True), _charset = cs)
@@ -313,8 +314,8 @@ class Composer (TFL.Meta.Object) :
         mapping = self.locals
         if msg is not None :
             mapping = PMA.Msg_Scope (msg, mapping)
-        return (unicode (format, PMA.default_charset) % mapping).encode \
-            (PMA.default_charset, "replace" )
+        return (unicode (format, PMA.default_encoding) % mapping).encode \
+            (PMA.default_encoding, "replace" )
     # end def _formatted
 
     def _process_attachement_headers (self, email) :
