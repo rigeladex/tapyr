@@ -41,11 +41,14 @@
 #    24-Sep-2004 (MG) `_description`: `format_prec` minimum changed from `40`
 #                     to `4`
 #     8-Feb-2005 (CED) `apidoc_tex_format` defined here
+#     9-Aug-2005 (CT)  Call to `tex_quoted` added (to new `_tex_description`)
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
+import _TFL.tex_quoted
+
 import textwrap
 
 """
@@ -91,7 +94,7 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
         )
 
     apidoc_tex_format    = \
-      ("""%(::>@_description:)"""
+      ("""%(::>@_tex_description:)"""
        """-{output_width - indent_anchor - ht_width - 4}s"""
       )
 
@@ -113,6 +116,11 @@ class Comment (TFL.SDG.Leaf, TFL.SDG.C.Node) :
             for l in wrapper.wrap (desc) :
                 yield l
     # end def _description
+
+    def _tex_description (self, ** kw) :
+        for l in self._description (** kw) :
+            yield TFL.tex_quoted (l)
+    # end def _tex_description
 
 # end class Comment
 

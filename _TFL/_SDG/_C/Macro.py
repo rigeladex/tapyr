@@ -42,12 +42,15 @@
 #     9-Feb-2005 (MBM/CED) formal changes to `apidoc_tex_format`
 #    22-Feb-2005 (MBM) Removed <> from index entry
 #    24-Feb-2005 (MBM) Changed index entry structure
+#     9-Aug-2005 (CT)  Call to `tex_quoted` added
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node
 import _TFL._SDG._C.Statement
+import _TFL.tex_quoted
+
 import textwrap
 
 class _Macro_ (TFL.SDG.C.Node) :
@@ -150,7 +153,7 @@ class Define (Macro) :
         yield "\\item \\textbf{Description:} \\\\"
         format_prec = max (int (kw ["format_prec"]), 4)
         wrapper     = textwrap.TextWrapper (width = format_prec)
-        for l in wrapper.wrap (self.explanation) :
+        for l in wrapper.wrap (TFL.tex_quoted (self.explanation)) :
             yield l
     # end def _explanation
 
