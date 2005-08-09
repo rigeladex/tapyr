@@ -256,9 +256,7 @@ class Composer (TFL.Meta.Object) :
             cs = email.get_charset () or PMA.default_charset
             result.attach \
                 ( Lib.MIMEText
-                    ( email.get_payload (decode = True)
-                    , _charset = cs
-                    )
+                    (email.get_payload (decode = True), _charset = cs)
                 )
         return result
     # end def _as_multipart

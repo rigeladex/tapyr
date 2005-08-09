@@ -110,6 +110,8 @@
 #    30-Jul-2005 (MG) s/_reset/reset/g
 #    30-Jul-2005 (MG) `_Pending_Action_.__len__` added
 #     1-Aug-2005 (MG) `message_from_string` added
+#     9-Aug-2005 (CT) Use of `PMA.default_charset` increased
+#     9-Aug-2005 (CT) Use `PMA.file_system_encoding` instead of `us-ascii`
 #    ««revision-date»»···
 #--
 
@@ -140,7 +142,7 @@ def decoded_header (header) :
     result = []
     if header :
         for p, c in Lib.decode_header (header) :
-            result.append (p.decode (c or "us-ascii", "replace"))
+            result.append (p.decode (c or PMA.default_charset, "replace"))
     result = u" ".join (result)
     return result
 # end def decoded_header
@@ -333,13 +335,12 @@ class _Msg_Part_ (object) :
 
     def _save (self, filename, body) :
         if body :
-            charset = self.charset
-            f       = open (filename, "wb")
+            f = open (filename, "wb")
             try :
                 try :
                     f.write (body)
                 except UnicodeError :
-                    f.write (body.encode (charset, "replace"))
+                    f.write (body.encode (PMA.default_charset, "replace"))
             finally :
                 f.close ()
     # end def _save
@@ -369,7 +370,8 @@ class _Msg_Part_ (object) :
         if self._tfn is None or not sos.path.isfile (self._tfn) :
             result = TFL.Filename \
                 ( sos.tempfile_name ()
-                , (self.filename or "").encode ("us-ascii", "ignore")
+                , (self.filename or "").encode
+                      (PMA.file_system_encoding, "ignore")
                 ).name
             f = open (result, "w")
             try :
@@ -435,9 +437,8 @@ class Message_Body (_Msg_Part_) :
                 if lines is not None :
                     self.lines = lines
         if lines is not None :
-            charset = self.charset
             for l in lines :
-                yield l.decode (charset, "replace").rstrip ("\r")
+                yield l.decode (PMA.default_charset, "replace").rstrip ("\r")
         else :
             hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
@@ -866,7 +867,7 @@ def _main (cmd) :
 from   _PMA                    import PMA
 import _PMA.Mailbox
 mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
-print mb.summary ().encode ("iso-8859-1", "replace")
+print mb.summary ().encode (PMA.default_charset, "replace")
 m = mb.messages [-1]
 m._reparsed ()
 def show (m, head = "") :

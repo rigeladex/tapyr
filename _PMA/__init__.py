@@ -31,19 +31,25 @@
 #    29-Jul-2005 (CT) `default_charset` and `load_user_config` added
 #    29-Jul-2005 (CT) `version` and `authors` added
 #     7-Aug-2005 (CT) `patchlevel` increased to 1
+#     9-Aug-2005 (CT) `locale.getpreferredencoding` used
+#     9-Aug-2005 (CT) `file_system_encoding` added
+#     9-Aug-2005 (CT) `patchlevel` increased to 2
 #    ««revision-date»»···
 #--
 
 from   _TFL.Package_Namespace import Package_Namespace
+import locale
+import sys
 
 PMA = Package_Namespace ()
 
-PMA.authors         = ["Christian Tanzer", "Martin Glueck"]
-PMA.major_version   = _M = 0
-PMA.minor_version   = _m = 5
-PMA.patchlevel      = _p = 1
-PMA.version         = __version__ = "%s.%s.%s" % (_M, _m, _p)
-PMA.default_charset = "us-ascii"
+PMA.authors              = ["Christian Tanzer", "Martin Glueck"]
+PMA.major_version        = _M = 0
+PMA.minor_version        = _m = 5
+PMA.patchlevel           = _p = 2
+PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
+PMA.default_charset      = locale.getpreferredencoding () or "us-ascii"
+PMA.file_system_encoding = sys.getfilesystemencoding ()
 
 def load_user_config (config_fn = "~/PMA/.config.py") :
     import sos
@@ -54,6 +60,8 @@ def load_user_config (config_fn = "~/PMA/.config.py") :
 PMA.load_user_config = load_user_config
 
 del load_user_config
+del locale
+del sys
 del Package_Namespace
 
 ### __END__ PMA.__init__
