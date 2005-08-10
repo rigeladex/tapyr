@@ -36,6 +36,7 @@
 #    27-Jul-2005 (MG) `_setup_event_binder` added
 #    28-Jul-2005 (MG) `_setup_toplevel`: read of style file added
 #    28-Jul-2005 (MG) `ask_*` function handling changed
+#    10-Aug-2005 (CT) `show_menubar` and `show_toolbar` considered
 #    ««revision-date»»···
 #--
 
@@ -211,8 +212,10 @@ class Application (PMA.TKT.Application) :
     def _setup_geometry (self) :
         ### XXX
         self.gui.add            (self.main)
-        self.main.pack          (self.menubar, expand = False)
-        self.main.pack          (self.toolbar, expand = False)
+        if self.model.show_menubar :
+            self.main.pack      (self.menubar, expand = False)
+        if self.model.show_toolbar :
+            self.main.pack      (self.toolbar, expand = False)
         self.main.pack          (self.o_pane)
         self.body_r.pack_top    (self.wc_mb_msg_view)
         self.body_r.pack_bottom (self.wc_msg_display)

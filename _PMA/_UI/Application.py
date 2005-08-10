@@ -42,6 +42,7 @@
 #    27-Jul-2005 (MG) `self.event_binders` added
 #    27-Jul-2005 (MG) New command groups and commands added
 #    28-Jul-2005 (MG) `File` menu removed, `_setup_*_menu` functions removed
+#    10-Aug-2005 (CT) `show_menubar` and `show_toolbar` added
 #    ««revision-date»»···
 #--
 
@@ -137,6 +138,9 @@ class Application (PMA.UI.Mixin) :
     """Main instance of PMA application"""
 
     product_name         = "PMA"
+    show_menubar         = True
+    show_toolbar         = True
+
     startup_cmds         = []
     _started_quit        = False
     ipreter              = None
