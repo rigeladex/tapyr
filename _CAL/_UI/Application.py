@@ -398,12 +398,12 @@ class Application (CAL.UI.Mixin) :
         add_cmd ( Cmd ("Commit and exit", self.exit)
                 , if_names    = ("mb", )
                 , underline   = 11
-                , accelerator = self.TNS.Eventname.save_and_exit
+                , accelerator = "save_and_exit"
                 )
         add_cmd ( Cmd ("Exit", self.quit)
                 , if_names    = ("mb", )
                 , underline   = 1
-                , accelerator = self.TNS.Eventname.exit
+                , accelerator = "exit"
                 )
     # end def _setup_file_group
 

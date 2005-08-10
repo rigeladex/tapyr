@@ -29,6 +29,7 @@
 #    21-Mar-2005 (MG) Creation
 #    25-Mar-2005 (CT) Moved to `TGL`
 #    20-May-2005 (MG) `Error` added
+#    10-Aug-2005 (CT) Use `set_TNS_name` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ GTK.stop_cb_chaining = True
 GTK.Error            = Exception
 
 import _TGL._TKT.Mixin
-TGL.TKT.Mixin.TNS_name = "GTK"
+TGL.TKT.Mixin.set_TNS_name ("GTK")
 
 del Package_Namespace
 
