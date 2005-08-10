@@ -30,6 +30,7 @@
 #    18-Jan-2005 (CT) Set `TFL.TKT.Mixin.TNS_name` instead of calling
 #                     `TFL.UI.set_TKT`
 #    23-Feb-2005 (CT) `stop_cb_chaining` added
+#    10-Aug-2005 (CT) Use `set_TNS_name` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -43,7 +44,7 @@ TFL.TKT._Export ("Batch")
 Batch.stop_cb_chaining = None
 
 import _TFL._TKT.Mixin
-TFL.TKT.Mixin.TNS_name = "Batch"
+TFL.TKT.Mixin.set_TNS_name ("Batch")
 
 del Package_Namespace
 

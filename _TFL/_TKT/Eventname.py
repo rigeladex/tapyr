@@ -32,8 +32,9 @@
 #    14-Feb-2005 (CT)  `__init__` changed to accept multiple mappings to `None`
 #    21-Feb-2005 (CT)  `check_names` and doc-test added
 #     3-Feb-2005 (ABR) Factored out `add`
-#    31-Mar-2005 (CT)  Totally broken `add` fixed and (factored) `_check`
-#                      made informative instead of prescriptive
+#    31-Mar-2005 (CT)  Totally broken `add` fixed and (factored)
+#                      `_check` made informative instead of prescriptive
+#    10-Aug-2005 (CT)  `canonical_key_name` added
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,10 @@ class _Eventname (TFL.TKT.Mixin) :
         self._map.update (kw)
         self._check      (kw)
     # end def add
+
+    def canonical_key_name (self, name) :
+        return name
+    # end def canonical_key_name
 
     def check_names (cls, evn_1, evn_2) :
         """Checks if `evn_1` and `evn_2` define the same event names"""

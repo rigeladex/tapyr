@@ -35,6 +35,7 @@
 #    22-Feb-2005 (RSC) mouse_motion, cursor movement and open_ close_ events
 #    23-Feb-2005 (CT)  `mouse_enter` and `mouse_leave` reintroduced
 #     3-Mar-2005 (RSC) `Print_all` added
+#    10-Aug-2005 (CT)  `canonical_key_name` added
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,9 @@ Eventname = TFL.TKT._Eventname \
     , start_scan               = "<ButtonPress-2>"
     , undo                     = "<Control-Key-z>"
     )
+
+from CTK import CTK
+Eventname.canonical_key_name = CTK.canonical_key_name
 
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("Eventname")

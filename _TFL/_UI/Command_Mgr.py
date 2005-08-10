@@ -167,6 +167,8 @@
 #    17-May-2005 (CT)  `LB_Command` improved
 #    11-Jun-2005 (MG)  `bind_interfacers` changed to allow multiple widgets
 #                      as paramete
+#    10-Aug-2005 (CT) `Command_Group._add_command` changed to look-up
+#                     `accelerator` in `TNS.Eventname`
 #    ««revision-date»»···
 #--
 
@@ -813,6 +815,9 @@ class Command_Group (_Command_Group_) :
         self.root.command [cmd.qname] = cmd
         if self.parent :
             self.command [cmd.name] = cmd
+        if isinstance (accelerator, str) :
+            accelerator = getattr \
+                (self.TNS.Eventname, accelerator, accelerator)
         for ( n, i, info, _ie, index
             ) in self._interfacers (if_names, index, delta) :
             _ie.insert             (index, cmd)

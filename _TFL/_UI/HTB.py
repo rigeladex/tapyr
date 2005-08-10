@@ -138,6 +138,7 @@
 #                 ABR)
 #     3-May-2005 (MZO) i15334, Moved extend_cmd_mgr from Report => HTB
 #     9-May-2005 (MZO) added setup_edit/file_menu
+#    10-Aug-2005 (CT)  Pass literal strings as `accelerator` arguments
 #    ««revision-date»»···
 #--
 
@@ -1329,7 +1330,7 @@ class Browser (TFL.UI.Mixin) :
         """
         result = [None, None]
         if not pattern :
-            self._find_pattern = pattern    
+            self._find_pattern = pattern
             return result
         if not (self._find_equal (pattern) and self._find_forward) :
             self._find_pattern = pattern
@@ -1402,12 +1403,12 @@ class Browser (TFL.UI.Mixin) :
         add_group ( "Edit"
                   , if_names = if_n
                   )
-        self._setup_file_menu () 
-        self._setup_edit_menu () 
+        self._setup_file_menu ()
+        self._setup_edit_menu ()
         cmd_mgr.set_auto_short_cuts ()
     # end def _setup_command_mgr
-    
-    def _setup_file_menu (self) : 
+
+    def _setup_file_menu (self) :
         cmd_mgr    = self.cmd_mgr_widget
         group      = cmd_mgr.group ("File")
         Cmd        = self.ANS.UI.Command
@@ -1433,7 +1434,7 @@ class Browser (TFL.UI.Mixin) :
                  )
     # end def _setup_file_menu
 
-    def _setup_edit_menu (self) : 
+    def _setup_edit_menu (self) :
         # insert clipboard cmds.....
         cmd_mgr  = self.cmd_mgr_widget
         group    = cmd_mgr.group ("Edit")
@@ -1446,12 +1447,12 @@ class Browser (TFL.UI.Mixin) :
                       )
                 , if_names     = if_n
                 )
-        add_cmd ( Cmd ( "Find"          
+        add_cmd ( Cmd ( "Find"
                       , self._ask_find
                       )
                 , if_names     = if_n
                 , underline    = 0
-                , accelerator  = self.TNS.Eventname.search
+                , accelerator  = "search"
                 )
         add_cmd ( Cmd ( "Find next"
                       , self._do_find_next
@@ -1459,7 +1460,7 @@ class Browser (TFL.UI.Mixin) :
                       )
                 , if_names     = if_n
                 , underline    = 5
-                , accelerator  = self.TNS.Eventname.search_next
+                , accelerator  = "search_next"
                 )
         add_cmd ( Cmd ( "Find previous"
                       , self._do_find_prev
@@ -1467,7 +1468,7 @@ class Browser (TFL.UI.Mixin) :
                       )
                 , if_names     = if_n
                 , underline    = 5
-                , accelerator  = self.TNS.Eventname.search_prev
+                , accelerator  = "search_prev"
                 )
     # end def _setup_edit_menu
 
@@ -1491,14 +1492,14 @@ class Browser (TFL.UI.Mixin) :
         # if we can print title add self.text.is_empty
         return self.nodes
     # end def has_elements
-    
+
     def is_search_pattern_defined (self, *args) :
         """ The search pattern is definded. """
         return self._find_pattern is not None
     # end def is_search_pattern_defined
 
     #  --------------  callbacks ---------------
-    
+
     def _ask_find (self) :
         """ Ask search pattern and find first match. """
         # XXX extend to present dialog with search options

@@ -29,6 +29,7 @@
 #    18-Jan-2005 (CT) Creation
 #    20-Jan-2005 (CT) Setting of `TNS` streamlined
 #    10-Mar-2005 (CT) `get_TNS` factored
+#    10-Aug-2005 (CT) `set_TNS_name` added
 #    ««revision-date»»···
 #--
 
@@ -59,13 +60,20 @@ class Mixin (TFL.Meta.Object) :
         self.__super.__init__ (AC = AC, ** kw)
     # end def __init__
 
+    @classmethod
     def get_TNS (cls, AC) :
         if cls.TNS_name is not None :
             result = getattr (AC.ANS, "TKT")
             for p in cls.TNS_name.split (".") :
                 result = getattr (result, p)
             return result
-    get_TNS = classmethod (get_TNS)
+    # end def get_TNS
+
+    @classmethod
+    def set_TNS_name (cls, name) :
+        if cls.TNS_name is None :
+            cls.TNS_name = name
+    # end def set_TNS_name
 
 # end class Mixin
 

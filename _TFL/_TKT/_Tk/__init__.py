@@ -31,6 +31,7 @@
 #                     `TFL.UI.set_TKT`
 #    23-Feb-2005 (CT) `stop_cb_chaining` added
 #    14-Mar-2005 (CT) `Tk.Error` aliased to `CTK.TclError`
+#    10-Aug-2005 (CT) Use `set_TNS_name` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,7 @@ from   CTK import *
 Tk.Error = CTK.TclError
 
 import _TFL._TKT.Mixin
-TFL.TKT.Mixin.TNS_name = "Tk"
+TFL.TKT.Mixin.set_TNS_name ("Tk")
 
 del Package_Namespace
 
