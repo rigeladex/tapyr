@@ -67,6 +67,7 @@
 #                     (objects which are selected could be removed)
 #     1-Aug-2005 (MG) `select_box`: only `change` the box if a new box has
 #                     been selected
+#    12-Aug-2005 (MG) Calls to `set_title` added
 #    ««revision-date»»···
 #--
 
@@ -534,6 +535,7 @@ class Office (PMA.UI.Mixin) :
                 self._select_message          (box.status.current_message)
             else :
                 self.model.msg_display.clear  ()
+            self.model.set_title              ()
     # end def select_box
 
     def set_target_mailbox (self, event = None) :
@@ -561,6 +563,7 @@ class Office (PMA.UI.Mixin) :
             if mailbox.status.current_message != message :
                 mailbox.status.current_message = message
                 self._display_message (mailbox)
+        self.model.set_title          ()
     # end def show_message
 
     def show_next_message (self, event = None) :

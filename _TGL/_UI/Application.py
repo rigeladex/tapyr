@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    12-Aug-2005 (MG) Creation (factored from PMA/CAL.UI.Application)
+#    12-Aug-2005 (MG) Literal `CAL` replaced by `self.product_name`
+#    12-Aug-2005 (MG) `s/_set_title/set_title/g` and call `set_title` in
+#                     `__init__` 
 #    ««revision-date»»···
 #--
 #
@@ -136,6 +139,7 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
         tkt._setup_stdout_redirect                   ()
         self._setup_cmd_mgr                          ()
         self._setup_application                      ()
+        self.set_title                               ()
         tkt.bind_to_sync                             (self.cmd_mgr.update_state)
     # end def __init__
 
@@ -198,8 +202,8 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
                 )
             , pv_callback    = self._show_precondition_violation
             , batch_mode     = self.batch_mode
-            , form_dict      = TFL.d_dict
-                  ( name     = "CAL"
+            , form_dict      = dict
+                  ( name     = self.product_name
                   )
             , appl           = self
             )
@@ -232,7 +236,8 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
                         self.State.dump    ()
                     finally :
                         self._destroy   ()
-                        print >> sys.__stdout__, "Leaving CAL, good bye"
+                        print >> sys.__stdout__, "Leaving %s, good bye" % \
+                            (self.product_name, )
             else :
                 raise RuntimeError, "Quit called reentrantly"
     # end def _quit
@@ -296,9 +301,9 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
         return result
     # end def _save_pending
 
-    def _set_title (self) :
+    def set_title (self) :
         self.tkt.set_title (self._window_title_text ())
-    # end def _set_title
+    # end def set_title
 
     def _setup_cmd_mgr (self) :
         self._create_command_mgr ()

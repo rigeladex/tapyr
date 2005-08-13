@@ -45,6 +45,7 @@
 #    10-Aug-2005 (CT) `show_menubar` and `show_toolbar` added
 #    12-Aug-2005 (MG) `TGL.UI.Application` factored
 #    12-Aug-2005 (MG) `_quit_finally` fixed
+#    12-Aug-2005 (MG) `_window_title_text` fixed
 #    ««revision-date»»···
 #--
 
@@ -198,11 +199,12 @@ class Application (TGL.UI.Application) :
 
     def _window_title_text (self) :
         result = ["PMA: "]
-        if self.ui_state.current_mailbox :
-            result.append (self.ui_state.current_mailbox.name)
+        cb = self.office.status.current_box
+        if cb :
+            result.append (cb.name)
             result.append ("/")
-        if self.ui_state.current_message :
-            result.append (self.ui_state.current_message.name)
+        if cb and cb.status.current_message :
+            result.append (cb.status.current_message.name)
         return "".join (result)
     # end def _window_title_text
 
