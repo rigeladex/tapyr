@@ -42,6 +42,7 @@
 #    17-Jun-2005 (MG) Class variables `Model_Type` and `rules_hint` added
 #    30-Jul-2005 (MG) Allow `kw` for `row_data`
 #    30-Jul-2005 (MG) Support fixed value attributes for renderer attributes
+#    13-Aug-2005 (MG) `Toggle_Cell` added
 #    ««revision-date»»···
 #--
 
@@ -74,8 +75,10 @@ class Cell (TFL.Meta.Object) :
                 get_fct             = getattr (self, get_fct, get_fct)
             self.attr_map [ui_attr] = rend_attr, tkt_type, get_fct
         for ui_attr, rend_attr in zip (attributes, self.renderer_attributes) :
+            tkt_type = str
+            if isinstance (rend_attr, (list, tuple)) :
+                rend_attr, tkt_type = rend_attr
             if not isinstance (ui_attr, (list, tuple)) :
-                tkt_type                       = str
                 get_fct                        = getattr
             else :
                 if len (ui_attr) > 2 :
@@ -147,6 +150,14 @@ class Text_Cell (Cell) :
 # end class Text_Cell
 
 class Text_Cell_Styled (_Style_Mixin_, Text_Cell) : pass
+
+class Toggle_Cell (Cell) :
+    """A cell with uses a normal text renderer"""
+
+    renderer_attributes = (("active", bool), )
+    renderer_class      = "Cell_Renderer_Toggle"
+
+# end class Toggle_Cell
 
 class Column (TFL.Meta.Object) :
     """Specifies the properties of on column displayed by the TNS.Tree"""

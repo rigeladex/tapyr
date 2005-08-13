@@ -30,6 +30,7 @@
 #    12-Aug-2005 (MG) Literal `CAL` replaced by `self.product_name`
 #    12-Aug-2005 (MG) `s/_set_title/set_title/g` and call `set_title` in
 #                     `__init__` 
+#    12-Aug-2005 (MG) Icon added to `interpreter` command
 #    ««revision-date»»···
 #--
 #
@@ -371,6 +372,7 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
         #add_sep (If_Names = ("mb", ))
         add_cmd \
             ( Cmd ("Interpreter", self.interact)
+            , icon      = "gtk-harddisk"
             , if_names  = ("mb", "tb")
             , underline = 5
             )
