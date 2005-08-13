@@ -155,7 +155,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         if self._messages is None :
             self._get_messages () ### calls self._sort
         else :
-            self._sort ()
+            self._sort (decorator = decorator)
     # end def sort
 
     def summary (self, format = "%-99.99s") :

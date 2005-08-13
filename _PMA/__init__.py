@@ -35,6 +35,7 @@
 #     9-Aug-2005 (CT) `file_system_encoding` added
 #     9-Aug-2005 (CT) `patchlevel` increased to 2
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
+#    12-Aug-2005 (MG) `patchlevel` increased to 3
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,7 @@ PMA = Package_Namespace ()
 PMA.authors              = ["Christian Tanzer", "Martin Glueck"]
 PMA.major_version        = _M = 0
 PMA.minor_version        = _m = 5
-PMA.patchlevel           = _p = 2
+PMA.patchlevel           = _p = 3
 PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
 PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
 PMA.file_system_encoding = sys.getfilesystemencoding ()

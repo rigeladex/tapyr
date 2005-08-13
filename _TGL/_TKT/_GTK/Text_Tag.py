@@ -46,19 +46,20 @@ import _TGL._TKT._GTK.Styler
 import  gobject
 
 GTK = TGL.TKT.GTK
+gtk = GTK.gtk
 
 for event_name in ( "enter-notify-event", "leave-notify-event"
                   , "button-press-event", "button-release-event"
                   ) :
     gobject.signal_new \
-        ( event_name, GTK.gtk.TextTag, gobject.SIGNAL_RUN_LAST
+        ( event_name, gtk.TextTag, gobject.SIGNAL_RUN_LAST
         , bool, (object, )
         )
 for kind in "single", "double", "triple" :
     for number in 1, 2, 3 :
         event = "%s-click-%d-event" % (kind, number)
         gobject.signal_new \
-            (event, GTK.gtk.TextTag, gobject.SIGNAL_RUN_LAST, bool, (object, ))
+            (event, gtk.TextTag, gobject.SIGNAL_RUN_LAST, bool, (object, ))
 
 class Text_Tag (GTK.Object) :
     """Wrapper for the GTK widget TextTag"""
@@ -72,7 +73,10 @@ class Text_Tag (GTK.Object) :
                   , "justify"
                   )
                 )
-            , background = "paragraph_background"
+            , background = ("background", "paragraph_background")
+                ["paragraph-background" in
+                   set (p.name for p in gobject.list_properties (gtk.TextTag))
+                ]
             , wrap       = "wrap_mode"
             , lmargin1   = "indent"
             , lmargin2   = "left_margin"

@@ -42,6 +42,7 @@
 #    10-Jun-2005 (MG) Allow signal's for `Event_Binder`
 #    10-Jun-2005 (MG) `Event_Binder` corrected
 #    27-Jul-2005 (MG) `CI_Event_Binder.add_widget` type corrected
+#    12-Aug-2005 (MG) `CI_Event_Binder.__init__`: allow ** kw
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -320,7 +321,7 @@ class CI_Event_Binder (_CI_) :
        triggered by key-presses, mouse-clicks and other such events)
     """
 
-    def __init__ (self, AC = None, * widgets) :
+    def __init__ (self, AC = None, * widgets, ** kw) :
         self.__super.__init__ (AC = AC)
         self.bindings = {}
         self.widgets  = dict_from_list (widgets)

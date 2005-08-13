@@ -20,21 +20,22 @@
 #
 #++
 # Name
-#    CAL.TKT.Application
+#    TGL.TKT.Application
 #
 # Purpose
-#    Implement toolkit-specific functionality of CAL
+#    Generic application framework root
 #
 # Revision Dates
-#    20-May-2005 (CT) Creation
+#    12-Aug-2005 (MG) Creation
 #    ««revision-date»»···
 #--
+#
 
-from   _CAL               import CAL
-import _CAL._TKT
-import _CAL._TKT.Mixin
+from   _TGL               import TGL
+import _TGL._TKT
+import _TGL._TKT.Mixin
 
-class _Application_ (CAL.TKT.Mixin) :
+class _Application_ (TGL.TKT.Mixin) :
 
     cmd                   = property (lambda s : s.model.cmd)
     verbose               = property (lambda s : s.model.verbose)
@@ -97,5 +98,5 @@ class _Application_ (CAL.TKT.Mixin) :
 Application = _Application_
 
 if __name__ != "__main__" :
-    CAL.TKT._Export ("*")
-### __END__ CAL.TKT.Application
+    TGL.TKT._Export ("Application")
+### __END__ TGL.TKT.Application

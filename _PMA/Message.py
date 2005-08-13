@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Message
+#    PMA.Message
 #
 # Purpose
 #    Model a mail message
