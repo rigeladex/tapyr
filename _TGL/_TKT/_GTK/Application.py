@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    12-Aug-2005 (MG) Creation (factored from PMA/CAL.TKT.GTK.Application)
+#    12-Aug-2005 (MG) `event_binders` added
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,8 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     widget_class          = "TGL"
     _real_name            = "Application"
     context_menus         = ()
-
+    event_binders         = ()
+    
     def __init__ (self, model, ** kw) :
         self.__super.__init__      (model, ** kw)
         self._setup_toplevel       ()

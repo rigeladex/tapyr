@@ -44,6 +44,7 @@
 #    28-Jul-2005 (MG) `File` menu removed, `_setup_*_menu` functions removed
 #    10-Aug-2005 (CT) `show_menubar` and `show_toolbar` added
 #    12-Aug-2005 (MG) `TGL.UI.Application` factored
+#    12-Aug-2005 (MG) `_quit_finally` fixed
 #    ««revision-date»»···
 #--
 
@@ -173,7 +174,7 @@ class Application (TGL.UI.Application) :
             return False
     # end def commit_all
 
-    def _quit_finally (self, quit_fct) :
+    def _quit_finally (self) :
         self.office.save_status ()
     # end def _quit_finally
 

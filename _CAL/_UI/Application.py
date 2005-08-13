@@ -28,6 +28,7 @@
 # Revision Dates
 #    17-Jun-2005 (MG) Creation
 #    12-Aug-2005 (MG) `TGL.UI.Application` factored
+#    12-Aug-2005 (MG) `_quit_finally` fixed
 #    ««revision-date»»···
 #--
 
@@ -79,7 +80,7 @@ class Application (TGL.UI.Application) :
         return True ### XXX
     # end def commit_all
 
-    def _quit_finally (self, quit_fct) :
+    def _quit_finally (self) :
         pass ### XXX
     # end def _quit_finally
 
