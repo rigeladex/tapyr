@@ -43,6 +43,8 @@
 #    30-Jul-2005 (MG) Allow `kw` for `row_data`
 #    30-Jul-2005 (MG) Support fixed value attributes for renderer attributes
 #    13-Aug-2005 (MG) `Toggle_Cell` added
+#    13-Aug-2005 (MG) Add `AC` to the creation of the renderer instance
+#    13-Aug-2005 (MG) Set the `renderer` attribute for the cell
 #    ««revision-date»»···
 #--
 
@@ -200,8 +202,8 @@ class Column (TFL.Meta.Object) :
             setattr (column, name, getattr (self, name))
         tree.append_column (column)
         for cell in self.cells :
-            renderer = getattr    (tree.TNS, cell.renderer_class) ()
-            column.pack           (renderer)
+            renderer = getattr (tree.TNS, cell.renderer_class) (AC = tree.AC)
+            column.pack        (renderer)
             if cell.lazy :
                 column.set_cell_function \
                     ( renderer
@@ -210,6 +212,7 @@ class Column (TFL.Meta.Object) :
                     )
             else :
                 column.set_attributes (renderer, ** cell.renderer_attr_dict)
+            cell.renderer = renderer
     # end def add_column
 
     def add_row_data (self, ui, row, kw) :

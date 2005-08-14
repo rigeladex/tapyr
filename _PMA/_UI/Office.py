@@ -68,6 +68,7 @@
 #     1-Aug-2005 (MG) `select_box`: only `change` the box if a new box has
 #                     been selected
 #    12-Aug-2005 (MG) Calls to `set_title` added
+#    13-Aug-2005 (MG) `Command_Definition` factored
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ from   _PMA                    import PMA
 
 import _PMA._UI
 import _PMA._UI.Mixin
+import _PMA._UI.Command_Definition
 import _PMA._UI.Mailbox_BV
 import _PMA._UI.Mailbox_MV
 import _PMA.Office
@@ -86,83 +88,10 @@ import _PMA.Sender
 import _TFL.sos
 import time
 
-class Command_Definition (object) :
-
-    precondition = None
-    batchable    = True
-    icon         = None
-    eventname    = None
-    accelerator  = None
-    underline    = None
-
-    class Group (object) :
-        def __init__ (self, name, ci = (), ev = ()) :
-            self.name = name
-            if not isinstance (ci, (list, tuple)) :
-                ci = (ci, )
-            if not isinstance (ev, (list, tuple)) :
-                ev = (ev, )
-            self.ci = ci
-            self.ev = ev
-        # end def __init__
-
-        def command_interfacers (self, eventname = None) :
-            if not eventname :
-                return self.ci
-            return self.ci + tuple ("%s:%s" % (ev, eventname) for ev in self.ev)
-        # end def command_interfacers
-
-    # end class Group
-
-    def __init__ (self, name, callback, * group_spec, ** kw) :
-        self.name         = name
-        self.callback     = callback
-        self.group_spec   = group_spec
-        self.__dict__.update (kw)
-    # end def __init__
-
-    def __call__ (self, Cmd, cmd_mgr, obj = None) :
-        callback = self.callback
-        if not callable (callback) :
-            callback = getattr (obj, callback)
-        cmd_dict = dict \
-            ( precondition = self.precondition
-            , batchable    = self.batchable
-            )
-        for group in self.group_spec :
-            acc = self.accelerator
-            if acc is not None :
-                acc = getattr (obj.TNS.Eventname, acc)
-            getattr (cmd_mgr.cmd, group.name).add_command \
-                ( Cmd (self.name, callback, ** cmd_dict)
-                , accelerator = acc
-                , icon        = self.icon
-                , if_names    = group.command_interfacers (self.eventname)
-                , underline   = self.underline
-                )
-    # end def __call__
-
-# end class Command_Definition
-
-class Separator (object) :
-
-    def __init__ (self, * group_spec) :
-        self.group_spec = group_spec
-    # end def __init__
-
-
-    def __call__ (self, Cmd, cmd_mgr, obj = None) :
-        for group in self.group_spec :
-            getattr (cmd_mgr.cmd, group.name).add_separator \
-                (if_names = group.command_interfacers ())
-    # end def __call__
-
-# end class Separator
-
-class Office (PMA.UI.Mixin) :
+class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     """Abstract user interface for PMA office."""
 
-    CD = Command_Definition
+    CD = PMA.UI.Command_Definition
 
     ### command definition
     box_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_bv"), "ev_bv"), )
@@ -196,7 +125,7 @@ class Office (PMA.UI.Mixin) :
              , * box_msg_cmd_grps
              )
           ### mailbox commands
-        , Separator (* box_cmd_grps)
+        , PMA.UI.Separator (* box_cmd_grps)
         , CD ( "Commit", "commit_box"
              , eventname = "commit_box"
              , * box_cmd_grps
@@ -206,7 +135,7 @@ class Office (PMA.UI.Mixin) :
              , eventname = "delete_message"
              , icon      = "gtk-delete"
              )
-        , Separator (* box_cmd_grps)
+        , PMA.UI.Separator (* box_cmd_grps)
         , CD ( "New Subbox",         "new_subbox"
              , * box_cmd_grps
              )
@@ -218,7 +147,7 @@ class Office (PMA.UI.Mixin) :
              )
 
           ### message commands
-        , Separator (CD.Group ("Message", "cm_mv"))
+        , PMA.UI.Separator (CD.Group ("Message", "cm_mv"))
         , CD ( "Reply",          "reply"
              , eventname = "reply"
              , underline = 0
@@ -238,7 +167,7 @@ class Office (PMA.UI.Mixin) :
              , underline = 2
              , * msg_cmd_grps
              )
-        , Separator (CD.Group ("Message", ("cm_mv", "mb")))
+        , PMA.UI.Separator (CD.Group ("Message", ("cm_mv", "mb")))
         , CD ( "Copy to subbox", "copy_message"
              , eventname = "copy_message"
              , icon      = "gtk-copy"
@@ -264,7 +193,7 @@ class Office (PMA.UI.Mixin) :
              , icon      = "gtk-cancel"
              , * msg_cmd_grps
              )
-        , Separator (CD.Group ("Message", ("cm_mv", "mb")))
+        , PMA.UI.Separator (CD.Group ("Message", ("cm_mv", "mb")))
         , CD ( "Select All",     "select_all_messages"
              , eventname = "select_all"
              , * msg_cmd_grps
@@ -278,7 +207,7 @@ class Office (PMA.UI.Mixin) :
              , icon = "gtk-new"
              ,  * off_cmd_grps
              )
-        , Separator (* off_cmd_grps)
+        , PMA.UI.Separator (* off_cmd_grps)
         , CD ( "Commit and exit", "model_exit"
              , CD.Group ("Office", ("mb", "tb"))
              , accelerator = "save_and_exit"
@@ -311,8 +240,6 @@ class Office (PMA.UI.Mixin) :
         self.box_views         = {}
         self.delivery_views    = []
         self.storage_views     = []
-        ### XXX replace me, please (o;
-        # execfile ("/home/lucky/PMA/.config.py", dict (PMA = PMA))
         UI                     = self.ANS.UI
         TNS                    = self.TNS
         AC                     = self.AC
@@ -339,7 +266,7 @@ class Office (PMA.UI.Mixin) :
         tkt = model.tkt
         tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
         tkt.pack (tkt.wc_po_box_view, self.tkt)
-        self._setup_commands    ()
+        self._setup_commands    (self.model.cmd_mgr)
         self._restore_selection ()
     # end def __init__
 
@@ -647,15 +574,16 @@ class Office (PMA.UI.Mixin) :
             view.selection = box
     # end def _restore_selection
 
-    def _setup_commands (self) :
-        Cmd     = self.ANS.UI.Command
-        Def_Cmd = self.ANS.UI.Deaf_Command
-        cmd_mgr = self.model.cmd_mgr
+    def _select_message (self, msg) :
+        if msg :
+            box                        = msg.mailbox
+            box.status.current_message = self.mb_msg_view.selection = msg
+            self.mb_msg_view.see  (msg)
+            self._display_message (box)
+    # end def _select_message
 
-        for cmd in self.deaf_commands :
-            cmd (Def_Cmd, cmd_mgr, self)
-        for cd in self.commands :
-            cd (Cmd, cmd_mgr, self)
+    def _setup_commands (self, cmd_mgr) :
+        self.__super._setup_commands (cmd_mgr)
         interfacers = cmd_mgr.cmd.Message.interfacers
         interfacers ["cm_mv"].bind_to_widget (self.mb_msg_view, "click_3")
         interfacers ["ev_mv"].add_widget     (self.mb_msg_view)
@@ -665,15 +593,7 @@ class Office (PMA.UI.Mixin) :
             cm.bind_to_widget       (w, "click_3")
             event_binder.add_widget (w)
     # end def _setup_commands
-
-    def _select_message (self, msg) :
-        if msg :
-            box                        = msg.mailbox
-            box.status.current_message = self.mb_msg_view.selection = msg
-            self.mb_msg_view.see  (msg)
-            self._display_message (box)
-    # end def _select_message
-
+    
 # end class Office
 
 if __name__ != "__main__" :

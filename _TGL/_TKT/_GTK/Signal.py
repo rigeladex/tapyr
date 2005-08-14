@@ -35,6 +35,7 @@
 #    17-Jun-2005 (MG) New Signal `Move_Cursor` added, exception handler for
 #                     faild connects added
 #     6-Aug-2005 (MG) `DND_Motion` and `Drag_Motion` added
+#    13-Aug-2005 (MG) `Cell_Toggled` added
 #    ««revision-date»»···
 #--
 
@@ -44,8 +45,8 @@ import _TFL._Meta.Object
 
 class _Event_ (object) :
     """Opaque event object mapping all `parameters` of the signal into the
-       `event` parameter
-    ."""
+       `event` parameter.
+    """
 
     def __init__ (self, widget, event = None, kw = {}) :
         self.__dict__.update (kw)
@@ -150,6 +151,7 @@ class GDK_Signal (GTK_Signal) :
 # end class GDK_Signal
 
 GTK_Signal ( "Activate")
+GTK_Signal ( "Cell_Toggled", "path", signal_name = "toggled")
 GTK_Signal ( "Changed")
 GTK_Signal ( "Clicked")
 GTK_Signal ( "Cursor_Changed")

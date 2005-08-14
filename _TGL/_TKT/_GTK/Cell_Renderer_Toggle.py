@@ -47,5 +47,5 @@ class Cell_Renderer_Toggle (GTK.Cell_Renderer) :
 # end class Cell_Renderer_Toggle
 
 if __name__ != "__main__" :
-    GTK._Export ("Cell_Renderer_Toggle")
+    GTK._Export ("*")
 ### __END__ TGL.TKT.GTK.Cell_Renderer_Toggle

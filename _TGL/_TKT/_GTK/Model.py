@@ -42,6 +42,9 @@
 #                     `iter` added
 #    28-Jul-2005 (MG) `_Iter_Mixin_` added
 #    29-Jul-2005 (MG) `_Proxy_Model_`: `add` and `remove` added
+#    13-Aug-2005 (MG) `Sort_Model.ui_object` and `Filter_Model.ui_object`
+#                     changed to handle `path` arguments as well as `iter`
+#                     arguments
 #    ««revision-date»»···
 #--
 
@@ -288,6 +291,8 @@ class Sort_Model (_Proxy_Model_, GTK.Object) :
         """Converts `iter` from the an tree iter of the sort model to
            an iter of the proxied model.
         """
+        if not isinstance (iter, GTK.gtk.TreeIter) :
+            iter = self.wtk_object.get_iter (iter)
         return self.model.ui_object \
             (self.wtk_object.convert_iter_to_child_iter (None, iter))
     # end def ui_object
@@ -342,6 +347,8 @@ class Filter_Model (_Proxy_Model_, GTK.Object_Wrapper) :
     # end def _filter_ui
 
     def ui_object (self, iter) :
+        if not isinstance (iter, GTK.gtk.TreeIter) :
+            iter = self.wtk_object.get_iter (iter)
         return self.model.ui_object \
             (self.wtk_object.convert_iter_to_child_iter (iter))
     # end def ui_object

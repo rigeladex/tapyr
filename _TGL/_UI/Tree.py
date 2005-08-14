@@ -109,7 +109,7 @@ class _Tree_ (TGL.UI.Mixin) :
 
     def add (self, element, parent = None) :
         result = self._add_element (element, parent = parent, lazy = self.lazy)
-        self.see (result)
+        self.see                   (result)
         return result
     # end def add
 
