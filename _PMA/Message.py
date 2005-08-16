@@ -113,6 +113,8 @@
 #     9-Aug-2005 (CT) Use of `PMA.default_charset` increased
 #     9-Aug-2005 (CT) Use `PMA.file_system_encoding` instead of `us-ascii`
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
+#    16-Aug-2005 (CT) `Msg_Scope._get_header_` factored
+#    16-Aug-2005 (CT) `Msg_Scope._get_sender_name` added
 #    ««revision-date»»···
 #--
 
@@ -174,6 +176,17 @@ class Msg_Scope (TFL.Caller.Scope) :
         self.msg = msg
     # end def __init__
 
+    def _get_header_ (self, key, index) :
+        email = self.msg.email
+        for n in self._header_map.get (key, (index, )) :
+            try :
+                result = email [n]
+                if result is not None :
+                    return result
+            except KeyError :
+                pass
+    # end def _get_header_
+
     def _get_reply_address_cc (self) :
         email  = self.msg.email
         result = []
@@ -182,23 +195,30 @@ class Msg_Scope (TFL.Caller.Scope) :
         return ", \n             ".join (r for r in result if r)
     # end def _get_reply_address_cc
 
+    def _get_sender_name (self) :
+        sender = self._get_header_ ("sender", "Sender")
+        if sender is not None :
+            result = \
+                (  filter (None, Lib.getaddresses ((sender, )) [0])
+                or (None, )
+                ) [0]
+            if result is not None :
+                return decoded_header (result)
+        return ""
+    # end def _get_sender_name
+
     def __getitem__ (self, index) :
         try :
             return self.__super.__getitem__ (index)
         except NameError :
-            email  = self.msg.email
             key    = index.lower ()
             getter = getattr (self, "_get_%s" % key, None)
             if callable (getter) :
                 return getter ()
             else :
-                for n in self._header_map.get (key, (index, )) :
-                    try :
-                        result = email [n]
-                        if result is not None :
-                            return decoded_header (result)
-                    except KeyError :
-                        pass
+                result = self._get_header_ (key, index)
+                if result is not None :
+                    return decoded_header (result)
             return ""
     # end def __getitem__
 
