@@ -66,6 +66,8 @@
 #                     `before = index + delta` to toolbar widget
 #    26-Apr-2005 (CT) `CI_Menu.bind_to_widget` fixed (translate `event_name`
 #                     via `Eventname`)
+#    16-Aug-2005 (CT)  `_CI_Toolbar_Group_` changed to allow nested groups
+#                      (without displaying them visually)
 #    ««revision-date»»···
 #--
 
@@ -459,11 +461,14 @@ class CI_Toolbar (_CI_Widget_) :
 
 class _CI_Toolbar_Group_ (_CI_) :
 
-    def __init__ (self, AC, category, widget) :
+    def __init__ (self, AC, category, widget, b_name = None, index_offset = 0) :
         self.__super.__init__ (AC = AC)
-        self.category   = category
-        self.wtk_widget = self.exposed_widget = widget
-        self.b_name     = {}
+        if b_name is None :
+            b_name        = {}
+        self.category     = category
+        self.wtk_widget   = self.exposed_widget = widget
+        self.b_name       = b_name
+        self.index_offset = index_offset
     # end def __init__
 
     ### command specific methods
@@ -489,7 +494,7 @@ class _CI_Toolbar_Group_ (_CI_) :
             , command     = callback
             , image       = CTK.image_mgr.get (im_name)
             , cmd_name    = cmd_name
-            , before      = index + delta
+            , before      = index + delta + self.index_offset
             )
     # end def add_command
 
@@ -499,7 +504,11 @@ class _CI_Toolbar_Group_ (_CI_) :
 
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
-        raise NotImplementedError, "Toolbar.add_group"
+        return self.__class__ \
+            ( self.AC, self.category, self.wtk_widget
+            , b_name        = self.b_name
+            , index_offset  = len (self.b_name)
+            )
     # end def add_group
 
     def remove_group (self, index) :
