@@ -40,7 +40,7 @@ class _Traceback_Printer_ (TFL.Meta.Object) :
 
     _default_format_str = \
         (   __debug__
-        and "%(fn)s:%(number)d in `%(function)s`:\n\t%(text)s"
+        and "%(fn)s:%(number)d in '%(function)s':\n\t%(text)s"
         or  "%(fn)s:%(number)d"
         )
 
