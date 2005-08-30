@@ -148,6 +148,7 @@
 #                      braino, CED)
 #    19-Jul-2005 (CT)  Style improvements
 #    19-Jul-2005 (CT)  Historical ballast removed (`map`, `apply`)
+#    30-Aug-2005 (CT)  `split_hst` and `rsplit_hst` added
 #    ««revision-date»»···
 #--
 
@@ -706,6 +707,70 @@ def split_by_key (seq, key_cmp, min_result_size = 1) :
         result = result + ([[]] * (min_result_size - len (result)))
     return result
 # end def split_by_key
+
+def split_hst (string, sep) :
+    """Returns a three element tuple (head, sep, tail) with
+       `sep.join (split_hst (string)) == string` split around the
+       first occurrence of `sep`.
+
+       Based on Raymond Hettinger's proposal for a new
+       string-method `str.partition` (python-dev@python.org).
+
+       >>> split_hst ("a", ",")
+       ('a', '', '')
+       >>> split_hst ("a,b", ",")
+       ('a', ',', 'b')
+       >>> split_hst ("a,b,c", ",")
+       ('a', ',', 'b,c')
+       >>> split_hst (",a", ",")
+       ('', ',', 'a')
+       >>> split_hst (",a,b", ",")
+       ('', ',', 'a,b')
+       >>> split_hst ("a,b", ";")
+       ('a,b', '', '')
+       >>> split_hst ("a,b", "b")
+       ('a,', 'b', '')
+       >>> split_hst ("a,bb", "b")
+       ('a,', 'b', 'b')
+    """
+    parts = string.split (sep, 1)
+    if len (parts) == 1 :
+        return parts [0], "", ""
+    else :
+        return parts [0], sep, parts [1]
+# end def split_hst
+
+def rsplit_hst (string, sep) :
+    """Returns a three element tuple (head, sep, tail) with
+       `sep.join (split_hst (string)) == string` split around the
+       last (i.e., rightmost) occurrence of `sep`.
+
+       Based on Raymond Hettinger's proposal for a new
+       string-method `str.rpartition` (python-dev@python.org).
+
+       >>> rsplit_hst ("a", ",")
+       ('a', '', '')
+       >>> rsplit_hst ("a,b", ",")
+       ('a', ',', 'b')
+       >>> rsplit_hst ("a,b,c", ",")
+       ('a,b', ',', 'c')
+       >>> rsplit_hst (",a", ",")
+       ('', ',', 'a')
+       >>> rsplit_hst (",a,b", ",")
+       (',a', ',', 'b')
+       >>> rsplit_hst ("a,b", ";")
+       ('a,b', '', '')
+       >>> rsplit_hst ("a,b", "b")
+       ('a,', 'b', '')
+       >>> rsplit_hst ("a,bb", "b")
+       ('a,b', 'b', '')
+    """
+    parts = string.rsplit (sep, 1)
+    if len (parts) == 1 :
+        return parts [0], "", ""
+    else :
+        return parts [0], sep, parts [1]
+# end def rsplit_hst
 
 def string_cross_sum (string) :
     return cross_sum (string, ord)
