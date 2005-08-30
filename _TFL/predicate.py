@@ -717,6 +717,15 @@ def split_hst (string, sep) :
        Based on Raymond Hettinger's proposal for a new
        string-method `str.partition` (python-dev@python.org).
 
+       In a later post to python-dev@python.org, Nick Coghlan
+       explained the semantics nicely:
+
+           head and not sep and not tail (the separator was not found)
+           head and sep and not tail (the separator is at the end)
+           head and sep and tail (the separator is somewhere in the middle)
+           not head and sep and tail (the separator is at the start)
+           not head and sep and not tail (the separator is the whole string)
+
        >>> split_hst ("a", ",")
        ('a', '', '')
        >>> split_hst ("a,b", ",")
@@ -727,12 +736,16 @@ def split_hst (string, sep) :
        ('', ',', 'a')
        >>> split_hst (",a,b", ",")
        ('', ',', 'a,b')
+       >>> split_hst ("a,", ",")
+       ('a', ',', '')
        >>> split_hst ("a,b", ";")
        ('a,b', '', '')
        >>> split_hst ("a,b", "b")
        ('a,', 'b', '')
        >>> split_hst ("a,bb", "b")
        ('a,', 'b', 'b')
+       >>> split_hst (",", ",")
+       ('', ',', '')
     """
     parts = string.split (sep, 1)
     if len (parts) == 1 :
@@ -765,6 +778,8 @@ def rsplit_hst (string, sep) :
        ('a,', 'b', '')
        >>> rsplit_hst ("a,bb", "b")
        ('a,b', 'b', '')
+       >>> rsplit_hst (",", ",")
+       ('', ',', '')
     """
     parts = string.rsplit (sep, 1)
     if len (parts) == 1 :
