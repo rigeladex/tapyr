@@ -149,6 +149,7 @@
 #    19-Jul-2005 (CT)  Style improvements
 #    19-Jul-2005 (CT)  Historical ballast removed (`map`, `apply`)
 #    30-Aug-2005 (CT)  `split_hst` and `rsplit_hst` added
+#    30-Aug-2005 (CT)  Use `in` instead of `find`
 #    ««revision-date»»···
 #--
 
@@ -430,7 +431,7 @@ def flattened (* lists) :
 
 def has_substr (s, subs) :
     """Returns true if `s' contains `subs'"""
-    return s.find (subs) >= 0
+    return subs in s
 # end def has_substr
 
 def head_slices (l) :

@@ -54,6 +54,7 @@
 #    25-Jan-2005 (CT) `expanded_globs` added
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    29-Jul-2005 (CT) Optional argument `create_dir` added to `tempfile_name`
+#    30-Aug-2005 (CT) Use `in` or `startswith` instead of `find`
 #    ««revision-date»»···
 #--
 
@@ -85,9 +86,9 @@ if (name == "nt") or (name == "win32") :
 
     _os_path_isabs = path.isabs
     def _isabs (path) :
-        return (  path.find (":") >= 0
-               or path [:2] == "\\\\"
-               or path [:1] in ("\\", "/")
+        return (  ":" in path
+               or path.startswith ("/")
+               or path.startswith ("\\")
                     ### strictly speaking this isn't an absolute filename (it
                     ### is relative to the current drive) but it isn't a
                     ### relative filename, either

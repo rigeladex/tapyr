@@ -154,6 +154,7 @@
 #    24-Mar-2005 (CT) Moved into package `TFL`
 #     3-Jun-2005 (MG) `_usage`: missing call parameter `result` added to the
 #                     call of `_add_rest_args`
+#    30-Aug-2005 (CT) Use `in` instead of `find`
 #    ««revision-date»»···
 #--
 
@@ -377,7 +378,7 @@ class Opt (Arg) :
     # end def _cook_default
 
     def _cook_default_opt (self, default) :
-        if self.auto_split and default.find (self.auto_split) > -1 :
+        if self.auto_split and self.auto_split in default :
             self.cooked_default = []
             for v in default.split (self.auto_split) :
                 self.cooked_default.append (self._cooked_value (v))
