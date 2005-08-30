@@ -167,20 +167,21 @@
 #    17-May-2005 (CT)  `LB_Command` improved
 #    11-Jun-2005 (MG)  `bind_interfacers` changed to allow multiple widgets
 #                      as paramete
-#    10-Aug-2005 (CT) `Command_Group._add_command` changed to look-up
-#                     `accelerator` in `TNS.Eventname`
+#    10-Aug-2005 (CT)  `Command_Group._add_command` changed to look-up
+#                      `accelerator` in `TNS.Eventname`
+#    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
-from   Abbr_Key_Dict  import Abbr_Key_Dict
 from   NO_List        import NO_List
 from   Record         import Record
-from   predicate      import *
+from   _TFL.predicate import *
 
 import _TFL._Meta.Object
 import _TFL._UI
 import _TFL._UI.Mixin
+import _TFL.Abbr_Key_Dict
 
 import re
 import traceback
@@ -645,9 +646,9 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
         interfacers = self.interfacers
         _epi        = self._epi
         for n in interface_names :
-            name, info = (n.split (":", 1) + [None]) [:2]
-            _ie        = _epi [name]
-            real_index = self._real_index (_ie, index, delta)
+            name, _, info = split_hst (n, ":")
+            _ie           = _epi [name]
+            real_index    = self._real_index (_ie, index, delta)
             yield name, interfacers [name], info, _ie, real_index
     # end def _interfacers
 
@@ -680,9 +681,9 @@ class Command_Group (_Command_Group_) :
             (AC, name, interfacers, parent, batchable, desc, precondition)
         self.cmd            = _Command_Getattr_ (self)
         self.n_seps         = 0
-        self.command        = Abbr_Key_Dict ()
-        self._dyn_command   = NO_List       ()
-        self._group         = NO_List       ()
+        self.command        = TFL.Abbr_Key_Dict ()
+        self._dyn_command   = NO_List           ()
+        self._group         = NO_List           ()
     # end def __init__
 
     def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
@@ -984,7 +985,7 @@ class Command_Mgr (Command_Group) :
         self._precondition_eager         = {}
         self._pending_interface_bindings = []
         for n in if_names :
-            iname, info = (n.split (":", 1) + [None]) [:2]
+            iname, _, info = split_hst (n, ":")
             if info :
                 self._pending_interface_bindings.append \
                     ((interfacers [iname], info))

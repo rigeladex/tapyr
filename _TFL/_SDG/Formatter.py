@@ -98,6 +98,7 @@
 #                     unless format specification contains at least one of
 #                     them
 #    13-Jul-2005 (CT) Style
+#    30-Aug-2005 (CT) Use `split_hst` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -107,9 +108,10 @@ import _TFL._SDG
 import _TFL.Generators
 
 from   Record             import Record
-from   Regexp             import *
+from   _TFL.predicate     import relax, split_hst
+from   _TFL.Regexp        import *
+
 import sys
-from   predicate import relax
 
 _percent_pat = Regexp ("(?<!%)%(?!%)")
 
@@ -225,8 +227,8 @@ class _Recursive_Formatter_Method_ (_Recursive_Formatter_) :
 class _Recursive_Formatter_Node_ (_Recursive_Formatter_) :
 
     def __init__ (self, key, format, head_form, tail_form, anchor) :
-        key, rec_form = (key.split (".", 1) + [None]) [:2]
-        self.rec_form = rec_form
+        key, _, rec_form = split_hst (key, ".")
+        self.rec_form    = rec_form or None
         self.__super.__init__ (key, format, head_form, tail_form, anchor)
     # end def __init__
 

@@ -27,11 +27,12 @@
 #
 # Revision Dates
 #    24-May-2005 (CED) Creation
+#    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #    ««revision-date»»···
 #--
-#
 
 from   _TFL              import TFL
+from   _TFL.predicate    import split_hst
 import _TFL._SDG._C.Node
 
 class Enum_Item (TFL.SDG.C.Node, TFL.SDG.Leaf) :
@@ -102,10 +103,8 @@ class Enum (TFL.SDG.C.Node, TFL.SDG.Leaf) :
             raise ValueError, \
                "Enum declaration need at least one possible value"
         for v in values :
-            item, comment = \
-               [s.strip () for s in (v.split ("//", 1) + [""]) [:2]]
-            name, value   = \
-               [s.strip () for s in (item.split ("=", 1) + [""]) [:2]]
+            item, _, comment = [s.strip () for s in split_hst (v, "//")]
+            name, _, value   = [s.strip () for s in split_hst (item, "=")]
             result.append (Enum_Item (name, value, comment))
         return result
     # end def _convert_values
@@ -114,6 +113,5 @@ class Enum (TFL.SDG.C.Node, TFL.SDG.Leaf) :
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*")
-### __END__ Enum
-
+### __END__ TFL.SDG.C.Enum
 

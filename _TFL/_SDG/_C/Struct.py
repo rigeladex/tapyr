@@ -31,6 +31,7 @@
 #                     `decl_children`)
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    12-Jul-2005 (MG) `description` added to `[ch]_format`
+#    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,8 @@ import _TFL._SDG._C.Type
 
 import weakref
 
-from   Regexp            import *
+from   _TFL.predicate    import split_hst
+from   _TFL.Regexp       import *
 
 class Struct (TFL.SDG.C._Decl_) :
     """C structure declaration"""
@@ -119,7 +121,7 @@ class Struct (TFL.SDG.C._Decl_) :
         const  = bool ((m.group ("const")  or "").strip ())
         struct = bool ((m.group ("struct") or "").strip ())
         if init :
-            init, desc = ([x.strip () for x in init.split ("//")] + [""]) [:2]
+            init, _, desc = [x.strip () for x in split_hst (init, "//")]
         if not init :
             init = None
         if m.group ("bounds") :
