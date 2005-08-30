@@ -404,11 +404,12 @@ class Maildir (_Mailbox_in_Dir_) :
         """Return parts of `name`.
 
            The result is a Record with attributes `time`, `proc`, `deli`,
-           `host`, and `flags`.
+           `host`, and `info`.
         """
-        t, p, h = (name.split (".", 2) + [None, None]) [:3]
-        p, d    = (p.split    ("_")    + [None])       [:2]
-        h, i    = (h.split    (":")    + [None])       [:2]
+        t, _, r = split_hst (name, ".")
+        p, _, h = split_hst (r,    ".")
+        p, _, d = split_hst (p,    "_")
+        h, _, i = split_hst (h,    ":")
         if i :
             if i.startswith ("2,") :
                 i = i [2:]

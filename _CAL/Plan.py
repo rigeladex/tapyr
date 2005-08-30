@@ -44,17 +44,17 @@
 from   __future__            import generators
 
 from   _TFL                  import TFL
-from   _CAL             import CAL
-from   _CAL.Appointment import prio_pat, time_pat
+from   _CAL                  import CAL
+from   _CAL.Appointment      import prio_pat, time_pat
 import _CAL.Appointment
 import _CAL.Date
 import _CAL.Year
 import _TFL._Meta.Object
 
-from   Filename              import *
-from   predicate             import *
-from   Regexp                import *
-import sos
+from   _TFL.Filename         import *
+from   _TFL.predicate        import *
+from   _TFL.Regexp           import *
+from   _TFL                  import sos
 
 day_sep       = Regexp ("^#", re.M)
 day_pat       = Regexp (r"^ (?P<day>\d{4}/\d{2}/\d{2}) ")
@@ -171,7 +171,7 @@ def read_plan (Y, plan_file_name) :
         if day_pat.match (entry) :
             id = tuple ([int (f) for f in day_pat.day.split ("/")])
             d  = Y.dmap [id]
-            head, tail = (entry.split ("\n", 1) + [""]) [:2]
+            head, _, tail = split_hst (entry, "\n")
             if tail :
                 d.add_appointments (* CAL.appointments (tail))
 # end def read_plan
