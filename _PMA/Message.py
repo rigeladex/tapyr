@@ -115,6 +115,8 @@
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    16-Aug-2005 (CT) `Msg_Scope._get_header_` factored
 #    16-Aug-2005 (CT) `Msg_Scope._get_sender_name` added
+#    31-Aug-2005 (CT) `body_lines` changed back to using `self.charset`
+#                     instead of `PMA.default_encoding` for `decode`
 #    ««revision-date»»···
 #--
 
@@ -458,8 +460,9 @@ class Message_Body (_Msg_Part_) :
                 if lines is not None :
                     self.lines = lines
         if lines is not None :
+            charset = self.charset
             for l in lines :
-                yield l.decode (PMA.default_encoding, "replace").rstrip ("\r")
+                yield l.decode (charset, "replace").rstrip ("\r")
         else :
             hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
@@ -868,7 +871,8 @@ def _command_spec (arg_array = None) :
     return Command_Line \
         ( arg_spec    = ("message:S?Message to print")
         , option_spec =
-            (
+            ( "encoding:S?Encoding to use for output"
+            ,
             )
         , description = "Print mail messages"
         , max_args    = 0
@@ -878,6 +882,8 @@ def _command_spec (arg_array = None) :
 
 def _main (cmd) :
     parser = Lib.Parser ()
+    if cmd.encoding :
+        PMA.default_encoding = cmd.encoding
     for m in cmd.argv :
         msg = PMA.message_from_file (m, parser)
         print u"\n".join \
@@ -904,5 +910,5 @@ if __name__ != "__main__" :
 else :
     import _PMA.Message
     PMA.load_user_config ()
-    _main (_command_spec ())
+    _PMA.Message._main (_PMA.Message._command_spec ())
 ### __END__ PMA.Message
