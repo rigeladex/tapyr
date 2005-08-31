@@ -22,6 +22,7 @@
 #    13-Apr-2005 (MZO) implemented new_menubar
 #    20-Apr-2005 (MZO) Focused_Toplevel return none - like TGW.Focused_Toplevel
 #    25-Apr-2005 (CT)  `new_context_menu` removed (wrong name, wrong place)
+#    30-Aug-2005 (MZO) i14421 - renamed win_expl_cb
 #    ««revision-date»»···
 #--
 
@@ -39,15 +40,15 @@ class Toplevel (TFL.TKT.Mixin) :
 
     def __init__ \
         ( self
-        , menu        = None
-        , statusbar   = None
-        , title       = ""
-        , toolbar     = None
-        , name        = ""
-        , cb_delete   = None  # callback for destroy event
-        , win_expl_cb = None # callback (file_uri) if dnd received
-        , maximize    = False
-        , AC          = None
+        , menu            = None
+        , statusbar       = None
+        , title           = ""
+        , toolbar         = None
+        , name            = ""
+        , cb_delete       = None  # callback for destroy event
+        , cb_win_explorer = None  # callback (file_uri) if dnd received
+        , maximize        = False
+        , AC              = None
         , *args
         , **kw
         ) :
