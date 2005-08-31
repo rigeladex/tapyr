@@ -150,6 +150,7 @@
 #    19-Jul-2005 (CT)  Historical ballast removed (`map`, `apply`)
 #    30-Aug-2005 (CT)  `split_hst` and `rsplit_hst` added
 #    30-Aug-2005 (CT)  Use `in` instead of `find`
+#    31-Aug-2005 (CT)  `rsplit_hst` changed to match Hettinger's clarification
 #    ««revision-date»»···
 #--
 
@@ -738,8 +739,6 @@ def split_hst (string, sep) :
        ('', ',', 'a,b')
        >>> split_hst ("a,", ",")
        ('a', ',', '')
-       >>> split_hst ("a,b", ";")
-       ('a,b', '', '')
        >>> split_hst ("a,b", "b")
        ('a,', 'b', '')
        >>> split_hst ("a,bb", "b")
@@ -763,7 +762,7 @@ def rsplit_hst (string, sep) :
        string-method `str.rpartition` (python-dev@python.org).
 
        >>> rsplit_hst ("a", ",")
-       ('a', '', '')
+       ('', '', 'a')
        >>> rsplit_hst ("a,b", ",")
        ('a', ',', 'b')
        >>> rsplit_hst ("a,b,c", ",")
@@ -772,8 +771,6 @@ def rsplit_hst (string, sep) :
        ('', ',', 'a')
        >>> rsplit_hst (",a,b", ",")
        (',a', ',', 'b')
-       >>> rsplit_hst ("a,b", ";")
-       ('a,b', '', '')
        >>> rsplit_hst ("a,b", "b")
        ('a,', 'b', '')
        >>> rsplit_hst ("a,bb", "b")
@@ -783,7 +780,7 @@ def rsplit_hst (string, sep) :
     """
     parts = string.rsplit (sep, 1)
     if len (parts) == 1 :
-        return parts [0], "", ""
+        return "", "", parts [0]
     else :
         return parts [0], sep, parts [1]
 # end def rsplit_hst
