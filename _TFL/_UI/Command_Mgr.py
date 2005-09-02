@@ -170,6 +170,8 @@
 #    10-Aug-2005 (CT)  `Command_Group._add_command` changed to look-up
 #                      `accelerator` in `TNS.Eventname`
 #    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
+#     2-Sep-2005 (CT)  `assert` added `add_command` to force string arguments
+#                      for `accelerator`
 #    ««revision-date»»···
 #--
 
@@ -706,6 +708,10 @@ class Command_Group (_Command_Group_) :
                 self._add_dyn_command (cmd, if_names, index, delta)
             else :
                 if accelerator and not cmd.accelerator :
+                    assert isinstance (accelerator, str), \
+                        ( "Expected string for accelerator parameter, got %s %s"
+                        % (type (accelerator), accelerator)
+                        )
                     cmd.accelerator = accelerator
                 self._add_command \
                     ( cmd, if_names, icon, index, delta
