@@ -71,7 +71,7 @@ class Clipboard (TFL.UI.Mixin) :
                 , index       = index
                 , if_names    = if_names
                 , underline   = 2
-                , accelerator = self.TNS.Eventname.cut # "cut"
+                , accelerator = "cut"
                 )
         add_cmd ( Cmd ( "Copy"
                       , tkt.menu_copy_cmd
