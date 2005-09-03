@@ -28,6 +28,8 @@
 # Revision Dates
 #    12-Aug-2005 (MG) Creation (factored from PMA/CAL.TKT.GTK.Application)
 #    12-Aug-2005 (MG) `event_binders` added
+#    16-Aug-2005 (MG) Don't call `show_all` anymore
+#     3-Sep-2005 (MG) correct `_wrap_function`
 #    ««revision-date»»···
 #--
 
@@ -70,7 +72,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     _real_name            = "Application"
     context_menus         = ()
     event_binders         = ()
-    
+
     def __init__ (self, model, ** kw) :
         self.__super.__init__      (model, ** kw)
         self._setup_toplevel       ()
@@ -124,7 +126,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
 
     def start_mainloop (self, after_mainloop_cb) :
         w = self.gui
-        w.show_all () ### XXX
+        w.show ()
         self._after_mainloop_cb = after_mainloop_cb
         self.model.cmd_mgr.set_auto_short_cuts ()
         w.update_idletasks                     ()
@@ -212,6 +214,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
             , help            = self.message
             ### XXX , balloon         = self.tool_balloon
             )
+        result.style = self.TNS.gtk.TOOLBAR_ICONS
         result.show ()
         self._load_images_from_dir \
             (TFL.Environment.module_path ("_%s" % (self.widget_class, )))
@@ -303,7 +306,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     def _wrap_function (f) :
         name = f.__name__
         def _prep_args (self, * args, ** kw) :
-            return getattr (PMA.TKT.GTK.Dialog, name) \
+            return getattr (self.TNS.Dialog, name) \
                 (self.toplevel.wtk_object, AC = self.AC, * args, ** kw)
         _prep_args.__name__ = f.__name__
         _prep_args.__doc__  = f.__doc__
@@ -324,7 +327,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     def _wrap_function (f) :
         name = f.__name__
         def _prep_args (self, * args, ** kw) :
-            return getattr (PMA.TKT.GTK, name) \
+            return getattr (self.TNS, name) \
                 (self.toplevel.wtk_object, AC = self.AC, * args, ** kw)
         _prep_args.__name__ = f.__name__
         _prep_args.__doc__  = f.__doc__

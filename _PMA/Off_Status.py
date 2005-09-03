@@ -27,14 +27,16 @@
 #
 # Revision Dates
 #    26-Jul-2005 (CT) Creation
+#    14-Aug-2005 (MG) use new `TGL._Status_` instead of `PMA._Status_`
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
+from   _TGL                    import TGL
 import _PMA.Mailbox
-import _PMA._Status_
+import _TGL._Status_
 
-class Off_Status (PMA._Status_I_) :
+class Off_Status (TGL._Status_I_) :
     """Status of mailbox"""
 
     def __init__ (self, office, * attr) :

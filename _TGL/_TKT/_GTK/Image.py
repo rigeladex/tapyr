@@ -30,11 +30,14 @@
 #     3-Apr-2005 (MG) Creation continued
 #     5-Apr-2005 (MG) `pixbuf` property added
 #     9-Apr-2005 (MG) Stock icon support added
+#    14-Aug-2005 (MG) `load` improved
 #    ««revision-date»»···
 #--
 
 from   _TGL._TKT._GTK         import GTK
+from   _TFL                   import TFL
 import _TGL._TKT._GTK.Misc
+import _TFL.Filename
 
 class Image (GTK.Misc) :
     """Wrapper for the GTK widget Image"""
@@ -56,8 +59,6 @@ class Image (GTK.Misc) :
         , GTK.SG_Property
             ("pixbuf", set_fct_name = "set_from_pixbuf")
         )
-    _wtk_delegation = GTK.Delegation \
-        ( load = GTK.Delegator ("set_from_file"))
 
     def __init__ (self, filename = None, stock_id = None, size = 0, ** kw) :
         self.__super.__init__ (** kw)
@@ -66,6 +67,21 @@ class Image (GTK.Misc) :
         elif stock_id :
             self.wtk_object.set_from_stock (stock_id, size)
     # end def __init__
+
+    def load (self, filename, width = None, height = None, fit = False) :
+        assert (width != None) == (height != None)
+        if fit :
+            width, height = tuple (self.wtk_object.allocation) [2:]
+        if isinstance (filename, TFL.Filename) :
+            filename = filename.name
+        if width is None :
+            self.wtk_object.set_from_file (filename)
+        else :
+            self.wtk_object.set_from_pixbuf \
+                (GTK.gtk.gdk.pixbuf_new_from_file_at_size
+                    (filename, width, height)
+                )
+    # end def load
 
 # end class Image
 

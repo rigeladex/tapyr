@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    03-Jun-2005 (MG) Automated creation
+#    14-Aug-2005 (MG) `add_pattern` improved
 #    ««revision-date»»···
 #--
 
@@ -49,8 +50,9 @@ class File_Filter (GTK.Object) :
     # end def __init__
 
     def add_pattern (self, * patterns) :
-        for p in patterns :
-            self.wtk_object.add_pattern (p)
+        for pat in patterns :
+            for p in pat.split (";") :
+                self.wtk_object.add_pattern (p.strip ())
     # end def add_pattern
 
 # end class File_Filter

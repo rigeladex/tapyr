@@ -69,6 +69,7 @@
 #                     been selected
 #    12-Aug-2005 (MG) Calls to `set_title` added
 #    13-Aug-2005 (MG) `Command_Definition` factored
+#    14-Aug-2005 (MG) `_setup_commands` replaced by `command_bindings`
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,18 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     CD = PMA.UI.Command_Definition
 
     ### command definition
+    box_view_widgets        = property \
+        (lambda s : [b.tkt for b in s.box_views.itervalues ()])
+    command_bindings        = dict \
+        ( mb_msg_view       = dict 
+            ( context_menu  = "Message.cm_mv"
+            , event_binder  = "Message.ev_mv"
+            )
+        , box_view_widgets  = dict
+            ( context_menu  = "Mailbox.cm_bv"
+            , event_binder  = "Mailbox.ev_bv"
+            )
+        )
     box_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_bv"), "ev_bv"), )
     msg_cmd_grps     = (CD.Group ("Message", ("mb", "cm_mv"), "ev_mv"), )
     off_cmd_grps     = (CD.Group ("Office",  ("mb", "tb")), )
@@ -582,18 +595,6 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             self._display_message (box)
     # end def _select_message
 
-    def _setup_commands (self, cmd_mgr) :
-        self.__super._setup_commands (cmd_mgr)
-        interfacers = cmd_mgr.cmd.Message.interfacers
-        interfacers ["cm_mv"].bind_to_widget (self.mb_msg_view, "click_3")
-        interfacers ["ev_mv"].add_widget     (self.mb_msg_view)
-        event_binder = cmd_mgr.cmd.Mailbox.interfacers ["ev_bv"]
-        cm           = cmd_mgr.cmd.Mailbox.interfacers ["cm_bv"]
-        for w in (b.tkt for b in self.box_views.itervalues ()) :
-            cm.bind_to_widget       (w, "click_3")
-            event_binder.add_widget (w)
-    # end def _setup_commands
-    
 # end class Office
 
 if __name__ != "__main__" :

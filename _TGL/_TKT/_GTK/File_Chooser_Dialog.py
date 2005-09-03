@@ -28,6 +28,8 @@
 # Revision Dates
 #    03-Jun-2005 (MG) Automated creation
 #     3-Jun-2005 (MG) Creation continued
+#    14-Aug-2005 (MG) `_ask_dialog` fixed
+#     3-Sep-2005 (MG) `select_multiple` added 
 #    ««revision-date»»···
 #--
 
@@ -43,8 +45,8 @@ class File_Chooser_Dialog (GTK.Dialog.Dialog) :
     GTK_Class        = GTK.gtk.FileChooserDialog
     __gtk_properties = \
         ( GTK.SG_Property
-            ("selection", set = False, get_fct_name = "get_filename")
-        ,
+            ("selection", set = False, get_fct_name = "get_filenames")
+        , GTK.SG_Property ("select_multiple")
         )
 
 # end class File_Chooser_Dialog
@@ -63,11 +65,12 @@ class File_Open_Dialog (File_Chooser_Dialog) :
         )
 
     def __init__ ( self
-                 , parent    = None
-                 , title     = None
-                 , filetypes = ()
-                 , init_val  = None
-                 , AC        = None
+                 , parent      = None
+                 , title       = None
+                 , filetypes   = ()
+                 , init_val    = None
+                 , multiselect = False
+                 , AC          = None
                  ) :
         self.__super.__init__ \
             ( title   = title
@@ -81,6 +84,7 @@ class File_Open_Dialog (File_Chooser_Dialog) :
             self.add_filter               (filter)
         if init_val :
             self.wtk_object.set_filename            (init_val)
+        self.select_multiple = multiselect
     # end def __init__
 
 # end class File_Open_Dialog
@@ -109,14 +113,17 @@ class File_Save_Dialog (File_Open_Dialog) :
             if not overwrite_warning or response != GTK.RESPONSE_OK :
                 return response
             selected = self.selection
-            if self.exist_check (selected) :
+            if reduce ( lambda l, r : l and r
+                      , ( self.exist_check (s) for s in selected)
+                      , True
+                      ) :
                 d = self.TNS.Yes_No_Cancel_Question \
                     ( title   = self.title
                     , message =
                         ( "The %s `%s` already exists!\n\n"
                           "Do you realy want to overwrite it?"
                         ) % (self.kind, selected)
-                    , AC      = AC
+                    , AC      = self.AC
                     )
                 over = d.run     ()
                 d.destroy        ()
@@ -148,10 +155,15 @@ class Folder_Create_Dialog (File_Save_Dialog) :
 # end class Folder_Create_Dialog
 
 def _ask_dialog (cls, args = (), kw = {}) :
-    d = cld (* args, ** kw)
+    d = cls (* args, ** kw)
     if d.run () == GTK.RESPONSE_CANCEL :
-        return None
-    return d.selection
+        result = None
+    else :
+        result = d.selection
+        if len (result) == 1 :
+            result = result [0]
+    d.destroy ()
+    return result
 # end def _ask_dialog
 
 def ask_open_file_name (* args, ** kw) :
@@ -162,15 +174,15 @@ def ask_save_file_name (* args, ** kw) :
     return _ask_dialog (File_Save_Dialog, args, kw)
 # end def ask_save_file_name
 
-def ask_dir_name (** kw) :
+def ask_dir_name (* args, ** kw) :
     return _ask_dialog (Folder_Select_Dialog, args, kw)
 # end def ask_dir_name
 
-def ask_open_dir_name (** kw) :
+def ask_open_dir_name (* args, ** kw) :
     return _ask_dialog (Folder_Select_Dialog, args, kw)
 # end def ask_open_dir_name
 
-def ask_save_dir_name (** kw) :
+def ask_save_dir_name (* args, ** kw) :
     return _ask_dialog (Folder_Create_Dialog, args, kw)
 # end def ask_save_dir_name
 

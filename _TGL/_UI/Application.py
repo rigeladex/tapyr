@@ -2,17 +2,17 @@
 # Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
-# 
+#
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
 # License as published by the Free Software Foundation; either
 # version 2 of the License, or (at your option) any later version.
-# 
+#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Library General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Library General Public
 # License along with this library; if not, write to the Free
 # Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -29,7 +29,7 @@
 #    12-Aug-2005 (MG) Creation (factored from PMA/CAL.UI.Application)
 #    12-Aug-2005 (MG) Literal `CAL` replaced by `self.product_name`
 #    12-Aug-2005 (MG) `s/_set_title/set_title/g` and call `set_title` in
-#                     `__init__` 
+#                     `__init__`
 #    12-Aug-2005 (MG) Icon added to `interpreter` command
 #    ««revision-date»»···
 #--
@@ -71,7 +71,7 @@ class Changes (TFL.Meta.Object) :
     def __cmp__ (self, rhs) :
         return cmp (self.value, int (rhs))
     # end def __cmp__
-    
+
 # end class Changes
 
 class UI_State (TFL.Meta.Object) :
@@ -87,7 +87,7 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
     """Generic application class"""
 
     _real_name           = "Application"
-    
+
     product_name         = "TGL"
     show_menubar         = True
     show_toolbar         = True
@@ -121,7 +121,7 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
           "This group provides commands displaying information "
           "about various aspects of %(name)s."
         )
-    
+
     def __init__ (self, AC, cmd, _globals = {}) :
         self.__super.__init__ (AC = AC, cmd = cmd, _globals = _globals)
         self._globals      = _globals

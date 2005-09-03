@@ -28,14 +28,16 @@
 # Revision Dates
 #    26-Jul-2005 (CT) Creation
 #    26-Jul-2005 (CT) `_Status_I_` factored
+#    14-Aug-2005 (MG) use new `TGL._Status_` instead of `PMA._Status_`
 #    ««revision-date»»···
 #--
 
 from   _TFL._Meta.Property     import prop
 from   _PMA                    import PMA
-import _PMA._Status_
+from   _TGL                    import TGL
+import _TGL._Status_
 
-class Box_Status (PMA._Status_I_) :
+class Box_Status (TGL._Status_I_) :
     """Status of mailbox"""
 
     def __init__ (self, box, * attr) :

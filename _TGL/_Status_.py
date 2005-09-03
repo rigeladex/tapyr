@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    PMA._Status_
+#    TGL._Status_
 #
 # Purpose
 #    Root class for various status encapsulators
@@ -31,11 +31,12 @@
 #    26-Jul-2005 (CT) `load` and `save` moved back to `Msg_Status`
 #    26-Jul-2005 (CT) `_ini_attr` added
 #    26-Jul-2005 (CT) `_Status_C_` and `_Status_I_` factored
+#    14-Aug-2005 (MG) Moved from `PMA` package to the `TGL` package
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
-from   _PMA                    import PMA
+from   _TGL                    import TGL
 import _TFL._Meta.Object
 
 import cPickle                 as     pickle
@@ -160,5 +161,5 @@ class _Status_I_ (_Status_) :
 # end class _Status_I_
 
 if __name__ != "__main__" :
-    PMA._Export ("_Status_", "_Status_C_", "_Status_I_")
-### __END__ PMA._Status_
+    TGL._Export ("_Status_", "_Status_C_", "_Status_I_")
+### __END__ TGL._Status_

@@ -40,6 +40,7 @@
 #    10-Nov-2004 (CT) `from_ordinal` added
 #    15-Nov-2004 (CT) `wk_ordinal` added
 #     6-Jan-2005 (CT) `__main__` script added
+#    01-Sep-2005 (MG) Use new decorator syntax for defining classmethod
 #    ««revision-date»»···
 #--
 
@@ -171,10 +172,12 @@ class Date (CAL._DTW_) :
 
     from _CAL.Delta import Date_Delta as Delta
 
+    @classmethod
     def from_ordinal (cls, ordinal) :
         return cls (date = datetime.date.fromordinal (ordinal))
-    from_ordinal = classmethod (from_ordinal)
+    # end def from_ordinal
 
+    @classmethod
     def from_string (cls, s) :
         match = cls.date_pattern.match (s)
         if match :
@@ -189,7 +192,7 @@ class Date (CAL._DTW_) :
             return cls (** kw)
         else :
             raise ValueError, s
-    from_string = classmethod (from_string)
+    # end def from_string
 
     def replace (self, ** kw) :
         if self.yad is None or "day" in kw :

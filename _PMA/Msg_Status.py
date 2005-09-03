@@ -31,15 +31,17 @@
 #    25-Jul-2005 (CT) `_Status_` factored
 #    26-Jul-2005 (CT) `load` and `save` moved back in here from `_Status_`
 #    26-Jul-2005 (CT) `_Status_C_` factored
+#    14-Aug-2005 (MG) use new `TGL._Status_` instead of `PMA._Status_`
 #    ««revision-date»»···
 #--
 
+from   _TGL                    import TGL
 from   _PMA                    import PMA
-import _PMA._Status_
+import _TGL._Status_
 
 import time
 
-class Msg_Status (PMA._Status_C_) :
+class Msg_Status (TGL._Status_C_) :
     """Status of mail message"""
 
     first_read = property (lambda s : s._attr.get ("first_read"))

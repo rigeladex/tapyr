@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Mar-2005 (MG) Automated creation
 #    15-May-2005 (MG) `mnemonic_widget` corrected
+#    14-Aug-2005 (MG) Property `text` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ class Label (GTK.Misc) :
         , GTK.SG_Property         ("selectable")
         , GTK.Property            ("selection_bound", set = None)
         , GTK.SG_Property         ("single_line_mode")
+        , GTK.SG_Property         ("text")
         , GTK.SG_Property         ("use_markup")
         , GTK.SG_Property         ("use_underline")
         , GTK.SG_Property         ("width_chars")

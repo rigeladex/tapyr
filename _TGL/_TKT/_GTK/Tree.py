@@ -34,6 +34,7 @@
 #     1-Aug-2005 (MG) `see`: add `set_cursor'
 #     6-Aug-2005 (MG) Basic DND handling added
 #     6-Aug-2005 (MG) Alignment of `see` added
+#     3-Sep-2005 (MG) Call `show` in `__init__`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,7 @@ class Tree (GTK.Tree_View) :
         ### cannot use the default add here !!! (will add itself or None)
         self.exposed_widget.wtk_object.add             (self.wtk_object)
         self.exposed_widget.show                       ()
+        self.show                                      ()
     # end def __init__
 
     def add (self, element, parent = None) :

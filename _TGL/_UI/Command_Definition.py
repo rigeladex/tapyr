@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    13-Aug-2005 (MG) Creation (factored from PMA.UI.Office)
+#    14-Aug-2005 (MG) `Command_Definition_Mixin`: Handling of
+#                     `command_bindings` added 
+#     3-Sep-2005 (MG) `command_bindings` handling changed
 #    ««revision-date»»···
 #--
 
@@ -75,8 +78,8 @@ class Command_Definition (object) :
             )
         for group in self.group_spec :
             acc = self.accelerator
-            if acc is not None :
-                acc = getattr (obj.TNS.Eventname, acc)
+            #if acc is not None :
+            #    acc = getattr (obj.TNS.Eventname, acc)
             getattr (cmd_mgr.cmd, group.name).add_command \
                 ( Cmd (self.name, callback, ** cmd_dict)
                 , accelerator = acc
@@ -105,9 +108,10 @@ class Separator (object) :
 
 class Command_Definition_Mixin (object) :
     """Mixin for handling the command definition."""
-    
-    deaf_commands = ()
-    commands      = ()
+
+    command_bindings = {}
+    commands         = ()
+    deaf_commands    = ()
     
     def _setup_commands (self, cmd_mgr) :
         Cmd     = self.ANS.UI.Command
@@ -116,7 +120,23 @@ class Command_Definition_Mixin (object) :
             cmd (Def_Cmd, cmd_mgr, self)
         for cd in self.commands :
             cd (Cmd, cmd_mgr, self)
+        for widgets_attr_name, bindings in self.command_bindings.iteritems () :
+            widgets = getattr (self, widgets_attr_name)
+            if not isinstance (widgets, (list, tuple)) :
+                widgets = (widgets, )
+            for w in widgets :
+                if "context_menu" in bindings :
+                    i = self._interfacer (cmd_mgr, bindings ["context_menu"])
+                    i.bind_to_widget     (w, "click_3")
+                if "event_binder" in bindings :
+                    i = self._interfacer (cmd_mgr, bindings ["event_binder"])
+                    i.add_widget         (w)
     # end def _setup_commands
+
+    def _interfacer (self, cmd_mgr, interfacer_name) :
+        group, name = interfacer_name.split (".", 1)
+        return cmd_mgr [group].interfacers [name]
+    # end def _interfacer
     
 # end class Command_Definition_Mixin
 

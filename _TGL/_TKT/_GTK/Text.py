@@ -38,6 +38,7 @@
 #    20-May-2005 (MG) `Styler` added to support `wrap` property
 #    20-May-2005 (MG) `V_Scrolled_Text` removed
 #    20-May-2005 (MG) `show` methods added
+#    16-Aug-2005 (MG) Call `show' in `__init__`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,7 @@ class _GTK_Text_ (GTK.Text_View) :
             (self.TNS.Signal.Motion_Notify, self._synthesize_focus_events)
         self.bind_add \
             (self.TNS.Signal.Leave_Notify,  self._mouse_leave_text)
+        self.show ()
     # end def __init__
 
     def insert_widget (self, pos_or_mark, widget, style = None, delta = 0) :
@@ -159,6 +161,7 @@ class Scrolled_Text (GTK.Scrolled_Window) :
         self._text   = GTK.Text (AC = AC, * args, ** kw)
         self.add                (self._text)
         self.hscrollbar_policy = self.TNS.NEVER
+        self.show ()
     # end def __init__
 
     #### we must o     verride this function because we don't want the
