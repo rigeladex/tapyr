@@ -29,7 +29,8 @@
 #    03-Jun-2005 (MG) Automated creation
 #     3-Jun-2005 (MG) Creation continued
 #    14-Aug-2005 (MG) `_ask_dialog` fixed
-#     3-Sep-2005 (MG) `select_multiple` added 
+#     3-Sep-2005 (MG) `select_multiple` added
+#     4-Sep-2005 (CT) `reduce` monstrosity replaced by call to `all_true_p`
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,8 @@ import _TGL._TKT._GTK.Dialog
 import _TGL._TKT._GTK.File_Filter
 import _TGL._TKT._GTK.Message_Dialog
 import _TFL.sos               as os
+
+from   _TFL.predicate         import all_true_p
 
 class File_Chooser_Dialog (GTK.Dialog.Dialog) :
     """Wrapper for the GTK widget FileChooserDialog"""
@@ -83,7 +86,7 @@ class File_Open_Dialog (File_Chooser_Dialog) :
             filter = self.TNS.File_Filter (name, pattern, AC = self.AC)
             self.add_filter               (filter)
         if init_val :
-            self.wtk_object.set_filename            (init_val)
+            self.wtk_object.set_filename  (init_val)
         self.select_multiple = multiselect
     # end def __init__
 
@@ -113,10 +116,7 @@ class File_Save_Dialog (File_Open_Dialog) :
             if not overwrite_warning or response != GTK.RESPONSE_OK :
                 return response
             selected = self.selection
-            if reduce ( lambda l, r : l and r
-                      , ( self.exist_check (s) for s in selected)
-                      , True
-                      ) :
+            if all_true_p (selected, self.exist_check) :
                 d = self.TNS.Yes_No_Cancel_Question \
                     ( title   = self.title
                     , message =
@@ -125,8 +125,8 @@ class File_Save_Dialog (File_Open_Dialog) :
                         ) % (self.kind, selected)
                     , AC      = self.AC
                     )
-                over = d.run     ()
-                d.destroy        ()
+                over = d.run ()
+                d.destroy    ()
                 if over == GTK.RESPONSE_CANCEL :
                     return over
                 elif over == GTK.RESPONSE_YES :
@@ -190,15 +190,14 @@ if __name__ != "__main__" :
     GTK._Export ("*")
 else :
     from _TGL import TGL
-    from   _TGL._UI.App_Context   import App_Context
-    AC  = App_Context     (TGL)
-
+    from _TGL._UI.App_Context   import App_Context
+    AC = App_Context (TGL)
     fo = File_Save_Dialog \
         ( title     = "Test file save"
         , filetypes = (("All Files", "*"), ("Python Files", "*.py"))
         , init_val  = ("/home/lucky/x.py")
         , AC        = AC
         )
-    print fo.run               ()
+    print fo.run ()
     print fo.selection
 ### __END__ TGL.TKT.GTK.File_Chooser_Dialog
