@@ -30,7 +30,8 @@
 #     3-Jun-2005 (MG) Creation continued
 #    14-Aug-2005 (MG) `_ask_dialog` fixed
 #     3-Sep-2005 (MG) `select_multiple` added
-#     4-Sep-2005 (CT) `reduce` monstrosity replaced by call to `all_true_p`
+#     4-Sep-2005 (CT) `reduce` monstrosity replaced by call to `any_true_p`
+#     4-Sep-2005 (CT) `run` streamlined
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,7 @@ import _TGL._TKT._GTK.File_Filter
 import _TGL._TKT._GTK.Message_Dialog
 import _TFL.sos               as os
 
-from   _TFL.predicate         import all_true_p
+from   _TFL.predicate         import any_true_p
 
 class File_Chooser_Dialog (GTK.Dialog.Dialog) :
     """Wrapper for the GTK widget FileChooserDialog"""
@@ -111,12 +112,10 @@ class File_Save_Dialog (File_Open_Dialog) :
     # end def __init__
 
     def run (self, overwrite_warning = True) :
-        while 1 :
-            response = self.wtk_object.run ()
-            if not overwrite_warning or response != GTK.RESPONSE_OK :
-                return response
+        response = self.wtk_object.run ()
+        if overwrite_warning and response == GTK.RESPONSE_OK :
             selected = self.selection
-            if all_true_p (selected, self.exist_check) :
+            if any_true_p (selected, self.exist_check) :
                 d = self.TNS.Yes_No_Cancel_Question \
                     ( title   = self.title
                     , message =
@@ -131,8 +130,6 @@ class File_Save_Dialog (File_Open_Dialog) :
                     return over
                 elif over == GTK.RESPONSE_YES :
                     return GTK.RESPONSE_OK
-            else :
-                return response
         return response
     # end def run
 
