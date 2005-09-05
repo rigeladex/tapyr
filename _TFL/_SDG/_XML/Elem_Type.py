@@ -29,6 +29,7 @@
 #    27-Aug-2004 (CT) Creation
 #    20-Sep-2004 (CT) Test for `x_attrs` added
 #    21-Oct-2004 (CT) Use `"` instead of `'` in output
+#     5-Sep-2005 (CT) Doctest fixed (`x_attrs` sorted alphabetically)
 #    ««revision-date»»···
 #--
 """Usage example:
@@ -60,8 +61,8 @@
        A bar-less X
      </X>
      <Y bar = "42"
-        quy = "85"
         qux = "84"
+        quy = "85"
      />
    </Test>
 

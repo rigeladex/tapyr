@@ -28,11 +28,15 @@
 # Revision Dates
 #    26-Aug-2004 (CT) Creation
 #    21-Oct-2004 (CT) Use `"` instead of `'` in output
+#     5-Sep-2005 (CT) `External_Id` factored
+#     5-Sep-2005 (CT) `[` and `]` added to `xml_format`
+#     5-Sep-2005 (CT) `__init__` removed
 #    ««revision-date»»···
 #--
 
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Element
+import _TFL._SDG._XML.External_Id
 
 from   Filename               import Filename
 
@@ -40,6 +44,7 @@ class Doctype (TFL.SDG.XML.Element) :
     """Model the doctype declaration of a XML document
 
        >>> from _TFL._SDG._XML import Decl
+       >>> from _TFL._SDG._XML.External_Id import *
        >>> dt = Doctype ( "Test"
        ...              , Decl.Element  ("Test", "(head, body, tail)")
        ...              , Decl.Element  ("head", "(title, author)")
@@ -58,10 +63,11 @@ class Doctype (TFL.SDG.XML.Element) :
        ...                              , "SYSTEM '/var/local/fubar.gif'"
        ...                              , "GIF"
        ...                              )
+       ...              , dtd = "test.dtd"
        ...              )
        >>> dt.write_to_xml_stream ()
-       <!DOCTYPE Test SYSTEM "Test.dtd"
-           <!ELEMENT Test (head, body, tail) >
+       <!DOCTYPE Test SYSTEM "test.dtd"
+         [ <!ELEMENT Test (head, body, tail) >
            <!ELEMENT head (title, author) >
            <!ELEMENT body (\#PCDATA) >
            <!ELEMENT tail (disclaimer) >
@@ -71,35 +77,43 @@ class Doctype (TFL.SDG.XML.Element) :
            <!ENTITY entity 'An internal general parsed entity' >
            <!ENTITY % parameter <!ELEMENT SAMPLE ANY> >
            <!ENTITY unparsed SYSTEM '/var/local/fubar.gif' NDATA GIF >
+         ]
        >
+       >>> dt = Doctype ("svg", dtd = External_Id_Public
+       ...     ( "-//W3C//DTD SVG 1.0//EN"
+       ...     , "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"
+       ...     ))
+       >>> dt.write_to_xml_stream ()
+       <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+           "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+       >>> dt = Doctype ("svg", dtd = External_Id ("svg10.dtd"))
+       >>> dt.write_to_xml_stream ()
+       <!DOCTYPE svg SYSTEM "svg10.dtd">
     """
 
-    kind                 = "SYSTEM"
-
+    front_args           = ("root_element", )
     init_arg_defaults    = dict \
-        ( doctype        = None
+        ( root_element   = None
         , dtd            = None
         )
 
     elem_type            = "DOCTYPE"
 
     xml_format           = \
-        ( '''<!DOCTYPE %(doctype)s %(kind)s "%(dtd)s"'''
-            """%(:front=%(NL)s%(" " * (indent_offset + 4))s"""
-              """¡rear=%(NL)s%(" " * indent_offset)s"""
+        ( """<!DOCTYPE %(root_element)s %(::*dtd:)s"""
+            """%(:front=%(NL)s  [%(" " * (indent_offset + 1))s"""
+              """¡rear=%(NL)s  ]%(chr (10))s"""
               """¡sep=%(" " * (indent_offset + 4))s"""
               """:*body_children"""
               """:)s"""
           """>"""
         )
 
-    def __init__ (self, doctype, * etd, ** kw) :
-        assert "elem_type" not in kw
-        doctype = Filename (doctype).base
-        dtd     = Filename (kw.get ("dtd", ""), doctype, ".dtd").name
-        self.__super.__init__ \
-            (self.elem_type, doctype = doctype, dtd = dtd, * etd, ** kw)
-    # end def __init__
+    _autoconvert         = dict \
+        ( dtd            =
+            lambda s, k, v : s._convert (v, TFL.SDG.XML.External_Id)
+        ,
+        )
 
 # end class Doctype
 
@@ -118,8 +132,9 @@ dt = Doctype ( "Test"
              , Decl.Notation ( "GIF", "SYSTEM 'display")
              , Decl.Entity   ( "entity", "'An internal general parsed entity'")
              , Decl.Unparsed ( "unpe", "/var/local/fubar.gif", "GIF")
-             )
+             ) # "'"
 dt.write_to_xml_stream ()
+
 """
 
 if __name__ != "__main__" :
