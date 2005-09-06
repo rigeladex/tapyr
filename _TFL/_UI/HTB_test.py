@@ -45,6 +45,7 @@
 #                      respectively
 #    20-Apr-2005 (MZO) update doctest (added necessary imports)
 #    20-Apr-2005 (MZO) update test - tail/head_contents
+#     5-Sep-2005 (MZO) fixed import
 #    ««revision-date»»···
 #--
 
@@ -145,6 +146,8 @@ from _TFL import TFL
 import _TFL._UI
 import _TFL._UI.Command_Mgr
 from _TOM import TOM
+import _TFL._TKT
+import _TFL._TKT._Tk.Command_Interfacer
 import _TOM._UI
 import _TOM._UI.Change_Counter
 TFL.UI.Change_Counter = TOM.UI.Change_Counter
