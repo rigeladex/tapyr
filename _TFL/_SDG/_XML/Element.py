@@ -30,6 +30,8 @@
 #    20-Sep-2004 (CT) `x_attrs` added
 #    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #     5-Sep-2005 (CT) `XML.Node` factored
+#     6-Sep-2005 (CT) `xml_format` changed (`elem_type.rear0` empty instead
+#                     of space)
 #    ««revision-date»»···
 #--
 
@@ -47,7 +49,7 @@ class Element (TFL.SDG.XML.Node) :
 
     _xml_format          = """
         %(::*description:)s
-        <%(elem_type)s%(:head= ¡rear0= ¡rear=%(NL)s:>@_attr_values:)s>
+        <%(elem_type)s%(:head= ¡rear0=¡rear=%(NL)s:>@_attr_values:)s>
         >%(::*body_children:)s
         </%(elem_type)s>
     """.strip ()
@@ -71,7 +73,7 @@ class Empty (Leaf) :
 
     xml_format           = \
         ( """<%(elem_type)s"""
-            """%(:head= ¡rear0= ¡rear=%(NL)s:>@_attr_values:)s"""
+            """%(:head= ¡rear0=¡rear=%(NL)s:>@_attr_values:)s"""
           """/>"""
         )
 

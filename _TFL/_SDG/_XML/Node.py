@@ -28,6 +28,10 @@
 # Revision Dates
 #     5-Sep-2005 (CT) Creation (factored from Element)
 #     5-Sep-2005 (CT) `_attr_values` changed to sort `x_attrs` and to align "="
+#     6-Sep-2005 (CT) `kw` added to `as_xml` and `write_to_xml_stream`
+#     6-Sep-2005 (CT) `_attr_iter` factored from `_attr_values` (and
+#                     alignment to "=" removed, again)
+#     6-Sep-2005 (CT) `_attr_values` changed to use `textwrap`
 #    ««revision-date»»···
 #--
 
@@ -36,6 +40,8 @@ import _TFL._SDG._XML
 import _TFL._SDG.Node
 
 from   Regexp            import *
+
+import textwrap
 
 class _XML_Node_ (TFL.SDG.Node) :
     """Model a node of a XML document"""
@@ -63,27 +69,38 @@ class _XML_Node_ (TFL.SDG.Node) :
         ("[<>]|(&(?! %s;))" % _xml_name_pat.pattern, re.X)
     _special_quot_pat    = Regexp ("&(amp|lt|gt|apos|quot);")
 
-    def as_xml (self, base_indent = None) :
-        return self.formatted ("xml_format", base_indent = base_indent)
+    def as_xml (self, base_indent = None, ** kw) :
+        return self.formatted ("xml_format", base_indent = base_indent, ** kw)
     # end def as_xml
 
-    def write_to_xml_stream (self, stream = None, gauge = None) :
+    def write_to_xml_stream (self, stream = None, gauge = None, ** kw) :
         """Write `self' and all elements in `self.children' to `stream'.
         """
-        self._write_to_stream (self.as_xml (), stream, gauge)
+        self._write_to_stream (self.as_xml (** kw), stream, gauge)
     # end def write_to_xml_stream
 
-    def _attr_values (self, * args, ** kw) :
+    def _attr_iter (self) :
         attr_values = \
             ( [(a, getattr (self, a)) for a in self.attr_names]
             + sorted (self.x_attrs.iteritems ())
             )
         if attr_values :
-            l = max (len (a) for a, v in attr_values)
             for a, v in attr_values :
                 if v is not None :
                     v = str (v).replace ("'", "&quot;")
-                    yield '''%-*s = "%s"''' % (l, a, v)
+                    yield '''%s="%s"''' % (a, v)
+    # end def _attr_iter
+
+    def _attr_values (self, * args, ** kw) :
+        attr_values = " ".join (self._attr_iter ())
+        if attr_values :
+            ow      = kw ["output_width"]
+            ia      = kw ["indent_anchor"]
+            ht      = kw ["ht_width"]
+            width   = max (ow - ia - ht - 4, 4)
+            wrapper = textwrap.TextWrapper (width = width)
+            for l in wrapper.wrap (attr_values) :
+                yield l.strip ()
     # end def _attr_values
 
     def _checked_xml_name (self, value) :

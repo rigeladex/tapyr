@@ -47,11 +47,19 @@ class External_Id (TFL.SDG.XML.Node) :
     public_id            = None
 
     xml_format           = \
-        ( """%(kind)s """
-          """%(:head="¡tail="¡rear=%(NL)s¡rear0=¡sep=    """
-            """:.public_id,.uri:"""
-          """)s"""
+        ( """%(kind)s"""
+          """%(:front0= ¡front=%(NL)s    """
+            """¡rear0=¡rear=%(NL)s"""
+            """¡head="¡tail="¡sep=    """
+            """:@_ext_ids:)s"""
         )
+
+    def _ext_ids (self, ** kw) :
+        if self.public_id is not None :
+            yield self.public_id
+        if self.uri is not None :
+            yield self.uri
+    # end def _ext_ids
 
 # end class External_Id
 

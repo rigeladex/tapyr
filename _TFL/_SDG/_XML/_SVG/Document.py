@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Sep-2005 (CT) Creation
+#     6-Sep-2005 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -55,80 +56,34 @@
 ...   "303,215 231,161 321,161"))
 >>> svg.write_to_xml_stream ()
 <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+<!DOCTYPE svg PUBLIC
+    "-//W3C//DTD SVG 1.1//EN"
     "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height  = "4cm"
-     version = "1.1"
-     viewBox = "0 0 1200 400"
-     width   = "12cm"
-     xmlns   = "http://www.w3.org/2000/svg"
+<svg height="4cm" version="1.1" viewBox="0 0 1200 400" width="12cm"
+     xmlns="http://www.w3.org/2000/svg"
 >
-  <rect fill      = "none"
-        height    = "398"
-        stroke    = "blue"
-        width     = "1198"
-        x         = "1"
-        y         = "1"
-  >
-  </rect>
-  <rect fill      = "green"
-        height    = "200"
-        rx        = "50"
-        width     = "400"
-        x         = "100"
-        y         = "100"
-  >
-  </rect>
-  <g id        = "1"
-     transform = "translate(700 210) rotate(-30)"
-  >
-    <rect fill      = "none"
-          height    = "200"
-          rx        = "50"
-          stroke    = "purple"
-          width     = "400"
-          x         = "0"
-          y         = "0"
-    >
-    </rect>
+  <rect fill="none" height="398" stroke="blue" width="1198" x="1" y="1"/>
+  <rect fill="green" height="200" rx="50" width="400" x="100" y="100"/>
+  <g id="1" transform="translate(700 210) rotate(-30)">
+    <rect fill="none" height="200" rx="50" stroke="purple" width="400"
+          x="0" y="0"
+    />
   </g>
-  <circle cx        = "600"
-          cy        = "200"
-          fill      = "red"
-          r         = "100"
-          stroke    = "blue"
-  >
-  </circle>
-  <ellipse fill      = "red"
-           rx        = "250"
-           ry        = "100"
-  >
-  </ellipse>
-  <ellipse fill      = "none"
-           rx        = "250"
-           ry        = "100"
-           stroke    = "blue"
-           transform = "translate(900 200) rotate(-30)"
-  >
-  </ellipse>
-  <line x1        = "100"
-        x2        = "300"
-        y1        = "300"
-        y2        = "100"
-  >
-  </line>
-  <polyline fill      = "none"
-            points    = "50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375"
-            stroke    = "blue"
-  >
-  </polyline>
-  <polygon fill      = "red"
-           points    = "350,75  379,161 469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161"
-           stroke    = "blue"
-  >
-  </polygon>
+  <circle cx="600" cy="200" fill="red" r="100" stroke="blue"/>
+  <ellipse fill="red" rx="250" ry="100"/>
+  <ellipse fill="none" rx="250" ry="100" stroke="blue"
+           transform="translate(900 200) rotate(-30)"
+  />
+  <line x1="100" x2="300" y1="300" y2="100"/>
+  <polyline fill="none" points="50,375 150,375 150,325 250,325 250,375
+            350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375
+            750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375
+            1150,375" stroke="blue"
+  />
+  <polygon fill="red" points="350,75  379,161 469,161 397,215 423,301
+           350,250 277,301 303,215 231,161 321,161" stroke="blue"
+  />
 </svg>
-
 """
 
 from   _TFL                   import TFL
@@ -142,23 +97,20 @@ class _SVG_Document_ (TFL.SDG.XML.Document) :
        >>> svg = Document (Root ())
        >>> svg.write_to_xml_stream ()
        <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
-       <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+       <!DOCTYPE svg PUBLIC
+           "-//W3C//DTD SVG 1.1//EN"
            "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-       <svg version = "1.1"
-            xmlns   = "http://www.w3.org/2000/svg"
-       >
+       <svg version="1.1" xmlns="http://www.w3.org/2000/svg">
        </svg>
        >>> svg = Document (
        ...     Root (viewBox="10 60 450 260", width="100%", height="100%"))
-       >>> svg.write_to_xml_stream ()
+       >>> svg.write_to_xml_stream (output_width = 65)
        <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
-       <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+       <!DOCTYPE svg PUBLIC
+           "-//W3C//DTD SVG 1.1//EN"
            "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-       <svg height  = "100%"
-            version = "1.1"
-            viewBox = "10 60 450 260"
-            width   = "100%"
-            xmlns   = "http://www.w3.org/2000/svg"
+       <svg height="100%" version="1.1" viewBox="10 60 450 260"
+            width="100%" xmlns="http://www.w3.org/2000/svg"
        >
        </svg>
     """
@@ -193,6 +145,7 @@ _shape_attr          = dict \
 
 Circle               = TFL.SDG.XML.Elem_Type \
     ( "circle"
+    , (TFL.SDG.XML.Empty, )
     , cx             = None
     , cy             = None
     , r              = None
@@ -201,6 +154,7 @@ Circle               = TFL.SDG.XML.Elem_Type \
 
 Ellipse              = TFL.SDG.XML.Elem_Type \
     ( "ellipse"
+    , (TFL.SDG.XML.Empty, )
     , cx             = None
     , cy             = None
     , rx             = None
@@ -216,6 +170,7 @@ Group                = TFL.SDG.XML.Elem_Type \
 
 Line                 = TFL.SDG.XML.Elem_Type \
     ( "line"
+    , (TFL.SDG.XML.Empty, )
     , x1             = None
     , x2             = None
     , y1             = None
@@ -232,18 +187,21 @@ Path                 = TFL.SDG.XML.Elem_Type \
 
 Polygon              = TFL.SDG.XML.Elem_Type \
     ( "polygon"
+    , (TFL.SDG.XML.Empty, )
     , points         = None
     , ** _shape_attr
     )
 
 Polyline             = TFL.SDG.XML.Elem_Type \
     ( "polyline"
+    , (TFL.SDG.XML.Empty, )
     , points         = None
     , ** _shape_attr
     )
 
 Rect                 = TFL.SDG.XML.Elem_Type \
     ( "rect"
+    , (TFL.SDG.XML.Empty, )
     , height         = None
     , rx             = None
     , ry             = None

@@ -61,8 +61,10 @@
 #    25-Aug-2004 (MG) `insert`: guard agains `None` children added
 #    26-Aug-2004 (CT) `_convert` moved in here (from `C.Node`)
 #    26-Aug-2004 (CT) `NL` added
-#    17-Sep-2004 (CT)  Argument `indent_anchor` added to `formatted`
-#    27-Sep-2004 (CT)  Doc-string improved
+#    17-Sep-2004 (CT) Argument `indent_anchor` added to `formatted`
+#    27-Sep-2004 (CT) Doc-string improved
+#     6-Sep-2005 (CT) `formatted` changed to include `output_width` in
+#                     `recurse_kw`
 #    ««revision-date»»···
 #--
 
@@ -125,8 +127,8 @@ Formats define how to format a node and its children for a specific
 purpose.
 
 - `_list_of_formats` specifies the names of the applicable formats for
-  the node-type in question (used by metaclass; therefore, it must be
-  defined by class body).
+  the node-type in question (used by the metaclass; therefore, it must be
+  defined by the class body).
 
 - Each format is a string defined as a class variable.
 
@@ -161,8 +163,8 @@ purpose.
     `<format-spec>` is documented in the Python Library Reference
     manual, in the section `String Formatting Operations`.
 
-    A simple example is `%(base_indent * 2)s` which will add two times
-    `node.base_indent` to the formatted representation.
+    A simple example is `%(base_indent * 2)s` which will force a minimum
+    width of two times `node.base_indent`.
 
   * A complex SDG format specification. This has the form
     `%(:<x_forms>:<key-specs>:)<format-spec>` and is described in more
@@ -403,7 +405,8 @@ class Node :
     _list_of_formats     = ("repr_format", "str_format")
     repr_format          = """
         %(__class__.__name__)s
-        >%(:front=( ¡front0=(¡rear=%(NL)s)¡rear0=)¡sep=, :>*children,>@_formatted_attrs:)s
+        >%(:front=( ¡front0=(¡rear=%(NL)s)¡rear0=)¡sep=, :\
+           >*children,>@_formatted_attrs:)s
     """
     str_format           = """
         %(__class__.__name__)s %(name)s
@@ -471,8 +474,9 @@ class Node :
         recurser   = "formatted"
         formatters = getattr (self, format_name)
         recurse_kw = dict \
-            ( format_name = format_name
-            , base_indent = base_indent
+            ( format_name  = format_name
+            , base_indent  = base_indent
+            , output_width = output_width
             , ** kw
             )
         context = TFL.Caller.Object_Scope (self)

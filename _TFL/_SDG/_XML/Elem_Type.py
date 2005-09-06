@@ -30,8 +30,10 @@
 #    20-Sep-2004 (CT) Test for `x_attrs` added
 #    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #     5-Sep-2005 (CT) Doctest fixed (`x_attrs` sorted alphabetically)
+#     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
 #    ««revision-date»»···
 #--
+
 """Usage example:
 
    >>> from _TFL._SDG._XML.Document import *
@@ -48,22 +50,14 @@
    <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
    <Test>
      Test for TFL.SDG.XML.Elem_Type creation and use
-     <X bar = "42"
-        baz = "quuux"
-        foo = "wibble"
-     >
+     <X bar="42" baz="quuux" foo="wibble">
        A foo-carrying X
      </X>
-     <Y bar = "wobble"
-        baz = "quuux"
-     />
-     <X baz = "quuux" >
+     <Y bar="wobble" baz="quuux"/>
+     <X baz="quuux">
        A bar-less X
      </X>
-     <Y bar = "42"
-        qux = "84"
-        quy = "85"
-     />
+     <Y bar="42" qux="84" quy="85"/>
    </Test>
 
 """

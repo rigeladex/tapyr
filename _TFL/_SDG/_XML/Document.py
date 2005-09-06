@@ -29,10 +29,11 @@
 #    26-Aug-2004 (CT) Creation
 #    17-Sep-2004 (CT) Doctest changed (added `%` to document text)
 #    21-Oct-2004 (CT) Use `"` instead of `'` in output
-#     5-Sep-2005 (CT) Derive from `XML.Node` instead of `XML.Document`
+#     5-Sep-2005 (CT) Derive from `XML.Node` instead of `XML.Element`
 #     5-Sep-2005 (CT) `root_element` added and `insert` redefined to delegate
 #                     to `root_element`
 #     5-Sep-2005 (CT) Doctest `svg` added
+#     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
 #    ««revision-date»»···
 #--
 
@@ -91,10 +92,8 @@ class Document (TFL.SDG.XML.Node) :
        ...              )
        >>> print chr (10).join (s.formatted ("xml_format"))
        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-       <svg height  = "100%"
-            viewBox = "10 60 450 260"
-            width   = "100%"
-            xmlns   = "http://www.w3.org/2000/svg"
+       <svg height="100%" viewBox="10 60 450 260" width="100%"
+            xmlns="http://www.w3.org/2000/svg"
        >
          ...
        </svg>
