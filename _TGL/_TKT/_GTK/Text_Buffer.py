@@ -43,6 +43,7 @@
 #                      respectively
 #    10-Jun-2005 (MG) `_tag`: delete tag if a tag with the passed name
 #                     already exists
+#     5-Sep-2005 (MG) `remove_style`: check if the style to remove has a tag
 #    ««revision-date»»···
 #--
 
@@ -200,11 +201,12 @@ class Text_Buffer (GTK.Object, TGL.TKT.Text) :
     # end def remove
 
     def remove_style (self, style, head, tail = None, delta = 0) :
-        self.wtk_object.remove_tag \
-            ( self._tag_map [style].wtk_object
-            , self._move_iter     (self._iter_from_pom (head), delta)
-            , self._iter_from_pom (tail or self.buffer_tail)
-            )
+        if style in self._tag_map :
+            self.wtk_object.remove_tag \
+                ( self._tag_map [style].wtk_object
+                , self._move_iter     (self._iter_from_pom (head), delta)
+                , self._iter_from_pom (tail or self.buffer_tail)
+                )
     # end def remove_style
 
     def see (self, pos_or_mark) :

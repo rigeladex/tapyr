@@ -32,6 +32,7 @@
 #     3-Sep-2005 (MG) `select_multiple` added
 #     4-Sep-2005 (CT) `reduce` monstrosity replaced by call to `any_true_p`
 #     4-Sep-2005 (CT) `run` streamlined
+#     5-Sep-2005 (MG) `overwrite_warning` removed from `Folder_Create_Dialog`
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,7 @@ class File_Open_Dialog (File_Chooser_Dialog) :
 
 # end class File_Open_Dialog
 
-class File_Save_Dialog (File_Open_Dialog) :
+class _Save_Dialog_ (File_Open_Dialog) :
     """Select a new file name."""
 
     action         = GTK.gtk.FILE_CHOOSER_ACTION_SAVE
@@ -110,6 +111,11 @@ class File_Save_Dialog (File_Open_Dialog) :
         if initialfile :
             self.wtk_object.set_current_name (initialfile)
     # end def __init__
+
+# end class _Save_Dialog_
+
+class File_Save_Dialog (_Save_Dialog_) :
+    """Select a new file name."""
 
     def run (self, overwrite_warning = True) :
         response = self.wtk_object.run ()
@@ -142,7 +148,7 @@ class Folder_Select_Dialog (File_Open_Dialog) :
 
 # end class Folder_Select_Dialog
 
-class Folder_Create_Dialog (File_Save_Dialog) :
+class Folder_Create_Dialog (_Save_Dialog_) :
     """Select a new file name."""
 
     action         = GTK.gtk.FILE_CHOOSER_ACTION_CREATE_FOLDER

@@ -49,6 +49,7 @@
 #    28-Jul-2005 (MG) `path` and `std_pathes` moved in here (from
 #                     `Image_Manager`)
 #    28-Jul-2005 (MG) `read_style_file` added
+#     5-Sep-2005 (MG) `read_widget_memory` guard added
 #    ««revision-date»»···
 #--
 
@@ -397,7 +398,7 @@ class _Object_ (TGL.TKT.Mixin) :
     # end def dump_widget_memory
 
     def read_widget_memory (self) :
-        if self.AC and self.name :
+        if self.AC and self.name and self.AC.memory :
             dump = self.AC.memory.state.get ("widget_memory", {}).get \
                 (self.name, {})
             if dump :

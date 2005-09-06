@@ -36,6 +36,7 @@
 #    10-Jun-2005 (MG) Map `wrap` to `wrap_mode`
 #    31-Jul-2005 (MG) New properties `paragraph_background*` added and used
 #                     in `Styler` (requires new GTK+)
+#     5-Sep-2005 (MG) `justify` style corrected
 #    ««revision-date»»···
 #--
 
@@ -70,13 +71,13 @@ class Text_Tag (GTK.Object) :
         Opts    = dict \
             ( dict_from_list
                 ( ( "font", "foreground", "underline"
-                  , "justify"
                   )
                 )
             , background = ("background", "paragraph_background")
                 ["paragraph-background" in
                    set (p.name for p in gobject.list_properties (gtk.TextTag))
                 ]
+            , justify    = "justification"
             , wrap       = "wrap_mode"
             , lmargin1   = "indent"
             , lmargin2   = "left_margin"

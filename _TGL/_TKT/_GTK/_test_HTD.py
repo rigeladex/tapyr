@@ -56,8 +56,8 @@ def show (t) :
           (len (x), len (x) - len (y))
 
 nl  = chr (10)
-ac  = App_Context (TGL)
-r   = Root (ac, nl.join (("R.line 1", "R.line 2")))
+AC  = App_Context (TGL)
+r   = Root (AC, nl.join (("R.line 1", "R.line 2")))
 t   = r.tkt_text
 #t.exposed_widget.pack (expand = "yes", fill = "both")
 
@@ -80,7 +80,7 @@ m2 = Node    ( n3, ("m2 line 1", nl, "m2 line 2"))
 n4 = Node_B2 ( r, ( ["n4 closed line 1"]
                   , ["n4 open line 1", nl, "n4 open line 2"])
              , r.Style.light_blue)
-win = TGL.TKT.GTK.Test_Window ()
+win = TGL.TKT.GTK.Test_Window (AC = AC)
 win.add                       (r.tkt_text)
 win.show_all                  ()
 TGL.TKT.GTK.main              ()
