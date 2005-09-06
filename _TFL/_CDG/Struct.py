@@ -31,6 +31,7 @@
 #    14-Jul-2005 (MG) `Typedef` added
 #    14-Jul-2005 (MG) `__new__` changed to use `super`
 #    14-Jul-2005 (MG) `add_typedef` added
+#     6-Sep-2005 (MPH) Missing `import traceback` added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Property
 import _TFL._SDG._C
 import  struct
+import traceback
 
 class Typedef (TFL.Meta.Object) :
     """Generate a new typedef used by the data structures."""
