@@ -139,6 +139,7 @@
 #     3-May-2005 (MZO) i15334, Moved extend_cmd_mgr from Report => HTB
 #     9-May-2005 (MZO) added setup_edit/file_menu
 #    10-Aug-2005 (CT)  Pass literal strings as `accelerator` arguments
+#     5-Sep-2005 (MZO) set dialog_title=productname if available.
 #    ««revision-date»»···
 #--
 
@@ -999,7 +1000,10 @@ class Browser (TFL.UI.Mixin) :
     def __init__ (self, AC, wc = None, name = None, ** kw) :
         self.__super.__init__ (AC = AC)
         self.gauge          = AC.ui_state.gauge
-        self._dialog_title  = AC.ANS.Version.productname
+        if AC and hasattr (AC.ANS, "Version") :
+            self._dialog_title  = AC.ANS.Version.productname
+        else : 
+            self._dialog_title  = ""
         self._parent        = wc
         self.name           = name
         self.mouse_act      = 1
