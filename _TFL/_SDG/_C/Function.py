@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    26-Aug-2004 (CT) `front0` and `rear0` used
 #     1-Sep-2004 (MG) `Function.tail_char` added and used in format
 #    23-Feb-2005 (CED) `apidoc_tex_format` and friends defined
+#     8-Sep-2005 (PGO) import of textwrap removed (not used)
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,6 @@ from   _TFL              import TFL
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Type
 import _TFL._SDG._C.Arg_List
-import textwrap
 
 class _Function_ (TFL.SDG.C.Maybe_Extern, TFL.SDG.C.Maybe_Static) :
     """Root class for C function declarations and function definitions"""

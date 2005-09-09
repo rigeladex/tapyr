@@ -26,12 +26,13 @@
 #    Model a node of a XML document
 #
 # Revision Dates
-#     5-Sep-2005 (CT) Creation (factored from Element)
-#     5-Sep-2005 (CT) `_attr_values` changed to sort `x_attrs` and to align "="
-#     6-Sep-2005 (CT) `kw` added to `as_xml` and `write_to_xml_stream`
-#     6-Sep-2005 (CT) `_attr_iter` factored from `_attr_values` (and
-#                     alignment to "=" removed, again)
-#     6-Sep-2005 (CT) `_attr_values` changed to use `textwrap`
+#     5-Sep-2005 (CT)  Creation (factored from Element)
+#     5-Sep-2005 (CT)  `_attr_values` changed to sort `x_attrs` and to align "="
+#     6-Sep-2005 (CT)  `kw` added to `as_xml` and `write_to_xml_stream`
+#     6-Sep-2005 (CT)  `_attr_iter` factored from `_attr_values` (and
+#                      alignment to "=" removed, again)
+#     6-Sep-2005 (CT)  `_attr_values` changed to use `textwrap`
+#     9-Sep-2005 (PGO) `_attr_values' modifies `textwrap`s word wrapping
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,7 @@ class _XML_Node_ (TFL.SDG.Node) :
     _special_char_pat    = Regexp \
         ("[<>]|(&(?! %s;))" % _xml_name_pat.pattern, re.X)
     _special_quot_pat    = Regexp ("&(amp|lt|gt|apos|quot);")
+    _wordsep_pat         = Regexp (r'(\s+)')
 
     def as_xml (self, base_indent = None, ** kw) :
         return self.formatted ("xml_format", base_indent = base_indent, ** kw)
@@ -94,11 +96,12 @@ class _XML_Node_ (TFL.SDG.Node) :
     def _attr_values (self, * args, ** kw) :
         attr_values = " ".join (self._attr_iter ())
         if attr_values :
-            ow      = kw ["output_width"]
-            ia      = kw ["indent_anchor"]
-            ht      = kw ["ht_width"]
-            width   = max (ow - ia - ht - 4, 4)
-            wrapper = textwrap.TextWrapper (width = width)
+            ow                 = kw ["output_width"]
+            ia                 = kw ["indent_anchor"]
+            ht                 = kw ["ht_width"]
+            width              = max (ow - ia - ht - 4, 4)
+            wrapper            = textwrap.TextWrapper (width = width)
+            wrapper.wordsep_re = self._wordsep_pat
             for l in wrapper.wrap (attr_values) :
                 yield l.strip ()
     # end def _attr_values
