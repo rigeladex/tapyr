@@ -37,6 +37,7 @@
 #    22-May-2005 (CT) `_Node_C_._insert` redefined to `apply_style` `nowrap`
 #    22-May-2005 (CT) `_Node_C_._level_inc` removed and `MO_Root._add_parts`
 #                     changed to add a `\t` per level
+#    14-Sep-2005 (CT) Use `sender_name` instead of `sender` in `summary_format`
 #    ««revision-date»»···
 #--
 
@@ -190,7 +191,7 @@ class _Header_Node_ (_Header_Node_Mixin_, _MD_Node_B3_) :
 class _Message_Node_ (_MD_Node_B2_) :
 
     summary_format      = unicode \
-        ( "%(name)s %(date).12s %(sender).20s %(subject)s "
+        ( "%(name)s %(date).12s %(sender_name).20s %(subject)s "
         )
 
     def __init__ (self, msg, parent, ** kw) :
@@ -440,7 +441,7 @@ class MD_Root (_Root_) :
 
     msg                 = None
     summary_format      = unicode \
-        ( "%(number)4s %(name)-10s %(date)-12.12s %(sender)-20.20s "
+        ( "%(number)4s %(name)-10s %(date)-12.12s %(sender_name)-20.20s "
           "%(subject)-50.50s "
         )
 

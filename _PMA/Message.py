@@ -117,8 +117,21 @@
 #    16-Aug-2005 (CT) `Msg_Scope._get_sender_name` added
 #    31-Aug-2005 (CT) `body_lines` changed back to using `self.charset`
 #                     instead of `PMA.default_encoding` for `decode`
+#    13-Sep-2005 (CT) `Msg_Scope._get_body` factored from
+#                     `_Msg_Part_.email_summary`
+#    14-Sep-2005 (CT) `kw` added to `Msg_Scope.__init__`
+#    14-Sep-2005 (CT) Always pass `Msg_Scope` to `%` applied to
+#                     `summary_format` and `short_summary_format`
+#    14-Sep-2005 (CT) `Message.sender` and `_Msg_Part_._sender` removed (use
+#                     `Msg_Scope ["sender"]` instead)
+#    14-Sep-2005 (CT) `Message.date` and _Msg_Part_._date removed (use
+#                     `Msg_Scope ["date"]` instead)
+#    14-Sep-2005 (CT) `_get_header_` moved back to `_Msg_Part_`
 #    ««revision-date»»···
 #--
+
+### XXX to do
+### - still need `headers_to_show` ??? If not, remomve
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -157,37 +170,45 @@ class Msg_Scope (TFL.Caller.Scope) :
        in.
     """
 
-    _header_map = dict \
-        ( delivery_date = ("Delivery-date")
-        , in_reply_to   = ("In-reply-to", )
-        , message_date  = ("Date", "Delivery-date")
-        , message_id    = ("Message-id", "References")
-        , reply_address =
-            ( "Mail-followup-to"
-            , "X-mailing-list"
-            , "Reply-To"
-            , "From"
-            , "Sender"
-            , "Return-path"
+    def __init__ (self, msg, locls = None, ** kw) :
+        self.__super.__init__ \
+            ( depth    = 1
+            , locls    = locls
+            , filename = msg.filename
+            , name     = msg.name
+            , number   = msg.number or u""
+            , type     = msg.type
+            , ** kw
             )
-        , sender        = ("From", "Reply-To", "Sender", "Return-path")
-        )
-
-    def __init__ (self, msg, locls = None) :
-        self.__super.__init__ (depth = 1, locls = locls)
         self.msg = msg
     # end def __init__
 
-    def _get_header_ (self, key, index) :
-        email = self.msg.email
-        for n in self._header_map.get (key, (index, )) :
+    def _get_body (self) :
+        _pl = self.msg.email
+        while _pl.is_multipart () :
+            _pl = _pl.get_payload (0)
+        result = _pl.get_payload (decode = True) or u""
+        if isinstance (result, str) :
             try :
-                result = email [n]
-                if result is not None :
-                    return result
-            except KeyError :
-                pass
-    # end def _get_header_
+                result = result.decode (self.msg.charset, "replace")
+                   ### XXX some emails trigger
+                   ### `UnicodeDecodeError: 'ascii' codec can't decode
+                   ### byte 0xe4` without `replace` argument
+            except LookupError :
+                result = result.decode ("us-ascii", "replace")
+        result = _ws_pat.sub (u" ", result.strip ()) or u"<empty>"
+        return result
+    # end def _get_body
+
+    def _get_date (self, treshold = 86400 * 270) :
+        t = self.msg._time ()
+        if t :
+            if now - t > treshold :
+                format = "%d-%b  %Y"
+            else :
+                format = "%d-%b %H:%M"
+            return time.strftime (format, time.localtime (t))
+    # end def _get_date
 
     def _get_reply_address_cc (self) :
         email  = self.msg.email
@@ -198,7 +219,10 @@ class Msg_Scope (TFL.Caller.Scope) :
     # end def _get_reply_address_cc
 
     def _get_sender_name (self) :
-        sender = self._get_header_ ("sender", "Sender")
+        msg    = self.msg
+        sender = msg._get_header_ ("sender", "Sender")
+        if sender is None :
+            sender = msg.email.get_unixfrom ()
         if sender is not None :
             result = \
                 (  filter (None, Lib.getaddresses ((sender, )) [0])
@@ -218,7 +242,7 @@ class Msg_Scope (TFL.Caller.Scope) :
             if callable (getter) :
                 return getter ()
             else :
-                result = self._get_header_ (key, index)
+                result = self.msg._get_header_ (key, index)
                 if result is not None :
                     return decoded_header (result)
             return ""
@@ -228,9 +252,9 @@ class Msg_Scope (TFL.Caller.Scope) :
 
 class _Msg_Part_ (object) :
 
-    __metaclass__    = TFL.Meta.M_Class_SWRP
+    __metaclass__       = TFL.Meta.M_Class_SWRP
 
-    __properties     = \
+    __properties        = \
         ( TFL.Meta.Lazy_Property ("charset",  lambda s : s._get_charset ())
         , TFL.Meta.Lazy_Property
             ("content_type", lambda s : s._get_content_type ())
@@ -240,11 +264,28 @@ class _Msg_Part_ (object) :
         , TFL.Meta.Lazy_Property ("type",     lambda s : s.content_type)
         )
 
-    label_width      = 8
-    number           = None
-    summary_format   = "%(name)-10s %(type)-20s %(filename)s"
-    _charset         = None
-    _tfn             = None
+    label_width         = 8
+    number              = None
+    summary_format      = "%(name)-10s %(type)-20s %(filename)s"
+    _charset            = None
+    _tfn                = None
+
+    _header_map         = dict \
+        ( delivery_date = ("Delivery-date")
+        , in_reply_to   = ("In-reply-to", )
+        , message_date  = ("Date", "Delivery-date")
+        , message_id    = ("Message-id", "References")
+        , receiver      = ("to", "envelope-to")
+        , reply_address =
+            ( "Mail-followup-to"
+            , "X-mailing-list"
+            , "Reply-To"
+            , "From"
+            , "Sender"
+            , "Return-path"
+            )
+        , sender        = ("From", "Reply-To", "Sender", "Return-path")
+        )
 
     def __init__ (self, email, name) :
         self.email = email
@@ -256,31 +297,9 @@ class _Msg_Part_ (object) :
     # end def __init__
 
     def email_summary (self, email, format = None) :
-        name  = self.name
-        type  = self.content_type
         if format is None :
             format = self.summary_format
-        number     = self.number
-        if number is None :
-            number = u""
-        date       = self._date   (email) or u""
-        sender     = self._sender (email) or u""
-        subject    = self.subject
-        if "%(body)" in format :
-            _pl = email
-            while _pl.is_multipart () :
-                _pl = _pl.get_payload (0)
-            body = _pl.get_payload (decode = True) or u""
-            if isinstance (body, str) :
-                try :
-                    body = body.decode (self.charset, "replace")
-                       ### XXX some emails trigger
-                       ### `UnicodeDecodeError: 'ascii' codec can't decode
-                       ### byte 0xe4` without `replace` argument
-                except LookupError :
-                    body = body.decode ("us-ascii", "replace")
-            body = _ws_pat.sub (u" ", body.strip ()) or u"<empty>"
-        return format % Msg_Scope (self, locals ())
+        return format % Msg_Scope (self)
     # end def email_summary
 
     def part_iter (self) :
@@ -291,19 +310,8 @@ class _Msg_Part_ (object) :
     def summary (self, summary_format = None) :
         if summary_format is None :
             summary_format = self.summary_format
-        return summary_format % dict \
-            (name = self.name, type = self.type, filename = self.filename)
+        return summary_format % Msg_Scope (self)
     # end def summary
-
-    def _date (self, email, treshold = 86400 * 270) :
-        t = self._time (email)
-        if t :
-            if now - t > treshold :
-                format = "%d-%b  %Y"
-            else :
-                format = "%d-%b %H:%M"
-            return time.strftime (format, time.localtime (t))
-    # end def _date
 
     def _filename (self) :
         email  = self.email
@@ -340,6 +348,17 @@ class _Msg_Part_ (object) :
         return self.email.get_content_type ().lower ()
     # end def _get_content_type
 
+    def _get_header_ (self, key, index) :
+        email = self.email
+        for n in self._header_map.get (key, (index, )) :
+            try :
+                result = email [n]
+                if result is not None :
+                    return result
+            except KeyError :
+                pass
+    # end def _get_header_
+
     def _get_headers (self, email, name) :
         if isinstance (name, tuple) :
             for n in name :
@@ -368,21 +387,6 @@ class _Msg_Part_ (object) :
                 f.close ()
     # end def _save
 
-    def _sender (self, email) :
-        sender = \
-            (  email ["from"]
-            or email ["reply-to"]
-            or email ["return-path"]
-            or email.get_unixfrom ()
-            )
-        if sender :
-            sender = \
-                (  filter (None, Lib.getaddresses ((sender, )) [0])
-                or (None, )
-                ) [0]
-            return decoded_header (sender)
-    # end def _sender
-
     def _separators (self, sep_length) :
         yield ""
         yield ( "%s part %s %s" % ("-" * 4, self.name, "-" * sep_length)
@@ -405,20 +409,19 @@ class _Msg_Part_ (object) :
         return self._tfn
     # end def _temp_body
 
-    def _time (self, email) :
-        for date in email ["date"], email ["delivery-date"] :
-            if date :
-                parsed = Lib.parsedate_tz (date)
-                if parsed is not None :
-                    try :
-                        return Lib.mktime_tz (parsed)
-                    except (OverflowError, ValueError) :
-                        pass
+    def _time (self) :
+        date = self._get_header_ ("date", "Date")
+        if date :
+            parsed = Lib.parsedate_tz (date)
+            if parsed is not None :
+                try :
+                    return Lib.mktime_tz (parsed)
+                except (OverflowError, ValueError) :
+                    pass
     # end def _time
 
     def __str__ (self) :
-        return self.summary_format % dict \
-            (name = self.name, type = self.type, filename = self.filename)
+        return self.summary_format % Msg_Scope (self)
     # end def __str__
 
     def __repr__ (self) :
@@ -552,8 +555,7 @@ class Part_Header (_Msg_Part_) :
             add (h)
             _hn [n] = h
         self.body = "\n".join (_fh)
-        mhn       = sorted \
-            (dict.fromkeys ([k for k in email.keys () if k not in _hn]))
+        mhn       = sorted (set (k for k in email.keys () if k not in _hn))
         self._mh  = []
         add       = self._mh.append
         seen      = {}
@@ -677,17 +679,15 @@ class Message (_Message_) :
         , "X-spambayes-classification"
         )
     short_summary_format = unicode \
-        ( "%(name)s %(date).12s %(sender).20s %(subject).45s "
+        ( "%(name)s %(date).12s %(sender_name).20s %(subject).45s "
         )
     summary_format   = unicode \
-        ( "%(number)4s %(date)-12.12s %(sender)-20.20s %(subject)-25.25s "
+        ( "%(number)4s %(date)-12.12s %(sender_name)-20.20s %(subject)-25.25s "
           "[%(body)-50.50s"
         )
 
     body_start       = property (lambda s : "<Not yet implemented>")
-    date             = property (lambda s : s._date   (s.email))
-    sender           = property (lambda s : s._sender (s.email))
-    time             = property (lambda s : s._time   (s.email))
+    time             = property (lambda s : s._time ())
 
     def __init__ (self, email, name = None, mailbox = None, number = None) :
         self.__super.__init__ (email, name)
