@@ -39,7 +39,7 @@ from _TGL._TKT._test_HTD import *
 
 __test__ = dict (interface_test = HTD_interface_test)
 
-"""
+""""""
 from   _TGL._UI.HTD import *
 from   _TFL._UI.App_Context import App_Context
 import _TGL._TKT._GTK
@@ -84,6 +84,6 @@ win = TGL.TKT.GTK.Test_Window (AC = AC)
 win.add                       (r.tkt_text)
 win.show_all                  ()
 TGL.TKT.GTK.main              ()
-"""
+""""""
 
 ### __END__ TGL.TKT.GTK._test_HTD

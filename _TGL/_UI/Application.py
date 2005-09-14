@@ -31,6 +31,7 @@
 #    12-Aug-2005 (MG) `s/_set_title/set_title/g` and call `set_title` in
 #                     `__init__`
 #    12-Aug-2005 (MG) Icon added to `interpreter` command
+#    13-Sep-2005 (MG) Dummy import's added
 #    ««revision-date»»···
 #--
 #
@@ -45,6 +46,11 @@ import _TGL._UI.Command_Mgr
 import  sys
 
 from   Record                 import Record
+
+### the folloing imports are just for py2exe
+if 0 == 1 :
+    import _TFL._UI.Mixin
+    import _TFL._UI.Command_Mgr
 
 class Changes (TFL.Meta.Object) :
 

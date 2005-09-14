@@ -58,6 +58,7 @@ class Application (TGL.TKT.GTK.Application) :
         ### XXX
         self.__super._setup_geometry ()
         self.main.pack               (self.o_pane)
+        self.gui.default_size = 320, 200
         return
         limit = 60
         self.pane_mgr.lower_limit_pixl = self.min_y - limit

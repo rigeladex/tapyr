@@ -67,8 +67,9 @@ import _TFL.Filename
 import  sys
 import _TFL.sos as sos
 
-import  pygtk
-pygtk.require ("2.0")
+# this does not work with py2exe
+#import  pygtk
+#pygtk.require ("2.0")
 import gtk
 import gobject
 import weakref

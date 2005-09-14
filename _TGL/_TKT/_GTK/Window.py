@@ -33,6 +33,7 @@
 #                     `memory_attributes` added
 #    20-May-2005 (MG) `present` added
 #    27-Jul-2005 (MG) Property `focus` added
+#    13-Sep-2005 (MG) `default_size` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,10 @@ class Window (GTK.Bin) :
         , GTK.Property            ("allow_shrink")
         , GTK.SG_Property         ("decorated")
         , GTK.Property            ("default_height")
+        , GTK.List_Property
+            ( "default_size"
+            , get = lambda s : (s.default_width, s.default_height)
+            )
         , GTK.Property            ("default_width")
         , GTK.SG_Property         ("destroy_with_parent")
         , GTK.SG_Object_Property  ("focus")

@@ -62,8 +62,9 @@ import _TGL._TKT
 import _TGL._TKT.Eventname
 import _TGL._TKT._GTK.Signal
 
-import  pygtk
-pygtk.require ("2.0")
+# this does not work with py2exe
+#import  pygtk
+#pygtk.require ("2.0")
 import gtk
 
 class Key_Binder (TFL.Meta.Object) :
