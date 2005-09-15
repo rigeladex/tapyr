@@ -56,6 +56,7 @@
 #    17-Sep-2004 (CT) `Object_Scope.derived` added
 #    24-Mar-2005 (CT) `U_Test` scaffolding removed (use `run_doctest` instead)
 #    25-Mar-2005 (MG) Import of `Filename` changed
+#    14-Sep-2005 (CT) `kw` added to `Scope.__init__`
 #    ««revision-date»»···
 #--
 
@@ -142,11 +143,13 @@ class Scope (TFL.Meta.Object) :
 
     """
 
-    def __init__ (self, depth = 0, globs = None, locls = None) :
+    def __init__ (self, depth = 0, globs = None, locls = None, ** kw) :
         if globs is None :
             globs = globals (depth)
         if locls is None :
             locls = locals  (depth)
+        if kw :
+            locls = dict (locls, ** kw)
         self.globals = globs
         self.locals  = locls
     # end def __init__
