@@ -127,6 +127,8 @@
 #    14-Sep-2005 (CT) `Message.date` and _Msg_Part_._date removed (use
 #                     `Msg_Scope ["date"]` instead)
 #    14-Sep-2005 (CT) `_get_header_` moved back to `_Msg_Part_`
+#    15-Sep-2005 (CT) `Msg_Scope._get_attr_` factored and
+#                     `Msg_Scope.__getattr__` added
 #    ««revision-date»»···
 #--
 
@@ -170,6 +172,8 @@ class Msg_Scope (TFL.Caller.Scope) :
        in.
     """
 
+    class Lookup_Error (Exception) : pass
+
     def __init__ (self, msg, locls = None, ** kw) :
         self.__super.__init__ \
             ( depth    = 1
@@ -182,6 +186,21 @@ class Msg_Scope (TFL.Caller.Scope) :
             )
         self.msg = msg
     # end def __init__
+
+    def _get_attr_ (self, name) :
+        try :
+            return self.__super.__getitem__ (name)
+        except NameError :
+            key    = name.lower ()
+            getter = getattr (self.__class__, "_get_%s" % key, None)
+            if callable (getter) :
+                return getter (self)
+            else :
+                result = self.msg._get_header_ (key, name)
+                if result is not None :
+                    return decoded_header (result)
+            raise self.Lookup_Error, name
+    # end def _get_attr_
 
     def _get_body (self) :
         _pl = self.msg.email
@@ -233,18 +252,17 @@ class Msg_Scope (TFL.Caller.Scope) :
         return ""
     # end def _get_sender_name
 
+    def __getattr__ (self, name) :
+        try :
+            return self._get_attr_ (name)
+        except self.Lookup_Error :
+            return getattr (self.msg, name)
+    # end def __getattr__
+
     def __getitem__ (self, index) :
         try :
-            return self.__super.__getitem__ (index)
-        except NameError :
-            key    = index.lower ()
-            getter = getattr (self, "_get_%s" % key, None)
-            if callable (getter) :
-                return getter ()
-            else :
-                result = self.msg._get_header_ (key, index)
-                if result is not None :
-                    return decoded_header (result)
+            return self._get_attr_ (index)
+        except self.Lookup_Error :
             return ""
     # end def __getitem__
 

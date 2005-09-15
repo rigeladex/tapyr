@@ -38,6 +38,7 @@
 #                     `Message_Cell_FW` added and used
 #    31-Jul-2005 (MG) Styles changed
 #    31-Jul-2005 (CT) Styles changed (and style names fixed)
+#    15-Sep-2005 (CT) `root_children` changed to return `Msg_Scope` instances
 #    ««revision-date»»···
 #--
 
@@ -86,13 +87,14 @@ class Message_Cell (PMA.UI.Text_Cell) :
         )
 
     def _style (self, message, office = None) :
+        pending = message.pending
         if message.status.unseen :
             return self.Unseen
-        if message.pending.deleted :
+        if pending.deleted :
             return self.Deleted
-        if message.pending.copied :
+        if pending.copied :
             return self.Copied
-        if message.pending.moved:
+        if pending.moved:
             return self.Moved
         return self.Normal
     # end def _style
@@ -150,7 +152,7 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
     # end def children
 
     def root_children (cls, mailbox) :
-        return mailbox.messages
+        return [PMA.Msg_Scope (m) for m in mailbox.messages]
     # end def root_children
 
 # end class _MB_TA_
