@@ -36,6 +36,7 @@
 #    27-Oct-2004 (MG)  Calculate the default of `bounds` based on the length
 #                      of `init` (to be backward compatible)
 #    16-Nov-2004 (MG) Multidimension array support added
+#    16-Sep-2005 (MG) Changed to support `fmt` again
 #    ««revision-date»»···
 #--
 
@@ -109,7 +110,10 @@ class Array (TFL.SDG.C._Var_) :
             Init = t._setup_initializers
         else :
             if len (self.bounds) <= 1 :
-                Init = TFL.SDG.C.Init_Atom
+                fmt = self.fmt.replace ("%%", "%")
+                Init = lambda v, ** kw : \
+                           TFL.SDG.C.Init_Atom (fmt % (v, ), ** kw)
+                kw   = dict (format = self.fmt)
             else :
                 return self._apply_array_level (init_list, description or "")
         for k, v in enumerate (init_list) :
