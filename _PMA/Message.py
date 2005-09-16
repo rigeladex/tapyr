@@ -131,6 +131,9 @@
 #                     `Msg_Scope.__getattr__` added
 #    15-Sep-2005 (MG) `Msg_Scope.__init__`: only assign `u""` to number of
 #                     `msg.number` is None (at not `0`)
+#    16-Sep-2005 (CT) `Msg_Scope._get_attr_` changed to delegate to `msg`
+#                     (and caching of `msg` attributes removed from `__init__`)
+#    16-Sep-2005 (CT) `_Msg_Part_.scope` added as `Lazy_Property`
 #    ««revision-date»»···
 #--
 
@@ -177,19 +180,8 @@ class Msg_Scope (TFL.Caller.Scope) :
     class Lookup_Error (Exception) : pass
 
     def __init__ (self, msg, locls = None, ** kw) :
-        number = msg.number
-        if number is None :
-            number = u""
-        self.__super.__init__ \
-            ( depth    = 1
-            , locls    = locls
-            , filename = msg.filename
-            , name     = msg.name
-            , number   = number
-            , type     = msg.type
-            , ** kw
-            )
         self.msg = msg
+        self.__super.__init__ (depth = 1, locls = locls, ** kw)
     # end def __init__
 
     def _get_attr_ (self, name) :
@@ -204,6 +196,9 @@ class Msg_Scope (TFL.Caller.Scope) :
                 result = self.msg._get_header_ (key, name)
                 if result is not None :
                     return decoded_header (result)
+            result = getattr (self.msg, name, None)
+            if result is not None :
+                return result
             raise self.Lookup_Error, name
     # end def _get_attr_
 
@@ -261,7 +256,7 @@ class Msg_Scope (TFL.Caller.Scope) :
         try :
             return self._get_attr_ (name)
         except self.Lookup_Error :
-            return getattr (self.msg, name)
+            raise AttributeError, name
     # end def __getattr__
 
     def __getitem__ (self, index) :
@@ -282,6 +277,7 @@ class _Msg_Part_ (object) :
         , TFL.Meta.Lazy_Property
             ("content_type", lambda s : s._get_content_type ())
         , TFL.Meta.Lazy_Property ("filename", lambda s : s._filename ())
+        , TFL.Meta.Lazy_Property ("scope",    lambda s : Msg_Scope (s))
         , TFL.Meta.Lazy_Property \
             ("subject",  lambda s : decoded_header (s.email ["subject"]))
         , TFL.Meta.Lazy_Property ("type",     lambda s : s.content_type)
