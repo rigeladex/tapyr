@@ -68,6 +68,7 @@
 #                     via `Eventname`)
 #    16-Aug-2005 (CT)  `_CI_Toolbar_Group_` changed to allow nested groups
 #                      (without displaying them visually)
+#    16-Sep-2005 (MZO) i17208, added manual bind of menu-accelerators.
 #    ««revision-date»»···
 #--
 
@@ -314,6 +315,7 @@ class CI_Menu (_CI_Widget_) :
             kw  = dict (variable = state_var, ** kw)
         else :
             fct = self.wtk_widget.insert_command
+        self._bind_accelerator_to_toplevel (accelerator, callback)
         return fct \
             ( index       = index + delta + self._index_offset
             , label       = name
@@ -392,6 +394,28 @@ class CI_Menu (_CI_Widget_) :
     # end def disable_entry
 
     ### internals
+    def _bind_accelerator_to_toplevel (self, accelerator, callback) :
+        ### tk does not bind accel (display only textlabel).
+        if accelerator : 
+            toplevel = self._find_toplevel ()
+            if toplevel is not None :
+                toplevel.bind (accelerator, callback)
+    # end def _bind_accelerator_to_toplevel
+
+    def _find_toplevel (self) : 
+        ### return toplevel window (widget) or None
+        toplevel = getattr (self, "_menu_toplevel", -1)
+        if toplevel == -1 :
+            self._menu_toplevel = None
+            menubar = self.wtk_widget.winfo_toplevel ()
+            if menubar is not None :
+                top = menubar.master.winfo_toplevel ()
+                if toplevel is not None :
+                    self._menu_toplevel = top
+            toplevel = self._menu_toplevel
+        return toplevel
+    # end def _find_toplevel
+        
     def _remove (self, index) :
         self.wtk_widget.delete (index)
     # end def _remove
