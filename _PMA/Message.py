@@ -129,6 +129,8 @@
 #    14-Sep-2005 (CT) `_get_header_` moved back to `_Msg_Part_`
 #    15-Sep-2005 (CT) `Msg_Scope._get_attr_` factored and
 #                     `Msg_Scope.__getattr__` added
+#    15-Sep-2005 (MG) `Msg_Scope.__init__`: only assign `u""` to number of
+#                     `msg.number` is None (at not `0`)
 #    ««revision-date»»···
 #--
 
@@ -175,12 +177,15 @@ class Msg_Scope (TFL.Caller.Scope) :
     class Lookup_Error (Exception) : pass
 
     def __init__ (self, msg, locls = None, ** kw) :
+        number = msg.number
+        if number is None :
+            number = u""
         self.__super.__init__ \
             ( depth    = 1
             , locls    = locls
             , filename = msg.filename
             , name     = msg.name
-            , number   = msg.number or u""
+            , number   = number
             , type     = msg.type
             , ** kw
             )
