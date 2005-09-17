@@ -134,6 +134,7 @@
 #    16-Sep-2005 (CT) `Msg_Scope._get_attr_` changed to delegate to `msg`
 #                     (and caching of `msg` attributes removed from `__init__`)
 #    16-Sep-2005 (CT) `_Msg_Part_.scope` added as `Lazy_Property`
+#    17-Sep-2005 (CT) `% Msg_Scope (self)` replaced by `% self.scope`
 #    ««revision-date»»···
 #--
 
@@ -318,7 +319,7 @@ class _Msg_Part_ (object) :
     def email_summary (self, email, format = None) :
         if format is None :
             format = self.summary_format
-        return format % Msg_Scope (self)
+        return format % self.scope
     # end def email_summary
 
     def part_iter (self) :
@@ -329,7 +330,7 @@ class _Msg_Part_ (object) :
     def summary (self, summary_format = None) :
         if summary_format is None :
             summary_format = self.summary_format
-        return summary_format % Msg_Scope (self)
+        return summary_format % self.scope
     # end def summary
 
     def _filename (self) :
@@ -440,7 +441,7 @@ class _Msg_Part_ (object) :
     # end def _time
 
     def __str__ (self) :
-        return self.summary_format % Msg_Scope (self)
+        return self.summary_format % self.scope
     # end def __str__
 
     def __repr__ (self) :
