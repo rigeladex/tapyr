@@ -70,6 +70,8 @@
 #    12-Aug-2005 (MG) Calls to `set_title` added
 #    13-Aug-2005 (MG) `Command_Definition` factored
 #    14-Aug-2005 (MG) `_setup_commands` replaced by `command_bindings`
+#    16-Sep-2005 (MG) Change to use new `Msg_Scope` object provided by
+#                     `mb_msg_view` 
 #    ««revision-date»»···
 #--
 
@@ -310,17 +312,17 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def _commit (self, messages) :
         boxes    = set ()
         text     = []
+        view     = self.mb_msg_view
         self.mb_msg_view.selection = ()
         for msg in messages :
             text.append ("%s:%s" % (msg.mailbox.qname, msg.number))
-            view   = self.mb_msg_view
             update = True
             if msg.pending.deleted or msg.pending.moved :
                 update = False
-                view.remove (msg)
-            boxes.update (msg.pending.commit ())
+                view.remove (msg.scope)
+            boxes.update    (msg.pending.commit ())
             if update :
-                view.update (msg)
+                view.update (msg.scope)
         for box in boxes :
             self.box_views [box.root].update (box)
         print "%s committed" % ", ".join (text)
@@ -369,7 +371,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._mail_compose \
             ( "forward"
             , "Start editor for forwarding the message `%s`"
-            % (msg.subject [:30])
+            % (msg.scope.subject [:30])
             , msg
             )
     # end def forward_message
@@ -408,7 +410,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         msg  = self.office.status.current_box.status.current_message
         self._mail_compose \
             ( "reply"
-            , "Start editor for a reply to message `%s`" % (msg.subject [:30])
+            , "Start editor for a reply to message `%s`"
+              % (msg.scope.subject [:30])
             , msg
             )
     # end def reply
@@ -419,7 +422,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._mail_compose \
             ( "reply_all"
             , "Start editor for a reply all to message `%s`"
-            % (msg.subject [:30])
+            % (msg.scope.subject [:30])
             , msg
             )
     # end def reply_all
@@ -430,7 +433,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._mail_compose \
             ( "resend"
             , "Start editor for resending the message `%s`"
-            % (msg.subject [:30])
+            % (msg.scope.subject [:30])
             , msg
             )
     # end def resend_message
@@ -472,10 +475,10 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             self.mb_msg_view.update_model (box)
             if box.status.current_message :
                 ### select and display the previous selected message
-                self._select_message          (box.status.current_message)
+                self._select_message         (box.status.current_message)
             else :
-                self.model.msg_display.clear  ()
-            self.model.set_title              ()
+                self.model.msg_display.clear ()
+            self.model.set_title             ()
     # end def select_box
 
     def set_target_mailbox (self, event = None) :
@@ -498,7 +501,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             self.model.msg_display.clear  ()
         else :
             ### display the selected message
-            message = selection [0]
+            scope   = selection [0]
+            message = scope.msg
             mailbox = message.mailbox
             if mailbox.status.current_message != message :
                 mailbox.status.current_message = message
@@ -508,12 +512,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def show_next_message (self, event = None) :
         """Show the next message of the current folder"""
-        self._select_message (self.mb_msg_view.next ())
+        self._select_message (scope = self.mb_msg_view.next ())
     # end def show_next_message
 
     def show_prev_message (self, event = None) :
         """Show the previous message of the current folder"""
-        self._select_message (self.mb_msg_view.prev ())
+        self._select_message (scope = self.mb_msg_view.prev ())
     # end def show_prev_message
 
     def show_next_unseen (self, event = None) :
@@ -529,14 +533,15 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def _message_command (self, cmd, text, * args) :
         status   = self.office.status
         view     = self.mb_msg_view
-        messages = self.mb_msg_view.selection
-        if not len (messages) :
-            messages = (status.current_box.status.current_message, )
-        for msg in messages :
+        scopes   = self.mb_msg_view.selection
+        if not len (scopes) :
+            scopes = (status.current_box.status.current_message.scope, )
+        for msg_scope in scopes :
+            msg    = msg_scope.msg
             result = getattr (msg.pending, cmd) (* args)
             print text % dict \
                 ( cb_qname = status.current_box.qname
-                , msg_no   = msg.number
+                , msg_no   = msg_scope.number
                 , tb_qname = getattr (status.target_box, "qname", "")
                 )
             view.update  (msg)
@@ -566,7 +571,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
         self.model.msg_display.display       (message)
-        self.mb_msg_view.update              (message)
+        self.mb_msg_view.update              (message.scope)
         self.box_views [mailbox.root].update (mailbox)
     # end def _display_message
 
@@ -587,11 +592,14 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             view.selection = box
     # end def _restore_selection
 
-    def _select_message (self, msg) :
-        if msg :
+    def _select_message (self, msg = None, scope = None) :
+        if msg or scope :
+            msg   = msg   or scope.msg
+            scope = scope or msg.scope
             box                        = msg.mailbox
-            box.status.current_message = self.mb_msg_view.selection = msg
-            self.mb_msg_view.see  (msg)
+            box.status.current_message = msg
+            self.mb_msg_view.selection = scope
+            self.mb_msg_view.see  (scope)
             self._display_message (box)
     # end def _select_message
 

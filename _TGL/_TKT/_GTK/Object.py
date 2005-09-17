@@ -50,6 +50,7 @@
 #                     `Image_Manager`)
 #    28-Jul-2005 (MG) `read_style_file` added
 #     5-Sep-2005 (MG) `read_widget_memory` guard added
+#    13-Sep-2005 (MG) Support for pygtk 2.8 added
 #    ««revision-date»»···
 #--
 
@@ -271,6 +272,7 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
                         , "__gproperties__" : props
                         , "do_get_property" : cls._get_property
                         , "do_set_property" : cls._set_property
+                        , "__gtype_name__"  : Class_Name
                         }
             attr  = "_%s__gtk_properties" % (name, )
             old_p = list (dict.get (attr, ()))
@@ -278,7 +280,8 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
                 old_p.append (Property (pname))
             dict [attr] = old_p
             gtk_class = type      (Class_Name, (gtk_base, ), d)
-            gobject.type_register (gtk_class)
+            if gtk.pygtk_version < (2, 8) :
+                gobject.type_register (gtk_class)
             cls.GTK_Classes [Class_Name] = dict ["GTK_Class"] = gtk_class
         return super (_M_Object_, cls).__new__ (cls, name, bases, dict)
     # end def __new__

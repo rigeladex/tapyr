@@ -45,6 +45,7 @@
 #    13-Aug-2005 (MG) `Sort_Model.ui_object` and `Filter_Model.ui_object`
 #                     changed to handle `path` arguments as well as `iter`
 #                     arguments
+#    16-Sep-2005 (MG) `add`: debug code added
 #    ««revision-date»»···
 #--
 
@@ -92,8 +93,15 @@ class _Model_ (GTK.Object, _Iter_Mixin_) :
     # end def __init__
 
     def add (self, row, after = None, ** kw) :
-        iter = self._add \
-            (row, after_iter = self._iter.get (after, after), ** kw)
+        try :
+            iter = self._add \
+                (row, after_iter = self._iter.get (after, after), ** kw)
+        except :
+            print "Error in adding a new row"
+            for i, data in enumerate (row) :
+                print "Col: %2d, value [%s] src_type [%s] gtk_type [%s]" % \
+                    (i, data, data.__class__, self.wtk_object.get_column_type (i))
+            raise
         if self.ui_column is not None :
             self._iter [row [self.ui_column]] = iter
         return iter

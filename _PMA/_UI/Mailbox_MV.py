@@ -39,6 +39,8 @@
 #    31-Jul-2005 (MG) Styles changed
 #    31-Jul-2005 (CT) Styles changed (and style names fixed)
 #    15-Sep-2005 (CT) `root_children` changed to return `Msg_Scope` instances
+#    16-Sep-2005 (MG) `root_children` changed to use `.scope` property of
+#                     message 
 #    ««revision-date»»···
 #--
 
@@ -152,7 +154,7 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
     # end def children
 
     def root_children (cls, mailbox) :
-        return [PMA.Msg_Scope (m) for m in mailbox.messages]
+        return (m.scope for m in mailbox.messages)
     # end def root_children
 
 # end class _MB_TA_
