@@ -34,6 +34,7 @@
 #                     to `root_element`
 #     5-Sep-2005 (CT) Doctest `svg` added
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
+#    20-Sep-2005 (CT) Doctest with over-long attributes added
 #    ««revision-date»»···
 #--
 
@@ -97,6 +98,26 @@ class Document (TFL.SDG.XML.Node) :
        >
          ...
        </svg>
+       >>> attrs = { "xmlns:fx"      : "http://www.asam.net/xml/fbx"
+       ...         , "xmlns:ho"      : "http://www.asam.net/xml"
+       ...         , "xmlns:flexray" : "http://www.asam.net/xml/fbx/flexray"
+       ...         , "xmlns:xsi"
+       ...         : "http://www.w3.org/2001/XMLSchema-instance"
+       ...         , "xsi:schemaLocation"
+       ...         : "http://www.asam.net/xml/fbx/all/fibex4multiplatform.xsd"
+       ...         , "VERSION"       : "1.0.0a"
+       ...         }
+       >>> d = Document (TFL.SDG.XML.Element ("fx:FIBEX", x_attrs = attrs ))
+       >>> print chr (10).join (d.formatted ("xml_format"))
+       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       <fx:FIBEX VERSION="1.0.0a"
+                 xmlns:flexray="http://www.asam.net/xml/fbx/flexray"
+                 xmlns:fx="http://www.asam.net/xml/fbx"
+                 xmlns:ho="http://www.asam.net/xml"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.asam.net/xml/fbx/all/fibex4multiplatform.xsd"
+       >
+       </fx:FIBEX>
     """
 
     front_args           = ("root_element", )
@@ -138,14 +159,6 @@ class Document (TFL.SDG.XML.Node) :
     # end def insert
 
 # end class Document
-
-"""
-from _TFL._SDG._XML.Document import *
-d = Document ("Memo", u"Just a single line of töxt", doctype = "memo", encoding = "utf-8")
-print "\n".join (d.formatted ("xml_format"))
-d = Document (Element ("svg", x_attrs = dict (viewBox="10 60 450 260", xmlns="http://www.w3.org/2000/svg", width="100%", height="100%")), "...", encoding="UTF-8", standalone)
-print "\n".join (d.formatted ("xml_format"))
-"""
 
 if __name__ != "__main__" :
     TFL.SDG.XML._Export ("*")

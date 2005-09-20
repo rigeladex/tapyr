@@ -33,6 +33,8 @@
 #                      alignment to "=" removed, again)
 #     6-Sep-2005 (CT)  `_attr_values` changed to use `textwrap`
 #     9-Sep-2005 (PGO) `_attr_values' modifies `textwrap`s word wrapping
+#    20-Sep-2005 (CT)  `break_long_words = False` passed to
+#                      `textwrap.TextWrapper`
 #    ««revision-date»»···
 #--
 
@@ -96,11 +98,14 @@ class _XML_Node_ (TFL.SDG.Node) :
     def _attr_values (self, * args, ** kw) :
         attr_values = " ".join (self._attr_iter ())
         if attr_values :
-            ow                 = kw ["output_width"]
-            ia                 = kw ["indent_anchor"]
-            ht                 = kw ["ht_width"]
-            width              = max (ow - ia - ht - 4, 4)
-            wrapper            = textwrap.TextWrapper (width = width)
+            ow      = kw ["output_width"]
+            ia      = kw ["indent_anchor"]
+            ht      = kw ["ht_width"]
+            width   = max (ow - ia - ht - 4, 4)
+            wrapper = textwrap.TextWrapper \
+                ( width            = width
+                , break_long_words = False
+                )
             wrapper.wordsep_re = self._wordsep_pat
             for l in wrapper.wrap (attr_values) :
                 yield l.strip ()
