@@ -48,6 +48,8 @@
 #    24-May-2004 (GWA) `crc` optimized and processes also arrays
 #    25-May-2004 (GWA) type ("") -> str, `crc_bytelist` became alias of `crc`
 #    27-May-2004 (HKR) Issue9651
+#    20-Sep-2005 (MPH) Reactivated the C-code generation, added commandline
+#                      functionality to support it
 #    ««revision-date»»···
 #--
 
@@ -102,37 +104,37 @@ class _TD_CRC_ (object) :
                      % name
                      )
                    )
-#                 , C.New_Line ()
-#                 , C.Array ( "ubyte4", "%s_polynome" % name
-#                           , len (cls.table)
-#                           , cls.table
-#                           , fmt     = "0x%08X"
-#                           , per_row = 6
-#                           , static  = 1
-#                           , const   = 1
-#                           )
-#                 , C.New_Line ()
+                 , C.New_Line ()
+                 , C.Array ( "ubyte4", "%s_polynome" % name
+                           , len (cls.table)
+                           , cls.table
+                           , fmt     = "0x%08X"
+                           , per_row = 6
+                           , static  = 1
+                           , const   = 1
+                           )
+                 , C.New_Line ()
                  )
-#        fct  = C.Function \
-#           ( "ubyte4", "%s_calculation" % name
-#           , "ubyte4 crc, ubyte1 * data, ubyte4 len"
-#           , description =
-#               ( "Returns a 32 bit CRC over 'len' number of bytes starting "
-#                 "at 'data'."
-#               , ""
-#               , "Traceability:"
-#               , "  Config Check ROM D20, Config Check ROM D21"
-#               )
-#           )
-#        loop = C.While    ("len--")
-#        node.add ( fct)
-#        loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
-#                   "^ %s_polynome [((crc) ^ (*data++)) & 0xff])"
-#                 % (cls.mask, name)
-#                 )
-#        fct.add  ( loop
-#                 , "return crc"
-#                 )
+        fct  = C.Function \
+           ( "ubyte4", "%s_calculation" % name
+           , "ubyte4 crc, ubyte1 * data, ubyte4 len"
+           , description =
+               ( "Returns a 32 bit CRC over 'len' number of bytes starting "
+                 "at 'data'."
+               , ""
+               , "Traceability:"
+               , "  Config Check ROM D20, Config Check ROM D21"
+               )
+           )
+        loop = C.While    ("len--")
+        node.add ( fct)
+        loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
+                   "^ %s_polynome [((crc) ^ (*data++)) & 0xff])"
+                 % (cls.mask, name)
+                 )
+        fct.add  ( loop
+                 , "return crc"
+                 )
     c_code = classmethod (c_code)
 
 # end class _TD_CRC_
@@ -227,6 +229,32 @@ else :
         # end def test
 
         test ()
-# end if __debug__
+    # end if __debug__
+    else :
+        from   Command_Line          import Command_Line
+        from   Filename              import Filename
+        from   Formatted_Stream      import *
+        from   _TFL                  import TFL
+        from   _TFL._SDG._C.import_C import C
 
+        cmd = Command_Line \
+          ( option_spec =
+              ( "-Comment_Level:I=0"
+                "?Determines the quantity of comments generated"
+              , "-out_dir:S=."
+                  "?Name of output directory for crc.[ch] files"
+                  "\n(default: current directory)"
+              )
+          )
+        TFL.SDG.C.Comment.out_level = cmd.Comment_Level
+        crc_module = C.Module (name = "crc", author = "_TFL/CRC.py")
+        crc_module.add (C.App_Include ("ptypes.h", scope = C.H))
+        crc_module.add (C.App_Include ("crc.h", scope = C.C))
+        CRC32.c_code (C, crc_module)
+        c_out      = Filename ("crc.c", default_dir = cmd.out_dir).name
+        h_out      = Filename ("crc.h", default_dir = cmd.out_dir).name
+        c_stream   = Formatted_C_Stream (c_out)
+        h_stream   = Formatted_C_Stream (h_out)
+        crc_module.write_to_h_stream (h_stream)
+        crc_module.write_to_c_stream (c_stream)
 ### __END__ TFL/CRC
