@@ -50,6 +50,7 @@
 #    27-May-2004 (HKR) Issue9651
 #    20-Sep-2005 (MPH) Reactivated the C-code generation, added commandline
 #                      functionality to support it
+#    22-Sep-2005 (RER) splitted `c_code` to support TTPos_cert-issue9651
 #    ««revision-date»»···
 #--
 
@@ -91,20 +92,32 @@ class _TD_CRC_ (object) :
         self.start_value = start_value
     # end def reset
 
+    def c_code_define ( cls, C, node) :
+        """Add the C-define for the C-function calculating the same CRC
+           as `cls.crc_bytelist`.
+        """
+        name = cls.__name__
+        return ( node.add ( C.New_Line ()
+                          , C.Define
+                            ( name, "crc, item"
+                            , ( "%s_calculation "
+                                "(crc, (ubyte1 *) &(item), sizeof (item))"
+                            % name
+                              )
+                            ) 
+                          )  
+               )
+     
+    # end c_code_define
+    c_code_define = classmethod (c_code_define)
+
     def c_code (cls, C, node) :
         """Add a C-function and the CRC table to `node` calculating the
            same CRC as `cls.crc_bytelist`.
         """
         name = cls.__name__
+        cls.c_code_define (C, node)
         node.add ( C.New_Line ()
-                 , C.Define
-                   ( name, "crc, item"
-                   , ( "%s_calculation "
-                       "(crc, (ubyte1 *) &(item), sizeof (item))"
-                     % name
-                     )
-                   )
-                 , C.New_Line ()
                  , C.Array ( "ubyte4", "%s_polynome" % name
                            , len (cls.table)
                            , cls.table
