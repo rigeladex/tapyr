@@ -30,6 +30,7 @@
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    20-Jul-2005 (GKH) `int_to_binary_string` with additional parameter 
 #                      `min_digits` (RUP 16885)
+#    26-Sep-2005 (GKH) `int_to_binary_string` trims leading zeros (RUP 16885)
 #    ««revision-date»»···
 #--
 
@@ -112,6 +113,10 @@ def int_to_binary_string (i, min_digits = 8) :
        True
        >>> int_to_binary_string (1)
        '00000001'
+       >>> int_to_binary_string (341)
+       '101010101'
+       >>> int_to_binary_string (1, 10)
+       '0000000001'
        >>> [int_to_binary_string(i) == _eight_bits_table[i] for i in range(8)]
        [True, True, True, True, True, True, True, True]
        >>> [ binary_string_to_int (int_to_binary_string (i)) == i
@@ -124,7 +129,7 @@ def int_to_binary_string (i, min_digits = 8) :
         i = i >> 8
         bits.append (_eight_bits_table [k])
     bits.reverse ()
-    result = "".join (bits or _eight_bits_table [0])
+    result = "".join (bits or _eight_bits_table [0]).lstrip ("0")
     if len (result) < min_digits :
         return "0" * (min_digits - len (result)) + result
     else :
