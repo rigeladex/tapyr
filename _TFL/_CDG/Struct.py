@@ -32,6 +32,7 @@
 #    14-Jul-2005 (MG) `__new__` changed to use `super`
 #    14-Jul-2005 (MG) `add_typedef` added
 #     6-Sep-2005 (MPH) Missing `import traceback` added
+#    09-Nov-2005 (MG)  `dict` added
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,8 @@ class Struct (TFL.Meta.Object) :
     ### __metaclass__      = TFL.CDG.M_Struct.New ("TDFT")
 
     __autowrap             = dict \
-      ( as_forward_typedef = TFL.Meta.Class_Method
+      ( add_typedef        = TFL.Meta.Class_Method
+      , as_forward_typedef = TFL.Meta.Class_Method
       , as_typedef         = TFL.Meta.Class_Method
       , as_c_code          = TFL.Meta.Class_Method
       , _struct_fields     = staticmethod
@@ -131,7 +133,6 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def as_typedef
 
-    @classmethod
     def add_typedef (cls, type, name) :
         cls.needs_typedef.append (Typedef (type, name))
     # end def add_typedef
@@ -179,6 +180,24 @@ class Struct (TFL.Meta.Object) :
         format  = "%s0%s" % (format, parts [-1] [-1])
         return format, values
     # end def format_and_values
+
+    def dict (self) :
+        result = {}
+        for f in self.struct_fields :
+            value  = getattr       (self, f.name)
+            if f.bounds is not None :
+                raise TypeError, "C-Code generation does not support Arrays"
+            if f.user_code or f.fmt_code.get (f.type, None) :
+                ### `value` is a primitive data type
+                result [f.name] = value
+            else :
+                ### `value` is another struct or an array of structs
+                if isinstance (value, Struct) :
+                    result [f.name] = value.dict ()
+                else :
+                    result [f.name] = [v.dict () for v in value]
+        return result
+    # end def dict
 
 # end class Struct
 
