@@ -32,6 +32,9 @@
 #    14-Jul-2005 (MG) `add_type_mapping` removed
 #    14-Jul-2005 (MG) `format_code` simplified
 #    14-Jul-2005 (MG) `Reference_Struct_Field` added
+#    09-Nov-2005 (MG) `[us]byte[14]` types added to `type_map`
+#    09-Nov-2005 (MG) `Reference_Struct_Field` calculation of `user_code`
+#                     fixed
 #    ««revision-date»»···
 #--
 
@@ -69,6 +72,13 @@ class Struct_Field (TFL.Meta.Object):
         , "unsigned long long"         : "ullong"
         , "ushort"                     : "unsigned short"
         , "void*"                      : "void *"
+        , "sbyte1"                     : "char"
+        , "sbyte2"                     : "short"
+        , "sbyte4"                     : "long"
+        , "ubyte1"                     : "unsigned char"
+        , "ubyte2"                     : "unsigned short"
+        , "ubyte4"                     : "unsigned long"
+        , "ubyte1 *"                   : "void *"
         }
 
     def __init__ ( self, type, name, desc
@@ -161,7 +171,8 @@ class Reference_Struct_Field (Struct_Field) :
         self.__super.__init__ (* args, ** kw)
         self.typedef   = kw.get ("typedef")
         if self.typedef and not self.user_code :
-            self.user_code = self.fmt_code.get (self.typedef, None)
+            type           = self.type_map.get (self.typedef, self.typedef)
+            self.user_code = self.fmt_code.get (type, None)
     # end def __init__
 
 # end class Reference_Struct_Field
