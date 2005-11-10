@@ -30,6 +30,7 @@
 #    12-Aug-2005 (MG) `event_binders` added
 #    16-Aug-2005 (MG) Don't call `show_all` anymore
 #     3-Sep-2005 (MG) correct `_wrap_function`
+#    21-Sep-2005 (MG) Obsolete import of ´Script_Menu_Mgr` removed
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,6 @@ import _TGL._TKT._GTK.V_Box
 
 
 from   Gauge_Logger         import Gauge_Logger
-from   Script_Menu_Mgr      import Script_Menu_Mgr
 
 import _TFL.d_dict
 import _TFL.Environment
