@@ -315,7 +315,7 @@ def cross_sum (seq, fct = None) :
     """
     if fct is None :
         fct = identity
-    return sum ([fct (x) for x in seq])
+    return sum (fct (x) for x in seq)
 # end def cross_sum
 
 def _dusort (seq, decorator, reverse = False) :
