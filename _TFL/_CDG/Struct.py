@@ -93,9 +93,9 @@ class Struct (TFL.Meta.Object) :
     reference_field    = None
     struct_fields      = ()
 
-    uses_global_buffer = 0
-    is_solitaire       = 0
-    const              = 1
+    uses_global_buffer = False
+    is_solitaire       = False
+    const              = True
 
     def __new__ (cls, * args, ** kw) :
         result        = super (Struct, cls).__new__ (cls, * args,  ** kw)

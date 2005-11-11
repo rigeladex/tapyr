@@ -121,7 +121,11 @@ class M_Struct (TFL.Meta.M_Class) :
     def define_access_macros (cls, C, node, main) :
         for c in cls.uses_global_buffers :
             b_name = c.buffer_field_name
-            index  = c.reference_field.index
+            if c.reference_field :
+                index  = c.reference_field.index
+            else :
+                index  = True
+                print ">>>", c.type_name
             if c.is_solitaire:
                 node.add \
                     (C.Define ( c.__name__.upper (), main
