@@ -33,6 +33,7 @@
 #    14-Jul-2005 (MG) `add_typedef` added
 #     6-Sep-2005 (MPH) Missing `import traceback` added
 #    09-Nov-2005 (MG)  `dict` added
+#    11-Nov-2005 (MG)  check list in `dict`
 #    ««revision-date»»···
 #--
 
@@ -194,8 +195,10 @@ class Struct (TFL.Meta.Object) :
                 ### `value` is another struct or an array of structs
                 if isinstance (value, Struct) :
                     result [f.name] = value.dict ()
-                else :
+                elif isinstance (value, list) :
                     result [f.name] = [v.dict () for v in value]
+                else  :
+                    result [f.name] = value
         return result
     # end def dict
 
