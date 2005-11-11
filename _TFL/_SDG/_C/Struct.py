@@ -112,7 +112,7 @@ class Struct (TFL.SDG.C._Decl_) :
         m = self.field_pat.match (f)
         if not m :
             print f
-            raise Invalid_Node, (self, f)
+            raise TFL.SDG.Invalid_Node, (self, f)
         name   = m.group ("name").strip ()
         type   = m.group ("type").strip ()
         init   = (m.group ("init") or "").strip ()

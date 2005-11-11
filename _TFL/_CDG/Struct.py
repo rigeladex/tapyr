@@ -33,7 +33,8 @@
 #    14-Jul-2005 (MG) `add_typedef` added
 #     6-Sep-2005 (MPH) Missing `import traceback` added
 #    09-Nov-2005 (MG)  `dict` added
-#    11-Nov-2005 (MG)  check list in `dict`
+#    11-Nov-2005 (MG)  Check for a list in `dict` added
+#    11-Nov-2005 (MG)  Handling of the `reference_field` extended
 #    ««revision-date»»···
 #--
 
@@ -77,15 +78,19 @@ class Struct (TFL.Meta.Object) :
     ### Set the __metaclass__ attribute a new M_Struct class, e.g.:
     ### __metaclass__      = TFL.CDG.M_Struct.New ("TDFT")
 
+    buffer_name_format     = "%(cls_name)s_buffer"
+
     __autowrap             = dict \
       ( add_typedef        = TFL.Meta.Class_Method
+      , as_c_code          = TFL.Meta.Class_Method
       , as_forward_typedef = TFL.Meta.Class_Method
       , as_typedef         = TFL.Meta.Class_Method
-      , as_c_code          = TFL.Meta.Class_Method
+      , buffer_name        = TFL.Meta.Class_Method
+      , current            = TFL.Meta.Class_Method
       , _struct_fields     = staticmethod
       )
 
-    reference_fields   = ()
+    reference_field    = None
     struct_fields      = ()
 
     uses_global_buffer = 0
@@ -137,6 +142,19 @@ class Struct (TFL.Meta.Object) :
     def add_typedef (cls, type, name) :
         cls.needs_typedef.append (Typedef (type, name))
     # end def add_typedef
+
+    def buffer_name (cls) :
+        d = dict (cls_name = cls.type_name)
+        return cls.buffer_name_format % d
+    # end def buffer_name
+
+    def current (cls) :
+        if cls.reference_field.index :
+            result = cls.count
+        else :
+            result = "& (%s [%3d])" % (cls.buffer_name (), cls.count)
+        return result
+    # end def current
 
     def packed (self) :
         """Returns a string containing a binary representation of the actual

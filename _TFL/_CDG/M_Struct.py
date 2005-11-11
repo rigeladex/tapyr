@@ -15,6 +15,10 @@
 #    11-Jul-2005 (MG)  `New` added
 #    14-Jul-2005 (MG)  `reset_all` changed to a `classmethod`
 #    14-Jul-2005 (MG)  `reference_field` handling added
+#    10-Nov-2005 (MG)  `offset_fields` and `buffer_fields` added
+#    11-Nov-2005 (MG)  `define_access_macros` added
+#    11-Nov-2005 (MG)  `reference_field` handling changed (no need to specify
+#                      a name for the field)
 #    ««revision-date»»···
 #--
 
@@ -28,10 +32,13 @@ import _TFL._Meta.M_Class
 class M_Struct (TFL.Meta.M_Class) :
     """Meta class for CDG Struct classes"""
 
+    ref_field_name = "%s_Ref"
+
     def __init__ (cls, name, bases, dict) :
         super (M_Struct, cls).__init__ (name, bases, dict)
         cls._add_class      (name)
         cls.reset_extension ()
+        cls.type_name = cls.__name__
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -64,8 +71,11 @@ class M_Struct (TFL.Meta.M_Class) :
                     ) :
                     setattr (cls, attr_name, value)
             ref_field = getattr (cls, "reference_field", None)
-            if ref_field and ref_field.typedef :
-                cls.needs_typedef.append (ref_field)
+            if ref_field :
+                ref_field.set_type (cls.ref_field_name % cls.__name__)
+                ref_field.struct    = cls
+                if ref_field.typedef :
+                    cls.needs_typedef.append (ref_field)
     # end def _add_class
 
     def reset_extension (cls) :
@@ -78,6 +88,61 @@ class M_Struct (TFL.Meta.M_Class) :
         for c in cls.classes.values () :
             c.reset_extension ()
     # end def reset_all
+
+    @classmethod
+    def offset_fields (cls, field_cls) :
+        return tuple \
+            ([ field_cls
+                 ( "ubyte4"
+                 , c.offset_field_name
+                 , "in `bin_buffer`"
+                 , -1
+                 )
+               for c in cls.uses_global_buffers
+             ]
+            )
+    # end def offset_fields
+
+    @classmethod
+    def buffer_fields (cls, field_cls) :
+        return tuple \
+            ([ field_cls
+                 ( "%s *" % (c.__name__, )
+                 , c.buffer_field_name
+                 , "Base address of all %s entries" % (c.__name__, )
+                 , -1
+                 )
+               for c in cls.uses_global_buffers
+             ]
+            )
+    # end def buffer_fields
+
+    @classmethod
+    def define_access_macros (cls, C, node, main) :
+        for c in cls.uses_global_buffers :
+            b_name = c.buffer_field_name
+            index  = c.reference_field.index
+            if c.is_solitaire:
+                node.add \
+                    (C.Define ( c.__name__.upper (), main
+                              , "(& %s->%s)" % (main, b_name, )
+                              , scope = C.H
+                              )
+                    )
+            else :
+                paramater = "ref"
+                if index :
+                    code = "(& %s->%s [%s])" % (main, b_name, paramater)
+                else :
+                    code = "(%s)" % (paramater, )
+                node.add \
+                    ( C.Define
+                        ( c.__name__.upper (), "%s, %s" % (main, paramater)
+                        , code
+                        , scope = C.H
+                        )
+                    )
+    # end def define_access_macros
 
 # end class M_Struct
 

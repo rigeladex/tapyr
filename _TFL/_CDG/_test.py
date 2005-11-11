@@ -11,6 +11,7 @@
 #
 # Revision Dates
 #    09-Nov-2005 (MG) Creation
+#    11-Nov-2005 (MG) Test extended
 #    ««revision-date»»···
 #--
 #
@@ -39,8 +40,7 @@ class Byte_Copy_Spec (Struct) :
     SF                 = TFL.CDG.Struct_Field
     uses_global_buffer = True
     reference_field    = TFL.CDG.Reference_Struct_Field \
-        ( "Byte_Copy_Spec_Ref"
-        , "byte_cs"
+        ( "byte_cs"
         , "Index into `byte_copy_spec_buffer` defining how to copy "
           "byte-parts of a message into the double buffer"
         , typedef      = "ubyte4"
@@ -71,13 +71,11 @@ class Bit_Copy_Spec (Byte_Copy_Spec) :
 
     SF                 = TFL.CDG.Struct_Field
     reference_field    = TFL.CDG.Reference_Struct_Field \
-        ( "Bit_Copy_Spec_Ref"
-        , "bit_cs"
+        ( "bit_cs"
         , "Index into `bit_copy_spec_buffer` defining how to copy "
           "bit-parts of a message into the double buffer"
         , typedef      = "ubyte4"
         )
-
 
     struct_fields      = Byte_Copy_Spec.struct_fields + \
         ( SF ( "ubyte1"
@@ -106,6 +104,13 @@ class Message_Pack_Copy (Struct) :
     """
     SF                 = TFL.CDG.Struct_Field
     uses_global_buffer = True
+
+    reference_field    = TFL.CDG.Reference_Struct_Field \
+        ( "msg_pack_copy"
+        , "Index into `message_apck_copy_buffer` defining which messages"
+          "should be copied"
+        , typedef      = "ubyte4"
+        )
     struct_fields      = \
         ( Byte_Copy_Spec.reference_field
         , Bit_Copy_Spec. reference_field
@@ -115,8 +120,8 @@ class Message_Pack_Copy (Struct) :
         bytes = length // 8
         bits  = length % 8
         off   = 0
-        self.byte_cs = Byte_Copy_Spec.count
-        self.bit_cs  = Bit_Copy_Spec. count
+        self.byte_cs = Byte_Copy_Spec.current ()
+        self.bit_cs  = Bit_Copy_Spec. current ()
         for i in range (bytes) :
             Byte_Copy_Spec ("(& %s) + %d" % (msg_name, off), off)
             off += 1
@@ -159,13 +164,14 @@ class TDCOM_Descriptor (Struct) :
         c_block = C.Stmt_Group ()
         for c in Meta_Struct.uses_global_buffers :
             values     = []
-            type_name  = c.__name__
-            array_name = "".join ([type_name.lower (), "_data"])
             for o in c.extension :
                 values.append (o.dict ())
             c_block.add \
-                ( C.Array \
-                    (type_name, array_name, len (values), init = values)
+                ( C.Array
+                    ( c.type_name, c.buffer_name ()
+                    , bounds = len (values)
+                    , init   = values
+                    )
                 )
         return c_block
     # end def pack_as_c_code
@@ -173,20 +179,40 @@ class TDCOM_Descriptor (Struct) :
 # end class TDCOM_Descriptor
 
 if __name__ == "__main__" :
+    from Command_Line import Command_Line
+
+    cmd = Command_Line \
+        ( option_spec = ( "index:B"
+                        , "header:B"
+                        )
+        ,
+        )
+
+    C                                    = TFL.SDG.C
+    C.Var.type_name_length               = 30
+    TFL.CDG.Reference_Struct_Field.index = not not cmd.index
+
     m1 = Message_Pack_Copy ("m1", 28)
     m2 = Message_Pack_Copy ("m2",  5)
     m  = TFL.SDG.C.Module (name = "test")
-    C  = TFL.SDG.C
     add = m.add
+
+    for sf in Meta_Struct.needs_typedef :
+        add (sf.as_typedef (C = C, scope = C.H))
+    add (C.New_Line (scope = C.H))
+
     for c in Meta_Struct.needs_struct :
         add (c.as_forward_typedef (const = c.const, scope = C.H))
-        add (C.New_Line (scope = C.H))
     add (C.New_Line (scope = C.H))
+
     for c in Meta_Struct.needs_struct :  # write struct
         add ( c.as_c_code (scope = C.H, standalone = 1))
         add ( C.New_Line  (scope = C.H))
     add (C.New_Line (scope = C.H))
-    if 1 :
+
+    Meta_Struct.define_access_macros (C, m, "tdcom")
+
+    if not cmd.header :
         x = TDCOM_Descriptor (C)
         print "\n".join (x.c_block.as_c_code ())
     else :

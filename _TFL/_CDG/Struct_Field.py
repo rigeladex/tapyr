@@ -35,6 +35,8 @@
 #    09-Nov-2005 (MG) `[us]byte[14]` types added to `type_map`
 #    09-Nov-2005 (MG) `Reference_Struct_Field` calculation of `user_code`
 #                     fixed
+#    11-Nov-2005 (MG)  `Reference_Struct_Field` now supports index and
+#                      address based references
 #    ««revision-date»»···
 #--
 
@@ -87,6 +89,7 @@ class Struct_Field (TFL.Meta.Object):
                  , bounds      = None
                  , ** kw ### ignore additional parameters
                  ) :
+        self.type_name   = type
         self.type        = self.type_map.get (type, type)
         self.name        = name
         self.desc        = desc
@@ -111,10 +114,10 @@ class Struct_Field (TFL.Meta.Object):
                 init = "= %s " % self.init
             else :
                 init = ""
-            return "%s %s %s// %s" % (self.type, self.name, init, desc)
+            return "%s %s %s// %s" % (self.type_name, self.name, init, desc)
         else :
             return C.Array \
-                (self.type, self.name, self.bounds, eol_desc = desc)
+                (self.type_name, self.name, self.bounds, description = desc)
     # end def as_c_code
 
     def as_typedef (self, C = TFL.SDG.C, c_node = None, ** kw) :
@@ -131,7 +134,7 @@ class Struct_Field (TFL.Meta.Object):
 
     def __str__ (self) :
         return "(%r, %r, %r, %r, %r)" % \
-               (self.type, self.name, self.desc, self.init, self.user_code)
+               (self.typedef, self.name, self.desc, self.init, self.user_code)
     # end def __str__
 
     def __repr__ (self) :
@@ -167,13 +170,41 @@ class Struct_Field (TFL.Meta.Object):
 class Reference_Struct_Field (Struct_Field) :
     """A struct field which references a other `Struct_Field`."""
 
-    def __init__ (self, * args, ** kw) :
-        self.__super.__init__ (* args, ** kw)
-        self.typedef   = kw.get ("typedef")
+    index = True
+
+    def __init__ ( self, name, desc
+                 , init        = None
+                 , user_code   = None
+                 , bounds      = None
+                 , typedef     = None
+                 , index       = None
+                 ) :
+        self.__super.__init__ ("<none>", name, desc, user_code, bounds)
+        self.typedef    = typedef
+        if index is not None :
+            ### only override class default if explicitly specfied
+            self.index = index
         if self.typedef and not self.user_code :
             type           = self.type_map.get (self.typedef, self.typedef)
             self.user_code = self.fmt_code.get (type, None)
     # end def __init__
+
+    def set_type (self, type) :
+        self.type_name = type
+        self.type      = self.type_map.get (type, type)
+    # end def set_type
+
+    def as_typedef (self, * args, ** kw) :
+        if not self.index :
+            self.type_name = "%s *" % (self.struct.__name__, )
+        return self.__super.as_typedef (* args, ** kw)
+    # end def as_typedef
+
+    def as_c_code (self, * args, ** kw) :
+        if not self.index :
+            self.type_name = "%s *" % (self.struct.__name__, )
+        return self.__super.as_c_code (* args, ** kw)
+    # end def as_c_code
 
 # end class Reference_Struct_Field
 
