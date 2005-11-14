@@ -19,6 +19,7 @@
 #    11-Nov-2005 (MG)  `define_access_macros` added
 #    11-Nov-2005 (MG)  `reference_field` handling changed (no need to specify
 #                      a name for the field)
+#    14-Nov-2005 (MG) ´as_dot` added
 #    ««revision-date»»···
 #--
 
@@ -147,6 +148,53 @@ class M_Struct (TFL.Meta.M_Class) :
                         )
                     )
     # end def define_access_macros
+
+    @classmethod
+    def as_dot (cls, filename) :
+        """ create dot file from Meta_Struct"""
+        const_node = "node"
+        dot        = \
+            [ 'digraph g {'
+            , 'graph [rankdir = "LR"];'
+            , 'node [fontsize = "16" shape = "ellipse"];'
+            , 'edge [];'
+            ]
+        add        = dot.append
+        for index, c in enumerate (cls.needs_struct) :
+            fields   = \
+                [ "%s %s |<f%s> " % (f.type, f.name, n)
+                    for (n, f) in enumerate (c.struct_fields)
+                ]
+            fields   = \
+                [ "<f%s> %s" % (f.name, f.name)
+                    for (n, f) in enumerate (c.struct_fields)
+                ]
+            add ( '%s%s ' % (const_node, c.type_name))
+            add ( '  [ label = "<f%s> %s | %s"'
+                % (c.type_name, c.type_name, " | ".join (fields))
+                )
+            add ( '    shape = "record"')
+            add ( '  ]')
+        add ("")
+        id = 0
+        for index, c in enumerate (cls.needs_struct) :
+            for f in c.struct_fields :
+                if isinstance (f, TFL.CDG.Reference_Struct_Field) :
+                    add ( '"%s%s":f%s -> "%s%s":f%s'
+                        % ( const_node, c.type_name, f.name
+                          , const_node, f.struct.type_name, f.struct.type_name
+                          )
+                        )
+                    add (' [ id = %d]' % (id, ))
+                    id += 1
+        add     ("}")
+        if isinstance (filename, str) :
+            f = open     (filename, "w")
+            f.write      ("\n".join (dot))
+            f.close      ()
+        else :
+            filename.write      ("\n".join (dot))
+    # end def as_dot
 
 # end class M_Struct
 
