@@ -20,6 +20,7 @@
 #    11-Nov-2005 (MG)  `reference_field` handling changed (no need to specify
 #                      a name for the field)
 #    14-Nov-2005 (MG) ´as_dot` added
+#    01-Dec-2005 (MG)  `typedef_prefix` added
 #    ««revision-date»»···
 #--
 
@@ -122,6 +123,9 @@ class M_Struct (TFL.Meta.M_Class) :
     def define_access_macros (cls, C, node, main) :
         for c in cls.uses_global_buffers :
             b_name = c.buffer_field_name
+            name   = c.__name__.upper ()
+            if cls.typedef_prefix :
+                name = "%s%s" % (cls.prefix, name)
             if c.reference_field :
                 index  = c.reference_field.index
             else :
@@ -129,7 +133,7 @@ class M_Struct (TFL.Meta.M_Class) :
                 print ">>>", c.type_name
             if c.is_solitaire:
                 node.add \
-                    (C.Define ( c.__name__.upper (), main
+                    (C.Define ( name, main
                               , "(& %s->%s)" % (main, b_name, )
                               , scope = C.H
                               )
@@ -142,7 +146,7 @@ class M_Struct (TFL.Meta.M_Class) :
                     code = "(%s)" % (paramater, )
                 node.add \
                     ( C.Define
-                        ( c.__name__.upper (), "%s, %s" % (main, paramater)
+                        ( name, "%s, %s" % (main, paramater)
                         , code
                         , scope = C.H
                         )
@@ -198,7 +202,9 @@ class M_Struct (TFL.Meta.M_Class) :
 
 # end class M_Struct
 
-def New (name_postfix) :
+def New ( name_postfix
+        , typedef_prefix = ""
+        ) :
     cls = M_Struct
     d   = dict \
         ( uses_global_buffers = []
@@ -206,6 +212,7 @@ def New (name_postfix) :
         , needs_typedef       = []
         , classes             = {}
         , prefix              = "%s_" % (name_postfix, )
+        , typedef_prefix      = typedef_prefix
         )
     name = "%s_%s" % (cls.__name__, name_postfix)
     return type (cls) (name, (cls, ), d)

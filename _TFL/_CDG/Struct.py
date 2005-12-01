@@ -35,6 +35,7 @@
 #    09-Nov-2005 (MG)  `dict` added
 #    11-Nov-2005 (MG)  Check for a list in `dict` added
 #    11-Nov-2005 (MG)  Handling of the `reference_field` extended
+#    01-Dec-2005 (MG) `typedef_prefix` added
 #    ««revision-date»»···
 #--
 
@@ -110,8 +111,10 @@ class Struct (TFL.Meta.Object) :
 
            If a `c_node` is passed in, the `result` will be added to it.
         """
-        result = C.Typedef \
-            ("struct _%s" % cls.__name__, cls.__name__, ** kw)
+        name   = cls.__name__
+        if cls.typedef_prefix :
+            name = "%s_%s" % (cls.typedef_prefix, name)
+        result = C.Typedef ("struct _%s" % name, name, ** kw)
         if c_node :
             c_node.add (result)
         return result
@@ -119,8 +122,11 @@ class Struct (TFL.Meta.Object) :
 
     def as_c_code (cls, C = TFL.SDG.C, ** kw) :
         """Returns c-code for the definition of C.Struct for `self`"""
+        name   = cls.__name__
+        if cls.typedef_prefix :
+            name = "%s_%s" % (cls.typedef_prefix, name)
         return C.Struct \
-            ( cls.__name__
+            ( name
             , [f.as_c_code (C) for f in cls.struct_fields]
             , description = cls.__doc__
             , ** kw
