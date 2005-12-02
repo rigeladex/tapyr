@@ -36,6 +36,9 @@
 #    11-Nov-2005 (MG)  Check for a list in `dict` added
 #    11-Nov-2005 (MG)  Handling of the `reference_field` extended
 #    01-Dec-2005 (MG) `typedef_prefix` added
+#    02-Dec-2005 (MG)  Use `type_name` instead of `__name__`
+#    02-Dec-2005 (MG) `Struct.as_c_code` changed to handle `Struct` classes
+#                     as `struct_fields`
 #    ««revision-date»»···
 #--
 
@@ -111,9 +114,7 @@ class Struct (TFL.Meta.Object) :
 
            If a `c_node` is passed in, the `result` will be added to it.
         """
-        name   = cls.__name__
-        if cls.typedef_prefix :
-            name = "%s_%s" % (cls.typedef_prefix, name)
+        name   = cls.type_name
         result = C.Typedef ("struct _%s" % name, name, ** kw)
         if c_node :
             c_node.add (result)
@@ -122,12 +123,17 @@ class Struct (TFL.Meta.Object) :
 
     def as_c_code (cls, C = TFL.SDG.C, ** kw) :
         """Returns c-code for the definition of C.Struct for `self`"""
-        name   = cls.__name__
-        if cls.typedef_prefix :
-            name = "%s_%s" % (cls.typedef_prefix, name)
+        fields   = []
+        for f in cls.struct_fields :
+            if not isinstance (f, TFL.CDG.Struct_Field) :
+                print "Add struct to struct"
+                c_field = "%s %s" % (f.type_name, f.__name__.lower ())
+            else :
+                c_field = f.as_c_code (C)
+            fields.append (c_field)
         return C.Struct \
-            ( name
-            , [f.as_c_code (C) for f in cls.struct_fields]
+            ( cls.type_name
+            , fields
             , description = cls.__doc__
             , ** kw
             )

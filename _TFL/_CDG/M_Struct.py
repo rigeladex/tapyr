@@ -21,6 +21,7 @@
 #                      a name for the field)
 #    14-Nov-2005 (MG) ´as_dot` added
 #    01-Dec-2005 (MG)  `typedef_prefix` added
+#    02-Dec-2005 (MG)  Use `typedef_prefix` to define the `type_name`
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,10 @@ class M_Struct (TFL.Meta.M_Class) :
         super (M_Struct, cls).__init__ (name, bases, dict)
         cls._add_class      (name)
         cls.reset_extension ()
-        cls.type_name = cls.__name__
+        if cls.typedef_prefix :
+            cls.type_name = "%s_%s" % (cls.typedef_prefix, cls.__name__)
+        else :
+            cls.type_name = cls.__name__
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
