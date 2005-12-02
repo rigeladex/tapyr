@@ -37,6 +37,7 @@
 #                     fixed
 #    11-Nov-2005 (MG)  `Reference_Struct_Field` now supports index and
 #                      address based references
+#    02-Dec-2005 (KZU) added `typedef_prefix` in Reference_Struct_Field
 #    ««revision-date»»···
 #--
 
@@ -202,7 +203,11 @@ class Reference_Struct_Field (Struct_Field) :
 
     def as_c_code (self, * args, ** kw) :
         if not self.index :
-            self.type_name = "%s *" % (self.struct.__name__, )
+            if self.struct.typedef_prefix:
+                self.type_name = "%s_%s *" % \
+                        (self.struct.typedef_prefix, self.struct.__name__,)
+            else:
+                self.type_name = "%s *" % (self.struct.__name__, )
         return self.__super.as_c_code (* args, ** kw)
     # end def as_c_code
 
