@@ -22,6 +22,8 @@
 #    14-Nov-2005 (MG) ´as_dot` added
 #    01-Dec-2005 (MG)  `typedef_prefix` added
 #    02-Dec-2005 (MG)  Use `typedef_prefix` to define the `type_name`
+#    04-Dec-2005 (KZU) `typedef_prefix` added to method buffer_fields
+
 #    ««revision-date»»···
 #--
 
@@ -111,9 +113,12 @@ class M_Struct (TFL.Meta.M_Class) :
 
     @classmethod
     def buffer_fields (cls, field_cls) :
+        pref = ""
+        if cls.typedef_prefix :
+            pref = cls.typedef_prefix + "_"
         return tuple \
             ([ field_cls
-                 ( "%s *" % (c.__name__, )
+                 ( "%s%s *" % (pref, c.__name__, )
                  , c.buffer_field_name
                  , "Base address of all %s entries" % (c.__name__, )
                  , -1
