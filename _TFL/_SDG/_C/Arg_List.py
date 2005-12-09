@@ -31,6 +31,7 @@
 #    12-Aug-2004 (MG) `default_cgi` added
 #    13-Aug-2004 (CT) `base_indent2` replaced by `base_indent * 2`
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
+#    08-Dec-2005 (MG)  Bugfixes
 #    ««revision-date»»···
 #--
 
@@ -38,8 +39,8 @@ from   _TFL              import TFL
 import _TFL._SDG._C.Node
 import _TFL._SDG._C.Expression
 import _TFL._SDG._C.Var
-
-from   Regexp            import *
+from   _TFL.predicate    import un_nested
+from    Regexp           import *
 
 class Arg_List (TFL.SDG.C.Node) :
     """Model C argument lists"""
@@ -61,6 +62,7 @@ class Arg_List (TFL.SDG.C.Node) :
         )
 
     def __init__ (self, * children, ** kw) :
+        children = un_nested              (children)
         children = self._convert_children (children)
         self.__super.__init__ (* children, ** kw)
     # end def __init__
@@ -78,7 +80,7 @@ class Arg_List (TFL.SDG.C.Node) :
                         c = TFL.SDG.C.Var \
                                 (self.arg_pat.type, self.arg_pat.name)
                 else :
-                    raise TFL.SDG.C.Invalid_Node, (self, c)
+                    raise TFL.SDG.Invalid_Node, (self, c)
             c.cgi     = self.Decl
             c.trailer = ""
             result.append (c)

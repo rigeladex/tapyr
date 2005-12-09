@@ -65,6 +65,8 @@
 #    27-Sep-2004 (CT) Doc-string improved
 #     6-Sep-2005 (CT) `formatted` changed to include `output_width` in
 #                     `recurse_kw`
+#    08-Dec-2005 (MG) Sematic of `has_child` changed: returns now the child
+#                     or None instead of True/False
 #    ««revision-date»»···
 #--
 
@@ -499,12 +501,13 @@ class Node :
         child_name = self._child_name (child_name)
         for children in self.children_groups.itervalues () :
             if child_name in children :
-                return True
+                return children [child_name]
         if transitive :
             for c in self.children :
-                if c.has_child (child_name, transitive = True) :
-                    return True
-        return False
+                child = c.has_child (child_name, transitive = True)
+                if child is not None :
+                    return child
+        return None
     # end def has_child
 
     def insert (self, child, index = None, delta = 0) :

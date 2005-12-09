@@ -194,7 +194,7 @@ class _C_Node_ (TFL.SDG.Node) :
     # end def _convert_c_stmt
 
     def _force (self, value, Class, * args, ** kw) :
-        """Comverts `value' to an instance of `Class'."""
+        """Converts `value' to an instance of `Class'."""
         value = self._convert (value, Class, * args, ** kw)
         if not isinstance (value, Class) :
             value = Class (value, * args, ** kw)

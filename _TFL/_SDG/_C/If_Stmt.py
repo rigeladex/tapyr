@@ -36,6 +36,7 @@
 #    10-Aug-2004 (MG) Missing import of `TFL.SDG.C.Statement` added
 #    24-Aug-2004 (CT) `_convert_then` factored and implemented to force
 #                     `self.then_class`
+#    08-Dec-2005 (MG) `Then` exported
 #    ««revision-date»»···
 #--
 
@@ -147,5 +148,5 @@ class If (TFL.SDG.C.Conditional, TFL.SDG.C._Statement_) :
 # end class If
 
 if __name__ != "__main__" :
-    TFL.SDG.C._Export ("*")
+    TFL.SDG.C._Export ("*", "Then")
 ### __END__ TFL.SDG.C.If_Stmt
