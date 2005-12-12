@@ -1,4 +1,3 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2004 Dr. Ralf Schlatterbeck Open Source Consulting.
 # Reichergasse 131, A-3411 Weidling.
@@ -6,19 +5,19 @@
 # All rights reserved
 # ****************************************************************************
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 # ****************************************************************************
 #
 #++
@@ -30,6 +29,13 @@
 #
 # Revision Dates
 #     9-Dec-2005 (RSC) Creation
+#    12-Dec-2005 (RSC) Changed License to LGPL
+#                      Added several new doctests for boundary cases
+#                      Reordered doctests for easier viewing
+#                      _element_class replaced with a lambda
+#                      Introduced _intersection_iter and recode
+#                      intersection and contains with it
+#                      Factored _bisection and use it in next_point
 #    ««revision-date»»···
 #--
 
@@ -50,21 +56,6 @@ class Interval_Set (TFL.Meta.Object) :
        >>> l = i.union (j)
        >>> l
        Interval_Set ((0, 200))
-       >>> m = Interval_Set (N (1, 2), N (5, 6), N (7, 9))
-       >>> m.overlaps (m)
-       True
-       >>> n = Interval_Set (N (1, 5), N (6, 6), N (9, 11))
-       >>> n.intersection (m)
-       Interval_Set ((1, 2), (5, 5), (6, 6), (9, 9))
-       >>> o = Interval_Set (N (1, 1))
-       >>> o.is_empty ()
-       False
-       >>> p = Interval_Set ()
-       >>> p.is_empty ()
-       True
-       >>> if     p : print "Ooops"
-       >>> if not p : print not p
-       True
        >>> l.overlaps (i)
        True
        >>> l.intersection (i)
@@ -88,6 +79,14 @@ class Interval_Set (TFL.Meta.Object) :
        >>> l.contains_point (4711)
        False
        >>> l.next_point (4711)
+       >>> m = Interval_Set (N (1, 2), N (5, 6), N (7, 9))
+       >>> m.overlaps (m)
+       True
+       >>> n = Interval_Set (N (1, 5), N (6, 6), N (9, 11))
+       >>> n.intersection (m)
+       Interval_Set ((1, 2), (5, 5), (6, 6), (9, 9))
+       >>> m.next_point (0)
+       1
        >>> m.next_point (1)
        1
        >>> m.next_point (3)
@@ -97,39 +96,35 @@ class Interval_Set (TFL.Meta.Object) :
        >>> m.next_point (10)
        >>> m.intersection (l)
        Interval_Set ((1, 2), (5, 6), (7, 9))
+       >>> o = Interval_Set (N (1, 1))
+       >>> o.is_empty ()
+       False
+       >>> p = Interval_Set ()
+       >>> p.is_empty ()
+       True
+       >>> p, bool (p)
+       (Interval_Set (), False)
+       >>> q = Interval_Set (N (1, 1))
+       >>> r = Interval_Set (N (1, 1), N (3, 4))
+       >>> q.intersection (r)
+       Interval_Set ((1, 1))
     """
 
     def __init__ (self, * args) :
         if args :
-            self.intervals = args [0].__class__.union (*args)
+            self.intervals = args [0].__class__.union (* args)
         else :
             self.intervals = []
     # end def __init__
 
     def contains_point (self, point) :
-        return point is not None and self.next_point (point) == point
+        return self.next_point (point) == point
     # end def contains_point
 
-    def _element_class (self) :
-        """ Will fail for self.is_empty """
-        return self.intervals [0].__class__
-    # end def _element_class
-    element_class = property (_element_class)
+    element_class = property (lambda self : self.intervals [0].__class__)
 
     def intersection (self, other) :
-        interval = []
-        iterator = [(i for i in k.intervals) for k in (self, other)]
-        try :
-            item = [i.next () for i in iterator]
-            while (True) :
-                it         = item [0].intersection (item [1])
-                if it.is_valid () : interval.append (it)
-                idx        = item [1] < item [0]
-                item [idx] = iterator [idx].next ()
-        except StopIteration :
-            for it in iterator :
-                interval.extend (i for i in it if i.is_valid ())
-        return self.__class__ (* interval)
+        return self.__class__ (* self._intersection_iter (other))
     # end def intersection
 
     def is_empty (self) :
@@ -137,27 +132,67 @@ class Interval_Set (TFL.Meta.Object) :
     # end def is_empty
 
     def next_point (self, point) :
-        i = bisect (self.intervals, self.element_class (point, point))
-        try :
-            # bisect might return i == len (self.intervals)
-            if self.intervals [i - 1].contains_point (point) :
+        ivals = self.intervals
+        if ivals :
+            i = bisect (ivals, self.element_class (point, point))
+            if ivals [i - 1].contains_point (point) :
                 return point
-            if self.intervals     [i].contains_point (point) :
-                return point
-            return self.intervals [i].lower
-        except IndexError :
-            pass
+            elif i < len (ivals) :
+                return ivals [i].lower
+        return None
+    # end def next_point
+
+    # Using _bisection: FIXME: Really?
+    def next_point (self, point) :
+        idx, contained = self._bisection (point)
+        if contained :
+            return point
+        if idx < len (self.intervals) :
+            return self.intervals [idx].lower
         return None
     # end def next_point
 
     def overlaps (self, other) :
-        return bool (self.intersection (other))
+        try :
+            self._intersection_iter (other).next ()
+            return True
+        except StopIteration :
+            pass
+        return False
     # end def overlaps
 
     def union (self, * other) :
+        # dont use sum, for o in other extend
+        # union soll self nicht aendern
         intervals = sum ((i.intervals for i in other), self.intervals)
         return self.__class__ (* intervals)
     # end def union
+
+    # FIXME: Do we really need this one? Can it be done better?
+    def _bisection (self, point) :
+        ivals = self.intervals
+        if not ivals :
+            return 0, False
+        i     = bisect (ivals, self.element_class (point, point))
+        if ivals [i - 1].contains_point (point) :
+            return i - 1, True
+        return i, i < len (ivals) and ivals [i].lower == point
+    # end def _bisection
+
+    def _intersection_iter (self, other) :
+        l_iter = iter (self.intervals)
+        r_iter = iter (other.intervals)
+        l      = l_iter.next ()
+        r      = r_iter.next ()
+        while (True) :
+            it = r.intersection (l)
+            if it.is_valid () :
+                yield it
+            if l.upper < r.upper :
+                l = l_iter.next ()
+            else :
+                r = r_iter.next ()
+    # end def _intersection_iter
 
     def __nonzero__ (self) :
         return bool (self.intervals)
