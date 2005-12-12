@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -67,6 +67,7 @@
 #                     `recurse_kw`
 #    08-Dec-2005 (MG) Sematic of `has_child` changed: returns now the child
 #                     or None instead of True/False
+#    12-Dec-2005 (CT) `return None` removed from `has_child`
 #    ««revision-date»»···
 #--
 
@@ -507,7 +508,6 @@ class Node :
                 child = c.has_child (child_name, transitive = True)
                 if child is not None :
                     return child
-        return None
     # end def has_child
 
     def insert (self, child, index = None, delta = 0) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -26,21 +26,22 @@
 #    Model C argument lists
 #
 # Revision Dates
-#    28-Jul-2004 (CT) Creation
-#     3-Aug-2004 (CT) Don't redefine the value of `Decl`
-#    12-Aug-2004 (MG) `default_cgi` added
-#    13-Aug-2004 (CT) `base_indent2` replaced by `base_indent * 2`
+#    28-Jul-2004 (CT)  Creation
+#     3-Aug-2004 (CT)  Don't redefine the value of `Decl`
+#    12-Aug-2004 (MG)  `default_cgi` added
+#    13-Aug-2004 (CT)  `base_indent2` replaced by `base_indent * 2`
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
 #    08-Dec-2005 (MG)  Bugfixes
+#    12-Dec-2005 (CT)  `Regexp` import fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
+from   _TFL.predicate    import un_nested
+from   _TFL.Regexp       import *
 import _TFL._SDG._C.Node
 import _TFL._SDG._C.Expression
 import _TFL._SDG._C.Var
-from   _TFL.predicate    import un_nested
-from    Regexp           import *
 
 class Arg_List (TFL.SDG.C.Node) :
     """Model C argument lists"""
