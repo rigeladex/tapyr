@@ -36,12 +36,14 @@
 #                      Introduced _intersection_iter and recode
 #                      intersection and contains with it
 #                      Factored _bisection and use it in next_point
+#    13-Dec-2005 (CT)  Small improvements
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 
 import _TFL._Meta.Object
+
 from   bisect import bisect
 
 class Interval_Set (TFL.Meta.Object) :
@@ -50,65 +52,39 @@ class Interval_Set (TFL.Meta.Object) :
        >>> from   _TFL   import TFL
        >>> import _TFL.Numeric_Interval
        >>> N = TFL.Numeric_Interval
-       >>> i = Interval_Set (N (  0, 100))
-       >>> j = Interval_Set (N (100, 200))
-       >>> k = Interval_Set (N ( 20,  50))
+       >>> class IS (Interval_Set) : pass
+       ...
+       >>> i = IS (N (  0, 100))
+       >>> j = IS (N (100, 200))
+       >>> k = IS (N ( 20,  50))
        >>> l = i.union (j)
        >>> l
-       Interval_Set ((0, 200))
-       >>> l.overlaps (i)
-       True
-       >>> l.intersection (i)
-       Interval_Set ((0, 100))
-       >>> l.intersection (j)
-       Interval_Set ((100, 200))
-       >>> l.overlaps (i)
-       True
-       >>> i.overlaps (j)
-       True
-       >>> l.overlaps (l)
-       True
-       >>> l.contains_point (0)
-       True
-       >>> l.contains_point (100)
-       True
-       >>> l.contains_point (200)
-       True
-       >>> l.contains_point (50)
-       True
-       >>> l.contains_point (4711)
-       False
-       >>> l.next_point (4711)
-       >>> m = Interval_Set (N (1, 2), N (5, 6), N (7, 9))
-       >>> m.overlaps (m)
-       True
-       >>> n = Interval_Set (N (1, 5), N (6, 6), N (9, 11))
+       IS ((0, 200))
+       >>> [l.intersection (x) for x in (i, j, l)]
+       [IS ((0, 100)), IS ((100, 200)), IS ((0, 200))]
+       >>> [l.overlaps (x) for x in (i, j, l)]
+       [True, True, True]
+       >>> [l.contains_point (x) for x in (0, 50, 100, 200, 4711)]
+       [True, True, True, True, False]
+       >>> m = IS (N (1, 2), N (5, 6), N (7, 9))
+       >>> m
+       IS ((1, 2), (5, 6), (7, 9))
+       >>> n = IS (N (1, 5), N (6, 6), N (9, 11), N (20, 30))
        >>> n.intersection (m)
-       Interval_Set ((1, 2), (5, 5), (6, 6), (9, 9))
-       >>> m.next_point (0)
-       1
-       >>> m.next_point (1)
-       1
-       >>> m.next_point (3)
-       5
-       >>> m.next_point (9)
-       9
-       >>> m.next_point (10)
+       IS ((1, 2), (5, 5), (6, 6), (9, 9))
+       >>> [m.next_point_up (x) for x in (0, 1, 3, 9, 10)]
+       [1, 1, 5, 9, None]
        >>> m.intersection (l)
-       Interval_Set ((1, 2), (5, 6), (7, 9))
-       >>> o = Interval_Set (N (1, 1))
-       >>> o.is_empty ()
-       False
-       >>> p = Interval_Set ()
-       >>> p.is_empty ()
-       True
-       >>> p, bool (p)
-       (Interval_Set (), False)
-       >>> q = Interval_Set (N (1, 1))
-       >>> r = Interval_Set (N (1, 1), N (3, 4))
-       >>> q.intersection (r)
-       Interval_Set ((1, 1))
+       IS ((1, 2), (5, 6), (7, 9))
+       >>> o = IS (N (1, 1))
+       >>> o, bool (o), o.is_empty ()
+       (IS ((1, 1)), True, False)
+       >>> p = IS ()
+       >>> p, bool (p), p.is_empty ()
+       (IS (), False, True)
     """
+
+    element_class = property (lambda self : self.intervals [0].__class__)
 
     def __init__ (self, * args) :
         if args :
@@ -118,10 +94,8 @@ class Interval_Set (TFL.Meta.Object) :
     # end def __init__
 
     def contains_point (self, point) :
-        return self.next_point (point) == point
+        return self.next_point_up (point) == point
     # end def contains_point
-
-    element_class = property (lambda self : self.intervals [0].__class__)
 
     def intersection (self, other) :
         return self.__class__ (* self._intersection_iter (other))
@@ -131,7 +105,7 @@ class Interval_Set (TFL.Meta.Object) :
         return not self
     # end def is_empty
 
-    def next_point (self, point) :
+    def next_point_up (self, point) :
         ivals = self.intervals
         if ivals :
             i = bisect (ivals, self.element_class (point, point))
@@ -139,70 +113,49 @@ class Interval_Set (TFL.Meta.Object) :
                 return point
             elif i < len (ivals) :
                 return ivals [i].lower
-        return None
-    # end def next_point
-
-    # Using _bisection: FIXME: Really?
-    def next_point (self, point) :
-        idx, contained = self._bisection (point)
-        if contained :
-            return point
-        if idx < len (self.intervals) :
-            return self.intervals [idx].lower
-        return None
-    # end def next_point
+    # end def next_point_up
 
     def overlaps (self, other) :
         try :
             self._intersection_iter (other).next ()
-            return True
         except StopIteration :
-            pass
-        return False
+            return False
+        else :
+            return True
     # end def overlaps
 
     def union (self, * other) :
-        # dont use sum, for o in other extend
-        # union soll self nicht aendern
-        intervals = sum ((i.intervals for i in other), self.intervals)
-        return self.__class__ (* intervals)
+        ivals = self.intervals [:]
+        for o in other :
+            ivals.extend (o.intervals)
+        return self.__class__ (* ivals)
     # end def union
 
-    # FIXME: Do we really need this one? Can it be done better?
-    def _bisection (self, point) :
-        ivals = self.intervals
-        if not ivals :
-            return 0, False
-        i     = bisect (ivals, self.element_class (point, point))
-        if ivals [i - 1].contains_point (point) :
-            return i - 1, True
-        return i, i < len (ivals) and ivals [i].lower == point
-    # end def _bisection
-
     def _intersection_iter (self, other) :
-        l_iter = iter (self.intervals)
-        r_iter = iter (other.intervals)
-        l      = l_iter.next ()
-        r      = r_iter.next ()
-        while (True) :
-            it = r.intersection (l)
-            if it.is_valid () :
-                yield it
+        l_iter = iter (self)
+        r_iter = iter (other)
+        l, r   = l_iter.next (), r_iter.next ()
+        while True :
+            i = r.intersection (l)
+            if i.is_valid () :
+                yield i
             if l.upper < r.upper :
                 l = l_iter.next ()
             else :
                 r = r_iter.next ()
     # end def _intersection_iter
 
+    def __iter__ (self) :
+        return iter (self.intervals)
+    # end def __iter__
+
     def __nonzero__ (self) :
         return bool (self.intervals)
     # end __nonzero__
 
     def __repr__ (self) :
-        return \
-            ( "Interval_Set (%s)"
-            % ', '.join (repr (i) for i in self.intervals)
-            )
+        name = self.__class__.__name__
+        return "%s (%s)" % (name, ", ".join (repr (i) for i in self))
     # end def __repr__
 
 # end class Interval_Set
@@ -210,4 +163,3 @@ class Interval_Set (TFL.Meta.Object) :
 if __name__ != "__main__" :
     TFL._Export ("*")
 ### __END__ TFL.Interval_Set
-
