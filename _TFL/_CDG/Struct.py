@@ -39,6 +39,7 @@
 #    02-Dec-2005 (MG)  Use `type_name` instead of `__name__`
 #    02-Dec-2005 (MG) `Struct.as_c_code` changed to handle `Struct` classes
 #                     as `struct_fields`
+#    06-Dec-2005 (MZO) added optional parameter index to current
 #    ««revision-date»»···
 #--
 
@@ -160,11 +161,13 @@ class Struct (TFL.Meta.Object) :
         return cls.buffer_name_format % d
     # end def buffer_name
 
-    def current (cls) :
+    def current (cls, index = None) :
+        if index is None : 
+            index = cls.count
         if cls.reference_field.index :
-            result = cls.count
+            result = index
         else :
-            result = "& (%s [%3d])" % (cls.buffer_name (), cls.count)
+            result = "& (%s [%3d])" % (cls.buffer_name (), index)
         return result
     # end def current
 
