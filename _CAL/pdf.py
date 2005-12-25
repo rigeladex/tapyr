@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -26,12 +26,17 @@
 #    Create pdf file of calendar with appointments
 #
 # Revision Dates
-#    18-Apr-2003 (CT) Creation
-#    20-Apr-2003 (CT) `is_holiday` added
-#     1-Jan-2004 (CT) `PDF_Plan_L` and `-landscape` added
-#     1-Jan-2004 (CT) `_cooked` added and used
+#    18-Apr-2003 (CT)  Creation
+#    20-Apr-2003 (CT)  `is_holiday` added
+#     1-Jan-2004 (CT)  `PDF_Plan_L` and `-landscape` added
+#     1-Jan-2004 (CT)  `_cooked` added and used
 #    11-Jun-2004 (GKH) deprecation warning removed (issue 10140)
 #    19-Dec-2004 (CT)  Small fixes to make it work again
+#    25-Dec-2005 (CT)  Default for `pdf_name` computed dynamically (otherwise
+#                      it defaults to the current, not the specified `year`)
+#    25-Dec-2005 (CT)  Deprecation warnings killed (`/` --> `//`)
+#    25-Dec-2005 (CT)  `line_generator` de-obfuscated
+#    25-Dec-2005 (CT)  Options `xl` and `yl` added
 #    ««revision-date»»···
 #--
 
@@ -75,7 +80,7 @@ class PDF_Plan (TFL.Meta.Object) :
 
     def __init__ ( self, Y, filename
                  , first_week = 0, last_week = -1, wpx = 2, wpy = 2
-                 , linewidth  = 0.6
+                 , linewidth  = 0.6, xl = None, yl = None
                  ) :
         from pdfgen import Canvas
         if last_week < 0 :
@@ -87,6 +92,14 @@ class PDF_Plan (TFL.Meta.Object) :
         self.wpx        = wpx
         self.wpy        = wpy
         self.linewidth  = linewidth
+        if xl :
+            self.xl     = xl * self.cm
+        else :
+            self.xl     = (self.xsiz - self.xo) / wpx
+        if yl :
+            self.yl     = yl * self.cm
+        else :
+            self.yl     = (self.ysiz - self.yo) / wpy
         self.canvas = c = Canvas (filename, pagesize = (self.xsiz, self.ysiz))
         self.pager  = p = self.page_generator (c)
         c.setPageCompression (0)
@@ -114,8 +127,8 @@ class PDF_Plan (TFL.Meta.Object) :
     def page_generator (self, c) :
         xo = self.xo
         yo = self.yo
-        xl = (self.xsiz - xo) / self.wpx
-        yl = (self.ysiz - yo) / self.wpy
+        xl = self.xl
+        yl = self.yl
         ds = (yl - self.yo - 1 * self.cm) / 7
         xs = [(xo + i * xl) for i in range (self.wpx)]
         ys = [(yo + i * yl) for i in range (self.wpy)]
@@ -155,14 +168,12 @@ class PDF_Plan (TFL.Meta.Object) :
     # end def one_week
 
     def line_generator (self, ds, x, xl, y, ts) :
-        def _ () :
-            lines = ds / (ts + 2)
-            yo    = y + ds - ts - 1
-            ys    = [(yo - (l * (ts + 1))) for l in range (lines)]
-            for xo in [x, x + xl // 2] :
-                for yo in ys :
-                    yield xo + 0.1 * self.cm, yo + 1
-        return _ ()
+        lines = int (ds / (ts + 2))
+        yo    = y + ds - ts - 1
+        ys    = [(yo - (l * (ts + 1))) for l in range (lines)]
+        for xo in [x, x + xl // 2] :
+            for yo in ys :
+                yield xo + 0.1 * self.cm, yo + 1
     # end def line_generator
 
     def one_day (self, c, d, ds, x, xl, y, yl, font, ts, cm, mm) :
@@ -170,15 +181,15 @@ class PDF_Plan (TFL.Meta.Object) :
         c.line            (x, y, xl, y)
         c.setFont         (font, ts)
         c.drawRightString (xo, y + ds * 0.95 - ts, d.formatted ("%d"))
-        c.setFont         (font, ts / 5)
+        c.setFont         (font, ts // 5)
         c.drawRightString (xo, y + mm,             d.formatted ("%A"))
-        lg = self.line_generator (ds, x, xo - 0.15 * (xl - x), y, ts / 5)
+        lg = self.line_generator (ds, x, xo - 0.15 * (xl - x), y, ts // 5)
         if d.is_holiday :
             lg.next ()
             xo, yo = lg.next ()
             c.setFont    (font, ts // 2)
             c.drawString (xo, yo, self._cooked (d.is_holiday) [:20])
-            c.setFont    (font, ts / 5)
+            c.setFont    (font, ts // 5)
         for a in getattr (d, "appointments", []) :
             try :
                  xo, yo = lg.next ()
@@ -216,10 +227,12 @@ def _command_spec (arg_array = None) :
             , "filename:S=plan?Filename of plan for `year`"
             , "head_week:I=0?Number of first week to process"
             , "landscape:B?Print in landscape format"
-            , "pdf:S=plan_%s.pdf?Generate PDF file with plan" % (year, )
+            , "pdf:S=?Generate PDF file with plan"
             , "tail_week:I=-1"
                 "?Number of last week to process (negative numbers "
                 "counting from the end of the year)"
+            , "XL:F?X length of one week"
+            , "YL:F?Y length of one week"
             , "year:I=%d?Year for which to process calendar" % (year, )
             )
         , max_args    = 0
@@ -237,16 +250,26 @@ def _main (cmd) :
     if tail < 0 :
         tail += len (Y.weeks)
     file_name = sos.path.join (path, cmd.filename)
-    CAL.read_plan         (Y, file_name)
-    pdf_name = Filename       (cmd.pdf, ".pdf").name
+    CAL.read_plan (Y, file_name)
+    pdf_name = Filename (cmd.pdf or ("plan_%s.pdf" % year), ".pdf").name
     if cmd.landscape :
-        PDF_Plan_L (Y, pdf_name, head - wd, tail + 1 - wd, 3, 1)
+        PDF_Plan_L \
+            ( Y, pdf_name, head - wd, tail + 1 - wd
+            , wpx = 3
+            , wpy = 1
+            , xl  = cmd.XL
+            , yl  = cmd.YL
+            )
     else :
-        PDF_Plan   (Y, pdf_name, head - wd, tail + 1 - wd)
-    print Y.weeks [0].number, cmd.head_week, head - wd, cmd.tail_week, tail + 1 - wd
+        PDF_Plan \
+            ( Y, pdf_name, head - wd, tail + 1 - wd
+            , xl  = cmd.XL
+            , yl  = cmd.YL
+            )
 # end def _main
 
 """
+$ export PYTHONPATH=$PYTHONPATH:/swing/private/tanzer/ttt/lib/old/pdfgen
 $ python pdf.py -year 2005 -landscape
 ### generates a
 """
