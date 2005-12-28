@@ -57,6 +57,9 @@
 #    24-Mar-2005 (CT) `U_Test` scaffolding removed (use `run_doctest` instead)
 #    25-Mar-2005 (MG) Import of `Filename` changed
 #    14-Sep-2005 (CT) `kw` added to `Scope.__init__`
+#    28-Dec-2005 (CT) `Scope.eval` added
+#    28-Dec-2005 (CT) `Scope.__getitem__` changed to raise `KeyError` instead
+#                     of `NameError`
 #    ««revision-date»»···
 #--
 
@@ -154,11 +157,18 @@ class Scope (TFL.Meta.Object) :
         self.locals  = locls
     # end def __init__
 
+    def eval (self, expression, globs = {}) :
+        return eval (expression, globs, self)
+    # end def eval
+
     def __getitem__ (self, index) :
         ### following Skip Montanaro, we interpolate `self` first to allow
         ### nested `%(expression)s`, ### e.g., "%(2*(%(3*4)s))s" % Scope ()
         index = index % self
-        return eval (index, self.globals, self.locals)
+        try :
+            return eval (index, self.globals, self.locals)
+        except NameError :
+            raise KeyError, index
     # end def __getitem__
 
     def __getattr__ (self, name) :
