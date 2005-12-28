@@ -45,6 +45,7 @@
 #    13-Aug-2005 (MG) `Toggle_Cell` added
 #    13-Aug-2005 (MG) Add `AC` to the creation of the renderer instance
 #    13-Aug-2005 (MG) Set the `renderer` attribute for the cell
+#    28-Dec-2005 (MG) `Column.Column_Widget` added and used
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,9 @@ class Toggle_Cell (Cell) :
 class Column (TFL.Meta.Object) :
     """Specifies the properties of on column displayed by the TNS.Tree"""
 
-    default_attributes = dict \
+    Column_Widget       = "Tree_View_Column"
+
+    default_attributes  = dict \
         ( visible       = True
         , clickable     = True
         , resizable     = True
@@ -192,7 +195,8 @@ class Column (TFL.Meta.Object) :
     # end def setup_column_types
 
     def add_column (self, tree) :
-        self.column = column = tree.TNS.Tree_View_Column (self.title)
+        self.column = column = getattr \
+            (tree.TNS, self.Column_Widget) (title = self.title, AC = tree.AC)
         for name in ( "alignment"
                     , "clickable"
                     , "visible"

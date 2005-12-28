@@ -129,12 +129,13 @@
 #    14-Sep-2005 (CT) `_get_header_` moved back to `_Msg_Part_`
 #    15-Sep-2005 (CT) `Msg_Scope._get_attr_` factored and
 #                     `Msg_Scope.__getattr__` added
-#    15-Sep-2005 (MG) `Msg_Scope.__init__`: only assign `u""` to number of
-#                     `msg.number` is None (at not `0`)
+#    15-Sep-2005 (MG) `Msg_Scope.__init__`: only assign `u""` to number if
+#                     `msg.number` is None (and not `0`)
 #    16-Sep-2005 (CT) `Msg_Scope._get_attr_` changed to delegate to `msg`
 #                     (and caching of `msg` attributes removed from `__init__`)
 #    16-Sep-2005 (CT) `_Msg_Part_.scope` added as `Lazy_Property`
 #    17-Sep-2005 (CT) `% Msg_Scope (self)` replaced by `% self.scope`
+#    28-Dec-2005 (MG) `Msg_Scope._get_attr_` catch `KeyError` as well
 #    ««revision-date»»···
 #--
 
@@ -188,7 +189,7 @@ class Msg_Scope (TFL.Caller.Scope) :
     def _get_attr_ (self, name) :
         try :
             return self.__super.__getitem__ (name)
-        except NameError :
+        except (NameError, KeyError) :
             key    = name.lower ()
             getter = getattr (self.__class__, "_get_%s" % key, None)
             if callable (getter) :

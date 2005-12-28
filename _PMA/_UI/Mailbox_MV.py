@@ -40,7 +40,9 @@
 #    31-Jul-2005 (CT) Styles changed (and style names fixed)
 #    15-Sep-2005 (CT) `root_children` changed to return `Msg_Scope` instances
 #    16-Sep-2005 (MG) `root_children` changed to use `.scope` property of
-#                     message 
+#                     message
+#    28-Dec-2005 (MG) `Message_Cell._style` fixed (a msg_scope is now passed
+#                     instead of the message object)
 #    ««revision-date»»···
 #--
 
@@ -88,9 +90,10 @@ class Message_Cell (PMA.UI.Text_Cell) :
         , no_wrap       = ("single-paragraph-mode", bool, True)
         )
 
-    def _style (self, message, office = None) :
-        pending = message.pending
-        if message.status.unseen :
+    def _style (self, msg_scope, office = None) :
+        msg     = msg_scope.msg
+        pending = msg.pending
+        if msg.status.unseen :
             return self.Unseen
         if pending.deleted :
             return self.Deleted
@@ -101,8 +104,8 @@ class Message_Cell (PMA.UI.Text_Cell) :
         return self.Normal
     # end def _style
 
-    def _style_get (self, message, attr_name, office = None) :
-        return getattr (self._style (message, office), attr_name)
+    def _style_get (self, msg_scope, attr_name, office = None) :
+        return getattr (self._style (msg_scope, office), attr_name)
     # end def _style_get
 
 # end class Message_Cell

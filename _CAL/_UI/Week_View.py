@@ -42,7 +42,8 @@ import _CAL.Date
 class _CAL_Column_ (CAL.UI.Column) :
     """A day column."""
 
-    _real_name = "Column"
+    _real_name    = "Column"
+    Column_Widget = "Day_Column"
 
     default_attributes = dict \
         ( visible       = True

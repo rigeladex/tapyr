@@ -33,6 +33,7 @@
 #    18-May-2005 (MG) Don't used `Pack_Mixin` (pack does not support the
 #                     `fill` property)
 #    17-Jun-2005 (MG) `set_cell_function` and `set_renderer_attributes` added
+#    28-Dec-2005 (MG) `widget` property fixed
 #    ««revision-date»»···
 #--
 
@@ -56,23 +57,23 @@ class Tree_View_Column (GTK.Object) :
 
     GTK_Class        = GTK.gtk.TreeViewColumn
     __gtk_properties = \
-        ( GTK.SG_Property  ("alignment")
-        , GTK.SG_Property  ("clickable")
-        , GTK.SG_Property  ("expand")
-        , GTK.SG_Property  ("fixed_width")
-        , GTK.SG_Property  ("max_width")
-        , GTK.SG_Property  ("min_width")
-        , GTK.SG_Property  ("reorderable")
-        , GTK.SG_Property  ("resizable")
-        , GTK.SG_Property  ("sizing")
-        , GTK.SG_Property  ("sort_column_id")
-        , GTK.SG_Property  ("sort_indicator")
-        , GTK.SG_Property  ("sort_order")
-        , GTK.SG_Property  ("spacing")
-        , GTK.SG_Property  ("title")
-        , GTK.SG_Property  ("visible")
-        , GTK.SG_Property  ("widget")
-        , GTK.SG_Property  ("width", set = None)
+        ( GTK.SG_Property        ("alignment")
+        , GTK.SG_Property        ("clickable")
+        , GTK.SG_Property        ("expand")
+        , GTK.SG_Property        ("fixed_width")
+        , GTK.SG_Property        ("max_width")
+        , GTK.SG_Property        ("min_width")
+        , GTK.SG_Property        ("reorderable")
+        , GTK.SG_Property        ("resizable")
+        , GTK.SG_Property        ("sizing")
+        , GTK.SG_Property        ("sort_column_id")
+        , GTK.SG_Property        ("sort_indicator")
+        , GTK.SG_Property        ("sort_order")
+        , GTK.SG_Property        ("spacing")
+        , GTK.SG_Property        ("title")
+        , GTK.SG_Property        ("visible")
+        , GTK.SG_Object_Property ("widget")
+        , GTK.SG_Property        ("width", set = None)
         , GTK.SG_Object_List_Property
             ("renderers", set = None, get_fct_name = "get_cell_renderers")
         )

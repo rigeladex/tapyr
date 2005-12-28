@@ -1,0 +1,15 @@
+style "small-text"
+{
+  font = "-*-courier-*-r-normal-*-20-*-*-*-*-*-*-*"
+}
+
+style "nice-treeview"
+{
+  GtkTreeView::horizontal-separator = 0
+  GtkTreeView::vertical-separator   = 0
+  GtkTreeView::focus-line-width     = 0
+}
+
+
+class "GtkTreeView" style "nice-treeview"
+class "GtkLabel"    style "small-text"

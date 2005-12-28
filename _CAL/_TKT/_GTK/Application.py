@@ -40,6 +40,7 @@ import _TGL._TKT._GTK.Application
 import _CAL._TKT
 import _CAL._TKT._GTK
 import _CAL._TKT._GTK.Day_Cell_Renderer
+import _CAL._TKT._GTK.Day_Column
 
 ### XXX todo
 ### - Clipboard
