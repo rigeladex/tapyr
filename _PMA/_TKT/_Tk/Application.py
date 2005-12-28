@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-May-2005 (CT) Creation
 #    22-May-2005 (CT) `virtual_key_name` removed
+#    28-Dec-2005 (MG) `_setup_event_binder` added
 #    ««revision-date»»···
 #--
 
@@ -198,8 +199,12 @@ class Application (PMA.TKT.Application) :
             , parent  = self.gui
             , tearoff = False
             )
-        return result
+        return dict (cm = result)
     # end def _setup_context_menu
+
+    def _setup_event_binder (self) :
+        return {} ### no event binder in TK at the moment
+    # end def _setup_event_binder
 
     def _setup_geometry (self) :
         for p in self.o_pane, self.body_l, self.body_r :

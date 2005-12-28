@@ -1,0 +1,294 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2005 Martin Glück. All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
+#
+#++
+# Name
+#    CAL.iCalendar
+#
+# Purpose
+#    A wrapper around the iCalender library.
+#
+# Revision Dates
+#    07-Dec-2005 (MG) Creation
+#    ««revision-date»»···
+#--
+#
+from   _TFL              import TFL
+import _TFL._Meta.Object
+import _TFL._Meta.Property
+import _TFL._Meta.M_Class
+
+from   _CAL              import CAL
+import _CAL.Date_Time
+
+import icalendar
+
+class Undefined (object) :
+
+    def __str__ (self) :
+        return "UNDEFINED"
+    # end def __str__
+
+# end class Undefined
+
+class Email (TFL.Meta.Object) :
+    """Convert an icalendar vCalAddress property"""
+
+    properties = ("rsvp", "role", "parstat", "cn")
+
+    def __init__ (self, ical) :
+        self.address = str (ical).replace ("mailto:", "")
+        for p in self.properties :
+            setattr (self, p, ical.params.get (p, None))
+        self.name = self.address.split ("@") [0].replace (".", " ")
+    # end def __init__
+
+    def __repr__ (self) :
+        if self.role :
+            return "%-15s: %s" % (self.role, self.name)
+        return self.name
+    # end def __repr__
+    __str__ = __repr__
+
+    def __cmp__ (self, other) :
+        s = self.address,                      self.role
+        o = getattr (other, "address", other), getattr (other, "role", other)
+        return cmp (s, o)
+    # end def __cmp__
+
+    def __hash__ (self) :
+        return id (self)
+    # end def __hash__
+
+# end class Email
+
+class ICal_Prop (TFL.Meta.Property) :
+    """Proviedes access to the properties of the ical object."""
+
+    conversion = \
+        { icalendar.prop.vText       : str
+        , icalendar.prop.vDDDTypes   : CAL.Date_Time.from_ical
+        , icalendar.prop.vCalAddress : Email
+        }
+
+    undefined = Undefined ()
+
+    def get_value (self, obj) :
+        value = obj._attributes.get (self.name, self.undefined)
+        if value is self.undefined :
+            value = self._get_value (obj)
+            obj._attributes [self.name] = value
+        return value
+    # end def get_value
+    _get = get_value
+
+    def _get_value (self, obj) :
+        try :
+            value = obj._icomp [self.name]
+        except KeyError, exc:
+            raise AttributeError, exc
+        if value.__class__ in self.conversion :
+            value = self.conversion [value.__class__] (value)
+        return value
+    # end def _get_value
+
+# end class ICal_Prop
+
+class ICal_Multi_Prop (ICal_Prop) :
+    """A property which should be a list of values."""
+
+    def _get_value (self, obj) :
+        try :
+            values = obj._icomp [self.name]
+        except KeyError, exc:
+            raise AttributeError, exc
+        if not isinstance (values, (list, tuple)) :
+            values = (values, )
+        result = []
+        for value in values :
+            if value.__class__ in self.conversion :
+                value = self.conversion [value.__class__] (value)
+            result.append (value)
+        return result
+    # end def _get_value
+
+# end class ICal_Multi_Prop
+
+class M_ICalendar (TFL.Meta.M_Class) :
+    """Meta class for the wrapper for the icalendar classes."""
+
+    prop_conversion = {}
+
+    def __init__ (cls, name, bases, dict) :
+        super (M_ICalendar, cls).__init__ (name, bases, dict)
+        wrapped                 = cls.wrapped
+        cls.properties          = ()
+        if wrapped :
+            cls.Table [wrapped] = cls
+            cls.singletons      = set (n.lower () for n in wrapped.singletons)
+            cls.multi           = set (n.lower () for n in wrapped.multiple)
+            cls.required        = set (n.lower () for n in wrapped.required)
+            props_name          = cls.required.union (cls.multi)
+            props_name          = props_name.union   (cls.singletons)
+            cls.properties      = []
+            for pn in props_name :
+                cls.properties.append (pn)
+                if pn in cls.multi :
+                    prop = ICal_Multi_Prop (pn)
+                else :
+                    prop = ICal_Prop       (pn)
+                setattr                    (cls, pn, prop)
+    # end def __init__
+
+# end class M_ICalendar
+
+class _Component_ (TFL.Meta.Object) :
+    """Root class for all icalendar component wrapper"""
+
+    __metaclass__   = M_ICalendar
+    wrapped         = None # needs to be set by all descendants
+    Table           = {}
+
+    def __init__ (self, * args, ** kw) :
+        self._attributes = {}
+        self.__super.__init__ ()
+        self._icomp   = self._create_wrapped (* args, ** kw)
+        self.children = []
+        for c in self._icomp.subcomponents :
+            if c.__class__ in self.Table :
+                self.children.append (self.Table [c.__class__] (_icomp = c))
+            else :
+                self.children.append (c)
+    # end def __init__
+
+    def _create_wrapped (self, * args, ** kw) :
+        if "_icomp" in kw :
+            return kw ["_icomp"]
+        return self.wrapped (* args, ** kw)
+    # end def _create_wrapped
+
+    def ical (self) :
+        return self._icomp.ical ()
+    # end def ical
+
+    def diff (self, other) :
+        result     = []
+        undefined = ICal_Prop.undefined
+        for p in self.properties :
+            ps = getattr (self,  p, undefined)
+            po = getattr (other, p, undefined)
+            if ps != po :
+                loc = "%s.%s" % (self.__class__.__name__, p)
+                result.append ((loc, ps, po))
+        for sc, oc in zip (self.children, other.children) :
+            result.extend (sc.diff (oc))
+        return result
+    # end def diff
+
+    name_length = 16
+
+    def formatted (self, level = 0) :
+        intent     = " " * level
+        result     = []
+        for p in self.properties :
+            try :
+                value = getattr (self, p)
+                if p in self.multi :
+                    value = \
+                        ( "\n%s" % (" " * (3 + self.name_length + level))
+                        ).join (str (v) for v in value)
+                result.append \
+                    ( "%s  %-*s = %s"
+                    % (intent, self.name_length - level, p, value)
+                    )
+            except AttributeError :
+                pass ### ignore not set properties
+        children = []
+        for c in self.children :
+            text = c.formatted (level = level + 2)
+            if text :
+                children.append (text)
+        if result or children :
+            result.insert (0, "%s<%s>" % (intent, self.__class__.__name__))
+            result.extend (children)
+            result.append ("%s</%s>"   % (intent, self.__class__.__name__))
+        return "\n".join (result)
+    # end def formatted
+
+    def __str__ (self) :
+        return self.formatted ()
+    # end def __str__
+
+# end class _Component_
+
+class Calendar (_Component_) :
+    """Wrapper around the iCalenader.Calendar object"""
+
+    wrapped         = icalendar.Calendar
+
+    def _create_wrapped (self, filename = None, * args, ** kw) :
+        if filename :
+            return self.wrapped.from_string \
+                (open (filename, "rb").read ())
+        else :
+            return self.__super._create_wrapped (* args, ** kw)
+    # end def __init__
+
+# end class Calendar
+
+for ical_cls in ( icalendar.cal.Component
+                , icalendar.Event
+                , icalendar.Alarm
+                , icalendar.Timezone
+                , icalendar.Todo
+                , icalendar.Journal
+                , icalendar.FreeBusy
+                ) :
+    type (_Component_) \
+        ( ical_cls.__name__, (_Component_, ),
+          dict ( wrapped     = ical_cls
+               , __module__  = _Component_.__module__
+               )
+        )
+
+if __name__ == "__main__" :
+    import _TFL.Command_Line
+
+    cmd = TFL.Command_Line \
+        ( arg_spec    = ( "ical_file:S"
+                        , "ical_file_old:S"
+                        )
+        , min_args    = 1
+        , max_args    = 2
+        , help_on_err = True
+        )
+    cal = Calendar (cmd.ical_file)
+    print cal
+    if cmd.ical_file_old :
+        old = Calendar (cmd.ical_file_old)
+        width = (17, 30, 30)
+        format = " ".join ("%%-%ds" % (w, ) for w in width)
+        sep    = " ".join ("~" * w for w in width)
+        print
+        print format % ("WHERE", "OLD", "NEW")
+        print sep
+        for where, new, old in cal.diff (old) :
+            print format % (where, old, new)
+### __END__ iCalendar

@@ -29,6 +29,7 @@
 #    20-May-2005 (CT) Creation
 #    21-May-2005 (MG) `batch` command line option replaced by `interface`
 #     3-Jun-2005 (MG) `max_args` set to `0`
+#    28-Dec-2005 (MG) Default `interface` changed to `GTK`
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,7 @@ class Starter (PMA.UI.Mixin) :
     max_args             = 0
     process_keywords     = True
     Opts                 = \
-        [ "-interface:S=Tk?Run the tool using this toolkit for the GUI"
+        [ "-interface:S=GTK?Run the tool using this toolkit for the GUI"
         , "-commands:S,?"
             """Command(s) to run after mailboxes are loaded."""
         , "-prescripts:S,?"

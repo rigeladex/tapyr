@@ -51,6 +51,7 @@
 #    30-Jul-2005 (MG) `_Mailbox_.pending` added
 #    30-Jul-2005 (MG) `Mailbox.add_messages`: set `path` of the new message
 #     1-Aug-2005 (MG) `Maildir.add_messages` added
+#    28-Dec-2005 (MG) `_Mailbox_.name_sep` added and used
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,7 @@ import time
 class _Mailbox_ (TFL.Meta.Object) :
     """Root class for mailbox classes"""
 
+    name_sep           = "/"
     messages           = property (lambda s : s._get_messages ())
     msg_dict           = property \
         (lambda s : (s._get_messages (), s._msg_dict) [-1])
@@ -96,7 +98,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         if prefix is None :
             qname      = name
         else :
-            qname      = "/".join ((prefix, name))
+            qname      = self.name_sep.join ((prefix, name))
         self.name      = name
         self.qname     = qname
         self.path      = path

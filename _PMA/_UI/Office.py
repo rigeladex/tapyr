@@ -75,6 +75,8 @@
 #    28-Dec-2005 (CT) `_message_command` fixed (pass `msg_scope` instead of
 #                     `msg` to `view.update`)
 #    28-Dec-2005 (CT) Output format of `_message_command` and `_commit` changed
+#    28-Dec-2005 (MG) `select_box`: new parameter `force` added
+#    28-Dec-2005 (MG) `_restore_selection` fixed
 #    ««revision-date»»···
 #--
 
@@ -455,13 +457,13 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self.mb_msg_view.selection.all ()
     # end def select_all_messages
 
-    def select_box (self, event = None) :
+    def select_box (self, event = None, force = False) :
         curr_box = self.office.status.current_box
         if event and isinstance (event.widget, self.TNS.Tree) :
             tree = event.widget
         else :
             if curr_box :
-                tree = keyboard-quitself.box_views [curr_box.root]
+                tree = self.box_views [curr_box.root]
             else :
                 return
         selection = tree.selection
@@ -471,7 +473,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         box      = selection [0]
         if curr_box and curr_box.root != box.root :
            self.box_views [curr_box.root].selection = ()
-        if self.office.status.current_box != box :
+        if force or self.office.status.current_box != box :
             self.office.status.current_box = box
             self.mb_msg_view.update_model (box)
             if box.status.current_message :
@@ -580,10 +582,11 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def _restore_selection (self) :
         box   = self.office.status.current_box
         if box :
-            name  = ""
+            names  = []
             view  = self.box_views [box.root]
-            for b_name in box.qname.split (TFL.sos.path.sep) :
-                name = TFL.sos.path.join  (name, b_name)
+            for b_name in box.qname.split (PMA.Mailbox.name_sep) :
+                names.append (b_name)
+                name = PMA.Mailbox.name_sep.join  (names)
                 try :
                     box  = PMA.Mailbox.instance (name)
                     view.see                    (box)
@@ -592,6 +595,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                     ### own mailbox object
                     pass
             view.selection = box
+            self.select_box (force = True)
     # end def _restore_selection
 
     def _select_message (self, msg = None, scope = None) :

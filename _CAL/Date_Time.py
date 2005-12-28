@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Oct-2004 (CT) Creation
 #    17-Oct-2004 (CT) Adapted to changes in `_DTW_` and `Delta`
+#    28-Dec-2005 (MG) Static method `from_ical` added
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,17 @@ class Date_Time (CAL.Date, CAL.Time) :
     _timetuple_slice = lambda s, tt : tt [:6] + (0, )
 
     from _CAL.Delta import Date_Time_Delta as Delta
+
+    @staticmethod
+    def from_ical (ical) :
+        for p_cls, tgl_cls in \
+            ( (datetime.datetime,   CAL.Date_Time)
+            , (datetime.date,       CAL.Date)
+            , (datetime.timedelta,  CAL.Time_Delta)
+            ) :
+            if isinstance (ical.dt, p_cls) :
+                return tgl_cls (** {tgl_cls._kind : ical.dt})
+    # end def from_ical
 
 # end class Date_Time
 
