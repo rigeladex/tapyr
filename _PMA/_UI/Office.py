@@ -71,7 +71,10 @@
 #    13-Aug-2005 (MG) `Command_Definition` factored
 #    14-Aug-2005 (MG) `_setup_commands` replaced by `command_bindings`
 #    16-Sep-2005 (MG) Change to use new `Msg_Scope` object provided by
-#                     `mb_msg_view` 
+#                     `mb_msg_view`
+#    28-Dec-2005 (CT) `_message_command` fixed (pass `msg_scope` instead of
+#                     `msg` to `view.update`)
+#    28-Dec-2005 (CT) Output format of `_message_command` and `_commit` changed
 #    ««revision-date»»···
 #--
 
@@ -100,7 +103,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     box_view_widgets        = property \
         (lambda s : [b.tkt for b in s.box_views.itervalues ()])
     command_bindings        = dict \
-        ( mb_msg_view       = dict 
+        ( mb_msg_view       = dict
             ( context_menu  = "Message.cm_mv"
             , event_binder  = "Message.ev_mv"
             )
@@ -291,8 +294,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         """
         self._message_command \
             ( "copy"
-            , "[M] Copy message `%(cb_qname)s:%(msg_no)d` "
-              "to mailbox `%(tb_qname)s`"
+            , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
             , self.office.status.target_box
             )
     # end def copy_message
@@ -315,7 +317,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         view     = self.mb_msg_view
         self.mb_msg_view.selection = ()
         for msg in messages :
-            text.append ("%s:%s" % (msg.mailbox.qname, msg.number))
+            text.append (str (msg.number))
             update = True
             if msg.pending.deleted or msg.pending.moved :
                 update = False
@@ -325,14 +327,14 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 view.update (msg.scope)
         for box in boxes :
             self.box_views [box.root].update (box)
-        print "%s committed" % ", ".join (text)
+        print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
     # end def _commit
 
     def delete_message (self, event = None) :
         """Delete the currently selected message from this mailbox."""
         self._message_command \
             ( "delete"
-            , "[M] Delete message `%(cb_qname)s:%(msg_no)d`"
+            , "Mark `%(cb_qname)s` for %(cmd)s:"
             , self.office.status.current_box
             )
     # end def delete_message
@@ -342,8 +344,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
            the default target mailbox."""
         self._message_command \
             ( "move"
-            , "[M] Move message `%(cb_qname)s:%(msg_no)d` "
-              "to mailbox `%(tb_qname)s`"
+            , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
             , self.office.status.current_box
             , self.office.status.target_box
             )
@@ -534,17 +535,21 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         status   = self.office.status
         view     = self.mb_msg_view
         scopes   = self.mb_msg_view.selection
-        if not len (scopes) :
+        if not len (scopes) : ### XXX add __nonzero__ to scopes.__class__ to
+                              ### avoid the need for `len`
             scopes = (status.current_box.status.current_message.scope, )
-        for msg_scope in scopes :
-            msg    = msg_scope.msg
-            result = getattr (msg.pending, cmd) (* args)
+        if scopes :
             print text % dict \
-                ( cb_qname = status.current_box.qname
-                , msg_no   = msg_scope.number
-                , tb_qname = getattr (status.target_box, "qname", "")
-                )
-            view.update  (msg)
+                    ( cb_qname = status.current_box.qname
+                    , cmd      = cmd
+                    , tb_qname = getattr (status.target_box, "qname", "")
+                    ),
+            for msg_scope in scopes :
+                msg    = msg_scope.msg
+                result = getattr (msg.pending, cmd) (* args)
+                print msg_scope.number,
+                view.update  (msg_scope)
+            print
         next = view.next ()
         if next :
             view.see               (next)
@@ -562,10 +567,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def unmark_message (self, event = None) :
         """Reset all pending actions for the selected message."""
-        self._message_command \
-            ( "reset"
-            , "Unmark message `%(cb_qname)s:%(msg_no)d`"
-            )
+        self._message_command ("reset", "Unmark `%(cb_qname)s`:")
     # end def unmark_message
 
     def _display_message (self, mailbox) :
