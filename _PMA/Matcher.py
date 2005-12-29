@@ -39,10 +39,8 @@ import _TFL._Meta.Object
 class Matcher (TFL.Meta.Object) :
     """Match PMA.Messages with predicate
 
-       >>> from _PMA.Matcher import *
        >>> import _TFL.Caller
        >>> import _TFL.Regexp
-       >>>
        >>> class Tester (TFL.Meta.Object) :
        ...     def __init__ (self, ** kw) :
        ...         self.kw = dict (kw)

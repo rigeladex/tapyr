@@ -111,7 +111,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         else :
             raise KeyError, "Duplicate mailbox name %s <-> %s" % \
                 (self.path, self._Table [qname].path)
-        self.status    = status = PMA.Box_Status (self)
+        self.status = status = PMA.Box_Status (self)
         if self.supports_status :
             self.status_fn = fn = sos.path.join (path, ".status")
             status.load (fn)
@@ -124,7 +124,7 @@ class _Mailbox_ (TFL.Meta.Object) :
     # end def commit
 
     def commit_all (self, transitive = False) :
-        """Commit the pending actions all messages"""
+        """Commit the pending actions of all messages"""
         for msg in self._msg_dict.itervalues () :
             if msg.pending :
                 msg.pending.commit ()
@@ -161,7 +161,7 @@ class _Mailbox_ (TFL.Meta.Object) :
     # end def sort
 
     def summary (self, format = "%-99.99s") :
-        return "\n".join ([format % m.summary () for m in self.messages])
+        return "\n".join (format % m.summary () for m in self.messages)
     # end def summary
 
     def _add (self, * messages) :
