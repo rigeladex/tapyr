@@ -165,10 +165,10 @@ class Scope (TFL.Meta.Object) :
         ### following Skip Montanaro, we interpolate `self` first to allow
         ### nested `%(expression)s`, ### e.g., "%(2*(%(3*4)s))s" % Scope ()
         index = index % self
-        try :
-            return eval (index, self.globals, self.locals)
-        except NameError :
-            raise KeyError, index
+#        try :
+        return eval (index, self.globals, self.locals)
+#        except NameError :
+#            raise KeyError, index
     # end def __getitem__
 
     def __getattr__ (self, name) :
