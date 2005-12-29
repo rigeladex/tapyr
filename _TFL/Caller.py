@@ -60,6 +60,8 @@
 #    28-Dec-2005 (CT) `Scope.eval` added
 #    28-Dec-2005 (CT) `Scope.__getitem__` changed to raise `KeyError` instead
 #                     of `NameError`
+#    29-Dec-2005 (CT) `Object_Scope.__getitem__` changed to catch `KeyError`
+#                     instead of `NameError`
 #    ««revision-date»»···
 #--
 
@@ -165,10 +167,10 @@ class Scope (TFL.Meta.Object) :
         ### following Skip Montanaro, we interpolate `self` first to allow
         ### nested `%(expression)s`, ### e.g., "%(2*(%(3*4)s))s" % Scope ()
         index = index % self
-#        try :
-        return eval (index, self.globals, self.locals)
-#        except NameError :
-#            raise KeyError, index
+        try :
+            return eval (index, self.globals, self.locals)
+        except NameError :
+            raise KeyError, index
     # end def __getitem__
 
     def __getattr__ (self, name) :
@@ -221,7 +223,7 @@ class Object_Scope (Scope) :
     def __getitem__ (self, index) :
         try :
             return self.__super.__getitem__ (index)
-        except NameError :
+        except KeyError :
             o = self.object
             for k in index.split (".") :
                 o = getattr (o, k)
