@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Dec-2005 (CT) Creation
+#    29-Dec-2005 (CT) doctest extended
 #    ««revision-date»»···
 #--
 
@@ -44,13 +45,17 @@ class Matcher (TFL.Meta.Object) :
        >>>
        >>> class Tester (TFL.Meta.Object) :
        ...     def __init__ (self, ** kw) :
+       ...         self.kw = dict (kw)
        ...         self.scope = TFL.Caller.Scope (globs = kw)
+       ...     def __repr__ (self) :
+       ...         items = [str (v) for (k, v) in sorted (self.kw.items ())]
+       ...         return "(%s)" % (", ".join (items,))
        ...
-       >>> t1 = Tester (sender = "foo", receiver = "bar", spam_score = 0.0)
-       >>> t2 = Tester (sender = "foo", receiver = "baz", spam_score = 0.1)
-       >>> t3 = Tester (sender = "bar", receiver = "baz", spam_score = 0.2)
-       >>> t4 = Tester (sender = "bar", receiver = "foo", spam_score = 0.2)
-       >>> t5 = Tester (sender = "baz", receiver = "foo", spam_score = 0.9)
+       >>> t1 = Tester (sender = "foo", receiver = "bar", spam_score = 0.00)
+       >>> t2 = Tester (sender = "foo", receiver = "baz", spam_score = 0.10)
+       >>> t3 = Tester (sender = "bar", receiver = "baz", spam_score = 0.25)
+       >>> t4 = Tester (sender = "bar", receiver = "foo", spam_score = 0.25)
+       >>> t5 = Tester (sender = "baz", receiver = "foo", spam_score = 0.90)
        >>> t6 = Tester (sender = "baz", receiver = "bar", spam_score = 0.99)
        >>> ts = t1, t2, t3, t4, t5, t6
        >>> m1 = Matcher ("sender == 'foo'")
@@ -62,6 +67,12 @@ class Matcher (TFL.Meta.Object) :
        [False, False, False, False, True, True]
        >>> [m3.match (t) for t in ts]
        [True, True, True, False, False, True]
+       >>> list (m1.filter (* ts))
+       [(bar, foo, 0.0), (baz, foo, 0.1)]
+       >>> list (m2.filter (* ts))
+       [(foo, baz, 0.9), (bar, baz, 0.99)]
+       >>> list (m3.filter (* ts))
+       [(bar, foo, 0.0), (baz, foo, 0.1), (baz, bar, 0.25), (bar, baz, 0.99)]
        >>> ma = m1 + m2 + m3
        >>> [ma.match (t) for t in ts]
        [False, False, False, False, False, False]

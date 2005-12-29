@@ -136,6 +136,11 @@
 #    16-Sep-2005 (CT) `_Msg_Part_.scope` added as `Lazy_Property`
 #    17-Sep-2005 (CT) `% Msg_Scope (self)` replaced by `% self.scope`
 #    28-Dec-2005 (MG) `Msg_Scope._get_attr_` catch `KeyError` as well
+#    29-Dec-2005 (CT) `Msg_Scope._get_sender_` factored
+#    29-Dec-2005 (CT) `Msg_Scope._get_sender_addr` added
+#    29-Dec-2005 (CT) `list_id`, `sb_vote`, `spam_flag` added to `_header_map`
+#    29-Dec-2005 (CT) `Msg_Scope._get_sb_score`, `._get_is_spam`, and
+#                     `._get_maybe_spam` added
 #    ««revision-date»»···
 #--
 
@@ -231,6 +236,32 @@ class Msg_Scope (TFL.Caller.Scope) :
             return time.strftime (format, time.localtime (t))
     # end def _get_date
 
+    def _get_is_spam (self) :
+        msg    = self.msg
+        result = ""
+        flag   = msg._get_header_ ("spam_flag", "")
+        if flag and flag.lower () == "yes" :
+            result = "yes"
+        else :
+            sb_score = self._get_sb_score ()
+            if sb_score and float (sb_score) > 0.75 :
+                result = "yes"
+        return result
+    # end def _get_is_spam
+
+    def _get_maybe_spam (self) :
+        msg    = self.msg
+        result = ""
+        flag   = msg._get_header_ ("spam_flag", "")
+        if flag and flag.lower () not in ("no", "yes") :
+            result = "yes"
+        else :
+            sb_score = self._get_sb_score ()
+            if sb_score and 0.20 < float (sb_score) <= 0.75 :
+                result = "yes"
+        return result
+    # end def _get_maybe_spam
+
     def _get_reply_address_cc (self) :
         email  = self.msg.email
         result = []
@@ -239,18 +270,37 @@ class Msg_Scope (TFL.Caller.Scope) :
         return ", \n             ".join (r for r in result if r)
     # end def _get_reply_address_cc
 
-    def _get_sender_name (self) :
+    def _get_sb_score (self) :
+        sb_vote = self.msg._get_header_ ("sb_vote", "")
+        if sb_vote :
+            i, w = [x.strip () for x in sb_vote.split (";")]
+            return w
+        return ""
+    # end def _get_sb_score
+
+    def _get_sender_ (self) :
         msg    = self.msg
+        result = (None, None)
         sender = msg._get_header_ ("sender", "Sender")
         if sender is None :
             sender = msg.email.get_unixfrom ()
         if sender is not None :
             result = \
-                (  filter (None, Lib.getaddresses ((sender, )) [0])
-                or (None, )
-                ) [0]
-            if result is not None :
-                return decoded_header (result)
+                (filter (None, Lib.getaddresses ((sender, )) [0]) or result)
+        return result
+    # end def _get_sender_
+
+    def _get_sender_addr (self) :
+        result = self._get_sender_ () [1]
+        if result is not None :
+            return result
+        return ""
+    # end def _get_sender_addr
+
+    def _get_sender_name (self) :
+        result = self._get_sender_ () [0]
+        if result is not None :
+            return decoded_header (result)
         return ""
     # end def _get_sender_name
 
@@ -294,6 +344,7 @@ class _Msg_Part_ (object) :
     _header_map         = dict \
         ( delivery_date = ("Delivery-date")
         , in_reply_to   = ("In-reply-to", )
+        , list_id       = ("List-id", )
         , message_date  = ("Date", "Delivery-date")
         , message_id    = ("Message-id", "References")
         , receiver      = ("to", "envelope-to")
@@ -306,6 +357,8 @@ class _Msg_Part_ (object) :
             , "Return-path"
             )
         , sender        = ("From", "Reply-To", "Sender", "Return-path")
+        , sb_vote       = ("X-spambayes-classification", )
+        , spam_flag     = ("X-spam-flag", )
         )
 
     def __init__ (self, email, name) :
@@ -394,7 +447,7 @@ class _Msg_Part_ (object) :
         name = name.capitalize ()
         for r in result :
             yield name, r
-    # end def _get_header
+    # end def _get_headers
 
     def _save (self, filename, body) :
         if body :

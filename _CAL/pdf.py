@@ -270,7 +270,6 @@ def _main (cmd) :
 
 """
 $ export PYTHONPATH=$PYTHONPATH:/swing/private/tanzer/ttt/lib/old/pdfgen
-$ python pdf.py -year 2006 -landscape -XL 8.5 -YL 16.9
 $ python pdf.py -year 2006 -landscape -XL 9.2 -YL 18.3
 ### generates a
 """
