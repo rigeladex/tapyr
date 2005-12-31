@@ -43,6 +43,8 @@
 #                     message
 #    28-Dec-2005 (MG) `Message_Cell._style` fixed (a msg_scope is now passed
 #                     instead of the message object)
+#    31-Dec-2005 (CT) `_style` changed to give `Unseen` lower priority than
+#                     `Deleted`, `Copied`, and `Moved`
 #    ««revision-date»»···
 #--
 
@@ -93,14 +95,14 @@ class Message_Cell (PMA.UI.Text_Cell) :
     def _style (self, msg_scope, office = None) :
         msg     = msg_scope.msg
         pending = msg.pending
-        if msg.status.unseen :
-            return self.Unseen
         if pending.deleted :
             return self.Deleted
         if pending.copied :
             return self.Copied
         if pending.moved:
             return self.Moved
+        if msg.status.unseen :
+            return self.Unseen
         return self.Normal
     # end def _style
 

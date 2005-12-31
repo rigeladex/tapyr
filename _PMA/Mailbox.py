@@ -52,6 +52,10 @@
 #    30-Jul-2005 (MG) `Mailbox.add_messages`: set `path` of the new message
 #     1-Aug-2005 (MG) `Maildir.add_messages` added
 #    28-Dec-2005 (MG) `_Mailbox_.name_sep` added and used
+#    31-Dec-2005 (CT)  `_Mailbox_in_Dir_._files` factored from
+#                      `Mailbox.MB_Type`
+#    31-Dec-2005 (CT) `Maildir._new2cur` factored
+#    31-Dec-2005 (CT) `Maildir.sync` added
 #    ««revision-date»»···
 #--
 
@@ -267,6 +271,14 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
             self.__super._copy_msg_file (message, target)
     # end def _copy_msg_file
 
+    @classmethod
+    def _files (cls, path) :
+        for f in sos.listdir_full (path) :
+            d, n = sos.path.split (f)
+            if not (n [0] in ".," or sos.path.isdir (f)) :
+                yield f
+    # end def _files
+
     def _new_email (self, fp) :
         result = self.parser.parse (fp, headersonly = True)
         result._pma_parsed_body = False
@@ -279,12 +291,15 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
         return result
     # end def _new_subbox
 
-    def _setup_messages (self) :
-        self._add \
-            (* [ self._new_message (m)
-                 for m in self.MB_Type (self.path, self._new_email)
-               ]
-            )
+    def _setup_messages (self, path = None, MB_Type = None) :
+        if path is None :
+            path = self.path
+        if MB_Type is None :
+            MB_Type = self.MB_Type
+        result = \
+            [self._new_message (m) for m in MB_Type (path, self._new_email)]
+        self._add (* result)
+        return result
     # end def _setup_messages
 
     def _subdirs (self, path) :
@@ -420,6 +435,12 @@ class Maildir (_Mailbox_in_Dir_) :
         return Record (time = t, proc = p, deli = d, host = h, info = i)
     # end def name_split
 
+    def sync (self) :
+        """Sync with `new` messages"""
+        return self._setup_messages \
+            (sos.path.join (self.path, "new"), Mailbox.MB_Type)
+    # end def sync
+
     def _new_email (self, fp) :
         result = self.__super._new_email (fp)
         d, n   = sos.path.split (fp.name)
@@ -435,20 +456,25 @@ class Maildir (_Mailbox_in_Dir_) :
         return result
     # end def _new_message
 
-    def _setup_messages (self) :
-        self.__super._setup_messages ()
+    def _new2cur (self, m) :
         join = sos.path.join
         path = self.path
-        for m in self._msg_dict.itervalues () :
+        n    = "%s:2," % (m.name, )
+        s    = join (path, "new", m.name)
+        t    = join (path, "cur", n)
+        sos.link    (s, t)
+        sos.unlink  (s)
+        m.name           = n
+        m.email._pma_dir = "cur"
+        m.path           = join (path, "cur", n)
+    # end def _new2cur
+
+    def _setup_messages (self, path = None, MB_Type = None) :
+        result = self.__super._setup_messages (path, MB_Type)
+        for m in result :
             if m.email._pma_dir == "new" :
-                n = "%s:2," % (m.name, )
-                s = join   (path, "new", m.name)
-                t = join   (path, "cur", n)
-                sos.link   (s, t)
-                sos.unlink (s)
-                m.name           = n
-                m.email._pma_dir = "cur"
-                m.path           = join (path, "cur", n)
+                self._new2cur (m)
+        return result
     # end def _setup_messages
 
     def _subdirs (self, path) :
@@ -468,15 +494,13 @@ class Mailbox (_Mailbox_in_Dir_S_) :
 
     @classmethod
     def MB_Type (cls, path, factory) :
-        for f in sos.listdir_full (path) :
-            d, n = sos.path.split (f)
-            if not (n.startswith (".") or sos.path.isdir (f)) :
-                fp = open (f)
-                try :
-                    m = factory (fp)
-                finally :
-                    fp.close ()
-                yield m
+        for f in cls._files (path) :
+            fp = open (f)
+            try :
+                m = factory (fp)
+            finally :
+                fp.close ()
+            yield m
     # end def MB_Type
 
     def add_messages (self, * messages) :
