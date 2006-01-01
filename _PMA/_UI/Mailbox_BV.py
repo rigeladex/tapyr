@@ -132,5 +132,5 @@ class Mailbox_BV (PMA.UI.Rooted_Tree) :
 # end class Mailbox_BV
 
 if __name__ != "__main__" :
-    PMA.UI._Export ("*")
+    PMA.UI._Export ("*", "_MB_TA_")
 ### __END__ PMA.UI.Mailbox_BV

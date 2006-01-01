@@ -46,6 +46,7 @@
 #                     changed to handle `path` arguments as well as `iter`
 #                     arguments
 #    16-Sep-2005 (MG) `add`: debug code added
+#    30-Dec-2005 (MG) `Filter_Model.iter` added
 #    ««revision-date»»···
 #--
 
@@ -306,7 +307,7 @@ class Sort_Model (_Proxy_Model_, GTK.Object) :
     # end def ui_object
 
     def iter (self, iter) :
-        """Converts `iter` from the an tree iter of the proxied model to
+        """Converts `iter` from the an tree iter of the sort model to
            an iter of the sort model.
         """
         return self.wtk_object.convert_child_iter_to_iter \
@@ -360,6 +361,14 @@ class Filter_Model (_Proxy_Model_, GTK.Object_Wrapper) :
         return self.model.ui_object \
             (self.wtk_object.convert_iter_to_child_iter (iter))
     # end def ui_object
+
+    def iter (self, iter) :
+        """Converts `iter` from the an tree iter of the filter model to
+           an iter of the sort model.
+        """
+        return self.wtk_object.convert_child_iter_to_iter \
+            (self.model.iter (iter))
+    # end def iter
 
 # end class Filter_Model
 

@@ -48,6 +48,7 @@
 #    29-Jul-2005 (MG) `next` and `prev` added
 #     1-Aug-2005 (MG) `update_model`: clearing of selection added
 #     6-Aug-2005 (MG) Basic DND handling added
+#    30-Dec-2005 (MG) `clone` added
 #    ««revision-date»»···
 #--
 
@@ -81,17 +82,25 @@ class _Tree_ (TGL.UI.Mixin) :
                  , multiselection = False
                  , quick_search   = True
                  , adapter_kw     = {}
+                 , tkt_model      = None
                  , AC             = None
                  ) :
         self.__super.__init__ (AC = AC)
-        TNS              = self.TNS
-        Adapter          = self.Adapter
-        self.ui_model    = None
-        self.lazy        = lazy
-        self.dnd_sources = []
-        self.dnd_targets = []
-        self.adapter_kw  = adapter_kw
-        self.tkt_model   = self.t_model = Adapter.create_model (TNS, AC)
+        TNS                  = self.TNS
+        Adapter              = self.Adapter
+        self.ui_model        = None
+        self.lazy            = lazy
+        self.sort            = sort
+        self.filter          = filter
+        self.show_header     = show_header
+        self.multiselection  = multiselection
+        self.quick_search    = quick_search
+        self.dnd_sources     = []
+        self.dnd_targets     = []
+        self.adapter_kw      = adapter_kw
+        if tkt_model is None :
+            tkt_model        = Adapter.create_model (TNS, AC)
+        self.tkt_model       = self.t_model = tkt_model
         if filter :
             self.tkt_f_model = Adapter.create_filter_model \
                 (TNS, AC, self.t_model, filter)
@@ -100,12 +109,24 @@ class _Tree_ (TGL.UI.Mixin) :
             self.tkt_s_model = Adapter.create_sort_model \
                 (TNS, AC, self.t_model)
             self.t_model     = self.tkt_s_model
-        self.tkt             = self._create_tkt_tree \
-            (sort, show_header, multiselection, quick_search)
+        self.tkt             = self._create_tkt_tree ()
         self._lazy_bind      = None
         if ui_model :
             self.update_model (ui_model)
     # end def __init__
+
+    def clone (self, ** kw) :
+        for attr in ( "lazy",           "sort",        "filter", "show_header"
+                    , "multiselection", "quick_search"
+                    , "AC"
+                    ) :
+            if attr not in kw :
+                kw [attr] = getattr (self, attr)
+        clone = self.__class__ \
+            (ui_model = None, tkt_model = self.tkt_model, ** kw)
+        clone.ui_model = self.ui_model
+        return clone
+    # end def clone
 
     def add (self, element, parent = None) :
         result = self._add_element (element, parent = parent, lazy = self.lazy)
@@ -205,18 +226,19 @@ class _Tree_ (TGL.UI.Mixin) :
                     self._add_element (child, element, lazy)
     # end def _add_element
 
-    def _create_tkt_tree (self, sort, show_header, multiselection, quick_search) :
-        tkt = self.TNS.Tree      (self.t_model, AC = self.AC)
-        tkt.headers_visible = show_header
+    def _create_tkt_tree (self) :
+        sort = self.sort
+        tkt  = self.TNS.Tree      (self.t_model, AC = self.AC)
+        tkt.headers_visible = self.show_header
         tkt.rules_hint      = self.Adapter.rules_hint
-        tkt.enable_search   = quick_search
+        tkt.enable_search   = self.quick_search
         self.Adapter.create_view (tkt)
         if sort :
             if sort is True :
                 sort = xrange (len (tkt.children))
             for col in sort :
                 tkt.children [col].sort_column_id = col
-        if multiselection :
+        if self.multiselection :
             tkt.selection_mode = self.TNS.SELECTION_MULTIPLE
         return tkt
     # end def _create_tkt_tree
@@ -248,7 +270,7 @@ class Rooted_Tree (_Tree_) :
         super (Rooted_Tree, self)._model_populate (parent)
         # XXX why does this `__super` call not work -> calls
         # `_model_populate` form this class instead of the super class ???
-        #self.__super._model_populate (lazy, parent)
+        #self.__super._model_populate ( parent)
     # end def _model_populate
 
 # end class Rooted_Tree

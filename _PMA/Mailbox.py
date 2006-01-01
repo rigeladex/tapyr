@@ -490,6 +490,12 @@ class Mailbox (_Mailbox_in_Dir_S_) :
        Maildir-like messages naming.
     """
 
+    ### supported interface
+    ### - add_subbox
+    ### - add_messages
+    ### - delete_subbox
+    ### - delete (messages)
+
     supports_status = True
 
     @classmethod

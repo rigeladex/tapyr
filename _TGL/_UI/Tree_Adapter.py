@@ -256,6 +256,11 @@ class Tree_Adapter (TGL.UI.Mixin) :
         raise NotImplementedError
     # end def children
 
+    def root_children (cls, root) :
+        ### returns all child elements of `root`
+        return cls.children (root)
+    # end def root_children
+
     @classmethod
     def create_model (cls, TNS, AC) :
         column_types = []
@@ -282,11 +287,6 @@ class Tree_Adapter (TGL.UI.Mixin) :
         for col in cls.schema :
             col.add_column (tkt)
     # end def create_view
-
-    def root_children (cls, root) :
-        ### returns all child elements of `root`
-        return cls.children (root)
-    # end def root_children
 
     @classmethod
     def row_data (cls, element, kw = {}, row = None) :

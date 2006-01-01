@@ -132,27 +132,30 @@ root.children [1].children = \
     ,
     )
 win     = GTK.Test_Window (title = "Tree Adapter Test", AC = AC)
+b       = GTK.V_Box       (AC = AC)
+b.show                    ()
+win.add                   (b)
 
-def gender_filter (ui) :
+def gender_filter (ui, gender = True) :
     ### a row filter example:
-    ### return not ui [7]
-    if isinstance (ui, TGL.UI.Dummy_Entry) :
-        return True
-    return not ui.gender
+    return ui.gender == gender
 # end def gender_filter
 
 My_Tree = TGL.UI.Rooted_Tree.New (Adapter = Test_Adapter)
 tree    = My_Tree \
     ( root
     , lazy    = True
-    , filter  = gender_filter
+    #, filter  = gender_filter
     , sort    = (0, 1, 2)
     , AC      = AC
     )
-tree.tkt.show   ()
+m_tree = tree.clone (filter = lambda ui : gender_filter (ui, True ))
+f_tree = tree.clone (filter = lambda ui : gender_filter (ui, False))
 #tree.tkt.hover_expand    = True
 #tree.tkt.hover_selection = True
-win.add         (tree.tkt)
+for t in tree, m_tree, f_tree :
+    t.tkt.show ()
+    b.add      (t.tkt)
 win.default_height = 150
 win.default_width  = 250
 win.show                   ()

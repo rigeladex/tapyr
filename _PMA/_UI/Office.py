@@ -77,6 +77,8 @@
 #    28-Dec-2005 (CT) Output format of `_message_command` and `_commit` changed
 #    28-Dec-2005 (MG) `select_box`: new parameter `force` added
 #    28-Dec-2005 (MG) `_restore_selection` fixed
+#     1-Jan-2006 (MG) Delivery box view changed (use new V_Mailbox and
+#                     Mbx_Filter)
 #    ««revision-date»»···
 #--
 
@@ -89,12 +91,15 @@ import _PMA._UI.Mixin
 import _PMA._UI.Command_Definition
 import _PMA._UI.Mailbox_BV
 import _PMA._UI.Mailbox_MV
+import _PMA._UI.Mailbox_DBV
 import _PMA.Office
 import _PMA.Composer
 import _PMA.Sender
+import _PMA._UI.Mbx_Filter
+import _PMA.V_Mailbox
 
 import _TFL.sos
-import time
+import  time
 
 class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     """Abstract user interface for PMA office."""
@@ -258,24 +263,20 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self.office            = office = model.office
         self.model             = model
         self.box_views         = {}
-        self.delivery_views    = []
         self.storage_views     = []
+        self.delivery_box      = self.ANS.V_Mailbox \
+            ("inbox", * office.delivery_boxes)
         UI                     = self.ANS.UI
         TNS                    = self.TNS
         AC                     = self.AC
-        for boxes, views in ( (office.storage_boxes,  self.storage_views)
-                            , (office.delivery_boxes, self.delivery_views)
-                            ) :
-            for box in boxes :
-                box._ui_tree = bv = UI.Mailbox_BV \
-                    ( AC = AC, show_header = False, quick_search = False
-                    , adapter_kw = dict (office = self.office)
-                    )
-                bv.update_model    (box)
-                views.append       (bv)
-                self.box_views [box] = bv
-        self.tkt = TNS.Office \
-            (self.delivery_views, self.storage_views, AC = AC)
+        for box in office.storage_boxes :
+            box._ui_tree = bv = UI.Mailbox_BV \
+                ( AC = AC, show_header = False, quick_search = False
+                , adapter_kw = dict (office = self.office)
+                )
+            bv.update_model           (box)
+            self.storage_views.append (bv)
+            self.box_views [box] = bv
         self.mb_msg_view = mmv = UI.Mailbox_MV \
             ( sort           = True
             , multiselection = True
@@ -283,12 +284,40 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             , AC             = self.AC
             )
         mmv.tkt.scroll_policies (TNS.AUTOMATIC)
-        tkt = model.tkt
+        self._create_delivery_view (mmv)
+        self.tkt = TNS.Office (self.delivery_view, self.storage_views, AC = AC)
+        tkt      = model.tkt
         tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
         tkt.pack (tkt.wc_po_box_view, self.tkt)
         self._setup_commands    (self.model.cmd_mgr)
         self._restore_selection ()
     # end def __init__
+
+    def _create_delivery_view (self, mbx_msg_view) :
+        ### XXX move to ???
+        AC = self.AC
+        db = self.delivery_box
+        self._inbox_filter     = \
+            ( self.ANS.UI.Mbx_Filter
+                (db, "all", "True",                       AC = AC)
+            , self.ANS.UI.Mbx_Filter
+                (db, "spam", "'spam' in subject",         AC = AC)
+            , self.ANS.UI.Mbx_Filter
+                ( db, "ralf", "'schlatterbeck' in sender or 'tanzer' in sender"
+                , AC = AC
+                )
+            )
+        self.f_box         = self.ANS.UI.F_Mailbox (db, * self._inbox_filter)
+        self.delivery_view = self.ANS.UI.Mailbox_DBV \
+            ( self.f_box
+            , show_header  = False
+            , adapter_kw   = dict (office = self.office)
+            , AC           = AC
+            )
+        self.delivery_view.tkt.scroll_policies (self.TNS.AUTOMATIC)
+        self.box_views [self.f_box] = self.delivery_view
+        self.box_views [db]         = self.delivery_view
+    # end def _create_delivery_view
 
     def copy_message (self, event = None) :
         """Copy the currently selected message to the default target
