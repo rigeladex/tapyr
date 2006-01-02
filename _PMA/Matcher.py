@@ -31,6 +31,7 @@
 #     2-Jan-2006 (CT) `And_Matcher.__init__` changed to allow empty `matchers`
 #     2-Jan-2006 (CT) `_Matcher_` factored
 #     2-Jan-2006 (CT) `Matcher.Table` added
+#     2-Jan-2006 (CT) `Matcher._cache` added and used
 #    ««revision-date»»···
 #--
 
@@ -149,9 +150,17 @@ class Matcher (_Matcher_) :
 
     def match (self, msg) :
         cache = self._cache
-        #if msg.
-        return bool (msg.scope.eval (self._code, self.ckw))
+        id    = msg.email
+        try :
+            result = cache [id]
+        except KeyError :
+            result = cache [id] = bool (msg.scope.eval (self._code, self.ckw))
+        return result
     # end def match
+
+    def __repr__ (self) :
+        return "%s" % self.condition
+    # end def __repr__
 
 # end class Matcher
 
@@ -171,6 +180,13 @@ class And_Matcher (_Matcher_) :
         return True
     # end def match
 
+    def __repr__ (self) :
+        return "%s (%s)" % \
+            ( self.__class__.__name__
+            , ", ".join (repr (m) for m in self.matchers)
+            )
+    # end def __repr__
+
 # end class And_Matcher
 
 class Not_Matcher (_Matcher_) :
@@ -183,6 +199,10 @@ class Not_Matcher (_Matcher_) :
     def match (self, msg) :
         return not self.matcher.match (msg)
     # end def match
+
+    def __repr__ (self) :
+        return "not (%s)" % (self.matcher, )
+    # end def __repr__
 
 # end class Not_Matcher
 
