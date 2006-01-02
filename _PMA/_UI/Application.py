@@ -46,6 +46,8 @@
 #    12-Aug-2005 (MG) `TGL.UI.Application` factored
 #    12-Aug-2005 (MG) `_quit_finally` fixed
 #    12-Aug-2005 (MG) `_window_title_text` fixed
+#     2-Jan-2006 (CT) Additional `if_names` added to `_Mbox_Cmd_Group` and
+#                     `_Message_Cmd_Group`
 #    ««revision-date»»···
 #--
 
@@ -125,7 +127,8 @@ class Application (TGL.UI.Application) :
         )
     _Mbox_Cmd_Group      = Record \
         ( name           = "Mailbox"
-        , if_names       = ("mb", "tb", "cm_bv", "cm_mv", "ev_bv", "ev_mv")
+        , if_names       =
+            ("mb", "tb", "cm_bv", "cm_dv", "cm_mv", "ev_bv", "ev_dv", "ev_mv")
         , batchable      = True
         , precondition   = None
         , description    =
@@ -134,7 +137,7 @@ class Application (TGL.UI.Application) :
         )
     _Message_Cmd_Group   = Record \
         ( name           = "Message"
-        , if_names       = ("mb", "tb", "cm_md", "cm_mv", "ev_mv")
+        , if_names       = ("mb", "tb", "cm_md", "cm_mv", "ev_mv", "ev_md")
         , batchable      = True
         , precondition   = None
         , description    =
@@ -150,7 +153,7 @@ class Application (TGL.UI.Application) :
           "This group provides commands for managing the currently "
           "selected message via the message outline display"
         )
-    
+
     Command_Groups       = \
         ( "_Office_Cmd_Group"
         , "_Mbox_Cmd_Group"
@@ -161,7 +164,7 @@ class Application (TGL.UI.Application) :
         )
 
     def __init__ (self, AC, cmd, _globals = {}) :
-        AC.memory          = _App_State_             (window_geometry = {})
+        AC.memory = _App_State_ (window_geometry = {})
         self.__super.__init__ (AC = AC, cmd = cmd, _globals = _globals)
     # end def __init__
 

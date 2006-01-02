@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-Dec-2005 (CT) Creation
 #    29-Dec-2005 (CT) doctest extended
+#     2-Jan-2006 (CT) `And_Matcher.__init__` changed to allow empty `matchers`
 #    ««revision-date»»···
 #--
 
@@ -135,7 +136,7 @@ class And_Matcher (Matcher) :
     """And-combination of Matcher instances"""
 
     def __init__ (self, * matchers) :
-        if matchers [0].__class__ is self.__class__ :
+        if matchers and matchers [0].__class__ is self.__class__ :
             matchers = matchers [0].matchers + matchers [1:]
         self.matchers = matchers
     # end def __init__

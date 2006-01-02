@@ -141,6 +141,7 @@
 #    29-Dec-2005 (CT) `list_id`, `sb_vote`, `spam_flag` added to `_header_map`
 #    29-Dec-2005 (CT) `Msg_Scope._get_sb_score`, `._get_is_spam`, and
 #                     `._get_maybe_spam` added
+#     2-Jan-2006 (CT) `_get_sender_` and `_get_sender_name` fixed
 #    ««revision-date»»···
 #--
 
@@ -285,8 +286,7 @@ class Msg_Scope (TFL.Caller.Scope) :
         if sender is None :
             sender = msg.email.get_unixfrom ()
         if sender is not None :
-            result = \
-                (filter (None, Lib.getaddresses ((sender, )) [0]) or result)
+            result = Lib.getaddresses ((sender, )) [0] or result
         return result
     # end def _get_sender_
 
@@ -298,7 +298,7 @@ class Msg_Scope (TFL.Caller.Scope) :
     # end def _get_sender_addr
 
     def _get_sender_name (self) :
-        result = self._get_sender_ () [0]
+        result = filter (None, self._get_sender_ ()) [0]
         if result is not None :
             return decoded_header (result)
         return ""

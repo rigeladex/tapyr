@@ -79,6 +79,11 @@
 #    28-Dec-2005 (MG) `_restore_selection` fixed
 #     1-Jan-2006 (MG) Delivery box view changed (use new V_Mailbox and
 #                     Mbx_Filter)
+#     2-Jan-2006 (CT) `Sync` command added
+#     2-Jan-2006 (CT) `box_cmd_grps` split into `sbx_cmd_grps` and
+#                     `dbx_cmd_grps`
+#     2-Jan-2006 (CT) `_create_delivery_view` changed to use
+#                     `office.dbx_matchers`
 #    ««revision-date»»···
 #--
 
@@ -107,27 +112,35 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     CD = PMA.UI.Command_Definition
 
     ### command definition
-    box_view_widgets        = property \
-        (lambda s : [b.tkt for b in s.box_views.itervalues ()])
     command_bindings        = dict \
         ( mb_msg_view       = dict
             ( context_menu  = "Message.cm_mv"
             , event_binder  = "Message.ev_mv"
             )
-        , box_view_widgets  = dict
+        , storage_views     = dict
             ( context_menu  = "Mailbox.cm_bv"
             , event_binder  = "Mailbox.ev_bv"
             )
+        , delivery_view     = dict
+            ( context_menu  = "Mailbox.cm_dv"
+            , event_binder  = "Mailbox.ev_dv"
+            )
         )
-    box_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_bv"), "ev_bv"), )
+    sbx_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_bv"), "ev_bv"), )
+    dbx_cmd_grps     = (CD.Group ("Mailbox", ("mb", "cm_dv"), "ev_dv"), )
     msg_cmd_grps     = (CD.Group ("Message", ("mb", "cm_mv"), "ev_mv"), )
     off_cmd_grps     = (CD.Group ("Office",  ("mb", "tb")), )
+    box_cmd_grps     = \
+        ( CD.Group ("Mailbox", ("mb", "cm_bv"), "ev_bv")
+        , CD.Group ("Mailbox", "cm_dv",         "ev_dv")
+        )
     box_msg_cmd_grps = \
         ( CD.Group ("Mailbox", ("mb", "tb", "cm_bv"), "ev_bv")
+        , CD.Group ("Mailbox", "cm_dv",               "ev_dv")
         , CD.Group ("Message", "cm_mv",               "ev_mv")
         )
 
-    deaf_commands = \
+    deaf_commands    = \
         ( ### mailbox/message commands
           CD ( "Previous Message", "show_prev_message"
              , eventname = "prev_message"
@@ -155,20 +168,21 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
              , eventname = "commit_box"
              , * box_cmd_grps
              )
-        , CD ( "Delete Message", "delete_message"
-             , CD.Group ("Mailbox", "cm_bv", "ev_bv")
-             , eventname = "delete_message"
-             , icon      = "gtk-delete"
+          ### delivery mailbox commands
+        , CD ( "Sync", "sync_box"
+             , eventname = "sync_box"
+             , * dbx_cmd_grps
              )
-        , PMA.UI.Separator (* box_cmd_grps)
+          ### storage mailbox commands
+        , PMA.UI.Separator (* sbx_cmd_grps)
         , CD ( "New Subbox",         "new_subbox"
-             , * box_cmd_grps
+             , * sbx_cmd_grps
              )
         , CD ( "Delete Subbox",      "delete_subbox"
-             , * box_cmd_grps
+             , * sbx_cmd_grps
              )
         , CD ( "Set target mailbox", "set_target_mailbox"
-             , * box_cmd_grps
+             , * sbx_cmd_grps
              )
 
           ### message commands
@@ -249,7 +263,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     commands = \
         ( ### mailbox commands
           CD ( "Select", "select_box"
-             , CD.Group ("Mailbox", ev = "ev_bv")
+             , CD.Group ("Mailbox", ev = ("ev_bv", "ev_dv"))
              , eventname = "Select"
              )
         , CD ( "Select", "show_message"
@@ -294,19 +308,15 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     # end def __init__
 
     def _create_delivery_view (self, mbx_msg_view) :
-        ### XXX move to ???
         AC = self.AC
         db = self.delivery_box
+        dbx_matchers = self.office.dbx_matchers
+        rest_matcher = PMA.Not_Matcher \
+            ( PMA.Or_Matcher (* (m for (n, m) in dbx_matchers)))
         self._inbox_filter     = \
-            ( self.ANS.UI.Mbx_Filter
-                (db, "all", "True",                       AC = AC)
-            , self.ANS.UI.Mbx_Filter
-                (db, "spam", "'spam' in subject",         AC = AC)
-            , self.ANS.UI.Mbx_Filter
-                ( db, "ralf", "'schlatterbeck' in sender or 'tanzer' in sender"
-                , AC = AC
-                )
-            )
+            [ self.ANS.UI.Mbx_Filter (db, name, matcher, AC = AC)
+              for (name, matcher) in dbx_matchers + (("INBOX", rest_matcher),)
+            ]
         self.f_box         = self.ANS.UI.F_Mailbox (db, * self._inbox_filter)
         self.delivery_view = self.ANS.UI.Mailbox_DBV \
             ( self.f_box
@@ -360,6 +370,11 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             self.box_views [box.root].update (box)
         print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
     # end def _commit
+
+    def sync_box (self, event = None) :
+        box = self.office.status.current_box or self.delivery_box
+        print box.sync () ### XXX
+    # end def sync_box
 
     def delete_message (self, event = None) :
         """Delete the currently selected message from this mailbox."""

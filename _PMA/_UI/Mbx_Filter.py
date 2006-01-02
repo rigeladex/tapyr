@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2005 (MG) Creation
+#     2-Jan-2006 (CT) `__init__` fixed
 #    ««revision-date»»···
 #--
 
@@ -62,14 +63,13 @@ class Mbx_Filter (PMA.UI.Mixin) :
         (lambda s : sum ([len (m.pending) for m in s._get_messages ()]))
     _box_dict          = {}
 
-    def __init__ (self, mailbox, name, condition, AC = None, matcher = None, ** ckw) :
+    def __init__ (self, mailbox, name, matcher, AC = None, ** ckw) :
         self.__super.__init__ (AC = AC)
         self.mailbox   = self.root  = mailbox
         self.name      = name
-        self.qname     = PMA.Mailbox.name_sep.join \
-            ((mailbox.qname, name))
-        if matcher is None :
-            matcher    = self.ANS.Matcher (condition, ** ckw)
+        self.qname     = PMA.Mailbox.name_sep.join ((mailbox.qname, name))
+        if not isinstance (matcher, self.ANS.Matcher) :
+            matcher    = self.ANS.Matcher (matcher, ** ckw)
         self._matcher  = matcher
         self._messages = None
         self._msg_dict = {}

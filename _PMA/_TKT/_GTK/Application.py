@@ -38,6 +38,7 @@
 #    28-Jul-2005 (MG) `ask_*` function handling changed
 #    10-Aug-2005 (CT) `show_menubar` and `show_toolbar` considered
 #    12-Aug-2005 (MG) `TGL.TKT.GTK.Application` factored
+#     2-Jan-2006 (CT) `context_menus` and `event_binders` added
 #    ««revision-date»»···
 #--
 
@@ -63,8 +64,12 @@ class Application (TGL.TKT.GTK.Application) :
     """Main instance of GTK-based PMA"""
 
     widget_class          = "PMA"
-    context_menus         = ("cm_bv", "cm_mv", "cm_md", "cm_mo", "cm_status")
-    event_binders         = ("ev_bv", "ev_mv")
+    context_menus         = \
+        ( "cm_bv", "cm_dv"
+        , "cm_mv", "cm_md", "cm_mo"
+        , "cm_status"
+        )
+    event_binders         = ("ev_bv", "ev_dv", "ev_mv", "ev_md")
 
     def _setup_geometry (self) :
         ### XXX

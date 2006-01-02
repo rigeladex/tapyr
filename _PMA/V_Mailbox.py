@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2005 (MG) Creation
+#     2-Jan-2006 (CT) `sync` added
 #    ««revision-date»»···
 #--
 #
@@ -45,6 +46,13 @@ class V_Mailbox (TFL.Meta.Object) :
         self.root      = self
         self.status    = PMA.Box_Status (self)
     # end def __init__
+
+    def sync (self) :
+        result = []
+        for b in self._boxes :
+            result.extend (b.sync ())
+        return result
+    # end def sync
 
     def _get_messages (self) :
         for b in self._boxes :

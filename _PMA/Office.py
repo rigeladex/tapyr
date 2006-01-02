@@ -39,6 +39,7 @@
 #    30-Jul-2005 (MG) `commit` added
 #     7-Aug-2005 (CT) `extra_delivery_boxes` added and import of
 #                     `Pop3_Mailbox` removed (let ~/PMA/.config.py do that)
+#     2-Jan-2006 (CT) `dbx_matchers` added
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,7 @@ class Office (TFL.Meta.Object) :
     top_name             = "PMA"
     delivery_area_name   = "Delivery"
 
+    dbx_matchers         = ()
     extra_delivery_boxes = []
 
     def __init__ (self, root = None) :

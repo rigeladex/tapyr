@@ -30,6 +30,7 @@
 #    28-Jul-2005 (CT) Creation
 #    30-Jul-2005 (MG) New commands added
 #    31-Jul-2005 (MG) New commands added
+#     2-Jan-2006 (CT) `sync_box` added
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,7 @@ Eventname.add \
     , reply_all       = Key_Binder      ("<Shift>r")
     , resend_message  = Key_Binder      ("f")
     , select_all      = Key_Binder      ("<Control>a")
+    , sync_box        = Key_Binder      ("<Shift>y")
     , unmark_message  = Key_Binder      ("u")
     )
 
