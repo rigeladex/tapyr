@@ -31,6 +31,8 @@
 #     2-Jan-2006 (CT) Optional argument `headersonly` added to `_new_email`
 #     2-Jan-2006 (CT) `_new_email` changed to use `SB.filter` if available
 #     2-Jan-2006 (CT) `MB_Type` changed to use `pop.top` instead or `pop.retr`
+#     2-Jan-2006 (CT) `connect` factored
+#     2-Jan-2006 (CT) Methods `msg_no` and `uidl` added
 #    ««revision-date»»···
 #--
 
@@ -59,19 +61,51 @@ class POP3_Mailbox (PMA._Mailbox_) :
         self.__super.__init__ (host, name, prefix, root)
     # end def __init__
 
-    def reparsed (self, msg) :
+    def connect (self) :
         pop = poplib.POP3 (self.host, self.port)
         pop.user  (self.user)
         pop.pass_ (self.passwd)
+        return pop
+    # end def connect
+
+    @classmethod
+    def MB_Type (cls, pop, factory) :
+        for msg_spec in pop.list () [1] :
+            msg_no, _ = msg_spec.split (" ", 1)
+            m = factory ("\n".join (pop.top (msg_no, 0) [1]))
+            m._pma_msg_no = msg_no
+            m._pma_uidl   = cls.uidl (pop, msg_no) [-1]
+            yield m
+    # end def MB_Type
+
+    def msg_no (self, pop, uidl, msg_no) :
+        msg_no = int (msg_no)
+        while msg_no > 0 :
+            r, m, u = self.uidl (pop, str (msg_no))
+            if u == uidl :
+                return m
+            msg_no -= 1
+    # end def msg_no
+
+    def reparsed (self, msg) :
+        pop = self.connect ()
         try :
-            msg_no = msg.path
-            result = self._new_email \
-                ("\n".join (pop.retr (msg_no) [1]), headersonly = False)
-            result._pma_msg_no = msg_no
+            msg_no = self.msg_no (pop, msg.email._pma_uidl, msg.path)
+            if msg_no :
+                result = self._new_email \
+                    ("\n".join (pop.retr (msg_no) [1]), headersonly = False)
+                result._pma_msg_no = msg_no
+            else :
+                print "This shouldn't happen!"
         finally :
             pop.quit ()
         return result
     # end def reparsed
+
+    @classmethod
+    def uidl (self, pop, msg_no) :
+        return pop.uidl (msg_no).split (" ")
+    # end def uidl
 
     def _new_email (self, msg_text, headersonly = True) :
         if PMA.SB is not None :
@@ -90,9 +124,7 @@ class POP3_Mailbox (PMA._Mailbox_) :
     # end def _new_message
 
     def _setup_messages (self) :
-        pop = poplib.POP3 (self.host, self.port)
-        pop.user  (self.user)
-        pop.pass_ (self.passwd)
+        pop = self.connect ()
         try :
             self._add \
                 ( * ( self._new_message (m)
@@ -102,15 +134,6 @@ class POP3_Mailbox (PMA._Mailbox_) :
         finally :
             pop.quit ()
     # end def _setup_messages
-
-    @classmethod
-    def MB_Type (cls, pop, factory) :
-        for msg_spec in pop.list () [1] :
-            msg_no, _ = msg_spec.split (" ", 1)
-            m = factory ("\n".join (pop.top (msg_no, 0) [1]))
-            m._pma_msg_no = msg_no
-            yield m
-    # end def MB_Type
 
 # end class POP3_Mailbox
 
