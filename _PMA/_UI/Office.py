@@ -401,7 +401,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         """Delete the currently selected subbox and all messages in this
            subbox
         """
-        cb     = self.office.status.current_box
+        cb = self.office.status.current_box
         self.box_views [cb.root].remove (cb)
         self._delete_box (cb)
     # end def delete_subbox
@@ -446,7 +446,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def new_subbox (self, event = None) :
         """Create a new subbox below the currently selected mailbox"""
-        name = self.model.ask_string (title = "Add new subbox", prompt = "Name")
+        name = self.model.ask_string \
+            (title = "Add new subbox", prompt = "Name")
         if name :
             cb   = self.office.status.current_box
             box  = cb.add_subbox (name)
@@ -513,9 +514,9 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 return
         selection = tree.selection
         if not selection :
-            ### ignore the callback if the slection has be canceled
+            ### ignore the callback if the selection has be canceled
             return
-        box      = selection [0]
+        box = selection [0]
         if curr_box and curr_box.root != box.root :
            self.box_views [curr_box.root].selection = ()
         if force or self.office.status.current_box != box :
