@@ -31,6 +31,8 @@
 #    16-Aug-2005 (MG) Don't call `show_all` anymore
 #     3-Sep-2005 (MG) correct `_wrap_function`
 #    21-Sep-2005 (MG) Obsolete import of ´Script_Menu_Mgr` removed
+#     2-Jan-2006 (MG) `_quit` close the interpreter window to save the
+#                     current state
 #    ««revision-date»»···
 #--
 
@@ -136,9 +138,6 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     # end def start_mainloop
 
     def after_mainloop_cb (self, * args) :
-        #self.body.change_size   (frac = 0.25)
-        #self.body_l.change_size (frac = 0.70)
-        #self.body_r.change_size (frac = 0.35)
         self._after_mainloop_cb ()
     # end def after_mainloop_cb
 
@@ -170,6 +169,8 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
 
     def _quit (self) :
         try :
+            if self.model.ipreter :
+                self.model.ipreter.close_window ()
             self.save_widget_memory ()
         finally :
             self._destroy ()

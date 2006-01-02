@@ -132,10 +132,11 @@ class _Tree_ (TGL.UI.Mixin) :
     def add (self, * elements, ** kw) :
         parent = kw.get ("parent", None)
         result = []
-        for e in elements :
-            result.append \
-                (self._add_element (e, parent = parent, lazy = self.lazy))
-        self.see (result [-1])
+        if elements :
+            for e in elements :
+                result.append \
+                    (self._add_element (e, parent = parent, lazy = self.lazy))
+            self.see (result [-1])
         return result
     # end def add
 

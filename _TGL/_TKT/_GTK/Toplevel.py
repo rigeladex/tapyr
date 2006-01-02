@@ -47,5 +47,3 @@ class Toplevel (GTK.Window) :
 if __name__ != "__main__" :
     GTK._Export ("Toplevel")
 ### __END__ Toplevel
-
-

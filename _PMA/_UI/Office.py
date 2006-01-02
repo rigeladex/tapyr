@@ -85,6 +85,8 @@
 #     2-Jan-2006 (CT) `_create_delivery_view` changed to use
 #                     `office.dbx_matchers`
 #     2-Jan-2006 (MG) `sync_box` finished
+#     3-Jan-2006 (MG) `sync_box` update of delivery box view and status
+#                     message added
 #    ««revision-date»»···
 #--
 
@@ -374,11 +376,18 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def sync_box (self, event = None) :
         box = self.office.status.current_box
-        self.mb_msg_view.add \
-            (* ( m.scope for m in self.f_box.add_messages (* box.sync ())
-                   if box is m.mailbox
-               )
-            )
+        new = self.f_box.add_messages (* box.sync ())
+        if new :
+            self.mb_msg_view.add (* (m.scope for m in new if box is m.mailbox))
+            box_updates = {}
+            for m in new :
+                old = box_updates.get (m.mailbox, 0)
+                box_updates [m.mailbox] = old + 1
+            print "New messages in",
+            for box, number in box_updates.iteritems () :
+                self.delivery_view.update (box)
+                print "`%s`: %d" % (box.qname, number),
+            print
     # end def sync_box
 
     def delete_message (self, event = None) :
