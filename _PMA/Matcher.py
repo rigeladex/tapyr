@@ -29,6 +29,8 @@
 #    28-Dec-2005 (CT) Creation
 #    29-Dec-2005 (CT) doctest extended
 #     2-Jan-2006 (CT) `And_Matcher.__init__` changed to allow empty `matchers`
+#     2-Jan-2006 (CT) `_Matcher_` factored
+#     2-Jan-2006 (CT) `Matcher.Table` added
 #    ««revision-date»»···
 #--
 
@@ -37,7 +39,36 @@ from   _PMA                    import PMA
 
 import _TFL._Meta.Object
 
-class Matcher (TFL.Meta.Object) :
+class _Matcher_ (TFL.Meta.Object) :
+
+    def filter (self, * msg) :
+        for m in msg :
+            if self.match (m) :
+                yield m
+    # end def filter
+
+    def split (self, * msg) :
+        result = [], []
+        for m in msg :
+            result [self.match (m)].append (m)
+        return result [1], result [0]
+    # end def split
+
+    def __add__ (self, rhs) :
+        return And_Matcher (self, rhs)
+    # end def __add__
+
+    def __invert__ (self) :
+        return Not_Matcher (self)
+    # end def __invert__
+
+    def __mul__ (self, rhs) :
+        return Or_Matcher (self, rhs)
+    # end def __mul__
+
+# end class Matcher
+
+class Matcher (_Matcher_) :
     """Match PMA.Messages with predicate
 
        >>> import _TFL.Caller
@@ -95,44 +126,36 @@ class Matcher (TFL.Meta.Object) :
 
     """
 
-    def __init__ (self, condition, ** ckw) :
+    Table = {}
+
+    def __new__ (cls, condition, ** ckw) :
+        result = cls.Table.get (condition)
+        if result :
+            if result.ckw != ckw :
+                raise ValueError
+        else :
+            result = super (Matcher, cls).__new__ (cls, condition, ** ckw)
+            result._init_ (condition, ** ckw)
+            cls.Table [condition] = result
+        return result
+    # end def __new__
+
+    def _init_ (self, condition, ** ckw) :
         self.condition = condition
         self.ckw       = ckw
         self._code     = compile (condition.strip (), condition, "eval")
-    # end def __init__
-
-    def filter (self, * msg) :
-        for m in msg :
-            if self.match (m) :
-                yield m
-    # end def filter
+        self._cache    = {}
+    # end def _init_
 
     def match (self, msg) :
+        cache = self._cache
+        #if msg.
         return bool (msg.scope.eval (self._code, self.ckw))
     # end def match
 
-    def split (self, * msg) :
-        result = [], []
-        for m in msg :
-            result [self.match (m)].append (m)
-        return result [1], result [0]
-    # end def split
-
-    def __add__ (self, rhs) :
-        return And_Matcher (self, rhs)
-    # end def __add__
-
-    def __invert__ (self) :
-        return Not_Matcher (self)
-    # end def __invert__
-
-    def __mul__ (self, rhs) :
-        return Or_Matcher (self, rhs)
-    # end def __mul__
-
 # end class Matcher
 
-class And_Matcher (Matcher) :
+class And_Matcher (_Matcher_) :
     """And-combination of Matcher instances"""
 
     def __init__ (self, * matchers) :
@@ -150,7 +173,7 @@ class And_Matcher (Matcher) :
 
 # end class And_Matcher
 
-class Not_Matcher (Matcher) :
+class Not_Matcher (_Matcher_) :
     """Invert condition of Matcher instance"""
 
     def __init__ (self, matcher) :
@@ -176,5 +199,5 @@ class Or_Matcher (And_Matcher) :
 # end class Or_Matcher
 
 if __name__ != "__main__" :
-    PMA._Export ("*")
+    PMA._Export ("*", "_Matcher_")
 ### __END__ PMA.Matcher

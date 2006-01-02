@@ -68,7 +68,7 @@ class Mbx_Filter (PMA.UI.Mixin) :
         self.mailbox   = self.root  = mailbox
         self.name      = name
         self.qname     = PMA.Mailbox.name_sep.join ((mailbox.qname, name))
-        if not isinstance (matcher, self.ANS.Matcher) :
+        if not isinstance (matcher, self.ANS._Matcher_) :
             matcher    = self.ANS.Matcher (matcher, ** ckw)
         self._matcher  = matcher
         self._messages = None

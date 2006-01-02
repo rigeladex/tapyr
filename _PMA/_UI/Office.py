@@ -386,8 +386,9 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     # end def delete_message
 
     def move_message (self, event = None) :
-        """Move the currently selected message from teh current mailbox into
-           the default target mailbox."""
+        """Move the currently selected message from the current mailbox into
+           the default target mailbox.
+        """
         self._message_command \
             ( "move"
             , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
