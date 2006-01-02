@@ -970,7 +970,6 @@ import _PMA.Mailbox
 mb=PMA.MH_Mailbox ("/swing/private/tanzer/MH/PMA")
 print mb.summary ().encode (PMA.default_encoding, "replace")
 m = mb.messages [-1]
-m._reparsed ()
 def show (m, head = "") :
     for p in m.part_iter () :
         print head, type (p), p.name, p.type, id (p.email), p.email.is_multipart()

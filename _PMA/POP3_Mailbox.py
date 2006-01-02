@@ -38,7 +38,7 @@ import  poplib
 import _TFL.sos as sos
 
 class POP3_Mailbox (PMA._Mailbox_) :
-    """A POP3 mailbox which receives the messages from the account and addes
+    """A POP3 mailbox which receives the messages from the account and adds
        them to a different mailbox (based on the message ID only once).
     """
 
@@ -90,9 +90,8 @@ class POP3_Mailbox (PMA._Mailbox_) :
 from _PMA.POP3_Mailbox import *
 
 mb = POP3_Mailbox ("mx.wavenet.at", "g9505a00", "5secyba3")
+mb = POP3_Mailbox ("localhost", "tanzer", "", port = 1100)
 """
 if __name__ != "__main__" :
     PMA._Export ("*")
 ### __END__ POP3_Mailbox
-
-
