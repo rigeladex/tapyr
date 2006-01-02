@@ -142,6 +142,9 @@
 #    29-Dec-2005 (CT) `Msg_Scope._get_sb_score`, `._get_is_spam`, and
 #                     `._get_maybe_spam` added
 #     2-Jan-2006 (CT) `_get_sender_` and `_get_sender_name` fixed
+#     2-Jan-2006 (CT) `_reparsed` changed to use `mailbox.reparsed`
+#     2-Jan-2006 (CT) `SB.filter` removed from `_reparsed` (let that be done
+#                     by POP3_Mailbox, procmail, etc.)
 #    ««revision-date»»···
 #--
 
@@ -804,24 +807,18 @@ class Message (_Message_) :
     def _reparsed (self) :
         result = self.email
         if self.path and not result._pma_parsed_body :
-            if PMA.SB is not None :
-                if self.mailbox :
-                    _parse = self.mailbox.parser.parsestr
-                else :
-                    _parse = Lib.message_from_string
-                parser = lambda fp : _parse (PMA.SB.filter (fp))
-            elif self.mailbox :
-                parser = self.mailbox.parser.parse
+            if self.mailbox :
+                result = self.mailbox.reparsed (self)
             else :
-                parser = Lib.message_from_file
-            fp = open (self.path, "r")
-            try :
-                result = self.email = parser (fp)
-            finally :
-                fp.close ()
-            result._pma_dir         = getattr (self.email, "_pma_dir",  None)
-            result._pma_path        = getattr (self.email, "_pma_path", None)
+                fp = open (self.path, "r")
+                try :
+                    result = Lib.message_from_file (fp)
+                finally :
+                    fp.close ()
+            result._pma_dir  = getattr (self.email, "_pma_dir",  None)
+            result._pma_path = getattr (self.email, "_pma_path", None)
             result._pma_parsed_body = True
+            self.email = result
             self._setup_body (result)
         return result
     # end def _reparsed

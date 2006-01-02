@@ -56,6 +56,8 @@
 #                      `Mailbox.MB_Type`
 #    31-Dec-2005 (CT) `Maildir._new2cur` factored
 #    31-Dec-2005 (CT) `Maildir.sync` added
+#     2-Jan-2006 (CT) `_Mailbox_in_Dir_.reparsed` added
+#     2-Jan-2006 (CT) Optional argument `headersonly` added to `_new_email`
 #    ««revision-date»»···
 #--
 
@@ -261,6 +263,15 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
         sos.rmdir                  (subbox.path)
     # end def delete_subbox
 
+    def reparsed (self, msg) :
+        fp = open (msg.path, "r")
+        try :
+            result = self.parser.parse (fp)
+        finally :
+            fp.close ()
+        return result
+    # end def reparsed
+
     def _copy_msg_file (self, message, target) :
         source = message.path
         try :
@@ -279,9 +290,9 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
                 yield f
     # end def _files
 
-    def _new_email (self, fp) :
-        result = self.parser.parse (fp, headersonly = True)
-        result._pma_parsed_body = False
+    def _new_email (self, fp, headersonly = True) :
+        result = self.parser.parse (fp, headersonly = headersonly)
+        result._pma_parsed_body = not headersonly
         return result
     # end def _new_email
 
@@ -311,8 +322,8 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
 class _Mailbox_in_Dir_S_ (_Mailbox_in_Dir_) :
     """Model simple directory-based mailbox"""
 
-    def _new_email (self, fp) :
-        result = self.__super._new_email   (fp)
+    def _new_email (self, fp, headersonly = True) :
+        result = self.__super._new_email   (fp, headersonly)
         result._pma_path  = sos.path.split (fp.name) [1]
         result._pma_dir   = None
         return result
@@ -329,7 +340,7 @@ class _Mailbox_in_Dir_S_ (_Mailbox_in_Dir_) :
 class _Mailbox_in_File_ (_Mailbox_) :
     """Model file-based mailbox"""
 
-    def _new_email (self, fp) :
+    def _new_email (self, fp, headersonly = False) :
         result  = Lib.message_from_file (fp)
         result._pma_parsed_body = True
         self.n += 1
@@ -441,8 +452,8 @@ class Maildir (_Mailbox_in_Dir_) :
             (sos.path.join (self.path, "new"), Mailbox.MB_Type)
     # end def sync
 
-    def _new_email (self, fp) :
-        result = self.__super._new_email (fp)
+    def _new_email (self, fp, headersonly = True) :
+        result = self.__super._new_email (fp, headersonly)
         d, n   = sos.path.split (fp.name)
         _, d   = sos.path.split (d)
         result._pma_path  = n

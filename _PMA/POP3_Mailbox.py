@@ -27,6 +27,10 @@
 #
 # Revision Dates
 #     8-Aug-2005 (MG) Creation
+#     2-Jan-2006 (CT) `reparsed` and `_new_message` added
+#     2-Jan-2006 (CT) Optional argument `headersonly` added to `_new_email`
+#     2-Jan-2006 (CT) `_new_email` changed to use `SB.filter` if available
+#     2-Jan-2006 (CT) `MB_Type` changed to use `pop.top` instead or `pop.retr`
 #    ««revision-date»»···
 #--
 
@@ -55,23 +59,45 @@ class POP3_Mailbox (PMA._Mailbox_) :
         self.__super.__init__ (host, name, prefix, root)
     # end def __init__
 
-    def _new_email (self, msg_text) :
-        parser                 = PMA.Lib.Parser  ()
-        email                  = parser.parsestr (msg_text)
-        email._pma_parsed_body = True
-        email._pma_path  = sos.path.join (self.path, email ["message-id"])
+    def reparsed (self, msg) :
+        pop = poplib.POP3 (self.host, self.port)
+        pop.user  (self.user)
+        pop.pass_ (self.passwd)
+        try :
+            msg_no = msg.path
+            result = self._new_email \
+                ("\n".join (pop.retr (msg_no) [1]), headersonly = False)
+            result._pma_msg_no = msg_no
+        finally :
+            pop.quit ()
+        return result
+    # end def reparsed
+
+    def _new_email (self, msg_text, headersonly = True) :
+        if PMA.SB is not None :
+            msg_text = PMA.SB.filter (msg_text)
+        parser = PMA.Lib.Parser  ()
+        email  = parser.parsestr (msg_text, headersonly = headersonly)
+        email._pma_parsed_body = not headersonly
+        email._pma_path = sos.path.join (self.path, email ["message-id"])
         return email
     # end def _new_email
 
+    def _new_message (self, m) :
+        result = self.__super._new_message (m)
+        result.path = result.email._pma_msg_no
+        return result
+    # end def _new_message
+
     def _setup_messages (self) :
         pop = poplib.POP3 (self.host, self.port)
-        pop.user          (self.user)
-        pop.pass_         (self.passwd)
+        pop.user  (self.user)
+        pop.pass_ (self.passwd)
         try :
             self._add \
-                ( * [ self._new_message (m)
+                ( * ( self._new_message (m)
                      for m in self.MB_Type (pop, self._new_email)
-                   ]
+                    )
                 )
         finally :
             pop.quit ()
@@ -81,7 +107,9 @@ class POP3_Mailbox (PMA._Mailbox_) :
     def MB_Type (cls, pop, factory) :
         for msg_spec in pop.list () [1] :
             msg_no, _ = msg_spec.split (" ", 1)
-            yield factory ("\n".join (pop.retr (msg_no) [1]))
+            m = factory ("\n".join (pop.top (msg_no, 0) [1]))
+            m._pma_msg_no = msg_no
+            yield m
     # end def MB_Type
 
 # end class POP3_Mailbox
