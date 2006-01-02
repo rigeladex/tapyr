@@ -48,6 +48,7 @@
 #    12-Aug-2005 (MG) `_window_title_text` fixed
 #     2-Jan-2006 (CT) Additional `if_names` added to `_Mbox_Cmd_Group` and
 #                     `_Message_Cmd_Group`
+#     2-Jan-2006 (MG) `_window_title_text` changed
 #    ««revision-date»»···
 #--
 
@@ -207,7 +208,7 @@ class Application (TGL.UI.Application) :
             result.append (cb.name)
             result.append ("/")
         if cb and cb.status.current_message :
-            result.append (cb.status.current_message.name)
+            result.append ("%d" % (cb.status.current_message.number, ))
         return "".join (result)
     # end def _window_title_text
 

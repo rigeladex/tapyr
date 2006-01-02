@@ -28,6 +28,9 @@
 # Revision Dates
 #    30-Dec-2005 (MG) Creation
 #     2-Jan-2006 (CT) `__init__` fixed
+#     2-Jan-2006 (MG)  Make ` Mbx_Filter` a descendent of `PMA._Mailbox_`
+#     2-Jan-2006 (MG) `Mbx_Filter.sync` added
+#     2-Jan-2006 (MG) `add_messages` added
 #    ««revision-date»»···
 #--
 
@@ -35,6 +38,7 @@ from   _TFL                 import TFL
 from   _PMA                 import PMA
 import _PMA._UI.Mixin
 import _PMA.Matcher
+import _PMA.Mailbox
 import  weakref
 
 class _Proxy_ (TFL.Meta.Object) :
@@ -51,42 +55,47 @@ class _Proxy_ (TFL.Meta.Object) :
 
 # end class _Proxy_
 
-class Mbx_Filter (PMA.UI.Mixin) :
-    """A mailbox filer which acts like a real mailbox"""
+class Mbx_Filter (PMA._Mailbox_) :
+    """A mailbox filter which acts like a real mailbox"""
 
-    messages           = property (lambda s : s._get_messages ())
-    msg_dict           = property \
-        (lambda s : (s._get_messages (), s._msg_dict) [-1])
-    unseen             = property \
-        (lambda s : sum ([m.status.unseen for m in s._get_messages ()]))
-    pending            = property \
-        (lambda s : sum ([len (m.pending) for m in s._get_messages ()]))
-    _box_dict          = {}
+    supports_status = True
 
     def __init__ (self, mailbox, name, matcher, AC = None, ** ckw) :
-        self.__super.__init__ (AC = AC)
-        self.mailbox   = self.root  = mailbox
-        self.name      = name
-        self.qname     = PMA.Mailbox.name_sep.join ((mailbox.qname, name))
-        if not isinstance (matcher, self.ANS._Matcher_) :
-            matcher    = self.ANS.Matcher (matcher, ** ckw)
+        self.__super.__init__ \
+            ( name   = name
+            , path   = mailbox._boxes [0].path ### XXX
+            , prefix = mailbox.qname
+            , root   = mailbox
+            )
+        self.mailbox   = mailbox
+        if not isinstance (matcher, PMA._Matcher_) :
+            matcher    = PMA.Matcher (matcher, ** ckw)
         self._matcher  = matcher
-        self._messages = None
-        self._msg_dict = {}
-        self.status    = self.ANS.Box_Status (self)
     # end def __init__
+
+    def add_messages (self, * msgs) :
+        result       = []
+        for m in self._matcher.filter (* msgs) :
+            sp       = _Proxy_ (m.scope)
+            mp       = _Proxy_ (m, mailbox = self, scope = sp)
+            sp.msg   = mp
+            m.number = len (self._messages)
+            self._messages.append (mp)
+            result.append         (mp)
+            self._msg_dict [m.name] = mp
+        return result
+    # end def add_message
 
     def _get_messages (self) :
         if self._messages is None :
             self._messages = []
-            for m in self._matcher.filter (* self.mailbox.messages) :
-                sp     = _Proxy_ (m.scope)
-                mp     = _Proxy_ (m, mailbox = self, scope = sp)
-                sp.msg = mp
-                self._messages.append (mp)
-                self._msg_dict [m.name] = mp
+            self.add_messages (* self.mailbox.messages)
         return self._messages
     # end def _get_messages
+
+    def sync (self) :
+        return self.mailbox.sync ()
+    # end def sync
 
 # end class Mbx_Filter
 
@@ -102,6 +111,13 @@ class F_Mailbox (PMA.UI.Mixin) :
         self.mailbox    = mailbox
         self.sub_boxes  = mbx_filter
     # end def __init__
+
+    def add_messages (self, * msgs) :
+        result = []
+        for bf in self.sub_boxes :
+            result.extend (bf.add_messages (* msgs))
+        return result
+    # end def add_messages
 
 # end class F_Mailbox
 

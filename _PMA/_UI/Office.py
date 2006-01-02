@@ -84,6 +84,7 @@
 #                     `dbx_cmd_grps`
 #     2-Jan-2006 (CT) `_create_delivery_view` changed to use
 #                     `office.dbx_matchers`
+#     2-Jan-2006 (MG) `sync_box` finished
 #    ««revision-date»»···
 #--
 
@@ -97,10 +98,10 @@ import _PMA._UI.Command_Definition
 import _PMA._UI.Mailbox_BV
 import _PMA._UI.Mailbox_MV
 import _PMA._UI.Mailbox_DBV
+import _PMA._UI.Mbx_Filter
 import _PMA.Office
 import _PMA.Composer
 import _PMA.Sender
-import _PMA._UI.Mbx_Filter
 import _PMA.V_Mailbox
 
 import _TFL.sos
@@ -308,14 +309,14 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     # end def __init__
 
     def _create_delivery_view (self, mbx_msg_view) :
-        AC = self.AC
-        db = self.delivery_box
+        AC           = self.AC
+        db           = self.delivery_box
         dbx_matchers = self.office.dbx_matchers
         rest_matcher = PMA.Not_Matcher \
             ( PMA.Or_Matcher (* (m for (n, m) in dbx_matchers)))
         self._inbox_filter     = \
             [ self.ANS.UI.Mbx_Filter (db, name, matcher, AC = AC)
-              for (name, matcher) in dbx_matchers + (("INBOX", rest_matcher),)
+              for (name, matcher) in (("INBOX", rest_matcher),) + dbx_matchers
             ]
         self.f_box         = self.ANS.UI.F_Mailbox (db, * self._inbox_filter)
         self.delivery_view = self.ANS.UI.Mailbox_DBV \
@@ -372,8 +373,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     # end def _commit
 
     def sync_box (self, event = None) :
-        box = self.office.status.current_box or self.delivery_box
-        print box.sync () ### XXX
+        box = self.office.status.current_box
+        self.mb_msg_view.add \
+            (* ( m.scope for m in self.f_box.add_messages (* box.sync ())
+                   if box is m.mailbox
+               )
+            )
     # end def sync_box
 
     def delete_message (self, event = None) :
@@ -583,8 +588,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         status   = self.office.status
         view     = self.mb_msg_view
         scopes   = self.mb_msg_view.selection
-        if not len (scopes) : ### XXX add __nonzero__ to scopes.__class__ to
-                              ### avoid the need for `len`
+        if not scopes :
             scopes = (status.current_box.status.current_message.scope, )
         if scopes :
             print text % dict \

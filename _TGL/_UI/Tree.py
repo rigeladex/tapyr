@@ -49,6 +49,7 @@
 #     1-Aug-2005 (MG) `update_model`: clearing of selection added
 #     6-Aug-2005 (MG) Basic DND handling added
 #    30-Dec-2005 (MG) `clone` added
+#     2-Jan-2006 (MG) `add` enhanced
 #    ««revision-date»»···
 #--
 
@@ -128,9 +129,13 @@ class _Tree_ (TGL.UI.Mixin) :
         return clone
     # end def clone
 
-    def add (self, element, parent = None) :
-        result = self._add_element (element, parent = parent, lazy = self.lazy)
-        self.see (result)
+    def add (self, * elements, ** kw) :
+        parent = kw.get ("parent", None)
+        result = []
+        for e in elements :
+            result.append \
+                (self._add_element (e, parent = parent, lazy = self.lazy))
+        self.see (result [-1])
         return result
     # end def add
 
