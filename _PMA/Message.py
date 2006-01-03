@@ -145,6 +145,7 @@
 #     2-Jan-2006 (CT) `_reparsed` changed to use `mailbox.reparsed`
 #     2-Jan-2006 (CT) `SB.filter` removed from `_reparsed` (let that be done
 #                     by POP3_Mailbox, procmail, etc.)
+#     3-Jan-2006 (CT) `body_start` implemented
 #    ««revision-date»»···
 #--
 
@@ -763,7 +764,7 @@ class Message (_Message_) :
           "[%(body)-50.50s"
         )
 
-    body_start       = property (lambda s : "<Not yet implemented>")
+    body_start       = property (lambda s : s.scope.eval ("body") [:50])
     time             = property (lambda s : s._time ())
 
     def __init__ (self, email, name = None, mailbox = None, number = None) :

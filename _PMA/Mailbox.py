@@ -58,6 +58,8 @@
 #    31-Dec-2005 (CT) `Maildir.sync` added
 #     2-Jan-2006 (CT) `_Mailbox_in_Dir_.reparsed` added
 #     2-Jan-2006 (CT) Optional argument `headersonly` added to `_new_email`
+#     3-Jan-2006 (CT) `_emails_from_dir` factored and defined as instance
+#                     method
 #    ««revision-date»»···
 #--
 
@@ -282,6 +284,16 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
             self.__super._copy_msg_file (message, target)
     # end def _copy_msg_file
 
+    def _emails_from_dir (self, path, factory) :
+        for f in self._files (path) :
+            fp = open (f)
+            try :
+                m = factory (fp)
+            finally :
+                fp.close ()
+            yield m
+    # end def _emails_from_dir
+
     @classmethod
     def _files (cls, path) :
         for f in sos.listdir_full (path) :
@@ -449,7 +461,7 @@ class Maildir (_Mailbox_in_Dir_) :
     def sync (self) :
         """Sync with `new` messages"""
         return self._setup_messages \
-            (sos.path.join (self.path, "new"), Mailbox.MB_Type)
+            (sos.path.join (self.path, "new"), self._emails_from_dir)
     # end def sync
 
     def _new_email (self, fp, headersonly = True) :
@@ -508,17 +520,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
     ### - delete (messages)
 
     supports_status = True
-
-    @classmethod
-    def MB_Type (cls, path, factory) :
-        for f in cls._files (path) :
-            fp = open (f)
-            try :
-                m = factory (fp)
-            finally :
-                fp.close ()
-            yield m
-    # end def MB_Type
+    MB_Type         = _Mailbox_in_Dir_S_._emails_from_dir
 
     def add_messages (self, * messages) :
         if self._messages is None :
@@ -597,5 +599,5 @@ sb = mb.sub_boxes[0]
 """
 
 if __name__ != "__main__" :
-    PMA._Export ("*", "_Mailbox_")
+    PMA._Export ("*", "_Mailbox_", "_Mailbox_in_Dir_", "_Mailbox_in_Dir_S_")
 ### __END__ PMA.Mailbox
