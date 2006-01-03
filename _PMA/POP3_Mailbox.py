@@ -33,6 +33,13 @@
 #     2-Jan-2006 (CT) `MB_Type` changed to use `pop.top` instead or `pop.retr`
 #     2-Jan-2006 (CT) `connect` factored
 #     2-Jan-2006 (CT) Methods `msg_no` and `uidl` added
+#     3-Jan-2006 (CT) Derive from `_Mailbox_in_Dir_S_` instead of `_Mailbox_`
+#     3-Jan-2006 (CT) `path` added to `__init__`
+#     3-Jan-2006 (CT) s/msg_no/_msg_no/ (for the method)
+#     3-Jan-2006 (CT) `_pop_msg_query` factored, `pop_list` added
+#     3-Jan-2006 (CT) `_save` added and used
+#     3-Jan-2006 (CT) `lazy_download_limit` added and used
+#     3-Jan-2006 (CT) `passwd_cb` added
 #    ««revision-date»»···
 #--
 
@@ -43,97 +50,172 @@ import _TFL._Meta.Object
 import  poplib
 import _TFL.sos as sos
 
-class POP3_Mailbox (PMA._Mailbox_) :
+class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     """A POP3 mailbox which receives the messages from the account and adds
        them to a different mailbox (based on the message ID only once).
     """
 
-    def __init__ ( self, host, user, passwd
-                 , name   = None
-                 , prefix = None
-                 , root   = None
-                 , port   = 110
+    supports_status     = True
+    lazy_download_limit = 1024 * 10
+
+    def __init__ ( self, path, host, user
+                 , passwd              = None
+                 , prefix              = None
+                 , root                = None
+                 , port                = 110
+                 , lazy_download_limit = None
                  ) :
         self.host   = host
         self.port   = port
         self.user   = user
         self.passwd = passwd
-        self.__super.__init__ (host, name, prefix, root)
+        if lazy_download_limit is not None :
+            self.lazy_download_limit = lazy_download_limit
+        self._msg_count = 0
+        self._mbx_size  = 0
+        self.__super.__init__ (path, prefix, root)
     # end def __init__
 
     def connect (self) :
         pop = poplib.POP3 (self.host, self.port)
         pop.user  (self.user)
-        pop.pass_ (self.passwd)
+        if self.passwd is None :
+            self.passwd = self.passwd_cb ()
+        if self.passwd != "" :
+            pop.pass_ (self.passwd)
         return pop
     # end def connect
 
-    @classmethod
-    def MB_Type (cls, pop, factory) :
-        for msg_spec in pop.list () [1] :
-            msg_no, _ = msg_spec.split (" ", 1)
-            m = factory ("\n".join (pop.top (msg_no, 0) [1]))
-            m._pma_msg_no = msg_no
-            m._pma_uidl   = cls.uidl (pop, msg_no) [-1]
-            yield m
+    def MB_Type (self, pop, factory) :
+        self._msg_count, self._mbx_size = c, s = pop.stat ()
+        _msg_dict = self._msg_dict
+        seen      = set (_msg_dict)
+        if not _msg_dict :
+            cached = self._emails_from_dir (self.path, self.__super._new_email)
+            for m in cached :
+                m._pma_msg_no = c
+                m._pma_size   = 0
+                m._pma_cached = True
+                seen.add (m._pma_path)
+                yield m
+        for msg_no, msg_uid in self.pop_uidl (pop) :
+            if msg_uid not in seen :
+                msg_size      = int (self.pop_list (pop, msg_no) [1])
+                headersonly   = msg_size > self.lazy_download_limit
+                if headersonly :
+                    lines     = pop.top  (msg_no, 0) [1]
+                else :
+                    lines     = pop.retr (msg_no)    [1]
+                m = factory ("\n".join (lines), headersonly = headersonly)
+                m._pma_msg_no = msg_no
+                m._pma_path   = msg_uid
+                m._pma_size   = msg_size
+                m._pma_cached = False
+                yield m
     # end def MB_Type
 
-    def msg_no (self, pop, uidl, msg_no) :
-        msg_no = int (msg_no)
-        while msg_no > 0 :
-            r, m, u = self.uidl (pop, str (msg_no))
-            if u == uidl :
-                return m
-            msg_no -= 1
-    # end def msg_no
+    def passwd_cb (self) :
+        raise NotImplemented, "Must pass passwd to POP3_Mailbox"
+    # end def passwd_cb
+
+    def pop_list (self, pop, msg_no = None) :
+        return self._pop_msg_query (pop.list, msg_no)
+    # end def pop_list
+
+    def pop_uidl (self, pop, msg_no = None) :
+        return self._pop_msg_query (pop.uidl, msg_no)
+    # end def pop_uidl
 
     def reparsed (self, msg) :
-        pop = self.connect ()
-        try :
-            msg_no = self.msg_no (pop, msg.email._pma_uidl, msg.path)
-            if msg_no :
-                result = self._new_email \
-                    ("\n".join (pop.retr (msg_no) [1]), headersonly = False)
-                result._pma_msg_no = msg_no
-            else :
-                print "This shouldn't happen!"
-        finally :
-            pop.quit ()
+        if msg.email._pma_cached :
+            result = self.__super.reparsed (msg)
+        else :
+            pop = self.connect ()
+            try :
+                msg_no = self._msg_no (pop, msg.name, msg.msg_no)
+                if msg_no :
+                    lines  = pop.retr (msg_no) [1]
+                    result = self._new_email \
+                        ("\n".join (lines), headersonly = False)
+                    result._pma_msg_no = msg_no
+                    self._save (msg, result)
+                else :
+                    print "This shouldn't happen!"
+            finally :
+                pop.quit ()
         return result
     # end def reparsed
 
-    @classmethod
-    def uidl (self, pop, msg_no) :
-        return pop.uidl (msg_no).split (" ")
-    # end def uidl
+    def sync (self) :
+        """Sync with `new` messages"""
+        return self._setup_messages ()
+    # end def sync
+
+    def _msg_no (self, pop, uid, msg_no) :
+        msg_no = int (msg_no)
+        while msg_no > 0 :
+            m, u = self.pop_uidl (pop, str (msg_no))
+            if u == uid :
+                return m
+            msg_no -= 1
+    # end def _msg_no
 
     def _new_email (self, msg_text, headersonly = True) :
         if PMA.SB is not None :
             msg_text = PMA.SB.filter (msg_text)
-        parser = PMA.Lib.Parser  ()
+        parser = self.parser
         email  = parser.parsestr (msg_text, headersonly = headersonly)
         email._pma_parsed_body = not headersonly
-        email._pma_path = sos.path.join (self.path, email ["message-id"])
         return email
     # end def _new_email
 
     def _new_message (self, m) :
-        result = self.__super._new_message (m)
-        result.path = result.email._pma_msg_no
+        result        = self.__super._new_message (m)
+        result.msg_no = result.email._pma_msg_no
+        if m._pma_parsed_body and not m._pma_cached :
+            self._save (result, m)
         return result
     # end def _new_message
 
-    def _setup_messages (self) :
-        pop = self.connect ()
+    def _new_subbox (self, path) :
+        raise TypeError, "POP3_Mailbox doesn't support sub-boxes"
+    # end def _new_subbox
+
+    def _pop_msg_query (self, cmd, msg_no) :
+        if msg_no :
+            return cmd (msg_no).split (" ") [1:]
+        else :
+            return (x.split (" ") for x in cmd () [1])
+    # end def _pop_msg_query
+
+    def _save (self, msg, email) :
         try :
-            self._add \
-                ( * ( self._new_message (m)
-                     for m in self.MB_Type (pop, self._new_email)
-                    )
-                )
+            msg._save \
+                (sos.path.join (self.path, msg.name), email.as_string ())
+        except IOError :
+            pass
+        else :
+            email._pma_cached = True
+    # end def _save
+
+    def _setup_messages (self) :
+        result = []
+        pop    = self.connect ()
+        try :
+            if (self._msg_count, self._mbx_size) != pop.stat () :
+                result = \
+                    [   self._new_message (m)
+                    for m in self.MB_Type (pop, self._new_email)
+                    ]
+                self._add (* result)
         finally :
             pop.quit ()
+        return result
     # end def _setup_messages
+
+    def _subdirs (self, path) :
+        return ()
+    # end def _subdirs
 
 # end class POP3_Mailbox
 
