@@ -175,13 +175,12 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     # end def sync
 
     def _msg_no (self, pop, uid, msg_no) :
-        max_no = int (pop.stat () [0])
-        msg_no = max (int (msg_no), max_no)
-        while msg_no > 0 :
-            m, u = self.pop_uidl (pop, str (msg_no))
+        m, u = self.pop_uidl (pop, str (msg_no))
+        if u == uid :
+            return msg_no
+        for m, u in self.pop_uidl (pop) :
             if u == uid :
                 return m
-            msg_no -= 1
     # end def _msg_no
 
     def _new_email (self, msg_text, headersonly = True) :
