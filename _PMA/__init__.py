@@ -37,6 +37,7 @@
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #    12-Aug-2005 (MG) `patchlevel` increased to 4
 #    16-Aug-2005 (CT) `patchlevel` increased to 5
+#    03-Jan-2006 (MG) `load_user_config` changed
 #    ««revision-date»»···
 #--
 
@@ -54,10 +55,11 @@ PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
 PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
 PMA.file_system_encoding = sys.getfilesystemencoding ()
 
-def load_user_config (config_fn = "~/PMA/.config.py") :
+def load_user_config (config_fn = ("~", "PMA", ".config.py")) :
     import sos
     try :
-        execfile (sos.expanded_path (config_fn), dict (PMA = PMA))
+        execfile \
+            (sos.expanded_path (sos.path.join (* config_fn)), dict (PMA = PMA))
     except IOError :
         pass
 PMA.load_user_config = load_user_config

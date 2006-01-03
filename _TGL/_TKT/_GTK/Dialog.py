@@ -30,6 +30,10 @@
 #     3-Jun-2005 (MG) Creation continued
 #    28-Jul-2005 (MG) Missing import of `TGL.TKT.GTK.Entry` added,
 #                     `Dialog.run` fixed
+#    03-Jan-2006 (MG) `Invisible_Entry`, `Invisible_String_Dialog` and
+#                     `ask_invisible_string` added
+#    03-Jan-2006 (MG) Emit `RESPONSE_OK` if`the `Activate` signal is emitted
+#                     by the entry
 #    ««revision-date»»···
 #--
 
@@ -94,7 +98,13 @@ class _Input_Dialog_ (Dialog) :
         self.box.  show                   ()
         self.prompt.show                  ()
         self.entry.show                   ()
+        self.entry.bind_add (self.TNS.Signal.Activate, self.respond)
+        self.wtk_object.set_default_response (GTK.RESPONSE_OK)
     # end def __init__
+
+    def respond (self, event = None) :
+        self.wtk_object.response (GTK.RESPONSE_OK)
+    # end def respond
 
     def run (self) :
         value = None
@@ -151,10 +161,33 @@ class Float_Dialog (String_Dialog) :
 
 # end class Float_Dialog
 
+class Invisible_Entry (GTK.Entry) :
+    """An entry with an `*` as invisible character"""
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.visibility = False
+    # end def __init__
+
+# end class Invisible_Entry
+
+GTK.Invisible_Entry = Invisible_Entry ### in this case `_Export` does not work
+
+class Invisible_String_Dialog (String_Dialog) :
+
+    entry_cls = "Invisible_Entry"
+
+# end class Invisible_String_Dialog
+
 def ask_string (* args, ** kw) :
     d = String_Dialog (* args, ** kw)
     return d.run ()
 # end def ask_string
+
+def ask_invisible_string (* args, ** kw) :
+    d = Invisible_String_Dialog (* args, ** kw)
+    return d.run ()
+# end def ask_invisible_string
 
 def ask_integer (* args, ** kw) :
     d = Int_Dialog (* args, ** kw)

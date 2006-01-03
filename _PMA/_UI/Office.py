@@ -87,6 +87,10 @@
 #     2-Jan-2006 (MG) `sync_box` finished
 #     3-Jan-2006 (MG) `sync_box` update of delivery box view and status
 #                     message added
+#    03-Jan-2006 (MG) `box_views` contains now a list of views for a mailbox
+#    03-Jan-2006 (MG) `_create_delivery_view` Add all sub boxes of the
+#                     delivery  box into the`box_views` dict
+#    03-Jan-2006 (MG) `ask_passwd` added
 #    ««revision-date»»···
 #--
 
@@ -105,6 +109,7 @@ import _PMA.Office
 import _PMA.Composer
 import _PMA.Sender
 import _PMA.V_Mailbox
+import _PMA.POP3_Mailbox
 
 import _TFL.sos
 import  time
@@ -277,6 +282,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def __init__ ( self, model, AC = None) :
         self.__super.__init__ (AC = AC)
+        ### set the passwd_cb as soon as possible
+        PMA.POP3_Mailbox.passwd_cb = lambda s : self.ask_passwd (s)
         self.office            = office = model.office
         self.model             = model
         self.box_views         = {}
@@ -293,7 +300,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 )
             bv.update_model           (box)
             self.storage_views.append (bv)
-            self.box_views [box] = bv
+            self.box_views [box] = (bv, )
         self.mb_msg_view = mmv = UI.Mailbox_MV \
             ( sort           = True
             , multiselection = True
@@ -309,6 +316,14 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._setup_commands    (self.model.cmd_mgr)
         self._restore_selection ()
     # end def __init__
+
+    def ask_passwd (self, mailbox) :
+        return self.model.ask_invisible_string \
+            ( title  = "Password for mailbox"
+            , prompt = "For user `%s` on `%s:%s`"
+                     % (mailbox.user, mailbox.host, mailbox.port)
+            )
+    # end def ask_passwd
 
     def _create_delivery_view (self, mbx_msg_view) :
         AC           = self.AC
@@ -328,8 +343,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             , AC           = AC
             )
         self.delivery_view.tkt.scroll_policies (self.TNS.AUTOMATIC)
-        self.box_views [self.f_box] = self.delivery_view
-        self.box_views [db]         = self.delivery_view
+        for box in (self.f_box, db) + self.f_box.sub_boxes :
+            self.box_views [box] = (self.delivery_view, )
     # end def _create_delivery_view
 
     def copy_message (self, event = None) :
@@ -359,24 +374,21 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         boxes    = set ()
         text     = []
         view     = self.mb_msg_view
-        self.mb_msg_view.selection = ()
-        for msg in messages :
-            text.append (str (msg.number))
-            update = True
-            if msg.pending.deleted or msg.pending.moved :
-                update = False
-                view.remove (msg.scope)
-            boxes.update    (msg.pending.commit ())
-            if update :
-                view.update (msg.scope)
-        for box in boxes :
-            try :
-                bv = self.box_views [box.root]
-            except KeyError :
-                pass
-            else :
-                bv.update (box)
-        print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
+        if messages :
+            self.mb_msg_view.selection = ()
+            for msg in messages :
+                text.append (str (msg.number))
+                update = True
+                if msg.pending.deleted or msg.pending.moved :
+                    update = False
+                    view.remove (msg.scope)
+                boxes.update    (msg.pending.commit ())
+                if update :
+                    view.update (msg.scope)
+            for box in boxes :
+                for bv in self.box_views [box.root] :
+                    bv.update (box)
+            print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
     # end def _commit
 
     def sync_box (self, event = None) :
@@ -419,7 +431,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
            subbox
         """
         cb = self.office.status.current_box
-        self.box_views [cb.root].remove (cb)
+        for bv in self.box_views [cb.root] :
+            bv.remove (cb)
         self._delete_box (cb)
     # end def delete_subbox
 
@@ -468,7 +481,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         if name :
             cb   = self.office.status.current_box
             box  = cb.add_subbox (name)
-            self.box_views [cb.root].add (box, parent = cb)
+            for bv in self.box_views [cb.root] :
+                bv.add (box, parent = cb)
     # end def new_subbox
 
     def reply (self, event = None) :
@@ -526,7 +540,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             tree = event.widget
         else :
             if curr_box :
-                tree = self.box_views [curr_box.root]
+                tree = self.box_views [curr_box.root] [0] ### XXX
             else :
                 return
         selection = tree.selection
@@ -535,7 +549,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             return
         box = selection [0]
         if curr_box and curr_box.root != box.root :
-           self.box_views [curr_box.root].selection = ()
+            for bv in self.box_views [curr_box.root] :
+                bv.selection = ()
         if force or self.office.status.current_box != box :
             self.office.status.current_box = box
             self.mb_msg_view.update_model (box)
@@ -556,7 +571,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         status.target_box = status.current_box
         for box in old, status.current_box :
             if box is not None :
-                self.box_views [box.root].update (box)
+                for bv in self.box_views [box.root] :
+                    bv.update (box)
     # end def set_target_mailbox
 
     def show_message (self, event = None) :
@@ -638,25 +654,27 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         message = mailbox.status.current_message
         self.model.msg_display.display       (message)
         self.mb_msg_view.update              (message.scope)
-        self.box_views [mailbox.root].update (mailbox)
+        for bv in self.box_views [mailbox.root] :
+            bv.update (mailbox)
     # end def _display_message
 
     def _restore_selection (self) :
         box   = self.office.status.current_box
         if box :
             names  = []
-            view  = self.box_views [box.root]
             for b_name in box.qname.split (PMA.Mailbox.name_sep) :
                 names.append (b_name)
                 name = PMA.Mailbox.name_sep.join  (names)
                 try :
                     box  = PMA.Mailbox.instance (name)
-                    view.see                    (box)
+                    for bv in self.box_views [box.root] :
+                        bv.see (box)
                 except KeyError :
                     ### ignore parts of the box path which don't have it's
                     ### own mailbox object
                     pass
-            view.selection = box
+            for bv in self.box_views [box.root] :
+                bv.selection = box
             self.select_box (force = True)
     # end def _restore_selection
 

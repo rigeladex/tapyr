@@ -33,6 +33,7 @@
 #    21-Sep-2005 (MG) Obsolete import of ´Script_Menu_Mgr` removed
 #     2-Jan-2006 (MG) `_quit` close the interpreter window to save the
 #                     current state
+#    03-Jan-2006 (MG) `ask_invisible_string` added
 #    ««revision-date»»···
 #--
 
@@ -315,11 +316,13 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     # end def _wrap_function
 
     @_wrap_function
-    def ask_string  () : pass
+    def ask_string           () : pass
     @_wrap_function
-    def ask_integer () : pass
+    def ask_invisible_string () : pass
     @_wrap_function
-    def ask_float   () : pass
+    def ask_integer          () : pass
+    @_wrap_function
+    def ask_float            () : pass
 
 ### XXX    ask_list_element         = CTK_Dialog.ask_list_element
 ### XXX    ask_list_element_combo   = CTK_Dialog.ask_list_element_combo
