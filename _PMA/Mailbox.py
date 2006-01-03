@@ -128,7 +128,7 @@ class _Mailbox_ (TFL.Meta.Object) :
     def commit (self, msg) :
         """Commit the pending actions of `msg`"""
         if msg.pending :
-            msg.pending.commit (self)
+            msg.pending.commit ()
     # end def commit
 
     def commit_all (self, transitive = False) :

@@ -146,6 +146,8 @@
 #     2-Jan-2006 (CT) `SB.filter` removed from `_reparsed` (let that be done
 #                     by POP3_Mailbox, procmail, etc.)
 #     3-Jan-2006 (CT) `body_start` implemented
+#     3-Jan-2006 (CT) `_Pending_Action_` changed to support errors during
+#                     `commit` of a `delete` gracefully
 #    ««revision-date»»···
 #--
 
@@ -847,55 +849,57 @@ class _Pending_Action_ (TFL.Meta.Object) :
     moved   = property (lambda s : bool (    s._targets and     s._delete))
 
     def __init__ (self, msg) :
-        self._msg = weakref.proxy (msg)
-        self.reset ()
+        self._msg     = weakref.proxy (msg)
+        self._delete  = None
+        self._targets = set ()
     # end def __init__
 
     def commit (self) :
-        """Commit all pending actions of message in mailbox `source`"""
+        """Commit all pending actions of message."""
         affected_boxes = set ()
         msg = self._msg
         for t in self._targets :
             t.add_messages     (msg)
             affected_boxes.add (t)
+        self._targets = set ()
         source = self._delete
         if hasattr (source, "delete") :
-            source.delete (msg)
-            affected_boxes.add (source)
-        self.reset ()
+            try :
+                source.delete (msg)
+            except Exception, exc :
+                print "Couldn't delete `%s (%s)` due to exception `%s`" % \
+                    (msg.number, msg.name, exc)
+            else :
+                self._delete = None
+                affected_boxes.add (source)
         return affected_boxes
     # end def commit
 
     def copy (self, target) :
         """Copy message into mailbox `target` (cancels `delete` if `target`
-           is the `source` passed to `delete`).
+           is the `mailbox` currently marked for `delete`).
         """
         if target is self._delete :
             self._delete = None
         else :
             if not self._targets :
                 self._delete = None
-            self._targets [target] = True
+            self._targets.add (target)
     # end def copy
 
-    def delete (self, source) :
-        """Delete message from mailbox `source`"""
-        self._delete  = source
-        self._targets = {}
+    def delete (self) :
+        """Delete message from mailbox"""
+        self._delete  = self._msg.mailbox
+        self._targets = set ()
     # end def delete
 
-    def move (self, source, target) :
-        """Move message into mailbox `source` into mailbox `target`"""
+    def move (self, target) :
+        """Move message into mailbox `target`"""
         if len (self._targets) == 1 :
-            self._targets = {}
-        self._delete           = source
-        self._targets [target] = True
+            self._targets = set ()
+        self._delete = self._msg.mailbox
+        self._targets.add (target)
     # end def move
-
-    def reset (self) :
-        self._delete  = None
-        self._targets = {}
-    # end def reset
 
     def __len__ (self) :
         return self.__nonzero__ ()
@@ -910,7 +914,7 @@ class _Pending_Action_ (TFL.Meta.Object) :
         if self :
             if self._delete :
                 result.append ("delete from %s" % self._delete.path)
-            result.extend (["copy to %s" % t.path for t in self._targets])
+            result.extend ("copy to %s" % t.path for t in self._targets)
         else :
             result.append ("no actions pending")
         return ":".join (result)

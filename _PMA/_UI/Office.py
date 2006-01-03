@@ -370,7 +370,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             if update :
                 view.update (msg.scope)
         for box in boxes :
-            self.box_views [box.root].update (box)
+            try :
+                bv = self.box_views [box.root]
+            except KeyError :
+                pass
+            else :
+                bv.update (box)
         print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
     # end def _commit
 
@@ -395,7 +400,6 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._message_command \
             ( "delete"
             , "Mark `%(cb_qname)s` for %(cmd)s:"
-            , self.office.status.current_box
             )
     # end def delete_message
 
@@ -406,7 +410,6 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._message_command \
             ( "move"
             , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
-            , self.office.status.current_box
             , self.office.status.target_box
             )
     # end def move_message
@@ -613,7 +616,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             print
         next = view.next ()
         if next :
-            view.see               (next)
+            view.see (next)
             view.selection = next
         return result
     # end def _message_command

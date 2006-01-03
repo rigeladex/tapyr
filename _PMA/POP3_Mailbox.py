@@ -86,6 +86,24 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
         return pop
     # end def connect
 
+    def delete (self, * messages) :
+        pop = self.connect ()
+        try :
+            for msg in messages :
+                msg_no = self._msg_no (pop, msg.name, msg.msg_no)
+                if msg_no :
+                    pop.dele (msg_no)
+                else :
+                    print \
+                        ( "Couldn't delete `%s (%s)`: POP3 msg-number %s"
+                          "not found"
+                        % (msg.number, msg.name, msg.msg_no)
+                        )
+        finally :
+            pop.quit ()
+        self.__super.delete (* messages)
+    # end def delete
+
     def MB_Type (self, pop, factory) :
         self._msg_count, self._mbx_size = c, s = pop.stat ()
         _msg_dict = self._msg_dict
@@ -111,7 +129,12 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
                 m._pma_path   = msg_uid
                 m._pma_size   = msg_size
                 m._pma_cached = False
+                seen.add (m._pma_path)
                 yield m
+        for msg in _msg_dict.values () :
+            ### can't use `itervalues` here because dict might change in loop
+            if msg.name not in seen :
+                self.__super.delete (msg)
     # end def MB_Type
 
     def passwd_cb (self) :
@@ -152,7 +175,8 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     # end def sync
 
     def _msg_no (self, pop, uid, msg_no) :
-        msg_no = int (msg_no)
+        max_no = int (pop.stat () [0])
+        msg_no = max (int (msg_no), max_no)
         while msg_no > 0 :
             m, u = self.pop_uidl (pop, str (msg_no))
             if u == uid :
@@ -200,16 +224,20 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
 
     def _setup_messages (self) :
         result = []
-        pop    = self.connect ()
         try :
-            if (self._msg_count, self._mbx_size) != pop.stat () :
-                result = \
-                    [   self._new_message (m)
-                    for m in self.MB_Type (pop, self._new_email)
-                    ]
-                self._add (* result)
-        finally :
-            pop.quit ()
+            pop = self.connect ()
+        except Exception :
+            pass
+        else :
+            try :
+                if (self._msg_count, self._mbx_size) != pop.stat () :
+                    result = \
+                        [   self._new_message (m)
+                        for m in self.MB_Type (pop, self._new_email)
+                        ]
+                    self._add (* result)
+            finally :
+                pop.quit ()
         return result
     # end def _setup_messages
 
