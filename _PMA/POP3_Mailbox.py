@@ -40,6 +40,7 @@
 #     3-Jan-2006 (CT) `_save` added and used
 #     3-Jan-2006 (CT) `lazy_download_limit` added and used
 #     3-Jan-2006 (CT) `passwd_cb` added
+#    04-Jan-2006 (MG) `POP3_SSL_Mailbox` added
 #    ««revision-date»»···
 #--
 
@@ -57,6 +58,7 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
 
     supports_status     = True
     lazy_download_limit = 1024 * 10
+    POP3_class          = poplib.POP3
 
     def __init__ ( self, path, host, user
                  , passwd              = None
@@ -77,7 +79,7 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     # end def __init__
 
     def connect (self) :
-        pop = poplib.POP3 (self.host, self.port)
+        pop = self.POP3_class (self.host, self.port)
         pop.user  (self.user)
         if self.passwd is None :
             self.passwd = self.passwd_cb ()
@@ -246,10 +248,16 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
 
 # end class POP3_Mailbox
 
+class POP3_SSL_Mailbox (POP3_Mailbox) :
+    """A POP3 mailbox using a ssl conection"""
+
+    POP3_class          = poplib.POP3_SSL
+
+# end class POP3_SSL_Mailbox
+
 """
 from _PMA.POP3_Mailbox import *
 
-mb = POP3_Mailbox ("mx.wavenet.at", "g9505a00", "5secyba3")
 mb = POP3_Mailbox ("localhost", "tanzer", "", port = 1100)
 """
 if __name__ != "__main__" :

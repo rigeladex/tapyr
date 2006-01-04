@@ -107,7 +107,7 @@ PMA.Composer.resend_format    = "\n".join \
 
 PMA.Mime.default_type         = "application/octet-stream"
 PMA.Mime.unencoded_mime_types = ("text/plain", "message/rfc822")
-PMA.Mime.add_extensions ("text/plain", None, ".sh", ".sty")
+PMA.Mime.add_extensions         ("text/plain", None, ".sh", ".sty")
 
 PMA.Office.top_name           = "PMA"
 
