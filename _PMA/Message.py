@@ -148,6 +148,7 @@
 #     3-Jan-2006 (CT) `body_start` implemented
 #     3-Jan-2006 (CT) `_Pending_Action_` changed to support errors during
 #                     `commit` of a `delete` gracefully
+#     4-Jan-2006 (CT) `reset` re-refactored
 #    ««revision-date»»···
 #--
 
@@ -849,9 +850,8 @@ class _Pending_Action_ (TFL.Meta.Object) :
     moved   = property (lambda s : bool (    s._targets and     s._delete))
 
     def __init__ (self, msg) :
-        self._msg     = weakref.proxy (msg)
-        self._delete  = None
-        self._targets = set ()
+        self._msg = weakref.proxy (msg)
+        self.reset ()
     # end def __init__
 
     def commit (self) :
@@ -900,6 +900,11 @@ class _Pending_Action_ (TFL.Meta.Object) :
         self._delete = self._msg.mailbox
         self._targets.add (target)
     # end def move
+
+    def reset (self) :
+        self._delete  = None
+        self._targets = set ()
+    # end def reset
 
     def __len__ (self) :
         return self.__nonzero__ ()

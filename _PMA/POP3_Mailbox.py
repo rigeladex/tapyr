@@ -41,6 +41,9 @@
 #     3-Jan-2006 (CT) `lazy_download_limit` added and used
 #     3-Jan-2006 (CT) `passwd_cb` added
 #    04-Jan-2006 (MG) `POP3_SSL_Mailbox` added
+#     4-Jan-2006 (CT) `MB_Type` changed to update `_pma_msg_no` and
+#                     `_pma_size` for messages already in `seen`
+#     4-Jan-2006 (CT) `_msg_no` changed to consider `max_no`
 #    ««revision-date»»···
 #--
 
@@ -109,18 +112,18 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     def MB_Type (self, pop, factory) :
         self._msg_count, self._mbx_size = c, s = pop.stat ()
         _msg_dict = self._msg_dict
-        seen      = set (_msg_dict)
+        seen      = dict ((m.name, m.email) for m in _msg_dict.itervalues ())
         if not _msg_dict :
             cached = self._emails_from_dir (self.path, self.__super._new_email)
             for m in cached :
                 m._pma_msg_no = c
                 m._pma_size   = 0
                 m._pma_cached = True
-                seen.add (m._pma_path)
+                seen [m._pma_path] = m
                 yield m
         for msg_no, msg_uid in self.pop_uidl (pop) :
+            msg_size = int (self.pop_list (pop, msg_no) [1])
             if msg_uid not in seen :
-                msg_size      = int (self.pop_list (pop, msg_no) [1])
                 headersonly   = msg_size > self.lazy_download_limit
                 if headersonly :
                     lines     = pop.top  (msg_no, 0) [1]
@@ -131,8 +134,12 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
                 m._pma_path   = msg_uid
                 m._pma_size   = msg_size
                 m._pma_cached = False
-                seen.add (m._pma_path)
+                seen [m._pma_path] = m
                 yield m
+            else :
+                m = seen [msg_uid]
+                m._pma_msg_no = msg_no
+                m._pma_size   = msg_size
         for msg in _msg_dict.values () :
             ### can't use `itervalues` here because dict might change in loop
             if msg.name not in seen :
@@ -177,7 +184,8 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
     # end def sync
 
     def _msg_no (self, pop, uid, msg_no) :
-        m, u = self.pop_uidl (pop, str (msg_no))
+        max_no = int (pop.stat () [0])
+        m, u   = self.pop_uidl (pop, str (max (int (msg_no), max_no))
         if u == uid :
             return msg_no
         for m, u in self.pop_uidl (pop) :
