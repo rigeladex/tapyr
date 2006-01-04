@@ -149,6 +149,8 @@
 #     3-Jan-2006 (CT) `_Pending_Action_` changed to support errors during
 #                     `commit` of a `delete` gracefully
 #     4-Jan-2006 (CT) `reset` re-refactored
+#     4-Jan-2006 (CT) `_Msg_Part_._save` refactored to module-level function
+#                     `save`
 #    ««revision-date»»···
 #--
 
@@ -186,6 +188,18 @@ def decoded_header (header) :
     result = u" ".join (result)
     return result
 # end def decoded_header
+
+def save (filename, body) :
+    if body :
+        f = open (filename, "wb")
+        try :
+            try :
+                f.write (body)
+            except UnicodeError :
+                f.write (body.encode (PMA.default_encoding, "replace"))
+        finally :
+            f.close ()
+# end def save
 
 class Msg_Scope (TFL.Caller.Scope) :
     """Provide access to the caller's locals and to the message object passed
@@ -456,18 +470,6 @@ class _Msg_Part_ (object) :
             yield name, r
     # end def _get_headers
 
-    def _save (self, filename, body) :
-        if body :
-            f = open (filename, "wb")
-            try :
-                try :
-                    f.write (body)
-                except UnicodeError :
-                    f.write (body.encode (PMA.default_encoding, "replace"))
-            finally :
-                f.close ()
-    # end def _save
-
     def _separators (self, sep_length) :
         yield ""
         yield ( "%s part %s %s" % ("-" * 4, self.name, "-" * sep_length)
@@ -558,7 +560,7 @@ class Message_Body (_Msg_Part_) :
 
     def save (self, filename) :
         """Save message/part body to file with `filename`"""
-        self._save (filename, self.body)
+        save (filename, self.body)
     # end def save
 
     def _get_content_type (self) :
@@ -620,8 +622,7 @@ class Part_Header (_Msg_Part_) :
 
     def save (self, filename) :
         """Save message/part headers to file with `filename`"""
-        self._save \
-            (filename, "\n".join ("\n".join (self._fh), "\n".join (self._mh)))
+        save (filename, "\n".join ("\n".join (self._fh), "\n".join (self._mh)))
     # end def save
 
     def _separators (self, sep_length) :
@@ -677,7 +678,7 @@ class _Message_ (_Msg_Part_) :
 
     def save (self, filename) :
         """Save message to file with `filename`"""
-        self._save (filename, self.email.as_string ())
+        save (filename, self.email.as_string ())
     # end def save
 
     _formatted = formatted

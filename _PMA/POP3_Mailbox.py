@@ -50,7 +50,6 @@
 from   _TFL                       import TFL
 from   _PMA                       import PMA
 import _PMA.Mailbox
-import _TFL._Meta.Object
 import  poplib
 import _TFL.sos as sos
 
@@ -185,7 +184,7 @@ class POP3_Mailbox (PMA._Mailbox_in_Dir_S_) :
 
     def _msg_no (self, pop, uid, msg_no) :
         max_no = int (pop.stat () [0])
-        m, u   = self.pop_uidl (pop, str (max (int (msg_no), max_no))
+        m, u   = self.pop_uidl (pop, str (max (int (msg_no), max_no)))
         if u == uid :
             return msg_no
         for m, u in self.pop_uidl (pop) :
