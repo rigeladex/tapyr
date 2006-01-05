@@ -40,18 +40,22 @@
 #     7-Aug-2005 (CT) `extra_delivery_boxes` added and import of
 #                     `Pop3_Mailbox` removed (let ~/PMA/.config.py do that)
 #     2-Jan-2006 (CT) `dbx_matchers` added
+#     5-Jan-2006 (CT) `_new_delivery_box` factored and changed to load
+#                     mailbox-specific config file, if any
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
+from   _TGL                    import TGL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 import _PMA.Mailbox
 import _PMA.Off_Status
+import _TFL.Environment
 import _TFL._Meta.Object
+import _TFL.sos                as     sos
+import _TGL.load_config_file
 
-import Environment
-import sos
 from   subdirs                 import subdirs
 
 class Office (TFL.Meta.Object) :
@@ -121,9 +125,23 @@ class Office (TFL.Meta.Object) :
             dirs.append (inbox)
         return \
             ( self.extra_delivery_boxes
-            + [PMA.Maildir (d, prefix = prefix) for d in dirs]
+            + [self._new_delivery_box (d, prefix) for d in dirs]
             )
     # end def _delivery_boxes
+
+    def _new_delivery_box (self, d, prefix) :
+        config = TGL.load_config_file \
+            ( sos.path.join (d, ".config.py")
+            , dict
+                ( Maildir_Type = PMA.Maildir
+                , Maildir_kw   = {}
+                )
+            )
+        result = config ["Maildir_Type"] \
+            (d, prefix = prefix, ** config ["Maildir_kw"])
+        result.config = config
+        return result
+    # end def _new_delivery_box
 
     def _storage_boxes (self, path, da) :
         return \
@@ -136,7 +154,7 @@ class Office (TFL.Meta.Object) :
     @classmethod
     def default_path (cls, root = None) :
         if root is None :
-            root = Environment.home_dir
+            root = TFL.Environment.home_dir
         return cls._path (root, cls.top_name)
     # end def default_path
 

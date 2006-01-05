@@ -60,6 +60,8 @@
 #     2-Jan-2006 (CT) Optional argument `headersonly` added to `_new_email`
 #     3-Jan-2006 (CT) `_emails_from_dir` factored and defined as instance
 #                     method
+#     5-Jan-2006 (CT) `Maildir._new2cur` changed to not append `:2,` (plays
+#                     havoc with `_msg_dict`)
 #    ««revision-date»»···
 #--
 
@@ -482,14 +484,11 @@ class Maildir (_Mailbox_in_Dir_) :
     def _new2cur (self, m) :
         join = sos.path.join
         path = self.path
-        n    = "%s:2," % (m.name, )
-        s    = join (path, "new", m.name)
-        t    = join (path, "cur", n)
+        s    =          join (path, "new", m.name)
+        t    = m.path = join (path, "cur", m.name)
         sos.link    (s, t)
         sos.unlink  (s)
-        m.name           = n
         m.email._pma_dir = "cur"
-        m.path           = join (path, "cur", n)
     # end def _new2cur
 
     def _setup_messages (self, path = None, MB_Type = None) :

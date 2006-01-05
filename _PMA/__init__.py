@@ -38,6 +38,8 @@
 #    12-Aug-2005 (MG) `patchlevel` increased to 4
 #    16-Aug-2005 (CT) `patchlevel` increased to 5
 #    03-Jan-2006 (MG) `load_user_config` changed
+#     5-Jan-2006 (CT) `load_config_file` factored to `TGL` and
+#                     `load_user_config` interface changed (`* config_fn`)
 #    ««revision-date»»···
 #--
 
@@ -49,19 +51,18 @@ PMA = Package_Namespace ()
 
 PMA.authors              = ["Christian Tanzer", "Martin Glueck"]
 PMA.major_version        = _M = 0
-PMA.minor_version        = _m = 5
-PMA.patchlevel           = _p = 5
+PMA.minor_version        = _m = 6
+PMA.patchlevel           = _p = 0
 PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
 PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
 PMA.file_system_encoding = sys.getfilesystemencoding ()
 
-def load_user_config (config_fn = ("~", "PMA", ".config.py")) :
+def load_user_config (* config_fn) :
     import sos
-    try :
-        execfile \
-            (sos.expanded_path (sos.path.join (* config_fn)), dict (PMA = PMA))
-    except IOError :
-        pass
+    from _TGL.load_config_file import load_config_file
+    if not config_fn :
+        config_fn = ("~", "PMA", ".config.py")
+    load_config_file (sos.path.join (* config_fn), dict (PMA = PMA))
 PMA.load_user_config = load_user_config
 
 del load_user_config

@@ -49,6 +49,10 @@
 #     2-Jan-2006 (CT) Additional `if_names` added to `_Mbox_Cmd_Group` and
 #                     `_Message_Cmd_Group`
 #     2-Jan-2006 (MG) `_window_title_text` changed
+#     5-Jan-2006 (CT) Attribute `office` moved to `UI.Office`
+#     5-Jan-2006 (CT) `_window_title_text` changed to guard against
+#                     `AttributeError` (during startup, `office` isn't there
+#                     yet)
 #    ««revision-date»»···
 #--
 
@@ -109,6 +113,8 @@ class UI_State (TGL.UI.UI_State) :
 
 class Application (TGL.UI.Application) :
     """Main instance of PMA application"""
+
+    office               = property (lambda s : s.ui_office.office)
 
     product_name         = "PMA"
     show_menubar         = True
@@ -184,7 +190,6 @@ class Application (TGL.UI.Application) :
     # end def _quit_finally
 
     def _setup_application (self) :
-        self.office      = self.ANS.Office ()
         tkt              = self.tkt
         UI               = self.ANS.UI
         self.msg_display = md = UI.Message \
@@ -203,12 +208,16 @@ class Application (TGL.UI.Application) :
 
     def _window_title_text (self) :
         result = ["PMA: "]
-        cb = self.office.status.current_box
-        if cb :
-            result.append (cb.name)
-            result.append ("/")
-        if cb and cb.status.current_message :
-            result.append ("%d" % (cb.status.current_message.number, ))
+        try :
+            cb = self.office.status.current_box
+        except AttributeError :
+            pass
+        else :
+            if cb :
+                result.append (cb.name)
+                result.append ("/")
+                if cb.status.current_message :
+                    result.append ("%d" % (cb.status.current_message.number, ))
         return "".join (result)
     # end def _window_title_text
 

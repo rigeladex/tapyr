@@ -91,6 +91,8 @@
 #    03-Jan-2006 (MG) `_create_delivery_view` Add all sub boxes of the
 #                     delivery  box into the`box_views` dict
 #    03-Jan-2006 (MG) `ask_passwd` added
+#     5-Jan-2006 (CT) `PMA.office` instantiated here (after setting up
+#                     `POP3_Mailbox.passwd_cb`)
 #    ««revision-date»»···
 #--
 
@@ -283,8 +285,9 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def __init__ ( self, model, AC = None) :
         self.__super.__init__ (AC = AC)
         ### set the passwd_cb as soon as possible
-        PMA.POP3_Mailbox.passwd_cb = lambda s : self.ask_passwd (s)
-        self.office            = office = model.office
+        PMA.POP3_Mailbox.passwd_cb = PMA.Pop3_Maildir.passwd_cb \
+                               = lambda s : self.ask_passwd (s)
+        self.office            = office = self.ANS.Office ()
         self.model             = model
         self.box_views         = {}
         self.storage_views     = []
@@ -343,7 +346,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             , AC           = AC
             )
         self.delivery_view.tkt.scroll_policies (self.TNS.AUTOMATIC)
-        for box in (self.f_box, db) + self.f_box.sub_boxes :
+        for box in (self.f_box, db) + self.f_box.sub_boxes + db._boxes :
             self.box_views [box] = (self.delivery_view, )
     # end def _create_delivery_view
 
@@ -387,7 +390,11 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                     view.update (msg.scope)
             for box in boxes :
                 for bv in self.box_views [box.root] :
-                    bv.update (box)
+                    try :
+                        bv.update (box)
+                    except Exception, exc :
+                        print "*** PMA.UI.Office._commit:", \
+                            exc.__class__.__name__, exc
             print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
     # end def _commit
 
