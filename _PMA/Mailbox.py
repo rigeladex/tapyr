@@ -62,10 +62,14 @@
 #                     method
 #     5-Jan-2006 (CT) `Maildir._new2cur` changed to not append `:2,` (plays
 #                     havoc with `_msg_dict`)
+#     5-Jan-2006 (CT) `unseen` changed to not count messages with `pending`
+#                     changes
+#     5-Jan-2006 (CT) `unsynced` added
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
+from   _TGL                    import TGL
 from   _PMA                    import PMA
 from   _PMA                    import Lib
 
@@ -74,6 +78,7 @@ import _PMA.Message
 
 import _TFL._Meta.Object
 import _TFL.B64 as B64
+import _TGL.Observed_Value
 
 import Environment
 from   predicate               import *
@@ -94,9 +99,11 @@ class _Mailbox_ (TFL.Meta.Object) :
     sub_boxes          = property (lambda s : s._box_dict.values ())
     supports_status    = False
     unseen             = property \
-        (lambda s : sum ([m.status.unseen for m in s._get_messages ()]))
+        ( lambda s
+        : sum ((m.status.unseen and not m.pending) for m in s._get_messages ())
+        )
     pending            = property \
-        (lambda s : sum ([len (m.pending) for m in s._get_messages ()]))
+        (lambda s : sum (len (m.pending) for m in s._get_messages ()))
 
     _deliveries        = {} ### `time.time ()` -> number of mails delivered
 
@@ -116,6 +123,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         self._box_dict = {}
         self._messages = None
         self._msg_dict = {}
+        self.unsynced  = TGL.Observed_Value (0)
         if qname not in self._Table :
             self._Table [qname] = self
         else :
