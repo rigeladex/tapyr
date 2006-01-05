@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2006 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -40,6 +40,7 @@
 #    02-Dec-2005 (MG) `Struct.as_c_code` changed to handle `Struct` classes
 #                     as `struct_fields`
 #    06-Dec-2005 (MZO) added optional parameter index to current
+#    04-Jan-2006 (MZO) added buffer_name_tail
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,7 @@ class Struct (TFL.Meta.Object) :
     ### __metaclass__      = TFL.CDG.M_Struct.New ("TDFT")
 
     buffer_name_format     = "%(cls_name)s_buffer"
+    buffer_name_tail       = ""
 
     __autowrap             = dict \
       ( add_typedef        = TFL.Meta.Class_Method
@@ -157,8 +159,13 @@ class Struct (TFL.Meta.Object) :
     # end def add_typedef
 
     def buffer_name (cls) :
-        d = dict (cls_name = cls.type_name)
-        return cls.buffer_name_format % d
+        name = getattr (cls, "buffer_field_name", None)
+        if name is None : 
+            d = dict (cls_name = cls.type_name)
+            name = cls.buffer_name_format % d
+            name = name.lower ()
+        buffer_name = "%s%s" % (name.lower (), cls.buffer_name_tail)
+        return buffer_name
     # end def buffer_name
 
     def current (cls, index = None) :
