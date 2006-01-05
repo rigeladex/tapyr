@@ -32,6 +32,8 @@
 #    26-Jul-2005 (CT) `_ini_attr` added
 #    26-Jul-2005 (CT) `_Status_C_` and `_Status_I_` factored
 #    14-Aug-2005 (MG) Moved from `PMA` package to the `TGL` package
+#    05-Jan-2006 (MG) Open the files in binary mode in the `load` functions
+#                     (they are stored in binary mode too)
 #    ««revision-date»»···
 #--
 
@@ -103,7 +105,7 @@ class _Status_C_ (_Status_) :
     @classmethod
     def load (cls, filename) :
         try :
-            f = open (filename)
+            f = open (filename, "rb")
         except IOError :
             pass
         else :
@@ -137,7 +139,7 @@ class _Status_I_ (_Status_) :
 
     def load (self, filename) :
         try :
-            f = open (filename)
+            f = open (filename, "rb")
         except IOError :
             pass
         else :
