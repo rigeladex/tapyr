@@ -36,6 +36,7 @@ from   _PMA                    import PMA
 import _TFL._Meta.Object
 
 import atexit
+import sys
 import threading
 import time
 
@@ -57,7 +58,7 @@ Thread = _Thread_
 class Polling_Thread (_Thread_) :
     """Base class for PMA polling threads"""
 
-    def __init__ (self, poll_interval = 60, ** kw) :
+    def __init__ (self, poll_interval = 10, ** kw) :
         self.finish         = False
         self.poll_interval  = poll_interval
         atexit.register       (setattr, self, "finish", True)
@@ -66,19 +67,15 @@ class Polling_Thread (_Thread_) :
 
     def run (self) :
         while not self.finish :
-            self._poll ()
-            self.sleep ()
+            ### print >> sys.__stdout__, self, "run poll", time.strftime ("%H:%M:%S", time.localtime ())
+            self._poll  ()
+            ### print >> sys.__stdout__, "  goto sleep", time.strftime ("%H:%M:%S", time.localtime ())
+            self._sleep ()
     # end def run
 
-    def sleep (self) :
-        ### XXX use a timeout-socket to avoid polling here
-        poll_increment = 5
-        poll_interval  = self.poll_interval
-        slept          = 0
-        while slept < poll_interval and not self.finish :
-            time.sleep (poll_increment)
-            slept += poll_increment
-    # end def sleep
+    def _sleep (self) :
+        time.sleep (self.poll_interval)
+    # end def _sleep
 
     def _poll (self) :
         raise NotImplemented, "%s must implement _poll" % self.__class__

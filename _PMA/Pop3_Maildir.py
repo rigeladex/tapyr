@@ -51,7 +51,7 @@ class Pop3_Poller (PMA.Polling_Thread) :
     def __init__ ( self, maildir, host, user
                  , passwd              = None
                  , port                = 110
-                 , poll_interval       = 60 ### in seconds
+                 , poll_interval       = 10 ### in seconds
                  , ** kw
                  ) :
         self.maildir       = maildir

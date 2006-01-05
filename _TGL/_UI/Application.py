@@ -34,7 +34,7 @@
 #    13-Sep-2005 (MG) Dummy import's added
 #    ««revision-date»»···
 #--
-#
+
 from   _TFL                   import TFL
 from   _TGL                   import TGL
 import _TFL._Meta.Object

@@ -93,6 +93,12 @@
 #    03-Jan-2006 (MG) `ask_passwd` added
 #     5-Jan-2006 (CT) `PMA.office` instantiated here (after setting up
 #                     `POP3_Mailbox.passwd_cb`)
+#     5-Jan-2006 (CT) SB-related commands (`train_ham`, etc.) added
+#     5-Jan-2006 (CT) `_message_command` split into `_message_command` and
+#                     `_message_command_n`
+#     5-Jan-2006 (CT) Failed to make `next_unseen` and `prev_unseen` work
+#     5-Jan-2006 (CT) `_display_message` changed to `push_help` of
+#                     `str (msg.pending)`
 #    ««revision-date»»···
 #--
 
@@ -194,7 +200,6 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         , CD ( "Set target mailbox", "set_target_mailbox"
              , * sbx_cmd_grps
              )
-
           ### message commands
         , PMA.UI.Separator (CD.Group ("Message", "cm_mv"))
         , CD ( "Reply",          "reply"
@@ -217,12 +222,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
              , * msg_cmd_grps
              )
         , PMA.UI.Separator (CD.Group ("Message", ("cm_mv", "mb")))
-        , CD ( "Copy to subbox", "copy_message"
+        , CD ( "Copy to box", "copy_message"
              , eventname = "copy_message"
              , icon      = "gtk-copy"
              , * msg_cmd_grps
              )
-        , CD ( "Move to subbox", "move_message"
+        , CD ( "Move to box", "move_message"
              , eventname = "move_message"
              , icon      = "gtk-cut"
              , * msg_cmd_grps
@@ -240,6 +245,25 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         , CD ( "Unmark",         "unmark_message"
              , eventname = "unmark_message"
              , icon      = "gtk-cancel"
+             , * msg_cmd_grps
+             )
+        , PMA.UI.Separator (CD.Group ("Message", ("cm_mv", "mb")))
+        , CD ( "Train ham", "train_ham"
+             , eventname = "train_ham"
+             # icon      = ???
+             , * msg_cmd_grps
+             )
+        , CD ( "Un-Train ham", "untrain_ham"
+             # icon      = ???
+             , * msg_cmd_grps
+             )
+        , CD ( "Train spam", "train_spam"
+             , eventname = "train_spam"
+             # icon      = ???
+             , * msg_cmd_grps
+             )
+        , CD ( "Un-Train spam", "untrain_spam"
+             # icon      = ???
              , * msg_cmd_grps
              )
         , PMA.UI.Separator (CD.Group ("Message", ("cm_mv", "mb")))
@@ -354,7 +378,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         """Copy the currently selected message to the default target
            mailbox.
         """
-        self._message_command \
+        self._message_command_n \
             ( "copy"
             , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
             , self.office.status.target_box
@@ -415,18 +439,18 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     # end def sync_box
 
     def delete_message (self, event = None) :
-        """Delete the currently selected message from this mailbox."""
-        self._message_command \
+        """Delete the currently selected message(s) from this mailbox."""
+        self._message_command_n \
             ( "delete"
             , "Mark `%(cb_qname)s` for %(cmd)s:"
             )
     # end def delete_message
 
     def move_message (self, event = None) :
-        """Move the currently selected message from the current mailbox into
+        """Move the currently selected message(s) from the current mailbox into
            the default target mailbox.
         """
-        self._message_command \
+        self._message_command_n \
             ( "move"
             , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
             , self.office.status.target_box
@@ -552,7 +576,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 return
         selection = tree.selection
         if not selection :
-            ### ignore the callback if the selection has be canceled
+            ### ignore the callback if the selection has been canceled
             return
         box = selection [0]
         if curr_box and curr_box.root != box.root :
@@ -611,13 +635,58 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def show_next_unseen (self, event = None) :
         """Show the next unseen message."""
-        print "Unseen N"
+        return ### XXX code below seems to go into infinite loop
+        scope = self.mb_msg_view.next ()
+        while scope and not scope.msg.status.unseen :
+            scope = self.mb_msg_view.next ()
+        if scope :
+            self._select_message (scope = scope)
+        ### XXX else : next unseen in different view
     # end def show_next_unseen
 
     def show_prev_unseen (self, event = None) :
         """Show the previous unseen message."""
-        print "Unseen P"
+        return ### XXX code below seems to go into infinite loop
+        scope = self.mb_msg_view.prev ()
+        while scope and not scope.msg.status.unseen :
+            scope = self.mb_msg_view.prev ()
+        if scope :
+            self._select_message (scope = scope)
+        ### XXX else : prev unseen in different view
     # end def show_prev_unseen
+
+    def train_ham (self, event = None) :
+        """Train the currently selected message(s) as ham."""
+        self._message_command_n \
+            ( "train_ham"
+            , "Train as ham `%(cb_qname)s`:"
+            )
+    # end def train_ham
+
+    def train_spam (self, event = None) :
+        """Train the currently selected message(s) as spam."""
+        self._message_command \
+            ( "train_spam"
+            , "Train as spam `%(cb_qname)s`:"
+            )
+        self.delete_message (event)
+    # end def train_spam
+
+    def untrain_ham (self, event = None) :
+        """Un-Train the currently selected message(s) as ham."""
+        self._message_command_n \
+            ( "untrain_ham"
+            , "Un-Train as ham `%(cb_qname)s`:"
+            )
+    # end def untrain_ham
+
+    def untrain_spam (self, event = None) :
+        """Un-Train the currently selected message(s) as spam."""
+        self._message_command_n \
+            ( "untrain_spam"
+            , "Un-Train as spam `%(cb_qname)s`:"
+            )
+    # end def untrain_spam
 
     def _message_command (self, cmd, text, * args) :
         status   = self.office.status
@@ -637,12 +706,18 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 print msg_scope.number,
                 view.update  (msg_scope)
             print
-        next = view.next ()
+        return result
+    # end def _message_command
+
+    def _message_command_n (self, cmd, text, * args) :
+        result = self._message_command (cmd, text, * args)
+        view   = self.mb_msg_view
+        next   = view.next ()
         if next :
             view.see (next)
             view.selection = next
         return result
-    # end def _message_command
+    # end def _message_command_n
 
     def model_exit (self, * args, ** kw) :
         return self.model.exit (* args, ** kw)
@@ -654,15 +729,18 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def unmark_message (self, event = None) :
         """Reset all pending actions for the selected message."""
-        self._message_command ("reset", "Unmark `%(cb_qname)s`:")
+        self._message_command_n ("reset", "Unmark `%(cb_qname)s`:")
     # end def unmark_message
 
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
-        self.model.msg_display.display       (message)
-        self.mb_msg_view.update              (message.scope)
+        self.model.msg_display.display (message)
+        self.mb_msg_view.update        (message.scope)
         for bv in self.box_views [mailbox.root] :
             bv.update (mailbox)
+        help = self.AC.ui_state.message
+        help.pop_help  ()
+        help.push_help (str (message.pending))
     # end def _display_message
 
     def _restore_selection (self) :

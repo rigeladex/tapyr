@@ -31,6 +31,7 @@
 #    30-Jul-2005 (MG) New commands added
 #    31-Jul-2005 (MG) New commands added
 #     2-Jan-2006 (CT) `sync_box` added
+#     5-Jan-2006 (CT) `train_ham` and `train_spam` added
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,8 @@ Eventname.add \
     , resend_message  = Key_Binder      ("f")
     , select_all      = Key_Binder      ("<Control>a")
     , sync_box        = Key_Binder      ("<Shift>y")
+    , train_ham       = Key_Binder      ("<Meta>h")
+    , train_spam      = Key_Binder      ("<Meta>s")
     , unmark_message  = Key_Binder      ("u")
     )
 

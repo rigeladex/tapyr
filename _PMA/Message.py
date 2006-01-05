@@ -151,6 +151,7 @@
 #     4-Jan-2006 (CT) `reset` re-refactored
 #     4-Jan-2006 (CT) `_Msg_Part_._save` refactored to module-level function
 #                     `save`
+#     5-Jan-2006 (CT) SB-related commands added
 #    ««revision-date»»···
 #--
 
@@ -906,6 +907,26 @@ class _Pending_Action_ (TFL.Meta.Object) :
         self._delete  = None
         self._targets = set ()
     # end def reset
+
+    def train_ham (self) :
+        """Train message as ham."""
+        PMA.SB.train_ham (self._msg)
+    # end def train_ham
+
+    def train_spam (self) :
+        """Train message as spam."""
+        PMA.SB.train_spam (self._msg)
+    # end def train_spam
+
+    def untrain_ham (self) :
+        """Un-Train message as ham."""
+        PMA.SB.untrain_ham (self._msg)
+    # end def untrain_ham
+
+    def untrain_spam (self) :
+        """Un-Train message as spam."""
+        PMA.SB.untrain_spam (self._msg)
+    # end def untrain_spam
 
     def __len__ (self) :
         return self.__nonzero__ ()
