@@ -78,6 +78,7 @@ class Pop3_Poller (PMA.Polling_Thread) :
 
     def download_pop (self, server, mdir) :
         md_name = PMA._Mailbox_.md_name
+        result  = 0
         for msg_no, msg_size in self.pop_list (server) :
             email = self._new_email ("\n".join (server.retr (msg_no) [1]))
             name  = md_name         ()
@@ -87,8 +88,10 @@ class Pop3_Poller (PMA.Polling_Thread) :
             sos.link    (tname, nname)
             sos.unlink  (tname)
             server.dele (msg_no)
+            result += 1
             if self.finish :
                 break
+        return result
     # end def download_pop
 
     def pop_list (self, server) :
@@ -99,7 +102,8 @@ class Pop3_Poller (PMA.Polling_Thread) :
         server = self.connect ()
         try :
             try :
-                self.download_pop (server, self.maildir)
+                self.maildir.unsynced.value += \
+                    self.download_pop (server, self.maildir)
             except Exception, exc :
                 print >> sys.__stderr__, \
                     "Exception during `download_pop`: %s" % (exc, )
