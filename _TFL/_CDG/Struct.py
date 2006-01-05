@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2006 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
