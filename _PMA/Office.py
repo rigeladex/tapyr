@@ -135,6 +135,7 @@ class Office (TFL.Meta.Object) :
             , dict
                 ( Maildir_Type = PMA.Maildir
                 , Maildir_kw   = {}
+                , PMA          = PMA
                 )
             )
         result = config ["Maildir_Type"] \

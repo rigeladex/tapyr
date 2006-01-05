@@ -42,7 +42,6 @@ import _PMA.Thread
 import _TFL._Meta.Object
 import _TFL.sos as sos
 
-import atexit
 import poplib
 import sys
 
@@ -63,7 +62,6 @@ class Pop3_Poller (PMA.Polling_Thread) :
         self.poll_interval = poll_interval
         self.finish        = False
         self.parser        = Lib.Parser ()
-        atexit.register (setattr, self, "finish", True)
         self.__super.__init__ (** kw)
     # end def __init__
 

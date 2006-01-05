@@ -64,7 +64,7 @@
 #                     havoc with `_msg_dict`)
 #     5-Jan-2006 (CT) `unseen` changed to not count messages with `pending`
 #                     changes
-#     5-Jan-2006 (CT) `unsynced` added
+#     5-Jan-2006 (CT) `unsynced` and `unsync_poller` added
 #    ««revision-date»»···
 #--
 
@@ -470,9 +470,15 @@ class Maildir (_Mailbox_in_Dir_) :
 
     def sync (self) :
         """Sync with `new` messages"""
-        return self._setup_messages \
+        result = self._setup_messages \
             (sos.path.join (self.path, "new"), self._emails_from_dir)
+        self.unsynced.value = 0
+        return result
     # end def sync
+
+    def unsync_poller (self, ** kw) :
+        return self._Unsynced_Poller (self, ** kw)
+    # end def unsync_poller
 
     def _new_email (self, fp, headersonly = True) :
         result = self.__super._new_email (fp, headersonly)
@@ -512,6 +518,24 @@ class Maildir (_Mailbox_in_Dir_) :
         ### XXX don't want to waste time on that braindead scheme right now
         return [d for d in self.__super._subdirs (path) if d.startswith (".")]
     # end def _subdirs
+
+    import _PMA.Thread
+
+    class _Unsynced_Poller (PMA.Thread) :
+
+        def __init__ (self, maildir, ** kw) :
+            self.maildir = maildir
+            self.path    = sos.path.join (maildir.path, "new")
+            kw.setdefault ("auto_start", True)
+            self.__super.__init__ (** kw)
+        # end def __init__
+
+        def _poll (self) :
+            mdir = self.maildir
+            mdir.unsynced.value = sum (1 for f in mdir._files (self.path))
+        # end def _poll
+
+    # end class _Unsynced_Poller
 
 # end class Maildir
 

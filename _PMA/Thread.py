@@ -35,6 +35,7 @@ from   _PMA                    import PMA
 
 import _TFL._Meta.Object
 
+import atexit
 import threading
 import time
 
@@ -56,8 +57,12 @@ Thread = _Thread_
 class Polling_Thread (_Thread_) :
     """Base class for PMA polling threads"""
 
-    poll_interval = 60 ### in seconds
-    finish        = False
+    def __init__ (self, poll_interval = 60, ** kw) :
+        self.finish         = False
+        self.poll_interval  = poll_interval
+        atexit.register       (setattr, self, "finish", True)
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     def run (self) :
         while not self.finish :
