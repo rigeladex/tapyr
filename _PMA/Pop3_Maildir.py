@@ -28,6 +28,8 @@
 #
 # Revision Dates
 #     4-Jan-2006 (CT) Creation
+#     5-Jan-2006 (CT) `Polling_Thread` factored
+#     5-Jan-2006 (CT) `Pop3_Maildir_SSL` added
 #    ««revision-date»»···
 #--
 
@@ -36,22 +38,22 @@ from   _PMA                       import PMA
 from   _PMA                       import Lib
 
 import _PMA.Mailbox
+import _PMA.Thread
 import _TFL._Meta.Object
 import _TFL.sos as sos
 
 import atexit
 import poplib
 import sys
-import time
-import threading
 
-class Pop3_Poll_Thread (TFL.Meta.Object, threading.Thread) :
+class Pop3_Poller (PMA.Polling_Thread) :
     """Thread polling mailbox on Pop3 server"""
 
     def __init__ ( self, maildir, host, user
                  , passwd              = None
                  , port                = 110
                  , poll_interval       = 60 ### in seconds
+                 , ** kw
                  ) :
         self.maildir       = maildir
         self.host          = host
@@ -62,7 +64,7 @@ class Pop3_Poll_Thread (TFL.Meta.Object, threading.Thread) :
         self.finish        = False
         self.parser        = Lib.Parser ()
         atexit.register (setattr, self, "finish", True)
-        self.__super.__init__ ()
+        self.__super.__init__ (** kw)
     # end def __init__
 
     def connect (self) :
@@ -95,19 +97,17 @@ class Pop3_Poll_Thread (TFL.Meta.Object, threading.Thread) :
         return (x.split (" ") for x in server.list () [1])
     # end def pop_list
 
-    def run (self) :
-        while not self.finish :
-            server = self.connect ()
+    def _poll (self) :
+        server = self.connect ()
+        try :
             try :
-                try :
-                    self.download_pop (server, self.maildir)
-                except Exception, exc :
-                    print >> sys.__stderr__, \
-                        "Exception during `download_pop`: %s" % (exc, )
-            finally :
-                server.quit ()
-            time.sleep (self.poll_interval)
-    # end def run
+                self.download_pop (server, self.maildir)
+            except Exception, exc :
+                print >> sys.__stderr__, \
+                    "Exception during `download_pop`: %s" % (exc, )
+        finally :
+            server.quit ()
+    # end def _poll
 
     def _new_email (self, msg_text) :
         if PMA.SB is not None :
@@ -115,14 +115,14 @@ class Pop3_Poll_Thread (TFL.Meta.Object, threading.Thread) :
         return self.parser.parsestr (msg_text)
     # end def _new_email
 
-# end class Pop3_Poll_Thread
+# end class Pop3_Poller
 
 class Pop3_Maildir (PMA.Maildir) :
     """Model a Maildir style mailbox getting mails from remote server using
        the POP3 protocol.
     """
 
-    POP3_class          = poplib.POP3
+    POP3_class = poplib.POP3
 
     def __init__ ( self, path, host, user
                  , passwd              = None
@@ -132,9 +132,8 @@ class Pop3_Maildir (PMA.Maildir) :
                  , poll_interval       = 60 ### in seconds
                  ) :
         self.__super.__init__ (path, prefix, root)
-        self.poller = Pop3_Poll_Thread \
-            (self, host, user, passwd, port, poll_interval)
-        self.poller.start ()
+        self.poller = Pop3_Poller \
+            (self, host, user, passwd, port, poll_interval, auto_start = True)
     # end def __init__
 
     def passwd_cb (self) :
@@ -142,6 +141,13 @@ class Pop3_Maildir (PMA.Maildir) :
     # end def passwd_cb
 
 # end class Pop3_Maildir
+
+class Pop3_Maildir_SSL (Pop3_Maildir) :
+    """Model a Pop3_Maildir using a SSL conection to the POP server."""
+
+    POP3_class = poplib.POP3_SSL
+
+# end class Pop3_Maildir_SSL
 
 if __name__ != "__main__" :
     PMA._Export ("*")

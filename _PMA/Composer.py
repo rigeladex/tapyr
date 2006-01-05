@@ -43,6 +43,7 @@
 #    29-Jul-2005 (CT) `forward` changed to allow multiple messages
 #    31-Jul-2005 (CT) `reply_all` added
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
+#     5-Jan-2006 (CT) `Thread` factored
 #    ««revision-date»»···
 #--
 
@@ -53,43 +54,31 @@ from   _PMA                    import Lib
 import _PMA.Message
 import _PMA.Mime
 import _PMA.Sender
+import _PMA.Thread
+
 import _TFL._Meta.Object
 import _TFL.Environment
-
 from   _TFL.Regexp             import *
 import _TFL.sos
 
 from   smtplib                 import SMTP
 import subprocess
 import textwrap
-import threading
 
-class Editor_Thread (TFL.Meta.Object, threading.Thread) :
+class Editor_Thread (PMA.Thread) :
     """Thread running an editor instance"""
 
-    def __init__ (self, buffer, editor, finish_callback, * args, ** kw) :
-        name = None
-        if "name" in kw :
-            name = kw ["name"]
-            del kw ["name"]
+    def __init__ (self, buffer, editor, finish_callback, ** kw) :
         self.buffer          = buffer
         self.editor          = editor
         self.finish_callback = finish_callback
-        #print "Editor_Thread.__init__"
-        self.__super.__init__ \
-            ( group  = None
-            , name   = name
-            , args   = args
-            , kwargs = kw
-            )
+        self.__super.__init__ (auto_start = True, ** kw)
     # end def __init__
 
     def run (self) :
         bfn = self._write_buffer (self.buffer)
         cmd = "%s %s" % (self.editor, bfn)
-        #print "Editor_Thread.run", bfn
         subprocess.call (cmd, shell  = True)
-        #print "Editor_Thread.run after subprocess"
         result = self._read_buffer  (bfn)
         if result != self.buffer :
             self.finish_callback    (result, bfn)
@@ -340,7 +329,7 @@ class Composer (TFL.Meta.Object) :
     # end def _process_attachement_headers
 
     def _send (self, buffer, finish_cb) :
-        Editor_Thread (buffer, self.editor, finish_cb).start ()
+        Editor_Thread (buffer, self.editor, finish_cb)
     # end def _send
 
 # end class Composer
