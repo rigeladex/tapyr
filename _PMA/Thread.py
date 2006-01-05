@@ -66,6 +66,7 @@ class Polling_Thread (_Thread_) :
     # end def run
 
     def sleep (self) :
+        ### XXX use a timeout-socket to avoid polling here
         poll_increment = 5
         poll_interval  = self.poll_interval
         slept          = 0
