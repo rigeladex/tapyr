@@ -45,6 +45,8 @@
 #                     instead of the message object)
 #    31-Dec-2005 (CT) `_style` changed to give `Unseen` lower priority than
 #                     `Deleted`, `Copied`, and `Moved`
+#    09-Jan-2006 (MG) Use `PMA.Message`as `ui` objects instead of
+#                     `PMA.Msg_Scope` objects
 #    ««revision-date»»···
 #--
 
@@ -92,8 +94,13 @@ class Message_Cell (PMA.UI.Text_Cell) :
         , no_wrap       = ("single-paragraph-mode", bool, True)
         )
 
-    def _style (self, msg_scope, office = None) :
-        msg     = msg_scope.msg
+    @staticmethod
+    def scope_getattr (msg, attr_name) :
+        return getattr (msg.scope, attr_name)
+    # end def scope_getattr
+    default_get_fct = scope_getattr
+
+    def _style (self, msg, office = None) :
         pending = msg.pending
         if pending.deleted :
             return self.Deleted
@@ -106,8 +113,8 @@ class Message_Cell (PMA.UI.Text_Cell) :
         return self.Normal
     # end def _style
 
-    def _style_get (self, msg_scope, attr_name, office = None) :
-        return getattr (self._style (msg_scope, office), attr_name)
+    def _style_get (self, msg, attr_name, office = None) :
+        return getattr (self._style (msg, office), attr_name)
     # end def _style_get
 
 # end class Message_Cell
@@ -159,7 +166,7 @@ class _MB_TA_ (PMA.UI.Tree_Adapter) :
     # end def children
 
     def root_children (cls, mailbox) :
-        return (m.scope for m in mailbox.messages)
+        return mailbox.messages
     # end def root_children
 
 # end class _MB_TA_

@@ -46,6 +46,7 @@
 #    13-Aug-2005 (MG) Add `AC` to the creation of the renderer instance
 #    13-Aug-2005 (MG) Set the `renderer` attribute for the cell
 #    28-Dec-2005 (MG) `Column.Column_Widget` added and used
+#    09-Jan-2006 (MG) Class attribbute `default_get_fct` added and used
 #    ««revision-date»»···
 #--
 
@@ -62,6 +63,7 @@ class Cell (TFL.Meta.Object) :
     renderer_attributes = ()
     auto_attributes     = dict () ### can be defined by descendents
     lazy                = False
+    default_get_fct     = getattr
 
     def __init__ (self, * attributes, ** options) :
         self.__super.__init__ ()
@@ -82,13 +84,13 @@ class Cell (TFL.Meta.Object) :
             if isinstance (rend_attr, (list, tuple)) :
                 rend_attr, tkt_type = rend_attr
             if not isinstance (ui_attr, (list, tuple)) :
-                get_fct                        = getattr
+                get_fct                        = self.default_get_fct
             else :
                 if len (ui_attr) > 2 :
                     ui_attr, tkt_type, get_fct = ui_attr
                 else :
                     ui_attr, tkt_type          = ui_attr
-                    get_fct                    = getattr
+                    get_fct                    = self.default_get_fct
             if not callable (get_fct) :
                 get_fct                        = getattr (self, get_fct)
             self.attr_map [ui_attr]            = rend_attr, tkt_type, get_fct

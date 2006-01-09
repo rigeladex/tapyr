@@ -214,7 +214,7 @@ class Application (TGL.UI.Application) :
             pass
         else :
             if cb :
-                result.append (cb.name)
+                result.append (cb.qname)
                 result.append ("/")
                 if cb.status.current_message :
                     result.append ("%d" % (cb.status.current_message.number, ))

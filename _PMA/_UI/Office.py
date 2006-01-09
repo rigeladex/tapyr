@@ -99,6 +99,9 @@
 #     5-Jan-2006 (CT) Failed to make `next_unseen` and `prev_unseen` work
 #     5-Jan-2006 (CT) `_display_message` changed to `push_help` of
 #                     `str (msg.pending)`
+#    09-Jan-2006 (MG) `PMA.UI.Mailbox_MV` uses message objects as `UI`
+#                     objects again
+#    09-Jan-2006 (MG) Unseen commands implemented
 #    ««revision-date»»···
 #--
 
@@ -118,6 +121,7 @@ import _PMA.Composer
 import _PMA.Sender
 import _PMA.V_Mailbox
 import _PMA.POP3_Mailbox
+import _PMA.Pop3_Maildir
 
 import _TFL.sos
 import  time
@@ -408,10 +412,10 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 update = True
                 if msg.pending.deleted or msg.pending.moved :
                     update = False
-                    view.remove (msg.scope)
+                    view.remove (msg)
                 boxes.update    (msg.pending.commit ())
                 if update :
-                    view.update (msg.scope)
+                    view.update (msg)
             for box in boxes :
                 for bv in self.box_views [box.root] :
                     try :
@@ -426,7 +430,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         box = self.office.status.current_box
         new = self.f_box.add_messages (* box.sync ())
         if new :
-            self.mb_msg_view.add (* (m.scope for m in new if box is m.mailbox))
+            self.mb_msg_view.add (* (m for m in new if box is m.mailbox))
             box_updates = {}
             for m in new :
                 old = box_updates.get (m.mailbox, 0)
@@ -614,8 +618,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             self.model.msg_display.clear  ()
         else :
             ### display the selected message
-            scope   = selection [0]
-            message = scope.msg
+            message = selection [0]
             mailbox = message.mailbox
             if mailbox.status.current_message != message :
                 mailbox.status.current_message = message
@@ -625,34 +628,34 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
 
     def show_next_message (self, event = None) :
         """Show the next message of the current folder"""
-        self._select_message (scope = self.mb_msg_view.next ())
+        self._select_message (msg = self.mb_msg_view.next ())
     # end def show_next_message
 
     def show_prev_message (self, event = None) :
         """Show the previous message of the current folder"""
-        self._select_message (scope = self.mb_msg_view.prev ())
+        self._select_message (msg = self.mb_msg_view.prev ())
     # end def show_prev_message
+
+    def _show_unseen (self, fct_name) :
+        fct = getattr (self.mb_msg_view, fct_name)
+        msg = fct ()
+        while msg and not msg.status.unseen :
+            msg = fct (current = msg)
+        if msg :
+            self._select_message (msg = msg)
+        return msg
+    # end def _show_unseen
 
     def show_next_unseen (self, event = None) :
         """Show the next unseen message."""
-        return ### XXX code below seems to go into infinite loop
-        scope = self.mb_msg_view.next ()
-        while scope and not scope.msg.status.unseen :
-            scope = self.mb_msg_view.next ()
-        if scope :
-            self._select_message (scope = scope)
-        ### XXX else : next unseen in different view
+        if not self._show_unseen ("next") :
+            pass ### select next message in next folder
     # end def show_next_unseen
 
     def show_prev_unseen (self, event = None) :
         """Show the previous unseen message."""
-        return ### XXX code below seems to go into infinite loop
-        scope = self.mb_msg_view.prev ()
-        while scope and not scope.msg.status.unseen :
-            scope = self.mb_msg_view.prev ()
-        if scope :
-            self._select_message (scope = scope)
-        ### XXX else : prev unseen in different view
+        if not self._show_unseen ("prev") :
+            pass ### select prev message in prev folder
     # end def show_prev_unseen
 
     def train_ham (self, event = None) :
@@ -691,20 +694,19 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def _message_command (self, cmd, text, * args) :
         status   = self.office.status
         view     = self.mb_msg_view
-        scopes   = self.mb_msg_view.selection
-        if not scopes :
-            scopes = (status.current_box.status.current_message.scope, )
-        if scopes :
+        msgs     = self.mb_msg_view.selection
+        if not msgs :
+            msgs = (status.current_box.status.current_message, )
+        if msgs :
             print text % dict \
                     ( cb_qname = status.current_box.qname
                     , cmd      = cmd
                     , tb_qname = getattr (status.target_box, "qname", "")
                     ),
-            for msg_scope in scopes :
-                msg    = msg_scope.msg
+            for msg in msgs :
                 result = getattr (msg.pending, cmd) (* args)
-                print msg_scope.number,
-                view.update  (msg_scope)
+                print msg.number,
+                view.update  (msg)
             print
         return result
     # end def _message_command
@@ -735,7 +737,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def _display_message (self, mailbox) :
         message = mailbox.status.current_message
         self.model.msg_display.display (message)
-        self.mb_msg_view.update        (message.scope)
+        self.mb_msg_view.update        (message)
         for bv in self.box_views [mailbox.root] :
             bv.update (mailbox)
         help = self.AC.ui_state.message
@@ -763,14 +765,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             self.select_box (force = True)
     # end def _restore_selection
 
-    def _select_message (self, msg = None, scope = None) :
-        if msg or scope :
-            msg   = msg   or scope.msg
-            scope = scope or msg.scope
+    def _select_message (self, msg = None) :
+        if msg :
             box                        = msg.mailbox
             box.status.current_message = msg
-            self.mb_msg_view.selection = scope
-            self.mb_msg_view.see  (scope)
+            self.mb_msg_view.selection = msg
+            self.mb_msg_view.see  (msg)
             self._display_message (box)
     # end def _select_message
 

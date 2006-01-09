@@ -41,6 +41,7 @@
 #     6-Aug-2005 (MG) `Selection.extend` factored
 #     6-Aug-2005 (MG) Basic DND handling added
 #     7-Aug-2005 (MG) Debug print removed, `s/_select/extend/g`
+#    09-Jan-2006 (MG) `next` and `prev`: `current` added
 #    ««revision-date»»···
 #--
 
@@ -88,24 +89,31 @@ class Tree_Selection (GTK.Object_Wrapper) :
         return self.wtk_object.count_selected_rows ()
     # end def __len__
 
-    def next (self, delta = 1) :
-        ### returns the object after the current selection, or None if
-        ### the selection oject is the last
-        selection = tuple (self._tree_iters ())
-        if selection :
-            iter = self.wtk_model.iter_delta (selection [-1], delta)
+    def _delta_ (self, current, delta) :
+        if current is None :
+            selection = tuple (self._tree_iters ())
+            if selection :
+                current = selection [-1]
+        else :
+            current = self.wtk_model.iter (current)
+        if current :
+            iter = self.wtk_model.iter_delta (current, delta)
             if iter :
                 return self.wtk_model.ui_object (iter)
+    # end def _delta_
+
+    def next (self, delta = 1, current = None) :
+        ### returns the object after `current` or None if
+        ### the selection oject is the last
+        ### if `current` is None, the current selection is used
+        return self._delta_ (current, delta)
     # end def next
 
-    def prev (self, delta = 1) :
-        ### returns the object before the current selection, or None if
+    def prev (self, delta = 1, current = None) :
+        ### returns the object before `current` or None if
         ### the selection oject is the last
-        selection = tuple (self._tree_iters ())
-        if selection :
-            iter = self.wtk_model.iter_delta (selection [0], -delta)
-            if iter :
-                return self.wtk_model.ui_object (iter)
+        ### if `current` is None, the current selection is used
+        return self._delta_ (current, -delta)
     # end def prev
 
     def all (self) :

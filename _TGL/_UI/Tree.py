@@ -50,6 +50,7 @@
 #     6-Aug-2005 (MG) Basic DND handling added
 #    30-Dec-2005 (MG) `clone` added
 #     2-Jan-2006 (MG) `add` enhanced
+#    09-Jan-2006 (MG) `next` and `prev` pass arguments to the tkt functions
 #    ««revision-date»»···
 #--
 
@@ -165,12 +166,12 @@ class _Tree_ (TGL.UI.Mixin) :
         self.tkt.clear_dnd_sources ()
     # end def clear_dnd_sources
 
-    def next (self) :
-        return self.tkt.next ()
+    def next (self, * args, ** kw) :
+        return self.tkt.next (* args, ** kw)
     # end def next
 
-    def prev (self) :
-        return self.tkt.prev ()
+    def prev (self, * args, ** kw) :
+        return self.tkt.prev (* args, ** kw)
     # end def prev
 
     def remove (self, element) :

@@ -35,6 +35,8 @@
 #     6-Aug-2005 (MG) Basic DND handling added
 #     6-Aug-2005 (MG) Alignment of `see` added
 #     3-Sep-2005 (MG) Call `show` in `__init__`
+#    09-Jan-2006 (MG) `next` and `prev` pass arguments to the selection
+#                     functions
 #    ««revision-date»»···
 #--
 
@@ -94,12 +96,12 @@ class Tree (GTK.Tree_View) :
         self.wtk_object.drag_source_unset ()
     # end def clear_dnd_sources
 
-    def next (self) :
-        return self._selection.next ()
+    def next (self, * args, ** kw) :
+        return self._selection.next (* args, ** kw)
     # end def next
 
-    def prev (self) :
-        return self._selection.prev ()
+    def prev (self, * args, ** kw) :
+        return self._selection.prev (* args, ** kw)
     # end def prev
 
     def remove (self, element) :
