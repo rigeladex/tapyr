@@ -65,6 +65,7 @@
 #     5-Jan-2006 (CT) `unseen` changed to not count messages with `pending`
 #                     changes
 #     5-Jan-2006 (CT) `unsynced` and `unsync_poller` added
+#    10-Jan-2006 (CT) `change_count` added
 #    ««revision-date»»···
 #--
 
@@ -93,20 +94,24 @@ class _Mailbox_ (TFL.Meta.Object) :
     """Root class for mailbox classes"""
 
     name_sep           = "/"
+    supports_status    = False
+
+    change_count       = property \
+        ( lambda s     : s._ccount.value
+        , lambda s, v  : s._ccount._set (v)
+        )
     messages           = property (lambda s : s._get_messages ())
     msg_dict           = property \
         (lambda s : (s._get_messages (), s._msg_dict) [-1])
+    pending            = property \
+        (lambda s : sum (len (m.pending) for m in s._get_messages ()))
     sub_boxes          = property (lambda s : s._box_dict.values ())
-    supports_status    = False
     unseen             = property \
         ( lambda s
         : sum ((m.status.unseen and not m.pending) for m in s._get_messages ())
         )
-    pending            = property \
-        (lambda s : sum (len (m.pending) for m in s._get_messages ()))
 
     _deliveries        = {} ### `time.time ()` -> number of mails delivered
-
     _Table             = {} ### dictionary of `_Mailbox_` instances
 
     def __init__ (self, path, name = None, prefix = None, root = None) :
@@ -123,6 +128,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         self._box_dict = {}
         self._messages = None
         self._msg_dict = {}
+        self._ccount   = TGL.Observed_Value (0)
         self.unsynced  = TGL.Observed_Value (0)
         if qname not in self._Table :
             self._Table [qname] = self
@@ -188,6 +194,7 @@ class _Mailbox_ (TFL.Meta.Object) :
             for m in messages :
                 md [m.name] = m
             self._messages = None
+            self.change_count += len (messages)
     # end def _add
 
     def _copy_msg_file (self, message, target) :
@@ -197,6 +204,7 @@ class _Mailbox_ (TFL.Meta.Object) :
     def delete_subbox (self, subbox) :
         """Delete this subbox and all messages contained inthis subbox."""
         subbox.delete ()
+        self.change_count += 1
         if subbox.supports_status and sos.path.isfile (subbox.status_fn) :
             ### a newly created mailbox which closing the application has no
             ### status file
@@ -268,6 +276,7 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
                 del self._msg_dict [m.name]
         finally :
             self._messages = None
+            self.change_count += len (messages)
     # end def delete
 
     def delete_subbox (self, subbox) :
@@ -582,6 +591,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
             if transitive :
                 for sb in b._box_dict.itervalues () :
                     s.add_subbox (sb, transitive)
+        self.change_count += 1
         return s
     # end def add_subbox
 
