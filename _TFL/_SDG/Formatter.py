@@ -112,6 +112,7 @@ from   _TFL.predicate     import relax, split_hst
 from   _TFL.Regexp        import *
 
 import sys
+import pdb
 
 _percent_pat = Regexp ("(?<!%)%(?!%)")
 
@@ -389,6 +390,7 @@ class Multi_Line_Formatter (_Formatter_) :
             i          = 0
             add_indent = len (head)
             for l in lines :
+                #pdb.set_trace ()
                 lines_not_finished = not lines.is_finished
                 if i > 0 and f.anchor and (lines_not_finished or l) :
                     head = (" " * add_indent) + head

@@ -28,6 +28,10 @@
 # Revision Dates
 #    23-Jul-2004 (CT) Creation
 #    26-Jul-2004 (CT) Creation continued
+#    15-Dec-2005 (CT) `normalize_formats` changed to normalize for each class
+#                     anew (to avoid nasty surprises with `sep` aliasing when
+#                     format is shared between sibling classes with different
+#                     values for `sep`)
 #    ««revision-date»»···
 #--
 
@@ -75,7 +79,9 @@ class M_Node (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     def _normalize_formats (cls) :
         for fn in cls._list_of_formats :
             f = getattr (cls, fn, None)
-            if isinstance (f, (str, unicode)) :
+            if f is not None :
+                if not isinstance (f, (str, unicode)) :
+                    f = getattr (cls, "__%s" % fn)
                 cls._normalize_format (fn, f)
     # end def _normalize_formats
 
