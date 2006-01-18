@@ -32,7 +32,7 @@ import _TFL._Meta.M_Class
 
 ### each `project` (e.g.: table driven FT-Com layer, table driven Com-Layer,
 ### ...) has to define it's own meta class which can be created using the
-### `New` function of tghis module.
+### `New` function of this module.
 
 class M_Struct (TFL.Meta.M_Class) :
     """Meta class for CDG Struct classes"""
