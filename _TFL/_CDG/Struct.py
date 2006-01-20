@@ -41,6 +41,7 @@
 #                     as `struct_fields`
 #    06-Dec-2005 (MZO) added optional parameter index to current
 #    04-Jan-2006 (MZO) added buffer_name_tail
+#    20-Jan-2006 (CED) made `packed` byte-order aware
 #    ««revision-date»»···
 #--
 
@@ -160,7 +161,7 @@ class Struct (TFL.Meta.Object) :
 
     def buffer_name (cls) :
         name = getattr (cls, "buffer_field_name", None)
-        if name is None : 
+        if name is None :
             d = dict (cls_name = cls.type_name)
             name = cls.buffer_name_format % d
             name = name.lower ()
@@ -169,7 +170,7 @@ class Struct (TFL.Meta.Object) :
     # end def buffer_name
 
     def current (cls, index = None) :
-        if index is None : 
+        if index is None :
             index = cls.count
         if cls.reference_field.index :
             result = index
@@ -178,13 +179,18 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def current
 
-    def packed (self) :
+    def packed (self, byte_order = "native") :
         """Returns a string containing a binary representation of the actual
            value of the struct's attributes.
         """
         format, values = self.format_and_values ()
+        bo_map         = self.struct_fields [0].bo_map
         try :
-            result = struct.pack (format, * values)
+            result = struct.pack \
+                ( "%s%s"
+                % (bo_map [byte_order], format)
+                , * values
+                )
         except :
             traceback.print_exc ()
             print self.__class__.__name__, format, values
@@ -214,11 +220,6 @@ class Struct (TFL.Meta.Object) :
                     formats.append  (format)
                     values.extend   (value)
         format  = "".join (formats)
-        ### add trailing pad bytes for correct alignment
-        ###   XXX for cross architecture/compiler use, a cross-struct is needed
-        parts   = [(struct.calcsize ("c0%s" % f), f) for f in format]
-        parts.sort ()
-        format  = "%s0%s" % (format, parts [-1] [-1])
         return format, values
     # end def format_and_values
 

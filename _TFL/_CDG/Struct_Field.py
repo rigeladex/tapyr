@@ -39,6 +39,7 @@
 #                      address based references
 #    02-Dec-2005 (KZU) added `typedef_prefix` in Reference_Struct_Field
 #    02-Dec-2005 (MG)  use `type_name` of Struct classes/instances
+#    20-Jan-2006 (CED) Added `bo_map`,  made `packed` byte-order aware
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,12 @@ class Struct_Field (TFL.Meta.Object):
         , "ubyte4"                     : "unsigned long"
         , "ubyte1 *"                   : "void *"
         }
+
+    bo_map                 = dict \
+      ( little_endian      = "<"
+      , big_32_endian      = ">"
+      , native             = "@"
+      )
 
     def __init__ ( self, type, name, desc
                  , init        = None
@@ -143,13 +150,17 @@ class Struct_Field (TFL.Meta.Object):
         return "%s %s" % (self.__class__.__name__, str (self))
     # end def __repr__
 
-    def packed (self, value) :
+    def packed (self, value, byte_order = "native") :
         format = self.format_code ()
         if not format :
             raise ValueError, \
                   "%s [%s] cannot be packed -- no format code" % (self, value)
         try :
-            result = struct.pack (format, value)
+            result = struct.pack \
+                ( "%s%s"
+                % (self.bo_map [byte_order], format)
+                , value
+                )
         except :
             traceback.print_exc ()
             print repr (self), format, value
