@@ -23,7 +23,8 @@
 #    01-Dec-2005 (MG)  `typedef_prefix` added
 #    02-Dec-2005 (MG)  Use `typedef_prefix` to define the `type_name`
 #    04-Dec-2005 (KZU) `typedef_prefix` added to method buffer_fields
-
+#    23-Jan-2006 (CED) Additional classmethods for structfield creation
+#                      added
 #    ««revision-date»»···
 #--
 
@@ -98,18 +99,16 @@ class M_Struct (TFL.Meta.M_Class) :
     # end def reset_all
 
     @classmethod
-    def offset_fields (cls, field_cls) :
-        return tuple \
-            ([ field_cls
-                 ( "ubyte4"
-                 , c.offset_field_name
-                 , "in `bin_buffer`"
-                 , -1
-                 )
-               for c in cls.uses_global_buffers
-             ]
-            )
-    # end def offset_fields
+    def bin_buffer_fields (cls, field_cls) :
+        return \
+           ( field_cls
+               ( "ubyte1 *", "bin_buffer"
+               , "Pointer to the bin_buffer"
+               , 0
+               )
+           ,
+           )
+    # end def bin_buffer_fields
 
     @classmethod
     def buffer_fields (cls, field_cls) :
@@ -127,6 +126,44 @@ class M_Struct (TFL.Meta.M_Class) :
              ]
             )
     # end def buffer_fields
+
+    @classmethod
+    def descriptor_fields (cls, field_cls, target_cls) :
+        return \
+           ( field_cls
+               ( "%s *" % target_cls.type_name, "descriptor"
+               , "Pointer to the main config table"
+               , 0
+               )
+           ,
+           )
+    # end def descriptor_fields
+
+    @classmethod
+    def offset_fields (cls, field_cls) :
+        return tuple \
+            ([ field_cls
+                 ( "ubyte4"
+                 , c.offset_field_name
+                 , "in `bin_buffer`"
+                 , -1
+                 )
+               for c in cls.uses_global_buffers
+             ]
+            )
+    # end def offset_fields
+
+    @classmethod
+    def size_fields (cls, field_cls) :
+        return \
+           ( field_cls
+               ( "ubyte4", "total_size"
+               , "Total size of bin_buffer"
+               , 0
+               )
+           ,
+           )
+    # end def size_fields
 
     @classmethod
     def define_access_macros (cls, C, node, main) :

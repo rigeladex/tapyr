@@ -55,8 +55,10 @@ class Bin_Block (TFL.Meta.Object) :
     def __str__ (self) :
         ### We have to re-pack the root struct, cause the offset field values
         ### have changed during adding
-        self._binheader  = self.root.packed (self.byte_order)
-        return "%s%s" % (self._binheader, "".join (self._binbuffer))
+        buffer = "".join (self._binbuffer)
+        self.root.total_size = len (self._binheader) + len (buffer)
+        self._binheader      = self.root.packed (self.byte_order)
+        return "%s%s" % (self._binheader, buffer)
     # def __str__
 
 # class Bin_Block
