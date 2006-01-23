@@ -42,6 +42,7 @@
 #    06-Dec-2005 (MZO) added optional parameter index to current
 #    04-Jan-2006 (MZO) added buffer_name_tail
 #    20-Jan-2006 (CED) made `packed` byte-order aware
+#    23-Jan-2006 (CED) `format_and_values` sets `self.alignment`
 #    ««revision-date»»···
 #--
 
@@ -219,7 +220,8 @@ class Struct (TFL.Meta.Object) :
                     format, value = v.format_and_values ()
                     formats.append  (format)
                     values.extend   (value)
-        format  = "".join (formats)
+        format         = "".join (formats)
+        self.alignment = struct.calcsize (format [0])
         return format, values
     # end def format_and_values
 
