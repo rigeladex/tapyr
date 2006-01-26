@@ -172,12 +172,13 @@
 #    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #     2-Sep-2005 (CT)  `assert` added `add_command` to force string arguments
 #                      for `accelerator`
+#    21-Jan-2006 (MG)  Imports fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
-from   NO_List        import NO_List
-from   Record         import Record
+import _TFL.NO_List
+import _TFL.Record
 from   _TFL.predicate import *
 
 import _TFL._Meta.Object
@@ -610,10 +611,10 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
                 self.qname  = "%s.%s" % (parent.qname, name)
         self.description    = self._cooked_doc (desc, self.root.form_dict)
         ### `_element` contains all groups/commands managed by `self`
-        self._element       = NO_List ()
+        self._element       = TFL.NO_List ()
         ### `_epi` contains all groups/commands per interfacer
         self._epi           = dict \
-            ([(n, NO_List ()) for n in interfacers.iterkeys ()])
+            ([(n, TFL.NO_List ()) for n in interfacers.iterkeys ()])
     # end def __init__
 
     def destroy (self) :
@@ -684,8 +685,8 @@ class Command_Group (_Command_Group_) :
         self.cmd            = _Command_Getattr_ (self)
         self.n_seps         = 0
         self.command        = TFL.Abbr_Key_Dict ()
-        self._dyn_command   = NO_List           ()
-        self._group         = NO_List           ()
+        self._dyn_command   = TFL.NO_List       ()
+        self._group         = TFL.NO_List       ()
     # end def __init__
 
     def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
@@ -766,7 +767,7 @@ class Command_Group (_Command_Group_) :
                 name = "sep_%s" % (self.n_seps, )
                 self.n_seps += 1
             result = []
-            sep    = Record (name = name, destroy = lambda s : 1)
+            sep    = TFL.Record (name = name, destroy = lambda s : 1)
             for ( n, i, info, _ie, index
                 ) in self._interfacers (if_names, s_index, delta) :
                 _ie.insert      (index, sep)

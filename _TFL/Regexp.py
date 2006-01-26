@@ -91,7 +91,7 @@ class Regexp :
            `pos' and `endpos' determine the region of the string included in
            the search (see documentation of re.match for more documentation).
         """
-        endpos = endpos or sys.maxint
+        endpos = endpos or 2 ** 31 - 1 # does not work ob 64 bit CPU's sys.maxint
         result = self.last_match = self._pattern.match (string, pos, endpos)
         return result
     # end def match
@@ -105,7 +105,7 @@ class Regexp :
            `pos' and `endpos' determine the region of the string included in
            the search (see documentation of re.match for more documentation).
         """
-        endpos = endpos or sys.maxint
+        endpos = endpos or 2 ** 31 - 1# does not work ob 64 bit CPU's sys.maxint
         result = self.last_match = self._pattern.search (string, pos, endpos)
         return result
     # end def search
@@ -122,7 +122,7 @@ class Regexp :
         """Iterator returning all non-overlapping match-objects of
            `self._pattern` in `string`.
         """
-        endpos  = endpos or sys.maxint
+        endpos  = endpos or 2 ** 31 - 1# does not work ob 64 bit CPU's sys.maxint
         lastpos = len (string)
         while pos < lastpos :
             match = self._pattern.search (string, pos, endpos)

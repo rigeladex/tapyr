@@ -70,8 +70,8 @@ class Mixin (TFL.Meta.Object) :
     # end def get_TNS
 
     @classmethod
-    def set_TNS_name (cls, name) :
-        if cls.TNS_name is None :
+    def set_TNS_name (cls, name, override = None) :
+        if (cls.TNS_name is None) or (cls.TNS_name == override) :
             cls.TNS_name = name
     # end def set_TNS_name
 

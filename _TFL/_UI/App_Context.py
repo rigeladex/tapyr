@@ -27,14 +27,14 @@
 #
 # Revision Dates
 #    18-Jan-2005 (CT) Creation
+#    21-Jan-2006 (MG) Imports fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL                 import TFL
 import _TFL._Meta.Object
 import _TFL._UI
-
-from   Record               import Record
+import _TFL.Record
 
 class App_Context (TFL.Meta.Object) :
     """Application context"""
@@ -43,7 +43,7 @@ class App_Context (TFL.Meta.Object) :
         self.ANS      = ANS
         self.memory   = memory
         if ui_state is None :
-            ui_state  = Record ()
+            ui_state  = TFL.Record ()
         self.ui_state = ui_state
     # end def __init__
 
