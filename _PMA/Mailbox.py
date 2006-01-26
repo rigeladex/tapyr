@@ -66,6 +66,13 @@
 #                     changes
 #     5-Jan-2006 (CT) `unsynced` and `unsync_poller` added
 #    10-Jan-2006 (CT) `change_count` added
+#    15-Jan-2006 (MG) `change_list` added
+#    21-Jan-2006 (MG) Imports fixed
+#    23-Jan-2006 (MG) Pass mailbox to the Observed_Value`s
+#    23-Jan-2006 (MG) `delete`: pass only the really delete messages to the
+#                     change object
+#    25-Jan-2006 (MG) `commit_all`: return list of committed messages
+#    25-Jan-2006 (MG) `__contains__` added
 #    ««revision-date»»···
 #--
 
@@ -76,19 +83,23 @@ from   _PMA                    import Lib
 
 import _PMA.Box_Status
 import _PMA.Message
+import _PMA._SCM
+import _PMA._SCM.Mailbox
 
 import _TFL._Meta.Object
 import _TFL.B64 as B64
 import _TGL.Observed_Value
 
-import Environment
-from   predicate               import *
-from   Record                  import Record
-from   subdirs                 import subdirs
+import _TFL.Environment
+from   _TFL.predicate          import *
+import _TFL.Record
+from    subdirs                import subdirs
 
 import errno
 import sos
 import time
+
+import pdb
 
 class _Mailbox_ (TFL.Meta.Object) :
     """Root class for mailbox classes"""
@@ -116,20 +127,21 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     def __init__ (self, path, name = None, prefix = None, root = None) :
         if name is None :
-            name       = sos.path.split (path) [-1]
+            name         = sos.path.split (path) [-1]
         if prefix is None :
-            qname      = name
+            qname        = name
         else :
-            qname      = self.name_sep.join ((prefix, name))
-        self.name      = name
-        self.qname     = qname
-        self.path      = path
-        self.root      = root or self
-        self._box_dict = {}
-        self._messages = None
-        self._msg_dict = {}
-        self._ccount   = TGL.Observed_Value (0)
-        self.unsynced  = TGL.Observed_Value (0)
+            qname        = self.name_sep.join ((prefix, name))
+        self.name        = name
+        self.qname       = qname
+        self.path        = path
+        self.root        = root or self
+        self._box_dict   = {}
+        self.change_list = []
+        self._messages   = None
+        self._msg_dict   = {}
+        self._ccount     = TGL.Observed_Value (0, mailbox = self)
+        self.unsynced    = TGL.Observed_Value (0, mailbox = self)
         if qname not in self._Table :
             self._Table [qname] = self
         else :
@@ -149,12 +161,16 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     def commit_all (self, transitive = False) :
         """Commit the pending actions of all messages"""
-        for msg in self._msg_dict.itervalues () :
+        result = []
+        ### cannot use `itervalues` because the delete action alters the dict
+        for msg in self._msg_dict.values () :
             if msg.pending :
                 msg.pending.commit ()
+                result.append (msg)
         if transitive :
             for sb in self.sub_boxes :
-                sb.commit_all (transitive)
+                result.extend (sb.commit_all (transitive))
+        return result
     # end def commit_all
 
     @classmethod
@@ -167,7 +183,7 @@ class _Mailbox_ (TFL.Meta.Object) :
         t = int (time.time ())
         p = sos.getpid ()
         n = cls._deliveries.setdefault (t, 0)
-        h = Environment.hostname
+        h = TFL.Environment.hostname
         cls._deliveries [t] += 1
         return cls._md_name (t, p, n, h)
     # end def md_name
@@ -190,10 +206,12 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     def _add (self, * messages) :
         if messages :
+            # pdb.set_trace ()
             md = self._msg_dict
             for m in messages :
                 md [m.name] = m
             self._messages = None
+            self.change_list.append (PMA.SCM.Add_Messages (* messages))
             self.change_count += len (messages)
     # end def _add
 
@@ -204,9 +222,10 @@ class _Mailbox_ (TFL.Meta.Object) :
     def delete_subbox (self, subbox) :
         """Delete this subbox and all messages contained inthis subbox."""
         subbox.delete ()
+        self.change_list.append (PMA.SCM.Remove_Subbox (subbox))
         self.change_count += 1
         if subbox.supports_status and sos.path.isfile (subbox.status_fn) :
-            ### a newly created mailbox which closing the application has no
+            ### a newly created mailbox without closing the application has no
             ### status file
             sos.unlink (subbox.status_fn)
         del self._box_dict [subbox.name]
@@ -240,6 +259,10 @@ class _Mailbox_ (TFL.Meta.Object) :
             m.number = i
     # end def _sort
 
+    def __contains__ (self, item) :
+        return getattr (item, "name", item) in self._msg_dict
+    # end def __contains__
+
     def __str__ (self) :
         return self.summary ()
     # end def __str__
@@ -271,11 +294,14 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
 
     def delete (self, * messages) :
         try :
+            deleted = []
             for m in messages :
                 sos.unlink (m.path)
                 del self._msg_dict [m.name]
+                deleted.append (m)
         finally :
             self._messages = None
+            self.change_list.append (PMA.SCM.Remove_Messages (* deleted))
             self.change_count += len (messages)
     # end def delete
 
@@ -299,6 +325,7 @@ class _Mailbox_in_Dir_ (_Mailbox_) :
             sos.link (source, target)
         except OSError, exc :
             if exc.args [0] != errno.EXDEV :
+                print source, target
                 raise
             self.__super._copy_msg_file (message, target)
     # end def _copy_msg_file
@@ -455,7 +482,7 @@ class Maildir (_Mailbox_in_Dir_) :
             except (TypeError, ValueError) :
                 n = cls._deliveries.setdefault (t, 0)
                 cls._deliveries [t] += 1
-            return cls._md_name (t, p, n, r.host or Environment.hostname)
+            return cls._md_name (t, p, n, r.host or TFL.Environment.hostname)
     # end def md_name
 
     @classmethod
@@ -474,7 +501,7 @@ class Maildir (_Mailbox_in_Dir_) :
                 i = i [2:]
             else :
                 i = None
-        return Record (time = t, proc = p, deli = d, host = h, info = i)
+        return TFL.Record (time = t, proc = p, deli = d, host = h, info = i)
     # end def name_split
 
     def sync (self) :
@@ -591,6 +618,7 @@ class Mailbox (_Mailbox_in_Dir_S_) :
             if transitive :
                 for sb in b._box_dict.itervalues () :
                     s.add_subbox (sb, transitive)
+        self.change_list.append (PMA.SCM.Add_Subbox (s))
         self.change_count += 1
         return s
     # end def add_subbox

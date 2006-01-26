@@ -102,6 +102,8 @@
 #    09-Jan-2006 (MG) `PMA.UI.Mailbox_MV` uses message objects as `UI`
 #                     objects again
 #    09-Jan-2006 (MG) Unseen commands implemented
+#    24-Jan-2006 (MG) Methods alphabetical ordered
+#    24-Jan-2006 (MG) Started to rewrite using new `PMA.V_Mailbox` features
 #    ««revision-date»»···
 #--
 
@@ -115,13 +117,14 @@ import _PMA._UI.Command_Definition
 import _PMA._UI.Mailbox_BV
 import _PMA._UI.Mailbox_MV
 import _PMA._UI.Mailbox_DBV
-import _PMA._UI.Mbx_Filter
-import _PMA.Office
 import _PMA.Composer
-import _PMA.Sender
-import _PMA.V_Mailbox
+import _PMA.Filter_Mailbox
+import _PMA.Matcher
+import _PMA.Office
 import _PMA.POP3_Mailbox
 import _PMA.Pop3_Maildir
+import _PMA.Sender
+import _PMA.V_Mailbox
 
 import _TFL.sos
 import  time
@@ -317,10 +320,10 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                                = lambda s : self.ask_passwd (s)
         self.office            = office = self.ANS.Office ()
         self.model             = model
-        self.box_views         = {}
+        self.box_views         = {} ### XXX still required ???
         self.storage_views     = []
         self.delivery_box      = self.ANS.V_Mailbox \
-            ("inbox", * office.delivery_boxes)
+            ("inbox", office.delivery_boxes)
         UI                     = self.ANS.UI
         TNS                    = self.TNS
         AC                     = self.AC
@@ -331,7 +334,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 )
             bv.update_model           (box)
             self.storage_views.append (bv)
-            self.box_views [box] = (bv, )
+            self.box_views [box] = bv
         self.mb_msg_view = mmv = UI.Mailbox_MV \
             ( sort           = True
             , multiselection = True
@@ -356,30 +359,27 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             )
     # end def ask_passwd
 
-    def _create_delivery_view (self, mbx_msg_view) :
-        AC           = self.AC
-        db           = self.delivery_box
-        dbx_matchers = self.office.dbx_matchers
-        rest_matcher = PMA.Not_Matcher \
-            ( PMA.Or_Matcher (* (m for (n, m) in dbx_matchers)))
-        self._inbox_filter     = \
-            [ self.ANS.UI.Mbx_Filter (db, name, matcher, AC = AC)
-              for (name, matcher) in (("INBOX", rest_matcher),) + dbx_matchers
-            ]
-        self.f_box         = self.ANS.UI.F_Mailbox (db, * self._inbox_filter)
-        self.delivery_view = self.ANS.UI.Mailbox_DBV \
-            ( self.f_box
-            , show_header  = False
-            , adapter_kw   = dict (office = self.office)
-            , AC           = AC
-            )
-        self.delivery_view.tkt.scroll_policies (self.TNS.AUTOMATIC)
-        for box in (self.f_box, db) + self.f_box.sub_boxes + db._boxes :
-            self.box_views [box] = (self.delivery_view, )
-    # end def _create_delivery_view
+    def commit_box (self, event = None) :
+        """Commit all pending actions of the selected box."""
+        box = self.office.status.current_box
+        if box :
+            self._update_commit_action (box.commit_all (transitive = True))
+    # end def commit_box
+
+    def commit_message (self, event = None) :
+        """Commit pending changes of the selected message."""
+        msg = self.office.status.current_box.status.current_message
+        if msg :
+            view   = self.mb_msg_view
+            box    = getattr (msg, "v_mailbox", msg.mailbox)
+            delete = msg.pending.deleted or msg.pending.moved
+            self.mb_msg_view.selection = ()
+            msg.pending.commit           ()
+            self._update_commit_action   ((msg, ))
+    # end def commit_message
 
     def copy_message (self, event = None) :
-        """Copy the currently selected message to the default target
+        """Copy the currently selected message(s) to the default target
            mailbox.
         """
         self._message_command_n \
@@ -389,59 +389,6 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             )
     # end def copy_message
 
-    def commit_box (self, event = None) :
-        """Commit all pending actions of the currently selected box."""
-        box = self.office.status.current_box
-        self._commit (m for m in box.messages if m.pending)
-    # end def commit_box
-
-    def commit_message (self, event = None) :
-        """Commit all pending changes of the currently selected message."""
-        self._commit \
-            ((self.office.status.current_box.status.current_message, ))
-    # end def commit_message
-
-    def _commit (self, messages) :
-        boxes    = set ()
-        text     = []
-        view     = self.mb_msg_view
-        if messages :
-            self.mb_msg_view.selection = ()
-            for msg in messages :
-                text.append (str (msg.number))
-                update = True
-                if msg.pending.deleted or msg.pending.moved :
-                    update = False
-                    view.remove (msg)
-                boxes.update    (msg.pending.commit ())
-                if update :
-                    view.update (msg)
-            for box in boxes :
-                for bv in self.box_views [box.root] :
-                    try :
-                        bv.update (box)
-                    except Exception, exc :
-                        print "*** PMA.UI.Office._commit:", \
-                            exc.__class__.__name__, exc
-            print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
-    # end def _commit
-
-    def sync_box (self, event = None) :
-        box = self.office.status.current_box
-        new = self.f_box.add_messages (* box.sync ())
-        if new :
-            self.mb_msg_view.add (* (m for m in new if box is m.mailbox))
-            box_updates = {}
-            for m in new :
-                old = box_updates.get (m.mailbox, 0)
-                box_updates [m.mailbox] = old + 1
-            print "New messages in",
-            for box, number in box_updates.iteritems () :
-                self.delivery_view.update (box)
-                print "`%s`: %d" % (box.qname, number),
-            print
-    # end def sync_box
-
     def delete_message (self, event = None) :
         """Delete the currently selected message(s) from this mailbox."""
         self._message_command_n \
@@ -450,33 +397,18 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             )
     # end def delete_message
 
-    def move_message (self, event = None) :
-        """Move the currently selected message(s) from the current mailbox into
-           the default target mailbox.
-        """
-        self._message_command_n \
-            ( "move"
-            , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
-            , self.office.status.target_box
-            )
-    # end def move_message
-
     def delete_subbox (self, event = None) :
         """Delete the currently selected subbox and all messages in this
            subbox
         """
         cb = self.office.status.current_box
-        for bv in self.box_views [cb.root] :
-            bv.remove (cb)
-        self._delete_box (cb)
+        try :
+            self._delete_box (cb)
+            self.box_views [cb.root].remove (cb)
+        except OSError :
+            self.model.show_error \
+                (title = "Error", message = "Cannot delete subbox")
     # end def delete_subbox
-
-    def _delete_box (self, box) :
-        for sb in box.sub_boxes :
-            self._delete_box (sb)
-        parent = PMA.Mailbox.instance (TFL.sos.path.split (box.qname) [0])
-        parent.delete_subbox (box)
-    # end def _delete_box
 
     def forward_message (self, event = None) :
         """Forward the selected message."""
@@ -489,6 +421,29 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             )
     # end def forward_message
 
+    def model_exit (self, * args, ** kw) :
+        dbox = self.delivery_box
+        dbox.save_status ()
+        for box in self.office.sub_boxes (dbox, transitive = True) :
+            box.save_status ()
+        return self.model.exit (* args, ** kw)
+    # end def model_exit
+
+    def model_quit (self, * args, ** kw) :
+        return self.model.quit (* args, ** kw)
+    # end def model_quit
+
+    def move_message (self, event = None) :
+        """Move the currently selected message(s) from the current mailbox into
+           the default target mailbox.
+        """
+        self._message_command_n \
+            ( "move"
+            , "Mark `%(cb_qname)s` for %(cmd)s to mailbox `%(tb_qname)s`:"
+            , self.office.status.target_box
+            )
+    # end def move_message
+
     def new_message (self, event = None) :
         """Start the default editor with a new message and send this message
            after finishing of editing.
@@ -496,28 +451,14 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._mail_compose ("compose", "Starting editor with a new message...")
     # end def new_message
 
-    def _mail_sent (self, email) :
-        receivers = set ()
-        for kind in "to", "cc", "bcc" :
-            recs = email [kind]
-            if recs :
-                for r in recs.split (",") :
-                    receivers.add (r)
-        time.sleep (0.1)
-        print "Mail sent to %s" % (", ".join (receivers))
-        time.sleep (0.1)
-        return email
-    # end def _mail_sent
-
     def new_subbox (self, event = None) :
-        """Create a new subbox below the currently selected mailbox"""
+        """Create a new subbox below the currently selected mailbox."""
         name = self.model.ask_string \
             (title = "Add new subbox", prompt = "Name")
         if name :
             cb   = self.office.status.current_box
             box  = cb.add_subbox (name)
-            for bv in self.box_views [cb.root] :
-                bv.add (box, parent = cb)
+            self.box_views [cb.root].add (box, parent = cb)
     # end def new_subbox
 
     def reply (self, event = None) :
@@ -553,16 +494,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             )
     # end def resend_message
 
-    def _mail_compose (self, cmd, text, * args) :
-        ANS    = self.ANS
-        smtp   = ANS.Sender     ()
-        comp   = ANS.Composer   (smtp = smtp, send_cb = self._mail_sent)
-        result = getattr        (comp, cmd) (* args)
-        time.sleep (0.1)
-        print text
-        time.sleep (0.1)
-        return result
-    # end def _mail_compose
+    def sync_box (self, event = None) :
+        box = self.office.status.current_box
+        if box :
+            box.root.add_messages (* box.sync ())
+            ### update of the UI is handled via the change counter callbacks
+    # end def sync_box
 
     def select_all_messages (self, event = None) :
         """Select all message of the current mailbox."""
@@ -575,7 +512,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             tree = event.widget
         else :
             if curr_box :
-                tree = self.box_views [curr_box.root] [0] ### XXX
+                tree = self.box_views [curr_box.root]
             else :
                 return
         selection = tree.selection
@@ -584,8 +521,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             return
         box = selection [0]
         if curr_box and curr_box.root != box.root :
-            for bv in self.box_views [curr_box.root] :
-                bv.selection = ()
+            self.box_views [curr_box.root].selection = ()
         if force or self.office.status.current_box != box :
             self.office.status.current_box = box
             self.mb_msg_view.update_model (box)
@@ -606,8 +542,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         status.target_box = status.current_box
         for box in old, status.current_box :
             if box is not None :
-                for bv in self.box_views [box.root] :
-                    bv.update (box)
+                self.box_views [box.root].update (box)
     # end def set_target_mailbox
 
     def show_message (self, event = None) :
@@ -619,7 +554,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         else :
             ### display the selected message
             message = selection [0]
-            mailbox = message.mailbox
+            mailbox = getattr (message, "v_mailbox", message.mailbox)
             if mailbox.status.current_message != message :
                 mailbox.status.current_message = message
                 self._display_message (mailbox)
@@ -635,16 +570,6 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         """Show the previous message of the current folder"""
         self._select_message (msg = self.mb_msg_view.prev ())
     # end def show_prev_message
-
-    def _show_unseen (self, fct_name) :
-        fct = getattr (self.mb_msg_view, fct_name)
-        msg = fct ()
-        while msg and not msg.status.unseen :
-            msg = fct (current = msg)
-        if msg :
-            self._select_message (msg = msg)
-        return msg
-    # end def _show_unseen
 
     def show_next_unseen (self, event = None) :
         """Show the next unseen message."""
@@ -675,6 +600,11 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self.delete_message (event)
     # end def train_spam
 
+    def unmark_message (self, event = None) :
+        """Reset all pending actions for the selected message."""
+        self._message_command_n ("reset", "Unmark `%(cb_qname)s`:")
+    # end def unmark_message
+
     def untrain_ham (self, event = None) :
         """Un-Train the currently selected message(s) as ham."""
         self._message_command_n \
@@ -690,6 +620,107 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             , "Un-Train as spam `%(cb_qname)s`:"
             )
     # end def untrain_spam
+
+    def _commit (self, messages) :
+        boxes    = set ()
+        text     = []
+        view     = self.mb_msg_view
+        if messages :
+            self.mb_msg_view.selection = ()
+            for msg in messages :
+                text.append (str (msg.number))
+                update = True
+                if msg.pending.deleted or msg.pending.moved :
+                    update = False
+                    view.remove (msg)
+                boxes.update    (msg.pending.commit ())
+                if update :
+                    view.update (msg)
+            for box in boxes :
+                try :
+                    self.box_views [box.root].update (box)
+                except Exception, exc :
+                    print "*** PMA.UI.Office._commit:", \
+                        exc.__class__.__name__, exc
+            print "Commit `%s`: %s" % (msg.mailbox.qname, ", ".join (text))
+    # end def _commit
+
+    def _create_delivery_view (self, mbx_msg_view) :
+        AC           = self.AC
+        db           = self.delivery_box
+        dbx_matchers = self.office.dbx_matchers
+        rest_matcher = PMA.Not_Matcher \
+            ( PMA.Or_Matcher (* (m for (n, m) in dbx_matchers)))
+        for name, matcher in (("INBOX", rest_matcher),) + dbx_matchers :
+            f_mb = self.delivery_box.add_filter_mailbox (name, matcher)
+            f_mb._ccount.register_observer (self._update_filter_mailbox)
+        self.delivery_view = self.ANS.UI.Mailbox_DBV \
+            ( self.delivery_box
+            , show_header  = False
+            , adapter_kw   = dict (office = self.office)
+            , AC           = AC
+            )
+        self.delivery_view.tkt.scroll_policies (self.TNS.AUTOMATIC)
+        for box in self.delivery_box.sub_boxes :
+            self.box_views [box] = self.delivery_view
+        for box in self.delivery_box.mailboxes :
+            self.box_views [box] = self.delivery_view
+        self.box_views [self.delivery_box] = self.delivery_view
+    # end def _create_delivery_view
+
+    def _delete_box (self, box) :
+        for sb in box.sub_boxes :
+            self._delete_box (sb)
+        parent = PMA.Mailbox.instance (TFL.sos.path.split (box.qname) [0])
+        parent.delete_subbox (box)
+    # end def _delete_box
+
+    def _display_message (self, mailbox) :
+        message = mailbox.status.current_message
+        self.model.msg_display.display (message)
+        self.mb_msg_view.update        (message)
+        self.box_views [mailbox.root].update (mailbox)
+        help = self.AC.ui_state.message
+        help.pop_help  ()
+        help.push_help (str (message.pending))
+    # end def _display_message
+
+    def _mail_compose (self, cmd, text, * args) :
+        ANS    = self.ANS
+        smtp   = ANS.Sender     ()
+        comp   = ANS.Composer   (smtp = smtp, send_cb = self._mail_sent)
+        result = getattr        (comp, cmd) (* args)
+        time.sleep (0.1)
+        print text
+        time.sleep (0.1)
+        return result
+    # end def _mail_compose
+
+    def _mail_sent (self, email) :
+        receivers = set ()
+        for kind in "to", "cc", "bcc" :
+            recs = email [kind]
+            if recs :
+                for r in recs.split (",") :
+                    receivers.add (r)
+        time.sleep (0.1)
+        print "Mail sent to %s" % (", ".join (receivers))
+        time.sleep (0.1)
+        return email
+    # end def _mail_sent
+
+    def _mail_sent (self, email) :
+        receivers = set ()
+        for kind in "to", "cc", "bcc" :
+            recs = email [kind]
+            if recs :
+                for r in recs.split (",") :
+                    receivers.add (r)
+        time.sleep (0.1)
+        print "Mail sent to %s" % (", ".join (receivers))
+        time.sleep (0.1)
+        return email
+    # end def _mail_sent
 
     def _message_command (self, cmd, text, * args) :
         status   = self.office.status
@@ -721,29 +752,15 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         return result
     # end def _message_command_n
 
-    def model_exit (self, * args, ** kw) :
-        return self.model.exit (* args, ** kw)
-    # end def model_exit
-
-    def model_quit (self, * args, ** kw) :
-        return self.model.quit (* args, ** kw)
-    # end def model_quit
-
-    def unmark_message (self, event = None) :
-        """Reset all pending actions for the selected message."""
-        self._message_command_n ("reset", "Unmark `%(cb_qname)s`:")
-    # end def unmark_message
-
-    def _display_message (self, mailbox) :
-        message = mailbox.status.current_message
-        self.model.msg_display.display (message)
-        self.mb_msg_view.update        (message)
-        for bv in self.box_views [mailbox.root] :
-            bv.update (mailbox)
-        help = self.AC.ui_state.message
-        help.pop_help  ()
-        help.push_help (str (message.pending))
-    # end def _display_message
+    def _show_unseen (self, fct_name) :
+        fct = getattr (self.mb_msg_view, fct_name)
+        msg = fct ()
+        while msg and not msg.status.unseen :
+            msg = fct (current = msg)
+        if msg :
+            self._select_message (msg = msg)
+        return msg
+    # end def _show_unseen
 
     def _restore_selection (self) :
         box   = self.office.status.current_box
@@ -754,14 +771,12 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
                 name = PMA.Mailbox.name_sep.join  (names)
                 try :
                     box  = PMA.Mailbox.instance (name)
-                    for bv in self.box_views [box.root] :
-                        bv.see (box)
+                    self.box_views [box.root].see (box)
                 except KeyError :
                     ### ignore parts of the box path which don't have it's
                     ### own mailbox object
                     pass
-            for bv in self.box_views [box.root] :
-                bv.selection = box
+            self.box_views [box.root].selection = box
             self.select_box (force = True)
     # end def _restore_selection
 
@@ -771,8 +786,34 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             box.status.current_message = msg
             self.mb_msg_view.selection = msg
             self.mb_msg_view.see  (msg)
-            self._display_message (box)
+            self._display_message (getattr (msg, "v_mailbox", box))
     # end def _select_message
+
+    def _update_commit_action (self, messages) :
+        view  = self.mb_msg_view
+        boxes = {}
+        for msg in messages :
+            if msg not in msg.mailbox :
+                ### message has been move or deleted -> remove it from display
+                view.remove (msg)
+            else :
+                ### only the state of the message has changed -> update display
+                view.update (msg)
+            boxes.setdefault \
+                (getattr (msg, "v_mailbox", msg.mailbox), []).append (msg)
+        text = []
+        for box, msgs in boxes.iteritems () :
+            self.box_views [box.root].update (box)
+            text.append \
+                ( "`%s`: %s"
+                % (box.qname, ", ".join (str (m.number) for m in msgs))
+                )
+        print "Commit %s" % (", ".join (text), )
+    # end def _update_commit_action
+
+    def _update_filter_mailbox (self, old, new, mailbox) :
+        print "update mailbox", mailbox.qname
+    # end def _update_filter_mailbox
 
 # end class Office
 

@@ -42,6 +42,7 @@
 #     2-Jan-2006 (CT) `dbx_matchers` added
 #     5-Jan-2006 (CT) `_new_delivery_box` factored and changed to load
 #                     mailbox-specific config file, if any
+#    24-Jan-2006 (MG) `virtual_mailbox_path` added
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,7 @@ class Office (TFL.Meta.Object) :
 
     top_name             = "PMA"
     delivery_area_name   = "Delivery"
+    virtual_root         = ".virtual"
 
     dbx_matchers         = ()
     extra_delivery_boxes = []
@@ -163,6 +165,11 @@ class Office (TFL.Meta.Object) :
     def delivery_path (cls, root) :
         return cls._path (root, cls.delivery_area_name)
     # end def delivery_path
+
+    @classmethod
+    def virtual_mailbox_path (cls) :
+        return cls._path (cls.default_path (), cls.virtual_root)
+    # end def virtual_mailbox_path
 
     @classmethod
     def _path (cls, root, stem) :

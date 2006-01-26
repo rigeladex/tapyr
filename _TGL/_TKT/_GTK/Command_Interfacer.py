@@ -48,7 +48,7 @@
 from   _TFL.predicate       import dict_from_list
 from   _TGL                 import TGL
 from   _TFL.Regexp          import *
-from    NO_List             import NO_List
+import _TFL.NO_List
 import _TGL._TKT._GTK
 import _TGL._TKT.Command_Interfacer
 import _TGL._TKT._GTK.Menu
@@ -141,7 +141,7 @@ class _CI_Item_Mixin_ (_CI_) :
 
     def __init__ (self, balloon = None, help = None, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
-        self._items      = NO_List ()
+        self._items      = TFL.NO_List ()
         self.balloon     = balloon
         self.help_widget = help
     # end def __init__

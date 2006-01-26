@@ -67,6 +67,7 @@
 #    21-May-2005 (CT) `lift = True` added to `apply_style`
 #    21-May-2005 (CT) `apply_style_to_match` added
 #    22-May-2005 (CT) `real_level` added
+#    21-Jan-2006 (MG) Imports fixed
 #    ««revision-date»»···
 #--
 
@@ -745,8 +746,8 @@ class Root (_Node_) :
     # end def _setup_bindings
 
     def _setup_styles (self, w) :
-        from Record import Record
-        d = Record ()
+        import _TFL.Record
+        d = TFL.Record ()
         for name, default in self._style_defaults.iteritems () :
             if isinstance (default, (str)) :
                 getter = w.option_value

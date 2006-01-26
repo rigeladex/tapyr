@@ -38,7 +38,7 @@ from   _TGL                   import TGL
 from   _TFL                   import TFL
 import _TFL._Meta.Object
 import _TGL._TKT._GTK.Image
-import  Environment
+import _TFL.Environment
 import _TFL.sos      as     sos
 from   _TFL.Filename import Filename
 import  sys
@@ -75,7 +75,7 @@ class _Image_Mgr_ (TFL.Meta.Object) :
         if not sos.path.isfile (filename.name) :
             fn = filename.base_ext
             for p in self.pathes :
-                if Environment.path_contains (p, fn) :
+                if TFL.Environment.path_contains (p, fn) :
                     filename = Filename (fn, default_dir = p)
                     break
         filename.make_absolute ()

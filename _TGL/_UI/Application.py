@@ -32,6 +32,7 @@
 #                     `__init__`
 #    12-Aug-2005 (MG) Icon added to `interpreter` command
 #    13-Sep-2005 (MG) Dummy import's added
+#    21-Jan-2006 (MG) Imports fixed
 #    ««revision-date»»···
 #--
 
@@ -39,13 +40,12 @@ from   _TFL                   import TFL
 from   _TGL                   import TGL
 import _TFL._Meta.Object
 import _TFL.Environment
+import _TFL.Record
 import _TFL.sos
 import _TGL._UI
 import _TGL._UI.Mixin
 import _TGL._UI.Command_Mgr
 import  sys
-
-from   Record                 import Record
 
 ### the folloing imports are just for py2exe
 if 0 == 1 :
@@ -102,7 +102,7 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
     _started_quit        = False
     ipreter              = None
 
-    _File_Cmd_Group      = Record \
+    _File_Cmd_Group      = TFL.Record \
         ( name           = "File"
         , if_names       = ("mb", "tb", "cm:click_3")
         , batchable      = True
@@ -110,7 +110,7 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
         , description    =
           "This group provides commands for managing the forest of mailboxes"
         )
-    _Scripts_Cmd_Group   = Record \
+    _Scripts_Cmd_Group   = TFL.Record \
         ( name             = "Scripts"
         , if_names         = ("mb", "tb")
         , batchable        = False
@@ -118,7 +118,7 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
         , description      =
           "This group provides access to various scripts."
         )
-    _Help_Cmd_Group      = Record \
+    _Help_Cmd_Group      = TFL.Record \
         ( name             = "Help"
         , if_names         = ("mb", "tb")
         , batchable        = False

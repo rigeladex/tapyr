@@ -61,6 +61,7 @@ from   _TGL                   import TGL
 from   _PMA                   import PMA
 
 import _TFL.App_State
+import _TFL.Record
 
 import _TGL._UI
 import _TGL._UI.Application
@@ -72,8 +73,6 @@ import _PMA._UI.Message
 import _PMA._UI.Msg_Display
 import _PMA._UI.Mixin
 import _PMA._UI.Office
-
-from    Record                 import Record
 
 class _App_State_ (TFL.App_State) :
     product_name = "PMA"
@@ -124,7 +123,7 @@ class Application (TGL.UI.Application) :
     _started_quit        = False
     ipreter              = None
 
-    _Office_Cmd_Group    = Record \
+    _Office_Cmd_Group    = TFL.Record \
         ( name           = "Office"
         , if_names       = ("mb", "tb")
         , batchable      = True
@@ -132,7 +131,7 @@ class Application (TGL.UI.Application) :
         , description    =
           "This group provides commands for managing the office"
         )
-    _Mbox_Cmd_Group      = Record \
+    _Mbox_Cmd_Group      = TFL.Record \
         ( name           = "Mailbox"
         , if_names       =
             ("mb", "tb", "cm_bv", "cm_dv", "cm_mv", "ev_bv", "ev_dv", "ev_mv")
@@ -142,7 +141,7 @@ class Application (TGL.UI.Application) :
           "This group provides commands for managing the currently "
           "selected mailbox"
         )
-    _Message_Cmd_Group   = Record \
+    _Message_Cmd_Group   = TFL.Record \
         ( name           = "Message"
         , if_names       = ("mb", "tb", "cm_md", "cm_mv", "ev_mv", "ev_md")
         , batchable      = True
@@ -151,7 +150,7 @@ class Application (TGL.UI.Application) :
           "This group provides commands for managing the currently "
           "selected message(s)"
         )
-    _Msg_Part_Cmd_Group   = Record \
+    _Msg_Part_Cmd_Group   = TFL.Record \
         ( name           = "Message-Part"
         , if_names       = ("mb", "cm_mo", )
         , batchable      = True

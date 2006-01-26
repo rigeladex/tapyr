@@ -28,47 +28,166 @@
 # Revision Dates
 #    30-Dec-2005 (MG) Creation
 #     2-Jan-2006 (CT) `sync` added
+#    23-Jan-2006 (MG) Rewritten using the change counter
 #    ««revision-date»»···
 #--
 #
-from   _PMA                    import PMA
 from   _TFL                    import TFL
+import _TFL.sos                as     sos
+from   _PMA                    import PMA
 import _TFL._Meta.Object
+import _PMA.Mailbox
+import  weakref
 
-class V_Mailbox (TFL.Meta.Object) :
-    """Virtual mailbox (combing several real mailboxes into one mailbox)."""
+class _Proxy_ (TFL.Meta.Object) :
+    """A proxy around an object which overrides some of the attributes."""
 
-    messages           = property (lambda s : s._get_messages ())
-
-    def __init__ (self, name, * boxes) :
-        self.name      = self.qname = name
-        self._boxes    = boxes
-        self.root      = self
-        self.status    = PMA.Box_Status (self)
+    def __init__ (self, obj, ** overrides) :
+        self.obj = weakref.proxy (obj)
+        self.__dict__.update (overrides)
     # end def __init__
+
+    def __getattr__ (self, name) :
+        return getattr (self.obj, name)
+    # end def __getattr__
+
+# end class _Proxy_
+
+class _V_Mailbox_ (PMA._Mailbox_) :
+    """Root class for all kind of virtual mailboxes"""
+
+    supports_status = True
+
+    def __init__ (self, name, prefix = None, root = None) :
+        path = sos.path.join \
+            (PMA.Office.virtual_mailbox_path (), name)
+        if not sos.path.isdir (path) :
+            sos.mkdir (path)
+        self.__super.__init__ \
+            ( name     = name
+            , path     = path
+            , prefix   = prefix
+            , root     = root
+            )
+        self._mb_change_list = {}
+        for mb in self.mailboxes :
+            self._mb_change_list [mb.qname] = 0
+            mb._ccount.register_observer (self._mailbox_changed)
+    # end def __init__
+
+    def add_filter_mailbox (self, name, matcher) :
+        s = PMA.Filter_Mailbox \
+            (name, matcher, self, prefix = self.qname, root = self.root)
+        self._box_dict [s.name] = s
+        self.change_list.append (PMA.SCM.Add_Filter_Subbox (s))
+        self.change_count      += 1
+        return s
+    # end def add_filter_mailbox
+
+    def add_messages (self, * messages) :
+        msgs = []
+        for m in self._eligible (messages) :
+            if m.name not in self._msg_dict :
+                msgs.append (m)
+        self._add (* msgs)
+        return msgs
+    # end def add_messages
+
+    def add_subbox (self, * args, ** kw) :
+        raise TypeError, "Only adding of a Filter_Mailbox supported!"
+    # end def add_subbox
+
+    def delete (self, * messages) :
+        deleted = {}
+        for m in messages :
+            deleted.setdefault (m.mailbox, []).append (m)
+        for mb, msgs in deleted.iteritems () :
+            mb.delete (* msgs)
+    # end def delete
 
     def sync (self) :
         result = []
-        for b in self._boxes :
+        for b in self.mailboxes :
             result.extend (b.sync ())
         return result
     # end def sync
 
+    def _add (self, * messages) :
+        return self.__super._add \
+            ( * ( _Proxy_ (m, number = None, v_mailbox = self)
+                  for m in messages
+                )
+            )
+    # end def _add
+
+    def remove_msg (self, * msgs) :
+        for m in msgs :
+            del self._msg_dict [m]
+        self.change_list.append (PMA.SCm.Remove_Messages (* msgs))
+        self.change_count += len (msgs)
+    # end def remove_msg
+
     def _get_messages (self) :
-        for b in self._boxes :
-            for m in b.messages :
-                yield m
+        if self._messages is None :
+            self._messages = []
+            msgs           = []
+            for mb in self.mailboxes :
+                for m in self._eligible (mb.messages) :
+                    if m.name not in self._msg_dict :
+                        ### this is necessary in case that the virual mailbox
+                        ### is created before the messages of the mailboxes
+                        ### have been materialized (to avoid doouble adding of
+                        ### messages based on the change list AND during the
+                        ### first creation of the _messages list).
+                        msgs.append (m)
+            self._add  (* msgs)
+            self._messages = self._msg_dict.values ()
+            self._sort ()
+        return self._messages
     # end def _get_messages
 
-    # XXX missing interfaces
-    # - add_subbox
-    # - add_messages
-    # - delete_subbox
-    # - delete (messages)
-    # - commit
+    def _mailbox_changed (self, old, new, mailbox = None) :
+        qname   = mailbox.qname
+        changes = mailbox.change_list [self._mb_change_list [qname]:]
+        self._mb_change_list [qname] = len (mailbox.change_list)
+        for chg in (c for c in changes if callable (c)) :
+            chg (self, mailbox)
+    # end def _mailbox_changed
+
+# end class _V_Mailbox_
+
+class V_Mailbox (_V_Mailbox_) :
+    """Virtual mailbox (combing several real mailboxes into one mailbox)."""
+
+    def __init__ (self, name, mailboxes, prefix = None) :
+        self.mailboxes  = mailboxes
+        self.__super.__init__ \
+            ( name      = name
+            , prefix    = prefix
+            )
+    # end def __init__
+
+    def _eligible (self, messages) :
+        return messages
+    # end def _eligible
 
 # end class V_Mailbox
 
+"""
+from _PMA                  import PMA
+import _PMA.Mailbox
+import _PMA.V_Mailbox
+import _PMA.Matcher
+
+mbi = PMA.Maildir    ("/home/glueck/PMA/D/inbox")
+mb1 = PMA.Mailbox    ("/home/glueck/PMA/TTTech/planung")
+mb2 = PMA.Mailbox    ("/home/glueck/PMA/TTTech/BIKA")
+mbs = PMA.MH_Mailbox ("/home/glueck/work/MH/Installscript")
+vmb = PMA.V_Mailbox  ("f1", (mb1, mb2))
+vmb.messages
+m   = mbs.messages [58]
+"""
+
 if __name__ != "__main__" :
-    PMA._Export ("V_Mailbox")
+    PMA._Export ("V_Mailbox", "_V_Mailbox_")
 ### __END__ PMA.V_Mailbox

@@ -34,6 +34,8 @@
 #     2-Jan-2006 (MG) `_quit` close the interpreter window to save the
 #                     current state
 #    03-Jan-2006 (MG) `ask_invisible_string` added
+#    21-Jan-2006 (MG) Imports fixed
+#    25-Jan-2006 (MG) `_show_dialog_` fixed
 #    ««revision-date»»···
 #--
 
@@ -60,10 +62,9 @@ import _TGL._TKT._GTK.Toplevel
 import _TGL._TKT._GTK.V_Box
 
 
-from   Gauge_Logger         import Gauge_Logger
-
 import _TFL.d_dict
 import _TFL.Environment
+import _TFL.Gauge_Logger
 from   _TFL                 import sos
 from   glob                 import glob
 
@@ -246,7 +247,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
             , cancel_button = 1
             , AC            = self.AC
             )
-        self.gauge       = self.AC.ui_state.gauge = Gauge_Logger \
+        self.gauge       = self.AC.ui_state.gauge = TFL.Gauge_Logger \
             (gauge, log = self.model.verbose)
         self._setup_panes      ()
         #self.tool_balloon = CTK.Balloon \
@@ -265,7 +266,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     # end def __getattr__
 
     def _show_dialog_ (self, cls, * args, ** kw) :
-        kw ["AC"] = AC
+        kw ["AC"] = self.AC
         dialog    = cls    (* args, ** kw)
         return dialog.run  ()
     # end def _show_dialog_

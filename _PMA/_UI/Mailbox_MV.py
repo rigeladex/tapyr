@@ -47,6 +47,8 @@
 #                     `Deleted`, `Copied`, and `Moved`
 #    09-Jan-2006 (MG) Use `PMA.Message`as `ui` objects instead of
 #                     `PMA.Msg_Scope` objects
+#    13-Jan-2006 (MG) `_add_element` and `remove` overwritten to handle
+#                     `name_msg_map` dict
 #    ««revision-date»»···
 #--
 
@@ -60,6 +62,7 @@ import _PMA._UI.Mixin
 import _PMA._UI.Tree
 import _PMA._UI.Tree_Adapter
 
+import  weakref
 #  * Current message    gray92    background
 # must be changed in the RC-File -> but I don't know how )o:
 
@@ -175,6 +178,29 @@ class Mailbox_MV (PMA.UI.Tree) :
     """Message view of mailbox"""
 
     Adapter = _MB_TA_
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.name_msg_map = {}
+    # end def __init__
+
+    def _add_element (self, message, * args, ** kw) :
+        result = self.__super._add_element (message, * args, ** kw)
+        ### weakref should be enogh because the tree model has still a
+        ### reference to the message object
+        self.name_msg_map [message.name] = message
+        return result
+    # end def _add_element
+
+    def removed (self, message) :
+        result = self.__super.remove (message)
+        del self.name_msg_map [message.name]
+        return result
+    # end def removed
+
+    def update (self, message) :
+        return self.__super.update (self.name_msg_map [message.name])
+    # end def update
 
 # end class Mailbox_MV
 

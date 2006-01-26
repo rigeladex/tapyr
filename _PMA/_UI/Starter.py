@@ -30,6 +30,8 @@
 #    21-May-2005 (MG) `batch` command line option replaced by `interface`
 #     3-Jun-2005 (MG) `max_args` set to `0`
 #    28-Dec-2005 (MG) Default `interface` changed to `GTK`
+#    23-Jan-2006 (MG) `HILD` interface added
+#    23-Jan-2006 (MG) `implicit_imports` fixed
 #    ««revision-date»»···
 #--
 
@@ -59,7 +61,7 @@ class Starter (PMA.UI.Mixin) :
     __metaclass__        = TFL.Meta.M_Auto_Combine
     _lists_to_combine    = ("Args", "Opts")
     toolkits             = TFL.Abbr_Key_Dict \
-        ( Batch = "Batch", GTK = "GTK", Tk = "Tk")
+        ( Batch = "Batch", GTK = "GTK", Tk = "Tk", Hildon = "HILD")
     cmd_description      = ""
     min_args             = 0
     max_args             = 0
@@ -106,7 +108,6 @@ class Starter (PMA.UI.Mixin) :
 
     def implicit_imports (cls, ANS, * TNS_names) :
         for pkg in ["_TKT._%s" % (n, ) for n in TNS_names] + ["_UI"] :
-            yield PMA, "%s.Application" % (pkg, )
             yield ANS, pkg
             yield ANS, "%s.Application" % (pkg, )
     implicit_imports = classmethod (implicit_imports)

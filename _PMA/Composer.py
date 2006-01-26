@@ -62,7 +62,11 @@ from   _TFL.Regexp             import *
 import _TFL.sos
 
 from   smtplib                 import SMTP
-import subprocess
+try :
+    import subprocess
+except ImportError :
+    pass ### python on the Nokia770 does not support the subprocess modul
+
 import textwrap
 
 class Editor_Thread (PMA.Thread) :

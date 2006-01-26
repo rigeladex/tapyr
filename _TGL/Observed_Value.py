@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jan-2006 (CT) Creation
+#    21-Jan-2006 (MG) Support for `kw` added
 #    ««revision-date»»···
 #--
 
@@ -55,9 +56,10 @@ class Observed_Value (TFL.Meta.Object) :
 
     value = property (lambda s : s._value, lambda s, v : s._set (v))
 
-    def __init__ (self, value = None) :
+    def __init__ (self, value = None, ** kw) :
         self._value    = value
         self.observers = []
+        self.kw        = kw
     # end def __init__
 
     def deregister_observer (self, * o) :
@@ -72,12 +74,14 @@ class Observed_Value (TFL.Meta.Object) :
     def _set (self, value) :
         if value != self._value :
             for o in self.observers :
-                o (self, value)
+                o (self, value, ** self.kw)
         self._value = value
     # end def _set
 
     def __getattr__ (self, name) :
-        return getattr (self._value, name)
+        if name not in self.kw :
+            return getattr (self._value, name)
+        return self.kw [name]
     # end def __getattr__
 
     def __float__ (self) :

@@ -51,6 +51,8 @@
 #    28-Jul-2005 (MG) `read_style_file` added
 #     5-Sep-2005 (MG) `read_widget_memory` guard added
 #    13-Sep-2005 (MG) Support for pygtk 2.8 added
+#    21-Jan-2006 (MG) Imports fixed
+#    22-Jan-2006 (MG) `Object`: optional parameter `wtk_object` added
 #    ««revision-date»»···
 #--
 
@@ -63,7 +65,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.M_Class
 import _TFL._Meta.M_Auto_Combine_Dicts
 import _TGL._TKT._GTK.Eventname
-import  Environment
+import _TFL.Environment
 import _TFL.Filename
 import  sys
 import _TFL.sos as sos
@@ -534,7 +536,7 @@ class _Object_ (TGL.TKT.Mixin) :
     def path (cls) :
         """Returns path where module resides"""
         return TFL.Filename \
-            (Environment.module_path ("_PMA.Office")).directory
+            (TFL.Environment.module_path ("_PMA.Office")).directory
     # end def path
 
     _std_pathes = None
@@ -554,8 +556,8 @@ class _Object_ (TGL.TKT.Mixin) :
                 if sos.path.isdir (si) :
                     _img_pathes.append (si)
             for q in ( p
-                     , Environment.default_dir
-                     , Environment.home_dir
+                     , TFL.Environment.default_dir
+                     , TFL.Environment.home_dir
                      ) + tuple (_img_pathes) :
                 if q not in seen :
                     cls._std_pathes.append (q)
@@ -581,7 +583,7 @@ class _Object_ (TGL.TKT.Mixin) :
             if not sos.path.isfile (filename.name) :
                 fn = filename.base_ext
                 for p in cls.std_pathes () :
-                    if Environment.path_contains (p, fn) :
+                    if TFL.Environment.path_contains (p, fn) :
                         filename = TFL.Filename (fn, default_dir = p)
                         break
             filename.make_absolute ()
@@ -616,7 +618,11 @@ class Object (_Object_) :
         if "AC" in kw :
             AC = kw ["AC"]
             del kw  ["AC"]
-        self.wtk_object    = self.GTK_Class (* args, ** kw)
+        if "wtk_object" in kw :
+            self.wtk_object = kw ["wtk_object"]
+            del kw ["wtk_object"]
+        else :
+            self.wtk_object = self.GTK_Class (* args, ** kw)
         self.__super.__init__ (AC = AC)
     # end def __init__
 
