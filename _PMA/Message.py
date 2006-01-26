@@ -152,6 +152,8 @@
 #     4-Jan-2006 (CT) `_Msg_Part_._save` refactored to module-level function
 #                     `save`
 #     5-Jan-2006 (CT) SB-related commands added
+#    25-Jan-2006 (CT) `body_lines` changed (again!) to using `self.charset`
+#                     *or* `PMA.default_encoding` for `decode`
 #    ««revision-date»»···
 #--
 
@@ -547,7 +549,7 @@ class Message_Body (_Msg_Part_) :
                 if lines is not None :
                     self.lines = lines
         if lines is not None :
-            charset = self.charset
+            charset = self.charset or PMA.default_encoding
             for l in lines :
                 yield l.decode (charset, "replace").rstrip ("\r")
         else :
