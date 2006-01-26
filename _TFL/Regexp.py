@@ -43,12 +43,12 @@
 #    15-Dec-2002 (CT) `split` and `split_n` added
 #     4-Dec-2003 (CT) `search_iter` factored from `search_all`
 #     2-Nov-2004 (CT) `Multi_Regexp` added
+#    26-Jan-2006 (CT) `max_index` factored
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
 import re
-import sys
 
 if hasattr (re, "RegexObject") :
     re_RegexObject = re.RegexObject
@@ -71,6 +71,10 @@ class Regexp :
 
     default_flags = 0
 
+    ### sys.maxint currently (Jan-2006) does not work on 64 bit CPU's
+    ### XXX set to `sys.maxint` when Python is 64-bit sane
+    max_index     = (2 ** 31) - 1
+
     def __init__ (self, pattern, flags = 0, quote = 0) :
         if isinstance (pattern, Regexp) :
             pattern = pattern._pattern
@@ -91,7 +95,7 @@ class Regexp :
            `pos' and `endpos' determine the region of the string included in
            the search (see documentation of re.match for more documentation).
         """
-        endpos = endpos or 2 ** 31 - 1 # does not work ob 64 bit CPU's sys.maxint
+        endpos = endpos or self.max_index
         result = self.last_match = self._pattern.match (string, pos, endpos)
         return result
     # end def match
@@ -105,7 +109,7 @@ class Regexp :
            `pos' and `endpos' determine the region of the string included in
            the search (see documentation of re.match for more documentation).
         """
-        endpos = endpos or 2 ** 31 - 1# does not work ob 64 bit CPU's sys.maxint
+        endpos = endpos or self.max_index
         result = self.last_match = self._pattern.search (string, pos, endpos)
         return result
     # end def search
@@ -122,7 +126,7 @@ class Regexp :
         """Iterator returning all non-overlapping match-objects of
            `self._pattern` in `string`.
         """
-        endpos  = endpos or 2 ** 31 - 1# does not work ob 64 bit CPU's sys.maxint
+        endpos  = endpos or self.max_index
         lastpos = len (string)
         while pos < lastpos :
             match = self._pattern.search (string, pos, endpos)
