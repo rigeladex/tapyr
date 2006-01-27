@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jan-2006 (CT) Creation
+#    26-Jan-2006 (MG) Timeout handling implemented using a socket with timeout
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ import _TFL._Meta.Object
 import atexit
 import sys
 import threading
-import time
+import socket
 
 class _Thread_ (TFL.Meta.Object, threading.Thread) :
     """Base class for PMA threads"""
@@ -61,28 +62,61 @@ class Polling_Thread (_Thread_) :
     def __init__ (self, poll_interval = 10, ** kw) :
         self.finish         = False
         self.poll_interval  = poll_interval
-        atexit.register       (setattr, self, "finish", True)
+        atexit.register       (self.quit)
+        self.setup_sockets    ()
         self.__super.__init__ (** kw)
     # end def __init__
 
     def run (self) :
         while not self.finish :
-            ### print >> sys.__stdout__, self, "run poll", time.strftime ("%H:%M:%S", time.localtime ())
-            self._poll  ()
-            ### print >> sys.__stdout__, "  goto sleep", time.strftime ("%H:%M:%S", time.localtime ())
-            self._sleep ()
+            self._poll       ()
+            try :
+                self.client.recv (4) # returns after the timeout or when data
+                                     # has beed written into the socket
+            except socket.timeout :
+                pass # we want a timeout to occure
     # end def run
 
-    def _sleep (self) :
-        time.sleep (self.poll_interval)
-    # end def _sleep
+    def setup_sockets (self) :
+        self.server         = socket.socket \
+            (socket.AF_INET, socket.SOCK_STREAM)
+        self.client         = socket.socket \
+            (socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind                  (("", 0)) # let the system choose
+                                                    # the port
+        _, port = self.server.getsockname ()  # result is ip address, port
+        self.server.listen                (1) # accept owe client
+        self.client.connect               (("", port)) # client connects
+        self.sock, _ = self.server.accept () # get `connection socket`
+        # now we are almost down, we need to set the timeout value
+        self.client.settimeout            (self.poll_interval)
+    # end def setup_sockets
+
+    def quit (self) :
+        self.finish = True
+        self.sock.send ("Stop")
+    # end def quit
 
     def _poll (self) :
         raise NotImplemented, "%s must implement _poll" % self.__class__
     # end def _poll
 
 # end class Polling_Thread
+"""
+from _PMA.Thread import *
+import time
 
+class Test (Polling_Thread) :
+    def _poll (self) :
+        print "I'm polling"
+    # end def _poll
+
+# end class Test
+
+t = Test (auto_start = True)
+
+time.sleep (33)
+"""
 if __name__ != "__main__" :
     PMA._Export ("*")
 ### __END__ PMA.Thread
