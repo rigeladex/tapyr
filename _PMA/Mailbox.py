@@ -76,6 +76,8 @@
 #    26-Jan-2006 (MG) `__contains__` looks in `_box_dict` as well
 #    26-Jan-2006 (MG) `(de)register_change_observer` and
 #                     `changes_for_observer` added
+#    27-Jan-2006 (CT) Typo in `__contains__` fixed (use `name in` instead of
+#                     `item in`)
 #    ««revision-date»»···
 #--
 
@@ -283,7 +285,7 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     def __contains__ (self, item) :
         name = getattr (item, "name", item)
-        return item in self._msg_dict or item in self._box_dict
+        return name in self._msg_dict or name in self._box_dict
     # end def __contains__
 
     def __str__ (self) :
