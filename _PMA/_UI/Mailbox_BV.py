@@ -36,6 +36,7 @@
 #    30-Jul-2005 (MG) New styles added and used
 #    31-Jul-2005 (CT) Style `Target` changed to match `Copied` of `Mailbox_MV`
 #    31-Jul-2005 (CT) `_style` fixed (superfluous `return` removed)
+#    26-Jan-2006 (MG) `Filter_Mailbox` have now a italic font style
 #    ««revision-date»»···
 #--
 
@@ -99,8 +100,7 @@ class Box_Cell (PMA.UI.Message_Cell) :
     # end def _get_font_weight
 
     def _get_font_style (self, mailbox, attr, office) :
-        style = self._style (mailbox, office)
-        return dict (italic = 2).get (style.font_style, 0)
+        return (0, 2) [isinstance (mailbox, PMA.Filter_Mailbox)]
     # end def _get_font_style
 
 # end class Box_Cell
