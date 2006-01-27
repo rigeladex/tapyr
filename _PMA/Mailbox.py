@@ -73,6 +73,9 @@
 #                     change object
 #    25-Jan-2006 (MG) `commit_all`: return list of committed messages
 #    25-Jan-2006 (MG) `__contains__` added
+#    26-Jan-2006 (MG) `__contains__` looks in `_box_dict` as well
+#    26-Jan-2006 (MG) `(de)register_change_observer` and
+#                     `changes_for_observer` added
 #    ««revision-date»»···
 #--
 
@@ -127,21 +130,22 @@ class _Mailbox_ (TFL.Meta.Object) :
 
     def __init__ (self, path, name = None, prefix = None, root = None) :
         if name is None :
-            name         = sos.path.split (path) [-1]
+            name           = sos.path.split (path) [-1]
         if prefix is None :
-            qname        = name
+            qname          = name
         else :
-            qname        = self.name_sep.join ((prefix, name))
-        self.name        = name
-        self.qname       = qname
-        self.path        = path
-        self.root        = root or self
-        self._box_dict   = {}
-        self.change_list = []
-        self._messages   = None
-        self._msg_dict   = {}
-        self._ccount     = TGL.Observed_Value (0, mailbox = self)
-        self.unsynced    = TGL.Observed_Value (0, mailbox = self)
+            qname          = self.name_sep.join ((prefix, name))
+        self.name          = name
+        self.qname         = qname
+        self.path          = path
+        self.root          = root or self
+        self._box_dict     = {}
+        self.change_list   = []
+        self._messages     = None
+        self._msg_dict     = {}
+        self._ccount       = TGL.Observed_Value (0, mailbox = self)
+        self._chg_list_idx = {}
+        self.unsynced      = TGL.Observed_Value (0, mailbox = self)
         if qname not in self._Table :
             self._Table [qname] = self
         else :
@@ -152,6 +156,14 @@ class _Mailbox_ (TFL.Meta.Object) :
             self.status_fn = fn = sos.path.join (path, ".status")
             status.load (fn)
     # end def __init__
+
+    def changes_for_observer (self, observer) :
+        result = ()
+        if observer in self._chg_list_idx :
+            result = self.change_list [self._chg_list_idx [observer]:]
+            self._chg_list_idx [observer] = len (self.change_list)
+        return result
+    # end def changes_for_observer
 
     def commit (self, msg) :
         """Commit the pending actions of `msg`"""
@@ -173,6 +185,11 @@ class _Mailbox_ (TFL.Meta.Object) :
         return result
     # end def commit_all
 
+    def deregister_change_observer (self, observer) :
+        self._ccount.deregister_observer (observer)
+        del self._chg_list_idx [observer]
+    # end def deregister_change_observer
+
     @classmethod
     def instance (cls, qname) :
         return cls._Table [qname]
@@ -192,6 +209,11 @@ class _Mailbox_ (TFL.Meta.Object) :
         if self.supports_status :
             self.status.save (self.status_fn)
     # end def save_status
+
+    def register_change_observer (self, observer) :
+        self._ccount.register_observer (observer)
+        self._chg_list_idx [observer] = len (self.change_list)
+    # end def register_change_observer
 
     def sort (self, decorator = None) :
         if self._messages is None :
@@ -260,7 +282,8 @@ class _Mailbox_ (TFL.Meta.Object) :
     # end def _sort
 
     def __contains__ (self, item) :
-        return getattr (item, "name", item) in self._msg_dict
+        name = getattr (item, "name", item)
+        return item in self._msg_dict or item in self._box_dict
     # end def __contains__
 
     def __str__ (self) :

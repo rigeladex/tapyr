@@ -24,11 +24,13 @@
 #
 # Purpose
 #    Change tracker objects for PMA Mailbox objects
-#    ««text»»···
 #
 # Revision Dates
 #    15-Jan-2006 (MG) Creation
 #    23-Jan-2006 (MG) `Add_Filter_Subbox` added
+#    26-Jan-2006 (MG) `_Messages_.__init__` allow strings and message objects
+#    26-Jan-2006 (MG) `Remove_Messages` fixed
+#    26-Jan-2006 (MG) `messages_from_box` factored
 #    ««revision-date»»···
 #--
 
@@ -42,8 +44,12 @@ class _Messages_ (TFL.Meta.Object) :
     """Root class for all message based change objects"""
 
     def __init__ (self, * messages) :
-        self.messages = [m.name for m in messages]
+        self.messages = [getattr (m, "name", m) for m in messages]
     # end def __init__
+
+    def messages_from_box (self, mailbox) :
+        return (mailbox._msg_dict [n] for n in self.messages)
+    # end def messages_from_box
 
     def __repr__ (self) :
         return "%s (%r)" % (self.__class__.__name__, self.messages)
@@ -68,7 +74,7 @@ class Remove_Messages (_Messages_) :
     """Remove a set of messages from a mailbox"""
 
     def __call__ (self, target, source) :
-        target.remove_msg (* (source._msg_dict [n] for n in self.messages))
+        target.remove_msg (* self.messages)
     # end def __call__
 
 # end class Remove_Messages
@@ -77,8 +83,7 @@ class Add_Messages (_Messages_) :
     """Add a set of messages to a mailbox"""
 
     def __call__ (self, target, source) :
-        result = target.add_messages \
-            (* (source._msg_dict [n] for n in self.messages))
+        result = target.add_messages (* self.messages_from_box (source))
         if target._messages is None :
             target._messages = target._msg_dict.values ()
             target._sort ()

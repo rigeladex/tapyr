@@ -104,6 +104,7 @@
 #    09-Jan-2006 (MG) Unseen commands implemented
 #    24-Jan-2006 (MG) Methods alphabetical ordered
 #    24-Jan-2006 (MG) Started to rewrite using new `PMA.V_Mailbox` features
+#    26-Jan-2006 (MG) Update after `sync` command implemented
 #    ««revision-date»»···
 #--
 
@@ -125,9 +126,15 @@ import _PMA.POP3_Mailbox
 import _PMA.Pop3_Maildir
 import _PMA.Sender
 import _PMA.V_Mailbox
+import _PMA._SCM.Mailbox
 
 import _TFL.sos
 import  time
+
+def update_mailbox_msg_view (self, mailbox, view) :
+    for msg in self.messages_from_box (mailbox) :
+        view.add (msg)
+PMA.SCM.Add_Messages.update_mailbox_msg_view = update_mailbox_msg_view
 
 class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     """Abstract user interface for PMA office."""
@@ -345,8 +352,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self._create_delivery_view (mmv)
         self.tkt = TNS.Office (self.delivery_view, self.storage_views, AC = AC)
         tkt      = model.tkt
-        tkt.pack (tkt.wc_mb_msg_view, mmv.tkt)
-        tkt.pack (tkt.wc_po_box_view, self.tkt)
+        tkt.pack                (tkt.wc_mb_msg_view, mmv.tkt)
+        tkt.pack                (tkt.wc_po_box_view, self.tkt)
         self._setup_commands    (self.model.cmd_mgr)
         self._restore_selection ()
     # end def __init__
@@ -495,6 +502,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     # end def resend_message
 
     def sync_box (self, event = None) :
+        """Synchronizes selected the mailbox"""
         box = self.office.status.current_box
         if box :
             box.root.add_messages (* box.sync ())
@@ -523,6 +531,8 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         if curr_box and curr_box.root != box.root :
             self.box_views [curr_box.root].selection = ()
         if force or self.office.status.current_box != box :
+            self.office.status.current_box.deregister_change_observer \
+                (self._update_mailbox_msg_view)
             self.office.status.current_box = box
             self.mb_msg_view.update_model (box)
             if box.status.current_message :
@@ -531,6 +541,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
             else :
                 self.model.msg_display.clear ()
             self.model.set_title             ()
+            box.register_change_observer     (self._update_mailbox_msg_view)
     # end def select_box
 
     def set_target_mailbox (self, event = None) :
@@ -652,8 +663,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         rest_matcher = PMA.Not_Matcher \
             ( PMA.Or_Matcher (* (m for (n, m) in dbx_matchers)))
         for name, matcher in (("INBOX", rest_matcher),) + dbx_matchers :
-            f_mb = self.delivery_box.add_filter_mailbox (name, matcher)
-            f_mb._ccount.register_observer (self._update_filter_mailbox)
+            self.delivery_box.add_filter_mailbox (name, matcher)
         self.delivery_view = self.ANS.UI.Mailbox_DBV \
             ( self.delivery_box
             , show_header  = False
@@ -663,6 +673,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self.delivery_view.tkt.scroll_policies (self.TNS.AUTOMATIC)
         for box in self.delivery_box.sub_boxes :
             self.box_views [box] = self.delivery_view
+            box.register_change_observer (self._update_box_status)
         for box in self.delivery_box.mailboxes :
             self.box_views [box] = self.delivery_view
         self.box_views [self.delivery_box] = self.delivery_view
@@ -680,6 +691,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         self.model.msg_display.display (message)
         self.mb_msg_view.update        (message)
         self.box_views [mailbox.root].update (mailbox)
+        return # XXX
         help = self.AC.ui_state.message
         help.pop_help  ()
         help.push_help (str (message.pending))
@@ -765,6 +777,7 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
     def _restore_selection (self) :
         box   = self.office.status.current_box
         if box :
+            box.register_change_observer (self._update_mailbox_msg_view)
             names  = []
             for b_name in box.qname.split (PMA.Mailbox.name_sep) :
                 names.append (b_name)
@@ -811,8 +824,20 @@ class Office (PMA.UI.Mixin, PMA.UI.Command_Definition_Mixin) :
         print "Commit %s" % (", ".join (text), )
     # end def _update_commit_action
 
-    def _update_filter_mailbox (self, old, new, mailbox) :
-        print "update mailbox", mailbox.qname
+    def _update_box_status (self, old, new, mailbox) :
+        ### call this function to reset the peding changes
+        mailbox.changes_for_observer (self._update_box_status)
+        ### possible that some message have been added -> update the box to
+        ### change the unseen count
+        self.box_views [mailbox.root].update (mailbox)
+    # end def _update_box_status
+
+    def _update_mailbox_msg_view (self, old, new, mailbox) :
+        ### maybe a complete rebuild of mb_msg_view is required since it is
+        ### possible that all message number have changed
+        for c in mailbox.changes_for_observer (self._update_mailbox_msg_view) :
+            if hasattr (c, "update_mailbox_msg_view") :
+                c.update_mailbox_msg_view (mailbox, self.mb_msg_view)
     # end def _update_filter_mailbox
 
 # end class Office

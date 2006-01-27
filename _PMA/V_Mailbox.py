@@ -29,6 +29,8 @@
 #    30-Dec-2005 (MG) Creation
 #     2-Jan-2006 (CT) `sync` added
 #    23-Jan-2006 (MG) Rewritten using the change counter
+#    26-Jan-2006 (MG) `remove_msg` reordered
+#    26-Jan-2006 (MG) Use new `changes_for_observer` feature
 #    ««revision-date»»···
 #--
 #
@@ -69,10 +71,8 @@ class _V_Mailbox_ (PMA._Mailbox_) :
             , prefix   = prefix
             , root     = root
             )
-        self._mb_change_list = {}
         for mb in self.mailboxes :
-            self._mb_change_list [mb.qname] = 0
-            mb._ccount.register_observer (self._mailbox_changed)
+            mb.register_change_observer (self._mailbox_changed)
     # end def __init__
 
     def add_filter_mailbox (self, name, matcher) :
@@ -98,7 +98,6 @@ class _V_Mailbox_ (PMA._Mailbox_) :
     # end def add_subbox
 
     def delete (self, * messages) :
-        deleted = {}
         for m in messages :
             deleted.setdefault (m.mailbox, []).append (m)
         for mb, msgs in deleted.iteritems () :
@@ -112,6 +111,15 @@ class _V_Mailbox_ (PMA._Mailbox_) :
         return result
     # end def sync
 
+    def remove_msg (self, * msg_names) :
+        msg_names = [n for n in msg_names if n in self._msg_dict]
+        if msg_names :
+            for name  in msg_names :
+                del self._msg_dict [name]
+            self.change_list.append (PMA.SCM.Remove_Messages (* msg_names))
+            self.change_count += len (msg_names)
+    # end def remove_msg
+
     def _add (self, * messages) :
         return self.__super._add \
             ( * ( _Proxy_ (m, number = None, v_mailbox = self)
@@ -119,13 +127,6 @@ class _V_Mailbox_ (PMA._Mailbox_) :
                 )
             )
     # end def _add
-
-    def remove_msg (self, * msgs) :
-        for m in msgs :
-            del self._msg_dict [m]
-        self.change_list.append (PMA.SCm.Remove_Messages (* msgs))
-        self.change_count += len (msgs)
-    # end def remove_msg
 
     def _get_messages (self) :
         if self._messages is None :
@@ -147,10 +148,10 @@ class _V_Mailbox_ (PMA._Mailbox_) :
     # end def _get_messages
 
     def _mailbox_changed (self, old, new, mailbox = None) :
-        qname   = mailbox.qname
-        changes = mailbox.change_list [self._mb_change_list [qname]:]
-        self._mb_change_list [qname] = len (mailbox.change_list)
-        for chg in (c for c in changes if callable (c)) :
+        for chg in \
+            ( c for c in mailbox.changes_for_observer (self._mailbox_changed)
+                    if callable (c)
+            ) :
             chg (self, mailbox)
     # end def _mailbox_changed
 

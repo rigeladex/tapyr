@@ -66,10 +66,9 @@ import _PMA.Matcher
 import _PMA.Office
 
 mb1 = PMA.Mailbox    ("/home/glueck/PMA/TTTech/planung")
-mb2 = PMA.Mailbox    ("/home/glueck/PMA/TTTech/BIKA")
-mbs = PMA.MH_Mailbox ("/home/glueck/work/MH/Installscript")
-vmb = PMA.V_Mailbox  ("inboxes", (mb1, mb2))
-fmb = vmb.add_filter_mailbox ("f1", "'maier' in sender or 'novak' in sender")
+mbs = PMA.Maildir    ("/home/glueck/PMA/D/inbox")
+vmb = PMA.V_Mailbox  ("inboxes", (mbs, ))
+fmb = vmb.add_filter_mailbox ("PGR", "'groessinger' in sender_name.lower ()")
 fmb.messages
 m   = mbs.messages [58]
 """
