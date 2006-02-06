@@ -11,6 +11,7 @@
 #
 # Revision Dates
 #    23-Jan-2006 (CED) Creation
+#     6-Feb-2006 (CED) Creation continued .
 #    ««revision-date»»···
 #--
 #
@@ -51,6 +52,13 @@ class Bin_Block (TFL.Meta.Object) :
                 setattr (self.root, off_name, self._offset)
             self._offset += len (bin)
     # def add
+
+    def add_blob (self, blob, offset_name) :
+        buffer = "".join (self._binbuffer)
+        offset = len (self._binheader) + len (buffer)
+        setattr (self.root, offset_name, offset)
+        self._binbuffer.append (blob)
+    # end def add_blob
 
     def __str__ (self) :
         ### We have to re-pack the root struct, cause the offset field values
