@@ -151,6 +151,7 @@
 #    30-Aug-2005 (CT)  `split_hst` and `rsplit_hst` added
 #    30-Aug-2005 (CT)  Use `in` instead of `find`
 #    31-Aug-2005 (CT)  `rsplit_hst` changed to match Hettinger's clarification
+#     9-Feb-2006 (CT)  `bool_split` added
 #    ««revision-date»»···
 #--
 
@@ -234,6 +235,23 @@ def bit_size_decorator (bs) :
     """
     return - byte_alignment ((bs + 4) >> 3), - bs
 # end def bit_size_decorator
+
+def bool_split (seq, predicate) :
+    """Returns two lists, the first containing all elements of
+       `seq` for which `predicate` evaluates to false, the second
+       all others.
+
+       >>> bool_split (range (10), lambda x : x % 2)
+       ([0, 2, 4, 6, 8], [1, 3, 5, 7, 9])
+       >>> bool_split (range (10), lambda x : x > 5)
+       ([0, 1, 2, 3, 4, 5], [6, 7, 8, 9])
+    """
+    result = ([], [])
+    add    = [r.append for r in result]
+    for e in seq :
+        add [bool (predicate (e))] (e)
+    return result
+# end def bool_split
 
 def byte_alignment (bytes) :
     """Returns alignment in powers of two of data with length `bytes'
