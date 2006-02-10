@@ -26,23 +26,24 @@
 #    Root class for class modelling C structs.
 #
 # Revision Dates
-#    11-Jul-2005 (MG) Creation (Factored from TTA.FTC.TDFT_Data)
-#    12-Jul-2005 (MG) `__new__`: use `super` for upchaining
-#    14-Jul-2005 (MG) `Typedef` added
-#    14-Jul-2005 (MG) `__new__` changed to use `super`
-#    14-Jul-2005 (MG) `add_typedef` added
+#    11-Jul-2005 (MG)  Creation (Factored from TTA.FTC.TDFT_Data)
+#    12-Jul-2005 (MG)  `__new__`: use `super` for upchaining
+#    14-Jul-2005 (MG)  `Typedef` added
+#    14-Jul-2005 (MG)  `__new__` changed to use `super`
+#    14-Jul-2005 (MG)  `add_typedef` added
 #     6-Sep-2005 (MPH) Missing `import traceback` added
 #    09-Nov-2005 (MG)  `dict` added
 #    11-Nov-2005 (MG)  Check for a list in `dict` added
 #    11-Nov-2005 (MG)  Handling of the `reference_field` extended
-#    01-Dec-2005 (MG) `typedef_prefix` added
+#    01-Dec-2005 (MG)  `typedef_prefix` added
 #    02-Dec-2005 (MG)  Use `type_name` instead of `__name__`
-#    02-Dec-2005 (MG) `Struct.as_c_code` changed to handle `Struct` classes
-#                     as `struct_fields`
+#    02-Dec-2005 (MG)  `Struct.as_c_code` changed to handle `Struct` classes
+#                      as `struct_fields`
 #    06-Dec-2005 (MZO) added optional parameter index to current
 #    04-Jan-2006 (MZO) added buffer_name_tail
 #    20-Jan-2006 (CED) made `packed` byte-order aware
 #    23-Jan-2006 (CED) `format_and_values` sets `self.alignment`
+#    10-Feb-2006 (PGO) Error detection added to `format_and_values`
 #    ««revision-date»»···
 #--
 
@@ -216,6 +217,11 @@ class Struct (TFL.Meta.Object) :
                 ### `value` is a `Struct` or sequence of `Struct`
                 if isinstance (value, Struct) :
                     value = (value, )
+                elif not isinstance (value, (tuple, list)) :
+                    raise TypeError \
+                        ( "No valid format found for %s.%s"
+                        % (self.type_name, f.name)
+                        )
                 for v in value :
                     format, value = v.format_and_values ()
                     formats.append  (format)
