@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    EU_Currency
+#    TFL.EU_Currency
 #
 # Purpose
 #    Provide classes for management of European Currencies
@@ -52,10 +52,11 @@
 #    18-Jun-2003 (CT) `comma_dec_pat` added and used
 #     5-Dec-2004 (CT) `to_euro_factor` changed from `1` to `1.0` to avoid
 #                     `DeprecationWarning: classic int division`
+#    11-Feb-2006 (CT) Moved into package `TFL`
 #    ««revision-date»»···
 #--
+
 import re
-import string
 
 ### see Fri97, p.229, p.292
 sep_1000_pat   = re.compile ("(\d{1,3}) (?= (?: \d\d\d)+ (?! \d) )", re.X)
@@ -93,11 +94,12 @@ class EU_Currency :
            `self.target_currency'.
         """
         (amount, cent, target_currency) = self.as_target ()
-        return "%d%s%02d %s" % ( amount
-                               , target_currency.decimal_sign
-                               , cent
-                               , target_currency.sloppy_name
-                               )
+        return "%d%s%02d %s" % \
+            ( amount
+            , target_currency.decimal_sign
+            , cent
+            , target_currency.sloppy_name
+            )
     # end def __str__
 
     def as_target (self, round = 0, target_currency = None) :
@@ -140,8 +142,8 @@ class EU_Currency :
         """Return `self.amount` as string representation of `self.__class__`
            with 1000 separators.
         """
-        (amount, cent, target_currency) = \
-                 self.as_target (round, self.__class__)
+        (amount, cent, target_currency) = self.as_target \
+            (round, self.__class__)
         result = self._formatted \
             (amount, cent, target_currency.decimal_sign, round)
         result = sep_1000_pat.sub \
@@ -283,12 +285,12 @@ class EU_Currency :
 EUR = EU_Currency
 
 def register (currency) :
-    EU_Currency.Table [currency.name]                       = currency
-    EU_Currency.Table [string.lower (currency.name)]        = currency
-    EU_Currency.Table [string.upper (currency.name)]        = currency
-    EU_Currency.Table [currency.sloppy_name]                = currency
-    EU_Currency.Table [string.lower (currency.sloppy_name)] = currency
-    EU_Currency.Table [string.upper (currency.sloppy_name)] = currency
+    EU_Currency.Table [currency.name]                 = currency
+    EU_Currency.Table [currency.name.lower ()]        = currency
+    EU_Currency.Table [currency.name.upper ()]        = currency
+    EU_Currency.Table [currency.sloppy_name]          = currency
+    EU_Currency.Table [currency.sloppy_name.lower ()] = currency
+    EU_Currency.Table [currency.sloppy_name.upper ()] = currency
     EU_Currency.extension.append (currency)
 # end def register
 
@@ -384,37 +386,38 @@ class LUF (EU_Currency) :
 
 for c in EU_Currency, ATS, DEM, FRF, ITL, BEF, NLG, ESP, PTE, FIM, IEP, LUF :
     register (c)
-EU_Currency.extension.sort (lambda l, r : cmp (l.name, r.name))
+EU_Currency.extension.sort (key = lambda c : c.name)
 
 def currency (name) :
     return EU_Currency.Table [name]
 # end def currency
 
-def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line, Opt_L
-    from   predicate    import sorted
+def _command_spec (arg_array = None) :
+    from   _TFL.Command_Line import Command_Line, Opt_L
+    from   _TFL.predicate    import sorted
     currencies = sorted (EU_Currency.Table.keys ())
-    return Command_Line ( option_spec =
-                            ( Opt_L ( selection   = currencies
-                                    , name        = "source"
-                                    , type        = "S"
-                                    , default     = "ATS"
-                                    , description = "Source currency"
-                                    )
-                            , Opt_L ( selection   = currencies
-                                    , name        = "target"
-                                    , type        = "S"
-                                    , default     = "EUR"
-                                    , description = "Target currency"
-                                    )
-                            )
-                        , arg_spec    = ("amount:S?Amount to convert", )
-                        , description = "Convert between two Euro currencies"
-                        , arg_array   = arg_array
-                        )
-# end def command_spec
+    return Command_Line \
+        ( option_spec =
+            ( Opt_L ( selection   = currencies
+                    , name        = "source"
+                    , type        = "S"
+                    , default     = "ATS"
+                    , description = "Source currency"
+                    )
+            , Opt_L ( selection   = currencies
+                    , name        = "target"
+                    , type        = "S"
+                    , default     = "EUR"
+                    , description = "Target currency"
+                    )
+            )
+        , arg_spec    = ("amount:S?Amount to convert", )
+        , description = "Convert between two Euro currencies"
+        , arg_array   = arg_array
+        )
+# end def _command_spec
 
-def main (cmd) :
+def _main (cmd) :
     Table                       = EU_Currency.Table
     source                      = Table [cmd.source]
     EU_Currency.target_currency = Table [cmd.target]
@@ -436,8 +439,8 @@ def main (cmd) :
         print "%s%s %s = %s" % (a, b, source.sloppy_name, c)
         s = s + c
     if s != 0 : print "Total : %s" % s
-# end def main
+# end def _main
 
 if __name__ == "__main__":
-    main (command_spec ())
-### __END__ EU_Currency
+    _main (_command_spec ())
+### __END__ TFL.EU_Currency
