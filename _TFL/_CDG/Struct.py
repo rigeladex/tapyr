@@ -44,6 +44,7 @@
 #    20-Jan-2006 (CED) made `packed` byte-order aware
 #    23-Jan-2006 (CED) `format_and_values` sets `self.alignment`
 #    10-Feb-2006 (PGO) Error detection added to `format_and_values`
+#    13-Feb-2006 (MZO) added `null_termination`
 #    ««revision-date»»···
 #--
 
@@ -250,6 +251,14 @@ class Struct (TFL.Meta.Object) :
                     result [f.name] = value
         return result
     # end def dict
+
+    @classmethod
+    def null_termination (cls) :
+        result = {}
+        for f in cls.struct_fields :
+            result [f.name] = "0"
+        return result
+    # end def null_termination
 
 # end class Struct
 
