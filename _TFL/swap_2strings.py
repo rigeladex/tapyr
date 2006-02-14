@@ -58,7 +58,7 @@ class String_Swapper :
 # end class String_Swapper
 
 def swap_2strings (s1, s2, text) :
-    """Swap all occurences of `self.s1` and `self.s2` in `text`
+    """Swap all occurences of `s1` and `s2` in `text`
 
        >>> swap_2strings ("a", "b", "ab" * 5)
        'bababababa'
@@ -69,26 +69,6 @@ def swap_2strings (s1, s2, text) :
     """
     return String_Swapper (s1, s2) (text)
 # end def swap_2strings
-
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import swap_2strings
-        return U_Test.run_module_doc_tests (swap_2strings)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
 
 if __name__ == "__main__" :
     pass
