@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -20,64 +20,54 @@
 #
 #++
 # Name
-#    TFL.Units.Time
+#    TFL.Units.Speed
 #
 # Purpose
-#    Time units
+#    Units of speed
 #
 # Revision Dates
-#     9-Feb-2005 (CED) Creation
-#    15-Feb-2006 (CT)  Done right
+#    15-Feb-2006 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 import _TFL._Meta.Object
 import _TFL._Units.Kind
+import _TFL._Units.Length
 import _TFL._Units.Prefix
+import _TFL._Units.Time
 import _TFL._Units.Unit
 
-class Time (TFL.Units.Kind) :
-    """Units of time.
+class Speed (TFL.Units.Kind) :
+    """Units of speed.
 
-       >>> Time (1)
+       >>> Speed (1)
        1.0
-       >>> Time (1, "ns")
-       1e-09
-       >>> Time (1, "d")
-       86400.0
-       >>> Time (1, "wk")
-       604800.0
-       >>> Time (1, "wk") == Time (7, "d")
-       True
+       >>> Speed (1, "kmh")
+       0.277777777778
+       >>> Speed (1, "c")
+       299792458.0
     """
 
+    Length        = TFL.Units.Length
+    Time          = TFL.Units.Time
     Unit          = TFL.Units.Unit
 
-    base_unit     = Unit ("second", 1.0, "s")
+    base_unit     = Unit ("meter_per_second", 1.0, "m/s")
     _units        = \
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
-        # SI prefixes
-          Unit ("attosecond",      TFL.Units.atto,   "as")
-        , Unit ("femtosecond",     TFL.Units.femto,  "fs")
-        , Unit ("picosecond",      TFL.Units.pico,   "ps")
-        , Unit ("nanosecond",      TFL.Units.nano,   "ns")
-        , Unit ("microsecond",     TFL.Units.micro,  "us")
-        , Unit ("millisecond",     TFL.Units.milli,  "ms")
         # Usual units
-        , Unit ("jiffy",                  1 / 60.0)
-        , Unit ("minute",                     60.0,  "min")
-        , Unit ("moment",                     90.0)
-        , Unit ("hour",                     3600.0,  "h")
-        , Unit ("day",               3600.0 * 24.0,  "d")
-        , Unit ("week",        3600.0 * 24.0 * 7.0,  "wk")
-        , Unit ("fortnight",             1209600.0)
+          Unit ("kilometer_per_hour", Length.kilometer     / Time.hour, "kmh")
+        # US customary units
+        , Unit ("furlong_per_fortnight", Length.furlong    / Time.fortnight)
+        , Unit ("mile_per_hour",      Length.statute_mile  / Time.hour, "mph")
+        , Unit ("knots",              Length.nautical_mile / Time.hour, "kn")
         # physics units
-        , Unit ("plank_time",      1.351211818e-43)
+        , Unit ("speed_of_light",     2.99792458e8,  "c")
         )
 
-# end class Time
+# end class Speed
 
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
-### __END__ TFL.Units.Time
+### __END__ TFL.Units.Speed

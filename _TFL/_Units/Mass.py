@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    TFL.Units.Weight
+#    TFL.Units.Mass
 #
 # Purpose
-#    Weight units
+#    Mass units
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
@@ -34,18 +34,18 @@ from   _TFL import TFL
 import _TFL._Meta.Object
 import _TFL._Units.Kind
 
-class Weight (TFL.Units.Kind) :
-    """Units of weight
+class Mass (TFL.Units.Kind) :
+    """Units of mass
 
-       >>> Weight (1)
+       >>> Mass (1)
        1.0
-       >>> Weight (1, "g")
+       >>> Mass (1, "g")
        0.001
-       >>> Weight (1, "oz")
+       >>> Mass (1, "oz")
        0.028349523125
-       >>> Weight (1, "stone")
+       >>> Mass (1, "stone")
        6.35029318
-       >>> Weight (1, "lb")
+       >>> Mass (1, "lb")
        0.45359237
     """
 
@@ -71,8 +71,8 @@ class Weight (TFL.Units.Kind) :
         , Unit ("stone",                _pound *   14)
         )
 
-# end class Weight
+# end class Mass
 
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
-### __END__ Weight
+### __END__ Mass

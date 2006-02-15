@@ -26,8 +26,10 @@
 #    Length units
 #
 # Revision Dates
-#     8-Aug-2004 (CT) Creation
+#     8-Aug-2004 (CT)  Creation
 #     9-Feb-2005 (CED) Some additional units added
+#    15-Feb-2006 (CT)  CED's additions corrected (rounding the speed of light
+#                      in the context of units is a bad thing (TM))
 #    ««revision-date»»···
 #--
 
@@ -38,7 +40,7 @@ import _TFL._Units.Prefix
 import _TFL._Units.Unit
 
 class Length (TFL.Units.Kind) :
-    """Units of length
+    """Units of length.
 
        >>> Length (1)
        1.0
@@ -58,29 +60,30 @@ class Length (TFL.Units.Kind) :
 
     base_unit         = Unit ("meter", 1.0, "m")
     _units            = \
-        (
+        ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
         # SI prefixes
-          Unit ("nanometer",      TFL.Units.nano,  "nm")
-        , Unit ("micrometer",     TFL.Units.micro, "um")
-        , Unit ("millimeter",     TFL.Units.milli, "mm")
-        , Unit ("centimeter",     TFL.Units.centi, "cm")
-        , Unit ("decimeter",      TFL.Units.deci,  "dm")
-        , Unit ("dekameter",      TFL.Units.deka,  "dam")
-        , Unit ("hectometer",     TFL.Units.hecto, "hm")
-        , Unit ("kilometer",      TFL.Units.kilo,  "km")
+          Unit ("nanometer",      TFL.Units.nano,            "nm")
+        , Unit ("micrometer",     TFL.Units.micro,           "um")
+        , Unit ("millimeter",     TFL.Units.milli,           "mm")
+        , Unit ("centimeter",     TFL.Units.centi,           "cm")
+        , Unit ("decimeter",      TFL.Units.deci,            "dm")
+        , Unit ("dekameter",      TFL.Units.deka,            "dam")
+        , Unit ("hectometer",     TFL.Units.hecto,           "hm")
+        , Unit ("kilometer",      TFL.Units.kilo,            "km")
         # US customary units
-        , Unit ("inch",              0.0254,       "in")
-        , Unit ("foot",              0.3048,       "ft")
-        , Unit ("yard",              0.9144,       "yd")
-        , Unit ("rod",               5.0292,       "rd")
-        , Unit ("furlong",         201.168,        "fur")
-        , Unit ("statute_mile",   1609.344,        "mi")
-        , Unit ("nautical_mile",  1852.0,          "Nm")
+        , Unit ("mil",               2.54e-5,                "mil")
+        , Unit ("inch",              0.0254,                 "in")
+        , Unit ("foot",              0.3048,                 "ft")
+        , Unit ("yard",              0.9144,                 "yd")
+        , Unit ("rod",               5.0292,                 "rd")
+        , Unit ("furlong",         201.168,                  "fur")
+        , Unit ("statute_mile",   1609.344,                  "mi")
+        , Unit ("nautical_mile",  1852.0,                    "Nm")
         # physics units
-        , Unit ("lightyear",      9.4605e15,       "ly")
-        , Unit ("parsec",         3.0857e16,       "pc")
-        , Unit ("planck_length",  1.616e-35,       "pl")
-        , Unit ("angstrom",       0.0000000001,    "A")
+        , Unit ("astronomical_unit", 1.49597870691e11,       "AU")
+        , Unit ("lightyear",         9.4607304725808e15,     "ly")
+        , Unit ("parsec",            3.0856775813e16,        "pc")
+        , Unit ("angstrom",       TFL.Units.nano / 10,       "A")
         )
 
 # end class Length

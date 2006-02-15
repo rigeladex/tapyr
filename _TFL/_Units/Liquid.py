@@ -46,16 +46,8 @@ class Liquid (TFL.Units.Kind) :
        0.003696625
        >>> Liquid (1.0, "gal")
        3.785344
-       >>> Liquid (1.0, "cubic_inch")
-       0.016387064
        >>> Liquid (1.0, "pt")
        0.473168
-       >>> Liquid (1.0, "pt").as_cubic_inch
-       28.874482945816283
-       >>> Liquid (1.0, "qt").as_cubic_inch
-       57.748965891632565
-       >>> Liquid (1.0, "gal").as_cubic_inch
-       230.99586356653026
     """
 
     Volume            = TFL.Units.Volume
@@ -85,8 +77,6 @@ class Liquid (TFL.Units.Kind) :
         , Unit ("pint",              _ounce    *  16, "pt")
         , Unit ("quart",             _ounce    *  32, "qt")
         , Unit ("gallon",            _ounce    * 128, "gal")
-        , Unit ("cubic_inch",        Volume.cubic_inch * 1000)
-        , Unit ("cubic_foot",        Volume.cubic_foot * 1000)
         )
 
 # end class Liquid

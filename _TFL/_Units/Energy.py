@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,13 +20,13 @@
 #
 #++
 # Name
-#    TFL.Units.Pressure
+#    TFL.Units.Energy
 #
 # Purpose
-#    Units of pressure
+#    Units of energy
 #
 # Revision Dates
-#     8-Aug-2004 (CT) Creation
+#    15-Feb-2006 (CT) Creation
 #    ««revision-date»»···
 #--
 
@@ -34,33 +34,32 @@ from   _TFL import TFL
 import _TFL._Meta.Object
 import _TFL._Units.Kind
 
-class Pressure (TFL.Units.Kind) :
-    """Units of pressure
+class Energy (TFL.Units.Kind) :
+    """Units of energy
 
-       >>> Pressure (1.0)
+       >>> Energy (1.0)
        1.0
-       >>> Pressure (1.0,"bar")
-       100000.0
-       >>> Pressure (1.0,"atm")
-       101325.0
+       >>> Energy (1, "cal")
+       4.1868
+       >>> Energy (1, "kWh")
+       3600000.0
     """
 
     Unit              = TFL.Units.Unit
 
-    base_unit         = Unit ("pascal", 1.0, "Pa")
+    base_unit         = Unit ("joule", 1.0, "J")
     _units            = \
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
-        # Usual units
-          Unit ("torr",                  133.3223684,     "torr")
-        , Unit ("atmosphere",              1.01325E+5,    "atm")
-        , Unit ("bar",                     1.0E+5,        "bar")
-        # US customary units
-        , Unit ("pound_per_square_foot",  47.880259,      "psf")
-        , Unit ("pound_per_square_inch",   6.894757e3,    "psi")
+          Unit ("electron_volt",           1.602176e-19,  "eV")
+        , Unit ("erg",                     1.0e-7,        "erg")
+        , Unit ("calorie",                 4.1868,        "cal")
+        , Unit ("kilocalorie",             4.1868e3,      "kcal")
+        , Unit ("horsepower_hour",         2.6845e6,      "hph")
+        , Unit ("kilowatt_hour",           3.6e6,         "kWh")
         )
 
-# end class Pressure
+# end class Energy
 
 if __name__ != "__main__" :
     TFL.Units._Export ("*")
-### __END__ TFL.Units.Pressure
+### __END__ TFL.Units.Energy

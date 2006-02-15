@@ -80,6 +80,8 @@ class Kind (TFL.Meta.Object) :
                 unit = self.abbrs [unit_name]
             elif unit_name in self.units :
                 unit = self.units [unit_name]
+            else :
+                raise AttributeError, name
             return self.value / unit.factor
         raise AttributeError, name
     # end def __getattr__

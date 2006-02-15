@@ -68,24 +68,26 @@ class Area (TFL.Units.Kind) :
     _hectare          = Length.hectometer ** 2
     _sq_mile          = Length.statute_mile ** 2
     _units            = \
-        (
+        ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
         # SI prefixes
-          Unit ("square_nanometer",   Length.nanometer    ** 2, "sqnm")
-        , Unit ("square_micrometer",  Length.micrometer   ** 2, "squm")
-        , Unit ("square_millimeter",  Length.millimeter   ** 2, "sqmm")
-        , Unit ("square_centimeter",  Length.centimeter   ** 2, "sqcm")
-        , Unit ("square_decimeter",   Length.decimeter    ** 2, "sqdm")
-        , Unit ("square_dekameter",   _are,                     "sqdam")
-        , Unit ("square_hectometer",  _hectare,                 "sqhm")
-        , Unit ("square_kilometer",   Length.kilometer    ** 2, "sqkm")
-        , Unit ("are",                _are)
-        , Unit ("hectare",            _hectare)
+          Unit ("square_nanometer",   Length.nanometer    ** 2,  "sqnm")
+        , Unit ("square_micrometer",  Length.micrometer   ** 2,  "squm")
+        , Unit ("square_millimeter",  Length.millimeter   ** 2,  "sqmm")
+        , Unit ("square_centimeter",  Length.centimeter   ** 2,  "sqcm")
+        , Unit ("square_decimeter",   Length.decimeter    ** 2,  "sqdm")
+        , Unit ("square_dekameter",   _are,                      "sqdam")
+        , Unit ("square_hectometer",  _hectare,                  "sqhm")
+        , Unit ("square_kilometer",   Length.kilometer    ** 2,  "sqkm")
+        , Unit ("are",                _are,)
+        , Unit ("hectare",            _hectare,                  "ha")
         # US customary units
-        , Unit ("square_inch",        Length.inch         ** 2, "sqin")
-        , Unit ("square_foot",        Length.foot         ** 2, "sqft")
-        , Unit ("square_yard",        Length.yard         ** 2, "sqyd")
-        , Unit ("acre",               _sq_mile / 640)
-        , Unit ("square_mile",        _sq_mile,                 "sqmi")
+        , Unit ("square_mil",         Length.mil          ** 2,  "sqmil")
+        , Unit ("square_inch",        Length.inch         ** 2,  "sqin")
+        , Unit ("board",              Length.inch * Length.foot, "bd")
+        , Unit ("square_foot",        Length.foot         ** 2,  "sqft")
+        , Unit ("square_yard",        Length.yard         ** 2,  "sqyd")
+        , Unit ("acre",               _sq_mile / 640,            "ac")
+        , Unit ("square_mile",        _sq_mile,                  "sqmi")
         )
 
 # end class Area

@@ -33,6 +33,8 @@
 from   _TFL import TFL
 import _TFL._Units
 
+### http://en.wikipedia.org/wiki/SI_prefix
+
 yocto  = 1E-24
 zepto  = 1E-21
 atto   = 1E-18
