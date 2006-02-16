@@ -81,7 +81,7 @@ class Length (TFL.Units.Kind) :
         , Unit ("nautical_mile",  1852.0,                    "Nm")
         # physics units
         , Unit ("astronomical_unit", 1.49597870691e11,       "AU")
-        , Unit ("lightyear",         9.4607304725808e15,     "ly")
+        , Unit ("light_year",        9.4607304725808e15,     "ly")
         , Unit ("parsec",            3.0856775813e16,        "pc")
         , Unit ("angstrom",       TFL.Units.nano / 10,       "A")
         )
