@@ -12,6 +12,7 @@
 # Revision Dates
 #    23-Jan-2006 (CED) Creation
 #     6-Feb-2006 (CED) Creation continued .
+#    15-Feb-2006 (MZO) added import of `struct`
 #    ««revision-date»»···
 #--
 #
@@ -19,6 +20,7 @@
 from     _TFL                  import TFL
 import   _TFL._CDG
 import   _TFL._Meta.Object
+import  struct
 
 class Bin_Block (TFL.Meta.Object) :
 
