@@ -40,6 +40,7 @@
 #    02-Dec-2005 (KZU) added `typedef_prefix` in Reference_Struct_Field
 #    02-Dec-2005 (MG)  use `type_name` of Struct classes/instances
 #    20-Jan-2006 (CED) Added `bo_map`,  made `packed` byte-order aware
+#    20-Feb-2006 (MZO) Corrected super call of `Reference_Struct_Field`
 #    ««revision-date»»···
 #--
 
@@ -192,7 +193,12 @@ class Reference_Struct_Field (Struct_Field) :
                  , typedef     = None
                  , index       = None
                  ) :
-        self.__super.__init__ ("<none>", name, desc, user_code, bounds)
+        self.__super.__init__ \
+            ("<none>", name, desc
+            , init      = init
+            , user_code = user_code
+            , bounds    = bounds
+            )
         self.typedef    = typedef
         if index is not None :
             ### only override class default if explicitly specfied
