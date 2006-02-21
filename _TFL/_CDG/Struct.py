@@ -46,6 +46,7 @@
 #    10-Feb-2006 (PGO) Error detection added to `format_and_values`
 #    13-Feb-2006 (MZO) added `null_termination`
 #    19-Feb-2006 (CED) `aligned_and_padded`, `atoms` added
+#    21-Feb-2006 (CED) Use `isdigit` instead of homegrown code
 #    ««revision-date»»···
 #--
 
@@ -253,11 +254,10 @@ class Struct (TFL.Meta.Object) :
     # def aligned_and_padded
 
     def atoms (self, format) :
-        digits  = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
         current = []
         for c in format :
             current.append (c)
-            if c not in digits :
+            if not c.isdigit :
                 yield "".join (current)
                 current = []
     # def atoms
