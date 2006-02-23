@@ -46,6 +46,7 @@
 #    10-Feb-2006 (PGO) Error detection added to `format_and_values`
 #    13-Feb-2006 (MZO) added `null_termination`
 #    19-Feb-2006 (CED) `aligned_and_padded`, `atoms` added
+#    23-Feb-2006 (CED) Use `rounded_up` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,7 @@ from   _TFL                           import TFL
 import _TFL._Meta.Object
 import _TFL._Meta.Property
 import _TFL._SDG._C
+from   _TFL.predicate                 import *
 import  struct
 import traceback
 
@@ -242,13 +244,11 @@ class Struct (TFL.Meta.Object) :
         offset = 0
         for atom in self.atoms (format) :
             size = struct.calcsize (atom)
-            miss = size - (offset % size)
-            if 0 < miss < size :
-                result.append ("%dx" % miss)
-            else :
-                miss = 0
+            gap  = rounded_up (offset, size) - offset
+            if gap :
+                result.append ("%dx" % gap)
             result.append (atom)
-            offset += miss + size
+            offset += (gap + size)
         return "".join (result)
     # def aligned_and_padded
 

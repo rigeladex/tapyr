@@ -14,6 +14,7 @@
 #     6-Feb-2006 (CED) Creation continued .
 #    15-Feb-2006 (MZO) added import of `struct`
 #    22-Feb-2006 (MZO) refactored from `SIT.Conf.Bin_Block_Creator`
+#    23-Feb-2006 (CED) Use `rounded_up` instead of home-grown code
 #    ««revision-date»»···
 #--
 #
@@ -22,6 +23,7 @@ from     _TFL                  import TFL
 import   _TFL._CDG
 import   _TFL._SDG._C
 import   _TFL._Meta.Object
+from     _TFL.predicate        import *
 import  struct
 
 class Bin_Block (TFL.Meta.Object) :
@@ -40,16 +42,16 @@ class Bin_Block (TFL.Meta.Object) :
         if not isinstance (structs, (tuple, list)) :
             structs = (structs, )
         for s in structs :
-            bin   = s.packed (self.byte_order)
-            align = s.alignment
-            miss  = align - (self._offset % align)
-            if 0 < miss < align :
-                fill = struct.pack ("%dx" % miss)
+            bin     = s.packed (self.byte_order)
+            align   = s.alignment
+            gap     = rounded_up (self._offset, align) - self._offset
+            if gap :
+                fill = struct.pack ("%dx" % gap)
             else :
                 fill = ""
             self._binbuffer.append (fill)
             self._binbuffer.append (bin)
-            self._offset += len (fill)
+            self._offset += gap
             off_name = s.__class__.offset_field_name
             if off_name not in self._offset_map :
                 self._offset_map [off_name] = self._offset
