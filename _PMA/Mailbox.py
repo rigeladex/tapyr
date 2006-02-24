@@ -78,6 +78,8 @@
 #                     `changes_for_observer` added
 #    27-Jan-2006 (CT) Typo in `__contains__` fixed (use `name in` instead of
 #                     `item in`)
+#    20-Feb-2006 (CT) `add_messages` changed to guard against messages
+#                     already contained in `self._msg_dict`
 #    ««revision-date»»···
 #--
 
@@ -624,11 +626,12 @@ class Mailbox (_Mailbox_in_Dir_S_) :
                 name = old_box.md_name (message)
             else :
                 name = self.md_name    (message)
-            new_m = PMA.Message \
-                (email = message.email, name = name, mailbox = self)
-            self._add (new_m)
-            new_m.path = sos.path.join (self.path, name)
-            old_box._copy_msg_file (message, new_m.path)
+            if name not in self._msg_dict :
+                new_m = PMA.Message \
+                    (email = message.email, name = name, mailbox = self)
+                self._add (new_m)
+                new_m.path = sos.path.join (self.path, name)
+                old_box._copy_msg_file (message, new_m.path)
     # end def add_messages
 
     def add_subbox (self, b, transitive = False) :
