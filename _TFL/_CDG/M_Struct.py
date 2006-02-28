@@ -25,6 +25,7 @@
 #    04-Dec-2005 (KZU) `typedef_prefix` added to method buffer_fields
 #    23-Jan-2006 (CED) Additional classmethods for structfield creation
 #                      added
+#    28-Feb-2006 (CED) Minor modifications to `define_access_macros`
 #    ««revision-date»»···
 #--
 
@@ -180,14 +181,14 @@ class M_Struct (TFL.Meta.M_Class) :
             if c.is_solitaire:
                 node.add \
                     (C.Define ( name, main
-                              , "(& %s->%s)" % (main, b_name, )
+                              , "(& (%s)->%s)" % (main, b_name, )
                               , scope = C.H
                               )
                     )
             else :
                 paramater = "ref"
                 if index :
-                    code = "(& %s->%s [%s])" % (main, b_name, paramater)
+                    code = "(& (%s)->%s [%s])" % (main, b_name, paramater)
                 else :
                     code = "(%s)" % (paramater, )
                 node.add \
