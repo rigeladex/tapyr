@@ -152,6 +152,7 @@
 #    30-Aug-2005 (CT)  Use `in` instead of `find`
 #    31-Aug-2005 (CT)  `rsplit_hst` changed to match Hettinger's clarification
 #     9-Feb-2006 (CT)  `bool_split` added
+#    28-Feb-2006 (CT)  `pairs_1w` and `pairs_2w` added
 #    ««revision-date»»···
 #--
 
@@ -566,6 +567,46 @@ def paired (s1, s2) :
     """
     return map (None, s1, s2)
 # end def paired
+
+def pairs_1w (seq) :
+    """Generates all pairs (one-way) in `seq` which must allow
+       repeated iteration (i.e., cannot be a generator).
+
+       >>> ["".join (p) for p in pairs_1w ("abcd")]
+       ['ab', 'ac', 'ad', 'bc', 'bd', 'cd']
+       >>> list (pairs_1w ("abc"))
+       [('a', 'b'), ('a', 'c'), ('b', 'c')]
+       >>> list (pairs_1w ("ab"))
+       [('a', 'b')]
+       >>> list (pairs_1w ("a"))
+       []
+       >>> list (pairs_1w (""))
+       []
+    """
+    for i, a in enumerate (seq [:-1]) :
+        for b in seq [i+1:] :
+            yield a, b
+# end def pairs_1w
+
+def pairs_2w (seq) :
+    """Generates all pairs (two-way) in `seq` which must allow
+       repeated iteration (i.e., cannot be a generator).
+
+       >>> ["".join (p) for p in pairs_2w ("abcd")]
+       ['ab', 'ba', 'ac', 'ca', 'ad', 'da', 'bc', 'cb', 'bd', 'db', 'cd', 'dc']
+       >>> ["".join (p) for p in pairs_2w ("abc")]
+       ['ab', 'ba', 'ac', 'ca', 'bc', 'cb']
+       >>> ["".join (p) for p in pairs_2w ("ab")]
+       ['ab', 'ba']
+       >>> ["".join (p) for p in pairs_2w ("a")]
+       []
+       >>> ["".join (p) for p in pairs_2w ("")]
+       []
+    """
+    for a, b in pairs_1w (seq) :
+        yield a, b
+        yield b, a
+# end def pairs_2w
 
 def predecessor_of (element, iterable, pairwise = pairwise) :
     """Returns the predecessor of `element` in `iterable`"""
