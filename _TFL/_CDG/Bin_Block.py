@@ -15,6 +15,7 @@
 #    15-Feb-2006 (MZO) added import of `struct`
 #    22-Feb-2006 (MZO) refactored from `SIT.Conf.Bin_Block_Creator`
 #    23-Feb-2006 (CED) Use `rounded_up` instead of home-grown code
+#     1-Mar-2006 (CED) Added function declarations to h-file
 #    ««revision-date»»···
 #--
 #
@@ -129,6 +130,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         ( self, meta_struct, root, ptr_table, C, c_file, h_file
         , main = "root"
         ) :
+        h_file.add (C.App_Include ("ptypes.h"))
         for c in meta_struct.needs_struct :
             h_file.add \
                 (c.as_forward_typedef (const = c.const, scope = h_file.scope))
@@ -137,17 +139,26 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             h_file.add (sf.as_typedef (scope = h_file.scope))
         for c in meta_struct.needs_struct :
             h_file.add (c.as_c_code (scope = h_file.scope, standalone = 1))
-        c_file.add (C.App_Include ("ptypes.h"))
         c_file.add (C.App_Include (h_file.inc_name))
-        self._aquire_bin_buffer  (meta_struct, root, ptr_table, c_file, C)
-        self._release_bin_buffer (meta_struct, root, ptr_table, c_file, C)
+        self._aquire_bin_buffer  \
+            (meta_struct, root, ptr_table, h_file, c_file, C)
+        self._release_bin_buffer \
+            (meta_struct, root, ptr_table, h_file, c_file, C)
     # def create_c_code
 
     def _aquire_bin_buffer \
-        (self, meta_struct, root_table, ptr_table, c_file, C) :
-        table = ptr_table.type_name
-        root  = root_table.type_name
-        func  = C.Function \
+        (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
+        table  = ptr_table.type_name
+        root   = root_table.type_name
+        h_file.add \
+            ( C.Fct_Decl
+                ( "%s *" % table
+                , "aquire_bin_buffer"
+                , "const ubyte1 * bin_buffer"
+                , scope = h_file.scope
+                )
+            )
+        func   = C.Function \
             ( "%s *" % table
             , "aquire_bin_buffer"
             , "const ubyte1 * bin_buffer"
@@ -197,19 +208,28 @@ class Bin_Block_Creator (TFL.Meta.Object) :
                     )
                 )
         c_file.add (func)
+        h_file.add (func)
     # end def _aquire_bin_buffer
 
     def _release_bin_buffer \
-        (self, meta_struct, root_table, ptr_table, c_file, C) :
-         func  = C.Function \
+        (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
+        h_file.add \
+            ( C.Fct_Decl
+                ( "void"
+                , "release_bin_buffer"
+                , "struct _%s * table" % ptr_table.type_name
+                , scope = h_file.scope
+                )
+            )
+        func  = C.Function \
             ( "void"
             , "release_bin_buffer"
             , "struct _%s * table" % ptr_table.type_name
             , scope = c_file.scope
             )
-         func.add (C.Statement ("free (table->bin_buffer)"))
-         func.add (C.Statement ("free (table)"))
-         c_file.add (func)
+        func.add (C.Statement ("free (table->bin_buffer)"))
+        func.add (C.Statement ("free (table)"))
+        c_file.add (func)
     # end def _release_bin_buffer
 
 # end class Bin_Block_Creator
