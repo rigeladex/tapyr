@@ -47,6 +47,7 @@
 #    13-Feb-2006 (MZO) added `null_termination`
 #    19-Feb-2006 (CED) `aligned_and_padded`, `atoms` added
 #    23-Feb-2006 (CED) Use `rounded_up` instead of home-grown code
+#     1-Mar-2006 (PGO) [r19739] Alignment of long longs fixed
 #    ««revision-date»»···
 #--
 
@@ -118,6 +119,14 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def __new__
 
+    def _alignment (self, atom, cpu_gran) :
+        type_format = atom [-1]
+        size        = struct.calcsize (type_format)
+        ### For types > cpu_gran (e.g. long long on a 32 bit plattform)
+        ### the compiler seems to align to cpu_gran instead of type length
+        return min (size, cpu_gran)
+    # end def _alignment
+
     def as_forward_typedef (cls, C = TFL.SDG.C, c_node = None, ** kw) :
         """Returns a typedef for a struct-object (using `C` as name-space for
            the C classes. `C` should be a subclass of `TFL.SDG.C`).
@@ -185,11 +194,11 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def current
 
-    def packed (self, byte_order = "native") :
+    def packed (self, byte_order = "native", cpu_gran = 4) :
         """Returns a string containing a binary representation of the actual
            value of the struct's attributes.
         """
-        format, values = self.format_and_values ()
+        format, values = self.format_and_values (cpu_gran)
         bo_map         = self.struct_fields [0].bo_map
         try :
             result = struct.pack \
@@ -204,7 +213,7 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def packed
 
-    def format_and_values (self) :
+    def format_and_values (self, cpu_gran) :
         values  = []
         formats = []
         for f in self.struct_fields :
@@ -227,24 +236,26 @@ class Struct (TFL.Meta.Object) :
                         % (self.type_name, f.name)
                         )
                 for v in value :
-                    format, value = v.format_and_values ()
+                    format, value = v.format_and_values (cpu_gran)
                     formats.append  (format)
                     values.extend   (value)
         format         = "".join (formats)
         ### Since we use a byte_order marker in `packed`,
         ### `struct` does not align (see python doc).
         ### So we must manually add pad bytes
-        format         = self.aligned_and_padded (format)
-        self.alignment = struct.calcsize (self.atoms (format).next ())
+        format         = self.aligned_and_padded (format, cpu_gran)
+        self.alignment = max \
+            (self._alignment (a, cpu_gran) for a in self.atoms (format))
         return format, values
     # end def format_and_values
 
-    def aligned_and_padded (self, format) :
+    def aligned_and_padded (self, format, cpu_gran) :
         result = []
         offset = 0
         for atom in self.atoms (format) :
-            size = struct.calcsize (atom)
-            gap  = rounded_up (offset, size) - offset
+            size  = struct.calcsize (atom)
+            align = self._alignment (atom, cpu_gran)
+            gap   = rounded_up (offset, align) - offset
             if gap :
                 result.append ("%dx" % gap)
             result.append (atom)
