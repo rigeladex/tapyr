@@ -16,6 +16,8 @@
 #    22-Feb-2006 (MZO) refactored from `SIT.Conf.Bin_Block_Creator`
 #    23-Feb-2006 (CED) Use `rounded_up` instead of home-grown code
 #     1-Mar-2006 (CED) Added function declarations to h-file
+#     3-Mar-2006 (MZO) added `C_Code_Creator`, debug_output for bin_blocks
+#                      added `_read_bin_buffer`
 #    ««revision-date»»···
 #--
 #
@@ -25,6 +27,7 @@ import   _TFL._CDG
 import   _TFL._SDG._C
 import   _TFL._Meta.Object
 from     _TFL.predicate        import *
+import  sos
 import  struct
 
 class Bin_Block (TFL.Meta.Object) :
@@ -78,7 +81,54 @@ class Bin_Block (TFL.Meta.Object) :
 
 # class Bin_Block
 
+class C_Code_Creator (TFL.Meta.Object) :
+
+    def __init__ (self, scope, gauge) :
+        self.scope  = scope
+        self.gauge  = gauge
+    # def __init__
+
+    def __call__ (self, C, meta_struct, config_struct, * args, ** kw) :
+        config_struct (self.scope, * args,  ** kw)
+        return self.pack_as_c_code (C, meta_struct)
+    # end def __call__
+
+    def _define_fmt (self, C, struct_cls) :
+        ### Array does not work with init dict if not a struct definition
+        ### before...
+        hs = C.Struct (struct_cls.type_name)
+        for f in struct_cls.struct_fields :
+            hs.add ("long %s" % f.name)
+    # end def _define_fmt
+
+    def pack_as_c_code (self, C, Meta_Struct) :
+        c_block = C.Stmt_Group ()
+        for c in Meta_Struct.uses_global_buffers :
+            values     = []
+            for o in c.extension :
+                values.append (o.dict ())
+            values = self.hook_pack_values (values, c)
+            self._define_fmt (C, c)
+            c_block.add \
+                ( C.Array
+                    ( c.type_name
+                    , c.buffer_name ()
+                    , bounds = len (values)
+                    , init   = values
+                    )
+                )
+        return c_block
+    # end def pack_as_c_code
+
+    def hook_pack_values (self, values, struct_cls) :
+        return values
+    # end def hook_pack_values
+
+# end class C_Code_Creator
+
 class Bin_Block_Creator (TFL.Meta.Object) :
+
+    use_internal_data_formats = False
 
     def __init__ (self, name, scope, gauge) :
         self.name   = name
@@ -88,11 +138,14 @@ class Bin_Block_Creator (TFL.Meta.Object) :
 
     def __call__ \
         (self, byte_order, meta_struct, config_struct, * args, ** kw) :
-        return self.create_bin_block \
+        bblock = self.create_bin_block \
             ( meta_struct
             , config_struct (self.scope, * args,  ** kw)
             , byte_order
             )
+        if self.__class__.use_internal_data_formats :
+            self._debug_as_c_code (meta_struct)
+        return bblock
     # end def __call__
 
     def additional_blobs (self, bin_block) :
@@ -199,17 +252,60 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             )
         blk2.add (C.Statement ("free (result)"))
         blk2.add (C.Statement ("return 0"))
+        self._map_offset_to_struct (meta_struct, blk, C)
+        c_file.add (func)
+        h_file.add (func)
+    # end def _aquire_bin_buffer
+
+    def _debug_as_c_code (self, meta_struct) :
+        C = TFL.SDG.C
+        filename = "debug_%s.c" % self.__class__.__name__
+        filename = sos.path.normpath (sos.path.join (sos.getcwd (), filename))
+        module   = C.Module ()
+        cc       = C_Code_Creator (self.scope, self.gauge)
+        module.add (cc.pack_as_c_code (C, meta_struct))
+        try :
+            print "Write file `%s`" % filename
+            f = open (filename, "w")
+            module.write_to_c_stream (cstream = f)
+        except IOError :
+            pass
+    # end def _debug_as_c_code
+
+    def _map_offset_to_struct (self, meta_struct, blk, C) :
         for c in meta_struct.uses_global_buffers :
             blk.add \
                 ( C.Statement
                     ( "result->%s = (%s *) "
                       "(& (result->bin_buffer [desc->%s]))"
                     % (c.buffer_field_name, c.type_name, c.offset_field_name)
+                    , scope = C.C
                     )
                 )
+    # end def _map_offset_to_struct
+
+    def _read_bin_buffer \
+        (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
+        table  = ptr_table.type_name
+        root   = root_table.type_name
+        func   = C.Function \
+            ( "void"
+            , "read_bin_buffer"
+            , "const ubyte1 * bin_buffer, %s * result" % (table, )
+            )
+        func.add \
+            ( C.Var
+                ( "%s *" % root
+                , "desc"
+                , "(%s *) bin_buffer" % root
+                )
+            )
+        blk  = C.Stmt_Group (scope = c_file.scope)
+        self._map_offset_to_struct (meta_struct, blk, C)
+        func.add (blk)
         c_file.add (func)
         h_file.add (func)
-    # end def _aquire_bin_buffer
+    # end def _read_bin_buffer
 
     def _release_bin_buffer \
         (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
