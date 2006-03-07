@@ -154,6 +154,7 @@
 #     9-Feb-2006 (CT)  `bool_split` added
 #    28-Feb-2006 (CT)  `pairs_1w` and `pairs_2w` added
 #     7-Mar-2006 (CED) `items_sorted_keys`, `items_sorted_values` added
+#     7-Mar-2006 (CED) `items_sorted_*` removed
 #    ««revision-date»»···
 #--
 
@@ -515,28 +516,6 @@ def is_contiguous (seq) :
             return False
     return True
 # end def is_contiguous
-
-def items_sorted_keys (d) :
-    """Returns the items of a dictionary, sorted by the keys
-
-       >>> d = dict (a = 3, b = 2, c = 1)
-       >>> items_sorted_keys (d)
-       [('a', 3), ('b', 2), ('c', 1)]
-    """
-
-    return sorted (d.iteritems (), key = lambda (k, v) : k)
-# end def items_sorted_keys
-
-def items_sorted_values (d) :
-    """Returns the items of a dictionary, sorted by the values
-
-       >>> d = dict (a = 3, b = 2, c = 1)
-       >>> items_sorted_values (d)
-       [('c', 1), ('b', 2), ('a', 3)]
-    """
-
-    return sorted (d.iteritems (), key = lambda (k, v) : v)
-# end def iteritems_sorted_values
 
 def list_difference (l, r) :
     """Compute difference of `l` and `r`.
