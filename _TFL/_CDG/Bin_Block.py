@@ -18,6 +18,7 @@
 #     1-Mar-2006 (CED) Added function declarations to h-file
 #     3-Mar-2006 (MZO) added `C_Code_Creator`, debug_output for bin_blocks
 #                      added `_read_bin_buffer`
+#     8-Mar-2006 (MZO) unique name for function `read_bin_buffer`
 #    ««revision-date»»···
 #--
 #
@@ -285,12 +286,14 @@ class Bin_Block_Creator (TFL.Meta.Object) :
     # end def _map_offset_to_struct
 
     def _read_bin_buffer \
-        (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
+        ( self, meta_struct, root_table, ptr_table, h_file, c_file, C
+        , function_name_tail = ""
+        ) :
         table  = ptr_table.type_name
         root   = root_table.type_name
         func   = C.Function \
             ( "void"
-            , "read_bin_buffer"
+            , "read_bin_buffer%s" % function_name_tail
             , "const ubyte1 * bin_buffer, %s * result" % (table, )
             )
         func.add \
