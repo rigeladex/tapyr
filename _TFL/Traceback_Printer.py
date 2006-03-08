@@ -19,13 +19,14 @@
 #
 #++
 # Name
-#    _TFL.Traceback_Printer
+#    TFL.Traceback_Printer
 #
 # Purpose
 #    Pretty-Print Traceback Information
 #
 # Revision Dates
 #     9-Aug-2005 (PGO) Creation
+#     8-Mar-2006 (CT)  `* args` added to `__call__`
 #    ««revision-date»»···
 #--
 
@@ -52,8 +53,10 @@ class _Traceback_Printer_ (TFL.Meta.Object) :
         self.cutter     = cutter
     # end def __init__
 
-    def __call__ (self) :
+    def __call__ (self, * args) :
         print self.as_string ()
+        for a in args :
+            print a
     # end def __call__
 
     def as_string (self) :
@@ -72,7 +75,6 @@ class _Traceback_Printer_ (TFL.Meta.Object) :
 
     def _cut (self, s) :
         """returns `s`, reduced by the first match of the cutter"""
-
         if self.cutter :
             s = self.cutter.sub ("", s)
         return s
@@ -80,7 +82,6 @@ class _Traceback_Printer_ (TFL.Meta.Object) :
 
     def _one_tb_line (self, line) :
         """generate one traceback line (apply format string)"""
-
         fn, number, function, text = line
         fn = self._cut (fn)
         return self.format_str % locals ()
@@ -92,5 +93,4 @@ Traceback_Printer = _Traceback_Printer_ ()
 
 if __name__ != "__main__" :
     TFL._Export ("_Traceback_Printer_", "Traceback_Printer")
-
-### __END__ of _TFL.Traceback_Printer
+### __END__ TFL.Traceback_Printer
