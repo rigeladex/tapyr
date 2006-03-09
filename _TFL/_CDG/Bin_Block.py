@@ -19,6 +19,7 @@
 #     3-Mar-2006 (MZO) added `C_Code_Creator`, debug_output for bin_blocks
 #                      added `_read_bin_buffer`
 #     8-Mar-2006 (MZO) unique name for function `read_bin_buffer`
+#     9-Mar-2006 (MZO) changed parameter in `read_bin_buffer`
 #    ««revision-date»»···
 #--
 #
@@ -294,7 +295,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         func   = C.Function \
             ( "void"
             , "read_bin_buffer%s" % function_name_tail
-            , "const ubyte1 * bin_buffer, %s * result" % (table, )
+            , "const ubyte1 * bin_buffer, struct _%s * result" % (table, )
             )
         func.add \
             ( C.Var
