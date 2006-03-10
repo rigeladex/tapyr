@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005 - 2006 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -10,8 +10,9 @@
 #    Test the basic functions of TFL.CDG.Struct
 #
 # Revision Dates
-#    09-Nov-2005 (MG) Creation
-#    11-Nov-2005 (MG) Test extended
+#    09-Nov-2005 (MG)  Creation
+#    11-Nov-2005 (MG)  Test extended
+#    10-Mar-2006 (MZO) added `S_With_Array`
 #    ««revision-date»»···
 #--
 #
@@ -98,6 +99,42 @@ class Bit_Copy_Spec (Byte_Copy_Spec) :
 
 # end class Bit_Copy_Spec
 
+class S_With_Array (Struct) :
+    """.
+    """
+    uses_global_buffer = True
+
+    SF                 = TFL.CDG.Struct_Field
+    reference_field    = TFL.CDG.Reference_Struct_Field \
+        ( "sa_entry"
+        , "."
+        , typedef      = "ubyte4"
+        )
+
+    struct_fields      = \
+        ( SF ( "ubyte1"
+             , "mask"
+             , "Mask applied to the source during the copy operation"
+             )
+        , SF ( "ubyte4"
+             , "cni_offset"
+             , "."
+             , bounds = 2
+             )
+        )
+
+    def __init__ (self) :
+        self.__super.__init__ ()
+        self.mask     = "1233"
+        self.cni_offset   = []
+        length = 2
+        for i in xrange (length) :
+            self.cni_offset.append \
+                (i)
+    # end def __init__
+
+# end class S_With_Array
+
 class Message_Pack_Copy (Struct) :
     """Structure defining which message has to be copied into the double
        buffer during the `pack` operation.
@@ -112,14 +149,21 @@ class Message_Pack_Copy (Struct) :
         , typedef      = "ubyte4"
         )
     struct_fields      = \
-        ( Byte_Copy_Spec.reference_field
+        ( SF ( "ubyte1"
+             , "no_of_bylc"
+             , "number of byte_copy_spe"
+             , 0
+             )
+        , Byte_Copy_Spec.reference_field
         , Bit_Copy_Spec. reference_field
+        , S_With_Array.  reference_field
         )
 
     def __init__ (self, msg_name, length) :
         bytes = length // 8
         bits  = length % 8
         off   = 0
+        self.no_of_bylc = str(bytes)
         self.byte_cs = Byte_Copy_Spec.current ()
         self.bit_cs  = Bit_Copy_Spec. current ()
         for i in range (bytes) :
@@ -128,6 +172,8 @@ class Message_Pack_Copy (Struct) :
         if bits :
             mask = (1 << bits) - 1
             Bit_Copy_Spec  ("(& %s) + %d" % (msg_name, off), off, mask)
+        self.sa_entry = S_With_Array.current ()
+        S_With_Array ()
     # end def __init__
 
 # end class Message_Pack_Copy
