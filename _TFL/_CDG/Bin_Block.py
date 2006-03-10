@@ -20,6 +20,7 @@
 #                      added `_read_bin_buffer`
 #     8-Mar-2006 (MZO) unique name for function `read_bin_buffer`
 #     9-Mar-2006 (MZO) changed parameter in `read_bin_buffer`
+#    10-Mar-2006 (MZO) generate scope independ
 #    ««revision-date»»···
 #--
 #
@@ -201,23 +202,20 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             (meta_struct, root, ptr_table, h_file, c_file, C)
     # def create_c_code
 
+    def _add_c_node (self, h_file, c_file, node) :
+        for f in [h_file, c_file] :
+            if f is not None :
+                f.add (node)
+    # end def _add_c_node
+
     def _aquire_bin_buffer \
         (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
         table  = ptr_table.type_name
         root   = root_table.type_name
-        h_file.add \
-            ( C.Fct_Decl
-                ( "%s *" % table
-                , "aquire_bin_buffer"
-                , "const ubyte1 * bin_buffer"
-                , scope = h_file.scope
-                )
-            )
         func   = C.Function \
             ( "%s *" % table
             , "aquire_bin_buffer"
             , "const ubyte1 * bin_buffer"
-            , scope = c_file.scope
             )
         func.add \
             ( C.Var
@@ -255,8 +253,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         blk2.add (C.Statement ("free (result)"))
         blk2.add (C.Statement ("return 0"))
         self._map_offset_to_struct (meta_struct, blk, C)
-        c_file.add (func)
-        h_file.add (func)
+        self._add_c_node (h_file, c_file, func)
     # end def _aquire_bin_buffer
 
     def _debug_as_c_code (self, meta_struct) :
@@ -307,29 +304,19 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         blk  = C.Stmt_Group (scope = c_file.scope)
         self._map_offset_to_struct (meta_struct, blk, C)
         func.add (blk)
-        c_file.add (func)
-        h_file.add (func)
+        self._add_c_node (h_file, c_file, func)
     # end def _read_bin_buffer
 
     def _release_bin_buffer \
         (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
-        h_file.add \
-            ( C.Fct_Decl
-                ( "void"
-                , "release_bin_buffer"
-                , "struct _%s * table" % ptr_table.type_name
-                , scope = h_file.scope
-                )
-            )
         func  = C.Function \
             ( "void"
             , "release_bin_buffer"
             , "struct _%s * table" % ptr_table.type_name
-            , scope = c_file.scope
             )
         func.add (C.Statement ("free (table->bin_buffer)"))
         func.add (C.Statement ("free (table)"))
-        c_file.add (func)
+        self._add_c_node (h_file, c_file, func)
     # end def _release_bin_buffer
 
 # end class Bin_Block_Creator
