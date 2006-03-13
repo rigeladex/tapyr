@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005  Philipp Gortan <gortan@tttech.com>
+# Copyright (C) 2005-2006  Philipp Gortan <gortan@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -24,9 +24,13 @@
 # Purpose
 #    Pretty-Print Traceback Information
 #
+#    as my /etc/init.d/vmware says:
+#    "Yea, the code is ugly but the output is pretty" :-)
+#
 # Revision Dates
 #     9-Aug-2005 (PGO) Creation
 #     8-Mar-2006 (CT)  `* args` added to `__call__`
+#    13-Mar-2006 (PGO) Message added if `sys.exc_info` is empty
 #    ««revision-date»»···
 #--
 
@@ -65,7 +69,7 @@ class _Traceback_Printer_ (TFL.Meta.Object) :
         """
         exc_type, exc_value, exc_tb = sys.exc_info ()
         if not (exc_type and exc_tb) :
-            return
+            return "<no traceback>"
         res = []
         for tb_line in traceback.extract_tb (exc_tb) :
             res.append (self._one_tb_line (tb_line))
