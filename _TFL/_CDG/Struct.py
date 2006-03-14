@@ -50,6 +50,7 @@
 #     1-Mar-2006 (PGO) [r19739] Alignment of long longs fixed
 #    10-Mar-2006 (RSC) Allow arrays in structs for C-Code generation
 #    13-Mar-2006 (MZO) Merge from `Decos Branch`
+#    14-Mar-2006 (RSC) Fix C-Code generation for arrays.
 #    ««revision-date»»···
 #--
 
@@ -279,7 +280,7 @@ class Struct (TFL.Meta.Object) :
         for f in self.struct_fields :
             value  = getattr       (self, f.name)
             if f.bounds is not None :
-                result [f.name] = '[%s]' % ','.join (str (value))
+                result [f.name] = str (value)
             if f.user_code or f.fmt_code.get (f.type, None) :
                 ### `value` is a primitive data type
                 result [f.name] = value
