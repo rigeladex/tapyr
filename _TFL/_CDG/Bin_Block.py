@@ -21,6 +21,7 @@
 #     8-Mar-2006 (MZO) unique name for function `read_bin_buffer`
 #     9-Mar-2006 (MZO) changed parameter in `read_bin_buffer`
 #    10-Mar-2006 (MZO) generate scope independ
+#    13-Mar-2006 (MZO) optional tail for function `aquire, release bin_buffer`
 #    ««revision-date»»···
 #--
 #
@@ -184,7 +185,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
 
     def create_c_code \
         ( self, meta_struct, root, ptr_table, C, c_file, h_file
-        , main = "root"
+        , main = "root", function_name_tail = ""
         ) :
         h_file.add (C.App_Include ("ptypes.h"))
         for c in meta_struct.needs_struct :
@@ -196,10 +197,15 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         for c in meta_struct.needs_struct :
             h_file.add (c.as_c_code (scope = h_file.scope, standalone = 1))
         c_file.add (C.App_Include (h_file.inc_name))
-        self._aquire_bin_buffer  \
-            (meta_struct, root, ptr_table, h_file, c_file, C)
-        self._release_bin_buffer \
-            (meta_struct, root, ptr_table, h_file, c_file, C)
+        if root is not None and ptr_table is not None :
+            self._aquire_bin_buffer  \
+                ( meta_struct, root, ptr_table, h_file, c_file, C
+                , function_name_tail
+                )
+            self._release_bin_buffer \
+                ( meta_struct, root, ptr_table, h_file, c_file, C
+                , function_name_tail
+                )
     # def create_c_code
 
     def _add_c_node (self, h_file, c_file, node) :
@@ -209,12 +215,14 @@ class Bin_Block_Creator (TFL.Meta.Object) :
     # end def _add_c_node
 
     def _aquire_bin_buffer \
-        (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
+        ( self, meta_struct, root_table, ptr_table, h_file, c_file, C
+        , function_name_tail = ""
+        ) :
         table  = ptr_table.type_name
         root   = root_table.type_name
         func   = C.Function \
             ( "%s *" % table
-            , "aquire_bin_buffer"
+            , "aquire_bin_buffer%s" %  function_name_tail
             , "const ubyte1 * bin_buffer"
             )
         func.add \
@@ -287,6 +295,8 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         ( self, meta_struct, root_table, ptr_table, h_file, c_file, C
         , function_name_tail = ""
         ) :
+        if ptr_table is None or root_table is None :
+            return
         table  = ptr_table.type_name
         root   = root_table.type_name
         func   = C.Function \
@@ -308,10 +318,12 @@ class Bin_Block_Creator (TFL.Meta.Object) :
     # end def _read_bin_buffer
 
     def _release_bin_buffer \
-        (self, meta_struct, root_table, ptr_table, h_file, c_file, C) :
+        ( self, meta_struct, root_table, ptr_table, h_file, c_file, C
+        , function_name_tail = ""
+        ) :
         func  = C.Function \
             ( "void"
-            , "release_bin_buffer"
+            , "release_bin_buffer%s" %  function_name_tail
             , "struct _%s * table" % ptr_table.type_name
             )
         func.add (C.Statement ("free (table->bin_buffer)"))
