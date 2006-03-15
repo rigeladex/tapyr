@@ -22,6 +22,7 @@
 #     9-Mar-2006 (MZO) changed parameter in `read_bin_buffer`
 #    10-Mar-2006 (MZO) generate scope independ
 #    13-Mar-2006 (MZO) optional tail for function `aquire, release bin_buffer`
+#    14-Mar-2006 (MZO) added mode in `map_offset_to_struct`
 #    ««revision-date»»···
 #--
 #
@@ -260,7 +261,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             )
         blk2.add (C.Statement ("free (result)"))
         blk2.add (C.Statement ("return 0"))
-        self._map_offset_to_struct (meta_struct, blk, C)
+        self._map_offset_to_struct (meta_struct, blk, C, read_buf_mode = False)
         self._add_c_node (h_file, c_file, func)
     # end def _aquire_bin_buffer
 
@@ -279,13 +280,19 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             pass
     # end def _debug_as_c_code
 
-    def _map_offset_to_struct (self, meta_struct, blk, C) :
+    def _map_offset_to_struct \
+        (self, meta_struct, blk, C, read_buf_mode = False) :
+        if read_buf_mode :
+            bin_buffer = "bin_buffer"
+        else :
+            bin_buffer = "result->bin_buffer"
         for c in meta_struct.uses_global_buffers :
             blk.add \
                 ( C.Statement
-                    ( "result->%s = (%s *) "
-                      "(& (result->bin_buffer [desc->%s]))"
-                    % (c.buffer_field_name, c.type_name, c.offset_field_name)
+                    ( "result->%s = (%s *) (& (%s [desc->%s]))"
+                    % ( c.buffer_field_name, c.type_name
+                      , bin_buffer, c.offset_field_name
+                      )
                     , scope = C.C
                     )
                 )
@@ -312,7 +319,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
                 )
             )
         blk  = C.Stmt_Group (scope = c_file.scope)
-        self._map_offset_to_struct (meta_struct, blk, C)
+        self._map_offset_to_struct (meta_struct, blk, C, read_buf_mode = True)
         func.add (blk)
         self._add_c_node (h_file, c_file, func)
     # end def _read_bin_buffer
