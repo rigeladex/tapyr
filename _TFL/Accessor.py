@@ -33,6 +33,7 @@
 #
 # Revision Dates
 #    19-Aug-2005 (CT) Creation
+#    15-Mar-2006 (CED) Additional events added
 #    ««revision-date»»···
 #--
 
