@@ -22,7 +22,7 @@
 #     9-Mar-2006 (MZO) changed parameter in `read_bin_buffer`
 #    10-Mar-2006 (MZO) generate scope independ
 #    13-Mar-2006 (MZO) optional tail for function `aquire, release bin_buffer`
-#    14-Mar-2006 (MZO) added mode in `map_offset_to_struct`
+#    14-Mar-2006 (MZO) added mode in `map_offset_to_struct`, fixed root_table
 #    ««revision-date»»···
 #--
 #
@@ -261,7 +261,8 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             )
         blk2.add (C.Statement ("free (result)"))
         blk2.add (C.Statement ("return 0"))
-        self._map_offset_to_struct (meta_struct, blk, C, read_buf_mode = False)
+        self._map_offset_to_struct \
+            (meta_struct, blk, C, root_table, read_buf_mode = False)
         self._add_c_node (h_file, c_file, func)
     # end def _aquire_bin_buffer
 
@@ -281,21 +282,30 @@ class Bin_Block_Creator (TFL.Meta.Object) :
     # end def _debug_as_c_code
 
     def _map_offset_to_struct \
-        (self, meta_struct, blk, C, read_buf_mode = False) :
+        (self, meta_struct, blk, C, root_table, read_buf_mode = False) :
         if read_buf_mode :
             bin_buffer = "bin_buffer"
         else :
             bin_buffer = "result->bin_buffer"
         for c in meta_struct.uses_global_buffers :
-            blk.add \
-                ( C.Statement
-                    ( "result->%s = (%s *) (& (%s [desc->%s]))"
-                    % ( c.buffer_field_name, c.type_name
-                      , bin_buffer, c.offset_field_name
-                      )
-                    , scope = C.C
+            if c is root_table :
+                blk.add \
+                    ( C.Statement
+                        ( "result->%s = (%s *) %s"
+                        % ( c.buffer_field_name, c.type_name, bin_buffer)
+                        , scope = C.C
+                        )
                     )
-                )
+            else :
+                blk.add \
+                    ( C.Statement
+                        ( "result->%s = (%s *) (& (%s [desc->%s]))"
+                        % ( c.buffer_field_name, c.type_name
+                          , bin_buffer, c.offset_field_name
+                          )
+                        , scope = C.C
+                        )
+                    )
     # end def _map_offset_to_struct
 
     def _read_bin_buffer \
@@ -319,7 +329,8 @@ class Bin_Block_Creator (TFL.Meta.Object) :
                 )
             )
         blk  = C.Stmt_Group (scope = c_file.scope)
-        self._map_offset_to_struct (meta_struct, blk, C, read_buf_mode = True)
+        self._map_offset_to_struct \
+            (meta_struct, blk, C, root_table, read_buf_mode = True)
         func.add (blk)
         self._add_c_node (h_file, c_file, func)
     # end def _read_bin_buffer
