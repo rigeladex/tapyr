@@ -31,9 +31,11 @@
 #    21-Jan-2001 (CT) `__getattr__' uses `try/except' instead of `has_key'
 #    16-Apr-2003 (CT) `copy` added
 #    21-Jan-2006 (MG)  Moved into `TFL` package
+#    20-Mar-2006 (CT)  `__getitem__` added
 #    ««revision-date»»···
 #--
 
+from   _TFL           import TFL
 from   _TFL.predicate import sorted
 
 class Record :
@@ -56,7 +58,7 @@ class Record :
         return ", ".join \
             ( map ( lambda (k, v), kq = key_quote, vq = value_quote
                   : "%s%s%s = %s%s%s" % (kq, k, kq, vq, v, vq)
-                  , sorted (self.kw.items ())
+                  , sorted (self.kw.iteritems ())
                   )
             )
     # end def _formatted_kw
@@ -73,6 +75,10 @@ class Record :
             raise AttributeError, name
     # end def __getattr__
 
+    def __getitem__ (self, key) :
+        return self.kw [key]
+    # end def __getitem__
+
     def __setattr__ (self, name, value) :
         self.kw [name] = value
     # end def __setattr__
@@ -80,6 +86,5 @@ class Record :
 # end class Record
 
 if __name__ != "__main__" :
-    from _TFL import TFL
     TFL._Export ("*")
 ### __END__ TFL.Record
