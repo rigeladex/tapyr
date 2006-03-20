@@ -34,6 +34,7 @@
 #    21-Oct-2004 (CT) Testcase for Macro_If in headerfile added
 #    16-Nov-2004 (MG) Testcase for multidimensional arrays added
 #    24-May-2005 (CED) Test of `Enum` added
+#    20-Mar-2006 (MZO) Funciton requires argument
 #    ««revision-date»»···
 #--
 
@@ -79,7 +80,7 @@ int func
     /*** A function explanation                                            ***/
 };
 
->>> f = C.Function ( "int", "func", "")
+>>> f = C.Function ( "int", "func", "void")
 >>> f.add (C.For ("i = 0", "i++", "i < 10"))
 >>> print NL.join (f.as_c_code ()).strip ()
 int func (void)
@@ -92,7 +93,7 @@ int func (void)
 >>> print NL.join (f.as_h_code ()).strip ()
 int func (void);
 
->>> f = C.Function ( "int", "func", "")
+>>> f = C.Function ( "int", "func", "void")
 >>> f.add ("i = 0")
 >>> f.add (C.While ("i < 10", "i++"))
 >>> f.add (C.Do_While ("i > 0", "i--"))
@@ -111,7 +112,7 @@ int func (void)
     while (i > 0);
 };
 
->>> f = C.Function ( "int", "if_tests", "")
+>>> f = C.Function ( "int", "if_tests", "void")
 >>> f.add (C.If ("i > 0", '''error ("i has the wrong value")'''))
 >>> if_s = C.If ("i < 0", "cont ()")
 >>> f.add (if_s)
@@ -151,7 +152,7 @@ int if_tests (void)
       };
 };
 
->>> f = C.Function ( "void", "switch_test", "")
+>>> f = C.Function ( "void", "switch_test", "void")
 >>> f.add ( C.Switch ( "quuux"
 ...                  , C.Case ("1", "a = 0; b = 2")
 ...                  , C.Case ("2", "a = 10; b = 20")
@@ -199,6 +200,17 @@ struct _my_struct_stand
     ubyte4 field_1;
     sbyte2 field_2_s;
   };
+
+>>> d = dict (field_1 = 10, field_2_s = 1)
+>>> v = C.Var ("my_struct", "test", init_dict = d)
+>>> print NL.join (v.as_c_code ()).strip ()
+my_struct test =
+  { 10 /* field_1                                                            */
+  , 1 /* field_2_s                                                           */
+  };
+
+>>> print NL.join (v.as_h_code ()).strip ()
+my_struct test;
 
 >>> s = C.Struct ( "TDFT_Sign_Mask"
 ...              , "unsigned long bit_mask    = 42 // mask for value"
