@@ -23,6 +23,7 @@
 #    10-Mar-2006 (MZO) generate scope independ
 #    13-Mar-2006 (MZO) optional tail for function `aquire, release bin_buffer`
 #    14-Mar-2006 (MZO) added mode in `map_offset_to_struct`, fixed root_table
+#    22-Mar-2006 (MZO) close debug file
 #    ««revision-date»»···
 #--
 #
@@ -273,12 +274,17 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         module   = C.Module ()
         cc       = C_Code_Creator (self.scope, self.gauge)
         module.add (cc.pack_as_c_code (C, meta_struct))
+        f        = None
         try :
-            print "Write file `%s`" % filename
-            f = open (filename, "w")
-            module.write_to_c_stream (cstream = f)
-        except IOError :
-            pass
+            try :
+                print "Write file `%s`" % filename
+                f = open (filename, "w")
+                module.write_to_c_stream (cstream = f)
+            except IOError :
+                pass
+        finally :
+            if f is not None :
+                f.close ()
     # end def _debug_as_c_code
 
     def _map_offset_to_struct \
