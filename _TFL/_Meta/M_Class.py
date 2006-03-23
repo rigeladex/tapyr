@@ -1,3 +1,4 @@
+
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -39,11 +40,14 @@
 #    25-Jan-2005 (CT) `New` added
 #    10-Feb-2005 (MG) `_M_Type_.New`: `mangled_attributes` added
 #    28-Mar-2005 (CT) `M_Class_SWRP` added
+#    23-Mar-2006 (CED) `_fixed_type_` added
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL._Meta
+
+import types
 
 def _m_mangled_attr_name (name, cls_name) :
     """Returns `name` as mangled by Python for occurences of `__%s` % name
@@ -63,8 +67,42 @@ def _m_mangled_attr_name (name, cls_name) :
     return format % (cls_name, name)
 # end def _m_mangled_attr_name
 
+class _fixed_type_ (type) :
+    """This class fixes a python problem in context of
+       multiple inheritence and custom metaclasses.
+    """
+
+    def __call__ (meta, name, bases, dict) :
+        meta = meta._get_meta (bases, dict)
+        cls  = meta.__new__   (meta, name, bases, dict)
+        meta.__init__         (cls, name, bases, dict)
+        return cls
+    # end def __call__
+
+    def _get_meta (meta, bases, dict) :
+        if "__metaclass__" in dict :
+            return dict ["__metaclass__"]
+        winner = meta
+        for b in bases :
+            cand = type (b)
+            if cand in (types.ClassType, type) :
+                 pass
+            elif issubclass (cand, winner) :
+                winner = cand
+            elif issubclass (winner, cand) :
+                pass
+            else :
+                raise TypeError ("Metatype conflict among bases")
+        return winner
+    # end def _get_meta
+
+# end class _fixed_type_
+
 class _M_Type_ (type) :
     """Base class of TFL metaclasses."""
+
+    __metaclass__ = _fixed_type_ ### to fix metaclasses, we need
+                                 ### meta-meta classes
 
     def _m_mangled_attr_name (cls, name) :
         return _m_mangled_attr_name (name, cls.__name__)
