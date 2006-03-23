@@ -81,6 +81,7 @@
 #     7-Sep-2004 (CT)  Methods defined in alphabetical order
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #    24-Mar-2005 (CT)  Moved into package `TFL`
+#    23-Mar-2006 (CED) `real_directory`, `real_name` added
 #    ««revision-date»»···
 #--
 
@@ -281,6 +282,23 @@ class Filename (TFL.Meta.Object):
         self.directory = self.abs_directory ()
         self.name      = self.abs_name      ()
     # end def make_absolute
+
+    def real_directory (self) :
+        """Return the absolute directory name after resolving all
+           symlinks.
+        """
+        result = self.abs_directory ()
+        if hasattr (TFL.sos.path, "realpath") :
+            result = TFL.sos.path.realpath (result)
+        return result
+    # end def real_directory
+
+    def real_name (self) :
+        """Return the absolute filename corresponding to `self'
+           after resolving all symlinks.
+        """
+        return TFL.sos.path.join (self.real_directory (), self.base_ext)
+    # end def real_name
 
     def relative_to (self, other) :
         """Returns `self' converted to a path relative to `other' (empty, if
