@@ -70,6 +70,8 @@ def _m_mangled_attr_name (name, cls_name) :
 class _fixed_type_ (type) :
     """This class fixes a python problem in context of
        multiple inheritence and custom metaclasses.
+       For a discussion of this problem, see:
+       http://groups.google.de/group/comp.lang.python/tree/browse_frm/thread/2b7a60d08d4a99c4/72346462866e6497?rnum=1&q=eder&_done=%2Fgroup%2Fcomp.lang.python%2Fbrowse_frm%2Fthread%2F2b7a60d08d4a99c4%2F36e83cab80f1dbaf%3Fq%3Deder%26rnum%3D2%26#doc_72346462866e6497
     """
 
     def __call__ (meta, name, bases, dict) :
