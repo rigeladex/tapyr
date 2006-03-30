@@ -24,6 +24,7 @@
 #    13-Mar-2006 (MZO) optional tail for function `aquire, release bin_buffer`
 #    14-Mar-2006 (MZO) added mode in `map_offset_to_struct`, fixed root_table
 #    22-Mar-2006 (MZO) close debug file
+#    30-Mar-2006 (MZO) unique name of the debug file
 #    ««revision-date»»···
 #--
 #
@@ -269,7 +270,10 @@ class Bin_Block_Creator (TFL.Meta.Object) :
 
     def _debug_as_c_code (self, meta_struct) :
         C = TFL.SDG.C
-        filename = "debug_%s.c" % self.__class__.__name__
+        filename = \
+            ( "debug_%s_%s.c"
+            % (getattr (self.scope.root, "name"), self.__class__.__name__)
+            )
         filename = sos.path.normpath (sos.path.join (sos.getcwd (), filename))
         module   = C.Module ()
         cc       = C_Code_Creator (self.scope, self.gauge)
