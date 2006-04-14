@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2006 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -36,6 +36,7 @@
 #    03-Jan-2006 (MG) `ask_invisible_string` added
 #    21-Jan-2006 (MG) Imports fixed
 #    25-Jan-2006 (MG) `_show_dialog_` fixed
+#    14-Apr-2006 (CT) Use `Decorator` to define decorators
 #    ««revision-date»»···
 #--
 
@@ -61,11 +62,12 @@ import _TGL._TKT._GTK.Tree
 import _TGL._TKT._GTK.Toplevel
 import _TGL._TKT._GTK.V_Box
 
-
 import _TFL.d_dict
 import _TFL.Environment
 import _TFL.Gauge_Logger
 from   _TFL                 import sos
+from   _TFL.Decorator       import Decorator
+
 from   glob                 import glob
 
 class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
@@ -306,14 +308,12 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     # end def ask_retry_cancel
 
     ### provide CTK_Dialog.ask_* functions as member functions, too
+    @Decorator
     def _wrap_function (f) :
-        name = f.__name__
-        def _prep_args (self, * args, ** kw) :
-            return getattr (self.TNS.Dialog, name) \
+        def _ (self, * args, ** kw) :
+            return getattr (self.TNS.Dialog, f.__name__) \
                 (self.toplevel.wtk_object, AC = self.AC, * args, ** kw)
-        _prep_args.__name__ = f.__name__
-        _prep_args.__doc__  = f.__doc__
-        return _prep_args
+        return _
     # end def _wrap_function
 
     @_wrap_function
@@ -329,14 +329,12 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
 ### XXX    ask_list_element_combo   = CTK_Dialog.ask_list_element_combo
 ### XXX    ask_list_element_spinner = CTK_Dialog.ask_list_element_spinner
 
+    @Decorator
     def _wrap_function (f) :
-        name = f.__name__
-        def _prep_args (self, * args, ** kw) :
-            return getattr (self.TNS, name) \
+        def _ (self, * args, ** kw) :
+            return getattr (self.TNS, f.__name__) \
                 (self.toplevel.wtk_object, AC = self.AC, * args, ** kw)
-        _prep_args.__name__ = f.__name__
-        _prep_args.__doc__  = f.__doc__
-        return _prep_args
+        return _
     # end def _wrap_function
 
     @_wrap_function
@@ -350,7 +348,7 @@ class _TGL_TKT_GTK_Application_ (TGL.TKT.Application) :
     @_wrap_function
     def ask_save_dir_name ()  : pass
 
-Application =_TGL_TKT_GTK_Application_
+Application = _TGL_TKT_GTK_Application_
 
 if __name__ != "__main__" :
     TGL.TKT.GTK._Export ("Application")

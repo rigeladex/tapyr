@@ -54,7 +54,7 @@ class Off_Status (TGL._Status_I_) :
             return result
         def set (self, box) :
             self._set_attr (** {name : box and box.qname})
-        return property (get, set)
+        return property (get, set, doc = f.__doc__)
     # end def _box_prop
 
     @_box_prop

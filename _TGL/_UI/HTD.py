@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -68,10 +68,12 @@
 #    21-May-2005 (CT) `apply_style_to_match` added
 #    22-May-2005 (CT) `real_level` added
 #    21-Jan-2006 (MG) Imports fixed
+#    14-Apr-2006 (CT)  Use `Decorator` to define decorators
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
+from   _TFL.Decorator        import Decorator
 from   _TGL                  import TGL
 from   _TGL._UI.Styled       import Styled
 
@@ -842,6 +844,7 @@ class Root (_Node_) :
     # end def _text_callback_dict
 
     ### event callbacks follow
+    @Decorator
     def _node_binding (method) :
         def wrapper (self, event = None, node = None, ** kw) :
             tkt_text = self.tkt_text
@@ -852,8 +855,6 @@ class Root (_Node_) :
                 method (self, node, ** kw)
                 tkt_text.place_cursor (pos)
             return self.TNS.stop_cb_chaining
-        wrapper.__name__ = method.__name__
-        wrapper.__doc__  = method.__doc__
         return wrapper
     # end def _node_binding
 

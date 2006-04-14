@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -27,11 +27,13 @@
 #
 # Revision Dates
 #    22-May-2005 (CT) Creation
+#    14-Apr-2006 (CT) Use `Decorator` to define decorators
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
 from   _PMA                    import PMA
+from   _TFL                    import TFL
+from   _TFL.Decorator          import Decorator
 
 import _TFL._Meta.Object
 
@@ -68,6 +70,7 @@ else :
             return self.hammie.filter (msg)
         # end def filter
 
+        @Decorator
         def _trainer (method) :
             def wrapper (self, msg) :
                 self._open ("c")
@@ -75,8 +78,6 @@ else :
                     msg = msg.email.as_string ()
                 method     (self, msg)
                 self._save ()
-            wrapper.__name__ = method.__name__
-            wrapper.__doc__  = method.__doc__
             return wrapper
         # end def _trainer
 
