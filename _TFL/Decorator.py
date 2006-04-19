@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Apr-2006 (CT) Creation
+#    19-Apr-2006 (CT) Set `__module__`, too
 #    ««revision-date»»···
 #--
 
@@ -66,17 +67,19 @@ def Decorator (decorator) :
        ('foo', 'Function to test decoration')
     """
     def wrapper (f) :
-        decorated = decorator (f)
-        decorated.__name__ = f.__name__
-        decorated.__doc__  = f.__doc__
+        decorated            = decorator (f)
+        decorated.__name__   = f.__name__
+        decorated.__module__ = f.__module__
+        decorated.__doc__    = f.__doc__
         decorated.__dict__.update (f.__dict__)
         return decorated
-    wrapper.__name__ = decorator.__name__
-    wrapper.__doc__  = decorator.__doc__
+    wrapper.__name__   = decorator.__name__
+    wrapper.__module__ = decorator.__module__
+    wrapper.__doc__    = decorator.__doc__
     wrapper.__dict__.update (decorator.__dict__)
     return wrapper
 # end def Decorator
 
-if __name__ == "__main__" :
+if __name__ != "__main__" :
     TFL._Export ("*")
 ### __END__ TFL.Decorator
