@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    31-Mar-2005 (CT)  Totally broken `add` fixed and (factored)
 #                      `_check` made informative instead of prescriptive
 #    10-Aug-2005 (CT)  `canonical_key_name` added
+#    26-Apr-2006 (PGO) import of Set removed
 #    ««revision-date»»···
 #--
 
@@ -85,12 +86,6 @@ class _Eventname (TFL.TKT.Mixin) :
 
     def check_names (cls, evn_1, evn_2) :
         """Checks if `evn_1` and `evn_2` define the same event names"""
-        try :
-            set
-        except NameError :
-            ### legacy lifter (`set` was added as builtin in 2.4)
-            ### XXX remove me, please after 2.3 is history
-            from sets import Set as set
         s1 = set (evn_1._map.iterkeys ())
         s2 = set (evn_2._map.iterkeys ())
         cls._check_difference (evn_1, evn_2, s1 - s2)

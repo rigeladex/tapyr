@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -122,6 +122,7 @@
 #                     - Unused import of `caller_info` removed
 #                     - Import of `caller_globals` replaced by home-grown code
 #    30-Mar-2005 (CED) `_name`, `_qname` added to `_Module_Space`
+#    26-Apr-2006 (PGO) [rup18983] renamed classes with leading underscore
 #    ««revision-date»»···
 #--
 
@@ -132,7 +133,7 @@ def _caller_globals () :
     return sys._getframe (1).f_back.f_globals
 # end def _caller_globals
 
-class _Module_Space :
+class _Module_Space_ :
 
     def __init__ (self, name, qname) :
         self.__name = self._name = name
@@ -146,7 +147,7 @@ class _Module_Space :
     # end def _load
 
 
-# end class _Module_Space
+# end class _Module_Space_
 
 class Package_Namespace :
     """Implement a namespace for python packages providing direct access to
@@ -253,7 +254,7 @@ class Package_Namespace :
         self.__name         = bname
         self.__qname        = self.__name__ = qname
         self.__pname        = pname
-        self.__module_space = self._ = _Module_Space (pname, qname)
+        self.__module_space = self._ = _Module_Space_ (pname, qname)
         self.__modules      = {}
         self.__seen         = {}
         self.__reload       = 0
