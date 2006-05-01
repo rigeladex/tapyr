@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Sep-2004 (CT) Creation
+#     1-May-2006 (CT) `Alias_Mgr.transitive_translation` added
 #    ««revision-date»»···
 #--
 
@@ -105,6 +106,18 @@ class Alias_Mgr (TFL.Meta.Object) :
         f.close ()
         self.add_alias_buffer (buffer)
     # end def add_alias_file
+
+    def transitive_translation (self, alias) :
+        """Return transitive translation of `alias`"""
+        result  = set ()
+        aliases = self.aliases
+        for v in alias.email_addresses () :
+            if v in aliases :
+                result.update (self.transitive_translation (aliases [v]))
+            else :
+                result.add (v)
+        return result
+    # end def transitive_translation
 
 # end class Alias_Mgr
 
