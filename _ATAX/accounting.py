@@ -93,6 +93,9 @@
 #    29-Jul-2005 (CT)  `7020` added to `ausgaben_minderung_pat`
 #    18-Nov-2005 (RSC) `7500` added to `ausgaben_minderung_pat`
 #    11-Feb-2006 (CT)  Moved into package `ATAX`
+#     1-May-2006 (CT)  `Account_Entry.__init__` changed to handle
+#                      `erloes_minderung` properly
+#     1-May-2006 (CT)  `Account_Entry.kontenzeile` fixed
 #    ««revision-date»»···
 #--
 
@@ -176,12 +179,16 @@ class Account_Entry :
         if   "-" in self.dir :
             self.soll_betrag   = self.netto
             self.haben_betrag  = source_currency (0)
-            self.konto         = self.soll
-            self.gegen_konto   = self.haben
-            if self.vat_p != 1 :
-                self.vat_vstk  = self.vat
-                self.vat       = self.vat * vst_korrektur
-                self.vat_vstk -= self.vat
+            if not erloes_minderung_pat.match (self.haben) :
+                self.konto         = self.soll
+                self.gegen_konto   = self.haben
+                if self.vat_p != 1 :
+                    self.vat_vstk  = self.vat
+                    self.vat       = self.vat * vst_korrektur
+                    self.vat_vstk -= self.vat
+            else :
+                self.konto         = self.haben
+                self.gegen_konto   = self.soll
         elif "+" in self.dir :
             self.haben_betrag  = self.netto
             self.soll_betrag   = source_currency (0)
@@ -215,10 +222,10 @@ class Account_Entry :
     def kontenzeile (self) :
         ## print self.vat_p, type (self.vat_p) # self.soll_betrag, self.haben_betrag
         try :
-            return "%02d%02d  %-5s  %-35s %2s  %12s  %12s" % \
+            return "%02d%02d  %-5s  %-35.35s %2s  %12s  %12s" % \
                    ( self.day, self.month
                    , self.gegen_konto
-                   , self.desc          [:35]
+                   , self.desc
                    , self.vat_txt
                    , self._soll_betrag  ()
                    , self._haben_betrag ()
