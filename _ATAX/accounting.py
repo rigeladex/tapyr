@@ -96,13 +96,15 @@
 #     1-May-2006 (CT)  `Account_Entry.__init__` changed to handle
 #                      `erloes_minderung` properly
 #     1-May-2006 (CT)  `Account_Entry.kontenzeile` fixed
+#     8-May-2006 (CT)  Style
+#     8-May-2006 (CT)  Use `TFL.defaultdict` instead of `TFL.PL_Dict`
 #    ««revision-date»»···
 #--
 
 from   _ATAX             import ATAX
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
-from   _TFL.PL_Dict      import PL_Dict
+from   _TFL.defaultdict  import defaultdict
 from   _TFL.predicate    import *
 
 import math
@@ -210,26 +212,26 @@ class Account_Entry :
 
     def __str__ (self) :
         return "%6s %2.2f%s%10s %10s %10s  %-5s  %-5s %s%1s %s" % \
-               ( self.date, self.vat_p, self.cati
-               , self.vat.as_string   ()
-               , self.netto.as_string ()
-               , self.gross.as_string ()
-               , self.soll, self.haben, self.dir
-               , self.flag, self.desc [:18]
-               )
+            ( self.date, self.vat_p, self.cati
+            , self.vat.as_string   ()
+            , self.netto.as_string ()
+            , self.gross.as_string ()
+            , self.soll, self.haben, self.dir
+            , self.flag, self.desc [:18]
+            )
     # end def __str__
 
     def kontenzeile (self) :
         ## print self.vat_p, type (self.vat_p) # self.soll_betrag, self.haben_betrag
         try :
             return "%02d%02d  %-5s  %-35.35s %2s  %12s  %12s" % \
-                   ( self.day, self.month
-                   , self.gegen_konto
-                   , self.desc
-                   , self.vat_txt
-                   , self._soll_betrag  ()
-                   , self._haben_betrag ()
-                   )
+                ( self.day, self.month
+                , self.gegen_konto
+                , self.desc
+                , self.vat_txt
+                , self._soll_betrag  ()
+                , self._haben_betrag ()
+                )
         except Exception, exc :
             print exc, type (self.soll_betrag), self.soll_betrag, type (self.haben_betrag), self.haben_betrag
             ### raise
@@ -295,18 +297,10 @@ class Account :
         self.gewerbe_anteil = 0
         self.entries        = []
         self.privat         = {}
-        self.ignore         = \
-          { "83003" : 1
-          , "83013" : 1
-          , "83006" : 1
-          , "83016" : 1
-          }
+        self.ignore         = set (("83003", "83013", "83006", "83016"))
     # end def __init__
 
-    account_vars = { "vst_korrektur"   : 1
-                   , "firma"           : 1
-                   , "gewerbe_anteil"  : 1
-                   }
+    account_vars = set (("vst_korrektur", "firma", "gewerbe_anteil"))
 
     def add_lines (self, lines, categ_interest, source_currency) :
         """Add entries given by `lines' to account `self'."""
@@ -350,7 +344,7 @@ class Account :
             del tmp ["ignore"]
             try :
                 for k, v in tmp.items () :
-                    if self.account_vars.has_key (k) :
+                    if k in self.account_vars :
                         setattr (self, k, v)
                         ### print k, v, getattr (self, k)
                     else :
@@ -359,7 +353,7 @@ class Account :
                 print "Exception `%s' during local-dict update `%s'" % (exc, tmp_cmd)
         except Exception, exc :
             print "Exception `%s' encountered during execution of line\n   `%s'"\
-                  % (exc, line)
+                % (exc, line)
     # end def eval_line
 
 # end class Account
@@ -379,10 +373,10 @@ class V_Account (Account) :
         self.vorsteuer               = EU_Currency (0)
         self.vorsteuer_igE           = EU_Currency (0)
         self.vorsteuer_EUst          = EU_Currency (0)
-        self.erwerb_igE_dict         = PL_Dict     (EU_Currency (0))
-        self.umsatz_dict             = PL_Dict     (EU_Currency (0))
-        self.ust_dict                = PL_Dict     (EU_Currency (0))
-        self.ust_igE_dict            = PL_Dict     (EU_Currency (0))
+        self.erwerb_igE_dict         = defaultdict (EU_Currency)
+        self.umsatz_dict             = defaultdict (EU_Currency)
+        self.ust_dict                = defaultdict (EU_Currency)
+        self.ust_igE_dict            = defaultdict (EU_Currency)
         self.umsatzsteuer_entries    = []
         self.vorsteuer_entries       = []
         self.vorsteuer_entries_igE   = []
@@ -410,21 +404,27 @@ class V_Account (Account) :
                 self.erwerb_igE              += netto
                 self.erwerb_igE_dict [vat_p] += netto
                 if vst_korrektur != 1.0 :
-                    sys.stderr.write ( "Cannot handle expenses resulting from innergemeinschaftlichem Erwerb for a VAT correction of %d\n       %s\n"
-                                     % (vst_korrektur, entry)
-                                     )
+                    sys.stderr.write \
+                        ( "Cannot handle expenses resulting from "
+                          "innergemeinschaftlichem Erwerb for a "
+                          "VAT correction of %d\n       %s\n"
+                        % (vst_korrektur, entry)
+                        )
                 elif "b" == entry.g_or_n :
-                    sys.stderr.write ( "**** igE entries must be netto****\n       %s\n"
-                                     % entry
-                                     )
+                    sys.stderr.write \
+                        ( "**** igE entries must be netto****\n       %s\n"
+                        % entry
+                        )
             elif "z" in entry.cat :
                 self.vorsteuer_EUst += vat
                 self.vorsteuer_entries_EUst.append (entry)
                 entry.cati = "E"
                 if vst_korrektur != 1.0 :
-                    sys.stderr.write ( "Cannot handle Einfuhrumsatzsteuer for a VAT correction of %d\n       %s\n"
-                                     % (vst_korrektur, entry)
-                                     )
+                    sys.stderr.write \
+                        ( "Cannot handle Einfuhrumsatzsteuer for a "
+                          "VAT correction of %d\n       %s\n"
+                        % (vst_korrektur, entry)
+                        )
             else : ### neither "i" nor "z"
                 self.vorsteuer_entries.append (entry)
                 if erloes_minderung_pat.match (entry.konto) :
@@ -435,9 +435,11 @@ class V_Account (Account) :
         elif "+" in entry.dir :
             self.umsatzsteuer_entries.append (entry)
             if "i" in entry.cat :
-                sys.stderr.write ( "Cannot handle income resulting from innergemeinschaftlichem Erwerb\n       %s\n"
-                                 % entry
-                                 )
+                sys.stderr.write \
+                    ( "Cannot handle income resulting from "
+                      "innergemeinschaftlichem Erwerb\n       %s\n"
+                    % entry
+                    )
             if ausgaben_minderung_pat.match (entry.konto) :
                 ## Ausgabenminderung instead of Einnahme
                 self._add_vorsteuer (- vat)
@@ -461,17 +463,17 @@ class V_Account (Account) :
 
     def header_string (self) :
         return " %s   %8s%7s   %8s   %8s  %-5s %-5s %s  %s\n%s" % \
-               ( "Tag"
-               ,      "MSt-Satz"
-               ,         "MWSt"
-               ,               "Netto"
-               ,                     "Brutto"
-               ,                          "Soll"
-               ,                               "Haben"
-               ,                                    "  "
-               ,                                        "Text"
-               ,                                            "=" * 80
-               )
+            ( "Tag"
+            ,      "MSt-Satz"
+            ,         "MWSt"
+            ,               "Netto"
+            ,                     "Brutto"
+            ,                          "Soll"
+            ,                               "Haben"
+            ,                                    "  "
+            ,                                        "Text"
+            ,                                            "=" * 80
+            )
     # end def header_string
 
     def print_entries (self, trailer = None) :
@@ -483,21 +485,21 @@ class V_Account (Account) :
         """Print `self.vorsteuer_entries', `self.vorsteuer_entries_igE', and
            `self.umsatzsteuer_entries' followed by trailer.
         """
-        if (  self.vorsteuer_entries
-           or self.vorsteuer_entries_EUst
-           or self.vorsteuer_entries_igE
-           or self.umsatzsteuer_entries
-           ) :
+        if  (  self.vorsteuer_entries
+            or self.vorsteuer_entries_EUst
+            or self.vorsteuer_entries_igE
+            or self.umsatzsteuer_entries
+            ) :
             print self.header_string ()
         self.print_entries_ (self.vorsteuer_entries,      trailer = "\n")
         self.print_entries_ (self.vorsteuer_entries_EUst, trailer = "\n")
         self.print_entries_ (self.vorsteuer_entries_igE,  trailer = "\n")
         self.print_entries_ (self.umsatzsteuer_entries)
-        if (  self.vorsteuer_entries
-           or self.vorsteuer_entries_EUst
-           or self.vorsteuer_entries_igE
-           or self.umsatzsteuer_entries
-           ) :
+        if  (  self.vorsteuer_entries
+            or self.vorsteuer_entries_EUst
+            or self.vorsteuer_entries_igE
+            or self.umsatzsteuer_entries
+            ) :
             if trailer : print trailer
     # end def print_entries_by_group
 
@@ -514,52 +516,52 @@ class V_Account (Account) :
         meldung   = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign      = (-1.0,         +1.0)            [vat_saldo >= 0]
         print "%-16s : %14s"   % \
-              ("Ausgaben brutto", self.ausgaben_b.as_string_s ())
+            ("Ausgaben brutto", self.ausgaben_b.as_string_s ())
         print "%-16s : %14s"   % \
-              ("Ausgaben netto",  self.ausgaben_n.as_string_s ())
+            ("Ausgaben netto",  self.ausgaben_n.as_string_s ())
         print "\n%s\n"         % ( "=" * 80, )
         print "%-16s : %14s"   % ( "Umsatz", self.umsatz.as_string_s ())
         print "%-16s : %14s"   % \
-              ( "Steuerpflichtig"
-              , (self.umsatz - self.umsatz_dict [1.0]).as_string_s ()
-              )
+            ( "Steuerpflichtig"
+            , (self.umsatz - self.umsatz_dict [1.0]).as_string_s ()
+            )
         self.print_ust_dict_     ( self.umsatz_dict, self.ust_dict)
         print "\n%-16s : %14s" % \
-              ("Erwerbe igE", self.erwerb_igE.as_string_s ())
+            ("Erwerbe igE", self.erwerb_igE.as_string_s ())
         self.print_ust_dict_     ( self.erwerb_igE_dict, self.ust_igE_dict)
         print "\n%-16s :                %14s" % \
-              ("USt Übertrag", (self.ust + self.ust_igE).as_string_s ())
+            ("USt Übertrag", (self.ust + self.ust_igE).as_string_s ())
         print "--------------- ./.. ---------------------------";
         print "%-16s :                %14s" % \
-              ("USt Übertrag", (self.ust + self.ust_igE).as_string_s ())
+            ("USt Übertrag", (self.ust + self.ust_igE).as_string_s ())
         print "%-16s : %14s" % \
-              ( "Vorsteuer", self.vorsteuer.as_string_s ())
+            ( "Vorsteuer", self.vorsteuer.as_string_s ())
         print "%-16s : %14s"   % \
-              ("Einfuhrumsatzst.", self.vorsteuer_EUst.as_string_s ())
+            ("Einfuhrumsatzst.", self.vorsteuer_EUst.as_string_s ())
         print "%-16s : %14s"   % \
-              ( "Vorsteuer igE", self.vorsteuer_igE.as_string_s ())
+            ( "Vorsteuer igE", self.vorsteuer_igE.as_string_s ())
         print "%-16s : %14s %14s" % \
-              ( "Summe Vorsteuer"
-              , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
-                ).as_string_s ()
-              , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
-                ).as_string_s ()
-              )
+            ( "Summe Vorsteuer"
+            , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
+              ).as_string_s ()
+            , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
+              ).as_string_s ()
+            )
         if vat_saldo.target_currency == EU_Currency :
             ### no rounding for Euro
             print "\n%-16s :                %14s %s" % \
-                  ( meldung
-                  , vat_saldo.as_string_s (), vat_saldo.target_currency.name
-                  )
+                ( meldung
+                , vat_saldo.as_string_s (), vat_saldo.target_currency.name
+                )
         else :
             ### rounding is necessary
             print "\n%-16s :             %14s%s00 %s     (%s)" % \
-                  ( meldung
-                  , vat_saldo.as_string_s (round = 1)
-                  , vat_saldo.target_currency.decimal_sign
-                  , vat_saldo.target_currency.name
-                  , vat_saldo.as_string_s ()
-                  )
+                ( meldung
+                , vat_saldo.as_string_s (round = 1)
+                , vat_saldo.target_currency.decimal_sign
+                , vat_saldo.target_currency.name
+                , vat_saldo.as_string_s ()
+                )
     # end def print_summary_old
 
     def print_summary (self) :
@@ -569,19 +571,19 @@ class V_Account (Account) :
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
         print "%-30s     : %29s" % \
-              ("Ausgaben brutto", self.ausgaben_b.as_string_s ())
+            ("Ausgaben brutto", self.ausgaben_b.as_string_s ())
         print "%-30s     : %29s" % \
-              ("Ausgaben netto", self.ausgaben_n.as_string_s ())
+            ("Ausgaben netto", self.ausgaben_n.as_string_s ())
         print "\n%s\n"           % ( "=" * 80, )
         print "%-30s %3s : %29s" % \
-              ("Nichtsteuerbar Ausland", "005", self.umsatz_frei.as_string_s())
+            ("Nichtsteuerbar Ausland", "005", self.umsatz_frei.as_string_s())
         print "%-30s %3s : %29s" % \
-              ("Lieferungen, sonstige", "000", umsatz_vat.as_string_s ())
+            ("Lieferungen, sonstige", "000", umsatz_vat.as_string_s ())
         print "%-30s     : %29s" % \
-              ("Summe Bemessungsgrundlage", umsatz_vat.as_string_s ())
+            ("Summe Bemessungsgrundlage", umsatz_vat.as_string_s ())
         print
         print "%-30s     : %29s" % \
-              ("Gesamt steuerpflichtig", umsatz_vat.as_string_s ())
+            ("Gesamt steuerpflichtig", umsatz_vat.as_string_s ())
         self.print_ust_dict_  (self.umsatz_dict, self.ust_dict, self._ust_cat)
         print
         print "%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ())
@@ -590,37 +592,37 @@ class V_Account (Account) :
         print "%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ())
 
         print "%-30s %3s : %14s" % \
-              ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
+            ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
         self.print_ust_dict_ \
-              (self.erwerb_igE_dict, self.ust_igE_dict, self._ige_cat)
+            (self.erwerb_igE_dict, self.ust_igE_dict, self._ige_cat)
 
         print "%-30s %3s : %29s" % \
-              ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
+            ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
         print "%-30s %3s : %29s" % \
-              ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
+            ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
         print "%-30s %3s : %29s" % \
-              ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
+            ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
         print "%-30s     : %29s" % \
-              ( "Gesamtbetrag Vorsteuer"
-              , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
-                ).as_string_s ()
-              )
+            ( "Gesamtbetrag Vorsteuer"
+            , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
+              ).as_string_s ()
+            )
         print
         if vat_saldo.target_currency == EU_Currency :
             ### no rounding for Euro
             print "%-30s %3s : %29s %s" % \
-                  ( meldung, "095"
-                  , vat_saldo.as_string_s (), vat_saldo.target_currency.name
-                  )
+                ( meldung, "095"
+                , vat_saldo.as_string_s (), vat_saldo.target_currency.name
+                )
         else :
             ### rounding is necessary
             print "%-30s %3s : %29s%s00 %s     (%s)" % \
-                  ( meldung, "095"
-                  , vat_saldo.as_string_s (round = 1)
-                  , vat_saldo.target_currency.decimal_sign
-                  , vat_saldo.target_currency.name
-                  , vat_saldo.as_string_s ()
-                  )
+                ( meldung, "095"
+                , vat_saldo.as_string_s (round = 1)
+                , vat_saldo.target_currency.decimal_sign
+                , vat_saldo.target_currency.name
+                , vat_saldo.as_string_s ()
+                )
     # end def print_summary
 
     def print_summary_online (self) :
@@ -633,10 +635,12 @@ class V_Account (Account) :
         print "=" * 47
         if umsatz_vat :
             print "%-30s %3s : %10s" % \
-              ("Lieferungen, sonstige", "000", umsatz_vat.as_string_s ())
+                ("Lieferungen, sonstige", "000", umsatz_vat.as_string_s ())
         if self.umsatz_frei :
             print "%-30s %3s : %10s" % \
-              ("Nichtsteuerbar Ausland", "005", self.umsatz_frei.as_string_s())
+                ( "Nichtsteuerbar Ausland", "005"
+                , self.umsatz_frei.as_string_s ()
+                )
         if umsatz_vat :
             print
             print "Steuersätze"
@@ -647,7 +651,7 @@ class V_Account (Account) :
         print "=" * 47
         if self.erwerb_igE :
             print "%-30s %3s : %10s" % \
-              ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
+                ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
             print
             print "Steuersätze"
             print "=" * 47
@@ -657,50 +661,50 @@ class V_Account (Account) :
         print "*** Vorsteuer ***"
         print "=" * 47
         print "%-30s %3s : %10s" % \
-              ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
+            ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
         print "%-30s %3s : %10s" % \
-              ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
+            ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
         print "%-30s %3s : %10s" % \
-              ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
+            ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
         print "\n\n"
         print "*" * 47
         if vat_saldo.target_currency == EU_Currency :
             ### no rounding for Euro
             print "%-30s %3s : %10s %s" % \
-                  ( meldung, "095"
-                  , vat_saldo.as_string_s (), vat_saldo.target_currency.name
-                  )
+                ( meldung, "095"
+                , vat_saldo.as_string_s (), vat_saldo.target_currency.name
+                )
         else :
             ### rounding is necessary
             print "%-30s %3s : %10s%s00 %s     (%s)" % \
-                  ( meldung, "095"
-                  , vat_saldo.as_string_s (round = 1)
-                  , vat_saldo.target_currency.decimal_sign
-                  , vat_saldo.target_currency.name
-                  , vat_saldo.as_string_s ()
-                  )
+                ( meldung, "095"
+                , vat_saldo.as_string_s (round = 1)
+                , vat_saldo.target_currency.decimal_sign
+                , vat_saldo.target_currency.name
+                , vat_saldo.as_string_s ()
+                )
     # end def print_summary_online
 
     _ust_cat = {20 : "022", 10 : "029", 0 : ""}
     _ige_cat = {20 : "072", 10 : "073", 0 : ""}
 
     def print_ust_dict_ (self, umsatz_dict, ust_dict, cat) :
-        for vat_p in sorted (umsatz_dict.keys (), lambda l, r : cmp (r, l)) :
+        for vat_p in sorted (umsatz_dict, reverse = True) :
             vp = int (((vat_p - 1) * 100) + 0.5)
             print "davon %2d%%                      %3s : %14s %14s" % \
-                  ( vp, cat [vp]
-                  , umsatz_dict [vat_p].as_string_s ()
-                  , ust_dict    [vat_p].as_string_s ()
-                  )
+                ( vp, cat [vp]
+                , umsatz_dict [vat_p].as_string_s ()
+                , ust_dict    [vat_p].as_string_s ()
+                )
     # end def print_ust_dict_
 
     def print_ust_dict_online (self, umsatz_dict, cat) :
-        for vat_p in sorted (umsatz_dict.keys (), lambda l, r : cmp (r, l)) :
+        for vat_p in sorted (umsatz_dict, reverse = True) :
             ust = umsatz_dict [vat_p]
             if ust :
                 vp = int (((vat_p - 1) * 100) + 0.5)
                 print "davon %2d%%                      %3s : %10s" % \
-                      (vp, cat [vp], ust.as_string_s ())
+                    (vp, cat [vp], ust.as_string_s ())
     # end def print_ust_dict_online
 
 # end class U_Account
@@ -715,26 +719,27 @@ class T_Account (Account) :
 
     t_konto_ignore_pat = re.compile (r"^[01239]\d\d\d\d? | 7000", re.X)
 
-    firma      = ("Mag. Christian Tanzer"
-                  "\n"
-                  "FA Wien 12/23 St.Nr. 853/0043 Ref. 23"
-                  "\n\n\n"
-                 )
+    firma      = \
+        ("Mag. Christian Tanzer"
+         "\n"
+         "FA Wien 12/23 St.Nr. 853/0043 Ref. 23"
+         "\n\n\n"
+        )
 
     def __init__ (self, name = "", year = 0, konto_desc = None, vst_korrektur = 1.0) :
         Account.__init__ (self, name, vst_korrektur)
         self.year                           = year or \
              day_to_time_tuple ("1.1").year - 1
         self.konto_desc                     = konto_desc or {}
-        self.soll_saldo                     = PL_Dict (EU_Currency (0))
-        self.haben_saldo                    = PL_Dict (EU_Currency (0))
-        self.ausgaben                       = PL_Dict (EU_Currency (0))
-        self.einnahmen                      = PL_Dict (EU_Currency (0))
-        self.vorsteuer                      = PL_Dict (EU_Currency (0))
-        self.vorsteuer_EUst                 = PL_Dict (EU_Currency (0))
-        self.ust                            = PL_Dict (EU_Currency (0))
-        self.ust_igE                        = PL_Dict (EU_Currency (0))
-        self.buchung_zahl                   = PL_Dict (0)
+        self.soll_saldo                     = defaultdict (EU_Currency)
+        self.haben_saldo                    = defaultdict (EU_Currency)
+        self.ausgaben                       = defaultdict (EU_Currency)
+        self.einnahmen                      = defaultdict (EU_Currency)
+        self.vorsteuer                      = defaultdict (EU_Currency)
+        self.vorsteuer_EUst                 = defaultdict (EU_Currency)
+        self.ust                            = defaultdict (EU_Currency)
+        self.ust_igE                        = defaultdict (EU_Currency)
+        self.buchung_zahl                   = defaultdict (int)
         self.ausgaben_total                 = EU_Currency (0)
         self.einnahmen_total                = EU_Currency (0)
         self.vorsteuer_total                = EU_Currency (0)
@@ -756,14 +761,14 @@ class T_Account (Account) :
         if "-" in entry.dir :
             self.soll_saldo  [entry.konto]       += entry.soll_betrag
             self.haben_saldo [entry.gegen_konto] += entry.soll_betrag
-            if (  (not self.t_konto_ignore_pat.match (entry.konto))
-               or ("u" in entry.cat)
-               ) :
+            if  (  (not self.t_konto_ignore_pat.match (entry.konto))
+                or ("u" in entry.cat)
+                ) :
                 betrag = (entry.soll_betrag, 0) \
-                           [(    self.t_konto_ignore_pat.match (entry.konto)
-                             and "u" in entry.cat
-                            ) or self.ignore.get (entry.konto, 0)
-                           ]
+                    [(    self.t_konto_ignore_pat.match (entry.konto)
+                      and "u" in entry.cat
+                     ) or entry.konto in self.ignore
+                    ]
                 betrag = self._effective_amount (entry, entry.soll_betrag)
                 if erloes_minderung_pat.match (entry.konto) :
                     ## Erlösminderung instead of Ausgabe
@@ -776,14 +781,14 @@ class T_Account (Account) :
         elif "+" in entry.dir :
             self.haben_saldo [entry.konto]       += entry.haben_betrag
             self.soll_saldo  [entry.gegen_konto] += entry.haben_betrag
-            if (  (not self.t_konto_ignore_pat.match (entry.konto))
-               or ("u" in entry.cat) ### ???  6-Feb-2000 ??? ###
-               ) :
+            if  (  (not self.t_konto_ignore_pat.match (entry.konto))
+                or ("u" in entry.cat) ### ???  6-Feb-2000 ??? ###
+                ) :
                 betrag = (entry.haben_betrag, 0) \
-                           [(    self.t_konto_ignore_pat.match (entry.konto)
-                             and "u" in entry.cat
-                            ) or self.ignore.get (entry.konto, 0)
-                           ]
+                    [(    self.t_konto_ignore_pat.match (entry.konto)
+                      and "u" in entry.cat
+                     ) or entry.konto in self.ignore
+                    ]
                 betrag = self._effective_amount (entry, entry.haben_betrag)
                 if ausgaben_minderung_pat.match (entry.konto) :
                     ## Ausgabenminderung instead of Einnahme
@@ -795,9 +800,9 @@ class T_Account (Account) :
     # end def add
 
     def _effective_amount (self, entry, amount) :
-        if (    self.t_konto_ignore_pat.match (entry.konto)
-           and "u" in entry.cat
-           ) or self.ignore.get (entry.konto, 0) :
+        if  (    self.t_konto_ignore_pat.match (entry.konto)
+            and "u" in entry.cat
+            ) or entry.konto in self.ignore :
             return 0
         else :
             return amount
@@ -833,31 +838,34 @@ class T_Account (Account) :
     def finish (self) :
         if not self._finished :
             self._finished = 1
-            self._do_gkonto ( self.vorsteuer,   self.vorsteuer_gkonto
-                            , self.soll_saldo,  "Vorsteuer"
-                            , lambda s : (s, 0)
-                            )
-            self._do_gkonto ( self.vorsteuer_EUst, self.eust_gkonto
-                            , self.soll_saldo, "Einfuhrumsatzsteuer"
-                            , lambda s : (s, 0)
-                            )
-            self._do_gkonto ( self.ust,         self.ust_gkonto
-                            , self.haben_saldo, "Umsatzsteuer"
-                            , lambda s : (0, s)
-                            )
-            self._do_gkonto ( self.ust_igE,     self.ige_gkonto
-                            , self.soll_saldo,  "Vor- und Umsatzsteuer igE"
-                            , lambda s : (s, s)
-                            , self.haben_saldo
-                            )
-            for k in sorted (self.kblatt.keys ()) :
-                if self.privat.has_key (k) :
+            self._do_gkonto \
+                ( self.vorsteuer,   self.vorsteuer_gkonto
+                , self.soll_saldo,  "Vorsteuer"
+                , lambda s : (s, 0)
+                )
+            self._do_gkonto \
+                ( self.vorsteuer_EUst, self.eust_gkonto
+                , self.soll_saldo, "Einfuhrumsatzsteuer"
+                , lambda s : (s, 0)
+                )
+            self._do_gkonto \
+                ( self.ust,         self.ust_gkonto
+                , self.haben_saldo, "Umsatzsteuer"
+                , lambda s : (0, s)
+                )
+            self._do_gkonto \
+                ( self.ust_igE,     self.ige_gkonto
+                , self.soll_saldo,  "Vor- und Umsatzsteuer igE"
+                , lambda s : (s, s)
+                , self.haben_saldo
+                )
+            for k in sorted (self.kblatt) :
+                if k in self.privat :
                     factor  = self.privat [k] / 100.0
                     p_soll  = self.soll_saldo  [k] * factor
                     p_haben = self.haben_saldo [k] * factor
-                    p_desc  = ( "%2d%% Privatanteil"
-                              % (int (self.privat [k] + 0.5), )
-                              )
+                    p_desc  = \
+                        ("%2d%% Privatanteil" % (int (self.privat [k] + 0.5),))
                     k_desc  = self.konto_desc.get (k, "")
                     self.soll_saldo  [k] -= p_soll
                     self.haben_saldo [k] -= p_haben
@@ -865,15 +873,15 @@ class T_Account (Account) :
                     self.einnahmen   [k] *= (1 - factor)
                     self.konto_desc  [k]  = "%s (abz. %s)" % (k_desc, p_desc)
                     self.kblatt [k].append \
-                        (Privatanteil
-                           ("9200", - p_soll, - p_haben, p_desc).kontenzeile ()
+                        ( Privatanteil
+                            ("9200", -p_soll, -p_haben, p_desc).kontenzeile ()
                         )
                     self._fix_vorsteuer_privat \
                         (k, k_desc, p_soll * 0.2, p_desc)
     # end def finish
 
     def _do_gkonto (self, ust, gkonto, saldo, txt, soll_haben, saldo2 = None) :
-        for m in sorted (ust.keys ()) :
+        for m in sorted (ust) :
             if ust.get (m, 0) != 0 :
                 self.buchung_zahl [gkonto] += 1
                 saldo             [gkonto] += ust [m]
@@ -896,27 +904,27 @@ class T_Account (Account) :
     def print_konten (self) :
         self.finish ()
         tc = EU_Currency.target_currency.name
-        for k in sorted (self.kblatt.keys ()) :
+        for k in sorted (self.kblatt) :
             head  = "%s    %s" % (self.year, self.konto_desc.get (k, "")) [:64]
             tail  = "Konto-Nr. %5s" % k
             belly = " " * (79 - len (head) - len (tail))
             print "\n\n%s%s%s" % (head, belly, tail)
             self.print_sep_line ()
             print "%-4s %-6s  %-35s%-3s  %12s  %12s" % \
-                  ("Tag", "Gegkto", "Text", "Ust", "Soll", "Haben")
+                ("Tag", "Gegkto", "Text", "Ust", "Soll", "Haben")
             self.print_sep_line ()
             print string.join (self.kblatt [k], "\n")
             print "\n%12s %-38s  %12s  %12s" % \
-                  ( "", "Kontostand neu"
-                  , self.soll_saldo  [k].as_string_s ()
-                  , self.haben_saldo [k].as_string_s ()
-                  )
+                ( "", "Kontostand neu"
+                , self.soll_saldo  [k].as_string_s ()
+                , self.haben_saldo [k].as_string_s ()
+                )
             print "\n%12s %-48s  %12s %s" % \
-                  ( ""
-                  , "Saldo      neu"
-                  , (self.soll_saldo [k] - self.haben_saldo [k]).as_string_s ()
-                  , tc
-                  )
+                ( ""
+                , "Saldo      neu"
+                , (self.soll_saldo [k] - self.haben_saldo [k]).as_string_s ()
+                , tc
+                )
             self.print_sep_line ()
     # end def print_konten
 
@@ -926,17 +934,16 @@ class T_Account (Account) :
         print "Zusammenfassung Konten %-52s %s" % (self.year, tc)
         self.print_sep_line ()
         print "%-5s %12s %12s  %12s %s" % \
-              ("Konto", "Soll", "Haben", "Saldo", "Text")
+            ("Konto", "Soll", "Haben", "Saldo", "Text")
         self.print_sep_line ()
-        for k in sorted (self.kblatt.keys ()) :
+        for k in sorted (self.kblatt) :
             print "%-5s%13s%13s %13s %s" % \
-                  ( k
-                  , self.soll_saldo  [k].as_string_s ()
-                  , self.haben_saldo [k].as_string_s ()
-                  , (self.soll_saldo [k] - self.haben_saldo [k]
-                    ).as_string_s ()
-                  , self.konto_desc.get (k, "") [:33]
-                  )
+                ( k
+                , self.soll_saldo  [k].as_string_s ()
+                , self.haben_saldo [k].as_string_s ()
+                , (self.soll_saldo [k] - self.haben_saldo [k]).as_string_s ()
+                , self.konto_desc.get (k, "") [:33]
+                )
     # end def print_konto_summary
 
     def print_sep_line (self) :
@@ -947,62 +954,65 @@ class T_Account (Account) :
         self.finish ()
         tc = EU_Currency.target_currency.name
         print self.firma
-        print underlined ( "Einnahmen/Ausgabenrechnung %s (%s)"
-                         % (self.year, tc)
-                         )
+        print underlined \
+            ("Einnahmen/Ausgabenrechnung %s (%s)" % (self.year, tc))
         print "\n"
         print underlined ("Betriebseinnahmen")
         print "\n"
         format  = "%-40s %15s %15s"
         format1 = "%-40s -%14s %15s"
         e_total = EU_Currency (0)
-        for k in sorted (self.einnahmen.keys ()) :
+        for k in sorted (self.einnahmen) :
             einnahmen = self.einnahmen [k] - self.ausgaben [k]
             if k [0] not in ("4", "8") : continue
             if einnahmen == 0          : continue
             e_total = e_total + einnahmen
-            print format % ( self.konto_desc.get (k, "") [:40], ""
-                           , einnahmen.as_string_s ()
-                           )
+            print format % \
+                ( self.konto_desc.get (k, "") [:40], ""
+                , einnahmen.as_string_s ()
+                )
         print format % ("", "", "_" * 15)
         print format % ("", "", e_total.as_string_s ()), tc
         print "\n"
         print underlined ("Betriebsausgaben")
         print "\n"
         a_total = EU_Currency (0)
-        for k in sorted (self.ausgaben.keys ()) :
+        for k in sorted (self.ausgaben) :
             ausgaben = self.ausgaben [k] - self.einnahmen [k]
             if k [0] not in ("5", "6", "7") : continue
             if ausgaben == 0                : continue
             a_total = a_total + ausgaben
-            print format % ( self.konto_desc.get (k, "") [:40]
-                           , ausgaben.as_string_s (), ""
-                           )
+            print format % \
+                ( self.konto_desc.get (k, "") [:40]
+                , ausgaben.as_string_s (), ""
+                )
         if self.vst_korrektur != 1 :
             p_anteil = a_total * (1 - self.vst_korrektur)
             print format  % ( "", "_" * 15, "")
             print format  % ( "", a_total.as_string_s (), "")
-            print format1 % ( "Privatanteil  %5.2f%%"
-                              % ((1 - self.vst_korrektur) * 100, )
-                            , p_anteil.as_string_s (), ""
-                            )
+            print format1 % \
+                ( "Privatanteil  %5.2f%%" % ((1 - self.vst_korrektur) * 100, )
+                , p_anteil.as_string_s (), ""
+                )
             if self.gewerbe_anteil :
                 self.g_anteil = g_anteil = a_total * self.gewerbe_anteil
-                print format1 % ( "Gewerbeanteil %5.2f%%"
-                                  % (self.gewerbe_anteil * 100, )
-                                , g_anteil.as_string_s (), ""
-                                )
+                print format1 % \
+                    ( "Gewerbeanteil %5.2f%%" % (self.gewerbe_anteil * 100, )
+                    , g_anteil.as_string_s (), ""
+                    )
             else :
                 g_anteil = 0
             a_total = a_total - p_anteil - g_anteil
         print format  % ( "", "_" * 15, "_" * 15)
-        print format1 % ( ""
-                        , a_total.as_string_s ()
-                        , (e_total - a_total).as_string_s ()
-                        ), tc
-        print ( "\nDas Ergebnis wurde gemäß Par.4/3 EStG nach der "
-                "Nettomethode erstellt."
-              )
+        print format1 % \
+            ( ""
+            , a_total.as_string_s ()
+            , (e_total - a_total).as_string_s ()
+            ), tc
+        print \
+            ( "\nDas Ergebnis wurde gemäß Par.4/3 EStG nach der "
+              "Nettomethode erstellt."
+            )
     # end def print_ein_aus_rechnung
 
     g_anteil = EU_Currency (0)
@@ -1023,9 +1033,10 @@ class H_Account_Entry (Account_Entry) :
 
     def kontenzeile (self) :
         try :
-            return ( "\\Einzelposten{%s\\hfill %s}{%s%s}"
-                   % (self.desc, self.date, self.dir, self.netto.as_string ())
-                   )
+            return \
+                ( "\\Einzelposten{%s\\hfill %s}{%s%s}"
+                % (self.desc, self.date, self.dir, self.netto.as_string ())
+                )
         except Exception, exc :
             print exc
             print sorted (self.__dict__.items ())
@@ -1039,13 +1050,11 @@ class H_Account (T_Account) :
 
     Ancestor = __Ancestor = T_Account
     Entry    = H_Account_Entry
-    t_konto_ignore_pat = re.compile ( r"^DON'T MATCH ANYTHING HERE$"
-                                    , re.X
-                                    )
+    t_konto_ignore_pat = re.compile (r"^DON'T MATCH ANYTHING HERE$", re.X)
 
     def __init__ (self, * args, ** kw) :
         self.__Ancestor.__init__ (self, * args, ** kw)
-        self.ignore = {}
+        self.ignore = set ()
     # end def __init__
 
     def _effective_amount (self, entry, amount) :
@@ -1065,7 +1074,7 @@ class Konto_Desc (UserDict) :
             file = open (file, "r")
         pat   = re.compile (r"^[0-9]")
         s_pat = re.compile (r"\s*:\s*")
-        for line in file.readlines () :
+        for line in file :
             if not pat.match (line) : continue
             (konto, desc)  = s_pat.split (line)
             konto          = string.strip   (string.replace (konto, "_", "0"))
@@ -1091,17 +1100,6 @@ def add_account_file (file, categories, source_currency, account) :
     account.add_lines (file.readlines (), categ_interest, source_currency)
 # end def add_account_file
 
-#import sys
-#sys.path [0:0] = ["/swing/python"]
-#from accounting import *
-#a = T_Account         ()
-#f = open              ("01/konto.dat")
-#c= re.compile         ("e")
-#a.add_lines           (f.readlines(),1.0,c,ATS)
-#a.print_konto_summary ()
-#a.print_konten        ()
-#for k in a.kblatt.keys () :
-#    print string.join (a.kblatt   [k],"\n")
 if __name__ != "__main__" :
     ATAX._Export ("*")
 ### __END__ ATAX.accounting
