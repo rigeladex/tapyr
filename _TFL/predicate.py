@@ -156,8 +156,6 @@
 #     7-Mar-2006 (CED) `items_sorted_keys`, `items_sorted_values` added
 #     7-Mar-2006 (CED) `items_sorted_*` removed
 #     9-May-2006 (CT)  `bit_size_cmp` removed (long since stale)
-#     9-May-2006 (CT)  `bit_size_decorator` changed (return
-#                      `int (bits % 8 != 0)` as first element of result)
 #    ««revision-date»»···
 #--
 
@@ -222,23 +220,13 @@ def bit_alignment (bits) :
     return byte_alignment ((bits + 4) >> 3)
 # end def bit_alignment
 
-def bit_size_decorator (bits) :
-    """Return a decorator for dusorting' by bit-size `bits`.
+def bit_size_decorator (bs) :
+    """Return a decorator for dusorting' by bit-size `bs`.
 
        Integral byte sizes compare before sub-byte sizes, even sizes compare
-       before odd sizes, larger values compare before smaller
-       values.
-
-       >>> [(i, bit_size_decorator (i)) for i in (8, 16, 24)]
-       [(8, (0, -1, -8)), (16, (0, -2, -16)), (24, (0, -1, -24))]
-       >>> [(i, bit_size_decorator (i)) for i in (32, 48, 64)]
-       [(32, (0, -4, -32)), (48, (0, -2, -48)), (64, (0, -8, -64))]
-       >>> [(i, bit_size_decorator (i)) for i in (2, 4, 10)]
-       [(2, (1, 0, -2)), (4, (1, -1, -4)), (10, (1, -1, -10))]
-       >>> [(i, bit_size_decorator (i)) for i in (22, 30, 31)]
-       [(22, (1, -1, -22)), (30, (1, -4, -30)), (31, (1, -4, -31))]
+       before odd sizes, larger values compare before smaller values.
     """
-    return int (bits % 8 != 0), - byte_alignment ((bits + 4) >> 3), - bits
+    return - byte_alignment ((bs + 4) >> 3), - bs
 # end def bit_size_decorator
 
 def bool_split (seq, predicate) :
