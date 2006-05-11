@@ -41,11 +41,12 @@
 #                      changed to break at `self` (to allow cyclic structures)
 #     2-Jul-2005 (CT)  `DL_Ring` added
 #     2-Jul-2005 (CT)  `_DL_Counted_` factored and `DL_Ring_Counted` added
+#    11-May-2006 (CED) `DL_Ring_Sorted` introduced
 #    ««revision-date»»···
 #--
 
 from   _TFL        import TFL
-
+import _TFL.predicate
 import _TFL._Meta.Object
 
 class DL_Item (TFL.Meta.Object) :
@@ -114,7 +115,10 @@ class DL_Item (TFL.Meta.Object) :
     # end def __str__
 
     def __repr__ (self) :
-        return repr (self.value)
+        if self.value is None :
+            return "<empty item>"
+        else :
+            return repr (self.value)
     # end def __repr__
 
 # end class DL_Item
@@ -323,6 +327,8 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
 
 # end class DL_List_Counted
 
+### XXX please make an own module for DL_Ring classes
+
 class DL_Ring (_DL_Chain_) :
     """Doubly linked ring.
 
@@ -442,6 +448,55 @@ class DL_Ring (_DL_Chain_) :
     # end def __nonzero__
 
 # end class DL_Ring
+
+class DL_Ring_Sorted (DL_Ring) :
+    """DL_Ring sorting its elements
+
+       >>> drs = DL_Ring_Sorted (2, 1, 3)
+       >>> list (drs)
+       [1, 2, 3]
+       >>> drs.insert (5)
+       >>> drs.insert (4)
+       >>> list (drs)
+       [1, 2, 3, 4, 5]
+    """
+
+    def __init__ (self, * items, ** kw) :
+        if "key" in kw :
+            self.key = kw ["key"]
+        else :
+            self.key = TFL.identity
+        self.clear ()
+        self.insert (* items)
+    # end def __init__
+
+    def append (self, * items) :
+        raise TypeError, "Append not allowed for DL_Ring_Sorted"
+    # end def append
+
+    def insert (self, * items) :
+        for i in items :
+            self._insert (i)
+    # end def insert
+
+    def prepend (self, items) :
+        raise TypeError, "Prepend not allowed for DL_Ring_Sorted"
+    # end def prepend
+
+    def _insert (self, other) :
+        item  = self.head
+        for item in list (self) :
+            if self.key (item.value) > self.key (other) :
+                prev = item.prev
+                break
+        else :
+            prev   = item
+        self.__super.insert (prev, other)
+        if self.key (self.mark.value) > self.key (other) :
+            self.rotate_prev (1)
+    # end def _insert
+
+# end class DL_Ring_Sorted
 
 class DL_Ring_Counted (_DL_Counted_, DL_Ring) :
     """DL_Ring counting its elements
