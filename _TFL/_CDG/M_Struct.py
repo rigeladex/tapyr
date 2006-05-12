@@ -26,6 +26,7 @@
 #    23-Jan-2006 (CED) Additional classmethods for structfield creation
 #                      added
 #    28-Feb-2006 (CED) Minor modifications to `define_access_macros`
+#    12-May-2006 (CED) `reset_state` added
 #    ««revision-date»»···
 #--
 
@@ -93,10 +94,15 @@ class M_Struct (TFL.Meta.M_Class) :
         cls.count     = 0
     # end def reset_extension
 
+    def reset_state (cls) :
+        pass ### subclasses implement this
+    # def reset_state
+
     @classmethod
     def reset_all (cls) :
         for c in cls.classes.values () :
             c.reset_extension ()
+            c.reset_state     ()
     # end def reset_all
 
     @classmethod

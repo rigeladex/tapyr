@@ -25,6 +25,7 @@
 #    14-Mar-2006 (MZO) added mode in `map_offset_to_struct`, fixed root_table
 #    22-Mar-2006 (MZO) close debug file
 #    30-Mar-2006 (MZO) unique name of the debug file
+#    12-May-2006 (CED) optional `alignment` added to `add_blob`
 #    ««revision-date»»···
 #--
 #
@@ -70,9 +71,14 @@ class Bin_Block (TFL.Meta.Object) :
             self._offset += len (bin)
     # def add
 
-    def add_blob (self, blob, offset_name) :
-        buffer = "".join (self._binbuffer)
-        offset = len (self._binheader) + len (buffer)
+    def add_blob (self, blob, offset_name, alignment = 1) :
+        buffer   = "".join (self._binbuffer)
+        current  = len (self._binheader) + len (buffer)
+        offset   = TFL.rounded_up (current, alignment)
+        gap      = offset - current
+        if gap :
+            fill = struct.pack ("%dx" % gap)
+            self._binbuffer.append (fill)
         setattr (self.root, offset_name, offset)
         self._binbuffer.append (blob)
     # end def add_blob
