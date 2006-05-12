@@ -42,6 +42,7 @@
 #     2-Jul-2005 (CT)  `DL_Ring` added
 #     2-Jul-2005 (CT)  `_DL_Counted_` factored and `DL_Ring_Counted` added
 #    11-May-2006 (CED) `DL_Ring_Sorted` introduced
+#    12-May-2006 (CT)  `DL_Ring_Sorted._insert` simplified (and disobfuscated)
 #    ««revision-date»»···
 #--
 
@@ -455,10 +456,15 @@ class DL_Ring_Sorted (DL_Ring) :
        >>> drs = DL_Ring_Sorted (2, 1, 3)
        >>> list (drs)
        [1, 2, 3]
-       >>> drs.insert (5)
-       >>> drs.insert (4)
+       >>> drs.insert (3, 5, 4)
        >>> list (drs)
-       [1, 2, 3, 4, 5]
+       [1, 2, 3, 3, 4, 5]
+       >>> drs.insert (0, -1, 42)
+       >>> list (drs)
+       [-1, 0, 1, 2, 3, 3, 4, 5, 42]
+       >>> drs.insert (0.25)
+       >>> list (drs)
+       [-1, 0, 0.25, 1, 2, 3, 3, 4, 5, 42]
     """
 
     def __init__ (self, * items, ** kw) :
@@ -466,7 +472,7 @@ class DL_Ring_Sorted (DL_Ring) :
             self.key = kw ["key"]
         else :
             self.key = TFL.identity
-        self.clear ()
+        self.clear  ()
         self.insert (* items)
     # end def __init__
 
@@ -484,15 +490,15 @@ class DL_Ring_Sorted (DL_Ring) :
     # end def prepend
 
     def _insert (self, other) :
-        item  = self.head
-        for item in list (self) :
-            if self.key (item.value) > self.key (other) :
-                prev = item.prev
-                break
+        key = self.key (other)
+        try :
+            larger = TFL.first (it for it in self if self.key (it.value) > key)
+        except IndexError :
+            prev = self.tail
         else :
-            prev   = item
+            prev = larger.prev
         self.__super.insert (prev, other)
-        if self.key (self.mark.value) > self.key (other) :
+        if self.key (self.mark.value) > key :
             self.rotate_prev (1)
     # end def _insert
 
