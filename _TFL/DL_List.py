@@ -43,6 +43,7 @@
 #     2-Jul-2005 (CT)  `_DL_Counted_` factored and `DL_Ring_Counted` added
 #    11-May-2006 (CED) `DL_Ring_Sorted` introduced
 #    12-May-2006 (CT)  `DL_Ring_Sorted._insert` simplified (and disobfuscated)
+#    12-May-2006 (CED) 'DL_Item_Sortable` added and used
 #    ««revision-date»»···
 #--
 
@@ -123,6 +124,15 @@ class DL_Item (TFL.Meta.Object) :
     # end def __repr__
 
 # end class DL_Item
+
+class DL_Item_Sortable (DL_Item) :
+
+    def __init__ (self, value = None, key = None, next = None, prev = None) :
+        self.__super.__init__ (value, next, prev)
+        self.key = key
+    # def __init__
+
+# class DL_Item_Sortable
 
 class _DL_Chain_ (TFL.Meta.Object) :
     """Root class for doubly linked chains."""
@@ -394,7 +404,7 @@ class DL_Ring (_DL_Chain_) :
     def insert (self, pred, * items) :
         if items :
             if self.mark is self._NIL :
-                pred  = self.mark = self.DL_Item (items [0])
+                pred  = self.mark = self._new_item (self._NIL, items [0])
                 items = items   [1:]
                 pred.link_next  (pred)
             self.__super.insert (pred, * items)
@@ -467,6 +477,8 @@ class DL_Ring_Sorted (DL_Ring) :
        [-1, 0, 0.25, 1, 2, 3, 3, 4, 5, 42]
     """
 
+    DL_Item = DL_Item_Sortable
+
     def __init__ (self, * items, ** kw) :
         if "key" in kw :
             self.key = kw ["key"]
@@ -492,15 +504,19 @@ class DL_Ring_Sorted (DL_Ring) :
     def _insert (self, other) :
         key = self.key (other)
         try :
-            larger = TFL.first (it for it in self if self.key (it.value) > key)
+            larger = TFL.first (it for it in self if it.key > key)
         except IndexError :
             prev = self.tail
         else :
             prev = larger.prev
         self.__super.insert (prev, other)
-        if self.key (self.mark.value) > key :
+        if self.mark.key > key :
             self.rotate_prev (1)
     # end def _insert
+
+    def _new_item (self, pred, item) :
+        return self.DL_Item (item, self.key (item), pred.next, pred)
+    # end def _new_item
 
 # end class DL_Ring_Sorted
 
