@@ -98,6 +98,8 @@
 #     1-May-2006 (CT)  `Account_Entry.kontenzeile` fixed
 #     8-May-2006 (CT)  Style
 #     8-May-2006 (CT)  Use `TFL.defaultdict` instead of `TFL.PL_Dict`
+#    15-May-2006 (CT)  `V_Account.finish` added (and then left empty, because
+#                      adding correction for `privat` means major surgery)
 #    ««revision-date»»···
 #--
 
@@ -298,6 +300,7 @@ class Account :
         self.entries        = []
         self.privat         = {}
         self.ignore         = set (("83003", "83013", "83006", "83016"))
+        self._finished      = False
     # end def __init__
 
     account_vars = set (("vst_korrektur", "firma", "gewerbe_anteil"))
@@ -460,6 +463,11 @@ class V_Account (Account) :
     def _add_vorsteuer (self, vat) :
         self.vorsteuer += vat
     # end def _add_vorsteuer
+
+    def finish (self) :
+        if not self._finished :
+            self._finished = True
+    # end def finish
 
     def header_string (self) :
         return " %s   %8s%7s   %8s   %8s  %-5s %-5s %s  %s\n%s" % \
@@ -747,14 +755,13 @@ class T_Account (Account) :
         self.kblatt                         = {}
         self.kblatt [self.vorsteuer_gkonto] = []
         self.kblatt [self.ust_gkonto]       = []
-        self._finished                      = None
     # end def __init__
 
     def add (self, entry) :
         """Add `entry' to account `self'."""
         assert (isinstance (entry, Account_Entry))
         self.buchung_zahl [entry.konto]       += 1
-        self.buchung_zahl [entry.gegen_konto] +=1
+        self.buchung_zahl [entry.gegen_konto] += 1
         if not self.kblatt.has_key (entry.konto) :
             self.kblatt [entry.konto] = []
         self.kblatt [entry.konto].append (entry.kontenzeile ())
@@ -837,7 +844,7 @@ class T_Account (Account) :
 
     def finish (self) :
         if not self._finished :
-            self._finished = 1
+            self._finished = True
             self._do_gkonto \
                 ( self.vorsteuer,   self.vorsteuer_gkonto
                 , self.soll_saldo,  "Vorsteuer"
