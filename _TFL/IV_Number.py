@@ -44,6 +44,7 @@
 #    24-Oct-2002 (CT)  Esthetics
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #    14-Feb-2006 (CT)  Moved into package `TFL`
+#    31-May-2006 (BRU) Added `db_name`
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,7 @@ class IV_Number :
                                environment (e.g., the database just read)
        * db_extension          for databases, the extension of the database
                                file (optional; used for auto-starting the tool)
+       * db_name               a long name for db_extension (optional)
 
        `external_version' is set to the version of the interface when the
        program reads information from that interface. The value of
@@ -95,7 +97,13 @@ class IV_Number :
            and read from the registry (obviously :-)
     """
 
-    def __init__ (self, name, producer, consumer, program_version, comp_min = None, comp_max = None, db_extension = None) :
+    def __init__ \
+        ( self, name, producer, consumer, program_version
+        , comp_min     = None
+        , comp_max     = None
+        , db_extension = None
+        , db_name      = None
+        ) :
         if isinstance (producer, (str, unicode)) :
             producer = (producer, )
         if isinstance (consumer, (str, unicode)) :
@@ -107,6 +115,7 @@ class IV_Number :
         self.comp_min          = (comp_min, program_version) [comp_min is None]
         self.comp_max          = (comp_max, program_version) [comp_max is None]
         self.db_extension      = db_extension
+        self.db_name           = db_name
         self.reset_external_version ()
     # end def __init__
 
