@@ -32,6 +32,7 @@
 #    16-Apr-2003 (CT) `copy` added
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #    20-Mar-2006 (CT)  `__getitem__` added
+#    31-May-2006 (WPR) `__iter__` added
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,10 @@ class Record :
     def __setattr__ (self, name, value) :
         self.kw [name] = value
     # end def __setattr__
+
+    def __iter__ (self) :
+        return iter (self.kw)
+    # end def __iter__
 
 # end class Record
 
