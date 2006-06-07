@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Plugin_Packager
+#    TFL.Plugin_Packager
 #
 # Purpose
 #    Package a plugin so that it can be added to a McMillanized application
@@ -47,7 +47,8 @@
 #    27-Oct-2004 (CED) `self.hides` saved
 #     4-Nov-2004 (CT)  `_make_target_dir` factored and called from
 #                      `_rewrite_package_plugin`
-#    25-Mar-2005 (MG) Import of `Filename` changed
+#    25-Mar-2005 (MG)  Import of `Filename` changed
+#     7-Jun-2006 (CT)  `Re_Replacer` factored to `TFL.Regexp`
 #    ««revision-date»»···
 #--
 
@@ -62,24 +63,13 @@ import _TFL._Meta.Object
 import _TFL.sos
 
 from   _TFL.Filename       import Filename, Dirname
-from   _TFL.Regexp         import Regexp, re
+from   _TFL.Regexp         import Regexp, Re_Replacer, re
 from   _TFL.predicate      import *
 
-class Replacer (TFL.Meta.Object) :
+class Replacer (Re_Replacer) :
     """Replace a specific pattern in text"""
 
-    def __init__ (self, pattern, replacement) :
-        self.regexp      = Regexp (pattern, re.VERBOSE | re.MULTILINE)
-        self.replacement = replacement
-    # end def __init__
-
-    def __call__ (self, text) :
-        try :
-            return self.regexp.sub (self.replacement, text)
-        except TypeError :
-            print self.regexp.pattern, self.replacement
-            raise
-    # end def __call__
+    default_flags = re.VERBOSE | re.MULTILINE
 
 # end class Replacer
 
@@ -416,4 +406,4 @@ if __name__ == "__main__":
 ### python ~/lib/python/_TFL/Plugin_Packager.py -Diff ~/NCO/external/ttpbuild/src/code/NDT.py ~/NCO/lib/python/_Plugins/_MPC555_AS8202/Board.py /tmp/PIP_Test ~/NCO/external/ttpbuild/src/code:~/NCO/external/ttpostool/src/code:~/NCO/lib/python
 else :
     TFL._Export ("Plugin_Packager")
-### __END__ Plugin_Packager
+### __END__ TFL.Plugin_Packager

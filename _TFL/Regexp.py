@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,10 +44,12 @@
 #     4-Dec-2003 (CT) `search_iter` factored from `search_all`
 #     2-Nov-2004 (CT) `Multi_Regexp` added
 #    26-Jan-2006 (CT) `max_index` factored
+#     7-Jun-2006 (CT) `Re_Replacer` added
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
+import _TFL._Meta.Object
 import re
 
 if hasattr (re, "RegexObject") :
@@ -56,7 +58,7 @@ else :
     ### `sre' returns a type
     re_RegexObject = type (re.compile (""))
 
-class Regexp :
+class Regexp (TFL.Meta.Object) :
     """Wrap a regular expression pattern and the last match, if any.
 
        The last result of match/search is available in the instance attribute
@@ -140,7 +142,7 @@ class Regexp :
                 pos = lastpos
     # end def search_iter
 
-    __call__ = search
+#    __call__ = search
 
     def split (self, string, maxsplit = 0, minsplit = 0) :
         """Split `string` by `self._pattern`"""
@@ -213,6 +215,38 @@ class Multi_Regexp :
     # end def __getattr__
 
 # end class Multi_Regexp
+
+class Re_Replacer (TFL.Meta.Object) :
+    """Wrap a regular expression and a replacement (text or function).
+
+       >>> rep = Re_Replacer (
+       ...     "[abc]", lambda m : str ("abc".index (m.group (0))))
+       >>> rep ("abc")
+       '012'
+       >>> rep ("abc", count = 1)
+       '0bc'
+    """
+
+    default_flags = 0
+
+    def __init__ (self, pattern, replacement, flags = 0) :
+        self.regexp      = Regexp (pattern, flags or self.default_flags)
+        self.replacement = replacement
+    # end def __init__
+
+    def __call__ (self, text, count = 0) :
+        try :
+            return self.regexp.sub (self.replacement, text, count)
+        except TypeError :
+            print self.regexp.pattern, self.replacement
+            raise
+    # end def __call__
+
+    def __getattr__ (self, name) :
+        return getattr (self.regexp, name)
+    # end def __getattr__
+
+# end class Re_Replacer
 
 if __name__ != "__main__" :
     TFL._Export ("*", "re")
