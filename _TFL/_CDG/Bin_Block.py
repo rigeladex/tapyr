@@ -28,6 +28,7 @@
 #    12-May-2006 (CED) optional `alignment` added to `add_blob`
 #    12-Jun-2006 (CED) `additional_defines` takes c_file also
 #    12-Jun-2006 (CED) `ptypes` included at begin of h-file
+#    12-Jun-2006 (CED) Include of `ptypes` done in subclasses
 #    ««revision-date»»···
 #--
 #
@@ -168,7 +169,6 @@ class Bin_Block_Creator (TFL.Meta.Object) :
     # end def additional_blobs
 
     def additional_defines (self, C, h_file, c_file) :
-        h_file.add (C.App_Include ("ptypes.h"))
         c_file.add (C.App_Include (h_file.inc_name))
     # end def additional_defines
 
