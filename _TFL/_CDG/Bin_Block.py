@@ -27,6 +27,7 @@
 #    30-Mar-2006 (MZO) unique name of the debug file
 #    12-May-2006 (CED) optional `alignment` added to `add_blob`
 #    12-Jun-2006 (CED) `additional_defines` takes c_file also
+#    12-Jun-2006 (CED) `ptypes` included at begin of h-file
 #    ««revision-date»»···
 #--
 #
@@ -167,6 +168,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
     # end def additional_blobs
 
     def additional_defines (self, C, h_file, c_file) :
+        h_file.add (C.App_Include ("ptypes.h"))
         c_file.add (C.App_Include (h_file.inc_name))
     # end def additional_defines
 
@@ -197,7 +199,6 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         ( self, meta_struct, root, ptr_table, C, c_file, h_file
         , main = "root", function_name_tail = ""
         ) :
-        h_file.add (C.App_Include ("ptypes.h"))
         for c in meta_struct.needs_struct :
             h_file.add \
                 (c.as_forward_typedef (const = c.const, scope = h_file.scope))
