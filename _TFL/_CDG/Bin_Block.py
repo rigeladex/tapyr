@@ -26,6 +26,7 @@
 #    22-Mar-2006 (MZO) close debug file
 #    30-Mar-2006 (MZO) unique name of the debug file
 #    12-May-2006 (CED) optional `alignment` added to `add_blob`
+#    12-Jun-2006 (CED) `additional_defines` takes c_file also
 #    ««revision-date»»···
 #--
 #
@@ -165,15 +166,15 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         pass
     # end def additional_blobs
 
-    def additional_defines (self, C, h_file) :
-        pass
+    def additional_defines (self, C, h_file, c_file) :
+        c_file.add (C.App_Include (h_file.inc_name))
     # end def additional_defines
 
     def create_api \
         ( self, filename, meta_struct, config_struct, table_struct
         , main_name, C, c_file = None, h_file = None
         ) :
-        self.additional_defines (C, h_file)
+        self.additional_defines (C, h_file, c_file)
         self.create_c_code \
             ( meta_struct, config_struct, table_struct, C
             , c_file, h_file, main_name
@@ -205,7 +206,6 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             h_file.add (sf.as_typedef (scope = h_file.scope))
         for c in meta_struct.needs_struct :
             h_file.add (c.as_c_code (scope = h_file.scope, standalone = 1))
-        c_file.add (C.App_Include (h_file.inc_name))
         if root is not None and ptr_table is not None :
             self._aquire_bin_buffer  \
                 ( meta_struct, root, ptr_table, h_file, c_file, C
