@@ -45,6 +45,7 @@
 #     2-Nov-2004 (CT) `Multi_Regexp` added
 #    26-Jan-2006 (CT) `max_index` factored
 #     7-Jun-2006 (CT) `Re_Replacer` added
+#    14-Jun-2006 (CT)  `Multi_Re_Replacer` added
 #    ««revision-date»»···
 #--
 
@@ -247,6 +248,22 @@ class Re_Replacer (TFL.Meta.Object) :
     # end def __getattr__
 
 # end class Re_Replacer
+
+class Multi_Re_Replacer (TFL.Meta.Object) :
+    """Wrap multiple `Re_Replacer` instances and apply them in sequence"""
+
+    def __init__ (self, * rerep) :
+        self.rereps = rerep
+    # end def __init__
+
+    def __call__ (self, text, count = 0) :
+        result = text
+        for rerep in self.rereps :
+            result = rerep (result, count)
+        return result
+    # end def __call__
+
+# end class Multi_Re_Replacer
 
 if __name__ != "__main__" :
     TFL._Export ("*", "re")
