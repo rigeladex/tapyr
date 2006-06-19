@@ -155,6 +155,7 @@
 #     3-Jun-2005 (MG) `_usage`: missing call parameter `result` added to the
 #                     call of `_add_rest_args`
 #    30-Aug-2005 (CT) Use `in` instead of `find`
+#     1-May-2006 (MG) Use `dict` instead of `d_dict`
 #    ««revision-date»»···
 #--
 
@@ -181,7 +182,6 @@ import _TFL.Abbr_Key_Dict
 import _TFL.Environment
 import _TFL.PL_Dict
 import _TFL.PL_List
-import _TFL.d_dict
 import _TFL.sos
 
 class Cmd_Error (StandardError) :
@@ -268,7 +268,7 @@ class Arg :
           r"""\s*$"""
         , re.X
         )
-    cooks        = TFL.d_dict \
+    cooks        = dict \
       ( B        = bool
       , F        = _cook_F
       , I        = int
