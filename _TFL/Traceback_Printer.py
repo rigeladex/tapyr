@@ -31,6 +31,7 @@
 #     9-Aug-2005 (PGO) Creation
 #     8-Mar-2006 (CT)  `* args` added to `__call__`
 #    13-Mar-2006 (PGO) Message added if `sys.exc_info` is empty
+#    20-Jun-2006 (PGO) Support for (deprecated) string exceptions added
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,7 @@ from    _TFL                 import  TFL
 import  _TFL._Meta.Object
 
 import  sys
+import  inspect
 import  traceback
 
 class _Traceback_Printer_ (TFL.Meta.Object) :
@@ -70,10 +72,15 @@ class _Traceback_Printer_ (TFL.Meta.Object) :
         exc_type, exc_value, exc_tb = sys.exc_info ()
         if not (exc_type and exc_tb) :
             return "<no traceback>"
+
+        if inspect.isclass (exc_type) :
+            exc_name = exc_type.__name__
+        else :
+            exc_name = exc_type
         res = []
         for tb_line in traceback.extract_tb (exc_tb) :
             res.append (self._one_tb_line (tb_line))
-        res.append ("\n%s: %s\n" % (exc_type.__name__, exc_value))
+        res.append ("\n%s: %s\n" % (exc_name, exc_value))
         return "\n".join (res)
     # end def as_string
 
