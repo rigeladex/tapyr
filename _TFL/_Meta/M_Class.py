@@ -148,6 +148,9 @@ class M_Autorename (_M_Type_) :
         if "_real_name" in dict :
             name = dict ["_real_name"]
             del dict ["_real_name"]
+##         elif __debug__ :
+##             assert name not in (b.__name__ for b in bases), \
+##                 "Class `%s` inherits from class with same name!" % name
         dict ["__real_name"] = real_name
         return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
     # end def __new__
