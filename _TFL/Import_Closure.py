@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -27,92 +27,93 @@
 #    user-specified directories (i.e., excluding standard Python modules)
 #
 # Revision Dates
-#    25-Nov-1998 (CT) Creation
-#    26-Nov-1998 (CT) `import_pat' corrected
-#     7-Sep-2000 (CT) `expanded_path' applied
-#    12-Apr-2001 (CT) `import_pat' changed ("[^#]*?" --> "^\s*")
-#    12-Apr-2001 (CT) `-ignore' added
-#     8-May-2001 (CT) Support for package imports added
-#    18-May-2001 (CT) Use `_find_import' everywhere (factoring of
-#                     `_find_import' finally completed)
-#     2-Jul-2001 (CT) `pkg_namespace_import_pat' added and used
-#     3-Jul-2001 (CT) `-Pathsep' added
-#     3-Jul-2001 (CT) `pkg_namespace_pat' and `pkg_ns_dict' added and used
-#    17-Jul-2001 (CT) Leading `_' removed from namespace-packages
-#    17-Jul-2001 (CT) `pkg_namespace_pat' renamed to `pkg_namespace_def_pat'
-#    17-Jul-2001 (CT) Global functions replaced by class Import_Finder
-#    17-Jul-2001 (CT) Support for implicit imports from package namespaces
-#                     added
-#    28-Aug-2001 (MG) `pkg_namespace_def_pat` extended (match `From_Import`)
-#    28-Aug-2001 (MG) Pass `pkg_path` for recursive calls of `_find_import`
-#    13-Nov-2001 (CT) Adapted to nested packages
-#    11-Dec-2001 (CT) `_import_module` factored
-#    11-Dec-2001 (CT) `prefix` added `path_of` (and `_path_of` factored)
-#    11-Dec-2001 (CT) `modules` handling added to `_import_module_from_pkg`
-#                     (along with adding `modules` group to
-#                     `pkg_namespace_import_pat` and `pkg_namespace_use_pat`)
-#    12-Dec-2001 (CT) Argument `pkg_import_path` removed from `_find_import*`
-#    12-Dec-2001 (CT) `_import_module_from_pkg` fixed (uses `_import_module`
-#                     now and computes `imported` using `pkg_ns_dict [p]`
-#                     instead of `p`)
-#    12-Dec-2001 (CT) `pkg_ns_dict` replaced by `pkg_ns_adict` and
-#                     `pkg_ns_rdict`
-#    12-Dec-2001 (CT) Argument `rel_name` added to `_find_imports`
-#    14-Mar-2002 (CT) `Package_Namespace` removed
-#    14-Mar-2002 (CT) Nested packages supported properly
-#    10-Jul-2002 (MG) Error in `path_of` corrected (use `prefix` as well)
-#    24-Feb-2004 (CT) Modernizations (e.g., usages of `string` module removed)
-#    24-Feb-2004 (CT) `file_dict` added, `_add` factored and changed as to
-#                     not put the same file twice into `import_dict`
-#                     (happened for TFL.Generator, because the doc-test
-#                     imports `Generator` without package prefix)
-#     9-Mar-2004 (CT) `_add` changed to write mixed relative and absolute
-#                     imports to sys.stderr
-#     8-Jun-2004 (CT) `Py_Module` added and used as value in `import_dict`
-#     8-Jun-2004 (CT) `seen` added to avoid multiple lookups of irrelevant
-#                     modules
-#     8-Jun-2004 (CT) Debug code changed and extended
-#     8-Jun-2004 (CT) Methods sorted alphabetically
-#     8-Jun-2004 (CT) `__sub__` added to `Import_Finder` (and the `-Diff`
-#                     option for testing it)
-#     9-Jun-2004 (CT) s/Py_Module/P_M/
-#     9-Jun-2004 (CT) `P_P` added
-#     9-Jun-2004 (CT) `path_of` changed to return `P_M` instances instead of
-#                     tuples
-#     9-Jun-2004 (CT) `pkg_dict` and `tlp_dict` added
-#     9-Jun-2004 (CT) `__sub__` and `__init__` changed so that `__sub__`
-#                     returns another instance of `Import_Finder` instead of
-#                     a `Record`
-#    17-Jun-2004 (CT) Options `-files`, `-packages`, and `-toplevels` added
-#    17-Jun-2004 (CT) `__sub__` corrected (call `_add` instead of `add`)
-#    17-Jun-2004 (CT) `__sub__` changed to set `pkg_dict` and `tlp_dict` of
-#                     result correctly
-#    17-Jun-2004 (CT) s/Import_Finder/Import_Closure/g
-#    17-Jun-2004 (CT) Debug code removed to make code clearer
-#    18-Jun-2004 (CT) s/import_dict/pym_dict/
-#    18-Jun-2004 (CT) Replaced `Import_Closure` attributes `file_name`,
-#                     `base_name`, and `path_name` by a single attribute
-#                     `root_pym`
-#    18-Jun-2004 (CT) `_import_root` factored from `__init__` and changed so
-#                     that `rel_name` and `pkg` are right
-#    18-Jun-2004 (CT) `level` added to `P_M` and used to determine
-#                     `is_toplevel`
-#    19-Jun-2004 (CT) s/from_text/new/
-#    19-Jun-2004 (CT) `remove` added
-#    19-Jun-2004 (CT) `__sub__` changed to `_add` packages to delta closure
-#                     if some of their modules are in the delta (up to now,
-#                     these were only inserted into `pkg_dict` and `tlp_dict`)
-#    20-Jun-2004 (CT) `base_name` added to `P_M`
-#    21-Jun-2004 (CT) `base_path` added and semantics of `base_name` changed
-#    22-Jun-2004 (CT) Creation (factored from find_import_closure.py)
-#    22-Jun-2004 (CT) `as_code` changed to package the `pyms` in a list to
-#                     avoid `more than 255 arguments` exception from `new`
-#    22-Jun-2004 (CT) `new` changed to expect list for `pyms` instead of
-#                     rest-arguments
-#     7-Oct-2004 (CT) `__sub__` changed to include parent packages into
-#                     result (otherwise result contains X.Y.Z, but not X.Y,
-#                     if difference doesn't contain any module of X.Y)
-#    25-Mar-2005 (MG) Import of `Filename` changed
+#    25-Nov-1998 (CT)  Creation
+#    26-Nov-1998 (CT)  `import_pat' corrected
+#     7-Sep-2000 (CT)  `expanded_path' applied
+#    12-Apr-2001 (CT)  `import_pat' changed ("[^#]*?" --> "^\s*")
+#    12-Apr-2001 (CT)  `-ignore' added
+#     8-May-2001 (CT)  Support for package imports added
+#    18-May-2001 (CT)  Use `_find_import' everywhere (factoring of
+#                      `_find_import' finally completed)
+#     2-Jul-2001 (CT)  `pkg_namespace_import_pat' added and used
+#     3-Jul-2001 (CT)  `-Pathsep' added
+#     3-Jul-2001 (CT)  `pkg_namespace_pat' and `pkg_ns_dict' added and used
+#    17-Jul-2001 (CT)  Leading `_' removed from namespace-packages
+#    17-Jul-2001 (CT)  `pkg_namespace_pat' renamed to `pkg_namespace_def_pat'
+#    17-Jul-2001 (CT)  Global functions replaced by class Import_Finder
+#    17-Jul-2001 (CT)  Support for implicit imports from package namespaces
+#                      added
+#    28-Aug-2001 (MG)  `pkg_namespace_def_pat` extended (match `From_Import`)
+#    28-Aug-2001 (MG)  Pass `pkg_path` for recursive calls of `_find_import`
+#    13-Nov-2001 (CT)  Adapted to nested packages
+#    11-Dec-2001 (CT)  `_import_module` factored
+#    11-Dec-2001 (CT)  `prefix` added `path_of` (and `_path_of` factored)
+#    11-Dec-2001 (CT)  `modules` handling added to `_import_module_from_pkg`
+#                      (along with adding `modules` group to
+#                      `pkg_namespace_import_pat` and `pkg_namespace_use_pat`)
+#    12-Dec-2001 (CT)  Argument `pkg_import_path` removed from `_find_import*`
+#    12-Dec-2001 (CT)  `_import_module_from_pkg` fixed (uses `_import_module`
+#                      now and computes `imported` using `pkg_ns_dict [p]`
+#                      instead of `p`)
+#    12-Dec-2001 (CT)  `pkg_ns_dict` replaced by `pkg_ns_adict` and
+#                      `pkg_ns_rdict`
+#    12-Dec-2001 (CT)  Argument `rel_name` added to `_find_imports`
+#    14-Mar-2002 (CT)  `Package_Namespace` removed
+#    14-Mar-2002 (CT)  Nested packages supported properly
+#    10-Jul-2002 (MG)  Error in `path_of` corrected (use `prefix` as well)
+#    24-Feb-2004 (CT)  Modernizations (e.g., usages of `string` module removed)
+#    24-Feb-2004 (CT)  `file_dict` added, `_add` factored and changed as to
+#                      not put the same file twice into `import_dict`
+#                      (happened for TFL.Generator, because the doc-test
+#                      imports `Generator` without package prefix)
+#     9-Mar-2004 (CT)  `_add` changed to write mixed relative and absolute
+#                      imports to sys.stderr
+#     8-Jun-2004 (CT)  `Py_Module` added and used as value in `import_dict`
+#     8-Jun-2004 (CT)  `seen` added to avoid multiple lookups of irrelevant
+#                      modules
+#     8-Jun-2004 (CT)  Debug code changed and extended
+#     8-Jun-2004 (CT)  Methods sorted alphabetically
+#     8-Jun-2004 (CT)  `__sub__` added to `Import_Finder` (and the `-Diff`
+#                      option for testing it)
+#     9-Jun-2004 (CT)  s/Py_Module/P_M/
+#     9-Jun-2004 (CT)  `P_P` added
+#     9-Jun-2004 (CT)  `path_of` changed to return `P_M` instances instead of
+#                      tuples
+#     9-Jun-2004 (CT)  `pkg_dict` and `tlp_dict` added
+#     9-Jun-2004 (CT)  `__sub__` and `__init__` changed so that `__sub__`
+#                      returns another instance of `Import_Finder` instead of
+#                      a `Record`
+#    17-Jun-2004 (CT)  Options `-files`, `-packages`, and `-toplevels` added
+#    17-Jun-2004 (CT)  `__sub__` corrected (call `_add` instead of `add`)
+#    17-Jun-2004 (CT)  `__sub__` changed to set `pkg_dict` and `tlp_dict` of
+#                      result correctly
+#    17-Jun-2004 (CT)  s/Import_Finder/Import_Closure/g
+#    17-Jun-2004 (CT)  Debug code removed to make code clearer
+#    18-Jun-2004 (CT)  s/import_dict/pym_dict/
+#    18-Jun-2004 (CT)  Replaced `Import_Closure` attributes `file_name`,
+#                      `base_name`, and `path_name` by a single attribute
+#                      `root_pym`
+#    18-Jun-2004 (CT)  `_import_root` factored from `__init__` and changed so
+#                      that `rel_name` and `pkg` are right
+#    18-Jun-2004 (CT)  `level` added to `P_M` and used to determine
+#                      `is_toplevel`
+#    19-Jun-2004 (CT)  s/from_text/new/
+#    19-Jun-2004 (CT)  `remove` added
+#    19-Jun-2004 (CT)  `__sub__` changed to `_add` packages to delta closure
+#                      if some of their modules are in the delta (up to now,
+#                      these were only inserted into `pkg_dict` and `tlp_dict`)
+#    20-Jun-2004 (CT)  `base_name` added to `P_M`
+#    21-Jun-2004 (CT)  `base_path` added and semantics of `base_name` changed
+#    22-Jun-2004 (CT)  Creation (factored from find_import_closure.py)
+#    22-Jun-2004 (CT)  `as_code` changed to package the `pyms` in a list to
+#                      avoid `more than 255 arguments` exception from `new`
+#    22-Jun-2004 (CT)  `new` changed to expect list for `pyms` instead of
+#                      rest-arguments
+#     7-Oct-2004 (CT)  `__sub__` changed to include parent packages into
+#                      result (otherwise result contains X.Y.Z, but not X.Y,
+#                      if difference doesn't contain any module of X.Y)
+#    25-Mar-2005 (MG)  Import of `Filename` changed
+#     5-Jul-2006 (CED) `__sub__` adds parent packages recursively
 #    ««revision-date»»···
 #--
 
@@ -363,9 +364,12 @@ class Import_Closure :
                     ### make sure that parent packages are part of `result`
                     ### even if none of their modules but only sub-packages
                     ### are in difference
-                    pn = ".".join (pn.split (".") [:-1])
-                    if pn not in result.pkg_dict :
-                        result._add (self.pkg_dict [pn])
+                    for pn in \
+                        ( ".".join (s) for s in
+                          head_slices (pn.split (".") [:-1])
+                        ) :
+                        if pn not in result.pkg_dict :
+                            result._add (self.pkg_dict [pn])
         return result
     # end def __sub__
 
