@@ -114,6 +114,7 @@
 #                      if difference doesn't contain any module of X.Y)
 #    25-Mar-2005 (MG)  Import of `Filename` changed
 #     5-Jul-2006 (CED) `__sub__` adds parent packages recursively
+#    11-Jul-2006 (PGO) `script_code` flag added
 #    ««revision-date»»···
 #--
 
@@ -185,7 +186,10 @@ class Import_Closure :
         , re.X
         )
 
-    def __init__ (self, file_name = None, import_path = ("./", ), ignore = None, debug = False) :
+    def __init__ \
+        ( self, file_name = None, import_path = ("./", ), ignore = None
+        , debug = False, script_code = False
+        ) :
         self.import_path  = tuple (import_path)
         self.pym_dict     = {} ### rel-name-sans-extension --> P_M
         self.file_dict    = {} ### path --> rel-name-sans-extension
@@ -194,6 +198,7 @@ class Import_Closure :
         self.seen         = {}
         self.ignore       = ignore or {}
         self.debug        = debug
+        self.script_code  = script_code
         self.root_pym     = None
         if file_name :
             self.root_pym = pym = self._import_root (file_name)
@@ -262,7 +267,7 @@ class Import_Closure :
         try :
             import_pat = self.import_pat
             for line in file :
-                if self.script_pat.match (line) :
+                if (not self.script_code) and self.script_pat.match (line) :
                     break
                 if import_pat.match (line) :
                     imported = import_pat.imported
@@ -393,6 +398,8 @@ def command_spec (arg_array = None) :
             , "-packages:B?Show all packages in import closure"
             , "-Pathsep:S=:?Path separator used by `import_path'"
             , "-toplevels:B?Show all toplevel packages in import closure"
+            , "-script_code:B?Add imports following the "
+              "__name__ == '__main__' line"
             )
         , min_args    = 1
         , max_args    = 3
@@ -414,6 +421,7 @@ def main (cmd) :
         , import_path = import_path
         , ignore      = ignore
         , debug       = cmd.debug
+        , script_code = cmd.script_code
         )
     if cmd.Diff :
         result = finder - Import_Closure \
@@ -421,6 +429,7 @@ def main (cmd) :
             , import_path = import_path
             , ignore      = ignore
             , debug       = cmd.debug
+            , script_code = cmd.script_code
             )
     sep = cmd.separator
     if sep == r"\n" :
