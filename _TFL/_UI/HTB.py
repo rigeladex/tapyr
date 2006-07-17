@@ -140,6 +140,7 @@
 #     9-May-2005 (MZO) added setup_edit/file_menu
 #    10-Aug-2005 (CT)  Pass literal strings as `accelerator` arguments
 #     5-Sep-2005 (MZO) set dialog_title=productname if available.
+#    17-Jul-2006 (MZO) i18749, present window `search`, `expand`
 #    ««revision-date»»···
 #--
 
@@ -1256,6 +1257,7 @@ class Browser (TFL.UI.Mixin) :
         try     :
             for n in self.nodes :
                 n.open (transitive = 1 << 30, show_gauge = True)
+            self.text.make_active ()
         finally :
             self._deactivate_gauge ()
     # end def open_nodes
@@ -1511,6 +1513,7 @@ class Browser (TFL.UI.Mixin) :
             (title = self._dialog_title, prompt = "Search for:")
         self._do_find (self.find, pattern)
         self._update_cmd_mgr ()
+        self.text.make_active ()
     # end def _ask_find
 
     def _do_find (self, func, *args) :
