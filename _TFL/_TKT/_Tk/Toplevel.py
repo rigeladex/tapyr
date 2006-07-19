@@ -23,6 +23,7 @@
 #    20-Apr-2005 (MZO) Focused_Toplevel return none - like TGW.Focused_Toplevel
 #    25-Apr-2005 (CT)  `new_context_menu` removed (wrong name, wrong place)
 #    30-Aug-2005 (MZO) i14421 - renamed win_expl_cb
+#    19-Jul-2006 (MZO) i18758, `new_menubar` implemented
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,9 @@ class Toplevel (TFL.TKT.Mixin) :
     """A toplevel window -- no optional toolbar etc. yet"""
 
     Widget_Type = CTK.Toplevel
+
+    _padx = 5
+    _pady = 5 
 
     def __init__ \
         ( self
@@ -54,8 +58,17 @@ class Toplevel (TFL.TKT.Mixin) :
         ) :
         self.__super.__init__ (AC = AC)
         self.cb_delete = cb_delete
-        self.wtk_widget = self.exposed_widget = CTK.C_Toplevel \
+        self.wtk_widget = CTK.C_Toplevel \
             (destroy_cmd = self.destroy)
+        self._bb        = None
+        self.exposed_widget = self.button_box = CTK.Buttongrid   \
+            ( self.wtk_widget
+            , name        = "button_box"
+            , padx        = self._padx
+            , pady        = self._pady
+            , columns     = 6
+            )
+        self.button_box.pack (side = BOTTOM)
     # end def __init__
 
     def destroy (self) :
@@ -69,7 +82,13 @@ class Toplevel (TFL.TKT.Mixin) :
             fill = BOTH
         elif fill == False :
             fill = None
-        widget.pack (fill = fill, ** kw)
+        widget.pack \
+            ( fill      = fill
+            , side      = BOTTOM
+            , padx      = self._padx
+            , pady      = self._pady
+            , ** kw
+            )
     # end def pack
 
     def show (self) :
@@ -77,12 +96,16 @@ class Toplevel (TFL.TKT.Mixin) :
     # end def pack
 
     def new_menubar (self) :
-        return None
-        # Tk allows only one menubar in the application
-        # XXX (MZO), 13-Apr-2005, TODO: 1) pack like in CT_TK.BB_Toplevel
-        #     2) ignore add_group instead of raise notimplementederror
-        # bb = self.TNS.CI_Button_Box (self.AC, self, name = "mb")
-        # return bb
+        if self._bb is None :
+            self._bb = self.TNS.CI_Button_Box \
+                (self.AC, self.button_box, name = "mb")
+            self._bb.wtk_widget.pack \
+                ( fill      = X
+                , side      = BOTTOM
+                , padx      = self._padx
+                , pady      = self._pady
+                )
+        return self._bb
     # end def new_menubar
 
     def __getattr__ (self, name) :
@@ -97,9 +120,6 @@ def Focused_Toplevel () :
     # return focused widget of current active toplevel
     return None
 # end def Focused_Toplevel
-
-
-
 
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("Toplevel", "Focused_Toplevel")
