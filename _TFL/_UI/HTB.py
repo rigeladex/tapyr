@@ -141,6 +141,7 @@
 #    10-Aug-2005 (CT)  Pass literal strings as `accelerator` arguments
 #     5-Sep-2005 (MZO) set dialog_title=productname if available.
 #    17-Jul-2006 (MZO) i18749, present window `search`, `expand`
+#    19-Jul-2006 (MZO) i18758, comment out `accelerator`
 #    ««revision-date»»···
 #--
 
@@ -1458,7 +1459,7 @@ class Browser (TFL.UI.Mixin) :
                       )
                 , if_names     = if_n
                 , underline    = 0
-                , accelerator  = "search"
+ #               , accelerator  = "search"
                 )
         add_cmd ( Cmd ( "Find next"
                       , self._do_find_next
@@ -1466,7 +1467,7 @@ class Browser (TFL.UI.Mixin) :
                       )
                 , if_names     = if_n
                 , underline    = 5
-                , accelerator  = "search_next"
+#                , accelerator  = "search_next"
                 )
         add_cmd ( Cmd ( "Find previous"
                       , self._do_find_prev
@@ -1474,7 +1475,7 @@ class Browser (TFL.UI.Mixin) :
                       )
                 , if_names     = if_n
                 , underline    = 5
-                , accelerator  = "search_prev"
+#                , accelerator  = "search_prev"
                 )
     # end def _setup_edit_menu
 
