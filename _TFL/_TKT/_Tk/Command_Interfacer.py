@@ -69,6 +69,7 @@
 #    16-Aug-2005 (CT)  `_CI_Toolbar_Group_` changed to allow nested groups
 #                      (without displaying them visually)
 #    16-Sep-2005 (MZO) i17208, added manual bind of menu-accelerators.
+#    19-Jul-2006 (MZO) i18758, `add_group` implemented
 #    ««revision-date»»···
 #--
 
@@ -151,7 +152,7 @@ class CI_Button_Box (_CI_Widget_) :
 
     ### group specific methods
     def add_group (self, name, index = None, delta = 0, ** kw) :
-        raise NotImplementedError, "Buttonbox.add_group"
+        return self
     # end def add_group
 
     def remove_group (self, index) :
