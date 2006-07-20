@@ -115,6 +115,8 @@
 #    25-Mar-2005 (MG)  Import of `Filename` changed
 #     5-Jul-2006 (CED) `__sub__` adds parent packages recursively
 #    11-Jul-2006 (PGO) `script_code` flag added
+#    20-Jul-2006 (PGO) `__sub__` doesn't add parent packages any longer (moved
+#                      to TFL.Plugin_Packager)
 #    ««revision-date»»···
 #--
 
@@ -365,16 +367,6 @@ class Import_Closure :
                 pn = pym.pkg
                 if pn in self.pkg_dict and pn not in result.pkg_dict :
                     result._add (self.pkg_dict [pn])
-                if pym.is_package and not pym.is_toplevel :
-                    ### make sure that parent packages are part of `result`
-                    ### even if none of their modules but only sub-packages
-                    ### are in difference
-                    for pn in \
-                        ( ".".join (s) for s in
-                          head_slices (pn.split (".") [:-1])
-                        ) :
-                        if pn not in result.pkg_dict :
-                            result._add (self.pkg_dict [pn])
         return result
     # end def __sub__
 

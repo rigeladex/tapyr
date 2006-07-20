@@ -49,6 +49,7 @@
 #                      `_rewrite_package_plugin`
 #    25-Mar-2005 (MG)  Import of `Filename` changed
 #     7-Jun-2006 (CT)  `Re_Replacer` factored to `TFL.Regexp`
+#    20-Jul-2006 (PGO) `_populate_dirs` creates init files in empty dirs
 #    ««revision-date»»···
 #--
 
@@ -122,6 +123,7 @@ class Plugin_Packager (TFL.Meta.Object) :
         self._setup_replacers       ()
         self._rewrite_modules       (self._m_replacers)
         self._rewrite_packages      ()
+        self._populate_dirs         ()
     # end def __init__
 
     def _get_version (self, pip) :
@@ -139,6 +141,20 @@ class Plugin_Packager (TFL.Meta.Object) :
         if not TFL.sos.path.isdir (pym_dir) :
             TFL.sos.mkdir_p (pym_dir)
     # end def _make_target_dir
+
+    def _populate_walker (self, lst, dir_name, files) :
+        p = TFL.sos.path
+        populated = \
+            TFL.any_true_p (files, lambda f : p.isfile (p.join (dir_name, f)))
+        if not populated :
+            f = file (p.join (dir_name, "__init__.py"), "a")
+            f.write ("# Tapir enterprises are evil. Except Mondays.\n")
+            f.close ()
+    # end def _populate_walker
+
+    def _populate_dirs (self) :
+        TFL.sos.path.walk (self.target_path, self._populate_walker, ())
+    # end def _populate_dirs
 
     def _pns_from_pkg (self, pkg) :
         return ".".join \
