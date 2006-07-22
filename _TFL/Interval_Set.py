@@ -37,6 +37,7 @@
 #                      intersection and contains with it
 #                      Factored _bisection and use it in next_point
 #    13-Dec-2005 (CT)  Small improvements
+#    22-Jul-2006 (CED) `contains_interval` added
 #    ««revision-date»»···
 #--
 
@@ -92,6 +93,13 @@ class Interval_Set (TFL.Meta.Object) :
         else :
             self.intervals = []
     # end def __init__
+
+    def contains_interval (self, ival) :
+        for iv in self.intervals :
+            if iv.contains (ival) :
+                return True
+        return False
+    # end def contains_interval
 
     def contains_point (self, point) :
         return self.next_point_up (point) == point

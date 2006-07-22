@@ -22,6 +22,7 @@
 #     5-Apr-2004 (CED) `__str__` added
 #    29-Jun-2005 (CT)  Test scaffolding dumped
 #    30-Jun-2005 (CT)  Style improvements
+#    22-Jul-2006 (CED) `is_free` added
 #    ««revision-date»»···
 #--
 
@@ -134,6 +135,11 @@ class Timeline (NDT.Sched2.Object) :
         return free, size
     # end def intersection
 
+    def is_free (self, span) :
+        free, size = self.intersection (span)
+        return (len (free) == 1) and (abs (size - span.length) < self.epsilon)
+    # end def is_free
+
     def cut (self, * pieces) :
         """Cut `pieces` from `self.free`. Each element of `pieces` must be a
            `Timeline_Cut` as returned from `intersection` to which
@@ -165,7 +171,7 @@ class Timeline (NDT.Sched2.Object) :
         for s in spans :
             if s.length > 0 :
                 free, size = self.intersection (s)
-                if len (free) != 1 or abs (size - s.length) > self.epsilon :
+                if not self.is_free (s) :
                     raise ValueError, (self.free, s, spans, free)
                 f = free [0]
                 f.prepare_cut_l (size)
