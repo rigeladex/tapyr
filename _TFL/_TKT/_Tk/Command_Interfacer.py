@@ -70,6 +70,7 @@
 #                      (without displaying them visually)
 #    16-Sep-2005 (MZO) i17208, added manual bind of menu-accelerators.
 #    19-Jul-2006 (MZO) i18758, `add_group` implemented
+#    26-Jul-2006 (MZO) i18758, label of buttons defined
 #    ««revision-date»»···
 #--
 
@@ -143,6 +144,7 @@ class CI_Button_Box (_CI_Widget_) :
             , command     = callback
             , image       = CTK.image_mgr.get (im_name)
             , cmd_name    = name
+            , text        = name
             )
     # end def add_command
 
