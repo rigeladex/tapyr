@@ -27,107 +27,109 @@
 #    classes and functions implemented in the modules of the package
 #
 # Revision Dates
-#     7-May-2001 (CT) Creation
-#     2-Jul-2001 (CT) Docstring extended
-#     2-Jul-2001 (CT) Use `` instead of `' to quote inside docstrings and
-#                     comments
-#    27-Jul-2001 (CT) `Import` changed to support `*`
-#    30-Jul-2001 (CT) `*` import corrected
-#    30-Jul-2001 (CT) `_import_1` and `_import_name` factored
-#    31-Jul-2001 (CT) `From_Import` added (and `_import_symbols` factored)
-#     2-Aug-2001 (CT) `_Module_Space` added and used to separate namespace
-#                     for modules provided by the package from the namespace
-#                     for classes and functions provided by the package
-#     3-Aug-2001 (CT) `Import_Module` added
-#    16-Aug-2001 (CT) `_import_1` fixed to correctly check for name clashes
-#    19-Aug-2001 (CT) `_import_names` changed to raise `ImportError` if
-#                     necessary
-#    19-Aug-2001 (CT) `__getattr__` raises `AttributeError` instead of
-#                     `ImportError` for `__*__`
-#    22-Aug-2001 (CT) `transitive` added
-#    20-Sep-2001 (MG) `_import_names`: import name they are defined in the
-#                     modul to be imported or if `getmodule` returns `None`
-#    20-Sep-2001 (CT) Change of MG revoked
-#    20-Sep-2001 (CT) Don't *-import names with leading underscores
-#     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
-#     8-Nov-2001 (CT) `Essence` added to handle TOM.Class_Proxy correctly
-#    13-Nov-2001 (CT) `_import_symbols` corrected to handle empty `symbols`
-#                     correctly
-#    13-Nov-2001 (CT) Unncessary restriction of nested packages removed
-#     5-Dec-2001 (MG) Special code for `Proxy_Type` changed
-#    20-Feb-2002 (CT) `_Export` and `XXX PPP` comments added
-#    21-Feb-2002 (CT) `_Module_Space._load` factored
-#    22-Feb-2002 (CT) `_leading_underscores` added and used to remove leading
-#                     underscores from `Package_Namespace.__name`
-#    22-Feb-2002 (CT) `_debug` added and used to guard `XXX PPP` prints
-#    25-Feb-2002 (CT) `_complain_implicit` factored
-#    25-Feb-2002 (CT) Kludge to add `FOO` alias to sys.modules for package
-#                     `_FOO` (otherwise binary databases with old-style
-#                     packages don't load <sigh>)
-#    26-Feb-2002 (CT) `_debug` set to `__debug__`
-#    26-Feb-2002 (CT) `_complain_implicit` changed to provide more useful
-#                     output (included addition of `last_caller`)
-#    27-Feb-2002 (CT) Argument `module_name` removed from `_Export` (get that
-#                     from `caller_globals`)
-#    12-Mar-2002 (CT) `_Export_Module` added
-#    12-Mar-2002 (CT) Use `TFL.Module.names_of` instead of half-broken
-#                     `inspect.getmodule`
-#    15-Mar-2002 (CT) `Import` renamed to `__Import`
-#                     `_import_symbols` renamed to `__import_symbols`
-#    15-Mar-2002 (CT) `From_Import` and `Import_Module` removed
-#    18-Mar-2002 (MG) `_Add` added
-#    18-Mar-2002 (CT) `_complain_implicit` changed to write new syntax
-#    28-Mar-2002 (CT) Last remnants of implicit imports removed
-#     3-Sep-2002 (CT) Comment added to `_Module_Space._load` to explain why
-#                     `__import__` is used in the particular way it is
-#     8-Oct-2002 (CT) Pass `None` as fourth argument to `__import__` to avoid
-#                     annoying Gordon McMillan
-#    11-Oct-2002 (CT) Change of `8-Oct-2002` backed out because it doesn't
-#                     work with McMillan
-#     4-Feb-2003 (CT) `Derived_Package_Namespace` added
-#     8-Apr-2003 (CT) `_leading_underscores` changed to consider `._` too
-#     8-Apr-2003 (CT) `qname` added
-#     8-Apr-2003 (CT) `pname` added
-#     8-Apr-2003 (CT) Compatibility kludge of putting `Package_Namespace`
-#                     into `sys.modules` removed (it was too smelly)
-#    28-Jul-2003 (CT) `_Reload` added
-#     1-Aug-2003 (CT) `_Reload` changed to reload in same sequence as
-#                     original import
-#    12-Sep-2003 (CT) `_Reload` changed to clear the damned `linecache`
-#    20-Nov-2003 (CT) `_Export_Module` changed to take `mod` from `kw` if
-#                     there
-#    16-Jun-2004 (CT) `_Module_Space._load` changed to
-#                     - use `sys.modules` instead of `__import__`
-#                     - accept `q_name` as argument
-#    16-Jun-2004 (CT) `Package_Namespace._Load_Module` factored
-#     5-Jul-2004 (CT) `__name__` set for `Package_Namespace` instances to
-#                     make them more similar to modules
-#     4-Aug-2004 (MG) `Package_Namespace._Import_Module` added
-#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
-#    23-Oct-2004 (CT) `_check_clashes` added
-#    28-Oct-2004 (CT) `_Export_Module` changed to honor `_check_clashes`
-#    10-Jan-2005 (CT) `__repr__` changed to not future warn about negative
-#                     values of `id`
-#    14-Jan-2005 (CT) `_DPN_Auto_Importer_` added and called by
-#                     `Derived_Package_Namespace`
-#    20-Jan-2005 (CT) `_DPN_Auto_Importer_.__call__` changed to ignore
-#                     transitive import errors
-#    24-Jan-2005 (CT) Change of `20-Jan-2005` fixed
-#    24-Jan-2005 (CT) `_Import_Module` changed to return the imported module
-#                     (and rest-args removed)
-#    10-Feb-2005 (CT) `_Export` changed to streamline `*` handling
-#    10-Feb-2005 (CT) More documentation added
-#    24-Mar-2005 (CT) Dependencies on non-standard-lib modules removed
-#                     - Use `re` instead of `Regexp`
-#                     - Unused import of `caller_info` removed
-#                     - Import of `caller_globals` replaced by home-grown code
+#     7-May-2001 (CT)  Creation
+#     2-Jul-2001 (CT)  Docstring extended
+#     2-Jul-2001 (CT)  Use `` instead of `' to quote inside docstrings and
+#                      comments
+#    27-Jul-2001 (CT)  `Import` changed to support `*`
+#    30-Jul-2001 (CT)  `*` import corrected
+#    30-Jul-2001 (CT)  `_import_1` and `_import_name` factored
+#    31-Jul-2001 (CT)  `From_Import` added (and `_import_symbols` factored)
+#     2-Aug-2001 (CT)  `_Module_Space` added and used to separate namespace
+#                      for modules provided by the package from the namespace
+#                      for classes and functions provided by the package
+#     3-Aug-2001 (CT)  `Import_Module` added
+#    16-Aug-2001 (CT)  `_import_1` fixed to correctly check for name clashes
+#    19-Aug-2001 (CT)  `_import_names` changed to raise `ImportError` if
+#                      necessary
+#    19-Aug-2001 (CT)  `__getattr__` raises `AttributeError` instead of
+#                      `ImportError` for `__*__`
+#    22-Aug-2001 (CT)  `transitive` added
+#    20-Sep-2001 (MG)  `_import_names`: import name they are defined in the
+#                      modul to be imported or if `getmodule` returns `None`
+#    20-Sep-2001 (CT)  Change of MG revoked
+#    20-Sep-2001 (CT)  Don't *-import names with leading underscores
+#     3-Nov-2001 (MG)  import `TFL.Caller` instead of `Caller`
+#     8-Nov-2001 (CT)  `Essence` added to handle TOM.Class_Proxy correctly
+#    13-Nov-2001 (CT)  `_import_symbols` corrected to handle empty `symbols`
+#                      correctly
+#    13-Nov-2001 (CT)  Unncessary restriction of nested packages removed
+#     5-Dec-2001 (MG)  Special code for `Proxy_Type` changed
+#    20-Feb-2002 (CT)  `_Export` and `XXX PPP` comments added
+#    21-Feb-2002 (CT)  `_Module_Space._load` factored
+#    22-Feb-2002 (CT)  `_leading_underscores` added and used to remove leading
+#                      underscores from `Package_Namespace.__name`
+#    22-Feb-2002 (CT)  `_debug` added and used to guard `XXX PPP` prints
+#    25-Feb-2002 (CT)  `_complain_implicit` factored
+#    25-Feb-2002 (CT)  Kludge to add `FOO` alias to sys.modules for package
+#                      `_FOO` (otherwise binary databases with old-style
+#                      packages don't load <sigh>)
+#    26-Feb-2002 (CT)  `_debug` set to `__debug__`
+#    26-Feb-2002 (CT)  `_complain_implicit` changed to provide more useful
+#                      output (included addition of `last_caller`)
+#    27-Feb-2002 (CT)  Argument `module_name` removed from `_Export` (get that
+#                      from `caller_globals`)
+#    12-Mar-2002 (CT)  `_Export_Module` added
+#    12-Mar-2002 (CT)  Use `TFL.Module.names_of` instead of half-broken
+#                      `inspect.getmodule`
+#    15-Mar-2002 (CT)  `Import` renamed to `__Import`
+#                      `_import_symbols` renamed to `__import_symbols`
+#    15-Mar-2002 (CT)  `From_Import` and `Import_Module` removed
+#    18-Mar-2002 (MG)  `_Add` added
+#    18-Mar-2002 (CT)  `_complain_implicit` changed to write new syntax
+#    28-Mar-2002 (CT)  Last remnants of implicit imports removed
+#     3-Sep-2002 (CT)  Comment added to `_Module_Space._load` to explain why
+#                      `__import__` is used in the particular way it is
+#     8-Oct-2002 (CT)  Pass `None` as fourth argument to `__import__` to avoid
+#                      annoying Gordon McMillan
+#    11-Oct-2002 (CT)  Change of `8-Oct-2002` backed out because it doesn't
+#                      work with McMillan
+#     4-Feb-2003 (CT)  `Derived_Package_Namespace` added
+#     8-Apr-2003 (CT)  `_leading_underscores` changed to consider `._` too
+#     8-Apr-2003 (CT)  `qname` added
+#     8-Apr-2003 (CT)  `pname` added
+#     8-Apr-2003 (CT)  Compatibility kludge of putting `Package_Namespace`
+#                      into `sys.modules` removed (it was too smelly)
+#    28-Jul-2003 (CT)  `_Reload` added
+#     1-Aug-2003 (CT)  `_Reload` changed to reload in same sequence as
+#                      original import
+#    12-Sep-2003 (CT)  `_Reload` changed to clear the damned `linecache`
+#    20-Nov-2003 (CT)  `_Export_Module` changed to take `mod` from `kw` if
+#                      there
+#    16-Jun-2004 (CT)  `_Module_Space._load` changed to
+#                      - use `sys.modules` instead of `__import__`
+#                      - accept `q_name` as argument
+#    16-Jun-2004 (CT)  `Package_Namespace._Load_Module` factored
+#     5-Jul-2004 (CT)  `__name__` set for `Package_Namespace` instances to
+#                      make them more similar to modules
+#     4-Aug-2004 (MG)  `Package_Namespace._Import_Module` added
+#    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
+#    23-Oct-2004 (CT)  `_check_clashes` added
+#    28-Oct-2004 (CT)  `_Export_Module` changed to honor `_check_clashes`
+#    10-Jan-2005 (CT)  `__repr__` changed to not future warn about negative
+#                      values of `id`
+#    14-Jan-2005 (CT)  `_DPN_Auto_Importer_` added and called by
+#                      `Derived_Package_Namespace`
+#    20-Jan-2005 (CT)  `_DPN_Auto_Importer_.__call__` changed to ignore
+#                      transitive import errors
+#    24-Jan-2005 (CT)  Change of `20-Jan-2005` fixed
+#    24-Jan-2005 (CT)  `_Import_Module` changed to return the imported module
+#                      (and rest-args removed)
+#    10-Feb-2005 (CT)  `_Export` changed to streamline `*` handling
+#    10-Feb-2005 (CT)  More documentation added
+#    24-Mar-2005 (CT)  Dependencies on non-standard-lib modules removed
+#                      - Use `re` instead of `Regexp`
+#                      - Unused import of `caller_info` removed
+#                      - Import of `caller_globals` replaced by home-grown code
 #    30-Mar-2005 (CED) `_name`, `_qname` added to `_Module_Space`
 #    26-Apr-2006 (PGO) [rup18983] renamed classes with leading underscore
+#    28-Jul-2006 (PGO) Replaced `_DPN_Auto_Importer_` with TFL.DPN_Importer
 #    ««revision-date»»···
 #--
 
 import re
 import sys
+from   _TFL.Importers  import  *
 
 def _caller_globals () :
     return sys._getframe (1).f_back.f_globals
@@ -149,7 +151,7 @@ class _Module_Space_ :
 
 # end class _Module_Space_
 
-class Package_Namespace :
+class Package_Namespace (object) :
     """Implement a namespace for python packages providing direct access to
        classes and functions implemented in the modules of the package.
 
@@ -387,60 +389,6 @@ class Package_Namespace :
 
 # end class Package_Namespace
 
-class _DPN_Auto_Importer_ :
-    """_DPN_Auto_Importer_ is used to automagically import a module of a
-       parent package-namespace when someone tries to import it via a derived
-       package-namespace.
-
-       >>> from _TOM import TOM
-       >>> import _TOM._UI.Command_Mgr
-       >>> import _TOM._TKT
-       >>> import _TOM._TKT.Eventname
-       >>> sys.modules ["_TOM._TKT.Eventname"].__name__
-       '_TFL._TKT.Eventname'
-       >>> TOM.TKT._Eventname
-       <class '_TFL._TKT.Eventname._Eventname'>
-    """
-
-    def __init__ (self) :
-        self._map = {}
-        self._builtin_import = __import__
-    # end def __init__
-
-    def __call__ (self, name, globals = None, locals = None, fromlist = None) :
-        try :
-            return self._builtin_import (name, globals, locals, fromlist)
-        except ImportError, exc :
-            msg = str (exc)
-            ns  = name.split (".")
-            mod = ns [-1]
-            if mod in msg :
-                ### <kludge-alert>
-                ###   Looking for `mod` in `str (exc)` is fragile but I
-                ###   don't know what else to do here to find out if the
-                ###   import of `name` itself failed or if something imported
-                ###   by `name` failed
-                ### </kludge-alert>
-                ### ignore transitive ImportError's
-                pkg = ".".join (ns [:-1])
-                if pkg and pkg in self._map :
-                    import _TFL.import_module
-                    parent = ".".join ((self._map [pkg], mod))
-                    result = self (parent, globals, locals, fromlist)
-                    sys.modules [name] = _TFL.import_module.import_module \
-                        (parent)
-                    return result
-            raise
-    # end def __call__
-
-    def register (self, derived, parent) :
-        if not self._map :
-            import __builtin__
-            __builtin__.__import__ = self.__call__
-        self._map [derived] = parent
-    # end def register
-
-_DPN_AI = _DPN_Auto_Importer_ () # end class _DPN_Auto_Importer_
 
 class Derived_Package_Namespace (Package_Namespace) :
     """Implement a derived Package_Namespace which adds to an existing
@@ -483,7 +431,14 @@ class Derived_Package_Namespace (Package_Namespace) :
         Package_Namespace.__init__ (self, name, pname)
         self._parent  = parent
         self.__cached = {}
-        _DPN_AI.register (pname, getattr (parent, "_Package_Namespace__pname"))
+        mod    = sys.modules [pname]
+        is_pkg = hasattr (mod, "__path__")
+        if is_pkg : ### a Package_Namespace is not always a package *ARGH*
+            token = [DERIVED_PNS_TOKEN, pname]
+            while parent :
+                token.append (parent._._name)
+                parent = getattr (parent, "_parent", None)
+            mod.__path__.append (",".join (token))
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -503,4 +458,4 @@ class Derived_Package_Namespace (Package_Namespace) :
 
 # end class Derived_Package_Namespace
 
-### __END__ TFL.Package_Namespace
+### end TFL.Package_Namespace
