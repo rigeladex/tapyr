@@ -27,6 +27,7 @@
 # Revision Dates
 #    25-Jul-2006 (PGO) Creation
 #    28-Jul-2006 (PGO) Creation continued
+#    31-Jul-2006 (PGO) `register` added, `_find_module` for builtin import fixed
 #    ««revision-date»»···
 #--
 
@@ -86,11 +87,23 @@ class DPN_Importer (object) :
         realmodule, finder_info = self._cache.pop (fullmodule)
         if realmodule in sys.modules :
             return sys.modules [realmodule]
-        mod = self._load_module (realmodule, finder_info)
+        mod            = self._load_module (realmodule, finder_info)
+        mod.__loader__ = self
         assert realmodule in sys.modules
         sys.modules [fullmodule] = mod
         return mod
     # end def load_module
+
+    @classmethod
+    def register (cls, mod, name, parent) :
+        if not hasattr (mod, "__path__") :
+            return ### a Package_Namespace is not always a package *argh*
+        token = [DERIVED_PNS_TOKEN, name]
+        while parent :
+            token.append (parent._._name)
+            parent = getattr (parent, "_parent", None)
+        mod.__path__.append (",".join (token))
+    # end def register
 
     def __repr__ (self) :
         return \
@@ -106,9 +119,10 @@ class _DPN_Builtin_Importer_ (DPN_Importer) :
        importing.
     """
     def _find_module (self, cand, fullmodule) :
-        cand_path = cand.replace (".", os.sep) ### brrrrrr
+        pkg, mod = cand.rsplit (".", 1)
+        path     = sys.modules [pkg].__path__ ### the pkg is already imported
         try :
-            res = imp.find_module (cand_path)
+            res = imp.find_module (mod, path)
         except ImportError :
             return
         self._cache [fullmodule] = (cand, res)

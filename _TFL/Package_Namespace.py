@@ -124,6 +124,7 @@
 #    30-Mar-2005 (CED) `_name`, `_qname` added to `_Module_Space`
 #    26-Apr-2006 (PGO) [rup18983] renamed classes with leading underscore
 #    28-Jul-2006 (PGO) Replaced `_DPN_Auto_Importer_` with TFL.DPN_Importer
+#    31-Jul-2006 (PGO) `DPN_Importer.register` introduced
 #    ««revision-date»»···
 #--
 
@@ -431,14 +432,8 @@ class Derived_Package_Namespace (Package_Namespace) :
         Package_Namespace.__init__ (self, name, pname)
         self._parent  = parent
         self.__cached = {}
-        mod    = sys.modules [pname]
-        is_pkg = hasattr (mod, "__path__")
-        if is_pkg : ### a Package_Namespace is not always a package *ARGH*
-            token = [DERIVED_PNS_TOKEN, pname]
-            while parent :
-                token.append (parent._._name)
-                parent = getattr (parent, "_parent", None)
-            mod.__path__.append (",".join (token))
+        mod           = sys.modules [pname]
+        DPN_Importer.register (mod, pname, parent)
     # end def __init__
 
     def __getattr__ (self, name) :
