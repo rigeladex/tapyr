@@ -51,12 +51,16 @@
 #    10-Mar-2006 (RSC) Allow arrays in structs for C-Code generation
 #    13-Mar-2006 (MZO) Merge from `Decos Branch`
 #    14-Mar-2006 (RSC) Fix C-Code generation for arrays.
+#    13-Jul-2006 (MZO) issue20886, `format_size` added
+#    27-Jul-2006 (CED) Alignement and padding code factored out to
+#                      `TFL.CDG.Type_Packer`
 #    ««revision-date»»···
 #--
 
 from   _TFL                           import TFL
 import _TFL._Meta.Object
 import _TFL._Meta.Property
+import _TFL._CDG.Type_Packer
 import _TFL._SDG._C
 from   _TFL.predicate                 import *
 import  struct
@@ -121,14 +125,6 @@ class Struct (TFL.Meta.Object) :
             setattr (result, sf.name, sf.init)
         return result
     # end def __new__
-
-    def _alignment (self, atom, cpu_gran) :
-        type_format = atom [-1]
-        size        = struct.calcsize (type_format)
-        ### For types > cpu_gran (e.g. long long on a 32 bit plattform)
-        ### the compiler seems to align to cpu_gran instead of type length
-        return min (size, cpu_gran)
-    # end def _alignment
 
     def as_forward_typedef (cls, C = TFL.SDG.C, c_node = None, ** kw) :
         """Returns a typedef for a struct-object (using `C` as name-space for
@@ -222,6 +218,7 @@ class Struct (TFL.Meta.Object) :
         for f in self.struct_fields :
             value  = getattr (self, f.name)
             format = f.format_code ()
+            f.check_value (value)
             if format :
                 ### `value` is a primitive data type
                 formats.append (format)
@@ -242,43 +239,17 @@ class Struct (TFL.Meta.Object) :
                     format, value = v.format_and_values (cpu_gran)
                     formats.append  (format)
                     values.extend   (value)
-        format         = "".join (formats)
-        ### Since we use a byte_order marker in `packed`,
-        ### `struct` does not align (see python doc).
-        ### So we must manually add pad bytes
-        format         = self.aligned_and_padded (format, cpu_gran)
-        self.alignment = max \
-            (self._alignment (a, cpu_gran) for a in self.atoms (format))
-        return format, values
+        format  = "".join (formats)
+        packer  = TFL.CDG.GCC_Like_Type_Packer (format, cpu_gran)
+        self.alignment = packer.alignment
+        return packer.packed_format, values
     # end def format_and_values
-
-    def aligned_and_padded (self, format, cpu_gran) :
-        result = []
-        offset = 0
-        for atom in self.atoms (format) :
-            size  = struct.calcsize (atom)
-            align = self._alignment (atom, cpu_gran)
-            gap   = rounded_up (offset, align) - offset
-            if gap :
-                result.append ("%dx" % gap)
-            result.append (atom)
-            offset += (gap + size)
-        return "".join (result)
-    # def aligned_and_padded
-
-    def atoms (self, format) :
-        current = []
-        for c in format :
-            current.append (c)
-            if not c.isdigit () :
-                yield "".join (current)
-                current = []
-    # def atoms
 
     def dict (self) :
         result = {}
         for f in self.struct_fields :
             value  = getattr       (self, f.name)
+            f.check_value (value)
             if f.bounds is not None :
                 result [f.name] = str (value)
             if f.user_code or f.fmt_code.get (f.type, None) :

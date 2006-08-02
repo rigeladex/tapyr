@@ -29,6 +29,7 @@
 #    12-Jun-2006 (CED) `additional_defines` takes c_file also
 #    12-Jun-2006 (CED) `ptypes` included at begin of h-file
 #    12-Jun-2006 (CED) Include of `ptypes` done in subclasses
+#     5-Jul-2006 (MZO) fixed debug directory
 #    ««revision-date»»···
 #--
 #
@@ -281,7 +282,14 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             ( "debug_%s_%s.c"
             % (getattr (self.scope.root, "name"), self.__class__.__name__)
             )
-        filename = sos.path.normpath (sos.path.join (sos.getcwd (), filename))
+        if self.scope :
+            filename = sos.path.join \
+                ( self.scope.db_name.directory
+                , filename
+                )
+        else : 
+            filename = sos.path.join (sos.getcwd (), filename)
+        filename = sos.path.normpath (filename)
         module   = C.Module ()
         cc       = C_Code_Creator (self.scope, self.gauge)
         module.add (cc.pack_as_c_code (C, meta_struct))

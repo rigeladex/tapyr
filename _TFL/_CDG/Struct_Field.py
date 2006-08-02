@@ -41,6 +41,8 @@
 #    02-Dec-2005 (MG)  use `type_name` of Struct classes/instances
 #    20-Jan-2006 (CED) Added `bo_map`,  made `packed` byte-order aware
 #    20-Feb-2006 (MZO) Corrected super call of `Reference_Struct_Field`
+#    13-Jul-2006 (MZO) issue20886, `check_value` added
+#    17-Jul-2006 (MZO) issue20886, `check_value` fixed
 #    ««revision-date»»···
 #--
 
@@ -50,6 +52,7 @@ import _TFL._SDG._C
 import operator
 import struct
 import traceback
+import math
 
 class Struct_Field (TFL.Meta.Object):
     """Model a single field of a C struct."""
@@ -169,6 +172,53 @@ class Struct_Field (TFL.Meta.Object):
         return result
     # end def packed
 
+    def check_value (self, original_value) :
+        result  = True
+        size    = 0
+        value   = str (original_value)
+        if   value.lower () == "true" : 
+            value = "1"
+        elif value.lower () == "false" : 
+            value = "0"
+        format = self.user_code or self.fmt_code.get (self.type, None)
+        if format and not format in ("c", "s", "b", "P", "B") : # char
+            size = struct.calcsize (format)
+        try : 
+            value = float (value)
+        except (ValueError, TypeError) : 
+            value = None
+        if size > 0 and value is not None :
+            val_range = math.pow (2, (size * 8))
+            if format in  ("I", "L", "Q", "H") :                # unsigned
+                if value > val_range : 
+                    result = False
+                    error_text = \
+                        ( ( "Unexpected value in Structfield `%s` "
+                            "(typesize `%s` bytes): Value `%s` is not"
+                            " within range (%s)." 
+                          )
+                        % ( self.name, size, original_value
+                          , "0 .. %s" % val_range
+                          )
+                        )
+                    raise ValueError, error_text
+            else :
+                val_range = val_range // 2 + 1                   # signed
+                if abs (value) > (val_range) : 
+                    result = False
+                    error_text = \
+                        ( ( "Unexpected value in Structfield `%s` "
+                            "(typesize `%s` bytes): Value `%s` is not"
+                            " within range (%s)." 
+                          )
+                        % ( self.name, size, original_value
+                          , "-%s .. +%s" % (val_range, val_range)
+                          )
+                        )
+                    raise ValueError, error_text
+        return result
+    # end def check_value
+
     def format_code (self) :
         result = self.user_code or self.fmt_code.get (self.type, None)
         if self.bounds and result :
@@ -224,6 +274,10 @@ class Reference_Struct_Field (Struct_Field) :
             self.type_name = "%s *" % (self.struct.type_name, )
         return self.__super.as_c_code (* args, ** kw)
     # end def as_c_code
+
+    def check_value (self, original_value) :
+        return True
+    # end def check_value
 
 # end class Reference_Struct_Field
 
