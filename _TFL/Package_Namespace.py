@@ -130,7 +130,7 @@
 
 import re
 import sys
-from   _TFL.Importers  import  *
+from   _TFL.Importers  import  DPN_Importer
 
 def _caller_globals () :
     return sys._getframe (1).f_back.f_globals

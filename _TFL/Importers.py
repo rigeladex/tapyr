@@ -28,6 +28,7 @@
 #    25-Jul-2006 (PGO) Creation
 #    28-Jul-2006 (PGO) Creation continued
 #    31-Jul-2006 (PGO) `register` added, `_find_module` for builtin import fixed
+#     3-Aug-2006 (PGO) `_find_module` for TTP-View fixed
 #    ««revision-date»»···
 #--
 
@@ -141,18 +142,22 @@ class _DPN_ZipImporter_ (DPN_Importer) :
     """
     def __init__ (self, name, pns_chain) :
         super (_DPN_ZipImporter_, self).__init__ (name, pns_chain)
-        self.zip_file = sys.argv [0]
     # end def __init__
 
     def _find_module (self, cand, fullmodule) :
         cand_lst = cand.split (".")
-        zip_path = os.sep.join ([self.zip_file] + cand_lst [:-1])
-        mod      = cand_lst [-1]
-        zi       = \
-            (  sys.path_importer_cache.get (zip_path)
-            or zipimport.zipimporter       (zip_path)
-            )
-        res      = zi.find_module (mod)
+        for p in reversed (sys.path) : ### currently it's always the last one
+            zip_path = os.sep.join ([p] + cand_lst [:-1])
+            zi       = \
+                (  sys.path_importer_cache.get (zip_path)
+                or zipimport.zipimporter       (zip_path)
+                )
+            if zi :
+                break
+        else :
+            return
+        mod = cand_lst [-1]
+        res = zi.find_module (mod)
         if res :
             self._cache [fullmodule] = (cand, (mod, res))
             return self
