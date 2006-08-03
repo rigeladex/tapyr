@@ -142,11 +142,12 @@ class _DPN_ZipImporter_ (DPN_Importer) :
     """
     def __init__ (self, name, pns_chain) :
         super (_DPN_ZipImporter_, self).__init__ (name, pns_chain)
+        self._path = reversed (sys.path) ### currently it's always the last one
     # end def __init__
 
     def _find_module (self, cand, fullmodule) :
         cand_lst = cand.split (".")
-        for p in reversed (sys.path) : ### currently it's always the last one
+        for p in self._path :
             zip_path = os.sep.join ([p] + cand_lst [:-1])
             zi       = \
                 (  sys.path_importer_cache.get (zip_path)
