@@ -29,6 +29,7 @@
 #    28-Jul-2006 (PGO) Creation continued
 #    31-Jul-2006 (PGO) `register` added, `_find_module` for builtin import fixed
 #     3-Aug-2006 (PGO) `_find_module` for TTP-View fixed
+#     4-Aug-2006 (PGO) `load_module` fixed if `realmodule` was already imported
 #    ««revision-date»»···
 #--
 
@@ -87,10 +88,10 @@ class DPN_Importer (object) :
     def load_module (self, fullmodule) :
         realmodule, finder_info = self._cache.pop (fullmodule)
         if realmodule in sys.modules :
-            return sys.modules [realmodule]
-        mod            = self._load_module (realmodule, finder_info)
+            mod = sys.modules [realmodule]
+        else :
+            mod = self._load_module (realmodule, finder_info)
         mod.__loader__ = self
-        assert realmodule in sys.modules
         sys.modules [fullmodule] = mod
         return mod
     # end def load_module
