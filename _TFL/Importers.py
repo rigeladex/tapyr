@@ -30,6 +30,7 @@
 #    31-Jul-2006 (PGO) `register` added, `_find_module` for builtin import fixed
 #     3-Aug-2006 (PGO) `_find_module` for TTP-View fixed
 #     4-Aug-2006 (PGO) `load_module` fixed if `realmodule` was already imported
+#     7-Aug-2006 (PGO) `_get_zipimporter` added
 #    ««revision-date»»···
 #--
 
@@ -141,19 +142,23 @@ class _DPN_ZipImporter_ (DPN_Importer) :
     """Use the executable itself in conjunction with Python's zipimporter
        for importing.
     """
-    def __init__ (self, name, pns_chain) :
-        super (_DPN_ZipImporter_, self).__init__ (name, pns_chain)
-        self._path = reversed (sys.path) ### currently it's always the last one
-    # end def __init__
+    _path = list (reversed (sys.path))
+
+    def _get_zipimporter (self, zip_path) :
+        zi = sys.path_importer_cache.get (zip_path)
+        if not zi :
+            try :
+                zi = zipimport.zipimporter (zip_path)
+            except ImportError :
+                pass
+        return zi
+    # end def _get_zipimporter
 
     def _find_module (self, cand, fullmodule) :
         cand_lst = cand.split (".")
         for p in self._path :
             zip_path = os.sep.join ([p] + cand_lst [:-1])
-            zi       = \
-                (  sys.path_importer_cache.get (zip_path)
-                or zipimport.zipimporter       (zip_path)
-                )
+            zi = self._get_zipimporter (zip_path)
             if zi :
                 break
         else :
