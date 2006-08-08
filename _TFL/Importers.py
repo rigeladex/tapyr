@@ -31,6 +31,7 @@
 #     3-Aug-2006 (PGO) `_find_module` for TTP-View fixed
 #     4-Aug-2006 (PGO) `load_module` fixed if `realmodule` was already imported
 #     7-Aug-2006 (PGO) `_get_zipimporter` added
+#     8-Aug-2006 (PGO) Filter sys.path to contain files only
 #    ««revision-date»»···
 #--
 
@@ -142,7 +143,7 @@ class _DPN_ZipImporter_ (DPN_Importer) :
     """Use the executable itself in conjunction with Python's zipimporter
        for importing.
     """
-    _path = list (reversed (sys.path))
+    _path = filter (os.path.isfile, sys.path)
 
     def _get_zipimporter (self, zip_path) :
         zi = sys.path_importer_cache.get (zip_path)
