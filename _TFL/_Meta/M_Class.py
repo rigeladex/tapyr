@@ -1,6 +1,5 @@
-
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,20 +26,21 @@
 #    Provide custom metaclass for new-style Python classes
 #
 # Revision Dates
-#    10-May-2002 (CT) Creation
-#    17-Jan-2003 (CT) `M_Automethodwrap` added
-#    17-Jan-2003 (CT) `M_` prefixes added
-#    20-Jan-2003 (CT) Docstring of `M_Automethodwrap` improved
-#     3-Feb-2003 (CT) File renamed from `Class.py` to `M_Class.py`
-#     1-Apr-2003 (CT) `M_Class_SW` factored
-#     1-Apr-2003 (CT) `M_Autoproperty` removed from `M_Class`
-#                     (optimize, optimize)
-#    28-Apr-2003 (CT) `M_Autorename` changed to not manipulate `caller_globals`
-#    23-Jul-2004 (CT) `_M_Type_` added to `_Export`
-#    25-Jan-2005 (CT) `New` added
-#    10-Feb-2005 (MG) `_M_Type_.New`: `mangled_attributes` added
-#    28-Mar-2005 (CT) `M_Class_SWRP` added
+#    10-May-2002 (CT)  Creation
+#    17-Jan-2003 (CT)  `M_Automethodwrap` added
+#    17-Jan-2003 (CT)  `M_` prefixes added
+#    20-Jan-2003 (CT)  Docstring of `M_Automethodwrap` improved
+#     3-Feb-2003 (CT)  File renamed from `Class.py` to `M_Class.py`
+#     1-Apr-2003 (CT)  `M_Class_SW` factored
+#     1-Apr-2003 (CT)  `M_Autoproperty` removed from `M_Class`
+#                      (optimize, optimize)
+#    28-Apr-2003 (CT)  `M_Autorename` changed to not manipulate `caller_globals`
+#    23-Jul-2004 (CT)  `_M_Type_` added to `_Export`
+#    25-Jan-2005 (CT)  `New` added
+#    10-Feb-2005 (MG)  `_M_Type_.New`: `mangled_attributes` added
+#    28-Mar-2005 (CT)  `M_Class_SWRP` added
 #    23-Mar-2006 (CED) `_fixed_type_` added
+#     8-Aug-2006 (PGO) `_super_calling_not_possible` added
 #    ««revision-date»»···
 #--
 
@@ -148,9 +148,6 @@ class M_Autorename (_M_Type_) :
         if "_real_name" in dict :
             name = dict ["_real_name"]
             del dict ["_real_name"]
-##         elif __debug__ :
-##             assert name not in (b.__name__ for b in bases), \
-##                 "Class `%s` inherits from class with same name!" % name
         dict ["__real_name"] = real_name
         return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
     # end def __new__
@@ -165,6 +162,15 @@ class M_Autorename (_M_Type_) :
     # end def _m_mangled_attr_name
 
 # end class M_Autorename
+
+@property
+def _super_calling_not_possible (obj) :
+    raise NameError \
+        ( "Name mangling broken for class `%s` or one of its bases - no super "
+          "calling possible. Someone forgot to use `_real_name`!"
+        %  obj.__class__.__name__
+        )
+# end def _super_calling_not_possible
 
 class M_Autosuper (_M_Type_) :
     """Metaclass adding a private class variable `__super` containing
@@ -181,7 +187,14 @@ class M_Autosuper (_M_Type_) :
 
     def __init__ (cls, name, bases, dict) :
         super   (M_Autosuper, cls).__init__ (name, bases, dict)
-        setattr (cls, cls._m_mangled_attr_name ("super"), super (cls))
+        _super = cls._m_mangled_attr_name ("super")
+        if (   __debug__
+           and name in (b.__name__ for b in bases)
+           and name == dict.get ("__real_name")
+           ) :
+            setattr (cls, _super, _super_calling_not_possible)
+        else :
+            setattr (cls, _super, super (cls))
     # end def __init__
 
 # end class M_Autosuper
@@ -320,4 +333,4 @@ else :
             __metaclass__ = Metatest
 
         T()
-### __END__ TFL.Meta.M_Class
+### end TFL.Meta.M_Class
