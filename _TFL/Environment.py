@@ -47,6 +47,7 @@
 #                      (the old pattern replaces `../../` -> `...`)
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    28-Jul-2005 (CT)  `mailname` added
+#     8-Aug-2006 (MSF) fixed issue 5608
 #    ««revision-date»»···
 #--
 
@@ -146,10 +147,6 @@ def path_contains (path, filename) :
 
 def frozen () :
     """Returns true if application is frozen"""
-##    (f, p, d) = imp.find_module ("Environment")
-##    return d [-1] == imp.PY_FROZEN
-    ## XXX use sys.frozen to determine whether frozen or not
-    ## XXX need a more general way to do that
     import sys
     return hasattr (sys, "frozen")
 # end def frozen
