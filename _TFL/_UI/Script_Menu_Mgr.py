@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
 #++
@@ -25,6 +25,8 @@
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #     2-Feb-2005 (CT) Moved to `TFL.UI` and refactored
 #     7-Apr-2005 (CT) Don't add category to `cmd_grp` when it's emtpy
+#     9-Aug-2006 (CT) `Script_Category.__hash__` changed to return
+#                     `hash (self.name)` instead of `id (self)`
 #    ««revision-date»»···
 #--
 
@@ -80,7 +82,7 @@ class Script_Category (TFL.UI.Mixin) :
     # end def __cmp__
 
     def __hash__ (self) :
-        return id (self)
+        return hash (self.name)
     # end def __hash__
 
 # end class Script_Category
@@ -156,4 +158,4 @@ class Script_Menu_Mgr (TFL.UI.Mixin) :
 
 if __name__ != "__main__" :
     TFL.UI._Export ("*")
-### __END__ Script_Menu_Mgr
+### __END__ TFL.UI.Script_Menu_Mgr

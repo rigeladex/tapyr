@@ -37,6 +37,8 @@
 #    29-Jan-2004 (CT)  `gauge` and `echo`-calls added
 #    14-Jun-2004 (GWA) `\n` added to `gauge.echo` calls
 #    14-Feb-2006 (CT)  Moved into package `TFL`
+#     9-Aug-2006 (CT) `Script.__hash__` changed to return
+#                     `hash (self.name)` instead of `id (self)`
 #    ««revision-date»»···
 #--
 
@@ -114,7 +116,7 @@ class Script :
     # end def __cmp__
 
     def __hash__ (self) :
-        return id (self)
+        return hash (self.name)
     # end def __hash__
 
 # end class Script

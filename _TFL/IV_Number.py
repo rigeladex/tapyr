@@ -45,6 +45,8 @@
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #    31-May-2006 (BRU) Added `db_name`
+#     9-Aug-2006 (CT)  `__hash__` changed to return `hash (id (self))`
+#                      instead of `id (self)`
 #    ««revision-date»»···
 #--
 
@@ -191,7 +193,7 @@ class IV_Number :
     # end def __cmp__
 
     def __hash__ (self) :
-        return id (self)
+        return hash (id (self))
     # end def __hash__
 
 # end class IV_Number

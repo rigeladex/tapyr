@@ -156,6 +156,8 @@
 #                     call of `_add_rest_args`
 #    30-Aug-2005 (CT) Use `in` instead of `find`
 #     1-May-2006 (MG) Use `dict` instead of `d_dict`
+#     9-Aug-2006 (CT) `Command_Spec.__cmp__` and `Command_Spec.__hash__`
+#                     removed (definition didn't make any sense)
 #    ««revision-date»»···
 #--
 
@@ -820,14 +822,6 @@ class Command_Spec :
     def __nonzero__ (self) :
         return 1
     # end def __nonzero__
-
-    def __cmp__ (self, other) :
-        return cmp (id (self), id (other))
-    # end def __cmp__
-
-    def __hash__ (self) :
-        return id (self)
-    # end def __hash__
 
 # end class Command_Spec
 

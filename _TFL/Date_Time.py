@@ -66,6 +66,8 @@
 #    18-Oct-2005 (CT) `YYYY_MM_DD_pat` changed to allow `-` as separator
 #    18-Oct-2005 (CT) `_time_pat` changed to support `dst`
 #    11-Feb-2006 (CT) Moved into package `TFL`
+#     9-Aug-2006 (CT) `__hash__` changed to return `hash (self.value)` instead
+#                     of `id (self)`
 #    ««revision-date»»···
 #--
 
@@ -367,7 +369,7 @@ class Date :
     # end def __cmp__
 
     def __hash__ (self) :
-        return id (self)
+        return hash (self.value)
     # end def __hash__
 
 # end class Date
