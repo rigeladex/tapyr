@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2006 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -26,7 +26,9 @@
 #    A wrapper around the iCalender library.
 #
 # Revision Dates
-#    07-Dec-2005 (MG) Creation
+#     7-Dec-2005 (MG) Creation
+#     9-Aug-2006 (CT) `__hash__` changed to return
+#                     `hash ((self.address, self.role))` instead of `id (self)`
 #    ««revision-date»»···
 #--
 #
@@ -65,6 +67,7 @@ class Email (TFL.Meta.Object) :
             return "%-15s: %s" % (self.role, self.name)
         return self.name
     # end def __repr__
+
     __str__ = __repr__
 
     def __cmp__ (self, other) :
@@ -74,7 +77,7 @@ class Email (TFL.Meta.Object) :
     # end def __cmp__
 
     def __hash__ (self) :
-        return id (self)
+        return hash ((self.address, self.role))
     # end def __hash__
 
 # end class Email

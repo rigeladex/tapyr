@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,6 +32,8 @@
 #    23-Oct-2004 (CT) `formatted` changed to use `_default_format`
 #    23-Oct-2004 (CT) `_new_object` factored
 #    12-Dec-2004 (CT) `__repr__` added
+#     9-Aug-2006 (CT) `__hash__` changed to return `hash (self._body)`
+#                     instead of `id (self)`
 #    ««revision-date»»···
 #--
 
@@ -107,7 +109,7 @@ class _DTW_ (TFL.Meta.Object) :
     # end def __cmp__
 
     def __hash__ (self) :
-        return id (self)
+        return hash (self._body)
     # end def __hash__
 
     def __repr__ (self) :
