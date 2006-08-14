@@ -117,6 +117,7 @@
 #    11-Jul-2006 (PGO) `script_code` flag added
 #    20-Jul-2006 (PGO) `__sub__` doesn't add parent packages any longer (moved
 #                      to TFL.Plugin_Packager)
+#    14-Aug-2006 (CED) `Derived_PNS_Finder` added and used
 #    ««revision-date»»···
 #--
 
@@ -124,6 +125,8 @@ from   _TFL              import TFL
 from   _TFL.predicate    import *
 from   _TFL.Regexp       import Regexp, re
 from   _TFL.Filename     import Filename
+from   _TFL.Importers    import DPN_Importer, DERIVED_PNS_TOKEN
+
 import sys
 
 import _TFL._Meta.Object
@@ -173,6 +176,74 @@ class P_P (P_M) :
 
 # end class P_P
 
+class Derived_PNS_Finder (TFL.Meta.Object) :
+    d_pns_pat = Regexp \
+        ( r"^(?P<base_name>\w+) *= *Derived_Package_Namespace *"
+          r"\( *parent *= *(?P<parent>(?:\w+\.)*\w+) *\)"
+        )
+    exp_pat   = Regexp \
+        ( r"^(?P<path_name>(?:\w+\.)*\w+)\._Export *"
+          r"\( *\"(?P<base_name>\w+)\" *\)"
+        )
+
+    def __init__ (self, import_path = (".", )) :
+        res = []
+        for p in import_path :
+            TFL.sos.path.walk (p, self.dir_visitor, res)
+        self.tokens = self._build_closure (res)
+    # end def __init__
+
+    def dir_visitor (self, res, dirname, names) :
+        res.extend \
+            (   self._build_pns_token (TFL.sos.path.join (dirname, n))
+            for n in names
+            if  n == "__init__.py"
+            )
+    # end def dir_visitor
+
+    def _build_closure (self, res) :
+        dct    = dict (filter (None, res))
+        result = {}
+        for key, val in dct.iteritems () :
+            token = [DERIVED_PNS_TOKEN, key]
+            while val :
+                token.append (val)
+                val = dct.get (val)
+            result ["_%s" % key.replace (".","._")] = ",_".join (token).replace (".", "._")
+        return result
+    # end def _build_closure
+
+    def _build_pns_token (self, fn) :
+        f = file (fn, "r")
+        try :
+            for line in f :
+                pns = self.d_pns_pat.match (line)
+                if pns :
+                    dns_dict = pns.groupdict ()
+                    assert "_" not in dns_dict ["parent"], dns_dict ["parent"]
+                    break
+            else :
+                return
+            for line in f : ### consecutive lines only
+                exp = self.exp_pat.match (line)
+                if exp :
+                    exp_dict = exp.groupdict ()
+                    bname    = exp_dict ["base_name"]
+                    assert \
+                        dns_dict ["base_name"] == bname, \
+                        ( "Inconsistent base_names (%s <-> %s) found in %s"
+                        % (dns_dict ["base_name"], bname, fn)
+                        )
+                    absname  = "%s.%s" % (exp_dict ["path_name"], bname)
+                    return (absname, dns_dict ["parent"])
+            else :
+                return (dns_dict ["base_name"], dns_dict ["parent"])
+        finally :
+            f.close ()
+    # end def _build_pns_token
+
+# end class Derived_Package_Namespace
+
 class Import_Closure :
     """Find all imports from a given python module"""
 
@@ -198,6 +269,7 @@ class Import_Closure :
         self.pkg_dict     = {}
         self.tlp_dict     = {}
         self.seen         = {}
+        self.d_pns_chains = Derived_PNS_Finder (self.import_path).tokens
         self.ignore       = ignore or {}
         self.debug        = debug
         self.script_code  = script_code
@@ -329,8 +401,8 @@ class Import_Closure :
         else :
             py_names = (py_name, )
         for py_name in py_names :
-            for dir in self.import_path :
-                result = self._path_of (dir, py_name)
+            for imp_dir in self.import_path :
+                result = self._path_of (imp_dir, py_name)
                 if result :
                     return result
     # end def path_of
@@ -339,12 +411,25 @@ class Import_Closure :
         b_name = TFL.sos.path.join (dir, py_name)
         m_name = b_name + ".py"
         p_name = TFL.sos.path.join (b_name, "__init__.py")
+        m_prefix = ".".join (py_name.split (TFL.sos.sep) [:-1])
         if TFL.sos.path.isfile (m_name) :
-            prefix = ".".join (py_name.split (TFL.sos.sep) [:-1])
-            return P_M (py_name, m_name, prefix)
+            return P_M (py_name, m_name, m_prefix)
         if TFL.sos.path.isfile (p_name) :
             prefix = ".".join (py_name.split (TFL.sos.sep))
             return P_P (py_name, p_name, prefix)
+        if m_prefix in self.d_pns_chains :
+            fullmodule = py_name.replace (TFL.sos.path.sep, ".")
+            try :
+                i = DPN_Importer (self.d_pns_chains [m_prefix])
+                i.find_module (fullmodule)
+            except ImportError :
+                pass
+            else :
+                mod, fname = i.get_filename (fullmodule)
+                ml         = mod.split (".")
+                pkg        = ".".join  (ml [:-1])
+                result = P_M (TFL.sos.sep.join (ml), fname, pkg)
+                return result
     # end def _path_of
 
     def remove (self, pym) :
@@ -442,5 +527,5 @@ def main (cmd) :
 if __name__ == "__main__":
     main (command_spec ())
 else :
-    TFL._Export ("Import_Closure")
+    TFL._Export ("Import_Closure", "Derived_PNS_Finder")
 ### __END__ TFL.Import_Closure

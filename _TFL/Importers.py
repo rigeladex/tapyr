@@ -32,6 +32,9 @@
 #     4-Aug-2006 (PGO) `load_module` fixed if `realmodule` was already imported
 #     7-Aug-2006 (PGO) `_get_zipimporter` added
 #     8-Aug-2006 (PGO) Filter sys.path to contain files only
+#    10-Aug-2006 (PGO) `_find_module` doesn't rely on package being in
+#                      sys.modules any more
+#    14-Aug-2006 (CED) `get_filename` added
 #    ««revision-date»»···
 #--
 
@@ -87,6 +90,12 @@ class DPN_Importer (object) :
         raise ImportError
     # end def find_module
 
+    def get_filename (self, module) :
+        res = self._cache.get (module)
+        if res :
+            return res [0], res [1] [1]
+    # end def get_filename
+
     def load_module (self, fullmodule) :
         realmodule, finder_info = self._cache.pop (fullmodule)
         if realmodule in sys.modules :
@@ -122,9 +131,11 @@ class _DPN_Builtin_Importer_ (DPN_Importer) :
     """Use the builtin import mechanism (as exposed by the imp module) for
        importing.
     """
+    _path = [p for p in sys.path if os.path.isdir (os.path.join (p, "_TFL"))]
+
     def _find_module (self, cand, fullmodule) :
         pkg, mod = cand.rsplit (".", 1)
-        path     = sys.modules [pkg].__path__ ### the pkg is already imported
+        path     = [os.path.join (self._path [0], * pkg.split ("."))]
         try :
             res = imp.find_module (mod, path)
         except ImportError :
