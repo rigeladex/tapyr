@@ -119,6 +119,7 @@
 #                      to TFL.Plugin_Packager)
 #    14-Aug-2006 (CED) `Derived_PNS_Finder` added and used
 #    16-Aug-2006 (CED) `_path_of` fixed
+#    16-Aug-2006 (MSF) `_path_of` really fixed
 #    ««revision-date»»···
 #--
 
@@ -427,7 +428,7 @@ class Import_Closure :
                 pass
             else :
                 mod, fname = i.get_filename (fullmodule)
-                if TFL.sos.isdir (fname) :
+                if TFL.sos.path.isdir (fname) :
                     return
                 ml         = mod.split (".")
                 pkg        = ".".join  (ml [:-1])
