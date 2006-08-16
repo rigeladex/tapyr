@@ -118,6 +118,7 @@
 #    20-Jul-2006 (PGO) `__sub__` doesn't add parent packages any longer (moved
 #                      to TFL.Plugin_Packager)
 #    14-Aug-2006 (CED) `Derived_PNS_Finder` added and used
+#    16-Aug-2006 (CED) `_path_of` fixed
 #    ««revision-date»»···
 #--
 
@@ -426,6 +427,8 @@ class Import_Closure :
                 pass
             else :
                 mod, fname = i.get_filename (fullmodule)
+                if TFL.sos.isdir (fname) :
+                    return
                 ml         = mod.split (".")
                 pkg        = ".".join  (ml [:-1])
                 result = P_M (TFL.sos.sep.join (ml), fname, pkg)
