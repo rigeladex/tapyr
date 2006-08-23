@@ -51,6 +51,7 @@
 #    20-Sep-2005 (MPH) Reactivated the C-code generation, added commandline
 #                      functionality to support it
 #    22-Sep-2005 (RER) splitted `c_code` to support TTPos_cert-issue9651
+#    23-Aug-2006 (PGO) Using alternate form of %x
 #    ««revision-date»»···
 #--
 
@@ -121,7 +122,7 @@ class _TD_CRC_ (object) :
                  , C.Array ( "ubyte4", "%s_polynome" % name
                            , len (cls.table)
                            , cls.table
-                           , fmt     = "0x%08X"
+                           , fmt     = "%#08X"
                            , per_row = 6
                            , static  = 1
                            , const   = 1
@@ -141,7 +142,7 @@ class _TD_CRC_ (object) :
            )
         loop = C.While    ("len--")
         node.add ( fct)
-        loop.add ( "crc = ((((crc) >> 8) & 0x%x) "
+        loop.add ( "crc = ((((crc) >> 8) & %#x) "
                    "^ %s_polynome [((crc) ^ (*data++)) & 0xff])"
                  % (cls.mask, name)
                  )
@@ -162,12 +163,12 @@ class CRC32 (_TD_CRC_) :
 
        >>> import _TFL.CRC as CRC
        >>> c = CRC.CRC32 ()
-       >>> "0x%08X" % c.crc ("abcd")
+       >>> "%#08X" % c.crc ("abcd")
        '0xCCC6120D'
-       >>> "0x%08X" % c.crc_bytelist ([97, 98, 99, 100])
+       >>> "%#08X" % c.crc_bytelist ([97, 98, 99, 100])
        '0xCCC6120D'
        >>> x = c.crc_bytelist ([97, 98, 99])
-       >>> "0x%08X" % c.crc_byte (x, 100)
+       >>> "%#08X" % c.crc_byte (x, 100)
        '0xCCC6120D'
     """
 

@@ -13,6 +13,7 @@
 #    09-Nov-2005 (MG)  Creation
 #    11-Nov-2005 (MG)  Test extended
 #    10-Mar-2006 (MZO) added `S_With_Array`
+#    23-Aug-2006 (PGO) Using alternate form of %x
 #    ««revision-date»»···
 #--
 #
@@ -93,7 +94,7 @@ class Bit_Copy_Spec (Byte_Copy_Spec) :
 
     def __init__ (self, source, desition, mask, shift = 0) :
         self.__super.__init__ (source, desition)
-        self.mask     = "0x%02X" % mask
+        self.mask     = "%#02X" % mask
         self.shift    = shift
     # end def __init__
 
