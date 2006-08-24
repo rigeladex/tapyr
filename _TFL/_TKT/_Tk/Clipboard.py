@@ -83,4 +83,4 @@ class Clipboard (TFL.TKT.Mixin) :
 
 if __name__ != "__main__" :
     TFL.TKT.Tk._Export ("*")
-### __END__ of TFL.TKT.Tk.Clipboard
+### __END__ TFL.TKT.Tk.Clipboard

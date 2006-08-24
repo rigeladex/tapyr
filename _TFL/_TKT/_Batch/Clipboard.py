@@ -60,4 +60,4 @@ class Clipboard (TFL.TKT.Mixin) :
 
 if __name__ != "__main__" :
     TFL.TKT.Batch._Export ("*")
-### __END__ of TFL.TKT.Batch.Clipboard
+### __END__ TFL.TKT.Batch.Clipboard

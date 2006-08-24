@@ -453,4 +453,4 @@ class Derived_Package_Namespace (Package_Namespace) :
 
 # end class Derived_Package_Namespace
 
-### end TFL.Package_Namespace
+### __END__ TFL.Package_Namespace

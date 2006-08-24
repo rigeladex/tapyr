@@ -194,4 +194,4 @@ if __name__ != '__main__' :
     if DPN_Importer not in sys.path_hooks :
         sys.path_hooks.insert (0, DPN_Importer)
 
-### end TFL.Importers
+### __END__ TFL.Importers

@@ -333,4 +333,4 @@ else :
             __metaclass__ = Metatest
 
         T()
-### end TFL.Meta.M_Class
+### __END__ TFL.Meta.M_Class

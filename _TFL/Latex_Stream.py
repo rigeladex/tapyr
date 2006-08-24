@@ -656,6 +656,6 @@ for c in _commands3 :
       "  return latex_cmd (\"%s\", options, p1, p2, p3)" % (c, c)
   exec (s)
 
-### __END__ TFL/Latex_Stream
 from _TFL import TFL
 TFL._Export ("*")
+### __END__ TFL/Latex_Stream
