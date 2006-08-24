@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    TFL/CRC
+#    TFL.CRC
 #
 # Purpose
 #    Base class for handling CRC computations, as well as a concrete 32-bit
@@ -52,6 +52,7 @@
 #                      functionality to support it
 #    22-Sep-2005 (RER) splitted `c_code` to support TTPos_cert-issue9651
 #    23-Aug-2006 (PGO) Using alternate form of %x
+#    24-Aug-2006 (PGO) Fixed doc tests
 #    ««revision-date»»···
 #--
 
@@ -105,10 +106,10 @@ class _TD_CRC_ (object) :
                                 "(crc, (ubyte1 *) &(item), sizeof (item))"
                             % name
                               )
-                            ) 
-                          )  
+                            )
+                          )
                )
-     
+
     # end c_code_define
     c_code_define = classmethod (c_code_define)
 
@@ -164,12 +165,12 @@ class CRC32 (_TD_CRC_) :
        >>> import _TFL.CRC as CRC
        >>> c = CRC.CRC32 ()
        >>> "%#08X" % c.crc ("abcd")
-       '0xCCC6120D'
+       '0XCCC6120D'
        >>> "%#08X" % c.crc_bytelist ([97, 98, 99, 100])
-       '0xCCC6120D'
+       '0XCCC6120D'
        >>> x = c.crc_bytelist ([97, 98, 99])
        >>> "%#08X" % c.crc_byte (x, 100)
-       '0xCCC6120D'
+       '0XCCC6120D'
     """
 
     mask  = 0x00FFFFFF
@@ -271,4 +272,5 @@ else :
         h_stream   = Formatted_C_Stream (h_out)
         crc_module.write_to_h_stream (h_stream)
         crc_module.write_to_c_stream (c_stream)
-### __END__ TFL/CRC
+
+### __END__ TFL.CRC
