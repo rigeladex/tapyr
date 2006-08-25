@@ -35,6 +35,7 @@
 #    10-Aug-2006 (PGO) `_find_module` doesn't rely on package being in
 #                      sys.modules any more
 #    14-Aug-2006 (CED) `get_filename` added
+#    25-Aug-2006 (CED) Support for multiple lib/pythons added :-)
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,8 @@ class DPN_Importer (object) :
        try to find the module.
     """
     __metaclass__ = M_DPN_Importer
+
+    _path         = sys.path
 
     def __init__ (self, name, pns_chain) :
         self.name      = name
@@ -131,14 +134,17 @@ class _DPN_Builtin_Importer_ (DPN_Importer) :
     """Use the builtin import mechanism (as exposed by the imp module) for
        importing.
     """
-    _path = [p for p in sys.path if os.path.isdir (os.path.join (p, "_TFL"))]
 
     def _find_module (self, cand, fullmodule) :
         pkg, mod = cand.rsplit (".", 1)
-        path     = [os.path.join (self._path [0], * pkg.split ("."))]
-        try :
-            res = imp.find_module (mod, path)
-        except ImportError :
+        for p in self._path :
+            path     = [os.path.join (p, * pkg.split ("."))]
+            try :
+                res = imp.find_module (mod, path)
+                break
+            except ImportError :
+                continue
+        else :
             return
         self._cache [fullmodule] = (cand, res)
         return self
@@ -154,7 +160,6 @@ class _DPN_ZipImporter_ (DPN_Importer) :
     """Use the executable itself in conjunction with Python's zipimporter
        for importing.
     """
-    _path = filter (os.path.isfile, sys.path)
 
     def _get_zipimporter (self, zip_path) :
         zi = sys.path_importer_cache.get (zip_path)
@@ -186,7 +191,7 @@ class _DPN_ZipImporter_ (DPN_Importer) :
         mod = loader.load_module (module)
         sys.modules [realmodule] = mod
         return mod
-    # end def _load_module
+    # end def _load_mo dule
 
 # end class _DPN_ZipImporter_
 
