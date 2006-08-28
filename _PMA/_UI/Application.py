@@ -78,7 +78,6 @@ class _App_State_ (TFL.App_State) :
     product_name = "PMA"
 # end class _App_State_
 
-
 class UI_State (TGL.UI.UI_State) :
 
     def __init__ (self, ** kw) :
