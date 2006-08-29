@@ -13,6 +13,7 @@
 #    12-May-2005 (MZO) Creation
 #     2-Sep-2005 (CT)  `setup_clipboard_menu` changed to pass strings as
 #                      `accelerator` instead of `Eventname` attributes
+#    28-Aug-2006 (ABR) Merged in changes from For_Lin_Plan_22_branch
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,7 @@ class Clipboard (TFL.UI.Mixin) :
             if_names = group.if_names
         add_cmd ( Cmd ( "Cut"
                       , tkt.menu_cut_cmd
-                      , precondition = tkt.cutable
+                      , precondition = tkt.cuttable
                       , pv_callback  = pv
                       )
                 , icon        = "edit.cut"
@@ -75,7 +76,7 @@ class Clipboard (TFL.UI.Mixin) :
                 )
         add_cmd ( Cmd ( "Copy"
                       , tkt.menu_copy_cmd
-                      , precondition = tkt.copyable
+                      , precondition = tkt.copiable
                       , pv_callback  = pv
                       )
                 , icon        = "edit.copy"
@@ -86,7 +87,7 @@ class Clipboard (TFL.UI.Mixin) :
                 )
         add_cmd ( Cmd ( "Paste"
                       , tkt.menu_paste_cmd
-                      , precondition = tkt.pasteable
+                      , precondition = tkt.pastable
                       , pv_callback  = pv
                       )
                 , icon        = "edit.paste"

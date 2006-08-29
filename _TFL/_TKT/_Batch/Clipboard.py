@@ -11,6 +11,7 @@
 #
 # Revision Dates
 #    29-Aug-2005 (MZO) Creation (i15639)
+#    29-Aug-2006 (ABR) Merged in changes from For_Lin_Plan_22_branch
 #    ««revision-date»»···
 #--
 
@@ -20,39 +21,33 @@ import _TFL._TKT.Mixin
 
 class Clipboard (TFL.TKT.Mixin) :
 
-    def copyable (self, *args) :
-        """Current content is copyable.
-        """
+    def copiable (self, *args) :
+        """Current content is copiable."""
         return True
-    # end def copyable
+    # end def copiable
 
-    def cutable (self, *args) :
-        """Current content is cutable.
-        """
+    def cuttable (self, *args) :
+        """Current content is cuttable."""
         return True
-    # end def cutable
+    # end def cuttable
 
-    def pasteable (self, *args) :
-        """Current content is pasteable.
-        """
+    def pastable (self, *args) :
+        """Current content is pastable."""
         return True
-    # end def pasteable
+    # end def pastable
 
     def menu_copy_cmd (self, event = None) :
-        """Copy selection.
-        """
+        """Copy selection."""
         pass
     # end def menu_cut_cmd
 
     def menu_cut_cmd (self, event = None) :
-        """Cut selection.
-        """
+        """Cut selection."""
         pass
     # end def menu_cut_cmd
 
     def menu_paste_cmd (self, event = None) :
-        """Paste selection.
-        """
+        """Paste selection."""
         pass
     # end def menu_cut_cmd
 
