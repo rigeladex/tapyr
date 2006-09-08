@@ -26,8 +26,9 @@
 #    Model a SVG document
 #
 # Revision Dates
-#     5-Sep-2005 (CT) Creation
-#     6-Sep-2005 (CT) Creation continued
+#     5-Sep-2005 (CT)  Creation
+#     6-Sep-2005 (CT)  Creation continued
+#     4-Sep-2006 (MZO) `Text` added
 #    ««revision-date»»···
 #--
 
@@ -218,6 +219,11 @@ Root                 = TFL.SDG.XML.Elem_Type \
     , xmlns          = "http://www.w3.org/2000/svg"
     , x              = None
     , y              = None
+    )
+
+Text                 = TFL.SDG.XML.Elem_Type \
+    ( "text"
+    , ** _shape_attr
     )
 
 """
