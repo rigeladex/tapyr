@@ -26,18 +26,21 @@
 #    C-include statements
 #
 # Revision Dates
-#    11-Aug-2004 (MG) Creation
-#    12-Aug-2004 (MG) `cgi` set to `Decl`
-#    13-Aug-2004 (CT) `Include.c_format` simplified
-#                     (`%(filename)s` instead of `%(::.filename:)s`)
-#    24-Aug-2004 (CT) `fn_head` and `fn_tail` added
-#    24-Aug-2004 (CT) Append `.h` if necessary (using `Filename`)
+#    11-Aug-2004 (MG)  Creation
+#    12-Aug-2004 (MG)  `cgi` set to `Decl`
+#    13-Aug-2004 (CT)  `Include.c_format` simplified
+#                      (`%(filename)s` instead of `%(::.filename:)s`)
+#    24-Aug-2004 (CT)  `fn_head` and `fn_tail` added
+#    24-Aug-2004 (CT)  Append `.h` if necessary (using `Filename`)
+#    11-Sep-2006 (MZO) i21459, searchpath fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
 from   Filename          import Filename
 import _TFL._SDG._C.Node
+import sos
+import sys
 
 class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
     """C-include statements"""
@@ -48,13 +51,22 @@ class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
         )
     front_args             = ("filename", )
     _autoconvert           = dict \
-        ( filename         = lambda s, k, v : Filename (v, ".h").name
+        ( filename         = lambda s, k, v : s._convert_filename (v)
         )
 
-    h_format = c_format    = """#include %(fn_head)s%(filename)s%(fn_tail)s"""
-
+    h_format = c_format    = \
+        """#include %(fn_head)s%(filename)s%(fn_tail)s"""
+        
     fn_head                = '<'
     fn_tail                = '>'
+    
+    def _convert_filename (self, value) : 
+        fname = Filename (value, ".h").name
+        if sys.platform == "win32" :
+            fname = fname.replace (sos.sep, "/")
+        return fname
+    # end def _convert_filename
+        
 # end class Include
 
 Sys_Include = Include
