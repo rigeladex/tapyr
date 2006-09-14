@@ -156,6 +156,7 @@
 #     7-Mar-2006 (CED) `items_sorted_keys`, `items_sorted_values` added
 #     7-Mar-2006 (CED) `items_sorted_*` removed
 #     9-May-2006 (CT)  `bit_size_cmp` removed (long since stale)
+#     6-Sep-2006 (CT)  Doc-strings of `split_hst` and `rsplit_hst` corrected
 #    ««revision-date»»···
 #--
 
@@ -763,7 +764,7 @@ def split_by_key (seq, key_cmp, min_result_size = 1) :
 
 def split_hst (string, sep) :
     """Returns a three element tuple (head, sep, tail) with
-       `sep.join (split_hst (string)) == string` split around the
+       `"".join (split_hst (string)) == string` split around the
        first occurrence of `sep`.
 
        Based on Raymond Hettinger's proposal for a new
@@ -805,8 +806,8 @@ def split_hst (string, sep) :
 # end def split_hst
 
 def rsplit_hst (string, sep) :
-    """Returns a three element tuple (head, sep, tail) with
-       `sep.join (split_hst (string)) == string` split around the
+    """Returns a three element tuple (tail, sep, head) with
+       `"".join (rsplit_hst (string)) == string` split around the
        last (i.e., rightmost) occurrence of `sep`.
 
        Based on Raymond Hettinger's proposal for a new
