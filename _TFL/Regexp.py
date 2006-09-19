@@ -143,8 +143,6 @@ class Regexp (TFL.Meta.Object) :
                 pos = lastpos
     # end def search_iter
 
-#    __call__ = search
-
     def split (self, string, maxsplit = 0, minsplit = 0) :
         """Split `string` by `self._pattern`"""
         result = self._pattern.split (string, maxsplit)
