@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Aug-2003 (CT) Creation
+#    29-Sep-2006 (CT) Two more doctests added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,9 @@ def bayesian (p_h, p_o_h, p_o_not_h) :
        >>> "%5.3f" % bayesian (0.01, 0.90, 0.01)
        '0.476'
 
+       >>> "%5.3f" % bayesian (0.01, 0.99, 0.01)
+       '0.500'
+
        Because so many people don't have the disease, the false positives far
        exceed the small percentage of those tested who actually have the
        disease.
@@ -65,6 +69,8 @@ def bayesian (p_h, p_o_h, p_o_not_h) :
        '0.944'
        >>> "%5.3f" % bayesian (0.50, 0.90, 0.01)
        '0.989'
+       >>> "%5.3f" % bayesian (0.50, 0.99, 0.01)
+       '0.990'
     """
     p_not_h         = 1.0 - p_h
     p_h_times_p_o_h = p_h * p_o_h

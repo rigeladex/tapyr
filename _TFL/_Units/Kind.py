@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
+#    29-Sep-2006 (CT) `__add__` and `__sub__` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,15 @@ class Kind (TFL.Meta.Object) :
         self.value = value * unit.factor
         self.unit  = unit
     # end def __init__
+
+    def __add__ (self, rhs) :
+        if isinstance (rhs, self.__class__) :
+            return self.__class__ (self.value + rhs.value)
+        raise TypeError, \
+            ( "unsupported operand type(s) for +: '%s' and '%s'"
+            % (self.__class__.__name__, rhs.__class__.__name__)
+            )
+    # end def __add__
 
     def __cmp__ (self, rhs) :
         try :
@@ -97,6 +107,15 @@ class Kind (TFL.Meta.Object) :
     def __repr__ (self) :
         return "%s" % (self.value, )
     # end def __repr__
+
+    def __sub__ (self, rhs) :
+        if isinstance (rhs, self.__class__) :
+            return self.__class__ (self.value - rhs.value)
+        raise TypeError, \
+            ( "unsupported operand type(s) for -: '%s' and '%s'"
+            % (self.__class__.__name__, rhs.__class__.__name__)
+            )
+    # end def __sub__
 
 # end class Kind
 
