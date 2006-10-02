@@ -399,13 +399,13 @@ class CI_Menu (_CI_Widget_) :
     ### internals
     def _bind_accelerator_to_toplevel (self, accelerator, callback) :
         ### tk does not bind accel (display only textlabel).
-        if accelerator : 
+        if accelerator :
             toplevel = self._find_toplevel ()
             if toplevel is not None :
                 toplevel.bind (accelerator, callback)
     # end def _bind_accelerator_to_toplevel
 
-    def _find_toplevel (self) : 
+    def _find_toplevel (self) :
         ### return toplevel window (widget) or None
         toplevel = getattr (self, "_menu_toplevel", -1)
         if toplevel == -1 :
@@ -418,7 +418,7 @@ class CI_Menu (_CI_Widget_) :
             toplevel = self._menu_toplevel
         return toplevel
     # end def _find_toplevel
-        
+
     def _remove (self, index) :
         self.wtk_widget.delete (index)
     # end def _remove

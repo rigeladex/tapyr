@@ -287,7 +287,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
                 ( self.scope.db_name.directory
                 , filename
                 )
-        else : 
+        else :
             filename = sos.path.join (sos.getcwd (), filename)
         filename = sos.path.normpath (filename)
         module   = C.Module ()

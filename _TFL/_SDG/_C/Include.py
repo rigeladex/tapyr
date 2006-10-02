@@ -56,17 +56,17 @@ class Include (TFL.SDG.Leaf, TFL.SDG.C.Node) :
 
     h_format = c_format    = \
         """#include %(fn_head)s%(filename)s%(fn_tail)s"""
-        
+
     fn_head                = '<'
     fn_tail                = '>'
-    
-    def _convert_filename (self, value) : 
+
+    def _convert_filename (self, value) :
         fname = Filename (value, ".h").name
         if sys.platform == "win32" :
             fname = fname.replace (sos.sep, "/")
         return fname
     # end def _convert_filename
-        
+
 # end class Include
 
 Sys_Include = Include

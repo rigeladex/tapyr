@@ -40,7 +40,7 @@ class Toplevel (TFL.TKT.Mixin) :
     Widget_Type = CTK.Toplevel
 
     _padx = 5
-    _pady = 5 
+    _pady = 5
 
     def __init__ \
         ( self

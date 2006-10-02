@@ -176,26 +176,26 @@ class Struct_Field (TFL.Meta.Object):
         result  = True
         size    = 0
         value   = str (original_value)
-        if   value.lower () == "true" : 
+        if   value.lower () == "true" :
             value = "1"
-        elif value.lower () == "false" : 
+        elif value.lower () == "false" :
             value = "0"
         format = self.user_code or self.fmt_code.get (self.type, None)
         if format and not format in ("c", "s", "b", "P", "B") : # char
             size = struct.calcsize (format)
-        try : 
+        try :
             value = float (value)
-        except (ValueError, TypeError) : 
+        except (ValueError, TypeError) :
             value = None
         if size > 0 and value is not None :
             val_range = math.pow (2, (size * 8))
             if format in  ("I", "L", "Q", "H") :                # unsigned
-                if value > val_range : 
+                if value > val_range :
                     result = False
                     error_text = \
                         ( ( "Unexpected value in Structfield `%s` "
                             "(typesize `%s` bytes): Value `%s` is not"
-                            " within range (%s)." 
+                            " within range (%s)."
                           )
                         % ( self.name, size, original_value
                           , "0 .. %s" % val_range
@@ -204,12 +204,12 @@ class Struct_Field (TFL.Meta.Object):
                     raise ValueError, error_text
             else :
                 val_range = val_range // 2 + 1                   # signed
-                if abs (value) > (val_range) : 
+                if abs (value) > (val_range) :
                     result = False
                     error_text = \
                         ( ( "Unexpected value in Structfield `%s` "
                             "(typesize `%s` bytes): Value `%s` is not"
-                            " within range (%s)." 
+                            " within range (%s)."
                           )
                         % ( self.name, size, original_value
                           , "-%s .. +%s" % (val_range, val_range)

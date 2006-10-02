@@ -1004,7 +1004,7 @@ class Browser (TFL.UI.Mixin) :
         self.gauge          = AC.ui_state.gauge
         if AC and hasattr (AC.ANS, "Version") :
             self._dialog_title  = AC.ANS.Version.productname
-        else : 
+        else :
             self._dialog_title  = ""
         self._parent        = wc
         self.name           = name

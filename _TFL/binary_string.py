@@ -28,7 +28,7 @@
 # Revision Dates
 #    25-Feb-2004 (CT) Creation
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
-#    20-Jul-2005 (GKH) `int_to_binary_string` with additional parameter 
+#    20-Jul-2005 (GKH) `int_to_binary_string` with additional parameter
 #                      `min_digits` (RUP 16885)
 #    26-Sep-2005 (GKH) `int_to_binary_string` trims leading zeros (RUP 16885)
 #    ««revision-date»»···
