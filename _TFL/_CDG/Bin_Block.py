@@ -30,6 +30,7 @@
 #    12-Jun-2006 (CED) `ptypes` included at begin of h-file
 #    12-Jun-2006 (CED) Include of `ptypes` done in subclasses
 #     5-Jul-2006 (MZO) fixed debug directory
+#    12-Oct-2006 (MZO) get object from `Filler`
 #    ««revision-date»»···
 #--
 #
@@ -155,9 +156,12 @@ class Bin_Block_Creator (TFL.Meta.Object) :
 
     def __call__ \
         (self, byte_order, meta_struct, config_struct, * args, ** kw) :
+        root = config_struct (self.scope, * args,  ** kw)
+        if getattr (root, "get_struct_object", None) :
+            root = root.get_struct_object ()
         bblock = self.create_bin_block \
             ( meta_struct
-            , config_struct (self.scope, * args,  ** kw)
+            , root
             , byte_order
             )
         if self.__class__.use_internal_data_formats :
@@ -170,7 +174,8 @@ class Bin_Block_Creator (TFL.Meta.Object) :
     # end def additional_blobs
 
     def additional_defines (self, C, h_file, c_file) :
-        c_file.add (C.App_Include (h_file.inc_name))
+        if c_file :
+            c_file.add (C.App_Include (h_file.inc_name))
     # end def additional_defines
 
     def create_api \
@@ -200,14 +205,11 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         ( self, meta_struct, root, ptr_table, C, c_file, h_file
         , main = "root", function_name_tail = ""
         ) :
-        for c in meta_struct.needs_struct :
-            h_file.add \
-                (c.as_forward_typedef (const = c.const, scope = h_file.scope))
         meta_struct.define_access_macros (C, h_file, main)
         for sf in meta_struct.needs_typedef :
             h_file.add (sf.as_typedef (scope = h_file.scope))
         for c in meta_struct.needs_struct :
-            h_file.add (c.as_c_code (scope = h_file.scope, standalone = 1))
+            h_file.add (c.as_typedef (scope = h_file.scope))
         if root is not None and ptr_table is not None :
             self._aquire_bin_buffer  \
                 ( meta_struct, root, ptr_table, h_file, c_file, C
