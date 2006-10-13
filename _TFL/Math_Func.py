@@ -42,6 +42,7 @@
 #                      as passed as argument instead of a real
 #    10-Dec-2004 (ABR) Corrected classic int division for `lcm`
 #    14-Feb-2006 (CT)  Moved into package `TFL`
+#    13-Oct-2006 (PGO) `linregress` added (very simple version)
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,17 @@ def least_common_multiple (seq, default = None) :
             result = lcm (result, i)
     return result
 # end def least_common_multiple
+
+def linregress (values) :
+    """Poor man's version of a linear regression algorithm.
+       Returns an estimated slope.
+    """
+    ### XXX replace me with something decent, pls!
+    x1, y1 = values [0]
+    xn, yn = values [-1]
+    k      = float (yn - y1) / (xn - x1)
+    return k
+# end def linregress
 
 def p2_ceil (n) :
     """Return next larger power of 2 for `n`.
