@@ -43,14 +43,39 @@
 #    10-Dec-2004 (ABR) Corrected classic int division for `lcm`
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #    13-Oct-2006 (PGO) `linregress` added (very simple version)
+#    16-Oct-2006 (CED) `linregress` filled with life,
+#                      `coefficent_of_correlation` added, functions sorted
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 
 from   math import *
+import operator
 
 _log2 = log (2)
+
+def average (seq) :
+    """Returns the average value of the elements in `seq`.
+
+       >>> s = (1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27)
+       >>> "%4.2f" % (average (s),)
+       '1.29'
+    """
+    return float (sum (seq)) / len (seq)
+# end def average
+
+def coefficent_of_correlation (values) :
+    """Returns the coefficent of correlation for a set of data points
+       in `values`
+    """
+    x_      = average ([x for x,y in values])
+    y_      = average ([y for x,y in values])
+    x2_sum  = sum ((x - x_) ** 2 for x, y in values)
+    y2_sum  = sum ((y - y_) ** 2 for x, y in values)
+    xy2_sum = sum ((x - x_) * (y - y_) for x, y in values)
+    return xy2_sum / (sqrt (x2_sum) * sqrt (y2_sum))
+# end def coefficent_of_correlation
 
 def log2  (x) :
     return log (x) / _log2
@@ -93,14 +118,17 @@ def least_common_multiple (seq, default = None) :
 # end def least_common_multiple
 
 def linregress (values) :
-    """Poor man's version of a linear regression algorithm.
-       Returns an estimated slope.
+    """Linear regression algorithm. Implements the method of least squares.
+       Returns the coefficents for a linear function approximating the data
+       points in `values`.
     """
-    ### XXX replace me with something decent, pls!
-    x1, y1 = values [0]
-    xn, yn = values [-1]
-    k      = float (yn - y1) / (xn - x1)
-    return k
+    x_      = average ([x for x,y in values])
+    y_      = average ([y for x,y in values])
+    x2_sum  = sum ((x - x_) ** 2 for x, y in values)
+    xy2_sum = sum ((x - x_) * (y - y_) for x, y in values)
+    k       = xy2_sum / x2_sum
+    d       = y_ - (k * x_)
+    return k, d
 # end def linregress
 
 def p2_ceil (n) :
@@ -111,16 +139,6 @@ def p2_ceil (n) :
     """
     return n.__class__ (2 ** ceil (log2 (n)))
 # end def p2_ceil
-
-def average (seq) :
-    """Returns the average value of the elements in `seq`.
-
-       >>> s = (1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27)
-       >>> "%4.2f" % (average (s),)
-       '1.29'
-    """
-    return sum (seq) / len (seq)
-# end def average
 
 def standard_deviation_plain (seq) :
     """Returns the standard deviation (aka root mean square) of the elements
