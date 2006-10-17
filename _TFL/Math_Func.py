@@ -133,7 +133,7 @@ def p2_ceil (n) :
 # end def p2_ceil
 
 def residuals (xs, ys, k, d) :
-    """Returns a list residuals of a set of data points given by xs and ys
+    """Returns a list of residuals of a set of data points given by xs and ys
        against a straight line approximation, given by k and d.
     """
     assert len (xs) == len (ys)
