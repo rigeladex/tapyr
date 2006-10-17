@@ -45,6 +45,8 @@
 #    13-Oct-2006 (PGO) `linregress` added (very simple version)
 #    16-Oct-2006 (CED) `linregress` filled with life,
 #                      `coefficent_of_correlation` added, functions sorted
+#    17-Oct-2006 (CED) s/linregress/linear_regression/,  implement robust
+#                      regression
 #    ««revision-date»»···
 #--
 
@@ -117,19 +119,20 @@ def least_common_multiple (seq, default = None) :
     return result
 # end def least_common_multiple
 
-def linregress (values) :
-    """Linear regression algorithm. Implements the method of least squares.
-       Returns the coefficents for a linear function approximating the data
-       points in `values`.
+def linear_regression (xs, ys) :
+    """Robust regression algorithm. Returns slope and offset of a
+       straight line approximating the data points given by `xs` and `ys`.
     """
-    x_      = average ([x for x,y in values])
-    y_      = average ([y for x,y in values])
-    x2_sum  = sum ((x - x_) ** 2 for x, y in values)
-    xy2_sum = sum ((x - x_) * (y - y_) for x, y in values)
-    k       = xy2_sum / x2_sum
-    d       = y_ - (k * x_)
+    assert len (xs) == len (ys)
+    n       = len (xs)
+    sx      = sum (xs)
+    sy      = sum (ys)
+    sxx     = sum (x ** 2 for x    in xs)
+    sxy     = sum (x * y  for x, y in zip (xs, ys))
+    k       = float (n * sxy - sx * sy) / (n * sxx - sx * sx)
+    d       = (sy - k * sx) / n
     return k, d
-# end def linregress
+# end def linear_regression
 
 def p2_ceil (n) :
     """Return next larger power of 2 for `n`.
