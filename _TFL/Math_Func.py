@@ -47,6 +47,7 @@
 #                      `coefficent_of_correlation` added, functions sorted
 #    17-Oct-2006 (CED) s/linregress/linear_regression/,  implement robust
 #                      regression
+#    17-Oct-2006 (CED) Removed `coefficent_of_correlation`,  added `residuals`
 #    ««revision-date»»···
 #--
 
@@ -66,18 +67,6 @@ def average (seq) :
     """
     return float (sum (seq)) / len (seq)
 # end def average
-
-def coefficent_of_correlation (values) :
-    """Returns the coefficent of correlation for a set of data points
-       in `values`
-    """
-    x_      = average ([x for x,y in values])
-    y_      = average ([y for x,y in values])
-    x2_sum  = sum ((x - x_) ** 2 for x, y in values)
-    y2_sum  = sum ((y - y_) ** 2 for x, y in values)
-    xy2_sum = sum ((x - x_) * (y - y_) for x, y in values)
-    return xy2_sum / (sqrt (x2_sum) * sqrt (y2_sum))
-# end def coefficent_of_correlation
 
 def log2  (x) :
     return log (x) / _log2
@@ -142,6 +131,17 @@ def p2_ceil (n) :
     """
     return n.__class__ (2 ** ceil (log2 (n)))
 # end def p2_ceil
+
+def residuals (xs, ys, k, d) :
+    """Returns a list residuals of a set of data points given by xs and ys
+       against a straight line approximation, given by k and d.
+    """
+    assert len (xs) == len (ys)
+    result = []
+    for x, y in zip (xs, ys) :
+        result.append (y - d - k * x)
+    return result
+# end def residuals
 
 def standard_deviation_plain (seq) :
     """Returns the standard deviation (aka root mean square) of the elements
