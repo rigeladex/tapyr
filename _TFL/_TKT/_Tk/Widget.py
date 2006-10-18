@@ -46,6 +46,9 @@
 #    31-May-2005 (CT)  `normal_cursor` fixed
 #    11-Jul-2005 (CT)  `__getattr__` changed to look in `CTK_Dialog` for
 #                      `ask_` functions, too
+#    13-Oct-2006 (ABR) Added `CTK_Dialog.*_Field` classes to `__getattr__`
+#                      lookup [21941]
+#                      
 #    ««revision-date»»···
 #--
 
@@ -159,7 +162,8 @@ class Widget (TFL.TKT.Mixin) :
     # end def _styler
 
     def __getattr__ (self, name) :
-        if name.startswith ("ask_") :
+        # `*_Field` classes are used by the `ask_many` function
+        if name.startswith ("ask_") or name.endswith ("_Field") :
             try :
                 return getattr (self.exposed_widget, name)
             except AttributeError :
