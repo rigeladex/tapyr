@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -26,17 +26,18 @@
 #    C array declaration
 #
 # Revision Dates
-#     9-Aug-2004 (CT) Creation
-#    12-Aug-2004 (MG) Format changed
-#    21-Sep-2004 (CT) `c_format` changed (use `head` instead of `front` for
-#                     `description`)
-#    23-Sep-2004 (CT) `c_format` changed (total revamp of `x_forms` for
-#                     `initializers`)
-#    23-Sep-2004 (MG) `vaps_channel_format` added
-#    27-Oct-2004 (MG)  Calculate the default of `bounds` based on the length
-#                      of `init` (to be backward compatible)
-#    16-Nov-2004 (MG) Multidimension array support added
-#    16-Sep-2005 (MG) Changed to support `fmt` again
+#     9-Aug-2004 (CT)  Creation
+#    12-Aug-2004 (MG)  Format changed
+#    21-Sep-2004 (CT)  `c_format` changed (use `head` instead of `front` for
+#                      `description`)
+#    23-Sep-2004 (CT)  `c_format` changed (total revamp of `x_forms` for
+#                      `initializers`)
+#    23-Sep-2004 (MG)  `vaps_channel_format` added
+#    27-Oct-2004 (MG)   Calculate the default of `bounds` based on the length
+#                       of `init` (to be backward compatible)
+#    16-Nov-2004 (MG)  Multidimension array support added
+#    16-Sep-2005 (MG)  Changed to support `fmt` again
+#    19-Oct-2006 (CED) Length check added
 #    ««revision-date»»···
 #--
 
@@ -91,6 +92,8 @@ class Array (TFL.SDG.C._Var_) :
     def __init__ (self, type, name, bounds = None, init = (), ** kw) :
         if bounds is None :
             bounds = len (init)
+        if isinstance (bounds, int) :
+            assert len (init) <= bounds, (bounds, init)
         self.__super.__init__ \
             (type, name, bounds = bounds, init = init, ** kw)
         if self.init :
