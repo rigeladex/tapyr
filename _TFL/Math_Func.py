@@ -48,7 +48,7 @@
 #    17-Oct-2006 (CED) s/linregress/linear_regression/,  implement robust
 #                      regression
 #    17-Oct-2006 (CED) Removed `coefficent_of_correlation`,  added `residuals`
-#    20-Oct-2006 (CED) s/linear_regression/linear_regression_1/,
+#    20-Oct-2006 (CED) s/linear_regression/linear_regression_1/, doctest added
 #                      `residuals` moved out
 #    ««revision-date»»···
 #--
@@ -110,12 +110,20 @@ def least_common_multiple (seq, default = None) :
     return result
 # end def least_common_multiple
 
-def linear_regression_1 (xs, ys) :
+def linear_regression_1 (ys, xs) :
     """Linear regression algorithm for 2-dimensional data
        (== 1 free variable).
-       (see http://en.wikipedia.org/wiki/Linear_regression#Robust_regression)
+       (see http://en.wikipedia.org/wiki/Linear_regression)
        Returns offset and slope of a straight line approximating the
        data points given by `xs` and `ys`.
+
+       >>> xs = [1, 2, 3]
+       >>> ys = [3, 6, 9]
+       >>> linear_regression_1 (ys, xs)
+       (0.0, 3.0)
+       >>> ys = [4, 7, 10]
+       >>> linear_regression_1 (ys, xs)
+       (1.0, 3.0)
     """
     assert len (xs) == len (ys)
     n       = float (len (xs))
@@ -125,8 +133,8 @@ def linear_regression_1 (xs, ys) :
     sxy     = sum (x * y  for x, y in zip (xs, ys))
     k       = (n*sxy - sx*sy) / (n*sxx - sx*sx)
     d       = (sy - k*sx) / n
-    return d, x
-# end def linear_regression
+    return d, k
+# end def linear_regression_1
 
 def p2_ceil (n) :
     """Return next larger power of 2 for `n`.
