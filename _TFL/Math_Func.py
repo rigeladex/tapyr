@@ -48,6 +48,8 @@
 #    17-Oct-2006 (CED) s/linregress/linear_regression/,  implement robust
 #                      regression
 #    17-Oct-2006 (CED) Removed `coefficent_of_correlation`,  added `residuals`
+#    20-Oct-2006 (CED) s/linear_regression/linear_regression_1/,
+#                      `residuals` moved out
 #    ««revision-date»»···
 #--
 
@@ -108,19 +110,22 @@ def least_common_multiple (seq, default = None) :
     return result
 # end def least_common_multiple
 
-def linear_regression (xs, ys) :
-    """Robust regression algorithm. Returns slope and offset of a
-       straight line approximating the data points given by `xs` and `ys`.
+def linear_regression_1 (xs, ys) :
+    """Linear regression algorithm for 2-dimensional data
+       (== 1 free variable).
+       (see http://en.wikipedia.org/wiki/Linear_regression#Robust_regression)
+       Returns offset and slope of a straight line approximating the
+       data points given by `xs` and `ys`.
     """
     assert len (xs) == len (ys)
-    n       = len (xs)
+    n       = float (len (xs))
     sx      = sum (xs)
     sy      = sum (ys)
-    sxx     = sum (x ** 2 for x    in xs)
+    sxx     = sum (x * x  for x    in xs)
     sxy     = sum (x * y  for x, y in zip (xs, ys))
-    k       = float (n * sxy - sx * sy) / (n * sxx - sx * sx)
-    d       = (sy - k * sx) / n
-    return k, d
+    k       = (n*sxy - sx*sy) / (n*sxx - sx*sx)
+    d       = (sy - k*sx) / n
+    return d, x
 # end def linear_regression
 
 def p2_ceil (n) :
@@ -131,17 +136,6 @@ def p2_ceil (n) :
     """
     return n.__class__ (2 ** ceil (log2 (n)))
 # end def p2_ceil
-
-def residuals (xs, ys, k, d) :
-    """Returns a list of residuals of a set of data points given by xs and ys
-       against a straight line approximation, given by k and d.
-    """
-    assert len (xs) == len (ys)
-    result = []
-    for x, y in zip (xs, ys) :
-        result.append (y - d - k * x)
-    return result
-# end def residuals
 
 def standard_deviation_plain (seq) :
     """Returns the standard deviation (aka root mean square) of the elements
