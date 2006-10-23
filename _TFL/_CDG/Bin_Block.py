@@ -32,6 +32,7 @@
 #     5-Jul-2006 (MZO) fixed debug directory
 #    12-Oct-2006 (MZO) get object from `Filler`
 #    16-Oct-2006 (MZO) revert `typedef` change
+#    23-Oct-2006 (MZO) note added
 #    ««revision-date»»···
 #--
 #
@@ -125,6 +126,9 @@ class C_Code_Creator (TFL.Meta.Object) :
         for c in Meta_Struct.uses_global_buffers :
             values     = []
             for o in c.extension :
+                # Note: does not encouple struct field value - generated value
+                # so displaced values possible if values shared (cls variable)
+                # and generated more than once
                 values.append (o.dict ())
             values = self.hook_pack_values (values, c)
             self._define_fmt (C, c)

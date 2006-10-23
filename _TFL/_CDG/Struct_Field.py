@@ -43,6 +43,7 @@
 #    20-Feb-2006 (MZO) Corrected super call of `Reference_Struct_Field`
 #    13-Jul-2006 (MZO) issue20886, `check_value` added
 #    17-Jul-2006 (MZO) issue20886, `check_value` fixed
+#    17-Jul-2006 (MZO) issue22038, `val_range` corrected
 #    ««revision-date»»···
 #--
 
@@ -188,7 +189,7 @@ class Struct_Field (TFL.Meta.Object):
         except (ValueError, TypeError) :
             value = None
         if size > 0 and value is not None :
-            val_range = math.pow (2, (size * 8))
+            val_range = math.pow (2, (size * 8)) - 1
             if format in  ("I", "L", "Q", "H") :                # unsigned
                 if value > val_range :
                     result = False
