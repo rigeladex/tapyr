@@ -35,6 +35,7 @@
 #    16-Nov-2004 (MG) Testcase for multidimensional arrays added
 #    24-May-2005 (CED) Test of `Enum` added
 #    20-Mar-2006 (MZO) Funciton requires argument
+#    30-Oct-2006 (CED) Tests for `Define_Constant`, `Preprocessor_Error` added
 #    ««revision-date»»···
 #--
 
