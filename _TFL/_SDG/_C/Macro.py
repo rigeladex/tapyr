@@ -43,6 +43,7 @@
 #    22-Feb-2005 (MBM) Removed <> from index entry
 #    24-Feb-2005 (MBM) Changed index entry structure
 #     9-Aug-2005 (CT)  Call to `tex_quoted` added
+#    30-Oct-2006 (CED) `Preprocessor_Error` added
 #    ««revision-date»»···
 #--
 
@@ -196,6 +197,24 @@ class Macro_Block (_Macro_, TFL.SDG.C.Stmt_Group) :
     Ancestor             = TFL.SDG.C.Stmt_Group
 
 # end class Macro_Block
+
+class Preprocessor_Error (_Macro_) :
+    """A C preprocessor error statement"""
+
+    m_head                 = "error "
+
+    init_arg_defaults      = dict \
+        ( scope            = TFL.SDG.C.HC
+        , error_msg        = ""
+        )
+
+    front_args             = ("error_msg", )
+
+    h_format = c_format  = """
+        #%(m_head) s%(error_msg)s
+    """
+
+# end class Preprocessor_Error
 
 if __name__ != "__main__" :
     TFL.SDG.C._Export ("*", "_Macro_")

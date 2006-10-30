@@ -303,6 +303,14 @@ line2
 line2 \\
 line3 long
 
+>>> dc = C.Define_Constant ("foo", "42")
+>>> print NL.join ([l.rstrip () for l in dc.as_c_code ()])
+#define foo 42
+
+>>> e = C.Preprocessor_Error ("this is fishy")
+>>> print NL.join ([l.rstrip () for l in e.as_c_code ()])
+#error this is fishy
+
 >>> i = C.Include ("define.h")
 >>> print NL.join ([l.rstrip () for l in i.as_c_code ()])
 #include <define.h>
