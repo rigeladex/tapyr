@@ -29,7 +29,7 @@
 #    24-Jun-2002 (CT)  Creation (factored from Two_Dim)
 #    24-Mar-2003 (CT)  Converted to new-style class
 #    11-Jun-2003 (CT)  s/!= None/is not None/
-#    11-Jun-2004 (GKH) Deprecation warning removed (issue 10140)
+#    11-Jun-2004 (GKH) Deprecation warning removed [10140]
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     5-Apr-2005 (CT)  Breakage in unit-test introduced by GKH removed
 #    ««revision-date»»···

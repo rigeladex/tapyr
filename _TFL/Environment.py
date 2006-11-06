@@ -39,7 +39,7 @@
 #                      (can't be bothered to tweak `imp.find_module` for
 #                      modules in packages)
 #    28-May-2003 (CT)  Use `sos.uname` to find `hostname`
-#    25-Jun-2003 (AGO) Fixed preliminarily issue 4629
+#    25-Jun-2003 (AGO) Fixed preliminarily [4629]
 #    11-Jul-2003 (MG)  `try... except` added around `uname` call
 #    21-Apr-2004 (CT)  Try to get `home_dir` from `USERPROFILE`, too
 #    21-Apr-2004 (MUZ) s/sys/sos/ in sys.environ.get ("USERPROFILE")
@@ -47,7 +47,7 @@
 #                      (the old pattern replaces `../../` -> `...`)
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    28-Jul-2005 (CT)  `mailname` added
-#     8-Aug-2006 (MSF) fixed issue 5608
+#     8-Aug-2006 (MSF) fixed [5608]
 #    ««revision-date»»···
 #--
 
