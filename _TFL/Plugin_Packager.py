@@ -50,65 +50,39 @@
 #    25-Mar-2005 (MG)  Import of `Filename` changed
 #     7-Jun-2006 (CT)  `Re_Replacer` factored to `TFL.Regexp`
 #    20-Jul-2006 (PGO) `_populate_dirs` creates init files in empty dirs
+#     6-Nov-2006 (CED) No rewriting anymore
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 
 import copy
+import md5
 import sys
 
+import _TFL.Accessor
 import _TFL.Import_Closure
 import _TFL.import_module
 import _TFL._Meta.Object
 import _TFL.sos
 
 from   _TFL.Filename       import Filename, Dirname
-from   _TFL.Regexp         import Regexp, Re_Replacer, re
+from   _TFL.Regexp         import Regexp
 from   _TFL.predicate      import *
-
-class Replacer (Re_Replacer) :
-    """Replace a specific pattern in text"""
-
-    default_flags = re.VERBOSE | re.MULTILINE
-
-# end class Replacer
 
 class Plugin_Packager (TFL.Meta.Object) :
 
-    _leading_underscore  = Regexp ("^_")
-    _pip_import_pat      = \
-        ( r"""^(?P<head> \s* from \s+ _Plugins._)"""
-          r""" (?P<pns>  %s) \s+ """
-          r""" (?P<midd> import \s+)"""
-          r""" (?P=pns)"""
-          r"""\s*$"""
-        )
-    _pns_import_pat      = \
-        ( r"""^(?P<head> \s* from \s+)"""
-          r"""_(?P<pns>  %s) \s+ """
-          r""" (?P<midd> import \s+)"""
-          r""" (?P=pns)"""
-          r"""\s*$"""
-        )
-    _mod_import_pat      = \
-        ( r"""^(?P<head>   \s* import \s+)"""
-          r""" (?P<module> %s)"""
-          r"""\s*$"""
-        )
-    _mod_from_import_pat = \
-        ( r"""^(?P<head>   \s* from \s+)"""
-          r""" (?P<module> %s)"""
-          r""" (?P<midd>   \s+ import \s+)"""
-        )
-    _pip_access_pat      = r"""(?<! [A-Za-z0-9_]) %s (?= \.)"""
+    _leading_underscore = Regexp ("^_")
 
-    def __init__ (self, pi_root_name, ap_closure, import_path, target_root, ignore = None) :
+    def __init__ \
+        ( self, pi_root_name, ap_closure, import_path, target_root
+        , ignore = None
+        ) :
         assert "_Plugins" not in ap_closure.pym_dict
         self.pi_root_name  = pi_root_name
         self.ap_closure    = ap_closure
         self.import_path   = import_path
-        self.target_root   = Dirname (target_root)
+        self.target_root   = Dirname (target_root).name
         self.pi_closure    = TFL.Import_Closure \
             (pi_root_name, import_path, ignore)
         self.delta_closure = dc = self.pi_closure - ap_closure
@@ -117,44 +91,56 @@ class Plugin_Packager (TFL.Meta.Object) :
                 if  p.pkg.startswith ("_Plugins") and p.level == 1
             ]
         assert len (pi_packages) == 1
-        self.pi_package = pip = pi_packages [0]
-        assert dc.root_pym.pkg == pip.pkg, "%s:%s" % (dc.root_pym.pkg, pip.pkg)
+        self.pi_package    = pip  = pi_packages [0]
+        assert dc.root_pym.pkg   == pip.pkg, "%s:%s" % (dc.root_pym.pkg, pip.pkg)
+        self.plugin_name          = self._get_name (pip)
         self._setup_target_packages (pip)
-        self._setup_replacers       ()
-        self._rewrite_modules       (self._m_replacers)
-        self._rewrite_packages      ()
-        self._populate_dirs         ()
+        self._copy_modules          ()
+        self._make_setup_file       ()
     # end def __init__
 
-    def _get_version (self, pip) :
+    def _copy_modules (self) :
+        for pym in self.py_modules + self.py_packages :
+            code = self._read_source_file (pym)
+            self._write_target_file       (pym, code)
+    # end def _copy_modules
+
+    def _get_name (self, pip) :
         try :
             sys_path = list (sys.path)
             sys.path [0:0] = self.import_path
             m = TFL.import_module ("%s.Version" % pip.pkg)
-            return m.Version
+            return m.Version.productid
         finally :
             sys.path = sys_path
-    # end def _get_version
+    # end def _get_name
+
+    def _make_setup_file (self) :
+        pname = self.plugin_name
+        fname = TFL.sos.path.join (self.target_root, "_setup.py")
+        sf    = open (fname, "w")
+        sf.write     ("# Setup code for plugin %s\n\n" % pname)
+        sf.write     ("from _TFL.Importers import Plugin_Importer\n\n")
+        for pyp in sorted (self.py_packages, key = TFL.Attribute.pkg) :
+            sf.write \
+                ( "Plugin_Importer.register ('%s', '%s')\n"
+                % (pname, pyp.pkg)
+                )
+        for pym in sorted (self.py_modules, key = TFL.Attribute.rel_name) :
+            code = self._read_source_file (pym)
+            m    = md5.new (code)
+            sf.write \
+              ( "Plugin_Importer.tag_module ('%s', '%s', '%s')\n"
+              % (pname, pym.rel_name, m.hexdigest ())
+              )
+        sf.close     ()
+    # end def _make_setup_file
 
     def _make_target_dir (self, pym) :
         pym_dir = TFL.sos.path.split (pym.target_path) [0]
         if not TFL.sos.path.isdir (pym_dir) :
             TFL.sos.mkdir_p (pym_dir)
     # end def _make_target_dir
-
-    def _populate_walker (self, lst, dir_name, files) :
-        p = TFL.sos.path
-        populated = \
-            TFL.any_true_p (files, lambda f : p.isfile (p.join (dir_name, f)))
-        if not populated :
-            f = file (p.join (dir_name, "__init__.py"), "a")
-            f.write ("# Tapir enterprises are evil. Except Mondays.\n")
-            f.close ()
-    # end def _populate_walker
-
-    def _populate_dirs (self) :
-        TFL.sos.path.walk (self.target_path, self._populate_walker, ())
-    # end def _populate_dirs
 
     def _pns_from_pkg (self, pkg) :
         return ".".join \
@@ -168,177 +154,21 @@ class Plugin_Packager (TFL.Meta.Object) :
         return code
     # end def _read_source_file
 
-    def _rewrite_module (self, pym, replacers) :
-        code = self._read_source_file (pym)
-        for r in replacers :
-            code = r (code)
-        self._write_target_file (pym, code)
-    # end def _rewrite_module
-
-    def _rewrite_modules (self, replacers) :
-        for pym in self.py_modules :
-            self._rewrite_module (pym, replacers)
-    # end def _rewrite_modules
-
-    def _rewrite_package_derived (self, pym) :
-        name  = pym.pkg.split (".") [-1] [1:]
-        repls = \
-            [ Replacer
-                ( r"%s \s* = \s* Package_Namespace \s* \(\)" % (name, )
-                , ( r"""from %s import %s"""
-                     """\n"""
-                    r"""%s = Derived_Package_Namespace (%s)"""
-                  ) % (pym.pkg, name, name, name)
-                )
-            , Replacer
-                ( r"""from \s+ _TFL.Package_Namespace \s+ """
-                  r"""import \s+ Package_Namespace"""
-                , r"""from _TFL.Package_Namespace import """
-                  r"""Derived_Package_Namespace"""
-                )
-            , Replacer
-                ( r"""del \s+ Package_Namespace"""
-                , r"""del Derived_Package_Namespace"""
-                )
-            ]
-        self._rewrite_module (pym, self._m_replacers + repls)
-    # end def _rewrite_package_derived
-
-    def _rewrite_package_plugin (self, pym) :
-        old_name = pym.pkg.split (".") [-1] [1:]
-        new_name = "%s_%s" % (old_name, self.target_vrsn)
-        self._rewrite_module \
-            ( pym
-            , self._m_replacers
-            + [ Replacer
-                  ( r"(\W)%s(\W)" % (old_name, )
-                  , r"\1%s\2"     % (new_name, )
-                  )
-              ]
-            )
-        hide = copy.copy (pym)
-        hide.target_path = TFL.sos.path.join \
-            (Filename (hide.target_path).directory, "_Hide", "__init__.py")
-        self._make_target_dir   (hide)
-        self._write_target_file (hide, "")
-        self.hides = [hide]
-    # end def _rewrite_package_plugin
-
-    def _rewrite_packages (self) :
-        pip = self.pi_package
-        for pym in self.py_packages :
-            if pym == pip :
-                self._rewrite_package_plugin (pym)
-            elif pym.pkg.startswith ("_Plugins") and pym.level > 1 :
-                raise NotImplementedError, \
-                    ( "Inner packages under plugin package not yet "
-                      "supported: %s"
-                    % pym.rel_name
-                    )
-            else :
-                if pym.rel_name in self.ap_closure.pym_dict :
-                    self._rewrite_package_derived (pym)
-                else :
-                    self._rewrite_module (pym, self._m_replacers)
-    # end def _rewrite_packages
-
-    def _setup_replacers (self) :
-        self._m_replacers = []
-        add               = self._m_replacers.append
-        tpkg              = self.target_pkg
-        tlp_pns           = sorted \
-            ( [ pym.source_pns
-                for pym in self.delta_closure.tlp_dict.itervalues ()
-                if  pym.rel_name != "_Plugins"
-              ]
-            )
-        modules           = dusort \
-            ( [ pym.source_mod
-                for pym in self.delta_closure.pym_dict.itervalues ()
-                if  not (  pym.pkg.startswith ("_Plugins")
-                        or (pym.is_package and pym.is_toplevel)
-                        )
-              ]
-            , lambda m : -len (m)
-            )
-        pi_modules        = dusort \
-            ( [ pym.source_mod
-                for pym in self.delta_closure.pym_dict.itervalues ()
-                if  pym.pkg.startswith ("_Plugins")
-                    and not (pym.is_package and pym.is_toplevel)
-              ]
-            , lambda m : -len (m)
-            )
-        add ( Replacer
-                ( self._pns_import_pat % ("|".join (tlp_pns), )
-                , r"\g<head>%s._Hide._\g<pns> \g<midd>\g<pns>" % (tpkg, )
-                )
-            )
-        add ( Replacer
-                ( self._pip_import_pat
-                  % (self.pi_package.pkg [len ("_Plugins._") : ], )
-                , r"\g<head>\g<pns>_%s \g<midd>\g<pns>_%s"
-                  % (self.target_vrsn, self.target_vrsn)
-                )
-            )
-        add ( Replacer
-                ( self._mod_import_pat % ("|".join (modules), )
-                , r"\g<head>%s._Hide.\g<module>" % (tpkg, )
-                )
-            )
-        add ( Replacer
-                ( self._mod_from_import_pat % ("|".join (modules), )
-                , r"\g<head>%s._Hide.\g<module>\g<midd>" % (tpkg, )
-                )
-            )
-        add ( Replacer
-                ( self._mod_import_pat % ("|".join (pi_modules), )
-                , lambda m : r"%s %s"
-                      % ( m.group ("head")
-                        , self.pym_dict [m.group ("module")].target_mod
-                        )
-                )
-            )
-        add ( Replacer
-                ( self._pip_access_pat
-                  % (self.pi_package.source_pns [len ("Plugins.") : ], )
-                ,    self.pi_package.target_pns [len ("Plugins.") : ]
-                )
-            )
-    # end def _setup_replacers
-
     def _setup_target_packages (self, pip) :
-        Version = self._get_version (pip)
         dc      = self.delta_closure
         path    = TFL.sos.path
         sep     = TFL.sos.sep
         self.pym_dict    = pym_dict    = {}
         self.py_modules  = pyms        = []
         self.py_packages = pyps        = []
-        self.target_vrsn = vrsn = Version.version.replace (".", "_").strip ()
-        self.target_pkg  = target_pkg  = "%s_%s" % (pip.pkg, vrsn)
-        self.target_path = target_path = path.join \
-            (self.target_root.name, target_pkg.replace (".", sep))
+        for pym in dc.pym_dict.values () :
+           for pyp in pym.pkg_chain () :
+               if pyp.rel_name not in dc.pym_dict :
+                   dc._add (pyp)
         for pym in dc.pym_dict.itervalues () :
-            if pym.rel_name == "_Plugins" :
-                pym.target_pkg  = pym.pkg
-                pym.target_path = path.join \
-                    (self.target_root.name, pym.pkg, pym.base_path)
-            elif pym.pkg.startswith (pip.pkg) :
-                if pym.pkg == pip.pkg :
-                    pym.target_pkg  = target_pkg
-                    pym.target_path = path.join (target_path, pym.base_path)
-                else :
-                    pn              = pym.pkg [len ("_Plugins.") : ]
-                    pym.target_pkg  = ".".join ((target_pkg, pn))
-                    pym.target_path = path.join \
-                        (target_path, pn.replace (".", sep), pym.base_path)
-            else :
-                pym.target_pkg  = ".".join ((target_pkg, "_Hide", pym.pkg))
-                pym.target_path = path.join \
-                    ( target_path, "_Hide"
-                    , pym.pkg.replace (".", sep), pym.base_path
-                    )
+            pym.target_pkg  = pym.pkg
+            pym.target_path = path.join \
+                (self.target_root, pym.pkg.replace (".", sep), pym.base_path)
             pym.source_pns = self._pns_from_pkg (pym.pkg)
             pym.target_pns = self._pns_from_pkg (pym.target_pkg)
             if pym.is_package :
@@ -402,24 +232,12 @@ def main (cmd) :
         raise SystemExit, 9
     packager = Plugin_Packager \
         (cmd.pi_root_name, ap_closure, import_path, cmd.target_root, ignore)
-    #print packager.target_pkg, packager.target_path
-    if 0 :
-        for pym in sorted (packager.delta_closure.pym_dict.itervalues ()) :
-            print "tkdiff %-80s %s" % (pym.path_name, pym.target_path)
-            #print "%-50s --> %s" % (pym.pkg, pym.target_pkg)
-            #print "%-50s --> %s" % (pym.source_pns, pym.target_pns)
-    if 0 :
-        print sorted ([pym.source_pns for pym in
-                       packager.delta_closure.tlp_dict.itervalues ()
-                      ]
-                     )
-    #print [r.regexp.pattern for r in packager._m_replacers]
 # end def main
 
 if __name__ == "__main__":
     main (command_spec ())
 ### to test:
-### python ~/lib/python/_TFL/Plugin_Packager.py -Diff ~/NCO/external/ttpbuild/src/code/NDT.py ~/NCO/lib/python/_Plugins/_MPC555_AS8202/Board.py /tmp/PIP_Test ~/NCO/external/ttpbuild/src/code:~/NCO/external/ttpostool/src/code:~/NCO/lib/python
+### python ~/lib/python/_TFL/Plugin_Packager.py -Diff TTP_Build.py ~/NCO/lib/python/_Plugins/_MPC555_AS8202/Board.py /tmp/PIP_Test ~/NCO/external/ttpbuild/src/code:~/NCO/lib/python
 else :
     TFL._Export ("Plugin_Packager")
 ### __END__ TFL.Plugin_Packager

@@ -120,6 +120,7 @@
 #    14-Aug-2006 (CED) `Derived_PNS_Finder` added and used
 #    16-Aug-2006 (CED) `_path_of` fixed
 #    16-Aug-2006 (MSF) `_path_of` really fixed
+#     6-Nov-2006 (CED) `pkg_chain` added
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,7 @@ from   _TFL.predicate    import *
 from   _TFL.Regexp       import Regexp, re
 from   _TFL.Filename     import Filename
 from   _TFL.Importers    import DPN_Importer, DERIVED_PNS_TOKEN
+from   _TFL.Composition  import Composition
 
 import sys
 
@@ -139,6 +141,10 @@ class P_M (TFL.Meta.Object) :
 
     is_package = False
 
+    _rel_split  = lambda s : s.rel_name.split  (TFL.sos.sep) [:-1]
+    _path_split = lambda s : s.path_name.split (TFL.sos.sep) [:-1]
+    _pkg_split  = lambda s : s.pkg.split       (".")
+
     def __init__ (self, rel_name, path_name, pkg) :
         self.rel_name     = rel_name
         self.path_name    = path_name
@@ -147,6 +153,25 @@ class P_M (TFL.Meta.Object) :
         self.pkg          = pkg
         self.level        = pkg.count (".")
     # end def __init__
+
+    def pkg_chain (self) :
+        for rel_name, path_name, pkg in zip \
+            ( * map
+              ( Composition (list, Composition (reversed, head_slices))
+              , ( self._rel_split  ()
+                , self._path_split ()
+                , self._pkg_split  ()
+                )
+              )
+            ) :
+            yield \
+               ( P_P
+                 ( TFL.sos.sep.join (rel_name)
+                 , TFL.sos.sep.join (path_name + ["__init__.py"])
+                 , ".".join         (pkg)
+                 )
+               )
+    # end def pkg_chain
 
     def __cmp__ (self, rhs) :
         try :
@@ -176,6 +201,8 @@ class P_P (P_M) :
     is_package   = True
     is_toplevel  = property (lambda s : s.level == 0)
 
+    _path_split = lambda s : s.path_name.split (TFL.sos.sep) [:-2]
+    _pkg_split  = lambda s : s.pkg.split       (".")         [:-1]
 # end class P_P
 
 class Derived_PNS_Finder (TFL.Meta.Object) :

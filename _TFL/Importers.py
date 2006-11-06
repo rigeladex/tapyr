@@ -36,6 +36,7 @@
 #                      sys.modules any more
 #    14-Aug-2006 (CED) `get_filename` added
 #    25-Aug-2006 (CED) Support for multiple lib/pythons added :-), fixed
+#     6-Nov-2006 (CED) `Plugin_Importer` added
 #    ««revision-date»»···
 #--
 
@@ -195,8 +196,121 @@ class _DPN_ZipImporter_ (DPN_Importer) :
 
 # end class _DPN_ZipImporter_
 
+### XXX Not really finished yet. Try to use __path__ hooks instead of
+### XXX `sys.meta_path` and beautify
+class Plugin_Importer (object) :
+
+    _is_set_up       = False
+    pns_dict         = {}
+    plain_to_version = {}
+    tag_dict         = {}
+
+    @classmethod
+    def new_plugin (cls, name) :
+        from   _TFL.Environment    import script_path, frozen
+        from   _TFL.Filename       import Filename
+        from   _TFL.import_module  import import_module
+        if frozen () :
+            plain_name             = name.rsplit ("_", 3) [0] ### XXX
+            cls.plain_to_version [plain_name] = name
+            pkg_name               = "_Plugins._%s" % (plain_name, )
+            tooldir                = script_path ()
+            plugin_dir             = os.path.join (tooldir, "_Plugins")
+            directory              = os.path.join (plugin_dir, "_%s" % name)
+            cls._run_setup         (directory, name)
+            if not cls._is_set_up :
+                sys.meta_path.append (cls (plugin_dir))
+                cls._is_set_up = True
+            module                 = import_module (pkg_name)
+            return directory, module, plain_name
+        else :
+            pkg_name               = "_Plugins._%s" % (name, )
+            module                 = import_module (pkg_name)
+            directory              = Filename (module.__file__).directory
+            return directory, module, name
+    # end def new_plugin
+
+    @classmethod
+    def register (cls, plugin_name, pns_name) :
+        cls.pns_dict.setdefault (pns_name, []).append (plugin_name)
+    # end def register
+
+    @classmethod
+    def tag_module (cls, plugin_name, module_name, tag) :
+        if module_name in cls.tag_dict :
+            old_pname, old_tag = cls.tag_dict [module_name]
+            if old_tag != tag :
+               raise RuntimeError \
+                   ( "Tag mismatch for module %s (plugins %s and %s)"
+                   % (module_name, old_pname, plugin_name)
+                   )
+        cls.tag_dict [module_name] = (plugin_name, tag)
+    # end def tag_module
+
+    @classmethod
+    def _run_setup (cls, directory, plugin_name) :
+        fname = os.path.join (directory, "_%s.t3p" % plugin_name)
+        try :
+            zim = zipimport.zipimporter (fname)
+        except ImportError :
+            if __debug__ :
+                print "Could not import from %s" % fname
+            return
+        sname     = "_setup"
+        setup_mod = zim.find_module (sname)
+        if not setup_mod :
+            if __debug__ :
+                print "Could not find '%s' in %s" % (sname, fname)
+            return
+        zim.load_module (sname)
+    # end def _run_setup
+
+    def __init__ (self, plugin_dir) :
+        self.plugin_dir = plugin_dir
+    # end def __init__
+
+    def find_module (self, fullname, path = None) :
+        modindex  = fullname.rsplit (".", 1) [ 0]
+        pkgindex  = fullname
+        mod       = fullname.split  (".")    [-1]
+        if mod == fullname :
+            path  = ""
+        else :
+            path  = fullname.rsplit (".", 1) [0]
+        for index in (modindex, pkgindex) :
+            for plugin_name in self.pns_dict.get (index, []) :
+                loader = self._find_module (path, mod, plugin_name)
+                if loader :
+                    return loader
+    # end def find_module
+
+    def _find_module (self, path, mod, plugin_name) :
+        fname    = self._plugin_file (plugin_name)
+        if path :
+            zip_path = os.path.join (fname, path.replace (".", os.path.sep))
+        else :
+            zip_path = fname
+        try :
+            zim  = zipimport.zipimporter (zip_path)
+        except ImportError :
+            pass
+        else :
+            result = zim.find_module (mod)
+            return result
+    # end def _find_module
+
+    def _plugin_file (self, plugin_name) :
+        plugin_with_version = "_%s" % self.plain_to_version [plugin_name]
+        return os.path.join \
+               ( self.plugin_dir
+               , plugin_with_version
+               , "%s.t3p" % plugin_with_version
+               )
+    # end def _plugin_file
+
+# end class Plugin_Importer
+
 if __name__ != '__main__' :
     if DPN_Importer not in sys.path_hooks :
         sys.path_hooks.insert (0, DPN_Importer)
-
 ### __END__ TFL.Importers
