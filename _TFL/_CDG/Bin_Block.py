@@ -34,6 +34,7 @@
 #    16-Oct-2006 (MZO) revert `typedef` change
 #    23-Oct-2006 (MZO) note added
 #    25-Oct-2006 (MZO) i22162, note removed
+#     7-Nov-2006 (MZO) [21988] `reset_extension` called
 #    ««revision-date»»···
 #--
 #
@@ -109,9 +110,13 @@ class C_Code_Creator (TFL.Meta.Object) :
         self.gauge  = gauge
     # def __init__
 
-    def __call__ (self, C, meta_struct, config_struct, * args, ** kw) :
+    def __call__ \
+        ( self, C, meta_struct, config_struct
+        , reset_extension = True
+        , * args, ** kw
+        ) :
         config_struct (self.scope, * args,  ** kw)
-        return self.pack_as_c_code (C, meta_struct)
+        return self.pack_as_c_code (C, meta_struct, reset_extension)
     # end def __call__
 
     def _define_fmt (self, C, struct_cls) :
@@ -122,7 +127,7 @@ class C_Code_Creator (TFL.Meta.Object) :
             hs.add ("long %s" % f.name)
     # end def _define_fmt
 
-    def pack_as_c_code (self, C, Meta_Struct) :
+    def pack_as_c_code (self, C, Meta_Struct, reset_extension = True) :
         c_block = C.Stmt_Group ()
         for c in Meta_Struct.uses_global_buffers :
             values     = []
@@ -138,6 +143,8 @@ class C_Code_Creator (TFL.Meta.Object) :
                     , init   = values
                     )
                 )
+            if reset_extension :
+                c.reset_extension ()
         return c_block
     # end def pack_as_c_code
 
@@ -300,7 +307,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         filename = sos.path.normpath (filename)
         module   = C.Module ()
         cc       = C_Code_Creator (self.scope, self.gauge)
-        module.add (cc.pack_as_c_code (C, meta_struct))
+        module.add (cc.pack_as_c_code (C, meta_struct, reset_extension = False))
         f        = None
         try :
             try :
