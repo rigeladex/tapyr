@@ -50,6 +50,7 @@
 #    17-Oct-2006 (CED) Removed `coefficent_of_correlation`,  added `residuals`
 #    20-Oct-2006 (CED) s/linear_regression/linear_regression_1/, doctest added
 #                      `residuals` moved out
+#     7-Nov-2006 (CED) `sign` added
 #    ««revision-date»»···
 #--
 
@@ -144,6 +145,24 @@ def p2_ceil (n) :
     """
     return n.__class__ (2 ** ceil (log2 (n)))
 # end def p2_ceil
+
+def sign (n) :
+    """Returns the sign of n.
+
+       >>> sign (4)
+       1
+       >>> sign (-6.9)
+       -1
+       >>> sign (0)
+       0
+    """
+    if n > 0 :
+        return 1
+    elif n < 0 :
+        return -1
+    else :
+        return 0
+# end def sign
 
 def standard_deviation_plain (seq) :
     """Returns the standard deviation (aka root mean square) of the elements
