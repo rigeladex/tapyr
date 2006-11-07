@@ -125,6 +125,7 @@
 #    26-Apr-2006 (PGO) [rup18983] renamed classes with leading underscore
 #    28-Jul-2006 (PGO) Replaced `_DPN_Auto_Importer_` with TFL.DPN_Importer
 #    31-Jul-2006 (PGO) `DPN_Importer.register` introduced
+#     7-Nov-2006 (PGO) Reloading now also works with `_Add`
 #    ««revision-date»»···
 #--
 
@@ -302,9 +303,10 @@ class Package_Namespace (object) :
     def _Add (self, ** kw) :
         """Add elements of `kw` to Package_Namespace `self`."""
         module_name, mod = self._Load_Module (_caller_globals ())
+        check_clashes    = self._check_clashes and not self.__reload
         self._Cache_Module (module_name, mod)
         for s, p in kw.items () :
-            self._import_1 (mod, s, s, p, self.__dict__, self._check_clashes)
+            self._import_1 (mod, s, s, p, self.__dict__, check_clashes)
     # end def _Add
 
     def _Export (self, * symbols, ** kw) :
