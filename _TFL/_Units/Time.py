@@ -78,7 +78,7 @@ class Time (TFL.Units.Kind) :
         , Unit ("microfortnight",  TFL.Units.micro * 2.0 * _week)
         , Unit ("fortnight",                         2.0 * _week)
         # physics units
-        , Unit ("plank_time",      1.351211818e-43)
+        , Unit ("planck_time",     1.351211818e-43)
         )
 
 # end class Time
