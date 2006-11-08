@@ -33,6 +33,6 @@
 
 from _TFL.Primes        import Primes
 
-primes = Primes (2, 3, 5, 7)
+primes = Primes ((2, 3, 5, 7))
 
 ### __END__ TFL.primes_1

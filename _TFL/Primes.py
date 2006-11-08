@@ -26,29 +26,22 @@
 #    Provide list of prime numbers up to a certain boundary
 #
 # Revision Dates
-#    25-Mar-2001 (CT) Creation
-#    11-Feb-2006 (CT) Moved into package `TFL`
+#    25-Mar-2001 (CT)  Creation
+#    11-Feb-2006 (CT)  Moved into package `TFL`
+#     8-Nov-2006 (PGO) Primes are immutable
 #    ««revision-date»»···
 #--
 
-from _TFL               import TFL
-from _TFL.Ordered_Set   import Ordered_Set
-from _TFL.predicate     import un_nested
+from   _TFL               import TFL
+import _TFL.Ordered_Set
 
 from math               import sqrt
 
-class Primes (Ordered_Set) :
+class Primes (TFL.Immutable_Ordered_Set) :
     """List of primes up to a certain boundary"""
 
-    Ancestor = __Ancestor = Ordered_Set
-
-    Factors               = {}
-    U_Factors             = {}
-
-    def __init__ (self, * primes) :
-        self.__Ancestor.__init__ (self, un_nested (primes))
-        self.primes = self.data
-    # end def __init__
+    Factors      = {}
+    U_Factors    = {}
 
     def is_prime (self, p) :
         return self.index_dict.has_key (p)
@@ -60,7 +53,7 @@ class Primes (Ordered_Set) :
             return self.Factors [number]
         except KeyError :
             last_p = int (sqrt (number))
-            for p in self.primes [_i:] :
+            for p in self [_i:] :
                 if p > last_p :
                     ### if we didn't find any prime factor yet, `number' must
                     ### be prime itself
@@ -85,7 +78,7 @@ class Primes (Ordered_Set) :
             return self.U_Factors [number]
         except KeyError :
             last_p = int (sqrt (number))
-            for p in self.primes [_i:] :
+            for p in self [_i:] :
                 if p > last_p :
                     ### if we didn't find any prime factor yet, `number' must
                     ### be prime itself

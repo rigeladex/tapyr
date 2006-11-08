@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -26,48 +26,50 @@
 #    Model a node of a structured document
 #
 # Revision Dates
-#    23-Jul-2004 (CT) Creation
-#    26-Jul-2004 (CT) Creation continued
-#    27-Jul-2004 (CT) Call to `_autoconvert` corrected (`self` passed)
-#    28-Jul-2004 (CT) `front_args` and `rest_args` added to `__init__`
-#    30-Jul-2004 (CT) `base_indent2` added
-#     2-Aug-2004 (CT) `_write_to_stream` added
-#     2-Aug-2004 (CT) Methods put into alphabetical order
-#     3-Aug-2004 (CT) `__repr__` changed to use `as_tree` (to make `as_tree`
-#                     work for cases where a node is stored as an attribute
-#                     instead of a child)
-#     3-Aug-2004 (CT) `__str__` added (using `as_repr`)
-#     3-Aug-2004 (CT) s/as_repr/as_str/  and s/repr_format/str_format/
-#     3-Aug-2004 (CT) s/as_tree/as_repr/ and s/tree_format/repr_format/
-#     3-Aug-2004 (CT) `base_indent` moved from `init_arg_defaults` to class
-#                     variable (save memory for spurious instance attribute)
-#    12-Aug-2004 (CT) s/recurse_args/recurse_kw/g
-#    12-Aug-2004 (MG) `default_cgi` added
-#    12-Aug-2004 (MG) `add`: unnest pass childrens (backward compatibility)
-#    12-Aug-2004 (CT) `indent_anchor` added
-#    13-Aug-2004 (MG) `formatted` Parameter `ht_width` added
-#    13-Aug-2004 (CT) `* args, ** kw` added to `_formatted_attrs`
-#    13-Aug-2004 (CT) Replaced `TFL.Caller.Scope` by `TFL.Caller.Object_Scope`
-#    13-Aug-2004 (CT) `node_type` removed
-#    13-Aug-2004 (CT) `base_indent2` removed
-#    13-Aug-2004 (CT) Doc-string added
-#    23-Aug-2004 (CT) `repr` and `repr_format` changed to make it
-#                     doc-testable
-#    23-Aug-2004 (CT) Doc-string completed
-#    24-Aug-2004 (CT) `_init_kw` changed to protect `%` inside strings
-#                     (which can be hidden in lists/tuples, <arrrgh>)
-#    25-Aug-2004 (CT) `_init_kw` changed again to protect `%` inside strings
-#                     hidden in `NO_List` <double arrrgh>
-#    25-Aug-2004 (MG) `insert`: guard agains `None` children added
-#    26-Aug-2004 (CT) `_convert` moved in here (from `C.Node`)
-#    26-Aug-2004 (CT) `NL` added
-#    17-Sep-2004 (CT) Argument `indent_anchor` added to `formatted`
-#    27-Sep-2004 (CT) Doc-string improved
-#     6-Sep-2005 (CT) `formatted` changed to include `output_width` in
-#                     `recurse_kw`
-#    08-Dec-2005 (MG) Sematic of `has_child` changed: returns now the child
-#                     or None instead of True/False
-#    12-Dec-2005 (CT) `return None` removed from `has_child`
+#    23-Jul-2004 (CT)  Creation
+#    26-Jul-2004 (CT)  Creation continued
+#    27-Jul-2004 (CT)  Call to `_autoconvert` corrected (`self` passed)
+#    28-Jul-2004 (CT)  `front_args` and `rest_args` added to `__init__`
+#    30-Jul-2004 (CT)  `base_indent2` added
+#     2-Aug-2004 (CT)  `_write_to_stream` added
+#     2-Aug-2004 (CT)  Methods put into alphabetical order
+#     3-Aug-2004 (CT)  `__repr__` changed to use `as_tree` (to make `as_tree`
+#                      work for cases where a node is stored as an attribute
+#                      instead of a child)
+#     3-Aug-2004 (CT)  `__str__` added (using `as_repr`)
+#     3-Aug-2004 (CT)  s/as_repr/as_str/  and s/repr_format/str_format/
+#     3-Aug-2004 (CT)  s/as_tree/as_repr/ and s/tree_format/repr_format/
+#     3-Aug-2004 (CT)  `base_indent` moved from `init_arg_defaults` to class
+#                      variable (save memory for spurious instance attribute)
+#    12-Aug-2004 (CT)  s/recurse_args/recurse_kw/g
+#    12-Aug-2004 (MG)  `default_cgi` added
+#    12-Aug-2004 (MG)  `add`: unnest pass childrens (backward compatibility)
+#    12-Aug-2004 (CT)  `indent_anchor` added
+#    13-Aug-2004 (MG)  `formatted` Parameter `ht_width` added
+#    13-Aug-2004 (CT)  `* args, ** kw` added to `_formatted_attrs`
+#    13-Aug-2004 (CT)  Replaced `TFL.Caller.Scope` by
+#                      `TFL.Caller.Object_Scope`
+#    13-Aug-2004 (CT)  `node_type` removed
+#    13-Aug-2004 (CT)  `base_indent2` removed
+#    13-Aug-2004 (CT)  Doc-string added
+#    23-Aug-2004 (CT)  `repr` and `repr_format` changed to make it
+#                      doc-testable
+#    23-Aug-2004 (CT)  Doc-string completed
+#    24-Aug-2004 (CT)  `_init_kw` changed to protect `%` inside strings
+#                      (which can be hidden in lists/tuples, <arrrgh>)
+#    25-Aug-2004 (CT)  `_init_kw` changed again to protect `%` inside strings
+#                      hidden in `NO_List` <double arrrgh>
+#    25-Aug-2004 (MG)  `insert`: guard agains `None` children added
+#    26-Aug-2004 (CT)  `_convert` moved in here (from `C.Node`)
+#    26-Aug-2004 (CT)  `NL` added
+#    17-Sep-2004 (CT)  Argument `indent_anchor` added to `formatted`
+#    27-Sep-2004 (CT)  Doc-string improved
+#     6-Sep-2005 (CT)  `formatted` changed to include `output_width` in
+#                      `recurse_kw`
+#    08-Dec-2005 (MG)  Sematic of `has_child` changed: returns now the child
+#                      or None instead of True/False
+#    12-Dec-2005 (CT)  `return None` removed from `has_child`
+#    08-Nov-2006 (PGO) `NO_List` added that doesn't check for dups
 #    ««revision-date»»···
 #--
 
@@ -376,10 +378,10 @@ T_Node
 
 from   _TFL              import TFL
 import _TFL.Caller
+import _TFL.NO_List
 import _TFL._SDG
 import _TFL._SDG.M_Node
 
-from   NO_List           import NO_List
 from   predicate         import *
 import sys
 
@@ -387,7 +389,21 @@ class Invalid_Node (StandardError) :
     pass
 # end class Invalid_Node
 
-class Node :
+class _Node_NO_List_ (TFL.NO_List) :
+
+    _real_name = "NO_List"
+
+    def _check_value_duplicate (self, value) :
+        """It may me necessary to add the same child multiple times to
+           the same node, e.g. ones as a forward typedef, and later to
+           actually perform the definition. Therefore, this check is disabled.
+        """
+        pass
+    # end def _check_value
+
+NO_List = _Node_NO_List_ # end def _Node_NO_List_
+
+class Node (object) :
     """Node of a structured document."""
 
     __metaclass__        = TFL.SDG.M_Node
@@ -559,7 +575,7 @@ class Node :
                 ### ValueErrors during formatting
                 if isinstance (v, (str, unicode)) :
                     v = v.replace ("%", "%%")
-                elif isinstance (v, (tuple, list, NO_List)) :
+                elif isinstance (v, (tuple, list, TFL.NO_List)) :
                     vin = v
                     v   = []
                     for x in vin :
@@ -586,7 +602,7 @@ class Node :
 
     def _reset_children (self) :
         self.children_groups = dict \
-            ([(i, NO_List ()) for i in self.children_group_names])
+            ((i, NO_List ()) for i in self.children_group_names)
     # end def _reset_children
 
     def _write_to_stream (self, gen, stream, gauge = None) :
