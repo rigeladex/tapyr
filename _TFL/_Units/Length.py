@@ -88,8 +88,8 @@ class Length (TFL.Units.Kind) :
         , Unit ("kiloparsec", TFL.Units.kilo * _parsec,     "kpc")
         , Unit ("megaparsec", TFL.Units.mega * _parsec,     "Mpc")
         , Unit ("gigaparsec", TFL.Units.giga * _parsec,     "Gpc")
-        , Unit ("parsec",                      _parsec,  "pc")
-        , Unit ("angstrom",       TFL.Units.nano / 10,            "A")
+        , Unit ("parsec",                      _parsec,      "pc")
+        , Unit ("angstrom",       TFL.Units.nano / 10,        "A")
         )
 
 # end class Length
