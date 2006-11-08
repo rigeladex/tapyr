@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Feb-2005 (CED) Creation
 #    15-Feb-2006 (CT)  Done right
+#     8-Nov-2006 (CED) `microfortnight` added (used in VMS)
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,8 @@ class Time (TFL.Units.Kind) :
     Unit          = TFL.Units.Unit
 
     base_unit     = Unit ("second", 1.0, "s")
+
+    _week         = 3600.0 * 24.0 * 7.0
     _units        = \
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
         # SI prefixes
@@ -66,12 +69,14 @@ class Time (TFL.Units.Kind) :
         , Unit ("millisecond",     TFL.Units.milli,  "ms")
         # Usual units
         , Unit ("jiffy",                  1 / 60.0)
-        , Unit ("minute",                     60.0,  "min")
+        , Unit ("minute",                     60.0, "min")
         , Unit ("moment",                     90.0)
         , Unit ("hour",                     3600.0,  "h")
         , Unit ("day",               3600.0 * 24.0,  "d")
-        , Unit ("week",        3600.0 * 24.0 * 7.0,  "wk")
-        , Unit ("fortnight",             1209600.0)
+        , Unit ("week",                      _week, "wk")
+        # Unusual units
+        , Unit ("microfortnight",  TFL.Units.micro * 2.0 * _week)
+        , Unit ("fortnight",                         2.0 * _week)
         # physics units
         , Unit ("plank_time",      1.351211818e-43)
         )

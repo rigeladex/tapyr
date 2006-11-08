@@ -30,6 +30,8 @@
 #     9-Feb-2005 (CED) Some additional units added
 #    15-Feb-2006 (CT)  CED's additions corrected (rounding the speed of light
 #                      in the context of units is a bad thing (TM))
+#     8-Nov-2006 (CED) Some parsec variants added (used in astronomy for large
+#                      structures)
 #    ««revision-date»»···
 #--
 
@@ -59,6 +61,7 @@ class Length (TFL.Units.Kind) :
     Unit              = TFL.Units.Unit
 
     base_unit         = Unit ("meter", 1.0, "m")
+    _parsec           = 3.0856775813e16
     _units            = \
         ( ### see http://en.wikipedia.org/wiki/Conversion_of_units
         # SI prefixes
@@ -67,23 +70,26 @@ class Length (TFL.Units.Kind) :
         , Unit ("millimeter",     TFL.Units.milli,           "mm")
         , Unit ("centimeter",     TFL.Units.centi,           "cm")
         , Unit ("decimeter",      TFL.Units.deci,            "dm")
-        , Unit ("dekameter",      TFL.Units.deka,            "dam")
+        , Unit ("dekameter",      TFL.Units.deka,           "dam")
         , Unit ("hectometer",     TFL.Units.hecto,           "hm")
         , Unit ("kilometer",      TFL.Units.kilo,            "km")
         # US customary units
-        , Unit ("mil",               2.54e-5,                "mil")
+        , Unit ("mil",               2.54e-5,               "mil")
         , Unit ("inch",              0.0254,                 "in")
         , Unit ("foot",              0.3048,                 "ft")
         , Unit ("yard",              0.9144,                 "yd")
         , Unit ("rod",               5.0292,                 "rd")
-        , Unit ("furlong",         201.168,                  "fur")
+        , Unit ("furlong",         201.168,                 "fur")
         , Unit ("statute_mile",   1609.344,                  "mi")
         , Unit ("nautical_mile",  1852.0,                    "Nm")
         # physics units
         , Unit ("astronomical_unit", 1.49597870691e11,       "AU")
         , Unit ("light_year",        9.4607304725808e15,     "ly")
-        , Unit ("parsec",            3.0856775813e16,        "pc")
-        , Unit ("angstrom",       TFL.Units.nano / 10,       "A")
+        , Unit ("kiloparsec", TFL.Units.kilo * _parsec,     "kpc")
+        , Unit ("megaparsec", TFL.Units.mega * _parsec,     "Mpc")
+        , Unit ("gigaparsec", TFL.Units.giga * _parsec,     "Gpc")
+        , Unit ("parsec",                      _parsec,  "pc")
+        , Unit ("angstrom",       TFL.Units.nano / 10,            "A")
         )
 
 # end class Length

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
+#     8-Nov-2006 (CED) `firkin` added (old british unit)
 #    ««revision-date»»···
 #--
 
@@ -69,6 +70,7 @@ class Mass (TFL.Units.Kind) :
         , Unit ("long_ton",             _pound * 2240)
         # Odd British unit
         , Unit ("stone",                _pound *   14)
+        , Unit ("firkin",                    40.91481)
         )
 
 # end class Mass

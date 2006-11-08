@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
+#     8-Nov-2006 (CED) `nanoacre` added (used in chip design)
 #    ««revision-date»»···
 #--
 
@@ -86,8 +87,9 @@ class Area (TFL.Units.Kind) :
         , Unit ("board",              Length.inch * Length.foot, "bd")
         , Unit ("square_foot",        Length.foot         ** 2,  "sqft")
         , Unit ("square_yard",        Length.yard         ** 2,  "sqyd")
-        , Unit ("acre",               _sq_mile / 640,            "ac")
-        , Unit ("square_mile",        _sq_mile,                  "sqmi")
+        , Unit ("nanoacre", TFL.Units.nano * (_sq_mile / 640.0))
+        , Unit ("acre",                       _sq_mile / 640.0,    "ac")
+        , Unit ("square_mile",                _sq_mile,          "sqmi")
         )
 
 # end class Area
