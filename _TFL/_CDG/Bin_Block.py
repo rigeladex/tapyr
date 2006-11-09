@@ -35,6 +35,7 @@
 #    23-Oct-2006 (MZO) note added
 #    25-Oct-2006 (MZO) i22162, note removed
 #     7-Nov-2006 (MZO) [21988] `reset_extension` called
+#     9-Nov-2006 (MZO) [21988] write each block into file immediately
 #    ««revision-date»»···
 #--
 #
@@ -106,17 +107,19 @@ class Bin_Block (TFL.Meta.Object) :
 class C_Code_Creator (TFL.Meta.Object) :
 
     def __init__ (self, scope, gauge) :
-        self.scope  = scope
-        self.gauge  = gauge
+        self.scope      = scope
+        self.gauge      = gauge
+        self.out_block  = None
     # def __init__
 
     def __call__ \
         ( self, C, meta_struct, config_struct
         , reset_extension = True
+        , filename        = None
         , * args, ** kw
         ) :
         config_struct (self.scope, * args,  ** kw)
-        return self.pack_as_c_code (C, meta_struct, reset_extension)
+        return self.pack_as_c_code (C, meta_struct, reset_extension, filename)
     # end def __call__
 
     def _define_fmt (self, C, struct_cls) :
@@ -127,30 +130,68 @@ class C_Code_Creator (TFL.Meta.Object) :
             hs.add ("long %s" % f.name)
     # end def _define_fmt
 
-    def pack_as_c_code (self, C, Meta_Struct, reset_extension = True) :
+    def pack_as_c_code \
+        (self, C, Meta_Struct, reset_extension = True, filename = None) :
         c_block = C.Stmt_Group ()
-        for c in Meta_Struct.uses_global_buffers :
-            values     = []
-            for o in c.extension :
-                values.append (o.dict ())
-            values = self.hook_pack_values (values, c)
-            self._define_fmt (C, c)
-            c_block.add \
-                ( C.Array
-                    ( c.type_name
-                    , c.buffer_name ()
-                    , bounds = len (values)
-                    , init   = values
+        if filename :
+            self._write_block_start (filename)
+        try :
+            for c in Meta_Struct.uses_global_buffers :
+                values = []
+                for o in c.extension :
+                    values.append (o.dict ())
+                values = self.hook_pack_values (values, c)
+                self._define_fmt (C, c)
+                c_block.add \
+                    ( C.Array
+                        ( c.type_name
+                        , c.buffer_name ()
+                        , bounds = len (values)
+                        , init   = values
+                        )
                     )
-                )
-            if reset_extension :
-                c.reset_extension ()
+                if filename :
+                    self._write_block (c_block)
+                    c_block = C.Stmt_Group ()
+                if reset_extension :
+                    c.reset_extension ()
+        finally :
+            self._write_block_end ()
         return c_block
     # end def pack_as_c_code
 
     def hook_pack_values (self, values, struct_cls) :
         return values
     # end def hook_pack_values
+
+    def write_module (self, filename, c_block) :
+        self._write_block_start (filename)
+        try :
+            self._write_block (c_block)
+        finally :
+            self._write_block_end ()
+    # end def write_module
+
+    def _write_block (self, c_block) :
+        assert self.out_block
+        try :
+            self.out_block.write ("%s\n" % "\n".join (c_block.as_c_code ()))
+            self.out_block.flush ()
+        except (OSError, TFL.sos.error), exc :
+            print exc
+    # end def _write_block
+
+    def _write_block_start (self, filename) :
+        try :
+            self.out_block = open (filename, "a")
+        except (IOError, TFL.sos.error), exc :
+            print "Cannot open file `%s`. %s" % (self.name, exc)
+    # end def _write_block_start
+
+    def _write_block_end (self) :
+        if self.out_block :
+            self.out_block.close ()
+    # end def _write_block_end
 
 # end class C_Code_Creator
 
