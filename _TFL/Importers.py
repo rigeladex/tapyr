@@ -37,6 +37,7 @@
 #    14-Aug-2006 (CED) `get_filename` added
 #    25-Aug-2006 (CED) Support for multiple lib/pythons added :-), fixed
 #     6-Nov-2006 (CED) `Plugin_Importer` added
+#    10-Nov-2006 (CED) Use path hooks for Plugin_Importer
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ import sys
 import zipimport
 
 DERIVED_PNS_TOKEN = "?Derived"
+PIM_TOKEN         = "?Plugin"
 
 class M_DPN_Importer (type) :
     """Metaclass for derived package namespace importer.
@@ -196,14 +198,11 @@ class _DPN_ZipImporter_ (DPN_Importer) :
 
 # end class _DPN_ZipImporter_
 
-### XXX Not really finished yet. Try to use __path__ hooks instead of
-### XXX `sys.meta_path` and beautify
 class Plugin_Importer (object) :
 
-    _is_set_up       = False
-    pns_dict         = {}
     plain_to_version = {}
     tag_dict         = {}
+    pending          = {}
 
     @classmethod
     def new_plugin (cls, name) :
@@ -216,11 +215,10 @@ class Plugin_Importer (object) :
             pkg_name               = "_Plugins._%s" % (plain_name, )
             tooldir                = script_path ()
             plugin_dir             = os.path.join (tooldir, "_Plugins")
+            if not hasattr (cls, plugin_dir) :
+                cls.plugin_dir = plugin_dir
             directory              = os.path.join (plugin_dir, "_%s" % name)
             cls._run_setup         (directory, name)
-            if not cls._is_set_up :
-                sys.meta_path.append (cls (plugin_dir))
-                cls._is_set_up = True
             module                 = import_module (pkg_name)
             return directory, module, plain_name
         else :
@@ -232,8 +230,28 @@ class Plugin_Importer (object) :
 
     @classmethod
     def register (cls, plugin_name, pns_name) :
-        cls.pns_dict.setdefault (pns_name, []).append (plugin_name)
+        pns_list  = pns_name.split (".")
+        token     = "%s,%s" % (PIM_TOKEN, plugin_name)
+        pns_list  = pns_name.split (".")
+        outer = ".".join (pns_list [:-1])
+        cls._register (pns_name, token)
+        cls._register (outer,    token)
     # end def register
+
+    @classmethod
+    def _register (cls, pkg, token) :
+        path_list = None
+        if pkg :
+           if pkg in sys.modules :
+               path_list = sys.modules [pkg].__path__
+           else :
+               cls.pending.setdefault (pkg, []).append (token)
+               return
+        else :
+            path_list = sys.path
+        if token not in path_list :
+            path_list.append (token)
+    # end def _register
 
     @classmethod
     def tag_module (cls, plugin_name, module_name, tag) :
@@ -265,24 +283,35 @@ class Plugin_Importer (object) :
         zim.load_module (sname)
     # end def _run_setup
 
-    def __init__ (self, plugin_dir) :
-        self.plugin_dir = plugin_dir
+    def __init__ (self, path) :
+        if path.startswith (PIM_TOKEN) :
+            self.plugin_name = path.split (",") [1]
+            self._cache      = {}
+        else :
+            raise ImportError
     # end def __init__
 
     def find_module (self, fullname, path = None) :
-        modindex  = fullname.rsplit (".", 1) [ 0]
-        pkgindex  = fullname
+        assert not path
         mod       = fullname.split  (".")    [-1]
         if mod == fullname :
             path  = ""
         else :
             path  = fullname.rsplit (".", 1) [0]
-        for index in (modindex, pkgindex) :
-            for plugin_name in self.pns_dict.get (index, []) :
-                loader = self._find_module (path, mod, plugin_name)
-                if loader :
-                    return loader
+        loader = self._find_module (path, mod, self.plugin_name)
+        if loader :
+            self._cache [fullname] = loader
+            return self
     # end def find_module
+
+    def load_module (self, fullmodule) :
+        loader = self._cache [fullmodule]
+        result = loader.load_module (fullmodule)
+        for token in self.pending.get (fullmodule, []) :
+            if token not in result.__path__ :
+                result.__path__.append (token)
+        return result
+    # end def load_module
 
     def _find_module (self, path, mod, plugin_name) :
         fname    = self._plugin_file (plugin_name)
@@ -313,4 +342,8 @@ class Plugin_Importer (object) :
 if __name__ != '__main__' :
     if DPN_Importer not in sys.path_hooks :
         sys.path_hooks.insert (0, DPN_Importer)
+    ### cannot import _TFL.Environment here :-(
+    if getattr (sys, "frozen", False) :
+        if Plugin_Importer not in sys.path_hooks :
+            sys.path_hooks.insert (1, Plugin_Importer)
 ### __END__ TFL.Importers
