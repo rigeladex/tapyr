@@ -14,6 +14,7 @@
 #    11-Nov-2005 (MG)  Test extended
 #    10-Mar-2006 (MZO) added `S_With_Array`
 #    23-Aug-2006 (PGO) Using alternate form of %x
+#    14-Nov-2006 (MZO) test extended
 #    ««revision-date»»···
 #--
 #
@@ -203,8 +204,10 @@ class TDCOM_Descriptor (Struct) :
         )
 
 
-    def __init__ (self, as_c = True) :
-        self.c_block = self.pack_as_c_code (TFL.SDG.C)
+    def __init__ (self, as_c = True, benchmark = False) :
+        self.c_block = None
+        if not benchmark :
+            self.c_block = self.pack_as_c_code (TFL.SDG.C)
     # end def __init__
 
     def pack_as_c_code (self, C) :
@@ -229,41 +232,78 @@ if __name__ == "__main__" :
     from Command_Line import Command_Line
 
     cmd = Command_Line \
-        ( option_spec = ( "index:B"
-                        , "header:B"
-                        )
+        ( option_spec =
+            ( "index:B"
+            , "header:B"
+            , "benchmark:B"
+            , "benchmark_no_of:I"
+            )
         ,
         )
-
     C                                    = TFL.SDG.C
     C.Var.type_name_length               = 30
     TFL.CDG.Reference_Struct_Field.index = not not cmd.index
+    if not cmd.benchmark :
+        m1 = Message_Pack_Copy ("m1", 28)
+        m2 = Message_Pack_Copy ("m2",  5)
+        m  = TFL.SDG.C.Module (name = "test")
+        add = m.add
 
-    m1 = Message_Pack_Copy ("m1", 28)
-    m2 = Message_Pack_Copy ("m2",  5)
-    m  = TFL.SDG.C.Module (name = "test")
-    add = m.add
+        for sf in Meta_Struct.needs_typedef :
+            add (sf.as_typedef (C = C, scope = C.H))
+        add (C.New_Line (scope = C.H))
 
-    for sf in Meta_Struct.needs_typedef :
-        add (sf.as_typedef (C = C, scope = C.H))
-    add (C.New_Line (scope = C.H))
+        for c in Meta_Struct.needs_struct :
+            add (c.as_forward_typedef (const = c.const, scope = C.H))
+        add (C.New_Line (scope = C.H))
 
-    for c in Meta_Struct.needs_struct :
-        add (c.as_forward_typedef (const = c.const, scope = C.H))
-    add (C.New_Line (scope = C.H))
+        for c in Meta_Struct.needs_struct :  # write struct
+            add ( c.as_c_code (scope = C.H, standalone = 1))
+            add ( C.New_Line  (scope = C.H))
+        add (C.New_Line (scope = C.H))
 
-    for c in Meta_Struct.needs_struct :  # write struct
-        add ( c.as_c_code (scope = C.H, standalone = 1))
-        add ( C.New_Line  (scope = C.H))
-    add (C.New_Line (scope = C.H))
+        Meta_Struct.define_access_macros (C, m, "tdcom")
 
-    Meta_Struct.define_access_macros (C, m, "tdcom")
-
-    if not cmd.header :
-        x = TDCOM_Descriptor (C)
-        print "\n".join (x.c_block.as_c_code ())
+        if not cmd.header :
+            x = TDCOM_Descriptor (C)
+            print "\n".join (x.c_block.as_c_code ())
+        else :
+            print "\n".join (m.as_h_code ())
+            print "-" * 70
+            print "\n".join (m.as_c_code ())
     else :
-        print "\n".join (m.as_h_code ())
-        print "-" * 70
-        print "\n".join (m.as_c_code ())
+        print "setup"
+        import _TFL._CDG.Bin_Block
+        import time
+        import pprint
+        import os
+        import sys
+        times = []
+        cg = TFL.CDG.C_Code_Creator (None, None)
+        times.append (time.time ())
+        for i in xrange (cmd.benchmark_no_of) :
+            Byte_Copy_Spec (i, i + 1)
+            Message_Pack_Copy ("m%s" % i, i + 1)
+        times.append (time.time ())
+        c_block = cg  (C, Meta_Struct, TDCOM_Descriptor
+            , reset_extension = True
+            , filename        = None
+            , benchmark       = True
+            )
+        times.append (time.time ())
+        if cmd.header :
+            print "\n".join (c_block.as_c_code ())
+        times.append (time.time ())
+        print "times and deltas:"
+        pprint.pprint (times)
+        print "\n".join ((str (j - i) for i, j in TFL.pairwise (times)))
+        if sys.platform == "linux2" :
+            print "sys status :"
+            try :
+                f = open ('/proc/%d/status' % os.getpid ())
+                status = f.read ()
+                f.close ()
+            except:
+                status = "Error occured while reading proc"
+            print status
 ### __END__ TFL.CDG._test
