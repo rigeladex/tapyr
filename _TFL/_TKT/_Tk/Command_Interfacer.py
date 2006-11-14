@@ -68,9 +68,9 @@
 #                     via `Eventname`)
 #    16-Aug-2005 (CT)  `_CI_Toolbar_Group_` changed to allow nested groups
 #                      (without displaying them visually)
-#    16-Sep-2005 (MZO) i17208, added manual bind of menu-accelerators.
-#    19-Jul-2006 (MZO) i18758, `add_group` implemented
-#    26-Jul-2006 (MZO) i18758, label of buttons defined
+#    16-Sep-2005 (MZO) [17208] added manual bind of menu-accelerators.
+#    19-Jul-2006 (MZO) [18758] `add_group` implemented
+#    26-Jul-2006 (MZO) [18758] label of buttons defined
 #    ««revision-date»»···
 #--
 

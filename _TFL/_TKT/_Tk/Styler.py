@@ -35,7 +35,7 @@
 #     1-Apr-2005 (CT)  s/__init__/_init_/
 #    18-May-2005 (CT)  `_font_size_map` replaced by `font_size_base` and
 #                      `_font_size_factor`
-#     5-Sep-2005 (MZO) i16066, defined courier as monospace font family
+#     5-Sep-2005 (MZO) [16066] defined courier as monospace font family
 #    ««revision-date»»···
 #--
 

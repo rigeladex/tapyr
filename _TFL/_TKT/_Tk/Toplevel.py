@@ -22,8 +22,8 @@
 #    13-Apr-2005 (MZO) implemented new_menubar
 #    20-Apr-2005 (MZO) Focused_Toplevel return none - like TGW.Focused_Toplevel
 #    25-Apr-2005 (CT)  `new_context_menu` removed (wrong name, wrong place)
-#    30-Aug-2005 (MZO) i14421 - renamed win_expl_cb
-#    19-Jul-2006 (MZO) i18758, `new_menubar` implemented
+#    30-Aug-2005 (MZO) [14421] - renamed win_expl_cb
+#    19-Jul-2006 (MZO) [18758] `new_menubar` implemented
 #    ««revision-date»»···
 #--
 

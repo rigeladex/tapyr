@@ -41,9 +41,9 @@
 #    02-Dec-2005 (MG)  use `type_name` of Struct classes/instances
 #    20-Jan-2006 (CED) Added `bo_map`,  made `packed` byte-order aware
 #    20-Feb-2006 (MZO) Corrected super call of `Reference_Struct_Field`
-#    13-Jul-2006 (MZO) issue20886, `check_value` added
-#    17-Jul-2006 (MZO) issue20886, `check_value` fixed
-#    17-Jul-2006 (MZO) issue22038, `val_range` corrected
+#    13-Jul-2006 (MZO) [20886] `check_value` added
+#    17-Jul-2006 (MZO) [20886] `check_value` fixed
+#    17-Jul-2006 (MZO) [22038] `val_range` corrected
 #    ««revision-date»»···
 #--
 

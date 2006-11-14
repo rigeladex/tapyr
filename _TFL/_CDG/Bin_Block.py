@@ -33,7 +33,7 @@
 #    12-Oct-2006 (MZO) get object from `Filler`
 #    16-Oct-2006 (MZO) revert `typedef` change
 #    23-Oct-2006 (MZO) note added
-#    25-Oct-2006 (MZO) i22162, note removed
+#    25-Oct-2006 (MZO) [22162] note removed
 #     7-Nov-2006 (MZO) [21988] `reset_extension` called
 #     9-Nov-2006 (MZO) [21988] write each block into file immediately
 #    ««revision-date»»···

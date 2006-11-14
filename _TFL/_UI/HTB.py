@@ -107,8 +107,8 @@
 #                      `self.__class__`
 #    11-Apr-2005 (MZO) implemented xml_node, cmd_mgr
 #    13-Apr-2005 (BRU) call `self.__class__` again in `add_contents`
-#    12-Apr-2005 (MZO) removed TGW imports. UI shall tk-independ, i14841
-#    14-Apr-2005 (MZO) fixed i14841 - TOM._TKT.Mixin => UI.Mixin
+#    12-Apr-2005 (MZO) removed TGW imports. UI shall tk-independ, [14841]
+#    14-Apr-2005 (MZO) fixed [14841] - TOM._TKT.Mixin => UI.Mixin
 #    14-Apr-2005 (CT)  `bot_pos`, `eot_pos`, and `current_pos` replaced by
 #                      `buffer_head`, `buffer_tail`, and `insert_mark`,
 #                      respectively
@@ -117,7 +117,7 @@
 #    20-Apr-2005 (BRU) Added search to command manager, various fixes.
 #    20-Apr-2005 (MZO) added tail/head_contents
 #    20-Apr-2005 (BRU) Fixed `_pre_has_find`
-#    21-Apr-2005 (MZO) fixed i15075, moved pdf-stuff to AC.ui_state.pdf_writer
+#    21-Apr-2005 (MZO) fixed [15075], moved pdf-stuff to AC.ui_state.pdf_writer
 #    21-Apr-2005 (BRU) Fixed `open_all`, fixed `_pre_has_find` once more
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
 #    25-Apr-2005 (CT)  `_setup_command_mgr` changed to use
@@ -130,18 +130,18 @@
 #    25-Apr-2005 (CT)  `gauge.activate_activity_mode` and `gauge.pulse`
 #                      replaced by toolkit-independent `gauge.activate` and
 #                      `gauge.inc`
-#    30-Apr-2005 (MZO) improved as introduced in issue15075, pdf_writer => cmd
-#    30-Apr-2005 (MZO) issue15075, put file menu creation into if
+#    30-Apr-2005 (MZO) improved as introduced in [15075], pdf_writer => cmd
+#    30-Apr-2005 (MZO) [15075] put file menu creation into if
 #     3-May-2005 (MZO, added/used `_pdf_writer` method
 #                 ABR)
-#     3-May-2005 (MZO, i15334, Refactored _pdf_writer
+#     3-May-2005 (MZO, [15334] Refactored _pdf_writer
 #                 ABR)
-#     3-May-2005 (MZO) i15334, Moved extend_cmd_mgr from Report => HTB
+#     3-May-2005 (MZO) [15334] Moved extend_cmd_mgr from Report => HTB
 #     9-May-2005 (MZO) added setup_edit/file_menu
 #    10-Aug-2005 (CT)  Pass literal strings as `accelerator` arguments
 #     5-Sep-2005 (MZO) set dialog_title=productname if available.
-#    17-Jul-2006 (MZO) i18749, present window `search`, `expand`
-#    19-Jul-2006 (MZO) i18758, comment out `accelerator`
+#    17-Jul-2006 (MZO) [18749] present window `search`, `expand`
+#    19-Jul-2006 (MZO) [18758] comment out `accelerator`
 #    ««revision-date»»···
 #--
 

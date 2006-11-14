@@ -51,7 +51,7 @@
 #    10-Mar-2006 (RSC) Allow arrays in structs for C-Code generation
 #    13-Mar-2006 (MZO) Merge from `Decos Branch`
 #    14-Mar-2006 (RSC) Fix C-Code generation for arrays.
-#    13-Jul-2006 (MZO) issue20886, `format_size` added
+#    13-Jul-2006 (MZO) [20886] `format_size` added
 #    27-Jul-2006 (CED) Alignement and padding code factored out to
 #                      `TFL.CDG.Type_Packer`
 #    ««revision-date»»···

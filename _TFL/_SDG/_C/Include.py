@@ -32,7 +32,7 @@
 #                      (`%(filename)s` instead of `%(::.filename:)s`)
 #    24-Aug-2004 (CT)  `fn_head` and `fn_tail` added
 #    24-Aug-2004 (CT)  Append `.h` if necessary (using `Filename`)
-#    11-Sep-2006 (MZO) i21459, searchpath fixed
+#    11-Sep-2006 (MZO) [21459] searchpath fixed
 #    ««revision-date»»···
 #--
 
