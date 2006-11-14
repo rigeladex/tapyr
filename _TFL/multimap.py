@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Mar-2006 (CT) Creation
+#    14-Nov-2006 (CT) `mm_set` added
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,13 @@ class mm_list (TFL._defaultdict_) :
     default_factory = list
 
 # end class mm_list
+
+class mm_set (TFL._defaultdict_) :
+    """`defaultdict` with `set` as `default_factory`."""
+
+    default_factory = set
+
+# end class mm_set
 
 class mm_dict_mm_list (TFL._defaultdict_) :
     """`defaultdict` with `mm_list` as `default_factory`."""
