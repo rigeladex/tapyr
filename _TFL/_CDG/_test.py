@@ -14,7 +14,7 @@
 #    11-Nov-2005 (MG)  Test extended
 #    10-Mar-2006 (MZO) added `S_With_Array`
 #    23-Aug-2006 (PGO) Using alternate form of %x
-#    14-Nov-2006 (MZO) test extended
+#    14-Nov-2006 (MZO) test extended, profiler added
 #    ««revision-date»»···
 #--
 #
@@ -228,6 +228,19 @@ class TDCOM_Descriptor (Struct) :
 
 # end class TDCOM_Descriptor
 
+def _proc () :
+    if sys.platform == "linux2" :
+        print "sys status :"
+        try :
+            f = open ('/proc/%d/status' % os.getpid ())
+            status = f.read ()
+            f.close ()
+        except:
+            status = "Error occured while reading proc"
+        print status
+# end def _proc
+
+
 if __name__ == "__main__" :
     from Command_Line import Command_Line
 
@@ -278,32 +291,35 @@ if __name__ == "__main__" :
         import pprint
         import os
         import sys
-        times = []
-        cg = TFL.CDG.C_Code_Creator (None, None)
-        times.append (time.time ())
-        for i in xrange (cmd.benchmark_no_of) :
-            Byte_Copy_Spec (i, i + 1)
-            Message_Pack_Copy ("m%s" % i, i + 1)
-        times.append (time.time ())
-        c_block = cg  (C, Meta_Struct, TDCOM_Descriptor
-            , reset_extension = True
-            , filename        = None
-            , benchmark       = True
-            )
-        times.append (time.time ())
-        if cmd.header :
-            print "\n".join (c_block.as_c_code ())
-        times.append (time.time ())
-        print "times and deltas:"
-        pprint.pprint (times)
-        print "\n".join ((str (j - i) for i, j in TFL.pairwise (times)))
-        if sys.platform == "linux2" :
-            print "sys status :"
-            try :
-                f = open ('/proc/%d/status' % os.getpid ())
-                status = f.read ()
-                f.close ()
-            except:
-                status = "Error occured while reading proc"
-            print status
+        import hotshot
+        benchmark_no_of = cmd.benchmark_no_of
+        prof = hotshot.Profile ("test_%s.prof" % benchmark_no_of)
+        try :
+            times = []
+            cg = TFL.CDG.C_Code_Creator (None, None)
+            times.append (time.time ())
+            _proc ()
+            prof.start ()
+            for i in xrange (benchmark_no_of) :
+                Byte_Copy_Spec (i, i + 1)
+                Message_Pack_Copy ("m%s" % i, i + 1)
+            prof.stop ()
+            _proc ()
+            times.append (time.time ())
+            c_block = cg  (C, Meta_Struct, TDCOM_Descriptor
+                , reset_extension = True
+                , filename        = None
+                , benchmark       = True
+                )
+            times.append (time.time ())
+            _proc ()
+            if cmd.header :
+                print "\n".join (c_block.as_c_code ())
+            times.append (time.time ())
+            print "times and deltas:"
+            pprint.pprint (times)
+            print "\n".join ((str (j - i) for i, j in TFL.pairwise (times)))
+            _proc ()
+        finally :
+            prof.close ()
 ### __END__ TFL.CDG._test
