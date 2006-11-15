@@ -51,6 +51,8 @@
 #     7-Jun-2006 (CT)  `Re_Replacer` factored to `TFL.Regexp`
 #    20-Jul-2006 (PGO) `_populate_dirs` creates init files in empty dirs
 #     6-Nov-2006 (CED) No rewriting anymore
+#    15-Nov-2006 (CED) `_make_setup_file` adds call to `register_at_sys_path`
+#                      if needed
 #    ««revision-date»»···
 #--
 
@@ -121,10 +123,18 @@ class Plugin_Packager (TFL.Meta.Object) :
         sf    = open (fname, "w")
         sf.write     ("# Setup code for plugin %s\n\n" % pname)
         sf.write     ("from _TFL.Importers import Plugin_Importer\n\n")
+        needs_sys_path = False
         for pyp in sorted (self.py_packages, key = TFL.Attribute.pkg) :
             sf.write \
                 ( "Plugin_Importer.register ('%s', '%s')\n"
                 % (pname, pyp.pkg)
+                )
+            if len (pyp.pkg.split (".")) == 1 :
+                needs_sys_path = True
+        if needs_sys_path :
+            sf.write \
+                ( "Plugin_Importer.register_at_sys_path ('%s')\n"
+                % (pname, )
                 )
         for pym in sorted (self.py_modules, key = TFL.Attribute.rel_name) :
             code = self._read_source_file (pym)

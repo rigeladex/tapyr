@@ -38,6 +38,7 @@
 #    25-Aug-2006 (CED) Support for multiple lib/pythons added :-), fixed
 #     6-Nov-2006 (CED) `Plugin_Importer` added
 #    10-Nov-2006 (CED) Use path hooks for Plugin_Importer
+#    15-Nov-2006 (CED) `register_at_sys_path` added
 #    ««revision-date»»···
 #--
 
@@ -230,25 +231,21 @@ class Plugin_Importer (object) :
 
     @classmethod
     def register (cls, plugin_name, pns_name) :
-        pns_list  = pns_name.split (".")
-        token     = "%s,%s" % (PIM_TOKEN, plugin_name)
-        pns_list  = pns_name.split (".")
-        outer = ".".join (pns_list [:-1])
-        cls._register (pns_name, token)
-        cls._register (outer,    token)
+        if pns_name in sys.modules :
+            path_list = sys.modules [pns_name].__path__
+            cls._register (path_list, plugin_name)
+        else :
+            cls.pending.setdefault (pns_name, []).append (plugin_name)
     # end def register
 
     @classmethod
-    def _register (cls, pkg, token) :
-        path_list = None
-        if pkg :
-           if pkg in sys.modules :
-               path_list = sys.modules [pkg].__path__
-           else :
-               cls.pending.setdefault (pkg, []).append (token)
-               return
-        else :
-            path_list = sys.path
+    def register_at_sys_path (cls, plugin_name) :
+        cls._register (sys.path, plugin_name)
+    # end def register_at_sys_path
+
+    @classmethod
+    def _register (cls, path_list, plugin_name) :
+        token     = "%s,%s" % (PIM_TOKEN, plugin_name)
         if token not in path_list :
             path_list.append (token)
     # end def _register
@@ -307,9 +304,8 @@ class Plugin_Importer (object) :
     def load_module (self, fullmodule) :
         loader = self._cache [fullmodule]
         result = loader.load_module (fullmodule)
-        for token in self.pending.get (fullmodule, []) :
-            if token not in result.__path__ :
-                result.__path__.append (token)
+        for plugin_name in self.pending.get (fullmodule, []) :
+            self.__class__._register (result.__path__, plugin_name)
         return result
     # end def load_module
 
