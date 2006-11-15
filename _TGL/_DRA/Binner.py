@@ -42,6 +42,12 @@ class Binner (TFL.Meta.Object) :
        The range of possible values is split into bins zhat are numbered from
        1 to `n` (0 is reserved for invalid values). Each measured value is
        mapped to the bin containing it.
+
+       >>> B = Binner (0, 2)
+       >>> [B.binned (d) for d in (0, 1, 2, 10, 180, 359)]
+       [1, 1, 2, 6, 91, 180]
+       >>> [B.dennib (i) for i in [1, 1, 2, 6, 91, 180]]
+       [1.0, 1.0, 3.0, 11.0, 181.0, 359.0]
     """
 
     def __init__ (self, offset, width) :
