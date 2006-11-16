@@ -44,9 +44,9 @@ class Binner (TFL.Meta.Object) :
        mapped to the bin containing it.
 
        >>> B = Binner (0, 2)
-       >>> [B.binned (d) for d in (0, 1, 2, 10, 180, 359)]
+       >>> [B.index (d) for d in (0, 1, 2, 10, 180, 359)]
        [1, 1, 2, 6, 91, 180]
-       >>> [B.dennib (i) for i in [1, 1, 2, 6, 91, 180]]
+       >>> [B.value (i) for i in [1, 1, 2, 6, 91, 180]]
        [1.0, 1.0, 3.0, 11.0, 181.0, 359.0]
     """
 
@@ -55,15 +55,15 @@ class Binner (TFL.Meta.Object) :
         self.width  = float (width)
     # end def __init__
 
-    def binned (self, r) :
+    def index (self, r) :
         """Returns bin index for value `r`."""
         return int ((r - self.offset) // self.width) + 1
-    # end def binned
+    # end def index
 
-    def dennib (self, i) :
+    def value (self, i) :
         """Returns value corresponding to bin `i`."""
-        return (i - 1) * self.width + self.offset + self.width / 2
-    # end def dennib
+        return ((i - 1) * self.width) + self.offset + (self.width / 2)
+    # end def value
 
 # end class Binner
 
