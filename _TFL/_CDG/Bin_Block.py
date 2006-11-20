@@ -36,12 +36,14 @@
 #    25-Oct-2006 (MZO) [22162] note removed
 #     7-Nov-2006 (MZO) [21988] `reset_extension` called
 #     9-Nov-2006 (MZO) [21988] write each block into file immediately
+#    20-Nov-2006 (MZO) [21696] `TFL.CDG.Array` used
 #    ««revision-date»»···
 #--
 #
 
 from     _TFL                  import TFL
 import   _TFL._CDG
+import   _TFL._CDG.Array
 import   _TFL._SDG._C
 import   _TFL._Meta.Object
 from     _TFL.predicate        import *
@@ -133,15 +135,14 @@ class C_Code_Creator (TFL.Meta.Object) :
     def pack_as_c_code \
         (self, C, Meta_Struct, reset_extension = True, filename = None) :
         c_block = C.Stmt_Group ()
-        if filename :
-            self._write_block_start (filename)
-        try :
-            for c in Meta_Struct.uses_global_buffers :
-                values = []
-                for o in c.extension :
-                    values.append (o.dict ())
-                values = self.hook_pack_values (values, c)
-                self._define_fmt (C, c)
+        content = ""
+        for c in Meta_Struct.uses_global_buffers :
+            values = []
+            for o in c.extension :
+                values.append (o.dict ())
+            values = self.hook_pack_values (values, c)
+            self._define_fmt (C, c)
+            if not filename :
                 c_block.add \
                     ( C.Array
                         ( c.type_name
@@ -150,13 +151,26 @@ class C_Code_Creator (TFL.Meta.Object) :
                         , init   = values
                         )
                     )
-                if filename :
-                    self._write_block (c_block)
-                    c_block = C.Stmt_Group ()
-                if reset_extension :
-                    c.reset_extension ()
-        finally :
-            self._write_block_end ()
+            else :
+                c_block = TFL.CDG.Array \
+                    ( c.type_name
+                    , c.buffer_name ()
+                    , bounds    = len (values)
+                    , init      = values
+                    )
+                if c_block :
+                    content = \
+                        "%s%s" % (content, "\n".join (c_block.as_c_code ()))
+                    c_block.destroy ()
+                c_block = None
+            if reset_extension :
+                c.reset_extension ()
+        if filename and content :
+            self._write_block_start (filename)
+            try :
+                self._write_str (content)
+            finally :
+                self._write_block_end ()
         return c_block
     # end def pack_as_c_code
 
@@ -192,6 +206,15 @@ class C_Code_Creator (TFL.Meta.Object) :
         if self.out_block :
             self.out_block.close ()
     # end def _write_block_end
+
+    def _write_str (self, block) :
+        assert self.out_block
+        try :
+            self.out_block.write ("%s\n" % block)
+            self.out_block.flush ()
+        except (OSError, TFL.sos.error), exc :
+            print exc
+    # end def _write_str
 
 # end class C_Code_Creator
 

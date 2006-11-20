@@ -25,6 +25,7 @@ import _TFL._CDG.Struct_Field
 import _TFL._CDG.Struct
 import _TFL._SDG._C
 import _TFL._SDG._C.import_C
+from _YAGNI.Debug import proc_status
 
 Meta_Struct = TFL.CDG.M_Struct.New ("TDCOM")
 
@@ -228,17 +229,19 @@ class TDCOM_Descriptor (Struct) :
 
 # end class TDCOM_Descriptor
 
-def _proc () :
-    if sys.platform == "linux2" :
-        print "sys status :"
-        try :
-            f = open ('/proc/%d/status' % os.getpid ())
-            status = f.read ()
-            f.close ()
-        except:
-            status = "Error occured while reading proc"
-        print status
-# end def _proc
+@proc_status
+def _run_cg (cg, C, with_reset_extension, with_filename, benchmark) :
+    if with_filename :
+        print "code_gen with filename"
+    if with_reset_extension :
+        print "code_gen with reset_extension"
+    return cg  \
+        (C, Meta_Struct, TDCOM_Descriptor
+        , reset_extension = with_reset_extension
+        , filename        = with_filename and "test.txt" or None
+        , benchmark       = benchmark
+        )
+# end def _run_cg
 
 
 if __name__ == "__main__" :
@@ -250,6 +253,9 @@ if __name__ == "__main__" :
             , "header:B"
             , "benchmark:B"
             , "benchmark_no_of:I"
+            , "with_reset_extension:B"
+            , "with_filename:B"
+            , "with_hotshot:B"
             )
         ,
         )
@@ -292,34 +298,35 @@ if __name__ == "__main__" :
         import os
         import sys
         import hotshot
+        with_hotshot    = cmd.with_hotshot
         benchmark_no_of = cmd.benchmark_no_of
-        prof = hotshot.Profile ("test_%s.prof" % benchmark_no_of)
+        if with_hotshot :
+            print "setup hotshot"
+            prof = hotshot.Profile ("test_%s.prof" % benchmark_no_of)
         try :
             times = []
             cg = TFL.CDG.C_Code_Creator (None, None)
             times.append (time.time ())
-            _proc ()
-            prof.start ()
             for i in xrange (benchmark_no_of) :
                 Byte_Copy_Spec (i, i + 1)
                 Message_Pack_Copy ("m%s" % i, i + 1)
-            prof.stop ()
-            _proc ()
             times.append (time.time ())
-            c_block = cg  (C, Meta_Struct, TDCOM_Descriptor
-                , reset_extension = True
-                , filename        = None
-                , benchmark       = True
+            if with_hotshot :
+                prof.start ()
+            c_block = _run_cg \
+                ( cg, C, cmd.with_reset_extension, cmd.with_filename
+                , cmd.benchmark
                 )
+            if with_hotshot :
+                prof.stop ()
             times.append (time.time ())
-            _proc ()
             if cmd.header :
                 print "\n".join (c_block.as_c_code ())
             times.append (time.time ())
             print "times and deltas:"
             pprint.pprint (times)
             print "\n".join ((str (j - i) for i, j in TFL.pairwise (times)))
-            _proc ()
         finally :
-            prof.close ()
+            if with_hotshot :
+                prof.close ()
 ### __END__ TFL.CDG._test

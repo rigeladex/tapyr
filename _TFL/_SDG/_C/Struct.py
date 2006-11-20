@@ -32,6 +32,7 @@
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    12-Jul-2005 (MG) `description` added to `[ch]_format`
 #    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
+#    20-Nov-2006 (MZO) [21696] `_setup_initializers_for_cdg_array` added
 #    ««revision-date»»···
 #--
 
@@ -161,6 +162,31 @@ class Struct (TFL.SDG.C._Decl_) :
             result.add (i)
         return result
     # end def _setup_initializers
+
+    def _setup_initializers_for_cdg_array \
+        (self, init_dict, description = None) :
+        ### speed/ram optimized generation
+        result = []
+        for c in self.decl_children :
+            if c.name not in init_dict :
+                if c.init :
+                    v = c.init.init
+                else :
+                    msg = \
+                        ( "No initialization value for `%s.%s`"
+                        % (self.name, c.name)
+                        )
+                    raise ValueError, msg
+            else :
+                v = init_dict [c.name]
+            assert not isinstance (c, (TFL.SDG.C.Struct, TFL.SDG.C.Array)), c
+            descr = "/* %s */" % c.name
+            result.append ("%s %s" % (v, descr))
+        return \
+            ("{ %s\n    } %s"
+            % ("\n    , ".join (result), "/* %s */" % description)
+            )
+    # end def _setup_initializers_for_cdg_array
 
 # end class Struct
 
