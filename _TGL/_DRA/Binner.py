@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Nov-2006 (CT) Creation
+#    22-Nov-2006 (CT) `delta` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,11 @@ class Binner (TFL.Meta.Object) :
         self.offset = float (offset)
         self.width  = float (width)
     # end def __init__
+
+    def delta (self, d) :
+        """Returns delta corresponding to binner index delta `d`"""
+        return self.width * d
+    # end def delta
 
     def index (self, r) :
         """Returns bin index for value `r`."""
