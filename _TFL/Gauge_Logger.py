@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,18 +41,19 @@
 #    14-Mar-2005 (CT)  `_activate` added
 #    14-Mar-2005 (CT)  Dead code courtesy of GWA removed
 #    21-Jan-2006 (MG)  Moved into `TFL` package
+#    23-Nov-2006 (PGO) Inheritance changed
 #    ««revision-date»»···
 #--
 
-from _TFL           import TFL
-from _TFL.predicate import relax
+from   _TFL              import TFL
+import _TFL._Meta.Object
+import _TFL.predicate
 
-class Gauge_Logger :
+class Gauge_Logger (TFL.Meta.Object) :
     """Provide access to progress gauge without introducing dependencies to
        window system (e.g., instances of Gauge_Logger can be used in
        interactive and batch applications)
     """
-
     def __init__ (self, gauge = None, log = 0) :
         self.gauge = gauge
         self.log   = log
@@ -73,7 +74,7 @@ class Gauge_Logger :
             return getattr (self.gauge, name)
         elif name == "activate" :
             return self._activate
-        return relax
+        return TFL.relax
     # end def __getattr__
 
     def __nonzero__ (self) :
