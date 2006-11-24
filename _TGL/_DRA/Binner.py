@@ -28,6 +28,7 @@
 # Revision Dates
 #    15-Nov-2006 (CT) Creation
 #    22-Nov-2006 (CT) `delta` added
+#    24-Nov-2006 (CT) Optional argument `center` added to `value`
 #    ««revision-date»»···
 #--
 
@@ -66,13 +67,17 @@ class Binner (TFL.Meta.Object) :
         return int ((r - self.offset) // self.width) + 1
     # end def index
 
-    def value (self, i) :
+    def value (self, i, center = True) :
         """Returns value corresponding to bin `i`."""
-        return ((i - 1) * self.width) + self.offset + (self.width / 2)
+        width  = self.width
+        result = ((i - 1) * width) + self.offset
+        if center :
+            result += (width / 2)
+        return result
     # end def value
 
 # end class Binner
 
 if __name__ != "__main__" :
-    TGL._Export ("*")
+    TGL.DRA._Export ("*")
 ### __END__ TGL.DRA.Binner
