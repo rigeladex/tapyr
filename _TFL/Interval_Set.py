@@ -38,6 +38,7 @@
 #                      Factored _bisection and use it in next_point
 #    13-Dec-2005 (CT)  Small improvements
 #    22-Jul-2006 (CED) `contains_interval` added
+#    24-Nov-2006 (CED) `difference` added
 #    ««revision-date»»···
 #--
 
@@ -83,6 +84,10 @@ class Interval_Set (TFL.Meta.Object) :
        >>> p = IS ()
        >>> p, bool (p), p.is_empty ()
        (IS (), False, True)
+       >>> o = IS (N (0, 5), N (10, 15), N (20, 25))
+       >>> p = IS (N (3, 6), N (12, 13), N (20, 25))
+       >>> o.difference (p)
+       IS ((0, 3), (10, 12), (13, 15))
     """
 
     element_class = property (lambda self : self.intervals [0].__class__)
@@ -104,6 +109,13 @@ class Interval_Set (TFL.Meta.Object) :
     def contains_point (self, point) :
         return self.next_point_up (point) == point
     # end def contains_point
+
+    def difference (self, other) :
+        result = self
+        for o_iv in other.intervals :
+            result = result._difference (o_iv)
+        return result
+    # end def difference
 
     def intersection (self, other) :
         return self.__class__ (* self._intersection_iter (other))
@@ -138,6 +150,13 @@ class Interval_Set (TFL.Meta.Object) :
             ivals.extend (o.intervals)
         return self.__class__ (* ivals)
     # end def union
+
+    def _difference (self, other_iv) :
+        result = []
+        for iv in self.intervals :
+            result += iv.difference (other_iv)
+        return self.__class__ (* result)
+    # end def _difference
 
     def _intersection_iter (self, other) :
         l_iter = iter (self)
