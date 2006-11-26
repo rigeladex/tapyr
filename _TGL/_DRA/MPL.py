@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Nov-2006 (CT) Creation
+#    26-Nov-2006 (CT) `errorbar` and `plot` added
 #    ««revision-date»»···
 #--
 
@@ -72,7 +73,6 @@ class Bin_Locator (Locator) :
         binner       = self.binner
         v_min        = binner.index (binner.value (d_min - 1, False))
         v_max        = binner.index (binner.value (d_max + 1, False))
-        print v_min, d_min, d_max, v_max
         return v_min, v_max
     # end def autoscale
 
@@ -82,7 +82,11 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
     """Matplotlib plot for Bin_Distribution"""
 
     cmap              = pylab.cm.YlOrRd
-    grid              = True
+    grid              = dict \
+        ( color       = "#E5D3C9"
+        , linestyle   = "-"
+        , linewidth   = 0.1
+        )
     shading           = "flat"
     x_tick_delta      = None
     x_tick_offset     = 0
@@ -113,7 +117,7 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         self.fm = ma.masked_where (fm == 0, fm)
     # end def _setup_frequency_map
 
-    def plot (self, ax) :
+    def display (self, ax) :
         """Put the Bin_Distribution plot into `axes`"""
         xb, xf = self.x_binner, self.x_tick_format
         yb, yf = self.y_binner, self.y_tick_format
@@ -134,7 +138,47 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
             , shading = self.shading
             )
         pylab.colorbar ()
-        pylab.grid     (self.grid)
+        pylab.grid     (** self.grid)
+    # end def display
+
+    def errorbar (self, xs, ys, yerr, marker_fmt, error_fmt, linewidth = 0.5, ** kw):
+        """Display error bars"""
+        xb = self.x_binner
+        xo = xb.width / 2.0
+        yb = self.y_binner
+        xs = [xb.index (i) + xo for i in xs]
+        pylab.vlines \
+            ( xs
+            , [yb.index_f (y - d) for (y, d) in zip (ys, yerr)]
+            , [yb.index_f (y + d) for (y, d) in zip (ys, yerr)]
+            , error_fmt
+            , linewidth = linewidth
+            )
+        pylab.plot (xs, [yb.index_f (i) for i in ys], marker_fmt, ** kw)
+        if 0 : ### couldn't find a way to incluence the thickness of the bars
+#           bdp.errorbar (D, A, SD, fmt = "b.", ecolor = "0.05", capsize = 1)
+            pylab.errorbar \
+            ( [xb.index   (x) + xo for x in xs]
+            , [yb.index_f (y)      for y in ys]
+            , [   (yb.index_f (y + d) - yb.index_f (y - d)) / 2
+              for (y, d) in zip (ys, yerr)
+              ]
+            , ** kw
+            )
+    # end def errorbar
+
+    def plot (self, xs, ys, * args, ** kw) :
+        """Put `plot` of `xs` versus `ys` (`args` and `kw` are passed on to
+           `pylab.plot`).
+        """
+        xb = self.x_binner
+        xo = xb.width / 2.0
+        yb = self.y_binner
+        pylab.plot \
+            ( [xb.index   (i) + xo for i in xs]
+            , [yb.index_f (i)      for i in ys]
+            , * args, ** kw
+            )
     # end def plot
 
 # end class Bin_Distribution_Plot
@@ -154,10 +198,10 @@ bdp = Bin_Distribution_Plot \
     , y_tick_delta = 1, y_tick_offset = 1, y_width = 0.5
     )
 ax  = subplot (111)
-bdp.plot (ax)
-xlabel   ("Week")
-ylabel   ("kg")
-title    ("Weight before breakfast")
-show     ()
+bdp.display   (ax)
+xlabel        ("Week")
+ylabel        ("kg")
+title         ("Weight before breakfast")
+show          ()
 
 """

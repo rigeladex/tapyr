@@ -29,6 +29,7 @@
 #    15-Nov-2006 (CT) Creation
 #    22-Nov-2006 (CT) `delta` added
 #    24-Nov-2006 (CT) Optional argument `center` added to `value`
+#    26-Nov-2006 (CT) `index_f` factored
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,12 @@ class Binner (TFL.Meta.Object) :
 
     def index (self, r) :
         """Returns bin index for value `r`."""
-        return int ((r - self.offset) // self.width) + 1
+        return int (self.index_f (r))
+    # end def index
+
+    def index_f (self, r) :
+        """Returns bin index for value `r` as float value."""
+        return ((r - self.offset) / self.width) + 1
     # end def index
 
     def value (self, i, center = True) :
