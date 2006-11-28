@@ -357,6 +357,8 @@ class ACPI_Entry (Text_LR_Entry) :
                     status = ""
                 else :
                     status = "->"
+                    if s.bat_percent == 100 :
+                        bat_status = " Full"
                 remaining = ""
             else :
                 status   = ""
