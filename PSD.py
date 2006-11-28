@@ -30,6 +30,7 @@
 #     4-Jun-2005 (CT) Creation continued
 #     7-Jun-2005 (CT) `_get_temperatures` added to remember
 #                     `/proc/acpi/ibm/thermal`
+#    28-Nov-2006 (CT) `_acpi_pattern` adapted to change in `acpitool`s output
 #    ««revision-date»»···
 #--
 
@@ -139,7 +140,7 @@ class ACPI_Updater (TFL.Meta.Object) :
               r")?"
               r"\s* "
           r"AC \s+ adapter   \s+ : \s+ (?P<ac_status> on|off)-line \s*"
-          r"(?: Thermal \s+ info \s+ : \s + "
+          r"(?: Thermal \s+ (?: info|zone) \s+ : \s + "
               r"(?P<therm_stat> [^,]+), \s+ "
               r"(?P<temperature> [0-9]+) \s+ C"
           r")?"
