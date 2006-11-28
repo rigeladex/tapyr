@@ -140,7 +140,7 @@ class ACPI_Updater (TFL.Meta.Object) :
               r")?"
               r"\s* "
           r"AC \s+ adapter   \s+ : \s+ (?P<ac_status> on|off)-line \s*"
-          r"(?: Thermal \s+ (?: info|zone) \s+ : \s + "
+          r"(?: Thermal \s+ (?: info|zone \s+ \d+) \s+ : \s + "
               r"(?P<therm_stat> [^,]+), \s+ "
               r"(?P<temperature> [0-9]+) \s+ C"
           r")?"
