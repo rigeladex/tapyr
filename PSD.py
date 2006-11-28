@@ -349,11 +349,11 @@ class ACPI_Entry (Text_LR_Entry) :
             remaining  = self._formatted_minutes (s.bat_minutes, head = " ")
             duration   = self._formatted_minutes \
                 (s.same_status_duration, tail = " ")
-            bat_status = s.bat_status
+            bat_status = s.bat_status.capitalize ()
             color      = s.color
             if s.ac_status == "on" :
                 s_format = "%s%s%s"
-                if bat_status == "charging" :
+                if bat_status == "Charging" :
                     status = ""
                 else :
                     status = "->"
@@ -363,9 +363,9 @@ class ACPI_Entry (Text_LR_Entry) :
             else :
                 status   = ""
                 s_format = "%s%s%2.2s"
-                if bat_status == "discharging" :
+                if bat_status == "Discharging" :
                     bat_status = ""
-            status = s_format % (status, duration, bat_status.capitalize ())
+            status = s_format % (status, duration, bat_status)
             value  = "%s%%%s" % (s.bat_percent, remaining)
             tcolor = self.text_color
             self.widget.config (fill = color)
