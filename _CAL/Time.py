@@ -29,6 +29,7 @@
 #    15-Oct-2004 (CT) Creation
 #    17-Oct-2004 (CT) `Time.Delta` defined as `Time_Delta`
 #    17-Oct-2004 (CT) Adapted to renaming of accessor-functions of `Time_Delta`
+#    30-Nov-2006 (CT) `__getattr__` for `seconds` added
 #    ««revision-date»»···
 #--
 
@@ -84,6 +85,17 @@ class Time (CAL._DTW_) :
             , microseconds = self.microsecond
             )
     # end def as_delta
+
+    def __getattr__ (self, name) :
+        if name == "seconds" :
+            result = self.hour * 3600 + self.minute * 60 + self.second
+            if self.microsecond :
+                result += (self.microsecond / 1000.)
+            self.seconds = result
+        else :
+            result = self.__super.__getattr__ (name)
+        return result
+    # end def __getattr__
 
     def __add__ (self, rhs) :
         result = self.as_delta () + self._delta (rhs)

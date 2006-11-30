@@ -41,6 +41,9 @@
 #    15-Nov-2004 (CT) `wk_ordinal` added
 #     6-Jan-2005 (CT) `__main__` script added
 #    01-Sep-2005 (MG) Use new decorator syntax for defining classmethod
+#    30-Nov-2006 (CT) `__getattr__` changed to delegate to
+#                     `__super.__getattr__`
+#    30-Nov-2006 (CT) `CJD`, `MJD`, and `TJD` added
 #    ««revision-date»»···
 #--
 
@@ -221,12 +224,24 @@ class Date (CAL._DTW_) :
     # end def _new_object
 
     def __getattr__ (self, name) :
-        if name == "month_name" :
+        if name == "CJD" :
+            ### Chronological Julian Day (based on January 1, 4713 BC)
+            ### http://en.wikipedia.org/wiki/Julian_day_number
+            result = self.CJD = self._body.toordinal () + 1721424
+        elif name == "MJD" :
+            ### Modified Julian Day (based on November 17, 1858)
+            result = self.MJD = self._body.toordinal () - 678576
+        elif name == "month_name" :
             result = self.month_name = self.strftime ("%b")
         elif name == "ordinal" :
+            ### Rata Die (based on January 1, 1)
             result = self.ordinal = self._body.toordinal ()
         elif name == "rjd" :
+            ### relative julian day (based on January 1 of `self.year`)
             result = self.rjd = self._body.timetuple ().tm_yday
+        elif name == "TJD" :
+            ### Truncated Julian Day (based on May 24, 1968)
+            result = self.TJD = self._body.toordinal () - 718576
         elif name == "tuple" :
             result = self.tuple = self._body.timetuple ()
         elif name == "week" :
@@ -234,7 +249,7 @@ class Date (CAL._DTW_) :
         elif name == "weekday" :
             result = self.weekday = self._body.weekday ()
         else :
-            raise AttributeError, name
+            result = self.__super.__getattr__ (name)
         return result
     # end def __getattr__
 

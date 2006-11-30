@@ -29,6 +29,8 @@
 #    15-Oct-2004 (CT) Creation
 #    17-Oct-2004 (CT) Adapted to changes in `_DTW_` and `Delta`
 #    28-Dec-2005 (MG) Static method `from_ical` added
+#    30-Nov-2006 (CT) `__getattr__` for `CJD`, `MJD`, `TJD`, "CJS", "MJS",
+#                     and "TJS" added
 #    ««revision-date»»···
 #--
 
@@ -84,6 +86,16 @@ class Date_Time (CAL.Date, CAL.Time) :
             if isinstance (ical.dt, p_cls) :
                 return tgl_cls (** {tgl_cls._kind : ical.dt})
     # end def from_ical
+
+    def __getattr__ (self, name) :
+        result = self.__super.__getattr__ (name)
+        if name in ("CJD", "MJD", "TJD") :
+            result += (self.seconds / 86400.)
+        elif name in ("CJS", "MJS", "TJS") :
+            result *= 86400
+            result += self.seconds
+        return result
+    # end def __getattr__
 
 # end class Date_Time
 

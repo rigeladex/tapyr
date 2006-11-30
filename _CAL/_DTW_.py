@@ -34,6 +34,8 @@
 #    12-Dec-2004 (CT) `__repr__` added
 #     9-Aug-2006 (CT) `__hash__` changed to return `hash (self._body)`
 #                     instead of `id (self)`
+#    30-Nov-2006 (CT) Empty `__getattr__` added to allow cooperative super
+#                     calls for `__getattr__` to fail gracefully
 #    ««revision-date»»···
 #--
 
@@ -107,6 +109,10 @@ class _DTW_ (TFL.Meta.Object) :
     def __cmp__ (self, rhs) :
         return cmp (self._body, getattr (rhs, self._kind, rhs))
     # end def __cmp__
+
+    def __getattr__ (self, name) :
+        raise AttributeError, name
+    # end def __getattr__
 
     def __hash__ (self) :
         return hash (self._body)
