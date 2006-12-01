@@ -85,15 +85,16 @@
 #    20-Sep-2004 (CED) `delete_file` fixed to pass `name` instead of
 #                      `full_name` to `_remove_file`
 #    14-Feb-2006 (CT)  Moved into package `TFL`
+#     1-Dec-2006 (PGO) Usage of Ordered_Set in `_remove_file` fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL                import TFL
 from   _TFL.Filename       import Filename
-from   _TFL.Ordered_Set    import Ordered_Set
 from   _TFL                import sos
 import _TFL.d_dict
 import _TFL.Environment
+import _TFL.Ordered_Set
 
 import dircache
 import errno
@@ -324,7 +325,7 @@ class _Open_Sync_Dir_ :
         self.default_mode    = default_mode + mode [1:]
         self.bufsize         = bufsize
         self.last_file       = None
-        self.files           = Ordered_Set ()
+        self.files           = TFL.Ordered_Set ()
         if backup_name :
             self.backup_name = Filename \
                 (backup_name, self.sync_dir.file_name).name
@@ -391,7 +392,7 @@ class _Open_Sync_Dir_ :
 
     def _get_files_from_stamp (self) :
         self._open_stamp_file ()
-        self.files = Ordered_Set \
+        self.files = TFL.Ordered_Set \
             ( filter ( None
                      , [ f.strip () for f in self.stamp.readlines ()
                          if self.not_comment_line (f)
@@ -411,7 +412,7 @@ class _Open_Sync_Dir_ :
 
     def _remove_file (self, name) :
         if name in self.files :
-            del self.files [name]
+            self.files.remove (name)
     # end def _remove_file
 
     def _write_stamp_file_header (self, dir_name = None) :
