@@ -52,8 +52,8 @@ class Averager (TFL.Meta.Object) :
 
     average            = property (lambda s : s.sum_x / s.n)
     standard_deviation = property \
-        ( lambda s : math.sqrt
-            ((s.sum_xx * s.n - s.sum_x ** 2) / (s.n * (s.n - 1)))
+        ( lambda s : (s.n > 1) and math.sqrt
+            ((s.sum_xx * s.n - s.sum_x ** 2) / (s.n * (s.n - 1))) or 0
         )
 
     def __init__ (self, s = []) :

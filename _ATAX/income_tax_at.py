@@ -1,6 +1,5 @@
-#! /swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -30,11 +29,12 @@
 #    17-Nov-2002 (CT) Creation
 #    14-Jan-2004 (CT) `2005` added
 #    14-Dec-2005 (CT) Type of `amount` changed from `I` to `F`
+#     3-Dec-2006 (CT) Import from `_TFL`
 #    ««revision-date»»···
 #--
 
-from   Date_Time    import *
-from   EU_Currency  import *
+from   _TFL.Date_Time    import *
+from   _TFL.EU_Currency  import *
 
 EUC  = EU_Currency
 year = Date ().year

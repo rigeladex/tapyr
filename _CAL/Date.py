@@ -228,9 +228,13 @@ class Date (CAL._DTW_) :
             ### Chronological Julian Day (based on January 1, 4713 BC)
             ### http://en.wikipedia.org/wiki/Julian_day_number
             result = self.CJD = self._body.toordinal () + 1721424
+        elif name == "CJS" :
+            result = self.CJS = (self._body.toordinal () + 1721424) * 86400
         elif name == "MJD" :
             ### Modified Julian Day (based on November 17, 1858)
             result = self.MJD = self._body.toordinal () - 678576
+        elif name == "MJS" :
+            result = self.MJS = (self._body.toordinal () - 678576) * 86400
         elif name == "month_name" :
             result = self.month_name = self.strftime ("%b")
         elif name == "ordinal" :
@@ -242,6 +246,8 @@ class Date (CAL._DTW_) :
         elif name == "TJD" :
             ### Truncated Julian Day (based on May 24, 1968)
             result = self.TJD = self._body.toordinal () - 718576
+        elif name == "TJS" :
+            result = self.TJS = (self._body.toordinal () - 718576) * 86400
         elif name == "tuple" :
             result = self.tuple = self._body.timetuple ()
         elif name == "week" :

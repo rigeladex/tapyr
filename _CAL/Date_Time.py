@@ -92,7 +92,6 @@ class Date_Time (CAL.Date, CAL.Time) :
         if name in ("CJD", "MJD", "TJD") :
             result += (self.seconds / 86400.)
         elif name in ("CJS", "MJS", "TJS") :
-            result *= 86400
             result += self.seconds
         return result
     # end def __getattr__
