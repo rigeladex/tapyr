@@ -42,6 +42,7 @@
 #     9-Jun-2005 (CT)  Arguments `key` and `reverse` added to `sort`
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #     8-Nov-2006 (PGO) Inheritance changed
+#     4-Dec-2006 (PGO) `remove` and `__delitem__` merged to restore interface
 #    ««revision-date»»···
 #--
 
@@ -123,12 +124,6 @@ class Ordered_Set (list) :
         return value
     # end def pop
 
-    def remove (self, value) :
-        assert not isinstance (value, int), "use `del []` instead"
-        index = self.index_dict [value]
-        del self [index]
-    # end def remove
-
     def reverse (self) :
         self.__super.reverse ()
         self._fix ()
@@ -184,13 +179,16 @@ class Ordered_Set (list) :
     # end def __contains__
     contains = __contains__
 
-    def __delitem__ (self, index) :
-        assert isinstance (index, int), "use `remove` instead"
-        value = self [index]
+    def __delitem__ (self, value_or_index) :
+        if isinstance (value_or_index, int) :
+            index = value_or_index
+            del self.index_dict [self [index]]
+        else :
+            index = self.index_dict.pop (value_or_index)
         self.__super.__delitem__ (index)
-        del self.index_dict [value]
         self._fix (index)
     # end def __delitem__
+    remove = __delitem__
 
     def __delslice__ (self, i, j) :
         raise NotImplementedError
