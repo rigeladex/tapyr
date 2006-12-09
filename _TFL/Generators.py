@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -45,6 +45,7 @@
 #    24-Mar-2005 (CT)  Cruft removed (recent additions by CED and Python
 #                      legacies)
 #     1-Jul-2005 (CT)  `pairwise_circle` defined here
+#     8-Dec-2006 (CT)  `window_wise` added
 #    ««revision-date»»···
 #--
 
@@ -298,6 +299,34 @@ class Lazy_List :
     # end def _get
 
 # end class Lazy_List
+
+def window_wise (seq, size) :
+    """Return all windows of `size` elements in `seq`.
+
+       >>> list (window_wise (range (5), 1))
+       [(0,), (1,), (2,), (3,), (4,)]
+       >>> list (window_wise (range (5), 2))
+       [(0, 1), (1, 2), (2, 3), (3, 4)]
+       >>> list (window_wise (range (5), 3))
+       [(0, 1, 2), (1, 2, 3), (2, 3, 4)]
+       >>> list (window_wise (range (5), 4))
+       [(0, 1, 2, 3), (1, 2, 3, 4)]
+       >>> list (window_wise (range (5), 5))
+       [(0, 1, 2, 3, 4)]
+       >>> list (window_wise (range (5), 6))
+       []
+    """
+    from _TFL.DL_List import DL_Ring
+    s = iter  (seq)
+    h = tuple ((s.next () for i in range (size)))
+    if len (h) == size :
+        w = DL_Ring (* h)
+        yield tuple (w.values ())
+        while True:
+            w.pop_front ()
+            w.append    (s.next ())
+            yield tuple (w.values ())
+# end def window_wise
 
 if __name__ != "__main__" :
     TFL._Export ("*")
