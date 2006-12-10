@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -44,6 +44,8 @@
 #    30-Nov-2006 (CT) `__getattr__` changed to delegate to
 #                     `__super.__getattr__`
 #    30-Nov-2006 (CT) `CJD`, `MJD`, and `TJD` added
+#    10-Dec-2006 (CT) `JD_offset` factored
+#    10-Dec-2006 (CT) `from_julian` added
 #    ««revision-date»»···
 #--
 
@@ -123,7 +125,34 @@ class Date (CAL._DTW_) :
        2004-10-31
        >>> print Date.from_string ("Oct 5, 2004")
        2004-10-05
+
+       >>> mjd_epoch = Date (1858, 11, 17)
+       >>> tjd_epoch = Date (1968,  5, 24)
+       >>> mjd_epoch.ordinal, mjd_epoch.CJD, mjd_epoch.MJD, mjd_epoch.TJD
+       (678576, 2400000, 0, -40000)
+       >>> tjd_epoch.ordinal, tjd_epoch.CJD, tjd_epoch.MJD, tjd_epoch.TJD
+       (718576, 2440000, 40000, 0)
+
+       >>> Date.from_julian (2400000)
+       Date (1858, 11, 17)
+       >>> Date.from_julian (2440000)
+       Date (1968, 5, 24)
+       >>> Date.from_julian (40000, kind = "MJD")
+       Date (1968, 5, 24)
+
+
     """
+
+    ### Julian date offsets to Rata Die (Jan 1, 1)
+    ###     http://en.wikipedia.org/wiki/Julian_day_number
+    JD_offset = dict \
+        ( CJD =   1721424  ### Chronological JD (based on Jan  1, 4713 BC)
+        , CJS =   1721424
+        , MJD = -  678576  ### Modified      JD (based on Nov 17, 1858)
+        , MJS = -  678576
+        , TJD = -  718576  ### Truncated     JD (based on May 24, 1968)
+        , TJS = -  718576
+        )
 
     months = \
         { 'jan' :  1, 'january'   :   1,  1 : "jan"
@@ -176,6 +205,14 @@ class Date (CAL._DTW_) :
     from _CAL.Delta import Date_Delta as Delta
 
     @classmethod
+    def from_julian (cls, jd, kind = "CJD") :
+        ordinal = int (jd) - cls.JD_offset [kind]
+        if kind.endswith ("S") :
+            ordinal //= 86400
+        return cls.from_ordinal (ordinal)
+    # end def from_ordinal
+
+    @classmethod
     def from_ordinal (cls, ordinal) :
         return cls (date = datetime.date.fromordinal (ordinal))
     # end def from_ordinal
@@ -224,17 +261,11 @@ class Date (CAL._DTW_) :
     # end def _new_object
 
     def __getattr__ (self, name) :
-        if name == "CJD" :
-            ### Chronological Julian Day (based on January 1, 4713 BC)
-            ### http://en.wikipedia.org/wiki/Julian_day_number
-            result = self.CJD = self._body.toordinal () + 1721424
-        elif name == "CJS" :
-            result = self.CJS = (self._body.toordinal () + 1721424) * 86400
-        elif name == "MJD" :
-            ### Modified Julian Day (based on November 17, 1858)
-            result = self.MJD = self._body.toordinal () - 678576
-        elif name == "MJS" :
-            result = self.MJS = (self._body.toordinal () - 678576) * 86400
+        if name in self.JD_offset :
+            result = self._body.toordinal () + self.JD_offset [name]
+            if name.endswith ("S") :
+                result *= 86400
+            setattr (self, name, result)
         elif name == "month_name" :
             result = self.month_name = self.strftime ("%b")
         elif name == "ordinal" :
@@ -243,11 +274,6 @@ class Date (CAL._DTW_) :
         elif name == "rjd" :
             ### relative julian day (based on January 1 of `self.year`)
             result = self.rjd = self._body.timetuple ().tm_yday
-        elif name == "TJD" :
-            ### Truncated Julian Day (based on May 24, 1968)
-            result = self.TJD = self._body.toordinal () - 718576
-        elif name == "TJS" :
-            result = self.TJS = (self._body.toordinal () - 718576) * 86400
         elif name == "tuple" :
             result = self.tuple = self._body.timetuple ()
         elif name == "week" :

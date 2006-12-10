@@ -155,7 +155,7 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
             , linewidth = linewidth
             )
         pylab.plot (xs, [yb.index_f (i) for i in ys], marker_fmt, ** kw)
-        if 0 : ### couldn't find a way to incluence the thickness of the bars
+        if 0 : ### couldn't find a way to influence the thickness of the bars
 #           bdp.errorbar (D, A, SD, fmt = "b.", ecolor = "0.05", capsize = 1)
             pylab.errorbar \
             ( [xb.index   (x) + xo for x in xs]

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -31,6 +31,7 @@
 #    28-Dec-2005 (MG) Static method `from_ical` added
 #    30-Nov-2006 (CT) `__getattr__` for `CJD`, `MJD`, `TJD`, "CJS", "MJS",
 #                     and "TJS" added
+#    10-Dec-2006 (CT) `from_julian` added
 #    ««revision-date»»···
 #--
 
@@ -66,6 +67,19 @@ class Date_Time (CAL.Date, CAL.Time) :
        False
        >>> print d2 - d1
        -1 day, 0:00:00
+
+       >>> d = Date_Time (2006, 12, 10, 12, 26, 30)
+       >>> d.TJD, d.TJS
+       (14079.518402777778, 1216470390)
+       >>> d
+       Date_Time (2006, 12, 10, 12, 26, 30, 0)
+       >>> Date_Time.from_julian (14079, kind = "TJD")
+       Date_Time (2006, 12, 10, 0, 0, 0, 0)
+       >>> Date_Time.from_julian (14079.518402777778, kind = "TJD")
+       Date_Time (2006, 12, 10, 12, 26, 30, 0)
+       >>> Date_Time.from_julian (1216470390, kind = "TJS")
+       Date_Time (2006, 12, 10, 12, 26, 30, 0)
+
     """
 
     _Type            = datetime.datetime
@@ -86,6 +100,18 @@ class Date_Time (CAL.Date, CAL.Time) :
             if isinstance (ical.dt, p_cls) :
                 return tgl_cls (** {tgl_cls._kind : ical.dt})
     # end def from_ical
+
+    @classmethod
+    def from_julian (cls, jd, kind = "CJD") :
+        result = super (Date_Time, cls).from_julian (jd, kind = kind)
+        if kind.endswith ("S") :
+            seconds = jd % 86400
+        else :
+            seconds = (jd * 86400) % 86400
+        result = result.replace \
+            (hour = 0, minute = 0, second = 0, microsecond = 0)
+        return result + CAL.Time_Delta (seconds = seconds)
+    # end def from_ordinal
 
     def __getattr__ (self, name) :
         result = self.__super.__getattr__ (name)
