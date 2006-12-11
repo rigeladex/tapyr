@@ -29,6 +29,7 @@
 # Revision Dates
 #    23-Jul-2004 (CT)  Creation (factored from TOM.Meta.M_Auto_Combine)
 #    13-Jul-2005 (CED) Use sets instead of dicts
+#     2-Jul-2006 (MG)  Unnecessary imports removed
 #    ««revision-date»»···
 #--
 
@@ -57,11 +58,9 @@
 []
 """
 
-from   _TFL                import TFL
-from   predicate           import sorted
-
-import _TFL.d_dict
+from    _TFL                import TFL
 import _TFL._Meta.M_Class
+from    predicate           import sorted
 
 class M_Auto_Combine_Lists (TFL.Meta._M_Type_) :
     """Meta class for auto-combining the list-attributes mentioned in
