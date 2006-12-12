@@ -20,63 +20,30 @@
 #
 #++
 # Name
-#    TGL.DRA.MPL
+#    TGL.DRA.MPL.Bin_Distribution_Plot
 #
 # Purpose
-#    Matplotlib support for DRA package
+#    Plot for Bin_Distribution
 #
 # Revision Dates
 #    24-Nov-2006 (CT) Creation
 #    26-Nov-2006 (CT) `errorbar` and `plot` added
+#    11-Dec-2006 (CT) Moved into package TGL.DRA.MPL and renamed from `MPL`
+#                     to `Bin_Distribution_Plot`
+#    11-Dec-2006 (CT) `Bin_Locator` factored into separate module
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 from   _TGL import TGL
+
 import _TGL._DRA.Binner
+import _TGL._DRA._MPL.Bin_Locator
 import _TFL._Meta.Object
 
 import pylab
 import matplotlib.numerix.ma as     ma
-from   matplotlib.mlab       import frange
-from   matplotlib.ticker     import Locator, FuncFormatter
-
-class Bin_Locator (Locator) :
-
-    def __init__ (self, binner, delta = 1.0, phase = None) :
-        self.binner = binner
-        self.delta  = delta
-        self.phase  = phase
-    # end def __init__
-
-    def __call__ (self) :
-        self.verify_intervals ()
-        binner     = self.binner
-        delta      = self.delta
-        phase      = self.phase
-        vmin, vmax = self.viewInterval.get_bounds ()
-        wmin       = binner.value (vmin, False)
-        wmax       = binner.value (vmax, False)
-        if phase is not None :
-            wmin -= (wmin % delta - phase)
-        return \
-            [ i for i in
-                (   binner.index (v)
-                for v in frange (wmin, wmax + 0.001 * delta, delta)
-                )
-            if vmin <= i <= vmax
-            ]
-    # end def __call__
-
-    def autoscale (self) :
-        d_min, d_max = self.dataInterval.get_bounds ()
-        binner       = self.binner
-        v_min        = binner.index (binner.value (d_min - 1, False))
-        v_max        = binner.index (binner.value (d_max + 1, False))
-        return v_min, v_max
-    # end def autoscale
-
-# end class Bin_Locator
+from   matplotlib.ticker     import FuncFormatter
 
 class Bin_Distribution_Plot (TFL.Meta.Object) :
     """Matplotlib plot for Bin_Distribution"""
@@ -88,10 +55,14 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         , linewidth   = 0.1
         )
     shading           = "flat"
+    x_formatter       = None
+    x_locator         = TGL.DRA.MPL.Bin_Locator
     x_tick_delta      = None
     x_tick_offset     = 0
     x_tick_format     = "%s"
     x_width           = 1.0
+    y_formatter       = None
+    y_locator         = TGL.DRA.MPL.Bin_Locator
     y_tick_delta      = None
     y_tick_offset     = 0
     y_tick_format     = "%s"
@@ -111,7 +82,8 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
 
     def _setup_frequency_map (self, ls, ks, fs) :
         ### No idea why args need to specify `ls, ks` here (instead of `ks,ls`)
-        fm = pylab.zeros ((max (ks) + 1, max (ls) + 1), dtype = pylab.double)
+        fm = pylab.zeros ((max (ks) + 1, max (ls) + 1), typecode = "d")
+        #fm = pylab.zeros ((max (ks) + 1, max (ls) + 1), dtype = pylab.double)
         for k, l, f in zip (ks, ls, fs) :
             fm [k, l] = f
         self.fm = ma.masked_where (fm == 0, fm)
@@ -119,17 +91,25 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
 
     def display (self, ax) :
         """Put the Bin_Distribution plot into `axes`"""
-        xb, xf = self.x_binner, self.x_tick_format
-        yb, yf = self.y_binner, self.y_tick_format
-        xd     = self.x_tick_delta or xb.width
-        yd     = self.y_tick_delta or yb.width
-        BL, FF = Bin_Locator,   FuncFormatter
-        ax.xaxis.set_major_locator   (BL (xb, xd, self.x_tick_offset))
-        ax.yaxis.set_major_locator   (BL (yb, yd, self.y_tick_offset))
-        ax.xaxis.set_major_formatter \
-            (FF (lambda v, i : xf % (xb.value (v, False), )))
-        ax.yaxis.set_major_formatter \
-            (FF (lambda v, i : yf % (yb.value (v, False), )))
+        xb          = self.x_binner
+        yb          = self.y_binner
+        xd          = self.x_tick_delta or xb.width
+        yd          = self.y_tick_delta or yb.width
+        FF          = FuncFormatter
+        x_formatter = self.x_formatter
+        if x_formatter is None :
+            x_formatter = FF \
+                (lambda v, i : self.x_tick_format % (xb.value (v, False), ))
+        y_formatter = self.y_formatter
+        if y_formatter is None :
+            y_formatter = FF \
+                (lambda v, i : self.y_tick_format % (yb.value (v, False), ))
+        ax.xaxis.set_major_locator   \
+            (self.x_locator (xb, xd, self.x_tick_offset))
+        ax.yaxis.set_major_locator   \
+            (self.y_locator (yb, yd, self.y_tick_offset))
+        ax.xaxis.set_major_formatter (x_formatter)
+        ax.yaxis.set_major_formatter (y_formatter)
         pylab.pcolor \
             ( self.fm
             , cmap    = self.cmap
@@ -144,22 +124,21 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
     def errorbar (self, xs, ys, yerr, marker_fmt, error_fmt, linewidth = 0.5, ** kw):
         """Display error bars"""
         xb = self.x_binner
-        xo = xb.width / 2.0
         yb = self.y_binner
-        xs = [xb.index (i) + xo for i in xs]
+        xi = [xb.index_f (i) for i in xs]
         pylab.vlines \
-            ( xs
+            ( xi
             , [yb.index_f (y - d) for (y, d) in zip (ys, yerr)]
             , [yb.index_f (y + d) for (y, d) in zip (ys, yerr)]
             , error_fmt
             , linewidth = linewidth
             )
-        pylab.plot (xs, [yb.index_f (i) for i in ys], marker_fmt, ** kw)
+        pylab.plot (xi, [yb.index_f (i) for i in ys], marker_fmt, ** kw)
         if 0 : ### couldn't find a way to influence the thickness of the bars
 #           bdp.errorbar (D, A, SD, fmt = "b.", ecolor = "0.05", capsize = 1)
             pylab.errorbar \
-            ( [xb.index   (x) + xo for x in xs]
-            , [yb.index_f (y)      for y in ys]
+            ( xi
+            , [yb.index_f (y) for y in ys]
             , [   (yb.index_f (y + d) - yb.index_f (y - d)) / 2
               for (y, d) in zip (ys, yerr)
               ]
@@ -172,11 +151,10 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
            `pylab.plot`).
         """
         xb = self.x_binner
-        xo = xb.width / 2.0
         yb = self.y_binner
         pylab.plot \
-            ( [xb.index   (i) + xo for i in xs]
-            , [yb.index_f (i)      for i in ys]
+            ( [xb.index_f (i) for i in xs]
+            , [yb.index_f (i) for i in ys]
             , * args, ** kw
             )
     # end def plot
@@ -184,24 +162,5 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
 # end class Bin_Distribution_Plot
 
 if __name__ != "__main__" :
-    TGL.DRA._Export ("*")
-### __END__ TGL.DRA.MPL
-
-"""
-
-from pylab         import *
-from _TGL._DRA.MPL import *
-D   = load ("/tmp/w.dat")
-bdp = Bin_Distribution_Plot \
-    ( D [:,0], D [:,1], D [:,2]
-    , x_tick_delta = 2, x_tick_format = "%d"
-    , y_tick_delta = 1, y_tick_offset = 1, y_width = 0.5
-    )
-ax  = subplot (111)
-bdp.display   (ax)
-xlabel        ("Week")
-ylabel        ("kg")
-title         ("Weight before breakfast")
-show          ()
-
-"""
+    TGL.DRA.MPL._Export ("*")
+### __END__ TGL.DRA.MPL.Bin_Distribution_Plot

@@ -46,6 +46,8 @@
 #    30-Nov-2006 (CT) `CJD`, `MJD`, and `TJD` added
 #    10-Dec-2006 (CT) `JD_offset` factored
 #    10-Dec-2006 (CT) `from_julian` added
+#    12-Dec-2006 (CT) `from_ordinal` changed to use `cls._kind` and
+#                     `cls._Type` instead of `date` and `datetime.date`
 #    ««revision-date»»···
 #--
 
@@ -214,7 +216,7 @@ class Date (CAL._DTW_) :
 
     @classmethod
     def from_ordinal (cls, ordinal) :
-        return cls (date = datetime.date.fromordinal (ordinal))
+        return cls (** {cls._kind : cls._Type.fromordinal (ordinal)})
     # end def from_ordinal
 
     @classmethod
@@ -252,12 +254,12 @@ class Date (CAL._DTW_) :
         return Year (year).mmap [month].days [yad].number
     # end def _day_from_end
 
-    def _new_object (self, ** kw) :
+    def _new_object (self, kw) :
         d = kw ["day"]
         if d < 0 :
             kw ["day"] = self._day_from_end (d, kw ["month"], kw ["year"])
             self.yad   = d
-        return self.__super._new_object (** kw)
+        return self.__super._new_object (kw)
     # end def _new_object
 
     def __getattr__ (self, name) :

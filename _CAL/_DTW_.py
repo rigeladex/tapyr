@@ -36,6 +36,9 @@
 #                     instead of `id (self)`
 #    30-Nov-2006 (CT) Empty `__getattr__` added to allow cooperative super
 #                     calls for `__getattr__` to fail gracefully
+#    12-Dec-2006 (CT) `__init__` changed to use `0` as defaults unless
+#                     a True `default_to_now` is passed in
+#    12-Dec-2006 (CT) `_new_object` changed from `** kw` to `kw`
 #    ««revision-date»»···
 #--
 
@@ -43,8 +46,8 @@ from   _TFL                    import TFL
 from   _CAL                    import CAL
 import _TFL._Meta.Object
 
-import  datetime
-import  time
+import datetime
+import time
 
 class _DTW_ (TFL.Meta.Object) :
     """Root for `datetime` wrappers"""
@@ -71,14 +74,18 @@ class _DTW_ (TFL.Meta.Object) :
             assert len (kw)   == 1
             self._body = kw [k]
         else :
-            args += self._timetuple_slice (time.localtime ()) [len (args):]
+            if kw.get ("default_to_now") :
+                defaults = time.localtime ()
+            else :
+                defaults = (0, ) * 9
+            args += self._timetuple_slice (defaults) [len (args):]
             attrs = {}
             for i, name in enumerate (self._init_arg_names) :
                 if name in kw :
                     attrs [name] = kw [name]
                 else :
                     attrs [name] = args [i]
-            self._body = self._new_object (** attrs)
+            self._body = self._new_object (attrs)
     # end def __init__
 
     def formatted (self, format = None) :
@@ -102,7 +109,7 @@ class _DTW_ (TFL.Meta.Object) :
         return getattr (self, self._init_arg_map.get (name, name), 0)
     # end def _init_arg
 
-    def _new_object (self, ** kw) :
+    def _new_object (self, kw) :
         return self._Type (** kw)
     # end def _new_object
 

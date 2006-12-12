@@ -32,6 +32,8 @@
 #    30-Nov-2006 (CT) `__getattr__` for `CJD`, `MJD`, `TJD`, "CJS", "MJS",
 #                     and "TJS" added
 #    10-Dec-2006 (CT) `from_julian` added
+#    11-Dec-2006 (CT) `from_julian` corrected
+#    11-Dec-2006 (CT) `__getattr__` changed to `setattr` the modified value
 #    ««revision-date»»···
 #--
 
@@ -40,7 +42,7 @@ from   _CAL                    import CAL
 import _CAL.Date
 import _CAL.Time
 
-import  datetime
+import datetime
 
 class Date_Time (CAL.Date, CAL.Time) :
     """Model a (gregorian) date plus time.
@@ -103,22 +105,24 @@ class Date_Time (CAL.Date, CAL.Time) :
 
     @classmethod
     def from_julian (cls, jd, kind = "CJD") :
-        result = super (Date_Time, cls).from_julian (jd, kind = kind)
+        k = kind
         if kind.endswith ("S") :
-            seconds = jd % 86400
-        else :
-            seconds = (jd * 86400) % 86400
-        result = result.replace \
-            (hour = 0, minute = 0, second = 0, microsecond = 0)
+            jd /= 86400.0
+            k = kind [:-1] + "D"
+        days          = int (jd)
+        seconds       = (jd - days) * 86400
+        result = super (Date_Time, cls).from_julian (days, kind = k)
         return result + CAL.Time_Delta (seconds = seconds)
     # end def from_ordinal
 
     def __getattr__ (self, name) :
         result = self.__super.__getattr__ (name)
-        if name in ("CJD", "MJD", "TJD") :
-            result += (self.seconds / 86400.)
-        elif name in ("CJS", "MJS", "TJS") :
-            result += self.seconds
+        if name in self.JD_offset :
+            if name in ("CJD", "MJD", "TJD") :
+                result += (self.seconds / 86400.)
+            elif name in ("CJS", "MJS", "TJS") :
+                result += self.seconds
+            setattr (self, name, result)
         return result
     # end def __getattr__
 

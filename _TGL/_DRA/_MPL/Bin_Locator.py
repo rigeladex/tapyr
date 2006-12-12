@@ -1,0 +1,78 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
+#
+#++
+# Name
+#    TGL.DRA.MPL.Bin_Locator
+#
+# Purpose
+#    Locator for binned values
+#
+# Revision Dates
+#    11-Dec-2006 (CT) Creation (factored from `Bin_Distribution_Plot`)
+#    ««revision-date»»···
+#--
+
+from   _TGL import TGL
+import _TGL._DRA._MPL
+
+from   matplotlib.mlab       import frange
+from   matplotlib.ticker     import Locator
+
+class Bin_Locator (Locator) :
+
+    def __init__ (self, binner, delta = 1.0, phase = None) :
+        self.binner = binner
+        self.delta  = delta
+        self.phase  = phase
+    # end def __init__
+
+    def __call__ (self) :
+        self.verify_intervals ()
+        binner     = self.binner
+        delta      = self.delta
+        phase      = self.phase
+        vmin, vmax = self.viewInterval.get_bounds ()
+        wmin       = binner.value (vmin, False)
+        wmax       = binner.value (vmax, False)
+        if phase is not None :
+            wmin -= (wmin % delta - phase)
+        return \
+            [ i for i in
+                (   binner.index_f (v)
+                for v in frange (wmin, wmax + 0.001 * delta, delta)
+                )
+            if vmin <= i <= vmax
+            ]
+    # end def __call__
+
+    def autoscale (self) :
+        binner = self.binner
+        bounds = self.dataInterval.get_bounds ()
+        v_min  = binner.index (binner.value (min (bounds), False))
+        v_max  = binner.index (binner.value (max (bounds), False))
+        return v_min, v_max
+    # end def autoscale
+
+# end class Bin_Locator
+
+if __name__ != "__main__" :
+    TGL.DRA.MPL._Export ("*")
+### __END__ TGL.DRA.MPL.Bin_Locator
