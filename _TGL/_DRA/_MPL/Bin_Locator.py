@@ -38,10 +38,11 @@ from   matplotlib.ticker     import Locator
 
 class Bin_Locator (Locator) :
 
-    def __init__ (self, binner, delta = 1.0, phase = None) :
+    def __init__ (self, binner, delta = 1.0, phase = None, pad = 0) :
         self.binner = binner
         self.delta  = delta
         self.phase  = phase
+        self.pad    = pad
     # end def __init__
 
     def __call__ (self) :
@@ -66,8 +67,9 @@ class Bin_Locator (Locator) :
     def autoscale (self) :
         binner = self.binner
         bounds = self.dataInterval.get_bounds ()
-        v_min  = binner.index (binner.value (min (bounds), False))
-        v_max  = binner.index (binner.value (max (bounds), False))
+        pad    = self.pad
+        v_min  = binner.index (binner.value (min (bounds), False) - pad)
+        v_max  = binner.index (binner.value (max (bounds), False) + pad)
         return v_min, v_max
     # end def autoscale
 

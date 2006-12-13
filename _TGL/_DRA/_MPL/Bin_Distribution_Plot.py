@@ -31,6 +31,7 @@
 #    11-Dec-2006 (CT) Moved into package TGL.DRA.MPL and renamed from `MPL`
 #                     to `Bin_Distribution_Plot`
 #    11-Dec-2006 (CT) `Bin_Locator` factored into separate module
+#    13-Dec-2006 (CT) `x_pad` and `y_pad` added
 #    ««revision-date»»···
 #--
 
@@ -57,12 +58,14 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
     shading           = "flat"
     x_formatter       = None
     x_locator         = TGL.DRA.MPL.Bin_Locator
+    x_pad             = 0
     x_tick_delta      = None
     x_tick_offset     = 0
     x_tick_format     = "%s"
     x_width           = 1.0
     y_formatter       = None
     y_locator         = TGL.DRA.MPL.Bin_Locator
+    y_pad             = 0
     y_tick_delta      = None
     y_tick_offset     = 0
     y_tick_format     = "%s"
@@ -105,9 +108,9 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
             y_formatter = FF \
                 (lambda v, i : self.y_tick_format % (yb.value (v, False), ))
         ax.xaxis.set_major_locator   \
-            (self.x_locator (xb, xd, self.x_tick_offset))
+            (self.x_locator (xb, xd, self.x_tick_offset, self.x_pad))
         ax.yaxis.set_major_locator   \
-            (self.y_locator (yb, yd, self.y_tick_offset))
+            (self.y_locator (yb, yd, self.y_tick_offset, self.y_pad))
         ax.xaxis.set_major_formatter (x_formatter)
         ax.yaxis.set_major_formatter (y_formatter)
         pylab.pcolor \
