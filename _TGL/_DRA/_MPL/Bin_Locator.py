@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Dec-2006 (CT) Creation (factored from `Bin_Distribution_Plot`)
+#    13-Dec-2006 (CT) `pad` added
 #    ««revision-date»»···
 #--
 
