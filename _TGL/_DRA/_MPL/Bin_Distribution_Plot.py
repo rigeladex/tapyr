@@ -129,6 +129,7 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         xb = self.x_binner
         yb = self.y_binner
         xi = [xb.index_f (i) for i in xs]
+        yi = [yb.index_f (i) for i in ys]
         pylab.vlines \
             ( xi
             , [yb.index_f (y - d) for (y, d) in zip (ys, yerr)]
@@ -136,7 +137,7 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
             , error_fmt
             , linewidth = linewidth
             )
-        pylab.plot (xi, [yb.index_f (i) for i in ys], marker_fmt, ** kw)
+        pylab.plot (xi, yi, marker_fmt, ** kw)
         if 0 : ### couldn't find a way to influence the thickness of the bars
 #           bdp.errorbar (D, A, SD, fmt = "b.", ecolor = "0.05", capsize = 1)
             pylab.errorbar \
@@ -155,11 +156,9 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         """
         xb = self.x_binner
         yb = self.y_binner
-        pylab.plot \
-            ( [xb.index_f (i) for i in xs]
-            , [yb.index_f (i) for i in ys]
-            , * args, ** kw
-            )
+        xi = [xb.index_f (x) for x in xs]
+        yi = [yb.index_f (y) for y in ys]
+        pylab.plot (xi, yi, * args, ** kw)
     # end def plot
 
 # end class Bin_Distribution_Plot
