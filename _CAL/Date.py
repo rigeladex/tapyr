@@ -142,7 +142,6 @@ class Date (CAL._DTW_) :
        >>> Date.from_julian (40000, kind = "MJD")
        Date (1968, 5, 24)
 
-
     """
 
     ### Julian date offsets to Rata Die (Jan 1, 1)
