@@ -211,7 +211,7 @@ class Date (CAL._DTW_) :
         if kind.endswith ("S") :
             ordinal //= 86400
         return cls.from_ordinal (ordinal)
-    # end def from_ordinal
+    # end def from_julian
 
     @classmethod
     def from_ordinal (cls, ordinal) :

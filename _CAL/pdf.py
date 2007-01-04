@@ -37,6 +37,8 @@
 #    25-Dec-2005 (CT)  Deprecation warnings killed (`/` --> `//`)
 #    25-Dec-2005 (CT)  `line_generator` de-obfuscated
 #    25-Dec-2005 (CT)  Options `xl` and `yl` added
+#     4-Jan-2007 (CT)  Removed stale __future__  import of `generators`
+#     4-Jan-2007 (CT)  Pass `default_to_now = True` to `Date`
 #    ««revision-date»»···
 #--
 
@@ -45,7 +47,6 @@ from   _CAL      import CAL
 from   Filename  import *
 from   predicate import *
 from   Regexp    import *
-from __future__  import generators
 
 import sos
 import _TFL._Meta.Object

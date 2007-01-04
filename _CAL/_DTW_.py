@@ -39,6 +39,10 @@
 #    12-Dec-2006 (CT) `__init__` changed to use `0` as defaults unless
 #                     a True `default_to_now` is passed in
 #    12-Dec-2006 (CT) `_new_object` changed from `** kw` to `kw`
+#     4-Jan-2007 (CT) `__init__` changed to use `1` for date-fields and `0`
+#                     for time-fields as defaults
+#     4-Jan-2007 (CT) `__init__` changed to use `localtime` if no args or kw
+#                     are passed in (and `default_to_now` removed)
 #    ««revision-date»»···
 #--
 
@@ -74,10 +78,10 @@ class _DTW_ (TFL.Meta.Object) :
             assert len (kw)   == 1
             self._body = kw [k]
         else :
-            if kw.get ("default_to_now") :
+            if len (args) + len (kw) == 0 :
                 defaults = time.localtime ()
             else :
-                defaults = (0, ) * 9
+                defaults = (1, 1, 1, 0, 0, 0, 0, 0, 0)
             args += self._timetuple_slice (defaults) [len (args):]
             attrs = {}
             for i, name in enumerate (self._init_arg_names) :
