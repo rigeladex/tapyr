@@ -238,7 +238,7 @@ def _command_spec (arg_array = None) :
                 "?Number of last week to process (negative numbers "
                 "counting from the end of the year)"
             , "XL:F?X length of one week (in cm)"
-            , "XO:F=0.5?X offset of one week (in cm relative to XL)"
+            , "XO:F=0.9?X offset of one week (in cm relative to XL)"
             , "YL:F?Y length of one week"
             , "YO:F=0.5?Y offset of one week (in cm relative to YL)"
             , "year:I=%d?Year for which to process calendar" % (year, )
