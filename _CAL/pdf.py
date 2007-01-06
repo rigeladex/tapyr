@@ -39,6 +39,7 @@
 #    25-Dec-2005 (CT)  Options `xl` and `yl` added
 #     4-Jan-2007 (CT)  Removed stale __future__  import of `generators`
 #     4-Jan-2007 (CT)  Pass `default_to_now = True` to `Date`
+#     6-Jan-2007 (CT)  Options `xo` and `yo` added
 #    ««revision-date»»···
 #--
 
@@ -81,7 +82,7 @@ class PDF_Plan (TFL.Meta.Object) :
 
     def __init__ ( self, Y, filename
                  , first_week = 0, last_week = -1, wpx = 2, wpy = 2
-                 , linewidth  = 0.6, xl = None, yl = None
+                 , linewidth  = 0.6, xl = None, yl = None, xo = None, yo = None
                  ) :
         from pdfgen import Canvas
         if last_week < 0 :
@@ -93,6 +94,10 @@ class PDF_Plan (TFL.Meta.Object) :
         self.wpx        = wpx
         self.wpy        = wpy
         self.linewidth  = linewidth
+        if xo :
+            self.xo     = xo * self.cm
+        if yo :
+            self.yo     = yo * self.cm
         if xl :
             self.xl     = xl * self.cm
         else :
@@ -232,8 +237,10 @@ def _command_spec (arg_array = None) :
             , "tail_week:I=-1"
                 "?Number of last week to process (negative numbers "
                 "counting from the end of the year)"
-            , "XL:F?X length of one week"
+            , "XL:F?X length of one week (in cm)"
+            , "XO:F=0.5?X offset of one week (in cm relative to XL)"
             , "YL:F?Y length of one week"
+            , "YO:F=0.5?Y offset of one week (in cm relative to YL)"
             , "year:I=%d?Year for which to process calendar" % (year, )
             )
         , max_args    = 0
@@ -260,20 +267,24 @@ def _main (cmd) :
             , wpy = 1
             , xl  = cmd.XL
             , yl  = cmd.YL
+            , xo  = cmd.XO
+            , yo  = cmd.YO
             )
     else :
         PDF_Plan \
             ( Y, pdf_name, head - wd, tail + 1 - wd
             , xl  = cmd.XL
             , yl  = cmd.YL
+            , xo  = cmd.XO
+            , yo  = cmd.YO
             )
 # end def _main
 
 """
-$ export PYTHONPATH=$PYTHONPATH:/swing/private/tanzer/ttt/lib/old/pdfgen
-$ python pdf.py -year 2006 -landscape -XL 9.2 -YL 18.3
-### generates a
+export PYTHONPATH=$PYTHONPATH:/swing/private/tanzer/ttt/lib/old/pdfgen
+python pdf.py -year 2007 -landscape -XL 8.95 -YL 16.85 -XO=1.5
 """
+
 if __name__ == "__main__" :
     _main (_command_spec ())
 else :
