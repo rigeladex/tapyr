@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2006 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2007 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-Jul-2006 (CED) Creation
+#     9-Jan-2007 (MZO) [21197] `gap_byte_positions` added
 #    ««revision-date»»···
 #--
 
@@ -41,10 +42,11 @@ class _Type_Packer_ (TFL.Meta.Object) :
     markers = ("@", "=", "<", ">", "!")
 
     def __init__ (self, pure_format, cpu_gran) :
-        self.pure_format   = pure_format
-        self.cpu_gran      = cpu_gran
-        self.packed_format = self._pack      (pure_format)
-        self.alignment     = self._alignment (self.packed_format)
+        self.pure_format        = pure_format
+        self.cpu_gran           = cpu_gran
+        self.gap_byte_positions = {}
+        self.packed_format      = self._pack      (pure_format)
+        self.alignment          = self._alignment (self.packed_format)
     # end def __init__
 
     def _atoms (self, format) :
@@ -82,6 +84,7 @@ class GCC_Like_Type_Packer (_Type_Packer_) :
         result    = []
         offset    = 0
         max_align = 1
+        self.gap_byte_positions = {}
         for atom in self._atoms (format) :
             size  = struct.calcsize  (atom)
             align = self._align_atom (atom)
@@ -89,11 +92,13 @@ class GCC_Like_Type_Packer (_Type_Packer_) :
                 max_align = align
             gap   = rounded_up (offset, align) - offset
             if gap :
+                self.gap_byte_positions [offset] = gap
                 result.append ("%dx" % gap)
             result.append (atom)
             offset += (gap + size)
         gap   = rounded_up (offset, max_align) - offset
         if gap :
+            self.gap_byte_positions [offset] = gap
             result.append ("%dx" % gap)
         return "".join (result)
     # def _pack
