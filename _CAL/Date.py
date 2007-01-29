@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -48,13 +48,15 @@
 #    10-Dec-2006 (CT) `from_julian` added
 #    12-Dec-2006 (CT) `from_ordinal` changed to use `cls._kind` and
 #                     `cls._Type` instead of `date` and `datetime.date`
+#    12-Jan-2007 (CT) Imports fixed
+#                     (import `Command_Line` and `Regexp` from _TFL)
 #    ««revision-date»»···
 #--
 
 from   _TFL                    import TFL
 from   _CAL                    import CAL
 import _CAL._DTW_
-from   Regexp                  import *
+from   _TFL.Regexp             import *
 
 import datetime
 import operator
@@ -322,7 +324,7 @@ class Date_M (CAL._Mutable_DTW_) :
 if __name__ != "__main__" :
     CAL._Export ("*")
 else :
-    from Command_Line import Command_Line
+    from _TFL.Command_Line import Command_Line
     cmd = Command_Line \
         ( arg_spec    =
               ( "base_date:S=%s" % Date ()
