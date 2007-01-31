@@ -62,7 +62,8 @@ class Gauge_Logger (TFL.Meta.Object) :
     def echo (self, * msg, ** kw) :
         verbose = kw.get ("verbose", 1)
         if self.log >= verbose :
-            for m in msg : print m,
+            for m in msg :
+                print m,
     # end def echo
 
     def _activate (self, title = "", label = " ", * args, ** kw) :
