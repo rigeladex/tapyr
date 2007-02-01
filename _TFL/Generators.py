@@ -150,18 +150,6 @@ def Indices (seq) :
     return Integers (len (seq))
 # end def Indices
 
-def IV_Pairs (seq) :
-    """Generates index-value pairs `i, s[i]' for all indices of sequence `seq'.
-
-       >>> list (IV_Pairs ("abcdef"))
-       [(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd'), (4, 'e'), (5, 'f')]
-    """
-    i = 0
-    for s in seq :
-        yield i, s
-        i += 1
-# end def IV_Pairs
-
 def pairwise (seq) :
     """Generates a list of pairs `(seq [0:1], seq [1:2], ..., seq [n-1:n])'.
 
