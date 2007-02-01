@@ -28,6 +28,7 @@
 # Revision Dates
 #    27-Jul-2006 (CED) Creation
 #     9-Jan-2007 (MZO) [21197] `gap_byte_positions` added
+#     1-Feb-2007 (CED) Additional packers added
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,11 @@ class _Type_Packer_ (TFL.Meta.Object) :
         self.alignment          = self._alignment (self.packed_format)
     # end def __init__
 
+    def _alignment (self, format) :
+        return max \
+            (self._align_atom (a) for a in self._atoms (format))
+    # end def _alignment
+
     def _atoms (self, format) :
         current = []
         for c in format :
@@ -59,26 +65,6 @@ class _Type_Packer_ (TFL.Meta.Object) :
                 yield "".join (current)
                 current = []
     # def _atoms
-
-# end class _Type_Packer_
-
-class GCC_Like_Type_Packer (_Type_Packer_) :
-    """Packs types (especially structs) like the GCC
-      (and most other compilers) does by default.
-    """
-
-    def _align_atom (self, atom) :
-        type_format = atom [-1]
-        size        = struct.calcsize (type_format)
-        ### For types > cpu_gran (e.g. long long on a 32 bit plattform)
-        ### the compiler seems to align to cpu_gran instead of type length
-        return min (size, self.cpu_gran)
-    # end def _align_atom
-
-    def _alignment (self, format) :
-        return max \
-            (self._align_atom (a) for a in self._atoms (format))
-    # end def _alignment
 
     def _pack (self, format) :
         result    = []
@@ -103,11 +89,50 @@ class GCC_Like_Type_Packer (_Type_Packer_) :
         return "".join (result)
     # def _pack
 
+# end class _Type_Packer_
+
+class _Padding_Type_Packer_ (_Type_Packer_) :
+    """Packs types (especially structs) using padding bytes.
+    """
+
+    def _align_atom (self, atom) :
+        type_format = atom [-1]
+        size        = struct.calcsize (type_format)
+        return size
+    # end def _align_atom
+
+# end class _Padding_Type_Packer_
+
+class GCC_Like_Type_Packer (_Padding_Type_Packer_) :
+    """Packs types like the GCC
+      (and most other compilers) does by default.
+    """
+
+    def _align_atom (self, atom) :
+        result = self.__super._align_atom (atom)
+        return min (result, self.cpu_gran)
+    # end def _align_atom
+
 # end class GCC_Like_Type_Packer
+
+class MSVC_Like_Type_Packer (_Padding_Type_Packer_) :
+    """Packs types like the Microsoft Visual C compiler does by default"""
+# end class MSVC_Like_Type_Packer
+
+class Dense_Type_Packer (_Type_Packer_) :
+    """Packs types without padding"""
+
+    def _align_atom (self, atom) :
+        return 1
+    # end def _align_atom
+
+# end class Dense_Type_Packer
 
 ### XXX More packers to follow ....
 
+Active_Type_Packer = GCC_Like_Type_Packer
+
 if __name__ != "__main__" :
     import _TFL._CDG
-    TFL.CDG._Export ("*")
+    TFL.CDG._Export ("*", "Active_Type_Packer")
 ### __END__ TFL.CDG.Type_Packer

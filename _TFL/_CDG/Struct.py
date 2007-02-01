@@ -54,6 +54,7 @@
 #    13-Jul-2006 (MZO) [20886] `format_size` added
 #    27-Jul-2006 (CED) Alignement and padding code factored out to
 #                      `TFL.CDG.Type_Packer`
+#     1-Feb-2007 (CED) s/GCC_Like_Type_Packer/Active_Type_Packer/g
 #    ««revision-date»»···
 #--
 
@@ -240,7 +241,7 @@ class Struct (TFL.Meta.Object) :
                     formats.append  (format)
                     values.extend   (value)
         format  = "".join (formats)
-        packer  = TFL.CDG.GCC_Like_Type_Packer (format, cpu_gran)
+        packer  = TFL.CDG.Active_Type_Packer (format, cpu_gran)
         self.alignment = packer.alignment
         return packer.packed_format, values
     # end def format_and_values
