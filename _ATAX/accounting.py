@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -100,6 +100,12 @@
 #     8-May-2006 (CT)  Use `TFL.defaultdict` instead of `TFL.PL_Dict`
 #    15-May-2006 (CT)  `V_Account.finish` added (and then left empty, because
 #                      adding correction for `privat` means major surgery)
+#    11-Feb-2007 (CT)  `string` functions replaced by `str` methods
+#    11-Feb-2007 (CT)  `T_Account.finish` changed to handle `vat` for
+#                      `privat` correctly
+#    11-Feb-2007 (CT)  `V_Account.finish` changed to consider `privat`
+#    11-Feb-2007 (CT)  `T_Account._add_einnahme` and `T_Account._add_ausgabe`
+#                      changed to check `entry.cat` for `u`
 #    ««revision-date»»···
 #--
 
@@ -111,7 +117,6 @@ from   _TFL.predicate    import *
 
 import math
 import re
-import string
 import sys
 from   UserDict          import UserDict
 
@@ -130,7 +135,8 @@ erloes_minderung_pat   = re.compile ( r"^8300\d")
 ausgaben_minderung_pat = re.compile ( r"^(7550|7500|7020)")
 
 def underlined (text) :
-    return string.join (map (lambda c : c + "\b_", text), "")
+    bu = "\b_"
+    return bu.join (text) + bu
 # end def underlined
 
 class Account_Entry :
@@ -157,7 +163,7 @@ class Account_Entry :
             gross           = currency_pat.sub ("", gross)
         ### avoid integer truncation by division
         ### otherwise `1/2' evaluates to `0.0' :-(
-        gross      = string.replace  (gross, "/", "*1.0/")
+        gross      = gross.replace   ("/", "*1.0/")
         ###
         self.gross = source_currency (eval (gross, {}, {}))
         self.netto = source_currency (self.gross)
@@ -179,6 +185,7 @@ class Account_Entry :
             self.netto = source_currency (0)
         self.vat       = self.gross - self.netto
         self.vat_vstk  = source_currency (0)
+        self.vat_x     = source_currency (0)
         self.is_change = 1
         if   "-" in self.dir :
             self.soll_betrag   = self.netto
@@ -190,6 +197,7 @@ class Account_Entry :
                     self.vat_vstk  = self.vat
                     self.vat       = self.vat * vst_korrektur
                     self.vat_vstk -= self.vat
+                    self.vat_x    = self.vat
             else :
                 self.konto         = self.haben
                 self.gegen_konto   = self.soll
@@ -322,7 +330,9 @@ class Account :
                     (line, self.source_currency, self.vst_korrektur)
                 if (categ_interest.search (entry.cat) and entry.is_change) :
                     entries.append (entry)
-        for entry in sorted (entries, Account_Entry.time_cmp) :
+        entries.sort (Account_Entry.time_cmp)
+        self.entries.extend (entries)
+        for entry in entries :
             self.add (entry)
     # end def add_lines
 
@@ -337,7 +347,6 @@ class Account :
             ### `tmp' must be passed to the local-dict argument because
             ### Python adds some junk to the global-dict argument of `exec'
             exec line in {}, tmp
-            self.entries.append (line)
             if tmp.has_key ("source_currency") :
                 self.source_currency = EUC.Table [tmp ["source_currency"]]
                 del tmp ["source_currency"]
@@ -389,7 +398,6 @@ class V_Account (Account) :
     def add (self, entry) :
         """Add `entry' to U_Account."""
         assert (isinstance (entry, Account_Entry))
-        self.entries.append (entry)
         vst_korrektur = entry.vst_korrektur
         netto         = entry.netto
         gross         = entry.gross
@@ -467,6 +475,14 @@ class V_Account (Account) :
     def finish (self) :
         if not self._finished :
             self._finished = True
+            p_vat = EU_Currency (0)
+            for entry in self.entries :
+                k = entry.konto
+                if k in self.privat and entry.vat_x and entry.netto :
+                    pa      = self.privat [k]
+                    p_vat  += entry.vat * pa / 100.0
+            if p_vat :
+                self._add_vorsteuer (- p_vat)
     # end def finish
 
     def header_string (self) :
@@ -752,7 +768,8 @@ class T_Account (Account) :
         self.einnahmen_total                = EU_Currency (0)
         self.vorsteuer_total                = EU_Currency (0)
         self.ust_total                      = EU_Currency (0)
-        self.kblatt                         = {}
+        self.k_entries                      = defaultdict (list)
+        self.kblatt                         = defaultdict (list)
         self.kblatt [self.vorsteuer_gkonto] = []
         self.kblatt [self.ust_gkonto]       = []
     # end def __init__
@@ -762,9 +779,8 @@ class T_Account (Account) :
         assert (isinstance (entry, Account_Entry))
         self.buchung_zahl [entry.konto]       += 1
         self.buchung_zahl [entry.gegen_konto] += 1
-        if not self.kblatt.has_key (entry.konto) :
-            self.kblatt [entry.konto] = []
-        self.kblatt [entry.konto].append (entry.kontenzeile ())
+        self.kblatt       [entry.konto].append (entry.kontenzeile ())
+        self.k_entries    [entry.konto].append (entry)
         if "-" in entry.dir :
             self.soll_saldo  [entry.konto]       += entry.soll_betrag
             self.haben_saldo [entry.gegen_konto] += entry.soll_betrag
@@ -816,28 +832,30 @@ class T_Account (Account) :
     # end def _effective_amount
 
     def _add_ausgabe (self, entry, betrag, vat) :
-        if "i" in entry.cat :
-            vat_dict = self.ust_igE
-        elif "z" in entry.cat :
-            vat_dict = self.vorsteuer_EUst
-        else :
-            vat_dict = self.vorsteuer
-        vat_dict      [entry.month] += vat
-        self.vorsteuer_total        += vat
+        if "u" in entry.cat :
+            if "i" in entry.cat :
+                vat_dict = self.ust_igE
+            elif "z" in entry.cat :
+                vat_dict = self.vorsteuer_EUst
+            else :
+                vat_dict = self.vorsteuer
+            vat_dict      [entry.month] += vat
+            self.vorsteuer_total        += vat
         self.ausgaben [entry.konto] += betrag
         self.ausgaben_total         += betrag
     # end def _add_ausgabe
 
     def _add_einnahme (self, entry, betrag, vat) :
-        if "i" in entry.cat :
-            ust_dict = self.ust_igE
-        else :
-            if "z" in entry.cat :
-                print "*** Einnahme cannot include Einfuhrumsatzsteuer"
-                print entry.line
-            ust_dict = self.ust
-        ust_dict       [entry.month] += vat
-        self.ust_total               += vat
+        if "u" in entry.cat :
+            if "i" in entry.cat :
+                ust_dict = self.ust_igE
+            else :
+                if "z" in entry.cat :
+                    print "*** Einnahme cannot include Einfuhrumsatzsteuer"
+                    print entry.line
+                ust_dict = self.ust
+            ust_dict       [entry.month] += vat
+            self.ust_total               += vat
         self.einnahmen [entry.konto] += betrag
         self.einnahmen_total         += betrag
      # end def _add_einnahme
@@ -868,11 +886,11 @@ class T_Account (Account) :
                 )
             for k in sorted (self.kblatt) :
                 if k in self.privat :
-                    factor  = self.privat [k] / 100.0
+                    pa      = self.privat [k]
+                    factor  = pa / 100.0
                     p_soll  = self.soll_saldo  [k] * factor
                     p_haben = self.haben_saldo [k] * factor
-                    p_desc  = \
-                        ("%2d%% Privatanteil" % (int (self.privat [k] + 0.5),))
+                    p_desc  = ("%2d%% Privatanteil" % (int (pa + 0.5),))
                     k_desc  = self.konto_desc.get (k, "")
                     self.soll_saldo  [k] -= p_soll
                     self.haben_saldo [k] -= p_haben
@@ -883,8 +901,13 @@ class T_Account (Account) :
                         ( Privatanteil
                             ("9200", -p_soll, -p_haben, p_desc).kontenzeile ()
                         )
-                    self._fix_vorsteuer_privat \
-                        (k, k_desc, p_soll * 0.2, p_desc)
+                    p_vat = factor * sum \
+                        ( (  e.vat for e in self.k_entries [k]
+                          if e.vat_x and e.netto
+                          )
+                        , 0
+                        )
+                    self._fix_vorsteuer_privat (k, k_desc, p_vat, p_desc)
     # end def finish
 
     def _do_gkonto (self, ust, gkonto, saldo, txt, soll_haben, saldo2 = None) :
@@ -920,7 +943,7 @@ class T_Account (Account) :
             print "%-4s %-6s  %-35s%-3s  %12s  %12s" % \
                 ("Tag", "Gegkto", "Text", "Ust", "Soll", "Haben")
             self.print_sep_line ()
-            print string.join (self.kblatt [k], "\n")
+            print "\n".join (self.kblatt [k])
             print "\n%12s %-38s  %12s  %12s" % \
                 ( "", "Kontostand neu"
                 , self.soll_saldo  [k].as_string_s ()
@@ -1084,8 +1107,8 @@ class Konto_Desc (UserDict) :
         for line in file :
             if not pat.match (line) : continue
             (konto, desc)  = s_pat.split (line)
-            konto          = string.strip   (string.replace (konto, "_", "0"))
-            desc           = string.strip   (string.replace (desc,  '"', ""))
+            konto          = konto.replace ("_", "0").strip ()
+            desc           = desc.replace  ('"', "" ).strip ()
             k_d [konto]    = desc
             d_k [desc]     = konto
     # end def __init__

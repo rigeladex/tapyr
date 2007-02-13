@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -40,6 +40,7 @@
 #     6-Jan-2003 (CT) Alias `umsatzsteuer` for `add_account_file` added
 #    19-Feb-2006 (CT) Import from package _ATAX
 #    15-May-2006 (CT) Call to `finish` added
+#    11-Feb-2007 (CT) `string` functions replaced by `str` methods
 #    ««revision-date»»···
 #--
 
@@ -73,9 +74,7 @@ if __name__ == "__main__":
         categories      = "."
     else :
         categories      = "[" + \
-                          (  string.join ( cmd.option ["categories"].value.body
-                                         , ""
-                                         )
+                          (  "".join (cmd.option ["categories"].value.body)
                           or cmd.option ["categories"].value_1 ()
                           ) + "]"
     source_currency     = EUC.Table [cmd.source_currency]

@@ -1,6 +1,6 @@
 #!/swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -37,6 +37,7 @@
 #     1-Dec-2002 (CT) Default of `-source_currency` and `-target_currency`
 #                     changed from `ats` to `eur`
 #    19-Feb-2006 (CT) Import from package _ATAX
+#    11-Feb-2007 (CT) `string` functions replaced by `str` methods
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     if cmd.all :
         categories      = "."
     else :
-        categories      = "[" + string.join (cmd.categories, "") + "]"
+        categories      = "[" + "".join (cmd.categories) + "]"
     categ_interest      = re.compile (categories)
     source_currency     = EUC.Table [cmd.source_currency]
     EUC.target_currency = EUC.Table [cmd.target_currency]

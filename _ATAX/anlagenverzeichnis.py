@@ -1,6 +1,6 @@
 #!/swing/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -36,6 +36,7 @@
 #    22-Dec-2003 (CT) `Anlagen_Entry.evaluate` changed to not add
 #                     non-contemporary entries to totals
 #    19-Feb-2006 (CT) Import from packages _ATAX and _TFL
+#    11-Feb-2007 (CT) `string` functions replaced by `str` methods
 #    ««revision-date»»···
 #--
 
@@ -145,7 +146,7 @@ class Anlagen_Entry (_Base) :
     # end def evaluate
 
     def _calc_rates (self) :
-        rates          = map (string.strip, self.afa_spec.split (","))
+        rates          = [x.strip () for x in self.afa_spec.split (",")]
         first_rate     = rates [0]
         first_rate_pat = self.first_rate_pat
         later_rate_pat = self.later_rate_pat
