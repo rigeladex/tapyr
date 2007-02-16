@@ -1,10 +1,26 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 TTTech Computertechnik AG. All rights reserved
-# Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
+# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free
+# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# ****************************************************************************
 #
 #++
 # Name
-#    Timeline
+#    TFL.Timeline
 #
 # Purpose
 #    Timeline for scheduling
@@ -23,18 +39,15 @@
 #    29-Jun-2005 (CT)  Test scaffolding dumped
 #    30-Jun-2005 (CT)  Style improvements
 #    22-Jul-2006 (CED) `is_free` added
+#    16-Feb-2007 (CT)  Factored to `TFL`
 #    ««revision-date»»···
 #--
 
-from   _NDT                 import NDT
-from   _TFL                 import TFL
+from   _TFL                  import TFL
+import _TFL.Numeric_Interval
+import _TFL._Meta.Object
 
-import _NDT._Sched2.Window
-import _NDT._Sched2.Object
-
-from   predicate            import *
-
-class Timeline_Cut (NDT.Sched2.Span) :
+class Timeline_Cut (TFL.Numeric_Interval) :
     """Cut from Timeline"""
 
     def __init__ (self, timeline, index, cut) :
@@ -46,22 +59,22 @@ class Timeline_Cut (NDT.Sched2.Span) :
 
     def prepare_cut_l (self, size) :
         lower       = self.cut.lower
-        self.to_cut = NDT.Sched2.Span (lower, lower + size)
+        self.to_cut = self.timeline.Span (lower, lower + size)
         return self.to_cut
     # end def prepare_cut_l
 
     def prepare_cut_u (self, size) :
         upper       = self.cut.upper
-        self.to_cut = NDT.Sched2.Span (upper - size, upper)
+        self.to_cut = self.timeline.Span (upper - size, upper)
         return self.to_cut
     # end def prepare_cut_u
 
 # end class Timeline_Cut
 
-class Timeline (NDT.Sched2.Object) :
+class Timeline (TFL.Meta.Object) :
     """Timeline for scheduling.
 
-       >>> S = NDT.Sched2.Span
+       >>> S  = Timeline.Span
        >>> tl = Timeline (0, 1000)
        >>> tl.free
        [(0, 1000)]
@@ -117,11 +130,13 @@ class Timeline (NDT.Sched2.Object) :
        XXX add doctest for `snip`
     """
 
-    length = property (lambda s : sum ([f.length for f in s.free], 0))
+    Span       = TFL.Numeric_Interval
+    epsilon    = 0.001
+    length     = property (lambda s : sum ((f.length for f in s.free), 0))
 
     def __init__ (self, lower, upper) :
-        self.orig = NDT.Sched2.Span (lower, upper)
-        self.free = [NDT.Sched2.Span (lower, upper)]
+        self.orig = self.Span (lower, upper)
+        self.reset ()
     # end def __init__
 
     def intersection (self, span) :
@@ -146,7 +161,7 @@ class Timeline (NDT.Sched2.Object) :
            `prepare_cut_l` or `prepare_cut_u` was applied. Beware: don't
            interleave calls to `intersection` with multiple calls to `cut`.
         """
-        for p in dusort (pieces, lambda p : - p.index) :
+        for p in sorted (pieces, key = lambda p : p.index, reverse = True) :
             if p.to_cut :
                 f = self.free [p.index]
                 if abs (f.lower - p.to_cut.lower) < self.epsilon :
@@ -154,8 +169,8 @@ class Timeline (NDT.Sched2.Object) :
                 elif abs (f.upper - p.to_cut.upper) < self.epsilon :
                     f.upper = p.to_cut.lower
                 else :
-                    head = NDT.Sched2.Span (f.lower, p.to_cut.lower)
-                    tail = NDT.Sched2.Span (p.to_cut.upper, f.upper)
+                    head = self.Span (f.lower, p.to_cut.lower)
+                    tail = self.Span (p.to_cut.upper, f.upper)
                     assert head and tail, "head = %s, tail = %s" % (head, tail)
                     self.free [p.index : p.index + 1] = [head, tail]
                 if not f :
@@ -163,7 +178,7 @@ class Timeline (NDT.Sched2.Object) :
     # end def cut
 
     def reset (self) :
-        self.free = [NDT.Sched2.Span (self.orig.lower, self.orig.upper)]
+        self.free = [self.orig.copy ()]
     # end def reset
 
     def snip (self, * spans) :
@@ -185,5 +200,5 @@ class Timeline (NDT.Sched2.Object) :
 # end class Timeline
 
 if __name__ != "__main__" :
-    NDT.Sched2._Export ("*")
-### __END__ Timeline
+    TFL._Export ("*")
+### __END__ TFL.Timeline
