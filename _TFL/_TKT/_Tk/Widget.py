@@ -48,7 +48,7 @@
 #                      `ask_` functions, too
 #    13-Oct-2006 (ABR) Added `CTK_Dialog.*_Field` classes to `__getattr__`
 #                      lookup [21941]
-#                      
+#
 #    ««revision-date»»···
 #--
 
