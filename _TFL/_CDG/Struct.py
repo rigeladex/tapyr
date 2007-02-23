@@ -206,7 +206,7 @@ class Struct (TFL.Meta.Object) :
                 % (bo_map [byte_order], format)
                 , * values
                 )
-        except :
+        except StandardError :
             traceback.print_exc ()
             print self.__class__.__name__, format, values
             raise

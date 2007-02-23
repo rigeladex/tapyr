@@ -104,7 +104,7 @@ class Bin_Block (TFL.Meta.Object) :
         return "%s%s" % (self._binheader, buffer)
     # def __str__
 
-# class Bin_Block
+# end class Bin_Block
 
 class C_Code_Creator (TFL.Meta.Object) :
 
