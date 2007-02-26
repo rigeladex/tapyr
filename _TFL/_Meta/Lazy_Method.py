@@ -35,11 +35,13 @@
 #                     counter instead of the change object itself
 #     2-Feb-2005 (MG) `_Lazy_Wrapper_RNC_` and `Lazy_Method_RNC` added,
 #                     `Lazy_Method` renamed to `Lazy_Method_RLV`
+#    26-Feb-2007 (CED) Fixed `self.changes`
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL._Meta.Property
+import _TFL.defaultdict
 
 class _Lazy_Wrapper_RLV_ (object) :
 
@@ -51,16 +53,16 @@ class _Lazy_Wrapper_RLV_ (object) :
         self.fct      = fct
         self.__name__ = getattr (fct, "__name__", None)
         self.__doc__  = getattr (fct, "__doc__", None)
-        self.changes  = None
+        self.changes  = TFL.defaultdict (lambda : -1)
         self.result   = None
         if counter_name :
             self.counter_name = counter_name
     # end def __init__
 
     def __call__ (self, that, * args, ** kw) :
-        if self.changes != int (getattr (that, self.counter_name)) :
+        if self.changes [that] != int (getattr (that, self.counter_name)) :
             self.result  = self.fct (that, * args, ** kw)
-            self.changes = int (getattr (that, self.counter_name))
+            self.changes [that] = int (getattr (that, self.counter_name))
         return self.result
     # end def __call__
 
@@ -73,9 +75,9 @@ class _Lazy_Wrapper_RLV_ (object) :
 class _Lazy_Wrapper_RNC_ (_Lazy_Wrapper_RLV_) :
 
     def __call__ (self, that, * args, ** kw) :
-        if self.changes != int (getattr (that, self.counter_name)) :
+        if self.changes [that] != int (getattr (that, self.counter_name)) :
             self.result  = self.fct (that, * args, ** kw)
-            self.changes = int (getattr (that, self.counter_name))
+            self.changes [that] = int (getattr (that, self.counter_name))
             return self.result
         return Lazy_Method.NC
     # end def __call__
