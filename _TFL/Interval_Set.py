@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Dr. Ralf Schlatterbeck Open Source Consulting.
+# Copyright (C) 2004-2007 Dr. Ralf Schlatterbeck Open Source Consulting.
 # Reichergasse 131, A-3411 Weidling.
 # Web: http://www.runtux.com Email: office@runtux.com
 # All rights reserved
@@ -36,9 +36,13 @@
 #                      Introduced _intersection_iter and recode
 #                      intersection and contains with it
 #                      Factored _bisection and use it in next_point
-#    13-Dec-2005 (CT)  Small improvements
+#    13-Dec-2005 (CT)  Small improvements (`_intersection_iter`, ...)
 #    22-Jul-2006 (CED) `contains_interval` added
 #    24-Nov-2006 (CED) `difference` added
+#    19-Feb-2007 (CT)  `intersection_iter` added
+#    19-Feb-2007 (CT)  `difference` done right
+#    20-Feb-2007 (CT)  `contains_interval` changed to use `any_true`
+#    21-Feb-2007 (CT)  `_difference_iter` factored
 #    ««revision-date»»···
 #--
 
@@ -46,7 +50,8 @@ from   _TFL                  import TFL
 
 import _TFL._Meta.Object
 
-from   bisect import bisect
+from   _TFL.predicate        import any_true
+from   bisect                import bisect
 
 class Interval_Set (TFL.Meta.Object) :
     """Class for modelling a sorted set of intervals.
@@ -88,6 +93,38 @@ class Interval_Set (TFL.Meta.Object) :
        >>> p = IS (N (3, 6), N (12, 13), N (20, 25))
        >>> o.difference (p)
        IS ((0, 3), (10, 12), (13, 15))
+
+       >>> a = IS (N (0, 5), N (10, 20), N (40, 60), N (65, 70))
+       >>> b = IS (N (7, 8), N (10, 12), N (18, 20), N (33, 37), N (45, 48))
+       >>> c = a.difference (b)
+       >>> c
+       IS ((0, 5), (12, 18), (40, 45), (48, 60), (65, 70))
+       >>> d = IS (N (10, 20), N (60,75))
+       >>> c.difference (d)
+       IS ((0, 5), (40, 45), (48, 60))
+       >>> d.difference (IS ())
+       IS ((10, 20), (60, 75))
+       >>> d.difference (IS (N (30, 40)))
+       IS ((10, 20), (60, 75))
+       >>> d.difference (IS (N (80, 90)))
+       IS ((10, 20), (60, 75))
+       >>> d.difference (IS (N (0, 10)))
+       IS ((10, 20), (60, 75))
+       >>> d.difference (IS (N (0, 11)))
+       IS ((11, 20), (60, 75))
+       >>> c.union (d)
+       IS ((0, 5), (10, 20), (40, 45), (48, 75))
+
+       >>> list (IS.intersection_iter ((N (3, 6), N (12, 13)), min_size = 1))
+       [(3, 6), (12, 13)]
+       >>> list (IS.intersection_iter ((N (3, 6), N (12, 13)), min_size = 2))
+       [(3, 6)]
+       >>> list (IS.intersection_iter (o, p))
+       [(3, 5), (12, 13), (20, 25)]
+       >>> list (IS.intersection_iter (o, p, min_size = 2))
+       [(3, 5), (20, 25)]
+       >>> list (IS.intersection_iter (o, p, (N (4, 6), N (12, 12))))
+       [(4, 5), (12, 12)]
     """
 
     element_class = property (lambda self : self.intervals [0].__class__)
@@ -100,10 +137,7 @@ class Interval_Set (TFL.Meta.Object) :
     # end def __init__
 
     def contains_interval (self, ival) :
-        for iv in self.intervals :
-            if iv.contains (ival) :
-                return True
-        return False
+        return bool (any_true (iv.contains (ival) for iv in self.intervals))
     # end def contains_interval
 
     def contains_point (self, point) :
@@ -111,15 +145,33 @@ class Interval_Set (TFL.Meta.Object) :
     # end def contains_point
 
     def difference (self, other) :
-        result = self
-        for o_iv in other.intervals :
-            result = result._difference (o_iv)
-        return result
+        return self.__class__ (* self._difference_iter (other))
     # end def difference
 
     def intersection (self, other) :
         return self.__class__ (* self._intersection_iter (other))
     # end def intersection
+
+    @classmethod
+    def intersection_iter (cls, * iv_sets, ** kw) :
+        """Generates all intersections larger than `min_size` between the
+           intervals of `iv_sets` (the default for `min_size` is 0).
+        """
+        min_size = kw.get ("min_size", 0)
+        iv_iters = [iter     (ivs) for ivs in iv_sets]
+        ivals    = [ivi.next ()    for ivi in iv_iters]
+        while True :
+            r = ivals [0]
+            if r.length >= min_size :
+                for i in ivals [1:] :
+                    r = r.intersection (i)
+                    if r.length < min_size :
+                        break
+                else :
+                    yield r
+            _, k = min ((iv.upper, k) for (k, iv) in enumerate (ivals))
+            ivals [k] = iv_iters [k].next ()
+    # end def intersection_iter
 
     def is_empty (self) :
         return not self
@@ -145,18 +197,30 @@ class Interval_Set (TFL.Meta.Object) :
     # end def overlaps
 
     def union (self, * other) :
-        ivals = self.intervals [:]
+        ivals = list (self)
         for o in other :
-            ivals.extend (o.intervals)
+            ivals.extend (o)
         return self.__class__ (* ivals)
     # end def union
 
-    def _difference (self, other_iv) :
-        result = []
-        for iv in self.intervals :
-            result += iv.difference (other_iv)
-        return self.__class__ (* result)
-    # end def _difference
+    def _difference_iter (self, other) :
+        lit = iter     (self)
+        l   = lit.next ()
+        for r in other :
+            while l.upper <= r.lower :
+                yield l
+                l = lit.next ()
+            if l.lower < r.upper :
+                if l.lower < r.lower :
+                    yield l.__class__ (l.lower, r.lower)
+                if r.upper < l.upper :
+                    l   = l.__class__ (r.upper, l.upper)
+                else :
+                    l   = lit.next ()
+        yield l
+        for l in lit :
+            yield l
+    # end def _difference_iter
 
     def _intersection_iter (self, other) :
         l_iter = iter (self)

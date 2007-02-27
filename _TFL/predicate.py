@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-200 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -158,6 +158,7 @@
 #     9-May-2006 (CT)  `bit_size_cmp` removed (long since stale)
 #     6-Sep-2006 (CT)  Doc-strings of `split_hst` and `rsplit_hst` corrected
 #     8-Dec-2006 (CT)  `window_wise` made visible
+#    16-Feb-2007 (CT)  `enumerate_slice` made visible
 #    ««revision-date»»···
 #--
 
@@ -165,10 +166,11 @@ from   _TFL             import TFL
 import _TFL.Generators
 
 ### legacy aliases
-IV_Pairs       = enumerate
-dict_from_list = dict.fromkeys
-pairwise       = TFL.pairwise
-window_wise    = TFL.window_wise
+IV_Pairs        = enumerate
+dict_from_list  = dict.fromkeys
+enumerate_slice = TFL.enumerate_slice
+pairwise        = TFL.pairwise
+window_wise     = TFL.window_wise
 
 def all_true (seq) :
     """Returns True if all elements of `seq` are true,

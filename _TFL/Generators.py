@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -46,6 +46,7 @@
 #                      legacies)
 #     1-Jul-2005 (CT)  `pairwise_circle` defined here
 #     8-Dec-2006 (CT)  `window_wise` added
+#    16-Feb-2007 (CT)  `enumerate_slice` added
 #    ««revision-date»»···
 #--
 
@@ -132,6 +133,22 @@ class Look_Ahead_Gen (object) :
     # end def __iter__
 
 # end class Look_Ahead_Gen
+
+def enumerate_slice (seq, head, tail = None) :
+    """Generate `index, value` pairs for slice `seq [head:tail]`.
+
+       >>> tuple (enumerate_slice (range (7), 0))
+       ((0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6))
+       >>> tuple (enumerate_slice (range (20), 5, 10))
+       ((5, 5), (6, 6), (7, 7), (8, 8), (9, 9))
+       >>> tuple (enumerate_slice ("abcdefghijklmnopqrstuvwxyz", 20))
+       ((20, 'u'), (21, 'v'), (22, 'w'), (23, 'x'), (24, 'y'), (25, 'z'))
+    """
+    i = head
+    for v in seq [head:tail] :
+        yield i, v
+        i += 1
+# end def enumerate_slice
 
 def Integers (n) :
     """Generates integers from 0 to `n`."""
