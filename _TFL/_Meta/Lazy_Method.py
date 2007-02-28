@@ -35,7 +35,9 @@
 #                     counter instead of the change object itself
 #     2-Feb-2005 (MG) `_Lazy_Wrapper_RNC_` and `Lazy_Method_RNC` added,
 #                     `Lazy_Method` renamed to `Lazy_Method_RLV`
-#    26-Feb-2007 (CED) Fixed `self.changes`
+#    26-Feb-2007 (CED) Fixed `self.changes` (is a dict now, since
+#                      both change counters that are compared must
+#                      work per instance ('that'))
 #    ««revision-date»»···
 #--
 
