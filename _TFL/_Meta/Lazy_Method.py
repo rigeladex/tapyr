@@ -38,6 +38,7 @@
 #    26-Feb-2007 (CED) Fixed `self.changes` (is a dict now, since
 #                      both change counters that are compared must
 #                      work per instance ('that'))
+#    28-Feb-2007 (CED) `self.result` also has to be per instance of course
 #    ««revision-date»»···
 #--
 
@@ -56,16 +57,16 @@ class _Lazy_Wrapper_RLV_ (object) :
         self.__name__ = getattr (fct, "__name__", None)
         self.__doc__  = getattr (fct, "__doc__", None)
         self.changes  = TFL.defaultdict (lambda : -1)
-        self.result   = None
+        self.result   = TFL.defaultdict (lambda : None)
         if counter_name :
             self.counter_name = counter_name
     # end def __init__
 
     def __call__ (self, that, * args, ** kw) :
         if self.changes [that] != int (getattr (that, self.counter_name)) :
-            self.result  = self.fct (that, * args, ** kw)
+            self.result  [that] = self.fct (that, * args, ** kw)
             self.changes [that] = int (getattr (that, self.counter_name))
-        return self.result
+        return self.result [that]
     # end def __call__
 
     def __getattr__ (self, name) :
@@ -78,9 +79,9 @@ class _Lazy_Wrapper_RNC_ (_Lazy_Wrapper_RLV_) :
 
     def __call__ (self, that, * args, ** kw) :
         if self.changes [that] != int (getattr (that, self.counter_name)) :
-            self.result  = self.fct (that, * args, ** kw)
+            self.result  [that] = self.fct (that, * args, ** kw)
             self.changes [that] = int (getattr (that, self.counter_name))
-            return self.result
+            return self.result [that]
         return Lazy_Method.NC
     # end def __call__
 
