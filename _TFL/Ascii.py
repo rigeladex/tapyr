@@ -30,6 +30,8 @@
 #    13-May-2005 (CT) Call to `strip` added to `sanitized_filename`
 #     9-Aug-2006 (CT) Use `unicodedata.normalize` (and simplify `_diacrit_map`)
 #     9-Mar-2007 (CT) `_diacrit_map` corrected (`Oe` and `Ue` instead `O`/`U`)
+#     9-Mar-2007 (CT) Optional `translate_table` added to `sanitized_unicode`
+#                     and `sanitized_filename`
 #    ««revision-date»»···
 #--
 
@@ -62,19 +64,23 @@ def _diacrit_sub (match) :
     return _diacrit_map.get (match.group (0), "")
 # end def _diacrit_sub
 
-def sanitized_unicode (s) :
+def sanitized_unicode (s, translate_table = None) :
     """Return sanitized version of unicode string `s` reduced to
        pure ASCII 8-bit string. Caveat: passing in an 8-bit string with
        diacriticals doesn't work.
 
        >>> sanitized_unicode (u"üxäyözßuÜXÄYÖZbc¡ha!")
        'uexaeyoezssuUeXAeYOeZbcha!'
+       >>> sanitized_unicode (u"«ÄÖÜ»", {ord (u"«") : u"<", ord ("»") : u">"})
+       '<AeOeUe>'
     """
     s = _diacrit_pat.sub (_diacrit_sub, s)
+    if translate_table :
+        s = s.translate (translate_table)
     return unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore")
 # end def sanitized_unicode
 
-def sanitized_filename (s) :
+def sanitized_filename (s, translate_table = None) :
    """Return `sanitized (s)` with all non-printable and some graphic
       characters removed so that the result is usable as a filename.
 
@@ -82,7 +88,7 @@ def sanitized_filename (s) :
        ...    u"überflüßig komplexer und $gefährlicher* Filename")
        'ueberfluessig_komplexer_und_gefaehrlicher_Filename'
    """
-   s = sanitized_unicode  (s.strip ())
+   s = sanitized_unicode  (s.strip (), translate_table)
    s = _non_print_pat.sub ("",  s)
    s = _graph_pat.sub     ("_", s)
    return s
