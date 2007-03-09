@@ -29,6 +29,7 @@
 #     6-Sep-2004 (CT) Creation
 #    13-May-2005 (CT) Call to `strip` added to `sanitized_filename`
 #     9-Aug-2006 (CT) Use `unicodedata.normalize` (and simplify `_diacrit_map`)
+#     9-Mar-2007 (CT) `_diacrit_map` corrected (`Oe` and `Ue` instead `O`/`U`)
 #    ««revision-date»»···
 #--
 
@@ -38,8 +39,8 @@ import unicodedata
 
 _diacrit_map    = \
     { u"Ä"      : u"Ae"
-    , u"Ö"      : u"O"
-    , u"Ü"      : u"U"
+    , u"Ö"      : u"Oe"
+    , u"Ü"      : u"Ue"
     , u"ß"      : u"ss"
     , u"ä"      : u"ae"
     , u"ö"      : u"oe"
@@ -47,15 +48,15 @@ _diacrit_map    = \
     }
 
 _diacrit_pat    = Regexp \
-    (u"|".join  ([re.escape (x) for x in _diacrit_map.iterkeys ()]))
+    (u"|".join  (re.escape (x) for x in _diacrit_map.iterkeys ()))
 
 _graph_pat      = Regexp \
     ( "(%s)+"
-    % "|".join   ([re.escape (c) for c in ("^!$%&([{}]) ?`'*+#:;<>|" '"')])
+    % "|".join   (re.escape (c) for c in ("^!$%&([{}]) ?`'*+#:;<>|" '"'))
     )
 
 _non_print_pat  = Regexp \
-    ("|".join   ([re.escape (chr (i)) for i in range (0, 32) + [127]]))
+    ("|".join   (re.escape (chr (i)) for i in range (0, 32) + [127]))
 
 def _diacrit_sub (match) :
     return _diacrit_map.get (match.group (0), "")
@@ -66,8 +67,8 @@ def sanitized_unicode (s) :
        pure ASCII 8-bit string. Caveat: passing in an 8-bit string with
        diacriticals doesn't work.
 
-       >>> sanitized_unicode (u"üaöbc¡ha!")
-       'ueaoebcha!'
+       >>> sanitized_unicode (u"üxäyözßuÜXÄYÖZbc¡ha!")
+       'uexaeyoezssuUeXAeYOeZbcha!'
     """
     s = _diacrit_pat.sub (_diacrit_sub, s)
     return unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore")
