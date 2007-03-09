@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2004-2007 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -44,6 +44,7 @@
 #    24-Feb-2005 (MBM) Changed index entry structure
 #     9-Aug-2005 (CT)  Call to `tex_quoted` added
 #    30-Oct-2006 (CED) `Preprocessor_Error` added
+#     9-Mar-2007 (CED) Accepting integer as value of `Define_Constant`
 #    ««revision-date»»···
 #--
 
@@ -188,7 +189,9 @@ class Define_Constant (Define) :
           ]
         )
 
-
+    _autoconvert         = dict \
+        ( value          = lambda s, k, v : str (v)
+        )
 # end class Define_Constant
 
 class Macro_Block (_Macro_, TFL.SDG.C.Stmt_Group) :
