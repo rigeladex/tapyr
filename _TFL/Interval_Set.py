@@ -43,6 +43,9 @@
 #    19-Feb-2007 (CT)  `difference` done right
 #    20-Feb-2007 (CT)  `contains_interval` changed to use `any_true`
 #    21-Feb-2007 (CT)  `_difference_iter` factored
+#    12-Mar-2007 (CT)  `k_of_n_intersection_iter` added
+#    13-Mar-2007 (CT)  `k_of_n_intersection_iter` added (cont.)
+#    13-Mar-2007 (CT)  `intersection_iter` changed to use `_IVS_Iter_`
 #    ««revision-date»»···
 #--
 
@@ -50,8 +53,9 @@ from   _TFL                  import TFL
 
 import _TFL._Meta.Object
 
-from   _TFL.predicate        import any_true
+from   _TFL.predicate        import any_true, dusort
 from   bisect                import bisect
+import itertools
 
 class Interval_Set (TFL.Meta.Object) :
     """Class for modelling a sorted set of intervals.
@@ -125,6 +129,21 @@ class Interval_Set (TFL.Meta.Object) :
        [(3, 5), (20, 25)]
        >>> list (IS.intersection_iter (o, p, (N (4, 6), N (12, 12))))
        [(4, 5), (12, 12)]
+
+       >>> ivs1 = (N (10, 20), N (25, 40), N (100, 150))
+       >>> ivs2 = (N (20, 50), N (120, 140))
+       >>> ivs3 = (N (0, 50), N (110, 140))
+       >>> ivs4 = (N (5, 20), N (22, 38), N (125, 150))
+       >>> list (IS.k_of_n_intersection_iter (1, 15, (ivs1, ivs2, ivs3, ivs4)))
+       [(0, 50), (5, 20), (20, 50), (22, 38), (25, 40), (100, 150), (110, 140), (120, 140), (125, 150)]
+       >>> list (IS.k_of_n_intersection_iter (2, 15, (ivs1, ivs2, ivs3, ivs4)))
+       [(5, 20), (25, 40), (20, 50), (22, 38), (125, 150), (110, 140), (125, 140), (120, 140)]
+       >>> list (IS.k_of_n_intersection_iter (3, 15, (ivs1, ivs2, ivs3, ivs4)))
+       [(25, 40), (22, 38), (125, 140), (120, 140)]
+       >>> list (IS.k_of_n_intersection_iter (4, 15, (ivs1, ivs2, ivs3, ivs4)))
+       [(125, 140)]
+       >>> list (IS.k_of_n_intersection_iter (5, 15, (ivs1, ivs2, ivs3, ivs4)))
+       []
     """
 
     element_class = property (lambda self : self.intervals [0].__class__)
@@ -158,20 +177,63 @@ class Interval_Set (TFL.Meta.Object) :
            intervals of `iv_sets` (the default for `min_size` is 0).
         """
         min_size = kw.get ("min_size", 0)
-        iv_iters = [iter     (ivs) for ivs in iv_sets]
-        ivals    = [ivi.next ()    for ivi in iv_iters]
+        iv_iters = [cls._IVS_Iter_ (ivs, min_size) for ivs in iv_sets]
         while True :
-            r = ivals [0]
-            if r.length >= min_size :
-                for i in ivals [1:] :
-                    r = r.intersection (i)
-                    if r.length < min_size :
-                        break
-                else :
-                    yield r
-            _, k = min ((iv.upper, k) for (k, iv) in enumerate (ivals))
-            ivals [k] = iv_iters [k].next ()
+            r = iv_iters [0].value
+            for ivi in iv_iters [1:] :
+                r = r.intersection (ivi.value)
+                if r.length < min_size :
+                    break
+            else :
+                yield r
+            _, small = min \
+                (((v.value.upper, - v.value.lower), v) for v in iv_iters)
+            small.advance ()
     # end def intersection_iter
+
+    @classmethod
+    def k_of_n_intersection_iter (cls, k, min_size, iv_sets) :
+        """Generates all intersections larger than `min_size` between at least
+           `k` of the intervals of `iv_sets`.
+        """
+        if k == 1 :
+            ivs = dusort (itertools.chain (* iv_sets), lambda iv : iv.lower)
+            for iv in ivs :
+                if iv.length >= min_size :
+                    yield iv
+        else :
+            seen     = set ()
+            sort_key = lambda i : (i.value.upper, i.value.lower)
+            iv_iters = dusort \
+                ( (x for x in (cls._IVS_Iter_X_ (i, min_size) for i in iv_sets)
+                     if  x
+                  )
+                , sort_key
+                )
+            slack = len (iv_iters) - k
+            while slack >= 0 :
+                for j in range (slack + 1) :
+                    hits   = 1
+                    misses = j
+                    r      = iv_iters [j].value
+                    for ivi in iv_iters [j+1:] :
+                        s = r.intersection (ivi.value)
+                        if s.length >= min_size :
+                            hits += 1
+                            key = (s.lower, s.upper)
+                            if hits >= k and key not in seen :
+                                seen.add (key)
+                                yield s
+                            r = s
+                        else :
+                            misses += 1
+                            if misses > slack :
+                                break
+                _, small = min    ((sort_key (ivi), ivi) for ivi in iv_iters)
+                small.advance     ()
+                iv_iters = dusort ((ivi for ivi in iv_iters if ivi), sort_key)
+                slack    = len    (iv_iters) - k
+    # end def k_of_n_intersection_iter
 
     def is_empty (self) :
         return not self
@@ -248,6 +310,45 @@ class Interval_Set (TFL.Meta.Object) :
         name = self.__class__.__name__
         return "%s (%s)" % (name, ", ".join (repr (i) for i in self))
     # end def __repr__
+
+    class _IVS_Iter_ (TFL.Meta.Object) :
+
+        def __init__ (self, iv_set, min_size) :
+            self.ivi      = iter (iv_set)
+            self.min_size = min_size
+            self.advance ()
+        # end def __init__
+
+        def advance (self) :
+            next       = self.ivi.next
+            min_size   = self.min_size
+            v = next ()
+            while v.length < min_size :
+                v = next ()
+            self.value = v
+            return v
+        # end def advance
+
+    # end class _IVS_Iter_
+
+    class _IVS_Iter_X_ (_IVS_Iter_) :
+
+        def advance (self) :
+            try :
+                self.value = v = self.__super.advance ()
+            except StopIteration :
+                self.done  = True
+                self.value = v = None
+            else :
+                self.done  = False
+            return v
+        # end def advance
+
+        def __nonzero__ (self) :
+            return not self.done
+        # end def __nonzero__
+
+    # end class _IVS_Iter_X_
 
 # end class Interval_Set
 
