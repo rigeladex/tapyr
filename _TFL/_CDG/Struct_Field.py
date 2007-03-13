@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2007 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -44,6 +44,7 @@
 #    13-Jul-2006 (MZO) [20886] `check_value` added
 #    17-Jul-2006 (MZO) [20886] `check_value` fixed
 #    17-Jul-2006 (MZO) [22038] `val_range` corrected
+#    13-Mar-2007 (MZO) [23693] check char fields
 #    ««revision-date»»···
 #--
 
@@ -182,7 +183,7 @@ class Struct_Field (TFL.Meta.Object):
         elif value.lower () == "false" :
             value = "0"
         format = self.user_code or self.fmt_code.get (self.type, None)
-        if format and not format in ("c", "s", "b", "P", "B") : # char
+        if format and not format in ("s", "P") : # char
             size = struct.calcsize (format)
         try :
             value = float (value)
@@ -190,7 +191,7 @@ class Struct_Field (TFL.Meta.Object):
             value = None
         if size > 0 and value is not None :
             val_range = math.pow (2, (size * 8)) - 1
-            if format in  ("I", "L", "Q", "H") :                # unsigned
+            if format in  ("I", "L", "Q", "H", "B", "c") :                # unsigned
                 if value > val_range :
                     result = False
                     error_text = \
