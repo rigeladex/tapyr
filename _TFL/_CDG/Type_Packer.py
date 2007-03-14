@@ -23,7 +23,7 @@
 #    TFL.CDG.Type_Packer
 #
 # Purpose
-#    Classes for handling the alignement and padding of C data types.
+#    Classes for handling the alignment and padding of C data types.
 #
 # Revision Dates
 #    27-Jul-2006 (CED) Creation
