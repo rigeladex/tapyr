@@ -117,8 +117,8 @@ class File2Meta_Struct (TFL.Meta.Object) :
     # end def _line2values
 
     def _write_ms (self, ms, filename) :
-        c_code_creator = TFL.CDG.C_Code_Creator (None, None)
-        c_code_creator.pack_as_c_code (TFL.SDG.C, ms, filename = filename)
+        c_code_creator = TFL.CDG.C_Code_Creator ()
+        c_code_creator (TFL.SDG.C, ms, None, filename = filename)
     # end def _write_ms
 
 # end class File2Meta_Struct

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2006-2007 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -37,6 +37,7 @@
 #     7-Nov-2006 (MZO) [21988] `reset_extension` called
 #     9-Nov-2006 (MZO) [21988] write each block into file immediately
 #    20-Nov-2006 (MZO) [21696] `TFL.CDG.Array` used
+#    14-Mar-2007 (PGO) `__call__` of `*_Creator` take only CDG Structs now
 #    ««revision-date»»···
 #--
 #
@@ -108,20 +109,17 @@ class Bin_Block (TFL.Meta.Object) :
 
 class C_Code_Creator (TFL.Meta.Object) :
 
-    def __init__ (self, scope, gauge) :
-        self.scope      = scope
+    def __init__ (self, gauge = None) :
         self.gauge      = gauge
         self.out_block  = None
     # def __init__
 
     def __call__ \
-        ( self, C, meta_struct, config_struct
+        ( self, C, meta_struct, root
         , reset_extension = True
         , filename        = None
-        , * args, ** kw
         ) :
-        config_struct (self.scope, * args,  ** kw)
-        return self.pack_as_c_code (C, meta_struct, reset_extension, filename)
+        return self._pack_as_c_code (C, meta_struct, reset_extension, filename)
     # end def __call__
 
     def _define_fmt (self, C, struct_cls) :
@@ -132,7 +130,7 @@ class C_Code_Creator (TFL.Meta.Object) :
             hs.add ("long %s" % f.name)
     # end def _define_fmt
 
-    def pack_as_c_code \
+    def _pack_as_c_code \
         (self, C, Meta_Struct, reset_extension = True, filename = None) :
         c_block = C.Stmt_Group ()
         content = ""
@@ -172,7 +170,7 @@ class C_Code_Creator (TFL.Meta.Object) :
             finally :
                 self._write_block_end ()
         return c_block
-    # end def pack_as_c_code
+    # end def _pack_as_c_code
 
     def hook_pack_values (self, values, struct_cls) :
         return values
@@ -222,23 +220,19 @@ class Bin_Block_Creator (TFL.Meta.Object) :
 
     use_internal_data_formats = False
 
-    def __init__ (self, name, scope, gauge) :
-        self.name   = name
-        self.scope  = scope
+    def __init__ (self, scope = None, gauge = None) :
+        self.scope  = scope ### XXX remove me
         self.gauge  = gauge
     # def __init__
 
     def __call__ \
-        (self, byte_order, meta_struct, config_struct, * args, ** kw) :
-        root = config_struct (self.scope, * args,  ** kw)
-        if getattr (root, "get_struct_object", None) :
-            root = root.get_struct_object ()
+        (self, byte_order, meta_struct, root) :
         bblock = self.create_bin_block \
             ( meta_struct
             , root
             , byte_order
             )
-        if self.__class__.use_internal_data_formats :
+        if self.use_internal_data_formats :
             self._debug_as_c_code (meta_struct)
         return bblock
     # end def __call__
@@ -268,7 +262,7 @@ class Bin_Block_Creator (TFL.Meta.Object) :
         bblock = TFL.CDG.Bin_Block    (byte_order.name, root)
         for c in meta_struct.uses_global_buffers :
             if root.__class__ is c :
-                assert len (c.extension) == 1
+                assert len (c.extension) == 1, c.extension
                 continue
             bblock.add (c.extension)
         self.additional_blobs (bblock)
@@ -370,8 +364,8 @@ class Bin_Block_Creator (TFL.Meta.Object) :
             filename = sos.path.join (sos.getcwd (), filename)
         filename = sos.path.normpath (filename)
         module   = C.Module ()
-        cc       = C_Code_Creator (self.scope, self.gauge)
-        module.add (cc.pack_as_c_code (C, meta_struct, reset_extension = False))
+        cc       = C_Code_Creator (self.gauge)
+        module.add (cc (C, meta_struct, None, reset_extension = False))
         f        = None
         try :
             try :

@@ -45,6 +45,7 @@
 #    17-Jul-2006 (MZO) [20886] `check_value` fixed
 #    17-Jul-2006 (MZO) [22038] `val_range` corrected
 #    13-Mar-2007 (MZO) [23693] check char fields
+#    14-Mar-2007 (PGO) `check_value` changed to raise Value_Out_Of_Range
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,8 @@ import operator
 import struct
 import traceback
 import math
+
+class Value_Out_Of_Range (ValueError) : pass
 
 class Struct_Field (TFL.Meta.Object):
     """Model a single field of a C struct."""
@@ -159,8 +162,8 @@ class Struct_Field (TFL.Meta.Object):
     def packed (self, value, byte_order = "native") :
         format = self.format_code ()
         if not format :
-            raise ValueError, \
-                  "%s [%s] cannot be packed -- no format code" % (self, value)
+            raise ValueError \
+                ("%s [%s] cannot be packed -- no format code" % (self, value))
         try :
             result = struct.pack \
                 ( "%s%s"
@@ -191,33 +194,34 @@ class Struct_Field (TFL.Meta.Object):
             value = None
         if size > 0 and value is not None :
             val_range = math.pow (2, (size * 8)) - 1
-            if format in  ("I", "L", "Q", "H", "B", "c") :                # unsigned
+            if format in  ("I", "L", "Q", "H", "B", "c") :        # unsigned
                 if value > val_range :
-                    result = False
+                    result     = False
                     error_text = \
-                        ( ( "Unexpected value in Structfield `%s` "
+                        ( ( "Unexpected value in %s `%s` "
                             "(typesize `%s` bytes): Value `%s` is not"
                             " within range (%s)."
                           )
-                        % ( self.name, size, original_value
-                          , "0 .. %s" % val_range
+                        % ( self.__class__.__name__, self.name
+                          , size, original_value , "0 .. %s" % val_range
                           )
                         )
-                    raise ValueError, error_text
+                    raise Value_Out_Of_Range (error_text)
             else :
                 val_range = val_range // 2 + 1                   # signed
                 if abs (value) > (val_range) :
-                    result = False
+                    result     = False
                     error_text = \
-                        ( ( "Unexpected value in Structfield `%s` "
+                        ( ( "Unexpected value in %s `%s` "
                             "(typesize `%s` bytes): Value `%s` is not"
                             " within range (%s)."
                           )
-                        % ( self.name, size, original_value
+                        % ( self.__class__.__name__, self.name
+                          , size, original_value
                           , "-%s .. +%s" % (val_range, val_range)
                           )
                         )
-                    raise ValueError, error_text
+                    raise Value_Out_Of_Range (error_text)
         return result
     # end def check_value
 

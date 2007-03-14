@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 - 2006 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2007 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -15,6 +15,7 @@
 #    10-Mar-2006 (MZO) added `S_With_Array`
 #    23-Aug-2006 (PGO) Using alternate form of %x
 #    14-Nov-2006 (MZO) test extended, profiler added
+#    14-Mar-2007 (PGO) `mask` is ubyte1 only
 #    ««revision-date»»···
 #--
 #
@@ -128,7 +129,7 @@ class S_With_Array (Struct) :
 
     def __init__ (self) :
         self.__super.__init__ ()
-        self.mask     = "1233"
+        self.mask     = "123"
         self.cni_offset   = []
         length = 2
         for i in xrange (length) :
