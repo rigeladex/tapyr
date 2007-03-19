@@ -27,6 +27,8 @@
 #                      added
 #    28-Feb-2006 (CED) Minor modifications to `define_access_macros`
 #    12-May-2006 (CED) `reset_state` added
+#    19-Mar-2007 (DAL) changed offset_field default from -1 to 0xFFFFFFFF
+#                      (RUP 23577)
 #    ««revision-date»»···
 #--
 
@@ -153,7 +155,7 @@ class M_Struct (TFL.Meta.M_Class) :
                  ( "ubyte4"
                  , c.offset_field_name
                  , "in `bin_buffer`"
-                 , -1
+                 , 0xFFFFFFFF
                  )
                for c in cls.uses_global_buffers
              ]
