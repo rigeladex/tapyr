@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2006 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2007 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #    27-Jul-2006 (CED) Alignement and padding code factored out to
 #                      `TFL.CDG.Type_Packer`
 #     1-Feb-2007 (CED) s/GCC_Like_Type_Packer/Active_Type_Packer/g
+#    26-Mar-2007 (PGO) `bounds` handling in `dict` fixed (was always overwritten)
 #    ««revision-date»»···
 #--
 
@@ -253,7 +254,7 @@ class Struct (TFL.Meta.Object) :
             f.check_value (value)
             if f.bounds is not None :
                 result [f.name] = str (value)
-            if f.user_code or f.fmt_code.get (f.type, None) :
+            elif f.user_code or f.fmt_code.get (f.type, None) :
                 ### `value` is a primitive data type
                 result [f.name] = value
             else :
