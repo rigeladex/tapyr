@@ -46,6 +46,7 @@
 #    12-Mar-2007 (CT)  `k_of_n_intersection_iter` added
 #    13-Mar-2007 (CT)  `k_of_n_intersection_iter` added (cont.)
 #    13-Mar-2007 (CT)  `intersection_iter` changed to use `_IVS_Iter_`
+#    28-Mar-2007 (CED) `copy`, `shifted` added
 #    ««revision-date»»···
 #--
 
@@ -71,8 +72,9 @@ class Interval_Set (TFL.Meta.Object) :
        >>> l = i.union (j)
        >>> l
        IS ((0, 200))
-       >>> m = i.union (i)
-       >>> m
+       >>> i.union (i)
+       IS ((0, 100))
+       >>> i.copy ()
        IS ((0, 100))
        >>> [l.intersection (x) for x in (i, j, l)]
        [IS ((0, 100)), IS ((100, 200)), IS ((0, 200))]
@@ -83,6 +85,8 @@ class Interval_Set (TFL.Meta.Object) :
        >>> m = IS (N (1, 2), N (5, 6), N (7, 9))
        >>> m
        IS ((1, 2), (5, 6), (7, 9))
+       >>> m.shifted (10)
+       IS ((11, 12), (15, 16), (17, 19))
        >>> n = IS (N (1, 5), N (6, 6), N (9, 11), N (20, 30))
        >>> n.intersection (m)
        IS ((1, 2), (5, 5), (6, 6), (9, 9))
@@ -166,6 +170,10 @@ class Interval_Set (TFL.Meta.Object) :
         return self.next_point_up (point) == point
     # end def contains_point
 
+    def copy (self) :
+        return self.__class__ (* (i.copy () for i in self.intervals))
+    # end def copy
+
     def difference (self, other) :
         return self.__class__ (* self._difference_iter (other))
     # end def difference
@@ -173,6 +181,10 @@ class Interval_Set (TFL.Meta.Object) :
     def intersection (self, other) :
         return self.__class__ (* self._intersection_iter (other))
     # end def intersection
+
+    def shifted (self, delta) :
+        return self.__class__ (* (i.shifted (delta) for i in self.intervals))
+    # end def shifted
 
     @classmethod
     def intersection_iter (cls, * iv_sets, ** kw) :
