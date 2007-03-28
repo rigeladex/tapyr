@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Feb-2007 (MZO) Creation
+#    28-Mar-2007 (MZO) Creation .
 #    ««revision-date»»···
 #--
 
@@ -76,9 +77,10 @@ class File2Meta_Struct (TFL.Meta.Object) :
                     (perfix,expected_ms_prefix, line)
                 expected_ms_struct_length = 0           # XXX find [5]
             elif line.count ("{") >= 1 :   # XXX use re # array and struct start
-                current_ms_cls = ms.classes [current_ms_cls_name] ()
-                n, v = self._line2values (line)
-                setattr (current_ms_cls, n, v)
+                if current_ms_cls_name : # ignore removed struct
+                    current_ms_cls = ms.classes [current_ms_cls_name] ()
+                    n, v = self._line2values (line)
+                    setattr (current_ms_cls, n, v)
             elif line.count ("};") == 1 :                # array end
                 # XXXX
                 # assert expected_ms_struct_length ==
@@ -87,8 +89,9 @@ class File2Meta_Struct (TFL.Meta.Object) :
             elif line.count ("}") == 1 :                 # struct end
                 current_ms_cls = None
             elif line.count (",") == 1 :                 # struct end
-                n, v = self._line2values (line)
-                setattr (current_ms_cls, n, v)
+                if current_ms_cls_name : # ignore removed struct
+                    n, v = self._line2values (line)
+                    setattr (current_ms_cls, n, v)
             else :
                 pass
         return ms
