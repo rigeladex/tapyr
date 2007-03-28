@@ -71,6 +71,9 @@ class Interval_Set (TFL.Meta.Object) :
        >>> l = i.union (j)
        >>> l
        IS ((0, 200))
+       >>> m = i.union (i)
+       >>> m
+       IS ((0, 100))
        >>> [l.intersection (x) for x in (i, j, l)]
        [IS ((0, 100)), IS ((100, 200)), IS ((0, 200))]
        >>> [l.overlaps (x) for x in (i, j, l)]
