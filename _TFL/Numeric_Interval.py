@@ -33,6 +33,7 @@
 #     4-Mar-2004 (CED) `difference` fixed
 #     8-Mar-2004 (CED) Doctest fixed according to last change
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
+#    29-Mar-2007 (CED) `converted` added
 #    ««revision-date»»···
 #--
 
@@ -109,6 +110,11 @@ class Numeric_Interval (TFL.Meta.Object) :
     def contains_point (self, point) :
         return self.lower <= point <= self.upper
     # end def contains_point
+
+    def converted (self, conversion_fct) :
+        return self.__class__ \
+            (conversion_fct (self.lower), conversion_fct (self.upper))
+    # end def converted
 
     def copy (self) :
         return self.__class__ (self.lower, self.upper)
