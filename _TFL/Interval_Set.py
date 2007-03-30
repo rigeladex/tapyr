@@ -47,6 +47,7 @@
 #    13-Mar-2007 (CT)  `k_of_n_intersection_iter` added (cont.)
 #    13-Mar-2007 (CT)  `intersection_iter` changed to use `_IVS_Iter_`
 #    28-Mar-2007 (CED) `copy`, `shifted` added
+#    30-Mar-2007 (CED) Additional doctest added
 #    ««revision-date»»···
 #--
 
@@ -151,6 +152,10 @@ class Interval_Set (TFL.Meta.Object) :
        [(125, 140)]
        >>> list (IS.k_of_n_intersection_iter (5, 15, (ivs1, ivs2, ivs3, ivs4)))
        []
+       >>> a = IS (N (0, 390), N (585, 5000))
+       >>> b = IS (N (0, 600))
+       >>> a.difference (b)
+       IS ((600, 5000))
     """
 
     element_class = property (lambda self : self.intervals [0].__class__)
