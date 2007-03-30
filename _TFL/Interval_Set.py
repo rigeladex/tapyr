@@ -48,15 +48,16 @@
 #    13-Mar-2007 (CT)  `intersection_iter` changed to use `_IVS_Iter_`
 #    28-Mar-2007 (CED) `copy`, `shifted` added
 #    30-Mar-2007 (CED) Additional doctest added
+#    30-Mar-2007 (CT)  `_difference_iter` fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
+from   _TFL.predicate        import any_true, dusort
+from   bisect                import bisect
 
 import _TFL._Meta.Object
 
-from   _TFL.predicate        import any_true, dusort
-from   bisect                import bisect
 import itertools
 
 class Interval_Set (TFL.Meta.Object) :
@@ -288,17 +289,20 @@ class Interval_Set (TFL.Meta.Object) :
     def _difference_iter (self, other) :
         lit = iter     (self)
         l   = lit.next ()
-        for r in other :
-            while l.upper <= r.lower :
-                yield l
-                l = lit.next ()
-            if l.lower < r.upper :
-                if l.lower < r.lower :
-                    yield l.__class__ (l.lower, r.lower)
-                if r.upper < l.upper :
-                    l   = l.__class__ (r.upper, l.upper)
-                else :
-                    l   = lit.next ()
+        if other :
+            for r in other :
+                while l.upper <= r.lower :
+                    yield l
+                    l = lit.next ()
+                if l.lower < r.upper :
+                    if l.lower < r.lower :
+                        yield l.__class__ (l.lower, r.lower)
+                    if r.upper < l.upper :
+                        l = l.__class__ (r.upper, l.upper)
+                    else :
+                        l = lit.next ()
+            if l.lower < r.upper < l.upper :
+                l = l.__class__ (r.upper, l.upper)
         yield l
         for l in lit :
             yield l
