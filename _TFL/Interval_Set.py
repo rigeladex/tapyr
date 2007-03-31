@@ -49,6 +49,7 @@
 #    28-Mar-2007 (CED) `copy`, `shifted` added
 #    30-Mar-2007 (CED) Additional doctest added
 #    30-Mar-2007 (CT)  `_difference_iter` fixed
+#    31-Mar-2007 (CT)  `_difference_iter` fixed again
 #    ««revision-date»»···
 #--
 
@@ -157,6 +158,10 @@ class Interval_Set (TFL.Meta.Object) :
        >>> b = IS (N (0, 600))
        >>> a.difference (b)
        IS ((600, 5000))
+       >>> a = IS (N (0, 390), N (585, 5000), N (6000, 6200), N (7000, 7500))
+       >>> b = IS (N (0, 600), N (5900, 6100), N (6250, 7100))
+       >>> a.difference (b)
+       IS ((600, 5000), (6100, 6200), (7100, 7500))
     """
 
     element_class = property (lambda self : self.intervals [0].__class__)
@@ -289,20 +294,19 @@ class Interval_Set (TFL.Meta.Object) :
     def _difference_iter (self, other) :
         lit = iter     (self)
         l   = lit.next ()
-        if other :
-            for r in other :
-                while l.upper <= r.lower :
-                    yield l
+        for r in other :
+            while l.upper <= r.lower :
+                yield l
+                l = lit.next ()
+            if l.lower < r.upper :
+                if l.lower < r.lower :
+                    yield l.__class__ (l.lower, r.lower)
+                if r.upper < l.upper :
+                    l = l.__class__ (r.upper, l.upper)
+                else :
                     l = lit.next ()
-                if l.lower < r.upper :
-                    if l.lower < r.lower :
-                        yield l.__class__ (l.lower, r.lower)
-                    if r.upper < l.upper :
+                    if l.lower < r.upper < l.upper :
                         l = l.__class__ (r.upper, l.upper)
-                    else :
-                        l = lit.next ()
-            if l.lower < r.upper < l.upper :
-                l = l.__class__ (r.upper, l.upper)
         yield l
         for l in lit :
             yield l
