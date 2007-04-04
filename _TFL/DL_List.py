@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,8 @@
 #    11-May-2006 (CED) `DL_Ring_Sorted` introduced
 #    12-May-2006 (CT)  `DL_Ring_Sorted._insert` simplified (and disobfuscated)
 #    12-May-2006 (CED) 'DL_Item_Sortable` added and used
+#     1-Mar-2007 (CT)  Constructor signature changed to be compatible with
+#                      `tuple` and `list` (`*` removed)
 #    ««revision-date»»···
 #--
 
@@ -139,7 +141,7 @@ class _DL_Chain_ (TFL.Meta.Object) :
 
     DL_Item = DL_Item
 
-    def __init__ (self, * items) :
+    def __init__ (self, items) :
         self.clear  ()
         self.append (* items)
     # end def __init__
@@ -253,7 +255,7 @@ class _DL_Counted_ (TFL.Meta.Object) :
 class DL_List (_DL_Chain_) :
     """Doubly linked list.
 
-       >>> dl = DL_List (0, 1, 2, 3, 4)
+       >>> dl = DL_List ((0, 1, 2, 3, 4))
        >>> list (dl)
        [0, 1, 2, 3, 4]
        >>> dl.head, dl.tail
@@ -286,8 +288,8 @@ class DL_List (_DL_Chain_) :
        >>> dl.clear ()
        >>> list (dl)
        []
-       >>> dl = DL_List (0, 1, 2, 3, 4)
-       >>> dk = DL_List ("a", "b", "c", "d", "e")
+       >>> dl = DL_List ((0, 1, 2, 3, 4))
+       >>> dk = DL_List (("a", "b", "c", "d", "e"))
        >>> dl.head.resplice (dl.tail.prev, dl.tail)
        >>> list (dl), list (dk)
        ([0, 3, 4, 1, 2], ['a', 'b', 'c', 'd', 'e'])
@@ -299,10 +301,10 @@ class DL_List (_DL_Chain_) :
     head    = property (lambda s : s._H.next)
     tail    = property (lambda s : s._T.prev)
 
-    def __init__ (self, * items) :
+    def __init__ (self, items) :
         self._H = self.DL_Item ()
         self._T = self.DL_Item ()
-        self.__super.__init__  (* items)
+        self.__super.__init__  (items)
     # end def __init__
 
     def clear (self) :
@@ -325,7 +327,7 @@ class DL_List (_DL_Chain_) :
 class DL_List_Counted (_DL_Counted_, DL_List) :
     """DL_List counting its elements
 
-       >>> dlc = DL_List_Counted (* range (5))
+       >>> dlc = DL_List_Counted (range (5))
        >>> dlc.count
        5
        >>> dlc.pop()
@@ -343,7 +345,7 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
 class DL_Ring (_DL_Chain_) :
     """Doubly linked ring.
 
-       >>> dr = DL_Ring (0, 1, 2, 3, 4)
+       >>> dr = DL_Ring ((0, 1, 2, 3, 4))
        >>> list (dr)
        [0, 1, 2, 3, 4]
        >>> dr.head, dr.tail
@@ -376,7 +378,7 @@ class DL_Ring (_DL_Chain_) :
        []
        >>> print dr.head, dr.tail
        None None
-       >>> dr = DL_Ring (0, 1, 2, 3, 4)
+       >>> dr = DL_Ring ((0, 1, 2, 3, 4))
        >>> list (dr)
        [0, 1, 2, 3, 4]
        >>> dr.rotate_next (4)
@@ -463,7 +465,7 @@ class DL_Ring (_DL_Chain_) :
 class DL_Ring_Sorted (DL_Ring) :
     """DL_Ring sorting its elements
 
-       >>> drs = DL_Ring_Sorted (2, 1, 3)
+       >>> drs = DL_Ring_Sorted ((2, 1, 3))
        >>> list (drs)
        [1, 2, 3]
        >>> drs.insert (3, 5, 4)
@@ -479,11 +481,8 @@ class DL_Ring_Sorted (DL_Ring) :
 
     DL_Item = DL_Item_Sortable
 
-    def __init__ (self, * items, ** kw) :
-        if "key" in kw :
-            self.key = kw ["key"]
-        else :
-            self.key = TFL.identity
+    def __init__ (self, items, key = TFL.identity) :
+        self.key = key
         self.clear  ()
         self.insert (* items)
     # end def __init__
@@ -523,7 +522,7 @@ class DL_Ring_Sorted (DL_Ring) :
 class DL_Ring_Counted (_DL_Counted_, DL_Ring) :
     """DL_Ring counting its elements
 
-       >>> drc = DL_Ring_Counted (* range (5))
+       >>> drc = DL_Ring_Counted (range (5))
        >>> drc.count
        5
        >>> drc.pop()

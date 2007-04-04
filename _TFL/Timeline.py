@@ -56,6 +56,20 @@
 #                      `Timeline_Cut.prepare_cut_around` added
 #    21-Feb-2007 (CT)  `Timeline.cut_p` added
 #    22-Feb-2007 (CT)  `Timeline_Cut_P.minmax` added
+#    11-Mar-2007 (CT)  `Timeline_Cut` and `Timeline_Cut_P` changed to take
+#                      `timeline` attribute (again)
+#    14-Mar-2007 (CT)  s/Timeline_Cut_P/Timeline_Cut_Periodic/
+#    14-Mar-2007 (CT)  `intersection_p` changed to use `orig.upper` instead
+#                      of `free [-1].upper` as upper bound
+#    15-Mar-2007 (CT)  s/Timeline_Cut/TL_Section/
+#    15-Mar-2007 (CT)  Major overhaul of `TL_Section`
+#                      - `new` instead of `__init__`
+#                      - `TL_Section_Mod_P` instead of `TL_Section.modulo`
+#    16-Mar-2007 (CT)  `TLS_Periodic.minmax` changed to cache
+#    16-Mar-2007 (CT)  `Timeline.intersection` changed to break
+#                      `if l == min_size == 0`
+#    17-Mar-2007 (CT)  `multi_intersection` and `_periodic_span_iter`
+#                      factored from `intersection_p`
 #    ««revision-date»»···
 #--
 
@@ -67,24 +81,23 @@ import _TFL._Meta.Object
 from   _TFL.Generators       import enumerate_slice
 from   bisect                import bisect
 
-class Timeline_Cut (TFL.Numeric_Interval) :
-    """Cut from Timeline"""
+class TL_Section (TFL.Numeric_Interval) :
+    """Section that may be cut from Timeline"""
 
     Span       = TFL.Numeric_Interval
     parents    = []
     period     = None
+    _sid       = None
 
-    def __init__ (self, lower, upper, index = None, _sid = None) :
-        self.__super.__init__ (lower, upper)
-        self.index = index
-        self._sid  = _sid
-    # end def __init__
-
-    def copy (self) :
-        result = self.__super.copy ()
-        self._update_result (None, result)
+    @classmethod
+    def new (cls, span, index, timeline) :
+        result          = cls (span.lower, span.upper)
+        result.index    = index
+        result.timeline = timeline
+        if timeline :
+            result._sid = timeline._sid
         return result
-    # end def copy
+    # end def new
 
     def intersection (self, other) :
         result = self.__super.intersection (other)
@@ -92,28 +105,28 @@ class Timeline_Cut (TFL.Numeric_Interval) :
         return result
     # end def intersection
 
-    def modulo (self, p) :
-        result = self.__class__ (self.lower % p, self.upper % p)
-        self._update_result (None, result)
-        result.period = p
-        return result
-    # end def modulo
-
     def prepare_cut (self, span) :
         self.to_cut = self.__super.intersection (span)
         return self.to_cut
     # end def prepare_cut
 
-    def prepare_cut_around (self, span, size) :
+    def prepare_cut_around_l (self, span, size) :
         jitter = size - span.length
         if jitter <= 0 :
             lower = span.lower
         else :
             lower = max (self.lower, span.lower - jitter)
-        self.to_cut = self.Span (lower, lower + size)
-        assert self.contains (self.to_cut)
-        return self.to_cut
-    # end def prepare_cut_around
+        return self.prepare_cut (self.Span (lower, lower + size))
+    # end def prepare_cut_around_l
+
+    def prepare_cut_around_u (self, span, size) :
+        jitter = size - span.length
+        if jitter <= 0 :
+            upper = span.upper
+        else :
+            upper = min (self.upper, span.upper + jitter)
+        return self.prepare_cut (self.Span (upper - size, upper))
+    # end def prepare_cut_around_u
 
     def prepare_cut_l (self, size) :
         lower       = self.lower
@@ -128,59 +141,92 @@ class Timeline_Cut (TFL.Numeric_Interval) :
     # end def prepare_cut_u
 
     def _update_result (self, other, result) :
-        result.index   = self.index
-        result._sid    = self._sid
-        result.parents = list (self.parents or [self])
-        result.period  = self.period
-        if other is not None :
-            assert self._sid == other._sid
-            result.parents.extend (other.parents or [other])
+        parents = self.parents
+        if parents :
+            result.parents = parents + getattr (other, "parents", [])
     # end def _update_result
 
-# end class Timeline_Cut
+# end class TL_Section
 
-class Timeline_Cut_P (TFL.Meta.Object) :
-    """Periodic cut from Timeline"""
+class TL_Section_Mod_P (TL_Section) :
+    """TL_Section modulo period."""
 
-    def __init__ (self, period, min_size, _sid, generations) :
+    @classmethod
+    def new (cls, parent, period) :
+        result         = cls (parent.lower % period, parent.upper % period)
+        result.parents = [parent]
+        return result
+    # end def new
+
+# end class TL_Section_Mod_P
+
+class TLS_Periodic (TFL.Meta.Object) :
+    """Set of periodic TL_Sections from Timeline"""
+
+    _minmax = None
+
+    def __init__ (self, period, min_size, timeline, generations) :
         self.period      = period
         self.min_size    = min_size
-        self._sid        = _sid
-        self.generations = generations
+        self.timeline    = timeline
+        self.generations = list (generations)
+        self._imp        = {}
     # end def __init__
-
-    @property
-    def minmax (self) :
-        return min \
-            (max ([c.length for c in g] or [0]) for g in self.generations)
-    # end def minmax
-
-    def prepare_cut_mod_p (self, imp, size) :
-        period = self.period
-        shift  = 0
-        for p in imp.parents :
-            p.prepare_cut_around (imp.shifted (shift), size)
-            shift += period
-        self.to_cut = imp.parents
-        return self.to_cut
-    # end def prepare_cut_mod_p
 
     def intersections_mod_p (self, min_size = None) :
         if min_size is None :
             min_size = self.min_size
-        p          = self.period
-        normalized = [[c.modulo (p) for c in g] for g in self.generations]
-        return list \
-            ( TFL.Interval_Set.intersection_iter
-                (* normalized, ** dict (min_size = min_size))
-            )
+        try :
+            result     = self._imp [min_size]
+        except KeyError :
+            p          = self.period
+            TSMP       = TL_Section_Mod_P
+            normalized = [[TSMP.new (s, p) for s in g] for g in self.generations]
+            result     = self._imp [min_size] = list \
+                ( TFL.Interval_Set.intersection_iter
+                    (* normalized, ** dict (min_size = min_size))
+                )
+        return result
     # end def intersections_mod_p
+
+    @property
+    def minmax (self) :
+        result = self._minmax
+        if result is None :
+            result = self._minmax = min \
+                (max ([c.length for c in g] or [0]) for g in self.generations)
+        return result
+    # end def minmax
+
+    def prepare_cut_mod_p_l (self, imp, size) :
+        return self._prepare_cut_mod_p \
+            (imp, size, lambda p, * a : p.prepare_cut_around_l (* a))
+    # end def prepare_cut_mod_p_l
+
+    def prepare_cut_mod_p_u (self, imp, size) :
+        return self._prepare_cut_mod_p \
+            (imp, size, lambda p, * a : p.prepare_cut_around_u (* a))
+    # end def prepare_cut_mod_p_u
+
+    def _prepare_cut_mod_p (self, imp, size, preparer) :
+        period = self.period
+        shift  = 0
+        for p in imp.parents :
+            preparer (p, imp.shifted (shift), size)
+            shift += period
+        self.to_cut = imp.parents
+        return self.to_cut
+    # end def _prepare_cut_mod_p
+
+    def __nonzero__ (self) :
+        return self.minmax > 0
+    # end def __nonzero__
 
     def __iter__ (self) :
         return iter (self.generations)
     # end def __iter__
 
-# end class Timeline_Cut_P
+# end class TLS_Periodic
 
 class Timeline (TFL.Meta.Object) :
     """Timeline for scheduling.
@@ -282,7 +328,7 @@ class Timeline (TFL.Meta.Object) :
        >>> imp = tcp.intersections_mod_p ()
        >>> imp
        [(90, 100), (120, 150)]
-       >>> tcp.prepare_cut_mod_p (imp [0], 30)
+       >>> tcp.prepare_cut_mod_p_l (imp [0], 30)
        [(50, 100), (330, 360), (590, 650), (800, 900)]
        >>> tl.cut_p (tcp)
        >>> tl.free
@@ -292,7 +338,17 @@ class Timeline (TFL.Meta.Object) :
        >>> tl.snip (S (100, 120), S (300, 330), S (360, 370), S (550, 590))
        >>> tcp = tl.intersection_p (S (50, 150), 250)
        >>> imp = tcp.intersections_mod_p ()
-       >>> tcp.prepare_cut_mod_p (imp [1], 30)
+       >>> tcp.prepare_cut_mod_p_u (imp [0], 25)
+       [(50, 100), (330, 360), (590, 650), (800, 900)]
+       >>> tl.cut_p (tcp)
+       >>> tl.free
+       [(0, 75), (120, 300), (330, 335), (370, 550), (615, 840), (865, 1000)]
+
+       >>> tl = Timeline (0, 1000)
+       >>> tl.snip (S (100, 120), S (300, 330), S (360, 370), S (550, 590))
+       >>> tcp = tl.intersection_p (S (50, 150), 250)
+       >>> imp = tcp.intersections_mod_p ()
+       >>> tcp.prepare_cut_mod_p_l (imp [1], 30)
        [(120, 150), (370, 400), (590, 650), (800, 900)]
        >>> tl.cut_p (tcp)
        >>> tl.free
@@ -313,8 +369,10 @@ class Timeline (TFL.Meta.Object) :
 
     epsilon    = 0.001
     length     = property (lambda s : sum ((f.length for f in s.free), 0))
-    Span       = TFL.Numeric_Interval
     _sid       = 0
+
+    Section    = TL_Section
+    Span       = TFL.Numeric_Interval
 
     def __init__ (self, lower, upper) :
         self.orig = self.Span (lower, upper)
@@ -323,7 +381,7 @@ class Timeline (TFL.Meta.Object) :
 
     def cut (self, * pieces) :
         """Cut `pieces` from `self.free`. Each element of `pieces` must be a
-           `Timeline_Cut` as returned from `intersection` to which
+           `TL_Section` as returned from `intersection` to which
            `prepare_cut_l` or `prepare_cut_u` was applied. Beware: don't
            interleave calls to `intersection` with multiple calls to `cut`.
         """
@@ -359,33 +417,41 @@ class Timeline (TFL.Meta.Object) :
 
     def intersection (self, span, min_size = 1) :
         if span.length == 0 :
-            min_size = 0
-        cuts, size   = [], 0
-        free         = self.free
-        lower, upper = span.lower, span.upper
-        h            = bisect (free, self.Span (lower, lower))
+            min_size    = 0
+        sections, total = [], 0
+        free            = self.free
+        Section         = self.Section
+        lower, upper    = span.lower, span.upper
+        h               = bisect (free, self.Span (lower, lower))
         if h and free [h - 1].contains_point (lower) :
             h -= 1
         for i, f in enumerate_slice (free, h) :
             if f.lower > upper :
                 break
-            cut = f.intersection (span)
-            if cut.length >= min_size :
-                cuts.append (Timeline_Cut (cut.lower, cut.upper, i, self._sid))
-                size += cut.length
-        return cuts, size
+            s = f.intersection (span)
+            l = s.length
+            if l >= min_size :
+                sections.append (Section.new (s, i, self))
+                total += l
+                if l == min_size == 0 :
+                    break
+        return sections, total
     # end def intersection
 
     def intersection_p (self, span, period, min_size = 1) :
-        assert span.length < period, (span, period)
-        result = []
-        upper  = self.free [-1].upper
-        while span.lower < upper :
-            cuts, size = self.intersection (span, min_size)
-            result.append (cuts)
-            span = span.shifted (period)
-        return Timeline_Cut_P (period, min_size, self._sid, result)
+        return self.multi_intersection \
+            (self._periodic_span_iter (span, period), period, min_size)
     # end def intersection_p
+
+    def multi_intersection (self, spans, period, min_size) :
+        """`spans` should be periodic with `period` but may have some
+           jitter.
+        """
+        return TLS_Periodic \
+            ( period, min_size, self
+            , (self.intersection (span, min_size) [0] for span in spans)
+            )
+    # end def multi_intersection
 
     def reset (self) :
         self.free = [self.orig.copy ()]
@@ -401,6 +467,14 @@ class Timeline (TFL.Meta.Object) :
                 free.prepare_cut_l (size)
                 self.cut           (free)
     # end def snip
+
+    def _periodic_span_iter (self, span, period) :
+        assert span.length < period, (span, period)
+        upper = self.orig.upper
+        while span.lower < upper :
+            yield span
+            span = span.shifted (period)
+    # end def _periodic_span_iter
 
     def __str__ (self) :
         return "Timeline free: " + str (self.free)

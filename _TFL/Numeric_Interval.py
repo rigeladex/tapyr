@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #     4-Mar-2004 (CED) `difference` fixed
 #     8-Mar-2004 (CED) Doctest fixed according to last change
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
+#     1-Mar-2007 (CT)  Adapted to signature change of `DL_List`
 #    29-Mar-2007 (CED) `converted` added
 #    ««revision-date»»···
 #--
@@ -192,8 +193,7 @@ class Numeric_Interval (TFL.Meta.Object) :
     def union (cls, * args) :
         """Returns a list of intervals with the union of `args`"""
         result = []
-        p      = TFL.DL_List \
-            (* TFL.dusort (args, lambda i : (i.lower, i.upper))).head
+        p = TFL.DL_List (TFL.dusort (args, lambda i : (i.lower, i.upper))).head
         while p :
             pv = p.value
             q  = p.next

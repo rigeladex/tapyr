@@ -50,6 +50,7 @@
 #    30-Mar-2007 (CED) Additional doctest added
 #    30-Mar-2007 (CT)  `_difference_iter` fixed
 #    31-Mar-2007 (CT)  `_difference_iter` fixed again
+#     2-Apr-2007 (CT)  Another doctest for `difference` added
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,18 @@ class Interval_Set (TFL.Meta.Object) :
        IS ((11, 20), (60, 75))
        >>> c.union (d)
        IS ((0, 5), (10, 20), (40, 45), (48, 75))
+       >>> a = IS (N (0, 390), N (585, 5000))
+       >>> b = IS (N (0, 600))
+       >>> a.difference (b)
+       IS ((600, 5000))
+       >>> a = IS (N (0, 390), N (585, 5000), N (6000, 6200), N (7000, 7500))
+       >>> b = IS (N (0, 600), N (5900, 6100), N (6250, 7100))
+       >>> a.difference (b)
+       IS ((600, 5000), (6100, 6200), (7100, 7500))
+       >>> t = IS (N (0, 1000))
+       >>> u = IS (N (10, 20), N (25, 25), N (42, 400), N (900, 990))
+       >>> t.difference (u)
+       IS ((0, 10), (20, 42), (400, 900), (990, 1000))
 
        >>> list (IS.intersection_iter ((N (3, 6), N (12, 13)), min_size = 1))
        [(3, 6), (12, 13)]
@@ -154,14 +167,6 @@ class Interval_Set (TFL.Meta.Object) :
        [(125, 140)]
        >>> list (IS.k_of_n_intersection_iter (5, 15, (ivs1, ivs2, ivs3, ivs4)))
        []
-       >>> a = IS (N (0, 390), N (585, 5000))
-       >>> b = IS (N (0, 600))
-       >>> a.difference (b)
-       IS ((600, 5000))
-       >>> a = IS (N (0, 390), N (585, 5000), N (6000, 6200), N (7000, 7500))
-       >>> b = IS (N (0, 600), N (5900, 6100), N (6250, 7100))
-       >>> a.difference (b)
-       IS ((600, 5000), (6100, 6200), (7100, 7500))
     """
 
     element_class = property (lambda self : self.intervals [0].__class__)

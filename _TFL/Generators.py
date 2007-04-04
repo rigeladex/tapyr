@@ -47,6 +47,7 @@
 #     1-Jul-2005 (CT)  `pairwise_circle` defined here
 #     8-Dec-2006 (CT)  `window_wise` added
 #    16-Feb-2007 (CT)  `enumerate_slice` added
+#     1-Mar-2007 (CT)  Adapted to signature change of `DL_Ring`
 #    ««revision-date»»···
 #--
 
@@ -325,7 +326,7 @@ def window_wise (seq, size) :
     s = iter  (seq)
     h = tuple ((s.next () for i in range (size)))
     if len (h) == size :
-        w = DL_Ring (* h)
+        w = DL_Ring (h)
         yield tuple (w.values ())
         while True:
             w.pop_front ()
