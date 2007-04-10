@@ -51,6 +51,8 @@
 #    30-Mar-2007 (CT)  `_difference_iter` fixed
 #    31-Mar-2007 (CT)  `_difference_iter` fixed again
 #     2-Apr-2007 (CT)  Another doctest for `difference` added
+#     6-Apr-2007 (CT)  Use `key` argument of `min` instead of
+#                      tuple/generator-expression obfuscation
 #    ««revision-date»»···
 #--
 
@@ -217,8 +219,8 @@ class Interval_Set (TFL.Meta.Object) :
                     break
             else :
                 yield r
-            _, small = min \
-                (((v.value.upper, - v.value.lower), v) for v in iv_iters)
+            small = min \
+                (iv_iters, key = lambda v : (v.value.upper, - v.value.lower))
             small.advance ()
     # end def intersection_iter
 
@@ -260,7 +262,7 @@ class Interval_Set (TFL.Meta.Object) :
                             misses += 1
                             if misses > slack :
                                 break
-                _, small = min    ((sort_key (ivi), ivi) for ivi in iv_iters)
+                small = min       (iv_iters, key = sort_key)
                 small.advance     ()
                 iv_iters = dusort ((ivi for ivi in iv_iters if ivi), sort_key)
                 slack    = len    (iv_iters) - k

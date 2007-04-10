@@ -70,6 +70,9 @@
 #                      `if l == min_size == 0`
 #    17-Mar-2007 (CT)  `multi_intersection` and `_periodic_span_iter`
 #                      factored from `intersection_p`
+#     5-Apr-2007 (CT)  Assertion in `_periodic_span_iter` corrected
+#     6-Apr-2007 (CT)  `TLS_Periodic.__init__` and `intersection_p` guarded
+#                      by assertions
 #    ««revision-date»»···
 #--
 
@@ -171,6 +174,7 @@ class TLS_Periodic (TFL.Meta.Object) :
         self.timeline    = timeline
         self.generations = list (generations)
         self._imp        = {}
+        assert self.generations
     # end def __init__
 
     def intersections_mod_p (self, min_size = None) :
@@ -439,8 +443,9 @@ class Timeline (TFL.Meta.Object) :
     # end def intersection
 
     def intersection_p (self, span, period, min_size = 1) :
-        return self.multi_intersection \
-            (self._periodic_span_iter (span, period), period, min_size)
+        spans = list (self._periodic_span_iter (span, period))
+        assert spans, "span = %s, period = %s" % (span, period)
+        return self.multi_intersection (spans, period, min_size)
     # end def intersection_p
 
     def multi_intersection (self, spans, period, min_size) :
@@ -469,7 +474,7 @@ class Timeline (TFL.Meta.Object) :
     # end def snip
 
     def _periodic_span_iter (self, span, period) :
-        assert span.length < period, (span, period)
+        assert span.length <= period, (span, period)
         upper = self.orig.upper
         while span.lower < upper :
             yield span
