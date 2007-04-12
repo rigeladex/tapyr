@@ -53,6 +53,10 @@
 #     2-Apr-2007 (CT)  Another doctest for `difference` added
 #     6-Apr-2007 (CT)  Use `key` argument of `min` instead of
 #                      tuple/generator-expression obfuscation
+#    11-Apr-2007 (CT)  `_new` added and used
+#    11-Apr-2007 (CT)  `union` simplified by using `itertools.chain`
+#    11-Apr-2007 (CT)  `_difference_iter` changed to skip empty intervals of
+#                      `other`
 #    ««revision-date»»···
 #--
 
@@ -180,6 +184,15 @@ class Interval_Set (TFL.Meta.Object) :
             self.intervals = []
     # end def __init__
 
+    @classmethod
+    def _new (cls, intervals) :
+        ### Beware: this assumes that `intervals` is properly normalized
+        ### (i.e., sorted and merged as done by `Numeric_Interval.union`)
+        result = cls ()
+        result.intervals = list (intervals)
+        return result
+    # end def _new
+
     def contains_interval (self, ival) :
         return bool (any_true (iv.contains (ival) for iv in self.intervals))
     # end def contains_interval
@@ -189,19 +202,19 @@ class Interval_Set (TFL.Meta.Object) :
     # end def contains_point
 
     def copy (self) :
-        return self.__class__ (* (i.copy () for i in self.intervals))
+        return self._new (i.copy () for i in self.intervals)
     # end def copy
 
     def difference (self, other) :
-        return self.__class__ (* self._difference_iter (other))
+        return self._new (self._difference_iter (other))
     # end def difference
 
     def intersection (self, other) :
-        return self.__class__ (* self._intersection_iter (other))
+        return self._new (self._intersection_iter (other))
     # end def intersection
 
     def shifted (self, delta) :
-        return self.__class__ (* (i.shifted (delta) for i in self.intervals))
+        return self._new (i.shifted (delta) for i in self.intervals)
     # end def shifted
 
     @classmethod
@@ -292,16 +305,15 @@ class Interval_Set (TFL.Meta.Object) :
     # end def overlaps
 
     def union (self, * other) :
-        ivals = list (self)
-        for o in other :
-            ivals.extend (o)
-        return self.__class__ (* ivals)
+        return self.__class__ (* itertools.chain (self, * other))
     # end def union
 
     def _difference_iter (self, other) :
         lit = iter     (self)
         l   = lit.next ()
         for r in other :
+            if not r :
+                continue
             while l.upper <= r.lower :
                 yield l
                 l = lit.next ()

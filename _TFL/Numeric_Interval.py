@@ -35,6 +35,8 @@
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #     1-Mar-2007 (CT)  Adapted to signature change of `DL_List`
 #    29-Mar-2007 (CED) `converted` added
+#    11-Apr-2007 (CT)  `__iter__` added and used (in `converted`)
+#    11-Apr-2007 (CT)  Doctest for `converted` added (Bad, Chris, bad)
 #    ««revision-date»»···
 #--
 
@@ -85,6 +87,8 @@ class Numeric_Interval (TFL.Meta.Object) :
        ((0, 100), (100, 200), (20, 50), (210, 250), (240, 260), (280, 300))
        >>> Numeric_Interval.union (i, j, k, l, m, n)
        [(0, 200), (210, 260), (280, 300)]
+       >>> j.converted (lambda v : v // 3), l.converted (lambda v : v // 2)
+       ((33, 66), (105, 125))
     """
 
     format = "(%s, %s)"
@@ -113,8 +117,7 @@ class Numeric_Interval (TFL.Meta.Object) :
     # end def contains_point
 
     def converted (self, conversion_fct) :
-        return self.__class__ \
-            (conversion_fct (self.lower), conversion_fct (self.upper))
+        return self.__class__ (* (conversion_fct (i) for i in self))
     # end def converted
 
     def copy (self) :
@@ -178,6 +181,10 @@ class Numeric_Interval (TFL.Meta.Object) :
         return (self.lower, self.upper) [key]
     # end def __getitem__
 
+    def __iter__ (self) :
+        return iter ((self.lower, self.upper))
+    # end def __iter__
+
     def __nonzero__ (self) :
         return self.length > 0
     # end def __nonzero__
@@ -190,6 +197,7 @@ class Numeric_Interval (TFL.Meta.Object) :
         setattr (self, ("lower", "upper") [key], value)
     # end def __setitem__
 
+    @classmethod
     def union (cls, * args) :
         """Returns a list of intervals with the union of `args`"""
         result = []
@@ -204,7 +212,7 @@ class Numeric_Interval (TFL.Meta.Object) :
             result.append (pv)
             p = q
         return result
-    union = classmethod (union)
+    # end def union
 
 # end class Numeric_Interval
 

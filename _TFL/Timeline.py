@@ -73,6 +73,8 @@
 #     5-Apr-2007 (CT)  Assertion in `_periodic_span_iter` corrected
 #     6-Apr-2007 (CT)  `TLS_Periodic.__init__` and `intersection_p` guarded
 #                      by assertions
+#    10-Apr-2007 (CT)  Increment `self._sid` instead of `self.__class__._sid`
+#    11-Apr-2007 (CT)  s/imp/tsmp/
 #    ««revision-date»»···
 #--
 
@@ -97,8 +99,7 @@ class TL_Section (TFL.Numeric_Interval) :
         result          = cls (span.lower, span.upper)
         result.index    = index
         result.timeline = timeline
-        if timeline :
-            result._sid = timeline._sid
+        result._sid     = timeline._sid
         return result
     # end def new
 
@@ -198,27 +199,27 @@ class TLS_Periodic (TFL.Meta.Object) :
         result = self._minmax
         if result is None :
             result = self._minmax = min \
-                (max ([c.length for c in g] or [0]) for g in self.generations)
+                (max ([s.length for s in g] or [0]) for g in self.generations)
         return result
     # end def minmax
 
-    def prepare_cut_mod_p_l (self, imp, size) :
+    def prepare_cut_mod_p_l (self, tsmp, size) :
         return self._prepare_cut_mod_p \
-            (imp, size, lambda p, * a : p.prepare_cut_around_l (* a))
+            (tsmp, size, lambda p, * a : p.prepare_cut_around_l (* a))
     # end def prepare_cut_mod_p_l
 
-    def prepare_cut_mod_p_u (self, imp, size) :
+    def prepare_cut_mod_p_u (self, tsmp, size) :
         return self._prepare_cut_mod_p \
-            (imp, size, lambda p, * a : p.prepare_cut_around_u (* a))
+            (tsmp, size, lambda p, * a : p.prepare_cut_around_u (* a))
     # end def prepare_cut_mod_p_u
 
-    def _prepare_cut_mod_p (self, imp, size, preparer) :
+    def _prepare_cut_mod_p (self, tsmp, size, preparer) :
         period = self.period
         shift  = 0
-        for p in imp.parents :
-            preparer (p, imp.shifted (shift), size)
+        for p in tsmp.parents :
+            preparer (p, tsmp.shifted (shift), size)
             shift += period
-        self.to_cut = imp.parents
+        self.to_cut = tsmp.parents
         return self.to_cut
     # end def _prepare_cut_mod_p
 
@@ -329,10 +330,10 @@ class Timeline (TFL.Meta.Object) :
        30
        >>> tcp.generations
        [[(50, 100), (120, 150)], [(330, 360), (370, 400)], [(590, 650)], [(800, 900)]]
-       >>> imp = tcp.intersections_mod_p ()
-       >>> imp
+       >>> tsmps = tcp.intersections_mod_p ()
+       >>> tsmps
        [(90, 100), (120, 150)]
-       >>> tcp.prepare_cut_mod_p_l (imp [0], 30)
+       >>> tcp.prepare_cut_mod_p_l (tsmps [0], 30)
        [(50, 100), (330, 360), (590, 650), (800, 900)]
        >>> tl.cut_p (tcp)
        >>> tl.free
@@ -341,8 +342,8 @@ class Timeline (TFL.Meta.Object) :
        >>> tl = Timeline (0, 1000)
        >>> tl.snip (S (100, 120), S (300, 330), S (360, 370), S (550, 590))
        >>> tcp = tl.intersection_p (S (50, 150), 250)
-       >>> imp = tcp.intersections_mod_p ()
-       >>> tcp.prepare_cut_mod_p_u (imp [0], 25)
+       >>> tsmps = tcp.intersections_mod_p ()
+       >>> tcp.prepare_cut_mod_p_u (tsmps [0], 25)
        [(50, 100), (330, 360), (590, 650), (800, 900)]
        >>> tl.cut_p (tcp)
        >>> tl.free
@@ -351,8 +352,8 @@ class Timeline (TFL.Meta.Object) :
        >>> tl = Timeline (0, 1000)
        >>> tl.snip (S (100, 120), S (300, 330), S (360, 370), S (550, 590))
        >>> tcp = tl.intersection_p (S (50, 150), 250)
-       >>> imp = tcp.intersections_mod_p ()
-       >>> tcp.prepare_cut_mod_p_l (imp [1], 30)
+       >>> tsmps = tcp.intersections_mod_p ()
+       >>> tcp.prepare_cut_mod_p_l (tsmps [1], 30)
        [(120, 150), (370, 400), (590, 650), (800, 900)]
        >>> tl.cut_p (tcp)
        >>> tl.free
@@ -380,6 +381,7 @@ class Timeline (TFL.Meta.Object) :
 
     def __init__ (self, lower, upper) :
         self.orig = self.Span (lower, upper)
+        self._sid = 0
         self.reset ()
     # end def __init__
 
@@ -412,7 +414,7 @@ class Timeline (TFL.Meta.Object) :
                     if not f :
                         del self.free [p.index]
         finally :
-            self.__class__._sid += 1
+            self._sid += 1
     # end def cut
 
     def cut_p (self, tcp) :
