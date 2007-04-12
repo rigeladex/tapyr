@@ -38,6 +38,7 @@
 #     9-Nov-2006 (MZO) [21988] write each block into file immediately
 #    20-Nov-2006 (MZO) [21696] `TFL.CDG.Array` used
 #    14-Mar-2007 (PGO) `__call__` of `*_Creator` take only CDG Structs now
+#    12-Apr-2007 (MZO) `_debug_as_c_code` fortified
 #    ««revision-date»»···
 #--
 #
@@ -351,16 +352,23 @@ class Bin_Block_Creator (TFL.Meta.Object) :
 
     def _debug_as_c_code (self, meta_struct) :
         C = TFL.SDG.C
-        filename = \
-            ( "debug_%s_%s.c"
-            % (getattr (self.scope.root, "name"), self.__class__.__name__)
-            )
         if self.scope :
+            filename = \
+                ( "debug_%s_%s.c"
+                % (getattr (self.scope.root, "name"), self.__class__.__name__)
+                )
             filename = sos.path.join \
                 ( self.scope.db_name.directory
                 , filename
                 )
         else :
+            cnt     = getattr (self, "debug_file_counter", -1)
+            cnt    += 1
+            setattr (self, "debug_file_counter", cnt)
+            filename = \
+                ( "debug_%s_%s_%05x.c"
+                % (self.__class__.__name__, str (meta_struct.__name__), cnt)
+                )
             filename = sos.path.join (sos.getcwd (), filename)
         filename = sos.path.normpath (filename)
         module   = C.Module ()
