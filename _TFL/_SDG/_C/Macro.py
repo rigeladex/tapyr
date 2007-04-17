@@ -45,6 +45,8 @@
 #     9-Aug-2005 (CT)  Call to `tex_quoted` added
 #    30-Oct-2006 (CED) `Preprocessor_Error` added
 #     9-Mar-2007 (CED) Accepting integer as value of `Define_Constant`
+#    17-Apr-2007 (CED) `Define_Constant` improved to print parantheses around
+#                      `value`
 #    ««revision-date»»···
 #--
 
@@ -174,7 +176,7 @@ class Define_Constant (Define) :
     front_args           = ("name", "value")
 
     h_format = c_format  = """
-        #%(m_head)s%(name)s %(::.value:)s
+        #%(m_head)s%(name)s %(:head=(¡tail=):.value:)s
         >%(::*description:)s
     """
 

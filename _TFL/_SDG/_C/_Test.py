@@ -36,6 +36,7 @@
 #    24-May-2005 (CED) Test of `Enum` added
 #    20-Mar-2006 (MZO) Funciton requires argument
 #    30-Oct-2006 (CED) Tests for `Define_Constant`, `Preprocessor_Error` added
+#    17-Apr-2007 (CED) Test for `Define_Constant` adapted
 #    ««revision-date»»···
 #--
 
@@ -306,7 +307,7 @@ line3 long
 
 >>> dc = C.Define_Constant ("foo", "42")
 >>> print NL.join ([l.rstrip () for l in dc.as_c_code ()])
-#define foo 42
+#define foo (42)
 
 >>> e = C.Preprocessor_Error ("this is fishy")
 >>> print NL.join ([l.rstrip () for l in e.as_c_code ()])
