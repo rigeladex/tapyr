@@ -75,6 +75,10 @@
 #                      by assertions
 #    10-Apr-2007 (CT)  Increment `self._sid` instead of `self.__class__._sid`
 #    11-Apr-2007 (CT)  s/imp/tsmp/
+#    17-Apr-2007 (CT)  `TL_Section_Mod_P.new` changed to use `%` operator of
+#                      `Numeric_Interval` instead of home-grown (and incorrect)
+#                      code
+#    17-Apr-2007 (CT)  `TLS_Periodic.prepare_cut_somewhere` added
 #    ««revision-date»»···
 #--
 
@@ -157,7 +161,7 @@ class TL_Section_Mod_P (TL_Section) :
 
     @classmethod
     def new (cls, parent, period) :
-        result         = cls (parent.lower % period, parent.upper % period)
+        result         = cls (* (parent % period))
         result.parents = [parent]
         return result
     # end def new
@@ -212,6 +216,18 @@ class TLS_Periodic (TFL.Meta.Object) :
         return self._prepare_cut_mod_p \
             (tsmp, size, lambda p, * a : p.prepare_cut_around_u (* a))
     # end def prepare_cut_mod_p_u
+
+    def prepare_cut_somewhere (self, size) :
+        result = self.to_cut = []
+        for g in self.generations :
+            p = max (g)
+            if p.parents :
+                assert len (p.parents) == 1
+                p = p.parents
+            p.prepare_cut_around_l (p, size)
+            result.append (p)
+        return result
+    # end def prepare_cut_somewhere
 
     def _prepare_cut_mod_p (self, tsmp, size, preparer) :
         period = self.period

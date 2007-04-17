@@ -37,6 +37,7 @@
 #    29-Mar-2007 (CED) `converted` added
 #    11-Apr-2007 (CT)  `__iter__` added and used (in `converted`)
 #    11-Apr-2007 (CT)  Doctest for `converted` added (Bad, Chris, bad)
+#    17-Apr-2007 (CT)  `__mod__` added
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,9 @@ class Numeric_Interval (TFL.Meta.Object) :
        [(0, 200), (210, 260), (280, 300)]
        >>> j.converted (lambda v : v // 3), l.converted (lambda v : v // 2)
        ((33, 66), (105, 125))
+
+       >>> j % 50, k % 10, l % 50, m % 50, n % 250
+       ((0, 50), (0, 10), (10, 50), (40, 10), (30, 50))
     """
 
     format = "(%s, %s)"
@@ -184,6 +188,10 @@ class Numeric_Interval (TFL.Meta.Object) :
     def __iter__ (self) :
         return iter ((self.lower, self.upper))
     # end def __iter__
+
+    def __mod__ (self, rhs) :
+        return self.__class__ (self.lower % rhs, (self.upper % rhs) or rhs)
+    # end def __mod__
 
     def __nonzero__ (self) :
         return self.length > 0
