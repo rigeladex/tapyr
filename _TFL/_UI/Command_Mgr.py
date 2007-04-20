@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -173,6 +173,7 @@
 #     2-Sep-2005 (CT)  `assert` added `add_command` to force string arguments
 #                      for `accelerator`
 #    21-Jan-2006 (MG)  Imports fixed
+#    20-Apr-2007 (PGO) Checking `name` to not contain underscores
 #    ««revision-date»»···
 #--
 
@@ -217,6 +218,12 @@ class _Command_ (TFL.Meta.Object) :
     indent_pat  = re.compile (r"\n( +)")
     par_pat     = re.compile (r"\n *\n")
     nam_pat     = re.compile (r"[Tt]his command")
+
+    def __init__ (self, name, ** kw) :
+        assert "_" not in name, name
+        self.name = name
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     def disable (self) :
         for i in self.interfacers.itervalues () :
@@ -299,7 +306,7 @@ class Command (_Command_) :
     accelerator   = None
 
     def __init__ (self, name, command, precondition = None, pv_callback = None, _doc = None, batchable = 1, Change_Action = None) :
-        self.name          = name
+        self.__super.__init__ (name)
         self.command       = command
         self.precondition  = precondition
         self.pv_callback   = pv_callback
@@ -463,7 +470,7 @@ class Dyn_Command (_Command_) :
     precondition = None
 
     def __init__ (self, name, command_gen, _doc = None) :
-        self.name        = name
+        self.__super.__init__ (name)
         self.command_gen = command_gen
         self._raw_doc    = _doc or command_gen.__doc__ or ""
     # end def __init__
@@ -599,8 +606,8 @@ class _Command_Group_ (_Command_, TFL.UI.Mixin) :
     nam_pat    = re.compile (r"[Tt]his (command )?group")
 
     def __init__ (self, AC, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
-        self.__super.__init__ (AC = AC)
-        self.name           = self.qname = name
+        self.__super.__init__ (name, AC = AC)
+        self.qname          = name
         self.interfacers    = interfacers
         self.parent         = parent
         self.batchable      = batchable
