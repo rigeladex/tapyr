@@ -46,6 +46,8 @@
 #    12-May-2006 (CED) 'DL_Item_Sortable` added and used
 #     1-Mar-2007 (CT)  Constructor signature changed to be compatible with
 #                      `tuple` and `list` (`*` removed)
+#    20-Apr-2007 (CT)  Argument `items` of `__init__` made optional (doh!)
+#                      and doctests for empty instantiations added
 #    ««revision-date»»···
 #--
 
@@ -141,9 +143,10 @@ class _DL_Chain_ (TFL.Meta.Object) :
 
     DL_Item = DL_Item
 
-    def __init__ (self, items) :
+    def __init__ (self, items = ()) :
         self.clear  ()
-        self.append (* items)
+        if items :
+            self.append (* items)
     # end def __init__
 
     def append (self, * items) :
@@ -255,6 +258,9 @@ class _DL_Counted_ (TFL.Meta.Object) :
 class DL_List (_DL_Chain_) :
     """Doubly linked list.
 
+       >>> dl = DL_List ()
+       >>> list (dl)
+       []
        >>> dl = DL_List ((0, 1, 2, 3, 4))
        >>> list (dl)
        [0, 1, 2, 3, 4]
@@ -301,7 +307,7 @@ class DL_List (_DL_Chain_) :
     head    = property (lambda s : s._H.next)
     tail    = property (lambda s : s._T.prev)
 
-    def __init__ (self, items) :
+    def __init__ (self, items = ()) :
         self._H = self.DL_Item ()
         self._T = self.DL_Item ()
         self.__super.__init__  (items)
@@ -327,6 +333,9 @@ class DL_List (_DL_Chain_) :
 class DL_List_Counted (_DL_Counted_, DL_List) :
     """DL_List counting its elements
 
+       >>> dlc = DL_List_Counted ()
+       >>> dlc.count
+       0
        >>> dlc = DL_List_Counted (range (5))
        >>> dlc.count
        5
@@ -336,6 +345,9 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
        >>> dlc.append (42)
        >>> len (dlc)
        5
+       >>> dlc.clear ()
+       >>> dlc.count
+       0
     """
 
 # end class DL_List_Counted
@@ -345,6 +357,11 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
 class DL_Ring (_DL_Chain_) :
     """Doubly linked ring.
 
+       >>> dr = DL_Ring ()
+       >>> list (dr)
+       []
+       >>> print dr.head, dr.tail
+       None None
        >>> dr = DL_Ring ((0, 1, 2, 3, 4))
        >>> list (dr)
        [0, 1, 2, 3, 4]
@@ -465,6 +482,9 @@ class DL_Ring (_DL_Chain_) :
 class DL_Ring_Sorted (DL_Ring) :
     """DL_Ring sorting its elements
 
+       >>> drs = DL_Ring_Sorted ()
+       >>> list (drs)
+       []
        >>> drs = DL_Ring_Sorted ((2, 1, 3))
        >>> list (drs)
        [1, 2, 3]
@@ -481,10 +501,11 @@ class DL_Ring_Sorted (DL_Ring) :
 
     DL_Item = DL_Item_Sortable
 
-    def __init__ (self, items, key = TFL.identity) :
+    def __init__ (self, items = (), key = TFL.identity) :
         self.key = key
-        self.clear  ()
-        self.insert (* items)
+        self.clear ()
+        if items :
+            self.insert (* items)
     # end def __init__
 
     def append (self, * items) :
