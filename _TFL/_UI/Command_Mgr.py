@@ -220,7 +220,7 @@ class _Command_ (TFL.Meta.Object) :
     nam_pat     = re.compile (r"[Tt]his command")
 
     def __init__ (self, name, ** kw) :
-        assert "_" not in name, name
+        #assert "_" not in name, name
         self.name = name
         self.__super.__init__ (** kw)
     # end def __init__
