@@ -29,6 +29,7 @@
 #    12-May-2006 (CED) `reset_state` added
 #    19-Mar-2007 (DAL) changed offset_field default from -1 to 0xFFFFFFFF
 #                      (RUP 23577)
+#    24-Apr-2007 (DAL) `as_tex` addded
 #    ««revision-date»»···
 #--
 
@@ -254,6 +255,48 @@ class M_Struct (TFL.Meta.M_Class) :
         else :
             filename.write      ("\n".join (dot))
     # end def as_dot
+
+    @classmethod
+    def as_tex (cls, filename):
+        """create TeX file from Meta_Struct"""
+        tex       = \
+            [ r"% \def\BeginTable#1#2"
+            , r"% {"
+            , r"%   \verb|#1|: \verb|#2|"
+            , r"%"
+            , r"%     \begin{longtable}{|l|l|c|p{2cm}|}"
+            , r"%     \hline"
+            , r"%     Attribute & Type & Valid Value Range & Requirements\\"
+            , r"%     \hline"
+            , r"% }"
+            , r"% \def\EndTable{"
+            , r"%   \end{longtable}"
+            , r"% }"
+            , r"% \def\Entry#1#2#3#4"
+            , r"% {"
+            , r"%   \verb|#1| & \verb|#2| & #3 & \verb|#4|\\"
+            , r"%   \hline"
+            , r"% }"
+            ]
+        begin_fmt = "\\BeginTable{%s}{}"
+        entry_fmt = "  \\Entry{%s}{%s}{}{}"
+        end_fmt   = "\\EndTable"
+        for c in cls.needs_struct:
+            tex.append (begin_fmt % c.type_name)
+            for f in c.struct_fields:
+                if isinstance (f, TFL.CDG.Reference_Struct_Field):
+                    t = "%s*" % f.struct.type_name
+                else:
+                    t = f.type_name
+                tex.append (entry_fmt % (f.name, t))
+            tex.append (end_fmt)
+        if isinstance (filename, str) :
+            f = open  (filename, "w")
+            f.write   ("\n".join (tex))
+            f.close   ()
+        else :
+            filename.write ("\n".join (tex))
+    # end def as_tex
 
 # end class M_Struct
 
