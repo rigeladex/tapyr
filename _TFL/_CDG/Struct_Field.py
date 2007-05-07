@@ -46,6 +46,7 @@
 #    17-Jul-2006 (MZO) [22038] `val_range` corrected
 #    13-Mar-2007 (MZO) [23693] check char fields
 #    14-Mar-2007 (PGO) `check_value` changed to raise Value_Out_Of_Range
+#     7-May-2007 (MZO) `check_value` fixed, hex was not checked correctly
 #    ««revision-date»»···
 #--
 
@@ -188,10 +189,16 @@ class Struct_Field (TFL.Meta.Object):
         format = self.user_code or self.fmt_code.get (self.type, None)
         if format and not format in ("s", "P") : # char
             size = struct.calcsize (format)
-        try :
-            value = float (value)
-        except (ValueError, TypeError) :
-            value = None
+        if format == "f" :
+            try :
+                value = float (value)
+            except (ValueError, TypeError) :
+                value = None
+        else :
+            try :
+                value = long (value, 0)
+            except (ValueError, TypeError) :
+                value = None
         if size > 0 and value is not None :
             val_range = math.pow (2, (size * 8)) - 1
             if format in  ("I", "L", "Q", "H", "B", "c") :        # unsigned

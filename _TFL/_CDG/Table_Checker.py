@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Feb-2007 (MZO) Creation
 #    28-Mar-2007 (MZO) Creation .
+#     8-May-2007 (MZO) Creation ..
 #    ««revision-date»»···
 #--
 
@@ -151,7 +152,29 @@ class M_Check_Rule (TFL.Meta.M_Class) :
 
 # end class M_Check_Rule
 
-class Check_Rule (TFL.Meta.Object) :
+class Check_Reference_Mixin (TFL.Meta.Object) :
+
+    def _ref_to_index (self, text) :
+        if isinstance (text, str) :  # c code
+            assert text.startswith ("&"), text  # & (xy_buffer [  0])
+            val_str = text [text.find ("[") + 1 : text.find ("]")]
+        else :
+            val_str = text         # bin
+        return int (val_str)
+    # end def _ref_to_index
+
+    def _ref_to_ms_cls (self, ms, ref_sf) :
+        cls = None
+        for cls in ms.classes.itervalues () :
+            ref = getattr (cls, "reference_field", None)
+            if ref == ref_sf :
+                break
+        return cls
+    # end def _ref_to_ms_cls
+
+# end class Check_Reference_Mixin
+
+class Check_Rule (Check_Reference_Mixin) :
 
     __metaclass__ =  M_Check_Rule
 
@@ -171,24 +194,6 @@ class Check_Rule (TFL.Meta.Object) :
     def _rule (self, fcl_ms, mhl_ms, app_data) :
         return True
     # end def _rule
-
-    def _ref_to_index (self, text) :
-        if isinstance (text, str) :  # c code
-            assert text.startswith ("&"), text  # & (xy_buffer [  0])
-            val_str = text [text.find ("[") + 1 : text.find ("]")]
-        else :
-            val_str = text         # bin
-        return int (val_str)
-    # end def _ref_to_index
-
-    def _ref_to_ms_cls (self, ms, ref_sf) :
-        cls = None
-        for cls in ms.classes.itervalues () :
-            ref = getattr (cls, "reference_field", None)
-            if ref == ref_sf :
-                break
-        return cls
-    # end def _ref_to_ms_cls
 
 # end class Check_Rule
 
