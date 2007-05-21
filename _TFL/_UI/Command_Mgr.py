@@ -174,6 +174,7 @@
 #                      for `accelerator`
 #    21-Jan-2006 (MG)  Imports fixed
 #    20-Apr-2007 (PGO) Checking `name` to not contain underscores
+#    21-May-2007 (PGO) Don't check dynamic commands for underscores
 #    ««revision-date»»···
 #--
 
@@ -220,7 +221,6 @@ class _Command_ (TFL.Meta.Object) :
     nam_pat     = re.compile (r"[Tt]his command")
 
     def __init__ (self, name, ** kw) :
-        #assert "_" not in name, name
         self.name = name
         self.__super.__init__ (** kw)
     # end def __init__
@@ -306,6 +306,7 @@ class Command (_Command_) :
     accelerator   = None
 
     def __init__ (self, name, command, precondition = None, pv_callback = None, _doc = None, batchable = 1, Change_Action = None) :
+        assert "_" not in name, name
         self.__super.__init__ (name)
         self.command       = command
         self.precondition  = precondition
@@ -687,6 +688,7 @@ class Command_Group (_Command_Group_) :
     """Manage a group of commands of an interactive application"""
 
     def __init__ (self, AC, name, interfacers, parent = None, batchable = False, desc = None, precondition = None) :
+        assert "_" not in name, name
         self.__super.__init__ \
             (AC, name, interfacers, parent, batchable, desc, precondition)
         self.cmd            = _Command_Getattr_ (self)

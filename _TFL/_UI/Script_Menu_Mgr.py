@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 #
 #++
@@ -10,23 +10,24 @@
 #    Manager for scripts to be run from the menu
 #
 # Revision Dates
-#    13-Dec-1999 (CT) Creation
-#    14-Dec-1999 (CT) `doc' added and passed to `add_cascade'
-#    14-Dec-1999 (CT) Capitalize category labels in menu
-#    30-Jun-2000 (CT) `local_dict' added (replaces `application.__dict__')
-#     8-Aug-2000 (CT) `Script' factored into separate module
-#    14-Aug-2000 (CT) Don't add the `Run ...' entry to the menu (and don't
-#                     clear it either)
-#     4-Sep-2002 (CT) `run_script` changed to pass `name` to
-#                     `ask_open_file_name`
-#    20-Mar-2003 (CT) `script_map` added to `Script_Category`
-#    29-Jan-2004 (CT) `echo` calls added to `run_script`
-#    29-Jan-2004 (CT) `echo` calls moved to `Script.__call__`
-#    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
-#     2-Feb-2005 (CT) Moved to `TFL.UI` and refactored
-#     7-Apr-2005 (CT) Don't add category to `cmd_grp` when it's emtpy
-#     9-Aug-2006 (CT) `Script_Category.__hash__` changed to return
-#                     `hash (self.name)` instead of `id (self)`
+#    13-Dec-1999 (CT)  Creation
+#    14-Dec-1999 (CT)  `doc' added and passed to `add_cascade'
+#    14-Dec-1999 (CT)  Capitalize category labels in menu
+#    30-Jun-2000 (CT)  `local_dict' added (replaces `application.__dict__')
+#     8-Aug-2000 (CT)  `Script' factored into separate module
+#    14-Aug-2000 (CT)  Don't add the `Run ...' entry to the menu (and don't
+#                      clear it either)
+#     4-Sep-2002 (CT)  `run_script` changed to pass `name` to
+#                      `ask_open_file_name`
+#    20-Mar-2003 (CT)  `script_map` added to `Script_Category`
+#    29-Jan-2004 (CT)  `echo` calls added to `run_script`
+#    29-Jan-2004 (CT)  `echo` calls moved to `Script.__call__`
+#    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
+#     2-Feb-2005 (CT)  Moved to `TFL.UI` and refactored
+#     7-Apr-2005 (CT)  Don't add category to `cmd_grp` when it's emtpy
+#     9-Aug-2006 (CT)  `Script_Category.__hash__` changed to return
+#                      `hash (self.name)` instead of `id (self)`
+#    21-May-2007 (PGO) Let `Script_Category` handle trailing slashes
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,8 @@ class Script_Category (TFL.UI.Mixin) :
     def __init__ (self, AC, cat_dir, glob_dict, local_dict, name = None, doc = "") :
         self.__super.__init__ (AC)
         if sos.path.isdir (cat_dir) :
-            self.name    = name or Filename (cat_dir).base
+            self.name    = name or Dirname (cat_dir).base
+            assert self.name, cat_dir
             self.dir     = cat_dir
             self.scripts = \
                 [   Script (s, glob_dict, local_dict)
