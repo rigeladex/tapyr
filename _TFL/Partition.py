@@ -26,28 +26,29 @@
 #    so that the overhead is minimized
 #
 # Revision Dates
-#    25-May-2007 (ABA)  Creation
+#    25-May-2007 (ABA) Creation
+#    25-May-2007 (ABA) adapt to Coding Guidelines
 #    ««revision-date»»···
 #--
 
 from _TFL import TFL
 
 def partition (blocks) :
-    if (len (blocks) == 0) :
-        return [0, 0]
+    if not blocks :
+        return (0, 0)
     blocks.sort ()
-    last = blocks [len (blocks) - 1]
+    last = blocks [-1]
     segment2_mb_size = last
     area_old = 1 * (last - blocks [0])
     segment1_mb_size = blocks [0]
     i = 1
-    while (i < len (blocks)) :
+    while i < len (blocks) :
         area = (i + 1) * (last - blocks [i])
-        if (area > area_old) :
+        if area > area_old :
             segment1_mb_size = blocks [i]
             area_old = area
         i += 1
-    return segment1_mb_size, segment2_mb_size
+    return (segment1_mb_size, segment2_mb_size)
 # end def _partition
 
 if __name__ != "__main__" :
