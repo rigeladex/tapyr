@@ -38,6 +38,7 @@
 #    11-Apr-2007 (CT)  `__iter__` added and used (in `converted`)
 #    11-Apr-2007 (CT)  Doctest for `converted` added (Bad, Chris, bad)
 #    17-Apr-2007 (CT)  `__mod__` added
+#    11-May-2007 (CT)  `set` added
 #    ««revision-date»»···
 #--
 
@@ -164,6 +165,11 @@ class Numeric_Interval (TFL.Meta.Object) :
     def overlaps (self, other) :
         return not (self.upper <= other.lower or self.lower >= other.upper)
     # end def overlaps
+
+    def set (self, lower, upper) :
+        self.lower = lower
+        self.upper = upper
+    # end def set
 
     def shift (self, delta) :
         self.lower += delta
