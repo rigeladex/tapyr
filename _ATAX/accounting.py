@@ -106,6 +106,13 @@
 #    11-Feb-2007 (CT)  `V_Account.finish` changed to consider `privat`
 #    11-Feb-2007 (CT)  `T_Account._add_einnahme` and `T_Account._add_ausgabe`
 #                      changed to check `entry.cat` for `u`
+#    13-Jun-2007 (CT)  Argument `entry` of `V_Account._add_umsatz` made
+#                      optional
+#    13-Jun-2007 (CT)  `V_Account.finish` changed to consider `privat` properly
+#    13-Jun-2007 (CT)  `T_Account.finish` changed to consider `privat` properly
+#    13-Jun-2007 (CT)  s/_fix_vorsteuer_privat/_fix_ust_privat/g
+#    13-Jun-2007 (CT)  Changed `T_Account._fix_ust_privat` to do the right
+#                      thing
 #    ««revision-date»»···
 #--
 
@@ -373,6 +380,8 @@ class Account :
 class V_Account (Account) :
     """VAT Account for a specific time interval (e.g., month, quarter, or year)"""
 
+    vat_private = 1.20 ### VAT rate applicable for private part
+
     def __init__ (self, name = "", vst_korrektur = 1.0) :
         Account.__init__ (self, name, vst_korrektur)
         self.ausgaben_b              = EU_Currency (0)
@@ -458,11 +467,11 @@ class V_Account (Account) :
                 self._add_umsatz    (netto, vat, vat_p, entry)
     # end def add
 
-    def _add_umsatz (self, netto, vat, vat_p, entry) :
+    def _add_umsatz (self, netto, vat, vat_p, entry = None) :
         self.ust                  += vat
         self.umsatz               += netto
         self.umsatz_dict [vat_p]  += netto
-        if entry.g_or_n == "f" :
+        if entry and entry.g_or_n == "f" :
             self.umsatz_frei      += netto
         elif vat_p != 1.0 :
             self.ust_dict [vat_p] += vat
@@ -475,14 +484,18 @@ class V_Account (Account) :
     def finish (self) :
         if not self._finished :
             self._finished = True
+            netto = EU_Currency (0)
             p_vat = EU_Currency (0)
-            for entry in self.entries :
+            vat_p = self.vat_private
+            for entry in self.vorsteuer_entries :
                 k = entry.konto
-                if k in self.privat and entry.vat_x and entry.netto :
-                    pa      = self.privat [k]
-                    p_vat  += entry.vat * pa / 100.0
-            if p_vat :
-                self._add_vorsteuer (- p_vat)
+                if k in self.privat and entry.netto > 0 :
+                    factor = self.privat [k] / 100.0
+                    corr   = entry.netto * factor
+                    netto += corr
+                    p_vat += corr * (vat_p - 1.00)
+            if netto :
+                self._add_umsatz (netto, p_vat, vat_p)
     # end def finish
 
     def header_string (self) :
@@ -901,13 +914,8 @@ class T_Account (Account) :
                         ( Privatanteil
                             ("9200", -p_soll, -p_haben, p_desc).kontenzeile ()
                         )
-                    p_vat = factor * sum \
-                        ( (  e.vat for e in self.k_entries [k]
-                          if e.vat_x and e.netto
-                          )
-                        , 0
-                        )
-                    self._fix_vorsteuer_privat (k, k_desc, p_vat, p_desc)
+                    p_vat = p_soll * 0.20
+                    self._fix_ust_privat (k, k_desc, p_vat, p_desc)
     # end def finish
 
     def _do_gkonto (self, ust, gkonto, saldo, txt, soll_haben, saldo2 = None) :
@@ -922,14 +930,14 @@ class T_Account (Account) :
                     (Ust_Gegenbuchung (m, gkonto, s, h, txt).kontenzeile ())
     # end def _do_gkonto
 
-    def _fix_vorsteuer_privat (self, k, k_desc, p_soll, p_desc) :
+    def _fix_ust_privat (self, k, k_desc, p_soll, p_desc) :
         p_desc = "%s [%s (%s)]" % (p_desc, k, k_desc)
-        gkonto = self.vorsteuer_gkonto
+        gkonto = self.ust_gkonto
         self.buchung_zahl [gkonto] += 1
-        self.soll_saldo   [gkonto] -= p_soll
+        self.haben_saldo  [gkonto] -= p_soll
         self.kblatt.setdefault (gkonto, []).append \
-            (Privatanteil ("9200", - p_soll, 0, p_desc, gkonto).kontenzeile ())
-    # end def _fix_vorsteuer_privat
+            (Privatanteil ("9200", 0, p_soll, p_desc, gkonto).kontenzeile ())
+    # end def _fix_ust_privat
 
     def print_konten (self) :
         self.finish ()
