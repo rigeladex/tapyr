@@ -79,6 +79,7 @@
 #                      `Numeric_Interval` instead of home-grown (and incorrect)
 #                      code
 #    17-Apr-2007 (CT)  `TLS_Periodic.prepare_cut_somewhere` added
+#    14-Jun-2007 (CT)  `reset` changed to increment `_sid`
 #    ««revision-date»»···
 #--
 
@@ -397,7 +398,6 @@ class Timeline (TFL.Meta.Object) :
 
     def __init__ (self, lower, upper) :
         self.orig = self.Span (lower, upper)
-        self._sid = 0
         self.reset ()
     # end def __init__
 
@@ -477,7 +477,8 @@ class Timeline (TFL.Meta.Object) :
     # end def multi_intersection
 
     def reset (self) :
-        self.free = [self.orig.copy ()]
+        self._sid += 1
+        self.free  = [self.orig.copy ()]
     # end def reset
 
     def snip (self, * spans) :
