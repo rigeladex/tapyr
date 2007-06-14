@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
+# Copyright (C) 2006-2007 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -39,6 +39,7 @@
 #     6-Nov-2006 (CED) `Plugin_Importer` added
 #    10-Nov-2006 (CED) Use path hooks for Plugin_Importer
 #    15-Nov-2006 (CED) `register_at_sys_path` added
+#    14-Jun-2007 (CED) [24566] `load_module` resets package's __path__
 #    ««revision-date»»···
 #--
 
@@ -290,11 +291,8 @@ class Plugin_Importer (object) :
 
     def find_module (self, fullname, path = None) :
         assert not path
-        mod       = fullname.split  (".")    [-1]
-        if mod == fullname :
-            path  = ""
-        else :
-            path  = fullname.rsplit (".", 1) [0]
+        mod    = fullname.split  (".")    [-1]
+        path   = fullname.rsplit (".", 1) [0 ] if mod != fullname else ""
         loader = self._find_module (path, mod, self.plugin_name)
         if loader :
             self._cache [fullname] = loader
@@ -302,10 +300,13 @@ class Plugin_Importer (object) :
     # end def find_module
 
     def load_module (self, fullmodule) :
-        loader = self._cache [fullmodule]
+        loader = self._cache.pop    (fullmodule)
         result = loader.load_module (fullmodule)
-        for plugin_name in self.pending.get (fullmodule, []) :
-            self.__class__._register (result.__path__, plugin_name)
+        if hasattr (result, "__path__") :
+            result.__path__ = p = [] ### remove zipimporter's token
+            pending             = self.pending.pop (fullmodule, ())
+            for plugin_name in pending :
+                self._register (p, plugin_name)
         return result
     # end def load_module
 
