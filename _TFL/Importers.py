@@ -40,6 +40,7 @@
 #    10-Nov-2006 (CED) Use path hooks for Plugin_Importer
 #    15-Nov-2006 (CED) `register_at_sys_path` added
 #    14-Jun-2007 (CED) [24566] `load_module` resets package's __path__
+#    18-Jun-2007 (CT)  `find_module` changed back to be 2.4 compatible
 #    ««revision-date»»···
 #--
 
@@ -292,7 +293,9 @@ class Plugin_Importer (object) :
     def find_module (self, fullname, path = None) :
         assert not path
         mod    = fullname.split  (".")    [-1]
-        path   = fullname.rsplit (".", 1) [0 ] if mod != fullname else ""
+        path   = ""
+        if mod != fullname :
+            path = fullname.rsplit (".", 1) [0]
         loader = self._find_module (path, mod, self.plugin_name)
         if loader :
             self._cache [fullname] = loader
