@@ -175,6 +175,7 @@
 #    21-Jan-2006 (MG)  Imports fixed
 #    20-Apr-2007 (PGO) Checking `name` to not contain underscores
 #    21-May-2007 (PGO) Don't check dynamic commands for underscores
+#    20-Jun-2007 (DAL) [21036] made Dyn_Group instantiation ANS specific
 #    ««revision-date»»···
 #--
 
@@ -735,7 +736,7 @@ class Command_Group (_Command_Group_) :
         """Add dynamic group `name`."""
         return self._add_group \
             ( name, precondition, if_names, index, delta
-            , lambda ifacers : Dyn_Group \
+            , lambda ifacers : self.AC.ANS.UI.Dyn_Group \
                 ( AC            = self.AC
                 , name          = name
                 , interfacers   = ifacers
