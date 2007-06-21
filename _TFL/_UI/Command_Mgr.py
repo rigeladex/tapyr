@@ -176,6 +176,7 @@
 #    20-Apr-2007 (PGO) Checking `name` to not contain underscores
 #    21-May-2007 (PGO) Don't check dynamic commands for underscores
 #    20-Jun-2007 (DAL) [21036] made Dyn_Group instantiation ANS specific
+#    21-Jun-2007 (MZO) `GeneratorExit" catched in Delegator
 #    ««revision-date»»···
 #--
 
@@ -557,7 +558,9 @@ class Command_Delegator (Command) :
                             "  `%s`" % (a, )
                           )
                     raise Precondition_Violation (self, msg)
-                except Exception, exc:
+                except GeneratorExit :
+                    raise StopIteration
+                except Exception, exc :
                     import traceback
                     traceback.print_exc ()
                     raise
