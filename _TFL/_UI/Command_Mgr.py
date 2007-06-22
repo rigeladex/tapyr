@@ -177,6 +177,7 @@
 #    21-May-2007 (PGO) Don't check dynamic commands for underscores
 #    20-Jun-2007 (DAL) [21036] made Dyn_Group instantiation ANS specific
 #    21-Jun-2007 (MZO) `GeneratorExit" catched in Delegator
+#    22-Jun-2007 (DAL) added `_Command_Group_` to export symbols
 #    ««revision-date»»···
 #--
 
@@ -1455,5 +1456,5 @@ mb.activate ()
 """
 
 if __name__ != "__main__" :
-    TFL.UI._Export ("*", "_Command_")
+    TFL.UI._Export ("*", "_Command_", "_Command_Group_")
 ### __END__ TFL.UI.Command_Mgr
