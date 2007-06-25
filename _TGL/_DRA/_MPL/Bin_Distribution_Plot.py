@@ -130,24 +130,26 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         yb = self.y_binner
         xi = [xb.index_f (i) for i in xs]
         yi = [yb.index_f (i) for i in ys]
-        pylab.vlines \
+        if 1 :
+            pylab.vlines \
             ( xi
             , [yb.index_f (y - d) for (y, d) in zip (ys, yerr)]
             , [yb.index_f (y + d) for (y, d) in zip (ys, yerr)]
             , error_fmt
             , linewidth = linewidth
             )
-        pylab.plot (xi, yi, marker_fmt, ** kw)
-        if 0 : ### couldn't find a way to influence the thickness of the bars
-#           bdp.errorbar (D, A, SD, fmt = "b.", ecolor = "0.05", capsize = 1)
+        if 0 : ### don't like the look of `pylab.errorbar`
             pylab.errorbar \
             ( xi
             , [yb.index_f (y) for y in ys]
             , [   (yb.index_f (y + d) - yb.index_f (y - d)) / 2
               for (y, d) in zip (ys, yerr)
               ]
+            , fmt       = None
+            , linewidth = linewidth
             , ** kw
             )
+        pylab.plot (xi, yi, marker_fmt, ** kw)
     # end def errorbar
 
     def plot (self, xs, ys, * args, ** kw) :
