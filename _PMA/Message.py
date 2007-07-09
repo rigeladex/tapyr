@@ -154,6 +154,8 @@
 #     5-Jan-2006 (CT) SB-related commands added
 #    25-Jan-2006 (CT) `body_lines` changed (again!) to using `self.charset`
 #                     *or* `PMA.default_encoding` for `decode`
+#     9-Jul-2007 (CT) `body_lines` changed to use `textwrap.Wrapper` to split
+#                     overlong lines
 #    ««revision-date»»···
 #--
 
@@ -177,6 +179,7 @@ import _TFL._Meta.Property
 from   _TFL.Regexp             import *
 
 import sos
+import textwrap
 import time
 import weakref
 
@@ -550,8 +553,12 @@ class Message_Body (_Msg_Part_) :
                     self.lines = lines
         if lines is not None :
             charset = self.charset or PMA.default_encoding
-            for l in lines :
-                yield l.decode (charset, "replace").rstrip ("\r")
+            wrapper = textwrap.TextWrapper \
+                (width = PMA.text_output_width, break_long_words = False)
+            for line in lines :
+                line = line.decode (charset, "replace").rstrip ("\r")
+                for l in wrapper.wrap (line) :
+                    yield l
         else :
             hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))

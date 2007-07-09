@@ -40,6 +40,7 @@
 #    03-Jan-2006 (MG) `load_user_config` changed
 #     5-Jan-2006 (CT) `load_config_file` factored to `TGL` and
 #                     `load_user_config` interface changed (`* config_fn`)
+#     9-Jul-2007 (CT) `text_output_width` added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,7 @@ PMA.patchlevel           = _p = 0
 PMA.version              = __version__ = "%s.%s.%s" % (_M, _m, _p)
 PMA.default_encoding     = locale.getpreferredencoding () or "us-ascii"
 PMA.file_system_encoding = sys.getfilesystemencoding ()
+PMA.text_output_width    = 75
 
 def load_user_config (* config_fn) :
     import sos
