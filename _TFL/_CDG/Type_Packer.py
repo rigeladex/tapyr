@@ -29,8 +29,11 @@
 #    27-Jul-2006 (CED) Creation
 #     9-Jan-2007 (MZO) [21197] `gap_byte_positions` added
 #     1-Feb-2007 (CED) Additional packers added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                           import TFL
 import _TFL._Meta.Object

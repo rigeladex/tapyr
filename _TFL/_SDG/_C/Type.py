@@ -30,8 +30,11 @@
 #    23-Sep-2004 (MG) `vaps_channel_format` and friends added
 #    24-Sep-2004 (MG) `vaps_channel_format` simplified
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node

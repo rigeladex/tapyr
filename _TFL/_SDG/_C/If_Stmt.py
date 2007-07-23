@@ -37,8 +37,11 @@
 #    24-Aug-2004 (CT) `_convert_then` factored and implemented to force
 #                     `self.then_class`
 #    08-Dec-2005 (MG) `Then` exported
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Block

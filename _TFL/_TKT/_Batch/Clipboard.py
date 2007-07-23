@@ -12,8 +12,11 @@
 # Revision Dates
 #    29-Aug-2005 (MZO) Creation (i15639)
 #    29-Aug-2006 (ABR) Merged in changes from For_Lin_Plan_22_branch
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from _TFL import TFL
 import _TFL._TKT._Batch

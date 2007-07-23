@@ -32,8 +32,11 @@
 #     9-Mar-2007 (CT) `_diacrit_map` corrected (`Oe` and `Ue` instead `O`/`U`)
 #     9-Mar-2007 (CT) Optional `translate_table` added to `sanitized_unicode`
 #                     and `sanitized_filename`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL        import TFL
 from   _TFL.Regexp import Regexp, re

@@ -39,8 +39,11 @@
 #    11-Apr-2007 (CT)  Doctest for `converted` added (Bad, Chris, bad)
 #    17-Apr-2007 (CT)  `__mod__` added
 #    11-May-2007 (CT)  `set` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 

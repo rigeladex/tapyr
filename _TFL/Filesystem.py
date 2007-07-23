@@ -33,8 +33,11 @@
 #     7-May-2001 (CT) `Glob_Filter' added
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    24-Mar-2005 (CT) Use `TFL.sos` instead of `sos`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL      import TFL
 

@@ -28,8 +28,11 @@
 # Revision Dates
 #     8-Aug-2004 (CT) Creation
 #    29-Sep-2006 (CT) `__add__` and `__sub__` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 import _TFL._Meta.Object

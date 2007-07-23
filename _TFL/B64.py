@@ -31,8 +31,11 @@
 #    12-Sep-2004 (CT) `_ord_map` changed (sequence of characters in sorted
 #                     order, `.` replaced by `_`)
 #    12-Sep-2004 (CT) Optional parameters added to `atoi` and `itoa`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 _base    = 64
 _chars   = "0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"

@@ -29,8 +29,11 @@
 #     9-Feb-2005 (CED) Creation
 #    15-Feb-2006 (CT)  Done right
 #     8-Nov-2006 (CED) `microfortnight` added (used in VMS)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 import _TFL._Meta.Object

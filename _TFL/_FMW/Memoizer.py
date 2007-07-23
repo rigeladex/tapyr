@@ -28,8 +28,11 @@
 #
 # Revision Dates
 #     5-Jun-2005 (CT) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 Add memoization to functions and methods of modules/classing without

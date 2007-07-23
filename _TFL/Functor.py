@@ -35,8 +35,11 @@
 #    29-Jun-2004 (CED) Doctest added
 #    23-Sep-2004 (CT)  Cleanup
 #    14-Feb-2006 (CT)  Moved into package `TFL`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL             import TFL
 import _TFL.Function

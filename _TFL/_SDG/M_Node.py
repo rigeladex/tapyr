@@ -32,8 +32,11 @@
 #                     anew (to avoid nasty surprises with `sep` aliasing when
 #                     format is shared between sibling classes with different
 #                     values for `sep`)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                            import TFL
 

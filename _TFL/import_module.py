@@ -31,8 +31,11 @@
 #                     result instead of a `getattr` loop
 #                     [the old implementation renamed to
 #                     `import_module_brittle`]
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 import sys
 

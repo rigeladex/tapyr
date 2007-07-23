@@ -35,8 +35,11 @@
 #     5-Sep-2005 (CT) Doctest `svg` added
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
 #    20-Sep-2005 (CT) Doctest with over-long attributes added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Comment

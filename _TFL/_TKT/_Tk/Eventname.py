@@ -36,8 +36,11 @@
 #    23-Feb-2005 (CT)  `mouse_enter` and `mouse_leave` reintroduced
 #     3-Mar-2005 (RSC) `Print_all` added
 #    10-Aug-2005 (CT)  `canonical_key_name` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk

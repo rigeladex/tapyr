@@ -39,8 +39,11 @@
 #    18-Feb-2005 (CT)  Moved to `TFL.Meta`
 #    13-Jul-2005 (CED) `M_Auto_Combine_Sets` added to bases
 #    13-Jul-2005 (CED) Missing import added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                import TFL
 

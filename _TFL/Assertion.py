@@ -29,8 +29,11 @@
 #     8-Jul-2002 (CT) Creation (factored from U_Test.py)
 #    24-Mar-2005 (CT) Use `TFL.Caller.globals` instead of `caller_globals`
 #                     (and ditto for `locals`)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 import _TFL.Caller

@@ -57,8 +57,11 @@
 #    11-Apr-2007 (CT)  `union` simplified by using `itertools.chain`
 #    11-Apr-2007 (CT)  `_difference_iter` changed to skip empty intervals of
 #                      `other`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                  import TFL
 from   _TFL.predicate        import any_true, dusort

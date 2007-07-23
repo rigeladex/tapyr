@@ -31,8 +31,11 @@
 #    20-Aug-2003 (CT) s/\n/\\n/ to avoid
 #                         `ValueError: inconsistent leading whitespace`
 #                     from the $%&@*$ doc-test
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from Regexp import *
 

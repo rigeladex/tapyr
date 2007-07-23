@@ -64,8 +64,11 @@
 #                      respectively
 #    21-Apr-2005 (BRU) Introduced property `buffer_empty`.
 #    25-Apr-2005 (CT)  s/buffer_empty/is_empty/
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin

@@ -33,8 +33,11 @@
 #    22-Apr-2003 (CT) `field_pat` changed to allow for `key` and modifier
 #    22-Apr-2003 (CT) `_split` changed to populate `_keys`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL._FDB import FDB
 from   Regexp    import *

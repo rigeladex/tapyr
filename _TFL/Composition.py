@@ -29,8 +29,11 @@
 #    19-Apr-2000 (CT)  Creation
 #    25-May-2004 (CED) Doctest added
 #    30-Oct-2006 (CED) Moved to TFL
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from _TFL        import TFL
 

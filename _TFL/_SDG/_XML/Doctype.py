@@ -31,8 +31,11 @@
 #     5-Sep-2005 (CT) `External_Id` factored
 #     5-Sep-2005 (CT) `[` and `]` added to `xml_format`
 #     5-Sep-2005 (CT) `__init__` removed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Element

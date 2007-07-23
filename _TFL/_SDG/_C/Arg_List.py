@@ -33,8 +33,11 @@
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
 #    08-Dec-2005 (MG)  Bugfixes
 #    12-Dec-2005 (CT)  `Regexp` import fixed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 from   _TFL.predicate    import un_nested

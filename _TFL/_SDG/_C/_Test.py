@@ -37,8 +37,11 @@
 #    20-Mar-2006 (MZO) Funciton requires argument
 #    30-Oct-2006 (CED) Tests for `Define_Constant`, `Preprocessor_Error` added
 #    17-Apr-2007 (CED) Test for `Define_Constant` adapted
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 >>> NL = chr (10)

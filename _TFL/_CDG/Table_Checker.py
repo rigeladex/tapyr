@@ -29,8 +29,11 @@
 #    22-Feb-2007 (MZO) Creation
 #    28-Mar-2007 (MZO) Creation .
 #     8-May-2007 (MZO) Creation ..
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from    _TFL                    import TFL
 from    _TTA                    import TTA

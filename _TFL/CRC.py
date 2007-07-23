@@ -53,8 +53,11 @@
 #    22-Sep-2005 (RER) splitted `c_code` to support TTPos_cert-issue9651
 #    23-Aug-2006 (PGO) Using alternate form of %x
 #    24-Aug-2006 (PGO) Fixed doc tests
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 class _TD_CRC_ (object) :
     """Table driven CRC. Base class for all derived CRC classes.

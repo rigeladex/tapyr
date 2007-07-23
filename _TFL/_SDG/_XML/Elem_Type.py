@@ -31,8 +31,11 @@
 #    21-Oct-2004 (CT) Use `"` instead of `'` in output
 #     5-Sep-2005 (CT) Doctest fixed (`x_attrs` sorted alphabetically)
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """Usage example:
 

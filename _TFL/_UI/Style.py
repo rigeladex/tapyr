@@ -42,8 +42,11 @@
 #     1-Apr-2005 (CT)  `__new__` and `__call__` redefined to merge `callback`
 #                      dictionaries
 #     4-Apr-2005 (CED) `reversed` imported
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 >>> Style ("foo", font_style = "normal")

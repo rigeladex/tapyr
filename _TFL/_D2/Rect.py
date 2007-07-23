@@ -31,8 +31,11 @@
 #    11-Jun-2003 (CT) s/!= None/is not None/
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #     4-Jun-2005 (CT) `str` added to show `size` instead of `bottom_right`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from    _TFL           import TFL
 from    _TFL._D2       import D2

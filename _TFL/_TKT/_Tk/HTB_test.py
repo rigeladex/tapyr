@@ -27,8 +27,11 @@
 #
 # Revision Dates
 #    25-Feb-2005 (RSC) Refactored into TFL.UI.HTB_test
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   CT_TK                import root, YES, BOTH
 from   _TFL                 import TFL

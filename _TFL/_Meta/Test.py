@@ -29,8 +29,11 @@
 # Revision Dates
 #    15-May-2002 (CT) Creation
 #     7-Sep-2002 (CT) Print statements and instances added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 print "\nDefining Meta-Meta class"
 

@@ -28,8 +28,11 @@
 # Revision Dates
 #    21-Jan-2001 (CT) Creation
 #    22-Apr-2003 (CT) Moved to package `TFL.FDB`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL._FDB  import FDB
 from   Filename   import *

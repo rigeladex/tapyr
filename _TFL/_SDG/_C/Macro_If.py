@@ -30,8 +30,11 @@
 #    13-Aug-2004 (CT) `Macro_If.c_format` simplified
 #                     (`%(if_tag)s` instead of `%(::.if_tag:)s`)
 #    20-Oct-2004 (CT) Imports for `Conditional` and `If_Stmt` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                import TFL
 import _TFL._SDG._C.Conditional

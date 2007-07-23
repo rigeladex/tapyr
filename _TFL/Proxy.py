@@ -30,8 +30,11 @@
 #    20-Apr-2004 (CT) Magic name check removed from `__getattr__` (for
 #                     new-style classes, Python doesn't look at instance for
 #                     magic methods)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._Meta.Object

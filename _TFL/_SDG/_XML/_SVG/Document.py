@@ -29,8 +29,11 @@
 #     5-Sep-2005 (CT)  Creation
 #     6-Sep-2005 (CT)  Creation continued
 #     4-Sep-2006 (MZO) `Text` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 >>> svg = Document (Root (width="12cm", height="4cm", viewBox="0 0 1200 400"))

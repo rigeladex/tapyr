@@ -34,8 +34,11 @@
 #    10-May-2001 (CT) Creation
 #    21-Feb-2002 (CT) `Range_` renamed to `_Range_`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from _TFL import TFL
 

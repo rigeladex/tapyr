@@ -28,8 +28,11 @@
 # Revision Dates
 #    30-Jul-2004 (CT) Creation
 #    24-Aug-2004 (CT) `trailer` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Scope_

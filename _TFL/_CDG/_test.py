@@ -16,9 +16,12 @@
 #    23-Aug-2006 (PGO) Using alternate form of %x
 #    14-Nov-2006 (MZO) test extended, profiler added
 #    14-Mar-2007 (PGO) `mask` is ubyte1 only
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
 #
+from __future__ import absolute_import
+
 from   _TFL                 import TFL
 import _TFL._Meta.Object
 import _TFL._CDG.M_Struct

@@ -26,8 +26,11 @@
 #
 # Revision Dates
 #    26-Jun-2007 (DAL) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from _TFL    import TFL
 from inspect import getargspec

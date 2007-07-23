@@ -31,8 +31,11 @@
 #    24-Aug-2004 (CT) `header_comment_level` and `signature_level` added
 #    25-Aug-2004 (CT) `_autoconvert` for `name` added to keep only
 #                     `Filename (name).base`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   Filename          import Filename
 from   _TFL              import TFL

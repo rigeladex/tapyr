@@ -35,8 +35,11 @@
 #    23-Feb-2005 (CED) `apidoc_tex_format` and friends defined
 #     8-Sep-2005 (PGO) import of textwrap removed (not used)
 #    08-Dec-2005 (MG)  `_convert_args` use `_force` instead of `_convert`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_

@@ -30,8 +30,11 @@
 #    23-Jul-2004 (CT)  Creation (factored from TOM.Meta.M_Auto_Combine)
 #    13-Jul-2005 (CED) Use sets instead of dicts
 #     2-Jul-2006 (MG)  Unnecessary imports removed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """Meta class for auto-combining the list-attributes mentioned in
 `_lists_to_combine` between a class and it's ancestors.

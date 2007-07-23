@@ -14,8 +14,11 @@
 #     2-Sep-2005 (CT)  `setup_clipboard_menu` changed to pass strings as
 #                      `accelerator` instead of `Eventname` attributes
 #    28-Aug-2006 (ABR) Merged in changes from For_Lin_Plan_22_branch
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                   import TFL
 import _TFL._UI

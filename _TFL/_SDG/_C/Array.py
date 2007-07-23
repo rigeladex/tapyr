@@ -38,8 +38,11 @@
 #    16-Nov-2004 (MG)  Multidimension array support added
 #    16-Sep-2005 (MG)  Changed to support `fmt` again
 #    19-Oct-2006 (CED) Length check added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_

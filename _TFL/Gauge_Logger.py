@@ -42,8 +42,11 @@
 #    14-Mar-2005 (CT)  Dead code courtesy of GWA removed
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #    23-Nov-2006 (PGO) Inheritance changed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._Meta.Object

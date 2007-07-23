@@ -53,8 +53,11 @@
 #     6-Nov-2006 (CED) No rewriting anymore
 #    15-Nov-2006 (CED) `_make_setup_file` adds call to `register_at_sys_path`
 #                      if needed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 

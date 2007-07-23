@@ -35,8 +35,11 @@
 #     9-Sep-2005 (PGO) `_attr_values' modifies `textwrap`s word wrapping
 #    20-Sep-2005 (CT)  `break_long_words = False` passed to
 #                      `textwrap.TextWrapper`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._XML

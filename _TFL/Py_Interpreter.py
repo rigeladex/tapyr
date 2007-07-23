@@ -29,9 +29,12 @@
 #     8-Mar-2005 (CED) Creation (moved multiple implemented stuff into here)
 #     9-Jun-2005 (CED) `locals` added to `__call__`
 #    25-Jul-2005 (CT)  `__call__` fixed (`or {}` considered harmful)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
 #
+from __future__ import absolute_import
+
 
 from _TFL        import TFL
 from _TFL.predicate   import *

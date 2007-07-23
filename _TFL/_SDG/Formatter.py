@@ -99,8 +99,11 @@
 #                     them
 #    13-Jul-2005 (CT) Style
 #    30-Aug-2005 (CT) Use `split_hst` instead of home-grown code
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL               import TFL
 import _TFL._Meta.Object

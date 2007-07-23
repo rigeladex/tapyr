@@ -86,8 +86,11 @@
 #                      `full_name` to `_remove_file`
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #     1-Dec-2006 (PGO) Usage of Ordered_Set in `_remove_file` fixed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                import TFL
 from   _TFL.Filename       import Filename

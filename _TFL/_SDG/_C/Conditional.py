@@ -29,8 +29,11 @@
 #     9-Aug-2004 (CT) Creation
 #    20-Oct-2004 (CT) `scope` set to `HC`
 #    21-Oct-2004 (CT) `scope` argument passed to `_convert`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Expression

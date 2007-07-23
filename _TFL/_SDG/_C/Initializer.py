@@ -29,8 +29,11 @@
 #     9-Aug-2004 (CT) Creation
 #    21-Sep-2004 (CT) `Init_Atom.c_format` changed (s/front/head/)
 #    23-Sep-2004 (CT) `Init_Comp.c_format` changed (total revamp)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node

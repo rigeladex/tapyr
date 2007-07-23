@@ -31,8 +31,11 @@
 #                     work in header files)
 #    20-Oct-2004 (CT) `H` removed from scope (not all expressions should
 #                     appear in headerfile by default)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node

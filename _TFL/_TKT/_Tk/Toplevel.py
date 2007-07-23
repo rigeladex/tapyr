@@ -24,8 +24,11 @@
 #    25-Apr-2005 (CT)  `new_context_menu` removed (wrong name, wrong place)
 #    30-Aug-2005 (MZO) [14421] - renamed win_expl_cb
 #    19-Jul-2006 (MZO) [18758] `new_menubar` implemented
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from _TFL import TFL
 from CTK  import *

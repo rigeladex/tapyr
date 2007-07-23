@@ -47,8 +47,11 @@
 #    13-Mar-2007 (MZO) [23693] check char fields
 #    14-Mar-2007 (PGO) `check_value` changed to raise Value_Out_Of_Range
 #     7-May-2007 (MZO) `check_value` fixed, hex was not checked correctly
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                           import TFL
 import _TFL._Meta.Object

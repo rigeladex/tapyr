@@ -32,8 +32,11 @@
 #     8-Mar-2006 (CT)  `* args` added to `__call__`
 #    13-Mar-2006 (PGO) Message added if `sys.exc_info` is empty
 #    20-Jun-2006 (PGO) Support for (deprecated) string exceptions added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from    _TFL                 import  TFL
 import  _TFL._Meta.Object

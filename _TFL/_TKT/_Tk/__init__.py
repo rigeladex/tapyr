@@ -32,8 +32,11 @@
 #    23-Feb-2005 (CT) `stop_cb_chaining` added
 #    14-Mar-2005 (CT) `Tk.Error` aliased to `CTK.TclError`
 #    10-Aug-2005 (CT) Use `set_TNS_name` instead of home-grown code
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL.Package_Namespace import Package_Namespace
 from   _TFL                   import TFL

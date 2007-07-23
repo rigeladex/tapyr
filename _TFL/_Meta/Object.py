@@ -29,8 +29,11 @@
 #    13-May-2002 (CT) Creation
 #    17-Jan-2003 (CT) `M_` prefixes added
 #    24-Mar-2003 (CT) Delegation for `__init__` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 import _TFL._Meta.M_Class

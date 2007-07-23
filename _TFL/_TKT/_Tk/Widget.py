@@ -49,8 +49,11 @@
 #    13-Oct-2006 (ABR) Added `CTK_Dialog.*_Field` classes to `__getattr__`
 #                      lookup [21941]
 #
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin

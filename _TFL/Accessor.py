@@ -33,8 +33,11 @@
 #
 # Revision Dates
 #    19-Aug-2005 (CT) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 import _TFL._Meta.Object

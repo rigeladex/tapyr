@@ -81,8 +81,11 @@
 #    13-May-2005 (CT)  `remove_style` robustified
 #    20-May-2005 (CT)  `Scrolled_Text` changed to set `x_scroll_default` to
 #                      False
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk

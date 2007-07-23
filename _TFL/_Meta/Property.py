@@ -40,8 +40,11 @@
 #    20-May-2005 (CT) `init_instance` changed to call `_set_value` instead of
 #                     `set_value`
 #    26-Jul-2005 (CT) `prop` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL             import TFL
 import _TFL._Meta

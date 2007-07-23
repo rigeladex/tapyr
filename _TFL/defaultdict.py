@@ -29,8 +29,11 @@
 #    13-Mar-2006 (CT) Creation (for Python 2.4)
 #    20-Jun-2007 (CT) Adapted to Python 2.5
 #    20-Jun-2007 (CT) `defaultdict_kd` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 Python 2.5 provides `collections.defaultdict`.

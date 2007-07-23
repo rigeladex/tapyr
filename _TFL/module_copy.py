@@ -27,8 +27,11 @@
 #
 # Revision Dates
 #    17-Dec-2003 (CT) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 import sys
 

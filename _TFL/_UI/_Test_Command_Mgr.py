@@ -13,8 +13,11 @@
 #    13-Jan-2005 (MG) Creation
 #    19-Jan-2005 (CT) Test fixed
 #    20-Jan-2005 (CT) Test fixed again
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 >>> cmd_mgr = TFL.UI.Command_Mgr (

@@ -33,8 +33,11 @@
 #    24-Aug-2004 (CT)  `fn_head` and `fn_tail` added
 #    24-Aug-2004 (CT)  Append `.h` if necessary (using `Filename`)
 #    11-Sep-2006 (MZO) [21459] searchpath fixed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 from   Filename          import Filename

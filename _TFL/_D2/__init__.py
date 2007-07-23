@@ -27,8 +27,11 @@
 #
 # Revision Dates
 #    24-Jun-2002 (CT) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                   import TFL
 from   _TFL.Package_Namespace import Package_Namespace

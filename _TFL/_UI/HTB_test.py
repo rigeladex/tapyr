@@ -46,8 +46,11 @@
 #    20-Apr-2005 (MZO) update doctest (added necessary imports)
 #    20-Apr-2005 (MZO) update test - tail/head_contents
 #     5-Sep-2005 (MZO) fixed import
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._UI

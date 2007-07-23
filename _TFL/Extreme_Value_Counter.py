@@ -29,9 +29,12 @@
 # Revision Dates
 #    19-Feb-2004 (CED) Creation
 #    26-Feb-2004 (CED) `set` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
 #
+from __future__ import absolute_import
+
 
 from _TFL import TFL
 

@@ -46,8 +46,11 @@
 #    26-Jan-2006 (CT) `max_index` factored
 #     7-Jun-2006 (CT) `Re_Replacer` added
 #    14-Jun-2006 (CT)  `Multi_Re_Replacer` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL           import TFL
 import _TFL._Meta.Object

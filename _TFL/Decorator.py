@@ -29,8 +29,11 @@
 #    14-Apr-2006 (CT)  Creation
 #    19-Apr-2006 (CT)  Set `__module__`, too
 #    26-Sep-2006 (PGO) `wrapper` fixed to work with builtin functions, too
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from _TFL import TFL
 

@@ -39,8 +39,11 @@
 #     3-Feb-2005 (CT) `max_cmds_per_group` added
 #    16-Feb-2005 (MG) `bind_to_widget`: parameter `event_name` added
 #     6-Apr-2005 (CT) `clear` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL           import TFL
 import _TFL._TKT.Mixin

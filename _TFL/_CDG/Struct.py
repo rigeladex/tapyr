@@ -56,8 +56,11 @@
 #                      `TFL.CDG.Type_Packer`
 #     1-Feb-2007 (CED) s/GCC_Like_Type_Packer/Active_Type_Packer/g
 #    26-Mar-2007 (PGO) `bounds` handling in `dict` fixed (was always overwritten)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                           import TFL
 import _TFL._Meta.Object

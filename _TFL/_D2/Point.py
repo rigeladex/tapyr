@@ -36,8 +36,11 @@
 #    24-Mar-2003 (CT) `__rdiv__` removed
 #     5-Apr-2005 (CT) `import _TFL._D2.Rect` added to doctest of `R_Point_R`
 #     4-Jun-2005 (CT) `__getitem__` simplified
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from    _TFL     import TFL
 from    _TFL._D2 import D2

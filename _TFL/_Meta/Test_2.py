@@ -28,8 +28,11 @@
 #
 # Revision Dates
 #    13-Mar-2003 (CT) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 class Meta_Meta(type) :
     def __str__(cls) :

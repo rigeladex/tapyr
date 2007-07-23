@@ -36,8 +36,11 @@
 #                      `_check` made informative instead of prescriptive
 #    10-Aug-2005 (CT)  `canonical_key_name` added
 #    26-Apr-2006 (PGO) import of Set removed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 Consistency check:

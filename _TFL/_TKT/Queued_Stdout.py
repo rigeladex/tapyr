@@ -28,8 +28,11 @@
 # Revision Dates
 #     7-Feb-2005 (CT) Creation (factored from CTK_Queued_Stdout)
 #     3-Jun-2005 (MG) `event` parameter added to `update`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL           import TFL
 import _TFL._TKT.Mixin

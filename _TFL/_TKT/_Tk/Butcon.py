@@ -32,8 +32,11 @@
 #    20-Feb-2005 (CT)  s/widget/wtk_widget/
 #    23-Feb-2005 (CT)  `exposed_widget` added
 #    25-Feb-2005 (RSC) Added _interface_test
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk

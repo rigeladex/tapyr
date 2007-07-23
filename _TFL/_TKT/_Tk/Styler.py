@@ -36,8 +36,11 @@
 #    18-May-2005 (CT)  `_font_size_map` replaced by `font_size_base` and
 #                      `_font_size_factor`
 #     5-Sep-2005 (MZO) [16066] defined courier as monospace font family
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk

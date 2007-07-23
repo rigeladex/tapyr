@@ -34,8 +34,11 @@
 #     8-Feb-2005 (CED) Various improvements
 #     9-Feb-2005 (CED) Some simplifications done
 #    24-Mar-2005 (CT)  Use `Math_Func.gcd` instead of `predicate.gcd`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL           import TFL
 from   _TFL.Regexp    import Regexp, re

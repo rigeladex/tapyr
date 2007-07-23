@@ -29,8 +29,11 @@
 #    26-Jul-2004 (CT) Creation
 #    12-Aug-2004 (MG) formats changed
 #    12-Aug-2004 (MG) `cgi` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node

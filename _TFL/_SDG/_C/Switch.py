@@ -28,8 +28,11 @@
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
 #    20-Oct-2004 (CT) Import for `Statement` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Block

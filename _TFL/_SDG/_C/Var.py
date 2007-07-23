@@ -38,8 +38,11 @@
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
 #    13-Jul-2005 (MG)  Parameter `type_name_length` added and used in
 #                      `h_format`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_

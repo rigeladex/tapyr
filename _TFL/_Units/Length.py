@@ -32,8 +32,11 @@
 #                      in the context of units is a bad thing (TM))
 #     8-Nov-2006 (CED) Some parsec variants added (used in astronomy for large
 #                      structures)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 import _TFL._Meta.Object

@@ -53,8 +53,11 @@
 #     5-Dec-2004 (CT) `to_euro_factor` changed from `1` to `1.0` to avoid
 #                     `DeprecationWarning: classic int division`
 #    11-Feb-2006 (CT) Moved into package `TFL`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 import re
 

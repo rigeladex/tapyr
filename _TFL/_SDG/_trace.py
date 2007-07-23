@@ -27,8 +27,11 @@
 #
 # Revision Dates
 #    22-Sep-2004 (CT) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   predicate         import *
 from   _TFL              import TFL

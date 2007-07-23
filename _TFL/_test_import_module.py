@@ -27,8 +27,11 @@
 #
 # Revision Dates
 #    17-Jun-2004 (CT) Creation
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 This module tests _TFL.import_module in two ways. The doctest tests the

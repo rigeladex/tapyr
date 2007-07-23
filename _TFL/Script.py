@@ -39,8 +39,11 @@
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #     9-Aug-2006 (CT) `Script.__hash__` changed to return
 #                     `hash (self.name)` instead of `id (self)`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 from   _TFL.Filename     import *

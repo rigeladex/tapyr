@@ -178,8 +178,11 @@
 #    20-Jun-2007 (DAL) [21036] made Dyn_Group instantiation ANS specific
 #    21-Jun-2007 (MZO) `GeneratorExit" catched in Delegator
 #    22-Jun-2007 (DAL) added `_Command_Group_` to export symbols
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL           import TFL
 import _TFL.NO_List

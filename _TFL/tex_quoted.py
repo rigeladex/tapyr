@@ -33,6 +33,8 @@
 #                      tex_quoted_underscore_word_with_path
 #    ««revision-date»»
 #--
+from __future__ import absolute_import
+
 
 from _TFL        import TFL
 from _TFL.Regexp import Regexp, re

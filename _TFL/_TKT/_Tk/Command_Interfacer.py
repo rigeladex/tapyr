@@ -71,8 +71,11 @@
 #    16-Sep-2005 (MZO) [17208] added manual bind of menu-accelerators.
 #    19-Jul-2006 (MZO) [18758] `add_group` implemented
 #    26-Jul-2006 (MZO) [18758] label of buttons defined
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT._Tk

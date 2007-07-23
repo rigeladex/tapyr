@@ -48,8 +48,11 @@
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    28-Jul-2005 (CT)  `mailname` added
 #     8-Aug-2006 (MSF) fixed [5608]
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL      import TFL
 

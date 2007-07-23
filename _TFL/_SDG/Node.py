@@ -70,8 +70,11 @@
 #                      or None instead of True/False
 #    12-Dec-2005 (CT)  `return None` removed from `has_child`
 #    08-Nov-2006 (PGO) `NO_List` added that doesn't check for dups
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 A node of a structured document has attributes and children.

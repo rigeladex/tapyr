@@ -33,8 +33,11 @@
 #    22-Feb-2001 (CT) Use `raise' instead of `raise exc' for re-raise
 #    19-Apr-2003 (CT) `__iter__` added
 #    24-Mar-2005 (CT) Moved into package `TFL`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   UserList  import UserList
 from   copy      import deepcopy

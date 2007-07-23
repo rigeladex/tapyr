@@ -28,8 +28,11 @@
 #
 # Revision Dates
 #    23-Jul-2004 (CT) Creation (factored from TOM.Meta.M_Auto_Combine)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 Meta class for auto-combining the dict-attributes mentioned in

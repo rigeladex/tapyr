@@ -35,8 +35,11 @@
 #                     classes have a hard time redefining `__call__`)
 #    10-Jan-2005 (CT) `__repr__` changed to not future warn about negative
 #                     values of `id`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 class Class_Proxy :
     """Transparent proxy for a class."""

@@ -121,8 +121,11 @@
 #    16-Aug-2006 (CED) `_path_of` fixed
 #    16-Aug-2006 (MSF) `_path_of` really fixed
 #     6-Nov-2006 (CED) `pkg_chain` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 from   _TFL.predicate    import *

@@ -46,8 +46,11 @@
 #                      DeprecationWarning
 #                          The 'bin' argument to Pickler() is deprecated
 #    20-May-2005 (CT)  Moved to TFL
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._Meta.Object

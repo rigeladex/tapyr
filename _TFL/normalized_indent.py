@@ -30,8 +30,11 @@
 #     6-Jul-2005 (CT) Doctest moved from function `normalized_indent` to
 #                     module (and another case added)
 #     6-Jul-2005 (CT) `textwrap.dedent` used if available
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 >>> normalized_indent ("Just a single line.")

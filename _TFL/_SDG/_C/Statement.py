@@ -39,8 +39,11 @@
 #    24-Aug-2004 (MG) `Stmt_Group.default_cgi` changed
 #    25-Aug-2004 (MG) `Decl` added to `Stmt_Group`
 #    20-Oct-2004 (CT) Import for `_Scope_` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node

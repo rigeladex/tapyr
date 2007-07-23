@@ -30,8 +30,11 @@
 #    20-Jan-2005 (CT) Setting of `TNS` streamlined
 #    10-Mar-2005 (CT) `get_TNS` factored
 #    10-Aug-2005 (CT) `set_TNS_name` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL           import TFL
 import _TFL._Meta.Object

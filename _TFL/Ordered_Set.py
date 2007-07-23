@@ -43,8 +43,11 @@
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #     8-Nov-2006 (PGO) Inheritance changed
 #     4-Dec-2006 (PGO) `remove` and `__delitem__` merged to restore interface
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from _TFL import TFL
 

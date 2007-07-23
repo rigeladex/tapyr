@@ -30,8 +30,11 @@
 #    12-Aug-2004 (MG) `description` and `eol_desc` added to formats
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    20-Oct-2004 (CT) Import for `_Decl_` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_

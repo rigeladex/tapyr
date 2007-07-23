@@ -28,8 +28,11 @@
 # Revision Dates
 #    13-Mar-2006 (CT) Creation
 #    14-Nov-2006 (CT) `mm_set` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import      TFL
 import _TFL.defaultdict

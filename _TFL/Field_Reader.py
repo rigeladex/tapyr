@@ -28,8 +28,11 @@
 # Revision Dates
 #    25-May-2002 (CT) Creation
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 import sys
 

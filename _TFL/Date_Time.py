@@ -68,8 +68,11 @@
 #    11-Feb-2006 (CT) Moved into package `TFL`
 #     9-Aug-2006 (CT) `__hash__` changed to return `hash (self.value)` instead
 #                     of `id (self)`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 ### Note: this module is obsolete and shouldn't be used for new code
 

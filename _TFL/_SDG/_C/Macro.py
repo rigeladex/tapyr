@@ -47,8 +47,11 @@
 #     9-Mar-2007 (CED) Accepting integer as value of `Define_Constant`
 #    17-Apr-2007 (CED) `Define_Constant` improved to print parantheses around
 #                      `value`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C.Node

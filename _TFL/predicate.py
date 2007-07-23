@@ -159,8 +159,11 @@
 #     6-Sep-2006 (CT)  Doc-strings of `split_hst` and `rsplit_hst` corrected
 #     8-Dec-2006 (CT)  `window_wise` made visible
 #    16-Feb-2007 (CT)  `enumerate_slice` made visible
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL             import TFL
 import _TFL.Generators

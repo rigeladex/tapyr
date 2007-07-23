@@ -55,8 +55,11 @@
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    29-Jul-2005 (CT) Optional argument `create_dir` added to `tempfile_name`
 #    30-Aug-2005 (CT) Use `in` or `startswith` instead of `find`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 from   os   import *

@@ -39,9 +39,12 @@
 #    20-Nov-2006 (MZO) [21696] `TFL.CDG.Array` used
 #    14-Mar-2007 (PGO) `__call__` of `*_Creator` take only CDG Structs now
 #    12-Apr-2007 (MZO) `_debug_as_c_code` fortified
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
 #
+from __future__ import absolute_import
+
 
 from     _TFL                  import TFL
 import   _TFL._CDG

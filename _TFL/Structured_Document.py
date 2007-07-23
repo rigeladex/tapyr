@@ -48,8 +48,11 @@
 #    12-Apr-2002 (CT) Use `StandardError` instead of `Exception`
 #    11-Jun-2003 (CT) s/== None/is None/
 #    14-Apr-2005 (CT) Use `isinstance` instead of `type` comparison
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   Formatted_Stream import *
 from   _TFL             import TFL

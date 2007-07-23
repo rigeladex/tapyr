@@ -43,8 +43,11 @@
 #    26-Aug-2004 (CT)  `_convert` moved to `TFL.SDG.Node`
 #    23-Sep-2004 (MG) `vaps_channel_format` and friends added
 #     7-Oct-2004 (CED) `apidoc_tex_format` and friends added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C

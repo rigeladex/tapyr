@@ -33,8 +33,11 @@
 #                      can't read PNG. Now left one xbm to document
 #                      failing doctest of TGW.
 #    25-Feb-2005 (RSC) Added style-related doctests
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin

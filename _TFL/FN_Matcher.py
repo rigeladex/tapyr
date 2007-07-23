@@ -34,8 +34,11 @@
 #    12-Aug-2003 (CT) Import for `StringIO` added
 #    12-Aug-2003 (CT) `Alias_Property` replaced by explicit function
 #                     delegation to avoid doctest hiccups
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL import TFL
 import _TFL._Meta.Object

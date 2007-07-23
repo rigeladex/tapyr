@@ -31,8 +31,11 @@
 #     8-Apr-1999 (CT) Constructor semantics changed (`** kw' instead of
 #                     argument `data = None')
 #    24-Mar-2005 (CT) Moved into package `TFL`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL      import TFL
 

@@ -28,9 +28,12 @@
 # Revision Dates
 #    13-Jul-2005 (CED) Creation (stolen from M_Auto_Combine_Dicts)
 #    13-Jul-2005 (CED) Export added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
 #
+from __future__ import absolute_import
+
 
 """
 Meta class for auto-combining the set-attributes mentioned in

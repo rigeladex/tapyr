@@ -47,8 +47,11 @@
 #    31-May-2006 (BRU) Added `db_name`
 #     9-Aug-2006 (CT)  `__hash__` changed to return `hash (id (self))`
 #                      instead of `id (self)`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL             import TFL
 

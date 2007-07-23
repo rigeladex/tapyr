@@ -15,9 +15,12 @@
 #    17-Nov-2004 (CED) Creation continued .
 #    13-Jul-2005 (CED) `__mul__` changed to use sets
 #    12-Jul-2007 (CED) `Part_Pos_Translator` and friends added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
 #
+from __future__ import absolute_import
+
 
 
 from   _TFL   import TFL

@@ -33,8 +33,11 @@
 #    12-Jul-2005 (MG) `description` added to `[ch]_format`
 #    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #    20-Nov-2006 (MZO) [21696] `_setup_initializers_for_cdg_array` added
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_

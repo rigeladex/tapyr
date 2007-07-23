@@ -30,8 +30,11 @@
 #    19-Mar-2007 (DAL) changed offset_field default from -1 to 0xFFFFFFFF
 #                      (RUP 23577)
 #    24-Apr-2007 (DAL) `as_tex` addded
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL             import TFL
 import _TFL._Meta.M_Class

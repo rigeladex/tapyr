@@ -37,8 +37,11 @@
 #    24-Mar-2005 (CT) Doctest added
 #    24-Mar-2005 (CT) Small changes in MGs changes
 #    24-Mar-2005 (CT) Moved into package `TFL`
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 >>> d = Abbr_Key_Dict (a = 1, ab = 2, abc = 3, bertie = 4, bingo = 5)

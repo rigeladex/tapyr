@@ -158,8 +158,11 @@
 #     1-May-2006 (MG) Use `dict` instead of `d_dict`
 #     9-Aug-2006 (CT) `Command_Spec.__cmp__` and `Command_Spec.__hash__`
 #                     removed (definition didn't make any sense)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 """
 Provides easy access to command line arguments and options in sys.argv

@@ -42,8 +42,11 @@
 #    20-Nov-2003 (CT)  Calls to `self.__len__` removed
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     8-Nov-2006 (PGO) Inheritance changed
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 

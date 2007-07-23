@@ -28,8 +28,11 @@
 #     9-Aug-2006 (CT)  `Script_Category.__hash__` changed to return
 #                      `hash (self.name)` instead of `id (self)`
 #    21-May-2007 (PGO) Let `Script_Category` handle trailing slashes
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL        import TFL
 import _TFL._UI

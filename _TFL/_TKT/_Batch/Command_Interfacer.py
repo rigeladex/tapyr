@@ -32,8 +32,11 @@
 #    14-Mar-2005 (CT) `CI_Button_Box` added to `_Export` call, too
 #    14-Mar-2005 (CT) `Boolean_Variable` added
 #    26-Apr-2005 (CT) Define CI-classes via `New` (to keep the right name)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL           import TFL
 import _TFL._TKT._Batch

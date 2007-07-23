@@ -32,8 +32,11 @@
 #    23-Sep-2004 (CT) `_Wrapped_.__getattr__` added to make wrapped
 #                     callables more similar to the real thing (e.g., avoid
 #                     an AttributeError from `wrapped.func_code`)
+#    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
+from __future__ import absolute_import
+
 
 from   _TFL                   import TFL
 import _TFL._FMW
