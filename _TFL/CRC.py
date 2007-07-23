@@ -154,6 +154,7 @@ class _TD_CRC_ (object) :
 
 # end class _TD_CRC_
 
+
 class CRC32 (_TD_CRC_) :
     """The CCITT 32-bit CRC as used in TTP.OS.CRC and many other
        places within TTTech, primarily in bootloaders, the C2S and TTP-Load.
