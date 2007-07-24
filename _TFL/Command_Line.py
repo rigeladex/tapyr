@@ -159,6 +159,7 @@
 #     9-Aug-2006 (CT) `Command_Spec.__cmp__` and `Command_Spec.__hash__`
 #                     removed (definition didn't make any sense)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    24-Jul-2007 (ABA) Coding Guidelines
 #    ««revision-date»»···
 #--
 from __future__ import absolute_import
@@ -452,10 +453,11 @@ class Opt (Arg) :
         if not self.pos :
             self.pos = pos
         if value and not self.valued :
-            raise Cmd_Error ( ( "Option `%s' doesn't require any value "
-                              + "(offending value: `%s')"
-                              ) % (self.name, value)
-                            )
+            raise Cmd_Error \
+                ( ( "Option `%s' doesn't require any value "
+                    "(offending value: `%s')"
+                  ) % (self.name, value)
+                )
         elif pos and self.valued and not value :
             raise Cmd_Error \
                 ( "%s `%s' requires a value of type `%s'"
