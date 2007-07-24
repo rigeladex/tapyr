@@ -15,6 +15,8 @@
 #    17-Nov-2004 (CED) Creation continued .
 #    13-Jul-2005 (CED) `__mul__` changed to use sets
 #    12-Jul-2007 (CED) `Part_Pos_Translator` and friends added
+#    19-Jul-2007 (MZO) [24856] moved Permutation from YAGNI.Permutation to TFL
+#                      and Part_Pos_Translator to HWA.Copy_List
 #    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
