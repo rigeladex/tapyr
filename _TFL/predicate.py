@@ -160,13 +160,15 @@
 #     8-Dec-2006 (CT)  `window_wise` made visible
 #    16-Feb-2007 (CT)  `enumerate_slice` made visible
 #    23-Jul-2007 (CED) Activated absolute_import
+#    24-Jul-2007 (PGO) `in_order` moved here from TTA.FTC.TDCOM
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
 
-
+from   __future__       import absolute_import
 from   _TFL             import TFL
 import _TFL.Generators
+
+import operator
 
 ### legacy aliases
 IV_Pairs        = enumerate
@@ -467,6 +469,23 @@ def identity (x) :
     """Returns its argument unchanged"""
     return x
 # end def identity
+
+def in_order (a, b, c, a_b_equal = False, b_c_equal = False) :
+    """Checks whether `a before b before c`, wrap proof.
+       >>> in_order (5, 15, 25), in_order (85, 95, 5), in_order (95, 5, 15)
+       (True, True, True)
+       >>> in_order (15, 5, 25), in_order (95, 85, 5), in_order (5, 95, 15)
+       (False, False, False)
+    """
+    op_a_b = operator.le if a_b_equal else operator.lt
+    op_b_c = operator.le if b_c_equal else operator.lt
+    return any \
+        ( ( (op_a_b (a, b) and op_b_c (b, c))
+          , (op_a_b (a, b) and c < a)
+          , (op_b_c (b, c) and c < a)
+          )
+        )
+# end def in_order
 
 def intersection (l, r) :
     """Compute intersection of lists `l' and `r'.
