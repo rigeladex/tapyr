@@ -1,6 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 DI Christian Eder
-# eder@tttech.com
+# Copyright (C) 2005-2007 DI Christian Eder <eder@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -30,22 +29,24 @@
 #     9-Jun-2005 (CED) `locals` added to `__call__`
 #    25-Jul-2005 (CT)  `__call__` fixed (`or {}` considered harmful)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    25-Jul-2007 (PGO) Reduced not-invented-here-ness
 #    ««revision-date»»···
 #--
 #
-from __future__ import absolute_import
 
+from   __future__       import absolute_import
+from   _TFL             import TFL
+from   _TFL.predicate   import *
 
-from _TFL        import TFL
-from _TFL.predicate   import *
+import rlcompleter
 
 class Pycode_Compiler (object) :
     """A class to eval/exec python code lines."""
 
-    def __init__ (self, str) :
-        lines = str.split ("\n")
+    def __init__ (self, s) :
+        lines = s.split ("\n")
         if len (lines) <= 1 :
-            self.src = str
+            self.src = s
         else :
             self.src  = "\n".join (lines) + "\n"
         try :
@@ -56,57 +57,29 @@ class Pycode_Compiler (object) :
             self.can_eval = False
     # end def __init__
 
-    def __call__ (self, globals, locals = None) :
-        if locals is None :
-            locals = {}
+    def __call__ (self, glob_dct, loc_dct = None) :
+        if loc_dct is None :
+            loc_dct = {}
         if self.can_eval :
-            print eval (self.code, globals, locals)
+            print eval (self.code, glob_dct, loc_dct)
         else :
-            exec self.code in globals, locals
+            exec self.code in glob_dct, loc_dct
     # end def __call__
 
 # end class Pycode_Compiler
 
-def complete_command (line, globals, locals = None) :
-    ### XXX beautify and refactor me
-    if locals is None :
-        locals = {}
-    base_obj  = None
-    start     = line.split (" ")
-    if len (start) > 1 :
-        line  = start [-1]
-        start = " ".join (start [:-1])
-    else :
-        start = ""
-    tail = line.split (".")[-1]
-    base = ".".join (line.split (".")[:-1])
+def complete_command (line, glob_dct, loc_dct = None) :
+    prefix, space, line = line.rpartition       (" ")
+    d                   = dict (glob_dct)
+    d.update (loc_dct or {})
+    c                   = rlcompleter.Completer (d)
     try :
-        if base :
-           base_obj = eval (base, globals, locals)
-        if base_obj :
-           list  = [s for s in dir (base_obj) if s.startswith (tail)]
-           mc = getattr (base_obj, "__metaclass__", None)
-           if mc :
-              list += [s for s in dir (mc) if s.startswith (tail)]
-        else :
-           list = \
-               [ s for s in globals.keys () + locals.keys ()
-                 if s.startswith (tail)
-               ]
-    except (NameError, AttributeError, SyntaxError) :
-        list = []
-    if not list :
+        c.complete (line, 0)
+    except StandardError :
         return None, None
-    longest_match = common_head (list)
-    if base :
-        base += "."
-    line = base + longest_match
-    choices = ""
-    if len (list) > 1 :
-        choices = "%s\n\n" % (", ".join (list))
-    if start :
-        line = start + " " + line
-    return (line, choices)
+    match = "".join ((prefix, space, common_head (c.matches)))
+    cands = ", ".join (sorted (s.split (".") [-1] for s in set (c.matches)))
+    return match, ("%s\n\n" % cands if cands else "")
 # end def complete_command
 
 if __name__ != "__main__" :
