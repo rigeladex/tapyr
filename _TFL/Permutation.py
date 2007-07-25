@@ -82,6 +82,9 @@ class Permutation (TFL.Meta.Object) :
        >>> p6 = Permutation (4, (0, 0), (1, 1), (2, 2))
        >>> p6
        Permutation: ()
+       >>> p7 = Permutation (2, (0, 1))
+       >>> p7.blown_up (8)
+       Permutation: ((0, 1), (2, 3), (4, 5), (6, 7))
     """
 
     def __init__ (self, count, * pl) :
