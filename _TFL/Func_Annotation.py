@@ -27,10 +27,11 @@
 # Revision Dates
 #    26-Jun-2007 (DAL) Creation
 #    23-Jul-2007 (CED) Activated absolute_import
+#    26-Jul-2007 (DAL) `isinstance` call optimized
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
 
+from __future__ import absolute_import
 
 from _TFL    import TFL
 from inspect import getargspec
@@ -54,7 +55,7 @@ def func_annotate (func, param_doc, return_doc = None) :
             else :
                 raise ValueError, \
                    "'%s' not a parameter of function '%s'" % (k, func.__name__)
-    elif isinstance (param_doc, list) or isinstance (param_doc, tuple) :
+    elif isinstance (param_doc, (list, tuple)) :
         assert len (args) == len (param_doc), (args, param_doc)
         for k, v in zip (args, param_doc) :
             func.func_annotation [k] = v
