@@ -39,6 +39,7 @@
 #    16-Sep-2005 (MG)  Changed to support `fmt` again
 #    19-Oct-2006 (CED) Length check added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    31-Jul-2007 (MG)  Add description to `h_format`
 #    ««revision-date»»···
 #--
 from __future__ import absolute_import
@@ -74,7 +75,7 @@ class Array (TFL.SDG.C._Var_) :
         )
     h_format             = "".join \
         ( ( _common_format
-          , ";"
+          , "%(:head= :*description:)s;"
           )
         )
 

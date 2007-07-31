@@ -146,6 +146,10 @@ class Struct (TFL.Meta.Object) :
 
     def as_c_code (cls, C = TFL.SDG.C, ** kw) :
         """Returns c-code for the definition of C.Struct for `self`"""
+        if kw.pop ("add_description", True) :
+            description = cls.__doc__
+        else :
+            description = None
         fields   = []
         for f in cls.struct_fields :
             if not isinstance (f, TFL.CDG.Struct_Field) :
@@ -157,7 +161,7 @@ class Struct (TFL.Meta.Object) :
         return C.Struct \
             ( cls.type_name
             , fields
-            , description = cls.__doc__
+            , description = description
             , ** kw
             )
     # end def as_c_code
@@ -168,7 +172,11 @@ class Struct (TFL.Meta.Object) :
 
            If a `c_node` is passed in, the `result` will be added to it.
         """
-        result = C.Typedef (cls.as_c_code (C), ** kw)
+        result = C.Typedef \
+            ( cls.as_c_code (C, add_description = False)
+            , description = cls.__doc__
+            , ** kw
+            )
         if c_node :
             c_node.add (result)
         return result
@@ -227,6 +235,7 @@ class Struct (TFL.Meta.Object) :
             if format :
                 ### `value` is a primitive data type
                 formats.append (format)
+                value = f.convert_value (value)
                 if isinstance (value, (list, tuple)) :
                     values.extend (value)
                 else :

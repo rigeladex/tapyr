@@ -62,6 +62,7 @@ import traceback
 import math
 
 class Value_Out_Of_Range (ValueError) : pass
+class String_Too_Long    (ValueError) : pass
 
 class Struct_Field (TFL.Meta.Object):
     """Model a single field of a C struct."""
@@ -181,6 +182,10 @@ class Struct_Field (TFL.Meta.Object):
         return result
     # end def packed
 
+    def convert_value (self, value) :
+        return value
+    # end def convert_value
+
     def check_value (self, original_value) :
         result  = True
         size    = 0
@@ -246,6 +251,34 @@ class Struct_Field (TFL.Meta.Object):
     # end def format_code
 
 # end class Struct_Field
+
+class String_Field (Struct_Field) :
+    """Models a struct field which is a fixed length char string."""
+
+    def __init__ (self, name, length, desc) :
+        self.__super.__init__ \
+            ("char", name, desc, bounds = length)
+    # end def __init__
+
+    def check_value (self, value) :
+        ### check the we get a bytestring (no unicode support here) and that
+        ### the string is not too long
+        if not (isinstance (value, str) and (len (value) < self.bounds)) :
+            raise String_Too_Long, value
+        return True
+    # end def check_value
+
+    def convert_value (self, value) :
+        if isinstance (value, str) :
+            value = tuple (value.ljust (self.bounds, "\0"))
+        return value
+    # end def convert_value
+
+    def packed (self, value, byte_order = "native") :
+        return self.__super.packed (self.convert_value (value), byte_order)
+    # end def packed
+
+# end class String_Field
 
 class Reference_Struct_Field (Struct_Field) :
     """A struct field which references a other `Struct_Field`."""

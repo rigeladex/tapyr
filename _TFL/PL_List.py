@@ -33,6 +33,8 @@
 #    22-Feb-2001 (CT) Use `raise' instead of `raise exc' for re-raise
 #    19-Apr-2003 (CT) `__iter__` added
 #    24-Mar-2005 (CT) Moved into package `TFL`
+#    11-May-2007 (MG) `__getslice__` added becasue the implementation of the
+#                     `UserList.__getslice__`does not work
 #    23-Jul-2007 (CED) Activated absolute_import
 #    ««revision-date»»···
 #--
@@ -81,6 +83,10 @@ class PL_List (UserList) :
         except IndexError :
             pass
     # end def __delslice__
+
+    def __getslice__ (self, i, j) :
+        return self.__class__ (self.undefined, * self.data [i:j])
+    # end def __getslice__
 
     def __getitem__ (self, item) :
         try :

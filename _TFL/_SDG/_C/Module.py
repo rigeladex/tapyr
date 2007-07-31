@@ -90,7 +90,7 @@ class Module (TFL.SDG.C._Scope_) :
         #ifndef _%(name)s_h_
         #define _%(name)s_h_ 1
 
-        """ + _format_children + """#endif /* _%(name)s_h_ */
+        """ + _format_children + """#endif /* _%(name)s_h_ */%(chr(10))s
     """
 
     def __init__ (self, * children, ** kw) :
