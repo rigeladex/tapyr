@@ -48,6 +48,8 @@
 #    14-Mar-2007 (PGO) `check_value` changed to raise Value_Out_Of_Range
 #     7-May-2007 (MZO) `check_value` fixed, hex was not checked correctly
 #    23-Jul-2007 (CED) Activated absolute_import
+#    01-Aug-2007 (MG)  `String_Field` added
+#    01-Aug-2007 (MG)  `convert_value` added
 #    ««revision-date»»···
 #--
 from __future__ import absolute_import

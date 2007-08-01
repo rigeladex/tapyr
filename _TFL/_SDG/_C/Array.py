@@ -75,7 +75,7 @@ class Array (TFL.SDG.C._Var_) :
         )
     h_format             = "".join \
         ( ( _common_format
-          , "%(:head= :*description:)s;"
+          , ";%(:head= :*description:)s"
           )
         )
 

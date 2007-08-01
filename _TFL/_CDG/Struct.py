@@ -57,6 +57,11 @@
 #     1-Feb-2007 (CED) s/GCC_Like_Type_Packer/Active_Type_Packer/g
 #    26-Mar-2007 (PGO) `bounds` handling in `dict` fixed (was always overwritten)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    01-Aug-2007 (MG)  Struct.as_c_code: parameter `add_description` added
+#                      and `as_typedef` changed to put the description to the
+#                      typedef instead
+#    01-Aug-2007 (MG)  Struct.format_and_values: call to
+#                      `field.convert_value` added
 #    ««revision-date»»···
 #--
 from __future__ import absolute_import
