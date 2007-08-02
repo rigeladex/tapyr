@@ -58,6 +58,7 @@
 #    11-Apr-2007 (CT)  `_difference_iter` changed to skip empty intervals of
 #                      `other`
 #    23-Jul-2007 (CED) Activated absolute_import
+#     2-Aug-2007 (CED) Property `length` added
 #    ««revision-date»»···
 #--
 from __future__ import absolute_import
@@ -179,6 +180,11 @@ class Interval_Set (TFL.Meta.Object) :
     """
 
     element_class = property (lambda self : self.intervals [0].__class__)
+
+    @property
+    def length (self) :
+        return sum (i.length for i in self.intervals)
+    # end def length
 
     def __init__ (self, * args) :
         if args :

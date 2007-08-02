@@ -161,6 +161,7 @@
 #    16-Feb-2007 (CT)  `enumerate_slice` made visible
 #    23-Jul-2007 (CED) Activated absolute_import
 #    24-Jul-2007 (PGO) `in_order` moved here from TTA.FTC.TDCOM
+#     2-Aug-2007 (CED) `is_ordered`, `rotated_until_ordered` added
 #    ««revision-date»»···
 #--
 
@@ -248,6 +249,10 @@ def bool_split (seq, predicate) :
        ([0, 2, 4, 6, 8], [1, 3, 5, 7, 9])
        >>> bool_split (range (10), lambda x : x > 5)
        ([0, 1, 2, 3, 4, 5], [6, 7, 8, 9])
+       >>> bool_split (range (5), lambda x : x < 5)
+       ([], [0, 1, 2, 3, 4])
+       >>> bool_split (range (5), lambda x : x > 4)
+       ([0, 1, 2, 3, 4], [])
     """
     result = ([], [])
     add    = [r.append for r in result]
@@ -512,7 +517,7 @@ def intersection_ns (lists) :
 # end def intersection_ns
 
 def is_contiguous (seq) :
-    """Tells whether the seqence of integers in `seq` is contiguous
+    """Tells whether the sequence of integers in `seq` is contiguous
 
        >>> is_contiguous ([1, 2, 3, 4, 5])
        True
@@ -533,6 +538,33 @@ def is_contiguous (seq) :
             return False
     return True
 # end def is_contiguous
+
+def is_ordered (seq, decorator = None) :
+    """Returns whether `seq` is ordered (according to `decorator`)
+
+       >>> is_ordered ([0, 1, 3, 7])
+       True
+       >>> is_ordered ([0, 1, 4, 3])
+       False
+       >>> is_ordered ([0, 0, 1, 1])
+       True
+       >>> is_ordered ([1])
+       True
+       >>> is_ordered ([])
+       True
+       >>> is_ordered ([(2, 0), (1, 1), (3, 2)], lambda (a, b) : a)
+       False
+       >>> is_ordered ([(2, 0), (1, 1), (3, 2)], lambda (a, b) : b)
+       True
+    """
+
+    if decorator is not None :
+        seq = (decorator (e) for e in seq)
+    for l, r in TFL.pairwise (seq) :
+        if l > r :
+            return False
+    return True
+# end is_ordered
 
 def list_difference (l, r) :
     """Compute difference of `l` and `r`.
@@ -705,6 +737,28 @@ def rotate_r (sequence) :
     """
     return sequence [-1:] + sequence [:-1]
 # end def rotate_r
+
+### XXX find a better name and a better docstring, please
+def rotated_until_ordered (seq, key = None) :
+    """Return a rotated copy of `seq` so that the smallest element comes first
+       (requires the `seq` is kind of ordered (sawtooth))
+
+       >>> rotated_until_ordered ([])
+       []
+       >>> rotated_until_ordered ([1])
+       [1]
+       >>> rotated_until_ordered ([3, 4, 0, 1])
+       [0, 1, 3, 4]
+    """
+
+    result = seq
+    if result :
+        if key is None :
+            key = TFL.identity
+        while key (result [0]) > key (result [-1]) :
+            result = TFL.rotate_r (result)
+    return result
+# end def rotated_until_ordered
 
 def rounded_down (value, granularity) :
     """Returns `value` rounded down to nearest multiple of `granularity`.
