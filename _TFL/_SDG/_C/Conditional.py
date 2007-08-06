@@ -30,9 +30,10 @@
 #    20-Oct-2004 (CT) `scope` set to `HC`
 #    21-Oct-2004 (CT) `scope` argument passed to `_convert`
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

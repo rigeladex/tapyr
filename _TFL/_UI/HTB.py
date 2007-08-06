@@ -143,9 +143,10 @@
 #    17-Jul-2006 (MZO) [18749] present window `search`, `expand`
 #    19-Jul-2006 (MZO) [18758] comment out `accelerator`
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL         import TFL

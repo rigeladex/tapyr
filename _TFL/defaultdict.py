@@ -30,9 +30,10 @@
 #    20-Jun-2007 (CT) Adapted to Python 2.5
 #    20-Jun-2007 (CT) `defaultdict_kd` added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """

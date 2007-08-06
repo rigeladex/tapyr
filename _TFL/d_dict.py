@@ -32,9 +32,10 @@
 #    11-Sep-2001 (CT) Creation (factored from `D_Dict`)
 #    16-Jan-2003 (CT) Aesthetics
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 def d_dict (* ancestors, ** kw) :

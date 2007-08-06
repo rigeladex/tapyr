@@ -30,9 +30,10 @@
 #    21-Sep-2004 (CT) `Init_Atom.c_format` changed (s/front/head/)
 #    23-Sep-2004 (CT) `Init_Comp.c_format` changed (total revamp)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

@@ -28,10 +28,11 @@
 #    26-Jun-2007 (DAL) Creation
 #    23-Jul-2007 (CED) Activated absolute_import
 #    26-Jul-2007 (DAL) `isinstance` call optimized
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-from __future__ import absolute_import
+
 
 from _TFL    import TFL
 from inspect import getargspec

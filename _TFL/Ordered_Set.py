@@ -44,9 +44,10 @@
 #     8-Nov-2006 (PGO) Inheritance changed
 #     4-Dec-2006 (PGO) `remove` and `__delitem__` merged to restore interface
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from _TFL import TFL

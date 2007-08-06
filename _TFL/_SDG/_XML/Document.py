@@ -36,9 +36,10 @@
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
 #    20-Sep-2005 (CT) Doctest with over-long attributes added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                   import TFL

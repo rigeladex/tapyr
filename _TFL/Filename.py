@@ -83,9 +83,10 @@
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    23-Mar-2006 (CED) `real_directory`, `real_name` added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """Provides a class that represents a filename with its parts: path, base

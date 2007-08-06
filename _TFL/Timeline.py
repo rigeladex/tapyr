@@ -81,9 +81,10 @@
 #    17-Apr-2007 (CT)  `TLS_Periodic.prepare_cut_somewhere` added
 #    14-Jun-2007 (CT)  `reset` changed to increment `_sid`
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                  import TFL

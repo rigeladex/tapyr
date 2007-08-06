@@ -33,9 +33,10 @@
 #     9-Mar-2007 (CT) Optional `translate_table` added to `sanitized_unicode`
 #                     and `sanitized_filename`
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL        import TFL

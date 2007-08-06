@@ -44,9 +44,10 @@
 #    23-Sep-2004 (MG) `vaps_channel_format` and friends added
 #     7-Oct-2004 (CED) `apidoc_tex_format` and friends added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

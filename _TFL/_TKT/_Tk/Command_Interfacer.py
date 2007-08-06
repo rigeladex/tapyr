@@ -72,9 +72,10 @@
 #    19-Jul-2006 (MZO) [18758] `add_group` implemented
 #    26-Jul-2006 (MZO) [18758] label of buttons defined
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                 import TFL

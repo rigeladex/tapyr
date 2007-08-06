@@ -33,9 +33,10 @@
 #    14-Mar-2005 (CT) `Boolean_Variable` added
 #    26-Apr-2005 (CT) Define CI-classes via `New` (to keep the right name)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL           import TFL

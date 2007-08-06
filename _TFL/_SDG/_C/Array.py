@@ -40,9 +40,10 @@
 #    19-Oct-2006 (CED) Length check added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    31-Jul-2007 (MG)  Add description to `h_format`
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

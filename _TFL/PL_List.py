@@ -36,9 +36,10 @@
 #    11-May-2007 (MG) `__getslice__` added becasue the implementation of the
 #                     `UserList.__getslice__`does not work
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   UserList  import UserList

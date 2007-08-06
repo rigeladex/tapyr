@@ -40,9 +40,10 @@
 #                      work per instance ('that'))
 #    28-Feb-2007 (CED) `self.result` also has to be per instance of course
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL             import TFL

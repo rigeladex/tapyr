@@ -31,9 +31,10 @@
 #                     module (and another case added)
 #     6-Jul-2005 (CT) `textwrap.dedent` used if available
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """

@@ -33,9 +33,10 @@
 #                     `_Export` (which leads to circular import again)
 #    24-Jun-2002 (CT) Import `Package_Namespace` absolutely (i.e., from `_TFL`)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from _TFL.Package_Namespace import Package_Namespace

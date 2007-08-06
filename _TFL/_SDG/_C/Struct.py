@@ -34,9 +34,10 @@
 #    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #    20-Nov-2006 (MZO) [21696] `_setup_initializers_for_cdg_array` added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

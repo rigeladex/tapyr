@@ -62,9 +62,10 @@
 #                      typedef instead
 #    01-Aug-2007 (MG)  Struct.format_and_values: call to
 #                      `field.convert_value` added
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                           import TFL

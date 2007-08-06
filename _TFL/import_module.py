@@ -32,9 +32,10 @@
 #                     [the old implementation renamed to
 #                     `import_module_brittle`]
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 import sys

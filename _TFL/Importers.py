@@ -42,9 +42,10 @@
 #    14-Jun-2007 (CED) [24566] `load_module` resets package's __path__
 #    18-Jun-2007 (CT)  `find_module` changed back to be 2.4 compatible
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 import imp

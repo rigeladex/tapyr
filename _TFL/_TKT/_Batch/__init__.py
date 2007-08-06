@@ -32,9 +32,10 @@
 #    23-Feb-2005 (CT) `stop_cb_chaining` added
 #    10-Aug-2005 (CT) Use `set_TNS_name` instead of home-grown code
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL.Package_Namespace import Package_Namespace

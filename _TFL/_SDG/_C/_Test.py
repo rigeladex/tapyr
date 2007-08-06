@@ -38,9 +38,10 @@
 #    30-Oct-2006 (CED) Tests for `Define_Constant`, `Preprocessor_Error` added
 #    17-Apr-2007 (CED) Test for `Define_Constant` adapted
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """

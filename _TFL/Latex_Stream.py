@@ -67,7 +67,7 @@
 #    15-Feb-2005 (MG) `isinstance (<>, str)`
 #    ««revision-date»»
 #--
-from __future__ import absolute_import
+
 
 
 from    Formatted_Stream import Formatted_Stream

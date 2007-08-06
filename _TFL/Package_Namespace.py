@@ -127,9 +127,10 @@
 #    31-Jul-2006 (PGO) `DPN_Importer.register` introduced
 #     7-Nov-2006 (PGO) Reloading now also works with `_Add`
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 import re

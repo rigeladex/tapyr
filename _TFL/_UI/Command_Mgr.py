@@ -179,9 +179,10 @@
 #    21-Jun-2007 (MZO) `GeneratorExit" catched in Delegator
 #    22-Jun-2007 (DAL) added `_Command_Group_` to export symbols
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL           import TFL

@@ -71,9 +71,10 @@
 #    12-Dec-2005 (CT)  `return None` removed from `has_child`
 #    08-Nov-2006 (PGO) `NO_List` added that doesn't check for dups
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """

@@ -36,9 +36,10 @@
 #     8-Sep-2005 (PGO) import of textwrap removed (not used)
 #    08-Dec-2005 (MG)  `_convert_args` use `_force` instead of `_convert`
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

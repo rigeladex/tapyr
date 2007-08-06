@@ -43,9 +43,10 @@
 #                      dictionaries
 #     4-Apr-2005 (CED) `reversed` imported
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """

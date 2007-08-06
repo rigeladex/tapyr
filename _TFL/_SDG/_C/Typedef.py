@@ -31,9 +31,10 @@
 #    23-Sep-2004 (MG) `vaps_channel_format` added
 #    20-Oct-2004 (CT) Import for `_Decl_` added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

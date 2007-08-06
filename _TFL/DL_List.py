@@ -49,9 +49,10 @@
 #    20-Apr-2007 (CT)  Argument `items` of `__init__` made optional (doh!)
 #                      and doctests for empty instantiations added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL        import TFL

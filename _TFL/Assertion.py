@@ -30,9 +30,10 @@
 #    24-Mar-2005 (CT) Use `TFL.Caller.globals` instead of `caller_globals`
 #                     (and ditto for `locals`)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL import TFL

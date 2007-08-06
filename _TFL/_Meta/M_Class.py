@@ -42,9 +42,10 @@
 #    23-Mar-2006 (CED) `_fixed_type_` added
 #     8-Aug-2006 (PGO) `_super_calling_not_possible` added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL             import TFL

@@ -25,9 +25,10 @@
 #    30-Aug-2005 (MZO) [14421] - renamed win_expl_cb
 #    19-Jul-2006 (MZO) [18758] `new_menubar` implemented
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from _TFL import TFL

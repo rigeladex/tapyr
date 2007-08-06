@@ -160,9 +160,10 @@
 #                     removed (definition didn't make any sense)
 #    23-Jul-2007 (CED) Activated absolute_import
 #    24-Jul-2007 (ABA) Coding Guidelines
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """

@@ -40,9 +40,10 @@
 #    30-Mar-2005 (CT) Optional argument `name` added to `M_Data_Class.__call__`
 #    30-Mar-2005 (CT) `_check_dict` changed to ignore magic names
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 """

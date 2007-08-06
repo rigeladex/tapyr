@@ -17,10 +17,11 @@
 #    14-Nov-2006 (MZO) test extended, profiler added
 #    14-Mar-2007 (PGO) `mask` is ubyte1 only
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 #
-from __future__ import absolute_import
+
 
 from   _TFL                 import TFL
 import _TFL._Meta.Object

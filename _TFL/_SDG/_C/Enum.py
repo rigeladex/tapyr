@@ -29,9 +29,10 @@
 #    24-May-2005 (CED) Creation
 #    30-Aug-2005 (CT)  Use `split_hst` instead of home-grown code
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

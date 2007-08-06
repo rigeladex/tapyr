@@ -34,9 +34,10 @@
 #    20-Mar-2006 (CT)  `__getitem__` added
 #    31-May-2006 (WPR) `__iter__` added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL           import TFL

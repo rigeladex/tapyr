@@ -29,9 +29,10 @@
 #    25-Mar-2001 (CT) Creation
 #    11-Feb-2006 (CT) Moved into package `TFL`
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from _TFL.Primes        import Primes

@@ -31,9 +31,10 @@
 #                      (RUP 23577)
 #    24-Apr-2007 (DAL) `as_tex` addded
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL             import TFL

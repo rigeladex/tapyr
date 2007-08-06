@@ -34,9 +34,10 @@
 #    22-Apr-2003 (CT) `_split` changed to populate `_keys`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL._FDB import FDB

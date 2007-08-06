@@ -40,9 +40,10 @@
 #    17-Apr-2007 (CT)  `__mod__` added
 #    11-May-2007 (CT)  `set` added
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                 import TFL

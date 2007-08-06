@@ -47,9 +47,10 @@
 #    20-Apr-2005 (MZO) update test - tail/head_contents
 #     5-Sep-2005 (MZO) fixed import
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                 import TFL

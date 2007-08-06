@@ -50,9 +50,10 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    01-Aug-2007 (MG)  `String_Field` added
 #    01-Aug-2007 (MG)  `convert_value` added
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                           import TFL

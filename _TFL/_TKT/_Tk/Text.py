@@ -82,9 +82,10 @@
 #    20-May-2005 (CT)  `Scrolled_Text` changed to set `x_scroll_default` to
 #                      False
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                 import TFL

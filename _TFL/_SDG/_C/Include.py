@@ -34,9 +34,10 @@
 #    24-Aug-2004 (CT)  Append `.h` if necessary (using `Filename`)
 #    11-Sep-2006 (MZO) [21459] searchpath fixed
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

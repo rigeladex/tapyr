@@ -29,9 +29,10 @@
 #    18-Jan-2005 (CT) Creation
 #    21-Jan-2006 (MG) Imports fixed
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL                 import TFL

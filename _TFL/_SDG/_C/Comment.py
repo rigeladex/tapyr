@@ -43,9 +43,10 @@
 #     8-Feb-2005 (CED) `apidoc_tex_format` defined here
 #     9-Aug-2005 (CT)  Call to `tex_quoted` added (to new `_tex_description`)
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-from __future__ import absolute_import
+
 
 
 from   _TFL              import TFL

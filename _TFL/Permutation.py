@@ -18,10 +18,11 @@
 #    19-Jul-2007 (MZO) [24856] moved Permutation from YAGNI.Permutation to TFL
 #                      and Part_Pos_Translator to HWA.Copy_List
 #    23-Jul-2007 (CED) Activated absolute_import
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 #
-from __future__ import absolute_import
+
 
 
 
