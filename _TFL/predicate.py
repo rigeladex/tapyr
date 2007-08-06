@@ -162,10 +162,11 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    24-Jul-2007 (PGO) `in_order` moved here from TTA.FTC.TDCOM
 #     2-Aug-2007 (CED) `is_ordered`, `rotated_until_ordered` added
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-from   __future__       import absolute_import
+
 from   _TFL             import TFL
 import _TFL.Generators
 

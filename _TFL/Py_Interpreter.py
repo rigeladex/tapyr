@@ -30,11 +30,12 @@
 #    25-Jul-2005 (CT)  `__call__` fixed (`or {}` considered harmful)
 #    23-Jul-2007 (CED) Activated absolute_import
 #    25-Jul-2007 (PGO) Reduced not-invented-here-ness
+#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 #
 
-from   __future__       import absolute_import
+
 from   _TFL             import TFL
 from   _TFL.predicate   import *
 
