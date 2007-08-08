@@ -51,8 +51,8 @@ umsatzsteuer = add_account_file
 sep_1000 = { "." : ",", "," : "."}
 
 if __name__ == "__main__":
-    from Command_Line   import Command_Line
-    from sys            import stdin
+    from _TFL.Command_Line   import Command_Line
+    from sys                 import stdin
     cmd = Command_Line  \
         ( option_spec =
             ( "-all"

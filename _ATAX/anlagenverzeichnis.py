@@ -376,37 +376,38 @@ class Anlagenverzeichnis (_Base) :
 # end class Anlagenverzeichnis
 
 def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line, Opt_L
-    from   predicate    import sorted
+    from   _TFL.Command_Line import Command_Line, Opt_L
+    from   _TFL.predicate    import sorted
     currencies = sorted (EU_Currency.Table.keys ())
-    return Command_Line ( option_spec =
-                            ( Opt_L ( selection   = currencies
-                                    , name        = "source_currency"
-                                    , type        = "S"
-                                    , default     = "EUR"
-                                    , description = "Source currency"
-                                    )
-                            , Opt_L ( selection   = currencies
-                                    , name        = "target_currency"
-                                    , type        = "S"
-                                    , default     = "EUR"
-                                    , description = "Target currency"
-                                    )
-                            , "-Start_year:S=1988"
-                                "?Skip all entries before `Start_year`"
-                            , "-update_accounts:B"
-                                "?Add depreciation entries to account file"
-                            )
-                        , arg_spec    =
-                            ( "year:S?Year of interest"
-                            , "anlagenverzeichnis:S"
-                                "?File defining depreciation data"
-                            )
-                        , min_args    = 2
-                        , max_args    = 2
-                        , description = "Calculate depreciations for `year`"
-                        , arg_array   = arg_array
-                        )
+    return Command_Line \
+        ( option_spec =
+            ( Opt_L ( selection   = currencies
+                    , name        = "source_currency"
+                    , type        = "S"
+                    , default     = "EUR"
+                    , description = "Source currency"
+                    )
+            , Opt_L ( selection   = currencies
+                    , name        = "target_currency"
+                    , type        = "S"
+                    , default     = "EUR"
+                    , description = "Target currency"
+                    )
+            , "-Start_year:S=1988"
+                "?Skip all entries before `Start_year`"
+            , "-update_accounts:B"
+                "?Add depreciation entries to account file"
+            )
+        , arg_spec    =
+            ( "year:S?Year of interest"
+            , "anlagenverzeichnis:S"
+                "?File defining depreciation data"
+            )
+        , min_args    = 2
+        , max_args    = 2
+        , description = "Calculate depreciations for `year`"
+        , arg_array   = arg_array
+        )
 # end def command_spec
 
 def main (cmd) :
