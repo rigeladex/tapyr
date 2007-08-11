@@ -112,9 +112,9 @@ class Quarter (TFL.Meta.Object) :
     """Ordinal numbers for quarters"""
 
     @classmethod
-    def to_date (cls, qu) :
-        """Return date corresponding to quarter ordinal `qu`."""
-        y, q = divmod (qu, 4)
+    def to_date (cls, qo) :
+        """Return date corresponding to quarter ordinal `qo`."""
+        y, q = divmod (qo, 4)
         return CAL.Date (y, ((q or 4) - 1) * 3 + 1, 1)
     # end def to_date
 
