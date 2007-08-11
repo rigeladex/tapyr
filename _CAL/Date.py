@@ -50,6 +50,7 @@
 #                     `cls._Type` instead of `date` and `datetime.date`
 #    12-Jan-2007 (CT) Imports fixed
 #                     (import `Command_Line` and `Regexp` from _TFL)
+#    11-Aug-2007 (CT) `quarter` added
 #    ««revision-date»»···
 #--
 
@@ -274,6 +275,8 @@ class Date (CAL._DTW_) :
         elif name == "ordinal" :
             ### Rata Die (based on January 1, 1)
             result = self.ordinal = self._body.toordinal ()
+        elif name == "quarter" :
+            result = self.quarter = (self.month - 1) // 3 + 1
         elif name == "rjd" :
             ### relative julian day (based on January 1 of `self.year`)
             result = self.rjd = self._body.timetuple ().tm_yday

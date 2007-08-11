@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Jan-2007 (CT) Creation
+#    11-Aug-2007 (CT) `Quarter` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,24 @@ class Month (TFL.Meta.Object) :
     # end def to_ordinal
 
 # end class Month
+
+class Quarter (TFL.Meta.Object) :
+    """Ordinal numbers for quarters"""
+
+    @classmethod
+    def to_date (cls, qu) :
+        """Return date corresponding to quarter ordinal `qu`."""
+        y, q = divmod (qu, 4)
+        return CAL.Date (y, ((q or 4) - 1) * 3 + 1, 1)
+    # end def to_date
+
+    @classmethod
+    def to_ordinal (cls, d) :
+        """Return quarter ordinal for date `d`."""
+        return d.year * 4 + d.quarter
+    # end def to_ordinal
+
+# end class Quarter
 
 class Week (TFL.Meta.Object) :
     """Ordinal numbers for weeks"""
