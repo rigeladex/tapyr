@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -62,19 +62,20 @@
 #    10-Dec-2004 (CT) Use `cal.day` to create days (instead of calling `Day`
 #                     directly)
 #    17-Jun-2005 (MG) `Day.is_weekday` fixed
+#    11-Aug-2007 (CT) Imports corrected
 #    ««revision-date»»···
 #--
 
-from   _TFL      import TFL
-from   _CAL import CAL
+from   _TFL              import TFL
+from   _CAL              import CAL
 import _TFL._Meta.Object
 import _CAL.Appointment
 import _CAL.Date
 import _CAL.Holiday
 import _TFL.d_dict
 
-from   predicate import *
-import sos
+from   _TFL.predicate    import *
+from   _TFL              import sos
 
 class Day (TFL.Meta.Object) :
     """Model a single day in a calendar"""
@@ -453,7 +454,7 @@ def write_year (Yf, file_name, force = 0) :
 # end def write_year
 
 def _command_spec (arg_array = None) :
-    from Command_Line import Command_Line
+    from _TFL.Command_Line import Command_Line
     today    = CAL.Date ()
     year     = today.year
     return Command_Line \

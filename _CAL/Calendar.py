@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,16 +30,17 @@
 #    14-Nov-2004 (CT) `_new_week` added
 #    15-Nov-2004 (CT) More doctests added
 #    10-Dec-2004 (CT) Small fixes
+#    11-Aug-2007 (CT) Imports corrected
 #    ««revision-date»»···
 #--
 
-from   _TFL      import TFL
-from   _CAL import CAL
+from   _TFL              import TFL
+from   _CAL              import CAL
 import _CAL.Date
 import _CAL.Year
 import _TFL._Meta.Object
-from   predicate import *
-import sos
+from   _TFL.predicate    import *
+from   _TFL              import sos
 
 class _Cal_Dict_ (dict) :
 

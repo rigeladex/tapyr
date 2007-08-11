@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,16 +40,17 @@
 #     4-Jan-2007 (CT)  Removed stale __future__  import of `generators`
 #     4-Jan-2007 (CT)  Pass `default_to_now = True` to `Date`
 #     6-Jan-2007 (CT)  Options `xo` and `yo` added
+#    11-Aug-2007 (CT) Imports corrected
 #    ««revision-date»»···
 #--
 
-from   _TFL      import TFL
-from   _CAL      import CAL
-from   Filename  import *
-from   predicate import *
-from   Regexp    import *
+from   _TFL           import TFL
+from   _CAL           import CAL
+from   _TFL.Filename  import *
+from   _TFL.predicate import *
+from   _TFL.Regexp    import *
+from   _TFL           import sos
 
-import sos
 import _TFL._Meta.Object
 import _CAL.Plan
 import _CAL.Year
@@ -224,7 +225,7 @@ class PDF_Plan_L (PDF_Plan) :
 # end class PDF_Plan_L
 
 def _command_spec (arg_array = None) :
-    from Command_Line import Command_Line
+    from _TFL.Command_Line import Command_Line
     today    = CAL.Date ()
     year     = today.year
     return Command_Line \

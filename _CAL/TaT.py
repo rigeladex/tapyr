@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    26-Oct-2004 (CT) `TaT.__iter__` changed to handle `None` returned from
 #                     `conditioner` (and doctest for this added)
 #    28-Oct-2004 (CT) `TaT` changed to allow multiple deltas
+#    11-Aug-2007 (CT) Imports corrected
 #    ««revision-date»»···
 #--
 
@@ -42,8 +43,10 @@ from   _TFL                    import TFL
 from   _CAL                    import CAL
 import _TFL._Meta.Object
 
+from   _TFL.Generators         import alt_iter
+from   _TFL.predicate          import identity
+
 import itertools
-from   predicate               import identity, alt_iter
 
 class TaT_Shifter (TFL.Meta.Object) :
     """Model a TaT shifter

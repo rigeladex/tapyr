@@ -88,6 +88,13 @@ class Date (CAL._DTW_) :
        2004-10-10 2004-09-10
        >>> print d, d + Month_Delta (-12)
        2004-10-10 2003-10-10
+       >>> MD = Month_Delta
+       >>> for x in (d, d + MD (3), d + MD (6), d + MD (9)):
+       ...    print str (x), ":", x.quarter
+       2004-10-10 : 4
+       2005-01-10 : 1
+       2005-04-10 : 2
+       2005-07-10 : 3
        >>> d = Date (day = 1, month = 1, year = 2004)
        >>> print d, d + Month_Delta (11)
        2004-01-01 2004-12-01

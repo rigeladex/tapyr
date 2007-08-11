@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,14 +29,15 @@
 #    13-Apr-2003 (CT) Creation
 #    19-Apr-2003 (CT) `time_pat` changed to allow for 1-digit hours, too
 #    19-Apr-2003 (CT) `prio_pat` factored
+#    11-Aug-2007 (CT) Imports corrected
 #    ««revision-date»»···
 #--
 
-from   _TFL      import TFL
-from   _CAL      import CAL
+from   _TFL           import TFL
+from   _CAL           import CAL
 import _TFL._Meta.Object
 
-from   Regexp    import *
+from   _TFL.Regexp    import *
 
 time_pat        = Regexp \
     ( r"(?P<time> "

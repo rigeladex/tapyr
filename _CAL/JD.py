@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jun-2004 (CT) Creation
+#    11-Aug-2007 (CT) U_Test ballast removed
 #    ««revision-date»»···
 #--
 
@@ -50,26 +51,6 @@ def JD (d, m, y) :
     jd = int (365.25  * (y + 4716)) + int (30.6001 * (m + 1)) + d + b - 1524.5
     return jd
 # end def JD
-
-### unit-test code ############################################################
-
-if __debug__ :
-    import U_Test
-
-    def _doc_test () :
-        import JD
-        return U_Test.run_module_doc_tests (JD)
-    # end def _doc_test
-
-    def _test () :
-        _doc_test  ()
-    # end def _test
-
-    if __name__ == "__main__" :
-        _test ()
-# end if __debug__
-
-### end unit-test code ########################################################
 
 if __name__ != "__main__" :
     from _CAL import CAL
