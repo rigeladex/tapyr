@@ -163,6 +163,7 @@
 #     2-Aug-2007 (CED) `is_ordered`, `rotated_until_ordered` added
 #     6-Aug-2007 (CT)  `in_order` removed
 #     6-Aug-2007 (CED) Future import removed again
+#    14-Aug-2007 (CED) `is_ordered` simplified, `unified` added
 #    ««revision-date»»···
 #--
 
@@ -543,10 +544,7 @@ def is_ordered (seq, decorator = None) :
 
     if decorator is not None :
         seq = (decorator (e) for e in seq)
-    for l, r in TFL.pairwise (seq) :
-        if l > r :
-            return False
-    return True
+    return not TFL.any_true_p (TFL.pairwise (seq), lambda (l, r) : l > r)
 # end is_ordered
 
 def list_difference (l, r) :
@@ -972,6 +970,28 @@ def union (* lists) :
         result.update (l)
     return list (result)
 # end def union
+
+def unified (seq) :
+    """Returns a copy of `seq` where duplicates are eliminated while
+       preserving the order of the remaining elements.
+
+       >>> list (unified ([]))
+       []
+       >>> list (unified ([1]))
+       [1]
+       >>> list (unified ([1, 2, 3]))
+       [1, 2, 3]
+       >>> list (unified ([1, 1, 1]))
+       [1]
+       >>> list (unified ([1, 2, 2, 3, 4, 4]))
+       [1, 2, 3, 4]
+    """
+    _result = set ()
+    for e in seq :
+        if e not in _result :
+            yield e
+            _result.add (e)
+# end def unified
 
 def un_nested (l) :
     """Returns list `l' in un-nested form (i.e., if it is a one-element list
