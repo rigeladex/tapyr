@@ -51,8 +51,6 @@
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL              import TFL
 import _TFL._Meta.Object
 import _TFL.Environment
@@ -64,7 +62,7 @@ import traceback
 
 try :
     from WindowsRegistry import *
-except ImportError :
+except (ImportError, SyntaxError) :
     pass
 
 class App_State (TFL.Meta.Object) :
