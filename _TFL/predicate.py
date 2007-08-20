@@ -164,6 +164,7 @@
 #     6-Aug-2007 (CT)  `in_order` removed
 #     6-Aug-2007 (CED) Future import removed again
 #    14-Aug-2007 (CED) `is_ordered` simplified, `unified` added
+#    20-Aug-2007 (CED) s/unified/uniq/
 #    ««revision-date»»···
 #--
 
@@ -971,19 +972,21 @@ def union (* lists) :
     return list (result)
 # end def union
 
-def unified (seq) :
+def uniq (seq) :
     """Returns a copy of `seq` where duplicates are eliminated while
        preserving the order of the remaining elements.
 
-       >>> list (unified ([]))
+       >>> list (uniq ([]))
        []
-       >>> list (unified ([1]))
+       >>> list (uniq ([1]))
        [1]
-       >>> list (unified ([1, 2, 3]))
+       >>> list (uniq ([1, 2, 3]))
        [1, 2, 3]
-       >>> list (unified ([1, 1, 1]))
+       >>> list (uniq ([1, 1, 1]))
        [1]
-       >>> list (unified ([1, 2, 2, 3, 4, 4]))
+       >>> list (uniq ([1, 2, 2, 3, 4, 4]))
+       [1, 2, 3, 4]
+       >>> list (uniq ([1, 2, 3, 2, 4, 1]))
        [1, 2, 3, 4]
     """
     _result = set ()
@@ -991,7 +994,7 @@ def unified (seq) :
         if e not in _result :
             yield e
             _result.add (e)
-# end def unified
+# end def uniq
 
 def un_nested (l) :
     """Returns list `l' in un-nested form (i.e., if it is a one-element list
