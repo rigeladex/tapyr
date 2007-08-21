@@ -50,6 +50,7 @@
 #     8-Aug-2006 (MSF) fixed [5608]
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    21-Aug-2007 (CED) practically_infinite introduced
 #    ««revision-date»»···
 #--
 
@@ -190,6 +191,8 @@ def module_path (module) :
         _module_pathes [module] = _path
     return _module_pathes [module]
 # end def module_path
+
+practically_infinite = int ((1 << 31) - 1)
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
