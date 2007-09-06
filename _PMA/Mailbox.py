@@ -100,10 +100,10 @@ import _TGL.Observed_Value
 import _TFL.Environment
 from   _TFL.predicate          import *
 import _TFL.Record
-from    subdirs                import subdirs
+from   _TFL.subdirs            import subdirs
+from   _TFL                    import sos
 
 import errno
-import sos
 import time
 
 import pdb

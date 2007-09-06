@@ -57,7 +57,7 @@ import _TFL._Meta.Object
 import _TFL.sos                as     sos
 import _TGL.load_config_file
 
-from   subdirs                 import subdirs
+from   _TFL.subdirs            import subdirs
 
 class Office (TFL.Meta.Object) :
     """Personal post office"""

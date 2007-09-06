@@ -60,7 +60,7 @@ PMA.file_system_encoding = sys.getfilesystemencoding ()
 PMA.text_output_width    = 75
 
 def load_user_config (* config_fn) :
-    import sos
+    from _TFL import sos
     from _TGL.load_config_file import load_config_file
     if not config_fn :
         config_fn = ("~", "PMA", ".config.py")

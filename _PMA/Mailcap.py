@@ -36,8 +36,8 @@ from   _PMA                    import PMA
 from   _PMA                    import Lib
 import _TFL._Meta.Object
 
-from   predicate               import *
-import sos
+from   _TFL.predicate          import *
+from   _TFL                    import sos
 
 _undefined = object ()
 

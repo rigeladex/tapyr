@@ -177,8 +177,7 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Property
 
 from   _TFL.Regexp             import *
-
-import sos
+from   _TFL                    import sos
 import textwrap
 import time
 import weakref
@@ -979,7 +978,7 @@ def message_from_string (msg, parser = None) :
 # end def message_from_string
 
 def _command_spec (arg_array = None) :
-    from   Command_Line import Command_Line
+    from   _TFL.Command_Line import Command_Line
     return Command_Line \
         ( arg_spec    = ("message:S?Message to print")
         , option_spec =
