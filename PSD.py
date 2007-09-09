@@ -31,12 +31,13 @@
 #     7-Jun-2005 (CT) `_get_temperatures` added to remember
 #                     `/proc/acpi/ibm/thermal`
 #    28-Nov-2006 (CT) `_acpi_pattern` adapted to change in `acpitool`s output
+#     9-Sep-2007 (CT) Display ` Full` instead of `Charged`
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 from   CTK                   import *
-from   Record                import Record
+from   _TFL.Record           import Record
 from   _TFL.Numeric_Interval import Numeric_Interval as Ival
 from   _TFL.predicate        import *
 from   _TFL.Regexp           import *
@@ -45,7 +46,9 @@ import _TFL._D2.Point
 import _TFL._D2.Rect
 import _TFL._Meta.Object
 
-import sos, sys, time
+from   _TFL                  import sos
+
+import sys, time
 
 class R_Map (TFL.Meta.Object) :
     """Map one range into another"""
@@ -357,7 +360,7 @@ class ACPI_Entry (Text_LR_Entry) :
                     status = ""
                 else :
                     status = "->"
-                    if s.bat_percent == 100 :
+                    if s.bat_percent == 100 or bat_status == "Charged" :
                         bat_status = " Full"
                 remaining = ""
             else :
@@ -596,13 +599,14 @@ class Toplevel (TFL.Meta.Object) :
 # end class Toplevel
 
 def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line
-    return Command_Line ( option_spec =
-                            ( "pos:S?Position of display in geometry-format"
-                            , "width:I=100?Width of display"
-                            )
-                        , arg_array   = arg_array
-                        )
+    from   _TFL.Command_Line import Command_Line
+    return Command_Line \
+        ( option_spec =
+            ( "pos:S?Position of display in geometry-format"
+            , "width:I=100?Width of display"
+            )
+        , arg_array   = arg_array
+        )
 # end def command_spec
 
 def main (cmd) :
