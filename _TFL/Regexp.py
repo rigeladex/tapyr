@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -48,13 +48,14 @@
 #    14-Jun-2006 (CT)  `Multi_Re_Replacer` added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    10-Sep-2007 (DAL) `Recursive_Re_Replacer` introduced
+#    10-Sep-2007 (DAL) used `practically_infinite` for `max_index`
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL           import TFL
 import _TFL._Meta.Object
+import _TFL.Environment
 import re
 
 if hasattr (re, "RegexObject") :
@@ -78,9 +79,7 @@ class Regexp (TFL.Meta.Object) :
 
     default_flags = 0
 
-    ### sys.maxint currently (Jan-2006) does not work on 64 bit CPU's
-    ### XXX set to `sys.maxint` when Python is 64-bit sane
-    max_index     = (2 ** 31) - 1
+    max_index     = TFL.Environment.practically_infinite
 
     def __init__ (self, pattern, flags = 0, quote = 0) :
         if isinstance (pattern, Regexp) :
@@ -250,6 +249,32 @@ class Re_Replacer (TFL.Meta.Object) :
     # end def __getattr__
 
 # end class Re_Replacer
+
+class Recursive_Re_Replacer (Re_Replacer) :
+    """Wrap a regular expression and a replacement recursively (until no
+       more changes are done).
+
+       >>> rep = Recursive_Re_Replacer (r"a(.)b", r"b\g<1>a")
+       >>> rep ("a.a.b.a.b")
+       'b.b.a.a.a'
+       >>> rep ("a.a.b.a.b", 2)
+       'b.a.b.a.a'
+       >>> rep ("a0b1a2b3b")
+       'b0b1b2a3a'
+    """
+
+    def __call__ (self, text, max_run = None) :
+        if not max_run :
+            max_run = 10000
+        result = text
+        n      = -1
+        while n and max_run :
+            max_run  -= 1
+            result, n = self.regexp.subn (self.replacement, result, 0)
+        return result
+    # end def __call__
+
+# end class Recursive_Re_Replacer
 
 class Multi_Re_Replacer (TFL.Meta.Object) :
     """Wrap multiple `Re_Replacer` instances and apply them in sequence"""

@@ -29,6 +29,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    26-Jul-2007 (DAL) `isinstance` call optimized
 #    06-Aug-2007 (CED) Future import removed again
+#    10-Sep-2007 (DAL) check `return_doc` for empty strings
 #    ««revision-date»»···
 #--
 
@@ -63,7 +64,7 @@ def func_annotate (func, param_doc, return_doc = None) :
     else :
         raise TypeError
 
-    if return_doc is not None :
+    if return_doc :
         func.func_annotation ['return'] = return_doc
 # end def func_annotate
 

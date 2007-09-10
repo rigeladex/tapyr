@@ -180,6 +180,7 @@
 #    22-Jun-2007 (DAL) added `_Command_Group_` to export symbols
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    10-Sep-2007 (DAL) Adapted doc-strings to coding guidelines
 #    ««revision-date»»···
 #--
 
@@ -708,7 +709,7 @@ class Command_Group (_Command_Group_) :
     # end def __init__
 
     def add_command (self, cmd, group = None, if_names = [], icon = None, index = None, delta = 0, underline = None, accelerator = None, batchable = 0, as_check_button = False) :
-        """Add `cmd' to `group'"""
+        """Add `cmd` to `group`"""
         cmd._cook_doc (self.root.form_dict)
         if group is not None :
             if isinstance (group, (str, unicode, int)) :
@@ -757,7 +758,7 @@ class Command_Group (_Command_Group_) :
     # end def add_dyn_group
 
     def add_group (self, name, desc = None, precondition = None, if_names = [], index = None, delta = 0, underline = None, batchable = 0, icon = None) :
-        """Add command group `name'."""
+        """Add command group `name`."""
         return self._add_group \
             ( name, precondition, if_names, index, delta
             , lambda ifacers : self.Group_Class \
@@ -774,7 +775,7 @@ class Command_Group (_Command_Group_) :
     # end def add_group
 
     def add_separator (self, name = None, group = None, if_names = [], index = None, delta = 0) :
-        """Add separator to `group'"""
+        """Add separator to `group`."""
         if group is not None :
             if isinstance (group, (str, unicode, int)) :
                 group = self._group [group]
@@ -1044,7 +1045,7 @@ class Command_Mgr (Command_Group) :
     # end def destroy
 
     def is_applicable (self, name) :
-        """Returns true if command name by `name' is currently applicable."""
+        """Returns true if command name by `name` is currently applicable."""
         return self.command [name].is_applicable ()
     # end def is_applicable
 
