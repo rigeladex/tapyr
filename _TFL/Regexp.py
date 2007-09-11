@@ -50,6 +50,7 @@
 #    06-Aug-2007 (CED) Future import removed again
 #    10-Sep-2007 (DAL) `Recursive_Re_Replacer` introduced
 #    10-Sep-2007 (DAL) used `practically_infinite` for `max_index`
+#    11-Sep-2007 (DAL) [25718] `Recursive_Re_Replacer` moved to YAGNI
 #    ««revision-date»»···
 #--
 
@@ -249,32 +250,6 @@ class Re_Replacer (TFL.Meta.Object) :
     # end def __getattr__
 
 # end class Re_Replacer
-
-class Recursive_Re_Replacer (Re_Replacer) :
-    """Wrap a regular expression and a replacement recursively (until no
-       more changes are done).
-
-       >>> rep = Recursive_Re_Replacer (r"a(.)b", r"b\g<1>a")
-       >>> rep ("a.a.b.a.b")
-       'b.b.a.a.a'
-       >>> rep ("a.a.b.a.b", 2)
-       'b.a.b.a.a'
-       >>> rep ("a0b1a2b3b")
-       'b0b1b2a3a'
-    """
-
-    def __call__ (self, text, max_run = None) :
-        if not max_run :
-            max_run = 10000
-        result = text
-        n      = -1
-        while n and max_run :
-            max_run  -= 1
-            result, n = self.regexp.subn (self.replacement, result, 0)
-        return result
-    # end def __call__
-
-# end class Recursive_Re_Replacer
 
 class Multi_Re_Replacer (TFL.Meta.Object) :
     """Wrap multiple `Re_Replacer` instances and apply them in sequence"""
