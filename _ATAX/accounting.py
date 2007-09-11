@@ -149,6 +149,25 @@ def underlined (text) :
 class Account_Entry :
     """Entry of accounting file."""
 
+    """Cat (several letters can be combined)::
+
+            e       include in income tax calculations
+            f       financial planning
+            i       Innergemeinschaftlicher Erwerb
+            k       correction
+            r       reverse charge (for VAT, Article 19 [057/066 in VAT form])
+            s       storno
+            u       include in VAT calculations
+            z       pure VAT amount
+
+        g_or_n (exactly one letter)::
+
+            b       gross amount
+            f       VAT free
+            n       net amount
+            v       pure VAT amount
+    """
+
     def __init__ (self, line, source_currency, vst_korrektur = 1.0) :
         self.line = line
         try :
@@ -751,6 +770,7 @@ class T_Account (Account) :
 
     eust_gkonto        = "9997"
     ige_gkonto         = "9998"
+    rvc_gkonto         = "9996"
     ust_gkonto         = "9999"
     vorsteuer_gkonto   = "9999"
 
