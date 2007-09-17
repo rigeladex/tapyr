@@ -116,6 +116,10 @@
 #    17-Sep-2007 (CT)  Function `add_account_file` replaced by method
 #                      `add_file`
 #    17-Sep-2007 (CT)  `Main` added
+#    17-Sep-2007 (CT)  `_load_config` added
+#                      * `erloes_minderung_pat` and `ausgaben_minderung_pat`
+#                        moved from module-level into `Account_Entry`
+#                      * CT-specific settings moved into external config file
 #    ««revision-date»»···
 #--
 
@@ -127,6 +131,9 @@ from   _TFL.defaultdict  import defaultdict
 from   _TFL.predicate    import *
 
 import _TFL._Meta.Object
+
+from   _TGL              import TGL
+import _TGL.load_config_file
 
 import math
 import re
@@ -142,8 +149,6 @@ perl_dict_pat          = re.compile ( r"""\{\s*"?(\s*\d+\s*)"?\s*\}""")
 split_pat              = re.compile ( r"\s*&\s*")
 currency_pat           = re.compile ( r"([A-Za-z]+)$")
 desc_strip_pat         = re.compile ( r"\s*&\s*$")
-erloes_minderung_pat   = re.compile ( r"^8300\d")
-ausgaben_minderung_pat = re.compile ( r"^(7550|7500|7020)")
 
 def underlined (text) :
     bu = "\b_"
@@ -171,6 +176,11 @@ class Account_Entry :
             n       net amount
             v       pure VAT amount
     """
+
+    ### The following class variables can be overriden in a config file
+    ### (e.g., ATAX.config)
+    erloes_minderung_pat   = re.compile ( r"Legacy: use `~` instead")
+    ausgaben_minderung_pat = re.compile ( r"Legacy: use `~` instead")
 
     def __init__ (self, line, source_currency, vst_korrektur = 1.0) :
         self.line = line
@@ -220,7 +230,7 @@ class Account_Entry :
         if   "-" in self.dir :
             self.soll_betrag   = self.netto
             self.haben_betrag  = source_currency (0)
-            if not erloes_minderung_pat.match (self.haben) :
+            if not self.erloes_minderung_pat.match (self.haben) :
                 self.konto         = self.soll
                 self.gegen_konto   = self.haben
                 if self.vat_p != 1 :
@@ -411,6 +421,8 @@ class Account :
 class V_Account (Account) :
     """VAT Account for a specific time interval (e.g., month, quarter, or year)"""
 
+    ### The following class variables can be overriden in a config file
+    ### (e.g., ATAX.config)
     vat_private = 1.20 ### VAT rate applicable for private part
 
     def __init__ (self, name = "", vst_korrektur = 1.0) :
@@ -478,7 +490,7 @@ class V_Account (Account) :
                         )
             else : ### neither "i" nor "z"
                 self.vorsteuer_entries.append (entry)
-                if erloes_minderung_pat.match (entry.konto) :
+                if entry.erloes_minderung_pat.match (entry.konto) :
                     ## Erlösminderung instead of Ausgabe
                     self._add_umsatz    (- netto, - vat, vat_p, entry)
                 else :
@@ -491,7 +503,7 @@ class V_Account (Account) :
                       "innergemeinschaftlichem Erwerb\n       %s\n"
                     % entry
                     )
-            if ausgaben_minderung_pat.match (entry.konto) :
+            if entry.ausgaben_minderung_pat.match (entry.konto) :
                 ## Ausgabenminderung instead of Einnahme
                 self._add_vorsteuer (- vat)
             else :
@@ -780,20 +792,15 @@ class V_Account (Account) :
 class T_Account (Account) :
     """Account total for a specific time interval (e.g., month, quarter, or year.)"""
 
+    ### The following class variables can be overriden in a config file
+    ### (e.g., ATAX.config)
     eust_gkonto        = "9997"
     ige_gkonto         = "9998"
     rvc_gkonto         = "9996"
     ust_gkonto         = "9999"
     vorsteuer_gkonto   = "9999"
-
-    t_konto_ignore_pat = re.compile (r"^[01239]\d\d\d\d? | 7000", re.X)
-
-    firma      = \
-        ("Mag. Christian Tanzer"
-         "\n"
-         "FA Wien 12/23 St.Nr. 853/0043 Ref. 23"
-         "\n\n\n"
-        )
+    t_konto_ignore_pat = re.compile (r"^[01239]\d\d\d\d?", re.X)
+    firma              = "<<<Specify in config file, e.g., ATAX.config>>>"
 
     def __init__ (self, name = "", year = 0, konto_desc = None, vst_korrektur = 1.0) :
         Account.__init__ (self, name, vst_korrektur)
@@ -838,7 +845,7 @@ class T_Account (Account) :
                      ) or entry.konto in self.ignore
                     ]
                 betrag = self._effective_amount (entry, entry.soll_betrag)
-                if erloes_minderung_pat.match (entry.konto) :
+                if entry.erloes_minderung_pat.match (entry.konto) :
                     ## Erlösminderung instead of Ausgabe
                     self._add_einnahme (entry, - betrag, - entry.vat)
                 else :
@@ -858,7 +865,7 @@ class T_Account (Account) :
                      ) or entry.konto in self.ignore
                     ]
                 betrag = self._effective_amount (entry, entry.haben_betrag)
-                if ausgaben_minderung_pat.match (entry.konto) :
+                if entry.ausgaben_minderung_pat.match (entry.konto) :
                     ## Ausgabenminderung instead of Einnahme
                     self._add_ausgabe  (entry, - betrag, - entry.vat)
                 else :
@@ -1163,13 +1170,14 @@ class Main (TFL.Meta.Object) :
     min_args            = None
 
     def __init__ (self, cmd) :
-        vst_korrektur   = cmd.vst_korrektur
+        self._load_config (cmd)
         if cmd.all :
             categories  = "."
         else :
             categories  = "[" + "".join (cmd.categories) + "]"
         categories      = re.compile (categories)
         source_currency = cmd.source_currency
+        vst_korrektur   = cmd.vst_korrektur
         account         = self._create_account \
             (cmd, categories, source_currency, vst_korrektur)
         self._add_files (cmd, account, categories, source_currency)
@@ -1197,6 +1205,13 @@ class Main (TFL.Meta.Object) :
             account.add_lines    (sys.stdin, categories, source_currency)
     # end def _add_files
 
+    def _load_config (self, cmd) :
+        globs   = globals ()
+        cf_dict = dict    (ATAX = ATAX)
+        for cf in cmd.Config :
+            TGL.load_config_file (cf, globs, cf_dict)
+    # end def _load_config
+
     @classmethod
     def _arg_spec (cls) :
         return ()
@@ -1207,6 +1222,7 @@ class Main (TFL.Meta.Object) :
         return \
             ( "-all"
             , "-categories:S,=%s" % cls.default_categories
+            , "-Config:P,?Config file(s)"
             , "-vst_korrektur:F=1.0"
             , EUC_Opt_SC ()
             , EUC_Opt_TC ()
