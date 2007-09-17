@@ -41,12 +41,12 @@
 #    19-Feb-2006 (CT) Import from package _ATAX
 #    15-May-2006 (CT) Call to `finish` added
 #    11-Feb-2007 (CT) `string` functions replaced by `str` methods
+#    17-Sep-2007 (CT) Modernized
+#    17-Sep-2007 (CT) Use `Account.add_file`
 #    ««revision-date»»···
 #--
 
 from _ATAX.accounting import *
-
-umsatzsteuer = add_account_file
 
 sep_1000 = { "." : ",", "," : "."}
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     cmd = Command_Line  \
         ( option_spec =
             ( "-all"
-            , "-categories:S=u#5"
+            , "-categories:S,=u"
             , "-decimal_sign:S=."
             , "-online_format:B"
                 "?Format for cope/paste into online form"
@@ -70,13 +70,11 @@ if __name__ == "__main__":
         )
     vst_korrektur       = cmd.vst_korrektur
     summary_only        = cmd.summary
-    if cmd.option ["all"] :
+    if cmd.all :
         categories      = "."
     else :
-        categories      = "[" + \
-                          (  "".join (cmd.option ["categories"].value.body)
-                          or cmd.option ["categories"].value_1 ()
-                          ) + "]"
+        categories      = "[" + "".join (cmd.categories) + "]"
+    categories          = re.compile (categories)
     source_currency     = EUC.Table [cmd.source_currency]
     EUC.target_currency = EUC.Table [cmd.target_currency]
     if cmd.online_format :
@@ -88,10 +86,9 @@ if __name__ == "__main__":
     account             = V_Account (vst_korrektur = vst_korrektur)
     if cmd.argn > 0 :
         for file_name in cmd.argv.body :
-            file = open (file_name, "r")
-            add_account_file (file,  categories, source_currency, account)
+            account.add_file (file_name, categories, source_currency)
     else :
-        add_account_file     (stdin, categories, source_currency, account)
+        account.add_lines    (stdin,     categories, source_currency)
     account.finish ()
     if cmd.online_format :
         account.print_summary_online ()

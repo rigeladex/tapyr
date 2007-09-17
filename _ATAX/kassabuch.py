@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,11 +30,12 @@
 #     6-Feb-2000 (CT) `vst_korrektur' passed to `V_Account' instead of to
 #                     `umsatzsteuer'
 #     5-Jul-2006 (CT) Import from `_ATAX`
+#    17-Sep-2007 (CT) Modernized
+#    17-Sep-2007 (CT) Use `Account.add_file`
 #    ««revision-date»»···
 #--
 
 from _ATAX.accounting   import *
-from _ATAX.umsatzsteuer import umsatzsteuer
 
 EUC  = EU_Currency
 
@@ -65,19 +66,18 @@ if __name__ == "__main__":
             , "-output:S"
             )
         )
-    vst_korrektur       = cmd.option ["vst_korrektur"].value_1 ()
-    categories          = "[u]"
-    source_currency     = EUC.Table [cmd.option ["source_currency"].value_1 ()]
-    EUC.target_currency = EUC.Table [cmd.option ["target_currency"].value_1 ()]
+    categories          = re.compile ("[u]")
+    source_currency     = EUC.Table [cmd.source_currency]
+    EUC.target_currency = EUC.Table [cmd.target_currency]
+    vst_korrektur       = cmd.vst_korrektur
     account             = V_Account (vst_korrektur = vst_korrektur)
     if cmd.argn > 0 :
         for file_name in cmd.argv.body :
-            file = open  (file_name, "r")
-            umsatzsteuer (file, categories, source_currency, account)
+            account.add_file (file_name, categories, source_currency)
     else :
-        umsatzsteuer     (stdin, categories, source_currency, account)
-    if cmd.option ["output"] :
-        file = open (cmd.option ["output"].value_1 (), "w")
+        account.add_lines    (stdin,     categories, source_currency)
+    if cmd.output :
+        file = open (cmd.output, "w")
     else :
         file = stdout
     kassabuch (account, file)

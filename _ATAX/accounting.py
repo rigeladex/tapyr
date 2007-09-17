@@ -113,6 +113,8 @@
 #    13-Jun-2007 (CT)  s/_fix_vorsteuer_privat/_fix_ust_privat/g
 #    13-Jun-2007 (CT)  Changed `T_Account._fix_ust_privat` to do the right
 #                      thing
+#    17-Sep-2007 (CT)  Function `add_account_file` replaced by method
+#                      `add_file`
 #    ««revision-date»»···
 #--
 
@@ -338,6 +340,14 @@ class Account :
     # end def __init__
 
     account_vars = set (("vst_korrektur", "firma", "gewerbe_anteil"))
+
+    def add_file (self, file_name, categ_interest, source_currency) :
+        file = open (file_name, "r")
+        try :
+            self.add_lines (file, categ_interest, source_currency)
+        finally :
+            file.close ()
+    # end def add_file
 
     def add_lines (self, lines, categ_interest, source_currency) :
         """Add entries given by `lines' to account `self'."""
@@ -1142,21 +1152,6 @@ class Konto_Desc (UserDict) :
     # end def __init__
 
 # end class Konto_Desc
-
-def add_account_file (file, categories, source_currency, account) :
-    """Add records in `file' to `account'.
-
-           - `file' must be an open file
-           - `vst_korrektur' must be a percentage <= 1.0
-           - `categories' specify which categories are added
-           - `source_currency' specifies the default currency of the records
-             in `file'
-           - `account' must be an object of class Account to which the
-             records are added
-    """
-    categ_interest = re.compile (categories)
-    account.add_lines (file.readlines (), categ_interest, source_currency)
-# end def add_account_file
 
 if __name__ != "__main__" :
     ATAX._Export ("*")

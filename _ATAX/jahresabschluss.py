@@ -38,6 +38,8 @@
 #                     changed from `ats` to `eur`
 #    19-Feb-2006 (CT) Import from package _ATAX
 #    11-Feb-2007 (CT) `string` functions replaced by `str` methods
+#    17-Sep-2007 (CT) Modernized
+#    17-Sep-2007 (CT) Use `Account.add_file`
 #    ««revision-date»»···
 #--
 
@@ -77,20 +79,16 @@ if __name__ == "__main__":
     EUC.target_currency = EUC.Table [cmd.target_currency]
     year                = cmd.argv.shift ()
     konto_desc          = Konto_Desc     (cmd.argv.shift ())
-    account             = T_Account      ( year          = year
-                                         , konto_desc    = konto_desc
-                                         , vst_korrektur = vst_korrektur
-                                         )
+    account             = T_Account \
+        ( year          = year
+        , konto_desc    = konto_desc
+        , vst_korrektur = vst_korrektur
+        )
     if cmd.argn > 0 :
         for file_name in cmd.argv.body :
-            file  = open (file_name, "r")
-            try :
-                lines = file.readlines ()
-            finally :
-                file.close ()
-            account.add_lines (lines, categ_interest, source_currency)
+            account.add_file (file_name, categ_interest, source_currency)
     else :
-        account.add_lines     (stdin, categ_interest, source_currency)
+        account.add_lines    (stdin,     categ_interest, source_currency)
     if not summary_only :
         account.print_konto_summary ()
         account.print_konten        ()
