@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,11 +55,12 @@
 #    11-Feb-2006 (CT) Moved into package `TFL`
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    17-Sep-2007 (CT)  `EUC_Opt`, `EUC_Opt_SC`, and `EUC_Opt_TC` added
+#    17-Sep-2007 (CT)  Handling of `target_currency` simplified
 #    ««revision-date»»···
 #--
 
-
-
+from   _TFL.Command_Line import Opt_L
 import re
 
 ### see Fri97, p.229, p.292
@@ -108,13 +109,9 @@ class EU_Currency :
 
     def as_target (self, round = 0, target_currency = None) :
         target_currency = target_currency or self.target_currency
-        if target_currency :
-            target_currency = target_currency (0)
-            amount          = self.amount * target_currency.to_euro_factor
-        else :
-            target_currency = EU_Currency (0)
-            amount          = self.amount
-        (amount, cent) = target_currency.rounded (amount, round)
+        target_currency = target_currency (0)
+        amount          = self.amount * target_currency.to_euro_factor
+        (amount, cent)  = target_currency.rounded (amount, round)
         return (amount, cent, target_currency)
     # end def as_target
 
@@ -188,12 +185,8 @@ class EU_Currency :
     # end def _formatted
 
     def __float__ (self) :
-        if self.target_currency :
-            target_currency = self.target_currency (0)
-            amount          = self.amount * target_currency.to_euro_factor
-        else :
-            target_currency = EU_Currency (0)
-            amount          = self.amount
+        target_currency = self.target_currency (0)
+        amount          = self.amount * target_currency.to_euro_factor
         return float (amount)
     # end def __float__
 
@@ -286,7 +279,8 @@ class EU_Currency :
 
 # end class EU_Currency
 
-EUR = EU_Currency
+EUC = EUR = EU_Currency
+EUC.target_currency = EUC
 
 def register (currency) :
     EU_Currency.Table [currency.name]                 = currency
@@ -396,24 +390,63 @@ def currency (name) :
     return EU_Currency.Table [name]
 # end def currency
 
+class EUC_Opt (Opt_L) :
+    """EU_Currency option class for use with Command_Line."""
+
+    default_name = ""
+    default_desc = ""
+
+    def __init__ (self, name = None, default = "EUR", ** kw) :
+        if "description" not in kw :
+            kw ["description"] = self.default_desc
+        Opt_L.__init__ \
+            ( self
+            , selection = sorted (EUC.Table.iterkeys ())
+            , name      = name or self.default_name
+            , default   = default
+            , type      = "S"
+            , cook      = self._cooked_currency
+            , ** kw
+            )
+        self._cooked_currency (self.default)
+    # end def __init__
+
+    def _cooked_currency (self, value) :
+        if not isinstance (value, EUC) :
+            value = currency (value)
+        return value
+    # end def _cooked_currency
+
+# end class EUC_Opt
+
+class EUC_Opt_SC (EUC_Opt) :
+    """EU_Currency source_currency option class for use with Command_Line."""
+
+    default_name = "source_currency"
+    default_desc = "Source currency"
+
+# end class EUC_Opt_TC
+
+class EUC_Opt_TC (EUC_Opt) :
+    """EU_Currency target_currency option class for use with Command_Line."""
+
+    default_name = "target_currency"
+    default_desc = "Target currency"
+
+    def _cooked_currency (self, value) :
+        result = EUC.target_currency = EUC_Opt._cooked_currency (self, value)
+        return result
+    # end def _cooked_currency
+
+# end class EUC_Opt_TC
+
 def _command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line, Opt_L
+    from   _TFL.Command_Line import Command_Line
     from   _TFL.predicate    import sorted
-    currencies = sorted (EU_Currency.Table.keys ())
     return Command_Line \
         ( option_spec =
-            ( Opt_L ( selection   = currencies
-                    , name        = "source"
-                    , type        = "S"
-                    , default     = "ATS"
-                    , description = "Source currency"
-                    )
-            , Opt_L ( selection   = currencies
-                    , name        = "target"
-                    , type        = "S"
-                    , default     = "EUR"
-                    , description = "Target currency"
-                    )
+            ( EUC_Opt_SC (name = "source", default = "ATS")
+            , EUC_Opt_TC (name = "target")
             )
         , arg_spec    = ("amount:S?Amount to convert", )
         , description = "Convert between two Euro currencies"
@@ -422,10 +455,8 @@ def _command_spec (arg_array = None) :
 # end def _command_spec
 
 def _main (cmd) :
-    Table                       = EU_Currency.Table
-    source                      = Table [cmd.source]
-    EU_Currency.target_currency = Table [cmd.target]
-    s = source (0)
+    source = cmd.source
+    s      = source (0)
     for a in cmd.argv.body :
         a = a.strip ()
         if not a :
@@ -434,7 +465,7 @@ def _main (cmd) :
             a = comma_dec_pat.sub (r"\g<1>.\g<2>", a.replace (".", ""))
         elif period_dec_pat.match (a) :
             a = a.replace (",", "")
-        b = eval   (a)
+        b = eval   (a, {}, {})
         c = source (b)
         if str (b) != a :
             b = " [%s]" % b
@@ -442,7 +473,8 @@ def _main (cmd) :
             b = ""
         print "%s%s %s = %s" % (a, b, source.sloppy_name, c)
         s = s + c
-    if s != 0 : print "Total : %s" % s
+    if s != 0 and len (cmd.argv.body) > 1 :
+        print "Total : %s" % s
 # end def _main
 
 if __name__ == "__main__":

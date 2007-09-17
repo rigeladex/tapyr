@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -161,10 +161,10 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    24-Jul-2007 (ABA) Coding Guidelines
 #    06-Aug-2007 (CED) Future import removed again
+#    17-Sep-2007 (CT)  Argument `cook` added to `Arg` and `Opt`
+#    17-Sep-2007 (CT)  Argument/option type `P` (path) added
 #    ««revision-date»»···
 #--
-
-
 
 """
 Provides easy access to command line arguments and options in sys.argv
@@ -276,17 +276,18 @@ class Arg :
         , re.X
         )
     cooks        = dict \
-      ( B        = bool
-      , F        = _cook_F
-      , I        = int
-      , L        = _safe_eval
-      , S        = identity
-      , T        = identity
-      , U        = long
-      , X        = _cook_X
-      )
+        ( B      = bool
+        , F      = _cook_F
+        , I      = int
+        , L      = _safe_eval
+        , P      = TFL.sos.expanded_path
+        , S      = identity
+        , T      = identity
+        , U      = long
+        , X      = _cook_X
+        )
 
-    def __init__ (self, name = "", type = "", default = "", description = "", explanation = "") :
+    def __init__ (self, name = "", type = "", default = "", description = "", explanation = "", cook = None) :
         self.name        = name
         self.type        = (type or "S") [0].upper ()
         self.default     = self.cooked_default = default
@@ -294,7 +295,7 @@ class Arg :
         self.explanation = explanation
         self.value       = None
         self.pos         = 0
-        self.cook        = self.cooks [self.type]
+        self.cook        = cook or self.cooks [self.type]
         self._cook_default (default)
     # end def __init__
 
@@ -363,10 +364,10 @@ class Opt (Arg) :
     def __init__ ( self, name, type = "", default = "", description = ""
                  , explanation = ""
                  , valued = 0, max_occur = None, auto_split = None, hide = 0
-                 , range_delta = 1
+                 , range_delta = 1, cook = None
                  ) :
         Arg.__init__ \
-            (self, name, type or "B", default, description, explanation)
+            (self, name, type or "B", default, description, explanation, cook)
         self.value       = TFL.PL_List (undefined = '')
         self.valued      = valued or   (self.type != "B")
         if max_occur is None :
@@ -394,7 +395,7 @@ class Opt (Arg) :
     def value_1 (self) :
         """Returns first value of option specified in command line or default"""
         if len (self.value) :
-            return self.value   [0]
+            return self.value [0]
         elif isinstance (self.cooked_default, (list, tuple)) :
             return self.cooked_default [0]
         else :
@@ -647,17 +648,17 @@ class Command_Spec :
 
        The constructor takes the arguments:
 
-           - the list of possible options `option_spec'
-           - the list of possible arguments `arg_spec' (matched positionaly)
-                 This is optional. If given, it is used for providing default
-                 arguments, converting arguments to internal data types and
-                 providing help
-           - the minimum number of arguments required `min_args'
-           - the maximum number of arguments allowed  `max_args'
-             (the default -1 means an unlimited number is allowed)
-           - a description of the command to be included in the `help'
-             (this can be a string or a list of strings which will be joined
-             by `\n')
+       - the list of possible options `option_spec'
+       - the list of possible arguments `arg_spec' (matched positionaly)
+             This is optional. If given, it is used for providing default
+             arguments, converting arguments to internal data types and
+             providing help
+       - the minimum number of arguments required `min_args'
+       - the maximum number of arguments allowed  `max_args'
+         (the default -1 means an unlimited number is allowed)
+       - a description of the command to be included in the `help'
+         (this can be a string or a list of strings which will be joined
+         by `\n')
 
        An option spec can be a string or an instance of `Opt'.
 
@@ -679,6 +680,7 @@ class Command_Spec :
            'F'  : float
            'I'  : integer
            'L'  : list
+           'P'  : path (file or directory name)
            'S'  : string
            'T,' : string (will be split at `,' to give a list)
            'T ' : string (will be split at ` ' to give a list)
@@ -704,20 +706,21 @@ class Command_Spec :
        with the exception of `#', `?' and `S,'.
     """
 
-    type_specifiers = \
-        { 'B'  : "boolean"
-        , 'F'  : "float"
-        , 'I'  : "integer"
-        , 'L'  : "list"
-        , 'S'  : "string"
-        , 'T'  : "string"
-        , 'U'  : "unsigned"
-        , 'X'  : "long"
-        }
+    type_specifiers = dict \
+        ( B         = "boolean"
+        , F         = "float"
+        , I         = "integer"
+        , L         = "list"
+        , P         = "path"
+        , S         = "string"
+        , T         = "string (with auto-split)"
+        , U         = "unsigned"
+        , X         = "long"
+        )
 
     arg_spec_pat = Regexp \
         ( """ (?P<name> [^:= ]+) """
-          """ (?: :  (?P<type> [FILSUX])?)? """
+          """ (?: :  (?P<type> [FILPSUX])?)? """
           """ (?: =  (?P<default> [^?]*))? """
           """ (?: \? (?P<help>    .+   ))? """
           """ $ """
@@ -732,7 +735,7 @@ class Command_Spec :
     opt_spec_pat = Regexp \
         ( """ -{0,2} (?P<name> [^:=# ]+) """
           """ (?:         : """
-          """    (?P<type> [FILSUXB]"""
+          """    (?P<type> [FILPSUXB]"""
           """       (?P<auto_split> [, :]?) """
           """    )? """
           """ )? """
@@ -744,7 +747,7 @@ class Command_Spec :
         )
     keyw_arg_pat = Regexp \
         ( """\s*"""
-          """(?P<name>  [^= ]+)"""
+          """(?P<name> [^= ]+)"""
           """\s* [=] \s* """
           """(?P<value> .*)"""
         , re.X | re.I
@@ -787,11 +790,12 @@ class Command_Spec :
             else :
                 if self.arg_spec_pat.match (a) :
                     match_group = self.arg_spec_pat.group
-                    arg = Arg ( name        = match_group ("name")
-                              , type        = match_group ("type")
-                              , default     = match_group ("default")
-                              , description = match_group ("help")
-                              )
+                    arg = Arg \
+                        ( name        = match_group ("name")
+                        , type        = match_group ("type")
+                        , default     = match_group ("default")
+                        , description = match_group ("help")
+                        )
                 else :
                     raise Cmd_Error  ("Invalid arg-spec: `%s'" % a)
             self.argument.append     (arg)
@@ -808,14 +812,15 @@ class Command_Spec :
             else :
                 if self.opt_spec_pat.match (o) :
                     match_group = self.opt_spec_pat.group
-                    opt = Opt ( name        = match_group ("name")
-                              , type        = match_group ("type")
-                              , default     = match_group ("default")
-                              , description = match_group ("help")
-                              , valued      = match_group ("valued")
-                              , max_occur   = match_group ("max_occur")
-                              , auto_split  = match_group ("auto_split")
-                              )
+                    opt = Opt \
+                        ( name        = match_group ("name")
+                        , type        = match_group ("type")
+                        , default     = match_group ("default")
+                        , description = match_group ("help")
+                        , valued      = match_group ("valued")
+                        , max_occur   = match_group ("max_occur")
+                        , auto_split  = match_group ("auto_split")
+                        )
                 else :
                     raise Cmd_Error ("Invalid option-spec: `%s'" % o)
             self.option [opt.name] = opt
@@ -987,7 +992,7 @@ class Command_Line (Command_Spec) :
     def key_value (self, name) :
         """Returns the value of the keyword parameter `name'."""
         if self.keywords.has_key (name) :
-            return self.keywords [name] # .value ()
+            return self.keywords [name]
         else :
             return TFL.sos.environ.get (name, "")
     # end def key_value
@@ -1009,7 +1014,7 @@ class Command_Line (Command_Spec) :
     def _attribute_value (self, name) :
         if self.option.really_has_key (name) :
             result = self.option [name]
-            if   not result.valued :
+            if not result.valued :
                 return result.pos
             elif not result.list_p :
                 return result.value_1 ()
