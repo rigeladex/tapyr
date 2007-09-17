@@ -120,6 +120,10 @@
 #                      * `erloes_minderung_pat` and `ausgaben_minderung_pat`
 #                        moved from module-level into `Account_Entry`
 #                      * CT-specific settings moved into external config file
+#    17-Sep-2007 (CT) `Account_Entry` changed to compute `minderung` based on
+#                     occurrence of `~` (`erloes_minderung_pat` and
+#                     `ausgaben_minderung_pat` only kept to support old input
+#                     files)
 #    ««revision-date»»···
 #--
 
@@ -227,10 +231,13 @@ class Account_Entry :
         self.vat_vstk  = source_currency (0)
         self.vat_x     = source_currency (0)
         self.is_change = 1
+        self.minderung = "~" in self.dir
         if   "-" in self.dir :
             self.soll_betrag   = self.netto
             self.haben_betrag  = source_currency (0)
-            if not self.erloes_minderung_pat.match (self.haben) :
+            self.minderung     = \
+                self.minderung or self.erloes_minderung_pat.match (self.haben)
+            if not self.minderung :
                 self.konto         = self.soll
                 self.gegen_konto   = self.haben
                 if self.vat_p != 1 :
@@ -242,6 +249,10 @@ class Account_Entry :
                 self.konto         = self.haben
                 self.gegen_konto   = self.soll
         elif "+" in self.dir :
+            self.minderung     = \
+                (  self.minderung
+                or self.ausgaben_minderung_pat.match (self.haben)
+                )
             self.haben_betrag  = self.netto
             self.soll_betrag   = source_currency (0)
             self.konto         = self.haben
@@ -490,7 +501,7 @@ class V_Account (Account) :
                         )
             else : ### neither "i" nor "z"
                 self.vorsteuer_entries.append (entry)
-                if entry.erloes_minderung_pat.match (entry.konto) :
+                if entry.minderung :
                     ## Erlösminderung instead of Ausgabe
                     self._add_umsatz    (- netto, - vat, vat_p, entry)
                 else :
@@ -503,7 +514,7 @@ class V_Account (Account) :
                       "innergemeinschaftlichem Erwerb\n       %s\n"
                     % entry
                     )
-            if entry.ausgaben_minderung_pat.match (entry.konto) :
+            if entry.minderung :
                 ## Ausgabenminderung instead of Einnahme
                 self._add_vorsteuer (- vat)
             else :
@@ -845,7 +856,7 @@ class T_Account (Account) :
                      ) or entry.konto in self.ignore
                     ]
                 betrag = self._effective_amount (entry, entry.soll_betrag)
-                if entry.erloes_minderung_pat.match (entry.konto) :
+                if entry.minderung :
                     ## Erlösminderung instead of Ausgabe
                     self._add_einnahme (entry, - betrag, - entry.vat)
                 else :
@@ -865,7 +876,7 @@ class T_Account (Account) :
                      ) or entry.konto in self.ignore
                     ]
                 betrag = self._effective_amount (entry, entry.haben_betrag)
-                if entry.ausgaben_minderung_pat.match (entry.konto) :
+                if entry.minderung :
                     ## Ausgabenminderung instead of Einnahme
                     self._add_ausgabe  (entry, - betrag, - entry.vat)
                 else :
