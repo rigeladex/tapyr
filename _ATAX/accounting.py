@@ -115,21 +115,23 @@
 #                      thing
 #    17-Sep-2007 (CT)  Function `add_account_file` replaced by method
 #                      `add_file`
+#    17-Sep-2007 (CT)  `Main` added
 #    ««revision-date»»···
 #--
 
 from   _ATAX             import ATAX
+from   _TFL.Command_Line import Command_Line
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
 from   _TFL.defaultdict  import defaultdict
 from   _TFL.predicate    import *
 
+import _TFL._Meta.Object
+
 import math
 import re
 import sys
 from   UserDict          import UserDict
-
-EUC                    = EU_Currency
 
 ignor_pat              = re.compile ( r"^\s*[«%#]")
 empty_pat              = re.compile ( r"^\s*$")
@@ -1152,6 +1154,66 @@ class Konto_Desc (UserDict) :
     # end def __init__
 
 # end class Konto_Desc
+
+class Main (TFL.Meta.Object) :
+    """Main class for accounting scripts"""
+
+    default_categories  = "u"
+    max_args            = None
+    min_args            = None
+
+    def __init__ (self, cmd) :
+        vst_korrektur   = cmd.vst_korrektur
+        if cmd.all :
+            categories  = "."
+        else :
+            categories  = "[" + "".join (cmd.categories) + "]"
+        categories      = re.compile (categories)
+        source_currency = cmd.source_currency
+        account         = self._create_account \
+            (cmd, categories, source_currency, vst_korrektur)
+        self._add_files (cmd, account, categories, source_currency)
+        self._output    (cmd, account, categories, source_currency)
+    # end def __init__
+
+    @classmethod
+    def command_spec (cls, arg_array = None) :
+        return Command_Line \
+            ( option_spec = cls._opt_spec ()
+            , arg_spec    = cls._arg_spec ()
+            , description = cls.__doc__ or ""
+            , min_args    = cls.min_args
+            , max_args    = cls.max_args
+            , help_on_err = 1
+            , arg_array   = arg_array
+            )
+    # end def command_spec
+
+    def _add_files (self, cmd, account, categories, source_currency) :
+        if cmd.argn > 0 :
+            for file_name in cmd.argv.body :
+                account.add_file (file_name, categories, source_currency)
+        else :
+            account.add_lines    (sys.stdin, categories, source_currency)
+    # end def _add_files
+
+    @classmethod
+    def _arg_spec (cls) :
+        return ()
+    # end def _arg_spec
+
+    @classmethod
+    def _opt_spec (cls) :
+        return \
+            ( "-all"
+            , "-categories:S,=%s" % cls.default_categories
+            , "-vst_korrektur:F=1.0"
+            , EUC_Opt_SC ()
+            , EUC_Opt_TC ()
+            )
+    # end def _opt_spec
+
+# end class Main
 
 if __name__ != "__main__" :
     ATAX._Export ("*")

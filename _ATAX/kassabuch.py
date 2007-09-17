@@ -32,52 +32,50 @@
 #     5-Jul-2006 (CT) Import from `_ATAX`
 #    17-Sep-2007 (CT) Modernized
 #    17-Sep-2007 (CT) Use `Account.add_file`
+#    17-Sep-2007 (CT) `main` refactored
 #    ««revision-date»»···
 #--
 
 from _ATAX.accounting   import *
-
-EUC  = EU_Currency
 
 par_sub_pat = re.compile ("\(([^)]+)\)")
 
 def kassabuch (account, file) :
     """Write entries in `account' to kassabuch `file'"""
     for e in account.entries :
-        if not isinstance (e, Account_Entry) : continue
+        if not isinstance (e, Account_Entry) :
+            continue
         e.desc = par_sub_pat.sub ("[\\1]", e.desc)
-        if e.dir == "-" :
+        if "-" in e.dir :
             file.write \
                 ( "\\A %6s %-50s (%8s) [%s]\n"
                 % (e.date, e.desc, e.gross.as_string (), e.number)
                 )
-        elif e.dir == "+" :
+        elif "+" in e.dir :
             print "Income entries not yet implemented", e
 # end def kassabuch
 
+class main (Main) :
+
+    def _create_account (self, cmd, categories, source_currency, vst_korrektur) :
+        return V_Account (vst_korrektur = vst_korrektur)
+    # end def _create_account
+
+    def _output (self, cmd, account, categories, source_currency) :
+        if cmd.output :
+            file = open (cmd.output, "w")
+        else :
+            file = sys.stdout
+        kassabuch (account, file)
+    # end def _output
+
+    @classmethod
+    def _opt_spec (cls) :
+        return super (main, cls)._opt_spec () + ("-output:S", )
+    # end def _opt_spec
+
+# end class main
+
 if __name__ == "__main__":
-    from _TFL.Command_Line   import Command_Line
-    from sys                 import stdin, stdout
-    cmd = Command_Line  \
-        ( option_spec =
-            ( "-source_currency:S=eur#2"
-            , "-target_currency:S=eur"
-            , "-vst_korrektur:F=1.0"
-            , "-output:S"
-            )
-        )
-    categories          = re.compile ("[u]")
-    source_currency     = EUC.Table [cmd.source_currency]
-    EUC.target_currency = EUC.Table [cmd.target_currency]
-    vst_korrektur       = cmd.vst_korrektur
-    account             = V_Account (vst_korrektur = vst_korrektur)
-    if cmd.argn > 0 :
-        for file_name in cmd.argv.body :
-            account.add_file (file_name, categories, source_currency)
-    else :
-        account.add_lines    (stdin,     categories, source_currency)
-    if cmd.output :
-        file = open (cmd.output, "w")
-    else :
-        file = stdout
-    kassabuch (account, file)
+    main (main.command_spec ())
+### __END__ ATAX.kassabuch

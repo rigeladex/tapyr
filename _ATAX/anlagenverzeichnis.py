@@ -1,4 +1,3 @@
-#!/swing/bin/python
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
@@ -37,6 +36,8 @@
 #                     non-contemporary entries to totals
 #    19-Feb-2006 (CT) Import from packages _ATAX and _TFL
 #    11-Feb-2007 (CT) `string` functions replaced by `str` methods
+#    17-Sep-2007 (CT) Use `EUC_Opt_SC` and `EUC_Opt_TC` instead of home-grown
+#                     code
 #    ««revision-date»»···
 #--
 
@@ -376,32 +377,17 @@ class Anlagenverzeichnis (_Base) :
 # end class Anlagenverzeichnis
 
 def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line, Opt_L
-    from   _TFL.predicate    import sorted
-    currencies = sorted (EU_Currency.Table.keys ())
+    from   _TFL.Command_Line import Command_Line
     return Command_Line \
         ( option_spec =
-            ( Opt_L ( selection   = currencies
-                    , name        = "source_currency"
-                    , type        = "S"
-                    , default     = "EUR"
-                    , description = "Source currency"
-                    )
-            , Opt_L ( selection   = currencies
-                    , name        = "target_currency"
-                    , type        = "S"
-                    , default     = "EUR"
-                    , description = "Target currency"
-                    )
-            , "-Start_year:S=1988"
-                "?Skip all entries before `Start_year`"
-            , "-update_accounts:B"
-                "?Add depreciation entries to account file"
+            ( "-Start_year:S=1988?Skip all entries before `Start_year`"
+            , "-update_accounts:B?Add depreciation entries to account file"
+            , EUC_Opt_SC ()
+            , EUC_Opt_TC ()
             )
         , arg_spec    =
             ( "year:S?Year of interest"
-            , "anlagenverzeichnis:S"
-                "?File defining depreciation data"
+            , "anlagenverzeichnis:P?File defining depreciation data"
             )
         , min_args    = 2
         , max_args    = 2
@@ -411,8 +397,7 @@ def command_spec (arg_array = None) :
 # end def command_spec
 
 def main (cmd) :
-    source_currency     = EUC.Table [cmd.source_currency]
-    EUC.target_currency = EUC.Table [cmd.target_currency]
+    source_currency     = cmd.source_currency
     year                = cmd.year
     start               = cmd.Start_year
     file_name           = cmd.anlagenverzeichnis
@@ -427,4 +412,4 @@ def main (cmd) :
 
 if __name__ == "__main__":
     main (command_spec ())
-### __END__ anlagenverzeichnis
+### __END__ ATAX.anlagenverzeichnis

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -30,13 +30,14 @@
 #    14-Jan-2004 (CT) `2005` added
 #    14-Dec-2005 (CT) Type of `amount` changed from `I` to `F`
 #     3-Dec-2006 (CT) Import from `_TFL`
+#    17-Sep-2007 (CT) Use `EUC_Opt_SC` and `EUC_Opt_TC` instead of home-grown
+#                     code
 #    ««revision-date»»···
 #--
 
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
 
-EUC  = EU_Currency
 year = Date ().year
 
 def tax_brackets (year) :
@@ -92,25 +93,13 @@ def tax (amount, year = year) :
 # end def tax
 
 def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line, Opt_L
-    from   predicate    import sorted
-    currencies = sorted (EU_Currency.Table.keys ())
+    from   Command_Line import Command_Line
     return Command_Line \
         ( option_spec =
-            ( Opt_L ( selection   = currencies
-                    , name        = "source_currency"
-                    , type        = "S"
-                    , default     = "EUR"
-                    , description = "Source currency"
-                    )
-            , Opt_L ( selection   = currencies
-                    , name        = "target_currency"
-                    , type        = "S"
-                    , default     = "EUR"
-                    , description = "Target currency"
-                    )
-            , "-verbose:B?Show chunks, too"
+            ( "-verbose:B?Show chunks, too"
             , "-year:I=%s?Year of interest" % (year, )
+            , EUC_Opt_SC ()
+            , EUC_Opt_TC ()
             )
         , arg_spec    = ("amount:F?Amount of taxable income", )
         , min_args    = 1
@@ -121,8 +110,7 @@ def command_spec (arg_array = None) :
 # end def command_spec
 
 def main (cmd) :
-    source_currency        = EUC.Table [cmd.source_currency]
-    EUC.target_currency    = EUC.Table [cmd.target_currency]
+    source_currency        = cmd.source_currency
     year                   = cmd.year
     amount                 = source_currency (cmd.amount)
     tax_amount, tax_chunks = tax (amount, year)
@@ -139,4 +127,4 @@ def main (cmd) :
 
 if __name__ == "__main__" :
     main (command_spec ())
-### __END__ income_tax_at
+### __END__ ATAX.income_tax_at

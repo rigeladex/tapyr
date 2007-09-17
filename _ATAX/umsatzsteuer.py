@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -43,6 +42,7 @@
 #    11-Feb-2007 (CT) `string` functions replaced by `str` methods
 #    17-Sep-2007 (CT) Modernized
 #    17-Sep-2007 (CT) Use `Account.add_file`
+#    17-Sep-2007 (CT) `main` refactored
 #    ««revision-date»»···
 #--
 
@@ -50,51 +50,46 @@ from _ATAX.accounting import *
 
 sep_1000 = { "." : ",", "," : "."}
 
-if __name__ == "__main__":
-    from _TFL.Command_Line   import Command_Line
-    from sys                 import stdin
-    cmd = Command_Line  \
-        ( option_spec =
-            ( "-all"
-            , "-categories:S,=u"
-            , "-decimal_sign:S=."
-            , "-online_format:B"
-                "?Format for cope/paste into online form"
+class main (Main) :
+
+    def _add_files (self, cmd, account, categories, source_currency) :
+        self.__super._add_files (cmd, account, categories, source_currency)
+        account.finish ()
+    # end def _add_files
+
+    def _create_account (self, cmd, categories, source_currency, vst_korrektur) :
+        if cmd.online_format :
+            EUC.target_currency.decimal_sign = ","
+            EUC.target_currency.sep_1000     = ""
+        else :
+            EUC.target_currency.decimal_sign = cmd.decimal_sign
+            EUC.target_currency.sep_1000     = sep_1000 [cmd.decimal_sign]
+        return V_Account (vst_korrektur = vst_korrektur)
+    # end def _create_account
+
+    def _output (self, cmd, account, categories, source_currency) :
+        if cmd.online_format :
+            account.print_summary_online ()
+        else :
+            if not cmd.summary :
+                account.print_entries ("\f")
+                if cmd.reverse :
+                    account.print_entries_by_group ("\f")
+            account.print_summary ()
+    # end def _output
+
+    @classmethod
+    def _opt_spec (cls) :
+        return Main._opt_spec () + \
+            ( "-decimal_sign:S=."
+            , "-online_format:B?Format for cope/paste into online form"
             , "-reverse"
-            , "-source_currency:S=eur#2"
-            , "-target_currency:S=eur"
             , "-summary"
-            , "-vst_korrektur:F=1.0"
             )
-        , help_on_err = 1
-        )
-    vst_korrektur       = cmd.vst_korrektur
-    summary_only        = cmd.summary
-    if cmd.all :
-        categories      = "."
-    else :
-        categories      = "[" + "".join (cmd.categories) + "]"
-    categories          = re.compile (categories)
-    source_currency     = EUC.Table [cmd.source_currency]
-    EUC.target_currency = EUC.Table [cmd.target_currency]
-    if cmd.online_format :
-        EUC.target_currency.decimal_sign = ","
-        EUC.target_currency.sep_1000     = ""
-    else :
-        EUC.target_currency.decimal_sign = cmd.decimal_sign
-        EUC.target_currency.sep_1000     = sep_1000 [cmd.decimal_sign]
-    account             = V_Account (vst_korrektur = vst_korrektur)
-    if cmd.argn > 0 :
-        for file_name in cmd.argv.body :
-            account.add_file (file_name, categories, source_currency)
-    else :
-        account.add_lines    (stdin,     categories, source_currency)
-    account.finish ()
-    if cmd.online_format :
-        account.print_summary_online ()
-    else :
-        if not summary_only :
-            account.print_entries ("\f")
-            if cmd.reverse :
-                account.print_entries_by_group ("\f")
-        account.print_summary ()
+    # end def _opt_spec
+
+# end class main
+
+if __name__ == "__main__":
+    main (main.command_spec ())
+### __END__ ATAX.umsatzsteuer
