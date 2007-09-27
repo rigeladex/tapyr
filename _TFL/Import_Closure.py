@@ -123,6 +123,7 @@
 #     6-Nov-2006 (CED) `pkg_chain` added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    27-Sep-2007 (CED) Added support for derived PNS import of root file
 #    ««revision-date»»···
 #--
 
@@ -296,17 +297,18 @@ class Import_Closure :
         ( self, file_name = None, import_path = ("./", ), ignore = None
         , debug = False, script_code = False
         ) :
-        self.import_path  = tuple (import_path)
-        self.pym_dict     = {} ### rel-name-sans-extension --> P_M
-        self.file_dict    = {} ### path --> rel-name-sans-extension
-        self.pkg_dict     = {}
-        self.tlp_dict     = {}
-        self.seen         = {}
-        self.d_pns_chains = Derived_PNS_Finder (self.import_path).tokens
-        self.ignore       = ignore or {}
-        self.debug        = debug
-        self.script_code  = script_code
-        self.root_pym     = None
+        self.import_path     = tuple (import_path)
+        self.pym_dict        = {} ### rel-name-sans-extension --> P_M
+        self.file_dict       = {} ### path --> rel-name-sans-extension
+        self.pkg_dict        = {}
+        self.tlp_dict        = {}
+        self.seen            = {}
+        self.derived_modules = {}
+        self.d_pns_chains    = Derived_PNS_Finder (self.import_path).tokens
+        self.ignore          = ignore or {}
+        self.debug           = debug
+        self.script_code     = script_code
+        self.root_pym        = None
         if file_name :
             self.root_pym = pym = self._import_root (file_name)
             if not pym :
@@ -411,6 +413,8 @@ class Import_Closure :
         match   = self.import_pat.match (line)
         if match :
             self._import_module      (match.group ("imported"), match, "")
+            if name in self.derived_modules :
+                base = self.derived_modules [name].replace (".", TFL.sos.path.sep)
             return self.pym_dict.get (base)
         else :
             print name, "doesn't match import pattern"
@@ -464,6 +468,8 @@ class Import_Closure :
                 ml         = mod.split (".")
                 pkg        = ".".join  (ml [:-1])
                 result = P_M (TFL.sos.sep.join (ml), fname, pkg)
+                assert self.derived_modules.get (fullmodule, mod) == mod
+                self.derived_modules [fullmodule] = mod
                 return result
     # end def _path_of
 
