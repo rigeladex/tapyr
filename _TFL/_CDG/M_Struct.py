@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2003 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2002-2007 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -32,10 +32,9 @@
 #    24-Apr-2007 (DAL) `as_tex` addded
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#     1-Oct-2007 (DAL) unit added to `as_tex` output table
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL             import TFL
 import _TFL._Meta.M_Class
@@ -268,22 +267,23 @@ class M_Struct (TFL.Meta.M_Class) :
             , r"% {"
             , r"%   \verb|#1|: \verb|#2|"
             , r"%"
-            , r"%     \begin{longtable}{|l|l|c|p{2cm}|}"
+            , r"%     \begin{longtable}{|l|l|c|l|p{2cm}|}"
             , r"%     \hline"
-            , r"%     Attribute & Type & Valid Value Range & Requirements\\"
+            , r"%     Attribute & Type & Valid Value Range & Unit & "
+              r"Requirements\\"
             , r"%     \hline"
             , r"% }"
             , r"% \def\EndTable{"
             , r"%   \end{longtable}"
             , r"% }"
-            , r"% \def\Entry#1#2#3#4"
+            , r"% \def\Entry#1#2#3#4#5"
             , r"% {"
-            , r"%   \verb|#1| & \verb|#2| & #3 & \verb|#4|\\"
+            , r"%   \verb|#1| & \verb|#2| & #3 & #4 & \verb|#5|\\"
             , r"%   \hline"
             , r"% }"
             ]
         begin_fmt = "\\BeginTable{%s}{}"
-        entry_fmt = "  \\Entry{%s}{%s}{}{}"
+        entry_fmt = "  \\Entry{%s}{%s}{}{}{}"
         end_fmt   = "\\EndTable"
         for c in cls.needs_struct:
             tex.append (begin_fmt % c.type_name)
