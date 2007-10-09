@@ -50,6 +50,8 @@
 #                      and doctests for empty instantiations added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#     9-Oct-2007 (CED) `_NIL` can't be a class attribute (otherwise it's
+#                      shared among instances, leading to ugly bugs)
 #    ««revision-date»»···
 #--
 
@@ -417,7 +419,11 @@ class DL_Ring (_DL_Chain_) :
     tail    = property (lambda s : s._T.prev)
     _H      = property (lambda s : s.mark.prev)
     _T      = property (lambda s : s.mark)
-    _NIL    = DL_Item  ()
+
+    def __init__ (self, items = ()) :
+        self._NIL    = DL_Item  ()
+        self.__super.__init__  (items)
+    # end def __init__
 
     def clear (self) :
         """Remove all items from list."""
@@ -506,7 +512,8 @@ class DL_Ring_Sorted (DL_Ring) :
     DL_Item = DL_Item_Sortable
 
     def __init__ (self, items = (), key = TFL.identity) :
-        self.key = key
+        self._NIL = DL_Item ()
+        self.key  = key
         self.clear ()
         if items :
             self.insert (* items)
