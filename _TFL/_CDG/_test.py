@@ -18,6 +18,7 @@
 #    14-Mar-2007 (PGO) `mask` is ubyte1 only
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    18-Oct-2007 (MZO) [25170] example for `table_entry_comments` added
 #    ««revision-date»»···
 #--
 #
@@ -69,6 +70,8 @@ class Byte_Copy_Spec (Struct) :
     def __init__ (self, source, destination) :
         self.source      = source
         self.destination = destination
+        comment = "USERCOMMENT %s" % Byte_Copy_Spec.count
+        setattr (self, self.table_entry_comment_name, comment)
     # end def __init__
 
 # end class Byte_Copy_Spec
@@ -137,8 +140,7 @@ class S_With_Array (Struct) :
         self.cni_offset   = []
         length = 2
         for i in xrange (length) :
-            self.cni_offset.append \
-                (i)
+            self.cni_offset.append (i)
     # end def __init__
 
 # end class S_With_Array
@@ -220,13 +222,16 @@ class TDCOM_Descriptor (Struct) :
         c_block = C.Stmt_Group ()
         for c in Meta_Struct.uses_global_buffers :
             values     = []
+            comments   = []
             for o in c.extension :
                 values.append (o.dict ())
+                comments.append (o.table_entry_comment ())
             c_block.add \
                 ( C.Array
                     ( c.type_name, c.buffer_name ()
                     , bounds = len (values)
                     , init   = values
+                    , init_comments = comments
                     )
                 )
         return c_block

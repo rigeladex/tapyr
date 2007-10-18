@@ -30,6 +30,7 @@
 #    18-Nov-2006 (MZO) Creation
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    18-Oct-2007 (MZO) [25170] `init_comments` added
 #    ««revision-date»»···
 #--
 
@@ -58,14 +59,23 @@ class _CDG_Array_ (TFL.SDG.C.Array) :
         )
 
     def _setup_initializers \
-        (self, init_list, description = None) :
+        ( self
+        , init_list
+        , description   = None
+        , init_comments = ()
+        ) :
         result   = TFL.SDG.C.Init_Comp (description = description)
         t        = self._struct or self.type
         assert isinstance (t, (TFL.SDG.C.Struct)), (t, type (t))
         Init = t._setup_initializers_for_cdg_array
         result_l = []
-        for k, v in enumerate (init_list) :
-            result_l.append (Init (v, description = "[%s]" % k))
+        if not init_comments :
+            init_comments = [None] * len (init_list)
+        for k, (v, comment) in enumerate (zip (init_list, init_comments)) :
+            d = "[%s]" % k
+            if comment :
+                d = "%s %s" % (d, comment)
+            result_l.append (Init (v, description = d))
         result = "{ %s\n  }" % ("\n  , ".join (result_l), )
         return result
     # end def _setup_initializers

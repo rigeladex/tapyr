@@ -41,6 +41,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    31-Jul-2007 (MG)  Add description to `h_format`
 #    06-Aug-2007 (CED) Future import removed again
+#    18-Oct-2007 (MZO) [25170] `init_comments` added
 #    ««revision-date»»···
 #--
 
@@ -94,7 +95,13 @@ class Array (TFL.SDG.C._Var_) :
     ### to be able to use `Ancestor._common_format` which references `struct`
     struct               = None
 
-    def __init__ (self, type, name, bounds = None, init = (), ** kw) :
+    def __init__ \
+        (self, type, name
+        , bounds        = None
+        , init          = ()
+        , init_comments = ()
+        , ** kw
+        ) :
         if bounds is None :
             bounds = len (init)
         if isinstance (bounds, int) :
@@ -102,7 +109,8 @@ class Array (TFL.SDG.C._Var_) :
         self.__super.__init__ \
             (type, name, bounds = bounds, init = init, ** kw)
         if self.init :
-            self.initializers = self._setup_initializers (self.init)
+            self.initializers = self._setup_initializers \
+                (self.init, init_comments = init_comments)
     # end def __init__
 
     def _convert_bounds (self, bounds) :
@@ -111,7 +119,12 @@ class Array (TFL.SDG.C._Var_) :
         return [str (b) for b in bounds]
     # end def _convert_bounds
 
-    def _setup_initializers (self, init_list, description = None) :
+    def _setup_initializers \
+        ( self
+        , init_list
+        , description   = None
+        , init_comments = ()
+        ) :
         result   = TFL.SDG.C.Init_Comp (description = description)
         t        = self._struct or self.type
         if isinstance (t, (TFL.SDG.C.Struct, TFL.SDG.C.Array)) :
@@ -124,8 +137,13 @@ class Array (TFL.SDG.C._Var_) :
                 kw   = dict (format = self.fmt)
             else :
                 return self._apply_array_level (init_list, description or "")
-        for k, v in enumerate (init_list) :
-            result.add (Init (v, description = "[%s]" % k))
+        if not init_comments :
+            init_comments = [None] * len (init_list)
+        for k, (v, comment) in enumerate (zip (init_list, init_comments)) :
+            d = "[%s]" % k
+            if comment :
+                d = "%s %s" % (d, comment)
+            result.add (Init (v, description = d))
         return result
     # end def _setup_initializers
 

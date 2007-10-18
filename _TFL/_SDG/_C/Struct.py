@@ -35,6 +35,7 @@
 #    20-Nov-2006 (MZO) [21696] `_setup_initializers_for_cdg_array` added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    18-Oct-2007 (MZO) [25170] line break in description introduced
 #    ««revision-date»»···
 #--
 
@@ -186,9 +187,28 @@ class Struct (TFL.SDG.C._Decl_) :
             assert not isinstance (c, (TFL.SDG.C.Struct, TFL.SDG.C.Array)), c
             descr = "/* %s */" % c.name
             result.append ("%s %s" % (v, descr))
+        description_with_lf = []
+        if description :
+            description = description.replace ("\n", " ")
+            ## emulate description line break :
+            ##     } /* ...*/
+            ##     /* ...  */
+            indent  = 6
+            max_col = 80
+            is_first = True
+            while description :
+                i = (max_col - indent - 6) # 6 comment chars
+                if is_first :
+                    i -= 6  # consider element maker " [0] "
+                    is_first = False
+                line = description [: i]
+                description_with_lf.append ("/* %s */" % line)
+                description = description [i:] # 6 comment chars
         return \
             ("{ %s\n    } %s"
-            % ("\n    , ".join (result), "/* %s */" % description)
+            % ( "\n    , ".join (result)
+              , "\n    ".join   (description_with_lf)
+              )
             )
     # end def _setup_initializers_for_cdg_array
 

@@ -63,6 +63,7 @@
 #    01-Aug-2007 (MG)  Struct.format_and_values: call to
 #                      `field.convert_value` added
 #    06-Aug-2007 (CED) Future import removed again
+#    18-Oct-2007 (MZO) [25170] `table_entry_comment` added
 #    ««revision-date»»···
 #--
 
@@ -110,8 +111,9 @@ class Struct (TFL.Meta.Object) :
     ### Set the __metaclass__ attribute a new M_Struct class, e.g.:
     ### __metaclass__      = TFL.CDG.M_Struct.New ("TDFT")
 
-    buffer_name_format     = "%(cls_name)s_buffer"
-    buffer_name_tail       = ""
+    buffer_name_format          = "%(cls_name)s_buffer"
+    buffer_name_tail            = ""
+    table_entry_comment_name    = "_table_entry_comment_"
 
     __autowrap             = dict \
       ( add_typedef        = TFL.Meta.Class_Method
@@ -285,6 +287,10 @@ class Struct (TFL.Meta.Object) :
                     result [f.name] = value
         return result
     # end def dict
+
+    def table_entry_comment (self) :
+        return getattr (self, self.table_entry_comment_name, None)
+    # end def table_entry_comment
 
     @classmethod
     def null_termination (cls) :

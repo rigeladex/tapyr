@@ -41,6 +41,7 @@
 #    12-Apr-2007 (MZO) `_debug_as_c_code` fortified
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    18-Oct-2007 (MZO) [25170] `init_comments` added
 #    ««revision-date»»···
 #--
 #
@@ -140,9 +141,11 @@ class C_Code_Creator (TFL.Meta.Object) :
         c_block = C.Stmt_Group ()
         content = ""
         for c in Meta_Struct.uses_global_buffers :
-            values = []
+            values   = []
+            comments = []
             for o in c.extension :
                 values.append (o.dict ())
+                comments.append (o.table_entry_comment ())
             values = self.hook_pack_values (values, c)
             self._define_fmt (C, c)
             if not filename :
@@ -152,6 +155,7 @@ class C_Code_Creator (TFL.Meta.Object) :
                         , c.buffer_name ()
                         , bounds = len (values)
                         , init   = values
+                        , init_comments = comments
                         )
                     )
             else :
@@ -160,6 +164,7 @@ class C_Code_Creator (TFL.Meta.Object) :
                     , c.buffer_name ()
                     , bounds    = len (values)
                     , init      = values
+                    , init_comments = comments
                     )
                 if c_block :
                     content = \
