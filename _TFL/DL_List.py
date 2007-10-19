@@ -50,8 +50,7 @@
 #                      and doctests for empty instantiations added
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
-#     9-Oct-2007 (CED) `_NIL` can't be a class attribute (otherwise it's
-#                      shared among instances, leading to ugly bugs)
+#    19-Oct-2007 (CED) doctest for behaviour of `NIL` added
 #    ««revision-date»»···
 #--
 
@@ -413,17 +412,22 @@ class DL_Ring (_DL_Chain_) :
        >>> dr.rotate_prev (3)
        >>> list (dr)
        [0, 1, 2, 3, 4]
+       >>> r = DL_Ring ()
+       >>> bool (r._NIL), r._NIL, r._NIL.next, r._NIL.prev
+       (False, <empty item>, None, None)
+       >>> r.append (1)
+       >>> bool (r._NIL), r._NIL, r._NIL.next, r._NIL.prev
+       (False, <empty item>, None, None)
+       >>> r.clear ()
+       >>> bool (r._NIL), r._NIL, r._NIL.next, r._NIL.prev
+       (False, <empty item>, None, None)
     """
 
     head    = property (lambda s : s._H and s._H.next)
     tail    = property (lambda s : s._T.prev)
     _H      = property (lambda s : s.mark.prev)
     _T      = property (lambda s : s.mark)
-
-    def __init__ (self, items = ()) :
-        self._NIL    = DL_Item  ()
-        self.__super.__init__  (items)
-    # end def __init__
+    _NIL    = DL_Item  ()
 
     def clear (self) :
         """Remove all items from list."""
@@ -512,8 +516,7 @@ class DL_Ring_Sorted (DL_Ring) :
     DL_Item = DL_Item_Sortable
 
     def __init__ (self, items = (), key = TFL.identity) :
-        self._NIL = DL_Item ()
-        self.key  = key
+        self.key = key
         self.clear ()
         if items :
             self.insert (* items)
