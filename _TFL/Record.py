@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,24 +34,30 @@
 #    20-Mar-2006 (CT)  `__getitem__` added
 #    31-May-2006 (WPR) `__iter__` added
 #    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     6-Aug-2007 (CED) Future import removed again
+#    19-Oct-2007 (PGO) self.kw needs name-mangling, otherwise a stored dict
+#                      named `kw` will be silently modified
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL           import TFL
 from   _TFL.predicate import sorted
 
-class Record :
-
+class Record (object) :
+    """
+    >>> r = Record (x = "y", kw = dict (foo = 42))
+    >>> r.x
+    'y'
+    >>> r.kw
+    {'foo': 42}
+    """
     def __init__ (self, ** kw) :
-        self.__dict__ ["kw"] = kw.copy ()
+        self.__dict__ ["_Record__kw"] = kw.copy ()
     # end def __init__
 
     def copy (self, ** kw) :
-        result = self.__class__ (** self.kw)
-        result.kw.update (kw)
+        result = self.__class__ (** self.__kw)
+        result.__kw.update (kw)
         return result
     # end def copy
 
@@ -63,7 +69,7 @@ class Record :
         return ", ".join \
             ( map ( lambda (k, v), kq = key_quote, vq = value_quote
                   : "%s%s%s = %s%s%s" % (kq, k, kq, vq, v, vq)
-                  , sorted (self.kw.iteritems ())
+                  , sorted (self.__kw.iteritems ())
                   )
             )
     # end def _formatted_kw
@@ -75,21 +81,21 @@ class Record :
 
     def __getattr__ (self, name) :
         try :
-            return self.kw [name]
+            return self.__kw [name]
         except KeyError :
             raise AttributeError, name
     # end def __getattr__
 
     def __getitem__ (self, key) :
-        return self.kw [key]
+        return self.__kw [key]
     # end def __getitem__
 
     def __setattr__ (self, name, value) :
-        self.kw [name] = value
+        self.__kw [name] = value
     # end def __setattr__
 
     def __iter__ (self) :
-        return iter (self.kw)
+        return iter (self.__kw)
     # end def __iter__
 
 # end class Record
