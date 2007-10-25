@@ -26,7 +26,8 @@ from distutils.core import setup
 
 name    = 'TFL'
 license = 'GNU Library or Lesser General Public License (LGPL)'
-VERSION = os.popen ('svnversion').read ().strip ()
+version = os.popen ('svnversion').read ().strip ()
+assert  (version.isdigit ())
 pkgs    = []
 # path-walking probably only works in Unix due to hardcoded '/'
 for root, dirs, files in os.walk ('../_' + name) :
@@ -39,7 +40,7 @@ for root, dirs, files in os.walk ('../_' + name) :
 
 setup \
     ( name             = name
-    , version          = VERSION
+    , version          = version
     , description      = "Library with lots of useful stuff"
     # long_description = 
     , license          = license
