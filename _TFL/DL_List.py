@@ -51,10 +51,11 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    19-Oct-2007 (CED) doctest for behaviour of `NIL` added
+#     6-Nov-2007 (CT)  `_new_item` changed to allow `None` for `pred`
+#     6-Nov-2007 (CT)  `DL_Ring.insert` changed to pass `None` instead of
+#                      `self._NIL` to `_new_item`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL        import TFL
 import _TFL.predicate
@@ -227,7 +228,10 @@ class _DL_Chain_ (TFL.Meta.Object) :
     itervalues = values ### compatibility to `dict`
 
     def _new_item (self, pred, item) :
-        return self.DL_Item (item, pred.next, pred)
+        next = None
+        if pred is not None :
+            next = pred.next
+        return self.DL_Item (item, next, pred)
     # end def _new_item
 
     def __iter__ (self) :
@@ -437,7 +441,7 @@ class DL_Ring (_DL_Chain_) :
     def insert (self, pred, * items) :
         if items :
             if self.mark is self._NIL :
-                pred  = self.mark = self._new_item (self._NIL, items [0])
+                pred  = self.mark = self._new_item (None, items [0])
                 items = items   [1:]
                 pred.link_next  (pred)
             self.__super.insert (pred, * items)
@@ -549,7 +553,10 @@ class DL_Ring_Sorted (DL_Ring) :
     # end def _insert
 
     def _new_item (self, pred, item) :
-        return self.DL_Item (item, self.key (item), pred.next, pred)
+        next = None
+        if pred is not None :
+            next = pred.next
+        return self.DL_Item (item, self.key (item), next, pred)
     # end def _new_item
 
 # end class DL_Ring_Sorted
