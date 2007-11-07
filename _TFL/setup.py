@@ -25,7 +25,9 @@ import os
 import sys
 from   distutils.core import setup
 
-os.chdir (os.path.dirname (__file__))
+src_dir = os.path.dirname (__file__)
+if src_dir :
+    os.chdir (src_dir)
 
 name    = 'TFL'
 license = 'GNU Library or Lesser General Public License (LGPL)'
