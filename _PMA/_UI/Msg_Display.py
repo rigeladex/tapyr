@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -38,6 +38,7 @@
 #    22-May-2005 (CT) `_Node_C_._level_inc` removed and `MO_Root._add_parts`
 #                     changed to add a `\t` per level
 #    14-Sep-2005 (CT) Use `sender_name` instead of `sender` in `summary_format`
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,7 @@ import _PMA._UI
 import _PMA._UI.HTD
 import _PMA._UI.Mixin
 
+import _TFL.Accessor
 from   _TFL.predicate          import *
 from   _TFL.Regexp             import *
 
@@ -213,7 +215,7 @@ class _Message_Node_ (_MD_Node_B2_) :
 
 class _MPA_Node_ (_MD_Node_B8_) :
 
-    no_of_states        = property (lambda s : s._no_of_states)
+    no_of_states        = property (TFL.Getter._no_of_states)
     type                = "multipart/alternative"
 
     def __init__ (self, msg, parent, ** kw) :

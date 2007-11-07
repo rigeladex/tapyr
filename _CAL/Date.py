@@ -51,12 +51,14 @@
 #    12-Jan-2007 (CT) Imports fixed
 #                     (import `Command_Line` and `Regexp` from _TFL)
 #    11-Aug-2007 (CT) `quarter` added
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
 from   _CAL                    import CAL
+from   _TFL                    import TFL
 import _CAL._DTW_
+import _TFL.Accessor
 from   _TFL.Regexp             import *
 
 import datetime
@@ -205,11 +207,11 @@ class Date (CAL._DTW_) :
         , flags = re.VERBOSE | re.IGNORECASE
         )
 
-    day              = property (lambda s : s._body.day)
+    day              = property (TFL.Getter._body.day)
     is_weekday       = property (lambda s : s.weekday < 5)
-    month            = property (lambda s : s._body.month)
+    month            = property (TFL.Getter._body.month)
     wk_ordinal       = property (lambda s : (s.ordinal - s.weekday) // 7)
-    year             = property (lambda s : s._body.year)
+    year             = property (TFL.Getter._body.year)
 
     yad              = None ### set for negative `day` arguments
 

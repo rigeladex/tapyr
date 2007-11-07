@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -41,12 +41,10 @@
 #    28-Mar-2005 (CT)  `M_Class_SWRP` added
 #    23-Mar-2006 (CED) `_fixed_type_` added
 #     8-Aug-2006 (PGO) `_super_calling_not_possible` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     7-Nov-2007 (CT)  Condition for `_super_calling_not_possible` corrected
+#                      (don't complain if one of the bases has used `_real_name`)
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL             import TFL
 import _TFL._Meta
@@ -190,15 +188,25 @@ class M_Autosuper (_M_Type_) :
     """
 
     def __init__ (cls, name, bases, dict) :
-        super   (M_Autosuper, cls).__init__ (name, bases, dict)
-        _super = cls._m_mangled_attr_name ("super")
-        if (   __debug__
-           and name in (b.__name__ for b in bases)
-           and name == dict.get ("__real_name")
-           ) :
-            setattr (cls, _super, _super_calling_not_possible)
-        else :
-            setattr (cls, _super, super (cls))
+        super (M_Autosuper, cls).__init__ (name, bases, dict)
+        _super_n = cls._m_mangled_attr_name ("super")
+        _super_v = super (cls)
+        if __debug__ :
+            from _TFL.predicate import any_true
+            ancestors = cls.mro () [1:]
+            if (   name == dict.get ("__real_name")
+               and any_true
+                     ( name == b.__name__ == b.__dict__.get ("__real_name")
+                     for b in ancestors
+                     )
+               ) :
+                if 0 :
+                    print cls, "has name clash with ancestor", ", ".join \
+                        (  str (b) for b in ancestors
+                        if name == b.__name__ == b.__dict__.get ("__real_name")
+                        )
+                _super_v = _super_calling_not_possible
+        setattr (cls, _super_n, _super_v)
     # end def __init__
 
 # end class M_Autosuper

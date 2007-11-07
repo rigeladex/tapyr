@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -33,22 +33,39 @@
 #
 # Revision Dates
 #    19-Aug-2005 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     7-Nov-2007 (CT) `Attribute` and `Item` generalized and refactored into
+#                     `Getter`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.Object
 
 import operator
 
-class _Attribute_ (TFL.Meta.Object) :
-    """Accessor to attributes.
+class _Getter_ (TFL.Meta.Object) :
+    """Generalized (and transitive) accessor to attributes and items.
+
+       *** Beware: this can't be used to refer to magic methods
+           (like `__cmp__` or `__str__`)
 
        >>> from Record import *
+       >>> r = Record (a = 1, b = "2", foo = 42, bar = Record (x = 0, y = 137))
+       >>> r.bar.z = [1, 42, 137]
+       >>> g1 = Getter.foo
+       >>> gi = Getter [2]
+       >>> gn = Getter.bar.z [-1]
+       >>> g1 (r)
+       42
+       >>> gi (r.bar.z)
+       137
+       >>> gn (r)
+       137
+       >>> r.bar.z.append ("howdi")
+       >>> gn (r)
+       'howdi'
+
+       `Attribute` is a legacy spelling of `Getter`
        >>> r = Record (a = 1, b = "2", foo = 42)
        >>> a = Attribute.foo
        >>> a (r)
@@ -58,17 +75,8 @@ class _Attribute_ (TFL.Meta.Object) :
        Traceback (most recent call last):
          ...
        AttributeError: foo
-    """
 
-    def __getattr__ (self, name) :
-        return operator.attrgetter (name)
-    # end def __getattr__
-
-# end class _Attribute_
-
-class _Item_ (TFL.Meta.Object) :
-    """Accessor to item
-
+       `Item` is another legacy spelling of `Getter`
        >>> last = Item [-1]
        >>> last (range (2))
        1
@@ -81,13 +89,71 @@ class _Item_ (TFL.Meta.Object) :
        IndexError: list index out of range
        >>> third (range (5))
        3
-    """
+     """
+
+    def __init__ (self, getters, doc) :
+        self.__getters = getters
+        self.__doc__   = doc
+    # end def __init__
+
+    def _call_1 (self, o) :
+        return self.__getters [0] (o)
+    # end def _call_1
+
+    def _call_n (self, o) :
+        getters = self.__getters
+        result = getters [0] (o)
+        for g in getters [1:] :
+            result = g (result)
+        return result
+    # end def _call_n
+
+    def __getattr__ (self, name) :
+        return _Getter_n_ \
+            ( self.__getters + (operator.attrgetter (name), )
+            , "%s.%s`" % (self.__doc__ [:-1], name)
+            )
+    # end def __getattr__
 
     def __getitem__ (self, key) :
-        return operator.itemgetter (key)
+        return _Getter_n_ \
+            (self.__getters + (operator.itemgetter (key), )
+            , "%s [%s]`" % (self.__doc__ [:-1], key)
+            )
     # end def __getitem__
 
-# end class _Item_
+    def __repr__ (self) :
+        return self.__doc__
+    # end def __repr__
+
+# end class _Getter_
+
+class _Getter_0_ (TFL.Meta.Object) :
+    """Generalized (and transitive) accessor to attributes and items."""
+
+    def __getattr__ (self, name) :
+        return _Getter_1_ \
+            ( (operator.attrgetter (name), )
+            , "Getter function for `.%s`" % name
+            )
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        return _Getter_1_ \
+            ( (operator.itemgetter (key), )
+            ,  "Getter function for `[%s]`" % key
+            )
+    # end def __getitem__
+
+# end class _Getter_0_
+
+class _Getter_1_ (_Getter_) :
+    __call__ = _Getter_._call_1
+# end class _Getter_1_
+
+class _Getter_n_ (_Getter_) :
+    __call__ = _Getter_._call_n
+# end class _Getter_n_
 
 class _Method_ (TFL.Meta.Object) :
     """Accessor to dynamically-bound methods (allows passing such as
@@ -113,10 +179,9 @@ class _Method_ (TFL.Meta.Object) :
 
 # end class _Method_
 
-Attribute = _Attribute_ ()
-Item      = _Item_      ()
-Method    = _Method_    ()
+Getter = Attribute = Item = _Getter_0_ ()
+Method = _Method_ ()
 
 if __name__ != "__main__" :
-    TFL._Export ("Attribute", "Item", "Method")
+    TFL._Export ("Attribute", "Getter", "Item", "Method")
 ### __END__ TFL.Accessor

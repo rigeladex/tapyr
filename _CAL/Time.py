@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -30,12 +30,14 @@
 #    17-Oct-2004 (CT) `Time.Delta` defined as `Time_Delta`
 #    17-Oct-2004 (CT) Adapted to renaming of accessor-functions of `Time_Delta`
 #    30-Nov-2006 (CT) `__getattr__` for `seconds` added
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
 from   _CAL                    import CAL
+from   _TFL                    import TFL
 import _CAL._DTW_
+import _TFL.Accessor
 
 import  datetime
 
@@ -72,10 +74,10 @@ class Time (CAL._DTW_) :
     _init_arg_names  = ("hour", "minute", "second", "microsecond")
     _timetuple_slice = lambda s, tt : tt [3:6] + (0, )
 
-    hour             = property (lambda s: s._body.hour)
-    minute           = property (lambda s: s._body.minute)
-    second           = property (lambda s: s._body.second)
-    microsecond      = property (lambda s: s._body.microsecond)
+    hour             = property (TFL.Getter._body.hour)
+    minute           = property (TFL.Getter._body.minute)
+    second           = property (TFL.Getter._body.second)
+    microsecond      = property (TFL.Getter._body.microsecond)
 
     from _CAL.Delta import Time_Delta as Delta
 

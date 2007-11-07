@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -49,6 +49,7 @@
 from   _TFL                    import TFL
 from   _CAL                    import CAL
 import _TFL._Meta.Object
+import _TFL.Accessor
 
 import datetime
 import time
@@ -68,7 +69,7 @@ class _DTW_ (TFL.Meta.Object) :
         , lambda self, value : setattr (self, self._kind, value)
         )
 
-    strftime         = property (lambda s: s._body.strftime)
+    strftime         = property (TFL.Getter._body.strftime)
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (** kw)

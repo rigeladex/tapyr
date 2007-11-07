@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    12-Aug-2005 (MG) Icon added to `interpreter` command
 #    13-Sep-2005 (MG) Dummy import's added
 #    21-Jan-2006 (MG) Imports fixed
+#     7-Nov-2007 (CT) `UI_State._real_name` added
 #    ««revision-date»»···
 #--
 
@@ -80,14 +81,16 @@ class Changes (TFL.Meta.Object) :
 
 # end class Changes
 
-class UI_State (TFL.Meta.Object) :
+class _UI_State_ (TFL.Meta.Object) :
+
+    _real_name           = "UI_State"
 
     def __init__ (self, ** kw) :
         self.__dict__.update   (kw)
         self.changes = Changes ()
     # end def __init__
 
-# end class UI_State
+UI_State = _UI_State_ # end class
 
 class _TGL_UI_Application_ (TGL.UI.Mixin) :
     """Generic application class"""

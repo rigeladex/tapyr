@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,6 +32,8 @@
 #     2-Jan-2006 (CT) `_Matcher_` factored
 #     2-Jan-2006 (CT) `Matcher.Table` added
 #     2-Jan-2006 (CT) `Matcher._cache` added and used
+#     7-Nov-2007 (CT) `match` changed to deal gracefully `msg` without
+#                     attribute `email` (otherwise test-stubs won't work)
 #    ««revision-date»»···
 #--
 
@@ -150,11 +152,13 @@ class Matcher (_Matcher_) :
 
     def match (self, msg) :
         cache = self._cache
-        id    = msg.email
-        try :
+        id    = getattr (msg, "email", None)
+        if id is not None and id in cache :
             result = cache [id]
-        except KeyError :
-            result = cache [id] = bool (msg.scope.eval (self._code, self.ckw))
+        else :
+            result = bool (msg.scope.eval (self._code, self.ckw))
+            if id is not None :
+                cache [id] = result
         return result
     # end def match
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -156,6 +156,7 @@
 #                     *or* `PMA.default_encoding` for `decode`
 #     9-Jul-2007 (CT) `body_lines` changed to use `textwrap.Wrapper` to split
 #                     overlong lines
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,7 @@ import _PMA.Mailcap
 import _PMA.Msg_Status
 import _PMA.SB
 
+import _TFL.Accessor
 import _TFL.Ascii
 import _TFL.Caller
 import _TFL.Filename
@@ -351,14 +353,14 @@ class _Msg_Part_ (object) :
     __metaclass__       = TFL.Meta.M_Class_SWRP
 
     __properties        = \
-        ( TFL.Meta.Lazy_Property ("charset",  lambda s : s._get_charset ())
+        ( TFL.Meta.Lazy_Property ("charset",  TFL.Method._get_charset)
         , TFL.Meta.Lazy_Property
-            ("content_type", lambda s : s._get_content_type ())
-        , TFL.Meta.Lazy_Property ("filename", lambda s : s._filename ())
+            ("content_type", TFL.Method._get_content_type)
+        , TFL.Meta.Lazy_Property ("filename", TFL.Method._filename)
         , TFL.Meta.Lazy_Property ("scope",    lambda s : Msg_Scope (s))
         , TFL.Meta.Lazy_Property \
             ("subject",  lambda s : decoded_header (s.email ["subject"]))
-        , TFL.Meta.Lazy_Property ("type",     lambda s : s.content_type)
+        , TFL.Meta.Lazy_Property ("type",     TFL.Getter.content_type)
         )
 
     label_width         = 8
@@ -778,7 +780,7 @@ class Message (_Message_) :
         )
 
     body_start       = property (lambda s : s.scope.eval ("body") [:50])
-    time             = property (lambda s : s._time ())
+    time             = property (TFL.Method._time)
 
     def __init__ (self, email, name = None, mailbox = None, number = None) :
         self.__super.__init__ (email, name)
@@ -854,7 +856,7 @@ class Message (_Message_) :
 
 class _Pending_Action_ (TFL.Meta.Object) :
 
-    msg     = property (lambda s : s._msg)
+    msg     = property (TFL.Getter._msg)
     copied  = property (lambda s : bool (    s._targets and not s._delete))
     deleted = property (lambda s : bool (not s._targets and     s._delete))
     moved   = property (lambda s : bool (    s._targets and     s._delete))

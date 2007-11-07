@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -68,7 +68,8 @@
 #    21-May-2005 (CT) `apply_style_to_match` added
 #    22-May-2005 (CT) `real_level` added
 #    21-Jan-2006 (MG) Imports fixed
-#    14-Apr-2006 (CT)  Use `Decorator` to define decorators
+#    14-Apr-2006 (CT) Use `Decorator` to define decorators
+#     7-Nov-2007 (CT) `Observer._real_name` added
 #    ««revision-date»»···
 #--
 
@@ -107,8 +108,10 @@ class _Node_ (TGL.UI.Mixin) :
     no_of_states        = 1
     state               = 0
 
-    class Observer (TFL.Meta.Object) :
+    class _Observer_ (TFL.Meta.Object) :
         """Model an observer of a node"""
+
+        _real_name = "Observer"
 
         def dec_state (self, observed) :
             """Called whenever `observed.dec_state` is called"""
@@ -135,7 +138,7 @@ class _Node_ (TGL.UI.Mixin) :
             pass
         # end def mouse_leave
 
-    # end class Observer
+    Observer = _Observer_ # end class
 
     def __init__ (self, parent, contents = (), style = None, AC = None, ** kw) :
         self.__super.__init__ \

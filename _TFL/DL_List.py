@@ -54,10 +54,12 @@
 #     6-Nov-2007 (CT)  `_new_item` changed to allow `None` for `pred`
 #     6-Nov-2007 (CT)  `DL_Ring.insert` changed to pass `None` instead of
 #                      `self._NIL` to `_new_item`
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
 from   _TFL        import TFL
+import _TFL.Accessor
 import _TFL.predicate
 import _TFL._Meta.Object
 
@@ -313,8 +315,8 @@ class DL_List (_DL_Chain_) :
        ([0, 2], ['a', 'b', 'c', 3, 4, 1, 'd', 'e'])
     """
 
-    head    = property (lambda s : s._H.next)
-    tail    = property (lambda s : s._T.prev)
+    head    = property (TFL.Getter._H.next)
+    tail    = property (TFL.Getter._T.prev)
 
     def __init__ (self, items = ()) :
         self._H = self.DL_Item ()
@@ -428,9 +430,9 @@ class DL_Ring (_DL_Chain_) :
     """
 
     head    = property (lambda s : s._H and s._H.next)
-    tail    = property (lambda s : s._T.prev)
-    _H      = property (lambda s : s.mark.prev)
-    _T      = property (lambda s : s.mark)
+    tail    = property (TFL.Getter.mark.prev)
+    _H      = property (TFL.Getter.mark.prev)
+    _T      = property (TFL.Getter.mark)
     _NIL    = DL_Item  ()
 
     def clear (self) :

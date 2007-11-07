@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -53,6 +53,7 @@
 #     5-Jan-2006 (CT) `_window_title_text` changed to guard against
 #                     `AttributeError` (during startup, `office` isn't there
 #                     yet)
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,7 @@ from   _TFL                   import TFL
 from   _TGL                   import TGL
 from   _PMA                   import PMA
 
+import _TFL.Accessor
 import _TFL.App_State
 import _TFL.Record
 
@@ -112,7 +114,7 @@ class UI_State (TGL.UI.UI_State) :
 class Application (TGL.UI.Application) :
     """Main instance of PMA application"""
 
-    office               = property (lambda s : s.ui_office.office)
+    office               = property (TFL.Getter.ui_office.office)
 
     product_name         = "PMA"
     show_menubar         = True

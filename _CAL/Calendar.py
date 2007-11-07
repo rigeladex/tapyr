@@ -31,14 +31,16 @@
 #    15-Nov-2004 (CT) More doctests added
 #    10-Dec-2004 (CT) Small fixes
 #    11-Aug-2007 (CT) Imports corrected
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
 from   _CAL              import CAL
+from   _TFL              import TFL
 import _CAL.Date
 import _CAL.Year
 import _TFL._Meta.Object
+import _TFL.Accessor
 from   _TFL.predicate    import *
 from   _TFL              import sos
 
@@ -89,9 +91,9 @@ class Calendar (TFL.Meta.Object) :
        53
     """
 
-    day             = property (lambda s : s._days)
-    week            = property (lambda s : s._weeks)
-    year            = property (lambda s : s._years)
+    day             = property (TFL.Getter._days)
+    week            = property (TFL.Getter._weeks)
+    year            = property (TFL.Getter._years)
 
     def __init__ (self, name = None, root_path = None) :
         self.name   = name

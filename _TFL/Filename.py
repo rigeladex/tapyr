@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -82,12 +82,9 @@
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    23-Mar-2006 (CED) `real_directory`, `real_name` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     7-Nov-2007 (CT)  Doctest fixed (removed `lib/python`)
 #    ««revision-date»»···
 #--
-
-
 
 """Provides a class that represents a filename with its parts: path, base
    name, and file extension.
@@ -402,7 +399,7 @@ class Dirname (Filename) :
         >>> g.ext
         ''
         >>> g = Dirname (__file__)
-        >>> g.name.endswith ('lib/python/_TFL/')
+        >>> g.name.endswith ('/_TFL/')
         True
     """
 

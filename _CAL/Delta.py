@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -38,12 +38,14 @@
 #    25-Oct-2004 (CT) `__abs__` added
 #    26-Oct-2004 (CT) `__abs__` changed to return `self` for positive values
 #    12-Dec-2004 (CT) `_init_arg_map` added
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
 from   _CAL                    import CAL
+from   _TFL                    import TFL
 import _CAL._DTW_
+import _TFL.Accessor
 
 import datetime
 import operator
@@ -138,8 +140,8 @@ class Time_Delta (_DT_Delta_) :
        (2, 15, 42, 8142)
     """
 
-    seconds          = property (lambda s : s._body.seconds)
-    microseconds     = property (lambda s : s._body.microseconds)
+    seconds          = property (TFL.Getter._body.seconds)
+    microseconds     = property (TFL.Getter._body.microseconds)
     h                = property (lambda s : (s.seconds // 3600))
     m                = property (lambda s : (s.seconds  % 3600) // 60)
     s                = property (lambda s : (s.seconds  %   60))
@@ -186,7 +188,7 @@ class Date_Delta (_DT_Delta_) :
        (42, 3, 0, 0)
     """
 
-    days             = property (lambda s : s._body.days)
+    days             = property (TFL.Getter._body.days)
     weeks            = property (lambda s : s._body.days // 7)
 
     _init_arg_names  = ("days", "weeks")

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,12 +42,9 @@
 #    20-Nov-2003 (CT)  Calls to `self.__len__` removed
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     8-Nov-2006 (PGO) Inheritance changed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     7-Nov-2007 (CT)  Use `Getter` instead of `Attribute`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                 import TFL
 
@@ -55,7 +52,6 @@ import _TFL._Meta.M_Class
 import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.Ordered_Set
-
 
 class M_Name_Dict (TFL.Meta.M_Class) :
 
@@ -106,7 +102,7 @@ class NO_List (TFL.Ordered_Set):
 
     def sort (self, cmp = None, key = None, reverse = False) :
         if key is None :
-            key = TFL.Attribute.name
+            key = TFL.Getter.name
         self.__super.sort (cmp = cmp, key = key, reverse = reverse)
     # end def sort
 

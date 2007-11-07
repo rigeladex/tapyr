@@ -63,15 +63,17 @@
 #                     directly)
 #    17-Jun-2005 (MG) `Day.is_weekday` fixed
 #    11-Aug-2007 (CT) Imports corrected
+#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
 from   _CAL              import CAL
-import _TFL._Meta.Object
+from   _TFL              import TFL
 import _CAL.Appointment
 import _CAL.Date
 import _CAL.Holiday
+import _TFL._Meta.Object
+import _TFL.Accessor
 import _TFL.d_dict
 
 from   _TFL.predicate    import *
@@ -83,8 +85,8 @@ class Day (TFL.Meta.Object) :
     is_holiday = ""
 
     id         = property (lambda s : s.date.tuple [:3])
-    is_weekday = property (lambda s : s.date.is_weekday)
-    number     = property (lambda s : s.date.day)
+    is_weekday = property (TFL.Getter.date.is_weekday)
+    number     = property (TFL.Getter.date.day)
 
     def __new__ (cls, cal, date) :
         Table = cal._days
@@ -162,14 +164,14 @@ class Day (TFL.Meta.Object) :
 class Week (TFL.Meta.Object) :
     """Model a single week in a calendar"""
 
-    tue        = property (lambda s : s.days [1])
-    wed        = property (lambda s : s.days [2])
-    thu        = property (lambda s : s.days [3])
-    fri        = property (lambda s : s.days [4])
-    sat        = property (lambda s : s.days [5])
-    sun        = property (lambda s : s.days [6])
+    tue        = property (TFL.Getter.days [1])
+    wed        = property (TFL.Getter.days [2])
+    thu        = property (TFL.Getter.days [3])
+    fri        = property (TFL.Getter.days [4])
+    sat        = property (TFL.Getter.days [5])
+    sun        = property (TFL.Getter.days [6])
 
-    ordinal    = property (lambda s : s.mon.wk_ordinal)
+    ordinal    = property (TFL.Getter.mon.wk_ordinal)
 
     _day_names = ("Mo", "Tu", "We", "Th", "Fr", "Sa", "So")
 
@@ -237,9 +239,9 @@ class Week (TFL.Meta.Object) :
 class Month (TFL.Meta.Object) :
     """Model a single month in a calendar"""
 
-    head   = property (lambda s : s.days [0])
-    number = property (lambda s : s.month)
-    tail   = property (lambda s : s.days [-1])
+    head   = property (TFL.Getter.days [0])
+    number = property (TFL.Getter.month)
+    tail   = property (TFL.Getter.days [-1])
 
     def __init__ (self, year, month) :
         self.year  = year
@@ -317,10 +319,7 @@ class Year (TFL.Meta.Object) :
        2005: week 00 <2004/12/27 to 2005/01/02> False, week 52 <2005/12/26 to 2006/01/01> True
     """
 
-    ### you can run the doctest with
-    ###     /swing/python/run_doctest.py -path ~/lib/python/_TFL/_CAL Year
-
-    number          = property (lambda s : s.year)
+    number          = property (TFL.Getter.year)
 
     def __new__ (cls, year = None, cal = None, populate = False) :
         if cal is None :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -53,12 +53,9 @@
 #     6-Nov-2006 (CED) No rewriting anymore
 #    15-Nov-2006 (CED) `_make_setup_file` adds call to `register_at_sys_path`
 #                      if needed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     7-Nov-2007 (CT)  Use `Getter` instead of `Attribute`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 
@@ -128,7 +125,7 @@ class Plugin_Packager (TFL.Meta.Object) :
         sf.write     ("# Setup code for plugin %s\n\n" % pname)
         sf.write     ("from _TFL.Importers import Plugin_Importer\n\n")
         needs_sys_path = False
-        for pyp in sorted (self.py_packages, key = TFL.Attribute.pkg) :
+        for pyp in sorted (self.py_packages, key = TFL.Getter.pkg) :
             sf.write \
                 ( "Plugin_Importer.register ('%s', '%s')\n"
                 % (pname, pyp.pkg)
@@ -140,7 +137,7 @@ class Plugin_Packager (TFL.Meta.Object) :
                 ( "Plugin_Importer.register_at_sys_path ('%s')\n"
                 % (pname, )
                 )
-        for pym in sorted (self.py_modules, key = TFL.Attribute.rel_name) :
+        for pym in sorted (self.py_modules, key = TFL.Getter.rel_name) :
             code = self._read_source_file (pym)
             m    = md5.new (code)
             sf.write \
