@@ -54,7 +54,6 @@ if version.isdigit () :
         , url              = "http://www.c-tanzer.at/en"
         , packages         = pkgs
         , package_dir      = {'_' + name : ''}
-        , data_files       = [("_TFL", "LGPL")]
         , platforms        = 'Any'
         , classifiers      = \
             [ 'Development Status :: 6 - Mature'
