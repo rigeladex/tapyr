@@ -52,6 +52,7 @@
 #                     (import `Command_Line` and `Regexp` from _TFL)
 #    11-Aug-2007 (CT) `quarter` added
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
+#     8-Nov-2007 (CT) `JD2000`, `JC_J2000`, and `julian_epoch` added
 #    ««revision-date»»···
 #--
 
@@ -158,13 +159,15 @@ class Date (CAL._DTW_) :
 
     ### Julian date offsets to Rata Die (Jan 1, 1)
     ###     http://en.wikipedia.org/wiki/Julian_day_number
-    JD_offset = dict \
-        ( CJD =   1721424  ### Chronological JD (based on Jan  1, 4713 BC)
-        , CJS =   1721424
-        , MJD = -  678576  ### Modified      JD (based on Nov 17, 1858)
-        , MJS = -  678576
-        , TJD = -  718576  ### Truncated     JD (based on May 24, 1968)
-        , TJS = -  718576
+    ###     http://en.wikipedia.org/wiki/Epoch_%28astronomy%29
+    JD_offset    = dict \
+        ( CJD    =   1721424    ### Chronological JD (based on Jan  1, 4713 BC)
+        , CJS    =   1721424
+        , JD2000 = -  730120.5  ### JD relative to J2000.0 (noon)
+        , MJD    = -  678576    ### Modified      JD (based on Nov 17, 1858)
+        , MJS    = -  678576
+        , TJD    = -  718576    ### Truncated     JD (based on May 24, 1968)
+        , TJS    = -  718576
         )
 
     months = \
@@ -279,6 +282,11 @@ class Date (CAL._DTW_) :
             if name.endswith ("S") :
                 result *= 86400
             setattr (self, name, result)
+        elif name == "JC_J2000" :
+            ### Julian Century from J2000
+            result = self.JD2000 / 36525.0
+        elif name == "julian_epoch" :
+            result = 2000.0 + self.JD2000 / 365.25
         elif name == "month_name" :
             result = self.month_name = self.strftime ("%b")
         elif name == "ordinal" :
