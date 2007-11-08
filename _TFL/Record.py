@@ -33,10 +33,10 @@
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #    20-Mar-2006 (CT)  `__getitem__` added
 #    31-May-2006 (WPR) `__iter__` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#     6-Aug-2007 (CED) Future import removed again
 #    19-Oct-2007 (PGO) self.kw needs name-mangling, otherwise a stored dict
 #                      named `kw` will be silently modified
+#     8-Nov-2007 (CT)  Use `_kw` instead of `__kw` (and modernized)
+#     8-Nov-2007 (CT)  `assert` statements added to avoid silent errors
 #    ««revision-date»»···
 #--
 
@@ -51,52 +51,57 @@ class Record (object) :
     >>> r.kw
     {'foo': 42}
     """
+
     def __init__ (self, ** kw) :
-        self.__dict__ ["_Record__kw"] = kw.copy ()
+        assert "_kw"           not in kw
+        assert "copy"          not in kw
+        assert "_formatted_kw" not in kw
+        self.__dict__ ["_kw"] = kw.copy ()
     # end def __init__
 
     def copy (self, ** kw) :
-        result = self.__class__ (** self.__kw)
-        result.__kw.update (kw)
+        result = self.__class__ (** self._kw)
+        result._kw.update (kw)
         return result
     # end def copy
 
-    def __str__ (self) :
-        return "(%s)" % (self._formatted_kw (), )
-    # end def __str__
-
     def _formatted_kw (self, key_quote = "", value_quote = "") :
+        kq = key_quote
+        vq = value_quote
         return ", ".join \
-            ( map ( lambda (k, v), kq = key_quote, vq = value_quote
-                  : "%s%s%s = %s%s%s" % (kq, k, kq, vq, v, vq)
-                  , sorted (self.__kw.iteritems ())
-                  )
+            ( (   "%s%s%s = %s%s%s" % (kq, k, kq, vq, v, vq)
+              for (k, v) in sorted (self._kw.iteritems ())
+              )
             )
     # end def _formatted_kw
+
+    def __getattr__ (self, name) :
+        try :
+            return self._kw [name]
+        except KeyError :
+            raise AttributeError, name
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        return self._kw [key]
+    # end def __getitem__
+
+    def __iter__ (self) :
+        return iter (self._kw)
+    # end def __iter__
 
     def __repr__ (self) :
         return "%s (%s)" % \
             (self.__class__.__name__, self._formatted_kw ('', '"""'))
     # end def __repr__
 
-    def __getattr__ (self, name) :
-        try :
-            return self.__kw [name]
-        except KeyError :
-            raise AttributeError, name
-    # end def __getattr__
-
-    def __getitem__ (self, key) :
-        return self.__kw [key]
-    # end def __getitem__
-
     def __setattr__ (self, name, value) :
-        self.__kw [name] = value
+        self._kw [name] = value
     # end def __setattr__
 
-    def __iter__ (self) :
-        return iter (self.__kw)
-    # end def __iter__
+    def __str__ (self) :
+        return "(%s)" % (self._formatted_kw (), )
+    # end def __str__
 
 # end class Record
 
