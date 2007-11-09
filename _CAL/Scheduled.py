@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -49,6 +49,22 @@ class Scheduled (TFL.Meta.Object) :
        >>> from _CAL.Date       import *
        >>> from _CAL.Delta      import *
        >>> from _CAL.Time       import *
+       >>> Scheduled ()
+       Scheduled ()
+       >>> Scheduled (start = Time (16, 0, 0))
+       Scheduled (start = Time (16, 0, 0, 0))
+       >>> Scheduled ( description = "First test"
+       ...     , start       = Time       (16, 0, 0)
+       ...     , duration    = Time_Delta ( 1, 30)
+       ...     , format      =
+       ...           "> %(time)-11s %(priority)1.1s < %(description)s"
+       ...     )
+       Scheduled \\
+           ( description = 'First test'
+           , duration    = Time_Delta (1, 30, 0, 0, 0)
+           , format      = '> %(time)-11s %(priority)1.1s < %(description)s'
+           , start       = Time (16, 0, 0, 0)
+           )
        >>> s = Scheduled ( description = "First test"
        ...               , start       = Time       (16, 0, 0)
        ...               , duration    = Time_Delta ( 1, 30)
@@ -156,7 +172,7 @@ class Scheduled (TFL.Meta.Object) :
         attrs  = sorted (self.substantial_attributes ())
         if len (attrs) > 1 :
             format = "%s \\%s( %s%s)"
-            a_fmt  = "%%-%ss = %%r" % (max ([len (n) for (n, v) in attrs]))
+            a_fmt  = "%%-%ss = %%r" % (max (len (n) for (n, v) in attrs))
             sep    = "\n    "
         else :
             format = "%s %s(%s%s)"
@@ -165,8 +181,7 @@ class Scheduled (TFL.Meta.Object) :
         result = format % \
             ( cname
             , sep
-            , (sep + ", ").join
-                  ([a_fmt % (n, v) for (n, v) in attrs])
+            , (sep + ", ").join (a_fmt % (n, v) for (n, v) in attrs)
             , sep
             )
         return result

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -39,12 +39,8 @@
 #                      both change counters that are compared must
 #                      work per instance ('that'))
 #    28-Feb-2007 (CED) `self.result` also has to be per instance of course
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL             import TFL
 import _TFL._Meta.Property

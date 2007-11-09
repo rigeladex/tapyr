@@ -53,14 +53,16 @@
 #    11-Aug-2007 (CT) `quarter` added
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #     8-Nov-2007 (CT) `JD2000`, `JC_J2000`, and `julian_epoch` added
+#     9-Nov-2007 (CT) Use `Once_Property` instead of `__getattr__`
 #    ««revision-date»»···
 #--
 
-from   _CAL                    import CAL
-from   _TFL                    import TFL
+from   _CAL                     import CAL
+from   _TFL                     import TFL
 import _CAL._DTW_
+from   _TFL._Meta.Once_Property import Once_Property
 import _TFL.Accessor
-from   _TFL.Regexp             import *
+from   _TFL.Regexp              import *
 
 import datetime
 import operator
@@ -250,6 +252,34 @@ class Date (CAL._DTW_) :
             raise ValueError, s
     # end def from_string
 
+    @Once_Property
+    def JC_J2000 (self) :
+        """Julian Century relative to 2000"""
+        return self.JD2000 / 36525.0
+    # end def JC_J2000
+
+    @Once_Property
+    def julian_epoch (self) :
+        """Epoch based on julian years"""
+        return 2000.0 + self.JD2000 / 365.25
+    # end def julian_epoch
+
+    @Once_Property
+    def month_name (self) :
+        return self.strftime ("%b")
+    # end def month_name
+
+    @Once_Property
+    def ordinal (self) :
+        """Rata Die (based on January 1, 1)"""
+        return self._body.toordinal ()
+    # end def ordinal
+
+    @Once_Property
+    def quarter (self) :
+        return (self.month - 1) // 3 + 1
+    # end def quarter
+
     def replace (self, ** kw) :
         if self.yad is None or "day" in kw :
             result      = self.__super.replace (** kw)
@@ -262,6 +292,27 @@ class Date (CAL._DTW_) :
             result.yad   = yad
         return result
     # end def replace
+
+    @Once_Property
+    def rjd (self) :
+        """Relative julian day (based on January 1 of `self.year`)"""
+        return self._body.timetuple ().tm_yday
+    # end def rjd
+
+    @Once_Property
+    def tuple (self) :
+        return self._body.timetuple ()
+    # end def tuple
+
+    @Once_Property
+    def week (self) :
+        return self._body.isocalendar () [1]
+    # end def week
+
+    @Once_Property
+    def weekday (self) :
+        return self._body.weekday ()
+    # end def weekday
 
     def _day_from_end (self, yad, month, year) :
         from _CAL.Year import Year
@@ -278,31 +329,10 @@ class Date (CAL._DTW_) :
 
     def __getattr__ (self, name) :
         if name in self.JD_offset :
-            result = self._body.toordinal () + self.JD_offset [name]
+            result = self.ordinal + self.JD_offset [name]
             if name.endswith ("S") :
                 result *= 86400
             setattr (self, name, result)
-        elif name == "JC_J2000" :
-            ### Julian Century from J2000
-            result = self.JD2000 / 36525.0
-        elif name == "julian_epoch" :
-            result = 2000.0 + self.JD2000 / 365.25
-        elif name == "month_name" :
-            result = self.month_name = self.strftime ("%b")
-        elif name == "ordinal" :
-            ### Rata Die (based on January 1, 1)
-            result = self.ordinal = self._body.toordinal ()
-        elif name == "quarter" :
-            result = self.quarter = (self.month - 1) // 3 + 1
-        elif name == "rjd" :
-            ### relative julian day (based on January 1 of `self.year`)
-            result = self.rjd = self._body.timetuple ().tm_yday
-        elif name == "tuple" :
-            result = self.tuple = self._body.timetuple ()
-        elif name == "week" :
-            result = self.week = self._body.isocalendar () [1]
-        elif name == "weekday" :
-            result = self.weekday = self._body.weekday ()
         else :
             result = self.__super.__getattr__ (name)
         return result

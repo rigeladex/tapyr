@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,12 +40,8 @@
 #    20-May-2005 (CT) `init_instance` changed to call `_set_value` instead of
 #                     `set_value`
 #    26-Jul-2005 (CT) `prop` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL             import TFL
 import _TFL._Meta

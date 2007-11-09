@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -89,6 +89,8 @@ class Date_Time (CAL.Date, CAL.Time) :
         CAL.Date._init_arg_names + CAL.Time._init_arg_names
     _kind            = "datetime"
     _timetuple_slice = lambda s, tt : tt [:6] + (0, )
+
+    mean_solar_day_over_mean_sidereal_day = 1.00273790935
 
     from _CAL.Delta import Date_Time_Delta as Delta
 

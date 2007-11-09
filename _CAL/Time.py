@@ -31,13 +31,15 @@
 #    17-Oct-2004 (CT) Adapted to renaming of accessor-functions of `Time_Delta`
 #    30-Nov-2006 (CT) `__getattr__` for `seconds` added
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
+#     9-Nov-2007 (CT) Use `Once_Property` instead of `__getattr__`
 #    ««revision-date»»···
 #--
 
-from   _CAL                    import CAL
-from   _TFL                    import TFL
+from   _CAL                     import CAL
+from   _TFL                     import TFL
 import _CAL._DTW_
 import _TFL.Accessor
+from   _TFL._Meta.Once_Property import Once_Property
 
 import  datetime
 
@@ -47,11 +49,11 @@ class Time (CAL._DTW_) :
        >>> t1 = Time (21, 35, 12)
        >>> print t1
        21:35:12
-       >>> t1.hour, t1.minute, t1.second, t1.time
-       (21, 35, 12, datetime.time(21, 35, 12))
+       >>> t1.hour, t1.minute, t1.second, t1.time, t1.seconds
+       (21, 35, 12, datetime.time(21, 35, 12), 77712)
        >>> t2 = Time (22, 47, 13)
-       >>> print t2
-       22:47:13
+       >>> print t2, t2.seconds
+       22:47:13 82033
        >>> t1 = Time (14, 30, 0)
        >>> t2 = Time (16, 30, 0)
        >>> d  = t2 - t1
@@ -66,6 +68,12 @@ class Time (CAL._DTW_) :
        ...     print exc
        ...
        1 day, 0:30:00
+       >>> t3 = Time (0, 0, 0)
+       >>> print t3, t3.seconds
+       00:00:00 0
+       >>> t4 = Time (23, 59, 59)
+       >>> print t4, t4.seconds
+       23:59:59 86399
     """
 
     _Type            = datetime.time
@@ -88,16 +96,14 @@ class Time (CAL._DTW_) :
             )
     # end def as_delta
 
-    def __getattr__ (self, name) :
-        if name == "seconds" :
-            result = self.hour * 3600 + self.minute * 60 + self.second
-            if self.microsecond :
-                result += (self.microsecond / 1000.)
-            self.seconds = result
-        else :
-            result = self.__super.__getattr__ (name)
+    @Once_Property
+    def seconds (self) :
+        """Seconds since midnight."""
+        result = self.hour * 3600 + self.minute * 60 + self.second
+        if self.microsecond :
+            result += (self.microsecond / 1000.)
         return result
-    # end def __getattr__
+    # end def seconds
 
     def __add__ (self, rhs) :
         result = self.as_delta () + self._delta (rhs)

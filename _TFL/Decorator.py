@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -29,12 +29,8 @@
 #    14-Apr-2006 (CT)  Creation
 #    19-Apr-2006 (CT)  Set `__module__`, too
 #    26-Sep-2006 (PGO) `wrapper` fixed to work with builtin functions, too
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from _TFL import TFL
 
