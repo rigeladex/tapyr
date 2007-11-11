@@ -30,19 +30,27 @@
 #
 # Revision Dates
 #     8-Nov-2007 (CT) Creation
+#    11-Nov-2007 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
+from   _TGL                     import TGL
 
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _CAL.Date_Time
+import _CAL.Time
 import _TFL._Meta.Object
+import _TFL.Accessor
+import _TGL._DRA.Interpolator
+
+from   _TFL.Math_Func import sign
 
 from   math import \
-    ( asin
+    ( acos
+    , asin
     , atan2
     , cos
     , degrees
@@ -52,14 +60,33 @@ from   math import \
     )
 import math
 
+def sin_d (d) :
+    return sin (radians (d))
+# end def sin_d
+
+def cos_d (d) :
+    return cos (radians (d))
+# end def cos_d
+
 class Sun_D (TFL.Meta.Object) :
     """Model behavior of sun for a single day."""
 
-    def __init__ (self, day) :
+    Table = {}
+
+    def __new__ (cls, day) :
+        Table = cls.Table
+        if day in Table :
+            return Table [day]
+        self = Table [day] = TFL.Meta.Object.__new__ (cls)
+        self._init_ (day)
+        return self
+    # end def __new__
+
+    def _init_ (self, day) :
         self.day   = day
         self.jc    = day.JC_J2000
         self.omega = radians (125.04 - 1934.136 * self.jc)
-    # end def __init__
+    # end def _init_
 
     @Once_Property
     def geometric_mean_longitude (self) :
@@ -180,5 +207,115 @@ class Sun_D (TFL.Meta.Object) :
     # end def equation_of_time
 
 # end class Sun_D
+
+class Sun_P (TFL.Meta.Object) :
+    """Model behavior of sun for a single day at a specific geographical
+       position.
+    """
+
+    ### see J. Meeus, ISBN 0-943396-61-1, pp. 101-104
+
+    def __init__ (self, sun_d, lon, lat, h0 = -0.8333) :
+        self.sun_d = sun_d
+        self.lon   = lon
+        self.lat   = lat
+        self.h0    = h0
+        self.sid   = sid   = sun_d.day.sidereal_time_deg
+        self.alpha = alpha = sun_d.right_ascension
+        self.delta = delta = sun_d.declination
+        self.H0    = H0    = degrees \
+            ( acos
+                ( (sin_d (h0) - sin_d (lat) * sin_d (delta))
+                / (cos_d (lat) * cos_d (delta))
+                )
+            )
+        self.m0    = m0    = (alpha + lon - sid) / 360.
+        self.m1    = m0 - H0 / 360.
+        self.m2    = m0 + H0 / 360.
+    # end def __init__
+
+    @Once_Property
+    def interpolator_a (self) :
+        sun_d = self.sun_d
+        return TGL.DRA.Interpolator_3 \
+            ( (-1, Sun_D (sun_d.day - 1))
+            , ( 0, sun_d)
+            , (+1, Sun_D (sun_d.day + 1))
+            , y_getter = TFL.Getter [1].right_ascension
+            )
+    # end def interpolator_a
+
+    @Once_Property
+    def interpolator_d (self) :
+        sun_d = self.sun_d
+        return TGL.DRA.Interpolator_3 \
+            ( (-1, Sun_D (sun_d.day - 1))
+            , ( 0, sun_d)
+            , (+1, Sun_D (sun_d.day + 1))
+            , y_getter = TFL.Getter [1].declination
+            )
+    # end def interpolator_d
+
+    @Once_Property
+    def rise_time (self) :
+        m            = self.m1
+        ha, dec, alt = self._at_time (m)
+        delta_m      = self._delta_m (ha, dec, alt)
+        return self._to_local_time (m, delta_m)
+    # end def rise_time
+
+    @Once_Property
+    def transit_time (self) :
+        m                     = self.m0
+        ha, dec, alt          = self._at_time (m)
+        delta_m               = ha / 360.0
+        self.transit_altitude = alt
+        return self._to_local_time (m, delta_m)
+    # end def transit_time
+
+    @Once_Property
+    def set_time (self) :
+        m            = self.m2
+        ha, dec, alt = self._at_time (m)
+        delta_m      = self._delta_m (ha, dec, alt)
+        return self._to_local_time (m, delta_m)
+    # end def set_time
+
+    def _at_time (self, m) :
+        sid      = self.sid + 360.985647 * m
+        n        = m + self.sun_d.day.delta_T / 86400.0
+        alpha    = self.interpolator_a (n)
+        delta    = self.interpolator_d (n)
+        ha       = ((sid - self.lon - alpha) % 360.0) - 180.0
+        lat      = self.lat
+        altitude = degrees \
+            ( asin
+                ( sin_d (lat) * sin_d (delta)
+                + cos_d (lat) * cos_d (delta) * cos_d (ha)
+                )
+            )
+        return ha, delta, altitude
+    # end def _at_time
+
+    def _delta_m (self, ha, dec, alt) :
+        return \
+            ( (alt - self.h0)
+            / (360.0 * cos_d (dec) * cos_d (self.lat) * sin_d (ha))
+            )
+    # end def _delta_m
+
+    def _to_local_time (self, m, delta_m) :
+        hours_ut    = (m + delta_m) * 24
+        lon         = self.lon
+        hours_local = \
+            ( hours_ut
+            + ( sign (lon)
+              * (CAL.Time.from_degrees (abs (lon)).seconds / 3600.0)
+              )
+            ) % 24.0
+        return CAL.Time.from_decimal_hours (hours_local)
+    # end def _to_local_time
+
+# end class Sun_P
 
 ### __END__ CAL.Sun

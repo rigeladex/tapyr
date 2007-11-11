@@ -33,6 +33,7 @@
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #     9-Nov-2007 (CT) Use `Once_Property` instead of `__getattr__`
 #    11-Nov-2007 (CT) `from_degrees` added
+#    11-Nov-2007 (CT) `from_decimal_hours` factored
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,14 @@ class Time (CAL._DTW_) :
     # end def as_delta
 
     @classmethod
+    def from_decimal_hours (cls, h) :
+        m = (h - int (h)) * 60
+        s = (m - int (m)) * 60
+        u = (s - int (s)) * 1000
+        return (cls (int (h), int (m), int (s), int (u + 0.5)))
+    # end def from_decimal_hours
+
+    @classmethod
     def from_degrees (cls, degrees) :
         """Returns `degrees` converted to time instance.
 
@@ -112,11 +121,7 @@ class Time (CAL._DTW_) :
            >>> Time.from_degrees (135)
            Time (9, 0, 0, 0)
         """
-        h = (degrees % 360.0) / 15.0
-        m = (h - int (h)) * 60
-        s = (m - int (m)) * 60
-        u = (s - int (s)) * 1000
-        return (cls (int (h), int (m), int (s), int (u + 0.5)))
+        return cls.from_decimal_hours ((degrees % 360.0) / 15.0)
     # end def from_degrees
 
     @Once_Property

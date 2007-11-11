@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This library is free software; you can redistribute it and/or
@@ -52,12 +52,8 @@
 #                      `residuals` moved out
 #     7-Nov-2006 (CED) `sign` added
 #    13-Dec-2006 (PGO) `periodic_pattern_gen` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 

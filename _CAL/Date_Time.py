@@ -84,6 +84,10 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> Date_Time.from_julian (1216470390, kind = "TJS")
        Date_Time (2006, 12, 10, 12, 26, 30, 0)
 
+       >>> d = Date_Time (1987, 4, 10, 19, 21, 0)
+       >>> d.sidereal_time
+       Time (8, 34, 57, 90)
+
     """
 
     _Type            = datetime.datetime
@@ -120,26 +124,22 @@ class Date_Time (CAL.Date, CAL.Time) :
     # end def from_ordinal
 
     @Once_Property
-    def sidereal_time (self) :
-        """Mean sidereal time at date/time `self` (applies for UT only).
-
-           >>> d = Date_Time (1987, 4, 10, 19, 21, 0)
-           >>> d.sidereal_time
-           Time (8, 34, 57, 90)
+    def sidereal_time_deg (self) :
+        """Mean sidereal time at date/time `self` in degrees
+           (applies for UT only).
         """
         ### see J. Meeus, ISBN 0-943396-61-1, pp. 87-88
         ### XXX Fix this to work with arbitrary timezones
-        T       = self.JC_J2000
-        T2      = T  * T
-        T3      = T2 * T
-        degrees = \
+        T  = self.JC_J2000
+        T2 = T  * T
+        T3 = T2 * T
+        return \
             ( 280.46061837
             + 360.985647366 * self.JD2000
             + 0.000387933   * T2
             - T3 / 38710000.0
             )
-        return CAL.Time.from_degrees (degrees)
-    # end def sidereal_time
+    # end def sidereal_time_deg
 
     def __getattr__ (self, name) :
         result = self.__super.__getattr__ (name)
