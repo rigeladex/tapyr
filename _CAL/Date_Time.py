@@ -34,13 +34,15 @@
 #    10-Dec-2006 (CT) `from_julian` added
 #    11-Dec-2006 (CT) `from_julian` corrected
 #    11-Dec-2006 (CT) `__getattr__` changed to `setattr` the modified value
+#    11-Nov-2007 (CT) `sidereal_time` added
 #    ««revision-date»»···
 #--
 
-from   _TFL                    import TFL
-from   _CAL                    import CAL
+from   _TFL                     import TFL
+from   _CAL                     import CAL
 import _CAL.Date
 import _CAL.Time
+from   _TFL._Meta.Once_Property import Once_Property
 
 import datetime
 
@@ -117,13 +119,35 @@ class Date_Time (CAL.Date, CAL.Time) :
         return result + CAL.Time_Delta (seconds = seconds)
     # end def from_ordinal
 
+    @Once_Property
+    def sidereal_time (self) :
+        """Mean sidereal time at date/time `self` (applies for UT only).
+
+           >>> d = Date_Time (1987, 4, 10, 19, 21, 0)
+           >>> d.sidereal_time
+           Time (8, 34, 57, 90)
+        """
+        ### see J. Meeus, ISBN 0-943396-61-1, pp. 87-88
+        ### XXX Fix this to work with arbitrary timezones
+        T       = self.JC_J2000
+        T2      = T  * T
+        T3      = T2 * T
+        degrees = \
+            ( 280.46061837
+            + 360.985647366 * self.JD2000
+            + 0.000387933   * T2
+            - T3 / 38710000.0
+            )
+        return CAL.Time.from_degrees (degrees)
+    # end def sidereal_time
+
     def __getattr__ (self, name) :
         result = self.__super.__getattr__ (name)
         if name in self.JD_offset :
-            if name in ("CJD", "MJD", "TJD") :
-                result += (self.seconds / 86400.)
-            elif name in ("CJS", "MJS", "TJS") :
+            if name.endswith ("S") :
                 result += self.seconds
+            else :
+                result += (self.seconds / 86400.)
             setattr (self, name, result)
         return result
     # end def __getattr__

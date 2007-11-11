@@ -54,6 +54,7 @@
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #     8-Nov-2007 (CT) `JD2000`, `JC_J2000`, and `julian_epoch` added
 #     9-Nov-2007 (CT) Use `Once_Property` instead of `__getattr__`
+#    11-Nov-2007 (CT) `sidereal_time` added
 #    ««revision-date»»···
 #--
 
@@ -298,6 +299,28 @@ class Date (CAL._DTW_) :
         """Relative julian day (based on January 1 of `self.year`)"""
         return self._body.timetuple ().tm_yday
     # end def rjd
+
+    @Once_Property
+    def sidereal_time (self) :
+        """Mean sidereal time at 0h UT of date `self`.
+
+           >>> d = Date (1987, 4, 10)
+           >>> d.sidereal_time
+           Time (13, 10, 46, 367)
+        """
+        ### see J. Meeus, ISBN 0-943396-61-1, pp. 87-88
+        import _CAL.Time
+        T       = self.JC_J2000
+        T2      = T  * T
+        T3      = T2 * T
+        degrees = \
+            ( 100.46061837
+            + 36000.770053608 * T
+            + 0.000387933     * T2
+            - T3 / 38710000.0
+            )
+        return CAL.Time.from_degrees (degrees)
+    # end def sidereal_time
 
     @Once_Property
     def tuple (self) :

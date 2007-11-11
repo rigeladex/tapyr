@@ -32,6 +32,7 @@
 #    30-Nov-2006 (CT) `__getattr__` for `seconds` added
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #     9-Nov-2007 (CT) Use `Once_Property` instead of `__getattr__`
+#    11-Nov-2007 (CT) `from_degrees` added
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,28 @@ class Time (CAL._DTW_) :
             , microseconds = self.microsecond
             )
     # end def as_delta
+
+    @classmethod
+    def from_degrees (cls, degrees) :
+        """Returns `degrees` converted to time instance.
+
+           >>> Time.from_degrees (0)
+           Time (0, 0, 0, 0)
+           >>> Time.from_degrees (360)
+           Time (0, 0, 0, 0)
+           >>> Time.from_degrees (180)
+           Time (12, 0, 0, 0)
+           >>> Time.from_degrees (90)
+           Time (6, 0, 0, 0)
+           >>> Time.from_degrees (135)
+           Time (9, 0, 0, 0)
+        """
+        h = (degrees % 360.0) / 15.0
+        m = (h - int (h)) * 60
+        s = (m - int (m)) * 60
+        u = (s - int (s)) * 1000
+        return (cls (int (h), int (m), int (s), int (u + 0.5)))
+    # end def from_degrees
 
     @Once_Property
     def seconds (self) :
