@@ -88,6 +88,16 @@ class Date_Time (CAL.Date, CAL.Time) :
        >>> d.sidereal_time
        Time (8, 34, 57, 90)
 
+       >>> Date_Time (1988,6,19,12).JD
+       2447332.0
+       >>> Date_Time (1988,1,27).JD
+       2447187.5
+       >>> Date_Time (1999,1,1).JD
+       2451179.5
+       >>> Date_Time (1999,1,1,12).JD
+       2451180.0
+       >>> Date_Time (2000,1,1,12).JD
+       2451545.0
     """
 
     _Type            = datetime.datetime
@@ -135,7 +145,7 @@ class Date_Time (CAL.Date, CAL.Time) :
         T3 = T2 * T
         return \
             ( 280.46061837
-            + 360.985647366 * self.JD2000
+            + 360.98564736629 * (self.JD - 2451545.0)
             + 0.000387933   * T2
             - T3 / 38710000.0
             )

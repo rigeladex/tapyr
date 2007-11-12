@@ -52,6 +52,7 @@
 #                      `residuals` moved out
 #     7-Nov-2006 (CED) `sign` added
 #    13-Dec-2006 (PGO) `periodic_pattern_gen` added
+#    12-Nov-2007 (CT)  `horner` added
 #    ««revision-date»»···
 #--
 
@@ -71,10 +72,6 @@ def average (seq) :
     """
     return float (sum (seq)) / len (seq)
 # end def average
-
-def log2  (x) :
-    return log (x) / _log2
-# end def log2
 
 def gcd (a, b) :
     """Calculates the greates common devisor of `a' and  `b'"""
@@ -96,6 +93,22 @@ def greatest_common_divisor (seq, default = None) :
             result = gcd (result, i)
     return result
 # end def greatest_common_divisor
+
+def horner (x, ai) :
+    """Value of polynomial `a0 + a1 * x + a2 * x**2 + ... an * x ** n` for `x`.
+
+       >>> horner (3, (-1, 2, -6, 2))
+       5
+       >>> horner (-3, [8, -1, 0, 13, 4])
+       -16
+    """
+    bi     = reversed (ai)
+    result = bi.next  ()
+    for b in bi :
+        result *= x
+        result += b
+    return result
+# end def horner
 
 def lcm (a, b) :
     """Calculates the least common multiple of `a' and `b'"""
@@ -137,6 +150,10 @@ def linear_regression_1 (ys, xs) :
     d       = (sy - k*sx) / n
     return d, k
 # end def linear_regression_1
+
+def log2  (x) :
+    return log (x) / _log2
+# end def log2
 
 def p2_ceil (n) :
     """Return next larger power of 2 for `n`.

@@ -56,6 +56,7 @@
 #     9-Nov-2007 (CT) Use `Once_Property` instead of `__getattr__`
 #    11-Nov-2007 (CT) `sidereal_time` added
 #    11-Nov-2007 (CT) `delta_T` added
+#    12-Nov-2007 (CT) `JD` added, coverage of `delta_T` extended
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ from   _TFL                     import TFL
 import _CAL._DTW_
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL.Accessor
+from   _TFL.Math_Func           import horner
 from   _TFL.Regexp              import *
 
 import datetime
@@ -167,6 +169,7 @@ class Date (CAL._DTW_) :
     JD_offset    = dict \
         ( CJD    =   1721424    ### Chronological JD (based on Jan  1, 4713 BC)
         , CJS    =   1721424
+        , JD     =   1721424.5  ### Julian day (starts at noon)
         , JD2000 = -  730120.5  ### JD relative to J2000.0 (noon)
         , MJD    = -  678576    ### Modified      JD (based on Nov 17, 1858)
         , MJS    = -  678576
@@ -243,10 +246,14 @@ class Date (CAL._DTW_) :
            >>> Date (2051).delta_T
            Traceback (most recent call last):
            ...
-           AssertionError: Algorithm is restricted to 2005..2050, fails for 2051
+           ValueError: Algorithm is restricted to 1800..2050, fails for 2051
+           >>> [Date (y).delta_T for y in
+           ... (1800, 1802, 1822, 1830, 1990, 1972, 1950)]
+           [14.0, 12.0, 10.0, 7.0, 57.0, 43.0, 27.0]
         """
         ### see http://sunearth.gsfc.nasa.gov/eclipse/SEcat5/deltat.html
         ### and http://sunearth.gsfc.nasa.gov/eclipse/SEcat5/deltatpoly.html
+        ### see J. Meeus, ISBN 0-943396-61-1, p.80
         y = self.year
         t = y - 2000.
         if -19 <= t < 5 :
@@ -262,11 +269,22 @@ class Date (CAL._DTW_) :
                             )
                       )
                 )
+        elif -200 <= t <= -3 :
+            t = (self.JD - Date (1900).JD) / 36525.
+            return round \
+                ( horner
+                    ( t
+                    , ( -1.02, 91.02, 265.90, -839.16, -1545.20
+                      , 3603.62, 4385.98, -6993.23, -6090.04
+                      , 6298.12, 4102.86, -2137.64, -1081.51
+                      )
+                    )
+                )
         elif 5 <= t <= 50 :
             return round (62.92 + t * (0.32217 + t * 0.005589))
         else :
             raise ValueError, \
-                "Algorithm is restricted to 1986..2050, fails for %s" % (y, )
+                "Algorithm is restricted to 1800..2050, fails for %s" % (y, )
     # end def delta_T
 
     @classmethod
@@ -302,7 +320,7 @@ class Date (CAL._DTW_) :
     @Once_Property
     def JC_J2000 (self) :
         """Julian Century relative to 2000"""
-        return self.JD2000 / 36525.0
+        return (self.JD - 2451545.0) / 36525.0
     # end def JC_J2000
 
     @Once_Property
@@ -371,7 +389,7 @@ class Date (CAL._DTW_) :
             + 36000.770053608 * T
             + 0.000387933     * T2
             - T3 / 38710000.0
-            )
+            ) % 360.
     # end def sidereal_time_deg
 
     @Once_Property

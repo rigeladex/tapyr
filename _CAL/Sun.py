@@ -259,24 +259,136 @@ class Sun_D (TFL.Meta.Object) :
 class Sun_P (TFL.Meta.Object) :
     """Model behavior of sun for a single day at a specific geographical
        position.
+
+       >>> from _TFL.Record import Record
+       >>> d  = CAL.Date (1988, 3, 20)
+       >>> sp = Sun_P \
+       ...     ( ( Record
+       ...           ( day = d - 1
+       ...           , right_ascension = Angle_D (40.68021)
+       ...           , declination     = Angle_D (18.04761)
+       ...           )
+       ...       , Record
+       ...           ( day = d
+       ...           , right_ascension = Angle_D (41.73129)
+       ...           , declination     = Angle_D (18.44092)
+       ...           )
+       ...       , Record
+       ...           ( day = d + 1
+       ...           , right_ascension = Angle_D (42.78204)
+       ...           , declination     = Angle_D (18.82742)
+       ...           )
+       ...       )
+       ...       , lat = Angle_D (42.3333)
+       ...       , lon = Angle_D (71.0833)
+       ...       , h0  = Angle_D (-0.5667)
+       ...     )
+       >>> sp.day, sp.sid
+       (Date (1988, 3, 20), Angle_D (177.741535578))
+       >>> [x.n for x in (sp.rise,sp.transit, sp.set)]
+       [0.51881115911723963, 0.82029552154124752, 0.12177988396525549]
+       >>> [x.alpha.degrees for x in (sp.rise,sp.transit, sp.set)]
+       [42.276472017055596, 42.593239842037981, 41.859267859751228]
+       >>> [x.delta.degrees for x in (sp.rise,sp.transit, sp.set)]
+       [18.642290558106509, 18.758466152777782, 18.488352088349298]
+       >>> [x.ha.degrees for x in (sp.rise, sp.transit, sp.set)]
+       [-108.5688266724258, -0.054066867395242468, 108.52578574490458]
+       >>> [x.altitude.degrees for x in (sp.rise,sp.transit, sp.set)]
+       [-0.44595681946769256, 66.425121506118614, -0.52716315594313057]
+       >>> [x.delta_m for x in (sp.rise, sp.transit, sp.set)]
+       [-0.00050512499927386257, -0.00015018574276456242, 0.0001652102142790363]
+       >>> [x.corrected_m for x in (sp.rise, sp.transit, sp.set)]
+       [0.51765788596981754, 0.81949718765033475, 0.12129694603138638]
+       >>> [x.time_ut for x in (sp.rise, sp.transit, sp.set)]
+       [Time (12, 25, 25, 641), Time (19, 40, 4, 557), Time (2, 54, 40, 56)]
     """
 
     ### see J. Meeus, ISBN 0-943396-61-1, pp. 101-104
 
-    def __init__ (self, ephs, lat, lon, h0 = Angle_D (-0.8333)) :
+    h0_stars_planets = Angle_D (-0.5667)
+    h0_sun           = Angle_D (-0.8333)
+
+    class _Event_ (TFL.Meta.Object) :
+
+        def __init__ (this, m, ** vars) :
+            this.m = m
+            this.__dict__.update (vars)
+            this.calc            (m)
+        # end def __init__
+
+        def calc (self, m) :
+            ha, dec, alt  = self._at_time       (m)
+            delta_m       = self._delta_m       (ha, dec, alt)
+            self.delta_m  = delta_m
+            self.time_ut  = self._to_ut         (m, delta_m)
+            self.time     = self._to_local_time (self.hours_ut)
+        # end def calc
+
+        def _at_time (self, m) :
+            lat           = self.lat
+            self.sid      = sid      = Angle_D.normalized \
+                (self.sid.degrees + 360.985647 * m)
+            self.n        = n        = m + self.day.delta_T / 86400.0
+            self.alpha    = alpha    = Angle_R (self.self.interpolator_a (n))
+            self.delta    = delta    = Angle_R (self.self.interpolator_d (n))
+            self.ha       = ha       = Angle_D \
+                ((sid - self.lon - alpha).degrees)
+            self.altitude = altitude = Angle_R.asin \
+                (lat.sin * delta.sin + lat.cos * delta.cos * ha.cos)
+            return ha, delta, altitude
+        # end def _at_time
+
+        def _delta_m (self, ha, dec, alt) :
+            return \
+                ( (alt - self.h0).degrees % 360.0
+                / (360.0 * dec.cos * self.lat.cos * ha.sin)
+                )
+        # end def _delta_m
+
+        def _to_local_time (self, hours_ut) :
+            lon         = self.lon.degrees
+            hours_local = self.hours_local = \
+                ( hours_ut
+                + ( sign (lon)
+                  * (CAL.Time.from_degrees (abs (lon)).seconds / 3600.0)
+                  )
+                ) % 24.0
+            return CAL.Time.from_decimal_hours (hours_local)
+        # end def _to_local_time
+
+        def _to_ut (self, m, delta_m) :
+            corr_m   = self.corrected_m = m + delta_m
+            hours_ut = self.hours_ut    = (corr_m * 24) % 24.0
+            return CAL.Time.from_decimal_hours (hours_ut)
+        # end def _to_ut
+
+    # end class _Event_
+
+    class _Transit_ (_Event_) :
+
+        def _delta_m (self, ha, dec, alt) :
+            return ha.degrees / 360.0
+        # end def _delta_m
+
+    # end class _Transit_
+
+    def __init__ (self, ephs, lat, lon, h0 = h0_sun) :
         self.ephs  = ephs
         self.lat   = lat   = Angle_D (getattr (lat, "degrees", lat))
         self.lon   = lon   = Angle_D (getattr (lon, "degrees", lon))
         self.h0    = h0    = Angle_D (getattr (h0,  "degrees", h0))
-        self.day   = day   = ephs [0].day
-        self.alpha = alpha = ephs [0].right_ascension
-        self.delta = delta = ephs [0].declination
-        self.sid   = sid   = Angle_D (day.sidereal_time_deg)
+        self.day   = day   = ephs [1].day
+        self.alpha = alpha = ephs [1].right_ascension
+        self.delta = delta = ephs [1].declination
+        self.sid   = sid   = Angle_D.normalized (day.sidereal_time_deg)
         self.H0    = H0    = Angle_D.acos \
             ((h0.sin - lat.sin * delta.sin) / (lat.cos * delta.cos))
         self.m0    = m0    = (float (alpha + lon - sid) / 360.) % 1.0
-        self.m1    = (m0 - H0.degrees / 360.) % 1.0
-        self.m2    = (m0 + H0.degrees / 360.) % 1.0
+        self.m1    = m1    = (m0 - H0.degrees / 360.) % 1.0
+        self.m2    = m2    = (m0 + H0.degrees / 360.) % 1.0
+        self.transit       = self._Transit_ (m0, ** locals ())
+        self.rise          = self._Event_   (m1, ** locals ())
+        self.set           = self._Event_   (m2, ** locals ())
     # end def __init__
 
     @Once_Property
@@ -301,79 +413,6 @@ class Sun_P (TFL.Meta.Object) :
             )
     # end def interpolator_d
 
-    @Once_Property
-    def rise_time (self) :
-        return self._to_local_time (self.rise_time_ut)
-    # end def rise_time
-
-    @Once_Property
-    def rise_time_ut (self) :
-        m       = self.m1
-        delta_m = self._delta_m (m)
-        return self._to_ut (m, delta_m)
-    # end def rise_time_ut
-
-    @Once_Property
-    def transit_time (self) :
-        return self._to_local_time (self.transit_time_ut)
-    # end def transit_time
-
-    @Once_Property
-    def transit_time_ut (self) :
-        m                     = self.m0
-        ha, dec, alt          = self._at_time (m)
-        delta_m               = (ha.degrees - 180.) / 360.0
-        self.transit_altitude = alt
-        return self._to_ut (m, delta_m)
-    # end def transit_time_ut
-
-    @Once_Property
-    def set_time (self) :
-        return self._to_local_time (self.set_time_ut)
-    # end def set_time
-
-    @Once_Property
-    def set_time_ut (self) :
-        m       = self.m2
-        delta_m = self._delta_m (m)
-        return self._to_ut (m, delta_m)
-    # end def set_time_ut
-
-    def _at_time (self, m) :
-        sid      = Angle_D.normalized (self.sid.degrees + 360.985647 * m)
-        n        = m + self.day.delta_T / 86400.0
-        alpha    = Angle_R (self.interpolator_a (n))
-        delta    = Angle_R (self.interpolator_d (n))
-        ha       = Angle_D.normalized ((sid - self.lon - alpha).degrees)
-        lat      = self.lat
-        altitude = Angle_R.asin \
-            (lat.sin * delta.sin + lat.cos * delta.cos * ha.cos)
-        return ha, delta, altitude
-    # end def _at_time
-
-    def _delta_m (self, m) :
-        ha, dec, alt = self._at_time (m)
-        return \
-            ( (alt - self.h0).degrees % 360.0
-            / (360.0 * dec.cos * self.lat.cos * ha.sin)
-            )
-    # end def _delta_m
-
-    def _to_local_time (self, hours_ut) :
-        lon         = self.lon.degrees
-        hours_local = \
-            ( hours_ut
-            + ( sign (lon)
-              * (CAL.Time.from_degrees (abs (lon)).seconds / 3600.0)
-              )
-            ) % 24.0
-        return CAL.Time.from_decimal_hours (hours_local)
-    # end def _to_local_time
-
-    def _to_ut (self, m, delta_m) :
-        return ((m + delta_m) * 24) % 24.0
-    # end def _to_ut
-
 # end class Sun_P
 
 """
@@ -382,30 +421,16 @@ sd = Sun_D (CAL.Date (2007, 11, 12))
 sp = Sun_P ((sd - 1, sd, sd + 1), 48.190111, -16.26867)
 
 
-from _CAL.Sun import *
-from _TFL.Record import Record
-d  = CAL.Date (1988, 3, 20)
-sp = Sun_P \
-    ( ( Record
-          ( day = d - 1
-          , right_ascension = Angle_D (40.68021)
-          , declination     = Angle_D (18.04761)
-          )
-      , Record
-          ( day = d
-          , right_ascension = Angle_D (41.73129)
-          , declination     = Angle_D (18.44092)
-          )
-      , Record
-          ( day = d + 1
-          , right_ascension = Angle_D (42.78204)
-          , declination     = Angle_D (18.82742)
-          )
-      )
-      , lat = Angle_D (42.3333)
-      , lon = Angle_D (71.0833)
-      , h0  = Angle_D (-0.5667)
-    )
-sp.rise_time_ut, sp.transit_time_ut, sp.set_time_ut
+sp.day, sp.sid
+[x.n for x in (sp.rise,sp.transit, sp.set)]
+[x.alpha.degrees for x in (sp.rise,sp.transit, sp.set)]
+[x.delta.degrees for x in (sp.rise,sp.transit, sp.set)]
+[x.ha.degrees for x in (sp.rise, sp.transit, sp.set)]
+[x.altitude.degrees for x in (sp.rise,sp.transit, sp.set)]
+[x.delta_m for x in (sp.rise, sp.transit, sp.set)]
+[x.corrected_m for x in (sp.rise, sp.transit, sp.set)]
+[x.time_ut for x in (sp.rise, sp.transit, sp.set)]
+
+sp.rise.time_ut, sp.transit.time_ut, sp.set.time_ut
 """
 ### __END__ CAL.Sun
