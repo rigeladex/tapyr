@@ -228,6 +228,12 @@ class Date (CAL._DTW_) :
     def delta_T (self) :
         """Arithmetic difference between Terrestrial Dynamical Time and UT in
            seconds.
+           >>> Date (1988).delta_T
+           56.0
+           >>> Date (1995).delta_T
+           61.0
+           >>> Date (2000).delta_T
+           64.0
            >>> Date (2007).delta_T
            65.0
            >>> Date (2010).delta_T
@@ -243,9 +249,24 @@ class Date (CAL._DTW_) :
         ### and http://sunearth.gsfc.nasa.gov/eclipse/SEcat5/deltatpoly.html
         y = self.year
         t = y - 2000.
-        assert 5 <= t <= 50, \
-            "Algorithm is restricted to 2005..2050, fails for %s" % (y, )
-        return round (62.92 + (0.32217 * t) + (0.005589 * t * t))
+        if -19 <= t < 5 :
+            return round \
+                ( 63.86
+                + t * ( 0.3345
+                      + t * ( -0.060374
+                            + t * ( 0.0017275
+                                  + t * ( 0.000651814
+                                        + t * 0.00002373599
+                                        )
+                                  )
+                            )
+                      )
+                )
+        elif 5 <= t <= 50 :
+            return round (62.92 + t * (0.32217 + t * 0.005589))
+        else :
+            raise ValueError, \
+                "Algorithm is restricted to 1986..2050, fails for %s" % (y, )
     # end def delta_T
 
     @classmethod
