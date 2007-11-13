@@ -69,7 +69,7 @@ class RTS (TFL.Meta.Object) :
        >>> [str (x.time) for x in (rts.rise, rts.transit, rts.set)]
        ['06:57:54.000773', '11:38:47.000148', '16:19:21.000831']
 
-       ### Example 15.a of J. Meeus, pp.103-104
+       ### Example 15.a of J. Meeus, pp.103-104, Venus at Boston
        >>> from _TFL.Record import Record
        >>> d  = CAL.Date (1988, 3, 20)
        >>> rts = RTS ( ( Record
