@@ -257,8 +257,14 @@ class Sun_P (TFL.Meta.Object) :
        >>> sd = Sun_D (CAL.Date (2007, 11, 13))
        >>> sp = Sun_P ((sd - 1, sd, sd + 1),
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
-       >>> [x.time for x in (sp.rise, sp.transit, sp.set)]
-       [Time (6, 57, 54, 773), Time (11, 38, 47, 148), Time (16, 19, 21, 831)]
+       >>> [str (x.time) for x in (sp.rise, sp.transit, sp.set)]
+       ['06:57:54.000773', '11:38:47.000148', '16:19:21.000831']
+       >>> print sp.civil_twilight_start.time, sp.civil_twilight_finis.time
+       06:17:42.000750 16:59:35.000743
+       >>> print sp.nautic_twilight_start.time, sp.nautic_twilight_finis.time
+       05:37:30.000727 17:39:49.000655
+       >>> print sp.astro_twilight_start.time, sp.astro_twilight_finis.time
+       04:57:18.000704 18:20:03.000568
 
        ### Tests stolen from sunriseset.py
        >>> sd = Sun_D (CAL.Date (2002, 1, 1))
@@ -423,6 +429,15 @@ class Sun_P (TFL.Meta.Object) :
         self.transit       = self._Transit_ (m0, ** locals ())
         self.rise          = self._Event_   (m1, ** locals ())
         self.set           = self._Event_   (m2, ** locals ())
+        h0                         = Angle_D (-6.0)
+        self.civil_twilight_start  = self._Event_ (m1, ** locals ())
+        self.civil_twilight_finis  = self._Event_ (m2, ** locals ())
+        h0                         = Angle_D (-12.0)
+        self.nautic_twilight_start = self._Event_ (m1, ** locals ())
+        self.nautic_twilight_finis = self._Event_ (m2, ** locals ())
+        h0                         = Angle_D (-18.0)
+        self.astro_twilight_start  = self._Event_ (m1, ** locals ())
+        self.astro_twilight_finis  = self._Event_ (m2, ** locals ())
     # end def __init__
 
     @Once_Property
