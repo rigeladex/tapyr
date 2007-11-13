@@ -452,14 +452,10 @@
 #     7-Mar-2007 (MZO) [23116] bitmap `edit_oe_read_only` loaded
 #     3-May-2007 (MZO) [24232] `change` of `Listspinner_` fixed
 #    14-May-2007 (MZO) consistent mouse wheel scroll in `Listbox_Tuple_` added
-#    23-Jul-2007 (CED) Activated absolute_import
 #    02-Aug-2007 (CED) Coding guidelines
 #    13-Sep-2007 (MZO) [24618] set toplevel icon
 #    ««revision-date»»···
 #--
-#
-from __future__ import absolute_import
-
 
 import Tkinter
 Tkinter.wantobjects = False

@@ -259,12 +259,12 @@ class Sun_P (TFL.Meta.Object) :
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
        >>> [str (x.time) for x in (sp.rise, sp.transit, sp.set)]
        ['06:57:54.000773', '11:38:47.000148', '16:19:21.000831']
-       >>> print sp.civil_twilight_start.time, sp.civil_twilight_finis.time
-       06:17:42.000750 16:59:35.000743
-       >>> print sp.nautic_twilight_start.time, sp.nautic_twilight_finis.time
-       05:37:30.000727 17:39:49.000655
-       >>> print sp.astro_twilight_start.time, sp.astro_twilight_finis.time
-       04:57:18.000704 18:20:03.000568
+       >>> [str (x.time) for x in (sp.civil_twilight_start, sp.civil_twilight_finis)]
+       ['06:23:17.000740', '16:54:00.000491']
+       >>> [str (x.time) for x in (sp.nautic_twilight_start, sp.nautic_twilight_finis)]
+       ['05:43:05.000717', '17:34:14.000403']
+       >>> [str (x.time) for x in (sp.astro_twilight_start, sp.astro_twilight_finis)]
+       ['05:02:53.000694', '18:14:28.000316']
 
        ### Tests stolen from sunriseset.py
        >>> sd = Sun_D (CAL.Date (2002, 1, 1))
