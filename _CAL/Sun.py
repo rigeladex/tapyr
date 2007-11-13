@@ -31,6 +31,7 @@
 # Revision Dates
 #     8-Nov-2007 (CT) Creation
 #    11-Nov-2007 (CT) Creation continued
+#    13-Nov-2007 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -46,25 +47,13 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 import _TGL._DRA.Interpolator
 
-from   _TFL.Math_Func import sign
+from   _TFL.predicate import rounded_to
 from   _TGL.Angle     import Angle_D, Angle_R
-
-from   math import \
-    ( acos
-    , asin
-    , atan2
-    , cos
-    , degrees
-    , radians
-    , sin
-    , tan
-    )
-import math
 
 class Sun_D (TFL.Meta.Object) :
     """Model behavior of sun for a single day.
 
-       Example 25.a of J. Meeus, ISBN 0-943396-61-1, p.165
+       ### Example 25.a of J. Meeus, ISBN 0-943396-61-1, p.165
        >>> sd = Sun_D (CAL.Date (1992, 10, 13))
        >>> sd.t
        -0.072183436002737855
@@ -260,10 +249,47 @@ class Sun_P (TFL.Meta.Object) :
     """Model behavior of sun for a single day at a specific geographical
        position.
 
+       >>> sd = Sun_D (CAL.Date (2007, 6, 13))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1),
+       ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
+       >>> [x.time for x in (sp.rise, sp.transit, sp.set)]
+       [Time (3, 53, 41, 641), Time (11, 54, 26, 712), Time (19, 55, 49, 352)]
+       >>> sd = Sun_D (CAL.Date (2007, 11, 13))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1),
+       ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
+       >>> [x.time for x in (sp.rise, sp.transit, sp.set)]
+       [Time (6, 57, 54, 773), Time (11, 38, 47, 148), Time (16, 19, 21, 831)]
+
+       ### Tests stolen from sunriseset.py
+       >>> sd = Sun_D (CAL.Date (2002, 1, 1))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1), 43.0, 79.0, -0.8333)
+       >>> sp.rise.time, sp.set.time
+       (Time (7, 47, 23, 812), Time (16, 52, 0, 881))
+       >>> sd = Sun_D (CAL.Date (2002, 3, 30))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1), 43.0, 79.0, -0.8333)
+       >>> sp.rise.time, sp.set.time
+       (Time (6, 1, 45, 552), Time (18, 39, 52, 870))
+       >>> sd = Sun_D (CAL.Date (2002, 8, 1))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1), 43.0, 79.0, -0.8333)
+       >>> sp.rise.time, sp.set.time
+       (Time (5, 6, 40, 945), Time (19, 38, 24, 361))
+       >>> sd = Sun_D (CAL.Date (2004, 8, 1))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1), 43.0, 79.0, -0.8333)
+       >>> sp.rise.time, sp.set.time
+       (Time (5, 7, 14, 51), Time (19, 37, 49, 220))
+       >>> sd = Sun_D (CAL.Date (2000, 6, 21))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1), 0, 0, -0.8333)
+       >>> sp.rise.time, sp.set.time
+       (Time (5, 58, 7, 648), Time (18, 5, 30, 185))
+       >>> sd = Sun_D (CAL.Date (2000, 12, 21))
+       >>> sp = Sun_P ((sd - 1, sd, sd + 1), 0, 0, -0.8333)
+       >>> sp.rise.time, sp.set.time
+       (Time (5, 54, 29, 994), Time (18, 2, 1, 26))
+
+       ### Example 15.a of J. Meeus, ISBN 0-943396-61-1, pp.103-104
        >>> from _TFL.Record import Record
        >>> d  = CAL.Date (1988, 3, 20)
-       >>> sp = Sun_P \
-       ...     ( ( Record
+       >>> sp = Sun_P ( ( Record
        ...           ( day = d - 1
        ...           , right_ascension = Angle_D (40.68021)
        ...           , declination     = Angle_D (18.04761)
@@ -331,8 +357,7 @@ class Sun_P (TFL.Meta.Object) :
             self.n        = n        = m + self.day.delta_T / 86400.0
             self.alpha    = alpha    = Angle_R (self.self.interpolator_a (n))
             self.delta    = delta    = Angle_R (self.self.interpolator_d (n))
-            self.ha       = ha       = Angle_D \
-                ((sid - self.lon - alpha).degrees)
+            self.ha       = ha       = self._hour_angle (sid, self.lon, alpha)
             self.altitude = altitude = Angle_R.asin \
                 (lat.sin * delta.sin + lat.cos * delta.cos * ha.cos)
             return ha, delta, altitude
@@ -340,18 +365,27 @@ class Sun_P (TFL.Meta.Object) :
 
         def _delta_m (self, ha, dec, alt) :
             return \
-                ( (alt - self.h0).degrees % 360.0
+                ( (alt - self.h0).degrees
                 / (360.0 * dec.cos * self.lat.cos * ha.sin)
                 )
         # end def _delta_m
 
+        def _hour_angle (self, sid, lon, alpha) :
+            ha = (sid - lon - alpha).degrees
+            if abs (ha) >= 360.0 :
+                ha = ha % 360.0
+            if ha > 180.0 :
+                ha -= 360.0
+            if ha < -180.0 :
+                ha += 360.
+            return Angle_D (ha)
+        # end def _hour_angle
+
         def _to_local_time (self, hours_ut) :
-            lon         = self.lon.degrees
+            lon         = rounded_to (self.lon.degrees, 15)
             hours_local = self.hours_local = \
                 ( hours_ut
-                + ( sign (lon)
-                  * (CAL.Time.from_degrees (abs (lon)).seconds / 3600.0)
-                  )
+                - (CAL.Time.from_degrees (lon).seconds / 3600.0)
                 ) % 24.0
             return CAL.Time.from_decimal_hours (hours_local)
         # end def _to_local_time
@@ -383,9 +417,9 @@ class Sun_P (TFL.Meta.Object) :
         self.sid   = sid   = Angle_D.normalized (day.sidereal_time_deg)
         self.H0    = H0    = Angle_D.acos \
             ((h0.sin - lat.sin * delta.sin) / (lat.cos * delta.cos))
-        self.m0    = m0    = (float (alpha + lon - sid) / 360.) % 1.0
-        self.m1    = m1    = (m0 - H0.degrees / 360.) % 1.0
-        self.m2    = m2    = (m0 + H0.degrees / 360.) % 1.0
+        self.m0    = m0    = ((alpha + lon - sid).degrees / 360.) % 1.0
+        self.m1    = m1    = (m0 - H0.degrees             / 360.) % 1.0
+        self.m2    = m2    = (m0 + H0.degrees             / 360.) % 1.0
         self.transit       = self._Transit_ (m0, ** locals ())
         self.rise          = self._Event_   (m1, ** locals ())
         self.set           = self._Event_   (m2, ** locals ())
@@ -415,22 +449,6 @@ class Sun_P (TFL.Meta.Object) :
 
 # end class Sun_P
 
-"""
-from _CAL.Sun import *
-sd = Sun_D (CAL.Date (2007, 11, 12))
-sp = Sun_P ((sd - 1, sd, sd + 1), 48.190111, -16.26867)
-
-
-sp.day, sp.sid
-[x.n for x in (sp.rise,sp.transit, sp.set)]
-[x.alpha.degrees for x in (sp.rise,sp.transit, sp.set)]
-[x.delta.degrees for x in (sp.rise,sp.transit, sp.set)]
-[x.ha.degrees for x in (sp.rise, sp.transit, sp.set)]
-[x.altitude.degrees for x in (sp.rise,sp.transit, sp.set)]
-[x.delta_m for x in (sp.rise, sp.transit, sp.set)]
-[x.corrected_m for x in (sp.rise, sp.transit, sp.set)]
-[x.time_ut for x in (sp.rise, sp.transit, sp.set)]
-
-sp.rise.time_ut, sp.transit.time_ut, sp.set.time_ut
-"""
+if __name__ != "__main__" :
+    CAL._Export ("*")
 ### __END__ CAL.Sun

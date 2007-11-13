@@ -162,9 +162,9 @@
 #    24-Jul-2007 (PGO) `in_order` moved here from TTA.FTC.TDCOM
 #     2-Aug-2007 (CED) `is_ordered`, `rotated_until_ordered` added
 #     6-Aug-2007 (CT)  `in_order` removed
-#     6-Aug-2007 (CED) Future import removed again
 #    14-Aug-2007 (CED) `is_ordered` simplified, `unified` added
 #    20-Aug-2007 (CED) s/unified/uniq/
+#    13-Nov-2007 (CT)  `rounded_to` added
 #    ««revision-date»»···
 #--
 
@@ -758,6 +758,22 @@ def rounded_down (value, granularity) :
     """
     return value - (value % granularity)
 # end def rounded_down
+
+def rounded_to (value, granularity) :
+    """Returns `value` rounded to nearest multiple of `granularity`.
+
+       >>> [rounded_to (v, 15) for v in [0, 1, 7, 8, 14, 22, 23]]
+       [0, 0, 0, 15, 15, 15, 30]
+       >>> [rounded_to (-v, 15) for v in [0, 1, 7, 8, 14, 22, 23]]
+       [0, 0, 0, -15, -15, -15, -30]
+    """
+    rd = rounded_down (value, granularity)
+    ru = rounded_up   (value, granularity)
+    if abs (ru - value) < abs (value - rd) :
+        return ru
+    else :
+        return rd
+# end def rounded_to
 
 def rounded_up (value, granularity) :
     """Returns `value` rounded up to nearest multiple of `granularity`.
