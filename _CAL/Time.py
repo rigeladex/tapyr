@@ -34,6 +34,7 @@
 #     9-Nov-2007 (CT) Use `Once_Property` instead of `__getattr__`
 #    11-Nov-2007 (CT) `from_degrees` added
 #    11-Nov-2007 (CT) `from_decimal_hours` factored
+#    13-Nov-2007 (CT) `as_degrees` added
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,15 @@ class Time (CAL._DTW_) :
        >>> t4 = Time (23, 59, 59)
        >>> print t4, t4.seconds
        23:59:59 86399
+
+       >>> Time (0, 0, 0, 0).as_degrees
+       0.0
+       >>> Time (1, 0, 0, 0).as_degrees
+       15.0
+       >>> Time (12, 0, 0, 0).as_degrees
+       180.0
+       >>> Time (23, 59, 0, 0).as_degrees
+       359.75
     """
 
     _Type            = datetime.time
@@ -90,6 +100,12 @@ class Time (CAL._DTW_) :
     microsecond      = property (TFL.Getter._body.microsecond)
 
     from _CAL.Delta import Time_Delta as Delta
+
+    @Once_Property
+    def as_degrees (self) :
+        """Returns `self` converted to an angle in degress."""
+        return (self.hour + self.minute / 60. + self.second / 3600.) * 15
+    # end def as_degrees
 
     def as_delta (self) :
         return self.Delta \

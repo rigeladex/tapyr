@@ -311,3 +311,14 @@ class RTS_Sun (CAL.Sky.RTS) :
 if __name__ != "__main__" :
     CAL.Sky._Export ("*")
 ### __END__ CAL.Sky.Sun
+
+"""
+from _CAL._Sky.Sun import *
+import _CAL.Date
+s = Sun (CAL.Date (2007, 6, 13))
+rts = RTS_Sun ((s - 1, s, s + 1), Angle_D (48, 14), Angle_D (-16, -20))
+[str (x.time) for x in (rts.rise, rts.transit, rts.set)]
+[str (x.time) for x in (rts.civil_twilight_start, rts.civil_twilight_finis)]
+[str (x.time) for x in (rts.nautic_twilight_start, rts.nautic_twilight_finis)]
+[str (x.time) for x in (rts.astro_twilight_start, rts.astro_twilight_finis)]
+"""
