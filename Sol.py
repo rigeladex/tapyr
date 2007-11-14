@@ -67,7 +67,8 @@ class Display (TFL.Meta.Object) :
     def __init__ (self, master, date, location, size = 64) :
         self.date     = date
         self.location = location
-        self.canvas   = canvas = CTK.Canvas \
+        self.balloon  = balloon = CTK.Balloon (master, arrow = False)
+        self.canvas   = canvas  = CTK.Canvas \
             ( master
             , background         = self.background
             , highlightthickness = 0
@@ -85,7 +86,10 @@ class Display (TFL.Meta.Object) :
             , tags    = "night"
             )
         self._display_rts (date, location, canvas, rect)
+        balloon.body.configure (font = ("Arial", 8))
         canvas.configure  (height = size, width = size)
+        canvas.bind       ("<Enter>",   self._balloon_show)
+        master.bind       ("<Leave>",   self._balloon_hide)
         canvas.after      (self.period, self.update)
     # end def __init__
 
@@ -115,6 +119,44 @@ class Display (TFL.Meta.Object) :
             , tags               = (tag, ) + ("sol", )
             )
     # end def _arc
+
+    def _balloon_show (self, event = None) :
+        if event :
+            widget  = event.widget
+            r       = self.rts
+            message = "\n".join \
+                ( ( ", ".join
+                      ( ( "Sunrise : %02d:%02d" % r.rise.time.hh_mm
+                        , "transit : %02d:%02d" % r.transit.time.hh_mm
+                        , "sunset : %02d:%02d"  % r.set.time.hh_mm
+                        )
+                      )
+                  , "Civil  twilight starts %02d:%02d, ends %02d:%02d"
+                    % (r.civil_twilight_start.time.hh_mm
+                    + r.civil_twilight_finis.time.hh_mm)
+                  , "Nautic twilight starts %02d:%02d, ends %02d:%02d"
+                    % (r.nautic_twilight_start.time.hh_mm
+                    + r.nautic_twilight_finis.time.hh_mm)
+                  , "Astro  twilight starts %02d:%02d, ends %02d:%02d"
+                    % (r.astro_twilight_start.time.hh_mm
+                    + r.astro_twilight_finis.time.hh_mm)
+                  )
+                )
+            x    = event.x_root - event.x
+            y    = event.y_root - event.y
+            offx = 0
+            offy = 5
+            if event.x_root > 200 :
+                offx = -200
+            if event.y_root > 100 :
+                offy = -25
+            self.balloon.activate \
+                (widget, message, x = x, y = y, offx = offx, offy = offy)
+    # end def _balloon_show
+
+    def _balloon_hide (self, event = None) :
+        self.balloon.deactivate ()
+    # end def _balloon_hide
 
     def _display_rts (self, date, location, canvas, rect) :
         self.rts = rts = CAL.Sky.RTS_Sun.On_Day (date, location)

@@ -35,6 +35,7 @@
 #    11-Nov-2007 (CT) `from_degrees` added
 #    11-Nov-2007 (CT) `from_decimal_hours` factored
 #    13-Nov-2007 (CT) `as_degrees` added
+#    14-Nov-2007 (CT) `hh_mm` added
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,19 @@ class Time (CAL._DTW_) :
         """
         return cls.from_decimal_hours ((degrees % 360.0) / 15.0)
     # end def from_degrees
+
+    @Once_Property
+    def hh_mm (self) :
+        """Return tuple of (hour, minute) with `minute` rounded."""
+        hh = self.hour
+        mm = self.minute + (self.second + 30) // 60
+        if mm >= 60 :
+            mm -= 60
+            hh += 1
+            if h == 24 :
+                hh = 0
+        return (hh, mm)
+    # end def hh_mm
 
     @Once_Property
     def seconds (self) :

@@ -35,6 +35,7 @@
 #    13-Nov-2007 (CT) Moved from `CAL` to `CAL.Sky`
 #    13-Nov-2007 (CT) `main` added
 #    14-Nov-2007 (CT) `RTS_Sun.On_Day` added (and used in `main`)
+#    14-Nov-2007 (CT) `hh_mm` factored to `CAL.Time`
 #    ««revision-date»»···
 #--
 
@@ -340,8 +341,7 @@ def command_spec (arg_array = None) :
 # end def command_spec
 
 def fmt (x) :
-    t = x.time
-    return "%2.2d:%2.2d" % (t.hour, t.minute + (t.second + 30) // 60)
+    return "%02d:%02d" % x.time.hh_mm
 # end def fmt
 
 def main (cmd) :
