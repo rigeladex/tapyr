@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    CAL.RTS
+#    CAL.Sky.RTS
 #
 # Purpose
 #    Provide class for calculating of rising, transit and setting of
@@ -232,4 +232,4 @@ class RTS (TFL.Meta.Object) :
 
 if __name__ != "__main__" :
     CAL.Sky._Export ("*")
-### __END__ CAL.Sun
+### __END__ CAL.Sky.RTS

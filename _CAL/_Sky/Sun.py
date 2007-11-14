@@ -34,6 +34,7 @@
 #    13-Nov-2007 (CT) Creation continued..
 #    13-Nov-2007 (CT) Moved from `CAL` to `CAL.Sky`
 #    13-Nov-2007 (CT) `main` added
+#    14-Nov-2007 (CT) `RTS_Sun.On_Day` added (and used in `main`)
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _TGL                     import TGL
 
 from   _TFL._Meta.Once_Property import Once_Property
 
+import _CAL._Sky.Location
 import _CAL._Sky.RTS
 import _TFL._Meta.Object
 
@@ -307,6 +309,13 @@ class RTS_Sun (CAL.Sky.RTS) :
         self.astro_twilight_finis  = self._Event_ (self.m2, ** vars)
     # end def __init__
 
+    @classmethod
+    def On_Day (cls, date, location, h0 = Angle_D (-0.8333)) :
+        s = Sun (date)
+        return cls \
+            ((s - 1, s, s + 1), location.latitude, location.longitude, h0)
+    # end def On_Day
+
 # end class RTS_Sun
 
 def command_spec (arg_array = None) :
@@ -337,9 +346,7 @@ def fmt (x) :
 
 def main (cmd) :
     date = CAL.Date.from_string (cmd.date)
-    s   = Sun (date)
-    rts = RTS_Sun \
-        ((s - 1, s, s + 1), Angle_D (cmd.latitude), Angle_D (cmd.longitude))
+    rts  = RTS_Sun.On_Day (date, CAL.Sky.Location (cmd.latitude, cmd.longitude))
     print "Sunrise : %s, transit : %s, sunset : %s" % \
         (fmt (rts.rise), fmt (rts.transit), fmt (rts.set))
     if cmd.civil_twilight :

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Nov-2007 (CT) Creation
+#    14-Nov-2007 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -35,10 +36,12 @@ from   _TGL                  import TGL
 from   _CAL                  import CAL
 
 from   _TFL._TKT._Tk.CTK     import *
+from   _TFL.predicate        import pairwise
 from   _TGL.Angle            import Angle_D, Angle_R
 
 import _CAL.Date
 import _CAL.Time
+import _CAL._Sky.Location
 import _CAL._Sky.Sun
 
 import _TFL._Meta.Object
@@ -46,45 +49,44 @@ import _TFL._Meta.Object
 class Display (TFL.Meta.Object) :
     """Solar clock."""
 
-    background   = "grey85"
-    civil_color  = "dodger blue"
-    day_color    = "light sky blue"
-    grid_color   = "grey75"
-    hand_color   = "red"
-    nautic_color = "royal blue"
-    night_color  = "blue"
+    tag_colors   = dict \
+        ( astro  = "#086FFF"
+        , civil  = "#9CD8FC"
+        , day    = "#D3F0FE"
+        , grid   = "grey65"
+        , hand   = "red"
+        , nautic = "#5BC2FE"
+        , night  = "#0005B1"
+        )
+    background   = "#BEBEBE"
     border       = 5
     pad_x        = 0
     pad_y        = 0
-    period       = 1000 * 300 ### specified in milliseconds --> 5 minutes
+    period       = 1000 * 60 ### specified in milliseconds --> 1 minute
 
-    def __init__ (self, master, rts, size = 64) :
-        self.canvas = canvas = CTK.Canvas \
+    def __init__ (self, master, date, location, size = 64) :
+        self.date     = date
+        self.location = location
+        self.canvas   = canvas = CTK.Canvas \
             ( master
             , background         = self.background
             , highlightthickness = 0
             , name               = "clock"
             )
-        b         = self.border
-        self.rect = rect = b, b, size - b, size -b
+        b             = self.border
+        bi            = size // 4
+        self.rect     = rect = b,  b,  size - b,  size -b
+        self.rect2           = bi, bi, size - bi, size - bi
         CTK.Oval \
             ( canvas, rect
-            , fill               = self.night_color
-            , outline            = ""
-            , width              = 0
-            , tags               = "night"
+            , fill    = self.tag_colors ["night"]
+            , outline = ""
+            , width   = 0
+            , tags    = "night"
             )
-        rise  = 270 - rts.rise.time.as_degrees
-        sett  = 270 - rts.set.time.as_degrees
-        twl_m = 270 - rts.nautic_twilight_start.time.as_degrees
-        twl_e = 270 - rts.nautic_twilight_finis.time.as_degrees
-        self._canvas_arc  (rise,  sett - rise,  self.day_color,   "day")
-        self._canvas_arc  (twl_m, rise - twl_m, self.civil_color, "twilight")
-        self._canvas_arc  (twl_e, sett - twl_e, self.civil_color, "twilight")
-        for i in (0, 45, 90, 135, 180, 225, 270, 315) :
-            self._canvas_arc  (i - 1, +2, self.grid_color, "grid")
+        self._display_rts (date, location, canvas, rect)
         canvas.configure  (height = size, width = size)
-        canvas.after_idle (self.update)
+        canvas.after      (self.period, self.update)
     # end def __init__
 
     def pack (self) :
@@ -92,24 +94,58 @@ class Display (TFL.Meta.Object) :
     # end def pack
 
     def update (self, event = None) :
-        time   = 270 - CAL.Time ().as_degrees
         canvas = self.canvas
-        canvas.delete    ("hand")
-        self._canvas_arc (time - 3, +7, self.hand_color, "hand")
-        canvas.after     (self.period, self.update)
+        date   = CAL.Date ()
+        if date != self.date :
+            self.date = date
+            self._display_rts (date, self.location, canvas, self.rect)
+        canvas.delete ("hand")
+        self._hand    (canvas)
+        canvas.after  (self.period, self.update)
     # end def update
 
-    def _canvas_arc (self, start, extent, fill, tags) :
+    def _arc (self, start, extent, tag, rect = None) :
         CTK.Arc \
-            ( self.canvas, self.rect
+            ( self.canvas, rect or self.rect
             , start              = start
             , extent             = extent
-            , fill               = fill
+            , fill               = self.tag_colors [tag]
             , outline            = ""
             , width              = 0
-            , tags               = tags
+            , tags               = (tag, ) + ("sol", )
             )
-    # end def _canvas_arc
+    # end def _arc
+
+    def _display_rts (self, date, location, canvas, rect) :
+        self.rts = rts = CAL.Sky.RTS_Sun.On_Day (date, location)
+        canvas.delete ("sol")
+        events = \
+            [ rts.astro_twilight_start
+            , rts.nautic_twilight_start
+            , rts.civil_twilight_start
+            , rts.rise
+            , rts.set
+            , rts.civil_twilight_finis
+            , rts.nautic_twilight_finis
+            , rts.astro_twilight_finis
+            ]
+        for (a, b), tag in zip \
+            ( pairwise (events)
+            , ("astro", "nautic", "civil", "day", "civil", "nautic", "astro")
+            ) :
+            x = 270 - a.time.as_degrees
+            y = 270 - b.time.as_degrees
+            self._arc (x, y - x, tag)
+        for i in range (0, 360, 45) :
+            self._arc (i - 1, +2, "grid")
+        self._hand (canvas)
+    # end def _display_rts
+
+    def _hand (self, canvas) :
+        time = 270 - CAL.Time ().as_degrees
+        self._arc (time - 7, +15, "hand", self.rect2)
+        self._arc (time - 2,  +5, "hand", self.rect)
+    # end def _hand
 
 # end class Display
 
@@ -122,14 +158,14 @@ class Toplevel (TFL.Meta.Object) :
     class _TL_ (CTK.C_Toplevel) :
         widget_class = "Sol_Display"
 
-    def __init__ (self, rts, size) :
+    def __init__ (self, date, location, size) :
         self.toplevel = toplevel = self._TL_ \
             ( bg                 = self.background
             , destroy_cmd        = self.destroy
             , relief             = self.relief
             , title              = "Sol-Clock"
             )
-        self.display  = display  = Display (toplevel, rts, size)
+        self.display  = display  = Display (toplevel, date, location, size)
         display.pack ()
     # end def __init__
 
@@ -153,8 +189,15 @@ class Toplevel (TFL.Meta.Object) :
 def command_spec (arg_array = None) :
     from   _TFL.Command_Line import Command_Line
     return Command_Line \
-        ( option_spec =
-            ( "pos:S?Position of display in geometry-format"
+        ( arg_spec    =
+            ( "date:S=%s" % CAL.Date ()
+            ,
+            )
+        , option_spec =
+            ( "latitude:F?Latitude (north is positive)"
+            , "location:S=Vienna?Location of observer"
+            , "longitude:F?Longitude (negative is east of Greenwich)"
+            , "pos:S?Position of display in geometry-format"
             , "size:I=64?Size of clock (square)"
             )
         , arg_array   = arg_array
@@ -162,10 +205,12 @@ def command_spec (arg_array = None) :
 # end def command_spec
 
 def main (cmd) :
-    s = CAL.Sky.Sun (CAL.Date ())
-    rts = CAL.Sky.RTS_Sun \
-        ((s - 1, s, s + 1), Angle_D (48, 14), Angle_D (-16, -20))
-    a = Toplevel (rts, cmd.size)
+    date = CAL.Date.from_string (cmd.date)
+    if cmd.latitude and cmd.longitude :
+        location = CAL.Sky.Location (cmd.latitude, cmd.longitude)
+    else :
+        location = CAL.Sky.Location.Table [cmd.location]
+    a = Toplevel (date, location, cmd.size)
     if cmd.pos :
         a.toplevel.geometry (cmd.pos)
     CTK.root.withdraw ()
