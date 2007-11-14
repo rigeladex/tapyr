@@ -33,6 +33,7 @@
 #    11-Nov-2007 (CT) Creation continued
 #    13-Nov-2007 (CT) Creation continued..
 #    13-Nov-2007 (CT) Moved from `CAL` to `CAL.Sky`
+#    13-Nov-2007 (CT) `main` added
 #    ««revision-date»»···
 #--
 
@@ -308,7 +309,53 @@ class RTS_Sun (CAL.Sky.RTS) :
 
 # end class RTS_Sun
 
-if __name__ != "__main__" :
+def command_spec (arg_array = None) :
+    from   _TFL.Command_Line import Command_Line
+    import _CAL.Date
+    return Command_Line \
+        ( arg_spec    =
+            ( "date:S=%s" % CAL.Date ()
+            ,
+            )
+        , option_spec =
+            ( "astro_twilight:B?Show astro twilight (-18 degrees below horizon)"
+            , "civil_twilight:B?Show civil twilight (-6 degrees below horizon)"
+            , "latitude:F=48.2333333333?Latitude (north is positive)"
+            , "longitude:F=-16.3333333333"
+                "?Longitude (negative is east of Greenwich)"
+            , "-nautic_twilight:B"
+                "?Show time of nautic twilight (sun -12 degrees below horizon)"
+            )
+        , arg_array   = arg_array
+        )
+# end def command_spec
+
+def fmt (x) :
+    t = x.time
+    return "%2.2d:%2.2d" % (t.hour, t.minute + (t.second + 30) // 60)
+# end def fmt
+
+def main (cmd) :
+    date = CAL.Date.from_string (cmd.date)
+    s   = Sun (date)
+    rts = RTS_Sun \
+        ((s - 1, s, s + 1), Angle_D (cmd.latitude), Angle_D (cmd.longitude))
+    print "Sunrise : %s, transit : %s, sunset : %s" % \
+        (fmt (rts.rise), fmt (rts.transit), fmt (rts.set))
+    if cmd.civil_twilight :
+        print "Civil  twilight starts %s, ends %s" % \
+            (fmt (rts.civil_twilight_start), fmt (rts.civil_twilight_finis))
+    if cmd.nautic_twilight :
+        print "Nautic twilight starts %s, ends %s" % \
+            (fmt (rts.nautic_twilight_start), fmt (rts.nautic_twilight_finis))
+    if cmd.astro_twilight :
+        print "Astro  twilight starts %s, ends %s" % \
+            (fmt (rts.astro_twilight_start), fmt (rts.astro_twilight_finis))
+# end def main
+
+if __name__ == "__main__":
+    main (command_spec ())
+else :
     CAL.Sky._Export ("*")
 ### __END__ CAL.Sky.Sun
 

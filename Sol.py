@@ -46,13 +46,14 @@ import _TFL._Meta.Object
 class Display (TFL.Meta.Object) :
     """Solar clock."""
 
-    background   = "grey30"
+    background   = "grey85"
     civil_color  = "dodger blue"
     day_color    = "light sky blue"
-    hand_color   = "yellow"
+    grid_color   = "grey75"
+    hand_color   = "red"
     nautic_color = "royal blue"
     night_color  = "blue"
-    border       = 3
+    border       = 5
     pad_x        = 0
     pad_y        = 0
     period       = 1000 * 300 ### specified in milliseconds --> 5 minutes
@@ -64,27 +65,24 @@ class Display (TFL.Meta.Object) :
             , highlightthickness = 0
             , name               = "clock"
             )
-        b          = self.border
-        self.rect  = rect = b, b, size - b, size -b
-        self.night = CTK.Oval \
+        b         = self.border
+        self.rect = rect = b, b, size - b, size -b
+        CTK.Oval \
             ( canvas, rect
             , fill               = self.night_color
             , outline            = ""
             , width              = 0
             , tags               = "night"
             )
-        rise = 270 - rts.rise.time.as_degrees
-        sett = 270 - rts.set.time.as_degrees
-        print rise, sett
-        self.day   = CTK.Arc \
-            ( canvas, rect
-            , start              = rise
-            , extent             = sett - rise
-            , fill               = self.day_color
-            , outline            = ""
-            , width              = 0
-            , tags               = "day"
-            )
+        rise  = 270 - rts.rise.time.as_degrees
+        sett  = 270 - rts.set.time.as_degrees
+        twl_m = 270 - rts.nautic_twilight_start.time.as_degrees
+        twl_e = 270 - rts.nautic_twilight_finis.time.as_degrees
+        self._canvas_arc  (rise,  sett - rise,  self.day_color,   "day")
+        self._canvas_arc  (twl_m, rise - twl_m, self.civil_color, "twilight")
+        self._canvas_arc  (twl_e, sett - twl_e, self.civil_color, "twilight")
+        for i in (0, 45, 90, 135, 180, 225, 270, 315) :
+            self._canvas_arc  (i - 1, +2, self.grid_color, "grid")
         canvas.configure  (height = size, width = size)
         canvas.after_idle (self.update)
     # end def __init__
@@ -96,18 +94,22 @@ class Display (TFL.Meta.Object) :
     def update (self, event = None) :
         time   = 270 - CAL.Time ().as_degrees
         canvas = self.canvas
-        canvas.delete ("hand")
+        canvas.delete    ("hand")
+        self._canvas_arc (time - 3, +7, self.hand_color, "hand")
+        canvas.after     (self.period, self.update)
+    # end def update
+
+    def _canvas_arc (self, start, extent, fill, tags) :
         CTK.Arc \
-            ( canvas, self.rect
-            , start              = time + 2
-            , extent             = 5
-            , fill               = self.hand_color
+            ( self.canvas, self.rect
+            , start              = start
+            , extent             = extent
+            , fill               = fill
             , outline            = ""
             , width              = 0
-            , tags               = "hand"
+            , tags               = tags
             )
-        canvas.after  (self.period, self.update)
-    # end def update
+    # end def _canvas_arc
 
 # end class Display
 
