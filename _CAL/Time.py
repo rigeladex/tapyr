@@ -149,7 +149,7 @@ class Time (CAL._DTW_) :
         if mm >= 60 :
             mm -= 60
             hh += 1
-            if h == 24 :
+            if hh == 24 :
                 hh = 0
         return (hh, mm)
     # end def hh_mm

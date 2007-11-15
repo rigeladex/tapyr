@@ -34,6 +34,7 @@
 #    11-Nov-2007 (CT) Creation continued
 #    13-Nov-2007 (CT) Creation continued..
 #    13-Nov-2007 (CT) Moved from `CAL.Sun.Sun_P` to `CAL.Sky.RTS.RTS`
+#    15-Nov-2007 (CT) `RTS._Event_.__str__` added
 #    ««revision-date»»···
 #--
 
@@ -175,6 +176,10 @@ class RTS (TFL.Meta.Object) :
             hours_ut = self.hours_ut    = (corr_m * 24) % 24.0
             return CAL.Time.from_decimal_hours (hours_ut)
         # end def _to_ut
+
+        def __str__ (self) :
+            return "%02d:%02d" % self.time.hh_mm
+        # end def __str__
 
     # end class _Event_
 

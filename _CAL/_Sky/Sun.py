@@ -340,24 +340,20 @@ def command_spec (arg_array = None) :
         )
 # end def command_spec
 
-def fmt (x) :
-    return "%02d:%02d" % x.time.hh_mm
-# end def fmt
-
 def main (cmd) :
     date = CAL.Date.from_string (cmd.date)
     rts  = RTS_Sun.On_Day (date, CAL.Sky.Location (cmd.latitude, cmd.longitude))
     print "Sunrise : %s, transit : %s, sunset : %s" % \
-        (fmt (rts.rise), fmt (rts.transit), fmt (rts.set))
+        (rts.rise, rts.transit, rts.set)
     if cmd.civil_twilight :
         print "Civil  twilight starts %s, ends %s" % \
-            (fmt (rts.civil_twilight_start), fmt (rts.civil_twilight_finis))
+            (rts.civil_twilight_start, rts.civil_twilight_finis)
     if cmd.nautic_twilight :
         print "Nautic twilight starts %s, ends %s" % \
-            (fmt (rts.nautic_twilight_start), fmt (rts.nautic_twilight_finis))
+            (rts.nautic_twilight_start, rts.nautic_twilight_finis)
     if cmd.astro_twilight :
         print "Astro  twilight starts %s, ends %s" % \
-            (fmt (rts.astro_twilight_start), fmt (rts.astro_twilight_finis))
+            (rts.astro_twilight_start, rts.astro_twilight_finis)
 # end def main
 
 if __name__ == "__main__":
