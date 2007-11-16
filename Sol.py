@@ -23,12 +23,13 @@
 #    Sol
 #
 # Purpose
-#    Display 24-hour clock showing sunrise, transit, and sunset
+#    Display 24-hour clock showing sunrise, transit, sunset, and twilight
 #
 # Revision Dates
 #    13-Nov-2007 (CT) Creation
 #    14-Nov-2007 (CT) Creation continued
 #    15-Nov-2007 (CT) Creation continued...
+#    16-Nov-2007 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -61,6 +62,8 @@ class Display (TFL.Meta.Object) :
         , night  = "#0005B1"
         )
     background   = "#BEBEBE"
+    font_grid    = ("Arial",  8)
+    font_time    = ("Arial", 13)
     label_color  = "white" # "grey30"
     pad_x        = 0
     pad_y        = 0
@@ -78,7 +81,7 @@ class Display (TFL.Meta.Object) :
             , name               = "clock"
             )
         b             = self.border = border
-        bi            = size // 5
+        bi            = size // 4
         self.size     = size
         self.rect     = rect = border, border, size - border, size - border
         self.rect2           = bi, bi, size - bi, size - bi
@@ -185,9 +188,10 @@ class Display (TFL.Meta.Object) :
 
     def _hand (self, canvas) :
         canvas.delete ("hand")
-        self.time = time = CAL.Time ()
-        hours     = 270 - time.as_degrees
-        minutes   =  90 - (time.hh_mm [1] * 6)
+        hh, mm    = CAL.Time ().hh_mm
+        hours     = 270 - (hh + mm / 60.) * 15
+        minutes   =  90 - (mm * 6)
+        self.time = time = "%02d:%02d" % (hh, mm)
         p         = self.size // 2
         self._arc (hours   - 5, + 10, "hand", self.rect2)
         self._arc (minutes - 2, +  5, "hand", self.rect)
@@ -195,9 +199,9 @@ class Display (TFL.Meta.Object) :
             ( canvas, (p, p + 2)
             , anchor = N
             , fill   = self.label_color
-            , font   = ("Arial", 13)
+            , font   = self.font_time
             , tags   = ("hand", )
-            , text   = "%02d:%02d" % (time.hour, time.minute)
+            , text   = time
             )
     # end def _hand
 
@@ -302,6 +306,9 @@ def command_spec (arg_array = None) :
             )
         , option_spec =
             ( "border:I=14?Border around clock"
+            , "font:S=Arial"
+            , "font_grid_size:I=8"
+            , "font_time_size:I=13"
             , "latitude:F?Latitude (north is positive)"
             , "location:S=Vienna?Location of observer"
             , "longitude:F?Longitude (negative is east of Greenwich)"
@@ -315,9 +322,12 @@ def command_spec (arg_array = None) :
 def main (cmd) :
     date = CAL.Date.from_string (cmd.date)
     if cmd.latitude and cmd.longitude :
-        location = CAL.Sky.Location (cmd.latitude, cmd.longitude)
+        location = CAL.Sky.Location \
+            (cmd.latitude, cmd.longitude, cmd.location or None)
     else :
         location = CAL.Sky.Location.Table [cmd.location]
+    Display.font_grid = (cmd.font, cmd.font_grid_size)
+    Display.font_time = (cmd.font, cmd.font_time_size)
     a = Toplevel (date, location, cmd.size, cmd.border)
     if cmd.pos :
         a.toplevel.geometry (cmd.pos)
