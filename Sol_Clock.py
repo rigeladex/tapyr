@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Sol
+#    Sol_Clock
 #
 # Purpose
 #    Display 24-hour clock showing sunrise, transit, sunset, and twilight
@@ -32,6 +32,12 @@
 #    16-Nov-2007 (CT) Creation continued....
 #    ««revision-date»»···
 #--
+
+"""
+Sol_Clock displays an analog clock (with a 24-hour face) showing the current
+time, the times of sunrise, the sun's transit, and sunset, and the begin and
+end of the civil, nautic, and astronomical twilight.
+"""
 
 from   _TFL                  import TFL
 from   _TGL                  import TGL
@@ -266,7 +272,7 @@ class Toplevel (TFL.Meta.Object) :
     relief       = CTK.RAISED
 
     class _TL_ (CTK.C_Toplevel) :
-        widget_class = "Sol_Display"
+        widget_class = "Sol_Clock"
 
     def __init__ (self, date, location, size, border) :
         self.toplevel = toplevel = self._TL_ \
@@ -337,4 +343,4 @@ def main (cmd) :
 
 if __name__ == "__main__":
     main (command_spec ())
-### __END__ Sol
+### __END__ Sol_Clock
