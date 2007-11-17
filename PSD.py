@@ -491,8 +491,9 @@ class CPU_Entry (Text_LR_Entry) :
 class Date_Entry (Text_C_Entry) :
     """Entry displaying the date"""
 
-    c_tag    = "date"
-    rect_tag = "datebody"
+    background   = "#BEBEBE"
+    c_tag        = "date"
+    rect_tag     = "datebody"
 
     def update (self, status) :
         d = time.strftime ("%a %d-%b-%Y", time.localtime ())
