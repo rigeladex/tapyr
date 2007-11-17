@@ -32,6 +32,7 @@
 #                     `/proc/acpi/ibm/thermal`
 #    28-Nov-2006 (CT) `_acpi_pattern` adapted to change in `acpitool`s output
 #     9-Sep-2007 (CT) Display ` Full` instead of `Charged`
+#    17-Nov-2007 (CT) `Time_Entry` removed from call to `Toplevel`
 #    ««revision-date»»···
 #--
 
@@ -516,7 +517,7 @@ class Time_Entry (Text_C_Entry) :
 class Display (TFL.Meta.Object) :
     """Status display comprising various entries"""
 
-    background   = "#BEBEBE"
+    background   = "grey30"
     foreground   = "grey77"
     pad_x        = 3
     pad_y        = 3
@@ -567,7 +568,7 @@ class Display (TFL.Meta.Object) :
 class Toplevel (TFL.Meta.Object) :
     """Toplevel for status display"""
 
-    background   = "grey30"
+    background   = "#BEBEBE"
     relief       = CTK.RAISED
 
     class _TL_ (CTK.C_Toplevel) :
@@ -611,9 +612,7 @@ def command_spec (arg_array = None) :
 
 def main (cmd) :
     a = Toplevel \
-        ( "ACPI", cmd.width
-        , Date_Entry, Time_Entry, ACPI_Entry, ACPI_Gauge, CPU_Entry
-        )
+        ("ACPI", cmd.width, Date_Entry, ACPI_Entry, ACPI_Gauge, CPU_Entry)
     if cmd.pos :
         a.toplevel.geometry (cmd.pos)
     CTK.root.withdraw ()
