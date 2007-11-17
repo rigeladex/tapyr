@@ -531,7 +531,7 @@ class Display (TFL.Meta.Object) :
         self.status   = Record ()
         self.canvas   = canvas   = CTK.Canvas \
             ( master
-            #, background         = "black"
+            , background         = "#BEBEBE"
             , name               = "canvas"
             , highlightthickness = 0
             )
