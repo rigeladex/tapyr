@@ -30,6 +30,7 @@
 #    14-Nov-2007 (CT) Creation continued
 #    15-Nov-2007 (CT) Creation continued...
 #    16-Nov-2007 (CT) Creation continued....
+#    18-Nov-2007 (CT) `close_balloon` added
 #    ««revision-date»»···
 #--
 
@@ -277,6 +278,7 @@ class Toplevel (TFL.Meta.Object) :
     def __init__ (self, date, location, size, border) :
         self.toplevel = toplevel = self._TL_ \
             ( bg                 = self.background
+            , close_cmd          = self.close_balloon
             , destroy_cmd        = self.destroy
             , relief             = self.relief
             , title              = "Sol-Clock"
@@ -285,6 +287,10 @@ class Toplevel (TFL.Meta.Object) :
             (toplevel, date, location, size, border)
         display.pack ()
     # end def __init__
+
+    def close_balloon (self, event = None) :
+        self.display.balloon.deactivate ()
+    # end def close_balloon
 
     def destroy (self, event = None) :
         self.toplevel.destroy ()
