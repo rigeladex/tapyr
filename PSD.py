@@ -37,7 +37,7 @@
 #--
 
 from   _TFL                  import TFL
-from   CTK                   import *
+from   _TFL._TKT._Tk.CTK     import *
 from   _TFL.Record           import Record
 from   _TFL.Numeric_Interval import Numeric_Interval as Ival
 from   _TFL.predicate        import *
