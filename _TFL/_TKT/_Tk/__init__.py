@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,12 +32,8 @@
 #    23-Feb-2005 (CT) `stop_cb_chaining` added
 #    14-Mar-2005 (CT) `Tk.Error` aliased to `CTK.TclError`
 #    10-Aug-2005 (CT) Use `set_TNS_name` instead of home-grown code
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL.Package_Namespace import Package_Namespace
 from   _TFL                   import TFL
@@ -48,7 +44,7 @@ TFL.TKT._Export ("Tk")
 
 Tk.stop_cb_chaining = "break"
 
-from   CTK import *
+from   _TFL._TKT._Tk.CTK import *
 Tk.Error = CTK.TclError
 
 import _TFL._TKT.Mixin

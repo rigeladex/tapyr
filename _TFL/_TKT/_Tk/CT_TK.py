@@ -455,6 +455,8 @@
 #    02-Aug-2007 (CED) Coding guidelines
 #    13-Sep-2007 (MZO) [24618] set toplevel icon
 #    19-Nov-2007 (CT)  `anchor` for `Balloon.body` set to `LEFT`
+#    19-Nov-2007 (CT)  Imports corrected
+#    19-Nov-2007 (CT)  `string` functions replaced by `str` methods
 #    ««revision-date»»···
 #--
 
@@ -466,24 +468,23 @@ from   Tkinter     import *
 from   Tkinter     import _flatten, _default_root
 from   Canvas      import *
 
-from   Filename    import Filename
-from   Functor     import *
-from   NO_List     import NO_List
-from   predicate   import *
-from   _TFL        import TFL
+from   _TFL.Filename    import Filename
+from   _TFL.Functor     import *
+from   _TFL.NO_List     import NO_List
+from   _TFL.predicate   import *
+from   _TFL             import Environment
+from   _TFL             import sos
+from   _TFL             import TFL
 import _TFL._Meta.Object
 
 import tkMessageBox
 
 import imp
 import re
-import sos
-import string
 import sys
 import traceback
 import types
 import zipfile
-import Environment
 
 _undefined = object ()
 
@@ -962,8 +963,8 @@ class CT_TK_mixin :
             value = default
         elif separator is not None :
             value = tuple (filter ( None
-                                  , map ( lambda a : string.strip (a)
-                                        , string.split (value, separator)
+                                  , map ( lambda a : a.strip ()
+                                        , value.split (separator)
                                         )
                                   )
                           )
@@ -1224,7 +1225,7 @@ class CT_TK_mixin :
 class C_Frame_ (CT_TK_mixin, Frame) :
     def __init__ (self, master = None, name = None, class_ = Frame, ** kw) :
         if name :
-            name = string.lower (name)
+            name = name.lower   ()
             name = name.replace (".", "_")
         self.name = name
         Frame.__init__ (self, master, name = name, class_ = class_)
@@ -1346,7 +1347,7 @@ class C_Text (C_Frame) :
         result = "break"
         if key in ("Control_L", "Control_R") : key = "Control"
         if (  (   self.last_key == "Control"
-              and string.lower (key) in ("c", "o", "w", "s")
+              and key.lower () in ("c", "o", "w", "s")
               )
            or (key in ( "Control", "Next", "Prior"
                       , "Up", "Down", "Home", "End", "Left", "Right"
@@ -2115,7 +2116,7 @@ class C_Button (CT_TK_mixin, Button) :
 
     def __init__ (self, master = None, name = None, ** kw) :
         self._set_options ( kw
-                          , name      = string.lower (name)
+                          , name      = name.lower ()
                           , takefocus = 0
                           , text      = name
                           )
@@ -2224,7 +2225,7 @@ class Buttongroup (CT_TK_mixin) :
                 raise
             except :
                 msg = cmd.__doc__
-            msg = string.strip (msg)
+            msg = msg.strip ()
             if   self.balloon and (state == NORMAL or not button._is_text) :
                 if button._is_text :
                     b_msg = msg
@@ -2511,7 +2512,7 @@ class Balloon (CT_TK_mixin, Toplevel) :
                  , name     = None
                  , arrow    = 1
                  ) :
-        if name : name = string.lower (name)
+        if name : name = name.lower ()
         Toplevel.__init__     ( self, master
                               , class_      = self.widget_class
                               , name        = name
@@ -2641,7 +2642,7 @@ class C_Listbox (C_Frame) :
         if item :
             ### `item' should be list of `int',
             ### but Tkinter 1.63 returns strings
-            try              : item = map (string.atoi, item)
+            try              : item = map (int, item)
             except TypeError : pass
         return item or ()
     # end def indices
@@ -3549,7 +3550,7 @@ class Notebook (C_Frame) :
     def new_page (self, name) :
         """Add a page named `name' to the notebook."""
         self.page   [name] = page = Frame \
-            (self.book (), name = string.lower (name))
+            (self.book (), name = name.lower ())
         self.p_name [page] = name
         if not self.pending :
             self.select (page)
@@ -4888,11 +4889,8 @@ class Listdropentry_Extended (Listdropentry_) :
     def select (self, i, event = None) :
         if i is not None and self.list :
             selection = self.scroll_box.indices ()
-            value     = string.join ( map ( lambda i, l = self.list : `l [i]`
-                                          , selection
-                                          )
-                                    , ", "
-                                    )
+            l         = self.list
+            value     = ", ".join (repr (l [i]) for i in selection)
             if value :
                 self.set   ( "(%s%s)"
                            % (value, ("", ", ") [len (selection) == 1])
@@ -6170,7 +6168,7 @@ class C_Menu (CT_TK_mixin, Menu) :
 
     def __init__ (self, master = None, help = None, balloon = None, ** kw) :
         if kw.has_key ("name") :
-            kw ["name"] = string.lower (kw ["name"])
+            kw ["name"] = kw ["name"].lower ()
         apply (Menu.__init__, (self, master), kw)
         self.help_widget         = help
         self.balloon             = balloon
@@ -6200,7 +6198,7 @@ class C_Menu (CT_TK_mixin, Menu) :
             self.bind ("<Unmap>",        self.deactivate_help)
         ### the following hacks around a bug in Tkinter 1.63 which doesn't
         ### correctly handle menus configured as menubar
-        hacked_name = string.replace (str (self), ".", "#")
+        hacked_name = str (self).replace (".", "#")
         self.master.children [hacked_name] = self
     # end def __init__
 
@@ -6279,7 +6277,7 @@ class C_Menu (CT_TK_mixin, Menu) :
     # end def _handle_shortcut
 
     def _add_pending_short_cut (self, short_cut, label) :
-        short_cut = string.lower (short_cut)
+        short_cut = short_cut.lower ()
         if not self._pending_short_cuts.has_key (short_cut) :
             self._pending_short_cuts [short_cut] = []
         self._pending_short_cuts [short_cut].append (label)
@@ -6296,22 +6294,17 @@ class C_Menu (CT_TK_mixin, Menu) :
         for sc, labels in items :
             del self._pending_short_cuts [sc]
             for label in labels :
-                self._set_auto_short_cut ( sc, label
-                                         , string.index
-                                               (string.lower (label), sc)
-                                         )
+                self._set_auto_short_cut (sc, label, label.lower ().index (sc))
         for sc, label in self._short_map.items () :
             if self.type (label) in ("checkbutton", "radiobutton") :
                 self.bind ("<Key %s>" % sc, self._toggle_button)
                 if ("a" <= sc <= "z") :
-                    self.bind ( "<Key %s>" % string.upper (sc)
-                              , self._toggle_button
-                              )
+                    self.bind ("<Key %s>" % sc.upper (), self._toggle_button)
     # end def set_auto_short_cuts
 
     def _toggle_button (self, event) :
         ### toggle checkbutton or radiobutton without unposting the menu
-        sc = string.lower (event.keysym)
+        sc = event.keysym.lower ()
         if self._short_map.has_key (sc) :
             self.invoke (self._short_map [sc])
             return "break"
@@ -6325,11 +6318,11 @@ class C_Menu (CT_TK_mixin, Menu) :
     # end def _set_auto_short_cut
 
     def _letter_shortcut (self, label, sc, i) :
-        sc = string.lower (sc)
+        sc = sc.lower ()
         while not ("a" <= sc <= "z") :
             i = i + 1
             if i > len (label) : return None, None
-            sc = string.lower (label [i])
+            sc = label [i].lower ()
         return sc, i
     # end def _letter_shortcut
 
@@ -6337,7 +6330,7 @@ class C_Menu (CT_TK_mixin, Menu) :
         sc, i = self._letter_shortcut (label, sc, i)
         if sc and self._short_map.has_key (sc) :
             for i in range (i, len (label)) :
-                sc = string.lower (label [i])
+                sc = label [i].lower ()
                 if not ("a" <= sc <= "z")           : continue
                 if not self._short_map.has_key (sc) : return sc, i
             return None, None
@@ -6522,7 +6515,7 @@ class Dirname_Entry (Filename_Entry) :
         old = self.get ()
         if old :
             if sos.altsep :
-                old = string.replace (old, sos.altsep, sos.sep)
+                old = old.replace (sos.altsep, sos.sep)
             if not old.endswith (sos.sep) :
                 old += sos.sep
             path = old
@@ -6653,8 +6646,8 @@ class Editor_Entry (C_Entry) :
 
     def close_editor (self, event = None) :
         if self.dropped :
-            new = string.strip        (self.edit_box.get (START, END))
-            self.set                  (new)
+            new = self.edit_box.get (START, END).strip ()
+            self.set (new)
             return self.cancel_editor ()
         return "break"
     # end def close_editor
@@ -6700,7 +6693,7 @@ class C_Toplevel (CT_TK_mixin, Toplevel) :
         , destroy_cmd = None, title = None, state_mgr = None, ** kw
         ) :
         if name :
-            name = string.lower (name)
+            name = name.lower ()
         self.name          = name
         self._sname        = title or name
         self.close_cmd     = close_cmd   or self.withdraw
