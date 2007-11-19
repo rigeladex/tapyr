@@ -454,7 +454,7 @@
 #    14-May-2007 (MZO) consistent mouse wheel scroll in `Listbox_Tuple_` added
 #    02-Aug-2007 (CED) Coding guidelines
 #    13-Sep-2007 (MZO) [24618] set toplevel icon
-#    19-Nov-2007 (CT)  `anchor` for `Balloon.body` set to `LEFT`
+#    19-Nov-2007 (CT)  `Balloon.body`: added `anchor = W, justify = LEFT`
 #    19-Nov-2007 (CT)  Imports corrected
 #    19-Nov-2007 (CT)  `string` functions replaced by `str` methods
 #    ««revision-date»»···
@@ -2528,13 +2528,20 @@ class Balloon (CT_TK_mixin, Toplevel) :
         self.x = self.y = 0
         self.pending    = None
         frame           = Frame (self,  name = "top", borderwidth = 2)
-        self.body       = Label (frame, name = "text", anchor = LEFT)
+        self.body       = Label \
+            ( frame
+            , anchor  = W
+            , justify = LEFT
+            , name    = "text"
+            )
         frame.pack        (fill = X)
         self.body.pack    (side = LEFT, fill = X, padx = 1, pady = 1)
         if arrow :
-            arrow       = Label ( frame, anchor  = NW
-                                , bitmap         = bitmap_mgr ["arrow"]
-                                )
+            arrow       = Label \
+                ( frame
+                , anchor  = NW
+                , bitmap  = bitmap_mgr ["arrow"]
+                )
             arrow.pack    (side = LEFT, fill = Y, before = self.body)
         if self.instance is None :
             self.__class__.instance = self
