@@ -34,6 +34,7 @@
 #                     values for `sep`)
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    20-Nov-2007 (MG)  Imports fixed
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,7 @@ import _TFL._Meta.M_Class
 import _TFL._SDG
 import _TFL._SDG.Formatter
 
-from   Regexp                          import *
+from   _TFL.Regexp                     import *
 
 _indent_pat = Regexp (r">*")
 

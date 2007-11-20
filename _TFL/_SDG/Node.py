@@ -72,6 +72,7 @@
 #    08-Nov-2006 (PGO) `NO_List` added that doesn't check for dups
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    20-Nov-2007 (MG)  Imports fixed
 #    ««revision-date»»···
 #--
 
@@ -386,7 +387,7 @@ import _TFL.NO_List
 import _TFL._SDG
 import _TFL._SDG.M_Node
 
-from   predicate         import *
+from   _TFL.predicate    import *
 import sys
 
 class Invalid_Node (StandardError) :

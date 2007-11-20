@@ -101,6 +101,7 @@
 #    30-Aug-2005 (CT) Use `split_hst` instead of home-grown code
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    20-Nov-2007 (MG)  Imports fixed
 #    ««revision-date»»···
 #--
 
@@ -111,7 +112,7 @@ import _TFL._Meta.Object
 import _TFL._SDG
 import _TFL.Generators
 
-from   Record             import Record
+from   _TFL.Record        import Record
 from   _TFL.predicate     import relax, split_hst
 from   _TFL.Regexp        import *
 

@@ -33,6 +33,7 @@
 #     5-Sep-2005 (CT) `__init__` removed
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    20-Nov-2007 (MG)  Imports fixed
 #    ««revision-date»»···
 #--
 
@@ -41,8 +42,6 @@
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Element
 import _TFL._SDG._XML.External_Id
-
-from   Filename               import Filename
 
 class Doctype (TFL.SDG.XML.Element) :
     """Model the doctype declaration of a XML document

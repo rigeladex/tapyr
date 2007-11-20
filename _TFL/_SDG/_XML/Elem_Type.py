@@ -33,6 +33,7 @@
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    20-Nov-2007 (MG)  Imports fixed
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ from   _TFL                   import TFL
 import _TFL._SDG._XML.Element
 import _TFL.Caller
 
-from   predicate              import *
+from   _TFL.predicate         import *
 
 def Elem_Type (elem_type, bases = None, front_args = (), rest_args = None, ** attributes) :
     """Return a new subclass of XML.Element"""
