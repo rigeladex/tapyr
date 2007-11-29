@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -35,21 +35,17 @@
 #     9-Sep-2005 (PGO) `_attr_values' modifies `textwrap`s word wrapping
 #    20-Sep-2005 (CT)  `break_long_words = False` passed to
 #                      `textwrap.TextWrapper`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    20-Nov-2007 (MG)  Imports fixed
+#    29-Nov-2007 (CT)  `_attr_values` changed to not use `textwrap` (quoted
+#                      values should *not* be wrapped)
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL              import TFL
 import _TFL._SDG._XML
 import _TFL._SDG.Node
 
 from   _TFL.Regexp       import *
-
-import textwrap
 
 class _XML_Node_ (TFL.SDG.Node) :
     """Model a node of a XML document"""
@@ -101,19 +97,22 @@ class _XML_Node_ (TFL.SDG.Node) :
     # end def _attr_iter
 
     def _attr_values (self, * args, ** kw) :
-        attr_values = " ".join (self._attr_iter ())
-        if attr_values :
-            ow      = kw ["output_width"]
-            ia      = kw ["indent_anchor"]
-            ht      = kw ["ht_width"]
-            width   = max (ow - ia - ht - 4, 4)
-            wrapper = textwrap.TextWrapper \
-                ( width            = width
-                , break_long_words = False
-                )
-            wrapper.wordsep_re = self._wordsep_pat
-            for l in wrapper.wrap (attr_values) :
-                yield l.strip ()
+        ow        = kw ["output_width"]
+        ia        = kw ["indent_anchor"]
+        ht        = kw ["ht_width"]
+        max_width = max (ow - ia - ht - 4, 4)
+        pieces    = []
+        width     = 0
+        for attr_value in self._attr_iter () :
+            attr_len = len (attr_value)
+            if pieces and (width + attr_len) > max_width :
+                yield " ".join (pieces)
+                pieces = []
+                width  = 0
+            width += attr_len + bool (pieces)
+            pieces.append (attr_value)
+        if pieces :
+            yield " ".join (pieces)
     # end def _attr_values
 
     def _checked_xml_name (self, value) :
