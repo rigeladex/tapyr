@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -35,12 +35,9 @@
 #     5-Sep-2005 (CT) Doctest `svg` added
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
 #    20-Sep-2005 (CT) Doctest with over-long attributes added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Nov-2007 (CT) Another doctest with over-long attributes added
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                   import TFL
 import _TFL._SDG._XML.Comment
@@ -122,6 +119,27 @@ class Document (TFL.SDG.XML.Node) :
                  xsi:schemaLocation="http://www.asam.net/xml/fbx/all/fibex4multiplatform.xsd"
        >
        </fx:FIBEX>
+
+       ### Test for linebreaking in/between attribute values
+       >>> Elem_Type = TFL.SDG.XML.Elem_Type
+       >>> root_elem = Elem_Type ("foo", xmlns = "http://foo/bar")
+       >>> elem  = Elem_Type ("bar", baz1 = None, baz2 = None, baz3 = None)
+       >>> root  = root_elem ()
+       >>> child = elem ( baz1 = "This really is the value of baz1"
+       ...     , baz2 = "This really is the value of baz2"
+       ...     , baz3 = "This really is the value of baz3"
+       ...     )
+       >>> root.add (child)
+       >>> d = Document (root)
+       >>> d.write_to_xml_stream ()
+       <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+       <foo xmlns="http://foo/bar">
+         <bar baz1="This really is the value of baz1"
+              baz2="This really is the value of baz2"
+              baz3="This really is the value of baz3"
+         >
+         </bar>
+       </foo>
     """
 
     front_args           = ("root_element", )

@@ -57,7 +57,7 @@
 #    11-Apr-2007 (CT)  `union` simplified by using `itertools.chain`
 #    11-Apr-2007 (CT)  `_difference_iter` changed to skip empty intervals of
 #                      `other`
-#    23-Jul-2007 (CED) Activated absolute_import
+#     2-Aug-2007 (CED) Property `length` added
 #    ««revision-date»»···
 #--
 
