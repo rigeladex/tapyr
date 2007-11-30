@@ -20,18 +20,18 @@
 #
 #++
 # Name
-#    TGL.Angle
+#    TFL.Angle
 #
 # Purpose
 #    Model angles
 #
 # Revision Dates
 #    12-Nov-2007 (CT) Creation
+#    30-Nov-2007 (CT) Moved to TFL
 #    ««revision-date»»···
 #--
 
 from   _TFL                     import TFL
-from   _TGL                     import TGL
 
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL._Meta.Object
@@ -219,5 +219,5 @@ class Angle_R (_Angle_) :
 # end class Angle_R
 
 if __name__ == "__main__" :
-    TGL._Export ("*")
-### __END__ TGL.Angle
+    TFL._Export ("*", "_Angle_")
+### __END__ TFL.Angle

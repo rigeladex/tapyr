@@ -32,12 +32,11 @@
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
-from   _TGL                     import TGL
 
 import _CAL._Sky
 import _TFL._Meta.Object
 
-from   _TGL.Angle     import Angle_D, Angle_R
+from   _TFL.Angle               import Angle_D, Angle_R
 
 class Location (TFL.Meta.Object) :
     """Model terrestrial location of observer."""

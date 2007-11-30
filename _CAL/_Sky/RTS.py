@@ -51,7 +51,7 @@ import _TFL.Accessor
 import _TGL._DRA.Interpolator
 
 from   _TFL.predicate import rounded_to
-from   _TGL.Angle     import Angle_D, Angle_R
+from   _TFL.Angle     import Angle_D, Angle_R
 
 class RTS (TFL.Meta.Object) :
     """Model behavior of celestial body for a single day at a specific

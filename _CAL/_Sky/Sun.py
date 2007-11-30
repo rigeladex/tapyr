@@ -41,15 +41,14 @@
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
-from   _TGL                     import TGL
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Angle               import Angle_D, Angle_R
 
 import _CAL._Sky.Location
 import _CAL._Sky.RTS
 import _TFL._Meta.Object
 
-from   _TGL.Angle     import Angle_D, Angle_R
 
 class Sun (TFL.Meta.Object) :
     """Model behavior of sun for a single day.

@@ -46,7 +46,7 @@ from   _CAL                  import CAL
 
 from   _TFL._TKT._Tk.CTK     import *
 from   _TFL.predicate        import pairwise
-from   _TGL.Angle            import Angle_D, Angle_R
+from   _TFL.Angle            import Angle_D, Angle_R
 
 import _CAL.Date
 import _CAL.Time

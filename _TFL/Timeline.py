@@ -80,12 +80,10 @@
 #                      code
 #    17-Apr-2007 (CT)  `TLS_Periodic.prepare_cut_somewhere` added
 #    14-Jun-2007 (CT)  `reset` changed to increment `_sid`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    30-Nov-2007 (CT)  `prepare_cut_somewhere` changed to explicitly check
+#                      for empty `generations` (improve traceback information)
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                  import TFL
 import _TFL.Interval_Set
@@ -225,6 +223,11 @@ class TLS_Periodic (TFL.Meta.Object) :
     def prepare_cut_somewhere (self, size) :
         result = self.to_cut = []
         for g in self.generations :
+            if not g :
+                raise ValueError, \
+                    ( "Elements of self.generations %s must not be empty, %s"
+                    % (self.generations, size)
+                    )
             p = max (g)
             if p.parents :
                 assert len (p.parents) == 1
