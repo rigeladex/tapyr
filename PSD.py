@@ -33,6 +33,8 @@
 #    28-Nov-2006 (CT) `_acpi_pattern` adapted to change in `acpitool`s output
 #     9-Sep-2007 (CT) Display ` Full` instead of `Charged`
 #    17-Nov-2007 (CT) `Time_Entry` removed from call to `Toplevel`
+#    24-Nov-2007 (CT) `ACPI_Updater.__call__` changed to use a treshold of
+#                     `minuntes < 45` instead of `percent < 40` for `low_color`
 #    ««revision-date»»···
 #--
 
@@ -187,7 +189,7 @@ class ACPI_Updater (TFL.Meta.Object) :
             if ac_status == "on" :
                 color = self.online_color
             else :
-                if percent < 40 :
+                if minutes < 45 :
                     color = self.low_color
                 if percent <= 5 :
                     color = self.alarm_color

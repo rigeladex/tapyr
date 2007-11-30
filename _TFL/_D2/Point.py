@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,17 +36,15 @@
 #    24-Mar-2003 (CT) `__rdiv__` removed
 #     5-Apr-2005 (CT) `import _TFL._D2.Rect` added to doctest of `R_Point_R`
 #     4-Jun-2005 (CT) `__getitem__` simplified
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Nov-2007 (CT) Doctest of `R_Point_R` corrected
+#    29-Nov-2007 (CT) Use `sum` instead of `reduce/operator.add`
+#    29-Nov-2007 (CT) Use `@property` instead of `__getattr__`
 #    ««revision-date»»···
 #--
-
-
 
 from    _TFL     import TFL
 from    _TFL._D2 import D2
 import  _TFL._Meta.Object
-import  operator
 
 class _Point_ (TFL.Meta.Object) :
     """Base class for points in 2D space."""
@@ -55,6 +53,11 @@ class _Point_ (TFL.Meta.Object) :
         """Returns `x' for `index == 0' and `y' for `index == 1'"""
         return (self.x, self.y) [index]
     # end def __getitem__
+
+    def __iter__ (self) :
+        yield self.x
+        yield self.y
+    # end def __iter__
 
     def __len__ (self) :
         return 2
@@ -152,23 +155,25 @@ class _R_Point_ (_Point_) :
         self._scale  = scale  or Point (1, 1)
     # end def __init__
 
-    def __getattr__ (self, name) :
-        if name == "x" :
-            return (self._ref_point.x + self._offset.x) * self._scale.x
-        elif name == "y" :
-            return (self._ref_point.y + self._offset.y) * self._scale.y
-        raise AttributeError
-    # end def __getattr__
+    def scale (self, right) :
+        self._scale.scale (right)
+        return self
+    # end def scale
 
     def shift (self, right) :
         self._offset.shift (right)
         return self
     # end def shift
 
-    def scale (self, right) :
-        self._scale.scale (right)
-        return self
-    # end def scale
+    @property
+    def x (self) :
+        return (self._ref_point.x + self._offset.x) * self._scale.x
+    # end def x
+
+    @property
+    def y (self) :
+        return (self._ref_point.y + self._offset.y) * self._scale.y
+    # end def y
 
     def _reference (self) :
         raise NotImplementedError
@@ -263,11 +268,10 @@ class R_Point_L (_R_Point_) :
         return self._ref_line, self._shift
     # end def _reference
 
-    def __getattr__ (self, name) :
-        if name == "_ref_point" :
-            return self._ref_line.point (self._shift)
-        return self.__super.__getattr__ (name)
-    # end def __getattr__
+    @property
+    def _ref_point (self) :
+        return self._ref_line.point (self._shift)
+    # end def _ref_point
 
 # end class R_Point_L
 
@@ -275,14 +279,14 @@ class R_Point_R (_R_Point_) :
     """Point positioned relative to a rectangle.
 
        >>> import _TFL._D2.Rect
-       >>> r = D2.Rect   (Point (0, 10), Point (20, 0))
+       >>> r = D2.Rect   (Point (0, 10), Point (20, 10))
        >>> p = R_Point_R (r, D2.Rect.Center_Top, Point (0, 2))
        >>> print r, p
-       ((0, 10), (20.0, 10.0)) (10.0, 12.0)
+       ((0, 10), (20, 10)) (10.0, 12.0)
        >>> r.shift (Point (5.0, 5.0))
-       Rect ((5.0, 15.0), (25.0, 15.0))
+       Rect ((5.0, 15.0), (20, 10))
        >>> print r, p
-       ((5.0, 15.0), (25.0, 15.0)) (15.0, 17.0)
+       ((5.0, 15.0), (20, 10)) (15.0, 17.0)
     """
 
     def __init__ \
@@ -296,11 +300,10 @@ class R_Point_R (_R_Point_) :
         return self._ref_rectangle, self._rect_point
     # end def _reference
 
-    def __getattr__ (self, name) :
-        if name == "_ref_point" :
-            return self._ref_rectangle.point (self._rect_point)
-        return self.__super.__getattr__ (name)
-    # end def __getattr__
+    @property
+    def _ref_point (self) :
+        return self._ref_rectangle.point (self._rect_point)
+    # end def _ref_point
 
 # end class R_Point_R
 
@@ -336,26 +339,17 @@ class R_Point_nP (_R_Point_) :
         return (self._ref_points, self._x_weights, self._y_weights)
     # end def _reference
 
-    def __getattr__ (self, name) :
-        if name == "_ref_point" :
-            return self._calc_ref_point ()
-        return self.__super.__getattr__ (name)
-    # end def __getattr__
-
-    def _calc_ref_point (self) :
+    @property
+    def _ref_point (self) :
         return Point \
-            ( reduce ( operator.add
-                     , [ (p.x * w) for (p, w)
-                         in zip (self._ref_points, self._x_weights)
-                       ]
-                     )
-            , reduce ( operator.add
-                     , [ (p.y * w) for (p, w)
-                         in zip (self._ref_points, self._y_weights)
-                       ]
-                     )
+            ( sum (   (p.x * w)
+                  for (p, w) in zip (self._ref_points, self._x_weights)
+                  )
+            , sum (   (p.y * w)
+                  for (p, w) in zip (self._ref_points, self._y_weights)
+                  )
             )
-    # end def _calc_ref_point
+    # end def _ref_point
 
 # end class R_Point_nP
 
@@ -367,4 +361,4 @@ Pn = R_Point_nP
 
 if __name__ != "__main__" :
     D2._Export ("*", "P", "Pp", "Pl", "Pr", "Pn")
-### __END__ Point
+### __END__ TFL.D2.Point

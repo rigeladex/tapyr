@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,12 +31,8 @@
 #    11-Jun-2003 (CT) s/!= None/is not None/
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
 #     4-Jun-2005 (CT) `str` added to show `size` instead of `bottom_right`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from    _TFL           import TFL
 from    _TFL._D2       import D2
