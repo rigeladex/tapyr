@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -38,22 +38,20 @@
 #    16-Nov-2004 (MG)  Multidimension array support added
 #    16-Sep-2005 (MG)  Changed to support `fmt` again
 #    19-Oct-2006 (CED) Length check added
-#    23-Jul-2007 (CED) Activated absolute_import
 #    31-Jul-2007 (MG)  Add description to `h_format`
-#    06-Aug-2007 (CED) Future import removed again
 #    18-Oct-2007 (MZO) [25170] `init_comments` added
+#     6-Dec-2007 (CT) Imports fixed
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Expression
+import _TFL._SDG._C.Struct
 import _TFL._SDG._C.Type
 import _TFL._SDG._C.Var
 
-from   predicate         import un_nested
+from   _TFL.predicate    import un_nested
 
 class Array (TFL.SDG.C._Var_) :
     """C array declaration"""

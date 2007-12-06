@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -38,17 +38,15 @@
 #    23-Feb-2005 (CED) `apidoc_tex_format` defined
 #    13-Jul-2005 (MG)  Parameter `type_name_length` added and used in
 #                      `h_format`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     6-Dec-2007 (CT) Imports fixed
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL              import TFL
 import _TFL._SDG._C._Decl_
 import _TFL._SDG._C.Expression
 import _TFL._SDG._C.Initializer
+import _TFL._SDG._C.Struct
 import _TFL._SDG._C.Type
 
 class _Var_ ( TFL.SDG.C.Maybe_Const
