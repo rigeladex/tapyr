@@ -34,6 +34,7 @@
 #    13-Sep-2005 (MG) Dummy import's added
 #    21-Jan-2006 (MG) Imports fixed
 #     7-Nov-2007 (CT) `UI_State._real_name` added
+#    14-Dec-2007 (MG) Support for output redirection suppression added
 #    ««revision-date»»···
 #--
 
@@ -146,7 +147,8 @@ class _TGL_UI_Application_ (TGL.UI.Mixin) :
         self.context_menus = tkt._setup_context_menu ()
         self.event_binders = tkt._setup_event_binder ()
         tkt._setup_geometry                          ()
-        tkt._setup_stdout_redirect                   ()
+        if not getattr (cmd, "Suppress_Redirect", False) :
+            tkt._setup_stdout_redirect               ()
         self._setup_cmd_mgr                          ()
         self._setup_application                      ()
         self.set_title                               ()

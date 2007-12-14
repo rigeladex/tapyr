@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #     2-Jul-2006 (MG)  Unnecessary imports removed
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
+#    14-Dec-2007 (MG)  Import changed
 #    ««revision-date»»···
 #--
 
@@ -62,9 +63,9 @@
 []
 """
 
-from    _TFL                import TFL
+from   _TFL                import TFL
 import _TFL._Meta.M_Class
-from    predicate           import sorted
+from   _TFL.predicate      import sorted
 
 class M_Auto_Combine_Lists (TFL.Meta._M_Type_) :
     """Meta class for auto-combining the list-attributes mentioned in

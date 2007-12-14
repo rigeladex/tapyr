@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2007 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -37,10 +37,11 @@
 #    31-Jul-2005 (MG) New properties `paragraph_background*` added and used
 #                     in `Styler` (requires new GTK+)
 #     5-Sep-2005 (MG) `justify` style corrected
+#    14-Dec-2007 (MG) Import fixed
 #    ««revision-date»»···
 #--
 
-from    predicate             import dict_from_list
+from   _TFL.predicate         import dict_from_list
 from   _TGL                   import TGL
 import _TGL._TKT._GTK.Object
 import _TGL._TKT._GTK.Styler

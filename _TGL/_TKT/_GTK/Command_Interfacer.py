@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2007 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #    10-Jun-2005 (MG) `Event_Binder` corrected
 #    27-Jul-2005 (MG) `CI_Event_Binder.add_widget` type corrected
 #    12-Aug-2005 (MG) `CI_Event_Binder.__init__`: allow ** kw
+#    14-Dec-2007 (MG) Name added to groupds and seperator
 #    ««revision-date»»···
 #--
 from   _TFL.predicate       import dict_from_list
@@ -196,7 +197,7 @@ class _CI_Item_Mixin_ (_CI_) :
 
     ### separator specific methods
     def add_separator (self, name = None, index = None, delta = 0) :
-        item =  self.Separator_Class ()
+        item =  self.Separator_Class (name = name)
         return self._insert_item     (index, delta, item)
     # end def add_separator
 
@@ -228,7 +229,7 @@ class CI_Button_Box (_CI_Item_Mixin_, GTK.H_Button_Box) :
     """Implement a button box command interfacer for GTK"""
 
     def _new_group (self, name, icon = None) :
-        item              = CI_Button_Box   (AC = self.AC)
+        item              = CI_Button_Box   (AC = self.AC, name = name)
         frame             = self.TNS.Frame  (AC = self.AC, name = name)
         frame.shadow_type = self.TNS.SHADOW_OUT
         frame.add (item)
@@ -415,11 +416,13 @@ class _CI_Menu_Mixin_ (_CI_Item_Mixin_) :
                 ( label     = name
                 , icon      = icon
                 , AC        = AC
+                , name      = name
                 )
         else :
             item            = TNS.Menu_Item \
                 ( label     = name
                 , AC        = AC
+                , name      = name
                 )
         if name == "Help" :
             item.right_justified = True
@@ -802,6 +805,7 @@ class _CI_Toolbar_Group_ (_CI_Toolbar_Mixin_) :
             ( self.TNS.Menu_Tool_Button
             , label      = name
             , icon       = icon
+            , name       = name
             )
         item.menu = menu = CI_Menu \
             ( AC         = self.AC

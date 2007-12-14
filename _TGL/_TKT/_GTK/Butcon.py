@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2007 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -29,10 +29,11 @@
 #     3-Apr-2005 (MG) Creation
 #     5-Apr-2005 (MG) Use `png` instead of `xbm` images
 #     5-Apr-2005 (MG) Adapted to the changes of the `Image_Manager`
+#    14-Dec-2007 (MG) Import fixed
 #    ««revision-date»»···
 #--
 
-from    predicate               import dict_from_list
+from   _TFL.predicate           import dict_from_list
 from   _TGL                     import TGL
 import _TGL._TKT
 import _TGL._TKT._GTK.Event_Box ### do we realy need the event box????

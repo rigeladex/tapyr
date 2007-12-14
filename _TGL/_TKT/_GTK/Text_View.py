@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2007 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -29,10 +29,11 @@
 #    28-Mar-2005 (MG) Automated creation
 #     2-Apr-2005 (MG) `__init__` added
 #     5-Apr-2005 (MG) `Styler` and `background` property added
+#    14-Dec-2007 (MG) Import fixed
 #    ««revision-date»»···
 #--
 
-from    predicate                import dict_from_list
+from   _TFL.predicate            import dict_from_list
 from   _TGL                      import TGL
 import _TGL._TKT._GTK.Container
 import _TGL._TKT._GTK.Styler

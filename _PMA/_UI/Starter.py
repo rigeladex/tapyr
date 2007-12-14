@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #    28-Dec-2005 (MG) Default `interface` changed to `GTK`
 #    23-Jan-2006 (MG) `HILD` interface added
 #    23-Jan-2006 (MG) `implicit_imports` fixed
+#    14-Dec-2007 (MG) `Suppress_Redirect` option added
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,8 @@ class Starter (PMA.UI.Mixin) :
             """Script(s) to run after mailboxes are loaded.
                The same rules apply as for -prescripts.
             """
+        , "-Suppress_Redirect:B?"
+            """Suppress the redirection of stdout/stderr to ease debugging"""
         , "-verbose:I?"
             "Higher levels of verbosity generate more detailed output."
         , "-Version?Show information about product version."

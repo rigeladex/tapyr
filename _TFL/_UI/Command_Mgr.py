@@ -184,8 +184,6 @@
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL           import TFL
 import _TFL.NO_List
 import _TFL.Record
