@@ -57,7 +57,7 @@ import re
 user_style = "default"
 
 register = template.Library ()
-import common.template.style as Style
+import _DJO.template.style as Style
 
 class _Node_ (template.Node) :
     """Simplifies the subclassing of template.Node"""
