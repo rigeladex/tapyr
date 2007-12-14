@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,12 +55,8 @@
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    29-Jul-2005 (CT) Optional argument `create_dir` added to `tempfile_name`
 #    30-Aug-2005 (CT) Use `in` or `startswith` instead of `find`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 from   os   import *
