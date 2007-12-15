@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    29-May-2007 (MG) Creation
+#    15-Dec-2007 (MG) Missing import added
 #    ««revision-date»»···
 #--
 #
@@ -75,5 +76,6 @@ class Paginatior (ObjectPaginator) :
 # end class Paginatior
 
 if __name__ != "__main__" :
+    from _DJO import DJO
     DJO._Export ("*")
 ### __END__ DJO.Paginatior

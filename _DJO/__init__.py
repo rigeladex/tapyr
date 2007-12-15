@@ -27,13 +27,22 @@
 #
 # Revision Dates
 #    14-Dec-2007 (CT) Creation
+#    15-Dec-2007 (MG) Creation of `Package_Namespace` guarded to allow usage
+#                     of the package without `TFL`
 #    ««revision-date»»···
 #--
 
-from   _TFL.Package_Namespace import Package_Namespace
+try :
+    from   _TFL.Package_Namespace import Package_Namespace
 
-DJO = Package_Namespace ()
+    DJO = Package_Namespace ()
 
-del Package_Namespace
-
+    del Package_Namespace
+except ImportError :
+    class DJO (object) :
+        @classmethod
+        def _Export (cls, * args) :
+            pass
+        # end def _Export
+    # end class DJO
 ### __END__ DJO.__init__

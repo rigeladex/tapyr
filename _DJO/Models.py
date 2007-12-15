@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Sep-2007 (MGL) Creation
 #    18-Nov-2007 (MG) ` IntegerLimitField` : `get_internal_type` added
+#    15-Dec-2007 (MG) Missing import added
 #    ««revision-date»»···
 #--
 
@@ -114,5 +115,6 @@ class IntegerLimitField (DM.IntegerField) :
 DM.IntegerLimitField = IntegerLimitField
 
 if __name__ != "__main__" :
+    from _DJO import DJO
     DJO._Export ("*")
 ### __END__ DJO.Models
