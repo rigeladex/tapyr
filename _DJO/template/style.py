@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2006-2007 Martin Glueck. All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
+# Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
