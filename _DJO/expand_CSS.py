@@ -27,12 +27,16 @@
 #
 # Revision Dates
 #    14-Dec-2007 (CT) Creation
+#    15-Dec-2007 (MG) `eval_paremeters` factored to support inclueded files
+#    15-Dec-2007 (MG) Fix single `%` to avoid having `%%` in the templates
 #    ««revision-date»»···
 #--
 
 from   _TFL                   import TFL
 from   _TFL.Filename          import Filename
 from   _TFL.Caller            import Scope
+import _TFL.Record
+import  re
 
 def command_spec (arg_array = None) :
     from   _TFL.Command_Line import Command_Line
@@ -48,14 +52,24 @@ def command_spec (arg_array = None) :
         )
 # end def command_spec
 
+def eval_paremeters (filename, pd) :
+    pn = Filename (".parameters", filename)
+    execfile \
+        ( pn.name
+        , dict (R = TFL.Record, include = lambda fn : eval_paremeters (fn, pd))
+        , pd
+        )
+# end def include
+
 def main (cmd) :
+    fix_percent_pat = re.compile ("%([^(])")
     for f in cmd.argv :
-        fn = Filename (f, ".css_template")
-        pn = Filename (".parameters", fn)
-        pd = {}
-        execfile    (pn.name, pd)
-        ct   = open (fn.name).read ()
-        outf = open (Filename (".css", fn).name, "wb")
+        fn    = Filename (f, ".css_template")
+        pd    = {}
+        eval_paremeters (fn, pd)
+        ct    = open (fn.name).read ()
+        ct, _ = fix_percent_pat.subn (lambda m : "%%%s" % (m.group (0), ), ct)
+        outf  = open (Filename (".css", fn).name, "wb")
         outf.write  (ct % Scope (globs = pd, locls = cmd.keywords))
         outf.close  ()
 # end def main
