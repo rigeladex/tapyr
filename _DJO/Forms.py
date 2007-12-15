@@ -33,7 +33,7 @@
 
 from   _DJO                        import DJO
 
-from   common.Models               import _User_Create_Mod_
+from   _DJO.Models                 import _User_Create_Mod_
 
 from   django.utils.datastructures import SortedDict
 from   django.http                 import HttpResponseRedirect
