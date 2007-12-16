@@ -30,6 +30,7 @@
 #    15-Dec-2007 (MG) `eval_paremeters` factored to support inclueded files
 #    15-Dec-2007 (MG) Fix single `%` to avoid having `%%` in the templates
 #    15-Dec-2007 (MG) `watch_directories` added
+#    16-Dec-2007 (MG) Exception handling added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ from   _TFL.Caller            import Scope
 import _TFL.sos               as     os
 import _TFL.Record
 import  re
+import  traceback
 
 try :
     import pyinotify
@@ -63,13 +65,16 @@ def create_css_file (filename, overrides) :
     filename     = Filename (filename, template_extension)
     out_filename = Filename (".css", filename).name
     pd           = {}
-    eval_paremeters (filename, pd)
-    ct    = open         (filename.name).read ()
-    ct, _ = fix_percent_pat.subn (lambda m : "%%%s" % (m.group (0), ), ct)
-    outf  = open  (out_filename, "wb")
-    outf.write    (ct % Scope (globs = pd, locls = overrides))
-    outf.close    ()
-    print "CSS file created `%s`" % (out_filename, )
+    try :
+        eval_paremeters (filename, pd)
+        ct    = open         (filename.name).read ()
+        ct, _ = fix_percent_pat.subn (lambda m : "%%%s" % (m.group (0), ), ct)
+        outf  = open  (out_filename, "wb")
+        outf.write    (ct % Scope (globs = pd, locls = overrides))
+        outf.close    ()
+        print "CSS file created `%s`" % (out_filename, )
+    except :
+        traceback.print_exc ()
     return filename.directory
 # end def create_css_file
 
@@ -79,6 +84,8 @@ def watch_directories (overrides, * directories) :
         pyinotify.EventsCodes.IN_MODIFY | pyinotify.EventsCodes.IN_CREATE
 
     class Event_Prcoessor (pyinotify.ProcessEvent) :
+
+        watched_extensions = set ((template_extension, ))
 
         def process_IN_MODIFY (self, event) :
             self.create_file (event)
@@ -91,8 +98,8 @@ def watch_directories (overrides, * directories) :
         def create_file (self, event) :
             fn = Filename (os.path.join (event.path, event.name))
             ##import pdb; pdb.set_trace ()
-            if (   (fn.ext == template_extension)
-               and not (fn.base.startswith ("."))
+            if (   not (fn.base.startswith ("."))
+               and (fn.ext in self.watched_extensions)
                ) :
                 create_css_file (fn, overrides)
         # end def create_file

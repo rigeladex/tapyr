@@ -179,6 +179,8 @@ def token_parse ( token
                 result [name] = value and value.replace ('"', "")
         if remainig :
             result [remainig] = tuple (values [map_len:])
+    elif remainig :
+        result = { remainig : parameters}
     else :
         result = dict (enumerate (parameters))
     if parser :
@@ -340,6 +342,81 @@ new_block_template_tag \
     , ("decision", )
     , optional = 1
     , remainig = "parameters"
+    )
+
+class Menu_Block_Node (_Node_) :
+
+    def __init__ (self, content, parameters = ()) :
+        self.content                  = content
+        self.link_url, self.match_url = parameters [:2]
+        self.url_parameters           = []
+        self.link_parameters          = {}
+        for p in parameters [2:] :
+            name, value = p.split ("=", 1)
+            self.link_parameters [name.strip ()] = value.strip ('"').strip ()
+    # end def __init__
+
+    def _reverse_url (self, spec) :
+        if spec.startswith ('"') :
+            ### literal url
+            return spec.strip ('"').strip ()
+        args = []
+        kw   = {}
+        if "|" in spec :
+            spec, parameters = spec.split ("|")
+            for p in parameters.split (":") :
+                if "=" in p :
+                    n, v = p.split ("=")
+                    kw [n] = v
+                else :
+                    args.append (p)
+        return reverse (spec, args = args, kwargs = kw)
+    # end def _reverse_url
+
+    def render (self, context) :
+        ## import pdb; pdb.set_trace ()
+        url       = self._reverse_url (self.link_url)
+        match     = self._reverse_url (self.match_url)
+        if match [-1] == "$" :
+            match = match [:-1]
+            exact = True
+        else :
+            exact = False
+        match_len = len (match)
+        path      = context ["request"].path
+        as_link   = True
+        if path [:match_len] == match :
+            as_link     = False
+            if exact and len (path) != match_len :
+                as_link = True
+        result = []
+        attrs  = []
+        for a, v in self.link_parameters.iteritems () :
+            attrs.append ('%s="%s"' % (a, v))
+        if attrs :
+            attrs = " %s" % (" ".join (attrs))
+        else :
+            attrs = ""
+        ### import pdb; pdb.set_trace ()
+        if as_link :
+            result.append ('<a href="%s"%s>' % (url, attrs, ))
+        if as_link :
+            context ["submenu_class"] = "hidden"
+        else :
+            context ["submenu_class"] = ""
+        result.append     (self.content.render (context).strip ())
+        if as_link :
+            result.append ("</a>")
+        ## import pdb; pdb.set_trace ()
+        return "".join (result)
+    # end def render
+
+# end class Menu_Block_Node
+
+new_block_template_tag \
+    ( register, "menublock", Menu_Block_Node
+    , remainig = "parameters"
+    , parser   = True
     )
 
 ### __END__ DJO.templatetags.Tags
