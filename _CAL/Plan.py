@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,16 +38,17 @@
 #    11-Jan-2004 (CT) `holidays_too` added
 #     6-Feb-2004 (CT) Use (y, m, d) tuples instead of strings as dictionary
 #                     keys (for `Y.map`)
+#    17-Dec-2007 (CT) `write_plan` changed to use `Date_Time` instead of
+#                     `Date` to calculate `today`
 #    ««revision-date»»···
 #--
-
-from   __future__            import generators
 
 from   _TFL                  import TFL
 from   _CAL                  import CAL
 from   _CAL.Appointment      import prio_pat, time_pat
 import _CAL.Appointment
 import _CAL.Date
+import _CAL.Date_Time
 import _CAL.Year
 import _TFL._Meta.Object
 
@@ -177,7 +178,7 @@ def read_plan (Y, plan_file_name) :
 # end def read_plan
 
 def write_plan (Y, plan_file_name, replace = 0) :
-    today = CAL.Date ()
+    today = CAL.Date_Time ()
     tail  = today.formatted ("%d.%m.%Y.%H:%M")
     if replace :
         sos.rename (plan_file_name, "%s-%s" % (plan_file_name, tail))

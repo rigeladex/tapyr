@@ -30,6 +30,8 @@
 #    19-Apr-2003 (CT) `time_pat` changed to allow for 1-digit hours, too
 #    19-Apr-2003 (CT) `prio_pat` factored
 #    11-Aug-2007 (CT) Imports corrected
+#    17-Dec-2007 (CT) `time_pat` changed to allow for end-time without
+#                     start-time, too (plus change of `_duration`)
 #    ««revision-date»»···
 #--
 
@@ -41,7 +43,7 @@ from   _TFL.Regexp    import *
 
 time_pat        = Regexp \
     ( r"(?P<time> "
-      r"(?:  (?P<hh_head> \d{1,2}) (?: : (?P<mm_head> \d{2}))? )"
+      r"(?:  (?P<hh_head> \d{1,2}) (?: : (?P<mm_head> \d{2}))? )?"
       r"(?: -(?P<hh_tail> \d{1,2}) (?: : (?P<mm_tail> \d{2}))? )?"
       r")"
     , re.VERBOSE
@@ -75,7 +77,7 @@ class Appointment (TFL.Meta.Object) :
 
     def _duration (self, pat_match) :
         p = pat_match
-        if p.hh_tail is not None :
+        if p.hh_head is not None and p.hh_tail is not None :
             d_h = int (p.hh_tail)      - int (p.hh_head)
             d_m = int (p.mm_tail or 0) - int (p.mm_head or 0)
             return d_h + (d_m / 60.)
