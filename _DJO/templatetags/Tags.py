@@ -42,6 +42,7 @@
 #     3-Dec-2007 (MG) `cond_url:Conditional_URL_Node` tag added
 #    14-Dec-2007 (MG) `_Mode_.iter_render` removed again
 #    14-Dec-2007 (CT) Moved into package DJO
+#    17-Dec-2007 (MG) `Menu_Block_Node` fixed
 #    ««revision-date»»···
 #--
 
@@ -356,7 +357,7 @@ class Menu_Block_Node (_Node_) :
             self.link_parameters [name.strip ()] = value.strip ('"').strip ()
     # end def __init__
 
-    def _reverse_url (self, spec) :
+    def _reverse_url (self, spec, exact = "") :
         if spec.startswith ('"') :
             ### literal url
             return spec.strip ('"').strip ()
@@ -370,13 +371,13 @@ class Menu_Block_Node (_Node_) :
                     kw [n] = v
                 else :
                     args.append (p)
-        return reverse (spec, args = args, kwargs = kw)
+        return reverse (spec, args = args, kwargs = kw) + exact
     # end def _reverse_url
 
     def render (self, context) :
         ## import pdb; pdb.set_trace ()
         url       = self._reverse_url (self.link_url)
-        match     = self._reverse_url (self.match_url)
+        match     = self._reverse_url (self.match_url, "$")
         if match [-1] == "$" :
             match = match [:-1]
             exact = True
