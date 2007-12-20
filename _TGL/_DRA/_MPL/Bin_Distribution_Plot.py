@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,6 +32,8 @@
 #                     to `Bin_Distribution_Plot`
 #    11-Dec-2006 (CT) `Bin_Locator` factored into separate module
 #    13-Dec-2006 (CT) `x_pad` and `y_pad` added
+#    20-Dec-2007 (CT) `zeros` call changed (back) to use `dtype` instead of
+#                     `typecode` (which obviously got lost in matplotlib 0.91)
 #    ««revision-date»»···
 #--
 
@@ -85,8 +87,7 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
 
     def _setup_frequency_map (self, ls, ks, fs) :
         ### No idea why args need to specify `ls, ks` here (instead of `ks,ls`)
-        fm = pylab.zeros ((max (ks) + 1, max (ls) + 1), typecode = "d")
-        #fm = pylab.zeros ((max (ks) + 1, max (ls) + 1), dtype = pylab.double)
+        fm = pylab.zeros ((max (ks) + 1, max (ls) + 1), dtype = float)
         for k, l, f in zip (ks, ls, fs) :
             fm [k, l] = f
         self.fm = ma.masked_where (fm == 0, fm)
