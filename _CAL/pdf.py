@@ -41,6 +41,7 @@
 #     4-Jan-2007 (CT)  Pass `default_to_now = True` to `Date`
 #     6-Jan-2007 (CT)  Options `xo` and `yo` added
 #    11-Aug-2007 (CT) Imports corrected
+#    22-Dec-2007 (CT) Color added
 #    ««revision-date»»···
 #--
 
@@ -69,17 +70,21 @@ _to_ascii  = \
 
 class PDF_Plan (TFL.Meta.Object) :
 
-    inch = INCH = 72
-    cm   = inch / 2.54
-    mm   = 0.1 * cm
+    inch   = INCH = 72
+    cm     = inch / 2.54
+    mm     = 0.1 * cm
 
-    xsiz = 21.0 * cm
-    ysiz = 29.7 * cm
-    xo   = 0.5  * cm
-    yo   = 0.5  * cm
-    ts   = 30
-    lw   = 1.0
-    font = "Helvetica"
+    xsiz   = 21.0 * cm
+    ysiz   = 29.7 * cm
+    xo     = 0.5  * cm
+    yo     = 0.5  * cm
+    ts     = 30
+    lw     = 1.0
+    font   = "Helvetica"
+    blue   = 0.285, 0.668, 0.902
+    gray   = 0.700, 0.700, 0.700
+    dark   = 0.400, 0.400, 0.400
+    black  = 0.000, 0.000, 0.000
 
     def __init__ ( self, Y, filename
                  , first_week = 0, last_week = -1, wpx = 2, wpy = 2
@@ -111,6 +116,7 @@ class PDF_Plan (TFL.Meta.Object) :
         self.pager  = p = self.page_generator (c)
         c.setPageCompression (0)
         c.setLineJoin        (2)
+        c.setFillColorRGB    (* self.gray)
         wpp = wpx * wpy
         for w in self.seq_generator (first_week, last_week, wpp) :
             page = p.next ()
@@ -157,8 +163,9 @@ class PDF_Plan (TFL.Meta.Object) :
         c.line (x, y, x, yl - 1 * cm)
         y = y + 7 * ds
         c.line (x, y, xl, y)
-        c.setFont (font, ts // 2)
-        c.drawString (x  + 0.2 * cm, y + 0.2 * cm, "Week %2.2d" % w.number)
+        c.setFont         (font, ts // 2)
+        c.setFillColorRGB (* self.blue)
+        c.drawString      (x  + 0.2 * cm, y + 0.2 * cm, "Week %2.2d" % w.number)
         if w.mon.month == w.sun.month :
             m_head = w.mon.formatted ("%B %Y")
         else :
@@ -169,6 +176,7 @@ class PDF_Plan (TFL.Meta.Object) :
             m_head = "%s/%s" % \
                 (w.mon.formatted (mon_format), w.sun.formatted ("%b %Y"))
         c.drawRightString (xl - 0.2 * cm, y + 0.2 * cm, m_head)
+        c.setFillColorRGB (* self.gray)
         for d in w.days :
             y -= ds
             self.one_day (c, d, ds, x, xl, y, yl, font, ts, cm, mm)
@@ -189,14 +197,18 @@ class PDF_Plan (TFL.Meta.Object) :
         c.setFont         (font, ts)
         c.drawRightString (xo, y + ds * 0.95 - ts, d.formatted ("%d"))
         c.setFont         (font, ts // 5)
+        c.setFillColorRGB (* self.dark)
         c.drawRightString (xo, y + mm,             d.formatted ("%A"))
+        c.setFillColorRGB (* self.gray)
         lg = self.line_generator (ds, x, xo - 0.15 * (xl - x), y, ts // 5)
         if d.is_holiday :
             lg.next ()
             xo, yo = lg.next ()
-            c.setFont    (font, ts // 2)
-            c.drawString (xo, yo, self._cooked (d.is_holiday) [:20])
-            c.setFont    (font, ts // 5)
+            c.setFont         (font, ts // 2)
+            c.setFillColorRGB (* self.blue)
+            c.drawString      (xo, yo, self._cooked (d.is_holiday) [:20])
+            c.setFont         (font, ts // 5)
+            c.setFillColorRGB (* self.gray)
         for a in getattr (d, "appointments", []) :
             try :
                  xo, yo = lg.next ()
@@ -283,7 +295,7 @@ def _main (cmd) :
 
 """
 export PYTHONPATH=$PYTHONPATH:/swing/private/tanzer/ttt/lib/old/pdfgen
-python pdf.py -year 2007 -landscape -XL 8.95 -YL 16.85 -XO=1.5
+python ~/Y/_CAL/pdf.py -year 2008 -landscape -XL 8.95 -YL 16.85 -XO=1.5
 """
 
 if __name__ == "__main__" :
