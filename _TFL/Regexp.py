@@ -46,11 +46,7 @@
 #    26-Jan-2006 (CT) `max_index` factored
 #     7-Jun-2006 (CT) `Re_Replacer` added
 #    14-Jun-2006 (CT)  `Multi_Re_Replacer` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
-#    10-Sep-2007 (DAL) `Recursive_Re_Replacer` introduced
-#    10-Sep-2007 (DAL) used `practically_infinite` for `max_index`
-#    11-Sep-2007 (DAL) [25718] `Recursive_Re_Replacer` moved to YAGNI
+#    23-Dec-2007 (CT)  `Dict_Replacer` added
 #    ««revision-date»»···
 #--
 
@@ -250,6 +246,33 @@ class Re_Replacer (TFL.Meta.Object) :
     # end def __getattr__
 
 # end class Re_Replacer
+
+class Dict_Replacer (Re_Replacer) :
+    """Replace all keys (which are assumed to be plain strings, not regexpes)
+       of a dictionary with the corresponding values.
+
+       >>> dr = Dict_Replacer ({"--" : "\\endash", "---" : "\\emdash"})
+       >>> dr ("TeX interprets `--` as an en-dash and `---` as an em-dash")
+       'TeX interprets `\\endash` as an en-dash and `\\emdash` as an em-dash'
+    """
+
+    def __init__ (self, __dict = {}, __flags = 0, ** kw) :
+        self._map = map = dict (__dict, ** kw)
+        regexp    = Regexp \
+            ( "|".join
+                ( re.escape (k) for k in sorted
+                    (map.iterkeys (), key = lambda k : (-len (k), k))
+                )
+            , __flags
+            )
+        self.__super.__init__ (regexp, self._replacer, __flags)
+    # end def __init__
+
+    def _replacer (self, match) :
+        return self._map [match.group (0)]
+    # end def _replacer
+
+# end class Dict_Replacer
 
 class Multi_Re_Replacer (TFL.Meta.Object) :
     """Wrap multiple `Re_Replacer` instances and apply them in sequence"""

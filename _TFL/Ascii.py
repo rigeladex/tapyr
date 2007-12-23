@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,15 +32,13 @@
 #     9-Mar-2007 (CT) `_diacrit_map` corrected (`Oe` and `Ue` instead `O`/`U`)
 #     9-Mar-2007 (CT) Optional `translate_table` added to `sanitized_unicode`
 #                     and `sanitized_filename`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    23-Dec-2007 (CT) Use `Re_Replacer` and `Dict_Replacer` instead of
+#                     home-grown code
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL        import TFL
-from   _TFL.Regexp import Regexp, re
+from   _TFL.Regexp import Regexp, Re_Replacer, Dict_Replacer, re
 import unicodedata
 
 _diacrit_map    = \
@@ -53,20 +51,16 @@ _diacrit_map    = \
     , u"ü"      : u"ue"
     }
 
-_diacrit_pat    = Regexp \
-    (u"|".join  (re.escape (x) for x in _diacrit_map.iterkeys ()))
+_diacrit_rep    = Dict_Replacer (_diacrit_map)
 
-_graph_pat      = Regexp \
+_graph_rep      = Re_Replacer \
     ( "(%s)+"
     % "|".join   (re.escape (c) for c in ("^!$%&([{}]) ?`'*+#:;<>|" '"'))
+    , "_"
     )
 
-_non_print_pat  = Regexp \
-    ("|".join   (re.escape (chr (i)) for i in range (0, 32) + [127]))
-
-def _diacrit_sub (match) :
-    return _diacrit_map.get (match.group (0), "")
-# end def _diacrit_sub
+_non_print_rep  = Re_Replacer \
+    ("|".join   (re.escape (chr (i)) for i in range (0, 32) + [127]), "")
 
 def sanitized_unicode (s, translate_table = None) :
     """Return sanitized version of unicode string `s` reduced to
@@ -78,7 +72,7 @@ def sanitized_unicode (s, translate_table = None) :
        >>> sanitized_unicode (u"«ÄÖÜ»", {ord (u"«") : u"<", ord ("»") : u">"})
        '<AeOeUe>'
     """
-    s = _diacrit_pat.sub (_diacrit_sub, s)
+    s = _diacrit_rep (s)
     if translate_table :
         s = s.translate (translate_table)
     return unicodedata.normalize ("NFKD", s).encode ("ascii", "ignore")
@@ -93,8 +87,8 @@ def sanitized_filename (s, translate_table = None) :
        'ueberfluessig_komplexer_und_gefaehrlicher_Filename'
    """
    s = sanitized_unicode  (s.strip (), translate_table)
-   s = _non_print_pat.sub ("",  s)
-   s = _graph_pat.sub     ("_", s)
+   s = _non_print_rep     (s)
+   s = _graph_rep         (s)
    return s
 # end def sanitized_filename
 
