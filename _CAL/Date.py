@@ -57,6 +57,7 @@
 #    11-Nov-2007 (CT) `sidereal_time` added
 #    11-Nov-2007 (CT) `delta_T` added
 #    12-Nov-2007 (CT) `JD` added, coverage of `delta_T` extended
+#    23-Dec-2007 (CT) Command_Line options `-regexp` and `-xformat` added
 #    ««revision-date»»···
 #--
 
@@ -467,7 +468,8 @@ class Date_M (CAL._Mutable_DTW_) :
 if __name__ != "__main__" :
     CAL._Export ("*")
 else :
-    from _TFL.Command_Line import Command_Line
+    from   _TFL.Command_Line import Command_Line
+    from   _TFL.Caller       import Scope
     cmd = Command_Line \
         ( arg_spec    =
               ( "base_date:S=%s" % Date ()
@@ -475,18 +477,38 @@ else :
               )
         , option_spec =
               ( "-delta_to:S?Print `base_date - delta`"
-              , "-format:S=%Y%m%d?Format for date"
+              , "-format:S=%Y%m%d?Format for date (not used for -delta_to)"
               , "-offset:I=0?delta to `base_date` in days"
+              , "-regexp:S?Use regexp to extract date from `base_date`"
+              , "-xformat:S=%(date)s"
+                  "?Format used to format output (not used for -delta_to)"
               )
         , max_args    = 1
         )
-    base_date = Date.from_string (cmd.base_date)
+    ### Usage example for `-regexp` and `-xformat`::
+    ### for f in *.tex; do
+    ###   VCMove $f $(python /swing/python/Date.py -regexp '(?P<prefix> .*)_(?P<date> \d{2}-[A-Za-z][a-z]{2}-\d{4}|\d{8})\.?(?P<ext> .*)' -xformat '%(date)s_%(prefix)s.%(ext)s' $f)
+    ### done
+    if cmd.regexp :
+        regexp = Regexp (cmd.regexp, re.VERBOSE)
+        if regexp.search (cmd.base_date) :
+            base_date   = regexp.date
+            match_dicht = regexp.groupdict ()
+        else :
+            import sys
+            print >> sys.stderr, "`%s` doesn't match for `%s`" % \
+                (cmd.regexp, cmd.base_date)
+            sys.exit (9)
+    else :
+        base_date   = cmd.base_date
+        match_dicht = {}
+    base_date = Date.from_string (base_date)
     if cmd.offset :
         base_date += cmd.offset
     if cmd.delta_to :
         delta_to  = Date.from_string (cmd.delta_to)
         print (base_date - delta_to).days
     else :
-        format = cmd.format
-        print base_date.formatted (format)
+        date = base_date.formatted (cmd.format)
+        print cmd.xformat % Scope (globs = match_dicht, locls = vars ())
 ### __END__ CAL.Date
