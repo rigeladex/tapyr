@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -36,6 +36,7 @@
 #    13-Nov-2007 (CT) `main` added
 #    14-Nov-2007 (CT) `RTS_Sun.On_Day` added (and used in `main`)
 #    14-Nov-2007 (CT) `hh_mm` factored to `CAL.Time`
+#     1-Jan-2008 (CT) `-day_length` and `-transit` added
 #    ««revision-date»»···
 #--
 
@@ -329,11 +330,13 @@ def command_spec (arg_array = None) :
         , option_spec =
             ( "astro_twilight:B?Show astro twilight (-18 degrees below horizon)"
             , "civil_twilight:B?Show civil twilight (-6 degrees below horizon)"
+            , "day_length:B?Show length of day in hours"
             , "latitude:F=48.2333333333?Latitude (north is positive)"
             , "longitude:F=-16.3333333333"
                 "?Longitude (negative is east of Greenwich)"
             , "-nautic_twilight:B"
                 "?Show time of nautic twilight (sun -12 degrees below horizon)"
+            , "-transit:B?Show transit height"
             )
         , arg_array   = arg_array
         )
@@ -344,6 +347,10 @@ def main (cmd) :
     rts  = RTS_Sun.On_Day (date, CAL.Sky.Location (cmd.latitude, cmd.longitude))
     print "Sunrise : %s, transit : %s, sunset : %s" % \
         (rts.rise, rts.transit, rts.set)
+    if cmd.day_length :
+        print "Day length: %02d:%02d" % (rts.set.time - rts.rise.time).hh_mm
+    if cmd.transit :
+        print "Transit height: %6.2f degrees" % (rts.transit.altitude.degrees, )
     if cmd.civil_twilight :
         print "Civil  twilight starts %s, ends %s" % \
             (rts.civil_twilight_start, rts.civil_twilight_finis)

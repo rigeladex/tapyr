@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,8 @@
 #    15-Nov-2007 (CT) Creation continued...
 #    16-Nov-2007 (CT) Creation continued....
 #    18-Nov-2007 (CT) `close_balloon` added
+#     1-Jan-2008 (CT) `_balloon_show` changed to show length of day and
+#                     transit height
 #    ««revision-date»»···
 #--
 
@@ -41,7 +43,6 @@ end of the civil, nautic, and astronomical twilight.
 """
 
 from   _TFL                  import TFL
-from   _TGL                  import TGL
 from   _CAL                  import CAL
 
 from   _TFL._TKT._Tk.CTK     import *
@@ -137,14 +138,19 @@ class Display (TFL.Meta.Object) :
         if event :
             widget  = event.widget
             r       = self.rts
+            a       = r.transit.altitude
             message = "\n".join \
-                ( ( "%s %s %s" % (self.location.name, self.date, self.time)
+                ( ( "%s %s %s        [%02d:%02d]"
+                    % ( (self.location.name, self.date, self.time)
+                      + (r.set.time - r.rise.time).hh_mm
+                      )
                   , ", ".join
                       ( ( "Sunrise : %s" % r.rise
                         , "transit : %s" % r.transit
                         , "sunset : %s"  % r.set
                         )
                       )
+                  , "Transit height: %6.2f degrees" % (a.degrees, )
                   , "Civil  twilight starts %s, ends %s"
                     % (r.civil_twilight_start, r.civil_twilight_finis)
                   , "Nautic twilight starts %s, ends %s"

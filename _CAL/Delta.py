@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #    26-Oct-2004 (CT) `__abs__` changed to return `self` for positive values
 #    12-Dec-2004 (CT) `_init_arg_map` added
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
+#     1-Jan-2008 (CT) `Time_Delta.hh_mm` added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ from   _CAL                    import CAL
 from   _TFL                    import TFL
 import _CAL._DTW_
 import _TFL.Accessor
+from   _TFL._Meta.Once_Property import Once_Property
 
 import datetime
 import operator
@@ -161,6 +163,17 @@ class Time_Delta (_DT_Delta_) :
             raise OverflowError, result
         return result
     # end def delta_op
+
+    @Once_Property
+    def hh_mm (self) :
+        """Return tuple of (hour, minute) with `minute` rounded."""
+        hh = self.h
+        mm = self.m + (self.s + 30) // 60
+        if mm >= 60 :
+            mm -= 60
+            hh += 1
+        return (hh, mm)
+    # end def hh_mm
 
 # end class Time_Delta
 
