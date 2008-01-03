@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    11-Dec-2006 (CT) `from_julian` corrected
 #    11-Dec-2006 (CT) `__getattr__` changed to `setattr` the modified value
 #    11-Nov-2007 (CT) `sidereal_time` added
+#     3-Jan-2008 (CT) `time_pattern` added and `_from_string_match_kw` redefined
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _CAL                     import CAL
 import _CAL.Date
 import _CAL.Time
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.Regexp              import *
 
 import datetime
 
@@ -108,6 +110,22 @@ class Date_Time (CAL.Date, CAL.Time) :
 
     mean_solar_day_over_mean_sidereal_day = 1.00273790935
 
+    time_pattern     = Regexp \
+        ( r"(?P<hour> \d{2,2})"
+          r":"
+          r"(?P<minute> \d{2,2})"
+          r"(?: :"
+            r"(?P<second> \d{2,2})"
+            r"(?: \."
+              r"(?P<microsecond> \d+)"
+            r")?"
+          r")?"
+          #r"(?: \s"
+          #  r"(?P<tzoff> [-+]\d{4,4})"
+          #r")?"
+        , flags = re.VERBOSE | re.IGNORECASE
+        )
+
     from _CAL.Delta import Date_Time_Delta as Delta
 
     @staticmethod
@@ -150,6 +168,19 @@ class Date_Time (CAL.Date, CAL.Time) :
             - T3 / 38710000.0
             )
     # end def sidereal_time_deg
+
+    @classmethod
+    def _from_string_match_kw (cls, s, match) :
+        assert match
+        kw = super (Date_Time, cls)._from_string_match_kw (s, match)
+        t  = s [match.end () :].lstrip ().lstrip ("T")
+        if t and cls.time_pattern.match (t) :
+            match = cls.time_pattern.last_match
+            for k, v in match.groupdict ().iteritems () :
+                if v :
+                    kw [k] = int (v)
+        return kw
+    # end def _from_string_match_kw
 
     def __getattr__ (self, name) :
         result = self.__super.__getattr__ (name)

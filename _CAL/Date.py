@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -58,6 +58,8 @@
 #    11-Nov-2007 (CT) `delta_T` added
 #    12-Nov-2007 (CT) `JD` added, coverage of `delta_T` extended
 #    23-Dec-2007 (CT) Command_Line options `-regexp` and `-xformat` added
+#     3-Jan-2008 (CT) `_from_string_match_kw` factored
+#     3-Jan-2008 (CT) `date_pattern` changed to make `year` mandatory
 #    ««revision-date»»···
 #--
 
@@ -209,7 +211,7 @@ class Date (CAL._DTW_) :
           r"([-./])"
           r"(?P<month> \d{1,2} | [a-z]{3,3})"
           r"\2"
-          r"(?P<year>  \d{4,4})?"
+          r"(?P<year>  \d{4,4})"
         , r"(?P<month> [a-z]{3,})"
           r"\s"
           r"(?P<day>   \d{1,2})"
@@ -305,15 +307,7 @@ class Date (CAL._DTW_) :
     def from_string (cls, s) :
         match = cls.date_pattern.match (s)
         if match :
-            kw = {}
-            for k, v in match.groupdict ().iteritems () :
-                v = v.lower ()
-                if k == "month" and v in cls.months :
-                    v = cls.months [v]
-                else :
-                    v = int (v)
-                kw [k] = v
-            return cls (** kw)
+            return cls (** cls._from_string_match_kw (s, match))
         else :
             raise ValueError, s
     # end def from_string
@@ -412,6 +406,21 @@ class Date (CAL._DTW_) :
         from _CAL.Year import Year
         return Year (year).mmap [month].days [yad].number
     # end def _day_from_end
+
+    @classmethod
+    def _from_string_match_kw (cls, s, match) :
+        assert match
+        kw = {}
+        for k, v in match.groupdict ().iteritems () :
+            if v :
+                v = v.lower ()
+                if k == "month" and v in cls.months :
+                    v = cls.months [v]
+                else :
+                    v = int (v)
+                kw [k] = v
+        return kw
+    # end def _from_string_match_kw
 
     def _new_object (self, kw) :
         d = kw ["day"]
