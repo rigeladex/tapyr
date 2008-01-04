@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -120,10 +120,12 @@
 #                      * `erloes_minderung_pat` and `ausgaben_minderung_pat`
 #                        moved from module-level into `Account_Entry`
 #                      * CT-specific settings moved into external config file
-#    17-Sep-2007 (CT) `Account_Entry` changed to compute `minderung` based on
-#                     occurrence of `~` (`erloes_minderung_pat` and
-#                     `ausgaben_minderung_pat` only kept to support old input
-#                     files)
+#    17-Sep-2007 (CT)  `Account_Entry` changed to compute `minderung` based on
+#                      occurrence of `~` (`erloes_minderung_pat` and
+#                      `ausgaben_minderung_pat` only kept to support old input
+#                      files)
+#     4-Jan-2008 (CT)  `Main._load_config` changed to classmethod `load_config`
+#     4-Jan-2008 (CT)  Use `Regexp` instead of `re.compile`
 #    ««revision-date»»···
 #--
 
@@ -133,6 +135,7 @@ from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
 from   _TFL.defaultdict  import defaultdict
 from   _TFL.predicate    import *
+from   _TFL.Regexp       import *
 
 import _TFL._Meta.Object
 
@@ -140,19 +143,18 @@ from   _TGL              import TGL
 import _TGL.load_config_file
 
 import math
-import re
 import sys
 from   UserDict          import UserDict
 
-ignor_pat              = re.compile ( r"^\s*[«%#]")
-empty_pat              = re.compile ( r"^\s*$")
-ws_head_pat            = re.compile ( r"^\s*")
-ws_tail_pat            = re.compile ( r"\s*\n?$")
-code_pat               = re.compile ( r"^\s*\$")
-perl_dict_pat          = re.compile ( r"""\{\s*"?(\s*\d+\s*)"?\s*\}""")
-split_pat              = re.compile ( r"\s*&\s*")
-currency_pat           = re.compile ( r"([A-Za-z]+)$")
-desc_strip_pat         = re.compile ( r"\s*&\s*$")
+ignor_pat              = Regexp ( r"^\s*[«%#]")
+empty_pat              = Regexp ( r"^\s*$")
+ws_head_pat            = Regexp ( r"^\s*")
+ws_tail_pat            = Regexp ( r"\s*\n?$")
+code_pat               = Regexp ( r"^\s*\$")
+perl_dict_pat          = Regexp ( r"""\{\s*"?(\s*\d+\s*)"?\s*\}""")
+split_pat              = Regexp ( r"\s*&\s*")
+currency_pat           = Regexp ( r"([A-Za-z]+)$")
+desc_strip_pat         = Regexp ( r"\s*&\s*$")
 
 def underlined (text) :
     bu = "\b_"
@@ -183,8 +185,8 @@ class Account_Entry :
 
     ### The following class variables can be overriden in a config file
     ### (e.g., ATAX.config)
-    erloes_minderung_pat   = re.compile ( r"Legacy: use `~` instead")
-    ausgaben_minderung_pat = re.compile ( r"Legacy: use `~` instead")
+    erloes_minderung_pat   = Regexp ( r"Legacy: use `~` instead")
+    ausgaben_minderung_pat = Regexp ( r"Legacy: use `~` instead")
 
     def __init__ (self, line, source_currency, vst_korrektur = 1.0) :
         self.line = line
@@ -810,7 +812,7 @@ class T_Account (Account) :
     rvc_gkonto         = "9996"
     ust_gkonto         = "9999"
     vorsteuer_gkonto   = "9999"
-    t_konto_ignore_pat = re.compile (r"^[01239]\d\d\d\d?", re.X)
+    t_konto_ignore_pat = Regexp (r"^[01239]\d\d\d\d?", re.X)
     firma              = "<<<Specify in config file, e.g., ATAX.config>>>"
 
     def __init__ (self, name = "", year = 0, konto_desc = None, vst_korrektur = 1.0) :
@@ -1138,7 +1140,7 @@ class H_Account (T_Account) :
 
     Ancestor = __Ancestor = T_Account
     Entry    = H_Account_Entry
-    t_konto_ignore_pat = re.compile (r"^DON'T MATCH ANYTHING HERE$", re.X)
+    t_konto_ignore_pat = Regexp (r"^DON'T MATCH ANYTHING HERE$", re.X)
 
     def __init__ (self, * args, ** kw) :
         self.__Ancestor.__init__ (self, * args, ** kw)
@@ -1160,8 +1162,8 @@ class Konto_Desc (UserDict) :
         d_k = self.reverse = {}
         if isinstance (file, str) :
             file = open (file, "r")
-        pat   = re.compile (r"^[0-9]")
-        s_pat = re.compile (r"\s*:\s*")
+        pat   = Regexp (r"^[0-9]")
+        s_pat = Regexp (r"\s*:\s*")
         for line in file :
             if not pat.match (line) : continue
             (konto, desc)  = s_pat.split (line)
@@ -1181,12 +1183,12 @@ class Main (TFL.Meta.Object) :
     min_args            = None
 
     def __init__ (self, cmd) :
-        self._load_config (cmd)
+        self.load_config (cmd)
         if cmd.all :
             categories  = "."
         else :
             categories  = "[" + "".join (cmd.categories) + "]"
-        categories      = re.compile (categories)
+        categories      = Regexp (categories)
         source_currency = cmd.source_currency
         vst_korrektur   = cmd.vst_korrektur
         account         = self._create_account \
@@ -1208,6 +1210,14 @@ class Main (TFL.Meta.Object) :
             )
     # end def command_spec
 
+    @classmethod
+    def load_config (cls, cmd) :
+        globs   = globals ()
+        cf_dict = dict    (ATAX = ATAX)
+        for cf in cmd.Config :
+            TGL.load_config_file (cf, globs, cf_dict)
+    # end def load_config
+
     def _add_files (self, cmd, account, categories, source_currency) :
         if cmd.argn > 0 :
             for file_name in cmd.argv.body :
@@ -1215,13 +1225,6 @@ class Main (TFL.Meta.Object) :
         else :
             account.add_lines    (sys.stdin, categories, source_currency)
     # end def _add_files
-
-    def _load_config (self, cmd) :
-        globs   = globals ()
-        cf_dict = dict    (ATAX = ATAX)
-        for cf in cmd.Config :
-            TGL.load_config_file (cf, globs, cf_dict)
-    # end def _load_config
 
     @classmethod
     def _arg_spec (cls) :

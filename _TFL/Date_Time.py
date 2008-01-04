@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -68,12 +68,9 @@
 #    11-Feb-2006 (CT) Moved into package `TFL`
 #     9-Aug-2006 (CT) `__hash__` changed to return `hash (self.value)` instead
 #                     of `id (self)`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     4-Jan-2008 (CT) `_sanitized_year` changed to add `2000` for `values < 40`
 #    ««revision-date»»···
 #--
-
-
 
 ### Note: this module is obsolete and shouldn't be used for new code
 
@@ -182,6 +179,8 @@ class Time_Tuple :
 
     def _sanitized_year (self, value) :
         result = self._sanitized_field (value)
+        if result < 40 :
+            result += 2000
         if result < 100 :
             result += 1900
         return result
