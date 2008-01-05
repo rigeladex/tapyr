@@ -27,18 +27,20 @@
 #
 # Revision Dates
 #     4-Jan-2008 (CT) Creation (ported from a perl version)
+#     5-Jan-2008 (CT) Use `CAL.Date_Time` instead of (obsolete) `TFL.Date_Time`
 #    ««revision-date»»···
 #--
 
 from   __future__        import with_statement
 
 from   _ATAX             import ATAX
+from   _CAL              import CAL
 from   _ATAX.accounting  import ignor_pat
-from   _TFL.Date_Time    import *
 from   _TFL.predicate    import *
 from   _TFL.Regexp       import *
 from   _TFL._Meta.Once_Property import Once_Property
 
+import _CAL.Date_Time
 import _TFL._Meta.Object
 import _TFL.Environment
 
@@ -179,7 +181,8 @@ class Fahrtenbuch (TFL.Meta.Object) :
         km_start = km_finis
         if last is not None :
             km_start = last.km_finis
-        return self.Entry (Date (d), km_start, km_finis, priv, desc)
+        return self.Entry \
+            (CAL.Date_Time.from_string (d), km_start, km_finis, priv, desc)
     # end def _new_entry
 
     def _read_lines (self, file) :
