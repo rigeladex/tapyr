@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Martin Glück. All rights reserved
+# Copyright (C) 2006-2008 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #    14-Dec-2007 (MG) `_Mode_.iter_render` removed again
 #    14-Dec-2007 (CT) Moved into package DJO
 #    17-Dec-2007 (MG) `Menu_Block_Node` fixed
+#     5-Jan-2008 (MG) `Conditional_URL_Node`: allow parameter less revers urls
 #    ««revision-date»»···
 #--
 
@@ -316,19 +317,24 @@ class Conditional_URL_Node (_Node_) :
             decision = fct (decision)
         except TypeError :
             return "error"
-        url_name, para_spec = self.parameters [decision].split ("=", 1)
-        args = []
-        kw   = {}
-        for value in para_spec.split (",") :
-            name = None
-            if "=" in value :
-                name, value = value.split ("=", 1)
-            if not self.literal_pat.match (value) :
-                value = template.resolve_variable (value, context)
-            if name :
-                kw [name] = value
-            else :
-                args.append (value)
+        split = self.parameters [decision].split ("=", 1)
+        args  = []
+        kw    = {}
+        if len (split) > 1 :
+            url_name, para_spec = split
+            for value in para_spec.split (",") :
+                name = None
+                if "=" in value :
+                    name, value = value.split ("=", 1)
+                if value != "NONE" :
+                    if not self.literal_pat.match (value) :
+                        value = template.resolve_variable (value, context)
+                    if name :
+                        kw [name] = value
+                    else :
+                        args.append (value)
+        else :
+            url_name = split [0]
         url = reverse (url_name, args = args, kwargs = kw)
         if self.context_variable :
             context [self.context_variable] = url

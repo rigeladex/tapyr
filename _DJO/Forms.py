@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 Martin Glück. All rights reserved
+# Copyright (C) 2005-2008 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #     3-Nov-2007 (MG) Creation
 #    14-Dec-2007 (CT) Moved into package DJO
+#     2-Jan-2008 (MG) Sort order of non model fields changed
 #    ««revision-date»»···
 #--
 
@@ -80,7 +81,7 @@ class _Form_Output_ (object) :
             bf_errors = form.error_class \
                 (escape (error) for error in bf.errors)
             if bf.is_hidden:
-                cls.add_hidden_field_errors (bf_errors)
+                cls.add_hidden_field_errors (name, bf_errors)
                 cls.hidden_fields.append    (unicode (bf))
             else:
                 if bf.label :
@@ -113,20 +114,23 @@ class _Definition_List_ (_Form_Output_) :
         field = bound_field.field
         if field.help_text :
             cls.output.append \
-                ("<dd>%s/dd>" % (force_unicode (field.help_text)))
+                ("<dd>%s</dd>" % (force_unicode (field.help_text)))
         if bf_errors :
             cls.output.append \
-                ('<dd class="form_errors">%s/dd>' % (bf_errors, ))
+                ('<dd class="form_errors">%s</dd>' % (bf_errors, ))
     # end def add_field
 
     @classmethod
     def add_hidden_fields (cls, html) :
-        cls.output [-1] = \
-            "%s%s</dd>" % (cls.output [-1] [:-len ("</dd>")] , html)
+        if cls.output :
+            cls.output [-1] = \
+                "%s%s</dd>" % (cls.output [-1] [:-len ("</dd>")] , html)
+        else :
+            cls.output.append (html)
     # end def add_hidden_fields
 
     @classmethod
-    def add_hidden_field_errors (cls, errors) :
+    def add_hidden_field_errors (cls, name, errors) :
         cls.top_errors.extend \
             ( [ "(Hidden field %s) %s"
                 % (name, force_unicode (e)) for e in errors
@@ -168,7 +172,7 @@ class _Table_ (_Form_Output_) :
     # end def add_hidden_fields
 
     @classmethod
-    def add_hidden_field_errors (cls, errors) :
+    def add_hidden_field_errors (cls, name, errors) :
         cls.top_errors.extend \
             ( [ "(Hidden field %s) %s"
                 % (name, force_unicode (e)) for e in errors
@@ -207,7 +211,7 @@ class _Markup_Less_ (_Form_Output_) :
     # end def add_hidden_fields
 
     @classmethod
-    def add_hidden_field_errors (cls, errors) :
+    def add_hidden_field_errors (cls, name, errors) :
         cls.top_errors.extend \
             ( [ "(Hidden field %s) %s"
                 % (name, force_unicode (e)) for e in errors
@@ -266,7 +270,12 @@ class M_Fields_From_Model (type) :
                 )
         set_after_save = set (attrs.get ("set_after_save", ()))
         sorted_fields  = [(fn, fields.pop (fn)) for fn in field_order]
-        sorted_fields.extend (fields.iteritems ())
+        sorted_fields.extend \
+            ( (fn, f) for (fn, f) in sorted
+                ( fields.iteritems ()
+                , key = lambda (fn, f) : f.creation_counter
+                )
+            )
         if not "set_before_save" in attrs :
             attrs ["set_before_save"] = set \
                 (fn for fn, f in sorted_fields if not fn in set_after_save)
@@ -397,6 +406,14 @@ class Reverse_Redirect (object) :
     # end def __call__
 
 # end class Reverse_Redirect
+
+class FileNameInput (forms.widgets.FileInput) :
+
+    def value_from_datadict (self, data, files, name) :
+        return data.get (name, None)
+    # end def value_from_datadict
+
+# end class FileNameField
 
 if __name__ != "__main__" :
     DJO._Export ("*")

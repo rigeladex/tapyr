@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Martin Glueck. All rights reserved
+# Copyright (C) 2006-2008 Martin Glueck. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -89,7 +89,7 @@ def get_template_sources (template_name, template_dirs = None) :
         app_name, template_name = parts
         root = app_temp_dirs.get (app_name, None)
         if root is None :
-            root          = app_temp_dirs [None]
+            root          = app_temp_dirs.get (None,  "")
             template_name = P.join (app_name, template_name)
         yield P.join (root, user_style,     template_name)
         yield P.join (root, default_style,  template_name)
