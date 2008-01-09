@@ -36,6 +36,7 @@
 #    11-Dec-2006 (CT) `__getattr__` changed to `setattr` the modified value
 #    11-Nov-2007 (CT) `sidereal_time` added
 #     3-Jan-2008 (CT) `time_pattern` added and `_from_string_match_kw` redefined
+#     7-Jan-2008 (CT) `as_utc` added
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,17 @@ class Date_Time (CAL.Date, CAL.Time) :
        2451180.0
        >>> Date_Time (2000,1,1,12).JD
        2451545.0
+
+       >>> dt = Date_Time (2008, 1, 7, 10, 16, 42, 0)
+       >>> dt
+       Date_Time (2008, 1, 7, 10, 16, 42, 0)
+       >>> dt.as_utc ()
+       Date_Time (2008, 1, 7, 9, 16, 42, 0)
+       >>> dt = Date_Time (2008, 4, 7, 10, 16, 42, 0)
+       >>> dt
+       Date_Time (2008, 4, 7, 10, 16, 42, 0)
+       >>> dt.as_utc ()
+       Date_Time (2008, 4, 7, 8, 16, 42, 0)
     """
 
     _Type            = datetime.datetime
@@ -127,6 +139,14 @@ class Date_Time (CAL.Date, CAL.Time) :
         )
 
     from _CAL.Delta import Date_Time_Delta as Delta
+
+    def as_utc (self) :
+        """Return `self` converted to `UTC`."""
+        from dateutil.tz import tzlocal
+        local = self.replace (tzinfo = tzlocal ())
+        delta = self.Delta   (seconds = local._body.utcoffset ().seconds)
+        return self - delta
+    # end def as_utc
 
     @staticmethod
     def from_ical (ical) :
