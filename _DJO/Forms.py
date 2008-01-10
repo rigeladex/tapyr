@@ -29,6 +29,7 @@
 #     3-Nov-2007 (MG) Creation
 #    14-Dec-2007 (CT) Moved into package DJO
 #     2-Jan-2008 (MG) Sort order of non model fields changed
+#    10-Jan-2008 (MG) Support `anchors` in the `*Redirect` classes
 #    ««revision-date»»···
 #--
 
@@ -382,28 +383,38 @@ class Form (forms.BaseForm) :
 class Redirect (object) :
     """Redirect to a static URL"""
 
-    def __init__ (self, url) :
-        self.url = url
+    def __init__ (self, url, anchor = None) :
+        self.url    = url
+        self.anchor = anchor
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        return HttpResponseRedirect (self.url)
+        url = [self._url ()]
+        if self.anchor :
+            url.append (self.anchor)
+        return HttpResponseRedirect ("#".join (url))
     # end def __call__
+
+    def _url (self, url) :
+        return self.url
+    # end def _url
 
 # end class Redirect
 
-class Reverse_Redirect (object) :
+class Reverse_Redirect (Redirect) :
     """Redirect to a named url pattern"""
 
     def __init__ (self, url_pattern_name, * args, ** kw) :
         self.url_pattern_name = url_pattern_name
-        self.args = args
-        self.kw   = kw
+        self.anchor           = kw.pop ("anchor", None)
+        self.args             = args
+        self.kw               = kw
     # end def __init__
 
-    def __call__ (self, * args, ** kw) :
-        return HttpResponseRedirect (reverse (self.url_pattern_name))
-    # end def __call__
+    def _url (self) :
+        return reverse \
+            (self.url_pattern_name, args = self.args, kwargs = self.kw)
+    # end def _url
 
 # end class Reverse_Redirect
 

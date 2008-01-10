@@ -44,6 +44,7 @@
 #    14-Dec-2007 (CT) Moved into package DJO
 #    17-Dec-2007 (MG) `Menu_Block_Node` fixed
 #     5-Jan-2008 (MG) `Conditional_URL_Node`: allow parameter less revers urls
+#    10-Jan-2008 (MG) Support varuable lookup in `Menu_Block_Node`
 #    ««revision-date»»···
 #--
 
@@ -363,7 +364,7 @@ class Menu_Block_Node (_Node_) :
             self.link_parameters [name.strip ()] = value.strip ('"').strip ()
     # end def __init__
 
-    def _reverse_url (self, spec, exact = "") :
+    def _reverse_url (self, spec, exact = "", context = None) :
         if spec.startswith ('"') :
             ### literal url
             return spec.strip ('"').strip ()
@@ -371,19 +372,26 @@ class Menu_Block_Node (_Node_) :
         kw   = {}
         if "|" in spec :
             spec, parameters = spec.split ("|")
-            for p in parameters.split (":") :
-                if "=" in p :
+            for v in parameters.split (":") :
+                n = None
+                if "=" in v :
                     n, v = p.split ("=")
+                if context and not v.startswith ('"') :
+                    try :
+                        v = template.resolve_variable (v, context)
+                    except template.VariableDoesNotExist :
+                        v = ""
+                if n :
                     kw [n] = v
                 else :
-                    args.append (p)
+                    args.append (v)
         return reverse (spec, args = args, kwargs = kw) + exact
     # end def _reverse_url
 
     def render (self, context) :
         ## import pdb; pdb.set_trace ()
-        url       = self._reverse_url (self.link_url)
-        match     = self._reverse_url (self.match_url, "$")
+        url       = self._reverse_url (self.link_url,       context = context)
+        match     = self._reverse_url (self.match_url, "$", context = context)
         if match [-1] == "$" :
             match = match [:-1]
             exact = True
@@ -399,7 +407,7 @@ class Menu_Block_Node (_Node_) :
         result = []
         attrs  = []
         for a, v in self.link_parameters.iteritems () :
-            attrs.append ('%s="%s"' % (a, v))
+            attrs.append ('%s="%s"' % (a, v.replace ("_", " ")))
         if attrs :
             attrs = " %s" % (" ".join (attrs))
         else :
