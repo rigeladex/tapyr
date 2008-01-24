@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,19 +37,23 @@
 #                      named `kw` will be silently modified
 #     8-Nov-2007 (CT)  Use `_kw` instead of `__kw` (and modernized)
 #     8-Nov-2007 (CT)  `assert` statements added to avoid silent errors
+#    23-Jan-2008 (CT)  `Record_S` added
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
 from   _TFL.predicate import sorted
 
-class Record (object) :
-    """
-    >>> r = Record (x = "y", kw = dict (foo = 42))
-    >>> r.x
-    'y'
-    >>> r.kw
-    {'foo': 42}
+import _TFL._Meta.Object
+
+class Record (TFL.Meta.Object) :
+    """Class emulating a struct/record (but dynamically).
+
+       >>> r = Record (x = "y", kw = dict (foo = 42))
+       >>> r.x
+       'y'
+       >>> r.kw
+       {'foo': 42}
     """
 
     def __init__ (self, ** kw) :
@@ -104,6 +108,30 @@ class Record (object) :
     # end def __str__
 
 # end class Record
+
+class Record_S (Record) :
+    """Record usable as dict for %-interpolation with nested attributes.
+
+       >>> c = Record_S (x = 1)
+           >>> o = Record_S (a = 42, b = Record_S (a = 137, b = "foo", c = c))
+       >>> "o.a = %(a)s, o.b.a = %(b.a)s, o.b.c.x = %(b.c.x)s" % o
+       'o.a = 42, o.b.a = 137, o.b.c.x = 1'
+    """
+
+    def __getitem__ (self, key) :
+        try :
+            return self.__super.__getitem__ (key)
+        except KeyError :
+            o = self
+            for k in key.split (".") :
+                try :
+                    o = getattr (o, k)
+                except AttributeError :
+                    raise KeyError, key
+            return o
+    # end def __getitem__
+
+# end class Record_S
 
 if __name__ != "__main__" :
     TFL._Export ("*")

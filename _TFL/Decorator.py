@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -29,10 +29,40 @@
 #    14-Apr-2006 (CT)  Creation
 #    19-Apr-2006 (CT)  Set `__module__`, too
 #    26-Sep-2006 (PGO) `wrapper` fixed to work with builtin functions, too
+#    24-Jan-2008 (CT)  `Add_Method` and `Add_New_Method` added
 #    ««revision-date»»···
 #--
 
 from _TFL import TFL
+
+def Add_Method (* classes) :
+    """Adds decorated function to `classes` (won't complains if any class
+       already contains a function of that name).
+    """
+    def decorator (f) :
+        name = f.__name__
+        for cls in classes :
+            if hasattr (cls, name) :
+                setattr (f, "orig", getattr (cls, name))
+            setattr (cls, name, f)
+        return f
+    return decorator
+# end def Add_Method
+
+def Add_New_Method (* classes) :
+    """Adds decorated function to `classes` (complains if any class already
+       contains a function of that name).
+    """
+    def decorator (f) :
+        name = f.__name__
+        for cls in classes :
+            if hasattr (cls, name) :
+                raise TypeError, "%s already has a property named `%s`" % \
+                    (cls, name)
+            setattr (cls, name, f)
+        return f
+    return decorator
+# end def Add_New_Method
 
 def Decorator (decorator) :
     """Decorate `decorator` so that `__name__`, `__doc__`, and `__dict__` of

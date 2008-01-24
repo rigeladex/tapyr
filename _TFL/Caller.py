@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -62,6 +62,7 @@
 #                     of `NameError`
 #    29-Dec-2005 (CT) `Object_Scope.__getitem__` changed to catch `KeyError`
 #                     instead of `NameError`
+#    24-Jan-2008 (CT) More doctests added
 #    ««revision-date»»···
 #--
 
@@ -208,6 +209,19 @@ class Object_Scope (Scope) :
        <bound method Filename.directories of Filename (/foo/bar/baz.dat)>
        >>> c.directories()
        ['foo', 'bar']
+
+       >>> from _TFL.Record import Record
+       >>> c = Record (x = 1)
+       >>> o = Record (a = 42, b = Record (a = 137, b = "foo", c = c))
+       >>> s = Object_Scope (o)
+       >>> s.a
+       42
+       >>> print s.b
+       (a = 137, b = foo, c = (x = 1))
+       >>> print s.b.c
+       (x = 1)
+       >>> "s.a = %(a)s, s.b.a = %(b.a)s, s.b.c.x = %(b.c.x)s" % s
+       's.a = 42, s.b.a = 137, s.b.c.x = 1'
     """
 
     def __init__ (self, object, locls = None) :
