@@ -54,7 +54,7 @@ class FB_Entry (TFL.Meta.Object) :
         self.date     = date
         self.km_start = float (km_start)
         self.km_finis = float (km_finis)
-        self.priv     = float (priv)
+        self.priv     = float (priv or 0)
         self.desc, _, self.comment = split_hst (desc, "%")
         self.__dict__.update (kw)
     # end def __init__
