@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,12 +34,8 @@
 #    10-May-2001 (CT) Creation
 #    21-Feb-2002 (CT) `Range_` renamed to `_Range_`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from _TFL import TFL
 

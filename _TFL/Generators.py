@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -48,12 +48,8 @@
 #     8-Dec-2006 (CT)  `window_wise` added
 #    16-Feb-2007 (CT)  `enumerate_slice` added
 #     1-Mar-2007 (CT)  Adapted to signature change of `DL_Ring`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from _TFL import TFL
 
