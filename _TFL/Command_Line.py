@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -359,7 +359,8 @@ class Arg_L (List_Selection_, Arg) :
 
 class Opt (Arg) :
 
-    kind = "option"
+    kind         = "option"
+    default_type = "B"
 
     def __init__ ( self, name, type = "", default = "", description = ""
                  , explanation = ""
@@ -367,7 +368,9 @@ class Opt (Arg) :
                  , range_delta = 1, cook = None
                  ) :
         Arg.__init__ \
-            (self, name, type or "B", default, description, explanation, cook)
+            ( self, name, type or self.default_type, default
+            , description, explanation, cook
+            )
         self.value       = TFL.PL_List (undefined = '')
         self.valued      = valued or   (self.type != "B")
         if max_occur is None :

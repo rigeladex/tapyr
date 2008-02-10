@@ -60,6 +60,7 @@
 #    23-Dec-2007 (CT) Command_Line options `-regexp` and `-xformat` added
 #     3-Jan-2008 (CT) `_from_string_match_kw` factored
 #     3-Jan-2008 (CT) `date_pattern` changed to make `year` mandatory
+#    10-Feb-2008 (CT) `Date_Opt` added (and used for option `delta_to`)
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,7 @@ from   _TFL                     import TFL
 import _CAL._DTW_
 from   _TFL._Meta.Once_Property import Once_Property
 import _TFL.Accessor
+from   _TFL.Command_Line        import Command_Line, Opt
 from   _TFL.Math_Func           import horner
 from   _TFL.Regexp              import *
 
@@ -474,10 +476,29 @@ class Date_M (CAL._Mutable_DTW_) :
 
 # end class Date_M
 
+class Date_Opt (Opt) :
+    """Date option class for use with TFL.Command_Line."""
+
+    default_type = "S"
+
+    def __init__ (self, name, description = "", ** kw) :
+        if "cook" not in kw :
+            kw ["cook"] = self._cooked_
+        Opt.__init__ (self, name, description, ** kw)
+    # end def __init__
+
+    def _cooked_ (self, v) :
+        if v == "now" :
+            return Date ()
+        elif v :
+            return Date.from_string (v)
+    # end def _cooked_
+
+# end class Date_Opt
+
 if __name__ != "__main__" :
     CAL._Export ("*")
 else :
-    from   _TFL.Command_Line import Command_Line
     from   _TFL.Caller       import Scope
     cmd = Command_Line \
         ( arg_spec    =
@@ -485,7 +506,7 @@ else :
               ,
               )
         , option_spec =
-              ( "-delta_to:S?Print `base_date - delta`"
+              ( Date_Opt ("delta_to", "Print `base_date - delta`")
               , "-format:S=%Y%m%d?Format for date (not used for -delta_to)"
               , "-offset:I=0?delta to `base_date` in days"
               , "-regexp:S?Use regexp to extract date from `base_date`"
@@ -515,8 +536,7 @@ else :
     if cmd.offset :
         base_date += cmd.offset
     if cmd.delta_to :
-        delta_to  = Date.from_string (cmd.delta_to)
-        print (base_date - delta_to).days
+        print (base_date - cmd.delta_to).days
     else :
         date = base_date.formatted (cmd.format)
         print cmd.xformat % Scope (globs = match_dicht, locls = vars ())
