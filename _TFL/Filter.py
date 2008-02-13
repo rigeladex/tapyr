@@ -30,6 +30,7 @@
 #    27-Jan-2008 (CT) Creation continued
 #    28-Jan-2008 (CT) Moved to TFL.Filter
 #    28-Jan-2008 (CT) Creation continued..
+#    13-Feb-2008 (CT) `filter_iter` added
 #    ««revision-date»»···
 #--
 
@@ -164,8 +165,12 @@ class _Filter_ (TFL.Meta.Object) :
     """Base class for filters."""
 
     def filter (self, iterable) :
-        return [item for item in iterable if self (item)]
+        return list (self.filter_iter (iterable))
     # end def filter
+
+    def filter_iter (self, iterable) :
+        return (item for item in iterable if self (item))
+    # end def filter_iter
 
     def __call__ (self, item) :
         return self.predicate (item)
