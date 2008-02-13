@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -103,10 +103,10 @@ fixed_holidays = \
   { ( 1,  1) : "Neujahr"
   , ( 1,  6) : "Hl. Drei Könige"
   , ( 5,  1) : "Mai-Feiertag"
-  , ( 8, 15) : "Mariae Himmelfahrt"
+  , ( 8, 15) : "Mariä Himmelfahrt"
   , (10, 26) : "Nationalfeiertag"
   , (11,  1) : "Allerheiligen"
-  , (12,  8) : "Mariae Empfaengnis"
+  , (12,  8) : "Mariä Empfängnis"
   , (12, 25) : "1. Weihnachtstag"
   , (12, 26) : "2. Weihnachtstag"
   }

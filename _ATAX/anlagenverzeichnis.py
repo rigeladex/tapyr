@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -38,6 +38,7 @@
 #    11-Feb-2007 (CT) `string` functions replaced by `str` methods
 #    17-Sep-2007 (CT) Use `EUC_Opt_SC` and `EUC_Opt_TC` instead of home-grown
 #                     code
+#     5-Feb-2008 (CT) Support for `FBiG` added
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,7 @@ class Anlagen_Entry (_Base) :
     def __init__ (self, line, anlagenverzeichnis) :
         try :
             ( self.desc, self.supplier, self.flags
-            , self.birth_date, self.a_value, self.afa_spec, self.ifb
+            , self.birth_date, self.a_value, self.afa_spec, ifb
             , self.death_date
             )                = split_pat.split     (line, 8)
         except ValueError, exc :
@@ -89,7 +90,6 @@ class Anlagen_Entry (_Base) :
             self.half_date   = "1.1.%s" % (self.birth_time.year + 1, )
         self.half_time       = Date (self.half_date)
         self.desc            = desc_strip_pat.sub  ("", self.desc)
-        self.ifb             = int (self.ifb or 0) / 100.0
         currency_match       = currency_pat.search (self.a_value)
         a_value              = self.a_value
         source_currency      = anlagenverzeichnis.source_currency
@@ -104,11 +104,18 @@ class Anlagen_Entry (_Base) :
         self.birth_value     = source_currency     (eval (a_value, {}, {}))
         self.new_value       = source_currency     (0.0)
         self.out_value       = source_currency     (0.0)
-        self.ifb_value       = source_currency     (0.0)
         self.contemporary    = \
             (   self.birth_time <= anlagenverzeichnis.tail_time
             and self.death_time >= anlagenverzeichnis.head_time
             )
+        self.fbig            = source_currency (0.0)
+        self.ifb_value       = source_currency (0.0)
+        if "G" in self.flags :
+            ### FBiG (Freibetrag für investierte Gewinne)
+            self.fbig        = source_currency (float (ifb or self.birth_value))
+            ifb              = ""
+        self.ifb             = int (ifb or 0) / 100.0
+        assert not (self.ifb and self.fbig)
     # end def __init__
 
     def evaluate (self) :
@@ -135,12 +142,15 @@ class Anlagen_Entry (_Base) :
         elif self.ifb and self.birth_time.year + 4 > self.target_year :
             self.ifb_value  = self.birth_value * self.ifb
         self.new_ifb        = self.ifb and self.birth_time > self.head_time
+        self.new_fbig       = \
+            (self.fbig and self.birth_time.year == self.head_time.year)
         if self.tail_value.target_currency is not EU_Currency :
             self.birth_value          = self.birth_value.rounded_as_target ()
             self.head_value           = self.head_value.rounded_as_target  ()
             self.tail_value           = self.tail_value.rounded_as_target  ()
             self.new_value            = self.new_value.rounded_as_target   ()
             self.out_value            = self.out_value.rounded_as_target   ()
+            self.fbig                 = self.fbig.rounded_as_target        ()
             self.ifb_value            = self.ifb_value.rounded_as_target   ()
             self.current_depreciation = \
                 self.current_depreciation.rounded_as_target ()
@@ -199,30 +209,32 @@ class Anlagenverzeichnis (_Base) :
         , re.X
         )
 
-    header_format = "%-48s  %-8s  %10s  %10s  %8s  %10s  %10s"
-    entry1_format = "%-45s%3s  %8s  %10.2f  %10.2f     %5.2f  %10.2f  %10.2f"
-    newifb_format = "  %-46s  %8s  %10s  %10s  %8s  %10.2f  %10s"
-    alive_format  = "  %-46s  %8s  %10s  %10s  %8s"
-    dying_format  = "  %-36.31s%10s  %8s  %10s  %10s  %8s  %10.2f  %10s"
-    footer_format = "\n%-48s  %8s  %10.2f  %10.2f  %8s  %10.2f  %10.2f"
-    new_format    = "%-48s  %8s  %10s  %10.2f"
-    out_format    = "%-48s  %8s  %10s  %10s  %8s  %10.2f"
+    header_format  = "%-48s  %-8s  %10s  %10s  %8s  %10s  %10s"
+    entry1_format  = "%-45s%3s  %8s  %10.2f  %10.2f     %5.2f  %10.2f  %10.2f"
+    newifb_format  = "  %-46s  %8s  %10s  %10s  %8s  %10.2f  %10s"
+    alive_format   = "  %-46s  %8s  %10s  %10s  %8s"
+    dying_format   = "  %-36.31s%10s  %8s  %10s  %10s  %8s  %10.2f  %10s"
+    footer_format  = "\n%-48s  %8s  %10.2f  %10.2f  %8s  %10.2f  %10.2f"
+    new_format     = "%-48s  %8s  %10s  %10.2f"
+    out_format     = "%-48s  %8s  %10s  %10s  %8s  %10.2f"
 
     account_format = \
         " 31.12 & & & %10.2f & b & %-5s & 2100 & - & %-3s & & %-6s %s\n"
 
-    def __init__ (self, year, start_year, file_name, source_currency) :
+
+    def __init__ (self, year, start_year, file_name, source_currency, account_file = None) :
         self.year               = year
         self.start_time         = Date ("1.1.%s" % (start_year, ))
         self.file_name          = file_name
         self.source_currency    = source_currency
-        self.account_file       = None
+        self.account_file       = account_file
         self.entries            = []
         self.total_birth_value  = source_currency (0.0)
         self.total_head_value   = source_currency (0.0)
         self.total_tail_value   = source_currency (0.0)
         self.total_new_value    = source_currency (0.0)
         self.total_out_value    = source_currency (0.0)
+        self.total_fbig         = source_currency (0.0)
         self.total_ifb_value    = source_currency (0.0)
         self.total_depreciation = source_currency (0.0)
         self._setup_dates (year)
@@ -272,7 +284,9 @@ class Anlagenverzeichnis (_Base) :
                 self.total_out_value     += e.out_value
                 self.total_depreciation  += e.current_depreciation
             elif e.new_ifb :
-                self.total_ifb_value += e.ifb_value
+                self.total_ifb_value     += e.ifb_value
+            if e.new_fbig :
+                self.total_fbig          += e.fbig
     # end def evaluate
 
     def write (self) :
@@ -302,12 +316,18 @@ class Anlagenverzeichnis (_Base) :
         print ( self.out_format
               % ( "Abgänge", "", "", "", "", self.total_out_value)
               )
-        print ( self.out_format
-              % ( "Investitionsfreibetrag", "", "", ""
-                , "IFB"
-                , self.total_ifb_value
-                )
-              )
+        if self.total_fbig :
+            print ( self.out_format
+                  % ( "Freibetrag für investierte Gewinne", "", "", "", "FBIG"
+                    , self.total_fbig
+                    )
+                  )
+        else :
+            print ( self.out_format
+                  % ( "Investitionsfreibetrag", "", "", "", "IFB"
+                    , self.total_ifb_value
+                    )
+                  )
     # end def write
 
     def _write_entry (self, e) :
@@ -380,7 +400,8 @@ def command_spec (arg_array = None) :
     from   _TFL.Command_Line import Command_Line
     return Command_Line \
         ( option_spec =
-            ( "-Start_year:S=1988?Skip all entries before `Start_year`"
+            ( "-account_file:P?Name of account file to update"
+            , "-Start_year:S=1988?Skip all entries before `Start_year`"
             , "-update_accounts:B?Add depreciation entries to account file"
             , EUC_Opt_SC ()
             , EUC_Opt_TC ()
@@ -401,8 +422,10 @@ def main (cmd) :
     year                = cmd.year
     start               = cmd.Start_year
     file_name           = cmd.anlagenverzeichnis
+    account_file        = cmd.account_file
+    print account_file
     anlagenverzeichnis  = Anlagenverzeichnis \
-        (year, start, file_name, source_currency)
+        (year, start, file_name, source_currency, account_file)
     anlagenverzeichnis.evaluate ()
     anlagenverzeichnis.write    ()
     if cmd.update_accounts :
