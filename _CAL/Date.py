@@ -61,6 +61,7 @@
 #     3-Jan-2008 (CT) `_from_string_match_kw` factored
 #     3-Jan-2008 (CT) `date_pattern` changed to make `year` mandatory
 #    10-Feb-2008 (CT) `Date_Opt` added (and used for option `delta_to`)
+#    15-Feb-2008 (CT) `Date_Opt` corrected (up-call to `__init__`)
 #    ««revision-date»»···
 #--
 
@@ -484,7 +485,7 @@ class Date_Opt (Opt) :
     def __init__ (self, name, description = "", ** kw) :
         if "cook" not in kw :
             kw ["cook"] = self._cooked_
-        Opt.__init__ (self, name, description, ** kw)
+        Opt.__init__ (self, name, description = description, ** kw)
     # end def __init__
 
     def _cooked_ (self, v) :

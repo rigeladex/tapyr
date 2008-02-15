@@ -163,6 +163,7 @@
 #    06-Aug-2007 (CED) Future import removed again
 #    17-Sep-2007 (CT)  Argument `cook` added to `Arg` and `Opt`
 #    17-Sep-2007 (CT)  Argument/option type `P` (path) added
+#    15-Feb-2008 (CT)  `_Help_._opts` robustified
 #    ««revision-date»»···
 #--
 
@@ -602,7 +603,7 @@ class _Help_ :
                         ( self._formatted
                               ( self.opt_head_format
                               , olen, n
-                              , cmd.type_specifiers.get (o.type)
+                              , cmd.type_specifiers.get (o.type, "<string>")
                               , o.default or "<None>"
                               )
                         )
