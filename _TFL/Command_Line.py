@@ -602,7 +602,7 @@ class _Help_ :
                         ( self._formatted
                               ( self.opt_head_format
                               , olen, n
-                              , cmd.type_specifiers [o.type]
+                              , cmd.type_specifiers.get (o.type)
                               , o.default or "<None>"
                               )
                         )
