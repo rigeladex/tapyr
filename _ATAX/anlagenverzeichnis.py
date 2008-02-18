@@ -39,13 +39,15 @@
 #    17-Sep-2007 (CT) Use `EUC_Opt_SC` and `EUC_Opt_TC` instead of home-grown
 #                     code
 #     5-Feb-2008 (CT) Support for `FBiG` added
+#    18-Feb-2008 (CT) s/_Base/_Base_/g
+#    18-Feb-2008 (CT) `_IFB_`, `IFB`, and `FBiG` factored
 #    ««revision-date»»···
 #--
 
 from _ATAX.accounting import *
 from _TFL.Regexp      import *
 
-class _Base :
+class _Base_ (TFL.Meta.Object) :
 
     def _setup_dates (self, target_year) :
         self.head_date       = "1.1.%s"   % (target_year, )
@@ -57,9 +59,57 @@ class _Base :
         self.target_year     = int  (target_year)
     # end def _setup_dates
 
-# end class _Base
+# end class _Base_
 
-class Anlagen_Entry (_Base) :
+class _IFB_ (TFL.Meta.Object) :
+    """Base class for FBiG and IFB."""
+
+    def __init__ (self, entry) :
+        self.entry  = entry
+        self.alive  = entry.birth_time.year + 4 >  entry.target_year
+        self.is_new = entry.birth_time.year     == entry.target_year
+    # end def __init__
+
+    def round (self) :
+        self.value  = self.value.rounded_as_target ()
+    # end def round
+
+    def __nonzero__ (self) :
+        return self.alive and bool (self.value)
+    # end def __nonzero__
+
+# end class _IFB_
+
+class FBiG (_IFB_) :
+    """Model a FBiG (Freibetrag für investierte Gewinne)."""
+
+    abbr    = "FBiG"
+    account = None
+    name    = "Freibetrag für investierte Gewinne"
+
+    def __init__ (self, entry, ifb, source_currency) :
+        self.__super.__init__ (entry)
+        self.value = source_currency (float (ifb or entry.birth_value))
+    # end def __init__
+
+# end class FBiG
+
+class IFB (_IFB_) :
+    """Model a IFB (Investitionsfreibetrag)."""
+
+    abbr    = "IFB"
+    account = 7802
+    name    = "Investitionsfreibetrag"
+
+    def __init__ (self, entry, ifb, source_currency) :
+        self.__super.__init__ (entry)
+        self.rate  = int (ifb or 0) / 100.0
+        self.value = entry.birth_value * self.rate
+    # end def __init__
+
+# end class IFB
+
+class Anlagen_Entry (_Base_) :
 
     rate_pattern   = r"(?P<rate> [-+*/().0-9\s]+)"
     first_rate_pat = Regexp (rate_pattern, re.X)
@@ -81,6 +131,10 @@ class Anlagen_Entry (_Base) :
         self.birth_time      = Date (self.birth_date)
         self.death_time      = Date (self.death_date or final)
         self.alive           = self.death_time > anlagenverzeichnis.tail_time
+        self.contemporary    = \
+            (   self.birth_time <= anlagenverzeichnis.tail_time
+            and self.death_time >= anlagenverzeichnis.head_time
+            )
         if int (self.death_time.year) < int (anlagenverzeichnis.year) :
             self._setup_dates (self.death_time.year)
         else :
@@ -104,18 +158,10 @@ class Anlagen_Entry (_Base) :
         self.birth_value     = source_currency     (eval (a_value, {}, {}))
         self.new_value       = source_currency     (0.0)
         self.out_value       = source_currency     (0.0)
-        self.contemporary    = \
-            (   self.birth_time <= anlagenverzeichnis.tail_time
-            and self.death_time >= anlagenverzeichnis.head_time
-            )
-        self.fbig            = source_currency (0.0)
-        self.ifb_value       = source_currency (0.0)
         if "G" in self.flags :
-            ### FBiG (Freibetrag für investierte Gewinne)
-            self.fbig        = source_currency (float (ifb or self.birth_value))
-            ifb              = ""
-        self.ifb             = int (ifb or 0) / 100.0
-        assert not (self.ifb and self.fbig)
+            self.ifb         = FBiG (self, ifb, source_currency)
+        else :
+            self.ifb         = IFB  (self, ifb, source_currency)
     # end def __init__
 
     def evaluate (self) :
@@ -139,21 +185,16 @@ class Anlagen_Entry (_Base) :
         if not self.alive :
             self.out_value  = self.tail_value
             self.tail_value = self.source_currency (0.0)
-        elif self.ifb and self.birth_time.year + 4 > self.target_year :
-            self.ifb_value  = self.birth_value * self.ifb
-        self.new_ifb        = self.ifb and self.birth_time > self.head_time
-        self.new_fbig       = \
-            (self.fbig and self.birth_time.year == self.head_time.year)
         if self.tail_value.target_currency is not EU_Currency :
             self.birth_value          = self.birth_value.rounded_as_target ()
             self.head_value           = self.head_value.rounded_as_target  ()
             self.tail_value           = self.tail_value.rounded_as_target  ()
             self.new_value            = self.new_value.rounded_as_target   ()
             self.out_value            = self.out_value.rounded_as_target   ()
-            self.fbig                 = self.fbig.rounded_as_target        ()
-            self.ifb_value            = self.ifb_value.rounded_as_target   ()
             self.current_depreciation = \
                 self.current_depreciation.rounded_as_target ()
+            if self.ifb :
+                self.ifb.round ()
     # end def evaluate
 
     def _calc_rates (self) :
@@ -198,7 +239,7 @@ class Anlagen_Entry (_Base) :
 
 # end class Anlagen_Entry
 
-class Anlagenverzeichnis (_Base) :
+class Anlagenverzeichnis (_Base_) :
 
     assignment_pat = Regexp \
         ( r"^\$ "
@@ -210,7 +251,7 @@ class Anlagenverzeichnis (_Base) :
         )
 
     header_format  = "%-48s  %-8s  %10s  %10s  %8s  %10s  %10s"
-    entry1_format  = "%-45s%3s  %8s  %10.2f  %10.2f     %5.2f  %10.2f  %10.2f"
+    entry1_format  = "%-44s%4s  %8s  %10.2f  %10.2f     %5.2f  %10.2f  %10.2f"
     newifb_format  = "  %-46s  %8s  %10s  %10s  %8s  %10.2f  %10s"
     alive_format   = "  %-46s  %8s  %10s  %10s  %8s"
     dying_format   = "  %-36.31s%10s  %8s  %10s  %10s  %8s  %10.2f  %10s"
@@ -221,6 +262,8 @@ class Anlagenverzeichnis (_Base) :
     account_format = \
         " 31.12 & & & %10.2f & b & %-5s & 2100 & - & %-3s & & %-6s %s\n"
 
+
+    ifb_type       = ""
 
     def __init__ (self, year, start_year, file_name, source_currency, account_file = None) :
         self.year               = year
@@ -234,7 +277,6 @@ class Anlagenverzeichnis (_Base) :
         self.total_tail_value   = source_currency (0.0)
         self.total_new_value    = source_currency (0.0)
         self.total_out_value    = source_currency (0.0)
-        self.total_fbig         = source_currency (0.0)
         self.total_ifb_value    = source_currency (0.0)
         self.total_depreciation = source_currency (0.0)
         self._setup_dates (year)
@@ -283,10 +325,9 @@ class Anlagenverzeichnis (_Base) :
                 self.total_new_value     += e.new_value
                 self.total_out_value     += e.out_value
                 self.total_depreciation  += e.current_depreciation
-            elif e.new_ifb :
-                self.total_ifb_value     += e.ifb_value
-            if e.new_fbig :
-                self.total_fbig          += e.fbig
+            if e.ifb and e.ifb.is_new :
+                self.ifb_type             = e.ifb.__class__
+                self.total_ifb_value     += e.ifb.value
     # end def evaluate
 
     def write (self) :
@@ -316,24 +357,21 @@ class Anlagenverzeichnis (_Base) :
         print ( self.out_format
               % ( "Abgänge", "", "", "", "", self.total_out_value)
               )
-        if self.total_fbig :
+        if self.total_ifb_value :
             print ( self.out_format
-                  % ( "Freibetrag für investierte Gewinne", "", "", "", "FBIG"
-                    , self.total_fbig
-                    )
-                  )
-        else :
-            print ( self.out_format
-                  % ( "Investitionsfreibetrag", "", "", "", "IFB"
+                  % ( self.ifb_type.name, "", "", "", self.ifb_type.abbr
                     , self.total_ifb_value
                     )
                   )
     # end def write
 
     def _write_entry (self, e) :
+        ifb_indicator = ""
+        if e.ifb :
+            ifb_indicator = e.ifb.abbr
         print ( self.entry1_format
               % ( e.desc
-                , ("", "IFB") [e.ifb_value > 0]
+                , ifb_indicator
                 , e.birth_time.formatted ("%d.%m.%y")
                 , e.birth_value
                 , e.head_value
@@ -342,22 +380,23 @@ class Anlagenverzeichnis (_Base) :
                 , e.tail_value
                 )
               )
-        if e.new_ifb :
-            print ( self.newifb_format
-                  % ( e.supplier, "", "", "", "IFB", e.ifb_value, "")
-                  )
-        elif e.ifb_value :
-            print "  %-36s%10.2f" % (e.supplier, e.ifb_value)
-        elif e.alive :
-            print ( self.alive_format
-                  % (e.supplier, "", "", "", ("", "ewig") ["=" in e.flags])
-                  )
+        if e.alive :
+            if e.ifb and e.ifb.is_new :
+                print ( self.newifb_format
+                      % ( e.supplier, "", "", "", e.ifb.abbr, e.ifb.value, "")
+                      )
+            elif e.ifb :
+                print "  %-36s%10.2f" % (e.supplier, e.ifb.value)
+            else :
+                print ( self.alive_format
+                      % (e.supplier, "", "", "", ("", "ewig") ["=" in e.flags])
+                      )
         else :
             print ( self.dying_format
                   % ( e.supplier
                     , "Abgang"
                     , e.death_time.formatted ("%d.%m.%y")
-                    , "", "", ("", "ewig") ["=" in e.flags]
+                    , ifb_indicator, e.ifb.value, ("", "ewig") ["=" in e.flags]
                     , e.out_value
                     , ""
                     )
@@ -380,17 +419,17 @@ class Anlagenverzeichnis (_Base) :
         if e.current_depreciation :
             file.write \
                 ( self.account_format
-                % (e.current_depreciation, 7800, "fe",  "Afa",    e.desc)
+                % (e.current_depreciation, 7800, "fe", "Afa",      e.desc)
                 )
-        if e.new_ifb :
+        if e.ifb and e.ifb.is_new and e.ifb.account :
             file.write \
                 ( self.account_format
-                % (e.ifb_value,            7802, "fue", "IFB",    e.desc)
+                % (e.ifb.value,   e.ifb.account, "fe", e.ifb.abbr, e.desc)
                 )
         if not e.alive :
             file.write \
                 ( self.account_format
-                % (e.out_value,            7801, "fue", "Abgang", e.desc)
+                % (e.out_value,            7801, "fe", "Abgang",   e.desc)
                 )
     # end def _update_account_entry
 
@@ -423,7 +462,6 @@ def main (cmd) :
     start               = cmd.Start_year
     file_name           = cmd.anlagenverzeichnis
     account_file        = cmd.account_file
-    print account_file
     anlagenverzeichnis  = Anlagenverzeichnis \
         (year, start, file_name, source_currency, account_file)
     anlagenverzeichnis.evaluate ()
@@ -433,6 +471,10 @@ def main (cmd) :
     return anlagenverzeichnis
 # end def main
 
+"""
+year=2007 ; \
+  python /swing/python/anlagenverzeichnis.py $year ~/EAR/anlagen_gewerbe.dat
+"""
 if __name__ == "__main__":
     main (command_spec ())
 ### __END__ ATAX.anlagenverzeichnis

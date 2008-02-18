@@ -126,6 +126,7 @@
 #                      files)
 #     4-Jan-2008 (CT)  `Main._load_config` changed to classmethod `load_config`
 #     4-Jan-2008 (CT)  Use `Regexp` instead of `re.compile`
+#    18-Feb-2008 (CT)  `kz_add` added and used
 #    ««revision-date»»···
 #--
 
@@ -437,6 +438,9 @@ class V_Account (Account) :
     ### The following class variables can be overriden in a config file
     ### (e.g., ATAX.config)
     vat_private = 1.20 ### VAT rate applicable for private part
+    kz_add      = \
+        { "????"  : ("027", "In 060/065 enthaltene Vorsteuern betreffend KFZ")
+        }
 
     def __init__ (self, name = "", vst_korrektur = 1.0) :
         Account.__init__ (self, name, vst_korrektur)
@@ -454,6 +458,7 @@ class V_Account (Account) :
         self.umsatz_dict             = defaultdict (EU_Currency)
         self.ust_dict                = defaultdict (EU_Currency)
         self.ust_igE_dict            = defaultdict (EU_Currency)
+        self.vorsteuer_kzs           = defaultdict (EU_Currency)
         self.umsatzsteuer_entries    = []
         self.vorsteuer_entries       = []
         self.vorsteuer_entries_igE   = []
@@ -491,6 +496,8 @@ class V_Account (Account) :
                         ( "**** igE entries must be netto****\n       %s\n"
                         % entry
                         )
+                if entry.konto in self.kz_add :
+                    self.vorsteuer_kzs [self.kz_add [entry.konto]] += vat
             elif "z" in entry.cat :
                 self.vorsteuer_EUst += vat
                 self.vorsteuer_entries_EUst.append (entry)
@@ -508,6 +515,8 @@ class V_Account (Account) :
                     self._add_umsatz    (- netto, - vat, vat_p, entry)
                 else :
                     self._add_vorsteuer (vat)
+                    if entry.konto in self.kz_add :
+                        self.vorsteuer_kzs [self.kz_add [entry.konto]] += vat
         elif "+" in entry.dir :
             self.umsatzsteuer_entries.append (entry)
             if "i" in entry.cat :
@@ -695,6 +704,8 @@ class V_Account (Account) :
             ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
         print "%-30s %3s : %29s" % \
             ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
+        for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
+            print "%-30.30s %3s : %29s" % (d, k, vst.as_string_s ())
         print "%-30s     : %29s" % \
             ( "Gesamtbetrag Vorsteuer"
             , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
@@ -725,25 +736,25 @@ class V_Account (Account) :
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
         print "*** Lieferungen, sonstige Leistungen und Eigenverbrauch ***"
-        print "=" * 47
+        print "=" * 67
         if umsatz_vat :
-            print "%-30s %3s : %10s" % \
+            print "%-50s %3s : %10s" % \
                 ("Lieferungen, sonstige", "000", umsatz_vat.as_string_s ())
         if self.umsatz_frei :
-            print "%-30s %3s : %10s" % \
+            print "%-50s %3s : %10s" % \
                 ( "Nichtsteuerbar Ausland", "005"
                 , self.umsatz_frei.as_string_s ()
                 )
         if umsatz_vat :
             print
             print "Steuersätze"
-            print "=" * 47
+            print "=" * 67
             self.print_ust_dict_online (self.umsatz_dict, self._ust_cat)
         print "\n\n"
         print "*** Innergemeinschaftliche Erwerbe ***"
-        print "=" * 47
+        print "=" * 67
         if self.erwerb_igE :
-            print "%-30s %3s : %10s" % \
+            print "%-50s %3s : %10s" % \
                 ("Erwerbe igE", "070", self.erwerb_igE.as_string_s ())
             print
             print "Steuersätze"
@@ -752,24 +763,26 @@ class V_Account (Account) :
 
         print "\n\n"
         print "*** Vorsteuer ***"
-        print "=" * 47
-        print "%-30s %3s : %10s" % \
+        print "=" * 67
+        print "%-50s %3s : %10s" % \
             ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
-        print "%-30s %3s : %10s" % \
+        print "%-50s %3s : %10s" % \
             ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
-        print "%-30s %3s : %10s" % \
+        print "%-50s %3s : %10s" % \
             ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
+        for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
+            print "%-50.50s %3s : %10s" % (d, k, vst.as_string_s ())
         print "\n\n"
-        print "*" * 47
+        print "*" * 67
         if vat_saldo.target_currency == EU_Currency :
             ### no rounding for Euro
-            print "%-30s %3s : %10s %s" % \
+            print "%-50s %3s : %10s %s" % \
                 ( meldung, "095"
                 , vat_saldo.as_string_s (), vat_saldo.target_currency.name
                 )
         else :
             ### rounding is necessary
-            print "%-30s %3s : %10s%s00 %s     (%s)" % \
+            print "%-50s %3s : %10s%s00 %s     (%s)" % \
                 ( meldung, "095"
                 , vat_saldo.as_string_s (round = 1)
                 , vat_saldo.target_currency.decimal_sign
