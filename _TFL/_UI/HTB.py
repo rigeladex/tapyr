@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -142,12 +142,9 @@
 #     5-Sep-2005 (MZO) set dialog_title=productname if available.
 #    17-Jul-2006 (MZO) [18749] present window `search`, `expand`
 #    19-Jul-2006 (MZO) [18758] comment out `accelerator`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    18-Feb-2008 (PGO) [26831] Longer names have to take precedence
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL         import TFL
 from   Regexp       import Regexp, re_RegexObject
@@ -956,19 +953,19 @@ class Node_Linked (Node) :
 
     def activate_links (self, head, tail) :
         hstyle = styles.hyper_link
+        links  = []
         for l in self.o_links :
-            if not isinstance (l, (list, tuple)) :
-                l = (l, )
-            for o in l :
-                nam = self._link_name  (o)
-                callback       = callback_style \
-                    ( callback = dict \
-                        ( click_1        = Functor
-                            (self.follow, head_args = (o, ))
-                        , double_click_1 = self.ignore
-                        )
+            links.extend (l if isinstance (l, (list,tuple)) else (l,))
+        link_dct = dict ((self._link_name (i), i) for i in links)
+        sk       = lambda (n, _) : -len (n) ### longer names first
+        for nam, o in sorted (link_dct.iteritems (), key = sk) :
+            callback       = callback_style \
+                ( callback = dict \
+                    ( click_1        = Functor (self.follow, head_args = (o, ))
+                    , double_click_1 = self.ignore
                     )
-                self._apply_styles (nam, head, tail, callback, hstyle)
+                )
+            self._apply_styles (nam, head, tail, callback, hstyle)
     # end def activate_links
 
     def add_contents (self, contents) :
