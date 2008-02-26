@@ -127,6 +127,7 @@
 #     4-Jan-2008 (CT)  `Main._load_config` changed to classmethod `load_config`
 #     4-Jan-2008 (CT)  Use `Regexp` instead of `re.compile`
 #    18-Feb-2008 (CT)  `kz_add` added and used
+#    22-Feb-2008 (RSC) Add reverse charge
 #    ««revision-date»»···
 #--
 
@@ -447,21 +448,27 @@ class V_Account (Account) :
         self.ausgaben_b              = EU_Currency (0)
         self.ausgaben_n              = EU_Currency (0)
         self.erwerb_igE              = EU_Currency (0)
+        self.reverse_charge          = EU_Currency (0)
         self.umsatz                  = EU_Currency (0)
         self.umsatz_frei             = EU_Currency (0)
         self.ust                     = EU_Currency (0)
         self.ust_igE                 = EU_Currency (0)
+        self.ust_revCharge           = EU_Currency (0)
         self.vorsteuer               = EU_Currency (0)
         self.vorsteuer_igE           = EU_Currency (0)
+        self.vorsteuer_revCh         = EU_Currency (0)
         self.vorsteuer_EUst          = EU_Currency (0)
         self.erwerb_igE_dict         = defaultdict (EU_Currency)
+        self.reverse_charge_dict     = defaultdict (EU_Currency)
         self.umsatz_dict             = defaultdict (EU_Currency)
         self.ust_dict                = defaultdict (EU_Currency)
         self.ust_igE_dict            = defaultdict (EU_Currency)
+        self.ust_revC_dict           = defaultdict (EU_Currency)
         self.vorsteuer_kzs           = defaultdict (EU_Currency)
         self.umsatzsteuer_entries    = []
         self.vorsteuer_entries       = []
         self.vorsteuer_entries_igE   = []
+        self.vorsteuer_entries_revC  = []
         self.vorsteuer_entries_EUst  = []
     # end def __init__
 
@@ -498,6 +505,29 @@ class V_Account (Account) :
                         )
                 if entry.konto in self.kz_add :
                     self.vorsteuer_kzs [self.kz_add [entry.konto]] += vat
+            elif "r" in entry.cat :
+                self.vorsteuer_revCh     += vat
+                self.ust_revCharge       += vat
+                self.vorsteuer_entries_revC.append (entry)
+                entry.cati = "r"
+                self.ust_revC_dict  [vat_p]      += vat
+                self.reverse_charge              += netto
+                self.reverse_charge_dict [vat_p] += netto
+                if vst_korrektur != 1.0 :
+                    sys.stderr.write \
+                        ( "Cannot handle expenses resulting from "
+                          "reverse Charge for a "
+                          "VAT correction of %d\n       %s\n"
+                        % (vst_korrektur, entry)
+                        )
+                elif "b" == entry.g_or_n :
+                    sys.stderr.write \
+                        ( "**** reverse Charge entries must be netto****\n"
+                          "       %s\n"
+                        % entry
+                        )
+                if entry.konto in self.kz_add :
+                    self.vorsteuer_kzs [self.kz_add [entry.konto]] += vat
             elif "z" in entry.cat :
                 self.vorsteuer_EUst += vat
                 self.vorsteuer_entries_EUst.append (entry)
@@ -508,7 +538,7 @@ class V_Account (Account) :
                           "VAT correction of %d\n       %s\n"
                         % (vst_korrektur, entry)
                         )
-            else : ### neither "i" nor "z"
+            else : ### neither "i" nor "z" nor "r"
                 self.vorsteuer_entries.append (entry)
                 if entry.minderung :
                     ## Erlösminderung instead of Ausgabe
@@ -523,6 +553,12 @@ class V_Account (Account) :
                 sys.stderr.write \
                     ( "Cannot handle income resulting from "
                       "innergemeinschaftlichem Erwerb\n       %s\n"
+                    % entry
+                    )
+            if "r" in entry.cat :
+                sys.stderr.write \
+                    ( "Cannot handle income resulting from "
+                      "reverse Charge\n       %s\n"
                     % entry
                     )
             if entry.minderung :
@@ -590,16 +626,19 @@ class V_Account (Account) :
         if  (  self.vorsteuer_entries
             or self.vorsteuer_entries_EUst
             or self.vorsteuer_entries_igE
+            or self.vorsteuer_entries_revC
             or self.umsatzsteuer_entries
             ) :
             print self.header_string ()
         self.print_entries_ (self.vorsteuer_entries,      trailer = "\n")
         self.print_entries_ (self.vorsteuer_entries_EUst, trailer = "\n")
         self.print_entries_ (self.vorsteuer_entries_igE,  trailer = "\n")
+        self.print_entries_ (self.vorsteuer_entries_revC, trailer = "\n")
         self.print_entries_ (self.umsatzsteuer_entries)
         if  (  self.vorsteuer_entries
             or self.vorsteuer_entries_EUst
             or self.vorsteuer_entries_igE
+            or self.vorsteuer_entries_revC
             or self.umsatzsteuer_entries
             ) :
             if trailer : print trailer
@@ -631,11 +670,18 @@ class V_Account (Account) :
         print "\n%-16s : %14s" % \
             ("Erwerbe igE", self.erwerb_igE.as_string_s ())
         self.print_ust_dict_     ( self.erwerb_igE_dict, self.ust_igE_dict)
+        print "\n%-16s : %14s" % \
+            ("Reverse Charge", self.reverse_charge.as_string_s ())
+        self.print_ust_dict_     ( self.reverse_charge_dict, self.ust_revC_dict)
         print "\n%-16s :                %14s" % \
-            ("USt Übertrag", (self.ust + self.ust_igE).as_string_s ())
+            ( "USt Übertrag"
+            , (self.ust + self.ust_igE + self.ust_revCharge).as_string_s ()
+            )
         print "--------------- ./.. ---------------------------";
         print "%-16s :                %14s" % \
-            ("USt Übertrag", (self.ust + self.ust_igE).as_string_s ())
+            ( "USt Übertrag"
+            , (self.ust + self.ust_igE + self.ust_revCharge).as_string_s ()
+            )
         print "%-16s : %14s" % \
             ( "Vorsteuer", self.vorsteuer.as_string_s ())
         print "%-16s : %14s"   % \
@@ -644,9 +690,11 @@ class V_Account (Account) :
             ( "Vorsteuer igE", self.vorsteuer_igE.as_string_s ())
         print "%-16s : %14s %14s" % \
             ( "Summe Vorsteuer"
-            , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
+            , ( self.vorsteuer     + self.vorsteuer_EUst
+              + self.vorsteuer_igE + self.vorsteuer_revCh
               ).as_string_s ()
-            , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
+            , ( self.vorsteuer     + self.vorsteuer_EUst
+              + self.vorsteuer_igE + self.vorsteuer_revCh
               ).as_string_s ()
             )
         if vat_saldo.target_currency == EU_Currency :
@@ -687,6 +735,8 @@ class V_Account (Account) :
         print "%-30s     : %29s" % \
             ("Gesamt steuerpflichtig", umsatz_vat.as_string_s ())
         self.print_ust_dict_  (self.umsatz_dict, self.ust_dict, self._ust_cat)
+        print "%-30s %3s : %29s" % \
+            ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
         print
         print "%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ())
         print "--------------------------------- ./.. ---------------------------"
@@ -704,11 +754,14 @@ class V_Account (Account) :
             ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
         print "%-30s %3s : %29s" % \
             ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
+        print "%-30s %3s : %29s" % \
+            ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
         for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
             print "%-30.30s %3s : %29s" % (d, k, vst.as_string_s ())
         print "%-30s     : %29s" % \
             ( "Gesamtbetrag Vorsteuer"
-            , ( self.vorsteuer + self.vorsteuer_EUst + self.vorsteuer_igE
+            , ( self.vorsteuer     + self.vorsteuer_EUst
+              + self.vorsteuer_igE + self.vorsteuer_revCh
               ).as_string_s ()
             )
         print
@@ -913,6 +966,8 @@ class T_Account (Account) :
         if "u" in entry.cat :
             if "i" in entry.cat :
                 vat_dict = self.ust_igE
+            elif "r" in entry.cat :
+                vat_dict = self.ust_revCharge
             elif "z" in entry.cat :
                 vat_dict = self.vorsteuer_EUst
             else :
@@ -927,6 +982,8 @@ class T_Account (Account) :
         if "u" in entry.cat :
             if "i" in entry.cat :
                 ust_dict = self.ust_igE
+            elif "r" in entry.cat :
+                ust_dict = self.ust_revCharge
             else :
                 if "z" in entry.cat :
                     print "*** Einnahme cannot include Einfuhrumsatzsteuer"
@@ -948,17 +1005,23 @@ class T_Account (Account) :
                 )
             self._do_gkonto \
                 ( self.vorsteuer_EUst, self.eust_gkonto
-                , self.soll_saldo, "Einfuhrumsatzsteuer"
+                , self.soll_saldo,     "Einfuhrumsatzsteuer"
                 , lambda s : (s, 0)
                 )
             self._do_gkonto \
-                ( self.ust,         self.ust_gkonto
-                , self.haben_saldo, "Umsatzsteuer"
+                ( self.ust,            self.ust_gkonto
+                , self.haben_saldo,    "Umsatzsteuer"
                 , lambda s : (0, s)
                 )
             self._do_gkonto \
-                ( self.ust_igE,     self.ige_gkonto
-                , self.soll_saldo,  "Vor- und Umsatzsteuer igE"
+                ( self.ust_igE,        self.ige_gkonto
+                , self.soll_saldo,     "Vor- und Umsatzsteuer igE"
+                , lambda s : (s, s)
+                , self.haben_saldo
+                )
+            self._do_gkonto \
+                ( self.ust_revCharge,  self.revc_gkonto
+                , self.soll_saldo,     "Vor- und Umsatzsteuer igE"
                 , lambda s : (s, s)
                 , self.haben_saldo
                 )
