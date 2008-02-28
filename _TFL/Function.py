@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,12 +37,10 @@
 #                     an AttributeError from `wrapped.func_code`)
 #    14-Feb-2006 (CT) Moved into package `TFL`
 #    14-Feb-2006 (CT) `_Function_` unfactored (`Function` was empty)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    21-Feb-2008 (MG) `__init__`: use getattr chain to hanld all sorts of
+#                     callables as `function`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL             import TFL
 
@@ -50,7 +48,8 @@ class Function :
 
     def __init__ (self, function, _doc = None) :
         self.function = function
-        self.__name__ = function.__name__
+        self.__name__ = getattr \
+            (function, "__name__", getattr (function, "name", repr (function)))
         self.__doc__  = _doc or function.__doc__
     # end def __init__
 

@@ -38,6 +38,7 @@
 #     8-Nov-2007 (CT)  Use `_kw` instead of `__kw` (and modernized)
 #     8-Nov-2007 (CT)  `assert` statements added to avoid silent errors
 #    23-Jan-2008 (CT)  `Record_S` added
+#     1-Feb-2008 (MG)  `__nonzero__` added
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,10 @@ class Record (TFL.Meta.Object) :
     def __iter__ (self) :
         return iter (self._kw)
     # end def __iter__
+
+    def __nonzero__ (self) :
+        return len (self._kw)
+    # end def __nonzero__
 
     def __repr__ (self) :
         return "%s (%s)" % \

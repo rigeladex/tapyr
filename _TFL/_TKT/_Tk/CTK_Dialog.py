@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -81,7 +81,8 @@
 #    10-Apr-2006 (CED) Workaround for Tkinter MacOS bug added
 #    02-Aug-2007 (CED) Coding guidelines
 #    13-Sep-2007 (MZO) [24618] inheritance fixed
-#     7-Nov-2007 (CT) Moved into package _TFL._TKT._Tk
+#     7-Nov-2007 (CT)  Moved into package _TFL._TKT._Tk
+#     1-Feb-2008 (MG)  `Change_Record.__name__` removed
 #    ««revision-date»»···
 #--
 
@@ -761,8 +762,6 @@ class Change_Record (Record) :
     # end def set_changes
 
     def __len__ (self) : return self._changes
-
-    def __nonzero__ (self) : return len (self.kw)
 
 # end class Change_Record
 

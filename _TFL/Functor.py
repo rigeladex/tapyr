@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,12 +35,9 @@
 #    29-Jun-2004 (CED) Doctest added
 #    23-Sep-2004 (CT)  Cleanup
 #    14-Feb-2006 (CT)  Moved into package `TFL`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    21-Feb-2008 (MG) `Functor.__init__`:  simplified by using `kw.pop`
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL             import TFL
 import _TFL.Function
@@ -67,15 +64,10 @@ class Functor (TFL.Function) :
     Ancestor = __Ancestor = TFL.Function
 
     def __init__ (self, function, * tail_args, ** kw) :
-        self.__Ancestor.__init__ (self, function, kw.get ("_doc"))
-        self.head_args = ()
+        self.__Ancestor.__init__ (self, function, kw.pop ("_doc", None))
+        self.head_args = kw.pop ("head_args", ())
         self.tail_args = tail_args
         self.kw        = kw
-        if "head_args" in kw :
-            self.head_args = kw ["head_args"]
-            del kw ["head_args"]
-        if "_doc" in kw :
-            del kw ["_doc"]
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
