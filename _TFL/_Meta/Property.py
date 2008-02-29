@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -40,6 +40,7 @@
 #    20-May-2005 (CT) `init_instance` changed to call `_set_value` instead of
 #                     `set_value`
 #    26-Jul-2005 (CT) `prop` added
+#    29-Feb-2008 (CT) `Method_Descriptor.__name__` property added
 #    ««revision-date»»···
 #--
 
@@ -139,6 +140,11 @@ class Method_Descriptor (object) :
         self.method = method
         self.cls    = cls
     # end def __init__
+
+    @property
+    def __name__ (self) :
+        return self.method.__name__
+    # end def __name__
 
     def __get__ (self, obj, cls = None) :
         if obj is None :

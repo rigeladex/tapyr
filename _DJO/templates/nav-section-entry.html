@@ -1,0 +1,44 @@
+{# Django template: nav-section-entry.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    nav-section-entry
+  ##
+  ## Purpose
+  ##    Template for one entry of a nav-section
+  ##
+  ## Revision Dates
+  ##    29-Feb-2008 (CT) Creation (factored from nav-section-level.html)
+  ##    29-Feb-2008 (CT) Changed to recursively `rrender
+  ##                     "nav-section-level.html"` for sub-sections
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL_Tags %}
+{% if link.href %}
+  {% let %}
+    {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
+    {% if page.link.prefix|starts_with:link.prefix and link.own_links %}
+      <li class="current-section {{ level }}">{{ link.title }}
+        {% rrender "nav-section-level.html" link_list=link.own_links %}
+      </li>
+    {% else %}
+      {% ifequal link page.link %}
+        <li class="current-link {{ level }}">{{ link.title }}</li>
+      {% else %}
+        <li class="nav-link {{ level }}">
+          <a href="{{ link.href }}"
+             {% if link.desc %}title="{{ link.desc }}"{% endif %}
+          >{{ link.title }}</a>
+        </li>
+      {% endifequal %}
+    {% endif %}
+  {% endlet %}
+{% else %}
+  <li class="no-link">{{ link.title|safe }}</li>
+{% endif %}
+{# __END__ Django template: nav-section-entry.html #}

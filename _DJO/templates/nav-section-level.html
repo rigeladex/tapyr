@@ -1,0 +1,25 @@
+{# Django template: nav-section-level.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    nav-section-level
+  ##
+  ## Purpose
+  ##    Template for one level of a nav-section
+  ##
+  ## Revision Dates
+  ##    29-Feb-2008 (CT) Creation (factored from nav-section.html)
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL_Tags %}
+<ul>
+  {% for link in link_list %}
+    {% rrender "nav-section-entry.html" %}
+  {% endfor %}
+</ul>
+{# __END__ Django template: nav-section-level.html #}

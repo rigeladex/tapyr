@@ -1,0 +1,28 @@
+{# Django template: nav-section.html #}
+{% comment %}
+  ## Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##++
+  ## Name
+  ##    nav-section
+  ##
+  ## Purpose
+  ##    Create one section of a navigation panel
+  ##
+  ##
+  ## Revision Dates
+  ##    14-Dec-2007 (CT) Creation
+  ##    31-Dec-2007 (CT) s/desc/title/g
+  ##    29-Feb-2008 (CT) nav-section-level.html factored
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL_Tags %}
+{% if link_list %}
+  <div class="nav-section" id="{{ nav_section_id }}">
+    <h1>{{ nav_section_name }}</h1>
+    {% rrender "nav-section-level.html" %}
+  </div>
+{% endif %}
+{# __END__ Django template: nav-section.html #}

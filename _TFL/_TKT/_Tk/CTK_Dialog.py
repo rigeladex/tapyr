@@ -82,7 +82,7 @@
 #    02-Aug-2007 (CED) Coding guidelines
 #    13-Sep-2007 (MZO) [24618] inheritance fixed
 #     7-Nov-2007 (CT)  Moved into package _TFL._TKT._Tk
-#     1-Feb-2008 (MG)  `Change_Record.__name__` removed
+#     1-Feb-2008 (MG)  `Change_Record.__nonzero__` factored to `Record`
 #    ««revision-date»»···
 #--
 

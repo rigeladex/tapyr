@@ -37,7 +37,7 @@
 #                     an AttributeError from `wrapped.func_code`)
 #    14-Feb-2006 (CT) Moved into package `TFL`
 #    14-Feb-2006 (CT) `_Function_` unfactored (`Function` was empty)
-#    21-Feb-2008 (MG) `__init__`: use getattr chain to hanld all sorts of
+#    21-Feb-2008 (MG) `__init__`: use getattr chain to handle all sorts of
 #                     callables as `function`
 #    ««revision-date»»···
 #--
