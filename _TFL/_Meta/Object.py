@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,17 +29,30 @@
 #    13-May-2002 (CT) Creation
 #    17-Jan-2003 (CT) `M_` prefixes added
 #    24-Mar-2003 (CT) Delegation for `__init__` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     5-Mar-2008 (CT) `_TFL_Meta_Object_Root_` added to accomodate Python 2.6
+#                     (http://bugs.python.org/issue1683368)
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 import _TFL._Meta.M_Class
 
-class _TFL_Meta_Object_ (object) :
+class _TFL_Meta_Object_Root_ (object) :
+    ### Root class to fix `__init__` and `__new__`.
+    ###     As of Python 2.6, `object.__init__` doesn't accept parameters
+    ### Don't inherit from this (unless you really know what you're doing)
+
+    def __new__ (cls, * args, ** kw) :
+        return object.__new__ (cls)
+    # end def __new__
+
+    def __init__ (self, * args, ** kw) :
+        object.__init__ (self)
+    # end def __init__
+
+# end class _TFL_Meta_Object_Root_
+
+class _TFL_Meta_Object_ (_TFL_Meta_Object_Root_) :
     """Base class using TFL.Meta.Class as metaclass."""
 
     __metaclass__ = TFL.Meta.M_Class
@@ -63,7 +76,7 @@ class _TFL_Meta_Object_ (object) :
 
     def __init__ (self, * args, ** kw) :
         ### delegate to `__super` to accomodate multiple inheritance
-        return self.__super.__init__ (* args, ** kw)
+        self.__super.__init__ (* args, ** kw)
     # end def __init__
 
 # end class _TFL_Meta_Object_
