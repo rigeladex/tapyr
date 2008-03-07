@@ -736,7 +736,7 @@ class V_Account (Account) :
             ("Gesamt steuerpflichtig", umsatz_vat.as_string_s ())
         self.print_ust_dict_  (self.umsatz_dict, self.ust_dict, self._ust_cat)
         print "%-30s %3s : %29s" % \
-            ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
+            ("Reverse Charge §19", "057", self.vorsteuer_revCh.as_string_s ())
         print
         print "%-30s     : %29s" % ( "USt Übertrag", self.ust.as_string_s ())
         print "--------------------------------- ./.. ---------------------------"
@@ -803,6 +803,8 @@ class V_Account (Account) :
             print "Steuersätze"
             print "=" * 67
             self.print_ust_dict_online (self.umsatz_dict, self._ust_cat)
+        print "\n%-50s %3s : %10s" % \
+            ("Reverse Charge §19", "057", self.vorsteuer_revCh.as_string_s ())
         print "\n\n"
         print "*** Innergemeinschaftliche Erwerbe ***"
         print "=" * 67
@@ -823,6 +825,8 @@ class V_Account (Account) :
             ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
         print "%-50s %3s : %10s" % \
             ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
+        print "%-50s %3s : %10s" % \
+            ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
         for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
             print "%-50.50s %3s : %10s" % (d, k, vst.as_string_s ())
         print "\n\n"
