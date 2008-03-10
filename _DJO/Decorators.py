@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 Martin Glück. All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
+# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.com
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -32,18 +32,25 @@
 #    18-Nov-2007 (MG) `render_template`: don't add `kw` to the result context
 #                     but only the `context` key
 #    14-Dec-2007 (CT) Moved into package DJO
+#     8-Mar-2008 (MG) `render_template`: login_required added
 #    ««revision-date»»···
 #--
 
-from   _DJO                      import DJO
+from   _DJO                           import DJO
 
-from   django.conf               import settings
-import django.conf.urls.defaults as     URL_defaults
-from   django.http               import HttpResponseRedirect
-from   django.shortcuts          import render_to_response
-from   django.template           import RequestContext
+from   django.conf                    import settings
+import django.conf.urls.defaults      as     URL_defaults
+from   django.http                    import HttpResponseRedirect, HttpResponse
+#from   django.shortcuts               import render_to_response
+from   django.template                import RequestContext
+import django.contrib.auth.decorators as     Auth_Decorators
 
-def view_url (urls, url_name = None, prefix = "", url_variable = None, ** kw) :
+def view_url ( urls
+             , url_name     = None
+             , prefix       = ""
+             , url_variable = None
+             , ** kw
+             ) :
     ### decorator which adds the decorated function to the url-patterns
     #### usage:
     #### @view_url ("^/foo/(.*)/$")
@@ -66,8 +73,9 @@ def view_url (urls, url_name = None, prefix = "", url_variable = None, ** kw) :
     # end def _decorator
     return _decorator
 # end def view_url
+from django.template import loader
 
-def render_template (template, ** kw) :
+def render_template (template, login_required = False, ** kw) :
     ### use this decorator as a short cut to `render_to_response`. If the
     ### decorated function returns a dict, the response is generated using
     ### the template specified (and the additional `kw` supplied will be
@@ -76,16 +84,20 @@ def render_template (template, ** kw) :
     ### will be created with the result as the new URL.
     ###
     ### Important:
-    ####  Make sure that this decorator is used BEFORE the view_url one so
-    ####  that the wrapped function is passed to the view_url decorator
+    ###   Make sure that this decorator is used BEFORE the view_url one so
+    ###   that the wrapped function is passed to the view_url decorator
     def _decorator (fct) :
         def _fct_wrapper (request, * args, ** kw) :
-            result = fct (request, * args, ** kw)
+            mimetype = kw.pop ("mimetype", None)
+            result   = fct (request, * args, ** kw)
             if isinstance (result, dict) :
-                result.update (kw.get ("context", {}))
-                return render_to_response \
-                    ( template, result
-                    , context_instance = RequestContext (request)
+                return HttpResponse \
+                    ( loader.render_to_string
+                        ( template, result
+                        , context_instance =
+                            RequestContext (request, kw.get ("context", {}))
+                        )
+                    ,  mimetype = mimetype
                     )
             elif isinstance (result, basestring) :
                 return HttpResponseRedirect (result)
@@ -93,6 +105,8 @@ def render_template (template, ** kw) :
         # end def _fct_wrapper
         _fct_wrapper.func_name = fct.func_name
         _fct_wrapper.__doc__   = fct.__doc__
+        if login_required :
+            _fct_wrapper = Auth_Decorators.login_required (_fct_wrapper)
         return _fct_wrapper
     # end def _decorator
     return _decorator
