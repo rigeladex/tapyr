@@ -33,6 +33,8 @@
 #                     but only the `context` key
 #    14-Dec-2007 (CT) Moved into package DJO
 #     8-Mar-2008 (MG) `render_template`: login_required added
+#    11-Mar-2008 (MG) `render_template`: do not use `render_to_response`
+#                     template anymore
 #    ««revision-date»»···
 #--
 
@@ -89,13 +91,13 @@ def render_template (template, login_required = False, ** kw) :
     def _decorator (fct) :
         def _fct_wrapper (request, * args, ** kw) :
             mimetype = kw.pop ("mimetype", None)
+            context  = kw.pop ("context",  {})
             result   = fct (request, * args, ** kw)
             if isinstance (result, dict) :
                 return HttpResponse \
                     ( loader.render_to_string
                         ( template, result
-                        , context_instance =
-                            RequestContext (request, kw.get ("context", {}))
+                        , context_instance = RequestContext (request, context)
                         )
                     ,  mimetype = mimetype
                     )

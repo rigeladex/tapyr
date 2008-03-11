@@ -29,6 +29,7 @@
 #    28-Feb-2008 (CT) Creation
 #    29-Feb-2008 (CT) Filter `starts_with` added
 #    29-Feb-2008 (CT) `RRender.parse` changed to allow call without bindings
+#    11-Mar-2008 (MG) Use `Filter_Exp` for `RRender.file_name`
 #    ««revision-date»»···
 #--
 
@@ -183,7 +184,7 @@ class RRender (_Binding_Tag_) :
     # end def __init__
 
     def _render (self, context) :
-        return render_to_string (self.template_name.resolve (context), context)
+        return render_to_string (self.template_name (context), context)
     # end def _render
 
     @classmethod
@@ -192,7 +193,7 @@ class RRender (_Binding_Tag_) :
         name, args             = token.contents.split (" ", 1)
         template_name, _, rest = split_hst (args.strip (), " ")
         binding_dict           = cls._parse_bindings (parser, rest)
-        return cls (parser.compile_filter (template_name), binding_dict)
+        return cls (Filter_Exp (parser, template_name), binding_dict)
     # end def parse
 
 # end class RRender

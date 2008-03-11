@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,12 +32,8 @@
 #     5-Sep-2005 (CT) `XML.Node` factored
 #     6-Sep-2005 (CT) `xml_format` changed (`elem_type.rear0` empty instead
 #                     of space)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL              import TFL
 import _TFL._SDG._XML.Node
