@@ -803,8 +803,11 @@ class V_Account (Account) :
             print "Steuersätze"
             print "=" * 67
             self.print_ust_dict_online (self.umsatz_dict, self._ust_cat)
-        print "\n%-50s %3s : %10s" % \
-            ("Reverse Charge §19", "057", self.vorsteuer_revCh.as_string_s ())
+        if self.vorsteuer_revCh :
+            print "\n%-50s %3s : %10s" % \
+                ( "Reverse Charge §19", "057"
+                , self.vorsteuer_revCh.as_string_s ()
+                )
         print "\n\n"
         print "*** Innergemeinschaftliche Erwerbe ***"
         print "=" * 67
@@ -866,8 +869,8 @@ class V_Account (Account) :
             ust = umsatz_dict [vat_p]
             if ust :
                 vp = int (((vat_p - 1) * 100) + 0.5)
-                print "davon %2d%%                      %3s : %10s" % \
-                    (vp, cat [vp], ust.as_string_s ())
+                hd = "davon %2d%%" % (vp, )
+                print "%-50s %3s : %10s" % (hd, cat [vp], ust.as_string_s ())
     # end def print_ust_dict_online
 
 # end class U_Account
