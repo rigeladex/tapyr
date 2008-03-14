@@ -30,12 +30,32 @@
 #    29-Feb-2008 (CT) Filter `starts_with` added
 #    29-Feb-2008 (CT) `RRender.parse` changed to allow call without bindings
 #    11-Mar-2008 (MG) Use `Filter_Exp` for `RRender.file_name`
+#    14-Mar-2008 (MG) `Path_Starts_With` tag and `query` and `count` filters
+#                     added
 #    ««revision-date»»···
 #--
+"""
+>>> from django.conf     import settings
+>>> settings.configure (ROOT_URLCONF = "_DJO._test_url_conf")
+>>> from django.template import add_to_builtins, Template, Context
+>>> add_to_builtins ("_DJO.templatetags.TGL_Tags")
+>>> template = '''
+...   {{ var|starts_with:"foo"}}
+...   {{ var|starts_with:"fooa"}}
+...   {{ var|starts_with:"afoo"}}
+...   {{ var|starts_with:"fo"}}
+... '''
+>>> t = Template (template)
+>>> t.render (Context (dict (var = "foo"))).strip ()
+u'True\\n  False\\n  False\\n  True'
+>>> t.render (Context (dict (var = ""))).strip ()
+u''
+"""
 
 from   django                      import template
 from   django.template             import defaultfilters
 from   django.template.loader      import render_to_string
+from   django.core.urlresolvers    import reverse, NoReverseMatch
 
 from   _TFL.predicate              import split_hst
 
@@ -59,8 +79,8 @@ class Tag (template.Node) :
 class Block_Exp (object) :
     """A block of a template usable as an expression"""
 
-    def __init__ (self, node_list) :
-        self.node_list = node_list
+    def __init__ (self, node_list = None) :
+        self.node_list = node_list or template.NodeList ()
     # end def __init__
 
     def __call__ (self, context) :
@@ -135,10 +155,7 @@ class _Binding_Tag_ (Tag) :
 class Let (_Binding_Tag_) :
     """Let tag.
 
-       >>> from django.template import Template, Context, add_to_builtins
-       >>> from django.conf     import settings
-       >>> settings.configure ()
-       >>> add_to_builtins ("_DJO.templatetags.TGL_Tags")
+       >>> from django.template import Template, Context
        >>> template = '''
        ...   {% let a=42 ; b = "foobar" ; c = Hugo|upper %}
        ...     a = {{ a }}
@@ -198,12 +215,155 @@ class RRender (_Binding_Tag_) :
 
 # end class RRender
 
+class Path_Starts_With (Tag) :
+    """Allows to easily build a navigation link. The tag splits the `content`
+       into two parts around the `else` tag.
+
+       If the current URL (request.path) starts with `prefix` the first
+       part (from the start to the `else` tag) will be rendered, if not, the
+       second part (from the `else` tag to the end) will be rendered.
+
+       The parameters of the tga are:
+       * url-or-name
+         a real URL or the name of the an url pattern used with the `reverse`
+         function. The resulting URl will be used to dermine if the a
+         `active` or the `link` block should be rendered.
+       * parameters to the `reverse` function in the form of:
+         - `parameter`
+         - name=`parameter`
+
+         In both cases, `parameter` will be treated as a filter expression
+         (which allows you to apply filters to them as well)
+
+       >>> from django.template import Template, Context
+       >>> class REQUEST : path = "http://a/b/c/"
+       >>> template = '''
+       ...   {% path_starts_with "http://a/b/" %}
+       ...     aaa
+       ...   {% else %}
+       ...     <a href="aaa">aaa</a>
+       ...   {% endpath_starts_with %}
+       ... '''.strip ()
+       >>> t = Template (template)
+       >>> t.render (Context (dict (request = REQUEST)))
+       u'aaa'
+       >>> t.render (Context ())
+       u'<a href="aaa">aaa</a>'
+       >>> template = '''
+       ...   {% path_starts_with "test-path-starts-with" %}
+       ...     aaa
+       ...   {% else %}
+       ...     <a href="aaa">aaa</a>
+       ...   {% endpath_starts_with %}
+       ... '''.strip ()
+       >>> t = Template (template)
+       >>> REQUEST.path = "/this/is/nice/"
+       >>> t.render (Context (dict (request = REQUEST)))
+       u'aaa'
+       >>> REQUEST.path = "/this/is/not/nice/"
+       >>> t.render (Context (dict (request = REQUEST)))
+       u'<a href="aaa">aaa</a>'
+    """
+
+    def __init__ (self, prefix, node_list_match, node_list_else) :
+        self.prefix           = prefix
+        self.node_list_match  = node_list_match
+        self.node_list_else   = node_list_else
+    # end def __init__
+
+    def render (self, context) :
+        prefix  = self._as_url (context, * self.prefix)
+        request = context.get ("request", None)
+        path    = (request and request.path) or ""
+        if path.startswith (prefix) :
+            ### looks like this should not be a href
+            result = self.node_list_match (context)
+        else :
+            result = self.node_list_else  (context)
+        return result
+    # end def render
+
+    def _as_url (self, context, name, rev_args, rev_kw) :
+        name = name (context)
+        try :
+            args = [a (context) for a in rev_args]
+            kw   = dict ((n, v (context)) for (n, v) in rev_kw.iteritems ())
+            return reverse (name, args = args, kwargs = kw)
+        except NoReverseMatch :
+            return name
+    # end def _as_url
+
+    @classmethod
+    def _parse_url_spec (cls, parser, rev_spec) :
+        rev_args = []
+        rev_kw   = {}
+        for p in rev_spec.split (";") :
+            if "=" in p :
+                k, v       = (x.strip () for x in p.split ("=", 1))
+                rev_kw [k] = Filter_Exp (parser, v)
+            else :
+                rev_args.append (Filter_Exp (parser, p))
+        return rev_args, rev_kw
+    # end def _parse_url_spec
+
+    @classmethod
+    def parse (cls, parser, token) :
+        name, args           = token.contents.split (" ", 1)
+        url_specs            = [p.strip () for p in args.split (" ", 1)]
+        url_or_name          = Filter_Exp (parser, url_specs [0])
+        rev_args             = ()
+        rev_kw               = {}
+        if len (url_specs) > 1 :
+            rev_args, rev_kw = cls._parse_url_spec (parser, url_specs [1])
+        elif len (url_specs) > 2 :
+            raise template.TemplateSyntaxError \
+                ( "%s only expects 2 parameters (%d given)"
+                % (cls.__name__, len (url_specs))
+                )
+        node_list_match = Block_Exp \
+            (parser.parse (("end%s" % (name, ), "else")))
+        token             = parser.next_token ()
+        if token.contents == "else" :
+            node_list_else = Block_Exp (parser.parse (("end%s" % (name,), )))
+            parser.delete_first_token    ()
+        else :
+            node_list_else = Block_Exp ()
+        return cls \
+            ((url_or_name, rev_args, rev_kw), node_list_match, node_list_else)
+    # end def parse
+
+# end class Navigation_Entry
+
 @register.filter
 @defaultfilters.stringfilter
 def starts_with (value, prefix) :
     """Returns the result of `value.startswith (prefix)`"""
     return value and value.startswith (prefix)
 # end def starts_with
+
+@register.filter
+def query (query_set, query) :
+    """Filters the `query_set` according the `query` spec. The syntac of the
+       `query` spec is the same as used in normal python code:
+      {{ query_set|query:"name__exact = 'hansi', status__gt = 2"}}
+    """
+    ### str is needed to convert the unicode string into a normal string or
+    ### else manager.filter` will not work
+    filter = dict ( ([ str (p).strip () for p in cond.split ("=")]
+                         for cond in query.split (",")
+                    )
+                  )
+    return query_set.filter (** filter)
+# end def query
+
+@register.filter
+def qs_count (query_set) :
+    """Runs the `count` method of the passed query set. This could be achived
+       using the `length` filter as well. But using the count filter the a
+       the calculation will be done by the database engine and not in python
+    """
+    return query_set.count ()
+# end def qs_count
 
 if __name__ != "__main__":
     from _DJO import DJO

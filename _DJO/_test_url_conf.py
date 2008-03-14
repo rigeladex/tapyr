@@ -42,7 +42,7 @@ urlpatterns  = patterns \
     ( ""
     ### the following patter is for the test of the `Path_Starts_With`
     ### template tag
-    , url (r"^this/is/nice/$", _test_view, name = "test-path-starts.with")
+    , url (r"^this/is/nice/$", _test_view, name = "test-path-starts-with")
     )
 
 ### __END__ DJO._test_url_conf
