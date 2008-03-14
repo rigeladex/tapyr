@@ -93,7 +93,7 @@ def tax (amount, year = year) :
 # end def tax
 
 def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line
+    from   _TFL.Command_Line import Command_Line
     return Command_Line \
         ( option_spec =
             ( "-verbose:B?Show chunks, too"

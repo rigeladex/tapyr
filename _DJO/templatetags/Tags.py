@@ -45,6 +45,9 @@
 #    17-Dec-2007 (MG) `Menu_Block_Node` fixed
 #     5-Jan-2008 (MG) `Conditional_URL_Node`: allow parameter less revers urls
 #    10-Jan-2008 (MG) Support varuable lookup in `Menu_Block_Node`
+#    17-Feb-2008 (MG) `add_include_file`: default weight changed to 500
+#    17-Feb-2008 (MG) `token_parse` Parameter `remove_quotes` added
+#    17-Feb-2008 (MG) `menublock` tag changed to `menuitem`
 #    ««revision-date»»···
 #--
 
@@ -132,13 +135,14 @@ class _Template_Node_ (_Node_) :
 # end class _Template_Node_
 
 def token_parse ( token
-                , map      = ()
-                , optional = sys.maxint
-                , tag      = None
-                , pattern  = None
-                , end_tag  = None
-                , parser   = None
-                , remainig = None
+                , map           = ()
+                , optional      = sys.maxint
+                , tag           = None
+                , pattern       = None
+                , end_tag       = None
+                , parser        = None
+                , remainig      = None
+                , remove_quotes = True
                 ) :
     if not isinstance (token, (list, tuple)) :
         parts  = token.split_contents ()
@@ -160,32 +164,37 @@ def token_parse ( token
         if md :
             return tag_name, md
         parameters = match.groups ()
-    if map :
-        map_len  = len (map)
-        if remainig is None :
-            max_length = map_len
-        else :
-            max_length = sys.maxint
-        min_length = min (optional, max_length)
-        if not (min_length <= len (parameters) <= max_length) :
-            if len (parameters) < min_length  :
-                msg = "%r requires at least %d parameters (only %d given)" \
-                    % (tag_name, min_length, len (parameters))
-            else :
-                msg = "%r takes at most %d parameters (%d given)" \
-                    % (tag_name, max_length, len (parameters))
-            raise template.TemplateSyntaxError, msg
-        result = {}
-        values = tuple (parameters) + (None, ) * (map_len - len (parameters))
-        for name, value in zip (map, values) :
-            if name is not None :
-                result [name] = value and value.replace ('"', "")
-        if remainig :
-            result [remainig] = tuple (values [map_len:])
-    elif remainig :
-        result = { remainig : parameters}
     else :
-        result = dict (enumerate (parameters))
+        if remove_quotes :
+            parameters = [p.strip ('"') for p in parameters]
+        else :
+            parameters = list (parameters)
+        if map :
+            map_len  = len (map)
+            if remainig is None :
+                max_length = map_len
+            else :
+                max_length = sys.maxint
+            min_length = min (optional, max_length)
+            if not (min_length <= len (parameters) <= max_length) :
+                if len (parameters) < min_length  :
+                    msg = "%r requires at least %d parameters (only %d given)" \
+                        % (tag_name, min_length, len (parameters))
+                else :
+                    msg = "%r takes at most %d parameters (%d given)" \
+                        % (tag_name, max_length, len (parameters))
+                raise template.TemplateSyntaxError, msg
+            result = {}
+            values = parameters + [None] * (map_len - len (parameters))
+            for name, value in zip (map, values) :
+                if name is not None :
+                    result [name] = value
+            if remainig :
+                result [remainig] = values [map_len:]
+        elif remainig :
+            result = { remainig : parameters}
+        else :
+            result = dict (enumerate (parameters))
     if parser :
         if not end_tag :
             end_tag = ("end%s" % (tag_name, ), )
@@ -223,11 +232,11 @@ def add_include_file (parser, token) :
         files.insert (0, file)
     weight = param ["weight"]
     try :
-        weight = int (weight or "0")
+        weight = int (weight or "500")
     except ValueError :
         if weight :
-            files.insert (0, param ["weight"])
-        weight = 0
+            files.insert (0, weight)
+        weight = 500
     Include_Files.setdefault \
         (settings.SITE_ID, {}).setdefault (weight, []).extend (files)
     return Empty
@@ -354,17 +363,26 @@ new_block_template_tag \
 
 class Menu_Block_Node (_Node_) :
 
-    def __init__ (self, content, parameters = ()) :
-        self.content                  = content
-        self.link_url, self.match_url = parameters [:2]
-        self.url_parameters           = []
-        self.link_parameters          = {}
-        for p in parameters [2:] :
-            name, value = p.split ("=", 1)
-            self.link_parameters [name.strip ()] = value.strip ('"').strip ()
+    def __init__ ( self, content, name = None, match_url = None
+                 , href              = None
+                 , anchor_attributes = ()
+                 ) :
+        ### import pdb; pdb.set_trace ()
+        self.name                  = name
+        self.content               = content
+        self.match_url             = match_url
+        self.href                  = href or match_url
+        anchor_attributes          = []
+        for p in anchor_attributes :
+            name, value            = p.split ("=", 1)
+            anchor_attributes.append \
+                ('%s="%s"' % (name.strip (), value.strip ('"').strip ()))
+        self.anchor_attributes     = ""
+        if anchor_attributes :
+            self.anchor_attributes = " %s" % (" ".join (anchor_attributes))
     # end def __init__
 
-    def _reverse_url (self, spec, exact = "", context = None) :
+    def _reverse_url (self, spec, context = None) :
         if spec.startswith ('"') :
             ### literal url
             return spec.strip ('"').strip ()
@@ -385,40 +403,31 @@ class Menu_Block_Node (_Node_) :
                     kw [n] = v
                 else :
                     args.append (v)
-        return reverse (spec, args = args, kwargs = kw) + exact
+        try :
+            return reverse (spec, args = args, kwargs = kw)
+        except :
+            return "<<no-reverse-match>>"
     # end def _reverse_url
 
     def render (self, context) :
-        ## import pdb; pdb.set_trace ()
-        url       = self._reverse_url (self.link_url,       context = context)
-        match     = self._reverse_url (self.match_url, "$", context = context)
-        if match [-1] == "$" :
-            match = match [:-1]
-            exact = True
-        else :
-            exact = False
+        ### import pdb; pdb.set_trace ()
+        href      = self._reverse_url (self.href,      context = context)
+        match     = self._reverse_url (self.match_url, context = context)
         match_len = len (match)
         path      = context ["request"].path
         as_link   = True
         if path [:match_len] == match :
             as_link     = False
-            if exact and len (path) != match_len :
-                as_link = True
-        result = []
-        attrs  = []
-        for a, v in self.link_parameters.iteritems () :
-            attrs.append ('%s="%s"' % (a, v.replace ("_", " ")))
-        if attrs :
-            attrs = " %s" % (" ".join (attrs))
-        else :
-            attrs = ""
+            #if exact and len (path) != match_len :
+            #    as_link = True
+        result    = []
+        item_name = "menu_item_%s" % (self.name, )
         ### import pdb; pdb.set_trace ()
         if as_link :
-            result.append ('<a href="%s"%s>' % (url, attrs, ))
-        if as_link :
-            context ["submenu_class"] = "hidden"
+            result.append ('<a href="%s"%s>' % (href, self.anchor_attributes, ))
+            context [item_name] = "hidden"
         else :
-            context ["submenu_class"] = ""
+            context [item_name] = ""
         result.append     (self.content.render (context).strip ())
         if as_link :
             result.append ("</a>")
@@ -429,9 +438,11 @@ class Menu_Block_Node (_Node_) :
 # end class Menu_Block_Node
 
 new_block_template_tag \
-    ( register, "menublock", Menu_Block_Node
-    , remainig = "parameters"
-    , parser   = True
+    ( register, "menuitem", Menu_Block_Node, ("name", "match_url", "href")
+    , optional      = 2
+    , remainig      = "anchor_attributes"
+    , parser        = True
+    , remove_quotes = False
     )
 
 ### __END__ DJO.templatetags.Tags
