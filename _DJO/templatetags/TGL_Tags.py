@@ -257,7 +257,7 @@ class Iterate (Tag) :
         def __init__ (self, sequence) :
             self.sequence = sequence
             self.length   = len (sequence)
-            self.index    = 0
+            self.index    = -1
         # end def __init__
 
         def update_filters (self, context) :
