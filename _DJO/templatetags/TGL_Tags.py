@@ -32,6 +32,7 @@
 #    11-Mar-2008 (MG) Use `Filter_Exp` for `RRender.file_name`
 #    14-Mar-2008 (MG) `Path_Starts_With` tag and `query` and `count` filters
 #                     added
+#    17-Mar-2008 (MG) `Path_Starts_With` removed, tag `Iterate` added
 #    ««revision-date»»···
 #--
 """
@@ -56,6 +57,7 @@ from   django                      import template
 from   django.template             import defaultfilters
 from   django.template.loader      import render_to_string
 from   django.core.urlresolvers    import reverse, NoReverseMatch
+import itertools
 
 from   _TFL.predicate              import split_hst
 
@@ -215,124 +217,73 @@ class RRender (_Binding_Tag_) :
 
 # end class RRender
 
-class Path_Starts_With (Tag) :
-    """Allows to easily build a navigation link. The tag splits the `content`
-       into two parts around the `else` tag.
-
-       If the current URL (request.path) starts with `prefix` the first
-       part (from the start to the `else` tag) will be rendered, if not, the
-       second part (from the `else` tag to the end) will be rendered.
-
-       The parameters of the tga are:
-       * url-or-name
-         a real URL or the name of the an url pattern used with the `reverse`
-         function. The resulting URl will be used to dermine if the a
-         `active` or the `link` block should be rendered.
-       * parameters to the `reverse` function in the form of:
-         - `parameter`
-         - name=`parameter`
-
-         In both cases, `parameter` will be treated as a filter expression
-         (which allows you to apply filters to them as well)
+class Iterate (Tag) :
+    """Add an iterable to the context. Calling `iter.next` will change the
+       current value of `iter`. Once the end of the sequence is used, it will
+       be reset and starts all over again.
+       This is simmilar to teh cycle that except that `cycling` trough the
+       list of values and receving the current value is seperated.
 
        >>> from django.template import Template, Context
-       >>> class REQUEST : path = "http://a/b/c/"
        >>> template = '''
-       ...   {% path_starts_with "http://a/b/" %}
-       ...     aaa
-       ...   {% else %}
-       ...     <a href="aaa">aaa</a>
-       ...   {% endpath_starts_with %}
+       ...   {% iterate "a", "b", "c" as iter%}
+       ...   {{ iter }}
+       ...   {{ iter.next }}
+       ...   {{ iter }}
+       ...   {{ iter.next }}
+       ...   {{ iter.next }}
+       ...   {{ iter }}
+       ...   {{ iter.next }}
+       ...   {{ iter }}
        ... '''.strip ()
        >>> t = Template (template)
-       >>> t.render (Context (dict (request = REQUEST)))
-       u'aaa'
-       >>> t.render (Context ())
-       u'<a href="aaa">aaa</a>'
-       >>> template = '''
-       ...   {% path_starts_with "test-path-starts-with" %}
-       ...     aaa
-       ...   {% else %}
-       ...     <a href="aaa">aaa</a>
-       ...   {% endpath_starts_with %}
-       ... '''.strip ()
-       >>> t = Template (template)
-       >>> REQUEST.path = "/this/is/nice/"
-       >>> t.render (Context (dict (request = REQUEST)))
-       u'aaa'
-       >>> REQUEST.path = "/this/is/not/nice/"
-       >>> t.render (Context (dict (request = REQUEST)))
-       u'<a href="aaa">aaa</a>'
+       >>> t.render (Context ({}))
+       u'\\n  a\\n  b\\n  b\\n  c\\n  a\\n  a\\n  b\\n  b'
     """
 
-    def __init__ (self, prefix, node_list_match, node_list_else) :
-        self.prefix           = prefix
-        self.node_list_match  = node_list_match
-        self.node_list_else   = node_list_else
+    def __init__ (self, name, sequence) :
+        self.name     = name
+        self.sequence = sequence
     # end def __init__
 
     def render (self, context) :
-        prefix  = self._as_url (context, * self.prefix)
-        request = context.get ("request", None)
-        path    = (request and request.path) or ""
-        if path.startswith (prefix) :
-            ### looks like this should not be a href
-            result = self.node_list_match (context)
-        else :
-            result = self.node_list_else  (context)
-        return result
+        context [self.name] = self.sequence
+        self.sequence.update_filters (context)
+        return ""
     # end def render
 
-    def _as_url (self, context, name, rev_args, rev_kw) :
-        name = name (context)
-        try :
-            args = [a (context) for a in rev_args]
-            kw   = dict ((n, v (context)) for (n, v) in rev_kw.iteritems ())
-            return reverse (name, args = args, kwargs = kw)
-        except NoReverseMatch :
-            return name
-    # end def _as_url
+    class _Iterable_ (object) :
 
-    @classmethod
-    def _parse_url_spec (cls, parser, rev_spec) :
-        rev_args = []
-        rev_kw   = {}
-        for p in rev_spec.split (";") :
-            if "=" in p :
-                k, v       = (x.strip () for x in p.split ("=", 1))
-                rev_kw [k] = Filter_Exp (parser, v)
-            else :
-                rev_args.append (Filter_Exp (parser, p))
-        return rev_args, rev_kw
-    # end def _parse_url_spec
+        def __init__ (self, sequence) :
+            self.sequence = sequence
+            self.length   = len (sequence)
+            self.index    = 0
+        # end def __init__
+
+        def update_filters (self, context) :
+            self.sequence = [item (context) for item in self.sequence]
+        # end def update_filters
+
+        def next (self) :
+            self.index    = (self.index + 1) % self.length
+            return str (self)
+        # end def netx
+
+        def __str__ (self) :
+            return self.sequence [self.index]
+        # end def __str__
+    # end class _Iterable_
 
     @classmethod
     def parse (cls, parser, token) :
-        name, args           = token.contents.split (" ", 1)
-        url_specs            = [p.strip () for p in args.split (" ", 1)]
-        url_or_name          = Filter_Exp (parser, url_specs [0])
-        rev_args             = ()
-        rev_kw               = {}
-        if len (url_specs) > 1 :
-            rev_args, rev_kw = cls._parse_url_spec (parser, url_specs [1])
-        elif len (url_specs) > 2 :
-            raise template.TemplateSyntaxError \
-                ( "%s only expects 2 parameters (%d given)"
-                % (cls.__name__, len (url_specs))
-                )
-        node_list_match = Block_Exp \
-            (parser.parse (("end%s" % (name, ), "else")))
-        token             = parser.next_token ()
-        if token.contents == "else" :
-            node_list_else = Block_Exp (parser.parse (("end%s" % (name,), )))
-            parser.delete_first_token    ()
-        else :
-            node_list_else = Block_Exp ()
-        return cls \
-            ((url_or_name, rev_args, rev_kw), node_list_match, node_list_else)
-    # end def parse
+        name, args             = token.contents.split (" ", 1)
+        sequence, _, name      = args.strip ().rsplit (" ", 2)
+        sequence = [Filter_Exp (parser, p.strip ()) for p in sequence.split (",")]
+        template_name, _, rest = split_hst (args.strip (), ",")
+        return cls (name, cls._Iterable_ (sequence))
+    # end def
 
-# end class Navigation_Entry
+# end class Iterate
 
 @register.filter
 @defaultfilters.stringfilter
