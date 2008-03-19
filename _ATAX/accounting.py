@@ -128,6 +128,7 @@
 #     4-Jan-2008 (CT)  Use `Regexp` instead of `re.compile`
 #    18-Feb-2008 (CT)  `kz_add` added and used
 #    22-Feb-2008 (RSC) Add reverse charge
+#    19-Mar-2008 (RSC) Fix issues with rev charge in Jahresabschluss
 #    ««revision-date»»···
 #--
 
@@ -901,6 +902,7 @@ class T_Account (Account) :
         self.vorsteuer_EUst                 = defaultdict (EU_Currency)
         self.ust                            = defaultdict (EU_Currency)
         self.ust_igE                        = defaultdict (EU_Currency)
+        self.ust_revCharge                  = defaultdict (EU_Currency)
         self.buchung_zahl                   = defaultdict (int)
         self.ausgaben_total                 = EU_Currency (0)
         self.einnahmen_total                = EU_Currency (0)
@@ -1027,7 +1029,7 @@ class T_Account (Account) :
                 , self.haben_saldo
                 )
             self._do_gkonto \
-                ( self.ust_revCharge,  self.revc_gkonto
+                ( self.ust_revCharge,  self.rvc_gkonto
                 , self.soll_saldo,     "Vor- und Umsatzsteuer igE"
                 , lambda s : (s, s)
                 , self.haben_saldo
