@@ -30,21 +30,115 @@
 #    19-Apr-2006 (CT)  Set `__module__`, too
 #    26-Sep-2006 (PGO) `wrapper` fixed to work with builtin functions, too
 #    24-Jan-2008 (CT)  `Add_Method` and `Add_New_Method` added
+#    26-Mar-2008 (CT)  `Add_Method` changed to use `_Added_Method_Descriptor_`
 #    ««revision-date»»···
 #--
 
-from _TFL import TFL
+from   _TFL         import TFL
+import _TFL.Function
+import _TFL.Functor
 
-def Add_Method (* classes) :
+class _Added_Method_Descriptor_ (object) :
+    """Descriptor supporting the monkey-patching of methods (supports
+       inheritance and patching of the same method by different monkeys).
+    """
+
+    def __init__ (self, fct, orig_name) :
+        self.__dict__.update (fct.__dict__)
+        self.__doc__    = fct.__doc__
+        self.__module__ = fct.__module__
+        self.__name__   = fct.__name__
+        self._chain     = None
+        self._fct       = fct
+        self._key       = "__%s_%08X_%s" % (fct.__name__, id (fct), orig_name)
+        self._orig_name = orig_name
+    # end def __init__
+
+    def _add_to_class (self, cls) :
+        name = self.__name__
+        orig = getattr (cls, name, None)
+        if orig is not None :
+            assert not hasattr (orig, self._orig_name), \
+                "%s, %s, %s" % (cls.__name__, self._key, orig)
+            setattr (cls, self._key, orig)
+            for b in cls.mro () :
+                c = b.__dict__.get (name)
+                if c is not None and isinstance (c, _Added_Method_Descriptor_) :
+                    self._chain = c
+                    break
+        setattr (cls, name, self)
+    # end def _add_to_class
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            result = TFL.Function (self._fct)
+        else :
+            result = TFL.Functor  (self._fct, obj)
+        c = self
+        while c is not None :
+            o = getattr (cls, c._key, None)
+            if o is not None :
+                setattr (result, c._orig_name, o)
+                c = c._chain
+            else :
+                c = None
+        return result
+    # end def __get__
+
+# end class _Added_Method_Descriptor_
+
+def Add_Method (* classes, ** kw) :
     """Adds decorated function to `classes` (won't complains if any class
        already contains a function of that name).
+
+       >>> class A (object) :
+       ...     def foo (self) :
+       ...         print self.__class__.__name__
+       ...
+       >>> class B (object) :
+       ...     def foo (self) :
+       ...         print self.__class__.__name__
+       ...
+       >>> class C (B) : pass
+       ...
+       >>> class D (B) : pass
+       ...
+       >>> @TFL.Add_Method (A, B)
+       ... def foo (self) :
+       ...     print "decorated",
+       ...     return self.foo.orig (self)
+       ...
+       >>> @TFL.Add_Method (C, D, orig_name = "orig1")
+       ... def foo (self) :
+       ...     print "twice",
+       ...     return self.foo.orig1 (self)
+       ...
+       >>> @TFL.Add_Method (D, orig_name = "orig2")
+       ... def foo (self) :
+       ...     print "more than",
+       ...     return self.foo.orig2 (self)
+       ...
+       >>> for X in A, B, C, D :
+       ...     o = X ()
+       ...     print "Instance call:",
+       ...     o.foo ()
+       ...     print "Class    call:",
+       ...     X.foo (o)
+       ...
+       Instance call: decorated A
+       Class    call: decorated A
+       Instance call: decorated B
+       Class    call: decorated B
+       Instance call: twice decorated C
+       Class    call: twice decorated C
+       Instance call: more than twice decorated D
+       Class    call: more than twice decorated D
+
     """
     def decorator (f) :
-        name = f.__name__
+        orig_name = kw.pop ("orig_name", "orig")
         for cls in classes :
-            if hasattr (cls, name) :
-                setattr (f, "orig", getattr (cls, name))
-            setattr (cls, name, f)
+            _Added_Method_Descriptor_ (f, orig_name)._add_to_class (cls)
         return f
     return decorator
 # end def Add_Method

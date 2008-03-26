@@ -41,6 +41,7 @@
 #                     `set_value`
 #    26-Jul-2005 (CT) `prop` added
 #    29-Feb-2008 (CT) `Method_Descriptor.__name__` property added
+#    26-Mar-2008 (CT) `Method_Descriptor.Bound_Method.__getattr__` added
 #    ««revision-date»»···
 #--
 
@@ -119,6 +120,7 @@ class Method_Descriptor (object) :
     """Descriptor for special method types."""
 
     class Bound_Method (object) :
+
         def __init__ (self, method, target, cls) :
             self.method = method
             self.target = target
@@ -128,6 +130,10 @@ class Method_Descriptor (object) :
         def __call__ (self, * args, ** kw) :
             return self.method (self.target, * args, ** kw)
         # end def __call__
+
+        def __getattr__ (self, name) :
+            return getattr (self.method, name)
+        # end def __getattr__
 
         def __repr__ (self) :
             return "<bound method %s.%s of %r>" % \
