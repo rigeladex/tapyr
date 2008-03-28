@@ -31,6 +31,8 @@
 #    26-Sep-2006 (PGO) `wrapper` fixed to work with builtin functions, too
 #    24-Jan-2008 (CT)  `Add_Method` and `Add_New_Method` added
 #    26-Mar-2008 (CT)  `Add_Method` changed to use `_Added_Method_Descriptor_`
+#    28-Mar-2008 (CT)  `_Added_Method_Descriptor_.__get__` corrected (`obj`
+#                      needs to be passed as `head_args`)
 #    ««revision-date»»···
 #--
 
@@ -73,7 +75,7 @@ class _Added_Method_Descriptor_ (object) :
         if obj is None :
             result = TFL.Function (self._fct)
         else :
-            result = TFL.Functor  (self._fct, obj)
+            result = TFL.Functor  (self._fct, head_args = (obj, ))
         c = self
         while c is not None :
             o = getattr (cls, c._key, None)
