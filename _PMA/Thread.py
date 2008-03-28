@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -48,6 +48,7 @@ class _Thread_ (TFL.Meta.Object, threading.Thread) :
 
     def __init__ (self, auto_start = False, ** kw) :
         self.__super.__init__ (** kw)
+        threading.Thread.__init__ (self, ** kw)
         if auto_start :
             self.start ()
     # end def __init__
