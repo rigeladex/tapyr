@@ -37,7 +37,6 @@ def _test_view (request, arg, kw = None) :
     return ""
 # end def _test_view
 
-
 urlpatterns  = patterns \
     ( ""
     ### the following patter is for the test of the `Path_Starts_With`
@@ -46,5 +45,3 @@ urlpatterns  = patterns \
     )
 
 ### __END__ DJO._test_url_conf
-
-
