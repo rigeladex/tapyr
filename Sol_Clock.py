@@ -103,8 +103,8 @@ class Display (TFL.Meta.Object) :
         self._setup_grid  (canvas, size, border, rect)
         self._display_rts (date, location, canvas, rect)
         canvas.configure  (height = size, width = size)
-        CTK.Widget.bind   (canvas, "<Enter>", self._balloon_show)
-        CTK.Widget.bind   (canvas, "<Leave>", self._balloon_hide)
+        CTK.Widget.bind   (canvas, "<Enter>",           self._balloon_show)
+        CTK.Widget.bind   (canvas, "<Leave>",           self._balloon_hide)
         canvas.after      (self.period, self.update)
     # end def __init__
 
@@ -138,11 +138,11 @@ class Display (TFL.Meta.Object) :
         if event :
             widget  = event.widget
             r       = self.rts
-            a       = r.transit.altitude
+            alt     = r.transit.altitude
             message = "\n".join \
                 ( ( "%s %s %s        [%02d:%02d]"
                     % ( (self.location.name, self.date, self.time)
-                      + (r.set.time - r.rise.time).hh_mm
+                      + (r.day_length).hh_mm
                       )
                   , ", ".join
                       ( ( "Sunrise : %s" % r.rise
@@ -150,7 +150,9 @@ class Display (TFL.Meta.Object) :
                         , "sunset : %s"  % r.set
                         )
                       )
-                  , "Transit height: %6.2f degrees" % (a.degrees, )
+                  , "Rise    azimuth : %6.2f degrees" % r.rise.azimuth.degrees
+                  , "Transit height  : %6.2f degrees" % alt.degrees
+                  , "Set     azimuth : %6.2f degrees" % r.set.azimuth.degrees
                   , "Civil  twilight starts %s, ends %s"
                     % (r.civil_twilight_start, r.civil_twilight_finis)
                   , "Nautic twilight starts %s, ends %s"
