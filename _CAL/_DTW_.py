@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #                     for time-fields as defaults
 #     4-Jan-2007 (CT) `__init__` changed to use `localtime` if no args or kw
 #                     are passed in (and `default_to_now` removed)
+#    31-Mar-2008 (CT) `__init__` changed to dereference `_body` if necessary
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,10 @@ class _DTW_ (TFL.Meta.Object) :
         if k in kw :
             assert len (args) == 0
             assert len (kw)   == 1
-            self._body = kw [k]
+            body = kw [k]
+            if isinstance (body, _DTW_) :
+                body = body._body
+            self._body = body
         else :
             if len (args) + len (kw) == 0 :
                 defaults = time.localtime ()

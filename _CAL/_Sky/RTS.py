@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,6 +35,8 @@
 #    13-Nov-2007 (CT) Creation continued..
 #    13-Nov-2007 (CT) Moved from `CAL.Sun.Sun_P` to `CAL.Sky.RTS.RTS`
 #    15-Nov-2007 (CT) `RTS._Event_.__str__` added
+#    31-Mar-2008 (CT) `_to_local_time` changed to consider `dst`
+#    31-Mar-2008 (CT) `azimuth` added to newly factored `_Rise_` and `_Set_`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +47,8 @@ from   _TGL                     import TGL
 from   _TFL._Meta.Once_Property import Once_Property
 
 import _CAL._Sky
+import _CAL.Date_Time
+import _CAL.Delta
 import _CAL.Time
 import _TFL._Meta.Object
 import _TFL.Accessor
@@ -63,7 +67,7 @@ class RTS (TFL.Meta.Object) :
        >>> rts = RTS ((s - 1, s, s + 1),
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
        >>> [x.time for x in (rts.rise, rts.transit, rts.set)]
-       [Time (3, 53, 41, 641), Time (11, 54, 26, 712), Time (19, 55, 49, 352)]
+       [Time (4, 53, 41, 641), Time (12, 54, 26, 712), Time (20, 55, 49, 352)]
        >>> s = Sun (CAL.Date (2007, 11, 13))
        >>> rts = RTS ((s - 1, s, s + 1),
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
@@ -163,12 +167,17 @@ class RTS (TFL.Meta.Object) :
         # end def _hour_angle
 
         def _to_local_time (self, hours_ut) :
+            from dateutil.tz import tzlocal
             lon         = rounded_to (self.lon.degrees, 15)
-            hours_local = self.hours_local = \
+            hours_local = \
                 ( hours_ut
                 - (CAL.Time.from_degrees (lon).seconds / 3600.0)
                 ) % 24.0
-            return CAL.Time.from_decimal_hours (hours_local)
+            dt          = CAL.Date_Time.combine \
+                (self.day, CAL.Time.from_decimal_hours (hours_local))
+            delta       = CAL.Date_Time_Delta \
+                (seconds = tzlocal ().dst (dt._body).seconds)
+            return CAL.Time (time = (dt + delta)._body.time ())
         # end def _to_local_time
 
         def _to_ut (self, m, delta_m) :
@@ -182,6 +191,26 @@ class RTS (TFL.Meta.Object) :
         # end def __str__
 
     # end class _Event_
+
+    class _Rise_ (_Event_) :
+
+        def calc (self, m) :
+            self.__super.calc (m)
+            self.azimuth  = Angle_D \
+                (Angle_R.acos (self.delta.sin / self.lat.cos).degrees)
+        # end def calc
+
+    # end class _Rise_
+
+    class _Set_ (_Event_) :
+
+        def calc (self, m) :
+            self.__super.calc (m)
+            self.azimuth  = Angle_D \
+                (360. - Angle_R.acos (self.delta.sin / self.lat.cos).degrees)
+        # end def calc
+
+    # end class _Set_
 
     class _Transit_ (_Event_) :
 
@@ -207,9 +236,14 @@ class RTS (TFL.Meta.Object) :
         self.m2    = m2    = (m0 + H0.degrees             / 360.) % 1.0
         self.vars  = vars  = locals ()
         self.transit       = self._Transit_ (m0, ** vars)
-        self.rise          = self._Event_   (m1, ** vars)
-        self.set           = self._Event_   (m2, ** vars)
+        self.rise          = self._Rise_    (m1, ** vars)
+        self.set           = self._Set_     (m2, ** vars)
     # end def __init__
+
+    @Once_Property
+    def day_length (self) :
+        return self.set.time_ut - self.rise.time_ut
+    # end def day_length
 
     @Once_Property
     def interpolator_a (self) :

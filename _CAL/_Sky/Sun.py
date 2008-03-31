@@ -37,6 +37,8 @@
 #    14-Nov-2007 (CT) `RTS_Sun.On_Day` added (and used in `main`)
 #    14-Nov-2007 (CT) `hh_mm` factored to `CAL.Time`
 #     1-Jan-2008 (CT) `-day_length` and `-transit` added
+#    31-Mar-2008 (CT) Doctests adapted to change of RTS to consider `dst` for
+#                     local times
 #    ««revision-date»»···
 #--
 
@@ -256,7 +258,7 @@ class RTS_Sun (CAL.Sky.RTS) :
        >>> rts = RTS_Sun ((s - 1, s, s + 1),
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
        >>> [x.time for x in (rts.rise, rts.transit, rts.set)]
-       [Time (3, 53, 41, 641), Time (11, 54, 26, 712), Time (19, 55, 49, 352)]
+       [Time (4, 53, 41, 641), Time (12, 54, 26, 712), Time (20, 55, 49, 352)]
        >>> s = Sun (CAL.Date (2007, 11, 13))
        >>> rts = RTS_Sun ((s - 1, s, s + 1),
        ...   Angle_D (48, 14), Angle_D (-16, -20), Angle_D (-0.8333))
@@ -281,15 +283,15 @@ class RTS_Sun (CAL.Sky.RTS) :
        >>> s = Sun (CAL.Date (2002, 8, 1))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (5, 6, 40, 945), Time (19, 38, 24, 361))
+       (Time (6, 6, 40, 945), Time (20, 38, 24, 361))
        >>> s = Sun (CAL.Date (2004, 8, 1))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 43.0, 79.0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (5, 7, 14, 51), Time (19, 37, 49, 220))
+       (Time (6, 7, 14, 51), Time (20, 37, 49, 220))
        >>> s = Sun (CAL.Date (2000, 6, 21))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0, -0.8333)
        >>> rts.rise.time, rts.set.time
-       (Time (5, 58, 7, 648), Time (18, 5, 30, 185))
+       (Time (6, 58, 7, 648), Time (19, 5, 30, 185))
        >>> s = Sun (CAL.Date (2000, 12, 21))
        >>> rts = RTS_Sun ((s - 1, s, s + 1), 0, 0, -0.8333)
        >>> rts.rise.time, rts.set.time
@@ -348,9 +350,11 @@ def main (cmd) :
     print "Sunrise : %s, transit : %s, sunset : %s" % \
         (rts.rise, rts.transit, rts.set)
     if cmd.day_length :
-        print "Day length: %02d:%02d" % (rts.set.time - rts.rise.time).hh_mm
+        print "Day length: %02d:%02d" % (rts.day_length).hh_mm
     if cmd.transit :
-        print "Transit height: %6.2f degrees" % (rts.transit.altitude.degrees, )
+        print "Rise    azimuth : %6.2f degrees" % rts.rise.azimuth.degrees
+        print "Transit height  : %6.2f degrees" % rts.transit.altitude.degrees
+        print "Set     azimuth : %6.2f degrees" % rts.set.azimuth.degrees
     if cmd.civil_twilight :
         print "Civil  twilight starts %s, ends %s" % \
             (rts.civil_twilight_start, rts.civil_twilight_finis)
@@ -377,4 +381,5 @@ rts = RTS_Sun ((s - 1, s, s + 1), Angle_D (48, 14), Angle_D (-16, -20))
 [str (x.time) for x in (rts.civil_twilight_start, rts.civil_twilight_finis)]
 [str (x.time) for x in (rts.nautic_twilight_start, rts.nautic_twilight_finis)]
 [str (x.time) for x in (rts.astro_twilight_start, rts.astro_twilight_finis)]
+rts = RTS_Sun.On_Day (CAL.Date (2007, 6, 13), CAL.Sky.Location (Angle_D (48, 14), Angle_D (-16, -20)))
 """

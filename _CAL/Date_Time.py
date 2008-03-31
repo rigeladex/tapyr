@@ -37,6 +37,7 @@
 #    11-Nov-2007 (CT) `sidereal_time` added
 #     3-Jan-2008 (CT) `time_pattern` added and `_from_string_match_kw` redefined
 #     7-Jan-2008 (CT) `as_utc` added
+#    31-Mar-2008 (CT) `combine` added
 #    ««revision-date»»···
 #--
 
@@ -147,6 +148,16 @@ class Date_Time (CAL.Date, CAL.Time) :
         delta = self.Delta   (seconds = local._body.utcoffset ().seconds)
         return self - delta
     # end def as_utc
+
+    @classmethod
+    def combine (cls, date, time) :
+        """Create a `Date_Time` object from `date` and `time` objects."""
+        if isinstance (date, CAL._DTW_) :
+            date = date._body
+        if isinstance (time, CAL._DTW_) :
+            time = time._body
+        return cls (** {cls._kind : datetime.datetime.combine (date, time)})
+    # end def combine
 
     @staticmethod
     def from_ical (ical) :
