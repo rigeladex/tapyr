@@ -33,6 +33,8 @@
 #    26-Mar-2008 (CT)  `Add_Method` changed to use `_Added_Method_Descriptor_`
 #    28-Mar-2008 (CT)  `_Added_Method_Descriptor_.__get__` corrected (`obj`
 #                      needs to be passed as `head_args`)
+#     1-Apr-2008 (CT)  `_Added_Method_Descriptor_` changed to be meta-class
+#                      compatible, too
 #    ««revision-date»»···
 #--
 
@@ -63,7 +65,7 @@ class _Added_Method_Descriptor_ (object) :
             assert not hasattr (orig, self._orig_name), \
                 "%s, %s, %s" % (cls.__name__, self._key, orig)
             setattr (cls, self._key, orig)
-            for b in cls.mro () :
+            for b in cls.__mro__ :
                 c = b.__dict__.get (name)
                 if c is not None and isinstance (c, _Added_Method_Descriptor_) :
                     self._chain = c
@@ -105,12 +107,16 @@ def Add_Method (* classes, ** kw) :
        ...
        >>> class D (B) : pass
        ...
+       >>> class T (type) :
+       ...     def foo (cls) :
+       ...         print cls.__class__.__name__
+       ...
        >>> @TFL.Add_Method (A, B)
        ... def foo (self) :
        ...     print "decorated",
        ...     return self.foo.orig (self)
        ...
-       >>> @TFL.Add_Method (C, D, orig_name = "orig1")
+       >>> @TFL.Add_Method (C, D, T, orig_name = "orig1")
        ... def foo (self) :
        ...     print "twice",
        ...     return self.foo.orig1 (self)
@@ -119,6 +125,11 @@ def Add_Method (* classes, ** kw) :
        ... def foo (self) :
        ...     print "more than",
        ...     return self.foo.orig2 (self)
+       ...
+       >>> @TFL.Add_Method (T)
+       ... def foo (cls) :
+       ...     print "meta-decorated",
+       ...     return cls.foo.orig (cls)
        ...
        >>> for X in A, B, C, D :
        ...     o = X ()
@@ -135,6 +146,15 @@ def Add_Method (* classes, ** kw) :
        Class    call: twice decorated C
        Instance call: more than twice decorated D
        Class    call: more than twice decorated D
+
+       >>> for X in T, :
+       ...     c = T ("bar", (), {})
+       ...     print "Class    call:",
+       ...     c.foo ()
+       ...     print "Meta     call:",
+       ...     T.foo (c)
+       Class    call: meta-decorated twice T
+       Meta     call: meta-decorated twice T
 
     """
     def decorator (f) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -86,12 +86,8 @@
 #                      `full_name` to `_remove_file`
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #     1-Dec-2006 (PGO) Usage of Ordered_Set in `_remove_file` fixed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                import TFL
 from   _TFL.Filename       import Filename
