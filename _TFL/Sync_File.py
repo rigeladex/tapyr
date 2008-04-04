@@ -86,10 +86,12 @@
 #                      `full_name` to `_remove_file`
 #    14-Feb-2006 (CT)  Moved into package `TFL`
 #     1-Dec-2006 (PGO) Usage of Ordered_Set in `_remove_file` fixed
+#     3-Apr-2008 (CT)  Exception classes factored into `TFL.Error`
 #    ««revision-date»»···
 #--
 
 from   _TFL                import TFL
+from   _TFL.Error          import *
 from   _TFL.Filename       import Filename
 from   _TFL                import sos
 import _TFL.d_dict
@@ -101,13 +103,6 @@ import errno
 import re
 import time
 import traceback
-
-class Not_A_File              (StandardError) : pass
-class Not_A_Dir               (StandardError) : pass
-class Sync_Conflict           (StandardError) : pass
-class Already_Open            (StandardError) : pass
-class Not_Open                (StandardError) : pass
-class Could_Not_Delete_Old_DB (StandardError) : pass
 
 class _Sync_File_ :
 

@@ -42,6 +42,7 @@
 #    26-Jul-2005 (CT) `prop` added
 #    29-Feb-2008 (CT) `Method_Descriptor.__name__` property added
 #    26-Mar-2008 (CT) `Method_Descriptor.Bound_Method.__getattr__` added
+#     3-Apr-2008 (CT) `Alias2_Class_and_Instance_Method` added
 #    ««revision-date»»···
 #--
 
@@ -305,6 +306,49 @@ class Alias_Class_and_Instance_Method (Class_Method) :
     # end def __get__
 
 # end class Alias_Class_and_Instance_Method
+
+class Alias2_Class_and_Instance_Method (Class_Method) :
+    """Property defining an alias name for a instance-method/class-method
+       pair with different names and definitions.
+
+       >>> class T (object) :
+       ...   chameleon = Alias2_Class_and_Instance_Method ("foo", "bar")
+       ...   @classmethod
+       ...   def foo (cls) :
+       ...     print "Class method foo <%s>" % (cls.__name__, )
+       ...   def bar (self) :
+       ...     print "Instance method bar <%s>" % (self.__class__.__name__, )
+       ...
+       >>> T.chameleon()
+       Class method foo <T>
+       >>> T ().chameleon ()
+       Instance method bar <T>
+       >>> class U(T) :
+       ...   pass
+       ...
+       >>> U.chameleon()
+       Class method foo <U>
+       >>> U().chameleon()
+       Instance method bar <U>
+    """
+
+    def __init__ (self, cm_alias, im_alias, cls = None) :
+        self.cm_alias = cm_alias
+        self.im_alias = im_alias
+        self.cls      = cls
+    # end def __init__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            result = self.Bound_Method \
+                (getattr (cls, self.cm_alias).im_func, cls, cls)
+        else :
+            result = self.Bound_Method \
+                (getattr (cls, self.im_alias), obj, cls)
+        return result
+    # end def __get__
+
+# end class Alias2_Class_and_Instance_Method
 
 class Alias_Meta_and_Class_Attribute (Class_Method) :
     """Property defining an alias name for a instance-method/class-method

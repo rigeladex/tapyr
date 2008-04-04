@@ -35,6 +35,9 @@
 #                      needs to be passed as `head_args`)
 #     1-Apr-2008 (CT)  `_Added_Method_Descriptor_` changed to be meta-class
 #                      compatible, too
+#     4-Apr-2008 (CT)  Set `_globals` (unfortunately, both `__globals__` and
+#                      `func_globals` are readonly)
+#     4-Apr-2008 (CT)  `Contextmanager` added
 #    ««revision-date»»···
 #--
 
@@ -214,18 +217,31 @@ def Decorator (decorator) :
        ('foo', 'Function to test decoration')
     """
     def wrapper (f) :
-        decorated            = decorator (f)
-        decorated.__name__   = f.__name__
-        decorated.__module__ = getattr (f, "__module__", "<builtin>")
-        decorated.__doc__    = f.__doc__
+        decorated             = decorator (f)
+        decorated.__name__    = f.__name__
+        decorated.__module__  = getattr (f, "__module__", "<builtin>")
+        decorated.__doc__     = f.__doc__
         decorated.__dict__.update (getattr (f, "__dict__", {}))
+        decorated._globals    = \
+            getattr (f, "_globals", getattr (f, "__globals__", {}))
         return decorated
     wrapper.__name__   = decorator.__name__
     wrapper.__module__ = decorator.__module__
     wrapper.__doc__    = decorator.__doc__
     wrapper.__dict__.update (decorator.__dict__)
+    wrapper._globals   = getattr \
+        (decorator, "_globals", getattr (decorator, "__globals__", {}))
     return wrapper
 # end def Decorator
+
+@Decorator
+def Contextmanager (f) :
+    """Decorate `f` so that it's usable as a contextmanager in `with`
+       statements.
+    """
+    from contextlib import contextmanager
+    return contextmanager (f)
+# end def Contextmanager
 
 if __name__ != "__main__" :
     TFL._Export ("*")
