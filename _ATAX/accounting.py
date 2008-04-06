@@ -129,6 +129,8 @@
 #    18-Feb-2008 (CT)  `kz_add` added and used
 #    22-Feb-2008 (RSC) Add reverse charge
 #    19-Mar-2008 (RSC) Fix issues with rev charge in Jahresabschluss
+#     6-Apr-2008 (CT)  `print_summary_online` changed to only show non-zero
+#                      categories
 #    ««revision-date»»···
 #--
 
@@ -825,12 +827,15 @@ class V_Account (Account) :
         print "=" * 67
         print "%-50s %3s : %10s" % \
             ("Vorsteuer", "060", self.vorsteuer.as_string_s ())
-        print "%-50s %3s : %10s" % \
-            ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
-        print "%-50s %3s : %10s" % \
-            ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
-        print "%-50s %3s : %10s" % \
-            ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
+        if self.vorsteuer_EUst:
+            print "%-50s %3s : %10s" % \
+                ("Einfuhrumsatzsteuer", "061", self.vorsteuer_EUst.as_string_s())
+        if self.vorsteuer_igE :
+            print "%-50s %3s : %10s" % \
+                ("Vorsteuer igE", "065", self.vorsteuer_igE.as_string_s ())
+        if self.vorsteuer_revCh :
+            print "%-50s %3s : %10s" % \
+                ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
         for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
             print "%-50.50s %3s : %10s" % (d, k, vst.as_string_s ())
         print "\n\n"
