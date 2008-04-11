@@ -134,6 +134,7 @@
 #    11-Apr-2008 (RSC) add suffix 'r' or 'i' for rev-Charge/igE in Ust column for kontenzeile
 #                      (requested by E. Pichler-Fruhstorfer)
 #                      Fix gkonto description for rev. Charge (cut & paste error) in finish
+#    11-Apr-2008 (RSC) fix printing of entry if "dir" includes "~"
 #    ««revision-date»»···
 #--
 
@@ -287,7 +288,7 @@ class Account_Entry :
     # end def __getattr__
 
     def __str__ (self) :
-        return "%6s %2.2f%s%10s %10s %10s  %-5s  %-5s %s%1s %s" % \
+        return "%6s %2.2f%s%10s %10s %10s  %-5s  %-5s%2s%1s %s" % \
             ( self.date, self.vat_p, self.cati
             , self.vat.as_string   ()
             , self.netto.as_string ()
