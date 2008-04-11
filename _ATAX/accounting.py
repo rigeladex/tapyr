@@ -131,6 +131,9 @@
 #    19-Mar-2008 (RSC) Fix issues with rev charge in Jahresabschluss
 #     6-Apr-2008 (CT)  `print_summary_online` changed to only show non-zero
 #                      categories
+#    11-Apr-2008 (RSC) add suffix 'r' or 'i' for rev-Charge/igE in Ust column for kontenzeile
+#                      (requested by E. Pichler-Fruhstorfer)
+#                      Fix gkonto description for rev. Charge (cut & paste error) in finish
 #    ««revision-date»»···
 #--
 
@@ -208,6 +211,11 @@ class Account_Entry :
         self.vst_korrektur  = vst_korrektur
         self.time           = mktime             (self.dtuple)
         self.desc           = desc_strip_pat.sub ("", self.desc)
+        self.vat_type       = ' '
+        for k in 'ir' :
+            if k in self.cat :
+                self.vat_type = k
+                break
         currency_match      = currency_pat.search (gross)
         if currency_match :
             source_currency = EU_Currency.Table [currency_match.group (1)]
@@ -292,11 +300,13 @@ class Account_Entry :
     def kontenzeile (self) :
         ## print self.vat_p, type (self.vat_p) # self.soll_betrag, self.haben_betrag
         try :
-            return "%02d%02d  %-5s  %-35.35s %2s  %12s  %12s" % \
+            vat_type = getattr (self, "vat_type", ' ')
+            return "%02d%02d  %-5s  %-35.35s %2s%1s %12s  %12s" % \
                 ( self.day, self.month
                 , self.gegen_konto
                 , self.desc
                 , self.vat_txt
+                , vat_type
                 , self._soll_betrag  ()
                 , self._haben_betrag ()
                 )
@@ -1035,7 +1045,7 @@ class T_Account (Account) :
                 )
             self._do_gkonto \
                 ( self.ust_revCharge,  self.rvc_gkonto
-                , self.soll_saldo,     "Vor- und Umsatzsteuer igE"
+                , self.soll_saldo,     "Vor- und Umsatzsteuer rev. Ch."
                 , lambda s : (s, s)
                 , self.haben_saldo
                 )
