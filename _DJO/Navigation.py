@@ -28,6 +28,8 @@
 # Revision Dates
 #    27-Feb-2008 (CT) Creation
 #    28-Feb-2008 (CT) `encoding` added and used
+#    13-Apr-2008 (CT) `own_links_transitive` corrected (needs to call
+#                     `own_links_transitive`, not `own_links`, for sub_dirs)
 #    ««revision-date»»···
 #--
 
@@ -146,7 +148,7 @@ class Dir (_Site_Entity_) :
             if isinstance (e, Dir) :
                 if e.href :
                     yield e
-                for ee in e.own_links :
+                for ee in e.own_links_transitive :
                     yield ee
             else :
                 yield e

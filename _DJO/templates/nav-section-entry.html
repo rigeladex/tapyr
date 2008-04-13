@@ -15,6 +15,8 @@
   ##    29-Feb-2008 (CT) Creation (factored from nav-section-level.html)
   ##    29-Feb-2008 (CT) Changed to recursively `rrender
   ##                     "nav-section-level.html"` for sub-sections
+  ##    13-Apr-2008 (CT) Check `ifequal link.href page.link.href` instead of
+  ##                     `ifequal link page.link` to determine `current-link`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -27,7 +29,7 @@
         {% rrender "nav-section-level.html" link_list=link.own_links %}
       </li>
     {% else %}
-      {% ifequal link page.link %}
+      {% ifequal link.href page.link.href %}
         <li class="current-link {{ level }}">{{ link.title }}</li>
       {% else %}
         <li class="nav-link {{ level }}">
