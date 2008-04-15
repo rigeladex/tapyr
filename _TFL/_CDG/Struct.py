@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2008 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -56,18 +56,16 @@
 #                      `TFL.CDG.Type_Packer`
 #     1-Feb-2007 (CED) s/GCC_Like_Type_Packer/Active_Type_Packer/g
 #    26-Mar-2007 (PGO) `bounds` handling in `dict` fixed (was always overwritten)
-#    23-Jul-2007 (CED) Activated absolute_import
 #    01-Aug-2007 (MG)  Struct.as_c_code: parameter `add_description` added
 #                      and `as_typedef` changed to put the description to the
 #                      typedef instead
 #    01-Aug-2007 (MG)  Struct.format_and_values: call to
 #                      `field.convert_value` added
-#    06-Aug-2007 (CED) Future import removed again
 #    18-Oct-2007 (MZO) [25170] `table_entry_comment` added
+#    26-Mar-2008 (MG)  `Struct` renamed to `_TFL_SDG_Struct_` and `_real_name`
+#                      used
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                           import TFL
 import _TFL._Meta.Object
@@ -100,7 +98,7 @@ class Typedef (TFL.Meta.Object) :
 
 # end class Typedef
 
-class Struct (TFL.Meta.Object) :
+class _TFL_SDG_Struct_ (TFL.Meta.Object) :
     """Root class for classes modelling C structs of the table-driven FT-Com
        Layer.
 
@@ -110,6 +108,8 @@ class Struct (TFL.Meta.Object) :
 
     ### Set the __metaclass__ attribute a new M_Struct class, e.g.:
     ### __metaclass__      = TFL.CDG.M_Struct.New ("TDFT")
+
+    _real_name                  = "Struct"
 
     buffer_name_format          = "%(cls_name)s_buffer"
     buffer_name_tail            = ""
@@ -300,7 +300,7 @@ class Struct (TFL.Meta.Object) :
         return result
     # end def null_termination
 
-# end class Struct
+Struct = _TFL_SDG_Struct_ # end class _TFL_SDG_Struct_
 
 if __name__ != "__main__" :
     import _TFL._CDG

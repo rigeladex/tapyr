@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2008 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -47,22 +47,20 @@
 #    13-Mar-2007 (MZO) [23693] check char fields
 #    14-Mar-2007 (PGO) `check_value` changed to raise Value_Out_Of_Range
 #     7-May-2007 (MZO) `check_value` fixed, hex was not checked correctly
-#    23-Jul-2007 (CED) Activated absolute_import
 #    01-Aug-2007 (MG)  `String_Field` added
 #    01-Aug-2007 (MG)  `convert_value` added
-#    06-Aug-2007 (CED) Future import removed again
+#    15-Apr-2008 (MG)  `Struct.__init__` support struct instances as `type`
+#                      parameter
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                           import TFL
 import _TFL._Meta.Object
 import _TFL._SDG._C
-import operator
-import struct
-import traceback
-import math
+import  operator
+import  struct
+import  traceback
+import  math
 
 class Value_Out_Of_Range (ValueError) : pass
 class String_Too_Long    (ValueError) : pass
@@ -70,9 +68,10 @@ class String_Too_Long    (ValueError) : pass
 class Struct_Field (TFL.Meta.Object):
     """Model a single field of a C struct."""
 
-    typedef  = None
+    typedef   = None
+    is_struct = False
 
-    fmt_code = \
+    fmt_code  = \
         { "char"                  : "c", "unsigned char"         : "B"
         , "char []"               : "s"
         , "double"                : "d", "float"                 : "f"
@@ -84,7 +83,7 @@ class Struct_Field (TFL.Meta.Object):
         , "void *"                : "P"
         }
 
-    type_map = \
+    type_map  = \
         { "char[]"                     : "char []"
         , "long long"                  : "llong"
         , "schar"                      : "signed char"
@@ -115,13 +114,16 @@ class Struct_Field (TFL.Meta.Object):
                  , bounds      = None
                  , ** kw ### ignore additional parameters
                  ) :
-        self.type_name   = type
-        self.type        = self.type_map.get (type, type)
-        self.name        = name
-        self.desc        = desc
-        self.init        = init
-        self.user_code   = user_code
-        self.bounds      = bounds
+        self.type          = self.type_map.get (type, type)
+        if not isinstance (type, basestring) :
+            type           = type.type_name
+            self.is_struct = True
+        self.type_name     = type
+        self.name          = name
+        self.desc          = desc
+        self.init          = init
+        self.user_code     = user_code
+        self.bounds        = bounds
     # end def __init__
 
     def as_c_code (self, C) :

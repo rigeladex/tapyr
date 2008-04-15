@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2007 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2002-2008 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -30,8 +30,6 @@
 #    19-Mar-2007 (DAL) changed offset_field default from -1 to 0xFFFFFFFF
 #                      (RUP 23577)
 #    24-Apr-2007 (DAL) `as_tex` addded
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #     1-Oct-2007 (DAL) unit added to `as_tex` output table
 #    ««revision-date»»···
 #--

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -73,6 +73,8 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    20-Nov-2007 (MG)  Imports fixed
+#     2-Apr-2008 (MG) `Node` now inherits from `TFL.Meta.Object` instead of
+#                     `object`
 #    ««revision-date»»···
 #--
 
@@ -386,6 +388,7 @@ import _TFL.Caller
 import _TFL.NO_List
 import _TFL._SDG
 import _TFL._SDG.M_Node
+import _TFL._Meta.Object
 
 from   _TFL.predicate    import *
 import sys
@@ -408,7 +411,7 @@ class _Node_NO_List_ (TFL.NO_List) :
 
 NO_List = _Node_NO_List_ # end def _Node_NO_List_
 
-class Node (object) :
+class Node (TFL.Meta.Object) :
     """Node of a structured document."""
 
     __metaclass__        = TFL.SDG.M_Node

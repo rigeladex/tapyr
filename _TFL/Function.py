@@ -39,12 +39,15 @@
 #    14-Feb-2006 (CT) `_Function_` unfactored (`Function` was empty)
 #    21-Feb-2008 (MG) `__init__`: use getattr chain to handle all sorts of
 #                     callables as `function`
+#    15-Apr-2008 (MG) `function` class attribute added (needed for unpickling)
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 
 class Function :
+
+    function = None ### needed to be able to unpickle a Function instance
 
     def __init__ (self, function, _doc = None) :
         self.function = function
