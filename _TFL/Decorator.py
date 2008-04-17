@@ -38,150 +38,16 @@
 #     4-Apr-2008 (CT)  Set `_globals` (unfortunately, both `__globals__` and
 #                      `func_globals` are readonly)
 #     4-Apr-2008 (CT)  `Contextmanager` added
+#    17-Apr-2008 (CT)  `_Added_Method_Descriptor_` complexity revoked (didn't
+#                      work for replacing a method that's overriden by a
+#                      descendent of the class for which it is overriden)
+#    17-Apr-2008 (CT)  `Override_Method` added (allows access to `orig`, but
+#                      no multiple classes); `Add_Method` changed to not
+#                      provide `orig`
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
-import _TFL.Function
-import _TFL.Functor
-
-class _Added_Method_Descriptor_ (object) :
-    """Descriptor supporting the monkey-patching of methods (supports
-       inheritance and patching of the same method by different monkeys).
-    """
-
-    def __init__ (self, fct, orig_name) :
-        self.__dict__.update (fct.__dict__)
-        self.__doc__    = fct.__doc__
-        self.__module__ = fct.__module__
-        self.__name__   = fct.__name__
-        self._chain     = None
-        self._fct       = fct
-        self._key       = "__%s_%08X_%s" % (fct.__name__, id (fct), orig_name)
-        self._orig_name = orig_name
-    # end def __init__
-
-    def _add_to_class (self, cls) :
-        name = self.__name__
-        orig = getattr (cls, name, None)
-        if orig is not None :
-            assert not hasattr (orig, self._orig_name), \
-                "%s, %s, %s" % (cls.__name__, self._key, orig)
-            setattr (cls, self._key, orig)
-            for b in cls.__mro__ :
-                c = b.__dict__.get (name)
-                if c is not None and isinstance (c, _Added_Method_Descriptor_) :
-                    self._chain = c
-                    break
-        setattr (cls, name, self)
-    # end def _add_to_class
-
-    def __get__ (self, obj, cls = None) :
-        if obj is None :
-            result = TFL.Function (self._fct)
-        else :
-            result = TFL.Functor  (self._fct, head_args = (obj, ))
-        c = self
-        while c is not None :
-            o = getattr (cls, c._key, None)
-            if o is not None :
-                setattr (result, c._orig_name, o)
-                c = c._chain
-            else :
-                c = None
-        return result
-    # end def __get__
-
-# end class _Added_Method_Descriptor_
-
-def Add_Method (* classes, ** kw) :
-    """Adds decorated function to `classes` (won't complains if any class
-       already contains a function of that name).
-
-       >>> class A (object) :
-       ...     def foo (self) :
-       ...         print self.__class__.__name__
-       ...
-       >>> class B (object) :
-       ...     def foo (self) :
-       ...         print self.__class__.__name__
-       ...
-       >>> class C (B) : pass
-       ...
-       >>> class D (B) : pass
-       ...
-       >>> class T (type) :
-       ...     def foo (cls) :
-       ...         print cls.__class__.__name__
-       ...
-       >>> @TFL.Add_Method (A, B)
-       ... def foo (self) :
-       ...     print "decorated",
-       ...     return self.foo.orig (self)
-       ...
-       >>> @TFL.Add_Method (C, D, T, orig_name = "orig1")
-       ... def foo (self) :
-       ...     print "twice",
-       ...     return self.foo.orig1 (self)
-       ...
-       >>> @TFL.Add_Method (D, orig_name = "orig2")
-       ... def foo (self) :
-       ...     print "more than",
-       ...     return self.foo.orig2 (self)
-       ...
-       >>> @TFL.Add_Method (T)
-       ... def foo (cls) :
-       ...     print "meta-decorated",
-       ...     return cls.foo.orig (cls)
-       ...
-       >>> for X in A, B, C, D :
-       ...     o = X ()
-       ...     print "Instance call:",
-       ...     o.foo ()
-       ...     print "Class    call:",
-       ...     X.foo (o)
-       ...
-       Instance call: decorated A
-       Class    call: decorated A
-       Instance call: decorated B
-       Class    call: decorated B
-       Instance call: twice decorated C
-       Class    call: twice decorated C
-       Instance call: more than twice decorated D
-       Class    call: more than twice decorated D
-
-       >>> for X in T, :
-       ...     c = T ("bar", (), {})
-       ...     print "Class    call:",
-       ...     c.foo ()
-       ...     print "Meta     call:",
-       ...     T.foo (c)
-       Class    call: meta-decorated twice T
-       Meta     call: meta-decorated twice T
-
-    """
-    def decorator (f) :
-        orig_name = kw.pop ("orig_name", "orig")
-        for cls in classes :
-            _Added_Method_Descriptor_ (f, orig_name)._add_to_class (cls)
-        return f
-    return decorator
-# end def Add_Method
-
-def Add_New_Method (* classes) :
-    """Adds decorated function to `classes` (complains if any class already
-       contains a function of that name).
-    """
-    def decorator (f) :
-        name = f.__name__
-        for cls in classes :
-            if hasattr (cls, name) :
-                raise TypeError, "%s already has a property named `%s`" % \
-                    (cls, name)
-            setattr (cls, name, f)
-        return f
-    return decorator
-# end def Add_New_Method
 
 def Decorator (decorator) :
     """Decorate `decorator` so that `__name__`, `__doc__`, and `__dict__` of
@@ -242,6 +108,50 @@ def Contextmanager (f) :
     from contextlib import contextmanager
     return contextmanager (f)
 # end def Contextmanager
+
+@Decorator
+def Add_Method (* classes) :
+    """Adds decorated function to `classes` (won't complains if any class
+       already contains a function of that name, but the original function
+       isn't available to the decorated function for chaining up to).
+    """
+    def decorator (f) :
+        name = f.__name__
+        for cls in classes :
+            setattr (cls, name, f)
+        return f
+    return decorator
+# end def Add_Method
+
+@Decorator
+def Add_New_Method (* classes) :
+    """Adds decorated function to `classes` (complains if any class already
+       contains a function of that name).
+    """
+    def decorator (f) :
+        name = f.__name__
+        for cls in classes :
+            if hasattr (cls, name) :
+                raise TypeError, "%s already has a property named `%s`" % \
+                    (cls, name)
+            setattr (cls, name, f)
+        return f
+    return decorator
+# end def Add_New_Method
+
+@Decorator
+def Override_Method (cls) :
+    """Adds decorated function to `cls` (original method if any is available
+       inside the decorated function as function attribute `.orig`).
+    """
+    def decorator (f) :
+        name = f.__name__
+        if hasattr (cls, name) :
+            setattr (f, "orig", getattr (cls, name))
+        setattr (cls, name, f)
+        return f
+    return decorator
+# end def Override_Method
 
 if __name__ != "__main__" :
     TFL._Export ("*")
