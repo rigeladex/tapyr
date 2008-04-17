@@ -1,6 +1,5 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -31,14 +30,10 @@
 #    20-Aug-2003 (CT) s/\n/\\n/ to avoid
 #                         `ValueError: inconsistent leading whitespace`
 #                     from the $%&@*$ doc-test
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
-
-from Regexp import *
+from _TFL.Regexp import *
 
 class String_Swapper :
     """Swaps all occurences of two strings in some text"""
@@ -75,5 +70,15 @@ def swap_2strings (s1, s2, text) :
 # end def swap_2strings
 
 if __name__ == "__main__" :
-    pass
+    from   _TFL.Command_Line import Command_Line
+    import sys
+    cmd = Command_Line \
+        ( arg_spec =
+            ( "s1:S"
+            , "s2:S"
+            )
+        , min_args = 2
+        , max_args = 2
+        )
+    print swap_2strings (cmd.s1, cmd.s2, sys.stdin.read ()),
 ### __END__ swap_2strings
