@@ -44,6 +44,8 @@
 #    17-Apr-2008 (CT)  `Override_Method` added (allows access to `orig`, but
 #                      no multiple classes); `Add_Method` changed to not
 #                      provide `orig`
+#    18-Apr-2008 (CT)  `Decorator` decorator removed from `Add_Method` and
+#                      `Override_Method`
 #    ««revision-date»»···
 #--
 
@@ -109,7 +111,6 @@ def Contextmanager (f) :
     return contextmanager (f)
 # end def Contextmanager
 
-@Decorator
 def Add_Method (* classes) :
     """Adds decorated function to `classes` (won't complains if any class
        already contains a function of that name, but the original function
@@ -123,7 +124,6 @@ def Add_Method (* classes) :
     return decorator
 # end def Add_Method
 
-@Decorator
 def Add_New_Method (* classes) :
     """Adds decorated function to `classes` (complains if any class already
        contains a function of that name).
