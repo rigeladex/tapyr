@@ -32,14 +32,31 @@
 #    11-Apr-2008 (CT) Exception handler added to make import version specific
 #                     (in Python 2.5.2, the import of old-style names fails
 #                     to import `mktime_tz` from `Utils`; arrrg)
+#    20-Apr-2008 (CT) Imports changed so that it really works for 2.5.2 and 2.4
 #    ««revision-date»»···
 #--
 
 from   _PMA                    import PMA
 
+from   email.Utils             import *
 try :
-    from   email.Utils             import mktime_tz
-except ImportError : ### email 3.0 module names
+    mktime_tz
+except NameError :
+    from   email.encoders          import encode_base64
+    from   email.generator         import *
+    from   email.header            import *
+    from   email.message           import *
+    from   email.mime.audio        import MIMEAudio
+    from   email.mime.base         import MIMEBase
+    from   email.mime.image        import MIMEImage
+    from   email.mime.message      import MIMEMessage
+    from   email.mime.multipart    import MIMEMultipart
+    from   email.mime.nonmultipart import MIMENonMultipart
+    from   email.mime.text         import MIMEText
+    from   email.parser            import *
+    from   email.utils             import *
+    from   email.utils             import mktime_tz
+else : ### email 3.0 module names
     from   email                   import message_from_string, message_from_file
     from   email.Encoders          import encode_base64
     from   email.Generator         import *
@@ -54,20 +71,6 @@ except ImportError : ### email 3.0 module names
     from   email.MIMEText          import MIMEText
     from   email.Parser            import *
     from   email.Utils             import *
-else :
-    from   email.encoders          import encode_base64
-    from   email.generator         import *
-    from   email.header            import *
-    from   email.message           import *
-    from   email.mime.audio        import MIMEAudio
-    from   email.mime.base         import MIMEBase
-    from   email.mime.image        import MIMEImage
-    from   email.mime.message      import MIMEMessage
-    from   email.mime.multipart    import MIMEMultipart
-    from   email.mime.nonmultipart import MIMENonMultipart
-    from   email.mime.text         import MIMEText
-    from   email.parser            import *
-    from   email.utils             import *
 
 import mailbox
 import mailcap
