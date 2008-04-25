@@ -64,6 +64,7 @@
 #    18-Oct-2007 (MZO) [25170] `table_entry_comment` added
 #    26-Mar-2008 (MG)  `Struct` renamed to `_TFL_SDG_Struct_` and `_real_name`
 #                      used
+#    25-Apr-2008 (MG) `Struct.dict` fixed array handling
 #    ««revision-date»»···
 #--
 
@@ -273,7 +274,11 @@ class _TFL_SDG_Struct_ (TFL.Meta.Object) :
             value  = getattr       (self, f.name)
             f.check_value (value)
             if f.bounds is not None :
-                result [f.name] = str (value)
+                if isinstance (value, (list, tuple)) :
+                    value = [str (v) for v in value]
+                else :
+                    value = str (value)
+                result [f.name] = value
             elif f.user_code or f.fmt_code.get (f.type, None) :
                 ### `value` is a primitive data type
                 result [f.name] = value

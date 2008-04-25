@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -36,6 +36,8 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    18-Oct-2007 (MZO) [25170] line break in description introduced
+#    25-Apr-2008 (MG)  `_setup_initializers`: handling for nested structs
+#                      extended
 #    ««revision-date»»···
 #--
 
@@ -160,7 +162,10 @@ class Struct (TFL.SDG.C._Decl_) :
                     raise ValueError, msg
             else :
                 v = init_dict [c.name]
-            if isinstance (c, (TFL.SDG.C.Struct, TFL.SDG.C.Array)) :
+            if c.type.name in TFL.SDG.C.Struct.extension :
+                i = TFL.SDG.C.Struct.extension \
+                    [c.type.name]._setup_initializers (v)
+            elif isinstance (c, (TFL.SDG.C.Struct, TFL.SDG.C.Array)) :
                 i = c._setup_initializers (v)
             else :
                 i = TFL.SDG.C.Init_Atom (v, description = c.name)
