@@ -30,6 +30,7 @@
 #    28-Feb-2008 (CT) `encoding` added and used
 #    13-Apr-2008 (CT) `own_links_transitive` corrected (needs to call
 #                     `own_links_transitive`, not `own_links`, for sub_dirs)
+#    29-Apr-2008 (CT) Default for `input_encoding` defined as class variable
 #    ««revision-date»»···
 #--
 
@@ -47,16 +48,19 @@ import _TFL._Meta.Object
 class _Site_Entity_ (TFL.Meta.Object) :
     """Model one entity that is part of a web site."""
 
-    desc           = ""
-    href           = ""
-    title          = ""
+    desc            = ""
+    href            = ""
+    input_encoding  = "iso-8859-15"
+    title           = ""
 
-    parent         = None
+    parent          = None
 
     def __init__ (self, parent = None, ** kw) :
         self.parent = parent
-        encoding    = kw.get \
-            ("input_encoding", getattr (parent, "input_encoding", "iso-8859-1"))
+        if "input_encoding" in kw :
+            self.input_encoding = encoding = kw.pop ("input_encoding")
+        else :
+            encoding = getattr (parent, "input_encoding", self.input_encoding)
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
@@ -91,15 +95,15 @@ class _Site_Entity_ (TFL.Meta.Object) :
 class Page (_Site_Entity_) :
     """Model one page of a web site."""
 
-    own_links = []
+    own_links       = []
 
 # end class Page
 
 class Dir (_Site_Entity_) :
     """Model one directory of a web site."""
 
-    dir       = ""
-    sub_dir   = ""
+    dir             = ""
+    sub_dir         = ""
 
     def __init__ (self, src_dir, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
