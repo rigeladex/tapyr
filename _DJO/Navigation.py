@@ -56,6 +56,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     parent          = None
 
     def __init__ (self, parent = None, ** kw) :
+        self._kw    = kw
         self.parent = parent
         if "input_encoding" in kw :
             self.input_encoding = encoding = kw.pop ("input_encoding")
@@ -90,6 +91,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
         raise AttributeError, name
     # end def __getattr__
 
+    def __str__ (self) :
+        return ", ".join \
+            ( "%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
+    # end def __str__
+
 # end class _Site_Entity_
 
 class Page (_Site_Entity_) :
@@ -101,6 +107,8 @@ class Page (_Site_Entity_) :
 
 class Dir (_Site_Entity_) :
     """Model one directory of a web site."""
+
+    Page            = Page
 
     dir             = ""
     sub_dir         = ""
@@ -118,23 +126,26 @@ class Dir (_Site_Entity_) :
         self.context  = context = dict ()
         self.level    = level   = 1 + getattr (parent, "level", -2)
         self._entries = entries = []
-        nl            = sos.path.join (src_dir, "navigation.list")
-        execfile (nl, context)
-        for d in context ["own_links"] :
-            s = d.get ("sub_dir")
-            if s :
-                sub_dir = sos.path.normpath (sos.path.join (src_dir, s))
-                entry   = self.__class__ (sub_dir, parent = self, ** d)
-            else :
-                h = d.get ("href")
-                if h and prefix :
-                    d ["href"] = sos.path.normpath (sos.path.join (prefix, h))
-                entry = Page \
-                    (parent = self, level = level + 1, dir = self.title, ** d)
-            entries.append (entry)
-        if entries :
-            self.href = entries [0].href
-    # end def __new__
+    # end def __init__
+
+    @classmethod
+    def from_nav_list_file (cls, src_dir, parent = None, ** kw) :
+        """Return a new `Dir` filled with information read from the file
+           `navigation.list` in `src_dir`.
+        """
+        result = cls           (src_dir, parent = parent, ** kw)
+        nl     = sos.path.join (src_dir, "navigation.list")
+        execfile               (nl, result.context)
+        result.add_entries \
+            (result.context ["own_links"], Type = cls.from_nav_list_file)
+        return result
+    # end def from_nav_list_file
+
+    @property
+    def href (self) :
+        if self._entries :
+            return self._entries [0].href
+    # end def href
 
     @property
     def own_links (self) :
@@ -164,6 +175,55 @@ class Dir (_Site_Entity_) :
             return self.parents [0]
         return self
     # end def top
+
+    def add_entries (self, list_of_dicts, ** kw) :
+        entries = self._entries
+        for d in list_of_dicts :
+            s = d.pop ("sub_dir", None)
+            if kw :
+                d = dict (kw, ** d)
+            if s :
+                entry = self.new_sub_dir (s, ** d)
+            else :
+                entry = self.new_page    (** d)
+            entries.append (entry)
+    # end def add_entries
+
+    def add_page (self, ** kw) :
+        """Add a page with the attributes passed as keyword arguments."""
+        result = self.new_page (** kw)
+        self.entries.append (result)
+        return result
+    # end def add_page
+
+    def add_sub_dir (self, sub_dir, ** kw) :
+        result = self.new_sub_dir (sub_dir, ** kw)
+        self.entries.append (result)
+        return result
+    # end def add_sub_dir
+
+    def new_page (self, ** kw) :
+        Type   = kw.pop ("Type", self.Page)
+        href   = kw.get ("href")
+        prefix = self.prefix
+        if href and prefix :
+            kw ["href"] = sos.path.normpath (sos.path.join (prefix, h))
+        result = Type \
+            (parent = self, level = self.level + 1, dir = self.title, ** kw)
+        return result
+    # end def new_page
+
+    def new_sub_dir (self, sub_dir, ** kw) :
+        Type    = kw.pop ("Type", self.__class__)
+        sub_dir = sos.path.normpath (sos.path.join (self.src_dir, sub_dir))
+        result  = Type (sub_dir, parent = self, ** kw)
+        return result
+    # end def new_sub_dir
+
+    def __str__ (self) :
+        return "%s; href : %r, %s" % \
+            (self.src_dir, self.href, self.__super.__str__ ())
+    # end def __str__
 
 # end class Dir
 
