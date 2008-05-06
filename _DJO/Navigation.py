@@ -31,6 +31,14 @@
 #    13-Apr-2008 (CT) `own_links_transitive` corrected (needs to call
 #                     `own_links_transitive`, not `own_links`, for sub_dirs)
 #    29-Apr-2008 (CT) Default for `input_encoding` defined as class variable
+#     3-May-2008 (CT) `Dir.__init__` refactored
+#     5-May-2008 (CT) Changed `add_entries` and `from_nav_list_file` to keep
+#                     `Type` and `Dir_Type` separate
+#     5-May-2008 (CT) Changed `add_entries` to leave `sub_dir` in `d` (and
+#                     not pass it positionally to `new_sub_dir`)
+#     5-May-2008 (CT) Fixed typo in `new_page` (s/h/href/)
+#     6-May-2008 (CT) Changed `new_sub_dir` to keep `src_dir` and `sub_dir`
+#                     separate
 #    ««revision-date»»···
 #--
 
@@ -117,15 +125,15 @@ class Dir (_Site_Entity_) :
         self.__super.__init__ (parent, ** kw)
         self.src_dir  = src_dir
         self.parents  = []
-        self.prefix   = prefix = ""
+        self.prefix   = ""
         if parent :
             self.parents = parent.parents + [parent]
             if self.sub_dir :
-                self.prefix = prefix = sos.path.join \
+                self.prefix = sos.path.join \
                     (* [p for p in (parent.prefix, self.sub_dir) if p])
-        self.context  = context = dict ()
-        self.level    = level   = 1 + getattr (parent, "level", -2)
-        self._entries = entries = []
+        self.context  = dict ()
+        self.level    = 1 + getattr (parent, "level", -2)
+        self._entries = []
     # end def __init__
 
     @classmethod
@@ -137,7 +145,7 @@ class Dir (_Site_Entity_) :
         nl     = sos.path.join (src_dir, "navigation.list")
         execfile               (nl, result.context)
         result.add_entries \
-            (result.context ["own_links"], Type = cls.from_nav_list_file)
+            (result.context ["own_links"], Dir_Type = cls.from_nav_list_file)
         return result
     # end def from_nav_list_file
 
@@ -177,13 +185,14 @@ class Dir (_Site_Entity_) :
     # end def top
 
     def add_entries (self, list_of_dicts, ** kw) :
-        entries = self._entries
+        entries  = self._entries
+        Dir_Type = kw.pop ("Dir_Type", self.__class__)
         for d in list_of_dicts :
-            s = d.pop ("sub_dir", None)
+            s = d.get ("sub_dir", None)
             if kw :
                 d = dict (kw, ** d)
             if s :
-                entry = self.new_sub_dir (s, ** d)
+                entry = self.new_sub_dir (Type = Dir_Type, ** d)
             else :
                 entry = self.new_page    (** d)
             entries.append (entry)
@@ -207,7 +216,7 @@ class Dir (_Site_Entity_) :
         href   = kw.get ("href")
         prefix = self.prefix
         if href and prefix :
-            kw ["href"] = sos.path.normpath (sos.path.join (prefix, h))
+            kw ["href"] = sos.path.normpath (sos.path.join (prefix, href))
         result = Type \
             (parent = self, level = self.level + 1, dir = self.title, ** kw)
         return result
@@ -215,8 +224,8 @@ class Dir (_Site_Entity_) :
 
     def new_sub_dir (self, sub_dir, ** kw) :
         Type    = kw.pop ("Type", self.__class__)
-        sub_dir = sos.path.normpath (sos.path.join (self.src_dir, sub_dir))
-        result  = Type (sub_dir, parent = self, ** kw)
+        src_dir = sos.path.normpath (sos.path.join (self.src_dir, sub_dir))
+        result  = Type (src_dir, parent = self, sub_dir = sub_dir, ** kw)
         return result
     # end def new_sub_dir
 
