@@ -31,6 +31,8 @@
 #    28-Jan-2008 (CT) Moved to TFL.Filter
 #    28-Jan-2008 (CT) Creation continued..
 #    13-Feb-2008 (CT) `filter_iter` added
+#     6-May-2008 (CT) Use `all_true` and `any_true` instead of `all` and
+#                     `any` to avoid errors from Python 2.4
 #    ««revision-date»»···
 #--
 
@@ -157,7 +159,7 @@ operators short-circuit::
 """
 
 from   _TFL                     import TFL
-from   _TFL.predicate           import first
+from   _TFL.predicate           import first, all_true, any_true
 
 import _TFL._Meta.Object
 
@@ -264,7 +266,7 @@ class _Filter_Q_ (_Filter_) :
 class Filter_And (_Filter_Q_) :
     """Return all items from an iterable which satisfy all predicates."""
 
-    quant = staticmethod (all)
+    quant = staticmethod (all_true)
 
     def __invert__ (self) :
         return Filter_Or (* self._inverted_predicate ())
@@ -275,7 +277,7 @@ class Filter_And (_Filter_Q_) :
 class Filter_Or (_Filter_Q_) :
     """Return all items from an iterable which satisfy any of the predicates."""
 
-    quant = staticmethod (any)
+    quant = staticmethod (any_true)
 
     def __invert__ (self) :
         return Filter_And (* self._inverted_predicate ())
