@@ -158,12 +158,11 @@
 #     1-May-2006 (MG) Use `dict` instead of `d_dict`
 #     9-Aug-2006 (CT) `Command_Spec.__cmp__` and `Command_Spec.__hash__`
 #                     removed (definition didn't make any sense)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    24-Jul-2007 (ABA) Coding Guidelines
-#    06-Aug-2007 (CED) Future import removed again
-#    17-Sep-2007 (CT)  Argument `cook` added to `Arg` and `Opt`
-#    17-Sep-2007 (CT)  Argument/option type `P` (path) added
-#    15-Feb-2008 (CT)  `_Help_._opts` robustified
+#    17-Sep-2007 (CT) Argument `cook` added to `Arg` and `Opt`
+#    17-Sep-2007 (CT) Argument/option type `P` (path) added
+#    15-Feb-2008 (CT) `_Help_._opts` robustified
+#     8-May-2008 (CT) Changed to use new-style classes
+#     8-May-2008 (CT) Cleanups
 #    ««revision-date»»···
 #--
 
@@ -180,7 +179,6 @@ Features provided:
 """
 
 import sys
-from   copy               import deepcopy
 
 from   _TFL               import TFL
 from   _TFL.predicate     import *
@@ -191,6 +189,7 @@ import _TFL.Environment
 import _TFL.PL_Dict
 import _TFL.PL_List
 import _TFL.sos
+import _TFL._Meta.Object
 
 class Cmd_Error (StandardError) :
 
@@ -205,26 +204,18 @@ class Cmd_Error (StandardError) :
     __repr__ = __str__
 # end class Cmd_Error
 
-class List_Selection_ :
+class _List_Selection_ (TFL.Meta.Object):
     """Mixin class for `Arg' and `Opt'.
 
        Provide for arguments/options which must have a value out of a list of
        possible selections.
 
-       Each descendent must define a class attribute `Ancestor' referring to
-       the `Arg' or `Opt' ancestor.
-
-       E.g.:
-
-       class List_Opt (List_Selection_, Opt) :
-           Ancestor = Opt
-       # end class List_Opt
     """
 
     def __init__ (self, selection, strict = 1, * args, ** kw) :
         self.selection = selection
         self.strict    = strict
-        self.Ancestor.__init__ (self, * args, ** kw)
+        self.__super.__init__ (* args, ** kw)
         if self.description :
             self.description = "%s\nPossible values are: %s" % \
                 (self.description, ", ".join (self.selection))
@@ -240,10 +231,10 @@ class List_Selection_ :
                   "\nChoose one of\n    %s"
                 % (value, self.kind, self.name, self.type, one_of)
                 )
-        self.Ancestor._set_value (self, value, pos)
+        self.__super._set_value (value, pos)
     # end def _set_value
 
-# end class List_Selection_
+# end class _List_Selection_
 
 def _safe_eval (value) :
     return eval (value, {}, {})
@@ -260,7 +251,7 @@ def _cook_X (value) :
         return long (value)
 # end def _cook_X
 
-class Arg :
+class Arg (TFL.Meta.Object) :
 
     kind         = "argument"
     paren_pat    = Regexp ("""^(.*)$""")
@@ -354,8 +345,8 @@ class Arg :
 
 # end class Arg
 
-class Arg_L (List_Selection_, Arg) :
-    Ancestor = Arg
+class Arg_L (_List_Selection_, Arg) :
+    pass
 # end class Arg_L
 
 class Opt (Arg) :
@@ -368,8 +359,8 @@ class Opt (Arg) :
                  , valued = 0, max_occur = None, auto_split = None, hide = 0
                  , range_delta = 1, cook = None
                  ) :
-        Arg.__init__ \
-            ( self, name, type or self.default_type, default
+        self.__super.__init__ \
+            ( name, type or self.default_type, default
             , description, explanation, cook
             )
         self.value       = TFL.PL_List (undefined = '')
@@ -485,11 +476,11 @@ class Opt (Arg) :
 
 # end class Opt
 
-class Opt_L (List_Selection_, Opt) :
-    Ancestor = Opt
+class Opt_L (_List_Selection_, Opt) :
+    pass
 # end class Opt_L
 
-class _Help_ :
+class _Help_ (TFL.Meta.Object) :
 
     item_sep            = "\n"
 
@@ -647,7 +638,7 @@ class _Help_ :
 
 # end class _Help_
 
-class Command_Spec :
+class Command_Spec (TFL.Meta.Object) :
     """Define syntax for command-line options and arguments.
 
        The constructor takes the arguments:
@@ -893,8 +884,8 @@ class Command_Line (Command_Spec) :
                  , arg_array        = None
                  , process_keywords = 0
                  ) :
-        Command_Spec.__init__ \
-            (self, option_spec, arg_spec, min_args, max_args, description)
+        self.__super.__init__ \
+            (option_spec, arg_spec, min_args, max_args, description)
         if not Command_Line.instance :
             Command_Line.instance = self
         if arg_array is None :
@@ -1077,48 +1068,6 @@ class Command_Line (Command_Spec) :
     # end def _setup
 
 # end class Command_Line
-
-if __name__ == "__main__":
-    print "*" * 4, "sys.argv"
-#    print len (sys.argv)
-#    i = 0
-#    for arg in sys.argv :
-#        print "arg %2d : `%s'" % (i, arg)
-#        i = i + 1
-
-    cmd = Command_Line ( ( "controller:s", "autoerase", "outfile:s", "force:s"
-                         , "manager:s", "relocate:i", "erase:i#0", "target:i"
-                         , "verbose#0", "dump", "silent"
-                         )
-                       , ("fname:s=stdin?File to write to", )
-                       , min_args = 0
-                       , max_args = 1
-                       )
-    print cmd.argument, cmd.argument [0], cmd.argv[0], cmd.arg_dict ["fname"].value
-    print cmd.help ()
-    sys.exit ()
-    print "\n", "*" * 4, "Command_Line:"
-    try :
-        cmd = Command_Line ( option_spec = ( "-foo:I=4"
-                                           , "-bar:F=3.14"
-                                           , "-baz:L"
-                                           , "-z:i#0"
-                                           , "gurgle:"
-                                           )
-                           , arg_spec    = ( "head:i=8", "tail")
-                           , min_args    = 2
-                           , max_args    = 4
-                           )
-    except Cmd_Error :
-        raise SystemExit
-    print "cmd.argument :"
-    for a in cmd.argument.body :
-        print "   ", a.name, repr (a.value)
-    print "cmd.option.{name, value, value_1()}:"
-    for o in cmd.option.values () :
-        print "   ", o.name, o.value, repr (o.value_1 ())
-    print "\n", "*" * 4, "Command Help:"
-    print cmd.help ()
 
 if __name__ != "__main__" :
     TFL._Export ("*")

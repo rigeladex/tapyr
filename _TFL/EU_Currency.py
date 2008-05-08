@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -53,10 +53,9 @@
 #     5-Dec-2004 (CT) `to_euro_factor` changed from `1` to `1.0` to avoid
 #                     `DeprecationWarning: classic int division`
 #    11-Feb-2006 (CT) Moved into package `TFL`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
-#    17-Sep-2007 (CT)  `EUC_Opt`, `EUC_Opt_SC`, and `EUC_Opt_TC` added
-#    17-Sep-2007 (CT)  Handling of `target_currency` simplified
+#    17-Sep-2007 (CT) `EUC_Opt`, `EUC_Opt_SC`, and `EUC_Opt_TC` added
+#    17-Sep-2007 (CT) Handling of `target_currency` simplified
+#     8-May-2008 (CT) `EUC_Opt_TC` changed to use `__super`
 #    ««revision-date»»···
 #--
 
@@ -391,7 +390,7 @@ def currency (name) :
 # end def currency
 
 class EUC_Opt (Opt_L) :
-    """EU_Currency option class for use with Command_Line."""
+    """EU_Currency option class for use with TFL.Command_Line."""
 
     default_name = ""
     default_desc = ""
@@ -399,9 +398,8 @@ class EUC_Opt (Opt_L) :
     def __init__ (self, name = None, default = "EUR", ** kw) :
         if "description" not in kw :
             kw ["description"] = self.default_desc
-        Opt_L.__init__ \
-            ( self
-            , selection = sorted (EUC.Table.iterkeys ())
+        self.__super.__init__ \
+            ( selection = sorted (EUC.Table.iterkeys ())
             , name      = name or self.default_name
             , default   = default
             , type      = "S"
@@ -434,7 +432,7 @@ class EUC_Opt_TC (EUC_Opt) :
     default_desc = "Target currency"
 
     def _cooked_currency (self, value) :
-        result = EUC.target_currency = EUC_Opt._cooked_currency (self, value)
+        result = EUC.target_currency = self.__super._cooked_currency (value)
         return result
     # end def _cooked_currency
 

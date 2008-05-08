@@ -47,14 +47,12 @@
 #     7-Jun-2006 (CT) `Re_Replacer` added
 #    14-Jun-2006 (CT)  `Multi_Re_Replacer` added
 #    23-Dec-2007 (CT)  `Dict_Replacer` added
-#     6-May-2008 (CT)  `Re_Filter` and `Re_Filter_OA` added
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
 import _TFL._Meta.Object
 import _TFL.Environment
-import _TFL.Filter
 import re
 
 if hasattr (re, "RegexObject") :
@@ -291,42 +289,6 @@ class Multi_Re_Replacer (TFL.Meta.Object) :
     # end def __call__
 
 # end class Multi_Re_Replacer
-
-class Re_Filter (TFL.Filter) :
-    """Return all items of an iterable of strings that match a Regexp."""
-
-    def __new__ (cls, * args, ** kw) :
-        return super (Re_Filter, cls).__new__ (cls, None)
-    # end def __new__
-
-    def __init__ (self, pattern, flags = 0, quote = 0) :
-        if isinstance (pattern, Regexp) :
-            regexp = pattern
-        else :
-            regexp = Regexp (pattern, flags, quote)
-        self._regexp = regexp
-        super (Re_Filter, self).__init__ (self.match)
-    # end def __init__
-
-    def match (self, item) :
-        return self._regexp.search (item)
-    # end def match
-
-# end class Re_Filter
-
-class Re_Filter_OA (Re_Filter) :
-    """Return all objects with a specific attributes matching a Regexp."""
-
-    def __init__ (self, attr, pattern, flags = 0, quote = 0) :
-        self._attr = attr
-        super (Re_Filter_OA, self).__init__ (pattern, flags = 0, quote = 0)
-    # end def __init__
-
-    def match (self, obj) :
-        return self.__super.match (getattr (obj, self._attr))
-    # end def match
-
-# end class Re_Filter_OA
 
 if __name__ != "__main__" :
     TFL._Export ("*", "re")

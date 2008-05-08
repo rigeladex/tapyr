@@ -62,6 +62,7 @@
 #     3-Jan-2008 (CT) `date_pattern` changed to make `year` mandatory
 #    10-Feb-2008 (CT) `Date_Opt` added (and used for option `delta_to`)
 #    15-Feb-2008 (CT) `Date_Opt` corrected (up-call to `__init__`)
+#     8-May-2008 (CT) `Date_Opt` changed to use `__super`
 #    ««revision-date»»···
 #--
 
@@ -485,7 +486,7 @@ class Date_Opt (Opt) :
     def __init__ (self, name, description = "", ** kw) :
         if "cook" not in kw :
             kw ["cook"] = self._cooked_
-        Opt.__init__ (self, name, description = description, ** kw)
+        self.__super.__init__ (name, description = description, ** kw)
     # end def __init__
 
     def _cooked_ (self, v) :
