@@ -39,6 +39,9 @@
 #     5-May-2008 (CT) Fixed typo in `new_page` (s/h/href/)
 #     6-May-2008 (CT) Changed `new_sub_dir` to keep `src_dir` and `sub_dir`
 #                     separate
+#     8-May-2008 (CT) `Gallery`, `Photo`, and `Thumbnail` added
+#     8-May-2008 (CT) `from_nav_list_file` changed to pass `globals` to
+#                     `execfile` (too allow tings like `Type = Gallery` there)
 #    ««revision-date»»···
 #--
 
@@ -47,6 +50,7 @@ from   _DJO import DJO
 
 from   _TFL.defaultdict         import defaultdict
 from   _TFL.Filename            import *
+from   _TFL.predicate           import pairwise
 from   _TFL.Record              import Record
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
@@ -113,6 +117,129 @@ class Page (_Site_Entity_) :
 
 # end class Page
 
+class Gallery (Page) :
+    """Model a photo gallery that's part of a web site."""
+
+    template = "gallery.html"
+
+    def __init__ (self, pic_dir, parent = None, ** kw) :
+        self.pic_dir  = pic_dir
+        self.im_dir   = sos.path.join (self.pic_dir, "im")
+        self.th_dir   = sos.path.join (self.pic_dir, "th")
+        self._photos  = []
+        self._thumbs  = []
+        self.__super.__init__ (parent, ** kw)
+        self.name     = Filename (pic_dir).base
+        self.src_dir  = sos.path.join (getattr (self, "prefix", ""), self.name)
+        self.href     = "%s.html" % (self.src_dir, )
+    # end def __init__
+
+    @property
+    def photos (self) :
+        if not self._photos :
+            self._read_entries ()
+        return self._photos
+    # end def photos
+
+    @property
+    def thumbnails (self) :
+        if not self._thumbs :
+            self._read_entries ()
+        return self._thumbs
+    # end def thumbnails
+
+    def _read_entries (self) :
+        photos = self._photos
+        thumbs = self._thumbs
+        images = sorted \
+            (sos.expanded_globs (sos.path.join (self.im_dir, "*.jpg")))
+        i = 0
+        for im in images :
+            name = Filename (im).base
+            th   = sos.path.join (self.th_dir, "%s.jpg" % name)
+            if sos.path.exists (th) :
+                i     += 1
+                title  = "%s %d/%d" % (self.title, i, len (images))
+                desc   = "%s %d/%d" % (self.desc,  i, len (images))
+                photo  = Photo     \
+                    ( name, im
+                    , parent = self
+                    , desc   = desc
+                    , title  = title
+                    )
+                thumb  = Thumbnail \
+                    ( name, th, photo
+                    , parent = self
+                    , desc   = desc
+                    , title  = title
+                    )
+                photos.append (photo)
+                thumbs.append (thumb)
+        prev  = None
+        for curr, next in pairwise (photos + [None]) :
+            curr.prev = prev
+            curr.next = next
+            prev      = curr
+    # end def _read_entries
+
+# end class Gallery
+
+class _Photo_ (Page) :
+
+    _size     = None
+
+    @property
+    def height (self) :
+        size = self.size
+        if size is not None :
+            return size [1]
+    # end def height
+
+    @property
+    def size (self) :
+        if self._size is None :
+            from PIL import Image
+            img = Image.open (self.href)
+            self._size = img.size
+        return self._size
+    # end def size
+
+    @property
+    def width (self) :
+        size = self.size
+        if size is not None :
+            return size [0]
+    # end def width
+
+# end class _Photo_
+
+class Photo (_Photo_) :
+    """Model one page of a web site displaying a single photo of a gallery."""
+
+    next      = None
+    prev      = None
+    template  = "photo.html"
+    thumb     = None
+
+    def __init__ (self, name, href, parent = None, ** kw) :
+        self.__super.__init__ (href = href, parent = parent, ** kw)
+        self.name       = name
+    # end def __init__
+
+# end class Photo
+
+class Thumbnail (_Photo_) :
+    """Model a thumbnail of a photo."""
+
+    def __init__ (self, name, href, photo, parent = None, ** kw) :
+        self.__super.__init__ (href = href, parent = parent, ** kw)
+        self.name   = name
+        self.photo  = photo
+        photo.thumb = self
+    # end def __init__
+
+# end class Thumbnail
+
 class Dir (_Site_Entity_) :
     """Model one directory of a web site."""
 
@@ -143,7 +270,7 @@ class Dir (_Site_Entity_) :
         """
         result = cls           (src_dir, parent = parent, ** kw)
         nl     = sos.path.join (src_dir, "navigation.list")
-        execfile               (nl, result.context)
+        execfile               (nl, globals (), result.context)
         result.add_entries \
             (result.context ["own_links"], Dir_Type = cls.from_nav_list_file)
         return result
