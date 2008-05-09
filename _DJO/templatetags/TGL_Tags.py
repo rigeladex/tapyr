@@ -33,6 +33,7 @@
 #    14-Mar-2008 (MG) `Path_Starts_With` tag and `query` and `count` filters
 #                     added
 #    17-Mar-2008 (MG) `Path_Starts_With` removed, tag `Iterate` added
+#     9-May-2008 (CT) Style
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,7 @@ from   django.template.loader      import render_to_string
 from   django.core.urlresolvers    import reverse, NoReverseMatch
 import itertools
 
+from   _DJO                        import DJO
 from   _TFL.predicate              import split_hst
 
 register = template.Library ()
@@ -301,23 +303,14 @@ def query (query_set, query) :
     """
     ### str is needed to convert the unicode string into a normal string or
     ### else manager.filter` will not work
-    filter = dict ( ([ str (p).strip () for p in cond.split ("=")]
-                         for cond in query.split (",")
-                    )
-                  )
+    filter = dict \
+        ( (   [str (p).strip () for p in cond.split ("=")]
+          for cond in query.split (",")
+          )
+        )
     return query_set.filter (** filter)
 # end def query
 
-@register.filter
-def qs_count (query_set) :
-    """Runs the `count` method of the passed query set. This could be achived
-       using the `length` filter as well. But using the count filter the a
-       the calculation will be done by the database engine and not in python
-    """
-    return query_set.count ()
-# end def qs_count
-
 if __name__ != "__main__":
-    from _DJO import DJO
     DJO._Export ("*")
 ### __END__ DJO.templatetags.TGL_Tags

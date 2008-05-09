@@ -42,6 +42,8 @@
 #     8-May-2008 (CT) `Gallery`, `Photo`, and `Thumbnail` added
 #     8-May-2008 (CT) `from_nav_list_file` changed to pass `globals` to
 #                     `execfile` (too allow tings like `Type = Gallery` there)
+#     9-May-2008 (CT) `_Meta_` and `Table` added
+#     9-May-2008 (CT) `top` made into class variable
 #    ««revision-date»»···
 #--
 
@@ -57,8 +59,27 @@ from   _TFL                     import sos
 
 import _TFL._Meta.Object
 
+### To-Do:
+### - Root class: factor from Dir
+###   * dump: dump navigation tree into string that's executable python code
+###     (using new classmethod `from_list_of_dicts`)
+### - Dyn_Dir
+###
+
+class _Meta_ (TFL.Meta.Object.__class__) :
+
+    def __call__ (cls, * args, ** kw) :
+        result = super (_Meta_, cls).__call__ (* args, ** kw)
+        result.top.Table [result.href] = result
+        return result
+    # end def __call__
+
+# end class _Meta_
+
 class _Site_Entity_ (TFL.Meta.Object) :
     """Model one entity that is part of a web site."""
+
+    __metaclass__   = _Meta_
 
     desc            = ""
     href            = ""
@@ -253,7 +274,10 @@ class Dir (_Site_Entity_) :
         self.src_dir  = src_dir
         self.parents  = []
         self.prefix   = ""
-        if parent :
+        if parent is None :
+            _Site_Entity_.top = self
+            self.Table        = {}
+        else :
             self.parents = parent.parents + [parent]
             if self.sub_dir :
                 self.prefix = sos.path.join \
@@ -303,13 +327,6 @@ class Dir (_Site_Entity_) :
             else :
                 yield e
     # end def own_links_transitive
-
-    @property
-    def top (self) :
-        if self.parents :
-            return self.parents [0]
-        return self
-    # end def top
 
     def add_entries (self, list_of_dicts, ** kw) :
         entries  = self._entries
