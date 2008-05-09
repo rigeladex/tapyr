@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Martin Glück. All rights reserved
+# Copyright (C) 2006-2008 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -29,6 +29,9 @@
 #    30-Nov-2007 (MG) Creation
 #     2-Dec-2007 (MG) `Input_Has_Value` added
 #    15-Dec-2007 (MG) Missing import added
+#     9-May-2008 (MG) `Redirect_to_Login` added, `Check_Context` and
+#                     `Input_Has_Value` fixed
+#     9-May-2008 (MG) `Test_Case.login` factored
 #    ««revision-date»»···
 #--
 
@@ -37,6 +40,7 @@ from   django.contrib.auth.models      import User
 from   django.core.urlresolvers        import reverse, NoReverseMatch
 from   django.db.models.fields         import FieldDoesNotExist
 from   django.db.models.manager        import Manager
+from   django.conf                     import settings
 import pdb
 import re
 
@@ -78,17 +82,20 @@ class Check_Context (_Check_) :
     # end def __init__
 
     def __call__ (self, test_case, response, status_code = None) :
-        CT           = {}
-        res_contexts = unittest.to_list (response.context)
-        for name, how in self.context.iteritems () :
-            for ct in res_contexts :
-                if how in ct :
-                    value = ct [how]
-                    break
-            else :
-                raise test_case.failureException, \
-                    ("`%s` bot found in any context" % (how, ))
-            CT [name] = value
+        if self.context :
+            CT           = {}
+            res_contexts = unittest.to_list (response.context)
+            for name, how in self.context.iteritems () :
+                for ct in res_contexts :
+                    if how in ct :
+                        value = ct [how]
+                        break
+                else :
+                    raise test_case.failureException, \
+                        ("`%s` bot found in any context" % (how, ))
+                CT [name] = value
+        else :
+            CT = (response.context and response.context [0]) or {}
         for cond in self.conditions :
             try :
                 result    = eval (cond, globals (), CT)
@@ -119,14 +126,15 @@ class Input_Has_Value (_Check_) :
             if match.group (1) == self.field_name :
                 ### we found the input tag, group (0) is the whole match
                 tag         = match.group (0)
+                value_req   = self.value is not None
                 value_match = self.value_patttern.search (tag)
                 type_match  = self.type_patttern. search (tag)
-                if not value_match :
+                if not value_match and value_req :
                     test_case.fail \
                         ( "Input tag `%s` has no value attribute."
                         % (self.field_name)
                         )
-                elif self.value != value_match.group (1) :
+                elif value_req and (self.value != value_match.group (1)) :
                     test_case.fail \
                         ( "Value of input tag `%s` is `%s` but `%s` was "
                           "expected."
@@ -189,6 +197,7 @@ class Field_Choices (_Check_) :
                             field_initial = tuple (field_initial)
                         except TypeError :
                             field_initial = (field_initial, )
+                        field_initial = tuple (sorted (field_initial))
                         if len (field_choices) != self.count :
                             test_case.fail \
                                 ( "The choices of field `%s` of form `%s` in "
@@ -199,12 +208,12 @@ class Field_Choices (_Check_) :
                                   , field_choices
                                   )
                                 )
-                        elif (   (self.initial        is not None)
-                             and (len (field_initial) !=     self.initial)
+                        elif (   (self.initial  is not None)
+                             and (field_initial !=     tuple (self.initial))
                              ) :
                             test_case.fail \
                                 ( "The initials of field `%s` of form `%s` in "
-                                  "context %d have %d entries but %d where "
+                                  "context %d has %s entries but %s where "
                                   "expected %r"
                                 % ( self.field_name, form, i
                                   , len (field_initial), self.initial
@@ -329,6 +338,19 @@ class Redirect (_Check_) :
 
 # end class Redirect
 
+class Redirect_to_Login (Redirect) :
+
+    def __init__ (self, name, * args, ** kw) :
+        try :
+            next = reverse (name, args = args, kwargs = kw)
+        except NoReverseMatch :
+            next = name
+        super (Redirect_to_Login, self).__init__ \
+            (url = "%s?next=%s" % (settings.LOGIN_URL, next))
+    # end def __init__
+
+# end class Redirect_to_Login
+
 class Test_Case (unittest.TestCase) :
     """Common test functions."""
 
@@ -344,12 +366,16 @@ class Test_Case (unittest.TestCase) :
         pdb.set_trace ()
     # end def STOP
 
+    def login (self, name, password = None) :
+        self.client.login (username = name, password = password or name)
+    # end def login
+
     def _create_user (self, name, password = None, login = False) :
         password = password or name
         user     = User.objects.create_user \
            (name, "%s@test.org" % (name, ), password)
         if login :
-            self.client.login (username = name, password = password)
+            self.login (name, password)
         return user
     # end def _create_user
 

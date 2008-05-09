@@ -42,24 +42,10 @@
 >>> settings.configure (ROOT_URLCONF = "_DJO._test_url_conf")
 >>> from django.template import add_to_builtins, Template, Context
 >>> add_to_builtins ("_DJO.templatetags.TGL_Tags")
->>> template = '''
-...   {{ var|starts_with:"foo"}}
-...   {{ var|starts_with:"fooa"}}
-...   {{ var|starts_with:"afoo"}}
-...   {{ var|starts_with:"fo"}}
-... '''
->>> t = Template (template)
->>> t.render (Context (dict (var = "foo"))).strip ()
-u'True\\n  False\\n  False\\n  True'
->>> t.render (Context (dict (var = ""))).strip ()
-u''
 """
 
 from   django                      import template
-from   django.template             import defaultfilters
 from   django.template.loader      import render_to_string
-from   django.core.urlresolvers    import reverse, NoReverseMatch
-import itertools
 
 from   _DJO                        import DJO
 from   _TFL.predicate              import split_hst
@@ -230,7 +216,7 @@ class Iterate (Tag) :
        >>> from django.template import Template, Context
        >>> template = '''
        ...   {% iterate "a", "b", "c" as iter%}
-       ...   {{ iter }}
+       ...   {{ iter.next }}
        ...   {{ iter.next }}
        ...   {{ iter }}
        ...   {{ iter.next }}
@@ -287,29 +273,6 @@ class Iterate (Tag) :
     # end def
 
 # end class Iterate
-
-@register.filter
-@defaultfilters.stringfilter
-def starts_with (value, prefix) :
-    """Returns the result of `value.startswith (prefix)`"""
-    return value and value.startswith (prefix)
-# end def starts_with
-
-@register.filter
-def query (query_set, query) :
-    """Filters the `query_set` according the `query` spec. The syntac of the
-       `query` spec is the same as used in normal python code:
-      {{ query_set|query:"name__exact = 'hansi', status__gt = 2"}}
-    """
-    ### str is needed to convert the unicode string into a normal string or
-    ### else manager.filter` will not work
-    filter = dict \
-        ( (   [str (p).strip () for p in cond.split ("=")]
-          for cond in query.split (",")
-          )
-        )
-    return query_set.filter (** filter)
-# end def query
 
 if __name__ != "__main__":
     DJO._Export ("*")

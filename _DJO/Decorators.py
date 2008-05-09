@@ -35,6 +35,9 @@
 #     8-Mar-2008 (MG) `render_template`: login_required added
 #    11-Mar-2008 (MG) `render_template`: do not use `render_to_response`
 #                     template anymore
+#     9-May-2008 (MG) `render_template`: use `getattr` to retrieve the
+#                     `func_name` because some of the django decorators don't
+#                     behave nice
 #    ««revision-date»»···
 #--
 
@@ -105,7 +108,7 @@ def render_template (template, login_required = False, ** kw) :
                 return HttpResponseRedirect (result)
             return result
         # end def _fct_wrapper
-        _fct_wrapper.func_name = fct.func_name
+        _fct_wrapper.func_name = getattr (fct, "func_name", "")
         _fct_wrapper.__doc__   = fct.__doc__
         if login_required :
             _fct_wrapper = Auth_Decorators.login_required (_fct_wrapper)

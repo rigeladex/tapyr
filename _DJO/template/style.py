@@ -47,7 +47,12 @@ default_style = "default"
 user_style    = "default"
 app_temp_dirs = {}
 
-for app in settings.INSTALLED_APPS:
+try :
+    apps = settings.INSTALLED_APPS
+except ImportError :
+    apps = ()
+
+for app in apps :
     i = app.rfind (".")
     if i == -1 :
         m, a = app, None
@@ -103,11 +108,10 @@ def load_template_source (template_name, template_dirs = None) :
             pass
     raise TemplateDoesNotExist, template_name
 # end def load_template_source
-
 load_template_source.is_usable = True
 
 def user_style_url (format) :
-    for style in user_style, default_style :
+    for style in set ((user_style, default_style)) :
         url = format % style
         try :
             uo = urllib2.urlopen (url)

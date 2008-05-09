@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Martin Glück. All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
+# Copyright (C) 2006-2008 Martin Glück. All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -26,9 +26,11 @@
 #    Some usefull classes
 #
 # Revision Dates
-#    18-Sep-2007 (MGL) Creation
-#    18-Nov-2007 (MG) ` IntegerLimitField` : `get_internal_type` added
+#    18-Sep-2007 (MG) Creation
+#    18-Nov-2007 (MG) `IntegerLimitField` : `get_internal_type` added
 #    15-Dec-2007 (MG) Missing import added
+#     4-Apr-2008 (MG) `additional_user_attrs` added
+#     9-May-2008 (MG) `_Permisson_Mixin_` factored
 #    ««revision-date»»···
 #--
 
@@ -43,7 +45,9 @@ class M_User_Create_Mod (DBM.ModelBase) :
 
     def __new__ (cls, name, bases, attrs) :
         if not name.startswith ("_") :
-            user_prefix = attrs.pop ("user_prefix", "")
+            auto_user_attrs       = [], []
+            user_prefix           = attrs.pop ("user_prefix", "")
+            additional_user_attrs = attrs.pop ("additional_user_attrs", ())
             if user_prefix :
                 user_prefix = "%s_" % (user_prefix, )
             for base_name, verbose, rel, default in \
@@ -53,7 +57,7 @@ class M_User_Create_Mod (DBM.ModelBase) :
                     , ( "modified", "Last modified", "modifier"
                       , None
                       )
-                    ) :
+                    ) + additional_user_attrs :
                 attrs ["%s_by" % (base_name, )] = DM.ForeignKey \
                     ( User
                     , verbose_name = _("%s by" % (verbose, ))
@@ -65,15 +69,77 @@ class M_User_Create_Mod (DBM.ModelBase) :
                     , default      = default
                     , null         = default is None
                     )
+                auto_user_attrs [0].append \
+                    (("%s_by" % (base_name, ), default is None))
+                if not default :
+                    auto_user_attrs [1].append ("%s_at" % (base_name, ))
+            attrs ["auto_user_attrs"] = auto_user_attrs
         return super (M_User_Create_Mod, cls).__new__ (cls, name, bases, attrs)
     # end def __new__
 
 # end class M_User_Create_Mod
 
-class _User_Create_Mod_ (object) :
+class _Permisson_Mixin_ (object) :
+    """Add the `add_allowed`, `change_allowed`, and `delete_allowed` methods to
+       models.
+    """
+
+    @classmethod
+    def _user_has_permission (cls, request_or_user, * permissions) :
+        user = request_or_user
+        if not isinstance (user, User) :
+            user = request_or_user.user
+        for p in permissions :
+            if not user.has_perm (".".join ((cls._meta.app_label, p))) :
+                return False
+        ### if no permissions where speficied we return False
+        return bool (permissions)
+    # end def _user_has_permission
+
+    @classmethod
+    def add_allowed (cls, request_or_user) :
+        meta = cls._meta
+        return cls._user_has_permission \
+            (request_or_user, "add_%s" % (meta.object_name.lower (), ))
+    # end def add_allowed
+
+    def delete_allowed (self, request_or_user) :
+        meta = self._meta
+        return self._user_has_permission \
+            (request_or_user, "delete_%s" % (meta.object_name.lower (), ))
+    # end def delete_allowed
+
+    def change_allowed (self, request_or_user) :
+        meta = self._meta
+        return self._user_has_permission \
+            (request_or_user, "change_%s" % (meta.object_name.lower (), )
+            )
+    # end def change_allowed
+
+# end class _Permisson_Mixin_
+
+class _User_Create_Mod_ (_Permisson_Mixin_) :
     """Automatically add cerated and modified fields to the model."""
 
     __metaclass__ = M_User_Create_Mod
+
+    def delete_allowed (self, request_or_user) :
+        user = request_or_user
+        if not isinstance (user, User) :
+            user = request_or_user.user
+        if self.created_by == user :
+            return True
+        return super (_User_Create_Mod_, self).delete_allowed (user)
+    # end def delete_allowed
+
+    def change_allowed (self, request_or_user) :
+        user = request_or_user
+        if not isinstance (user, User) :
+            user = request_or_user.user
+        if self.created_by == user :
+            return True
+        return super (_User_Create_Mod_, self).change_allowed (user)
+    # end def change_allowed
 
     def save (self, user = None) :
         if user :
@@ -86,6 +152,7 @@ class _User_Create_Mod_ (object) :
 
 # end class _User_Create_Mod_
 
+DM._Permisson_Mixin_ = _Permisson_Mixin_
 DM._User_Create_Mod_ = _User_Create_Mod_
 
 ### some common fields
