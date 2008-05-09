@@ -208,9 +208,9 @@ class RRender (_Binding_Tag_) :
 
 class Iterate (Tag) :
     """Add an iterable to the context. Calling `iter.next` will change the
-       current value of `iter`. Once the end of the sequence is used, it will
-       be reset and starts all over again.
-       This is simmilar to teh cycle that except that `cycling` trough the
+       current value of `iter`. Once the end of the sequence is readched, it
+       will be reset and starts all over again.
+       This is simmilar to the cycle that except that `cycling` trough the
        list of values and receving the current value is seperated.
 
        >>> from django.template import Template, Context
