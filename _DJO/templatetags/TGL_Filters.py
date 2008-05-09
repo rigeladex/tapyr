@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-May-2008 (MG) Creation
+#     9-May-2008 (MG) Arithmetic and bool filters added
 #    ««revision-date»»···
 #--
 """
@@ -35,19 +36,47 @@
 >>> from django.template import add_to_builtins, Template, Context
 >>> add_to_builtins ("_DJO.templatetags.TGL_Filters")
 >>> template = '''
-...   {{ var|starts_with:"foo"}}
-...   {{ var|starts_with:"fooa"}}
-...   {{ var|starts_with:"afoo"}}
-...   {{ var|starts_with:"fo"}}
+...   {{ var|starts_with:"foo"  }}
+...   {{ var|starts_with:"fooa" }}
+...   {{ var|starts_with:"afoo" }}
+...   {{ var|starts_with:"fo"   }}
 ... '''
 >>> t = Template (template)
 >>> t.render (Context (dict (var = "foo"))).strip ()
 u'True\\n  False\\n  False\\n  True'
 >>> t.render (Context (dict (var = ""))).strip ()
 u''
+
+>>> template = '''
+...   {{ var|eq:"1"}} {{ var|ne:"1"}} {{ var|eq:bar}} {{ var|ne:bar}}
+... '''
+>>> t = Template (template)
+>>> t.render (Context (dict (var = 1, bar = 1))).strip ()
+u'False True True False'
+>>> t.render (Context (dict (var = "1", bar = 1))).strip ()
+u'True False False True'
+>>> template = '''
+...   {{ var|gt:1}} {{ var|gt:bar}} {{ var|gt:3 }}
+...   {{ var|ge:1}} {{ var|ge:bar}} {{ var|ge:3 }}
+...   {{ var|lt:1}} {{ var|lt:bar}} {{ var|lt:3 }}
+...   {{ var|le:1}} {{ var|le:bar}} {{ var|le:3 }}
+... '''
+>>> t = Template (template)
+>>> t.render (Context (dict (var = 2, bar = 2))).strip ()
+u'True False False\\n  True True False\\n  False False True\\n  False True True'
+>>> template = '''
+...   {{ var|add:1}} {{  var|sub:bar }}
+...   {{ var|mul:2}} {{  var|div:bar }}
+...   {{ var|mod:2}} {{  var|pow:bar }}
+...   {{ var|mod:3}} {{ nvar|abs     }} {{ var|abs}}
+... '''
+>>> t = Template (template)
+>>> t.render (Context (dict (var = 20, bar = 2, nvar = -10))).strip ()
+u'21 18\\n  40 10\\n  0 400\\n  2 10 20'
 """
 from   django.template             import defaultfilters
 from   django                      import template
+import operator
 
 register = template.Library ()
 
@@ -58,5 +87,17 @@ def starts_with (value, prefix) :
     return value and value.startswith (prefix)
 # end def starts_with
 
+_fct = {}
+for op in ( "eq",  "ne",  "gt",  "ge",  "lt",  "le"
+          , "add", "sub", "div", "mul", "mod", "pow") :
+    exec \
+        ( "def %s (lhs, rhs) : return operator.%s (lhs, rhs)" % (op, op)
+        , globals (), _fct
+        )
+    register.filter (op, _fct [op])
 
+@register.filter
+def abs (value) :
+    return operator.abs (value)
+# end def abs
 ### __END__ DJO.templatetags.TGL_Filters

@@ -34,6 +34,7 @@
 #                     added
 #    17-Mar-2008 (MG) `Path_Starts_With` removed, tag `Iterate` added
 #     9-May-2008 (CT) Style
+#     9-May-2008 (MG) `Onion` tag added
 #    ««revision-date»»···
 #--
 
@@ -267,12 +268,120 @@ class Iterate (Tag) :
     def parse (cls, parser, token) :
         name, args             = token.contents.split (" ", 1)
         sequence, _, name      = args.strip ().rsplit (" ", 2)
-        sequence = [Filter_Exp (parser, p.strip ()) for p in sequence.split (",")]
+        sequence = \
+            [Filter_Exp (parser, p.strip ()) for p in sequence.split (",")]
         template_name, _, rest = split_hst (args.strip (), ",")
         return cls (name, cls._Iterable_ (sequence))
-    # end def
+    # end def parse
 
 # end class Iterate
+
+class Onion (Tag) :
+    """Enclose a block with a head/tail based on a condition:
+
+       >>> from django.template import Template, Context
+       >>> template = '''
+       ...   {% onion foo %}
+       ...     {% head %}
+       ...       I am the onion then head
+       ...     {% else %}
+       ...       I am the onion else head
+       ...     {% body %}
+       ...       And this is the body which should be enclosed by the head/tail
+       ...     {% tail %}
+       ...       I am the onion then tail
+       ...     {% else %}
+       ...       I am the onion else tail
+       ...   {% endonion %}
+       ... '''.strip ()
+       >>> t = Template (template)
+       >>> t.render (Context (dict (foo = True)))
+       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
+       >>> t.render (Context (dict (foo = False)))
+       u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
+
+       ### The else tag inside the head/tail or optionally
+       >>> template = '''
+       ...   {% onion foo %}
+       ...     {% head %}
+       ...       I am the onion then head
+       ...     {% body %}
+       ...       And this is the body which should be enclosed by the head/tail
+       ...     {% tail %}
+       ...       I am the onion then tail
+       ...     {% else %}
+       ...       I am the onion else tail
+       ...   {% endonion %}
+       ... '''.strip ()
+       >>> t = Template (template)
+       >>> t.render (Context (dict (foo = True)))
+       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
+       >>> t.render (Context (dict (foo = False)))
+       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
+       >>> template = '''
+       ...   {% onion foo %}
+       ...     {% head %}
+       ...       I am the onion then head
+       ...     {% else %}
+       ...       I am the onion else head
+       ...     {% body %}
+       ...       And this is the body which should be enclosed by the head/tail
+       ...     {% tail %}
+       ...       I am the onion then tail
+       ...   {% endonion %}
+       ... '''.strip ()
+       >>> t = Template (template)
+       >>> t.render (Context (dict (foo = True)))
+       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n  '
+       >>> t.render (Context (dict (foo = False)))
+       u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n  '
+    """
+
+    def __init__ (self, condition, node_list, head, tail) :
+        self.condition = condition
+        self.head      = head
+        self.tail      = tail
+        self.node_list = node_list
+    # end def __init__
+
+    def render (self, context) :
+        use_else = not bool (self.condition (context))
+        head     = self.head [use_else] or self.head [0]
+        tail     = self.tail [use_else] or self.tail [0]
+        return "".join \
+            ( ( head and  head.render (context)
+              , self.node_list.render (context)
+              , tail and  tail.render (context)
+              )
+            )
+    # end def render
+
+    @classmethod
+    def parse (cls, parser, token) :
+        name, condition = token.contents.split (" ", 1)
+        condition  = Filter_Exp                (parser, condition)
+        skip       = parser.parse              (("head", ))
+        parser.delete_first_token              ()
+        head       = cls._then_else            (parser, "body")
+        node_list  = parser.parse              (("tail", ))
+        parser.delete_first_token              ()
+        tail       = cls._then_else            (parser, "endonion")
+        return cls (condition, node_list, head, tail)
+    # end def parse
+
+    @classmethod
+    def _then_else (cls, parser, end_token) :
+        then_block = parser.parse      (("else", end_token))
+        token      = parser.next_token ()
+        if token.contents == "else" :
+            else_block = parser.parse   ((end_token, ))
+            parser.delete_first_token   ()
+        else :
+            else_block = None
+        return then_block, else_block
+    # end def _then_else
+
+# end class Onion
 
 if __name__ != "__main__":
     DJO._Export ("*")
