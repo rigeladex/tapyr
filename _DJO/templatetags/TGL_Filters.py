@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-May-2008 (MG) Creation
 #     9-May-2008 (MG) Arithmetic and bool filters added
+#    12-May-2008 (MG) `sequence_filter` added
 #    ««revision-date»»···
 #--
 """
@@ -73,6 +74,13 @@ u'True False False\\n  True True False\\n  False False True\\n  False True True'
 >>> t = Template (template)
 >>> t.render (Context (dict (var = 20, bar = 2, nvar = -10))).strip ()
 u'21 18\\n  40 10\\n  0 400\\n  2 10 20'
+
+>>> from _TFL.Record import Record as R
+>>> seq = R (hidden = True,  text = "A"), R (hidden = False,  text = "B"), R (hidden = True,  text = "C")
+>>> [r.text for r in sequence_filter (seq, "hidden:True")]
+['A', 'C']
+>>> [r.text for r in sequence_filter (seq, "hidden:False")]
+['B']
 """
 from   django.template             import defaultfilters
 from   django                      import template
@@ -100,4 +108,17 @@ for op in ( "eq",  "ne",  "gt",  "ge",  "lt",  "le"
 def abs (value) :
     return operator.abs (value)
 # end def abs
+
+@register.filter
+def sequence_filter (sequence, filter_spec) :
+    attr, condition = filter_spec, True
+    if ":" in filter_spec :
+        attr, condition = (p.strip () for p in filter_spec.split (":", 1))
+        try :
+            condition = eval (condition)
+        except :
+            pass
+    return (e for e in sequence if getattr (e, attr, False) == condition)
+# end def sequence_filter
+
 ### __END__ DJO.templatetags.TGL_Filters

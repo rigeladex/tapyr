@@ -44,6 +44,13 @@
 #                     `execfile` (too allow tings like `Type = Gallery` there)
 #     9-May-2008 (CT) `_Meta_` and `Table` added
 #     9-May-2008 (CT) `top` made into class variable
+#    10-May-2008 (MG) `add_page` and `add_sub_dir` fixed
+#    10-May-2008 (MG) Use `posixpath` instead of `os.path` (we deal with urls
+#                     here not with a files system)
+#    12-May-2008 (MG) `url_resolver` and `url_patterns` added
+#    12-May-2008 (MG) Context processor `populate_naviagtion_root` added
+#    12-May-2008 (MG) `new_sub_dir` and `new_page`: don't normpath `src_dir`
+#                     and `href`
 #    ««revision-date»»···
 #--
 
@@ -56,6 +63,10 @@ from   _TFL.predicate           import pairwise
 from   _TFL.Record              import Record
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
+
+import posixpath
+pjoin = posixpath.join
+pnorm = posixpath.normpath
 
 import _TFL._Meta.Object
 
@@ -108,7 +119,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def file_stem (self) :
-        return sos.path.normpath (sos.path.join (self.prefix, self.base))
+        return npath (pjoin (self.prefix, self.base))
     # end def file_stem
 
     def above (self, link) :
@@ -129,12 +140,27 @@ class _Site_Entity_ (TFL.Meta.Object) :
             ( "%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
     # end def __str__
 
+    @Once_Property
+    def abs_href (self) :
+        result = self.href
+        if not result.startswith ("/") :
+            return "/%s" % (result, )
+        return result
+    # end def abs_href
+
 # end class _Site_Entity_
 
 class Page (_Site_Entity_) :
     """Model one page of a web site."""
 
     own_links       = []
+    url_patterns    = ()
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        if self.parent.url_resolver and self.url_patterns :
+            self.parent.url_resolver.add_nav_pattern (self, * self.url_patterns)
+    # end def __init__
 
 # end class Page
 
@@ -145,13 +171,13 @@ class Gallery (Page) :
 
     def __init__ (self, pic_dir, parent = None, ** kw) :
         self.pic_dir  = pic_dir
-        self.im_dir   = sos.path.join (self.pic_dir, "im")
-        self.th_dir   = sos.path.join (self.pic_dir, "th")
+        self.im_dir   = pjoin (self.pic_dir, "im")
+        self.th_dir   = pjoin (self.pic_dir, "th")
         self._photos  = []
         self._thumbs  = []
         self.__super.__init__ (parent, ** kw)
         self.name     = Filename (pic_dir).base
-        self.src_dir  = sos.path.join (getattr (self, "prefix", ""), self.name)
+        self.src_dir  = pjoin (getattr (self, "prefix", ""), self.name)
         self.href     = "%s.html" % (self.src_dir, )
     # end def __init__
 
@@ -173,11 +199,11 @@ class Gallery (Page) :
         photos = self._photos
         thumbs = self._thumbs
         images = sorted \
-            (sos.expanded_globs (sos.path.join (self.im_dir, "*.jpg")))
+            (sos.expanded_globs (pjoin (self.im_dir, "*.jpg")))
         i = 0
         for im in images :
             name = Filename (im).base
-            th   = sos.path.join (self.th_dir, "%s.jpg" % name)
+            th   = pjoin (self.th_dir, "%s.jpg" % name)
             if sos.path.exists (th) :
                 i     += 1
                 title  = "%s %d/%d" % (self.title, i, len (images))
@@ -265,6 +291,7 @@ class Dir (_Site_Entity_) :
     """Model one directory of a web site."""
 
     Page            = Page
+    url_resolver    = None
 
     dir             = ""
     sub_dir         = ""
@@ -282,9 +309,15 @@ class Dir (_Site_Entity_) :
             if self.sub_dir :
                 self.prefix = sos.path.join \
                     (* [p for p in (parent.prefix, self.sub_dir) if p])
-        self.context  = dict ()
-        self.level    = 1 + getattr (parent, "level", -2)
-        self._entries = []
+        if (   self.url_resolver
+           and not isinstance (self.url_resolver, DJO._Url_Resolver_)
+           ) :
+            self.url_resolver = self.url_resolver (self.sub_dir, self.sub_dir)
+        if self.parent and self.parent.url_resolver and self.url_resolver :
+            self.parent.url_resolver.add_post_pattern (self.url_resolver)
+        self.context          = dict ()
+        self.level            = 1 + getattr (parent, "level", -2)
+        self._entries         = []
     # end def __init__
 
     @classmethod
@@ -292,9 +325,9 @@ class Dir (_Site_Entity_) :
         """Return a new `Dir` filled with information read from the file
            `navigation.list` in `src_dir`.
         """
-        result = cls           (src_dir, parent = parent, ** kw)
-        nl     = sos.path.join (src_dir, "navigation.list")
-        execfile               (nl, globals (), result.context)
+        result = cls   (src_dir, parent = parent, ** kw)
+        nl     = pjoin (src_dir, "navigation.list")
+        execfile       (nl, globals (), result.context)
         result.add_entries \
             (result.context ["own_links"], Dir_Type = cls.from_nav_list_file)
         return result
@@ -345,13 +378,13 @@ class Dir (_Site_Entity_) :
     def add_page (self, ** kw) :
         """Add a page with the attributes passed as keyword arguments."""
         result = self.new_page (** kw)
-        self.entries.append (result)
+        self._entries.append (result)
         return result
     # end def add_page
 
     def add_sub_dir (self, sub_dir, ** kw) :
         result = self.new_sub_dir (sub_dir, ** kw)
-        self.entries.append (result)
+        self._entries.append (result)
         return result
     # end def add_sub_dir
 
@@ -360,7 +393,7 @@ class Dir (_Site_Entity_) :
         href   = kw.get ("href")
         prefix = self.prefix
         if href and prefix :
-            kw ["href"] = sos.path.normpath (sos.path.join (prefix, href))
+            kw ["href"] = pjoin (prefix, href)
         result = Type \
             (parent = self, level = self.level + 1, dir = self.title, ** kw)
         return result
@@ -368,7 +401,7 @@ class Dir (_Site_Entity_) :
 
     def new_sub_dir (self, sub_dir, ** kw) :
         Type    = kw.pop ("Type", self.__class__)
-        src_dir = sos.path.normpath (sos.path.join (self.src_dir, sub_dir))
+        src_dir = pjoin (self.src_dir, sub_dir)
         result  = Type (src_dir, parent = self, sub_dir = sub_dir, ** kw)
         return result
     # end def new_sub_dir
@@ -379,6 +412,10 @@ class Dir (_Site_Entity_) :
     # end def __str__
 
 # end class Dir
+
+def populate_naviagtion_root (request) :
+    return dict (NAVIGATION = _Site_Entity_.top)
+# end def populate_naviagtion_root
 
 if __name__ != "__main__":
     DJO._Export_Module ()

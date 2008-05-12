@@ -30,6 +30,31 @@
 #    ««revision-date»»···
 #--
 
+"""
+>>> from django.conf     import settings
+>>> settings.configure (ROOT_URLCONF = "_DJO._test_url_conf")
+>>> from django.template import add_to_builtins, Template, Context
+>>> add_to_builtins ("_DJO.templatetags.TGL")
+>>> template = '''
+...   {% onion path|eq:"/" %}
+...     {% head %}
+...       I am the onion then head
+...     {% else %}
+...       I am the onion else head
+...     {% body %}
+...       And this is the body which should be enclosed by the head/tail
+...     {% tail %}
+...       I am the onion then tail
+...     {% else %}
+...       I am the onion else tail
+...   {% endonion %}
+... '''.strip ()
+>>> t = Template (template)
+>>> t.render (Context (dict (path = "/a")))
+u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
+>>> t.render (Context (dict (path = "/")))
+u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
+"""
 from   django                      import template
 register = template.Library ()
 
