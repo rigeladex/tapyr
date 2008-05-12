@@ -37,31 +37,38 @@ from    django.core import urlresolvers
 import  posixpath
 
 class Url_Pattern (urlresolvers.RegexURLPattern) :
-    """XXX"""
+    """Match a path to a distived view.
+       This is an extension to the default django RegexURLPattern which adds
+       the `active_page_paremeter_name` to the parameters passed to the view
+       callable.
+    """
 
-    def __init__ (self, regex, callback, pattern_name = None, ** kw) :
-        super (Url_Pattern, self).__init__ (regex, callback, kw, pattern_name)
-    # end def __init__
+    active_page_paremeter_name = "PAGE"
 
     def resolve (self, path) :
         result = super (Url_Pattern, self).resolve (path)
         if result and self.nav_element :
             self.nav_element.top.active_page = self.nav_element
-            if not "ACTIVE_PAGE" in result [2] :
-                result [2] ["ACTIVE_PAGE"]   = self.nav_element
+            if self.active_page_paremeter_name not in result [2] :
+                result [2] [self.active_page_paremeter_name] = self.nav_element
         return result
     # end def resolve
 
 # end class Url_Pattern
 
-class _Url_Resolver_ (urlresolvers.RegexURLResolver) :
-    """XXX"""
+class Url_Resolver (urlresolvers.RegexURLResolver) :
+    """Match a path-prefix and tests the remainder of the path to it's own
+       url_patterns.
+       This url resolver is different to the default django RegexURLResolver
+       in that way that the url_platterns don't come from a differnet file
+       but are insead stored in the instance.
+    """
 
     _url_pattners = None
 
     def __init__ (self, regex, name = None, ** kw) :
         regex = posixpath.join (regex, "")
-        super (_Url_Resolver_, self).__init__ (regex, name, kw)
+        super (Url_Resolver, self).__init__ (regex, name, kw)
         self._pre_url_patterns  = []
         self._post_url_patterns = []
         self._nav_url_patterns  = []
@@ -88,21 +95,35 @@ class _Url_Resolver_ (urlresolvers.RegexURLResolver) :
 
     def add_nav_pattern (self, nav_element, * patterns) :
         for p in patterns :
+            if not isinstance (p, Url_Pattern) :
+                args = ()
+                kw   = {}
+                if isinstance (p, dict) :
+                    kw = dict
+                else :
+                    args = p if isinstance (p, (tuple, list)) else (p, )
+                href = nav_element.rhref or nav_element.href
+                p = Url_Pattern ("^%s$" % (href, ), * args, ** kw)
             self._nav_url_patterns.append (p)
             p.nav_element = nav_element
-    # end def nav_post_pattern
+    # end def add_nav_pattern
 
-    def add_post_pattern (self, * patterns) :
+    def append_pattern (self, * patterns) :
         self._post_url_patterns.extend (patterns)
-    # end def add_post_pattern
+    # end def append_pattern
 
-    def add_pre_pattern (self, * patterns) :
+    def prepend_pattern (self, * patterns) :
         self._pre_url_patterns.extend (patterns)
-    # end def add_pre_pattern
+    # end def prepend_pattern
 
-# end class _Url_Resolver_
+# end class Url_Resolver
 
-class M_Root_Url_Resolver (_Url_Resolver_.__class__) :
+class M_Root_Url_Resolver (Url_Resolver.__class__) :
+    """Meta class to create only one instance of the root url resolver per
+      `name`.
+      In real world django sites, the name is defined in the settings module
+      and is called `ROOT_URLCONF`
+    """
 
     root_url_reslovers = {}
 
@@ -115,7 +136,7 @@ class M_Root_Url_Resolver (_Url_Resolver_.__class__) :
 
 # end class M_Root_Url_Resolver
 
-class Root_Url_Resolver (_Url_Resolver_) :
+class Root_Url_Resolver (Url_Resolver) :
     """The resolver for the whole site (this is the first resolver activated
        by django)
     """
@@ -124,18 +145,9 @@ class Root_Url_Resolver (_Url_Resolver_) :
 
 # end class Root_Url_Resolver
 
-class Url_Resolver (_Url_Resolver_) :
-    """XXX"""
-
-    def __init__ (self, * args, ** kw) :
-        super (Url_Resolver, self).__init__ (* args, ** kw)
-    # end def __init__
-
-# end class Url_Resolver
-
 if not issubclass (urlresolvers.RegexURLResolver, Root_Url_Resolver) :
     urlresolvers.RegexURLResolver = Root_Url_Resolver
 
 if __name__ != "__main__":
-    DJO._Export ("*", "_Url_Resolver_")
+    DJO._Export ("*")
 ### __END__ DJO.Url_Resolver

@@ -51,6 +51,7 @@
 #    12-May-2008 (MG) Context processor `populate_naviagtion_root` added
 #    12-May-2008 (MG) `new_sub_dir` and `new_page`: don't normpath `src_dir`
 #                     and `href`
+#    12-May-2008 (MG) `rhref` added
 #    ««revision-date»»···
 #--
 
@@ -94,6 +95,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     desc            = ""
     href            = ""
+    rhref           = None
     input_encoding  = "iso-8859-15"
     title           = ""
 
@@ -119,7 +121,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def file_stem (self) :
-        return npath (pjoin (self.prefix, self.base))
+        return pjoin (pjoin (self.prefix, self.base))
     # end def file_stem
 
     def above (self, link) :
@@ -310,11 +312,12 @@ class Dir (_Site_Entity_) :
                 self.prefix = sos.path.join \
                     (* [p for p in (parent.prefix, self.sub_dir) if p])
         if (   self.url_resolver
-           and not isinstance (self.url_resolver, DJO._Url_Resolver_)
+           and not isinstance (self.url_resolver, DJO.Url_Resolver)
            ) :
-            self.url_resolver = self.url_resolver (self.sub_dir, self.sub_dir)
+            self.url_resolver = self.url_resolver \
+                ("^%s" % (self.sub_dir, ), self.sub_dir)
         if self.parent and self.parent.url_resolver and self.url_resolver :
-            self.parent.url_resolver.add_post_pattern (self.url_resolver)
+            self.parent.url_resolver.append_pattern (self.url_resolver)
         self.context          = dict ()
         self.level            = 1 + getattr (parent, "level", -2)
         self._entries         = []
@@ -389,9 +392,10 @@ class Dir (_Site_Entity_) :
     # end def add_sub_dir
 
     def new_page (self, ** kw) :
-        Type   = kw.pop ("Type", self.Page)
-        href   = kw.get ("href")
-        prefix = self.prefix
+        Type         = kw.pop ("Type", self.Page)
+        href         = kw.get ("href")
+        kw ["rhref"] = href
+        prefix       = self.prefix
         if href and prefix :
             kw ["href"] = pjoin (prefix, href)
         result = Type \
