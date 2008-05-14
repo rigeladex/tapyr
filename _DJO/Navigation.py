@@ -55,6 +55,12 @@
 #    14-May-2008 (CT) `file_stem` fixed
 #    14-May-2008 (CT) `Page.__init__` changed to use `self.url_resolver`
 #                     instead of `self.parent.url_resolver`
+#    14-May-2008 (CT) `dump` added
+#    14-May-2008 (CT) `href` converted to property based on new attribute `name`
+#    14-May-2008 (CT) `Page.dir` and `Page.level` converted from attributes
+#                     to properties
+#    14-May-2008 (CT) `Root` and `_Dir_` factored from `Dir`
+#    14-May-2008 (CT) `from_dict_list` added
 #    ««revision-date»»···
 #--
 
@@ -68,9 +74,9 @@ from   _TFL.Record              import Record
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
 
-from   posixpath                import join as pjoin, normpath as pnorm
-
 import _TFL._Meta.Object
+
+from   posixpath                import join as pjoin, normpath as pnorm
 
 ### To-Do:
 ### - Root class: factor from Dir
@@ -102,6 +108,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     parent          = None
 
+    _dump_type      = "dict"
+
     def __init__ (self, parent = None, ** kw) :
         self._kw    = kw
         self.parent = parent
@@ -116,13 +124,26 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def __init__
 
     @Once_Property
+    def abs_href (self) :
+        result = self.href
+        if not result.startswith ("/") :
+            return "/%s" % (result, )
+        return result
+    # end def abs_href
+
+    @Once_Property
     def base (self) :
-        return Filename (self.href).base
+        return Filename (self.name).base
     # end def base
 
     @Once_Property
     def file_stem (self) :
         return pnorm (pjoin (self.prefix, self.base))
+    # end def file_stem
+
+    @Once_Property
+    def href (self) :
+        return pnorm (pjoin (self.prefix, self.name))
     # end def file_stem
 
     def above (self, link) :
@@ -131,6 +152,20 @@ class _Site_Entity_ (TFL.Meta.Object) :
             and ((not self.prefix) or link.prefix.startswith (self.prefix))
             )
     # end def above
+
+    def dump (self, tail = None) :
+        level  = self.level
+        indent = "  " * (level + 3)
+        sep    = "\n%s, " % (indent, )
+        lines  = sep.join \
+            ("%s = %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
+        if tail :
+            lines = "%s%s%s" % (lines, sep, tail)
+        return "%s\n%s( Type = %s%s%s\n%s)" % \
+            ( self._dump_type
+            , indent, self.__class__.__name__, sep, lines, indent
+            )
+    # end def dump
 
     def __getattr__ (self, name) :
         if self.parent is not None :
@@ -142,14 +177,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return ", ".join \
             ( "%s : %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
     # end def __str__
-
-    @Once_Property
-    def abs_href (self) :
-        result = self.href
-        if not result.startswith ("/") :
-            return "/%s" % (result, )
-        return result
-    # end def abs_href
 
 # end class _Site_Entity_
 
@@ -165,6 +192,16 @@ class Page (_Site_Entity_) :
             self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
 
+    @property
+    def dir (self) :
+        return self.parent.title
+    # end def dir
+
+    @property
+    def level (self) :
+        return self.parent.level + 1
+    # end def dir
+
 # end class Page
 
 class Gallery (Page) :
@@ -173,15 +210,14 @@ class Gallery (Page) :
     template = "gallery.html"
 
     def __init__ (self, pic_dir, parent = None, ** kw) :
-        self.pic_dir  = pic_dir
-        self.im_dir   = pjoin (self.pic_dir, "im")
-        self.th_dir   = pjoin (self.pic_dir, "th")
+        self.im_dir   = pjoin (pic_dir, "im")
+        self.th_dir   = pjoin (pic_dir, "th")
         self._photos  = []
         self._thumbs  = []
-        self.__super.__init__ (parent, ** kw)
-        self.name     = Filename (pic_dir).base
-        self.src_dir  = pjoin (getattr (self, "prefix", ""), self.name)
-        self.href     = "%s.html" % (self.src_dir, )
+        base          = Filename (pic_dir).base
+        self.name     = "%s.html" % (base, )
+        self.__super.__init__ (parent, pic_dir = pic_dir, ** kw)
+        self.src_dir  = pjoin (getattr (self, "prefix", ""), base)
     # end def __init__
 
     @property
@@ -212,13 +248,13 @@ class Gallery (Page) :
                 title  = "%s %d/%d" % (self.title, i, len (images))
                 desc   = "%s %d/%d" % (self.desc,  i, len (images))
                 photo  = Photo     \
-                    ( name, im
+                    ( im
                     , parent = self
                     , desc   = desc
                     , title  = title
                     )
                 thumb  = Thumbnail \
-                    ( name, th, photo
+                    ( th, photo
                     , parent = self
                     , desc   = desc
                     , title  = title
@@ -238,6 +274,10 @@ class _Photo_ (Page) :
 
     _size     = None
 
+    def __init__ (self, name, parent, ** kw) :
+        self.__super.__init__ (name = name, src = name, parent = parent, ** kw)
+    # end def __init__
+
     @property
     def height (self) :
         size = self.size
@@ -249,7 +289,7 @@ class _Photo_ (Page) :
     def size (self) :
         if self._size is None :
             from PIL import Image
-            img = Image.open (self.href)
+            img = Image.open (self.name)
             self._size = img.size
         return self._size
     # end def size
@@ -271,26 +311,20 @@ class Photo (_Photo_) :
     template  = "photo.html"
     thumb     = None
 
-    def __init__ (self, name, href, parent = None, ** kw) :
-        self.__super.__init__ (href = href, parent = parent, ** kw)
-        self.name       = name
-    # end def __init__
-
 # end class Photo
 
 class Thumbnail (_Photo_) :
     """Model a thumbnail of a photo."""
 
-    def __init__ (self, name, href, photo, parent = None, ** kw) :
-        self.__super.__init__ (href = href, parent = parent, ** kw)
-        self.name   = name
+    def __init__ (self, name, photo, parent, ** kw) :
+        self.__super.__init__ (name, parent, ** kw)
         self.photo  = photo
         photo.thumb = self
     # end def __init__
 
 # end class Thumbnail
 
-class Dir (_Site_Entity_) :
+class _Dir_ (_Site_Entity_) :
     """Model one directory of a web site."""
 
     Page            = Page
@@ -299,29 +333,15 @@ class Dir (_Site_Entity_) :
     dir             = ""
     sub_dir         = ""
 
-    def __init__ (self, src_dir, parent = None, ** kw) :
+    def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
-        self.src_dir  = src_dir
-        self.parents  = []
-        self.prefix   = ""
-        if parent is None :
-            _Site_Entity_.top = self
-            self.Table        = {}
-        else :
-            self.parents = parent.parents + [parent]
-            if self.sub_dir :
-                self.prefix = sos.path.join \
-                    (* [p for p in (parent.prefix, self.sub_dir) if p])
+        self.context  = dict ()
+        self._entries = []
         if (   self.url_resolver
            and not isinstance (self.url_resolver, DJO.Url_Resolver)
            ) :
             self.url_resolver = self.url_resolver \
                 ("^%s" % (self.sub_dir, ), self.sub_dir)
-        if self.parent and self.parent.url_resolver and self.url_resolver :
-            self.parent.url_resolver.append_pattern (self.url_resolver)
-        self.context          = dict ()
-        self.level            = 1 + getattr (parent, "level", -2)
-        self._entries         = []
     # end def __init__
 
     @classmethod
@@ -333,7 +353,7 @@ class Dir (_Site_Entity_) :
         nl     = pjoin (src_dir, "navigation.list")
         execfile       (nl, globals (), result.context)
         result.add_entries \
-            (result.context ["own_links"], Dir_Type = cls.from_nav_list_file)
+            (result.context ["own_links"], Dir_Type = Dir.from_nav_list_file)
         return result
     # end def from_nav_list_file
 
@@ -366,14 +386,15 @@ class Dir (_Site_Entity_) :
     # end def own_links_transitive
 
     def add_entries (self, list_of_dicts, ** kw) :
-        entries  = self._entries
-        Dir_Type = kw.pop ("Dir_Type", self.__class__)
+        entries   = self._entries
+        Dir_Type  = kw.pop ("Dir_Type", self.__class__)
         for d in list_of_dicts :
-            s = d.get ("sub_dir", None)
+            s     = d.get ("sub_dir", None)
+            Type  = d.pop ("Type", None)
             if kw :
                 d = dict (kw, ** d)
             if s :
-                entry = self.new_sub_dir (Type = Dir_Type, ** d)
+                entry = self.new_sub_dir (Type = Type or Dir_Type, ** d)
             else :
                 entry = self.new_page    (** d)
             entries.append (entry)
@@ -392,22 +413,37 @@ class Dir (_Site_Entity_) :
         return result
     # end def add_sub_dir
 
+    def dump (self) :
+        level  = self.level
+        indent = "  " * (level + 5)
+        sep    = "\n%s" % (indent, )
+        sep_c  = "%s, " % sep
+        tail = sep_c.join \
+            (   "\n      ".join (owl.dump ().split ("\n"))
+            for owl in self.own_links
+            )
+        return self.__super.dump \
+            (tail = "_entries =%s[ %s%s]" % (sep, tail, sep))
+    # end def dump
+
     def new_page (self, ** kw) :
         Type         = kw.pop ("Type", self.Page)
-        href         = kw.get ("href")
-        kw ["rhref"] = href
-        prefix       = self.prefix
-        if href and prefix :
-            kw ["href"] = pjoin (prefix, href)
-        result = Type \
-            (parent = self, level = self.level + 1, dir = self.title, ** kw)
+        href         = kw.pop ("href", None)
+        if href is not None :
+            ### legacy lifting
+            assert not "name" in kw
+            kw ["name"] = href
+        result = Type (parent = self, ** kw)
         return result
     # end def new_page
 
     def new_sub_dir (self, sub_dir, ** kw) :
         Type    = kw.pop ("Type", self.__class__)
+        entries = kw.pop ("_entries", None)
         src_dir = pjoin (self.src_dir, sub_dir)
         result  = Type (src_dir, parent = self, sub_dir = sub_dir, ** kw)
+        if entries :
+            result.add_entries (entries)
         return result
     # end def new_sub_dir
 
@@ -416,7 +452,51 @@ class Dir (_Site_Entity_) :
             (self.src_dir, self.href, self.__super.__str__ ())
     # end def __str__
 
+# end class _Dir_
+
+class Dir (_Dir_) :
+    """Model one directory of a web site."""
+
+    def __init__ (self, src_dir, parent, ** kw) :
+        sub_dir      = kw.get ("sub_dir", "")
+        self.level   = parent.level + 1
+        self.parents = parent.parents + [parent]
+        self.prefix  = sos.path.join \
+            (* [p for p in (parent.prefix, sub_dir) if p])
+        self.src_dir  = src_dir
+        self.__super.__init__ (parent = parent, ** kw)
+        if parent.url_resolver and parent.url_resolver != self.url_resolver :
+            parent.url_resolver.append_pattern (self.url_resolver)
+    # end def __init__
+
 # end class Dir
+
+class Root (_Dir_) :
+
+    name       = "/"
+
+    _dump_type = "DJO.Navigation.Root.from_dict_list \\"
+
+    def __init__ (self, src_dir, ** kw) :
+        _Site_Entity_.top = self
+        self.parents      = []
+        self.prefix       = ""
+        self.Table        = {}
+        self.level        = -1
+        self.__super.__init__ (src_dir = src_dir, ** kw)
+    # end def __init__
+
+    @classmethod
+    def from_dict_list (cls, ** kw) :
+        Type    = kw.pop ("Type", cls)
+        entries = kw.pop ("_entries", None)
+        result  = Type (** kw)
+        if entries :
+            result.add_entries (entries)
+        return result
+    # end def from_dict_list
+
+# end class Root
 
 def populate_naviagtion_root (request) :
     return dict (NAVIGATION = _Site_Entity_.top)
