@@ -64,6 +64,7 @@
 #    14-May-2008 (CT) Bug fixes in `add_entries` and `from_dict_list`
 #    14-May-2008 (MG) `Page.parents` added
 #    14-May-2008 (MG) `rhref` removed and `_Dir_.url_resolver` removed
+#    14-May-2008 (MG) `url_patterns` moved up into `_Site_Entity_`
 #    ««revision-date»»···
 #--
 
@@ -82,11 +83,7 @@ import _TFL._Meta.Object
 from   posixpath                import join as pjoin, normpath as pnorm
 
 ### To-Do:
-### - Root class: factor from Dir
-###   * dump: dump navigation tree into string that's executable python code
-###     (using new classmethod `from_list_of_dicts`)
 ### - Dyn_Dir
-###
 
 class _Meta_ (TFL.Meta.Object.__class__) :
 
@@ -107,6 +104,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     href            = ""
     input_encoding  = "iso-8859-15"
     title           = ""
+    url_patterns    = ()
 
     parent          = None
 
@@ -123,6 +121,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
             setattr (self, k, v)
+        if self.url_patterns :
+            self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
 
     @Once_Property
@@ -186,13 +186,6 @@ class Page (_Site_Entity_) :
     """Model one page of a web site."""
 
     own_links       = []
-    url_patterns    = ()
-
-    def __init__ (self, * args, ** kw) :
-        self.__super.__init__ (* args, ** kw)
-        if self.url_resolver and self.url_patterns :
-            self.url_resolver.add_nav_pattern (self, * self.url_patterns)
-    # end def __init__
 
     @Once_Property
     def parents (self) :
@@ -505,6 +498,8 @@ class Root (_Dir_) :
 
 # end class Root
 
+### a django TEMPLATE_CONTEXT_PROCESSORS which adds a variable named
+### `NAVIGATION` to all `RequestContext` instances
 def populate_naviagtion_root (request) :
     return dict (NAVIGATION = _Site_Entity_.top)
 # end def populate_naviagtion_root
