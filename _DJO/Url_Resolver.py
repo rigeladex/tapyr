@@ -29,6 +29,7 @@
 # Revision Dates
 #    10-May-2008 (MG) Creation
 #    14-May-2008 (CT) Spelling corrections
+#    14-May-2008 (MG) Use `nav_element.name` instead of `nav_element.href`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,11 @@ class Url_Pattern (urlresolvers.RegexURLPattern) :
        the `active_page_parameter_name` to the parameters passed to the view
        callable.
     """
+
+    def __init__ (self, pattern, view, name = None, ** kw) :
+        ### just to make it easier to pass additional context information
+        super (Url_Pattern, self).__init__ (pattern, view, kw, name)
+    # end def __init__
 
     active_page_parameter_name = "PAGE"
 
@@ -102,7 +108,7 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
                     kw = dict
                 else :
                     args = p if isinstance (p, (tuple, list)) else (p, )
-                href = nav_element.rhref or nav_element.href
+                href = nav_element.name
                 p = Url_Pattern ("^%s$" % (href, ), * args, ** kw)
             self._nav_url_patterns.append (p)
             p.nav_element = nav_element

@@ -62,6 +62,8 @@
 #    14-May-2008 (CT) `Root` and `_Dir_` factored from `Dir`
 #    14-May-2008 (CT) `from_dict_list` added
 #    14-May-2008 (CT) Bug fixes in `add_entries` and `from_dict_list`
+#    14-May-2008 (MG) `Page.parents` added
+#    14-May-2008 (MG) `rhref` removed and `_Dir_.url_resolver` removed
 #    ««revision-date»»···
 #--
 
@@ -103,7 +105,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     desc            = ""
     href            = ""
-    rhref           = None
     input_encoding  = "iso-8859-15"
     title           = ""
 
@@ -192,6 +193,11 @@ class Page (_Site_Entity_) :
         if self.url_resolver and self.url_patterns :
             self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
+
+    @Once_Property
+    def parents (self) :
+        return self.parent.parents + [self.parent]
+    # end def parents
 
     @property
     def dir (self) :
@@ -329,7 +335,6 @@ class _Dir_ (_Site_Entity_) :
     """Model one directory of a web site."""
 
     Page            = Page
-    url_resolver    = None
 
     dir             = ""
     sub_dir         = ""
