@@ -61,6 +61,7 @@
 #                     to properties
 #    14-May-2008 (CT) `Root` and `_Dir_` factored from `Dir`
 #    14-May-2008 (CT) `from_dict_list` added
+#    14-May-2008 (CT) Bug fixes in `add_entries` and `from_dict_list`
 #    ««revision-date»»···
 #--
 
@@ -390,11 +391,11 @@ class _Dir_ (_Site_Entity_) :
         Dir_Type  = kw.pop ("Dir_Type", self.__class__)
         for d in list_of_dicts :
             s     = d.get ("sub_dir", None)
-            Type  = d.pop ("Type", None)
             if kw :
                 d = dict (kw, ** d)
             if s :
-                entry = self.new_sub_dir (Type = Type or Dir_Type, ** d)
+                Type  = d.pop ("Type", Dir_Type)
+                entry = self.new_sub_dir (Type = Type, ** d)
             else :
                 entry = self.new_page    (** d)
             entries.append (entry)
@@ -488,11 +489,12 @@ class Root (_Dir_) :
 
     @classmethod
     def from_dict_list (cls, ** kw) :
-        Type    = kw.pop ("Type", cls)
-        entries = kw.pop ("_entries", None)
-        result  = Type (** kw)
+        Dir_Type = kw.pop ("Dir_Type", Dir)
+        Type     = kw.pop ("Type",     cls)
+        entries  = kw.pop ("_entries", None)
+        result   = Type (** kw)
         if entries :
-            result.add_entries (entries)
+            result.add_entries (entries, Dir_Type = Dir_Type)
         return result
     # end def from_dict_list
 
