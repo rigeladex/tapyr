@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     9-May-2008 (MG) Creation
+#    14-May-2008 (CT) Enforce that TGL_Filters only defines filters, TGL_Tags
+#                     only defines tags
 #    ««revision-date»»···
 #--
 
@@ -61,7 +63,10 @@ register = template.Library ()
 from _DJO.templatetags.TGL_Tags    import register as tags
 from _DJO.templatetags.TGL_Filters import register as filters
 
-for r in tags, filters :
-    register.filters.update (r.filters)
-    register.tags.update    (r.tags)
+assert not tags.filters
+assert not filters.tags
+
+register.filters.update (filters.filters)
+register.tags.update    (tags.tags)
+
 ### __END__ DJO.templatetags.TGL

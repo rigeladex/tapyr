@@ -26,12 +26,14 @@
 #    Tanzer and Glueck's library of custom django template filters
 #
 # Revision Dates
-#     9-May-2008 (MG) Creation
+#     9-May-2008 (MG) Creation (factored from TGL_Tags)
 #     9-May-2008 (MG) Arithmetic and bool filters added
 #    12-May-2008 (MG) `sequence_filter` added
 #    12-May-2008 (MG) `sequence_filter`: support `None` as passed in sequence
+#    14-May-2008 (CT) Use `_define_op_filter` instead of `exec`
 #    ««revision-date»»···
 #--
+
 """
 >>> from django.conf     import settings
 >>> settings.configure (ROOT_URLCONF = "_DJO._test_url_conf")
@@ -87,6 +89,7 @@ u'21 18\\n  40 10\\n  0 400\\n  2 10 20'
 >>> [r.text for r in sequence_filter (None, "hidden:True")]
 []
 """
+
 from   django.template             import defaultfilters
 from   django                      import template
 import operator
@@ -100,14 +103,25 @@ def starts_with (value, prefix) :
     return value and value.startswith (prefix)
 # end def starts_with
 
-_fct = {}
-for op in ( "eq",  "ne",  "gt",  "ge",  "lt",  "le"
-          , "add", "sub", "div", "mul", "mod", "pow") :
-    exec \
-        ( "def %s (lhs, rhs) : return operator.%s (lhs, rhs)" % (op, op)
-        , globals (), _fct
-        )
-    register.filter (op, _fct [op])
+### Ideally, we'd just pass `getattr (operator, op)` to register.filter
+### but the unfortunate `inspect.getargspec` throws a sissy fit
+###   >>> from inspect import getargspec
+###   >>> getargspec (abs)
+###   Traceback (most recent call last):
+###     ...
+###   TypeError: arg is not a Python function
+
+def _define_op_filter (name) :
+    op = getattr (operator, name)
+    def _ (lhs, rhs) :
+        return op (lhs, rhs)
+    register.filter (name, _)
+
+for op in \
+        ( "eq",  "ge",  "gt",  "le",  "lt",  "ne"
+        , "add", "div", "mod", "mul", "pow", "sub"
+        ) :
+    _define_op_filter (op)
 
 @register.filter
 def abs (value) :

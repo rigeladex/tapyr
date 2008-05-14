@@ -52,11 +52,12 @@
 #    12-May-2008 (MG) `new_sub_dir` and `new_page`: don't normpath `src_dir`
 #                     and `href`
 #    12-May-2008 (MG) `rhref` added
+#    14-May-2008 (CT) `file_stem` fixed
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
-from   _DJO import DJO
+from   _DJO                     import DJO
 
 from   _TFL.defaultdict         import defaultdict
 from   _TFL.Filename            import *
@@ -65,9 +66,7 @@ from   _TFL.Record              import Record
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
 
-import posixpath
-pjoin = posixpath.join
-pnorm = posixpath.normpath
+from   posixpath                import join as pjoin, normpath as pnorm
 
 import _TFL._Meta.Object
 
@@ -121,7 +120,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def file_stem (self) :
-        return pjoin (pjoin (self.prefix, self.base))
+        return pnorm (pjoin (self.prefix, self.base))
     # end def file_stem
 
     def above (self, link) :
