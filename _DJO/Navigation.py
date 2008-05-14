@@ -53,6 +53,8 @@
 #                     and `href`
 #    12-May-2008 (MG) `rhref` added
 #    14-May-2008 (CT) `file_stem` fixed
+#    14-May-2008 (CT) `Page.__init__` changed to use `self.url_resolver`
+#                     instead of `self.parent.url_resolver`
 #    ««revision-date»»···
 #--
 
@@ -159,8 +161,8 @@ class Page (_Site_Entity_) :
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
-        if self.parent.url_resolver and self.url_patterns :
-            self.parent.url_resolver.add_nav_pattern (self, * self.url_patterns)
+        if self.url_resolver and self.url_patterns :
+            self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
 
 # end class Page

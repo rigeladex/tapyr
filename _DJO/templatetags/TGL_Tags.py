@@ -35,6 +35,7 @@
 #    17-Mar-2008 (MG) `Path_Starts_With` removed, tag `Iterate` added
 #     9-May-2008 (CT) Style
 #     9-May-2008 (MG) `Onion` tag added
+#    14-May-2008 (CT) `_Export` removed
 #    ««revision-date»»···
 #--
 
@@ -383,6 +384,4 @@ class Onion (Tag) :
 
 # end class Onion
 
-if __name__ != "__main__":
-    DJO._Export ("*")
 ### __END__ DJO.templatetags.TGL_Tags
