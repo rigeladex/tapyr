@@ -23,11 +23,12 @@
 #    DJO.Url_Resolver
 #
 # Purpose
-#    Extend/Enhance the djnago builtin url resolver/url patterns and
+#    Extend/enhance the django builtin url resolver/url patterns and
 #    integrate url resolving with the navigation
 #
 # Revision Dates
 #    10-May-2008 (MG) Creation
+#    14-May-2008 (CT) Spelling corrections
 #    ««revision-date»»···
 #--
 
@@ -39,18 +40,18 @@ import  posixpath
 class Url_Pattern (urlresolvers.RegexURLPattern) :
     """Match a path to a distived view.
        This is an extension to the default django RegexURLPattern which adds
-       the `active_page_paremeter_name` to the parameters passed to the view
+       the `active_page_parameter_name` to the parameters passed to the view
        callable.
     """
 
-    active_page_paremeter_name = "PAGE"
+    active_page_parameter_name = "PAGE"
 
     def resolve (self, path) :
         result = super (Url_Pattern, self).resolve (path)
         if result and self.nav_element :
             self.nav_element.top.active_page = self.nav_element
-            if self.active_page_paremeter_name not in result [2] :
-                result [2] [self.active_page_paremeter_name] = self.nav_element
+            if self.active_page_parameter_name not in result [2] :
+                result [2] [self.active_page_parameter_name] = self.nav_element
         return result
     # end def resolve
 
@@ -60,11 +61,11 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
     """Match a path-prefix and tests the remainder of the path to it's own
        url_patterns.
        This url resolver is different to the default django RegexURLResolver
-       in that way that the url_platterns don't come from a differnet file
-       but are insead stored in the instance.
+       in that way that the url_platterns don't come from a different file
+       but are instead stored in the instance.
     """
 
-    _url_pattners = None
+    _url_patterns = None
 
     def __init__ (self, regex, name = None, ** kw) :
         regex = posixpath.join (regex, "")
@@ -83,15 +84,14 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
 
     @property
     def url_patterns (self) :
-        if self._url_pattners is None :
-            self._url_pattners = \
+        if self._url_patterns is None :
+            self._url_patterns = \
                 ( self._pre_url_patterns
                 + self._nav_url_patterns
                 + self._post_url_patterns
                 )
-        return self._url_pattners
-    # end def url_patterns
-    urlpatterns = url_patterns
+        return self._url_patterns
+    urlpatterns = url_patterns # end def url_patterns
 
     def add_nav_pattern (self, nav_element, * patterns) :
         for p in patterns :
@@ -125,13 +125,13 @@ class M_Root_Url_Resolver (Url_Resolver.__class__) :
       and is called `ROOT_URLCONF`
     """
 
-    root_url_reslovers = {}
+    root_url_resolvers = {}
 
     def __call__ (meta, regex, name, ** kw) :
-        if name not in meta.root_url_reslovers :
-            meta.root_url_reslovers [name] = super \
+        if name not in meta.root_url_resolvers :
+            meta.root_url_resolvers [name] = super \
                 (M_Root_Url_Resolver, meta).__call__ (regex, name, ** kw)
-        return meta.root_url_reslovers [name]
+        return meta.root_url_resolvers [name]
     # end def __call__
 
 # end class M_Root_Url_Resolver
