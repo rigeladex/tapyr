@@ -69,6 +69,7 @@
 #                     (from `_Dir_) and added support for `_Site_Entity_`
 #                     which don't have there own url resolver
 #    16-May-2008 (MG) `url_resolver_pattern` added
+#    16-May-2008 (MG) `_Site_Entity_.href` fixed in case of an empfy `href`
 #    ««revision-date»»···
 #--
 
@@ -189,7 +190,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def href (self) :
-        return pnorm (pjoin (self.prefix, self.name))
+        href = pjoin (self.prefix, self.name)
+        if href :
+            return pnorm (href)
+        return ""
     # end def file_stem
 
     @Once_Property

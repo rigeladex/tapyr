@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-May-2008 (MG) Creation
 #    16-May-2008 (MG) Tests extended
+#    16-May-2008 (MG) Test for `href` and `abs_href` added
 #    ««revision-date»»···
 #--
 """
@@ -74,6 +75,26 @@ special pattern:
 >>> view is std_view_1, kw
 (True, {})
 
+Test some of the attributes of the navigation list:
+>>> for link in root.own_links_transitive :
+...    print repr (link.href), repr (link.abs_href)
+...
+'' '/'
+u'dir-1/page-1.html' u'/dir-1/page-1.html'
+u'dir-1/page-1.html' u'/dir-1/page-1.html'
+u'dir-1/page-2.html' u'/dir-1/page-2.html'
+u'dir-2/page-3.html' u'/dir-2/page-3.html'
+u'dir-2/page-3.html' u'/dir-2/page-3.html'
+u'dir-2/page-4.html' u'/dir-2/page-4.html'
+u'dir-3/sub-dir-1/page-5.html' u'/dir-3/sub-dir-1/page-5.html'
+u'dir-3/sub-dir-1/page-5.html' u'/dir-3/sub-dir-1/page-5.html'
+u'dir-3/sub-dir-1/page-5.html' u'/dir-3/sub-dir-1/page-5.html'
+u'dir-3/sub-dir-1/sub-sub-dir-1/page-6.html' u'/dir-3/sub-dir-1/sub-sub-dir-1/page-6.html'
+u'dir-3/sub-dir-1/sub-sub-dir-1/page-6.html' u'/dir-3/sub-dir-1/sub-sub-dir-1/page-6.html'
+u'dir-3/sub-dir-2/page-7.html' u'/dir-3/sub-dir-2/page-7.html'
+u'dir-3/sub-dir-2/page-7.html' u'/dir-3/sub-dir-2/page-7.html'
+u'dir-3/sub-dir-2/sub-sub-dir-2/page-8.html' u'/dir-3/sub-dir-2/sub-sub-dir-2/page-8.html'
+u'dir-3/sub-dir-2/sub-sub-dir-2/page-8.html' u'/dir-3/sub-dir-2/sub-sub-dir-2/page-8.html'
 """
 
 from   _DJO                import DJO
