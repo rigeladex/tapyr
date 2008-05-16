@@ -27,57 +27,80 @@
 #
 # Revision Dates
 #    14-May-2008 (MG) Creation
+#    16-May-2008 (MG) Tests extended
 #    ««revision-date»»···
 #--
 """
-For each `name` exactly one Root_Url_Resolver shall be created (that will
-ensure that the Root_Url_Resolver created during the navigation tree creation
+For each `name` exactly one Memo_Url_Resolver shall be created (that will
+ensure that the Memo_Url_Resolver created during the navigation tree creation
 is used by DJANGO as well)
->>> root_resolver = DJO.Root_Url_Resolver.root_url_resolvers.values () [0]
->>> resolver = DJO.Root_Url_Resolver ("^/", "test.urls")
+>>> resolver       = urlresolvers.get_resolver ("test.urls")
+>>> root_resolver = root.url_resolver
 >>> root_resolver is resolver
 True
 
 Now lets test the basic resolving of a `path` to the appropriate view
 function:
 >>> view, args, kw = resolver.resolve ("/")
->>> view is view_1
-True
->>> kw ["PAGE"].title
-u'Home'
+>>> view is view_1, kw ["PAGE"].title
+(True, u'Home')
 
 >>> view, args, kw = resolver.resolve ("/dir-1/page-1.html")
->>> view is view_2
-True
->>> kw ["PAGE"].title
-u'Page 1'
+>>> view is view_2, kw ["PAGE"].title
+(True, u'Page 1')
 
->>> view, args, kw = resolver.resolve ("/dir-3/sub-dir-1/page-6.html")
->>> view is view_7
-True
->>> kw ["PAGE"].title
-u'Page 6'
+Let's check how sub directories with there own url resolver work:
+>>> view, args, kw = resolver.resolve ("/dir-3/sub-dir-1/sub-sub-dir-1/page-6.html")
+>>> view is view_7, kw ["PAGE"].title
+(True, u'Page 6')
+
+>>> view, args, kw = resolver.resolve ("/dir-3/sub-dir-2/sub-sub-dir-2/page-8.html")
+>>> view is view_9, kw ["PAGE"].title
+(True, u'Page 8')
+
+Let see what happens if we try a path which does not exist:
+>>> view, args, kw = resolver.resolve ("/dir-NOT/sub-dir-1/page-6.html")
+Traceback (most recent call last):
+ ...
+Resolver404: {'path': 'dir-NOT/sub-dir-1/page-6.html', 'tried': [u'^$', u'^dir-1/', u'^dir-2/', u'^dir-3/', '^admin/', '^admin/', '^i18n/', '^user/', '^databrowse/(.*)$']}
+
+A directory can also have it's own url_pattern. In our case, dir-3 has a
+special pattern:
+>>> view, args, kw = resolver.resolve ("/dir-3/")
+>>> view is view_dir_3, kw ["PAGE"].title
+(True, u'Test Dir 3')
+
+>>> view, args, kw = resolver.resolve ("/admin/")
+>>> view is std_view_1, kw
+(True, {})
+
 """
 
 from   _DJO                import DJO
 import _DJO.Navigation
 import _DJO.Url_Resolver
+from    django.core        import urlresolvers
 
-def view_1 (request, PAGE) : print PAGE.title
-def view_2 (request, PAGE) : print PAGE.title
-def view_3 (request, PAGE) : print PAGE.title
-def view_4 (request, PAGE) : print PAGE.title
-def view_5 (request, PAGE) : print PAGE.title
-def view_6 (request, PAGE) : print PAGE.title
-def view_7 (request, PAGE) : print PAGE.title
-def view_8 (request, PAGE) : print PAGE.title
-def view_9 (request, PAGE) : print PAGE.title
+def view_1     (request, PAGE) : print PAGE.title
+def view_2     (request, PAGE) : print PAGE.title
+def view_3     (request, PAGE) : print PAGE.title
+def view_4     (request, PAGE) : print PAGE.title
+def view_5     (request, PAGE) : print PAGE.title
+def view_6     (request, PAGE) : print PAGE.title
+def view_7     (request, PAGE) : print PAGE.title
+def view_8     (request, PAGE) : print PAGE.title
+def view_9     (request, PAGE) : print PAGE.title
+def view_dir_3 (request, PAGE) : print PAGE.title
+def std_view_1 (request, PAGE) : print PAGE.title
+def std_view_2 (request, PAGE) : print PAGE.title
+def gen_view_1 (request, PAGE) : print PAGE.title
+def gen_view_2 (request, PAGE) : print PAGE.title
 
 root = DJO.Navigation.Root.from_dict_list \
     ( Type         = DJO.Navigation.Root
     , Dir_Type     = DJO.Navigation.Dir
     , src_dir      = ''
-    , url_resolver = DJO.Root_Url_Resolver ("^/", "test.urls")
+    , url_resolver = DJO.Singleton_Url_Resolver ("^/", "test.urls")
     , _entries     =
         [ dict
             ( Type         = DJO.Navigation.Page
@@ -130,6 +153,7 @@ root = DJO.Navigation.Root.from_dict_list \
             , sub_dir      = 'dir-3'
             , title        = 'Test Dir 3'
             , url_resolver = DJO.Url_Resolver
+            , url_patterns = (view_dir_3, )
             , _entries     =
                 [ dict
                     ( Type         = DJO.Navigation.Dir
@@ -143,10 +167,18 @@ root = DJO.Navigation.Root.from_dict_list \
                             , url_patterns = (view_6, )
                             )
                         , dict
-                            ( Type         = DJO.Navigation.Page
-                            , name         = 'page-6.html'
-                            , title        = 'Page 6'
-                            , url_patterns = (view_7, )
+                            ( Type         = DJO.Navigation.Dir
+                            , sub_dir      = 'sub-sub-dir-1'
+                            , title        = 'Sub Sub Dir 1'
+                            , _entries     =
+                                [ dict
+                                    ( Type         = DJO.Navigation.Page
+                                    , name         = 'page-6.html'
+                                    , title        = 'Page 6'
+                                    , url_patterns = (view_7, )
+                                    , url_resolver = DJO.Url_Resolver
+                                    )
+                                ]
                             )
                         ]
                     )
@@ -162,10 +194,17 @@ root = DJO.Navigation.Root.from_dict_list \
                             , url_patterns = (view_8, )
                             )
                         , dict
-                            ( Type         = DJO.Navigation.Page
-                            , name         = 'page-8.html'
-                            , title        = 'Page 8'
-                            , url_patterns = (view_9, )
+                            ( Type         = DJO.Navigation.Dir
+                            , sub_dir      = 'sub-sub-dir-2'
+                            , title        = 'Sub Sub Dir 2'
+                            , _entries     =
+                                [ dict
+                                    ( Type         = DJO.Navigation.Page
+                                    , name         = 'page-8.html'
+                                    , title        = 'Page 8'
+                                    , url_patterns = (view_9, )
+                                    )
+                                ]
                             )
                         ]
                     )
@@ -173,37 +212,34 @@ root = DJO.Navigation.Root.from_dict_list \
             )
         ]
     )
-root = DJO.Navigation.Root.from_dict_list \
-    ( Type         = DJO.Navigation.Root
-    , src_dir      = ''
-    , url_resolver = DJO.Root_Url_Resolver ("^/", "test.urls")
-    , _entries     =
-        [ dict
-            ( Type         = DJO.Navigation.Dir
-            , sub_dir      = 'dir-3'
-            , title        = 'Test Dir 3'
-            , url_resolver = DJO.Url_Resolver
-            , _entries     =
-                [ dict
-                    ( Type         = DJO.Navigation.Dir
-                    , sub_dir      = 'sub-dir-1'
-                    , title        = 'Sub Dir 1'
-                    , _entries     =
-                        [ dict
-                            ( Type         = DJO.Navigation.Page
-                            , name         = 'page-5.html'
-                            , title        = 'Page 5'
-                            , url_patterns = (view_6, )
-                            )
-                        ]
-                    )
-                ]
-            )
-        ]
+
+### fake Url_Resolvers to support the test
+admin = DJO.Singleton_Url_Resolver ("^admin/", "django_docs.urls")
+admin.append_pattern \
+    ( urlresolvers.RegexURLPattern
+        ( r"^$", std_view_1, name = "databrowse")
     )
-#import pdb; pdb.set_trace ()
-#resolver = DJO.Root_Url_Resolver ("^/", "test.urls")
-#view, args, kw = resolver.resolve ("/dir-3/sub-dir-1/page-6.html")
+root.url_resolver.append_pattern \
+    ( urlresolvers.RegexURLResolver ("^admin/", "django_docs.urls")
+    , urlresolvers.RegexURLResolver ("^admin/", "django.contrib.admin.urls")
+    , urlresolvers.RegexURLResolver ("^i18n/",  "django.conf.urls.i18n")
+    , urlresolvers.RegexURLResolver ("^user/",  "pages.mangari_org.user_urls")
+    , urlresolvers.RegexURLPattern
+        ( r"^databrowse/(.*)$"
+        , std_view_1
+        , name = "databrowse"
+        )
+    )
+if __name__ == "__main__" :
+    def _print_resolver_pattern (prefix, resolver) :
+        for p in resolver.urlpatterns :
+            print "%s%s" % (prefix, p)
+            if isinstance (p, DJO.Url_Resolver) :
+                _print_resolver_pattern ("  " + prefix, p)
+    _print_resolver_pattern ("", root.url_resolver)
+    resolver = urlresolvers.get_resolver ("test.urls")
+    view, args, kw = resolver.resolve ("/admin/")
+    print view, args, kw
 ### __END__ DJO._test
 
 

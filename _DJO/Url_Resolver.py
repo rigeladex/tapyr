@@ -30,6 +30,14 @@
 #    10-May-2008 (MG) Creation
 #    14-May-2008 (CT) Spelling corrections
 #    14-May-2008 (MG) Use `nav_element.name` instead of `nav_element.href`
+#    16-May-2008 (MG) `_Url_Pattern_Creation_Mixin_` factored,
+#                     `Proxy_Url_Resolver` added
+#    16-May-2008 (MG) `Url_Resolver.urlconf_name` replaced by settings
+#                     `_urlconf_module` to `self`
+#    16-May-2008 (MG) Support for url resolver less directories added
+#    16-May-2008 (MG) Support for `Page`s with `url_resolver`s added
+#    16-May-2008 (MG) `Singleton_Url_Resolver` and
+#                     `SingletonRegexURLResolver` added
 #    ««revision-date»»···
 #--
 
@@ -37,6 +45,7 @@ from   _TFL         import TFL
 from   _DJO         import DJO
 from    django.core import urlresolvers
 import  posixpath
+import  re
 
 class Url_Pattern (urlresolvers.RegexURLPattern) :
     """Match a path to a distived view.
@@ -63,7 +72,39 @@ class Url_Pattern (urlresolvers.RegexURLPattern) :
 
 # end class Url_Pattern
 
-class Url_Resolver (urlresolvers.RegexURLResolver) :
+class _Url_Pattern_Creation_Mixin_ (object) :
+    """Mixin for creating/modifing url patterns out of the user spec."""
+
+    def create_url_patterns (self, nav_element, prefix, patterns) :
+        result = []
+        for p in patterns :
+            if not isinstance (p, (Url_Pattern, Url_Resolver)) :
+                args     = ()
+                kw       = {}
+                if isinstance (p, dict) :
+                    kw   = p
+                else :
+                    args = p if isinstance (p, (tuple, list)) else (p, )
+                href     = nav_element.name
+                if href.startswith (posixpath.sep) :
+                    href = href [1:]
+                p    = Url_Pattern \
+                    ("^%s$" % (posixpath.join (prefix, href), ), * args, ** kw)
+            elif prefix :
+                old_pattern = p.regex.pattern [1:]
+                p.regex = re.compile \
+                    ( "^%s" % ( posixpath.join (prefix, old_pattern), )
+                    , p.regex.flags
+                    )
+            result.append (p)
+        return result
+    # end def create_url_patterns
+
+# end class _Url_Pattern_Creation_Mixin_
+
+class Url_Resolver ( _Url_Pattern_Creation_Mixin_
+                   , urlresolvers.RegexURLResolver
+                   ) :
     """Match a path-prefix and tests the remainder of the path to it's own
        url_patterns.
        This url resolver is different to the default django RegexURLResolver
@@ -79,14 +120,8 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
         self._pre_url_patterns  = []
         self._post_url_patterns = []
         self._nav_url_patterns  = []
+        self._urlconf_module    = self
     # end def __init__
-
-    @property
-    def urlconf_module (self) :
-        ### this url resolver acts like an urlresolver and the module
-        ### containing the `urlpatterns` list as well
-        return self
-    # end def urlconf_module
 
     @property
     def url_patterns (self) :
@@ -100,16 +135,14 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
     urlpatterns = url_patterns # end def url_patterns
 
     def add_nav_pattern (self, nav_element, * patterns) :
+        patterns = self.create_url_patterns (nav_element, "", patterns)
+        if (   isinstance (nav_element, DJO.Navigation.Page)
+           and nav_element.has_own_url_resolver
+           and self is nav_element.url_resolver
+           ) :
+            return nav_element.parent.url_resolver.add_nav_pattern \
+                (nav_element, * patterns)
         for p in patterns :
-            if not isinstance (p, Url_Pattern) :
-                args = ()
-                kw   = {}
-                if isinstance (p, dict) :
-                    kw = dict
-                else :
-                    args = p if isinstance (p, (tuple, list)) else (p, )
-                href = nav_element.name
-                p = Url_Pattern ("^%s$" % (href, ), * args, ** kw)
             self._nav_url_patterns.append (p)
             p.nav_element = nav_element
     # end def add_nav_pattern
@@ -124,35 +157,69 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
 
 # end class Url_Resolver
 
-class M_Root_Url_Resolver (Url_Resolver.__class__) :
+class Proxy_Url_Resolver (_Url_Pattern_Creation_Mixin_) :
+    """Add a prefix (proxied_nav.sub_dir) to all patterns added to this
+       resolver and than append the pattners/resolvers to the url resolver of
+       the parent of the proxied_nav
+    """
+
+    def __init__ (self, proxied_nav) :
+        self.proxied_nav = proxied_nav
+    # end def __init__
+
+    def add_nav_pattern (self, nav_element, * patterns) :
+        patterns = self.create_url_patterns \
+            (nav_element, self.proxied_nav.sub_dir, patterns)
+        return self.proxied_nav.parent.url_resolver.add_nav_pattern \
+            (nav_element, * patterns)
+    # end def add_nav_pattern
+
+    def append_pattern (self, * patterns) :
+        patterns = self.create_url_patterns \
+                (None, self.proxied_nav.sub_dir, patterns)
+        return self.proxied_nav.parent.url_resolver.append_pattern \
+            (* patterns)
+    # end def append_pattern
+
+# end class Proxy_Url_Resolver
+
+class M_Url_Resolver (Url_Resolver.__class__) :
     """Meta class to create only one instance of the root url resolver per
       `name`.
       In real world django sites, the name is defined in the settings module
       and is called `ROOT_URLCONF`
     """
 
-    root_url_resolvers = {}
+    url_resolvers = {}
 
-    def __call__ (meta, regex, name, ** kw) :
-        if name not in meta.root_url_resolvers :
-            meta.root_url_resolvers [name] = super \
-                (M_Root_Url_Resolver, meta).__call__ (regex, name, ** kw)
-        return meta.root_url_resolvers [name]
+    def __call__ (meta, regex, urlconf_name, * args, ** kw) :
+        if urlconf_name not in meta.url_resolvers :
+            meta.url_resolvers [urlconf_name] = result = super \
+                (M_Url_Resolver, meta).__call__ \
+                    (regex, urlconf_name, * args, ** kw)
+        return meta.url_resolvers [urlconf_name]
     # end def __call__
 
-# end class M_Root_Url_Resolver
+# end class M_Url_Resolver
 
-class Root_Url_Resolver (Url_Resolver) :
-    """The resolver for the whole site (this is the first resolver activated
-       by django)
+class Singleton_Url_Resolver (Url_Resolver) :
+    """Adds the singleton behavior to the Url_Resolver."""
+
+    __metaclass__ = M_Url_Resolver
+
+# end class Singleton_Url_Resolver
+
+class SingletonRegexURLResolver (urlresolvers.RegexURLResolver) :
+    """Extend the default RegexURLResolver of django to add the
+       `singleton` function to the django url resolvers as well.
     """
 
-    __metaclass__ = M_Root_Url_Resolver
+    __metaclass__ = M_Url_Resolver
 
-# end class Root_Url_Resolver
+# end class SingletonRegexURLResolver
 
-if not issubclass (urlresolvers.RegexURLResolver, Root_Url_Resolver) :
-    urlresolvers.RegexURLResolver = Root_Url_Resolver
+if urlresolvers.RegexURLResolver is not SingletonRegexURLResolver :
+    urlresolvers.RegexURLResolver = SingletonRegexURLResolver
 
 if __name__ != "__main__":
     DJO._Export ("*")

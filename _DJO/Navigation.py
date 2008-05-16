@@ -65,6 +65,10 @@
 #    14-May-2008 (MG) `Page.parents` added
 #    14-May-2008 (MG) `rhref` removed and `_Dir_.url_resolver` removed
 #    14-May-2008 (MG) `url_patterns` moved up into `_Site_Entity_`
+#    16-May-2008 (MG) `_Site_Entity_.__init__`: Move `url_resolver` in here
+#                     (from `_Dir_) and added support for `_Site_Entity_`
+#                     which don't have there own url resolver
+#    16-May-2008 (MG) `url_resolver_pattern` added
 #    ««revision-date»»···
 #--
 
@@ -121,6 +125,25 @@ class _Site_Entity_ (TFL.Meta.Object) :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
             setattr (self, k, v)
+        url_resolver                     = kw.get ("url_resolver")
+        self.has_own_url_resolver        = bool    (url_resolver)
+        if url_resolver :
+            ### this entity has it's own url resolver
+            if not isinstance (url_resolver, DJO.Url_Resolver) :
+                ### looks like it's juast a class -> let's convert it to an
+                ### instance
+                pattern = self.url_resolver_pattern
+                self.url_resolver = self.url_resolver \
+                ("^%s" % (pattern, ), pattern)
+            if parent :
+                ### this entity has a parent so let's add our own url
+                ### resolver to the parents to build the resolve chain
+                parent.url_resolver.append_pattern (self.url_resolver)
+        elif parent and isinstance (self, _Dir_) :
+            ### this entity does not have an url resolver but a parent.
+            ### Therefore we create a Proxy_Url_Resolver which will add all
+            ### patterns to the url resolver of the parent.
+            self.url_resolver = DJO.Proxy_Url_Resolver (self)
         if self.url_patterns :
             self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
@@ -133,27 +156,17 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return result
     # end def abs_href
 
-    @Once_Property
-    def base (self) :
-        return Filename (self.name).base
-    # end def base
-
-    @Once_Property
-    def file_stem (self) :
-        return pnorm (pjoin (self.prefix, self.base))
-    # end def file_stem
-
-    @Once_Property
-    def href (self) :
-        return pnorm (pjoin (self.prefix, self.name))
-    # end def file_stem
-
     def above (self, link) :
         return (not self.level) or \
             (   self.level <= link.level
             and ((not self.prefix) or link.prefix.startswith (self.prefix))
             )
     # end def above
+
+    @Once_Property
+    def base (self) :
+        return Filename (self.name).base
+    # end def base
 
     def dump (self, tail = None) :
         level  = self.level
@@ -168,6 +181,21 @@ class _Site_Entity_ (TFL.Meta.Object) :
             , indent, self.__class__.__name__, sep, lines, indent
             )
     # end def dump
+
+    @Once_Property
+    def file_stem (self) :
+        return pnorm (pjoin (self.prefix, self.base))
+    # end def file_stem
+
+    @Once_Property
+    def href (self) :
+        return pnorm (pjoin (self.prefix, self.name))
+    # end def file_stem
+
+    @Once_Property
+    def url_resolver_pattern (self) :
+        return self.sub_dir
+    # end def url_resolver_pattern
 
     def __getattr__ (self, name) :
         if self.parent is not None :
@@ -201,6 +229,11 @@ class Page (_Site_Entity_) :
     def level (self) :
         return self.parent.level + 1
     # end def dir
+
+    @Once_Property
+    def url_resolver_pattern (self) :
+        return self.base
+    # end def url_resolver_pattern
 
 # end class Page
 
@@ -336,11 +369,6 @@ class _Dir_ (_Site_Entity_) :
         self.__super.__init__ (parent, ** kw)
         self.context  = dict ()
         self._entries = []
-        if (   self.url_resolver
-           and not isinstance (self.url_resolver, DJO.Url_Resolver)
-           ) :
-            self.url_resolver = self.url_resolver \
-                ("^%s" % (self.sub_dir, ), self.sub_dir)
     # end def __init__
 
     @classmethod
@@ -464,8 +492,6 @@ class Dir (_Dir_) :
             (* [p for p in (parent.prefix, sub_dir) if p])
         self.src_dir  = src_dir
         self.__super.__init__ (parent = parent, ** kw)
-        if parent.url_resolver and parent.url_resolver != self.url_resolver :
-            parent.url_resolver.append_pattern (self.url_resolver)
     # end def __init__
 
 # end class Dir
