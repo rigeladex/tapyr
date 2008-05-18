@@ -199,7 +199,6 @@ class RRender (_Binding_Tag_) :
 
     @classmethod
     def parse (cls, parser, token) :
-        """Add a set of values to the context."""
         name, args             = token.contents.split (" ", 1)
         template_name, _, rest = split_hst (args.strip (), " ")
         binding_dict           = cls._parse_bindings (parser, rest)

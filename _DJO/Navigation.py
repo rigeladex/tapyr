@@ -70,6 +70,8 @@
 #                     which don't have there own url resolver
 #    16-May-2008 (MG) `url_resolver_pattern` added
 #    16-May-2008 (MG) `_Site_Entity_.href` fixed in case of an empfy `href`
+#    17-May-2008 (MG) `_Dir_.delegation_view` added
+#    18-May-2008 (MG) Check `src_dir` against None to allow an empty `src_dir`
 #    ««revision-date»»···
 #--
 
@@ -368,11 +370,17 @@ class _Dir_ (_Site_Entity_) :
 
     dir             = ""
     sub_dir         = ""
+    delegation_view = None
 
     def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
         self.context  = dict ()
         self._entries = []
+        if self.delegation_view :
+            self.url_resolver.prepend_pattern \
+                ( DJO.Url_Pattern
+                    ("^$", self.delegation_view , nav_element = self)
+                )
     # end def __init__
 
     @classmethod
@@ -390,8 +398,10 @@ class _Dir_ (_Site_Entity_) :
 
     @property
     def href (self) :
-        if self._entries :
-            return self._entries [0].href
+        if not self.delegation_view :
+            if self._entries :
+                return self._entries [0].href
+        return pjoin (self.prefix, "")
     # end def href
 
     @property
@@ -423,7 +433,7 @@ class _Dir_ (_Site_Entity_) :
             s     = d.get ("sub_dir", None)
             if kw :
                 d = dict (kw, ** d)
-            if s :
+            if s is not None :
                 Type  = d.pop ("Type", Dir_Type)
                 entry = self.new_sub_dir (Type = Type, ** d)
             else :
@@ -493,7 +503,7 @@ class Dir (_Dir_) :
         self.level   = parent.level + 1
         self.parents = parent.parents + [parent]
         self.prefix  = sos.path.join \
-            (* [p for p in (parent.prefix, sub_dir) if p])
+            (* [p for p in (parent.prefix, sub_dir) if p is not None])
         self.src_dir  = src_dir
         self.__super.__init__ (parent = parent, ** kw)
     # end def __init__

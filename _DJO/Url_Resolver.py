@@ -38,6 +38,10 @@
 #    16-May-2008 (MG) Support for `Page`s with `url_resolver`s added
 #    16-May-2008 (MG) `Singleton_Url_Resolver` and
 #                     `SingletonRegexURLResolver` added
+#    18-May-2008 (MG) `Proxy_Url_Resolver.prepend_pattern` and
+#                     `delegate_directory_root` added
+#    18-May-2008 (MG) Optional parameter `nav_element` added to
+#                     `Url_Pattern.__init__`
 #    ««revision-date»»···
 #--
 
@@ -54,12 +58,13 @@ class Url_Pattern (urlresolvers.RegexURLPattern) :
        callable.
     """
 
+    active_page_parameter_name = "PAGE"
+
     def __init__ (self, pattern, view, name = None, ** kw) :
+        self.nav_element = kw.pop ("nav_element", None)
         ### just to make it easier to pass additional context information
         super (Url_Pattern, self).__init__ (pattern, view, kw, name)
     # end def __init__
-
-    active_page_parameter_name = "PAGE"
 
     def resolve (self, path) :
         result = super (Url_Pattern, self).resolve (path)
@@ -181,6 +186,13 @@ class Proxy_Url_Resolver (_Url_Pattern_Creation_Mixin_) :
             (* patterns)
     # end def append_pattern
 
+    def prepend_pattern (self, * patterns) :
+        patterns = self.create_url_patterns \
+                (None, self.proxied_nav.sub_dir, patterns)
+        return self.proxied_nav.parent.url_resolver.prepend_pattern \
+            (* patterns)
+    # end def prepend_pattern
+
 # end class Proxy_Url_Resolver
 
 class M_Url_Resolver (Url_Resolver.__class__) :
@@ -217,6 +229,13 @@ class SingletonRegexURLResolver (urlresolvers.RegexURLResolver) :
     __metaclass__ = M_Url_Resolver
 
 # end class SingletonRegexURLResolver
+
+def delegate_directory_root (request, ** kw) :
+    page               = kw.get (DJO.Url_Pattern.active_page_parameter_name)
+    callable, args, kw = urlresolvers.get_resolver (None).resolve \
+        (page._entries [0].abs_href)
+    return callable (request, * args, ** kw)
+# end def delegate_directory_root
 
 if urlresolvers.RegexURLResolver is not SingletonRegexURLResolver :
     urlresolvers.RegexURLResolver = SingletonRegexURLResolver
