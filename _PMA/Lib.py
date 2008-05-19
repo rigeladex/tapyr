@@ -39,6 +39,7 @@
 from   _PMA                    import PMA
 
 from   email.Utils             import *
+from   email                   import message_from_string, message_from_file
 try :
     mktime_tz
 except NameError :
@@ -57,7 +58,6 @@ except NameError :
     from   email.utils             import *
     from   email.utils             import mktime_tz
 else : ### email 3.0 module names
-    from   email                   import message_from_string, message_from_file
     from   email.Encoders          import encode_base64
     from   email.Generator         import *
     from   email.Header            import *
