@@ -75,6 +75,7 @@
 #    19-May-2008 (CT) Missing import for `Url_Resolver` added
 #    20-May-2008 (MG) `_Site_Entity_.relative_to` added, url resolver
 #                     handling cleanup
+#    20-May-2008 (MG) Bug with `delegation_view` fixed
 #    ««revision-date»»···
 #--
 
