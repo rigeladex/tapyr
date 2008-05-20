@@ -36,6 +36,8 @@
 #     9-May-2008 (CT) Style
 #     9-May-2008 (MG) `Onion` tag added
 #    14-May-2008 (CT) `_Export` removed
+#    20-May-2008 (MG) `Onion` Tag change (use an empty string as default
+#                     `else` part)
 #    ««revision-date»»···
 #--
 
@@ -300,7 +302,7 @@ class Onion (Tag) :
        >>> t.render (Context (dict (foo = False)))
        u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
 
-       ### The else tag inside the head/tail or optionally
+       ### The else tag inside the head/tail are optionally
        >>> template = '''
        ...   {% onion foo %}
        ...     {% head %}
@@ -317,7 +319,7 @@ class Onion (Tag) :
        >>> t.render (Context (dict (foo = True)))
        u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n    '
        >>> t.render (Context (dict (foo = False)))
-       u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
+       u'\\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
        >>> template = '''
        ...   {% onion foo %}
        ...     {% head %}
@@ -334,7 +336,7 @@ class Onion (Tag) :
        >>> t.render (Context (dict (foo = True)))
        u'\\n      I am the onion then head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n  '
        >>> t.render (Context (dict (foo = False)))
-       u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion then tail\\n  '
+       u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    '
     """
 
     def __init__ (self, condition, node_list, head, tail) :
@@ -346,8 +348,8 @@ class Onion (Tag) :
 
     def render (self, context) :
         use_else = not bool (self.condition (context))
-        head     = self.head [use_else] or self.head [0]
-        tail     = self.tail [use_else] or self.tail [0]
+        head     = self.head [use_else] or ""
+        tail     = self.tail [use_else] or ""
         return "".join \
             ( ( head and  head.render (context)
               , self.node_list.render (context)
