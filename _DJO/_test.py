@@ -30,6 +30,7 @@
 #    16-May-2008 (MG) Tests extended
 #    16-May-2008 (MG) Test for `href` and `abs_href` added
 #    20-May-2008 (MG) Test the delegation_view function
+#    20-May-2008 (MG) Additional test for `delegation_view` added
 #    ««revision-date»»···
 #--
 """
@@ -74,11 +75,17 @@ special pattern:
 
 A directory can also have a delegation view (which will return the response
 of the first entry)
->>> view, args, kw = resolver.resolve ("/dir-2/")
->>> view is delegate_directory_root, kw ["PAGE"].title
-(True, u'Test Dir 2')
->>> view (None, * args, ** kw)
+>>> for path in "/dir-2/", "/dir-3/sub-dir-2/", "/dir-3/sub-dir-2/sub-sub-dir-2/" :
+...     view, args, kw = resolver.resolve (path)
+...     print path, view is delegate_directory_root, kw ["PAGE"].title
+...     view (None, * args, ** kw)
+...
+/dir-2/ True Test Dir 2
 Page 3
+/dir-3/sub-dir-2/ True Sub Dir 2
+Page 7
+/dir-3/sub-dir-2/sub-sub-dir-2/ True Sub Sub Dir 2
+Page 8
 
 >>> view, args, kw = resolver.resolve ("/admin/")
 >>> view is std_view_1, kw
@@ -100,9 +107,9 @@ u'dir-3/sub-dir-1/page-5.html' u'/dir-3/sub-dir-1/page-5.html'
 u'dir-3/sub-dir-1/page-5.html' u'/dir-3/sub-dir-1/page-5.html'
 u'dir-3/sub-dir-1/sub-sub-dir-1/page-6.html' u'/dir-3/sub-dir-1/sub-sub-dir-1/page-6.html'
 u'dir-3/sub-dir-1/sub-sub-dir-1/page-6.html' u'/dir-3/sub-dir-1/sub-sub-dir-1/page-6.html'
+u'dir-3/sub-dir-2/' u'/dir-3/sub-dir-2/'
 u'dir-3/sub-dir-2/page-7.html' u'/dir-3/sub-dir-2/page-7.html'
-u'dir-3/sub-dir-2/page-7.html' u'/dir-3/sub-dir-2/page-7.html'
-u'dir-3/sub-dir-2/sub-sub-dir-2/page-8.html' u'/dir-3/sub-dir-2/sub-sub-dir-2/page-8.html'
+u'dir-3/sub-dir-2/sub-sub-dir-2/' u'/dir-3/sub-dir-2/sub-sub-dir-2/'
 u'dir-3/sub-dir-2/sub-sub-dir-2/page-8.html' u'/dir-3/sub-dir-2/sub-sub-dir-2/page-8.html'
 """
 
@@ -224,6 +231,7 @@ root = DJO.Navigation.Root.from_dict_list \
                     ( Type         = DJO.Navigation.Dir
                     , sub_dir      = 'sub-dir-2'
                     , title        = 'Sub Dir 2'
+                    , delegation_view = delegate_directory_root
                     , _entries     =
                         [ dict
                             ( Type         = DJO.Navigation.Page
@@ -235,6 +243,7 @@ root = DJO.Navigation.Root.from_dict_list \
                             ( Type         = DJO.Navigation.Dir
                             , sub_dir      = 'sub-sub-dir-2'
                             , title        = 'Sub Sub Dir 2'
+                            , delegation_view = delegate_directory_root
                             , _entries     =
                                 [ dict
                                     ( Type         = DJO.Navigation.Page

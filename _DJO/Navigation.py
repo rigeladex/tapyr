@@ -394,8 +394,14 @@ class _Dir_ (_Site_Entity_) :
         self._entries = []
         self.context  = dict ()
         if self.delegation_view :
-            self.url_resolver.prepend_pattern \
-                (DJO.Url_Pattern (u"^$", self.delegation_view , nav = self))
+            resolver = self.url_resolver
+            resolver.prepend_pattern \
+                ( DJO.Url_Pattern
+                    ( u"^%s$" % (self.relative_to (resolver.nav_href), )
+                    , self.delegation_view
+                    , nav = self
+                    )
+                )
     # end def __init__
 
     @classmethod
