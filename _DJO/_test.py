@@ -29,6 +29,7 @@
 #    14-May-2008 (MG) Creation
 #    16-May-2008 (MG) Tests extended
 #    16-May-2008 (MG) Test for `href` and `abs_href` added
+#    20-May-2008 (MG) Test fixed
 #    ««revision-date»»···
 #--
 """
@@ -63,7 +64,7 @@ Let see what happens if we try a path which does not exist:
 >>> view, args, kw = resolver.resolve ("/dir-NOT/sub-dir-1/page-6.html")
 Traceback (most recent call last):
  ...
-Resolver404: {'path': 'dir-NOT/sub-dir-1/page-6.html', 'tried': [u'^$', u'^dir-1/', u'^dir-2/', u'^dir-3/', '^admin/', '^admin/', '^i18n/', '^user/', '^databrowse/(.*)$']}
+Resolver404: {'path': 'dir-NOT/sub-dir-1/page-6.html', 'tried': ['^$', u'^dir-1/', u'^dir-2/', u'^dir-3/', '^admin/', '^admin/', '^i18n/', '^user/', '^databrowse/(.*)$']}
 
 A directory can also have it's own url_pattern. In our case, dir-3 has a
 special pattern:

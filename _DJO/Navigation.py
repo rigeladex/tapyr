@@ -73,6 +73,8 @@
 #    17-May-2008 (MG) `_Dir_.delegation_view` added
 #    18-May-2008 (MG) Check `src_dir` against None to allow an empty `src_dir`
 #    19-May-2008 (CT) Missing import for `Url_Resolver` added
+#    20-May-2008 (MG) `_Site_Entity_.relative_to` added, url resolver
+#                     handling cleanup
 #    ««revision-date»»···
 #--
 
@@ -90,7 +92,7 @@ from   _TFL                     import sos
 
 import _TFL._Meta.Object
 
-from   posixpath                import join as pjoin, normpath as pnorm
+from   posixpath  import join as pjoin, normpath as pnorm, commonprefix
 
 ### To-Do:
 ### - Dyn_Dir
@@ -188,6 +190,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
         yield self
     # end def nav_links
 
+    def relative_to (self, url, href = None) :
+        href          = href or self.href
+        common_prefix = commonprefix ((href, url))
+        return href.replace (common_prefix, "")
+    # end def relative_to
+
     @Once_Property
     def url_resolver_pattern (self) :
         return self.sub_dir
@@ -195,7 +203,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     def _setup_url_resolver (self, parent, kw) :
         url_resolver              = kw.get ("url_resolver")
-        self.has_own_url_resolver = bool   (url_resolver)
         if url_resolver :
             ### this entity has it's own url resolver
             if not isinstance (url_resolver, DJO.Url_Resolver) :
@@ -208,6 +215,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 ### this entity has a parent so let's add our own url
                 ### resolver to the parents to build the resolve chain
                 parent.url_resolver.append_pattern (self.url_resolver)
+            self.url_resolver.set_nav (self)
         return url_resolver
     # end def _setup_url_resolver
 
@@ -246,7 +254,8 @@ class Page (_Site_Entity_) :
 
     @Once_Property
     def url_resolver_pattern (self) :
-        return self.base
+        return self.relative_to \
+            (self.parent.url_resolver.nav_href, self.file_stem)
     # end def url_resolver_pattern
 
 # end class Page
@@ -382,13 +391,11 @@ class _Dir_ (_Site_Entity_) :
 
     def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
-        self.context  = dict ()
         self._entries = []
+        self.context  = dict ()
         if self.delegation_view :
             self.url_resolver.prepend_pattern \
-                ( DJO.Url_Pattern
-                    ("^$", self.delegation_view , nav_element = self)
-                )
+                (DJO.Url_Pattern ("^$", self.delegation_view , nav = self))
     # end def __init__
 
     @classmethod
@@ -514,16 +521,6 @@ class Dir (_Dir_) :
         self.src_dir  = src_dir
         self.__super.__init__ (parent = parent, ** kw)
     # end def __init__
-
-    def _setup_url_resolver (self, parent, kw) :
-        url_resolver = self.__super._setup_url_resolver (parent, kw)
-        if parent and not url_resolver :
-            ### this entity does not have an url resolver but a parent.
-            ### Therefore we create a Proxy_Url_Resolver which will add all
-            ### patterns to the url resolver of the parent.
-            self.url_resolver = DJO.Proxy_Url_Resolver (self)
-        return url_resolver
-    # end def _setup_url_resolver
 
 # end class Dir
 
