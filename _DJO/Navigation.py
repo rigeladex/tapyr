@@ -193,7 +193,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def relative_to (self, url, href = None) :
         href          = href or self.href
         common_prefix = commonprefix ((href, url))
-        return href.replace (common_prefix, "")
+        return href.replace (common_prefix, u"")
     # end def relative_to
 
     @Once_Property
@@ -395,7 +395,7 @@ class _Dir_ (_Site_Entity_) :
         self.context  = dict ()
         if self.delegation_view :
             self.url_resolver.prepend_pattern \
-                (DJO.Url_Pattern ("^$", self.delegation_view , nav = self))
+                (DJO.Url_Pattern (u"^$", self.delegation_view , nav = self))
     # end def __init__
 
     @classmethod
@@ -416,7 +416,7 @@ class _Dir_ (_Site_Entity_) :
         if not self.delegation_view :
             if self._entries :
                 return self._entries [0].href
-        return pjoin (self.prefix, "")
+        return pjoin (self.prefix, u"")
     # end def href
 
     @property

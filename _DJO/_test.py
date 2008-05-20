@@ -29,7 +29,7 @@
 #    14-May-2008 (MG) Creation
 #    16-May-2008 (MG) Tests extended
 #    16-May-2008 (MG) Test for `href` and `abs_href` added
-#    20-May-2008 (MG) Test fixed
+#    20-May-2008 (MG) Test the delegation_view function
 #    ««revision-date»»···
 #--
 """
@@ -37,7 +37,7 @@ For each `name` exactly one Memo_Url_Resolver shall be created (that will
 ensure that the Memo_Url_Resolver created during the navigation tree creation
 is used by DJANGO as well)
 >>> resolver       = urlresolvers.get_resolver ("test.urls")
->>> root_resolver = root.url_resolver
+>>> root_resolver = root.url_resolver ## root is define outside the doctest
 >>> root_resolver is resolver
 True
 
@@ -64,13 +64,21 @@ Let see what happens if we try a path which does not exist:
 >>> view, args, kw = resolver.resolve ("/dir-NOT/sub-dir-1/page-6.html")
 Traceback (most recent call last):
  ...
-Resolver404: {'path': 'dir-NOT/sub-dir-1/page-6.html', 'tried': ['^$', u'^dir-1/', u'^dir-2/', u'^dir-3/', '^admin/', '^admin/', '^i18n/', '^user/', '^databrowse/(.*)$']}
+Resolver404: {'path': 'dir-NOT/sub-dir-1/page-6.html', 'tried': [u'^$', u'^dir-1/', u'^dir-2/', u'^dir-3/', '^admin/', '^admin/', '^i18n/', '^user/', '^databrowse/(.*)$']}
 
 A directory can also have it's own url_pattern. In our case, dir-3 has a
 special pattern:
 >>> view, args, kw = resolver.resolve ("/dir-3/")
 >>> view is view_dir_3, kw ["PAGE"].title
 (True, u'Test Dir 3')
+
+A directory can also have a delegation view (which will return the response
+of the first entry)
+>>> view, args, kw = resolver.resolve ("/dir-2/")
+>>> view is delegate_directory_root, kw ["PAGE"].title
+(True, u'Test Dir 2')
+>>> view (None, * args, ** kw)
+Page 3
 
 >>> view, args, kw = resolver.resolve ("/admin/")
 >>> view is std_view_1, kw
@@ -84,7 +92,7 @@ Test some of the attributes of the navigation list:
 u'dir-1/page-1.html' u'/dir-1/page-1.html'
 u'dir-1/page-1.html' u'/dir-1/page-1.html'
 u'dir-1/page-2.html' u'/dir-1/page-2.html'
-u'dir-2/page-3.html' u'/dir-2/page-3.html'
+u'dir-2/' u'/dir-2/'
 u'dir-2/page-3.html' u'/dir-2/page-3.html'
 u'dir-2/page-4.html' u'/dir-2/page-4.html'
 u'dir-3/sub-dir-1/page-5.html' u'/dir-3/sub-dir-1/page-5.html'
@@ -117,6 +125,13 @@ def std_view_1 (request, PAGE) : print PAGE.title
 def std_view_2 (request, PAGE) : print PAGE.title
 def gen_view_1 (request, PAGE) : print PAGE.title
 def gen_view_2 (request, PAGE) : print PAGE.title
+
+def delegate_directory_root (request, ** kw) :
+    page               = kw.get (DJO.Url_Pattern.active_page_parameter_name)
+    callable, args, kw = urlresolvers.get_resolver ("test.urls").resolve \
+        (page._entries [0].abs_href)
+    return callable (request, * args, ** kw)
+# end def delegate_directory_root
 
 root = DJO.Navigation.Root.from_dict_list \
     ( Type         = DJO.Navigation.Root
@@ -151,11 +166,12 @@ root = DJO.Navigation.Root.from_dict_list \
                 ]
             )
         , dict
-            ( Type         = DJO.Navigation.Dir
-            , sub_dir      = 'dir-2'
-            , title        = 'Test Dir 2'
-            , url_resolver = DJO.Url_Resolver
-            , _entries     =
+            ( Type            = DJO.Navigation.Dir
+            , sub_dir         = 'dir-2'
+            , title           = 'Test Dir 2'
+            , url_resolver    = DJO.Url_Resolver
+            , delegation_view = delegate_directory_root
+            , _entries        =
                 [ dict
                     ( Type         = DJO.Navigation.Page
                     , name         = 'page-3.html'
@@ -260,8 +276,9 @@ if __name__ == "__main__" :
                 _print_resolver_pattern ("  " + prefix, p)
     _print_resolver_pattern ("", root.url_resolver)
     resolver = urlresolvers.get_resolver ("test.urls")
-    view, args, kw = resolver.resolve ("/admin/")
-    print view, args, kw
+    import pdb; pdb.set_trace ()
+    view, args, kw = resolver.resolve ("/dir-2/")
+    print view (None, * args, ** kw)
 ### __END__ DJO._test
 
 
