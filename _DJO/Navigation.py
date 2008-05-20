@@ -131,26 +131,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
             setattr (self, k, v)
-        url_resolver                     = kw.get ("url_resolver")
-        self.has_own_url_resolver        = bool    (url_resolver)
-        if url_resolver :
-            ### this entity has it's own url resolver
-            if not isinstance (url_resolver, DJO.Url_Resolver) :
-                ### looks like it's juast a class -> let's convert it to an
-                ### instance
-                pattern = self.url_resolver_pattern
-                self.url_resolver = self.url_resolver \
-                ("^%s" % (pattern, ), pattern)
-            if parent :
-                ### this entity has a parent so let's add our own url
-                ### resolver to the parents to build the resolve chain
-                parent.url_resolver.append_pattern (self.url_resolver)
-        elif parent and isinstance (self, _Dir_) :
-            ### this entity does not have an url resolver but a parent.
-            ### Therefore we create a Proxy_Url_Resolver which will add all
-            ### patterns to the url resolver of the parent.
-            self.url_resolver = DJO.Proxy_Url_Resolver (self)
-        if self.url_patterns :
+        self._setup_url_resolver (parent, kw)
+        if self.url_resolver and self.url_patterns :
             self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
 
@@ -201,10 +183,33 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return ""
     # end def file_stem
 
+    @property
+    def nav_links (self) :
+        yield self
+    # end def nav_links
+
     @Once_Property
     def url_resolver_pattern (self) :
         return self.sub_dir
     # end def url_resolver_pattern
+
+    def _setup_url_resolver (self, parent, kw) :
+        url_resolver              = kw.get ("url_resolver")
+        self.has_own_url_resolver = bool   (url_resolver)
+        if url_resolver :
+            ### this entity has it's own url resolver
+            if not isinstance (url_resolver, DJO.Url_Resolver) :
+                ### looks like it's just a class -> let's convert it to an
+                ### instance
+                pattern           = self.url_resolver_pattern
+                self.url_resolver = self.url_resolver \
+                    ("^%s" % (pattern, ), pattern)
+            if parent :
+                ### this entity has a parent so let's add our own url
+                ### resolver to the parents to build the resolve chain
+                parent.url_resolver.append_pattern (self.url_resolver)
+        return url_resolver
+    # end def _setup_url_resolver
 
     def __getattr__ (self, name) :
         if self.parent is not None :
@@ -410,15 +415,14 @@ class _Dir_ (_Site_Entity_) :
     @property
     def own_links (self) :
         for e in self._entries :
-            if isinstance (e, Dir) :
-                if e.href :
-                    yield e
-            else :
-                yield e
+            for nl in e.nav_links :
+                if nl.href :
+                    yield nl
     # end def own_links
 
     @property
     def own_links_transitive (self) :
+        ### XXX either remove or rewrite to use `nav_links`
         for e in self._entries :
             if isinstance (e, Dir) :
                 if e.href :
@@ -510,6 +514,16 @@ class Dir (_Dir_) :
         self.src_dir  = src_dir
         self.__super.__init__ (parent = parent, ** kw)
     # end def __init__
+
+    def _setup_url_resolver (self, parent, kw) :
+        url_resolver = self.__super._setup_url_resolver (parent, kw)
+        if parent and not url_resolver :
+            ### this entity does not have an url resolver but a parent.
+            ### Therefore we create a Proxy_Url_Resolver which will add all
+            ### patterns to the url resolver of the parent.
+            self.url_resolver = DJO.Proxy_Url_Resolver (self)
+        return url_resolver
+    # end def _setup_url_resolver
 
 # end class Dir
 
