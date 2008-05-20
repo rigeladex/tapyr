@@ -38,6 +38,10 @@
 #    14-May-2008 (CT) `_Export` removed
 #    20-May-2008 (MG) `Onion` Tag change (use an empty string as default
 #                     `else` part)
+#    20-May-2008 (CT) Small corrections
+#    20-May-2008 (CT) `BLet.render` changed to apply `defaultfilters.safe`
+#    20-May-2008 (CT) `Var` tag added
+#    20-May-2008 (CT) `context.push` and `context.pop` added to `Onion.render`
 #    ««revision-date»»···
 #--
 
@@ -49,6 +53,7 @@
 """
 
 from   django                      import template
+from   django.template             import defaultfilters
 from   django.template.loader      import render_to_string
 
 from   _DJO                        import DJO
@@ -98,7 +103,7 @@ class Filter_Exp (object) :
 # end class Filter_Exp
 
 class BLet (Tag) :
-    """BLet tag"""
+    """BLet tag: assign result of rendering the enclosed block to a variable."""
 
     def __init__ (self, name, node_list) :
         self.name  = name
@@ -106,7 +111,7 @@ class BLet (Tag) :
     # end def __init__
 
     def render (self, context) :
-        context [self.name] = self.block (context)
+        context [self.name] = defaultfilters.safe (self.block (context))
         return ""
     # end def render
 
@@ -128,8 +133,7 @@ class _Binding_Tag_ (Tag) :
 
     def render (self, context) :
         context.push ()
-        for k, x in self.binding_dict.iteritems () :
-            context [k] = x (context)
+        self._set_bindings    (context)
         result = self._render (context)
         context.pop ()
         return result
@@ -144,6 +148,11 @@ class _Binding_Tag_ (Tag) :
                 binding_dict [k] = Filter_Exp (parser, x)
         return binding_dict
     # end def parse
+
+    def _set_bindings (self, context) :
+        for k, x in self.binding_dict.iteritems () :
+            context [k] = x (context)
+    # end def _set_bindings
 
 # end class _Binding_Tag_
 
@@ -188,7 +197,7 @@ class Let (_Binding_Tag_) :
 # end class Let
 
 class RRender (_Binding_Tag_) :
-    """Render tag."""
+    """Render tag: render a template with the bindings specified."""
 
     def __init__ (self, template_name, binding_dict) :
         self.template_name = template_name
@@ -208,6 +217,27 @@ class RRender (_Binding_Tag_) :
     # end def parse
 
 # end class RRender
+
+class Var (_Binding_Tag_) :
+    """Var tag: assign the bindings specified."""
+
+    def __init__ (self, binding_dict) :
+        self.binding_dict = binding_dict
+    # end def __init__
+
+    def render (self, context) :
+        self._set_bindings (context)
+        return ""
+    # end def render
+
+    @classmethod
+    def parse (cls, parser, token) :
+        name, args   = token.contents.split (" ", 1)
+        binding_dict = cls._parse_bindings (parser, args.strip ())
+        return cls (binding_dict)
+    # end def parse
+
+# end class Var
 
 class Iterate (Tag) :
     """Add an iterable to the context. Calling `iter.next` will change the
@@ -302,7 +332,7 @@ class Onion (Tag) :
        >>> t.render (Context (dict (foo = False)))
        u'\\n      I am the onion else head\\n    \\n      And this is the body which should be enclosed by the head/tail\\n    \\n      I am the onion else tail\\n  '
 
-       ### The else tag inside the head/tail are optionally
+       ### The else tags inside the head/tail are optional
        >>> template = '''
        ...   {% onion foo %}
        ...     {% head %}
@@ -347,15 +377,18 @@ class Onion (Tag) :
     # end def __init__
 
     def render (self, context) :
+        context.push ()
         use_else = not bool (self.condition (context))
-        head     = self.head [use_else] or ""
-        tail     = self.tail [use_else] or ""
-        return "".join \
+        head     = self.head [use_else]
+        tail     = self.tail [use_else]
+        result   = "".join \
             ( ( head and  head.render (context)
               , self.node_list.render (context)
               , tail and  tail.render (context)
               )
             )
+        context.pop ()
+        return result
     # end def render
 
     @classmethod
@@ -379,7 +412,7 @@ class Onion (Tag) :
             else_block = parser.parse   ((end_token, ))
             parser.delete_first_token   ()
         else :
-            else_block = None
+            else_block = ""
         return then_block, else_block
     # end def _then_else
 

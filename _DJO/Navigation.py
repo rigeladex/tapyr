@@ -72,11 +72,14 @@
 #    16-May-2008 (MG) `_Site_Entity_.href` fixed in case of an empfy `href`
 #    17-May-2008 (MG) `_Dir_.delegation_view` added
 #    18-May-2008 (MG) Check `src_dir` against None to allow an empty `src_dir`
+#    19-May-2008 (CT) Missing import for `Url_Resolver` added
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 from   _DJO                     import DJO
+
+import _DJO.Url_Resolver
 
 from   _TFL.defaultdict         import defaultdict
 from   _TFL.Filename            import *

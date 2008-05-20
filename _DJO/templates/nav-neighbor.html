@@ -1,0 +1,32 @@
+{# Django template: nav-neighbor.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    nav-neighbor
+  ##
+  ## Purpose
+  ##    Template for a link to a neighboring page
+  ##
+  ##
+  ## Revision Dates
+  ##    19-May-2008 (CT) Creation
+  ##--
+{% endcomment %}
+{% load TGL %}
+{% onion neighbor %}
+  {% head %}
+    <a href="{{ neighbor.html }}">
+  {% else %}
+    {% blet symbol %}{{ symbol }}_gray{% endblet %}
+  {% body %}
+      <img alt="{{ alt }}" src="media/images/{{ symbol }}.png"
+           title="{% firstof neighbor.title alt %}"
+      />
+  {% tail %}
+    </a>
+{% endonion %}
+{# __END__ Django template: nav-neighbor.html #}
