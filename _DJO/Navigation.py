@@ -76,6 +76,7 @@
 #    20-May-2008 (MG) `_Site_Entity_.relative_to` added, url resolver
 #                     handling cleanup
 #    20-May-2008 (MG) Bug with `delegation_view` fixed
+#    21-May-2008 (CT) `copyright` property added
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,9 @@ from   _TFL                     import sos
 
 import _TFL._Meta.Object
 
-from   posixpath  import join as pjoin, normpath as pnorm, commonprefix
+from   posixpath import join as pjoin, normpath as pnorm, commonprefix
+
+import time
 
 ### To-Do:
 ### - Dyn_Dir
@@ -135,7 +138,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 v = unicode (v, encoding, "replace")
             setattr (self, k, v)
         self._setup_url_resolver (parent, kw)
-        if self.url_resolver and self.url_patterns :
+        if hasattr (self, "url_resolver") and self.url_patterns :
             self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
 
@@ -158,6 +161,16 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def base (self) :
         return Filename (self.name).base
     # end def base
+
+    @Once_Property
+    def copyright (self) :
+        year  = time.localtime ().tm_year
+        start = self.copyright_start
+        return dict \
+            ( year   = "-".join ("%s" % y for y in (start, year) if y)
+            , holder = self.owner
+            )
+    # end def copyright
 
     def dump (self, tail = None) :
         level  = self.level
@@ -203,7 +216,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def url_resolver_pattern
 
     def _setup_url_resolver (self, parent, kw) :
-        url_resolver              = kw.get ("url_resolver")
+        url_resolver = kw.get ("url_resolver")
         if url_resolver :
             ### this entity has it's own url resolver
             if not isinstance (url_resolver, DJO.Url_Resolver) :
@@ -393,7 +406,6 @@ class _Dir_ (_Site_Entity_) :
     def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
         self._entries = []
-        self.context  = dict ()
         if self.delegation_view :
             resolver = self.url_resolver
             resolver.prepend_pattern \
@@ -410,11 +422,12 @@ class _Dir_ (_Site_Entity_) :
         """Return a new `Dir` filled with information read from the file
            `navigation.list` in `src_dir`.
         """
-        result = cls   (src_dir, parent = parent, ** kw)
-        nl     = pjoin (src_dir, "navigation.list")
-        execfile       (nl, globals (), result.context)
+        context = {}
+        nl      = pjoin (src_dir, "navigation.list")
+        result  = cls   (src_dir, parent = parent, ** kw)
+        execfile        (nl, globals (), context)
         result.add_entries \
-            (result.context ["own_links"], Dir_Type = Dir.from_nav_list_file)
+            (context ["own_links"], Dir_Type = Dir.from_nav_list_file)
         return result
     # end def from_nav_list_file
 
@@ -533,7 +546,10 @@ class Dir (_Dir_) :
 
 class Root (_Dir_) :
 
-    name       = "/"
+    copyright_start = None
+    name            = "/"
+    owner           = None
+    src_root        = ""
 
     _dump_type = "DJO.Navigation.Root.from_dict_list \\"
 

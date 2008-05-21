@@ -17,6 +17,7 @@
   ##                     "nav-section-level.html"` for sub-sections
   ##    13-Apr-2008 (CT) Check `ifequal link.href page.link.href` instead of
   ##                     `ifequal link page.link` to determine `current-link`
+  ##    21-May-2008 (CT) s/page.link/page/w
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -24,16 +25,16 @@
 {% if link.href %}
   {% let %}
     {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
-    {% if page.link.prefix|starts_with:link.prefix and link.own_links %}
+    {% if page.prefix|starts_with:link.prefix and link.own_links %}
       <li class="current-section {{ level }}">{{ link.title }}
         {% rrender "nav-section-level.html" link_list=link.own_links %}
       </li>
     {% else %}
-      {% ifequal link.href page.link.href %}
+      {% ifequal link.href page.href %}
         <li class="current-link {{ level }}">{{ link.title }}</li>
       {% else %}
         <li class="nav-link {{ level }}">
-          <a href="{{ link.href }}"
+          <a href="{{ link.site_prefix }}{{ link.href }}"
              {% if link.desc %}title="{{ link.desc }}"{% endif %}
           >{{ link.title }}</a>
         </li>
