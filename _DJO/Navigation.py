@@ -76,7 +76,11 @@
 #    20-May-2008 (MG) `_Site_Entity_.relative_to` added, url resolver
 #                     handling cleanup
 #    20-May-2008 (MG) Bug with `delegation_view` fixed
+#    21-May-2008 (MG) `url_resolver_pattern` removed
 #    21-May-2008 (CT) `copyright` property added
+#    22-May-2008 (MG) `_Site_Entity_.view` added,
+#                     `_Dir_.default_view_pattern` added
+#                     `Url_Pattern` renamed to `Single_Url_Pattern`
 #    ««revision-date»»···
 #--
 
@@ -123,6 +127,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     url_patterns    = ()
 
     parent          = None
+    view            = None
 
     _dump_type      = "dict"
 
@@ -138,6 +143,15 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 v = unicode (v, encoding, "replace")
             setattr (self, k, v)
         self._setup_url_resolver (parent, kw)
+        if self.view :
+            view         = self.view
+            class_method = False
+            if "view" not in kw :
+                ### the view function is an instance method -> we need to
+                ### pass the unbound method instead
+                view         = self.__class__.view
+                class_method = True
+            self.url_resolver.add_view_function (self, view, class_method)
         if hasattr (self, "url_resolver") and self.url_patterns :
             self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
@@ -210,11 +224,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return href.replace (common_prefix, u"")
     # end def relative_to
 
-    @Once_Property
-    def url_resolver_pattern (self) :
-        return self.sub_dir
-    # end def url_resolver_pattern
-
     def _setup_url_resolver (self, parent, kw) :
         url_resolver = kw.get ("url_resolver")
         if url_resolver :
@@ -222,9 +231,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
             if not isinstance (url_resolver, DJO.Url_Resolver) :
                 ### looks like it's just a class -> let's convert it to an
                 ### instance
-                pattern           = self.url_resolver_pattern
+                pattern = self.relative_to \
+                    (self.parent.url_resolver.nav_href, self.file_stem)
                 self.url_resolver = self.url_resolver \
-                    ("^%s" % (pattern, ), pattern)
+                    ( "^%s" % (pattern, ), pattern
+                    , default_view_pattern = kw.get ("default_view_pattern", {})
+                    )
             if parent :
                 ### this entity has a parent so let's add our own url
                 ### resolver to the parents to build the resolve chain
@@ -265,12 +277,6 @@ class Page (_Site_Entity_) :
     def level (self) :
         return self.parent.level + 1
     # end def dir
-
-    @Once_Property
-    def url_resolver_pattern (self) :
-        return self.relative_to \
-            (self.parent.url_resolver.nav_href, self.file_stem)
-    # end def url_resolver_pattern
 
 # end class Page
 
@@ -409,7 +415,7 @@ class _Dir_ (_Site_Entity_) :
         if self.delegation_view :
             resolver = self.url_resolver
             resolver.prepend_pattern \
-                ( DJO.Url_Pattern
+                ( DJO.Single_Url_Pattern
                     ( u"^%s$" % (self.relative_to (resolver.nav_href), )
                     , self.delegation_view
                     , nav = self

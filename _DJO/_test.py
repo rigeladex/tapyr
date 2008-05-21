@@ -31,6 +31,10 @@
 #    16-May-2008 (MG) Test for `href` and `abs_href` added
 #    20-May-2008 (MG) Test the delegation_view function
 #    20-May-2008 (MG) Additional test for `delegation_view` added
+#    22-May-2008 (MG) New `_Site_Entity_.view` and
+#                     `_Dir_.default_view_pattern` tested, directory
+#                     delagation changed and therfore the test cases changed
+#                     as well
 #    ««revision-date»»···
 #--
 """
@@ -48,9 +52,23 @@ function:
 >>> view is view_1, kw ["PAGE"].title
 (True, u'Home')
 
->>> view, args, kw = resolver.resolve ("/dir-1/page-1.html")
->>> view is view_2, kw ["PAGE"].title
-(True, u'Page 1')
+### dir-1 has 5 entries which are matched differently: page-2 with a distinct
+### pattern, page-X1 and page-X2 are match with a Multi_Page_Url_Pattern and
+### page-1 and page-Y with the default pattern of the directory
+>>> for path in ( "/dir-1/page-1.html"
+...             , "/dir-1/page-2.html"
+...             , "/dir-1/page-X1.html"
+...             , "/dir-1/page-X2.html"
+...             , "/dir-1/page-Y.html"
+...             ) :
+...     view, args, kw = resolver.resolve (path)
+...     view (None, * args, ** kw)
+...
+Page 1 True () {}
+Page 2
+Page X1 True () {}
+Page X2 True () {}
+Page Y True () {}
 
 Let's check how sub directories with there own url resolver work:
 >>> view, args, kw = resolver.resolve ("/dir-3/sub-dir-1/sub-sub-dir-1/page-6.html")
@@ -76,15 +94,24 @@ special pattern:
 A directory can also have a delegation view (which will return the response
 of the first entry)
 >>> for path in "/dir-2/", "/dir-3/sub-dir-2/", "/dir-3/sub-dir-2/sub-sub-dir-2/" :
-...     view, args, kw = resolver.resolve (path)
+...     try :
+...         view, args, kw = resolver.resolve (path)
+...     except urlresolvers.Resolver404, e :
+...         print "No match found for", path, "\\n" + str (e)
 ...     print path, view is delegate_directory_root, kw ["PAGE"].title
-...     view (None, * args, ** kw)
+...     try :
+...         view (None, * args, ** kw)
+...     except urlresolvers.Resolver404, e :
+...         print "Delegation problem for url", path, "\\n" + str (e)
 ...
 /dir-2/ True Test Dir 2
+In Test Dir 2 -> delegate to /dir-2/page-3.html (page-3.html)
 Page 3
 /dir-3/sub-dir-2/ True Sub Dir 2
+In Sub Dir 2 -> delegate to /dir-3/sub-dir-2/page-7.html (sub-dir-2/page-7.html)
 Page 7
 /dir-3/sub-dir-2/sub-sub-dir-2/ True Sub Sub Dir 2
+In Sub Sub Dir 2 -> delegate to /dir-3/sub-dir-2/sub-sub-dir-2/page-8.html (sub-dir-2/sub-sub-dir-2/page-8.html)
 Page 8
 
 >>> view, args, kw = resolver.resolve ("/admin/")
@@ -99,6 +126,9 @@ Test some of the attributes of the navigation list:
 u'dir-1/page-1.html' u'/dir-1/page-1.html'
 u'dir-1/page-1.html' u'/dir-1/page-1.html'
 u'dir-1/page-2.html' u'/dir-1/page-2.html'
+u'dir-1/page-X1.html' u'/dir-1/page-X1.html'
+u'dir-1/page-Y.html' u'/dir-1/page-Y.html'
+u'dir-1/page-X2.html' u'/dir-1/page-X2.html'
 u'dir-2/' u'/dir-2/'
 u'dir-2/page-3.html' u'/dir-2/page-3.html'
 u'dir-2/page-4.html' u'/dir-2/page-4.html'
@@ -133,12 +163,27 @@ def std_view_2 (request, PAGE) : print PAGE.title
 def gen_view_1 (request, PAGE) : print PAGE.title
 def gen_view_2 (request, PAGE) : print PAGE.title
 
+### we cannot use the `delegate_directory_root` view form the
+### DJO.Url_Resolver module because it relies on a defined
+### DJANGO_SETTINGS_MODULE which we don't like to add for our test
 def delegate_directory_root (request, ** kw) :
-    page               = kw.get (DJO.Url_Pattern.active_page_parameter_name)
-    callable, args, kw = urlresolvers.get_resolver ("test.urls").resolve \
-        (page._entries [0].abs_href)
+    page     = kw.get (DJO.Url_Pattern.active_page_parameter_name)
+    entry    = page._entries [0]
+    rel_path = entry.relative_to (page.url_resolver.nav_href)
+    print "In %s -> delegate to %s (%s)" % \
+        (page.title, entry.abs_href, rel_path)
+    callable, args, kw = page.url_resolver.try_patterns (rel_path, kw)
     return callable (request, * args, ** kw)
 # end def delegate_directory_root
+
+class Page_with_View (DJO.Navigation.Page) :
+    """A normal page which uses an instance method has view"""
+
+    def view (self, request, PAGE, * args, ** kw) :
+        print self.title, self is PAGE, args, kw
+    # end def view
+
+# end class Page_with_View
 
 root = DJO.Navigation.Root.from_dict_list \
     ( Type         = DJO.Navigation.Root
@@ -150,25 +195,44 @@ root = DJO.Navigation.Root.from_dict_list \
             ( Type         = DJO.Navigation.Page
             , name         = ''
             , title        = 'Home'
-            , url_patterns = ((view_1, "view_1"), ) ###
+            , view         = view_1
             )
+          ### dir-1 test is ued to test the `view` attribute of an
+          ### `_Site_Entity_` and if the Multi_Page_Url_Pattern matches the
+          ### path to the correct navigation element
         , dict
             ( Type         = DJO.Navigation.Dir
             , sub_dir      = 'dir-1'
             , title        = 'Test Dir 1'
             , url_resolver = DJO.Url_Resolver
+            , default_view_pattern =
+                { Page_with_View.view : "^(?P<page>[^X\.]+.html)$"}
             , _entries     =
                 [ dict
-                    ( Type         = DJO.Navigation.Page
+                    ( Type         = Page_with_View
                     , name         = 'page-1.html'
                     , title        = 'Page 1'
-                    , url_patterns = (view_2, )
                     )
                 , dict
-                    ( Type         = DJO.Navigation.Page
+                    ( Type         = Page_with_View
                     , name         = 'page-2.html'
                     , title        = 'Page 2'
-                    , url_patterns = (view_3, )
+                    , view         = view_3
+                    )
+                , dict
+                    ( Type         = Page_with_View
+                    , name         = 'page-X1.html'
+                    , title        = 'Page X1'
+                    )
+                , dict
+                    ( Type         = Page_with_View
+                    , name         = 'page-Y.html'
+                    , title        = 'Page Y'
+                    )
+                , dict
+                    ( Type         = Page_with_View
+                    , name         = 'page-X2.html'
+                    , title        = 'Page X2'
                     )
                 ]
             )
@@ -183,13 +247,13 @@ root = DJO.Navigation.Root.from_dict_list \
                     ( Type         = DJO.Navigation.Page
                     , name         = 'page-3.html'
                     , title        = 'Page 3'
-                    , url_patterns = (view_4, )
+                    , view         = view_4
                     )
                 , dict
                     ( Type         = DJO.Navigation.Page
                     , name         = 'page-4.html'
                     , title        = 'Page 4'
-                    , url_patterns = (view_5, )
+                    , view         = view_5
                     )
                 ]
             )
@@ -198,7 +262,7 @@ root = DJO.Navigation.Root.from_dict_list \
             , sub_dir      = 'dir-3'
             , title        = 'Test Dir 3'
             , url_resolver = DJO.Url_Resolver
-            , url_patterns = (view_dir_3, )
+            , view         = view_dir_3
             , _entries     =
                 [ dict
                     ( Type         = DJO.Navigation.Dir
@@ -209,7 +273,7 @@ root = DJO.Navigation.Root.from_dict_list \
                             ( Type         = DJO.Navigation.Page
                             , name         = 'page-5.html'
                             , title        = 'Page 5'
-                            , url_patterns = (view_6, )
+                            , view         = view_6
                             )
                         , dict
                             ( Type         = DJO.Navigation.Dir
@@ -220,6 +284,7 @@ root = DJO.Navigation.Root.from_dict_list \
                                     ( Type         = DJO.Navigation.Page
                                     , name         = 'page-6.html'
                                     , title        = 'Page 6'
+                                    #, view         = view_7
                                     , url_patterns = (view_7, )
                                     , url_resolver = DJO.Url_Resolver
                                     )
@@ -237,7 +302,7 @@ root = DJO.Navigation.Root.from_dict_list \
                             ( Type         = DJO.Navigation.Page
                             , name         = 'page-7.html'
                             , title        = 'Page 7'
-                            , url_patterns = (view_8, )
+                            , view         = view_8
                             )
                         , dict
                             ( Type         = DJO.Navigation.Dir
@@ -249,7 +314,7 @@ root = DJO.Navigation.Root.from_dict_list \
                                     ( Type         = DJO.Navigation.Page
                                     , name         = 'page-8.html'
                                     , title        = 'Page 8'
-                                    , url_patterns = (view_9, )
+                                    , view         = view_9
                                     )
                                 ]
                             )
@@ -278,16 +343,16 @@ root.url_resolver.append_pattern \
         )
     )
 if __name__ == "__main__" :
+    ### XXX this is only code with makes debugging easier
     def _print_resolver_pattern (prefix, resolver) :
         for p in resolver.urlpatterns :
             print "%s%s" % (prefix, p)
             if isinstance (p, DJO.Url_Resolver) :
                 _print_resolver_pattern ("  " + prefix, p)
-    _print_resolver_pattern ("", root.url_resolver)
-    resolver = urlresolvers.get_resolver ("test.urls")
-    import pdb; pdb.set_trace ()
-    view, args, kw = resolver.resolve ("/dir-2/")
-    print view (None, * args, ** kw)
+    if 0 :
+       _print_resolver_pattern ("", root.url_resolver)
+    if 0 :
+       resolver = urlresolvers.get_resolver ("test.urls")
+       view, args, kw = resolver.resolve ("/dir-1/page-1.html")
+       view (None, * args, ** kw)
 ### __END__ DJO._test
-
-
