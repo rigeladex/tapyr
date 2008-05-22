@@ -81,6 +81,8 @@
 #    22-May-2008 (MG) `_Site_Entity_.view` added,
 #                     `_Dir_.default_view_pattern` added
 #                     `Url_Pattern` renamed to `Single_Url_Pattern`
+#    22-May-2008 (CT) s/class_method/unbound_method/ (Truth in Advertising)
+#    22-May-2008 (CT) `_Site_Entity_.__init__` streamlined
 #    ««revision-date»»···
 #--
 
@@ -143,15 +145,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 v = unicode (v, encoding, "replace")
             setattr (self, k, v)
         self._setup_url_resolver (parent, kw)
-        if self.view :
-            view         = self.view
-            class_method = False
-            if "view" not in kw :
+        view = self.view
+        if view :
+            unbound_method = "view" not in kw
+            if unbound_method :
                 ### the view function is an instance method -> we need to
                 ### pass the unbound method instead
-                view         = self.__class__.view
-                class_method = True
-            self.url_resolver.add_view_function (self, view, class_method)
+                view = self.__class__.view
+            self.url_resolver.add_view_function (self, view, unbound_method)
         if hasattr (self, "url_resolver") and self.url_patterns :
             self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__

@@ -49,6 +49,7 @@
 #                     `Single_Url_Pattern` and `Multi_Page_Url_Pattern` added
 #                     `Url_Resolver.try_patterns` added
 #                     Support for `default_view_pattern` and `view` added
+#    22-May-2008 (CT) s/class_method/unbound_method/ (Truth in Advertising)
 #    ««revision-date»»···
 #--
 ### ToDO
@@ -74,7 +75,7 @@ class Url_Pattern (urlresolvers.RegexURLPattern) :
     active_page_parameter_name = "PAGE"
 
     def __init__ (self, pattern, view, name = None, ** kw) :
-        self.view_is_unbound = kw.pop ("class_method", False)
+        self.view_is_unbound = kw.pop ("unbound_method", False)
         super (Url_Pattern, self).__init__ (pattern, view, kw, name)
     # end def __init__
 
@@ -168,7 +169,7 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
             p.nav = nav
     # end def add_nav_pattern
 
-    def add_view_function (self, nav, view, class_method = False) :
+    def add_view_function (self, nav, view, unbound_method = False) :
         ### first, we need to reduct the full url to the url which will be
         ### matched by the url resolver
         url_part        = nav.relative_to (self.nav_href)
@@ -181,7 +182,7 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
         else :
             ## looks like we need an own pattern for this view/nav combination
             d    = self._view_patterns
-        d [view].append ((nav, url_part, class_method))
+        d [view].append ((nav, url_part, unbound_method))
     # end def add_view_function
 
     def append_pattern (self, * patterns) :
@@ -265,16 +266,16 @@ class Url_Resolver (urlresolvers.RegexURLResolver) :
                         p = Multi_Page_Url_Pattern \
                             ( "^(?:%s)$" % ("|".join (e [1] for e in entities), )
                             , view
-                            , class_method = entities [0] [2]
-                            , url2nav      = dict
-                                  ((u, n) for (n, u, _) in entities)
+                            , unbound_method = entities [0] [2]
+                            , url2nav        = dict
+                                ((u, n) for (n, u, _) in entities)
                             )
                     else :
-                        nav, url_part, class_method = entities [0]
+                        nav, url_part, unbound_method = entities [0]
                         p = Single_Url_Pattern \
                             ("^%s$" % (url_part, ), view
-                            , nav          = nav
-                            , class_method = class_method
+                            , nav            = nav
+                            , unbound_method = unbound_method
                             )
                     l.append (p)
             self._url_patterns = \
