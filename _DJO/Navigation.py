@@ -83,6 +83,9 @@
 #                     `Url_Pattern` renamed to `Single_Url_Pattern`
 #    22-May-2008 (CT) s/class_method/unbound_method/ (Truth in Advertising)
 #    22-May-2008 (CT) `_Site_Entity_.__init__` streamlined
+#    22-May-2008 (CT) `_formatted_attr` added to `dump`
+#    22-May-2008 (CT) `_Dir_.dump` changed to use `_entries` instead of
+#                     `own_links`
 #    ««revision-date»»···
 #--
 
@@ -137,7 +140,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         self._kw    = kw
         self.parent = parent
         if "input_encoding" in kw :
-            self.input_encoding = encoding = kw.pop ("input_encoding")
+            encoding = kw ["input_encoding"]
         else :
             encoding = getattr (parent, "input_encoding", self.input_encoding)
         for k, v in kw.iteritems () :
@@ -192,7 +195,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
         indent = "  " * (level + 3)
         sep    = "\n%s, " % (indent, )
         lines  = sep.join \
-            ("%s = %r" % (k, v) for (k, v) in sorted (self._kw.iteritems ()))
+            (   "%s = %s" % (k, self._formatted_attr (k))
+            for k in sorted (self._kw)
+            )
         if tail :
             lines = "%s%s%s" % (lines, sep, tail)
         return "%s\n%s( Type = %s%s%s\n%s)" % \
@@ -224,6 +229,13 @@ class _Site_Entity_ (TFL.Meta.Object) :
         common_prefix = commonprefix ((href, url))
         return href.replace (common_prefix, u"")
     # end def relative_to
+
+    def _formatted_attr (self, name) :
+        v = getattr (self, name)
+        if isinstance (v, unicode) :
+            v = 'u"""%s"""' % (v.encode (self.input_encoding))
+        return v
+    # end def _formatted_attr
 
     def _setup_url_resolver (self, parent, kw) :
         url_resolver = kw.get ("url_resolver")
@@ -501,8 +513,8 @@ class _Dir_ (_Site_Entity_) :
         sep    = "\n%s" % (indent, )
         sep_c  = "%s, " % sep
         tail = sep_c.join \
-            (   "\n      ".join (owl.dump ().split ("\n"))
-            for owl in self.own_links
+            (   "\n      ".join (e.dump ().split ("\n"))
+            for e in self._entries
             )
         return self.__super.dump \
             (tail = "_entries =%s[ %s%s]" % (sep, tail, sep))
