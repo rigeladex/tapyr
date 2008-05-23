@@ -90,6 +90,7 @@
 #    23-May-2008 (CT) Semantics of `_Photo_.name` changed (so that `href`
 #                     works properly)
 #    23-May-2008 (CT) `Page_ReST` and `Page_ReST_F` added
+#    23-May-2008 (CT) `Dyn_Slice_ReST_Dir` added
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,7 @@ from   _TFL.defaultdict         import defaultdict
 from   _TFL.Filename            import *
 from   _TFL.predicate           import pairwise
 from   _TFL.Record              import Record
+from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
 
@@ -111,7 +113,9 @@ import _TFL._Meta.Object
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
+import textwrap
 import time
+
 
 ### To-Do:
 ### - Dyn_Dir
@@ -120,7 +124,8 @@ class _Meta_ (TFL.Meta.Object.__class__) :
 
     def __call__ (cls, * args, ** kw) :
         result = super (_Meta_, cls).__call__ (* args, ** kw)
-        result.top.Table [result.href] = result
+        if result.href is not None :
+            result.top.Table [result.href] = result
         return result
     # end def __call__
 
@@ -223,7 +228,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if href :
             return pnorm (href)
         return ""
-    # end def file_stem
+    # end def href
 
     @property
     def nav_links (self) :
@@ -324,8 +329,16 @@ class Gallery (Page) :
         base          = Filename (pic_dir).base
         self.name     = "%s.html" % (base, )
         self.__super.__init__ (parent, pic_dir = pic_dir, ** kw)
-        self.src_dir  = pjoin (getattr (self, "prefix", ""), base)
+        self.src_dir  = self.prefix = pjoin (parent.prefix, base)
     # end def __init__
+
+    @Once_Property
+    def href (self) :
+        href = pjoin (self.parent.prefix, self.name)
+        if href :
+            return pnorm (href)
+        return ""
+    # end def href
 
     @property
     def photos (self) :
@@ -355,7 +368,7 @@ class Gallery (Page) :
                 title  = "%s %d/%d" % (self.title, i, len (images))
                 desc   = "%s %d/%d" % (self.desc,  i, len (images))
                 photo  = Photo     \
-                    ( pjoin (self.base, name) + ".html", im
+                    ( "%s.html" % (name, ), im
                     , parent = self
                     , desc   = desc
                     , title  = title
@@ -472,7 +485,7 @@ class _Dir_ (_Site_Entity_) :
     def href (self) :
         if not self.delegation_view :
             if self._entries :
-                return self._entries [0].href
+                return first (self.own_links).href
         return pjoin (self.prefix, u"")
     # end def href
 
@@ -480,21 +493,16 @@ class _Dir_ (_Site_Entity_) :
     def own_links (self) :
         for e in self._entries :
             for nl in e.nav_links :
-                if nl.href :
-                    yield nl
+                yield nl
     # end def own_links
 
     @property
     def own_links_transitive (self) :
-        ### XXX either remove or rewrite to use `nav_links`
-        for e in self._entries :
+        for e in self.own_links :
+            yield e
             if isinstance (e, Dir) :
-                if e.href :
-                    yield e
                 for ee in e.own_links_transitive :
                     yield ee
-            else :
-                yield e
     # end def own_links_transitive
 
     def add_entries (self, list_of_dicts, ** kw) :
@@ -621,6 +629,8 @@ def populate_naviagtion_root (request) :
 class Page_ReST (Page) :
     """Model one page generated from re-structured text."""
 
+    date = ""
+
     @Once_Property
     def contents (self) :
         return self.markup_to_html (self.src_contents)
@@ -653,6 +663,64 @@ class Page_ReST_F (Page_ReST) :
     # end def src_path
 
 # end class Page_ReST_F
+
+class Dyn_Slice_ReST_Dir (_Site_Entity_) :
+    """Dynamic slice based on the re-structured files in a directory."""
+
+    href          = None
+    nav_info_pat  = Regexp \
+        ( r"^\.\. *$"
+          "\n"
+          r" +<Nav-Info> *$"
+          "\n"
+            r"(?P<code>"
+              r"(?:^ +\w+ *=.*$" "\n" r")+"
+            r")"
+          r" +</Nav-Info> *$"
+        , re.MULTILINE
+        )
+    own_links     = ()
+    src_extension = ".txt"
+    _entries      = None
+
+    @property
+    def nav_links (self) :
+        if self._entries is None :
+            self._read_entries ()
+        return self._entries
+    # end def nav_links
+
+    def _page_info (self, f) :
+        result = {}
+        with open (f, "rb") as f :
+            src = unicode (f.read ().strip (), self.input_encoding, "replace")
+        pat = self.nav_info_pat
+        if pat.search (src) :
+            exec textwrap.dedent (pat.code) in globals (), result
+            result ["src_contents"] = pat.sub ("", src).strip ()
+        return result
+    # end def _page_info
+
+    def _read_entries (self) :
+        self._entries = entries = []
+        add           = entries.append
+        files         = sos.expanded_globs \
+            ( pjoin
+                (self.src_root, self.prefix, "*%s" % (self.src_extension, ))
+            )
+        parent        = self.parent
+        Page_Type     = getattr (self, "Page_Type", Page_ReST)
+        sort_key      = getattr (self, "sort_key", lambda x : (x.date, x.name))
+        for f in files :
+            info = self._page_info (f)
+            if info :
+                name = "%s.html" % (Filename (f).base, )
+                info ["name"] = name
+                add (Page_Type (parent = parent, ** info))
+        entries.sort (key = sort_key, reverse = True)
+    # end def _read_entries
+
+# end class Dyn_Slice_ReST_Dir
 
 if __name__ != "__main__":
     DJO._Export_Module ()

@@ -18,30 +18,31 @@
   ##    13-Apr-2008 (CT) Check `ifequal link.href page.link.href` instead of
   ##                     `ifequal link page.link` to determine `current-link`
   ##    21-May-2008 (CT) s/page.link/page/w
+  ##    23-May-2008 (CT) `if link.href` moved from outermost to innermost
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
-{% if link.href %}
-  {% let %}
-    {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
-    {% if page.prefix|starts_with:link.prefix and link.own_links %}
-      <li class="current-section {{ level }}">{{ link.title }}
-        {% rrender "nav-section-level.html" link_list=link.own_links %}
-      </li>
+{% let %}
+  {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
+  {% if page.prefix|starts_with:link.prefix and link.own_links %}
+    <li class="current-section {{ level }}">{{ link.title }}
+      {% rrender "nav-section-level.html" link_list=link.own_links %}
+    </li>
+  {% else %}
+    {% ifequal link.href page.href %}
+      <li class="current-link {{ level }}">{{ link.title }}</li>
     {% else %}
-      {% ifequal link.href page.href %}
-        <li class="current-link {{ level }}">{{ link.title }}</li>
-      {% else %}
+      {% if link.href %}
         <li class="nav-link {{ level }}">
           <a href="{{ link.site_prefix }}{{ link.href }}"
              {% if link.desc %}title="{{ link.desc }}"{% endif %}
           >{{ link.title }}</a>
         </li>
-      {% endifequal %}
-    {% endif %}
-  {% endlet %}
-{% else %}
-  <li class="no-link">{{ link.title|safe }}</li>
-{% endif %}
+      {% else %}
+        <li class="no-link">{{ link.title|safe }}</li>
+      {% endif %}
+    {% endifequal %}
+  {% endif %}
+{% endlet %}
 {# __END__ Django template: nav-section-entry.html #}
