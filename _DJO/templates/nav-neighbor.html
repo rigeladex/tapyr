@@ -14,12 +14,14 @@
   ##
   ## Revision Dates
   ##    19-May-2008 (CT) Creation
+  ##    23-May-2008 (CT) s/neighbor.html/neighbor.href/
+  ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
 {% onion neighbor %}
   {% head %}
-    <a href="{{ neighbor.html }}">
+    <a href="{{ neighbor.href }}">
   {% else %}
     {% blet symbol %}{{ symbol }}_gray{% endblet %}
   {% body %}

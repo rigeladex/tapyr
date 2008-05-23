@@ -86,10 +86,16 @@
 #    22-May-2008 (CT) `_formatted_attr` added to `dump`
 #    22-May-2008 (CT) `_Dir_.dump` changed to use `_entries` instead of
 #                     `own_links`
+#    23-May-2008 (CT) `rendered` added
+#    23-May-2008 (CT) Semantics of `_Photo_.name` changed (so that `href`
+#                     works properly)
+#    23-May-2008 (CT) `Page_ReST` and `Page_ReST_F` added
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
+from   __future__               import with_statement
+
+from   _TFL                     import TFL
 from   _DJO                     import DJO
 
 import _DJO.Url_Resolver
@@ -230,6 +236,18 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return href.replace (common_prefix, u"")
     # end def relative_to
 
+    @Once_Property
+    def render_to_string (self) :
+        from _DJO.Render import to_string
+        return to_string
+    # end def render_to_string
+
+    def rendered (self, context = None) :
+        if context is None :
+            context = dict (page = self)
+        return self.render_to_string (self.template, context, self.encoding)
+    # end def rendered
+
     def _formatted_attr (self, name) :
         v = getattr (self, name)
         if isinstance (v, unicode) :
@@ -298,7 +316,7 @@ class Gallery (Page) :
 
     template = "gallery.html"
 
-    def __init__ (self, pic_dir, parent = None, ** kw) :
+    def __init__ (self, pic_dir, parent, ** kw) :
         self.im_dir   = pjoin (pic_dir, "im")
         self.th_dir   = pjoin (pic_dir, "th")
         self._photos  = []
@@ -337,7 +355,7 @@ class Gallery (Page) :
                 title  = "%s %d/%d" % (self.title, i, len (images))
                 desc   = "%s %d/%d" % (self.desc,  i, len (images))
                 photo  = Photo     \
-                    ( im
+                    ( pjoin (self.base, name) + ".html", im
                     , parent = self
                     , desc   = desc
                     , title  = title
@@ -363,8 +381,8 @@ class _Photo_ (Page) :
 
     _size     = None
 
-    def __init__ (self, name, parent, ** kw) :
-        self.__super.__init__ (name = name, src = name, parent = parent, ** kw)
+    def __init__ (self, name, src, parent, ** kw) :
+        self.__super.__init__ (name = name, src = src, parent = parent, ** kw)
     # end def __init__
 
     @property
@@ -378,7 +396,7 @@ class _Photo_ (Page) :
     def size (self) :
         if self._size is None :
             from PIL import Image
-            img = Image.open (self.name)
+            img = Image.open (self.src)
             self._size = img.size
         return self._size
     # end def size
@@ -405,8 +423,8 @@ class Photo (_Photo_) :
 class Thumbnail (_Photo_) :
     """Model a thumbnail of a photo."""
 
-    def __init__ (self, name, photo, parent, ** kw) :
-        self.__super.__init__ (name, parent, ** kw)
+    def __init__ (self, src, photo, parent, ** kw) :
+        self.__super.__init__ (photo.name, src, parent, ** kw)
         self.photo  = photo
         photo.thumb = self
     # end def __init__
@@ -599,6 +617,42 @@ class Root (_Dir_) :
 def populate_naviagtion_root (request) :
     return dict (NAVIGATION = _Site_Entity_.top)
 # end def populate_naviagtion_root
+
+class Page_ReST (Page) :
+    """Model one page generated from re-structured text."""
+
+    @Once_Property
+    def contents (self) :
+        return self.markup_to_html (self.src_contents)
+    # end def contents
+
+    @Once_Property
+    def markup_to_html (self) :
+        from django.contrib.markup.templatetags.markup \
+            import restructuredtext
+        return restructuredtext
+    # end def markup_to_html
+
+# end class Page_ReST
+
+class Page_ReST_F (Page_ReST) :
+    """Model one page generated from re-structured text stored in file."""
+
+    src_extension = ".txt"
+
+    @Once_Property
+    def src_contents (self) :
+        with open (self.src_path, "rb") as f :
+            result = f.read ()
+        return unicode (result.strip (), self.input_encoding, "replace")
+    # end def src_contents
+
+    @Once_Property
+    def src_path (self) :
+        return pjoin (self.src_root, self.file_stem + self.src_extension)
+    # end def src_path
+
+# end class Page_ReST_F
 
 if __name__ != "__main__":
     DJO._Export_Module ()
