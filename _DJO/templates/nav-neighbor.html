@@ -21,11 +21,12 @@
 {% load TGL %}
 {% onion neighbor %}
   {% head %}
-    <a href="{{ neighbor.href }}">
+    <a href="{{ neighbor.site_prefix }}{{ neighbor.href }}">
   {% else %}
     {% blet symbol %}{{ symbol }}_gray{% endblet %}
   {% body %}
-      <img alt="{{ alt }}" src="media/images/{{ symbol }}.png"
+      <img alt="{{ alt }}"
+           src="{{ page.site_prefix }}media/images/{{ symbol }}.png"
            title="{% firstof neighbor.title alt %}"
       />
   {% tail %}
