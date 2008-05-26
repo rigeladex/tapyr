@@ -1,0 +1,89 @@
+{# Django template: gmap_head.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    gmap_head
+  ##
+  ## Purpose
+  ##    Template fragment for head of a page containing a google map
+  ##
+  ##
+  ## Revision Dates
+  ##    26-May-2008 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+  ## map types
+  // G_NORMAL_MAP, G_SATELLITE_MAP, G_HYBRID_MAP, G_PHYSICAL_MAP
+  ## map control types
+  // GLargeMapControl, GSmallMapControl
+  ## map-type control types
+  // GMapTypeControl, GMenuMapTypeControl
+{% endcomment %}
+  {% block gmap-head %}
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key={{ page.map.google_key }}"
+            type="text/javascript"></script>
+    <script type="text/javascript">
+      //<![CDATA[
+        function load() {
+          if (GBrowserIsCompatible ()) {
+            var map  = new GMap2   (document.getElementById ("map"));
+            var pnt  = new GLatLng ({{ page.map.latitude }}, {{ page.map.longitude }});
+            var mark = new GMarker (pnt, {title: "{{ page.map.title }}"});
+            var mrkx;
+            map.enableGoogleBar    ();
+            map.enableScrollWheelZoom ();
+            map.addControl
+              (new {{ page.map.Map_Control|default:"GLargeMapControl" }} ());
+            map.addControl
+              (new {{ page.map.Typ_Control|default:"GMenuMapTypeControl" }} ());
+            map.addControl (new GOverviewMapControl ());
+            map.setCenter  (pnt, {{ page.map.scale|default:14 }});
+            map.addOverlay (mark);
+            {% spaceless %}
+            {% if page.map.pan %}
+              map.panDirection ({{ page.map.pan.dx }}, {{ page.map.pan.dy }});
+            {% endif %}
+            {% for marker in page.map.markers %}
+              mrkx = new GMarker
+                ( new GLatLng
+                    ({{ marker.latitude }}, {{ marker.longitude }})
+                , {title: "{{ marker.title }}"}
+                );
+              map.addOverlay (mrkx);
+              {% if marker.blowup %}
+                mrkx.showMapBlowup
+                  ( {{ marker.blowup.scale|default:16 }}
+                  , {{ marker.blowup.type|default:"G_HYBRID_MAP" }}
+                  );
+              {% endif %}
+            {% endfor %}
+            {% if page.map.blowup %}
+              {% if page.map.blowup.latitude and page.map.blowup.longitude %}
+                pnt = new GLatLng
+                  ( {{ page.map.blowup.latitude }}
+                  , {{ page.map.blowup.longitude }}
+                  );
+                map.showMapBlowup
+                  ( pnt
+                  , { zoomLevel : {{ page.map.blowup.scale|default:16 }}
+                    , mapType   : {{ page.map.blowup.type|default:"G_HYBRID_MAP" }}
+                    }
+                  );
+              {% else %}
+                mark.showMapBlowup
+                  ( {{ page.map.blowup.scale|default:16 }}
+                  , {{ page.map.blowup.type|default:"G_HYBRID_MAP" }}
+                  );
+              {% endif %}
+            {% endif %}
+            {% endspaceless %}
+          }
+        }
+      //]]>
+    </script>
+  {% endblock gmap-head %}
+{# __END__ Django template: gmap_head.html #}

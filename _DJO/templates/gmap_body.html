@@ -1,0 +1,27 @@
+{% spaceless %}
+{# Django template: gmap_body.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    gmap_body
+  ##
+  ## Purpose
+  ##    Template fragment for body of a page containing a google map
+  ##
+  ##
+  ## Revision Dates
+  ##    26-May-2008 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+  {% block gmap-body %}
+    <div id="map"
+      style="height: {{ page.map.height|default:800 }}px; width: {{ page.map.width|default:800 }}px"
+    ></div>
+  {% endblock gmap-body %}
+{# __END__ Django template: gmap_body.html #}
+{% endspaceless %}
