@@ -91,6 +91,7 @@
 #                     works properly)
 #    23-May-2008 (CT) `Page_ReST` and `Page_ReST_F` added
 #    23-May-2008 (CT) `Dyn_Slice_ReST_Dir` added
+#    27-May-2008 (CT) `translator` added
 #    ««revision-date»»···
 #--
 
@@ -250,7 +251,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def rendered (self, context = None) :
         if context is None :
             context = dict (page = self)
-        return self.render_to_string (self.template, context, self.encoding)
+        result = self.render_to_string (self.template, context, self.encoding)
+        if self.translator :
+            result = self.translator (result)
+        return result
     # end def rendered
 
     def _formatted_attr (self, name) :
@@ -595,6 +599,7 @@ class Root (_Dir_) :
     name            = "/"
     owner           = None
     src_root        = ""
+    translator      = None
 
     _dump_type = "DJO.Navigation.Root.from_dict_list \\"
 
