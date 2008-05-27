@@ -91,6 +91,8 @@
 #                     works properly)
 #    23-May-2008 (CT) `Page_ReST` and `Page_ReST_F` added
 #    23-May-2008 (CT) `Dyn_Slice_ReST_Dir` added
+#    25-May-2008 (MG) `_setup_url_resolver` fixed to work without a parent as
+#                     well
 #    27-May-2008 (CT) `translator` added
 #    ««revision-date»»···
 #--
@@ -268,19 +270,25 @@ class _Site_Entity_ (TFL.Meta.Object) :
         url_resolver = kw.get ("url_resolver")
         if url_resolver :
             ### this entity has it's own url resolver
-            if not isinstance (url_resolver, DJO.Url_Resolver) :
-                ### looks like it's just a class -> let's convert it to an
-                ### instance
-                pattern = self.relative_to \
-                    (self.parent.url_resolver.nav_href, self.file_stem)
-                self.url_resolver = self.url_resolver \
-                    ( "^%s" % (pattern, ), pattern
-                    , default_view_pattern = kw.get ("default_view_pattern", {})
-                    )
             if parent :
+                if not isinstance (url_resolver, DJO.Url_Resolver) :
+                    ### looks like it's just a class -> let's convert it to an
+                    ### instance
+                    pattern = self.relative_to \
+                        (self.parent.url_resolver.nav_href, self.file_stem)
+                    self.url_resolver = self.url_resolver \
+                        ( "^%s" % (pattern, ), pattern
+                        , default_view_pattern =
+                            kw.get ("default_view_pattern", {})
+                        )
                 ### this entity has a parent so let's add our own url
                 ### resolver to the parents to build the resolve chain
                 parent.url_resolver.append_pattern (self.url_resolver)
+            if not isinstance (self.url_resolver, DJO.Url_Resolver) :
+                raise TypeError \
+                    ( "The specified `url_resolver` is not an instance of "
+                      "`DJO.Url_Resolver`"
+                    )
             self.url_resolver.set_nav (self)
         return url_resolver
     # end def _setup_url_resolver
