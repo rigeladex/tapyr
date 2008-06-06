@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,12 +31,11 @@
 # Revision Dates
 #    11-Sep-2001 (CT) Creation (factored from `D_Dict`)
 #    16-Jan-2003 (CT) Aesthetics
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     6-Jun-2008 (CT) `dict_from_named_objects` added
 #    ««revision-date»»···
 #--
 
-
+from _TFL import TFL
 
 def d_dict (* ancestors, ** kw) :
     """Returns a dictionary,
@@ -82,7 +81,13 @@ def d_dict (* ancestors, ** kw) :
     return result
 # end def d_dict
 
-from _TFL import TFL
-TFL._Export ("*")
+def dict_from_named_objects (* args, ** kw) :
+    Dict = kw.pop ("dict", dict)
+    name = kw.pop ("name", "name")
+    assert not kw
+    return Dict ((getattr (a, name), a) for a in args)
+# end def dict_from_named_objects
 
-### __END__ d_dict
+if __name__ != "__main__" :
+    TFL._Export ("*")
+### __END__ TFL.d_dict
