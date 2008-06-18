@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -82,6 +82,8 @@
 #    14-Jun-2007 (CT)  `reset` changed to increment `_sid`
 #    30-Nov-2007 (CT)  `prepare_cut_somewhere` changed to explicitly check
 #                      for empty `generations` (improve traceback information)
+#    13-Jun-2008 (CT)  `intersection` changed to never return an empty
+#                      `sections` if `min_size == 0`
 #    ««revision-date»»···
 #--
 
@@ -193,7 +195,8 @@ class TLS_Periodic (TFL.Meta.Object) :
         except KeyError :
             p          = self.period
             TSMP       = TL_Section_Mod_P
-            normalized = [[TSMP.new (s, p) for s in g] for g in self.generations]
+            normalized = \
+                [[TSMP.new (s, p) for s in g] for g in self.generations]
             result     = self._imp [min_size] = list \
                 ( TFL.Interval_Set.intersection_iter
                     (* normalized, ** dict (min_size = min_size))
@@ -223,17 +226,18 @@ class TLS_Periodic (TFL.Meta.Object) :
     def prepare_cut_somewhere (self, size) :
         result = self.to_cut = []
         for g in self.generations :
-            if not g :
+            if g :
+                p = max (g)
+                if p.parents :
+                    assert len (p.parents) == 1
+                    p = p.parents
+                p.prepare_cut_around_l (p, size)
+                result.append (p)
+            else :
                 raise ValueError, \
                     ( "Elements of self.generations %s must not be empty, %s"
                     % (self.generations, size)
                     )
-            p = max (g)
-            if p.parents :
-                assert len (p.parents) == 1
-                p = p.parents
-            p.prepare_cut_around_l (p, size)
-            result.append (p)
         return result
     # end def prepare_cut_somewhere
 
@@ -445,25 +449,30 @@ class Timeline (TFL.Meta.Object) :
     # end def cut_p
 
     def intersection (self, span, min_size = 1) :
-        if span.length == 0 :
-            min_size    = 0
-        sections, total = [], 0
-        free            = self.free
-        Section         = self.Section
-        lower, upper    = span.lower, span.upper
-        h               = bisect (free, self.Span (lower, lower))
-        if h and free [h - 1].contains_point (lower) :
-            h -= 1
-        for i, f in enumerate_slice (free, h) :
-            if f.lower > upper :
-                break
-            s = f.intersection (span)
-            l = s.length
-            if l >= min_size :
-                sections.append (Section.new (s, i, self))
-                total += l
-                if l == min_size == 0 :
+        sections, total  = [], 0
+        Section          = self.Section
+        if span.length > 0 :
+            free         = self.free
+            lower, upper = span.lower, span.upper
+            h            = bisect (free, self.Span (lower, lower))
+            if h and free [h - 1].contains_point (lower) :
+                h -= 1
+            for i, f in enumerate_slice (free, h) :
+                if f.lower > upper :
                     break
+                s = f.intersection (span)
+                l = s.length
+                if l >= min_size :
+                    sections.append (Section.new (s, i, self))
+                    total += l
+                    if l == min_size == 0 :
+                        break
+        else :
+            min_size = 0
+        if (not sections) and min_size == 0 :
+            sections.append \
+                (Section.new (self.Span (span.upper, span.upper), 0, self))
+            total += 1
         return sections, total
     # end def intersection
 
