@@ -46,6 +46,7 @@
 #                      provide `orig`
 #    18-Apr-2008 (CT)  `Decorator` decorator removed from `Add_Method` and
 #                      `Override_Method`
+#    19-Jun-2008 (CT)  `Attributed` added
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,32 @@ def Decorator (decorator) :
         (decorator, "_globals", getattr (decorator, "__globals__", {}))
     return wrapper
 # end def Decorator
+
+def Attributed (** kw) :
+    """Add all elements of `kw` as function attribute to decorated function.
+
+       >>> from _TFL.Decorator import *
+       >>> @Attributed (foo = 1, bar = 42)
+       ... def f () :
+       ...     pass
+       ...
+       >>> sorted (f.__dict__.iteritems ())
+       [('bar', 42), ('foo', 1)]
+       >>> @Attributed (a = "WTF", b = 137)
+       ... def g () :
+       ...     "Test `Attributed` decorator"
+       ...
+       >>> sorted (g.__dict__.iteritems ())
+       [('a', 'WTF'), ('b', 137)]
+       >>> g.__doc__
+       'Test `Attributed` decorator'
+    """
+    def decorator (f) :
+        for k, v in kw.iteritems () :
+            setattr (f, k, v)
+        return f
+    return decorator
+# end def Attributed
 
 @Decorator
 def Contextmanager (f) :
