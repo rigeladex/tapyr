@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -457,6 +457,7 @@
 #    19-Nov-2007 (CT)  `Balloon.body`: added `anchor = W, justify = LEFT`
 #    19-Nov-2007 (CT)  Imports corrected
 #    19-Nov-2007 (CT)  `string` functions replaced by `str` methods
+#    24-Jun-2008 (CT)  `Progress_Gauge.set_label` changed to `.strip` the `text`
 #    ««revision-date»»···
 #--
 
@@ -1978,7 +1979,7 @@ class Progress_Gauge (C_Frame) :
     # end def inc
 
     def set_label (self, text) :
-        self.label.configure (text = text)
+        self.label.configure (text = text.strip ())
         self.label.place \
             ( relx   = 0.5
             , rely   = 0.20
