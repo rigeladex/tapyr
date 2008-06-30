@@ -56,6 +56,7 @@
 #    17-Sep-2007 (CT) `EUC_Opt`, `EUC_Opt_SC`, and `EUC_Opt_TC` added
 #    17-Sep-2007 (CT) Handling of `target_currency` simplified
 #     8-May-2008 (CT) `EUC_Opt_TC` changed to use `__super`
+#    30-Jun-2008 (CT) Parts of `EUC_Opt` factored to `Opt_L`
 #    ««revision-date»»···
 #--
 
@@ -392,17 +393,11 @@ def currency (name) :
 class EUC_Opt (Opt_L) :
     """EU_Currency option class for use with TFL.Command_Line."""
 
-    default_name = ""
-    default_desc = ""
+    default_value = "EUR"
 
-    def __init__ (self, name = None, default = "EUR", ** kw) :
-        if "description" not in kw :
-            kw ["description"] = self.default_desc
+    def __init__ (self, ** kw) :
         self.__super.__init__ \
             ( selection = sorted (EUC.Table.iterkeys ())
-            , name      = name or self.default_name
-            , default   = default
-            , type      = "S"
             , cook      = self._cooked_currency
             , ** kw
             )

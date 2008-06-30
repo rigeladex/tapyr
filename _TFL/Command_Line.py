@@ -163,6 +163,7 @@
 #    15-Feb-2008 (CT) `_Help_._opts` robustified
 #     8-May-2008 (CT) Changed to use new-style classes
 #     8-May-2008 (CT) Cleanups
+#    30-Jun-2008 (CT) `Opt_L.__init__` added
 #    ««revision-date»»···
 #--
 
@@ -477,8 +478,41 @@ class Opt (Arg) :
 # end class Opt
 
 class Opt_L (_List_Selection_, Opt) :
-    pass
+
+    default_desc  = ""
+    default_name  = ""
+    default_value = ""
+    default_type  = "S"
+
+    def __init__ (self, selection, name = None, ** kw) :
+        kw.setdefault ("default",     self.default_value)
+        kw.setdefault ("description", self.default_desc)
+        kw.setdefault ("type",        self.default_type)
+        self.__super.__init__ \
+            ( selection = selection
+            , name      = name or self.default_name
+            , ** kw
+            )
+    # end def __init__
+
 # end class Opt_L
+
+class Opt_D (Opt_L) :
+
+    def __init__ (self, dict, ** kw) :
+        self._dict = dict
+        self.__super.__init__ \
+            ( selection = sorted (dict.iterkeys ())
+            , cook      = self._cooked_key
+            , ** kw
+            )
+    # end def __init__
+
+    def _cooked_key (self, value) :
+        return self._dict [value]
+    # end def _cooked_key
+
+# end class Opt_D
 
 class _Help_ (TFL.Meta.Object) :
 
