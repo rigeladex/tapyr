@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -28,6 +28,8 @@
 # Revision Dates
 #    11-Dec-2006 (CT) Creation (factored from `Bin_Distribution_Plot`)
 #    13-Dec-2006 (CT) `pad` added
+#    30-Jun-2008 (CT) Adapted to (undocumented [Arrrg]) changes in
+#                     matplotlib 0.98
 #    ««revision-date»»···
 #--
 
@@ -39,6 +41,9 @@ from   matplotlib.ticker     import Locator
 
 class Bin_Locator (Locator) :
 
+    dataInterval = property (lambda s : s.axis.get_data_interval ())
+    viewInterval = property (lambda s : s.axis.get_view_interval ())
+
     def __init__ (self, binner, delta = 1.0, phase = None, pad = 0) :
         self.binner = binner
         self.delta  = delta
@@ -47,11 +52,10 @@ class Bin_Locator (Locator) :
     # end def __init__
 
     def __call__ (self) :
-        self.verify_intervals ()
         binner     = self.binner
         delta      = self.delta
         phase      = self.phase
-        vmin, vmax = self.viewInterval.get_bounds ()
+        vmin, vmax = self.viewInterval
         wmin       = binner.value (vmin, False)
         wmax       = binner.value (vmax, False)
         if phase is not None :
@@ -67,7 +71,7 @@ class Bin_Locator (Locator) :
 
     def autoscale (self) :
         binner = self.binner
-        bounds = self.dataInterval.get_bounds ()
+        bounds = self.dataInterval
         pad    = self.pad
         v_min  = binner.index (binner.value (min (bounds), False) - pad)
         v_max  = binner.index (binner.value (max (bounds), False) + pad)

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -108,10 +108,10 @@ class Bin_Distribution_Plot (TFL.Meta.Object) :
         if y_formatter is None :
             y_formatter = FF \
                 (lambda v, i : self.y_tick_format % (yb.value (v, False), ))
-        ax.xaxis.set_major_locator   \
-            (self.x_locator (xb, xd, self.x_tick_offset, self.x_pad))
-        ax.yaxis.set_major_locator   \
-            (self.y_locator (yb, yd, self.y_tick_offset, self.y_pad))
+        xloc = self.x_locator (xb, xd, self.x_tick_offset, self.x_pad)
+        yloc = self.y_locator (yb, yd, self.y_tick_offset, self.y_pad)
+        ax.xaxis.set_major_locator   (xloc)
+        ax.yaxis.set_major_locator   (yloc)
         ax.xaxis.set_major_formatter (x_formatter)
         ax.yaxis.set_major_formatter (y_formatter)
         pylab.pcolor \

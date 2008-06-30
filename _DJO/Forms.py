@@ -30,12 +30,16 @@
 #    14-Dec-2007 (CT) Moved into package DJO
 #     2-Jan-2008 (MG) Sort order of non model fields changed
 #    10-Jan-2008 (MG) Support `anchors` in the `*Redirect` classes
+#    30-Jun-2008 (CT) `object_to_save` added to `BaseModelForm`
 #    ««revision-date»»···
 #--
 
 from   _DJO                        import DJO
+from   _TFL                        import TFL
 
 from   _DJO.Models                 import _User_Create_Mod_
+
+import _TFL.Decorator
 
 from   django.utils.datastructures import SortedDict
 from   django.http                 import HttpResponseRedirect
@@ -47,6 +51,7 @@ from   django.db.models.base       import Model
 from   django.db.models.manager    import Manager
 import django.newforms             as     forms
 from   django.newforms.forms       import BoundField
+from   django.newforms.models      import BaseModelForm
 from   django.utils.translation    import gettext_lazy as _
 import copy
 
@@ -425,6 +430,18 @@ class FileNameInput (forms.widgets.FileInput) :
     # end def value_from_datadict
 
 # end class FileNameField
+
+@TFL.Add_New_Method (BaseModelForm)
+@TFL.Contextmanager
+def object_to_save (self) :
+    """Context manager for saving an object created from a form"""
+    obj = self.save (commit=False)
+    try :
+        yield obj
+    finally :
+        obj.save      ()
+        self.save_m2m ()
+# end def object_to_save
 
 if __name__ != "__main__" :
     DJO._Export ("*")
