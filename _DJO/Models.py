@@ -23,7 +23,7 @@
 #    DJO.Models
 #
 # Purpose
-#    Some usefull classes
+#    Some useful classes
 #
 # Revision Dates
 #    18-Sep-2007 (MG) Creation
