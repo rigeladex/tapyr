@@ -31,14 +31,35 @@
 #    15-Dec-2007 (MG) Missing import added
 #     4-Apr-2008 (MG) `additional_user_attrs` added
 #     9-May-2008 (MG) `_Permisson_Mixin_` factored
+#     1-Jul-2008 (CT) `M_Model` and `Model` added
 #    ««revision-date»»···
 #--
+
+from   _TFL                               import TFL
+import _TFL._Meta.M_Class
+
+from   _DJO                               import DJO
 
 from   django.db                          import models as DM
 from   django.contrib.auth.models         import User
 import django.db.models.base as DBM
 import datetime
 from   django.utils.translation           import gettext_lazy as _
+
+class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
+    """Meta class for models with support for `.__super` and `_real_name`."""
+# end class M_Model
+
+class _DJO_Model_ (DM.Model) :
+
+    __metaclass__ = M_Model
+    _real_name    = "Model"
+
+    class Meta :
+        abstract       = True
+    # end class Meta
+
+Model = _DJO_Model_ # end class
 
 class M_User_Create_Mod (DBM.ModelBase) :
     """Meta class which add's the created_by/at and modified_by/at fields."""
@@ -182,6 +203,5 @@ class IntegerLimitField (DM.IntegerField) :
 DM.IntegerLimitField = IntegerLimitField
 
 if __name__ != "__main__" :
-    from _DJO import DJO
     DJO._Export ("*")
 ### __END__ DJO.Models
