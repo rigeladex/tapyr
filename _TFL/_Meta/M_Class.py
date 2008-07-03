@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -42,9 +42,8 @@
 #    23-Mar-2006 (CED) `_fixed_type_` added
 #     8-Aug-2006 (PGO) `_super_calling_not_possible` added
 #     7-Nov-2007 (CT)  Condition for `_super_calling_not_possible` corrected
-#                      (don't complain if one of the bases has used `_real_name`)
-#     1-Jul-2008 (CT)  `** kw` added to meta-methods `__init__` and `__new__`
-#                      (bad, Django, bad)
+#                      (don't complain if one of the bases has used
+#                      `_real_name`)
 #    ««revision-date»»···
 #--
 
@@ -147,19 +146,18 @@ class M_Autorename (_M_Type_) :
        definition.
     """
 
-    def __new__ (meta, name, bases, dict, ** kw) :
+    def __new__ (meta, name, bases, dict) :
         real_name = name
         if "_real_name" in dict :
             name = dict ["_real_name"]
             del dict ["_real_name"]
         dict ["__real_name"] = real_name
-        return super (M_Autorename, meta).__new__ \
-            (meta, name, bases, dict, ** kw)
+        return super (M_Autorename, meta).__new__ (meta, name, bases, dict)
     # end def __new__
 
-    def __init__ (cls, name, bases, dict, ** kw) :
+    def __init__ (cls, name, bases, dict) :
         ### Need to pass `cls.__name__` as it might defer from `name`
-        super (M_Autorename, cls).__init__ (cls.__name__, bases, dict, ** kw)
+        super (M_Autorename, cls).__init__ (cls.__name__, bases, dict)
     # end def __init__
 
     def _m_mangled_attr_name (cls, name) :
@@ -190,8 +188,8 @@ class M_Autosuper (_M_Type_) :
            # end def foo
     """
 
-    def __init__ (cls, name, bases, dict, ** kw) :
-        super (M_Autosuper, cls).__init__ (name, bases, dict, ** kw)
+    def __init__ (cls, name, bases, dict) :
+        super (M_Autosuper, cls).__init__ (name, bases, dict)
         _super_n = cls._m_mangled_attr_name ("super")
         _super_v = super (cls)
         if __debug__ :
@@ -229,8 +227,8 @@ class M_Autoproperty (_M_Type_) :
          the class if `p` provides a callable `init_instance` attribute.
     """
 
-    def __init__ (cls, name, bases, dict, ** kw) :
-        super (M_Autoproperty, cls).__init__ (name, bases, dict, ** kw)
+    def __init__ (cls, name, bases, dict) :
+        super (M_Autoproperty, cls).__init__ (name, bases, dict)
         prop_name  = cls._m_mangled_attr_name ("properties")
         properties = {}
         classes    = [cls] + list (bases)
@@ -264,8 +262,8 @@ class M_Automethodwrap (_M_Type_) :
        classmethod), or TFL.Meta.Class_and_Instance_Method).
     """
 
-    def __init__ (cls, name, bases, dict, ** kw) :
-        super (M_Automethodwrap, cls).__init__ (name, bases, dict, ** kw)
+    def __init__ (cls, name, bases, dict) :
+        super (M_Automethodwrap, cls).__init__ (name, bases, dict)
         cls._m_autowrap (bases, dict)
     # end def __init__
 
