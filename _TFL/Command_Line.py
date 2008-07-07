@@ -164,6 +164,7 @@
 #     8-May-2008 (CT) Changed to use new-style classes
 #     8-May-2008 (CT) Cleanups
 #    30-Jun-2008 (CT) `Opt_L.__init__` added
+#    30-Jun-2008 (CT) `Opt_D` added
 #    ««revision-date»»···
 #--
 
