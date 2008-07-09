@@ -94,6 +94,15 @@
 #    25-May-2008 (MG) `_setup_url_resolver` fixed to work without a parent as
 #                     well
 #    27-May-2008 (CT) `translator` added
+#     8-Jul-2008 (CT) `implicit` added
+#     8-Jul-2008 (CT) `Root.universal_view` and `Root.page_from_href` added
+#     9-Jul-2008 (CT) `_get_child` added to `_Site_Entity_`, `Gallery`, and
+#                     `Dir`
+#     9-Jul-2008 (CT) `Gallery` changed to consider `delegation_view`
+#     9-Jul-2008 (CT) `_Dir_.rendered` added
+#     9-Jul-2008 (CT) Default for `delegation_view` moved from `Dir` to `Root`
+#                     (and handling changed to allow `True` for
+#                     `delegation_view`, too)
 #    ««revision-date»»···
 #--
 
@@ -119,15 +128,11 @@ from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 import textwrap
 import time
 
-
-### To-Do:
-### - Dyn_Dir
-
 class _Meta_ (TFL.Meta.Object.__class__) :
 
     def __call__ (cls, * args, ** kw) :
         result = super (_Meta_, cls).__call__ (* args, ** kw)
-        if result.href is not None :
+        if result.href is not None and not result.implicit :
             result.top.Table [result.href] = result
         return result
     # end def __call__
@@ -145,6 +150,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     title           = ""
     url_patterns    = ()
 
+    implicit        = False
     parent          = None
     view            = None
 
@@ -266,6 +272,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return v
     # end def _formatted_attr
 
+    def _get_child (self, child, * grandchildren) :
+        if child == self.name and not grandchildren :
+            return self
+    # end def _get_child
+
     def _setup_url_resolver (self, parent, kw) :
         url_resolver = kw.get ("url_resolver")
         if url_resolver :
@@ -339,17 +350,23 @@ class Gallery (Page) :
         self._photos  = []
         self._thumbs  = []
         base          = Filename (pic_dir).base
-        self.name     = "%s.html" % (base, )
+        if self.top.delegation_view :
+            self.name = pjoin (base, u"")
+        else :
+            self.name = "%s.html" % (base, )
         self.__super.__init__ (parent, pic_dir = pic_dir, ** kw)
         self.src_dir  = self.prefix = pjoin (parent.prefix, base)
     # end def __init__
 
     @Once_Property
     def href (self) :
-        href = pjoin (self.parent.prefix, self.name)
+        result = ""
+        href   = pjoin (self.parent.prefix, self.name)
         if href :
-            return pnorm (href)
-        return ""
+            result = pnorm (href)
+            if self.top.delegation_view :
+                result = pjoin (result, "")
+        return result
     # end def href
 
     @property
@@ -365,6 +382,13 @@ class Gallery (Page) :
             self._read_entries ()
         return self._thumbs
     # end def thumbnails
+
+    def _get_child (self, child, * grandchildren) :
+        if not grandchildren :
+            for p in self.photos :
+                if child == p.name :
+                    return p
+    # end def _get_child
 
     def _read_entries (self) :
         photos = self._photos
@@ -404,7 +428,8 @@ class Gallery (Page) :
 
 class _Photo_ (Page) :
 
-    _size     = None
+    implicit        = True
+    _size           = None
 
     def __init__ (self, name, src, parent, ** kw) :
         self.__super.__init__ (name = name, src = src, parent = parent, ** kw)
@@ -463,12 +488,11 @@ class _Dir_ (_Site_Entity_) :
 
     dir             = ""
     sub_dir         = ""
-    delegation_view = None
 
     def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
         self._entries = []
-        if self.delegation_view :
+        if callable (self.delegation_view) :
             resolver = self.url_resolver
             resolver.prepend_pattern \
                 ( DJO.Single_Url_Pattern
@@ -497,7 +521,10 @@ class _Dir_ (_Site_Entity_) :
     def href (self) :
         if not self.delegation_view :
             if self._entries :
-                return first (self.own_links).href
+                try :
+                    return first (self.own_links).href
+                except IndexError :
+                    pass
         return pjoin (self.prefix, u"")
     # end def href
 
@@ -572,12 +599,30 @@ class _Dir_ (_Site_Entity_) :
     def new_sub_dir (self, sub_dir, ** kw) :
         Type    = kw.pop ("Type", self.__class__)
         entries = kw.pop ("_entries", None)
-        src_dir = pjoin (self.src_dir, sub_dir)
-        result  = Type (src_dir, parent = self, sub_dir = sub_dir, ** kw)
+        src_dir = pjoin  (self.src_dir, sub_dir)
+        result  = Type   (src_dir, parent = self, sub_dir = sub_dir, ** kw)
         if entries :
             result.add_entries (entries)
         return result
     # end def new_sub_dir
+
+    def rendered (self, context = None) :
+        try :
+            page = first (self.own_links)
+        except IndexError :
+            pass
+        else :
+            return page.rendered (context)
+    # end def rendered
+
+    def _get_child (self, child, * grandchildren) :
+        for owl in self.own_links :
+            if owl.name in (child, pjoin (child, "/")) :
+                if not grandchildren :
+                    return owl
+                else :
+                    return owl._get_child (* grandchildren)
+    # end def _get_child
 
     def __str__ (self) :
         return "%s; href : %r, %s" % \
@@ -604,12 +649,13 @@ class Dir (_Dir_) :
 class Root (_Dir_) :
 
     copyright_start = None
+    delegation_view = None
     name            = "/"
     owner           = None
     src_root        = ""
     translator      = None
 
-    _dump_type = "DJO.Navigation.Root.from_dict_list \\"
+    _dump_type      = "DJO.Navigation.Root.from_dict_list \\"
 
     def __init__ (self, src_dir, ** kw) :
         _Site_Entity_.top = self
@@ -630,6 +676,37 @@ class Root (_Dir_) :
             result.add_entries (entries, Dir_Type = Dir_Type)
         return result
     # end def from_dict_list
+
+    @classmethod
+    def page_from_href (cls, href) :
+        result = None
+        if href in cls.top.Table :
+            result = cls.top.Table [href]
+        else :
+            tail = []
+            while href :
+                href, _ = TFL.sos.path.split (href)
+                tail.append (_)
+                try :
+                    d = cls.top.Table [pjoin (href, u"")]
+                except KeyError :
+                    pass
+                else :
+                    result = d._get_child (* reversed (tail))
+                    if result :
+                        break
+        return result
+    # end def page_from_href
+
+    @classmethod
+    def universal_view (cls, request) :
+        from django.http import HttpResponse, Http404
+        href = request.path [1:]
+        page = cls.page_from_href (href)
+        if page :
+            return HttpResponse (unicode (page.rendered (), page.encoding))
+        raise Http404
+    # end def universal_view
 
 # end class Root
 

@@ -27,15 +27,17 @@
 #
 # Revision Dates
 #    23-May-2008 (CT) Creation
+#     8-Jul-2008 (CT) `to_response` added
 #    ««revision-date»»···
 #--
 
-from   _TFL              import TFL
-from   _DJO              import DJO
+from   _TFL                   import TFL
+from   _DJO                   import DJO
 
-from   _TFL.Regexp       import *
+from   _TFL.Regexp            import *
 
-from django.template.loader import render_to_string
+from   django.template.loader import render_to_string
+from   django.http            import HttpResponse
 
 remove_blank_lines = Multi_Re_Replacer \
     ( Re_Replacer
@@ -49,6 +51,10 @@ remove_blank_lines = Multi_Re_Replacer \
     , Re_Replacer
         ("[ \t]*\n(?:[ \t]*\n)*[ \t]*(/?)>", r" \1>",  re.MULTILINE)
     )
+
+def to_response (template, context, encoding = None) :
+    return HttpResponse (to_string (template, context, encoding))
+# end def to_response
 
 def to_string (template, context, encoding = None) :
     result = render_to_string (template, context)
