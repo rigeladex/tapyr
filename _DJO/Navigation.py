@@ -313,7 +313,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
         from django.http     import HttpResponse
         from django.template import RequestContext
         context = RequestContext (request, dict (page = self))
-        return HttpResponse (unicode (self.rendered (context), self.encoding))
+        result  = self.rendered  (context)
+        if isinstance (result, str) :
+            result = unicode (result, self.encoding)
+        if not isinstance (result, HttpResponse) :
+            result = HttpResponse (result)
+        return result
     # end def _view
 
     def __getattr__ (self, name) :
@@ -826,7 +831,53 @@ class Dyn_Slice_ReST_Dir (_Site_Entity_) :
 class Model_Admin (Page) :
     """Model an admin page for a specific Django model class."""
 
-    template = "model_admin_list.html"
+    template        = "model_admin_list.html"
+
+    template_change = "model_admin_change.html"
+
+    class Creator (_Site_Entity_) :
+
+        implicit    = True
+        name        = "create"
+        template    = "model_admin_create.html"
+
+        def rendered (self, context = None) :
+            request = context ["request"]
+            if request.method == "POST":
+                form = self.Form (request.POST)
+                if form.is_valid ():
+                    from django.http import HttpResponseRedirect
+                    has_field = self.Form.base_fields.has_key
+                    with form.object_to_save () as result :
+                        if has_field ("creator") and not result.creator :
+                            if request.user.is_authenticated () :
+                                result.creator = request.user
+                    return HttpResponseRedirect \
+                        ("%s#%s" % (self.parent.abs_href, result.id))
+            else :
+                form = self.Form ()
+            context ["form"] = form
+            return self.__super.rendered (context)
+        # end def rendered
+
+    # end class Creator
+
+    class Deleter (_Site_Entity_) :
+
+        implicit    = True
+        name        = "delete"
+        template    = "model_admin_delete.html"
+
+        def _view (self, request) :
+            from django.http import HttpResponseRedirect
+            obj_id = self.obj_id
+            obj    = self.Model.objects.get (id = obj_id)
+            obj.delete ()
+            ### XXX ??? Feedback ???
+            return HttpResponseRedirect (self.parent.abs_href)
+        # end def _view
+
+    # end class Deleter
 
     class Field (TFL.Meta.Object) :
 
@@ -875,8 +926,13 @@ class Model_Admin (Page) :
         # end def fields
 
         @Once_Property
-        def href (self) :
+        def href_change (self) :
             return self.admin.href_change (self.obj)
+        # end def href_change
+
+        @Once_Property
+        def href_delete (self) :
+            return self.admin.href_delete (self.obj)
         # end def href
 
         def __getattr__ (self, name) :
@@ -900,12 +956,17 @@ class Model_Admin (Page) :
         self.__super.__init__ (Model = Model, ** kw)
     # end def __init__
 
-    def href_add (self) :
-        return pjoin (self.href, "add")
-    # end def href_add
+    @Once_Property
+    def href (self) :
+        return pjoin (self.parent.prefix, self.name, u"")
+    # end def href
+
+    def href_create (self) :
+        return pjoin (self.abs_href, "create")
+    # end def href_create
 
     def href_change (self, obj) :
-        return pjoin (self.href, str (obj.id))
+        return pjoin (self.abs_href, "change", str (obj.id))
     # end def href_change
 
     def href_delete (self, obj) :
@@ -947,6 +1008,13 @@ class Model_Admin (Page) :
             )
         return result
     # end def _auto_form
+
+    def _get_child (self, child, * grandchildren) :
+        if child == "create" and not grandchildren :
+            return self.Creator (parent = self)
+        if child == "delete" and len (grandchildren) == 1 :
+            return self.Deleter (parent = self, obj_id = grandchildren [0])
+    # end def _get_child
 
 # end class Model_Admin
 
