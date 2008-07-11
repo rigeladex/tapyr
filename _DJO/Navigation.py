@@ -103,6 +103,9 @@
 #     9-Jul-2008 (CT) Default for `delegation_view` moved from `Dir` to `Root`
 #                     (and handling changed to allow `True` for
 #                     `delegation_view`, too)
+#    10-Jul-2008 (CT) `_view` factored from `universal_view`
+#    10-Jul-2008 (CT) `Model_Admin` started
+#    11-Jul-2008 (CT) `Model_Admin` continued
 #    ««revision-date»»···
 #--
 
@@ -125,6 +128,8 @@ import _TFL._Meta.Object
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
+import datetime
+import django
 import textwrap
 import time
 
@@ -303,6 +308,13 @@ class _Site_Entity_ (TFL.Meta.Object) :
             self.url_resolver.set_nav (self)
         return url_resolver
     # end def _setup_url_resolver
+
+    def _view (self, request) :
+        from django.http     import HttpResponse
+        from django.template import RequestContext
+        context = RequestContext (request, dict (page = self))
+        return HttpResponse (unicode (self.rendered (context), self.encoding))
+    # end def _view
 
     def __getattr__ (self, name) :
         if self.parent is not None :
@@ -700,12 +712,11 @@ class Root (_Dir_) :
 
     @classmethod
     def universal_view (cls, request) :
-        from django.http import HttpResponse, Http404
         href = request.path [1:]
         page = cls.page_from_href (href)
         if page :
-            return HttpResponse (unicode (page.rendered (), page.encoding))
-        raise Http404
+            return page._view (request)
+        raise django.http.Http404
     # end def universal_view
 
 # end class Root
@@ -811,6 +822,133 @@ class Dyn_Slice_ReST_Dir (_Site_Entity_) :
     # end def _read_entries
 
 # end class Dyn_Slice_ReST_Dir
+
+class Model_Admin (Page) :
+    """Model an admin page for a specific Django model class."""
+
+    template = "model_admin_list.html"
+
+    class Field (TFL.Meta.Object) :
+
+        def __init__ (self, instance, name) :
+            self.instance = instance
+            self.name     = name
+            self.field    = instance.admin.Model._meta.get_field (name)
+            self.value    = getattr (instance.obj, name)
+        # end def __init__
+
+        @Once_Property
+        def formatted (self) :
+            from django.conf import settings
+            v = self.value
+            if isinstance (v, datetime.datetime) :
+                v = v.strftime ("%Y/%m/%d %H:%M")
+            elif isinstance (v, datetime.date) :
+                v = v.strftime ("%Y/%m/%d")
+            elif isinstance (v, (tuple, list)) :
+                v = ", ".join (str (e) for e in v)
+            elif isinstance (v, float) :
+                v = "%.2f" % v
+            elif v is None :
+                v = ""
+            return v
+        # end def formatted
+
+        def __unicode__ (self) :
+            return self.formatted
+        # end def __unicode__
+
+    # end class Field
+
+    class Instance (TFL.Meta.Object) :
+
+        def __init__ (self, admin, obj) :
+            self.admin = admin
+            self.obj   = obj
+        # end def __init__
+
+        @Once_Property
+        def fields (self) :
+            admin = self.admin
+            F     = admin.Field
+            return [F (self, f) for f in admin.list_display]
+        # end def fields
+
+        @Once_Property
+        def href (self) :
+            return self.admin.href_change (self.obj)
+        # end def href
+
+        def __getattr__ (self, name) :
+            try :
+                return getattr (self.obj, name)
+            except AttributeError :
+                return getattr (self.obj._meta, name)
+        # end def __getattr__
+
+        def __iter__ (self) :
+            return iter (self.fields)
+        # end def __iter__
+
+    # end class Instance
+
+    def __init__ (self, Model, ** kw) :
+        if "Form" not in kw :
+            kw ["Form"] = self._auto_form (Model, kw)
+        if "list_display" not in kw :
+            kw ["list_display"] = self._auto_list_display (Model, kw)
+        self.__super.__init__ (Model = Model, ** kw)
+    # end def __init__
+
+    def href_add (self) :
+        return pjoin (self.href, "add")
+    # end def href_add
+
+    def href_change (self, obj) :
+        return pjoin (self.href, str (obj.id))
+    # end def href_change
+
+    def href_delete (self, obj) :
+        return pjoin (self.href, "delete", str (obj.id))
+    # end def href_delete
+
+    def rendered (self, context = None) :
+        M        = self.Model
+        Instance = self.Instance
+        field    = M._meta.get_field
+        if context is None :
+            context = dict (page = self)
+        context.update \
+            ( dict
+                ( fields       =
+                    [field (f) for f in self.list_display]
+                , objects      =
+                    [Instance (self, o) for o in self.Model.objects.all ()]
+                , Meta         = M._meta
+                , Model        = M
+                , Model_Name   = M._meta.verbose_name
+                , Model_Name_s = M._meta.verbose_name_plural
+                )
+            )
+        return self.__super.rendered (context)
+    # end def rendered
+
+    def _auto_list_display (self, Model, kw) :
+        return [f.name for f in Model._meta.fields]
+    # end def _auto_list_display
+
+    def _auto_form (self, Model, kw) :
+        from django.newforms import ModelForm
+        name   = Model.__name__
+        result = ModelForm.__class__ \
+            ( "%s_Form" % name
+            , (ModelForm, )
+            , dict (Meta = type ("Meta", (object, ), dict (model = Model)))
+            )
+        return result
+    # end def _auto_form
+
+# end class Model_Admin
 
 if __name__ != "__main__":
     DJO._Export_Module ()
