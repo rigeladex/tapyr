@@ -833,34 +833,37 @@ class Model_Admin (Page) :
 
     template        = "model_admin_list.html"
 
-    template_change = "model_admin_change.html"
+    class Changer (_Site_Entity_) :
 
-    class Creator (_Site_Entity_) :
-
-        implicit    = True
-        name        = "create"
-        template    = "model_admin_create.html"
+        implicit     = True
+        name         = "create"
+        obj_id       = None
+        template     = "model_admin_change.html"
 
         def rendered (self, context = None) :
-            request = context ["request"]
+            request  = context ["request"]
+            obj      = context ["instance"] = None
+            if self.obj_id :
+                obj  = self.Model.objects.get (id = self.obj_id)
             if request.method == "POST":
-                form = self.Form (request.POST)
-                if form.is_valid ():
+                form = self.Form (request.POST, instance = obj)
+                if form.is_valid () :
                     from django.http import HttpResponseRedirect
-                    has_field = self.Form.base_fields.has_key
                     with form.object_to_save () as result :
-                        if has_field ("creator") and not result.creator :
+                        if hasattr (result, "creator") and not result.creator :
                             if request.user.is_authenticated () :
                                 result.creator = request.user
                     return HttpResponseRedirect \
-                        ("%s#%s" % (self.parent.abs_href, result.id))
+                        ("%s#pk-%s" % (self.parent.abs_href, result.id))
+            elif obj :
+                form = self.Form (instance = obj)
             else :
                 form = self.Form ()
             context ["form"] = form
             return self.__super.rendered (context)
         # end def rendered
 
-    # end class Creator
+    # end class Changer
 
     class Deleter (_Site_Entity_) :
 
@@ -1010,8 +1013,10 @@ class Model_Admin (Page) :
     # end def _auto_form
 
     def _get_child (self, child, * grandchildren) :
+        if child == "change" and len (grandchildren) == 1 :
+            return self.Changer (parent = self, obj_id = grandchildren [0])
         if child == "create" and not grandchildren :
-            return self.Creator (parent = self)
+            return self.Changer (parent = self)
         if child == "delete" and len (grandchildren) == 1 :
             return self.Deleter (parent = self, obj_id = grandchildren [0])
     # end def _get_child
