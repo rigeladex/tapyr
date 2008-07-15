@@ -1025,12 +1025,11 @@ class Site_Admin (Dir) :
 
     def __init__ (self, src_dir, parent, ** kw) :
         models   = kw.pop ("models")
-        _entries = kw.pop ("_entries", [])
-        assert not (models and _entries)
         self.__super.__init__ (src_dir, parent, ** kw)
+        entries = []
         for m in models :
             name  = m._meta.verbose_name_plural
-            desc  = "Admin for %s" % name
+            desc  = "%s: %s" % (self.desc, name)
             d     = dict \
                 ( name         = name
                 , title        = name
@@ -1040,8 +1039,8 @@ class Site_Admin (Dir) :
                 )
             if hasattr (m, "admin_args") :
                 d.update (m.admin_args)
-            _entries.append (d)
-        self.add_entries (_entries)
+            entries.append (d)
+        self.add_entries (entries)
     # end def __init__
 
     def rendered (self, context = None) :
