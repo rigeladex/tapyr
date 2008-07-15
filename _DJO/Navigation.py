@@ -106,6 +106,9 @@
 #    10-Jul-2008 (CT) `_view` factored from `universal_view`
 #    10-Jul-2008 (CT) `Model_Admin` started
 #    11-Jul-2008 (CT) `Model_Admin` continued
+#    15-Jul-2008 (CT) Use `DJO.Model_Form` instead of plain old
+#                     newsforms.Model_Form
+#    15-Jul-2008 (CT) `Site_Admin` added
 #    ««revision-date»»···
 #--
 
@@ -893,7 +896,11 @@ class Model_Admin (Page) :
 
         @Once_Property
         def formatted (self) :
-            return self.field.as_string (self.value)
+            try :
+                f = self.field.as_string
+            except AttributeError :
+                f = str
+            return f (self.value)
         # end def formatted
 
         def __unicode__ (self) :
@@ -986,17 +993,16 @@ class Model_Admin (Page) :
     # end def rendered
 
     def _auto_list_display (self, Model, kw) :
-        return [f.name for f in Model._meta.fields]
+        return [f.name for f in Model._meta.fields if f.editable]
     # end def _auto_list_display
 
     def _auto_form (self, Model, kw) :
-        from django.newforms import ModelForm
-        name   = Model.__name__
-        result = ModelForm.__class__ \
-            ( "%s_Form" % name
-            , (ModelForm, )
-            , dict (Meta = type ("Meta", (object, ), dict (model = Model)))
-            )
+        import _DJO.Forms
+        Form_Type = kw.get ("Form", DJO.Model_Form)
+        form_name = "%s_Form" % Model.__name__
+        form_dict = dict \
+            (Meta = type ("Meta", (object, ), dict (model = Model)))
+        result = Form_Type.__class__ (form_name, (Form_Type, ), form_dict)
         return result
     # end def _auto_form
 
@@ -1010,6 +1016,46 @@ class Model_Admin (Page) :
     # end def _get_child
 
 # end class Model_Admin
+
+class Site_Admin (Dir) :
+    """Model an admin page for a Django site."""
+
+    Page            = Model_Admin
+    template        = "site_admin.html"
+
+    def __init__ (self, src_dir, parent, ** kw) :
+        models   = kw.pop ("models")
+        _entries = kw.pop ("_entries", [])
+        assert not (models and _entries)
+        self.__super.__init__ (src_dir, parent, ** kw)
+        for m in models :
+            name  = m._meta.verbose_name_plural
+            desc  = "Admin for %s" % name
+            d     = dict \
+                ( name         = name
+                , title        = name
+                , desc         = desc
+                , Model        = m
+                , Type         = Model_Admin
+                )
+            if hasattr (m, "admin_args") :
+                d.update (m.admin_args)
+            _entries.append (d)
+        self.add_entries (_entries)
+    # end def __init__
+
+    def rendered (self, context = None) :
+        if context is None :
+            context = dict (page = self)
+        context.update \
+            ( dict
+                ( models = [(m.name, m.abs_href) for m in self.own_links]
+                )
+            )
+        return _Site_Entity_.rendered (self, context)
+    # end def rendered
+
+# end class Site_Admin
 
 if __name__ != "__main__":
     DJO._Export_Module ()

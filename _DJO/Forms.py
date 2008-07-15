@@ -31,6 +31,7 @@
 #     2-Jan-2008 (MG) Sort order of non model fields changed
 #    10-Jan-2008 (MG) Support `anchors` in the `*Redirect` classes
 #    30-Jun-2008 (CT) `object_to_save` added to `BaseModelForm`
+#    15-Jul-2008 (CT) `Model_Form` added
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ from   django.db.models.base       import Model
 from   django.db.models.manager    import Manager
 import django.newforms             as     forms
 from   django.newforms.forms       import BoundField
-from   django.newforms.models      import BaseModelForm
+from   django.newforms.models      import BaseModelForm, ModelForm
 from   django.utils.translation    import gettext_lazy as _
 import copy
 
@@ -442,6 +443,27 @@ def object_to_save (self) :
         obj.save      ()
         self.save_m2m ()
 # end def object_to_save
+
+class M_Model_Form (TFL.Meta.M_Class, ModelForm.__class__) :
+    """Meta class for model forms with support for `.__super` and
+       `_real_name`.
+    """
+# end class M_Model
+
+class _DJO_Model_Form_ (ModelForm) :
+
+    __metaclass__ = M_Model_Form
+    _real_name    = "Model_Form"
+    _djo_clean    = None
+
+    def clean (self) :
+        result = self.__super.clean ()
+        if callable (self._djo_clean) :
+            result = self._djo_clean (result)
+        return result
+    # end def clean
+
+Model_Form = _DJO_Model_Form_ # end class
 
 if __name__ != "__main__" :
     DJO._Export ("*")

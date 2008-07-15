@@ -74,6 +74,9 @@ class _DJO_Field_ (DM.Field) :
     def formfield (self, ** kw) :
         defaults = dict ()
         if self.Widget :
+            ### XXX ???
+            ### - instantiate `Widget`
+            ### - pass `self` (cf. `_D_Widget_`)
             defaults.update (widget = self.Widget)
         defaults.update (kw)
         return self.__super.formfield (** defaults)
