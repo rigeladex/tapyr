@@ -1001,7 +1001,17 @@ class Model_Admin (Page) :
         Form_Type = kw.get ("Form", DJO.Model_Form)
         form_name = "%s_Form" % Model.__name__
         form_dict = dict \
-            (Meta = type ("Meta", (object, ), dict (model = Model)))
+            ( Meta = type
+                ( "Meta", (object, )
+                , dict
+                    ( exclude = kw.get ("exclude")
+                    , fields  = kw.get ("fields")
+                    , model   = Model
+                    )
+                )
+            )
+        if "_djo_clean" in kw :
+            form_dict ["_djo_clean"] = kw ["_djo_clean"]
         result = Form_Type.__class__ (form_name, (Form_Type, ), form_dict)
         return result
     # end def _auto_form
