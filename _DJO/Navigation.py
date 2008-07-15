@@ -893,19 +893,7 @@ class Model_Admin (Page) :
 
         @Once_Property
         def formatted (self) :
-            from django.conf import settings
-            v = self.value
-            if isinstance (v, datetime.datetime) :
-                v = v.strftime ("%Y/%m/%d %H:%M")
-            elif isinstance (v, datetime.date) :
-                v = v.strftime ("%Y/%m/%d")
-            elif isinstance (v, (tuple, list)) :
-                v = ", ".join (str (e) for e in v)
-            elif isinstance (v, float) :
-                v = "%.2f" % v
-            elif v is None :
-                v = ""
-            return v
+            return self.field.as_string (self.value)
         # end def formatted
 
         def __unicode__ (self) :

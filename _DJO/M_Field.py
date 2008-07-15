@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Jul-2008 (CT) Creation
+#    15-Jul-2008 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -35,10 +36,12 @@ import _TFL._Meta.M_Class
 
 from   _DJO                               import DJO
 
-from   django.db                          import models as DM
+from   django.db                          import models       as DM
+from   django.newforms                    import widgets
 from   django.utils.translation           import gettext_lazy as _
 
 import datetime
+import time
 
 class M_Field (TFL.Meta.M_Class, DM.Field.__class__) :
     """Meta class for model fields with support for `.__super` and
@@ -64,7 +67,7 @@ class _DJO_Field_ (DM.Field) :
 
     def as_string (self, value) :
         if value is not None :
-            return self.output_format % (s, )
+            return self.output_format % (value, )
         return ""
     # end def as_string
 
@@ -107,11 +110,28 @@ class Char (Field, DM.CharField) :
     pass
 # end class Char
 
+class _D_Widget_ (widgets.TextInput) :
+
+    def __init__ (self, attrs=None, field=None) :
+        super (_D_Widget_, self).__init__ (attrs)
+        self.field = field
+    # end def __init__
+
+    def render (self, name, value, attrs = None) :
+        if self.field :
+            value = self.field.as_string (value)
+        return super (_D_Widget_, self).render (name, value, attrs)
+    # end def render
+
+# end class _D_Widget_
+
 class _Date_ (Field) :
 
-    input_formats  = ("%Y/%m/%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
+    input_formats  = ("%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
     _output_format = None
     _tuple_off     = 0
+
+    Widget         = _D_Widget_
 
     def __init__ (self, * args, ** kw) :
         if "input_formats" in kw :
@@ -130,7 +150,7 @@ class _Date_ (Field) :
         try :
             value.strftime
         except AttributeError :
-            result = value
+            result = value or ""
         else :
             result = value.strftime (self.output_format)
         return result
@@ -151,8 +171,8 @@ class _Date_ (Field) :
 
     def formfield (self, ** kw) :
         defaults = dict \
-            ( format        = self.output_format ### XXX ???
-            , input_formats = self.input_formats
+            ( input_formats = self.input_formats
+            , widget        = self.Widget (field = self)
             )
         defaults.update (kw)
         return self.__super.formfield (** defaults)
@@ -161,11 +181,49 @@ class _Date_ (Field) :
 # end class _Date_
 
 class Date (_Date_, DM.DateField) :
+    """
+       >>> df = Date ()
+       >>> df.from_string ("2008/04/30")
+       datetime.date(2008, 4, 30)
+       >>> df.from_string ("20080430")
+       datetime.date(2008, 4, 30)
+       >>> df.from_string ("2008-04-30")
+       datetime.date(2008, 4, 30)
+       >>> df.from_string ("30/4/2008")
+       datetime.date(2008, 4, 30)
+       >>> df.from_string ("30.4.2008")
+       datetime.date(2008, 4, 30)
+       >>> d=df.from_string ("20080430")
+       >>> df.as_string (d)
+       '2008/04/30'
+       >>> df.from_string ("2008/04/31")
+       ...
+       ValueError: 2008/04/31
+    """
 
     _tuple_len     = 3
     _DT_Type       = datetime.date
 
 # end class Date
+
+class Date_Time (_Date_, DM.DateTimeField) :
+
+    input_formats  = \
+      ( "%Y/%m/%d %H:%M:%S"
+      , "%Y/%m/%d %H:%M"
+      , "%Y%m%d %H:%M:%S"
+      , "%Y%m%d %H:%M"
+      , "%Y-%m-%d %H:%M:%S"
+      , "%Y-%m-%d %H:%M"
+      , "%d/%m/%Y %H:%M:%S"
+      , "%d/%m/%Y %H:%M"
+      , "%d.%m.%Y %H:%M:%S"
+      , "%d.%m.%Y %H:%M"
+      ) + _Date_.input_formats
+    _tuple_len     = 6
+    _DT_Type       = datetime.datetime
+
+# end class Date_Time
 
 class Decimal (Field, DM.DecimalField) :
 
@@ -194,7 +252,7 @@ class File_Path (Field, DM.FilePathField) :
     pass
 # end class File_Path
 
-class Float (Field, DM.FieldField) :
+class Float (Field, DM.FloatField) :
 
     output_format = "%.2f"
 
