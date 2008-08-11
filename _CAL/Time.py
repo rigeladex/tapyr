@@ -36,6 +36,7 @@
 #    11-Nov-2007 (CT) `from_decimal_hours` factored
 #    13-Nov-2007 (CT) `as_degrees` added
 #    14-Nov-2007 (CT) `hh_mm` added
+#     4-Aug-2008 (MG) `from_string` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _CAL                     import CAL
 from   _TFL                     import TFL
 import _CAL._DTW_
 import _TFL.Accessor
+from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 
 import  datetime
@@ -87,6 +89,15 @@ class Time (CAL._DTW_) :
        180.0
        >>> Time (23, 59, 0, 0).as_degrees
        359.75
+
+       >>> Time.from_string ("12:00")
+       Time (12, 0, 0, 0)
+       >>> Time.from_string ("12:01")
+       Time (12, 1, 0, 0)
+       >>> Time.from_string ("12:01:02")
+       Time (12, 1, 2, 0)
+       >>> Time.from_string ("12:01:03.12678")
+       Time (12, 1, 3, 12678)
     """
 
     _Type            = datetime.time
@@ -99,6 +110,14 @@ class Time (CAL._DTW_) :
     minute           = property (TFL.Getter._body.minute)
     second           = property (TFL.Getter._body.second)
     microsecond      = property (TFL.Getter._body.microsecond)
+
+    pattern          = Regexp \
+        ( "  (?P<hour>\d{1,2})"
+          ": (?P<minute>\d{1,2})"
+          "(: (?P<second>\d{1,2})"
+          "(. (?P<microsecond>\d+))?)?"
+        , re.X
+        )
 
     from _CAL.Delta import Time_Delta as Delta
 
@@ -140,6 +159,17 @@ class Time (CAL._DTW_) :
         """
         return cls.from_decimal_hours ((degrees % 360.0) / 15.0)
     # end def from_degrees
+
+    @classmethod
+    def from_string (cls, s) :
+        if cls.pattern.match (s) :
+            kw = dict \
+                (   (n, int (v or "0"))
+                for (n, v) in cls.pattern.groupdict ().iteritems ()
+                )
+            return cls (** kw)
+        raise ValueError (s)
+    # end def from_string
 
     @Once_Property
     def hh_mm (self) :

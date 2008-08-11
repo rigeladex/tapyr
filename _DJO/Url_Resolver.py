@@ -329,8 +329,6 @@ def delegate_directory_root (request, ** kw) :
     page     = kw.get (DJO.Url_Pattern.active_page_parameter_name)
     entry    = page._entries [0]
     rel_path = entry.relative_to (page.url_resolver.nav_href)
-    print "In %s -> delegate to %s (%s)" % \
-        (page.title, entry.abs_href, rel_path)
     ### this wouldn't need to duplicate part of the code of
     ### django.core.urlresolvers.RegexURLResolver (the duplicated code is in
     ### DJO.Url_Resolver.try_patterns) but on the other hand this version
