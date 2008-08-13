@@ -41,10 +41,14 @@
 #     5-Feb-2008 (CT) Support for `FBiG` added
 #    18-Feb-2008 (CT) s/_Base/_Base_/g
 #    18-Feb-2008 (CT) `_IFB_`, `IFB`, and `FBiG` factored
+#    12-Aug-2008 (CT) `p_konto` added
+#    13-Aug-2008 (CT) `_write_entry` changed to only write `e.ifb.value` if
+#                     `ifb` is still alive (and output formatting corrected)
 #    ««revision-date»»···
 #--
 
 from _ATAX.accounting import *
+from _ATAX.accounting import _Entry_
 from _TFL.Regexp      import *
 
 class _Base_ (TFL.Meta.Object) :
@@ -109,7 +113,7 @@ class IFB (_IFB_) :
 
 # end class IFB
 
-class Anlagen_Entry (_Base_) :
+class Anlagen_Entry (_Base_, _Entry_) :
 
     rate_pattern   = r"(?P<rate> [-+*/().0-9\s]+)"
     first_rate_pat = Regexp (rate_pattern, re.X)
@@ -128,6 +132,7 @@ class Anlagen_Entry (_Base_) :
             print line
             raise
         final                = "31.12.2037"
+        self.p_konto         = self._get_p_konto (self.flags)
         self.birth_time      = Date (self.birth_date)
         self.death_time      = Date (self.death_date or final)
         self.alive           = self.death_time > anlagenverzeichnis.tail_time
@@ -396,7 +401,9 @@ class Anlagenverzeichnis (_Base_) :
                   % ( e.supplier
                     , "Abgang"
                     , e.death_time.formatted ("%d.%m.%y")
-                    , ifb_indicator, e.ifb.value, ("", "ewig") ["=" in e.flags]
+                    , ifb_indicator
+                    , ("", e.ifb.value.as_string_s ()) [bool (e.ifb)]
+                    , ("", "ewig") ["=" in e.flags]
                     , e.out_value
                     , ""
                     )
@@ -416,20 +423,23 @@ class Anlagenverzeichnis (_Base_) :
     # end def update_accounts
 
     def _update_account_entry (self, e, file) :
+        cat = "fe"
+        if e.p_konto :
+            cat = "%sP[%s]" % (cat, e.p_konto)
         if e.current_depreciation :
             file.write \
                 ( self.account_format
-                % (e.current_depreciation, 7800, "fe", "Afa",      e.desc)
+                % (e.current_depreciation, 7800, cat, "Afa",      e.desc)
                 )
         if e.ifb and e.ifb.is_new and e.ifb.account :
             file.write \
                 ( self.account_format
-                % (e.ifb.value,   e.ifb.account, "fe", e.ifb.abbr, e.desc)
+                % (e.ifb.value,   e.ifb.account, cat, e.ifb.abbr, e.desc)
                 )
         if not e.alive :
             file.write \
                 ( self.account_format
-                % (e.out_value,            7801, "fe", "Abgang",   e.desc)
+                % (e.out_value,            7801, cat, "Abgang",   e.desc)
                 )
     # end def _update_account_entry
 

@@ -135,6 +135,7 @@
 #                      (requested by E. Pichler-Fruhstorfer)
 #                      Fix gkonto description for rev. Charge (cut & paste error) in finish
 #    11-Apr-2008 (RSC) fix printing of entry if "dir" includes "~"
+#    12-Aug-2008 (CT)  `p_konto` added (and `_Entry_` factored)
 #    ««revision-date»»···
 #--
 
@@ -170,7 +171,19 @@ def underlined (text) :
     return bu.join (text) + bu
 # end def underlined
 
-class Account_Entry :
+class _Entry_ (TFL.Meta.Object) :
+
+    _p_konto_pat = Regexp (r"P\[(?P<p_konto> \d+)\]", re.VERBOSE)
+
+    def _get_p_konto (self, flags) :
+        pat = self._p_konto_pat
+        if pat.search (flags) :
+            return pat.p_konto
+    # end def _get_p_konto
+
+# end class _Entry_
+
+class Account_Entry (_Entry_) :
     """Entry of accounting file."""
 
     """Cat (several letters can be combined)::
@@ -212,6 +225,7 @@ class Account_Entry :
         self.vst_korrektur  = vst_korrektur
         self.time           = mktime             (self.dtuple)
         self.desc           = desc_strip_pat.sub ("", self.desc)
+        self.p_konto        = self._get_p_konto  (self.cat)
         self.vat_type       = ' '
         for k in 'ir' :
             if k in self.cat :
@@ -368,12 +382,13 @@ class Privatanteil (Account_Entry) :
 class Account :
     """Account for a specific time interval (e.g., month, quarter, or year)"""
 
-    Entry = Account_Entry
+    Entry          = Account_Entry
+
+    gewerbe_anteil = 0
 
     def __init__ (self, name = "", vst_korrektur = 1.0) :
         self.name           = name
         self.vst_korrektur  = vst_korrektur
-        self.gewerbe_anteil = 0
         self.entries        = []
         self.privat         = {}
         self.ignore         = set (("83003", "83013", "83006", "83016"))
@@ -926,8 +941,6 @@ class T_Account (Account) :
         self.ust_total                      = EU_Currency (0)
         self.k_entries                      = defaultdict (list)
         self.kblatt                         = defaultdict (list)
-        self.kblatt [self.vorsteuer_gkonto] = []
-        self.kblatt [self.ust_gkonto]       = []
     # end def __init__
 
     def add (self, entry) :
@@ -1056,19 +1069,26 @@ class T_Account (Account) :
                     factor  = pa / 100.0
                     p_soll  = self.soll_saldo  [k] * factor
                     p_haben = self.haben_saldo [k] * factor
-                    p_desc  = ("%2d%% Privatanteil" % (int (pa + 0.5),))
+                    p_entry = self._fix_privat_anteil \
+                        (k, pa, factor, p_soll, p_haben)
                     k_desc  = self.konto_desc.get (k, "")
-                    self.soll_saldo  [k] -= p_soll
-                    self.haben_saldo [k] -= p_haben
-                    self.ausgaben    [k] *= (1 - factor)
-                    self.einnahmen   [k] *= (1 - factor)
-                    self.konto_desc  [k]  = "%s (abz. %s)" % (k_desc, p_desc)
-                    self.kblatt [k].append \
-                        ( Privatanteil
-                            ("9200", -p_soll, -p_haben, p_desc).kontenzeile ()
-                        )
+                    self.ausgaben   [k] *= (1 - factor)
+                    self.einnahmen  [k] *= (1 - factor)
+                    self.konto_desc [k]  = "%s (abz. %s)" % \
+                        (k_desc, p_entry.desc)
                     p_vat = p_soll * 0.20
-                    self._fix_ust_privat (k, k_desc, p_vat, p_desc)
+                    self._fix_ust_privat (k, k_desc, p_vat, p_entry.desc)
+                else :
+                    for ke in self.k_entries [k] :
+                        if ke.p_konto in self.privat :
+                            pa      = self.privat [ke.p_konto]
+                            factor  = pa / 100.0
+                            p_soll  = ke.soll_betrag  * factor
+                            p_haben = ke.haben_betrag * factor
+                            self.ausgaben  [k] -= p_soll
+                            self.einnahmen [k] -= p_haben
+                            self._fix_privat_anteil \
+                                (k, pa, factor, p_soll, p_haben, ke.desc)
     # end def finish
 
     def _do_gkonto (self, ust, gkonto, saldo, txt, soll_haben, saldo2 = None) :
@@ -1079,16 +1099,25 @@ class T_Account (Account) :
                 if saldo2 is not None :
                     saldo2        [gkonto] += ust [m]
                 s, h                        = soll_haben (ust [m])
-                self.kblatt.setdefault (gkonto, []).append \
+                self.kblatt [gkonto].append \
                     (Ust_Gegenbuchung (m, gkonto, s, h, txt).kontenzeile ())
     # end def _do_gkonto
+
+    def _fix_privat_anteil (self, k, pa, factor, p_soll, p_haben, desc = "") :
+        p_desc  = ("%2d%% Privatanteil %s" % (int (pa + 0.5), desc)).strip ()
+        p_entry = Privatanteil ("9200", -p_soll, -p_haben, p_desc)
+        self.soll_saldo  [k] -= p_soll
+        self.haben_saldo [k] -= p_haben
+        self.kblatt [k].append (p_entry.kontenzeile ())
+        return p_entry
+    # end def _fix_privat_anteil
 
     def _fix_ust_privat (self, k, k_desc, p_soll, p_desc) :
         p_desc = "%s [%s (%s)]" % (p_desc, k, k_desc)
         gkonto = self.ust_gkonto
         self.buchung_zahl [gkonto] += 1
         self.haben_saldo  [gkonto] -= p_soll
-        self.kblatt.setdefault (gkonto, []).append \
+        self.kblatt [gkonto].append \
             (Privatanteil ("9200", 0, p_soll, p_desc, gkonto).kontenzeile ())
     # end def _fix_ust_privat
 
@@ -1174,9 +1203,7 @@ class T_Account (Account) :
             if ausgaben == 0                : continue
             a_total = a_total + ausgaben
             print format % \
-                ( self.konto_desc.get (k, "") [:40]
-                , ausgaben.as_string_s (), ""
-                )
+                (self.konto_desc.get (k, "") [:40], ausgaben.as_string_s (), "")
         if self.vst_korrektur != 1 :
             p_anteil = a_total * (1 - self.vst_korrektur)
             print format  % ( "", "_" * 15, "")
