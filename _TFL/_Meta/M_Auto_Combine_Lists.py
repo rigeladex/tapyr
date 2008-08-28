@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -30,13 +30,9 @@
 #    23-Jul-2004 (CT)  Creation (factored from TOM.Meta.M_Auto_Combine)
 #    13-Jul-2005 (CED) Use sets instead of dicts
 #     2-Jul-2006 (MG)  Unnecessary imports removed
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    14-Dec-2007 (MG)  Import changed
 #    ««revision-date»»···
 #--
-
-
 
 """Meta class for auto-combining the list-attributes mentioned in
 `_lists_to_combine` between a class and it's ancestors.

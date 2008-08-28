@@ -47,6 +47,7 @@
 #    18-Apr-2008 (CT)  `Decorator` decorator removed from `Add_Method` and
 #                      `Override_Method`
 #    19-Jun-2008 (CT)  `Attributed` added
+#    23-Aug-2008 (CT)  `Annotated` added
 #    ««revision-date»»···
 #--
 
@@ -102,6 +103,54 @@ def Decorator (decorator) :
         (decorator, "_globals", getattr (decorator, "__globals__", {}))
     return wrapper
 # end def Decorator
+
+_undefined = object ()
+
+def Annotated (RETURN = _undefined, ** kw) :
+    """Add dictionary `func_annotations` containing elements of `kw` and
+       value of `RETURN` bound to key `return` as proposed by
+       http://www.python.org/dev/peps/pep-3107/.
+
+       Each key of `kw` must be the name of an argument of the function to be
+       annotated.
+
+       >>> @TFL.Annotated (bar = "Arg 1", baz = 42)
+       ... def foo (bar, baz) : pass
+       ...
+       >>> sorted (foo.func_annotations.items ())
+       [('bar', 'Arg 1'), ('baz', 42)]
+       >>> @TFL.Annotated (bar = "Arg 1", baz = 42, RETURN = None)
+       ... def foo (bar, baz) : pass
+       ...
+       >>> sorted (foo.func_annotations.items ())
+       [('bar', 'Arg 1'), ('baz', 42), ('return', None)]
+       >>> @TFL.Annotated (bar = "Arg 1", baz = 42, qux = None)
+       ... def foo (bar, baz) : pass
+       ...
+       Traceback (most recent call last):
+         ...
+       TypeError: Function `foo` doesn't have an argument named `qux`
+    """
+    def decorator (f) :
+        from inspect import getargspec
+        f.func_annotations             = fa = {}
+        args, varargs, varkw, defaults = getargspec (f)
+        if varargs : args.append (varargs)
+        if varkw   : args.append (varkw)
+        arg_set = set (args)
+        for k, v in kw.iteritems () :
+            if k in arg_set :
+                fa [k] = v
+            else :
+                raise TypeError, \
+                    ( "Function `%s` doesn't have an argument named `%s`"
+                    % (f.__name__, k)
+                    )
+        if RETURN is not _undefined :
+            fa ["return"] = RETURN
+        return f
+    return decorator
+# end def Annotated
 
 def Attributed (** kw) :
     """Add all elements of `kw` as function attribute to decorated function.

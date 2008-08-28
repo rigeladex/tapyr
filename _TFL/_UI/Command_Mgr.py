@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -181,6 +181,7 @@
 #    23-Jul-2007 (CED) Activated absolute_import
 #    06-Aug-2007 (CED) Future import removed again
 #    10-Sep-2007 (DAL) Adapted doc-strings to coding guidelines
+#    22-Aug-2008 (CT)  Optional argument `force` added to `update_state`
 #    ««revision-date»»···
 #--
 
@@ -1056,11 +1057,11 @@ class Command_Mgr (Command_Group) :
         return self.command [name].run (* args, ** kw)
     # end def run
 
-    def update_state (self, event = None) :
+    def update_state (self, event = None, force = False) :
         """Enable/disable all commands according to their preconditions"""
         for p_checker in self._precondition_eager.itervalues () :
             p_checker ()
-        if self.changes != int (self.change_counter) :
+        if force or self.changes != int (self.change_counter) :
             try :
                 for p_checker in self._precondition_lazy.itervalues () :
                     p_checker ()

@@ -143,12 +143,16 @@
 #    17-Jul-2006 (MZO) [18749] present window `search`, `expand`
 #    19-Jul-2006 (MZO) [18758] comment out `accelerator`
 #    18-Feb-2008 (PGO) [26831] Longer names have to take precedence
+#    22-Aug-2008 (CT)  Pass `force = True` to `cmd_mgr_widget.update_state`
 #    ««revision-date»»···
 #--
 
-from   _TFL         import TFL
-from   Regexp       import Regexp, re_RegexObject
-from   Functor      import Functor
+from   _TFL           import TFL
+
+from   _TFL           import sos
+from   _TFL.predicate import un_nested
+from   _TFL.Regexp    import Regexp, re_RegexObject
+from   _TFL.Functor   import Functor
 
 import _TFL._UI
 import _TFL._UI.Mixin
@@ -156,11 +160,8 @@ from   _TFL._UI.Style import *
 import _TFL._UI.Command_Mgr
 import _TOM._UI.Change_Counter
 
-from   predicate      import un_nested
 
 import sys
-import sos
-
 
 callback_style = Style ("callback")
 
@@ -1488,9 +1489,7 @@ class Browser (TFL.UI.Mixin) :
     # end def _setup_interfacer
 
     def _update_cmd_mgr (self) :
-         # XXX Currently inc always. Find places, where  inc () is necessary
-        self._change_counter.inc ()
-        self.cmd_mgr_widget.update_state ()
+        self.cmd_mgr_widget.update_state (force = True)
     # end def _update_cmd_mgr
 
     #  -------------- preconditions ---------------

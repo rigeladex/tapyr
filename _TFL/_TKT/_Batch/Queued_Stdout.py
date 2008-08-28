@@ -27,24 +27,20 @@
 #
 # Revision Dates
 #     7-Feb-2005 (CT) Creation
+#    27-Aug-2008 (CT) Rewritten as function
 #    ««revision-date»»···
 #--
 
 from   _TFL           import TFL
-import _TFL._TKT.Queued_Stdout
+
 import _TFL._TKT._Batch
 
-class Queued_Stdout (TFL.TKT.Queued_Stdout) :
+import sys
 
-    def write (self, text) :
-        self.old_stdout.write (text)
-    # end def write
-
-    def _setup_queue (self) :
-        pass ### don't need no queue for batch
-    # end def _setup_queue
-
-# end class Queued_Stdout
+def Queued_Stdout (out_widget) :
+    ### no need for queuing in batch-mode
+    return sys.stdout
+# end def Queued_Stdout
 
 if __name__ != "__main__" :
     TFL.TKT.Batch._Export ("*")

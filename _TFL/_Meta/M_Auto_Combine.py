@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    TFL.Meta.Auto_Combine
+#    TFL.Meta.M_Auto_Combine
 #
 # Purpose
 #    Metaclass for autocombining lists, dictionaries and sets between a class
@@ -39,12 +39,8 @@
 #    18-Feb-2005 (CT)  Moved to `TFL.Meta`
 #    13-Jul-2005 (CED) `M_Auto_Combine_Sets` added to bases
 #    13-Jul-2005 (CED) Missing import added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                import TFL
 

@@ -1,8 +1,7 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -46,15 +45,15 @@
 #                      DeprecationWarning
 #                          The 'bin' argument to Pickler() is deprecated
 #    20-May-2005 (CT)  Moved to TFL
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    19-Aug-2008 (CT)  `product_name` added as optional paramter to `__init__`
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
+from   _TFL              import sos
+
 import _TFL._Meta.Object
 import _TFL.Environment
-from   _TFL              import sos
 
 import cPickle as pickle
 import sys
@@ -68,10 +67,12 @@ except (ImportError, SyntaxError) :
 class App_State (TFL.Meta.Object) :
     """Encapsulate the persistent state of an interactive application."""
 
-    product_name = None ### redefine in descendents
+    product_name = None ### redefine in descendents or pass into constructor
     bin          = False
 
-    def __init__ (self, ** kw) :
+    def __init__ (self, product_name = None, ** kw) :
+        if product_name is not None :
+            self.__dict__ ["product_name"] = product_name
         assert (self.product_name)
         self.__dict__ ["state"] = kw.copy ()
     # end def __init__

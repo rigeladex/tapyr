@@ -28,6 +28,7 @@
 # Revision Dates
 #     7-Feb-2005 (CT) Creation (factored from CTK_Queued_Stdout)
 #     3-Jun-2005 (MG) `event` parameter added to `update`
+#    27-Aug-2008 (CT) Redirection refactored to `TFL.Output.Redirect_Std`
 #    ««revision-date»»···
 #--
 
@@ -42,23 +43,14 @@ class _Queued_Stdout_ (TFL.TKT.Mixin) :
 
     _real_name = "_Queued_Stdout_"
 
-    def __init__ (self, out_widget = None, redirect_stderr = True) :
+    def __init__ (self, out_widget) :
         self._setup_queue ()
         self.out_widget = out_widget
-        self.old_stdout = sys.stdout
-        sys.stdout      = self
         self._pending   = None
-        if redirect_stderr :
-            self.old_stderr = sys.stderr
-            sys.stderr      = self
     # end def __init__
 
     def destroy (self) :
         try :
-            if sys.stdout is self :
-                sys.stdout  = self.old_stdout
-            if sys.stderr is self :
-                sys.stderr  = self.old_stderr
             if self._pending :
                 self._cancel_pending ()
             self.out_widget = None
