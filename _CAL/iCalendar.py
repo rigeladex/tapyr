@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2006 Martin Glück. All rights reserved
+# Copyright (C) 2005-2008 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -29,9 +29,10 @@
 #     7-Dec-2005 (MG) Creation
 #     9-Aug-2006 (CT) `__hash__` changed to return
 #                     `hash ((self.address, self.role))` instead of `id (self)`
+#    29-Aug-2008 (CT) s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
-#
+
 from   _TFL              import TFL
 import _TFL._Meta.Object
 import _TFL._Meta.Property
@@ -140,7 +141,7 @@ class M_ICalendar (TFL.Meta.M_Class) :
     prop_conversion = {}
 
     def __init__ (cls, name, bases, dict) :
-        super (M_ICalendar, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         wrapped                 = cls.wrapped
         cls.properties          = ()
         if wrapped :

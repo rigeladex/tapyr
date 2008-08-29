@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
 #     8-Nov-2006 (PGO) Inheritance changed
 #     7-Nov-2007 (CT)  Use `Getter` instead of `Attribute`
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,7 @@ import _TFL.Ordered_Set
 class M_Name_Dict (TFL.Meta.M_Class) :
 
     def __init__ (cls, name, bases, dct) :
-        super (M_Name_Dict, cls).__init__ (name, bases, dct)
+        cls.__m_super.__init__ (name, bases, dct)
         for method_name in dct.get ("_convert_methods", ()) :
             setattr \
                 ( cls, method_name
@@ -76,7 +77,6 @@ class M_Name_Dict (TFL.Meta.M_Class) :
 
 # end class M_Name_Dict
 
-
 class Name_Dict (dict) :
 
     __metaclass__    = M_Name_Dict
@@ -85,7 +85,6 @@ class Name_Dict (dict) :
 
 # end class Name_Dict
 
-
 class NO_List (TFL.Ordered_Set):
     """List of named objects. Access to the list elements is provided by
        numerical index and by name.
@@ -93,6 +92,7 @@ class NO_List (TFL.Ordered_Set):
        Each element of the list must provide an attribute `name' of a
        non-numeric type.
     """
+
     _reverse_mapping_cls = Name_Dict
     _cannot_hold         = basestring
 
@@ -118,5 +118,4 @@ class NO_List (TFL.Ordered_Set):
 
 if __name__ != "__main__" :
     TFL._Export ("*")
-
 ### __END__ TFL.NO_List

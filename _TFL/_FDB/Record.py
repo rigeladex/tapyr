@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,23 +33,18 @@
 #    22-Apr-2003 (CT) `field_pat` changed to allow for `key` and modifier
 #    22-Apr-2003 (CT) `_split` changed to populate `_keys`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
-
-from   _TFL._FDB import FDB
-from   Regexp    import *
-import string
+from   _TFL._FDB      import FDB
+from   _TFL.Regexp    import *
 
 class Record :
     """Model a record in a file-based DB."""
 
     field_sep = Regexp ("\n(?!\\s)") ### a new-line followed by non-whitespace
     field_pat = Regexp ( r"(?P<name> "
-                           r"    (?P<key>      [A-Za-z][A-Za-z0-9_]*"
+                           r"    (?P<key>      [A-Za-z][A-Za-z0-9_]*)"
                            r"(?: (?P<modifier> [A-Za-z0-9_\\-]+) )?"
                          r")"
                          r"\s* : \s*"
@@ -157,7 +152,7 @@ class Record :
         self._seq     = []
         self._errors  = []
         for f in fields :
-            f = string.strip (f)
+            f = f.strip ()
             if pat.match (f) :
                 self.add (pat.name, pat.value)
                 if pat.key in self._keys :
@@ -181,7 +176,7 @@ class Record :
             else :
                 r = self.field_sep.sub ("\n    ", format % (n, v))
                 result.append (r)
-        return string.join (result, "\n")
+        return "\n".join (result)
     # end def __str__
 
 # end class Record

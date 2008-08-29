@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Aug-2004 (CT) Creation
+#    29-Aug-2008 (CT) s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ class M_Kind (TFL.Meta.M_Class) :
     """Meta class for TFL.Units.Kind"""
 
     def __init__ (cls, name, bases, dict) :
-        super (M_Kind, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         cls.abbrs = abbrs = {}
         cls.units = units = {}
         for u in (cls.base_unit, ) + tuple (cls._units) :

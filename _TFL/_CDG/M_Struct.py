@@ -31,6 +31,7 @@
 #                      (RUP 23577)
 #    24-Apr-2007 (DAL) `as_tex` addded
 #     1-Oct-2007 (DAL) unit added to `as_tex` output table
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -47,9 +48,9 @@ class M_Struct (TFL.Meta.M_Class) :
     ref_field_name = "%s_Ref"
 
     def __init__ (cls, name, bases, dict) :
-        super (M_Struct, cls).__init__ (name, bases, dict)
-        cls._add_class      (name)
-        cls.reset_extension ()
+        cls.__m_super.__init__ (name, bases, dict)
+        cls._add_class         (name)
+        cls.reset_extension    ()
         if cls.typedef_prefix :
             cls.type_name = "%s_%s" % (cls.typedef_prefix, cls.__name__)
         else :
@@ -58,7 +59,7 @@ class M_Struct (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         cls.count += 1
-        result     = super (M_Struct, cls).__call__ (* args, ** kw)
+        result     = cls.__m_super.__call__ (* args, ** kw)
         result.id  = cls.count
         cls.extension.append (result)
         return result

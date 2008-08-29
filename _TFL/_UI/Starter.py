@@ -36,7 +36,7 @@ from   __future__             import with_statement
 
 from   _TFL                   import TFL
 
-import _TFL._Meta.M_Auto_Combine_Lists
+import _TFL._Meta.M_Auto_Combine
 import _TFL._UI.Application
 import _TFL._UI.App_Context
 import _TFL._UI.Mixin

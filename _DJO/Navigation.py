@@ -109,6 +109,7 @@
 #    15-Jul-2008 (CT) Use `DJO.Model_Form` instead of plain old
 #                     newsforms.Model_Form
 #    15-Jul-2008 (CT) `Site_Admin` added
+#    29-Aug-2008 (CT) s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,7 @@ from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
 
+import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
@@ -136,10 +138,10 @@ import django
 import textwrap
 import time
 
-class _Meta_ (TFL.Meta.Object.__class__) :
+class _Meta_ (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
-        result = super (_Meta_, cls).__call__ (* args, ** kw)
+        result = cls.__m_super.__call__ (* args, ** kw)
         if result.href is not None and not result.implicit :
             result.top.Table [result.href] = result
         return result

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,12 +32,8 @@
 #     1-Apr-2005 (CT) `__new__` and `_cache` added
 #     2-Apr-2005 (MG) `__init__` changed to allow renaming of a `style`
 #                     property
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                 import TFL
 import _TFL._TKT.Mixin

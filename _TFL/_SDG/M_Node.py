@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,13 +32,10 @@
 #                     anew (to avoid nasty surprises with `sep` aliasing when
 #                     format is shared between sibling classes with different
 #                     values for `sep`)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
-#    20-Nov-2007 (MG)  Imports fixed
+#    20-Nov-2007 (MG) Imports fixed
+#    29-Aug-2008 (CT) s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                            import TFL
 
@@ -58,7 +55,7 @@ class M_Node (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     _dicts_to_combine = ("init_arg_defaults", "_autoconvert")
 
     def __init__ (cls, name, bases, dict) :
-        super (M_Node, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         cls._normalize_formats ()
     # end def __init__
 

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2003 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,16 +28,13 @@
 # Revision Dates
 #    21-Jan-2001 (CT) Creation
 #    22-Apr-2003 (CT) Moved to package `TFL.FDB`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
 
-
-
-from   _TFL._FDB  import FDB
-from   Filename   import *
-from   subdirs    import *
+from   _TFL._FDB       import FDB
+from   _TFL.Filename   import *
+from   _TFL.Regexp     import *
+from   _TFL.subdirs    import *
 
 import _TFL._FDB.Record
 
@@ -170,7 +167,6 @@ def command_spec (arg_array = None) :
 # end def command_spec
 
 def main (cmd) :
-    from Regexp import *
     Folder.extension = cmd.extension
     ff               = Folder (cmd.folder, cmd.root, cmd.transitive)
     quote            = not cmd.Regexp

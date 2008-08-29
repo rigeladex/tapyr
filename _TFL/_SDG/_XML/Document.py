@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -36,6 +36,7 @@
 #     6-Sep-2005 (CT) Doctest adapted to change of `_attr_values`
 #    20-Sep-2005 (CT) Doctest with over-long attributes added
 #    29-Nov-2007 (CT) Another doctest with over-long attributes added
+#    29-Aug-2008 (CT) Import for `Elem_Type` added to fix doctest
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _TFL                   import TFL
 import _TFL._SDG._XML.Comment
 import _TFL._SDG._XML.Doctype
 import _TFL._SDG._XML.Element
+import _TFL._SDG._XML.Elem_Type
 import _TFL._SDG._XML.Node
 
 class Document (TFL.SDG.XML.Node) :

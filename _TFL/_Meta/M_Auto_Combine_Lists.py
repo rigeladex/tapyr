@@ -31,6 +31,7 @@
 #    13-Jul-2005 (CED) Use sets instead of dicts
 #     2-Jul-2006 (MG)  Unnecessary imports removed
 #    14-Dec-2007 (MG)  Import changed
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -77,8 +78,8 @@ class M_Auto_Combine_Lists (TFL.Meta._M_Type_) :
     _lists_to_combine = ()
 
     def __init__ (cls, name, bases, dict) :
-        cls._m_combine_lists (bases, dict)
-        super (M_Auto_Combine_Lists, cls).__init__ (name, bases, dict)
+        cls._m_combine_lists   (bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
     # end def __init__
 
     def _m_combine_lists (cls, bases, dict) :

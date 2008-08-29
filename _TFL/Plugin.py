@@ -43,6 +43,7 @@
 #     7-Nov-2007 (CT)  Use `Getter` instead of `lambda`
 #    22-Aug-2008 (CT)  Moved from `_TOM` to `_TFL`, code from `TTA.Plugin`
 #                      factored in here
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ class M_Plugin (TFL.Meta.M_Class) :
     def __call__ (cls, name, * args, ** kw) :
         if name in cls.Table :
             raise KeyError, "Duplicate plugin name %s" % (name, )
-        result           = super (M_Plugin, cls).__call__ (name, * args, ** kw)
+        result           = cls.__m_super.__call__ (name, * args, ** kw)
         cls.Table [name] = result
         return result
     # end def __call__

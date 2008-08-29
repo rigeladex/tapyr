@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2006 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2008 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 # ****************************************************************************
 #
@@ -29,20 +29,17 @@
 #    22-Feb-2007 (MZO) Creation
 #    28-Mar-2007 (MZO) Creation .
 #     8-May-2007 (MZO) Creation ..
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#    29-Aug-2008 (CT)  Import of TTA removed
 #    ««revision-date»»···
 #--
 
-
-
 from    _TFL                    import TFL
-from    _TTA                    import TTA
+from    _TFL                    import sos
 import  _TFL._Meta.Object
 import  _TFL._Meta.M_Class
 import  _TFL.predicate
 import  _TFL._CDG.Bin_Block
-import  sos
 
 class File2Meta_Struct (TFL.Meta.Object) :
 
@@ -137,15 +134,15 @@ class M_Check_Rule (TFL.Meta.M_Class) :
     classes = {}
 
     def __init__ (cls, name, bases, dict) :
-        super (M_Check_Rule, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         cls.classes [name] = cls
         cls.reset_extension ()
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        result     = super (M_Check_Rule, cls).__call__ (* args, ** kw)
+        result    = cls.__m_super.__call__ (* args, ** kw)
+        result.id = cls.count
         cls.extension.append (result)
-        result.id  = cls.count
         return result
     # end def __call__
 

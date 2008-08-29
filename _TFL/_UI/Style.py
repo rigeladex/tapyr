@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -42,12 +42,9 @@
 #     1-Apr-2005 (CT)  `__new__` and `__call__` redefined to merge `callback`
 #                      dictionaries
 #     4-Apr-2005 (CED) `reversed` imported
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
-
-
 
 """
 >>> Style ("foo", font_style = "normal")
@@ -147,7 +144,7 @@ class M_Style (TFL.Meta.M_Data_Class) :
     def __call__ (cls, name = None, ** kw) :
         if "callback" in kw and cls.callback:
             kw ["callback"] = dict (cls.callback, ** kw ["callback"])
-        result = super (M_Style, cls).__call__ (name, ** kw)
+        result = cls.__m_super.__call__ (name, ** kw)
         return result
     # end def __call__
 

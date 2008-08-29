@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,12 +43,8 @@
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #     8-Nov-2006 (PGO) Inheritance changed
 #     4-Dec-2006 (PGO) `remove` and `__delitem__` merged to restore interface
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from _TFL import TFL
 
@@ -61,6 +57,7 @@ class Ordered_Set (list) :
        additionally kept in a dictionary to allow fast access to the position
        in the list.
     """
+
     __metaclass__        = TFL.Meta.M_Class
     _reverse_mapping_cls = dict
     _cannot_hold         = int

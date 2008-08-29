@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,12 +37,9 @@
 #    16-Sep-2004 (MPH) Changed `gen_method_wrapper` to also work with only one
 #                      argument.
 #    14-Feb-2006 (CT)  Moved into package `TFL`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                  import TFL
 from   _TFL.predicate        import *
@@ -59,7 +56,7 @@ class Meta_Py_Object (TFL.Meta.M_Class) :
     count = 0
 
     def __init__ (cls, name, bases, dict) :
-        super (Meta_Py_Object, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         if cls.format_code :
             assert not cls.Table.has_key (cls.format_code)
             cls.Table [cls.format_code] = cls
@@ -69,7 +66,7 @@ class Meta_Py_Object (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         cls.__class__.count += 1
-        result = super (Meta_Py_Object, cls).__call__ (* args, ** kw)
+        result = cls.__m_super.__call__ (* args, ** kw)
         return result
     # end def __call__
 

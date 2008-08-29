@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -28,12 +28,9 @@
 #
 # Revision Dates
 #    23-Jul-2004 (CT) Creation (factored from TOM.Meta.M_Auto_Combine)
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
-
-
 
 """
 Meta class for auto-combining the dict-attributes mentioned in
@@ -75,8 +72,8 @@ class M_Auto_Combine_Dicts (TFL.Meta._M_Type_) :
     _dicts_to_combine = ()
 
     def __init__ (cls, name, bases, dict) :
-        cls._m_combine_dicts (bases, dict)
-        super (M_Auto_Combine_Dicts, cls).__init__ (name, bases, dict)
+        cls._m_combine_dicts   (bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
     # end def __init__
 
     def _m_combine_dicts (cls, bases, dict) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -29,12 +29,9 @@
 #     5-Sep-2005 (CT)  Creation
 #     6-Sep-2005 (CT)  Creation continued
 #     4-Sep-2006 (MZO) `Text` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Aug-2008 (CT)  Doctest corrected
 #    ««revision-date»»···
 #--
-
-
 
 """
 >>> svg = Document (Root (width="12cm", height="4cm", viewBox="0 0 1200 400"))
@@ -70,8 +67,8 @@
   <rect fill="none" height="398" stroke="blue" width="1198" x="1" y="1"/>
   <rect fill="green" height="200" rx="50" width="400" x="100" y="100"/>
   <g id="1" transform="translate(700 210) rotate(-30)">
-    <rect fill="none" height="200" rx="50" stroke="purple" width="400"
-          x="0" y="0"
+    <rect fill="none" height="200" rx="50" stroke="purple" width="400" x="0"
+          y="0"
     />
   </g>
   <circle cx="600" cy="200" fill="red" r="100" stroke="blue"/>
@@ -80,13 +77,13 @@
            transform="translate(900 200) rotate(-30)"
   />
   <line x1="100" x2="300" y1="300" y2="100"/>
-  <polyline fill="none" points="50,375 150,375 150,325 250,325 250,375
-            350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375
-            750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375
-            1150,375" stroke="blue"
+  <polyline fill="none"
+            points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375"
+            stroke="blue"
   />
-  <polygon fill="red" points="350,75  379,161 469,161 397,215 423,301
-           350,250 277,301 303,215 231,161 321,161" stroke="blue"
+  <polygon fill="red"
+           points="350,75  379,161 469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161"
+           stroke="blue"
   />
 </svg>
 """

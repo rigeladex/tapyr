@@ -43,6 +43,7 @@
 #    29-Feb-2008 (CT) `Method_Descriptor.__name__` property added
 #    26-Mar-2008 (CT) `Method_Descriptor.Bound_Method.__getattr__` added
 #     3-Apr-2008 (CT) `Alias2_Class_and_Instance_Method` added
+#    29-Aug-2008 (CT)  s/super(...)/__super/
 #    ««revision-date»»···
 #--
 
@@ -119,6 +120,8 @@ class RW_Property (RO_Property) :
 
 class Method_Descriptor (object) :
     """Descriptor for special method types."""
+
+    __metaclass__ = TFL.Meta.M_Class
 
     class Bound_Method (object) :
 
@@ -239,6 +242,8 @@ class Alias_Property (object) :
        42
     """
 
+    __metaclass__ = TFL.Meta.M_Class
+
     def __init__ (self, aliased_name) :
         self.aliased_name = aliased_name
     # end def __init__
@@ -259,7 +264,7 @@ class Alias_Attribute (Alias_Property) :
     """Property defining an attribute alias for a computed value"""
 
     def __get__ (self, obj, cls = None) :
-        return super (Alias_Attribute, self).__get__ (obj, cls) ()
+        return self.__super.__get__ (obj, cls) ()
     # end def __get__
 
     def __set__ (self, obj, value) :

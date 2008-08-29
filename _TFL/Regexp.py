@@ -253,7 +253,7 @@ class Dict_Replacer (Re_Replacer) :
 
        >>> dr = Dict_Replacer ({"--" : "\\endash", "---" : "\\emdash"})
        >>> dr ("TeX interprets `--` as an en-dash and `---` as an em-dash")
-       'TeX interprets `\\endash` as an en-dash and `\\emdash` as an em-dash'
+       'TeX interprets `\\\\endash` as an en-dash and `\\\\emdash` as an em-dash'
     """
 
     def __init__ (self, __dict = {}, __flags = 0, ** kw) :

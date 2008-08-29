@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #                      both change counters that are compared must
 #                      work per instance ('that'))
 #    28-Feb-2007 (CED) `self.result` also has to be per instance of course
+#    29-Aug-2008 (CT)  s/super(...)/__super/
 #    ««revision-date»»···
 #--
 
@@ -120,8 +121,7 @@ class Lazy_Method_RLV (TFL.Meta.Method_Descriptor) :
     wrapper = _Lazy_Wrapper_RLV_
 
     def __init__ (self, method, cls = None, counter_name = None) :
-        super (Lazy_Method, self).__init__ \
-            (self.wrapper (method, counter_name), cls)
+        self.__super.__init__ (self.wrapper (method, counter_name), cls)
     # end def __init__
 
 # end class Lazy_Method_RLV

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,12 +37,9 @@
 #    24-Mar-2005 (CT) Doctest added
 #    24-Mar-2005 (CT) Small changes in MGs changes
 #    24-Mar-2005 (CT) Moved into package `TFL`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Aug-2008 (CT) s/super(...)/__super/
 #    ««revision-date»»···
 #--
-
-
 
 """
 >>> d = Abbr_Key_Dict (a = 1, ab = 2, abc = 3, bertie = 4, bingo = 5)
@@ -79,7 +76,9 @@ KeyError: 'berties'
 """
 
 from   _TFL      import TFL
+
 import _TFL.predicate
+import _TFL._Meta.M_Class
 
 class Ambiguous_Key (KeyError) :
     pass
@@ -90,10 +89,12 @@ class Abbr_Key_Dict (dict) :
        arguments for `__getitem__'.
     """
 
+    __metaclass__        = TFL.Meta.M_Class
+
     def __getitem__ (self, key) :
         matching = self.matching_keys (key)
         if len (matching) == 1 :
-            return super (Abbr_Key_Dict, self).__getitem__ (matching [0])
+            return self.__super.__getitem__ (matching [0])
         elif not matching :
             raise KeyError, key
         else :

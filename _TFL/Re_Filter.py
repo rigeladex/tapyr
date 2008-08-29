@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-May-2008 (CT) Creation
+#    29-Aug-2008 (CT) s/super(...)/__super/
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,7 @@ class Re_Filter (TFL.Filter) :
         else :
             regexp = Regexp (pattern, flags, quote)
         self._regexp = regexp
-        super (Re_Filter, self).__init__ (self.match)
+        self.__super.__init__ (self.match)
     # end def __init__
 
     def match (self, item) :
@@ -70,7 +71,7 @@ class Re_Filter_OA (Re_Filter) :
 
     def __init__ (self, attr, pattern, flags = 0, quote = 0) :
         self._attr = attr
-        super (Re_Filter_OA, self).__init__ (pattern, flags = 0, quote = 0)
+        self.__super.__init__ (pattern, flags = 0, quote = 0)
     # end def __init__
 
     def match (self, obj) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,8 @@
 #     7-Nov-2007 (CT)  Condition for `_super_calling_not_possible` corrected
 #                      (don't complain if one of the bases has used
 #                      `_real_name`)
+#    29-Aug-2008 (CT)  `_fixed_type_.__init__` added to define `__m_super`
+#    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -75,7 +77,18 @@ class _fixed_type_ (type) :
        multiple inheritence and custom metaclasses.
        For a discussion of this problem, see:
        http://groups.google.de/group/comp.lang.python/tree/browse_frm/thread/2b7a60d08d4a99c4/72346462866e6497?rnum=1&q=eder&_done=%2Fgroup%2Fcomp.lang.python%2Fbrowse_frm%2Fthread%2F2b7a60d08d4a99c4%2F36e83cab80f1dbaf%3Fq%3Deder%26rnum%3D2%26#doc_72346462866e6497
+
+       It also adds a private class variable `__m_super` containing
+       `super (cls)`. This corresponds to `__super` (see `M_Autosuper`) but
+       can be used inside meta-classes.
     """
+
+    def __init__ (cls, name, bases, dict) :
+        super (_fixed_type_, cls).__init__ (name, bases, dict)
+        _super_n = _m_mangled_attr_name ("m_super", cls.__name__)
+        _super_v = super (cls)
+        setattr (cls, _super_n, _super_v)
+    # end def __init__
 
     def __call__ (meta, name, bases, dict) :
         meta = meta._get_meta (bases, dict)
@@ -157,7 +170,7 @@ class M_Autorename (_M_Type_) :
 
     def __init__ (cls, name, bases, dict) :
         ### Need to pass `cls.__name__` as it might defer from `name`
-        super (M_Autorename, cls).__init__ (cls.__name__, bases, dict)
+        cls.__m_super.__init__ (cls.__name__, bases, dict)
     # end def __init__
 
     def _m_mangled_attr_name (cls, name) :
@@ -189,7 +202,7 @@ class M_Autosuper (_M_Type_) :
     """
 
     def __init__ (cls, name, bases, dict) :
-        super (M_Autosuper, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         _super_n = cls._m_mangled_attr_name ("super")
         _super_v = super (cls)
         if __debug__ :
@@ -228,7 +241,7 @@ class M_Autoproperty (_M_Type_) :
     """
 
     def __init__ (cls, name, bases, dict) :
-        super (M_Autoproperty, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         prop_name  = cls._m_mangled_attr_name ("properties")
         properties = {}
         classes    = [cls] + list (bases)
@@ -243,7 +256,7 @@ class M_Autoproperty (_M_Type_) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        result = super (M_Autoproperty, cls).__call__ (* args, ** kw)
+        result = cls.__m_super.__call__ (* args, ** kw)
         props  = cls.__dict__.get (cls._m_mangled_attr_name ("properties"), [])
         for p in props :
             init_instance = getattr (p, "init_instance", None)
@@ -263,7 +276,7 @@ class M_Automethodwrap (_M_Type_) :
     """
 
     def __init__ (cls, name, bases, dict) :
-        super (M_Automethodwrap, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         cls._m_autowrap (bases, dict)
     # end def __init__
 
@@ -324,23 +337,15 @@ else :
         ZZZ = _Y_
 
         class Metatest (M_Class) :
-
             def __call__ (cls, * args, ** kw) :
                 print cls, "__call__", args, kw
-                return super (Metatest, cls).__call__ (* args, ** kw)
-            # end def __call__
-
+                return cls.__m_super.__call__ (* args, ** kw)
             def __init__ (cls, * args, ** kw) :
                 print cls, "__init__", args, kw
-                super (Metatest, cls).__init__ (* args, ** kw)
-            # end def __init__
-
+                cls.__m_super.__init__ (* args, ** kw)
             def __new__ (meta, * args, ** kw) :
                 print meta, "__new__", args, kw
                 return super (Metatest, meta).__new__ (meta, * args, ** kw)
-            # end def __new__
-
-        # end class Metatest
 
         class T (object) :
             __metaclass__ = Metatest

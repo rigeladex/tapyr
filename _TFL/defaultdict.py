@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -29,12 +29,9 @@
 #    13-Mar-2006 (CT) Creation (for Python 2.4)
 #    20-Jun-2007 (CT) Adapted to Python 2.5
 #    20-Jun-2007 (CT) `defaultdict_kd` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    29-Aug-2008 (CT) s/super(...)/__super/
 #    ««revision-date»»···
 #--
-
-
 
 """
 Python 2.5 provides `collections.defaultdict`.
@@ -55,14 +52,18 @@ defaultdict(<type 'int'>, {1: 42, 2: 137, 3: 0})
 """
 
 from   _TFL import TFL
+import _TFL._Meta.M_Class
+
 import sys
 
 class _defaultdict_ (dict) :
 
+    __metaclass__        = TFL.Meta.M_Class
+
     if sys.hexversion < 0x02050000 :
         def __getitem__ (self, key) :
             try :
-                return super (_defaultdict_, self).__getitem__ (key)
+                return self.__super.__getitem__ (key)
             except KeyError :
                 return self.__missing__ (key)
         # end def __getitem__
@@ -76,13 +77,13 @@ class _defaultdict_ (dict) :
 
     def _defaultdict__init__ (self, _default_factory, * args, ** kw) :
         self.default_factory = _default_factory
-        super (_defaultdict_, self).__init__ (* args, ** kw)
+        self.__super.__init__ (* args, ** kw)
     # end def _defaultdict__init__
 
     def _defaultdict__repr__ (self) :
         return "%s(%r, %s)" % \
             ( self.__class__.__name__, self.default_factory
-            , super (_defaultdict_, self).__repr__ ()
+            , self.__super.__repr__ ()
             )
     # end def _defaultdict__repr__
 

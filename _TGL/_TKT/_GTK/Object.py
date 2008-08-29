@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2008 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -53,6 +53,7 @@
 #    13-Sep-2005 (MG) Support for pygtk 2.8 added
 #    21-Jan-2006 (MG) Imports fixed
 #    22-Jan-2006 (MG) `Object`: optional parameter `wtk_object` added
+#    29-Aug-2008 (CT) s/super(...)/__m_super/
 #    ««revision-date»»···
 #--
 
@@ -79,8 +80,8 @@ import weakref
 
 class Property (property) :
     """Models a simple gtk property using the default `set_property` and
-       `get_property` methods
-    ."""
+       `get_property` methods.
+    """
 
     __metaclass__ = TFL.Meta.M_Autosuper
 
@@ -289,7 +290,7 @@ class _M_Object_ (TFL.Meta.M_Auto_Combine_Dicts, TFL.Meta.M_Class) :
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
-        super (_M_Object_, cls).__init__ (name, bases, dict)
+        cls.__m_super.__init__ (name, bases, dict)
         for p in getattr \
                 (cls, cls._m_mangled_attr_name ("gtk_properties"), ()) :
             setattr (cls, p.name, p)
