@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -27,15 +27,19 @@
 #
 # Revision Dates
 #    22-Nov-2006 (CT) Creation
+#     1-Sep-2008 (CT) `moving_average` added
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 from   _TGL import TGL
 
+from   _TFL.DL_List import DL_Ring
+
 import _TFL._Meta.Object
 import _TGL._DRA
 
+import itertools
 import math
 
 class Averager (TFL.Meta.Object) :
@@ -74,6 +78,48 @@ class Averager (TFL.Meta.Object) :
 
 # end class Averager
 
+def moving_average (s, n, central = False) :
+    """Generator for moving average of `n` data points over sequence `s`.
+
+       >>> list (moving_average (range (10), 3))
+       [(2, 1.0), (3, 2.0), (4, 3.0), (5, 4.0), (6, 5.0), (7, 6.0), (8, 7.0), (9, 8.0)]
+       >>> list (moving_average (range (10), 4))
+       [(3, 1.5), (4, 2.5), (5, 3.5), (6, 4.5), (7, 5.5), (8, 6.5), (9, 7.5)]
+       >>> list (moving_average (range (10), 5))
+       [(4, 2.0), (5, 3.0), (6, 4.0), (7, 5.0), (8, 6.0), (9, 7.0)]
+       >>> list (moving_average (range (10), 3, True))
+       [(1, 1.0), (2, 2.0), (3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0), (7, 7.0), (8, 8.0)]
+       >>> list (moving_average (range (10), 5, True))
+       [(2, 2.0), (3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0), (7, 7.0)]
+       >>> list (moving_average (range (10), 7, True))
+       [(3, 3.0), (4, 4.0), (5, 5.0), (6, 6.0)]
+       >>> list (moving_average (range (10), 9, True))
+       [(4, 4.0), (5, 5.0)]
+       >>> list (moving_average (range (10), 10, True))
+       [(5, 4.5)]
+       >>> list (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 3, True))
+       [(1, 1.2933333333333332), (2, 1.2933333333333332), (3, 1.2899999999999998), (4, 1.2966666666666664), (5, 1.293333333333333)]
+       >>> list (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 5, True))
+       [(2, 1.292), (3, 1.298), (4, 1.29)]
+       >>> list (moving_average ((1.28, 1.31, 1.29, 1.28, 1.30, 1.31, 1.27), 7, True))
+       [(3, 1.2914285714285714)]
+    """
+    if central :
+        i = n // 2
+    else :
+        i = n - 1
+    s = iter    (s)
+    w = DL_Ring (s.next () for k in range (n))
+    m = float   (n)
+    v = sum     (w.values ()) / m
+    yield i, v
+    for x in s :
+        i += 1
+        v += (- w.pop_front () / m) + (x / m)
+        w.append (x)
+        yield i, v
+# end def moving_average
+
 if __name__ != "__main__" :
     TGL.DRA._Export ("*")
-### __END__ Averager
+### __END__ TGL.DRA.Averager
