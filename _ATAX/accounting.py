@@ -136,6 +136,8 @@
 #                      Fix gkonto description for rev. Charge (cut & paste error) in finish
 #    11-Apr-2008 (RSC) fix printing of entry if "dir" includes "~"
 #    12-Aug-2008 (CT)  `p_konto` added (and `_Entry_` factored)
+#     5-Sep-2008 (CT)  `_fix_ust_privat` corrected
+#                      (`+=` instead of `-=` for `haben_saldo` of `ust_gkonto`)
 #    ««revision-date»»···
 #--
 
@@ -1112,13 +1114,13 @@ class T_Account (Account) :
         return p_entry
     # end def _fix_privat_anteil
 
-    def _fix_ust_privat (self, k, k_desc, p_soll, p_desc) :
+    def _fix_ust_privat (self, k, k_desc, p_vat, p_desc) :
         p_desc = "%s [%s (%s)]" % (p_desc, k, k_desc)
         gkonto = self.ust_gkonto
         self.buchung_zahl [gkonto] += 1
-        self.haben_saldo  [gkonto] -= p_soll
+        self.haben_saldo  [gkonto] += p_vat
         self.kblatt [gkonto].append \
-            (Privatanteil ("9200", 0, p_soll, p_desc, gkonto).kontenzeile ())
+            (Privatanteil ("9200", 0, p_vat, p_desc, gkonto).kontenzeile ())
     # end def _fix_ust_privat
 
     def print_konten (self) :
