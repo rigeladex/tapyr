@@ -29,6 +29,9 @@
 #    19-Aug-2008 (CT) Creation (factored from TTA.UI.Starter)
 #    20-Aug-2008 (CT) Creation finished
 #    28-Aug-2008 (CT) `-logfile` and `-unique_logfile` added
+#    10-Sep-2008 (CT) Guard added to `_do_import` (not every `PNS` needs to
+#                     actually exist [provided the existing ones define
+#                     everything necessary])
 #    ««revision-date»»···
 #--
 
@@ -141,8 +144,12 @@ class _TFL_UI_Starter_ (TFL.UI.Mixin) :
     # end def start_mainloop
 
     def _do_import (self, PNS, module) :
-        m = PNS._Import_Module (module)
-        return m.__dict__
+        try :
+            m = PNS._Import_Module (module)
+        except ImportError :
+            return {}
+        else :
+            return m.__dict__
     # end def _do_import
 
     def _do_imports (self, cmd) :

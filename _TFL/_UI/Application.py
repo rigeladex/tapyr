@@ -91,6 +91,7 @@ class _TFL_UI_Application_ (TFL.UI.Mixin) :
     ipreter                = None
     product_name           = "TFL" ### override
     powered                = False ### set to True for power users
+    root                   = None
     script_locals          = property (lambda s : s._script_locals)
     script_run_change_act  = None
     startup_cmds           = []
