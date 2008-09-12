@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -42,7 +42,7 @@ import _TGL._DRA
 class Binner (TFL.Meta.Object) :
     """Distribute measurement values into bins.
 
-       The range of possible values is split into bins zhat are numbered from
+       The range of possible values is split into bins that are numbered from
        1 to `n` (0 is reserved for invalid values). Each measured value is
        mapped to the bin containing it.
 
