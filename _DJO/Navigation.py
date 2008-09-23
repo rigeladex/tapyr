@@ -705,7 +705,7 @@ class Root (_Dir_) :
     # end def from_dict_list
 
     @classmethod
-    def page_from_href (cls, href) :
+    def page_from_href (cls, href, request) :
         result = None
         if href in cls.top.Table :
             result = cls.top.Table [href]
@@ -713,25 +713,28 @@ class Root (_Dir_) :
             tail = []
             while href :
                 href, _ = TFL.sos.path.split (href)
-                tail.append (_)
-                try :
-                    d = cls.top.Table [pjoin (href, u"")]
-                except KeyError :
-                    pass
-                else :
-                    result = d._get_child (* reversed (tail))
-                    if result :
-                        break
+                if href :
+                    tail.append (_)
+                    try :
+                        d = cls.top.Table [pjoin (href, u"")]
+                    except KeyError :
+                        pass
+                    else :
+                        result = d._get_child (* reversed (tail))
+                if result :
+                    break
+        ### XXX check permission of request.user vs. result.???
         return result
     # end def page_from_href
 
     @classmethod
     def universal_view (cls, request) :
         href = request.path [1:]
-        page = cls.page_from_href (href)
+        #import pdb; pdb.set_trace ()
+        page = cls.page_from_href (href, request)
         if page :
             return page._view (request)
-        raise django.http.Http404
+        raise django.http.Http404 (href)
     # end def universal_view
 
 # end class Root
@@ -865,10 +868,8 @@ class Model_Admin (Page) :
                                 result.creator = request.user
                     return HttpResponseRedirect \
                         ("%s#pk-%s" % (self.parent.abs_href, result.id))
-            elif obj :
-                form = self.Form (instance = obj)
             else :
-                form = self.Form ()
+                form = self.Form (instance = obj)
             context ["form"] = form
             return self.__super.rendered (context)
         # end def rendered
@@ -911,7 +912,7 @@ class Model_Admin (Page) :
         # end def formatted
 
         def __unicode__ (self) :
-            return self.formatted
+            return self.formatted ### XXX encoding
         # end def __unicode__
 
     # end class Field
@@ -975,7 +976,7 @@ class Model_Admin (Page) :
     # end def href_change
 
     def href_delete (self, obj) :
-        return pjoin (self.href, "delete", str (obj.id))
+        return pjoin (self.abs_href, "delete", str (obj.id))
     # end def href_delete
 
     def rendered (self, context = None) :
@@ -1052,7 +1053,7 @@ class Site_Admin (Dir) :
                 , title        = name
                 , desc         = desc
                 , Model        = m
-                , Type         = Model_Admin
+                , Type         = m.admin_args.get ("Admin_Type", self.Page)
                 )
             if hasattr (m, "admin_args") :
                 d.update (m.admin_args)
@@ -1066,6 +1067,8 @@ class Site_Admin (Dir) :
         context.update \
             ( dict
                 ( models = [(m.name, m.abs_href) for m in self.own_links]
+                ### XXX models = self.own_links ### and change
+                ###                                 site_admin.html accordingly
                 )
             )
         return _Site_Entity_.rendered (self, context)
