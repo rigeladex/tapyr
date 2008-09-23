@@ -110,6 +110,9 @@
 #                     newsforms.Model_Form
 #    15-Jul-2008 (CT) `Site_Admin` added
 #    29-Aug-2008 (CT) s/super(...)/__m_super/
+#    23-Sep-2008 (CT) `_Site_Entity_.rendered` changed to always put
+#                     `page = self` into context (otherwise delegation from
+#                     `Dir` to `Page` doesn't work properly)
 #    ««revision-date»»···
 #--
 
@@ -268,7 +271,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     def rendered (self, context = None) :
         if context is None :
-            context = dict (page = self)
+            from django.template import Context
+            context = Context ({})
+        context ["page"] = self
         result = self.render_to_string (self.template, context, self.encoding)
         if self.translator :
             result = self.translator (result)
@@ -317,7 +322,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def _view (self, request) :
         from django.http     import HttpResponse
         from django.template import RequestContext
-        context = RequestContext (request, dict (page = self))
+        context = RequestContext (request, dict ())
         result  = self.rendered  (context)
         if isinstance (result, str) :
             result = unicode (result, self.encoding)
