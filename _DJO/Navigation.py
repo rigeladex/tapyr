@@ -113,6 +113,8 @@
 #    23-Sep-2008 (CT) `_Site_Entity_.rendered` changed to always put
 #                     `page = self` into context (otherwise delegation from
 #                     `Dir` to `Page` doesn't work properly)
+#    25-Sep-2008 (CT) `Alias` added
+#    26-Sep-2008 (CT) Optional argument `nav_page` added to `rendered`
 #    ««revision-date»»···
 #--
 
@@ -269,11 +271,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return to_string
     # end def render_to_string
 
-    def rendered (self, context = None) :
+    def rendered (self, context = None, nav_page = None) :
         if context is None :
             from django.template import Context
             context = Context ({})
-        context ["page"] = self
+        context ["page"]     = self
+        context ["nav_page"] = nav_page or self
         result = self.render_to_string (self.template, context, self.encoding)
         if self.translator :
             result = self.translator (result)
@@ -343,6 +346,40 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def __str__
 
 # end class _Site_Entity_
+
+class Alias (_Site_Entity_) :
+    """Model an alias for a page of a web site."""
+
+    _target_href = None
+    _target_page = None
+
+    def __init__ (self, * args, ** kw) :
+        target = kw.pop ("target")
+        if isinstance (target, basestring) :
+            self._target_href = target
+        else :
+            self._target_page = target
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def rendered (self, context = None, nav_page = None) :
+        target = self.target
+        if target :
+            return target.rendered (context, nav_page or self)
+    # end def rendered
+
+    @property
+    def target (self) :
+        result = self._target_page
+        if not result :
+            href = self._target_href
+            if href :
+                href = href.lstrip ("/")
+                result = self._target_page = self.top.page_from_href (href)
+        return result
+    # end def target
+
+# end class Alias
 
 class Page (_Site_Entity_) :
     """Model one page of a web site."""
@@ -633,13 +670,13 @@ class _Dir_ (_Site_Entity_) :
         return result
     # end def new_sub_dir
 
-    def rendered (self, context = None) :
+    def rendered (self, context = None, nav_page = None) :
         try :
             page = first (self.own_links)
         except IndexError :
             pass
         else :
-            return page.rendered (context)
+            return page.rendered (context, nav_page)
     # end def rendered
 
     def _get_child (self, child, * grandchildren) :
@@ -705,7 +742,7 @@ class Root (_Dir_) :
     # end def from_dict_list
 
     @classmethod
-    def page_from_href (cls, href, request) :
+    def page_from_href (cls, href, request = None) :
         result = None
         if href in cls.top.Table :
             result = cls.top.Table [href]
@@ -853,7 +890,7 @@ class Model_Admin (Page) :
         obj_id       = None
         template     = "model_admin_change.html"
 
-        def rendered (self, context = None) :
+        def rendered (self, context, nav_page = None) :
             request  = context ["request"]
             obj      = context ["instance"] = None
             if self.obj_id :
@@ -871,7 +908,7 @@ class Model_Admin (Page) :
             else :
                 form = self.Form (instance = obj)
             context ["form"] = form
-            return self.__super.rendered (context)
+            return self.__super.rendered (context, nav_page)
         # end def rendered
 
     # end class Changer
@@ -979,7 +1016,7 @@ class Model_Admin (Page) :
         return pjoin (self.abs_href, "delete", str (obj.id))
     # end def href_delete
 
-    def rendered (self, context = None) :
+    def rendered (self, context = None, nav_page = None) :
         M        = self.Model
         Instance = self.Instance
         field    = M._meta.get_field
@@ -997,7 +1034,7 @@ class Model_Admin (Page) :
                 , Model_Name_s = M._meta.verbose_name_plural
                 )
             )
-        return self.__super.rendered (context)
+        return self.__super.rendered (context, nav_page)
     # end def rendered
 
     def _auto_list_display (self, Model, kw) :
@@ -1061,7 +1098,7 @@ class Site_Admin (Dir) :
         self.add_entries (entries)
     # end def __init__
 
-    def rendered (self, context = None) :
+    def rendered (self, context = None, nav_page = None) :
         if context is None :
             context = dict (page = self)
         context.update \
@@ -1071,7 +1108,7 @@ class Site_Admin (Dir) :
                 ###                                 site_admin.html accordingly
                 )
             )
-        return _Site_Entity_.rendered (self, context)
+        return _Site_Entity_.rendered (self, context, nav_page)
     # end def rendered
 
 # end class Site_Admin

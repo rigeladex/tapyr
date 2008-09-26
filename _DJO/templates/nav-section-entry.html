@@ -19,18 +19,20 @@
   ##                     `ifequal link page.link` to determine `current-link`
   ##    21-May-2008 (CT) s/page.link/page/w
   ##    23-May-2008 (CT) `if link.href` moved from outermost to innermost
+  ##    26-Sep-2008 (CT) Use `nav_page` instead of `page` to access `href`
+  ##                     and `prefix`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
 {% let %}
   {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
-  {% if page.prefix|starts_with:link.prefix and link.own_links %}
+  {% if nav_page.prefix|starts_with:link.prefix and link.own_links %}
     <li class="current-section {{ level }}">{{ link.title }}
       {% rrender "nav-section-level.html" link_list=link.own_links %}
     </li>
   {% else %}
-    {% ifequal link.href page.href %}
+    {% ifequal link.href nav_page.href %}
       <li class="current-link {{ level }}">{{ link.title }}</li>
     {% else %}
       {% if link.href %}
