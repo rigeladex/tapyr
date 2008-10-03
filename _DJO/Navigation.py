@@ -115,6 +115,10 @@
 #                     `Dir` to `Page` doesn't work properly)
 #    25-Sep-2008 (CT) `Alias` added
 #    26-Sep-2008 (CT) Optional argument `nav_page` added to `rendered`
+#     3-Oct-2008 (CT) Properties `has_children` and `Type` added
+#     3-Oct-2008 (CT) `context ["NAV"]` added to `rendered`
+#     3-Oct-2008 (CT) `Alias` changed to inherit from `Page`,
+#                     `Alias.__getattr__` added
 #    ««revision-date»»···
 #--
 
@@ -181,7 +185,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
-            setattr (self, k, v)
+            try :
+                setattr (self, k, v)
+            except AttributeError, exc :
+                print self.href or "Navigation.Root", k, v, "\n   ", exc
         self._setup_url_resolver (parent, kw)
         view = self.view
         if view :
@@ -246,6 +253,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return pnorm (pjoin (self.prefix, self.base))
     # end def file_stem
 
+    @property
+    def has_children (self) :
+        return bool (getattr (self, "own_links", []))
+    # end def has_children
+
     @Once_Property
     def href (self) :
         href = pjoin (self.prefix, self.name)
@@ -277,11 +289,17 @@ class _Site_Entity_ (TFL.Meta.Object) :
             context = Context ({})
         context ["page"]     = self
         context ["nav_page"] = nav_page or self
+        context ["NAV"]      = self.top
         result = self.render_to_string (self.template, context, self.encoding)
         if self.translator :
             result = self.translator (result)
         return result
     # end def rendered
+
+    @property
+    def Type (self) :
+        return self.__class__.__name__
+    # end def Type
 
     def _formatted_attr (self, name) :
         v = getattr (self, name)
@@ -347,11 +365,34 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
 # end class _Site_Entity_
 
-class Alias (_Site_Entity_) :
+class Page (_Site_Entity_) :
+    """Model one page of a web site."""
+
+    own_links       = []
+
+    @Once_Property
+    def parents (self) :
+        return self.parent.parents + [self.parent]
+    # end def parents
+
+    @property
+    def dir (self) :
+        return self.parent.title
+    # end def dir
+
+    @property
+    def level (self) :
+        return self.parent.level + 1
+    # end def dir
+
+# end class Page
+
+class Alias (Page) :
     """Model an alias for a page of a web site."""
 
     _target_href = None
     _target_page = None
+    _parent_attr = set (("prefix", "src_dir"))
 
     def __init__ (self, * args, ** kw) :
         target = kw.pop ("target")
@@ -379,29 +420,15 @@ class Alias (_Site_Entity_) :
         return result
     # end def target
 
+    def __getattr__ (self, name) :
+        if name not in self._parent_attr :
+            target = self.target
+            if target is not None :
+                return getattr (target, name)
+        return self.__super.__getattr__ (name)
+    # end def __getattr__
+
 # end class Alias
-
-class Page (_Site_Entity_) :
-    """Model one page of a web site."""
-
-    own_links       = []
-
-    @Once_Property
-    def parents (self) :
-        return self.parent.parents + [self.parent]
-    # end def parents
-
-    @property
-    def dir (self) :
-        return self.parent.title
-    # end def dir
-
-    @property
-    def level (self) :
-        return self.parent.level + 1
-    # end def dir
-
-# end class Page
 
 class Gallery (Page) :
     """Model a photo gallery that's part of a web site."""
@@ -421,6 +448,11 @@ class Gallery (Page) :
         self.__super.__init__ (parent, pic_dir = pic_dir, ** kw)
         self.src_dir  = self.prefix = pjoin (parent.prefix, base)
     # end def __init__
+
+    @property
+    def has_children (self) :
+        return bool (self.photos)
+    # end def has_children
 
     @Once_Property
     def href (self) :
@@ -492,8 +524,10 @@ class Gallery (Page) :
 
 class _Photo_ (Page) :
 
-    implicit        = True
     _size           = None
+    implicit        = True
+    photos          = None
+    thumbnails      = None
 
     def __init__ (self, name, src, parent, ** kw) :
         self.__super.__init__ (name = name, src = src, parent = parent, ** kw)
@@ -580,6 +614,16 @@ class _Dir_ (_Site_Entity_) :
             (context ["own_links"], Dir_Type = Dir.from_nav_list_file)
         return result
     # end def from_nav_list_file
+
+    @property
+    def has_children (self) :
+        try :
+            first (self.own_links)
+        except IndexError :
+            return False
+        else :
+            return True
+    # end def has_children
 
     @property
     def href (self) :

@@ -1,0 +1,26 @@
+{# Django template: nav-sitemap-level.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    nav-sitemap-level
+  ##
+  ## Purpose
+  ##    Template for one level of a sitemap
+  ##
+  ##
+  ## Revision Dates
+  ##     3-Oct-2008 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL %}
+<ul>
+  {% for link in link_list %}
+    {% rrender "nav-sitemap-entry.html" %}
+  {% endfor %}
+</ul>
+{# __END__ Django template: nav-sitemap-level.html #}
