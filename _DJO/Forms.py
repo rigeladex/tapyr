@@ -32,6 +32,8 @@
 #    10-Jan-2008 (MG) Support `anchors` in the `*Redirect` classes
 #    30-Jun-2008 (CT) `object_to_save` added to `BaseModelForm`
 #    15-Jul-2008 (CT) `Model_Form` added
+#     3-Oct-2008 (CT) Optional argument `commit` added to `object_to_save`
+#     3-Oct-2008 (CT) s/django.newforms/django.forms/g
 #    ««revision-date»»···
 #--
 
@@ -50,9 +52,9 @@ from   django.utils.safestring     import mark_safe
 from   django.core.urlresolvers    import reverse
 from   django.db.models.base       import Model
 from   django.db.models.manager    import Manager
-import django.newforms             as     forms
-from   django.newforms.forms       import BoundField
-from   django.newforms.models      import BaseModelForm, ModelForm
+from   django                      import forms
+from   django.forms.forms          import BoundField
+from   django.forms.models         import BaseModelForm, ModelForm
 from   django.utils.translation    import gettext_lazy as _
 import copy
 
@@ -434,14 +436,15 @@ class FileNameInput (forms.widgets.FileInput) :
 
 @TFL.Add_New_Method (BaseModelForm)
 @TFL.Contextmanager
-def object_to_save (self) :
+def object_to_save (self, commit=True) :
     """Context manager for saving an object created from a form"""
     obj = self.save (commit=False)
     try :
         yield obj
     finally :
-        obj.save      ()
-        self.save_m2m ()
+        if commit :
+            obj.save      ()
+            self.save_m2m ()
 # end def object_to_save
 
 class M_Model_Form (TFL.Meta.M_Class, ModelForm.__class__) :

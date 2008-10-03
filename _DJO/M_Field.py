@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-Jul-2008 (CT) Creation
 #    15-Jul-2008 (CT) Creation continued
+#     3-Oct-2008 (CT) s/django.newforms/django.forms/g
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,7 @@ import _TFL._Meta.M_Class
 from   _DJO                               import DJO
 
 from   django.db                          import models       as DM
-from   django.newforms                    import widgets
+from   django.forms                       import widgets
 from   django.utils.translation           import gettext_lazy as _
 
 import datetime
