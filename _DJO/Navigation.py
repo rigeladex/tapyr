@@ -119,6 +119,8 @@
 #     3-Oct-2008 (CT) `context ["NAV"]` added to `rendered`
 #     3-Oct-2008 (CT) `Alias` changed to inherit from `Page`,
 #                     `Alias.__getattr__` added
+#     3-Oct-2008 (MG) `populate_naviagtion_root`, `url_pattern`, and
+#                     `delegation_view` removed (not needed anymore)
 #    ««revision-date»»···
 #--
 
@@ -126,8 +128,6 @@ from   __future__               import with_statement
 
 from   _TFL                     import TFL
 from   _DJO                     import DJO
-
-import _DJO.Url_Resolver
 
 from   _TFL.defaultdict         import defaultdict
 from   _TFL.Filename            import *
@@ -167,11 +167,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
     href            = ""
     input_encoding  = "iso-8859-15"
     title           = ""
-    url_patterns    = ()
 
     implicit        = False
     parent          = None
-    view            = None
 
     _dump_type      = "dict"
 
@@ -189,17 +187,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 setattr (self, k, v)
             except AttributeError, exc :
                 print self.href or "Navigation.Root", k, v, "\n   ", exc
-        self._setup_url_resolver (parent, kw)
-        view = self.view
-        if view :
-            unbound_method = "view" not in kw
-            if unbound_method :
-                ### the view function is an instance method -> we need to
-                ### pass the unbound method instead
-                view = self.__class__.view
-            self.url_resolver.add_view_function (self, view, unbound_method)
-        if hasattr (self, "url_resolver") and self.url_patterns :
-            self.url_resolver.add_nav_pattern (self, * self.url_patterns)
     # end def __init__
 
     @Once_Property
@@ -313,33 +300,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
             return self
     # end def _get_child
 
-    def _setup_url_resolver (self, parent, kw) :
-        url_resolver = kw.get ("url_resolver")
-        if url_resolver :
-            ### this entity has it's own url resolver
-            if parent :
-                if not isinstance (url_resolver, DJO.Url_Resolver) :
-                    ### looks like it's just a class -> let's convert it to an
-                    ### instance
-                    pattern = self.relative_to \
-                        (self.parent.url_resolver.nav_href, self.file_stem)
-                    self.url_resolver = self.url_resolver \
-                        ( "^%s" % (pattern, ), pattern
-                        , default_view_pattern =
-                            kw.get ("default_view_pattern", {})
-                        )
-                ### this entity has a parent so let's add our own url
-                ### resolver to the parents to build the resolve chain
-                parent.url_resolver.append_pattern (self.url_resolver)
-            if not isinstance (self.url_resolver, DJO.Url_Resolver) :
-                raise TypeError \
-                    ( "The specified `url_resolver` is not an instance of "
-                      "`DJO.Url_Resolver`"
-                    )
-            self.url_resolver.set_nav (self)
-        return url_resolver
-    # end def _setup_url_resolver
-
     def _view (self, request) :
         from django.http     import HttpResponse
         from django.template import RequestContext
@@ -441,10 +401,7 @@ class Gallery (Page) :
         self._photos  = []
         self._thumbs  = []
         base          = Filename (pic_dir).base
-        if self.top.delegation_view :
-            self.name = pjoin (base, u"")
-        else :
-            self.name = "%s.html" % (base, )
+        self.name     = "%s.html" % (base, )
         self.__super.__init__ (parent, pic_dir = pic_dir, ** kw)
         self.src_dir  = self.prefix = pjoin (parent.prefix, base)
     # end def __init__
@@ -460,8 +417,6 @@ class Gallery (Page) :
         href   = pjoin (self.parent.prefix, self.name)
         if href :
             result = pnorm (href)
-            if self.top.delegation_view :
-                result = pjoin (result, "")
         return result
     # end def href
 
@@ -590,15 +545,6 @@ class _Dir_ (_Site_Entity_) :
     def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
         self._entries = []
-        if callable (self.delegation_view) :
-            resolver = self.url_resolver
-            resolver.prepend_pattern \
-                ( DJO.Single_Url_Pattern
-                    ( u"^%s$" % (self.relative_to (resolver.nav_href), )
-                    , self.delegation_view
-                    , nav = self
-                    )
-                )
     # end def __init__
 
     @classmethod
@@ -627,12 +573,11 @@ class _Dir_ (_Site_Entity_) :
 
     @property
     def href (self) :
-        if not self.delegation_view :
-            if self._entries :
-                try :
-                    return first (self.own_links).href
-                except IndexError :
-                    pass
+        if self._entries :
+            try :
+                return first (self.own_links).href
+            except IndexError :
+                pass
         return pjoin (self.prefix, u"")
     # end def href
 
@@ -757,7 +702,6 @@ class Dir (_Dir_) :
 class Root (_Dir_) :
 
     copyright_start = None
-    delegation_view = None
     name            = "/"
     owner           = None
     src_root        = ""
@@ -819,12 +763,6 @@ class Root (_Dir_) :
     # end def universal_view
 
 # end class Root
-
-### a django TEMPLATE_CONTEXT_PROCESSORS which adds a variable named
-### `NAVIGATION` to all `RequestContext` instances
-def populate_naviagtion_root (request) :
-    return dict (NAVIGATION = _Site_Entity_.top)
-# end def populate_naviagtion_root
 
 class Page_ReST (Page) :
     """Model one page generated from re-structured text."""
