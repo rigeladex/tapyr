@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{# Django template: news.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    news
+  ##
+  ## Purpose
+  ##    Template for news pages of www.scams.at
+  ##
+  ##
+  ## Revision Dates
+  ##    26-Feb-2008 (CT) Creation
+  ##    28-Feb-2008 (CT) Put `page.contents` inside `div#news-entry`
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL %}
+{% block document %}
+  {% let entry=page %}
+    {% include "news-entry.html" %}
+  {% endlet %}
+{% endblock %}
+{# __END__ Django template: news.html #}

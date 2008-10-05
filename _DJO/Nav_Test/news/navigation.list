@@ -1,0 +1,6 @@
+# -*- coding: iso-8859-1 -*-
+own_links = \
+    [ dict
+        ( Type                = Dyn_Slice_ReST_Dir
+        )
+    ]

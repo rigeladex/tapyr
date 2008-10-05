@@ -121,6 +121,8 @@
 #                     `Alias.__getattr__` added
 #     3-Oct-2008 (MG) `populate_naviagtion_root`, `url_pattern`, and
 #                     `delegation_view` removed (not needed anymore)
+#     5-Oct-2008 (MG) `Bypass_URL_Resolver` added
+#     5-Oct-2008 (MG) `none_result` and `no_entries_template` added
 #    ««revision-date»»···
 #--
 
@@ -170,6 +172,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     implicit        = False
     parent          = None
+    none_result     = None
 
     _dump_type      = "dict"
 
@@ -270,14 +273,15 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return to_string
     # end def render_to_string
 
-    def rendered (self, context = None, nav_page = None) :
+    def rendered (self, context = None, nav_page = None, template = None) :
         if context is None :
             from django.template import Context
             context = Context ({})
         context ["page"]     = self
         context ["nav_page"] = nav_page or self
         context ["NAV"]      = self.top
-        result = self.render_to_string (self.template, context, self.encoding)
+        result = self.render_to_string \
+            (template or self.template, context, self.encoding)
         if self.translator :
             result = self.translator (result)
         return result
@@ -663,7 +667,10 @@ class _Dir_ (_Site_Entity_) :
         try :
             page = first (self.own_links)
         except IndexError :
-            pass
+            for e in self._entries :
+                result = e.none_result
+                if result :
+                    return result
         else :
             return page.rendered (context, nav_page)
     # end def rendered
@@ -899,6 +906,13 @@ class Dyn_Slice_ReST_Dir (_Site_Entity_) :
                 add (Page_Type (parent = parent, ** info))
         entries.sort (key = sort_key, reverse = True)
     # end def _read_entries
+
+    @property
+    def none_result (self) :
+        if self.no_entries_template :
+            return self.rendered (template = self.no_entries_template)
+        return "No entries"
+    # end def none_result
 
 # end class Dyn_Slice_ReST_Dir
 

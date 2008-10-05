@@ -1,8 +1,30 @@
 # -*- coding: iso-8859-1 -*-
+from _DJO.Navigation import Dir
+
 own_links = \
-    [ dict
+    [ ### a page generated from a `static` ReST file called index.txt
+      dict
         ( name       = "index.html"
         , title      = u"Home"
         , Type       = Page_ReST_F
+        )
+    ### test a dynamic dir with the `no_entries_template`
+    , dict
+        ( sub_dir    =  "news-no-entries"
+        , template   =  "news.html"
+        , title      = u"News No Entries"
+        , Type       = Dir
+        , _entries   =
+            [ dict
+                ( Type                = Dyn_Slice_ReST_Dir
+                , no_entries_template = "no_news.html"
+                )
+            ]
+        )
+    ### test a dynamic dir
+    , dict
+        ( sub_dir    =  "news"
+        , template   =  "news.html"
+        , title      = u"News"
         )
     ]

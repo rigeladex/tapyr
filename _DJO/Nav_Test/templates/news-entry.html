@@ -1,0 +1,27 @@
+{# Django template: news-entry.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    news-entry
+  ##
+  ## Purpose
+  ##    Template for one news entry of www.scams.at
+  ##
+  ##
+  ## Revision Dates
+  ##    28-Feb-2008 (CT) Creation (factored from news.html)
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+<div class="news-entry">
+  <div class="news-meta">
+    <span class="news-author">{{ entry.author }}</span><span class="news-date" >{{ entry.date }}</span>
+    <div class="news-title" >{% firstof entry.desc entry.title %}</div>
+  </div>
+  {{ entry.contents|safe }}
+</div>
+{# __END__ Django template: news-entry.html #}

@@ -1,0 +1,9 @@
+..
+  <Nav-Info>
+    author     = u"Test Author"
+    date       = u"2008/08/30 22:50"
+    desc       = u"Description of the Entry"
+    title      = u"News 1"
+  </Nav-Info>
+
+This is the first news entry

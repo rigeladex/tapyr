@@ -31,6 +31,7 @@
 #    12-May-2008 (MG) `sequence_filter` added
 #    12-May-2008 (MG) `sequence_filter`: support `None` as passed in sequence
 #    14-May-2008 (CT) Use `_define_op_filter` instead of `exec`
+#     5-Oct-2008 (MG) `path_starts_with` added
 #    ««revision-date»»···
 #--
 
@@ -141,5 +142,18 @@ def sequence_filter (sequence, filter_spec) :
         return (e for e in sequence if getattr (e, attr, False) == condition)
     return ()
 # end def sequence_filter
+
+@register.filter
+@defaultfilters.stringfilter
+def path_starts_with (value, prefix) :
+    """Returns the result of `value.startswith (prefix)`"""
+    if value and value.startswith (prefix) :
+        ### now that we know that `value` starts with `prefix` let's
+        ### check that after the prefix one `seperator` charector is
+        ### found
+        plen = len (prefix)
+        return plen == len (value) or (value [plen] in "/.")
+    return False
+# end def path_starts_with
 
 ### __END__ DJO.templatetags.TGL_Filters
