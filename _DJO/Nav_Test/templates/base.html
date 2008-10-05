@@ -1,0 +1,54 @@
+{% comment %}
+  ## Copyright (C) 2008 Martin Glück All rights reserved
+  ## Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
+  ##
+  ##++
+  ## Name
+  ##    base
+  ##
+  ## Purpose
+  ##    Base template for the test page
+  ##
+  ##
+  ## Revision Dates
+  ##     5-Oct-2008 (MG) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+
+{# Django template: base.html #}
+{% load TGL %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="{{ page.language|default:"de" }}"
+      lang="{{ page.language|default:"de" }}"
+>
+{# {% spaceless %} #}
+  <head>
+    {% block head-elements %}
+      <meta http-equiv="Content-Type"
+        content="text/html; charset={{ page.encoding|default:"iso-8859-15" }}"
+      />
+      {% block title %}
+        <title>
+        {% if page.title %}
+          {{ page.title }} [{{ page.owner }}]
+        {% else %}
+          {% firstof page.owner "DJO Test Page" %}
+        {% endif %}
+        </title>
+      {% endblock title %}
+    {% endblock head-elements %}
+  </head>
+  <body {{ page.body_attr|safe }} {% block body-attrs %}{% endblock %}>
+    <div id="main">
+      <div id="navigate">
+        {% block navigate %}{% include "navigate.html" %}{% endblock %}
+      <div id="document">{% block document %}{% endblock %}</div>
+    </div>
+  </body>
+{# {% endspaceless %} #}
+</html>
+{# __END__ Django template: base.html #}

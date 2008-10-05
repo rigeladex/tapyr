@@ -1,0 +1,25 @@
+{# Django template: navigate.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    navigate
+  ##
+  ## Purpose
+  ##    Create the navigation division
+  ##
+  ##
+  ## Revision Dates
+  ##    22-Feb-2008 (CT) Creation
+  ##    21-May-2008 (CT) s/page.own_links/page.top.own_links/
+  ##                     (same for web_links)
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+  {% load TGL %}
+  {% rrender "nav-section.html" link_list = page.top.own_links; nav_section_id = "ownlinks"; nav_section_name = "Navigation" %}
+  {% rrender "nav-section.html" link_list = page.top.web_links; nav_section_id = "weblinks"; nav_section_name = "Wind und Wetter" %}
+{# __END__ Django template: navigate.html #}

@@ -1,0 +1,8 @@
+# -*- coding: iso-8859-1 -*-
+own_links = \
+    [ dict
+        ( name       = "index.html"
+        , title      = u"Home"
+        , Type       = Page_ReST_F
+        )
+    ]

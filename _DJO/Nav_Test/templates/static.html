@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{# Django template: static.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    static
+  ##
+  ## Purpose
+  ##    Template for static pages
+  ##
+  ##
+  ## Revision Dates
+  ##    26-Feb-2008 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+  {% block document %}{{ page.contents|safe }}{% endblock %}
+{# __END__ Django template: static.html #}

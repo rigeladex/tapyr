@@ -709,6 +709,11 @@ class Root (_Dir_) :
 
     _dump_type      = "DJO.Navigation.Root.from_dict_list \\"
 
+    handlers        = \
+        { 404       : None
+        , 500       : None
+        }
+
     def __init__ (self, src_dir, ** kw) :
         _Site_Entity_.top = self
         self.parents      = []
@@ -761,6 +766,43 @@ class Root (_Dir_) :
             return page._view (request)
         raise django.http.Http404 (href)
     # end def universal_view
+
+    ### methods needed to be able to use the root object as a Django URLResolver
+    @classmethod
+    def resolve (cls, path) :
+        return cls.universal_view, (), {}
+    # end def resolve
+
+    @classmethod
+    def _resolve_special (cls, view_type):
+        from django.core.exceptions import ViewDoesNotExist
+        try :
+            callback = cls.handlers [view_type]
+            if isinstance (callback, basestring) :
+                from django.core.urlresolvers import get_mod_func
+                mod_name, func_name = get_mod_func (callback)
+                try:
+                    callback = getattr \
+                        (__import__(mod_name, {}, {}, ['']), func_name)
+                except (ImportError, AttributeError), e:
+                    raise ViewDoesNotExist \
+                        ("Tried %s. Error was: %s" % (callback, e))
+                except (ImportError, AttributeError), e:
+                    raise ViewDoesNotExist \
+                        ("Tried %s. Error was: %s" % (callback, e))
+            if not callable (callback) :
+                raise TypeError ("Handler for %s not callable" % (view_type, ))
+        except (KeyError, TypeError), e:
+            raise ViewDoesNotExist \
+                ("Tried %s. Error was: %s" % (view_type, e))
+        return callback, {}
+    # end def _resolve_special
+
+    @classmethod
+    def resolve404 (cls) : return cls._resolve_special (404)
+
+    @classmethod
+    def resolve500 (cls) : return cls._resolve_special (500)
 
 # end class Root
 
@@ -1094,6 +1136,12 @@ class Site_Admin (Dir) :
     # end def rendered
 
 # end class Site_Admin
+
+def Bypass_URL_Resolver () :
+    from django.core import exceptions, urlresolvers
+
+    urlresolvers.RegexURLResolver = lambda path, urlconf : DJO.Navigation.Root
+# end def Bypass_URL_Resolver
 
 if __name__ != "__main__":
     DJO._Export_Module ()
