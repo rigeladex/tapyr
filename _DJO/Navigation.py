@@ -123,6 +123,11 @@
 #                     `delegation_view` removed (not needed anymore)
 #     5-Oct-2008 (MG) `Bypass_URL_Resolver` added
 #     5-Oct-2008 (MG) `none_result` and `no_entries_template` added
+#     6-Oct-2008 (MG) `none_result` and` no_entries_template` replaced by
+#                     `empty_template`
+#                     `_Site_Entity_._view` raise `Http404` in case
+#                     `rendered` returns `None`
+#                     `Root.url_pattern` and friends added
 #    ««revision-date»»···
 #--
 
@@ -135,6 +140,7 @@ from   _TFL.defaultdict         import defaultdict
 from   _TFL.Filename            import *
 from   _TFL.predicate           import pairwise
 from   _TFL.Record              import Record
+from   _TFL.Regexp              import *
 from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
@@ -172,7 +178,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     implicit        = False
     parent          = None
-    none_result     = None
 
     _dump_type      = "dict"
 
@@ -309,6 +314,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
         from django.template import RequestContext
         context = RequestContext (request, dict ())
         result  = self.rendered  (context)
+        if result is None :
+            raise django.http.Http404 (request.path [1:])
         if isinstance (result, str) :
             result = unicode (result, self.encoding)
         if not isinstance (result, HttpResponse) :
@@ -545,6 +552,7 @@ class _Dir_ (_Site_Entity_) :
 
     dir             = ""
     sub_dir         = ""
+    empty_template  = None
 
     def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
@@ -667,10 +675,8 @@ class _Dir_ (_Site_Entity_) :
         try :
             page = first (self.own_links)
         except IndexError :
-            for e in self._entries :
-                result = e.none_result
-                if result :
-                    return result
+            if self.empty_template :
+                return self.__super.rendered (template = self.empty_template)
         else :
             return page.rendered (context, nav_page)
     # end def rendered
@@ -715,6 +721,8 @@ class Root (_Dir_) :
     translator      = None
 
     _dump_type      = "DJO.Navigation.Root.from_dict_list \\"
+
+    url_patterns    = []
 
     handlers        = \
         { 404       : None
@@ -767,10 +775,14 @@ class Root (_Dir_) :
     @classmethod
     def universal_view (cls, request) :
         href = request.path [1:]
-        #import pdb; pdb.set_trace ()
+        ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
         if page :
             return page._view (request)
+        for pattern in cls.url_patterns :
+            response = pattern.resolve (request)
+            if response :
+                return response
         raise django.http.Http404 (href)
     # end def universal_view
 
@@ -812,6 +824,33 @@ class Root (_Dir_) :
     def resolve500 (cls) : return cls._resolve_special (500)
 
 # end class Root
+
+class Url_Pattnern (TFL.Meta.Object) :
+    """Link an regular expression to a view callable"""
+
+    def __init__ (self, pattern, callable, ** kw) :
+        self.pattern  = TFL.Regexp (pattern, re.X)
+        self.callable = callable
+        self.kw       = kw
+    # end def __init__
+
+    def resolve (self, request) :
+        if self.pattern.match (request.path [1:]) :
+            kw = dict (self.kw, ** self.pattern.groupdict ())
+            return self.callable (request, ** kw)
+    # end def resolve
+
+# end class Url_Pattnern
+
+class Static_Files_Pattner (Url_Pattnern) :
+    """A pattern to serve static files"""
+
+    def __init__ (self, pattern, ** kw) :
+        from django.views.static import serve
+        self.__super.__init__ (pattern, serve, ** kw)
+    # end def __init__
+
+# end class Static_Files_Pattner
 
 class Page_ReST (Page) :
     """Model one page generated from re-structured text."""
@@ -906,13 +945,6 @@ class Dyn_Slice_ReST_Dir (_Site_Entity_) :
                 add (Page_Type (parent = parent, ** info))
         entries.sort (key = sort_key, reverse = True)
     # end def _read_entries
-
-    @property
-    def none_result (self) :
-        if self.no_entries_template :
-            return self.rendered (template = self.no_entries_template)
-        return "No entries"
-    # end def none_result
 
 # end class Dyn_Slice_ReST_Dir
 

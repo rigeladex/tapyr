@@ -10,14 +10,14 @@ own_links = \
         )
     ### test a dynamic dir with the `no_entries_template`
     , dict
-        ( sub_dir    =  "news-no-entries"
+        ( sub_dir    =  "no-entriies-test"
         , template   =  "news.html"
         , title      = u"News No Entries"
         , Type       = Dir
+        , empty_template = "no_news.html"
         , _entries   =
             [ dict
                 ( Type                = Dyn_Slice_ReST_Dir
-                , no_entries_template = "no_news.html"
                 )
             ]
         )

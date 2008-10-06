@@ -135,3 +135,10 @@ NAV       = DJO.Navigation.Root.from_nav_list_file \
         )
 ### bypass the standard django URL resolving based on regular expressions
 DJO.Navigation.Bypass_URL_Resolver ()
+DJO.Navigation.Root.url_patterns.append \
+    ( DJO.Navigation.Static_Files_Pattner
+        ( "^media/(?P<path>.*)$"
+        , document_root = MEDIA_ROOT
+        , show_indexes  = True
+        )
+    )
