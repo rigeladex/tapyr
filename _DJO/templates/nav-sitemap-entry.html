@@ -32,6 +32,7 @@
           <p>Prefix: {{ link.prefix }}</p>
           <p>Template: {{ link.template }}</p>
           <p>Type: {{ link.Type }}</p>
+          <p>Target: {{ link.target.href }}</p>
           {% if link.photos %}
             <ul >
               {% rrender "nav-sitemap-entry.html" link=link.photos.0 %}

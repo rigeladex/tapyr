@@ -128,6 +128,13 @@
 #                     `_Site_Entity_._view` raise `Http404` in case
 #                     `rendered` returns `None`
 #                     `Root.url_pattern` and friends added
+#     7-Oct-2008 (CT) Esthetics (and spelling)
+#     7-Oct-2008 (CT) Gallery changed to use a directory-style `href`
+#     7-Oct-2008 (CT) `empty_template` moved from `_Dir_` to `Root`
+#     7-Oct-2008 (CT) `auto_delegate` added to support statically generated
+#                     files
+#     7-Oct-2008 (CT) `page_from_href` changed to try `href` with a trailing
+#                     slash, too
 #    ««revision-date»»···
 #--
 
@@ -140,7 +147,6 @@ from   _TFL.defaultdict         import defaultdict
 from   _TFL.Filename            import *
 from   _TFL.predicate           import pairwise
 from   _TFL.Record              import Record
-from   _TFL.Regexp              import *
 from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
@@ -310,12 +316,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def _get_child
 
     def _view (self, request) :
-        from django.http     import HttpResponse
+        from django.http     import HttpResponse, Http404
         from django.template import RequestContext
         context = RequestContext (request, dict ())
         result  = self.rendered  (context)
         if result is None :
-            raise django.http.Http404 (request.path [1:])
+            raise Http404 (request.path [1:])
         if isinstance (result, str) :
             result = unicode (result, self.encoding)
         if not isinstance (result, HttpResponse) :
@@ -412,7 +418,7 @@ class Gallery (Page) :
         self._photos  = []
         self._thumbs  = []
         base          = Filename (pic_dir).base
-        self.name     = "%s.html" % (base, )
+        self.name     = pjoin (base, u"")
         self.__super.__init__ (parent, pic_dir = pic_dir, ** kw)
         self.src_dir  = self.prefix = pjoin (parent.prefix, base)
     # end def __init__
@@ -427,7 +433,7 @@ class Gallery (Page) :
         result = ""
         href   = pjoin (self.parent.prefix, self.name)
         if href :
-            result = pnorm (href)
+            result = pjoin (pnorm (href), "")
         return result
     # end def href
 
@@ -552,7 +558,6 @@ class _Dir_ (_Site_Entity_) :
 
     dir             = ""
     sub_dir         = ""
-    empty_template  = None
 
     def __init__ (self, parent = None, ** kw) :
         self.__super.__init__ (parent, ** kw)
@@ -585,7 +590,7 @@ class _Dir_ (_Site_Entity_) :
 
     @property
     def href (self) :
-        if self._entries :
+        if self.auto_delegate and self._entries :
             try :
                 return first (self.own_links).href
             except IndexError :
@@ -714,7 +719,9 @@ class Dir (_Dir_) :
 
 class Root (_Dir_) :
 
+    auto_delegate   = False  ### useful if not served by Django
     copyright_start = None
+    empty_template  = None
     name            = "/"
     owner           = None
     src_root        = ""
@@ -752,8 +759,11 @@ class Root (_Dir_) :
     @classmethod
     def page_from_href (cls, href, request = None) :
         result = None
+        href_s = pjoin (href, u"")
         if href in cls.top.Table :
             result = cls.top.Table [href]
+        elif href_s in cls.top.Table :
+            result = cls.top.Table [href_s]
         else :
             tail = []
             while href :
@@ -818,14 +828,18 @@ class Root (_Dir_) :
     # end def _resolve_special
 
     @classmethod
-    def resolve404 (cls) : return cls._resolve_special (404)
+    def resolve404 (cls) :
+        return cls._resolve_special (404)
+    # end def resolve404
 
     @classmethod
-    def resolve500 (cls) : return cls._resolve_special (500)
+    def resolve500 (cls) :
+        return cls._resolve_special (500)
+    # end def resolve500
 
 # end class Root
 
-class Url_Pattnern (TFL.Meta.Object) :
+class Url_Pattern (TFL.Meta.Object) :
     """Link an regular expression to a view callable"""
 
     def __init__ (self, pattern, callable, ** kw) :
@@ -840,9 +854,9 @@ class Url_Pattnern (TFL.Meta.Object) :
             return self.callable (request, ** kw)
     # end def resolve
 
-# end class Url_Pattnern
+# end class Url_Pattern
 
-class Static_Files_Pattner (Url_Pattnern) :
+class Static_Files_Pattern (Url_Pattern) :
     """A pattern to serve static files"""
 
     def __init__ (self, pattern, ** kw) :
@@ -850,7 +864,7 @@ class Static_Files_Pattner (Url_Pattnern) :
         self.__super.__init__ (pattern, serve, ** kw)
     # end def __init__
 
-# end class Static_Files_Pattner
+# end class Static_Files_Pattern
 
 class Page_ReST (Page) :
     """Model one page generated from re-structured text."""
