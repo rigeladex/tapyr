@@ -8,7 +8,7 @@ from   _TFL.Filename    import Filename
 
 ROOT_PATH      = sos.path.dirname (__file__)
 
-DEBUG          = True
+DEBUG          = False # or True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = ()
@@ -136,9 +136,25 @@ NAV       = DJO.Navigation.Root.from_nav_list_file \
 ### bypass the standard django URL resolving based on regular expressions
 DJO.Navigation.Bypass_URL_Resolver ()
 DJO.Navigation.Root.url_patterns.append \
-    ( DJO.Navigation.Static_Files_Pattner
+    ( DJO.Navigation.Static_Files_Pattern
         ( "^media/(?P<path>.*)$"
         , document_root = MEDIA_ROOT
         , show_indexes  = True
         )
     )
+DJO.Navigation.Root.url_patterns.append \
+    ( DJO.Navigation.Static_Files_Pattern
+        ( "^images/(?P<path>.*)$"
+        , document_root = sos.path.join (MEDIA_ROOT, "..", "images")
+        , show_indexes  = True
+        )
+    )
+DJO.Navigation.Root.handlers [404] = "_DJO.Nav_Test.handler_404.handler404"
+
+def handle_500 (request) :
+    import sys
+    from   django.views import debug
+    exc_info = sys.exc_info ()
+    return debug.technical_500_response(request, *exc_info)
+# end handle_500
+DJO.Navigation.Root.handlers [500] = handle_500

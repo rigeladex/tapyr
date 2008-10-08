@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load TGL %}
+{% block document %}
+  <div class="gallery">
+    <h1>{% firstof page.desc page.title page.href %}</h1>
+    {% for th in page.thumbnails %}
+      <span class="thumbnail">
+        <a href="{{ th.site_prefix }}{{ th.photo.href }}">
+         <img src="{{ th.site_prefix }}{{ th.src }}"
+              height="{{ th.height }}" width="{{ th.width }}"
+         />
+        </a>
+      </span>
+    {% endfor %}
+  </div>
+{% endblock document %}

@@ -1,0 +1,78 @@
+# -*- coding: iso-8859-1 -*-
+from _DJO.Navigation import Dir, Alias
+
+own_links = \
+    [ ### a page generated from a `static` ReST file called index.txt
+      dict
+        ( name           =  "index.html"
+        , title          = u"Home"
+        , Type           =   Page_ReST_F
+        )
+    ### test a dynamic dir with the `no_entries_template`
+    , dict
+        ( sub_dir        =  "no-entries-test"
+        , template       =  "news.html"
+        , title          = u"News No Entries"
+        , Type           =   Dir
+        , empty_template =  "no_news.html"
+        , _entries       =
+            [ dict
+                ( Type   =   Dyn_Slice_ReST_Dir
+                )
+            ]
+        )
+    ### test a dynamic dir
+    , dict
+        ( sub_dir        =  "news"
+        , template       =  "news.html"
+        , title          = u"News"
+        , empty_template =  "no_news.html"
+        )
+    ### a `sub-dir` which display 2 static text entries
+    , dict
+        ( sub_dir        =  "static-dir"
+        , title          = u"Static"
+        , Type           =  Dir
+        , _entries       =
+            [ ### a static page showing some text
+              dict
+               ( name            = "text-1.html"
+               , title           = u"Static 1"
+               , Type            =   Page_ReST_F
+               )
+            ### a static page showing some text
+            , dict
+               ( name            = "text-2.html"
+               , title           = u"Static 2"
+               , Type            =   Page_ReST_F
+               )
+            ]
+        )
+    ### make a directory which some Alias to other pages
+    , dict
+        ( sub_dir        =  "alias-dir"
+        , title          = u"Alias"
+        , Type           =  Dir
+        , _entries       =
+            [ dict
+                ( name   =  "alias-static-1.html"
+                , title  = u"Alias Static 1"
+                , target =  "/static-dir/text-1.html"
+                , Type   = Alias
+                )
+            ]
+        )
+    ### now we test the gallery
+    , dict
+        ( sub_dir        =  "gallery"
+        , title          = u"Photos"
+        , Type           = Dir
+        , _entries       =
+            [ dict
+                ( Type    = Gallery
+                , title   = u"Nature"
+                , pic_dir = "images/nature"
+                )
+            ]
+        )
+    ]
