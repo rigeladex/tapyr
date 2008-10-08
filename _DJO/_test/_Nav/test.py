@@ -15,7 +15,7 @@
 #--
 
 import  os
-os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO.Nav_Test.settings"
+os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._test._Nav.settings"
 
 from   _DJO                    import DJO
 import _DJO._Test.Client

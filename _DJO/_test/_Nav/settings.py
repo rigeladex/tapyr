@@ -149,7 +149,7 @@ DJO.Navigation.Root.url_patterns.append \
         , show_indexes  = True
         )
     )
-DJO.Navigation.Root.handlers [404] = "_DJO.Nav_Test.handler_404.handler404"
+DJO.Navigation.Root.handlers [404] = "_DJO._test._Nav.handler_404.handler404"
 
 def handle_500 (request) :
     import sys
