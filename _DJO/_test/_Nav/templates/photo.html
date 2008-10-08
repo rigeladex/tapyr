@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{# Django template: photo.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    photo
+  ##
+  ## Purpose
+  ##    Template for photo
+  ##
+  ##
+  ## Revision Dates
+  ##     8-May-2008 (CT) Creation
+  ##    19-May-2008 (CT) `nav-neighbor.html` factored
+  ##    21-May-2008 (CT) s/page.link/page/w
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL %}
+{% block document %}
+  <div class="photo">
+    {% blet photo_nav %}
+    <p class="photo-nav">
+      {% rrender "nav-neighbor.html" neighbor=page.prev; alt="Voriges Bild"; symbol="arrow_left" %}
+      <a href="{{ page.site_prefix }}{{ page.parent.href }}">
+        <img alt="Gallerie {{ page.parent.title }}"
+             src="{{ page.site_prefix }}media/images/arrow_up.png"
+             title="Gallerie {{ page.parent.title }}"
+        />
+      </a>
+      {% rrender "nav-neighbor.html" neighbor=page.next; alt="Nächstes Bild"; symbol="arrow_right" %}
+    </p>
+    {% endblet %}
+    {{ photo_nav|safe }}
+    <img alt="{% firstof page.alt page.desc page.title page.href %}"
+         title="{% firstof page.desc page.title page.href %}"
+         src="{{ page.site_prefix }}{{ page.src }}"
+         height="{{ page.height }}" width="{{ page.width }}"
+    />
+    {{ photo_nav|safe }}
+  </div>
+{% endblock document %}
+{# __END__ Django template: photo.html #}

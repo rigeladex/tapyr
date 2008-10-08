@@ -60,6 +60,12 @@ own_links = \
                 , target =  "/static-dir/text-1.html"
                 , Type   = Alias
                 )
+            , dict
+                ( name   =  "pic-of-the-day.html"
+                , title  = u"Picture of the Day"
+                , target = "/gallery/nature/OpenFlower.html"
+                , Type   = Alias
+                )
             ]
         )
     ### now we test the gallery

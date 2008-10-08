@@ -19,6 +19,7 @@ os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._test._Nav.settings"
 
 from   _DJO                    import DJO
 import _DJO._Test.Client
+from   _TFL.predicate          import pairwise
 
 c = DJO.Test.Client ()
 
@@ -93,13 +94,32 @@ def test_alias () :
     page     = response.context ["page"]
     assert  nav_page        != page
     assert  nav_page.target is page
+    response = c.get ("/alias-dir/pic-of-the-day.html", status_code = 200)
+    nav_page = response.context ["nav_page"]
+    page     = response.context ["page"]
+    assert  nav_page        != page
+    assert  nav_page.target is page
+    assert  isinstance (nav_page, DJO.Navigation.Alias)
+    assert  isinstance (page,     DJO.Navigation.Photo)
 # end def test_alias
 
 def test_gallery () :
     response = c.get ("/gallery/nature/", status_code = 200)
-    page     = response.context ["page"]
+    gallery  = response.context ["page"]
+    assert isinstance (gallery, DJO.Navigation.Gallery)
+    assert len (gallery._photos) == 3
+    assert len (gallery._thumbs) == 3
+    for l, r in pairwise (gallery.photos) :
+        assert l.next == r
+        assert r.prev == l
+    assert response.check_templates ("!photo.html", "gallery.html")
+    assert gallery.photos [ 0].prev is None
+    assert gallery.photos [-1].next is None
+    response = c.get ("/gallery/nature/GreenMeadow.html", status_code = 200)
+    photo    = response.context ["page"]
+    assert isinstance (photo, DJO.Navigation.Photo)
+    assert photo.parent is gallery
+    assert response.check_templates ("photo.html", "!gallery.html")
 # end def test_gallery
 
 ### __END__ test
-
-
