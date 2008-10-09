@@ -135,6 +135,9 @@
 #                     files
 #     7-Oct-2008 (CT) `page_from_href` changed to try `href` with a trailing
 #                     slash, too
+#     9-Oct-2008 (CT) Use `.top` to access class variables like
+#                     `url_patterns` and `handlers` that might be redefined
+#                     for the instance of `Root`
 #    ««revision-date»»···
 #--
 
@@ -789,7 +792,7 @@ class Root (_Dir_) :
         page = cls.page_from_href (href, request)
         if page :
             return page._view (request)
-        for pattern in cls.url_patterns :
+        for pattern in cls.top.url_patterns :
             response = pattern.resolve (request)
             if response :
                 return response
@@ -806,7 +809,7 @@ class Root (_Dir_) :
     def _resolve_special (cls, view_type):
         from django.core.exceptions import ViewDoesNotExist
         try :
-            callback = cls.handlers [view_type]
+            callback = cls.top.handlers [view_type]
             if isinstance (callback, basestring) :
                 from django.core.urlresolvers import get_mod_func
                 mod_name, func_name = get_mod_func (callback)
@@ -816,14 +819,10 @@ class Root (_Dir_) :
                 except (ImportError, AttributeError), e:
                     raise ViewDoesNotExist \
                         ("Tried %s. Error was: %s" % (callback, e))
-                except (ImportError, AttributeError), e:
-                    raise ViewDoesNotExist \
-                        ("Tried %s. Error was: %s" % (callback, e))
             if not callable (callback) :
                 raise TypeError ("Handler for %s not callable" % (view_type, ))
         except (KeyError, TypeError), e:
-            raise ViewDoesNotExist \
-                ("Tried %s. Error was: %s" % (view_type, e))
+            raise ViewDoesNotExist ("Tried %s. Error was: %s" % (view_type, e))
         return callback, {}
     # end def _resolve_special
 
