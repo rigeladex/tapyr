@@ -138,6 +138,10 @@
 #     9-Oct-2008 (CT) Use `.top` to access class variables like
 #                     `url_patterns` and `handlers` that might be redefined
 #                     for the instance of `Root`
+#     9-Oct-2008 (MG) `Root.pre_first_request_hooks` added and used in
+#                     `universal_view`
+#                     `Site_Admin.__init__` allow models without `admin_args`
+#                     set
 #    ««revision-date»»···
 #--
 
@@ -184,6 +188,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     href            = ""
     input_encoding  = "iso-8859-15"
     title           = ""
+    top             = None
 
     implicit        = False
     parent          = None
@@ -722,21 +727,22 @@ class Dir (_Dir_) :
 
 class Root (_Dir_) :
 
-    auto_delegate   = False  ### useful if not served by Django
-    copyright_start = None
-    empty_template  = None
-    name            = "/"
-    owner           = None
-    src_root        = ""
-    translator      = None
+    auto_delegate           = False  ### useful if not served by Django
+    copyright_start         = None
+    empty_template          = None
+    name                    = "/"
+    owner                   = None
+    src_root                = ""
+    translator              = None
 
-    _dump_type      = "DJO.Navigation.Root.from_dict_list \\"
+    _dump_type              = "DJO.Navigation.Root.from_dict_list \\"
 
-    url_patterns    = []
+    url_patterns            = []
+    pre_first_request_hooks = []
 
-    handlers        = \
-        { 404       : None
-        , 500       : None
+    handlers                = \
+        { 404               : None
+        , 500               : None
         }
 
     def __init__ (self, src_dir, ** kw) :
@@ -787,7 +793,9 @@ class Root (_Dir_) :
 
     @classmethod
     def universal_view (cls, request) :
-        href = request.path [1:]
+        while cls.pre_first_request_hooks :
+            cls.pre_first_request_hooks.pop () ()
+        href                        = request.path [1:]
         ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
         if page :
@@ -1173,9 +1181,10 @@ class Site_Admin (Dir) :
                 , title        = name
                 , desc         = desc
                 , Model        = m
-                , Type         = m.admin_args.get ("Admin_Type", self.Page)
+                , Type         = self.Page
                 )
             if hasattr (m, "admin_args") :
+                d ["Type"] = m.admin_args.pop ("Admin_Type", d ["Type"])
                 d.update (m.admin_args)
             entries.append (d)
         self.add_entries (entries)

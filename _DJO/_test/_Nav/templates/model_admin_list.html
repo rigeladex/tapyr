@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{# Django template: New.scams.at:django:templates:model_admin_list.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    model_admin_list
+  ##
+  ## Purpose
+  ##    Django template to display a list of objects of a model
+  ##
+  ##
+  ## Revision Dates
+  ##    10-Jul-2008 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL %}
+{% block document %}
+  <table class="Object-List">
+    <caption>
+      {{ Model_Name_s }}
+      {# XXX add button #}
+    </caption>
+    <colgroup>
+      <col class="{{ Meta.object_name }}-cmd-change" />
+      {% for f in fields %}
+        <col class="{{ Meta.object_name }}-{{ f.name }}" />
+      {% endfor %}
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="{{ Meta.object_name }}-cmd-change" scope="col"></th>
+        {% for f in fields %}
+          <th class="{{ Meta.object_name }}-{{ f.name }}" scope="col"
+              title="{{ f.help_text }}">{{ f.verbose_name }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in objects %}
+        <tr class="{% cycle 'row1' 'row2' %}" id="pk-{{ o.id }}">
+          <td class="{{ Meta.object_name }}-cmd-change">
+            <a href="{{ o.href_change }}"><img
+            src="{{ page.site_prefix }}media/images/icon_edit.gif"
+            alt="Ändern"
+            height="10" width="10" style="border:0"
+          /></a>
+          </td>
+          {% for f in o %}
+            <td class="{{ Meta.object_name }}-{{ f.name }}">{{ f }}</td>
+          {% endfor %}
+          <td class="{{ Meta.object_name }}-cmd-delete">
+            <a href="{{ o.href_delete }}"><img
+            src="{{ page.site_prefix }}media/images/icon_delete.gif"
+            alt="Löschen"
+            height="10" width="10" style="border:0"
+          /></a>
+          </td>
+          {# XXX icons instead of text for change/delete #}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><a href="{{ page.href_create }}">Neues Objekt erzeugen</a></p>
+{% endblock document %}
+{# __END__ Django template: New.scams.at:django:templates:model_admin_list.html #}
+
+
+

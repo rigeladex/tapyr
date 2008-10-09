@@ -15,15 +15,20 @@
 #--
 
 import  os
-os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._test._Nav.settings"
+os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._test._Nav.settings_test"
 
+from django.core               import management
 from   _DJO                    import DJO
 import _DJO._Test.Client
 from   _TFL.predicate          import pairwise
 
 c = DJO.Test.Client ()
 
-TOP_LEVEL_MENU_ITEMS = 6
+TOP_LEVEL_MENU_ITEMS = 7
+
+def setup_module (modele) :
+    management.call_command ("syncdb", verbosity = 0, interactive = False)
+# end def setup_module
 
 def test_404_error () :
     response = c.get ("/page-does-not-exist", status_code = 404)
@@ -121,5 +126,10 @@ def test_gallery () :
     assert photo.parent is gallery
     assert response.check_templates ("photo.html", "!gallery.html")
 # end def test_gallery
+
+def test_admin_new () :
+    management.call_command ("flush")
+    response = c.get ("/Admin/News/", status_code = 200)
+# end def test_admin_new
 
 ### __END__ test
