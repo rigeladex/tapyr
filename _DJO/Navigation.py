@@ -144,6 +144,8 @@
 #                     set
 #    10-Oct-2008 (CT) Esthetics
 #                     (and use `.top` to access `pre_first_request_hooks`)
+#    10-Oct-2008 (CT) Guard for `DoesNotExist` added to `Changer.rendered`
+#                     and `Deleter._view`
 #    ««revision-date»»···
 #--
 
@@ -987,8 +989,16 @@ class Model_Admin (Page) :
         def rendered (self, context, nav_page = None) :
             request  = context ["request"]
             obj      = context ["instance"] = None
-            if self.obj_id :
-                obj  = self.Model.objects.get (id = self.obj_id)
+            obj_id   = self.obj_id
+            if obj_id :
+                try :
+                    obj  = self.Model.objects.get (id = obj_id)
+                except self.Model.DoesNotExist, exc :
+                    request.Error = \
+                        ( "%s `%s` existiert nicht!"
+                        % (self.Model._meta.verbose_name, obj_id)
+                        )
+                    raise django.http.Http404 (request.path)
             if request.method == "POST":
                 form = self.Form (request.POST, instance = obj)
                 if form.is_valid () :
@@ -1016,7 +1026,14 @@ class Model_Admin (Page) :
         def _view (self, request) :
             from django.http import HttpResponseRedirect
             obj_id = self.obj_id
-            obj    = self.Model.objects.get (id = obj_id)
+            try :
+                obj  = self.Model.objects.get (id = obj_id)
+            except self.Model.DoesNotExist, exc :
+                request.Error = \
+                    ( "%s `%s` existiert nicht!"
+                    % (self.Model._meta.verbose_name, obj_id)
+                    )
+                raise django.http.Http404 (request.path)
             obj.delete ()
             ### XXX ??? Feedback ???
             return HttpResponseRedirect (self.parent.abs_href)
