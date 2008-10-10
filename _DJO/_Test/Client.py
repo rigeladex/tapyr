@@ -56,14 +56,14 @@ class Client (DClient) :
         return response
     # end def get
 
-    def put (self, * args, ** kw) :
+    def post (self, * args, ** kw) :
         status_code = kw.pop ("status_code", DJO.Test.no_default)
-        response    = self.__super.put (* args, ** kw)
+        response    = self.__super.post (* args, ** kw)
         if status_code != DJO.Test.no_default :
             assert response.status_code == status_code, "%d != %s" % \
                 (response.status_code, status_code)
         return response
-    # end def put
+    # end def post
 
     def request (self, * args, ** kw) :
         response = self.__super.request (* args, ** kw)

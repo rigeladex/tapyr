@@ -34,6 +34,8 @@
 from   _TFL                   import TFL
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
+from    urlparse              import urlsplit, urlunsplit
+from    django.http           import QueryDict
 
 no_default = object ()
 
@@ -67,7 +69,7 @@ class Response (TFL.Meta.Object) :
 
     def __init__ (self, response) :
         self._response = response
-        self.context   = Multi_Dict (name = "Context", * response.context)
+        self.context   = Multi_Dict (name = "Context", * response.context or ())
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -105,6 +107,28 @@ class Response (TFL.Meta.Object) :
         assert not errors
         assert bool (form.non_field_errors ()) == non_field
     # end def check_form_errors
+
+    def check_redirect ( self, redirect_to
+                       , redirect_status_code = 302
+                       , status_code          = 200
+                       , host                 = None
+                       ) :
+        assert self.status_code == redirect_status_code
+        url = self._response ["Location"]
+        scheme,     netloc,   path,   query,   fragment = urlsplit (url)
+        e_scheme, e_netloc, e_path, e_query, e_fragment = urlsplit (redirect_to)
+        if not (e_scheme or e_netloc):
+            redirect_to = urlunsplit \
+                (("http", host or "testserver", e_path, e_query, e_fragment))
+        assert url == redirect_to
+
+        if status_code is not None :
+            # Get the redirection page, using the same client that was used
+            # to obtain the original response.
+            redirect_response = self._response.client.get \
+                (path, QueryDict (query))
+            assert redirect_response.status_code == status_code
+    # end def check_redirect
 
 # end class Response
 
