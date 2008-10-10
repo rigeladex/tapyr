@@ -140,8 +140,10 @@
 #                     for the instance of `Root`
 #     9-Oct-2008 (MG) `Root.pre_first_request_hooks` added and used in
 #                     `universal_view`
-#                     `Site_Admin.__init__` allow models without `admin_args`
+#     9-Oct-2008 (MG) `Site_Admin.__init__` allow models without `admin_args`
 #                     set
+#    10-Oct-2008 (CT) Esthetics
+#                     (and use `.top` to access `pre_first_request_hooks`)
 #    ««revision-date»»···
 #--
 
@@ -793,9 +795,10 @@ class Root (_Dir_) :
 
     @classmethod
     def universal_view (cls, request) :
-        while cls.pre_first_request_hooks :
-            cls.pre_first_request_hooks.pop () ()
-        href                        = request.path [1:]
+        for h in cls.top.pre_first_request_hooks :
+            h ()
+        cls.top.pre_first_request_hooks = []
+        href = request.path [1:]
         ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
         if page :
@@ -1170,22 +1173,22 @@ class Site_Admin (Dir) :
     template        = "site_admin.html"
 
     def __init__ (self, src_dir, parent, ** kw) :
+        entries  = []
         models   = kw.pop ("models")
         self.__super.__init__ (src_dir, parent, ** kw)
-        entries = []
         for m in models :
-            name  = m._meta.verbose_name_plural
-            desc  = "%s: %s" % (self.desc, name)
-            d     = dict \
-                ( name         = name
-                , title        = name
-                , desc         = desc
-                , Model        = m
-                , Type         = self.Page
+            name = m._meta.verbose_name_plural
+            desc = "%s: %s" % (self.desc, name)
+            m_kw = getattr  (m, "admin_args", {})
+            Type = m_kw.pop ("Admin_Type", self.Page)
+            d = dict \
+                ( name   = name
+                , title  = name
+                , desc   = desc
+                , Model  = m
+                , Type   = Type
+                , ** m_kw
                 )
-            if hasattr (m, "admin_args") :
-                d ["Type"] = m.admin_args.pop ("Admin_Type", d ["Type"])
-                d.update (m.admin_args)
             entries.append (d)
         self.add_entries (entries)
     # end def __init__
