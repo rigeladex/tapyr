@@ -194,4 +194,11 @@ def test_admin_news_change_and_delete () :
     assert objects [0].title == "This is titel 1"
     assert objects [1].title == "New title of the 3rd entry"
 # end def test_admin_news_change_and_delete
+
+@DJO.Test.DB.setup_database (flush = True)
+def test_admin_404 () :
+    response = c.get ("/Admin/news/delete/1", status_code = 404)
+    response = c.get ("/Admin/news/change/1", status_code = 404)
+# end def test_admin_404
+
 ### __END__ test
