@@ -17,7 +17,7 @@
 import  os
 os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._test._Nav.settings_test"
 
-from django.core               import management
+from    django.core            import management
 from   _DJO                    import DJO
 import _DJO._Test.Client
 from   _TFL.predicate          import pairwise
@@ -129,7 +129,23 @@ def test_gallery () :
 
 def test_admin_new () :
     management.call_command ("flush")
-    response = c.get ("/Admin/News/", status_code = 200)
+    response = c.get         ("/Admin/news/", status_code = 200)
+    assert response.check_templates ("model_admin_list.html")
+    assert not response.context ["objects"]
+    response = c.get         ("/Admin/news/create", status_code = 200)
+    assert response.check_templates ("model_admin_change.html")
+    ### test if from errors are flagged
+    response = c.post        ("/Admin/news/create", status_code = 200)
+    assert response.check_templates ("model_admin_change.html")
+    response = c.post \
+        ( "/Admin/news/create"
+        , status_code = 200
+        , text        = "This is a text"
+        , title       = "This is the title"
+        )
+    ### test if the instance has been created
+    response = c.get         ("/Admin/news/", status_code = 200)
+    assert not response.context ["objects"]
 # end def test_admin_new
 
 ### __END__ test

@@ -96,8 +96,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     "_DJO",
     ### add a few test models
-    "_DJO._test._Nav.model_1",
-    "_DJO._test._Nav.model_2"
+    "_DJO._test._Nav.model_1"
 )
 
 DATE_FORMAT                      = "Y/m/d"

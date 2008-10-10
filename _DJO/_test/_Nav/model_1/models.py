@@ -51,7 +51,7 @@ class News (DJO.Model) :
     """A imple news entry model."""
 
     class Meta :
-        verbose_name_plural = "News"
+        verbose_name_plural = "news"
     # end class Meta
 
     title    = MF.Char ( "Titel", max_length   = 80)

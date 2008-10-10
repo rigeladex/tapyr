@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Oct-2008 (MG) Creation
+#    10-Oct-2008 (MG) `check_form_errors` added
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,21 @@ class Response (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         return getattr (self._response, name)
     # end def __getattr__
+
+    def check_form_errors (self, * fields_with_errors, ** kw) :
+        form_name = kw.pop ("form_name", "form")
+        non_field = kw.pop ("non_field_errors", False)
+        form      = self.context [form_name]
+        errors    = dict (form.errors)
+        for field_name in fields_with_errors :
+            assert field_name in errors
+            del errors [field_name]
+        for field_name, error_msg in kw.iteritems () :
+            msg = "\n\n".join (unicode (m) for m in errors.pop (field_name))
+            assert error_msg in msg
+        assert not errors
+        assert bool (form.non_field_errors ()) == non_field
+    # end def check_form_errors
 
 # end class Response
 

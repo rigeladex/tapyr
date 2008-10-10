@@ -146,6 +146,9 @@
 #                     (and use `.top` to access `pre_first_request_hooks`)
 #    10-Oct-2008 (CT) Guard for `DoesNotExist` added to `Changer.rendered`
 #                     and `Deleter._view`
+#    10-Oct-2008 (MG)  `Site_Admin.__init__` use `unicode
+#                      (m._meta.verbose_name_plural)` to resolve the
+#                      translation proxy
 #    ««revision-date»»···
 #--
 
@@ -1194,7 +1197,7 @@ class Site_Admin (Dir) :
         models   = kw.pop ("models")
         self.__super.__init__ (src_dir, parent, ** kw)
         for m in models :
-            name = m._meta.verbose_name_plural
+            name = unicode (m._meta.verbose_name_plural)
             desc = "%s: %s" % (self.desc, name)
             m_kw = getattr  (m, "admin_args", {})
             Type = m_kw.pop ("Admin_Type", self.Page)
