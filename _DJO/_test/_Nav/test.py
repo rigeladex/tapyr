@@ -17,18 +17,15 @@
 import  os
 os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._test._Nav.settings_test"
 
-from    django.core            import management
 from   _DJO                    import DJO
 import _DJO._Test.Client
+import _DJO._Test.Database
+
 from   _TFL.predicate          import pairwise
 
 c = DJO.Test.Client ()
 
 TOP_LEVEL_MENU_ITEMS = 7
-
-def setup_module (modele) :
-    management.call_command ("syncdb", verbosity = 0, interactive = False)
-# end def setup_module
 
 def test_404_error () :
     response = c.get ("/page-does-not-exist", status_code = 404)
@@ -127,8 +124,8 @@ def test_gallery () :
     assert response.check_templates ("photo.html", "!gallery.html")
 # end def test_gallery
 
-def test_admin_new () :
-    management.call_command ("flush")
+@DJO.Test.DB.setup_database (flush = True)
+def test_admin_news () :
     response = c.get         ("/Admin/news/", status_code = 200)
     assert response.check_templates ("model_admin_list.html")
     assert not response.context ["objects"]
@@ -139,13 +136,62 @@ def test_admin_new () :
     assert response.check_templates ("model_admin_change.html")
     response = c.post \
         ( "/Admin/news/create"
-        , status_code = 200
-        , text        = "This is a text"
-        , title       = "This is the title"
+        , data = dict ( text        = "This is a text"
+                      , title       = "This is the title"
+                      )
         )
+    response.check_redirect ("/Admin/news/#pk-1")
     ### test if the instance has been created
     response = c.get         ("/Admin/news/", status_code = 200)
-    assert not response.context ["objects"]
-# end def test_admin_new
+    objects  = response.context ["objects"]
+    assert len (objects) == 1
+    assert objects [0].title == "This is the title"
+# end def test_admin_news
 
+@DJO.Test.DB.setup_database (flush = True)
+def test_admin_news_change_and_delete () :
+    ### first check that no object is in the database
+    response = c.get         ("/Admin/news/", status_code = 200)
+    assert not response.context ["objects"]
+    ### now, let's create 3 entries
+    for i in range (1, 4) :
+        response = c.post \
+            ( "/Admin/news/create"
+            , data = dict ( text        = "This is text no %04d" % (i, )
+                          , title       = "This is titel %d"     % (i, )
+                          )
+            )
+        response.check_redirect ("/Admin/news/#pk-%d" % (i, ))
+    ### make sure all 3 objects are in the `list`
+    response = c.get         ("/Admin/news/", status_code = 200)
+    objects  = response.context ["objects"]
+    assert len (objects) == 3
+    ### and that the 3rd object  has the currect title
+    assert objects [2].title == "This is titel 3"
+    ### now we change the title and text of entry 3
+    response = c.post \
+        ( "/Admin/news/change/3"
+        , data = dict ( text        = "New text of the third entry"
+                      , title       = "New title of the 3rd entry"
+                      )
+        )
+    response.check_redirect ("/Admin/news/#pk-3")
+    ### make sure that the title has changed
+    response = c.get         ("/Admin/news/", status_code = 200)
+    objects  = response.context ["objects"]
+    assert len (objects) == 3
+    ### and that the 3rd object  has the currect title
+    assert objects [2].title == "New title of the 3rd entry"
+
+    ### now we delete the second entry :
+    response = c.get         ("/Admin/news/delete/2")
+    response.check_redirect  ("/Admin/news/")
+    ### and make sure that the correct item was deleted
+    response = c.get         ("/Admin/news/", status_code = 200)
+    objects  = response.context ["objects"]
+    assert len (objects) == 2
+    ### and that the 3rd object  has the currect title
+    assert objects [0].title == "This is titel 1"
+    assert objects [1].title == "New title of the 3rd entry"
+# end def test_admin_news_change_and_delete
 ### __END__ test
