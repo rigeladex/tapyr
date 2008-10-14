@@ -149,6 +149,7 @@
 #    10-Oct-2008 (MG)  `Site_Admin.__init__` use `unicode
 #                      (m._meta.verbose_name_plural)` to resolve the
 #                      translation proxy
+#    14-Oct-2008 (CT) `_load_view` factored and used in `Url_Pattern.resolve`
 #    ««revision-date»»···
 #--
 
@@ -174,6 +175,16 @@ import datetime
 import django
 import textwrap
 import time
+
+def _load_view (name) :
+    from django.core.exceptions import ViewDoesNotExist
+    from django.core.urlresolvers import get_mod_func
+    mod_name, func_name = get_mod_func (name)
+    try:
+        return getattr (__import__(mod_name, {}, {}, ['']), func_name)
+    except (ImportError, AttributeError), e:
+        raise ViewDoesNotExist ("Tried %s. Error was: %s" % (name, e))
+# end def _load_view
 
 class _Meta_ (TFL.Meta.M_Class) :
 
@@ -286,6 +297,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def nav_links (self) :
         yield self
     # end def nav_links
+
+    @Once_Property
+    def permalink (self) :
+        return self.abs_href
+    # end def permalink
 
     def relative_to (self, url, href = None) :
         href          = href or self.href
@@ -827,14 +843,7 @@ class Root (_Dir_) :
         try :
             callback = cls.top.handlers [view_type]
             if isinstance (callback, basestring) :
-                from django.core.urlresolvers import get_mod_func
-                mod_name, func_name = get_mod_func (callback)
-                try:
-                    callback = getattr \
-                        (__import__(mod_name, {}, {}, ['']), func_name)
-                except (ImportError, AttributeError), e:
-                    raise ViewDoesNotExist \
-                        ("Tried %s. Error was: %s" % (callback, e))
+                callback = _load_view (callback)
             if not callable (callback) :
                 raise TypeError ("Handler for %s not callable" % (view_type, ))
         except (KeyError, TypeError), e:
@@ -866,6 +875,9 @@ class Url_Pattern (TFL.Meta.Object) :
     def resolve (self, request) :
         if self.pattern.match (request.path [1:]) :
             kw = dict (self.kw, ** self.pattern.groupdict ())
+            callable = self.callable
+            if isinstance (callable, basestring) :
+                callable = self.callable = _load_view (callable)
             return self.callable (request, ** kw)
     # end def resolve
 
