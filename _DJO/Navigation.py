@@ -150,6 +150,10 @@
 #                      (m._meta.verbose_name_plural)` to resolve the
 #                      translation proxy
 #    14-Oct-2008 (CT) `_load_view` factored and used in `Url_Pattern.resolve`
+#    15-Oct-2008 (CT) `Model_Admin.has_children` and `Model_Admin.prefix` added
+#    15-Oct-2008 (CT) `Model_Admin.Field.formatted` changed to not apply
+#                     `str` to values of type `unicode`
+#    15-Oct-2008 (CT) `Site_Admin.rendered` simplified and then commented out
 #    ««revision-date»»···
 #--
 
@@ -992,6 +996,7 @@ class Dyn_Slice_ReST_Dir (_Site_Entity_) :
 class Model_Admin (Page) :
     """Model an admin page for a specific Django model class."""
 
+    has_children    = True
     template        = "model_admin_list.html"
 
     class Changer (_Site_Entity_) :
@@ -1070,7 +1075,10 @@ class Model_Admin (Page) :
             try :
                 f = self.field.as_string
             except AttributeError :
-                f = str
+                if isinstance (self.value, unicode) :
+                    f = lambda x : x
+                else :
+                    f = str
             return f (self.value)
         # end def formatted
 
@@ -1120,14 +1128,15 @@ class Model_Admin (Page) :
     def __init__ (self, Model, ** kw) :
         if "Form" not in kw :
             kw ["Form"] = self._auto_form (Model, kw)
-        if "list_display" not in kw :
+        if not kw.get ("list_display") :
             kw ["list_display"] = self._auto_list_display (Model, kw)
         self.__super.__init__ (Model = Model, ** kw)
+        self.prefix = pjoin (self.parent.prefix, self.name)
     # end def __init__
 
     @Once_Property
     def href (self) :
-        return pjoin (self.parent.prefix, self.name, u"")
+        return pjoin (self.prefix, u"")
     # end def href
 
     def href_create (self) :
@@ -1164,7 +1173,8 @@ class Model_Admin (Page) :
     # end def rendered
 
     def _auto_list_display (self, Model, kw) :
-        return [f.name for f in Model._meta.fields if f.editable]
+        result = [f.name for f in Model._meta.fields if f.editable]
+        return result
     # end def _auto_list_display
 
     def _auto_form (self, Model, kw) :
@@ -1225,24 +1235,18 @@ class Site_Admin (Dir) :
         self.add_entries (entries)
     # end def __init__
 
-    def rendered (self, context = None, nav_page = None) :
-        if context is None :
-            context = dict (page = self)
-        context.update \
-            ( dict
-                ( models = [(m.name, m.abs_href) for m in self.own_links]
-                ### XXX models = self.own_links ### and change
-                ###                                 site_admin.html accordingly
-                )
-            )
-        return _Site_Entity_.rendered (self, context, nav_page)
-    # end def rendered
+    if 0 :
+        ### if we want to display a site-admin specific page (and not
+        ### just the page of the first child [a Model_Admin]), we'll
+        ### need to bypass `_Dir_.rendered`
+        def rendered (self, context = None, nav_page = None) :
+            return _Site_Entity_.rendered (self, context, nav_page)
+        # end def rendered
 
 # end class Site_Admin
 
 def Bypass_URL_Resolver () :
-    from django.core import exceptions, urlresolvers
-
+    from django.core import urlresolvers
     urlresolvers.RegexURLResolver = lambda path, urlconf : DJO.Navigation.Root
 # end def Bypass_URL_Resolver
 

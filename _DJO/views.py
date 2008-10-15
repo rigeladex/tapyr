@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Oct-2008 (CT) Creation
+#    15-Oct-2008 (CT) `next_page` added to `logout`
 #    ««revision-date»»···
 #--
 
@@ -64,17 +65,18 @@ def handle_500_debug (request) :
     return debug.technical_500_response (request, * sys.exc_info ())
 # end handle_500_debug
 
-def login (request, * args, ** kw) :
+def login (request, ** kw) :
     from django.contrib.auth import views
     ### import pdb; pdb.set_trace ()
-    return views.login (request, * args, ** kw)
+    return views.login (request, ** kw)
 # end def login
 
-def logout (request, * args, ** kw) :
+def logout (request, ** kw) :
     from django.contrib.auth import views
     ### import pdb; pdb.set_trace ()
     request.user_logged_out = request.user
-    return views.logout (request, * args, ** kw)
+    return views.logout \
+        (request, next_page = request.POST.get ("next"), ** kw)
 # end def logout
 
 if __name__ != "__main__":
