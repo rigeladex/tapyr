@@ -29,6 +29,7 @@
 #    14-Jul-2008 (CT) Creation
 #    15-Jul-2008 (CT) Creation continued
 #     3-Oct-2008 (CT) s/django.newforms/django.forms/g
+#    16-Oct-2008 (CT) `widget_attrs` added
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,7 @@ class _DJO_Field_ (DM.Field) :
             self.output_format = kw.pop ("output_format")
         if "Widget" in kw :
             self.Widget        = kw.pop ("Widget")
+        self.widget_attrs = kw.pop ("widget_attrs", {})
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
@@ -80,7 +82,9 @@ class _DJO_Field_ (DM.Field) :
             ### - pass `self` (cf. `_D_Widget_`)
             defaults.update (widget = self.Widget)
         defaults.update (kw)
-        return self.__super.formfield (** defaults)
+        result = self.__super.formfield (** defaults)
+        result.widget.attrs.update (self.widget_attrs)
+        return result
     # end def formfield
 
     def from_string (self, s) :

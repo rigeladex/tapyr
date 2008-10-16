@@ -154,6 +154,8 @@
 #    15-Oct-2008 (CT) `Model_Admin.Field.formatted` changed to not apply
 #                     `str` to values of type `unicode`
 #    15-Oct-2008 (CT) `Site_Admin.rendered` simplified and then commented out
+#    16-Oct-2008 (CT) `Model_Admin._get_child` changed to set proper `name`
+#                     for `Changer`
 #    ««revision-date»»···
 #--
 
@@ -1050,7 +1052,7 @@ class Model_Admin (Page) :
                 obj  = self.Model.objects.get (id = obj_id)
             except self.Model.DoesNotExist, exc :
                 request.Error = \
-                    ( "%s `%s` existiert nicht!"
+                    ( "%s `%s` doesn't exist!"
                     % (self.Model._meta.verbose_name, obj_id)
                     )
                 raise django.http.Http404 (request.path)
@@ -1199,7 +1201,11 @@ class Model_Admin (Page) :
 
     def _get_child (self, child, * grandchildren) :
         if child == "change" and len (grandchildren) == 1 :
-            return self.Changer (parent = self, obj_id = grandchildren [0])
+            return self.Changer \
+                ( parent = self
+                , name   = "change/%s" % (grandchildren [0], )
+                , obj_id = grandchildren [0]
+                )
         if child == "create" and not grandchildren :
             return self.Changer (parent = self)
         if child == "delete" and len (grandchildren) == 1 :
