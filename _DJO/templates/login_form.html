@@ -1,0 +1,34 @@
+{# Django template: login_form.html #}
+{% comment %}
+  ## Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    login_form
+  ##
+  ## Purpose
+  ##    Form for login
+  ##
+  ##
+  ## Revision Dates
+  ##    17-Oct-2008 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+<form method="post" action="/login/" class="login">
+  <ul>
+    <li><label for="id_username">Username</label></li>
+    <li>
+      <input id="id_username" name="username" maxlength="30" type="text"/>
+    </li>
+    <li><label for="id_password">Password</label></li>
+    <li><input type="password" name="password" id="id_password"/></li>
+    <li>
+      <input type="submit" class="submit" value="Login" />
+      <input type="hidden" name="next" value="{{ next }}" />
+    </li>
+  </ul>
+</form>
+{# __END__ Django template: login_form.html #}

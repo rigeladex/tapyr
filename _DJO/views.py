@@ -28,6 +28,8 @@
 # Revision Dates
 #    15-Oct-2008 (CT) Creation
 #    15-Oct-2008 (CT) `next_page` added to `logout`
+#    17-Oct-2008 (CT) `_special_handler` refactored
+#    17-Oct-2008 (CT) `handler_403` added
 #    ««revision-date»»···
 #--
 
@@ -37,29 +39,31 @@ from _DJO.Navigation           import Root
 from django.template           import RequestContext, loader
 from django                    import http
 
-def _special_handler (request, template_name) :
+def _special_handler (request, template_name, Response_Type = None, ** kw) :
+    if Response_Type is None :
+        Response_Type = http.HttpResponseNotFound
     t = loader.get_template (template_name)
-    return http.HttpResponseNotFound \
-        ( t.render
-            ( RequestContext
-                ( request
-                , dict
-                    ( page         = Root.top
-                    )
-                )
-            )
-        )
+    kw.setdefault ("page", Root.top)
+    return Response_Type (t.render (RequestContext (request, kw)))
 # end def _special_handler
 
-def handler_404 (request, template_name = "404.html") :
-    return _special_handler (request, template_name)
+def handler_403 (request, template_name = "403.html", ** kw) :
+    return _special_handler \
+        ( request, template_name
+        , Response_Type = http.HttpResponseForbidden
+        , ** kw
+        )
+# end def handler_403
+
+def handler_404 (request, template_name = "404.html", ** kw) :
+    return _special_handler (request, template_name, ** kw)
 # end def handler_404
 
-def handler_500 (request, template_name = "500.html") :
-    return _special_handler (request, template_name)
+def handler_500 (request, template_name = "500.html", ** kw) :
+    return _special_handler (request, template_name, ** kw)
 # end def handler_500
 
-def handle_500_debug (request) :
+def handle_500_debug (request, template_name = "500.html", ** kw) :
     import sys
     from   django.views import debug
     return debug.technical_500_response (request, * sys.exc_info ())

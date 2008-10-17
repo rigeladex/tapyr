@@ -23,30 +23,38 @@
   ##                     and `prefix`
   ##     3-Oct-2008 (CT) Use `link.has_children` instead of `link.own_links`
   ##                     for predicate about `current-section`
+  ##    17-Oct-2008 (CT) `login_required` added
+  ##    17-Oct-2008 (CT) Wrap `current-section` inside a `a`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
-{% let %}
-  {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
-  {% if nav_page.prefix|starts_with:link.prefix and link.has_children %}
-    <li class="current-section {{ level }}">{{ link.title }}
-      {% rrender "nav-section-level.html" link_list=link.own_links %}
-    </li>
-  {% else %}
-    {% ifequal link.href nav_page.href %}
-      <li class="current-link {{ level }}">{{ link.title }}</li>
+{% if link.login_required and not request.user.is_authenticated %}{% else %}
+  {% let %}
+    {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
+    {% if nav_page.prefix|starts_with:link.prefix and link.has_children %}
+      <li class="current-section {{ level }}">
+        <a href="{{ link.site_prefix }}{{ link.href }}"
+               {% if link.desc %}title="{{ link.desc }}"{% endif %}
+               class="current-section"
+            >{{ link.title }}</a>
+        {% rrender "nav-section-level.html" link_list=link.own_links %}
+      </li>
     {% else %}
-      {% if link.href %}
-        <li class="nav-link {{ level }}">
-          <a href="{{ link.site_prefix }}{{ link.href }}"
-             {% if link.desc %}title="{{ link.desc }}"{% endif %}
-          >{{ link.title }}</a>
-        </li>
+      {% ifequal link.href nav_page.href %}
+        <li class="current-link {{ level }}">{{ link.title }}</li>
       {% else %}
-        <li class="no-link">{{ link.title|safe }}</li>
-      {% endif %}
-    {% endifequal %}
-  {% endif %}
-{% endlet %}
+        {% if link.href %}
+          <li class="nav-link {{ level }}">
+            <a href="{{ link.site_prefix }}{{ link.href }}"
+               {% if link.desc %}title="{{ link.desc }}"{% endif %}
+            >{{ link.title }}</a>
+          </li>
+        {% else %}
+          <li class="no-link">{{ link.title|safe }}</li>
+        {% endif %}
+      {% endifequal %}
+    {% endif %}
+  {% endlet %}
+{% endif %}
 {# __END__ Django template: nav-section-entry.html #}

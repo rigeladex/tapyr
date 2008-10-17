@@ -156,6 +156,7 @@
 #    15-Oct-2008 (CT) `Site_Admin.rendered` simplified and then commented out
 #    16-Oct-2008 (CT) `Model_Admin._get_child` changed to set proper `name`
 #                     for `Changer`
+#    17-Oct-2008 (CT) `login_required` added
 #    ««revision-date»»···
 #--
 
@@ -226,6 +227,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
             encoding = kw ["input_encoding"]
         else :
             encoding = getattr (parent, "input_encoding", self.input_encoding)
+        self._login_required = kw.pop ("login_required", False)
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
@@ -298,6 +300,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
             return pnorm (href)
         return ""
     # end def href
+
+    @Once_Property
+    def login_required (self) :
+        return \
+            (  self._login_required
+            or (self.parent and self.parent._login_required)
+            )
+    # end def login_required
 
     @property
     def nav_links (self) :
@@ -759,6 +769,7 @@ class Root (_Dir_) :
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
     empty_template          = None
+    _login_required         = False
     name                    = "/"
     owner                   = None
     src_root                = ""
@@ -829,6 +840,10 @@ class Root (_Dir_) :
         ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
         if page :
+            if page.login_required :
+                if not request.user.is_authenticated () :
+                    import _DJO.views
+                    return DJO.views.handler_403 (request)
             return page._view (request)
         for pattern in cls.top.url_patterns :
             response = pattern.resolve (request)
