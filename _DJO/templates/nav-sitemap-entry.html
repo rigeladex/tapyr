@@ -15,11 +15,12 @@
   ## Revision Dates
   ##     3-Oct-2008 (CT) Creation
   ##    17-Oct-2008 (CT) `login_required` added
+  ##    17-Oct-2008 (CT) Use `allow_user`  instead of `login_required`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load TGL %}
-{% if link.login_required and not request.user.is_authenticated %}{% else %}
+{% if link|allow_user:request.user %}
   {% let %}
     {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
       <li class="nav-link {{ level }}">

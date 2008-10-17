@@ -252,6 +252,17 @@ class _Site_Entity_ (TFL.Meta.Object) :
             )
     # end def above
 
+    def allow_user (self, user) :
+        if self.login_required :
+            if not user.is_authenticated () :
+                return False
+            if not user.is_active :
+                return False
+            if not user.is_superuser and self._permission :
+                return self._permission (user, self)
+        return True
+    # end def allow_user
+
     @Once_Property
     def base (self) :
         return Filename (self.name).base
@@ -303,9 +314,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def login_required (self) :
+        ### if a parent requires login, all children do too (even if they
+        ### claim otherwise!)
         return \
             (  self._login_required
-            or (self.parent and self.parent._login_required)
+            or self._permission
+            or (self.parent and self.parent.login_required)
             )
     # end def login_required
 
@@ -426,6 +440,17 @@ class Alias (Page) :
             self._target_page = target
         self.__super.__init__ (* args, ** kw)
     # end def __init__
+
+    def allow_user (self, user) :
+        return (not self.target) or self.target.allow_user (user)
+    # end def allow_user
+
+    @Once_Property
+    def login_required (self) :
+        ### if a parent requires login, all children do too (even if they
+        ### claim otherwise!)
+        return (not self.target) or self.target.login_required
+    # end def login_required
 
     def rendered (self, context = None, nav_page = None) :
         target = self.target
@@ -772,6 +797,7 @@ class Root (_Dir_) :
     _login_required         = False
     name                    = "/"
     owner                   = None
+    _permission             = None
     src_root                = ""
     translator              = None
 
@@ -840,11 +866,17 @@ class Root (_Dir_) :
         ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
         if page :
+            import _DJO.views
+            user = request.user
             if page.login_required :
-                if not request.user.is_authenticated () :
-                    import _DJO.views
-                    return DJO.views.handler_403 (request)
-            return page._view (request)
+                if not user.is_authenticated () :
+                    return DJO.views.handler_403 \
+                        (request, template_name = "403_login.html")
+            if page.allow_user (user) :
+                return page._view (request)
+            else :
+                return DJO.views.handler_403 \
+                    (request, template_name = "403_permission.html")
         for pattern in cls.top.url_patterns :
             response = pattern.resolve (request)
             if response :

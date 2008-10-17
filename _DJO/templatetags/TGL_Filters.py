@@ -31,6 +31,7 @@
 #    12-May-2008 (MG) `sequence_filter` added
 #    12-May-2008 (MG) `sequence_filter`: support `None` as passed in sequence
 #    14-May-2008 (CT) Use `_define_op_filter` instead of `exec`
+#    17-Oct-2008 (CT) `allow_user` added
 #    ««revision-date»»···
 #--
 
@@ -102,6 +103,14 @@ def starts_with (value, prefix) :
     """Returns the result of `value.startswith (prefix)`"""
     return value and value.startswith (prefix)
 # end def starts_with
+
+@register.filter
+def allow_user (page, user) :
+    """Returns true if `page` allows access to `user`."""
+    if hasattr (page, "allow_user") :
+        return page.allow_user (user)
+    return True
+# end def allow_user
 
 ### Ideally, we'd just pass `getattr (operator, op)` to register.filter
 ### but the unfortunate `inspect.getargspec` throws a sissy fit

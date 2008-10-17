@@ -33,6 +33,7 @@
 #    13-Feb-2008 (CT) `filter_iter` added
 #     6-May-2008 (CT) Use `all_true` and `any_true` instead of `all` and
 #                     `any` to avoid errors from Python 2.4
+#    17-Oct-2008 (CT) `* args, ** kw` added to filter functions
 #    ««revision-date»»···
 #--
 
@@ -166,16 +167,16 @@ import _TFL._Meta.Object
 class _Filter_ (TFL.Meta.Object) :
     """Base class for filters."""
 
-    def filter (self, iterable) :
-        return list (self.filter_iter (iterable))
+    def filter (self, iterable, * args, ** kw) :
+        return list (self.filter_iter (iterable, * args, ** kw))
     # end def filter
 
-    def filter_iter (self, iterable) :
-        return (item for item in iterable if self (item))
+    def filter_iter (self, iterable, * args, ** kw) :
+        return (item for item in iterable if self (item, * args, ** kw))
     # end def filter_iter
 
-    def __call__ (self, item) :
-        return self.predicate (item)
+    def __call__ (self, item, * args, ** kw) :
+        return self.predicate (item, * args, ** kw)
     # end def __call__
 
     def __and__ (self, rhs) :
@@ -228,8 +229,8 @@ class Filter_Not (_Filter_S_) :
         self._not_predicate = predicate
     # end def __init__
 
-    def predicate (self, item) :
-        return not self._not_predicate (item)
+    def predicate (self, item, * args, ** kw) :
+        return not self._not_predicate (item, * args, ** kw)
     # end def predicate
 
     def __invert__ (self) :
@@ -253,8 +254,8 @@ class _Filter_Q_ (_Filter_) :
                 add (getattr (pof, "predicate", pof))
     # end def __init__
 
-    def predicate (self, item) :
-        return self.quant (p (item) for p in self.predicates)
+    def predicate (self, item, * args, ** kw) :
+        return self.quant (p (item, * args, ** kw) for p in self.predicates)
     # end def predicate
 
     def _inverted_predicate (self) :
