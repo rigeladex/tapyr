@@ -62,7 +62,6 @@ class In_Group (_Permission_) :
     _group      = None
 
     def __init__ (self, group) :
-        self.__super.__init__ ()
         if isinstance (group, basestring) :
             self._group_name = group
         else :
@@ -71,18 +70,23 @@ class In_Group (_Permission_) :
 
     @Once_Property
     def group (self) :
-        result = self._group
-        if not result :
-            from django.contrib.auth.models import Group
-            self._group = result = Group.objects.get (name = self._group_name)
-        return result
+        from django.contrib.auth.models import Group
+        return Group.objects.get (name = self._group_name)
     # end def group
 
     def predicate (self, user, page, * args, ** kw) :
-        return self.group in user.groups
+        return self.group in user.groups.all ()
     # end def predicate
 
 # end class In_Group
+
+class In_Page_Group (_Permission_) :
+
+    def predicate (self, user, page, * args, ** kw) :
+        return page.Group in user.groups.all ()
+    # end def predicate
+
+# end class In_Page_Group
 
 class Is_Creator (_Permission_) :
 

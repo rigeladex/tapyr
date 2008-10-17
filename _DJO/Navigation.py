@@ -1184,6 +1184,12 @@ class Model_Admin (Page) :
     # end def __init__
 
     @Once_Property
+    def Group (self) :
+        from django.contrib.auth.models import Group
+        return Group.objects.get (name = self.Group_Name)
+    # end def Group
+
+    @Once_Property
     def href (self) :
         return pjoin (self.prefix, u"")
     # end def href
