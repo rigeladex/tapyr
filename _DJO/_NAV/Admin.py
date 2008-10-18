@@ -158,6 +158,9 @@
 #                     for `Changer`
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
+#    18-Oct-2008 (CT) `Model_Admin.count` added (because Django templates are
+#                     FUBAR -- `link.Model.objects.count` silently fails to
+#                     return the count)
 #    ««revision-date»»···
 #--
 
@@ -316,6 +319,11 @@ class Model_Admin (DJO.NAV.Page) :
         self.prefix = pjoin (self.parent.prefix, self.name)
     # end def __init__
 
+    @property
+    def count (self) :
+        return self.Model.objects.count ()
+    # end def count
+
     @Once_Property
     def Group (self) :
         from django.contrib.auth.models import Group
@@ -427,7 +435,7 @@ class Site_Admin (DJO.NAV.Dir) :
         self.add_entries (entries)
     # end def __init__
 
-    if 0 :
+    if 1 :
         ### if we want to display a site-admin specific page (and not
         ### just the page of the first child [a Model_Admin]), we'll
         ### need to bypass `_Dir_.rendered`
