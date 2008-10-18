@@ -158,6 +158,8 @@
 #                     for `Changer`
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
+#    18-Oct-2008 (CT) `handler_403` added and `handlers` defined with
+#                     `_DJO.views.handler_XXX` as defaults
 #    ««revision-date»»···
 #--
 
@@ -656,8 +658,9 @@ class Root (_Dir_) :
     pre_first_request_hooks = []
 
     handlers                = \
-        { 404               : None
-        , 500               : None
+        { 403               : "_DJO.views.handler_403"
+        , 404               : "_DJO.views.handler_404"
+        , 500               : "_DJO.views.handler_500"
         }
 
     def __init__ (self, src_dir, ** kw) :
@@ -753,6 +756,11 @@ class Root (_Dir_) :
             raise ViewDoesNotExist ("Tried %s. Error was: %s" % (view_type, e))
         return callback, {}
     # end def _resolve_special
+
+    @classmethod
+    def resolve403 (cls) :
+        return cls._resolve_special (403)
+    # end def resolve404
 
     @classmethod
     def resolve404 (cls) :
