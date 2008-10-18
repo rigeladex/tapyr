@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -21,19 +21,15 @@
 #
 #++
 # Name
-#    TFL/Meta/__init__
+#    TFL.Meta.__init__
 #
 # Purpose
 #    Initialize package `TFL.Meta`
 #
 # Revision Dates
 #    13-May-2002 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL                   import TFL
 from   _TFL.Package_Namespace import Package_Namespace
@@ -43,4 +39,4 @@ TFL._Export ("Meta")
 
 del Package_Namespace
 
-### __END__ TFL/__init__
+### __END__ TFL.Meta.__init__
