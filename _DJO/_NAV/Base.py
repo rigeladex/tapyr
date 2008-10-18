@@ -163,7 +163,7 @@
 
 from   _DJO                     import DJO
 from   _TFL                     import TFL
-import _DJO._Nav
+import _DJO._NAV
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -493,7 +493,7 @@ class _Dir_ (_Site_Entity_) :
         context = {}
         nl      = pjoin (src_dir, "navigation.list")
         result  = cls   (src_dir, parent = parent, ** kw)
-        execfile        (nl, globals (), context)
+        execfile        (nl, DJO.NAV.__dict__, context)
         result.add_entries \
             (context ["own_links"], Dir_Type = Dir.from_nav_list_file)
         return result
@@ -767,5 +767,5 @@ class Root (_Dir_) :
 # end class Root
 
 if __name__ != "__main__":
-    DJO.NAV._Export ("*", "_load_view", "_Meta_", "_Site_Entity_")
+    DJO.NAV._Export ("*", "_load_view", "_Meta_", "_Site_Entity_", "_Dir_")
 ### __END__ DJO.NAV.Base

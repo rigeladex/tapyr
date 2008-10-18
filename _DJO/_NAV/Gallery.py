@@ -163,7 +163,7 @@
 
 from   _DJO                     import DJO
 from   _TFL                     import TFL
-import _DJO._Nav
+import _DJO._NAV.Base
 
 from   _TFL.Filename            import *
 from   _TFL.predicate           import pairwise
@@ -259,7 +259,7 @@ class Gallery (DJO.NAV.Page) :
 
 # end class Gallery
 
-class _Photo_ (Page) :
+class _Photo_ (DJO.NAV.Page) :
 
     _size           = None
     implicit        = True

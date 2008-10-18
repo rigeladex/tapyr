@@ -165,7 +165,7 @@ from   __future__               import with_statement
 
 from   _DJO                     import DJO
 from   _TFL                     import TFL
-import _DJO._NAV
+import _DJO._NAV.Base
 
 from   _TFL.Filename            import *
 from   _TFL.Regexp              import *
@@ -176,7 +176,7 @@ from   posixpath import join as pjoin, normpath as pnorm
 
 import textwrap
 
-class Page_ReST (Page) :
+class Page_ReST (DJO.NAV.Page) :
     """Model one page generated from re-structured text."""
 
     date = ""
@@ -214,7 +214,7 @@ class Page_ReST_F (Page_ReST) :
 
 # end class Page_ReST_F
 
-class Dyn_Slice_ReST_Dir (_Site_Entity_) :
+class Dyn_Slice_ReST_Dir (DJO.NAV._Site_Entity_) :
     """Dynamic slice based on the re-structured files in a directory."""
 
     href          = None

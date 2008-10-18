@@ -165,19 +165,21 @@ from   __future__               import with_statement
 
 from   _DJO                     import DJO
 from   _TFL                     import TFL
-import _DJO._NAV
+
+import _DJO._NAV.Base
+import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   posixpath import join as pjoin, normpath as pnorm
 
-class Model_Admin (Page) :
+class Model_Admin (DJO.NAV.Page) :
     """Model an admin page for a specific Django model class."""
 
     has_children    = True
     template        = "model_admin_list.html"
 
-    class Changer (_Site_Entity_) :
+    class Changer (DJO.NAV._Site_Entity_) :
 
         implicit     = True
         name         = "create"
@@ -216,7 +218,7 @@ class Model_Admin (Page) :
 
     # end class Changer
 
-    class Deleter (_Site_Entity_) :
+    class Deleter (DJO.NAV._Site_Entity_) :
 
         implicit    = True
         name        = "delete"
@@ -398,7 +400,7 @@ class Model_Admin (Page) :
 
 # end class Model_Admin
 
-class Site_Admin (Dir) :
+class Site_Admin (DJO.NAV.Dir) :
     """Model an admin page for a Django site."""
 
     Page            = Model_Admin
@@ -430,7 +432,7 @@ class Site_Admin (Dir) :
         ### just the page of the first child [a Model_Admin]), we'll
         ### need to bypass `_Dir_.rendered`
         def rendered (self, context = None, nav_page = None) :
-            return _Site_Entity_.rendered (self, context, nav_page)
+            return DJO.NAV._Site_Entity_.rendered (self, context, nav_page)
         # end def rendered
 
 # end class Site_Admin

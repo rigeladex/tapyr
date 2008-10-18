@@ -182,6 +182,7 @@ class Url_Pattern (TFL.Meta.Object) :
             kw = dict (self.kw, ** self.pattern.groupdict ())
             callable = self.callable
             if isinstance (callable, basestring) :
+                from _DJO._NAV.Base import _load_view
                 callable = self.callable = _load_view (callable)
             return self.callable (request, ** kw)
     # end def resolve
@@ -200,8 +201,8 @@ class Static_Files_Pattern (Url_Pattern) :
 
 def Bypass_URL_Resolver () :
     from django.core import urlresolvers
-    import _DJO._NAV.Base
-    urlresolvers.RegexURLResolver = lambda path, urlconf : DJO.NAV.Root
+    from _DJO._NAV.Base import Root
+    urlresolvers.RegexURLResolver = lambda path, urlconf : Root
 # end def Bypass_URL_Resolver
 
 if __name__ != "__main__":
