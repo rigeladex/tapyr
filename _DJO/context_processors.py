@@ -31,10 +31,10 @@
 #--
 
 from   _DJO            import DJO
-from   _DJO.Navigation import Root
+import _DJO._NAV.Base
 
 def navigation_root (request) :
-    return dict (NAV = Root.top)
+    return dict (NAV = DJO.NAV.Root.top)
 # end def navigation_root
 
 if __name__ == "__main__" :

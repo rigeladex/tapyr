@@ -33,17 +33,17 @@
 #    ««revision-date»»···
 #--
 
-from _DJO                      import DJO
-from _DJO.Navigation           import Root
+from   _DJO                      import DJO
+import _DJO._NAV.Base
 
-from django.template           import RequestContext, loader
-from django                    import http
+from   django.template           import RequestContext, loader
+from   django                    import http
 
 def _special_handler (request, template_name, Response_Type = None, ** kw) :
     if Response_Type is None :
         Response_Type = http.HttpResponseNotFound
     t = loader.get_template (template_name)
-    kw.setdefault ("page", Root.top)
+    kw.setdefault ("page", DJO.NAV.Root.top)
     return Response_Type (t.render (RequestContext (request, kw)))
 # end def _special_handler
 
