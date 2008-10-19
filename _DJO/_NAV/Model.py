@@ -69,6 +69,10 @@ class Field (TFL.Meta.Object) :
         return getattr (self.obj, self.name)
     # end def value
 
+    def __nonzero__ (self) :
+        return bool (self.value)
+    # end def __nonzero__
+
     def __unicode__ (self) :
         return self.formatted ### XXX encoding
     # end def __unicode__
