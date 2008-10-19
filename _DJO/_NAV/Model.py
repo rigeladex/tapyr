@@ -132,6 +132,9 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         if hasattr (result, "creator") and not result.creator :
                             if request.user.is_authenticated () :
                                 result.creator = request.user
+                    man = self.top.Models.get (self.Model)
+                    if man :
+                        man._old_count = -1
                     return HttpResponseRedirect \
                         ("%s#pk-%s" % (self.parent.abs_href, result.id))
             else :
@@ -315,7 +318,7 @@ class Instance (DJO.NAV.Page) :
 
     @property
     def contents (self) :
-        return self.obj.text_to_html ()
+        return self.obj.contents
     # end def contents
 
     @property
@@ -392,6 +395,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
     def _get_entries (self) :
         count = self.count
         if self._old_count != count :
+            ### XXX Doesn't catch changes to fields of objects
             self._objects   = self._get_objects ()
             self._old_count = count
         return self._objects
