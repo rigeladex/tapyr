@@ -107,7 +107,7 @@ def starts_with (value, prefix) :
 @register.filter
 def allow_user (page, user) :
     """Returns true if `page` allows access to `user`."""
-    if hasattr (page, "allow_user") :
+    if user and hasattr (page, "allow_user") :
         return page.allow_user (user)
     return True
 # end def allow_user
@@ -144,7 +144,7 @@ def sequence_filter (sequence, filter_spec) :
         if ":" in filter_spec :
             attr, condition = (p.strip () for p in filter_spec.split (":", 1))
             try :
-                condition = eval (condition)
+                condition = eval (condition, {})
             except :
                 pass
         return (e for e in sequence if getattr (e, attr, False) == condition)

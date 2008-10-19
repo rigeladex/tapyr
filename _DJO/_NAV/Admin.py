@@ -161,271 +161,41 @@
 #    18-Oct-2008 (CT) `Model_Admin.count` added (because Django templates are
 #                     FUBAR -- `link.Model.objects.count` silently fails to
 #                     return the count)
+#    19-Oct-2008 (CT) s/admin_args/NAV_admin_args/g
+#    19-Oct-2008 (CT) Add `top.Models` automatically to `Site_Admin`
+#    19-Oct-2008 (CT) `Model_Admin` factored to `DJO.NAV.Model.Admin`
 #    ««revision-date»»···
 #--
-
-from   __future__               import with_statement
 
 from   _DJO                     import DJO
 from   _TFL                     import TFL
 
 import _DJO._NAV.Base
-import _TFL._Meta.Object
+import _DJO._NAV.Model
 
 from   _TFL._Meta.Once_Property import Once_Property
 
-from   posixpath import join as pjoin, normpath as pnorm
-
-class Model_Admin (DJO.NAV.Page) :
-    """Model an admin page for a specific Django model class."""
-
-    has_children    = True
-    template        = "model_admin_list.html"
-
-    class Changer (DJO.NAV._Site_Entity_) :
-
-        implicit     = True
-        name         = "create"
-        obj_id       = None
-        template     = "model_admin_change.html"
-
-        def rendered (self, context, nav_page = None) :
-            request  = context ["request"]
-            obj      = context ["instance"] = None
-            obj_id   = self.obj_id
-            if obj_id :
-                try :
-                    obj  = self.Model.objects.get (id = obj_id)
-                except self.Model.DoesNotExist, exc :
-                    from django.http import Http404
-                    request.Error = \
-                        ( "%s `%s` existiert nicht!"
-                        % (self.Model._meta.verbose_name, obj_id)
-                        )
-                    raise Http404 (request.path)
-            if request.method == "POST":
-                form = self.Form (request.POST, instance = obj)
-                if form.is_valid () :
-                    from django.http import HttpResponseRedirect
-                    with form.object_to_save () as result :
-                        if hasattr (result, "creator") and not result.creator :
-                            if request.user.is_authenticated () :
-                                result.creator = request.user
-                    return HttpResponseRedirect \
-                        ("%s#pk-%s" % (self.parent.abs_href, result.id))
-            else :
-                form = self.Form (instance = obj)
-            context ["form"] = form
-            return self.__super.rendered (context, nav_page)
-        # end def rendered
-
-    # end class Changer
-
-    class Deleter (DJO.NAV._Site_Entity_) :
-
-        implicit    = True
-        name        = "delete"
-        template    = "model_admin_delete.html"
-
-        def _view (self, request) :
-            from django.http import HttpResponseRedirect
-            obj_id = self.obj_id
-            try :
-                obj  = self.Model.objects.get (id = obj_id)
-            except self.Model.DoesNotExist, exc :
-                from django.http import Http404
-                request.Error = \
-                    ( "%s `%s` doesn't exist!"
-                    % (self.Model._meta.verbose_name, obj_id)
-                    )
-                raise Http404 (request.path)
-            obj.delete ()
-            ### XXX ??? Feedback ???
-            return HttpResponseRedirect (self.parent.abs_href)
-        # end def _view
-
-    # end class Deleter
-
-    class Field (TFL.Meta.Object) :
-
-        def __init__ (self, instance, name) :
-            self.instance = instance
-            self.name     = name
-            self.field    = instance.admin.Model._meta.get_field (name)
-            self.value    = getattr (instance.obj, name)
-        # end def __init__
-
-        @Once_Property
-        def formatted (self) :
-            try :
-                f = self.field.as_string
-            except AttributeError :
-                if isinstance (self.value, unicode) :
-                    f = lambda x : x
-                else :
-                    f = str
-            return f (self.value)
-        # end def formatted
-
-        def __unicode__ (self) :
-            return self.formatted ### XXX encoding
-        # end def __unicode__
-
-    # end class Field
-
-    class Instance (TFL.Meta.Object) :
-
-        def __init__ (self, admin, obj) :
-            self.admin = admin
-            self.obj   = obj
-        # end def __init__
-
-        @Once_Property
-        def fields (self) :
-            admin = self.admin
-            F     = admin.Field
-            return [F (self, f) for f in admin.list_display]
-        # end def fields
-
-        @Once_Property
-        def href_change (self) :
-            return self.admin.href_change (self.obj)
-        # end def href_change
-
-        @Once_Property
-        def href_delete (self) :
-            return self.admin.href_delete (self.obj)
-        # end def href
-
-        def __getattr__ (self, name) :
-            try :
-                return getattr (self.obj, name)
-            except AttributeError :
-                return getattr (self.obj._meta, name)
-        # end def __getattr__
-
-        def __iter__ (self) :
-            return iter (self.fields)
-        # end def __iter__
-
-    # end class Instance
-
-    def __init__ (self, Model, ** kw) :
-        if "Form" not in kw :
-            kw ["Form"] = self._auto_form (Model, kw)
-        if not kw.get ("list_display") :
-            kw ["list_display"] = self._auto_list_display (Model, kw)
-        self.__super.__init__ (Model = Model, ** kw)
-        self.prefix = pjoin (self.parent.prefix, self.name)
-    # end def __init__
-
-    @property
-    def count (self) :
-        return self.Model.objects.count ()
-    # end def count
-
-    @Once_Property
-    def Group (self) :
-        from django.contrib.auth.models import Group
-        return Group.objects.get (name = self.Group_Name)
-    # end def Group
-
-    @Once_Property
-    def href (self) :
-        return pjoin (self.prefix, u"")
-    # end def href
-
-    def href_create (self) :
-        return pjoin (self.abs_href, "create")
-    # end def href_create
-
-    def href_change (self, obj) :
-        return pjoin (self.abs_href, "change", str (obj.id))
-    # end def href_change
-
-    def href_delete (self, obj) :
-        return pjoin (self.abs_href, "delete", str (obj.id))
-    # end def href_delete
-
-    def rendered (self, context = None, nav_page = None) :
-        M        = self.Model
-        Instance = self.Instance
-        field    = M._meta.get_field
-        if context is None :
-            context = dict (page = self)
-        context.update \
-            ( dict
-                ( fields       =
-                    [field (f) for f in self.list_display]
-                , objects      =
-                    [Instance (self, o) for o in self.Model.objects.all ()]
-                , Meta         = M._meta
-                , Model        = M
-                , Model_Name   = M._meta.verbose_name
-                , Model_Name_s = M._meta.verbose_name_plural
-                )
-            )
-        return self.__super.rendered (context, nav_page)
-    # end def rendered
-
-    def _auto_list_display (self, Model, kw) :
-        result = [f.name for f in Model._meta.fields if f.editable]
-        return result
-    # end def _auto_list_display
-
-    def _auto_form (self, Model, kw) :
-        import _DJO.Forms
-        Form_Type = kw.get ("Form", DJO.Model_Form)
-        form_name = "%s_Form" % Model.__name__
-        form_dict = dict \
-            ( Meta = type
-                ( "Meta", (object, )
-                , dict
-                    ( exclude = kw.get ("exclude")
-                    , fields  = kw.get ("fields")
-                    , model   = Model
-                    )
-                )
-            )
-        if "_djo_clean" in kw :
-            form_dict ["_djo_clean"] = kw ["_djo_clean"]
-        result = Form_Type.__class__ (form_name, (Form_Type, ), form_dict)
-        return result
-    # end def _auto_form
-
-    def _get_child (self, child, * grandchildren) :
-        if child == "change" and len (grandchildren) == 1 :
-            return self.Changer \
-                ( parent = self
-                , name   = "change/%s" % (grandchildren [0], )
-                , obj_id = grandchildren [0]
-                )
-        if child == "create" and not grandchildren :
-            return self.Changer (parent = self)
-        if child == "delete" and len (grandchildren) == 1 :
-            return self.Deleter (parent = self, obj_id = grandchildren [0])
-    # end def _get_child
-
-# end class Model_Admin
+import itertools
 
 class Site_Admin (DJO.NAV.Dir) :
     """Model an admin page for a Django site."""
 
-    Page            = Model_Admin
+    Page            = DJO.NAV.Model.Admin
     template        = "site_admin.html"
 
     def __init__ (self, src_dir, parent, ** kw) :
         entries  = []
-        models   = kw.pop ("models")
+        models   = kw.pop ("models", [])
         self.__super.__init__ (src_dir, parent, ** kw)
-        for m in models :
-            name = unicode (m._meta.verbose_name_plural)
-            desc = "%s: %s" % (self.desc, name)
-            m_kw = getattr  (m, "admin_args", {})
-            Type = m_kw.pop ("Admin_Type", self.Page)
+        for m in itertools.chain (self.top.Models.iterkeys (), models) :
+            m_kw  = getattr  (m, "NAV_admin_args", {})
+            name  = unicode  (m._meta.verbose_name)
+            title = m_kw.pop ("title", m._meta.verbose_name_plural)
+            desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
+            Type  = m_kw.pop ("Admin_Type", self.Page)
             d = dict \
                 ( name   = name
-                , title  = name
+                , title  = title
                 , desc   = desc
                 , Model  = m
                 , Type   = Type
@@ -433,6 +203,7 @@ class Site_Admin (DJO.NAV.Dir) :
                 )
             entries.append (d)
         self.add_entries (entries)
+        self.top.Admin = self
     # end def __init__
 
     if 1 :

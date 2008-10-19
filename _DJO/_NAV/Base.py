@@ -160,6 +160,7 @@
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
 #    18-Oct-2008 (CT) `handler_403` added and `handlers` defined with
 #                     `_DJO.views.handler_XXX` as defaults
+#    19-Oct-2008 (CT) `Root.Admin` and `Root.Models` added
 #    ««revision-date»»···
 #--
 
@@ -248,7 +249,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def above
 
     def allow_user (self, user) :
-        if self.login_required :
+        if user and self.login_required :
             if not user.is_authenticated () :
                 return False
             if not user.is_active :
@@ -642,32 +643,32 @@ class Dir (_Dir_) :
 
 class Root (_Dir_) :
 
+    Admin                   = None
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
     empty_template          = None
-    _login_required         = False
-    name                    = "/"
-    owner                   = None
-    _permission             = None
-    src_root                = ""
-    translator              = None
-
-    _dump_type              = "DJO.NAV.Root.from_dict_list \\"
-
-    url_patterns            = []
-    pre_first_request_hooks = []
-
     handlers                = \
         { 403               : "_DJO.views.handler_403"
         , 404               : "_DJO.views.handler_404"
         , 500               : "_DJO.views.handler_500"
         }
+    name                    = "/"
+    owner                   = None
+    pre_first_request_hooks = []
+    src_root                = ""
+    translator              = None
+    url_patterns            = []
+
+    _dump_type              = "DJO.NAV.Root.from_dict_list \\"
+    _login_required         = False
+    _permission             = None
 
     def __init__ (self, src_dir, ** kw) :
         _Site_Entity_.top = self
         self.parents      = []
         self.prefix       = ""
         self.Table        = {}
+        self.Models       = {}
         self.level        = -1
         self.__super.__init__ (src_dir = src_dir, ** kw)
     # end def __init__

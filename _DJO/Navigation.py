@@ -171,6 +171,8 @@ from   _DJO._NAV.Gallery        import *
 from   _DJO._NAV.ReST           import *
 from   _DJO._NAV.Url_Pattern    import *
 
+from   _DJO._NAV                import Model
+
 if __name__ != "__main__":
     DJO._Export_Module ()
 ### __END__ DJO.Navigation
