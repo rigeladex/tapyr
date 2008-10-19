@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Oct-2008 (CT) Creation
+#    19-Oct-2008 (CT) Field changed to re-evaluate `value` and `formatted`
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   posixpath import join as pjoin, normpath as pnorm
+import itertools
 
 class Field (TFL.Meta.Object) :
 
@@ -48,10 +50,9 @@ class Field (TFL.Meta.Object) :
         self.name     = name
         self.field    = field
         self.obj      = obj
-        self.value    = getattr (obj, name)
     # end def __init__
 
-    @Once_Property
+    @property
     def formatted (self) :
         try :
             f = self.field.as_string
@@ -62,6 +63,11 @@ class Field (TFL.Meta.Object) :
                 f = str
         return f (self.value)
     # end def formatted
+
+    @property
+    def value (self) :
+        return getattr (self.obj, self.name)
+    # end def value
 
     def __unicode__ (self) :
         return self.formatted ### XXX encoding
@@ -287,7 +293,7 @@ class Instance (DJO.NAV.Page) :
     """Model a page showing on model instance"""
 
     def __init__ (self, obj, manager) :
-        for f in "name", "title" :
+        for f in "name", "slug" :
             name = getattr (obj, f, None)
             if name :
                 break
@@ -299,7 +305,14 @@ class Instance (DJO.NAV.Page) :
             , obj     = obj
             , parent  = manager
             )
+        for k in itertools.chain (manager.attr_map, manager.fields) :
+            setattr (self, k, self._get_field (k))
     # end def __init__
+
+    @property
+    def contents (self) :
+        return self.obj.text_to_html ()
+    # end def contents
 
     @property
     def href_change (self) :
@@ -315,11 +328,13 @@ class Instance (DJO.NAV.Page) :
             return admin.href_delete (self.obj)
     # end def href
 
-    def __getattr__ (self, name) :
-        if name in self.manager.fields :
-            return Field (name, self.manager.fields [name], self.obj)
-        return self.__super.__getattr__ (name)
-    # end def __getattr__
+    def _get_field (self, name) :
+        man = self.manager
+        k   = man.attr_map.get (name, name)
+        if k in man.fields :
+            return Field (k, man.fields [k], self.obj)
+        return "%s: `%s/%s` is not defined" % (self.Model.name, name, k)
+    # end def _get_field
 
 # end class Instance
 
@@ -329,7 +344,8 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
     Page       = Instance
     _admin     = None
 
-    def __init__ (self, Model, parent, ** kw) :
+    def __init__ (self, src_dir, parent, ** kw) :
+        Model  = kw.pop ("Model")
         assert Model not in self.top.Models
         self.top.Models [Model] = self
         Meta   = Model._meta
@@ -338,7 +354,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
         name   = unicode (Meta.verbose_name)
         title  = kw.pop  ("title", Meta.verbose_name_plural)
         self.__super.__init__ \
-            ( name, parent
+            ( src_dir, parent
             , desc         = desc
             , fields       = dict \
                 ((f.name, Meta.get_field (f.name)) for f in Meta.fields)
@@ -369,22 +385,23 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
             return admin.href_create ()
     # end def href_change
 
-    @property
-    def _entries (self) :
+    def _get_entries (self) :
         count = self.count
         if self._old_count != count :
-            self._objects   = self._get_entries ()
+            self._objects   = self._get_objects ()
             self._old_count = count
         return self._objects
-    # end def _entries
+    # end def _get_entries
 
-    def _get_entries (self) :
+    _entries = property (_get_entries, lambda s, v : True)
+
+    def _get_objects (self) :
         T = self.Page
         return [T (o, self) for o in self.Model.objects.all ()]
-    # end def _get_entries
+    # end def _get_objects
 
 # end class Manager
 
-if __name__ == "__main__" :
+if __name__ != "__main__" :
     DJO.NAV._Export_Module ()
 ### __END__ DJO.NAV.Model

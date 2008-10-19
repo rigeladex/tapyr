@@ -37,6 +37,6 @@ def navigation_root (request) :
     return dict (NAV = DJO.NAV.Root.top)
 # end def navigation_root
 
-if __name__ == "__main__" :
+if __name__ != "__main__" :
     DJO._Export_Module ()
 ### __END__ context_processors

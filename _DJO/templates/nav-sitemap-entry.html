@@ -33,6 +33,8 @@
             {% if link.date %}<p>Date: {{ link.date }}</p>{% endif %}
             <p>Url: {{ link.href }}</p>
             <p>Prefix: {{ link.prefix }}</p>
+            <p>Title: {{ link.title }}</p>
+            <p>Desc: {{ link.desc }}</p>
             <p>Template: {{ link.template }}</p>
             <p>Type: {{ link.Type }}</p>
             <p>Target: {{ link.target.href }}</p>
@@ -40,6 +42,9 @@
               <ul >
                 {% rrender "nav-sitemap-entry.html" link=link.photos.0 %}
               </ul>
+            {% endif %}
+            {% if link.manager %}
+              <p>Format: {{ link.obj.format }}
             {% endif %}
           </div>
         {% endif %}

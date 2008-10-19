@@ -183,7 +183,7 @@ class Page_ReST (DJO.NAV.Page) :
 
     @Once_Property
     def contents (self) :
-        return self.markup_to_html (self.src_contents)
+        return self.markup_to_html (unicode (self.src_contents))
     # end def contents
 
     @Once_Property
