@@ -27,7 +27,8 @@
 #
 # Revision Dates
 #    19-Oct-2008 (CT) Creation
-#    19-Oct-2008 (CT) Field changed to re-evaluate `value` and `formatted`
+#    19-Oct-2008 (CT) `Field` changed to re-evaluate `value` and `formatted`
+#    20-Oct-2008 (CT) `Field.__init__` changed to cope with `field is None`
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,8 @@ import itertools
 class Field (TFL.Meta.Object) :
 
     def __init__ (self, name, field, obj) :
+        if field is None :
+            field = obj.__class__._meta.get_field (name)
         self.name     = name
         self.field    = field
         self.obj      = obj
@@ -61,7 +64,10 @@ class Field (TFL.Meta.Object) :
                 f = lambda x : x
             else :
                 f = str
-        return f (self.value)
+        value = self.value
+        if value is None :
+            value = ""
+        return f (value)
     # end def formatted
 
     @property

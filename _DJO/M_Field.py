@@ -30,6 +30,7 @@
 #    15-Jul-2008 (CT) Creation continued
 #     3-Oct-2008 (CT) s/django.newforms/django.forms/g
 #    16-Oct-2008 (CT) `widget_attrs` added
+#    20-Oct-2008 (CT) `Auto_Slug` added
 #    ««revision-date»»···
 #--
 
@@ -297,6 +298,43 @@ class  Positive_Integer (Integer, DM.PositiveIntegerField) :
 class Slug (Field, DM.SlugField) :
     pass
 # end class Slug
+
+class Auto_Slug (Slug) :
+
+    def __init__ (self, * args, ** kw) :
+        from_fields = kw.pop ("from_fields")
+        if isinstance (from_fields, basestring) :
+            from_fields = (from_fields, )
+        self.from_fields = from_fields
+        self.__super.__init__ (* args, **kw)
+        self.editable = False
+    # end def __init__
+
+    def pre_save (self, obj, add) :
+        result = self.__super.pre_save (obj, add)
+        if not result :
+            from django.template import defaultfilters
+            from _DJO._NAV.Model import Field
+            base   = defaultfilters.slugify \
+                ( u"--".join
+                    (unicode (Field (f, None, obj)) for f in self.from_fields)
+                )
+            result = self._unique_slug (obj, base)
+        return result
+    # end def pre_save
+
+    def _unique_slug (self, obj, base) :
+        result  = base
+        i       = 1
+        objects = obj.__class__.objects.all ()
+        key     = "%s__exact" % self.attname
+        while objects.filter (** { key : result}) :
+            i      += 1
+            result  = u"%s-%s" % (base, i)
+        return result
+    # end def _unique_slug
+
+# end class Auto_Slug
 
 class Small_Integer (Integer, DM.SmallIntegerField) :
     pass
