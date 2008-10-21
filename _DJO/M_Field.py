@@ -31,6 +31,7 @@
 #     3-Oct-2008 (CT) s/django.newforms/django.forms/g
 #    16-Oct-2008 (CT) `widget_attrs` added
 #    20-Oct-2008 (CT) `Auto_Slug` added
+#    21-Oct-2008 (CT) `Auto_Slug.field_fmt_kw` added
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,7 @@ from   _TFL                               import TFL
 import _TFL._Meta.M_Class
 
 from   _DJO                               import DJO
+from   _TFL.defaultdict                   import defaultdict
 
 from   django.db                          import models       as DM
 from   django.forms                       import widgets
@@ -155,13 +157,13 @@ class _Date_ (Field) :
         return self._output_format or self.input_formats [0]
     # end def output_format
 
-    def as_string (self, value) :
+    def as_string (self, value, output_format = None) :
         try :
             value.strftime
         except AttributeError :
             result = value or ""
         else :
-            result = value.strftime (self.output_format)
+            result = value.strftime (output_format or self.output_format)
         return result
     # end def as_string
 
@@ -304,20 +306,25 @@ class Auto_Slug (Slug) :
     def __init__ (self, * args, ** kw) :
         from_fields = kw.pop ("from_fields")
         if isinstance (from_fields, basestring) :
-            from_fields = (from_fields, )
-        self.from_fields = from_fields
-        self.__super.__init__ (* args, **kw)
+            from_fields   = (from_fields, )
+        self.from_fields  = from_fields
+        self.field_fmt_kw = kw.pop ("field_fmt_kw", defaultdict (dict))
+        kw ["unique"]     = True
+        self.__super.__init__ (* args, ** kw)
         self.editable = False
     # end def __init__
 
     def pre_save (self, obj, add) :
         result = self.__super.pre_save (obj, add)
+        fmt_kw = self.field_fmt_kw
         if not result :
             from django.template import defaultfilters
             from _DJO._NAV.Model import Field
             base   = defaultfilters.slugify \
                 ( u"--".join
-                    (unicode (Field (f, None, obj)) for f in self.from_fields)
+                    (   unicode (Field (f, None, obj, fmt_kw [f]))
+                    for f in self.from_fields
+                    )
                 )
             result = self._unique_slug (obj, base)
         return result

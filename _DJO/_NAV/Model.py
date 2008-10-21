@@ -29,6 +29,9 @@
 #    19-Oct-2008 (CT) Creation
 #    19-Oct-2008 (CT) `Field` changed to re-evaluate `value` and `formatted`
 #    20-Oct-2008 (CT) `Field.__init__` changed to cope with `field is None`
+#    21-Oct-2008 (CT) `format_kw` added to `Field`
+#    21-Oct-2008 (CT) `Changer.process_post` factored
+#    21-Oct-2008 (CT) `Instance.changer` added
 #    ««revision-date»»···
 #--
 
@@ -47,12 +50,13 @@ import itertools
 
 class Field (TFL.Meta.Object) :
 
-    def __init__ (self, name, field, obj) :
+    def __init__ (self, name, field, obj, format_kw = {}) :
         if field is None :
             field = obj.__class__._meta.get_field (name)
-        self.name     = name
-        self.field    = field
-        self.obj      = obj
+        self.name      = name
+        self.field     = field
+        self.obj       = obj
+        self.format_kw = dict (format_kw)
     # end def __init__
 
     @property
@@ -67,7 +71,7 @@ class Field (TFL.Meta.Object) :
         value = self.value
         if value is None :
             value = ""
-        return f (value)
+        return f (value, ** self.format_kw)
     # end def formatted
 
     @property
@@ -116,6 +120,17 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         obj_id       = None
         template     = "model_admin_change.html"
 
+        def process_post (self, request, obj) :
+            form = self.Form (request.POST, instance = obj)
+            if form.is_valid () :
+                from django.http import HttpResponseRedirect
+                with form.object_to_save () as result :
+                    if hasattr (result, "creator") and not result.creator :
+                        if request.user.is_authenticated () :
+                            result.creator = request.user
+                return result
+        # end def process_post
+
         def rendered (self, context, nav_page = None) :
             request  = context ["request"]
             obj      = context ["instance"] = None
@@ -131,13 +146,8 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         )
                     raise Http404 (request.path)
             if request.method == "POST":
-                form = self.Form (request.POST, instance = obj)
-                if form.is_valid () :
-                    from django.http import HttpResponseRedirect
-                    with form.object_to_save () as result :
-                        if hasattr (result, "creator") and not result.creator :
-                            if request.user.is_authenticated () :
-                                result.creator = request.user
+                result = self.process_post (request.POST, obj)
+                if result :
                     man = self.top.Models.get (self.Model)
                     if man :
                         man._old_count = -1
@@ -326,6 +336,13 @@ class Instance (DJO.NAV.Page) :
     def contents (self) :
         return self.obj.contents
     # end def contents
+
+    @property
+    def changer (self) :
+        admin = self.manager.admin
+        if admin :
+            return admin._get_child ("change", self.obj.id)
+    # end def changer
 
     @property
     def href_change (self) :
