@@ -28,8 +28,10 @@
 # Revision Dates
 #    26-Jun-2008 (CT) Creation started (factored from TTA.UI.Application)
 #    ...
-#    24-Aug-2008 (CT) Creation finished
-#    28-Aug-2008 (CT) `_logfile_name` added
+#    24-Aug-2008 (CT)  Creation finished
+#    28-Aug-2008 (CT)  `_logfile_name` added
+#     9-Sep-2008 (PGO) `root` moved here from TOM.UI.Application
+#    22-Oct-2008 (CED) `if_name_map` defined
 #    ««revision-date»»···
 #--
 
@@ -88,14 +90,15 @@ class _TFL_UI_Application_ (TFL.UI.Mixin) :
     State                  = Once_Property \
         (lambda s : TFL.App_State (product_name = s.product_name))
 
+    if_name_map            = {}
     ipreter                = None
     product_name           = "TFL" ### override
     powered                = False ### set to True for power users
-    root                   = None
     script_locals          = property (lambda s : s._script_locals)
     script_run_change_act  = None
     startup_cmds           = []
     tkt                    = None
+    root                   = None
     verbose                = 1
 
     Tool_Supplier          = ""
