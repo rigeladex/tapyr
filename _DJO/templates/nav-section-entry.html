@@ -30,7 +30,7 @@
   ##--
 {% endcomment %}
 {% load TGL %}
-{% if link|allow_user:request.user %}
+{% if NAV.permissive or link|allow_user:request.user %}
   {% let %}
     {% blet level %}level-{{ link.level|default:0 }}{% endblet %}
     {% if nav_page.prefix|starts_with:link.prefix and link.has_children %}
@@ -57,5 +57,7 @@
       {% endifequal %}
     {% endif %}
   {% endlet %}
+{% else %}
+  <li>{{ link.title|safe }}</li>
 {% endif %}
 {# __END__ Django template: nav-section-entry.html #}
