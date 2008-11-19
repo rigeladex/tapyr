@@ -32,6 +32,7 @@
 #    10-Sep-2008 (CT) Guard added to `_do_import` (not every `PNS` needs to
 #                     actually exist [provided the existing ones define
 #                     everything necessary])
+#    19-Nov-2008 (CT) `hide` added to option `-batch`
 #    ««revision-date»»···
 #--
 
@@ -66,11 +67,16 @@ class _TFL_UI_Starter_ (TFL.UI.Mixin) :
     process_keywords     = True
     Args                 = []
     Opts                 = \
-        [ "-batch:B?"
-            """Runs the tool in batch mode without any GUI. This option has
-               the same effect as starting the `_batch.exe` version of the
-               tool directly.
-            """
+        [ Opt
+            ("batch"
+            , type        = "B"
+            , description =
+                """Runs the tool in batch mode without any GUI. This option has
+                   the same effect as starting the `_batch.exe` version of the
+                   tool directly.
+                """
+            , hide        = True
+            )
         , "-commands:S,?"
             """Command(s) to be executed after startup.
 
