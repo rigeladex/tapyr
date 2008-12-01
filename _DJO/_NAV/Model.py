@@ -32,6 +32,8 @@
 #    21-Oct-2008 (CT) `format_kw` added to `Field`
 #    21-Oct-2008 (CT) `Changer.process_post` factored
 #    21-Oct-2008 (CT) `Instance.changer` added
+#     1-Dec-2008 (CT) Bug fixes (`Changer.rendered`: import
+#                     HttpResponseRedirect, pass `request` to `process_post`)
 #    ««revision-date»»···
 #--
 
@@ -121,9 +123,9 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         template     = "model_admin_change.html"
 
         def process_post (self, request, obj) :
+            from django.http import HttpResponseRedirect
             form = self.Form (request.POST, instance = obj)
             if form.is_valid () :
-                from django.http import HttpResponseRedirect
                 with form.object_to_save () as result :
                     if hasattr (result, "creator") and not result.creator :
                         if request.user.is_authenticated () :
@@ -132,6 +134,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         # end def process_post
 
         def rendered (self, context, nav_page = None) :
+            from django.http import HttpResponseRedirect
             request  = context ["request"]
             obj      = context ["instance"] = None
             obj_id   = self.obj_id
@@ -146,7 +149,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         )
                     raise Http404 (request.path)
             if request.method == "POST":
-                result = self.process_post (request.POST, obj)
+                result = self.process_post (request, obj)
                 if result :
                     man = self.top.Models.get (self.Model)
                     if man :
