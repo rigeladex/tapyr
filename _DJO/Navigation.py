@@ -158,6 +158,7 @@
 #                     for `Changer`
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Package `DJO.NAV` factored
+#    10-Dec-2008 (CT) Import for `Video` added
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,7 @@ from   _DJO._NAV.Admin          import *
 from   _DJO._NAV.Gallery        import *
 from   _DJO._NAV.ReST           import *
 from   _DJO._NAV.Url_Pattern    import *
+from   _DJO._NAV.Video          import *
 
 from   _DJO._NAV                import Model
 
