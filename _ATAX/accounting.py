@@ -138,6 +138,8 @@
 #    12-Aug-2008 (CT)  `p_konto` added (and `_Entry_` factored)
 #     5-Sep-2008 (CT)  `_fix_ust_privat` corrected
 #                      (`+=` instead of `-=` for `haben_saldo` of `ust_gkonto`)
+#    18-Dec-2008 (CT)  `privat` converted to class variable to allow
+#                      setting/modification in ATAX.config
 #    ««revision-date»»···
 #--
 
@@ -387,12 +389,13 @@ class Account :
     Entry          = Account_Entry
 
     gewerbe_anteil = 0
+    privat         = {}
 
     def __init__ (self, name = "", vst_korrektur = 1.0) :
         self.name           = name
         self.vst_korrektur  = vst_korrektur
         self.entries        = []
-        self.privat         = {}
+        self.privat         = dict (self.privat)
         self.ignore         = set (("83003", "83013", "83006", "83016"))
         self._finished      = False
     # end def __init__
