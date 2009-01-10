@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -165,6 +165,7 @@
 #     8-May-2008 (CT) Cleanups
 #    30-Jun-2008 (CT) `Opt_L.__init__` added
 #    30-Jun-2008 (CT) `Opt_D` added
+#     8-Jan-2009 (CT) `raw_value` added
 #    ««revision-date»»···
 #--
 
@@ -298,6 +299,7 @@ class Arg (TFL.Meta.Object) :
     # end def _cook_default
 
     def set_value (self, value, pos) :
+        self.raw_value = value
         self._set_value (value, pos)
     # end def set_value
 
@@ -424,6 +426,7 @@ class Opt (Arg) :
     # end def values
 
     def set_value (self, value, pos) :
+        self.raw_value = value
         if self.auto_split and value :
             if self.type in "IUX" and self.range_pat.match (value) :
                 cook = self.cook

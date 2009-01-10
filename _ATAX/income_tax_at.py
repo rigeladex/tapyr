@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -32,6 +32,8 @@
 #     3-Dec-2006 (CT) Import from `_TFL`
 #    17-Sep-2007 (CT) Use `EUC_Opt_SC` and `EUC_Opt_TC` instead of home-grown
 #                     code
+#     8-Jan-2009 (CT) Display `raw_value` of `cmd.amount`
+#     9-Jan-2009 (CT) `2009` added, display `year`
 #    ««revision-date»»···
 #--
 
@@ -65,12 +67,19 @@ def tax_brackets (year) :
             , (EUR (     29070), 0.41)
             , (EUR (2000000000), 0.50)
             )
-    else :
+    elif year < 2009 :
         return \
             ( (EUR (     10000), 0.00)
             , (EUR (     15000), 0.3833)
             , (EUR (     26000), 0.436)
             , (EUR (2000000000), 0.50)
+            )
+    else :
+        return \
+            ( (EUR (     11000), 0.000)
+            , (EUR (     14000), 0.365)
+            , (EUR (     35000), 0.432)
+            , (EUR (2000000000), 0.500)
             )
 # end def tax_brackets
 
@@ -118,9 +127,12 @@ def main (cmd) :
         for c, r, t in tax_chunks :
             print "%2d%% for %14s : %14s" % \
                 (r * 100, c.as_string_s (), t.as_string_s ())
-    f = "For a taxable income of %s you pay a tax of %s (%5.2f%%) and get %s\n"
+    f = ( "In %s, for a taxable income of %s [%s]\n"
+          "    you pay a tax of %s (%5.2f%%) and get %s\n"
+        )
     print f % \
-        ( amount, tax_amount, tax_amount.amount / (amount.amount / 100.0)
+        ( year, amount, cmd.arg_dict ["amount"].raw_value, tax_amount
+        , tax_amount.amount / (amount.amount / 100.0)
         , amount - tax_amount
         )
 # end def main
