@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,6 +34,8 @@
 #    21-Oct-2008 (CT) `Instance.changer` added
 #     1-Dec-2008 (CT) Bug fixes (`Changer.rendered`: import
 #                     HttpResponseRedirect, pass `request` to `process_post`)
+#    16-Jan-2009 (CT) `kind_filter` added to `Admin` and `Manager`
+#    16-Jan-2009 (CT) `disp_filter` added to `Manager`
 #    ««revision-date»»···
 #--
 
@@ -235,6 +237,12 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             kw ["list_display"] = self._auto_list_display (Model, kw)
         self.__super.__init__ (Model = Model, ** kw)
         self.prefix = pjoin (self.parent.prefix, self.name)
+        man = self.top.Models.get (Model)
+        if man and man.kind_filter :
+            q = lambda : Model.objects.filter (man.kind_filter)
+        else :
+            q = Model.objects.all
+        self.query_fct = q
     # end def __init__
 
     @Once_Property
@@ -258,14 +266,13 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         M        = self.Model
         Instance = self.Instance
         field    = M._meta.get_field
+        q        = self.query_fct
         if context is None :
             context = dict (page = self)
         context.update \
             ( dict
-                ( fields       =
-                    [field (f) for f in self.list_display]
-                , objects      =
-                    [Instance (self, o) for o in self.Model.objects.all ()]
+                ( fields       = [field (f) for f in self.list_display]
+                , objects      = [Instance (self, o) for o in q ()]
                 , Meta         = M._meta
                 , Model        = M
                 , Model_Name   = M._meta.verbose_name
@@ -374,8 +381,11 @@ class Instance (DJO.NAV.Page) :
 class Manager (_Model_Mixin_, DJO.NAV.Dir) :
     """Model a directory showing one Django model"""
 
-    Page       = Instance
-    _admin     = None
+    Page            = Instance
+    _admin          = None
+
+    kind_filter     = None
+    disp_filter     = None
 
     def __init__ (self, src_dir, parent, ** kw) :
         Model  = kw.pop ("Model")
@@ -400,6 +410,18 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
             , ** kw
             )
         self._old_count = -1
+        qf = None
+        if self.kind_filter :
+            qf = self.kind_filter
+            if self.disp_filter :
+                qf = self.disp_filter | qf
+        elif self.disp_filter :
+            qf = self.disp_filter
+        if qf :
+            query_fct = lambda : Model.objects.filter (qf)
+        else :
+            query_fct = Model.objects.all
+        self.query_fct = query_fct
     # end def __init__
 
     @property
@@ -431,7 +453,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
 
     def _get_objects (self) :
         T = self.Page
-        return [T (o, self) for o in self.Model.objects.all ()]
+        return [T (o, self) for o in self.query_fct ()]
     # end def _get_objects
 
 # end class Manager
