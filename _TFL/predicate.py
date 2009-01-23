@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -165,13 +165,15 @@
 #    14-Aug-2007 (CED) `is_ordered` simplified, `unified` added
 #    20-Aug-2007 (CED) s/unified/uniq/
 #    13-Nov-2007 (CT)  `rounded_to` added
+#    23-Jan-2009 (CT)  `filtered_join` added
+#    23-Jan-2009 (CT)  Broken `rotated_until_ordered` removed,
+#                      `is_ordered` de-obfuscated (removed criminal energy,
+#                      indeed)
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL.Generators
-
-import operator
 
 ### legacy aliases
 IV_Pairs        = enumerate
@@ -415,6 +417,21 @@ def extender (l, tail) :
     return l
 # end def extender
 
+def filtered_join (sep, strings, pred = None) :
+    """Return a string which is the concatenation of the items in the
+       iterable `strings` for which `pred` is true, separated by `sep`.
+
+       >>> filtered_join ("-", ["", "abc", "ced"])
+       'abc-ced'
+       >>> filtered_join ("-", [" ", "abc", "ced"])
+       ' -abc-ced'
+    """
+    if pred is None :
+        import operator
+        pred = operator.truth
+    return sep.join (s for s in strings if pred (s))
+# end def filtered_join
+
 def first (iterable) :
     """Return first element of iterable"""
     try :
@@ -545,7 +562,7 @@ def is_ordered (seq, decorator = None) :
 
     if decorator is not None :
         seq = (decorator (e) for e in seq)
-    return not TFL.any_true_p (TFL.pairwise (seq), lambda (l, r) : l > r)
+    return all_true (l <= r for l, r in pairwise (seq))
 # end is_ordered
 
 def list_difference (l, r) :
@@ -719,28 +736,6 @@ def rotate_r (sequence) :
     """
     return sequence [-1:] + sequence [:-1]
 # end def rotate_r
-
-### XXX find a better name and a better docstring, please
-def rotated_until_ordered (seq, key = None) :
-    """Return a rotated copy of `seq` so that the smallest element comes first
-       (requires the `seq` is kind of ordered (sawtooth))
-
-       >>> rotated_until_ordered ([])
-       []
-       >>> rotated_until_ordered ([1])
-       [1]
-       >>> rotated_until_ordered ([3, 4, 0, 1])
-       [0, 1, 3, 4]
-    """
-
-    result = seq
-    if result :
-        if key is None :
-            key = TFL.identity
-        while key (result [0]) > key (result [-1]) :
-            result = TFL.rotate_r (result)
-    return result
-# end def rotated_until_ordered
 
 def rounded_down (value, granularity) :
     """Returns `value` rounded down to nearest multiple of `granularity`.
@@ -1005,11 +1000,11 @@ def uniq (seq) :
        >>> list (uniq ([1, 2, 3, 2, 4, 1]))
        [1, 2, 3, 4]
     """
-    _result = set ()
+    seen = set ()
     for e in seq :
-        if e not in _result :
+        if e not in seen :
+            seen.add (e)
             yield e
-            _result.add (e)
 # end def uniq
 
 def un_nested (l) :

@@ -36,6 +36,11 @@
 #                     HttpResponseRedirect, pass `request` to `process_post`)
 #    16-Jan-2009 (CT) `kind_filter` added to `Admin` and `Manager`
 #    16-Jan-2009 (CT) `disp_filter` added to `Manager`
+#    23-Jan-2009 (CT) `kind_filter` based on `kind_name`
+#    23-Jan-2009 (CT) `Manager.__init__` changed to consider `kind_name` for
+#                     `name` and `title`
+#    23-Jan-2009 (CT) `Admin.model_man` added and used
+#    23-Jan-2009 (CT) Use `(Model, kind_name)` as index for `top.Models`
 #    ««revision-date»»···
 #--
 
@@ -48,6 +53,7 @@ import _DJO._NAV.Base
 import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.predicate           import filtered_join
 
 from   posixpath import join as pjoin, normpath as pnorm
 import itertools
@@ -115,6 +121,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
     Field           = Field
     has_children    = True
+    kind_name       = None
     template        = "model_admin_list.html"
 
     class Changer (DJO.NAV._Site_Entity_) :
@@ -153,7 +160,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             if request.method == "POST":
                 result = self.process_post (request, obj)
                 if result :
-                    man = self.top.Models.get (self.Model)
+                    man = self.top.Models.get ((self.Model, self.kind_name))
                     if man :
                         man._old_count = -1
                     return HttpResponseRedirect \
@@ -235,9 +242,10 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             kw ["Form"] = self._auto_form (Model, kw)
         if not kw.get ("list_display") :
             kw ["list_display"] = self._auto_list_display (Model, kw)
+        k = kw.get ("kind_name")
         self.__super.__init__ (Model = Model, ** kw)
-        self.prefix = pjoin (self.parent.prefix, self.name)
-        man = self.top.Models.get (Model)
+        self.prefix    = pjoin (self.parent.prefix, self.name)
+        self.model_man = man = self.top.Models.get ((Model, k))
         if man and man.kind_filter :
             q = lambda : Model.objects.filter (man.kind_filter)
         else :
@@ -269,14 +277,20 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         q        = self.query_fct
         if context is None :
             context = dict (page = self)
+        if self.model_man :
+            name   = self.model_man.name
+            name_s = self.model_man.title
+        else :
+            name   = M._meta.verbose_name
+            name_s = M._meta.verbose_name_plural
         context.update \
             ( dict
                 ( fields       = [field (f) for f in self.list_display]
                 , objects      = [Instance (self, o) for o in q ()]
                 , Meta         = M._meta
                 , Model        = M
-                , Model_Name   = M._meta.verbose_name
-                , Model_Name_s = M._meta.verbose_name_plural
+                , Model_Name   = name
+                , Model_Name_s = name_s
                 )
             )
         return self.__super.rendered (context, nav_page)
@@ -384,18 +398,22 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
     Page            = Instance
     _admin          = None
 
-    kind_filter     = None
+    kind_name       = None
     disp_filter     = None
 
     def __init__ (self, src_dir, parent, ** kw) :
         Model  = kw.pop ("Model")
-        assert Model not in self.top.Models
-        self.top.Models [Model] = self
+        kn     = unicode (kw.get ("kind_name"))
+        assert (Model, kn) not in self.top.Models
+        self.top.Models [(Model, kn)] = self
         Meta   = Model._meta
         kw     = dict    (getattr (Model, "NAV_manager_args", {}), ** kw)
         desc   = kw.pop  ("desc", Model.__doc__)
-        name   = unicode (Meta.verbose_name)
-        title  = kw.pop  ("title", Meta.verbose_name_plural)
+        name   = filtered_join ("-", (unicode (Meta.verbose_name), kn))
+        title  = kw.pop  \
+            ( "title"
+            , filtered_join ("-", (unicode (Meta.verbose_name_plural), kn))
+            )
         self.__super.__init__ \
             ( src_dir, parent
             , desc         = desc
@@ -404,8 +422,8 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
             , name         = name
             , Meta         = Meta
             , Model        = Model
-            , Model_Name   = Meta.verbose_name
-            , Model_Name_s = Meta.verbose_name_plural
+            , Model_Name   = name
+            , Model_Name_s = title
             , title        = title
             , ** kw
             )
@@ -439,6 +457,13 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
         if admin :
             return admin.href_create ()
     # end def href_change
+
+    @Once_Property
+    def kind_filter (self) :
+        if self.kind_name :
+            import _DJO.QF
+            return DJO.QF (kind__exact = self.kind_name)
+    # end def kind_filter
 
     def _get_entries (self) :
         count = self.count

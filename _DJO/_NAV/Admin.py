@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -164,6 +164,7 @@
 #    19-Oct-2008 (CT) s/admin_args/NAV_admin_args/g
 #    19-Oct-2008 (CT) Add `top.Models` automatically to `Site_Admin`
 #    19-Oct-2008 (CT) `Model_Admin` factored to `DJO.NAV.Model.Admin`
+#    23-Jan-2009 (CT) Use `(Model, kind_name)` as index for `top.Models`
 #    ««revision-date»»···
 #--
 
@@ -175,7 +176,7 @@ import _DJO._NAV.Model
 
 from   _TFL._Meta.Once_Property import Once_Property
 
-import itertools
+from   itertools import chain as ichain, repeat as irepeat
 
 class Site_Admin (DJO.NAV.Dir) :
     """Model an admin page for a Django site."""
@@ -187,18 +188,21 @@ class Site_Admin (DJO.NAV.Dir) :
         entries  = []
         models   = kw.pop ("models", [])
         self.__super.__init__ (src_dir, parent, ** kw)
-        for m in itertools.chain (self.top.Models.iterkeys (), models) :
+        model_iter = ichain \
+            (self.top.Models.iterkeys (), zip (models, irepeat (None)))
+        for m, k in model_iter :
             m_kw  = getattr  (m, "NAV_admin_args", {})
             name  = unicode  (m._meta.verbose_name)
             title = m_kw.pop ("title", m._meta.verbose_name_plural)
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
             Type  = m_kw.pop ("Admin_Type", self.Page)
             d = dict \
-                ( name   = name
-                , title  = title
-                , desc   = desc
-                , Model  = m
-                , Type   = Type
+                ( name      = name
+                , title     = title
+                , desc      = desc
+                , Model     = m
+                , kind_name = k
+                , Type      = Type
                 , ** m_kw
                 )
             entries.append (d)
