@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# Copyright (C) 2005-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -34,6 +34,8 @@
 #    15-Jul-2008 (CT) `Model_Form` added
 #     3-Oct-2008 (CT) Optional argument `commit` added to `object_to_save`
 #     3-Oct-2008 (CT) s/django.newforms/django.forms/g
+#     4-Feb-2009 (CT) Derive from `TFL.Meta.Object` instead of `object` and
+#                     `TFL.Meta.M_Class` instead of `type`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +45,7 @@ from   _TFL                        import TFL
 from   _DJO.Models                 import _User_Create_Mod_
 
 import _TFL.Decorator
+import _TFL._Meta.M_Class
 
 from   django.utils.datastructures import SortedDict
 from   django.http                 import HttpResponseRedirect
@@ -58,7 +61,7 @@ from   django.forms.models         import BaseModelForm, ModelForm
 from   django.utils.translation    import gettext_lazy as _
 import copy
 
-class _Form_Output_ (object) :
+class _Form_Output_ (TFL.Meta.Object) :
 
     @classmethod
     def add_field (cls, bound_field, field_html, label, bf_errors) :
@@ -256,7 +259,7 @@ class SortedDictFromList (SortedDict):
 
 # end class SortedDictFromList
 
-class M_Fields_From_Model (type) :
+class M_Fields_From_Model (TFL.Meta.M_Class) :
     """Meta class for form class creation."""
 
     def __new__ (cls, name, bases, attrs) :
@@ -388,7 +391,7 @@ class Form (forms.BaseForm) :
 
 # end class Form
 
-class Redirect (object) :
+class Redirect (TFL.Meta.Object) :
     """Redirect to a static URL"""
 
     def __init__ (self, url, anchor = None) :

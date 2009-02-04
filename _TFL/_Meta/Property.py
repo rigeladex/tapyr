@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,9 @@
 #    26-Mar-2008 (CT) `Method_Descriptor.Bound_Method.__getattr__` added
 #     3-Apr-2008 (CT) `Alias2_Class_and_Instance_Method` added
 #    29-Aug-2008 (CT)  s/super(...)/__super/
+#     3-Feb-2009 (CT) `RO_Property` and `RW_Property` removed (weren't used
+#                     anywhere)
+#     3-Feb-2009 (CT) Documentation improved
 #    ««revision-date»»···
 #--
 
@@ -83,6 +86,7 @@ class _Property_ (property) :
 # end class _Property_
 
 class Property (_Property_) :
+    """Base class for property classes."""
 
     def __init__ (self, name, doc = None) :
         self.name         = name
@@ -93,30 +97,6 @@ class Property (_Property_) :
     # end def __init__
 
 # end class Property
-
-class RO_Property (Property) :
-    """Readonly property which is automatically initialized for each
-       instance.
-    """
-
-    def __init__ (self, name, init_value = None, doc = None) :
-        self.init_value = init_value
-        self.__super.__init__ (name, doc)
-    # end def __init__
-
-    def init_instance (self, obj) :
-        self._set_value (obj, self.init_value)
-    # end def init_instance
-
-# end class RO_Property
-
-class RW_Property (RO_Property) :
-    """Read/write property automatically initialized for each instance"""
-
-    _del = RO_Property.del_value
-    _set = RO_Property.set_value
-
-# end class RW_Property
 
 class Method_Descriptor (object) :
     """Descriptor for special method types."""
@@ -172,7 +152,8 @@ class Class_Method (Method_Descriptor) :
        will provide better introspection, though (by showing which class
        actually defined a class method).
 
-       Normally, it is best to use `TFL.Meta.M_Automethodwrap` as metaclass,
+       Normally, it is best to use
+       :class:`~_TFL._Meta.M_Class.M_Automethodwrap` as metaclass,
        which does everything the right way.
     """
 
@@ -183,30 +164,32 @@ class Class_Method (Method_Descriptor) :
 # end class Class_Method
 
 class Class_and_Instance_Method (Method_Descriptor) :
-    """Flexible method wrapper: wrapped method can be used as class method
-       and as instance method.
+    """Flexible method wrapper: wrapped method can be used as
+       class method **and** as instance method.
 
-       >>> class T (object) :
-       ...     foo = 42
-       ...     def __init__ (self) :
-       ...         self.foo = 137
-       ...     def chameleon (soc) :
-       ...         print type (soc), soc.foo
-       ...     chameleon = Class_and_Instance_Method (chameleon)
-       ...
-       >>> T.chameleon ()
-       <type 'type'> 42
-       >>> T ().chameleon ()
-       <class 'Property.T'> 137
-       >>> class U (T) :
-       ...     foo = 84
-       ...     def __init__ (self) :
-       ...         self.foo = 2 * 137
-       ...
-       >>> U.chameleon ()
-       <type 'type'> 84
-       >>> U ().chameleon ()
-       <class 'Property.U'> 274
+       ::
+
+           >>> class T (object) :
+           ...     foo = 42
+           ...     def __init__ (self) :
+           ...         self.foo = 137
+           ...     def chameleon (soc) :
+           ...         print type (soc), soc.foo
+           ...     chameleon = Class_and_Instance_Method (chameleon)
+           ...
+           >>> T.chameleon ()
+           <type 'type'> 42
+           >>> T ().chameleon ()
+           <class 'Property.T'> 137
+           >>> class U (T) :
+           ...     foo = 84
+           ...     def __init__ (self) :
+           ...         self.foo = 2 * 137
+           ...
+           >>> U.chameleon ()
+           <type 'type'> 84
+           >>> U ().chameleon ()
+           <class 'Property.U'> 274
     """
 
     def __get__ (self, obj, cls = None) :
@@ -220,26 +203,28 @@ class Class_and_Instance_Method (Method_Descriptor) :
 class Alias_Property (object) :
     """Property defining an alias name for another attribute.
 
-       >>> class X (object) :
-       ...     def __init__ (self) :
-       ...         self.foo = 137
-       ...     def foo (self) :
-       ...         return 42
-       ...     foo = classmethod (foo)
-       ...     bar = Alias_Property ("foo")
-       ...
-       >>> X.bar
-       <bound method type.foo of <class 'Property.X'>>
-       >>> X.bar()
-       42
-       >>> x = X()
-       >>> x.bar
-       137
-       >>> x.bar=7
-       >>> x.bar
-       7
-       >>> X.bar()
-       42
+       ::
+
+           >>> class X (object) :
+           ...     def __init__ (self) :
+           ...         self.foo = 137
+           ...     def foo (self) :
+           ...         return 42
+           ...     foo = classmethod (foo)
+           ...     bar = Alias_Property ("foo")
+           ...
+           >>> X.bar
+           <bound method type.foo of <class 'Property.X'>>
+           >>> X.bar()
+           42
+           >>> x = X()
+           >>> x.bar
+           137
+           >>> x.bar=7
+           >>> x.bar
+           7
+           >>> X.bar()
+           42
     """
 
     __metaclass__ = TFL.Meta.M_Class
@@ -277,25 +262,27 @@ class Alias_Class_and_Instance_Method (Class_Method) :
     """Property defining an alias name for a instance-method/class-method
        pair with different definitions.
 
-       >>> class T (object) :
-       ...   chameleon = Alias_Class_and_Instance_Method ("foo")
-       ...   class __metaclass__ (TFL.Meta.M_Class) :
-       ...     def foo (cls) :
-       ...       print "Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__)
-       ...   def foo (self) :
-       ...     print "Instance method foo <%s>" % (self.__class__.__name__, )
-       ...
-       >>> T.chameleon()
-       Class method foo <T.__metaclass__>
-       >>> T ().chameleon ()
-       Instance method foo <T>
-       >>> class U(T) :
-       ...   pass
-       ...
-       >>> U.chameleon()
-       Class method foo <U.__metaclass__>
-       >>> U().chameleon()
-       Instance method foo <U>
+       ::
+
+         >>> class T (object) :
+         ...   chameleon = Alias_Class_and_Instance_Method ("foo")
+         ...   class __metaclass__ (TFL.Meta.M_Class) :
+         ...     def foo (cls) :
+         ...       print "Class method foo <%s.%s>" % (cls.__name__, cls.__class__.__name__)
+         ...   def foo (self) :
+         ...     print "Instance method foo <%s>" % (self.__class__.__name__, )
+         ...
+         >>> T.chameleon()
+         Class method foo <T.__metaclass__>
+         >>> T ().chameleon ()
+         Instance method foo <T>
+         >>> class U(T) :
+         ...   pass
+         ...
+         >>> U.chameleon()
+         Class method foo <U.__metaclass__>
+         >>> U().chameleon()
+         Instance method foo <U>
     """
 
     def __init__ (self, aliased_name, cls = None) :
@@ -316,25 +303,27 @@ class Alias2_Class_and_Instance_Method (Class_Method) :
     """Property defining an alias name for a instance-method/class-method
        pair with different names and definitions.
 
-       >>> class T (object) :
-       ...   chameleon = Alias2_Class_and_Instance_Method ("foo", "bar")
-       ...   @classmethod
-       ...   def foo (cls) :
-       ...     print "Class method foo <%s>" % (cls.__name__, )
-       ...   def bar (self) :
-       ...     print "Instance method bar <%s>" % (self.__class__.__name__, )
-       ...
-       >>> T.chameleon()
-       Class method foo <T>
-       >>> T ().chameleon ()
-       Instance method bar <T>
-       >>> class U(T) :
-       ...   pass
-       ...
-       >>> U.chameleon()
-       Class method foo <U>
-       >>> U().chameleon()
-       Instance method bar <U>
+       ::
+
+         >>> class T (object) :
+         ...   chameleon = Alias2_Class_and_Instance_Method ("foo", "bar")
+         ...   @classmethod
+         ...   def foo (cls) :
+         ...     print "Class method foo <%s>" % (cls.__name__, )
+         ...   def bar (self) :
+         ...     print "Instance method bar <%s>" % (self.__class__.__name__, )
+         ...
+         >>> T.chameleon()
+         Class method foo <T>
+         >>> T ().chameleon ()
+         Instance method bar <T>
+         >>> class U(T) :
+         ...   pass
+         ...
+         >>> U.chameleon()
+         Class method foo <U>
+         >>> U().chameleon()
+         Instance method bar <U>
     """
 
     def __init__ (self, cm_alias, im_alias, cls = None) :
@@ -359,16 +348,18 @@ class Alias_Meta_and_Class_Attribute (Class_Method) :
     """Property defining an alias name for a instance-method/class-method
        pair with different definitions.
 
-       >>> class T (object) :
-       ...   chameleon = Alias_Meta_and_Class_Attribute ("foo")
-       ...   class __metaclass__ (TFL.Meta.M_Class) :
-       ...     foo = 42
-       ...   foo = 137
-       ...
-       >>> T.chameleon
-       42
-       >>> T ().chameleon
-       137
+       ::
+
+         >>> class T (object) :
+         ...   chameleon = Alias_Meta_and_Class_Attribute ("foo")
+         ...   class __metaclass__ (TFL.Meta.M_Class) :
+         ...     foo = 42
+         ...   foo = 137
+         ...
+         >>> T.chameleon
+         42
+         >>> T ().chameleon
+         137
     """
 
     def __init__ (self, aliased_name, cls = None) :
@@ -406,7 +397,7 @@ class Lazy_Property (object) :
 def prop (wrapper) :
     """Property decorator as proposed by Alex Martelli (and propably others).
 
-       Usage example:
+       Usage example::
 
           @prop
           def foo () :

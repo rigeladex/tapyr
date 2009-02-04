@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -40,6 +40,7 @@
 #                      work per instance ('that'))
 #    28-Feb-2007 (CED) `self.result` also has to be per instance of course
 #    29-Aug-2008 (CT)  s/super(...)/__super/
+#     3-Feb-2009 (CT)  Documentation improved
 #    ««revision-date»»···
 #--
 
@@ -130,16 +131,18 @@ class Lazy_Method_RNC (Lazy_Method_RLV) :
     """Lazy evaluation wrapper: the wrapped method is executed only if the
        the object changed since the last call. In case that the wrapped
        function has not been executed, the unique object
-       `TFL.Meta.Lazy_Method_RNC.NC` will be return.
+       `TFL.Meta.Lazy_Method_RNC.NC` will be returned.
     """
 
     wrapper = _Lazy_Wrapper_RNC_
 
 # end class Lazy_Method_RNC
 
-Lazy_Method     = Lazy_Method_RLV ### provided for legacy, should not be used
-                                  ### in new code !!!
+class Lazy_Method (Lazy_Method_RLV) :
+    """Provided for legacy, should not be used in new code -- use
+       :class:`~_TFL._Meta.Lazy_Method.Lazy_Method_RLV` instead!
+    """
 
 if __name__ != "__main__" :
-    TFL.Meta._Export ("*", "Lazy_Method")
+    TFL.Meta._Export ("*")
 ### __END__ Lazy_Method

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Nov-2007 (CT) Creation
+#     4-Feb-2009 (CT) Documentation improved
 #    ««revision-date»»···
 #--
 
@@ -47,8 +48,8 @@ except ImportError :
         return _
 
 def Once_Property (f) :
-    """Define a property `f.__name` thats computed once (per instance) by
-       calling `f`.
+    """Define a property that is computed once (per instance) by
+       calling `f` and stored in the instance attribute `__<name>`.
     """
     key = "__%s" % (f.__name__, )
     @wraps (f)

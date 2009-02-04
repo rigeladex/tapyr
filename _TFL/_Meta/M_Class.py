@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -46,13 +46,16 @@
 #                      `_real_name`)
 #    29-Aug-2008 (CT)  `_fixed_type_.__init__` added to define `__m_super`
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#     2-Feb-2009 (CT)  s/_M_Type_/M_Base/
+#     2-Feb-2009 (CT)  Documentation improved
+#     3-Feb-2009 (CT)  Documentation improved..
+#     4-Feb-2009 (CT)  Documentation improved...
+#     4-Feb-2009 (CT)  s/_fixed_type_/M_M_Class/ and clarified implementation
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
 import _TFL._Meta
-
-import types
 
 def _m_mangled_attr_name (name, cls_name) :
     """Returns `name` as mangled by Python for occurences of `__%s` % name
@@ -72,62 +75,83 @@ def _m_mangled_attr_name (name, cls_name) :
     return format % (cls_name, name)
 # end def _m_mangled_attr_name
 
-class _fixed_type_ (type) :
-    """This class fixes a python problem in context of
-       multiple inheritence and custom metaclasses.
-       For a discussion of this problem, see:
-       http://groups.google.de/group/comp.lang.python/tree/browse_frm/thread/2b7a60d08d4a99c4/72346462866e6497?rnum=1&q=eder&_done=%2Fgroup%2Fcomp.lang.python%2Fbrowse_frm%2Fthread%2F2b7a60d08d4a99c4%2F36e83cab80f1dbaf%3Fq%3Deder%26rnum%3D2%26#doc_72346462866e6497
+class M_M_Class (type) :
+    """Metaclass for metaclasses (i.e., a meta-meta-class).
+       `M_M_Class` should be used as metaclass for *all* metaclasses.
 
-       It also adds a private class variable `__m_super` containing
-       `super (cls)`. This corresponds to `__super` (see `M_Autosuper`) but
-       can be used inside meta-classes.
+       It adds a private class variable `__m_super` containing
+       `super (cls)`. This corresponds to `__super` (see
+       :class:`~_TFL._Meta.M_Class.M_Autosuper`) but can be used
+       inside meta-classes.
+
+       This class chooses the most specific metaclass of the `bases`
+       (instead of the metaclass of the first element of `bases` as
+       standard Python does; for a discussion of this problem, see:
+       http://groups.google.de/group/comp.lang.python/tree/browse_frm/thread/2b7a60d08d4a99c4/72346462866e6497?rnum=1&q=eder&_done=%2Fgroup%2Fcomp.lang.python%2Fbrowse_frm%2Fthread%2F2b7a60d08d4a99c4%2F36e83cab80f1dbaf%3Fq%3Deder%26rnum%3D2%26#doc_72346462866e6497).
     """
 
     def __init__ (cls, name, bases, dict) :
-        super (_fixed_type_, cls).__init__ (name, bases, dict)
-        _super_n = _m_mangled_attr_name ("m_super", cls.__name__)
-        _super_v = super (cls)
-        setattr (cls, _super_n, _super_v)
+        super (M_M_Class, cls).__init__ (name, bases, dict)
+        _super_name  = _m_mangled_attr_name ("m_super", cls.__name__)
+        _super_value = super (cls)
+        setattr (cls, _super_name, _super_value)
     # end def __init__
 
     def __call__ (meta, name, bases, dict) :
-        meta = meta._get_meta (bases, dict)
-        cls  = meta.__new__   (meta, name, bases, dict)
-        meta.__init__         (cls, name, bases, dict)
+        meta = meta._most_specific_meta (bases, dict)
+        cls  = meta.__new__ (meta, name, bases, dict)
+        meta.__init__       (cls,  name, bases, dict)
         return cls
     # end def __call__
 
-    def _get_meta (meta, bases, dict) :
-        if "__metaclass__" in dict :
-            return dict ["__metaclass__"]
-        winner = meta
-        for b in bases :
-            cand = type (b)
-            if cand in (types.ClassType, type) :
-                 pass
-            elif issubclass (cand, winner) :
-                winner = cand
-            elif issubclass (winner, cand) :
-                pass
-            else :
-                raise TypeError ("Metatype conflict among bases")
-        return winner
-    # end def _get_meta
+    def _most_specific_meta (meta, bases, dict) :
+        result = dict.get ("__metaclass__")
+        if result is None :
+            from types import ClassType as Classic
+            result = meta
+            for b in bases :
+                b_meta = type (b)
+                if issubclass (result, b_meta) or b_meta is Classic :
+                    pass
+                elif issubclass (b_meta, result) :
+                    result = b_meta
+                else :
+                    raise TypeError \
+                        ( "Metatype conflict among bases: %s, %s"
+                        % (result, b_meta)
+                        )
+        return result
+    # end def _most_specific_meta
 
-# end class _fixed_type_
+# end class M_M_Class
 
-class _M_Type_ (type) :
-    """Base class of TFL metaclasses."""
+class M_Base (type) :
+    """Base class of TFL metaclasses.
 
-    __metaclass__ = _fixed_type_ ### to fix metaclasses, we need
-                                 ### meta-meta classes
+       It provides a `__m_super` attribute for the meta-classes (for
+       cooperative method calls in the meta classes themselves) and
+       the class method `New` that creates a descendent class
+       augmented by additional attributes and/or methods.
+    """
+
+    __metaclass__ = M_M_Class
 
     def _m_mangled_attr_name (cls, name) :
         return _m_mangled_attr_name (name, cls.__name__)
     # end def _m_mangled_attr_name
 
     def New (cls, name_postfix = None, mangled_attributes = {}, ** kw) :
-        """Returns a new class derived from `cls` with `kw` in __dict__"""
+        """Returns a new class derived from `cls` with `kw` in
+           __dict__. If `name_postfix` is given, it is used as postfix
+           for the name of the new class.
+
+           For instance::
+
+               Some_Class.New (name_postfix = "X", foo = 42)
+
+           will create a class `Some_Class_X` derived from
+           `Some_Class` with a class attribute `foo` with value `42`.
+        """
         name = cls.__name__
         if name_postfix :
             name = "_".join ((name, name_postfix))
@@ -138,25 +162,38 @@ class _M_Type_ (type) :
         return type (cls) (name, (cls, ), new_dict)
     # end def New
 
-# end class _M_Type_
+# end class M_Base
 
-class M_Autorename (_M_Type_) :
-    """Metaclass renaming the class to the value of the class attribute
-       `_real_name` if existing.
+class M_Autorename (M_Base) :
+    """`TFL.Meta.M_Autorename` renames a class from a unique ugly name, e.g.,
+       `_TFL_Meta_Object_` specified in the `class` statement to a possibly
+       non-unique but more readable name, e.g., `Object`.
 
-       Python will use the name following the `class` keyword for mangling of
-       private names. To avoid name clashes between private names of classes
-       with the same name (e.g., Package_A.Class and Package_B.Class), define
-       these classes with unique names and use `_real_name` to define the
-       name to be used by clients of the class.
-
-       The metaclass `M_Autorename` swaps `__name__` and `_real_name` before
-       creating the class object. As this occurs after the name mangling done
-       by Python (compiler), you can have your cake and eat it, too.
+       `M_Autorename` looks for a class attribute `_real_name` that specifies
+       the readable name to be used; if `_real_name` exists,
+       `M_Autorename` renames the class to `_real_names` value.
 
        To make the class visible in the defining module under the
-       `_real_name` you'll have to add an explicit assignment after the class
-       definition.
+       `_real_name` you'll have to add an explicit assignment after
+       the class definition.
+
+       Python will use the name following the `class` keyword for
+       mangling of private names, i.e., names starting but not ending
+       with double underscores, e.g., `__super`. To avoid name clashes
+       between private names of classes with the same name (e.g.,
+       Package_A.Class and Package_B.Class), define these classes with
+       unique names and use `_real_name` to define the name to be used
+       by clients of the class.
+
+       If one defines a base class with a generic name, e.g., `Object`,
+       `Document`, etc., where the class name is disambiguated by the name of
+       the package namespace, one should define `_real_name` for the base
+       class.
+
+       The metaclass `M_Autorename` swaps `__name__` and `_real_name`
+       before creating the class object. As this occurs after the name
+       mangling done by Python (compiler), you can have your cake and
+       eat it, too.
     """
 
     def __new__ (meta, name, bases, dict) :
@@ -169,7 +206,7 @@ class M_Autorename (_M_Type_) :
     # end def __new__
 
     def __init__ (cls, name, bases, dict) :
-        ### Need to pass `cls.__name__` as it might defer from `name`
+        ### Need to pass `cls.__name__` as it might differ from `name`
         cls.__m_super.__init__ (cls.__name__, bases, dict)
     # end def __init__
 
@@ -188,23 +225,34 @@ def _super_calling_not_possible (obj) :
         )
 # end def _super_calling_not_possible
 
-class M_Autosuper (_M_Type_) :
-    """Metaclass adding a private class variable `__super` containing
-       `super (cls)`.
+class M_Autosuper (M_Base) :
+    """`TFL.Meta.M_Autosuper` adds a class attribute `__super` that can be
+       used for cooperative method calls.
 
-       `__super` can be used for cooperative method calls. For instance:
+       For instance, for a class `Some_Class` derived from `Object`, a
+       cooperative method call can be written as::
+
+           self.__super.method (a, b, c)
+
+       instead of::
+
+           super (Some_Class, self).method (a, b, c)
+
+       which avoids the DRY violation of repeating the class name in all
+       cooperative method calls.
+
+       A typical usage of cooperative method calls looks like::
 
            def foo (self, bar, baz) :
                ...
                self.__super.foo (bar, baz)
                ...
-           # end def foo
     """
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)
-        _super_n = cls._m_mangled_attr_name ("super")
-        _super_v = super (cls)
+        _super_name  = cls._m_mangled_attr_name ("super")
+        _super_value = super (cls)
         if __debug__ :
             from _TFL.predicate import any_true
             ancestors = cls.mro () [1:]
@@ -219,25 +267,26 @@ class M_Autosuper (_M_Type_) :
                         (  str (b) for b in ancestors
                         if name == b.__name__ == b.__dict__.get ("__real_name")
                         )
-                _super_v = _super_calling_not_possible
-        setattr (cls, _super_n, _super_v)
+                _super_value = _super_calling_not_possible
+        setattr (cls, _super_name, _super_value)
     # end def __init__
 
 # end class M_Autosuper
 
-class M_Autoproperty (_M_Type_) :
+class M_Autoproperty (M_Base) :
     """Metaclass adding and initializing properties defined in
        `__properties`.
 
        `M_Autoproperty` expects `__properties` to contain instances of
-       TFL.Meta.Property (or signature-compatible objects). For each element
-       `p` of `__properties`,
+       :class:`~_TFL._Meta.Property.Property` (or signature-compatible
+       objects). For each element `p` of `__properties`,
 
-       - `M_Autoproperty` will add a class attribute named `p.name` with value
-         `p` to the class.
+       - `M_Autoproperty` will add a class attribute named `p.name`
+         with value `p` to the class.
 
-       - `M_Autoproperty` will add an instance attribute to all instances of
-         the class if `p` provides a callable `init_instance` attribute.
+       - `M_Autoproperty` will add an instance attribute to all
+         instances of the class if `p` provides a callable
+         `init_instance` attribute.
     """
 
     def __init__ (cls, name, bases, dict) :
@@ -267,12 +316,15 @@ class M_Autoproperty (_M_Type_) :
 
 # end class M_Autoproperty
 
-class M_Automethodwrap (_M_Type_) :
-    """Metaclass automatically wrapping the methods specified in `__autowrap`.
+class M_Automethodwrap (M_Base) :
+    """Metaclass automatically wrapping the methods specified in the
+       dictionary `__autowrap`.
 
-       `__autowrap` must map method names to wrapper functions/objects (e.g.,
-       to staticmethod, TFL.Meta.Class_Method (a TFL replacement to
-       classmethod), or TFL.Meta.Class_and_Instance_Method).
+       `__autowrap` must map method names to wrapper function or
+       objects (e.g., to staticmethod,
+       :class:`~_TFL._Meta.Property.Class_Method` (a TFL replacement
+       to classmethod), or
+       :class:`~_TFL._Meta.Property.Class_and_Instance_Method`).
     """
 
     def __init__ (cls, name, bases, dict) :
@@ -308,47 +360,34 @@ class M_Automethodwrap (_M_Type_) :
 # end class M_Automethodwrap
 
 class M_Class_SW (M_Autosuper, M_Automethodwrap) :
-    pass
+    """Metaclass combining :class:`~_TFL._Meta.M_Class.M_Autosuper`
+       and :class:`~_TFL._Meta.M_Class.M_Automethodwrap`.
+    """
 # end class M_Class_SW
 
 class M_Class (M_Autorename, M_Class_SW) :
-    pass
+    """`TFL.Meta.M_Class` is the standard metaclass provided by `TFL.Meta`.
+       It is used as metaclass by all descendents of `TFL.Meta.Object`. It
+       can also be specified as metaclass for classes derived from Python
+       builtin types, e.g., `dict`, `list`, or `set`.
+
+       `M_Class` is derived from :class:`~_TFL._Meta.M_Class.M_Autorename`,
+       :class:`~_TFL._Meta.M_Class.M_Autosuper`, and
+       :class:`~_TFL._Meta.M_Class.M_Automethodwrap` and combines
+       the features of these three metaclasses. It thus also serves as an
+       example of how cooperative method calls work in practice.
+    """
 # end class M_Class
 
 class M_Class_SWRP (M_Autoproperty, M_Class) :
-    pass
+    """Metaclass combining
+       :class:`~_TFL._Meta.M_Class.M_Autoproperty`,
+       :class:`~_TFL._Meta.M_Class.M_Autorename`,
+       :class:`~_TFL._Meta.M_Class.M_Autosuper`, and
+       :class:`~_TFL._Meta.M_Class.M_Automethodwrap`.
+    """
 # end class M_Class_SWRP
 
 if __name__ != "__main__" :
-    TFL.Meta._Export ("*", "_M_Type_")
-else :
-    if __debug__ :
-        class _X_ (object) :
-           __metaclass__ = M_Class
-           hugo          = 1
-           __private     = 42
-           _real_name    = "Y"
-        Y = _X_
-
-        class _Y_ (_X_) :
-            hugo         = 2
-            __private    = 137
-            _real_name   = "ZZZ"
-        ZZZ = _Y_
-
-        class Metatest (M_Class) :
-            def __call__ (cls, * args, ** kw) :
-                print cls, "__call__", args, kw
-                return cls.__m_super.__call__ (* args, ** kw)
-            def __init__ (cls, * args, ** kw) :
-                print cls, "__init__", args, kw
-                cls.__m_super.__init__ (* args, ** kw)
-            def __new__ (meta, * args, ** kw) :
-                print meta, "__new__", args, kw
-                return super (Metatest, meta).__new__ (meta, * args, ** kw)
-
-        class T (object) :
-            __metaclass__ = Metatest
-
-        T()
+    TFL.Meta._Export ("*", "M_Base")
 ### __END__ TFL.Meta.M_Class

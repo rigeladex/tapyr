@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2008 DI Christian Eder. All rights reserved
+# Copyright (C) 2005-2009 DI Christian Eder. All rights reserved
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -29,32 +29,35 @@
 #    13-Jul-2005 (CED) Creation (stolen from M_Auto_Combine_Dicts)
 #    13-Jul-2005 (CED) Export added
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#     2-Feb-2009 (CT)  s/_M_Type_/M_Base/
+#     3-Feb-2009 (CT)  Documentation improved
 #    ««revision-date»»···
 #--
-#
 
 """
 Meta class for auto-combining the set-attributes mentioned in
 `_sets_to_combine` between a class and it's ancestors.
 
->>> class A (object) :
-...     __metaclass__     = M_Auto_Combine_Sets
-...     _sets_to_combine  = ("foo",)
-...     foo               = set ([1, 2, 3])
-...
->>> class B (A) :
-...     foo               = set ([5, 4, 3])
-...
->>> sorted (A.foo)
-[1, 2, 3]
->>> sorted (B.foo)
-[1, 2, 3, 4, 5]
+::
+
+    >>> class A (object) :
+    ...     __metaclass__     = M_Auto_Combine_Sets
+    ...     _sets_to_combine  = ("foo",)
+    ...     foo               = set ([1, 2, 3])
+    ...
+    >>> class B (A) :
+    ...     foo               = set ([5, 4, 3])
+    ...
+    >>> sorted (A.foo)
+    [1, 2, 3]
+    >>> sorted (B.foo)
+    [1, 2, 3, 4, 5]
 """
 
 from   _TFL                import TFL
 import _TFL._Meta.M_Class
 
-class M_Auto_Combine_Sets (TFL.Meta._M_Type_) :
+class M_Auto_Combine_Sets (TFL.Meta.M_Base) :
     """Meta class for auto-combining the set-attributes mentioned in
        `_sets_to_combine` between a class and it's ancestors.
     """

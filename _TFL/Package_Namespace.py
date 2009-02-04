@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -126,12 +126,9 @@
 #    28-Jul-2006 (PGO) Replaced `_DPN_Auto_Importer_` with TFL.DPN_Importer
 #    31-Jul-2006 (PGO) `DPN_Importer.register` introduced
 #     7-Nov-2006 (PGO) Reloading now also works with `_Add`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#     3-Feb-2009 (CT)  Style improvements
 #    ««revision-date»»···
 #--
-
-
 
 import re
 import sys
@@ -153,7 +150,6 @@ class _Module_Space_ :
         setattr (self, module_name, module)
         return module
     # end def _load
-
 
 # end class _Module_Space_
 
@@ -278,22 +274,23 @@ class Package_Namespace (object) :
                 p = getattr (mod, name)
                 self._import_1 (mod, name, as_name, p, result, check_clashes)
             except AttributeError :
-                raise ImportError, ( "cannot import name %s from %s"
-                                   ) % (name, mod.__name__)
+                raise ImportError \
+                    ("cannot import name %s from %s" % (name, mod.__name__))
     # end def _import_names
 
     def _import_1 (self, mod, name, as_name, object, result, check_clashes) :
         if __debug__ :
             old = self.__dict__.get (name, object)
             if check_clashes and old is not object :
-                raise ImportError, ( "ambiguous name %s refers to %s and %s"
-                                   ) % (name, object, old)
+                raise ImportError \
+                    ( "ambiguous name %s refers to %s and %s"
+                    % (name, object, old)
+                    )
         result [as_name] = object
     # end def _import_1
 
     def __repr__ (self) :
-        return "<%s %s>" % \
-               (self.__class__.__name__, self.__name)
+        return "<%s %s>" % (self.__class__.__name__, self.__name)
     # end def __repr__
 
     def _Cache_Module (self, module_name, mod) :
@@ -356,8 +353,10 @@ class Package_Namespace (object) :
             old = self.__dict__.get (module_name, mod)
             check_clashes = self._check_clashes and not self.__reload
             if old is not mod and check_clashes :
-                raise ImportError, ( "ambiguous name %s refers to %s and %s"
-                                   ) % (module_name, mod, old)
+                raise ImportError \
+                    ( "ambiguous name %s refers to %s and %s"
+                    % (module_name, mod, old)
+                    )
         self.__dict__  [module_name] = mod
         self._Cache_Module (module_name, mod)
     # end def _Export_Module
@@ -372,7 +371,7 @@ class Package_Namespace (object) :
         old_reload = self.__reload
         if not modules :
             from _TFL.predicate import dusort
-            second  = lambda (a, b) : b
+            second  = lambda x : x[1]
             modules = \
                 [m for (m, i) in dusort (self.__modules.values (), second)]
         try :
@@ -395,7 +394,6 @@ class Package_Namespace (object) :
     # end def _Import_Module
 
 # end class Package_Namespace
-
 
 class Derived_Package_Namespace (Package_Namespace) :
     """Implement a derived Package_Namespace which adds to an existing

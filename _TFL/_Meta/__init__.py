@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -24,10 +24,13 @@
 #    TFL.Meta.__init__
 #
 # Purpose
-#    Initialize package `TFL.Meta`
+#    `TFL.Meta` provides meta-classes and property-helpers
 #
 # Revision Dates
 #    13-May-2002 (CT) Creation
+#     2-Feb-2009 (CT) Documentation added
+#     3-Feb-2009 (CT) Documentation added..
+#     4-Feb-2009 (CT) Documentation added...
 #    ««revision-date»»···
 #--
 
@@ -38,5 +41,91 @@ Meta = Package_Namespace ()
 TFL._Export ("Meta")
 
 del Package_Namespace
+
+__doc__ = """
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+`TFL.Meta` provides a generic base-class and various meta-classes and
+property-helpers:
+
+- New-style classes should be derived (directly or indirectly) from
+  :class:`Object<_TFL._Meta.Object.Object>` instead of
+  Python's builtin `object`.
+
+- Classes derived from other builtin types (like `dict`, `list`,
+  `set`, etc.) should declare their metaclass to be
+  :class:`M_Class<_TFL._Meta.M_Class.M_Class>`.
+
+- Metaclasses should be derived (directly or indirectly) from
+  :class:`M_Base<_TFL._Meta.M_Class.M_Base>`
+  (most commonly, from :class:`M_Class<_TFL._Meta.M_Class.M_Class>`).
+
+Module `Object`
+===============
+
+.. automodule:: _TFL._Meta.Object
+   :members:
+
+Module `M_Class`
+================
+
+.. automodule:: _TFL._Meta.M_Class
+   :members:
+
+Module `M_Data_Class`
+=====================
+
+.. automodule:: _TFL._Meta.M_Data_Class
+   :members:
+
+Module `M_Auto_Combine`
+=======================
+
+.. automodule:: _TFL._Meta.M_Auto_Combine
+   :members:
+
+Module `Property`
+=================
+
+.. automodule:: _TFL._Meta.Property
+   :members:
+
+
+Module `Once_Property`
+======================
+
+.. automodule:: _TFL._Meta.Once_Property
+   :members:
+
+Module `Lazy_Method`
+====================
+
+.. automodule:: _TFL._Meta.Lazy_Method
+   :members:
+
+"""
+
+### To use Sphinx for generating the documentation for TFL.Meta, one
+### needs a file `index.rst` with the contents::
+
+index_rst = """
+Welcome to the `TFL.Meta` documentation!
+========================================
+
+.. toctree::
+   :maxdepth: 2
+
+Package-NS `TFL.Meta`
+---------------------
+
+.. automodule:: _TFL._Meta
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+"""
 
 ### __END__ TFL.Meta.__init__

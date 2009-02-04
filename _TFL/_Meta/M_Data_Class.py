@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -40,6 +40,8 @@
 #    30-Mar-2005 (CT) Optional argument `name` added to `M_Data_Class.__call__`
 #    30-Mar-2005 (CT) `_check_dict` changed to ignore magic names
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#     2-Feb-2009 (CT) s/_M_Type_/M_Base/
+#     4-Feb-2009 (CT) Documentation improved
 #    ««revision-date»»···
 #--
 
@@ -48,68 +50,47 @@ M_Data_Class supports the definition of classes holding primarily or
 exclusively data in the form of class attributes with full support for
 inheritance.
 
->>> class M_Record (M_Data_Class) :
-...     class _names (M_Data_Class._names) :
-...         foo  = None
-...         bar  = 42
-...         baz  = 137
-...         quux = None
-...
->>> R1 = M_Record ("R1", (), dict (foo = 1))
->>> print R1, R1.foo, R1.bar, R1.baz
-<Record R1> 1 42 137
->>> R2 = M_Record ("R2", (R1, ), dict (bar = 2))
->>> print R2, R2.foo, R2.bar, R2.baz
-<Record R2> 1 2 137
->>> R3 = M_Record ("R3", (R1, ), dict (baz = 3))
->>> print R3, R3.foo, R3.bar, R3.baz
-<Record R3> 1 42 3
->>> R4 = M_Record ("R4", (R2, R3), dict ())
->>> print R4, R4.foo, R4.bar, R4.baz
-<Record R4> 1 2 3
->>> R5 = M_Record ("R5", (R1, ),   dict (bauz = 5))
-Traceback (most recent call last):
-  ...
-TypeError: <Record R5> doesn't allow attribute bauz=5
->>> r1  = R1 (name = "r1",  quux = 1)
->>> print r1, r1.foo, r1.bar, r1.baz, r1.quux
-<Record instance r1> 1 42 137 1
->>> r11 = r1 (name = "r11", foo  = 2)
->>> print r11, r11.foo, r11.bar, r11.baz, r11.quux
-<Record instance r11> 2 42 137 1
->>> r12 = r1 (name = "r12", foo  = 3, quux = 13)
->>> print r12, r12.foo, r12.bar, r12.baz, r12.quux
-<Record instance r12> 3 42 137 13
+::
 
-
-from _TFL._Meta.M_Data_Class import *
-class M_Record (M_Data_Class) :
-    class _names (M_Data_Class._names) :
-        foo  = None
-        bar  = 42
-        baz  = 137
-        quux = None
-
-R1 = M_Record ("R1", (),       dict (foo = 1))
-R2 = M_Record ("R2", (R1, ),   dict (bar = 2))
-R3 = M_Record ("R3", (R1, ),   dict (baz = 3))
-R4 = M_Record ("R4", (R2, R3), dict ())
-
-r1  = R1 (name = "r1",  quux = 1)
-r11 = r1 (name = "r11", foo  = 2)
-r12 = r1 (name = "r12", foo  = 3, quux = 13)
-
-print r1, r1.foo, r1.bar, r1.baz, r1.quux
-print r11, r11.foo, r11.bar, r11.baz, r11.quux
-print r12, r12.foo, r12.bar, r12.baz, r12.quux
-
+    >>> class M_Record (M_Data_Class) :
+    ...     class _names (M_Data_Class._names) :
+    ...         foo  = None
+    ...         bar  = 42
+    ...         baz  = 137
+    ...         quux = None
+    ...
+    >>> R1 = M_Record ("R1", (), dict (foo = 1))
+    >>> print R1, R1.foo, R1.bar, R1.baz
+    <Record R1> 1 42 137
+    >>> R2 = M_Record ("R2", (R1, ), dict (bar = 2))
+    >>> print R2, R2.foo, R2.bar, R2.baz
+    <Record R2> 1 2 137
+    >>> R3 = M_Record ("R3", (R1, ), dict (baz = 3))
+    >>> print R3, R3.foo, R3.bar, R3.baz
+    <Record R3> 1 42 3
+    >>> R4 = M_Record ("R4", (R2, R3), dict ())
+    >>> print R4, R4.foo, R4.bar, R4.baz
+    <Record R4> 1 2 3
+    >>> R5 = M_Record ("R5", (R1, ),   dict (bauz = 5))
+    Traceback (most recent call last):
+      ...
+    TypeError: <Record R5> doesn't allow attribute bauz=5
+    >>> r1  = R1 (name = "r1",  quux = 1)
+    >>> print r1, r1.foo, r1.bar, r1.baz, r1.quux
+    <Record instance r1> 1 42 137 1
+    >>> r11 = r1 (name = "r11", foo  = 2)
+    >>> print r11, r11.foo, r11.bar, r11.baz, r11.quux
+    <Record instance r11> 2 42 137 1
+    >>> r12 = r1 (name = "r12", foo  = 3, quux = 13)
+    >>> print r12, r12.foo, r12.bar, r12.baz, r12.quux
+    <Record instance r12> 3 42 137 13
 """
 
 from   _TFL             import TFL
 import _TFL._Meta.M_Class
 import _TFL.Caller
 
-class M_Data_Class (TFL.Meta._M_Type_) :
+class M_Data_Class (TFL.Meta.M_Base) :
     """Meta class supporting definition of classes holding data"""
 
     class _names (object) :

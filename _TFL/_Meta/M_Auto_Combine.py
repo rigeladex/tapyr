@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #    18-Feb-2005 (CT)  Moved to `TFL.Meta`
 #    13-Jul-2005 (CED) `M_Auto_Combine_Sets` added to bases
 #    13-Jul-2005 (CED) Missing import added
+#     3-Feb-2009 (CT)  Documentation added
 #    ««revision-date»»···
 #--
 
@@ -57,12 +58,32 @@ class M_Auto_Combine ( TFL.Meta.M_Auto_Combine_Dicts
     """Meta class for auto-combining
 
        * the list-attributes mentioned in `_lists_to_combine`
-
+         (see :class:`~_TFL._Meta.M_Auto_Combine_Lists.M_Auto_Combine_Lists`)
        * the dict-attributes mentioned in `_dicts_to_combine`
-
+         (see :class:`~_TFL._Meta.M_Auto_Combine_Dicts.M_Auto_Combine_Dicts`)
        * the set-attributes  mentioned in `_sets_to_combine`
+         (see :class:`~_TFL._Meta.M_Auto_Combine_Sets.M_Auto_Combine_Sets`)
 
        between a class and its ancestors.
+
+       Module `M_Auto_Combine_Dicts`
+       =============================
+
+       .. automodule:: _TFL._Meta.M_Auto_Combine_Dicts
+          :members:
+
+       Module `M_Auto_Combine_Lists`
+       =============================
+
+       .. automodule:: _TFL._Meta.M_Auto_Combine_Lists
+          :members:
+
+       Module `M_Auto_Combine_Sets`
+       ============================
+
+       .. automodule:: _TFL._Meta.M_Auto_Combine_Sets
+          :members:
+
     """
 # end class M_Auto_Combine
 

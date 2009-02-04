@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -29,6 +29,8 @@
 # Revision Dates
 #    23-Jul-2004 (CT) Creation (factored from TOM.Meta.M_Auto_Combine)
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#     2-Feb-2009 (CT) s/_M_Type_/M_Base/
+#     3-Feb-2009 (CT) Documentation improved
 #    ««revision-date»»···
 #--
 
@@ -36,27 +38,29 @@
 Meta class for auto-combining the dict-attributes mentioned in
 `_dicts_to_combine` between a class and it's ancestors.
 
->>> from predicate import sorted
->>> class A (object) :
-...     __metaclass__     = M_Auto_Combine_Dicts
-...     _dicts_to_combine = ("foo", "bar")
-...     bar               = TFL.d_dict (x = 1, y = 2)
-...
->>> class B (A) :
-...     _dicts_to_combine = A._dicts_to_combine + ("baz", )
-...     foo               = TFL.d_dict (u = 1)
-...     bar               = TFL.d_dict (y = 3, z = 42)
-...
->>> sorted (A.foo.iteritems ())
-[]
->>> sorted (B.foo.iteritems ())
-[('u', 1)]
->>> sorted (A.bar.iteritems ())
-[('x', 1), ('y', 2)]
->>> sorted (B.bar.iteritems ())
-[('x', 1), ('y', 3), ('z', 42)]
->>> B.baz
-{}
+::
+
+    >>> from _TFL.predicate import sorted
+    >>> class A (object) :
+    ...     __metaclass__     = M_Auto_Combine_Dicts
+    ...     _dicts_to_combine = ("foo", "bar")
+    ...     bar               = TFL.d_dict (x = 1, y = 2)
+    ...
+    >>> class B (A) :
+    ...     _dicts_to_combine = A._dicts_to_combine + ("baz", )
+    ...     foo               = TFL.d_dict (u = 1)
+    ...     bar               = TFL.d_dict (y = 3, z = 42)
+    ...
+    >>> sorted (A.foo.iteritems ())
+    []
+    >>> sorted (B.foo.iteritems ())
+    [('u', 1)]
+    >>> sorted (A.bar.iteritems ())
+    [('x', 1), ('y', 2)]
+    >>> sorted (B.bar.iteritems ())
+    [('x', 1), ('y', 3), ('z', 42)]
+    >>> B.baz
+    {}
 """
 
 from   _TFL                import TFL
@@ -64,7 +68,7 @@ from   _TFL                import TFL
 import _TFL.d_dict
 import _TFL._Meta.M_Class
 
-class M_Auto_Combine_Dicts (TFL.Meta._M_Type_) :
+class M_Auto_Combine_Dicts (TFL.Meta.M_Base) :
     """Meta class for auto-combining the dict-attributes mentioned in
        `_dicts_to_combine` between a class and it's ancestors.
     """
