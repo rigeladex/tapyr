@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -391,6 +391,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
             return getattr (self.parent, name)
         raise AttributeError, name
     # end def __getattr__
+
+    def __repr__ (self) :
+        return "<%s %s\n    %s\n  >" % \
+            (self.Type, self.name, str (self).replace (", ", "\n    "))
+    # end def __repr__
 
     def __str__ (self) :
         return ", ".join \
