@@ -6,6 +6,7 @@ Documentation for Tanzer's Python packages
 .. toctree::
    :maxdepth: 2
 
+   TFL/Package_Namespace
    TFL/Meta/index
 
 Indices and tables

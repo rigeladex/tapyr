@@ -1,13 +1,10 @@
 .. TFL.Meta documentation master file
 
-Documentation for `TFL.Meta`
-============================
+Package-NS `TFL.Meta`
+=====================
 
 .. toctree::
    :maxdepth: 2
-
-Package-NS `TFL.Meta`
----------------------
 
 .. automodule:: _TFL._Meta
 

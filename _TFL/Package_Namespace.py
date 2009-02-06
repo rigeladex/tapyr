@@ -127,6 +127,7 @@
 #    31-Jul-2006 (PGO) `DPN_Importer.register` introduced
 #     7-Nov-2006 (PGO) Reloading now also works with `_Add`
 #     3-Feb-2009 (CT)  Style improvements
+#     6-Feb-2009 (CT)  Documentation improved
 #    ««revision-date»»···
 #--
 
@@ -154,8 +155,8 @@ class _Module_Space_ :
 # end class _Module_Space_
 
 class Package_Namespace (object) :
-    """Implement a namespace for python packages providing direct access to
-       classes and functions implemented in the modules of the package.
+    """Implements a namespace that provides direct access to classes and
+       functions implemented in the modules of a Python package.
 
        In the following, a package Foo_Package and module Bar are assumed as
        example.
@@ -237,12 +238,32 @@ class Package_Namespace (object) :
 
        If a module prefers to put itself instead of some of its attributes
        (functions/classes/whatever) into the Package_Namespace, it can do so
-       by calling
+       by calling::
 
            Foo._Export_Module ()
 
        The modules of the package can be accessed via the `_` attribute of
        the package namespace.
+
+       The standard naming convention for packages exporting a
+       Package_Namespace is::
+
+           _TFL           ### the Python package
+           TFL            ### the Package_Namespace
+
+       i.e., use the same name but with a leading underscore for the package.
+
+       So, the canonical use of Package_Namespaces looks like::
+
+           #7
+           from   _TFL import TFL
+           import _TFL.Filename
+           fn = TFL.Filename ("/some/very/important/file.name")
+
+       Note: the methods `_Export`, `_Export_Module`, and `_Reload` are part
+       of the public interface of `Package_Namespaces` (they start with an
+       underscore to avoid name clashes with user-defined attributes of
+       package namespaces).
     """
 
     _leading_underscores = re.compile (r"(\.|^)_+")
@@ -311,7 +332,7 @@ class Package_Namespace (object) :
     # end def _Add
 
     def _Export (self, * symbols, ** kw) :
-        """To be called by modules of Package_Namespace to inject their
+        """To be called by modules of `Package_Namespace` to inject their
            symbols into the package namespace `self`.
         """
         result         = {}
@@ -368,6 +389,9 @@ class Package_Namespace (object) :
     # end def _Load_Module
 
     def _Reload (self, * modules) :
+        """Reload all the `modules` of the `Package_Namespace` specified
+           (default: all modules of the `Package_Namespace` currently imported).
+        """
         old_reload = self.__reload
         if not modules :
             from _TFL.predicate import dusort
@@ -396,8 +420,8 @@ class Package_Namespace (object) :
 # end class Package_Namespace
 
 class Derived_Package_Namespace (Package_Namespace) :
-    """Implement a derived Package_Namespace which adds to an existing
-       Package_Namespace.
+    """Implements a derived Package_Namespace, which adds to classes and
+       functions an existing Package_Namespace.
 
        Derivation of Package_Namespaces is similar to inheritance between
        classes -- the derived Package_Namespace
