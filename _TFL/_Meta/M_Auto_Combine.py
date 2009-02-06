@@ -55,37 +55,41 @@ class M_Auto_Combine ( TFL.Meta.M_Auto_Combine_Dicts
                      , TFL.Meta.M_Auto_Combine_Sets
                      , TFL.Meta.M_Class
                      ) :
-    """Meta class for auto-combining
-
-       * the list-attributes mentioned in `_lists_to_combine`
-         (see :class:`~_TFL._Meta.M_Auto_Combine_Lists.M_Auto_Combine_Lists`)
-       * the dict-attributes mentioned in `_dicts_to_combine`
-         (see :class:`~_TFL._Meta.M_Auto_Combine_Dicts.M_Auto_Combine_Dicts`)
-       * the set-attributes  mentioned in `_sets_to_combine`
-         (see :class:`~_TFL._Meta.M_Auto_Combine_Sets.M_Auto_Combine_Sets`)
-
-       between a class and its ancestors.
-
-       Module `M_Auto_Combine_Dicts`
-       =============================
-
-       .. automodule:: _TFL._Meta.M_Auto_Combine_Dicts
-          :members:
-
-       Module `M_Auto_Combine_Lists`
-       =============================
-
-       .. automodule:: _TFL._Meta.M_Auto_Combine_Lists
-          :members:
-
-       Module `M_Auto_Combine_Sets`
-       ============================
-
-       .. automodule:: _TFL._Meta.M_Auto_Combine_Sets
-          :members:
-
-    """
+    pass
 # end class M_Auto_Combine
+
+__doc__ = """
+Meta class for auto-combining
+
+* the list-attributes mentioned in `_lists_to_combine`
+  (see :class:`~_TFL._Meta.M_Auto_Combine_Lists.M_Auto_Combine_Lists`)
+* the dict-attributes mentioned in `_dicts_to_combine`
+  (see :class:`~_TFL._Meta.M_Auto_Combine_Dicts.M_Auto_Combine_Dicts`)
+* the set-attributes  mentioned in `_sets_to_combine`
+  (see :class:`~_TFL._Meta.M_Auto_Combine_Sets.M_Auto_Combine_Sets`)
+
+between a class and its ancestors.
+
+Module `M_Auto_Combine_Dicts`
+=============================
+
+.. automodule:: _TFL._Meta.M_Auto_Combine_Dicts
+   :members:
+
+Module `M_Auto_Combine_Lists`
+=============================
+
+.. automodule:: _TFL._Meta.M_Auto_Combine_Lists
+   :members:
+
+Module `M_Auto_Combine_Sets`
+============================
+
+.. automodule:: _TFL._Meta.M_Auto_Combine_Sets
+   :members:
+
+"""
+
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*")
