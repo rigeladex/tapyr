@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    14-Aug-2008 (CT) Creation (factored from TTA.TKT.Batch.Application)
+#    11-Feb-2009 (CT) `interact` changed to include `model.globals ()` and
+#                     `model.script_locals` in context of interpreter
 #    ««revision-date»»···
 #--
 
@@ -187,8 +189,9 @@ class _TFL_TKT_Batch_Application_ (TFL.TKT.Application) :
     def interact (self, glob_dct = None, locl_dct = None) :
         import sys
         import code
+        model = self.model
         if glob_dct is None:
-            glob_dct = {}
+            glob_dct = TFL.d_dict (model.script_locals, model.globals ())
         if locl_dct is not None :
             glob_dct.update (locl_dct)
         try :
@@ -201,10 +204,10 @@ class _TFL_TKT_Batch_Application_ (TFL.TKT.Application) :
         ### XXX readline checks if sys.stdout is what is used to be,
         ### XXX otherwise it won't do tab-completion
         with TFL.Context.attr_let (sys, "stdout", sys.__stdout__) :
-            sys.ps1 = "%s => " % (self.model.Tool_Supplier)
+            sys.ps1 = "%s => " % (model.Tool_Supplier)
             code.interact \
                 ( "%s - %s python interpreter"
-                  % (self.model.Tool_Supplier, self.model.product_name)
+                  % (model.Tool_Supplier, model.product_name)
                 , local = glob_dct
                 )
     # end def interact

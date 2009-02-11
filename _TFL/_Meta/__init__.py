@@ -105,27 +105,4 @@ Module `Lazy_Method`
 
 """
 
-### To use Sphinx for generating the documentation for TFL.Meta, one
-### needs a file `index.rst` with the contents::
-
-index_rst = """
-Welcome to the `TFL.Meta` documentation!
-========================================
-
-.. toctree::
-   :maxdepth: 2
-
-Package-NS `TFL.Meta`
----------------------
-
-.. automodule:: _TFL._Meta
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-"""
-
 ### __END__ TFL.Meta.__init__
