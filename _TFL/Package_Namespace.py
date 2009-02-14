@@ -260,10 +260,11 @@ class Package_Namespace (object) :
            import _TFL.Filename
            fn = TFL.Filename ("/some/very/important/file.name")
 
-       Note: the methods `_Export`, `_Export_Module`, and `_Reload` are part
-       of the public interface of `Package_Namespaces` (they start with an
-       underscore to avoid name clashes with user-defined attributes of
-       package namespaces).
+       .. note::
+         The methods `_Export`, `_Export_Module`, and `_Reload` are part
+         of the public interface of `Package_Namespaces` (they start with an
+         underscore to avoid name clashes with user-defined attributes of
+         package namespaces).
     """
 
     _leading_underscores = re.compile (r"(\.|^)_+")

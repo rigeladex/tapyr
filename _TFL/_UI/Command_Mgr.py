@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -1395,69 +1395,6 @@ __test__ = dict \
           7 : (callback = d, name = Dyn-d)
         """
     )
-
-"""
-from _TFL._UI.Command_Mgr import *
-from _TFL._TKT.Command_Interfacer import _Test_CI_
-import _TFL._TKT._Batch
-import itertools
-_d1 = itertools.cycle (([1, 2, 3], [4], [5, 6], []))
-def dyn_1 () :
-    for i in _d1.next () :
-        yield "Dyn-%s" % i, i, None
-
-_d2 = itertools.cycle ((["a"], ["b", "c", "d"], []))
-def dyn_2 () :
-    for i in _d2.next () :
-        yield "Dyn-%s" % i, i, None
-
-mb = interfacer = _Test_CI_ (None)
-cm = Command_Mgr (None, None, dict (mb = mb))
-cm.add_command   (Command ("First", "First"), if_names = ("mb", ))
-cm.add_command   (Command ("Secnd", "Secnd"), if_names = ("mb", ))
-d1 = Dyn_Command ("Dyn-A", dyn_1)
-cm.add_command   (d1, if_names = ("mb", ))
-cm.add_command   (Command ("Third", "Third"), if_names = ("mb", ))
-d2 = Dyn_Command ("Dyn-B", dyn_2)
-cm.add_command   (d2, if_names = ("mb", ))
-cm.add_command   (Command ("Fourt", "Fourt"), if_names = ("mb", ))
-
-mb.activate ()
-mb.activate ()
-mb.activate ()
-mb.activate ()
-mb.activate ()
-mb.activate ()
-
-elements = cm._epi ["mb"]
-for e in elements :
-    print e.name, elements.n_index (e.name), mb.index (e.name)
-
-from _TFL._UI.Command_Mgr import *
-from _TFL._TKT.Command_Interfacer import _Test_CI_
-import _TFL._TKT._Batch
-import itertools
-_d1 = itertools.cycle (([1, 2], ))
-def dyn_1 () :
-    for i in _d1.next () :
-        n = "%s Dyn-command" % i
-        yield n, n, None
-
-mb = interfacer = _Test_CI_ (None)
-cm = Command_Mgr (None, None, dict (mb = mb))
-cm.add_command   (Command ("New cluster",  ""), if_names = ("mb", ))
-cm.add_command   (Command ("Load cluster", ""), if_names = ("mb", ))
-cm.add_command   (Command ("Close",        ""), if_names = ("mb", ))
-cm.add_separator (if_names = ("mb", ))
-cm.add_command   (Command ("Save cluster", ""), if_names = ("mb", ))
-cm.add_command   (Command ("Save cluster as text", ""), if_names = ("mb", ))
-cm.add_command   (Command ("Save cluster as ...", ""), if_names = ("mb", ))
-d1 = Dyn_Command ("Dyn-A", dyn_1)
-cm.add_command   (d1, if_names = ("mb", ))
-cm.add_command   (Command ("Save and exit", ""), if_names = ("mb", ))
-cm.add_command   (Command ("Save", ""), if_names = ("mb", ))
-mb.activate ()
-"""
 
 if __name__ != "__main__" :
     TFL.UI._Export ("*", "_Command_", "_Command_Group_")
