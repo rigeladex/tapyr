@@ -161,6 +161,7 @@
 #    18-Oct-2008 (CT) `handler_403` added and `handlers` defined with
 #                     `_DJO.views.handler_XXX` as defaults
 #    19-Oct-2008 (CT) `Root.Admin` and `Root.Models` added
+#    15-Feb-2009 (CT) `Dict_Replacer` added to `_Export`
 #    ««revision-date»»···
 #--
 
@@ -170,6 +171,7 @@ import _DJO._NAV
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
+from   _TFL.Regexp              import Dict_Replacer
 from   _TFL                     import sos
 
 import _TFL._Meta.M_Class
@@ -781,5 +783,9 @@ class Root (_Dir_) :
 # end class Root
 
 if __name__ != "__main__":
-    DJO.NAV._Export ("*", "_load_view", "_Meta_", "_Site_Entity_", "_Dir_")
+    DJO.NAV._Export \
+        ( "*"
+        , "_load_view", "_Meta_", "_Site_Entity_", "_Dir_"
+        , "Dict_Replacer"
+        )
 ### __END__ DJO.NAV.Base
