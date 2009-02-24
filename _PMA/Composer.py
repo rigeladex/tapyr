@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -44,6 +44,9 @@
 #    31-Jul-2005 (CT) `reply_all` added
 #     9-Aug-2005 (CT) s/default_charset/default_encoding/g
 #     5-Jan-2006 (CT) `Thread` factored
+#    24-Feb-2009 (CT) `_add_header_maybe` factored
+#    24-Feb-2009 (CT) Add headers for `Content-type`,
+#                     `Content-transfer-encoding` and `Mime-version`
 #    ««revision-date»»···
 #--
 
@@ -235,8 +238,22 @@ class Composer (TFL.Meta.Object) :
         self._send (buffer, lambda * a : self._finish_resend (msg, * a))
     # end def resend
 
+    def _add_header_maybe (self, email, name, value) :
+        if email.get (name, None) is None :
+            ### just to be safe (del of non-existing key is a no-op)
+            del email [name]
+            if callable (value) :
+                value = value ()
+            email [name] = value
+    # end def _add_header_maybe
+
     def _as_message (self, buffer) :
-        return Lib.message_from_string (buffer.replace (self.body_marker, ""))
+        result = Lib.message_from_string (buffer.replace (self.body_marker, ""))
+        self._add_header_maybe \
+            ( result
+            , "Content-type", "text/plain; charset=%s" % PMA.default_encoding
+            )
+        return result
     # end def _as_message
 
     def _as_multipart (self, email) :
@@ -258,10 +275,7 @@ class Composer (TFL.Meta.Object) :
     def _finish_edit (self, buffer, bfn) :
         if buffer :
             email = self._as_message (buffer)
-            if email.get ("Date", None) is None :
-                ### just to be safe (del of non-existing key is a no-op)
-                del email ["Date"]
-                email ["Date"] = Lib.formatdate ()
+            self._add_header_maybe (email, "Date", Lib.formatdate)
             subject = email.get ("Subject")
             email   = self._process_attachement_headers (email)
         if email and self.smtp :
@@ -297,6 +311,8 @@ class Composer (TFL.Meta.Object) :
     # end def _finish_resend
 
     def _finish__send (self, email, envelope = None, send_cb = None) :
+        self._add_header_maybe (email, "Mime-version",              "1.0")
+        self._add_header_maybe (email, "Content-transfer-encoding", "8bit")
         if send_cb is not None :
             email = send_cb (email)
         if email and self.smtp :

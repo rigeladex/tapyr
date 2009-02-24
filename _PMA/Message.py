@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -157,6 +157,8 @@
 #     9-Jul-2007 (CT) `body_lines` changed to use `textwrap.Wrapper` to split
 #                     overlong lines
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
+#    24-Feb-2009 (CT) `Message_Body.body_lines` changed to not gobble empty
+#                     lines (`textwrap.TextWrapper` is broken in that regard)
 #    ««revision-date»»···
 #--
 
@@ -558,8 +560,12 @@ class Message_Body (_Msg_Part_) :
                 (width = PMA.text_output_width, break_long_words = False)
             for line in lines :
                 line = line.decode (charset, "replace").rstrip ("\r")
-                for l in wrapper.wrap (line) :
-                    yield l
+                if line :
+                    for l in wrapper.wrap (line or "") :
+                        yield l
+                else :
+                    ### `wrapper` returns an empty list for an empty string
+                    yield line
         else :
             hp = Part_Header (self.email, self.headers_to_show)
             self.lines = lines = list (hp.formatted (sep_length))
