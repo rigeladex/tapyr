@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,6 +39,7 @@
 #     8-Nov-2007 (CT)  `assert` statements added to avoid silent errors
 #    23-Jan-2008 (CT)  `Record_S` added
 #     1-Feb-2008 (MG)  `__nonzero__` added
+#    27-Feb-2009 (CT)  `__setitem__` added
 #    ««revision-date»»···
 #--
 
@@ -107,6 +108,10 @@ class Record (TFL.Meta.Object) :
     def __setattr__ (self, name, value) :
         self._kw [name] = value
     # end def __setattr__
+
+    def __setitem__ (self, name, value) :
+        self._kw [name] = value
+    # end def __setitem__
 
     def __str__ (self) :
         return "(%s)" % (self._formatted_kw (), )

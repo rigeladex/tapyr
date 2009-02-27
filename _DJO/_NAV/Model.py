@@ -41,6 +41,9 @@
 #                     `name` and `title`
 #    23-Jan-2009 (CT) `Admin.model_man` added and used
 #    23-Jan-2009 (CT) Use `(Model, kind_name)` as index for `top.Models`
+#    26-Feb-2009 (CT) `Changer.process_post` changed to call `_before_save`
+#    27-Feb-2009 (CT) `count` changed to use `query_fct`
+#    27-Feb-2009 (CT) `_Field` added and used in `kind_filter`
 #    ««revision-date»»···
 #--
 
@@ -103,7 +106,7 @@ class _Model_Mixin_ (TFL.Meta.Object) :
 
     @property
     def count (self) :
-        return self.Model.objects.count ()
+        return self.query_fct ().count ()
     # end def count
 
     @Once_Property
@@ -136,6 +139,9 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             form = self.Form (request.POST, instance = obj)
             if form.is_valid () :
                 with form.object_to_save () as result :
+                    if hasattr (result, "_before_save") :
+                        result._before_save \
+                            (request, kind_name = self.kind_name)
                     if hasattr (result, "creator") and not result.creator :
                         if request.user.is_authenticated () :
                             result.creator = request.user
@@ -425,6 +431,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
             , Model_Name   = name
             , Model_Name_s = title
             , title        = title
+            , _Field       = Model._Field
             , ** kw
             )
         self._old_count = -1
@@ -462,7 +469,8 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
     def kind_filter (self) :
         if self.kind_name :
             import _DJO.QF
-            return DJO.QF (kind__exact = self.kind_name)
+            cind = self._Field.kind.choice_to_code (self.kind_name)
+            return DJO.QF (kind__exact = cind)
     # end def kind_filter
 
     def _get_entries (self) :

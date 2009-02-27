@@ -162,6 +162,7 @@
 #                     `_DJO.views.handler_XXX` as defaults
 #    19-Oct-2008 (CT) `Root.Admin` and `Root.Models` added
 #    15-Feb-2009 (CT) `Dict_Replacer` added to `_Export`
+#    26-Feb-2009 (CT) `_run_pre_first_request_hooks` factored out
 #    ««revision-date»»···
 #--
 
@@ -717,11 +718,30 @@ class Root (_Dir_) :
         return result
     # end def page_from_href
 
+    ### methods needed to be able to use the root object as a Django URLResolver
+    @classmethod
+    def resolve (cls, path) :
+        return cls.universal_view, (), {}
+    # end def resolve
+
+    @classmethod
+    def resolve403 (cls) :
+        return cls._resolve_special (403)
+    # end def resolve404
+
+    @classmethod
+    def resolve404 (cls) :
+        return cls._resolve_special (404)
+    # end def resolve404
+
+    @classmethod
+    def resolve500 (cls) :
+        return cls._resolve_special (500)
+    # end def resolve500
+
     @classmethod
     def universal_view (cls, request) :
-        for h in cls.top.pre_first_request_hooks :
-            h ()
-        cls.top.pre_first_request_hooks = []
+        cls._run_pre_first_request_hooks ()
         href = request.path [1:]
         ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
@@ -745,12 +765,6 @@ class Root (_Dir_) :
         raise Http404 (href)
     # end def universal_view
 
-    ### methods needed to be able to use the root object as a Django URLResolver
-    @classmethod
-    def resolve (cls, path) :
-        return cls.universal_view, (), {}
-    # end def resolve
-
     @classmethod
     def _resolve_special (cls, view_type):
         from django.core.exceptions import ViewDoesNotExist
@@ -766,19 +780,11 @@ class Root (_Dir_) :
     # end def _resolve_special
 
     @classmethod
-    def resolve403 (cls) :
-        return cls._resolve_special (403)
-    # end def resolve404
-
-    @classmethod
-    def resolve404 (cls) :
-        return cls._resolve_special (404)
-    # end def resolve404
-
-    @classmethod
-    def resolve500 (cls) :
-        return cls._resolve_special (500)
-    # end def resolve500
+    def _run_pre_first_request_hooks (cls) :
+        for h in cls.top.pre_first_request_hooks :
+            h ()
+        cls.top.pre_first_request_hooks = []
+    # end def _run_pre_first_request_hooks
 
 # end class Root
 

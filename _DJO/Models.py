@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2008 Martin Glück. All rights reserved
+# Copyright (C) 2006-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -32,11 +32,14 @@
 #     4-Apr-2008 (MG) `additional_user_attrs` added
 #     9-May-2008 (MG) `_Permisson_Mixin_` factored
 #     1-Jul-2008 (CT) `M_Model` and `Model` added
+#    26-Feb-2009 (CT) `Model._before_save` added
+#    27-Feb-2009 (CT) `M_Model._setup_attr` added and used
 #    ««revision-date»»···
 #--
 
 from   _TFL                               import TFL
 import _TFL._Meta.M_Class
+import _TFL.Record
 
 from   _DJO                               import DJO
 
@@ -48,6 +51,21 @@ from   django.utils.translation           import gettext_lazy as _
 
 class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     """Meta class for models with support for `.__super` and `_real_name`."""
+
+    def __init__ (cls, name, bases, dict) :
+        cls.__m_super.__init__ (name, bases, dict)
+        cls._setup_attr        (cls)
+    # end def __init__
+
+    @classmethod
+    def _setup_attr (meta, cls) :
+        ### this is defined as a class method of the meta class so that it
+        ### can be called for `cls` that don't use M_Model as meta class
+        cls._Field = map = TFL.Record ()
+        for f in cls._meta.fields :
+            map [f.name] = f
+    # end def _setup_attr
+
 # end class M_Model
 
 class _DJO_Model_ (DM.Model) :
@@ -58,6 +76,10 @@ class _DJO_Model_ (DM.Model) :
     class Meta :
         abstract       = True
     # end class Meta
+
+    def _before_save (self, request, ** kw) :
+        pass
+    # end def _before_save
 
 Model = _DJO_Model_ # end class
 

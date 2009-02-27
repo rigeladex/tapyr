@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #    16-Oct-2008 (CT) `widget_attrs` added
 #    20-Oct-2008 (CT) `Auto_Slug` added
 #    21-Oct-2008 (CT) `Auto_Slug.field_fmt_kw` added
+#    27-Feb-2009 (CT) `Choice_Char`, `Choice_Int` and `Choice_Small` added
 #    ««revision-date»»···
 #--
 
@@ -363,6 +364,50 @@ class Time (_Date_, DM.TimeField) :
 class URL (Field, DM.URLField) :
     pass
 # end class URL
+
+class _Choice_ (Field) :
+
+    def __init__ (self, * args, ** kw) :
+        choices = kw ["choices"]
+        if isinstance (choices, dict) :
+            kw ["choices"] = sorted (choices.iteritems ())
+        else :
+            ### doesn't support collecting available choices into named groups
+            choices = dict (choices)
+        self._code_to_choice = choices
+        self._choice_to_code = dict ((v, k) for (k, v) in choices.iteritems ())
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def choice_to_code (self, value) :
+        if value in self._code_to_choice :
+            result = value
+        else :
+            result = self._choice_to_code [value]
+        return result
+    # end def choice_to_code
+
+    def code_to_choice (self, value) :
+        if value in self._choice_to_code :
+            result = value
+        else :
+            result = self._code_to_choice [value]
+        return result
+    # end def code_to_choice
+
+# end class _Choice_
+
+class Choice_Char (_Choice_, Char) :
+    pass
+# end class Choice_Char
+
+class Choice_Int (_Choice_, Integer) :
+    pass
+# end class Choice_Int
+
+class Choice_Small (_Choice_, Small_Integer) :
+    pass
+# end class Choice_Small
 
 if __name__ != "__main__":
     DJO._Export_Module ()

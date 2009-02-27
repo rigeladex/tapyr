@@ -165,6 +165,10 @@
 #    19-Oct-2008 (CT) Add `top.Models` automatically to `Site_Admin`
 #    19-Oct-2008 (CT) `Model_Admin` factored to `DJO.NAV.Model.Admin`
 #    23-Jan-2009 (CT) Use `(Model, kind_name)` as index for `top.Models`
+#    26-Feb-2009 (CT) `Site_Admin` fixed to handle `top.Models` with
+#                     `kind_name` properly
+#    27-Feb-2009 (CT)  `_model_entries` changed to add `_Field` to (non-DJO)
+#                      models
 #    ««revision-date»»···
 #--
 
@@ -185,30 +189,52 @@ class Site_Admin (DJO.NAV.Dir) :
     template        = "site_admin.html"
 
     def __init__ (self, src_dir, parent, ** kw) :
-        entries  = []
-        models   = kw.pop ("models", [])
+        models = kw.pop ("models", [])
         self.__super.__init__ (src_dir, parent, ** kw)
-        model_iter = ichain \
-            (self.top.Models.iterkeys (), zip (models, irepeat (None)))
-        for m, k in model_iter :
+        self.add_entries (self._model_man_entries ())
+        self.add_entries (self._model_entries (models))
+        self.top.Admin = self
+    # end def __init__
+
+    def _model_entries (self, models) :
+        for m in models :
             m_kw  = getattr  (m, "NAV_admin_args", {})
             name  = unicode  (m._meta.verbose_name)
             title = m_kw.pop ("title", m._meta.verbose_name_plural)
+            desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
+            Type  = m_kw.pop ("Admin_Type", self.Page)
+            if not hasattr (m, "_Field") :
+                DJO.M_Model._setup_attr (m)
+            d = dict \
+                ( name      = name
+                , title     = title
+                , desc      = desc
+                , Model     = m
+                , kind_name = None
+                , Type      = Type
+                , ** m_kw
+                )
+            yield d
+    # end def _model_entries
+
+    def _model_man_entries (self) :
+        for (model, kind), man in self.top.Models.iteritems () :
+            m_kw  = getattr  (model, "NAV_admin_args", {})
+            name  = unicode  (man.name)
+            title = m_kw.pop ("title", man.title)
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
             Type  = m_kw.pop ("Admin_Type", self.Page)
             d = dict \
                 ( name      = name
                 , title     = title
                 , desc      = desc
-                , Model     = m
-                , kind_name = k
+                , Model     = model
+                , kind_name = kind
                 , Type      = Type
                 , ** m_kw
                 )
-            entries.append (d)
-        self.add_entries (entries)
-        self.top.Admin = self
-    # end def __init__
+            yield d
+    # end def _model_man_entries
 
     if 1 :
         ### if we want to display a site-admin specific page (and not
