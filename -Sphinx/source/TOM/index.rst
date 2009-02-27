@@ -13,6 +13,7 @@ Package-NS `TOM`
 .. toctree::
 
    Attr/index
+   Pred/index
    SCM/index
    bib
 
