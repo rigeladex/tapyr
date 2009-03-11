@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,6 +57,7 @@
 #    17-Sep-2007 (CT) Handling of `target_currency` simplified
 #     8-May-2008 (CT) `EUC_Opt_TC` changed to use `__super`
 #    30-Jun-2008 (CT) Parts of `EUC_Opt` factored to `Opt_L`
+#     7-Mar-2009 (CT) Doctest added
 #    ««revision-date»»···
 #--
 
@@ -469,6 +470,74 @@ def _main (cmd) :
     if s != 0 and len (cmd.argv.body) > 1 :
         print "Total : %s" % s
 # end def _main
+
+__doc__ = """
+Provide classes for management of European Currencies compatible to
+the Euro. The conversion factors are the ones published by the
+European Union for the currencies that participated in the initial
+introduction of the Euro.
+
+>>> for C in EU_Currency.extension :
+...   print "100 %s = %10s" % (C.name, C (100))
+...
+100 ATS =   7.27 EUR
+100 BEF =   2.48 EUR
+100 DEM =  51.13 EUR
+100 ESP =   0.60 EUR
+100 EUR = 100.00 EUR
+100 FIM =  16.82 EUR
+100 FRF =  15.24 EUR
+100 IEP = 126.97 EUR
+100 ITL =   0.05 EUR
+100 LUF =   2.48 EUR
+100 NLG =  45.38 EUR
+100 PTE =   0.50 EUR
+
+>>> EU_Currency.target_currency = ATS
+>>> for C in EU_Currency.extension :
+...   print "100 %s = %10s" % (C.name, C (100))
+...
+100 ATS =  100,00 öS
+100 BEF =   34,11 öS
+100 DEM =  703,55 öS
+100 ESP =    8,27 öS
+100 EUR = 1376,03 öS
+100 FIM =  231,43 öS
+100 FRF =  209,77 öS
+100 IEP = 1747,20 öS
+100 ITL =    0,71 öS
+100 LUF =   34,11 öS
+100 NLG =  624,42 öS
+100 PTE =    6,86 öS
+
+>>> EU_Currency.target_currency = EUR
+>>> for C in EU_Currency.extension :
+...   print "100 %s + 100 ATS = %10s" % (C.name, C (100) + ATS (100))
+...
+100 ATS + 100 ATS =  14.53 EUR
+100 BEF + 100 ATS =   9.75 EUR
+100 DEM + 100 ATS =  58.40 EUR
+100 ESP + 100 ATS =   7.87 EUR
+100 EUR + 100 ATS = 107.27 EUR
+100 FIM + 100 ATS =  24.09 EUR
+100 FRF + 100 ATS =  22.51 EUR
+100 IEP + 100 ATS = 134.24 EUR
+100 ITL + 100 ATS =   7.32 EUR
+100 LUF + 100 ATS =   9.75 EUR
+100 NLG + 100 ATS =  52.65 EUR
+100 PTE + 100 ATS =   7.77 EUR
+
+>>> print EUR (100) * 1.20
+120.00 EUR
+
+>>> EUR (100) == 100.00
+True
+>>> ATS (100) == 7.27
+False
+>>> ATS (100) == 7.267283416785971
+True
+
+"""
 
 if __name__ == "__main__":
     _main (_command_spec ())

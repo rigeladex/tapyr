@@ -26,15 +26,15 @@
 #    Provide a wrapper for lazy evaluation of methods
 #
 # Revision Dates
-#    15-Jul-2004 (CT) Creation
-#    23-Sep-2004 (CT) `_Lazy_Wrapper_.__getattr__` added to make wrapped
-#                     callables more similar to the real thing (e.g., avoid
-#                     an AttributeError from `wrapped.func_code`)
-#    24-Jan-2005 (MG) `_Lazy_Wrapper_.__call__`: conversion to an int added
-#     2-Feb-2005 (MG) `_Lazy_Wrapper_.__call__`: store `int` of the change
-#                     counter instead of the change object itself
-#     2-Feb-2005 (MG) `_Lazy_Wrapper_RNC_` and `Lazy_Method_RNC` added,
-#                     `Lazy_Method` renamed to `Lazy_Method_RLV`
+#    15-Jul-2004 (CT)  Creation
+#    23-Sep-2004 (CT)  `_Lazy_Wrapper_.__getattr__` added to make wrapped
+#                      callables more similar to the real thing (e.g., avoid
+#                      an AttributeError from `wrapped.func_code`)
+#    24-Jan-2005 (MG)  `_Lazy_Wrapper_.__call__`: conversion to an int added
+#     2-Feb-2005 (MG)  `_Lazy_Wrapper_.__call__`: store `int` of the change
+#                      counter instead of the change object itself
+#     2-Feb-2005 (MG)  `_Lazy_Wrapper_RNC_` and `Lazy_Method_RNC` added,
+#                      `Lazy_Method` renamed to `Lazy_Method_RLV`
 #    26-Feb-2007 (CED) Fixed `self.changes` (is a dict now, since
 #                      both change counters that are compared must
 #                      work per instance ('that'))
@@ -84,7 +84,7 @@ class _Lazy_Wrapper_RNC_ (_Lazy_Wrapper_RLV_) :
             self.result  [that] = self.fct (that, * args, ** kw)
             self.changes [that] = int (getattr (that, self.counter_name))
             return self.result [that]
-        return Lazy_Method.NC
+        return Lazy_Method_RLV.NC
     # end def __call__
 
 # end class _Lazy_Wrapper_RNC_

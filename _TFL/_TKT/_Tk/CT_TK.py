@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -458,6 +458,10 @@
 #    19-Nov-2007 (CT)  Imports corrected
 #    19-Nov-2007 (CT)  `string` functions replaced by `str` methods
 #    24-Jun-2008 (CT)  `Progress_Gauge.set_label` changed to `.strip` the `text`
+#     8-Mar-2009 (CT)  `Zipped_Option_Mgr`, Zipped_Image`,
+#                      _Zipped_Image_Mgr_`, Zipped_Image_Mgr`, and
+#                      Zipped_Bitmap_Mgr`removed (wrong design, uses
+#                      deprecated `sos.tmpnam`)
 #    ««revision-date»»···
 #--
 
@@ -580,56 +584,6 @@ option_mgr = Option_Mgr ()
 ### XXX Backward compatibility
 read_option_files = option_mgr.read_option_files
 read_option_file  = option_mgr.read_option_file
-
-class Zipped_Option_Mgr (Option_Mgr) :
-    """Provides methods to read options files inside a zipfile"""
-
-    def __init__ (self, archive) :
-        self.__super.__init__ ()
-        if not isinstance (archive, Filename) :
-            archive = Filename (archive)
-        self.archive = archive
-    # end def __init__
-
-    def read_option_file (self, tk, filename, cur_dir = None) :
-        try :
-            filename = sos.sep.join \
-                ( [ c for c in filename.split (sos.sep)
-                    if c != "."
-                  ]
-                )
-            if filename in self._already_read_option_file :
-                return
-            zf = zipfile.ZipFile (self.archive.abs_name (), "r")
-            if filename in zf.namelist () :
-                ### Tkinter seems to have no way specifiy the contents
-                ### of an option file directly. So we have to temporarily
-                ### unpack the file (we do not want to use homegrown
-                ### code to parse the file contents and call `add_option`
-                ### for each entry).
-                self._unzip_and_read_file (tk, filename, zf)
-            zf.close ()
-        except (IOError, zipfile.BadZipfile) :
-            pass
-    # end def read_option_file
-
-    def _unzip_and_read_file (self, tk, filename, zf) :
-        try :
-            data = zf.read     (filename)
-            name = sos.tmpnam  ()
-            outf = open        (name, "w")
-            outf.write         (data)
-            outf.close         ()
-            tk.option_readfile (name)
-            self._already_read_option_file [filename] = 1
-            sos.unlink         (name)
-        except (SystemExit, KeyboardInterrupt) :
-            raise
-        except :
-            pass
-    # end def _unzip_and_read_file
-
-# end class Zipped_Option_Mgr
 
 _key_pattern            = re.compile ("-Key-")
 _ctrl_pattern           = re.compile ("Control-(.)")
@@ -810,119 +764,6 @@ class Bitmap_Mgr (_Image_Mgr_) :
 # end class Bitmap_Mgr
 
 bitmap_mgr = Bitmap_Mgr ()
-
-class Zipped_Image (TFL.Meta.Object) :
-    """Image class modelling an image file inside a zipfile."""
-
-    def __init__ (self, name, archive, ** kw) :
-        self.kw       = kw.copy ()
-        self.name     = name
-        try :
-            zf        = zipfile.ZipFile (archive, "r")
-            ### XXX *#gfrfx!*+#
-            for p in ["", "-Images"] :
-                try :
-                    fn = sos.path.join (p, name)
-                    self.data = zf.read (fn)
-                    break
-                except KeyError :
-                    pass
-            else :
-                raise KeyError
-            zf.close ()
-        except (IOError, KeyError, zipfile.BadZipfile) :
-            self.data = ""
-    # end def __init__
-
-    def image (self, image_cls) :
-        return image_cls (data = self.data, ** self.kw)
-    # end def image
-
-# end class Zipped_Image
-
-class _Zipped_Image_Mgr_ (_Image_Mgr_) :
-    """Provide management of a collection of images inside a zip file"""
-
-    __Ancestor  = Ancestor = Image_Mgr
-
-    def __init__ (self, archive) :
-        self.__super.__init__ ()
-        if not isinstance (archive, Filename) :
-            archive = Filename (archive)
-        self.archive = archive
-    # end def __init__
-
-    def add (self, filename, name = None, ** kw) :
-        name = self.__super.add (filename, name,  ** kw)
-        self.files [name] = Filename (filename)
-    # end def add
-
-# end class _Zipped_Image_Mgr_
-
-class Zipped_Image_Mgr (_Zipped_Image_Mgr_, Image_Mgr) :
-
-    def __getitem__ (self, name) :
-        name = self.normalized (name)
-        if not self.x_map.has_key (name) :
-            imgfile = self.files [name]
-            zimg    = Zipped_Image \
-                ( imgfile.name, self.archive.abs_name ()
-                , cnf = self.cnf [name]
-                )
-            img_cls = self.Image_class [imgfile.ext]
-            self.x_map [name] = zimg.image (img_cls)
-        return self.x_map [name]
-    # end def __getitem__
-
-# end class Zipped_Image_Mgr
-
-### Yes, we do NOT want to inherit from `Bitmap_Mgr` here
-class Zipped_Bitmap_Mgr (_Zipped_Image_Mgr_) :
-
-    def __init__ (self, * args, ** kw) :
-        self.__super.__init__ (* args, ** kw)
-        self._unpacked = []
-    # end def __init__
-
-    def __getitem__ (self, name) :
-        name = self.normalized (name)
-        if not self.x_map.has_key (name) :
-            imgfile = self.files [name]
-            ### Due a bug in TKinter, it is not possible
-            ### to specify bitmap data directly. It works only
-            ### with the '@filename' method. So we have to unpack
-            ### the needed file on demand. (I don't like this way,
-            ### but it seems to be the only possible solution).
-            unziped_name = self._unzip_file (imgfile)
-            self.x_map [name] = "@" + unziped_name
-        return self.x_map [name]
-    # end def __getitem__
-
-    def _unzip_file (self, imgfile) :
-        name = sos.tmpnam ()
-        if not sos.path.exists (name) :
-            zimg = Zipped_Image (imgfile.name, self.archive.abs_name ())
-            try :
-                outf = open (name, "w")
-                outf.write  (zimg.data)
-                outf.close  ()
-                self._unpacked.append (name)
-            except IOError :
-                name = ""
-        return name
-    # end def _unzip_file
-
-    def cleanup (self) :
-        ### If a 'Zipped_Bitmap_Mgr' is used, you should call 'cleanup'
-        ### in the end.
-        for f in self._unpacked :
-            try :
-                sos.unlink (f)
-            except (IOError, OSError) :
-                pass
-    # end def cleanup
-
-# end class Zipped_Bitmap_Mgr
 
 class CT_TK_mixin :
     """Provide some convenience functions for widget classes of CT_TK"""

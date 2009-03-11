@@ -47,6 +47,9 @@
 #     3-Feb-2009 (CT) `RO_Property` and `RW_Property` removed (weren't used
 #                     anywhere)
 #     3-Feb-2009 (CT) Documentation improved
+#     6-Mar-2009 (CT) `__doc__` added to `Method_Descriptor`
+#                     (unfortunately, cannot use a property, because Sphinx
+#                     crashes and burns with that)
 #    ««revision-date»»···
 #--
 
@@ -106,10 +109,16 @@ class Method_Descriptor (object) :
     class Bound_Method (object) :
 
         def __init__ (self, method, target, cls) :
-            self.method = method
-            self.target = target
-            self.cls    = cls
+            self.method  = method
+            self.target  = target
+            self.cls     = cls
+            self.__doc__ = method.__doc__
         # end def __init__
+
+        @property
+        def __name__ (self) :
+            return self.method.__name__
+        # end def __name__
 
         def __call__ (self, * args, ** kw) :
             return self.method (self.target, * args, ** kw)
@@ -127,8 +136,9 @@ class Method_Descriptor (object) :
     # end class Bound_Method
 
     def __init__ (self, method, cls = None) :
-        self.method = method
-        self.cls    = cls
+        self.method  = method
+        self.__doc__ = method.__doc__
+        self.cls     = cls
     # end def __init__
 
     @property
