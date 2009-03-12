@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -44,6 +44,8 @@
 #    12-Aug-2008 (CT) `p_konto` added
 #    13-Aug-2008 (CT) `_write_entry` changed to only write `e.ifb.value` if
 #                     `ifb` is still alive (and output formatting corrected)
+#    11-Mar-2009 (CT)  Check `target_currency.to_euro_factor == 1.0` instead
+#                      of comparing `target_currency` to `EU_Currency`
 #    ««revision-date»»···
 #--
 
@@ -190,7 +192,7 @@ class Anlagen_Entry (_Base_, _Entry_) :
         if not self.alive :
             self.out_value  = self.tail_value
             self.tail_value = self.source_currency (0.0)
-        if self.tail_value.target_currency is not EU_Currency :
+        if self.tail_value.target_currency.to_euro_factor != 1.0 :
             self.birth_value          = self.birth_value.rounded_as_target ()
             self.head_value           = self.head_value.rounded_as_target  ()
             self.tail_value           = self.tail_value.rounded_as_target  ()

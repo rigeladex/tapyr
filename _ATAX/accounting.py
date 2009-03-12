@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -140,6 +140,10 @@
 #                      (`+=` instead of `-=` for `haben_saldo` of `ust_gkonto`)
 #    18-Dec-2008 (CT)  `privat` converted to class variable to allow
 #                      setting/modification in ATAX.config
+#    11-Mar-2009 (CT)  Check `target_currency.to_euro_factor == 1.0` instead
+#                      of comparing `target_currency` to `EU_Currency`
+#    11-Mar-2009 (CT)  Use `EUR` instead of `EU_Currency` to create currency
+#                      instances
 #    ««revision-date»»···
 #--
 
@@ -237,7 +241,7 @@ class Account_Entry (_Entry_) :
                 break
         currency_match      = currency_pat.search (gross)
         if currency_match :
-            source_currency = EU_Currency.Table [currency_match.group (1)]
+            source_currency = EUR.Table [currency_match.group (1)]
             gross           = currency_pat.sub ("", gross)
         ### avoid integer truncation by division
         ### otherwise `1/2' evaluates to `0.0' :-(
@@ -352,13 +356,13 @@ class Account_Entry (_Entry_) :
 
     def _init (self, soll_betrag, haben_betrag, gegen_konto = "3293", konto = "") :
         self.konto        = konto
-        self.soll_betrag  = EU_Currency (soll_betrag)
-        self.haben_betrag = EU_Currency (haben_betrag)
+        self.soll_betrag  = EUR (soll_betrag)
+        self.haben_betrag = EUR (haben_betrag)
         self.dtuple       = day_to_time_tuple  (self.date)
         self.gegen_konto  = gegen_konto
         self.vat_txt      = self.vat_p = self.cat_i = ""
         self.soll         = self.haben = self.flag  = self.dir = ""
-        self.gross        = self.netto = self.vat = EU_Currency (0)
+        self.gross        = self.netto = self.vat = EUR (0)
     # end def _init
 
 # end class Account_Entry
@@ -479,26 +483,26 @@ class V_Account (Account) :
 
     def __init__ (self, name = "", vst_korrektur = 1.0) :
         Account.__init__ (self, name, vst_korrektur)
-        self.ausgaben_b              = EU_Currency (0)
-        self.ausgaben_n              = EU_Currency (0)
-        self.erwerb_igE              = EU_Currency (0)
-        self.reverse_charge          = EU_Currency (0)
-        self.umsatz                  = EU_Currency (0)
-        self.umsatz_frei             = EU_Currency (0)
-        self.ust                     = EU_Currency (0)
-        self.ust_igE                 = EU_Currency (0)
-        self.ust_revCharge           = EU_Currency (0)
-        self.vorsteuer               = EU_Currency (0)
-        self.vorsteuer_igE           = EU_Currency (0)
-        self.vorsteuer_revCh         = EU_Currency (0)
-        self.vorsteuer_EUst          = EU_Currency (0)
-        self.erwerb_igE_dict         = defaultdict (EU_Currency)
-        self.reverse_charge_dict     = defaultdict (EU_Currency)
-        self.umsatz_dict             = defaultdict (EU_Currency)
-        self.ust_dict                = defaultdict (EU_Currency)
-        self.ust_igE_dict            = defaultdict (EU_Currency)
-        self.ust_revC_dict           = defaultdict (EU_Currency)
-        self.vorsteuer_kzs           = defaultdict (EU_Currency)
+        self.ausgaben_b              = EUR (0)
+        self.ausgaben_n              = EUR (0)
+        self.erwerb_igE              = EUR (0)
+        self.reverse_charge          = EUR (0)
+        self.umsatz                  = EUR (0)
+        self.umsatz_frei             = EUR (0)
+        self.ust                     = EUR (0)
+        self.ust_igE                 = EUR (0)
+        self.ust_revCharge           = EUR (0)
+        self.vorsteuer               = EUR (0)
+        self.vorsteuer_igE           = EUR (0)
+        self.vorsteuer_revCh         = EUR (0)
+        self.vorsteuer_EUst          = EUR (0)
+        self.erwerb_igE_dict         = defaultdict (EUR)
+        self.reverse_charge_dict     = defaultdict (EUR)
+        self.umsatz_dict             = defaultdict (EUR)
+        self.ust_dict                = defaultdict (EUR)
+        self.ust_igE_dict            = defaultdict (EUR)
+        self.ust_revC_dict           = defaultdict (EUR)
+        self.vorsteuer_kzs           = defaultdict (EUR)
         self.umsatzsteuer_entries    = []
         self.vorsteuer_entries       = []
         self.vorsteuer_entries_igE   = []
@@ -619,8 +623,8 @@ class V_Account (Account) :
     def finish (self) :
         if not self._finished :
             self._finished = True
-            netto = EU_Currency (0)
-            p_vat = EU_Currency (0)
+            netto = EUR (0)
+            p_vat = EUR (0)
             vat_p = self.vat_private
             for entry in self.vorsteuer_entries :
                 k = entry.konto
@@ -731,7 +735,7 @@ class V_Account (Account) :
               + self.vorsteuer_igE + self.vorsteuer_revCh
               ).as_string_s ()
             )
-        if vat_saldo.target_currency == EU_Currency :
+        if vat_saldo.target_currency.to_euro_factor == 1.0 :
             ### no rounding for Euro
             print "\n%-16s :                %14s %s" % \
                 ( meldung
@@ -799,7 +803,7 @@ class V_Account (Account) :
               ).as_string_s ()
             )
         print
-        if vat_saldo.target_currency == EU_Currency :
+        if vat_saldo.target_currency.to_euro_factor == 1.0 :
             ### no rounding for Euro
             print "%-30s %3s : %29s %s" % \
                 ( meldung, "095"
@@ -871,7 +875,7 @@ class V_Account (Account) :
             print "%-50.50s %3s : %10s" % (d, k, vst.as_string_s ())
         print "\n\n"
         print "*" * 67
-        if vat_saldo.target_currency == EU_Currency :
+        if vat_saldo.target_currency.to_euro_factor == 1.0 :
             ### no rounding for Euro
             print "%-50s %3s : %10s %s" % \
                 ( meldung, "095"
@@ -930,20 +934,20 @@ class T_Account (Account) :
         self.year                           = year or \
              day_to_time_tuple ("1.1").year - 1
         self.konto_desc                     = konto_desc or {}
-        self.soll_saldo                     = defaultdict (EU_Currency)
-        self.haben_saldo                    = defaultdict (EU_Currency)
-        self.ausgaben                       = defaultdict (EU_Currency)
-        self.einnahmen                      = defaultdict (EU_Currency)
-        self.vorsteuer                      = defaultdict (EU_Currency)
-        self.vorsteuer_EUst                 = defaultdict (EU_Currency)
-        self.ust                            = defaultdict (EU_Currency)
-        self.ust_igE                        = defaultdict (EU_Currency)
-        self.ust_revCharge                  = defaultdict (EU_Currency)
+        self.soll_saldo                     = defaultdict (EUR)
+        self.haben_saldo                    = defaultdict (EUR)
+        self.ausgaben                       = defaultdict (EUR)
+        self.einnahmen                      = defaultdict (EUR)
+        self.vorsteuer                      = defaultdict (EUR)
+        self.vorsteuer_EUst                 = defaultdict (EUR)
+        self.ust                            = defaultdict (EUR)
+        self.ust_igE                        = defaultdict (EUR)
+        self.ust_revCharge                  = defaultdict (EUR)
         self.buchung_zahl                   = defaultdict (int)
-        self.ausgaben_total                 = EU_Currency (0)
-        self.einnahmen_total                = EU_Currency (0)
-        self.vorsteuer_total                = EU_Currency (0)
-        self.ust_total                      = EU_Currency (0)
+        self.ausgaben_total                 = EUR (0)
+        self.einnahmen_total                = EUR (0)
+        self.vorsteuer_total                = EUR (0)
+        self.ust_total                      = EUR (0)
         self.k_entries                      = defaultdict (list)
         self.kblatt                         = defaultdict (list)
     # end def __init__
@@ -1128,7 +1132,7 @@ class T_Account (Account) :
 
     def print_konten (self) :
         self.finish ()
-        tc = EU_Currency.target_currency.name
+        tc = EUR.target_currency.name
         for k in sorted (self.kblatt) :
             head  = "%s    %s" % (self.year, self.konto_desc.get (k, "")) [:64]
             tail  = "Konto-Nr. %5s" % k
@@ -1155,7 +1159,7 @@ class T_Account (Account) :
 
     def print_konto_summary (self) :
         self.finish ()
-        tc = EU_Currency.target_currency.name
+        tc = EUR.target_currency.name
         print "Zusammenfassung Konten %-52s %s" % (self.year, tc)
         self.print_sep_line ()
         print "%-5s %12s %12s  %12s %s" % \
@@ -1177,7 +1181,7 @@ class T_Account (Account) :
 
     def print_ein_aus_rechnung (self) :
         self.finish ()
-        tc = EU_Currency.target_currency.name
+        tc = EUR.target_currency.name
         print self.firma
         print underlined \
             ("Einnahmen/Ausgabenrechnung %s (%s)" % (self.year, tc))
@@ -1186,7 +1190,7 @@ class T_Account (Account) :
         print "\n"
         format  = "%-40s %15s %15s"
         format1 = "%-40s -%14s %15s"
-        e_total = EU_Currency (0)
+        e_total = EUR (0)
         for k in sorted (self.einnahmen) :
             einnahmen = self.einnahmen [k] - self.ausgaben [k]
             if k [0] not in ("4", "8") : continue
@@ -1201,7 +1205,7 @@ class T_Account (Account) :
         print "\n"
         print underlined ("Betriebsausgaben")
         print "\n"
-        a_total = EU_Currency (0)
+        a_total = EUR (0)
         for k in sorted (self.ausgaben) :
             ausgaben = self.ausgaben [k] - self.einnahmen [k]
             if k [0] not in ("5", "6", "7") : continue
@@ -1238,7 +1242,7 @@ class T_Account (Account) :
             )
     # end def print_ein_aus_rechnung
 
-    g_anteil = EU_Currency (0)
+    g_anteil = EUR (0)
 
 # end class T_Account
 

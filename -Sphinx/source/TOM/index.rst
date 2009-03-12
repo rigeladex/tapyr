@@ -10,6 +10,10 @@ Package-NS `TOM`
 .. automodule:: _TOM.Link_AB
 .. automodule:: _TOM.DFC_Link
 .. automodule:: _TOM.App_Type
+.. automodule:: _TOM.Scope
+
+Sub-package namespaces
+======================
 
 .. toctree::
 

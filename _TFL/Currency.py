@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #     7-Mar-2009 (CT) Creation
+#    11-Mar-2009 (CT) `_massage_rhs` added
+#    11-Mar-2009 (CT) `split` fixed (apply `abs` to cents)
 #    ««revision-date»»···
 #--
 
@@ -49,6 +51,8 @@ def _binary_operator (f) :
         C_Type = self.C_Type
         if isinstance (rhs, C_Type) :
             rhs = rhs.amount
+        if self._massage_rhs :
+            rhs = self._massage_rhs (rhs)
         return f (self, rhs)
     return _
 # end def _binary_operator
@@ -59,6 +63,8 @@ def _binary_operator_currency (f) :
         C_Type = self.C_Type
         if isinstance (rhs, C_Type) :
             rhs = rhs.amount
+        if self._massage_rhs :
+            rhs = self._massage_rhs (rhs)
         return C_Type (f (self, rhs))
     return _
 # end def _binary_operator
@@ -69,6 +75,8 @@ def _binary_operator_inplace (f) :
         C_Type = self.C_Type
         if isinstance (rhs, C_Type) :
             rhs = rhs.amount
+        if self._massage_rhs :
+            rhs = self._massage_rhs (rhs)
         f (self, rhs)
         self.amount = self.normalized_amount (self.amount)
         return self
@@ -87,6 +95,8 @@ class _Currency_ (TFL.Meta.Object) :
     C_Type          = property (lambda s : s.__class__)
     _currency       = property (lambda s : s.amount)
     _symbol         = None
+
+    _massage_rhs    = None
 
     def as_string_s (self, round = 0) :
         result = self.as_string   (round)
@@ -287,6 +297,10 @@ class Currency (_Currency_) :
     U     = decimal.Decimal ("1.")
 
     def __init__ (self, amount = 0) :
+        if isinstance (amount, self.C_Type) :
+            amount = amount.amount
+        elif self._massage_rhs :
+            amount = self._massage_rhs (amount)
         self.amount = self.normalized_amount (self.D (amount, self.C))
     # end def __init__
 
@@ -306,19 +320,20 @@ class Currency (_Currency_) :
         return self.__class__ (self.amount.quantize (* args, ** kw))
     # end def quantize
 
-    def rounded_as_target (self) :
-        return self.quantize (self.U)
-    # end def rounded_as_target
-
     def split (self) :
         amount = self.amount
         a      = int (amount)
-        return a, int ((amount - a) * self.Q_inv)
+        return a, int (abs (amount - a) * self.Q_inv)
     # end def split
 
+    def _massage_rhs_float (self, rhs) :
+        if isinstance (rhs, float) :
+            rhs = self.D (str (rhs))
+        return rhs
+    # end def _massage_rhs_float
+
     def __str__ (self) :
-        a, c = self.split ()
-        return "%d%s%02d %s" % (a, self.decimal_sign, c, self.symbol)
+        return "%s %s" % (self.as_string (), self.symbol)
     # end def __str__
 
 # end class Currency

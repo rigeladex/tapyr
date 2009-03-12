@@ -58,42 +58,32 @@
 #     8-May-2008 (CT) `EUC_Opt_TC` changed to use `__super`
 #    30-Jun-2008 (CT) Parts of `EUC_Opt` factored to `Opt_L`
 #     7-Mar-2009 (CT) Doctest added
+#    11-Mar-2009 (CT) Refactored to derive from `TFL.Currency`
+#    11-Mar-2009 (CT) `Euro` (based on decimal.Decimal but compatible to
+#                     float-based `EU_Currency`) added
 #    ««revision-date»»···
 #--
 
+from   _TFL              import TFL
+
+from   _TFL.Currency     import *
+from   _TFL.Currency     import Currency, _Currency_
 from   _TFL.Command_Line import Opt_L
-import re
 
-### see Fri97, p.229, p.292
-sep_1000_pat   = re.compile ("(\d{1,3}) (?= (?: \d\d\d)+ (?! \d) )", re.X)
-comma_dec_pat  = re.compile ("([0-9.]+) , (\d{2})$",                 re.X)
-period_dec_pat = re.compile ("([0-9,]+) \. (\d{2})$",                re.X)
-
-class EU_Currency :
-    """Root class of currency hierarchy"""
-
-    ### if `target_currency' is not set, output is done in Euro
-    target_currency = None
-    to_euro_factor  = 1.0
-    name            = "EUR"
-    sloppy_name     = "EUR"
-    decimal_sign    = "."
-    sep_1000        = ","
+class _EU_Currency_ (_Currency_) :
 
     Table           = {}
     extension       = []
 
-    def __init__ (self, amount = 0) :
-        if isinstance (amount, EU_Currency) :
-            self.amount = amount.amount
-        else :
-            self.amount = self.to_euro (amount)
-    # end def __init__
+    ### if `target_currency' is not set, output is done in Euro
+    target_currency = None
 
-    def to_euro (self, amount) :
-        """Converts `amount' into Euro."""
-        return amount / self.to_euro_factor
-    # end def to_euro
+    to_euro_factor  = 1.0
+
+    @classmethod
+    def set_target_currency (cls, tc) :
+        _EU_Currency_.target_currency = tc or Euro
+    # end def set_target_currency
 
     def __str__ (self) :
         """Return `self.amount' as string representation of
@@ -108,39 +98,87 @@ class EU_Currency :
             )
     # end def __str__
 
-    def as_target (self, round = 0, target_currency = None) :
-        target_currency = target_currency or self.target_currency
-        target_currency = target_currency (0)
-        amount          = self.amount * target_currency.to_euro_factor
-        (amount, cent)  = target_currency.rounded (amount, round)
-        return (amount, cent, target_currency)
-    # end def as_target
+# end class _EU_Currency_
 
-    def rounded_as_target (self) :
-        (amount, cent, target_currency) = self.as_target (round = 1)
-        return target_currency.__class__ (amount)
-    # end def rounded_as_target
+class Euro (_EU_Currency_, Currency) :
+    """Model Euro currency using Decimal for representation."""
 
-    def as_string (self, round = 0) :
-        """Return `self.amount' as string representation of
-           `self.target_currency' (without currency name).
-        """
-        (amount, cent, target_currency) = self.as_target (round)
-        return self._formatted \
-            (amount, cent, target_currency.decimal_sign, round)
+    def as_source_s (self, round = False) :
+        return self.as_string (round)
+    # end def as_source_s
+
+    def as_string (self, round = False) :
+        if EU_Currency.target_currency is Euro :
+            return self.__super.as_string (round)
+        else :
+            return self._as_target_currency ().as_string (round)
     # end def as_string
 
     def as_string_s (self, round = 0) :
-        """Return result of `self.as_string ()' with 1000 separators"""
-        (amount, cent, target_currency) = self.as_target (round)
-        result = self._formatted \
-            (amount, cent, target_currency.decimal_sign, round)
-        result = sep_1000_pat.sub \
-            (r"\g<1>%s" % target_currency.sep_1000, result)
-        return result
+        if EU_Currency.target_currency is Euro :
+            return self.__super.as_string_s (round)
+        else :
+            return self._as_target_currency ().as_string_s (round)
     # end def as_string_s
 
-    def as_source_s (self, round = 0) :
+    def as_target (self, round = False, target_currency = None) :
+        target_currency = target_currency or EU_Currency.target_currency
+        if target_currency is Euro :
+            a, c = self.rounded (round)
+            return (a, c, target_currency)
+        else :
+            return self._as_target_currency (target_currency).as_target ()
+    # end def as_target
+
+    def rounded (self, amount, round = False) :
+        if round :
+            a, c = int (self), 0
+        else :
+            a, c = self.split ()
+        return a, c
+    # end def rounded
+
+    def rounded_as_target (self) :
+        if EU_Currency.target_currency is Euro :
+            return self.quantize (self.U)
+        else :
+            return self._as_target_currency ().rounded_as_target ()
+    # end def rounded_as_target
+
+    def _massage_rhs (self, rhs) :
+        if isinstance (rhs, EU_Currency) :
+            rhs = rhs.amount
+        rhs = self._massage_rhs_float (rhs)
+        return rhs
+    # end def _massage_rhs
+
+    def _as_target_currency (self, target_currency = None) :
+        ### we need to wrap the result in `target_currency` to get the right
+        ### `decimal_sign`, `sep_1000`, ...
+        target_currency = target_currency or EU_Currency.target_currency
+        return target_currency (EU_Currency (float (self)))
+    # end def _as_target_currency
+
+# end class Euro
+
+class EU_Currency (_EU_Currency_) :
+    """Root class of hierarchy of Euro currencies"""
+
+    C_Type          = property (lambda s : EU_Currency)
+
+    def __init__ (self, amount = 0) :
+        if isinstance (amount, (self.C_Type, Euro)) :
+            self.amount = amount.amount
+        else :
+            self.amount = self.to_euro (amount)
+    # end def __init__
+
+    def to_euro (self, amount) :
+        """Converts `amount' into Euro."""
+        return amount / self.to_euro_factor
+    # end def to_euro
+
+    def as_source_s (self, round = False) :
         """Return `self.amount` as string representation of `self.__class__`
            with 1000 separators.
         """
@@ -153,7 +191,31 @@ class EU_Currency :
         return result
     # end def as_source_s
 
-    def rounded (self, amount, round = 0) :
+    def as_string (self, round = False) :
+        """Return `self.amount' as string representation of
+           `self.target_currency' (without currency name).
+        """
+        (amount, cent, target_currency) = self.as_target (round)
+        return self._formatted \
+            (amount, cent, target_currency.decimal_sign, round)
+    # end def as_string
+
+    def as_target (self, round = False, target_currency = None) :
+        target_currency = target_currency or self.target_currency
+        if target_currency is Euro :
+            return Euro (str (self.amount)).as_target (round)
+        else :
+            target_currency = target_currency (0)
+            amount          = self.amount * target_currency.to_euro_factor
+            (amount, cent)  = target_currency.rounded (amount, round)
+            return (amount, cent, target_currency)
+    # end def as_target
+
+    def normalized_amount (self, amount) :
+        return amount
+    # end def normalized_amount
+
+    def rounded (self, amount, round = False) :
         """Return `amount' rounded to (euro, cent)."""
         euro = int (amount)
         cent = abs (int (((amount - euro) + 0.005) * 100))
@@ -173,10 +235,10 @@ class EU_Currency :
         return (euro, cent)
     # end def rounded
 
-    def formatted (self, amount, cent, name, decimal_sign) :
-        """Return a string representation of `amount.cent'."""
-        return "%d%s%02d %s" % (amount, decimal_sign, cent, name)
-    # end def formatted
+    def rounded_as_target (self) :
+        (amount, cent, target_currency) = self.as_target (round = True)
+        return target_currency.__class__ (amount)
+    # end def rounded_as_target
 
     def _formatted (self, amount, cent, decimal_sign, round) :
         if round :
@@ -185,103 +247,23 @@ class EU_Currency :
             return "%d%s%02d" % (amount, decimal_sign, cent)
     # end def _formatted
 
+    def _massage_rhs (self, rhs) :
+        if isinstance (rhs, Euro) :
+            rhs = rhs.amount
+        if isinstance (rhs, decimal.Decimal) :
+            rhs = float (rhs)
+        return rhs
+    # end def _massage_rhs
+
     def __float__ (self) :
-        target_currency = self.target_currency (0)
-        amount          = self.amount * target_currency.to_euro_factor
-        return float (amount)
+        return float (self.amount * self.target_currency.to_euro_factor)
     # end def __float__
 
-    def __add__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return EU_Currency (self.amount + rhs)
-    # end def __add__
-
-    __radd__ = __add__
-
-    def __sub__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return EU_Currency (self.amount - rhs)
-    # end def __sub__
-
-    __rsub__ = __sub__
-
-    def __mul__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return EU_Currency (self.amount * rhs)
-    # end def __mul__
-
-    __rmul__ = __mul__
-
-    def __div__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return EU_Currency (self.amount / rhs)
-    # end def __div__
-
-    __rdiv__ = __div__
-
-    def __mod__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return EU_Currency (self.amount % rhs)
-    # end def __mod__
-
-    __rmod__ = __mod__
-
-    def __divmod__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return EU_Currency (divmod (self.amount, rhs))
-    # end def __divmod__
-
-    __rdivmod__ = __divmod__
-
-    def __cmp__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        return cmp (self.amount, rhs)
-    # end def __cmp__
-
-    def __neg__ (self) :
-        return EU_Currency (- self.amount)
-    # end def __neg__
-
-    def __pos__ (self) :
-        return EU_Currency (self.amount)
-    # end def __pos__
-
-    def __abs__ (self) :
-        return EU_Currency (abs (self.amount))
-    # end def __abs__
-
-    def __iadd__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        self.amount += rhs
-        return self
-    # end def __iadd__
-
-    def __isub__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        self.amount -= rhs
-        return self
-    # end def __isub__
-
-    def __imul__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        self.amount *= rhs
-        return self
-    # end def __imul__
-
-    def __idiv__ (self, rhs) :
-        if isinstance (rhs, EU_Currency) : rhs = rhs.amount
-        self.amount /= rhs
-        return self
-    # end def __idiv__
-
-    def __nonzero__ (self) :
-        return self.amount != 0.0
-    # end def __nonzero__
+    def __int__ (self) :
+        return int (float (self))
+    # end def __int__
 
 # end class EU_Currency
-
-EUC = EUR = EU_Currency
-EUC.target_currency = EUC
 
 def register (currency) :
     EU_Currency.Table [currency.name]                 = currency
@@ -383,7 +365,10 @@ class LUF (EU_Currency) :
     sloppy_name    = "LUF"
 # end class BEF
 
-for c in EU_Currency, ATS, DEM, FRF, ITL, BEF, NLG, ESP, PTE, FIM, IEP, LUF :
+EUC = EU_Currency
+EUC.set_target_currency (Euro)
+EUR = Euro
+for c in EUR, ATS, DEM, FRF, ITL, BEF, NLG, ESP, PTE, FIM, IEP, LUF :
     register (c)
 EU_Currency.extension.sort (key = lambda c : c.name)
 
@@ -428,7 +413,8 @@ class EUC_Opt_TC (EUC_Opt) :
     default_desc = "Target currency"
 
     def _cooked_currency (self, value) :
-        result = EUC.target_currency = self.__super._cooked_currency (value)
+        result = self.__super._cooked_currency (value)
+        EUC.set_target_currency (result)
         return result
     # end def _cooked_currency
 
@@ -493,7 +479,7 @@ introduction of the Euro.
 100 NLG =  45.38 EUR
 100 PTE =   0.50 EUR
 
->>> EU_Currency.target_currency = ATS
+>>> EU_Currency.set_target_currency (ATS)
 >>> for C in EU_Currency.extension :
 ...   print "100 %s = %10s" % (C.name, C (100))
 ...
@@ -510,7 +496,7 @@ introduction of the Euro.
 100 NLG =  624,42 öS
 100 PTE =    6,86 öS
 
->>> EU_Currency.target_currency = EUR
+>>> EU_Currency.set_target_currency (EU_Currency)
 >>> for C in EU_Currency.extension :
 ...   print "100 %s + 100 ATS = %10s" % (C.name, C (100) + ATS (100))
 ...
