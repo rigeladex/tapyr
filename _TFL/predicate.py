@@ -236,7 +236,7 @@ def bit_alignment (bits) :
 # end def bit_alignment
 
 def bit_size_decorator (bs) :
-    """Return a decorator for dusorting' by bit-size `bs`.
+    """Return a decorator for `dusort`-ing by bit-size `bs`.
 
        Integral byte sizes compare before sub-byte sizes, even sizes compare
        before odd sizes, larger values compare before smaller values.
