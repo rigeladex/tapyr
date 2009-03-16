@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,8 @@
 # Revision Dates
 #     6-May-2008 (CT) Creation
 #    29-Aug-2008 (CT) s/super(...)/__super/
+#    15-Mar-2009 (CT) `Re_Filter_OA_Opt` changed to accept `attr` spec in
+#                     `__init__`
 #    ««revision-date»»···
 #--
 
@@ -109,8 +111,19 @@ class Re_Filter_Opt (TFL.Opt) :
 class Re_Filter_OA_Opt (Re_Filter_Opt) :
     """Re_Filter_OA option class for use with TFL.Command_Line."""
 
+    def __init__ (self, * args, ** kw) :
+        self.attr_to_match = kw.pop ("attr", None)
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
     def _cooked_ (self, v) :
-        attr, pattern = v.split (":", 1)
+        if ":" in v :
+            attr, pattern = v.split (":", 1)
+        elif self.attr_to_match :
+            attr    = self.attr_to_match
+            pattern = v
+        else :
+            raise ValueError, v
         return Re_Filter_OA (attr, pattern)
     # end def _cooked_
 
