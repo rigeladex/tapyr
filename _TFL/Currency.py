@@ -29,6 +29,8 @@
 #     7-Mar-2009 (CT) Creation
 #    11-Mar-2009 (CT) `_massage_rhs` added
 #    11-Mar-2009 (CT) `split` fixed (apply `abs` to cents)
+#    15-Mar-2009 (CT) s/ROUND_05UP/ROUND_HALF_UP/ (Python 2.5.1 doesn't have
+#                     ROUND_05UP, 2.5.2 does <Arrrrg>)
 #    ««revision-date»»···
 #--
 
@@ -290,7 +292,7 @@ class Currency (_Currency_) :
 
     _symbol         = "¤"
 
-    C     = decimal.Context (prec = 12, rounding = decimal.ROUND_05UP)
+    C     = decimal.Context (prec = 12, rounding = decimal.ROUND_HALF_UP)
     D     = decimal.Decimal
     Q     = decimal.Decimal ("0.01")
     Q_inv = Q ** -1
