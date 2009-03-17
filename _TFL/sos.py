@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    29-Jul-2005 (CT) Optional argument `create_dir` added to `tempfile_name`
 #    30-Aug-2005 (CT) Use `in` or `startswith` instead of `find`
+#    17-Mar-2009 (CT) Function definitions put into alphabetic sequence
 #    ««revision-date»»···
 #--
 
@@ -64,12 +65,17 @@ from   os   import *
 mkdir_p = makedirs
 
 if (name == "nt") or (name == "win32") :
-    _os_rename = rename
-    def rename (src, dst) :
-        if path.exists (dst) :
-            remove (dst)
-        _os_rename (src, dst)
-    # end def rename
+    _os_path_isabs = path.isabs
+    def _isabs (path) :
+        return (  ":" in path
+               or path.startswith ("/")
+               or path.startswith ("\\")
+                    ### strictly speaking this isn't an absolute filename (it
+                    ### is relative to the current drive) but it isn't a
+                    ### relative filename, either
+               )
+    # end def _isabs
+    path.isabs = _isabs
 
     _os_path_isdir = path.isdir
     def _hacked_isdir (path) :
@@ -84,17 +90,12 @@ if (name == "nt") or (name == "win32") :
     # end def _hacked_isdir
     path.isdir = _hacked_isdir
 
-    _os_path_isabs = path.isabs
-    def _isabs (path) :
-        return (  ":" in path
-               or path.startswith ("/")
-               or path.startswith ("\\")
-                    ### strictly speaking this isn't an absolute filename (it
-                    ### is relative to the current drive) but it isn't a
-                    ### relative filename, either
-               )
-    # end def _isabs
-    path.isabs = _isabs
+    _os_rename = rename
+    def rename (src, dst) :
+        if path.exists (dst) :
+            remove (dst)
+        _os_rename (src, dst)
+    # end def rename
 
     if not hasattr (path, "samefile") :
         def __samefile (p, q) :
@@ -104,24 +105,26 @@ if (name == "nt") or (name == "win32") :
         # end def __samefile
         path.samefile = __samefile
     # end if not hasattr (path, "samefile")
+
 # end if (name == "nt") or (name == "win32")
 
-def tempfile_name (in_dir = None, create_dir = False) :
-    """Return a unqiue temporary filename. If `in_dir' is specified, the
-       filename returned resides in the directory `in_dir'.
-    """
-    import tempfile
-    try :
-        if in_dir :
-            tempdir, tempfile.tempdir = tempfile.tempdir, in_dir
-            if create_dir and not path.isdir (in_dir) :
-                mkdir (in_dir)
-        result = tempfile.mktemp ()
-    finally :
-        if in_dir :
-            tempfile.tempdir = tempdir
-    return result
-# end def tempfile_name
+def expanded_glob (pathname) :
+    """Return a list of file names matching `expanded_path (pathname)'."""
+    from glob import glob
+    return glob (expanded_path (pathname))
+# end def expanded_glob
+
+def expanded_path (pathname) :
+    """Return `pathname' with tilde and shell variables expanded."""
+    return path.expandvars (path.expanduser (pathname))
+# end def expanded_path
+
+def expanded_globs (* pathnames) :
+    """Generate all file names to which the `pathnames` expand"""
+    for p in pathnames :
+        for r in expanded_glob (p) :
+            yield r
+# end def expanded_globs
 
 def filesize (path) :
     """Return size of file `path' in bytes."""
@@ -190,24 +193,6 @@ def listdir_exts (in_dir, * extensions) :
         return [f for f in listdir_full (in_dir) if not path.isdir (f)]
 # end def listdir_exts
 
-def expanded_path (pathname) :
-    """Return `pathname' with tilde and shell variables expanded."""
-    return path.expandvars (path.expanduser (pathname))
-# end def expanded_path
-
-def expanded_glob (pathname) :
-    """Return a list of file names matching `expanded_path (pathname)'."""
-    from glob import glob
-    return glob (expanded_path (pathname))
-# end def expanded_glob
-
-def expanded_globs (* pathnames) :
-    """Generate all file names to which the `pathnames` expand"""
-    for p in pathnames :
-        for r in expanded_glob (p) :
-            yield r
-# end def expanded_globs
-
 def rmdir (dir, deletefiles = 0) :
     """ Extension to the standard rmdir function. It takes an additional
         argument 'deletefiles' which can be true or false.
@@ -248,6 +233,23 @@ def system_info_env () :
                 break
     return result
 # end def system_info_env
+
+def tempfile_name (in_dir = None, create_dir = False) :
+    """Return a unqiue temporary filename. If `in_dir' is specified, the
+       filename returned resides in the directory `in_dir'.
+    """
+    import tempfile
+    try :
+        if in_dir :
+            tempdir, tempfile.tempdir = tempfile.tempdir, in_dir
+            if create_dir and not path.isdir (in_dir) :
+                mkdir (in_dir)
+        result = tempfile.mktemp ()
+    finally :
+        if in_dir :
+            tempfile.tempdir = tempdir
+    return result
+# end def tempfile_name
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
