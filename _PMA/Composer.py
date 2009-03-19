@@ -47,8 +47,11 @@
 #    24-Feb-2009 (CT) `_add_header_maybe` factored
 #    24-Feb-2009 (CT) Add headers for `Content-type`,
 #                     `Content-transfer-encoding` and `Mime-version`
+#    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
 #    ««revision-date»»···
 #--
+
+from   __future__              import with_statement
 
 from   _TFL                    import TFL
 from   _PMA                    import PMA
@@ -61,6 +64,7 @@ import _PMA.Thread
 
 import _TFL._Meta.Object
 import _TFL.Environment
+import _TFL.FCM
 from   _TFL.Regexp             import *
 import _TFL.sos
 
@@ -108,13 +112,12 @@ class Editor_Thread (PMA.Thread) :
     # end def _read_buffer
 
     def _write_buffer (self, buffer) :
-        result = TFL.sos.tempfile_name \
-            (TFL.sos.expanded_path ("~/PMA/.drafts"), create_dir = True)
-        f = open (result, "w")
-        try :
+        with TFL.open_tempfile \
+            ( dir         = TFL.sos.expanded_path ("~/PMA/.drafts")
+            , auto_remove = False
+            , create_dir  = True
+            ) as (f, result) :
             f.write (buffer)
-        finally :
-            f.close ()
         return result
     # end def _write_buffer
 

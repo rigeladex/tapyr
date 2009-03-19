@@ -159,8 +159,11 @@
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #    24-Feb-2009 (CT) `Message_Body.body_lines` changed to not gobble empty
 #                     lines (`textwrap.TextWrapper` is broken in that regard)
+#    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
 #    ««revision-date»»···
 #--
+
+from   __future__              import with_statement
 
 ### XXX to do
 ### - still need `headers_to_show` ??? If not, remomve
@@ -176,6 +179,7 @@ import _PMA.SB
 import _TFL.Accessor
 import _TFL.Ascii
 import _TFL.Caller
+import _TFL.FCM
 import _TFL.Filename
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
@@ -487,17 +491,14 @@ class _Msg_Part_ (object) :
 
     def _temp_body (self) :
         if self._tfn is None or not sos.path.isfile (self._tfn) :
-            result = TFL.Filename \
-                ( sos.tempfile_name ()
-                , (self.filename or "").encode
-                      (PMA.file_system_encoding, "ignore")
-                ).name
-            f = open (result, "w")
-            try :
+            dir = TFL.Filename \
+                ( (self.filename or "").encode
+                    (PMA.file_system_encoding, "ignore")
+                ).directory
+            with TFL.open_tempfile (dir = dir, auto_remove = False) as \
+                     (f, result) :
                 f.write (self.body)
-            finally :
-                f.close ()
-            self._tfn = result
+                self._tfn = result
         return self._tfn
     # end def _temp_body
 

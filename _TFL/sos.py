@@ -56,6 +56,7 @@
 #    29-Jul-2005 (CT) Optional argument `create_dir` added to `tempfile_name`
 #    30-Aug-2005 (CT) Use `in` or `startswith` instead of `find`
 #    17-Mar-2009 (CT) Function definitions put into alphabetic sequence
+#    19-Mar-2009 (CT) Deprecation warning added to `tempfile_name`
 #    ««revision-date»»···
 #--
 
@@ -238,6 +239,11 @@ def tempfile_name (in_dir = None, create_dir = False) :
     """Return a unqiue temporary filename. If `in_dir' is specified, the
        filename returned resides in the directory `in_dir'.
     """
+    from warnings import warn as w
+    w   ( "`TFL.sos.tempfile_name` uses the deprecated function "
+          "`tempfile.mktemp`. "
+        , RuntimeWarning, stacklevel = 2
+        )
     import tempfile
     try :
         if in_dir :

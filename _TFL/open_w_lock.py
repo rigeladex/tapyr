@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,7 +31,7 @@
 #    ««revision-date»»···
 #--
 
-"""Provide lockng via a lock file.
+"""Provide locking via a lock file.
 
    >>> name = "/tmp/foo.bar"
    >>> show = "ls -1 %s*" % name

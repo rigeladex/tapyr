@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -177,7 +177,7 @@ def read_plan (Y, plan_file_name) :
                 d.add_appointments (* CAL.appointments (tail))
 # end def read_plan
 
-def write_plan (Y, plan_file_name, replace = 0) :
+def write_plan (Y, plan_file_name, replace = False) :
     today = CAL.Date_Time ()
     tail  = today.formatted ("%d.%m.%Y.%H:%M")
     if replace :

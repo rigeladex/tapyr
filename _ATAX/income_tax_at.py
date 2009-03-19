@@ -34,6 +34,8 @@
 #                     code
 #     8-Jan-2009 (CT) Display `raw_value` of `cmd.amount`
 #     9-Jan-2009 (CT) `2009` added, display `year`
+#    16-Mar-2009 (CT) `main` changed to work with `Euro` using `Decimal`
+#    16-Mar-2009 (CT) `tax_brackets` for `2009` changed to final version of law
 #    ««revision-date»»···
 #--
 
@@ -77,8 +79,8 @@ def tax_brackets (year) :
     else :
         return \
             ( (EUR (     11000), 0.000)
-            , (EUR (     14000), 0.365)
-            , (EUR (     35000), 0.432)
+            , (EUR (     14000), 0.3635)
+            , (EUR (     35000), 0.4321429)
             , (EUR (2000000000), 0.500)
             )
 # end def tax_brackets
@@ -132,7 +134,7 @@ def main (cmd) :
         )
     print f % \
         ( year, amount, cmd.arg_dict ["amount"].raw_value, tax_amount
-        , tax_amount.amount / (amount.amount / 100.0)
+        , (tax_amount / (amount / 100.0)).amount
         , amount - tax_amount
         )
 # end def main
