@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -39,20 +39,16 @@
 #    11-Apr-2007 (CT)  Doctest for `converted` added (Bad, Chris, bad)
 #    17-Apr-2007 (CT)  `__mod__` added
 #    11-May-2007 (CT)  `set` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    20-Mar-2009 (CT)  Use `practically_infinite` instead of sys.maxint
 #    ««revision-date»»···
 #--
 
-
-
 from   _TFL                 import TFL
 
+from   _TFL.Environment     import practically_infinite as infinite
 import _TFL.DL_List
 import _TFL.predicate
 import _TFL._Meta.Object
-
-import sys
 
 class Numeric_Interval (TFL.Meta.Object) :
     """Class for modelling a numeric interval.
@@ -102,7 +98,7 @@ class Numeric_Interval (TFL.Meta.Object) :
 
     format = "(%s, %s)"
 
-    def __init__ (self, lower = sys.maxint, upper = - sys.maxint) :
+    def __init__ (self, lower = infinite, upper = - infinite) :
         self.lower = lower
         self.upper = upper
     # end def __init__

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -453,7 +453,7 @@ class Timeline (TFL.Meta.Object) :
         Section          = self.Section
         if span.length > 0 :
             free         = self.free
-            lower, upper = span.lower, span.upper
+            lower, upper = span
             h            = bisect (free, self.Span (lower, lower))
             if h and free [h - 1].contains_point (lower) :
                 h -= 1

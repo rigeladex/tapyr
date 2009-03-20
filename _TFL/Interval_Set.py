@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Dr. Ralf Schlatterbeck Open Source Consulting.
+# Copyright (C) 2004-2009 Dr. Ralf Schlatterbeck Open Source Consulting.
 # Reichergasse 131, A-3411 Weidling.
 # Web: http://www.runtux.com Email: office@runtux.com
 # All rights reserved
@@ -228,7 +228,8 @@ class Interval_Set (TFL.Meta.Object) :
         """Generates all intersections larger than `min_size` between the
            intervals of `iv_sets` (the default for `min_size` is 0).
         """
-        min_size = kw.get ("min_size", 0)
+        min_size = kw.pop ("min_size", 0)
+        assert not kw, "Undefined arguments passed: %s" % (sorted (kw), )
         iv_iters = [cls._IVS_Iter_ (ivs, min_size) for ivs in iv_sets]
         while True :
             r = iv_iters [0].value
@@ -388,7 +389,7 @@ class Interval_Set (TFL.Meta.Object) :
 
         def advance (self) :
             try :
-                self.value = v = self.__super.advance ()
+                v = self.__super.advance ()
             except StopIteration :
                 self.done  = True
                 self.value = v = None

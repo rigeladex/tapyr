@@ -1,6 +1,5 @@
-#! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This program is free software; you can redistribute it and/or modify
@@ -29,22 +28,17 @@
 #    19-Apr-2000 (CT)  Creation
 #    25-May-2004 (CED) Doctest added
 #    30-Oct-2006 (CED) Moved to TFL
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from _TFL        import TFL
 
 class Composition :
-    """
-    >>> inner = lambda x : x + 5
-    >>> outer = lambda x : x * 2
-    >>> c = Composition (outer, inner)
-    >>> c (1)
-    12
+    """Functor for composing two functions:
+
+       >>> c = Composition (outer = lambda x : x * 2, inner = lambda x : x + 5)
+       >>> c (1)
+       12
     """
 
     def __init__ (self, outer, inner) :
@@ -53,12 +47,11 @@ class Composition :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        return self.outer (apply (self.inner, args, kw))
+        return self.outer (self.inner (* args, ** kw))
     # end def __call__
 
 # end class Composition
 
 if __name__ != "__main__" :
     TFL._Export ("*")
-
 ### __END__ TFL.Composition
