@@ -46,6 +46,10 @@
 #                     `ifb` is still alive (and output formatting corrected)
 #    11-Mar-2009 (CT)  Check `target_currency.to_euro_factor == 1.0` instead
 #                      of comparing `target_currency` to `EU_Currency`
+#    27-Mar-2009 (CT) `active` factored (and changed to allow entries with
+#                     `base_rate == 0`)
+#    27-Mar-2009 (CT) `account_format` and `_update_account_entry` changed to
+#                     allow line-specific date (for `Abgang`)
 #    ««revision-date»»···
 #--
 
@@ -171,6 +175,14 @@ class Anlagen_Entry (_Base_, _Entry_) :
             self.ifb         = IFB  (self, ifb, source_currency)
     # end def __init__
 
+    @property
+    def active (self) :
+        return \
+            (   self.contemporary
+            and (self.current_depreciation > 0 or self.base_rate == 0)
+            )
+    # end def active
+
     def evaluate (self) :
         self._calc_rates ()
         self.current_depreciation = \
@@ -225,7 +237,7 @@ class Anlagen_Entry (_Base_, _Entry_) :
         else :
             later_rates.append ((self.target_year, y_rate))
         y_rates = self.y_rates   = \
-                  [y_rate * ((0.5, 1.0) [self.birth_time < self.half_time])]
+            [y_rate * ((0.5, 1.0) [self.birth_time < self.half_time])]
         if self.birth_time < self.head_time :
             current_year = self.birth_time.year + 1
             for target_year, next_rate in later_rates :
@@ -267,7 +279,7 @@ class Anlagenverzeichnis (_Base_) :
     out_format     = "%-48s  %8s  %10s  %10s  %8s  %10.2f"
 
     account_format = \
-        " 31.12 & & & %10.2f & b & %-5s & 2100 & - & %-3s & & %-6s %s\n"
+        " %s & & & %10.2f & b & %-5s & 2100 & - & %-3s & & %-6s %s\n"
 
 
     ifb_type       = ""
@@ -325,7 +337,7 @@ class Anlagenverzeichnis (_Base_) :
                 e.contemporary = 0
                 continue
             e.evaluate ()
-            if e.contemporary and e.current_depreciation > 0 :
+            if e.active :
                 self.total_birth_value   += e.birth_value
                 self.total_head_value    += e.head_value
                 self.total_tail_value    += e.tail_value
@@ -348,7 +360,7 @@ class Anlagenverzeichnis (_Base_) :
               )
         print "\n%s\n" % ("=" * 116, )
         for e in self.entries :
-            if e.contemporary and e.current_depreciation > 0 :
+            if e.active :
                 self._write_entry (e)
         print "\n%s\n" % ("=" * 116, )
         print ( self.footer_format
@@ -428,20 +440,27 @@ class Anlagenverzeichnis (_Base_) :
         cat = "fe"
         if e.p_konto :
             cat = "%sP[%s]" % (cat, e.p_konto)
-        if e.current_depreciation :
+        eoy = Date (day_to_time_tuple  ("31.12."))
+        if e.active and e.current_depreciation :
             file.write \
                 ( self.account_format
-                % (e.current_depreciation, 7800, cat, "Afa",      e.desc)
+                % ( eoy.formatted ("%d.%m.")
+                  , e.current_depreciation, 7800, cat, "Afa",      e.desc
+                  )
                 )
         if e.ifb and e.ifb.is_new and e.ifb.account :
             file.write \
                 ( self.account_format
-                % (e.ifb.value,   e.ifb.account, cat, e.ifb.abbr, e.desc)
+                % (eoy.formatted ("%d.%m.")
+                  , e.ifb.value,   e.ifb.account, cat, e.ifb.abbr, e.desc
+                  )
                 )
         if not e.alive :
             file.write \
                 ( self.account_format
-                % (e.out_value,            7801, cat, "Abgang",   e.desc)
+                % ( e.death_time.formatted ("%d.%m.")
+                  , e.out_value,            7801, cat, "Abgang",   e.desc
+                  )
                 )
     # end def _update_account_entry
 
