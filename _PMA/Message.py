@@ -160,6 +160,7 @@
 #    24-Feb-2009 (CT) `Message_Body.body_lines` changed to not gobble empty
 #                     lines (`textwrap.TextWrapper` is broken in that regard)
 #    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
+#    31-Mar-2009 (CT) `_get_sender_name` robustified
 #    ««revision-date»»···
 #--
 
@@ -332,7 +333,10 @@ class Msg_Scope (TFL.Caller.Scope) :
     # end def _get_sender_addr
 
     def _get_sender_name (self) :
-        result = filter (None, self._get_sender_ ()) [0]
+        try :
+            result = filter (None, self._get_sender_ ()) [0]
+        except IndexError :
+            result = None
         if result is not None :
             return decoded_header (result)
         return ""
