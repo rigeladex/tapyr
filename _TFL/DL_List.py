@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,8 +30,6 @@
 #    12-Sep-2003 (CT)  Creation continued
 #    15-Sep-2003 (CT)  s/_append/insert/g
 #    15-Sep-2003 (CT)  `_new_item` factored
-#    29-Sep-2003 (CED) `list_of_preds`, `list_of_succs` added
-#     7-Oct-2003 (CT)  `list_of_preds`, `list_of_succs` removed
 #     2-Dec-2003 (CT)  Already commented-out `__getattr__` finally removed
 #     9-Mar-2004 (CT)  `_doc_test` changed to not use `import`
 #    30-Jun-2005 (CT)  Style improvements
@@ -48,13 +46,13 @@
 #                      `tuple` and `list` (`*` removed)
 #    20-Apr-2007 (CT)  Argument `items` of `__init__` made optional (doh!)
 #                      and doctests for empty instantiations added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    19-Oct-2007 (CED) doctest for behaviour of `NIL` added
 #     6-Nov-2007 (CT)  `_new_item` changed to allow `None` for `pred`
 #     6-Nov-2007 (CT)  `DL_Ring.insert` changed to pass `None` instead of
 #                      `self._NIL` to `_new_item`
-#     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
+#     7-Nov-2007 (CT)  Use `Getter` instead of `lambda`
+#    15-Apr-2009 (CT)  `_DL_Counted_.remove` changed to `return` the value
+#                      removed
 #    ««revision-date»»···
 #--
 
@@ -256,8 +254,8 @@ class _DL_Counted_ (TFL.Meta.Object) :
     # end def insert
 
     def remove (self, item) :
-        self.__super.remove (item)
         self.count -= 1
+        return self.__super.remove (item)
     # end def remove
 
     def __len__ (self) :
@@ -351,6 +349,7 @@ class DL_List_Counted (_DL_Counted_, DL_List) :
        >>> dlc.count
        5
        >>> dlc.pop()
+       4
        >>> len (dlc)
        4
        >>> dlc.append (42)
@@ -570,6 +569,7 @@ class DL_Ring_Counted (_DL_Counted_, DL_Ring) :
        >>> drc.count
        5
        >>> drc.pop()
+       4
        >>> len (drc)
        4
        >>> drc.append (42)
