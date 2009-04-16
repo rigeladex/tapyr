@@ -131,10 +131,11 @@
 #    19-Mar-2008 (RSC) Fix issues with rev charge in Jahresabschluss
 #     6-Apr-2008 (CT)  `print_summary_online` changed to only show non-zero
 #                      categories
-#    11-Apr-2008 (RSC) add suffix 'r' or 'i' for rev-Charge/igE in Ust column for kontenzeile
-#                      (requested by E. Pichler-Fruhstorfer)
-#                      Fix gkonto description for rev. Charge (cut & paste error) in finish
-#    11-Apr-2008 (RSC) fix printing of entry if "dir" includes "~"
+#    11-Apr-2008 (RSC) Add suffix 'r' or 'i' for rev-Charge/igE in Ust column
+#                      for kontenzeile (requested by E. Pichler-Fruhstorfer)
+#                      Fix gkonto description for rev. Charge (cut & paste
+#                      error) in finish
+#    11-Apr-2008 (RSC) Fix printing of entry if "dir" includes "~"
 #    12-Aug-2008 (CT)  `p_konto` added (and `_Entry_` factored)
 #     5-Sep-2008 (CT)  `_fix_ust_privat` corrected
 #                      (`+=` instead of `-=` for `haben_saldo` of `ust_gkonto`)
@@ -144,6 +145,8 @@
 #                      of comparing `target_currency` to `EU_Currency`
 #    11-Mar-2009 (CT)  Use `EUR` instead of `EU_Currency` to create currency
 #                      instances
+#    16-Apr-2009 (CT)  `_vat_saldo` factored and changed to recompute `ust` to
+#                      avoid 1-cent rounding errors
 #    ««revision-date»»···
 #--
 
@@ -257,7 +260,7 @@ class Account_Entry (_Entry_) :
             self.flag  = "k"
         else :
             self.flag  = " "
-        self.vat_p = (eval (self.vat_txt or "0", {}, {}) / 100.0) + 1.0;
+        self.vat_p = (eval (self.vat_txt or "0", {}, {}) / 100.0) + 1.0
         if   "n" == self.g_or_n :
             self.gross = self.netto * self.vat_p
         elif "b" == self.g_or_n :
@@ -691,7 +694,7 @@ class V_Account (Account) :
 
     def print_summary_old (self) :
         """Print summary for Umsatzsteuervoranmeldung."""
-        vat_saldo = self.ust - self.vorsteuer - self.vorsteuer_EUst
+        vat_saldo = self._vat_saldo ()
         meldung   = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign      = (-1.0,         +1.0)            [vat_saldo >= 0]
         print "%-16s : %14s"   % \
@@ -754,7 +757,7 @@ class V_Account (Account) :
 
     def print_summary (self) :
         """Print summary for Umsatzsteuervoranmeldung."""
-        vat_saldo    = self.ust - self.vorsteuer - self.vorsteuer_EUst
+        vat_saldo    = self._vat_saldo ()
         meldung      = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
@@ -822,7 +825,7 @@ class V_Account (Account) :
 
     def print_summary_online (self) :
         """Print summary for Umsatzsteuervoranmeldung for online entry."""
-        vat_saldo    = self.ust - self.vorsteuer - self.vorsteuer_EUst
+        vat_saldo    = self._vat_saldo ()
         meldung      = ("Überschuss", "Vorauszahlung") [vat_saldo >= 0]
         sign         = (-1.0,         +1.0)            [vat_saldo >= 0]
         umsatz_vat   = self.umsatz - self.umsatz_frei
@@ -913,6 +916,16 @@ class V_Account (Account) :
                 hd = "davon %2d%%" % (vp, )
                 print "%-50s %3s : %10s" % (hd, cat [vp], ust.as_string_s ())
     # end def print_ust_dict_online
+
+    def _vat_saldo (self) :
+        ### recompute `ust` instead of using `self.ust` to avoid 1-cent
+        ### rounding errors
+        ust = sum \
+            ( ((v*r - v) for (r, v) in self.umsatz_dict.iteritems ())
+            , EUR (0)
+            )
+        return ust - self.vorsteuer - self.vorsteuer_EUst
+    # end def _vat_saldo
 
 # end class U_Account
 
