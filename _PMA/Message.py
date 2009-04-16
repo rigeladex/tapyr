@@ -161,6 +161,7 @@
 #                     lines (`textwrap.TextWrapper` is broken in that regard)
 #    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
 #    31-Mar-2009 (CT) `_get_sender_name` robustified
+#    16-Apr-2009 (CT) `_get_charset` guarded against unknown `charset`
 #    ««revision-date»»···
 #--
 
@@ -251,13 +252,9 @@ class Msg_Scope (TFL.Caller.Scope) :
             _pl = _pl.get_payload (0)
         result = _pl.get_payload (decode = True) or u""
         if isinstance (result, str) :
-            try :
-                result = result.decode (self.msg.charset, "replace")
-                   ### XXX some emails trigger
-                   ### `UnicodeDecodeError: 'ascii' codec can't decode
-                   ### byte 0xe4` without `replace` argument
-            except LookupError :
-                result = result.decode ("us-ascii", "replace")
+            ### Some emails trigger `UnicodeDecodeError:
+            ### 'ascii' codec can't decode byte 0xe4` without `replace` argument
+            result = result.decode (self.msg.charset, "replace")
         result = _ws_pat.sub (u" ", result.strip ()) or u"<empty>"
         return result
     # end def _get_body
@@ -453,6 +450,12 @@ class _Msg_Part_ (object) :
                 result = email.get_charset ()
                 if result is None :
                     result = email.get_param ("charset", "us-ascii")
+        try :
+            "".decode (result, "replace")
+        except LookupError :
+            ### Guard against broken messages like::
+            ###   Content-Type: text/plain; charset=unknown-8bit
+            result = "us-ascii"
         return result
     # end def _get_charset
 
