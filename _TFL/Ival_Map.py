@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,17 +27,18 @@
 #
 # Revision Dates
 #     5-Jul-2003 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    24-Apr-2009 (CT) `index` factored (and changed to use `bisect`)
+#    24-Apr-2009 (CT) `keys`  added
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL               import TFL
 from   _TFL._Meta         import Meta
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 import _TFL.predicate
+
+from   bisect             import bisect_left
 
 class Ival_Map (Meta.Object) :
     """Mapping of intervals to values.
@@ -65,11 +66,20 @@ class Ival_Map (Meta.Object) :
         self.iv_map = TFL.sorted (iv_list)
     # end def __init__
 
-    def __getitem__ (self, key) :
-        for i, result in self.iv_map :
-            if key < i :
-                break
+    def index (self, key) :
+        result = bisect_left (self.keys, key)
+        if result == len (self.iv_map) :
+            result -= 1
         return result
+    # end def index
+
+    @TFL.Meta.Once_Property
+    def keys (self) :
+        return [i for (i, v) in self.iv_map]
+    # end def keys
+
+    def __getitem__ (self, key) :
+        return self.iv_map [self.index (key)] [1]
     # end def __getitem__
 
     def __str__ (self) :
