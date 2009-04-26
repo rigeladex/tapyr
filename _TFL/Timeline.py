@@ -188,6 +188,8 @@ class TLS_Periodic (TFL.Meta.Object) :
     # end def __init__
 
     def intersections_mod_p (self, min_size = None) :
+        """Return the intersections of `.generations` taken modulo `.period`.
+        """
         if min_size is None :
             min_size = self.min_size
         try :
