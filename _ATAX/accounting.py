@@ -147,6 +147,8 @@
 #                      instances
 #    16-Apr-2009 (CT)  `_vat_saldo` factored and changed to recompute `ust` to
 #                      avoid 1-cent rounding errors
+#    28-Apr-2009 (CT)  `vorsteuer_gut` added and used
+#     4-May-2009 (CT)  s/vorsteuer_gut/ust_gut/
 #    ««revision-date»»···
 #--
 
@@ -496,6 +498,7 @@ class V_Account (Account) :
         self.ust_igE                 = EUR (0)
         self.ust_revCharge           = EUR (0)
         self.vorsteuer               = EUR (0)
+        self.ust_gut                 = EUR (0)
         self.vorsteuer_igE           = EUR (0)
         self.vorsteuer_revCh         = EUR (0)
         self.vorsteuer_EUst          = EUR (0)
@@ -604,9 +607,9 @@ class V_Account (Account) :
                     )
             if entry.minderung :
                 ## Ausgabenminderung instead of Einnahme
-                self._add_vorsteuer (- vat)
+                self.ust_gut += vat
             else :
-                self._add_umsatz    (netto, vat, vat_p, entry)
+                self._add_umsatz (netto, vat, vat_p, entry)
     # end def add
 
     def _add_umsatz (self, netto, vat, vat_p, entry = None) :
@@ -725,16 +728,18 @@ class V_Account (Account) :
             )
         print "%-16s : %14s" % \
             ( "Vorsteuer", self.vorsteuer.as_string_s ())
+        print "%-16s : %14s" % \
+            ( "Umsatzsteuer aus Gutschrift", self.ust_gut.as_string_s ())
         print "%-16s : %14s"   % \
             ("Einfuhrumsatzst.", self.vorsteuer_EUst.as_string_s ())
         print "%-16s : %14s"   % \
             ( "Vorsteuer igE", self.vorsteuer_igE.as_string_s ())
         print "%-16s : %14s %14s" % \
             ( "Summe Vorsteuer"
-            , ( self.vorsteuer     + self.vorsteuer_EUst
+            , ( self.vorsteuer     - self.ust_gut + self.vorsteuer_EUst
               + self.vorsteuer_igE + self.vorsteuer_revCh
               ).as_string_s ()
-            , ( self.vorsteuer     + self.vorsteuer_EUst
+            , ( self.vorsteuer     - self.ust_gut + self.vorsteuer_EUst
               + self.vorsteuer_igE + self.vorsteuer_revCh
               ).as_string_s ()
             )
@@ -799,9 +804,11 @@ class V_Account (Account) :
             ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
         for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
             print "%-30.30s %3s : %29s" % (d, k, vst.as_string_s ())
+        print "%-30s %3s : %29s" % \
+            ("Umsatzsteuer aus Gutschrift", "090", self.ust_gut.as_string_s ())
         print "%-30s     : %29s" % \
             ( "Gesamtbetrag Vorsteuer"
-            , ( self.vorsteuer     + self.vorsteuer_EUst
+            , ( self.vorsteuer     - self.ust_gut + self.vorsteuer_EUst
               + self.vorsteuer_igE + self.vorsteuer_revCh
               ).as_string_s ()
             )
@@ -876,6 +883,9 @@ class V_Account (Account) :
                 ("Reverse Charge §19", "066", self.vorsteuer_revCh.as_string_s ())
         for (k, d), vst in sorted (self.vorsteuer_kzs.iteritems ()) :
             print "%-50.50s %3s : %10s" % (d, k, vst.as_string_s ())
+        if self.ust_gut :
+            print "%-50s %3s : %10s" % \
+                ("Umsatzsteuer auf Gutschrift", "090", self.ust_gut.as_string_s ())
         print "\n\n"
         print "*" * 67
         if vat_saldo.target_currency.to_euro_factor == 1.0 :
@@ -924,7 +934,7 @@ class V_Account (Account) :
             ( ((v*r - v) for (r, v) in self.umsatz_dict.iteritems ())
             , EUR (0)
             )
-        return ust - self.vorsteuer - self.vorsteuer_EUst
+        return ust + self.ust_gut - self.vorsteuer - self.vorsteuer_EUst
     # end def _vat_saldo
 
 # end class U_Account
