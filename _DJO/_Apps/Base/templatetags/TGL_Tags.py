@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.templatetags.TGL_Tags
+#    DJO.Apps.Base.templatetags.TGL_Tags
 #
 # Purpose
 #    Tanzer and Glueck's library of custom django template tags
@@ -42,6 +42,7 @@
 #    20-May-2008 (CT) `BLet.render` changed to apply `defaultfilters.safe`
 #    20-May-2008 (CT) `Var` tag added
 #    20-May-2008 (CT) `context.push` and `context.pop` added to `Onion.render`
+#    14-May-2009 (CT) Moved to `_DJO._Apps.Base`
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@
 >>> from django.conf     import settings
 >>> settings.configure (ROOT_URLCONF = "_DJO._test_url_conf")
 >>> from django.template import add_to_builtins, Template, Context
->>> add_to_builtins ("_DJO.templatetags.TGL_Tags")
+>>> add_to_builtins ("_DJO._Apps.Base.templatetags.TGL_Tags")
 """
 
 from   django                      import template
@@ -418,4 +419,4 @@ class Onion (Tag) :
 
 # end class Onion
 
-### __END__ DJO.templatetags.TGL_Tags
+### __END__ DJO.Apps.Base.templatetags.TGL_Tags

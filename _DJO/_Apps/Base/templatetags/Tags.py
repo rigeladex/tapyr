@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2008 Martin Glück. All rights reserved
+# Copyright (C) 2006-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.templatetags.Tags
+#    DJO.Apps.Base.templatetags.Tags
 #
 # Purpose
 #    Collection of useful template tags.
@@ -63,7 +63,6 @@ import re
 user_style = "default"
 
 register = template.Library ()
-import _DJO.template.style as Style
 
 class _Node_ (template.Node) :
     """Simplifies the subclassing of template.Node"""
@@ -258,13 +257,7 @@ class Include_File_Link (_Node_) :
             for file in files :
                 kind = os.path.splitext (file) [-1] [1:]
                 style, tag = self.tags [kind]
-                if style :
-                    url = Style.user_style_url \
-                        ( "%sstatic/%s/%%s/%s"
-                        % (settings.MEDIA_URL, kind, file)
-                        ) [0]
-                else :
-                    url = file
+                url = file
                 result.append (tag % (url, ))
         Include_Files = {}
         return "\n  ".join (result).strip ()
@@ -445,4 +438,4 @@ new_block_template_tag \
     , remove_quotes = False
     )
 
-### __END__ DJO.templatetags.Tags
+### __END__ DJO.Apps.Base.templatetags.Tags

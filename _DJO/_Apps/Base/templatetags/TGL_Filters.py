@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Martin Glück All rights reserved
+# Copyright (C) 2008-2009 Martin Glück All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.templatetags.TGL_Filters
+#    DJO.Apps.Base.templatetags.TGL_Filters
 #
 # Purpose
 #    Tanzer and Glueck's library of custom django template filters
@@ -32,6 +32,7 @@
 #    12-May-2008 (MG) `sequence_filter`: support `None` as passed in sequence
 #    14-May-2008 (CT) Use `_define_op_filter` instead of `exec`
 #    17-Oct-2008 (CT) `allow_user` added
+#    14-May-2009 (CT) Moved to `_DJO._Apps.Base`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@
 >>> from django.conf     import settings
 >>> settings.configure (ROOT_URLCONF = "_DJO._test_url_conf")
 >>> from django.template import add_to_builtins, Template, Context
->>> add_to_builtins ("_DJO.templatetags.TGL_Filters")
+>>> add_to_builtins ("_DJO._Apps.Base.templatetags.TGL_Filters")
 >>> template = '''
 ...   {{ var|starts_with:"foo"  }}
 ...   {{ var|starts_with:"fooa" }}
@@ -151,4 +152,4 @@ def sequence_filter (sequence, filter_spec) :
     return ()
 # end def sequence_filter
 
-### __END__ DJO.templatetags.TGL_Filters
+### __END__ DJO.Apps.Base.templatetags.TGL_Filters
