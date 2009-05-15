@@ -33,6 +33,7 @@
 #    14-May-2008 (CT) Use `_define_op_filter` instead of `exec`
 #    17-Oct-2008 (CT) `allow_user` added
 #    14-May-2009 (CT) Moved to `_DJO._Apps.Base`
+#    15-May-2009 (CT) Alphabetic sequence
 #    ««revision-date»»···
 #--
 
@@ -99,19 +100,33 @@ import operator
 register = template.Library ()
 
 @register.filter
-@defaultfilters.stringfilter
-def starts_with (value, prefix) :
-    """Returns the result of `value.startswith (prefix)`"""
-    return value and value.startswith (prefix)
-# end def starts_with
-
-@register.filter
 def allow_user (page, user) :
     """Returns true if `page` allows access to `user`."""
     if user and hasattr (page, "allow_user") :
         return page.allow_user (user)
     return True
 # end def allow_user
+
+@register.filter
+def sequence_filter (sequence, filter_spec) :
+    if sequence :
+        attr, condition = filter_spec, True
+        if ":" in filter_spec :
+            attr, condition = (p.strip () for p in filter_spec.split (":", 1))
+            try :
+                condition = eval (condition, {})
+            except :
+                pass
+        return (e for e in sequence if getattr (e, attr, False) == condition)
+    return ()
+# end def sequence_filter
+
+@register.filter
+@defaultfilters.stringfilter
+def starts_with (value, prefix) :
+    """Returns the result of `value.startswith (prefix)`"""
+    return value and value.startswith (prefix)
+# end def starts_with
 
 ### Ideally, we'd just pass `getattr (operator, op)` to register.filter
 ### but the unfortunate `inspect.getargspec` throws a sissy fit
@@ -137,19 +152,5 @@ for op in \
 def abs (value) :
     return operator.abs (value)
 # end def abs
-
-@register.filter
-def sequence_filter (sequence, filter_spec) :
-    if sequence :
-        attr, condition = filter_spec, True
-        if ":" in filter_spec :
-            attr, condition = (p.strip () for p in filter_spec.split (":", 1))
-            try :
-                condition = eval (condition, {})
-            except :
-                pass
-        return (e for e in sequence if getattr (e, attr, False) == condition)
-    return ()
-# end def sequence_filter
 
 ### __END__ DJO.Apps.Base.templatetags.TGL_Filters

@@ -48,6 +48,7 @@
 #    17-Feb-2008 (MG) `add_include_file`: default weight changed to 500
 #    17-Feb-2008 (MG) `token_parse` Parameter `remove_quotes` added
 #    17-Feb-2008 (MG) `menublock` tag changed to `menuitem`
+#    14-May-2009 (CT) Moved to `_DJO._Apps.Base`
 #    ««revision-date»»···
 #--
 
