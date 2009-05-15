@@ -44,6 +44,9 @@
 #    26-Feb-2009 (CT) `Changer.process_post` changed to call `_before_save`
 #    27-Feb-2009 (CT) `count` changed to use `query_fct`
 #    27-Feb-2009 (CT) `_Field` added and used in `kind_filter`
+#    15-May-2009 (CT) `Admin.Changer.process_post` changed to return
+#                     `result, form` instead of `form` to display validation
+#                     errors
 #    ««revision-date»»···
 #--
 
@@ -57,6 +60,8 @@ import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.predicate           import filtered_join
+
+from   django.utils.translation import gettext as _
 
 from   posixpath import join as pjoin, normpath as pnorm
 import itertools
@@ -136,7 +141,8 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
         def process_post (self, request, obj) :
             from django.http import HttpResponseRedirect
-            form = self.Form (request.POST, instance = obj)
+            form   = self.Form (request.POST, instance = obj)
+            result = None
             if form.is_valid () :
                 with form.object_to_save () as result :
                     if hasattr (result, "_before_save") :
@@ -145,7 +151,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                     if hasattr (result, "creator") and not result.creator :
                         if request.user.is_authenticated () :
                             result.creator = request.user
-                return result
+            return result, form
         # end def process_post
 
         def rendered (self, context, nav_page = None) :
@@ -164,7 +170,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         )
                     raise Http404 (request.path)
             if request.method == "POST":
-                result = self.process_post (request, obj)
+                result, form = self.process_post (request, obj)
                 if result :
                     man = self.top.Models.get ((self.Model, self.kind_name))
                     if man :
@@ -246,7 +252,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     def __init__ (self, Model, ** kw) :
         if "Form" not in kw :
             kw ["Form"] = self._auto_form (Model, kw)
-        if not kw.get ("list_display") :
+        if "list_display" not in kw :
             kw ["list_display"] = self._auto_list_display (Model, kw)
         k = kw.get ("kind_name")
         self.__super.__init__ (Model = Model, ** kw)
@@ -284,8 +290,8 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         if context is None :
             context = dict (page = self)
         if self.model_man :
-            name   = self.model_man.name
-            name_s = self.model_man.title
+            name   = _(self.model_man.name)
+            name_s = _(self.model_man.title)
         else :
             name   = M._meta.verbose_name
             name_s = M._meta.verbose_name_plural

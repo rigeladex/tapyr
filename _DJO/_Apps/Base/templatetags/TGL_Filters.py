@@ -34,6 +34,7 @@
 #    17-Oct-2008 (CT) `allow_user` added
 #    14-May-2009 (CT) Moved to `_DJO._Apps.Base`
 #    15-May-2009 (CT) Alphabetic sequence
+#    15-May-2009 (CT) `tel_uri` added
 #    ««revision-date»»···
 #--
 
@@ -91,7 +92,21 @@ u'21 18\\n  40 10\\n  0 400\\n  2 10 20'
 ['B']
 >>> [r.text for r in sequence_filter (None, "hidden:True")]
 []
+
+>>> template = '''
+...   For registration, please call {{ "+43-1-234-56-78"|tel_uri }}.'''
+>>> t = Template (template)
+>>> t.render (Context ()).strip ()
+u'For registration, please call <a href="tel:+43-1-234-56-78">+43-1-234-56-78</a>.'
+>>> template = '''
+...   For registration, please call {{ "+43-1-234-56-78"|tel_uri:"M. Mouse" }}.'''
+>>> t = Template (template)
+>>> t.render (Context ()).strip ()
+u'For registration, please call <a href="tel:+43-1-234-56-78">M. Mouse</a>.'
+
 """
+
+from   _TFL.Decorator              import Attributed
 
 from   django.template             import defaultfilters
 from   django                      import template
@@ -127,6 +142,19 @@ def starts_with (value, prefix) :
     """Returns the result of `value.startswith (prefix)`"""
     return value and value.startswith (prefix)
 # end def starts_with
+
+@Attributed (is_safe = True)
+@register.filter
+@defaultfilters.stringfilter
+def tel_uri (phone_number, text=None) :
+    """Returns a telephone URI for `phone_number`.
+
+       http://tools.ietf.org/html/rfc3966
+    """
+    if text is None :
+        text = phone_number
+    return u"""<a href="tel:%(phone_number)s">%(text)s</a>""" % locals ()
+# end def tel_uri
 
 ### Ideally, we'd just pass `getattr (operator, op)` to register.filter
 ### but the unfortunate `inspect.getargspec` throws a sissy fit

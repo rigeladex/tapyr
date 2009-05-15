@@ -33,6 +33,7 @@
 #    20-Oct-2008 (CT) `Auto_Slug` added
 #    21-Oct-2008 (CT) `Auto_Slug.field_fmt_kw` added
 #    27-Feb-2009 (CT) `Choice_Char`, `Choice_Int` and `Choice_Small` added
+#    15-May-2009 (CT) `Positive_Small_Integer` added
 #    ««revision-date»»···
 #--
 
@@ -295,6 +296,10 @@ class Null_Boolean (Boolean, DM.NullBooleanField) :
 # end class Null_Boolean
 
 class  Positive_Integer (Integer, DM.PositiveIntegerField) :
+    pass
+# end class  Positive_Integer
+
+class  Positive_Small_Integer (Integer, DM.PositiveSmallIntegerField) :
     pass
 # end class  Positive_Integer
 

@@ -85,7 +85,7 @@ class _Form_Output_ (TFL.Meta.Object) :
 
     @classmethod
     def html (cls, form) :
-        cls.top_errors                 = form.non_field_errors ()
+        cls.top_errors                = form.non_field_errors ()
         cls.output, cls.hidden_fields = [], []
         for name, field in form.fields.items () :
             bf        = BoundField (form, field, name)
