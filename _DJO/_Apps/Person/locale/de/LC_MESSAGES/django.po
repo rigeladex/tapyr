@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-15 17:35+0200\n"
+"POT-Creation-Date: 2009-05-18 10:46+0200\n"
 "PO-Revision-Date: 2009-05-15 15:59+0200\n"
 "Last-Translator: Christian Tanzer <Christian.Tanzer@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,38 +16,90 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Phone_Number.py:46
-msgid "Phone_Number"
-msgstr "Telefonnummer"
+#: Address.py:46
+msgid "Address"
+msgstr "Adresse"
 
-#: Phone_Number.py:47
-msgid "Phone_Numbers"
-msgstr "Telefonnummern"
+#: Address.py:47
+msgid "Addresses"
+msgstr "Adressen"
 
-#: Phone_Number.py:51
-msgid "Country-Code"
-msgstr "Landesvorwahl"
+#: Address.py:51
+msgid "Street"
+msgstr "Strasse"
 
-#: Phone_Number.py:54
-msgid "Area-Code"
-msgstr "Ortsvorwahl"
+#: Address.py:52
+msgid "Street (or place) and house number"
+msgstr "Strasse (oder Platz) und Hausnummer"
 
-#: Phone_Number.py:59
-msgid "Subscriber-Number"
-msgstr "Telefonnummer"
+#: Address.py:56
+msgid "City"
+msgstr "Stadt"
 
-#: Phone_Number.py:64
-msgid "Extension"
-msgstr "Durchwahl"
+#: Address.py:60
+msgid "Zip"
+msgstr "Postleitzahl"
 
-#: Phone_Number.py:66
-msgid "Extension number used in PBX"
-msgstr "Durchwahl in einer Nebenstellenanlage"
+#: Address.py:64
+msgid "Region"
+msgstr "Bundesland"
 
-#: Phone_Number.py:70
+#: Address.py:66
+msgid "State or province or region"
+msgstr "Bundesland oder Kanton"
+
+#: Address.py:71
+msgid "Country"
+msgstr "Land"
+
+#: Address.py:81 Email_Address.py:52 Phone_Number.py:69
 msgid "Description"
 msgstr "Beschreibung"
 
-#: Phone_Number.py:72
+#: Address.py:83
+msgid "Short description of the address"
+msgstr "Kurze Beschreibung der Adresse"
+
+#: Email_Address.py:43 Email_Address.py:48
+msgid "Email_Address"
+msgstr "Email_Adresse"
+
+#: Email_Address.py:44
+msgid "Email_Addresses"
+msgstr "Email_Adressen"
+
+#: Email_Address.py:54
+msgid "Short description of the email address"
+msgstr "Kurze Beschreibung der Email Adresse"
+
+#: Phone_Number.py:45
+msgid "Phone_Number"
+msgstr "Telefonnummer"
+
+#: Phone_Number.py:46
+msgid "Phone_Numbers"
+msgstr "Telefonnummern"
+
+#: Phone_Number.py:50
+msgid "Country-Code"
+msgstr "Landesvorwahl"
+
+#: Phone_Number.py:53
+msgid "Area-Code"
+msgstr "Ortsvorwahl"
+
+#: Phone_Number.py:58
+msgid "Subscriber-Number"
+msgstr "Telefonnummer"
+
+#: Phone_Number.py:63
+msgid "Extension"
+msgstr "Durchwahl"
+
+#: Phone_Number.py:65
+msgid "Extension number used in PBX"
+msgstr "Durchwahl in einer Nebenstellenanlage"
+
+#: Phone_Number.py:71
 msgid "Short description of the phone number"
 msgstr "Kurze Beschreibung der Telefonnummer"

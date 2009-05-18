@@ -20,17 +20,15 @@
 #
 #++
 # Name
-#    DJO.Apps.Person.Phone_Number
+#    DJO.Apps.Person.Email_Address
 #
 # Purpose
-#    Django model for phone numbers
+#    Django model for email addresses
 #
 # Revision Dates
-#    15-May-2009 (CT) Creation
+#    18-May-2009 (CT) Creation
 #    ««revision-date»»···
 #--
-
-### http://tools.ietf.org/html/rfc3966
 
 from   _DJO                       import DJO
 import _DJO.Models
@@ -38,60 +36,33 @@ import _DJO.M_Field               as     MF
 
 from   django.utils.translation import gettext_lazy as _
 
-class Phone_Number (DJO.Model) :
-    """Models a phone number."""
+class Email_Address (DJO.Model) :
+    """Models an email address"""
 
     class Meta :
-        verbose_name          = _("Phone_Number")
-        verbose_name_plural   = _("Phone_Numbers")
+        verbose_name          = _("Email_Address")
+        verbose_name_plural   = _("Email_Addresses")
     # end class Meta
 
-    country_code          = MF.Positive_Small_Integer \
-        ( _("Country-Code")
+    email                = MF.Email \
+        ( _("Email_Address")
         )
-    area_code             = MF.Positive_Integer \
-        ( _("Area-Code")
-        , blank           = True
-        , null            = True
-        )
-    subscriber_number     = MF.Decimal \
-        ( _("Subscriber-Number")
-        , max_digits      = 14
-        , decimal_places  = 0
-        )
-    extension             = MF.Positive_Integer \
-        ( _("Extension")
-        , blank           = True
-        , help_text       = _("Extension number used in PBX")
-        , null            = True
-        )
+
     desc                  = MF.Char \
         ( _("Description")
         , blank           = True
-        , help_text       = _("Short description of the phone number")
+        , help_text       = _("Short description of the email address")
         , max_length      = 20
         )
 
-    def components (self) :
-        result = [self.country_code]
-        if self.area_code :
-            result.append (self.area_code)
-        result.append (self.subscriber_number)
-        if self.extension :
-            result.append (self.extension)
-        return result
-    # end def components
-
     def __unicode__ (self) :
-        return u"+%s" % ("-".join (str (c) for c in self.components ()), )
+        return unicode (self.email)
     # end def __unicode__
 
-    display = property (__unicode__)
-
     NAV_admin_args = dict \
-        ( list_display = ("desc", )
+        ( list_display = ("email", "desc")
         )
 
-# end class Phone_Number
+# end class Email_Address
 
-### __END__ DJO.Apps.Person.Phone_Number
+### __END__ DJO.Apps.Person.Email_Address
