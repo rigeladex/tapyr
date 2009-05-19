@@ -30,9 +30,9 @@
 #    ««revision-date»»···
 #--
 
-from   _DJO._Apps.Person.Phone_Number  import Phone_Number
-from   _DJO._Apps.Person.Email_Address import Email_Address
 from   _DJO._Apps.Person.Address       import Address
-
+from   _DJO._Apps.Person.Email_Address import Email_Address
+from   _DJO._Apps.Person.Person        import Person
+from   _DJO._Apps.Person.Phone_Number  import Phone_Number
 
 ### __END__ DJO.Apps.Person.models

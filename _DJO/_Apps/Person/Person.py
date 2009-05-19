@@ -20,13 +20,13 @@
 #
 #++
 # Name
-#    DJO.Apps.Person.Email_Address
+#    DJO.Apps.Person.Person
 #
 # Purpose
-#    Django model for email addresses
+#    Django model for persons
 #
 # Revision Dates
-#    18-May-2009 (CT) Creation
+#    19-May-2009 (CT) Creation
 #    ««revision-date»»···
 #--
 
@@ -36,33 +36,35 @@ import _DJO.M_Field               as     MF
 
 from   django.utils.translation import gettext_lazy as _
 
-class Email_Address (DJO.Model) :
-    """Models an email address"""
+class Person (DJO.Model) :
+    """Models a person."""
 
     class Meta :
-        verbose_name          = _("Email Address")
-        verbose_name_plural   = _("Email Addresses")
+        verbose_name          = _("Person")
+        verbose_name_plural   = _("Persons")
     # end class Meta
 
-    email                = MF.Email \
-        ( _("Email Address")
+    user                  = MF.One_to_One \
+        ( "auth.User"
+        , editable        = False
+        , verbose_name    = _("User")
         )
-
-    desc                  = MF.Char \
-        ( _("Description")
+    emails                = MF.Many_to_Many \
+        ( "Person.Email_Address"
         , blank           = True
-        , help_text       = _("Short description of the email address")
-        , max_length      = 20
+        , verbose_name    = _("Email Addresses")
+        )
+    phones                = MF.Many_to_Many \
+        ( "Person.Phone_Number"
+        , blank           = False
+        , verbose_name    = _("Phone Numbers")
+        )
+    addresses             = MF.Many_to_Many \
+        ( "Person.Address"
+        , blank           = True
+        , verbose_name    = _("Addresses")
         )
 
-    def __unicode__ (self) :
-        return unicode (self.email)
-    # end def __unicode__
+# end class Person
 
-    NAV_admin_args = dict \
-        ( list_display = ("email", "desc")
-        )
-
-# end class Email_Address
-
-### __END__ DJO.Apps.Person.Email_Address
+### __END__ DJO.Apps.Person.Person

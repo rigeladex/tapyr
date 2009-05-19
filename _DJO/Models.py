@@ -34,6 +34,8 @@
 #     1-Jul-2008 (CT) `M_Model` and `Model` added
 #    26-Feb-2009 (CT) `Model._before_save` added
 #    27-Feb-2009 (CT) `M_Model._setup_attr` added and used
+#    19-May-2009 (CT) `IntegerLimitField` removed
+#                     (use `DJO.M_Field.Integer` instead)
 #    ««revision-date»»···
 #--
 
@@ -197,32 +199,6 @@ class _User_Create_Mod_ (_Permisson_Mixin_) :
 
 DM._Permisson_Mixin_ = _Permisson_Mixin_
 DM._User_Create_Mod_ = _User_Create_Mod_
-
-### some common fields
-class IntegerLimitField (DM.IntegerField) :
-    """Just add min/max values to the default integer field"""
-
-    def __init__ (self, * args, ** kw) :
-        self.min_value = kw.pop ("min_value", None)
-        self.max_value = kw.pop ("max_value", None)
-        super (IntegerLimitField, self).__init__ (* args, ** kw)
-    # end def __init__
-
-    def formfield (self, * args, ** kw) :
-        if self.min_value is not None :
-            kw ["min_value"] = self.min_value
-        if self.max_value is not None :
-            kw ["max_value"] = self.max_value
-        return super (IntegerLimitField, self).formfield (* args, ** kw)
-    # end def formfield
-
-    def get_internal_type(self):
-        return "IntegerField"
-    # end def get_internal_type
-
-# end class IntegerLimitField
-
-DM.IntegerLimitField = IntegerLimitField
 
 if __name__ != "__main__" :
     DJO._Export ("*")

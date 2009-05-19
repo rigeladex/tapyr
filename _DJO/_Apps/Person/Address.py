@@ -65,17 +65,16 @@ class Address (DJO.Model) :
         , blank           = True
         , help_text       = _("State or province or region")
         , max_length      = 40
-        , null            = True
         )
     country               =  MF.Char     \
         ( _("Country")
         , max_length      = 40
         )
-    phone                 = models.ForeignKey \
+    phone                 = MF.Foreign_Key \
         ( Phone_Number
         , blank           = True
         , null            = True
-        , verbose_name    = "Phone_Number"
+        , verbose_name    = _("Phone Number")
         )
     desc                  = MF.Char \
         ( _("Description")
@@ -85,7 +84,7 @@ class Address (DJO.Model) :
         )
 
     def components (self) :
-        result = [self.street, ", ".join (self.zip, self.city)]
+        result = [self.street, ", ".join ((self.zip, self.city))]
         if self.region :
             result.append (self.region)
         result.append (self.country)

@@ -34,6 +34,11 @@
 #    21-Oct-2008 (CT) `Auto_Slug.field_fmt_kw` added
 #    27-Feb-2009 (CT) `Choice_Char`, `Choice_Int` and `Choice_Small` added
 #    15-May-2009 (CT) `Positive_Small_Integer` added
+#    19-May-2009 (CT) `_Numeric_` added; `_Integer_` factored;
+#                     `Positive_Integer` and `Positive_Small_Integer` removed
+#    19-May-2009 (CT) `Choice` (and `M_Choice`) added;
+#                     `Choice_Char`, `Choice_Int`, and `Choice_Small` removed
+#    19-May-2009 (CT) `Foreign_Key`, `Many_to_Many`, and `One_to_One` added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +60,23 @@ class M_Field (TFL.Meta.M_Class, DM.Field.__class__) :
        `_real_name`.
     """
 # end class M_Field
+
+class M_Choice (M_Field) :
+    """Meta class for choice model fields."""
+
+    Table = {}
+
+    def __call__ (cls, Field_Type, * args, ** kw) :
+        Type = cls.Table.get (Field_Type)
+        if Type is None :
+            name = "Choice_%s" % Field_Type.__name__
+            dct  = dict (__module__ = cls.__module__)
+            Type = cls.Table [Field_Type] = type (Field_Type) \
+                (name, (_Choice_, Field_Type), dct)
+        return Type (* args, ** kw)
+    # end def __call__
+
+# end class M_Choice
 
 class _DJO_Field_ (DM.Field) :
 
@@ -102,6 +124,25 @@ class _DJO_Field_ (DM.Field) :
     # end def _from_string
 
 Field = _DJO_Field_ # end class
+
+class _Numeric_ (Field) :
+    """Mixin for numeric field types"""
+
+    def __init__ (self, * args, ** kw) :
+        self.min_value = kw.pop ("min_value", None)
+        self.max_value = kw.pop ("max_value", None)
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def formfield (self, * args, ** kw) :
+        if self.min_value is not None :
+            kw ["min_value"] = self.min_value
+        if self.max_value is not None :
+            kw ["max_value"] = self.max_value
+        return self.__super.formfield (* args, ** kw)
+    # end def formfield
+
+# end class _Numeric_
 
 class Auto (Field, DM.AutoField) :
 
@@ -238,7 +279,7 @@ class Date_Time (_Date_, DM.DateTimeField) :
 
 # end class Date_Time
 
-class Decimal (Field, DM.DecimalField) :
+class Decimal (_Numeric_, DM.DecimalField) :
 
     def as_string (self, value) :
         if value is not None :
@@ -265,7 +306,7 @@ class File_Path (Field, DM.FilePathField) :
     pass
 # end class File_Path
 
-class Float (Field, DM.FloatField) :
+class Float (_Numeric_, DM.FloatField) :
 
     output_format = "%.2f"
 
@@ -275,33 +316,41 @@ class Float (Field, DM.FloatField) :
 
 # end class Float
 
+class Foreign_Key (Field, DM.ForeignKey) :
+    pass
+# end class Foreign_Key
+
 class Image (Field, DM.ImageField) :
     pass
 # end class Image
 
-class Integer (Field, DM.IntegerField) :
+class _Integer_ (_Numeric_) :
 
     def _from_string (self, s) :
         return int (s)
     # end def _from_string
 
+# end class _Integer_
+
+class Integer (_Integer_, DM.IntegerField) :
+    pass
 # end class Integer
 
 class IP_Address (Field, DM.IPAddressField) :
     pass
 # end class IP_Address
 
+class Many_to_Many (Field, DM.ManyToManyField) :
+    pass
+# end class Many_to_Many
+
 class Null_Boolean (Boolean, DM.NullBooleanField) :
     pass
 # end class Null_Boolean
 
-class  Positive_Integer (Integer, DM.PositiveIntegerField) :
+class One_to_One (Field, DM.OneToOneField) :
     pass
-# end class  Positive_Integer
-
-class  Positive_Small_Integer (Integer, DM.PositiveSmallIntegerField) :
-    pass
-# end class  Positive_Integer
+# end class One_to_One
 
 class Slug (Field, DM.SlugField) :
     pass
@@ -349,7 +398,7 @@ class Auto_Slug (Slug) :
 
 # end class Auto_Slug
 
-class Small_Integer (Integer, DM.SmallIntegerField) :
+class Small_Integer (_Integer_, DM.SmallIntegerField) :
     pass
 # end class Small_Integer
 
@@ -402,17 +451,9 @@ class _Choice_ (Field) :
 
 # end class _Choice_
 
-class Choice_Char (_Choice_, Char) :
-    pass
-# end class Choice_Char
-
-class Choice_Int (_Choice_, Integer) :
-    pass
-# end class Choice_Int
-
-class Choice_Small (_Choice_, Small_Integer) :
-    pass
-# end class Choice_Small
+class Choice (Field) :
+    __metaclass__ = M_Choice
+# end class Choice
 
 if __name__ != "__main__":
     DJO._Export_Module ()

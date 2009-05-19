@@ -27,10 +27,13 @@
 #
 # Revision Dates
 #    15-May-2009 (CT) Creation
+#    19-May-2009 (CT) Use `min_value` and `max_value` to constrain values
+#                     (and s/Positive_Integer/Integer/)
 #    ««revision-date»»···
 #--
 
 ### http://tools.ietf.org/html/rfc3966
+### http://en.wikipedia.org/wiki/List_of_country_calling_codes
 
 from   _DJO                       import DJO
 import _DJO.Models
@@ -42,27 +45,32 @@ class Phone_Number (DJO.Model) :
     """Models a phone number."""
 
     class Meta :
-        verbose_name          = _("Phone_Number")
-        verbose_name_plural   = _("Phone_Numbers")
+        verbose_name          = _("Phone Number")
+        verbose_name_plural   = _("Phone Numbers")
     # end class Meta
 
-    country_code          = MF.Positive_Small_Integer \
+    country_code          = MF.Small_Integer \
         ( _("Country-Code")
+        , min_value       = 1
+        , max_value       = 999
         )
-    area_code             = MF.Positive_Integer \
+    area_code             = MF.Integer \
         ( _("Area-Code")
         , blank           = True
+        , min_value       = 1
         , null            = True
         )
     subscriber_number     = MF.Decimal \
         ( _("Subscriber-Number")
         , max_digits      = 14
+        , min_value       = 100
         , decimal_places  = 0
         )
-    extension             = MF.Positive_Integer \
+    extension             = MF.Integer \
         ( _("Extension")
         , blank           = True
         , help_text       = _("Extension number used in PBX")
+        , min_value       = 0
         , null            = True
         )
     desc                  = MF.Char \

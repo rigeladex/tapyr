@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-18 10:46+0200\n"
+"POT-Creation-Date: 2009-05-19 12:42+0200\n"
 "PO-Revision-Date: 2009-05-15 15:59+0200\n"
 "Last-Translator: Christian Tanzer <Christian.Tanzer@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Address"
 msgstr "Adresse"
 
-#: Address.py:47
+#: Address.py:47 Person.py:65
 msgid "Addresses"
 msgstr "Adressen"
 
@@ -48,58 +48,70 @@ msgstr "Bundesland"
 msgid "State or province or region"
 msgstr "Bundesland oder Kanton"
 
-#: Address.py:71
+#: Address.py:70
 msgid "Country"
 msgstr "Land"
 
-#: Address.py:81 Email_Address.py:52 Phone_Number.py:69
+#: Address.py:80 Email_Address.py:52 Phone_Number.py:77
 msgid "Description"
 msgstr "Beschreibung"
 
-#: Address.py:83
+#: Address.py:82
 msgid "Short description of the address"
 msgstr "Kurze Beschreibung der Adresse"
 
 #: Email_Address.py:43 Email_Address.py:48
-msgid "Email_Address"
-msgstr "Email_Adresse"
+msgid "Email Address"
+msgstr "Email Adresse"
 
-#: Email_Address.py:44
-msgid "Email_Addresses"
-msgstr "Email_Adressen"
+#: Email_Address.py:44 Person.py:55
+msgid "Email Addresses"
+msgstr "Email Adressen"
 
 #: Email_Address.py:54
 msgid "Short description of the email address"
 msgstr "Kurze Beschreibung der Email Adresse"
 
-#: Phone_Number.py:45
-msgid "Phone_Number"
-msgstr "Telefonnummer"
+#: Person.py:43
+msgid "Person"
+msgstr "Person"
 
-#: Phone_Number.py:46
-msgid "Phone_Numbers"
+#: Person.py:44
+msgid "Persons"
+msgstr "Personen"
+
+#: Person.py:50
+msgid "User"
+msgstr "Anwender"
+
+#: Person.py:60 Phone_Number.py:49
+msgid "Phone Numbers"
 msgstr "Telefonnummern"
 
-#: Phone_Number.py:50
+#: Phone_Number.py:48
+msgid "Phone Number"
+msgstr "Telefonnummer"
+
+#: Phone_Number.py:53
 msgid "Country-Code"
 msgstr "Landesvorwahl"
 
-#: Phone_Number.py:53
+#: Phone_Number.py:58
 msgid "Area-Code"
 msgstr "Ortsvorwahl"
 
-#: Phone_Number.py:58
+#: Phone_Number.py:64
 msgid "Subscriber-Number"
 msgstr "Telefonnummer"
 
-#: Phone_Number.py:63
+#: Phone_Number.py:70
 msgid "Extension"
 msgstr "Durchwahl"
 
-#: Phone_Number.py:65
+#: Phone_Number.py:72
 msgid "Extension number used in PBX"
 msgstr "Durchwahl in einer Nebenstellenanlage"
 
-#: Phone_Number.py:71
+#: Phone_Number.py:79
 msgid "Short description of the phone number"
 msgstr "Kurze Beschreibung der Telefonnummer"
