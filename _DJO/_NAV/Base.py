@@ -163,6 +163,9 @@
 #    19-Oct-2008 (CT) `Root.Admin` and `Root.Models` added
 #    15-Feb-2009 (CT) `Dict_Replacer` added to `_Export`
 #    26-Feb-2009 (CT) `_run_pre_first_request_hooks` factored out
+#    20-May-2009 (CT) `page_from_href` changed to strip leading `/`
+#    20-May-2009 (CT) Import/Export for `Record` added to allow use in
+#                     navigation-files
 #    ««revision-date»»···
 #--
 
@@ -172,6 +175,7 @@ import _DJO._NAV
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
+from   _TFL.Record              import Record
 from   _TFL.Regexp              import Dict_Replacer
 from   _TFL                     import sos
 
@@ -695,6 +699,7 @@ class Root (_Dir_) :
     @classmethod
     def page_from_href (cls, href, request = None) :
         result = None
+        href   = href.lstrip (u"/")
         href_s = pjoin (href, u"")
         if href in cls.top.Table :
             result = cls.top.Table [href]
@@ -792,6 +797,6 @@ if __name__ != "__main__":
     DJO.NAV._Export \
         ( "*"
         , "_load_view", "_Meta_", "_Site_Entity_", "_Dir_"
-        , "Dict_Replacer"
+        , "Dict_Replacer", "Record"
         )
 ### __END__ DJO.NAV.Base
