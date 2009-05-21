@@ -172,6 +172,7 @@
 from   _DJO                     import DJO
 from   _TFL                     import TFL
 import _DJO._NAV
+import _DJO._NAV.Url_Pattern
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -683,6 +684,7 @@ class Root (_Dir_) :
         self.Models       = {}
         self.level        = -1
         self.__super.__init__ (src_dir = src_dir, ** kw)
+        DJO.NAV.Bypass_URL_Resolver ()
     # end def __init__
 
     @classmethod
