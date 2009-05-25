@@ -419,14 +419,6 @@ class URL (Field, DM.URLField) :
     pass
 # end class URL
 
-class Foreign_Key (Field, DM.ForeignKey) :
-    pass
-# end class Foreign_Key
-
-class Many_To_Many (Field, DM.ManyToManyField) :
-    pass
-# end class Many_To_Many
-
 class _Choice_ (Field) :
 
     def __init__ (self, * args, ** kw) :
