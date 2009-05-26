@@ -87,10 +87,6 @@ obfuscated_email = Multi_Re_Replacer \
           r"(</a>)"
         , _rep_explicit, re.MULTILINE
         )
-    , Re_Replacer
-        (r"""\b[-.\w]+(@|&#64;)[-.\w]+\.[a-z]{2,4}\b"""
-        , _rep_implicit, re.MULTILINE
-        )
     )
 
 if __name__ != "__main__" :

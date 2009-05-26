@@ -20,49 +20,17 @@
 #
 #++
 # Name
-#    DJO.Apps.Person.Email_Address
+#    DJO.Apps.Regatta.models
 #
 # Purpose
-#    Django model for email addresses
+#    Django application for modelling sailing regattas
 #
 # Revision Dates
-#    18-May-2009 (CT) Creation
+#    26-May-2009 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   _DJO                       import DJO
-import _DJO.Models
-import _DJO.M_Field               as     MF
+from   _DJO._Apps.Regatta.Boat_Class import Boat_Class
+from   _DJO._Apps.Regatta.Boat       import Boat
 
-from   django.utils.translation import gettext_lazy as _
-
-class Email_Address (DJO.Model) :
-    """Models an email address"""
-
-    class Meta :
-        verbose_name          = _("Email-Address")
-        verbose_name_plural   = _("Email-Addresses")
-    # end class Meta
-
-    email                = MF.Email \
-        ( _("Email Address")
-        )
-
-    desc                  = MF.Char \
-        ( _("Description")
-        , blank           = True
-        , help_text       = _("Short description of the email address")
-        , max_length      = 20
-        )
-
-    def __unicode__ (self) :
-        return unicode (self.email)
-    # end def __unicode__
-
-    NAV_admin_args = dict \
-        ( list_display = ("email", "desc")
-        )
-
-# end class Email_Address
-
-### __END__ DJO.Apps.Person.Email_Address
+### __END__ DJO.Apps.Regatta.models

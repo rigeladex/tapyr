@@ -1,0 +1,273 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-26 13:00+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Boat.py:43
+msgid "Australia"
+msgstr "Australien"
+
+#: Boat.py:44
+msgid "Austria"
+msgstr "Österreich"
+
+#: Boat.py:45
+msgid "Belgium"
+msgstr "Belgien"
+
+#: Boat.py:46
+msgid "Canada"
+msgstr "Kanada"
+
+#: Boat.py:47
+msgid "Croatia"
+msgstr "Kroatien"
+
+#: Boat.py:48
+msgid "Cyprus"
+msgstr "Zypern"
+
+#: Boat.py:49
+msgid "Czech Republic"
+msgstr "Tschechische Republik"
+
+#: Boat.py:50
+msgid "Denmark"
+msgstr "Dänemark"
+
+#: Boat.py:51
+msgid "Spain"
+msgstr "Spanien"
+
+#: Boat.py:52
+msgid "Estonia"
+msgstr "Estland"
+
+#: Boat.py:53
+msgid "Finland"
+msgstr "Finnland"
+
+#: Boat.py:54
+msgid "France"
+msgstr "Frankreich"
+
+#: Boat.py:55
+msgid "Great Britain"
+msgstr "Grossbritannien"
+
+#: Boat.py:56
+msgid "Germany"
+msgstr "Deutschland"
+
+#: Boat.py:57
+msgid "Greece"
+msgstr "Griechenland"
+
+#: Boat.py:58
+msgid "Hungary"
+msgstr "Ungarn"
+
+#: Boat.py:59
+msgid "Ireland"
+msgstr "Irland"
+
+#: Boat.py:60
+msgid "Iceland"
+msgstr "Island"
+
+#: Boat.py:61
+msgid "Italy"
+msgstr "Italien"
+
+#: Boat.py:62
+msgid "Latvia"
+msgstr "Lettland"
+
+#: Boat.py:63
+msgid "Lichtenstein"
+msgstr "Lichtenstein"
+
+#: Boat.py:64
+msgid "Lithuania"
+msgstr "Litauen"
+
+#: Boat.py:65
+msgid "Luxembourg"
+msgstr "Luxemburg"
+
+#: Boat.py:66
+msgid "Malta"
+msgstr "Malta"
+
+#: Boat.py:67
+msgid "Montenegro"
+msgstr "Montenegro"
+
+#: Boat.py:68
+msgid "Monaco"
+msgstr "Monaco"
+
+#: Boat.py:69
+msgid "Netherlands"
+msgstr "Niederlande"
+
+#: Boat.py:70
+msgid "Norway"
+msgstr "Norwegen"
+
+#: Boat.py:71
+msgid "New Zealand"
+msgstr "Neuseeland"
+
+#: Boat.py:72
+msgid "Poland"
+msgstr "Polen"
+
+#: Boat.py:73
+msgid "Portugal"
+msgstr "Portugal"
+
+#: Boat.py:74
+msgid "Romania"
+msgstr "Rumänien"
+
+#: Boat.py:75
+msgid "Russia"
+msgstr "Russland"
+
+#: Boat.py:76
+msgid "Slovenia"
+msgstr "Slowenien"
+
+#: Boat.py:77
+msgid "Serbia"
+msgstr "Serbien"
+
+#: Boat.py:78
+msgid "Switzerland"
+msgstr "Schweiz"
+
+#: Boat.py:79
+msgid "Slovakia"
+msgstr "Slowakei"
+
+#: Boat.py:80
+msgid "Sweden"
+msgstr "Schweden"
+
+#: Boat.py:81
+msgid "Ukraine"
+msgstr "Ukraine"
+
+#: Boat.py:82
+msgid "United States"
+msgstr "Vereinigte Staaten"
+
+#: Boat.py:89
+msgid "Boat"
+msgstr "Boot"
+
+#: Boat.py:90
+msgid "Boats"
+msgstr "Boote"
+
+#: Boat.py:97
+msgid "Nation"
+msgstr "Nation"
+
+#: Boat.py:100
+msgid "Nation for which the boat is registered"
+msgstr "Staat, für den das Boot registriert ist"
+
+#: Boat.py:104
+msgid "Sail-Number"
+msgstr "Segelnummer"
+
+#: Boat.py:106
+msgid "Sail number of the boat"
+msgstr "Segelnummer des Bootes"
+
+#: Boat.py:112
+msgid "Boat-Name"
+msgstr "Bootsname"
+
+#: Boat.py:114
+msgid "Name of the boat"
+msgstr "Name des Bootes"
+
+#: Boat.py:118 Boat_Class.py:53
+msgid "Max-Crew"
+msgstr ""
+
+#: Boat.py:121
+msgid "Maximum number of crew (default: `boat_class.max_crew`)"
+msgstr "Höchstzahl von Besatzungsmitgliedern (wird von Bootsklasse übernommen, wenn kein Wert eingegeben wird)"
+
+#: Boat.py:126 Boat_Class.py:60
+msgid "Yardstick"
+msgstr ""
+
+#: Boat.py:129
+msgid "Yardstick number (default: `boat_class.yardstick`)"
+msgstr "Yardstick Zahl (wird von Bootsklasse übernommen, wenn kein Wert eingegeben wird)"
+
+#: Boat_Class.py:43
+msgid "Boat-Class"
+msgstr "Bootsklasse"
+
+#: Boat_Class.py:44
+msgid "Boat-Classes"
+msgstr "Bootsklassen"
+
+#: Boat_Class.py:48
+msgid "Class-Name"
+msgstr "Klassenname"
+
+#: Boat_Class.py:49
+msgid "Name of the sail boat class"
+msgstr "Name der Bootsklasse"
+
+#: Boat_Class.py:55
+msgid "Maximum number of crew"
+msgstr "Höchstzahl von Besatzungsmitgliedern"
+
+#: Boat_Class.py:62
+msgid "Yardstick number"
+msgstr "Yardstick Zahl"
+
+#: Boat_Class.py:68
+msgid "LoA"
+msgstr "LüA"
+
+#: Boat_Class.py:71
+msgid "Length overall in meters"
+msgstr "Länge über alles in Metern"
+
+#: Boat_Class.py:78
+msgid "Beam"
+msgstr "Breite"
+
+#: Boat_Class.py:81
+msgid "Maximum beam in meters"
+msgstr "Maximale Breite in Metern"
+
+#: Boat_Class.py:88
+msgid "Weight"
+msgstr "Gewicht"
+
+#: Boat_Class.py:90
+msgid "Weight (fully rigged) in kilograms"
+msgstr "Gewicht (inkl. Rigg) in Kilogramm"

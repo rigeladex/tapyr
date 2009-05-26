@@ -34,7 +34,7 @@ from   _DJO                       import DJO
 import _DJO.Models
 import _DJO.M_Field               as     MF
 
-from   django.utils.translation import gettext_lazy as _
+from   django.utils.translation   import gettext_lazy as _
 
 class Person (DJO.Model) :
     """Models a person."""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-19 12:42+0200\n"
+"POT-Creation-Date: 2009-05-25 18:44+0200\n"
 "PO-Revision-Date: 2009-05-15 15:59+0200\n"
 "Last-Translator: Christian Tanzer <Christian.Tanzer@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,6 +52,10 @@ msgstr "Bundesland oder Kanton"
 msgid "Country"
 msgstr "Land"
 
+#: Address.py:77 Phone_Number.py:48
+msgid "Phone Number"
+msgstr "Telefonnummer"
+
 #: Address.py:80 Email_Address.py:52 Phone_Number.py:77
 msgid "Description"
 msgstr "Beschreibung"
@@ -60,13 +64,17 @@ msgstr "Beschreibung"
 msgid "Short description of the address"
 msgstr "Kurze Beschreibung der Adresse"
 
-#: Email_Address.py:43 Email_Address.py:48
+#: Email_Address.py:43
+msgid "Email-Address"
+msgstr "Email-Adresse"
+
+#: Email_Address.py:44
+msgid "Email-Addresses"
+msgstr "Email-Adressen"
+
+#: Email_Address.py:48
 msgid "Email Address"
 msgstr "Email Adresse"
-
-#: Email_Address.py:44 Person.py:55
-msgid "Email Addresses"
-msgstr "Email Adressen"
 
 #: Email_Address.py:54
 msgid "Short description of the email address"
@@ -84,13 +92,13 @@ msgstr "Personen"
 msgid "User"
 msgstr "Anwender"
 
+#: Person.py:55
+msgid "Email Addresses"
+msgstr "Email Adressen"
+
 #: Person.py:60 Phone_Number.py:49
 msgid "Phone Numbers"
 msgstr "Telefonnummern"
-
-#: Phone_Number.py:48
-msgid "Phone Number"
-msgstr "Telefonnummer"
 
 #: Phone_Number.py:53
 msgid "Country-Code"
