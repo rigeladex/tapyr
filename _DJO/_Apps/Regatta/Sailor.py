@@ -20,18 +20,48 @@
 #
 #++
 # Name
-#    DJO.Apps.Regatta.models
+#    DJO.Apps.Regatta.Sailor
 #
 # Purpose
-#    Django application for modelling sailing regattas
+#    Django model for sailor
 #
 # Revision Dates
-#    26-May-2009 (CT) Creation
+#    27-May-2009 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   _DJO._Apps.Regatta.Boat_Class import Boat_Class
-from   _DJO._Apps.Regatta.Boat       import Boat
-from   _DJO._Apps.Regatta.Sailor     import Sailor
+from   _DJO                       import DJO
+import _DJO.Models
+import _DJO.M_Field               as     MF
 
-### __END__ DJO.Apps.Regatta.models
+from   django.utils.translation   import gettext_lazy as _
+
+from   _DJO._Apps.Person.Person   import Person
+
+class Sailor (Person) :
+    """Modelliert die Person eines Seglers (oder Angehörigen eines Seglers)."""
+
+    class Meta :
+        verbose_name        = _("Sailor")
+        verbose_name_plural = _("Sailors")
+    # end class Meta
+
+    club               = MF.Char \
+        ( u"Club"
+        , help_text    = "Sailing club the sailor starts for"
+        , max_length   = 10
+        )
+    oesv_nr            = MF.Integer \
+        ( u"ÖSV-Nr."
+        , blank        = True
+        , null         = True
+        , unique       = True
+        )
+
+    NAV_admin_args = dict \
+        ( list_display = ("birth_date", "sex", "club", "oesv_nr")
+        )
+
+# end class Sailor
+
+### __END__ DJO.Apps.Regatta.Sailor

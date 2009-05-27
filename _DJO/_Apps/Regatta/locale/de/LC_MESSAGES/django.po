@@ -8,12 +8,12 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-26 13:00+0200\n"
+"POT-Creation-Date: 2009-05-27 10:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: Boat.py:43
@@ -22,7 +22,7 @@ msgstr "Australien"
 
 #: Boat.py:44
 msgid "Austria"
-msgstr "Österreich"
+msgstr "Ã–sterreich"
 
 #: Boat.py:45
 msgid "Belgium"
@@ -46,7 +46,7 @@ msgstr "Tschechische Republik"
 
 #: Boat.py:50
 msgid "Denmark"
-msgstr "Dänemark"
+msgstr "DÃ¤nemark"
 
 #: Boat.py:51
 msgid "Spain"
@@ -142,7 +142,7 @@ msgstr "Portugal"
 
 #: Boat.py:74
 msgid "Romania"
-msgstr "Rumänien"
+msgstr "RumÃ¤nien"
 
 #: Boat.py:75
 msgid "Russia"
@@ -184,90 +184,102 @@ msgstr "Boot"
 msgid "Boats"
 msgstr "Boote"
 
-#: Boat.py:97
-msgid "Nation"
-msgstr "Nation"
-
-#: Boat.py:100
-msgid "Nation for which the boat is registered"
-msgstr "Staat, für den das Boot registriert ist"
-
-#: Boat.py:104
-msgid "Sail-Number"
-msgstr "Segelnummer"
-
-#: Boat.py:106
-msgid "Sail number of the boat"
-msgstr "Segelnummer des Bootes"
-
-#: Boat.py:112
-msgid "Boat-Name"
-msgstr "Bootsname"
-
-#: Boat.py:114
-msgid "Name of the boat"
-msgstr "Name des Bootes"
-
-#: Boat.py:118 Boat_Class.py:53
-msgid "Max-Crew"
-msgstr ""
-
-#: Boat.py:121
-msgid "Maximum number of crew (default: `boat_class.max_crew`)"
-msgstr "Höchstzahl von Besatzungsmitgliedern (wird von Bootsklasse übernommen, wenn kein Wert eingegeben wird)"
-
-#: Boat.py:126 Boat_Class.py:60
-msgid "Yardstick"
-msgstr ""
-
-#: Boat.py:129
-msgid "Yardstick number (default: `boat_class.yardstick`)"
-msgstr "Yardstick Zahl (wird von Bootsklasse übernommen, wenn kein Wert eingegeben wird)"
-
-#: Boat_Class.py:43
+#: Boat.py:95 Boat_Class.py:44
 msgid "Boat-Class"
 msgstr "Bootsklasse"
 
-#: Boat_Class.py:44
+#: Boat.py:98
+msgid "Nation"
+msgstr "Nation"
+
+#: Boat.py:101
+msgid "Nation for which the boat is registered"
+msgstr "Staat, fÃ¼r den das Boot registriert ist"
+
+#: Boat.py:105
+msgid "Sail-Number"
+msgstr "Segelnummer"
+
+#: Boat.py:107
+msgid "Sail number of the boat"
+msgstr "Segelnummer des Bootes"
+
+#: Boat.py:113
+msgid "Vintage"
+msgstr "Baujahr"
+
+#: Boat.py:115
+msgid "Year of construction"
+msgstr ""
+
+#: Boat.py:121
+msgid "Boat-Name"
+msgstr "Bootsname"
+
+#: Boat.py:123
+msgid "Name of the boat"
+msgstr "Name des Bootes"
+
+#: Boat.py:127 Boat_Class.py:54
+msgid "Max-Crew"
+msgstr ""
+
+#: Boat.py:130
+msgid "Maximum number of crew (default: `boat_class.max_crew`)"
+msgstr ""
+"HÃ¶chstzahl von Besatzungsmitgliedern (wird von Bootsklasse Ã¼bernommen, wenn "
+"kein Wert eingegeben wird)"
+
+#: Boat.py:136 Boat_Class.py:61
+msgid "Yardstick"
+msgstr ""
+
+#: Boat.py:139
+msgid "Yardstick number (default: `boat_class.yardstick`)"
+msgstr ""
+"Yardstick Zahl (wird von Bootsklasse Ã¼bernommen, wenn kein Wert eingegeben "
+"wird)"
+
+#: Boat_Class.py:45
 msgid "Boat-Classes"
 msgstr "Bootsklassen"
 
-#: Boat_Class.py:48
+#: Boat_Class.py:49
 msgid "Class-Name"
 msgstr "Klassenname"
 
-#: Boat_Class.py:49
+#: Boat_Class.py:50
 msgid "Name of the sail boat class"
 msgstr "Name der Bootsklasse"
 
-#: Boat_Class.py:55
+#: Boat_Class.py:56
 msgid "Maximum number of crew"
-msgstr "Höchstzahl von Besatzungsmitgliedern"
+msgstr "HÃ¶chstzahl von Besatzungsmitgliedern"
 
-#: Boat_Class.py:62
+#: Boat_Class.py:63
 msgid "Yardstick number"
 msgstr "Yardstick Zahl"
 
-#: Boat_Class.py:68
+#: Boat_Class.py:69
 msgid "LoA"
-msgstr "LüA"
+msgstr "LÃ¼A"
 
-#: Boat_Class.py:71
+#: Boat_Class.py:72
 msgid "Length overall in meters"
-msgstr "Länge über alles in Metern"
+msgstr "LÃ¤nge Ã¼ber alles in Metern"
 
-#: Boat_Class.py:78
+#: Boat_Class.py:79
 msgid "Beam"
 msgstr "Breite"
 
-#: Boat_Class.py:81
+#: Boat_Class.py:82
 msgid "Maximum beam in meters"
 msgstr "Maximale Breite in Metern"
 
-#: Boat_Class.py:88
+#: Boat_Class.py:89
 msgid "Weight"
 msgstr "Gewicht"
 
-#: Boat_Class.py:90
+#: Boat_Class.py:91
 msgid "Weight (fully rigged) in kilograms"
 msgstr "Gewicht (inkl. Rigg) in Kilogramm"

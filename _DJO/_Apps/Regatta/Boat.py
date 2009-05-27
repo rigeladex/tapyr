@@ -86,6 +86,7 @@ class Boat (DJO.Model) :
     """Models a sail boat"""
 
     class Meta :
+        ordering              = ["boat_class", "nation", "sailnumber"]
         verbose_name          = _("Boat")
         verbose_name_plural   = _("Boats")
     # end class Meta
@@ -107,6 +108,14 @@ class Boat (DJO.Model) :
         , help_text       = _("Sail number of the boat")
         , min_value       = 1
         , max_value       = 1000000
+        , null            = True
+        )
+    vintage               = MF.Small_Integer \
+        ( _("Vintage")
+        , blank           = True
+        , help_text       = _("Year of construction")
+        , min_value       = 1850
+        , max_value       = 2050
         , null            = True
         )
     name                  = MF.Char \
@@ -154,7 +163,8 @@ class Boat (DJO.Model) :
     # end def __unicode__
 
     NAV_admin_args = dict \
-        ( list_display = ("boat_class", "nation", "sailnumber", "name")
+        ( list_display =
+            ("boat_class", "nation", "sailnumber", "name", "vintage")
         )
 
 # end class Boat

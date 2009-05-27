@@ -40,14 +40,32 @@ class Person (DJO.Model) :
     """Models a person."""
 
     class Meta :
+        ordering              = ["user"]
         verbose_name          = _("Person")
         verbose_name_plural   = _("Persons")
     # end class Meta
 
     user                  = MF.One_to_One \
         ( "auth.User"
-        , editable        = False
+        , editable        = True
         , verbose_name    = _("User")
+        )
+    title                 = MF.Char \
+        ( _("Title")
+        , blank           = True
+        , help_text       = _("Academic title")
+        , max_length      = 20
+        )
+    birth_date            = MF.Date \
+        ( _("Birth-Date")
+        , blank           = True
+        , null            = True
+        )
+    sex                   = MF.Choice \
+        ( MF.Char, _("Sex")
+        , blank           = True
+        , choices         = (("F", _("Female")), ("M", _("Male")))
+        , max_length      = 1
         )
     emails                = MF.Many_to_Many \
         ( "Person.Email_Address"
@@ -63,6 +81,31 @@ class Person (DJO.Model) :
         ( "Person.Address"
         , blank           = True
         , verbose_name    = _("Addresses")
+        )
+
+    @property
+    def first_name (self) :
+        return self.user.first_name
+    # end def first_name
+
+    @property
+    def last_name (self) :
+        return self.user.last_name
+    # end def last_name
+
+    def __unicode__ (self) :
+        u = self.user
+        result = " ".join \
+            (x for x in (self.title, u.first_name, u.last_name) if x)
+        if not result :
+            result = u.username
+        return result
+    # end def __unicode__
+
+    display = property (__unicode__)
+
+    NAV_admin_args = dict \
+        ( list_display = ("birth_date", "sex")
         )
 
 # end class Person
