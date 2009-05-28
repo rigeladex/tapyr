@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# Copyright (C) 2005-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@smangari.org
 # ****************************************************************************
 #
@@ -36,7 +36,7 @@ from   _DJO                       import DJO
 ### import _DJO.Admin
 import _DJO.Forms
 import _DJO.Models
-import _DJO.M_Field               as     MF
+import _DJO.Model_Field           as     MF
 
 from   _TFL.Decorator             import Attributed
 from   _TFL.Function              import Function

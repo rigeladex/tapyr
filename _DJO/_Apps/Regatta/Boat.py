@@ -32,7 +32,7 @@
 
 from   _DJO                       import DJO
 import _DJO.Models
-import _DJO.M_Field               as     MF
+import _DJO.Model_Field           as     MF
 
 from   _DJO._Apps.Regatta.Boat_Class import Boat_Class
 

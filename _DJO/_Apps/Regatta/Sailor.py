@@ -33,7 +33,7 @@
 
 from   _DJO                       import DJO
 import _DJO.Models
-import _DJO.M_Field               as     MF
+import _DJO.Model_Field           as     MF
 
 from   django.utils.translation   import gettext_lazy as _
 
