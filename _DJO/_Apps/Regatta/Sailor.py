@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    27-May-2009 (CT) Creation
+#    28-May-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ from   django.utils.translation   import gettext_lazy as _
 
 from   _DJO._Apps.Person.Person   import Person
 
-class Sailor (Person) :
+class Sailor (DJO.Model) :
     """Modelliert die Person eines Seglers (oder Angehörigen eines Seglers)."""
 
     class Meta :
@@ -46,6 +47,11 @@ class Sailor (Person) :
         verbose_name_plural = _("Sailors")
     # end class Meta
 
+    person             = MF.One_to_One \
+        ( Person
+        , editable        = True
+        , verbose_name    = _("Person")
+        )
     club               = MF.Char \
         ( u"Club"
         , help_text    = "Sailing club the sailor starts for"
@@ -59,7 +65,8 @@ class Sailor (Person) :
         )
 
     NAV_admin_args = dict \
-        ( list_display = ("birth_date", "sex", "club", "oesv_nr")
+        ( list_display = ("club", "oesv_nr")
+        # list_display = ("birth_date", "sex", "club", "oesv_nr")
         )
 
 # end class Sailor

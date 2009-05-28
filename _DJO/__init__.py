@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -29,20 +29,28 @@
 #    14-Dec-2007 (CT) Creation
 #    15-Dec-2007 (MG) Creation of `Package_Namespace` guarded to allow usage
 #                     of the package without `TFL`
+#    28-May-2009 (CT) Guard removed
+#    28-May-2009 (CT) `AppCache._populate` monkey-patched to send signal
+#                     `models_loaded`
 #    ««revision-date»»···
 #--
 
-try :
-    from   _TFL.Package_Namespace import Package_Namespace
+from   _TFL.Package_Namespace import Package_Namespace
+DJO = Package_Namespace ()
+del Package_Namespace
 
-    DJO = Package_Namespace ()
+from   _TFL.Decorator import Override_Method
+import django.db.models.loading as loading
+import django.db.models.signals as signals
 
-    del Package_Namespace
-except ImportError :
-    class DJO (object) :
-        @classmethod
-        def _Export (cls, * args) :
-            pass
-        # end def _Export
-    # end class DJO
+if not hasattr (signals, "models_loaded") :
+    signals.models_loaded = signals.Signal ()
+
+    @Override_Method (loading.AppCache)
+    def _populate (self, * args, ** kw) :
+        if not self.loaded :
+            _populate.orig (self, * args, ** kw)
+            signals.models_loaded.send (self)
+    # end def _populate
+
 ### __END__ DJO.__init__

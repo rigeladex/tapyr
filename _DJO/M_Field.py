@@ -39,6 +39,7 @@
 #    19-May-2009 (CT) `Choice` (and `M_Choice`) added;
 #                     `Choice_Char`, `Choice_Int`, and `Choice_Small` removed
 #    19-May-2009 (CT) `Foreign_Key`, `Many_to_Many`, and `One_to_One` added
+#    28-May-2009 (CT) `Null` added
 #    ««revision-date»»···
 #--
 
@@ -70,7 +71,10 @@ class M_Choice (M_Field) :
         Type = cls.Table.get (Field_Type)
         if Type is None :
             name = "Choice_%s" % Field_Type.__name__
-            dct  = dict (__module__ = cls.__module__)
+            dct  = dict \
+                ( __module__ = cls.__module__
+                , Null       = Field_Type.Null
+                )
             Type = cls.Table [Field_Type] = type (Field_Type) \
                 (name, (_Choice_, Field_Type), dct)
         return Type (* args, ** kw)
@@ -83,6 +87,7 @@ class _DJO_Field_ (DM.Field) :
     __metaclass__ = M_Field
     _real_name    = "Field"
 
+    Null          = ""
     output_format = "%s"
     Widget        = None
 
@@ -91,6 +96,8 @@ class _DJO_Field_ (DM.Field) :
             self.output_format = kw.pop ("output_format")
         if "Widget" in kw :
             self.Widget        = kw.pop ("Widget")
+        if self.Null == "" :
+            kw.pop ("null", None)
         self.widget_attrs = kw.pop ("widget_attrs", {})
         self.__super.__init__ (* args, ** kw)
     # end def __init__
@@ -128,6 +135,8 @@ Field = _DJO_Field_ # end class
 class _Numeric_ (Field) :
     """Mixin for numeric field types"""
 
+    Null          = None
+
     def __init__ (self, * args, ** kw) :
         self.min_value = kw.pop ("min_value", None)
         self.max_value = kw.pop ("max_value", None)
@@ -146,6 +155,8 @@ class _Numeric_ (Field) :
 
 class Auto (Field, DM.AutoField) :
 
+    Null          = None
+
     def _from_string (self, s) :
         return int (s)
     # end def _from_string
@@ -153,6 +164,8 @@ class Auto (Field, DM.AutoField) :
 # end class Auto
 
 class Boolean (Field, DM.BooleanField) :
+
+    Null          = None
 
     def _from_string (self, s) :
         return s == "True"
@@ -182,6 +195,7 @@ class _D_Widget_ (widgets.TextInput) :
 class _Date_ (Field) :
 
     input_formats  = ("%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
+    Null           = None
     _output_format = None
     _tuple_off     = 0
 
@@ -317,7 +331,7 @@ class Float (_Numeric_, DM.FloatField) :
 # end class Float
 
 class Foreign_Key (Field, DM.ForeignKey) :
-    pass
+    Null          = None
 # end class Foreign_Key
 
 class Image (Field, DM.ImageField) :
@@ -341,7 +355,7 @@ class IP_Address (Field, DM.IPAddressField) :
 # end class IP_Address
 
 class Many_to_Many (Field, DM.ManyToManyField) :
-    pass
+    Null          = None
 # end class Many_to_Many
 
 class Null_Boolean (Boolean, DM.NullBooleanField) :
@@ -349,7 +363,7 @@ class Null_Boolean (Boolean, DM.NullBooleanField) :
 # end class Null_Boolean
 
 class One_to_One (Field, DM.OneToOneField) :
-    pass
+    Null          = None
 # end class One_to_One
 
 class Slug (Field, DM.SlugField) :

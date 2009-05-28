@@ -36,6 +36,7 @@
 #    27-Feb-2009 (CT) `M_Model._setup_attr` added and used
 #    19-May-2009 (CT) `IntegerLimitField` removed
 #                     (use `DJO.M_Field.Integer` instead)
+#    28-May-2009 (CT) Legacy `M_User_Create_Mod` removed
 #    ««revision-date»»···
 #--
 
@@ -84,45 +85,6 @@ class _DJO_Model_ (DM.Model) :
     # end def _before_save
 
 Model = _DJO_Model_ # end class
-
-class M_User_Create_Mod (DBM.ModelBase) :
-    """Meta class which add's the created_by/at and modified_by/at fields."""
-
-    def __new__ (cls, name, bases, attrs) :
-        if not name.startswith ("_") :
-            auto_user_attrs       = [], []
-            user_prefix           = attrs.pop ("user_prefix", "")
-            additional_user_attrs = attrs.pop ("additional_user_attrs", ())
-            if user_prefix :
-                user_prefix = "%s_" % (user_prefix, )
-            for base_name, verbose, rel, default in \
-                    ( ( "created",  "Created",       "creator"
-                      , datetime.datetime.now
-                      )
-                    , ( "modified", "Last modified", "modifier"
-                      , None
-                      )
-                    ) + additional_user_attrs :
-                attrs ["%s_by" % (base_name, )] = DM.ForeignKey \
-                    ( User
-                    , verbose_name = _("%s by" % (verbose, ))
-                    , related_name = "%s%s" % (user_prefix, rel)
-                    , null         = default is None
-                    )
-                attrs ["%s_at" % (base_name, )] = DM.DateTimeField \
-                    ( _("%s at" % (verbose, ))
-                    , default      = default
-                    , null         = default is None
-                    )
-                auto_user_attrs [0].append \
-                    (("%s_by" % (base_name, ), default is None))
-                if not default :
-                    auto_user_attrs [1].append ("%s_at" % (base_name, ))
-            attrs ["auto_user_attrs"] = auto_user_attrs
-        return super (M_User_Create_Mod, cls).__new__ (cls, name, bases, attrs)
-    # end def __new__
-
-# end class M_User_Create_Mod
 
 class _Permisson_Mixin_ (object) :
     """Add the `add_allowed`, `change_allowed`, and `delete_allowed` methods to
