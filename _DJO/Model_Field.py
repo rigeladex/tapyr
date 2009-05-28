@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.M_Field
+#    DJO.Model_Field
 #
 # Purpose
 #    Subclass Django models/field classes to add useful behavior
@@ -40,14 +40,15 @@
 #                     `Choice_Char`, `Choice_Int`, and `Choice_Small` removed
 #    19-May-2009 (CT) `Foreign_Key`, `Many_to_Many`, and `One_to_One` added
 #    28-May-2009 (CT) `Null` added
+#    28-May-2009 (CT) `sort_key` added
 #    ««revision-date»»···
 #--
 
 from   _TFL                               import TFL
 import _TFL._Meta.M_Class
+from   _TFL.defaultdict                   import defaultdict
 
 from   _DJO                               import DJO
-from   _TFL.defaultdict                   import defaultdict
 
 from   django.db                          import models       as DM
 from   django.forms                       import widgets
@@ -98,6 +99,7 @@ class _DJO_Field_ (DM.Field) :
             self.Widget        = kw.pop ("Widget")
         if self.Null == "" :
             kw.pop ("null", None)
+        self._sort_key    = kw.pop ("sort_key", 0)
         self.widget_attrs = kw.pop ("widget_attrs", {})
         self.__super.__init__ (* args, ** kw)
     # end def __init__
@@ -125,6 +127,11 @@ class _DJO_Field_ (DM.Field) :
         if s is not None :
             return self._from_string (s)
     # end def from_string
+
+    @property
+    def sort_key (self) :
+        return (self._sort_key, self.creation_counter)
+    # end def sort_key
 
     def _from_string (self, s) :
         return s
@@ -471,4 +478,4 @@ class Choice (Field) :
 
 if __name__ != "__main__":
     DJO._Export_Module ()
-### __END__ DJO.M_Field
+### __END__ DJO.Model_Field

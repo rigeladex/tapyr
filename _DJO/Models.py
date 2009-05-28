@@ -23,7 +23,7 @@
 #    DJO.Models
 #
 # Purpose
-#    Some useful classes
+#    Provide a (shiny new) subclass of django.db.models.base.Model
 #
 # Revision Dates
 #    18-Sep-2007 (MG) Creation
@@ -37,6 +37,8 @@
 #    19-May-2009 (CT) `IntegerLimitField` removed
 #                     (use `DJO.M_Field.Integer` instead)
 #    28-May-2009 (CT) Legacy `M_User_Create_Mod` removed
+#    28-May-2009 (CT) Legacies `_Permisson_Mixin_` and `_User_Create_Mod_`
+#                     removed, too (doh!)
 #    ««revision-date»»···
 #--
 
@@ -85,82 +87,6 @@ class _DJO_Model_ (DM.Model) :
     # end def _before_save
 
 Model = _DJO_Model_ # end class
-
-class _Permisson_Mixin_ (object) :
-    """Add the `add_allowed`, `change_allowed`, and `delete_allowed` methods to
-       models.
-    """
-
-    @classmethod
-    def _user_has_permission (cls, request_or_user, * permissions) :
-        user = request_or_user
-        if not isinstance (user, User) :
-            user = request_or_user.user
-        for p in permissions :
-            if not user.has_perm (".".join ((cls._meta.app_label, p))) :
-                return False
-        ### if no permissions where speficied we return False
-        return bool (permissions)
-    # end def _user_has_permission
-
-    @classmethod
-    def add_allowed (cls, request_or_user) :
-        meta = cls._meta
-        return cls._user_has_permission \
-            (request_or_user, "add_%s" % (meta.object_name.lower (), ))
-    # end def add_allowed
-
-    def delete_allowed (self, request_or_user) :
-        meta = self._meta
-        return self._user_has_permission \
-            (request_or_user, "delete_%s" % (meta.object_name.lower (), ))
-    # end def delete_allowed
-
-    def change_allowed (self, request_or_user) :
-        meta = self._meta
-        return self._user_has_permission \
-            (request_or_user, "change_%s" % (meta.object_name.lower (), )
-            )
-    # end def change_allowed
-
-# end class _Permisson_Mixin_
-
-class _User_Create_Mod_ (_Permisson_Mixin_) :
-    """Automatically add cerated and modified fields to the model."""
-
-    __metaclass__ = M_User_Create_Mod
-
-    def delete_allowed (self, request_or_user) :
-        user = request_or_user
-        if not isinstance (user, User) :
-            user = request_or_user.user
-        if self.created_by == user :
-            return True
-        return super (_User_Create_Mod_, self).delete_allowed (user)
-    # end def delete_allowed
-
-    def change_allowed (self, request_or_user) :
-        user = request_or_user
-        if not isinstance (user, User) :
-            user = request_or_user.user
-        if self.created_by == user :
-            return True
-        return super (_User_Create_Mod_, self).change_allowed (user)
-    # end def change_allowed
-
-    def save (self, user = None) :
-        if user :
-            if self.pk is None :
-                self.created_by = user
-            self.modified_by    = user
-            self.modified_at    = datetime.datetime.now ()
-        return super (_User_Create_Mod_, self).save ()
-    # end def save
-
-# end class _User_Create_Mod_
-
-DM._Permisson_Mixin_ = _Permisson_Mixin_
-DM._User_Create_Mod_ = _User_Create_Mod_
 
 if __name__ != "__main__" :
     DJO._Export ("*")
