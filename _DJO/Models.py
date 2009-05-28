@@ -47,6 +47,7 @@ import _TFL._Meta.M_Class
 import _TFL.Record
 
 from   _DJO                               import DJO
+import _DJO.Model_Field_Man
 
 from   django.db                          import models as DM
 from   django.contrib.auth.models         import User
@@ -66,9 +67,7 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     def _setup_attr (meta, cls) :
         ### this is defined as a class method of the meta class so that it
         ### can be called for `cls` that don't use M_Model as meta class
-        cls._Field = map = TFL.Record ()
-        for f in cls._meta.fields :
-            map [f.name] = f
+        cls._F = DJO.Model_Field_Man (cls)
     # end def _setup_attr
 
 # end class M_Model
@@ -81,6 +80,19 @@ class _DJO_Model_ (DM.Model) :
     class Meta :
         abstract       = True
     # end class Meta
+
+    def __init__ (self, * args, ** kw) :
+        self._save_callbacks = set ()
+    # end def __init__
+
+    def save (self, * args, ** kw) :
+        try :
+            for sc in self._save_callbacks :
+                sc ()
+        finally :
+            self._save_callbacks.clear ()
+        self.__super.save (* args, ** kw)
+    # end def save
 
     def _before_save (self, request, ** kw) :
         pass

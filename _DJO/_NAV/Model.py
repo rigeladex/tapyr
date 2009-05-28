@@ -47,6 +47,7 @@
 #    15-May-2009 (CT) `Admin.Changer.process_post` changed to return
 #                     `result, form` instead of `form` to display validation
 #                     errors
+#    28-May-2009 (CT) s/_Field/_F/g
 #    ««revision-date»»···
 #--
 
@@ -437,7 +438,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
             , Model_Name   = name
             , Model_Name_s = title
             , title        = title
-            , _Field       = Model._Field
+            , _F           = Model._F
             , ** kw
             )
         self._old_count = -1
@@ -475,7 +476,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
     def kind_filter (self) :
         if self.kind_name :
             import _DJO.QF
-            cind = self._Field.kind.choice_to_code (self.kind_name)
+            cind = self._F.kind.choice_to_code (self.kind_name)
             return DJO.QF (kind__exact = cind)
     # end def kind_filter
 

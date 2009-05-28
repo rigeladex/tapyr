@@ -169,6 +169,7 @@
 #                     `kind_name` properly
 #    27-Feb-2009 (CT)  `_model_entries` changed to add `_Field` to (non-DJO)
 #                      models
+#    28-May-2009 (CT) s/_Field/_F/g
 #    ««revision-date»»···
 #--
 
@@ -203,8 +204,10 @@ class Site_Admin (DJO.NAV.Dir) :
             title = m_kw.pop ("title", m._meta.verbose_name_plural)
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
             Type  = m_kw.pop ("Admin_Type", self.Page)
-            if not hasattr (m, "_Field") :
+            if not hasattr (m, "_F") :
                 DJO.M_Model._setup_attr (m)
+            if not m._F._finalized :
+                m._F.finalize ()
             d = dict \
                 ( name      = name
                 , title     = title
