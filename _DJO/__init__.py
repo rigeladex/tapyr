@@ -40,17 +40,18 @@ DJO = Package_Namespace ()
 del Package_Namespace
 
 from   _TFL.Decorator import Override_Method
+
+from django.dispatch import Signal
+### needs to be set before we import anything from django.db to be able to
+### use this signal from within the settins module
+DJO.models_loaded_signal = Signal ()
+
 import django.db.models.loading as loading
-import django.db.models.signals as signals
-
-if not hasattr (signals, "models_loaded") :
-    signals.models_loaded = signals.Signal ()
-
-    @Override_Method (loading.AppCache)
-    def _populate (self, * args, ** kw) :
-        if not self.loaded :
-            _populate.orig (self, * args, ** kw)
-            signals.models_loaded.send (self)
-    # end def _populate
+@Override_Method (loading.AppCache)
+def _populate (self, * args, ** kw) :
+    if not self.loaded :
+        _populate.orig (self, * args, ** kw)
+        DJO.models_loaded_signal.send (self)
+# end def _populate
 
 ### __END__ DJO.__init__

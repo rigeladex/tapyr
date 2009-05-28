@@ -1,5 +1,4 @@
 # -*- coding: iso-8859-1 -*-
-from _DJO.Navigation import Dir, Alias
 
 own_links = \
     [ ### a page generated from a `static` ReST file called index.txt

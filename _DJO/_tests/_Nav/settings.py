@@ -94,9 +94,9 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    "_DJO",
+    "_DJO._Apps.Base",
     ### add a few test models
-    "_DJO._test._Nav.model_1"
+    "_DJO._tests._Nav.model_1"
 )
 
 DATE_FORMAT                      = "Y/m/d"
@@ -115,6 +115,11 @@ SESSION_COOKIE_SECURE            = False ### True --> set only for https
 SESSION_EXPIRE_AT_BROWSER_CLOSE  = True
 
 if not DJO.Navigation.Root.top :
+    def _test (signal, sender) :
+        print signal, sender
+    # end def _test
+
+    DJO.models_loaded_signal.connect (_test)
     def handle_500 (request) :
         import sys
         from   django.views import debug
@@ -154,7 +159,7 @@ if not DJO.Navigation.Root.top :
                     )
                 )
             , handlers =
-                { 404  : "_DJO._test._Nav.handler_404.handler404"
+                { 404  : "_DJO._tests._Nav.handler_404.handler404"
                 , 500  : handle_500
                 }
             )
@@ -162,7 +167,7 @@ if not DJO.Navigation.Root.top :
     DJO.Navigation.Bypass_URL_Resolver ()
 
     def add_admin_setction () :
-        from   _DJO._test._Nav.model_1.models import News
+        from   _DJO._tests._Nav.model_1.models import News
         DJO.Navigation.Root.top.add_entries \
             ( [ dict
                   ( sub_dir      = "Admin"
