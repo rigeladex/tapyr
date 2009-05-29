@@ -168,6 +168,8 @@
 #                     navigation-files
 #    29-May-2009 (CT) `Root.__init__` changed to call
 #                     `DJO.models_loaded_signal.send`
+#    29-May-2009 (CT) `pre_first_request_hooks` removed
+#                     (`models_loaded_signal` should be used instead)
 #    ««revision-date»»···
 #--
 
@@ -669,7 +671,6 @@ class Root (_Dir_) :
         }
     name                    = "/"
     owner                   = None
-    pre_first_request_hooks = []
     src_root                = ""
     translator              = None
     url_patterns            = []
@@ -751,7 +752,6 @@ class Root (_Dir_) :
 
     @classmethod
     def universal_view (cls, request) :
-        cls._run_pre_first_request_hooks ()
         href = request.path [1:]
         ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
@@ -788,13 +788,6 @@ class Root (_Dir_) :
             raise ViewDoesNotExist ("Tried %s. Error was: %s" % (view_type, e))
         return callback, {}
     # end def _resolve_special
-
-    @classmethod
-    def _run_pre_first_request_hooks (cls) :
-        for h in cls.top.pre_first_request_hooks :
-            h ()
-        cls.top.pre_first_request_hooks = []
-    # end def _run_pre_first_request_hooks
 
 # end class Root
 

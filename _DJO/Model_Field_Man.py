@@ -83,8 +83,6 @@ class Model_Field_Man (TFL.Meta.Object) :
                     if g.name not in Own :
                         All.append (g)
                         self._setup_delegated_field (model, ledom, f, g)
-                    else :
-                        All.append (f)
             else :
                 All.append (f)
     # end def finalize
