@@ -45,6 +45,7 @@ Help text for the title
 >>> print title.errors
 <BLANKLINE>
 """
+
 import  os
 os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._tests._Nav.settings_test"
 
@@ -52,4 +53,18 @@ import _DJO._tests._Nav.model_1.models as     M
 from   _DJO                            import DJO
 import _DJO.Forms
 import _DJO.Form_Set_Description
+M.News._F.finalize ()
+
+"""
+import  os
+os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._tests._Nav.settings_test"
+
+import _DJO._tests._Nav.model_1.models as     M
+from   _DJO                            import DJO
+import _DJO.Forms
+import _DJO.Form_Set_Description
+
+fs1       = DJO.Form_Set_Description ()
+form1_cls = DJO.Model_Form.New (M.News, fs1)
+"""
 ### __END__ DJO.tests.Model_Form

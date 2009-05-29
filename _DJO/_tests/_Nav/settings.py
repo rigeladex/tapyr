@@ -1,11 +1,7 @@
 # -*- coding: iso-8859-15 -*-
 # Django settings for scams project.
 
-from   _DJO             import DJO
-import _DJO.Navigation
-from   _TFL             import sos
-from   _TFL.Filename    import Filename
-
+import _TFL.sos as sos
 ROOT_PATH      = sos.path.dirname (__file__)
 
 DEBUG          = False # or True
@@ -96,7 +92,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     "_DJO._Apps.Base",
     ### add a few test models
-    "_DJO._tests._Nav.model_1"
+    "_DJO._tests._Nav.model_1",
+    "_DJO._tests._Nav.nav"
 )
 
 DATE_FORMAT                      = "Y/m/d"
@@ -114,64 +111,3 @@ SESSION_COOKIE_AGE               = 86400 // 2
 SESSION_COOKIE_SECURE            = False ### True --> set only for https
 SESSION_EXPIRE_AT_BROWSER_CLOSE  = True
 
-if not DJO.Navigation.Root.top :
-    def handle_500 (request) :
-        import sys
-        from   django.views import debug
-        exc_info = sys.exc_info ()
-        return debug.technical_500_response(request, *exc_info)
-    # end handle_500
-    SRC_ROOT  = ROOT_PATH
-    NAV       = DJO.Navigation.Root.from_nav_list_file \
-            ( SRC_ROOT
-            , src_root        = SRC_ROOT
-            , copyright_start = 2008
-            , encoding        = "iso-8859-15"
-            , input_encoding  = "iso-8859-15"
-            , hide_marginal   = True
-            , language        = "de"
-            , owner           = "DJO Test Page"
-            , site_prefix     = "/"
-            , site_url        = "http://localhost:8000"
-            , template        = "static.html"
-            , web_links       =
-                [ dict
-                    ( href    = u"http://www.noe.gv.at/externeseiten/wasserstand/wiskiwebpublic/stat_1574033.htm?entryparakey=Q"
-                    , desc    = u"Wasserstand der Donau in Korneuburg"
-                    , title   = u"Donau Wasserstand"
-                    )
-                ]
-            , url_patterns    =
-                ( DJO.Navigation.Static_Files_Pattern
-                    ( "^media/(?P<path>.*)$"
-                    , document_root = MEDIA_ROOT
-                    , show_indexes  = True
-                    )
-                , DJO.Navigation.Static_Files_Pattern
-                    ( "^images/(?P<path>.*)$"
-                    , document_root = sos.path.join (MEDIA_ROOT, "..", "images")
-                    , show_indexes  = True
-                    )
-                )
-            , handlers =
-                { 404  : "_DJO._tests._Nav.handler_404.handler404"
-                , 500  : handle_500
-                }
-            )
-    ### bypass the standard django URL resolving based on regular expressions
-    DJO.Navigation.Bypass_URL_Resolver ()
-
-    def add_admin_setction () :
-        from   _DJO._tests._Nav.model_1.models import News
-        DJO.Navigation.Root.top.add_entries \
-            ( [ dict
-                  ( sub_dir      = "Admin"
-                  , title        = "Admin"
-                  , models       = (News, )
-                  , Type         = DJO.Navigation.Site_Admin
-                  )
-              ]
-            )
-    # end def add_admin_setction
-
-    DJO.Navigation.Root.pre_first_request_hooks.append (add_admin_setction)

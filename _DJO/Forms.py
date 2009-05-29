@@ -38,6 +38,7 @@
 #                     `TFL.Meta.M_Class` instead of `type`
 #    28-May-2009 (CT) Legacy removed
 #    29-May-2009 (MG) `M_Model_Form` filled with live
+#    29-May-2009 (MG) `M_Model_Form` filled with live continued
 #    ««revision-date»»···
 #--
 
@@ -48,23 +49,23 @@ import _TFL.Decorator
 import _TFL._Meta.M_Class
 import _TFL.NO_List
 
-from   django.forms                import BaseForm
+import _DJO.Form_Set_Description
 
-if 0 :
-    ### maybe needed once `save' of `ModelForm` is implemented again....
-    ### don't know yet
-    @TFL.Add_New_Method (BaseModelForm)
-    @TFL.Contextmanager
-    def object_to_save (self, commit=True) :
-        """Context manager for saving an object created from a form"""
-        obj = self.save (commit=False)
-        try :
-            yield obj
-        finally :
-            if commit :
-                obj.save      ()
-                self.save_m2m ()
-    # end def object_to_save
+from   django.forms                import BaseForm
+from   django.forms                import BaseModelForm
+
+@TFL.Add_New_Method (BaseModelForm)
+@TFL.Contextmanager
+def object_to_save (self, commit=True) :
+    """Context manager for saving an object created from a form"""
+    obj = self.save (commit=False)
+    try :
+        yield obj
+    finally :
+        if commit :
+            obj.save      ()
+            self.save_m2m ()
+# end def object_to_save
 
 class M_Model_Form (TFL.Meta.M_Class) :
     """Meta class for forms based on a djnago model."""
@@ -81,6 +82,11 @@ class M_Model_Form (TFL.Meta.M_Class) :
     # end def __new__
 
     def New (cls, model, * form_set_descriptions) :
+        class Meta :
+            fields = ()
+            exclude = ()
+        Meta.model = model
+
         if not form_set_descriptions :
             form_set_descriptions = \
                (DJO.Form_Set_Description (model = model), )
@@ -88,12 +94,13 @@ class M_Model_Form (TFL.Meta.M_Class) :
             ( model.__name__
             , model                 = model
             , form_set_descriptions = form_set_descriptions
+            , _meta                 = Meta
             )
     # end def New
 
 # end class M_Model_Form
 
-class _DJO_Model_Form_ (BaseForm) :
+class _DJO_Model_Form_ (BaseModelForm) :
     """Base class for all form's which derive there fields from a Django
        model.
 

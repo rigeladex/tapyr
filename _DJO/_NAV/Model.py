@@ -49,6 +49,7 @@
 #                     errors
 #    28-May-2009 (CT) s/_Field/_F/g
 #    29-May-2009 (CT) Use `_F` instead of `_meta` to access fields
+#    29-May-2009 (MG) Use new `DJO.Model_Form.New` in `_auto_form`
 #    ««revision-date»»···
 #--
 
@@ -331,7 +332,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             )
         if "_djo_clean" in kw :
             form_dict ["_djo_clean"] = kw ["_djo_clean"]
-        result = Form_Type.__class__ (form_name, (Form_Type, ), form_dict)
+        result = Form_Type.New (Model) #, ** form_dict)
         return result
     # end def _auto_form
 

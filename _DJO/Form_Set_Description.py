@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-May-2009 (MG) Creation
+#    29-May-2009 (MG) `_setup_fields` corrected, order if initialization fixed
 #    ««revision-date»»···
 #--
 
@@ -41,10 +42,8 @@ class Form_Set_Description (TFL.Meta.Object) :
 
     def __init__ (self, * fields, ** kw) :
         self.template            = kw.pop ("template", self.defaults ["template"])
-        self.model               = kw.pop ("model", None)
-        self._fields             = []
         self._field_descriptions = fields
-        assert not kw ### make sure we have no unused kw's left
+        self.model               = kw.pop ("model", None)
     # end def __init__
 
     def _set_model (self, model) :
@@ -60,8 +59,9 @@ class Form_Set_Description (TFL.Meta.Object) :
     model = property (model, _set_model)
 
     def _setup_fields (self) :
-        model = self._model
-        _F    = model._F
+        model        = self._model
+        _F           = model._F
+        self._fields = []
         for fd in    self._field_descriptions \
                  or [f.name for f in _F if f.editable] :
             dj_field = _F [getattr (fd, "name", fd)]
