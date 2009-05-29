@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    28-May-2009 (CT) Creation
-#    29-May-2009 (CT) `finalize` changed to not override existing attributes
+#    29-May-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -54,26 +54,32 @@ class Model_Field_Man (TFL.Meta.Object) :
     _extension = []
 
     def __init__ (self, model) :
-        self._extension.append (self)
+        self._extension.append   (self)
+        self.All   = TFL.NO_List ()
+        self.Own   = TFL.NO_List ()
         self.model = model
-        self.Own   = Own = self.All = TFL.NO_List ()
-        fields = itertools.chain (model._meta.fields + model._meta.many_to_many)
-        for f in sorted (fields, key = _sort_key) :
-            Own.append (f)
     # end def __init__
 
     def finalize (self) :
         if self._finalized :
             return
-        self._finalized = Model_Field_Man._finalized = True
+        self._finalized = True
+        All             = self.All
+        Own             = self.Own
         model           = self.model
-        All  = self.All = TFL.NO_List ()
+        fields          = itertools.chain \
+            (model._meta.fields + model._meta.many_to_many)
+        for f in sorted (fields, key = _sort_key) :
+            Own.append (f)
         for f in self.Own :
             if isinstance (f, MF.One_to_One) :
                 ledom = f.rel.to
-                ledom._F.finalize ()
+                if not hasattr (ledom, "_F") :
+                    DJO.M_Model.assimilate (ledom)
+                else :
+                    ledom._F.finalize  ()
                 for g in ledom._F.All :
-                    if g.name not in self.Own :
+                    if g.name not in Own :
                         All.append (g)
                         self._setup_delegated_field (model, ledom, f, g)
                     else :
@@ -81,6 +87,12 @@ class Model_Field_Man (TFL.Meta.Object) :
             else :
                 All.append (f)
     # end def finalize
+
+    @classmethod
+    def finalize_all (cls, ** kw) :
+        for mfm in cls._extension :
+            mfm.finalize ()
+    # end def finalize_all
 
     def _setup_delegated_field (self, model, ledom, field, dleif) :
         def _get (this) :
@@ -103,6 +115,10 @@ class Model_Field_Man (TFL.Meta.Object) :
             (model, dleif.name, property (_get, _set, _del, dleif.help_text))
     # end def _setup_delegated_field
 
+    def __contains__ (self, item) :
+        return item in self.All
+    # end def __contains__
+
     def __getattr__ (self, name) :
         d = self.All
         try :
@@ -116,6 +132,8 @@ class Model_Field_Man (TFL.Meta.Object) :
     # end def __iter__
 
 # end class Model_Field_Man
+
+DJO.models_loaded_signal.connect (Model_Field_Man.finalize_all)
 
 if __name__ != "__main__" :
     DJO._Export ("*")

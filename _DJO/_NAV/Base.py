@@ -166,6 +166,8 @@
 #    20-May-2009 (CT) `page_from_href` changed to strip leading `/`
 #    20-May-2009 (CT) Import/Export for `Record` added to allow use in
 #                     navigation-files
+#    29-May-2009 (CT) `Root.__init__` changed to call
+#                     `DJO.models_loaded_signal.send`
 #    ««revision-date»»···
 #--
 
@@ -683,8 +685,9 @@ class Root (_Dir_) :
         self.Table        = {}
         self.Models       = {}
         self.level        = -1
-        self.__super.__init__ (src_dir = src_dir, ** kw)
-        DJO.NAV.Bypass_URL_Resolver ()
+        DJO.models_loaded_signal.send (self)
+        self.__super.__init__         (src_dir = src_dir, ** kw)
+        DJO.NAV.Bypass_URL_Resolver   ()
     # end def __init__
 
     @classmethod

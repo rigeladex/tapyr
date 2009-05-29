@@ -178,6 +178,7 @@ from   _TFL                     import TFL
 
 import _DJO._NAV.Base
 import _DJO._NAV.Model
+import _DJO.Models
 
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -205,9 +206,7 @@ class Site_Admin (DJO.NAV.Dir) :
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
             Type  = m_kw.pop ("Admin_Type", self.Page)
             if not hasattr (m, "_F") :
-                DJO.M_Model._setup_attr (m)
-            if not m._F._finalized :
-                m._F.finalize ()
+                DJO.M_Model.assimilate (m)
             d = dict \
                 ( name      = name
                 , title     = title

@@ -39,6 +39,10 @@
 #    28-May-2009 (CT) Legacy `M_User_Create_Mod` removed
 #    28-May-2009 (CT) Legacies `_Permisson_Mixin_` and `_User_Create_Mod_`
 #                     removed, too (doh!)
+#    28-May-2009 (CT) `__init__` and `save `redefined to handle
+#                     `_save_callbacks`
+#    29-May-2009 (CT) `__init__` fixed (needs to call `__super.__init__`)
+#    29-May-2009 (CT) `assimilate` added
 #    ««revision-date»»···
 #--
 
@@ -64,6 +68,15 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     # end def __init__
 
     @classmethod
+    def assimilate (meta, cls) :
+        """Assimilate a django model class that doesn't use `M_Model` as meta
+           class.
+        """
+        meta._setup_attr (cls)
+        cls._F.finalize  ()
+    # end def assimilate
+
+    @classmethod
     def _setup_attr (meta, cls) :
         ### this is defined as a class method of the meta class so that it
         ### can be called for `cls` that don't use M_Model as meta class
@@ -83,6 +96,7 @@ class _DJO_Model_ (DM.Model) :
 
     def __init__ (self, * args, ** kw) :
         self._save_callbacks = set ()
+        self.__super.__init__ (* args, ** kw)
     # end def __init__
 
     def save (self, * args, ** kw) :
