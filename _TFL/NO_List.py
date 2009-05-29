@@ -118,7 +118,7 @@ class NO_List (TFL.Ordered_Set):
 
     def items  (self) : return list (self.iteritems  ())
     def keys   (self) : return list (self.iterkeys   ())
-    def values (self  : return list (self.itervalues ())
+    def values (self) : return list (self.itervalues ())
 
     def sort (self, cmp = None, key = None, reverse = False) :
         if key is None :
