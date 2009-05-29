@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-May-2009 (CT) Creation
+#    29-May-2009 (CT) `finalize` changed to not override existing attributes
 #    ««revision-date»»···
 #--
 
@@ -72,8 +73,11 @@ class Model_Field_Man (TFL.Meta.Object) :
                 ledom = f.rel.to
                 ledom._F.finalize ()
                 for g in ledom._F.All :
-                    All.append (g)
-                    self._setup_delegated_field (model, ledom, f, g)
+                    if g.name not in self.Own :
+                        All.append (g)
+                        self._setup_delegated_field (model, ledom, f, g)
+                    else :
+                        All.append (f)
             else :
                 All.append (f)
     # end def finalize

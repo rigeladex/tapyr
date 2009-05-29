@@ -48,6 +48,7 @@
 #                     `result, form` instead of `form` to display validation
 #                     errors
 #    28-May-2009 (CT) s/_Field/_F/g
+#    29-May-2009 (CT) Use `_F` instead of `_meta` to access fields
 #    ««revision-date»»···
 #--
 
@@ -71,7 +72,7 @@ class Field (TFL.Meta.Object) :
 
     def __init__ (self, name, field, obj, format_kw = {}) :
         if field is None :
-            field = obj.__class__._meta.get_field (name)
+            field = obj._F.All [name]
         self.name      = name
         self.field     = field
         self.obj       = obj
@@ -223,7 +224,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         def fields (self) :
             admin = self.admin
             obj   = self.obj
-            field = self.Model._meta.get_field
+            field = self.Model._F.All.get
             return [Field (f, field (f), obj) for f in admin.list_display]
         # end def fields
 
@@ -286,7 +287,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     def rendered (self, context = None, nav_page = None) :
         M        = self.Model
         Instance = self.Instance
-        field    = M._meta.get_field
+        field    = M._F.All.get
         q        = self.query_fct
         if context is None :
             context = dict (page = self)
@@ -310,7 +311,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     # end def rendered
 
     def _auto_list_display (self, Model, kw) :
-        result = [f.name for f in Model._meta.fields if f.editable]
+        result = [f.name for f in Model._F.All if f.editable]
         return result
     # end def _auto_list_display
 
@@ -430,8 +431,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
         self.__super.__init__ \
             ( src_dir, parent
             , desc         = desc
-            , fields       = dict \
-                ((f.name, Meta.get_field (f.name)) for f in Meta.fields)
+            , fields       = dict ((f.name, f) for f in Model._F.All)
             , name         = name
             , Meta         = Meta
             , Model        = Model
