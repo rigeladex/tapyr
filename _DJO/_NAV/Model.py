@@ -331,7 +331,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             )
         if "_djo_clean" in kw :
             form_dict ["_djo_clean"] = kw ["_djo_clean"]
-        result = Form_Type.New (Model, ** form_dict)
+        result = Form_Type.__class__ (form_name, (Form_Type, ), form_dict)
         return result
     # end def _auto_form
 
