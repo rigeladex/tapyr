@@ -37,6 +37,7 @@
 #     4-Feb-2009 (CT) Derive from `TFL.Meta.Object` instead of `object` and
 #                     `TFL.Meta.M_Class` instead of `type`
 #    28-May-2009 (CT) Legacy removed
+#    29-May-2009 (MG) `M_Model_Form` filled with live
 #    ««revision-date»»···
 #--
 
@@ -45,29 +46,60 @@ from   _TFL                        import TFL
 
 import _TFL.Decorator
 import _TFL._Meta.M_Class
+import _TFL.NO_List
 
-from   django.forms.models         import BaseModelForm, ModelForm
+from   django.forms                import BaseForm
 
-@TFL.Add_New_Method (BaseModelForm)
-@TFL.Contextmanager
-def object_to_save (self, commit=True) :
-    """Context manager for saving an object created from a form"""
-    obj = self.save (commit=False)
-    try :
-        yield obj
-    finally :
-        if commit :
-            obj.save      ()
-            self.save_m2m ()
-# end def object_to_save
+if 0 :
+    ### maybe needed once `save' of `ModelForm` is implemented again....
+    ### don't know yet
+    @TFL.Add_New_Method (BaseModelForm)
+    @TFL.Contextmanager
+    def object_to_save (self, commit=True) :
+        """Context manager for saving an object created from a form"""
+        obj = self.save (commit=False)
+        try :
+            yield obj
+        finally :
+            if commit :
+                obj.save      ()
+                self.save_m2m ()
+    # end def object_to_save
 
-class M_Model_Form (TFL.Meta.M_Class, ModelForm.__class__) :
-    """Meta class for model forms with support for `.__super` and
-       `_real_name`.
+class M_Model_Form (TFL.Meta.M_Class) :
+    """Meta class for forms based on a djnago model."""
+
+    def __new__ (cls, name, bases, attrs) :
+        base_fields = TFL.NO_List ()
+        model       = attrs.get ("model", None)
+        for fsd in attrs.pop ("form_set_descriptions", ()) :
+            fsd.model = model
+            base_fields.extend (fsd._fields)
+        attrs ["base_fields"] = base_fields
+        return super (M_Model_Form, cls).__new__ \
+            (cls, name, bases, attrs)
+    # end def __new__
+
+    def New (cls, model, * form_set_descriptions) :
+        if not form_set_descriptions :
+            form_set_descriptions = \
+               (DJO.Form_Set_Description (model = model), )
+        return super (M_Model_Form, cls).New \
+            ( model.__name__
+            , model                 = model
+            , form_set_descriptions = form_set_descriptions
+            )
+    # end def New
+
+# end class M_Model_Form
+
+class _DJO_Model_Form_ (BaseForm) :
+    """Base class for all form's which derive there fields from a Django
+       model.
+
+       BaseForm expect's a class attribute called `base_fields` which is a
+       sorted dict containing django field instances.
     """
-# end class M_Model
-
-class _DJO_Model_Form_ (ModelForm) :
 
     __metaclass__ = M_Model_Form
     _real_name    = "Model_Form"

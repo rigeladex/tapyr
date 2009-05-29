@@ -28,6 +28,7 @@
 # Revision Dates
 #    28-May-2009 (CT) Creation
 #    29-May-2009 (CT) Creation continued
+#    29-May-2009 (MG) `__getitem__` added
 #    ««revision-date»»···
 #--
 
@@ -120,12 +121,15 @@ class Model_Field_Man (TFL.Meta.Object) :
     # end def __contains__
 
     def __getattr__ (self, name) :
-        d = self.All
         try :
-            return d [name]
+            return self [name]
         except KeyError :
             raise AttributeError, name
     # end def __getattr__
+
+    def __getitem__ (self, key) :
+        return self.All [key]
+    # end def __getitem__
 
     def __iter__ (self) :
         return iter (self.All)

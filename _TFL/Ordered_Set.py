@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -43,6 +43,7 @@
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #     8-Nov-2006 (PGO) Inheritance changed
 #     4-Dec-2006 (PGO) `remove` and `__delitem__` merged to restore interface
+#    29-May-2009 (MG)  `__deepcopy__` added
 #    ««revision-date»»···
 #--
 
@@ -179,6 +180,10 @@ class Ordered_Set (list) :
         return self.index_dict.has_key (value)
     # end def __contains__
     contains = __contains__
+
+    def __deepcopy__ (self, memo = {}) :
+        return self.__class__ (self)
+    # end def __deepcopy__
 
     def __delitem__ (self, value_or_index) :
         if isinstance (value_or_index, int) :

@@ -54,7 +54,11 @@ class News (DJO.Model) :
         verbose_name_plural = "news"
     # end class Meta
 
-    title    = MF.Char ( "Titel", max_length   = 80)
+    title    = MF.Char \
+        ( "Titel"
+        , max_length   = 80
+        , help_text    = "Help text for the title"
+        )
     text     = MF.Text ()
     creator  = models.ForeignKey \
         ( User

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,7 @@
 #     8-Nov-2006 (PGO) Inheritance changed
 #     7-Nov-2007 (CT)  Use `Getter` instead of `Attribute`
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#    29-May-2009 (MG) `*items`, `*keys`, and `*values` added
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,25 @@ class NO_List (TFL.Ordered_Set):
     def has_key (self, name) :
         return self.index_dict.has_key (name)
     # end def has_key
+
+    def iteritems (self) :
+        for i in self :
+            yield (i.name, i)
+    # end def iteritems
+
+    def iterkeys (self) :
+        for i in self :
+            yield i.name
+    # end def iteritems
+
+    def itervalues (self) :
+        for i in self :
+            yield i
+    # end def iter
+
+    def items  (self) : return list (self.iteritems  ())
+    def keys   (self) : return list (self.iterkeys   ())
+    def values (self  : return list (self.itervalues ())
 
     def sort (self, cmp = None, key = None, reverse = False) :
         if key is None :

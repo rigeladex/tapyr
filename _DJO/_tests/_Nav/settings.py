@@ -115,11 +115,6 @@ SESSION_COOKIE_SECURE            = False ### True --> set only for https
 SESSION_EXPIRE_AT_BROWSER_CLOSE  = True
 
 if not DJO.Navigation.Root.top :
-    def _test (signal, sender) :
-        print signal, sender
-    # end def _test
-
-    DJO.models_loaded_signal.connect (_test)
     def handle_500 (request) :
         import sys
         from   django.views import debug
