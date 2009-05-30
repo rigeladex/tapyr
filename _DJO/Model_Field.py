@@ -41,6 +41,8 @@
 #    19-May-2009 (CT) `Foreign_Key`, `Many_to_Many`, and `One_to_One` added
 #    28-May-2009 (CT) `Null` added
 #    28-May-2009 (CT) `sort_key` added
+#    30-May-2009 (CT) `M_Field.__call__` added to save `_creation_kw`
+#    30-May-2009 (CT) `opt_proxy_args` added to `Foreign_Key`
 #    ««revision-date»»···
 #--
 
@@ -61,6 +63,17 @@ class M_Field (TFL.Meta.M_Class, DM.Field.__class__) :
     """Meta class for model fields with support for `.__super` and
        `_real_name`.
     """
+
+    def __call__ (cls, * args, ** kw) :
+        ckw    = dict (kw)
+        result = cls.__m_super.__call__ (* args, ** kw)
+        result._creation_kw = ckw
+        if args :
+            if "verbose_name" not in ckw :
+                ckw ["verbose_name"] = result.verbose_name
+        return result
+    # end def __call__
+
 # end class M_Field
 
 class M_Choice (M_Field) :
@@ -338,7 +351,14 @@ class Float (_Numeric_, DM.FloatField) :
 # end class Float
 
 class Foreign_Key (Field, DM.ForeignKey) :
+
     Null          = None
+
+    def __init__ (self, * args, ** kw) :
+        self.opt_proxy_args = kw.pop ("opt_proxy_args", ())
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
 # end class Foreign_Key
 
 class Image (Field, DM.ImageField) :

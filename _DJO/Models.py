@@ -43,6 +43,8 @@
 #                     `_save_callbacks`
 #    29-May-2009 (CT) `__init__` fixed (needs to call `__super.__init__`)
 #    29-May-2009 (CT) `assimilate` added
+#    30-May-2009 (CT) `M_Model.__new__`, `_handle_foreign_keys`, and
+#                     `_setup_opt_proxy_field` added
 #    ««revision-date»»···
 #--
 
@@ -52,15 +54,22 @@ import _TFL.Record
 
 from   _DJO                               import DJO
 import _DJO.Model_Field_Man
+import _DJO.Model_Field                   as     MF
+
+import datetime
 
 from   django.db                          import models as DM
 from   django.contrib.auth.models         import User
 import django.db.models.base as DBM
-import datetime
 from   django.utils.translation           import gettext_lazy as _
 
 class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     """Meta class for models with support for `.__super` and `_real_name`."""
+
+    def __new__ (meta, name, bases, dict) :
+        meta._handle_foreign_keys (name, bases, dict)
+        return super (M_Model, meta).__new__ (meta, name, bases, dict)
+    # end def __new__
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)
@@ -77,11 +86,50 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     # end def assimilate
 
     @classmethod
+    def _handle_foreign_keys (meta, name, bases, dict) :
+        for k, f in dict.iteritems () :
+            if isinstance (f, MF.Foreign_Key) :
+                if isinstance (f.rel.to, basestring) :
+                    if f.opt_proxy_args :
+                        raise TypeError \
+                            ( "Cannot setup opt_proxy_args for symbolic "
+                              "Foreign_Key %s for model %s"
+                            % (k, name)
+                            )
+                else :
+                    ledom = f.rel.to
+                    for a in f.opt_proxy_args :
+                        if k not in dict :
+                            dleif = getattr (ledom, k)
+                            meta._setup_opt_proxy_field \
+                                (a, k, ledom, dleif, dict)
+    # end def _handle_foreign_keys
+
+    @classmethod
     def _setup_attr (meta, cls) :
         ### this is defined as a class method of the meta class so that it
         ### can be called for `cls` that don't use M_Model as meta class
         cls._F = DJO.Model_Field_Man (cls)
     # end def _setup_attr
+
+    @classmethod
+    def _setup_opt_proxy_field (a, k, ledom, dleif, dict) :
+        ckw   = dict (dleif._creation_kw, blank = True)
+        b     = "_%s" % a.name
+        field = dict [b] = dleif.__class__ (** ckw)
+        def _get (this) :
+            result = getattr (this, b)
+            if result == field.Null :
+                l = getattr (this, k, None)
+                if l is not None :
+                    result = getattr (l, a.name)
+            return result
+        def _set (this, value) :
+            setattr (this, b, value)
+        def _del (this) :
+            setattr (this, b, field.Null)
+        dict [a.name] = property (_get, _set, _del, dleif.help_text)
+    # end def _setup_opt_proxy_field
 
 # end class M_Model
 
