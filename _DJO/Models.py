@@ -46,6 +46,7 @@
 #    30-May-2009 (CT) `M_Model.__new__`, `_handle_foreign_keys`, and
 #                     `_setup_opt_proxy_field` added
 #     1-Jun-2009 (CT) `_handle_foreign_keys` and `_setup_opt_proxy_field` fixed
+#     1-Jun-2009 (CT) Support for `real_name` added
 #    ««revision-date»»···
 #--
 
@@ -116,7 +117,7 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
 
     @classmethod
     def _setup_opt_proxy_field (meta, a, k, ledom, dleif, dct) :
-        ckw   = dict (dleif._creation_kw, blank = True)
+        ckw   = dict (dleif._creation_kw, blank = True, real_name = a)
         b     = "_%s" % a
         field = dct [b] = dleif.__class__ (** ckw)
         def _get (this) :

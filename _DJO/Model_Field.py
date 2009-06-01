@@ -43,6 +43,7 @@
 #    28-May-2009 (CT) `sort_key` added
 #    30-May-2009 (CT) `M_Field.__call__` added to save `_creation_kw`
 #    30-May-2009 (CT) `opt_proxy_args` added to `Foreign_Key`
+#     1-Jun-2009 (CT) Support for `real_name` added
 #    ««revision-date»»···
 #--
 
@@ -108,6 +109,8 @@ class _DJO_Field_ (DM.Field) :
     def __init__ (self, * args, ** kw) :
         if "output_format" in kw :
             self.output_format = kw.pop ("output_format")
+        if "real_name" in kw :
+            self.real_name = kw.pop ("real_name")
         if "Widget" in kw :
             self.Widget        = kw.pop ("Widget")
         if self.Null == "" :

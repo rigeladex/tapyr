@@ -137,7 +137,9 @@ class Boat (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display =
-            ("boat_class", "nation", "sailnumber", "name", "vintage")
+            ( "boat_class", "nation", "sailnumber", "name", "vintage"
+            , "max_crew"
+            )
         )
 
 # end class Boat

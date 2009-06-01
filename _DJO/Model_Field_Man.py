@@ -29,6 +29,8 @@
 #    28-May-2009 (CT) Creation
 #    29-May-2009 (CT) Creation continued
 #    29-May-2009 (MG) `__getitem__` added
+#     1-Jun-2009 (CT) `get` added
+#     1-Jun-2009 (CT) Support for `real_name` added
 #    ««revision-date»»···
 #--
 
@@ -55,10 +57,11 @@ class Model_Field_Man (TFL.Meta.Object) :
     _extension = []
 
     def __init__ (self, model) :
-        self._extension.append   (self)
-        self.All   = TFL.NO_List ()
-        self.Own   = TFL.NO_List ()
-        self.model = model
+        self._extension.append     (self)
+        self.All     = TFL.NO_List ()
+        self.Own     = TFL.NO_List ()
+        self.model   = model
+        self._rn_map = {}
     # end def __init__
 
     def finalize (self) :
@@ -71,6 +74,8 @@ class Model_Field_Man (TFL.Meta.Object) :
         fields          = itertools.chain \
             (model._meta.fields + model._meta.many_to_many)
         for f in sorted (fields, key = _sort_key) :
+            if hasattr (f, "real_name") :
+                self._rn_map [f.real_name] = f.name
             Own.append (f)
         for f in self.Own :
             if isinstance (f, MF.One_to_One) :
@@ -79,8 +84,10 @@ class Model_Field_Man (TFL.Meta.Object) :
                     DJO.M_Model.assimilate (ledom)
                 else :
                     ledom._F.finalize  ()
-                for g in ledom._F.All :
+                for g in ledom._F :
                     if g.name not in Own :
+                        if hasattr (g, "real_name") :
+                            self._rn_map [g.real_name] = g.name
                         All.append (g)
                         self._setup_delegated_field (model, ledom, f, g)
             else :
@@ -92,6 +99,11 @@ class Model_Field_Man (TFL.Meta.Object) :
         for mfm in cls._extension :
             mfm.finalize ()
     # end def finalize_all
+
+    def get (self, key, default = None) :
+        key = self._rn_map.get (key, key)
+        return self.All.get (key, default)
+    # end def get
 
     def _setup_delegated_field (self, model, ledom, field, dleif) :
         def _get (this) :
@@ -119,6 +131,7 @@ class Model_Field_Man (TFL.Meta.Object) :
     # end def __contains__
 
     def __getattr__ (self, name) :
+        name = self._rn_map.get (name, name)
         try :
             return self [name]
         except KeyError :
@@ -126,6 +139,7 @@ class Model_Field_Man (TFL.Meta.Object) :
     # end def __getattr__
 
     def __getitem__ (self, key) :
+        key = self._rn_map.get (key, key)
         return self.All [key]
     # end def __getitem__
 
