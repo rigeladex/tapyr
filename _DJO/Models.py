@@ -45,6 +45,7 @@
 #    29-May-2009 (CT) `assimilate` added
 #    30-May-2009 (CT) `M_Model.__new__`, `_handle_foreign_keys`, and
 #                     `_setup_opt_proxy_field` added
+#     1-Jun-2009 (CT) `_handle_foreign_keys` and `_setup_opt_proxy_field` fixed
 #    ««revision-date»»···
 #--
 
@@ -66,13 +67,13 @@ from   django.utils.translation           import gettext_lazy as _
 class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     """Meta class for models with support for `.__super` and `_real_name`."""
 
-    def __new__ (meta, name, bases, dict) :
-        meta._handle_foreign_keys (name, bases, dict)
-        return super (M_Model, meta).__new__ (meta, name, bases, dict)
+    def __new__ (meta, name, bases, dct) :
+        meta._handle_foreign_keys (name, bases, dct)
+        return super (M_Model, meta).__new__ (meta, name, bases, dct)
     # end def __new__
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         cls._setup_attr        (cls)
     # end def __init__
 
@@ -86,8 +87,8 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     # end def assimilate
 
     @classmethod
-    def _handle_foreign_keys (meta, name, bases, dict) :
-        for k, f in dict.iteritems () :
+    def _handle_foreign_keys (meta, name, bases, dct) :
+        for k, f in list (dct.iteritems ()) :
             if isinstance (f, MF.Foreign_Key) :
                 if isinstance (f.rel.to, basestring) :
                     if f.opt_proxy_args :
@@ -99,10 +100,11 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
                 else :
                     ledom = f.rel.to
                     for a in f.opt_proxy_args :
-                        if k not in dict :
-                            dleif = getattr (ledom, k)
+                        if a not in dct :
+                            ### Can't rely on `dleif._F` yet, unfortunately
+                            dleif = ledom._meta.get_field (a)
                             meta._setup_opt_proxy_field \
-                                (a, k, ledom, dleif, dict)
+                                (a, k, ledom, dleif, dct)
     # end def _handle_foreign_keys
 
     @classmethod
@@ -113,22 +115,22 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     # end def _setup_attr
 
     @classmethod
-    def _setup_opt_proxy_field (a, k, ledom, dleif, dict) :
+    def _setup_opt_proxy_field (meta, a, k, ledom, dleif, dct) :
         ckw   = dict (dleif._creation_kw, blank = True)
-        b     = "_%s" % a.name
-        field = dict [b] = dleif.__class__ (** ckw)
+        b     = "_%s" % a
+        field = dct [b] = dleif.__class__ (** ckw)
         def _get (this) :
             result = getattr (this, b)
             if result == field.Null :
                 l = getattr (this, k, None)
                 if l is not None :
-                    result = getattr (l, a.name)
+                    result = getattr (l, a)
             return result
         def _set (this, value) :
             setattr (this, b, value)
         def _del (this) :
             setattr (this, b, field.Null)
-        dict [a.name] = property (_get, _set, _del, dleif.help_text)
+        dct [a] = property (_get, _set, _del, dleif.help_text)
     # end def _setup_opt_proxy_field
 
 # end class M_Model

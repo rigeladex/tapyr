@@ -93,6 +93,7 @@ class Boat (DJO.Model) :
 
     boat_class            = MF.Foreign_Key \
         ( Boat_Class
+        , opt_proxy_args  = ("max_crew", "yardstick")
         , verbose_name    = _("Boat-Class")
         )
     nation                = MF.Choice \
@@ -124,34 +125,6 @@ class Boat (DJO.Model) :
         , help_text       = _("Name of the boat")
         , max_length      = 80
         )
-    _max_crew             = MF.Small_Integer \
-        ( _("Max-Crew")
-        , blank           = True
-        , help_text       =
-            _("Maximum number of crew (default: `boat_class.max_crew`)")
-        , min_value       = 1
-        , max_value       = 5
-        , null            = True
-        )
-    _yardstick            = MF.Small_Integer \
-        ( _("Yardstick")
-        , blank           = True
-        , help_text       =
-            _("Yardstick number (default: `boat_class.yardstick`)")
-        , min_value       = 50
-        , max_value       = 200
-        , null            = True
-        )
-
-    @property
-    def max_crew (self) :
-        return self._max_crew or self.boat_class.max_crew
-    # end def max_crew
-
-    @property
-    def yardstick (self) :
-        return self._yardstick or self.boat_class.yardstick
-    # end def yardstick
 
     def __unicode__ (self) :
         if self.sailnumber :
