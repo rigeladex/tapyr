@@ -47,6 +47,8 @@
 #                     `_setup_opt_proxy_field` added
 #     1-Jun-2009 (CT) `_handle_foreign_keys` and `_setup_opt_proxy_field` fixed
 #     1-Jun-2009 (CT) Support for `real_name` added
+#     1-Jun-2009 (CT) `_handle_foreign_keys` changed to add `_<name>_owned`
+#                     fields for One_to_One fields
 #    ««revision-date»»···
 #--
 
@@ -90,7 +92,11 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
     @classmethod
     def _handle_foreign_keys (meta, name, bases, dct) :
         for k, f in list (dct.iteritems ()) :
-            if isinstance (f, MF.Foreign_Key) :
+            if isinstance (f, MF.One_to_One) :
+                ko = "_%s_owned" % k
+                dct [ko] = MF.Boolean \
+                    (ko, blank = True, null = True, editable = False)
+            elif isinstance (f, MF.Foreign_Key) :
                 if isinstance (f.rel.to, basestring) :
                     if f.opt_proxy_args :
                         raise TypeError \

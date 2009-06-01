@@ -101,8 +101,10 @@ class Model_Field_Man (TFL.Meta.Object) :
     # end def finalize_all
 
     def get (self, key, default = None) :
-        key = self._rn_map.get (key, key)
-        return self.All.get (key, default)
+        try :
+            return self [key]
+        except KeyError :
+            return default
     # end def get
 
     def _setup_delegated_field (self, model, ledom, field, dleif) :
@@ -126,12 +128,12 @@ class Model_Field_Man (TFL.Meta.Object) :
             (model, dleif.name, property (_get, _set, _del, dleif.help_text))
     # end def _setup_delegated_field
 
-    def __contains__ (self, item) :
-        return item in self.All
+    def __contains__ (self, key) :
+        key = self._rn_map.get (key, key)
+        return key in self.All
     # end def __contains__
 
     def __getattr__ (self, name) :
-        name = self._rn_map.get (name, name)
         try :
             return self [name]
         except KeyError :
@@ -140,7 +142,10 @@ class Model_Field_Man (TFL.Meta.Object) :
 
     def __getitem__ (self, key) :
         key = self._rn_map.get (key, key)
-        return self.All [key]
+        try :
+            return self.All [key]
+        except KeyError :
+            return self.Own [key]
     # end def __getitem__
 
     def __iter__ (self) :
