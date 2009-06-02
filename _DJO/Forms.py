@@ -37,8 +37,9 @@
 #     4-Feb-2009 (CT) Derive from `TFL.Meta.Object` instead of `object` and
 #                     `TFL.Meta.M_Class` instead of `type`
 #    28-May-2009 (CT) Legacy removed
-#    29-May-2009 (MG) `M_Model_Form` filled with live
-#    29-May-2009 (MG) `M_Model_Form` filled with live continued
+#    29-May-2009 (MG) `M_Model_Form` filled with life
+#    29-May-2009 (MG) `M_Model_Form` filled with life continued
+#     2-Jun-2009 (MG) `Model_Form.save` added
 #    ««revision-date»»···
 #--
 
@@ -58,7 +59,7 @@ from   django.forms                import BaseModelForm
 @TFL.Contextmanager
 def object_to_save (self, commit=True) :
     """Context manager for saving an object created from a form"""
-    obj = self.save (commit=False)
+    obj = self.save (commit = False)
     try :
         yield obj
     finally :
@@ -68,7 +69,7 @@ def object_to_save (self, commit=True) :
 # end def object_to_save
 
 class M_Model_Form (TFL.Meta.M_Class) :
-    """Meta class for forms based on a djnago model."""
+    """Meta class for forms based on a django model."""
 
     def __new__ (cls, name, bases, attrs) :
         base_fields = TFL.NO_List ()
@@ -118,6 +119,39 @@ class _DJO_Model_Form_ (BaseModelForm) :
             result = self._djo_clean (result)
         return result
     # end def clean
+
+    def save (self, commit = True) :
+        from django.db import models
+
+        instance     = self.instance
+        _F           = instance._F
+        cleaned_data = self.cleaned_data
+        if self.errors :
+            raise ValueError\
+                ( "The %s could not be %s because the data didn't "
+                  "validate."
+                % ( instance._meta.object_name
+                  , "created" if not instance.pk else "changed"
+                  )
+                )
+        file_field_defers = []
+        for ff in self.fields :
+            df    = _F [ff.name]
+            # Defer saving file-type fields until after the other fields, so a
+            # callable upload_to can use the values from other fields.
+            if isinstance (df, models.FileField):
+                file_field_defers.append (dj)
+            else:
+                df.save_form_data (instance, cleaned_data [df.name])
+
+        for df in file_field_defers :
+            df.save_form_data (instance, cleaned_data [df.name])
+        return instance
+    # end def save
+
+    def save_m2m (self) :
+        pass
+    # end def save_m2m
 
 Model_Form = _DJO_Model_Form_ # end class
 

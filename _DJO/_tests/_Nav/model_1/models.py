@@ -83,7 +83,21 @@ class News (DJO.Model) :
         , blank        = True
         , max_length   = 80
         )
+
+    def __unicode__ (self) :
+        return self.title
+    # end def __unicode__
+
 # end class News
+
+class News_Extender (DJO.Model) :
+    """Use a One2One relation to use to test the new form generation stuff."""
+
+    news = MF.One_to_One (News)
+
+    additional_text = MF.Text ()
+
+# end class News_Extender
 
 ### __END__ model_1.models
 

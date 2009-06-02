@@ -31,6 +31,9 @@
 #    29-May-2009 (MG) `__getitem__` added
 #     1-Jun-2009 (CT) `get` added
 #     1-Jun-2009 (CT) Support for `real_name` added
+#     1-Jun-2009 (MG) Special save handling added if `ledom` is created
+#                     automatically
+#     2-Jun-2009 (MG) `Own_O2O` added, setting of `_%_owned` added
 #    ««revision-date»»···
 #--
 
@@ -60,6 +63,7 @@ class Model_Field_Man (TFL.Meta.Object) :
         self._extension.append     (self)
         self.All     = TFL.NO_List ()
         self.Own     = TFL.NO_List ()
+        self.Own_O2O = TFL.NO_List ()
         self.model   = model
         self._rn_map = {}
     # end def __init__
@@ -79,6 +83,7 @@ class Model_Field_Man (TFL.Meta.Object) :
             Own.append (f)
         for f in self.Own :
             if isinstance (f, MF.One_to_One) :
+                self.Own_O2O.append (f)
                 ledom = f.rel.to
                 if not hasattr (ledom, "_F") :
                     DJO.M_Model.assimilate (ledom)
@@ -113,13 +118,30 @@ class Model_Field_Man (TFL.Meta.Object) :
             if l is not None :
                 return getattr (l, dleif.name)
         def _set (this, value) :
-            l = getattr (this, field.name, None)
+            created = False
+            try :
+                l   = getattr (this, field.name, None)
+            except ledom.DoesNotExist :
+                l   = None
             if l is None :
-                l = ledom ()
+                created = True
+                l       = ledom ()
                 setattr (this, field.name, l)
-            if get (this) != value :
+            if _get (this) != value :
                 setattr (l, dleif.name, value)
-                this._save_callbacks.add (l.save)
+                if created :
+                    ### save the information that the `ledom` was created
+                    ### automatically so that we can delete it automatically
+                    ### as well
+                    setattr (this, "_%s_owned" % (field.name, ), True)
+                    def save () :
+                        l.save ()
+                        setattr (this, field.name, l)
+                    # end def save
+                else :
+                    save = l.save
+                if l not in this._save_callbacks :
+                    this._save_callbacks [l] = save
         def _del (this) :
             l = getattr (this, field.name, None)
             if l is not None :

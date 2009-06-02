@@ -49,6 +49,10 @@
 #     1-Jun-2009 (CT) Support for `real_name` added
 #     1-Jun-2009 (CT) `_handle_foreign_keys` changed to add `_<name>_owned`
 #                     fields for One_to_One fields
+#     1-Jun-2009 (MG) `_save_callbacks` changed to dict
+#     2-Jun-2009 (MG) `_<name>_owned`: cannot have `null = True` (at least on
+#                     sqlite)
+#     2-Jun-2009 (MG) `delete` added
 #    ««revision-date»»···
 #--
 
@@ -95,7 +99,7 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
             if isinstance (f, MF.One_to_One) :
                 ko = "_%s_owned" % k
                 dct [ko] = MF.Boolean \
-                    (ko, blank = True, null = True, editable = False)
+                    (ko, blank = True, editable = False)
             elif isinstance (f, MF.Foreign_Key) :
                 if isinstance (f.rel.to, basestring) :
                     if f.opt_proxy_args :
@@ -152,13 +156,22 @@ class _DJO_Model_ (DM.Model) :
     # end class Meta
 
     def __init__ (self, * args, ** kw) :
-        self._save_callbacks = set ()
+        self._save_callbacks = {}
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
+    def delete (self) :
+        for f in self._F.Own_O2O :
+            ### if this object was created automatically we should delete it
+            ### automatically as well
+            if getattr (self, "_%s_owned" % (f.name, )) :
+                getattr (self, f.name).delete ()
+        self.__super.delete ()
+    # end def delete
+
     def save (self, * args, ** kw) :
         try :
-            for sc in self._save_callbacks :
+            for sc in self._save_callbacks.itervalues () :
                 sc ()
         finally :
             self._save_callbacks.clear ()
