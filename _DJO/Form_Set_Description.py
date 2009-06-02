@@ -36,12 +36,12 @@ import _TFL._Meta.Object
 from   _DJO               import DJO
 
 class Form_Set_Description (TFL.Meta.Object) :
-    """XXX"""
+    """Describes a part of a form used to create/edit a Django model"""
 
     defaults = dict (template = "")
 
     def __init__ (self, * fields, ** kw) :
-        self.template            = kw.pop ("template", self.defaults ["template"])
+        self.template = kw.pop ("template", self.defaults ["template"])
         self._field_descriptions = fields
         self.model               = kw.pop ("model", None)
     # end def __init__

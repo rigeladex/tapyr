@@ -40,6 +40,7 @@
 #    29-May-2009 (MG) `M_Model_Form` filled with life
 #    29-May-2009 (MG) `M_Model_Form` filled with life continued
 #     2-Jun-2009 (MG) `Model_Form.save` added
+#     2-Jun-2009 (MG) `model_to_dict` added
 #    ««revision-date»»···
 #--
 
@@ -52,8 +53,11 @@ import _TFL.NO_List
 
 import _DJO.Form_Set_Description
 
-from   django.forms                import BaseForm
-from   django.forms                import BaseModelForm
+from   django.forms                import BaseForm, BaseModelForm
+from   django.forms.util           import ErrorList
+from   django.forms                import models
+
+django_model_to_dict = models.model_to_dict
 
 @TFL.Add_New_Method (BaseModelForm)
 @TFL.Contextmanager
@@ -100,6 +104,38 @@ class M_Model_Form (TFL.Meta.M_Class) :
     # end def New
 
 # end class M_Model_Form
+
+def model_to_dict (instance, fields = None, exclude = None) :
+    _F = getattr (instance, "_F", None)
+    if _F is not None :
+        ### XXX don't know if we need this, depends on how ManyToManyField
+        ### will be implemented
+        from django.db.models.fields.related import ManyToManyField
+        ### we build the data dict in a different way
+        data = {}
+        exclude = (exclude or ())
+        for fn in fields or [f.name for f in _F if f.editable] :
+            if fn in exclude :
+                continue
+            f = _F [fn]
+            if isinstance (f, ManyToManyField):
+                # If the object doesn't have a primry key yet, just use an empty
+                # list for its m2m fields. Calling f.value_from_object will
+                # raise an exception.
+                if instance.pk is None:
+                    data [f.name] = []
+                else:
+                    # MultipleChoiceWidget needs a list of pks, not object
+                    # instances.
+                    data [f.name] = \
+                         [obj.pk for obj in f.value_from_object (instance)]
+            else:
+                data [f.name] = f.value_from_object (instance)
+        return data
+    else :
+        return django_model_to_dict (instance, fields, exclude)
+# end def model_to_dict
+models.model_to_dict = model_to_dict
 
 class _DJO_Model_Form_ (BaseModelForm) :
     """Base class for all form's which derive there fields from a Django
