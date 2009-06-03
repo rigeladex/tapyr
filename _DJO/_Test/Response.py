@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# Copyright (C) 2005-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@smangari.org
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #     7-Oct-2008 (MG) Creation
 #    10-Oct-2008 (MG) `check_form_errors` added
+#    02-Jun-2009 (MG) `__str__` and `__unicode__` added
 #    ««revision-date»»···
 #--
 
@@ -129,6 +130,14 @@ class Response (TFL.Meta.Object) :
                 (path, QueryDict (query))
             assert redirect_response.status_code == status_code
     # end def check_redirect
+
+    def __str__ (self) :
+        return str (self._response.content)
+    # end def __str__
+
+    def __unicode__ (self) :
+        return unicode (self._response.content)
+    # end def __unicode__
 
 # end class Response
 

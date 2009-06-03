@@ -41,6 +41,9 @@
 #    29-May-2009 (MG) `M_Model_Form` filled with life continued
 #     2-Jun-2009 (MG) `Model_Form.save` added
 #     2-Jun-2009 (MG) `model_to_dict` added
+#     2-Jun-2009 (MG) Support for wildcard field spec (`*`) added. Problem in
+#                     `Model_Form.save` fixed
+#    02-Jun-2009 (MG) Cleanup of `New`
 #    ««revision-date»»···
 #--
 
@@ -78,18 +81,17 @@ class M_Model_Form (TFL.Meta.M_Class) :
     def __new__ (cls, name, bases, attrs) :
         base_fields = TFL.NO_List ()
         model       = attrs.get ("model", None)
-        for fsd in attrs.pop ("form_set_descriptions", ()) :
+        used_fields = set ()
+        for fsd in attrs.get ("form_set_descriptions", ()) :
             fsd.model = model
-            base_fields.extend (fsd._fields)
+            base_fields.extend (fsd.setup_fields (used_fields))
         attrs ["base_fields"] = base_fields
         return super (M_Model_Form, cls).__new__ \
             (cls, name, bases, attrs)
     # end def __new__
 
     def New (cls, model, * form_set_descriptions) :
-        class Meta :
-            fields = ()
-            exclude = ()
+        class Meta : pass
         Meta.model = model
 
         if not form_set_descriptions :
@@ -149,6 +151,12 @@ class _DJO_Model_Form_ (BaseModelForm) :
     _real_name    = "Model_Form"
     _djo_clean    = None
 
+    def __init__ (self, * args, ** kw) :
+        for fsd in self.form_set_descriptions :
+            fsd.form = self
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
     def clean (self) :
         result = self.__super.clean ()
         if callable (self._djo_clean) :
@@ -161,7 +169,6 @@ class _DJO_Model_Form_ (BaseModelForm) :
 
         instance     = self.instance
         _F           = instance._F
-        cleaned_data = self.cleaned_data
         if self.errors :
             raise ValueError\
                 ( "The %s could not be %s because the data didn't "
@@ -170,6 +177,7 @@ class _DJO_Model_Form_ (BaseModelForm) :
                   , "created" if not instance.pk else "changed"
                   )
                 )
+        cleaned_data      = self.cleaned_data
         file_field_defers = []
         for ff in self.fields :
             df    = _F [ff.name]

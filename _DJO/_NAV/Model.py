@@ -51,6 +51,8 @@
 #    29-May-2009 (CT) Use `_F` instead of `_meta` to access fields
 #    29-May-2009 (MG) Use new `DJO.Model_Form.New` in `_auto_form`
 #     1-Jun-2009 (CT) Use `_F` instead of `_F.All`
+#     2-Jun-2009 (MG) `_auto_form` changed to support form sets defined in
+#                     the models
 #    ««revision-date»»···
 #--
 
@@ -319,22 +321,13 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
     def _auto_form (self, Model, kw) :
         import _DJO.Forms
-        Form_Type = kw.get ("Form", DJO.Model_Form)
-        form_name = "%s_Form" % Model.__name__
-        form_dict = dict \
-            ( Meta = type
-                ( "Meta", (object, )
-                , dict
-                    ( exclude = kw.get ("exclude")
-                    , fields  = kw.get ("fields")
-                    , model   = Model
-                    )
-                )
-            )
+        Form_Type             = kw.get ("Form", DJO.Model_Form)
+        form_name             = "%s_Form" % Model.__name__
+        form_dict             = dict ()
+        form_set_descriptions = kw.get ("form_set_descriptions", ())
         if "_djo_clean" in kw :
             form_dict ["_djo_clean"] = kw ["_djo_clean"]
-        result = Form_Type.New (Model) #, ** form_dict)
-        return result
+        return Form_Type.New (Model, * form_set_descriptions, ** form_dict)
     # end def _auto_form
 
     def _get_child (self, child, * grandchildren) :

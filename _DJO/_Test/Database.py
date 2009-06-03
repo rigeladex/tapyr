@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2008 Martin Glück. All rights reserved
+# Copyright (C) 2005-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@smangari.org
 # ****************************************************************************
 #
@@ -90,5 +90,3 @@ if __name__ != "__main__" :
     from _DJO._Test import Test
     Test._Export ("*")
 ### __END__ Database
-
-

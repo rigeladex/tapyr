@@ -1,0 +1,11 @@
+{% load TGL %}
+  <form method="post" action="">
+    <table>
+      {% for fs in form.form_set_descriptions %}
+        {% rrender fs.template %}
+      {% endfor %}
+    </table>
+    <div class="submit-button">
+      <input type="submit" value="Sichern" />
+    </div>
+  </form>

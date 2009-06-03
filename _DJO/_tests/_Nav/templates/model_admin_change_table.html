@@ -1,0 +1,5 @@
+{% for field in fs %}
+    <tr><th>{{ field.label_tag}}</th>
+        <td>{{ field.errors}}{{field}} HT: {{field.help_text}}</td>
+    </tr>
+{% endfor %}
