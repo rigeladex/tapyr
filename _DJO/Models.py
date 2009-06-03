@@ -53,6 +53,8 @@
 #     2-Jun-2009 (MG) `_<name>_owned`: cannot have `null = True` (at least on
 #                     sqlite)
 #     2-Jun-2009 (MG) `delete` added
+#     3-Jun-2009 (CT) `_setup_opt_proxy_field` changed to set
+#                     `null = (dleif.Null is None)`
 #    ««revision-date»»···
 #--
 
@@ -127,7 +129,8 @@ class M_Model (TFL.Meta.M_Class, DM.Model.__class__) :
 
     @classmethod
     def _setup_opt_proxy_field (meta, a, k, ledom, dleif, dct) :
-        ckw   = dict (dleif._creation_kw, blank = True, real_name = a)
+        ckw   = dict (dleif._creation_kw)
+        ckw.update   (blank = True, null = (dleif.Null is None), real_name = a)
         b     = "_%s" % a
         field = dct [b] = dleif.__class__ (** ckw)
         def _get (this) :
