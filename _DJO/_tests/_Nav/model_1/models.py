@@ -98,11 +98,18 @@ class News_Extender (DJO.Model) :
 
     additional_text = MF.Text ()
 
+    @classmethod
+    def _form_clean (cls, cleaned_data) :
+        print "Model clean called"
+        return cleaned_data
+    # end def _form_clean
+
     NAV_admin_args  = dict \
         ( form_set_descriptions =
               ( DJO.Form_Set_Description ("title", "text", "additional_text")
               ,
               )
+        , _djo_clean = _form_clean
         )
 # end class News_Extender
 

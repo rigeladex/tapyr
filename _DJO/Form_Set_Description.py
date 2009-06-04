@@ -41,7 +41,7 @@ import _TFL._Meta.Object
 from   _DJO               import DJO
 
 class Field_Description (TFL.Meta.Object) :
-    """Desciption of how a field should be rendered in a form (set)"""
+    """Description of how a field should be rendered in a form (set)"""
 
     def __init__ (self, name, ** kw) :
         self.name = name

@@ -123,10 +123,31 @@ Admin Site
 ['title', 'text', 'date_pub', 'author']
 >>> [bff.name for bff in news_extender_form_cls ()]
 ['title', 'text', 'additional_text']
+>>> news_extender_form_cls ({}).full_clean ()
+Model clean called
 
 >>> c = DJO.Test.Client ()
 >>> response = c.get ("/news/create")
 >>> print response
+<form method="post" action="">
+    <table>
+    <tr><th><label for="id_title">Titel</label></th>
+        <td><input id="id_title" type="text" name="title" maxlength="80" /> HT: Help text for the title</td>
+    </tr>
+    <tr><th><label for="id_text">Text</label></th>
+        <td><input type="text" name="text" id="id_text" /> HT: </td>
+    </tr>
+    <tr><th><label for="id_date_pub">Erscheinungs-Datum</label></th>
+        <td><input type="text" name="date_pub" id="id_date_pub" /> HT: </td>
+    </tr>
+    <tr><th><label for="id_author">Autor</label></th>
+        <td><input id="id_author" type="text" name="author" maxlength="80" /> HT: </td>
+    </tr>
+    </table>
+    <div class="submit-button">
+      <input type="submit" value="Sichern" />
+    </div>
+  </form>
 """
 
 import  os

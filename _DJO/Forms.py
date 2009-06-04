@@ -44,6 +44,7 @@
 #     2-Jun-2009 (MG) Support for wildcard field spec (`*`) added. Problem in
 #                     `Model_Form.save` fixed
 #    02-Jun-2009 (MG) Cleanup of `New`
+#     4-Jun-2009 (MG) `**kw` added to `M_Model_Form.New`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +91,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
             (cls, name, bases, attrs)
     # end def __new__
 
-    def New (cls, model, * form_set_descriptions) :
+    def New (cls, model, * form_set_descriptions, ** kw) :
         class Meta : pass
         Meta.model = model
 
@@ -102,6 +103,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
             , model                 = model
             , form_set_descriptions = form_set_descriptions
             , _meta                 = Meta
+            , ** kw
             )
     # end def New
 
