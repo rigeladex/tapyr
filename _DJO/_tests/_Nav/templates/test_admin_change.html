@@ -1,7 +1,7 @@
 {% load TGL %}
   <form method="post" action="">
     <table>
-      {% for fs in form.form_set_descriptions %}
+      {% for fs in form.form_sets %}
         {% rrender fs.template %}
       {% endfor %}
     </table>

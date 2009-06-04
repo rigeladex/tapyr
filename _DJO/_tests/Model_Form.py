@@ -123,11 +123,13 @@ Admin Site
 ['title', 'text', 'date_pub', 'author']
 >>> [bff.name for bff in news_extender_form_cls ()]
 ['title', 'text', 'additional_text']
+>>> news_extender_form_cls.form_set_descriptions [0].template
+'model_admin_change_table.html'
 >>> news_extender_form_cls ({}).full_clean ()
 Model clean called
 
 >>> c = DJO.Test.Client ()
->>> response = c.get ("/news/create")
+>>> response = c.get ("/news_ extender/create")
 >>> print response
 <form method="post" action="">
     <table>
@@ -137,11 +139,8 @@ Model clean called
     <tr><th><label for="id_text">Text</label></th>
         <td><input type="text" name="text" id="id_text" /> HT: </td>
     </tr>
-    <tr><th><label for="id_date_pub">Erscheinungs-Datum</label></th>
-        <td><input type="text" name="date_pub" id="id_date_pub" /> HT: </td>
-    </tr>
-    <tr><th><label for="id_author">Autor</label></th>
-        <td><input id="id_author" type="text" name="author" maxlength="80" /> HT: </td>
+    <tr><th><label for="id_additional_text">Additional text</label></th>
+        <td><input type="text" name="additional_text" id="id_additional_text" /> HT: </td>
     </tr>
     </table>
     <div class="submit-button">

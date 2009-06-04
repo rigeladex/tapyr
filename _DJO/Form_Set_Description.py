@@ -23,7 +23,7 @@
 #    DJO.Form_Set_Description
 #
 # Purpose
-#    «text»···
+#    Classes to describe form set's and the handling for fromset in forms
 #
 # Revision Dates
 #    29-May-2009 (MG) Creation
@@ -33,6 +33,8 @@
 #     2-Jun-2009 (MG) `setup_fields`: Parameter `used_fields` added, support
 #                     for wildcard field * added
 #     2-Jun-2009 (MG) `Field_Description` added
+#     4-Jun-2009 (MG) Reorganized: `Form_Set` and `Bound_Form_Set` factored
+#                     out of `Form_Set_Description`
 #    ««revision-date»»···
 #--
 
@@ -57,30 +59,39 @@ class Field_Description (TFL.Meta.Object) :
 class Form_Set_Description (TFL.Meta.Object) :
     """Describes a part of a form used to create/edit a Django model"""
 
-    defaults = dict (template = "model_admin_change_table.html")
+    template = None
 
     def __init__ (self, * fields, ** kw) :
-        self.template = kw.pop ("template", self.defaults ["template"])
         self.exclude  = set (kw.pop ("exclude", ()))
-        self._field_descriptions = fields
-        self.model               = kw.pop ("model", None)
-        if self.model :
-            self.setup_fields ()
+        self.fields   = fields
+        self.__dict__.update (kw)
     # end def __init__
 
-    def setup_fields (self, used_fields = set ()) :
-        model        = self.model
-        _F           = model._F
-        exclude      = self.exclude
-        self._fields = []
-        _fields      = self._field_descriptions
-        if (   (len (self._field_descriptions) == 1)
-           and (self._field_descriptions [0]   == "*")
+    def __call__ (self, model = None, used_fields = set ()) :
+        return DJO.Form_Set (model or self.model, self, used_fields)
+    # end def __call__
+
+# end class Form_Set_Description
+
+class Form_Set (TFL.Meta.Object) :
+    """A Form_Set binds a form set description to an model."""
+
+    def __init__ (self, model, fsd = None, used_fields = ()) :
+        self.model                = model
+        self.form_set_description = fsd
+        _F                        = model._F
+        if not fsd :
+            fsd                   = DJO.Field_Description ()
+        exclude                   = fsd.exclude
+        self.fields               = []
+        fields                    = fsd.fields
+        if (   (len (fields) == 1)
+           and (fields [0]   == "*")
            ) :
-            _fields = None
+            fields  = None
             exclude = used_fields.copy ()
-            exclude.update             (self.exclude)
-        for fd in _fields or [f.name for f in _F if f.editable] :
+            exclude.update             (fsd.exclude)
+        for fd in fields or [f.name for f in _F if f.editable] :
             name     = str (fd)
             if name in exclude :
                 continue
@@ -98,19 +109,44 @@ class Form_Set_Description (TFL.Meta.Object) :
                 ### need to use the TFL.NO_list to keep the order but a
                 ### NO_List needs a `name`
                 fo_field.name = dj_field.name
-                self._fields.append (fo_field)
+                self.fields.append (fo_field)
                 used_fields.add (name)
-        return self._fields
-    # end def setup_fields
+    # end def __init__
+
+    def __call__ (self, form) :
+        return DJO.Bound_Form_Set (self, form)
+    # end def __call__
+
+    def __getattr__ (self, name) :
+        return getattr (self.form_set_description, name)
+    # end def __getattr__
+
+    def __iter__ (self) :
+        return iter (self.fields)
+    # end def __iter__
+
+# end class Form_Set
+
+class Bound_Form_Set (TFL.Meta.Object) :
+    """A formset bound to an instance of a Form"""
+
+    def __init__ (self, form_set, form) :
+        self.form_set = form_set
+        self.form     = form
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        return getattr (self.form_set, name)
+    # end def __getattr__
 
     def __iter__ (self) :
         from django.forms.forms import BoundField
 
-        for field in self._fields :
+        for field in self.form_set.fields :
             yield BoundField (self.form, field, field.name)
     # end def __iter__
 
-# end class Form_Set_Description
+# end class Bound_Form_Set
 
 if __name__ != "__main__" :
     DJO._Export ("*")

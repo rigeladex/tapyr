@@ -45,6 +45,7 @@
 #                     `Model_Form.save` fixed
 #    02-Jun-2009 (MG) Cleanup of `New`
 #     4-Jun-2009 (MG) `**kw` added to `M_Model_Form.New`
+#     4-Jun-2009 (MG) Use new `Form_Set` and `Bound_Form_Set` class
 #    ««revision-date»»···
 #--
 
@@ -83,9 +84,11 @@ class M_Model_Form (TFL.Meta.M_Class) :
         base_fields = TFL.NO_List ()
         model       = attrs.get ("model", None)
         used_fields = set ()
+        form_sets   = attrs ["unbound_form_sets"] = []
         for fsd in attrs.get ("form_set_descriptions", ()) :
-            fsd.model = model
-            base_fields.extend (fsd.setup_fields (used_fields))
+            form_set = fsd     (model, used_fields)
+            form_sets.append   (form_set)
+            base_fields.extend (form_set)
         attrs ["base_fields"] = base_fields
         return super (M_Model_Form, cls).__new__ \
             (cls, name, bases, attrs)
@@ -154,8 +157,9 @@ class _DJO_Model_Form_ (BaseModelForm) :
     _djo_clean    = None
 
     def __init__ (self, * args, ** kw) :
-        for fsd in self.form_set_descriptions :
-            fsd.form = self
+        self.form_sets = []
+        for ufs in self.unbound_form_sets :
+            self.form_sets.append (ufs (self))
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
