@@ -46,6 +46,7 @@
 #    02-Jun-2009 (MG) Cleanup of `New`
 #     4-Jun-2009 (MG) `**kw` added to `M_Model_Form.New`
 #     4-Jun-2009 (MG) Use new `Form_Set` and `Bound_Form_Set` class
+#     5-Jun-2009 (MG) Update `_meta.fields` based on the form set descriptions
 #    ««revision-date»»···
 #--
 
@@ -89,14 +90,18 @@ class M_Model_Form (TFL.Meta.M_Class) :
             form_set = fsd     (model, used_fields)
             form_sets.append   (form_set)
             base_fields.extend (form_set)
-        attrs ["base_fields"] = base_fields
+        _meta                  = attrs.get ("_meta", None)
+        if _meta :
+            _meta.fields = [f.name for f in base_fields]
+        attrs ["base_fields"]  = base_fields
         return super (M_Model_Form, cls).__new__ \
             (cls, name, bases, attrs)
     # end def __new__
 
     def New (cls, model, * form_set_descriptions, ** kw) :
-        class Meta : pass
-        Meta.model = model
+        class Meta :
+            exclude = ()
+        Meta.model  = model
 
         if not form_set_descriptions :
             form_set_descriptions = \

@@ -93,6 +93,9 @@ INSTALLED_APPS = (
     "_DJO._Apps.Base",
     ### add a few test models
     "_DJO._tests._Nav.model_1",
+    "_DJO._Apps.Person",
+    "_DJO._Apps.Regatta",
+    ### last model to setup the navigation
     "_DJO._tests._Nav.nav"
 )
 

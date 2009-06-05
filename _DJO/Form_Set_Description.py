@@ -35,6 +35,8 @@
 #     2-Jun-2009 (MG) `Field_Description` added
 #     4-Jun-2009 (MG) Reorganized: `Form_Set` and `Bound_Form_Set` factored
 #                     out of `Form_Set_Description`
+#     5-Jun-2009 (MG) `Form_Set.__init__` honor `required` of field
+#                     description
 #    ««revision-date»»···
 #--
 
@@ -98,11 +100,13 @@ class Form_Set (TFL.Meta.Object) :
             dj_field              = _F [name]
             kw                    = dict (widget = getattr (fd, "widget", None))
             form_field_class      = getattr (fd, "form_flield_class", None)
-            if form_field_class is not None :
-                ### the default form class is set as default of the
-                ### constructor. therefore only pass the argument if really
-                ### required
-                kw ["form_class"] = form_field_class
+            ### the following attribues must not be passed to `formfield` is
+            ### they have not been specified in the field definition to
+            ### ensure the proper default
+            for attr in "form_class", "required" :
+                value = getattr (fd, attr, None)
+                if value is not None :
+                    kw [attr]     = value
             fo_field              = dj_field.formfield (** kw)
             if fo_field :
                 ### we need to set the name for the form-field because we

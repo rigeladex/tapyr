@@ -53,11 +53,21 @@ NAV        = DJO.Navigation.Root.from_nav_list_file \
 
 def add_admin_setction () :
     from   _DJO._tests._Nav.model_1.models import News, News_Extender
+    from   _DJO._Apps.Person.models        import \
+         Address, Email_Address, Person, Phone_Number
+    from   _DJO._Apps.Regatta.models        import \
+         Boat_Class, Boat, Sailor
+    from django.contrib.auth.models import User
     DJO.Navigation.Root.top.add_entries \
         ( [ dict
               ( sub_dir      = "Admin"
               , title        = "Admin"
-              , models       = (News, News_Extender)
+              , models       =
+                  ( User
+                  , Address, Email_Address, Person, Phone_Number
+                  , Boat_Class, Boat, Sailor
+                  , News, News_Extender
+                  )
               , Type         = DJO.Navigation.Site_Admin
               )
           ]
