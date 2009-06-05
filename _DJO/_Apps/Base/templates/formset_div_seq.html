@@ -1,0 +1,32 @@
+{# Django template: formset_div_seq.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    formset_div_seq
+  ##
+  ## Purpose
+  ##    Template rendering a form-set as a sequence of div elements
+  ##
+  ## Revision Dates
+  ##     5-Jun-2009 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n %}
+{% load TGL %}
+{% for field in formset %}
+  <div class="{% cycle 'row1' 'row2' %} Field"
+       id="Field-{{ field.html_name }}"
+       title="{{ field.help_text }}"
+  >
+    <span class="Field-Help">{{ field.help_text|safe }}</span>
+    <label for="id_{{ field.html_name }}">{{ field.label }}</label>
+    {{ field }}
+    {{ field.errors }}
+  </div>
+{% endfor %}
+{# __END__ Django template: formset_div_seq.html #}

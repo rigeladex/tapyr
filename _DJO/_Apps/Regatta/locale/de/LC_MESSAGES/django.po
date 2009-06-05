@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-27 10:22+0200\n"
+"POT-Creation-Date: 2009-06-05 09:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -176,69 +176,49 @@ msgstr "Ukraine"
 msgid "United States"
 msgstr "Vereinigte Staaten"
 
-#: Boat.py:89
+#: Boat.py:90
 msgid "Boat"
 msgstr "Boot"
 
-#: Boat.py:90
+#: Boat.py:91
 msgid "Boats"
 msgstr "Boote"
 
-#: Boat.py:95 Boat_Class.py:44
+#: Boat.py:97 Boat_Class.py:44
 msgid "Boat-Class"
 msgstr "Bootsklasse"
 
-#: Boat.py:98
+#: Boat.py:100
 msgid "Nation"
 msgstr "Nation"
 
-#: Boat.py:101
+#: Boat.py:103
 msgid "Nation for which the boat is registered"
 msgstr "Staat, für den das Boot registriert ist"
 
-#: Boat.py:105
+#: Boat.py:107
 msgid "Sail-Number"
 msgstr "Segelnummer"
 
-#: Boat.py:107
+#: Boat.py:109
 msgid "Sail number of the boat"
 msgstr "Segelnummer des Bootes"
 
-#: Boat.py:113
+#: Boat.py:115
 msgid "Vintage"
 msgstr "Baujahr"
 
-#: Boat.py:115
+#: Boat.py:117
 msgid "Year of construction"
-msgstr ""
+msgstr "Baujahr"
 
-#: Boat.py:121
+#: Boat.py:123
 msgid "Boat-Name"
 msgstr "Bootsname"
 
-#: Boat.py:123
+#: Boat.py:125
 msgid "Name of the boat"
 msgstr "Name des Bootes"
-
-#: Boat.py:127 Boat_Class.py:54
-msgid "Max-Crew"
-msgstr ""
-
-#: Boat.py:130
-msgid "Maximum number of crew (default: `boat_class.max_crew`)"
-msgstr ""
-"Höchstzahl von Besatzungsmitgliedern (wird von Bootsklasse übernommen, wenn "
-"kein Wert eingegeben wird)"
-
-#: Boat.py:136 Boat_Class.py:61
-msgid "Yardstick"
-msgstr ""
-
-#: Boat.py:139
-msgid "Yardstick number (default: `boat_class.yardstick`)"
-msgstr ""
-"Yardstick Zahl (wird von Bootsklasse übernommen, wenn kein Wert eingegeben "
-"wird)"
 
 #: Boat_Class.py:45
 msgid "Boat-Classes"
@@ -252,9 +232,17 @@ msgstr "Klassenname"
 msgid "Name of the sail boat class"
 msgstr "Name der Bootsklasse"
 
+#: Boat_Class.py:54
+msgid "Max-Crew"
+msgstr ""
+
 #: Boat_Class.py:56
 msgid "Maximum number of crew"
 msgstr "Höchstzahl von Besatzungsmitgliedern"
+
+#: Boat_Class.py:61
+msgid "Yardstick"
+msgstr ""
 
 #: Boat_Class.py:63
 msgid "Yardstick number"
@@ -283,3 +271,19 @@ msgstr "Gewicht"
 #: Boat_Class.py:91
 msgid "Weight (fully rigged) in kilograms"
 msgstr "Gewicht (inkl. Rigg) in Kilogramm"
+
+#: Sailor.py:47
+msgid "Sailor"
+msgstr "Segler"
+
+#: Sailor.py:48
+msgid "Sailors"
+msgstr "Segler"
+
+#: Sailor.py:54
+msgid "Person"
+msgstr ""
+
+#: Sailor.py:58
+msgid "Sailing club the sailor starts for"
+msgstr "Segelclub für den Segler/in startet"

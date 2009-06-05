@@ -53,6 +53,8 @@
 #     1-Jun-2009 (CT) Use `_F` instead of `_F.All`
 #     2-Jun-2009 (MG) `_auto_form` changed to support form sets defined in
 #                     the models
+#     5-Jun-2009 (CT) `additional_context` factored from `Admin.rendered` and
+#                     used in `Changer.rendered`, too
 #    ««revision-date»»···
 #--
 
@@ -185,7 +187,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         ("%s#pk-%s" % (self.parent.abs_href, result.id))
             else :
                 form = self.Form (instance = obj)
-            context ["form"] = form
+            context.update (self.parent.additional_context (form = form))
             return self.__super.rendered (context, nav_page)
         # end def rendered
 
@@ -271,6 +273,24 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         self.query_fct = q
     # end def __init__
 
+    def additional_context (self, ** kw) :
+        M = self.Model
+        if self.model_man :
+            name   = _(self.model_man.name)
+            name_s = _(self.model_man.title)
+        else :
+            name   = M._meta.verbose_name
+            name_s = M._meta.verbose_name_plural
+        result     = dict \
+            ( Meta         = M._meta
+            , Model        = M
+            , Model_Name   = name
+            , Model_Name_s = name_s
+            )
+        result.update (kw)
+        return result
+    # end def additional_context
+
     @Once_Property
     def href (self) :
         return pjoin (self.prefix, u"")
@@ -289,26 +309,15 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     # end def href_delete
 
     def rendered (self, context = None, nav_page = None) :
-        M        = self.Model
         Instance = self.Instance
-        field    = M._F.get
+        field    = self.Model._F.get
         q        = self.query_fct
         if context is None :
             context = dict (page = self)
-        if self.model_man :
-            name   = _(self.model_man.name)
-            name_s = _(self.model_man.title)
-        else :
-            name   = M._meta.verbose_name
-            name_s = M._meta.verbose_name_plural
         context.update \
-            ( dict
-                ( fields       = [field (f) for f in self.list_display]
-                , objects      = [Instance (self, o) for o in q ()]
-                , Meta         = M._meta
-                , Model        = M
-                , Model_Name   = name
-                , Model_Name_s = name_s
+            ( self.additional_context
+                ( fields  = [field (f) for f in self.list_display]
+                , objects = [Instance (self, o) for o in q ()]
                 )
             )
         return self.__super.rendered (context, nav_page)

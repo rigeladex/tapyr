@@ -32,6 +32,7 @@
 #--
 
 from   _DJO                       import DJO
+import _DJO.Form_Set_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
 
@@ -54,7 +55,7 @@ class Sailor (DJO.Model) :
         )
     club               = MF.Char \
         ( u"Club"
-        , help_text    = "Sailing club the sailor starts for"
+        , help_text    = _("Sailing club the sailor starts for")
         , max_length   = 10
         )
     oesv_nr            = MF.Integer \
@@ -64,9 +65,35 @@ class Sailor (DJO.Model) :
         , unique       = True
         )
 
+    def __unicode__ (self) :
+        return unicode (self.person)
+    # end def __unicode__
+
+    display = property (__unicode__)
+
     NAV_admin_args = dict \
-        ( list_display = ("club", "oesv_nr")
-        # list_display = ("birth_date", "sex", "club", "oesv_nr")
+        ( list_display = ("birth_date", "sex", "club", "oesv_nr")
+        , form_set_descriptions =
+              ( DJO.Form_Set_Description
+                  ( DJO.Field_Description ("last_name",  required = True)
+                  , DJO.Field_Description ("first_name", required = True)
+                  , "title"
+                  , legend    = _("Personal info")
+                  , template  = "formset_horizontal.html"
+                  )
+              , DJO.Form_Set_Description
+                  ( "club", "oesv_nr"
+                  , legend    = _("Sailing club info")
+                  , template  = "formset_horizontal.html"
+                  )
+              , DJO.Form_Set_Description
+                  ( "sex"
+                  , legend    = _("Personal details")
+                  , template  = "formset_horizontal.html"
+                  )
+              , DJO.Form_Set_Description
+                  ( "phones", "emails", "addresses")
+              )
         )
 
 # end class Sailor

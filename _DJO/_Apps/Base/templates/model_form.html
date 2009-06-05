@@ -1,0 +1,39 @@
+{# Django template: model_form.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    model_form
+  ##
+  ## Purpose
+  ##    Template rendering a form for a django model
+  ##
+  ## Revision Dates
+  ##     5-Jun-2009 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n %}
+{% load TGL %}
+<form method="post" action="" class="Object-Editor {{ Model_Name }}">
+  {% for formset in form.form_sets %}
+    <div class="{% cycle 'row1' 'row2' %} Formset {{ formset.css_class }}"
+       title="{{ formset.legend }}"
+    >
+      {% rrender formset.template|default:"formset_div_seq.html" %}
+    </div>
+  {% endfor %}
+  <input class="submit" type="submit" value="{% trans "Submit" %}" />
+  <input class="reset"  type="reset"  value="{% trans "Reset" %}"
+    title="{% trans "Discard all changes" %}"
+  />
+  <a href="{{ page.parent.abs_href}}"
+     title="{% trans "Discard all changes and leave form" %}"
+     class="button">
+    {% trans "Cancel" %}
+  </a>
+</form>
+{# __END__ Django template: model_form.html #}

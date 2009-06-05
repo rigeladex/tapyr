@@ -31,6 +31,7 @@
 #--
 
 from   _DJO                       import DJO
+import _DJO.Form_Set_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
 
@@ -106,6 +107,22 @@ class Person (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("birth_date", "sex")
+        , form_set_descriptions =
+              ( DJO.Form_Set_Description
+                  ( DJO.Field_Description ("last_name",  required = True)
+                  , DJO.Field_Description ("first_name", required = True)
+                  , "title"
+                  , legend    = _("Personal info")
+                  , template  = "formset_horizontal.html"
+                  )
+              , DJO.Form_Set_Description
+                  ( "sex", "birth_date"
+                  , legend    = _("Personal details")
+                  , template  = "formset_horizontal.html"
+                  )
+              , DJO.Form_Set_Description
+                  ( "phones", "emails", "addresses")
+              )
         )
 
 # end class Person

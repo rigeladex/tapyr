@@ -1,0 +1,51 @@
+{# Django template: formset_horizontal.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    formset_horizontal
+  ##
+  ## Purpose
+  ##    Template rendering a form-set as a horizontal sequence of elements
+  ##
+  ## Revision Dates
+  ##     5-Jun-2009 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n %}
+{% load TGL %}
+<table class="Formset-Horizontal">
+  <thead>
+  <tr>
+    {% for field in formset %}
+      <th title="{{ field.help_text|safe }}">
+        <label for="id_{{ field.html_name }}">{{ field.label }}</label>
+      </th>
+    {% endfor %}
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    {% for field in formset %}
+      <td title="{{ field.help_text|safe }}" id="Field-{{ field.html_name }}">
+        {{ field }}
+        {{ field.errors }}
+      </td>
+    {% endfor %}
+  </tr>
+  </tbody>
+</table>
+<div class="Formset-Horizontal-Help">
+  {% for field in formset %}
+    {% if field.help_text %}
+      <p class="Field-Help" id="Field-Help-{{ field.html_name }}">
+        {{ field.help_text|safe }}
+      </p>
+    {% endif %}
+  {% endfor %}
+</div>
+{# __END__ Django template: formset_horizontal.html #}
