@@ -45,8 +45,9 @@
 #                     `Model_Form.save` fixed
 #    02-Jun-2009 (MG) Cleanup of `New`
 #     4-Jun-2009 (MG) `**kw` added to `M_Model_Form.New`
-#     4-Jun-2009 (MG) Use new `Form_Set` and `Bound_Form_Set` class
+#     4-Jun-2009 (MG) Use new `Formset` and `Bound_Formset` class
 #     5-Jun-2009 (MG) Update `_meta.fields` based on the form set descriptions
+#     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ import _TFL.Decorator
 import _TFL._Meta.M_Class
 import _TFL.NO_List
 
-import _DJO.Form_Set_Description
+import _DJO.Formset_Description
 
 from   django.forms                import BaseForm, BaseModelForm
 from   django.forms.util           import ErrorList
@@ -105,7 +106,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
 
         if not form_set_descriptions :
             form_set_descriptions = \
-               (DJO.Form_Set_Description (model = model), )
+               (DJO.Formset_Description (model = model), )
         return super (M_Model_Form, cls).New \
             ( model.__name__
             , model                 = model

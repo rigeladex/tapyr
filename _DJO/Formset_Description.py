@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.Form_Set_Description
+#    DJO.Formset_Description
 #
 # Purpose
 #    Classes to describe form set's and the handling for fromset in forms
@@ -33,32 +33,21 @@
 #     2-Jun-2009 (MG) `setup_fields`: Parameter `used_fields` added, support
 #                     for wildcard field * added
 #     2-Jun-2009 (MG) `Field_Description` added
-#     4-Jun-2009 (MG) Reorganized: `Form_Set` and `Bound_Form_Set` factored
-#                     out of `Form_Set_Description`
-#     5-Jun-2009 (MG) `Form_Set.__init__` honor `required` of field
+#     4-Jun-2009 (MG) Reorganized: `Formset` and `Bound_Formset` factored
+#                     out of `Formset_Description`
+#     5-Jun-2009 (MG) `Formset.__init__` honor `required` of field
 #                     description
+#     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
+#     6-Jun-2009 (MG) `Field_Description` factored into own module
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 import _TFL._Meta.Object
 from   _DJO               import DJO
+import _DJO.Field_Description
 
-class Field_Description (TFL.Meta.Object) :
-    """Description of how a field should be rendered in a form (set)"""
-
-    def __init__ (self, name, ** kw) :
-        self.name = name
-        self.__dict__.update (kw)
-    # end def __init__
-
-    def __str__ (self) :
-        return self.name
-    # end def __str__
-
-# end class Field_Description
-
-class Form_Set_Description (TFL.Meta.Object) :
+class Formset_Description (TFL.Meta.Object) :
     """Describes a part of a form used to create/edit a Django model"""
 
     template = None
@@ -70,13 +59,13 @@ class Form_Set_Description (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, model = None, used_fields = set ()) :
-        return DJO.Form_Set (model or self.model, self, used_fields)
+        return DJO.Formset (model or self.model, self, used_fields)
     # end def __call__
 
-# end class Form_Set_Description
+# end class Formset_Description
 
-class Form_Set (TFL.Meta.Object) :
-    """A Form_Set binds a form set description to an model."""
+class Formset (TFL.Meta.Object) :
+    """A Formset binds a form set description to an model."""
 
     def __init__ (self, model, fsd = None, used_fields = ()) :
         self.model                = model
@@ -118,7 +107,7 @@ class Form_Set (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, form) :
-        return DJO.Bound_Form_Set (self, form)
+        return DJO.Bound_Formset (self, form)
     # end def __call__
 
     def __getattr__ (self, name) :
@@ -129,9 +118,9 @@ class Form_Set (TFL.Meta.Object) :
         return iter (self.fields)
     # end def __iter__
 
-# end class Form_Set
+# end class Formset
 
-class Bound_Form_Set (TFL.Meta.Object) :
+class Bound_Formset (TFL.Meta.Object) :
     """A formset bound to an instance of a Form"""
 
     def __init__ (self, form_set, form) :
@@ -150,8 +139,8 @@ class Bound_Form_Set (TFL.Meta.Object) :
             yield BoundField (self.form, field, field.name)
     # end def __iter__
 
-# end class Bound_Form_Set
+# end class Bound_Formset
 
 if __name__ != "__main__" :
     DJO._Export ("*")
-### __END__ DJO.Form_Set_Description
+### __END__ DJO.Formset_Description

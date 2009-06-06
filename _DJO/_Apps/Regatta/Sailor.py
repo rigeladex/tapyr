@@ -28,11 +28,12 @@
 # Revision Dates
 #    27-May-2009 (CT) Creation
 #    28-May-2009 (CT) Creation continued
+#     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
 #    ««revision-date»»···
 #--
 
 from   _DJO                       import DJO
-import _DJO.Form_Set_Description
+import _DJO.Formset_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
 
@@ -74,24 +75,24 @@ class Sailor (DJO.Model) :
     NAV_admin_args = dict \
         ( list_display = ("birth_date", "sex", "club", "oesv_nr")
         , form_set_descriptions =
-              ( DJO.Form_Set_Description
+              ( DJO.Formset_Description
                   ( DJO.Field_Description ("last_name",  required = True)
                   , DJO.Field_Description ("first_name", required = True)
                   , "title"
                   , legend    = _("Personal info")
                   , template  = "formset_horizontal.html"
                   )
-              , DJO.Form_Set_Description
+              , DJO.Formset_Description
                   ( "club", "oesv_nr"
                   , legend    = _("Sailing club info")
                   , template  = "formset_horizontal.html"
                   )
-              , DJO.Form_Set_Description
+              , DJO.Formset_Description
                   ( "sex"
                   , legend    = _("Personal details")
                   , template  = "formset_horizontal.html"
                   )
-              , DJO.Form_Set_Description
+              , DJO.Formset_Description
                   ( "phones", "emails", "addresses")
               )
         )
