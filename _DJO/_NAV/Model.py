@@ -148,7 +148,6 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         template     = "model_admin_change.html"
 
         def process_post (self, request, obj) :
-            from django.http import HttpResponseRedirect
             form   = self.Form (request.POST, instance = obj)
             result = None
             if form.is_valid () :
