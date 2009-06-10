@@ -16,10 +16,9 @@
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
-{% load i18n %}
-{% load TGL %}
+{% load i18n TGL %}
 <form method="post" action="" class="Object-Editor {{ Model_Name }}">
-  {% for formset in form.form_sets %}
+  {% for formset in form.formsets %}
     <div class="{% cycle 'row1' 'row2' %} Formset {{ formset.css_class }}"
        title="{{ formset.legend }}"
     >

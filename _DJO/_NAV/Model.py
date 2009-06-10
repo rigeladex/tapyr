@@ -332,10 +332,10 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         Form_Type             = kw.get ("Form", DJO.Model_Form)
         form_name             = "%s_Form" % Model.__name__
         form_dict             = dict ()
-        form_set_descriptions = kw.get ("form_set_descriptions", ())
+        formset_descriptions = kw.get ("formset_descriptions", ())
         if "_djo_clean" in kw :
             form_dict ["_djo_clean"] = kw ["_djo_clean"]
-        return Form_Type.New (Model, * form_set_descriptions, ** form_dict)
+        return Form_Type.New (Model, * formset_descriptions, ** form_dict)
     # end def _auto_form
 
     def _get_child (self, child, * grandchildren) :

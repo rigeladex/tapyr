@@ -74,7 +74,7 @@ class Sailor (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("birth_date", "sex", "club", "oesv_nr")
-        , form_set_descriptions =
+        , formset_descriptions =
               ( DJO.Formset_Description
                   ( DJO.Field_Description ("last_name",  required = True)
                   , DJO.Field_Description ("first_name", required = True)

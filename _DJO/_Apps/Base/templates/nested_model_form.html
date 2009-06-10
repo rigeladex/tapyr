@@ -1,0 +1,31 @@
+{# Django template: nested_model_form.html #}
+{% comment %}
+  ## Copyright (C) 2009 Martin Glück All rights reserved
+  ## Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
+  ##
+  ##++
+  ## Name
+  ##    nested_model_form
+  ##
+  ## Purpose
+  ##    Template rendering a nested from inside a model form
+  ##
+  ## Revision Dates
+  ##     6-Jun-2009 (MG) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n TGL %}
+  <div class="{{ formset.css_class|default:"nested-many-2-many"}}">
+    {{ formset.object_count }}
+  {% for nested_form in formset.nested_forms %}
+    {% for fs in nested_form.formsets %}
+      <div class="{% cycle 'row1' 'row2' %} Formset {{ formset.css_class }}"
+         title="{{ fs.legend }}"
+      >
+        {% rrender fs.template|default:"formset_div_seq.html" formset=fs %}
+      </div>
+    {% endfor %}
+  {% endfor %}
+  </div>
+{# __END__ Django template: nested_model_form.html #}

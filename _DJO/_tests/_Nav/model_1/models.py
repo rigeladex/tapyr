@@ -105,7 +105,7 @@ class News_Extender (DJO.Model) :
     # end def _form_clean
 
     NAV_admin_args  = dict \
-        ( form_set_descriptions =
+        ( formset_descriptions =
               ( DJO.Formset_Description
                   ( "title", "text", "additional_text"
                   , template = "model_admin_change_table.html"

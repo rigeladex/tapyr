@@ -123,7 +123,7 @@ Admin Site
 ['title', 'text', 'date_pub', 'author']
 >>> [bff.name for bff in news_extender_form_cls ()]
 ['title', 'text', 'additional_text']
->>> news_extender_form_cls.form_set_descriptions [0].template
+>>> news_extender_form_cls.formset_descriptions [0].template
 'model_admin_change_table.html'
 >>> news_extender_form_cls ({}).full_clean ()
 Model clean called

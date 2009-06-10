@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-May-2009 (CT) Creation
 #     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
+#    10-Jun-2009 (MG) `Nested_Form_Description` used for phone numbers
 #    ««revision-date»»···
 #--
 
@@ -108,7 +109,7 @@ class Person (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("birth_date", "sex")
-        , form_set_descriptions =
+        , formset_descriptions =
               ( DJO.Formset_Description
                   ( DJO.Field_Description ("last_name",  required = True)
                   , DJO.Field_Description ("first_name", required = True)
@@ -122,7 +123,22 @@ class Person (DJO.Model) :
                   , template  = "formset_horizontal.html"
                   )
               , DJO.Formset_Description
-                  ( "phones", "emails", "addresses")
+                  ( DJO.Nested_Form_Description
+                        ( "phones"
+                        , formset_descriptions =
+                            ( DJO.Formset_Description
+                                ( "country_code"
+                                , "area_code"
+                                , "subscriber_number"
+                                , legend    = _("Phone info")
+                                , template  = "formset_horizontal.html"
+                                )
+                            ,
+                            )
+                        )
+                  , "emails"
+                  , "addresses"
+                  )
               )
         )
 

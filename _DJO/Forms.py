@@ -48,6 +48,7 @@
 #     4-Jun-2009 (MG) Use new `Formset` and `Bound_Formset` class
 #     5-Jun-2009 (MG) Update `_meta.fields` based on the form set descriptions
 #     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
+#    10-Jun-2009 (MG) Support for netsed forms added
 #    ««revision-date»»···
 #--
 
@@ -57,12 +58,15 @@ from   _TFL                        import TFL
 import _TFL.Decorator
 import _TFL._Meta.M_Class
 import _TFL.NO_List
+from   _TFL.predicate              import all_true
 
 import _DJO.Formset_Description
+import _DJO.Formset
 
-from   django.forms                import BaseForm, BaseModelForm
-from   django.forms.util           import ErrorList
-from   django.forms                import models
+from    django.forms                    import BaseForm, BaseModelForm
+from    django.forms.util               import ErrorList
+from    django.forms                    import models
+from    django.db.models.fields.related import RelatedField
 
 django_model_to_dict = models.model_to_dict
 
@@ -83,14 +87,14 @@ class M_Model_Form (TFL.Meta.M_Class) :
     """Meta class for forms based on a django model."""
 
     def __new__ (cls, name, bases, attrs) :
-        base_fields = TFL.NO_List ()
-        model       = attrs.get ("model", None)
-        used_fields = set ()
-        form_sets   = attrs ["unbound_form_sets"] = []
-        for fsd in attrs.get ("form_set_descriptions", ()) :
-            form_set = fsd     (model, used_fields)
-            form_sets.append   (form_set)
-            base_fields.extend (form_set)
+        base_fields      = TFL.NO_List ()
+        model            = attrs.get ("model", None)
+        used_fields      = set ()
+        unbound_formsets = attrs ["unbound_formsets"] = []
+        for fsd in attrs.get ("formset_descriptions", ()) :
+            for formset in fsd (model, used_fields) :
+                unbound_formsets.append (formset)
+                base_fields.extend      (formset)
         _meta                  = attrs.get ("_meta", None)
         if _meta :
             _meta.fields = [f.name for f in base_fields]
@@ -99,18 +103,18 @@ class M_Model_Form (TFL.Meta.M_Class) :
             (cls, name, bases, attrs)
     # end def __new__
 
-    def New (cls, model, * form_set_descriptions, ** kw) :
+    def New (cls, model, * formset_descriptions, ** kw) :
         class Meta :
             exclude = ()
         Meta.model  = model
 
-        if not form_set_descriptions :
-            form_set_descriptions = \
+        if not formset_descriptions :
+            formset_descriptions = \
                (DJO.Formset_Description (model = model), )
         return super (M_Model_Form, cls).New \
             ( model.__name__
             , model                 = model
-            , form_set_descriptions = form_set_descriptions
+            , formset_descriptions = formset_descriptions
             , _meta                 = Meta
             , ** kw
             )
@@ -163,10 +167,16 @@ class _DJO_Model_Form_ (BaseModelForm) :
     _djo_clean    = None
 
     def __init__ (self, * args, ** kw) :
-        self.form_sets = []
-        for ufs in self.unbound_form_sets :
-            self.form_sets.append (ufs (self))
+        ### super call must be before creating the bound formset's in order
+        ### to have the `instance` member setup correctly
         self.__super.__init__ (* args, ** kw)
+        self.formsets     = []
+        self.nested_forms = []
+        for ufs in self.unbound_formsets :
+            bfs = ufs (self)
+            self.formsets.append (bfs)
+            if isinstance (bfs, DJO.Bound_Nested_Form_Formset) :
+                self.nested_forms.append (bfs)
     # end def __init__
 
     def clean (self) :
@@ -175,6 +185,20 @@ class _DJO_Model_Form_ (BaseModelForm) :
             result = self._djo_clean (result)
         return result
     # end def clean
+
+    def full_clean (self) :
+        if not self.is_bound: # Stop further processing.
+            return
+        for bfs in self.nested_forms :
+            bfs.full_clean ()
+        self.__super.full_clean ()
+    # end def full_clean
+
+    def is_valid (self) :
+        return (    all_true (nf.is_valid () for nf in self.nested_forms)
+               and self.__super.is_valid ()
+               )
+    # end def is_valid
 
     def save (self, commit = True) :
         from django.db import models
@@ -189,24 +213,36 @@ class _DJO_Model_Form_ (BaseModelForm) :
                   , "created" if not instance.pk else "changed"
                   )
                 )
-        cleaned_data      = self.cleaned_data
-        file_field_defers = []
+        cleaned_data        = self.cleaned_data
+        file_field_defers   = []
+        self.related_defers = []
         for ff in self.fields :
             df    = _F [ff.name]
             # Defer saving file-type fields until after the other fields, so a
             # callable upload_to can use the values from other fields.
             if isinstance (df, models.FileField):
                 file_field_defers.append (dj)
+            elif isinstance (df, RelatedField) :
+                ### related fields can only be `saved` after the main object
+                ### has been saved, so we defer them
+                self.related_defers.append (df)
             else:
                 df.save_form_data (instance, cleaned_data [df.name])
 
         for df in file_field_defers :
             df.save_form_data (instance, cleaned_data [df.name])
+        if commit :
+            instance.save ()
+            self.save_m2m ()
         return instance
     # end def save
 
     def save_m2m (self) :
-        pass
+        for df in self.related_defers :
+            df.save_form_data (self.instance, self.cleaned_data [df.name])
+        self.related_defers = []
+        for nf in self.nested_forms :
+            nf.save_and_assign (self.instance)
     # end def save_m2m
 
 Model_Form = _DJO_Model_Form_ # end class
