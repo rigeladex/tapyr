@@ -33,10 +33,9 @@
 from   __future__                 import with_statement
 
 from   _DJO                       import DJO
-### import _DJO.Admin
-import _DJO.Forms
 import _DJO.Models
 import _DJO.Model_Field           as     MF
+import _DJO.Model_Form
 import _DJO.Formset_Description
 
 from   _TFL.Decorator             import Attributed
@@ -117,5 +116,3 @@ class News_Extender (DJO.Model) :
 # end class News_Extender
 
 ### __END__ model_1.models
-
-

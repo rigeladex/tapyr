@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2009 Martin Glück. All rights reserved
+# Copyright (C) 2007-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin.glueck@gmail.com
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    DJO.Forms
+#    DJO.Model_Form
 #
 # Purpose
 #    Simplify form handling with the newforms django library
@@ -49,6 +49,7 @@
 #     5-Jun-2009 (MG) Update `_meta.fields` based on the form set descriptions
 #     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
 #    10-Jun-2009 (MG) Support for netsed forms added
+#    11-Jun-2009 (CT) Module renamed from Forms to Model_Form
 #    ««revision-date»»···
 #--
 
@@ -249,4 +250,4 @@ Model_Form = _DJO_Model_Form_ # end class
 
 if __name__ != "__main__" :
     DJO._Export ("*")
-### __END__ DJO.Forms
+### __END__ DJO.Model_Form

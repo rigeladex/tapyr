@@ -154,7 +154,7 @@ os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._tests._Nav.settings_test"
 
 import _DJO._tests._Nav.model_1.models as     M
 from   _DJO                            import DJO
-import _DJO.Forms
+import _DJO.Model_Form
 import _DJO.Formset_Description
 import _DJO.Navigation
 import _DJO._Test.Database
@@ -179,7 +179,7 @@ os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._tests._Nav.settings_test"
 
 import _DJO._tests._Nav.model_1.models as     M
 from   _DJO                            import DJO
-import _DJO.Forms
+import _DJO.Model_Form
 import _DJO.Formset_Description
 
 fs1       = DJO.Formset_Description ()
