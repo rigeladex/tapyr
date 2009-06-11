@@ -41,6 +41,7 @@
 #     6-Jun-2009 (MG) `Field_Description` factored into own module
 #     6-Jun-2009 (MG) `Formset` and `Bound_Formset` factored into own module
 #    10-Jun-2009 (MG) `Nested_Form_Description` and friends added
+#    11-Jun-2009 (CT) `name` and `_` added to `Formset_Description`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,14 @@ class Formset_Description (TFL.Meta.Object) :
     template = None
     model    = None
 
+    _        = TFL.Record ()
+
     def __init__ (self, * fields, ** kw) :
+        name = kw.pop ("name", None)
+        if name :
+            if name in self._ :
+                raise NameError, name
+            setattr (self._, name, self)
         self.exclude  = set (kw.pop ("exclude", ()))
         self.fields   = fields
         self.__dict__.update (kw)

@@ -29,6 +29,7 @@
 #    19-May-2009 (CT) Creation
 #     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
 #    10-Jun-2009 (MG) `Nested_Form_Description` used for phone numbers
+#    11-Jun-2009 (CT) Use `name` for `Formset_Description`
 #    ««revision-date»»···
 #--
 
@@ -110,38 +111,77 @@ class Person (DJO.Model) :
     NAV_admin_args = dict \
         ( list_display = ("birth_date", "sex")
         , formset_descriptions =
-              ( DJO.Formset_Description
-                  ( DJO.Field_Description ("last_name",  required = True)
-                  , DJO.Field_Description ("first_name", required = True)
-                  , "title"
-                  , legend    = _("Personal info")
-                  , template  = "formset_horizontal.html"
-                  )
-              , DJO.Formset_Description
-                  ( "sex", "birth_date"
-                  , legend    = _("Personal details")
-                  , template  = "formset_horizontal.html"
-                  )
-              , DJO.Formset_Description
-                  ( DJO.Nested_Form_Description
-                      ( "phones"
-                      , formset_descriptions =
-                          ( DJO.Formset_Description
-                              ( "country_code"
-                              , "area_code"
-                              , "subscriber_number"
-                              , "extension"
-                              , template  = "formset_horizontal.html"
-                              )
-                          , DJO.Formset_Description
-                              ( "desc")
-                          )
-                      , legend = _("Phone Numbers")
-                      )
-                  , "emails"
-                  , "addresses"
-                  )
-              )
+            ( DJO.Formset_Description
+                ( DJO.Field_Description ("last_name",  required = True)
+                , DJO.Field_Description ("first_name", required = True)
+                , "title"
+                , legend    = _("Personal info")
+                , template  = "formset_horizontal.html"
+                , name      = "Personal_Info"
+                )
+            , DJO.Formset_Description
+                ( "sex", "birth_date"
+                , legend    = _("Personal details")
+                , template  = "formset_horizontal.html"
+                , name      = "Personal_Details"
+                )
+            , DJO.Formset_Description
+                ( DJO.Nested_Form_Description
+                    ( "phones"
+                    , formset_descriptions =
+                        ( DJO.Formset_Description
+                            ( "country_code"
+                            , "area_code"
+                            , "subscriber_number"
+                            , "extension"
+                            , template  = "formset_horizontal.html"
+                            )
+                        , DJO.Formset_Description
+                            ( "desc")
+                        )
+                    , legend = _("Phone-Numbers")
+                    )
+#                  , DJO.Nested_Form_Description
+#                      ( "emails"
+#                      , formset_descriptions =
+#                          ( DJO.Formset_Description
+#                              ( "email", "desc"
+#                              , template  = "formset_horizontal.html"
+#                              )
+#                          ,
+#                          )
+#                      , legend = _("Email-Addresses")
+#                      )
+                , name = "Personal_Contact_Info"
+                )
+            , DJO.Formset_Description
+                ( DJO.Nested_Form_Description
+                    ( "emails"
+                    , formset_descriptions =
+                        ( DJO.Formset_Description
+                            ( "email", "desc"
+                            , template  = "formset_horizontal.html"
+                            )
+                        ,
+                        )
+                    , legend = _("Email-Addresses")
+                    )
+                )
+            , DJO.Formset_Description
+                ( DJO.Nested_Form_Description
+                    ( "addresses"
+                    , formset_descriptions =
+                        ( DJO.Formset_Description
+                            ( "street", "city", "zip", "country"
+                            , template  = "formset_horizontal.html"
+                            )
+                        , DJO.Formset_Description
+                            ( "desc")
+                        )
+                    , legend = _("Addresses")
+                    )
+                )
+            )
         )
 
 # end class Person
