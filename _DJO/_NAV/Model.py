@@ -56,6 +56,7 @@
 #     5-Jun-2009 (CT) `additional_context` factored from `Admin.rendered` and
 #                     used in `Changer.rendered`, too
 #    11-Jun-2009 (CT) s/Forms/Model_Form/
+#    11-Jun-2009 (CT) `Form_Mixins` added
 #    ««revision-date»»···
 #--
 
@@ -331,8 +332,9 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     def _auto_form (self, Model, kw) :
         import _DJO.Model_Form
         Form_Type            = kw.get ("Form", DJO.Model_Form)
+        Form_Mixins          = kw.get ("Form_Mixins", ())
         form_name            = "%s_Form" % Model.__name__
-        form_dict            = dict ()
+        form_dict            = dict (head_mixins = Form_Mixins)
         formset_descriptions = kw.get ("formset_descriptions", ())
         if "_djo_clean" in kw :
             form_dict ["_djo_clean"] = kw ["_djo_clean"]

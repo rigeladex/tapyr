@@ -51,6 +51,7 @@
 #    10-Jun-2009 (MG) Support for netsed forms added
 #    11-Jun-2009 (CT) Module renamed from Forms to Model_Form
 #    11-Jun-2009 (CT) Use `Override_Method` to change `models.model_to_dict`
+#    11-Jun-2009 (CT) Use `cls.__m_super` instead of `super (..., cls)`
 #    ««revision-date»»···
 #--
 
@@ -111,7 +112,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
         if not formset_descriptions :
             formset_descriptions = \
                (DJO.Formset_Description (model = model), )
-        return super (M_Model_Form, cls).New \
+        return cls.__m_super.New \
             ( model.__name__
             , model                 = model
             , formset_descriptions = formset_descriptions
