@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #     6-Jun-2009 (MG) Creation (factored from Formset_Description)
+#    11-Jun-2009 (CT) `Form_Mixins` added to `Nested_Form_Formset`
+#    11-Jun-2009 (CT) `Bound_Nested_Form_Formset` adapted to pass `request`
+#                     to `nested_form_class`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +44,7 @@ class Bound_Formset (TFL.Meta.Object) :
 
     def __init__ (self, formset, form) :
         self.formset = formset
-        self.form     = form
+        self.form    = form
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -86,7 +89,7 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
         else :
             rel_instances = ()
         if form.is_bound :
-            form_kw       = dict (data = form.data, files = form.files)
+            form_kw       = dict (files = form.files)
             count_spec    = form.data [self.object_count.name]
             count         = int (count_spec.split (":") [0])
         else :
@@ -99,7 +102,8 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
                 (rel_instances + (None, ) * (form_count - len (rel_instances))):
             nested_forms.append \
                 ( self.nested_form_class
-                    ( instance = rel_inst
+                    ( request  = self.form.request
+                    , instance = rel_inst
                     , prefix   = "M%d" % (no, )
                     , ** form_kw
                     )
@@ -195,9 +199,11 @@ class Nested_Form_Formset (_Formset_) :
         self.__super.__init__ (model, related_field)
         related_model          = model._F [related_field.name].rel.to
         Form_Type              = getattr (self, "Form", DJO.Model_Form)
+        Form_Mixins            = getattr (self, "Form_Mixins", ())
         formset_descriptions   = getattr (self, "formset_descriptions", ())
+        kw                     = dict    (head_mixins = Form_Mixins)
         self.nested_form_class = Form_Type.New \
-            (related_model, * formset_descriptions)
+            (related_model, * formset_descriptions, ** kw)
     # end def __init__
 
 # end class Nested_Form_Formset

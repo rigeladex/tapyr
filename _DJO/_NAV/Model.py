@@ -57,6 +57,7 @@
 #                     used in `Changer.rendered`, too
 #    11-Jun-2009 (CT) s/Forms/Model_Form/
 #    11-Jun-2009 (CT) `Form_Mixins` added
+#    11-Jun-2009 (CT) `process_post` changed to pass `request` to `Form`
 #    ««revision-date»»···
 #--
 
@@ -150,7 +151,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         template     = "model_admin_change.html"
 
         def process_post (self, request, obj) :
-            form   = self.Form (request.POST, instance = obj)
+            form   = self.Form (request = request, instance = obj)
             result = None
             if form.is_valid () :
                 with form.object_to_save () as result :

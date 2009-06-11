@@ -52,6 +52,8 @@
 #    11-Jun-2009 (CT) Module renamed from Forms to Model_Form
 #    11-Jun-2009 (CT) Use `Override_Method` to change `models.model_to_dict`
 #    11-Jun-2009 (CT) Use `cls.__m_super` instead of `super (..., cls)`
+#    11-Jun-2009 (CT) `Model_Form.__init__` changed to expect `request`
+#                     instead of `* args`
 #    ««revision-date»»···
 #--
 
@@ -166,10 +168,13 @@ class _DJO_Model_Form_ (BaseModelForm) :
     _real_name    = "Model_Form"
     _djo_clean    = None
 
-    def __init__ (self, * args, ** kw) :
+    def __init__ (self, request = None, instance = None, ** kw) :
         ### super call must be before creating the bound formset's in order
         ### to have the `instance` member setup correctly
-        self.__super.__init__ (* args, ** kw)
+        if request :
+            kw ["data"] = request.POST
+        self.__super.__init__ (instance = instance, ** kw)
+        self.request      = request
         self.formsets     = []
         self.nested_forms = []
         for ufs in self.unbound_formsets :
