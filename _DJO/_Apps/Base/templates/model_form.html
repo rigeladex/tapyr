@@ -19,8 +19,8 @@
 {% load i18n TGL %}
 <form method="post" action="" class="Object-Editor {{ Model_Name }}">
   {% for formset in form.formsets %}
-    <div class="{% cycle 'row1' 'row2' %} Formset {{ formset.css_class }}"
-       title="{{ formset.legend }}"
+    <div class="Formset {{ formset.css_class }}"
+       {% if formset.legend %}title="{{ formset.legend }}"{% endif %}
     >
       {% rrender formset.template|default:"formset_div_seq.html" %}
     </div>

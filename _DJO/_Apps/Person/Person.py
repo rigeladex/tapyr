@@ -124,18 +124,20 @@ class Person (DJO.Model) :
                   )
               , DJO.Formset_Description
                   ( DJO.Nested_Form_Description
-                        ( "phones"
-                        , formset_descriptions =
-                            ( DJO.Formset_Description
-                                ( "country_code"
-                                , "area_code"
-                                , "subscriber_number"
-                                , legend    = _("Phone info")
-                                , template  = "formset_horizontal.html"
-                                )
-                            ,
-                            )
-                        )
+                      ( "phones"
+                      , formset_descriptions =
+                          ( DJO.Formset_Description
+                              ( "country_code"
+                              , "area_code"
+                              , "subscriber_number"
+                              , "extension"
+                              , template  = "formset_horizontal.html"
+                              )
+                          , DJO.Formset_Description
+                              ( "desc")
+                          )
+                      , legend = _("Phone Numbers")
+                      )
                   , "emails"
                   , "addresses"
                   )

@@ -50,6 +50,7 @@
 #     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
 #    10-Jun-2009 (MG) Support for netsed forms added
 #    11-Jun-2009 (CT) Module renamed from Forms to Model_Form
+#    11-Jun-2009 (CT) Use `Override_Method` to change `models.model_to_dict`
 #    ««revision-date»»···
 #--
 
@@ -68,8 +69,6 @@ from    django.forms                    import BaseForm, BaseModelForm
 from    django.forms.util               import ErrorList
 from    django.forms                    import models
 from    django.db.models.fields.related import RelatedField
-
-django_model_to_dict = models.model_to_dict
 
 @TFL.Add_New_Method (BaseModelForm)
 @TFL.Contextmanager
@@ -123,6 +122,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
 
 # end class M_Model_Form
 
+@TFL.Override_Method (models)
 def model_to_dict (instance, fields = None, exclude = None) :
     _F = getattr (instance, "_F", None)
     if _F is not None :
@@ -151,9 +151,8 @@ def model_to_dict (instance, fields = None, exclude = None) :
                 data [f.name] = f.value_from_object (instance)
         return data
     else :
-        return django_model_to_dict (instance, fields, exclude)
+        return model_to_dict.orig (instance, fields, exclude)
 # end def model_to_dict
-models.model_to_dict = model_to_dict
 
 class _DJO_Model_Form_ (BaseModelForm) :
     """Base class for all form's which derive there fields from a Django

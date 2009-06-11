@@ -16,16 +16,19 @@
   ##--
 {% endcomment %}
 {% load i18n TGL %}
-  <div class="{{ formset.css_class|default:"nested-many-2-many"}}">
+  <fieldset class="{{ formset.css_class|default:"nested-many-2-many"}}">
+    {% if formset.legend %}<legend>{{ formset.legend }}</legend>{% endif %}
     {{ formset.object_count }}
-  {% for nested_form in formset.nested_forms %}
-    {% for fs in nested_form.formsets %}
-      <div class="{% cycle 'row1' 'row2' %} Formset {{ formset.css_class }}"
-         title="{{ fs.legend }}"
-      >
-        {% rrender fs.template|default:"formset_div_seq.html" formset=fs %}
-      </div>
-    {% endfor %}
-  {% endfor %}
-  </div>
+    <div class="One-Link">
+      {% for nested_form in formset.nested_forms %}
+        {% for fs in nested_form.formsets %}
+          <div class="Formset {{ formset.css_class }}"
+             {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
+          >
+            {% rrender fs.template|default:"formset_div_seq.html" formset=fs %}
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </fieldset>
 {# __END__ Django template: nested_model_form.html #}

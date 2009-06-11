@@ -44,6 +44,7 @@
 #    30-May-2009 (CT) `M_Field.__call__` added to save `_creation_kw`
 #    30-May-2009 (CT) `opt_proxy_args` added to `Foreign_Key`
 #     1-Jun-2009 (CT) Support for `real_name` added
+#    11-Jun-2009 (CT) Support for `css_class` added
 #    ««revision-date»»···
 #--
 
@@ -115,8 +116,12 @@ class _DJO_Field_ (DM.Field) :
             self.Widget        = kw.pop ("Widget")
         if self.Null == "" :
             kw.pop ("null", None)
+        self.css_class    = kw.pop ("css_class", "")
         self._sort_key    = kw.pop ("sort_key", 0)
-        self.widget_attrs = kw.pop ("widget_attrs", {})
+        self.widget_attrs = dict \
+            ( {"class" : self.css_class}
+            , ** (kw.pop ("widget_attrs", {}))
+            )
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 

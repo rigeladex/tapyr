@@ -51,12 +51,14 @@ class Phone_Number (DJO.Model) :
 
     country_code          = MF.Small_Integer \
         ( _("Country-Code")
+        , css_class       = "Short-Number"
         , min_value       = 1
         , max_value       = 999
         )
     area_code             = MF.Integer \
         ( _("Area-Code")
         , blank           = True
+        , css_class       = "Short-Number"
         , min_value       = 1
         , null            = True
         )
@@ -69,6 +71,7 @@ class Phone_Number (DJO.Model) :
     extension             = MF.Integer \
         ( _("Extension")
         , blank           = True
+        , css_class       = "Short-Number"
         , help_text       = _("Extension number used in PBX")
         , min_value       = 0
         , null            = True
