@@ -96,7 +96,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
             for formset in fsd (model, used_fields) :
                 unbound_formsets.append (formset)
                 base_fields.extend      (formset)
-        _meta                  = attrs.get ("_meta", None)
+        _meta = attrs.get ("_meta", None)
         if _meta :
             _meta.fields = [f.name for f in base_fields]
         attrs ["base_fields"]  = base_fields
@@ -108,7 +108,6 @@ class M_Model_Form (TFL.Meta.M_Class) :
         class Meta :
             exclude = ()
         Meta.model  = model
-
         if not formset_descriptions :
             formset_descriptions = \
                (DJO.Formset_Description (model = model), )
