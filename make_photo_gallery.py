@@ -77,6 +77,7 @@ def command_spec (arg_array = None) :
             , "photographer:S?Name of photographer"
             , "i_size:I=800?Size of images in gallery (larger dimension)"
             , "t_size:I=150?Size of thumbnails in gallery (larger dimension)"
+            , "start_pid:I=0?Start value for picture count"
             , "-year:I=%s?Year for copyright" % (year, )
             )
         , min_args    = 2
@@ -111,7 +112,7 @@ def main (cmd) :
             if not sos.path.isdir (x) :
                 print "Making directory %s" % (x, )
                 sos.mkdir_p (x)
-        pid  = 0
+        pid  = cmd.start_pid
         for src in sorted (sos.expanded_globs (* cmd.argv [1:])) :
             pid  += 1
             name  = "%04d.jpg" % pid

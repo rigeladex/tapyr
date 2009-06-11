@@ -162,6 +162,7 @@
 #    19-Mar-2009 (CT) Use `with open_tempfile` instead of `sos.tempfile_name`
 #    31-Mar-2009 (CT) `_get_sender_name` robustified
 #    16-Apr-2009 (CT) `_get_charset` guarded against unknown `charset`
+#     8-Jun-2009 (CT) Use `with` instead of `try..finally` for opening files
 #    ««revision-date»»···
 #--
 
@@ -206,14 +207,11 @@ def decoded_header (header) :
 
 def save (filename, body) :
     if body :
-        f = open (filename, "wb")
-        try :
+        with open (filename, "wb") as f :
             try :
                 f.write (body)
             except UnicodeError :
                 f.write (body.encode (PMA.default_encoding, "replace"))
-        finally :
-            f.close ()
 # end def save
 
 class Msg_Scope (TFL.Caller.Scope) :
@@ -840,11 +838,8 @@ class Message (_Message_) :
             if self.mailbox :
                 result = self.mailbox.reparsed (self)
             else :
-                fp = open (self.path, "r")
-                try :
+                with open (self.path, "r") as fp :
                     result = Lib.message_from_file (fp)
-                finally :
-                    fp.close ()
             result._pma_dir  = getattr (self.email, "_pma_dir",  None)
             result._pma_path = getattr (self.email, "_pma_path", None)
             result._pma_parsed_body = True
@@ -976,12 +971,9 @@ class _Pending_Action_ (TFL.Meta.Object) :
 def message_from_file (filename, parser = None) :
     if parser is None :
         parser = Lib.Parser ()
-    fp = open (filename)
-    try :
+    with open (filename) as fp :
         email = parser.parse (fp)
         email._pma_parsed_body = True
-    finally :
-        fp.close ()
     return PMA.Message (email, sos.path.split (filename) [-1])
 # end def message_from_file
 

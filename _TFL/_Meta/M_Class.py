@@ -51,6 +51,7 @@
 #     3-Feb-2009 (CT)  Documentation improved..
 #     4-Feb-2009 (CT)  Documentation improved...
 #     4-Feb-2009 (CT)  s/_fixed_type_/M_M_Class/ and clarified implementation
+#    11-Jun-2009 (CT) `head_mixins` and `tail_mixins` added to `New`
 #    ««revision-date»»···
 #--
 
@@ -158,8 +159,10 @@ class M_Base (type) :
         new_dict = dict (__module__ = cls.__module__)
         for attr_name, value in mangled_attributes.iteritems () :
             new_dict [_m_mangled_attr_name (attr_name, name)] = value
+        head_mixins = kw.pop ("head_mixins", ())
+        tail_mixins = kw.pop ("tail_mixins", ())
         new_dict.update (kw)
-        return type (cls) (name, (cls, ), new_dict)
+        return type (cls) (name, head_mixins + (cls, ) + tail_mixins, new_dict)
     # end def New
 
 # end class M_Base

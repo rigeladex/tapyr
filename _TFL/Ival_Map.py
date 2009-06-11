@@ -29,6 +29,7 @@
 #     5-Jul-2003 (CT) Creation
 #    24-Apr-2009 (CT) `index` factored (and changed to use `bisect`)
 #    24-Apr-2009 (CT) `keys`  added
+#    11-Jun-2009 (CT) s/bisect_left/bisect_right/
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.predicate
 
-from   bisect             import bisect_left
+from   bisect             import bisect_right
 
 class Ival_Map (Meta.Object) :
     """Mapping of intervals to values.
@@ -67,7 +68,7 @@ class Ival_Map (Meta.Object) :
     # end def __init__
 
     def index (self, key) :
-        result = bisect_left (self.keys, key)
+        result = bisect_right (self.keys, key)
         if result == len (self.iv_map) :
             result -= 1
         return result

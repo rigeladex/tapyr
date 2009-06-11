@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2009 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -13,40 +13,41 @@
 #    13-Jan-2005 (MG) Creation
 #    19-Jan-2005 (CT) Test fixed
 #    20-Jan-2005 (CT) Test fixed again
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    11-Jun-2009 (CT) Test fixed onceagain
 #    ««revision-date»»···
 #--
 
-
-
 """
 >>> cmd_mgr = TFL.UI.Command_Mgr (
-...       None, None, 1
+...       None, None
 ...     , dict ( menu_1 = CI_Menu ("menu_1")
 ...            , menu_2 = CI_Menu ("menu_2")
 ...            )
 ...     )
 >>>
->>> g1 = cmd_mgr.add_group ("Group_1", if_names = ("menu_1", ))
->>> g2 = cmd_mgr.add_group ("Group_2", if_names = ("menu_2", ))
+>>> g1 = cmd_mgr.add_group ("Group1", if_names = ("menu_1", ))
+>>> g2 = cmd_mgr.add_group ("Group2", if_names = ("menu_2", ))
 >>>
->>> g1.add_command (TFL.UI.Command ("fct_1", fct_1), if_names = ("menu_1", ))
->>> g1.add_command (TFL.UI.Command ("fct_2", fct_2), if_names = ("menu_1", ))
->>> g2.add_command (TFL.UI.Command ("fct_3", fct_3), if_names = ("menu_2", ))
->>> g2.add_command (TFL.UI.Command ("fct_4", fct_4), if_names = ("menu_2", ))
->>> print cmd_mgr ["Group_1"].interfacers ['menu_1']
-Group_1 ['fct_1', 'fct_2']
->>> print cmd_mgr ["Group_1"].interfacers ['menu_2']
+>>> g1.add_command (TFL.UI.Command ("fct1", fct_1), if_names = ("menu_1", ))
+<Command fct_1>
+>>> g1.add_command (TFL.UI.Command ("fct2", fct_2), if_names = ("menu_1", ))
+<Command fct_2>
+>>> g2.add_command (TFL.UI.Command ("fct3", fct_3), if_names = ("menu_2", ))
+<Command fct_3>
+>>> g2.add_command (TFL.UI.Command ("fct4", fct_4), if_names = ("menu_2", ))
+<Command fct_4>
+>>> print cmd_mgr ["Group1"].interfacers ['menu_1']
+Group1 ['fct1', 'fct2']
+>>> print cmd_mgr ["Group1"].interfacers ['menu_2']
 Traceback (most recent call last):
   ...
 KeyError: 'menu_2'
->>> print cmd_mgr ["Group_2"].interfacers ['menu_1']
+>>> print cmd_mgr ["Group2"].interfacers ['menu_1']
 Traceback (most recent call last):
   ...
 KeyError: 'menu_1'
->>> print cmd_mgr ["Group_2"].interfacers ['menu_2']
-Group_2 ['fct_3', 'fct_4']
+>>> print cmd_mgr ["Group2"].interfacers ['menu_2']
+Group2 ['fct3', 'fct4']
 """
 
 from   _TFL                   import TFL
@@ -100,24 +101,5 @@ class CI_Menu (TFL.TKT.Command_Interfacer) :
     # end def __str__
 
 # end class CI_Menu
-
-"""
-from _TFL._UI._Test_Command_Mgr import *
-cmd_mgr = TFL.UI.Command_Mgr \
-    (1, dict ( menu_1 = CI_Menu ("menu_1")
-             , menu_2 = CI_Menu ("menu_2")
-             )
-    )
-
-g1 = cmd_mgr.add_group ("Group_1", if_names = ("menu_1", ))
-g2 = cmd_mgr.add_group ("Group_2", if_names = ("menu_2", ))
-
-g1.add_command (TFL.UI.Command ("fct_1", fct_1), if_names = ("menu_1", ))
-g1.add_command (TFL.UI.Command ("fct_2", fct_2), if_names = ("menu_1", ))
-g2.add_command (TFL.UI.Command ("fct_3", fct_3), if_names = ("menu_2", ))
-g2.add_command (TFL.UI.Command ("fct_4", fct_4), if_names = ("menu_2", ))
-print cmd_mgr ["Group_1"].interfacers ['menu_1']
-print cmd_mgr ["Group_2"].interfacers ['menu_2']
-"""
 
 ### __END__ TFL.UI._Test_Command_Mgr

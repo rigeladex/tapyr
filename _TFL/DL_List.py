@@ -53,6 +53,7 @@
 #     7-Nov-2007 (CT)  Use `Getter` instead of `lambda`
 #    15-Apr-2009 (CT)  `_DL_Counted_.remove` changed to `return` the value
 #                      removed
+#    11-Jun-2009 (CT)  s/if...raise/assert/ for guards against program errors
 #    ««revision-date»»···
 #--
 
@@ -328,8 +329,7 @@ class DL_List (_DL_Chain_) :
     # end def clear
 
     def remove (self, item) :
-        if item is self._H or item is self._T :
-            raise IndexError, error
+        assert item is not self._H and item is not self._T
         return self.__super.remove (item)
     # end def remove
 
@@ -454,9 +454,8 @@ class DL_Ring (_DL_Chain_) :
     # end def prepend
 
     def remove (self, item) :
-        if item is self._NIL :
-            raise IndexError, error
-        elif item.next is item.prev is item :
+        assert item is not self._NIL
+        if item.next is item.prev is item :
             assert item is self.mark
             self.clear ()
             return item

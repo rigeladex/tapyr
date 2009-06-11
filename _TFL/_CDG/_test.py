@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 TTTech Computertechnik AG. All rights reserved
+# Copyright (C) 2005-2009 TTTech Computertechnik AG. All rights reserved
 # Schönbrunnerstraße 7, A--1040 Wien, Austria. office@tttech.com
 #
 #++
@@ -16,13 +16,9 @@
 #    23-Aug-2006 (PGO) Using alternate form of %x
 #    14-Nov-2006 (MZO) test extended, profiler added
 #    14-Mar-2007 (PGO) `mask` is ubyte1 only
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    18-Oct-2007 (MZO) [25170] example for `table_entry_comments` added
 #    ««revision-date»»···
 #--
-#
-
 
 from   _TFL                 import TFL
 import _TFL._Meta.Object
@@ -31,7 +27,6 @@ import _TFL._CDG.Struct_Field
 import _TFL._CDG.Struct
 import _TFL._SDG._C
 import _TFL._SDG._C.import_C
-from _YAGNI.Debug import proc_status
 
 Meta_Struct = TFL.CDG.M_Struct.New ("TDCOM")
 
@@ -239,7 +234,6 @@ class TDCOM_Descriptor (Struct) :
 
 # end class TDCOM_Descriptor
 
-@proc_status
 def _run_cg (cg, C, with_reset_extension, with_filename, benchmark) :
     if with_filename :
         print "code_gen with filename"
@@ -253,9 +247,8 @@ def _run_cg (cg, C, with_reset_extension, with_filename, benchmark) :
         )
 # end def _run_cg
 
-
 if __name__ == "__main__" :
-    from Command_Line import Command_Line
+    from _TFL.Command_Line import Command_Line
 
     cmd = Command_Line \
         ( option_spec =
