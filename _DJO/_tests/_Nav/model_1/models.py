@@ -97,11 +97,15 @@ class News_Extender (DJO.Model) :
 
     additional_text = MF.Text ()
 
-    @classmethod
-    def _form_clean (cls, cleaned_data) :
-        print "Model clean called"
-        return cleaned_data
-    # end def _form_clean
+    class Form_Mixin (DJO.Model_Form_Mixin) :
+
+        def clean (self) :
+            result = self.__super.clean ()
+            print "Model clean called"
+            return result
+        # end def clean
+
+    # end class Form_Mixin
 
     NAV_admin_args  = dict \
         ( formset_descriptions =
@@ -111,8 +115,9 @@ class News_Extender (DJO.Model) :
                   )
               ,
               )
-        , _djo_clean = _form_clean
+        , Form_Mixins  = (Form_Mixin, )
         )
+
 # end class News_Extender
 
 ### __END__ model_1.models

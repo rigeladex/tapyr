@@ -54,6 +54,12 @@
 #    11-Jun-2009 (CT) Use `cls.__m_super` instead of `super (..., cls)`
 #    11-Jun-2009 (CT) `Model_Form.__init__` changed to expect `request`
 #                     instead of `* args`
+#    12-Jun-2009 (CT) `object_to_save` removed
+#    12-Jun-2009 (CT) `clean` and `_djo_clean` removed
+#    12-Jun-2009 (CT) `_before_commit` added to, `commit` argument removed
+#                     from, `save`
+#    12-Jun-2009 (CT) `Model_Form_Mixin`, `Creator_Form_Mixin`, and
+#                     `Kind_Name_Form_Mixin` added
 #    ««revision-date»»···
 #--
 
@@ -62,6 +68,7 @@ from   _TFL                        import TFL
 
 import _TFL.Decorator
 import _TFL._Meta.M_Class
+import _TFL._Meta.Object
 import _TFL.NO_List
 from   _TFL.predicate              import all_true
 
@@ -72,19 +79,7 @@ from    django.forms                    import BaseForm, BaseModelForm
 from    django.forms.util               import ErrorList
 from    django.forms                    import models
 from    django.db.models.fields.related import RelatedField
-
-@TFL.Add_New_Method (BaseModelForm)
-@TFL.Contextmanager
-def object_to_save (self, commit=True) :
-    """Context manager for saving an object created from a form"""
-    obj = self.save (commit = False)
-    try :
-        yield obj
-    finally :
-        if commit :
-            obj.save      ()
-            self.save_m2m ()
-# end def object_to_save
+from    django.db.models                import FileField
 
 class M_Model_Form (TFL.Meta.M_Class) :
     """Meta class for forms based on a django model."""
@@ -166,7 +161,6 @@ class _DJO_Model_Form_ (BaseModelForm) :
 
     __metaclass__ = M_Model_Form
     _real_name    = "Model_Form"
-    _djo_clean    = None
 
     def __init__ (self, request = None, instance = None, ** kw) :
         ### super call must be before creating the bound formset's in order
@@ -184,13 +178,6 @@ class _DJO_Model_Form_ (BaseModelForm) :
                 self.nested_forms.append (bfs)
     # end def __init__
 
-    def clean (self) :
-        result = self.__super.clean ()
-        if callable (self._djo_clean) :
-            result = self._djo_clean (result)
-        return result
-    # end def clean
-
     def full_clean (self) :
         if not self.is_bound: # Stop further processing.
             return
@@ -205,11 +192,9 @@ class _DJO_Model_Form_ (BaseModelForm) :
                )
     # end def is_valid
 
-    def save (self, commit = True) :
-        from django.db import models
-
-        instance     = self.instance
-        _F           = instance._F
+    def save (self) :
+        instance = self.instance
+        _F       = instance._F
         if self.errors :
             raise ValueError\
                 ( "The %s could not be %s because the data didn't "
@@ -222,10 +207,10 @@ class _DJO_Model_Form_ (BaseModelForm) :
         file_field_defers   = []
         self.related_defers = []
         for ff in self.fields :
-            df    = _F [ff.name]
+            df = _F [ff.name]
             # Defer saving file-type fields until after the other fields, so a
             # callable upload_to can use the values from other fields.
-            if isinstance (df, models.FileField):
+            if isinstance (df, FileField):
                 file_field_defers.append (dj)
             elif isinstance (df, RelatedField) :
                 ### related fields can only be `saved` after the main object
@@ -233,12 +218,11 @@ class _DJO_Model_Form_ (BaseModelForm) :
                 self.related_defers.append (df)
             else:
                 df.save_form_data (instance, cleaned_data [df.name])
-
         for df in file_field_defers :
             df.save_form_data (instance, cleaned_data [df.name])
-        if commit :
-            instance.save ()
-            self.save_m2m ()
+        self._before_commit (instance)
+        instance.save ()
+        self.save_m2m ()
         return instance
     # end def save
 
@@ -250,7 +234,47 @@ class _DJO_Model_Form_ (BaseModelForm) :
             nf.save_and_assign (self.instance)
     # end def save_m2m
 
+    def _before_commit (self, instance) :
+        return instance
+    # end def _before_commit
+
 Model_Form = _DJO_Model_Form_ # end class
+
+class Model_Form_Mixin (TFL.Meta.Object) :
+
+    __metaclass__ = M_Model_Form
+
+# end class Model_Form_Mixin
+
+class Creator_Form_Mixin (Model_Form_Mixin) :
+    """Model_Form mixin dealing with models with `creator`."""
+
+    def _before_commit (self, instance) :
+        if not instance.creator :
+            request = self.request
+            if request.user.is_authenticated () :
+                instance.creator = request.user
+        return self.__super._before_commit (instance)
+    # end def _before_commit
+
+# end class Creator_Form_Mixin
+
+class Kind_Name_Form_Mixin (Model_Form_Mixin) :
+    """Model_Form mixin dealing with models with `kind_name`."""
+
+    kind_name       = None
+
+    def __init__ (self, request = None, instance = None, ** kw) :
+        self.kind_name = kw.pop ("kind_name", None)
+        self.__super.__init__ (request = request, instance = instance, ** kw)
+    # end def __init__
+
+    def _before_commit (self, instance) :
+        instance.kind = instance._F.kind.choice_to_code (self.kind_name)
+        return self.__super._before_commit (instance)
+    # end def _before_commit
+
+# end class Kind_Name_Form_Mixin
 
 if __name__ != "__main__" :
     DJO._Export ("*")

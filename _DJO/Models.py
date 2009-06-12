@@ -55,6 +55,7 @@
 #     2-Jun-2009 (MG) `delete` added
 #     3-Jun-2009 (CT) `_setup_opt_proxy_field` changed to set
 #                     `null = (dleif.Null is None)`
+#    12-Jun-2009 (CT) `_before_save` removed
 #    ««revision-date»»···
 #--
 
@@ -180,10 +181,6 @@ class _DJO_Model_ (DM.Model) :
             self._save_callbacks.clear ()
         self.__super.save (* args, ** kw)
     # end def save
-
-    def _before_save (self, request, ** kw) :
-        pass
-    # end def _before_save
 
 Model = _DJO_Model_ # end class
 

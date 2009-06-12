@@ -54,10 +54,13 @@
 #     2-Jun-2009 (MG) `_auto_form` changed to support form sets defined in
 #                     the models
 #     5-Jun-2009 (CT) `additional_context` factored from `Admin.rendered` and
-#                     used in `Changer.rendered`, too
+#                     used in `Admin.Changer.rendered`, too
 #    11-Jun-2009 (CT) s/Forms/Model_Form/
 #    11-Jun-2009 (CT) `Form_Mixins` added
 #    11-Jun-2009 (CT) `process_post` changed to pass `request` to `Form`
+#    12-Jun-2009 (CT) `_djo_clean` removed
+#    12-Jun-2009 (CT) `Admin.Changer.process_post` simplified (no more
+#                     `object_to_save`, `_before_save`, ...)
 #    ««revision-date»»···
 #--
 
@@ -151,16 +154,11 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         template     = "model_admin_change.html"
 
         def process_post (self, request, obj) :
-            form   = self.Form (request = request, instance = obj)
+            form   = self.Form \
+                (request = request, instance = obj, kind_name = self.kind_name)
             result = None
             if form.is_valid () :
-                with form.object_to_save () as result :
-                    if hasattr (result, "_before_save") :
-                        result._before_save \
-                            (request, kind_name = self.kind_name)
-                    if hasattr (result, "creator") and not result.creator :
-                        if request.user.is_authenticated () :
-                            result.creator = request.user
+                result = form.save ()
             return result, form
         # end def process_post
 
@@ -337,8 +335,6 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         form_name            = "%s_Form" % Model.__name__
         form_dict            = dict (head_mixins = Form_Mixins)
         formset_descriptions = kw.get ("formset_descriptions", ())
-        if "_djo_clean" in kw :
-            form_dict ["_djo_clean"] = kw ["_djo_clean"]
         return Form_Type.New (Model, * formset_descriptions, ** form_dict)
     # end def _auto_form
 
