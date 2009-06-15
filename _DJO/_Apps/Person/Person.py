@@ -141,34 +141,18 @@ class Person (DJO.Model) :
                         )
                     , legend = _("Phone-Numbers")
                     )
-#                  , DJO.Nested_Form_Description
-#                      ( "emails"
-#                      , formset_descriptions =
-#                          ( DJO.Formset_Description
-#                              ( "email", "desc"
-#                              , template  = "formset_horizontal.html"
-#                              )
-#                          ,
-#                          )
-#                      , legend = _("Email-Addresses")
-#                      )
-                , name = "Personal_Contact_Info"
-                )
-            , DJO.Formset_Description
-                ( DJO.Nested_Form_Description
-                    ( "emails"
-                    , formset_descriptions =
-                        ( DJO.Formset_Description
-                            ( "email", "desc"
-                            , template  = "formset_horizontal.html"
-                            )
-                        ,
-                        )
-                    , legend = _("Email-Addresses")
-                    )
-                )
-            , DJO.Formset_Description
-                ( DJO.Nested_Form_Description
+                  , DJO.Nested_Form_Description
+                      ( "emails"
+                      , formset_descriptions =
+                          ( DJO.Formset_Description
+                              ( "email", "desc"
+                              , template  = "formset_horizontal.html"
+                              )
+                          ,
+                          )
+                      , legend = _("Email-Addresses")
+                      )
+                  , DJO.Nested_Form_Description
                     ( "addresses"
                     , formset_descriptions =
                         ( DJO.Formset_Description
@@ -180,6 +164,7 @@ class Person (DJO.Model) :
                         )
                     , legend = _("Addresses")
                     )
+                , name = "Personal_Contact_Info"
                 )
             )
         )

@@ -42,6 +42,8 @@
 #     6-Jun-2009 (MG) `Formset` and `Bound_Formset` factored into own module
 #    10-Jun-2009 (MG) `Nested_Form_Description` and friends added
 #    11-Jun-2009 (CT) `name` and `_` added to `Formset_Description`
+#    15-Jun-2009 (MG) `Formset_Description.__class__`: fixed problem if two
+#                     `Nested_Form_Description` are neighbors
 #    ««revision-date»»···
 #--
 
@@ -113,7 +115,7 @@ class Formset_Description (TFL.Meta.Object) :
         if nested_form_index :
             current_idx = 0
             for nested_idx in nested_form_index :
-                if nested_idx > 0 :
+                if nested_idx != current_idx :
                     fsd = self.copy (self.fields [current_idx : nested_idx])
                     result.append (DJO.Formset (model, fsd))
                 result.append \
