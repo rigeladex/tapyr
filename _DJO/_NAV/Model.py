@@ -332,7 +332,6 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         import _DJO.Model_Form
         Form_Type            = kw.get ("Form", DJO.Model_Form)
         Form_Mixins          = kw.get ("Form_Mixins", ())
-        form_name            = "%s_Form" % Model.__name__
         form_dict            = dict (head_mixins = Form_Mixins)
         formset_descriptions = kw.get ("formset_descriptions", ())
         return Form_Type.New (Model, * formset_descriptions, ** form_dict)

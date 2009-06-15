@@ -109,7 +109,7 @@ class Person (DJO.Model) :
     display = property (__unicode__)
 
     NAV_admin_args = dict \
-        ( list_display = ("birth_date", "sex")
+        ( list_display = ("last_name", "first_name", "birth_date", "sex")
         , formset_descriptions =
             ( DJO.Formset_Description
                 ( DJO.Field_Description ("last_name",  required = True)

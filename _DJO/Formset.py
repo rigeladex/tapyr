@@ -30,6 +30,8 @@
 #    11-Jun-2009 (CT) `Form_Mixins` added to `Nested_Form_Formset`
 #    11-Jun-2009 (CT) `Bound_Nested_Form_Formset` adapted to pass `request`
 #                     to `nested_form_class`
+#    15-Jun-2009 (MG) `Bound_Nested_Form_Formset.__init__` use `request`
+#                     instead of passing data and files
 #    ««revision-date»»···
 #--
 
@@ -89,11 +91,8 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
         else :
             rel_instances = ()
         if form.is_bound :
-            form_kw       = dict (files = form.files)
             count_spec    = form.data [self.object_count.name]
             count         = int (count_spec.split (":") [0])
-        else :
-            form_kw       = dict ()
         form_count = min \
             ( self.max_count
             , max (self.min_count, len (rel_instances) + self.min_empty)
@@ -105,7 +104,6 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
                     ( request  = self.form.request
                     , instance = rel_inst
                     , prefix   = "M%d" % (no, )
-                    , ** form_kw
                     )
                 )
     # end def __init__

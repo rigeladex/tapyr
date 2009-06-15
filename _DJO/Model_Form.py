@@ -60,6 +60,10 @@
 #                     from, `save`
 #    12-Jun-2009 (CT) `Model_Form_Mixin`, `Creator_Form_Mixin`, and
 #                     `Kind_Name_Form_Mixin` added
+#    15-Jun-2009 (MG) `Model_Form.__init__` changed so that only some
+#                     attributes are passed to the django form ancestor
+#    15-Jun-2009 (MG) `Model_Form_Mixin` cannot inherit from
+#                     `TFL.Meta.Object`
 #    ««revision-date»»···
 #--
 
@@ -110,9 +114,9 @@ class M_Model_Form (TFL.Meta.M_Class) :
                (DJO.Formset_Description (model = model), )
         return cls.__m_super.New \
             ( model.__name__
-            , model                 = model
+            , model                = model
             , formset_descriptions = formset_descriptions
-            , _meta                 = Meta
+            , _meta                = Meta
             , ** kw
             )
     # end def New
@@ -162,15 +166,16 @@ class _DJO_Model_Form_ (BaseModelForm) :
     __metaclass__ = M_Model_Form
     _real_name    = "Model_Form"
 
-    def __init__ (self, request = None, instance = None, ** kw) :
+    def __init__ (self, request = None, instance = None, prefix = None, ** kw) :
         ### super call must be before creating the bound formset's in order
         ### to have the `instance` member setup correctly
+        form_kw = dict ()
         if request :
-            kw ["data"] = request.POST
-        self.__super.__init__ (instance = instance, ** kw)
-        self.request      = request
-        self.formsets     = []
-        self.nested_forms = []
+            form_kw ["data"] = request.POST
+        self.__super.__init__ (instance = instance, prefix = prefix, ** form_kw)
+        self.request         = request
+        self.formsets        = []
+        self.nested_forms    = []
         for ufs in self.unbound_formsets :
             bfs = ufs (self)
             self.formsets.append (bfs)
@@ -240,7 +245,7 @@ class _DJO_Model_Form_ (BaseModelForm) :
 
 Model_Form = _DJO_Model_Form_ # end class
 
-class Model_Form_Mixin (TFL.Meta.Object) :
+class Model_Form_Mixin (object) :
 
     __metaclass__ = M_Model_Form
 

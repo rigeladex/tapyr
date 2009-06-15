@@ -53,6 +53,7 @@ NAV        = DJO.Navigation.Root.from_nav_list_file \
 
 def add_admin_setction () :
     from   _DJO._tests._Nav.model_1.models import News, News_Extender
+    from   _DJO._tests._Nav.model_2.models import Entry
     from   _DJO._Apps.Person.models        import \
          Address, Email_Address, Person, Phone_Number
     from   _DJO._Apps.Regatta.models        import \
@@ -64,6 +65,7 @@ def add_admin_setction () :
               , title        = "Admin"
               , models       =
                   ( User
+                  , Entry
                   , Address, Email_Address, Person, Phone_Number
                   , Boat_Class, Boat, Sailor
                   , News, News_Extender
