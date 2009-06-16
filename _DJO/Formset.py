@@ -32,6 +32,7 @@
 #                     to `nested_form_class`
 #    15-Jun-2009 (MG) `Bound_Nested_Form_Formset.__init__` use `request`
 #                     instead of passing data and files
+#    16-Jun-2009 (MG) Only pass `widget`to formfields if really set
 #    ««revision-date»»···
 #--
 
@@ -167,12 +168,12 @@ class Formset (_Formset_) :
             if name in fsd.exclude :
                 continue
             dj_field          = _F [name]
-            kw                = dict (widget = getattr (fd, "widget", None))
+            kw                = dict ()
             form_field_class  = getattr (fd, "form_flield_class", None)
             ### the following attribues must not be passed to `formfield` is
             ### they have not been specified in the field definition to
             ### ensure the proper default
-            for attr in "form_class", "required" :
+            for attr in "form_class", "required", "widget":
                 value = getattr (fd, attr, None)
                 if value is not None :
                     kw [attr] = value
