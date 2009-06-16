@@ -58,6 +58,7 @@ class Address (DJO.Model) :
         )
     zip                   = MF.Char \
         ( _("Zip")
+        , css_class       = "Short-Number"
         , max_length      = 10
         )
     region                =  MF.Char     \
