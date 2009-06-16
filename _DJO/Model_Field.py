@@ -113,7 +113,7 @@ class _DJO_Field_ (DM.Field) :
         if "real_name" in kw :
             self.real_name = kw.pop ("real_name")
         if "Widget" in kw :
-            self.Widget        = kw.pop ("Widget")
+            self.Widget    = kw.pop ("Widget")
         if self.Null == "" :
             kw.pop ("null", None)
         self.css_class    = kw.pop ("css_class", "")
@@ -253,6 +253,7 @@ class _Date_ (Field) :
     # end def as_string
 
     def _from_string (self, s) :
+        s = s.strip ()
         for f in self.input_formats :
             try :
                 result = time.strptime (s, f)
@@ -452,7 +453,7 @@ class Small_Integer (_Integer_, DM.SmallIntegerField) :
 # end class Small_Integer
 
 class Text (Field, DM.TextField) :
-    pass
+    Widget         = widgets.Textarea
 # end class Text
 
 class Time (_Date_, DM.TimeField) :
