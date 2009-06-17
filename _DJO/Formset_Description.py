@@ -44,6 +44,7 @@
 #    11-Jun-2009 (CT) `name` and `_` added to `Formset_Description`
 #    15-Jun-2009 (MG) `Formset_Description.__class__`: fixed problem if two
 #                     `Nested_Form_Description` are neighbors
+#    17-Jun-2009 (MG) `Nested_Form_Description.min_required` added
 #    ««revision-date»»···
 #--
 
@@ -59,9 +60,10 @@ class Nested_Form_Description (DJO.Field_Description) :
        should be rendered
     """
 
-    min_count = 1
-    max_count = sys.maxint
-    min_empty = 1
+    min_count    = 1
+    max_count    = sys.maxint
+    min_empty    = 1
+    min_required = 0
 
 # end class Nested_Form_Description
 

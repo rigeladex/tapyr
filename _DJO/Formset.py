@@ -33,6 +33,10 @@
 #    15-Jun-2009 (MG) `Bound_Nested_Form_Formset.__init__` use `request`
 #                     instead of passing data and files
 #    16-Jun-2009 (MG) Only pass `widget`to formfields if really set
+#    17-Jun-2009 (MG) `Bound_Nested_Form_Formset.__init__` pass
+#                     `empty_permitted` to form to allow empty forms
+#                     `save_and_assign` only set instances which have a
+#                     primary key (are saved to the database)
 #    ««revision-date»»···
 #--
 
@@ -98,13 +102,16 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
             ( self.max_count
             , max (self.min_count, len (rel_instances) + self.min_empty)
             )
+        min_required = self.min_required
         for no, rel_inst in enumerate \
                 (rel_instances + (None, ) * (form_count - len (rel_instances))):
             nested_forms.append \
                 ( self.nested_form_class
-                    ( request  = self.form.request
-                    , instance = rel_inst
-                    , prefix   = "M%d" % (no, )
+                    ( request         = self.form.request
+                    , instance        = rel_inst
+                    , prefix          = "M%d" % (no, )
+                    , empty_permitted =
+                        (rel_inst is None) or (no < min_required)
                     )
                 )
     # end def __init__
@@ -118,7 +125,8 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
     # end def count_spec
 
     def save_and_assign (self, instance) :
-        setattr (instance, self.name, [nf.save () for nf in self.nested_forms])
+        rel_instances = [nf.save () for nf in self.nested_forms]
+        setattr (instance, self.name, [i for i in rel_instances if i.pk])
     # end def save_and_assign
 
     def full_clean (self) :

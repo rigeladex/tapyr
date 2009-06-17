@@ -64,6 +64,10 @@
 #                     attributes are passed to the django form ancestor
 #    15-Jun-2009 (MG) `Model_Form_Mixin` cannot inherit from
 #                     `TFL.Meta.Object`
+#    17-Jun-2009 (MG) `Model_Form.__init__` handle `empty_permitted`
+#                     `Model_Form.save` only save the instance if the form
+#                     tries to change anything, moved saving of nested form's
+#                     into `save` method
 #    ««revision-date»»···
 #--
 
@@ -169,7 +173,7 @@ class _DJO_Model_Form_ (BaseModelForm) :
     def __init__ (self, request = None, instance = None, prefix = None, ** kw) :
         ### super call must be before creating the bound formset's in order
         ### to have the `instance` member setup correctly
-        form_kw = dict ()
+        form_kw = dict (empty_permitted = kw.pop ("empty_permitted", False))
         if request :
             form_kw ["data"] = request.POST
         self.__super.__init__ (instance = instance, prefix = prefix, ** form_kw)
@@ -208,26 +212,29 @@ class _DJO_Model_Form_ (BaseModelForm) :
                   , "created" if not instance.pk else "changed"
                   )
                 )
-        cleaned_data        = self.cleaned_data
-        file_field_defers   = []
-        self.related_defers = []
-        for ff in self.fields :
-            df = _F [ff.name]
-            # Defer saving file-type fields until after the other fields, so a
-            # callable upload_to can use the values from other fields.
-            if isinstance (df, FileField):
-                file_field_defers.append (dj)
-            elif isinstance (df, RelatedField) :
-                ### related fields can only be `saved` after the main object
-                ### has been saved, so we defer them
-                self.related_defers.append (df)
-            else:
+        if self.has_changed () :
+            cleaned_data        = self.cleaned_data
+            file_field_defers   = []
+            self.related_defers = []
+            for ff in self.fields :
+                df = _F [ff.name]
+                # Defer saving file-type fields until after the other fields, so a
+                # callable upload_to can use the values from other fields.
+                if isinstance (df, FileField):
+                    file_field_defers.append (dj)
+                elif isinstance (df, RelatedField) :
+                    ### related fields can only be `saved` after the main object
+                    ### has been saved, so we defer them
+                    self.related_defers.append (df)
+                else:
+                    df.save_form_data (instance, cleaned_data [df.name])
+            for df in file_field_defers :
                 df.save_form_data (instance, cleaned_data [df.name])
-        for df in file_field_defers :
-            df.save_form_data (instance, cleaned_data [df.name])
-        self._before_commit (instance)
-        instance.save ()
-        self.save_m2m ()
+            self._before_commit (instance)
+            instance.save ()
+            self.save_m2m ()
+        for nf in self.nested_forms :
+            nf.save_and_assign (self.instance)
         return instance
     # end def save
 
@@ -235,8 +242,6 @@ class _DJO_Model_Form_ (BaseModelForm) :
         for df in self.related_defers :
             df.save_form_data (self.instance, self.cleaned_data [df.name])
         self.related_defers = []
-        for nf in self.nested_forms :
-            nf.save_and_assign (self.instance)
     # end def save_m2m
 
     def _before_commit (self, instance) :
