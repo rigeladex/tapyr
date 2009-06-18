@@ -141,26 +141,29 @@ class Person (DJO.Model) :
                         )
                     , legend = _("Phone-Numbers")
                     )
-                  , DJO.Nested_Form_Description
-                      ( "emails"
-                      , formset_descriptions =
-                          ( DJO.Formset_Description
-                              ( "email", "desc"
-                              , template  = "formset_horizontal.html"
-                              )
-                          ,
-                          )
-                      , legend = _("Email-Addresses")
-                      )
-                  , DJO.Nested_Form_Description
+                , template = "nested_model_form_table.html"
+                , name = "Personal_Phone_Info"
+                )
+            , DJO.Formset_Description
+                ( DJO.Nested_Form_Description
+                    ( "emails"
+                    , formset_descriptions =
+                        ( DJO.Formset_Description
+                            ( "email", "desc"
+                            , template  = "formset_horizontal.html"
+                            )
+                        ,
+                        )
+                    , legend = _("Email-Addresses")
+                    )
+                , DJO.Nested_Form_Description
                     ( "addresses"
                     , formset_descriptions =
                         ( DJO.Formset_Description
-                            ( "street", "city", "zip", "country"
+                            ( "street", "city", "zip", "country", "desc"
                             , template  = "formset_horizontal.html"
                             )
-                        , DJO.Formset_Description
-                            ( "desc")
+                        ,
                         )
                     , legend = _("Addresses")
                     )

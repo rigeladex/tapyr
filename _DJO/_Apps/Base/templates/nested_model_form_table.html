@@ -1,0 +1,61 @@
+{# Django template: nested_model_form.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##++
+  ## Name
+  ##    nested_model_form_table
+  ##
+  ## Purpose
+  ##    Template rendering a nested form inside a model form as a table
+  ##
+  ## Revision Dates
+  ##    18-Jun-2009 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n TGL %}
+  <fieldset class="{{ formset.css_class|default:"nested-many-2-many-table"}}">
+    {% if formset.legend %}<legend>{{ formset.legend }}</legend>{% endif %}
+    {{ formset.object_count }}
+    <div class="One-Link">
+      <table class="Formset-Horizontal">
+        <thead>
+        <tr>
+          {% for field in formset.nested_forms.0.formsets.0 %}
+            <th title="{{ field.help_text|safe }}">
+              {{ field.label_tag }}
+            </th>
+          {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+          {% for nested_form in formset.nested_forms %}
+            {% for fs in nested_form.formsets %}
+              <tr class="Formset {{ fs.css_class }}"
+                   {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
+              >
+                {% for field in fs %}
+                  <td class="Field Field-{{ field.name }}" title="{{ field.help_text|safe }}">
+                    {{ field }}
+                    {{ field.errors }}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </fieldset>
+  <script type="text/javascript">
+    jQuery
+      ( function ()
+          { jQuery
+              ( "fieldset.{{ formset.css_class|default:"nested-many-2-many"}}"
+              ).nested_many_2_many_setup ();
+          }
+      )
+  </script>
+{# __END__ Django template: nested_model_form_table.html #}

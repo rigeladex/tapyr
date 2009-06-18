@@ -19,8 +19,7 @@
 {% load i18n %}
 {% load TGL %}
 {% for field in formset %}
-  <div class="Field"
-       id="Field-{{ field.name }}" title="{{ field.help_text }}"
+  <div class="Field Field-{{ field.name }}" title="{{ field.help_text }}"
   >
     <span class="Field-Help">{{ field.help_text|safe }}</span>
     <label for="id_{{ field.html_name }}">{{ field.label }}</label>

@@ -152,9 +152,9 @@ class _Formset_ (TFL.Meta.Object) :
     Bound_Formset = Bound_Formset
 
     def __init__ (self, model, fsd = None) :
-        self.model                = model
+        self.model               = model
         self.formset_description = fsd or DJO.Formset_Description ()
-        self.fields               = []
+        self.fields              = []
     # end def __init__
 
     def __call__ (self, form) :

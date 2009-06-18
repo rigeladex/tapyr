@@ -12,10 +12,11 @@
               return this.each
                 ( function ()
                     {
-                      $(this).hide ();
+                      $(this).addClass ("orange");
                     }
                 );
             }
         };
+      $.fn.nested_many_2_many_setup = $.fn.DJO.nested_many_2_many_setup;
     }
 )(jQuery);
