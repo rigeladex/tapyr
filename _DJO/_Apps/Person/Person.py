@@ -134,10 +134,10 @@ class Person (DJO.Model) :
                             , "area_code"
                             , "subscriber_number"
                             , "extension"
+                            , "desc"
                             , template  = "formset_horizontal.html"
                             )
-                        , DJO.Formset_Description
-                            ( "desc")
+                        ,
                         )
                     , legend = _("Phone-Numbers")
                     )

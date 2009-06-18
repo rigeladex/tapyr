@@ -31,4 +31,13 @@
       {% endfor %}
     </div>
   </fieldset>
+  <script type="text/javascript">
+    jQuery
+      ( function ()
+          { jQuery
+              ( "fieldset.{{ formset.css_class|default:"nested-many-2-many"}}"
+              ).DJO.nested_many_2_many_setup ();
+          }
+      )
+  </script>
 {# __END__ Django template: nested_model_form.html #}

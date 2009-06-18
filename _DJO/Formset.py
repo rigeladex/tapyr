@@ -37,6 +37,8 @@
 #                     `empty_permitted` to form to allow empty forms
 #                     `save_and_assign` only set instances which have a
 #                     primary key (are saved to the database)
+#    18-Jun-2009 (CT) `Bound_Nested_Form_Formset.__init__` changed to
+#                     consider `min_required` for `form_count`
 #    ««revision-date»»···
 #--
 
@@ -98,11 +100,15 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
         if form.is_bound :
             count_spec    = form.data [self.object_count.name]
             count         = int (count_spec.split (":") [0])
-        form_count = min \
-            ( self.max_count
-            , max (self.min_count, len (rel_instances) + self.min_empty)
-            )
         min_required = self.min_required
+        form_count   = min \
+            ( self.max_count
+            , max
+                ( self.min_count
+                , len (rel_instances) + self.min_empty
+                , min_required
+                )
+            )
         for no, rel_inst in enumerate \
                 (rel_instances + (None, ) * (form_count - len (rel_instances))):
             nested_forms.append \
@@ -111,7 +117,7 @@ class Bound_Nested_Form_Formset (Bound_Formset) :
                     , instance        = rel_inst
                     , prefix          = "M%d" % (no, )
                     , empty_permitted =
-                        (rel_inst is None) or (no < min_required)
+                        (rel_inst is None) and (no >= min_required)
                     )
                 )
     # end def __init__

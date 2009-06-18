@@ -23,7 +23,7 @@
   <tr>
     {% for field in formset %}
       <th title="{{ field.help_text|safe }}">
-        <label for="id_{{ field.html_name }}">{{ field.label }}</label>
+        {{ field.label_tag }}
       </th>
     {% endfor %}
   </tr>
