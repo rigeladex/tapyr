@@ -1,0 +1,28 @@
+{# Django template: formset_tr_head.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    formset_tr_head.html
+  ##
+  ## Purpose
+  ##    Template rendering the fields of one form-set as a horizontal
+  ##    sequence of lebel elements
+  ##
+  ## Revision Dates
+  ##     5-Jun-2009 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n TGL %}
+  <tr>
+    {% for field in formset %}
+      <th title="{{ field.help_text|safe }}">
+        {{ field.label_tag }}
+      </th>
+    {% endfor %}
+  </tr>
+{# __END__ Django template: formset_tr_head.html #}

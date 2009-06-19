@@ -12,6 +12,7 @@
   ##
   ## Revision Dates
   ##    18-Jun-2009 (CT) Creation
+  ##    19-Jun-2009 (CT) `formset_tr_head` and `formset_tr_body` factored
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -22,27 +23,12 @@
     <div class="One-Link">
       <table class="Formset-Horizontal">
         <thead>
-        <tr>
-          {% for field in formset.nested_forms.0.formsets.0 %}
-            <th title="{{ field.help_text|safe }}">
-              {{ field.label_tag }}
-            </th>
-          {% endfor %}
-        </tr>
+          {% rrender "formset_tr_body.html" formset=formset.nested_forms.0.formsets.0 %}
         </thead>
         <tbody>
           {% for nested_form in formset.nested_forms %}
             {% for fs in nested_form.formsets %}
-              <tr class="Formset {{ fs.css_class }}"
-                   {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
-              >
-                {% for field in fs %}
-                  <td class="Field Field-{{ field.name }}" title="{{ field.help_text|safe }}">
-                    {{ field }}
-                    {{ field.errors }}
-                  </td>
-                {% endfor %}
-              </tr>
+              {% rrender "formset_tr_body.html" formset=fs %}
             {% endfor %}
           {% endfor %}
         </tbody>

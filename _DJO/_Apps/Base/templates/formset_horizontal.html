@@ -13,6 +13,7 @@
   ##
   ## Revision Dates
   ##     5-Jun-2009 (CT) Creation
+  ##    19-Jun-2009 (CT) `formset_tr_head` and `formset_tr_body` factored
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -20,23 +21,10 @@
 {% load TGL %}
 <table class="Formset-Horizontal">
   <thead>
-  <tr>
-    {% for field in formset %}
-      <th title="{{ field.help_text|safe }}">
-        {{ field.label_tag }}
-      </th>
-    {% endfor %}
-  </tr>
+    {% rrender "formset_tr_head.html" formset=formset %}
   </thead>
   <tbody>
-  <tr>
-    {% for field in formset %}
-      <td class="Field Field-{{ field.name }}" title="{{ field.help_text|safe }}">
-        {{ field }}
-        {{ field.errors }}
-      </td>
-    {% endfor %}
-  </tr>
+    {% rrender "formset_tr_body.html" formset=formset %}
   </tbody>
 </table>
 <div class="Formset-Horizontal-Help">

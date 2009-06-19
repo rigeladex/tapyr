@@ -22,7 +22,7 @@
   <div class="Field Field-{{ field.name }}" title="{{ field.help_text }}"
   >
     <span class="Field-Help">{{ field.help_text|safe }}</span>
-    <label for="id_{{ field.html_name }}">{{ field.label }}</label>
+    {{ field.label_tag }}
     {{ field }}
     {{ field.errors }}
   </div>
