@@ -333,8 +333,8 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         Form_Type            = kw.get ("Form", DJO.Model_Form)
         Form_Mixins          = kw.get ("Form_Mixins", ())
         form_dict            = dict (head_mixins = Form_Mixins)
-        formset_descriptions = kw.get ("formset_descriptions", ())
-        return Form_Type.New (Model, * formset_descriptions, ** form_dict)
+        field_group_descriptions = kw.get ("field_group_descriptions", ())
+        return Form_Type.New (Model, * field_group_descriptions, ** form_dict)
     # end def _auto_form
 
     def _get_child (self, child, * grandchildren) :

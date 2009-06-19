@@ -12,23 +12,24 @@
   ##
   ## Revision Dates
   ##    18-Jun-2009 (CT) Creation
-  ##    19-Jun-2009 (CT) `formset_tr_head` and `formset_tr_body` factored
+  ##    19-Jun-2009 (CT) `field_group_tr_head` and `field_group_tr_body`
+  ##                      factored
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load i18n TGL %}
-  <fieldset class="{{ formset.css_class|default:"nested-many-2-many-table"}}">
-    {% if formset.legend %}<legend>{{ formset.legend }}</legend>{% endif %}
-    {{ formset.object_count }}
+  <fieldset class="{{ field_group.css_class|default:"nested-many-2-many-table"}}">
+    {% if field_group.legend %}<legend>{{ field_group.legend }}</legend>{% endif %}
+    {{ field_group.object_count }}
     <div class="One-Link">
-      <table class="Formset-Horizontal">
+      <table class="field_group-Horizontal">
         <thead>
-          {% rrender "formset_tr_body.html" formset=formset.nested_forms.0.formsets.0 %}
+          {% rrender "field_group_tr_body.html" field_group=field_group.nested_forms.0.field_groups.0 %}
         </thead>
         <tbody>
-          {% for nested_form in formset.nested_forms %}
-            {% for fs in nested_form.formsets %}
-              {% rrender "formset_tr_body.html" formset=fs %}
+          {% for nested_form in field_group.nested_forms %}
+            {% for fs in nested_form.field_groups %}
+              {% rrender "field_group_tr_body.html" field_group=fs %}
             {% endfor %}
           {% endfor %}
         </tbody>
@@ -39,7 +40,7 @@
     jQuery
       ( function ()
           { jQuery
-              ( "fieldset.{{ formset.css_class|default:"nested-many-2-many"}}"
+              ( "fieldset.{{ field_group.css_class|default:"nested-many-2-many"}}"
               ).nested_many_2_many_setup ();
           }
       )

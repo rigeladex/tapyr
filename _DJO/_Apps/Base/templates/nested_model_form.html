@@ -16,16 +16,16 @@
   ##--
 {% endcomment %}
 {% load i18n TGL %}
-  <fieldset class="{{ formset.css_class|default:"nested-many-2-many"}}">
-    {% if formset.legend %}<legend>{{ formset.legend }}</legend>{% endif %}
-    {{ formset.object_count }}
+  <fieldset class="{{ field_group.css_class|default:"nested-many-2-many"}}">
+    {% if field_group.legend %}<legend>{{ field_group.legend }}</legend>{% endif %}
+    {{ field_group.object_count }}
     <div class="One-Link">
-      {% for nested_form in formset.nested_forms %}
-        {% for fs in nested_form.formsets %}
-          <div class="Formset {{ formset.css_class }}"
+      {% for nested_form in field_group.nested_forms %}
+        {% for fs in nested_form.field_groups %}
+          <div class="field_group {{ field_group.css_class }}"
              {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
           >
-            {% rrender fs.template|default:"formset_div_seq.html" formset=fs %}
+            {% rrender fs.template|default:"field_group_div_seq.html" field_group=fs %}
           </div>
         {% endfor %}
       {% endfor %}
@@ -35,7 +35,7 @@
     jQuery
       ( function ()
           { jQuery
-              ( "fieldset.{{ formset.css_class|default:"nested-many-2-many"}}"
+              ( "fieldset.{{ field_group.css_class|default:"nested-many-2-many"}}"
               ).nested_many_2_many_setup ();
           }
       )

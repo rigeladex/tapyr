@@ -36,7 +36,7 @@ from   _DJO                       import DJO
 import _DJO.Models
 import _DJO.Model_Field           as     MF
 import _DJO.Model_Form
-import _DJO.Formset_Description
+import _DJO.Field_Group_Description
 
 from   _TFL.Decorator             import Attributed
 from   _TFL.Function              import Function
@@ -108,8 +108,8 @@ class News_Extender (DJO.Model) :
     # end class Form_Mixin
 
     NAV_admin_args  = dict \
-        ( formset_descriptions =
-              ( DJO.Formset_Description
+        ( field_group_descriptions =
+              ( DJO.Field_Group_Description
                   ( "title", "text", "additional_text"
                   , template = "model_admin_change_table.html"
                   )

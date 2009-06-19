@@ -30,7 +30,7 @@
 #    ««revision-date»»···
 #--
 """
->>> fs       = DJO.Formset_Description ()
+>>> fs       = DJO.Field_Group_Description ()
 >>> form_cls = DJO.Model_Form.New (M.News, fs)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
@@ -50,39 +50,39 @@ Help text for the title
 >>> form.save ()
 <News: Title>
 
-### now, let's explicitly specify the field we want in the formset to show up
->>> fs       = DJO.Formset_Description ("title", "text")
+### now, let's explicitly specify the field we want in the field_group to show up
+>>> fs       = DJO.Field_Group_Description ("title", "text")
 >>> form_cls = DJO.Model_Form.New (M.News, fs)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
 ['title', 'text']
 
 ### now we test mutiple form set's
->>> fs1      = DJO.Formset_Description ("title", "text")
->>> fs2      = DJO.Formset_Description ("author", "date_pub")
+>>> fs1      = DJO.Field_Group_Description ("title", "text")
+>>> fs2      = DJO.Field_Group_Description ("author", "date_pub")
 >>> form_cls = DJO.Model_Form.New (M.News, fs1, fs2)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
 ['title', 'text', 'author', 'date_pub']
 
 ### now we test the '*' if multiple form set's are specified
->>> fs1      = DJO.Formset_Description ("title", "text")
->>> fs2      = DJO.Formset_Description ("*")
+>>> fs1      = DJO.Field_Group_Description ("title", "text")
+>>> fs2      = DJO.Field_Group_Description ("*")
 >>> form_cls = DJO.Model_Form.New (M.News, fs1, fs2)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
 ['title', 'text', 'date_pub', 'author']
 
 ### and now combin ethe "*" with an exclude
->>> fs1      = DJO.Formset_Description ("title", "text")
->>> fs2      = DJO.Formset_Description ("*", exclude = ("date_pub", ))
+>>> fs1      = DJO.Field_Group_Description ("title", "text")
+>>> fs2      = DJO.Field_Group_Description ("*", exclude = ("date_pub", ))
 >>> form_cls = DJO.Model_Form.New (M.News, fs1, fs2)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
 ['title', 'text', 'author']
 
 ### now, let's use the DJO.Field_Description (FD)
->>> fs       = DJO.Formset_Description (FD ("title"), FD ("text"))
+>>> fs       = DJO.Field_Group_Description (FD ("title"), FD ("text"))
 >>> form_cls = DJO.Model_Form.New (M.News, fs)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
@@ -92,7 +92,7 @@ Help text for the title
 '<input id="id_title" type="text" name="title" maxlength="80" />'
 
 ### this was boring, so let's use the field descriptor for some fancy
->>> fs       = DJO.Formset_Description \\
+>>> fs       = DJO.Field_Group_Description \\
 ...     ( FD ("title", widget = forms.HiddenInput)
 ...     , FD ("text")
 ...     )
@@ -123,7 +123,7 @@ Admin Site
 ['title', 'text', 'date_pub', 'author']
 >>> [bff.name for bff in news_extender_form_cls ()]
 ['title', 'text', 'additional_text']
->>> news_extender_form_cls.formset_descriptions [0].template
+>>> news_extender_form_cls.field_group_descriptions [0].template
 'model_admin_change_table.html'
 >>> news_extender_form_cls ({}).full_clean ()
 Model clean called
@@ -155,7 +155,7 @@ os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._tests._Nav.settings_test"
 import _DJO._tests._Nav.model_1.models as     M
 from   _DJO                            import DJO
 import _DJO.Model_Form
-import _DJO.Formset_Description
+import _DJO.Field_Group_Description
 import _DJO.Navigation
 import _DJO._Test.Database
 import _DJO._Test.Client
@@ -180,9 +180,9 @@ os.environ ["DJANGO_SETTINGS_MODULE"] = "_DJO._tests._Nav.settings_test"
 import _DJO._tests._Nav.model_1.models as     M
 from   _DJO                            import DJO
 import _DJO.Model_Form
-import _DJO.Formset_Description
+import _DJO.Field_Group_Description
 
-fs1       = DJO.Formset_Description ()
+fs1       = DJO.Field_Group_Description ()
 form1_cls = DJO.Model_Form.New (M.News, fs1)
 """
 ### __END__ DJO.tests.Model_Form

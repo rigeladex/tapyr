@@ -27,14 +27,14 @@
 #
 # Revision Dates
 #    19-May-2009 (CT) Creation
-#     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
+#     6-Jun-2009 (MG) `s/Form_Set/Field_Group/g`
 #    10-Jun-2009 (MG) `Nested_Form_Description` used for phone numbers
-#    11-Jun-2009 (CT) Use `name` for `Formset_Description`
+#    11-Jun-2009 (CT) Use `name` for `Field_Group_Description`
 #    ««revision-date»»···
 #--
 
 from   _DJO                       import DJO
-import _DJO.Formset_Description
+import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
 
@@ -110,64 +110,60 @@ class Person (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("birth_date", "sex")
-        , formset_descriptions =
-            ( DJO.Formset_Description
+        , field_group_descriptions =
+            ( DJO.Field_Group_Description
                 ( DJO.Field_Description ("last_name",  required = True)
                 , DJO.Field_Description ("first_name", required = True)
                 , "title"
                 , legend    = _("Personal info")
-                , template  = "formset_horizontal.html"
+                , template  = "field_group_horizontal.html"
                 , name      = "Personal_Info"
                 )
-            , DJO.Formset_Description
+            , DJO.Field_Group_Description
                 ( "sex", "birth_date"
                 , legend    = _("Personal details")
-                , template  = "formset_horizontal.html"
+                , template  = "field_group_horizontal.html"
                 , name      = "Personal_Details"
                 )
-            , DJO.Formset_Description
-                ( DJO.Nested_Form_Description
-                    ( "phones"
-                    , formset_descriptions =
-                        ( DJO.Formset_Description
-                            ( "country_code"
-                            , "area_code"
-                            , "subscriber_number"
-                            , "extension"
-                            , "desc"
-                            , template  = "formset_horizontal.html"
-                            )
-                        ,
+            , DJO.Nested_Form_Group_Description
+                ( "phones"
+                , field_group_descriptions =
+                    ( DJO.Field_Group_Description
+                        ( "country_code"
+                        , "area_code"
+                        , "subscriber_number"
+                        , "extension"
+                        , "desc"
+                        , template  = "field_group_horizontal.html"
                         )
-                    , legend = _("Phone-Numbers")
+                    ,
                     )
+                , legend   = _("Phone-Numbers")
                 , template = "nested_model_form_table.html"
-                , name = "Personal_Phone_Info"
+                , name     = "Personal_Phone_Info"
                 )
-            , DJO.Formset_Description
-                ( DJO.Nested_Form_Description
-                    ( "emails"
-                    , formset_descriptions =
-                        ( DJO.Formset_Description
-                            ( "email", "desc"
-                            , template  = "formset_horizontal.html"
-                            )
-                        ,
+            , DJO.Nested_Form_Group_Description
+                ( "emails"
+                , field_group_descriptions =
+                    ( DJO.Field_Group_Description
+                        ( "email", "desc"
+                        , template  = "field_group_horizontal.html"
                         )
-                    , legend = _("Email-Addresses")
+                    ,
                     )
-                , DJO.Nested_Form_Description
-                    ( "addresses"
-                    , formset_descriptions =
-                        ( DJO.Formset_Description
-                            ( "street", "city", "zip", "country", "desc"
-                            , template  = "formset_horizontal.html"
-                            )
-                        ,
+                , legend = _("Email-Addresses")
+                )
+            , DJO.Nested_Form_Group_Description
+                ( "addresses"
+                , field_group_descriptions =
+                    ( DJO.Field_Group_Description
+                        ( "street", "city", "zip", "country", "desc"
+                        , template  = "field_group_horizontal.html"
                         )
-                    , legend = _("Addresses")
+                    ,
                     )
-                , name = "Personal_Contact_Info"
+                , legend = _("Addresses")
+                , name   = "Personal_Contact_Info"
                 )
             )
         )

@@ -219,13 +219,13 @@ class Entry (DJO.Model) :
         ( list_display = \
             ("slug", "title", "desc", "date_pub", "date_exp", "author")
         , Form_Mixins  = (Entry_Form_Mixin, )
-        , formset_descriptions =
-            ( DJO.Formset_Description
+        , field_group_descriptions =
+            ( DJO.Field_Group_Description
                 ("title", "text", "desc", "author", "format")
-            , DJO.Formset_Description
+            , DJO.Field_Group_Description
                 ( "date_cre", "date_pub", "date_exp"
                 , legend    = _("Publication dates")
-                , template  = "formset_horizontal.html"
+                , template  = "field_group_horizontal.html"
                 )
             )
 #        , _permission  = DJO.In_Page_Group ()

@@ -1,4 +1,4 @@
-{# Django template: formset_tr_body.html #}
+{# Django template: field_group_tr_body.html #}
 {% comment %}
   ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
   ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -6,7 +6,7 @@
   ##
   ##++
   ## Name
-  ##    formset_tr_body.html
+  ##    field_group_tr_body.html
   ##
   ## Purpose
   ##    Template rendering the fields of one form-set as a horizontal
@@ -18,14 +18,14 @@
   ##--
 {% endcomment %}
 {% load i18n TGL %}
-  <tr class="Formset {{ formset.css_class }}"
-    {% if formset.legend %}title="{{ formset.legend }}"{% endif %}
+  <tr class="field_group {{ field_group.css_class }}"
+    {% if field_group.legend %}title="{{ field_group.legend }}"{% endif %}
   >
-    {% for field in formset %}
+    {% for field in field_group %}
       <td class="Field Field-{{ field.name }}" title="{{ field.help_text|safe }}">
         {{ field }}
         {{ field.errors }}
       </td>
     {% endfor %}
   </tr>
-{# __END__ Django template: formset_tr_body.html #}
+{# __END__ Django template: field_group_tr_body.html #}

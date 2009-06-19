@@ -18,11 +18,11 @@
 {% endcomment %}
 {% load i18n TGL %}
 <form method="post" action="" class="Object-Editor {{ Model_Name }}">
-  {% for formset in form.formsets %}
-    <div class="Formset {{ formset.css_class }}"
-       {% if formset.legend %}title="{{ formset.legend }}"{% endif %}
+  {% for field_group in form.field_groups %}
+    <div class="Formset {{ field_group.css_class }}"
+       {% if field_group.legend %}title="{{ field_group.legend }}"{% endif %}
     >
-      {% rrender formset.template|default:"formset_div_seq.html" %}
+      {% rrender field_group.template|default:"field_group_div_seq.html" %}
     </div>
   {% endfor %}
   <input class="submit" type="submit" value="{% trans "Submit" %}" />

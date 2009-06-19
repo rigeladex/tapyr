@@ -28,14 +28,14 @@
 # Revision Dates
 #    27-May-2009 (CT) Creation
 #    28-May-2009 (CT) Creation continued
-#     6-Jun-2009 (MG) `s/Form_Set/Formset/g`
-#    11-Jun-2009 (CT) Use `name` for `Formset_Description` and reuse
-#                     `Formset_Descriptions` defined by `Person`
+#     6-Jun-2009 (MG) `s/Form_Set/Field_Group/g`
+#    11-Jun-2009 (CT) Use `name` for `Field_Group_Description` and reuse
+#                     `Field_Group_Descriptions` defined by `Person`
 #    ««revision-date»»···
 #--
 
 from   _DJO                       import DJO
-import _DJO.Formset_Description
+import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
 
@@ -76,21 +76,21 @@ class Sailor (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("birth_date", "sex", "club", "oesv_nr")
-        , formset_descriptions =
-              ( DJO.Formset_Description._.Personal_Info
-              , DJO.Formset_Description
+        , field_group_descriptions =
+              ( DJO.Field_Group_Description._.Personal_Info
+              , DJO.Field_Group_Description
                   ( "club", "oesv_nr"
                   , legend    = _("Sailing club info")
-                  , template  = "formset_horizontal.html"
+                  , template  = "field_group_horizontal.html"
                   , name      = "Sailing_Club_Info"
                   )
-              , DJO.Formset_Description
+              , DJO.Field_Group_Description
                   ( "sex"
                   , legend    = _("Sailor details")
-                  , template  = "formset_horizontal.html"
+                  , template  = "field_group_horizontal.html"
                   , name      = "Sailor_Details"
                   )
-              , DJO.Formset_Description._.Personal_Contact_Info
+              , DJO.Field_Group_Description._.Personal_Contact_Info
               )
         )
 

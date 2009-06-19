@@ -80,8 +80,7 @@ import _TFL._Meta.Object
 import _TFL.NO_List
 from   _TFL.predicate              import all_true
 
-import _DJO.Formset_Description
-import _DJO.Formset
+import _DJO.Field_Group_Description
 
 from    django.forms                    import BaseForm, BaseModelForm
 from    django.forms.util               import ErrorList
@@ -93,14 +92,15 @@ class M_Model_Form (TFL.Meta.M_Class) :
     """Meta class for forms based on a django model."""
 
     def __new__ (cls, name, bases, attrs) :
-        base_fields      = TFL.NO_List ()
-        model            = attrs.get ("model", None)
-        used_fields      = set ()
-        unbound_formsets = attrs ["unbound_formsets"] = []
-        for fsd in attrs.get ("formset_descriptions", ()) :
-            for formset in fsd (model, used_fields) :
-                unbound_formsets.append (formset)
-                base_fields.extend      (formset)
+        base_fields          = TFL.NO_List ()
+        model                = attrs.get ("model", None)
+        used_fields          = set ()
+        unbound_field_groups = attrs ["unbound_field_groups"] = []
+        for fgd in attrs.get ("field_group_descriptions", ()) :
+            for grp in fgd.groups (model) :
+                field_group = grp           (model, used_fields)
+                unbound_field_groups.append (field_group)
+                base_fields.extend          (field_group)
         _meta = attrs.get ("_meta", None)
         if _meta :
             _meta.fields = [f.name for f in base_fields]
@@ -109,18 +109,18 @@ class M_Model_Form (TFL.Meta.M_Class) :
             (cls, name, bases, attrs)
     # end def __new__
 
-    def New (cls, model, * formset_descriptions, ** kw) :
+    def New (cls, model, * field_group_descriptions, ** kw) :
         class Meta :
             exclude = ()
         Meta.model  = model
-        if not formset_descriptions :
-            formset_descriptions = \
-               (DJO.Formset_Description (model = model), )
+        if not field_group_descriptions :
+            field_group_descriptions = \
+               (DJO.Auto_Field_Group_Description (model = model), )
         return cls.__m_super.New \
             ( model.__name__
-            , model                = model
-            , formset_descriptions = formset_descriptions
-            , _meta                = Meta
+            , model                    = model
+            , field_group_descriptions = field_group_descriptions
+            , _meta                    = Meta
             , ** kw
             )
     # end def New
@@ -171,19 +171,19 @@ class _DJO_Model_Form_ (BaseModelForm) :
     _real_name    = "Model_Form"
 
     def __init__ (self, request = None, instance = None, prefix = None, ** kw) :
-        ### super call must be before creating the bound formset's in order
+        ### super call must be before creating the bound field_group's in order
         ### to have the `instance` member setup correctly
         form_kw = dict (empty_permitted = kw.pop ("empty_permitted", False))
         if request :
             form_kw ["data"] = request.POST
         self.__super.__init__ (instance = instance, prefix = prefix, ** form_kw)
         self.request         = request
-        self.formsets        = []
+        self.field_groups    = []
         self.nested_forms    = []
-        for ufs in self.unbound_formsets :
+        for ufs in self.unbound_field_groups :
             bfs = ufs (self)
-            self.formsets.append (bfs)
-            if isinstance (bfs, DJO.Bound_Nested_Form_Formset) :
+            self.field_groups.append (bfs)
+            if isinstance (bfs, DJO.Bound_Nested_Form_Group) :
                 self.nested_forms.append (bfs)
     # end def __init__
 
