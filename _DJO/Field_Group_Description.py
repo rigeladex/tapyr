@@ -45,6 +45,7 @@
 #    15-Jun-2009 (MG) `Field_Group_Description.__class__`: fixed problem if two
 #                     `Nested_Form_Description` are neighbors
 #    17-Jun-2009 (MG) `Nested_Form_Description.min_required` added
+#    19-Jun-2009 (MG) `Auto_Field_Group_Description.groups` implemented
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ class _Field_Group_Description_ (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
-    def groups (self, model) :
+    def groups (self, model, used_fields) :
         return [self]
     # end def groups
 
@@ -98,8 +99,29 @@ class Field_Group_Description (_Field_Group_Description_) :
 class Auto_Field_Group_Description (_Field_Group_Description_) :
     """A field group which creates field groups automatically"""
 
-    def groups (self, model) :
-        result = []
+    field_descriptions = ()
+
+    def groups (self, model, used_fields) :
+        result         = []
+        _F             = model._F
+        exclude        = self.exclude.copy ()
+        exclude.update (used_fields)
+        field_override = dict ((f.name, f) for f in self.field_descriptions)
+        normal_fields  = []
+        for name in [f.name for f in _F if f.editable] :
+            fd       = field_override.get (name, name)
+            if name in exclude :
+                continue
+            if getattr (fd, "nested", False) :
+                if normal_fields :
+                    result.append \
+                        (DJO.Field_Group_Description (* normal_fields))
+                normal_fields = []
+                result.append (DJO.Nested_Form_Group (name))
+            else :
+                normal_fields.append (fd)
+        if normal_fields :
+            result.append (DJO.Field_Group_Description (* normal_fields))
         return result
     # end def groups
 

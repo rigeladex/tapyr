@@ -68,6 +68,8 @@
 #                     `Model_Form.save` only save the instance if the form
 #                     tries to change anything, moved saving of nested form's
 #                     into `save` method
+#    19-Jun-2009 (MG) Support data argumnet for Model_Form as well as request
+#                     Pass `used_fields` to `groups` method
 #    ««revision-date»»···
 #--
 
@@ -97,7 +99,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
         used_fields          = set ()
         unbound_field_groups = attrs ["unbound_field_groups"] = []
         for fgd in attrs.get ("field_group_descriptions", ()) :
-            for grp in fgd.groups (model) :
+            for grp in fgd.groups (model, used_fields) :
                 field_group = grp           (model, used_fields)
                 unbound_field_groups.append (field_group)
                 base_fields.extend          (field_group)
@@ -176,6 +178,8 @@ class _DJO_Model_Form_ (BaseModelForm) :
         form_kw = dict (empty_permitted = kw.pop ("empty_permitted", False))
         if request :
             form_kw ["data"] = request.POST
+        if "data" in kw :
+            form_kw ["data"] = kw.pop ("data")
         self.__super.__init__ (instance = instance, prefix = prefix, ** form_kw)
         self.request         = request
         self.field_groups    = []
@@ -196,8 +200,8 @@ class _DJO_Model_Form_ (BaseModelForm) :
     # end def full_clean
 
     def is_valid (self) :
-        return (    all_true (nf.is_valid () for nf in self.nested_forms)
-               and self.__super.is_valid ()
+        return (   self.__super.is_valid ()
+               and all_true (nf.is_valid () for nf in self.nested_forms)
                )
     # end def is_valid
 

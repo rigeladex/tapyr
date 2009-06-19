@@ -37,15 +37,11 @@
 ['title', 'text', 'date_pub', 'author']
 >>> title = form ["title"]
 >>> print title
-<input id="id_title" type="text" name="title" maxlength="80" />
+<input id="id_title" type="text" class="" name="title" maxlength="80" />
 >>> print title.label_tag ()
 <label for="id_title">Titel</label>
 >>> print title.help_text
 Help text for the title
->>> print title.errors
-<ul class="errorlist"><li>This field is required.</li></ul>
->>> sorted (form.errors.iteritems ())
-[('text', [u'This field is required.']), ('title', [u'This field is required.'])]
 >>> form     = form_cls (data = dict (title = "Title", text = "Text"))
 >>> form.save ()
 <News: Title>
@@ -65,17 +61,17 @@ Help text for the title
 >>> [bff.name for bff in form]
 ['title', 'text', 'author', 'date_pub']
 
-### now we test the '*' if multiple form set's are specified
+### now we test the 'Auto_Field_Group_Description' if multiple form set's are specified
 >>> fs1      = DJO.Field_Group_Description ("title", "text")
->>> fs2      = DJO.Field_Group_Description ("*")
+>>> fs2      = DJO.Auto_Field_Group_Description ()
 >>> form_cls = DJO.Model_Form.New (M.News, fs1, fs2)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
 ['title', 'text', 'date_pub', 'author']
 
-### and now combin ethe "*" with an exclude
+### and now combine the "Auto_Field_Group_Description" with an exclude
 >>> fs1      = DJO.Field_Group_Description ("title", "text")
->>> fs2      = DJO.Field_Group_Description ("*", exclude = ("date_pub", ))
+>>> fs2      = DJO.Auto_Field_Group_Description (exclude = ("date_pub", ))
 >>> form_cls = DJO.Model_Form.New (M.News, fs1, fs2)
 >>> form     = form_cls (data = {})
 >>> [bff.name for bff in form]
@@ -89,7 +85,7 @@ Help text for the title
 ['title', 'text']
 >>> title = form ["title"]
 >>> str (title)
-'<input id="id_title" type="text" name="title" maxlength="80" />'
+'<input id="id_title" type="text" class="" name="title" maxlength="80" />'
 
 ### this was boring, so let's use the field descriptor for some fancy
 >>> fs       = DJO.Field_Group_Description \\
@@ -102,7 +98,7 @@ Help text for the title
 ['title', 'text']
 >>> title = form ["title"]
 >>> str (title)
-'<input type="hidden" name="title" id="id_title" />'
+'<input id="id_title" type="hidden" class="" name="title" />'
 
 ### create a test navigation root object and the admin for it
 >>> root  = DJO.Navigation.Root ("/", encoding = "iso-8859-15", input_encoding  = "iso-8859-15")
@@ -126,7 +122,6 @@ Admin Site
 >>> news_extender_form_cls.field_group_descriptions [0].template
 'model_admin_change_table.html'
 >>> news_extender_form_cls ({}).full_clean ()
-Model clean called
 
 >>> c = DJO.Test.Client ()
 >>> response = c.get ("/news_ extender/create")
@@ -134,13 +129,13 @@ Model clean called
 <form method="post" action="">
     <table>
     <tr><th><label for="id_title">Titel</label></th>
-        <td><input id="id_title" type="text" name="title" maxlength="80" /> HT: Help text for the title</td>
+        <td><input id="id_title" type="text" class="" name="title" maxlength="80" /> HT: Help text for the title</td>
     </tr>
     <tr><th><label for="id_text">Text</label></th>
-        <td><input type="text" name="text" id="id_text" /> HT: </td>
+        <td><textarea id="id_text" rows="10" cols="40" name="text" class=""></textarea> HT: </td>
     </tr>
     <tr><th><label for="id_additional_text">Additional text</label></th>
-        <td><input type="text" name="additional_text" id="id_additional_text" /> HT: </td>
+        <td><textarea id="id_additional_text" rows="10" cols="40" name="additional_text" class=""></textarea> HT: </td>
     </tr>
     </table>
     <div class="submit-button">
@@ -182,7 +177,13 @@ from   _DJO                            import DJO
 import _DJO.Model_Form
 import _DJO.Field_Group_Description
 
+M.News._F.finalize ()
+
 fs1       = DJO.Field_Group_Description ()
 form1_cls = DJO.Model_Form.New (M.News, fs1)
+
+fs1      = DJO.Field_Group_Description ("title", "text")
+fs2      = DJO.Auto_Field_Group_Description ()
+form_cls = DJO.Model_Form.New (M.News, fs1, fs2)
 """
 ### __END__ DJO.tests.Model_Form
