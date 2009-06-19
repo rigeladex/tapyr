@@ -24,11 +24,11 @@
     <div class="One-Link">
       <table class="Field_Group-Horizontal">
         <thead>
-          {% rrender "field_group_tr_body.html" field_group=field_group.nested_forms.0.field_groups.0 %}
+          {% rrender "field_group_tr_head.html" field_group=field_group.forms.0.field_groups.0 %}
         </thead>
         <tbody>
-          {% for nested_form in field_group.nested_forms %}
-            {% for fs in nested_form.field_groups %}
+          {% for form in field_group.forms %}
+            {% for fs in form.field_groups %}
               {% rrender "field_group_tr_body.html" field_group=fs %}
             {% endfor %}
           {% endfor %}

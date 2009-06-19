@@ -70,6 +70,7 @@
 #                     into `save` method
 #    19-Jun-2009 (MG) Support data argumnet for Model_Form as well as request
 #                     Pass `used_fields` to `groups` method
+#    19-Jun-2009 (MG) `s/nested_forms/forms/g`
 #    ««revision-date»»···
 #--
 
@@ -181,27 +182,27 @@ class _DJO_Model_Form_ (BaseModelForm) :
         if "data" in kw :
             form_kw ["data"] = kw.pop ("data")
         self.__super.__init__ (instance = instance, prefix = prefix, ** form_kw)
-        self.request         = request
-        self.field_groups    = []
-        self.nested_forms    = []
+        self.request      = request
+        self.field_groups = []
+        self.forms        = []
         for ufs in self.unbound_field_groups :
             bfs = ufs (self)
             self.field_groups.append (bfs)
             if isinstance (bfs, DJO.Bound_Nested_Form_Group) :
-                self.nested_forms.append (bfs)
+                self.forms.append (bfs)
     # end def __init__
 
     def full_clean (self) :
         if not self.is_bound: # Stop further processing.
             return
-        for bfs in self.nested_forms :
+        for bfs in self.forms :
             bfs.full_clean ()
         self.__super.full_clean ()
     # end def full_clean
 
     def is_valid (self) :
         return (   self.__super.is_valid ()
-               and all_true (nf.is_valid () for nf in self.nested_forms)
+               and all_true (nf.is_valid () for nf in self.forms)
                )
     # end def is_valid
 
@@ -237,7 +238,7 @@ class _DJO_Model_Form_ (BaseModelForm) :
             self._before_commit (instance)
             instance.save ()
             self.save_m2m ()
-        for nf in self.nested_forms :
+        for nf in self.forms :
             nf.save_and_assign (self.instance)
         return instance
     # end def save

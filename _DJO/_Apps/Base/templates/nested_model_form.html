@@ -20,8 +20,8 @@
     {% if field_group.legend %}<legend>{{ field_group.legend }}</legend>{% endif %}
     {{ field_group.object_count }}
     <div class="One-Link">
-      {% for nested_form in field_group.nested_forms %}
-        {% for fs in nested_form.field_groups %}
+      {% for form in field_group.forms %}
+        {% for fs in form.field_groups %}
           <div class="field_group {{ field_group.css_class }}"
              {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
           >
