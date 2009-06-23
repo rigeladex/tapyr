@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -83,6 +83,8 @@
 #    24-Mar-2005 (CT)  Moved into package `TFL`
 #    23-Mar-2006 (CED) `real_directory`, `real_name` added
 #     7-Nov-2007 (CT)  Doctest fixed (removed `lib/python`)
+#    23-Jun-2009 (CT)  `split_ext` added to deal with changed behavior of
+#                      `os.path.splitext` in Python 2.6+
 #    ««revision-date»»···
 #--
 
@@ -92,10 +94,10 @@
 
 from   _TFL           import TFL
 from   _TFL.predicate import *
+from   _TFL           import sos
 
 import _TFL._Meta.Object
 import _TFL.Environment
-import _TFL.sos
 
 class Filename (TFL.Meta.Object):
     """Represents a filename with its parts: path, base name and file
@@ -124,6 +126,42 @@ class Filename (TFL.Meta.Object):
        'e.f'
        >>>
 
+       >>> f=Filename ("spam.py")
+       >>> f.name
+       'spam.py'
+       >>> f=Filename ("spam", ".py")
+       >>> f.name
+       'spam.py'
+       >>> f=Filename ("spam.py", ".pyo")
+       >>> f.name
+       'spam.py'
+       >>> f=Filename (".pyo", "spam.py")
+       >>> f.name
+       'spam.pyo'
+       >>> f=Filename ("spam.py", "/usr/local/src")
+       >>> f.name
+       '/usr/local/spam.py'
+       >>> f=Filename ("spam.py", "/usr/local/src/")
+       >>> f.name
+       '/usr/local/src/spam.py'
+       >>> f=Filename (".pyo", "spam.py", "/usr/local/src/")
+       >>> f.name
+       '/usr/local/src/spam.pyo'
+       >>> f=Filename ("../spam.py", "/usr/local/src/")
+       >>> f.name
+       '../spam.py'
+       >>> f=Filename ("spam.py", default_dir = "/usr/local/src")
+       >>> f.name
+       '/usr/local/src/spam.py'
+       >>> f=Filename ("spam.py")
+       >>> f.directory == sos.getcwd ()
+       0
+       >>> f=Filename ("spam.py", absolute=1)
+       >>> f.directory == sos.getcwd ()
+       1
+       >>> f=Filename ("../spam.py", "/usr/local/src/", default_rel=1)
+       >>> f.name
+       '/usr/local/spam.py'
     """
 
     as_dir  = property (lambda s : s._as_dir  (s.name))
@@ -152,58 +190,20 @@ class Filename (TFL.Meta.Object):
            default_rel  Interpret relative name relative to
                         default_dir (instead of to current working directory)
 
-           For example:
-
-           >>> f=Filename ("spam.py")
-           >>> f.name
-           'spam.py'
-
-           >>> f=Filename ("spam.py", "/usr/local/src")
-           >>> f.name
-           '/usr/local/spam.py'
-
-           >>> f=Filename ("spam.py", "/usr/local/src/")
-           >>> f.name
-           '/usr/local/src/spam.py'
-
-           >>> f=Filename (".pyo", "spam.py", "/usr/local/src/")
-           >>> f.name
-           '/usr/local/src/spam.pyo'
-
-           >>> f=Filename ("../spam.py", "/usr/local/src/")
-           >>> f.name
-           '../spam.py'
-
-           >>> f=Filename ("spam.py", default_dir = "/usr/local/src")
-           >>> f.name
-           '/usr/local/src/spam.py'
-
-           >>> f=Filename ("spam.py")
-           >>> f.directory == TFL.sos.getcwd ()
-           0
-
-           >>> f=Filename ("spam.py", absolute=1)
-           >>> f.directory == TFL.sos.getcwd ()
-           1
-
-           >>> f=Filename ("../spam.py", "/usr/local/src/", default_rel=1)
-           >>> f.name
-           '/usr/local/spam.py'
-
         """
         if isinstance (name, Filename) :
             name = name.name
-        path         = TFL.sos.path
+        path         = sos.path
         default_dir  = kw.get ("default_dir")
         absolute     = kw.get ("absolute")
         default_rel  = kw.get ("default_rel") and not path.isabs (name)
         (self.directory, bname) = path.split (name)
-        if name.endswith (TFL.sos.sep) :
+        if name.endswith (sos.sep) :
             ### fix bug in Win32 Python 1.5.1
             ### XXX is this still necessary ???
             self.directory = path.join (self.directory, bname)
             bname          = ""
-        (self.base, self.ext) = path.splitext (bname)
+        (self.base, self.ext) = self.split_ext (bname)
         if default_dir :
             if isinstance (default_dir, (str, unicode)) :
                 default_dir = self._as_dir (default_dir)
@@ -232,50 +232,52 @@ class Filename (TFL.Meta.Object):
             self.name = path.join (self.directory, self.base_ext)
     # end def __init__
 
-    if    hasattr (TFL.sos.path, "abspath") :
+    if    hasattr (sos.path, "abspath") :
         def abs_directory (self) :
             """Return the directory name converted to absolute path string."""
-            result = TFL.sos.path.abspath (self.directory)
+            result = sos.path.abspath (self.directory)
             if (not result) :
-                result = TFL.sos.getcwd ()
+                result = sos.getcwd ()
             return result
         # end def abs_directory
     else :
         def abs_directory (self) :
             """Return the directory name converted to absolute path string."""
             result = self.directory
-            if (not result) or (result == TFL.sos.curdir) :
-                result = TFL.sos.getcwd ()
+            if (not result) or (result == sos.curdir) :
+                result = sos.getcwd ()
             return result
         # end def abs_directory
-    # end if hasattr (TFL.sos.path, "abspath")
+    # end if hasattr (sos.path, "abspath")
 
     def abs_name (self) :
         """Return the absolute filename corresponding to `self'."""
-        return TFL.sos.path.join (self.abs_directory (), self.base_ext)
+        return sos.path.join (self.abs_directory (), self.base_ext)
     # end def abs_name
 
+    @classmethod
     def _as_dir (cls, name) :
-        path = TFL.sos.path
+        path = sos.path
         for sep in (path.sep, path.altsep) :
             if sep and name.endswith (sep) :
                 break
         else :
             name = "%s%s" % (name, path.sep)
         return name
-    _as_dir = classmethod (_as_dir)
+    # end def _as_dir
 
+    @classmethod
     def _as_file (cls, name) :
-        path = TFL.sos.path
+        path = sos.path
         for sep in (path.sep, path.altsep) :
             if sep and name.endswith (sep) :
                 name = name [:-len (sep)]
                 break
         return name
-    _as_file = classmethod (_as_file)
+    # end def _as_file
 
     def directories (self) :
-        return filter (None, self.directory.split (TFL.sos.sep))
+        return filter (None, self.directory.split (sos.sep))
     # end def directories
 
     def make_absolute (self) :
@@ -289,8 +291,8 @@ class Filename (TFL.Meta.Object):
            symlinks.
         """
         result = self.abs_directory ()
-        if hasattr (TFL.sos.path, "realpath") :
-            result = TFL.sos.path.realpath (result)
+        if hasattr (sos.path, "realpath") :
+            result = sos.path.realpath (result)
         return result
     # end def real_directory
 
@@ -298,7 +300,7 @@ class Filename (TFL.Meta.Object):
         """Return the absolute filename corresponding to `self'
            after resolving all symlinks.
         """
-        return TFL.sos.path.join (self.real_directory (), self.base_ext)
+        return sos.path.join (self.real_directory (), self.base_ext)
     # end def real_name
 
     def relative_to (self, other) :
@@ -333,6 +335,20 @@ class Filename (TFL.Meta.Object):
         down        = [s    for (s, o) in differences if s]
         return "/".join (((up + down) or ["."]) + [self.base_ext])
     # end def relative_to
+
+    @classmethod
+    def split_ext (cls, name) :
+        ### In Python 2.6, the behavior of `os.path.splitext` chnaged for
+        ### names starting with a leading dot
+        if name.startswith (".") :
+            base, ext  = sos.path.splitext (name [1:])
+            base       = "." + base
+            if not ext :
+                base, ext = "", base
+        else :
+            base, ext  = sos.path.splitext (name)
+        return base, ext
+    # end def split_ext
 
     def __cmp__ (self, other) :
         if isinstance (other, Filename) :
@@ -406,7 +422,7 @@ class Dirname (Filename) :
     def __init__ (self, name, ** kw) :
         if isinstance (name, Filename) :
             name = name.name
-        path = TFL.sos.path
+        path = sos.path
         if path.isfile (name) and not path.isdir (name) :
             name, _ = path.split (name)
         self.__super.__init__ (self._as_dir (name), ** kw)
