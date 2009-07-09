@@ -151,6 +151,7 @@ class Person (DJO.Model) :
                         )
                     ,
                     )
+                , template = "nested_model_form_table.html"
                 , legend = _("Email-Addresses")
                 )
             , DJO.Nested_Form_Group_Description
@@ -163,6 +164,7 @@ class Person (DJO.Model) :
                     ,
                     )
                 , legend = _("Addresses")
+                , template = "nested_model_form_table.html"
                 , name   = "Personal_Contact_Info"
                 )
             )

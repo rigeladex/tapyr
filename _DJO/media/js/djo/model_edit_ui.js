@@ -55,10 +55,10 @@
           var $forms = this.element.find (".m2m-clone");
           for (var i = 0; i < $forms.length; i++)
           {
-              var $form = $forms.eq (0);
+              var $form = $forms.eq (i);
               var  first_tag = $form.get (0).tagName.toUpperCase ();
               var $link      =
-                  $('<a href="#delete" class="ui-icon ui-icon-trash">Delete</a>');
+                  $('<a href="#delete" class="ui-icon ui-icon-circle-close">Delete</a>');
               if (first_tag == "TR")
                   $link = $("<td></td>").append ($link);
               $form.append ($link);
@@ -98,6 +98,7 @@
           /* we are ready to add the new block at the end */
           $old.parent ().append ($new);
           self._update_add_button ();
+          evt.preventDefault ();
       }
     , _update_add_button : function ()
       {

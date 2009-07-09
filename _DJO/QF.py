@@ -33,8 +33,6 @@
 from   _TFL                               import TFL
 from   _DJO                               import DJO
 
-import _TFL._Meta.M_Class
-
 from   django.db.models import Q as QF
 
 def _isnull_p (a) :
