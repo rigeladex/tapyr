@@ -153,6 +153,7 @@ class Person (DJO.Model) :
                     )
                 , template = "nested_model_form_table.html"
                 , legend = _("Email-Addresses")
+                , max_count = 2 ### XXX debug
                 )
             , DJO.Nested_Form_Group_Description
                 ( "addresses"

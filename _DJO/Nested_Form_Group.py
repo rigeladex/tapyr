@@ -107,7 +107,7 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
     def count_spec (self) :
         return ":".join \
             (   str (n)
-            for n in (len (self.forms), self.min_count, self.max_count)
+            for n in (self.min_count, len (self.forms), self.max_count)
             )
     # end def count_spec
 

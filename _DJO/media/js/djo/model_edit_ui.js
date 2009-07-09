@@ -117,12 +117,24 @@
     , _update_button_states : function ()
       {
           var $add_button = this.element.find ("legend a.ui-icon");
-          var cur_count = this._getData ("cur_count");
-          var max_count = this._getData ("max_count");
+          var cur_count   = this._getData ("cur_count");
+          var max_count   = this._getData ("max_count");
+          var $undeletes  = this.element.find
+              (".m2m-nested-form a[href=#delete].ui-icon-circle-close");
           if (cur_count < max_count)
-              $add_button.bind ("click", this, this._add_new_form);
+          {
+              $add_button.bind        ("click", this, this._add_new_form)
+                         .removeClass ("ui-state-disabled");
+              $undeletes .bind        ("click", this, this._delete_form)
+                         .removeClass ("ui-state-disabled");
+          }
           else
-              $add_button.addClass ("ui-state-disabled");
+          {
+              $add_button.unbind   ("click", this._add_new_form)
+                         .addClass ("ui-state-disabled");
+              $undeletes. unbind   ("click", this._delete_form)
+                         .addClass ("ui-state-disabled");
+          }
       }
     , _forms_equal : function ($l, $r)
       {
@@ -145,10 +157,10 @@
           var self       = evt.data;
           var $prototype = self._getData         ("$prototype");
           var $form      = $(evt.target).parents (".m2m-nested-form");
-          self._setData ("cur_count", self._getData ("cur_count") + 1);
           if (self._forms_equal ($form, $prototype))
           {
               $form.remove ();
+              self._setData ("cur_count", self._getData ("cur_count") - 1);
           }
           else
           {
@@ -159,6 +171,7 @@
                        .attr        ("disabled","disabled");
                   $link.removeClass ("ui-icon-closethick")
                        .addClass    ("ui-icon-circle-close");
+                  self._setData ("cur_count", self._getData ("cur_count") - 1);
               }
               else
               {
@@ -166,9 +179,11 @@
                        .removeAttr  ("disabled");
                   $link.removeClass ("ui-icon-circle-close")
                        .addClass    ("ui-icon-closethick");
+                  self._setData ("cur_count", self._getData ("cur_count") + 1);
               }
           }
-          evt.preventDefault ();
+          self._update_button_states ();
+          evt.preventDefault         ();
       }
     }
   $.widget ("ui.many2many", Many2Many);
