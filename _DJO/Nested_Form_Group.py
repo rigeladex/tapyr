@@ -29,6 +29,7 @@
 # Revision Dates
 #    19-Jun-2009 (MG) Creation
 #    19-Jun-2009 (MG) `s/nested_forms/forms/g`
+#     9-Jul-2009 (MG) `Nested_Form_Count.__unicode__`: class added
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,11 @@ class Nested_Form_Count (object) :
 
     def __unicode__ (self) :
         return self._widget.render \
-            (self.name, self.value, attrs = dict (id = "id_%s" % (self.name, )))
+            ( self.name, self.value
+            , attrs = { "id"    : "id_%s" % (self.name, )
+                      , "class" : "many-2-many-range"
+                      }
+            )
     # end def __unicode__
 
 # end class Nested_Form_Count

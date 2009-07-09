@@ -12,6 +12,7 @@
   ##
   ## Revision Dates
   ##     6-Jun-2009 (MG) Creation
+  ##     9-Jul-2009 (MG) `m2m-clone` added to `div`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -22,7 +23,7 @@
     <div class="One-Link">
       {% for form in field_group.forms %}
         {% for fs in form.field_groups %}
-          <div class="field_group {{ field_group.css_class }}"
+          <div class="field_group {{ field_group.css_class }} m2m-clone"
              {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
           >
             {% rrender fs.template|default:"field_group_div_seq.html" field_group=fs %}
@@ -31,13 +32,4 @@
       {% endfor %}
     </div>
   </fieldset>
-  <script type="text/javascript">
-    jQuery
-      ( function ()
-          { jQuery
-              ( "fieldset.{{ field_group.css_class|default:"nested-many-2-many"}}"
-              ).nested_many_2_many_setup ();
-          }
-      )
-  </script>
 {# __END__ Django template: nested_model_form.html #}
