@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,7 @@
 # Revision Dates
 #     4-Jan-2008 (CT) Creation (ported from a perl version)
 #     5-Jan-2008 (CT) Use `CAL.Date_Time` instead of (obsolete) `TFL.Date_Time`
+#     9-Jul-2009 (MG) Support for `km_geld` added
 #    ««revision-date»»···
 #--
 
@@ -47,8 +48,10 @@ import _TFL.Environment
 class FB_Entry (TFL.Meta.Object) :
     """Model one entry of a Fahrtenbuch"""
 
-    str_format = r"  %-11s & %8d & %6d & %s"
-    tex_format = r"  %-10s & %6d & %6d & %4d & %4d & \sf %s"
+    str_format  = r"  %-11s & %8d & %6d & %s"
+    tex_format  = r"  %-10s & %6d & %6d & %4d & %4d & \sf %s"
+    atax_format = \
+        " %s  & & & %6.2f & b & 7500 & 2100 & -  & e & & KM Geld (%5.1f km)"
 
     def __init__ (self, date, km_start, km_finis, priv, desc, ** kw) :
         self.date     = date
@@ -82,6 +85,15 @@ class FB_Entry (TFL.Meta.Object) :
         return self.tex_format % \
             (date, self.km_start, self.km_finis, bus_km, priv_km, desc)
     # end def tex
+
+    def atax (self) :
+        date    = self.date.formatted ("%d.%m")
+        km      = self.km_business
+        f       = 0.42 ### 0.42 Euro/km
+        if self.date < CAL.Date_Time (2008, 7, 1) :
+            f   = 0.38
+        return self.atax_format % (date, f * km, km)
+    # end def atax
 
     def __nonzero__ (self) :
         return bool (self.delta)
@@ -127,6 +139,14 @@ class Fahrtenbuch (TFL.Meta.Object) :
                     add (last)
         return result
     # end def from_file
+
+    def km_geld (self) :
+        result = ["""$source_currency = "EUR";"""]
+        for e in self.entries :
+            if e.km_business :
+                result.append (e.atax ())
+        return "\n".join (result)
+    # end def km_geld
 
     def tex (self) :
         result  = []
@@ -202,8 +222,9 @@ def command_spec (arg_array = None) :
     from   _TFL.Command_Line import Command_Line
     return Command_Line \
         ( option_spec =
-            ( "-Config:P,?Config file(s)"
-            , "-user:S=%s" % TFL.Environment.username.capitalize ()
+            ( "Config:P,?Config file(s)"
+            , "user:S=%s" % TFL.Environment.username.capitalize ()
+            , "km_geld:B?Print the factoring for the KM Geld"
             )
         , arg_spec    =
             ( "fahrtenbuch:P?File defining fahrtenbuch"
@@ -217,7 +238,10 @@ def command_spec (arg_array = None) :
 def main (cmd) :
     ATAX.Main.load_config (cmd)
     fb = Fahrtenbuch.from_file (cmd.user, cmd.fahrtenbuch)
-    print fb.tex ()
+    if not cmd.km_geld :
+        print fb.tex ()
+    else :
+        print fb.km_geld ()
 # end def main
 
 if __name__ != "__main__" :

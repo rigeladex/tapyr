@@ -1,3 +1,9 @@
 a.m2m-add
 {  float:   left
 }
+
+.m2m-prototype
+{ display:  none;
+}
+
+.m2m-nested-form

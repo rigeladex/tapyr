@@ -36,49 +36,61 @@
   var Many2Many =
     { _init : function ()
       {
-          var $legend    = $("legend", this.element);
-          var add_class  = this._getData ("add_class");
+          var $legend    = this.element.find ("legend");
+          var add_class  = this._getData     ("add_class");
           var $m2m_range = this.element.find ("input.many-2-many-range:first");
-          var  m2m_range = $m2m_range.attr ("value").split (":");
+          var  m2m_range = $m2m_range.attr   ("value").split (":");
           var cur_count  = parseInt (m2m_range [1]);
           var max_count  = parseInt (m2m_range [2]);
+          this._setData ("$prototype", this.element.find (".m2m-prototype"));
           this._setData ("$m2m_range", $m2m_range);
-          this._setData ("min_count", parseInt (m2m_range [0]));
-          this._setData ("cur_count", cur_count);
-          this._setData ("max_count", max_count);
+          this._setData ("min_count",  parseInt (m2m_range [0]));
+          this._setData ("cur_count",  cur_count);
+          this._setData ("cur_number", cur_count);
+          this._setData ("max_count",  max_count);
           $legend.prepend
-              ( '<a href="#add" class="ui-icon ui-icon-circle-plus '
+              ( '<a href="#add" class="ui-icon ui-icon-plusthick '
               + add_class
               + '" title="Add ' + $legend.attr ("title")
               + '">Add</a> '
               );
-          var $forms = this.element.find (".m2m-clone");
+          var $forms = this.element.find (".m2m-nested-form");
           for (var i = 0; i < $forms.length; i++)
           {
-              var $form = $forms.eq (i);
-              var  first_tag = $form.get (0).tagName.toUpperCase ();
-              var $link      =
-                  $('<a href="#delete" class="ui-icon ui-icon-circle-close">Delete</a>');
-              if (first_tag == "TR")
-                  $link = $("<td></td>").append ($link);
-              $form.append ($link);
+              this._add_delete_button ($forms.eq (i));
           }
-          this._update_add_button ();
+          this._update_button_states ();
+      }
+    , _add_delete_button : function ($form)
+      {
+          var $link = $form.find ("a[href=#delete]");
+          if (! $link.length)
+          {
+              var  first_tag = $form.get (0).tagName.toLowerCase ();
+              $link          =
+                  $('<a href="#delete" class="ui-icon ui-icon-closethick">Delete</a>');
+              var $element = $link;
+              if (first_tag == "tr")
+                  $element = $("<td></td>").append ($link);
+              $form.append ($element);
+          }
+          /* we can only bind callback's once the element is part of the DOM */
+          $link.bind ("click", this, this._delete_form);
       }
     , _add_new_form : function (evt)
       {
-          var self = evt.data;
-          /* find the block which will be cloned */
-          var $old = self.element.find (".m2m-clone:first");
-          var $new = $old.clone ()
+          var self       = evt.data;
+          var $prototype = self._getData    ("$prototype");
+          var $new       = $prototype.clone ().removeClass ("m2m-prototype");
           /* now that we have cloned the block, let's change the
           ** name/id/for attributes
           */
-          var cur_count = self._getData ("cur_count");
-          self._setData ("cur_count", cur_count + 1);
-          var pattern   = /M(\d+)-/;
-          var new_no    = "M" + cur_count + "-";
-          var $labels   = $new.find     ("label")
+          self._setData ("cur_count", self._getData ("cur_count") + 1);
+          var cur_number = self._getData ("cur_number") + 1;
+          self._setData ("cur_number", cur_number);
+          var pattern    = /MP-/;
+          var new_no     = "M" + cur_number + "-";
+          var $labels    = $new.find     ("label")
           for (var i = 0; i < $labels.length; i++)
           {
               var $l = $labels.eq (i);
@@ -96,11 +108,13 @@
               }
           }
           /* we are ready to add the new block at the end */
-          $old.parent ().append ($new);
-          self._update_add_button ();
+          self._add_delete_button    ($new);
+          self._update_button_states ();
+          $prototype.parent          ().append ($new);
+          evt.preventDefault         ();
           evt.preventDefault ();
       }
-    , _update_add_button : function ()
+    , _update_button_states : function ()
       {
           var $add_button = this.element.find ("legend a.ui-icon");
           var cur_count = this._getData ("cur_count");
@@ -109,6 +123,52 @@
               $add_button.bind ("click", this, this._add_new_form);
           else
               $add_button.addClass ("ui-state-disabled");
+      }
+    , _forms_equal : function ($l, $r)
+      {
+          /* Returns whether the values of the two forms are equal */
+          var $l_value_elements = $l.find ("[value]");
+          var $r_value_elements = $r.find ("[value]");
+          if ($l_value_elements.length != $r_value_elements.length)
+              return false;
+          for (var i = 0; i < $l_value_elements.length; i++)
+          {
+              if (  $l_value_elements.eq (i).attr ("value")
+                 != $r_value_elements.eq (i).attr ("value")
+                 )
+                  return false;
+          }
+          return true;
+      }
+    , _delete_form : function (evt)
+      {
+          var self       = evt.data;
+          var $prototype = self._getData         ("$prototype");
+          var $form      = $(evt.target).parents (".m2m-nested-form");
+          self._setData ("cur_count", self._getData ("cur_count") + 1);
+          if (self._forms_equal ($form, $prototype))
+          {
+              $form.remove ();
+          }
+          else
+          {
+              var $link = $form.find ("a[href=#delete]");
+              if ($link.hasClass ("ui-icon-closethick"))
+              {
+                  $form.find        ("input, textarea, select")
+                       .attr        ("disabled","disabled");
+                  $link.removeClass ("ui-icon-closethick")
+                       .addClass    ("ui-icon-circle-close");
+              }
+              else
+              {
+                  $form.find        ("input, textarea, select")
+                       .removeAttr  ("disabled");
+                  $link.removeClass ("ui-icon-circle-close")
+                       .addClass    ("ui-icon-closethick");
+              }
+          }
+          evt.preventDefault ();
       }
     }
   $.widget ("ui.many2many", Many2Many);

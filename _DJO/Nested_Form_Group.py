@@ -30,6 +30,7 @@
 #    19-Jun-2009 (MG) Creation
 #    19-Jun-2009 (MG) `s/nested_forms/forms/g`
 #     9-Jul-2009 (MG) `Nested_Form_Count.__unicode__`: class added
+#     9-Jul-2009 (MG) `Nested_Form_Group`: bug related to `object_count` fixed
 #    ««revision-date»»···
 #--
 
@@ -65,13 +66,17 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
 
     def __init__ (self, field_group, form) :
         self.__super.__init__ (field_group, form)
-        self.forms        = forms = []
+        self.forms     = forms = []
+        prefix         = "%s-M%%s" % (self.form_class.model.__name__.lower (), )
+        self.prototype = self.form_class \
+            (prefix = prefix % "P", empty_permitted = True)
         instance          = form.instance
         no                = 0
         if instance.pk :
             rel_instances = tuple (getattr (instance, self.name).all ())
         else :
             rel_instances = ()
+        self.object_count = Nested_Form_Count (self.name, self.count_spec)
         if form.is_bound :
             count_spec    = form.data [self.object_count.name]
             count         = int (count_spec.split (":") [0])
@@ -90,12 +95,12 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
                 ( self.form_class
                     ( request         = self.form.request
                     , instance        = rel_inst
-                    , prefix          = "M%d" % (no, )
+                    , prefix          = prefix % (no, )
                     , empty_permitted =
                         (rel_inst is None) and (no >= min_required)
                     )
                 )
-        self.object_count = Nested_Form_Count (self.name, self.count_spec)
+        self.object_count.value = self.count_spec
     # end def __init__
 
     @property

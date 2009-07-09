@@ -16,6 +16,7 @@
   ##                      factored
   ##     9-Jul-2009 (MG) Added `title` to `legend`,`css_class` passed to
   ##                     `rrender` of `field_group_tr_body.html`
+  ##     9-Jul-2009 (MG) Prototype generation added
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -29,24 +30,17 @@
           {% rrender "field_group_tr_head.html" field_group=field_group.forms.0.field_groups.0 %}
         </thead>
         <tbody>
+          {% for fs in field_group.prototype.field_groups %}
+            {% rrender "field_group_tr_body.html" field_group=fs;css_class="m2m-prototype m2m-nested-form" %}
+          {% endfor %}
+          </tr>
           {% for form in field_group.forms %}
             {% for fs in form.field_groups %}
-              {% rrender "field_group_tr_body.html" field_group=fs;css_class="m2m-clone" %}
+              {% rrender "field_group_tr_body.html" field_group=fs;css_class="m2m-nested-form" %}
             {% endfor %}
           {% endfor %}
         </tbody>
       </table>
     </div>
   </fieldset>
-  {% comment %}
-  <script type="text/javascript">
-    jQuery
-      ( function ()
-          { jQuery
-              ( "fieldset.{{ field_group.css_class|default:"nested-many-2-many"}}"
-              ).nested_many_2_many_setup ();
-          }
-      )
-  </script>
-  {% endcomment %}
 {# __END__ Django template: nested_model_form_table.html #}
