@@ -88,9 +88,9 @@ class Media_List (TFL.Meta.Object) :
         for mob in self._gen_own () :
             yield mob
         name = self.name
-        for c in self.media.children :
-            for l in getattr (c, name) :
-                yield l
+        for child in self.media.children :
+            for mob in getattr (child, name) :
+                yield mob
     # end def _gen_all
 
     def _gen_own (self) :
