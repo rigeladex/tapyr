@@ -28,6 +28,8 @@
 # Revision Dates
 #     9-Jul-2009 (CT) Creation
 #    10-Jul-2009 (CT) Creation continued
+#    10-Jul-2009 (CT) `Script` added and `js_code` removed
+#    10-Jul-2009 (CT) `Rel_Link` added
 #    ««revision-date»»···
 #--
 
@@ -37,15 +39,17 @@ from   _DJO                               import DJO
 import _TFL.predicate
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property           import Once_Property
+from   _TFL._Meta.Property                import Alias_Property
 
 from   posixpath import join as pjoin
 
 class CSS_Link (TFL.Meta.Object) :
     """Model a CSS link object."""
 
-    def __init__ (self, href, media_type = "all") :
+    def __init__ (self, href, media_type = "all", condition = "") :
         self.href       = href
         self.media_type = media_type
+        self.condition  = condition
     # end def __init__
 
     def __eq__ (self, rhs) :
@@ -69,6 +73,56 @@ class CSS_Link (TFL.Meta.Object) :
     # end def __str__
 
 # end class CSS_Link
+
+class Rel_Link (TFL.Meta.Object) :
+    """Model a `rel` link object."""
+
+    def __init__ (self, ** kw) :
+        self.href = kw ["href"]
+        self._kw  = kw
+    # end def __init__
+
+    def attrs (self) :
+        return " ".join \
+            ('''%s="%s"''' % (k, v) for (k, v) in sorted (self._kw))
+    # end def attrs
+
+# end class Rel_Link
+
+class Script (TFL.Meta.Object) :
+    """Model a script element"""
+
+    href = Alias_Property ("src")
+
+    def __init__ (self, src = "", body = "", script_type = "text/javascript") :
+        assert src or body
+        assert not (src and body)
+        self.src         = src
+        self.body        = body
+        self.script_type = script_type
+    # end def __init__
+
+    def __eq__ (self, rhs) :
+        try :
+            rhs = (rhs.src, rhs.body, rhs.script_type)
+        except AttributeError :
+            pass
+        return (self.src, self.body, self.script_type) == rhs
+    # end def __eq__
+
+    def __hash__ (self) :
+        return hash ((self.src, self.body, self.script_type))
+    # end def __hash__
+
+    def __repr__ (self) :
+        return "%s: %s" % (self.src or self.body, self.script_type)
+    # end def __repr__
+
+    def __str__ (self) :
+        return self.src or self.body
+    # end def __str__
+
+# end class Script
 
 class Media_List (TFL.Meta.Object) :
     """Model a list of media objects"""
@@ -113,10 +167,11 @@ class Media_List_Unique (Media_List) :
 
 # end class Media_List_Unique
 
-class Media_List_CSSL (Media_List_Unique) :
-    """Model a list of CSS_Link objects"""
+class Media_List_href (Media_List) :
+    """Model a list of media objects with href"""
 
-    prefix = "styles"
+    prefix   = None
+    Mob_Type = None
 
     def __init__ (self, name, media, mobs) :
         self.__super.__init__ (name, media, tuple (self._sanitized (mobs)))
@@ -126,35 +181,45 @@ class Media_List_CSSL (Media_List_Unique) :
         prefix = self.prefix
         url    = self.media.url
         for mob in self.__super._gen_own () :
-            if not mob.href.startswith (("http://", "https://", "/")) :
-                mob.href = pjoin (url, prefix, mob.href)
+            href = mob.href
+            if href and not href.startswith (("http://", "https://", "/")) :
+                mob.href = pjoin \
+                    (* (x for x in (url, prefix, href) if x is not None))
             yield mob
     # end def _gen_own
 
     def _sanitized (self, mobs) :
+        Mob_Type = self.Mob_Type
         for mob in mobs :
-            if not isinstance (mob, CSS_Link) :
-                mob = CSS_Link (mob)
+            if Mob_Type and not isinstance (mob, Mob_Type) :
+                mob = Mob_Type (mob)
             yield mob
     # end def _sanitized
 
+# end class Media_List_href
+
+class Media_List_CSSL (Media_List_href, Media_List_Unique) :
+    """Model a list of CSS_Link objects"""
+
+    prefix   = "styles"
+    Mob_Type = CSS_Link
+
 # end class Media_List_CSSL
 
-class Media_List_JSL (Media_List_Unique) :
-    """Model a list of Javascript link objects"""
+class Media_List_Rell (Media_List_href) :
 
-    prefix = "js"
+    prefix   = None
+    Mob_Type = Rel_Link
 
-    def _gen_own (self) :
-        prefix = self.prefix
-        url    = self.media.url
-        for mob in self.__super._gen_own () :
-            if not mob.startswith (("http://", "https://", "/")) :
-                mob = pjoin (url, prefix, mob)
-            yield mob
-    # end def _gen_own
+# end class Media_List_Rell
 
-# end class Media_List_JSL
+class Media_List_Script (Media_List_href, Media_List_Unique) :
+    """Model a list of script objects"""
+
+    prefix   = "js"
+    Mob_Type = Script
+
+# end class Media_List_Script
 
 class Media (TFL.Meta.Object) :
     """
@@ -164,39 +229,36 @@ class Media (TFL.Meta.Object) :
        >>> NL = chr (10)
 
        >>> m = Media (css_links = ("a.css", "/b/c.css"),
-       ...       js_links = ("foo.js", "bar.js", "http://baz.js"))
+       ...       scripts = ("foo.js", "bar.js", "http://baz.js"))
        >>> print NL.join (repr (l) for l in m.css_links)
        all: /test/styles/a.css
        all: /b/c.css
-       >>> tuple (m.js_links)
+       >>> tuple (str (l) for l in m.scripts)
        ('/test/js/foo.js', '/test/js/bar.js', 'http://baz.js')
        >>> n = Media (("/test/styles/a.css", CSS_Link ("c.css", "screen")))
        >>> print NL.join (repr (l) for l in n.css_links)
        all: /test/styles/a.css
        screen: /test/styles/c.css
-       >>> tuple (n.js_links)
+       >>> tuple (str (l) for l in n.scripts)
        ()
-       >>> q = Media (js_links = ("qux.js", ), children = (m, n))
+       >>> q = Media (scripts = ("qux.js", ), children = (m, n))
        >>> print NL.join (repr (l) for l in q.css_links)
        all: /test/styles/a.css
        all: /b/c.css
        screen: /test/styles/c.css
-       >>> "; ".join (q.js_links)
+       >>> "; ".join (str (l) for l in q.scripts)
        '/test/js/qux.js; /test/js/foo.js; /test/js/bar.js; http://baz.js'
     """
 
-    @Once_Property
-    def url (self) :
-        from django.conf import settings
-        return settings.MEDIA_URL
-    # end def url
+    url = "/media"
 
-    def __init__ (self, css_links = (), js_links = (), js_on_ready = (), js_code = (), children = ()) :
-        self.css_links   = Media_List_CSSL ("css_links",   self, css_links)
-        self.js_links    = Media_List_JSL  ("js_links",    self, js_links)
-        self.js_on_ready = Media_List      ("js_on_ready", self, js_on_ready)
-        self.js_code     = Media_List      ("js_code",     self, js_code)
-        self.children    = list            (children)
+    def __init__ (self, css_links = (), scripts = (), js_on_ready = (), rel_links = (), children = (), ** kw) :
+        self.__dict__.update (kw)
+        self.css_links   = Media_List_CSSL   ("css_links",   self, css_links)
+        self.scripts     = Media_List_Script ("scripts",     self, scripts)
+        self.js_on_ready = Media_List        ("js_on_ready", self, js_on_ready)
+        self.rel_links   = Media_List_Rell   ("rel_links",   self, rel_links)
+        self.children    = list              (children)
     # end def __init__
 
 # end class Media

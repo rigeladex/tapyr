@@ -170,6 +170,7 @@
 #                     `DJO.models_loaded_signal.send`
 #    29-May-2009 (CT) `pre_first_request_hooks` removed
 #                     (`models_loaded_signal` should be used instead)
+#    10-Jul-2009 (CT) `h_title` added
 #    ««revision-date»»···
 #--
 
@@ -319,6 +320,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
             return pnorm (href)
         return ""
     # end def href
+
+    @property
+    def h_title (self) :
+        return u"::".join \
+            ((self.title or self.name or self.href, self.parent.h_title))
+    # end def h_title
 
     @Once_Property
     def login_required (self) :
@@ -701,6 +708,11 @@ class Root (_Dir_) :
             result.add_entries (entries, Dir_Type = Dir_Type)
         return result
     # end def from_dict_list
+
+    @property
+    def h_title (self) :
+        return unicode (self.owner or self.name)
+    # end def h_title
 
     @classmethod
     def page_from_href (cls, href, request = None) :

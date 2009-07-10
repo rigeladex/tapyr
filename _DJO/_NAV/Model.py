@@ -61,6 +61,7 @@
 #    12-Jun-2009 (CT) `_djo_clean` removed
 #    12-Jun-2009 (CT) `Admin.Changer.process_post` simplified (no more
 #                     `object_to_save`, `_before_save`, ...)
+#    10-Jul-2009 (CT) `h_title` added
 #    ««revision-date»»···
 #--
 
@@ -308,6 +309,11 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         return pjoin (self.abs_href, "delete", str (obj.id))
     # end def href_delete
 
+    @property
+    def h_title (self) :
+        return u"::".join ((self.name, self.parent.h_title))
+    # end def h_title
+
     def rendered (self, context = None, nav_page = None) :
         Instance = self.Instance
         field    = self.Model._F.get
@@ -353,7 +359,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 # end class Admin
 
 class Instance (DJO.NAV.Page) :
-    """Model a page showing on model instance"""
+    """Model a page showing an model instance"""
 
     def __init__ (self, obj, manager) :
         for f in "name", "slug" :
@@ -383,6 +389,11 @@ class Instance (DJO.NAV.Page) :
         if admin :
             return admin._get_child ("change", self.obj.id)
     # end def changer
+
+    @property
+    def h_title (self) :
+        return u"::".join ((self.name, self.parent.h_title))
+    # end def h_title
 
     @property
     def href_change (self) :
