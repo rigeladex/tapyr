@@ -1,6 +1,6 @@
 /*
 * jQuery UI CSS Framework
-* Copyright (c) 2009 AUTHORS.txt (http://jqueryui.com/about)
+* Copyright (C) 2009 AUTHORS.txt (http://jqueryui.com/about)
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
 */
 
@@ -27,7 +27,7 @@
 ----------------------------------*/
 
 /* states and images */
-.ui-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+.ui-icon, .ui-icon-add, .ui-icon-delete { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
 
 
 /* Misc visuals
@@ -87,6 +87,26 @@
 .ui-state-active .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
 .ui-state-highlight .ui-icon {background-image: url(images/ui-icons_2e83ff_256x240.png); }
 .ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
+
+/* states and images  -- green */
+.ui-icon-add { width: 16px; height: 16px; background-image: url(images/ui-icons_9fda58_256x240.png); }
+.ui-widget-content .ui-icon-add {background-image: url(images/ui-icons_9fda58_256x240.png); }
+.ui-widget-header .ui-icon-add {background-image: url(images/ui-icons_1f1f1f_256x240.png); }
+.ui-state-default .ui-icon-add { background-image: url(images/ui-icons_b8ec79_256x240.png); }
+.ui-state-hover .ui-icon-add, .ui-state-focus .ui-icon-add {background-image: url(images/ui-icons_b8ec79_256x240.png); }
+.ui-state-active .ui-icon-add {background-image: url(images/ui-icons_ffffff_256x240.png); }
+.ui-state-highlight .ui-icon-add {background-image: url(images/ui-icons_000000_256x240.png); }
+.ui-state-error .ui-icon-add, .ui-state-error-text .ui-icon-add {background-image: url(images/ui-icons_cd0a0a_256x240.png); }
+
+/* states and images  -- delete */
+.ui-icon-delete { width: 16px; height: 16px; background-image: url(images/ui-icons_222222_256x240.png); }
+.ui-widget-content .ui-icon-delete {background-image: url(images/ui-icons_222222_256x240.png); }
+.ui-widget-header .ui-icon-delete {background-image: url(images/ui-icons_ffffff_256x240.png); }
+.ui-state-default .ui-icon-delete { background-image: url(images/ui-icons_ef8c08_256x240.png); }
+.ui-state-hover .ui-icon-delete, .ui-state-focus .ui-icon-delete {background-image: url(images/ui-icons_ef8c08_256x240.png); }
+.ui-state-active .ui-icon-delete {background-image: url(images/ui-icons_ef8c08_256x240.png); }
+.ui-state-highlight .ui-icon-delete {background-image: url(images/ui-icons_228ef1_256x240.png); }
+.ui-state-error .ui-icon-delete, .ui-state-error-text .ui-icon-delete {background-image: url(images/ui-icons_ffd27a_256x240.png); }
 
 /* positioning */
 .ui-icon-carat-1-n { background-position: 0 0; }
@@ -302,7 +322,7 @@
 .ui-datepicker .ui-datepicker-title { margin: 0 2.3em; line-height: 1.8em; text-align: center; }
 .ui-datepicker .ui-datepicker-title select { float:left; font-size:1em; margin:1px 0; }
 .ui-datepicker select.ui-datepicker-month-year {width: 100%;}
-.ui-datepicker select.ui-datepicker-month, 
+.ui-datepicker select.ui-datepicker-month,
 .ui-datepicker select.ui-datepicker-year { width: 49%;}
 .ui-datepicker .ui-datepicker-title select.ui-datepicker-year { float: right; }
 .ui-datepicker table {width: 100%; font-size: .9em; border-collapse: collapse; margin:0 0 .4em; }
@@ -353,7 +373,7 @@
 ----------------------------------*/
 .ui-dialog { position: relative; padding: .2em; width: 300px; }
 .ui-dialog .ui-dialog-titlebar { padding: .5em .3em .3em 1em; position: relative;  }
-.ui-dialog .ui-dialog-title { float: left; margin: .1em 0 .2em; } 
+.ui-dialog .ui-dialog-title { float: left; margin: .1em 0 .2em; }
 .ui-dialog .ui-dialog-titlebar-close { position: absolute; right: .3em; top: 50%; width: 19px; margin: -10px 0 0 0; padding: 1px; height: 18px; }
 .ui-dialog .ui-dialog-titlebar-close span { display: block; margin: 1px; }
 .ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus { padding: 0; }

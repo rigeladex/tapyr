@@ -49,7 +49,7 @@
           this._setData ("cur_number", cur_count);
           this._setData ("max_count",  max_count);
           $legend.prepend
-              ( '<a href="#add" class="ui-icon ui-icon-plusthick '
+              ( '<a href="#add" class="ui-icon-add ui-icon-plusthick '
               + add_class
               + '" title="Add ' + $legend.attr ("title")
               + '">Add</a> '
@@ -68,7 +68,7 @@
           {
               var  first_tag = $form.get (0).tagName.toLowerCase ();
               $link          =
-                  $('<a href="#delete" class="ui-icon ui-icon-closethick">Delete</a>');
+                  $('<a href="#delete" class="ui-icon-delete ui-icon-closethick">Delete</a>');
               var $element = $link;
               if (first_tag == "tr")
                   $element = $("<td></td>").append ($link);
@@ -169,16 +169,16 @@
               {
                   $form.find        ("input, textarea, select")
                        .attr        ("disabled","disabled");
-                  $link.removeClass ("ui-icon-closethick")
-                       .addClass    ("ui-icon-circle-close");
+                  $link.removeClass ("ui-icon-closethick ui-icon-delete")
+                       .addClass    ("ui-icon-circle-close ui-icon-add");
                   self._setData ("cur_count", self._getData ("cur_count") - 1);
               }
               else
               {
                   $form.find        ("input, textarea, select")
                        .removeAttr  ("disabled");
-                  $link.removeClass ("ui-icon-circle-close")
-                       .addClass    ("ui-icon-closethick");
+                  $link.removeClass ("ui-icon-circle-close ui-icon-add")
+                       .addClass    ("ui-icon-closethick ui-icon-delete");
                   self._setData ("cur_count", self._getData ("cur_count") + 1);
               }
           }
