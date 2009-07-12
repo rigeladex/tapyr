@@ -31,6 +31,7 @@
 #    19-Jun-2009 (MG) `s/nested_forms/forms/g`
 #     9-Jul-2009 (MG) `Nested_Form_Count.__unicode__`: class added
 #     9-Jul-2009 (MG) `Nested_Form_Group`: bug related to `object_count` fixed
+#     9-Jul-2009 (MG) On post, use count from post data
 #    ««revision-date»»···
 #--
 
@@ -77,16 +78,21 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
         else :
             rel_instances = ()
         self.object_count = Nested_Form_Count (self.name, self.count_spec)
+        count             = 0
         if form.is_bound :
             count_spec    = form.data [self.object_count.name]
-            count         = int (count_spec.split (":") [0])
-        min_required = self.min_required
-        form_count   = min \
+            try :
+                count     = int (count_spec.split (":") [1])
+            except :
+                count     = self.min_required
+        min_required      = self.min_required
+        form_count        = min \
             ( self.max_count
             , max
                 ( self.min_count
                 , len (rel_instances) + self.min_empty
                 , min_required
+                , count
                 )
             )
         for no, rel_inst in enumerate \

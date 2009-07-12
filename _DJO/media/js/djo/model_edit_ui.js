@@ -27,6 +27,8 @@
 **
 ** Revision Dates
 **    20-Jun-2009 (MG) Creation
+**    12-Jul-2009 (MG) Min and Max count's are considered for enable/disable
+**					   of add/delete button's
 **    ««revision-date»»···
 **--
 */
@@ -86,8 +88,8 @@
           ** name/id/for attributes
           */
           self._setData ("cur_count", self._getData ("cur_count") + 1);
-          var cur_number = self._getData ("cur_number") + 1;
-          self._setData ("cur_number", cur_number);
+          var cur_number = self._getData ("cur_number");
+          self._setData ("cur_number", cur_number + 1);
           var pattern    = /MP-/;
           var new_no     = "M" + cur_number + "-";
           var $labels    = $new.find     ("label")
@@ -109,18 +111,20 @@
           }
           /* we are ready to add the new block at the end */
           self._add_delete_button    ($new);
-          self._update_button_states ();
           $prototype.parent          ().append ($new);
+          self._update_button_states ();
           evt.preventDefault         ();
-          evt.preventDefault ();
       }
     , _update_button_states : function ()
       {
-          var $add_button = this.element.find ("legend a.ui-icon");
+          var $add_button = this.element.find ("legend a[href=#add]");
           var cur_count   = this._getData ("cur_count");
+          var min_count   = this._getData ("min_count");
           var max_count   = this._getData ("max_count");
           var $undeletes  = this.element.find
               (".m2m-nested-form a[href=#delete].ui-icon-circle-close");
+          var $deletes    = this.element.find
+              (".m2m-nested-form a[href=#delete].ui-icon-closethick");
           if (cur_count < max_count)
           {
               $add_button.bind        ("click", this, this._add_new_form)
@@ -135,6 +139,18 @@
               $undeletes. unbind   ("click", this._delete_form)
                          .addClass ("ui-state-disabled");
           }
+          if (cur_count == min_count)
+          {
+              $deletes.addClass    ("ui-state-disabled")
+                      .unbind      ("click", this._delete_form);
+          }
+          else
+          {
+              $deletes.removeClass ("ui-state-disabled")
+                      .bind        ("click", this, this._delete_form);
+          }
+          this._getData ("$m2m_range").attr 
+              ("value", [min_count, cur_count, max_count].join (":"));
       }
     , _forms_equal : function ($l, $r)
       {

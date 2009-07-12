@@ -33,7 +33,6 @@
           {% for fs in field_group.prototype.field_groups %}
             {% rrender "field_group_tr_body.html" field_group=fs;css_class="m2m-prototype m2m-nested-form" %}
           {% endfor %}
-          </tr>
           {% for form in field_group.forms %}
             {% for fs in form.field_groups %}
               {% rrender "field_group_tr_body.html" field_group=fs;css_class="m2m-nested-form" %}

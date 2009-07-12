@@ -41,22 +41,22 @@
         </title>
       {% endblock title %}
     {% endblock head-elements %}
+	  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	  <script type="text/javascript">
+	    google.load ("jquery",   "1");
+	    google.load ("jqueryui", "1");
+	  </script>
+	  <script type="text/javascript" src="{{ MEDIA_URL }}js/djo/model_edit_ui.js"></script>
+	  <script type="text/javascript">
+	    $(function ()
+	      {
+	          $("fieldset.nested-many-2-many-table, fieldset.nested-many-2-many").many2many ();
+	      }
+	     );
+	  </script>
+	  <link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery-ui-1.7.2.custom.css" type="text/css" media="all" />
+	  <link rel="stylesheet" href="{{ MEDIA_URL }}css/style.css" type="text/css" media="all" />
   </head>
-  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-  <script type="text/javascript">
-    google.load ("jquery",   "1");
-    google.load ("jqueryui", "1");
-  </script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/djo/model_edit_ui.js"></script>
-  <script type="text/javascript">
-    $(function ()
-      {
-          $("fieldset.nested-many-2-many-table, fieldset.nested-many-2-many").many2many ();
-      }
-     );
-  </script>
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery-ui-1.7.2.custom.css" type="text/css" media="all" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/style.css" type="text/css" media="all" />
 
   <body {{ page.body_attr|safe }} {% block body-attrs %}{% endblock %}>
     <div id="main">
