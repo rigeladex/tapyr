@@ -351,7 +351,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         template = getattr (self, "template")
         if parent and parent.Media is not _Site_Entity_._Media :
             medias.append (parent.Media)
-        if template and hasattr (template, "Media") :
+        if getattr (template, "Media", None) :
             medias.append (template.Media)
         if self._Media is not _Site_Entity_._Media :
             medias.append (self._Media)
