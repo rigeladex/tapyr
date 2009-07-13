@@ -171,11 +171,13 @@
 #    29-May-2009 (CT) `pre_first_request_hooks` removed
 #                     (`models_loaded_signal` should be used instead)
 #    10-Jul-2009 (CT) `h_title` added
+#    13-Jul-2009 (CT) `Media` added
 #    ««revision-date»»···
 #--
 
 from   _DJO                     import DJO
 from   _TFL                     import TFL
+import _DJO.Media
 import _DJO._NAV
 import _DJO._NAV.Url_Pattern
 
@@ -229,6 +231,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     _dump_type      = "dict"
 
+    _Media          = DJO.Media ()
+
     def __init__ (self, parent = None, ** kw) :
         self._kw    = kw
         self.parent = parent
@@ -236,6 +240,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
             encoding = kw ["input_encoding"]
         else :
             encoding = getattr (parent, "input_encoding", self.input_encoding)
+        if "Media" in kw :
+            self._Media = kw.pop ("Media")
         self._login_required = kw.pop ("login_required", False)
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
@@ -337,6 +343,22 @@ class _Site_Entity_ (TFL.Meta.Object) :
             or (self.parent and self.parent.login_required)
             )
     # end def login_required
+
+    @Once_Property
+    def Media (self) :
+        medias   = []
+        parent   = self.parent
+        template = getattr (self, "template")
+        if parent and parent.Media is not _Site_Entity_._Media :
+            medias.append (parent.Media)
+        if template and hasattr (template, "Media") :
+            medias.append (template.Media)
+        if self._Media is not _Site_Entity_._Media :
+            medias.append (self._Media)
+        if medias :
+            return DJO.Media (children = medias)
+        return self._Media
+    # end def Media
 
     @property
     def nav_links (self) :
