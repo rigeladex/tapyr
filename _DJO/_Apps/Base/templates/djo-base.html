@@ -14,6 +14,7 @@
   ##
   ## Revision Dates
   ##    10-Jul-2009 (CT) Creation started (factored from two specific homepages)
+  ##    13-Jul-2009 (CT) Creation finished (bug fixes)
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -47,25 +48,24 @@
           {% endif %}
         {% endfor %}
       {% endblock styles %}
-      {% block scripts %}
-        {% for jsl in page.Media.js_links %}
-          <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %}
-            type="{{ jsl.script_type }}">{{ jsl.body }}</script>
-        {% endfor %}
-        {% if page.Media.js_on_ready %}
-          <script type="text/javascript">
-            $(function ()
-              { {% for jsor in page.Media.js_on_ready %}
-                  {{ jsor }}
-                {% endfor %}
-              }
-             );
-          </script>
-        {% endif %}
-      {% endblock scripts %}
+        {% block scripts %}
+          {% for jsl in page.Media.scripts %}
+            <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+          {% endfor %}
+          {% if page.Media.js_on_ready %}
+            <script type="text/javascript">
+              $(function ()
+                { {% for jsor in page.Media.js_on_ready %}
+                    {{ jsor|safe }}
+                  {% endfor %}
+                }
+               );
+            </script>
+          {% endif %}
+        {% endblock scripts %}
       {% block related-links %}
         {% for rl in page.Media.rel_links %}
-          <link {{ rl.attrs }} />
+          <link {{ rl.attrs|safe }} />
         {% endfor %}
       {% endblock related-links %}
       {% block meta-elements %}

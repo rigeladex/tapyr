@@ -30,6 +30,7 @@
 #    10-Jul-2009 (CT) Creation continued
 #    10-Jul-2009 (CT) `Script` added and `js_code` removed
 #    10-Jul-2009 (CT) `Rel_Link` added
+#    13-Jul-2009 (CT) `Rel_Link.attrs` fixed
 #    ««revision-date»»···
 #--
 
@@ -84,7 +85,9 @@ class Rel_Link (TFL.Meta.Object) :
 
     def attrs (self) :
         return " ".join \
-            ('''%s="%s"''' % (k, v) for (k, v) in sorted (self._kw))
+            (   '''%s="%s"''' % (k, v)
+            for (k, v) in sorted (self._kw.iteritems ())
+            )
     # end def attrs
 
 # end class Rel_Link
