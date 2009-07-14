@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jul-2009 (CT) Creation
+#    14-Jul-2009 (CT) `parent` and `uses` added to `Template`
 #    ««revision-date»»···
 #--
 
@@ -79,9 +80,22 @@ class Template (TFL.Meta.Object) :
 
     __metaclass__  = M_Template
 
-    def __init__ (self, name, Media = None) :
-        self.name  = name
-        self.Media = Media
+    def __init__ (self, name, Media = None, parent = None, uses = ()) :
+        import _DJO.Media
+        medias      = tuple \
+            (   m
+            for m in
+              ( (getattr (parent, "Media", None), Media)
+              + tuple (u.Media for u in uses)
+              )
+            if  m is not None
+            )
+        if medias :
+            Media   = DJO.Media (children = medias)
+        self.name   = name
+        self.Media  = Media
+        self.parent = parent
+        self.uses   = uses
     # end def __init__
 
     def __repr__ (self) :
