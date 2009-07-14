@@ -71,6 +71,7 @@
 #    19-Jun-2009 (MG) Support data argumnet for Model_Form as well as request
 #                     Pass `used_fields` to `groups` method
 #    19-Jun-2009 (MG) `s/nested_forms/forms/g`
+#    14-Jul-2009 (CT) `Media` added
 #    ««revision-date»»···
 #--
 
@@ -81,6 +82,8 @@ import _TFL.Decorator
 import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL.NO_List
+
+from   _TFL._Meta.Once_Property    import Once_Property
 from   _TFL.predicate              import all_true
 
 import _DJO.Field_Group_Description
@@ -193,11 +196,10 @@ class _DJO_Model_Form_ (BaseModelForm) :
     # end def __init__
 
     def full_clean (self) :
-        if not self.is_bound: # Stop further processing.
-            return
-        for bfs in self.forms :
-            bfs.full_clean ()
-        self.__super.full_clean ()
+        if self.is_bound:
+            for bfs in self.forms :
+                bfs.full_clean ()
+            self.__super.full_clean ()
     # end def full_clean
 
     def is_valid (self) :
@@ -205,6 +207,13 @@ class _DJO_Model_Form_ (BaseModelForm) :
                and all_true (nf.is_valid () for nf in self.forms)
                )
     # end def is_valid
+
+    @Once_Property
+    def Media (self) :
+        medias = [fg.Media for fg in self.field_groups if fg.Media]
+        if medias :
+            return DJO.Media (children = medias)
+    # end def Media
 
     def save (self) :
         instance = self.instance

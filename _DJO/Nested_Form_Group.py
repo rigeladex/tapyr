@@ -54,9 +54,10 @@ class Nested_Form_Count (object) :
     def __unicode__ (self) :
         return self._widget.render \
             ( self.name, self.value
-            , attrs = { "id"    : "id_%s" % (self.name, )
-                      , "class" : "many-2-many-range"
-                      }
+            , attrs =
+                { "id"    : "id_%s" % (self.name, )
+                , "class" : "many-2-many-range"
+                }
             )
     # end def __unicode__
 

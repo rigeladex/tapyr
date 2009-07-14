@@ -62,6 +62,7 @@
 #    12-Jun-2009 (CT) `Admin.Changer.process_post` simplified (no more
 #                     `object_to_save`, `_before_save`, ...)
 #    10-Jul-2009 (CT) `h_title` added
+#    14-Jul-2009 (CT) `Media` added to `Admin.Changer`
 #    ««revision-date»»···
 #--
 
@@ -150,6 +151,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     class Changer (DJO.NAV._Site_Entity_) :
 
         implicit     = True
+        Media        = None ### cancel inherited property defined
         name         = "create"
         obj_id       = None
         template     = "model_admin_change.html"
@@ -188,6 +190,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         ("%s#pk-%s" % (self.parent.abs_href, result.id))
             else :
                 form = self.Form (instance = obj)
+            self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (self.parent.additional_context (form = form))
             return self.__super.rendered (context, nav_page)
         # end def rendered

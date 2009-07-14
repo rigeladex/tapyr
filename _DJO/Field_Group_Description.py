@@ -46,6 +46,8 @@
 #                     `Nested_Form_Description` are neighbors
 #    17-Jun-2009 (MG) `Nested_Form_Description.min_required` added
 #    19-Jun-2009 (MG) `Auto_Field_Group_Description.groups` implemented
+#    14-Jul-2009 (CT) `Media` added
+#    14-Jul-2009 (CT) Use `Template` instance instead of literal string
 #    ««revision-date»»···
 #--
 
@@ -55,6 +57,9 @@ from   _DJO               import DJO
 import _DJO.Field_Description
 import _DJO.Field_Group
 import _DJO.Nested_Form_Group
+import _DJO.Template
+import _DJO._Apps.Base
+
 import  sys
 
 class _Field_Group_Description_ (TFL.Meta.Object) :
@@ -78,6 +83,11 @@ class _Field_Group_Description_ (TFL.Meta.Object) :
     def groups (self, model, used_fields) :
         return [self]
     # end def groups
+
+    @property
+    def Media (self) :
+        return getattr (self.template, "Media")
+    # end def Media
 
 # end class _Field_Group_Description_
 
@@ -130,7 +140,7 @@ class Auto_Field_Group_Description (_Field_Group_Description_) :
 class Nested_Form_Group_Description (_Field_Group_Description_) :
     """Description of an inline for an may 2 many relation"""
 
-    template     = "nested_model_form.html"
+    template     = DJO.Template ["nested_model_form.html"]
     min_count    = 1
     max_count    = sys.maxint
     min_empty    = 1

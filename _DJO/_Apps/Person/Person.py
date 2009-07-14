@@ -30,6 +30,7 @@
 #     6-Jun-2009 (MG) `s/Form_Set/Field_Group/g`
 #    10-Jun-2009 (MG) `Nested_Form_Description` used for phone numbers
 #    11-Jun-2009 (CT) Use `name` for `Field_Group_Description`
+#    14-Jul-2009 (CT) Use `Template` objects instead of strings
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,8 @@ from   _DJO                       import DJO
 import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
+import _DJO.Template
+import _DJO._Apps.Base
 
 from   django.utils.translation   import gettext_lazy as _
 
@@ -116,13 +119,13 @@ class Person (DJO.Model) :
                 , DJO.Field_Description ("first_name", required = True)
                 , "title"
                 , legend    = _("Personal info")
-                , template  = "field_group_horizontal.html"
+                , template  = DJO.Template ["field_group_horizontal.html"]
                 , name      = "Personal_Info"
                 )
             , DJO.Field_Group_Description
                 ( "sex", "birth_date"
                 , legend    = _("Personal details")
-                , template  = "field_group_horizontal.html"
+                , template  = DJO.Template ["field_group_horizontal.html"]
                 , name      = "Personal_Details"
                 )
             , DJO.Nested_Form_Group_Description
@@ -134,25 +137,27 @@ class Person (DJO.Model) :
                         , "subscriber_number"
                         , "extension"
                         , "desc"
-                        , template  = "field_group_horizontal.html"
+                        , template = DJO.Template
+                            ["field_group_horizontal.html"]
                         )
                     ,
                     )
-                , legend   = _("Phone-Numbers")
-                , template = "nested_model_form_table.html"
-                , name     = "Personal_Phone_Info"
+                , legend    = _("Phone-Numbers")
+                , template  = DJO.Template ["nested_model_form_table.html"]
+                , name      = "Personal_Phone_Info"
                 )
             , DJO.Nested_Form_Group_Description
                 ( "emails"
                 , field_group_descriptions =
                     ( DJO.Field_Group_Description
                         ( "email", "desc"
-                        , template  = "field_group_horizontal.html"
+                        , template  = DJO.Template
+                            ["field_group_horizontal.html"]
                         )
                     ,
                     )
-                , template = "nested_model_form_table.html"
-                , legend = _("Email-Addresses")
+                , template  = DJO.Template ["nested_model_form_table.html"]
+                , legend    = _("Email-Addresses")
                 , max_count = 2 ### XXX debug
                 )
             , DJO.Nested_Form_Group_Description
@@ -160,13 +165,14 @@ class Person (DJO.Model) :
                 , field_group_descriptions =
                     ( DJO.Field_Group_Description
                         ( "street", "city", "zip", "country", "desc"
-                        , template  = "field_group_horizontal.html"
+                        , template  = DJO.Template
+                            ["field_group_horizontal.html"]
                         )
                     ,
                     )
-                , legend = _("Addresses")
-                , template = "nested_model_form_table.html"
-                , name   = "Personal_Contact_Info"
+                , legend    = _("Addresses")
+                , template  = DJO.Template ["nested_model_form_table.html"]
+                , name      = "Personal_Contact_Info"
                 )
             )
         )

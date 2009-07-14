@@ -55,9 +55,8 @@
           {% if page.Media.js_on_ready %}
             <script type="text/javascript">
               $(function ()
-                { {% for jsor in page.Media.js_on_ready %}
-                    {{ jsor|safe }}
-                  {% endfor %}
+                {
+                  {% for jsor in page.Media.js_on_ready %}{{ jsor|safe }}{% endfor %}
                 }
                );
             </script>

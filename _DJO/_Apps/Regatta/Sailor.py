@@ -31,6 +31,7 @@
 #     6-Jun-2009 (MG) `s/Form_Set/Field_Group/g`
 #    11-Jun-2009 (CT) Use `name` for `Field_Group_Description` and reuse
 #                     `Field_Group_Descriptions` defined by `Person`
+#    14-Jul-2009 (CT) Use `Template` objects instead of strings
 #    ««revision-date»»···
 #--
 
@@ -38,6 +39,8 @@ from   _DJO                       import DJO
 import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
+import _DJO.Template
+import _DJO._Apps.Base
 
 from   django.utils.translation   import gettext_lazy as _
 
@@ -81,13 +84,13 @@ class Sailor (DJO.Model) :
               , DJO.Field_Group_Description
                   ( "club", "oesv_nr"
                   , legend    = _("Sailing club info")
-                  , template  = "field_group_horizontal.html"
+                  , template  = DJO.Template ["field_group_horizontal.html"]
                   , name      = "Sailing_Club_Info"
                   )
               , DJO.Field_Group_Description
                   ( "sex"
                   , legend    = _("Sailor details")
-                  , template  = "field_group_horizontal.html"
+                  , template  = DJO.Template ["field_group_horizontal.html"]
                   , name      = "Sailor_Details"
                   )
               , DJO.Field_Group_Description._.Personal_Contact_Info

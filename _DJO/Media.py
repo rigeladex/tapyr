@@ -31,6 +31,7 @@
 #    10-Jul-2009 (CT) `Script` added and `js_code` removed
 #    10-Jul-2009 (CT) `Rel_Link` added
 #    13-Jul-2009 (CT) `Rel_Link.attrs` fixed
+#    14-Jul-2009 (CT) `Media_List_JSOR` added and used for `js_on_ready`
 #    ««revision-date»»···
 #--
 
@@ -209,6 +210,11 @@ class Media_List_CSSL (Media_List_href, Media_List_Unique) :
 
 # end class Media_List_CSSL
 
+class Media_List_JSOR (Media_List_Unique) :
+    """Model a list of javascript on-ready objects"""
+
+# end class Media_List_JSOR
+
 class Media_List_Rell (Media_List_href) :
 
     prefix   = None
@@ -259,7 +265,7 @@ class Media (TFL.Meta.Object) :
         self.__dict__.update (kw)
         self.css_links   = Media_List_CSSL   ("css_links",   self, css_links)
         self.scripts     = Media_List_Script ("scripts",     self, scripts)
-        self.js_on_ready = Media_List        ("js_on_ready", self, js_on_ready)
+        self.js_on_ready = Media_List_JSOR   ("js_on_ready", self, js_on_ready)
         self.rel_links   = Media_List_Rell   ("rel_links",   self, rel_links)
         self.children    = list              (children)
     # end def __init__

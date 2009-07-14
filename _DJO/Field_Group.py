@@ -54,7 +54,7 @@ class Bound_Field_Group (TFL.Meta.Object) :
 
     def __init__ (self, field_group, form) :
         self.field_group = field_group
-        self.form    = form
+        self.form        = form
     # end def __init__
 
     def __getattr__ (self, name) :
@@ -63,7 +63,6 @@ class Bound_Field_Group (TFL.Meta.Object) :
 
     def __iter__ (self) :
         from django.forms.forms import BoundField
-
         for field in self.field_group.fields :
             yield BoundField (self.form, field, field.name)
     # end def __iter__
@@ -100,7 +99,7 @@ class Field_Group (_Field_Group_) :
 
     def __init__ (self, model, fgd = None, used_fields = set ()) :
         self.__super.__init__ (model, fgd)
-        _F                        = model._F
+        _F = model._F
         for fd in fgd.fields or [f.name for f in _F if f.editable] :
             name = str (fd)
             if name in fgd.exclude :

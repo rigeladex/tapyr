@@ -59,6 +59,10 @@ _gs_media = Media \
     )
 
 _t_b = Template ("djo-base.html")
+_fds = Template ("field_group_div_seq.html")
+_fgh = Template ("field_group_horizontal.html")
+_ftb = Template ("field_group_tr_body.html")
+_fth = Template ("field_group_tr_head.html")
 _gmb = Template ("gmap_body.html")
 _gmh = Template ("gmap_head.html")
 _gsb = Template ("google_custom_search_body.html", _gs_media)

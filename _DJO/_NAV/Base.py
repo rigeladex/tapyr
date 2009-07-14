@@ -172,6 +172,7 @@
 #                     (`models_loaded_signal` should be used instead)
 #    10-Jul-2009 (CT) `h_title` added
 #    13-Jul-2009 (CT) `Media` added
+#    14-Jul-2009 (CT) `_get_media` factored
 #    ««revision-date»»···
 #--
 
@@ -346,18 +347,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def Media (self) :
-        medias   = []
-        parent   = self.parent
-        template = getattr (self, "template")
-        if parent and parent.Media is not _Site_Entity_._Media :
-            medias.append (parent.Media)
-        if getattr (template, "Media", None) :
-            medias.append (template.Media)
-        if self._Media is not _Site_Entity_._Media :
-            medias.append (self._Media)
-        if medias :
-            return DJO.Media (children = medias)
-        return self._Media
+        return self._get_media ()
     # end def Media
 
     @property
@@ -412,6 +402,23 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if child == self.name and not grandchildren :
             return self
     # end def _get_child
+
+    def _get_media (self, head = None) :
+        medias   = []
+        parent   = self.parent
+        template = getattr (self, "template")
+        if head is not None :
+            medias.append (head)
+        if self._Media is not _Site_Entity_._Media :
+            medias.append (self._Media)
+        if getattr (template, "Media", None) :
+            medias.append (template.Media)
+        if parent and parent.Media is not _Site_Entity_._Media :
+            medias.append (parent.Media)
+        if medias :
+            return DJO.Media (children = medias)
+        return self._Media
+    # end def _get_media
 
     def _view (self, request) :
         from django.http     import HttpResponse, Http404
