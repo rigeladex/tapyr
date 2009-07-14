@@ -26,10 +26,10 @@
 {% if not page %}{% var page=NAV %}{% endif %}
   <head>
     {% block head-elements %}
-      {% block head-base-element %}{% endblock head-base-element %}
       <meta http-equiv="Content-Type"
         content="text/html; charset={{ page.encoding|default:"iso-8859-15" }}"
       />
+      {% block head-base-element %}{% endblock head-base-element %}
       {% spaceless %}
         {% block title %}
           <title>{% firstof page.h_title page.title page.h_ref %}</title>
@@ -88,9 +88,12 @@
         {% block navigate %}{% include "navigate.html" %}{% endblock %}
       </div>
       <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
-        {% if page.headline %}<h1 class="headline">{{ page.headline }}</h1>{% endif %}
+        {% block body-headline %}
+          {% if page.headline %}<h1 class="headline">{{ page.headline }}</h1>{% endif %}
+        {% endblock body-headline %}
         {% block document %}{% endblock %}
       </div>
+    </div>
     <div id="footer">{% block body-footer %}{% endblock body-footer %}</div>
   </body>
 </html>

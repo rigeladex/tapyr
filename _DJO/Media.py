@@ -32,6 +32,7 @@
 #    10-Jul-2009 (CT) `Rel_Link` added
 #    13-Jul-2009 (CT) `Rel_Link.attrs` fixed
 #    14-Jul-2009 (CT) `Media_List_JSOR` added and used for `js_on_ready`
+#    14-Jul-2009 (CT) `__len__` and `__nonzero__` added to `Media_List`
 #    ««revision-date»»···
 #--
 
@@ -155,6 +156,14 @@ class Media_List (TFL.Meta.Object) :
         for mob in self.mobs :
             yield mob
     # end def _gen_own
+
+    def __len__ (self) :
+        return len (self.values)
+    # end def __len__
+
+    def __nonzero__ (self) :
+        return bool (self.values)
+    # end def __nonzero__
 
     def __iter__ (self) :
         return iter (self.values)

@@ -16,6 +16,8 @@
   ##     3-Oct-2008 (CT) Creation
   ##    17-Oct-2008 (CT) `login_required` added
   ##    17-Oct-2008 (CT) Use `allow_user`  instead of `login_required`
+  ##    14-Jul-2009 (CT) Recursion into `link.own_links` guarded to
+  ##                     avoid empty (and invalid) `<ul></ul>`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -48,7 +50,9 @@
             {% endif %}
           </div>
         {% endif %}
+        {% if link.own_links %}
         {% rrender "nav-sitemap-level.html" link_list=link.own_links %}
+        {% endif %}
       </li>
   {% endlet %}
 {% endif %}
