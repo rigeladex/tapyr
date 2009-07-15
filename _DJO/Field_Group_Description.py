@@ -120,7 +120,7 @@ class Auto_Field_Group_Description (_Field_Group_Description_) :
         field_override = dict ((f.name, f) for f in self.field_descriptions)
         normal_fields  = []
         for name in [f.name for f in _F if f.editable] :
-            fd       = field_override.get (name, name)
+            fd = field_override.get (name, name)
             if name in exclude :
                 continue
             if getattr (fd, "nested", False) :
