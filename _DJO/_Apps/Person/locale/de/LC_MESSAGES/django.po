@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-27 10:19+0200\n"
+"POT-Creation-Date: 2009-07-15 13:14+0200\n"
 "PO-Revision-Date: 2009-05-15 15:59+0200\n"
 "Last-Translator: Christian Tanzer <Christian.Tanzer@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid "Address"
 msgstr "Adresse"
 
-#: Address.py:47 Person.py:82
+#: Address.py:47 Person.py:93 Person.py:174
 msgid "Addresses"
 msgstr "Adressen"
 
@@ -40,27 +40,27 @@ msgstr "Stadt"
 msgid "Zip"
 msgstr "Postleitzahl"
 
-#: Address.py:64
+#: Address.py:65
 msgid "Region"
 msgstr "Bundesland"
 
-#: Address.py:66
+#: Address.py:67
 msgid "State or province or region"
 msgstr "Bundesland oder Kanton"
 
-#: Address.py:70
+#: Address.py:71
 msgid "Country"
 msgstr "Land"
 
-#: Address.py:77 Phone_Number.py:48
+#: Address.py:78 Phone_Number.py:48
 msgid "Phone Number"
 msgstr "Telefonnummer"
 
-#: Address.py:80 Email_Address.py:52 Phone_Number.py:77
+#: Address.py:81 Email_Address.py:52 Phone_Number.py:80
 msgid "Description"
 msgstr "Beschreibung"
 
-#: Address.py:82
+#: Address.py:83
 msgid "Short description of the address"
 msgstr "Kurze Beschreibung der Adresse"
 
@@ -68,7 +68,7 @@ msgstr "Kurze Beschreibung der Adresse"
 msgid "Email-Address"
 msgstr "Email-Adresse"
 
-#: Email_Address.py:44
+#: Email_Address.py:44 Person.py:162
 msgid "Email-Addresses"
 msgstr "Email-Adressen"
 
@@ -80,70 +80,82 @@ msgstr "Email Adresse"
 msgid "Short description of the email address"
 msgstr "Kurze Beschreibung der Email Adresse"
 
-#: Person.py:43
+#: Person.py:51
 msgid "Person"
 msgstr "Person"
 
-#: Person.py:44
+#: Person.py:52
 msgid "Persons"
 msgstr "Personen"
 
-#: Person.py:50
+#: Person.py:58
 msgid "User"
 msgstr "Anwender"
 
-#: Person.py:53
+#: Person.py:61
 msgid "Title"
 msgstr "Titel"
 
-#: Person.py:55
+#: Person.py:63
 msgid "Academic title"
 msgstr "Akademischer Grad"
 
-#: Person.py:59
+#: Person.py:67
 msgid "Birth-Date"
 msgstr "Geburtsdatum"
 
-#: Person.py:64
+#: Person.py:72
 msgid "Sex"
 msgstr "Geschlecht"
 
-#: Person.py:66
+#: Person.py:74
 msgid "Female"
 msgstr "Weiblich"
 
-#: Person.py:66
+#: Person.py:74
 msgid "Male"
-msgstr "M\xc3\xa4nnlich"
+msgstr "Männlich"
 
-#: Person.py:72
+#: Person.py:81
 msgid "Email Addresses"
 msgstr "Email Adressen"
 
-#: Person.py:77 Phone_Number.py:49
+#: Person.py:87 Phone_Number.py:49
 msgid "Phone Numbers"
+msgstr "Telefonnummern"
+
+#: Person.py:124
+msgid "Personal info"
+msgstr "Persönliche Informationen"
+
+#: Person.py:130
+msgid "Personal details"
+msgstr "Persönliche Details"
+
+#: Person.py:148
+msgid "Phone-Numbers"
 msgstr "Telefonnummern"
 
 #: Phone_Number.py:53
 msgid "Country-Code"
 msgstr "Landesvorwahl"
 
-#: Phone_Number.py:58
+#: Phone_Number.py:59
 msgid "Area-Code"
 msgstr "Ortsvorwahl"
 
-#: Phone_Number.py:64
+#: Phone_Number.py:66
 msgid "Subscriber-Number"
 msgstr "Telefonnummer"
 
-#: Phone_Number.py:70
+#: Phone_Number.py:72
 msgid "Extension"
 msgstr "Durchwahl"
 
-#: Phone_Number.py:72
+#: Phone_Number.py:75
 msgid "Extension number used in PBX"
 msgstr "Durchwahl in einer Nebenstellenanlage"
 
-#: Phone_Number.py:79
+#: Phone_Number.py:82
 msgid "Short description of the phone number"
 msgstr "Kurze Beschreibung der Telefonnummer"
