@@ -77,16 +77,19 @@ class Person (DJO.Model) :
     emails                = MF.Many_to_Many \
         ( "Person.Email_Address"
         , blank           = True
+        , null            = True
         , verbose_name    = _("Email Addresses")
         )
     phones                = MF.Many_to_Many \
         ( "Person.Phone_Number"
         , blank           = False
+        , null            = True
         , verbose_name    = _("Phone Numbers")
         )
     addresses             = MF.Many_to_Many \
         ( "Person.Address"
         , blank           = True
+        , null            = True
         , verbose_name    = _("Addresses")
         )
 

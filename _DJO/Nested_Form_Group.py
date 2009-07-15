@@ -32,6 +32,8 @@
 #     9-Jul-2009 (MG) `Nested_Form_Count.__unicode__`: class added
 #     9-Jul-2009 (MG) `Nested_Form_Group`: bug related to `object_count` fixed
 #     9-Jul-2009 (MG) On post, use count from post data
+#    15-Jul-2009 (CT) `Nested_Form_Count` changed to keep reference to
+#                     `Bound_Nested_Form_Group` instead of `count_spec`
 #    ««revision-date»»···
 #--
 
@@ -45,11 +47,16 @@ from    django.forms.widgets        import HiddenInput
 
 class Nested_Form_Count (object) :
 
-    def __init__ (self, name, value) :
-        self.name    = "%s-count" % (name, )
-        self.value   = value
+    def __init__ (self, bnfg) :
+        self.bnfg    = bnfg
+        self.name    = "%s-count" % (bnfg.name, )
         self._widget = HiddenInput ()
     # end def __init__
+
+    @property
+    def value (self) :
+        return self.bnfg.count_spec
+    # end def value
 
     def __unicode__ (self) :
         return self._widget.render \
@@ -78,7 +85,7 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
             rel_instances = tuple (getattr (instance, self.name).all ())
         else :
             rel_instances = ()
-        self.object_count = Nested_Form_Count (self.name, self.count_spec)
+        self.object_count = Nested_Form_Count (self)
         count             = 0
         if form.is_bound :
             count_spec    = form.data [self.object_count.name]
@@ -107,7 +114,6 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
                         (rel_inst is None) and (no >= min_required)
                     )
                 )
-        self.object_count.value = self.count_spec
     # end def __init__
 
     @property
