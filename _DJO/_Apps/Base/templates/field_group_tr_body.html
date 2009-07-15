@@ -19,7 +19,7 @@
   ##--
 {% endcomment %}
 {% load i18n TGL %}
-  <tr class="field_group {{ field_group.css_class }} {{css_class }}"
+  <tr class="field_group {{ field_group.css_class }} {{ css_class }}"
     {% if field_group.legend %}title="{{ field_group.legend }}"{% endif %}
   >
     {% for field in field_group %}

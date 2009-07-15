@@ -154,12 +154,11 @@ class Person (DJO.Model) :
                 , field_group_descriptions =
                     ( DJO.Field_Group_Description
                         ( "email", "desc"
-                        , template  = DJO.Template
-                            ["field_group_horizontal.html"]
+                        #, template  = DJO.Template ["field_group_horizontal.html"]
                         )
                     ,
                     )
-                , template  = DJO.Template ["nested_model_form_table.html"]
+                #, template  = DJO.Template ["nested_model_form_table.html"]
                 , legend    = _("Email-Addresses")
                 )
             , DJO.Nested_Form_Group_Description

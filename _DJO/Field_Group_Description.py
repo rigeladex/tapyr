@@ -104,7 +104,6 @@ class Field_Group_Description (_Field_Group_Description_) :
         return DJO.Field_Group (model, self, used_fields)
     # end def __call__
 
-
 # end class Field_Group_Description
 
 class Auto_Field_Group_Description (_Field_Group_Description_) :
