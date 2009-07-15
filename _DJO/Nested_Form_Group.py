@@ -69,11 +69,11 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
     def __init__ (self, field_group, form) :
         self.__super.__init__ (field_group, form)
         self.forms     = forms = []
+        instance       = form.instance
+        no             = 0
         prefix         = "%s-M%%s" % (self.form_class.model.__name__.lower (), )
         self.prototype = self.form_class \
             (prefix = prefix % "P", empty_permitted = True)
-        instance          = form.instance
-        no                = 0
         if instance.pk :
             rel_instances = tuple (getattr (instance, self.name).all ())
         else :

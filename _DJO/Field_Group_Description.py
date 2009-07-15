@@ -48,6 +48,7 @@
 #    19-Jun-2009 (MG) `Auto_Field_Group_Description.groups` implemented
 #    14-Jul-2009 (CT) `Media` added
 #    14-Jul-2009 (CT) Use `Template` instance instead of literal string
+#    15-Jul-2009 (CT) `min_empty` changed from `1` to `0`
 #    ««revision-date»»···
 #--
 
@@ -143,7 +144,7 @@ class Nested_Form_Group_Description (_Field_Group_Description_) :
     template     = DJO.Template ["nested_model_form.html"]
     min_count    = 1
     max_count    = sys.maxint
-    min_empty    = 1
+    min_empty    = 0
     min_required = 0
 
     def __init__ (self, field, field_group_descriptions, ** kw) :
