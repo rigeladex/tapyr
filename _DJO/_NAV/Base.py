@@ -173,6 +173,7 @@
 #    10-Jul-2009 (CT) `h_title` added
 #    13-Jul-2009 (CT) `Media` added
 #    14-Jul-2009 (CT) `_get_media` factored
+#    16-Jul-2009 (CT) `nick` added and used in `h_title`
 #    ««revision-date»»···
 #--
 
@@ -224,6 +225,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     desc            = ""
     href            = ""
     input_encoding  = "iso-8859-15"
+    nick            = ""
     title           = ""
     top             = None
 
@@ -331,7 +333,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
     @property
     def h_title (self) :
         return u"::".join \
-            ((self.title or self.name or self.href, self.parent.h_title))
+            ( ( self.nick or self.title or self.name or self.href
+              , self.parent.h_title
+              )
+            )
     # end def h_title
 
     @Once_Property
@@ -740,7 +745,7 @@ class Root (_Dir_) :
 
     @property
     def h_title (self) :
-        return unicode (self.owner or self.name)
+        return unicode (self.nick or self.owner or self.name)
     # end def h_title
 
     @classmethod
