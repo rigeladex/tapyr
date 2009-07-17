@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2007-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -37,6 +37,7 @@
 #    15-Nov-2007 (CT) `RTS._Event_.__str__` added
 #    31-Mar-2008 (CT) `_to_local_time` changed to consider `dst`
 #    31-Mar-2008 (CT) `azimuth` added to newly factored `_Rise_` and `_Set_`
+#    17-Jul-2009 (CT) Don't display floating point values in doctest
 #    ««revision-date»»···
 #--
 
@@ -99,20 +100,20 @@ class RTS (TFL.Meta.Object) :
        ...     )
        >>> rts.day, rts.sid
        (Date (1988, 3, 20), Angle_D (177.741535578))
-       >>> [x.n for x in (rts.rise,rts.transit, rts.set)]
-       [0.51881115911723963, 0.82029552154124752, 0.12177988396525549]
-       >>> [x.alpha.degrees for x in (rts.rise,rts.transit, rts.set)]
-       [42.276472017055596, 42.593239842037981, 41.859267859751228]
-       >>> [x.delta.degrees for x in (rts.rise,rts.transit, rts.set)]
-       [18.642290558106509, 18.758466152777782, 18.488352088349298]
-       >>> [x.ha.degrees for x in (rts.rise, rts.transit, rts.set)]
-       [-108.5688266724258, -0.054066867395242468, 108.52578574490458]
-       >>> [x.altitude.degrees for x in (rts.rise,rts.transit, rts.set)]
-       [-0.44595681946769256, 66.425121506118614, -0.52716315594313057]
-       >>> [x.delta_m for x in (rts.rise, rts.transit, rts.set)]
-       [-0.00050512499927386257, -0.00015018574276456242, 0.0001652102142790363]
-       >>> [x.corrected_m for x in (rts.rise, rts.transit, rts.set)]
-       [0.51765788596981754, 0.81949718765033475, 0.12129694603138638]
+       >>> ["%5.2f" % x.n for x in (rts.rise,rts.transit, rts.set)]
+       [' 0.52', ' 0.82', ' 0.12']
+       >>> ["%5.2f" % x.alpha.degrees for x in (rts.rise,rts.transit, rts.set)]
+       ['42.28', '42.59', '41.86']
+       >>> ["%5.2f" % x.delta.degrees for x in (rts.rise,rts.transit, rts.set)]
+       ['18.64', '18.76', '18.49']
+       >>> ["%5.2f" % x.ha.degrees for x in (rts.rise, rts.transit, rts.set)]
+       ['-108.57', '-0.05', '108.53']
+       >>> ["%5.2f" % x.altitude.degrees for x in (rts.rise,rts.transit, rts.set)]
+       ['-0.45', '66.43', '-0.53']
+       >>> ["%8.5f" % x.delta_m for x in (rts.rise, rts.transit, rts.set)]
+       ['-0.00051', '-0.00015', ' 0.00017']
+       >>> ["%5.2f" % x.corrected_m for x in (rts.rise, rts.transit, rts.set)]
+       [' 0.52', ' 0.82', ' 0.12']
        >>> [x.time_ut for x in (rts.rise, rts.transit, rts.set)]
        [Time (12, 25, 25, 641), Time (19, 40, 4, 557), Time (2, 54, 40, 56)]
     """
