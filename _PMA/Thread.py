@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -47,7 +47,7 @@ class _Thread_ (TFL.Meta.Object, threading.Thread) :
     _real_name = "Thread"
 
     def __init__ (self, auto_start = False, ** kw) :
-        self.__super.__init__ (** kw)
+        self.__super.__init__     (** kw)
         threading.Thread.__init__ (self, ** kw)
         if auto_start :
             self.start ()
@@ -103,21 +103,7 @@ class Polling_Thread (_Thread_) :
     # end def _poll
 
 # end class Polling_Thread
-"""
-from _PMA.Thread import *
-import time
 
-class Test (Polling_Thread) :
-    def _poll (self) :
-        print "I'm polling"
-    # end def _poll
-
-# end class Test
-
-t = Test (auto_start = True)
-
-time.sleep (33)
-"""
 if __name__ != "__main__" :
     PMA._Export ("*")
 ### __END__ PMA.Thread
