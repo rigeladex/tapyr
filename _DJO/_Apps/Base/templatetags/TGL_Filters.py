@@ -90,6 +90,8 @@ u'21 18\\n  40 10\\n  0 400\\n  2 10 20'
 ['A', 'C']
 >>> [r.text for r in sequence_filter (seq, "hidden:False")]
 ['B']
+>>> [r.text for r in sequence_filter (seq, "text:'A'")]
+['A']
 >>> [r.text for r in sequence_filter (None, "hidden:True")]
 []
 
