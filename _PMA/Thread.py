@@ -28,6 +28,10 @@
 # Revision Dates
 #     5-Jan-2006 (CT) Creation
 #    26-Jan-2006 (MG) Timeout handling implemented using a socket with timeout
+#    28-Mar-2008 (CT) Explicit call to `threading.Thread.__init__` added
+#                     (due to change of _TFL_Meta_Object_Root_ from 5-Mar-2008)
+#    17-Jul-2009 (CT) `_check_MRO` added to avoid error from new check in
+#                     _TFL_Meta_Object_Root_
 #    ««revision-date»»···
 #--
 
@@ -44,7 +48,7 @@ import socket
 class _Thread_ (TFL.Meta.Object, threading.Thread) :
     """Base class for PMA threads"""
 
-    _real_name = "Thread"
+    _real_name      = "Thread"
 
     def __init__ (self, auto_start = False, ** kw) :
         self.__super.__init__     (** kw)
@@ -52,6 +56,13 @@ class _Thread_ (TFL.Meta.Object, threading.Thread) :
         if auto_start :
             self.start ()
     # end def __init__
+
+    @classmethod
+    def _check_MRO (cls, args, kw) :
+        """We know what we're doing and explicitly call
+           `threading.Thread.__init__`.
+        """
+    # end def _check_MRO
 
 # end class _Thread_
 

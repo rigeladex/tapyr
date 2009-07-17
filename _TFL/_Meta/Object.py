@@ -32,6 +32,7 @@
 #     5-Mar-2008 (CT) `_TFL_Meta_Object_Root_` added to accomodate Python 2.6
 #                     (http://bugs.python.org/issue1683368)
 #     2-Feb-2009 (CT) Documentation improved
+#    17-Jul-2009 (CT) `_check_MRO` and doctest added to `_TFL_Meta_Object_Root_`
 #    ««revision-date»»···
 #--
 
@@ -39,17 +40,82 @@ from   _TFL import TFL
 import _TFL._Meta.M_Class
 
 class _TFL_Meta_Object_Root_ (object) :
-    ### Root class to fix `__init__` and `__new__`.
-    ###     As of Python 2.6, `object.__init__` doesn't accept parameters
-    ### Don't inherit from this (unless you really know what you're doing)
+    """Root class to fix `__init__` and `__new__`.
+
+       As of Python 2.6, `object.__init__` doesn't accept parameters
+       (http://bugs.python.org/issue1683368).
+
+       Don't inherit from _TFL_Meta_Object_Root_ directly(unless you really
+       know what you're doing).
+
+       >>> class A (object) :
+       ...     def __init__ (self, x = 2) :
+       ...         print "A.__init__:", x
+       ...         self.x = x
+       ...         super (A, self).__init__ ()
+       ...
+       >>> class B (TFL.Meta.Object, A) :
+       ...     def __init__ (self, y) :
+       ...         print "B.__init__:", y
+       ...         self.y = y
+       ...         self.__super.__init__ ()
+       ...
+       >>> b = B (1)
+       Traceback (most recent call last):
+           ...
+       AssertionError: MRO conflict for B.__init__: super != object,
+           (<class 'Object.B'>, <class 'Object.Object'>, <class 'Object._TFL_Meta_Object_Root_'>, <class 'Object.A'>, <type 'object'>)
+       >>> class C (object) :
+       ...     def __init__ (self, x = 2) :
+       ...         print "C.__init__:", x
+       ...         self.x = x
+       ...         super (C, self).__init__ ()
+       ...
+       >>> class D (TFL.Meta.Object, C) :
+       ...     def __init__ (self, y, x = 3) :
+       ...         print "D.__init__:", y
+       ...         self.y = y
+       ...         self.__super.__init__ (y = y, x = x)
+       ...         C.__init__ (self, x)
+       ...     @classmethod
+       ...     def _check_MRO (cls, args, kw) :
+       ...         '''We know what we're doing and explicitly call `C__init__`.'''
+       ...
+       >>> d = D (42)
+       D.__init__: 42
+       C.__init__: 3
+       >>> print d.x,d.y
+       3 42
+    """
 
     def __new__ (cls, * args, ** kw) :
+        if __debug__ :
+            cls._check_MRO (args, kw)
         return object.__new__ (cls)
     # end def __new__
 
     def __init__ (self, * args, ** kw) :
         object.__init__ (self)
     # end def __init__
+
+    @classmethod
+    def _check_MRO (cls, args, kw) :
+        if (args or kw) :
+            ### Make sure that there is not class intervening between
+            ### `_TFL_Meta_Object_Root_` and `object` in `cls.__mro__`
+            ###
+            ### due to http://bugs.python.org/issue1683368, cooperative
+            ### calls to `__new__` and `__init__` can't work **unless**
+            ### all cooperating classes derive from the same root (that
+            ### is not `object`)
+            sup = super (_TFL_Meta_Object_Root_, cls)
+            msg       = \
+                ( "MRO conflict for %s.%%s: super != object,\n    %s"
+                % (cls.__name__, cls.__mro__)
+                )
+            assert sup.__new__  is object.__new__,  (msg % ("__new__", ))
+            assert sup.__init__ is object.__init__, (msg % ("__init__", ))
+    # end def _check_MRO
 
 # end class _TFL_Meta_Object_Root_
 

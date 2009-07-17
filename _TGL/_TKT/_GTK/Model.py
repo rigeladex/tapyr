@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -47,6 +47,7 @@
 #                     arguments
 #    16-Sep-2005 (MG) `add`: debug code added
 #    30-Dec-2005 (MG) `Filter_Model.iter` added
+#    17-Jul-2009 (CT) `_check_MRO` and `__init__` added t o`_Proxy_Model_`
 #    ««revision-date»»···
 #--
 
@@ -258,6 +259,18 @@ class _Proxy_Model_ (TFL.Meta.Object, _Iter_Mixin_) :
     """Root class for all kinds of `proxy` models (sort, filter, ...)"""
 
     ui_column = property ( lambda s : s.model.ui_column)
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__  (* args, ** kw)
+        _Iter_Mixin_.__init__  (self)
+    # end def __init__
+
+    @classmethod
+    def _check_MRO (cls, args, kw) :
+        """We know what we're doing and explicitly call
+           `_Iter_Mixin_.__init__`.
+        """
+    # end def _check_MRO
 
     def add (self, * args, ** kw) :
         return self.model.add (* args, ** kw)
