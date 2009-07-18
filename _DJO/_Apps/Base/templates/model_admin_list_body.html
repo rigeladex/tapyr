@@ -1,0 +1,106 @@
+{# Django template: model_admin_list_body.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ## ****************************************************************************
+  ##
+  ## This library is free software; you can redistribute it and/or
+  ## modify it under the terms of the GNU Library General Public
+  ## License as published by the Free Software Foundation; either
+  ## version 2 of the License, or (at your option) any later version.
+  ##
+  ## This library is distributed in the hope that it will be useful,
+  ## but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ## Library General Public License for more details.
+  ##
+  ## You should have received a copy of the GNU Library General Public
+  ## License along with this library; if not, write to the Free
+  ## Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  ## ****************************************************************************
+  ##
+  ##++
+  ## Name
+  ##    model_admin_list_body
+  ##
+  ## Purpose
+  ##    Template fragment rendering a list of model instances
+  ##
+  ## Revision Dates
+  ##    17-Jul-2009 (CT) Creation (factored from project-specific template)
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+  {% load TGL i18n %}
+  <table class="Object-List">
+    <caption>
+      {{ Model_Name_s }}
+    </caption>
+    <colgroup>
+      <col class="{{ Meta.object_name }}-cmd-change" />
+      {% for f in fields %}
+        <col class="{{ Meta.object_name }}-{{ f.name }}" />
+      {% endfor %}
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="{{ Meta.object_name }}-cmd-change" scope="col">
+          <a href="{{ page.href_create }}" title="{% trans "Create new object" %} {{ Model_Name }}"><img
+            src="{{ page.site_prefix }}media/images/icon_add.gif"
+            alt="{% trans "Create new object" %}" height="10" width="10"
+          /></a>
+        </th>
+        {% if Model.display %}
+          <th class="{{ Meta.object_name }}-display" scope="col">
+            {{ Model_Name }}
+          </th>
+        {% endif %}
+        {% for f in fields %}
+          <th class="{{ Meta.object_name }}-{{ f.name }}" scope="col"
+              title="{{ f.help_text }}">
+            {{ f.verbose_name }}
+          </th>
+        {% endfor %}
+        <th class="{{ Meta.object_name }}-cmd-change" scope="col">
+          <a href="{{ page.href_create }}" title="{% trans "Create new" %} {{ Model_Name }}"><img
+            src="{{ page.site_prefix }}media/images/icon_add.gif"
+            alt="{% trans "Create new" %} {{ Model_Name }} "
+            height="10" width="10"
+          /></a>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in objects %}
+        <tr class="{% cycle 'row1' 'row2' %}" id="pk-{{ o.id }}">
+          <td class="{{ Meta.object_name }}-cmd-change">
+            <a href="{{ o.href_change }}" title="{% trans "Change object" %} {{ o.id }}"><img
+            src="{{ page.site_prefix }}media/images/icon_edit.gif"
+            alt="{% trans "Change object" %}" height="10" width="10"
+          /></a>
+          </td>
+          {% if o.display %}
+            <td class="{{ Meta.object_name }}-display">
+              <a href="{{ o.href_change }}" title="{% trans "Change object" %} {{ o.id }}">
+                {{ o.display }}
+              </a>
+            </td>
+          {% endif %}
+          {% for f in o %}
+            <td class="{{ Meta.object_name }}-{{ f.name }} {{ f.name }}">
+              <a href="{{ o.href_change }}" title="{% trans "Change object" %} {{ o.id }}">
+                {{ f }}
+              </a>
+            </td>
+          {% endfor %}
+          <td class="{{ Meta.object_name }}-cmd-delete">
+            <a href="{{ o.href_delete }}" title="{% trans "Delete object" %} {{ o.id }}"><img
+            src="{{ page.site_prefix }}media/images/icon_delete.gif"
+            alt="Delete object" height="10" width="10"
+          /></a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{# __END__ Django template: model_admin_list_body.html #}
