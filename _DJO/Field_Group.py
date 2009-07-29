@@ -40,6 +40,7 @@
 #    18-Jun-2009 (CT) `Bound_Nested_Form_Field_Group.__init__` changed to
 #                     consider `min_required` for `form_count`
 #    19-Jun-2009 (MG) Nested parts factored into `Nested_Form_Group`
+#    29-Jul-2009 (CT) Once_Property `Bound_Field` factored
 #    ««revision-date»»···
 #--
 
@@ -57,14 +58,20 @@ class Bound_Field_Group (TFL.Meta.Object) :
         self.form        = form
     # end def __init__
 
+    @Once_Property
+    def Bound_Field (self) :
+        from django.forms.forms import BoundField
+        return BoundField
+    # end def Bound_Field
+
     def __getattr__ (self, name) :
         return getattr (self.field_group, name)
     # end def __getattr__
 
     def __iter__ (self) :
-        from django.forms.forms import BoundField
+        BF = self.Bound_Field
         for field in self.field_group.fields :
-            yield BoundField (self.form, field, field.name)
+            yield BF (self.form, field, field.name)
     # end def __iter__
 
 # end class Bound_Field_Group
@@ -107,7 +114,7 @@ class Field_Group (_Field_Group_) :
             used_fields.add (name)
             dj_field          = _F [name]
             kw                = dict ()
-            form_field_class  = getattr (fd, "form_flield_class", None)
+            form_field_class  = getattr (fd, "form_field_class", None)
             ### the following attribues must not be passed to `formfield` if
             ### they have not been specified in the field definition to
             ### ensure the proper default
@@ -115,7 +122,7 @@ class Field_Group (_Field_Group_) :
                 value = getattr (fd, attr, None)
                 if value is not None :
                     kw [attr] = value
-            fo_field          = dj_field.formfield (** kw)
+            fo_field  = dj_field.formfield (** kw)
             if fo_field :
                 ### we need to set the name for the form-field because we
                 ### need to use the TFL.NO_list to keep the order but a
