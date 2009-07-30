@@ -44,10 +44,11 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                  import TFL
+from   _TFL                          import TFL
 import _TFL._Meta.Object
-from   _TFL.predicate        import all_true
-from   _DJO                  import DJO
+from   _TFL._Meta.Once_Property      import Once_Property
+from   _TFL.predicate                import all_true
+from   _DJO                          import DJO
 import _DJO.Field_Group_Description
 
 class Bound_Field_Group (TFL.Meta.Object) :
