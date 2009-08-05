@@ -29,6 +29,8 @@
 #     4-Jan-2008 (CT) Creation (ported from a perl version)
 #     5-Jan-2008 (CT) Use `CAL.Date_Time` instead of (obsolete) `TFL.Date_Time`
 #     9-Jul-2009 (MG) Support for `km_geld` added
+#     5-Aug-2009 (CT) `km_business`, `km_private`, and `private_percent`
+#                     factored (in class `Fahrtenbuch`)
 #    ««revision-date»»···
 #--
 
@@ -140,6 +142,11 @@ class Fahrtenbuch (TFL.Meta.Object) :
         return result
     # end def from_file
 
+    @property
+    def km_business (self) :
+        return sum (e.km_business for e in self.entries)
+    # end def km_business
+
     def km_geld (self) :
         result = ["""$source_currency = "EUR";"""]
         for e in self.entries :
@@ -147,6 +154,21 @@ class Fahrtenbuch (TFL.Meta.Object) :
                 result.append (e.atax ())
         return "\n".join (result)
     # end def km_geld
+
+    @property
+    def km_private (self) :
+        return sum (e.km_private for e in self.entries)
+    # end def km_private
+
+    @property
+    def private_percent (self) :
+        kmb    = self.km_business
+        kmp    = self.km_private
+        result = 0
+        if kmp :
+            result = 100.0 / ((kmb + kmp) / kmp)
+        return result
+    # end def private_percent
 
     def tex (self) :
         result  = []
@@ -183,11 +205,9 @@ class Fahrtenbuch (TFL.Meta.Object) :
                         add (r"\begin{fahrtenbuch}")
                         i = 1
             add (r"\hline\hline")
-            kmb  = sum (e.km_business for e in entries)
-            kmp  = sum (e.km_private  for e in entries)
-            priv = 0
-            if kmp :
-                priv = 100.0 / ((kmb + kmp) / kmp)
+            kmb  = self.km_business
+            kmp  = self.km_private
+            priv = self.private_percent
             add ( FB_Entry.tex_format
                 % ( "Total", head.km_start, tail.km_finis, kmb, kmp
                   , r"\hfill Privatanteil = \percent{%5.2f} \CR" % priv
