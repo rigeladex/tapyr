@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -34,6 +34,8 @@
 #    13-Dec-2006 (CT) `x_pad` and `y_pad` added
 #    20-Dec-2007 (CT) `zeros` call changed (back) to use `dtype` instead of
 #                     `typecode` (which obviously got lost in matplotlib 0.91)
+#    11-Aug-2009 (CT) Import `ma` from `numpy` instead of deprecated
+#                     `matplotlib.numerix`
 #    ««revision-date»»···
 #--
 
@@ -45,7 +47,7 @@ import _TGL._DRA._MPL.Bin_Locator
 import _TFL._Meta.Object
 
 import pylab
-import matplotlib.numerix.ma as     ma
+import numpy.ma              as     ma
 from   matplotlib.ticker     import FuncFormatter
 
 class Bin_Distribution_Plot (TFL.Meta.Object) :
