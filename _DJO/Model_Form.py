@@ -137,8 +137,6 @@ class M_Model_Form (TFL.Meta.M_Class) :
 def model_to_dict (instance, fields = None, exclude = None) :
     _F = getattr (instance, "_F", None)
     if _F is not None :
-        ### XXX don't know if we need this, depends on how ManyToManyField
-        ### will be implemented
         from django.db.models.fields.related import ManyToManyField
         ### we build the data dict in a different way
         data = {}
@@ -148,9 +146,9 @@ def model_to_dict (instance, fields = None, exclude = None) :
                 continue
             f = _F [fn]
             if isinstance (f, ManyToManyField):
-                # If the object doesn't have a primry key yet, just use an empty
-                # list for its m2m fields. Calling f.value_from_object will
-                # raise an exception.
+                # If the object doesn't have a primary key yet, just use an
+                # empty list for its m2m fields.
+                # Calling f.value_from_object will raise an exception.
                 if instance.pk is None:
                     data [f.name] = []
                 else:

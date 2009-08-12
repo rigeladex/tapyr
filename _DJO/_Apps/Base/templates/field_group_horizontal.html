@@ -14,6 +14,7 @@
   ## Revision Dates
   ##     5-Jun-2009 (CT) Creation
   ##    19-Jun-2009 (CT) `field_group_tr_head` and `field_group_tr_body` factored
+  ##    12-Aug-2009 (CT) Use `visible_fields`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -28,7 +29,7 @@
   </tbody>
 </table>
 <div class="field_group-Horizontal-Help">
-  {% for field in field_group %}
+  {% for field in field_group.visible_fields %}
     {% if field.help_text %}
       <p class="Field-Help" id="Field-Help-{{ field.html_name }}">
         {{ field.help_text|safe }}

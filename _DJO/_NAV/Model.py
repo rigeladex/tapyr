@@ -63,6 +63,8 @@
 #                     `object_to_save`, `_before_save`, ...)
 #    10-Jul-2009 (CT) `h_title` added
 #    14-Jul-2009 (CT) `Media` added to `Admin.Changer`
+#    12-Aug-2009 (CT) `Field.formatted` changed to convert `str` to `unicode`
+#                     using `Root.top.input_encoding`
 #    ««revision-date»»···
 #--
 
@@ -100,6 +102,9 @@ class Field (TFL.Meta.Object) :
         except AttributeError :
             if isinstance (self.value, unicode) :
                 f = lambda x : x
+            elif isinstance (self.value, str) :
+                f = lambda x : unicode \
+                        (x, DJO.NAV.Root.top.input_encoding, "replace")
             else :
                 f = str
         value = self.value
@@ -118,7 +123,7 @@ class Field (TFL.Meta.Object) :
     # end def __nonzero__
 
     def __unicode__ (self) :
-        return self.formatted ### XXX encoding
+        return self.formatted
     # end def __unicode__
 
 # end class Field

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Jun-2009 (MG) Factored from `Formset_Description.py`
+#    12-Aug-2009 (CT) `__repr__` added
 #    ««revision-date»»···
 #--
 
@@ -42,6 +43,10 @@ class Field_Description (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
+    def __repr__ (self) :
+        return "<Field_Description %s>" % (self.name, )
+    # end def __repr__
+
     def __str__ (self) :
         return self.name
     # end def __str__
@@ -51,5 +56,3 @@ class Field_Description (TFL.Meta.Object) :
 if __name__ != "__main__" :
     DJO._Export ("*")
 ### __END__ DJO.Field_Description
-
-

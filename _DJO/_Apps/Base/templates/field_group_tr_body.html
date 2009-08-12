@@ -15,6 +15,7 @@
   ## Revision Dates
   ##     5-Jun-2009 (CT) Creation
   ##     9-Jul-2009 (MG) `css_class` added to `tr`
+  ##    12-Aug-2009 (CT) Use `visible_fields` and `hidden_fields`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
@@ -22,8 +23,11 @@
   <tr class="field_group {{ field_group.css_class }} {{ css_class }}"
     {% if field_group.legend %}title="{{ field_group.legend }}"{% endif %}
   >
-    {% for field in field_group %}
+    {% for field in field_group.visible_fields %}
       <td class="Field Field-{{ field.name }}" title="{{ field.help_text|safe }}">
+        {% if forloop.first %}
+          {% for hidden in field_group.hidden_fields %}{{ hidden }}{% endfor %}
+        {% endif %}
         {{ field }}
         {{ field.errors }}
       </td>

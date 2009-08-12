@@ -13,15 +13,19 @@
   ##
   ## Revision Dates
   ##     5-Jun-2009 (CT) Creation
+  ##    12-Aug-2009 (CT) Use `visible_fields` and `hidden_fields`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load i18n %}
 {% load TGL %}
-{% for field in field_group %}
+{% for field in field_group.visible_fields %}
   <div class="Field Field-{{ field.name }}" title="{{ field.help_text }}"
   >
     <span class="Field-Help">{{ field.help_text|safe }}</span>
+    {% if forloop.first %}
+      {% for hidden in field_group.hidden_fields %}{{ hidden }}{% endfor %}
+    {% endif %}
     {{ field.label_tag }}
     {{ field }}
     {{ field.errors }}

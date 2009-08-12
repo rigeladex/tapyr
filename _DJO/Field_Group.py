@@ -41,6 +41,11 @@
 #                     consider `min_required` for `form_count`
 #    19-Jun-2009 (MG) Nested parts factored into `Nested_Form_Group`
 #    29-Jul-2009 (CT) Once_Property `Bound_Field` factored
+#    12-Aug-2009 (CT) `hidden_fields` and `visible_fields` added to
+#                     `Bound_Field_Group`
+#    12-Aug-2009 (CT) `Field_Group.__init__` changed to render fields with
+#                     widget of `HiddenInput`, that django wouldn't render
+#                     (like `id`)
 #    ««revision-date»»···
 #--
 
@@ -50,6 +55,8 @@ from   _TFL._Meta.Once_Property      import Once_Property
 from   _TFL.predicate                import all_true
 from   _DJO                          import DJO
 import _DJO.Field_Group_Description
+
+from    django.forms.widgets         import HiddenInput
 
 class Bound_Field_Group (TFL.Meta.Object) :
     """A field_group bound to an instance of a Form"""
@@ -64,6 +71,14 @@ class Bound_Field_Group (TFL.Meta.Object) :
         from django.forms.forms import BoundField
         return BoundField
     # end def Bound_Field
+
+    def hidden_fields (self):
+ 	return [field for field in self if field.is_hidden]
+    # end def hidden_fields
+
+    def visible_fields (self):
+ 	return [field for field in self if not field.is_hidden]
+    # end def visible_fields
 
     def __getattr__ (self, name) :
         return getattr (self.field_group, name)
@@ -124,6 +139,9 @@ class Field_Group (_Field_Group_) :
                 if value is not None :
                     kw [attr] = value
             fo_field  = dj_field.formfield (** kw)
+            if fo_field is None and kw.get ("widget") == HiddenInput :
+                from django.forms import CharField
+                fo_field = CharField (** kw)
             if fo_field :
                 ### we need to set the name for the form-field because we
                 ### need to use the TFL.NO_list to keep the order but a

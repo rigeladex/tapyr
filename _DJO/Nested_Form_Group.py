@@ -146,15 +146,27 @@ class Nested_Form_Group (DJO._Field_Group_) :
     Bound_Field_Group = Bound_Nested_Form_Group
 
     def __init__ (self, model, nfgd, used_fields = set ()) :
-        name                     = str (nfgd.field)
         self.__super.__init__ (model, nfgd)
+        name                     = str (nfgd.field)
         related_model            = model._F [name].rel.to
         Form_Type                = getattr (self, "Form", DJO.Model_Form)
         Form_Mixins              = getattr (self, "Form_Mixins", ())
-        field_group_descriptions = getattr (self, "field_group_descriptions", ())
         kw                       = dict    (head_mixins = Form_Mixins)
-        self.form_class          = Form_Type.New \
+        field_group_descriptions = getattr \
+            ( self, "field_group_descriptions"
+            , (DJO.Auto_Field_Group_Description (model = model), )
+            )
+        assert len (field_group_descriptions) == 1
+        fgd = field_group_descriptions [0]
+        if not any (getattr (f, "name", f) == "id" for f in fgd.fields) :
+            fgd.fields += (DJO.Field_Description ("id", widget = HiddenInput), )
+        self.form_class = fc = Form_Type.New \
             (related_model, * field_group_descriptions, ** kw)
+        from django.forms import BooleanField
+        ufg = fc.unbound_field_groups [0]
+        hfr = BooleanField (widget = HiddenInput, initial = False)
+        hfr.name = "_Delete_"
+        ufg.fields.append (hfr)
     # end def __init__
 
 # end class Nested_Form_Field_Group

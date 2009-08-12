@@ -19,7 +19,7 @@
 {% endcomment %}
 {% load i18n TGL %}
   <tr>
-    {% for field in field_group %}
+    {% for field in field_group.visible_fields %}
       <th title="{{ field.help_text|safe }}">
         {{ field.label_tag }}
       </th>
