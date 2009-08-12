@@ -34,6 +34,8 @@
 #     9-Jul-2009 (MG) On post, use count from post data
 #    15-Jul-2009 (CT) `Nested_Form_Count` changed to keep reference to
 #                     `Bound_Nested_Form_Group` instead of `count_spec`
+#    12-Aug-2009 (CT) `Nested_Form_Count.__init__` changed to add hidden
+#                     fields `id` and `_delete_`
 #    ««revision-date»»···
 #--
 
@@ -165,7 +167,7 @@ class Nested_Form_Group (DJO._Field_Group_) :
         from django.forms import BooleanField
         ufg = fc.unbound_field_groups [0]
         hfr = BooleanField (widget = HiddenInput, initial = False)
-        hfr.name = "_Delete_"
+        hfr.name = "_delete_"
         ufg.fields.append (hfr)
     # end def __init__
 
