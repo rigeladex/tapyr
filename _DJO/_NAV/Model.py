@@ -65,6 +65,7 @@
 #    14-Jul-2009 (CT) `Media` added to `Admin.Changer`
 #    12-Aug-2009 (CT) `Field.formatted` changed to convert `str` to `unicode`
 #                     using `Root.top.input_encoding`
+#    19-Aug-2009 (CT) Class docstrings added/improved
 #    ««revision-date»»···
 #--
 
@@ -146,7 +147,7 @@ class _Model_Mixin_ (TFL.Meta.Object) :
 # end class _Model_Mixin_
 
 class Admin (_Model_Mixin_, DJO.NAV.Page) :
-    """Model an admin page for a specific Django model class."""
+    """Model an admin page for a specific Django model."""
 
     Field           = Field
     has_children    = True
@@ -154,6 +155,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     template        = "model_admin_list.html"
 
     class Changer (DJO.NAV._Site_Entity_) :
+        """Model an admin page for creating or changing a specific instance of a Django model."""
 
         implicit     = True
         Media        = None ### cancel inherited property defined
@@ -203,6 +205,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     # end class Changer
 
     class Deleter (DJO.NAV._Site_Entity_) :
+        """Model an admin page for deleting a specific instance of a Django model."""
 
         implicit    = True
         name        = "delete"
@@ -228,6 +231,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     # end class Deleter
 
     class Instance (TFL.Meta.Object) :
+        """Model a specific instance in the context of an admin page for one Django model."""
 
         def __init__ (self, admin, obj) :
             self.admin = admin
@@ -367,7 +371,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 # end class Admin
 
 class Instance (DJO.NAV.Page) :
-    """Model a page showing an model instance"""
+    """Model a page showing a specific instance of a Django model."""
 
     def __init__ (self, obj, manager) :
         for f in "name", "slug" :
@@ -428,7 +432,7 @@ class Instance (DJO.NAV.Page) :
 # end class Instance
 
 class Manager (_Model_Mixin_, DJO.NAV.Dir) :
-    """Model a directory showing one Django model"""
+    """Model a directory showing (the instances of) one Django model."""
 
     Page            = Instance
     _admin          = None
