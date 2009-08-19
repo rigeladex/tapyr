@@ -210,7 +210,9 @@ class _DJO_Model_Form_ (BaseModelForm) :
     def Media (self) :
         medias = [fg.Media for fg in self.field_groups if fg.Media]
         if medias :
-            return DJO.Media (children = medias)
+            result = DJO.Media (children = medias)
+            print "\n".join (result.js_on_ready)
+            return result
     # end def Media
 
     def save (self) :

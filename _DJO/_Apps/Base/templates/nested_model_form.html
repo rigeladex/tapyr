@@ -14,11 +14,12 @@
   ##     6-Jun-2009 (MG) Creation
   ##     9-Jul-2009 (MG) `m2m-clone` added to `div`
   ##     9-Jul-2009 (MG) Prototype generation added
+  ##    19-Aug-2009 (CT) Add `field_group.Name` to `class` of `fieldset`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load i18n TGL %}
-  <fieldset class="{{ field_group.css_class|default:"nested-many-2-many"}}">
+  <fieldset class="{{ field_group.css_class|default:"nested-many-2-many"}} {{ field_group.Name }}">
     {% if field_group.legend %}<legend>{{ field_group.legend }}</legend>{% endif %}
     {{ field_group.object_count }}
     <div class="One-Link">

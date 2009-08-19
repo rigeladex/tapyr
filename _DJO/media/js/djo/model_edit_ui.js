@@ -149,7 +149,7 @@
               $deletes.removeClass ("ui-state-disabled")
                       .bind        ("click", this, this._delete_form);
           }
-          this._getData ("$m2m_range").attr 
+          this._getData ("$m2m_range").attr
               ("value", [min_count, cur_count, max_count].join (":"));
       }
     , _forms_equal : function ($l, $r)
@@ -211,4 +211,12 @@
         }
       }
     );
+  var Completer =
+    { _init : function ()
+      {
+        var url      = this._getData     ("url");
+        var triggers = this._getData     ("triggers");
+      }
+    }
+  $.widget ("ui.completer", Completer);
 })(jQuery);

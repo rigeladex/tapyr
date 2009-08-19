@@ -38,6 +38,7 @@ from   _DJO                       import DJO
 import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
+import _DJO.Nested_Form_Completer
 import _DJO.Template
 import _DJO._Apps.Base
 
@@ -144,6 +145,14 @@ class Person (DJO.Model) :
                             ["field_group_horizontal.html"]
                         )
                     ,
+                    )
+                , completer = DJO.Nested_Form_Completer
+                    ( fields  =
+                        ( "country_code", "area_code", "subscriber_number")
+                    , triggers = dict
+                        ( area_code         = dict (min_chars = 3)
+                        , subscriber_number = dict (min_chars = 2)
+                        )
                     )
                 , legend    = _("Phone-Numbers")
                 , template  = DJO.Template ["nested_model_form_table.html"]

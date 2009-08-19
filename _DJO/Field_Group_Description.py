@@ -140,11 +140,12 @@ class Auto_Field_Group_Description (_Field_Group_Description_) :
 class Nested_Form_Group_Description (_Field_Group_Description_) :
     """Description of an inline for an may 2 many relation"""
 
-    template     = DJO.Template ["nested_model_form.html"]
-    min_count    = 1
+    completer    = None
     max_count    = sys.maxint
+    min_count    = 1
     min_empty    = 0
     min_required = 0
+    template     = DJO.Template ["nested_model_form.html"]
 
     def __init__ (self, field, field_group_descriptions, ** kw) :
         self.field                    = field

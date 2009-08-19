@@ -80,9 +80,9 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
         self.forms     = forms = []
         instance       = form.instance
         no             = 0
-        prefix         = "%s-M%%s" % (self.form_class.model.__name__.lower (), )
+        pf             = self.Name
         self.prototype = self.form_class \
-            (prefix = prefix % "P", empty_permitted = True)
+            (prefix = "%s-MP" % pf, empty_permitted = True)
         if instance.pk :
             rel_instances = tuple (getattr (instance, self.name).all ())
         else :
@@ -111,7 +111,7 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
                 ( self.form_class
                     ( request         = self.form.request
                     , instance        = rel_inst
-                    , prefix          = prefix % (no, )
+                    , prefix          = "%s-M%s" % (pf, no)
                     , empty_permitted =
                         (rel_inst is None) and (no >= min_required)
                     )
@@ -149,8 +149,9 @@ class Nested_Form_Group (DJO._Field_Group_) :
 
     def __init__ (self, model, nfgd, used_fields = set ()) :
         self.__super.__init__ (model, nfgd)
-        name                     = str (nfgd.field)
-        related_model            = model._F [name].rel.to
+        self.field_name = name   = str (nfgd.field)
+        self.related_model       = model._F [name].rel.to
+        self.Name                = self.related_model.__name__.lower ()
         Form_Type                = getattr (self, "Form", DJO.Model_Form)
         Form_Mixins              = getattr (self, "Form_Mixins", ())
         kw                       = dict    (head_mixins = Form_Mixins)
@@ -163,15 +164,18 @@ class Nested_Form_Group (DJO._Field_Group_) :
         if not any (getattr (f, "name", f) == "id" for f in fgd.fields) :
             fgd.fields += (DJO.Field_Description ("id", widget = HiddenInput), )
         self.form_class = fc = Form_Type.New \
-            (related_model, * field_group_descriptions, ** kw)
+            (self.related_model, * field_group_descriptions, ** kw)
         from django.forms import BooleanField
         ufg = fc.unbound_field_groups [0]
-        hfr = BooleanField (widget = HiddenInput, initial = False)
-        hfr.name = "_delete_"
-        ufg.fields.append (hfr)
+        hfs = BooleanField (widget = HiddenInput, initial = 0)
+        hfs.name = "_state_"
+        ufg.fields.append (hfs)
+        if self.completer :
+            self.Media = DJO.Media \
+                (js_on_ready = self.completer.js_on_ready (self))
     # end def __init__
 
-# end class Nested_Form_Field_Group
+# end class Nested_Form_Group
 
 if __name__ != "__main__" :
     DJO._Export ("*")

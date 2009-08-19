@@ -17,11 +17,12 @@
   ##     9-Jul-2009 (MG) Added `title` to `legend`,`css_class` passed to
   ##                     `rrender` of `field_group_tr_body.html`
   ##     9-Jul-2009 (MG) Prototype generation added
+  ##    19-Aug-2009 (CT) Add `field_group.Name` to `class` of `fieldset`
   ##    ««revision-date»»···
   ##--
 {% endcomment %}
 {% load i18n TGL %}
-  <fieldset class="{{ field_group.css_class|default:"nested-many-2-many-table"}}">
+  <fieldset class="{{ field_group.css_class|default:"nested-many-2-many-table"}} {{ field_group.Name }}">
     {% if field_group.legend %}<legend title="{{ field_group.name|capfirst}}">{{ field_group.legend }}</legend>{% endif %}
     {{ field_group.object_count }}
     <div class="One-Link">

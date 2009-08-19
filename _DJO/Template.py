@@ -50,6 +50,10 @@ class M_Template (TFL.Meta.M_Class) :
         return result
     # end def __call__
 
+    def Copy (cls, proto) :
+        return cls.__m_super.__call__ (proto.name)
+    # end def Copy
+
     def __getattr__ (cls, name) :
         try :
             return cls.Table [name]
@@ -97,6 +101,13 @@ class Template (TFL.Meta.Object) :
         self.parent = parent
         self.uses   = uses
     # end def __init__
+
+    def copy (self, Media) :
+        result        = self.__class__.Copy (self)
+        result.parent = self
+        result.Media  = DJO.Media (children = (self.Media, Media))
+        return result
+    # end def copy
 
     def __repr__ (self) :
         return self.name
