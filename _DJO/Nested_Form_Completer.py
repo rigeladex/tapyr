@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Aug-2009 (CT) Creation
 #    20-Aug-2009 (CT) `template` added
+#    20-Aug-2009 (CT) `jsor_form` and `js_on_ready` changed to include `triggers`
 #    ««revision-date»»···
 #--
 
@@ -42,8 +43,10 @@ class Nested_Form_Completer (TFL.Meta.Object) :
 
     jsor_form = "\n".join \
         ( ("""$(".%(mname)s").completer"""
-          , """  ({ "url": "%(url)s" """
-          , """   , "prefix": "%(mname)s" """
+          , """  ({ "list_url" : "%(list_url)s" """
+          , """   , "obj_url"  : "%(obj_url)s" """
+          , """   , "prefix"   : "%(mname)s" """
+          , """   , "triggers" :  %(triggers)s """
           , """  }); """
           , ""
           )
@@ -51,21 +54,34 @@ class Nested_Form_Completer (TFL.Meta.Object) :
 
     template = "model_completion_list.html"
 
-    def __init__ (self, triggers, fields = (), template = None) :
-        self.triggers = triggers
+    def __init__ (self, triggers, fields = (), prefix = "/Admin", template = None) :
+        self._triggers = triggers
         self.fields   = fields
+        self.prefix   = prefix
         if template is not None :
             self.template = template
     # end def __init__
 
     def js_on_ready (self, nested_form_group) :
-        model  = nested_form_group.model
-        fname  = nested_form_group.field_name
-        mname  = nested_form_group.Name
-        url    = "/Admin/%s/complete/%s" % (model.__name__, fname)
-        result =  self.jsor_form % TFL.Caller.Object_Scope (self)
+        from django.utils import simplejson
+        model    = nested_form_group.model
+        fname    = nested_form_group.field_name
+        mname    = nested_form_group.Name
+        list_url = "%s/%s/complete/%s"  % (self.prefix, model.__name__, fname)
+        obj_url  = "%s/%s/completed/%s" % (self.prefix, model.__name__, fname)
+        triggers = simplejson.dumps (self.triggers)
+        result   = self.jsor_form % TFL.Caller.Object_Scope (self)
         return (result, )
     # end def js_on_ready
+
+    @property
+    def triggers (self) :
+        result = {}
+        for k, v in self._triggers.iteritems () :
+            result [k] = d = v.copy ()
+            d.setdefault ("fields", self.fields)
+        return result
+    # end def triggers
 
 # end class Nested_Form_Completer
 
