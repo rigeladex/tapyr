@@ -28,13 +28,18 @@
 ** Revision Dates
 **    20-Jun-2009 (MG) Creation
 **    12-Jul-2009 (MG) Min and Max count's are considered for enable/disable
-**					   of add/delete button's
+**                     of add/delete button's
+**    20-Aug-2009 (MG) Completer added and completion functions added to
+**                     Many2Many
 **    ««revision-date»»···
 **--
 */
 
 (function ($)
 {
+  var field_name_pat = /-M[\dP]+-/;
+  var field_no_pat   = /-M([\dP]+)-/;
+
   var Many2Many =
     { _init : function ()
       {
@@ -83,6 +88,7 @@
       {
           var self       = evt.data;
           var $prototype = self._getData    ("$prototype");
+          var  comp_opt  = $prototype.data  ("completion");
           var $new       = $prototype.clone ().removeClass ("m2m-prototype");
           /* now that we have cloned the block, let's change the
           ** name/id/for attributes
@@ -113,8 +119,98 @@
           self._add_delete_button    ($new);
           $prototype.parent          ().append ($new);
           self._update_button_states ();
+          if (comp_opt != undefined)
+          {
+              var pf = comp_opt.prefix + "-" + new_no;
+              for (var field_name in comp_opt.triggers)
+              {
+                  var real_field_name = pf + field_name;
+                  $("[name=" + real_field_name + "]").bind
+                      ( "keyup"
+                      , {comp_opt : comp_opt, self :self}
+                      , self._auto_complete
+                      );
+              }
+          }
           evt.preventDefault         ();
       }
+    , _model_field_name     : function (name)
+    {
+        return name.split (field_name_pat) [1];
+    }
+    , _auto_complete        : function (evt)
+    {
+        //console.log ("Key up");
+        var data     = {};
+        var self     = evt.data.self;
+        var comp_opt = evt.data.comp_opt;
+        var trigger  = evt.currentTarget.name.split (field_name_pat) [1];
+        trigger      = comp_opt.triggers [trigger];
+        var fields   = trigger ["fields"];
+        var value    = evt.currentTarget.value;
+        var id       = comp_opt.prefix + "-comp-list"
+        $("#" + id).remove (); /* remove old display */
+        if (  (trigger.min_chars != undefined)
+           && (value.length      >= trigger.min_chars)
+           )
+        {
+            var no = field_no_pat.exec (evt.currentTarget.name) [1];
+            var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
+            for (var i = 0;  i < trigger.fields.length; i++)
+            {
+                var mfn   = trigger.fields [i];
+                var value =  $("[name=" + pf + mfn + "]").attr ("value");
+                if (value) data [mfn] = value;
+            }
+            jQuery.get
+              ( comp_opt.list_url
+              , data
+              , function (data, textStatus)
+                {
+                    if (textStatus == "success")
+                    {
+                        var comp_data = { comp_data : comp_data
+                                        , input     :  evt.originalTarget
+                                        };
+                        var $auto_complete = $(data).attr ("id", id);
+                        if ($auto_complete.find (".completion-id").length)
+                        {
+                            $(evt.originalTarget).parent ()
+                                                 .append ($auto_complete);
+                            $auto_complete.children ().bind
+                              ( "click", function (e)
+                              {
+                                  var pk = $(e.originalTarget).find
+                                    (".completion-id").text ();
+                                  var no = field_no_pat.exec
+                                    (evt.currentTarget.name) [1];
+                                  jQuery.getJSON
+                                    ( comp_opt.obj_url
+                                    , { "id" : pk, "no" : no}
+                                    , function (data, textStatus)
+                                      {
+                                          $("#" + id).remove ();
+                                          if (textStatus == "success")
+                                          {
+                                              self._replace_fields (data, pf);
+                                          }
+                                          console.log (data);
+                                      }
+                                    );
+                              });
+                        }
+                    }
+                }
+              )
+        }
+    }
+    , _replace_fields       : function (fields, pf)
+    {
+        for (var key in fields)
+        {
+            $("[name=" + pf + key + "]").replaceWith (fields [key]);
+        }
+    }
     , _update_button_states : function ()
       {
           var $add_button = this.element.find ("legend a[href=#add]");
@@ -214,9 +310,32 @@
   var Completer =
     { _init : function ()
       {
-        var url      = this._getData     ("url");
-        var triggers = this._getData     ("triggers");
+          var options = {};
+          for (var key in $.ui.completer.defaults)
+          {
+              options [key] = this._getData (key);
+          }
+          this.element.find (".m2m-prototype").data ("completion", options);
       }
     }
   $.widget ("ui.completer", Completer);
+  $.extend
+    ( $.ui.completer
+    , { version                          : "0.1"
+      , defaults                         :
+        { triggers                       : { "subscriber_number"
+                                           : { "min_chars" : 2
+                                             , "fields"    :
+                                                 [ "country_code"
+                                                 , "area_code"
+                                                 , "subscriber_number"
+                                                 ]
+                                             }
+                                           }
+        , list_url                       : ""
+        , obj_url                        : "" // id -> pk, no ->number
+        , prefix                         : ""
+        }
+      }
+    );
 })(jQuery);

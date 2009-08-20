@@ -29,6 +29,7 @@
 #    15-May-2009 (CT) Creation
 #    19-May-2009 (CT) Use `min_value` and `max_value` to constrain values
 #                     (and s/Positive_Integer/Integer/)
+#    20-Aug-2009 (MG) `ordering` added
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,8 @@ class Phone_Number (DJO.Model) :
     class Meta :
         verbose_name          = _("Phone Number")
         verbose_name_plural   = _("Phone Numbers")
+        ordering              = \
+            ("country_code", "area_code", "subscriber_number", "extension")
     # end class Meta
 
     country_code          = MF.Small_Integer \

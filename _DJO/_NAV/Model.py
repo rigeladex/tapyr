@@ -77,6 +77,8 @@ from   __future__               import with_statement
 from   _DJO                     import DJO
 from   _TFL                     import TFL
 
+import _DJO.QF
+
 import _DJO._NAV.Base
 import _TFL._Meta.Object
 

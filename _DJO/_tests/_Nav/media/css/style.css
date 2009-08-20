@@ -6,4 +6,17 @@ a.m2m-add
 { display:  none;
 }
 
-.m2m-nested-form
+.completion-list
+{ z-Index:          999
+; position:         absolute
+; background-color: white
+; border:           2px solid black
+}
+
+.completion-list p
+{ margin:           0px
+}
+
+.completion-list .completion-id
+{ display:          none
+}

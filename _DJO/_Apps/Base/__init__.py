@@ -41,7 +41,8 @@ _nf_media = Media \
         )
     , scripts     =
         ( DJO.Script (src  = "http://www.google.com/jsapi")
-        , DJO.Script (body = 'google.load ("jquery", "1");')
+        , DJO.Script (body = 'google.load ("jquery", "1"')
+##        , DJO.Script (body = 'google.load ("jquery", "1", {uncompressed:true});')
         , DJO.Script (body = 'google.load ("jqueryui", "1");')
         , DJO.Script (src  = "djo/model_edit_ui.js")
         )
