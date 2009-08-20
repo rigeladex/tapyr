@@ -66,6 +66,8 @@
 #    12-Aug-2009 (CT) `Field.formatted` changed to convert `str` to `unicode`
 #                     using `Root.top.input_encoding`
 #    19-Aug-2009 (CT) Class docstrings added/improved
+#    20-Aug-2009 (CT) `Admin._get_media` modified to handle `complete`
+#    20-Aug-2009 (CT) `Admin.Completer` started
 #    ««revision-date»»···
 #--
 
@@ -187,7 +189,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         % (self.Model._meta.verbose_name, obj_id)
                         )
                     raise Http404 (request.path)
-            if request.method == "POST":
+            if request.method == "POST" :
                 result, form = self.process_post (request, obj)
                 if result :
                     man = self.top.Models.get ((self.Model, self.kind_name))
@@ -203,6 +205,41 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         # end def rendered
 
     # end class Changer
+
+    class Completer (DJO.NAV._Site_Entity_) :
+        """Deliver completion information for a AJAX request."""
+
+        implicit     = True
+        Media        = None ### cancel inherited property defined
+        name         = "create"
+
+        def rendered (self, context, nav_page = None) :
+            request = context ["request"]
+            result  = None
+            if request.method == "GET" :
+                form = self.Form (kind_name = self.kind_name)
+                bnfg = form.form_map.get (self.field_name)
+                if bnfg is not None :
+                    relm = bnfg.related_model
+                    qfs  = tuple \
+                        (   DJO.QF (** {"%s__startswith" % str (k) : str (v)})
+                        for (k, v) in request.GET.iteritems ()
+                        )
+                    completions = relm.objects.filter (* qfs).distinct ()
+                    print relm, [(c.id, str (c)) for c in completions]
+                    self.Media = self._get_media \
+                        (head = getattr (form, "Media", None))
+                    context.update \
+                        (self.parent.additional_context (form = form))
+                    ### ??? how to render the resulting objects ???
+                    result = ""
+            if result is None :
+                from django.http import Http404
+                raise Http404 (request.path)
+            return result
+        # end def rendered
+
+    # end class Completer
 
     class Deleter (DJO.NAV._Site_Entity_) :
         """Model an admin page for deleting a specific instance of a Django model."""
@@ -231,7 +268,9 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     # end class Deleter
 
     class Instance (TFL.Meta.Object) :
-        """Model a specific instance in the context of an admin page for one Django model."""
+        """Model a specific instance in the context of an admin page for one
+           Django model, e.g., displayed as one line of a table.
+        """
 
         def __init__ (self, admin, obj) :
             self.admin = admin
@@ -361,6 +400,12 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                 ( parent = self
                 , name   = "change/%s" % (grandchildren [0], )
                 , obj_id = grandchildren [0]
+                )
+        if child == "complete" and len (grandchildren) == 1 :
+            return self.Completer \
+                ( parent     = self
+                , name       = "complete/%s" % (grandchildren [0], )
+                , field_name = grandchildren [0]
                 )
         if child == "create" and not grandchildren :
             return self.Changer (parent = self)

@@ -72,6 +72,7 @@
 #                     Pass `used_fields` to `groups` method
 #    19-Jun-2009 (MG) `s/nested_forms/forms/g`
 #    14-Jul-2009 (CT) `Media` added
+#    20-Aug-2009 (CT) `form_map` added to `Model_Form`
 #    ««revision-date»»···
 #--
 
@@ -186,11 +187,13 @@ class _DJO_Model_Form_ (BaseModelForm) :
         self.request      = request
         self.field_groups = []
         self.forms        = []
+        self.form_map     = {}
         for ufs in self.unbound_field_groups :
             bfs = ufs (self)
             self.field_groups.append (bfs)
             if isinstance (bfs, DJO.Bound_Nested_Form_Group) :
                 self.forms.append (bfs)
+                self.form_map [bfs.name] = bfs
     # end def __init__
 
     def full_clean (self) :
