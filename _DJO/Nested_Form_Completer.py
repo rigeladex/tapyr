@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Aug-2009 (CT) Creation
+#    20-Aug-2009 (CT) `template` added
 #    ««revision-date»»···
 #--
 
@@ -48,9 +49,13 @@ class Nested_Form_Completer (TFL.Meta.Object) :
           )
         )
 
-    def __init__ (self, triggers, fields = ()) :
+    template = "model_completion_list.html"
+
+    def __init__ (self, triggers, fields = (), template = None) :
         self.triggers = triggers
         self.fields   = fields
+        if template is not None :
+            self.template = template
     # end def __init__
 
     def js_on_ready (self, nested_form_group) :

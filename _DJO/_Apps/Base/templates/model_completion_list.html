@@ -1,0 +1,25 @@
+
+{# Django template: model_completion_list.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##++
+  ## Name
+  ##    model_completion_list
+  ##
+  ## Purpose
+  ##    Template rendering a list of completions (of model instances)
+  ##
+  ## Revision Dates
+  ##    20-Aug-2009 (CT) Creation
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n TGL %}
+  <div class="completion-list">
+    {% for o in completions %}
+      <p><span class="completion-id">{{ o.id }}</span>{{ o }}</p>
+    {% endfor %}
+  </div>
+{# __END__ Django template: model_completion_list.html #}

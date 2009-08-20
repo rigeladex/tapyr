@@ -225,14 +225,10 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                         (   DJO.QF (** {"%s__startswith" % str (k) : str (v)})
                         for (k, v) in request.GET.iteritems ()
                         )
-                    completions = relm.objects.filter (* qfs).distinct ()
-                    print relm, [(c.id, str (c)) for c in completions]
-                    self.Media = self._get_media \
-                        (head = getattr (form, "Media", None))
-                    context.update \
-                        (self.parent.additional_context (form = form))
-                    ### ??? how to render the resulting objects ???
-                    result = ""
+                    completions = context ["completions"] = \
+                        sorted (relm.objects.filter (* qfs).distinct ())
+                    result = self.__super.rendered \
+                        (context, nav_page, template = bnfg.completer.template)
             if result is None :
                 from django.http import Http404
                 raise Http404 (request.path)
