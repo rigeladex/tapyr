@@ -67,7 +67,8 @@
 #                     using `Root.top.input_encoding`
 #    19-Aug-2009 (CT) Class docstrings added/improved
 #    20-Aug-2009 (CT) `Admin._get_media` modified to handle `complete`
-#    20-Aug-2009 (CT) `Admin.Completer` started
+#    20-Aug-2009 (CT) `Admin.Completer` added
+#    20-Aug-2009 (CT) `Admin.Completed` added
 #    ««revision-date»»···
 #--
 
@@ -211,7 +212,6 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
         implicit     = True
         Media        = None ### cancel inherited property defined
-        name         = "create"
 
         def rendered (self, context, nav_page = None) :
             request = context ["request"]
@@ -236,6 +236,49 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         # end def rendered
 
     # end class Completer
+
+    class Completed (DJO.NAV._Site_Entity_) :
+        """Deliver fields for a model instance selected by completion."""
+
+        implicit     = True
+        Media        = None ### cancel inherited property defined
+
+        def rendered (self, context, nav_page = None) :
+            from django.http  import Http404, HttpResponse
+            from django.utils import simplejson
+            request = context ["request"]
+            result  = None
+            if request.method == "GET" :
+                form = self.Form         (kind_name = self.kind_name)
+                bnfg = form.form_map.get (self.field_name)
+                id   = request.GET.get   ("id")
+                no   = request.GET.get   ("no")
+                if not any (x is None for x in (bnfg, id, no)) :
+                    relm = bnfg.related_model
+                    try :
+                        obj  = relm.objects.get (id = id)
+                    except relm.DoesNotExist, exc :
+                        request.Error = \
+                            ( "%s `%s` existiert nicht!"
+                            % (relm._meta.verbose_name, id)
+                            )
+                        raise Http404 (request.path)
+                    form_class = bnfg.form_class \
+                        ( request         = None
+                        , instance        = obj
+                        , prefix          = "%s-M%s" % (bnfg.Name, no)
+                        )
+                    fields = dict ((f.name, str (f)) for f in form_class)
+                    result = HttpResponse \
+                        ( simplejson.dumps (fields)
+                        , mimetype = "application/javascript"
+                        )
+            if result is None :
+                raise Http404 (request.path)
+            return result
+        # end def rendered
+
+    # end class Completed
 
     class Deleter (DJO.NAV._Site_Entity_) :
         """Model an admin page for deleting a specific instance of a Django model."""
@@ -390,18 +433,19 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         return Form_Type.New (Model, * field_group_descriptions, ** form_dict)
     # end def _auto_form
 
+    _child_name_map = dict \
+        ( change    = (Changer,   "obj_id")
+        , complete  = (Completer, "field_name")
+        , completed = (Completed, "field_name")
+        )
+
     def _get_child (self, child, * grandchildren) :
-        if child == "change" and len (grandchildren) == 1 :
-            return self.Changer \
+        if child in self._child_name_map :
+            T, attr = self._child_name_map [child]
+            return T \
                 ( parent = self
-                , name   = "change/%s" % (grandchildren [0], )
-                , obj_id = grandchildren [0]
-                )
-        if child == "complete" and len (grandchildren) == 1 :
-            return self.Completer \
-                ( parent     = self
-                , name       = "complete/%s" % (grandchildren [0], )
-                , field_name = grandchildren [0]
+                , name   = "%s/%s" % (child, grandchildren [0])
+                , ** {attr : grandchildren [0]}
                 )
         if child == "create" and not grandchildren :
             return self.Changer (parent = self)
