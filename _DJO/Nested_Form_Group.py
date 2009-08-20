@@ -36,6 +36,8 @@
 #                     `Bound_Nested_Form_Group` instead of `count_spec`
 #    12-Aug-2009 (CT) `Nested_Form_Count.__init__` changed to add hidden
 #                     fields `id` and `_delete_`
+#    20-Aug-2009 (MG) `Bound_Nested_Form_Group.__init__` changed how form's
+#                     and instances are coupled
 #    ««revision-date»»···
 #--
 
@@ -84,7 +86,7 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
         self.prototype = self.form_class \
             (prefix = "%s-MP" % pf, empty_permitted = True)
         if instance.pk :
-            rel_instances = tuple (getattr (instance, self.name).all ())
+            rel_instances = getattr (instance, self.name).all ()
         else :
             rel_instances = ()
         self.object_count = Nested_Form_Count (self)
@@ -105,13 +107,22 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
                 , count
                 )
             )
-        for no, rel_inst in enumerate \
-                (rel_instances + (None, ) * (form_count - len (rel_instances))):
+        for no in xrange (form_count) :
+            prefix   = "%s-M%s" % (pf, no)
+            rel_inst = None
+            if form.is_bound :
+                ### XXX
+                obj_pk   = form.data ["%s-id" % (prefix, )]
+                if obj_pk :
+                    rel_inst = self.related_model.objects.get (pk = obj_pk)
+            else :
+                if no < len (rel_instances) :
+                    rel_inst = rel_instances [no]
             forms.append \
                 ( self.form_class
                     ( request         = self.form.request
                     , instance        = rel_inst
-                    , prefix          = "%s-M%s" % (pf, no)
+                    , prefix          = prefix
                     , empty_permitted =
                         (rel_inst is None) and (no >= min_required)
                     )
