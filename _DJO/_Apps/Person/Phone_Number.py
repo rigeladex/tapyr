@@ -30,6 +30,7 @@
 #    19-May-2009 (CT) Use `min_value` and `max_value` to constrain values
 #                     (and s/Positive_Integer/Integer/)
 #    20-Aug-2009 (MG) `ordering` added
+#    21-Aug-2009 (CT) `Nested_Form_Group_Description` added
 #    ««revision-date»»···
 #--
 
@@ -37,8 +38,10 @@
 ### http://en.wikipedia.org/wiki/List_of_country_calling_codes
 
 from   _DJO                       import DJO
+import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
+import _DJO.Nested_Form_Completer
 
 from   django.utils.translation   import gettext_lazy as _
 
@@ -104,6 +107,36 @@ class Phone_Number (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("desc", )
+        )
+
+    ### Saves the `Nested_Form_Group_Description` as
+    ###   `DJO.Nested_Form_Group_Description._.Personal_Phone_Info`
+    DJO.Nested_Form_Group_Description \
+        ( "phones"
+        , field_group_descriptions =
+            ( DJO.Field_Group_Description
+                ( "country_code"
+                , "area_code"
+                , "subscriber_number"
+                , "extension"
+                , "desc"
+                , template = DJO.Template
+                    ["field_group_horizontal.html"]
+                )
+            ,
+            )
+        , completer = DJO.Nested_Form_Completer
+            ( fields    =
+                ( "country_code", "area_code", "subscriber_number")
+            , triggers  = dict
+                ( area_code         = dict (min_chars = 3)
+                , subscriber_number = dict (min_chars = 2)
+                )
+            , name      = "Personal_Phone_Info"
+            )
+        , legend    = _("Phone-Numbers")
+        , template  = DJO.Template ["nested_model_form_table.html"]
+        , name      = "Personal_Phone_Info"
         )
 
 # end class Phone_Number

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Aug-2009 (CT) Creation
+#    21-Aug-2009 (CT) Guard `__getattr__` against `name == "_"`
 #    ««revision-date»»···
 #--
 
@@ -49,10 +50,10 @@ Traceback (most recent call last):
   ...
 NameError: foo
 >>> c = C (name = "foo")
->>> a is A.foo, a is A._.foo, a is A ["foo"]
-(True, True, True)
->>> a is B._.foo
-True
+>>> a is A._.foo, a is A ["foo"]
+(True, True)
+>>> a is B._.foo, a is B.foo
+(True, True)
 >>> c is C._.foo
 True
 >>> a is not C._.foo
@@ -77,7 +78,7 @@ class M_Unique_If_Named (TFL.Meta.M_Class) :
         name = kw.get ("name")
         if name :
             if name in cls._ :
-                raise NameError, name
+                raise NameError (name)
         result = cls.__m_super.__call__ (* args, ** kw)
         if name :
             setattr (cls._, name, result)
@@ -85,6 +86,8 @@ class M_Unique_If_Named (TFL.Meta.M_Class) :
     # end def __call__
 
     def __getattr__ (cls, name) :
+        if name == "_" :
+            raise AttributeError, name
         return getattr (cls._, name)
     # end def __getattr__
 

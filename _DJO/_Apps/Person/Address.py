@@ -27,12 +27,15 @@
 #
 # Revision Dates
 #    18-May-2009 (CT) Creation
+#    21-Aug-2009 (CT) `Nested_Form_Group_Description` added
 #    ««revision-date»»···
 #--
 
 from   _DJO                          import DJO
+import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field              as     MF
+import _DJO.Nested_Form_Completer
 
 from   _DJO._Apps.Person.Phone_Number import Phone_Number
 
@@ -98,6 +101,28 @@ class Address (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("street", "zip", "city", "desc")
+        )
+
+    ### Saves the `Nested_Form_Group_Description` as
+    ###   `DJO.Nested_Form_Group_Description._.Personal_Phone_Info`
+    DJO.Nested_Form_Group_Description \
+        ( "addresses"
+        , field_group_descriptions =
+            ( DJO.Field_Group_Description
+                ( "street", "city", "zip", "country", "desc"
+                , template  = DJO.Template
+                    ["field_group_horizontal.html"]
+                )
+            ,
+            )
+        , completer = DJO.Nested_Form_Completer
+            ( fields    = ("street", "city", "zip", "country")
+            , triggers  = dict (street    = dict (min_chars = 3))
+            , name      = "Personal_Contact_Info"
+            )
+        , legend    = _("Addresses")
+        , template  = DJO.Template ["nested_model_form_table.html"]
+        , name      = "Personal_Contact_Info"
         )
 
 # end class Address

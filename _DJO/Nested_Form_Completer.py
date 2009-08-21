@@ -31,6 +31,7 @@
 #    20-Aug-2009 (CT) `jsor_form` and `js_on_ready` changed to include `triggers`
 #    21-Aug-2009 (CT) `options` factored
 #    21-Aug-2009 (CT) `min_chars` added to `options`
+#    21-Aug-2009 (CT) Use meta class `M_Unique_If_Named`
 #    ««revision-date»»···
 #--
 
@@ -38,10 +39,13 @@ from   _TFL                               import TFL
 from   _DJO                               import DJO
 
 import _TFL._Meta.Object
+import _TFL._Meta.M_Unique_If_Named
 import _TFL.Caller
 
 class Nested_Form_Completer (TFL.Meta.Object) :
     """Helper class for completion in nested forms."""
+
+    __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     jsor_form = "\n".join \
         ( ("""$(".%(mname)s").completer"""

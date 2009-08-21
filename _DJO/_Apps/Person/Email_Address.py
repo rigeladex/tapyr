@@ -27,12 +27,15 @@
 #
 # Revision Dates
 #    18-May-2009 (CT) Creation
+#    21-Aug-2009 (CT) `Nested_Form_Group_Description` added
 #    ««revision-date»»···
 #--
 
 from   _DJO                       import DJO
+import _DJO.Field_Group_Description
 import _DJO.Models
 import _DJO.Model_Field           as     MF
+import _DJO.Nested_Form_Completer
 
 from   django.utils.translation import gettext_lazy as _
 
@@ -61,6 +64,27 @@ class Email_Address (DJO.Model) :
 
     NAV_admin_args = dict \
         ( list_display = ("email", "desc")
+        )
+
+    ### Saves the `Nested_Form_Group_Description` as
+    ###   `DJO.Nested_Form_Group_Description._.Personal_Email_Info`
+    DJO.Nested_Form_Group_Description \
+        ( "emails"
+        , field_group_descriptions =
+            ( DJO.Field_Group_Description
+                ( "email", "desc"
+                , template  = DJO.Template ["field_group_horizontal.html"]
+                )
+            ,
+            )
+        , completer = DJO.Nested_Form_Completer
+            ( fields    = ("email", )
+            , triggers  = dict (email = dict (min_chars = 3))
+            , name      = "Personal_Email_Info"
+            )
+        , legend    = _("Email-Addresses")
+        , template  = DJO.Template ["nested_model_form_table.html"]
+        , name      = "Personal_Email_Info"
         )
 
 # end class Email_Address
