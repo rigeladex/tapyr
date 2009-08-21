@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    14-Jul-2009 (CT) Templates defined (and comment-header added)
+#    21-Aug-2009 (MG) Use `JS_On_Ready` to set `sort_key` to force setup of
+#                     many 2 many to be executed last
 #    ««revision-date»»···
 #--
 
@@ -47,7 +49,11 @@ _nf_media = Media \
         , DJO.Script (src  = "djo/model_edit_ui.js")
         )
     , js_on_ready =
-        ( '$("fieldset.nested-many-2-many-table, fieldset.nested-many-2-many").many2many ();'
+        ( DJO.JS_On_Ready
+              ( '$("fieldset.nested-many-2-many-table'
+                  ', fieldset.nested-many-2-many").many2many ();'
+              , 100
+              )
         ,
         )
     )

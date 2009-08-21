@@ -42,6 +42,10 @@
 #                     `Nested_Form_Group`
 #    21-Aug-2009 (MG) `Nested_Form_Group.name` renamed to
 #                     `Nested_Form_Group.field_name`
+#    21-Aug-2009 (MG) `Nested_Form_Group.__init__` use new
+#                     `Nested_Model_Form` class as bese for the related forms
+#    21-Aug-2009 (MG) `Nested_Form_Group.__init__` combine media with media
+#                     from `Completer`
 #    ««revision-date»»···
 #--
 
@@ -166,27 +170,20 @@ class Nested_Form_Group (DJO._Field_Group_) :
         self.__super.__init__ (model, nfgd)
         self.related_model       = model._F [self.field_name].rel.to
         self.Name                = self.related_model.__name__.lower ()
-        Form_Type                = getattr (self, "Form", DJO.Model_Form)
-        Form_Mixins              = getattr (self, "Form_Mixins", ())
-        kw                       = dict    (head_mixins = Form_Mixins)
+        import _DJO.Nested_Model_Form
+        Form_Type                = DJO.Nested_Model_Form
         field_group_descriptions = getattr \
             ( self, "field_group_descriptions"
             , (DJO.Auto_Field_Group_Description (model = model), )
             )
-        assert len (field_group_descriptions) == 1
-        fgd = field_group_descriptions [0]
-        if not any (getattr (f, "name", f) == "id" for f in fgd.fields) :
-            fgd.fields += (DJO.Field_Description ("id", widget = HiddenInput), )
         self.form_class = fc = Form_Type.New \
-            (self.related_model, * field_group_descriptions, ** kw)
-        from django.forms import BooleanField
-        ufg = fc.unbound_field_groups [0]
-        hfs = BooleanField (widget = HiddenInput, initial = 0)
-        hfs.name = "_state_"
-        ufg.fields.append (hfs)
+            (self.related_model, * field_group_descriptions)
         if self.completer :
+            children = (self.Media, ) if self.Media else ()
             self.Media = DJO.Media \
-                (js_on_ready = self.completer.js_on_ready (self))
+                ( js_on_ready = self.completer.js_on_ready (self)
+                , children    = children
+                )
     # end def __init__
 
 # end class Nested_Form_Group

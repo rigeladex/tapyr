@@ -43,6 +43,7 @@
   var Many2Many =
     { _init : function ()
       {
+          var  self      = this;
           var $legend    = this.element.find ("legend");
           var add_class  = this._getData     ("add_class");
           var $m2m_range = this.element.find ("input.many-2-many-range:first");
@@ -66,8 +67,21 @@
           {
               this._add_delete_button ($forms.eq (i));
           }
-          this.element.parents ("form").many2manysubmit ();
+          this.element.parents       ("form").many2manysubmit ();
           this._update_button_states ();
+          this.element.find (":input[name$=-id][value]").each (function ()
+          {
+              $(this).parents (".m2m-nested-form")
+                     .find    (":input:not([type=hidden])")
+                     .attr    ("disabled", "disabled");
+          });
+          this.element.find    (":input[name$=-id]")
+                      .each    (function ()
+          {
+              var no = field_no_pat.exec (this.name) [1];
+              if ((no != "P") && !this.value)
+                  self._setup_auto_complete (no);
+          });
       }
     , _add_delete_button : function ($form)
       {
@@ -89,7 +103,6 @@
       {
           var self       = evt.data;
           var $prototype = self._getData    ("$prototype");
-          var  comp_opt  = $prototype.data  ("completion");
           var $new       = $prototype.clone ().removeClass ("m2m-prototype");
           /* now that we have cloned the block, let's change the
           ** name/id/for attributes
@@ -120,21 +133,28 @@
           self._add_delete_button    ($new);
           $prototype.parent          ().append ($new);
           self._update_button_states ();
+          self._setup_auto_complete (cur_number);
+          $new.find          ("input[name$=-_state_]").attr ("value", "3");
+          evt.preventDefault ();
+      }
+    , _setup_auto_complete  : function (no)
+      {
+          var $prototype = this._getData    ("$prototype");
+          var  comp_opt  = $prototype.data  ("completion");
+          console.log ("SA", no, comp_opt);
           if (comp_opt != undefined)
           {
-              var pf = comp_opt.prefix + "-" + new_no;
+              var  pf        = comp_opt.prefix + "-M" + no + "-";
               for (var field_name in comp_opt.triggers)
               {
                   var real_field_name = pf + field_name;
                   $("[name=" + real_field_name + "]").bind
                       ( "keyup"
-                      , {comp_opt : comp_opt, self :self}
-                      , self._auto_complete
+                      , {comp_opt : comp_opt, self : this}
+                      , this._auto_complete
                       );
               }
           }
-          $new.find          ("input[name$=-_state_]").attr ("value", "3");
-          evt.preventDefault ();
       }
     , _model_field_name     : function (name)
     {
@@ -254,8 +274,8 @@
     , _forms_equal : function ($l, $r)
       {
           /* Returns whether the values of the two forms are equal */
-          var $l_value_elements = $l.find ("[value]");
-          var $r_value_elements = $r.find ("[value]");
+          var $l_value_elements = $l.find ("[value]:not([type=hidden])");
+          var $r_value_elements = $r.find ("[value]:not([type=hidden])");
           if ($l_value_elements.length != $r_value_elements.length)
               return false;
           for (var i = 0; i < $l_value_elements.length; i++)
@@ -294,11 +314,15 @@
               else
               {
                   if ($form.find ("input:[name$=-id]").attr ("value"))
-                      $state.attr       ("value", "0");
+                  {
+                      $state.attr           ("value", "0");
+                  }
                   else
-                      $state.attr       ("value", "3");
-                  $elements.removeAttr  ("disabled")
-                           .removeClass ("ui-state-disabled");
+                  {
+                      $state.attr           ("value", "3");
+                      $elements.removeAttr  ("disabled")
+                  }
+                  $elements.removeClass ("ui-state-disabled");
                   $link.removeClass     ("ui-icon-circle-close ui-icon-add")
                        .addClass        ("ui-icon-closethick ui-icon-delete");
                   self._setData ("cur_count", self._getData ("cur_count") + 1);
@@ -381,6 +405,10 @@
                           no = no + 1;
                       });
                   });
+              /* now, let's re-enable all input's so that they are set to the
+              ** server
+              */
+              self.element.find (":input").removeAttr ("disabled");
               console.log ("Form Submit")
           }
           );

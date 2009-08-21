@@ -33,6 +33,8 @@
 #    13-Jul-2009 (CT) `Rel_Link.attrs` fixed
 #    14-Jul-2009 (CT) `Media_List_JSOR` added and used for `js_on_ready`
 #    14-Jul-2009 (CT) `__len__` and `__nonzero__` added to `Media_List`
+#    21-Aug-2009 (MG) `JS_On_Ready` added and used to support sorting in
+#                     `Media_List_JSOR`
 #    ««revision-date»»···
 #--
 
@@ -129,6 +131,20 @@ class Script (TFL.Meta.Object) :
 
 # end class Script
 
+class JS_On_Ready (TFL.Meta.Object) :
+    """A javascript code which should be executed once the document is loaded"""
+
+    def __init__ (self, code, sort_key = 0) :
+        self.code     = code
+        self.sort_key = sort_key
+    # end def __init__
+
+    def __str__ (self) :
+        return self.code
+    # end def __str__
+
+# end class JS_On_Ready
+
 class Media_List (TFL.Meta.Object) :
     """Model a list of media objects"""
 
@@ -169,6 +185,19 @@ class Media_List (TFL.Meta.Object) :
         return iter (self.values)
     # end def __iter__
 
+
+    def __str__ (self) :
+        return "\n".join (str (v) for v in self)
+    # end def __str__
+
+    def _sanitized (self, mobs) :
+        Mob_Type = self.Mob_Type
+        for mob in mobs :
+            if Mob_Type and not isinstance (mob, Mob_Type) :
+                mob = Mob_Type (mob)
+            yield mob
+    # end def _sanitized
+
 # end class Media_List
 
 class Media_List_Unique (Media_List) :
@@ -201,14 +230,6 @@ class Media_List_href (Media_List) :
             yield mob
     # end def _gen_own
 
-    def _sanitized (self, mobs) :
-        Mob_Type = self.Mob_Type
-        for mob in mobs :
-            if Mob_Type and not isinstance (mob, Mob_Type) :
-                mob = Mob_Type (mob)
-            yield mob
-    # end def _sanitized
-
 # end class Media_List_href
 
 class Media_List_CSSL (Media_List_href, Media_List_Unique) :
@@ -221,6 +242,17 @@ class Media_List_CSSL (Media_List_href, Media_List_Unique) :
 
 class Media_List_JSOR (Media_List_Unique) :
     """Model a list of javascript on-ready objects"""
+
+    Mob_Type = JS_On_Ready
+
+    def __init__ (self, name, media, mobs) :
+        self.__super.__init__ (name, media, tuple (self._sanitized (mobs)))
+    # end def __init__
+
+    @Once_Property
+    def values (self) :
+        return tuple (sorted (self._gen_all (), key = lambda mob : mob.sort_key))
+    # end def values
 
 # end class Media_List_JSOR
 
