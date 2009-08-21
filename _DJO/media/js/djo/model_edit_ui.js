@@ -141,7 +141,6 @@
       {
           var $prototype = this._getData    ("$prototype");
           var  comp_opt  = $prototype.data  ("completion");
-          console.log ("SA", no, comp_opt);
           if (comp_opt != undefined)
           {
               var  pf        = comp_opt.prefix + "-M" + no + "-";
@@ -156,13 +155,8 @@
               }
           }
       }
-    , _model_field_name     : function (name)
-    {
-        return name.split (field_name_pat) [1];
-    }
     , _auto_complete        : function (evt)
     {
-        //console.log ("Key up");
         var data     = {};
         var self     = evt.data.self;
         var comp_opt = evt.data.comp_opt;
@@ -216,7 +210,6 @@
                                           {
                                               self._replace_fields (data, pf);
                                           }
-                                          console.log (data);
                                       }
                                     );
                               });
@@ -232,6 +225,7 @@
         for (var key in fields)
         {
             $("[name=" + pf + key + "]").replaceWith (fields [key]);
+            $("[name=" + pf + key + "]").attr        ("disabled", "disabled");
         }
     }
     , _update_button_states : function ()
@@ -409,7 +403,6 @@
               ** server
               */
               self.element.find (":input").removeAttr ("disabled");
-              console.log ("Form Submit")
           }
           );
       }

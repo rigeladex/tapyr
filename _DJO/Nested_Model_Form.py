@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    21-Aug-2009 (MG) Creation
+#    21-Aug-2009 (MG) Field for `pk` mst not be part of a `Field_Description`
+#                     because in this case django requires a value during a post
 #    ««revision-date»»···
 #--
 
@@ -36,30 +38,30 @@ from   _TFL                         import TFL
 import _DJO.Field_Group_Description
 import _DJO.Model_Form
 from    django.forms.widgets        import HiddenInput
-from    django.forms                import BooleanField
+from    django.forms                import IntegerField
 
 class M_Nested_Model_Form (DJO.Model_Form.__class__) :
     """Meta class which adds some special fields needed for handling the
        nesting
     """
 
-    pk_name          = "id"
+    pk_field_name    = "id"
     state_field_name = "_state_"
 
     def __new__ (meta, name, bases, dict) :
-        pk   = meta.pk_name
         field_group_descriptions = dict.get ("field_group_descriptions", ())
-        if field_group_descriptions :
-            assert len (field_group_descriptions) == 1
-            fgd = field_group_descriptions [0]
-            if not any (getattr (f, "name", f) == pk for f in fgd.fields) :
-                fgd.fields += \
-                   (DJO.Field_Description (pk, widget = HiddenInput), )
         result = super (M_Nested_Model_Form, meta).__new__ \
             (meta, name, bases, dict)
         if field_group_descriptions :
-            ufg      = result.unbound_field_groups [0]
-            hfs      = BooleanField (widget = HiddenInput, initial = 0)
+            assert len (field_group_descriptions) == 1
+            pk   = result.pk_field_name
+            ufg  = result.unbound_field_groups [0]
+            if not any (getattr (f, "name", f) == pk for f in ufg.fields) :
+                pkf                      = IntegerField (widget = HiddenInput)
+                pkf.name                 = pk
+                result.primary_key_field = pkf
+                ufg.fields.append (pkf)
+            hfs      = IntegerField (widget = HiddenInput, initial = 0)
             hfs.name = meta.state_field_name
             ufg.fields.append (hfs)
         return result
@@ -72,11 +74,25 @@ class Nested_Model_Form (DJO.Model_Form) :
 
     __metaclass__ = M_Nested_Model_Form
 
+    unlink_states = set ((1, 2))
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (* args, ** kw)
+        self.initial [self.primary_key_field.name] = self.instance.pk or ""
+    # end def __init__
+
     def save (self) :
-        import pdb; pdb.set_trace ()
-        print self.data.get ("%s-%s" % \
-            (self.prefix, self.__class__.state_field_name))
-        return self.__super.save ()
+        try :
+            state = int \
+                ( self.data.get
+                    ("%s-%s" % (self.prefix, self.__class__.state_field_name))
+                )
+        except :
+            state = 0
+        if state not in self.unlink_states :
+            return self.__super.save ()
+        self.instance.pk = None
+        return self.instance
     # end def save
 
 # end class Nested_Model_Form
