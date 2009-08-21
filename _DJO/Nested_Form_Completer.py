@@ -29,6 +29,8 @@
 #    19-Aug-2009 (CT) Creation
 #    20-Aug-2009 (CT) `template` added
 #    20-Aug-2009 (CT) `jsor_form` and `js_on_ready` changed to include `triggers`
+#    21-Aug-2009 (CT) `options` factored
+#    21-Aug-2009 (CT) `min_chars` added to `options`
 #    ««revision-date»»···
 #--
 
@@ -52,14 +54,17 @@ class Nested_Form_Completer (TFL.Meta.Object) :
           )
         )
 
-    template = "model_completion_list.html"
+    ### Can be overriden by `__init__` arguments
+    options   = dict \
+        ( fields    = ()
+        , min_chars = 3
+        , prefix    = "/Admin"
+        , template  = "model_completion_list.html"
+        )
 
-    def __init__ (self, triggers, fields = (), prefix = "/Admin", template = None) :
+    def __init__ (self, triggers, ** kw) :
         self._triggers = triggers
-        self.fields   = fields
-        self.prefix   = prefix
-        if template is not None :
-            self.template = template
+        self.options   = dict (self.options, ** kw)
     # end def __init__
 
     def js_on_ready (self, nested_form_group) :
@@ -79,9 +84,18 @@ class Nested_Form_Completer (TFL.Meta.Object) :
         result = {}
         for k, v in self._triggers.iteritems () :
             result [k] = d = v.copy ()
-            d.setdefault ("fields", self.fields)
+            for k, v in self.options.iteritems () :
+                if k != "template" :
+                    d.setdefault (k, v)
         return result
     # end def triggers
+
+    def __getattr__ (self, name) :
+        try :
+            return self.options [name]
+        except KeyError :
+            raise AttributeError, name
+    # end def __getattr__
 
 # end class Nested_Form_Completer
 

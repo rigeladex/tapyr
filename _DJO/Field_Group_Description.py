@@ -54,6 +54,8 @@
 
 from   _TFL               import TFL
 import _TFL._Meta.Object
+import _TFL.Record
+
 from   _DJO               import DJO
 import _DJO.Field_Description
 import _DJO.Field_Group
@@ -64,7 +66,7 @@ import _DJO._Apps.Base
 import  sys
 
 class _Field_Group_Description_ (TFL.Meta.Object) :
-    """Base class for field group descriotions"""
+    """Base class for field group descriptions"""
 
     template = None
     model    = None
