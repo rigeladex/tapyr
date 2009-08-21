@@ -31,6 +31,7 @@
 **                     of add/delete button's
 **    20-Aug-2009 (MG) Completer added and completion functions added to
 **                     Many2Many
+**    21-Aug-2009 (MG) Keyboard shortcuts added
 **    ««revision-date»»···
 **--
 */
@@ -151,14 +152,67 @@
                       ( "keyup"
                       , {comp_opt : comp_opt, self : this}
                       , this._auto_complete
-                      );
+                      ).bind
+                      ( "keypress"
+                      , {comp_opt : comp_opt, self : this}
+                      , this._auto_complete_navigation
+                      );;
               }
           }
       }
+    , _auto_complete_navigation : function (evt)
+    {
+        var  self      = evt.data.self;
+        var  comp_opt  = evt.data.comp_opt;
+        var $comp_list = $("#" + comp_opt.prefix + "-comp-list");
+        var  handled   = false;
+        if ($comp_list.length)
+        {
+            var $curr_selected = $comp_list.find     (".ui-state-hover");
+            var $all           = $comp_list.children ();
+            var  curr_idx      = $all.index          ($curr_selected);
+            switch (evt.keyCode)
+            {
+                case 40 : curr_idx += 1;
+                          handled = true;
+                          break;
+                case 38 : curr_idx -= 1;
+                          handled = true;
+                          break;
+                case 27 : $comp_list.remove ();
+                          handled = true;
+                          break;
+                case  9 :
+                case 13 : $comp_list.remove ();
+                          $comp_list.remove ();
+                          self._replace_form (evt, $curr_selected, comp_opt);
+                          handled = true;
+                          break;
+            }
+            if (handled)
+            {
+                if (curr_idx <  0          ) curr_idx = $all.length - 1;
+                if (curr_idx >= $all.length) curr_idx = 0;
+                $curr_selected.    removeClass  ("ui-state-hover");
+                $all.eq (curr_idx).addClass     ("ui-state-hover");
+                evt.preventDefault  ();
+                evt.stopPropagation ();
+                self._setData       ("key_handled", true);
+                return false;
+            }
+        }
+    }
     , _auto_complete        : function (evt)
     {
         var data     = {};
         var self     = evt.data.self;
+        if (self._getData ("key_handled"))
+        {
+            evt.preventDefault  ();
+            evt.stopPropagation ();
+            self._setData      ("key_handled", false);
+            return false
+        }
         var comp_opt = evt.data.comp_opt;
         var trigger  = evt.currentTarget.name.split (field_name_pat) [1];
         trigger      = comp_opt.triggers [trigger];
@@ -191,42 +245,54 @@
                         var $auto_complete = $(data).attr ("id", id);
                         if ($auto_complete.find (".completion-id").length)
                         {
-                            $(evt.originalTarget).parent ()
-                                                 .append ($auto_complete);
-                            $auto_complete.children ()
+                            var $input = $(evt.originalTarget);
+                            var  pos   = $input.position ();
+                            pos.left += $input.width  ();
+                            $("#" + id).remove (); /* remove old display */
+                            $input.parent ().append ($auto_complete);
+                            $auto_complete.css      (pos)
+                                          .children ()
                                           .bind ( "click", function (e)
                               {
-                                  var pk = $(e.originalTarget).find
-                                    (".completion-id").text ();
-                                  var no = field_no_pat.exec
-                                    (evt.currentTarget.name) [1];
-                                  jQuery.getJSON
-                                    ( comp_opt.obj_url
-                                    , { "id" : pk, "no" : no}
-                                    , function (data, textStatus)
-                                      {
-                                          $("#" + id).remove ();
-                                          if (textStatus == "success")
-                                          {
-                                              self._replace_fields (data, pf);
-                                          }
-                                      }
-                                    );
+                                  self._replace_form
+                                    (evt, $(e.originalTarget), comp_opt);
+                              })
+                                          .hover (function (e)
+                              {
+                                  $(this).addClass ("ui-state-hover");
+                              }, function (e)
+                              {
+                                  $(this).removeClass ("ui-state-hover");
                               });
-//                                          .bind ( "click", function (e)
                         }
                     }
                 }
               )
         }
     }
-    , _replace_fields       : function (fields, pf)
+    , _replace_form : function (evt, $selected, comp_opt)
     {
-        for (var key in fields)
-        {
-            $("[name=" + pf + key + "]").replaceWith (fields [key]);
-            $("[name=" + pf + key + "]").attr        ("disabled", "disabled");
-        }
+        var id = comp_opt.prefix + "-comp-list";
+        var pk = $selected.find    (".completion-id").text ();
+        var no = field_no_pat.exec (evt.originalTarget.name) [1];
+        var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
+        jQuery.getJSON
+          ( comp_opt.obj_url
+          , { "id" : pk, "no" : no}
+          , function (data, textStatus)
+            {
+                $("#" + id).remove ();
+                if (textStatus == "success")
+                {
+                    for (var key in data)
+                    {
+                        $("[name=" + pf + key + "]").replaceWith (data [key]);
+                        $("[name=" + pf + key + "]").attr
+                            ("disabled", "disabled");
+                    }
+                }
+            }
+          );
     }
     , _update_button_states : function ()
       {
@@ -373,7 +439,6 @@
           var self       = this;
           this.element.bind ("submit", function (evt)
           {
-              //evt.preventDefault ();
               /* first, let's renumerate the forms */
               self.element.find
                   (".nested-many-2-many, .nested-many-2-many-table")
