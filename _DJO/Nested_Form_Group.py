@@ -40,6 +40,8 @@
 #                     and instances are coupled
 #    21-Aug-2009 (MG) Moved `form_map` from `Bound_Nested_Form_Group` to
 #                     `Nested_Form_Group`
+#    21-Aug-2009 (MG) `Nested_Form_Group.name` renamed to
+#                     `Nested_Form_Group.field_name`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +57,7 @@ class Nested_Form_Count (object) :
 
     def __init__ (self, bnfg) :
         self.bnfg    = bnfg
-        self.name    = "%s-count" % (bnfg.name, )
+        self.name    = "%s-count" % (bnfg.field_name, )
         self._widget = HiddenInput ()
     # end def __init__
 
@@ -88,7 +90,7 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
         self.prototype = self.form_class \
             (prefix = "%s-MP" % pf, empty_permitted = True)
         if instance.pk :
-            rel_instances = getattr (instance, self.name).all ()
+            rel_instances = getattr (instance, self.field_name).all ()
         else :
             rel_instances = ()
         self.object_count = Nested_Form_Count (self)
@@ -141,7 +143,7 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
 
     def save_and_assign (self, instance) :
         rel_instances = [nf.save () for nf in self.forms]
-        setattr (instance, self.name, [i for i in rel_instances if i.pk])
+        setattr (instance, self.field_name, [i for i in rel_instances if i.pk])
     # end def save_and_assign
 
     def full_clean (self) :
@@ -162,8 +164,7 @@ class Nested_Form_Group (DJO._Field_Group_) :
 
     def __init__ (self, model, nfgd, used_fields = set ()) :
         self.__super.__init__ (model, nfgd)
-        self.field_name = name   = str (nfgd.field)
-        self.related_model       = model._F [name].rel.to
+        self.related_model       = model._F [self.field_name].rel.to
         self.Name                = self.related_model.__name__.lower ()
         Form_Type                = getattr (self, "Form", DJO.Model_Form)
         Form_Mixins              = getattr (self, "Form_Mixins", ())

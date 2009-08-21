@@ -73,6 +73,8 @@
 #    19-Jun-2009 (MG) `s/nested_forms/forms/g`
 #    14-Jul-2009 (CT) `Media` added
 #    20-Aug-2009 (CT) `form_map` added to `Model_Form`
+#    21-Aug-2009 (MG) `Nested_Form_Group.name` renamed to
+#                     `Nested_Form_Group.field_name`
 #    ««revision-date»»···
 #--
 
@@ -109,7 +111,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
                 field_group = grp           (model, used_fields)
                 unbound_field_groups.append (field_group)
                 if isinstance (field_group, DJO.Nested_Form_Group) :
-                    form_map [field_group.name] = field_group
+                    form_map [field_group.field_name] = field_group
                 base_fields.extend          (field_group)
         _meta = attrs.get ("_meta", None)
         if _meta :

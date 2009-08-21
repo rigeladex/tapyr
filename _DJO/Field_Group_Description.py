@@ -49,6 +49,7 @@
 #    14-Jul-2009 (CT) `Media` added
 #    14-Jul-2009 (CT) Use `Template` instance instead of literal string
 #    15-Jul-2009 (CT) `min_empty` changed from `1` to `0`
+#    21-Aug-2009 (MG) `name` renamed to `field_name`
 #    ««revision-date»»···
 #--
 
@@ -148,7 +149,7 @@ class Nested_Form_Group_Description (_Field_Group_Description_) :
 
     def __init__ (self, field, field_group_descriptions, ** kw) :
         self.field                    = field
-        self.name                     = str (field)
+        self.field_name               = str (field)
         self.field_group_descriptions = \
             field_group_descriptions or DJO.Auto_Field_Group_Description ()
         self.__super.__init__ (** kw)
