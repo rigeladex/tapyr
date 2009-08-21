@@ -32,6 +32,7 @@
 #    21-Aug-2009 (CT) `options` factored
 #    21-Aug-2009 (CT) `min_chars` added to `options`
 #    21-Aug-2009 (CT) Use meta class `M_Unique_If_Named`
+#    21-Aug-2009 (CT) `_ignore_options` added and used
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,7 @@ class Nested_Form_Completer (TFL.Meta.Object) :
         , prefix    = "/Admin"
         , template  = "model_completion_list.html"
         )
+    _ignore_options = set (["name", "prefix", "template"])
 
     def __init__ (self, triggers, ** kw) :
         self._triggers = triggers
@@ -89,7 +91,7 @@ class Nested_Form_Completer (TFL.Meta.Object) :
         for k, v in self._triggers.iteritems () :
             result [k] = d = v.copy ()
             for k, v in self.options.iteritems () :
-                if k != "template" :
+                if k not in self._ignore_options :
                     d.setdefault (k, v)
         return result
     # end def triggers
