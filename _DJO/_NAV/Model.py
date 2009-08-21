@@ -69,6 +69,7 @@
 #    20-Aug-2009 (CT) `Admin._get_media` modified to handle `complete`
 #    20-Aug-2009 (CT) `Admin.Completer` added
 #    20-Aug-2009 (CT) `Admin.Completed` added
+#    21-Aug-2009 (MG) `Complete*` changed to used unbound nested form group
 #    ««revision-date»»···
 #--
 
@@ -219,8 +220,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             request = context ["request"]
             result  = None
             if request.method == "GET" :
-                form = self.Form (kind_name = self.kind_name)
-                bnfg = form.form_map.get (self.field_name)
+                bnfg = self.Form.form_map.get (self.field_name)
                 if bnfg is not None :
                     relm = bnfg.related_model
                     qfs  = tuple \
@@ -251,8 +251,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             request = context ["request"]
             result  = None
             if request.method == "GET" :
-                form = self.Form         (kind_name = self.kind_name)
-                bnfg = form.form_map.get (self.field_name)
+                bnfg = self.Form.form_map.get (self.field_name)
                 id   = request.GET.get   ("id")
                 no   = request.GET.get   ("no")
                 if not any (x is None for x in (bnfg, id, no)) :

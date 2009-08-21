@@ -38,6 +38,8 @@
 #                     fields `id` and `_delete_`
 #    20-Aug-2009 (MG) `Bound_Nested_Form_Group.__init__` changed how form's
 #                     and instances are coupled
+#    21-Aug-2009 (MG) Moved `form_map` from `Bound_Nested_Form_Group` to
+#                     `Nested_Form_Group`
 #    ««revision-date»»···
 #--
 

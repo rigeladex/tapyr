@@ -103,10 +103,13 @@ class M_Model_Form (TFL.Meta.M_Class) :
         model                = attrs.get ("model", None)
         used_fields          = set ()
         unbound_field_groups = attrs ["unbound_field_groups"] = []
+        form_map             = attrs ["form_map"]             = {}
         for fgd in attrs.get ("field_group_descriptions", ()) :
             for grp in fgd.groups (model, used_fields) :
                 field_group = grp           (model, used_fields)
                 unbound_field_groups.append (field_group)
+                if isinstance (field_group, DJO.Nested_Form_Group) :
+                    form_map [field_group.name] = field_group
                 base_fields.extend          (field_group)
         _meta = attrs.get ("_meta", None)
         if _meta :
@@ -187,13 +190,11 @@ class _DJO_Model_Form_ (BaseModelForm) :
         self.request      = request
         self.field_groups = []
         self.forms        = []
-        self.form_map     = {}
         for ufs in self.unbound_field_groups :
             bfs = ufs (self)
             self.field_groups.append (bfs)
             if isinstance (bfs, DJO.Bound_Nested_Form_Group) :
                 self.forms.append (bfs)
-                self.form_map [bfs.name] = bfs
     # end def __init__
 
     def full_clean (self) :
