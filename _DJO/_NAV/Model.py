@@ -220,7 +220,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             request = context ["request"]
             result  = None
             if request.method == "GET" :
-                bnfg = self.Form.form_map.get (self.field_name)
+                bnfg = self.Form.unbound_form_map.get (self.field_name)
                 if bnfg is not None :
                     relm = bnfg.related_model
                     qfs  = tuple \
@@ -251,7 +251,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             request = context ["request"]
             result  = None
             if request.method == "GET" :
-                bnfg = self.Form.form_map.get (self.field_name)
+                bnfg = self.Form.unbound_form_map.get (self.field_name)
                 id   = request.GET.get   ("id")
                 no   = request.GET.get   ("no")
                 if not any (x is None for x in (bnfg, id, no)) :

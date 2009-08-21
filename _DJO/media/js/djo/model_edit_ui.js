@@ -199,8 +199,8 @@
                                           console.log (data);
                                       }
                                     );
-                              })
-                                          .bind ( "click", function (e)
+                              });
+//                                          .bind ( "click", function (e)
                         }
                     }
                 }

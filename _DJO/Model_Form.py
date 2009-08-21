@@ -103,7 +103,7 @@ class M_Model_Form (TFL.Meta.M_Class) :
         model                = attrs.get ("model", None)
         used_fields          = set ()
         unbound_field_groups = attrs ["unbound_field_groups"] = []
-        form_map             = attrs ["form_map"]             = {}
+        form_map             = attrs ["unbound_form_map"]     = {}
         for fgd in attrs.get ("field_group_descriptions", ()) :
             for grp in fgd.groups (model, used_fields) :
                 field_group = grp           (model, used_fields)
