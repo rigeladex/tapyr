@@ -94,6 +94,6 @@ class M_Unique_If_Named (TFL.Meta.M_Class) :
 
 # end class M_Unique_If_Named
 
-if __name__ == "__main__" :
+if __name__ != "__main__" :
     TFL.Meta._Export ("*")
 ### __END__ TFL.Meta.M_Unique_If_Named

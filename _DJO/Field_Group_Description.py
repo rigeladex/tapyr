@@ -54,6 +54,8 @@
 
 from   _TFL               import TFL
 import _TFL._Meta.Object
+import _TFL._Meta.M_Unique_If_Named
+
 import _TFL.Record
 
 from   _DJO               import DJO
@@ -68,17 +70,12 @@ import  sys
 class _Field_Group_Description_ (TFL.Meta.Object) :
     """Base class for field group descriptions"""
 
+    __metaclass__ = TFL.Meta.M_Unique_If_Named
+
     template = None
     model    = None
 
-    _        = TFL.Record ()
-
     def __init__ (self, ** kw) :
-        name = kw.pop ("name", None)
-        if name :
-            if name in self._ :
-                raise NameError, name
-            setattr (self._, name, self)
         self.exclude  = set (kw.pop ("exclude", ()))
         self.__dict__.update (kw)
     # end def __init__
