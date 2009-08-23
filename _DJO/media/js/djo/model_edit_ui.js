@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2009 Martin Glück All rights reserved
+** Copyright (C) 2009 Martin GlÃ¼ck All rights reserved
 ** Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 ** ****************************************************************************
 **
@@ -32,7 +32,7 @@
 **    20-Aug-2009 (MG) Completer added and completion functions added to
 **                     Many2Many
 **    21-Aug-2009 (MG) Keyboard shortcuts added
-**    ««revision-date»»···
+**    Â«Â«revision-dateÂ»Â»Â·Â·Â·
 **--
 */
 
@@ -240,12 +240,12 @@
                     if (textStatus == "success")
                     {
                         var comp_data = { comp_data : comp_data
-                                        , input     :  evt.originalTarget
+                                        , input     : evt.currentTarget
                                         };
                         var $auto_complete = $(data).attr ("id", id);
                         if ($auto_complete.find (".completion-id").length)
                         {
-                            var $input = $(evt.originalTarget);
+                            var $input = $(evt.currentTarget);
                             var  pos   = $input.position ();
                             pos.left += $input.width  ();
                             $("#" + id).remove (); /* remove old display */
@@ -255,7 +255,7 @@
                                           .bind ( "click", function (e)
                               {
                                   self._replace_form
-                                    (evt, $(e.originalTarget), comp_opt);
+                                    (evt, $(e.currentTarget), comp_opt);
                               })
                                           .hover (function (e)
                               {
@@ -274,7 +274,7 @@
     {
         var id = comp_opt.prefix + "-comp-list";
         var pk = $selected.find    (".completion-id").text ();
-        var no = field_no_pat.exec (evt.originalTarget.name) [1];
+        var no = field_no_pat.exec (evt.currentTarget.name) [1];
         var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
         jQuery.getJSON
           ( comp_opt.obj_url
