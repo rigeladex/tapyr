@@ -50,6 +50,8 @@
 #    14-Jul-2009 (CT) Use `Template` instance instead of literal string
 #    15-Jul-2009 (CT) `min_empty` changed from `1` to `0`
 #    21-Aug-2009 (MG) `name` renamed to `field_name`
+#    24-Aug-2009 (MG) `_Field_Group_Description_.Media` changed to support
+#                     `None` as template
 #    ««revision-date»»···
 #--
 
@@ -87,7 +89,7 @@ class _Field_Group_Description_ (TFL.Meta.Object) :
 
     @property
     def Media (self) :
-        return getattr (self.template, "Media")
+        return getattr (self.template, "Media", None)
     # end def Media
 
 # end class _Field_Group_Description_

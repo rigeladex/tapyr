@@ -29,6 +29,7 @@
 #    14-Jul-2009 (CT) Templates defined (and comment-header added)
 #    21-Aug-2009 (MG) Use `JS_On_Ready` to set `sort_key` to force setup of
 #                     many 2 many to be executed last
+#    23-Aug-2009 (MG) Changed location of jquery-ui css
 #    ««revision-date»»···
 #--
 
@@ -38,7 +39,7 @@ from _DJO.Template import Template
 
 _nf_media = Media \
     ( css_links   =
-        ( DJO.CSS_Link ("/media/css/jquery-ui-1.7.2.custom.css")
+        ( DJO.CSS_Link ("/media/css/djo/jquery-ui-1.7.2.custom.css")
         , DJO.CSS_Link ("/media/css/style.css")
         )
     , scripts     =

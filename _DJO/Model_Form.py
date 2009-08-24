@@ -75,6 +75,7 @@
 #    20-Aug-2009 (CT) `form_map` added to `Model_Form`
 #    21-Aug-2009 (MG) `Nested_Form_Group.name` renamed to
 #                     `Nested_Form_Group.field_name`
+#    24-Aug-2009 (MG) 'Model_Form.save' fixed to work again with foreign keys
 #    ««revision-date»»···
 #--
 
@@ -94,7 +95,7 @@ import _DJO.Field_Group_Description
 from    django.forms                    import BaseForm, BaseModelForm
 from    django.forms.util               import ErrorList
 from    django.forms                    import models
-from    django.db.models.fields.related import RelatedField
+from    django.db.models.fields.related import ManyToManyField
 from    django.db.models                import FileField
 
 class M_Model_Form (TFL.Meta.M_Class) :
@@ -241,7 +242,7 @@ class _DJO_Model_Form_ (BaseModelForm) :
                 # callable upload_to can use the values from other fields.
                 if isinstance (df, FileField):
                     file_field_defers.append (dj)
-                elif isinstance (df, RelatedField) :
+                elif isinstance (df, ManyToManyField) :
                     ### related fields can only be `saved` after the main object
                     ### has been saved, so we defer them
                     self.related_defers.append (df)
