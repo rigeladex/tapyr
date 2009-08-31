@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{# Django template: model_admin_change.html #}
+{% comment %}
+  ## Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    model_admin_change
+  ##
+  ## Purpose
+  ##    Django template to display to display a form for adding or changing
+  ##    an object
+  ##
+  ##
+  ## Revision Dates
+  ##     8-Jul-2008 (CT) Creation
+  ##     5-Jun-2009 (CT) `model_form.html` factored
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load i18n %}
+{% load TGL %}
+{% block document %}
+{% include "model_form.html" %}
+{% endblock document %}
+{# __END__ Django template: model_admin_change.html #}

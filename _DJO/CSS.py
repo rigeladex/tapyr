@@ -213,6 +213,8 @@ class Style_Sheet (TFL.Meta.Object) :
 
 # end class Style_Sheet
 
+S = Style_Sheet
+
 if __name__ != "__main__" :
     DJO._Export_Module ()
 ### __END__ DJO.CSS

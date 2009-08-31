@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{# Django template: New.scams.at:django:templates:model_admin_list.html #}
+{% comment %}
+  ## Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    model_admin_list
+  ##
+  ## Purpose
+  ##    Django template to display a list of objects of a model
+  ##
+  ##
+  ## Revision Dates
+  ##    10-Jul-2008 (CT) Creation
+  ##    14-Jul-2009 (CT) `style` attributes removed
+  ##    18-Jul-2009 (CT) `model_admin_list_body.html` factored
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL %}
+{% block document %}
+  {% rrender "model_admin_list_body.html" %}
+{% endblock document %}
+{# __END__ Django template: New.scams.at:django:templates:model_admin_list.html #}

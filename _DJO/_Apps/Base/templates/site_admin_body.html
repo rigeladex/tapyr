@@ -1,0 +1,50 @@
+{# Django template: site_admin_body.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ## ****************************************************************************
+  ##
+  ## This library is free software; you can redistribute it and/or
+  ## modify it under the terms of the GNU Library General Public
+  ## License as published by the Free Software Foundation; either
+  ## version 2 of the License, or (at your option) any later version.
+  ##
+  ## This library is distributed in the hope that it will be useful,
+  ## but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  ## Library General Public License for more details.
+  ##
+  ## You should have received a copy of the GNU Library General Public
+  ## License along with this library; if not, write to the Free
+  ## Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  ## ****************************************************************************
+  ##
+  ##++
+  ## Name
+  ##    site_admin_body
+  ##
+  ## Purpose
+  ##    Template fragment rendering a list of models managed by
+  ##    DJO.Nav.Model.Admin
+  ##
+  ## Revision Dates
+  ##    31-Aug-2009 (CT) Creation (factored from project-specific template)
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL i18n %}
+  <table class="Object-List">
+    {% for link in page.own_links %}
+      {% if link|allow_user:request.user %}
+        <tr class="{% cycle 'row1' 'row2' %}">
+          <td>
+            <a href="{{ link.site_prefix }}{{ link.href }}"
+               {% if link.desc %}title="{{ link.desc }}"{% endif %}
+            >{{ link.title }}</a>
+          </td>
+          <td>{{link.count }}</td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </table>
+{# __END__ Django template: site_admin_body.html #}
