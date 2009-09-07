@@ -27,6 +27,11 @@
 #
 # Revision Dates
 #    31-Aug-2009 (CT) Creation
+#     7-Sep-2009 (CT) `Rule_Attr` and `Rule_Class` added
+#     7-Sep-2009 (CT) `Rule.level` changed to subtract
+#                     `(not parent.declarations)`
+#     7-Sep-2009 (CT) `Rule.__iter__` changed to not yield `self` if there
+#                     aren't `self.declarations`
 #    ««revision-date»»···
 #--
 
@@ -90,7 +95,7 @@ class Rule (TFL.Meta.Object) :
     def level (self) :
         parent = self.parent
         if parent is not None :
-            return parent.level + 1
+            return parent.level - (not parent.declarations) + 1
         return 0
     # end def level
 
@@ -125,7 +130,8 @@ class Rule (TFL.Meta.Object) :
     # end def _pop_children
 
     def __iter__ (self) :
-        yield self
+        if self.declarations :
+            yield self
         for c in self.children :
             for r in c :
                 yield r
@@ -153,12 +159,26 @@ class Rule (TFL.Meta.Object) :
 
 # end class Rule
 
+class Rule_Attr (Rule) :
+    """Rule for attribute selection"""
+
+    parent_sep = ""
+
+# end class Rule_Attr
+
 class Rule_Child (Rule) :
-    """Rule for a a child of another element."""
+    """Rule for a child of another element."""
 
     parent_sep = " > "
 
 # end class Rule_Child
+
+class Rule_Class (Rule) :
+    """Rule for a class."""
+
+    parent_sep = "."
+
+# end class Rule_Class
 
 class Rule_Pseudo (Rule) :
     """Rule for pseudo-classes"""
