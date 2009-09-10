@@ -31,6 +31,7 @@
 #--
 
 if "just for testing" :
+    ### import rest; print rest.style_sheet
     from _DJO.CSS import *
 
 first_and_last = \

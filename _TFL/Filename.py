@@ -338,7 +338,7 @@ class Filename (TFL.Meta.Object):
 
     @classmethod
     def split_ext (cls, name) :
-        ### In Python 2.6, the behavior of `os.path.splitext` chnaged for
+        ### In Python 2.6, the behavior of `os.path.splitext` changed for
         ### names starting with a leading dot
         if name.startswith (".") :
             base, ext  = sos.path.splitext (name [1:])
