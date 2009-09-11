@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,12 +27,11 @@
 #
 # Revision Dates
 #    12-Mar-2002 (CT) Creation
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    11-Sep-2009 (CT) `names_of` converted to generator
 #    ««revision-date»»···
 #--
 
-
+from _TFL import TFL
 
 def module_of (object) :
     """Returns the name of the module defining `object`, if possible.
@@ -67,14 +66,11 @@ def names_of (module) :
        Unfortunately, this currently only returns objects for which
        `module_of` returns a non-None result.
     """
-    result = []
     for n, f in module.__dict__.items () :
         if defined_by (f, module) :
-            result.append (n)
-    return result
+            yield n
 # end def names_of
 
 if __name__ != "__main__" :
-    from _TFL import TFL
     TFL._Export_Module ()
 ### __END__ TFL.Module

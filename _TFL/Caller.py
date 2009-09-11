@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    Caller
+#    TFL.Caller
 #
 # Purpose
 #    Return information about the context of the caller's caller (e.g.,
@@ -40,7 +40,6 @@
 #     2-Sep-2000 (CT) Simplified `caller_info' (try/except isn't necessary)
 #    18-May-2001 (CT) Renamed from caller_globals to TFL/Caller.py
 #    18-May-2001 (CT) `depth' added
-#    16-Sep-2001 (CT) Protect `import U_Test`
 #    18-Sep-2001 (CT) `globs` and `locls` arguments added to `Scope.__init__`
 #     3-Nov-2001 (MG) import `TFL.Caller` instead of `Caller`
 #    25-Feb-2002 (CT) `Caller.__getitem__` changed to allow nested format
@@ -48,8 +47,6 @@
 #    12-Mar-2002 (CT) `_Export_Module` added
 #     1-Jun-2002 (CT) Try `sys._getframe` in `frame` instead of raising
 #                     `AssertionError`
-#    12-Aug-2003 (CT) Error in `_doc_test` removed
-#     9-Mar-2004 (CT) `_doc_test` changed to not use `import`
 #    13-Aug-2004 (CT) `Scope` derived from `TFL.Meta.Object`
 #    13-Aug-2004 (CT) `Object_Scope` derived from `Scope`
 #    17-Sep-2004 (CT) Optional argument `locls` added to `Object_Scope`
@@ -63,6 +60,7 @@
 #    29-Dec-2005 (CT) `Object_Scope.__getitem__` changed to catch `KeyError`
 #                     instead of `NameError`
 #    24-Jan-2008 (CT) More doctests added
+#    11-Sep-2009 (CT) `Object_Scope_Mutable` added
 #    ««revision-date»»···
 #--
 
@@ -252,6 +250,36 @@ class Object_Scope (Scope) :
     # end def __getattr__
 
 # end class Object_Scope
+
+class Object_Scope_Mutable (Object_Scope) :
+    """Add mutability to `Object_Scope`.
+
+       >>> from _TFL.Record import Record
+       >>> o = Record (a = 42, b = Record (a = 137, b = "foo"))
+       >>> s = Object_Scope_Mutable (o, {})
+       >>> s.a
+       42
+       >>> s.locals
+       {}
+       >>> s ["a"] = 137
+       >>> s.a
+       137
+       >>> s.locals
+       {'a': 137}
+       >>> t = Object_Scope (o, {})
+       >>> t.a
+       42
+       >>> t ["a"] = 666
+       Traceback (most recent call last):
+         ...
+       TypeError: 'Object_Scope' object does not support item assignment
+    """
+
+    def __setitem__ (self, key, value) :
+        self.locals [key] = value
+    # end def __setitem__
+
+# end class Object_Scope_Mutable
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

@@ -32,14 +32,46 @@
 #                     `(not parent.declarations)`
 #     7-Sep-2009 (CT) `Rule.__iter__` changed to not yield `self` if there
 #                     aren't `self.declarations`
+#    11-Sep-2009 (CT) `Parameters`, `Parameter_Scope` and `Style_Sheet.Read`
+#                     added
 #    ««revision-date»»···
 #--
 
+from   __future__                 import with_statement
+
 from   _TFL                       import TFL
 from   _DJO                       import DJO
+
 import _TFL._Meta.Object
+import _TFL.Caller
+
 from   _TFL._Meta.Once_Property   import Once_Property
 from   _TFL.predicate             import cartesian
+
+def Parameters (* bases, ** kw) :
+    """Model parameters for CSS rules and stylesheets, defined by `kw` and
+       inherited from `bases`.
+    """
+    return type ("CSS_Parameters", bases, kw)
+# end def Parameters
+
+class Parameter_Scope (TFL.Caller.Object_Scope_Mutable) :
+    """Encapsulate a CSS parameters class so that it is usable as context for
+       `exec` of a file containing CSS.Style_Sheet declarations.
+    """
+
+    def __init__ (self, parameters) :
+        self.__super.__init__ (object = parameters, locls = {})
+        self.style_sheets = []
+    # end def __init__
+
+    def __setitem__ (self, key, value) :
+        self.__super.__setitem__ (key, value)
+        if isinstance (value, Style_Sheet) :
+            self.style_sheets.append (value)
+    # end def __setitem__
+
+# end class Parameter_Scope
 
 class Rule (TFL.Meta.Object) :
     """Model a CSS rule.
@@ -202,6 +234,8 @@ Rs = Rule_Sibling
 class Style_Sheet (TFL.Meta.Object) :
     """Model a CSS style sheet"""
 
+    _CSS_globs = {}
+
     def __init__ (self, * rules, ** attrs) :
         self.rules   = list (rules)
         self.imports = list (attrs.pop ("imports", []))
@@ -217,6 +251,28 @@ class Style_Sheet (TFL.Meta.Object) :
     def add_rule (self, * rules) :
         self.rules.extend (rules)
     # end def add_rule
+
+    @classmethod
+    def Read (cls, file_name, parameters = None) :
+        """Read style sheets definitions from `file_name`."""
+        scope = Parameter_Scope (parameters)
+        with open (file_name, "rt") as file :
+            exec file in cls._get_CSS_globs (), scope
+        return scope.style_sheets
+    # end def Read
+
+    @classmethod
+    def _get_CSS_globs (cls) :
+        result = cls._CSS_globs
+        ignore = set (("Parameter_Scope", "Parameters"))
+        if not result :
+            from _TFL.Module import names_of
+            from _DJO        import CSS
+            for name in names_of (CSS) :
+                if name not in ignore :
+                    result [name] = getattr (CSS, name)
+        return result
+    # end def _get_CSS_globs
 
     def __iter__ (self) :
         for i in self.imports :

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    10-Sep-2009 (CT) Creation
+#    11-Sep-2009 (CT) `expand_iter` factored
 #    ««revision-date»»···
 #--
 
@@ -68,9 +69,14 @@ class Search_Path (TFL.Meta.Object) :
 
     def __init__ (self, * pathes, ** kw) :
         self.pathes       = [TFL.Dirname (p) for p in pathes]
-        self.default_pred = kw.pop ("default_pred", "isfile")
+        self.default_pred = kw.pop ("default_pred", sos.path.isfile)
         assert not kw
     # end def __init__
+
+    def expand_iter (self, name) :
+        for path in self.pathes :
+            yield TFL.Filename (name, path, default_rel = True).name
+    # end def expand_iter
 
     def find (self, name, pred = None) :
         for result in self.find_iter (name, pred) :
@@ -84,10 +90,7 @@ class Search_Path (TFL.Meta.Object) :
     def find_iter (self, name, pred = None) :
         if pred is None :
             pred = self.default_pred
-        if isinstance (pred, basestring) :
-            pred = getattr (sos.path, pred)
-        for path in self.pathes :
-            n = TFL.Filename (name, path, default_rel = True).name
+        for n in self.expand_iter (name) :
             if pred (n) :
                 yield n
     # end def find_iter
