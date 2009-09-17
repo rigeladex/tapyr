@@ -149,6 +149,7 @@
 #                      avoid 1-cent rounding errors
 #    28-Apr-2009 (CT)  `vorsteuer_gut` added and used
 #     4-May-2009 (CT)  s/vorsteuer_gut/ust_gut/
+#    17-Sep-2009 (RSC) Fix Doc-String on "z" category after email-discussion
 #    ««revision-date»»···
 #--
 
@@ -208,7 +209,7 @@ class Account_Entry (_Entry_) :
             r       reverse charge (for VAT, Article 19 [057/066 in VAT form])
             s       storno
             u       include in VAT calculations
-            z       pure VAT amount
+            z       pure VAT amount (Einfuhrumsatzsteuer)
 
         g_or_n (exactly one letter)::
 
