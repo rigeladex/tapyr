@@ -57,22 +57,6 @@ from   _MOM._Pred      import Pred
 import itertools
 import traceback
 
-def cmp_key_id (ent) :
-    return ent.id
-# end def cmp_key_id
-
-def cmp_key_name (ent) :
-    return ent.name
-# end def cmp_key_name
-
-def cmp_key_rank_id (ent) :
-    return (ent.rank, ent.id)
-# end def cmp_key_rank_id
-
-def cmp_key_rank_name (ent) :
-    return (ent.rank, ent.name)
-# end def cmp_key_rank_name
-
 class _Entity_Essentials_ (TFL.Meta.Object) :
     """Define essential attributes of MOM entities (as needed by editors, ...)
     """
@@ -210,22 +194,6 @@ class Entity (_Entity_Essentials_) :
             )
         )
 
-    @staticmethod
-    def __new_id () :
-        Entity.__id += 1
-        return Entity.__id
-    # end def __new_id
-
-    @classmethod
-    def add_filter (cls, * filters) :
-        """Add `filters` to `clss`."""
-        cls.filters += filters
-    # end def add_filter
-
-    def globals (self) :
-        return self.__class__._appl_globals or object_globals (self)
-    # end def globals
-
     class _Attributes (_Entity_Essentials_._Attributes) :
 
         class default_sort_key (A_Blob) :
@@ -306,6 +274,16 @@ class Entity (_Entity_Essentials_) :
 
     # end class _Predicates
 
+    @property
+    def has_errors (self) :
+        return self._pred_man.has_errors
+    # end def has_errors
+
+    @property
+    def has_warnings (self) :
+        return self._pred_man.has_warnings
+    # end def has_warnings
+
     def __new__ (cls, * args, ** kw) :
         if cls.is_partial :
             raise MOM.Error.Partial_Type (cls.type_name)
@@ -321,24 +299,15 @@ class Entity (_Entity_Essentials_) :
         self._init_attributes ()
     # end def __init__
 
+    @classmethod
+    def add_filter (cls, * filters) :
+        """Add `filters` to `clss`."""
+        cls.filters += filters
+    # end def add_filter
+
     def after_init (self) :
         pass
     # end def after_init
-
-    def after_init_db (self) :
-        pass
-    # end def after_init
-
-    def _init_meta_attrs (self) :
-        self._attr_man                   = MOM.Attr.Manager (self._Attributes)
-        self._pred_man                   = MOM.Pred.Manager (self._Predicates)
-        self.dependencies                = TFL.defaultdict  (int)
-        self.object_referring_attributes = {}
-    # end def _init_meta_attrs
-
-    def _init_attributes (self) :
-        self._attr_man.reset_attributes (self)
-    # end def _init_attributes_
 
     def attr_value_maybe (self, name) :
         attr = self.attributes.get (name)
@@ -346,10 +315,89 @@ class Entity (_Entity_Essentials_) :
             return attr.get_value (self)
     # end def attr_value_maybe
 
-    cmp_key_id        = cmp_key_id
-    cmp_key_name      = cmp_key_name
-    cmp_key_rank_id   = cmp_key_rank_id
-    cmp_key_rank_name = cmp_key_rank_name
+    def check_all (self) :
+        """Checks all predicates"""
+        return self._pred_man.check_all (self)
+    # end def check_all
+
+    def compute_defaults_internal (self) :
+        """Compute default values for optional/internal/cached parameters."""
+        pass
+    # end def compute_defaults_internal
+
+    @classmethod
+    def compute_type_defaults_internal (cls) :
+        pass
+    # end def compute_type_defaults_internal
+
+    def copy (self, * new_n, ** kw) :
+        """Make copy with name(s) `new_n`."""
+        new_obj = self.__class__ (* new_n)
+        raw_kw  = self._attr_man.raw_attr_value_dict
+        if raw_kw :
+            new_obj.set_raw (** raw_kw)
+        if kw :
+            new_obj.set     (** kw)
+        return new_obj
+    # end def copy
+
+    def correct_unknown_attr (self, error) :
+        """Try to correct an unknown attribute error."""
+        pass
+    # end def correct_unknown_attr
+
+    def customize_stmt (self) :
+        return self.define_stmt ("customize")
+    # end def customize_stmt
+
+    def define_stmt (self, name_of_def_stmt = None) :
+        name = self._define_stmt_name_arg   ()
+        args = self._define_stmt_attributes ([name])
+        if self._need_define_stmt (args) :
+            return self._define_stmt \
+                (args, name_of_def_stmt = name_of_def_stmt)
+        else :
+            ### print "Ignoring", name
+            return ""
+    # end def define_stmt
+
+    def globals (self) :
+        return self.__class__._appl_globals or object_globals (self)
+    # end def globals
+
+    def has_changed (self) :
+        return self._attr_man.has_changed (self)
+    # end def has_changed
+
+    def has_substance (self) :
+        """TRUE if there is at least one attribute with a non-default value."""
+        return any (a.has_substance (self) for a in self.user_attr)
+    # end def has_substance
+
+    def is_correct (self, attr_dict = {})  :
+        ews = self._pred_man.check_kind ("object", self, attr_dict)
+        return not ews
+    # end def is_correct
+
+    def is_defined (self)  :
+        return \
+            (  (not self.is_used)
+            or all (a.has_substance (self) for a in self.required)
+            )
+    # end def is_defined
+
+    def is_g_correct (self)  :
+        ews = self._pred_man.check_kind ("system", self)
+        return not ews
+    # end def is_g_correct
+
+    def is_locked (self) :
+        return self.x_locked or self.electric
+    # end def is_locked
+
+    def make_snapshot (self) :
+        self._attr_man.make_snapshot (self)
+    # end def make_snapshot
 
     def raw_attr (self, name) :
         """Returns the raw value of attribute `name`, i.e., the value entered
@@ -359,6 +407,30 @@ class Entity (_Entity_Essentials_) :
         if attr :
             return attr.get_raw (self) or ""
     # end def raw_attr
+
+    def remove_stmt (self) :
+        return """%s.%s (%s)\n""" % \
+               ( self.type_name
+               , self._name_of_remove_stmt
+               , self._remove_stmt_name_arg ()
+               )
+    # end def remove_stmt
+
+    def reset_syncable (self) :
+        self._attr_man.reset_syncable ()
+    # end def reset_syncable
+
+    def set (self, on_error = None, ** kw) :
+        """Set attributes specified in `kw` from cooked values"""
+        if not kw :
+            return 0
+        self._kw_satisfies_i_invariants (kw, on_error)
+        self._set_record (kw)
+        tc = self._attr_man.total_changes
+        for name, val, attr in self.set_attr_iter (kw, on_error) :
+            attr._set_cooked (self, val)
+        return self._attr_man.total_changes - tc
+    # end def set
 
     def set_attr_iter (self, attr_dict, on_error = None) :
         attributes = self.attributes
@@ -378,22 +450,6 @@ class Entity (_Entity_Essentials_) :
             elif name != "raw" :
                 on_error (MOM.Error.Unknown_Attribute (self, name, val))
     # end def set_attr_iter
-
-    def is_locked (self) :
-        return self.x_locked or self.electric
-    # end def is_locked
-
-    def set (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from cooked values"""
-        if not kw :
-            return 0
-        self._kw_satisfies_i_invariants (kw, on_error)
-        self._set_record (kw)
-        tc = self._attr_man.total_changes
-        for name, val, attr in self.set_attr_iter (kw, on_error) :
-            attr._set_cooked (self, val)
-        return self._attr_man.total_changes - tc
-    # end def set
 
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
@@ -437,71 +493,6 @@ class Entity (_Entity_Essentials_) :
         return self._attr_man.total_changes - tc
     # end def set_raw
 
-    def copy (self, * new_n, ** kw) :
-        """Make copy with name(s) `new_n`."""
-        new_obj = self.__class__ (* new_n)
-        raw_kw  = self._attr_man.raw_attr_value_dict
-        if raw_kw :
-            new_obj.set_raw (** raw_kw)
-        if kw :
-            new_obj.set     (** kw)
-        return new_obj
-    # end def copy
-
-    def has_changed (self) :
-        return self._attr_man.has_changed (self)
-    # end def has_changed
-
-    @property
-    def has_errors (self) :
-        return self._pred_man.has_errors
-    # end def has_errors
-
-    @property
-    def has_warnings (self) :
-        return self._pred_man.has_warnings
-    # end def has_warnings
-
-    def make_snapshot (self) :
-        self._attr_man.make_snapshot (self)
-    # end def make_snapshot
-
-    def is_correct (self, attr_dict = {})  :
-        ews = self._pred_man.check_kind ("object", self, attr_dict)
-        return not ews
-    # end def is_correct
-
-    def is_g_correct (self)  :
-        ews = self._pred_man.check_kind ("system", self)
-        return not ews
-    # end def is_g_correct
-
-    def is_defined (self)  :
-        return \
-            (  (not self.is_used)
-            or all (a.has_substance (self) for a in self.required)
-            )
-    # end def is_defined
-
-    def _kw_satisfies_i_invariants (self, attr_dict, on_error) :
-        result = not self.is_correct (attr_dict)
-        if result :
-            errors = self._pred_man.errors ["object"]
-            if on_error is None :
-                on_error = self._raise_attr_error
-            on_error (MOM.Error.Invariant_Errors (errors))
-        return result
-    # end def _kw_satisfies_i_invariants
-
-    def has_substance (self) :
-        """TRUE if there is at least one attribute with a non-default value."""
-        return any (a.has_substance (self) for a in self.user_attr)
-    # end def has_substance
-
-    def reset_syncable (self) :
-        self._attr_man.reset_syncable ()
-    # end def reset_syncable
-
     def sync_attributes (self) :
         """Synchronizes all user attributes with the values from
            _raw_attr and all sync-cached attributes.
@@ -509,20 +500,13 @@ class Entity (_Entity_Essentials_) :
         self._attr_man.sync_attributes (self)
     # end def sync_attributes
 
-    def check_all (self) :
-        """Checks all predicates"""
-        return self._pred_man.check_all (self)
-    # end def check_all
-
-    def compute_defaults_internal (self) :
-        """Compute default values for optional/internal/cached parameters."""
-        pass
-    # end def compute_defaults_internal
-
-    @classmethod
-    def compute_type_defaults_internal (cls) :
-        pass
-    # end def compute_type_defaults_internal
+    def _define_stmt \
+        (self, args, sep = ", ", sep2 = " ", name_of_def_stmt = None) :
+        if name_of_def_stmt is None :
+            name_of_def_stmt = self._name_of_define_stmt
+        return """%s.%s (%s, raw=1)\n""" % \
+               (self.type_name, name_of_def_stmt, sep.join (args))
+    # end def _define_stmt
 
     def _define_stmt_attributes (self, start = []) :
         result = list (start)
@@ -533,40 +517,15 @@ class Entity (_Entity_Essentials_) :
         return result
     # end def _define_stmt_attributes
 
-    def customize_stmt (self) :
-        return self.define_stmt ("customize")
-    # end def customize_stmt
+    def _init_meta_attrs (self) :
+        self._attr_man                   = MOM.Attr.Manager (self._Attributes)
+        self._pred_man                   = MOM.Pred.Manager (self._Predicates)
+        self.object_referring_attributes = {}
+    # end def _init_meta_attrs
 
-    def define_stmt (self, name_of_def_stmt = None) :
-        name = self._define_stmt_name_arg   ()
-        args = self._define_stmt_attributes ([name])
-        if self._need_define_stmt (args) :
-            return self._define_stmt \
-                (args, name_of_def_stmt = name_of_def_stmt)
-        else :
-            ### print "Ignoring", name
-            return ""
-    # end def define_stmt
-
-    def remove_stmt (self) :
-        return """%s.%s (%s)\n""" % \
-               ( self.type_name
-               , self._name_of_remove_stmt
-               , self._remove_stmt_name_arg ()
-               )
-    # end def remove_stmt
-
-    def _define_stmt \
-        (self, args, sep = ", ", sep2 = " ", name_of_def_stmt = None) :
-        if name_of_def_stmt is None :
-            name_of_def_stmt = self._name_of_define_stmt
-        return """%s.%s (%s, raw=1)\n""" % \
-               (self.type_name, name_of_def_stmt, sep.join (args))
-    # end def _define_stmt
-
-    def _need_define_stmt (self, args) :
-        return True
-    # end def _need_define_stmt
+    def _init_attributes (self) :
+        self._attr_man.reset_attributes (self)
+    # end def _init_attributes_
 
     def _journal_items (self, result_dict, result) :
         attributes = self.attributes
@@ -582,10 +541,19 @@ class Entity (_Entity_Essentials_) :
         return result
     # end def _journal_items
 
-    def correct_unknown_attr (self, error) :
-        """Try to correct an unknown attribute error."""
-        pass
-    # end def correct_unknown_attr
+    def _kw_satisfies_i_invariants (self, attr_dict, on_error) :
+        result = not self.is_correct (attr_dict)
+        if result :
+            errors = self._pred_man.errors ["object"]
+            if on_error is None :
+                on_error = self._raise_attr_error
+            on_error (MOM.Error.Invariant_Errors (errors))
+        return result
+    # end def _kw_satisfies_i_invariants
+
+    def _need_define_stmt (self, args) :
+        return True
+    # end def _need_define_stmt
 
     def _print_attr_err (self, exc) :
         print self, exc
@@ -595,16 +563,22 @@ class Entity (_Entity_Essentials_) :
         raise exc
     # end def _raise_attr_error
 
-    def _store_attr_error (self, exc) :
-        self.home_scope._db_errors.append (exc)
-    # end def _store_attr_error
-
     def _set_record (self, kw) :
         rvr = self._attr_man.raw_values_record (self, kw)
         if rvr :
             self.home_scope.record_change \
                 (MOM.SCM.Entity_Change_Attr, self, rvr)
     # end def _set_record
+
+    def _store_attr_error (self, exc) :
+        self.home_scope._db_errors.append (exc)
+    # end def _store_attr_error
+
+    @staticmethod
+    def __new_id () :
+        Entity.__id += 1
+        return Entity.__id
+    # end def __new_id
 
     def __repr__ (self) :
         return self._repr (self.type_name)
@@ -614,12 +588,9 @@ class Entity (_Entity_Essentials_) :
 
 _Essence = Entity
 
-__all__ = \
-    ( "Entity", "Entity_Essentials"
-    , "cmp_key_name", "cmp_key_id", "cmp_key_rank_name", "cmp_key_rank_id"
-    )
+__all__  = ("Entity", "Entity_Essentials")
 
-__doc__ = """
+__doc__  = """
 Class `MOM.Entity`
 ==================
 
@@ -646,11 +617,6 @@ Class `MOM.Entity`
    - `home_scope` refers to the :class:`~_MOM.Scope.Scope` in
      which the instance lives.
 
-       .. note::
-         Technically, `home_scope` is a class attribute (of a
-         scope-specific class that's automatically created by the
-         framework).
-
    `Entity` is normally not directly used as a base class. Instead,
    `Entity`'s subclasses :class:`~_MOM.Object.Object` and
    :class:`~_MOM.Link.Link` serve as root classes for the hierarchies
@@ -672,8 +638,6 @@ the attribute types in :mod:`MOM.Attr.Type<_MOM._Attr.Type>`.
 
 `MOM.Entity` defines a number of attributes that can be overriden by
 descendant classes:
-
-- default_sort_key
 
 - electric
 
@@ -796,11 +760,6 @@ you redefine one of these methods, you'll normally need to call the
   (successfully) created. `after_init` can create additional objects
   automatically to ease the life of the interactive user of the
   application.
-
-- `after_init_db` is called after an instance of the class was read
-  from the database. Such methods can be used as legacy lifters after
-  a serious change of semantics and are normally injected into the
-  essential class in question by the database framework.
 
 - `compute_defaults_internal` is called whenever object attributes
   needs to synchronized and can be used to set attributes to computed

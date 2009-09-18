@@ -20,7 +20,7 @@ MOM To-Do
 - Replace `default_sort_key` (essential attribute) by class attribute
   `sorted_by`
 
-  * Implement `Sorted_By` to interpret list of attribute names as
+  x Implement `Sorted_By` to interpret list of attribute names as
     sort-key (including `-name` for reverse sorting for some attributes)
 
 x Simplify attribute handling ?
@@ -45,5 +45,9 @@ x Simplify attribute handling ?
   * change doc-strings to describe the error
 
 - Rewrite pickling
+
+  * Inject after_init_db into Entity
+
+  * Implement pickling/unpickling of entities
 
 ### __END__ to-do

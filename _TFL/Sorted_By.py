@@ -136,6 +136,11 @@ class Sorted_By (TFL.Meta.Object) :
        (a = 2, b = 1, c = xyz)
        (a = 2, b = 1, c =  xyzz)
        (a = 2, b = 1, c =   xyzzz)
+       >>> show (["1", 0, "42", 2.4], Sorted_By ([int]))
+       0
+       1
+       2.4
+       42
     """
 
     class Descending (TFL.Meta.Object) :
