@@ -3,9 +3,9 @@ MOM To-Do
 
 - Open questions:
 
-  + Entity:
+  + Object: named vs. un-named
 
-    * dependency management
+- Dependency management: move to DBW-Mixin for Scope
 
       # referential integrity
 
@@ -15,7 +15,7 @@ MOM To-Do
 
       # `has_substance` uses `self.dependencies`
 
-    * count
+- count: move to DBW-Mixin for Scope
 
 - Replace `default_sort_key` (essential attribute) by class attribute
   `sorted_by`
