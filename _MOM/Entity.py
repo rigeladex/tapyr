@@ -48,13 +48,13 @@ import _MOM._Pred.Spec
 import _MOM._Pred.Type
 import _MOM._SCM.Change
 
-import _MOM.Documenter
 import _MOM.Filter
 
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
 from   _MOM._Pred      import Pred
 
+import itertools
 import traceback
 
 def cmp_key_id (ent) :
@@ -163,32 +163,25 @@ class Entity_Essentials (_Entity_Essentials_) :
 class Entity (_Entity_Essentials_) :
     """Internal root class for MOM objects and links."""
 
-    __metaclass__ = MOM.Meta.M_Entity
-    __id          = 0 ### used to generate a unique id for each entity
-    __autowrap    = dict \
-      (is_locked  = TFL.Meta.Class_and_Instance_Method)
+    __metaclass__         = MOM.Meta.M_Entity
+    __id                  = 0 ### used to generate a unique id for each entity
+    __autowrap            = dict \
+      (is_locked          = TFL.Meta.Class_and_Instance_Method)
 
-    doc_description_attributes = ("type_desc", "__doc__")
-    doc_explanation_attributes = ("type_expl", )
-    doc_name_attributes        = ("ui_name", )
+    _appl_globals         = {}
 
-    _appl_globals              = {}
-    _db_attr                   = {}
+    rank                  = 0
 
-    Documenter                 = MOM.Documenter ()
-
-    rank                = 0
-
-    _lists_to_combine   = ("filters", "auto_display")
+    _lists_to_combine     = ("filters", "auto_display")
     """`_lists_to_combine` names the list-valued attributes to be merged
        from all levels of the inheritance hierarchy
        """
-    _dicts_to_combine   = ("deprecated_attr_names", "refuse_links")
+    _dicts_to_combine     = ("deprecated_attr_names", "refuse_links")
     """`_dicts_to_combine` names the dict-valued attributes to be merged
        from all levels of the inheritance hierarchy
     """
 
-    filters             = \
+    filters               = \
         ( MOM.Filter
             ( predicate   = "not object.is_defined ()"
             , name        = "underdefined"
@@ -267,7 +260,7 @@ class Entity (_Entity_Essentials_) :
         # end class x_locked
 
         class is_used (A_Int) :
-            """Number of users."""
+            """Specifies whether entity is used by another entity."""
 
             kind          = Attr.Cached
             default       = "1"
@@ -367,115 +360,62 @@ class Entity (_Entity_Essentials_) :
             return attr.get_raw (self) or ""
     # end def raw_attr
 
-    def set_attr_iter (self, attr_dict, raise_err = True) :
+    def set_attr_iter (self, attr_dict, on_error = None) :
         attributes = self.attributes
+        if on_error is None :
+            on_error = self._raise_attr_error
         for name, val in attr_dict.iteritems () :
             cnam = self.deprecated_attr_names.get (name, name)
             attr = attributes.get (cnam)
             if attr :
                 if attr._set is None :
-                    if raise_err :
-                        raise AttributeError, \
-                            ( "Can't set %s attribute <%s>.%s to `%s`"
-                            % (attr.kind, self, name, val)
-                            )
-                    else :
-                        self.home_scope._db_errors.append \
-                            (MOM.Invalid_Attribute (self, name, val))
+                    on_error \
+                        ( MOM.Error.Invalid_Attribute
+                            (self, name, val, attr.kind)
+                        )
                 else :
                     yield (cnam, val, attr)
             elif name != "raw" :
-                self.home_scope._db_errors.append \
-                    (MOM.Unknown_Attribute (self, name, val))
+                on_error (MOM.Error.Unknown_Attribute (self, name, val))
     # end def set_attr_iter
-
-    def _set_internal_attributes (self, raw = 1, ** kw) :
-        g = self.globals ()
-        for name, raw_val, attr in self.set_attr_iter (kw, raise_err = False) :
-            try :
-                val = attr.from_code_string (self, raw_val, g)
-            except MOM.Error.Attribute_Syntax_Error, exc :
-                print exc
-            except StandardError, exc :
-                if __debug__ :
-                    print "_set_internal_attributes:", exc
-                    print self, name, raw_val
-                    traceback.print_exc ()
-            else :
-                attr._set_raw (self, raw_val, val)
-    # end def _set_internal_attributes
-
-    def _set_pickle_state (self, editable, electric) :
-        try :
-            if editable :
-                self.set (raise_exception = 0, ** editable)
-                self._db_attr  = editable
-        except StandardError, exc :
-            if __debug__ :
-                print "Unpickling error %s: editable=%s" % (self, editable)
-                print exc
-                traceback.print_exc ()
-        try :
-            if electric :
-                self._set_internal_attributes (** electric)
-        except StandardError, exc:
-            if __debug__ :
-                print "Unpickling error %s: electric=%s" % (self, electric)
-                print exc
-                traceback.print_exc ()
-        self.after_init_db ()
-    # end def _set_pickle_state
 
     def is_locked (self) :
         return self.x_locked or self.electric
     # end def is_locked
 
-    def set (self, raise_exception = 1, raw = 0, internals = None, ** kw) :
-        """Set attributes specified in parameter list"""
-        if raw :
-            return self.set_raw    (raise_exception, internals, ** kw)
-        else :
-            return self.set_cooked (raise_exception, ** kw)
-    # end def set
-
-    def _set_record (self, kw) :
-        rvr = self._attr_man.raw_values_record (self, kw)
-        if rvr :
-            self.home_scope.record_change \
-                (MOM.SCM.Entity_Change_Attr, self, rvr)
-    # end def _set_record
-
-    def set_cooked (self, raise_exception = 1, ** kw) :
+    def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
-        self._kw_satisfies_i_invariants (kw, raise_exception)
+        if not kw :
+            return 0
+        self._kw_satisfies_i_invariants (kw, on_error)
         self._set_record (kw)
         tc = self._attr_man.total_changes
-        for name, val, attr in self.set_attr_iter (kw, raise_exception) :
+        for name, val, attr in self.set_attr_iter (kw, on_error) :
             attr._set_cooked (self, val)
         return self._attr_man.total_changes - tc
-    # end def set_cooked
+    # end def set
 
-    def set_raw (self, raise_exception = 1, internals = None, ** kw) :
+    def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
-        if not (internals or kw) :
+        if not kw :
             return 0
         tc = self._attr_man.total_changes
         if kw :
-            if not self._db_attr :
-                self._db_attr = kw
             cooked_kw = {}
             to_do     = []
-            for name, val, attr in self.set_attr_iter (kw, raise_exception) :
+            for name, val, attr in self.set_attr_iter (kw, on_error) :
                 if val :
                     try :
                         cooked_kw [name] = cooked_val = \
-                            self._attr_from_string (attr, val)
+                            attr.from_string (self, val)
                     except (ValueError, MOM.Error.Attribute_Syntax_Error), err:
                         print ("Warning: Error when setting attribute %s "
                                "of %s to %s\nClearing attribute"
                               ) % (attr.name, self.name, val)
                         self.home_scope._db_errors.append \
-                            (MOM.Invalid_Attribute (self, name, val))
+                            ( MOM.Error.Invalid_Attribute
+                                (self, name, val, attr.kind)
+                            )
                         if __debug__ :
                             print err
                         to_do.append ((attr, "", None))
@@ -489,16 +429,11 @@ class Entity (_Entity_Essentials_) :
                         to_do.append ((attr, val, cooked_val))
                 else :
                     to_do.append ((attr, "", None))
-            self._kw_satisfies_i_invariants (cooked_kw, raise_exception)
+            self._kw_satisfies_i_invariants (cooked_kw, on_error)
             self._set_record (cooked_kw)
             self._attr_man.reset_pending ()
             for attr, raw_val, val in to_do :
                 attr._set_raw (self, raw_val, val)
-        if internals :
-            ikw = {}
-            self._decode_internals (internals, ikw)
-            if ikw :
-                self._set_internal_attributes (** ikw)
         return self._attr_man.total_changes - tc
     # end def set_raw
 
@@ -531,10 +466,6 @@ class Entity (_Entity_Essentials_) :
         self._attr_man.make_snapshot (self)
     # end def make_snapshot
 
-    def is_instance (self, of_class) :
-        return isinstance (self, of_class)
-    # end def is_instance
-
     def is_correct (self, attr_dict = {})  :
         ews = self._pred_man.check_kind ("object", self, attr_dict)
         return not ews
@@ -546,74 +477,25 @@ class Entity (_Entity_Essentials_) :
     # end def is_g_correct
 
     def is_defined (self)  :
-        return (not self.is_used) or self.is_defined__ ()
+        return \
+            (  (not self.is_used)
+            or all (a.has_substance (self) for a in self.required)
+            )
     # end def is_defined
 
-    def _kw_satisfies_i_invariants (self, attr_dict, raise_exception) :
+    def _kw_satisfies_i_invariants (self, attr_dict, on_error) :
         result = not self.is_correct (attr_dict)
         if result :
             errors = self._pred_man.errors ["object"]
-            if raise_exception :
-                raise MOM.Error.Invariant_Errors (errors)
-            else :
-                print self, MOM.Error.Invariant_Errors (errors)
+            if on_error is None :
+                on_error = self._raise_attr_error
+            on_error (MOM.Error.Invariant_Errors (errors))
         return result
     # end def _kw_satisfies_i_invariants
 
-    def is_defined__ (self)  :
-        ### XXX move code into _attr_man and Attr.Kind
-        for a in self.required :
-            if not a.has_substance (self) :
-                return False
-        return True
-    # end def is_defined__
-
-    def _destroy (self) :
-        self.notify_dependencies_destroy ()
-        self.__super._destroy ()
-    # end def _destroy
-
-    def destroy_dependency (self, other) :
-        for attr in self.object_referring_attributes.pop (other, ()) :
-            attr.reset (self)
-        if other in self.dependencies :
-            del self.dependencies [other]
-    # end def destroy_dependency
-
-    def notify_dependencies_destroy (self) :
-        """Notify all entities registered in `self.dependencies` and
-           `self.object_referring_attributes` about the destruction of `self`.
-        """
-        for d in self.dependencies.keys () :
-            d.destroy_dependency (self)
-        for o in self.object_referring_attributes.keys () :
-            o.destroy_dependency (self)
-    # end def notify_dependencies_destroy
-
-    def register_dependency (self, other) :
-        """Register that `other` depends on `self`"""
-        self.dependencies [other] += 1
-    # end def register_dependency
-
-    def unregister_dependency (self, other) :
-        """Unregister dependency of `other` on `self`"""
-        deps = self.dependencies
-        deps [other] -= 1
-        if deps [other] <= 0 :
-            del deps [other]
-    # end def unregister_dependency
-
-    def update_dependency_names (self, other, old_name) :
-        for attr in self.object_referring_attributes.get (other, []) :
-            attr._update_raw (self, other, old_name)
-    # end def update_dependency_names
-
     def has_substance (self) :
         """TRUE if there is at least one attribute with a non-default value."""
-        return bool \
-            (  self.dependencies
-            or any (a.has_substance (self) for a in self.user_attr)
-            )
+        return any (a.has_substance (self) for a in self.user_attr)
     # end def has_substance
 
     def reset_syncable (self) :
@@ -632,14 +514,6 @@ class Entity (_Entity_Essentials_) :
         return self._pred_man.check_all (self)
     # end def check_all
 
-    def _attr_from_string (self, attr, raw_val) :
-        try :
-            return attr.from_string (self, raw_val)
-        except TypeError :
-            print self, attr.name, raw_val, type (raw_val)
-            raise
-    # end def _attr_from_string
-
     def compute_defaults_internal (self) :
         """Compute default values for optional/internal/cached parameters."""
         pass
@@ -650,63 +524,22 @@ class Entity (_Entity_Essentials_) :
         pass
     # end def compute_type_defaults_internal
 
-    def _save_attr_to_db (self, attr, value) :
-        return attr.to_save (self)
-    # end def _save_attr_to_db
-
-    def _picklish (self) :
-        if not self.save_to_db :
-            return
-        editable = {"raw" : 1}
-        electric = {"raw" : 1}
-        for a in self.attributes.values () :
-            if not a.save_to_db :
-                continue
-            if not a.electric :                        ### required or optional
-                v = a.get_raw (self)
-                if self._save_attr_to_db (a, v) :
-                    editable [a.name] = v
-            else :                                     ### computed or internal
-                v = getattr (self, a.name)
-                if self._save_attr_to_db (a, v) :
-                    try :
-                        electric [a.name] = a.as_code_string (v)
-                    except (SystemExit, KeyboardInterrupt), exc :
-                        raise
-                    except :
-                        print self, a.name, a.typ, v
-                        raise
-        return self.Pickle (self, editable, electric)
-    # end def _picklish
-
-    def attributes___ (self, start = None) :
-        result = start or []
-        for kind in self.required, self.optional :
-            for a in kind :
-                if a.to_save (self) :
-                    result.append \
-                        ("%s = %s" % (a.name, a.raw_as_string (self)))
+    def _define_stmt_attributes (self, start = []) :
+        result = list (start)
+        for a in itertools.chain (self.required, self.optional) :
+            if a.to_save (self) :
+                result.append \
+                    ("%s = %s" % (a.name, a.raw_as_string (self)))
         return result
-    # end def attributes___
-
-    def attributes__ (self, start = []) :
-        result   = start + self.attributes___ ()
-        internal = self._encoded_internals ()
-        if internal :
-            if isinstance (internal, (str, unicode)) :
-                result.append ("internals = " + `internal`)
-            else :
-                result [len (result):] = internal
-        return result
-    # end def attributes__
+    # end def _define_stmt_attributes
 
     def customize_stmt (self) :
         return self.define_stmt ("customize")
     # end def customize_stmt
 
     def define_stmt (self, name_of_def_stmt = None) :
-        name = self._define_stmt_name_arg ()
-        args = self.attributes__  ([name])
+        name = self._define_stmt_name_arg   ()
+        args = self._define_stmt_attributes ([name])
         if self._need_define_stmt (args) :
             return self._define_stmt \
                 (args, name_of_def_stmt = name_of_def_stmt)
@@ -732,23 +565,8 @@ class Entity (_Entity_Essentials_) :
     # end def _define_stmt
 
     def _need_define_stmt (self, args) :
-        return 1
+        return True
     # end def _need_define_stmt
-
-    def _decode_internals (self, internals, kw) :
-        pass
-    # end def _decode_internals
-
-    def _encoded_internals (self, attr_kinds = ("internal", )) :
-        result = []
-        for kn in attr_kinds :
-            kind = getattr (self, kn)
-            for a in kind :
-                v = getattr (self, a.name)
-                if self._save_attr_to_db (a, v) :
-                    result.append (a.name + " = " + a.as_code_string (v))
-        return result
-    # end def _encoded_internals
 
     def _journal_items (self, result_dict, result) :
         attributes = self.attributes
@@ -768,6 +586,25 @@ class Entity (_Entity_Essentials_) :
         """Try to correct an unknown attribute error."""
         pass
     # end def correct_unknown_attr
+
+    def _print_attr_err (self, exc) :
+        print self, exc
+    # end def _print_attr_err
+
+    def _raise_attr_error (self, exc) :
+        raise exc
+    # end def _raise_attr_error
+
+    def _store_attr_error (self, exc) :
+        self.home_scope._db_errors.append (exc)
+    # end def _store_attr_error
+
+    def _set_record (self, kw) :
+        rvr = self._attr_man.raw_values_record (self, kw)
+        if rvr :
+            self.home_scope.record_change \
+                (MOM.SCM.Entity_Change_Attr, self, rvr)
+    # end def _set_record
 
     def __repr__ (self) :
         return self._repr (self.type_name)

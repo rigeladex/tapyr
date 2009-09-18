@@ -1,0 +1,49 @@
+MOM To-Do
+=========
+
+- Open questions:
+
+  + Entity:
+
+    * dependency management
+
+      # referential integrity
+
+        = `_destroy` uses `notify_dependencies_destroy`
+
+        = `rename` uses `self.dependencies` to call `update_dependency_names`
+
+      # `has_substance` uses `self.dependencies`
+
+    * count
+
+- Replace `default_sort_key` (essential attribute) by class attribute
+  `sorted_by`
+
+  * Implement `Sorted_By` to interpret list of attribute names as
+    sort-key (including `-name` for reverse sorting for some attributes)
+
+x Simplify attribute handling ?
+
+  x Move pickle handling out of Entity
+
+  x `set` only handles cooked values
+
+  x `on_error` callback for `set` and `set_raw` instead of
+    `raise_exception`
+
+- Documenter:
+
+  x separate from Entity
+
+  * Need to replace references to `obj.Documenter`
+
+    (like in MOM.Error.Invariant_Error)
+
+- MOM.Error:
+
+  * change doc-strings to describe the error
+
+- Rewrite pickling
+
+### __END__ to-do

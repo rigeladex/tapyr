@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -35,6 +35,9 @@
 #    19-Aug-2005 (CT) Creation
 #     7-Nov-2007 (CT) `Attribute` and `Item` generalized and refactored into
 #                     `Getter`
+#    18-Sep-2009 (CT) `_call_1` and `_call_n` changed to call callable results
+#    18-Sep-2009 (CT) `_Getter_0_.__getattr__` changed to deal properly with
+#                     composite names (e.g., `.x.y.z`)
 #    ««revision-date»»···
 #--
 
@@ -64,6 +67,30 @@ class _Getter_ (TFL.Meta.Object) :
        >>> r.bar.z.append ("howdi")
        >>> gn (r)
        'howdi'
+
+       >>> t = Record (a = "abc", b = "ABC", d = "   xyz")
+       >>> Getter.a (t)
+       'abc'
+       >>> Getter.a.upper (t)
+       'ABC'
+       >>> Getter.a.upper.strip (t)
+       'ABC'
+       >>> Getter.b (t)
+       'ABC'
+       >>> Getter.b.lower (t)
+       'abc'
+       >>> Getter.b.lower.strip (t)
+       'abc'
+       >>> Getter.d (t)
+       '   xyz'
+       >>> Getter.d.upper (t)
+       '   XYZ'
+       >>> Getter.d.upper.strip (t)
+       'XYZ'
+       >>> getattr (Getter, "d.__len__") (t)
+       6
+       >>> Getter.d.strip.__len__ (t)
+       3
 
        `Attribute` is a legacy spelling of `Getter`
        >>> r = Record (a = 1, b = "2", foo = 42)
@@ -97,14 +124,19 @@ class _Getter_ (TFL.Meta.Object) :
     # end def __init__
 
     def _call_1 (self, o) :
-        return self.__getters [0] (o)
+        assert len (self.__getters) == 1
+        result = self.__getters [0] (o)
+        if hasattr (result, "__call__") :
+            result = result ()
+        return result
     # end def _call_1
 
     def _call_n (self, o) :
-        getters = self.__getters
-        result = getters [0] (o)
-        for g in getters [1:] :
+        result = o
+        for g in self.__getters :
             result = g (result)
+            if hasattr (result, "__call__") :
+                result = result ()
         return result
     # end def _call_n
 
@@ -132,10 +164,17 @@ class _Getter_0_ (TFL.Meta.Object) :
     """Generalized (and transitive) accessor to attributes and items."""
 
     def __getattr__ (self, name) :
-        return _Getter_1_ \
-            ( (operator.attrgetter (name), )
-            , "Getter function for `.%s`" % name
-            )
+        if "." in name :
+            ### Accommodate explicit calls to `getattr` with composite `name`
+            result = self
+            for n in name.split (".") :
+                result = getattr (result, n)
+            return result
+        else :
+            return _Getter_1_ \
+                ( (operator.attrgetter (name), )
+                , "Getter function for `.%s`" % name
+                )
     # end def __getattr__
 
     def __getitem__ (self, key) :

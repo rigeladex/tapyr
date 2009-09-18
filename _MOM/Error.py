@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -20,90 +20,23 @@
 #
 #++
 # Name
-#    TOM.Error
+#    MOM.Error
 #
 # Purpose
-#    Provide exception classes for TOM
+#    Provide exception classes for MOM
 #
 # Revision Dates
-#     2-Aug-1999 (CT) Creation (factored from TTA.py)
-#     2-Aug-1999 (CT) `Locked_Attribute' added
-#     4-Oct-1999 (CT) `Invariant.__init__': take `inv.attr_none' into account
-#    17-Nov-1999 (CT) `__cmp__' and `__hash__' added
-#    18-Nov-1999 (CT) `Attribute_Syntax_Error.__str__': use string
-#                     interpolation instead of string addition
-#     3-Dec-1999 (CT) `Invariant_Error_': set `self.attributes'
-#    19-Jan-2000 (CT) `assertion': put text of assertion in separate line
-#    24-Jan-2000 (CT) `Undefined_Object' added
-#    25-Jan-2000 (CT) `Undefined_Object' renamed to `Undefined_Cross_Ref'
-#    25-Jan-2000 (CT) `Unknown_Assoc' added
-#     3-Feb-2000 (CT) `Invariant_Error._attribute_values' factored
-#     3-Feb-2000 (CT) `_clean_this' used
-#    21-Jun-2000 (CT) `Quant_Error.violator_values': formatting changed
-#    21-Jun-2000 (CT) 2 calls to `_clean_this' added to `Quant_Error'
-#    27-Jul-2000 (MY) `Frame_Address_Error' added
-#     3-Aug-2000 (MY) `Frame_Address_Error' renamed to `MEDLerror'
-#    14-Sep-2000 (CT) `User_RDA_Module_Error' added
-#    15-Mar-2001 (CT) `Link_Scope_Mix_Error' added
-#     8-Oct-2001 (CT) `Quant_Error._violator_value` factored and made more
-#                     robust
-#     7-Nov-2001 (CT) Inherit from `StandardError` instead of `Exception`
-#     7-Nov-2001 (CT) Specialcased `Record` instance in `_violator_value`
-#    12-Nov-2001 (CT) `violator_values` made more robust
-#    18-Apr-2002 (MY) Rename MEDLerror to MEDL_Error
-#    25-Apr-2002 (MY) Remove MEDL_Error
-#     4-Jun-2002 (CT) `No_Such_Link` added
-#    18-Jun-2002 (CT) `Quant_Error` made descendent of `Invariant_Error`
-#                     - major refactorings in `Invariant_Error` and
-#                       `Quant_Error`
-#    10-Jul-2002 (CT) `Circular_Link` added
-#     6-Aug-2002 (CT) `violator_values` corrected
-#    17-Oct-2002 (CT) `_attribute_values` corrected (use `%` instead of
-#                     string concatenation of `repr`)
-#    19-Dec-2002 (CT) `Cannot_Rename_Root_Object` added
-#     6-Feb-2003 (CT) `inv.error_info` added to `Invariant_Error._tail`
-#     6-Feb-2003 (CT) s/Invariant_Error_/_Invariant_Error_/g
-#    10-Feb-2003 (CT) `extra_links` added
-#    17-Feb-2003 (CED) `Kind_Not_Valid_For_App_Type` added
-#    10-Apr-2003 (CT)  `Attribute_Syntax_Error` fixed
-#     8-May-2003 (CT)  `Attribute_Syntax_Error` fixed, again
-#     8-May-2003 (CT)  `Attribute_Syntax_Error` derived from `ValueError`, too
-#     7-Oct-2003 (CT)  `Attribute_Syntax_Error.__str__` changed to show
-#                      `exc_str`
-#    14-Jun-2004 (CT)  `Exception_Handled` added
-#    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
-#    11-Nov-2004 (CT)  `Invariant_Error.inv_desc` added and used
-#    14-Apr-2005 (CT)  Use `isinstance` instead of `type` comparison
-#     4-May-2006 (CT)  `Attribute_Syntax_Error.__str__` changed to not
-#                      display class, anymore
-#     1-Jun-2006 (CT)  Use `type_name` instead of `__class__.__name__`
-#     1-Jun-2006 (CT)  Style
-#    15-Jun-2006 (CT)  Use `Documenter.description` and
-#                      `Documenter.explanation`
-#     6-Jul-2006 (CT)  Use `app_type.doc_translation` in `Invariant_Error`
-#                      and `Attribute_Syntax_Error` (`name`, `description`)
-#     1-Aug-2006 (CT)  `obj` and `doc_translator` added to `_Invariant_Error_`
-#     1-Aug-2006 (CT)  `doc_translator` used instead of home-grown code
-#     1-Aug-2006 (CT)  `extra_links` run through `doc_translator`
-#     2-Aug-2006 (CT)  Yesterday's code corrected to only run strings in
-#                      `extra_links` through `doc_translator`
-#     9-Aug-2006 (CT)  `__cmp__` and `__hash__` changed to use `str (self)`
-#    29-Aug-2006 (MZO) [21185] `__cmp__` fixed
-#    04-Jul-2007 (CED) User RDAs removed
-#    23-Jul-2007 (CED) Activated absolute_import
-#     4-Apr-2008 (CT)  Exceptions factored in here from TOM.DB_File
+#    18-Sep-2009 (CT) Creation (factored from TOM.Error)
 #    ««revision-date»»···
 #--
 
-from __future__ import absolute_import
-
 from   _TFL           import TFL
-from   _TOM           import TOM
-import _TFL.Caller
+from   _MOM           import MOM
 
-from   copy           import copy
 from   _TFL.predicate import *
 from   _TFL.Record    import Record
+
+import _TFL.Caller
 
 class Exception_Handled (Exception) :
     """Raised after an exception was already handled to bail out from an
@@ -112,7 +45,7 @@ class Exception_Handled (Exception) :
 # end class Exception_Handled
 
 class Error (StandardError) :
-    """Root class of TOM exceptions"""
+    """Root class of MOM exceptions"""
 
     arg_sep = ", "
 
@@ -141,43 +74,46 @@ class Undefined_Cross_Ref (Error) :
     """Raised when a cross-referenced object/link is undefined or the
        cross-referenced attribute of that entity is undefined.
     """
-    pass
+# end class Undefined_Cross_Ref
 
 class Unknown_Assoc (Error) :
     """Raised when a cross-referenced link refers to an unknown association."""
-    pass
+# end class Unknown_Assoc
 
 class Name_Clash (Error) :
     """Raised when one name is used for more than one object."""
+
     arg_sep = " "
 
     def __init__ (self, new, old) :
         self.args = ("new definition of", new, "clashes with existing", old)
     # end def __init__
 
+# end class Name_Clash
+
 class Invalid_Name (Error) :
     """Raised when an invalid name is given for an object to be created."""
-    pass
+# end class Invalid_Name
 
 class Invalid_Seq_Nr (Error) :
     """Raised when an invalid sequence number is given for an ordered link to be created."""
-    pass
+# end class Invalid_Seq_Nr
 
 class Partial_Type (Error) :
     """Raised when creation of an object of a partial type is tried."""
-    pass
+# end class Partial_Type
 
 class No_Such_Directory (Error) :
     """Raised for a file specification containing a non-existent directory."""
-    pass
+# end class No_Such_Directory
 
 class No_Such_File (Error) :
     """Raised for a file specification of a non-existing file."""
-    pass
+# end class No_Such_File
 
 class No_Such_Link (Error) :
     """Raised if names/objects are passed to association which aren't linked."""
-    pass
+# end class No_Such_Link
 
 class Too_Many_Objects (Error) :
     """Raised when too many objects are created."""
@@ -193,35 +129,35 @@ class Too_Many_Objects (Error) :
 
 class Duplicate_Link (Error) :
     """Raised when a link is added to an association more than once."""
-    pass
+# end class Duplicate_Link
 
 class Duplicate_Seq_Nr (Error) :
     """Raised when a sequence number is added to an ordered association more than once."""
-    pass
+# end class Duplicate_Seq_Nr
 
 class Assoc_Link_Error (Error) :
     """Raised when a link of wrong type is added to an association."""
-    pass
+# end class Assoc_Link_Error
 
 class Empty_Link_Error (Error) :
     """Raised when an empty link is added to an association."""
-    pass
+# end class Empty_Link_Error
 
 class Link_Type_Error (Error) :
     """Raised when a link is created with wrong object types."""
-    pass
+# end class Link_Type_Error
 
 class Link_Scope_Mix_Error (Error) :
     """Raised when objects with different home scopes are put into a link."""
-    pass
+# end class Link_Scope_Mix_Error
 
 class Circular_Link (Error) :
     """Raised when a link is added to an association which results directly or indirectly in a circular link."""
-    pass
+# end class Circular_Link
 
 class Incomplete_Assoc_Error (Error) :
     """Raised when an association without link type is defined."""
-    pass
+# end class Incomplete_Assoc_Error
 
 class Multiplicity_Error (Error) :
     """Raised when the maximum multiplicity for an association is violated."""
@@ -236,12 +172,15 @@ class Multiplicity_Error (Error) :
 
 class Multiplicity_Errors (Error) :
     pass
+# end class Multiplicity_Errors
 
 class Inconsistent_Attribute (Error) :
     pass
+# end class Inconsistent_Attribute
 
 class Locked_Attribute (Error) :
     pass
+# end class Locked_Attribute
 
 class _Invariant_Error_ (Error) :
 
@@ -284,8 +223,8 @@ class Invariant_Error (_Invariant_Error_) :
             if isinstance (el, basestring) :
                 el = dt (el)
             sel.append (el)
-        self.val_dict       = copy (inv.val_dict)
-        self.val_desc       = copy (inv.val_desc)
+        self.val_dict       = dict (inv.val_dict)
+        self.val_desc       = dict (inv.val_desc)
         self.violators      = violators
         self.violators_attr = violators_attr
         description         = obj.Documenter.description (inv)
@@ -365,7 +304,7 @@ class Invariant_Error (_Invariant_Error_) :
 # end class Invariant_Error
 
 class Quant_Error (Invariant_Error) :
-    """Raised when a quantifier invariant of a TOM object/link is violated."""
+    """Raised when a quantifier invariant of a MOM object/link is violated."""
 
     Ancestor = __Ancestor = Invariant_Error
 
@@ -420,7 +359,7 @@ class Quant_Error (Invariant_Error) :
 # end class Quant_Error
 
 class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
-    """Raised for syntax errors in attributes of TOM objects/links."""
+    """Raised for syntax errors in attributes of MOM objects/links."""
 
     def __init__ (self, obj, attr, val, exc_str = "") :
         _Invariant_Error_.__init__ (self, obj)
@@ -483,6 +422,36 @@ class Invariant_Errors (Error) :
 
 # end class Invariant_Errors
 
+class Invalid_Attribute (Error, AttributeError) :
+
+    def __init__ (self, entity, name, val, kind = "unknown") :
+        self.args = \
+            ( ( "Can't set %s attribute <%s>.%s to `%s`"
+              % (kind, entity, name, val)
+              )
+            ,
+            )
+        self.entity    = entity
+        self.kind      = kind
+        self.attribute = name
+        self.value     = val
+    # end def __init__
+
+    def correct (self) :
+        pass
+    # end def correct
+
+# end class Invalid_Attribute
+
+class Unknown_Attribute (Invalid_Attribute) :
+
+    def correct (self) :
+        """Try to correct this error."""
+        self.entity.correct_unknown_attr (self)
+    # end def correct
+
+# end class Unknown_Attribute
+
 class Invalid_Attribute_Type (Error) :
     pass
 # end class Invalid_Attribute_Type
@@ -493,17 +462,24 @@ class Already_Editing (Error) :
 
 class Type_Not_In_Scope (Error) :
     pass
+# end class Type_Not_In_Scope
 
 class Cannot_Rename_Root_Object (Error) :
     pass
+# end class Cannot_Rename_Root_Object
 
-class Kind_Not_Valid_For_App_Type (Error) :
+class DB_Error (StandardError) :
     pass
+# end class DB_Error
 
-class DB_Error                (StandardError) : pass
-class Incompatible_DB_Version (DB_Error)      : pass
-class Empty_DB                (DB_Error)      : pass
+class Incompatible_DB_Version (DB_Error) :
+    pass
+# end class Incompatible_DB_Version
+
+class Empty_DB (DB_Error) :
+    pass
+# end class Empty_DB
 
 if __name__ != "__main__" :
-    TOM._Export_Module ()
-### __END__ TOM.Error
+    MOM._Export_Module ()
+### __END__ MOM.Error
