@@ -38,6 +38,8 @@
 #    18-Sep-2009 (CT) `_call_1` and `_call_n` changed to call callable results
 #    18-Sep-2009 (CT) `_Getter_0_.__getattr__` changed to deal properly with
 #                     composite names (e.g., `.x.y.z`)
+#    18-Sep-2009 (CT) `_call_1` and `_call_n` changed back to *not* call
+#                     callable results (breaks too many users)
 #    ««revision-date»»···
 #--
 
@@ -67,30 +69,6 @@ class _Getter_ (TFL.Meta.Object) :
        >>> r.bar.z.append ("howdi")
        >>> gn (r)
        'howdi'
-
-       >>> t = Record (a = "abc", b = "ABC", d = "   xyz")
-       >>> Getter.a (t)
-       'abc'
-       >>> Getter.a.upper (t)
-       'ABC'
-       >>> Getter.a.upper.strip (t)
-       'ABC'
-       >>> Getter.b (t)
-       'ABC'
-       >>> Getter.b.lower (t)
-       'abc'
-       >>> Getter.b.lower.strip (t)
-       'abc'
-       >>> Getter.d (t)
-       '   xyz'
-       >>> Getter.d.upper (t)
-       '   XYZ'
-       >>> Getter.d.upper.strip (t)
-       'XYZ'
-       >>> getattr (Getter, "d.__len__") (t)
-       6
-       >>> Getter.d.strip.__len__ (t)
-       3
 
        `Attribute` is a legacy spelling of `Getter`
        >>> r = Record (a = 1, b = "2", foo = 42)
@@ -125,18 +103,13 @@ class _Getter_ (TFL.Meta.Object) :
 
     def _call_1 (self, o) :
         assert len (self.__getters) == 1
-        result = self.__getters [0] (o)
-        if hasattr (result, "__call__") :
-            result = result ()
-        return result
+        return self.__getters [0] (o)
     # end def _call_1
 
     def _call_n (self, o) :
         result = o
         for g in self.__getters :
             result = g (result)
-            if hasattr (result, "__call__") :
-                result = result ()
         return result
     # end def _call_n
 
