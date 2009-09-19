@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    18-Sep-2009 (CT) Creation
+#    19-Sep-2009 (MG) `_desc_key` factored to avoind binding problems of the 
+#                     `get` function
 #    ««revision-date»»···
 #--
 
@@ -157,13 +159,17 @@ class Sorted_By (TFL.Meta.Object) :
             if hasattr (c, "__call__") :
                 key = c
             elif c.startswith ("-") :
-                get = getattr (TFL.Getter, c [1:])
-                key = lambda x : Desc (get (x))
+                key = self._desc_key (c [1:])
             else :
                 key = getattr (TFL.Getter, c)
             result.append (key)
         return result
     # end def keys
+
+    def _desc_key (self, c) :
+        get = getattr (TFL.Getter, c)
+        return lambda x : self.Descending (get (x))
+    # end def _desc_key
 
 # end class Sorted_By
 
