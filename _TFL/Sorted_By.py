@@ -39,7 +39,7 @@
 from   _TFL import TFL
 
 import _TFL._Meta.Object
-from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL._Meta.Once_Property   import Once_Property
 
 import _TFL.Accessor
 
