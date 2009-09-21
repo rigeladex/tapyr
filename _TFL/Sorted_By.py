@@ -32,6 +32,7 @@
 #    21-Sep-2009 (CT) `Descending.__lt__` fixed
 #    21-Sep-2009 (CT) `Desc_Getter` added to improve introspection and to
 #                     replace `_desc_key`
+#    21-Sep-2009 (CT) `Descending.__eq__` added and doctests fixed
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,10 @@ class Desc_Getter (TFL.Meta.Object) :
         def __lt__ (self, rhs) :
             return rhs.key <= self.key
         # end def __lt__
+
+        def __eq__ (self, rhs) :
+            return rhs.key == self.key
+        # end def __eq__
 
     # end class Descending
 
@@ -107,12 +112,12 @@ class Sorted_By (TFL.Meta.Object) :
        (a = 2, b = 1, c =  xyzz)
        (a = 2, b = 1, c =   xyzzz)
        >>> show (l, key = Sorted_By (["a", "-b"]))
-       (a = 1, b = 2, c = efg)
        (a = 1, b = 2, c = ABCD)
+       (a = 1, b = 2, c = efg)
        (a = 1, b = 1, c = abcd)
-       (a = 2, b = 1, c =   xyzzz)
-       (a = 2, b = 1, c =  xyzz)
        (a = 2, b = 1, c = xyz)
+       (a = 2, b = 1, c =  xyzz)
+       (a = 2, b = 1, c =   xyzzz)
        >>> show (l, key = Sorted_By (["b", "a"]))
        (a = 1, b = 1, c = abcd)
        (a = 2, b = 1, c = xyz)
@@ -121,18 +126,18 @@ class Sorted_By (TFL.Meta.Object) :
        (a = 1, b = 2, c = ABCD)
        (a = 1, b = 2, c = efg)
        >>> show (l, key = Sorted_By (["-b", "a"]))
-       (a = 1, b = 2, c = efg)
        (a = 1, b = 2, c = ABCD)
-       (a = 2, b = 1, c =   xyzzz)
-       (a = 2, b = 1, c =  xyzz)
-       (a = 2, b = 1, c = xyz)
+       (a = 1, b = 2, c = efg)
        (a = 1, b = 1, c = abcd)
-       >>> show (l, key = Sorted_By (["-b", "-a"]))
-       (a = 1, b = 2, c = efg)
-       (a = 1, b = 2, c = ABCD)
-       (a = 2, b = 1, c =   xyzzz)
-       (a = 2, b = 1, c =  xyzz)
        (a = 2, b = 1, c = xyz)
+       (a = 2, b = 1, c =  xyzz)
+       (a = 2, b = 1, c =   xyzzz)
+       >>> show (l, key = Sorted_By (["-b", "-a"]))
+       (a = 1, b = 2, c = ABCD)
+       (a = 1, b = 2, c = efg)
+       (a = 2, b = 1, c = xyz)
+       (a = 2, b = 1, c =  xyzz)
+       (a = 2, b = 1, c =   xyzzz)
        (a = 1, b = 1, c = abcd)
        >>> show (l, key = Sorted_By (["b", "c"]))
        (a = 2, b = 1, c =   xyzzz)
@@ -149,19 +154,19 @@ class Sorted_By (TFL.Meta.Object) :
        (a = 1, b = 2, c = efg)
        (a = 1, b = 2, c = ABCD)
        >>> show (l, key = Sorted_By (["-b", "c"]))
-       (a = 1, b = 2, c = efg)
        (a = 1, b = 2, c = ABCD)
+       (a = 1, b = 2, c = efg)
        (a = 2, b = 1, c =   xyzzz)
        (a = 2, b = 1, c =  xyzz)
-       (a = 2, b = 1, c = xyz)
        (a = 1, b = 1, c = abcd)
+       (a = 2, b = 1, c = xyz)
        >>> show (l, key = Sorted_By (["-b", "-c"]))
        (a = 1, b = 2, c = efg)
        (a = 1, b = 2, c = ABCD)
-       (a = 2, b = 1, c =   xyzzz)
-       (a = 2, b = 1, c =  xyzz)
        (a = 2, b = 1, c = xyz)
        (a = 1, b = 1, c = abcd)
+       (a = 2, b = 1, c =  xyzz)
+       (a = 2, b = 1, c =   xyzzz)
        >>> show (l, key = Sorted_By (["c"]))
        (a = 2, b = 1, c =   xyzzz)
        (a = 2, b = 1, c =  xyzz)
