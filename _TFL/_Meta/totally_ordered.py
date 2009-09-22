@@ -27,13 +27,15 @@
 #
 # Revision Dates
 #    21-Sep-2009 (CT) Creation
+#    22-Sep-2009 (CT) `__eq__` and `__ne__` removed from `_Orders_.__cmp__`
+#    22-Sep-2009 (CT) `equality_operators ["__eq__"]` change to use only `<`
 #    ««revision-date»»···
 #--
 
 """
-`totally_ordered` is a class decorator adding all missing
-rich comparison methods to a class, if at least one of the rich ordering
-methods or the old-style `__cmp__` is defined.
+`totally_ordered` is a class decorator adding all missing rich comparison
+methods to a class, if at least one of the rich ordering methods or the
+old-style `__cmp__` is defined.
 
 >>> class T (TFL.Meta.Object) :
 ...     def __init__ (self, value) :
@@ -48,6 +50,10 @@ methods or the old-style `__cmp__` is defined.
 ...     def __gt__ (self, rhs) : return self.value >  rhs.value
 ...
 >>> @totally_ordered
+... class T_gtr (T) :
+...     def __gt__ (self, rhs) : return self.value <  rhs.value
+...
+>>> @totally_ordered
 ... class T_le (T) :
 ...     def __le__ (self, rhs) : return self.value <= rhs.value
 ...
@@ -56,11 +62,15 @@ methods or the old-style `__cmp__` is defined.
 ...     def __lt__ (self, rhs) : return self.value <  rhs.value
 ...
 >>> @totally_ordered
+... class T_ltr (T) :
+...     def __lt__ (self, rhs) : return self.value >  rhs.value
+...
+>>> @totally_ordered
 ... class T_cmp (T) :
 ...     def __cmp__ (self, rhs) : return self.value - rhs.value
 ...
 
->>> for C in T_cmp, T_ge, T_gt, T_le, T_lt :
+>>> for C in T_cmp, T_ge, T_gt, T_le, T_lt, T_gtr, T_ltr :
 ...     a, b, c = C (1), C (2), C (2)
 ...     print C.__name__, a<b, a<=b, a>b, a>=b, b<a, b<=a, b>a, b>=a
 ...     print "    ", a==b, a!=b, b==c, b!=c
@@ -75,12 +85,36 @@ T_le True True False False False False True True
      False True True False
 T_lt True True False False False False True True
      False True True False
->>> print "   ab", (a, b) < (a, b), (a, b) <= (a, b), (a, b) == (a, b)
-   ab False True True
->>> print "   bc", (b, c) < (b, c), (b, c) <= (b, c), (b, c) == (b, c)
-   bc False True True
->>> print " acbc", (a, c) < (b, c), (a, c) <= (b, c), (a, c) == (b, c)
- acbc True True False
+T_gtr False False True True True True False False
+     False True True False
+T_ltr False False True True True True False False
+     False True True False
+>>> for C in T_lt, T_gtr, T_ltr :
+...     a, b, c = C (1), C (2), C (2)
+...     print C.__name__, (a, b) < (a, b), (a, b) <= (a, b), (a, b) == (a, b)
+...     print "    ",     (a, b) > (a, b), (a, b) >= (a, b), (a, b) == (a, b)
+...     print "    ",     (b, c) < (b, c), (b, c) <= (b, c), (b, c) == (b, c)
+...     print "    ",     (b, c) > (b, c), (b, c) >= (b, c), (b, c) == (b, c)
+...     print "    ",     (a, c) < (b, c), (a, c) <= (b, c), (a, c) == (b, c)
+...     print "    ",     (a, c) > (b, c), (a, c) >= (b, c), (a, c) == (b, c)
+T_lt False True True
+     False True True
+     False True True
+     False True True
+     True True False
+     False False False
+T_gtr False True True
+     False True True
+     False True True
+     False True True
+     False False False
+     True True False
+T_ltr False True True
+     False True True
+     False True True
+     False True True
+     False False False
+     True True False
 >>> totally_ordered (T)
 Traceback (most recent call last):
   ...
@@ -110,12 +144,10 @@ class _Orders_ (TFL.Meta.Object) :
 
     @_base_operator
     class __cmp__ :
-        def __eq__ (self, rhs) : return self.__cmp__ (rhs) == 0
         def __ge__ (self, rhs) : return self.__cmp__ (rhs) >= 0
         def __gt__ (self, rhs) : return self.__cmp__ (rhs) >  0
         def __le__ (self, rhs) : return self.__cmp__ (rhs) <= 0
         def __lt__ (self, rhs) : return self.__cmp__ (rhs) <  0
-        def __ne__ (self, rhs) : return self.__cmp__ (rhs) != 0
 
     @_base_operator
     class __ge__ :
@@ -145,9 +177,15 @@ class _Orders_ (TFL.Meta.Object) :
     ### the exception::
     ###     TypeError: unbound method __eq__() must be called with _Orders_
     ###         instance as first argument (got T_ge instance instead)
+    ###
+    ### Both `__eq__` and `__ne__` only use the `<` operator as that is the
+    ### one most likely to be defined (being used by Pythons inbuilt `sort`)
+    ###
+    ### Using more than one operator for implementing `__eq__` (or `__ne__`)
+    ### gives wrong results for some implementations of the base operator
     equality_operators = dict \
-        ( __eq__ = lambda self, rhs : self <= rhs and self >= rhs
-        , __ne__ = lambda self, rhs : self <  rhs or  rhs  <  self
+        ( __eq__ = lambda self, rhs : not (self < rhs or rhs < self)
+        , __ne__ = lambda self, rhs :     (self < rhs or rhs < self)
         )
 
     for name, func in equality_operators.iteritems () :
@@ -163,7 +201,7 @@ def totally_ordered (cls) :
     if oops :
         base = (k for k in _order_operators if k in oops).next ()
     elif "__cmp__" in defined :
-        ### backwards compatibility for 2.x classes defining poor comparison
+        ### backwards compatibility for 2.x classes defining `__cmp__`
         base = "__cmp__"
     else :
         raise TypeError, \

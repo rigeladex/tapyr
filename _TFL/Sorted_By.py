@@ -33,6 +33,8 @@
 #    21-Sep-2009 (CT) `Desc_Getter` added to improve introspection and to
 #                     replace `_desc_key`
 #    21-Sep-2009 (CT) `Descending.__eq__` added and doctests fixed
+#    22-Sep-2009 (CT) `Descending` made `totally_ordered`
+#                     `Descending.__eq__` removed again
 #    ««revision-date»»···
 #--
 
@@ -40,11 +42,13 @@ from   _TFL import TFL
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property   import Once_Property
+from   _TFL._Meta.totally_ordered import totally_ordered
 
 import _TFL.Accessor
 
 class Desc_Getter (TFL.Meta.Object) :
 
+    @totally_ordered
     class Descending (TFL.Meta.Object) :
 
         def __init__ (self, key) :
@@ -52,12 +56,8 @@ class Desc_Getter (TFL.Meta.Object) :
         # end def __init__
 
         def __lt__ (self, rhs) :
-            return rhs.key <= self.key
+            return self.key > rhs.key
         # end def __lt__
-
-        def __eq__ (self, rhs) :
-            return rhs.key == self.key
-        # end def __eq__
 
     # end class Descending
 
