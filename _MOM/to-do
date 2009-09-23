@@ -5,6 +5,27 @@ MOM To-Do
 
   + Object: named vs. un-named
 
+- M_Entity vs. M_E_Type:
+
+  * Entity defines the specification of the essential class
+
+  * E_Type is automagically created without inheriting from Entity
+
+    + The essential E_Type.__dict__ is filled with contents of
+      Entity.__dict__ except for `_Attributes` and `_Predicates`
+
+      # The essential E_Type gets the meta-processed predicates
+
+    + For each DBW backend to support, a separate subclass of the essential
+      E_Type is automagically derived, which contains the DBW specific
+      attribute descriptors
+
+  x M_Entity __init__/__new__ does very little apart from remembering the
+    essential classes (in the class attribute _M_Extension)
+
+  * M_E_Type __init__/__new__ sets up the meta information for the essential
+    classes
+
 - Scope:
 
   * change signature of `remove` and `rename`

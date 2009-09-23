@@ -123,6 +123,8 @@ Object Queries
 
 For each essential class `E`, a number of queries is defined:
 
+### XXX base on `query`
+
 - `E.count` gives the number of strict instances of `E` (i.e., excluding
   instances of descendent classes). For partial classes, `count` always
   returns zero.
