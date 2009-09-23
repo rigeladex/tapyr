@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    17-Sep-2009 (CT) Creation (factored from `TOM.Entity`)
+#    23-Sep-2009 (CT) Journal-related methods removed
 #    ««revision-date»»···
 #--
 
@@ -289,7 +290,7 @@ class Entity (_Entity_Essentials_) :
             raise MOM.Error.Partial_Type (cls.type_name)
         result = super (Entity, cls).__new__ (cls)
         if not result.home_scope :
-            result.home_scope = MOM.Scope.active
+            result.home_scope = kw.get ("scope", MOM.Scope.active)
         result.id = result.__new_id ()
         return result
     # end def __new__
@@ -330,6 +331,7 @@ class Entity (_Entity_Essentials_) :
         pass
     # end def compute_type_defaults_internal
 
+    ### XXX needs to change
     def copy (self, * new_n, ** kw) :
         """Make copy with name(s) `new_n`."""
         new_obj = self.__class__ (* new_n)
@@ -345,21 +347,6 @@ class Entity (_Entity_Essentials_) :
         """Try to correct an unknown attribute error."""
         pass
     # end def correct_unknown_attr
-
-    def customize_stmt (self) :
-        return self.define_stmt ("customize")
-    # end def customize_stmt
-
-    def define_stmt (self, name_of_def_stmt = None) :
-        name = self._define_stmt_name_arg   ()
-        args = self._define_stmt_attributes ([name])
-        if self._need_define_stmt (args) :
-            return self._define_stmt \
-                (args, name_of_def_stmt = name_of_def_stmt)
-        else :
-            ### print "Ignoring", name
-            return ""
-    # end def define_stmt
 
     def globals (self) :
         return self.__class__._appl_globals or object_globals (self)
@@ -407,14 +394,6 @@ class Entity (_Entity_Essentials_) :
         if attr :
             return attr.get_raw (self) or ""
     # end def raw_attr
-
-    def remove_stmt (self) :
-        return """%s.%s (%s)\n""" % \
-               ( self.type_name
-               , self._name_of_remove_stmt
-               , self._remove_stmt_name_arg ()
-               )
-    # end def remove_stmt
 
     def reset_syncable (self) :
         self._attr_man.reset_syncable ()
@@ -500,46 +479,15 @@ class Entity (_Entity_Essentials_) :
         self._attr_man.sync_attributes (self)
     # end def sync_attributes
 
-    def _define_stmt \
-        (self, args, sep = ", ", sep2 = " ", name_of_def_stmt = None) :
-        if name_of_def_stmt is None :
-            name_of_def_stmt = self._name_of_define_stmt
-        return """%s.%s (%s, raw=1)\n""" % \
-               (self.type_name, name_of_def_stmt, sep.join (args))
-    # end def _define_stmt
-
-    def _define_stmt_attributes (self, start = []) :
-        result = list (start)
-        for a in itertools.chain (self.required, self.optional) :
-            if a.to_save (self) :
-                result.append \
-                    ("%s = %s" % (a.name, a.raw_as_string (self)))
-        return result
-    # end def _define_stmt_attributes
-
     def _init_meta_attrs (self) :
-        self._attr_man                   = MOM.Attr.Manager (self._Attributes)
-        self._pred_man                   = MOM.Pred.Manager (self._Predicates)
+        self._attr_man  = MOM.Attr.Manager (self._Attributes)
+        self._pred_man  = MOM.Pred.Manager (self._Predicates)
         self.object_referring_attributes = {}
     # end def _init_meta_attrs
 
     def _init_attributes (self) :
         self._attr_man.reset_attributes (self)
     # end def _init_attributes_
-
-    def _journal_items (self, result_dict, result) :
-        attributes = self.attributes
-        raw_attr_d = self._attr_man.raw_attr_value_dict
-        for k, v in dusort (result_dict.iteritems (), TFL.Item [0]) :
-            if k in raw_attr_d :
-                old = raw_attr_d [k]
-                if (old != v) and (v or old):
-                    result.append \
-                        ( '%s = %s'
-                        % (k, attributes [k].raw_as_string (self, v))
-                        )
-        return result
-    # end def _journal_items
 
     def _kw_satisfies_i_invariants (self, attr_dict, on_error) :
         result = not self.is_correct (attr_dict)
@@ -550,10 +498,6 @@ class Entity (_Entity_Essentials_) :
             on_error (MOM.Error.Invariant_Errors (errors))
         return result
     # end def _kw_satisfies_i_invariants
-
-    def _need_define_stmt (self, args) :
-        return True
-    # end def _need_define_stmt
 
     def _print_attr_err (self, exc) :
         print self, exc

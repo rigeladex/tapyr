@@ -5,6 +5,12 @@ MOM To-Do
 
   + Object: named vs. un-named
 
+- Scope:
+
+  * change signature of `remove` and `rename`
+
+  * use `.epk` instead of `.name` to identify objects
+
 - Dependency management: move to DBW-Mixin for Scope
 
       # referential integrity
