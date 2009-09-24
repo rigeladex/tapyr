@@ -50,6 +50,8 @@
 #     6-Mar-2009 (CT) `__doc__` added to `Method_Descriptor`
 #                     (unfortunately, cannot use a property, because Sphinx
 #                     crashes and burns with that)
+#    24-Sep-2009 (CT) `prop` decorator removed
+#    24-Sep-2009 (CT) `Data_Descriptor` added (as an example how to do it)
 #    ««revision-date»»···
 #--
 
@@ -100,6 +102,45 @@ class Property (_Property_) :
     # end def __init__
 
 # end class Property
+
+class Data_Descriptor (property) :
+    """Data descriptor for an attribute.
+
+       This is just an example how to define a data descriptor for an
+       attribute.
+    """
+
+    __metaclass__ = TFL.Meta.M_Class
+
+    def __init__ (self, name, doc = None) :
+        self.name    = name
+        self.__doc__ = doc
+    # end def __init__
+
+    def __delete__ (self, obj) :
+        try :
+            del obj.__dict__ [self.name]
+        except KeyError :
+            raise AttributeError (self.name)
+    # end def __delete__
+
+    def __get__ (self, obj, cls = None) :
+        if obj is None :
+            return self
+        try :
+            return obj.__dict__ [self.name]
+        except KeyError :
+            raise AttributeError \
+                ( "%r object has no attribute %r"
+                % (obj.__class__.__name__, self.name)
+                )
+    # end def __get__
+
+    def __set__ (self, obj, value) :
+        obj.__dict__ [self.name] = value
+    # end def __set__
+
+# end class Data_Descriptor
 
 class Method_Descriptor (object) :
     """Descriptor for special method types."""
@@ -218,9 +259,9 @@ class Alias_Property (object) :
            >>> class X (object) :
            ...     def __init__ (self) :
            ...         self.foo = 137
+           ...     @classmethod
            ...     def foo (self) :
            ...         return 42
-           ...     foo = classmethod (foo)
            ...     bar = Alias_Property ("foo")
            ...
            >>> X.bar
@@ -403,22 +444,6 @@ class Lazy_Property (object) :
     # end def __get__
 
 # end class Lazy_Property
-
-def prop (wrapper) :
-    """Property decorator as proposed by Alex Martelli (and propably others).
-
-       Usage example::
-
-          @prop
-          def foo () :
-              def get (self) :
-                  return getattr (self, "_foo", 42)
-              def set (self, value) :
-                  self._foo = value
-              return get, set
-    """
-    return property (* wrapper ())
-# end def prop
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "_Property_")

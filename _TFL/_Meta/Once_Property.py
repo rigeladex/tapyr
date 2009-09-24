@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Nov-2007 (CT) Creation
 #     4-Feb-2009 (CT) Documentation improved
+#    24-Sep-2009 (CT) `_del` added to `Once_Property`
 #    ««revision-date»»···
 #--
 
@@ -53,18 +54,18 @@ def Once_Property (f) :
     """
     key = "__%s" % (f.__name__, )
     @wraps (f)
-    def _ (self) :
+    def _get (self) :
         dict = self.__dict__
         try :
             result = dict [key]
         except KeyError :
             result = dict [key] = f (self)
         return result
-    return property (_, doc = f.__doc__)
+    def _del (self) :
+        del self.__dict__ [key]
+    return property (_get, None, _del, doc = f.__doc__)
 # end def Once_Property
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("Once_Property")
-### __END__ Once_Property
-
-
+### __END__ TFL.Meta.Once_Property

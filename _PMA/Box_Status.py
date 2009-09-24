@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -28,11 +28,11 @@
 # Revision Dates
 #    26-Jul-2005 (CT) Creation
 #    26-Jul-2005 (CT) `_Status_I_` factored
-#    14-Aug-2005 (MG) use new `TGL._Status_` instead of `PMA._Status_`
+#    14-Aug-2005 (MG) Use new `TGL._Status_` instead of `PMA._Status_`
+#    24-Sep-2009 (CT) `prop` decorator removed
 #    ««revision-date»»···
 #--
 
-from   _TFL._Meta.Property     import prop
 from   _PMA                    import PMA
 from   _TGL                    import TGL
 import _TGL._Status_
@@ -45,18 +45,19 @@ class Box_Status (TGL._Status_I_) :
         self.__super.__init__ (* attr)
     # end def __init__
 
-    @prop
-    def current_message () :
-        def get (self) :
-            result = None
-            cmn    = self._attr.get ("current_message")
-            if cmn is not None :
-                result = self.box.msg_dict.get (cmn)
-            return result
-        def set (self, cm) :
-            self._set_attr (current_message = cm and cm.name)
-        return get, set
-    # end def current_message
+    def _get_current_message () :
+        result = None
+        cmn    = self._attr.get ("current_message")
+        if cmn is not None :
+            result = self.box.msg_dict.get (cmn)
+        return result
+    # end def _get_current_message
+
+    def _set_current_message () :
+        self._set_attr (current_message = cm and cm.name)
+    # end def _set_current_message
+
+    current_message = property (_get_current_message, _set_current_message)
 
 # end class Box_Status
 

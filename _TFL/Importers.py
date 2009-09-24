@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2007 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
+# Copyright (C) 2006-2009 Christian Eder, Philipp Gortan <{ced,pgo}@tttech.com>
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -41,12 +41,10 @@
 #    15-Nov-2006 (CED) `register_at_sys_path` added
 #    14-Jun-2007 (CED) [24566] `load_module` resets package's __path__
 #    18-Jun-2007 (CT)  `find_module` changed back to be 2.4 compatible
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
+#    24-Sep-2009 (CT)  `_load_module` changed to not rely on tuple unpacking
+#                      in the argument list (3.x doesn't support that anymore)
 #    ««revision-date»»···
 #--
-
-
 
 import imp
 import os
@@ -169,6 +167,7 @@ class _DPN_ZipImporter_ (DPN_Importer) :
     """Use the executable itself in conjunction with Python's zipimporter
        for importing.
     """
+
     _path = filter (os.path.isfile, sys.path)
 
     def _get_zipimporter (self, zip_path) :
@@ -197,7 +196,8 @@ class _DPN_ZipImporter_ (DPN_Importer) :
             return self
     # end def _find_module
 
-    def _load_module (self, realmodule, (module, loader)) :
+    def _load_module (self, realmodule, res) :
+        (module, loader) = res
         mod = loader.load_module (module)
         sys.modules [realmodule] = mod
         return mod

@@ -51,7 +51,8 @@
 #     3-Feb-2009 (CT)  Documentation improved..
 #     4-Feb-2009 (CT)  Documentation improved...
 #     4-Feb-2009 (CT)  s/_fixed_type_/M_M_Class/ and clarified implementation
-#    11-Jun-2009 (CT) `head_mixins` and `tail_mixins` added to `New`
+#    11-Jun-2009 (CT)  `head_mixins` and `tail_mixins` added to `New`
+#    24-Sep-2009 (CT)  Use `_TFL.callable` to avoid `-3` warnings
 #    ««revision-date»»···
 #--
 
@@ -312,7 +313,7 @@ class M_Autoproperty (M_Base) :
         props  = cls.__dict__.get (cls._m_mangled_attr_name ("properties"), [])
         for p in props :
             init_instance = getattr (p, "init_instance", None)
-            if callable (init_instance) :
+            if TFL.callable (init_instance) :
                 init_instance (result)
         return result
     # end def __call__
@@ -343,7 +344,7 @@ class M_Automethodwrap (M_Base) :
             _aw.update (getattr (b, "__autowrap", {}))
         _aw.update (dict.get (cls._m_mangled_attr_name ("autowrap"), {}))
         for name, wrapper in _aw.iteritems () :
-            if callable (wrapper) :
+            if TFL.callable (wrapper) :
                 method = dict.get (name)
                 if method :
                     ### this is tricky: we want to wrap the function found in
@@ -390,6 +391,8 @@ class M_Class_SWRP (M_Autoproperty, M_Class) :
        :class:`~_TFL._Meta.M_Class.M_Automethodwrap`.
     """
 # end class M_Class_SWRP
+
+import _TFL.predicate
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*", "M_Base")

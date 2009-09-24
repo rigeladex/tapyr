@@ -169,10 +169,12 @@
 #    23-Jan-2009 (CT)  Broken `rotated_until_ordered` removed,
 #                      `is_ordered` de-obfuscated (removed criminal energy,
 #                      indeed)
+#    24-Sep-2009 (CT)  `callable` added
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
+
 import _TFL.Generators
 
 ### legacy aliases
@@ -275,6 +277,14 @@ def byte_alignment (bytes) :
     """
     return (bytes ^ (bytes - 1)) & bytes
 # end def byte_alignment
+
+def callable (obj) :
+    """Return whether the object is callable (i.e., some kind of function).
+       Note that classes are callable, as are instances with a __call__()
+       method.
+    """
+    return hasattr (obj, "__call__")
+# end def callable
 
 def cartesian (s1, s2, combiner = None) :
     """Returns the cartesian product of the sequences `s1' and `s2'.

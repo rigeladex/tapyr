@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -69,6 +69,7 @@
 #     9-Aug-2006 (CT) `__hash__` changed to return `hash (self.value)` instead
 #                     of `id (self)`
 #     4-Jan-2008 (CT) `_sanitized_year` changed to add `2000` for `values < 40`
+#    24-Sep-2009 (CT) Use `in` operator instead of `has_key` method
 #    ««revision-date»»···
 #--
 
@@ -189,7 +190,7 @@ class Time_Tuple :
     _sanitizers = { "month" : _sanitized_month, "year" : _sanitized_year}
 
     def __getattr__ (self, name) :
-        if self.index.has_key (name) :
+        if name in self.index :
             return self.body [self.index [name]]
         if name == "week" :
             result = self.week = self._week ()
