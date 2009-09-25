@@ -30,6 +30,7 @@
 #    26-Jul-2005 (CT) `_Status_I_` factored
 #    14-Aug-2005 (MG) Use new `TGL._Status_` instead of `PMA._Status_`
 #    24-Sep-2009 (CT) `prop` decorator removed
+#    25-Sep-2009 (CT) Use `property` as decorator (thanks to `.setter`)
 #    ««revision-date»»···
 #--
 
@@ -45,19 +46,19 @@ class Box_Status (TGL._Status_I_) :
         self.__super.__init__ (* attr)
     # end def __init__
 
-    def _get_current_message () :
+    @property
+    def current_message () :
         result = None
         cmn    = self._attr.get ("current_message")
         if cmn is not None :
             result = self.box.msg_dict.get (cmn)
         return result
-    # end def _get_current_message
+    # end def current_message
 
-    def _set_current_message () :
+    @current_message.setter
+    def current_message () :
         self._set_attr (current_message = cm and cm.name)
-    # end def _set_current_message
-
-    current_message = property (_get_current_message, _set_current_message)
+    # end def current_message
 
 # end class Box_Status
 
