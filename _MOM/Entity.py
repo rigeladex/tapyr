@@ -442,7 +442,7 @@ class Entity (_Entity_Essentials_) :
                 if val :
                     try :
                         cooked_kw [name] = cooked_val = \
-                            attr.from_string (self, val)
+                            attr.from_string (val, self)
                     except (ValueError, MOM.Error.Attribute_Syntax_Error), err:
                         print ("Warning: Error when setting attribute %s "
                                "of %s to %s\nClearing attribute"

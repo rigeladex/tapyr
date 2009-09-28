@@ -413,8 +413,6 @@ class Invariant_Errors (Error) :
         for a in args [0] :
             try :
                 add (str (a))
-            except KeyboardInterrupt :
-                raise
             except StandardError, exc :
                 add ("%s --> %s" % (repr (a), exc))
         return result

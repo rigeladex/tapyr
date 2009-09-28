@@ -221,7 +221,7 @@ class M_E_Type (TFL.Meta.M_Class) :
                             attr.invariant.append (pn)
         P._syntax_checks = \
             [  a.attr for a in attr_dict.itervalues ()
-            if (not a.electric) and callable (a.attr.check_syntax)
+            if (not a.electric) and TFL.callable (a.attr.check_syntax)
             ]
     # end def _m_setup_attributes_dbw
 

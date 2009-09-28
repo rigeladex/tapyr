@@ -103,8 +103,6 @@ class Kind (MOM.Prop.Kind) :
             try :
                 value = self.attr.from_string (obj, raw_value, glob_dict)
                 self.attr.check_invariant     (obj, value)
-            except KeyboardInterrupt :
-                raise
             except StandardError, exc :
                 if dont_raise :
                     if __debug__ :
@@ -139,12 +137,7 @@ class Kind (MOM.Prop.Kind) :
     def _get_computed (self, obj) :
         computed = self.attr.computed
         if TFL.callable (computed) :
-            try :
-                val = computed (obj)
-            except KeyboardInterrupt :
-                raise
-            except StandardError :
-                raise
+            val = computed (obj)
             if val is not None :
                 return self.attr.cooked (val)
     # end def _get_computed
@@ -161,8 +154,6 @@ class Kind (MOM.Prop.Kind) :
         if value is not None :
             try :
                 value = self.attr.cooked (value)
-            except KeyboardInterrupt :
-                raise
             except StandardError, exc :
                 print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
                 raise
@@ -193,7 +184,7 @@ class Kind (MOM.Prop.Kind) :
     # end def _set_raw_inner
 
     def __cmp__ (self, other) :
-        return cmp  (self.attr, getattr (other, "attr", other)
+        return cmp  (self.attr, getattr (other, "attr", other))
     # end def __cmp__
 
     def __hash__ (self) :
@@ -205,16 +196,6 @@ class Kind (MOM.Prop.Kind) :
     # end def __repr__
 
 # end class Kind
-
-class _Cached_ (_Volatile_, _System_) :
-
-    kind        = "cached"
-
-    def _inc_changes (self, man, obj, value) :
-        pass
-    # end def _inc_changes
-
-# end class _Cached_
 
 class _DB_Attr_ (MOM.Prop.Kind) :
     """Attributes stored in DB."""
@@ -269,8 +250,6 @@ class _User_ (_DB_Attr_, Kind) :
         if raw_value :
             try :
                 value = self.attr.from_string (obj, raw_value, obj.globals ())
-            except KeyboardInterrupt :
-                raise
             except StandardError, exc :
                 if __debug__ :
                     print exc
@@ -310,6 +289,16 @@ class _Volatile_ (MOM.Prop.Kind) :
     # end def to_save
 
 # end class _Volatile_
+
+class _Cached_ (_Volatile_, _System_) :
+
+    kind        = "cached"
+
+    def _inc_changes (self, man, obj, value) :
+        pass
+    # end def _inc_changes
+
+# end class _Cached_
 
 class Primary (_User_) :
     """Primary attribute: must be defined at all times, used for (essential)
