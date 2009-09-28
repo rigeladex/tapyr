@@ -101,7 +101,7 @@ class Kind (MOM.Prop.Kind) :
         value = None
         if raw_value :
             try :
-                value = self.attr.from_string (obj, raw_value, glob_dict)
+                value = self.attr.from_string (raw_value, obj, glob_dict)
                 self.attr.check_invariant     (obj, value)
             except StandardError, exc :
                 if dont_raise :
@@ -249,7 +249,7 @@ class _User_ (_DB_Attr_, Kind) :
         value     = None
         if raw_value :
             try :
-                value = self.attr.from_string (obj, raw_value, obj.globals ())
+                value = self.attr.from_string (raw_value, obj, obj.globals ())
             except StandardError, exc :
                 if __debug__ :
                     print exc
@@ -508,7 +508,7 @@ class Class_Uses_Default_Mixin (MOM.Prop.Kind) :
     def __get__ (self, obj, cls) :
         if obj is None :
             a = self.attr
-            return a.from_string (None, a.default)
+            return a.from_string (a.default, None)
         return self.__super.__get__ (obj, cls)
     # end def __get__
 
@@ -551,14 +551,14 @@ class Sticky_Mixin (MOM.Prop.Kind) :
 
     def _set_cooked (self, obj, value) :
         if value is None :
-            value = self.attr.from_string (obj, self.attr.default)
+            value = self.attr.from_string (self.attr.default, obj)
         self.__super._set_cooked (obj, value)
     # end def _set_cooked
 
     def _set_raw (self, obj, raw_value, value) :
         if raw_value in ("", None) :
             raw_value = self.attr.default
-            value     = self.attr.from_string (obj, self.attr.default)
+            value     = self.attr.from_string (self.attr.default, obj)
         self.__super._set_raw (obj, raw_value, value)
     # end def _set_raw
 

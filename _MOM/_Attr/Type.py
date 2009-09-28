@@ -168,22 +168,6 @@ class A_Attr_Type (object) :
         raise NotImplementedError ("_from_symbolic_ref: XXX")
     # end def _from_symbolic_ref
 
-    def _obj_as_pickle (self, value) :
-        ### XXX move into _A_Object_ (or somewhere similar)
-        if value is not None :
-            return (value.type_name, value.name)
-    # end def _obj_as_pickle
-
-    def _obj_from_pickle (self, p, obj = None, glob = None, locl = None) :
-        ### XXX move into _A_Object_ (or somewhere similar)
-        assert obj is not None
-        type_name, name = p
-        scope  = obj.home_scope
-        ### XXX deal with errors
-        result = scope.instance (name, type_name)
-        return result
-    # end def _obj_from_pickle
-
     def _to_cooked (self, s, cooker, obj, glob, locl) :
         if self.simple_cooked :
             try :
@@ -281,6 +265,89 @@ class _A_Int_ (_A_Number_) :
     cooked      = int
 
 # end class _A_Int_
+
+class _A_Object_ (A_Attr_Type) :
+    """Models an attribute referring to an object."""
+
+    Class       = ""
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        if value is not None :
+            return value.name
+        return ""
+    # end def as_string
+
+    def as_code (self, value) :
+        return self.code_format % (value, )
+    # end def as_code
+
+    def as_pickle (self, value) :
+        if value is not None :
+            return value.name
+    # end def as_pickle
+
+    def eligible_objects (self, obj = None) :
+        if obj is not None :
+            scope = self._get_scope (obj)
+        else :
+            scope = MOM.Scope.active
+        return (scope and scope.extension (self.Class)) or ()
+    # end def eligible_objects
+
+    def eligible_raw_values (self, obj = None) :
+        return sorted (o.name for o in self.eligible_objects (obj))
+    # end def eligible_raw_values
+
+    def from_pickle (self, p, obj = None, glob = None, locl = None) :
+        if p is not None :
+            return self._to_cooked (p, None, obj, glob, locl)
+    # end def from_pickle
+
+    def from_string (self, s, obj = None, glob = None, locl = None) :
+        if s :
+            return self._to_cooked (s, None, obj, glob, locl)
+    # end def from_string
+
+    def _accept_object (self, obj, result) :
+        if (      self.__class__.eligible_objects.im_func
+           is not _A_Object_.eligible_objects.im_func
+           ) :
+            eo = self.eligible_objects (obj)
+            if eo :
+                return result in eo
+        return True
+    # end def _accept_object
+
+    def _get_scope (self, obj) :
+        return obj.home_scope
+    # end def _get_scope
+
+    def _to_cooked (self, s, cooker, obj, glob, locl) :
+        if cooker is None :
+            t = s
+        else :
+            t = cooker (s, glob or {}, locl or {})
+        scope = self._get_scope (obj)
+        if scope.exists (t, Class = self.Class) :
+            result = scope.instance (t)
+            if self._accept_object (obj, result) :
+                return result
+            else :
+                raise ValueError \
+                    ( "object `%s` not eligible, specify one of: %s"
+                    % ( " ".join ((self.Class, t)).strip ()
+                      , self.eligible_raw_values (obj)
+                      )
+                    )
+        else :
+            raise ValueError, \
+                ( "No object `%s` in %s"
+                % (" ".join ((self.Class, t)).strip (), scope.qname)
+                )
+    # end def _to_cooked
+
+# end class _A_Object_
 
 class _A_Unit_ (A_Attr_Type) :
     """Mixin for attributes describing physical quantities with optional
