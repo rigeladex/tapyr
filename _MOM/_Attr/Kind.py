@@ -26,7 +26,8 @@
 #    Provide descriptor classes for various attribute kinds of MOM
 #
 # Revision Dates
-#    24-Sep-2009 (CT) Creation
+#    24-Sep-2009 (CT) Creation (factored from TOM.Attr.Kind)
+#    28-Sep-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -152,35 +153,6 @@ class Kind (MOM.Prop.Kind) :
         man.inc_changes ()
     # end def _inc_changes
 
-    def set_cooked (self, obj, value) :
-        self.attr.check_invariant (obj, value)
-        if self.record_changes and self.get_value (obj) != value :
-            obj.home_scope.record_change \
-                ( TOM.SCM.Entity_Change_Attr
-                , obj, {self.name : self.get_raw (obj)}
-                )
-        self._set_cooked (obj, value)
-    # end def set_cooked
-
-    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
-        if glob_dict is None :
-            glob_dict = obj.globals ()
-        value = None
-        if raw_value :
-            try :
-                value = self.attr.from_string (obj, raw_value, glob_dict)
-                self.attr.check_invariant     (obj, value)
-            except KeyboardInterrupt :
-                raise
-            except StandardError, exc :
-                if dont_raise :
-                    if __debug__ :
-                        print exc
-                else :
-                    raise
-        self._set_raw (obj, raw_value, value)
-    # end def set_raw
-
     def _set_cooked (self, obj, value) :
         self._set_cooked_inner (obj, value)
     # end def _set_cooked
@@ -234,7 +206,17 @@ class Kind (MOM.Prop.Kind) :
 
 # end class Kind
 
-class _DB_Attr_ :
+class _Cached_ (_Volatile_, _System_) :
+
+    kind        = "cached"
+
+    def _inc_changes (self, man, obj, value) :
+        pass
+    # end def _inc_changes
+
+# end class _Cached_
+
+class _DB_Attr_ (MOM.Prop.Kind) :
     """Attributes stored in DB."""
 
     save_to_db     = True
@@ -249,18 +231,6 @@ class _DB_Attr_ :
     # end def to_save
 
 # end class _DB_Attr_
-
-class _Volatile_ :
-    """Attributes not stored in DB."""
-
-    save_to_db     = False
-    record_changes = False
-
-    def to_save (self, obj) :
-        return False
-    # end def to_save
-
-# end class _Volatile_
 
 class _User_ (_DB_Attr_, Kind) :
     """Attributes set by user."""
@@ -309,6 +279,303 @@ class _User_ (_DB_Attr_, Kind) :
     # end def _sync
 
 # end class _User_
+
+class _System_ (Kind) :
+    """Attributes set by system."""
+
+    electric       = True
+
+    def get_raw (self, obj) :
+        val = self.get_value (obj)
+        if val is not None :
+            return self.attr.as_string (val)
+        else :
+            return ""
+    # end def get_raw
+
+# end class _System_
+
+class _DB_System_ (_DB_Attr_, _System_) :
+    pass
+# end class _DB_System_
+
+class _Volatile_ (MOM.Prop.Kind) :
+    """Attributes not stored in DB."""
+
+    save_to_db     = False
+    record_changes = False
+
+    def to_save (self, obj) :
+        return False
+    # end def to_save
+
+# end class _Volatile_
+
+class Primary (_User_) :
+    """Primary attribute: must be defined at all times, used for (essential)
+       primary key.
+    """
+
+    kind        = "primary"
+
+    def has_substance (self, obj) :
+        return self.get_raw (obj) not in (None, "")
+    # end def has_substance
+
+    def to_save (self, obj) :
+        return True
+    # end def to_save
+
+# end class Primary
+
+class Required (_User_) :
+    """Required attribute: must be defined by the tool user."""
+
+    kind        = "required"
+
+    def has_substance (self, obj) :
+        return self.get_raw (obj) not in (None, "")
+    # end def has_substance
+
+    def to_save (self, obj) :
+        return self.has_substance (obj)
+    # end def to_save
+
+# end class Required
+
+class Optional (_User_) :
+    """Optional attribute: if undefined, the `default` value is used, if any."""
+
+    kind = "optional"
+
+    def has_substance (self, obj) :
+        raw_val = self.get_raw (obj)
+        return raw_val not in (None, "", self.default)
+    # end def has_substance
+
+# end class Optional
+
+class Internal (_DB_System_) :
+    """Internal attribute: value is defined by some component of the tool."""
+
+    kind = "internal"
+
+# end class Internal
+
+class Const (_Cached_) :
+    """Constant attribute (has static default value that cannot be changed)."""
+
+    kind = "constant"
+
+    def __set__ (self, obj, value) :
+        raise AttributeError \
+            ("Constant attribute `%s.%s` cannot be changed" % (obj, self.name))
+    # end def __set__
+
+# end class Const
+
+class Cached (_Cached_) :
+    """Cached attribute: value is defined by some component of the tool, but
+       not saved to DB.
+    """
+
+# end class Cached
+
+class Sync_Cached (_Cached_) :
+    """Cached attribute computed automatically when syncing. This kind can be
+       used for attributes dependending on attributes of different objects,
+       as long those don't change significantly between syncing --- use
+       :class:`Computed` otherwise.
+    """
+
+    def sync (self, obj) :
+        self._set_cooked (obj, self._get_computed (obj))
+        obj._attr_man.needs_sync [self.name] = False
+    # end def sync
+
+    def get_raw (self, obj) :
+        if obj._attr_man.needs_sync [self.name] :
+            self.sync (obj)
+        return self.__super.get_raw (obj)
+    # end def get_raw
+
+    def get_value (self, obj) :
+        if obj._attr_man.needs_sync [self.name] :
+            self.sync (obj)
+        return self.__super.get_value (obj)
+    # end def get_value
+
+    def reset (self, obj) :
+        self.__super.reset (obj)
+        obj._attr_man.needs_sync [self.name] = True
+    # end def reset
+
+# end class Sync_Cached
+
+class Auto_Cached (_Cached_) :
+    """Cached attribute that is recomputed whenever it is accessed after one
+       or more of the other attributes changed since the last recomputation.
+
+       This kind must **not** be used if the value of the attribute depends
+       on other objects (use :class:`Sync_Cached` or :class:`Computed` if
+       that's the case).
+    """
+
+    def get_value (self, obj) :
+        ### XXX fix this
+        man = obj._attr_man
+        if (  (man.total_changes != man.update_at_changes.get (self.name, -1))
+           or self.name not in man.attr_values [self.attr_dict_name]
+           ) :
+            val = self._get_computed (obj)
+            if val is None :
+                return
+            self._set_cooked (obj, val)
+            man.update_at_changes [self.name] = man.total_changes
+        return self.__super.get_value (obj)
+    # end def get_value
+
+    def reset (self, obj) :
+        obj._attr_man.update_at_changes [self.name] = -1
+    # end def reset
+
+# end class Auto_Cached
+
+class Once_Cached (_Cached_) :
+    """Cached attribute computed just once (a.k.a. computed constant).
+       This kind can be used if the `constant` value that is computed depends
+       on attributes of different objects, as longs as those don't change
+       during the lifetime of this attribute's object.
+    """
+
+    def reset (self, obj) :
+        ### XXX fix this
+        man = obj._attr_man
+        val = man.attr_values [self.attr_dict_name].get (self.name)
+        if val is None :
+            val = self._get_computed (obj)
+            man.attr_values [self.attr_dict_name] [self.name] = val
+    # end def reset
+
+# end class Once_Cached
+
+class Cached_Role (_Cached_) :
+    """Cached attribute automagically updated by association."""
+
+    def reset (self, obj) :
+        pass
+    # end def reset
+
+# end class Cached_Role
+
+class Cached_Role_DFC (Cached_Role) :
+    """Cached attribute normally updated by association but asking
+       association for DFC_Link.
+    """
+
+    def get_value (self, obj) :
+        result = self.__super.get_value (obj)
+        if result is None :
+            assoc = getattr (obj.home_scope, self.attr.assoc)
+            links = getattr (assoc, self.attr.name) (obj)
+            if links :
+                assert len (links) == 1
+                result = getattr (links [0], self.attr.name)
+        return result
+    # end def get_value
+
+# end class Cached_Role_DFC
+
+class Computed (_Cached_) :
+    """Computed attribute: the value is computed for each and every attribute
+       access. This is quite inefficient and should only be used if
+       :class:`Auto_Cached` or :class:`Sync_Cached` don't work.
+    """
+
+    kind        = "computed"
+
+    def reset (self, obj) :
+        pass
+    # end def reset
+
+    def _check_sanity (self, attr_type) :
+        self.__super._check_sanity (attr_type)
+        default = self.attr.default
+        if default and not isinstance (self, Class_Uses_Default_Mixin) :
+            raise TypeError \
+                ( "%s is computed but has default `%r` "
+                  "(i.e., `computed` will never be called)"
+                % (attr_type, default)
+                )
+    # end def _check_sanity
+
+# end class Computed
+
+class Class_Uses_Default_Mixin (MOM.Prop.Kind) :
+    """Mixin returning the default value of the attribute when applied to the
+       class instead of to the instance.
+    """
+
+    def __get__ (self, obj, cls) :
+        if obj is None :
+            a = self.attr
+            return a.from_string (None, a.default)
+        return self.__super.__get__ (obj, cls)
+    # end def __get__
+
+# end class Class_Uses_Default_Mixin
+
+class Computed_Mixin (MOM.Prop.Kind) :
+    """Mixin to compute attribute value if empty."""
+
+    def get_value (self, obj) :
+        result = self.__super.get_value (obj)
+        if result is None :
+            result = self._get_computed (obj)
+        return result
+    # end def get_value
+
+    def _check_sanity (self, attr_type) :
+        self.__super._check_sanity (attr_type)
+        default = self.attr.default
+        if default and not isinstance (self, Class_Uses_Default_Mixin) :
+            raise TypeError \
+                ( "%s is _Computed_ but has default `%r` "
+                  "(i.e., `computed` will never be called)"
+                % (attr_type, default)
+                )
+    # end def _check_sanity
+
+# end class Computed_Mixin
+
+class Sticky_Mixin (MOM.Prop.Kind) :
+    """Mixin to reset attribute to default value whenever user enters empty
+       value.
+    """
+
+    def _check_sanity (self, attr_type) :
+        self.__super._check_sanity (attr_type)
+        if not self.attr.default :
+            raise TypeError \
+                ("%s is sticky but lacks `default`" % (attr_type, ))
+    # end def _check_sanity
+
+    def _set_cooked (self, obj, value) :
+        if value is None :
+            value = self.attr.from_string (obj, self.attr.default)
+        self.__super._set_cooked (obj, value)
+    # end def _set_cooked
+
+    def _set_raw (self, obj, raw_value, value) :
+        if raw_value in ("", None) :
+            raw_value = self.attr.default
+            value     = self.attr.from_string (obj, self.attr.default)
+        self.__super._set_raw (obj, raw_value, value)
+    # end def _set_raw
+
+# end class Sticky_Mixin
+
+### XXX Object-Reference- and Link-related kinds
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*")

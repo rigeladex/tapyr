@@ -26,6 +26,10 @@ MOM To-Do
   * M_E_Type __init__/__new__ sets up the meta information for the essential
     classes
 
+- Attr.Kind:
+
+  * remove all dependencies on `obj._attr_man.attr_values [self.attr_dict_name]`
+
 - Scope:
 
   * change signature of `remove` and `rename`
