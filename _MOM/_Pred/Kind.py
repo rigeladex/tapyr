@@ -43,6 +43,7 @@ class Kind (MOM.Prop.Kind) :
        predicates of the MOM meta object model.
     """
 
+    kind                  = None ### override in descendents
     pred                  = None
     prop                  = TFL.Meta.Alias_Property ("pred")
     Table                 = dict ()
@@ -116,7 +117,7 @@ class System (Kind) :
 
 __doc__ = """
 Class `MOM.Pred.Kind`
-============================
+=====================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 

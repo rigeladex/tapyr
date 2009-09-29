@@ -28,6 +28,7 @@
 # Revision Dates
 #    24-Sep-2009 (CT) Creation (factored from TOM.Attr.Kind)
 #    28-Sep-2009 (CT) Creation continued
+#    29-Sep-2009 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -49,11 +50,11 @@ class Kind (MOM.Prop.Kind) :
     sync                  = None
     Table                 = dict ()
 
-    def __init__ (self, attr_type) :
-        attr = attr_type      (self)
+    def __init__ (self, Attr_Type) :
+        attr = Attr_Type      (self)
         self.__super.__init__ (attr)
-        self._check_sanity    (attr_type)
-        self.record_changes = self.attr.record_changes and self.record_changes
+        self._check_sanity    (attr)
+        self.record_changes = attr.record_changes and self.record_changes
     # end def __init__
 
     def __delete__ (self, obj) :
@@ -71,7 +72,7 @@ class Kind (MOM.Prop.Kind) :
     # end def __set__
 
     def get_value (self, obj) :
-        raise NotImplementedError ("must be defined by descendent")
+        getattr (obj, self.attr.ckd_name, None)
     # end def get_value
 
     def inc_changes (self, man, obj, value) :
@@ -161,19 +162,14 @@ class Kind (MOM.Prop.Kind) :
     # end def _set_cooked_inner
 
     def _set_cooked_value (self, obj, value, changed = 42) :
-        man = obj._attr_man
+        attr = self.attr
         if changed == 42 :
             ### if the caller didn't pass a (boolean) value, evaluate it here
-            changed = \
-                man.attr_values [self.attr_dict_name].get (self.name) != value
+            changed = self.get_value (obj) != value
         if changed :
-            self.inc_changes (man, obj, value)
-            self._set_cooked_value_inner (obj, value)
+            self.inc_changes (obj._attr_man, obj, value)
+            setattr (obj, attr.ckd_name, value)
     # end def _set_cooked_value
-
-    def _set_cooked_value_inner (self, obj, value) :
-        raise NotImplementedError ("must be defined by descendent")
-    # end def _set_cooked_value_inner
 
     def _set_raw (self, obj, raw_value, value) :
         self._set_cooked_inner (obj, value)
@@ -219,7 +215,7 @@ class _User_ (_DB_Attr_, Kind) :
     electric       = False
 
     def get_raw (self, obj) :
-        raise NotImplementedError ("must be defined by descendent")
+        getattr (obj, self.attr.raw_name, "")
     # end def get_raw
 
     def get_value (self, obj) :
@@ -241,7 +237,7 @@ class _User_ (_DB_Attr_, Kind) :
     # end def _set_raw
 
     def _set_raw_inner (self, obj, raw_value, value) :
-        raise NotImplementedError ("must be defined by descendent")
+        setattr (obj, self.attr.raw_name, raw_value)
     # end def _set_raw_inner
 
     def _sync (self, obj) :
@@ -411,10 +407,9 @@ class Auto_Cached (_Cached_) :
     """
 
     def get_value (self, obj) :
-        ### XXX fix this
         man = obj._attr_man
         if (  (man.total_changes != man.update_at_changes.get (self.name, -1))
-           or self.name not in man.attr_values [self.attr_dict_name]
+           or self.attr.ckd_name not in obj.__dict__
            ) :
             val = self._get_computed (obj)
             if val is None :
@@ -438,12 +433,10 @@ class Once_Cached (_Cached_) :
     """
 
     def reset (self, obj) :
-        ### XXX fix this
-        man = obj._attr_man
-        val = man.attr_values [self.attr_dict_name].get (self.name)
+        val = self.get_value (obj)
         if val is None :
             val = self._get_computed (obj)
-            man.attr_values [self.attr_dict_name] [self.name] = val
+            self._set_cooked_inner   (obj, val)
     # end def reset
 
 # end class Once_Cached

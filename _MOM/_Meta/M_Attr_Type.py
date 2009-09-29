@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Sep-2009 (CT) Creation (factored from TOM.Meta.M_Attr_Type)
+#    29-Sep-2009 (CT) `ckd_name` and `raw_name` added
 #    ««revision-date»»···
 #--
 
@@ -44,6 +45,9 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)
         M_Attr_Type.count += 1
+        if not name.startswith (("_A_", "A_")) :
+            cls.ckd_name = "__%s"     % (cls.name, )
+            cls.raw_name = "__raw_%s" % (cls.name, )
     # end def __init__
 
 # end class M_Attr_Type

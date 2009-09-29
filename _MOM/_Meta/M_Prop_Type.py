@@ -50,8 +50,8 @@ class M_Prop_Type (TFL.Meta.M_Class_SW) :
         for n in "description", "explanation" :
             if n in dct :
                 dct [n] = TFL.normalized_indent (dct [n])
-        dct ["name"]            = name
-        dct ["_kind_mixins"]    = {}
+        dct ["name"]         = name
+        dct ["_kind_mixins"] = {}
         return super (M_Prop_Type, meta).__new__ (meta, name, bases, dct)
     # end def __new__
 
