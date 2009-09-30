@@ -40,8 +40,9 @@ class M_Prop_Kind (TFL.Meta.M_Class) :
     """Meta class for `Kind` properties of MOM meta object model."""
 
     def __init__ (cls, name, bases, dict) :
-        if "kind" in dict :
-            cls.Table [dict ["kind"]] = cls
+        kind = dict.get ("kind")
+        if kind :
+            cls.Table [kind] = cls
         cls.__m_super.__init__ (name, bases, dict)
     # end def __init__
 

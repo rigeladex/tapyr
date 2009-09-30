@@ -33,11 +33,74 @@
 from   _TFL                  import TFL
 from   _MOM                  import MOM
 
-import _TFL._Meta.M_Class
-import _TFL._Meta.Property
-
 import _MOM._Attr.Type
 import _MOM._Attr.Kind
+import _MOM._Meta.M_Attr_Spec
+import _MOM._Prop.Spec
+
+import _TFL._Meta.M_Class
+import _TFL._Meta.Property
+import _TFL.Alias_Dict
+
+class Spec (MOM.Prop.Spec) :
+    """Attribute specification for MOM entities (objects and links).
+
+       A :class:`~_MOM.Entity.Entity` class contains a descendent of `Spec`
+       with declarations for all attributes (which are descendents of
+       :class:`~_MOM._Attr.Type.A_Attr_Type`) provided by that class.
+
+       :class:`MOM.Meta.M_E_Type<_MOM._Meta.M_E_Type.M_E_Type>` instantiates
+       the `Spec`: this results in the assignment of all attribute
+       properties, i.e., for all attributes `attr` defined in the `Spec` a
+       property named by `attr.name` and instantiated as ::
+
+           attr.kind (attr)
+
+       is added to the `E_Type`.
+    """
+
+    __metaclass__   = MOM.Meta.M_Attr_Spec
+
+    _Prop_Pkg       = MOM.Attr
+    _Prop_Spec_Name = "_Attributes"
+    _prop_dict_cls  = TFL.Alias_Dict
+    _prop_dict      = TFL.Meta.Alias_Property ("_attr_dict")
+    _prop_kind      = TFL.Meta.Alias_Property ("_attr_kind")
+
+    def __init__ (self, e_type) :
+        self._user_attr   = []
+        self._syncable    = []
+        self.__super.__init__ (e_type)
+        e_type.user_attr  = self._user_attr
+        e_type.attributes = self._prop_dict
+    # end def __init__
+
+    def _setup_alias (self, e_type, alias_name, real_name) :
+        setattr (e_type, alias_name, TFL.Meta.Alias_Property (real_name))
+        self._prop_dict.add_alias (alias_name, real_name)
+    # end def _setup_alias
+
+    def _setup_prop (self, e_type, name, kind, prop) :
+        self.__super._setup_prop (e_type, prop.name, kind, prop)
+        if name != prop.name :
+            self._setup_alias (e_type, name, prop.name)
+        if not prop.electric :
+            self._user_attr.append (prop)
+        if callable (prop.sync) :
+            self._syncable.append (prop)
+    # end def _setup_prop
+
+# end class Spec
+
+__doc__ = """
+Class `MOM.Attr.Spec`
+=====================
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+.. autoclass:: Spec
+
+"""
 
 if __name__ != "__main__" :
     MOM.Attr._Export ("*")
