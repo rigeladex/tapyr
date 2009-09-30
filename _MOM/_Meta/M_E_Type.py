@@ -196,7 +196,8 @@ class M_E_Type (TFL.Meta.M_Class) :
     # end def _m_scope
 
     def _m_setup_attributes (cls) :
-        pass ### XXX implement
+        for P in cls._Attributes, cls._Predicates :
+            P.m_setup_names ()
     # end def _m_setup_attributes
 
     def _m_setup_attributes_dbw (cls) :
@@ -269,8 +270,6 @@ Class `MOM.Meta.M_E_Type`
     of an essential class, i.e., a descendent of :class:`~_MOM.Entity.Entity`.
 
     For each instance of `M_E_Type`, it:
-
-    ### XXX
 
     * Setups the attributes and predicates by instantiating
       `Essence._Attributes` and `Essence._Predicates` (and assigning it to
