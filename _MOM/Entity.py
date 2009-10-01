@@ -28,15 +28,12 @@
 # Revision Dates
 #    17-Sep-2009 (CT) Creation (factored from `TOM.Entity`)
 #    23-Sep-2009 (CT) Journal-related methods removed
+#     1-Oct-2009 (CT) `Entity_Essentials` removed
 #    ««revision-date»»···
 #--
 
-from   _TFL                  import TFL
 from   _MOM                  import MOM
-from   _TFL.object_globals   import object_globals
-from   _TFL.Regexp           import *
-
-import _TFL.defaultdict
+from   _TFL                  import TFL
 
 import _MOM._Attr.Kind
 import _MOM._Attr.Manager
@@ -55,116 +52,36 @@ from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
 from   _MOM._Pred      import Pred
 
+from   _TFL.object_globals   import object_globals
+from   _TFL.Regexp           import *
+
+import _TFL.defaultdict
+
 import itertools
 import traceback
 
-class _Entity_Essentials_ (TFL.Meta.Object) :
-    """Define essential attributes of MOM entities (as needed by editors, ...)
-    """
-
-    Class                 = None
-    home_scope            = None
-    is_partial            = True  ### all complete descendents of this class
-                                  ### must redefine `is_partial' to None
-    show_package_prefix   = False
-    ui_name               = None
-
-    Package_NS            = MOM
-    """`Package_Namespace` the class belongs to. Set to `None` if not
-       defined inside a package.
-       """
-
-    class _Attributes (MOM.Attr.Spec) :
-        pass
-    # end class _Attributes
-
-    class _Predicates (MOM.Pred.Spec) :
-        pass
-    # end class _Predicates
-
-    def after_init    (self) : pass
-    def after_init_db (self) : pass
-    def has_substance (self) : pass
-
-    def _repr (self, type_name) :
-        return "%s (%s)" % (type_name, self.name)
-    # end def _repr
-
-    def __str__ (self) :
-        return self.name
-    # end def __str__
-
-    def __repr__ (self) :
-        try :
-            tn = self.type_name
-        except AttributeError :
-            tn = self.__class__
-        return self._repr (tn)
-    # end def __repr__
-
-    def __getattr__ (self, name) :
-        ### just to ease up-chaining in descendents
-        raise AttributeError, "%s.%s" % (self, name)
-    # end def __getattr__
-
-# end class _Entity_Essentials_
-
-class Entity_Essentials (_Entity_Essentials_) :
-    """Define essential attributes of thingies masquerading as MOM entities
-       (as needed by editors, ...)
-    """
-
-    default_child         = None
-    x_locked              = False
-    electric              = False
-
-    auto_display          = ()    ### object/link editor will display all
-                                  ### attributes listed in `auto_display' for
-                                  ### the selected object/link in the status
-                                  ### window
-    filters               = ()    ### filters for object editors
-    generate_doc          = True  ### `generate_doc == False` inhibits
-                                  ### generation of documentation
-    max_count             = 0     ### restriction on number of instances
-    record_changes        = True  ### `record_changes == False' inhibits
-                                  ### recording of changes for an object or
-                                  ### class
-    save_to_db            = True  ### `save_to_db == False' inhibits saving of
-                                  ### the object/link to the database
-    tutorial              = None  ### text for step-to-step tutorial
-    type_desc             = None  ### short description of object/link type
-
-    deprecated_attr_names = {}
-    refuse_links          = {}    ### subclasses can put associations here
-                                  ### they don't want to participate in
-
-    children              = {}
-    """`children' enumerates the (direct) descendent classes of this class --
-       it maps class names to class objects.
-       """
-
-# end class Entity_Essentials
-
-class Entity (_Entity_Essentials_) :
+class Entity (TFL.Meta.Object) :
     """Internal root class for MOM objects and links."""
 
     __metaclass__         = MOM.Meta.M_Entity
     __id                  = 0 ### used to generate a unique id for each entity
-    __autowrap            = dict \
-      (is_locked          = TFL.Meta.Class_and_Instance_Method)
+
+    auto_display          = ()
+    deprecated_attr_names = {}
+    home_scope            = None
+    is_partial            = True
+    max_count             = 0
+    Package_NS            = MOM
+    rank                  = 0
+    record_changes        = True
+    refuse_links          = {}
+    save_to_db            = True
+    show_package_prefix   = False
+    tutorial              = None
 
     _appl_globals         = {}
-
-    rank                  = 0
-
     _lists_to_combine     = ("filters", "auto_display")
-    """`_lists_to_combine` names the list-valued attributes to be merged
-       from all levels of the inheritance hierarchy
-       """
     _dicts_to_combine     = ("deprecated_attr_names", "refuse_links")
-    """`_dicts_to_combine` names the dict-valued attributes to be merged
-       from all levels of the inheritance hierarchy
-    """
 
     filters               = \
         ( MOM.Filter
@@ -195,18 +112,7 @@ class Entity (_Entity_Essentials_) :
             )
         )
 
-    class _Attributes (_Entity_Essentials_._Attributes) :
-
-        class default_sort_key (A_Blob) :
-            """Defines the sort key to be used when sorting this entity."""
-
-            kind          = Attr.Once_Cached ### Change in descendants
-
-            def computed (self, obj) :
-                return obj.id,
-            # end def computed
-
-        # end class default_sort_key
+    class _Attributes (MOM.Attr.Spec) :
 
         class electric (A_Boolean) :
             """Indicates if object/link was created automatically or not."""
@@ -238,7 +144,7 @@ class Entity (_Entity_Essentials_) :
 
     # end class _Attributes
 
-    class _Predicates (_Entity_Essentials_._Predicates) :
+    class _Predicates (MOM.Pred.Spec) :
 
         class completely_defined (Pred.Condition) :
             """All required attributes must be defined."""
@@ -285,7 +191,7 @@ class Entity (_Entity_Essentials_) :
         return self._pred_man.has_warnings
     # end def has_warnings
 
-    def __new__ (cls, * args, ** kw) :
+    def __new__ (cls, ** kw) :
         if cls.is_partial :
             raise MOM.Error.Partial_Type (cls.type_name)
         result = super (Entity, cls).__new__ (cls)
@@ -295,7 +201,7 @@ class Entity (_Entity_Essentials_) :
         return result
     # end def __new__
 
-    def __init__ (self) :
+    def __init__ (self, ** kw) :
         self._init_meta_attrs ()
         self._init_attributes ()
     # end def __init__
@@ -309,6 +215,10 @@ class Entity (_Entity_Essentials_) :
     def after_init (self) :
         pass
     # end def after_init
+
+    def after_init_db (self) :
+        pass
+    # end def after_init_db
 
     def attr_value_maybe (self, name) :
         attr = self.attributes.get (name)
@@ -331,11 +241,11 @@ class Entity (_Entity_Essentials_) :
         pass
     # end def compute_type_defaults_internal
 
-    ### XXX needs to change
     def copy (self, * new_n, ** kw) :
         """Make copy with name(s) `new_n`."""
         new_obj = self.__class__ (* new_n)
-        raw_kw  = self._attr_man.raw_attr_value_dict
+        raw_kw  = dict \
+            ((a.name, a.get_raw (self)) for a in self.user_attr)
         if raw_kw :
             new_obj.set_raw (** raw_kw)
         if kw :
@@ -347,6 +257,13 @@ class Entity (_Entity_Essentials_) :
         """Try to correct an unknown attribute error."""
         pass
     # end def correct_unknown_attr
+
+    def destroy_dependency (self, other) :
+        for attr in self.object_referring_attributes.pop (other, ()) :
+            attr.reset (self)
+        if other in self.dependencies :
+            del self.dependencies [other]
+    # end def destroy_dependency
 
     def globals (self) :
         return self.__class__._appl_globals or object_globals (self)
@@ -378,13 +295,25 @@ class Entity (_Entity_Essentials_) :
         return not ews
     # end def is_g_correct
 
-    def is_locked (self) :
-        return self.x_locked or self.electric
+    @TFL.Meta.Class_and_Instance_Method
+    def is_locked (soc) :
+        return soc.x_locked or soc.electric
     # end def is_locked
 
     def make_snapshot (self) :
         self._attr_man.make_snapshot (self)
     # end def make_snapshot
+
+    def notify_dependencies_destroy (self) :
+        """Notify all entities registered in `self.dependencies` and
+           `self.object_referring_attributes` about the destruction of `self`.
+        """
+        ### dicts are modified by the loops
+        for d in self.dependencies.keys () :
+            d.destroy_dependency (self)
+        for o in self.object_referring_attributes.keys () :
+            o.destroy_dependency (self)
+    # end def notify_dependencies_destroy
 
     def raw_attr (self, name) :
         """Returns the raw value of attribute `name`, i.e., the value entered
@@ -394,6 +323,11 @@ class Entity (_Entity_Essentials_) :
         if attr :
             return attr.get_raw (self) or ""
     # end def raw_attr
+
+    def register_dependency (self, other) :
+        """Register that `other` depends on `self`"""
+        self.dependencies [other] += 1
+    # end def register_dependency
 
     def reset_syncable (self) :
         self._attr_man.reset_syncable ()
@@ -479,6 +413,23 @@ class Entity (_Entity_Essentials_) :
         self._attr_man.sync_attributes (self)
     # end def sync_attributes
 
+    def unregister_dependency (self, other) :
+        """Unregister dependency of `other` on `self`"""
+        deps = self.dependencies
+        deps [other] -= 1
+        if deps [other] <= 0 :
+            del deps [other]
+    # end def unregister_dependency
+
+    def update_dependency_names (self, other, old_name) :
+        for attr in self.object_referring_attributes.get (other, []) :
+            attr._update_raw (self, other, old_name)
+    # end def update_dependency_names
+
+    def _destroy (self) :
+        self.notify_dependencies_destroy ()
+    # end def _destroy
+
     def _init_meta_attrs (self) :
         self._attr_man  = MOM.Attr.Manager (self._Attributes)
         self._pred_man  = MOM.Pred.Manager (self._Predicates)
@@ -507,6 +458,10 @@ class Entity (_Entity_Essentials_) :
         raise exc
     # end def _raise_attr_error
 
+    def _repr (self, type_name) :
+        return "%s (%s)" % (type_name, self.name)
+    # end def _repr
+
     def _set_record (self, kw) :
         rvr = self._attr_man.raw_values_record (self, kw)
         if rvr :
@@ -524,15 +479,24 @@ class Entity (_Entity_Essentials_) :
         return Entity.__id
     # end def __new_id
 
+    def __getattr__ (self, name) :
+        ### just to ease up-chaining in descendents
+        raise AttributeError ("%r.%s" % (self, name))
+    # end def __getattr__
+
     def __repr__ (self) :
         return self._repr (self.type_name)
     # end def __repr__
+
+    def __str__ (self) :
+        return self.name
+    # end def __str__
 
 # end class Entity
 
 _Essence = Entity
 
-__all__  = ("Entity", "Entity_Essentials")
+__all__  = ("Entity")
 
 __doc__  = """
 Class `MOM.Entity`
@@ -675,12 +639,20 @@ aspects of the use of an essential class by the framework.
   depend on the existance of instances of another type, the dependent
   type should have higher rank.
 
+.. attribute:: record_changes
+
+  Changes of the entity will only be recorded if `record_changes` is True.
+
 .. attribute:: refuse_links
 
   This is a dictionary of (names of) classes that must not be linked
   to instances of the essential class in question. This can be used if
   objects of a derived class should not participate in associations of
   a base class.
+
+.. attribute:: save_to_db
+
+  Entity will be saved to database only if `save_to_db` is True.
 
 .. attribute:: show_package_prefix
 

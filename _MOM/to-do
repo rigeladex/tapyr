@@ -40,6 +40,15 @@ x Attr.Kind:
 
   * use `.epk` instead of `.name` to identify objects
 
+  * keyed-entities just call `self.home_scope.add (self)`
+
+    + For objects, there is a manager object that manages a hash-table of
+      objects (analogous to the meta-link).
+
+    + This architecture also allows separate hash-tables for different object
+      types (using several managers).
+
+
 - Dependency management: move to DBW-Mixin for Scope
 
       # referential integrity
