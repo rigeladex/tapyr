@@ -20,44 +20,53 @@
 #
 #++
 # Name
-#    MOM.Prop.Kind
+#    MOM.Pred.Err_and_Warn_List
 #
 # Purpose
-#    Base class for attribute and predicate kinds
+#    Encapsules lists of error and warning objects
 #
 # Revision Dates
-#    24-Sep-2009 (CT) Creation
+#     1-Oct-2009 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
-import _MOM._Meta.M_Prop_Kind
-import _MOM._Prop
+import _MOM._Pred
 
-import _TFL._Meta.M_Class
+import _TFL._Meta.Object
 
-class _Prop_Kind_ (property) :
-    """Base class for attribute and predicate kinds."""
+class Err_and_Warn_List (TFL.Meta.Object) :
 
-    __metaclass__ = MOM.Meta.M_Prop_Kind
-    _real_name    = "Kind"
-
-    def __init__ (self, prop) :
-        self.prop    = prop
-        self.name    = prop.name
-        self.__doc__ = prop.description
+    def __init__ (self, errors, warnings) :
+        self.errors   = errors
+        self.warnings = warnings
     # end def __init__
 
-    def __getattr__ (self, name) :
-        if not name.startswith ("_") :
-            return getattr (self.prop, name)
-        raise AttributeError, name
-    # end def __getattr__
+    def extend (self, other) :
+        self.errors.extend   (other.errors)
+        self.warnings.extend (other.warnings)
+    # end def extend
 
-Kind = _Prop_Kind_ # end class
+    def __len__ (self) :
+        return len (self.errors)
+    # end def __len__
+
+    def __nonzero__ (self) :
+        return bool (self.errors)
+    # end def __nonzero__
+
+    def __getitem__ (self, index) :
+        return self.errors [index]
+    # end def __getitem__
+
+    def __iter__ (self) :
+        return iter (self.errors)
+    # end def __iter__
+
+# end class Err_and_Warn_List
 
 if __name__ != "__main__" :
-    MOM.Prop._Export ("*")
-### __END__ MOM.Prop.Kind
+    MOM.Pred._Export ("*")
+### __END__ MOM.Pred.Err_and_Warn_List

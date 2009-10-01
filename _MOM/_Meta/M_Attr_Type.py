@@ -34,7 +34,6 @@
 from   _MOM                import MOM
 from   _TFL                import TFL
 
-import _TFL._Meta.M_Class
 import _MOM._Meta.M_Prop_Type
 
 class M_Attr_Type (MOM.Meta.M_Prop_Type) :

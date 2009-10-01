@@ -23,22 +23,22 @@
 #    MOM.Attr.Type
 #
 # Purpose
-#    «text»···
+#    Model attribute types of MOM meta object model
 #
 # Revision Dates
 #    28-Sep-2009 (CT) Creation (factored from TOM.Attr.Type)
 #    ««revision-date»»···
 #--
 
-from   _TFL                  import TFL
 from   _MOM                  import MOM
+from   _TFL                  import TFL
+
+import _MOM._Attr.Kind
+import _MOM._Meta.M_Attr_Type
 
 from   _TFL.Regexp           import *
 
 import _TFL._Meta.Property
-
-import _MOM._Attr.Kind
-import _MOM._Meta.M_Attr_Type
 
 import datetime
 import itertools

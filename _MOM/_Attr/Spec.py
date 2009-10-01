@@ -30,15 +30,14 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                  import TFL
 from   _MOM                  import MOM
+from   _TFL                  import TFL
 
 import _MOM._Attr.Type
 import _MOM._Attr.Kind
 import _MOM._Meta.M_Attr_Spec
 import _MOM._Prop.Spec
 
-import _TFL._Meta.M_Class
 import _TFL._Meta.Property
 import _TFL.Alias_Dict
 
