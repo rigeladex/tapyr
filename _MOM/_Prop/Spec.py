@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    30-Sep-2009 (CT) Creation (factored from TOM.Property_Spec)
+#     6-Oct-2009 (CT) `_create_properties` changed to include inherited
+#                     properties into `_prop_dict` and `_prop_kind`
+#     6-Oct-2009 (CT) `setattr` call moved from `_setup_prop` to `_add_prop`
 #    ««revision-date»»···
 #--
 
@@ -54,12 +57,12 @@ class _Prop_Spec_ (TFL.Meta.Object) :
 
     def _add_prop (self, e_type, name, prop_type) :
         kind = self._effective_prop_kind (name, prop_type)
+        prop = None
         if kind is not None :
             prop = self._new_prop (name, kind, prop_type, e_type)
             self._setup_prop      (e_type, name, kind.kind, prop)
-            return prop
-        else :
-            setattr (e_type, name, None)
+        setattr (e_type, name, prop)
+        return prop
     # end def _add_prop
 
     def _create_prop_dict (self, e_type) :
@@ -70,11 +73,16 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     # end def _create_prop_dict
 
     def _create_properties (self, e_type) :
-        ### TOM explicitly handled inherited properties here
-        ### hope we don't need that anymore
         for n, prop_type in self._own_names.iteritems () :
             if prop_type is not None :
                 self._add_prop (e_type, n, prop_type)
+        for n, prop_type in self._names.iteritems () :
+            if n not in self._prop_dict :
+                ### Inherited property: include in `_prop_dict` and `_prop_kind`
+                prop = getattr (e_type, n, None)
+                if prop is not None :
+                    self._setup_prop (e_type, n, prop.kind, prop)
+        self._prop_kind.sort (key = TFL.Getter.rank)
     # end def _create_properties
 
     def _effective_prop_kind (self, name, prop_type) :
@@ -104,7 +112,6 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     def _setup_prop (self, e_type, name, kind, prop) :
         self._prop_dict [name] = prop
         self._prop_kind [kind].append (prop)
-        setattr (e_type, name, prop)
     # end def _setup_prop
 
 Spec = _Prop_Spec_ # end class

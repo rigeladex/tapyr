@@ -29,6 +29,7 @@
 #    24-Sep-2009 (CT) Creation (factored from TOM.Attr.Kind)
 #    28-Sep-2009 (CT) Creation continued
 #    29-Sep-2009 (CT) Creation continued..
+#     6-Oct-2009 (CT) Creation continued... (`Primary`: method redefinitions)
 #    ««revision-date»»···
 #--
 
@@ -307,9 +308,28 @@ class Primary (_User_) :
         return self.get_raw (obj) not in (None, "")
     # end def has_substance
 
+    def set_cooked (self, obj, value) :
+        if value is None :
+            raise AttributeError \
+                ("Primary attribute `%s.%s` cannot be None" % (obj, self.name))
+        return self.__super.set_cooked (obj, value)
+    # end def set_cooked
+
+    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
+        if raw_value is "" :
+            raise AttributeError \
+                ("Primary attribute `%s.%s` cannot be empty" % (obj, self.name))
+        return self.__super.set_raw (obj, raw_value, glob_dict, dont_raise)
+    # end def set_raw
+
     def to_save (self, obj) :
         return True
     # end def to_save
+
+    def __delete__ (self, obj, value) :
+        raise AttributeError \
+            ("Primary attribute `%s.%s` cannot be deleted" % (obj, self.name))
+    # end def __delete__
 
 # end class Primary
 

@@ -28,6 +28,9 @@
 # Revision Dates
 #    24-Sep-2009 (CT) Creation (factored from TOM.Attr.Spec)
 #     2-Oct-2009 (CT) `_epk_attr` added
+#     6-Oct-2009 (CT) `_epk_attr` removed (use `obj.primary` instead)
+#     6-Oct-2009 (CT) Call of `_setup_alias` moved from `_setup_prop` to
+#                     (newly redefined) `_add_prop`
 #    ««revision-date»»···
 #--
 
@@ -68,14 +71,19 @@ class Spec (MOM.Prop.Spec) :
     _prop_kind      = TFL.Meta.Alias_Property ("_attr_kind")
 
     def __init__ (self, e_type) :
-        self._epk_attr    = []
         self._syncable    = []
         self._user_attr   = []
         self.__super.__init__ (e_type)
         e_type.attributes = self._prop_dict
-        e_type.epk_attr   = self._epk_attr
         e_type.user_attr  = self._user_attr
     # end def __init__
+
+    def _add_prop (self, e_type, name, prop_type) :
+        prop = self.__super._add_prop (e_type, name, prop_type)
+        if prop and name != prop.name :
+            self._setup_alias (e_type, name, prop.name)
+        return prop
+    # end def _add_prop
 
     def _setup_alias (self, e_type, alias_name, real_name) :
         setattr (e_type, alias_name, TFL.Meta.Alias_Property (real_name))
@@ -84,12 +92,8 @@ class Spec (MOM.Prop.Spec) :
 
     def _setup_prop (self, e_type, name, kind, prop) :
         self.__super._setup_prop (e_type, prop.name, kind, prop)
-        if name != prop.name :
-            self._setup_alias (e_type, name, prop.name)
         if not prop.electric :
             self._user_attr.append (prop)
-            if kind.kind = "primary" :
-                self._epk_attr.append (prop)
         if callable (prop.sync) :
             self._syncable.append (prop)
     # end def _setup_prop

@@ -154,12 +154,13 @@ class Entity (TFL.Meta.Object) :
             guard_attr    = ("is_used", )
 
             def eval_condition (self, obj, glob_dict, val_dict) :
-                info = self._error_info
-                add  = info.append
+                result = []
+                add    = result.append
                 for a in obj.required :
                     if not a.has_substance (obj) :
                         add ("Required attribute %s is not defined" % (a, ))
-                return not info
+                self._error_info.extend (result)
+                return not result
             # end def eval_condition
 
         # end class completely_defined
@@ -170,14 +171,35 @@ class Entity (TFL.Meta.Object) :
             kind          = Pred.System
 
             def eval_condition (self, obj, glob_dict, val_dict) :
-                info = self._error_info
-                add  = info.append
+                result = []
+                add    = result.append
                 for p in obj._pred_man.errors ["object"] :
                     add (str (p))
-                return not info
+                self._error_info.extend (result)
+                return not result
             # end def eval_condition
 
         # end class object_correct
+
+        class primary_key_defined (Pred.Condition) :
+            """All primary key attributes must be defined."""
+
+            kind          = Pred.Object
+            guard         = "primary"
+            guard_attr    = ("primary", )
+
+            def eval_condition (self, obj, glob_dict, val_dict) :
+                result = []
+                add    = result.append
+                for a in obj.primary :
+                    v = val_dict.get (a.name)
+                    if v is None and not a.has_substance (obj) :
+                        add ("Primary key attribute %s is not defined" % (a, ))
+                self._error_info.extend (result)
+                return not result
+            # end def eval_condition
+
+        # end class primary_key_defined
 
     # end class _Predicates
 
