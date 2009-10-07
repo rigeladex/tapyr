@@ -29,7 +29,8 @@
 #    24-Sep-2009 (CT) Creation (factored from TOM.Attr.Kind)
 #    28-Sep-2009 (CT) Creation continued
 #    29-Sep-2009 (CT) Creation continued..
-#     6-Oct-2009 (CT) Creation continued... (`Primary`: method redefinitions)
+#     6-Oct-2009 (CT) Creation continued...: `Primary`: method redefinitions
+#     7-Oct-2009 (CT) Creation continued....: `set_cooked` folded into `__set__`
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,13 @@ class Kind (MOM.Prop.Kind) :
     # end def __get__
 
     def __set__ (self, obj, value) :
-        self.set_cooked (obj, value)
+        self.attr.check_invariant (obj, value)
+        if self.record_changes and self.get_value (obj) != value :
+            obj.home_scope.record_change \
+                ( TOM.SCM.Entity_Change_Attr
+                , obj, {self.name : self.get_raw (obj)}
+                )
+        self._set_cooked (obj, value)
     # end def __set__
 
     def get_value (self, obj) :
@@ -86,16 +93,6 @@ class Kind (MOM.Prop.Kind) :
     def reset (self, obj) :
         self.set_raw (obj, self.attr.default, dont_raise = True)
     # end def reset
-
-    def set_cooked (self, obj, value) :
-        self.attr.check_invariant (obj, value)
-        if self.record_changes and self.get_value (obj) != value :
-            obj.home_scope.record_change \
-                ( TOM.SCM.Entity_Change_Attr
-                , obj, {self.name : self.get_raw (obj)}
-                )
-        self._set_cooked (obj, value)
-    # end def set_cooked
 
     def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
         if glob_dict is None :
@@ -308,12 +305,12 @@ class Primary (_User_) :
         return self.get_raw (obj) not in (None, "")
     # end def has_substance
 
-    def set_cooked (self, obj, value) :
+    def __set__ (self, obj, value) :
         if value is None :
             raise AttributeError \
                 ("Primary attribute `%s.%s` cannot be None" % (obj, self.name))
-        return self.__super.set_cooked (obj, value)
-    # end def set_cooked
+        return self.__super.__set__ (obj, value)
+    # end def __set__
 
     def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
         if raw_value is "" :
