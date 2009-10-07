@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    28-Sep-2009 (CT) Creation (factored from TOM.Attr.Type)
+#     7-Oct-2009 (CT) Class attribute `syntax` removed (added by `M_Attr_Type`
+#                     if necessary)
+#     7-Oct-2009 (CT) `_A_Named_Value_` and `A_Boolean` added
 #    ««revision-date»»···
 #--
 
@@ -65,7 +68,6 @@ class A_Attr_Type (object) :
     simple_cooked     = None
     store_default     = False
     symbolic_ref_pat  = Regexp (r"^\s*\$\(.*\)\s*$", re.MULTILINE)
-    syntax            = ""
     typ               = None
 
     def __init__ (self, kind) :
@@ -241,6 +243,48 @@ class _A_Date_ (A_Attr_Type) :
 
 # end class _A_Date_
 
+class _A_Named_Value_ (A_Attr_Type) :
+    """Common base class for attributes holding named values."""
+
+    __metaclass__ = MOM.Meta.M_Attr_Type_Named_Value
+
+    def as_code (self, value) :
+        return self.code_format % (self.__class__.Elbat [value], )
+    # end def as_code
+
+    def as_pickle (self, value) :
+        return self.__class__.Elbat [value]
+    # end def as_pickle
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        return soc.format % (self.__class__.Elbat [value], )
+    # end def as_string
+
+    def eligible_raw_values (self, obj = None) :
+        return sorted (self.__class__.Table.iterkeys ())
+    # end def eligible_raw_values
+
+    def from_code (self, s, obj = None, glob = None, locl = None) :
+        return self._from_string_eval (self._call_eval (s, glob, locl))
+    # end def from_code
+
+    def from_pickle (self, s, obj = None, glob = None, locl = None) :
+        try :
+            return self.__class__.Table [s]
+        except KeyError :
+            pass
+    # end def from_pickle
+
+    def _from_string_eval (self, s, obj, glob, locl) :
+        try :
+            return self.__class__.Table [s]
+        except KeyError :
+            raise ValueError ("%s not in %s" % (s, self.eligible_raw_values ()))
+    # end def _from_string_eval
+
+# end class _A_Named_Value_
+
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""
 
@@ -279,7 +323,7 @@ class _A_Object_ (A_Attr_Type) :
     # end def as_string
 
     def as_code (self, value) :
-        return self.code_format % (value, )
+        return self.code_format % (value.name, )
     # end def as_code
 
     def as_pickle (self, value) :
@@ -394,6 +438,18 @@ class _A_Unit_ (A_Attr_Type) :
     # end def _from_string_eval
 
 # end class _A_Unit_
+
+class A_Boolean (_A_Named_Value_) :
+    """Models a Boolean attribute of an object."""
+
+    typ            = "Boolean"
+
+    Table          = dict \
+        ( no       = False
+        , yes      = True
+        )
+
+# end class A_Boolean
 
 class A_Date (_A_Date_) :
     """Models a date attribute of an object."""
@@ -596,5 +652,5 @@ Class `MOM.Attr.A_Attr_Type`
 """
 
 if __name__ != "__main__" :
-    MOM.Attr._Export ("*")
+    MOM.Attr._Export ("*", "_A_Named_Value_", "_A_Number_", "_A_Unit_")
 ### __END__ MOM.Attr.Type

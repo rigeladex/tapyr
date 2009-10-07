@@ -29,6 +29,7 @@
 #    17-Sep-2009 (CT) Creation (factored from `TOM.Entity`)
 #    23-Sep-2009 (CT) Journal-related methods removed
 #     1-Oct-2009 (CT) `Entity_Essentials` removed
+#     7-Oct-2009 (CT) `filters` removed
 #    ««revision-date»»···
 #--
 
@@ -45,8 +46,6 @@ import _MOM._Pred.Manager
 import _MOM._Pred.Spec
 import _MOM._Pred.Type
 import _MOM._SCM.Change
-
-import _MOM.Filter
 
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
@@ -80,37 +79,8 @@ class Entity (TFL.Meta.Object) :
     tutorial              = None
 
     _appl_globals         = {}
-    _lists_to_combine     = ("filters", "auto_display")
+    _lists_to_combine     = ("auto_display", )
     _dicts_to_combine     = ("deprecated_attr_names", "refuse_links")
-
-    filters               = \
-        ( MOM.Filter
-            ( predicate   = "not object.is_defined ()"
-            , name        = "underdefined"
-            , description = "All objects with undefined required attributes"
-            , bvar        = "object"
-            )
-        , MOM.Filter
-            ( predicate   = "object.is_correct ()"
-            , name        = "is internally correct"
-            , description = "All internally correct objects"
-            , bvar        = "object"
-            , invert      = 1
-            )
-        , MOM.Filter
-            ( predicate   = "object.is_g_correct ()"
-            , name        = "is globally correct"
-            , description = "All globally correct objects"
-            , bvar        = "object"
-            , invert      = 1
-            )
-        , MOM.Filter
-            ( predicate   = "not object.is_locked ()"
-            , name        = "editable"
-            , description = "All objects with some editable attributes"
-            , bvar        = "object"
-            )
-        )
 
     class _Attributes (MOM.Attr.Spec) :
 
@@ -227,12 +197,6 @@ class Entity (TFL.Meta.Object) :
         self._init_meta_attrs ()
         self._init_attributes ()
     # end def __init__
-
-    @classmethod
-    def add_filter (cls, * filters) :
-        """Add `filters` to `clss`."""
-        cls.filters += filters
-    # end def add_filter
 
     def after_init (self) :
         pass
@@ -518,7 +482,7 @@ class Entity (TFL.Meta.Object) :
 
 _Essence = Entity
 
-__all__  = ("Entity")
+__all__  = ("Entity", )
 
 __doc__  = """
 Class `MOM.Entity`
@@ -622,12 +586,6 @@ aspects of the use of an essential class by the framework.
   This is a dictionary that maps deprecated names
   of attributes to the currently preferred names (this is used to
   allow the reading of older databases without loss of information).
-
-.. attribute:: filters
-
-  This is a sequence of filter objects (see :class:`~_MOM.Filter`)
-  that can be used in the UI to reduce the number of objects displayed
-  to those satisfying the filter condition.
 
 .. attribute:: is_partial
 

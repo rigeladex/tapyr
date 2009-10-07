@@ -430,7 +430,7 @@ class Lazy_Property (object) :
     """Property caching a computed value"""
 
     def __init__ (self, name, computer, doc = None) :
-        self.name     = name
+        self.name     = self.__name__ = name
         self.computer = computer
         self.__doc__  = doc
     # end def __init__

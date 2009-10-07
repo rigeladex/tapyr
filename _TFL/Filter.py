@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -38,7 +38,7 @@
 #--
 
 """
-This modules provides some classes for filtering iterables.
+This module provides some classes for filtering iterables.
 
     >>> def pprint (x) :
     ...     import textwrap
@@ -167,6 +167,8 @@ import _TFL._Meta.Object
 class _Filter_ (TFL.Meta.Object) :
     """Base class for filters."""
 
+    attrs = {}
+
     def filter (self, iterable, * args, ** kw) :
         return list (self.filter_iter (iterable, * args, ** kw))
     # end def filter
@@ -183,8 +185,15 @@ class _Filter_ (TFL.Meta.Object) :
         return Filter_And (self, rhs)
     # end def __add__
 
+    def __getattr__ (self, name) :
+        try :
+            return self.attrs [name]
+        except KeyError :
+            raise AttributeError (name)
+    # end def __getattr__
+
     def __invert__ (self) :
-        return Filter_Not (self.predicate)
+        return Filter_Not (self.predicate, ** self.attrs)
     # end def __invert__
 
     def __or__ (self, rhs) :
@@ -201,16 +210,17 @@ class _Filter_S_ (_Filter_) :
 class Filter (_Filter_S_) :
     """Return all items from an iterable which satisfy the predicate."""
 
-    def __new__ (cls, predicate) :
+    def __new__ (cls, predicate, ** kw) :
         if isinstance (predicate, Filter) :
             return predicate
         else :
-            return super (Filter, cls).__new__ (cls, predicate)
+            return super (Filter, cls).__new__ (cls, predicate, ** kw)
     # end def __new__
 
-    def __init__ (self, predicate) :
+    def __init__ (self, predicate, ** kw) :
         if self is not predicate :
             self.predicate = predicate
+            self.attrs     = kw
     # end def __init__
 
 # end class Filter
@@ -218,15 +228,16 @@ class Filter (_Filter_S_) :
 class Filter_Not (_Filter_S_) :
     """Return all items from an iterable which don't satisfy the predicate."""
 
-    def __new__ (cls, predicate) :
+    def __new__ (cls, predicate, ** kw) :
         if isinstance (predicate, Filter_Not) :
             return ~ predicate
         else :
-            return super  (Filter_Not, cls).__new__ (cls, predicate)
+            return super  (Filter_Not, cls).__new__ (cls, predicate, ** kw)
     # end def __new__
 
-    def __init__ (self, predicate) :
+    def __init__ (self, predicate, ** kw) :
         self._not_predicate = predicate
+        self.attrs          = kw
     # end def __init__
 
     def predicate (self, item, * args, ** kw) :
@@ -234,7 +245,7 @@ class Filter_Not (_Filter_S_) :
     # end def predicate
 
     def __invert__ (self) :
-        return Filter (self._not_predicate)
+        return Filter (self._not_predicate, ** self.attrs)
     # end def __invert__
 
 # end class Filter_Not

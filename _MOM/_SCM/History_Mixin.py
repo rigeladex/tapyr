@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -20,46 +20,36 @@
 #
 #++
 # Name
-#    TFL.Context
+#    MOM.SCM.History_Mixin
 #
 # Purpose
-#    Library of context manager functions
+#    History mixin for MOM Scope change management
 #
 # Revision Dates
-#    14-Apr-2008 (CT) Creation
+#     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Change)
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
-import _TFL.Decorator
+from   _MOM          import MOM
+from   _TFL          import TFL
 
-from contextlib import closing, nested
+import _MOM._SCM
 
-@TFL.Contextmanager
-def attr_let (obj, attr_name, value) :
-    """Context manager for temporarily changing obj's attribute `attr_name` to
-       `value`.
-    """
-    old = getattr (obj, attr_name)
-    setattr (obj, attr_name, value)
-    try :
-        yield obj
-    finally :
-        assert getattr (obj, attr_name) is value
-        setattr (obj, attr_name, old)
-# end def attr_let
+import _TFL._Meta.Object
 
-@TFL.Contextmanager
-def list_push (list, item) :
-    """Context manager for temporarily pushing `item` onto `list`."""
-    list.append (item)
-    try :
-        yield list
-    finally :
-        assert list [-1] is item
-        list.pop ()
-# end def list_push
+class History_Mixin (TFL.Meta.Object) :
+
+    def __init__ (self) :
+        self.change_count = 0
+        self.history      = []
+    # end def __init__
+
+    def __nonzero__ (self) :
+        return bool (self.change_count or self.history)
+    # end def __nonzero__
+
+# end class History_Mixin
 
 if __name__ != "__main__" :
-    TFL._Export_Module ()
-### __END__ TFL.Context
+    MOM.SCM._Export ("*")
+### __END__ MOM.SCM.History_Mixin

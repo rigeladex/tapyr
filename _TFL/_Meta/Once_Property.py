@@ -29,41 +29,17 @@
 #     9-Nov-2007 (CT) Creation
 #     4-Feb-2009 (CT) Documentation improved
 #    24-Sep-2009 (CT) `_del` added to `Once_Property`
+#     7-Oct-2009 (CT) `Once_Property` implemented as wrapper around
+#                     `Lazy_Property`
 #    ««revision-date»»···
 #--
 
 from   _TFL             import TFL
-import _TFL._Meta
-
-### XXX `wraps` should go somewhere else (and be used for `TFL.Decorator`, too)
-try :
-    from functools import wraps
-except ImportError :
-    def wraps (wrapped) :
-        def _ (wrapper) :
-            wrapper.__name__   = wrapped.__name__
-            wrapper.__doc__    = wrapped.__doc__
-            wrapper.__module__ = getattr (wrapped, "__module__", "<builtin>")
-            wrapper.__dict__.update (getattr (wrapped, "__dict__", {}))
-            return wrapper
-        return _
+import _TFL._Meta.Property
 
 def Once_Property (f) :
-    """Define a property that is computed once (per instance) by
-       calling `f` and stored in the instance attribute `__<name>`.
-    """
-    key = "__%s" % (f.__name__, )
-    @wraps (f)
-    def _get (self) :
-        dict = self.__dict__
-        try :
-            result = dict [key]
-        except KeyError :
-            result = dict [key] = f (self)
-        return result
-    def _del (self) :
-        del self.__dict__ [key]
-    return property (_get, None, _del, doc = f.__doc__)
+    """Decorator returning a `Lazy_Property`."""
+    return TFL.Meta.Lazy_Property (f.__name__, f, f.__doc__)
 # end def Once_Property
 
 if __name__ != "__main__" :

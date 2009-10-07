@@ -28,6 +28,8 @@
 # Revision Dates
 #    28-Sep-2009 (CT) Creation (factored from TOM.Meta.M_Attr_Type)
 #    29-Sep-2009 (CT) `ckd_name` and `raw_name` added
+#     7-Oct-2009 (CT) `M_Attr_Type_Named_Value` added
+#     7-Oct-2009 (CT) `M_Attr_Type.__init__` changed to add `syntax`
 #    ««revision-date»»···
 #--
 
@@ -35,6 +37,8 @@ from   _MOM                import MOM
 from   _TFL                import TFL
 
 import _MOM._Meta.M_Prop_Type
+
+import _TFL._Meta.Once_Property
 
 class M_Attr_Type (MOM.Meta.M_Prop_Type) :
     """Meta class for MOM.Attr.Type classes."""
@@ -47,9 +51,55 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
         if not name.startswith (("_A_", "A_")) :
             cls.ckd_name = "__%s"     % (cls.name, )
             cls.raw_name = "__raw_%s" % (cls.name, )
+        if not hasattr (cls, "syntax") :
+            if not name.startswith (("_A_", "A_Attr_Type")) :
+                ### Adding `syntax` here (instead of as a class attribute in
+                ### `A_Attr_Type`) allows descendent meta classes to define a
+                ### meta property for `syntax` (which would be hidden by the
+                ### class attribute)
+                cls.syntax = ""
     # end def __init__
 
 # end class M_Attr_Type
+
+class M_Attr_Type_Named_Value (M_Attr_Type) :
+    """Meta class for MOM.Attr.A_Named_Value classes.
+
+       `M_Attr_Type_Named_Value` adds Once_Property for `Elbat` (reverse
+       mapping) for `Table` and for `syntax`, if these aren't defined by the
+       descendent of `A_Named_Value`.
+    """
+
+    @TFL.Meta.Once_Property
+    def Elbat (cls) :
+        """Reversed mapping for `cls.Table`. Requires that `Table` is a
+           unique mapping.
+        """
+        result = {None : ""}
+        for i, v in cls.Table.iteritems () :
+            if v in result :
+                raise TypeError \
+                    ( "Non-unique mapping for %s: "
+                      "\n"
+                      "    keys %r and %r both map to value '%s'."
+                      "\n"
+                      "Please specify reverse mapping `Elbat` manually."
+                    % (cls, i, result [v], v)
+                    )
+            result [v] = i
+        return result
+    # end def Elbat
+
+    @TFL.Meta.Once_Property
+    def syntax (cls) :
+        return \
+            ( "The following string values are accepted as valid "
+              "%s values: %s"
+            % (cls.typ, ", ".join (sorted (cls.Table.iterkeys ())))
+            )
+    # end def syntax
+
+# end class M_Attr_Type_Named_Value
 
 class M_Attr_Type_Unit (M_Attr_Type) :
     """Meta class for MOM.Attr._A_Unit_ classes.
@@ -117,6 +167,7 @@ Class `MOM.Meta.M_Attr_Type`
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 .. autoclass:: M_Attr_Type
+.. autoclass:: M_Attr_Type_Named_Value
 .. autoclass:: M_Attr_Type_Unit
 
 """
