@@ -29,6 +29,7 @@
 #    18-Sep-2009 (CT) Creation (factored from TOM.Object)
 #    23-Sep-2009 (CT) Journal-related methods removed
 #    23-Sep-2009 (CT) `name` replaced by `epk`
+#     8-Oct-2009 (CT) s/Entity/Id_Entity/
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ import _MOM._Meta.M_Object
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
 
-_Ancestor_Essence = MOM.Entity
+_Ancestor_Essence = MOM.Id_Entity
 
 class Object (_Ancestor_Essence) :
     """Root class for object-types of Tanzer's Object Model."""
@@ -68,31 +69,8 @@ class Object (_Ancestor_Essence) :
             self.home_scope.remove (self)
     # end def destroy
 
-    def rename (self, new_epk) :
-        """Rename object to essential primary key `new_epk`."""
-        if self.home_scope._roots.get (self.Essence.type_base_name) is self :
-            raise MOM.Error.Cannot_Rename_Root_Object (self, new_epk)
-        old_epk  = self.epk
-        self.epk = new_epk
-        self.home_scope.rename (self, old_epk, new_epk)
-        for d in self.dependencies.keys () :
-            try :
-                d.update_dependency_names (self, old_epk)
-            except :
-                print self.__class__, old_epk, new_epk, d
-                raise
-    # end def rename
-
-    def _repr (self, type_name) :
-        return """%s.instance (%r)""" % (type_name, self.epk)
-    # end def _repr
-
-    def __str__ (self) :
-        return "%s `%s`" % (self.type_name, self.epk)
-    # end def __str__
-
     def __hash__ (self) :
-        return self.id
+        return self.epk
     # end def __hash__
 
     def __cmp__  (self, other) :

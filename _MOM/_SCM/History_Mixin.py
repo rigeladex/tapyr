@@ -26,7 +26,7 @@
 #    History mixin for MOM Scope change management
 #
 # Revision Dates
-#     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Change)
+#     7-Oct-2009 (CT) Creation (factored from TOM.SCM.History_Mixin)
 #    ««revision-date»»···
 #--
 

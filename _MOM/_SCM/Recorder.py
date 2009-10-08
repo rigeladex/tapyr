@@ -26,7 +26,7 @@
 #    Recorder of changes in a MOM scope
 #
 # Revision Dates
-#     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Change)
+#     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Recorder)
 #    ««revision-date»»···
 #--
 

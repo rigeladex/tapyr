@@ -30,6 +30,7 @@
 #    23-Sep-2009 (CT) Journal-related methods removed
 #     1-Oct-2009 (CT) `Entity_Essentials` removed
 #     7-Oct-2009 (CT) `filters` removed
+#     8-Oct-2009 (CT) `An_Entity` and `Id_Entity` factored from `Entity`
 #    ««revision-date»»···
 #--
 
@@ -51,26 +52,251 @@ from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
 from   _MOM._Pred      import Pred
 
-from   _TFL.object_globals   import object_globals
-from   _TFL.Regexp           import *
-
+import _TFL._Meta.Once_Property
 import _TFL.defaultdict
+
+from   _TFL.object_globals   import object_globals
 
 import itertools
 import traceback
 
 class Entity (TFL.Meta.Object) :
-    """Internal root class for MOM objects and links."""
+    """Internal root class for MOM entities with and without identity."""
 
     __metaclass__         = MOM.Meta.M_Entity
-    __id                  = 0 ### used to generate a unique id for each entity
-
-    auto_display          = ()
     deprecated_attr_names = {}
     home_scope            = None
     is_partial            = True
-    max_count             = 0
     Package_NS            = MOM
+
+    _dicts_to_combine     = ("deprecated_attr_names", )
+
+    class _Attributes (MOM.Attr.Spec) :
+        pass
+    # end class _Attributes
+
+    class _Predicates (MOM.Pred.Spec) :
+        pass
+    # end class _Predicates
+
+    def __new__ (cls, ** kw) :
+        if cls.is_partial :
+            raise MOM.Error.Partial_Type (cls.type_name)
+        result = super (Entity, cls).__new__ (cls)
+        if not result.home_scope :
+            result.home_scope = kw.get ("scope", MOM.Scope.active)
+        return result
+    # end def __new__
+
+    def __init__ (self, ** kw) :
+        self._init_meta_attrs ()
+        self._init_attributes ()
+    # end def __init__
+
+    def after_init (self) :
+        pass
+    # end def after_init
+
+    def after_init_db (self) :
+        pass
+    # end def after_init_db
+
+    def attr_value_maybe (self, name) :
+        attr = self.attributes.get (name)
+        if attr :
+            return attr.get_value (self)
+    # end def attr_value_maybe
+
+    def globals (self) :
+        return self.__class__._appl_globals or object_globals (self)
+    # end def globals
+
+    def has_changed (self) :
+        return self._attr_man.has_changed (self)
+    # end def has_changed
+
+    def has_substance (self) :
+        """TRUE if there is at least one attribute with a non-default value."""
+        return any (a.has_substance (self) for a in self.user_attr)
+    # end def has_substance
+
+    def is_correct (self, attr_dict = {})  :
+        ews = self._pred_man.check_kind ("object", self, attr_dict)
+        return not ews
+    # end def is_correct
+
+    def raw_attr (self, name) :
+        """Returns the raw value of attribute `name`, i.e., the value entered
+           by the user into the object editor.
+        """
+        attr = self.attributes.get (name)
+        if attr :
+            return attr.get_raw (self) or ""
+    # end def raw_attr
+
+    def reset_syncable (self) :
+        self._attr_man.reset_syncable ()
+    # end def reset_syncable
+
+    def set (self, on_error = None, ** kw) :
+        """Set attributes specified in `kw` from cooked values"""
+        if not kw :
+            return 0
+        self._kw_satisfies_i_invariants (kw, on_error)
+        self._set_record (kw)
+        tc = self._attr_man.total_changes
+        for name, val, attr in self.set_attr_iter (kw, on_error) :
+            attr._set_cooked (self, val)
+        return self._attr_man.total_changes - tc
+    # end def set
+
+    def set_attr_iter (self, attr_dict, on_error = None) :
+        attributes = self.attributes
+        if on_error is None :
+            on_error = self._raise_attr_error
+        for name, val in attr_dict.iteritems () :
+            cnam = self.deprecated_attr_names.get (name, name)
+            attr = attributes.get (cnam)
+            if attr :
+                if attr._set is None :
+                    on_error \
+                        ( MOM.Error.Invalid_Attribute
+                            (self, name, val, attr.kind)
+                        )
+                else :
+                    yield (cnam, val, attr)
+            elif name != "raw" :
+                on_error (MOM.Error.Unknown_Attribute (self, name, val))
+    # end def set_attr_iter
+
+    def set_raw (self, on_error = None, ** kw) :
+        """Set attributes specified in `kw` from raw values"""
+        if not kw :
+            return 0
+        tc = self._attr_man.total_changes
+        if kw :
+            cooked_kw = {}
+            to_do     = []
+            for name, val, attr in self.set_attr_iter (kw, on_error) :
+                if val :
+                    try :
+                        cooked_kw [name] = cooked_val = \
+                            attr.from_string (val, self)
+                    except (ValueError, MOM.Error.Attribute_Syntax_Error), err:
+                        print ("Warning: Error when setting attribute %s "
+                               "of %r to %s\nClearing attribute"
+                              ) % (attr.name, self, val)
+                        self.home_scope._db_errors.append \
+                            ( MOM.Error.Invalid_Attribute
+                                (self, name, val, attr.kind)
+                            )
+                        if __debug__ :
+                            print err
+                        to_do.append ((attr, "", None))
+                    except StandardError, exc :
+                        print exc, \
+                          ( "; object %s, attribute %s: %s [%s]"
+                          % (self, name, val, type (val))
+                          )
+                        traceback.print_exc ()
+                    else :
+                        to_do.append ((attr, val, cooked_val))
+                else :
+                    to_do.append ((attr, "", None))
+            self._kw_satisfies_i_invariants (cooked_kw, on_error)
+            self._set_record (cooked_kw)
+            self._attr_man.reset_pending ()
+            for attr, raw_val, val in to_do :
+                attr._set_raw (self, raw_val, val)
+        return self._attr_man.total_changes - tc
+    # end def set_raw
+
+    def sync_attributes (self) :
+        """Synchronizes all user attributes with the values from
+           _raw_attr and all sync-cached attributes.
+        """
+        self._attr_man.sync_attributes (self)
+    # end def sync_attributes
+
+    def _init_attributes (self) :
+        self._attr_man.reset_attributes (self)
+    # end def _init_attributes_
+
+    def _init_meta_attrs (self) :
+        self._attr_man  = MOM.Attr.Manager (self._Attributes)
+        self._pred_man  = MOM.Pred.Manager (self._Predicates)
+    # end def _init_meta_attrs
+
+    def _kw_satisfies_i_invariants (self, attr_dict, on_error) :
+        result = not self.is_correct (attr_dict)
+        if result :
+            errors = self._pred_man.errors ["object"]
+            if on_error is None :
+                on_error = self._raise_attr_error
+            on_error (MOM.Error.Invariant_Errors (errors))
+        return result
+    # end def _kw_satisfies_i_invariants
+
+    def _print_attr_err (self, exc) :
+        print self, exc
+    # end def _print_attr_err
+
+    def _raise_attr_error (self, exc) :
+        raise exc
+    # end def _raise_attr_error
+
+    def _set_record (self, kw) :
+        pass
+    # end def _set_record
+
+    def _store_attr_error (self, exc) :
+        self.home_scope._db_errors.append (exc)
+    # end def _store_attr_error
+
+    def __getattr__ (self, name) :
+        ### just to ease up-chaining in descendents
+        raise AttributeError ("%r.%s" % (self, name))
+    # end def __getattr__
+
+    def __repr__ (self) :
+        return self._repr (self.type_name)
+    # end def __repr__
+
+# end class Entity
+
+class An_Entity (Entity) :
+    """Root class for anonymous entities without identity."""
+
+    def __init__ (self, ** kw) :
+        self.__super.__init__ (** kw)
+        self.set              (** kw)
+    # end def __init__
+
+    def _formatted_user_attr (self) :
+        return ", ".join \
+            ("%s = %s" % (a.name, a.get_raw (self)) for a in self.user_attr)
+    # end def _formatted_user_attr
+
+    def _repr (self, type_name) :
+        return "%s (%s)" % (type_name, self._formatted_user_attr ())
+    # end def _repr
+
+    def __str__ (self) :
+        return "(%s)" % (self._formatted_user_attr ())
+    # end def __str__
+
+# end class An_Entity
+
+class Id_Entity (Entity) :
+    """Internal root class for MOM entities with identity, i.e.,
+       objects and links.
+    """
+
+    __metaclass__         = MOM.Meta.M_Id_Entity
+    __id                  = 0 ### used to generate a unique id for each entity
+
+    auto_display          = ()
+    max_count             = 0
     rank                  = 0
     record_changes        = True
     refuse_links          = {}
@@ -80,9 +306,9 @@ class Entity (TFL.Meta.Object) :
 
     _appl_globals         = {}
     _lists_to_combine     = ("auto_display", )
-    _dicts_to_combine     = ("deprecated_attr_names", "refuse_links")
+    _dicts_to_combine     = ("refuse_links", )
 
-    class _Attributes (MOM.Attr.Spec) :
+    class _Attributes (Entity._Attributes) :
 
         class electric (A_Boolean) :
             """Indicates if object/link was created automatically or not."""
@@ -114,7 +340,7 @@ class Entity (TFL.Meta.Object) :
 
     # end class _Attributes
 
-    class _Predicates (MOM.Pred.Spec) :
+    class _Predicates (Entity._Predicates) :
 
         class completely_defined (Pred.Condition) :
             """All required attributes must be defined."""
@@ -173,6 +399,12 @@ class Entity (TFL.Meta.Object) :
 
     # end class _Predicates
 
+    @TFL.Meta.Once_Property
+    def epk (self) :
+        """Essential primary key"""
+        return tuple (a.get_value (self) for a in self.primary)
+    # end def epk
+
     @property
     def has_errors (self) :
         return self._pred_man.has_errors
@@ -184,33 +416,10 @@ class Entity (TFL.Meta.Object) :
     # end def has_warnings
 
     def __new__ (cls, ** kw) :
-        if cls.is_partial :
-            raise MOM.Error.Partial_Type (cls.type_name)
-        result = super (Entity, cls).__new__ (cls)
-        if not result.home_scope :
-            result.home_scope = kw.get ("scope", MOM.Scope.active)
+        result    = super (Id_Entity, cls).__new__ (cls, ** kw)
         result.id = result.__new_id ()
         return result
     # end def __new__
-
-    def __init__ (self, ** kw) :
-        self._init_meta_attrs ()
-        self._init_attributes ()
-    # end def __init__
-
-    def after_init (self) :
-        pass
-    # end def after_init
-
-    def after_init_db (self) :
-        pass
-    # end def after_init_db
-
-    def attr_value_maybe (self, name) :
-        attr = self.attributes.get (name)
-        if attr :
-            return attr.get_value (self)
-    # end def attr_value_maybe
 
     def check_all (self) :
         """Checks all predicates"""
@@ -227,9 +436,9 @@ class Entity (TFL.Meta.Object) :
         pass
     # end def compute_type_defaults_internal
 
-    def copy (self, * new_n, ** kw) :
+    def copy (self, * new_epk, ** kw) :
         """Make copy with name(s) `new_n`."""
-        new_obj = self.__class__ (* new_n)
+        new_obj = self.__class__ (* new_epk)
         raw_kw  = dict \
             ((a.name, a.get_raw (self)) for a in self.user_attr)
         if raw_kw :
@@ -250,24 +459,6 @@ class Entity (TFL.Meta.Object) :
         if other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
-
-    def globals (self) :
-        return self.__class__._appl_globals or object_globals (self)
-    # end def globals
-
-    def has_changed (self) :
-        return self._attr_man.has_changed (self)
-    # end def has_changed
-
-    def has_substance (self) :
-        """TRUE if there is at least one attribute with a non-default value."""
-        return any (a.has_substance (self) for a in self.user_attr)
-    # end def has_substance
-
-    def is_correct (self, attr_dict = {})  :
-        ews = self._pred_man.check_kind ("object", self, attr_dict)
-        return not ews
-    # end def is_correct
 
     def is_defined (self)  :
         return \
@@ -301,103 +492,10 @@ class Entity (TFL.Meta.Object) :
             o.destroy_dependency (self)
     # end def notify_dependencies_destroy
 
-    def raw_attr (self, name) :
-        """Returns the raw value of attribute `name`, i.e., the value entered
-           by the user into the object editor.
-        """
-        attr = self.attributes.get (name)
-        if attr :
-            return attr.get_raw (self) or ""
-    # end def raw_attr
-
     def register_dependency (self, other) :
         """Register that `other` depends on `self`"""
         self.dependencies [other] += 1
     # end def register_dependency
-
-    def reset_syncable (self) :
-        self._attr_man.reset_syncable ()
-    # end def reset_syncable
-
-    def set (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from cooked values"""
-        if not kw :
-            return 0
-        self._kw_satisfies_i_invariants (kw, on_error)
-        self._set_record (kw)
-        tc = self._attr_man.total_changes
-        for name, val, attr in self.set_attr_iter (kw, on_error) :
-            attr._set_cooked (self, val)
-        return self._attr_man.total_changes - tc
-    # end def set
-
-    def set_attr_iter (self, attr_dict, on_error = None) :
-        attributes = self.attributes
-        if on_error is None :
-            on_error = self._raise_attr_error
-        for name, val in attr_dict.iteritems () :
-            cnam = self.deprecated_attr_names.get (name, name)
-            attr = attributes.get (cnam)
-            if attr :
-                if attr._set is None :
-                    on_error \
-                        ( MOM.Error.Invalid_Attribute
-                            (self, name, val, attr.kind)
-                        )
-                else :
-                    yield (cnam, val, attr)
-            elif name != "raw" :
-                on_error (MOM.Error.Unknown_Attribute (self, name, val))
-    # end def set_attr_iter
-
-    def set_raw (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from raw values"""
-        if not kw :
-            return 0
-        tc = self._attr_man.total_changes
-        if kw :
-            cooked_kw = {}
-            to_do     = []
-            for name, val, attr in self.set_attr_iter (kw, on_error) :
-                if val :
-                    try :
-                        cooked_kw [name] = cooked_val = \
-                            attr.from_string (val, self)
-                    except (ValueError, MOM.Error.Attribute_Syntax_Error), err:
-                        print ("Warning: Error when setting attribute %s "
-                               "of %s to %s\nClearing attribute"
-                              ) % (attr.name, self.name, val)
-                        self.home_scope._db_errors.append \
-                            ( MOM.Error.Invalid_Attribute
-                                (self, name, val, attr.kind)
-                            )
-                        if __debug__ :
-                            print err
-                        to_do.append ((attr, "", None))
-                    except StandardError, exc :
-                        print exc, \
-                          ( "; object %s, attribute %s: %s [%s]"
-                          % (self, name, val, type (val))
-                          )
-                        traceback.print_exc ()
-                    else :
-                        to_do.append ((attr, val, cooked_val))
-                else :
-                    to_do.append ((attr, "", None))
-            self._kw_satisfies_i_invariants (cooked_kw, on_error)
-            self._set_record (cooked_kw)
-            self._attr_man.reset_pending ()
-            for attr, raw_val, val in to_do :
-                attr._set_raw (self, raw_val, val)
-        return self._attr_man.total_changes - tc
-    # end def set_raw
-
-    def sync_attributes (self) :
-        """Synchronizes all user attributes with the values from
-           _raw_attr and all sync-cached attributes.
-        """
-        self._attr_man.sync_attributes (self)
-    # end def sync_attributes
 
     def unregister_dependency (self, other) :
         """Unregister dependency of `other` on `self`"""
@@ -417,35 +515,12 @@ class Entity (TFL.Meta.Object) :
     # end def _destroy
 
     def _init_meta_attrs (self) :
-        self._attr_man  = MOM.Attr.Manager (self._Attributes)
-        self._pred_man  = MOM.Pred.Manager (self._Predicates)
+        self.__super._init_meta_attrs ()
         self.object_referring_attributes = {}
     # end def _init_meta_attrs
 
-    def _init_attributes (self) :
-        self._attr_man.reset_attributes (self)
-    # end def _init_attributes_
-
-    def _kw_satisfies_i_invariants (self, attr_dict, on_error) :
-        result = not self.is_correct (attr_dict)
-        if result :
-            errors = self._pred_man.errors ["object"]
-            if on_error is None :
-                on_error = self._raise_attr_error
-            on_error (MOM.Error.Invariant_Errors (errors))
-        return result
-    # end def _kw_satisfies_i_invariants
-
-    def _print_attr_err (self, exc) :
-        print self, exc
-    # end def _print_attr_err
-
-    def _raise_attr_error (self, exc) :
-        raise exc
-    # end def _raise_attr_error
-
     def _repr (self, type_name) :
-        return "%s (%s)" % (type_name, self.name)
+        return "%s %r" % (type_name, self.epk)
     # end def _repr
 
     def _set_record (self, kw) :
@@ -455,34 +530,21 @@ class Entity (TFL.Meta.Object) :
                 (MOM.SCM.Entity_Change_Attr, self, rvr)
     # end def _set_record
 
-    def _store_attr_error (self, exc) :
-        self.home_scope._db_errors.append (exc)
-    # end def _store_attr_error
-
-    @staticmethod
-    def __new_id () :
-        Entity.__id += 1
-        return Entity.__id
+    def __new_id (self) :
+        Id_Entity.__id += 1
+        return Id_Entity.__id
     # end def __new_id
 
-    def __getattr__ (self, name) :
-        ### just to ease up-chaining in descendents
-        raise AttributeError ("%r.%s" % (self, name))
-    # end def __getattr__
-
-    def __repr__ (self) :
-        return self._repr (self.type_name)
-    # end def __repr__
-
     def __str__ (self) :
-        return self.name
+        epk = self.epk
+        if len (epk) == 1 :
+            result = str  (epk [0])
+        else :
+            result = repr (epk)
+        return result
     # end def __str__
 
-# end class Entity
-
-_Essence = Entity
-
-__all__  = ("Entity", )
+# end class Id_Entity
 
 __doc__  = """
 Class `MOM.Entity`

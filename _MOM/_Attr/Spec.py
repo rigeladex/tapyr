@@ -31,6 +31,7 @@
 #     6-Oct-2009 (CT) `_epk_attr` removed (use `obj.primary` instead)
 #     6-Oct-2009 (CT) Call of `_setup_alias` moved from `_setup_prop` to
 #                     (newly redefined) `_add_prop`
+#     8-Oct-2009 (CT) `sort` for `_user_attr` added
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,7 @@ class Spec (MOM.Prop.Spec) :
         self.__super.__init__ (e_type)
         e_type.attributes = self._prop_dict
         e_type.user_attr  = self._user_attr
+        self._user_attr.sort ()
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :
