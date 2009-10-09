@@ -30,6 +30,7 @@
 #    29-Sep-2009 (CT) `ckd_name` and `raw_name` added
 #     7-Oct-2009 (CT) `M_Attr_Type_Named_Value` added
 #     7-Oct-2009 (CT) `M_Attr_Type.__init__` changed to add `syntax`
+#     9-Oct-2009 (CT) Handling of `default` and `raw_default` added
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,19 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
                 ### meta property for `syntax` (which would be hidden by the
                 ### class attribute)
                 cls.syntax = ""
+        raw_default = dict.get ("raw_default")
+        if raw_default :
+            assert not cls.default, \
+                ( "Can't specify both raw default and %s "
+                  "and cooked default %s for %s"
+                % (raw_default, cls.default, cls)
+                )
+            if cls.symbolic_ref_pat.match (raw_default) :
+                cls._symbolic_default = True
+            ### Can't precompute `default` from `raw_default`
+        if cls.default is not None and not cls.raw_default :
+            ### Precompute `raw_default` from `default`
+            cls.raw_default = cls.as_string (cls.default)
     # end def __init__
 
 # end class M_Attr_Type

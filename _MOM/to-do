@@ -52,14 +52,11 @@ MOM To-Do
 
 - Id_Entity renaming: ???
 
-  * Change of any primary key attribute needs to reset `epk`
-
-  * Does `rename` make sense at all?
+  * `rename` isn't a method of the public API
 
   * `set` and `set_raw` need to deal with changes in primary key attributes
 
-  * Having both `rename` and `set` deaal with it easily leads to infinite
-    recursion
+  * Assignment to primary key attributes is forbidden
 
 x Attr.Kind:
 

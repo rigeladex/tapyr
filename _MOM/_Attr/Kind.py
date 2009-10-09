@@ -31,6 +31,10 @@
 #    29-Sep-2009 (CT) Creation continued..
 #     6-Oct-2009 (CT) Creation continued...: `Primary`: method redefinitions
 #     7-Oct-2009 (CT) Creation continued....: `set_cooked` folded into `__set__`
+#     9-Oct-2009 (CT) `_symbolic_default` and `raw_default` added
+#     9-Oct-2009 (CT) `Primary.__set__` changed to raise unconditionally
+#     9-Oct-2009 (CT) `Sticky_Mixin` changed to use `reset` instead of
+#                     homegrown code
 #    ««revision-date»»···
 #--
 
@@ -91,7 +95,13 @@ class Kind (MOM.Prop.Kind) :
     # end def inc_changes
 
     def reset (self, obj) :
-        self.set_raw (obj, self.attr.default, dont_raise = True)
+        if self._symbolic_default :
+            self.set_raw (obj, self.attr.default, dont_raise = True)
+        else :
+            if self.attr.raw_default and not self.attr.default :
+                self.attr.default = self.attr.from_string \
+                    (self.attr.raw_default, obj, obj.globals ())
+            self._set_raw (obj, self.attr.raw_default, self.attr.default)
     # end def reset
 
     def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
@@ -120,7 +130,7 @@ class Kind (MOM.Prop.Kind) :
 
     def _check_sanity (self, attr_type) :
         if __debug__ :
-            default = getattr (attr_type, "default", None)
+            default = getattr (attr_type, "raw_default", None)
             if (   default is not None
                and not isinstance (default, (str, unicode))
                ) :
@@ -128,7 +138,7 @@ class Kind (MOM.Prop.Kind) :
                 if d == "" and default is not None :
                     d = "%s" % default
                 raise ValueError, \
-                    ( """>>> %s.%s: got `%s` instead of "%s" as default"""
+                    ( """>>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
                     % (attr_type, self.name, default, d)
                     )
     # end def _check_sanity
@@ -223,8 +233,8 @@ class _User_ (_DB_Attr_, Kind) :
     # end def get_value
 
     def _set_cooked (self, obj, value) :
-        self.__super._set_cooked (obj, value)
-        self._set_raw_inner      (obj, self.attr.as_string (value), value)
+        self._set_cooked_inner (obj, value)
+        self._set_raw_inner    (obj, self.attr.as_string (value), value)
     # end def _set_cooked
 
     def _set_raw (self, obj, raw_value, value) :
@@ -306,10 +316,12 @@ class Primary (_User_) :
     # end def has_substance
 
     def __set__ (self, obj, value) :
-        if value is None :
-            raise AttributeError \
-                ("Primary attribute `%s.%s` cannot be None" % (obj, self.name))
-        return self.__super.__set__ (obj, value)
+        raise AttributeError \
+            ( "Primary attribute `%s.%s` cannot be assigned."
+              "\n"
+              "Use `set` or `set_raw` to change it."
+            % (obj, self.name)
+            )
     # end def __set__
 
     def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
@@ -499,10 +511,10 @@ class Computed (_Cached_) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        default = self.attr.default
+        default = self.attr.raw_default
         if default and not isinstance (self, Class_Uses_Default_Mixin) :
             raise TypeError \
-                ( "%s is computed but has default `%r` "
+                ( "%s is computed but has default %r "
                   "(i.e., `computed` will never be called)"
                 % (attr_type, default)
                 )
@@ -536,10 +548,10 @@ class Computed_Mixin (MOM.Prop.Kind) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        default = self.attr.default
+        default = self.attr.raw_default
         if default and not isinstance (self, Class_Uses_Default_Mixin) :
             raise TypeError \
-                ( "%s is _Computed_ but has default `%r` "
+                ( "%s is _Computed_ but has default %r "
                   "(i.e., `computed` will never be called)"
                 % (attr_type, default)
                 )
@@ -554,22 +566,23 @@ class Sticky_Mixin (MOM.Prop.Kind) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        if not self.attr.default :
+        if not self.attr.raw_default :
             raise TypeError \
                 ("%s is sticky but lacks `default`" % (attr_type, ))
     # end def _check_sanity
 
     def _set_cooked (self, obj, value) :
         if value is None :
-            value = self.attr.from_string (self.attr.default, obj)
-        self.__super._set_cooked (obj, value)
+            self.reset (obj)
+        else :
+            self.__super._set_cooked (obj, value)
     # end def _set_cooked
 
     def _set_raw (self, obj, raw_value, value) :
         if raw_value in ("", None) :
-            raw_value = self.attr.default
-            value     = self.attr.from_string (self.attr.default, obj)
-        self.__super._set_raw (obj, raw_value, value)
+            self.reset (obj)
+        else :
+            self.__super._set_raw (obj, raw_value, value)
     # end def _set_raw
 
 # end class Sticky_Mixin

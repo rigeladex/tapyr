@@ -31,6 +31,8 @@
 #     1-Oct-2009 (CT) `Entity_Essentials` removed
 #     7-Oct-2009 (CT) `filters` removed
 #     8-Oct-2009 (CT) `An_Entity` and `Id_Entity` factored from `Entity`
+#     9-Oct-2009 (CT) Cooked instead of raw values assigned to
+#                     attribute `default`s
 #    ««revision-date»»···
 #--
 
@@ -315,7 +317,7 @@ class Id_Entity (Entity) :
 
             kind          = Attr.Internal
             Kind_Mixins   = (Attr.Class_Uses_Default_Mixin, )
-            default       = "no"
+            default       = False
             hidden        = True
 
         # end class electric
@@ -325,7 +327,7 @@ class Id_Entity (Entity) :
 
             kind          = Attr.Internal
             Kind_Mixins   = (Attr.Class_Uses_Default_Mixin, )
-            default       = "no"
+            default       = False
             hidden        = True
 
         # end class x_locked
@@ -334,7 +336,7 @@ class Id_Entity (Entity) :
             """Specifies whether entity is used by another entity."""
 
             kind          = Attr.Cached
-            default       = "1"
+            default       = 1
 
         # end class is_used
 
@@ -404,6 +406,18 @@ class Id_Entity (Entity) :
         """Essential primary key"""
         return tuple (a.get_value (self) for a in self.primary)
     # end def epk
+
+    @TFL.Meta.Once_Property
+    def epk_as_code (self) :
+        """Essential primary key formatted with `as_code`"""
+        return tuple (a.as_code (a.get_value (self)) for a in self.primary)
+    # end def epk_as_code
+
+    @TFL.Meta.Once_Property
+    def epk_as_string (self) :
+        """Essential primary key formatted with `as_string`"""
+        return tuple (a.as_string (a.get_value (self)) for a in self.primary)
+    # end def epk_as_string
 
     @property
     def has_errors (self) :
@@ -520,7 +534,7 @@ class Id_Entity (Entity) :
     # end def _init_meta_attrs
 
     def _repr (self, type_name) :
-        return "%s %r" % (type_name, self.epk)
+        return "%s %r" % (type_name, self.epk_as_code)
     # end def _repr
 
     def _set_record (self, kw) :
@@ -536,12 +550,12 @@ class Id_Entity (Entity) :
     # end def __new_id
 
     def __str__ (self) :
-        epk = self.epk
+        epk = self.epk_as_string
         if len (epk) == 1 :
-            result = str  (epk [0])
+            result = epk [0]
         else :
-            result = repr (epk)
-        return result
+            result = epk
+        return "%s `%s`" % (self.type_name, result)
     # end def __str__
 
 # end class Id_Entity

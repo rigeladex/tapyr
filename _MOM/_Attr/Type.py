@@ -30,6 +30,7 @@
 #     7-Oct-2009 (CT) Class attribute `syntax` removed (added by `M_Attr_Type`
 #                     if necessary)
 #     7-Oct-2009 (CT) `_A_Named_Value_` and `A_Boolean` added
+#     9-Oct-2009 (CT) `raw_default` and `_symbolic_default` added
 #    ««revision-date»»···
 #--
 
@@ -56,7 +57,7 @@ class A_Attr_Type (object) :
     check_syntax      = None
     code_format       = "%r"
     computed          = None
-    default           = ""
+    default           = None
     description       = ""
     explanation       = ""
     format            = "%s"
@@ -64,11 +65,14 @@ class A_Attr_Type (object) :
     kind              = None
     Kind_Mixins       = ()
     rank              = 0
+    raw_default       = ""
     record_changes    = True
     simple_cooked     = None
     store_default     = False
     symbolic_ref_pat  = Regexp (r"^\s*\$\(.*\)\s*$", re.MULTILINE)
     typ               = None
+
+    _symbolic_default = False
 
     def __init__ (self, kind) :
         self.kind      = kind
@@ -105,15 +109,15 @@ class A_Attr_Type (object) :
         return value
     # end def cooked
 
-    def from_code (self, s, obj = None, glob = None, locl = None) :
+    def from_code (self, s, obj = None, glob = {}, locl = {}) :
         return self._to_cooked (s, self._call_eval, obj, glob, locl)
     # end def from_code
 
-    def from_pickle (self, s, obj = None, glob = None, locl = None) :
+    def from_pickle (self, s, obj = None, glob = {}, locl = {}) :
         return p
     # end def from_pickle
 
-    def from_string (self, s, obj = None, glob = None, locl = None) :
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
         return self._to_cooked (s, self._from_string_resolve, obj, glob, locl)
     # end def from_string
 
@@ -258,7 +262,10 @@ class _A_Named_Value_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
-        return soc.format % (self.__class__.Elbat [value], )
+        Elbat = getattr (soc, "Elbat", None)
+        if Elbat is None :
+            Elbat = getattr (soc.__class__, "Elbat", None)
+        return soc.format % (Elbat [value], )
     # end def as_string
 
     def eligible_raw_values (self, obj = None) :
