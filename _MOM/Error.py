@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Sep-2009 (CT) Creation (factored from TOM.Error)
+#    12-Oct-2009 (CT) `Invalid_Primary_Key` added
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,10 @@ class Name_Clash (Error) :
 
 class Invalid_Name (Error) :
     """Raised when an invalid name is given for an object to be created."""
+# end class Invalid_Name
+
+class Invalid_Primary_Key (Error) :
+    """Raised when an invalid primary key is given for an identified entity to be created."""
 # end class Invalid_Name
 
 class Invalid_Seq_Nr (Error) :

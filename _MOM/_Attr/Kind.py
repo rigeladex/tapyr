@@ -35,6 +35,7 @@
 #     9-Oct-2009 (CT) `Primary.__set__` changed to raise unconditionally
 #     9-Oct-2009 (CT) `Sticky_Mixin` changed to use `reset` instead of
 #                     homegrown code
+#    12-Oct-2009 (CT) `is_primary` and `is_settable` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,8 @@ class Kind (MOM.Prop.Kind) :
     """
 
     attr                  = None
+    is_primary            = False
+    is_settable           = True
     prop                  = TFL.Meta.Alias_Property ("attr")
     sync                  = None
     Table                 = dict ()
@@ -296,6 +299,7 @@ class _Volatile_ (MOM.Prop.Kind) :
 
 class _Cached_ (_Volatile_, _System_) :
 
+    is_settable = False
     kind        = "cached"
 
     def _inc_changes (self, man, obj, value) :
@@ -309,6 +313,8 @@ class Primary (_User_) :
        primary key.
     """
 
+    is_primary  = True
+    is_settable = False
     kind        = "primary"
 
     def has_substance (self, obj) :
@@ -379,7 +385,7 @@ class Internal (_DB_System_) :
 class Const (_Cached_) :
     """Constant attribute (has static default value that cannot be changed)."""
 
-    kind = "constant"
+    kind        = "constant"
 
     def __set__ (self, obj, value) :
         raise AttributeError \

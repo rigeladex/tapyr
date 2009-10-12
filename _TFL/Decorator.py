@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -48,6 +48,7 @@
 #                      `Override_Method`
 #    19-Jun-2008 (CT)  `Attributed` added
 #    23-Aug-2008 (CT)  `Annotated` added
+#    12-Oct-2009 (CT)  `Add_To_Class` added
 #    ««revision-date»»···
 #--
 
@@ -188,7 +189,7 @@ def Contextmanager (f) :
 # end def Contextmanager
 
 def Add_Method (* classes) :
-    """Adds decorated function to `classes` (won't complains if any class
+    """Adds decorated function to `classes` (won't complain if any class
        already contains a function of that name, but the original function
        isn't available to the decorated function for chaining up to).
     """
@@ -214,6 +215,16 @@ def Add_New_Method (* classes) :
         return f
     return decorator
 # end def Add_New_Method
+
+def Add_To_Class (name, * classes) :
+    """Adds decorated function/class to `classes` using `name`.
+    """
+    def decorator (x) :
+        for cls in classes :
+            setattr (cls, name, x)
+        return x
+    return decorator
+# end def Add_To_Class
 
 @Decorator
 def Override_Method (cls) :

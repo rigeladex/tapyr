@@ -33,6 +33,8 @@
 #     8-Oct-2009 (CT) `An_Entity` and `Id_Entity` factored from `Entity`
 #     9-Oct-2009 (CT) Cooked instead of raw values assigned to
 #                     attribute `default`s
+#    12-Oct-2009 (CT) `Entity.__init__` changed to set attributes from `kw`
+#    12-Oct-2009 (CT) `Id_Entity._init_epk` added and used
 #    ««revision-date»»···
 #--
 
@@ -93,6 +95,10 @@ class Entity (TFL.Meta.Object) :
     def __init__ (self, ** kw) :
         self._init_meta_attrs ()
         self._init_attributes ()
+        if kw :
+            raw = kw.pop ("raw", False)
+            set = (self.set, self.set_raw) [bool (raw)]
+            set (** kw)
     # end def __init__
 
     def after_init (self) :
@@ -160,7 +166,7 @@ class Entity (TFL.Meta.Object) :
             cnam = self.deprecated_attr_names.get (name, name)
             attr = attributes.get (cnam)
             if attr :
-                if attr._set is None :
+                if not attr.is_settable :
                     on_error \
                         ( MOM.Error.Invalid_Attribute
                             (self, name, val, attr.kind)
@@ -294,7 +300,6 @@ class Id_Entity (Entity) :
        objects and links.
     """
 
-    __metaclass__         = MOM.Meta.M_Id_Entity
     __id                  = 0 ### used to generate a unique id for each entity
 
     auto_display          = ()
@@ -429,11 +434,23 @@ class Id_Entity (Entity) :
         return self._pred_man.has_warnings
     # end def has_warnings
 
-    def __new__ (cls, ** kw) :
+    def __new__ (cls, * epk, ** kw) :
         result    = super (Id_Entity, cls).__new__ (cls, ** kw)
         result.id = result.__new_id ()
         return result
     # end def __new__
+
+    def __init__ (self, * epk, ** kw) :
+        init_epk = (self._init_epk, self._init_epk_raw) [bool (kw.get ("raw"))]
+        init_epk             (* epk)
+        kw.pop               ("scope", None)
+        self.home_scope.add  (self)
+        try :
+            self.__super.__init__ (** kw)
+        except StandardError :
+            self.home_scope.remove (self)
+            raise
+    # end def __init__
 
     def check_all (self) :
         """Checks all predicates"""
@@ -451,14 +468,15 @@ class Id_Entity (Entity) :
     # end def compute_type_defaults_internal
 
     def copy (self, * new_epk, ** kw) :
-        """Make copy with name(s) `new_n`."""
-        new_obj = self.__class__ (* new_epk)
+        """Make copy with primary key `new_epk`."""
+        new_obj = self.__class__ (* new_epk, ** kw)
         raw_kw  = dict \
-            ((a.name, a.get_raw (self)) for a in self.user_attr)
+            (  (a.name, a.get_raw (self))
+            for a in self.user_attr
+            if  a.name not in kw and not a.is_primary
+            )
         if raw_kw :
             new_obj.set_raw (** raw_kw)
-        if kw :
-            new_obj.set     (** kw)
         return new_obj
     # end def copy
 
@@ -466,6 +484,15 @@ class Id_Entity (Entity) :
         """Try to correct an unknown attribute error."""
         pass
     # end def correct_unknown_attr
+
+    def destroy (self) :
+        """Remove entity from `home_scope`."""
+        if self is self.home_scope.root :
+            self.home_scope.destroy ()
+        else :
+            assert (not self.home_scope._locked)
+            self.home_scope.remove (self)
+    # end def destroy
 
     def destroy_dependency (self, other) :
         for attr in self.object_referring_attributes.pop (other, ()) :
@@ -528,6 +555,20 @@ class Id_Entity (Entity) :
         self.notify_dependencies_destroy ()
     # end def _destroy
 
+    def _init_epk (self, * epk) :
+        for a, pka in zip (self.primary, epk) :
+            if pka is None :
+                raise MOM.Error.Invalid_Primary_Key (a.name)
+            a._set_cooked (self, pka)
+    # end def _init_epk
+
+    def _init_epk_raw (self, * epk) :
+        for a, pka in zip (self.primary, epk) :
+            if pka is None or pka == "" :
+                raise MOM.Error.Invalid_Primary_Key (a.name)
+            a._set_raw (self, pka, a.from_string (pka, self))
+    # end def _init_epk_raw
+
     def _init_meta_attrs (self) :
         self.__super._init_meta_attrs ()
         self.object_referring_attributes = {}
@@ -548,6 +589,15 @@ class Id_Entity (Entity) :
         Id_Entity.__id += 1
         return Id_Entity.__id
     # end def __new_id
+
+    def __cmp__  (self, other) :
+        rhs = getattr (other, "epk", other)
+        return cmp (self.epk, rhs)
+    # end def __cmp__
+
+    def __hash__ (self) :
+        return self.epk
+    # end def __hash__
 
     def __str__ (self) :
         epk = self.epk_as_string

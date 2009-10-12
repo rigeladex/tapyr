@@ -30,6 +30,7 @@
 #    23-Sep-2009 (CT) Journal-related methods removed
 #    23-Sep-2009 (CT) `name` replaced by `epk`
 #     8-Oct-2009 (CT) s/Entity/Id_Entity/
+#    12-Oct-2009 (CT) Methods moved to `Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -50,33 +51,6 @@ class Object (_Ancestor_Essence) :
     __metaclass__         = MOM.Meta.M_Object
 
     entity_kind           = "object"
-
-    def __init__ (self, ** kw) :
-        kw.pop ("scope", None)
-        self.home_scope.add   (self)
-        ### Call the __init__ of the Ancestor as late as possible.
-        self.__super.__init__ ()
-        if kw :
-            self.set (** kw)
-    # end def __init__
-
-    def destroy (self) :
-        """Remove object from `extension`."""
-        if self is self.home_scope.root :
-            self.home_scope.destroy ()
-        else :
-            assert (not self.home_scope._locked)
-            self.home_scope.remove (self)
-    # end def destroy
-
-    def __hash__ (self) :
-        return self.epk
-    # end def __hash__
-
-    def __cmp__  (self, other) :
-        rhs = getattr (other, "epk", other)
-        return cmp (self.epk, rhs)
-    # end def __cmp__
 
 # end class Object
 
