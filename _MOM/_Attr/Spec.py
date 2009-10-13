@@ -31,7 +31,9 @@
 #     6-Oct-2009 (CT) `_epk_attr` removed (use `obj.primary` instead)
 #     6-Oct-2009 (CT) Call of `_setup_alias` moved from `_setup_prop` to
 #                     (newly redefined) `_add_prop`
-#     8-Oct-2009 (CT) `sort` for `_user_attr` added
+#     8-Oct-2009 (CT) `sort` for `user_attr` added
+#    13-Oct-2009 (CT) `sort` for `primary` added
+#    13-Oct-2009 (CT) Don't append primary attributes to `_user_attr`
 #    ««revision-date»»···
 #--
 
@@ -77,7 +79,8 @@ class Spec (MOM.Prop.Spec) :
         self.__super.__init__ (e_type)
         e_type.attributes = self._prop_dict
         e_type.user_attr  = self._user_attr
-        self._user_attr.sort ()
+        for x in etype.user_attr, etype.primary :
+            x.sort (TFL.Sorted_By ("rank", "name"))
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :
@@ -94,7 +97,7 @@ class Spec (MOM.Prop.Spec) :
 
     def _setup_prop (self, e_type, name, kind, prop) :
         self.__super._setup_prop (e_type, prop.name, kind, prop)
-        if not prop.electric :
+        if not (prop.electric or prop.is_primary) :
             self._user_attr.append (prop)
         if callable (prop.sync) :
             self._syncable.append (prop)

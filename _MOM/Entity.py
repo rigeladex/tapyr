@@ -35,6 +35,9 @@
 #                     attribute `default`s
 #    12-Oct-2009 (CT) `Entity.__init__` changed to set attributes from `kw`
 #    12-Oct-2009 (CT) `Id_Entity._init_epk` added and used
+#    13-Oct-2009 (CT) `Id_Entity`: redefined `set` and `set_raw`
+#    13-Oct-2009 (CT) `Id_Entity`: added `_extract_primary*`,
+#                     `_rename`, and `_reset_epk`
 #    ««revision-date»»···
 #--
 
@@ -472,8 +475,7 @@ class Id_Entity (Entity) :
         new_obj = self.__class__ (* new_epk, ** kw)
         raw_kw  = dict \
             (  (a.name, a.get_raw (self))
-            for a in self.user_attr
-            if  a.name not in kw and not a.is_primary
+            for a in self.user_attr if a.name not in kw
             )
         if raw_kw :
             new_obj.set_raw (** raw_kw)
@@ -538,6 +540,26 @@ class Id_Entity (Entity) :
         self.dependencies [other] += 1
     # end def register_dependency
 
+    def set (self, on_error = None, ** kw) :
+        """Set attributes specified in `kw` from cooked values"""
+        with self.home_scope.historian.nested_recorder (MOM.SCM.Change) :
+            new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
+            if new_epk :
+                self._rename (new_epk, pkas_raw, pkas_ckd)
+            result = self.__super.set (on_error, ** kw)
+        return result
+    # end def set
+
+    def set_raw (self, on_error = None, ** kw) :
+        """Set attributes specified in `kw` from raw values"""
+        with self.home_scope.historian.nested_recorder (MOM.SCM.Change) :
+            new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
+            if new_epk :
+                self._rename (new_epk, pkas_raw, pkas_ckd)
+            result = self.__super.set_raw (on_error, ** kw)
+        return result
+    # end def set_raw
+
     def unregister_dependency (self, other) :
         """Unregister dependency of `other` on `self`"""
         deps = self.dependencies
@@ -554,6 +576,44 @@ class Id_Entity (Entity) :
     def _destroy (self) :
         self.notify_dependencies_destroy ()
     # end def _destroy
+
+    def _extract_primary (self, kw) :
+        result = {}
+        for pka in self.primary :
+            name = pka.name
+            if name in kw :
+                result [name] = kw.pop (name)
+        return result
+    # end def _extract_primary
+
+    def _extract_primary_ckd (self, kw) :
+        new_epk  = []
+        pkas_ckd = self._extract_primary (kw)
+        pkas_raw = {}
+        for pka in self.primary :
+            name = pka.name
+            if name in pkas_ckd :
+                v = pkas_ckd [name]
+                pkas_raw [name] = attr.as_string (v)
+            else :
+                v = getattr (self, name)
+            new_epk.append (v)
+        return new_epk, pkas_raw, pkas_ckd
+    # end def _extract_primary_raw
+
+    def _extract_primary_raw (self, kw) :
+        new_epk  = []
+        pkas_ckd = {}
+        pkas_raw = self._extract_primary (kw)
+        for pka in self.primary :
+            name = pka.name
+            if name in pkas_raw :
+                pkas_ckd [name] = v = attr.from_string (pkas_raw [name], self)
+            else :
+                v = getattr (self, name)
+            new_epk.append (v)
+        return new_epk, pkas_raw, pkas_ckd
+    # end def _extract_primary_raw
 
     def _init_epk (self, * epk) :
         for a, pka in zip (self.primary, epk) :
@@ -574,9 +634,28 @@ class Id_Entity (Entity) :
         self.object_referring_attributes = {}
     # end def _init_meta_attrs
 
+    def _rename (self, new_epk, pkas_raw, pkas_ckd) :
+        def _renamer () :
+            attributes = self.attributes
+            for k, v in pkas_ckd.iteritems () :
+                attr = attributes [k]
+                attr._set_cooked_inner (self, v)
+                attr._set_raw_inner    (self, pkas_raw [k], v)
+            self._reset_epk ()
+        self._kw_satisfies_i_invariants (pkas_ckd)
+        self._set_record                (cooked_kw)
+        self.home_scope.rename          (self, new_epk, _renamer)
+    # end def _rename
+
     def _repr (self, type_name) :
         return "%s %r" % (type_name, self.epk_as_code)
     # end def _repr
+
+    def _reset_epk (self) :
+        del self.epk
+        del self.epk_as_code
+        del self.epk_as_string
+    # end def _reset_epk
 
     def _set_record (self, kw) :
         rvr = self._attr_man.raw_values_record (self, kw)
@@ -589,15 +668,6 @@ class Id_Entity (Entity) :
         Id_Entity.__id += 1
         return Id_Entity.__id
     # end def __new_id
-
-    def __cmp__  (self, other) :
-        rhs = getattr (other, "epk", other)
-        return cmp (self.epk, rhs)
-    # end def __cmp__
-
-    def __hash__ (self) :
-        return self.epk
-    # end def __hash__
 
     def __str__ (self) :
         epk = self.epk_as_string
