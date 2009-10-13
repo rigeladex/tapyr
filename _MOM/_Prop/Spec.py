@@ -30,6 +30,7 @@
 #     6-Oct-2009 (CT) `_create_properties` changed to include inherited
 #                     properties into `_prop_dict` and `_prop_kind`
 #     6-Oct-2009 (CT) `setattr` call moved from `_setup_prop` to `_add_prop`
+#    13-Oct-2009 (CT) Bug fixes
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ import _MOM._Meta.M_Prop_Spec
 import _MOM._Prop
 
 import _TFL._Meta.Object
+import _TFL.Sorted_By
 
 class _Prop_Spec_ (TFL.Meta.Object) :
     """Base class for attribute and predicate specification."""
@@ -67,7 +69,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
 
     def _create_prop_dict (self, e_type) :
         self._prop_dict = self._prop_dict_cls ()
-        self._prop_kind = dict ((k, []) for k in pkg.Kind.Table)
+        self._prop_kind = dict ((k, []) for k in self._Prop_Pkg.Kind.Table)
         for n, v in self._prop_kind.iteritems () :
             setattr (e_type, self._kind_list_name (n), v)
     # end def _create_prop_dict
@@ -82,7 +84,8 @@ class _Prop_Spec_ (TFL.Meta.Object) :
                 prop = getattr (e_type, n, None)
                 if prop is not None :
                     self._setup_prop (e_type, n, prop.kind, prop)
-        self._prop_kind.sort (key = TFL.Getter.rank)
+        for pk in self._prop_kind.itervalues ()
+            pk.sort (key = TFL.Sorted_By (("rank", "name")))
     # end def _create_properties
 
     def _effective_prop_kind (self, name, prop_type) :

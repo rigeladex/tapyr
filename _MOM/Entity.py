@@ -38,6 +38,7 @@
 #    13-Oct-2009 (CT) `Id_Entity`: redefined `set` and `set_raw`
 #    13-Oct-2009 (CT) `Id_Entity`: added `_extract_primary*`,
 #                     `_rename`, and `_reset_epk`
+#    13-Oct-2009 (CT) `__init__` and `__new__` refactored
 #    ««revision-date»»···
 #--
 
@@ -71,10 +72,17 @@ class Entity (TFL.Meta.Object) :
     """Internal root class for MOM entities with and without identity."""
 
     __metaclass__         = MOM.Meta.M_Entity
+
+    Package_NS            = MOM
+
     deprecated_attr_names = {}
+    electric              = False
+    generate_doc          = True
     home_scope            = None
     is_partial            = True
-    Package_NS            = MOM
+    is_used               = True
+    show_package_prefix   = False
+    x_locked              = False
 
     _dicts_to_combine     = ("deprecated_attr_names", )
 
@@ -92,25 +100,20 @@ class Entity (TFL.Meta.Object) :
         result = super (Entity, cls).__new__ (cls)
         if not result.home_scope :
             result.home_scope = kw.get ("scope", MOM.Scope.active)
+        result._init_meta_attrs ()
+        result._init_attributes ()
         return result
     # end def __new__
 
     def __init__ (self, ** kw) :
-        self._init_meta_attrs ()
-        self._init_attributes ()
         if kw :
-            raw = kw.pop ("raw", False)
-            set = (self.set, self.set_raw) [bool (raw)]
+            set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
             set (** kw)
     # end def __init__
 
     def after_init (self) :
         pass
     # end def after_init
-
-    def after_init_db (self) :
-        pass
-    # end def after_init_db
 
     def attr_value_maybe (self, name) :
         attr = self.attributes.get (name)
@@ -278,10 +281,7 @@ class Entity (TFL.Meta.Object) :
 class An_Entity (Entity) :
     """Root class for anonymous entities without identity."""
 
-    def __init__ (self, ** kw) :
-        self.__super.__init__ (** kw)
-        self.set              (** kw)
-    # end def __init__
+    __metaclass__         = MOM.Meta.M_An_Entity
 
     def _formatted_user_attr (self) :
         return ", ".join \
@@ -303,7 +303,7 @@ class Id_Entity (Entity) :
        objects and links.
     """
 
-    __id                  = 0 ### used to generate a unique id for each entity
+    __metaclass__         = MOM.Meta.M_Id_Entity
 
     auto_display          = ()
     max_count             = 0
@@ -311,7 +311,6 @@ class Id_Entity (Entity) :
     record_changes        = True
     refuse_links          = {}
     save_to_db            = True
-    show_package_prefix   = False
     tutorial              = None
 
     _appl_globals         = {}
@@ -438,14 +437,14 @@ class Id_Entity (Entity) :
     # end def has_warnings
 
     def __new__ (cls, * epk, ** kw) :
-        result    = super (Id_Entity, cls).__new__ (cls, ** kw)
-        result.id = result.__new_id ()
+        result   = super (Id_Entity, cls).__new__ (cls, ** kw)
+        init_epk = (result._init_epk, result._init_epk_raw) \
+            [bool (kw.get ("raw", False))]
+        init_epk (* epk)
         return result
     # end def __new__
 
     def __init__ (self, * epk, ** kw) :
-        init_epk = (self._init_epk, self._init_epk_raw) [bool (kw.get ("raw"))]
-        init_epk             (* epk)
         kw.pop               ("scope", None)
         self.home_scope.add  (self)
         try :

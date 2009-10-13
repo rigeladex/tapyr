@@ -32,7 +32,6 @@
 #     6-Oct-2009 (CT) Call of `_setup_alias` moved from `_setup_prop` to
 #                     (newly redefined) `_add_prop`
 #     8-Oct-2009 (CT) `sort` for `user_attr` added
-#    13-Oct-2009 (CT) `sort` for `primary` added
 #    13-Oct-2009 (CT) Don't append primary attributes to `_user_attr`
 #    ««revision-date»»···
 #--
@@ -47,6 +46,7 @@ import _MOM._Prop.Spec
 
 import _TFL._Meta.Property
 import _TFL.Alias_Dict
+import _TFL.Sorted_By
 
 class Spec (MOM.Prop.Spec) :
     """Attribute specification for MOM entities (objects and links).
@@ -79,8 +79,7 @@ class Spec (MOM.Prop.Spec) :
         self.__super.__init__ (e_type)
         e_type.attributes = self._prop_dict
         e_type.user_attr  = self._user_attr
-        for x in etype.user_attr, etype.primary :
-            x.sort (TFL.Sorted_By ("rank", "name"))
+        e_type.user_attr.sort (TFL.Sorted_By (("rank", "name")))
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :

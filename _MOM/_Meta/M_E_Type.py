@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    23-Sep-2009 (CT) Creation started (factored from TOM.Meta.M_E_Type)
+#    13-Oct-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -36,13 +37,16 @@ from   _TFL                import TFL
 from   _TFL.object_globals import object_globals
 
 import _TFL._Meta.M_Class
-import _MOM._Meta
-import _MOM.Scope
+import _TFL.Decorator
 
-class M_E_Type (TFL.Meta.M_Class) :
-    """Meta class for app_type specific entity types of the MOM meta object
-       model.
-    """
+import _MOM._Meta.M_Entity
+import _MOM.Entity
+import _MOM.Object
+### XXX ### import _MOM.Scope
+
+@TFL.Add_To_Class ("M_E_Type", MOM.Entity)
+class M_E_Type (MOM.Meta.M_E_Mixin) :
+    """Meta class for for essence of MOM.Entity."""
 
     app_type = None
 
@@ -55,7 +59,6 @@ class M_E_Type (TFL.Meta.M_Class) :
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)
         if cls.app_type is None :
-            cls._m_init_name_attributes ()
             cls._m_setup_children       (bases)
             cls._m_setup_attributes     ()
         else :
@@ -64,8 +67,9 @@ class M_E_Type (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         scope = kw.get ("scope", MOM.Scope.active)
-        if scope :
-            return cls._m_call (scope, * args, ** kw)
+        if not scope :
+            raise MOM.Error.No_Scope
+        return cls._m_call (* args, scope = scope, ** kw)
     # end def __call__
 
     def add_attribute (cls, attr, verbose = True, parent = None, transitive = True, override = False) :
@@ -123,27 +127,6 @@ class M_E_Type (TFL.Meta.M_Class) :
                 yield et
     # end def children_iter
 
-    def pns_qualified (cls, name) :
-        """Returns the `name` qualified with `Package_Namespace` of `cls`
-           (i.e., includes the name of the Package_Namespace `cls` lives in,
-           if any).
-        """
-        pkg_ns = getattr (cls, "Package_NS", None)
-        if pkg_ns :
-            result = "%s.%s" % (pkg_ns._Package_Namespace__qname, name)
-        else :
-            result = name
-        return result
-    # end def pns_qualified
-
-    def set_ui_name (cls, ui_name) :
-        """Sets `ui_name` of `cls`"""
-        if not cls.show_package_prefix :
-            cls.ui_name = ui_name
-        else :
-            cls.ui_name = cls.pns_qualified (ui_name)
-    # end def set_alias
-
     def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
         name = prop.__name__
         if (not override) and name in _Properties._prop_dict :
@@ -163,12 +146,12 @@ class M_E_Type (TFL.Meta.M_Class) :
             return result
     # end def _m_add_prop
 
-    def _m__call__ (cls, * args, ** kw) :
+    def _m_call (cls, * args, ** kw) :
         result = cls.__new__ (cls, * args, ** kw)
         result.__init__      (* args, ** kw)
         cls.after_creation   (result)
         return result
-    # end def _m__call__
+    # end def _m_call
 
     def _m_entity_type (cls, scope = None) :
         scope = cls._m_scope (scope)
@@ -182,9 +165,7 @@ class M_E_Type (TFL.Meta.M_Class) :
 
     def _m_init_name_attributes (cls) :
         cls.Essence = cls
-        if "name" not in cls.__dict__ :
-            cls.name = cls.__name__
-        cls._set_type_names (cls.__name__)
+        cls.__m_super._m_init_name_attributes ()
     # end def _m_init_name_attributes
 
     def _m_scope (cls, scope = None, ** kw) :
@@ -198,15 +179,9 @@ class M_E_Type (TFL.Meta.M_Class) :
     def _m_setup_attributes (cls) :
         for P in cls._Attributes, cls._Predicates :
             P.m_setup_names ()
-    # end def _m_setup_attributes
-
-    def _m_setup_attributes_dbw (cls) :
         cls._Attributes = A = cls.Essence._Attributes (cls)
         cls._Predicates = P = cls.Essence._Predicates (cls)
         attr_dict       = A._attr_dict
-        cls.is_editable = (not cls.electric) and cls.user_attr
-        cls.show_in_ui  = \
-            (cls.record_changes and cls.generate_doc and not cls.is_partial)
         for pv in P._pred_kind.get ("object", []) :
             pn = pv.name
             for an in pv.attributes + pv.attr_none :
@@ -224,36 +199,52 @@ class M_E_Type (TFL.Meta.M_Class) :
             [  a.attr for a in attr_dict.itervalues ()
             if (not a.electric) and TFL.callable (a.attr.check_syntax)
             ]
+    # end def _m_setup_attributes
+
+    def _m_setup_attributes_dbw (cls) :
+        pass
     # end def _m_setup_attributes_dbw
 
     def _m_setup_children (cls, bases) :
         cls.children = {}
         for b in bases :
-            b.children [cls.type_name] = cls
-            if __debug__ :
-                if hasattr (b, "children_frozen") :
-                    print \
-                        ( "adding %s too late to `children` dict of %s"
-                        % (cls.type_name, b.type_name)
-                        )
+            if isinstance (b, M_E_Type) :
+                b.children [cls.type_name] = cls
+                if __debug__ :
+                    if hasattr (b, "children_frozen") :
+                        print \
+                            ( "adding %s too late to `children` dict of %s"
+                            % (cls.type_name, b.type_name)
+                            )
     # end def _m_setup_children
-
-    def _set_type_names (cls, base_name) :
-        cls.type_base_name = base_name
-        cls.type_name      = cls.pns_qualified (base_name)
-        cls.set_ui_name (base_name)
-    # end def _set_type_names
 
     def __getattr__ (cls, name) :
         ### delegate to scope specific class, if any
         if not (name.startswith ("__") and name.endswith ("__")) :
-            etype = cls._m_entity_type ()
-            if etype :
-                return cls._m_get_attribute (etype, name)
-        raise AttributeError, name
+            try :
+                etype = cls._m_entity_type ()
+            except AttributeError :
+                pass
+            else :
+                if etype :
+                    return cls._m_get_attribute (etype, name)
+        raise AttributeError ("%s.%s" % (cls.type_name, name))
     # end def __getattr__
 
 # end class M_E_Type
+
+@TFL.Add_To_Class ("M_E_Type", MOM.Id_Entity)
+class M_E_Type_Id (M_E_Type) :
+    """Meta class for essence of MOM.Id_Entity."""
+
+    def _m_setup_attributes (cls) :
+        cls.__m_super._m_setup_attributes ()
+        cls.is_editable = (not cls.electric) and cls.user_attr
+        cls.show_in_ui  = \
+            (cls.record_changes and cls.generate_doc and not cls.is_partial)
+    # end def _m_setup_attributes
+
+# end class M_E_Type_Id
 
 __doc__ = """
 Class `MOM.Meta.M_E_Type`
@@ -313,5 +304,5 @@ Class `MOM.Meta.M_E_Type`
 """
 
 if __name__ != "__main__" :
-    MOM.Meta._Export ("M_Entity")
+    MOM.Meta._Export ("*")
 ### __END__ MOM.Meta.M_E_Type

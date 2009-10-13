@@ -31,30 +31,44 @@
 #    23-Sep-2009 (CT) `name` replaced by `epk`
 #     8-Oct-2009 (CT) s/Entity/Id_Entity/
 #    12-Oct-2009 (CT) Methods moved to `Id_Entity`
+#    13-Oct-2009 (CT) `Named_Object` added
 #    ««revision-date»»···
 #--
 
 from   _TFL      import TFL
 from   _MOM      import MOM
 
-import _MOM.Entity
-import _MOM._Meta.M_Object
-
-from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr
+from   _MOM._Attr.Type import *
 
-_Ancestor_Essence = MOM.Id_Entity
+import  _MOM._Meta.M_Object
 
-class Object (_Ancestor_Essence) :
-    """Root class for object-types of Tanzer's Object Model."""
+import _MOM.Entity
+
+class _MOM_Object_ (MOM.Id_Entity) :
+    """Root class for object-types of MOM meta object model."""
 
     __metaclass__         = MOM.Meta.M_Object
-
+    _real_name            = "Object"
     entity_kind           = "object"
 
-# end class Object
+Object = _MOM_Object_ # end class
 
-_Essence = Object
+class Named_Object (Object) :
+    """Root class for named object-types of MOM meta object model."""
+
+    class _Attributes (Object._Attributes) :
+
+        class name (A_Name) :
+            """Unique name of the object."""
+
+            kind       = Attr.Primary
+
+        # end class name
+
+    # end class _Attributes
+
+# end class Named_Object
 
 __doc__ = """
 Class `MOM.Object`
@@ -100,5 +114,5 @@ All these queries can be applied to all classes derived from `Object` and to
 """
 
 if __name__ != "__main__" :
-    MOM._Export ("Object")
+    MOM._Export ("*")
 ### __END__ MOM.Object

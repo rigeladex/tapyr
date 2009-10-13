@@ -109,5 +109,5 @@ Class `MOM.Meta.M_Link`
 """
 
 if __name__ != "__main__" :
-    MOM.Meta._Export ("M_Entity")
+    MOM.Meta._Export ("*")
 ### __END__ MOM.Meta.M_Link

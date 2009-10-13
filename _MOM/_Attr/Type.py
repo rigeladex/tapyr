@@ -31,6 +31,7 @@
 #                     if necessary)
 #     7-Oct-2009 (CT) `_A_Named_Value_` and `A_Boolean` added
 #     9-Oct-2009 (CT) `raw_default` and `_symbolic_default` added
+#    13-Oct-2009 (CT) Guard for empty string added to `_to_cooked`
 #    ««revision-date»»···
 #--
 
@@ -175,12 +176,13 @@ class A_Attr_Type (object) :
     # end def _from_symbolic_ref
 
     def _to_cooked (self, s, cooker, obj, glob, locl) :
-        if self.simple_cooked :
-            try :
-                return self.simple_cooked (s)
-            except (ValueError, TypeError) :
-                pass
-        return cooker (s, glob or {}, locl or {})
+        if s :
+            if self.simple_cooked :
+                try :
+                    return self.simple_cooked (s)
+                except (ValueError, TypeError) :
+                    pass
+            return cooker (s, obj, glob or {}, locl or {})
     # end def _to_cooked
 
     def __str__ (self) :

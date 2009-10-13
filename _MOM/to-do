@@ -50,13 +50,13 @@ MOM To-Do
   * M_E_Type __init__/__new__ sets up the meta information for the essential
     classes
 
-- Id_Entity renaming: ???
+x Id_Entity renaming:
 
-  * `rename` isn't a method of the public API
+  x `rename` isn't a method of the public API
 
-  * `set` and `set_raw` need to deal with changes in primary key attributes
+  x `set` and `set_raw` need to deal with changes in primary key attributes
 
-  * Assignment to primary key attributes is forbidden
+  x Assignment to primary key attributes is forbidden
 
 x Attr.Kind:
 

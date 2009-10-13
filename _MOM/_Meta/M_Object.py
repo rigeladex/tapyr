@@ -35,9 +35,8 @@ from   _TFL import TFL
 
 import _MOM._Meta.M_Entity
 
-class M_Object (MOM.Meta.M_Entity) :
-    """Meta class of object-types of MOM meta object model."""
-
+class M_Object (MOM.Meta.M_Id_Entity) :
+    """Meta class of MOM.Object."""
 
 # end class M_Object
 
@@ -71,5 +70,5 @@ Class `MOM.Meta.M_Object`
 """
 
 if __name__ != "__main__" :
-    MOM.Meta._Export ("M_Entity")
+    MOM.Meta._Export ("*")
 ### __END__ MOM.Meta.M_Object
