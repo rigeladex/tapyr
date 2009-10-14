@@ -3,22 +3,24 @@ MOM To-Do
 
 - Open questions:
 
-  + Object: named vs. un-named
+- Scope
+
+  * Scope just holds (dbw-specific) managers for objects and links
 
 - M_Entity vs. M_E_Type:
 
-  * Entity defines the specification of the essential class (`E_Spec`)
+  x Entity defines the specification of the essential class (`E_Spec`)
 
   * E_Type is automagically created without inheriting from Entity
 
-    + The essential E_Type.__dict__ is filled with contents of
+    x The essential E_Type.__dict__ is filled with contents of
       Entity.__dict__ except for `_Attributes` and `_Predicates`
 
-      # The essential E_Type gets the meta-processed predicates
+      x The essential E_Type gets the meta-processed predicates
 
-      # `Essence` refers to the essential E_Type
+      x `Essence` refers to the essential E_Type
 
-      # The essential E_Type replaces the `E_Spec` in the appropriate package
+      x The essential E_Type replaces the `E_Spec` in the appropriate package
         namespace and module.
 
     + For each DBW backend to support, a separate subclass of the essential
@@ -47,8 +49,13 @@ MOM To-Do
   x M_Entity __init__/__new__ does very little apart from remembering the
     essential classes (in the class attribute _M_Extension)
 
-  * M_E_Type __init__/__new__ sets up the meta information for the essential
+  x M_E_Type __init__/__new__ sets up the meta information for the essential
     classes
+
+  * M_E_Type_Id implements the basic query methods
+
+    + Subclasses of M_E_Type_Id implemented object- and link-specific query
+      methods
 
 x Id_Entity renaming:
 

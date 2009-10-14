@@ -81,7 +81,7 @@ class Spec (MOM.Prop.Spec) :
         e_type.attributes = self._prop_dict
         e_type.user_attr  = self._user_attr
         e_type.epk_sig    = tuple (a.name for a in e_type.primary)
-        e_type.user_attr.sort (key = TFL.Sorted_By (("rank", "name")))
+        e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :

@@ -36,6 +36,8 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _TFL._Meta.M_Class
+import _TFL.Sorted_By
+
 from   _TFL.object_globals import class_globals
 
 import _MOM._Meta
@@ -201,7 +203,7 @@ class M_Id_Entity (M_Entity) :
         if pkas and "__new__" not in result :
             epk_sig = tuple \
                 ( a.name
-                for a in sorted (pkas, key = TFL.Sorted_By (("rank", "name")))
+                for a in sorted (pkas, key = TFL.Sorted_By ("rank", "name"))
                 )
             i_bases = tuple (b for b in bases if isinstance (b, M_Id_Entity))
             if not (i_bases and i_bases [0].epk_sig == epk_sig) :

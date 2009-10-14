@@ -62,6 +62,7 @@ from   _MOM._Pred      import Pred
 
 import _TFL._Meta.Once_Property
 import _TFL.defaultdict
+import _TFL.Sorted_By
 
 from   _TFL.object_globals   import object_globals
 
@@ -311,6 +312,7 @@ class Id_Entity (Entity) :
     record_changes        = True
     refuse_links          = {}
     save_to_db            = True
+    sorted_by             = TFL.Sorted_By ("epk")
     tutorial              = None
 
     _appl_globals         = {}
