@@ -84,7 +84,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
                 prop = getattr (e_type, n, None)
                 if prop is not None :
                     self._setup_prop (e_type, n, prop.kind, prop)
-        for pk in self._prop_kind.itervalues ()
+        for pk in self._prop_kind.itervalues () :
             pk.sort (key = TFL.Sorted_By (("rank", "name")))
     # end def _create_properties
 

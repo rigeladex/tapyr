@@ -50,19 +50,19 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
 
     app_type = None
 
-    def __new__ (meta, name, bases, dict) :
-        dict ["associated_by"] = {}
-        result = super (M_E_Type, meta).__new__ (meta, name, bases, dict)
+    def __new__ (meta, name, bases, dct) :
+        dct ["associated_by"] = {}
+        result = super (M_E_Type, meta).__new__ (meta, name, bases, dct)
         return result
     # end def __new__
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         if cls.app_type is None :
-            cls._m_setup_children       (bases)
-            cls._m_setup_attributes     ()
+            cls._m_setup_children       (bases, dct)
+            cls._m_setup_attributes     (bases, dct)
         else :
-            cls._m_setup_attributes_dbw ()
+            cls._m_setup_attributes_dbw (bases, dct)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -176,9 +176,7 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
         return scope
     # end def _m_scope
 
-    def _m_setup_attributes (cls) :
-        for P in cls._Attributes, cls._Predicates :
-            P.m_setup_names ()
+    def _m_setup_attributes (cls, bases, dct) :
         cls._Attributes = A = cls.Essence._Attributes (cls)
         cls._Predicates = P = cls.Essence._Predicates (cls)
         attr_dict       = A._attr_dict
@@ -201,11 +199,11 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
             ]
     # end def _m_setup_attributes
 
-    def _m_setup_attributes_dbw (cls) :
+    def _m_setup_attributes_dbw (cls, bases, dct) :
         pass
     # end def _m_setup_attributes_dbw
 
-    def _m_setup_children (cls, bases) :
+    def _m_setup_children (cls, bases, dct) :
         cls.children = {}
         for b in bases :
             if isinstance (b, M_E_Type) :
@@ -237,8 +235,8 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
 class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
 
-    def _m_setup_attributes (cls) :
-        cls.__m_super._m_setup_attributes ()
+    def _m_setup_attributes (cls, bases, dct) :
+        cls.__m_super._m_setup_attributes (bases, dct)
         cls.is_editable = (not cls.electric) and cls.user_attr
         cls.show_in_ui  = \
             (cls.record_changes and cls.generate_doc and not cls.is_partial)

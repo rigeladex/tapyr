@@ -33,6 +33,7 @@
 #                     (newly redefined) `_add_prop`
 #     8-Oct-2009 (CT) `sort` for `user_attr` added
 #    13-Oct-2009 (CT) Don't append primary attributes to `_user_attr`
+#    14-Oct-2009 (CT) `epk_sig` added
 #    ««revision-date»»···
 #--
 
@@ -79,7 +80,8 @@ class Spec (MOM.Prop.Spec) :
         self.__super.__init__ (e_type)
         e_type.attributes = self._prop_dict
         e_type.user_attr  = self._user_attr
-        e_type.user_attr.sort (TFL.Sorted_By (("rank", "name")))
+        e_type.epk_sig    = tuple (a.name for a in e_type.primary)
+        e_type.user_attr.sort (key = TFL.Sorted_By (("rank", "name")))
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :

@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Sep-2009 (CT) Creation (factored from `MOM.Meta.M_Entity`)
 #    13-Oct-2009 (CT) Creation continued
+#    14-Oct-2009 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,8 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _TFL._Meta.M_Class
+from   _TFL.object_globals import class_globals
+
 import _MOM._Meta
 
 import sys
@@ -128,7 +131,7 @@ class M_Entity (M_E_Mixin) :
     def _m_new_e_type (cls, etypes) :
         bases  = cls._m_new_e_type_bases (etypes)
         dct    = cls._m_new_e_type_dict  (etypes, bases)
-        result = cls.M_E_Type            (cls.type_base_name, bases, dct)
+        result = cls.M_E_Type            (dct.pop ("__name__"), bases, dct)
         return result
     # end def _m_new_e_type
 
@@ -142,14 +145,22 @@ class M_Entity (M_E_Mixin) :
     def _m_new_e_type_dict (cls, etypes, bases) :
         return dict  \
             ( cls.__dict__
-            , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , children      = {}
+            , __metaclass__ = None ### avoid `Metatype conflict among bases`
+            , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
+            , _real_name    = cls.type_base_name           ### M_Autorename
             )
     # end def _m_new_e_type_dict
 
     def _m_setup_auto_props (cls, MX) :
-        pass
+        for c in MX :
+            c._m_setup_etype_auto_props ()
     # end def _m_setup_auto_props
+
+    def _m_setup_etype_auto_props (cls) :
+        for P in cls._Attributes, cls._Predicates :
+            P.m_setup_names ()
+    # end def _m_setup_etype_auto_props
 
 # end class M_Entity
 
@@ -161,22 +172,47 @@ class M_An_Entity (M_Entity) :
 class M_Id_Entity (M_Entity) :
     """Meta class for MOM.Id_Entity"""
 
+    ### `_new_form` needs `* args` to allow additional primary keys in
+    ### descendent classes to properly percolate up
+    _new_form = """def __new__ (cls, %(epk)s, * args, ** kw) :
+        return super (%(type)s, cls).__new__ (cls, %(epk)s, * args, ** kw)
+"""
+
+    def _m_auto__new__ (cls, epk_sig) :
+        globals = class_globals (cls)
+        scope   = dict          ()
+        code    = cls._new_form % dict\
+            ( epk  = ", ".join (epk_sig)
+            , type = cls.type_base_name
+            )
+        exec code in globals, scope
+        result             = scope ["__new__"]
+        result.epk_sig     = epk_sig
+        result.source_code = code
+        return result
+    # end def _m_auto__new__
+
     def _m_new_e_type_dict (cls, etypes, bases) :
         result = cls.__m_super._m_new_e_type_dict (etypes, bases)
-        if "__new__" not in result :
-            pass ### XXX
+        pkas   = tuple \
+            (  a for a in cls._Attributes._names.itervalues ()
+            if a.kind.is_primary
+            )
+        if pkas and "__new__" not in result :
+            epk_sig = tuple \
+                ( a.name
+                for a in sorted (pkas, key = TFL.Sorted_By (("rank", "name")))
+                )
+            i_bases = tuple (b for b in bases if isinstance (b, M_Id_Entity))
+            if not (i_bases and i_bases [0].epk_sig == epk_sig) :
+                result ["__new__"] = cls._m_auto__new__ (epk_sig)
         return result
     # end def _m_new_e_type_dict
 
     ### XXX Should this go into M_Link ???
-    def _m_setup_auto_props (cls, MX) :
-        for c in MX :
-            c._m_setup_etype_auto_props ()
-    # end def _m_setup_auto_props
-
     def _m_setup_etype_auto_props (cls) :
-        ### Override for links with cached roles
-        pass
+        cls.__m_super._m_setup_etype_auto_props ()
+        ### XXX Create auto-props for cached roles
     # end def _m_setup_etype_auto_props
 
 # end class M_Id_Entity
