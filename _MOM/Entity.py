@@ -39,6 +39,7 @@
 #    13-Oct-2009 (CT) `Id_Entity`: added `_extract_primary*`,
 #                     `_rename`, and `_reset_epk`
 #    13-Oct-2009 (CT) `__init__` and `__new__` refactored
+#    15-Oct-2009 (CT) `is_relevant` and `relevant_root` added
 #    ««revision-date»»···
 #--
 
@@ -307,10 +308,12 @@ class Id_Entity (Entity) :
     __metaclass__         = MOM.Meta.M_Id_Entity
 
     auto_display          = ()
+    is_relevant           = False
     max_count             = 0
     rank                  = 0
     record_changes        = True
     refuse_links          = {}
+    relevant_root         = None
     save_to_db            = True
     sorted_by             = TFL.Sorted_By ("epk")
     tutorial              = None

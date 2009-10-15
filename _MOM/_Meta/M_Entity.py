@@ -29,6 +29,7 @@
 #    23-Sep-2009 (CT) Creation (factored from `MOM.Meta.M_Entity`)
 #    13-Oct-2009 (CT) Creation continued
 #    14-Oct-2009 (CT) Creation continued..
+#    15-Oct-2009 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -90,34 +91,37 @@ class M_E_Mixin (TFL.Meta.M_Class) :
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
 
-    _M_Extension = []
-    _M_Map       = {}
+    _S_Extension = [] ### List       of E_Spec
+    _T_Extension = [] ### List       of E_Type
+    _T_Map       = {} ### Dictionary of E_Type
 
     def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__      (name, bases, dict)
-        cls._m_init_prop_specs      (name, bases, dict)
-        cls._M_Extension.append     (cls)
-        cls._M_Map [cls.type_name] = cls
+        cls.__m_super.__init__  (name, bases, dict)
+        cls._m_init_prop_specs  (name, bases, dict)
+        cls._S_Extension.append (cls)
     # end def __init__
 
     ### XXX add methods to create app-type specific Etypes
+
     def m_setup_etypes (cls) :
-        """Setup essential types for all classes in `cls._M_Extension`"""
+        """Setup essential types for all classes in `cls._S_Extension`"""
         import _MOM._Meta.M_E_Type
-        MX = cls._M_Extension
-        cls._m_setup_auto_props (MX)
-        cls._m_create_e_types   (MX)
+        SX = cls._S_Extension
+        cls._m_setup_auto_props (SX)
+        cls._m_create_e_types   (SX)
     # end def m_setup_etypes
 
-    def _m_create_e_types (cls, MX) :
-        etypes = {}
-        for c in MX :
-            c.E_Spec = c
-            bn       = c.type_base_name
-            et       = c._m_new_e_type (etypes)
-            etypes  [c.type_name] = et
-            setattr (c.Package_NS,               bn, et)
-            setattr (sys.modules [c.__module__], bn, et)
+    def _m_create_e_types (cls, SX) :
+        etypes = cls._T_Map
+        TX     = cls._T_Extension
+        for s in SX :
+            s.E_Spec = s
+            bn       = s.type_base_name
+            et       = s._m_new_e_type (etypes)
+            etypes     [s.type_name] = et
+            TX.append  (et)
+            setattr    (s.Package_NS,               bn, et)
+            setattr    (sys.modules [s.__module__], bn, et)
     # end def _m_create_e_types
 
     def _m_init_prop_specs (cls, name, bases, dct) :
@@ -144,18 +148,19 @@ class M_Entity (M_E_Mixin) :
             )
     # end def _m_new_e_type_bases
 
-    def _m_new_e_type_dict (cls, etypes, bases) :
+    def _m_new_e_type_dict (cls, etypes, bases, ** kw) :
         return dict  \
             ( cls.__dict__
             , children      = {}
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
             , _real_name    = cls.type_base_name           ### M_Autorename
+            , ** kw
             )
     # end def _m_new_e_type_dict
 
-    def _m_setup_auto_props (cls, MX) :
-        for c in MX :
+    def _m_setup_auto_props (cls, SX) :
+        for c in SX :
             c._m_setup_etype_auto_props ()
     # end def _m_setup_auto_props
 
@@ -194,8 +199,18 @@ class M_Id_Entity (M_Entity) :
         return result
     # end def _m_auto__new__
 
-    def _m_new_e_type_dict (cls, etypes, bases) :
-        result = cls.__m_super._m_new_e_type_dict (etypes, bases)
+    def _m_create_e_types (cls, SX) :
+        cls.__m_super._m_create_e_types (SX)
+        for t in reversed (cls._T_Extension) :
+            t._m_setup_relevant_roots ()
+    # end def _m_create_e_types
+
+    def _m_new_e_type_dict (cls, etypes, bases, ** kw) :
+        result = cls.__m_super._m_new_e_type_dict \
+            ( etypes, bases
+            , is_relevant = cls.is_relevant or (not cls.is_partial)
+            , ** kw
+            )
         pkas   = tuple \
             (  a for a in cls._Attributes._names.itervalues ()
             if a.kind.is_primary

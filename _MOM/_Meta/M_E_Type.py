@@ -29,6 +29,7 @@
 # Revision Dates
 #    23-Sep-2009 (CT) Creation started (factored from TOM.Meta.M_E_Type)
 #    13-Oct-2009 (CT) Creation continued
+#    15-Oct-2009 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -118,7 +119,7 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
         if cls.app_type :
             etype = cls.app_type.etype
         else :
-            etype = lambda c : c
+            etype = lambda c : cls.children [c]
         if __debug__ :
             cls.Essence.children_frozen = True
         for c in cls.children :
@@ -241,6 +242,25 @@ class M_E_Type_Id (M_E_Type) :
         cls.show_in_ui  = \
             (cls.record_changes and cls.generate_doc and not cls.is_partial)
     # end def _m_setup_attributes
+
+    def _m_setup_children (cls, bases, dct) :
+        cls.__m_super._m_setup_children (bases, dct)
+        if cls.is_relevant :
+            if not any (b.is_relevant for b in bases) :
+                cls.relevant_root = cls
+        else :
+            cls.relevant_roots = {}
+    # end def _m_setup_children
+
+    def _m_setup_relevant_roots (cls) :
+        if not cls.relevant_root :
+            rr = cls.relevant_roots
+            for c in cls.children.itervalues () :
+                if c.relevant_root is c :
+                    rr [c.type_name] = c
+                else :
+                    rr.update (c.relevant_roots)
+    # end def _m_setup_relevant_roots
 
 # end class M_E_Type_Id
 

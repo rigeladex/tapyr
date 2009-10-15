@@ -3,9 +3,9 @@ MOM To-Do
 
 - Open questions:
 
-- Scope
+- M_Link:
 
-  * Scope just holds (dbw-specific) managers for objects and links
+  * Set `is_relevant` of all roles to True
 
 - M_Entity vs. M_E_Type:
 
@@ -54,6 +54,8 @@ MOM To-Do
 
   * M_E_Type_Id implements the basic query methods
 
+    + Delegation to EMS-manager of scope
+
     + Subclasses of M_E_Type_Id implemented object- and link-specific query
       methods
 
@@ -70,6 +72,8 @@ x Attr.Kind:
   x remove all dependencies on `obj._attr_man.attr_values [self.attr_dict_name]`
 
 - Scope:
+
+  * Scope just holds (dbw-specific) managers for objects and links
 
   * change signature of `remove` and `rename`
 
