@@ -40,37 +40,97 @@ import _MOM.Entity
 
 import _TFL._Meta.Object
 
-import _TFL.Decorator
 import _TFL.defaultdict
 
 import itertools
 
-@TFL.Add_To_Class ("EMS_Hash", MOM.Id_Entity)
 class Manager (TFL.Meta.Object) :
     """Entity manager using hash tables to hold entities."""
 
     def __init__ (self) :
         self._counts = TFL.defaultdict (int)
         self._tables = TFL.defaultdict (dict)
+        self._r_map  = TFL.defaultdict (lambda : TFL.defaultdict (dict))
+        self.__id    = 0
     # end def __init__
 
-    def add (self, obj) :
+    def add (self, entity) :
         count = self._counts
-        epk   = obj.epk
-        root  = obj.relevant_root
+        hpk   = entity.hpk
+        root  = entity.relevant_root
         table = self._tables [root.type_name]
-        if epk in table :
-            raise MOM.Error.Name_Clash (obj, table [epk])
-        if obj.max_count and obj.max_count <= count [obj.type_name] :
-            raise MOM.Error.Too_Many_Objects (obj, obj.max_count)
-        table [epk] = obj
-        count [obj.type_name] += 1
-        ### XXX ??? How to deal with link role tables
+        if hpk in table :
+            raise MOM.Error.Name_Clash (entity, table [hpk])
+        if entity.max_count and entity.max_count <= count [entity.type_name] :
+            raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
+        entity.id    = self.__id
+        self.__id   += 1
+        table [hpk]  = entity
+        count [entity.type_name] += 1
+        if entity.Roles :
+            r_map = self._r_map
+            for r in entity.Roles :
+                r_map [r.type_name] [r.get_role (entity).id] [entity] = entity
     # end def add
+
+    def exists (self, hpk, Type) :
+        tables = self._tables
+        root   = Type.relevant_root
+        if root :
+            roots = {root.type_name : root}
+        else :
+            roots = Type.relevant_roots
+        return [T for (n, T) in roots.iteritems () if hpk in tables [n]]
+    # end def exists
+
+    def instance (self, hpk, Type) :
+        root = Type.relevant_root
+        if root :
+            return hpk in self._tables [root.type_name]
+        raise TypeError \
+            ( "Cannot query `instance` of non-root type `%s`."
+              "\n"
+              "Use one of the types %s instead."
+            % (Type.type_name, ", ".join (sorted (Type.relevant_roots)))
+            )
+    # end def instance
+
+    def remove (self, entity) :
+        count = self._counts
+        hpk   = entity.hpk
+        root  = entity.relevant_root
+        table = self._tables [root.type_name]
+        del table [hpk]
+        count [entity.type_name] -= 1
+        if entity.Roles :
+            r_map = self._r_map
+            for r in entity.Roles :
+                del r_map [r.type_name] [r.get_role (entity).id] [entity]
+    # end def remove
+
+    def rename (self, entity, new_hpk, renamer) :
+        pass ### XXX
+    # end def rename
 
     def s_count (self, Type) :
         return self._counts [Type.type_name]
     # end def s_count
+
+    def s_extension (self, Type, sort_key = None) :
+        root   = Type.relevant_root
+        tables = self._tables
+        result = []
+        if root :
+            result = tables [root.type_name].itervalues ()
+            if Type.children :
+                pred   = lambda x : x.Essence == Type.Essence
+                result = itertools.ifilter (pred, result)
+        return sorted (result, key = sort_key or Type.sorted_by)
+    # end def s_extension
+
+    def s_role (self, role, obj) :
+        return self._r_map [role.type_name] [obj.id].itervalues ()
+    # end def s_role
 
     def t_count (self, Type, seen = None) :
         if seen is None :
@@ -83,61 +143,7 @@ class Manager (TFL.Meta.Object) :
         return result
     # end def t_count
 
-    def exists (self, epk, Type = None) :
-        if Type is None :
-            Type = MOM.Id_Entity
-        tables = self._tables
-        root   = Type.relevant_root
-        if root :
-            roots = {root.type_name : root}
-        else :
-            roots = Type.relevant_roots
-        return [T for (n, T) in roots.iteritems () if epk in tables [n]]
-    # end def exists
-
-    def instance (self, epk, Type) :
-        root = Type.relevant_root
-        if root :
-            return epk in self._tables [root.type_name]
-        raise TypeError \
-            ( "Cannot query `instance` of non-root type `%s`."
-              "\n"
-              "Use one of the types %s instead."
-            % (Type.type_name, ", ".join (sorted (Type.relevant_roots)))
-            )
-    # end def instance
-
-    def remove (self, obj) :
-        count = self._counts
-        epk   = obj.epk
-        root  = obj.relevant_root
-        table = self._tables [root.type_name]
-        del table [epk]
-        count [obj.type_name] -= 1
-        ### XXX ??? How to deal with link role tables
-    # end def remove
-
-    def rename (self, obj, new_epk, renamer) :
-        pass ### XXX
-    # end def rename
-
-    def s_extension (self, Type = None, sort_key = None) :
-        if Type is None :
-            Type = MOM.Id_Entity
-        root   = Type.relevant_root
-        tables = self._tables
-        result = []
-        if root :
-            result = tables [root.type_name].itervalues ()
-            if Type.children :
-                pred   = lambda x : x.Essence == Type.Essence
-                result = itertools.ifilter (pred, result)
-        return sorted (result, key = sort_key or Type.sorted_by)
-    # end def s_extension
-
-    def t_extension (self, Type = None, sort_key = None) :
-        if Type is None :
-            Type = MOM.Id_Entity
+    def t_extension (self, Type , sort_key = None) :
         root   = Type.relevant_root
         tables = self._tables
         if root :
@@ -147,6 +153,17 @@ class Manager (TFL.Meta.Object) :
                 (* (tables [t].itervalues () for t in Type.relevant_roots))
         return sorted (result, key = sort_key or Type.sorted_by)
     # end def t_extension
+
+    def t_role (self, role, obj) :
+        r_map = self._r_map
+        i     = role.role_index
+        return itertools.chain \
+            ( r_map [role.type_name] [obj.id].itervalues ()
+            , * ( r_map [c.Roles [i].type_name] [obj.id].itervalues ()
+                for c in role.assoc.children.itervalues ()
+                )
+            )
+    # end def t_role
 
     def __iter__ (self) :
         return itertools.chain \

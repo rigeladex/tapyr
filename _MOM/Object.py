@@ -52,6 +52,8 @@ class _MOM_Object_ (MOM.Id_Entity) :
     _real_name            = "Object"
     entity_kind           = "object"
 
+    hpk                   = TFL.Meta.Alias_Property ("epk")
+
 Object = _MOM_Object_ # end class
 
 class Named_Object (Object) :

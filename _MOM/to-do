@@ -3,9 +3,16 @@ MOM To-Do
 
 - Open questions:
 
-- M_Link:
+- Link, M_Link, Role:
 
   * Set `is_relevant` of all roles to True
+
+  * Define Alias_Property for `hpk` that maps to `id` derived from objects
+    linked
+
+  * Change role to provide `.type_name` and `.type_base_name`
+
+    (in TOM `role.type_name` has the value of `role.role_e_type.type_base_name`)
 
 - M_Entity vs. M_E_Type:
 
