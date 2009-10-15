@@ -87,11 +87,12 @@ class Manager (TFL.Meta.Object) :
         if Type is None :
             Type = MOM.Id_Entity
         tables = self._tables
-        if Type.relevant_root :
-            return epk in tables [Type.relevant_root.type_name]
+        root   = Type.relevant_root
+        if root :
+            roots = {root.type_name : root}
         else :
             roots = Type.relevant_roots
-            return [T for (n, T) in roots.iteritems () if epk in tables [n]]
+        return [T for (n, T) in roots.iteritems () if epk in tables [n]]
     # end def exists
 
     def instance (self, epk, Type) :
