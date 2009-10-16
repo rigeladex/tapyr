@@ -30,6 +30,7 @@
 #    23-Sep-2009 (CT) Creation started (factored from TOM.Meta.M_E_Type)
 #    13-Oct-2009 (CT) Creation continued
 #    15-Oct-2009 (CT) Creation continued..
+#    16-Oct-2009 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
@@ -50,18 +51,13 @@ import _MOM.Scope_Proxy
 class M_E_Type (MOM.Meta.M_E_Mixin) :
     """Meta class for for essence of MOM.Entity."""
 
-    app_type = None
-
-    def __new__ (meta, name, bases, dct) :
-        dct ["associated_by"] = {}
-        result = super (M_E_Type, meta).__new__ (meta, name, bases, dct)
-        return result
-    # end def __new__
+    app_type    = None
+    Scope_Proxy = MOM.Scope_Proxy
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        if cls.app_type is None :
-            cls._m_setup_children       (bases, dct)
+        cls._m_setup_children  (bases, dct)
+        if cls.app_type.EMS is None :
             cls._m_setup_attributes     (bases, dct)
         else :
             cls._m_setup_attributes_dbw (bases, dct)
@@ -128,6 +124,14 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
             if et :
                 yield et
     # end def children_iter
+
+    def m_setup_etypes (cls, app_type) :
+        """Setup EMS- and DBW -specific essential types for all classes in
+           `app_type.parent._T_Extension`.
+        """
+        assert not app_type.etypes
+        cls._m_create_e_types (app_type, app_type.parent._T_Extension)
+    # end def m_setup_etypes
 
     def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
         name = prop.__name__
@@ -202,7 +206,7 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
     # end def _m_setup_attributes
 
     def _m_setup_attributes_dbw (cls, bases, dct) :
-        pass
+        pass ### XXX
     # end def _m_setup_attributes_dbw
 
     def _m_setup_children (cls, bases, dct) :
@@ -217,6 +221,10 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
                             % (cls.type_name, b.type_name)
                             )
     # end def _m_setup_children
+
+    def _m_new_e_type_bases (cls, app_type, etypes) :
+        return cls.__m_super._m_new_e_type_bases (app_type, etypes, M_E_Type)
+    # end def _m_new_e_type_bases
 
     def __getattr__ (cls, name) :
         ### delegate to scope specific class, if any
@@ -236,6 +244,8 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
 @TFL.Add_To_Class ("M_E_Type", MOM.Id_Entity)
 class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
+
+    _m_create_e_types_finish = MOM.Meta.M_E_Mixin._m_create_e_types_id_finish_
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
@@ -269,7 +279,7 @@ class M_E_Type_Id (M_E_Type) :
 class M_E_Type_Object (M_E_Type_Id) :
     """Meta class for essence of MOM.Object."""
 
-    Scoped_Proxy = MOM.Scope_Proxy_O
+    Scope_Proxy = MOM.Scope_Proxy_O
 
 # end class M_E_Type_Object
 

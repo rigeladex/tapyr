@@ -38,16 +38,14 @@ import _MOM.Error
 import _MOM._Pred.Err_and_Warn_List
 import _MOM._SCM.Tracker
 
-from   _TFL._Meta.Lazy_Method import Lazy_Method_RLV as lazy_method
 from   _TFL.Gauge_Logger      import Gauge_Logger
 
 import _TFL.Accessor
 import _TFL.Context
 import _TFL.Decorator
 import _TFL.Ordered_Set
-import _TFL._Meta.M_Class
+import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
-import _TFL._Meta.Property
 
 import uuid
 
@@ -77,6 +75,7 @@ class Scope (TFL.Meta.Object) :
 
     init_callback          = TFL.Ordered_Set ()
     kill_callback          = TFL.Ordered_Set ()
+    is_universe            = False
     _deprecated_type_names = {}
     _locked                = False
     _pkg_ns                = None
@@ -112,7 +111,8 @@ class Scope (TFL.Meta.Object) :
             if qname in pkg_ns :
                 result = pkg_ns [qname]
             elif qname in etypes :
-                result = etype.Scoped_Proxy (etypes [qname], scope)
+                etype  = etypes [qname]
+                result = etype.Scope_Proxy (etype, scope)
             if result is not None :
                 setattr (self, name, result)
             else :
@@ -128,7 +128,6 @@ class Scope (TFL.Meta.Object) :
                 app_type             = MOM.App_Type.instance (app_type)
             self.app_type            = app_type
             self.bname               = name
-            self.id                  = self._new_id   ()
             self.guid                = self._new_guid (guid)
             self._pkg_ns             = {}
             self._roots              = {}
@@ -153,7 +152,7 @@ class Scope (TFL.Meta.Object) :
         self.record_change (MOM.SCM.Entity_Change_Create, entity)
     # end def add
 
-    @TFL.Meta.Class_Method
+    @classmethod
     def add_init_callback (cls, * callbacks) :
         """Add all `callbacks` to `init_callback`. These
            callbacks are executed whenever a scope is
@@ -184,7 +183,7 @@ class Scope (TFL.Meta.Object) :
             Scope.active = old_active
     # end def as_active
 
-    @lazy_method
+    @TFL.Meta.Lazy_Method_RLV
     def compute_defaults_internal (self, gauge = Gauge_Logger ()) :
         """Lazily call `compute_defaults_internal` for all entities."""
         with self.as_active () :
@@ -228,7 +227,6 @@ class Scope (TFL.Meta.Object) :
         self.root = None
         for d in (self._roots, self._pkg_ns) :
             d.clear ()
-        self.id = None
         ### XXX break circular links (references to this scope from
         ###     importers... )
         if Scope.active == self :
@@ -268,11 +266,11 @@ class Scope (TFL.Meta.Object) :
         if isinstance (entity, basestring) :
             name = entity
         else :
-            name = entity and entity.Essence.type_name
-        return self.app_type.etypes.get (self._canonical_name (name))
+            name = entity.Essence.type_name
+        return self.app_type.entity_type (self._canonical_name (name))
     # end def entity_type
 
-    @lazy_method
+    @TFL.Meta.Lazy_Method_RLV
     def g_incorrect (self, gauge = Gauge_Logger ()) :
         """Returns all objects which are globally incorrect (i.e., violating
            the object's `system` predicates).
@@ -297,7 +295,7 @@ class Scope (TFL.Meta.Object) :
         return False
     # end def has_changed
 
-    @lazy_method
+    @TFL.Meta.Lazy_Method_RLV
     def i_incorrect (self, gauge = Gauge_Logger ()) :
         """Returns all objects which are object-wise incorrect (i.e., violating
            the object's `object` predicates).
@@ -387,12 +385,6 @@ class Scope (TFL.Meta.Object) :
         return guid
     # end def _new_guid
 
-    def _new_id (self) :
-        result = Scope.__id
-        Scope.__id += 1
-        return result
-    # end def _new_id
-
     def _run_init_callbacks (self) :
         for c in self.init_callback :
             c (self)
@@ -412,7 +404,7 @@ class Scope (TFL.Meta.Object) :
 
     def _setup_pkg_ns (self, app_type) :
         _pkg_ns = self._pkg_ns
-        for name, pns in sorted (app_type.PNS_Set.iteritems (), key = len) :
+        for name, pns in sorted (app_type.PNS_Map.iteritems (), key = len) :
             if name not in _pkg_ns :
                 _pkg_ns [name] = self.Pkg_NS (self, pns, name)
     # end def _setup_pkg_ns
@@ -439,6 +431,20 @@ class Scope (TFL.Meta.Object) :
                 pass
         return getattr (self.app_type, name)
     # end def __getattr__
+
+    def __getitem__ (self, name) :
+        result = self._pkg_ns
+        for k in name.split (".") :
+            try :
+                result = getattr (result, k)
+            except AttributeError :
+                raise KeyError (name)
+        return result
+    # end def __getitem__
+
+    def __iter__ (self) :
+        return iter (self.ems)
+    # end def __iter__
 
     def __str__ (self) :
         return "%s `%s`" % (self.__class__.__name__, self.bname)

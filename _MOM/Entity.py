@@ -877,3 +877,15 @@ you redefine one of these methods, you'll normally need to call the
 if __name__ != "__main__" :
     MOM._Export ("*")
 ### __END__ MOM.Entity
+
+"""
+from _MOM.Object import *
+from _MOM.App_Type import App_Type
+from _MOM.Scope import Scope
+from _MOM._EMS.Hash import Manager
+apt = App_Type ("test", MOM)
+cpt = apt.Derived (Manager, None)
+MOM.Entity.m_setup_etypes (apt)
+MOM.Entity.m_setup_etypes (cpt)
+scope = Scope (cpt)
+"""
