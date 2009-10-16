@@ -10,9 +10,7 @@ MOM To-Do
   * Define Alias_Property for `hpk` that maps to `id` derived from objects
     linked
 
-  * Change role to provide `.type_name` and `.type_base_name`
-
-    (in TOM `role.type_name` has the value of `role.role_e_type.type_base_name`)
+  * Is `Id_Entity.rename` correct for links ?
 
 - M_Entity vs. M_E_Type:
 

@@ -24,11 +24,11 @@
 #
 # Purpose
 #    Entity manager strategy using hash tables for entities
-#    ««text»»···
 #
 # Revision Dates
 #    14-Oct-2009 (CT) Creation
 #    15-Oct-2009 (CT) Creation continued
+#    16-Oct-2009 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -50,7 +50,7 @@ class Manager (TFL.Meta.Object) :
     def __init__ (self) :
         self._counts = TFL.defaultdict (int)
         self._tables = TFL.defaultdict (dict)
-        self._r_map  = TFL.defaultdict (lambda : TFL.defaultdict (dict))
+        self._r_map  = TFL.defaultdict (lambda : TFL.defaultdict (set))
         self.__id    = 0
     # end def __init__
 
@@ -63,14 +63,14 @@ class Manager (TFL.Meta.Object) :
             raise MOM.Error.Name_Clash (entity, table [hpk])
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        entity.id    = self.__id
-        self.__id   += 1
-        table [hpk]  = entity
+        entity.id                 = self.__id
+        self.__id                += 1
         count [entity.type_name] += 1
+        table [hpk]               = entity
         if entity.Roles :
             r_map = self._r_map
             for r in entity.Roles :
-                r_map [r.type_name] [r.get_role (entity).id] [entity] = entity
+                r_map [r] [r.get_role (entity).id].add (entity)
     # end def add
 
     def exists (self, hpk, Type) :
@@ -86,7 +86,7 @@ class Manager (TFL.Meta.Object) :
     def instance (self, hpk, Type) :
         root = Type.relevant_root
         if root :
-            return hpk in self._tables [root.type_name]
+            return self._tables [root.type_name] [hpk]
         raise TypeError \
             ( "Cannot query `instance` of non-root type `%s`."
               "\n"
@@ -105,11 +105,17 @@ class Manager (TFL.Meta.Object) :
         if entity.Roles :
             r_map = self._r_map
             for r in entity.Roles :
-                del r_map [r.type_name] [r.get_role (entity).id] [entity]
+                r_map [r] [r.get_role (entity).id].remove (entity)
     # end def remove
 
     def rename (self, entity, new_hpk, renamer) :
-        pass ### XXX
+        root    = entity.relevant_root
+        table   = self._tables [root.type_name]
+        if new_hpk in table :
+            raise MOM.Error.Name_Clash (entity, table [new_hpk])
+        self.remove (entity)
+        renamer     ()
+        self.add    (entity)
     # end def rename
 
     def s_count (self, Type) :
@@ -129,7 +135,7 @@ class Manager (TFL.Meta.Object) :
     # end def s_extension
 
     def s_role (self, role, obj) :
-        return self._r_map [role.type_name] [obj.id].itervalues ()
+        return self._r_map [role] [obj.id]
     # end def s_role
 
     def t_count (self, Type, seen = None) :
@@ -158,8 +164,8 @@ class Manager (TFL.Meta.Object) :
         r_map = self._r_map
         i     = role.role_index
         return itertools.chain \
-            ( r_map [role.type_name] [obj.id].itervalues ()
-            , * ( r_map [c.Roles [i].type_name] [obj.id].itervalues ()
+            ( r_map [role] [obj.id]
+            , * ( r_map [c.Roles [i]] [obj.id]
                 for c in role.assoc.children.itervalues ()
                 )
             )
