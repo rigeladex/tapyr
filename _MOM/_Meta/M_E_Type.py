@@ -43,7 +43,8 @@ import _TFL.Decorator
 import _MOM._Meta.M_Entity
 import _MOM.Entity
 import _MOM.Object
-### XXX ### import _MOM.Scope
+import _MOM.Scope
+import _MOM.Scope_Proxy
 
 @TFL.Add_To_Class ("M_E_Type", MOM.Entity)
 class M_E_Type (MOM.Meta.M_E_Mixin) :
@@ -263,6 +264,16 @@ class M_E_Type_Id (M_E_Type) :
     # end def _m_setup_relevant_roots
 
 # end class M_E_Type_Id
+
+@TFL.Add_To_Class ("M_E_Type", MOM.Object)
+class M_E_Type_Object (M_E_Type_Id) :
+    """Meta class for essence of MOM.Object."""
+
+    Scoped_Proxy = MOM.Scope_Proxy_O
+
+# end class M_E_Type_Object
+
+### XXX ditto for MOM.Link
 
 __doc__ = """
 Class `MOM.Meta.M_E_Type`

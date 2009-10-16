@@ -91,9 +91,9 @@ class M_E_Mixin (TFL.Meta.M_Class) :
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
 
-    _S_Extension = [] ### List       of E_Spec
-    _T_Extension = [] ### List       of E_Type
-    _T_Map       = {} ### Dictionary of E_Type
+    _S_Extension = []     ### List       of E_Spec
+    _T_Extension = []     ### List       of E_Type
+    _T_Map       = {}     ### Dictionary of E_Type
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__  (name, bases, dict)

@@ -47,7 +47,8 @@ import itertools
 class Manager (TFL.Meta.Object) :
     """Entity manager using hash tables to hold entities."""
 
-    def __init__ (self) :
+    def __init__ (self, scope) :
+        self.scope   = scope
         self._counts = TFL.defaultdict (int)
         self._tables = TFL.defaultdict (dict)
         self._r_map  = TFL.defaultdict (lambda : TFL.defaultdict (set))
@@ -73,7 +74,7 @@ class Manager (TFL.Meta.Object) :
                 r_map [r] [r.get_role (entity).id].add (entity)
     # end def add
 
-    def exists (self, hpk, Type) :
+    def exists (self, Type, hpk) :
         tables = self._tables
         root   = Type.relevant_root
         if root :
@@ -83,7 +84,7 @@ class Manager (TFL.Meta.Object) :
         return [T for (n, T) in roots.iteritems () if hpk in tables [n]]
     # end def exists
 
-    def instance (self, hpk, Type) :
+    def instance (self, Type, hpk) :
         root = Type.relevant_root
         if root :
             return self._tables [root.type_name] [hpk]

@@ -12,6 +12,8 @@ MOM To-Do
 
   * Is `Id_Entity.rename` correct for links ?
 
+  * Implement `epk_to_hpk` to translate from `epk` to `hpk`
+
 - M_Entity vs. M_E_Type:
 
   x Entity defines the specification of the essential class (`E_Spec`)
@@ -92,6 +94,12 @@ x Attr.Kind:
     + This architecture also allows separate hash-tables for different object
       types (using several managers).
 
+- App_Type
+
+  * Dictionary PNS_Set mapping the fully qualified names of essential package
+    namespaces to the namespaces in question
+
+  * Use `entity_type` instead of `etype` as method name
 
 - Dependency management: move to DBW-Mixin for Scope
 
