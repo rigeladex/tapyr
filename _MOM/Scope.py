@@ -49,6 +49,8 @@ import _TFL._Meta.M_Class
 import _TFL._Meta.Object
 import _TFL._Meta.Property
 
+import uuid
+
 @TFL.Contextmanager
 def unlocked (scope) :
     old_locked    = scope._locked
@@ -120,21 +122,25 @@ class Scope (TFL.Meta.Object) :
 
     # end class Pkg_NS
 
-    def __init__ (self, app_type, name = "") :
+    def __init__ (self, app_type, guid = None, name = "") :
         with self._self_active () :
             if isinstance (app_type, (str, unicode)) :
-                app_type              = MOM.App_Type.instance (app_type)
-            self.app_type             = app_type
-            self.bname                = name
-            self.qname                = ""
-            self.id                   = self._new_id ()
-            self._pkg_ns              = {}
-            self._roots               = {}
-            self.snapshot_count       = 0
-            self.historian            = MOM.SCM.Tracker (self)
-            self.ems                  = app_type.EMS    (self)
-            self.dbw                  = app_type.DBW    (self)
-            self._setup_pkg_ns (app_type)
+                app_type             = MOM.App_Type.instance (app_type)
+            self.app_type            = app_type
+            self.bname               = name
+            self.id                  = self._new_id   ()
+            self.guid                = self._new_guid (guid)
+            self._pkg_ns             = {}
+            self._roots              = {}
+            self.root                = None
+            self.snapshot_count      = 0
+            self.historian           = MOM.SCM.Tracker (self)
+            self.ems                 = app_type.EMS    (self)
+            self.dbw                 = app_type.DBW    (self)
+            self._setup_pkg_ns         (app_type)
+            if name :
+                self._setup_root       (app_type, name)
+            self._run_init_callbacks   ()
         ### copy `kill_callback` from class into instance to allow appending
         ### of instance specific callbacks by clients
         self.kill_callback = self.kill_callback [:]
@@ -375,6 +381,12 @@ class Scope (TFL.Meta.Object) :
         return MOM.Pred.Err_and_Warn_List (err_result, wrn_result)
     # end def _check_inv
 
+    def _new_guid (self, guid) :
+        if not guid :
+            guid = uuid.uuid4 ().bytes
+        return guid
+    # end def _new_guid
+
     def _new_id (self) :
         result = Scope.__id
         Scope.__id += 1
@@ -404,6 +416,18 @@ class Scope (TFL.Meta.Object) :
             if name not in _pkg_ns :
                 _pkg_ns [name] = self.Pkg_NS (self, pns, name)
     # end def _setup_pkg_ns
+
+    def _setup_root (self, app_type, name) :
+        if app_type.Root_Type :
+            ### use `__new__` here to allow setting of `self.root` and
+            ### `self._roots` before `__init__` of the root object is
+            ### executed and might refer to `self.root`
+            Root_Type = self.entity_type (app_type.Root_Type)
+            self.root = root = Root_Type.__new__ (name, scope = self)
+            self._roots [root.Essence.type_base_name] = root
+            root.__init__ (name)
+            root_cls.after_creation (root)
+    # end def _setup_root
 
     def __getattr__ (self, name) :
         for dict in self._roots, self._pkg_ns :
