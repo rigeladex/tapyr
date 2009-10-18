@@ -422,13 +422,20 @@ class Id_Entity (Entity) :
     @TFL.Meta.Once_Property
     def epk_as_code (self) :
         """Essential primary key formatted with `as_code`"""
-        return tuple (a.as_code (a.get_value (self)) for a in self.primary)
+        try :
+            return tuple (a.as_code (a.get_value (self)) for a in self.primary)
+        except StandardError :
+            return id (self)
     # end def epk_as_code
 
     @TFL.Meta.Once_Property
     def epk_as_string (self) :
         """Essential primary key formatted with `as_string`"""
-        return tuple (a.as_string (a.get_value (self)) for a in self.primary)
+        try :
+            return tuple \
+                (a.as_string (a.get_value (self)) for a in self.primary)
+        except StandardError :
+            return id (self)
     # end def epk_as_string
 
     @property
@@ -652,7 +659,11 @@ class Id_Entity (Entity) :
     # end def _rename
 
     def _repr (self, type_name) :
-        return "%s %r" % (type_name, self.epk_as_code)
+        try :
+            epk = id (self) ### self.epk_as_code
+        except StandardError :
+            epk = id (self)
+        return "%s %r" % (type_name, epk)
     # end def _repr
 
     def _reset_epk (self) :
@@ -668,17 +679,16 @@ class Id_Entity (Entity) :
                 (MOM.SCM.Entity_Change_Attr, self, rvr)
     # end def _set_record
 
-    def __new_id (self) :
-        Id_Entity.__id += 1
-        return Id_Entity.__id
-    # end def __new_id
-
     def __str__ (self) :
-        epk = self.epk_as_string
-        if len (epk) == 1 :
-            result = epk [0]
+        try :
+            epk = self.epk_as_string
+        except StandardError :
+            result = id (self)
         else :
-            result = epk
+            if len (epk) == 1 :
+                result = epk [0]
+            else :
+                result = epk
         return "%s `%s`" % (self.type_name, result)
     # end def __str__
 

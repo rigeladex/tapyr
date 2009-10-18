@@ -87,18 +87,18 @@ class Kind (MOM.Prop.Kind) :
     # end def __set__
 
     def get_value (self, obj) :
-        getattr (obj, self.attr.ckd_name, None)
+        return getattr (obj, self.attr.ckd_name, None)
     # end def get_value
 
     def inc_changes (self, man, obj, value) :
         ### don't redefine this (redefine `_inc_changes` instead)
         ### (this allows applications to extend `inc_changes` without having
         ### to know all classes redefining `_inc_changes`) !!!
-        self._inc_changes (man, obj, value)
+        return self._inc_changes (man, obj, value)
     # end def inc_changes
 
     def reset (self, obj) :
-        if self._symbolic_default :
+        if self.attr._symbolic_default :
             self.set_raw (obj, self.attr.default, dont_raise = True)
         else :
             if self.attr.raw_default and not self.attr.default :
@@ -167,7 +167,7 @@ class Kind (MOM.Prop.Kind) :
             try :
                 value = self.attr.cooked (value)
             except StandardError, exc :
-                print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
+                ### print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
                 raise
         self._set_cooked_value (obj, value)
     # end def _set_cooked_inner
@@ -226,7 +226,7 @@ class _User_ (_DB_Attr_, Kind) :
     electric       = False
 
     def get_raw (self, obj) :
-        getattr (obj, self.attr.raw_name, "")
+        return getattr (obj, self.attr.raw_name, "")
     # end def get_raw
 
     def get_value (self, obj) :
@@ -326,14 +326,16 @@ class Primary (_User_) :
             ( "Primary attribute `%s.%s` cannot be assigned."
               "\n"
               "Use `set` or `set_raw` to change it."
-            % (obj, self.name)
+            % (obj.type_name, self.name)
             )
     # end def __set__
 
     def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
         if raw_value is "" :
             raise AttributeError \
-                ("Primary attribute `%s.%s` cannot be empty" % (obj, self.name))
+                ( "Primary attribute `%s.%s` cannot be empty"
+                % (obj.type_name, self.name)
+                )
         return self.__super.set_raw (obj, raw_value, glob_dict, dont_raise)
     # end def set_raw
 
@@ -343,7 +345,9 @@ class Primary (_User_) :
 
     def __delete__ (self, obj, value) :
         raise AttributeError \
-            ("Primary attribute `%s.%s` cannot be deleted" % (obj, self.name))
+            ( "Primary attribute `%s.%s` cannot be deleted"
+            % (obj.type_name, self.name)
+            )
     # end def __delete__
 
 # end class Primary
@@ -389,7 +393,9 @@ class Const (_Cached_) :
 
     def __set__ (self, obj, value) :
         raise AttributeError \
-            ("Constant attribute `%s.%s` cannot be changed" % (obj, self.name))
+            ( "Constant attribute `%s.%s` cannot be changed"
+            % (obj.type_name, self.name)
+            )
     # end def __set__
 
 # end class Const

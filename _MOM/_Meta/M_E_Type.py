@@ -65,10 +65,10 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        scope = kw.get ("scope", MOM.Scope.active)
+        scope = kw.get ("scope", None)
         if not scope :
             raise MOM.Error.No_Scope
-        return cls._m_call (* args, scope = scope, ** kw)
+        return cls._m_call (* args, ** kw)
     # end def __call__
 
     def add_attribute (cls, attr, verbose = True, parent = None, transitive = True, override = False) :
@@ -241,7 +241,7 @@ class M_E_Type_Id (M_E_Type) :
     def _m_setup_children (cls, bases, dct) :
         cls.__m_super._m_setup_children (bases, dct)
         if cls.is_relevant :
-            if not any (b.is_relevant for b in bases) :
+            if not any (getattr (b, "is_relevant", False) for b in bases) :
                 cls.relevant_root = cls
         else :
             cls.relevant_roots = {}

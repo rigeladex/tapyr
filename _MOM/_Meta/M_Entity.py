@@ -55,6 +55,13 @@ class M_E_Mixin (TFL.Meta.M_Class) :
         cls._m_init_name_attributes ()
     # end def __init__
 
+    def __call__ (cls, * args, ** kw) :
+        raise TypeError \
+            ( "Can't instantiate %s %r, use <scope>.%s %r instead"
+            % (cls.type_name, args, cls.type_name, args)
+            )
+    # end def __call__
+
     def pns_qualified (cls, name) :
         """Returns the `name` qualified with `Package_Namespace` of `cls`
            (i.e., includes the name of the Package_Namespace `cls` lives in,
@@ -77,8 +84,6 @@ class M_E_Mixin (TFL.Meta.M_Class) :
     # end def set_alias
 
     def _m_init_name_attributes (cls) :
-        if "name" not in cls.__dict__ :
-            cls.name = cls.__name__
         cls._set_type_names (cls.__name__)
     # end def _m_init_name_attributes
 
@@ -244,11 +249,12 @@ class M_Id_Entity (M_Entity) :
             if a.kind.is_primary
             )
         if pkas and "__new__" not in result :
+            M_E_Type_Id = MOM.Meta.M_E_Type_Id
             epk_sig = tuple \
                 ( a.name
                 for a in sorted (pkas, key = TFL.Sorted_By ("rank", "name"))
                 )
-            i_bases = tuple (b for b in bases if isinstance (b, M_Id_Entity))
+            i_bases = tuple (b for b in bases if isinstance (b, M_E_Type_Id))
             if not (i_bases and i_bases [0].epk_sig == epk_sig) :
                 result ["__new__"] = cls._m_auto__new__ (epk_sig)
         return result

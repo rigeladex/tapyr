@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    23-Sep-2009 (CT) Creation (factored from `MOM.Meta.M_Object`)
+#    18-Oct-2009 (CT) `_m_new_e_type_dict` redefined (add `Roles`)
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,15 @@ import _MOM._Meta.M_Entity
 
 class M_Object (MOM.Meta.M_Id_Entity) :
     """Meta class of MOM.Object."""
+
+    def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
+        result = cls.__m_super._m_new_e_type_dict \
+            ( app_type, etypes, bases
+            , Roles = None
+            , ** kw
+            )
+        return result
+    # end def _m_new_e_type_dict
 
 # end class M_Object
 

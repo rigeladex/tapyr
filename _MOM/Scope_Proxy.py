@@ -44,7 +44,7 @@ class Scope_Proxy (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        self._etype (* args, scope = self.home_scope, ** kw)
+        return self._etype (* args, scope = self.home_scope, ** kw)
     # end def __call__
 
     def exists (self, epk) :
