@@ -124,7 +124,7 @@ class Entity (TFL.Meta.Object) :
     # end def attr_value_maybe
 
     def globals (self) :
-        return self.__class__._appl_globals or object_globals (self)
+        return self.__class__._app_globals or object_globals (self)
     # end def globals
 
     def has_changed (self) :
@@ -313,12 +313,12 @@ class Id_Entity (Entity) :
     rank                  = 0
     record_changes        = True
     refuse_links          = {}
-    relevant_root         = None
+    relevant_root         = None   ### Set by meta machinery
     save_to_db            = True
     sorted_by             = TFL.Sorted_By ("epk")
     tutorial              = None
 
-    _appl_globals         = {}
+    _app_globals          = {}
     _lists_to_combine     = ("auto_display", )
     _dicts_to_combine     = ("refuse_links", )
 
@@ -884,8 +884,10 @@ from _MOM.App_Type import App_Type
 from _MOM.Scope import Scope
 from _MOM._EMS.Hash import Manager
 apt = App_Type ("test", MOM)
-cpt = apt.Derived (Manager, None)
+cpt = apt.Derived (Manager, Manager)
 MOM.Entity.m_setup_etypes (apt)
-MOM.Entity.m_setup_etypes (cpt)
+cpt.setup_etypes ()
 scope = Scope (cpt)
+scope.MOM.Entity
+
 """

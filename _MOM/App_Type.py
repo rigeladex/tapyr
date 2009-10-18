@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Oct-2009 (CT) Creation
+#    18-Oct-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -110,6 +111,15 @@ class App_Type (TFL.Meta.Object) :
         self.etypes  [etype.Essence.type_name] = etype
         self._T_Extension.append (etype)
     # end def add_type
+
+    def setup_etypes (self) :
+        """Setup EMS- and DBW -specific essential types for all classes in
+           `self.parent._T_Extension`.
+        """
+        assert self.parent
+        assert self.parent._T_Extension
+        self.parent._T_Extension [0].m_setup_etypes (self)
+    # end def setup_etypes
 
     def entity_type (self, entity) :
         """Returns app-type specific type of `entity`."""

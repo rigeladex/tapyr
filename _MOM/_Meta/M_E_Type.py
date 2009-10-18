@@ -31,6 +31,7 @@
 #    13-Oct-2009 (CT) Creation continued
 #    15-Oct-2009 (CT) Creation continued..
 #    16-Oct-2009 (CT) Creation continued...
+#    18-Oct-2009 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -117,8 +118,6 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
             etype = cls.app_type.etype
         else :
             etype = lambda c : cls.children [c]
-        if __debug__ :
-            cls.Essence.children_frozen = True
         for c in cls.children :
             et = etype (c)
             if et :
@@ -169,11 +168,6 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
         return getattr (etype, name)
     # end def _m_get_attribute
 
-    def _m_init_name_attributes (cls) :
-        cls.Essence = cls
-        cls.__m_super._m_init_name_attributes ()
-    # end def _m_init_name_attributes
-
     def _m_scope (cls, scope = None, ** kw) :
         if scope is None :
             scope = MOM.Scope.active
@@ -183,8 +177,8 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
     # end def _m_scope
 
     def _m_setup_attributes (cls, bases, dct) :
-        cls._Attributes = A = cls.Essence._Attributes (cls)
-        cls._Predicates = P = cls.Essence._Predicates (cls)
+        cls._Attributes = A = cls._Attributes (cls)
+        cls._Predicates = P = cls._Predicates (cls)
         attr_dict       = A._attr_dict
         for pv in P._pred_kind.get ("object", []) :
             pn = pv.name
@@ -214,17 +208,7 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
         for b in bases :
             if isinstance (b, M_E_Type) :
                 b.children [cls.type_name] = cls
-                if __debug__ :
-                    if hasattr (b, "children_frozen") :
-                        print \
-                            ( "adding %s too late to `children` dict of %s"
-                            % (cls.type_name, b.type_name)
-                            )
     # end def _m_setup_children
-
-    def _m_new_e_type_bases (cls, app_type, etypes) :
-        return cls.__m_super._m_new_e_type_bases (app_type, etypes, M_E_Type)
-    # end def _m_new_e_type_bases
 
     def __getattr__ (cls, name) :
         ### delegate to scope specific class, if any

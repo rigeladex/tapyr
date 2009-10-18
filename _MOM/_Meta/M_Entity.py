@@ -31,6 +31,7 @@
 #    14-Oct-2009 (CT) Creation continued..
 #    15-Oct-2009 (CT) Creation continued...
 #    16-Oct-2009 (CT) Creation continued....
+#    18-Oct-2009 (CT) Creation continued.....
 #    ««revision-date»»···
 #--
 
@@ -103,12 +104,19 @@ class M_E_Mixin (TFL.Meta.M_Class) :
         return result
     # end def _m_new_e_type
 
-    def _m_new_e_type_bases (cls, app_type, etypes, M_Root) :
-        return tuple \
-            (   (etypes [b.type_name] if isinstance (b, M_Root) else b)
-            for b in cls.__bases__
-            )
+    def _m_new_e_type_bases (cls, app_type, etypes) :
+        return tuple (cls._m_new_e_type_bases_iter (app_type, etypes))
     # end def _m_new_e_type_bases
+
+    def _m_new_e_type_bases_iter (cls, app_type, etypes) :
+        yield cls.Essence
+        for b in cls.__bases__ :
+            tn = getattr (b, "type_name", None)
+            if tn in etypes :
+                b = etypes [tn]
+            if b is not cls.Essence :
+                yield b
+    # end def _m_new_e_type_bases_iter
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         return dict  \
@@ -146,9 +154,32 @@ class M_Entity (M_E_Mixin) :
         import _MOM._Meta.M_E_Type
         assert not app_type.etypes
         SX = cls._S_Extension
-        cls._m_setup_auto_props (app_type, SX)
-        cls._m_create_e_types   (app_type, SX)
+        cls._m_create_base_e_types (SX)
+        cls._m_setup_auto_props    (app_type, SX)
+        cls._m_create_e_types      (app_type, SX)
     # end def m_setup_etypes
+
+    def _m_create_base_e_types (self, SX) :
+        for s in SX :
+            tbn = s.type_base_name
+            bet = M_E_Mixin \
+                ( "_BET_%s_" % s.type_base_name
+                , tuple (getattr (b, "__BET", b) for b in s.__bases__)
+                , dict
+                    ( app_type            = None
+                    , E_Spec              = s
+                    , Package_NS          = s.Package_NS
+                    , show_package_prefix = s.show_package_prefix
+                    , _real_name          = tbn
+                    , __module__          = s.__module__
+                    )
+                )
+            bet.Essence = s.Essence = bet
+            setattr (bet,                        "__BET", bet)
+            setattr (s,                          "__BET", bet)
+            setattr (s.Package_NS,               tbn,     bet)
+            setattr (sys.modules [s.__module__], tbn,     bet)
+    # end def _m_create_base_e_types
 
     def _m_init_prop_specs (cls, name, bases, dct) :
         for psn in "_Attributes", "_Predicates" :
@@ -159,19 +190,6 @@ class M_Entity (M_E_Mixin) :
                 ### (i.e., `M_Attr_Spec` or `M_Pred_Spec`)
                 setattr (cls, psn, MOM.Meta.M_Prop_Spec (psn, prop_bases, d))
     # end def _m_init_prop_specs
-
-    def _m_new_e_type (cls, app_type, etypes) :
-        cls.E_Spec = cls
-        bn         = cls.type_base_name
-        result     = cls.__m_super._m_new_e_type (app_type, etypes)
-        setattr (cls.Package_NS,               bn, result)
-        setattr (sys.modules [cls.__module__], bn, result)
-        return result
-    # end def _m_new_e_type
-
-    def _m_new_e_type_bases (cls, app_type, etypes) :
-        return cls.__m_super._m_new_e_type_bases (app_type, etypes, M_Entity)
-    # end def _m_new_e_type_bases
 
     def _m_setup_auto_props (cls, app_type, SX) :
         for c in SX :
