@@ -36,6 +36,8 @@
 #     9-Oct-2009 (CT) `Sticky_Mixin` changed to use `reset` instead of
 #                     homegrown code
 #    12-Oct-2009 (CT) `is_primary` and `is_settable` added
+#    19-Oct-2009 (CT) `changed = 42` added to various `set`-specific methods
+#                     to avoid change checks during `reset`
 #    ««revision-date»»···
 #--
 
@@ -99,15 +101,17 @@ class Kind (MOM.Prop.Kind) :
 
     def reset (self, obj) :
         if self.attr._symbolic_default :
-            self.set_raw (obj, self.attr.default, dont_raise = True)
+            self.set_raw \
+                (obj, self.attr.default, dont_raise = True, changed = True)
         else :
             if self.attr.raw_default and not self.attr.default :
                 self.attr.default = self.attr.from_string \
                     (self.attr.raw_default, obj, obj.globals ())
-            self._set_raw (obj, self.attr.raw_default, self.attr.default)
+            self._set_raw \
+                (obj, self.attr.raw_default, self.attr.default, changed = True)
     # end def reset
 
-    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
+    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False, changed = 42) :
         if glob_dict is None :
             glob_dict = obj.globals ()
         value = None
@@ -121,7 +125,7 @@ class Kind (MOM.Prop.Kind) :
                         print exc
                 else :
                     raise
-        self._set_raw (obj, raw_value, value)
+        self._set_raw (obj, raw_value, value, changed)
     # end def set_raw
 
     def sync_cooked (self, obj, raw_value) :
@@ -158,18 +162,18 @@ class Kind (MOM.Prop.Kind) :
         man.inc_changes ()
     # end def _inc_changes
 
-    def _set_cooked (self, obj, value) :
-        self._set_cooked_inner (obj, value)
+    def _set_cooked (self, obj, value, changed = 42) :
+        self._set_cooked_inner (obj, value, changed)
     # end def _set_cooked
 
-    def _set_cooked_inner (self, obj, value) :
+    def _set_cooked_inner (self, obj, value, changed = 42) :
         if value is not None :
             try :
                 value = self.attr.cooked (value)
             except StandardError, exc :
                 ### print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
                 raise
-        self._set_cooked_value (obj, value)
+        self._set_cooked_value (obj, value, changed)
     # end def _set_cooked_inner
 
     def _set_cooked_value (self, obj, value, changed = 42) :
@@ -182,11 +186,11 @@ class Kind (MOM.Prop.Kind) :
             setattr (obj, attr.ckd_name, value)
     # end def _set_cooked_value
 
-    def _set_raw (self, obj, raw_value, value) :
-        self._set_cooked_inner (obj, value)
+    def _set_raw (self, obj, raw_value, value, changed = 42) :
+        self._set_cooked_inner (obj, value, changed)
     # end def _set_raw
 
-    def _set_raw_inner (self, obj, raw_value, value) :
+    def _set_raw_inner (self, obj, raw_value, value, changed = 42) :
         pass
     # end def _set_raw_inner
 
@@ -235,19 +239,22 @@ class _User_ (_DB_Attr_, Kind) :
         return self.__super.get_value (obj)
     # end def get_value
 
-    def _set_cooked (self, obj, value) :
-        self._set_cooked_inner (obj, value)
-        self._set_raw_inner    (obj, self.attr.as_string (value), value)
+    def _set_cooked (self, obj, value, changed = 42) :
+        self._set_cooked_inner (obj, value, changed)
+        self._set_raw_inner (obj, self.attr.as_string (value), value, changed)
     # end def _set_cooked
 
-    def _set_raw (self, obj, raw_value, value) :
-        if raw_value != self.get_raw (obj) :
+    def _set_raw (self, obj, raw_value, value, changed = 42) :
+        if changed == 42 :
+            ### if the caller didn't pass a (boolean) value, evaluate it here
+            changed = raw_value != self.get_raw (obj)
+        if changed :
             self.inc_changes  (obj._attr_man, obj, value)
-        self.__super._set_raw (obj, raw_value, value)
-        self._set_raw_inner   (obj, raw_value, value)
+        self.__super._set_raw (obj, raw_value, value, changed)
+        self._set_raw_inner   (obj, raw_value, value, changed)
     # end def _set_raw
 
-    def _set_raw_inner (self, obj, raw_value, value) :
+    def _set_raw_inner (self, obj, raw_value, value, changed = 42) :
         setattr (obj, self.attr.raw_name, raw_value)
     # end def _set_raw_inner
 
@@ -330,13 +337,14 @@ class Primary (_User_) :
             )
     # end def __set__
 
-    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False) :
+    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False, changed = 42) :
         if raw_value is "" :
             raise AttributeError \
                 ( "Primary attribute `%s.%s` cannot be empty"
                 % (obj.type_name, self.name)
                 )
-        return self.__super.set_raw (obj, raw_value, glob_dict, dont_raise)
+        return self.__super.set_raw \
+            (obj, raw_value, glob_dict, dont_raise, changed)
     # end def set_raw
 
     def to_save (self, obj) :
@@ -477,7 +485,7 @@ class Once_Cached (_Cached_) :
         val = self.get_value (obj)
         if val is None :
             val = self._get_computed (obj)
-            self._set_cooked_inner   (obj, val)
+            self._set_cooked_inner   (obj, val, changed = True)
     # end def reset
 
 # end class Once_Cached
@@ -583,18 +591,18 @@ class Sticky_Mixin (MOM.Prop.Kind) :
                 ("%s is sticky but lacks `default`" % (attr_type, ))
     # end def _check_sanity
 
-    def _set_cooked (self, obj, value) :
+    def _set_cooked (self, obj, value, changed = 42) :
         if value is None :
             self.reset (obj)
         else :
-            self.__super._set_cooked (obj, value)
+            self.__super._set_cooked (obj, value, changed)
     # end def _set_cooked
 
-    def _set_raw (self, obj, raw_value, value) :
+    def _set_raw (self, obj, raw_value, value, changed = 42) :
         if raw_value in ("", None) :
             self.reset (obj)
         else :
-            self.__super._set_raw (obj, raw_value, value)
+            self.__super._set_raw (obj, raw_value, value, changed)
     # end def _set_raw
 
 # end class Sticky_Mixin

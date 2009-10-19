@@ -271,7 +271,7 @@ class Entity (TFL.Meta.Object) :
 
     def __getattr__ (self, name) :
         ### just to ease up-chaining in descendents
-        raise AttributeError ("%r.%s" % (self, name))
+        raise AttributeError ("%r <%r>" % (name, self))
     # end def __getattr__
 
     def __repr__ (self) :
@@ -659,10 +659,7 @@ class Id_Entity (Entity) :
     # end def _rename
 
     def _repr (self, type_name) :
-        try :
-            epk = id (self) ### self.epk_as_code
-        except StandardError :
-            epk = id (self)
+        epk = self.epk_as_code
         return "%s %r" % (type_name, epk)
     # end def _repr
 
@@ -680,15 +677,11 @@ class Id_Entity (Entity) :
     # end def _set_record
 
     def __str__ (self) :
-        try :
-            epk = self.epk_as_string
-        except StandardError :
-            result = id (self)
+        epk = self.epk_as_string
+        if len (epk) == 1 :
+            result = epk [0]
         else :
-            if len (epk) == 1 :
-                result = epk [0]
-            else :
-                result = epk
+            result = epk
         return "%s `%s`" % (self.type_name, result)
     # end def __str__
 

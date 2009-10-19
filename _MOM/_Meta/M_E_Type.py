@@ -32,6 +32,8 @@
 #    15-Oct-2009 (CT) Creation continued..
 #    16-Oct-2009 (CT) Creation continued...
 #    18-Oct-2009 (CT) Creation continued....
+#    19-Oct-2009 (CT) `__getattr__` changed to not delegate to scope-specific
+#                     type
 #    ««revision-date»»···
 #--
 
@@ -211,15 +213,7 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
     # end def _m_setup_children
 
     def __getattr__ (cls, name) :
-        ### delegate to scope specific class, if any
-        if not (name.startswith ("__") and name.endswith ("__")) :
-            try :
-                etype = cls._m_entity_type ()
-            except AttributeError :
-                pass
-            else :
-                if etype :
-                    return cls._m_get_attribute (etype, name)
+        ### just to ease up-chaining in descendents
         raise AttributeError ("%s.%s" % (cls.type_name, name))
     # end def __getattr__
 
