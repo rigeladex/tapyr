@@ -73,14 +73,67 @@ class Mouse (Rodent) :
 
 # end class Mouse
 
-apt   = MOM.App_Type ("BMT", MOM)
+class Rat (Rodent) :
+    """Model a rat of the Better Mouse Trap application."""
+
+    is_partial = False
+
+# end class Rat
+
+class Trap (MOM.Object) :
+    """Model a trap of the Better Mouse Trap application."""
+
+    is_partial = False
+
+    class _Attributes (MOM.Object._Attributes) :
+
+        class cat (A_String) :
+            """Category of the trap"""
+
+            kind     = Attr.Primary
+
+        # end class cat
+
+        class serial_no (A_Int) :
+            """Serial number of the trap"""
+
+            kind     = Attr.Primary
+
+        # end class serial_no
+
+        class max_weight (A_Float) :
+            """Maximum weight of rodent the trap can hold"""
+
+            kind     = Attr.Optional
+            check    = ("value > 0", )
+
+        # end class max_weight
+
+    # end class _Attributes
+
+# end class Trap
+
 EMS   = MOM.EMS.Hash.Manager
 DBW   = MOM.EMS.Hash.Manager ### XXX change to a real DBW
-apt_c = apt.Derived (EMS, DBW)
-MOM.Entity.m_setup_etypes (apt)
-apt_c.setup_etypes        ()
-scope = MOM.Scope         (apt_c)
-if 1 :
-    fritz = scope.MOM.Mouse   ("fritz")
+apt   = MOM.App_Type                 ("BMT", MOM)
+apt_c = apt.Derived                  (EMS, DBW)
+MOM.Entity.m_setup_etypes            (apt)
+apt_c.setup_etypes                   ()
+scope = MOM.Scope                    (apt_c)
+m     = scope.MOM.Mouse              ("Mighty Mouse")
+r     = scope.MOM.Rat                ("Rutty Rat")
+t1    = scope.MOM.Trap               ("X", 1)
+t2    = scope.MOM.Trap               ("X", 2)
+t3    = scope.MOM.Trap               ("Y", 1)
+print scope.MOM.Mouse.t_extension          ()
+print scope.MOM.Rat.t_extension            ()
+print scope.MOM.Trap.t_extension           ()
+print scope.MOM.Rodent.t_extension         ()
+print scope.MOM.Named_Object.t_extension   ()
+print scope.MOM.Object.t_extension         ()
+
+
+
+
 
 ### __END__ MOM.__Test
