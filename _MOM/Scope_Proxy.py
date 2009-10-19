@@ -47,14 +47,15 @@ class Scope_Proxy (TFL.Meta.Object) :
         return self._etype (* args, scope = self.home_scope, ** kw)
     # end def __call__
 
-    def exists (self, epk) :
+    def exists (self, * epk) :
         return self.home_scope.ems.exists      (self._etype, epk)
     # end def exists
 
-    def instance (self, epk) :
+    def instance (self, * epk) :
         return self.home_scope.ems.instance    (self._etype, epk)
     # end def instance
 
+    @property
     def s_count (self) :
         return self.home_scope.ems.s_count     (self._etype)
     # end def s_count
@@ -63,6 +64,7 @@ class Scope_Proxy (TFL.Meta.Object) :
         return self.home_scope.ems.s_extension (self._etype, sort_key)
     # end def s_extension
 
+    @property
     def t_count (self) :
         return self.home_scope.ems.t_count     (self._etype)
     # end def t_count
@@ -84,14 +86,6 @@ class Scope_Proxy_O (Scope_Proxy) :
 
 class Scope_Proxy_L (Scope_Proxy) :
     """Scope-specific proxy for essential link-types."""
-
-    def exists (self, epk) :
-        return self.__super.exists   (self._etype.epk_to_hpk (epk))
-    # end def exists
-
-    def instance (self, epk) :
-        return self.__super.instance (self._etype.epk_to_hpk (epk))
-    # end def instance
 
 # end class Scope_Proxy_L
 

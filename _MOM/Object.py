@@ -54,6 +54,11 @@ class _MOM_Object_ (MOM.Id_Entity) :
 
     hpk                   = TFL.Meta.Alias_Property ("epk")
 
+    @classmethod
+    def epk_to_hpk (cls, * epk) :
+        return epk
+    # end def epk_to_hpk
+
 Object = _MOM_Object_ # end class
 
 class Named_Object (Object) :

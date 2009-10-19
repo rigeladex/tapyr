@@ -76,20 +76,24 @@ class Manager (TFL.Meta.Object) :
                 r_map [r] [r.get_role (entity).id].add (entity)
     # end def add
 
-    def exists (self, Type, hpk) :
+    def exists (self, Type, epk) :
         tables = self._tables
         root   = Type.relevant_root
         if root :
             roots = {root.type_name : root}
         else :
             roots = Type.relevant_roots
-        return [T for (n, T) in roots.iteritems () if hpk in tables [n]]
+        return \
+            [  T for (n, T) in roots.iteritems ()
+            if T.epk_to_hpk (* epk) in tables [n]
+            ]
     # end def exists
 
-    def instance (self, Type, hpk) :
-        root = Type.relevant_root
+    def instance (self, Type, epk) :
+        root   = Type.relevant_root
+        hpk    = Type.epk_to_hpk (* epk)
         if root :
-            return self._tables [root.type_name] [hpk]
+            return self._tables [root.type_name].get (hpk)
         raise TypeError \
             ( "Cannot query `instance` of non-root type `%s`."
               "\n"

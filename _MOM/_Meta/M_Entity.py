@@ -91,16 +91,7 @@ class M_E_Mixin (TFL.Meta.M_Class) :
         etypes = app_type.etypes
         for s in SX :
             app_type.add_type (s._m_new_e_type (app_type, etypes))
-        if cls._m_create_e_types_finish :
-            cls._m_create_e_types_finish (app_type, SX)
     # end def _m_create_e_types
-
-    _m_create_e_types_finish = None
-
-    def _m_create_e_types_id_finish_ (cls, app_type, SX) :
-        for t in reversed (app_type._T_Extension) :
-            t._m_setup_relevant_roots ()
-    # end def _m_create_e_types_id_finish_
 
     def _m_new_e_type (cls, app_type, etypes) :
         bases  = cls._m_new_e_type_bases (app_type, etypes)
@@ -241,8 +232,6 @@ class M_Id_Entity (M_Entity) :
         result.source_code = code
         return result
     # end def _m_auto__new__
-
-    _m_create_e_types_finish = M_E_Mixin._m_create_e_types_id_finish_
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \

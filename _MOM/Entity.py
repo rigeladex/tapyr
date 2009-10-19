@@ -419,25 +419,6 @@ class Id_Entity (Entity) :
         return tuple (a.get_value (self) for a in self.primary)
     # end def epk
 
-    @TFL.Meta.Once_Property
-    def epk_as_code (self) :
-        """Essential primary key formatted with `as_code`"""
-        try :
-            return tuple (a.as_code (a.get_value (self)) for a in self.primary)
-        except StandardError :
-            return id (self)
-    # end def epk_as_code
-
-    @TFL.Meta.Once_Property
-    def epk_as_string (self) :
-        """Essential primary key formatted with `as_string`"""
-        try :
-            return tuple \
-                (a.as_string (a.get_value (self)) for a in self.primary)
-        except StandardError :
-            return id (self)
-    # end def epk_as_string
-
     @property
     def has_errors (self) :
         return self._pred_man.has_errors
@@ -659,14 +640,11 @@ class Id_Entity (Entity) :
     # end def _rename
 
     def _repr (self, type_name) :
-        epk = self.epk_as_code
-        return "%s %r" % (type_name, epk)
+        return "%s %r" % (type_name, self.epk)
     # end def _repr
 
     def _reset_epk (self) :
         del self.epk
-        del self.epk_as_code
-        del self.epk_as_string
     # end def _reset_epk
 
     def _set_record (self, kw) :
@@ -677,7 +655,7 @@ class Id_Entity (Entity) :
     # end def _set_record
 
     def __str__ (self) :
-        epk = self.epk_as_string
+        epk = self.epk
         if len (epk) == 1 :
             result = epk [0]
         else :
