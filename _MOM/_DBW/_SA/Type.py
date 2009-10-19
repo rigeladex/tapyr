@@ -20,41 +20,43 @@
 #
 #++
 # Name
-#    MOM.DBW.Session
+#    MOM.DBW.SA.Type
 #
 # Purpose
-#    Base class for database backend specific session classes
+#    Implement composite sort-key for list of sort criteria
 #
 # Revision Dates
 #     2009-Oct-19 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from   _TFL       import TFL
-from   _MOM       import MOM
-import _MOM._DBW
-import _TFL._Meta.Object
+from   _MOM               import MOM
+import _MOM._Attr.Type
+import _MOM._Attr
 
-# end class _DBW_
+Attr = MOM.Attr
 
-class _M_Session_ (TFL.Meta.Object.__class__) :
-    """Base meta class for all session"""
+from sqlalchemy     import types, schema # Table, Column, Integer, String, Boolean, MetaData, ForeignKey
 
-    def Mapper (cls, e_type) :
-        return e_type
-    # end def Mapper
+def _sa_bool (self, kind, ** kw) :
+    return schema.Column (self.name, types.Boolean, ** kw)
+# end def _sa_bool
 
-# end class _M_Session_
+def _sa_string (self, kind, ** kw) :
+    return schema.Column (self.name, types.String, ** kw)
+# end def _sa_string
 
+def _sa_int (self, kind, ** kw) :
+    return schema.Column (self.name, types.Integer, ** kw)
+# end def _sa_int
 
-class _DBW_Session_ (TFL.Meta.Object) :
-    """Base class for database backend specific session classes"""
+def _sa_float (self, kind, ** kw) :
+    return schema.Column (self.name, types.Float, ** kw)
+# end def _sa_float
 
-    _real_name    = "Session"
-    __metaclass__ = _M_Session_
-    
-Session = _DBW_Session_ # end class Session
+Attr.A_Boolean._sa_column   = _sa_bool
+Attr.A_String._sa_column    = _sa_string
+Attr.A_Int._sa_column       = _sa_int
+Attr.A_Float._sa_column     = _sa_float
 
-if __name__ != '__main__':
-    MOM.DBW._Export ("*")
-### __END__ ### MOM.DBW.Session
+### __END__ MOM.DBW.SA.Type

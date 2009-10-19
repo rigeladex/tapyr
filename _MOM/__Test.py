@@ -113,6 +113,8 @@ class Trap (MOM.Object) :
 
 # end class Trap
 
+import _MOM._DBW._SA.Session
+
 EMS   = MOM.EMS.Hash.Manager
 DBW   = MOM.EMS.Hash.Manager ### XXX change to a real DBW
 apt   = MOM.App_Type                 ("BMT", MOM)
@@ -120,20 +122,30 @@ apt_c = apt.Derived                  (EMS, DBW)
 MOM.Entity.m_setup_etypes            (apt)
 apt_c.setup_etypes                   ()
 scope = MOM.Scope                    (apt_c)
-m     = scope.MOM.Mouse              ("Mighty Mouse")
-r     = scope.MOM.Rat                ("Rutty Rat")
-t1    = scope.MOM.Trap               ("X", 1)
-t2    = scope.MOM.Trap               ("X", 2)
-t3    = scope.MOM.Trap               ("Y", 1)
-print scope.MOM.Mouse.t_extension          ()
-print scope.MOM.Rat.t_extension            ()
-print scope.MOM.Trap.t_extension           ()
-print scope.MOM.Rodent.t_extension         ()
-print scope.MOM.Named_Object.t_extension   ()
-print scope.MOM.Object.t_extension         ()
-
-
-
-
+if 0 :
+    m     = scope.MOM.Mouse              ("Mighty Mouse")
+    r     = scope.MOM.Rat                ("Rutty Rat")
+    t1    = scope.MOM.Trap               ("X", 1)
+    t2    = scope.MOM.Trap               ("X", 2)
+    t3    = scope.MOM.Trap               ("Y", 1)
+    print scope.MOM.Mouse.t_extension          ()
+    print scope.MOM.Rat.t_extension            ()
+    print scope.MOM.Trap.t_extension           ()
+    print scope.MOM.Rodent.t_extension         ()
+    print scope.MOM.Named_Object.t_extension   ()
+    print scope.MOM.Object.t_extension         ()
+elif 1 :
+    MOM.DBW.SA.Session.Mapper (scope.MOM.Mouse._etype)
+    from sqlalchemy     import create_engine
+    from sqlalchemy.orm import sessionmaker
+    engine     = create_engine ('sqlite:///:memory:', echo = True)
+    Session    = sessionmaker  (bind=engine)
+    MOM.DBW.SA.Session.metadata.create_all (engine)
+    dMOM = scope.MOM
+    session    = Session ()
+    m          = dMOM.Mouse ("Mighty Mouse")
+    #session.add   (m)
+    #session.flush ()
+###Session    = sessionmaker  (bind=engine)
 
 ### __END__ MOM.__Test
