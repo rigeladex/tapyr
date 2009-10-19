@@ -65,7 +65,8 @@ class App_Type (TFL.Meta.Object) :
         assert not (EMS, DBW) in self.derived
         result                  = self.__class__.__new__ (self.__class__)
         self.derived [EMS, DBW] = result
-        result.name             = self.name
+        result.name             = "__".join \
+            ((self.name, EMS.type_name, DBW.type_name))
         result.ANS              = self.ANS
         result.Root_Type_Name   = self.Root_Type_Name
         result.EMS              = EMS

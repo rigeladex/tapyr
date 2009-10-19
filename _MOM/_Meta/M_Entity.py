@@ -141,6 +141,12 @@ class M_E_Mixin (TFL.Meta.M_Class) :
         cls.set_ui_name (base_name)
     # end def _set_type_names
 
+    def __repr__ (cls) :
+        if cls.app_type :
+            return "<class %r [%s]>" % (cls.type_name, cls.app_type.name)
+        return "<class %r [Bare Essence]>" % (cls.type_name, )
+    # end def __repr__
+
 # end class M_E_Mixin
 
 class M_Entity (M_E_Mixin) :

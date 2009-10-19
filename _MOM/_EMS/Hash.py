@@ -47,6 +47,8 @@ import itertools
 class Manager (TFL.Meta.Object) :
     """Entity manager using hash tables to hold entities."""
 
+    type_name = "Hash"
+
     def __init__ (self, scope) :
         self.scope   = scope
         self._counts = TFL.defaultdict (int)
@@ -130,7 +132,7 @@ class Manager (TFL.Meta.Object) :
         if root :
             result = tables [root.type_name].itervalues ()
             if Type.children :
-                pred   = lambda x : x.Essence == Type.Essence
+                pred   = lambda x : x.Essence is Type.Essence
                 result = itertools.ifilter (pred, result)
         return sorted (result, key = sort_key or Type.sorted_by)
     # end def s_extension

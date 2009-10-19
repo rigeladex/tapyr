@@ -132,6 +132,8 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
         """
         assert not app_type.etypes
         cls._m_create_e_types (app_type, app_type.parent._T_Extension)
+        for t in reversed (app_type._T_Extension) :
+            t._m_setup_relevant_roots ()
     # end def m_setup_etypes
 
     def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
@@ -212,6 +214,10 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
                 b.children [cls.type_name] = cls
     # end def _m_setup_children
 
+    def _m_setup_relevant_roots (cls) :
+        pass
+    # end def _m_setup_relevant_roots
+
     def __getattr__ (cls, name) :
         ### just to ease up-chaining in descendents
         raise AttributeError ("%s.%s" % (cls.type_name, name))
@@ -222,8 +228,6 @@ class M_E_Type (MOM.Meta.M_E_Mixin) :
 @TFL.Add_To_Class ("M_E_Type", MOM.Id_Entity)
 class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
-
-    _m_create_e_types_finish = MOM.Meta.M_E_Mixin._m_create_e_types_id_finish_
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)

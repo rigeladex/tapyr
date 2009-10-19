@@ -86,11 +86,11 @@ class Scope_Proxy_L (Scope_Proxy) :
     """Scope-specific proxy for essential link-types."""
 
     def exists (self, epk) :
-        return self.__super.exists   (self._etype.epk_to_hpk (hpk))
+        return self.__super.exists   (self._etype.epk_to_hpk (epk))
     # end def exists
 
     def instance (self, epk) :
-        return self.__super.instance (self._etype.epk_to_hpk (hpk))
+        return self.__super.instance (self._etype.epk_to_hpk (epk))
     # end def instance
 
 # end class Scope_Proxy_L
