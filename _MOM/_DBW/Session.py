@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glück. All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# Copyright (C) 2009 Martin Glueck. All rights reserved
+# Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -20,22 +20,31 @@
 #
 #++
 # Name
-#    MOM.DBW.__init__
+#    MOM.DBW.Session
 #
 # Purpose
-#    Package for database wrappers
+#    Base class for database backend specific session classes
 #
 # Revision Dates
-#    20-Sep-2009 (MG) Creation
+#     2009-Oct-19 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from   _MOM                   import MOM
-from   _TFL.Package_Namespace import Package_Namespace
+from   _TFL       import TFL
+from   _MOM       import MOM
+import _MOM._DBW
+import _TFL._Meta.Object
 
-DBW = Package_Namespace ()
-MOM._Export ("DBW")
+class Session (TFL.Meta.Object) :
+    """Base class for database backend specific session classes"""
 
-del Package_Namespace
+    @classmethod
+    def Mapper (cls, e_type) :
+        return e_type
+    # end def Mapper
+    
+# end class Session
 
-### __END__ MOM.DBW.__init__
+if __name__ != '__main__':
+    MOM.DBW._Export ("*")
+### __END__ ### MOM.DBW.Session

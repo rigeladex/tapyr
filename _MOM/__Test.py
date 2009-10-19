@@ -80,7 +80,7 @@ apt_c = apt.Derived (EMS, DBW)
 MOM.Entity.m_setup_etypes (apt)
 apt_c.setup_etypes        ()
 scope = MOM.Scope         (apt_c)
-if 0 :
+if 1 :
     fritz = scope.MOM.Mouse   ("fritz")
 
 ### __END__ MOM.__Test
