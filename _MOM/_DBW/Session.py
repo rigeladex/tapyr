@@ -35,15 +35,17 @@ from   _MOM       import MOM
 import _MOM._DBW
 import _TFL._Meta.Object
 
-class Session (TFL.Meta.Object) :
+class _DBW_Session_ (TFL.Meta.Object) :
     """Base class for database backend specific session classes"""
 
+    _real_name = "Session"
+    
     @classmethod
     def Mapper (cls, e_type) :
         return e_type
     # end def Mapper
     
-# end class Session
+Session = _DBW_Session_ # end class Session
 
 if __name__ != '__main__':
     MOM.DBW._Export ("*")
