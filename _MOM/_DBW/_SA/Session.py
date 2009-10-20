@@ -35,6 +35,7 @@ import _MOM._DBW
 import _MOM._DBW.Session
 import _MOM._DBW._SA
 import _MOM._DBW._SA.Type
+import _MOM._DBW._SA.Attr_Kind
 
 from sqlalchemy import orm
 from sqlalchemy import schema
@@ -56,9 +57,13 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     # end def Mapper
 
     def _setup_columns (cls, e_type) :
-        result = [schema.Column ("id",   types.Integer, primary_key = True)]
+        ### first, all object ge a surrogat primary key
+        result = [schema.Column ("id", types.Integer, primary_key = True)]
         for name, attr_kind in e_type._Attributes._attr_dict.iteritems () :
-            result.append (attr_kind.attr._sa_column (attr_kind))
+            result.append \
+                ( attr_kind.attr._sa_column
+                    (attr_kind, ** attr_kind._sa_column_attrs ())
+                )
         return result
     # end def _setup_columns
 

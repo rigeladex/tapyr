@@ -41,6 +41,7 @@
 #    13-Oct-2009 (CT) `__init__` and `__new__` refactored
 #    15-Oct-2009 (CT) `is_relevant` and `relevant_root` added
 #    20-Oct-2009 (CT) Moved call of `init_epk` from `__new__` to `__init__`
+#    20-Oct-2009 (NN) `epk_as_dict` added
 #    ««revision-date»»···
 #--
 
@@ -496,6 +497,10 @@ class Id_Entity (Entity) :
         if other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
+
+    def epk_as_dict (self) :
+        return dict (zip (self.epk_sig, self.epk))
+    # end def epk_as_dict
 
     def is_defined (self)  :
         return \
