@@ -104,11 +104,11 @@ class Entity (TFL.Meta.Object) :
         if not result.home_scope :
             result.home_scope = kw.get ("scope", MOM.Scope.active)
         result._init_meta_attrs ()
-        result._init_attributes ()
         return result
     # end def __new__
 
     def __init__ (self, ** kw) :
+        self._init_attributes ()
         if kw :
             set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
             set (** kw)
@@ -443,7 +443,8 @@ class Id_Entity (Entity) :
         self.home_scope.add  (self)
         try :
             self.__super.__init__  (** kw)
-        except StandardError :
+            init_epk               (* epk)
+        except StandardError, exc :
             self.home_scope.remove (self)
             raise
     # end def __init__

@@ -36,9 +36,10 @@ import _MOM._DBW.Session
 import _MOM._DBW._SA
 import _MOM._DBW._SA.Type
 
-from sqlalchemy import orm    ### mapper, sessionmaker, relation, synonym
-from sqlalchemy import schema ### MetaData
-from sqlalchemy import types  ### MetaData
+from sqlalchemy import orm
+from sqlalchemy import schema
+from sqlalchemy import types
+from sqlalchemy import engine
 
 class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
@@ -64,7 +65,6 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     def _setup_mapper_properties (cls, e_type) :
         result = {}
         for name, attr_kind in e_type._Attributes._attr_dict.iteritems () :
-            print name, attr_kind.ckd_name
             result [name] = orm.synonym (attr_kind.ckd_name, map_column = True)
         return result
     # end def _setup_mapper_properties
@@ -76,6 +76,17 @@ class _SA_Session_ (MOM.DBW.Session) :
 
     _real_name    = "Session"
     __metaclass__ = _M_SA_Session_
+
+    type_name     = "SA"
+
+    ### XXX
+    engine        = engine.create_engine ('sqlite:///:memory:', echo = False)
+    SA_Session    = orm.sessionmaker    (bind = engine)
+
+    def __init__ (self, scope) :
+        self.scope   = scope
+        self.session = self.SA_Session ()
+    # end def __init__
 
 Session = _SA_Session_ # end class _SA_Session_
 

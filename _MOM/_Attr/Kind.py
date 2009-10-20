@@ -38,6 +38,7 @@
 #    12-Oct-2009 (CT) `is_primary` and `is_settable` added
 #    19-Oct-2009 (CT) `changed = 42` added to various `set`-specific methods
 #                     to avoid change checks during `reset`
+#    20-Oct-2009 (MH) `s/TOM/MOM/g`
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,7 @@ class Kind (MOM.Prop.Kind) :
         self.attr.check_invariant (obj, value)
         if self.record_changes and self.get_value (obj) != value :
             obj.home_scope.record_change \
-                ( TOM.SCM.Entity_Change_Attr
+                ( MOM.SCM.Entity_Change_Attr
                 , obj, {self.name : self.get_raw (obj)}
                 )
         self._set_cooked (obj, value)

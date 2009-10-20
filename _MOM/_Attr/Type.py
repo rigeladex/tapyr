@@ -32,6 +32,7 @@
 #     7-Oct-2009 (CT) `_A_Named_Value_` and `A_Boolean` added
 #     9-Oct-2009 (CT) `raw_default` and `_symbolic_default` added
 #    13-Oct-2009 (CT) Guard for empty string added to `_to_cooked`
+#    20-Oct-2009 (MG) `check_ascii` added as it is used for String attributes
 #    ««revision-date»»···
 #--
 
@@ -160,6 +161,7 @@ class A_Attr_Type (object) :
                 )
         return s
     # end def _from_string_prepare
+    check_ascii          = _from_string_prepare ### XXX
 
     def _from_string_resolve (self, s, obj, glob, locl) :
         if obj is not None and not glob :
