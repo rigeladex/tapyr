@@ -32,6 +32,8 @@
 #    15-Oct-2009 (CT) Creation continued...
 #    16-Oct-2009 (CT) Creation continued....
 #    18-Oct-2009 (CT) Creation continued.....
+#    19-Oct-2009 (CT) Creation continued.....
+#    20-Oct-2009 (CT) Creation continued......
 #    ««revision-date»»···
 #--
 
@@ -213,25 +215,25 @@ class M_An_Entity (M_Entity) :
 class M_Id_Entity (M_Entity) :
     """Meta class for MOM.Id_Entity"""
 
-    ### `_new_form` needs `* args` to allow additional primary keys in
+    ### `_init_form` needs `* args` to allow additional primary keys in
     ### descendent classes to properly percolate up
-    _new_form = """def __new__ (cls, %(epk)s, * args, ** kw) :
-        return super (%(type)s, cls).__new__ (cls, %(epk)s, * args, ** kw)
+    _init_form = """def __init__ (self, %(epk)s, * args, ** kw) :
+        return super (%(type)s, self).__init__ (%(epk)s, * args, ** kw)
 """
 
-    def _m_auto__new__ (cls, epk_sig) :
+    def _m_auto__init__ (cls, epk_sig) :
         globals = class_globals (cls)
         scope   = dict          ()
-        code    = cls._new_form % dict\
+        code    = cls._init_form % dict \
             ( epk  = ", ".join (epk_sig)
             , type = cls.type_base_name
             )
         exec code in globals, scope
-        result             = scope ["__new__"]
+        result             = scope ["__init__"]
         result.epk_sig     = epk_sig
         result.source_code = code
         return result
-    # end def _m_auto__new__
+    # end def _m_auto__init__
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \
@@ -243,7 +245,7 @@ class M_Id_Entity (M_Entity) :
             (  a for a in cls._Attributes._names.itervalues ()
             if a.kind.is_primary
             )
-        if pkas and "__new__" not in result :
+        if pkas and "__init__" not in result :
             M_E_Type_Id = MOM.Meta.M_E_Type_Id
             epk_sig = tuple \
                 ( a.name
@@ -251,7 +253,7 @@ class M_Id_Entity (M_Entity) :
                 )
             i_bases = tuple (b for b in bases if isinstance (b, M_E_Type_Id))
             if not (i_bases and i_bases [0].epk_sig == epk_sig) :
-                result ["__new__"] = cls._m_auto__new__ (epk_sig)
+                result ["__init__"] = cls._m_auto__init__ (epk_sig)
         return result
     # end def _m_new_e_type_dict
 

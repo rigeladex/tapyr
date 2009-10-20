@@ -40,6 +40,7 @@
 #                     `_rename`, and `_reset_epk`
 #    13-Oct-2009 (CT) `__init__` and `__new__` refactored
 #    15-Oct-2009 (CT) `is_relevant` and `relevant_root` added
+#    20-Oct-2009 (CT) Moved call of `init_epk` from `__new__` to `__init__`
 #    ««revision-date»»···
 #--
 
@@ -430,18 +431,18 @@ class Id_Entity (Entity) :
     # end def has_warnings
 
     def __new__ (cls, * epk, ** kw) :
-        result   = super (Id_Entity, cls).__new__ (cls, ** kw)
-        init_epk = (result._init_epk, result._init_epk_raw) \
-            [bool (kw.get ("raw", False))]
-        init_epk (* epk)
-        return result
+        ### hide positional args
+        return super (Id_Entity, cls).__new__ (cls, ** kw)
     # end def __new__
 
     def __init__ (self, * epk, ** kw) :
+        init_epk = (self._init_epk, self._init_epk_raw) \
+            [bool (kw.get ("raw", False))]
+        init_epk             (* epk)
         kw.pop               ("scope", None)
         self.home_scope.add  (self)
         try :
-            self.__super.__init__ (** kw)
+            self.__super.__init__  (** kw)
         except StandardError :
             self.home_scope.remove (self)
             raise
@@ -611,14 +612,14 @@ class Id_Entity (Entity) :
         for a, pka in zip (self.primary, epk) :
             if pka is None :
                 raise MOM.Error.Invalid_Primary_Key (a.name)
-            a._set_cooked (self, pka)
+            a._set_cooked (self, pka, changed = True)
     # end def _init_epk
 
     def _init_epk_raw (self, * epk) :
         for a, pka in zip (self.primary, epk) :
             if pka is None or pka == "" :
                 raise MOM.Error.Invalid_Primary_Key (a.name)
-            a._set_raw (self, pka, a.from_string (pka, self))
+            a._set_raw (self, pka, a.from_string (pka, self), changed = True)
     # end def _init_epk_raw
 
     def _init_meta_attrs (self) :
