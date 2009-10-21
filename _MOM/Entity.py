@@ -45,6 +45,7 @@
 #    21-Oct-2009 (CT) `is_locked` changed to use `.default` if called
 #                     as class method
 #    21-Oct-2009 (CT) `Class_Uses_Default_Mixin` removed
+#    21-Oct-2009 (CT) `_finish__init__` factored
 #    ««revision-date»»···
 #--
 
@@ -101,7 +102,7 @@ class Entity (TFL.Meta.Object) :
         pass
     # end class _Predicates
 
-    def __new__ (cls, ** kw) :
+    def __new__ (cls, * args, ** kw) :
         if cls.is_partial :
             raise MOM.Error.Partial_Type (cls.type_name)
         result = super (Entity, cls).__new__ (cls)
@@ -111,11 +112,9 @@ class Entity (TFL.Meta.Object) :
         return result
     # end def __new__
 
-    def __init__ (self, ** kw) :
+    def __init__ (self, * args, ** kw) :
         self._init_attributes ()
-        if kw :
-            set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
-            set (** kw)
+        self._finish__init__  (* args, ** kw)
     # end def __init__
 
     def after_init (self) :
@@ -238,6 +237,12 @@ class Entity (TFL.Meta.Object) :
         """
         self._attr_man.sync_attributes (self)
     # end def sync_attributes
+
+    def _finish__init__ (self, * args, ** kw) :
+        if kw :
+            set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
+            set (** kw)
+    # end def _finish__init__
 
     def _init_attributes (self) :
         self._attr_man.reset_attributes (self)
@@ -423,6 +428,11 @@ class Id_Entity (Entity) :
     # end def epk
 
     @property
+    def epk_as_dict (self) :
+        return dict (zip (self.epk_sig, self.epk))
+    # end def epk_as_dict
+
+    @property
     def has_errors (self) :
         return self._pred_man.has_errors
     # end def has_errors
@@ -431,25 +441,6 @@ class Id_Entity (Entity) :
     def has_warnings (self) :
         return self._pred_man.has_warnings
     # end def has_warnings
-
-    def __new__ (cls, * epk, ** kw) :
-        ### hide positional args
-        return super (Id_Entity, cls).__new__ (cls, ** kw)
-    # end def __new__
-
-    def __init__ (self, * epk, ** kw) :
-        init_epk = (self._init_epk, self._init_epk_raw) \
-            [bool (kw.get ("raw", False))]
-        init_epk             (* epk)
-        kw.pop               ("scope", None)
-        self.home_scope.add  (self)
-        try :
-            self.__super.__init__  (** kw)
-            init_epk               (* epk)
-        except StandardError, exc :
-            self.home_scope.remove (self)
-            raise
-    # end def __init__
 
     def check_all (self) :
         """Checks all predicates"""
@@ -498,10 +489,6 @@ class Id_Entity (Entity) :
         if other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
-
-    def epk_as_dict (self) :
-        return dict (zip (self.epk_sig, self.epk))
-    # end def epk_as_dict
 
     def is_defined (self)  :
         return \
@@ -597,12 +584,12 @@ class Id_Entity (Entity) :
             name = pka.name
             if name in pkas_ckd :
                 v = pkas_ckd [name]
-                pkas_raw [name] = attr.as_string (v)
+                pkas_raw [name] = pka.as_string (v)
             else :
                 v = getattr (self, name)
             new_epk.append (v)
-        return new_epk, pkas_raw, pkas_ckd
-    # end def _extract_primary_raw
+        return tuple (new_epk), pkas_raw, pkas_ckd
+    # end def _extract_primary_ckd
 
     def _extract_primary_raw (self, kw) :
         new_epk  = []
@@ -611,12 +598,25 @@ class Id_Entity (Entity) :
         for pka in self.primary :
             name = pka.name
             if name in pkas_raw :
-                pkas_ckd [name] = v = attr.from_string (pkas_raw [name], self)
+                pkas_ckd [name] = v = pka.from_string (pkas_raw [name], self)
             else :
                 v = getattr (self, name)
             new_epk.append (v)
         return new_epk, pkas_raw, pkas_ckd
     # end def _extract_primary_raw
+
+    def _finish__init__ (self, * epk, ** kw) :
+        init_epk = (self._init_epk, self._init_epk_raw) \
+            [bool (kw.get ("raw", False))]
+        init_epk             (* epk)
+        kw.pop               ("scope", None)
+        self.home_scope.add  (self)
+        try :
+            self.__super._finish__init__  (* epk, ** kw)
+        except StandardError, exc :
+            self.home_scope.remove (self)
+            raise
+    # end def _finish__init__
 
     def _init_epk (self, * epk) :
         for a, pka in zip (self.primary, epk) :
@@ -645,8 +645,8 @@ class Id_Entity (Entity) :
                 attr._set_cooked_inner (self, v)
                 attr._set_raw_inner    (self, pkas_raw [k], v)
             self._reset_epk ()
-        self._kw_satisfies_i_invariants (pkas_ckd)
-        self._set_record                (cooked_kw)
+        self._kw_satisfies_i_invariants (pkas_ckd, None)
+        self._set_record                (pkas_ckd)
         self.home_scope.rename          (self, new_epk, _renamer)
     # end def _rename
 

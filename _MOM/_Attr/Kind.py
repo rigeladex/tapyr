@@ -106,7 +106,7 @@ class Kind (MOM.Prop.Kind) :
             self.set_raw \
                 (obj, self.attr.default, dont_raise = True, changed = True)
         else :
-            if self.attr.raw_default and not self.attr.default :
+            if self.attr.raw_default and self.attr.default is None :
                 self.attr.default = self.attr.from_string \
                     (self.attr.raw_default, obj, obj.globals ())
             self._set_raw \

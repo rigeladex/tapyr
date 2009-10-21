@@ -554,7 +554,7 @@ class A_Name (A_String) :
         if value :
             self.__super.check_syntax (obj, value)
             v = value.strip ()
-            if not identifier_pattern.match (v) :
+            if not self.identifier_pattern.match (v) :
                 raise ValueError (value)
     # end def check_syntax
 

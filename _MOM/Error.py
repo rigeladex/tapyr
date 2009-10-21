@@ -367,7 +367,7 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
     """Raised for syntax errors in attributes of MOM objects/links."""
 
     def __init__ (self, obj, attr, val, exc_str = "") :
-        _Invariant_Error_.__init__ (self, obj)
+        ### XXX ### _Invariant_Error_.__init__ (self, obj)
         self.args       = (obj, attr, val, exc_str)
         self.obj        = obj
         self.attributes = (attr, )

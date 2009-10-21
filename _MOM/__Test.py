@@ -36,7 +36,6 @@ from   _TFL                  import TFL
 import _MOM.App_Type
 import _MOM.Object
 import _MOM.Scope
-import _MOM._EMS.Hash
 
 from   _MOM._Attr.Type       import *
 from   _MOM._Attr            import Attr
@@ -113,25 +112,4 @@ class Trap (MOM.Object) :
 
 # end class Trap
 
-if __name__ == "__main__"  :
-    EMS   = MOM.EMS.Hash.Manager
-    DBW   = MOM.EMS.Hash.Manager ### XXX change to a real DBW
-    apt   = MOM.App_Type                 ("BMT", MOM)
-    apt_c = apt.Derived                  (EMS, DBW)
-    MOM.Entity.m_setup_etypes            (apt)
-    apt_c.setup_etypes                   ()
-    scope = MOM.Scope                    (apt_c)
-    m     = scope.MOM.Mouse              ("Mighty Mouse")
-    r     = scope.MOM.Rat                ("Rutty Rat")
-    t1    = scope.MOM.Trap               ("X", 1)
-    t2    = scope.MOM.Trap               ("X", 2)
-    t3    = scope.MOM.Trap               ("Y", 1)
-    print scope.MOM.Mouse.t_extension          ()
-    print scope.MOM.Rat.t_extension            ()
-    print scope.MOM.Trap.t_extension           ()
-    print scope.MOM.Rodent.t_extension         ()
-    print scope.MOM.Named_Object.t_extension   ()
-    print scope.MOM.Object.t_extension         ()
-    import pdb; pdb.set_trace ()
-    m.color = "white"
 ### __END__ MOM.__Test
