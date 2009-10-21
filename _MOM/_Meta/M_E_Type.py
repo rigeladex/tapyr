@@ -231,7 +231,7 @@ class M_E_Type_Id (M_E_Type) :
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
-        cls.is_editable = (not cls.electric) and cls.user_attr
+        cls.is_editable = (not cls.electric.default) and cls.user_attr
         cls.show_in_ui  = \
             (cls.record_changes and cls.generate_doc and not cls.is_partial)
     # end def _m_setup_attributes

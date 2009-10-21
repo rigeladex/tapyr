@@ -42,6 +42,9 @@
 #    15-Oct-2009 (CT) `is_relevant` and `relevant_root` added
 #    20-Oct-2009 (CT) Moved call of `init_epk` from `__new__` to `__init__`
 #    20-Oct-2009 (NN) `epk_as_dict` added
+#    21-Oct-2009 (CT) `is_locked` changed to use `.default` if called
+#                     as class method
+#    21-Oct-2009 (CT) `Class_Uses_Default_Mixin` removed
 #    ««revision-date»»···
 #--
 
@@ -330,7 +333,6 @@ class Id_Entity (Entity) :
             """Indicates if object/link was created automatically or not."""
 
             kind          = Attr.Internal
-            Kind_Mixins   = (Attr.Class_Uses_Default_Mixin, )
             default       = False
             hidden        = True
 
@@ -340,7 +342,6 @@ class Id_Entity (Entity) :
             """Specifies if object can be changed by user"""
 
             kind          = Attr.Internal
-            Kind_Mixins   = (Attr.Class_Uses_Default_Mixin, )
             default       = False
             hidden        = True
 
@@ -516,7 +517,10 @@ class Id_Entity (Entity) :
 
     @TFL.Meta.Class_and_Instance_Method
     def is_locked (soc) :
-        return soc.x_locked or soc.electric
+        if isinstance (soc, Entity) :
+            return soc.x_locked or soc.electric
+        else :
+            return soc.x_locked.default or soc.electric.default
     # end def is_locked
 
     def make_snapshot (self) :

@@ -39,6 +39,7 @@
 #    19-Oct-2009 (CT) `changed = 42` added to various `set`-specific methods
 #                     to avoid change checks during `reset`
 #    20-Oct-2009 (MH) `s/TOM/MOM/g`
+#    21-Oct-2009 (CT) `Class_Uses_Default_Mixin` removed
 #    ««revision-date»»···
 #--
 
@@ -533,7 +534,7 @@ class Computed (_Cached_) :
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
         default = self.attr.raw_default
-        if default and not isinstance (self, Class_Uses_Default_Mixin) :
+        if default :
             raise TypeError \
                 ( "%s is computed but has default %r "
                   "(i.e., `computed` will never be called)"
@@ -542,20 +543,6 @@ class Computed (_Cached_) :
     # end def _check_sanity
 
 # end class Computed
-
-class Class_Uses_Default_Mixin (MOM.Prop.Kind) :
-    """Mixin returning the default value of the attribute when applied to the
-       class instead of to the instance.
-    """
-
-    def __get__ (self, obj, cls) :
-        if obj is None :
-            a = self.attr
-            return a.from_string (a.default, None)
-        return self.__super.__get__ (obj, cls)
-    # end def __get__
-
-# end class Class_Uses_Default_Mixin
 
 class Computed_Mixin (MOM.Prop.Kind) :
     """Mixin to compute attribute value if empty."""
@@ -570,7 +557,7 @@ class Computed_Mixin (MOM.Prop.Kind) :
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
         default = self.attr.raw_default
-        if default and not isinstance (self, Class_Uses_Default_Mixin) :
+        if default :
             raise TypeError \
                 ( "%s is _Computed_ but has default %r "
                   "(i.e., `computed` will never be called)"
