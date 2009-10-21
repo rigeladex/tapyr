@@ -46,6 +46,7 @@
 #                     as class method
 #    21-Oct-2009 (CT) `Class_Uses_Default_Mixin` removed
 #    21-Oct-2009 (CT) `_finish__init__` factored
+#    21-Oct-2009 (CT) Predicate `primary_key_defined` removed
 #    ««revision-date»»···
 #--
 
@@ -398,26 +399,6 @@ class Id_Entity (Entity) :
             # end def eval_condition
 
         # end class object_correct
-
-        class primary_key_defined (Pred.Condition) :
-            """All primary key attributes must be defined."""
-
-            kind          = Pred.Object
-            guard         = "primary"
-            guard_attr    = ("primary", )
-
-            def eval_condition (self, obj, glob_dict, val_dict) :
-                result = []
-                add    = result.append
-                for a in obj.primary :
-                    v = val_dict.get (a.name)
-                    if v is None and not a.has_substance (obj) :
-                        add ("Primary key attribute %s is not defined" % (a, ))
-                self._error_info.extend (result)
-                return not result
-            # end def eval_condition
-
-        # end class primary_key_defined
 
     # end class _Predicates
 

@@ -31,6 +31,8 @@
 #                     properties into `_prop_dict` and `_prop_kind`
 #     6-Oct-2009 (CT) `setattr` call moved from `_setup_prop` to `_add_prop`
 #    13-Oct-2009 (CT) Bug fixes
+#    21-Oct-2009 (CT) `_setup_attr_checker_1` factored and used to add a
+#                     checker for primary attributes not being empty
 #    ««revision-date»»···
 #--
 

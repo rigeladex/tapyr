@@ -62,6 +62,15 @@ class Spec (MOM.Prop.Spec) :
     def __init__ (self, e_type) :
         self.__super.__init__ (e_type)
         for n, a in e_type.attributes.iteritems () :
+            if a.is_primary :
+                self._setup_attr_checker_1 \
+                    ( e_type
+                    , a
+                    , "AC_check_%s_not_empty" % (a.name, )
+                    , MOM.Pred.Object
+                    , "value is not None and value != ''"
+                    , (a.name, )
+                    )
             if a.check and (a.kind != "outer") :
                 self._setup_attr_checker (e_type, a)
         e_type.predicates = self._prop_dict
@@ -74,15 +83,20 @@ class Spec (MOM.Prop.Spec) :
     def _setup_attr_checker (self, e_type, attr) :
         kind = (MOM.Pred.Object, MOM.Pred.System) [attr.electric]
         for i, check in enumerate (attr.check) :
-            name    = "AC_check_%s_%d" % (attr.name, i)
-            checker = self._new_prop \
-                ( name      = name
-                , kind      = kind
-                , prop_type = MOM.Pred.Attribute_Check (name, attr.name, check)
-                , e_type    = e_type
-                )
-            self._setup_prop (e_type, name, kind.kind, checker)
+            self._setup_attr_checker_1 \
+                (e_type, attr, "AC_check_%s_%d" % (attr.name, i), kind, check)
     # end def _setup_attr_checker
+
+    def _setup_attr_checker_1 (self, e_type, attr, name, kind, check, attr_none = ()) :
+        checker = self._new_prop \
+            ( name      = name
+            , kind      = kind
+            , prop_type = MOM.Pred.Attribute_Check
+                (name, attr.name, check, attr_none)
+            , e_type    = e_type
+            )
+        self._setup_prop (e_type, name, kind.kind, checker)
+    # end def _setup_attr_checker_1
 
 # end class Spec
 

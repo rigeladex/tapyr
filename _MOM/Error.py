@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Sep-2009 (CT) Creation (factored from TOM.Error)
 #    12-Oct-2009 (CT) `Invalid_Primary_Key` added
+#    21-Oct-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -191,7 +192,6 @@ class _Invariant_Error_ (Error) :
 
     def __init__ (self, obj) :
         self.obj            = obj
-        self.doc_translator = obj.app_type.doc_translation
         self.violators      = ()
         self.violators_attr = ()
         self.attributes     = ()
@@ -222,17 +222,12 @@ class Invariant_Error (_Invariant_Error_) :
         self.args           = (obj, inv, violators, violators_attr)
         self.inv            = inv
         self.attributes     = inv.attributes + inv.attr_none
-        dt                  = self.doc_translator
-        self.extra_links    = sel = []
-        for el in inv.extra_links () :
-            if isinstance (el, basestring) :
-                el = dt (el)
-            sel.append (el)
+        self.extra_links    = list (inv.extra_links ())
         self.val_dict       = dict (inv.val_dict)
         self.val_desc       = dict (inv.val_desc)
         self.violators      = violators
         self.violators_attr = violators_attr
-        description         = obj.Documenter.description (inv)
+        description         = inv.description
         try :
             self.inv_desc   = description % TFL.Caller.Object_Scope (obj)
         except TypeError :
@@ -270,15 +265,15 @@ class Invariant_Error (_Invariant_Error_) :
         if inv.description and inv.assertion :
             result = ("\n" + indent).join \
                 (["`%s`" % inv.assertion, "", result])
-        return self.doc_translator (self._clean_this (result))
+        return self._clean_this (result)
     # end def description
 
     def explanation (self, indent = "") :
-        return self.obj.Documenter.explanation (self.inv)
+        return self.inv.explanation
     # end def explanation
 
     def name (self) :
-        return self.doc_translator (self.inv_desc or self.inv.assertion)
+        return self.inv_desc or self.inv.assertion
     # end def name
 
     def parameter_values (self, head = None) :
@@ -287,7 +282,7 @@ class Invariant_Error (_Invariant_Error_) :
 
     def __str__ (self) :
         return self._as_string \
-            ( "Condition `%s` " % (self.obj.Documenter.name (self.inv), )
+            ( "Condition `%s` " % (self.inv.name, )
             + ": %s %s%s"
             , "    "
             )
@@ -367,7 +362,7 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
     """Raised for syntax errors in attributes of MOM objects/links."""
 
     def __init__ (self, obj, attr, val, exc_str = "") :
-        ### XXX ### _Invariant_Error_.__init__ (self, obj)
+        _Invariant_Error_.__init__ (self, obj)
         self.args       = (obj, attr, val, exc_str)
         self.obj        = obj
         self.attributes = (attr, )
@@ -381,23 +376,26 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
     # end def name
 
     def description (self, indent = "") :
-        return self.doc_translator (self.assertion ())
+        return self.assertion ()
     # end def description
 
     def __str__ (self) :
-        return ( ("`%s` for : `%s'"
-                  "\n     expected type  : `%s'"
-                  "\n     got      value : `%s'"
-                  "\n     of       type  : `%s`"
-                 )
-               % ( self.exc_str or "Syntax error"
-                 , self.attr, self.attr.typ, self.val, type (self.val)
-                 )
-               )
+        result = \
+            ( ("`%s` for : `%s'"
+               "\n     expected type  : `%s'"
+               "\n     got      value : `%s'"
+               "\n     of       type  : `%s`"
+              )
+            % ( self.exc_str or "Syntax error"
+              , self.attr, self.attr.typ, self.val, type (self.val)
+              )
+            )
+        if self.attr.syntax :
+            result = "\n".join ((result, self.attr.syntax))
+        return result
     # end def __str__
 
     def assertion (self) :
-        ### XXX Add `attr.syntax`
         result = ( "Syntax error: \n  expected type `%s'\n  got value `%s'"
                  % (self.attr.typ, self.val)
                  )

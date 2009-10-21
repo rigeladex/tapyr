@@ -549,6 +549,10 @@ class A_Name (A_String) :
 
     typ                = "Name"
     identifier_pattern = Regexp ("^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
+    syntax             = " ".join \
+        ( ( "A name must start with a letter or underscore and continue with"
+          , "letters, digits, and underscores."
+        ) )
 
     def check_syntax (self, obj, value) :
         if value :

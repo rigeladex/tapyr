@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from TOM.Pred.Type)
+#    21-Oct-2009 (CT) `attr_none` added to `Attribute_Check`
 #    ««revision-date»»···
 #--
 
@@ -424,13 +425,16 @@ class U_Quant (_Quantifier_) :
 
 # end class U_Quant
 
-def Attribute_Check (name, attr, assertion) :
+def Attribute_Check (name, attr, assertion, attr_none = ()) :
+    attributes = () if attr_none else (attr, )
     result = MOM.Meta.M_Pred_Type_Condition \
         ( name, (Condition, )
         , dict
-             ( attributes = (attr, )
+             ( attributes = attributes
+             , attr_none  = attr_none
              , assertion  = assertion.replace ("value", attr)
-             , __doc__    = ""
+             , __doc__    = " "
+                 ### Space necessary to avoid inheritance of `Condition.__doc__`
              )
         )
     return result

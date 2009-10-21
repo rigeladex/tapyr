@@ -47,11 +47,10 @@ class M_Prop_Type (TFL.Meta.M_Class_SW) :
                 del dct ["__doc__"]
         elif "description" not in dct :
             dct ["description"] = doc
-        for n in "description", "explanation" :
+        for n in "description", "explanation", "syntax":
             if n in dct :
                 dct [n] = TFL.normalized_indent (dct [n])
         dct ["name"]         = name
-        dct ["_kind_mixins"] = {}
         return super (M_Prop_Type, meta).__new__ (meta, name, bases, dct)
     # end def __new__
 
@@ -80,10 +79,6 @@ Class `MOM.Meta.M_Prop_Type`
     .. attribute:: name
 
       The name of the property.
-
-    .. attribute:: _kind_mixins
-
-      An empty dictionary.
 
     `M_Prop_Type` normalizes the `__doc__`, `description` and `explanation`
     attributes:
