@@ -323,7 +323,6 @@ class Primary (_User_) :
     """
 
     is_primary  = True
-    is_settable = False
     kind        = "primary"
 
     def has_substance (self, obj) :

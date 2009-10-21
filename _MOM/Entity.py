@@ -427,7 +427,7 @@ class Id_Entity (Entity) :
         return tuple (a.get_value (self) for a in self.primary)
     # end def epk
 
-    @property
+    @TFL.Meta.Once_Property
     def epk_as_dict (self) :
         return dict (zip (self.epk_sig, self.epk))
     # end def epk_as_dict
@@ -606,9 +606,10 @@ class Id_Entity (Entity) :
     # end def _extract_primary_raw
 
     def _finish__init__ (self, * epk, ** kw) :
-        init_epk = (self._init_epk, self._init_epk_raw) \
+        ### Need to use `__super.` methods here because it's not a `rename`
+        setter = (self.__super.set, self.__super.set_raw) \
             [bool (kw.get ("raw", False))]
-        init_epk             (* epk)
+        self._init_epk       (setter, * epk)
         kw.pop               ("scope", None)
         self.home_scope.add  (self)
         try :
@@ -618,19 +619,13 @@ class Id_Entity (Entity) :
             raise
     # end def _finish__init__
 
-    def _init_epk (self, * epk) :
+    def _init_epk (self, setter, * epk) :
+        assert len (epk) == len (self.primary)
+        pkas = {}
         for a, pka in zip (self.primary, epk) :
-            if pka is None :
-                raise MOM.Error.Invalid_Primary_Key (a.name)
-            a._set_cooked (self, pka, changed = True)
+            pkas [a.name] = pka
+        setter (** pkas)
     # end def _init_epk
-
-    def _init_epk_raw (self, * epk) :
-        for a, pka in zip (self.primary, epk) :
-            if pka is None or pka == "" :
-                raise MOM.Error.Invalid_Primary_Key (a.name)
-            a._set_raw (self, pka, a.from_string (pka, self), changed = True)
-    # end def _init_epk_raw
 
     def _init_meta_attrs (self) :
         self.__super._init_meta_attrs ()
@@ -656,6 +651,8 @@ class Id_Entity (Entity) :
 
     def _reset_epk (self) :
         del self.epk
+        if "epk_as_dict" in self.__dict__ :
+            del self.epk_as_dict
     # end def _reset_epk
 
     def _set_record (self, kw) :
