@@ -57,11 +57,14 @@ import _MOM._Attr.Kind
 import _MOM._Attr.Manager
 import _MOM._Attr.Spec
 import _MOM._Attr.Type
+
 import _MOM._Meta.M_Entity
+
 import _MOM._Pred.Kind
 import _MOM._Pred.Manager
 import _MOM._Pred.Spec
 import _MOM._Pred.Type
+
 import _MOM._SCM.Change
 
 from   _MOM._Attr.Type import *
@@ -74,7 +77,6 @@ import _TFL.Sorted_By
 
 from   _TFL.object_globals   import object_globals
 
-import itertools
 import traceback
 
 class Entity (TFL.Meta.Object) :

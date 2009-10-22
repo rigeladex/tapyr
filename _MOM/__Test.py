@@ -30,16 +30,7 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM                  import MOM
-from   _TFL                  import TFL
-
-import _MOM.App_Type
-import _MOM.Object
-import _MOM.Scope
-
-from   _MOM._Attr.Type       import *
-from   _MOM._Attr            import Attr
-from   _MOM._Pred            import Pred
+from   _MOM.import_MOM       import *
 
 class Rodent (MOM.Named_Object) :
     """Model a rodent of the Better Mouse Trap application."""

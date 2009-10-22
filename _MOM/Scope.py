@@ -334,10 +334,10 @@ class Scope (TFL.Meta.Object) :
     # end def remove
 
     @_with_lock_check
-    def rename (self, entity, new_hpk, renamer) :
-        old_hpk = entity.hpk
-        self.ems.rename    (entity, new_hpk, renamer)
-        self.record_change (MOM.SCM.Entity_Change_Rename, entity, old_hpk)
+    def rename (self, entity, new_epk, renamer) :
+        old_epk = entity.epk
+        self.ems.rename    (entity, new_epk, renamer)
+        self.record_change (MOM.SCM.Entity_Change_Rename, entity, old_epk)
     # end def rename
 
     def start_change_recorder (self) :

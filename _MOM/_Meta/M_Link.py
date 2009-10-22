@@ -38,6 +38,16 @@ import _MOM._Meta.M_Entity
 class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
+    def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
+        Roles  = [] ### XXX ??? can we do that here ???
+        result = cls.__m_super._m_new_e_type_dict \
+            ( app_type, etypes, bases
+            , Roles = Roles
+            , ** kw
+            )
+        return result
+    # end def _m_new_e_type_dict
+
 # end class M_Link
 
 @TFL.Add_To_Class ("M_E_Type", M_Link)

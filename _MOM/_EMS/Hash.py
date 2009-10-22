@@ -36,10 +36,13 @@ from   _MOM                  import MOM
 from   _TFL                  import TFL
 
 import _MOM._EMS
-import _MOM.Entity
+import _MOM.Error
+import _MOM.Link
+import _MOM.Object
 
 import _TFL._Meta.Object
 
+import _TFL.Decorator
 import _TFL.defaultdict
 
 import itertools
@@ -115,7 +118,8 @@ class Manager (TFL.Meta.Object) :
                 r_map [r] [r.get_role (entity).id].remove (entity)
     # end def remove
 
-    def rename (self, entity, new_hpk, renamer) :
+    def rename (self, entity, new_epk, renamer) :
+        new_hpk = Type.epk_to_hpk (* new_epk)
         root    = entity.relevant_root
         table   = self._tables [root.type_name]
         if new_hpk in table :
@@ -184,6 +188,26 @@ class Manager (TFL.Meta.Object) :
     # end def __iter__
 
 # end class Manager
+
+@TFL.Add_Method (MOM.Link)
+@TFL.Meta.Class_Method
+def epk_to_hpk (cls, * epk) :
+    return epk
+# end def epk_to_hpk
+
+@TFL.Add_Method (MOM.Link)
+@TFL.Meta.Once_Property
+def hpk (self) :
+    return tuple (a.get_value (self) for a in self.roles) ### XXX ???
+# end def epk
+
+@TFL.Add_Method (MOM.Object)
+@TFL.Meta.Class_Method
+def epk_to_hpk (cls, * epk) :
+    return epk
+# end def epk_to_hpk
+
+MOM.Object.hpk = TFL.Meta.Alias_Property ("epk")
 
 if __name__ != "__main__" :
     MOM.EMS._Export_Module ()

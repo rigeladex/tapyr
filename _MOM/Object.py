@@ -38,8 +38,9 @@
 from   _TFL      import TFL
 from   _MOM      import MOM
 
-from   _MOM._Attr      import Attr
 from   _MOM._Attr.Type import *
+from   _MOM._Attr      import Attr
+from   _MOM._Pred      import Pred
 
 import  _MOM._Meta.M_Object
 
@@ -51,13 +52,6 @@ class _MOM_Object_ (MOM.Id_Entity) :
     __metaclass__         = MOM.Meta.M_Object
     _real_name            = "Object"
     entity_kind           = "object"
-
-    hpk                   = TFL.Meta.Alias_Property ("epk")
-
-    @classmethod
-    def epk_to_hpk (cls, * epk) :
-        return epk
-    # end def epk_to_hpk
 
 Object = _MOM_Object_ # end class
 
