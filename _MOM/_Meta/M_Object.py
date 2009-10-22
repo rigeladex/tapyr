@@ -26,7 +26,7 @@
 #    Meta class of object-types of MOM meta object model
 #
 # Revision Dates
-#    23-Sep-2009 (CT) Creation (factored from `MOM.Meta.M_Object`)
+#    23-Sep-2009 (CT) Creation (factored from `TOM.Meta.M_Object`)
 #    18-Oct-2009 (CT) `_m_new_e_type_dict` redefined (add `Roles`)
 #    ««revision-date»»···
 #--
@@ -35,6 +35,7 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _MOM._Meta.M_Entity
+import _MOM.Scope_Proxy
 
 class M_Object (MOM.Meta.M_Id_Entity) :
     """Meta class of MOM.Object."""
@@ -49,6 +50,14 @@ class M_Object (MOM.Meta.M_Id_Entity) :
     # end def _m_new_e_type_dict
 
 # end class M_Object
+
+@TFL.Add_To_Class ("M_E_Type", M_Object)
+class M_E_Type_Object (MOM.Meta.M_E_Type_Id) :
+    """Meta class for essence of MOM.Object."""
+
+    Scope_Proxy = MOM.Scope_Proxy_O
+
+# end class M_E_Type_Object
 
 __doc__ = """
 Class `MOM.Meta.M_Object`

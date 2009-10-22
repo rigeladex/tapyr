@@ -95,6 +95,8 @@ class Entity (TFL.Meta.Object) :
 
     _dicts_to_combine     = ("deprecated_attr_names", )
 
+    _Class_Kind           = "Spec Essence"
+
     class _Attributes (MOM.Attr.Spec) :
         pass
     # end class _Attributes

@@ -60,7 +60,7 @@ class Spec (MOM.Prop.Spec) :
        with declarations for all attributes (which are descendents of
        :class:`~_MOM._Attr.Type.A_Attr_Type`) provided by that class.
 
-       :class:`MOM.Meta.M_E_Type<_MOM._Meta.M_E_Type.M_E_Type>` instantiates
+       :class:`MOM.Meta.M_E_Type<_MOM._Meta.M_Entity.M_E_Type>` instantiates
        the `Spec`: this results in the assignment of all attribute
        properties, i.e., for all attributes `attr` defined in the `Spec` a
        property named by `attr.name` and instantiated as ::

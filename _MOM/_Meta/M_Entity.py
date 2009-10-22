@@ -34,6 +34,7 @@
 #    18-Oct-2009 (CT) Creation continued.....
 #    19-Oct-2009 (CT) Creation continued.....
 #    20-Oct-2009 (CT) Creation continued......
+#    22-Oct-2009 (CT) Creation continued.......
 #    ««revision-date»»···
 #--
 
@@ -41,16 +42,21 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _TFL._Meta.M_Class
+import _TFL.Decorator
 import _TFL.Sorted_By
 
 from   _TFL.object_globals import class_globals
 
 import _MOM._Meta
+import _MOM.Scope
+import _MOM.Scope_Proxy
 
 import sys
 
 class M_E_Mixin (TFL.Meta.M_Class) :
     """Meta mixin for M_Entity and M_E_Type."""
+
+    _Class_Kind = "Bare Essence"
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__      (name, bases, dict)
@@ -121,6 +127,7 @@ class M_E_Mixin (TFL.Meta.M_Class) :
             ( cls.__dict__
             , app_type      = app_type
             , children      = {}
+            , M_E_Type      = cls.M_E_Type
             , __metaclass__ = None ### avoid `Metatype conflict among bases`
             , __name__      = cls.__dict__ ["__real_name"] ### M_Autorename
             , _real_name    = cls.type_base_name           ### M_Autorename
@@ -135,9 +142,12 @@ class M_E_Mixin (TFL.Meta.M_Class) :
     # end def _set_type_names
 
     def __repr__ (cls) :
-        if cls.app_type :
-            return "<class %r [%s]>" % (cls.type_name, cls.app_type.name)
-        return "<class %r [Bare Essence]>" % (cls.type_name, )
+        app_type = getattr (cls, "app_type", None)
+        if app_type :
+            kind = app_type.name
+        else :
+            kind = getattr (cls, "_Class_Kind", "unknown")
+        return "<class %r [%s]>" % (cls.type_name, kind)
     # end def __repr__
 
 # end class M_E_Mixin
@@ -155,7 +165,6 @@ class M_Entity (M_E_Mixin) :
 
     def m_setup_etypes (cls, app_type) :
         """Setup essential types for all classes in `cls._S_Extension`."""
-        import _MOM._Meta.M_E_Type
         assert not app_type.etypes
         SX = cls._S_Extension
         cls._m_create_base_e_types (SX)
@@ -265,6 +274,215 @@ class M_Id_Entity (M_Entity) :
 
 # end class M_Id_Entity
 
+@TFL.Add_To_Class ("M_E_Type", M_Entity)
+class M_E_Type (M_E_Mixin) :
+    """Meta class for for essence of MOM.Entity."""
+
+    app_type    = None
+    Scope_Proxy = MOM.Scope_Proxy
+
+    _Class_Kind = "Essence"
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        cls._m_setup_children  (bases, dct)
+        if cls.app_type.EMS is None :
+            cls._m_setup_attributes     (bases, dct)
+        else :
+            cls._m_setup_attributes_dbw (bases, dct)
+    # end def __init__
+
+    def __call__ (cls, * args, ** kw) :
+        scope = kw.get ("scope", None)
+        if not scope :
+            raise MOM.Error.No_Scope
+        return cls._m_call (* args, ** kw)
+    # end def __call__
+
+    def add_attribute (cls, attr, verbose = True, parent = None, transitive = True, override = False) :
+        """Add `attr` to `cls`"""
+        result = cls._m_add_prop \
+            (attr, cls._Attributes, verbose, parent, override)
+        if result is not None :
+            if result.check :
+                cls._Predicates._setup_attr_checker (cls, result)
+            if transitive :
+                for c in cls.children_iter () :
+                    c.add_attribute \
+                        ( attr
+                        , verbose   = False
+                        , parent    = parent or cls
+                        , override = override
+                        )
+        return result
+    # end def add_attribute
+
+    def add_predicate (cls, pred, verbose = True, parent = None, transitive = True, override = False) :
+        """Add `pred` to `cls`"""
+        result = cls._m_add_prop \
+            (pred, cls._Predicates, verbose, parent, override)
+        if transitive and result is not None :
+            for c in cls.children_iter () :
+                c.add_predicate \
+                    ( pred
+                    , verbose   = False
+                    , parent    = parent or cls
+                    , override = override
+                    )
+        return result
+    # end def add_predicate
+
+    def after_creation (cls, instance) :
+        """Called after the creation of `instance`. Descendent meta classes
+           can override `after_creation` to modify certain instances
+           automatically when they are created.
+        """
+        pass
+    # end def after_creation
+
+    def children_iter (cls) :
+        """Generates the etypes of all children of `cls`."""
+        if cls.app_type :
+            etype = cls.app_type.etype
+        else :
+            etype = lambda c : cls.children [c]
+        for c in cls.children :
+            et = etype (c)
+            if et :
+                yield et
+    # end def children_iter
+
+    def m_setup_etypes (cls, app_type) :
+        """Setup EMS- and DBW -specific essential types for all classes in
+           `app_type.parent._T_Extension`.
+        """
+        assert not app_type.etypes
+        cls._m_create_e_types (app_type, app_type.parent._T_Extension)
+        for t in reversed (app_type._T_Extension) :
+            t._m_setup_relevant_roots ()
+    # end def m_setup_etypes
+
+    def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
+        name = prop.__name__
+        if (not override) and name in _Properties._prop_dict :
+            if __debug__ :
+                if verbose :
+                    p = _Properties._prop_dict.get (name)
+                    print "Property %s.%s already defined for %s as %s [%s]" %\
+                        ( cls.type_name, name, cls.app_type.name
+                        , getattr (p,    "kind")
+                        , getattr (prop, "kind")
+                        )
+        else :
+            result = _Properties._add_prop (cls, name, prop)
+            if result is not None and name not in _Properties._names :
+                ### needed for descendents of `cls.Essence` yet to be imported
+                _Properties._names [name] = prop
+            return result
+    # end def _m_add_prop
+
+    def _m_call (cls, * args, ** kw) :
+        result = cls.__new__ (cls, * args, ** kw)
+        result.__init__      (* args, ** kw)
+        cls.after_creation   (result)
+        return result
+    # end def _m_call
+
+    def _m_entity_type (cls, scope = None) :
+        scope = cls._m_scope (scope)
+        if scope is not None :
+            return scope.entity_type (cls)
+    # end def _m_entity_type
+
+    def _m_get_attribute (cls, etype, name) :
+        return getattr (etype, name)
+    # end def _m_get_attribute
+
+    def _m_scope (cls, scope = None, ** kw) :
+        if scope is None :
+            scope = MOM.Scope.active
+            if scope.is_universe :
+                scope = None
+        return scope
+    # end def _m_scope
+
+    def _m_setup_attributes (cls, bases, dct) :
+        cls._Attributes = A = cls._Attributes (cls)
+        cls._Predicates = P = cls._Predicates (cls)
+        attr_dict       = A._attr_dict
+        for pv in P._pred_kind.get ("object", []) :
+            pn = pv.name
+            for an in pv.attributes + pv.attr_none :
+                if an in attr_dict :
+                    attr = attr_dict [an]
+                    if attr :
+                        if attr.electric :
+                            print ( "%s: %s attribute `%s` of `%s` cannot "
+                                    "be referred to by object "
+                                    "invariant `%s`"
+                                  ) % (cls, attr.kind, an, cls.name, pn)
+                        else :
+                            attr.invariant.append (pn)
+        P._syntax_checks = \
+            [  a.attr for a in attr_dict.itervalues ()
+            if (not a.electric) and TFL.callable (a.attr.check_syntax)
+            ]
+    # end def _m_setup_attributes
+
+    def _m_setup_attributes_dbw (cls, bases, dct) :
+        pass ### XXX
+    # end def _m_setup_attributes_dbw
+
+    def _m_setup_children (cls, bases, dct) :
+        cls.children = {}
+        for b in bases :
+            if isinstance (b, M_E_Type) :
+                b.children [cls.type_name] = cls
+    # end def _m_setup_children
+
+    def _m_setup_relevant_roots (cls) :
+        pass
+    # end def _m_setup_relevant_roots
+
+    def __getattr__ (cls, name) :
+        ### just to ease up-chaining in descendents
+        raise AttributeError ("%s.%s" % (cls.type_name, name))
+    # end def __getattr__
+
+# end class M_E_Type
+
+@TFL.Add_To_Class ("M_E_Type", M_Id_Entity)
+class M_E_Type_Id (M_E_Type) :
+    """Meta class for essence of MOM.Id_Entity."""
+
+    def _m_setup_attributes (cls, bases, dct) :
+        cls.__m_super._m_setup_attributes (bases, dct)
+        cls.is_editable = (not cls.electric.default) and cls.user_attr
+        cls.show_in_ui  = \
+            (cls.record_changes and cls.generate_doc and not cls.is_partial)
+    # end def _m_setup_attributes
+
+    def _m_setup_children (cls, bases, dct) :
+        cls.__m_super._m_setup_children (bases, dct)
+        if cls.is_relevant :
+            if not any (getattr (b, "is_relevant", False) for b in bases) :
+                cls.relevant_root = cls
+        else :
+            cls.relevant_roots = {}
+    # end def _m_setup_children
+
+    def _m_setup_relevant_roots (cls) :
+        if not cls.relevant_root :
+            rr = cls.relevant_roots
+            for c in cls.children.itervalues () :
+                if c.relevant_root is c :
+                    rr [c.type_name] = c
+                else :
+                    rr.update (c.relevant_roots)
+    # end def _m_setup_relevant_roots
+
+# end class M_E_Type_Id
+
 __doc__ = """
 Class `MOM.Meta.M_Entity`
 =========================
@@ -279,47 +497,56 @@ Class `MOM.Meta.M_Entity`
     :class:`MOM.Meta.M_Object<_MOM._Meta.M_Object.M_Object>` and
     :class:`MOM.Meta.M_Link<_MOM._Meta.M_Link.M_Link>`.
 
-    For each essential class, `M_Entity`:
+XXX
 
-    - Creates `_Attributes` and `_Predicates`, if they weren't already
-      defined by the class definition.
+.. class:: M_E_Type
 
-    - Defines the class attributes
+    `MOM.Meta.M_E_Type` provides the meta machinery for defining app-type
+    specific essential object and link types (aka, e_types).
 
-      .. attribute:: Essence
+    Each instance of `M_E_Type` is a class that is defined using information
+    of an essential class, i.e., a descendent of :class:`~_MOM.Entity.Entity`.
 
-          Always points to the class defining the essence (even in the
-          automatically generated ats-specific children of that class).
+    For each instance of `M_E_Type`, it:
 
-      .. attribute:: name
+    * Setups the attributes and predicates by instantiating
+      `Essence._Attributes` and `Essence._Predicates` (and assigning it to
+      class variables `_Attributes` and `_Predicates`, respectively, of the
+      `etype`).
 
-          Refers to the essential name of the class.
+    * Assigns the class variables `is_editable` and `show_in_ui` according
+      the settings of essential and app-type specific settings.
 
-      .. attribute:: type_base_name
+    * Checks that object predicates don't depend on electric attributes.
 
-          Refers to the essential name of the class.
+    * Adds all object predicates to the `invariant` lists of the attributes
+      the predicates depend on.
 
-      .. attribute:: type_name
+    * Adds `_syntax_checks` entries to `_Predicates` for all non-electric
+      attributes with a callable `check_syntax`.
 
-          Refers to the essential name of the class qualified by the
-          name of defining :attr:`package namespace<_MOM.Entity.Package_NS>`.
+    * Adds the `etype` to the `children` dictionary of all its base classes.
 
-      .. attribute:: ui_name
+    `M_E_Type` provides the attribute:
 
-          Refers to the name of the class to be displayed by the user
-          interface(s). Depending on the class variable
-          :attr:`~_MOM.Entity.show_package_prefix`, `ui_name` might or
-          might not be qualified by the name of defining
-          :attr:`package namespace<_MOM.Entity.Package_NS>`.
+    .. attribute:: default_child
 
-    ### XXX ???
-    `M_Entity` delegates two operations to the scope-specific type
-    of the class:
+      For partial classes, `default_child` can be set to refer to the
+      non-partial descendent class that should be used by default (for
+      instance, to create a new object in an object editor).
 
-    - object creation,
+    `M_E_Type` provides the methods:
 
-    - attribute access (for attributes not defined by the essential
-      class itself).
+    .. automethod:: add_attribute
+    .. automethod:: add_predicate
+
+    .. method:: add_to_app_type(app_type)
+
+      Adds the newly created `etype` to the `app_type`.
+
+    .. automethod:: after_creation
+    .. automethod:: children_iter
+
 
 """
 

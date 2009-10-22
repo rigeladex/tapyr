@@ -47,7 +47,7 @@ class Spec (MOM.Prop.Spec) :
        with declarations for all predicates (which are descendents of
        MOM.Pred._Condition_) provided by that class.
 
-       :class:`MOM.Meta.M_E_Type<_MOM._Meta.M_E_Type.M_E_Type>` instantiates
+       :class:`MOM.Meta.M_E_Type<_MOM._Meta.M_Entity.M_E_Type>` instantiates
        the `Spec`: this results in the assignment of all predicate properties
        to the `E_Type`.
     """

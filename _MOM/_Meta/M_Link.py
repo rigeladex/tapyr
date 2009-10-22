@@ -26,7 +26,7 @@
 #    Meta class of link-types of MOM meta object model
 #
 # Revision Dates
-#    23-Sep-2009 (CT) Creation (factored from `MOM.Meta.M_Link`)
+#    23-Sep-2009 (CT) Creation (factored from `TOM.Meta.M_Link`)
 #    ««revision-date»»···
 #--
 
@@ -35,10 +35,18 @@ from   _TFL import TFL
 
 import _MOM._Meta.M_Entity
 
-class M_Link (MOM.Meta.M_Entity) :
+class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
 # end class M_Link
+
+@TFL.Add_To_Class ("M_E_Type", M_Link)
+class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
+    """Meta class for essence of MOM.Link."""
+
+    Scope_Proxy = MOM.Scope_Proxy_L
+
+# end class M_E_Type_Link
 
 __doc__ = """
 Class `MOM.Meta.M_Link`
