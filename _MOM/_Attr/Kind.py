@@ -65,6 +65,7 @@ class Kind (MOM.Prop.Kind) :
     attr                  = None
     is_primary            = False
     is_settable           = True
+    needs_raw_value       = False
     prop                  = TFL.Meta.Alias_Property ("attr")
     sync                  = None
     Table                 = dict ()
@@ -226,6 +227,8 @@ class Kind (MOM.Prop.Kind) :
 
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""
+
+    needs_raw_value = True
 
     def get_raw (self, obj) :
         return getattr (obj, self.attr.raw_name, "")

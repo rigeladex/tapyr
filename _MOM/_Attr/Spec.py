@@ -36,6 +36,8 @@
 #    14-Oct-2009 (CT) `epk_sig` added
 #    22-Oct-2009 (CT) `_effective_prop_kind_mixins` redefined to add
 #                     `_Raw_Value_Mixin_` if necessary
+#    22-Oct-2009 (CT) `_effective_prop_kind_mixins` changed to ignore
+#                     electric kinds and to put `_Raw_Value_Mixin_` at end
 #    ««revision-date»»···
 #--
 
@@ -96,8 +98,8 @@ class Spec (MOM.Prop.Spec) :
     def _effective_prop_kind_mixins (self, name, kind, prop_type) :
         result = self.__super._effective_prop_kind_mixins \
             (name, kind, prop_type)
-        if prop_type.needs_raw_value :
-            result = (MOM.Attr._Raw_Value_Mixin_, ) + result
+        if prop_type.needs_raw_value and not kind.electric :
+            result = result + (MOM.Attr._Raw_Value_Mixin_, )
         return result
     # end def _effective_prop_kind_mixins
 
