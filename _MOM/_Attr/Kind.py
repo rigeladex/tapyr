@@ -40,6 +40,9 @@
 #                     to avoid change checks during `reset`
 #    20-Oct-2009 (MH) `s/TOM/MOM/g`
 #    21-Oct-2009 (CT) `Class_Uses_Default_Mixin` removed
+#    22-Oct-2009 (CT) Use `M_Attr_Kind` as meta
+#    22-Oct-2009 (CT) s/default/raw_default/ where necessary
+#    22-Oct-2009 (CT) `_Raw_Value_Mixin_` factored
 #    ««revision-date»»···
 #--
 
@@ -49,12 +52,15 @@ from   _MOM                  import MOM
 import _TFL._Meta.Property
 
 import _MOM._Attr
+import _MOM._Meta.M_Attr_Kind
 import _MOM._Prop.Kind
 
 class Kind (MOM.Prop.Kind) :
     """Root class of attribute kinds to be used as properties for essential
        attributes of the MOM meta object model.
     """
+
+    __metaclass__         = MOM.Meta.M_Attr_Kind
 
     attr                  = None
     is_primary            = False
@@ -90,6 +96,14 @@ class Kind (MOM.Prop.Kind) :
         self._set_cooked (obj, value)
     # end def __set__
 
+    def get_raw (self, obj) :
+        val = self.get_value (obj)
+        if val is not None :
+            return self.attr.as_string (val) or ""
+        else :
+            return ""
+    # end def get_raw
+
     def get_value (self, obj) :
         return getattr (obj, self.attr.ckd_name, None)
     # end def get_value
@@ -104,7 +118,7 @@ class Kind (MOM.Prop.Kind) :
     def reset (self, obj) :
         if self.attr._symbolic_default :
             self.set_raw \
-                (obj, self.attr.default, dont_raise = True, changed = True)
+                (obj, self.attr.raw_default, dont_raise = True, changed = True)
         else :
             if self.attr.raw_default and self.attr.default is None :
                 self.attr.default = self.attr.from_string \
@@ -210,26 +224,8 @@ class Kind (MOM.Prop.Kind) :
 
 # end class Kind
 
-class _DB_Attr_ (MOM.Prop.Kind) :
-    """Attributes stored in DB."""
-
-    save_to_db     = True
-    record_changes = True
-
-    def to_save (self, obj) :
-        raw_val = self.get_raw (obj)
-        result  = bool (raw_val)
-        if result and not self.store_default :
-            result = raw_val != self.default
-        return result
-    # end def to_save
-
-# end class _DB_Attr_
-
-class _User_ (_DB_Attr_, Kind) :
-    """Attributes set by user."""
-
-    electric       = False
+class _Raw_Value_Mixin_ (Kind) :
+    """Mixin for keeping raw values of user-specified attributes."""
 
     def get_raw (self, obj) :
         return getattr (obj, self.attr.raw_name, "")
@@ -240,6 +236,10 @@ class _User_ (_DB_Attr_, Kind) :
             self._sync (obj)
         return self.__super.get_value (obj)
     # end def get_value
+
+    def has_substance (self, obj) :
+        return self.get_raw (obj) not in ("", self.raw_default)
+    # end def has_substance
 
     def _set_cooked (self, obj, value, changed = 42) :
         self._set_cooked_inner (obj, value, changed)
@@ -273,6 +273,33 @@ class _User_ (_DB_Attr_, Kind) :
         obj._attr_man.needs_sync [self.name] = False
     # end def _sync
 
+# end class _Raw_Value_Mixin_
+
+class _DB_Attr_ (Kind) :
+    """Attributes stored in DB."""
+
+    save_to_db     = True
+    record_changes = True
+
+    def to_save (self, obj) :
+        raw_val = self.get_raw (obj)
+        result  = bool (raw_val)
+        if result and not self.store_default :
+            result = raw_val != self.raw_default
+        return result
+    # end def to_save
+
+# end class _DB_Attr_
+
+class _User_ (_DB_Attr_, Kind) :
+    """Attributes set by user."""
+
+    electric       = False
+
+    def has_substance (self, obj) :
+        return self.get_value (obj) not in (None, self.default)
+    # end def has_substance
+
 # end class _User_
 
 class _System_ (Kind) :
@@ -280,21 +307,13 @@ class _System_ (Kind) :
 
     electric       = True
 
-    def get_raw (self, obj) :
-        val = self.get_value (obj)
-        if val is not None :
-            return self.attr.as_string (val)
-        else :
-            return ""
-    # end def get_raw
-
 # end class _System_
 
 class _DB_System_ (_DB_Attr_, _System_) :
     pass
 # end class _DB_System_
 
-class _Volatile_ (MOM.Prop.Kind) :
+class _Volatile_ (Kind) :
     """Attributes not stored in DB."""
 
     save_to_db     = False
@@ -325,10 +344,6 @@ class Primary (_User_) :
     is_primary  = True
     kind        = "primary"
 
-    def has_substance (self, obj) :
-        return self.get_raw (obj) not in (None, "")
-    # end def has_substance
-
     def __set__ (self, obj, value) :
         raise AttributeError \
             ( "Primary attribute `%s.%s` cannot be assigned."
@@ -337,16 +352,6 @@ class Primary (_User_) :
             % (obj.type_name, self.name)
             )
     # end def __set__
-
-    def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False, changed = 42) :
-        if raw_value is "" :
-            raise AttributeError \
-                ( "Primary attribute `%s.%s` cannot be empty"
-                % (obj.type_name, self.name)
-                )
-        return self.__super.set_raw \
-            (obj, raw_value, glob_dict, dont_raise, changed)
-    # end def set_raw
 
     def to_save (self, obj) :
         return True
@@ -366,10 +371,6 @@ class Required (_User_) :
 
     kind        = "required"
 
-    def has_substance (self, obj) :
-        return self.get_raw (obj) not in (None, "")
-    # end def has_substance
-
     def to_save (self, obj) :
         return self.has_substance (obj)
     # end def to_save
@@ -380,11 +381,6 @@ class Optional (_User_) :
     """Optional attribute: if undefined, the `default` value is used, if any."""
 
     kind = "optional"
-
-    def has_substance (self, obj) :
-        raw_val = self.get_raw (obj)
-        return raw_val not in (None, "", self.default)
-    # end def has_substance
 
 # end class Optional
 
@@ -543,7 +539,7 @@ class Computed (_Cached_) :
 
 # end class Computed
 
-class Computed_Mixin (MOM.Prop.Kind) :
+class Computed_Mixin (Kind) :
     """Mixin to compute attribute value if empty."""
 
     def get_value (self, obj) :
@@ -566,7 +562,7 @@ class Computed_Mixin (MOM.Prop.Kind) :
 
 # end class Computed_Mixin
 
-class Sticky_Mixin (MOM.Prop.Kind) :
+class Sticky_Mixin (Kind) :
     """Mixin to reset attribute to default value whenever user enters empty
        value.
     """
@@ -597,5 +593,5 @@ class Sticky_Mixin (MOM.Prop.Kind) :
 ### XXX Object-Reference- and Link-related kinds
 
 if __name__ != "__main__" :
-    MOM.Attr._Export ("*")
+    MOM.Attr._Export ("*", "_Raw_Value_Mixin_")
 ### __END__ MOM.Attr.Kind

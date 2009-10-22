@@ -569,7 +569,7 @@ class Id_Entity (Entity) :
             else :
                 v = getattr (self, name)
             new_epk.append (v)
-        return tuple (new_epk), pkas_raw, pkas_ckd
+        return new_epk, pkas_raw, pkas_ckd
     # end def _extract_primary_ckd
 
     def _extract_primary_raw (self, kw) :
@@ -623,7 +623,7 @@ class Id_Entity (Entity) :
             self._reset_epk ()
         self._kw_satisfies_i_invariants (pkas_ckd, None)
         self._set_record                (pkas_ckd)
-        self.home_scope.rename          (self, new_epk, _renamer)
+        self.home_scope.rename          (self, tuple (new_epk), _renamer)
     # end def _rename
 
     def _repr (self, type_name) :

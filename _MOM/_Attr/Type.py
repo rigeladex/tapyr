@@ -33,6 +33,10 @@
 #     9-Oct-2009 (CT) `raw_default` and `_symbolic_default` added
 #    13-Oct-2009 (CT) Guard for empty string added to `_to_cooked`
 #    20-Oct-2009 (MG) `check_ascii` added as it is used for String attributes
+#    22-Oct-2009 (CT) `needs_raw_value` added
+#    22-Oct-2009 (CT) `max_length` added to `A_String` and its descendents
+#    22-Oct-2009 (CT) Signatures of `_from_string_prepare` and
+#                     `_from_string_eval` fixed
 #    ««revision-date»»···
 #--
 
@@ -66,6 +70,7 @@ class A_Attr_Type (object) :
     hidden            = False
     kind              = None
     Kind_Mixins       = ()
+    needs_raw_value   = True
     rank              = 0
     raw_default       = ""
     record_changes    = True
@@ -128,9 +133,9 @@ class A_Attr_Type (object) :
     # end def _call_eval
 
     def _from_string (self, s, obj, glob, locl) :
-        t = self._from_string_prepare (obj, s)
+        t = self._from_string_prepare (s, obj)
         try :
-            u = self._from_string_eval (obj, t, glob, locl)
+            u = self._from_string_eval (t, obj, glob, locl)
         except StandardError, exc :
             raise MOM.Error.Attribute_Syntax_Error \
                 (obj, self, "%s -> %s" % (s, t), str (exc))
@@ -148,7 +153,7 @@ class A_Attr_Type (object) :
         return self._call_eval (s, glob, locl)
     # end def _from_string_eval
 
-    def _from_string_prepare (self, obj, s) :
+    def _from_string_prepare (self, s, obj) :
         try :
             s = s.encode ("ascii")
         except AttributeError, exc :
@@ -246,7 +251,6 @@ class _A_Date_ (A_Attr_Type) :
         else :
             raise ValueError (s)
         return self._DT_Type (* result [self._tuple_off:self._tuple_len])
-
     # end def _from_string_eval
 
 # end class _A_Date_
@@ -254,7 +258,9 @@ class _A_Date_ (A_Attr_Type) :
 class _A_Named_Value_ (A_Attr_Type) :
     """Common base class for attributes holding named values."""
 
-    __metaclass__ = MOM.Meta.M_Attr_Type_Named_Value
+    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Value
+
+    needs_raw_value   = False
 
     def as_code (self, value) :
         return self.code_format % (self.__class__.Elbat [value], )
@@ -307,7 +313,7 @@ class _A_Float_ (_A_Number_) :
     typ         = "Float"
     cooked      = float
 
-    def _from_string_prepare (self, obj, s) :
+    def _from_string_prepare (self, s, obj) :
         return s.replace ("/", "*1.0/")
     # end def _from_string_prepare
 
@@ -324,7 +330,9 @@ class _A_Int_ (_A_Number_) :
 class _A_Object_ (A_Attr_Type) :
     """Models an attribute referring to an object."""
 
-    Class       = ""
+    Class             = ""
+
+    needs_raw_value   = False
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
@@ -463,7 +471,7 @@ class A_Boolean (_A_Named_Value_) :
 # end class A_Boolean
 
 class A_Date (_A_Date_) :
-    """Models a date attribute of an object."""
+    """Models a date-valued attribute of an object."""
 
     typ            = "Date"
     input_formats  = \
@@ -474,7 +482,7 @@ class A_Date (_A_Date_) :
 # end class A_Date
 
 class A_Date_Time (_A_Date_) :
-    """Models a date-time attribute of an object."""
+    """Models a date-time-valued attribute of an object."""
 
     typ            = "Date-Time"
     input_formats  = tuple \
@@ -520,7 +528,10 @@ class A_Length (_A_Unit_, _A_Float_) :
 class A_String (A_Attr_Type) :
     """Models a string-valued attribute of an object."""
 
-    typ         = "String"
+    typ               = "String"
+
+    max_length        = 64
+    needs_raw_value   = False
 
     def _from_string_eval (self, s, obj, glob, locl) :
         return s
@@ -528,26 +539,17 @@ class A_String (A_Attr_Type) :
 
     def check_syntax (self, obj, value) :
         if value :
-            self.check_ascii (obj, value)
+            self.check_ascii (value, obj)
     # end def check_syntax
 
 # end class A_String
-
-class A_Date_Time (_A_Date_) :
-    """Models a date-time attribute of an object."""
-
-    typ            = "Time"
-    input_formats  = ("%H:%M:%S", "%H:%M")
-    _tuple_len     = 6
-    _tuple_off     = 3
-    _DT_Type       = datetime.time
-
-# end class A_Date_Time
 
 class A_Name (A_String) :
     """Models a name-valued attribute of an object."""
 
     typ                = "Name"
+
+    max_length         = 32
     identifier_pattern = Regexp ("^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
     syntax             = " ".join \
         ( ( "A name must start with a letter or underscore and continue with"
@@ -570,7 +572,20 @@ class A_Text (A_String) :
     """
     typ         = "Text"
 
+    max_length  = None
+
 # end class A_Text
+
+class A_Time (_A_Date_) :
+    """Models a time-valued attribute of an object."""
+
+    typ            = "Time"
+    input_formats  = ("%H:%M:%S", "%H:%M")
+    _tuple_len     = 6
+    _tuple_off     = 3
+    _DT_Type       = datetime.time
+
+# end class A_Time
 
 __doc__ = """
 Class `MOM.Attr.A_Attr_Type`

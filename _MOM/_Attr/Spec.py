@@ -34,6 +34,8 @@
 #     8-Oct-2009 (CT) `sort` for `user_attr` added
 #    13-Oct-2009 (CT) Don't append primary attributes to `_user_attr`
 #    14-Oct-2009 (CT) `epk_sig` added
+#    22-Oct-2009 (CT) `_effective_prop_kind_mixins` redefined to add
+#                     `_Raw_Value_Mixin_` if necessary
 #    ««revision-date»»···
 #--
 
@@ -90,6 +92,14 @@ class Spec (MOM.Prop.Spec) :
             self._setup_alias (e_type, name, prop.name)
         return prop
     # end def _add_prop
+
+    def _effective_prop_kind_mixins (self, name, kind, prop_type) :
+        result = self.__super._effective_prop_kind_mixins \
+            (name, kind, prop_type)
+        if prop_type.needs_raw_value :
+            result = (MOM.Attr._Raw_Value_Mixin_, ) + result
+        return result
+    # end def _effective_prop_kind_mixins
 
     def _setup_alias (self, e_type, alias_name, real_name) :
         setattr (e_type, alias_name, TFL.Meta.Alias_Property (real_name))

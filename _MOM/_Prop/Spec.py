@@ -33,6 +33,8 @@
 #    13-Oct-2009 (CT) Bug fixes
 #    21-Oct-2009 (CT) `_setup_attr_checker_1` factored and used to add a
 #                     checker for primary attributes not being empty
+#    22-Oct-2009 (CT) `_effective_prop_kind_mixins` factored
+#    22-Oct-2009 (CT) Use `kind_name`
 #    ««revision-date»»···
 #--
 
@@ -91,20 +93,25 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     # end def _create_properties
 
     def _effective_prop_kind (self, name, prop_type) :
-        kind = result = getattr (prop_type, "kind",        None)
-        kind_mixins   = getattr (prop_type, "Kind_Mixins", [])
+        kind = result = getattr (prop_type, "kind", None)
+        kind_mixins   = self._effective_prop_kind_mixins \
+            (name, kind, prop_type)
         if kind is not None and kind_mixins :
             kinds = tuple (kind_mixins) + (kind, )
             try :
                 result = self._mixed_kinds [kinds]
             except KeyError :
                 result = self._mixed_kinds [kinds] = kind.__class__ \
-                    ( "__".join (k.__name__ for k in reversed (kinds))
+                    ( "__".join (k.kind_name for k in reversed (kinds))
                     , kinds
                     , dict (__module__ = kind.__module__)
                     )
         return result
     # end def _effective_prop_kind
+
+    def _effective_prop_kind_mixins (self, name, kind, prop_type) :
+        return tuple (getattr (prop_type, "Kind_Mixins", ()))
+    # end def _effective_prop_kind_mixins
 
     def _kind_list_name (self, kind) :
         return kind
