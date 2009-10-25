@@ -26,7 +26,8 @@
 #    SQAlchemy specific session
 #
 # Revision Dates
-#     2009-Oct-19 (MG) Creation
+#    19-Oct-2009 (MG) Creation
+#    24-Oct-2009 (MG) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -34,7 +35,7 @@ from   _MOM       import MOM
 import _MOM._DBW
 import _MOM._DBW.Session
 import _MOM._DBW._SA
-import _MOM._DBW._SA.Type
+import _MOM._DBW._SA.Attr_Type
 import _MOM._DBW._SA.Attr_Kind
 
 from sqlalchemy import orm
@@ -48,29 +49,105 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     metadata = schema.MetaData () ### XXX
 
     def Mapper (cls, e_type) :
-        columns   = cls._setup_columns           (e_type)
-        prop_dict = cls._setup_mapper_properties (e_type)
-        sa_table  = schema.Table \
-            (e_type.type_name, cls.metadata, * columns)
-        orm.mapper (e_type, sa_table, properties = prop_dict)
+        if e_type.relevant_root :
+            bases      = \
+                [  b for b in e_type.__bases__ 
+                if getattr (b, "_Attributes", None)
+                ]
+            if len (bases) > 1 :
+                raise NotImplementedError \
+                    ("Multiple inheritance currently not supported")
+            attr_dict = cls._attr_dict               (e_type)
+            columns   = cls._setup_columns           (e_type, attr_dict, bases)
+            sa_table  = schema.Table \
+                ( e_type.type_name.replace (".", "__")
+                , cls.metadata
+                , * columns
+                )
+            prop_dict  = cls._setup_mapper_properties \
+                (e_type, attr_dict, sa_table, bases)
+            inhe_dict  = cls._setup_inheritance       (e_type, sa_table, bases)
+            orm.mapper (e_type, sa_table, properties = prop_dict, ** inhe_dict)
+            e_type._sa_table = sa_table
         return e_type
     # end def Mapper
 
-    def _setup_columns (cls, e_type) :
-        ### first, all object ge a surrogat primary key
-        result = [schema.Column ("id", types.Integer, primary_key = True)]
-        for name, attr_kind in e_type._Attributes._attr_dict.iteritems () :
+    def _attr_dict (self, e_type) :
+        result     = {}
+        attr_dict  = e_type._Attributes._attr_dict
+        if e_type is e_type.relevant_root :
+            for name, attr_kind in attr_dict.iteritems () :
+                if attr_kind.save_to_db :
+                    result [name] = attr_kind
+        else :            
+            root_attrs = e_type.relevant_root._Attributes._attr_dict
+            for name, attr_kind in attr_dict.iteritems () :
+                if attr_kind.save_to_db and name not in root_attrs :
+                    result [name] = attr_kind
+        return result
+    # end def _attr_dict
+    
+    def _setup_columns (cls, e_type, attr_dict, bases) :
+        result = []
+        if e_type is not e_type.relevant_root :
+            base    = bases [0]
+            pk_name = "%s_id" % (base._sa_table.name)
+            result.append \
+                ( schema.Column
+                    ( pk_name, types.Integer
+                    , schema.ForeignKey (base._sa_table.c [base._sa_pk_name])
+                    , primary_key = True
+                    )
+                )
+        else :
+            pk_name = "id"
+            result.append \
+                ( schema.Column 
+                    (pk_name, types.Integer, primary_key = True)
+                )
+        ### we add the inheritance_type in any case to make EMS.SA easier
+        result.append \
+            ( schema.Column 
+                ("inheritance_type", types.String (length = 30))
+            )
+        e_type._sa_pk_name = pk_name
+        for name, attr_kind in attr_dict.iteritems () :
             result.append \
                 ( attr_kind.attr._sa_column
                     (attr_kind, ** attr_kind._sa_column_attrs ())
                 )
+            if attr_kind.needs_raw_value :
+                result.append \
+                    ( schema.Column
+                        ( attr_kind.attr.raw_name
+                        , types.String (length = 60)
+                        )
+                    )
         return result
     # end def _setup_columns
 
-    def _setup_mapper_properties (cls, e_type) :
+    def _setup_inheritance (cls, e_type, sa_table, bases) :
         result = {}
-        for name, attr_kind in e_type._Attributes._attr_dict.iteritems () :
-            result [name] = orm.synonym (attr_kind.ckd_name, map_column = True)
+        e_type._sa_inheritance = True
+        if e_type is not e_type.relevant_root :
+            result ["inherits"]             = bases [0]
+            result ["polymorphic_identity"] = e_type.type_name
+        elif e_type.children :
+            result ["polymorphic_on"]       = sa_table.c.inheritance_type
+            result ["polymorphic_identity"] = e_type.type_name
+        else :
+            e_type._sa_inheritance          = False
+        return result
+    # end def _setup_inheritance
+    
+    def _setup_mapper_properties (cls, e_type, attr_dict, sa_table, bases) :
+        result = {}
+        for name, attr_kind in attr_dict.iteritems () :
+            ckd           = attr_kind.ckd_name
+            ### we need to do this in 2 steps because otherways we hit a
+            ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
+            result [name] = orm.synonym (ckd, map_column = False)
+            result [ckd]  = sa_table.c [name]
         return result
     # end def _setup_mapper_properties
 
@@ -85,7 +162,7 @@ class _SA_Session_ (MOM.DBW.Session) :
     type_name     = "SA"
 
     ### XXX
-    engine        = engine.create_engine ('sqlite:///:memory:', echo = False)
+    engine        = engine.create_engine ('sqlite:///test.sqlite', echo = False)
     SA_Session    = orm.sessionmaker    (bind = engine)
 
     def __init__ (self, scope) :

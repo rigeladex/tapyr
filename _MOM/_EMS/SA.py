@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Oct-2009 (MG) Creation
+#    25-Oct-2009 (MG) Updated to support inheritance
 #    ««revision-date»»···
 #--
 
@@ -68,9 +69,9 @@ class Manager (TFL.Meta.Object) :
             ses.add   (entity)
             ses.flush ()
         except SA_Exception.IntegrityError, exc :
-            print exc
+            ses.rollback ()
             raise MOM.Error.Name_Clash \
-                (entity, self.instance (entity.Essence, entity.epk))
+                (entity, self.instance (entity.__class__, entity.epk))
         ### XXX how to handle Roles ???
         ### if entity.Roles :
         ###     r_map = self._r_map
@@ -79,10 +80,12 @@ class Manager (TFL.Meta.Object) :
     # end def add
 
     def exists (self, Type, epk) :
-        Type     = getattr (Type, "_etype", Type)
-        ses      = self.session
-        epk_dict = dict (zip (Type.epk_sig, epk))
-        return [e.type_name for e in ses.query (Type).filter_by (** epk_dict)]
+        Type      = getattr (Type, "_etype", Type)
+        ses       = self.session
+        filter_by = dict (zip (Type.epk_sig, epk))
+        #if Type._sa_inheritance :
+        #    filter_by ["inheritance_type"] = Type.type_name
+        return [e.type_name for e in ses.query (Type).filter_by (** filter_by)]
     # end def exists
 
     def instance (self, Type, epk) :
@@ -116,18 +119,23 @@ class Manager (TFL.Meta.Object) :
         self.add    (entity)
     # end def rename
 
-    ### XXX May change depending on how inheritance is implemented
     def s_count (self, Type) :
         root = Type.relevant_root
         if root :
-            return self.session.query (root).count ()
+            query = self.session.query (root)
+            if Type._sa_inheritance :
+                query = query.filter_by (inheritance_type = Type.type_name)
+            return query.count ()
         return 0
     # end def s_count
 
     def s_extension (self, Type, sort_key = None) :
         root   = Type.relevant_root
         if root :
-            return self.session.query (root)
+            query = self.session.query (root)
+            if Type._sa_inheritance :
+                query = query.filter_by (inheritance_type = Type.type_name)
+            return query
         return ()
     # end def s_extension
 
@@ -137,27 +145,24 @@ class Manager (TFL.Meta.Object) :
     # end def s_role
 
     def t_count (self, Type, seen = None) :
-        if seen is None :
-            seen = set ()
-        result = self.s_count (Type)
-        for n, c in Type.children.iteritems () :
-            if n not in seen :
-                seen.add (n)
-                result += self.t_count (c, seen)
-        return result
+        root = Type.relevant_root
+        if root :
+            return self.session.query (Type).count ()
+        return 0
     # end def t_count
 
     def t_extension (self, Type , sort_key = None) :
         root   = Type.relevant_root
-        tables = self._tables
+        ses    = self.session
         if root :
-            result = tables [root.type_name].itervalues ()
-        else :
-            result = itertools.chain \
-                (* (tables [t].itervalues () for t in Type.relevant_roots))
-        return sorted (result, key = sort_key or Type.sorted_by)
+            ### XXX sort_key
+            return ses.query (getattr (Type, "_type", Type))
+        ### XXX sort_key
+        return itertools.chain \
+            (ses.query (rr) for rr in Type.relevant_roots)
     # end def t_extension
 
+    ### XXX don't know how roles will be handled
     def t_role (self, role, obj) :
         r_map = self._r_map
         i     = role.role_index
@@ -170,6 +175,7 @@ class Manager (TFL.Meta.Object) :
     # end def t_role
 
     def __iter__ (self) :
+        ### XXX how do I know which objects we have?
         return itertools.chain \
             (* (t.itervalues () for t in self._tables.itervalues ()))
     # end def __iter__

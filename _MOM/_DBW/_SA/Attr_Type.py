@@ -43,7 +43,7 @@ def _sa_bool (self, kind, ** kw) :
 # end def _sa_bool
 
 def _sa_string (self, kind, ** kw) :
-    return schema.Column (self.name, types.String, ** kw)
+    return schema.Column (self.name, types.String (self.max_length), ** kw)
 # end def _sa_string
 
 def _sa_int (self, kind, ** kw) :

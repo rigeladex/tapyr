@@ -47,6 +47,8 @@
 #    21-Oct-2009 (CT) `Class_Uses_Default_Mixin` removed
 #    21-Oct-2009 (CT) `_finish__init__` factored
 #    21-Oct-2009 (CT) Predicate `primary_key_defined` removed
+#    25-Oct-2009 (MG) `__getattr__` Use %s instead of %r to avoid recursive
+#                     calls of `__getattr__`
 #    ««revision-date»»···
 #--
 
@@ -286,7 +288,7 @@ class Entity (TFL.Meta.Object) :
 
     def __getattr__ (self, name) :
         ### just to ease up-chaining in descendents
-        raise AttributeError ("%r <%r>" % (name, self))
+        raise AttributeError ("%r <%s>" % (name, self.type_name))
     # end def __getattr__
 
     def __repr__ (self) :

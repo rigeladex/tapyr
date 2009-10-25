@@ -37,7 +37,7 @@ import _MOM._EMS.SA
 class Beaver (Mouse) :
     """Model a beaver of the Better Mouse Trap application."""
 
-    class _Attributes (MOM.Object._Attributes) :
+    class _Attributes (Mouse._Attributes) :
 
         class region (A_String) :
             """In wich are lives the beaver"""
@@ -50,6 +50,20 @@ class Beaver (Mouse) :
 
 # end class Beaver
 
+class Killer  (Beaver) :
+
+    class _Attributes (Beaver._Attributes) :
+
+        class dummy (A_String) :
+            
+            kind       = Attr.Optional
+            max_length = 2
+        # end class dummy
+
+    # end class _Attributes
+
+# end class Killer
+
 EMS   = MOM.EMS.SA.Manager
 DBW   = MOM.DBW.SA.Session
 apt   = MOM.App_Type                   ("BMT", MOM)
@@ -59,21 +73,38 @@ apt_c.setup_etypes                     ()
 scope = MOM.Scope                      (apt_c)
 MOM.DBW.SA.Session.Mapper              (scope.MOM.Mouse._etype)
 MOM.DBW.SA.Session.Mapper              (scope.MOM.Beaver._etype)
+MOM.DBW.SA.Session.Mapper              (scope.MOM.Killer._etype)
 MOM.DBW.SA.Session.Mapper              (scope.MOM.Rat._etype)
 MOM.DBW.SA.Session.Mapper              (scope.MOM.Trap._etype)
 
 session    = scope.dbw.session
-session.bind.echo = True
+#session.bind.echo = True 
 MOM.DBW.SA.Session.metadata.create_all (MOM.DBW.SA.Session.engine)
 session.bind.echo = False
 dMOM       = scope.MOM
-#session.bind.echo = True
-m          = dMOM.Mouse ("Mighty Mouse")
-print dMOM.Mouse.s_count
-print dMOM.Mouse.exists      (m.name)
-print dMOM.Mouse.instance    (m.name)
-print dMOM.Mouse.instance    ("<Baz>")
-print list (dMOM.Mouse.s_extension ())
-print dMOM.Rodent.t_count
-
+session.bind.echo = True * 0
+if 0 :
+    m          = dMOM.Mouse ("Mighty_Mouse")
+    print dMOM.Mouse.s_count
+    print dMOM.Mouse.exists      (m.name)
+    print dMOM.Mouse.instance    (m.name)
+    print dMOM.Mouse.instance    ("<Baz>")
+    print list (dMOM.Mouse.s_extension ())
+    print dMOM.Rodent.t_count
+#import pdb;pdb.set_trace ()
+dMOM.Mouse  ("Mighty_Mouse")
+dMOM.Beaver ("Beaver")
+dMOM.Mouse  ("Magic_Mouse")
+dMOM.Beaver ("Beaver_2")
+dMOM.Killer ("Killer")
+session.commit ()
+for et in dMOM.Mouse, dMOM.Beaver, dMOM.Killer :
+    print et.s_count, et.s_extension ().all ()
+    print et.t_count, et.t_extension ().all ()
+print dMOM.Mouse.instance ("Mighty_Mouse")
+print dMOM.Mouse.instance ("<baz>")
+try :
+    dMOM.Mouse  ("Mighty_Mouse")
+except MOM.Error.Name_Clash, exc :
+    print exc
 ### __END__ __Test
