@@ -28,6 +28,8 @@
 # Revision Dates
 #    19-Oct-2009 (MG) Creation
 #    24-Oct-2009 (MG) Creation continued
+#    27-Oct-2009 (MG) Create `UniqueConstraint` for essential primary key
+#                     columns
 #    ««revision-date»»···
 #--
 
@@ -51,23 +53,27 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     def Mapper (cls, e_type) :
         if e_type.relevant_root :
             bases      = \
-                [  b for b in e_type.__bases__ 
+                [  b for b in e_type.__bases__
                 if getattr (b, "_Attributes", None)
                 ]
             if len (bases) > 1 :
                 raise NotImplementedError \
                     ("Multiple inheritance currently not supported")
-            attr_dict = cls._attr_dict               (e_type)
-            columns   = cls._setup_columns           (e_type, attr_dict, bases)
+            col_props = dict ()
+            unique    = []
+            attr_dict = cls._attr_dict     (e_type)
+            columns   = cls._setup_columns (e_type, attr_dict, bases, unique)
+            if unique :
+                columns.append (schema.UniqueConstraint (* unique))
             sa_table  = schema.Table \
                 ( e_type.type_name.replace (".", "__")
                 , cls.metadata
                 , * columns
                 )
-            prop_dict  = cls._setup_mapper_properties \
+            col_props  ["properties"] = cls._setup_mapper_properties \
                 (e_type, attr_dict, sa_table, bases)
-            inhe_dict  = cls._setup_inheritance       (e_type, sa_table, bases)
-            orm.mapper (e_type, sa_table, properties = prop_dict, ** inhe_dict)
+            cls._setup_inheritance (e_type, sa_table, bases, col_props)
+            orm.mapper             (e_type, sa_table, ** col_props)
             e_type._sa_table = sa_table
         return e_type
     # end def Mapper
@@ -79,15 +85,15 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
             for name, attr_kind in attr_dict.iteritems () :
                 if attr_kind.save_to_db :
                     result [name] = attr_kind
-        else :            
+        else :
             root_attrs = e_type.relevant_root._Attributes._attr_dict
             for name, attr_kind in attr_dict.iteritems () :
                 if attr_kind.save_to_db and name not in root_attrs :
                     result [name] = attr_kind
         return result
     # end def _attr_dict
-    
-    def _setup_columns (cls, e_type, attr_dict, bases) :
+
+    def _setup_columns (cls, e_type, attr_dict, bases, unique) :
         result = []
         if e_type is not e_type.relevant_root :
             base    = bases [0]
@@ -102,16 +108,18 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
         else :
             pk_name = "id"
             result.append \
-                ( schema.Column 
+                ( schema.Column
                     (pk_name, types.Integer, primary_key = True)
                 )
         ### we add the inheritance_type in any case to make EMS.SA easier
         result.append \
-            ( schema.Column 
+            ( schema.Column
                 ("inheritance_type", types.String (length = 30))
             )
         e_type._sa_pk_name = pk_name
         for name, attr_kind in attr_dict.iteritems () :
+            if attr_kind.is_primary :
+                unique.append (name)
             result.append \
                 ( attr_kind.attr._sa_column
                     (attr_kind, ** attr_kind._sa_column_attrs ())
@@ -126,20 +134,19 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
         return result
     # end def _setup_columns
 
-    def _setup_inheritance (cls, e_type, sa_table, bases) :
-        result = {}
+    def _setup_inheritance (cls, e_type, sa_table, bases, col_prop) :
         e_type._sa_inheritance = True
         if e_type is not e_type.relevant_root :
-            result ["inherits"]             = bases [0]
-            result ["polymorphic_identity"] = e_type.type_name
+            col_prop ["inherits"]             = bases [0]
+            col_prop ["polymorphic_identity"] = e_type.type_name
         elif e_type.children :
-            result ["polymorphic_on"]       = sa_table.c.inheritance_type
-            result ["polymorphic_identity"] = e_type.type_name
+            col_prop ["polymorphic_on"]       = sa_table.c.inheritance_type
+            col_prop ["polymorphic_identity"] = e_type.type_name
         else :
-            e_type._sa_inheritance          = False
-        return result
+            e_type._sa_inheritance            = False
+        return col_prop
     # end def _setup_inheritance
-    
+
     def _setup_mapper_properties (cls, e_type, attr_dict, sa_table, bases) :
         result = {}
         for name, attr_kind in attr_dict.iteritems () :

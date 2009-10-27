@@ -55,7 +55,7 @@ class Killer  (Beaver) :
     class _Attributes (Beaver._Attributes) :
 
         class dummy (A_String) :
-            
+
             kind       = Attr.Optional
             max_length = 2
         # end class dummy
@@ -78,7 +78,7 @@ MOM.DBW.SA.Session.Mapper              (scope.MOM.Rat._etype)
 MOM.DBW.SA.Session.Mapper              (scope.MOM.Trap._etype)
 
 session    = scope.dbw.session
-#session.bind.echo = True 
+#session.bind.echo = True
 MOM.DBW.SA.Session.metadata.create_all (MOM.DBW.SA.Session.engine)
 session.bind.echo = False
 dMOM       = scope.MOM
@@ -102,9 +102,10 @@ for et in dMOM.Mouse, dMOM.Beaver, dMOM.Killer :
     print et.s_count, et.s_extension ().all ()
     print et.t_count, et.t_extension ().all ()
 print dMOM.Mouse.instance ("Mighty_Mouse")
-print dMOM.Mouse.instance ("<baz>")
+print dMOM.Mouse.instance ("<baz>"), " ===None"
 try :
     dMOM.Mouse  ("Mighty_Mouse")
+    print "No name clash"
 except MOM.Error.Name_Clash, exc :
     print exc
 ### __END__ __Test

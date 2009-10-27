@@ -28,6 +28,8 @@
 #
 # Revision Dates
 #    20-Oct-2009 (MG) Creation
+#    27-Oct-2009 (MG) Removed `unique` constraint because we actually need a
+#                     unique-together which is not possible at a column level
 #    ««revision-date»»···
 #--
 
@@ -39,24 +41,12 @@ def _sa_kind (self) :
 # end def _sa_kind
 
 def _sa_primary (self) :
-    ### __super does not work, don't know whay
-    # result = self.__super._sa_column_attrs ()
-    result = _sa_kind (self)
-    #result ["nullable"] = False
-    result ["unique"]   = True
+    result              = _sa_kind (self)
+    result ["nullable"] = False
     return result
 # end def _sa_primary
 
-def _sa_required (self) :
-    ### __super does not work, don't know whay
-    # result = self.__super._sa_column_attrs ()
-    result = _sa_kind (self)
-    result ["nullable"] = False
-    return result
-# end def _sa_required
-
-MOM.Attr.Kind.    _sa_column_attrs = _sa_kind
-MOM.Attr.Primary. _sa_column_attrs = _sa_primary
-#MOM.Attr.Required._sa_column_attrs = _sa_required
+MOM.Attr.Kind.   _sa_column_attrs = _sa_kind
+MOM.Attr.Primary._sa_column_attrs = _sa_primary
 
 ### __END__ MOM.DBW.SA.Attr_Kind
