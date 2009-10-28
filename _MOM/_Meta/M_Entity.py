@@ -35,6 +35,7 @@
 #    19-Oct-2009 (CT) Creation continued.....
 #    20-Oct-2009 (CT) Creation continued......
 #    22-Oct-2009 (CT) Creation continued.......
+#    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,7 @@ from   _TFL.object_globals import class_globals
 
 import _MOM._Meta
 import _MOM.Scope
-import _MOM.Scope_Proxy
+import _MOM.E_Type_Manager
 
 import sys
 
@@ -279,7 +280,7 @@ class M_E_Type (M_E_Mixin) :
     """Meta class for for essence of MOM.Entity."""
 
     app_type    = None
-    Scope_Proxy = MOM.Scope_Proxy
+    Manager     = MOM.E_Type_Manager
 
     _Class_Kind = "Essence"
 

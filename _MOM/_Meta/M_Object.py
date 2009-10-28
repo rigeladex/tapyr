@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Sep-2009 (CT) Creation (factored from `TOM.Meta.M_Object`)
 #    18-Oct-2009 (CT) `_m_new_e_type_dict` redefined (add `Roles`)
+#    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #    ««revision-date»»···
 #--
 
@@ -35,7 +36,7 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _MOM._Meta.M_Entity
-import _MOM.Scope_Proxy
+import _MOM.E_Type_Manager
 
 class M_Object (MOM.Meta.M_Id_Entity) :
     """Meta class of MOM.Object."""
@@ -55,7 +56,7 @@ class M_Object (MOM.Meta.M_Id_Entity) :
 class M_E_Type_Object (MOM.Meta.M_E_Type_Id) :
     """Meta class for essence of MOM.Object."""
 
-    Scope_Proxy = MOM.Scope_Proxy_O
+    Manager = MOM.E_Type_Manager_O
 
 # end class M_E_Type_Object
 

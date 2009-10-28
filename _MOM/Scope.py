@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    16-Oct-2009 (CT) Creation (factored from `TOM.Scope`)
+#    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
+#    27-Oct-2009 (CT) `_etm` and `_get_etm` added and used in `__getattr__`
+#                     and `__getitem__`
 #    ««revision-date»»···
 #--
 
@@ -39,6 +42,7 @@ import _MOM._Pred.Err_and_Warn_List
 import _MOM._SCM.Tracker
 
 from   _TFL.Gauge_Logger      import Gauge_Logger
+from   _TFL.predicate         import split_hst
 
 import _TFL.Accessor
 import _TFL.Context
@@ -112,8 +116,7 @@ class Scope (TFL.Meta.Object) :
                 result = pkg_ns [qname]
             elif qname in etypes :
                 etype  = etypes [qname]
-                result = etype.Scope_Proxy (etype, scope)
-            if result is not None :
+                result = scope._etm [qname] = etype.Manager (etype, scope)
                 setattr (self, name, result)
             else :
                 result = getattr (self._pns, name)
@@ -129,6 +132,7 @@ class Scope (TFL.Meta.Object) :
             self.app_type            = app_type
             self.bname               = name
             self.guid                = self._new_guid (guid)
+            self._etm                = {}
             self._pkg_ns             = {}
             self._roots              = {}
             self.root                = None
@@ -379,6 +383,21 @@ class Scope (TFL.Meta.Object) :
         return MOM.Pred.Err_and_Warn_List (err_result, wrn_result)
     # end def _check_inv
 
+    def _get_etm (self, name) :
+        try :
+            result = self._etm [name]
+        except KeyError :
+            pn, _, rest = split_hst (name, ".")
+            try :
+                result = self._pkg_ns [pn]
+            except KeyError :
+                raise AttributeError (name)
+            for k in rest.split (".") :
+                result = getattr (result, k)
+            self._etm [name] = result
+        return result
+    # end def _get_etm
+
     def _new_guid (self, guid) :
         if not guid :
             guid = uuid.uuid4 ().bytes
@@ -422,24 +441,28 @@ class Scope (TFL.Meta.Object) :
     # end def _setup_root
 
     def __getattr__ (self, name) :
-        for dict in self._roots, self._pkg_ns :
-            try :
-                result = dict [name]
-                setattr  (self, name, result)
-                return result
-            except KeyError :
-                pass
-        return getattr (self.app_type, name)
+        if "." in name :
+            if name in self._etm :
+                return self._etm [name]
+            else :
+                return self._get_etm (name)
+        else :
+            for dict in self._roots, self._pkg_ns :
+                try :
+                    result = dict [name]
+                except KeyError :
+                    pass
+                else :
+                    setattr (self, name, result)
+                    return result
+            return getattr (self.app_type, name)
     # end def __getattr__
 
     def __getitem__ (self, name) :
-        result = self._pkg_ns
-        for k in name.split (".") :
-            try :
-                result = getattr (result, k)
-            except AttributeError :
-                raise KeyError (name)
-        return result
+        try :
+            return self._get_etm (name)
+        except AttributeError :
+            raise KeyError (name)
     # end def __getitem__
 
     def __iter__ (self) :

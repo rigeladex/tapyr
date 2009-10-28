@@ -37,6 +37,7 @@
 #    22-Oct-2009 (CT) `max_length` added to `A_String` and its descendents
 #    22-Oct-2009 (CT) Signatures of `_from_string_prepare` and
 #                     `_from_string_eval` fixed
+#    27-Oct-2009 (CT) `_A_Object_` changed to use `epk` instead of `name`
 #    ««revision-date»»···
 #--
 
@@ -337,17 +338,17 @@ class _A_Object_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return value.name
+            return value.epk
         return ""
     # end def as_string
 
     def as_code (self, value) :
-        return self.code_format % (value.name, )
+        return self.code_format % (value.epk, )
     # end def as_code
 
     def as_pickle (self, value) :
         if value is not None :
-            return value.name
+            return value.epk
     # end def as_pickle
 
     def eligible_objects (self, obj = None) :
@@ -359,7 +360,7 @@ class _A_Object_ (A_Attr_Type) :
     # end def eligible_objects
 
     def eligible_raw_values (self, obj = None) :
-        return sorted (o.name for o in self.eligible_objects (obj))
+        return sorted (o.epk for o in self.eligible_objects (obj))
     # end def eligible_raw_values
 
     def from_pickle (self, p, obj = None, glob = None, locl = None) :
@@ -392,8 +393,9 @@ class _A_Object_ (A_Attr_Type) :
         else :
             t = cooker (s, glob or {}, locl or {})
         scope = self._get_scope (obj)
-        if scope.exists (t, Class = self.Class) :
-            result = scope.instance (t)
+        et    = getattr (scope, self.Class.type_name)
+        if et.exists (* t) :
+            result = et.instance (* t)
             if self._accept_object (obj, result) :
                 return result
             else :
@@ -586,6 +588,12 @@ class A_Time (_A_Date_) :
     _DT_Type       = datetime.time
 
 # end class A_Time
+
+class A_Link_Role (A_Attr_Type) :
+    """Models an attribute describing a link-role."""
+
+# end class A_Link_Role
+
 
 __doc__ = """
 Class `MOM.Attr.A_Attr_Type`

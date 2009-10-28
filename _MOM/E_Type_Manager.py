@@ -20,13 +20,14 @@
 #
 #++
 # Name
-#    MOM.Scope_Proxy
+#    MOM.E_Type_Manager
 #
 # Purpose
-#    Scope-specific proxy for essential object- and link-types
+#    Scope-specific manager for essential object- and link-types
 #
 # Revision Dates
 #    16-Oct-2009 (CT) Creation
+#    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #    ««revision-date»»···
 #--
 
@@ -35,8 +36,8 @@ from   _TFL import TFL
 
 import _TFL._Meta.Object
 
-class Scope_Proxy (TFL.Meta.Object) :
-    """Scope-specific proxy for essential object- and link-types."""
+class E_Type_Manager (TFL.Meta.Object) :
+    """Scope-specific manager for essential object- and link-types."""
 
     def __init__ (self, etype, scope) :
         self._etype     = etype
@@ -77,18 +78,18 @@ class Scope_Proxy (TFL.Meta.Object) :
         return getattr (self._etype, name)
     # end def __getattr__
 
-# end class Scope_Proxy
+# end class E_Type_Manager
 
-class Scope_Proxy_O (Scope_Proxy) :
-    """Scope-specific proxy for essential object-types."""
+class E_Type_Manager_O (E_Type_Manager) :
+    """Scope-specific manager for essential object-types."""
 
-# end class Scope_Proxy_O
+# end class E_Type_Manager_O
 
-class Scope_Proxy_L (Scope_Proxy) :
-    """Scope-specific proxy for essential link-types."""
+class E_Type_Manager_L (E_Type_Manager) :
+    """Scope-specific manager for essential link-types."""
 
-# end class Scope_Proxy_L
+# end class E_Type_Manager_L
 
 if __name__ != "__main__" :
     MOM._Export ("*")
-### __END__ MOM.Scope_Proxy
+### __END__ MOM.E_Type_Manager
