@@ -34,7 +34,7 @@ from   _TFL         import TFL
 
 def _ (text):
     """Mark `text` for translation."""
-    return text
+    return unicode (text)
 # end def _
 
 def _T (text) :

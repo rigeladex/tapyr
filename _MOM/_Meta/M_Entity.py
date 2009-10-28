@@ -36,6 +36,7 @@
 #    20-Oct-2009 (CT) Creation continued......
 #    22-Oct-2009 (CT) Creation continued.......
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
+#    28-Oct-2009 (CT) I18N
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,8 @@ import _TFL._Meta.M_Class
 import _TFL.Decorator
 import _TFL.Sorted_By
 
-from   _TFL.object_globals import class_globals
+from   _TFL.object_globals   import class_globals
+from   _TFL.I18N             import _, _T, _Tn
 
 import _MOM._Meta
 import _MOM.Scope
@@ -66,7 +68,7 @@ class M_E_Mixin (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         raise TypeError \
-            ( "Can't instantiate %s %r, use <scope>.%s %r instead"
+            ( _T ("Can't instantiate %s %r, use <scope>.%s %r instead")
             % (cls.type_name, args, cls.type_name, args)
             )
     # end def __call__

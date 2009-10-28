@@ -43,6 +43,7 @@
 #    22-Oct-2009 (CT) Use `M_Attr_Kind` as meta
 #    22-Oct-2009 (CT) s/default/raw_default/ where necessary
 #    22-Oct-2009 (CT) `_Raw_Value_Mixin_` factored
+#    28-Oct-2009 (CT) I18N
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,8 @@ import _TFL._Meta.Property
 import _MOM._Attr
 import _MOM._Meta.M_Attr_Kind
 import _MOM._Prop.Kind
+
+from   _TFL.I18N             import _, _T, _Tn
 
 class Kind (MOM.Prop.Kind) :
     """Root class of attribute kinds to be used as properties for essential
@@ -147,8 +150,9 @@ class Kind (MOM.Prop.Kind) :
 
     def sync_cooked (self, obj, raw_value) :
         if __debug__ :
-            print ( "Trying to sync pending attribute %s of %s to `%s`"
-                  ) % (self.name, obj.name, raw_value)
+            print _T \
+                ( "Trying to sync pending attribute %s of %s to `%s`"
+                ) % (self.name, obj.name, raw_value)
         self.set_raw (obj, raw_value)
     # end def sync_cooked
 
@@ -161,7 +165,7 @@ class Kind (MOM.Prop.Kind) :
                 d = attr_type.as_string (default)
                 if d == "" and default is not None :
                     d = "%s" % default
-                raise ValueError, \
+                raise ValueError \
                     ( """>>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
                     % (attr_type, self.name, default, d)
                     )
@@ -349,9 +353,11 @@ class Primary (_User_) :
 
     def __set__ (self, obj, value) :
         raise AttributeError \
-            ( "Primary attribute `%s.%s` cannot be assigned."
-              "\n"
-              "Use `set` or `set_raw` to change it."
+            ( "\n".join
+                ( ( _T ( "Primary attribute `%s.%s` cannot be assigned.")
+                  , _T ("Use `set` or `set_raw` to change it.")
+                  )
+                )
             % (obj.type_name, self.name)
             )
     # end def __set__
@@ -362,7 +368,7 @@ class Primary (_User_) :
 
     def __delete__ (self, obj, value) :
         raise AttributeError \
-            ( "Primary attribute `%s.%s` cannot be deleted"
+            ( _T ("Primary attribute `%s.%s` cannot be deleted")
             % (obj.type_name, self.name)
             )
     # end def __delete__
@@ -401,7 +407,7 @@ class Const (_Cached_) :
 
     def __set__ (self, obj, value) :
         raise AttributeError \
-            ( "Constant attribute `%s.%s` cannot be changed"
+            ( _T ("Constant attribute `%s.%s` cannot be changed")
             % (obj.type_name, self.name)
             )
     # end def __set__

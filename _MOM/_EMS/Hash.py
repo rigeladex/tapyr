@@ -45,6 +45,8 @@ import _TFL._Meta.Object
 import _TFL.Decorator
 import _TFL.defaultdict
 
+from   _TFL.I18N             import _, _T, _Tn
+
 import itertools
 
 class Manager (TFL.Meta.Object) :
@@ -98,9 +100,11 @@ class Manager (TFL.Meta.Object) :
         if root :
             return self._tables [root.type_name].get (hpk)
         raise TypeError \
-            ( "Cannot query `instance` of non-root type `%s`."
-              "\n"
-              "Use one of the types %s instead."
+            ( "\n".join
+                ( ( _T ("Cannot query `instance` of non-root type `%s`.")
+                  , _T ("Use one of the types %s instead.")
+                  )
+                )
             % (Type.type_name, ", ".join (sorted (Type.relevant_roots)))
             )
     # end def instance

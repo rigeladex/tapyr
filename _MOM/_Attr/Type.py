@@ -38,6 +38,7 @@
 #    22-Oct-2009 (CT) Signatures of `_from_string_prepare` and
 #                     `_from_string_eval` fixed
 #    27-Oct-2009 (CT) `_A_Object_` changed to use `epk` instead of `name`
+#    28-Oct-2009 (CT) I18N
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,7 @@ from   _TFL                  import TFL
 import _MOM._Attr.Kind
 import _MOM._Meta.M_Attr_Type
 
+from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.Regexp           import *
 
 import _TFL._Meta.Property
@@ -163,7 +165,7 @@ class A_Attr_Type (object) :
         except UnicodeError :
             raise MOM.Error.Attribute_Syntax_Error \
                 ( obj, self, s
-                , "Non-ascii values are currently not supported"
+                , _T ("Non-ascii values are currently not supported")
                 )
         return s
     # end def _from_string_prepare
@@ -400,14 +402,14 @@ class _A_Object_ (A_Attr_Type) :
                 return result
             else :
                 raise ValueError \
-                    ( "object `%s` not eligible, specify one of: %s"
+                    ( _T ("object `%s` not eligible, specify one of: %s")
                     % ( " ".join ((self.Class, t)).strip ()
                       , self.eligible_raw_values (obj)
                       )
                     )
         else :
             raise ValueError, \
-                ( "No object `%s` in %s"
+                ( _T ("No object `%s` in %s")
                 % (" ".join ((self.Class, t)).strip (), scope.qname)
                 )
     # end def _to_cooked
@@ -452,7 +454,7 @@ class _A_Unit_ (A_Attr_Type) :
                 factor = self._unit_dict [unit]
             except KeyError :
                 raise ValueError \
-                      ( "Invalid unit %s, specify one of %s"
+                      ( _T ("Invalid unit %s, specify one of %s")
                       % (unit, self.eligible_raw_values ())
                       )
         return self.__super._from_string_eval (obj, s, glob, locl) * factor
@@ -553,10 +555,10 @@ class A_Name (A_String) :
 
     max_length         = 32
     identifier_pattern = Regexp ("^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
-    syntax             = " ".join \
-        ( ( "A name must start with a letter or underscore and continue with"
-          , "letters, digits, and underscores."
-        ) )
+    syntax             = _T \
+        ( "A name must start with a letter or underscore and continue with "
+          "letters, digits, and underscores."
+        )
 
     def check_syntax (self, obj, value) :
         if value :
