@@ -346,7 +346,7 @@ class M_E_Type (M_E_Mixin) :
     def children_iter (cls) :
         """Generates the etypes of all children of `cls`."""
         if cls.app_type :
-            etype = cls.app_type.etype
+            etype = cls.app_type.entity_type
         else :
             etype = lambda c : cls.children [c]
         for c in cls.children :

@@ -47,6 +47,12 @@ class _MOM_Link_ (MOM.Id_Entity) :
     __metaclass__         = MOM.Meta.M_Link
     _real_name            = "Link"
     entity_kind           = "link"
+    is_synthetic          = False
+
+    @property
+    def roles (self) :
+        return self.epk [:self.number_of_roles]
+    # end def roles
 
 Link = _MOM_Link_ # end class
 

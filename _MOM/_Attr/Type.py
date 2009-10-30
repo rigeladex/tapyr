@@ -39,6 +39,8 @@
 #                     `_from_string_eval` fixed
 #    27-Oct-2009 (CT) `_A_Object_` changed to use `epk` instead of `name`
 #    28-Oct-2009 (CT) I18N
+#    28-Oct-2009 (CT) `A_Link_Role` and descendents added
+#    29-Oct-2009 (CT) `_t_rank` added
 #    ««revision-date»»···
 #--
 
@@ -83,6 +85,7 @@ class A_Attr_Type (object) :
     typ               = None
 
     _symbolic_default = False
+    _t_rank           = 0
 
     def __init__ (self, kind) :
         self.kind      = kind
@@ -592,10 +595,88 @@ class A_Time (_A_Date_) :
 # end class A_Time
 
 class A_Link_Role (A_Attr_Type) :
-    """Models an attribute describing a link-role."""
+    """Attribute describing a link-role."""
+
+    __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
+
+    dfc_synthesizer   = None
+    kind              = MOM.Attr.Link_Role
+    max_links         = 0
+    role_name         = None
+    role_type         = None
+
+    _t_rank           = -100
 
 # end class A_Link_Role
 
+class A_Link_Role_AB (A_Link_Role) :
+    """Attribute describing a link-role of an attribute-based link."""
+
+    attr_name         = None
+    auto_cache        = True ### XXX do we need this ???
+
+# end class A_Link_Role_AB
+
+class A_Link_Role_EB (A_Link_Role) :
+    """Attribute describing a link-role of an entity-based link."""
+
+    auto_cache        = False
+
+# end class A_Link_Role_EB
+
+class _A_Link_Role_Left_ (A_Attr_Type) :
+    """Attribute modelling the left role of a link."""
+
+    generic_role_name = "left"
+    rank              = 0
+    role_abbreviation = "l"
+
+# end class _A_Link_Role_Left_
+
+class _A_Link_Role_L_Middle_ (A_Attr_Type) :
+    """Attribute modelling the left-middle role of a link."""
+
+    generic_role_name = "l_middle"
+    rank              = 1
+    role_abbreviation = "lm"
+
+# end class _A_Link_Role_L_Middle_
+
+class _A_Link_Role_Middle_ (A_Attr_Type) :
+    """Attribute modelling the middle role of a link."""
+
+    generic_role_name = "middle"
+    rank              = 2
+    role_abbreviation = "m"
+
+# end class _A_Link_Role_Middle_
+
+class _A_Link_Role_R_Middle_ (A_Attr_Type) :
+    """Attribute modelling the right-middle role of a link."""
+
+    generic_role_name = "r_middle"
+    rank              = 3
+    role_abbreviation = "rm"
+
+# end class _A_Link_Role_R_Middle_
+
+class _A_Link_Role_Right_ (A_Attr_Type) :
+    """Attribute modelling the right role of a link."""
+
+    generic_role_name = "right"
+    rank              = 4
+    role_abbreviation = "r"
+
+# end class _A_Link_Role_Right_
+
+class _A_Link_Role_Seq_No_ (A_Attr_Type) :
+    """Attribute modelling the sequence number role of an ordered link."""
+
+    generic_role_name = "seq_no"
+    rank              = 5
+    role_abbreviation = "n"
+
+# end class _A_Link_Role_Seq_No_
 
 __doc__ = """
 Class `MOM.Attr.A_Attr_Type`

@@ -46,8 +46,8 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
 
     count = 0
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         M_Attr_Type.count += 1
         if not name.startswith (("_A_", "A_")) :
             cls.ckd_name = "__%s"     % (cls.name, )
@@ -59,7 +59,7 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
                 ### meta property for `syntax` (which would be hidden by the
                 ### class attribute)
                 cls.syntax = ""
-        raw_default = dict.get ("raw_default")
+        raw_default = dct.get ("raw_default")
         if raw_default :
             assert not cls.default, \
                 ( "Can't specify both raw default and %s "
@@ -75,6 +75,17 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
     # end def __init__
 
 # end class M_Attr_Type
+
+class M_Attr_Type_Link_Role (M_Attr_Type) :
+    """Meta class for MOM.Attr.A_Link_Role classes."""
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if cls.role_type and dct.get ("role_name") is None :
+            cls.role_name = cls.role_type.type_base_name.lower ()
+    # end def __init__
+
+# end class M_Attr_Type_Link_Role
 
 class M_Attr_Type_Named_Value (M_Attr_Type) :
     """Meta class for MOM.Attr.A_Named_Value classes.
@@ -133,8 +144,8 @@ class M_Attr_Type_Unit (M_Attr_Type) :
          in the class specifying the attribute type.
     """
 
-    def __init__ (cls, name, bases, dict) :
-        cls.__m_super.__init__ (name, bases, dict)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
         if name != "_A_Unit_" :
             ud = getattr (cls, "_unit_dict",    None)
             if ud :

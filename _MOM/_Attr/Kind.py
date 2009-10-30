@@ -44,6 +44,7 @@
 #    22-Oct-2009 (CT) s/default/raw_default/ where necessary
 #    22-Oct-2009 (CT) `_Raw_Value_Mixin_` factored
 #    28-Oct-2009 (CT) I18N
+#    29-Oct-2009 (CT) `rank` added
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ class Kind (MOM.Prop.Kind) :
         attr = Attr_Type      (self)
         self.__super.__init__ (attr)
         self._check_sanity    (attr)
+        self.rank           = (attr._t_rank, attr.rank)
         self.record_changes = attr.record_changes and self.record_changes
     # end def __init__
 
@@ -374,6 +376,13 @@ class Primary (_User_) :
     # end def __delete__
 
 # end class Primary
+
+class Link_Role (Primary) :
+    """Link-role attribute must be defined at all times, used for (essential)
+       primary key.
+    """
+
+# end class Link_Role
 
 class Required (_User_) :
     """Required attribute: must be defined by the tool user."""

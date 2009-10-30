@@ -40,15 +40,9 @@ import _MOM.E_Type_Manager
 class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
-    def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
-        Roles  = [] ### XXX ??? can we do that here ???
-        result = cls.__m_super._m_new_e_type_dict \
-            ( app_type, etypes, bases
-            , Roles = Roles
-            , ** kw
-            )
-        return result
-    # end def _m_new_e_type_dict
+    def _m_setup_etype_auto_props (cls, app_type) :
+        pass ### XXX setup auto cache roles
+    # end def _m_setup_etype_auto_props
 
 # end class M_Link
 
@@ -57,6 +51,47 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
     """Meta class for essence of MOM.Link."""
 
     Manager = MOM.E_Type_Manager_L
+
+    def _m_setup_attributes (cls, bases, dct) :
+        cls.__m_super._m_setup_attributes (bases, dct)
+        cls._m_setup_roles                (bases, dct)
+    # end def _m_setup_attributes
+
+    def _m_setup_roles (cls, bases, dct) :
+        cls.Roles  = Roles  = tuple \
+            (p for p in cls.primary if isinstance (p, MOM.Attr.Link_Role))
+        role_types = tuple \
+            (r.role_type for r in Roles if r.role_type is not None)
+        if role_types and role_types [0] is not MOM.Sequence_Number :
+            type_base_names = [rt.type_base_name for rt in role_types]
+            if type_base_names [-1] == "Sequence_Number" :
+                type_base_names = type_base_names [:-1]
+            rltn_pat = TFL.Regexp (r"_(.*?)_".join (type_base_names))
+            if rltn_pat.match (cls.type_base_name) :
+                cls.rltn_names = rltn_pat.groups ()
+            else :
+                cls.rltn_names = None
+                if __debug__ :
+                    print "No match for relation names", \
+                        cls.name, type_base_names, rltn_pat.pattern
+            cls.number_of_roles = len (Roles)
+            cls.role_map        = role_map = {}
+            for i, r in enumerate (Roles) :
+                r.role_index = i
+                if r.role_type :
+                    ### Replace by app-type specific e-type
+                    r.role_type = cls.app_type.entity (r.role_type)
+                if r.role_name != r.generic_role_name :
+                    setattr \
+                        ( cls, r.role_name
+                        , TFL.Meta.Alias_Property (r.generic_role_name)
+                        )
+                for key in set \
+                        (( r.default_role_name, r.generic_role_name, r.role_name
+                         , r.role_type.type_name, r.role_type.type_base_name
+                        )) :
+                    role_map [key] = r.role_index
+    # end def _m_setup_roles
 
 # end class M_E_Type_Link
 
