@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Oct-2009 (CT) Creation
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
+#     3-Nov-2009 (CT) Type conversions for `epk` added
 #    ««revision-date»»···
 #--
 
@@ -35,6 +36,8 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _TFL._Meta.Object
+
+from   _TFL.predicate import paired
 
 class E_Type_Manager (TFL.Meta.Object) :
     """Scope-specific manager for essential object- and link-types."""
@@ -48,11 +51,15 @@ class E_Type_Manager (TFL.Meta.Object) :
         return self._etype (* args, scope = self.home_scope, ** kw)
     # end def __call__
 
-    def exists (self, * epk) :
+    def exists (self, * epk, ** kw) :
+        if kw :
+            raise TypeError (kw)
         return self.home_scope.ems.exists      (self._etype, epk)
     # end def exists
 
-    def instance (self, * epk) :
+    def instance (self, * epk, ** kw) :
+        if kw :
+            raise TypeError (kw)
         return self.home_scope.ems.instance    (self._etype, epk)
     # end def instance
 
@@ -83,10 +90,88 @@ class E_Type_Manager (TFL.Meta.Object) :
 class E_Type_Manager_O (E_Type_Manager) :
     """Scope-specific manager for essential object-types."""
 
+    def exists (self, * epk, ** kw) :
+        if kw.pop ("raw", False) :
+            epk = tuple (self._cooked_epk_iter (epk))
+        return self.__super.exists   (* epk, ** kw)
+    # end def exists
+
+    def instance (self, * epk, ** kw) :
+        if kw.pop ("raw", False) :
+            epk = tuple (self._cooked_epk_iter (epk))
+        return self.__super.instance (* epk, ** kw)
+    # end def instance
+
+    def _cooked_epk_iter (self, epk) :
+        for (pka, v) in zip (self._etype.primary, epk) :
+            yield pka.from_string (v, None)
+    # end def _cooked_epk
+
 # end class E_Type_Manager_O
 
 class E_Type_Manager_L (E_Type_Manager) :
     """Scope-specific manager for essential link-types."""
+
+    def __call__ (self, * args, ** kw) :
+        if kw.get ("raw", False) :
+            args = tuple (self._role_to_raw_iter (args))
+        return self.__super.__call__ (* args, ** kw)
+    # end def __call__
+
+    def exists (self, * epk, ** kw) :
+        if kw.pop ("raw", False) :
+            epk = tuple (self._cooked_epk_iter (epk))
+        else :
+            epk = tuple (self._role_to_cooked_iter (args))
+        return self.__super.exists   (* epk, ** kw)
+    # end def exists
+
+    def instance (self, * epk, ** kw) :
+        if kw.pop ("raw", False) :
+            epk = tuple (self._cooked_epk_iter (epk))
+        else :
+            epk = tuple (self._role_to_cooked_iter (args))
+        return self.__super.instance (* epk, ** kw)
+    # end def instance
+
+    def _cooked_epk_iter (self, epk) :
+        for (pka, v) in zip (self._etype.primary, epk) :
+            if getattr (pka, "role_type", None) :
+                ### Allow role attributes to be passed as objects even if
+                ### `raw` is specified
+                v = self._cooked_role (pka, v)
+            else :
+                v = pka.from_string   (v, None)
+            yield v
+    # end def _cooked_epk
+
+    def _cooked_role (self, r, v) :
+        result = v
+        if not isinstance (result, MOM.Entity) :
+            if not isinstance (v, (tuple, list)) :
+                v = (v, )
+            result = r.from_string (v, None)
+        return result
+    # end def _cooked_role
+
+    def _role_to_cooked_iter (self, epk) :
+        for (r, v) in paired (self._etype.Roles, epk) :
+            if r is not None :
+                ### Allow role attributes to be passed as raw values even if
+                ### `raw` is not specified
+                v = self._cooked_role (r, v)
+            yield v
+    # end def _role_to_cooked_iter
+
+    def _role_to_raw_iter (self, epk) :
+        for (r, v) in paired (self._etype.Roles, epk) :
+            if r is not None :
+                ### Allow role attributes to be passed as objects even if
+                ### `raw` is specified
+                if not isinstance (v, basestring) :
+                    v = r.as_code (v)
+            yield v
+    # end def _role_to_raw_iter
 
 # end class E_Type_Manager_L
 

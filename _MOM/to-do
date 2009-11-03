@@ -59,7 +59,7 @@ MOM To-Do
   x M_E_Type __init__/__new__ sets up the meta information for the essential
     classes
 
-  * M_E_Type_Id implements the basic query methods
+  * E_Type_Manager implements the basic query methods
 
     + Delegation to EMS-manager of scope
 

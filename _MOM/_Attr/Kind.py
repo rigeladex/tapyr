@@ -45,6 +45,7 @@
 #    22-Oct-2009 (CT) `_Raw_Value_Mixin_` factored
 #    28-Oct-2009 (CT) I18N
 #    29-Oct-2009 (CT) `rank` added
+#     3-Nov-2009 (CT) `Link_Role.get_role` added
 #    ««revision-date»»···
 #--
 
@@ -381,6 +382,8 @@ class Link_Role (Primary) :
     """Link-role attribute must be defined at all times, used for (essential)
        primary key.
     """
+
+    get_role               = TFL.Meta.Alias_Property ("get_value")
 
 # end class Link_Role
 

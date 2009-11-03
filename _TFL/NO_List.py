@@ -45,6 +45,7 @@
 #     7-Nov-2007 (CT)  Use `Getter` instead of `Attribute`
 #    29-Aug-2008 (CT)  s/super(...)/__m_super/
 #    29-May-2009 (MG) `*items`, `*keys`, and `*values` added
+#     3-Nov-2009 (CT)  Usage of `has_key` removed
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,7 @@ class Name_Dict (dict) :
 
     __metaclass__    = M_Name_Dict
     _convert_methods = \
-        ("get", "has_key", "pop", "__getitem__", "__delitem__", "__setitem__")
+        ("get", "pop", "__getitem__", "__delitem__", "__setitem__")
 
 # end class Name_Dict
 
@@ -98,7 +99,7 @@ class NO_List (TFL.Ordered_Set):
     _cannot_hold         = basestring
 
     def has_key (self, name) :
-        return self.index_dict.has_key (name)
+        return name in self.index_dict
     # end def has_key
 
     def iteritems (self) :

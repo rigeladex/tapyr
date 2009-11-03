@@ -110,8 +110,7 @@
 #     2-Apr-2004 (CT)  Yesterday's `apply` removal reverted
 #                      (sorry for the stupid breakage!)
 #     2-Apr-2004 (CT)  `cartesian` changed to use `flattened` again
-#    10-May-2004 (CED) `tripplewise`, `tripplewise_circle`,
-#                      `pairwise_circle` added
+#    10-May-2004 (CED) `pairwise_circle` added
 #    11-May-2004 (CED) `is_contiguous` added
 #    25-May-2004 (CED) Some doctests added
 #    30-Jun-2004 (CT)  `list_difference` fixed to do what the doc-string
@@ -120,16 +119,11 @@
 #                      list comprehension
 #    20-Oct-2004 (CED) `list` used where possible
 #    15-Nov-2004 (CED) Second parameter of `dusort`, `dusplit` made optional
-#    17-Nov-2004 (CED) `min_element`, `max_element` added
-#    17-Nov-2004 (CED) Last changes reverted
-#     1-Dec-2004 (CED) `fit_to_ceil_in_cycle` added
 #    24-Mar-2005 (CT)  Moved into package `TFL` and removed
 #                      various cruft
-#    31-Mar-2005 (CED) `fit_to_ceil_in_cycle` re-added
 #     3-Apr-2005 (CT)  Use built-in `reversed` and `sorted` if any instead of
 #                      defining home-grown versions
 #     3-Apr-2005 (CT)  Base `dusort` on built-in `sorted` if available
-#     4-Apr-2005 (CED) `fit_to_ceil_in_cycle` moved to `Math_Func`
 #     7-Apr-2005 (CED) `is_contiguous` made more robust
 #     8-Jun-2005 (CT)  Home-grown `sorted` and `dusort` factored
 #                      to `_sorted` and `_dusort` and made
@@ -153,15 +147,11 @@
 #    31-Aug-2005 (CT)  `rsplit_hst` changed to match Hettinger's clarification
 #     9-Feb-2006 (CT)  `bool_split` added
 #    28-Feb-2006 (CT)  `pairs_1w` and `pairs_2w` added
-#     7-Mar-2006 (CED) `items_sorted_keys`, `items_sorted_values` added
-#     7-Mar-2006 (CED) `items_sorted_*` removed
 #     9-May-2006 (CT)  `bit_size_cmp` removed (long since stale)
 #     6-Sep-2006 (CT)  Doc-strings of `split_hst` and `rsplit_hst` corrected
 #     8-Dec-2006 (CT)  `window_wise` made visible
 #    16-Feb-2007 (CT)  `enumerate_slice` made visible
-#    24-Jul-2007 (PGO) `in_order` moved here from TTA.FTC.TDCOM
 #     2-Aug-2007 (CED) `is_ordered`, `rotated_until_ordered` added
-#     6-Aug-2007 (CT)  `in_order` removed
 #    14-Aug-2007 (CED) `is_ordered` simplified, `unified` added
 #    20-Aug-2007 (CED) s/unified/uniq/
 #    13-Nov-2007 (CT)  `rounded_to` added
@@ -170,6 +160,8 @@
 #                      `is_ordered` de-obfuscated (removed criminal energy,
 #                      indeed)
 #    24-Sep-2009 (CT)  `callable` added
+#     3-Nov-2009 (CT)  Use `TFL.paired_map` instead of built-in map (which
+#                      will change semantics in 3.x)
 #    ««revision-date»»···
 #--
 
@@ -625,7 +617,7 @@ def paired (s1, s2) :
        >>> paired ([], [])
        []
     """
-    return map (None, s1, s2)
+    return list (TFL.paired_map (s1, s2))
 # end def paired
 
 def pairs_1w (seq) :
@@ -977,8 +969,6 @@ def tupled (* seqs) :
     """
     if seqs :
         return map (None, * seqs)
-    else :
-        return None
 # end def tupled
 
 def union (* lists) :

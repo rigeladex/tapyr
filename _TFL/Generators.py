@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -38,16 +38,12 @@
 #    21-Sep-2004 (CT) `Look_Ahead_Gen` changed to call `.next` lazily instead
 #                     of (over)-eagerly
 #    26-Oct-2004 (CT) `alt_iter` added
-#     9-Feb-2005 (CED) `Lazy_List` fixed to handle step`ed slices and doctest
-#                      added
-#     9-Feb-2005 (CED) `Fibonacci`, `Primes` added (moved from _YAGNI to here)
-#    15-Feb-2005 (CED) `Faculties` added (moved from _YAGNI to here)
-#    24-Mar-2005 (CT)  Cruft removed (recent additions by CED and Python
-#                      legacies)
-#     1-Jul-2005 (CT)  `pairwise_circle` defined here
-#     8-Dec-2006 (CT)  `window_wise` added
-#    16-Feb-2007 (CT)  `enumerate_slice` added
-#     1-Mar-2007 (CT)  Adapted to signature change of `DL_Ring`
+#    24-Mar-2005 (CT) Cruft removed
+#     1-Jul-2005 (CT) `pairwise_circle` defined here
+#     8-Dec-2006 (CT) `window_wise` added
+#    16-Feb-2007 (CT) `enumerate_slice` added
+#     1-Mar-2007 (CT) Adapted to signature change of `DL_Ring`
+#     3-Nov-2009 (CT) `paired_map` fixed, `paired_zip` removed
 #    ««revision-date»»···
 #--
 
@@ -207,36 +203,24 @@ def pairwise_circle (seq) :
         yield h, head ### close circle
 # end def pairwise_circle
 
-def paired_zip (s1, s2) :
-    """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
-
-       >>> list (paired_zip ("abc", range (4)))
-       [('a', 0), ('b', 1), ('c', 2)]
-    """
-    s1 = iter (s1)
-    s2 = iter (s2)
-    while True :
-        yield s1.next (), s2.next ()
-# end def paired_zip
-
 def paired_map (s1, s2) :
     """Generates a list of pairs `((s1 [0], s2 [0]), ... (s1 [-1], s2 [-1]))'.
 
        >>> list (paired_map ("abc", range (4)))
-       [('a', [0]), ('b', [1]), ('c', [2]), (None, [3])]
+       [('a', 0), ('b', 1), ('c', 2), (None, 3)]
        >>> list (paired_map ("abc", range (2)))
-       [('a', [0]), ('b', [1]), ('c', None)]
+       [('a', 0), ('b', 1), ('c', None)]
     """
     i, l1, l2 = 0, len (s1), len (s2)
     l         = min (l1, l2)
     while i < l :
-        yield s1 [i:i+1], s2 [i:i+1]
+        yield s1 [i], s2 [i]
         i += 1
     while i < l1 :
-        yield s1 [i:i+1], None
+        yield s1 [i], None
         i += 1
     while i < l2 :
-        yield None, s2 [i:i+1]
+        yield None, s2 [i]
         i += 1
 # end def paired_map
 

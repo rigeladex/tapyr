@@ -36,14 +36,13 @@
 #    20-Nov-2003 (CT)  Minor face lifts
 #    21-Nov-2003 (MG)  `__radd__` fixed (parameter rhs also a list)
 #    28-Sep-2004 (CT)  Use `isinstance` instead of type comparison
-#    11-Nov-2004 (CED) `remove` implemented
-#    11-Nov-2004 (CED) `remove` removed
 #    27-Feb-2005 (MG)  `dusort` added
 #     9-Jun-2005 (CT)  Arguments `key` and `reverse` added to `sort`
 #    21-Jan-2006 (MG)  Moved into `TFL` package
 #     8-Nov-2006 (PGO) Inheritance changed
 #     4-Dec-2006 (PGO) `remove` and `__delitem__` merged to restore interface
 #    29-May-2009 (MG)  `__deepcopy__` added
+#     3-Nov-2009 (CT)  Usage of `has_key` removed
 #    ««revision-date»»···
 #--
 
@@ -177,7 +176,7 @@ class Ordered_Set (list) :
     # end def __add__
 
     def __contains__ (self, value) :
-        return self.index_dict.has_key (value)
+        return value in self.index_dict
     # end def __contains__
     contains = __contains__
 
@@ -252,6 +251,5 @@ class Immutable_Ordered_Set (Ordered_Set) :
 # end class Immutable_Ordered_Set
 
 if __name__ != "__main__" :
-    from _TFL import TFL
     TFL._Export ("*")
 ### __END__ TFL.Ordered_Set

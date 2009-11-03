@@ -31,6 +31,9 @@
 #    11-Mar-2009 (CT) `split` fixed (apply `abs` to cents)
 #    15-Mar-2009 (CT) s/ROUND_05UP/ROUND_HALF_UP/ (Python 2.5.1 doesn't have
 #                     ROUND_05UP, 2.5.2 does <Arrrrg>)
+#     3-Nov-2009 (CT) `__hash__` added to avoid::
+#                         DeprecationWarning: Overriding __eq__
+#                         blocks inheritance of __hash__ in 3.x
 #    ««revision-date»»···
 #--
 
@@ -193,6 +196,10 @@ class _Currency_ (TFL.Meta.Object) :
     def __float__ (self) :
         return float (self.amount)
     # end def __float__
+
+    def __hash__ (self) :
+        return hash (self.amount)
+    # end def __hash__
 
     def __int__ (self) :
         return int (self.amount)

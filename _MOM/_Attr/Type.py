@@ -41,6 +41,8 @@
 #    28-Oct-2009 (CT) I18N
 #    28-Oct-2009 (CT) `A_Link_Role` and descendents added
 #    29-Oct-2009 (CT) `_t_rank` added
+#     3-Nov-2009 (CT) Fixed `as_string` and `_to_cooked` of `_A_Object_`
+#     3-Nov-2009 (CT) `A_Link_Role` derived from `_A_Object_`
 #    ««revision-date»»···
 #--
 
@@ -343,7 +345,7 @@ class _A_Object_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return value.epk
+            return self.format % (value.epk, )
         return ""
     # end def as_string
 
@@ -393,14 +395,11 @@ class _A_Object_ (A_Attr_Type) :
     # end def _get_scope
 
     def _to_cooked (self, s, cooker, obj, glob, locl) :
-        if cooker is None :
-            t = s
-        else :
-            t = cooker (s, glob or {}, locl or {})
-        scope = self._get_scope (obj)
-        et    = getattr (scope, self.Class.type_name)
-        if et.exists (* t) :
-            result = et.instance (* t)
+        scope  = self._get_scope (obj)
+        et     = getattr         (scope, self.Class.type_name)
+        t      = self._call_eval (s)
+        result = et.instance     (* t, raw = True)
+        if result is not None :
             if self._accept_object (obj, result) :
                 return result
             else :
@@ -412,7 +411,7 @@ class _A_Object_ (A_Attr_Type) :
                     )
         else :
             raise ValueError, \
-                ( _T ("No object `%s` in %s")
+                ( _T ("No object `%s` in scope %s")
                 % (" ".join ((self.Class, t)).strip (), scope.qname)
                 )
     # end def _to_cooked
@@ -594,7 +593,7 @@ class A_Time (_A_Date_) :
 
 # end class A_Time
 
-class A_Link_Role (A_Attr_Type) :
+class A_Link_Role (_A_Object_) :
     """Attribute describing a link-role."""
 
     __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
