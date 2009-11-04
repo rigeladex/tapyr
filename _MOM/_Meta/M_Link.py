@@ -28,6 +28,7 @@
 # Revision Dates
 #    23-Sep-2009 (CT) Creation (factored from `TOM.Meta.M_Link`)
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
+#     4-Nov-2009 (CT) s/E_Type_Manager_L/E_Type_Manager.Link/
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
     """Meta class for essence of MOM.Link."""
 
-    Manager = MOM.E_Type_Manager_L
+    Manager = MOM.E_Type_Manager.Link
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)

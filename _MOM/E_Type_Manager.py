@@ -29,6 +29,8 @@
 #    16-Oct-2009 (CT) Creation
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #     3-Nov-2009 (CT) Type conversions for `epk` added
+#     4-Nov-2009 (CT) Rename classes to `Id_Entity`, `Object`, and `Link` and
+#                     call `MOM._Export_Module` instead of `MOM._Export`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +41,7 @@ import _TFL._Meta.Object
 
 from   _TFL.predicate import paired
 
-class E_Type_Manager (TFL.Meta.Object) :
+class Id_Entity (TFL.Meta.Object) :
     """Scope-specific manager for essential object- and link-types."""
 
     def __init__ (self, etype, scope) :
@@ -85,9 +87,9 @@ class E_Type_Manager (TFL.Meta.Object) :
         return getattr (self._etype, name)
     # end def __getattr__
 
-# end class E_Type_Manager
+# end class Id_Entity
 
-class E_Type_Manager_O (E_Type_Manager) :
+class Object (Id_Entity) :
     """Scope-specific manager for essential object-types."""
 
     def exists (self, * epk, ** kw) :
@@ -107,9 +109,9 @@ class E_Type_Manager_O (E_Type_Manager) :
             yield pka.from_string (v, None)
     # end def _cooked_epk
 
-# end class E_Type_Manager_O
+# end class Object
 
-class E_Type_Manager_L (E_Type_Manager) :
+class Link (Id_Entity) :
     """Scope-specific manager for essential link-types."""
 
     def __call__ (self, * args, ** kw) :
@@ -173,8 +175,8 @@ class E_Type_Manager_L (E_Type_Manager) :
             yield v
     # end def _role_to_raw_iter
 
-# end class E_Type_Manager_L
+# end class Link
 
 if __name__ != "__main__" :
-    MOM._Export ("*")
+    MOM._Export_Module ()
 ### __END__ MOM.E_Type_Manager
