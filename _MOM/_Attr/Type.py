@@ -345,12 +345,16 @@ class _A_Object_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return self.format % (value.epk, )
+            return self.format % \
+                ( tuple
+                    (a.as_string (a.get_value (value)) for a in value.primary)
+                ,
+                )
         return ""
     # end def as_string
 
     def as_code (self, value) :
-        return self.code_format % (value.epk, )
+        return tuple (a.as_code (a.get_value (value)) for a in value.primary)
     # end def as_code
 
     def as_pickle (self, value) :
@@ -397,7 +401,10 @@ class _A_Object_ (A_Attr_Type) :
     def _to_cooked (self, s, cooker, obj, glob, locl) :
         scope  = self._get_scope (obj)
         et     = getattr         (scope, self.Class.type_name)
-        t      = self._call_eval (s)
+        if isinstance (s, tuple) :
+            t  = s
+        else :
+            t  = self._call_eval (s)
         result = et.instance     (* t, raw = True)
         if result is not None :
             if self._accept_object (obj, result) :

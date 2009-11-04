@@ -42,7 +42,11 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
     def _m_setup_etype_auto_props (cls, app_type) :
-        pass ### XXX setup auto cache roles
+        cls.__m_super._m_setup_etype_auto_props (app_type)
+        for a in cls._Attributes._names.itervalues () :
+            if isinstance (a, MOM.Attr.A_Link_Role) and a.role_type :
+                a.role_type.is_relevant = True
+        ### XXX setup auto cache roles
     # end def _m_setup_etype_auto_props
 
 # end class M_Link

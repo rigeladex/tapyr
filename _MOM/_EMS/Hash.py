@@ -165,7 +165,7 @@ class Manager (TFL.Meta.Object) :
         return result
     # end def t_count
 
-    def t_extension (self, Type , sort_key = None) :
+    def t_extension (self, Type, sort_key = None) :
         root   = Type.relevant_root
         tables = self._tables
         if root :

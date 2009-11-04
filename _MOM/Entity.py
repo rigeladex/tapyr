@@ -49,6 +49,7 @@
 #    21-Oct-2009 (CT) Predicate `primary_key_defined` removed
 #    25-Oct-2009 (MG) `__getattr__` Use %s instead of %r to avoid recursive
 #                     calls of `__getattr__`
+#     4-Nov-2009 (CT) `refuse_links` changed from dict to set
 #    ««revision-date»»···
 #--
 
@@ -329,7 +330,7 @@ class Id_Entity (Entity) :
     max_count             = 0
     rank                  = 0
     record_changes        = True
-    refuse_links          = {}
+    refuse_links          = set ()
     relevant_root         = None   ### Set by meta machinery
     save_to_db            = True
     sorted_by             = TFL.Sorted_By ("epk")
@@ -337,7 +338,7 @@ class Id_Entity (Entity) :
 
     _app_globals          = {}
     _lists_to_combine     = ("auto_display", )
-    _dicts_to_combine     = ("refuse_links", )
+    _sets_to_combine      = ("refuse_links", )
 
     class _Attributes (Entity._Attributes) :
 
@@ -801,7 +802,7 @@ aspects of the use of an essential class by the framework.
 
 .. attribute:: refuse_links
 
-  This is a dictionary of (names of) classes that must not be linked
+  This is a set of (names of) classes that must not be linked
   to instances of the essential class in question. This can be used if
   objects of a derived class should not participate in associations of
   a base class.
