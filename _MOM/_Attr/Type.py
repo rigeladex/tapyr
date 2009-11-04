@@ -43,6 +43,7 @@
 #    29-Oct-2009 (CT) `_t_rank` added
 #     3-Nov-2009 (CT) Fixed `as_string` and `_to_cooked` of `_A_Object_`
 #     3-Nov-2009 (CT) `A_Link_Role` derived from `_A_Object_`
+#     4-Nov-2009 (CT) `__all__` defined and used
 #    ««revision-date»»···
 #--
 
@@ -74,6 +75,7 @@ class A_Attr_Type (object) :
     description       = ""
     explanation       = ""
     format            = "%s"
+    group             = ""
     hidden            = False
     kind              = None
     Kind_Mixins       = ()
@@ -341,6 +343,7 @@ class _A_Link_Role_Left_ (A_Attr_Type) :
     generic_role_name = "left"
     rank              = 0
     role_abbreviation = "l"
+    typ               = "Left"
 
 # end class _A_Link_Role_Left_
 
@@ -350,6 +353,7 @@ class _A_Link_Role_L_Middle_ (A_Attr_Type) :
     generic_role_name = "l_middle"
     rank              = 1
     role_abbreviation = "lm"
+    typ               = "L_Middle"
 
 # end class _A_Link_Role_L_Middle_
 
@@ -359,6 +363,7 @@ class _A_Link_Role_Middle_ (A_Attr_Type) :
     generic_role_name = "middle"
     rank              = 2
     role_abbreviation = "m"
+    typ               = "Middle"
 
 # end class _A_Link_Role_Middle_
 
@@ -368,6 +373,7 @@ class _A_Link_Role_R_Middle_ (A_Attr_Type) :
     generic_role_name = "r_middle"
     rank              = 3
     role_abbreviation = "rm"
+    typ               = "R_Middle"
 
 # end class _A_Link_Role_R_Middle_
 
@@ -377,6 +383,7 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
     generic_role_name = "right"
     rank              = 4
     role_abbreviation = "r"
+    typ               = "Right"
 
 # end class _A_Link_Role_Right_
 
@@ -386,6 +393,7 @@ class _A_Link_Role_Seq_No_ (A_Attr_Type) :
     generic_role_name = "seq_no"
     rank              = 5
     role_abbreviation = "n"
+    typ               = "Seq_No"
 
 # end class _A_Link_Role_Seq_No_
 
@@ -778,6 +786,11 @@ Class `MOM.Attr.A_Attr_Type`
 
 """
 
+__all__ = tuple \
+    (  k for (k, v) in globals ().iteritems ()
+    if isinstance (v, MOM.Meta.M_Attr_Type)
+    )
+
 if __name__ != "__main__" :
-    MOM.Attr._Export ("*", "_A_Named_Value_", "_A_Number_", "_A_Unit_")
+    MOM.Attr._Export (* __all__)
 ### __END__ MOM.Attr.Type

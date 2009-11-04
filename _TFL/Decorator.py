@@ -49,6 +49,8 @@
 #    19-Jun-2008 (CT)  `Attributed` added
 #    23-Aug-2008 (CT)  `Annotated` added
 #    12-Oct-2009 (CT)  `Add_To_Class` added
+#     4-Nov-2009 (CT)  `decorator` keyword argument added to `Add_Method` and
+#                      `Add_New_Method`
 #    ««revision-date»»···
 #--
 
@@ -188,29 +190,35 @@ def Contextmanager (f) :
     return contextmanager (f)
 # end def Contextmanager
 
-def Add_Method (* classes) :
+def Add_Method (* classes, ** kw) :
     """Adds decorated function to `classes` (won't complain if any class
        already contains a function of that name, but the original function
        isn't available to the decorated function for chaining up to).
     """
     def decorator (f) :
         name = f.__name__
+        deco = kw.get ("decorator")
+        if deco :
+            f = deco (f)
         for cls in classes :
             setattr (cls, name, f)
         return f
     return decorator
 # end def Add_Method
 
-def Add_New_Method (* classes) :
+def Add_New_Method (* classes, ** kw) :
     """Adds decorated function to `classes` (complains if any class already
        contains a function of that name).
     """
     def decorator (f) :
         name = f.__name__
+        deco = kw.get ("decorator")
+        if deco :
+            f = deco (f)
         for cls in classes :
             if hasattr (cls, name) :
-                raise TypeError, "%s already has a property named `%s`" % \
-                    (cls, name)
+                raise TypeError \
+                    ("%s already has a property named `%s`" % (cls, name))
             setattr (cls, name, f)
         return f
     return decorator

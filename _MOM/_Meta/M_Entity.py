@@ -269,12 +269,6 @@ class M_Id_Entity (M_Entity) :
         return result
     # end def _m_new_e_type_dict
 
-    ### XXX Should this go into M_Link ???
-    def _m_setup_etype_auto_props (cls, app_type) :
-        cls.__m_super._m_setup_etype_auto_props (app_type)
-        ### XXX Create auto-props for cached roles
-    # end def _m_setup_etype_auto_props
-
 # end class M_Id_Entity
 
 @TFL.Add_To_Class ("M_E_Type", M_Entity)

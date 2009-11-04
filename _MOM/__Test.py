@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Oct-2009 (CT) Creation
+#     4-Nov-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -102,5 +103,32 @@ class Trap (MOM.Object) :
     # end class _Attributes
 
 # end class Trap
+
+class Rodent_in_Trap (MOM.Link2) :
+    """Model a rodent caught in a trap."""
+
+    is_partial = False
+
+    class _Attributes (MOM.Link2._Attributes) :
+
+        class left (MOM.Link2._Attributes.left) :
+            """Rodent caught in Trap."""
+
+            role_type     = Rodent
+            max_links     = 1
+
+        # end class left
+
+        class right (MOM.Link2._Attributes.right) :
+            """Trap that caught a rodent."""
+
+            role_type     = Trap
+            max_links     = 1
+
+        # end class right
+
+    # end class _Attributes
+
+# end class Rodent_in_Trap
 
 ### __END__ MOM.__Test

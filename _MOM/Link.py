@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Oct-2009 (CT) Creation (factored from TOM.Link)
+#     4-Nov-2009 (CT) `Link2` added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,29 @@ class _MOM_Link_ (MOM.Id_Entity) :
     # end def roles
 
 Link = _MOM_Link_ # end class
+
+class Link2 (Link) :
+    """Model an entity-based link of a binary association of the MOM meta
+       object model.
+    """
+
+    __metaclass__         = MOM.Meta.M_Link2
+
+    class _Attributes (Link._Attributes) :
+
+        class left (_A_Link_Role_Left_, A_Link_Role_EB) :
+            """Left role of association. Override to define `role_type`, ..."""
+
+        # end class left
+
+        class right (_A_Link_Role_Right_, A_Link_Role_EB) :
+            """Right role of association. Override to define `role_type`, ..."""
+
+        # end class right
+
+    # end class _Attributes
+
+# end class Link2
 
 if __name__ != "__main__" :
     MOM._Export ("*")

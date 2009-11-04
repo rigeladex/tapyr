@@ -43,6 +43,7 @@ import _MOM.Error
 import _MOM.Link
 import _MOM.Object
 import _MOM.Scope
+import _MOM.Sequence_Number
 
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr

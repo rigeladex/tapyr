@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Oct-2009 (CT) Creation
+#     4-Nov-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -46,12 +47,27 @@ if 1 :
     t1    = scope.MOM.Trap               ("X", 1)
     t2    = scope.MOM.Trap               ("X", 2)
     t3    = scope.MOM.Trap               ("Y", 1)
+    if 1 :
+        mit   = scope.MOM.Rodent_in_Trap     (m, t1)
+        rit   = scope.MOM.Rodent_in_Trap     (r, t2)
     print scope.MOM.Mouse.t_extension          ()
     print scope.MOM.Rat.t_extension            ()
     print scope.MOM.Trap.t_extension           ()
     print scope.MOM.Rodent.t_extension         ()
     print scope.MOM.Named_Object.t_extension   ()
     print scope.MOM.Object.t_extension         ()
+    print scope.MOM.Rodent_in_Trap.t_extension ()
+    print scope.MOM.Rodent_in_Trap.s_extension ()
+    print scope.MOM.Rodent_in_Trap.s_left      (t1)
+    print scope.MOM.Rodent_in_Trap.s_left      (t2)
+    print scope.MOM.Rodent_in_Trap.s_left      (t3)
+    print scope.MOM.Rodent_in_Trap.t_left      (t1)
+    print scope.MOM.Rodent_in_Trap.t_left      (t2)
+    print scope.MOM.Rodent_in_Trap.t_left      (t3)
+    print scope.MOM.Rodent_in_Trap.s_right     (m)
+    print scope.MOM.Rodent_in_Trap.s_right     (r)
+    print scope.MOM.Rodent_in_Trap.t_right     (m)
+    print scope.MOM.Rodent_in_Trap.t_right     (r)
 
 if 0 :
     import pdb; pdb.set_trace ()

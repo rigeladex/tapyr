@@ -29,6 +29,7 @@
 #    23-Sep-2009 (CT) Creation (factored from `TOM.Meta.M_Link`)
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #     4-Nov-2009 (CT) s/E_Type_Manager_L/E_Type_Manager.Link/
+#     4-Nov-2009 (CT) `M_Link2` and `M_E_Type_Link2` added
 #    ««revision-date»»···
 #--
 
@@ -44,12 +45,17 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     def _m_setup_etype_auto_props (cls, app_type) :
         cls.__m_super._m_setup_etype_auto_props (app_type)
         for a in cls._Attributes._names.itervalues () :
-            if isinstance (a, MOM.Attr.A_Link_Role) and a.role_type :
+            if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
                 a.role_type.is_relevant = True
         ### XXX setup auto cache roles
     # end def _m_setup_etype_auto_props
 
 # end class M_Link
+
+class M_Link2 (M_Link) :
+    """Meta class of binary entity-based link-types of MOM meta object model."""
+
+# end class M_Link2
 
 @TFL.Add_To_Class ("M_E_Type", M_Link)
 class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
@@ -85,7 +91,9 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                 r.role_index = i
                 if r.role_type :
                     ### Replace by app-type specific e-type
-                    r.role_type = cls.app_type.entity (r.role_type)
+                    r.assoc          = cls
+                    r.attr.role_type = cls.app_type.entity_type (r.role_type)
+                    r.attr.typ       = r.attr.role_type.type_base_name
                 if r.role_name != r.generic_role_name :
                     setattr \
                         ( cls, r.role_name
@@ -99,6 +107,14 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
     # end def _m_setup_roles
 
 # end class M_E_Type_Link
+
+@TFL.Add_To_Class ("M_E_Type", M_Link2)
+class M_E_Type_Link2 (M_E_Type_Link) :
+    """Meta class for essence of MOM.Link2."""
+
+    Manager = MOM.E_Type_Manager.Link2
+
+# end class M_E_Type_Link2
 
 __doc__ = """
 Class `MOM.Meta.M_Link`

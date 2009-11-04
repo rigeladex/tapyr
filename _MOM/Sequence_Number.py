@@ -34,6 +34,10 @@
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
+from   _MOM._Attr.Type import *
+from   _MOM._Attr      import Attr
+from   _MOM._Pred      import Pred
+
 import _MOM.Entity
 
 _Ancestor_Essence = MOM.Entity

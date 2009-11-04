@@ -31,6 +31,7 @@
 #     7-Oct-2009 (CT) `M_Attr_Type_Named_Value` added
 #     7-Oct-2009 (CT) `M_Attr_Type.__init__` changed to add `syntax`
 #     9-Oct-2009 (CT) Handling of `default` and `raw_default` added
+#     4-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to add `default_role_name`
 #    ««revision-date»»···
 #--
 
@@ -81,8 +82,10 @@ class M_Attr_Type_Link_Role (M_Attr_Type) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        if cls.role_type and dct.get ("role_name") is None :
-            cls.role_name = cls.role_type.type_base_name.lower ()
+        if cls.role_type :
+            cls.default_role_name = drn = cls.role_type.type_base_name.lower ()
+            if dct.get ("role_name") is None :
+                cls.role_name = drn
     # end def __init__
 
 # end class M_Attr_Type_Link_Role

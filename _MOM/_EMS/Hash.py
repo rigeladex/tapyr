@@ -30,6 +30,8 @@
 #    15-Oct-2009 (CT) Creation continued
 #    16-Oct-2009 (CT) Creation continued..
 #    28-Oct-2009 (CT) I18N
+#     4-Nov-2009 (CT) `sort_key` argument added to `s_role` and `t_role`
+#     4-Nov-2009 (CT) `epk_to_hpk` and `hpk` for `MOM.Link` fixed
 #    ««revision-date»»···
 #--
 
@@ -150,8 +152,9 @@ class Manager (TFL.Meta.Object) :
         return sorted (result, key = sort_key or Type.sorted_by)
     # end def s_extension
 
-    def s_role (self, role, obj) :
-        return self._r_map [role] [obj.id]
+    def s_role (self, role, obj, sort_key = None) :
+        result = self._r_map [role] [obj.id]
+        return sorted (result, key = sort_key or role.assoc.sorted_by)
     # end def s_role
 
     def t_count (self, Type, seen = None) :
@@ -176,15 +179,16 @@ class Manager (TFL.Meta.Object) :
         return sorted (result, key = sort_key or Type.sorted_by)
     # end def t_extension
 
-    def t_role (self, role, obj) :
-        r_map = self._r_map
-        i     = role.role_index
-        return itertools.chain \
+    def t_role (self, role, obj, sort_key = None) :
+        r_map  = self._r_map
+        i      = role.role_index
+        result = itertools.chain \
             ( r_map [role] [obj.id]
             , * ( r_map [c.Roles [i]] [obj.id]
                 for c in role.assoc.children.itervalues ()
                 )
             )
+        return sorted (result, key = sort_key or role.assoc.sorted_by)
     # end def t_role
 
     def __iter__ (self) :
@@ -197,14 +201,18 @@ class Manager (TFL.Meta.Object) :
 @TFL.Add_Method (MOM.Link)
 @TFL.Meta.Class_Method
 def epk_to_hpk (cls, * epk) :
-    return epk
+    def gen (epk) :
+        for r, pka in TFL.paired (cls.Roles, epk) :
+            if r is not None :
+                pka = pka.id
+            yield pka
+    return tuple (gen (epk))
 # end def epk_to_hpk
 
-@TFL.Add_Method (MOM.Link)
-@TFL.Meta.Once_Property
+@TFL.Add_Method (MOM.Link, decorator = property)
 def hpk (self) :
-    return tuple (a.get_value (self) for a in self.roles) ### XXX ???
-# end def epk
+    return self.epk_to_hpk (* self.epk)
+# end def hpk
 
 @TFL.Add_Method (MOM.Object)
 @TFL.Meta.Class_Method
