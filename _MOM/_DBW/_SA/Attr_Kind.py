@@ -30,23 +30,25 @@
 #    20-Oct-2009 (MG) Creation
 #    27-Oct-2009 (MG) Removed `unique` constraint because we actually need a
 #                     unique-together which is not possible at a column level
+#     4-Nov-2009 (MG) Use `TFL.Add_To_Class`
 #    ««revision-date»»···
 #--
 
 from   _MOM             import MOM
 import _MOM._Attr.Type
+from   _TFL             import TFL
+import _TFL.Decorator
 
+@TFL.Add_To_Class ("_sa_column_attrs", MOM.Attr.Kind)
 def _sa_kind (self) :
     return dict (nullable = True)
 # end def _sa_kind
 
+@TFL.Add_To_Class ("_sa_column_attrs", MOM.Attr.Primary)
 def _sa_primary (self) :
     result              = _sa_kind (self)
     result ["nullable"] = False
     return result
 # end def _sa_primary
-
-MOM.Attr.Kind.   _sa_column_attrs = _sa_kind
-MOM.Attr.Primary._sa_column_attrs = _sa_primary
 
 ### __END__ MOM.DBW.SA.Attr_Kind

@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Oct-2009 (CT) Creation
 #     4-Nov-2009 (CT) Creation continued
+#     4-Nov-2009 (MG) `Beaver` and `Otter` added
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,37 @@ class Rat (Rodent) :
     is_partial = False
 
 # end class Rat
+
+class Beaver (Mouse) :
+    """Model a beaver of the Better Mouse Trap application."""
+
+    class _Attributes (Mouse._Attributes) :
+
+        class region (A_String) :
+            """In wich are lives the beaver"""
+
+            kind     = Attr.Optional
+
+        # end class region
+
+    # end class _Attributes
+
+# end class Beaver
+
+class Otter (Beaver) :
+
+    class _Attributes (Beaver._Attributes) :
+
+        class river (A_String) :
+
+            kind       = Attr.Optional
+            max_length = 20
+
+        # end class river
+
+    # end class _Attributes
+
+# end class Otter
 
 class Trap (MOM.Object) :
     """Model a trap of the Better Mouse Trap application."""
@@ -130,5 +162,6 @@ class Rodent_in_Trap (MOM.Link2) :
     # end class _Attributes
 
 # end class Rodent_in_Trap
+
 
 ### __END__ MOM.__Test

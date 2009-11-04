@@ -27,9 +27,12 @@
 #
 # Revision Dates
 #     2009-Oct-19 (MG) Creation
+#     4-Nov-2009 (MG) Use `TFL.Add_To_Class`
 #    ««revision-date»»···
 #--
 
+from   _TFL               import TFL
+import _TFL.Decorator
 from   _MOM               import MOM
 import _MOM._Attr.Type
 import _MOM._Attr
@@ -38,25 +41,24 @@ Attr = MOM.Attr
 
 from sqlalchemy     import types, schema # Table, Column, Integer, String, Boolean, MetaData, ForeignKey
 
+@TFL.Add_To_Class ("_sa_column", Attr.A_Boolean)
 def _sa_bool (self, kind, ** kw) :
     return schema.Column (self.name, types.Boolean, ** kw)
 # end def _sa_bool
 
+@TFL.Add_To_Class ("_sa_column", Attr.A_String)
 def _sa_string (self, kind, ** kw) :
     return schema.Column (self.name, types.String (self.max_length), ** kw)
 # end def _sa_string
 
+@TFL.Add_To_Class ("_sa_column", Attr.A_Int)
 def _sa_int (self, kind, ** kw) :
     return schema.Column (self.name, types.Integer, ** kw)
 # end def _sa_int
 
+@TFL.Add_To_Class ("_sa_column", Attr.A_Float)
 def _sa_float (self, kind, ** kw) :
     return schema.Column (self.name, types.Float, ** kw)
 # end def _sa_float
-
-Attr.A_Boolean._sa_column   = _sa_bool
-Attr.A_String._sa_column    = _sa_string
-Attr.A_Int._sa_column       = _sa_int
-Attr.A_Float._sa_column     = _sa_float
 
 ### __END__ MOM.DBW.SA.Type
