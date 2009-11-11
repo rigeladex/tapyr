@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -54,13 +54,14 @@
 #    15-Nov-2006 (CED) `_make_setup_file` adds call to `register_at_sys_path`
 #                      if needed
 #     7-Nov-2007 (CT)  Use `Getter` instead of `Attribute`
+#    11-Nov-2009 (CT)  Use `hashlib.md5`  instead of `md5.new` (3-compatibility)
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 
 import copy
-import md5
+import hashlib
 import sys
 
 import _TFL.Accessor
@@ -139,7 +140,7 @@ class Plugin_Packager (TFL.Meta.Object) :
                 )
         for pym in sorted (self.py_modules, key = TFL.Getter.rel_name) :
             code = self._read_source_file (pym)
-            m    = md5.new (code)
+            m    = hashlib.md5 (code)
             sf.write \
               ( "Plugin_Importer.tag_module ('%s', '%s', '%s')\n"
               % (pname, pym.rel_name, m.hexdigest ())

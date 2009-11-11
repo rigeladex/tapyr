@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Martin Glück. All rights reserved
+# Copyright (C) 2005-2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. office@spannberg.com
 # ****************************************************************************
 #
@@ -47,6 +47,7 @@
 #    13-Aug-2005 (MG) Set the `renderer` attribute for the cell
 #    28-Dec-2005 (MG) `Column.Column_Widget` added and used
 #    09-Jan-2006 (MG) Class attribbute `default_get_fct` added and used
+#    10-Nov-2009 (CT) Import `callable` from `_TFL.predicate` to silence `-3`
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,8 @@ from   _TFL                import TFL
 import _TGL._UI
 import _TGL._UI.Mixin
 import _TFL._Meta.Object
+
+from   _TFL.predicate      import callable
 
 class Cell (TFL.Meta.Object) :
     """A cell with gets render specific attributes out of an `UI` element.

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     5-Jan-2006 (CT) Creation
+#    10-Nov-2009 (CT) s/execfile/exec/ to avoid `-3` warning
 #    ««revision-date»»···
 #--
 
@@ -38,9 +39,12 @@ def load_config_file (file_name, globals, locals = None) :
         locals = globals
     fname = sos.expanded_path (file_name)
     try :
-        execfile (fname, globals, locals)
+        with open (fname) as f :
+            config = f.read ()
     except IOError :
         pass
+    else :
+        exec (config, globals, locals)
     return locals
 # end def load_config_file
 

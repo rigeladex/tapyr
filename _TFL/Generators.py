@@ -44,6 +44,7 @@
 #    16-Feb-2007 (CT) `enumerate_slice` added
 #     1-Mar-2007 (CT) Adapted to signature change of `DL_Ring`
 #     3-Nov-2009 (CT) `paired_map` fixed, `paired_zip` removed
+#    11-Nov-2009 (CT) Exception handler changed for 3-compatibility
 #    ««revision-date»»···
 #--
 
@@ -271,7 +272,7 @@ class Lazy_List :
             try :
                 self._get (i + 1)
             except StopIteration :
-                raise IndexError, i
+                raise IndexError (i)
             return self._data [i]
         else :
             try :

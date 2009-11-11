@@ -53,6 +53,8 @@ import _TFL._Meta.Property
 import _TFL.Alias_Dict
 import _TFL.Sorted_By
 
+from   _TFL.predicate        import callable
+
 class Spec (MOM.Prop.Spec) :
     """Attribute specification for MOM entities (objects and links).
 

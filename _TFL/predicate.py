@@ -162,6 +162,7 @@
 #    24-Sep-2009 (CT)  `callable` added
 #     3-Nov-2009 (CT)  Use `TFL.paired_map` instead of built-in map (which
 #                      will change semantics in 3.x)
+#    11-Nov-2009 (CT)  Legacy `_sorted` changed to 3-compatibility
 #    ««revision-date»»···
 #--
 
@@ -792,7 +793,7 @@ def second_arg (x, y, * args, ** kw) :
     return y
 # end def second_arg
 
-def _sorted (seq, pred = cmp, key = None, reverse = False) :
+def _sorted (seq, cmp = None, key = None, reverse = False) :
     """Returns a sorted copy of `seq'.
 
        >>> _sorted ([1, 3, 5, 2, 4])
@@ -807,7 +808,7 @@ def _sorted (seq, pred = cmp, key = None, reverse = False) :
     if key is not None :
         return _dusort (seq, key, reverse)
     result = list (seq)
-    result.sort (pred)
+    result.sort (cmp)
     if reverse :
         result.reverse ()
     return result

@@ -128,12 +128,15 @@
 #     7-Nov-2006 (PGO) Reloading now also works with `_Add`
 #     3-Feb-2009 (CT)  Style improvements
 #     6-Feb-2009 (CT)  Documentation improved
+#    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
 #    ««revision-date»»···
 #--
 
+from   __future__      import print_function
+
 import re
 import sys
-from   _TFL.Importers  import  DPN_Importer
+from   _TFL.Importers  import DPN_Importer
 
 def _caller_globals () :
     return sys._getframe (1).f_back.f_globals
@@ -401,11 +404,11 @@ class Package_Namespace (object) :
                 [m for (m, i) in dusort (self.__modules.values (), second)]
         try :
             self.__reload = 1
-            print "Reloading", self.__name,
+            print ("Reloading", self.__name, end = " ")
             for m in modules :
-                print m.__name__,
+                print (m.__name__, end = " ")
                 reload (m)
-            print "finished"
+            print ("finished")
         finally :
             self.__reload = old_reload
         import linecache

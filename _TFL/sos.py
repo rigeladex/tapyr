@@ -57,6 +57,7 @@
 #    30-Aug-2005 (CT) Use `in` or `startswith` instead of `find`
 #    17-Mar-2009 (CT) Function definitions put into alphabetic sequence
 #    19-Mar-2009 (CT) Deprecation warning added to `tempfile_name`
+#    11-Nov-2009 (CT) Changed exception handler for 3-compatibility
 #    ««revision-date»»···
 #--
 
@@ -83,9 +84,7 @@ if (name == "nt") or (name == "win32") :
         try :
             if path [- len (sep):] == sep and path [- len (sep) - 1] != ":" :
                 path = path [: - len (sep)]
-        except (SystemExit, KeyboardInterrupt), exc :
-            raise
-        except :
+        except StandardError :
             pass
         return _os_path_isdir (path)
     # end def _hacked_isdir
@@ -171,7 +170,7 @@ __extension_dict = {}
 def _ext_filter (f) :
     if path.isfile (f) :
         n, e = path.splitext (f)
-        return __extension_dict.has_key (e)
+        return e in __extension_dict
     return 0
 # end def _ext_filter
 

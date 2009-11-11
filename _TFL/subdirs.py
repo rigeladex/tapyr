@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,12 +35,8 @@
 #     6-Oct-2004 (CT) `subdir_names` added
 #     6-Oct-2004 (CT) `-basenames` and `-lstrip` added
 #    14-Feb-2006 (CT) Moved into package `TFL`
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL import TFL
 from   _TFL import sos

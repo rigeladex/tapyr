@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -35,6 +35,7 @@
 #    21-Jan-2006 (MG) Imports fixed
 #     7-Nov-2007 (CT) `UI_State._real_name` added
 #    14-Dec-2007 (MG) Support for output redirection suppression added
+#    10-Nov-2009 (CT) `__hash__` added to silence `-3`
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,14 @@ class Changes (TFL.Meta.Object) :
         self.value += 1
     # end def inc
 
+    def __cmp__ (self, rhs) :
+        return cmp (self.value, int (rhs))
+    # end def __cmp__
+
+    def __hash__ (self) :
+        return hash (self.value)
+    # end def __hash__
+
     def __iadd__ (self, value) :
         self.value += value
     # end def __iadd__
@@ -75,10 +84,6 @@ class Changes (TFL.Meta.Object) :
     def __str__ (self) :
         return str (self.value)
     # end def __str__
-
-    def __cmp__ (self, rhs) :
-        return cmp (self.value, int (rhs))
-    # end def __cmp__
 
 # end class Changes
 

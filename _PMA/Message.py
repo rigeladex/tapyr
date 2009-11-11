@@ -187,6 +187,7 @@ import _TFL.Filename
 import _TFL._Meta.M_Class
 import _TFL._Meta.Property
 
+from   _TFL.predicate          import callable
 from   _TFL.Regexp             import *
 from   _TFL                    import sos
 import textwrap

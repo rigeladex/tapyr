@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -34,6 +34,7 @@
 #    14-Aug-2005 (MG) Moved from `PMA` package to the `TGL` package
 #    05-Jan-2006 (MG) Open the files in binary mode in the `load` functions
 #                     (they are stored in binary mode too)
+#    10-Nov-2009 (CT) Use `pickle` instead of `cPickle` to silence `-3`
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,7 @@ from   _TFL                    import TFL
 from   _TGL                    import TGL
 import _TFL._Meta.Object
 
-import cPickle                 as     pickle
+import pickle
 
 class _Status_ (TFL.Meta.Object) :
 

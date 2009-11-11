@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -34,12 +34,11 @@
 #    10-May-2001 (CT) Creation
 #    21-Feb-2002 (CT) `Range_` renamed to `_Range_`
 #    28-Sep-2004 (CT) Use `isinstance` instead of type comparison
+#    11-Nov-2009 (CT) Use `slice` instead of `types.SliceType`
 #    ««revision-date»»···
 #--
 
 from _TFL import TFL
-
-import types
 
 class _Range_ :
     """Range generator: takes integers and slices as arguments to
@@ -66,7 +65,7 @@ class _Range_ :
             indices = (indices, )
         result = []
         for i in indices :
-            if isinstance (i, types.SliceType) :
+            if isinstance (i, slice) :
                 result.extend (range (i.start, i.stop, i.step or 1))
             else :
                 result.extend (range (i))

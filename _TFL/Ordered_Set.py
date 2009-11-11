@@ -43,10 +43,12 @@
 #     4-Dec-2006 (PGO) `remove` and `__delitem__` merged to restore interface
 #    29-May-2009 (MG)  `__deepcopy__` added
 #     3-Nov-2009 (CT)  Usage of `has_key` removed
+#    11-Nov-2009 (CT)  `__getitem__` changed to deal with slices
+#                      (3-compatibility)
 #    ««revision-date»»···
 #--
 
-from _TFL import TFL
+from   _TFL import TFL
 
 import _TFL._Meta.M_Class
 
@@ -91,7 +93,7 @@ class Ordered_Set (list) :
     def get (self, index, default = None) :
         try :
             return self [index]
-        except (KeyError, IndexError) :
+        except LookupError :
             return default
     # end def get
 
@@ -195,13 +197,12 @@ class Ordered_Set (list) :
     # end def __delitem__
     remove = __delitem__
 
-    def __delslice__ (self, i, j) :
-        raise NotImplementedError
-    # end def __delslice__
-
-    def __getslice__ (self, i, j) :
-        return self.__class__ (self.__super.__getslice__ (i, j))
-    # end def __getslice__
+    def __getitem__ (self, i) :
+        result = self.__super.__getitem__ (i)
+        if isinstance (i, slice) :
+            result = self.__class__ (result)
+        return result
+    # end def __getitem__
 
     def __radd__ (self, other) :
         res = self.__class__ (other)
@@ -210,6 +211,11 @@ class Ordered_Set (list) :
     # end def __radd__
 
     def __setitem__ (self, index, value) :
+        if isinstance (index, slice) :
+            raise NotImplementedError \
+                ( "Cannot delete slice %s from %s"
+                % (index, self.__class__.__name__)
+                )
         self._check_value (value)
         old_value = self [index]
         del self.index_dict [old_value]
@@ -217,9 +223,17 @@ class Ordered_Set (list) :
         self.__super.__setitem__ (index, value)
     # end def __setitem__
 
-    def __setslice__ (self, i, j, value) :
-        raise NotImplementedError
-    # end def __setslice__
+    import sys
+    if sys.version_info < (3, ) :
+        ### Py3k: remove
+        def __getslice__ (self, i, j) :
+            return self.__class__ (self.__getitem__ (slice (i, j)))
+        # end def __getslice__
+
+        def __setslice__ (self, i, j, value) :
+            raise NotImplementedError
+        # end def __setslice__
+    # end if sys.version_info < (3, )
 
 # end class Ordered_Set
 

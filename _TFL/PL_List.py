@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -35,12 +35,8 @@
 #    24-Mar-2005 (CT) Moved into package `TFL`
 #    11-May-2007 (MG) `__getslice__` added becasue the implementation of the
 #                     `UserList.__getslice__`does not work
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    ««revision-date»»···
 #--
-
-
 
 from   UserList  import UserList
 from   copy      import deepcopy
@@ -50,14 +46,28 @@ from   _TFL      import TFL
 class PL_List (UserList) :
     """Perl like list: references to undefined indices return an undefined
        value instead of raising an exception.
+
+       >>> p = PL_List ([1,2,3])
+       >>> p
+       [1, 2, 3]
+       >>> print p [5]
+       None
+       >>> p = PL_List ([1,2,3], undefined = 0)
+       >>> print p [5]
+       0
+       >>> p [0]
+       1
+       >>> p
+       [1, 2, 3]
+
     """
 
-    def __init__ (self, undefined = None, * args) :
+    def __init__ (self, args = (), undefined = None) :
         """Construct a new `PL_List' with elements specified as optional
            arguments `args' and undefined value `undefined'.
         """
         UserList.__init__ (self)
-        self.data      = list (args [:])
+        self.data      = list (args)
         self.body      = self.data ### alias name for `self.data'
         self.undefined = undefined
     # end def __init__
@@ -85,16 +95,19 @@ class PL_List (UserList) :
             pass
     # end def __delslice__
 
-    def __getslice__ (self, i, j) :
-        return self.__class__ (self.undefined, * self.data [i:j])
-    # end def __getslice__
-
     def __getitem__ (self, item) :
         try :
-            return self.data [item]
+            result = self.data [item]
+            if isinstance (item, slice) :
+                result = self.__class__ (self.undefined, result)
+            return result
         except IndexError :
             return deepcopy (self.undefined)
     # end def __getitem__
+
+    def __getslice__ (self, i, j) :
+        return self.__class__ (self.undefined, * self.data [i:j])
+    # end def __getslice__
 
     def __iter__ (self) :
         return iter (self.data)

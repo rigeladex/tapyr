@@ -43,8 +43,11 @@
 #    18-Jun-2007 (CT)  `find_module` changed back to be 2.4 compatible
 #    24-Sep-2009 (CT)  `_load_module` changed to not rely on tuple unpacking
 #                      in the argument list (3.x doesn't support that anymore)
+#    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
 #    ««revision-date»»···
 #--
+
+from   __future__      import print_function
 
 import imp
 import os
@@ -275,13 +278,13 @@ class Plugin_Importer (object) :
             zim = zipimport.zipimporter (fname)
         except ImportError :
             if __debug__ :
-                print "Could not import from %s" % fname
+                print ("Could not import from %s" % fname)
             return
         sname     = "_setup"
         setup_mod = zim.find_module (sname)
         if not setup_mod :
             if __debug__ :
-                print "Could not find '%s' in %s" % (sname, fname)
+                print ("Could not find '%s' in %s" % (sname, fname))
             return
         zim.load_module (sname)
     # end def _run_setup

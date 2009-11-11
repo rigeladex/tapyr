@@ -65,6 +65,7 @@ import _PMA.Thread
 import _TFL._Meta.Object
 import _TFL.Environment
 import _TFL.FCM
+from   _TFL.predicate          import callable
 from   _TFL.Regexp             import *
 import _TFL.sos
 
