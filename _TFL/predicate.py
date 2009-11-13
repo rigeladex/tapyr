@@ -163,6 +163,8 @@
 #     3-Nov-2009 (CT)  Use `TFL.paired_map` instead of built-in map (which
 #                      will change semantics in 3.x)
 #    11-Nov-2009 (CT)  Legacy `_sorted` changed to 3-compatibility
+#    13-Nov-2009 (CT) `tupled` removed (Usage of `map` is not compatible with
+#                     Python 3.x)
 #    ««revision-date»»···
 #--
 
@@ -960,17 +962,6 @@ def tupelize (l) :
     except TypeError :
         return l
 # end def tupelize
-
-def tupled (* seqs) :
-    """Returns a list of tuples of corresponding elements of each of `seqs'.
-
-       >>> tupled ([1, 2, 3], [1], [])
-       [(1, 1, None), (2, None, None), (3, None, None)]
-       >>> tupled ()
-    """
-    if seqs :
-        return map (None, * seqs)
-# end def tupled
 
 def union (* lists) :
     """Compute the union of lists.

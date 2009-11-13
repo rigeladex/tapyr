@@ -462,6 +462,7 @@
 #                      _Zipped_Image_Mgr_`, Zipped_Image_Mgr`, and
 #                      Zipped_Bitmap_Mgr`removed (wrong design, uses
 #                      deprecated `sos.tmpnam`)
+#    13-Nov-2009 (CT)  Don't use `map`, `apply`, and `has_key` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -658,7 +659,7 @@ class _Image_Mgr_ (TFL.Meta.Object) :
         """
         if not isinstance (filename, Filename) :
             filename = Filename (filename, ".xbm")
-        assert (self.Image_class.has_key (filename.ext))
+        assert (filename.ext in self.Image_class)
         if not sos.path.isfile (filename.name) :
             fn = filename.base_ext
             for p in self.pathes :
@@ -669,7 +670,7 @@ class _Image_Mgr_ (TFL.Meta.Object) :
         if not name :
             name = filename.base
         name = self.normalized (name)
-        if self.files.has_key (name) :
+        if name in self.files :
             if self.files [name].name != filename.name :
                 print "Name clash for %s %s: %s vs. %s" \
                       % ( self.Image_class [filename.ext]
@@ -735,7 +736,7 @@ class Image_Mgr (_Image_Mgr_):
 
     def __getitem__ (self, name) :
         name = self.normalized (name)
-        if not self.x_map.has_key (name) :
+        if name not in self.x_map :
             filename          = self.files [name]
             self.x_map [name] = self.Image_class \
                 [filename.ext] (file = filename.name, cnf = self.cnf [name])
@@ -804,12 +805,8 @@ class CT_TK_mixin :
         if value == "" :
             value = default
         elif separator is not None :
-            value = tuple (filter ( None
-                                  , map ( lambda a : a.strip ()
-                                        , value.split (separator)
-                                        )
-                                  )
-                          )
+            value = tuple \
+                (a for a in (v.strip () for v in value.split (separator)) if a)
         return value
     # end def option_value
 
@@ -821,14 +818,13 @@ class CT_TK_mixin :
     # end def num_opt_val
 
     def _set_option (self, name, default, dict) :
-        if not dict.has_key (name) : dict [name] = default
+        if name not in dict :
+            dict [name] = default
     # end def _set_option
 
     def _set_options (self, dict, ** kw) :
-        map ( lambda (name, default), set = self._set_option, dict = dict
-                  : set (name, default, dict)
-            , kw.items ()
-            )
+        for name, default in kw.iteritems () :
+            self._set_option (name, default, dict)
     # end def _set_options
 
     def _sanitized_dir (self, dir_name) :
@@ -838,7 +834,7 @@ class CT_TK_mixin :
     # end def _sanitized_dir
 
     def _sanitize_dir (self, kw, dir_attr = "initialdir") :
-        if kw.has_key (dir_attr) :
+        if dir_attr in kw :
             kw [dir_attr] = self._sanitized_dir (kw [dir_attr])
     # end def _sanitize_dir
 
@@ -846,9 +842,7 @@ class CT_TK_mixin :
         self._sanitize_dir (kw)
         self._set_option   ("parent", root, kw)
         try :
-            result = apply ( self.tk.call
-                           , (tk_fct, ) + args + self._options (kw)
-                           )
+            result = self.tk.call (tk_fct, * (args + self._options (kw)))
         except TclError, exc :
             print exc
             result = None
@@ -883,7 +877,7 @@ class CT_TK_mixin :
 
     def _show__ (self, show_fct, * args, ** kw) :
         self._set_option ("parent", self, kw)
-        result = apply (show_fct, args, kw)
+        result = show_fct (* args, ** kw)
         return result
     # end def _show__
 
@@ -891,34 +885,34 @@ class CT_TK_mixin :
 
     def show_error (self, * args, ** kw) :
         """Display an error window using `tk_messageBox'."""
-        return apply (self._show__, (tkMessageBox.showerror, ) + args, kw)
+        return self._show__ (tkMessageBox.showerror, * args, ** kw)
     # end def show_error
 
     def show_warning (self, * args, ** kw) :
         """Display a warning window using `tk_messageBox'."""
-        return apply (self._show__, (tkMessageBox.showwarning, ) + args, kw)
+        return self._show__ (tkMessageBox.showwarning, * args, ** kw)
     # end def show_warning
 
     def show_info (self, * args, ** kw) :
         """Display an info window using `tk_messageBox'."""
-        return apply (self._show__, (tkMessageBox.showinfo, ) + args, kw)
+        return self._show__ (tkMessageBox.showinfo, * args, ** kw)
     # end def show_info
 
     def ask_question (self, * args, ** kw) :
         """Display a confirmation window (yes/no) using `tk_messageBox'."""
-        return apply (self._ask__, (tkMessageBox.askquestion, ) + args, kw)
+        return self._ask__ (tkMessageBox.askquestion, * args, ** kw)
     # end def ask_question
 
     def ask_ok_cancel (self, * args, ** kw) :
         """Display a confirmation window (ok/cancel) using `tk_messageBox'."""
         self._set_option ("default", tkMessageBox.OK, kw)
-        return apply (self._ask__, (tkMessageBox.askokcancel, ) + args, kw)
+        return self._ask__ (tkMessageBox.askokcancel, * args, ** kw)
     # end def ask_ok_cancel
 
     def ask_yes_no (self, * args, ** kw) :
         """Display a confirmation window (yes/no) using `tk_messageBox'."""
         self._set_option ("default", tkMessageBox.YES, kw)
-        return apply (self._ask__, (tkMessageBox.askyesno, ) + args, kw)
+        return self._ask__ (tkMessageBox.askyesno, * args, ** kw)
     # end def ask_yes_no
 
     def ask_yes_no_cancel (self, * args, ** kw) :
@@ -927,10 +921,7 @@ class CT_TK_mixin :
         """
         self._set_option ("default", tkMessageBox.YES, kw)
         kw ["type"] = tkMessageBox.YESNOCANCEL
-        return apply ( self._ask__
-                     , (tkMessageBox._show, ) + args
-                     , kw
-                     )
+        return self._ask__ (tkMessageBox._show, * args, ** kw)
     # end def ask_yes_no_cancel
 
     def ask_retry_cancel (self, * args, ** kw) :
@@ -938,7 +929,7 @@ class CT_TK_mixin :
            `tk_messageBox'.
         """
         self._set_option ("default", tkMessageBox.RETRY, kw)
-        return apply (self._ask__, (tkMessageBox.askretrycancel, ) + args, kw)
+        return self._ask__ (tkMessageBox.askretrycancel, * args, ** kw)
     # end def ask_retry_cancel
 
     def busy_cursor (self, cursor = "watch", widget = None) :
@@ -995,7 +986,7 @@ class CT_TK_mixin :
 
     def define_edit_menu (self, master, menu_class = Menu, ** kw) :
         """Define a menu for cut/copy/paste functions."""
-        self.edit_menu = apply (menu_class, (master, ), kw)
+        self.edit_menu = menu_class (master, ** kw)
         self.edit_menu.add_command \
             ( label       = "Cut"
             , command     = self.menu_cut_cmd
@@ -1079,7 +1070,7 @@ class C_Frame_ (CT_TK_mixin, Frame) :
 
 class C_Frame  (C_Frame_) :
     def __init__ (self, master = None, name = None, class_ = Frame, ** kw) :
-        apply (C_Frame_.__init__, (self, master, name, class_), kw)
+        C_Frame_.__init__ (self, master, name, class_, ** kw)
     # end def __init__
 # end class C_Frame
 
@@ -1105,7 +1096,7 @@ class C_Text (C_Frame) :
         )
 
     def __init__ (self, master, name = None, state = NORMAL, ** kw) :
-        apply (self._init_head, (master, name, state), kw)
+        self._init_head (master, name, state, ** kw)
         self._init_tail ()
     # end def __init__
 
@@ -1118,7 +1109,8 @@ class C_Text (C_Frame) :
         self.body      = Text      ( self
                                    , name           = self.body_name
                                    )
-        if kw : apply              ( self.body.configure, (), kw)
+        if kw :
+            self.body.configure (** kw)
         if state == DISABLED :
             self.disable ()
             self.state = NORMAL
@@ -1206,7 +1198,7 @@ class C_Text (C_Frame) :
     # end def get
 
     def put (self, text, * tags) :
-        apply (self.insert,   (END, text, ) + tags)
+        self.insert (END, text, * tags)
         self.update_idletasks ()
     # end def put
 
@@ -1216,7 +1208,7 @@ class C_Text (C_Frame) :
         """Insert text into `self.body'."""
         try     :
             self.body.configure (state = NORMAL)
-            apply               (self.body.insert, args, kw)
+            self.body.insert    (* args, ** kw)
         finally :
             self.body.configure (state = self.state)
     # end def insert
@@ -1225,7 +1217,7 @@ class C_Text (C_Frame) :
         """Delete text from `self.body'."""
         try     :
             self.body.configure (state = NORMAL)
-            apply               (self.body.delete, args, kw)
+            self.body.delete    (* args, ** kw)
         finally :
             self.body.configure (state = self.state)
     # end def delete
@@ -1342,7 +1334,7 @@ class H_Strut (C_Frame_) :
                  , strut_width = 0
                  , ** kw
                  ) :
-        apply (C_Frame_.__init__, (self, master), kw)
+        C_Frame_.__init__    (self, master, ** kw)
         self.h_strut = Frame ( self
                              , name        = strut_name
                              , class_      = strut_class or self.strut_class
@@ -1367,7 +1359,7 @@ class V_Strut (C_Frame_) :
                  , strut_height = 0
                  , ** kw
                  ) :
-        apply (C_Frame_.__init__, (self, master), kw)
+        C_Frame_.__init__    (self, master, ** kw)
         self.v_strut = Frame ( self
                              , name        = strut_name
                              , class_      = strut_class or self.strut_class
@@ -1962,7 +1954,7 @@ class C_Button (CT_TK_mixin, Button) :
                           , takefocus = 0
                           , text      = name
                           )
-        apply             (Button.__init__, (self, master), kw)
+        Button.__init__   (self, master, ** kw)
         self.name = name
     # end def __init__
 
@@ -2043,7 +2035,7 @@ class Buttongroup (CT_TK_mixin) :
         if default == ACTIVE :
             self.buttonactivate (button_name)
         if self.help :
-            if kw.has_key ("command") :
+            if "command" in kw :
                 self.cmd_map [button.cget ("text")] = kw ["command"]
                 self.cmd_map [i]                    = kw ["command"]
             button.bind ("<Enter>", self.put_button_help)
@@ -2135,7 +2127,8 @@ class Buttongroup (CT_TK_mixin) :
 
     def _change_state (self, state) :
         self.buttonstate = state
-        map (lambda b, s = state : b.configure (state = s), self.button)
+        for b in self.button :
+            b.configure (state = state)
     # end def _change_state
 
     def enable_entry (self, button) :
@@ -2155,10 +2148,10 @@ class Buttongroup (CT_TK_mixin) :
     # end def buttonactivate
 
     def buttonconfigure (self, button, ** kw) :
-        apply (self.button [button].configure, (), kw)
+        self.button [button].configure (** kw)
         if self.help :
-            if kw.has_key ("text") :
-                if kw.has_key ("command") :
+            if "text" in kw :
+                if "command" in kw :
                     self.cmd_map [kw ["text"]] = kw ["command"]
                 else :
                     self.cmd_map [kw ["text"]] = self.cmd_map [button]
@@ -2166,7 +2159,7 @@ class Buttongroup (CT_TK_mixin) :
 
     def buttonbind (self, button, * args, ** kw) :
         """Call `bind' for `button'"""
-        apply (self.button [button].bind, args, kw)
+        self.button [button].bind (* args, ** kw)
     # end def buttonbind
 
     def flash     (self, button) : self.button [button].flash     ()
@@ -2214,7 +2207,7 @@ class Buttongrid (Buttongroup, C_Frame) :
                  , balloon       = None
                  , ** kw
                  ) :
-        apply (C_Frame.__init__, (self, master, name, self.widget_class), kw)
+        C_Frame.__init__ (self, master, name, self.widget_class, ** kw)
         height = height or self.num_opt_val  ("pixelHeight", None)
         width  = width  or self.num_opt_val  ("pixelWidth",  None)
         Buttongroup.__init__ ( self, help, height, width
@@ -2235,7 +2228,7 @@ class Buttongrid (Buttongroup, C_Frame) :
         """Add a button with name `button_name'. The button is automatically
            put into the grid.
         """
-        button = apply (Buttongroup.add, (self, self, button_name), kw)
+        button = Buttongroup.add (self, self, button_name, ** kw)
         self.columnspan.insert (self._index (button_name), max (columnspan, 1))
         if not self.pending  :
             self.pending = self.after_idle (self.regrid)
@@ -2328,8 +2321,9 @@ class Buttonboxes (Buttongroup) :
                     )
     # end def _button_pack
 
-    def repack (self)         :
-        map (self._button_pack, self.button)
+    def repack (self) :
+        for b in self.button :
+            self._button_pack (b)
     # end def repack
 
     def unpack (self, button_name) :
@@ -2448,7 +2442,7 @@ class C_Listbox (C_Frame) :
         lb               = self.list_box
         lb.pack            (side = LEFT, fill = BOTH, expand = YES)
         self._define_keys  ()
-        apply              (self.insert, (END,) + tuple (list))
+        self.insert        (END, * list)
         self.disabled_bg = self.option_value \
             ("disabledBackground", "grey90", lb)
         self.disabled_fg = self.option_value \
@@ -2472,18 +2466,18 @@ class C_Listbox (C_Frame) :
     def _change_size (self, event=None) : pass
 
     def insert (self, * args) :
-        apply (self.list_box.insert, args)
-        self._change_size ()
+        self.list_box.insert (* args)
+        self._change_size    ()
     # end def insert
 
     def delete (self, first, last = None) :
         self.list_box.delete (first, last)
-        self._change_size ()
+        self._change_size    ()
     # end def delete
 
     def reload (self, list) :
         self.list_box.delete (0, END)
-        apply                (self.insert, (0, ) + tuple (list))
+        self.insert          (0, * list)
     # end def reload
 
     def indices (self) :
@@ -2491,8 +2485,10 @@ class C_Listbox (C_Frame) :
         if item :
             ### `item' should be list of `int',
             ### but Tkinter 1.63 returns strings
-            try              : item = map (int, item)
-            except TypeError : pass
+            try :
+                item = tuple (int (i) for i in item)
+            except TypeError :
+                pass
         return item or ()
     # end def indices
 
@@ -2605,7 +2601,7 @@ class C_Listbox_Extended (C_Listbox) :
     def _define_keys (self) : pass
 
     def selected_items (self) :
-        return map (lambda i,  s = s : s.list_box.get (i), self.indices ())
+        return tuple (self.list_box.get (i) for i in self.indices ())
     # end def selected_items
 
     def set (self, values) :
@@ -2729,7 +2725,7 @@ class H_Scrolled_Tuple_ :
             return self._x_scrolled [0].xview ()
         else :
             for w in self._x_scrolled :
-                apply (w.xview, args)
+                w.xview (* args)
     # end def xview
 
     def add_h_scrolled (self, * widgets) :
@@ -2743,14 +2739,18 @@ class H_Scrolled_Tuple_ :
     # end def add_h_scrolled
 
     def scan_mark (self, event) :
-        map ( lambda w, x = event.x, y = event.y : w.scan_mark (x, y)
-            , self._x_scrolled
-            )
+        x = event.x
+        y = event.y
+        for w in self._x_scrolled :
+            w.scan_mark (x, y)
+    # end def scan_mark
 
     def scan_dragto (self, event) :
-        map ( lambda w, x = event.x, y = event.y : w.scan_dragto (x, y)
-            , self._x_scrolled
-            )
+        x = event.x
+        y = event.y
+        for w in self._x_scrolled :
+            w.scan_dragto (x, y)
+    # end def scan_dragto
 
 # end class H_Scrolled_Tuple_
 
@@ -2772,7 +2772,7 @@ class V_Scrolled_Tuple_ :
             return self._y_scrolled [0].yview ()
         else :
             for w in self._y_scrolled :
-                apply (w.yview, args)
+                w.yview (* args)
     # end def yview
 
     def add_v_scrolled (self, * widgets) :
@@ -2786,14 +2786,18 @@ class V_Scrolled_Tuple_ :
     # end def add_v_scrolled
 
     def scan_mark (self, event) :
-        map ( lambda w, x = event.x, y = event.y : w.scan_mark (x, y)
-            , self._y_scrolled
-            )
+        x = event.x
+        y = event.y
+        for w in self._y_scrolled :
+            w.scan_mark (x, y)
+    # end def scan_mark
 
     def scan_dragto (self, event) :
-        map ( lambda w, x = event.x, y = event.y : w.scan_dragto (x, y)
-            , self._y_scrolled
-            )
+        x = event.x
+        y = event.y
+        for w in self._y_scrolled :
+            w.scan_dragto (x, y)
+    # end def scan_dragto
 
 # end class V_Scrolled_Tuple_
 
@@ -2872,7 +2876,7 @@ class Listbox_Tuple_ (V_Scrolled_Tuple_, Scrolled_Listbox_) :
     def insert (self, index, * lists) :
         assert (len (lists) == len (self._y_scrolled))
         for lb, args in paired (self._y_scrolled, lists) :
-            apply (lb.insert, (index, ) + _flatten ((args, )))
+            lb.insert (index, * _flatten ((args, )))
         self._change_size ()
     # end def insert
 
@@ -2884,7 +2888,7 @@ class Listbox_Tuple_ (V_Scrolled_Tuple_, Scrolled_Listbox_) :
 
     def reload (self, * lists) :
         self.delete (0, END)
-        apply       (self.insert, (0, ) + lists)
+        self.insert (0, * lists)
     # end def reload
 
     def mouse_finish (self, event = None) :
@@ -2993,7 +2997,7 @@ class Separator_ (C_Frame) :
         self._set_option ("padx",   self.default_padx, kw)
         self._set_option ("pady",   self.default_pady, kw)
         kw ["fill"] = self.default_fill
-        apply (C_Frame.pack, (self, ), kw)
+        C_Frame.pack (self, ** kw)
     # end def pack
 
     def grid (self, span = None, ** kw) :
@@ -3001,9 +3005,11 @@ class Separator_ (C_Frame) :
         self._set_option ("padx",   self.default_padx,   kw)
         self._set_option ("pady",   self.default_pady,   kw)
         self.grid_kw = kw
-        if span : self._set_option (self.span_name, span, kw)
-        else    : self.after_idle  (self.config_span)
-        apply (C_Frame.grid, (self, ), kw)
+        if span :
+            self._set_option (self.span_name, span, kw)
+        else :
+            self.after_idle  (self.config_span)
+        C_Frame.grid (self, ** kw)
     # end def grid
 
 # end class Separator_
@@ -3639,9 +3645,9 @@ class Slide_Show (C_Frame) :
            (the new slide is appended if `before' is not specified).
            The slide is a widget of type Widget_Class which is created by
            `add_slide' with the call:
-               apply (Widget_Class, (self.hull, ) + args, kw)
+               Widget_Class (self.hull, * args, ** kw)
         """
-        slide = Slide ( apply (Widget_Class, (self.hull, ) + args, kw)
+        slide = Slide ( Widget_Class (self.hull, * args, ** kw)
                       , action, action_name
                       )
         if before is None :
@@ -3886,7 +3892,7 @@ class H_Panedwindow (Panedwindow_) :
     ### `pane [...].place' must be changed
 
     def __init__ (self, master = None, ** kw) :
-        apply (Panedwindow_.__init__, (self, master), kw)
+        Panedwindow_.__init__ (self, master, ** kw)
         self.left  = self.pane [0]
         self.right = self.pane [1]
     # end def __init__
@@ -3935,7 +3941,7 @@ class V_Panedwindow (Panedwindow_) :
     ### `pane [...].place' must be changed
 
     def __init__ (self, master = None, ** kw) :
-        apply (Panedwindow_.__init__, (self, master), kw)
+        Panedwindow_.__init__ (self, master, ** kw)
         self.upper = self.pane [0]
         self.lower = self.pane [1]
     # end def __init__
@@ -4316,7 +4322,7 @@ class C_Checkbutton_Entry (C_Entry) :
     def __init__ (self, master, onvalue = "1", offvalue = "", * args, ** kw) :
         self.onvalue  = onvalue
         self.offvalue = offvalue
-        apply (C_Entry.__init__, (self, master) + args, kw)
+        C_Entry.__init__ (self, master, * args, ** kw)
         if self.label :
             self.label.bind ("<ButtonRelease-1>", self._invoke_by_label)
     # end def __init__
@@ -4405,21 +4411,24 @@ class Entry_Tuple :
     # end def add
 
     def get (self) :
-        return map (lambda x : x.get (), self.entry)
+        return [x.get () for x in self.entry]
     # end def get
 
     def set (self, value) :
-        map (lambda p : p [0].set (p [1]), paired (self.entry, value))
+        for e, v in paired (self.entry, value):
+            e.set (v)
     # end def set
 
     def enable (self) :
         """Enable input into widget."""
-        for entry in self.entry : entry.enable  ()
+        for entry in self.entry :
+            entry.enable  ()
     # end def enable
 
     def disable (self) :
         """Disable input into widget."""
-        for entry in self.entry : entry.disable ()
+        for entry in self.entry :
+            entry.disable ()
     # end def disable
 
 # end class Entry_Tuple
@@ -4444,10 +4453,7 @@ class Entrybox (Entry_Tuple, C_Frame) :
                  , ** kw
                  ) :
         if not framepos          : framepos = entrypos
-        apply                    ( C_Frame.__init__
-                                 , (self, master, name, self.widget_class)
-                                 , kw
-                                 )
+        C_Frame.__init__ (self, master, name, self.widget_class, ** kw)
         self.frame     = Frame   ( self
                                  , name               = "frame"
                                  , borderwidth        = 0
@@ -4478,7 +4484,7 @@ class Entrybox (Entry_Tuple, C_Frame) :
         self._set_option  ("side",   self.entrypos,    pack_kw)
         self._set_option  ("fill",   self.entryfill,   pack_kw)
         self._set_option  ("expand", self.entryexpand, pack_kw)
-        apply             (entry.pack, (), pack_kw)
+        entry.pack        (** pack_kw)
     # end def add
 
 # end class Entrybox
@@ -4491,9 +4497,9 @@ class Listdrop_ (CT_TK_mixin) :
 
     Listbox = Scrolled_Listbox
 
-    def __init__ (self, master, list, side, state = NORMAL) :
+    def __init__ (self, master, l, side, state = NORMAL) :
         self.dropped     = None
-        self.list        = map              (None, list)
+        self.list        = list             (l)
         self.drop_button = Button           ( self.entrybox
                                             , name       = "dropbutton"
                                             , bitmap     = bitmap_mgr
@@ -4509,7 +4515,7 @@ class Listdrop_ (CT_TK_mixin) :
                                             )
         self.drop_box.withdraw              ( )
         self.drop_box.overrideredirect      ( 1)
-        self.scroll_box  = self.Listbox     ( self.drop_box, list
+        self.scroll_box  = self.Listbox     ( self.drop_box, self.list
                                             , name  = "dropdown"
                                             )
         self.scroll_box.pack                (fill = BOTH, expand = YES)
@@ -4528,16 +4534,17 @@ class Listdrop_ (CT_TK_mixin) :
                                             )
     # end def _define_keys
 
-    def reload (self, list) :
-        self.list = map (None, list)
-        self.scroll_box.reload (list)
-        if not self.get () in list : self.set (None)
+    def reload (self, l) :
+        self.list = list (l)
+        self.scroll_box.reload (l)
+        if not self.get () in l :
+            self.set (None)
     # end def reload
 
     def toggle (self, event = None) :
         if not self.dropped :
             self.drop   (event)
-        else                :
+        else :
             self.undrop (event)
     # end def toggle
 
@@ -4689,7 +4696,7 @@ class Listdropentry (Listdropentry_) :
     """Entry with dropdown listbox."""
 
     def __init__ (self, * args, ** kw) :
-        apply (Listdropentry_.__init__, (self, ) + args, kw)
+        Listdropentry_.__init__ (self, * args, ** kw)
         self._bind_completer (self.entry, self.complete)
     # end def __init__
 
@@ -5028,7 +5035,7 @@ class Combo_Tuple (Listbox_Tuple_, Entry_Tuple, C_Frame) :
     def add_listbox (self, LB_class, * args,  ** kw) :
         """Add a listbox of type `LB_class' to `Combo_Tuple'."""
         assert (len (self.list_boxes) < self.entry_number)
-        lb = apply                 (LB_class, (self, ) + args, kw)
+        lb = LB_class              (self, * args, ** kw)
         Listbox_Tuple_.add_listbox (self, lb)
         self.list_boxes.append     (lb)
     # end def add_listbox
@@ -5036,7 +5043,7 @@ class Combo_Tuple (Listbox_Tuple_, Entry_Tuple, C_Frame) :
     def add_entry (self, Entry_class, * args, ** kw) :
         """Add an entry of type `Entry_class' to `Combo_Tuple'."""
         assert (len (self.entry) < self.entry_number)
-        entry = apply        (Entry_class, (self, ) + args, kw)
+        entry = Entry_class  (self, * args, ** kw)
         Entry_Tuple.add      (self, entry)
         ### 31-Mar-2000
         ### set height of `entry' and disable it's `pack_propagate' to avoid
@@ -5154,15 +5161,14 @@ class Combo_Tuple_X (Combo_Tuple) :
     """Combo_Tuple with additional target entries."""
 
     def __init__ (self, ** kw) :
-        apply (Combo_Tuple.__init__, (self, ), kw)
+        Combo_Tuple.__init__ (self, ** kw)
         self.target = Entry_Tuple ()
     # end def __init__
 
     def add_target_entry (self, Entry_class, * args, ** kw) :
         """Add an entry of type `Entry_class' to `self.target'."""
         assert (len (self.target.entry) < self.entry_number)
-        entry = apply (Entry_class, (self, ) + args, kw)
-        self.target.add (entry)
+        self.target.add (Entry_class (self, * args, ** kw))
     # end def add_target_entry
 
     def init_finish (self) :
@@ -5198,7 +5204,7 @@ class Combo_Tuple_Xtern (Combo_Tuple) :
     # end class _Entrybox
 
     def __init__ (self, t_master, ** kw) :
-        apply (Combo_Tuple.__init__, (self, ), kw)
+        Combo_Tuple.__init__ (self, ** kw)
         self.target = self._Entrybox ( t_master
                                      , name = "target"
                                      , entryfill    = None
@@ -5211,8 +5217,7 @@ class Combo_Tuple_Xtern (Combo_Tuple) :
     def add_target_entry (self, Entry_class, * args, ** kw) :
         """Add an entry of type `Entry_class' to `self.target'."""
         assert (len (self.target.entry) < self.entry_number)
-        entry = apply (Entry_class, (self.target.frame, ) + args, kw)
-        self.target.add (entry)
+        self.target.add (Entry_class (self.target.frame, * args, ** kw))
     # end def add_target_entry
 
     def init_finish (self) :
@@ -5723,15 +5728,15 @@ class Listspinner_ (CT_TK_mixin) :
 
     inc = 1
 
-    def __init__ (self, list, default) :
-        self.list  = map (None, list)
+    def __init__ (self, l, default) :
+        self.list  = list (l)
         self.last  = default
         self.i     = self.index (default)
     # end def __init__
 
-    def reload (self, list) :
-        self.list = map (None, list)
-        if not self.get () in list :
+    def reload (self, l) :
+        self.list = list (l)
+        if not self.get () in l :
             self.last = None
             self.set (None)
     # end def reload
@@ -5740,7 +5745,7 @@ class Listspinner_ (CT_TK_mixin) :
         if value is None :
             return 0
         else :
-            try    :
+            try :
                 return self.list.index (value)
             except (SystemExit, KeyboardInterrupt), exc :
                 raise
@@ -5874,10 +5879,7 @@ class History_Spinner (Listdropspinner) :
 
     def __init__ (self, master, history = None, ** kw) :
         self._entry_history = Entry_History (history)
-        apply ( Listdropspinner.__init__
-              , (self, master, ())
-              , kw
-              )
+        Listdropspinner.__init__   (self, master, (), ** kw)
         self._entry_history.attach (self)
         self.list = self._entry_history.values
         self.scroll_box.reload (self.list)
@@ -6016,9 +6018,9 @@ class C_Menu (CT_TK_mixin, Menu) :
     _n            = 0
 
     def __init__ (self, master = None, help = None, balloon = None, ** kw) :
-        if kw.has_key ("name") :
+        if "name" in kw :
             kw ["name"] = kw ["name"].lower ()
-        apply (Menu.__init__, (self, master), kw)
+        Menu.__init__ (self, master, ** kw)
         self.help_widget         = help
         self.balloon             = balloon
         self.cmd_map             = {}
@@ -6095,21 +6097,22 @@ class C_Menu (CT_TK_mixin, Menu) :
     # end def popup
 
     def __add (self, fct, kw, * args) :
-        if kw.has_key ("_doc") and kw.has_key ("label") :
+        if "_doc" in kw and "label" in kw :
             self.hlp_map [kw ["label"]] = kw ["_doc"]
             del kw ["_doc"]
         self._handle_shortcut (kw)
-        apply (fct, (self, ) + args, kw)
-        if kw.has_key ("command") and kw.has_key ("label") :
+        fct (self, * args, ** kw)
+        if "command" in kw and "label" in kw :
             self.cmd_map [kw ["label"]] = kw ["command"]
     # end def __add
 
     def _handle_shortcut (self, kw) :
-        if kw.has_key ("label") :
+        if "label" in kw :
             label = kw ["label"]
-            if kw.has_key ("underline") and kw ["underline"] is not None :
-                short_cut = label [kw ["underline"]]
-                if (   self._short_map.has_key (short_cut)
+            ul    = kw.get ("underline")
+            if ul is not None :
+                short_cut = label [ul]
+                if (   short_cut in self._short_map
                    and short_cut not in "0123456789"
                    ) :
                     msg = ( "Duplicate short cut `%s' for "
@@ -6127,7 +6130,7 @@ class C_Menu (CT_TK_mixin, Menu) :
 
     def _add_pending_short_cut (self, short_cut, label) :
         short_cut = short_cut.lower ()
-        if not self._pending_short_cuts.has_key (short_cut) :
+        if short_cut not in self._pending_short_cuts :
             self._pending_short_cuts [short_cut] = []
         self._pending_short_cuts [short_cut].append (label)
     # end def _add_pending_short_cut
@@ -6154,7 +6157,7 @@ class C_Menu (CT_TK_mixin, Menu) :
     def _toggle_button (self, event) :
         ### toggle checkbutton or radiobutton without unposting the menu
         sc = event.keysym.lower ()
-        if self._short_map.has_key (sc) :
+        if sc in self._short_map :
             self.invoke (self._short_map [sc])
             return "break"
     # end def _toggle_button
@@ -6177,11 +6180,13 @@ class C_Menu (CT_TK_mixin, Menu) :
 
     def _unique_short_cut (self, label, sc, i) :
         sc, i = self._letter_shortcut (label, sc, i)
-        if sc and self._short_map.has_key (sc) :
+        if sc and sc in self._short_map :
             for i in range (i, len (label)) :
                 sc = label [i].lower ()
-                if not ("a" <= sc <= "z")           : continue
-                if not self._short_map.has_key (sc) : return sc, i
+                if not ("a" <= sc <= "z") :
+                    continue
+                if sc not in self._short_map :
+                    return sc, i
             return None, None
         else :
             return sc, i
@@ -6225,9 +6230,7 @@ class C_Menu (CT_TK_mixin, Menu) :
 
     def _help_label (self, label, widget = None, event = None) :
         widget = widget or self
-        if label and (  self.cmd_map.has_key (label)
-                     or self.hlp_map.has_key (label)
-                     ) :
+        if label and (label in self.cmd_map or label in self.hlp_map) :
             if label != self.active_help :
                 self.deactivate_help ()
                 old_help         = self.active_help
@@ -6336,16 +6339,15 @@ class Filename_Entry (C_Entry) :
             path = sos.path.dirname  (old)
         else :
             file = path = ""
-        new = apply ( (self.ask_save_file_name, self.ask_open_file_name)
-                          [self.must_exist]
-                    , ()
-                    , { "defaultextension" : self.defaultextension
-                      , "filetypes"        : self.filetypes
-                      , "initialdir"       : path
-                      , "initialfile"      : file
-                      , "title"            : self.selector_title or self.name
-                      }
-                    )
+        ask = (self.ask_save_file_name, self.ask_open_file_name) \
+            [self.must_exist]
+        new = ask \
+            ( defaultextension = self.defaultextension
+            , filetypes        = self.filetypes
+            , initialdir       = path
+            , initialfile      = file
+            , title            = self.selector_title or self.name
+            )
         if new :
             self.set (new)
         self.after_idle (self.entry.focus_set)
@@ -6370,14 +6372,12 @@ class Dirname_Entry (Filename_Entry) :
             path = old
         else :
             path = ""
-        new = apply ( self.ask_dir_name
-                    , ()
-                    , { "defaultextension" : self.defaultextension
-                      , "filetypes"        : self.filetypes
-                      , "initialdir"       : path
-                      , "title"            : self.selector_title or self.name
-                      }
-                    )
+        new = self.ask_dir_name \
+            ( defaultextension = self.defaultextension
+            , filetypes        = self.filetypes
+            , initialdir       = path
+            , title            = self.selector_title or self.name
+            )
         if new :
             self.set (new)
         self.after_idle (self.entry.focus_set)
@@ -6511,11 +6511,9 @@ class Fileview (Scrolled_Text) :
 
     def __init__ (self, master, file, name = None, ** kw) :
         if isinstance (file, (str, unicode)) :
-            file = open ( file, "r")
-        apply           ( self.__Ancestor.__init__
-                        , (self, master, name, DISABLED), kw
-                        )
-        self.insert     ( "at_end", file.read ())
+            file = open (file, "r")
+        self.__Ancestor.__init__ (self, master, name, DISABLED, ** kw)
+        self.insert              ("at_end", file.read ())
     # end def __init__
 # end class Fileview
 
@@ -6548,7 +6546,7 @@ class C_Toplevel (CT_TK_mixin, Toplevel) :
         self.close_cmd     = close_cmd   or self.withdraw
         self.destroy_cmd   = destroy_cmd or self.destroy
         kw.update          ({"name" : name, "class" : self.widget_class})
-        apply              (self.__Ancestor.__init__, (self, master), kw)
+        self.__Ancestor.__init__ (self, master, ** kw)
         self.set_maxsize   ()
         self.protocol      ("WM_DELETE_WINDOW", self.destroy_cmd)
         self.bind          ("<Escape>",         self.close_cmd)
