@@ -37,6 +37,8 @@
 #    22-Oct-2009 (CT) Creation continued.......
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #    28-Oct-2009 (CT) I18N
+#    18-Nov-2009 (CT) Major surgery (removed generic e-types [i.e., those for
+#                     non-derived app_types])
 #    ««revision-date»»···
 #--
 
@@ -59,7 +61,10 @@ import sys
 class M_E_Mixin (TFL.Meta.M_Class) :
     """Meta mixin for M_Entity and M_E_Type."""
 
-    _Class_Kind = "Bare Essence"
+    _Class_Kind    = "Bare Essence"
+
+    _S_Extension   = []     ### List of E_Spec
+    _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__      (name, bases, dict)
@@ -72,6 +77,18 @@ class M_E_Mixin (TFL.Meta.M_Class) :
             % (cls.type_name, args, cls.type_name, args)
             )
     # end def __call__
+
+    def m_setup_etypes (cls, app_type) :
+        """Setup EMS- and DBW -specific essential types for all classes in
+           `cls._S_Extension`.
+        """
+        assert not app_type.etypes
+        if not cls._BET_map :
+            cls.m_init_etypes ()
+        cls._m_create_e_types (app_type, cls._S_Extension)
+        for t in reversed (app_type._T_Extension) :
+            t._m_setup_relevant_roots ()
+    # end def m_setup_etypes
 
     def pns_qualified (cls, name) :
         """Returns the `name` qualified with `Package_Namespace` of `cls`
@@ -158,24 +175,22 @@ class M_E_Mixin (TFL.Meta.M_Class) :
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
 
-    _S_Extension = []     ### List of E_Spec
-
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__  (name, bases, dict)
         cls._m_init_prop_specs  (name, bases, dict)
         cls._S_Extension.append (cls)
     # end def __init__
 
-    def m_setup_etypes (cls, app_type) :
-        """Setup essential types for all classes in `cls._S_Extension`."""
-        assert not app_type.etypes
-        SX = cls._S_Extension
-        cls._m_create_base_e_types (SX)
-        cls._m_setup_auto_props    (app_type, SX)
-        cls._m_create_e_types      (app_type, SX)
+    def m_init_etypes (cls) :
+        """Initialize bare essential types for all classes in `cls._S_Extension`."""
+        if not cls._BET_map :
+            SX = cls._S_Extension
+            cls._m_create_base_e_types (SX)
+            cls._m_setup_auto_props    (SX)
     # end def m_setup_etypes
 
-    def _m_create_base_e_types (self, SX) :
+    def _m_create_base_e_types (cls, SX) :
+        BX = cls._BET_map
         for s in SX :
             tbn = s.type_base_name
             bet = M_E_Mixin \
@@ -184,17 +199,18 @@ class M_Entity (M_E_Mixin) :
                 , dict
                     ( app_type            = None
                     , E_Spec              = s
+                    , is_partial          = s.is_partial
                     , Package_NS          = s.Package_NS
                     , show_package_prefix = s.show_package_prefix
                     , _real_name          = tbn
                     , __module__          = s.__module__
                     )
                 )
-            bet.Essence = s.Essence = bet
-            setattr (bet,                        "__BET", bet)
-            setattr (s,                          "__BET", bet)
-            setattr (s.Package_NS,               tbn,     bet)
-            setattr (sys.modules [s.__module__], tbn,     bet)
+            bet.Essence = s.Essence = BX [tbn] = bet
+            setattr   (bet,                        "__BET", bet)
+            setattr   (s,                          "__BET", bet)
+            setattr   (s.Package_NS,               tbn,     bet)
+            setattr   (sys.modules [s.__module__], tbn,     bet)
     # end def _m_create_base_e_types
 
     def _m_init_prop_specs (cls, name, bases, dct) :
@@ -207,12 +223,12 @@ class M_Entity (M_E_Mixin) :
                 setattr (cls, psn, MOM.Meta.M_Prop_Spec (psn, prop_bases, d))
     # end def _m_init_prop_specs
 
-    def _m_setup_auto_props (cls, app_type, SX) :
+    def _m_setup_auto_props (cls, SX) :
         for c in SX :
-            c._m_setup_etype_auto_props (app_type)
+            c._m_setup_etype_auto_props ()
     # end def _m_setup_auto_props
 
-    def _m_setup_etype_auto_props (cls, app_type) :
+    def _m_setup_etype_auto_props (cls) :
         for P in cls._Attributes, cls._Predicates :
             P.m_setup_names ()
     # end def _m_setup_etype_auto_props
@@ -281,12 +297,9 @@ class M_E_Type (M_E_Mixin) :
     _Class_Kind = "Essence"
 
     def __init__ (cls, name, bases, dct) :
-        cls.__m_super.__init__ (name, bases, dct)
-        cls._m_setup_children  (bases, dct)
-        if cls.app_type.EMS is None :
-            cls._m_setup_attributes     (bases, dct)
-        else :
-            cls._m_setup_attributes_dbw (bases, dct)
+        cls.__m_super.__init__  (name, bases, dct)
+        cls._m_setup_children   (bases, dct)
+        cls._m_setup_attributes (bases, dct)
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
@@ -339,25 +352,12 @@ class M_E_Type (M_E_Mixin) :
 
     def children_iter (cls) :
         """Generates the etypes of all children of `cls`."""
-        if cls.app_type :
-            etype = cls.app_type.entity_type
-        else :
-            etype = lambda c : cls.children [c]
+        etype = cls.app_type.entity_type
         for c in cls.children :
             et = etype (c)
             if et :
                 yield et
     # end def children_iter
-
-    def m_setup_etypes (cls, app_type) :
-        """Setup EMS- and DBW -specific essential types for all classes in
-           `app_type.parent._T_Extension`.
-        """
-        assert not app_type.etypes
-        cls._m_create_e_types (app_type, app_type.parent._T_Extension)
-        for t in reversed (app_type._T_Extension) :
-            t._m_setup_relevant_roots ()
-    # end def m_setup_etypes
 
     def _m_add_prop (cls, prop, _Properties, verbose, parent = None, override = False) :
         name = prop.__name__
@@ -425,10 +425,6 @@ class M_E_Type (M_E_Mixin) :
             if (not a.electric) and TFL.callable (a.attr.check_syntax)
             ]
     # end def _m_setup_attributes
-
-    def _m_setup_attributes_dbw (cls, bases, dct) :
-        pass ### XXX
-    # end def _m_setup_attributes_dbw
 
     def _m_setup_children (cls, bases, dct) :
         cls.children = {}

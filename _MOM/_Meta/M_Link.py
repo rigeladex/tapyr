@@ -30,6 +30,8 @@
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #     4-Nov-2009 (CT) s/E_Type_Manager_L/E_Type_Manager.Link/
 #     4-Nov-2009 (CT) `M_Link2` and `M_E_Type_Link2` added
+#    18-Nov-2009 (CT) Major surgery (removed generic e-types [i.e., those for
+#                     non-derived app_types])
 #    ««revision-date»»···
 #--
 
@@ -42,8 +44,8 @@ import _MOM.E_Type_Manager
 class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
-    def _m_setup_etype_auto_props (cls, app_type) :
-        cls.__m_super._m_setup_etype_auto_props (app_type)
+    def _m_setup_etype_auto_props (cls) :
+        cls.__m_super._m_setup_etype_auto_props ()
         for a in cls._Attributes._names.itervalues () :
             if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
                 a.role_type.is_relevant = True

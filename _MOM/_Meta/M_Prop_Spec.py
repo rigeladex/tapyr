@@ -51,10 +51,8 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
         for n, v in dict.iteritems () :
             if n.startswith ("_") and n.endswith ("_") :
                 continue
-            if isinstance (v, MOM.Meta.M_Prop_Type) :
+            if v is None or isinstance (v, MOM.Meta.M_Prop_Type) :
                 _names [n] = _own_names [n] = v
-            elif v is None :
-                _names [n] = _own_names [n] = None
             elif n in _names :
                 raise cls._m_inconsistent_prop (n, v, _names, dict)
     # end def m_setup_names

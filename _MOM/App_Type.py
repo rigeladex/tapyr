@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Oct-2009 (CT) Creation
 #    18-Oct-2009 (CT) Creation continued
+#    18-Nov-2009 (CT) `_App_Type_` and `_App_Type_D_` factored
 #    ««revision-date»»···
 #--
 
@@ -37,49 +38,8 @@ from   _TFL                  import TFL
 import _TFL.Ordered_Set
 import _TFL._Meta.Object
 
-class App_Type (TFL.Meta.Object) :
+class _App_Type_ (TFL.Meta.Object) :
     """Encapsulate information about a specific application type."""
-
-    Table            = {}
-
-    def __init__ (self, name, ANS, Root_Type_Name = None) :
-        assert bool (name)
-        assert name not in self.Table
-        self.Table [name]      = self
-        self.name              = name
-        self.ANS               = ANS
-        self.Root_Type_Name    = Root_Type_Name
-        self.EMS               = None
-        self.DBW               = None
-        self.etypes            = {}
-        self._T_Extension      = []
-        self.derived           = {}
-        self.parent            = None
-        self.init_callback     = TFL.Ordered_Set ()
-        self.kill_callback     = TFL.Ordered_Set ()
-        self.PNS_Map           = {}
-    # end def __init__
-
-    def Derived (self, EMS, DBW) :
-        assert self.parent is None
-        assert not (EMS, DBW) in self.derived
-        result                  = self.__class__.__new__ (self.__class__)
-        self.derived [EMS, DBW] = result
-        result.name             = "__".join \
-            ((self.name, EMS.type_name, DBW.type_name))
-        result.ANS              = self.ANS
-        result.Root_Type_Name   = self.Root_Type_Name
-        result.EMS              = EMS
-        result.DBW              = DBW
-        result.etypes           = {}
-        result._T_Extension     = []
-        result.derived          = None
-        result.parent           = self
-        result.init_callback    = TFL.Ordered_Set ()
-        result.kill_callback    = TFL.Ordered_Set ()
-        result.PNS_Map          = self.PNS_Map
-        return result
-    # end def Derived
 
     @property
     def Root_Type (self) :
@@ -89,7 +49,7 @@ class App_Type (TFL.Meta.Object) :
 
     def add_init_callback (self, * callbacks) :
         """Add all `callbacks` to `init_callback`. These
-           callbacks are executed whenever a :class:`~_TOM.Scope.Scope` is
+           callbacks are executed whenever a :class:`~_MOM.Scope.Scope` is
            created (the new scope is passed as the single argument to each
            callback).
         """
@@ -98,12 +58,66 @@ class App_Type (TFL.Meta.Object) :
 
     def add_kill_callback (self, * callbacks) :
         """Add all `callbacks` to `kill_callback`. These
-           callbacks` are executed whenever a :class:`~_TOM.Scope.Scope` is
+           callbacks` are executed whenever a :class:`~_MOM.Scope.Scope` is
            destroyed (the scope to be destroyed is passed as the single
            argument to each callback).
         """
         self.kill_callback.extend (callbacks)
     # end def add_kill_callback
+
+    @staticmethod
+    def instance (name) :
+        return App_Type.Table [name]
+    # end def instance
+
+    def run_init_callbacks (self, scope) :
+        for c in self.init_callback :
+            c (scope)
+    # end def run_init_callbacks
+
+    def run_kill_callbacks (self, scope) :
+        for c in self.kill_callback :
+            c (scope)
+    # end def run_kill_callbacks
+
+    def __getitem__ (self, name) :
+        return self.etypes [name]
+    # end def __getitem__
+
+    def __repr__ (self) :
+        return "%s (%r, %s)" % \
+            ( self.__class__.__name__
+            , self.name, self.ANS._Package_Namespace__qname
+            )
+    # end def __repr__
+
+    def __str__ (self) :
+        return self.name
+    # end def __str__
+
+# end class _App_Type_
+
+class _App_Type_D_ (_App_Type_) :
+    """App_Type derived for a specific combination of `EMS` and `DBW`"""
+
+    def __init__ (self, parent, EMS, DBW) :
+        assert parent
+        self.name             = "__".join \
+            ((parent.name, EMS.type_name, DBW.type_name))
+        self.ANS              = parent.ANS
+        self.Root_Type_Name   = parent.Root_Type_Name
+        self.EMS              = EMS
+        self.DBW              = DBW
+        self.etypes           = {}
+        self._T_Extension     = []
+        self.derived          = None
+        self.parent           = parent
+        self.init_callback    = TFL.Ordered_Set ()
+        self.kill_callback    = TFL.Ordered_Set ()
+        self.PNS_Map          = parent.PNS_Map
+        import _MOM.Entity
+        MOM.Entity.m_setup_etypes (self)
+    # end def __init__
 
     def add_type (self, etype) :
         pns = etype.Package_NS
@@ -123,53 +137,53 @@ class App_Type (TFL.Meta.Object) :
         return result
     # end def entity_type
 
-    @staticmethod
-    def instance (name) :
-        return App_Type.Table [name]
-    # end def instance
-
     def run_init_callbacks (self, scope) :
-        if self.parent :
-            for c in self.parent.init_callback :
-                c (scope)
-        for c in self.init_callback :
+        for c in self.parent.init_callback :
             c (scope)
+        self.__super.run_init_callbacks (scope)
     # end def run_init_callbacks
 
     def run_kill_callbacks (self, scope) :
-        for c in self.kill_callback :
+        self.__super.run_kill_callbacks (scope)
+        for c in self.parent.kill_callback :
             c (scope)
-        if self.parent :
-            for c in self.parent.kill_callback :
-                c (scope)
     # end def run_kill_callbacks
 
-    def setup_etypes (self) :
-        """Setup EMS- and DBW -specific essential types for all classes in
-           `self.parent._T_Extension`.
-        """
-        assert self.parent
-        assert self.parent._T_Extension
-        self.parent._T_Extension [0].m_setup_etypes (self)
-    # end def setup_etypes
+# end class _App_Type_D_
 
-    def __getitem__ (self, name) :
-        return self.etypes [name]
-    # end def __getitem__
+class App_Type (_App_Type_) :
+    """Encapsulate information about a specific application type."""
 
-    def __repr__ (self) :
-        return "%s (%r, %s)" % \
-            ( self.__class__.__name__
-            , self.name, self.ANS._Package_Namespace__qname
-            )
-    # end def __repr__
+    Table            = {}
 
-    def __str__ (self) :
-        return self.name
-    # end def __str__
+    DBW              = None
+    EMS              = None
+    etypes           = None
+    _T_Extension     = None
+    parent           = None
+
+    def __init__ (self, name, ANS, Root_Type_Name = None) :
+        assert bool (name)
+        assert name not in self.Table
+        self.Table [name]      = self
+        self.name              = name
+        self.ANS               = ANS
+        self.Root_Type_Name    = Root_Type_Name
+        self.derived           = {}
+        self.init_callback     = TFL.Ordered_Set ()
+        self.kill_callback     = TFL.Ordered_Set ()
+        self.PNS_Map           = {}
+    # end def __init__
+
+    def Derived (self, EMS, DBW) :
+        if (EMS, DBW) in self.derived :
+            result = self.derived [EMS, DBW]
+        else :
+            result = self.derived [EMS, DBW] = _App_Type_D_ (self, EMS, DBW)
+        return result
+    # end def Derived
 
 # end class App_Type
-
 
 if __name__ != "__main__" :
     MOM._Export ("*")

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -121,13 +121,10 @@
 #    16-Aug-2006 (CED) `_path_of` fixed
 #    16-Aug-2006 (MSF) `_path_of` really fixed
 #     6-Nov-2006 (CED) `pkg_chain` added
-#    23-Jul-2007 (CED) Activated absolute_import
-#    06-Aug-2007 (CED) Future import removed again
 #    27-Sep-2007 (CED) Added support for derived PNS import of root file
+#    18-Nov-2009 (CT)  3-compatibility
 #    ««revision-date»»···
 #--
-
-
 
 from   _TFL              import TFL
 from   _TFL.predicate    import *
@@ -223,7 +220,7 @@ class Derived_PNS_Finder (TFL.Meta.Object) :
     def __init__ (self, import_path = (".", )) :
         res = []
         for p in import_path :
-            TFL.sos.path.walk (p, self.dir_visitor, res)
+            TFL.sos.walk (p, self.dir_visitor, res)
         self.tokens = self._build_closure (res)
     # end def __init__
 
@@ -365,7 +362,7 @@ class Import_Closure :
             pym = self.path_of (imported, prefix)
             if pym :
                 file = Filename (pym.path_name, absolute = True)
-                if not self.ignore.has_key (file.base) :
+                if file.base not in self.ignore :
                     if self._add (pym) :
                         self._find_imports (pym.path_name, imported, pym.pkg)
                         return True
@@ -412,7 +409,7 @@ class Import_Closure :
         line    = "import %s" % (name, )
         match   = self.import_pat.match (line)
         if match :
-            self._import_module      (match.group ("imported"), match, "")
+            self._import_module (match.group ("imported"), match, "")
             if name in self.derived_modules :
                 base = self.derived_modules [name].replace (".", TFL.sos.path.sep)
             return self.pym_dict.get (base)

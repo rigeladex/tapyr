@@ -163,5 +163,4 @@ class Rodent_in_Trap (MOM.Link2) :
 
 # end class Rodent_in_Trap
 
-
 ### __END__ MOM.__Test

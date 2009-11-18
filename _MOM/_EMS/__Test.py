@@ -38,8 +38,6 @@ EMS   = MOM.EMS.Hash.Manager
 DBW   = MOM.EMS.Hash.Manager ### XXX change to a real DBW
 apt   = MOM.App_Type                 ("BMT", MOM)
 apt_c = apt.Derived                  (EMS, DBW)
-MOM.Entity.m_setup_etypes            (apt)
-apt_c.setup_etypes                   ()
 scope = MOM.Scope                    (apt_c)
 if 1 :
     m     = scope.MOM.Mouse              ("Mighty_Mouse")
