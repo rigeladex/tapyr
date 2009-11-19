@@ -274,7 +274,7 @@ class _Text_Entry_ (Entry) :
     background   = "gray"
     height       = 14
     text_color   = "white"
-    text_font    = ("Helvetica", 7) ## "6x13"
+    text_font    = ("Helvetica", -10) ## "6x13"
 
     def _new_text (self, canvas, pos, offset, anchor, tag) :
         p = pos + offset
@@ -496,7 +496,7 @@ class Date_Entry (Text_C_Entry) :
     background   = "#BEBEBE"
     c_tag        = "date"
     rect_tag     = "datebody"
-    text_font    = ("Helvetica", 8) ## "6x13"
+    text_font    = ("Helvetica", -12) ## "6x13"
 
     def update (self, status) :
         d = time.strftime ("%a %d-%b-%Y", time.localtime ())
