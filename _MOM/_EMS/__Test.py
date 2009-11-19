@@ -28,33 +28,43 @@
 # Revision Dates
 #    21-Oct-2009 (CT) Creation
 #     4-Nov-2009 (CT) Creation continued
+#    19-Nov-2009 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
-from   _MOM.__Test          import *
+from   _MOM.__doc__          import *
 import _MOM._EMS.Hash
+import _MOM._DBW.Session
 
 EMS   = MOM.EMS.Hash.Manager
-DBW   = MOM.EMS.Hash.Manager ### XXX change to a real DBW
+DBW   = MOM.DBW.Session ### XXX change to a real DBW
 apt   = MOM.App_Type                 ("BMT", MOM)
 apt_c = apt.Derived                  (EMS, DBW)
 scope = MOM.Scope                    (apt_c)
+RiT   = scope.MOM.Rodent_in_Trap
 if 1 :
-    m     = scope.MOM.Mouse              ("Mighty_Mouse")
-    r     = scope.MOM.Rat                ("Rutty_Rat")
-    t1    = scope.MOM.Trap               ("X", 1)
-    t2    = scope.MOM.Trap               ("X", 2)
-    t3    = scope.MOM.Trap               ("Y", 1)
+    m     = scope.MOM.Mouse          ("Mighty_Mouse")
+    r     = scope.MOM.Rat            ("Rutty_Rat")
+    axel  = scope.MOM.Rat            ("Axel")
+    t1    = scope.MOM.Trap           ("X", 1)
+    t2    = scope.MOM.Trap           ("X", 2)
+    t3    = scope.MOM.Trap           ("Y", 1)
     if 1 :
-        mit   = scope.MOM.Rodent_in_Trap     (m, t1)
-        rit   = scope.MOM.Rodent_in_Trap     (r, t2)
+        mit   = RiT                  (m,    t1)
+        rit   = RiT                  (r,    t3)
+        xit   = RiT                  (axel, t2)
+if 1 :
     print scope.MOM.Mouse.t_extension          ()
     print scope.MOM.Rat.t_extension            ()
     print scope.MOM.Trap.t_extension           ()
     print scope.MOM.Rodent.t_extension         ()
     print scope.MOM.Named_Object.t_extension   ()
     print scope.MOM.Object.t_extension         ()
+    print
     print scope.MOM.Rodent_in_Trap.t_extension ()
+    print scope.MOM.Rodent_in_Trap.t_extension \
+        (TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key))
+    print
     print scope.MOM.Rodent_in_Trap.s_extension ()
     print scope.MOM.Rodent_in_Trap.s_left      (t1)
     print scope.MOM.Rodent_in_Trap.s_left      (t2)

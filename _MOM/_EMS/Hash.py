@@ -32,6 +32,8 @@
 #    28-Oct-2009 (CT) I18N
 #     4-Nov-2009 (CT) `sort_key` argument added to `s_role` and `t_role`
 #     4-Nov-2009 (CT) `epk_to_hpk` and `hpk` for `MOM.Link` fixed
+#    19-Nov-2009 (CT) Use `Type.sort_key (sort_key)` instead of
+#                     `sort_key or Type.sorted_by` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -149,12 +151,12 @@ class Manager (TFL.Meta.Object) :
             if Type.children :
                 pred   = lambda x : x.Essence is Type.Essence
                 result = itertools.ifilter (pred, result)
-        return sorted (result, key = sort_key or Type.sorted_by)
+        return sorted (result, key = Type.sort_key (sort_key))
     # end def s_extension
 
     def s_role (self, role, obj, sort_key = None) :
         result = self._r_map [role] [obj.id]
-        return sorted (result, key = sort_key or role.assoc.sorted_by)
+        return sorted (result, key = role.assoc.sort_key (sort_key))
     # end def s_role
 
     def t_count (self, Type, seen = None) :
@@ -176,7 +178,7 @@ class Manager (TFL.Meta.Object) :
         else :
             result = itertools.chain \
                 (* (tables [t].itervalues () for t in Type.relevant_roots))
-        return sorted (result, key = sort_key or Type.sorted_by)
+        return sorted (result, key = Type.sort_key (sort_key))
     # end def t_extension
 
     def t_role (self, role, obj, sort_key = None) :
@@ -188,7 +190,7 @@ class Manager (TFL.Meta.Object) :
                 for c in role.assoc.children.itervalues ()
                 )
             )
-        return sorted (result, key = sort_key or role.assoc.sorted_by)
+        return sorted (result, key = role.assoc.sort_key (sort_key))
     # end def t_role
 
     def __iter__ (self) :

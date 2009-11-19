@@ -29,6 +29,7 @@
 #    21-Sep-2009 (CT) Creation
 #    22-Sep-2009 (CT) `__eq__` and `__ne__` removed from `_Orders_.__cmp__`
 #    22-Sep-2009 (CT) `equality_operators ["__eq__"]` change to use only `<`
+#    19-Nov-2009 (CT) `_Orders_.__hash__` added (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -191,6 +192,11 @@ class _Orders_ (TFL.Meta.Object) :
     for name, func in equality_operators.iteritems () :
         func.__name__ = name
         func.__doc__  = getattr (object, name).__doc__
+
+    def __hash__ (self) :
+        ### Define this just to silence `-3` deprecation warning about __cmp__
+        raise NotImplementedError
+    # end def __hash__
 
 # end class _Orders_
 

@@ -1,18 +1,16 @@
 MOM To-Do
 =========
 
-- Open questions:
-
 - Link, M_Link, Role:
 
   x Set `is_relevant` of all roles to True
 
-  * Define Alias_Property for `hpk` that maps to `id` derived from objects
+  x Define Alias_Property for `hpk` that maps to `id` derived from objects
     linked
 
   * Is `Id_Entity.rename` correct for links ?
 
-  * Implement `epk_to_hpk` to translate from `epk` to `hpk`
+  x Implement `epk_to_hpk` to translate from `epk` to `hpk`
 
   * auto_cacher
 
@@ -40,7 +38,7 @@ MOM To-Do
       x The essential E_Type replaces the `E_Spec` in the appropriate package
         namespace and module.
 
-    + For each DBW backend to support, a separate subclass of the essential
+    x For each DBW backend to support, a separate subclass of the essential
       E_Type is automagically derived, which contains the DBW specific
       attribute descriptors
 
@@ -69,11 +67,11 @@ MOM To-Do
   x M_E_Type __init__/__new__ sets up the meta information for the essential
     classes
 
-  * E_Type_Manager implements the basic query methods
+  x E_Type_Manager implements the basic query methods
 
-    + Delegation to EMS-manager of scope
+    x Delegation to EMS-manager of scope
 
-    + Subclasses of M_E_Type_Id implemented object- and link-specific query
+    x Subclasses of M_E_Type_Id implemented object- and link-specific query
       methods
 
 x Id_Entity renaming:
@@ -96,17 +94,17 @@ x Attr.Kind:
 
   * use `.epk` instead of `.name` to identify objects
 
-  * keyed-entities just call `self.home_scope.add (self)`
+  x keyed-entities just call `self.home_scope.add (self)`
 
-    + For objects, there is a manager object that manages a hash-table of
+    x For objects, there is a manager object that manages a hash-table of
       objects (analogous to the meta-link).
 
-    + This architecture also allows separate hash-tables for different object
+    x This architecture also allows separate hash-tables for different object
       types (using several managers).
 
 - App_Type
 
-  * Dictionary PNS_Set mapping the fully qualified names of essential package
+  x Dictionary PNS_Set mapping the fully qualified names of essential package
     namespaces to the namespaces in question
 
   * Use `entity_type` instead of `etype` as method name

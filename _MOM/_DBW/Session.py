@@ -26,7 +26,7 @@
 #    Base class for database backend specific session classes
 #
 # Revision Dates
-#     2009-Oct-19 (MG) Creation
+#    19-Oct-2009 (MG) Creation
 #    ««revision-date»»···
 #--
 
@@ -35,26 +35,25 @@ from   _MOM       import MOM
 import _MOM._DBW
 import _TFL._Meta.Object
 
-# end class _DBW_
-
 class _M_Session_ (TFL.Meta.Object.__class__) :
     """Base meta class for all session"""
 
-    def Mapper (cls, e_type) :
+    def etype_decorator (cls, e_type) :
         return e_type
-    # end def Mapper
+    # end def etype_decorator
 
 # end class _M_Session_
-
 
 class _DBW_Session_ (TFL.Meta.Object) :
     """Base class for database backend specific session classes"""
 
-    _real_name    = "Session"
     __metaclass__ = _M_Session_
-    
+    _real_name    = "Session"
+
+    type_name     = "<Unspecified>"
+
 Session = _DBW_Session_ # end class Session
 
 if __name__ != '__main__':
     MOM.DBW._Export ("*")
-### __END__ ### MOM.DBW.Session
+### __END__ MOM.DBW.Session

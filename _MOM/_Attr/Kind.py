@@ -46,6 +46,7 @@
 #    28-Oct-2009 (CT) I18N
 #    29-Oct-2009 (CT) `rank` added
 #     3-Nov-2009 (CT) `Link_Role.get_role` added
+#    19-Nov-2009 (CT) `Link_Role.sort_key` added
 #    ««revision-date»»···
 #--
 
@@ -384,6 +385,11 @@ class Link_Role (Primary) :
     """
 
     get_role               = TFL.Meta.Alias_Property ("get_value")
+
+    def sort_key (self, l) :
+        r = self.get_role (l)
+        return r.__class__.sort_key () (r)
+    # end def sort_key
 
 # end class Link_Role
 

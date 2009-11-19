@@ -30,6 +30,8 @@
 #    24-Oct-2009 (MG) Creation continued
 #    27-Oct-2009 (MG) Create `UniqueConstraint` for essential primary key
 #                     columns
+#    19-Nov-2009 (CT) `_M_SA_Session_._attr_dict` simplified
+#    19-Nov-2009 (CT) s/Mapper/etype_decorator/
 #    ««revision-date»»···
 #--
 
@@ -50,7 +52,7 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
 
     metadata = schema.MetaData () ### XXX
 
-    def Mapper (cls, e_type) :
+    def etype_decorator (cls, e_type) :
         if e_type.relevant_root :
             bases      = \
                 [  b for b in e_type.__bases__
@@ -76,20 +78,19 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
             orm.mapper             (e_type, sa_table, ** col_props)
             e_type._sa_table = sa_table
         return e_type
-    # end def Mapper
+    # end def etype_decorator
 
     def _attr_dict (self, e_type) :
-        result     = {}
         attr_dict  = e_type._Attributes._attr_dict
-        if e_type is e_type.relevant_root :
-            for name, attr_kind in attr_dict.iteritems () :
-                if attr_kind.save_to_db :
-                    result [name] = attr_kind
+        result     = {}
+        root       = e_type.relevant_root
+        if e_type is root :
+            inherited_attrs = {}
         else :
-            root_attrs = e_type.relevant_root._Attributes._attr_dict
-            for name, attr_kind in attr_dict.iteritems () :
-                if attr_kind.save_to_db and name not in root_attrs :
-                    result [name] = attr_kind
+            inherited_attrs = root._Attributes._attr_dict
+        for name, attr_kind in attr_dict.iteritems () :
+            if attr_kind.save_to_db and name not in inherited_attrs :
+                result [name] = attr_kind
         return result
     # end def _attr_dict
 
@@ -181,4 +182,4 @@ Session = _SA_Session_ # end class _SA_Session_
 
 if __name__ != '__main__':
     MOM.DBW.SA._Export ("*")
-### __END__ ### MOM.DBW.Session
+### __END__ MOM.DBW.Session

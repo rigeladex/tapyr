@@ -32,6 +32,7 @@
 #     4-Nov-2009 (CT) `M_Link2` and `M_E_Type_Link2` added
 #    18-Nov-2009 (CT) Major surgery (removed generic e-types [i.e., those for
 #                     non-derived app_types])
+#    19-Nov-2009 (CT) `cls.sorted_by` fixed for default case (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,8 @@ from   _TFL import TFL
 
 import _MOM._Meta.M_Entity
 import _MOM.E_Type_Manager
+
+import itertools
 
 class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
@@ -87,7 +90,7 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                 if __debug__ :
                     print "No match for relation names", \
                         cls.name, type_base_names, rltn_pat.pattern
-            cls.number_of_roles = len (Roles)
+            cls.number_of_roles = nor      = len (Roles)
             cls.role_map        = role_map = {}
             for i, r in enumerate (Roles) :
                 r.role_index = i
@@ -106,6 +109,14 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                          , r.role_type.type_name, r.role_type.type_base_name
                         )) :
                     role_map [key] = r.role_index
+            if cls.sorted_by is MOM.Id_Entity.E_Spec.sorted_by :
+                criteria = itertools.chain \
+                    ( (R.sort_key for R in Roles)
+                    , (TFL.Sorted_By (a.name) for a in cls.primary [nor:])
+                    )
+                cls.sorted_by = TFL.Sorted_By (* criteria)
+            else :
+                pass ### XXX what to do here ???
     # end def _m_setup_roles
 
 # end class M_E_Type_Link

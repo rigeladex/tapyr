@@ -30,29 +30,20 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM.__Test import *
+from   _MOM.__doc__ import *
 import _MOM._DBW._SA.Session
 import _MOM._EMS.SA
 
-EMS   = MOM.EMS.SA.Manager
-DBW   = MOM.DBW.SA.Session
-apt   = MOM.App_Type                   ("BMT", MOM)
-apt_c = apt.Derived                    (EMS, DBW)
-MOM.Entity.m_setup_etypes              (apt)
-apt_c.setup_etypes                     ()
-scope = MOM.Scope                      (apt_c)
-MOM.DBW.SA.Session.Mapper              (scope.MOM.Rodent._etype)
-MOM.DBW.SA.Session.Mapper              (scope.MOM.Mouse._etype)
-MOM.DBW.SA.Session.Mapper              (scope.MOM.Beaver._etype)
-MOM.DBW.SA.Session.Mapper              (scope.MOM.Otter._etype)
-MOM.DBW.SA.Session.Mapper              (scope.MOM.Rat._etype)
-MOM.DBW.SA.Session.Mapper              (scope.MOM.Trap._etype)
+EMS     = MOM.EMS.SA.Manager
+DBW     = MOM.DBW.SA.Session
+apt     = MOM.App_Type    ("BMT", MOM)
+apt_c   = apt.Derived     (EMS, DBW)
+scope   = MOM.Scope       (apt_c)
+DBW.metadata.create_all   (DBW.engine)
 
-session    = scope.dbw.session
-#session.bind.echo = True
-MOM.DBW.SA.Session.metadata.create_all (MOM.DBW.SA.Session.engine)
+session           = scope.dbw.session
 session.bind.echo = False
-dMOM       = scope.MOM
+dMOM              = scope.MOM
 session.bind.echo = True * 0
 #import pdb;pdb.set_trace ()
 dMOM.Mouse  ("Mighty_Mouse")

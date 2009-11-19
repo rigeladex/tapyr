@@ -39,6 +39,8 @@
 #    28-Oct-2009 (CT) I18N
 #    18-Nov-2009 (CT) Major surgery (removed generic e-types [i.e., those for
 #                     non-derived app_types])
+#    19-Nov-2009 (CT) `M_E_Type.sort_key` added
+#    19-Nov-2009 (CT) `app_type.DBW.etype_decorator` called
 #    ««revision-date»»···
 #--
 
@@ -117,8 +119,9 @@ class M_E_Mixin (TFL.Meta.M_Class) :
 
     def _m_create_e_types (cls, app_type, SX) :
         etypes = app_type.etypes
+        e_deco = app_type.DBW.etype_decorator
         for s in SX :
-            app_type.add_type (s._m_new_e_type (app_type, etypes))
+            app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
     # end def _m_create_e_types
 
     def _m_new_e_type (cls, app_type, etypes) :
@@ -447,6 +450,11 @@ class M_E_Type (M_E_Mixin) :
 @TFL.Add_To_Class ("M_E_Type", M_Id_Entity)
 class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
+
+    def sort_key (cls, sort_key = None) :
+        return TFL.Sorted_By \
+            ("relevant_root.type_name", sort_key or cls.sorted_by)
+    # end def sort_key
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
