@@ -35,6 +35,7 @@
 #    17-Nov-2007 (CT) `Time_Entry` removed from call to `Toplevel`
 #    24-Nov-2007 (CT) `ACPI_Updater.__call__` changed to use a treshold of
 #                     `minuntes < 45` instead of `percent < 40` for `low_color`
+#    19-Nov-2009 (CT) `text_font` changed (X update broke the display)
 #    ««revision-date»»···
 #--
 

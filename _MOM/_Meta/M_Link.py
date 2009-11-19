@@ -33,6 +33,8 @@
 #    18-Nov-2009 (CT) Major surgery (removed generic e-types [i.e., those for
 #                     non-derived app_types])
 #    19-Nov-2009 (CT) `cls.sorted_by` fixed for default case (3-compatibility)
+#    19-Nov-2009 (CT) `_m_setup_roles` changed to set `role.attr.Class` to
+#                     `role_type` (needed by MOM.Attr._A_Object_._to_cooked)
 #    ««revision-date»»···
 #--
 
@@ -97,7 +99,8 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                 if r.role_type :
                     ### Replace by app-type specific e-type
                     r.assoc          = cls
-                    r.attr.role_type = cls.app_type.entity_type (r.role_type)
+                    r.attr.role_type = r.attr.Class = \
+                        cls.app_type.entity_type (r.role_type)
                     r.attr.typ       = r.attr.role_type.type_base_name
                 if r.role_name != r.generic_role_name :
                     setattr \

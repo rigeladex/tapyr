@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.__Test
+#    MOM.__doc__
 #
 # Purpose
 #    Test for MOM meta object model
@@ -163,4 +163,4 @@ class Rodent_in_Trap (MOM.Link2) :
 
 # end class Rodent_in_Trap
 
-### __END__ MOM.__Test
+### __END__ MOM.__doc__

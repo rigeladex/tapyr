@@ -44,6 +44,8 @@
 #     3-Nov-2009 (CT) Fixed `as_string` and `_to_cooked` of `_A_Object_`
 #     3-Nov-2009 (CT) `A_Link_Role` derived from `_A_Object_`
 #     4-Nov-2009 (CT) `__all__` defined and used
+#    19-Nov-2009 (CT) `_A_Object_._get_scope` changed to use
+#                     `MOM.Scope.active` as default
 #    ««revision-date»»···
 #--
 
@@ -457,7 +459,7 @@ class _A_Object_ (A_Attr_Type) :
     # end def _accept_object
 
     def _get_scope (self, obj) :
-        return obj.home_scope
+        return obj.home_scope if obj else MOM.Scope.active
     # end def _get_scope
 
     def _to_cooked (self, s, cooker, obj, glob, locl) :
