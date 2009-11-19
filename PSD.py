@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -274,7 +274,7 @@ class _Text_Entry_ (Entry) :
     background   = "gray"
     height       = 14
     text_color   = "white"
-    text_font    = "6x13"
+    text_font    = ("Arial", 8) ## "6x13"
 
     def _new_text (self, canvas, pos, offset, anchor, tag) :
         p = pos + offset
