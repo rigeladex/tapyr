@@ -274,7 +274,7 @@ class _Text_Entry_ (Entry) :
     background   = "gray"
     height       = 14
     text_color   = "white"
-    text_font    = ("Arial", 8) ## "6x13"
+    text_font    = ("Helvetica", 8) ## "6x13"
 
     def _new_text (self, canvas, pos, offset, anchor, tag) :
         p = pos + offset
