@@ -35,6 +35,8 @@
 #    19-Nov-2009 (CT) `cls.sorted_by` fixed for default case (3-compatibility)
 #    19-Nov-2009 (CT) `_m_setup_roles` changed to set `role.attr.Class` to
 #                     `role_type` (needed by MOM.Attr._A_Object_._to_cooked)
+#    20-Nov-2009 (CT) `M_Link3`, `M_Link2_Ordered`, `M_E_Type_Link3`, and
+#                     `M_E_Type_Link2_Ordered` added
 #    ««revision-date»»···
 #--
 
@@ -63,6 +65,16 @@ class M_Link2 (M_Link) :
     """Meta class of binary entity-based link-types of MOM meta object model."""
 
 # end class M_Link2
+
+class M_Link3 (M_Link2) :
+    """Meta class of ternary link-types of MOM meta object model."""
+
+# end class M_Link3
+
+class M_Link2_Ordered (M_Link2) :
+    """Meta class of binary ordered link-types of MOM meta object model."""
+
+# end class M_Link2_Ordered
 
 @TFL.Add_To_Class ("M_E_Type", M_Link)
 class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
@@ -132,6 +144,22 @@ class M_E_Type_Link2 (M_E_Type_Link) :
 
 # end class M_E_Type_Link2
 
+@TFL.Add_To_Class ("M_E_Type", M_Link3)
+class M_E_Type_Link3 (M_E_Type_Link) :
+    """Meta class for essence of MOM.Link2."""
+
+    Manager = MOM.E_Type_Manager.Link3
+
+# end class M_E_Type_Link3
+
+@TFL.Add_To_Class ("M_E_Type", M_Link2_Ordered)
+class M_E_Type_Link2_Ordered (M_E_Type_Link) :
+    """Meta class for essence of MOM.Link2_Ordered."""
+
+    Manager = MOM.E_Type_Manager.Link2_Ordered
+
+# end class M_E_Type_Link2_Ordered
+
 __doc__ = """
 Class `MOM.Meta.M_Link`
 =========================
@@ -153,50 +181,20 @@ Class `MOM.Meta.M_Link`
       The tuple of role objects (contains as many role objects as the arity
       of the association specifies).
 
-    `M_Link` provides the methods:
-
-    .. automethod:: add
-    .. automethod:: add_children_filters
-    .. automethod:: applicable_objects
-    .. automethod:: define_link
-
-    .. method:: destroy()
-
-        Destroy all links of the association.
-
-    .. automethod:: destroy_links
-    .. automethod:: link(* objs)
-    .. automethod:: link_transitive(* objs)
-    .. automethod:: links_of_obj(obj)
-    .. automethod:: remove
-
 .. class:: M_Link2
 
     `TOM.Meta.M_Link2` provides the meta machinery for
     :class:`binary links<_TOM.Link2.Link2>`.
-
-    `M_Link2` provides the method:
-
-    .. automethod:: links_of(l = None, r = None)
-
 
 .. class:: M_Link2_Ordered
 
     `TOM.Meta.M_Link2_Ordered` provides the meta machinery for
     :class:`binary ordered links<_TOM.Link2_Ordered.Link2_Ordered>`.
 
-    `M_Link2_Ordered` provides the method:
-
-    .. automethod:: links_of(l = None, r = None, seq_no = None)
-
 .. class:: M_Link3
 
     `TOM.Meta.M_Link3` provides the meta machinery for
     :class:`ternary links<_TOM.Link3.Link3>`.
-
-    `M_Link3` provides the method:
-
-    .. automethod:: links_of(l = None, m = None, r = None)
 
 """
 

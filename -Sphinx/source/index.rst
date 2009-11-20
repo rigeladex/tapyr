@@ -6,6 +6,7 @@ Documentation for Tanzer's Python packages
 .. toctree::
 
    TFL/index
+   MOM/index
    TOM/index
 
 Indices and tables

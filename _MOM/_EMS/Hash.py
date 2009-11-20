@@ -34,6 +34,8 @@
 #     4-Nov-2009 (CT) `epk_to_hpk` and `hpk` for `MOM.Link` fixed
 #    19-Nov-2009 (CT) Use `Type.sort_key (sort_key)` instead of
 #                     `sort_key or Type.sorted_by` (3-compatibility)
+#    20-Nov-2009 (CT) `sort_key = None` means no sorting,
+#                     `sort_key = False` means use default sort-key for sorting
 #    ««revision-date»»···
 #--
 
@@ -142,7 +144,7 @@ class Manager (TFL.Meta.Object) :
         return self._counts [Type.type_name]
     # end def s_count
 
-    def s_extension (self, Type, sort_key = None) :
+    def s_extension (self, Type, sort_key = False) :
         root   = Type.relevant_root
         tables = self._tables
         result = []
@@ -151,12 +153,16 @@ class Manager (TFL.Meta.Object) :
             if Type.children :
                 pred   = lambda x : x.Essence is Type.Essence
                 result = itertools.ifilter (pred, result)
-        return sorted (result, key = Type.sort_key (sort_key))
+        if sort_key is not None :
+            result = sorted (result, key = Type.sort_key (sort_key))
+        return result
     # end def s_extension
 
-    def s_role (self, role, obj, sort_key = None) :
+    def s_role (self, role, obj, sort_key = False) :
         result = self._r_map [role] [obj.id]
-        return sorted (result, key = role.assoc.sort_key (sort_key))
+        if sort_key is not None :
+            result = sorted (result, key = role.assoc.sort_key (sort_key))
+        return result
     # end def s_role
 
     def t_count (self, Type, seen = None) :
@@ -170,7 +176,7 @@ class Manager (TFL.Meta.Object) :
         return result
     # end def t_count
 
-    def t_extension (self, Type, sort_key = None) :
+    def t_extension (self, Type, sort_key = False) :
         root   = Type.relevant_root
         tables = self._tables
         if root :
@@ -178,10 +184,12 @@ class Manager (TFL.Meta.Object) :
         else :
             result = itertools.chain \
                 (* (tables [t].itervalues () for t in Type.relevant_roots))
-        return sorted (result, key = Type.sort_key (sort_key))
+        if sort_key is not None :
+            result = sorted (result, key = Type.sort_key (sort_key))
+        return result
     # end def t_extension
 
-    def t_role (self, role, obj, sort_key = None) :
+    def t_role (self, role, obj, sort_key = False) :
         r_map  = self._r_map
         i      = role.role_index
         result = itertools.chain \
@@ -190,7 +198,9 @@ class Manager (TFL.Meta.Object) :
                 for c in role.assoc.children.itervalues ()
                 )
             )
-        return sorted (result, key = role.assoc.sort_key (sort_key))
+        if sort_key is not None :
+            result = sorted (result, key = role.assoc.sort_key (sort_key))
+        return result
     # end def t_role
 
     def __iter__ (self) :

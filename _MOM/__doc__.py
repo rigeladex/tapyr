@@ -32,6 +32,65 @@
 #    ««revision-date»»···
 #--
 
+"""
+How to define essential object models
+=====================================
+
+Using `MOM`, an essential object model is specified by deriving
+classes from :class:`MOM.Object<_MOM.Object.Object>`,
+:class:`MOM.Named_Object<_MOM.Object.Named_Object>`, or from one of
+the descendents of :class:`MOM.Link<_MOM.Link.Link>`.
+
+Each essential class must be defined inside a
+:class:`TFL.Package_Namespace<_TFL.Package_Namespace.Package_Namespace>`
+and the class definition must contain an explicit or inherited
+reference :attr:`Package_NS<_MOM.Entity.Package_NS>` to that package
+namespace.
+
+Normally, each essential class is defined in a module of its own. In
+some cases, a single module might define more than one essential
+class.
+
+Essential objects and links have identity, i.e., each object or link
+can be uniquely identified. This identity is specified by a set of (so
+called `primary`) attributes that together define the `essential
+primary key`, short `epk`, for the entity in question. If there is no
+more than primary attribute, the sequence of the attributes is defined
+by their :attr:`rank` and :attr:`name`.
+
+Essential objects identified by a simple, unstructured `name` are
+defined by classes derived from
+:class:`MOM.Named_Object<_MOM.Object.Named_Object>`. All other
+essential objects are defined by classes derived from
+:class:`MOM.Object<_MOM.Object.Object>` that specify one or more
+essential attributes of kind :class:`~_MOM._Attr.Kind.Primary`.
+
+Essential links are identified by the associated objects (the link's
+roles) and any other, if any, primary attributes defined for the link
+in question:
+
+- Binary links are derived from :class:`MOM.Link2<_MOM.Link.Link2>`
+  and identified by the link roles :attr:`left<_MOM.Link.Link2.left>`
+  and :attr:`right<_MOM.Link.Link2.right>` plus any other primary
+  attributes.
+
+- Binary ordered links are derived from
+  :class:`MOM.Link2_Ordered<_MOM.Link.Link2_Ordered>`
+  and identified by the link roles
+  :attr:`left<_MOM.Link.Link2_Ordered.left>`,
+  :attr:`right<_MOM.Link.Link2_Ordered.right>`, and
+  :attr:`seq_no<_MOM.Link.Link2_Ordered.seq_no>` plus any other primary
+  attributes.
+
+- Ternary links are derived from :class:`MOM.Link2<_MOM.Link.Link3>`
+  and identified by the link roles :attr:`left<_MOM.Link.Link3.left>`,
+  :attr:`middle<_MOM.Link.Link3.middle>`,
+  and :attr:`right<_MOM.Link.Link3.right>` plus any other primary
+  attributes.
+
+
+"""
+
 from   _MOM.import_MOM       import *
 
 class Rodent (MOM.Named_Object) :

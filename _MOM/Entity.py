@@ -662,14 +662,14 @@ class Id_Entity (Entity) :
 # end class Id_Entity
 
 __doc__  = """
-Class `MOM.Entity`
-==================
+Class `MOM.Id_Entity`
+=====================
 
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
-.. class:: Entity
+.. class:: Id_Entity
 
-   `MOM.Entity` provides the framework for defining essential classes and
+   `MOM.Id_Entity` provides the framework for defining essential classes and
    associations. Each essential class or association is characterized by
 
    - `essential attributes`_
@@ -680,16 +680,11 @@ Class `MOM.Entity`
 
    - `methods`_
 
-   Each instance of `Entity` has a a couple of attributes:
+   Each instance of `Id_Entity` has a attribute :attr:`home_scope` that
+   refers to the :class:`~_MOM.Scope.Scope` in which the instance lives.
 
-   - `id` is a unique identifier that isn't changed after the instance
-     is created -- even when the entity is renamed.
-
-   - `home_scope` refers to the :class:`~_MOM.Scope.Scope` in
-     which the instance lives.
-
-   `Entity` is normally not directly used as a base class. Instead,
-   `Entity`'s subclasses :class:`~_MOM.Object.Object` and
+   `Id_Entity` is normally not directly used as a base class. Instead,
+   `Id_Entity`'s subclasses :class:`~_MOM.Object.Object` and
    :class:`~_MOM.Link.Link` serve as root classes for the hierarchies
    of essential classes and associations, respectively.
 
@@ -697,9 +692,9 @@ Essential Attributes
 --------------------
 
 Essential attributes are defined inside the class `_Attributes`
-that is nested in `Entity` (or one of its derived classes).
+that is nested in `Id_Entity` (or one of its derived classes).
 
-Any essential class derived (directly or indirectly) from `Entity`
+Any essential class derived (directly or indirectly) from `Id_Entity`
 needs to define a `_Attributes` class that's derived from its
 ancestors `_Attributes`. The top-most `_Attributes` class is
 derived from :class:`MOM.Attr.Spec<_MOM._Attr.Spec.Spec>`.
@@ -707,7 +702,7 @@ derived from :class:`MOM.Attr.Spec<_MOM._Attr.Spec.Spec>`.
 Each essential attribute is defined by a class derived from one of
 the attribute types in :mod:`MOM.Attr.Type<_MOM._Attr.Type>`.
 
-`MOM.Entity` defines a number of attributes that can be overriden by
+`MOM.Id_Entity` defines a number of attributes that can be overriden by
 descendant classes:
 
 - electric
@@ -720,9 +715,9 @@ Essential Predicates
 --------------------
 
 Essential predicates are defined inside the class `_Predicates` that
-is nested in `Entity` (or one of its derived classes).
+is nested in `Id_Entity` (or one of its derived classes).
 
-Any essential class derived (directly or indirectly) from `Entity`
+Any essential class derived (directly or indirectly) from `Id_Entity`
 needs to define a `_Predicates` class that's derived from its
 ancestors `_Predicates`. The top-most `_Predicates` class is
 derived from :class:`MOM.Pred.Spec<_MOM._Pred.Spec.Spec>`.
@@ -730,7 +725,7 @@ derived from :class:`MOM.Pred.Spec<_MOM._Pred.Spec.Spec>`.
 Each essential predicate is defined by a class derived from one of
 the predicate types in :mod:`MOM.Pred.Type<_MOM._Pred.Type>`.
 
-`MOM.Entity` defines two predicates that should not be overriden by
+`MOM.Id_Entity` defines two predicates that should not be overriden by
 descendant classes:
 
 - completely_defined
@@ -745,7 +740,7 @@ of how predicates should be defined. Normally, predicates define
 Class Attributes
 ----------------
 
-`MOM.Entity` provides a number of class attributes that control various
+`MOM.Id_Entity` provides a number of class attributes that control various
 aspects of the use of an essential class by the framework.
 
 .. attribute:: auto_display
@@ -781,7 +776,7 @@ aspects of the use of an essential class by the framework.
   common root for these, e.g., `SPN.Entity`, that defines
   `Package_NS`, e.g., ::
 
-      class _SPN_Entity_ (MOM.Entity) :
+      class _SPN_Entity_ (MOM.Id_Entity) :
 
           _real_name = "Entity"
 
@@ -824,17 +819,21 @@ aspects of the use of an essential class by the framework.
 Methods
 -------
 
-Descendents of `MOM.Entity` can redefine a number of methods to
+Descendents of `MOM.Id_Entity` can redefine a number of methods to
 influence how instances of the class are handled by the framework. If
 you redefine one of these methods, you'll normally need to call the
 `super` method somewhere in the redefinition.
 
-- `after_init` is called by the GUI after an instance of the class was
+.. method:: after_init
+
+  Is called by the GUI after an instance of the class was
   (successfully) created. `after_init` can create additional objects
   automatically to ease the life of the interactive user of the
   application.
 
-- `compute_defaults_internal` is called whenever object attributes
+.. method:: compute_defaults_internal
+
+  Is called whenever object attributes
   needs to synchronized and can be used to set attributes to computed
   default values. Please note that it is better to use
   `compute_default` defined for a specific attribute than to compute that
@@ -843,7 +842,9 @@ you redefine one of these methods, you'll normally need to call the
   `compute_defaults_internal` should only be used when the default
   values for several different attributes need to be computed together.
 
-- `compute_type_defaults_internal` is a class method that is called to
+.. method:: compute_type_defaults_internal
+
+  Is a class method that is called to
   compute a default value of an attribute that is based on all
   instances of the class. The value of such an attribute must be
   stored as a class attribute (or in the root object of the scope).
@@ -854,17 +855,3 @@ you redefine one of these methods, you'll normally need to call the
 if __name__ != "__main__" :
     MOM._Export ("*")
 ### __END__ MOM.Entity
-
-"""
-from _MOM.Object import *
-from _MOM.App_Type import App_Type
-from _MOM.Scope import Scope
-from _MOM._EMS.Hash import Manager
-apt = App_Type ("test", MOM)
-cpt = apt.Derived (Manager, Manager)
-MOM.Entity.m_setup_etypes (apt)
-cpt.setup_etypes ()
-scope = Scope (cpt)
-scope.MOM.Entity
-
-"""

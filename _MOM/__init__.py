@@ -46,7 +46,7 @@ An essential (see [McP84]_) object model is one, IMHO the best, way of
 capturing the results of an object oriented analysis. An essential
 object model comprises classes and associations.
 
-Each essential class (modelled by the class
+Each essential class (modelled by a descendent of the class
 :class:`MOM.Object<_MOM.Object.Object>`)
 describes one specific type of object, in particluar
 
@@ -58,15 +58,15 @@ describes one specific type of object, in particluar
 
 visible to the class' clients.
 
-Each association (modelled by the classes :class:`MOM.Link<_MOM.Link.Link>` and
-:class:`MOM.Meta.M_Link<_MOM._Meta.M_Link.M_Link`) describes the possible links
-between the objects of a number of classes.
+Each essential association (modelled by a descendent of the class
+:class:`MOM.Link<_MOM.Link.Link>`)
+describes the possible links between the objects of a number of classes.
 
 As the links of an association are also characterized by attributes
 and predicates, most of the behavior of
 :class:`MOM.Object<_MOM.Object.Object>` and
 :class:`MOM.Link<_MOM.Link.Link>` is defined by their common ancestor
-:class:`MOM.Entity<_MOM.Entity.Entity>`.
+:class:`MOM.Id_Entity<_MOM.Entity.Id_Entity>`.
 
 A specific meta object model is defined for a well-defined application. Each
 instance of a meta object model is managed by a scope object (modelled by the

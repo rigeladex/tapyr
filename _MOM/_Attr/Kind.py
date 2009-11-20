@@ -47,6 +47,8 @@
 #    29-Oct-2009 (CT) `rank` added
 #     3-Nov-2009 (CT) `Link_Role.get_role` added
 #    19-Nov-2009 (CT) `Link_Role.sort_key` added
+#    20-Nov-2009 (CT) Documentation added
+#    20-Nov-2009 (CT) `__all__` computed explicitly
 #    ««revision-date»»···
 #--
 
@@ -348,8 +350,8 @@ class _Cached_ (_Volatile_, _System_) :
 # end class _Cached_
 
 class Primary (_User_) :
-    """Primary attribute: must be defined at all times, used for (essential)
-       primary key.
+    """Primary attribute: must be defined at all times, used as part of the
+       `essential primary key`.
     """
 
     is_primary  = True
@@ -567,7 +569,9 @@ class Computed (_Cached_) :
 # end class Computed
 
 class Computed_Mixin (Kind) :
-    """Mixin to compute attribute value if empty."""
+    """Mixin to compute attribute value if empty, i.e., if no value was
+       specified by the tool user.
+    """
 
     def get_value (self, obj) :
         result = self.__super.get_value (obj)
@@ -590,8 +594,8 @@ class Computed_Mixin (Kind) :
 # end class Computed_Mixin
 
 class Sticky_Mixin (Kind) :
-    """Mixin to reset attribute to default value whenever user enters empty
-       value.
+    """Mixin to reset the attribute to the default value whenever the tool
+       user enters an empty value.
     """
 
     def _check_sanity (self, attr_type) :
@@ -619,6 +623,55 @@ class Sticky_Mixin (Kind) :
 
 ### XXX Object-Reference- and Link-related kinds
 
+__doc__ = """
+Class `MOM.Attr.Kind`
+============================
+
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
+.. class:: Kind
+
+    `MOM.Attr.Kind` is the root class of a hierarchy of classes defining the
+    various kinds of attributes of essential classes. The attribute kind
+    controls how the value of an attribute is accessed and how (and if) it
+    can be modified. Technically, `Kind` and its subclasses define Python
+    `data descriptors` that implement `property` semantics.
+
+    The kind of a concrete attribute is specified as one the properties of
+    the :class:`attribute's type<_MOM._Attr.Type.A_Attr_Type>`. The kind
+    class gets instantiated by :class:`~_MOM._Attr.Spec.Spec` which passes
+    the `type` to the kind's `__init__`.
+
+    Some kinds of attributes are stored into the database, e.g.,
+    :class:`Primary`, :class:`Required`, :class:`Optional` (and its
+    descendents), and :class:`Internal`, others are not, e.g., the various
+    kinds of cached and computed attributes.
+
+    There are some mixins that can modify the semantics of :class:`Optional`
+    attributes.
+
+.. autoclass:: Primary
+.. autoclass:: Required
+.. autoclass:: Optional
+
+.. autoclass:: Internal
+.. autoclass:: Cached
+.. autoclass:: Computed
+.. autoclass:: Auto_Cached
+.. autoclass:: Sync_Cached
+.. autoclass:: Once_Cached
+.. autoclass:: Const
+
+.. autoclass:: Computed_Mixin
+.. autoclass:: Sticky_Mixin
+
+"""
+
+__all__ = tuple \
+    (  k for (k, v) in globals ().iteritems ()
+    if isinstance (v, MOM.Meta.M_Attr_Kind)
+    )
+
 if __name__ != "__main__" :
-    MOM.Attr._Export ("*", "_Raw_Value_Mixin_")
+    MOM.Attr._Export (* __all__)
 ### __END__ MOM.Attr.Kind

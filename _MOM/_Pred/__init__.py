@@ -78,7 +78,7 @@ class named `_Predicates` that is derived from
 
     class Some_Essence (MOM.Object) :
 
-        class _Predicates (Pred.Spec) :
+        class _Predicates (MOM.Object._Predicates) :
 
             class completely_defined (Pred.Condition) :
                 "All required attributes must be defined."

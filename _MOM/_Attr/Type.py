@@ -719,34 +719,55 @@ Class `MOM.Attr.A_Attr_Type`
 
     Abstract attribute types are characterized by the properties:
 
-    - `name`: specified by the name of the class.
+    .. attribute:: name
 
-    - `syntax`: provides information about the syntax required for the
+      Specified by the name of the class.
+
+    .. attribute:: syntax
+
+      Provides information about the syntax required for the
       attribute.
 
-    - `typ`: defines the human-readable name of
+    .. attribute:: typ
+
+      Defines the human-readable name of
       the abstract attribute type, e.g., `int`, `string`, or `name`.
+
+    .. attribute:: needs_raw_value
+
+      Specifies if the raw value needs to be stored for
+      this attribute type.
 
     Concrete attribute types are characterized by the properties:
 
-    - `name`: specified by the name of the class.
+    .. attribute:: name
 
-    - `description`: A short description of the attribute in question.
+      Specified by the name of the class.
+
+    .. attribute:: description
+
+      A short description of the attribute in question.
       This is for example used for displaying a short help text.
 
       Normally specified via the doc-string of the
       class (but can also be defined by defining a class attribute
       `description`).
 
-    - `explanation`: A long description of the attribute in question
+    .. attribute:: explanation
+
+      A long description of the attribute in question
       (optional). This is used for the documentation of the attribute
       (together with `description`) and is for example displayed by
       an attribute browser.
 
-    - `kind`: refers to the specific class defining the
+    .. attribute:: kind
+
+      Refers to the specific class defining the
       :class:`~_MOM._Attr.Kind.Kind` of the attribute in question.
 
-    - `Kind_Mixins`: a number of mixins for the `kind` to be used for this
+    .. attribute:: Kind_Mixins
+
+      A number of mixins for the `kind` to be used for this
       attribute. Some of the possible mixins are
       :class:`~_MOM._Attr.Kind.Computed_Mixin`,
       :class:`~_MOM._Attr.Kind.Sticky_Mixin`, and
@@ -754,20 +775,27 @@ Class `MOM.Attr.A_Attr_Type`
 
       This is optional and defaults to `()`.
 
-    - `check`: specifies a tuple of expressions that constrain the possible
+    .. attribute:: check
+
+      Specifies a tuple of expressions that constrain the possible
       values of the attribute. e.g. '0 <= this <= 100'.
 
       This is optional and defaults to `()`.
 
-    - `default`: Defines the default value to be used for the
+    .. attribute:: default
+
+      Defines the default value to be used for the
       attribute when no explicit value is defined by the tool's user.
 
       This is optional and defaults to `None`.
 
       `default` **must** not be specified for
+      :class:`~_MOM._Attr.Kind.Primary` and
       :class:`~_MOM._Attr.Kind.Required` attributes.
 
-    - `computed`: A method that's used to compute a value if none is
+    .. attribute:: computed
+
+      A method that's used to compute a value if none is
       specified by the tool user for
       :class:`~_MOM._Attr.Kind.Optional` attributes with the
       :class:`~_MOM._Attr.Kind.Computed_Mixin` or
@@ -777,13 +805,19 @@ Class `MOM.Attr.A_Attr_Type`
       :class:`~_MOM._Attr.Kind.Once_Cached`, or
       :class:`~_MOM._Attr.Kind.Computed`.
 
-    - `group`: A string that can be used to group a set of attributes
+    .. attribute:: group
+
+      A string that can be used to group a set of attributes
       together. For instance, editors display attributes sorted
       alphabetically by `(group, name)`.
 
-    - `rank` is used when sorting attributes of `Primary`.
+    .. attribute:: rankis
 
-    - `store_default`: specifies whether the default value should be
+      Used when sorting attributes of `Primary`.
+
+    .. attribute:: store_default
+
+      Specifies whether the default value should be
       stored in the database (unless explicitly specified, it isn't).
 
 """

@@ -61,7 +61,7 @@ class named `_Attributes` that is derived from
 
     class Some_Essence (MOM.Object) :
 
-        class _Attributes (Attr.Spec) :
+        class _Attributes (MOM.Object._Attributes) :
 
             class is_used (Attr.A_Int) :
                 "Counts the number of users of this object."

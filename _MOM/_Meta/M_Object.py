@@ -73,20 +73,6 @@ Class `MOM.Meta.M_Object`
     essential object types and instances. It is based on
     :class:`~_MOM._Meta.M_Entity.M_Entity`.
 
-    `M_Object` provides the attribute:
-
-    .. attribute:: root
-
-      `root` gives to the root object, if any, in the `home_scope` or
-      the currently active scope.
-
-    `M_Object` provides the methods:
-
-    .. automethod:: define
-    .. automethod:: exists
-    .. automethod:: extension
-    .. automethod:: extension_strict
-    .. automethod:: instance
 
 """
 

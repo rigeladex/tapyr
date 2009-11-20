@@ -72,45 +72,26 @@ class Named_Object (Object) :
 # end class Named_Object
 
 __doc__ = """
+.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
+
 Class `MOM.Object`
 ==================
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
 .. class:: Object
 
-   `MOM.Object` provides the framework for defining essential classes. It is
-   based on :class:`~_MOM.Entity.Entity`. In addition to the properties
-   defined by `Entity`, each instance of `Object` is characterized by a
-   unique *essential primary key* (short `epk`) that must be specified when
-   the instance is created.
+   `MOM.Object` provides the framework for defining essential classes.
 
-Object Queries
---------------
+   It is based on :class:`~_MOM.Entity.Id_Entity`.
 
-For each essential class `E`, a number of queries is defined:
+Class `MOM.Named_Object`
+========================
 
-### XXX base on `query`
+.. class:: Named_Object
 
-- `E.count` gives the number of strict instances of `E` (i.e., excluding
-  instances of descendent classes). For partial classes, `count` always
-  returns zero.
+   `MOM.Named_Object` provides the framework for defining essential classes
+   uniquely identified by a simple unstructured :attr:`name`.
 
-- `E.exists(epk)` returns True if an instance of `E` (or one of its
-  descendent classes) with the essential primary key `epk` exists.
-
-- `E.extension()` returns all instances of `E` and its descendent classes.
-
-- `E.extension_strict()` returns all instances of `E` but none of its
-  descendent classes.
-
-- `E.instance(epk)` returns the instance of `E` (or one of its descendent
-  classes) with the essential primary key `epk`.
-
-- `E.root` gives the root object of `E` in the current scope, if any.
-
-All these queries can be applied to all classes derived from `Object` and to
-`Object` itself.
+   It is based on :class:`~_MOM.Object.Object`.
 
 """
 

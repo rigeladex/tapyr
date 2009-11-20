@@ -463,9 +463,13 @@ appropriate predicate type, e.g., :class:`Condition` or :class:`U_Quant`.
 
 Concrete predicates are characterized by the properties:
 
-- `name`: specified by the name of the class.
+.. attribute:: name
 
-- `description`: A short description of the predicate in question.
+  Specified by the name of the class.
+
+.. attribute:: description
+
+  A short description of the predicate in question.
 
   Normally specified via the doc-string of the
   class (but can also be defined by defining a class attribute
@@ -475,16 +479,24 @@ Concrete predicates are characterized by the properties:
   the user what is wrong when the predicate is violated and how the
   error can be fixed.
 
-- `explanation`: A long description of the predicate in question
+.. attribute:: explanation
+
+  A long description of the predicate in question
   (optional).
 
-- `kind`: refers to the specific class defining the
+.. attribute:: kind
+
+  Refers to the specific class defining the
   :class:`~_MOM._Pred.Kind.Kind` of the predicate in question.
 
-- `assertion`: a logical expression defining the constraint (specified
+.. attribute:: assertion
+
+  A logical expression defining the constraint (specified
   as a string).
 
-- `attributes`: list of names of the attributes constrained by the
+.. attribute:: attributes
+
+  List of names of the attributes constrained by the
   predicate.
 
   * The predicate is only evaluated if all `attributes` have a
@@ -492,7 +504,9 @@ Concrete predicates are characterized by the properties:
 
   * The names listed can be dotted names, e.g., `a.b.c`.
 
-- `attr_none`: list of names of the attributes constrained by the
+.. attribute:: attr_none
+
+  List of names of the attributes constrained by the
   predicate.
 
   * The predicate is even evaluated if some elements of `attr_none` have
@@ -500,30 +514,40 @@ Concrete predicates are characterized by the properties:
 
   * The names listed can be dotted names, e.g., `a.b.c`.
 
-- `bindings`: a dictionary of names to be bound to the results of
-  epxressions usable in the `assertion`.
+.. attribute:: bindings
 
-  * Judicious use of `bindings` can dramatically simplify `assertion`.
+  A dictionary of names to be bound to the results of
+  epxressions usable in the :attr:`assertion`.
+
+  * Judicious use of `bindings` can dramatically simplify :attr:`assertion`.
 
   * The name, the symbolic expression, and the calculated value of each
     binding will be displayed in the error message of the predicate.
 
-- `guard`: a logical expression defining a guard for the predicate
+.. attribute:: guard
+
+  A logical expression defining a guard for the predicate
   (specified as a string).
 
   * The predicate is only evaluated if `guard` evaluates to True.
 
-- `guard_attr`: list of names of attributes used by `guard`.
+.. attribute:: guard_attr
+
+  List of names of attributes used by :attr:`guard`.
 
   * The names listed can be dotted names, e.g., `a.b.c`.
 
-- `parameters`: list of properties of other objects constrained by the
+.. attribute:: parameters
+
+  List of properties of other objects constrained by the
   predicate.
 
   * The predicate is only evaluated if all `parameters` have a
     value differing from `None`.
 
-- `rank`: for each object, the predicates of a specific kind are
+.. attribute:: rank
+
+  For each object, the predicates of a specific kind are
   evaluated in the sequence of `rank` (lower rank first).
 
   * If a predicate of a specific rank is violated, predicates of
@@ -532,28 +556,38 @@ Concrete predicates are characterized by the properties:
   * This can be used to avoid lots of spurious error messages that all
     follow from a violation of one (or a small set of) basic predicate(s).
 
-- `severe`: specifies whether a predicate describes an error condition
+.. attribute:: severe
+
+  Specifies whether a predicate describes an error condition
   or a warning (by default, it's an error).
 
-- `_extra_links_s`: list of essential types to be hyperlinked in an
+.. attribute:: _extra_links_s
+
+  List of essential types to be hyperlinked in an
   error message for this predicate.
 
-  * The names of these types must appear somewhere in `description`,
-    `explanation`, or `assertion` for `_extra_links_s` to have a
+  * The names of these types must appear somewhere in :attr:`description`,
+    :attr:`explanation`, or :attr:`assertion` for `_extra_links_s` to have a
     noticeable effect.
 
 Concrete quantifier predicates are characterized by the additional
 required properties:
 
-- `bvar`: a string listing the `bounded variables`_ of the quantified
+.. attribute:: bvar
+
+  A string listing the `bounded variables`_ of the quantified
   `assertion`.
 
   * Corresponds to the loop variables in a python loop.
 
-- `bvar_attr`: a list of expressions referring to attributes of the bounded
+.. attribute:: bvar_attr
+
+  A list of expressions referring to attributes of the bounded
   variables to be shown for violating elements of `seq`.
 
-- `seq`: an expression defining the sequence over which `assertion` is
+.. attribute:: seq
+
+  An expression defining the sequence over which `assertion` is
   quantified.
 
 .. autoclass:: Condition()
@@ -565,13 +599,13 @@ required properties:
 Namespace for evaluation of `assertion` (and `seq`)
 ----------------------------------------------------
 
-* All names listed in `attributes`, `attr_none`, and `bindings` are
-  available (and refer to the respective attributes of the object the
-  predicate is checked for).
+* All names listed in :attr:`attributes`, :attr:`attr_none`, and
+  :attr:`bindings` are available (and refer to the respective attributes of
+  the object the predicate is checked for).
 
   - When an object predicate is checked before attributes of the
-    object are changed, the names listed in `attributes` and
-    `attr_none` refer to the values passed to `set` (or `set_raw`,
+    object are changed, the names listed in :attr:`attributes` and
+    :attr:`attr_none` refer to the values passed to `set` (or `set_raw`,
     `setattr`).
 
 * All names listed in `parameters` are available (and refer to the
@@ -580,12 +614,12 @@ Namespace for evaluation of `assertion` (and `seq`)
 
 * `this` refers to the object the predicate is checked for. Use of
   `this` should be avoided, when possible (e.g., by adding names to
-  `attributes` or `attr_none`).
+  :attr:`attributes` or :attr:`attr_none`).
 
 Namespace for evaluation of `guard`
 -----------------------------------
 
-* All names listed in `guard_attr`.
+* All names listed in :attr:`guard_attr`.
 
 * `this` refers to the object the predicate is checked for.
 
