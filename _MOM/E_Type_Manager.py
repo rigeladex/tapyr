@@ -35,6 +35,7 @@
 #     4-Nov-2009 (CT) `Link.s_links_of_obj`, `Link.t_links_of_obj` added
 #     4-Nov-2009 (CT) `Link2` added
 #    20-Nov-2009 (CT) `Link3` and `Link2_Ordered` added
+#    22-Nov-2009 (CT) Documentation added
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,7 @@ import _TFL._Meta.Object
 from   _TFL.predicate import paired
 
 class Id_Entity (TFL.Meta.Object) :
-    """Scope-specific manager for essential object- and link-types."""
+    """Scope-specific manager for a specific essential object- or link-type."""
 
     def __init__ (self, etype, scope) :
         self._etype     = etype
@@ -71,19 +72,23 @@ class Id_Entity (TFL.Meta.Object) :
 
     @property
     def s_count (self) :
+        """Return the strict count of objects or links."""
         return self.home_scope.ems.s_count     (self._etype)
     # end def s_count
 
     def s_extension (self, sort_key = None) :
+        """Return the strict extension of objects or links."""
         return self.home_scope.ems.s_extension (self._etype, sort_key)
     # end def s_extension
 
     @property
     def t_count (self) :
+        """Return the transitive count of objects or links."""
         return self.home_scope.ems.t_count     (self._etype)
     # end def t_count
 
     def t_extension (self, sort_key = None) :
+        """Return the transitive extension of objects or links."""
         return self.home_scope.ems.t_extension (self._etype, sort_key)
     # end def t_extension
 
@@ -97,12 +102,14 @@ class Object (Id_Entity) :
     """Scope-specific manager for essential object-types."""
 
     def exists (self, * epk, ** kw) :
+        """Return true if an object with primary key `epk` exists."""
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         return self.__super.exists   (* epk, ** kw)
     # end def exists
 
     def instance (self, * epk, ** kw) :
+        """Return the object with primary key `epk` or None."""
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         return self.__super.instance (* epk, ** kw)
@@ -133,6 +140,7 @@ class Link (Id_Entity) :
     # end def applicable_objects
 
     def exists (self, * epk, ** kw) :
+        """Return true if a link with primary key `epk` exists."""
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         else :
@@ -141,6 +149,7 @@ class Link (Id_Entity) :
     # end def exists
 
     def instance (self, * epk, ** kw) :
+        """Return the link with primary key `epk` or None."""
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         else :
@@ -458,6 +467,51 @@ class Link2_Ordered (Link2) :
     # end def _links_of
 
 # end class Link2_Ordered
+
+__doc__ = """
+Module `MOM.E_Type_Manager`
+===========================
+
+  `MOM.E_Type_Manager` provides classes implementing scope-specific managers
+  for essential object and link types.
+
+  For each essential object and link type, a scope provides a
+  `E_Type_Manager` that is accessible under the `type_name` of the essential
+  type in question.
+
+  For instance, the `E_Type_Manager` for an essential
+  object type `BMT.Mouse` of a scope `s` can be accessed as::
+
+      s.BMT.Mouse
+
+  and provides methods to create and query instances of `BMT.Mouse`. A new
+  mouse named `mickey` is created by::
+
+      s.BMT.Mouse ("mickey")
+
+  The transitive extension of mice, i.e., the extension of `BMT.Mouse` and
+  all classes derived from it, is computed by the query::
+
+      s.BMT.Mouse.t_extension ()
+
+
+
+.. autoclass:: Object()
+    :members:
+    :inherited-members:
+.. autoclass:: Link2()
+    :members:
+    :inherited-members:
+.. autoclass:: Link3()
+    :members:
+    :inherited-members:
+.. autoclass:: Link2_Ordered()
+    :members:
+    :inherited-members:
+
+
+
+"""
 
 if __name__ != "__main__" :
     MOM._Export_Module ()

@@ -82,7 +82,7 @@ in question:
   :attr:`seq_no<_MOM.Link.Link2_Ordered.seq_no>` plus any other primary
   attributes.
 
-- Ternary links are derived from :class:`MOM.Link2<_MOM.Link.Link3>`
+- Ternary links are derived from :class:`MOM.Link3<_MOM.Link.Link3>`
   and identified by the link roles :attr:`left<_MOM.Link.Link3.left>`,
   :attr:`middle<_MOM.Link.Link3.middle>`,
   and :attr:`right<_MOM.Link.Link3.right>` plus any other primary

@@ -164,8 +164,6 @@ __doc__ = """
 Class `MOM.Meta.M_Link`
 =========================
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
 .. class:: M_Link
 
     `MOM.Meta.M_Link` provides the meta machinery for defining

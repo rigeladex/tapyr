@@ -122,8 +122,6 @@ __doc__ = """
 Class `MOM.Link`
 ================
 
-.. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
-
 .. class:: Link
 
     `MOM.Link` provides the framework for defining essential
