@@ -38,44 +38,62 @@ import _MOM._DBW.Session
 
 EMS   = MOM.EMS.Hash.Manager
 DBW   = MOM.DBW.Session ### XXX change to a real DBW
-apt   = MOM.App_Type                 ("BMT", MOM)
+apt   = MOM.App_Type                 ("BMT", BMT)
 apt_c = apt.Derived                  (EMS, DBW)
 scope = MOM.Scope                    (apt_c)
-RiT   = scope.MOM.Rodent_in_Trap
+RiT   = scope.BMT.Rodent_in_Trap
+PoT   = scope.BMT.Person_owns_Trap
+PTL   = scope.BMT.Person_sets_Trap_at_Location
 if 1 :
-    m     = scope.MOM.Mouse          ("Mighty_Mouse")
-    r     = scope.MOM.Rat            ("Rutty_Rat")
-    axel  = scope.MOM.Rat            ("Axel")
-    t1    = scope.MOM.Trap           ("X", 1)
-    t2    = scope.MOM.Trap           ("X", 2)
-    t3    = scope.MOM.Trap           ("Y", 1)
-    if 1 :
-        mit   = RiT                  (m,    t1)
-        rit   = RiT                  (r,    t3)
-        xit   = RiT                  (axel, t2)
+    p     = scope.BMT.Person     ("Luke", "Lucky")
+    q     = scope.BMT.Person     ("Dog",  "Snoopy")
+    l1    = scope.BMT.Location   (-16.268799, 48.189956)
+    l2    = scope.BMT.Location   (-16.740770, 48.463313)
+    m     = scope.BMT.Mouse      ("Mighty_Mouse")
+    r     = scope.BMT.Rat        ("Rutty_Rat")
+    axel  = scope.BMT.Rat        ("Axel")
+    t1    = scope.BMT.Trap       ("X", 1)
+    t2    = scope.BMT.Trap       ("X", 2)
+    t3    = scope.BMT.Trap       ("Y", 1)
+    mit   = RiT                  (m,    t1)
+    rit   = RiT                  (r,    t3)
+    xit   = RiT                  (axel, t2)
+    PoT (p, t1)
+    PoT (p, t2)
+    PoT (q, t3)
+    PTL (p, t1, l1)
+    PTL (p, t2, l2)
+    PTL (p, t3, l2)
 if 1 :
-    print scope.MOM.Mouse.t_extension          ()
-    print scope.MOM.Rat.t_extension            ()
-    print scope.MOM.Trap.t_extension           ()
-    print scope.MOM.Rodent.t_extension         ()
+    print scope.BMT.Mouse.t_extension          ()
+    print scope.BMT.Rat.t_extension            ()
+    print scope.BMT.Trap.t_extension           ()
+    print scope.BMT.Rodent.t_extension         ()
     print scope.MOM.Named_Object.t_extension   ()
     print scope.MOM.Object.t_extension         ()
     print
-    print scope.MOM.Rodent_in_Trap.t_extension ()
-    print scope.MOM.Rodent_in_Trap.t_extension \
+    print scope.BMT.Rodent_in_Trap.t_extension ()
+    print scope.BMT.Rodent_in_Trap.t_extension \
         (TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key))
     print
-    print scope.MOM.Rodent_in_Trap.s_extension ()
-    print scope.MOM.Rodent_in_Trap.s_left      (t1)
-    print scope.MOM.Rodent_in_Trap.s_left      (t2)
-    print scope.MOM.Rodent_in_Trap.s_left      (t3)
-    print scope.MOM.Rodent_in_Trap.t_left      (t1)
-    print scope.MOM.Rodent_in_Trap.t_left      (t2)
-    print scope.MOM.Rodent_in_Trap.t_left      (t3)
-    print scope.MOM.Rodent_in_Trap.s_right     (m)
-    print scope.MOM.Rodent_in_Trap.s_right     (r)
-    print scope.MOM.Rodent_in_Trap.t_right     (m)
-    print scope.MOM.Rodent_in_Trap.t_right     (r)
+    print scope.BMT.Rodent_in_Trap.s_extension ()
+    print scope.BMT.Rodent_in_Trap.s_left      (t1)
+    print scope.BMT.Rodent_in_Trap.s_left      (t2)
+    print scope.BMT.Rodent_in_Trap.s_left      (t3)
+    print scope.BMT.Rodent_in_Trap.t_left      (t1)
+    print scope.BMT.Rodent_in_Trap.t_left      (t2)
+    print scope.BMT.Rodent_in_Trap.t_left      (t3)
+    print scope.BMT.Rodent_in_Trap.s_right     (m)
+    print scope.BMT.Rodent_in_Trap.s_right     (r)
+    print scope.BMT.Rodent_in_Trap.t_right     (m)
+    print scope.BMT.Rodent_in_Trap.t_right     (r)
+    print
+    print PoT.trap (p)
+    print PoT.trap (("Dog",  "Snoopy"))
+    print
+    print PTL.s_middle_right (p)
+    print PTL.s_left_middle  ((-16.74077, 48.463313))
+    print PTL.s_left_right   (("Y", "1"))
 
 if 0 :
     import pdb; pdb.set_trace ()

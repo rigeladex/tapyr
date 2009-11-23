@@ -129,6 +129,7 @@
 #     3-Feb-2009 (CT)  Style improvements
 #     6-Feb-2009 (CT)  Documentation improved
 #    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
+#    23-Nov-2009 (CT) `Package_Namespace.__init__`: order of arguments changed
 #    ««revision-date»»···
 #--
 
@@ -273,7 +274,7 @@ class Package_Namespace (object) :
     _leading_underscores = re.compile (r"(\.|^)_+")
     _check_clashes       = True
 
-    def __init__ (self, name = None, pname = None) :
+    def __init__ (self, pname = None, name = None) :
         if not pname :
             pname = _caller_globals () ["__name__"]
         if not name :
@@ -461,7 +462,7 @@ class Derived_Package_Namespace (Package_Namespace) :
         pname = _caller_globals () ["__name__"]
         if not name :
             name = pname
-        Package_Namespace.__init__ (self, name, pname)
+        Package_Namespace.__init__ (self, pname, name)
         self._parent  = parent
         self.__cached = {}
         mod           = sys.modules [pname]

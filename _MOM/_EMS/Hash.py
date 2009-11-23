@@ -36,6 +36,8 @@
 #                     `sort_key or Type.sorted_by` (3-compatibility)
 #    20-Nov-2009 (CT) `sort_key = None` means no sorting,
 #                     `sort_key = False` means use default sort-key for sorting
+#    23-Nov-2009 (CT) `t_extension` changed to filter siblings of `Type` that
+#                     are derived from the same `relevant_root`
 #    ««revision-date»»···
 #--
 
@@ -181,6 +183,10 @@ class Manager (TFL.Meta.Object) :
         tables = self._tables
         if root :
             result = tables [root.type_name].itervalues ()
+            if root is not Type :
+                ### filter siblings derived from same `relevant_root`
+                result = itertools.ifilter \
+                    (lambda x : isinstance (x, Type), result)
         else :
             result = itertools.chain \
                 (* (tables [t].itervalues () for t in Type.relevant_roots))

@@ -145,7 +145,7 @@ class M_E_Type_Link2 (M_E_Type_Link) :
 # end class M_E_Type_Link2
 
 @TFL.Add_To_Class ("M_E_Type", M_Link3)
-class M_E_Type_Link3 (M_E_Type_Link) :
+class M_E_Type_Link3 (M_E_Type_Link2) :
     """Meta class for essence of MOM.Link2."""
 
     Manager = MOM.E_Type_Manager.Link3
@@ -153,7 +153,7 @@ class M_E_Type_Link3 (M_E_Type_Link) :
 # end class M_E_Type_Link3
 
 @TFL.Add_To_Class ("M_E_Type", M_Link2_Ordered)
-class M_E_Type_Link2_Ordered (M_E_Type_Link) :
+class M_E_Type_Link2_Ordered (M_E_Type_Link2) :
     """Meta class for essence of MOM.Link2_Ordered."""
 
     Manager = MOM.E_Type_Manager.Link2_Ordered

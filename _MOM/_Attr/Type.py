@@ -204,25 +204,13 @@ class A_Attr_Type (object) :
             return cooker (s, obj, glob or {}, locl or {})
     # end def _to_cooked
 
-    def __str__ (self) :
-        return self.name
-    # end def __str__
-
     def __repr__ (self) :
        return "%s `%s'" % (self.typ, self.name)
     # end def __repr__
 
-    def __cmp__ (self, other) :
-        try :
-            rhs = (other.group, other.name)
-        except AttributeError :
-            rhs = other
-        return cmp ((self.group, self.name), rhs)
-    # end def __cmp__
-
-    def __hash__ (self) :
-        return hash ((self.group, self.name))
-    # end def __hash__
+    def __str__ (self) :
+        return self.name
+    # end def __str__
 
 # end class A_Attr_Type
 
@@ -409,7 +397,7 @@ class _A_Object_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return self.format % \
+            return soc.format % \
                 ( tuple
                     (a.as_string (a.get_value (value)) for a in value.primary)
                 ,
@@ -468,7 +456,7 @@ class _A_Object_ (A_Attr_Type) :
         if isinstance (s, tuple) :
             t  = s
         else :
-            t  = self._call_eval (s)
+            t  = self._call_eval (s, {}, {})
         result = et.instance     (* t, raw = True)
         if result is not None :
             if self._accept_object (obj, result) :
@@ -575,6 +563,7 @@ class A_Date_Time (_A_Date_) :
 # end class A_Date_Time
 
 class A_Float (_A_Float_) :
+    code_format   = "%s"
     simple_cooked = float
 # end class A_Float
 

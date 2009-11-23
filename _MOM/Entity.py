@@ -50,6 +50,7 @@
 #    25-Oct-2009 (MG) `__getattr__` Use %s instead of %r to avoid recursive
 #                     calls of `__getattr__`
 #     4-Nov-2009 (CT) `refuse_links` changed from dict to set
+#    23-Nov-2009 (CT) `epk_as_code` added and used in `_repr` and `__str__`
 #    ««revision-date»»···
 #--
 
@@ -415,6 +416,17 @@ class Id_Entity (Entity) :
         return tuple (a.get_value (self) for a in self.primary)
     # end def epk
 
+    @property
+    def epk_as_code (self) :
+        def _gen () :
+            for a in self.primary :
+                r = a.as_code (a.get_value (self))
+                if isinstance (r, tuple) :
+                    r = "(%s)" % (", ".join (r))
+                yield r
+        return tuple (_gen ())
+    # end def epk_as_code
+
     @TFL.Meta.Once_Property
     def epk_as_dict (self) :
         return dict (zip (self.epk_sig, self.epk))
@@ -634,7 +646,8 @@ class Id_Entity (Entity) :
     # end def _rename
 
     def _repr (self, type_name) :
-        return "%s %r" % (type_name, self.epk)
+        return "%s (%s)" % \
+            (type_name, ", ".join (self.epk_as_code))
     # end def _repr
 
     def _reset_epk (self) :
@@ -653,10 +666,10 @@ class Id_Entity (Entity) :
     def __str__ (self) :
         epk = self.epk
         if len (epk) == 1 :
-            result = epk [0]
+            format = "%s"
         else :
-            result = epk
-        return "%s `%s`" % (self.type_name, result)
+            format = "(%s)"
+        return format % (", ".join (self.epk_as_code))
     # end def __str__
 
 # end class Id_Entity

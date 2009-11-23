@@ -49,6 +49,8 @@
 #    19-Nov-2009 (CT) `Link_Role.sort_key` added
 #    20-Nov-2009 (CT) Documentation added
 #    20-Nov-2009 (CT) `__all__` computed explicitly
+#    23-Nov-2009 (CT) `__cmp__` and `__hash__` removed (breaks hashing of
+#                     Link_Role attributes)
 #    ««revision-date»»···
 #--
 
@@ -220,14 +222,6 @@ class Kind (MOM.Prop.Kind) :
     def _set_raw_inner (self, obj, raw_value, value, changed = 42) :
         pass
     # end def _set_raw_inner
-
-    def __cmp__ (self, other) :
-        return cmp  (self.attr, getattr (other, "attr", other))
-    # end def __cmp__
-
-    def __hash__ (self) :
-        return hash (self.attr)
-    # end def __hash__
 
     def __repr__ (self) :
         return "%s `%s`" % (self.attr.typ, self.name)

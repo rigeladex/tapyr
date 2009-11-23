@@ -33,8 +33,8 @@
 #--
 
 """
-How to define essential object models
-=====================================
+How to define essential and use object models
+==============================================
 
 Using `MOM`, an essential object model is specified by deriving
 classes from :class:`MOM.Object<_MOM.Object.Object>`,
@@ -93,8 +93,70 @@ in question:
 
 from   _MOM.import_MOM       import *
 
+BMT = TFL.Package_Namespace ("_BMT")
+
+class Location (MOM.Object) :
+    """Model a location of the Better Mouse Trap application."""
+
+    Package_NS = BMT
+
+    is_partial = False
+
+    class _Attributes (MOM.Object._Attributes) :
+
+        class lon (A_Float) :
+            """Longitude """
+
+            kind     = Attr.Primary
+            rank     = 1
+
+        # end class lon
+
+        class lat (A_Float) :
+            """Latitude"""
+
+            kind     = Attr.Primary
+            rank     = 2
+
+        # end class lat
+
+    # end class _Attributes
+
+# end class Location
+
+class Person (MOM.Object) :
+    """Model a person of the Better Mouse Trap application."""
+
+    Package_NS = BMT
+
+    is_partial = False
+
+    class _Attributes (MOM.Object._Attributes) :
+
+        class last_name (A_String) :
+            """Last name of person"""
+
+            kind     = Attr.Primary
+            rank     = 1
+
+        # end class last_name
+
+        class first_name (A_String) :
+            """First name of person"""
+
+            kind     = Attr.Primary
+            rank     = 2
+
+        # end class first_name
+
+    # end class _Attributes
+
+# end class Person
+
 class Rodent (MOM.Named_Object) :
     """Model a rodent of the Better Mouse Trap application."""
+
+    Package_NS = BMT
 
     class _Attributes (MOM.Named_Object._Attributes) :
 
@@ -165,6 +227,8 @@ class Otter (Beaver) :
 class Trap (MOM.Object) :
     """Model a trap of the Better Mouse Trap application."""
 
+    Package_NS = BMT
+
     is_partial = False
 
     class _Attributes (MOM.Object._Attributes) :
@@ -198,6 +262,8 @@ class Trap (MOM.Object) :
 class Rodent_in_Trap (MOM.Link2) :
     """Model a rodent caught in a trap."""
 
+    Package_NS = BMT
+
     is_partial = False
 
     class _Attributes (MOM.Link2._Attributes) :
@@ -221,5 +287,63 @@ class Rodent_in_Trap (MOM.Link2) :
     # end class _Attributes
 
 # end class Rodent_in_Trap
+
+class Person_owns_Trap (MOM.Link2) :
+
+    Package_NS = BMT
+
+    is_partial = False
+
+    class _Attributes (MOM.Link2._Attributes) :
+
+        class left (MOM.Link2._Attributes.left) :
+            """Person owning the Trap."""
+
+            role_type     = Person
+
+        # end class left
+
+        class right (MOM.Link2._Attributes.right) :
+            """Trap owned by person."""
+
+            role_type     = Trap
+            max_links     = 1
+
+        # end class right
+
+    # end class _Attributes
+
+# end class Person_owns_Trap
+
+class Person_sets_Trap_at_Location (MOM.Link3) :
+
+    Package_NS = BMT
+
+    is_partial = False
+
+    class _Attributes (MOM.Link2._Attributes) :
+
+        class left (MOM.Link2._Attributes.left) :
+
+            role_type     = Person
+
+        # end class left
+
+        class middle (MOM.Link2._Attributes.right) :
+
+            role_type     = Trap
+            max_links     = 1
+
+        # end class middle
+
+        class right (MOM.Link2._Attributes.right) :
+
+            role_type     = Location
+
+        # end class right
+
+    # end class _Attributes
+
+# end class Person_sets_Trap_at_Location
 
 ### __END__ MOM.__doc__

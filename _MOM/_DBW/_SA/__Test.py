@@ -36,38 +36,38 @@ import _MOM._EMS.SA
 
 EMS     = MOM.EMS.SA.Manager
 DBW     = MOM.DBW.SA.Session
-apt     = MOM.App_Type    ("BMT", MOM)
+apt     = MOM.App_Type    ("BMT", BMT)
 apt_c   = apt.Derived     (EMS, DBW)
 scope   = MOM.Scope       (apt_c)
 DBW.metadata.create_all   (DBW.engine)
 
 session           = scope.dbw.session
 session.bind.echo = False
-dMOM              = scope.MOM
+dBMT              = scope.BMT
 session.bind.echo = True * 0
 #import pdb;pdb.set_trace ()
-dMOM.Mouse  ("Mighty_Mouse")
-dMOM.Beaver ("Beaver")
-dMOM.Mouse  ("Magic_Mouse")
-dMOM.Beaver ("Beaver_2")
-dMOM.Otter  ("Otter")
-dMOM.Trap   ("Mouse_Trap", 1)
-dMOM.Trap   ("Mouse_Trap", 2)
+dBMT.Mouse  ("Mighty_Mouse")
+dBMT.Beaver ("Beaver")
+dBMT.Mouse  ("Magic_Mouse")
+dBMT.Beaver ("Beaver_2")
+dBMT.Otter  ("Otter")
+dBMT.Trap   ("Mouse_Trap", 1)
+dBMT.Trap   ("Mouse_Trap", 2)
 
 session.commit ()
-for et in dMOM.Mouse, dMOM.Beaver, dMOM.Otter :
+for et in dBMT.Mouse, dBMT.Beaver, dBMT.Otter :
     print et.s_count, et.s_extension ().all ()
     print et.t_count, et.t_extension ().all ()
-print dMOM.Mouse.instance ("Mighty_Mouse")
-print dMOM.Mouse.instance ("<baz>"), " ===None"
+print dBMT.Mouse.instance ("Mighty_Mouse")
+print dBMT.Mouse.instance ("<baz>"), " ===None"
 try :
-    dMOM.Mouse  ("Mighty_Mouse")
+    dBMT.Mouse  ("Mighty_Mouse")
     raise ValueError ("No Name_Clash")
 except MOM.Error.Name_Clash, exc :
     print "OK", exc
 try :
     ### we test if multi-attr epk's work
-    dMOM.Trap ("Mouse_Trap", 1)
+    dBMT.Trap ("Mouse_Trap", 1)
     raise ValueError ("No Name_Clash")
 except MOM.Error.Name_Clash, exc :
     print "OK", exc

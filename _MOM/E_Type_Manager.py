@@ -36,6 +36,9 @@
 #     4-Nov-2009 (CT) `Link2` added
 #    20-Nov-2009 (CT) `Link3` and `Link2_Ordered` added
 #    22-Nov-2009 (CT) Documentation added
+#    23-Nov-2009 (CT) `Link.__init__` added to define queries for `role_names`
+#    23-Nov-2009 (CT) `_check_multiplicity` added
+#    23-Nov-2009 (CT) `_role_query` changed to sue `_cooked_role`
 #    ««revision-date»»···
 #--
 
@@ -76,7 +79,7 @@ class Id_Entity (TFL.Meta.Object) :
         return self.home_scope.ems.s_count     (self._etype)
     # end def s_count
 
-    def s_extension (self, sort_key = None) :
+    def s_extension (self, sort_key = False) :
         """Return the strict extension of objects or links."""
         return self.home_scope.ems.s_extension (self._etype, sort_key)
     # end def s_extension
@@ -87,7 +90,7 @@ class Id_Entity (TFL.Meta.Object) :
         return self.home_scope.ems.t_count     (self._etype)
     # end def t_count
 
-    def t_extension (self, sort_key = None) :
+    def t_extension (self, sort_key = False) :
         """Return the transitive extension of objects or links."""
         return self.home_scope.ems.t_extension (self._etype, sort_key)
     # end def t_extension
@@ -125,7 +128,15 @@ class Object (Id_Entity) :
 class Link (Id_Entity) :
     """Scope-specific manager for essential link-types."""
 
+    def __init__ (self, etype, scope) :
+        self.__super.__init__ (etype, scope)
+        for r in etype.Roles :
+            setattr \
+                (self, r.role_name, getattr (self, "s_" + r.generic_role_name))
+    # end def __init__
+
     def __call__ (self, * args, ** kw) :
+        self._check_multiplicity (* args, ** kw)
         if kw.get ("raw", False) :
             args = tuple (self._role_to_raw_iter    (args))
         else :
@@ -171,6 +182,29 @@ class Link (Id_Entity) :
         return self._links_of_obj (obj, "t_role")
     # end def t_links_of_obj
 
+    def _check_multiplicity (self, * epk, ** kw) :
+        if kw.get ("raw", False) :
+            epk = tuple (self._cooked_epk_iter (epk))
+        else :
+            epk = tuple (self._role_to_cooked_iter (epk))
+        etype = self._etype
+        if self.__super.exists (* epk) :
+            raise MOM.Error.Duplicate_Link \
+                (etype, self.__super.instance (* epk))
+        errors = []
+        for r, pk in zip (etype.Roles, epk) :
+            if r.max_links :
+                links = list (self._role_query (r, pk, "s_role", None))
+                nol   = len  (links)
+                if nol >= r.max_links :
+                    errors.append \
+                        ( MOM.Error.Multiplicity_Error \
+                            (pk, r.max_links, epk, links)
+                        )
+        if errors :
+            raise MOM.Error.Multiplicity_Errors (etype.type_name, errors)
+    # end def _check_multiplicity
+
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :
             if getattr (pka, "role_type", None) :
@@ -201,17 +235,17 @@ class Link (Id_Entity) :
         return result
     # end def _links_of_obj
 
+    def _query_intersection (self, q1, * qs) :
+        result = set (q1)
+        for q in qs :
+            result.intersection_update (q)
+        return sorted (result, key = self._etype.sort_key ())
+    # end def _query_intersection
+
     def _role_query (self, role, obj, q_name, sort_key = False) :
         query = getattr (self.home_scope.ems, q_name)
-        return query (role, obj, sort_key)
+        return query (role, self._cooked_role (role, obj), sort_key)
     # end def _role_query
-
-    def _role_query_2 (self, q1, q2) :
-        r1 = set (q1)
-        r2 = set (q2)
-        return sorted \
-            (r1.intersection (r2), key = self._etype.sort_key (sort_key))
-    # end def _role_query_2
 
     def _role_to_cooked_iter (self, epk) :
         for (r, v) in paired (self._etype.Roles, epk) :
@@ -300,7 +334,7 @@ class Link3 (Link) :
 
     def s_left (self, m, r) :
         """Return all strict links related to both middle `m` and right `r`."""
-        return self._role_query_2 \
+        return self._query_intersection \
             (self.s_left_middle (r, None), self.s_left_right (m, None))
     # end def s_left
 
@@ -330,7 +364,7 @@ class Link3 (Link) :
 
     def s_middle (self, l, r) :
         """Return all strict links related to both left `l` and right `r`."""
-        return self._role_query_2 \
+        return self._query_intersection \
             (self.s_middle_right (l, None), self.s_left_middle (r, None))
     # end def s_middle
 
@@ -341,13 +375,13 @@ class Link3 (Link) :
 
     def s_right (self, l, m) :
         """Return all strict links related to both left `l` and middle `m`."""
-        return self._role_query_2 \
+        return self._query_intersection \
             (self.s_middle_right (l, None), self.s_left_right (m, None))
     # end def s_right
 
     def t_left (self, m, r) :
         """Return all transitive links related to both middle `m` and right `r`."""
-        return self._role_query_2 \
+        return self._query_intersection \
             (self.t_left_middle (r, None), self.t_left_right (m, None))
     # end def t_left
 
@@ -377,7 +411,7 @@ class Link3 (Link) :
 
     def t_middle (self, l, r) :
         """Return all transitive links related to both left `l` and right `r`."""
-        return self._role_query_2 \
+        return self._query_intersection \
             (self.t_middle_right (l, None), self.t_left_middle (r, None))
     # end def t_middle
 
@@ -388,7 +422,7 @@ class Link3 (Link) :
 
     def t_right (self, l, m) :
         """Return all transitive links related to both left `l` and middle `m`."""
-        return self._role_query_2 \
+        return self._query_intersection \
             (self.t_middle_right (l, None), self.t_left_right (m, None))
     # end def t_right
 
@@ -453,7 +487,7 @@ class Link2_Ordered (Link2) :
                     else :
                         return []
                 else :
-                    return self._role_query_2 \
+                    return self._query_intersection \
                         (l_query (r, None), r_query (l, None))
             else :
                 result = r_query (l)

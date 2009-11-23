@@ -14,13 +14,15 @@ MOM To-Do
 
   * auto_cacher
 
-  * check_type, check_multiplicity
+  * check_type
 
-  * Link3
+  x Link3
 
-  * Link2_Ordered
+  x Link2_Ordered
 
   * dfc_synthesizer
+
+  * destroy_links / destroy_dependency
 
 - M_Entity vs. M_E_Type:
 
