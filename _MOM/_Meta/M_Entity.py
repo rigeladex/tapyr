@@ -41,6 +41,7 @@
 #                     non-derived app_types])
 #    19-Nov-2009 (CT) `M_E_Type.sort_key` added
 #    19-Nov-2009 (CT) `app_type.DBW.etype_decorator` called
+#    23-Nov-2009 (CT) `Manager` for `M_Id_Entity.M_E_Type` corrected
 #    ««revision-date»»···
 #--
 
@@ -295,7 +296,6 @@ class M_E_Type (M_E_Mixin) :
     """Meta class for for essence of MOM.Entity."""
 
     app_type    = None
-    Manager     = MOM.E_Type_Manager
 
     _Class_Kind = "Essence"
 
@@ -450,6 +450,8 @@ class M_E_Type (M_E_Mixin) :
 @TFL.Add_To_Class ("M_E_Type", M_Id_Entity)
 class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
+
+    Manager     = MOM.E_Type_Manager.Id_Entity
 
     def sort_key (cls, sort_key = None) :
         return TFL.Sorted_By \

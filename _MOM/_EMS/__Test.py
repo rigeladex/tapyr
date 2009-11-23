@@ -50,6 +50,7 @@ if 1 :
     l1    = scope.BMT.Location   (-16.268799, 48.189956)
     l2    = scope.BMT.Location   (-16.740770, 48.463313)
     m     = scope.BMT.Mouse      ("Mighty_Mouse")
+    b     = scope.BMT.Beaver     ("Toothy_Beaver")
     r     = scope.BMT.Rat        ("Rutty_Rat")
     axel  = scope.BMT.Rat        ("Axel")
     t1    = scope.BMT.Trap       ("X", 1)

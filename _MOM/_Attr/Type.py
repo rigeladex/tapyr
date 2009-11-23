@@ -46,6 +46,8 @@
 #     4-Nov-2009 (CT) `__all__` defined and used
 #    19-Nov-2009 (CT) `_A_Object_._get_scope` changed to use
 #                     `MOM.Scope.active` as default
+#    23-Nov-2009 (CT) `__cmp__` and `__hash__` removed (breaks hashing of
+#                     Link_Role attributes)
 #    ««revision-date»»···
 #--
 

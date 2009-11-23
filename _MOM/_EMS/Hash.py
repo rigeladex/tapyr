@@ -38,6 +38,9 @@
 #                     `sort_key = False` means use default sort-key for sorting
 #    23-Nov-2009 (CT) `t_extension` changed to filter siblings of `Type` that
 #                     are derived from the same `relevant_root`
+#    23-Nov-2009 (CT) `exists`, `instance` and `s_extension` changed to
+#                     filter siblings of `Type` that are derived from the
+#                     same `relevant_root`
 #    ««revision-date»»···
 #--
 
@@ -91,6 +94,7 @@ class Manager (TFL.Meta.Object) :
     # end def add
 
     def exists (self, Type, epk) :
+        scope  = self.scope
         tables = self._tables
         root   = Type.relevant_root
         if root :
@@ -98,8 +102,11 @@ class Manager (TFL.Meta.Object) :
         else :
             roots = Type.relevant_roots
         return \
-            [  T for (n, T) in roots.iteritems ()
-            if T.epk_to_hpk (* epk) in tables [n]
+            [ getattr (scope, e.type_name)
+            for e in (   tables [n].get (R.epk_to_hpk (* epk))
+                     for (n, R) in roots.iteritems ()
+                     )
+            if  isinstance (e, Type.Essence)
             ]
     # end def exists
 
@@ -107,7 +114,10 @@ class Manager (TFL.Meta.Object) :
         root   = Type.relevant_root
         hpk    = Type.epk_to_hpk (* epk)
         if root :
-            return self._tables [root.type_name].get (hpk)
+            result = self._tables [root.type_name].get (hpk)
+            if not isinstance (result, Type.Essence) :
+                result = None
+            return result
         raise TypeError \
             ( "\n".join
                 ( ( _T ("Cannot query `instance` of non-root type `%s`.")
@@ -153,8 +163,12 @@ class Manager (TFL.Meta.Object) :
         if root :
             result = tables [root.type_name].itervalues ()
             if Type.children :
-                pred   = lambda x : x.Essence is Type.Essence
-                result = itertools.ifilter (pred, result)
+                result = itertools.ifilter \
+                    (lambda x : x.Essence is Type.Essence, result)
+            elif root is not Type :
+                ### filter siblings derived from same `relevant_root`
+                result = itertools.ifilter \
+                    (lambda x : isinstance (x, Type.Essence), result)
         if sort_key is not None :
             result = sorted (result, key = Type.sort_key (sort_key))
         return result
@@ -232,13 +246,13 @@ def hpk (self) :
     return self.epk_to_hpk (* self.epk)
 # end def hpk
 
-@TFL.Add_Method (MOM.Object)
+@TFL.Add_Method (MOM.Id_Entity)
 @TFL.Meta.Class_Method
 def epk_to_hpk (cls, * epk) :
     return epk
 # end def epk_to_hpk
 
-MOM.Object.hpk = TFL.Meta.Alias_Property ("epk")
+MOM.Id_Entity.hpk = TFL.Meta.Alias_Property ("epk")
 
 if __name__ != "__main__" :
     MOM.EMS._Export_Module ()

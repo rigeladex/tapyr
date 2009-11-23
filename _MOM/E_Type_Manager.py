@@ -39,6 +39,7 @@
 #    23-Nov-2009 (CT) `Link.__init__` added to define queries for `role_names`
 #    23-Nov-2009 (CT) `_check_multiplicity` added
 #    23-Nov-2009 (CT) `_role_query` changed to sue `_cooked_role`
+#    23-Nov-2009 (CT) `__repr__` added
 #    ««revision-date»»···
 #--
 
@@ -98,6 +99,11 @@ class Id_Entity (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
     # end def __getattr__
+
+    def __repr__ (self) :
+        return "<E_Type_Manager for %s of scope %s>" % \
+            (self._etype.type_name, self.home_scope.name)
+    # end def __repr__
 
 # end class Id_Entity
 
