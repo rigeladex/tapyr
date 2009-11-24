@@ -122,6 +122,7 @@ class Entity (TFL.Meta.Object) :
     # end def __new__
 
     def __init__ (self, * args, ** kw) :
+        self.dependencies = TFL.defaultdict  (int)
         self._init_attributes ()
         self._finish__init__  (* args, ** kw)
     # end def __init__

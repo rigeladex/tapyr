@@ -84,8 +84,8 @@ Application type
 ----------------
 
 Before an essential object model can be used, the
-:class:`application type<_MOM.App_Type:App_Type>` and at least one
-:class:`derived application type<_MOM.App_Type._App_Type_D_` must be
+:class:`application type<_MOM.App_Type.App_Type>` and at least one
+:class:`derived application type<_MOM.App_Type._App_Type_D_>` must be
 defined:
 
     >>> import _MOM._EMS.Hash
@@ -110,11 +110,47 @@ and derives an app-type specific entity-type for each of the essential
 classes:
 
     >>> ET_Id_Entity = apt.entity_type ("MOM.Id_Entity")
+    >>> ET_Named_Obj = apt.entity_type ("MOM.Named_Object")
     >>> ET_Person    = apt.entity_type ("BMT.Person")
     >>> ET_Mouse     = apt ["BMT.Mouse"]
     >>> ET_Rat       = apt ["BMT.Rat"]
     >>> ET_Rodent    = apt ["BMT.Rodent"]
     >>> ET_Trap      = apt ["BMT.Trap"]
+
+    >>> for et in apt._T_Extension :
+    ...   if (et.epk_sig and "__init__" in et.__dict__ and
+    ...       hasattr (et.__init__, "source_code")) :
+    ...     print "***", et.type_name, "***", et.__init__.i_bases
+    ...     print et.__init__.source_code
+    ...
+    *** MOM.Link2 *** (<class 'MOM.Link' [BMT__Hash__XXX]>,)
+    def __init__ (self, left, right, * args, ** kw) :
+        return super (Link2, self).__init__ (left, right, * args, ** kw)
+    <BLANKLINE>
+    *** MOM.Link3 *** (<class 'MOM.Link2' [BMT__Hash__XXX]>,)
+    def __init__ (self, left, middle, right, * args, ** kw) :
+        return super (Link3, self).__init__ (left, middle, right, * args, ** kw)
+    <BLANKLINE>
+    *** MOM.Link2_Ordered *** (<class 'MOM.Link2' [BMT__Hash__XXX]>,)
+    def __init__ (self, left, right, seq_no, * args, ** kw) :
+        return super (Link2_Ordered, self).__init__ (left, right, seq_no, * args, ** kw)
+    <BLANKLINE>
+    *** MOM.Named_Object *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
+    def __init__ (self, name, * args, ** kw) :
+        return super (Named_Object, self).__init__ (name, * args, ** kw)
+    <BLANKLINE>
+    *** BMT.Location *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
+    def __init__ (self, lon, lat, * args, ** kw) :
+        return super (Location, self).__init__ (lon, lat, * args, ** kw)
+    <BLANKLINE>
+    *** BMT.Person *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
+    def __init__ (self, last_name, first_name, * args, ** kw) :
+        return super (Person, self).__init__ (last_name, first_name, * args, ** kw)
+    <BLANKLINE>
+    *** BMT.Trap *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
+    def __init__ (self, cat, serial_no, * args, ** kw) :
+        return super (Trap, self).__init__ (cat, serial_no, * args, ** kw)
+    <BLANKLINE>
 
     >>> ET_Person
     <class 'BMT.Person' [BMT__Hash__XXX]>
@@ -197,10 +233,11 @@ object and link types.
 
     >>> scope = MOM.Scope (apt)
 
-For each `Package_NS` defining essential classes, the `scope` provides
-an object holding an
-:class:`etype manager<_MOM.E_Type_Manager.E_Type_Manager`
-that supports instance creation and queries:
+For each :attr:`~_MOM.Entity.Package_NS` defining essential
+classes, the `scope` provides an object holding
+:class:`object managers<_MOM.E_Type_Manager.Object>` and
+:class:`link managers<_MOM.E_Type_Manager.Link2>`
+that support instance creation and queries:
 
     >>> scope.MOM.Id_Entity
     <E_Type_Manager for MOM.Id_Entity of scope BMT__Hash__XXX>
@@ -214,10 +251,10 @@ Identity
 
 Essential objects and links have identity, i.e., each object or link
 can be uniquely identified. This identity is specified by a set of (so
-called `primary`) attributes that together define the `essential
-primary key`, short `epk`, for the entity in question. If there is
-more than one primary attribute, the sequence of the attributes is
-defined by their :attr:`rank` and :attr:`name`.
+called `primary`) attributes that together define the
+`essential primary key`, short `epk`, for the entity in question. If
+there is more than one primary attribute, the sequence of the
+attributes is defined by their :attr:`rank` and :attr:`name`.
 
 Essential objects identified by a simple, unstructured `name` are
 defined by classes derived from
@@ -255,6 +292,11 @@ Object and link creation
 One creates objects or links by calling the etype manager of the
 appropriate class:
 
+    >>> scope.MOM.Named_Object ("foo")
+    Traceback (most recent call last):
+      ...
+    Partial_Type: MOM.Named_Object
+
     >>> p     = scope.BMT.Person     ("Luke", "Lucky")
     >>> p
     BMT.Person ('Luke', 'Lucky')
@@ -268,23 +310,39 @@ appropriate class:
     >>> t1    = scope.BMT.Trap       ("X", 1)
     >>> t2    = scope.BMT.Trap       ("X", 2)
     >>> t3    = scope.BMT.Trap       ("Y", 1)
+    >>> t4    = scope.BMT.Trap       ("Y", 2)
 
     >>> RiT   = scope.BMT.Rodent_in_Trap
     >>> PoT   = scope.BMT.Person_owns_Trap
     >>> PTL   = scope.BMT.Person_sets_Trap_at_Location
 
-    >>> RiT (m,    t1)
+    >>> RiT (m, t1)
     BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1))
-    >>> RiT (r,    t3)
+    >>> RiT (m, t2)
+    Traceback (most recent call last):
+      ...
+    Multiplicity_Errors: BMT.Rodent_in_Trap, [Maximum number of links for 'Mighty_Mouse' is 1 ((BMT.Mouse ('Mighty_Mouse'), BMT.Trap ('X', 2)), [BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1))])]
+    >>> RiT (r, t3)
     BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))
     >>> RiT (axel, t2)
     BMT.Rodent_in_Trap (('Axel'), ('X', 2))
+    >>> RiT (p, t4)
+    Traceback (most recent call last):
+      ...
+    ValueError: BMT.Person ('Luke', 'Lucky') not eligible for attribute left,
+        must be instance of BMT.Rodent
+
     >>> PoT (p, t1)
     BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1))
     >>> PoT (p, t2)
     BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2))
     >>> PoT (q, t3)
     BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1))
+    >>> PoT (("Tin", "Tin"), t4)
+    Traceback (most recent call last):
+      ...
+    No_Such_Object: No object BMT.Person ('Tin', 'Tin') in scope BMT__Hash__XXX
+
     >>> PTL (p, t1, l1)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))
     >>> PTL (p, t2, l2)
@@ -304,7 +362,7 @@ question and all its descendents. For partial types, strict queries
 return nothing.
 
 
-The query :method:`instance<_MOM.E_Type_Manager.E_Type_Manager.instance>` can
+The query :meth:`instance<_MOM.E_Type_Manager.E_Type_Manager.instance>` can
 only be applied to `E_Type_Managers` for essential types that are or
 inherit a `relevant_root`:
 
@@ -327,8 +385,10 @@ inherit a `relevant_root`:
     >>> scope.BMT.Person_owns_Trap.instance (('Dog', 'Snoopy'), ('Y', 1))
     BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1))
     >>> scope.BMT.Person_owns_Trap.instance (('Dog', 'Snoopy'), ('X', 2))
+    >>> print PoT.instance (("Man", "Tin"), t4)
+    None
 
-The query :method:`exists<_MOM.E_Type_Manager.E_Type_Manager.exists>`
+The query :meth:`exists<_MOM.E_Type_Manager.E_Type_Manager.exists>`
 returns a list of all `E_Type_Managers` for which an object or link
 with the specified `epk` exists:
 
@@ -342,10 +402,10 @@ with the specified `epk` exists:
     >>> scope.BMT.Person_owns_Trap.exists (('Dog', 'Snoopy'), ('Y', 1))
     [<E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__XXX>]
 
-THe queries :method:`~_MOM.E_Type_Manager.E_Type_Manager.s_count`,
-:method:`~_MOM.E_Type_Manager.E_Type_Manager.t_count`,
-:method:`~_MOM.E_Type_Manager.E_Type_Manager.s_extension`, and
-:method:`~_MOM.E_Type_Manager.E_Type_Manager.t_extension`return the
+The queries :meth:`~_MOM.E_Type_Manager.E_Type_Manager.s_count`,
+:meth:`~_MOM.E_Type_Manager.E_Type_Manager.t_count`,
+:meth:`~_MOM.E_Type_Manager.E_Type_Manager.s_extension`, and
+:meth:`~_MOM.E_Type_Manager.E_Type_Manager.t_extension` return the
 number, or list, of strict or transitive instances of the specified
 etype:
 
@@ -381,12 +441,12 @@ etype:
     >>> scope.MOM.Named_Object.t_extension ()
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
     >>> scope.MOM.Object.t_count
-    11
+    12
     >>> scope.MOM.Object.t_extension ()
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1)]
+    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
 
     >>> scope.MOM.Id_Entity.t_count
-    20
+    21
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)
     >>> RiT.t_count

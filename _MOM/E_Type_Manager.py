@@ -40,6 +40,8 @@
 #    23-Nov-2009 (CT) `_check_multiplicity` added
 #    23-Nov-2009 (CT) `_role_query` changed to sue `_cooked_role`
 #    23-Nov-2009 (CT) `__repr__` added
+#    24-Nov-2009 (CT) Support for `No_Such_Object` added to
+#                     `_cooked_epk_iter` and `_role_to_cooked_iter`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +128,10 @@ class Object (Id_Entity) :
 
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :
-            yield pka.from_string (v, None)
+            try :
+                yield pka.from_string (v, None)
+            except MOM.Error.No_Such_Object :
+                yield None
     # end def _cooked_epk
 
 # end class Object
@@ -142,11 +147,11 @@ class Link (Id_Entity) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        self._check_multiplicity (* args, ** kw)
+        self._check_multiplicity (* args, auto_create = True, ** kw)
         if kw.get ("raw", False) :
             args = tuple (self._role_to_raw_iter    (args))
         else :
-            args = tuple (self._role_to_cooked_iter (args))
+            args = tuple (self._role_to_cooked_iter (args, auto_create = True))
         return self.__super.__call__ (* args, ** kw)
     # end def __call__
 
@@ -192,7 +197,8 @@ class Link (Id_Entity) :
         if kw.get ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         else :
-            epk = tuple (self._role_to_cooked_iter (epk))
+            epk = tuple \
+                (self._role_to_cooked_iter (epk, kw.get ("auto_create")))
         etype = self._etype
         if self.__super.exists (* epk) :
             raise MOM.Error.Duplicate_Link \
@@ -213,12 +219,15 @@ class Link (Id_Entity) :
 
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :
-            if getattr (pka, "role_type", None) :
-                ### Allow role attributes to be passed as objects even if
-                ### `raw` is specified
-                v = self._cooked_role (pka, v)
-            else :
-                v = pka.from_string   (v, None)
+            try :
+                if getattr (pka, "role_type", None) :
+                    ### Allow role attributes to be passed as objects even if
+                    ### `raw` is specified
+                    v = self._cooked_role (pka, v)
+                else :
+                    v = pka.from_string   (v, None)
+            except MOM.Error.No_Such_Object :
+                v = None
             yield v
     # end def _cooked_epk_iter
 
@@ -253,12 +262,20 @@ class Link (Id_Entity) :
         return query (role, self._cooked_role (role, obj), sort_key)
     # end def _role_query
 
-    def _role_to_cooked_iter (self, epk) :
+    def _role_to_cooked_iter (self, epk, auto_create = False) :
         for (r, v) in paired (self._etype.Roles, epk) :
             if r is not None :
                 ### Allow role attributes to be passed as raw values even if
                 ### `raw` is not specified
-                v = self._cooked_role (r, v)
+                try :
+                    v = self._cooked_role (r, v)
+                except MOM.Error.No_Such_Object :
+                    if auto_create :
+                        scope = self.home_scope
+                        et    = getattr (scope, r.role_type.type_name)
+                        v     = et (* v, implicit = True, raw = True)
+                    else :
+                        v = None
             yield v
     # end def _role_to_cooked_iter
 

@@ -142,7 +142,7 @@ class Manager (TFL.Meta.Object) :
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :
-        new_hpk = Type.epk_to_hpk (* new_epk)
+        new_hpk = entity.epk_to_hpk (* new_epk)
         root    = entity.relevant_root
         table   = self._tables [root.type_name]
         if new_hpk in table :
@@ -235,7 +235,7 @@ class Manager (TFL.Meta.Object) :
 def epk_to_hpk (cls, * epk) :
     def gen (epk) :
         for r, pka in TFL.paired (cls.Roles, epk) :
-            if r is not None :
+            if pka is not None :
                 pka = pka.id
             yield pka
     return tuple (gen (epk))

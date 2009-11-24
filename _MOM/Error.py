@@ -29,6 +29,8 @@
 #    18-Sep-2009 (CT) Creation (factored from TOM.Error)
 #    12-Oct-2009 (CT) `Invalid_Primary_Key` added
 #    21-Oct-2009 (CT) Creation continued
+#    24-Nov-2009 (CT) `No_Such_Object` added
+#    24-Nov-2009 (CT) `Error.__str__` changed
 #    ««revision-date»»···
 #--
 
@@ -52,10 +54,7 @@ class Error (StandardError) :
     arg_sep = ", "
 
     def __str__ (self) :
-        return "%s : %s" % \
-            ( self.__class__.__name__
-            , self.arg_sep.join (self.str_arg (self.args))
-            )
+        return self.arg_sep.join (self.str_arg (self.args))
     # end def __str__
 
     def str_arg (self, args) :
@@ -119,6 +118,10 @@ class No_Such_File (Error) :
 
 class No_Such_Link (Error) :
     """Raised if names/objects are passed to association which aren't linked."""
+# end class No_Such_Link
+
+class No_Such_Object (Error) :
+    """Raised if an unknown epk is passed for an object or link-role."""
 # end class No_Such_Link
 
 class Too_Many_Objects (Error) :
@@ -316,7 +319,8 @@ class Quant_Error (Invariant_Error) :
         return "%s%s" % (result, ("\n" + indent).join (tail))
     # end def _tail
 
-    def _violator_value (self, (n, o)) :
+    def _violator_value (self, x) :
+        n, o = x
         if isinstance (o, Record) :
             v = o
         else :

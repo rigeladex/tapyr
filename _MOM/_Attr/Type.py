@@ -48,6 +48,7 @@
 #                     `MOM.Scope.active` as default
 #    23-Nov-2009 (CT) `__cmp__` and `__hash__` removed (breaks hashing of
 #                     Link_Role attributes)
+#    24-Nov-2009 (CT) `_A_Object_.cooked` added to check value agains `Class`
 #    ««revision-date»»···
 #--
 
@@ -416,6 +417,22 @@ class _A_Object_ (A_Attr_Type) :
             return value.epk
     # end def as_pickle
 
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        scope  = soc._get_scope  (None)
+        et     = getattr         (scope, soc.Class.type_name)
+        if et and not isinstance (value, et) :
+            raise ValueError \
+                ( _T
+                    ( "%s %s not eligible for attribute %s,"
+                      "\n"
+                      "    must be instance of %s"
+                    )
+                % (value.type_name, str (value), soc, soc.Class.type_name)
+                )
+        return value
+    # end def cooked
+
     def eligible_objects (self, obj = None) :
         if obj is not None :
             scope = self._get_scope (obj)
@@ -448,7 +465,8 @@ class _A_Object_ (A_Attr_Type) :
         return True
     # end def _accept_object
 
-    def _get_scope (self, obj) :
+    @TFL.Meta.Class_and_Instance_Method
+    def _get_scope (soc, obj) :
         return obj.home_scope if obj else MOM.Scope.active
     # end def _get_scope
 
@@ -462,18 +480,16 @@ class _A_Object_ (A_Attr_Type) :
         result = et.instance     (* t, raw = True)
         if result is not None :
             if self._accept_object (obj, result) :
-                return result
+                return self.cooked (result)
             else :
                 raise ValueError \
-                    ( _T ("object `%s` not eligible, specify one of: %s")
-                    % ( " ".join ((self.Class, t)).strip ()
-                      , self.eligible_raw_values (obj)
-                      )
+                    ( _T ("object %s %s not eligible, specify one of: %s")
+                    % (self.Class.type_name, t, self.eligible_raw_values (obj))
                     )
         else :
-            raise ValueError, \
-                ( _T ("No object `%s` in scope %s")
-                % (" ".join ((self.Class, t)).strip (), scope.qname)
+            raise MOM.Error.No_Such_Object, \
+                ( _T ("No object %s %s in scope %s")
+                % (self.Class.type_name, t, scope.name)
                 )
     # end def _to_cooked
 

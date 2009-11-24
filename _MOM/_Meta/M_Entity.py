@@ -42,6 +42,7 @@
 #    19-Nov-2009 (CT) `M_E_Type.sort_key` added
 #    19-Nov-2009 (CT) `app_type.DBW.etype_decorator` called
 #    23-Nov-2009 (CT) `Manager` for `M_Id_Entity.M_E_Type` corrected
+#    24-Nov-2009 (CT) `_m_auto__init__` changed to set `i_bases` of `__init__`
 #    ««revision-date»»···
 #--
 
@@ -250,10 +251,10 @@ class M_Id_Entity (M_Entity) :
     ### `_init_form` needs `* args` to allow additional primary keys in
     ### descendent classes to properly percolate up
     _init_form = """def __init__ (self, %(epk)s, * args, ** kw) :
-        return super (%(type)s, self).__init__ (%(epk)s, * args, ** kw)
+    return super (%(type)s, self).__init__ (%(epk)s, * args, ** kw)
 """
 
-    def _m_auto__init__ (cls, epk_sig) :
+    def _m_auto__init__ (cls, epk_sig, i_bases) :
         globals = class_globals (cls)
         scope   = dict          ()
         code    = cls._init_form % dict \
@@ -263,6 +264,7 @@ class M_Id_Entity (M_Entity) :
         exec code in globals, scope
         result             = scope ["__init__"]
         result.epk_sig     = epk_sig
+        result.i_bases     = i_bases
         result.source_code = code
         return result
     # end def _m_auto__init__
@@ -285,7 +287,7 @@ class M_Id_Entity (M_Entity) :
                 )
             i_bases = tuple (b for b in bases if isinstance (b, M_E_Type_Id))
             if not (i_bases and i_bases [0].epk_sig == epk_sig) :
-                result ["__init__"] = cls._m_auto__init__ (epk_sig)
+                result ["__init__"] = cls._m_auto__init__ (epk_sig, i_bases)
         return result
     # end def _m_new_e_type_dict
 
