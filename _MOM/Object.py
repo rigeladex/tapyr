@@ -32,6 +32,7 @@
 #     8-Oct-2009 (CT) s/Entity/Id_Entity/
 #    12-Oct-2009 (CT) Methods moved to `Id_Entity`
 #    13-Oct-2009 (CT) `Named_Object` added
+#    24-Nov-2009 (CT) `all_links` added
 #    ««revision-date»»···
 #--
 
@@ -46,12 +47,22 @@ import  _MOM._Meta.M_Object
 
 import _MOM.Entity
 
+import itertools
+
 class _MOM_Object_ (MOM.Id_Entity) :
     """Root class for object-types of MOM meta object model."""
 
     __metaclass__         = MOM.Meta.M_Object
     _real_name            = "Object"
     entity_kind           = "object"
+
+    def all_links (self) :
+        result = set ()
+        scope  = self.home_scope
+        for role in itertools.chain (* self.__class__.link_map.itervalues ()) :
+            result.update (scope.ems.s_role (role, self, None))
+        return sorted (result, key = scope.MOM.Id_Entity.sort_key ())
+    # end def all_links
 
 Object = _MOM_Object_ # end class
 

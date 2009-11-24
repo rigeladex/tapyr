@@ -50,7 +50,7 @@ class _DBW_Session_ (TFL.Meta.Object) :
     __metaclass__ = _M_Session_
     _real_name    = "Session"
 
-    type_name     = "<Unspecified>"
+    type_name     = "XXX"
 
 Session = _DBW_Session_ # end class Session
 

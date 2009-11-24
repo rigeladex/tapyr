@@ -37,6 +37,7 @@
 #                     `role_type` (needed by MOM.Attr._A_Object_._to_cooked)
 #    20-Nov-2009 (CT) `M_Link3`, `M_Link2_Ordered`, `M_E_Type_Link3`, and
 #                     `M_E_Type_Link2_Ordered` added
+#    24-Nov-2009 (CT) `_m_setup_roles` changed to add to `rt._own_link_map`
 #    ««revision-date»»···
 #--
 
@@ -111,9 +112,10 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                 if r.role_type :
                     ### Replace by app-type specific e-type
                     r.assoc          = cls
-                    r.attr.role_type = r.attr.Class = \
+                    r.attr.role_type = r.attr.Class = rt = \
                         cls.app_type.entity_type (r.role_type)
-                    r.attr.typ       = r.attr.role_type.type_base_name
+                    r.attr.typ       = rt.type_base_name
+                    rt._own_link_map [cls].add (r)
                 if r.role_name != r.generic_role_name :
                     setattr \
                         ( cls, r.role_name

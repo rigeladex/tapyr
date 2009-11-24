@@ -38,9 +38,8 @@ import _MOM._DBW.Session
 
 EMS   = MOM.EMS.Hash.Manager
 DBW   = MOM.DBW.Session ### XXX change to a real DBW
-apt   = MOM.App_Type                 ("BMT", BMT)
-apt_c = apt.Derived                  (EMS, DBW)
-scope = MOM.Scope                    (apt_c)
+apt   = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
+scope = MOM.Scope    (apt)
 RiT   = scope.BMT.Rodent_in_Trap
 PoT   = scope.BMT.Person_owns_Trap
 PTL   = scope.BMT.Person_sets_Trap_at_Location

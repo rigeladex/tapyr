@@ -30,11 +30,12 @@
 #     4-Nov-2009 (CT) Creation continued
 #     4-Nov-2009 (MG) `Beaver` and `Otter` added
 #    23-Nov-2009 (CT) Creation continued..
+#    24-Nov-2009 (CT) Creation continued...
 #    ««revision-date»»···
 #--
 
 """
-How to define essential and use object models
+How to define and use essential object models
 ==============================================
 
 Using `MOM`, an essential object model is specified by deriving
@@ -79,15 +80,144 @@ app-type is created.
     AttributeError: type object 'Person' has no attribute 'last_name'
 
 
+Application type
+----------------
+
+Before an essential object model can be used, the
+:class:`application type<_MOM.App_Type:App_Type>` and at least one
+:class:`derived application type<_MOM.App_Type._App_Type_D_` must be
+defined:
+
+    >>> import _MOM._EMS.Hash
+    >>> import _MOM._DBW.Session
+    >>> EMS   = MOM.EMS.Hash.Manager
+    >>> DBW   = MOM.DBW.Session ### XXX change to a real DBW
+    >>> apt   = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
+
+Creating a derived app-type replaces the specification of the
+essential classes with bare essential classes:
+
+    >>> BMT.Person
+    <class 'BMT.Person' [Bare Essence]>
+    >>> BMT.Rodent
+    <class 'BMT.Rodent' [Bare Essence]>
+    >>> BMT.Beaver
+    <class 'BMT.Beaver' [Bare Essence]>
+    >>> BMT.Person_owns_Trap
+    <class 'BMT.Person_owns_Trap' [Bare Essence]>
+
+and derives an app-type specific entity-type for each of the essential
+classes:
+
+    >>> ET_Id_Entity = apt.entity_type ("MOM.Id_Entity")
+    >>> ET_Person    = apt.entity_type ("BMT.Person")
+    >>> ET_Mouse     = apt ["BMT.Mouse"]
+    >>> ET_Rat       = apt ["BMT.Rat"]
+    >>> ET_Rodent    = apt ["BMT.Rodent"]
+    >>> ET_Trap      = apt ["BMT.Trap"]
+
+    >>> ET_Person
+    <class 'BMT.Person' [BMT__Hash__XXX]>
+    >>> ET_Person.Essence
+    <class 'BMT.Person' [Bare Essence]>
+    >>> ET_Person.E_Spec
+    <class 'BMT.Person' [Spec Essence]>
+    >>> ET_Person.last_name
+    String `last_name`
+    >>> ET_Person.last_name.__class__
+    <class '_MOM._Attr.Kind.Primary'>
+    >>> ET_Person.primary
+    [String `last_name`, String `first_name`]
+    >>> ET_Person.required
+    []
+    >>> ET_Person.optional
+    []
+
+    >>> ET_Mouse.primary
+    [Name `name`]
+    >>> ET_Mouse.required
+    [Float `weight`]
+    >>> ET_Mouse.optional
+    [String `color`]
+    >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
+    [String `color`, Boolean `electric`, Int `is_used`, Name `name`,\
+ Float `weight`, Boolean `x_locked`]
+
+    >>> sorted (ET_Id_Entity.relevant_roots)
+    ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
+ 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap',\
+ 'BMT.Trap']
+    >>> ET_Person.relevant_root
+    <class 'BMT.Person' [BMT__Hash__XXX]>
+    >>> ET_Rodent.relevant_root
+    <class 'BMT.Rodent' [BMT__Hash__XXX]>
+    >>> ET_Mouse.relevant_root
+    <class 'BMT.Rodent' [BMT__Hash__XXX]>
+
+    >>> sorted (ET_Person.children)
+    []
+    >>> sorted (ET_Rodent.children)
+    ['BMT.Mouse', 'BMT.Rat']
+    >>> sorted (ET_Rodent.children.itervalues (), key = TFL.Getter.type_name)
+    [<class 'BMT.Mouse' [BMT__Hash__XXX]>,\
+ <class 'BMT.Rat' [BMT__Hash__XXX]>]
+    >>> sorted (ET_Rat.children)
+    []
+
+    >>> sorted (apt.etypes)
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter',\
+ 'BMT.Person', 'BMT.Person_owns_Trap',\
+ 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent',\
+ 'BMT.Rodent_in_Trap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity',\
+ 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered',\
+ 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object',\
+ 'MOM.Sequence_Number']
+    >>> [t.type_name for t in apt._T_Extension]
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity',\
+ 'MOM.Link', 'MOM.Link2', 'MOM.Link3', 'MOM.Link2_Ordered',\
+ 'MOM.Object', 'MOM.Named_Object', 'MOM.Sequence_Number',\
+ 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat',\
+ 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Rodent_in_Trap',\
+ 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+
+    >>> sorted (ET_Person.link_map, key = TFL.Getter.type_name)
+    [<class 'BMT.Person_owns_Trap' [BMT__Hash__XXX]>,\
+ <class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__XXX]>]
+    >>> sorted (ET_Trap.link_map.iteritems (), key = TFL.Getter [0].type_name)
+    [(<class 'BMT.Person_owns_Trap' [BMT__Hash__XXX]>, set([Trap `right`])),\
+ (<class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__XXX]>,\
+ set([Trap `middle`])), (<class 'BMT.Rodent_in_Trap' [BMT__Hash__XXX]>,\
+ set([Trap `right`]))]
+
+Scope
+-----
+
+A :class:`scope<_MOM.Scope.Scope>` manages the instances of essential
+object and link types.
+
+    >>> scope = MOM.Scope (apt)
+
+For each `Package_NS` defining essential classes, the `scope` provides
+an object holding an
+:class:`etype manager<_MOM.E_Type_Manager.E_Type_Manager`
+that supports instance creation and queries:
+
+    >>> scope.MOM.Id_Entity
+    <E_Type_Manager for MOM.Id_Entity of scope BMT__Hash__XXX>
+    >>> scope.BMT.Person
+    <E_Type_Manager for BMT.Person of scope BMT__Hash__XXX>
+    >>> scope.BMT.Person_owns_Trap
+    <E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__XXX>
+
 Identity
 --------
 
 Essential objects and links have identity, i.e., each object or link
 can be uniquely identified. This identity is specified by a set of (so
 called `primary`) attributes that together define the `essential
-primary key`, short `epk`, for the entity in question. If there is no
-more than primary attribute, the sequence of the attributes is defined
-by their :attr:`rank` and :attr:`name`.
+primary key`, short `epk`, for the entity in question. If there is
+more than one primary attribute, the sequence of the attributes is
+defined by their :attr:`rank` and :attr:`name`.
 
 Essential objects identified by a simple, unstructured `name` are
 defined by classes derived from
@@ -119,102 +249,8 @@ in question:
   and :attr:`right<_MOM.Link.Link3.right>` plus any other primary
   attributes.
 
-Application type
-----------------
-
-Before an essential object model can be used, the :class:`application
-type<_MOM.App_Type:App_Type>` and at least one
-:class:`derived application type<_MOM.App_Type._App_Type_D_` must be
-defined:
-
-    >>> import _MOM._EMS.Hash
-    >>> import _MOM._DBW.Session
-    >>> EMS   = MOM.EMS.Hash.Manager
-    >>> DBW   = MOM.DBW.Session ### XXX change to a real DBW
-    >>> apt   = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
-
-Creating a derived app-type replaces the specification of the
-essential classes with bare essential classes:
-
-    >>> BMT.Person
-    <class 'BMT.Person' [Bare Essence]>
-    >>> BMT.Rodent
-    <class 'BMT.Rodent' [Bare Essence]>
-    >>> BMT.Beaver
-    <class 'BMT.Beaver' [Bare Essence]>
-    >>> BMT.Person_owns_Trap
-    <class 'BMT.Person_owns_Trap' [Bare Essence]>
-
-and derives an app-type specific entity-type for each of the essential
-classes:
-
-    >>> apt ["BMT.Person"]
-    <class 'BMT.Person' [BMT__Hash__<Unspecified>]>
-    >>> apt ["BMT.Person"].Essence
-    <class 'BMT.Person' [Bare Essence]>
-    >>> apt ["BMT.Person"].E_Spec
-    <class 'BMT.Person' [Spec Essence]>
-    >>> apt ["BMT.Person"].last_name
-    String `last_name`
-    >>> apt ["BMT.Person"].last_name.__class__
-    <class '_MOM._Attr.Kind.Primary'>
-    >>> apt ["BMT.Person"].primary
-    [String `last_name`, String `first_name`]
-    >>> apt ["BMT.Person"].required
-    []
-    >>> apt ["BMT.Person"].optional
-    []
-
-    >>> apt ["BMT.Mouse"].primary
-    [Name `name`]
-    >>> apt ["BMT.Mouse"].required
-    [Float `weight`]
-    >>> apt ["BMT.Mouse"].optional
-    [String `color`]
-
-    >>> sorted (apt ["MOM.Id_Entity"].relevant_roots)
-    ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Trap']
-    >>> apt ["BMT.Person"].relevant_root
-    <class 'BMT.Person' [BMT__Hash__<Unspecified>]>
-    >>> apt ["BMT.Rodent"].relevant_root
-    <class 'BMT.Rodent' [BMT__Hash__<Unspecified>]>
-    >>> apt ["BMT.Mouse"].relevant_root
-    <class 'BMT.Rodent' [BMT__Hash__<Unspecified>]>
-
-    >>> sorted (apt ["BMT.Person"].children)
-    []
-    >>> sorted (apt ["BMT.Rodent"].children)
-    ['BMT.Mouse', 'BMT.Rat']
-    >>> sorted (apt ["BMT.Rodent"].children.itervalues (), key = TFL.Getter.type_name)
-    [<class 'BMT.Mouse' [BMT__Hash__<Unspecified>]>,\
- <class 'BMT.Rat' [BMT__Hash__<Unspecified>]>]
-    >>> sorted (apt ["BMT.Rat"].children)
-    []
-
-    >>> sorted (apt.etypes)
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter',\
- 'BMT.Person', 'BMT.Person_owns_Trap',\
- 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent',\
- 'BMT.Rodent_in_Trap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity',\
- 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered',\
- 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object',\
- 'MOM.Sequence_Number']
-
-Scope
------
-
-A :class:`scope<_MOM.Scope.Scope>` manages the instances of essential
-object and link types.
-
-    >>> scope = MOM.Scope (apt)
-
-For each `Package_NS` defining essential classes, the `scope` provides
-an object holding an :class:`etype
-manager<_MOM.E_Type_Manager.E_Type_Manager` that supports instance
-creation and queries:
-
-    >>> scope.BMT.Person
-    <E_Type_Manager for BMT.Person of scope BMT__Hash__<Unspecified>>
+Object and link creation
+-------------------------
 
 One creates objects or links by calling the etype manager of the
 appropriate class:
@@ -256,6 +292,9 @@ appropriate class:
     >>> PTL (p, t3, l2)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))
 
+Queries
+-------
+
 One queries the object model by calling query methods of the
 appropriate etype manager. Queries starting with `s_` are strict,
 i.e., they return only instances of the essential class in question,
@@ -269,11 +308,6 @@ The query :method:`instance<_MOM.E_Type_Manager.E_Type_Manager.instance>` can
 only be applied to `E_Type_Managers` for essential types that are or
 inherit a `relevant_root`:
 
-    >>> scope.MOM.Id_Entity.instance ("Mighty_Mouse")
-    Traceback (most recent call last):
-      ...
-    TypeError: Cannot query `instance` of non-root type `MOM.Id_Entity`.
-    Use one of the types BMT.Location, BMT.Person, BMT.Person_owns_Trap, BMT.Person_sets_Trap_at_Location, BMT.Rodent, BMT.Rodent_in_Trap, BMT.Trap instead.
     >>> scope.MOM.Object.instance ("Mighty_Mouse")
     Traceback (most recent call last):
       ...
@@ -290,16 +324,23 @@ inherit a `relevant_root`:
     >>> print scope.BMT.Rat.instance ("Mighty_Mouse")
     None
 
+    >>> scope.BMT.Person_owns_Trap.instance (('Dog', 'Snoopy'), ('Y', 1))
+    BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1))
+    >>> scope.BMT.Person_owns_Trap.instance (('Dog', 'Snoopy'), ('X', 2))
+
 The query :method:`exists<_MOM.E_Type_Manager.E_Type_Manager.exists>`
 returns a list of all `E_Type_Managers` for which an object or link
 with the specified `epk` exists:
 
     >>> scope.MOM.Named_Object.exists ("Mighty_Mouse")
-    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__<Unspecified>>]
+    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__XXX>]
     >>> scope.BMT.Mouse.exists ("Mighty_Mouse")
-    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__<Unspecified>>]
+    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__XXX>]
     >>> scope.BMT.Rat.exists ("Mighty_Mouse")
     []
+
+    >>> scope.BMT.Person_owns_Trap.exists (('Dog', 'Snoopy'), ('Y', 1))
+    [<E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__XXX>]
 
 THe queries :method:`~_MOM.E_Type_Manager.E_Type_Manager.s_count`,
 :method:`~_MOM.E_Type_Manager.E_Type_Manager.t_count`,
@@ -408,6 +449,14 @@ etype:
     []
     >>> show (PTL.s_links_of (l = p, m = ('X', 1), r = l1))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
+
+    >>> t1
+    BMT.Trap ('X', 1)
+    >>> t1.all_links ()
+    [BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)),\
+ BMT.Person_sets_Trap_at_Location\
+ (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)),\
+ BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1))]
 
 """
 
@@ -672,5 +721,22 @@ def show (e) :
     else :
         print str (e)
 # end def show
+
+### All classes defining `__getslice__` have been changed to be
+### compatible to Python 3.x by changing `__getitem__` to deal with
+### slices
+###
+### Unfortunately, in Python 2.x `__getslice__` is still necessary and
+### code like::
+###
+###     self.kill_callback [:]
+###
+### triggers the warning::
+###
+### DeprecationWarning: in 3.x, __getslice__ has been removed; use __getitem__
+###
+import warnings
+warnings.filterwarnings \
+    ( "ignore", "in 3.x, __getslice__ has been removed; use __getitem__")
 
 ### __END__ MOM.__doc__
