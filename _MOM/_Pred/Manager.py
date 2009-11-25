@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from TOM.Pred.Manager)
+#    25-Nov-2009 (CT) `attr_map` added and used instead of `attr.invariant`
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,7 @@ class Manager (TFL.Meta.Object) :
         self.pred_dict         = pred_spec._pred_dict
         self.pred_kind         = pred_spec._pred_kind
         self.syntax_checks     = pred_spec._syntax_checks
+        self.attr_map          = pred_spec._attr_map
         self.reset_predicates  ()
     # end def __init__
 
@@ -72,7 +74,7 @@ class Manager (TFL.Meta.Object) :
     def check_attribute (self, obj, attr, value) :
         result    = []
         attr_dict = {attr.name : value}
-        for pn in attr.invariant :
+        for pn in self.attr_map [attr] :
             p = self.pred_dict.get (pn)
             if p :
                 r = p.check_predicate (obj, attr_dict)

@@ -52,6 +52,7 @@
 #     4-Nov-2009 (CT) `refuse_links` changed from dict to set
 #    23-Nov-2009 (CT) `epk_as_code` added and used in `_repr` and `__str__`
 #    25-Nov-2009 (CT) `set` and `set_raw` of `Id_Entity` corrected
+#    25-Nov-2009 (CT) `as_code`, `attr_as_code` and `errors` added
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,7 @@ import _TFL.Sorted_By
 
 from   _TFL.object_globals   import object_globals
 
+import itertools
 import traceback
 
 class Entity (TFL.Meta.Object) :
@@ -131,6 +133,18 @@ class Entity (TFL.Meta.Object) :
     def after_init (self) :
         pass
     # end def after_init
+
+    def as_code (self) :
+        return "%s (%s)" % (self.type_name, self.attr_as_code ())
+    # end def as_code
+
+    def attr_as_code (self) :
+        return ", ".join \
+            ( "%s = %s" % (a.name, a.as_code (a.get_value (self)))
+            for a in sorted (self.user_attr, key = TFL.Getter.name)
+            if  a.to_save (self)
+            )
+    # end def attr_as_code
 
     def attr_value_maybe (self, name) :
         attr = self.attributes.get (name)
@@ -436,6 +450,12 @@ class Id_Entity (Entity) :
     # end def epk_as_dict
 
     @property
+    def errors (self) :
+        return itertools.chain \
+            (* (pk for pk in self._pred_man.errors.itervalues ()))
+    # end def errors
+
+    @property
     def has_errors (self) :
         return self._pred_man.has_errors
     # end def has_errors
@@ -444,6 +464,10 @@ class Id_Entity (Entity) :
     def has_warnings (self) :
         return self._pred_man.has_warnings
     # end def has_warnings
+
+    def attr_as_code (self) :
+        return ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))
+    # end def attr_as_code
 
     def check_all (self) :
         """Checks all predicates"""

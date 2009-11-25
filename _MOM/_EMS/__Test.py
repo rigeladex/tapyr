@@ -43,12 +43,13 @@ scope = MOM.Scope    (apt)
 RiT   = scope.BMT.Rodent_in_Trap
 PoT   = scope.BMT.Person_owns_Trap
 PTL   = scope.BMT.Person_sets_Trap_at_Location
+ET_Mouse = apt ["BMT.Mouse"]
 if 1 :
+    m     = scope.BMT.Mouse      ("Mighty_Mouse")
     p     = scope.BMT.Person     ("Luke", "Lucky")
     q     = scope.BMT.Person     ("Dog",  "Snoopy")
     l1    = scope.BMT.Location   (-16.268799, 48.189956)
     l2    = scope.BMT.Location   (-16.740770, 48.463313)
-    m     = scope.BMT.Mouse      ("Mighty_Mouse")
     b     = scope.BMT.Beaver     ("Toothy_Beaver")
     r     = scope.BMT.Rat        ("Rutty_Rat")
     axel  = scope.BMT.Rat        ("Axel")

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from TOM.Pred.Spec)
+#    25-Nov-2009 (CT) `_attr_map` added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ import _MOM._Pred.Type
 import _MOM._Prop.Spec
 
 import _TFL._Meta.Property
+import _TFL.defaultdict
 
 class Spec (MOM.Prop.Spec) :
     """Predicate specification for MOM entities (objects and links).
@@ -61,6 +63,7 @@ class Spec (MOM.Prop.Spec) :
 
     def __init__ (self, e_type) :
         self.__super.__init__ (e_type)
+        self._attr_map = TFL.defaultdict (list)
         for n, a in e_type.attributes.iteritems () :
             if a.is_primary :
                 self._setup_attr_checker_1 \

@@ -49,6 +49,7 @@
 #    23-Nov-2009 (CT) `__cmp__` and `__hash__` removed (breaks hashing of
 #                     Link_Role attributes)
 #    24-Nov-2009 (CT) `_A_Object_.cooked` added to check value agains `Class`
+#    25-Nov-2009 (CT) `invariant` removed
 #    ««revision-date»»···
 #--
 
@@ -97,8 +98,7 @@ class A_Attr_Type (object) :
     _t_rank           = 0
 
     def __init__ (self, kind) :
-        self.kind      = kind
-        self.invariant = set ()
+        self.kind = kind
     # end def __init__
 
     def as_code (self, value) :

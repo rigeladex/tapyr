@@ -43,6 +43,9 @@
 #    19-Nov-2009 (CT) `app_type.DBW.etype_decorator` called
 #    23-Nov-2009 (CT) `Manager` for `M_Id_Entity.M_E_Type` corrected
 #    24-Nov-2009 (CT) `_m_auto__init__` changed to set `i_bases` of `__init__`
+#    25-Nov-2009 (CT) `_m_setup_attributes` changed to use `P._attr_map`
+#                     instead of `attr.invariant` (because `attr` can be shared
+#                     between superclass and subclasses, but `P` isn't shared)
 #    ««revision-date»»···
 #--
 
@@ -424,7 +427,7 @@ class M_E_Type (M_E_Mixin) :
                                     "invariant `%s`"
                                   ) % (cls, attr.kind, an, cls.name, pn)
                         else :
-                            attr.invariant.add (pn)
+                            P._attr_map [attr.attr].append (pn)
         P._syntax_checks = \
             [  a.attr for a in attr_dict.itervalues ()
             if (not a.electric) and TFL.callable (a.attr.check_syntax)

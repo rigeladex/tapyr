@@ -137,18 +137,6 @@ Class `MOM.Attr.Manager`
 
   The attribute manager
 
-  - Stores the values of the attributes in various kind-specific
-    dictionaries.
-
-  - Stores the raw values of those attributes that need them.
-
-    Raw values are the values as entered by the user in string format
-    and can contain symbolic expressions and cross references to other
-    attributes of the same or of different entities.
-
-    In general, attributes of string type, attributes referring to other
-    objects, and electric attributes don't store raw values.
-
   - Manages a change count that is incremented each time an attribute
     value is changed.
 

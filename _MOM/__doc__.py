@@ -552,21 +552,28 @@ Changing objects and links
     BMT.Mouse ('Mighty_Mouse')
     >>> m.color, m.weight
     (None, None)
+    >>> print m.as_code ()
+    BMT.Mouse ('Mighty_Mouse', )
     >>> m.color = "white"
-    >>> m.color, m.weight
-    ('white', None)
+    >>> print m.as_code ()
+    BMT.Mouse ('Mighty_Mouse', color = 'white')
     >>> m.weight = 0
     Traceback (most recent call last):
       ...
     Invariant_Error: Condition `AC_check_weight_0` :  (weight > 0)
         weight = 0
+    >>> m.set (weight = -5.0)
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: Condition `AC_check_weight_0` :  (weight > 0)
+        weight = -5.0
     >>> m.weight = 10
-    >>> m.color, m.weight
-    ('white', 10.0)
+    >>> print m.as_code ()
+    BMT.Mouse ('Mighty_Mouse', color = 'white', weight = 10.0)
     >>> m.set (color = "black", weight = 25.0)
     2
-    >>> m.color, m.weight
-    ('black', 25.0)
+    >>> print m.as_code ()
+    BMT.Mouse ('Mighty_Mouse', color = 'black', weight = 25.0)
     >>> m.set (weight = "one ton")
     Traceback (most recent call last):
       ...
@@ -575,6 +582,28 @@ Changing objects and links
     3
     >>> m.color, m.weight
     ('yellow', 42.0)
+    >>> print m.as_code ()
+    BMT.Mouse ('Mighty_Mouse', color = 'yellow', weight = 42.0)
+
+    >>> rit = RiT.instance (m, t1)
+    >>> print rit.as_code ()
+    BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1), )
+    >>> print rit.rodent.as_code ()
+    BMT.Mouse ('Mighty_Mouse', color = 'yellow', weight = 42.0)
+    >>> print rit.trap.as_code ()
+    BMT.Trap ('X', 1, )
+    >>> print rit.is_g_correct ()
+    True
+    >>> rit.trap.max_weight = 20
+    >>> print rit.is_g_correct ()
+    False
+    >>> for err in rit.errors :
+    ...     print err
+    Condition `valid_weight` : Weight of `rodent` must not exceed `max_weight` of `trap`. (rodent.weight <= trap.max_weight)
+        rodent = 'Mighty_Mouse'
+        trap = ('X', 1)
+        rodent.weight = 42.0
+        trap.max_weight = 20.0
 
 """
 
@@ -772,6 +801,20 @@ class Rodent_in_Trap (MOM.Link2) :
         # end class right
 
     # end class _Attributes
+
+    class _Predicates (MOM.Link2._Predicates) :
+
+        class valid_weight (Pred.Condition) :
+            """Weight of `rodent` must not exceed `max_weight` of `trap`."""
+
+            kind          = Pred.System
+            assertion     = "rodent.weight <= trap.max_weight"
+            attributes    = ("rodent.weight", "trap.max_weight")
+
+        # end class valid_weight
+
+    # end class _Predicates
+
 
 # end class Rodent_in_Trap
 
