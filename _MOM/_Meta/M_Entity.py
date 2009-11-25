@@ -424,7 +424,7 @@ class M_E_Type (M_E_Mixin) :
                                     "invariant `%s`"
                                   ) % (cls, attr.kind, an, cls.name, pn)
                         else :
-                            attr.invariant.append (pn)
+                            attr.invariant.add (pn)
         P._syntax_checks = \
             [  a.attr for a in attr_dict.itervalues ()
             if (not a.electric) and TFL.callable (a.attr.check_syntax)

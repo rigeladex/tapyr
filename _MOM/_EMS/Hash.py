@@ -41,6 +41,7 @@
 #    23-Nov-2009 (CT) `exists`, `instance` and `s_extension` changed to
 #                     filter siblings of `Type` that are derived from the
 #                     same `relevant_root`
+#    25-Nov-2009 (CT) `rename` (and `add`) changed to preserve `id`
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ class Manager (TFL.Meta.Object) :
         self.__id    = 0
     # end def __init__
 
-    def add (self, entity) :
+    def add (self, entity, id = None) :
         count = self._counts
         hpk   = entity.hpk
         root  = entity.relevant_root
@@ -83,8 +84,10 @@ class Manager (TFL.Meta.Object) :
             raise MOM.Error.Name_Clash (entity, table [hpk])
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
-        entity.id                 = self.__id
-        self.__id                += 1
+        if id is None :
+            id = self.__id
+            self.__id += 1
+        entity.id                 = id
         count [entity.type_name] += 1
         table [hpk]               = entity
         if entity.Roles :
@@ -149,7 +152,7 @@ class Manager (TFL.Meta.Object) :
             raise MOM.Error.Name_Clash (entity, table [new_hpk])
         self.remove (entity)
         renamer     ()
-        self.add    (entity)
+        self.add    (entity, entity.id)
     # end def rename
 
     def s_count (self, Type) :

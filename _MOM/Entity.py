@@ -537,7 +537,7 @@ class Id_Entity (Entity) :
         """Set attributes specified in `kw` from cooked values"""
         with self.home_scope.historian.nested_recorder (MOM.SCM.Change) :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
-            if new_epk :
+            if pkas_ckd :
                 self._rename (new_epk, pkas_raw, pkas_ckd)
             result = self.__super.set (on_error, ** kw)
         return result

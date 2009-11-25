@@ -98,7 +98,7 @@ class A_Attr_Type (object) :
 
     def __init__ (self, kind) :
         self.kind      = kind
-        self.invariant = []
+        self.invariant = set ()
     # end def __init__
 
     def as_code (self, value) :

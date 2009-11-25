@@ -527,6 +527,55 @@ etype:
  (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)),\
  BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1))]
 
+Changing objects and links
+---------------------------
+
+    >>> axel.id
+    7
+    >>> axel.all_links ()
+    [BMT.Rodent_in_Trap (('Axel'), ('X', 2))]
+    >>> axel.name = "betty"
+    Traceback (most recent call last):
+      ...
+    AttributeError: Primary attribute `BMT.Rat.name` cannot be assigned.
+    Use `set` or `set_raw` to change it.
+    >>> axel.set (name = "betty")
+    0
+    >>> axel
+    BMT.Rat ('betty')
+    >>> axel.id
+    7
+    >>> axel.all_links ()
+    [BMT.Rodent_in_Trap (('betty'), ('X', 2))]
+
+    >>> m
+    BMT.Mouse ('Mighty_Mouse')
+    >>> m.color, m.weight
+    (None, None)
+    >>> m.color = "white"
+    >>> m.color, m.weight
+    ('white', None)
+    >>> m.weight = 0
+    Traceback (most recent call last):
+      ...
+    Invariant_Error: Condition `AC_check_weight_0` :  (weight > 0)
+        weight = 0
+    >>> m.weight = 10
+    >>> m.color, m.weight
+    ('white', 10.0)
+    >>> m.set (color = "black", weight = 25.0)
+    2
+    >>> m.color, m.weight
+    ('black', 25.0)
+    >>> m.set (weight = "one ton")
+    Traceback (most recent call last):
+      ...
+    ValueError: invalid literal for float(): one ton
+    >>> m.set_raw (color = "yellow", weight = "42")
+    3
+    >>> m.color, m.weight
+    ('yellow', 42.0)
+
 """
 
 from   _MOM.import_MOM       import *

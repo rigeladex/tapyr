@@ -38,7 +38,7 @@ import _MOM.Error
 
 import _TFL._Meta.Object
 
-from   _TFL.predicate        import dusplit
+from   _TFL.predicate        import callable, dusplit
 
 class Manager (TFL.Meta.Object) :
     """Predicate manager for instances of MOM entities (objects and links).
