@@ -147,7 +147,7 @@ class Link (Id_Entity) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        self._check_multiplicity (* args, auto_create = True, ** kw)
+        self._check_multiplicity (* args, ** kw)
         if kw.get ("raw", False) :
             args = tuple (self._role_to_raw_iter    (args))
         else :
@@ -197,8 +197,7 @@ class Link (Id_Entity) :
         if kw.get ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         else :
-            epk = tuple \
-                (self._role_to_cooked_iter (epk, kw.get ("auto_create")))
+            epk = tuple (self._role_to_cooked_iter (epk))
         etype = self._etype
         if self.__super.exists (* epk) :
             raise MOM.Error.Duplicate_Link \

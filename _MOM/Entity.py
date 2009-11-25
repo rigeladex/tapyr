@@ -51,6 +51,7 @@
 #                     calls of `__getattr__`
 #     4-Nov-2009 (CT) `refuse_links` changed from dict to set
 #    23-Nov-2009 (CT) `epk_as_code` added and used in `_repr` and `__str__`
+#    25-Nov-2009 (CT) `set` and `set_raw` of `Id_Entity` corrected
 #    ««revision-date»»···
 #--
 
@@ -249,6 +250,7 @@ class Entity (TFL.Meta.Object) :
     # end def sync_attributes
 
     def _finish__init__ (self, * args, ** kw) :
+        self.implicit = kw.pop ("implicit", False)
         if kw :
             set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
             set (** kw)
@@ -545,7 +547,7 @@ class Id_Entity (Entity) :
         """Set attributes specified in `kw` from raw values"""
         with self.home_scope.historian.nested_recorder (MOM.SCM.Change) :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
-            if new_epk :
+            if pkas_ckd :
                 self._rename (new_epk, pkas_raw, pkas_ckd)
             result = self.__super.set_raw (on_error, ** kw)
         return result

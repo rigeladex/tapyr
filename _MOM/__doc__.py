@@ -339,9 +339,7 @@ appropriate class:
     >>> PoT (q, t3)
     BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1))
     >>> PoT (("Tin", "Tin"), t4)
-    Traceback (most recent call last):
-      ...
-    No_Such_Object: No object BMT.Person ('Tin', 'Tin') in scope BMT__Hash__XXX
+    BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2))
 
     >>> PTL (p, t1, l1)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))
@@ -441,12 +439,12 @@ etype:
     >>> scope.MOM.Named_Object.t_extension ()
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
     >>> scope.MOM.Object.t_count
-    12
+    13
     >>> scope.MOM.Object.t_extension ()
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
+    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
 
     >>> scope.MOM.Id_Entity.t_count
-    21
+    23
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)
     >>> RiT.t_count
