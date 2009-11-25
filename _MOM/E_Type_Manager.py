@@ -42,6 +42,7 @@
 #    23-Nov-2009 (CT) `__repr__` added
 #    24-Nov-2009 (CT) Support for `No_Such_Object` added to
 #                     `_cooked_epk_iter` and `_role_to_cooked_iter`
+#    25-Nov-2009 (CT) `_role_query` guarded agains `No_Such_Object`
 #    ««revision-date»»···
 #--
 
@@ -258,7 +259,11 @@ class Link (Id_Entity) :
 
     def _role_query (self, role, obj, q_name, sort_key = False) :
         query = getattr (self.home_scope.ems, q_name)
-        return query (role, self._cooked_role (role, obj), sort_key)
+        try :
+            result = query (role, self._cooked_role (role, obj), sort_key)
+        except MOM.Error.No_Such_Object :
+            result = []
+        return result
     # end def _role_query
 
     def _role_to_cooked_iter (self, epk, auto_create = False) :

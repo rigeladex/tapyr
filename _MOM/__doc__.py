@@ -31,6 +31,7 @@
 #     4-Nov-2009 (MG) `Beaver` and `Otter` added
 #    23-Nov-2009 (CT) Creation continued..
 #    24-Nov-2009 (CT) Creation continued...
+#    25-Nov-2009 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -380,9 +381,9 @@ inherit a `relevant_root`:
     >>> print scope.BMT.Rat.instance ("Mighty_Mouse")
     None
 
-    >>> scope.BMT.Person_owns_Trap.instance (('Dog', 'Snoopy'), ('Y', 1))
+    >>> PoT.instance (('Dog', 'Snoopy'), ('Y', 1))
     BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1))
-    >>> scope.BMT.Person_owns_Trap.instance (('Dog', 'Snoopy'), ('X', 2))
+    >>> PoT.instance (('Dog', 'Snoopy'), ('X', 2))
     >>> print PoT.instance (("Man", "Tin"), t4)
     None
 
@@ -397,8 +398,10 @@ with the specified `epk` exists:
     >>> scope.BMT.Rat.exists ("Mighty_Mouse")
     []
 
-    >>> scope.BMT.Person_owns_Trap.exists (('Dog', 'Snoopy'), ('Y', 1))
+    >>> PoT.exists (('Dog', 'Snoopy'), ('Y', 1))
     [<E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__XXX>]
+    >>> PoT.exists (("Man", "Tin"), t4)
+    []
 
 The queries :meth:`~_MOM.E_Type_Manager.E_Type_Manager.s_count`,
 :meth:`~_MOM.E_Type_Manager.E_Type_Manager.t_count`,
@@ -462,6 +465,8 @@ etype:
     [(('Rutty_Rat'), ('Y', 1))]
     >>> show (RiT.t_left (m))
     []
+    >>> show (RiT.s_left ("Foxy_Fox"))
+    []
 
     >>> show (RiT.s_right (m))
     [(('Mighty_Mouse'), ('X', 1))]
@@ -469,6 +474,8 @@ etype:
     [(('Rutty_Rat'), ('Y', 1))]
     >>> show (RiT.s_right (("Axel", )))
     [(('Axel'), ('X', 2))]
+    >>> show (RiT.s_right ("Jimmy", ))
+    []
 
     >>> show (PoT.trap (p))
     [(('Luke', 'Lucky'), ('X', 1)), (('Luke', 'Lucky'), ('X', 2))]
@@ -490,6 +497,8 @@ etype:
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.s_left_right   (("Y", "1")))
     [(('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
+    >>> show (PTL.s_middle_right (("Tan", "Tan")))
+    []
 
     >>> show (PTL.s_links_of (l = p))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
@@ -507,6 +516,8 @@ etype:
     []
     >>> show (PTL.s_links_of (l = p, m = ('X', 1), r = l1))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
+    >>> show (PTL.s_links_of (l = ("Tan", "Tan")))
+    []
 
     >>> t1
     BMT.Trap ('X', 1)
