@@ -144,9 +144,9 @@ classes:
     def __init__ (self, last_name, first_name, * args, ** kw) :
         return self._MOM_Entity__init__ (self, last_name, first_name, * args, ** kw)
     <BLANKLINE>
-    *** BMT.Trap *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
-    def __init__ (self, cat, serial_no, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, cat, serial_no, * args, ** kw)
+    *** BMT.Trap *** (<class 'MOM.Named_Object' [BMT__Hash__XXX]>,)
+    def __init__ (self, name, serial_no, * args, ** kw) :
+        return self._MOM_Entity__init__ (self, name, serial_no, * args, ** kw)
     <BLANKLINE>
 
     >>> ET_Person
@@ -370,11 +370,12 @@ inherit a `relevant_root`:
       ...
     TypeError: Cannot query `instance` of non-root type `MOM.Object`.
     Use one of the types BMT.Location, BMT.Person, BMT.Rodent, BMT.Trap instead.
+
     >>> scope.MOM.Named_Object.instance ("Mighty_Mouse")
     Traceback (most recent call last):
       ...
     TypeError: Cannot query `instance` of non-root type `MOM.Named_Object`.
-    Use one of the types BMT.Rodent instead.
+    Use one of the types BMT.Rodent, BMT.Trap instead.
 
     >>> scope.BMT.Rodent.instance ("Mighty_Mouse")
     BMT.Mouse ('Mighty_Mouse')
@@ -438,9 +439,9 @@ etype:
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
 
     >>> scope.MOM.Named_Object.t_count
-    4
+    8
     >>> scope.MOM.Named_Object.t_extension ()
-    [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
+    [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
     >>> scope.MOM.Object.t_count
     13
     >>> scope.MOM.Object.t_extension ()
@@ -764,21 +765,14 @@ class Otter (Beaver) :
 
 # end class Otter
 
-class Trap (MOM.Object) :
+class Trap (MOM.Named_Object) :
     """Model a trap of the Better Mouse Trap application."""
 
     Package_NS = BMT
 
     is_partial = False
 
-    class _Attributes (MOM.Object._Attributes) :
-
-        class cat (A_String) :
-            """Category of the trap"""
-
-            kind     = Attr.Primary
-
-        # end class cat
+    class _Attributes (MOM.Named_Object._Attributes) :
 
         class serial_no (A_Int) :
             """Serial number of the trap"""
