@@ -112,6 +112,8 @@ classes:
     >>> ET_Rodent    = apt ["BMT.Rodent"]
     >>> ET_Trap      = apt ["BMT.Trap"]
 
+    ### DBW-specific start
+
     >>> for et in apt._T_Extension :
     ...   if (et.epk_sig and "__init__" in et.__dict__ and
     ...       hasattr (et.__init__, "source_code")) :
@@ -120,31 +122,31 @@ classes:
     ...
     *** MOM.Link2 *** (<class 'MOM.Link' [BMT__Hash__XXX]>,)
     def __init__ (self, left, right, * args, ** kw) :
-        return super (Link2, self).__init__ (left, right, * args, ** kw)
+        return self._MOM_Entity__init__ (self, left, right, * args, ** kw)
     <BLANKLINE>
     *** MOM.Link3 *** (<class 'MOM.Link2' [BMT__Hash__XXX]>,)
     def __init__ (self, left, middle, right, * args, ** kw) :
-        return super (Link3, self).__init__ (left, middle, right, * args, ** kw)
+        return self._MOM_Entity__init__ (self, left, middle, right, * args, ** kw)
     <BLANKLINE>
     *** MOM.Link2_Ordered *** (<class 'MOM.Link2' [BMT__Hash__XXX]>,)
     def __init__ (self, left, right, seq_no, * args, ** kw) :
-        return super (Link2_Ordered, self).__init__ (left, right, seq_no, * args, ** kw)
+        return self._MOM_Entity__init__ (self, left, right, seq_no, * args, ** kw)
     <BLANKLINE>
     *** MOM.Named_Object *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
     def __init__ (self, name, * args, ** kw) :
-        return super (Named_Object, self).__init__ (name, * args, ** kw)
+        return self._MOM_Entity__init__ (self, name, * args, ** kw)
     <BLANKLINE>
     *** BMT.Location *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
     def __init__ (self, lon, lat, * args, ** kw) :
-        return super (Location, self).__init__ (lon, lat, * args, ** kw)
+        return self._MOM_Entity__init__ (self, lon, lat, * args, ** kw)
     <BLANKLINE>
     *** BMT.Person *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
     def __init__ (self, last_name, first_name, * args, ** kw) :
-        return super (Person, self).__init__ (last_name, first_name, * args, ** kw)
+        return self._MOM_Entity__init__ (self, last_name, first_name, * args, ** kw)
     <BLANKLINE>
     *** BMT.Trap *** (<class 'MOM.Object' [BMT__Hash__XXX]>,)
     def __init__ (self, cat, serial_no, * args, ** kw) :
-        return super (Trap, self).__init__ (cat, serial_no, * args, ** kw)
+        return self._MOM_Entity__init__ (self, cat, serial_no, * args, ** kw)
     <BLANKLINE>
 
     >>> ET_Person
@@ -153,12 +155,10 @@ classes:
     <class 'BMT.Person' [Bare Essence]>
     >>> ET_Person.E_Spec
     <class 'BMT.Person' [Spec Essence]>
-    >>> ET_Person.last_name
-    String `last_name`
-    >>> ET_Person.last_name.__class__
-    <class '_MOM._Attr.Kind.Primary'>
     >>> ET_Person.primary
     [String `last_name`, String `first_name`]
+    >>> [attr.__class__ for attr in ET_Person.primary]
+    [<class '_MOM._Attr.Kind.Primary'>, <class '_MOM._Attr.Kind.Primary'>]
     >>> ET_Person.required
     []
     >>> ET_Person.optional
@@ -220,6 +220,8 @@ classes:
  set([Trap `middle`])), (<class 'BMT.Rodent_in_Trap' [BMT__Hash__XXX]>,\
  set([Trap `right`]))]
 
+    ### DBW-specific finish
+
 Scope
 -----
 
@@ -234,12 +236,16 @@ classes, the `scope` provides an object holding
 :class:`link managers<_MOM.E_Type_Manager.Link2>`
 that support instance creation and queries:
 
+    ### DBW-specific start
+
     >>> scope.MOM.Id_Entity
     <E_Type_Manager for MOM.Id_Entity of scope BMT__Hash__XXX>
     >>> scope.BMT.Person
     <E_Type_Manager for BMT.Person of scope BMT__Hash__XXX>
     >>> scope.BMT.Person_owns_Trap
     <E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__XXX>
+
+    ### DBW-specific finish
 
 Identity
 --------
@@ -619,7 +625,7 @@ Changing objects and links
 
 """
 
-__doc__ = dt_form.format \
+__doc__ = doctest = dt_form.format \
     ( import_DBW = "from _MOM._DBW.Session import Session"
     , import_EMS = "from _MOM._EMS.Hash    import Manager"
         ### XXX change to a real DBW

@@ -46,6 +46,10 @@
 #    25-Nov-2009 (CT) `_m_setup_attributes` changed to use `P._attr_map`
 #                     instead of `attr.invariant` (because `attr` can be shared
 #                     between superclass and subclasses, but `P` isn't shared)
+#    26-Nov-2009 (CT) `M_Id_Entity.__init__` added to disallow redefinition
+#                     of `__init__`
+#    26-Nov-2009 (CT) `_m_auto__init__` changed to chain up directly to
+#                     `self._MOM_Entity__init__`
 #    ««revision-date»»···
 #--
 
@@ -254,8 +258,14 @@ class M_Id_Entity (M_Entity) :
     ### `_init_form` needs `* args` to allow additional primary keys in
     ### descendent classes to properly percolate up
     _init_form = """def __init__ (self, %(epk)s, * args, ** kw) :
-    return super (%(type)s, self).__init__ (%(epk)s, * args, ** kw)
+    return self._MOM_Entity__init__ (self, %(epk)s, * args, ** kw)
 """
+
+    def __init__ (cls, name, bases, dict) :
+        assert "__init__" not in dict, \
+          "%s: please redefine `_finish__init__`, not __init__" % cls
+        cls.__m_super.__init__  (name, bases, dict)
+    # end def __init__
 
     def _m_auto__init__ (cls, epk_sig, i_bases) :
         globals = class_globals (cls)

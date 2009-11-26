@@ -57,6 +57,7 @@
 #    26-Nov-2009 (CT) `set` and `set_raw` of `Id_Entity` changed to include
 #                     `len (pkas_ckd)` in `result`
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#    26-Nov-2009 (CT) s/_finish__init__/_main__init__/
 #    ««revision-date»»···
 #--
 
@@ -131,8 +132,11 @@ class Entity (TFL.Meta.Object) :
     def __init__ (self, * args, ** kw) :
         self.dependencies = TFL.defaultdict  (int)
         self._init_attributes ()
-        self._finish__init__  (* args, ** kw)
+        self._main__init__  (* args, ** kw)
     # end def __init__
+
+    ### provide read-only access to this class' __init__
+    _MOM_Entity__init__ = property (lambda self, __init__ = __init__ : __init__)
 
     def after_init (self) :
         pass
@@ -267,13 +271,6 @@ class Entity (TFL.Meta.Object) :
         self._attr_man.sync_attributes (self)
     # end def sync_attributes
 
-    def _finish__init__ (self, * args, ** kw) :
-        self.implicit = kw.pop ("implicit", False)
-        if kw :
-            set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
-            set (** kw)
-    # end def _finish__init__
-
     def _init_attributes (self) :
         self._attr_man.reset_attributes (self)
     # end def _init_attributes_
@@ -292,6 +289,13 @@ class Entity (TFL.Meta.Object) :
             on_error (MOM.Error.Invariant_Errors (errors))
         return result
     # end def _kw_satisfies_i_invariants
+
+    def _main__init__ (self, * args, ** kw) :
+        self.implicit = kw.pop ("implicit", False)
+        if kw :
+            set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
+            set (** kw)
+    # end def _main__init__
 
     def _print_attr_err (self, exc) :
         print self, exc
@@ -640,17 +644,7 @@ class Id_Entity (Entity) :
     # end def _extract_primary_raw
 
     def _finish__init__ (self, * epk, ** kw) :
-        ### Need to use `__super.` methods here because it's not a `rename`
-        setter = (self.__super.set, self.__super.set_raw) \
-            [bool (kw.get ("raw", False))]
-        self._init_epk       (setter, * epk)
-        kw.pop               ("scope", None)
-        self.home_scope.add  (self)
-        try :
-            self.__super._finish__init__  (* epk, ** kw)
-        except StandardError as exc :
-            self.home_scope.remove (self)
-            raise
+        """Redefine this to perform additional initialization."""
     # end def _finish__init__
 
     def _init_epk (self, setter, * epk) :
@@ -665,6 +659,21 @@ class Id_Entity (Entity) :
         self.__super._init_meta_attrs ()
         self.object_referring_attributes = {}
     # end def _init_meta_attrs
+
+    def _main__init__ (self, * epk, ** kw) :
+        ### Need to use `__super.` methods here because it's not a `rename`
+        setter = (self.__super.set, self.__super.set_raw) \
+            [bool (kw.get ("raw", False))]
+        self._init_epk       (setter, * epk)
+        kw.pop               ("scope", None)
+        self.home_scope.add  (self)
+        try :
+            self.__super._main__init__  (* epk, ** kw)
+            self._finish__init__        (* epk, ** kw)
+        except StandardError as exc :
+            self.home_scope.remove (self)
+            raise
+    # end def _main__init__
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
         def _renamer () :

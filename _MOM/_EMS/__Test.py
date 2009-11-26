@@ -32,13 +32,10 @@
 #    ««revision-date»»···
 #--
 
-from   _MOM.__doc__          import *
-import _MOM._EMS.Hash
-import _MOM._DBW.Session
-
-EMS   = MOM.EMS.Hash.Manager
-DBW   = MOM.DBW.Session ### XXX change to a real DBW
-apt   = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
+from _MOM.__doc__      import *
+from _MOM._EMS.Hash    import Manager as EMS
+from _MOM._DBW.Session import Session as DBW
+apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
 scope = MOM.Scope    (apt)
 RiT   = scope.BMT.Rodent_in_Trap
 PoT   = scope.BMT.Person_owns_Trap
