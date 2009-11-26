@@ -657,7 +657,7 @@ class Id_Entity (Entity) :
 
     def _init_meta_attrs (self) :
         self.__super._init_meta_attrs ()
-        self.object_referring_attributes = {}
+        self.object_referring_attributes = TFL.defaultdict (list)
     # end def _init_meta_attrs
 
     def _main__init__ (self, * epk, ** kw) :

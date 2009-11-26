@@ -30,6 +30,9 @@
 #     4-Nov-2009 (CT) `Link2` added
 #    20-Nov-2009 (CT) `Link3` and `Link2_Ordered` added
 #    20-Nov-2009 (CT) Documentation added
+#    26-Nov-2009 (CT) `Role_Cacher` added
+#    26-Nov-2009 (CT) `_init_epk` and `destroy` redefined to handle
+#                     `auto_cache_roles`
 #    ««revision-date»»···
 #--
 
@@ -56,6 +59,18 @@ class _MOM_Link_ (MOM.Id_Entity) :
     def roles (self) :
         return self.epk [:self.number_of_roles]
     # end def roles
+
+    def _init_epk (self, setter, * epk) :
+        self.__super._init_epk (setter, * epk)
+        for role_cacher in self.auto_cache_roles :
+            role_cacher (self, no_value = False)
+    # end def
+
+    def destroy (self) :
+        for role_cacher in self.auto_cache_roles :
+            role_cacher (self, no_value = True)
+        self.__super.destroy ()
+    # end def destroy
 
 Link = _MOM_Link_ # end class
 
@@ -117,6 +132,43 @@ class Link2_Ordered (Link2) :
     # end class _Attributes
 
 # end class Link2_Ordered
+
+class Role_Cacher (TFL.Meta.Object) :
+
+    def __init__ (self, attr_name = None, other_role_name = None) :
+        self.role_name       = None
+        self.attr_name       = attr_name
+        self.other_role_name = other_role_name
+    # end def __init__
+
+    def __call__ (self, link, no_value = False) :
+        assert self.role_name is not None
+        o = getattr (link, self.other_role_name)
+        if o is not None :
+            if no_value :
+                value = None
+            else :
+                value = getattr (link, self.role_name)
+            setattr (o, self.attr_name, value)
+    # end def __call__
+
+    def setup (self, Link, role) :
+        assert self.role_name is None
+        self.role_name = role_name = role.role_name
+        attr_name      = self.attr_name
+        if attr_name is None or attr_name == True :
+            self.attr_name = role_name
+        assert isinstance (self.attr_name, basestring)
+        if self.other_role_name is None :
+            orn_generic = Link.other_role_name (role.name)
+            other_role  = getattr (Link._Attributes, orn_generic)
+            self.other_role_name = \
+                (  other_role.role_name
+                or other_role.role_type.type_base_name.lower ()
+                )
+    # end def setup
+
+# end class Role_Cacher
 
 __doc__ = """
 Class `MOM.Link`

@@ -38,6 +38,9 @@
 #    20-Nov-2009 (CT) `M_Link3`, `M_Link2_Ordered`, `M_E_Type_Link3`, and
 #                     `M_E_Type_Link2_Ordered` added
 #    24-Nov-2009 (CT) `_m_setup_roles` changed to add to `rt._own_link_map`
+#    26-Nov-2009 (CT) `_m_setup_etype_auto_props` changed to handle
+#                     `auto_cache`
+#    26-Nov-2009 (CT) `other_role_name` added
 #    ««revision-date»»···
 #--
 
@@ -54,10 +57,37 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 
     def _m_setup_etype_auto_props (cls) :
         cls.__m_super._m_setup_etype_auto_props ()
-        for a in cls._Attributes._names.itervalues () :
+        auto_cache_roles = set ()
+        own_attr = cls._Attributes._own_names
+        for a in own_attr.itervalues () :
             if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
                 a.role_type.is_relevant = True
-        ### XXX setup auto cache roles
+                rc = a.auto_cache
+                if rc :
+                    if not isinstance (rc, MOM.Role_Cacher) :
+                        rc = MOM.Role_Cacher (rc)
+                    rc.setup (cls, a)
+                    auto_cache_roles.add (rc)
+                    other_role = own_attr [rc.other_role_name]
+                    other_type = other_role.role_type
+                    assert rc.attr_name not in other_type._Attributes._names
+                    CR = (MOM.Attr.A_Cached_Role, MOM.Attr.A_Cached_Role_DFC) \
+                        [bool (other_role.dfc_synthesizer)]
+                    kw =  dict \
+                        ( assoc        = cls.type_name
+                        , Class        = a.role_type
+                        , __module__   = other_type.__module__
+                        )
+                    desc = getattr (other_role, "description", None)
+                    if desc is None :
+                        desc = "%s linked to %s" % \
+                            ( a.role_name.capitalize ()
+                            , other_role.role_name.capitalize ()
+                            )
+                    kw ["description"] = desc
+                    other_type.add_attribute \
+                        (type (CR) (rc.attr_name, (CR, ), kw))
+        cls.auto_cache_roles = tuple (auto_cache_roles)
     # end def _m_setup_etype_auto_props
 
 # end class M_Link
@@ -65,10 +95,23 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 class M_Link2 (M_Link) :
     """Meta class of binary entity-based link-types of MOM meta object model."""
 
+    _orn = dict (left = "right", right = "left")
+
+    def other_role_name (cls, role_name) :
+        return cls._orn [role_name]
+    # end def other_role_name
+
 # end class M_Link2
 
 class M_Link3 (M_Link2) :
     """Meta class of ternary link-types of MOM meta object model."""
+
+    def other_role_name (cls, role_name) :
+        raise TypeError \
+            ( "%s.%s.other_role_name needs to be explicitly defined"
+            % (cls.type_name, role_name)
+            )
+    # end def other_role_name
 
 # end class M_Link3
 

@@ -342,12 +342,24 @@ appropriate class:
     >>> PoT (("Tin", "Tin"), t4)
     BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2))
 
+    >>> t1.owner, t1.location
+    (None, None)
     >>> PTL (p, t1, l1)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))
+    >>> t1.owner, t1.location
+    (BMT.Person ('Luke', 'Lucky'), BMT.Location (-16.268799, 48.189956))
+    >>> t2.owner, t2.location
+    (None, None)
     >>> PTL (p, t2, l2)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))
+    >>> t2.owner, t2.location
+    (BMT.Person ('Luke', 'Lucky'), BMT.Location (-16.74077, 48.463313))
+    >>> t3.owner, t3.location
+    (None, None)
     >>> PTL (p, t3, l2)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))
+    >>> t3.owner, t3.location
+    (BMT.Person ('Luke', 'Lucky'), BMT.Location (-16.74077, 48.463313))
 
 Queries
 -------
@@ -889,6 +901,10 @@ class Person_sets_Trap_at_Location (MOM.Link3) :
         class left (MOM.Link2._Attributes.left) :
 
             role_type     = Person
+            auto_cache    = MOM.Role_Cacher \
+                ( attr_name       = "owner"
+                , other_role_name = "middle"
+                )
 
         # end class left
 
@@ -902,6 +918,10 @@ class Person_sets_Trap_at_Location (MOM.Link3) :
         class right (MOM.Link2._Attributes.right) :
 
             role_type     = Location
+            auto_cache    = MOM.Role_Cacher \
+                ( other_role_name = "middle"
+                )
+
 
         # end class right
 

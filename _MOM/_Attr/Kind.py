@@ -52,6 +52,8 @@
 #    23-Nov-2009 (CT) `__cmp__` and `__hash__` removed (breaks hashing of
 #                     Link_Role attributes)
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#    26-Nov-2009 (CT) `_Object_Reference_Mixin_` and `Object_Reference_Mixin`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -212,8 +214,8 @@ class Kind (MOM.Prop.Kind) :
             ### if the caller didn't pass a (boolean) value, evaluate it here
             changed = self.get_value (obj) != value
         if changed :
+            setattr          (obj, attr.ckd_name, value)
             self.inc_changes (obj._attr_man, obj, value)
-            setattr (obj, attr.ckd_name, value)
     # end def _set_cooked_value
 
     def _set_raw (self, obj, raw_value, value, changed = 42) :
@@ -528,6 +530,7 @@ class Cached_Role_DFC (Cached_Role) :
     def get_value (self, obj) :
         result = self.__super.get_value (obj)
         if result is None :
+            ### XXX
             assoc = getattr (obj.home_scope, self.attr.assoc)
             links = getattr (assoc, self.attr.name) (obj)
             if links :
@@ -615,6 +618,52 @@ class Sticky_Mixin (Kind) :
     # end def _set_raw
 
 # end class Sticky_Mixin
+
+class _Object_Reference_Mixin_ (Kind) :
+
+    def __delete__ (self, obj) :
+        ### We need to manually set the value to None first in order to
+        ### get the dependencies updated
+        self._set_cooked_value  (obj, None)
+        self.__super.__delete__ (obj)
+    # end def __delete__
+
+    def _register (self, obj, value) :
+        if value is not obj :
+            value.register_dependency (obj)
+            obj.object_referring_attributes [value].append (self)
+    # end def _register
+
+    def _unregister (self, obj, old_value) :
+        old_value.unregister_dependency (obj)
+        try :
+            del obj.object_referring_attributes [old_value]
+        except KeyError :
+            pass
+    # end def _unregister
+
+    def _update_raw (self, obj, ref, old_name) :
+        raw_value = self.attr.as_string (ref)
+        self._set_raw_inner (obj, raw_value, ref, True)
+    # end def _update_raw
+
+# end class _Object_Reference_Mixin_
+
+class Object_Reference_Mixin (_Object_Reference_Mixin_) :
+    """Kind mixin for handling object references correctly."""
+
+    def _set_cooked_value (self, obj, value, changed = 42) :
+        old_value = self.get_value (obj)
+        changed   = old_value is not value
+        if changed :
+            if old_value :
+                self._unregister (obj, old_value)
+            self.__super._set_cooked_value (obj, value, changed)
+            if value and not isinstance (value, str) :
+                self._register (obj, value)
+    # end def _set_cooked_value
+
+# end class Object_Reference_Mixin
 
 ### XXX Object-Reference- and Link-related kinds
 

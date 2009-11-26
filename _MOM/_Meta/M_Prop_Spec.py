@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Sep-2009 (CT) Creation (factored from TOM.Meta.M_Prop_Spec)
+#    26-Nov-2009 (CT) `_m_add_prop` added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,12 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
             elif n in _names :
                 raise cls._m_inconsistent_prop (n, v, _names, dict)
     # end def m_setup_names
+
+    def _m_add_prop (cls, e_type, name, prop_type) :
+        cls._names [name] = cls._own_names [name] = prop_type
+        setattr (cls, name, prop_type)
+        return prop_type
+    # end def _m_add_prop
 
 # end class M_Prop_Spec
 

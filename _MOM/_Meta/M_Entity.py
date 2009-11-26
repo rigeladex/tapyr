@@ -50,6 +50,7 @@
 #                     of `__init__`
 #    26-Nov-2009 (CT) `_m_auto__init__` changed to chain up directly to
 #                     `self._MOM_Entity__init__`
+#    26-Nov-2009 (CT) `M_Entity`: `add_attribute` and `add_predicate` added
 #    ««revision-date»»···
 #--
 
@@ -193,6 +194,16 @@ class M_Entity (M_E_Mixin) :
         cls._S_Extension.append (cls)
     # end def __init__
 
+    def add_attribute (cls, attr, verbose = True, override = False) :
+        """Add `attr` to `cls`"""
+        cls._m_add_prop (attr, cls._Attributes, verbose, override)
+    # end def add_attribute
+
+    def add_predicate (cls, pred, verbose = True, override = False) :
+        """Add `pred` to `cls`"""
+        cls._m_add_prop (pred, cls._Predicates, verbose, override)
+    # end def add_predicate
+
     def m_init_etypes (cls) :
         """Initialize bare essential types for all classes in `cls._S_Extension`."""
         if not cls._BET_map :
@@ -200,6 +211,21 @@ class M_Entity (M_E_Mixin) :
             cls._m_create_base_e_types (SX)
             cls._m_setup_auto_props    (SX)
     # end def m_setup_etypes
+
+    def _m_add_prop (cls, prop, _Properties, verbose, override = False) :
+        name = prop.__name__
+        if (not override) and name in _Properties._names :
+            if __debug__ :
+                if verbose :
+                    p = _Properties._names.get (name)
+                    print "Property %s.%s already defined as %s [%s]" %\
+                        ( cls.type_name, name
+                        , getattr (p,    "kind")
+                        , getattr (prop, "kind")
+                        )
+        else :
+            _Properties._m_add_prop (cls, name, prop)
+    # end def _m_add_prop
 
     def _m_create_base_e_types (cls, SX) :
         BX = cls._BET_map

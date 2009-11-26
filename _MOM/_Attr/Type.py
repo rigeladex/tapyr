@@ -51,6 +51,8 @@
 #    24-Nov-2009 (CT) `_A_Object_.cooked` added to check value agains `Class`
 #    25-Nov-2009 (CT) `invariant` removed
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#    26-Nov-2009 (CT) `A_Object`, `A_Cached_Role`, and `A_Cached_Role_DFC` added
+#    26-Nov-2009 (CT) `_A_Object_.etype_manager` factored and used
 #    ««revision-date»»···
 #--
 
@@ -420,8 +422,7 @@ class _A_Object_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        scope  = soc._get_scope  (None)
-        et     = getattr         (scope, soc.Class.type_name)
+        et = soc.etype_manager ()
         if et and not isinstance (value, et) :
             raise ValueError \
                 ( _T
@@ -435,16 +436,19 @@ class _A_Object_ (A_Attr_Type) :
     # end def cooked
 
     def eligible_objects (self, obj = None) :
-        if obj is not None :
-            scope = self._get_scope (obj)
-        else :
-            scope = MOM.Scope.active
-        return (scope and scope.extension (self.Class)) or ()
+        etm = self.etype_manager (obj)
+        return (et and et.t_extension ()) or ()
     # end def eligible_objects
 
     def eligible_raw_values (self, obj = None) :
         return sorted (o.epk for o in self.eligible_objects (obj))
     # end def eligible_raw_values
+
+    @TFL.Meta.Class_and_Instance_Method
+    def etype_manager (soc, obj = None) :
+        if soc.Class :
+            return getattr (soc._get_scope (obj), soc.Class.type_name, None)
+    # end def etype_manager
 
     def from_pickle (self, p, obj = None, glob = None, locl = None) :
         if p is not None :
@@ -472,16 +476,17 @@ class _A_Object_ (A_Attr_Type) :
     # end def _get_scope
 
     def _to_cooked (self, s, cooker, obj, glob, locl) :
-        scope  = self._get_scope (obj)
-        et     = getattr         (scope, self.Class.type_name)
+        assert self.Class, "%s needs to define `Class`" % self
         if isinstance (s, tuple) :
             t  = s
         else :
-            t  = self._call_eval (s, {}, {})
-        result = et.instance     (* t, raw = True)
+            t  = self._call_eval    (s, {}, {})
+        scope  = self._get_scope    (obj)
+        et     = self.etype_manager (obj)
+        result = et.instance        (* t, raw = True)
         if result is not None :
-            if self._accept_object (obj, result) :
-                return self.cooked (result)
+            if self._accept_object  (obj, result) :
+                return self.cooked  (result)
             else :
                 raise ValueError \
                     ( _T ("object %s %s not eligible, specify one of: %s")
@@ -637,6 +642,33 @@ class A_Link_Role_EB (A_Link_Role) :
     """Attribute describing a link-role of an entity-based link."""
 
 # end class A_Link_Role_EB
+
+class A_Object (_A_Object_) :
+    """Models an attribute referring to an object."""
+
+    typ         = "Object"
+    Kind_Mixins = (MOM.Attr.Object_Reference_Mixin, )
+
+# end class A_Object
+
+class A_Cached_Role (A_Object) :
+    """Models an attribute referring to an object linked via an
+       association.
+    """
+
+    kind         = MOM.Attr.Cached_Role
+    hidden       = True
+
+# end class A_Cached_Role
+
+class A_Cached_Role_DFC (A_Cached_Role) :
+    """Models an attribute to an object linked via an association or derived
+       from a container.
+    """
+
+    kind         = MOM.Attr.Cached_Role_DFC
+
+# end class A_Cached_Role_DFC
 
 class A_String (A_Attr_Type) :
     """Models a string-valued attribute of an object."""
