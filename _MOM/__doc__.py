@@ -35,6 +35,7 @@
 #    ««revision-date»»···
 #--
 
+dt_form = \
 """
 How to define and use essential object models
 ==============================================
@@ -89,11 +90,9 @@ Before an essential object model can be used, the
 :class:`derived application type<_MOM.App_Type._App_Type_D_>` must be
 defined:
 
-    >>> import _MOM._EMS.Hash
-    >>> import _MOM._DBW.Session
-    >>> EMS   = MOM.EMS.Hash.Manager
-    >>> DBW   = MOM.DBW.Session ### XXX change to a real DBW
-    >>> apt   = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
+    >>> {import_EMS} as EMS
+    >>> {import_DBW} as DBW
+    >>> apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
 
 Creating a derived app-type replaces the specification of the
 essential classes with bare essential classes:
@@ -613,8 +612,10 @@ Changing objects and links
     BMT.Rodent_in_Trap (('Toothy_Beaver'), ('X', 1), )
     >>> b.all_links ()
     [BMT.Rodent_in_Trap (('Toothy_Beaver'), ('X', 1))]
-    >>> rit.rodent
-    BMT.Beaver ('Toothy_Beaver')
+    >>> rit.rodent, rit.right
+    (BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1))
+    >>> rit.__class__.rodent, rit.__class__.right
+    (Rodent `left`, Trap `right`)
     >>> rit.set (rodent = m)
     1
     >>> print rit.as_code ()
@@ -622,6 +623,12 @@ Changing objects and links
 
 
 """
+
+__doc__ = dt_form.format \
+    ( import_DBW = "from _MOM._DBW.Session import Session"
+    , import_EMS = "from _MOM._EMS.Hash    import Manager"
+        ### XXX change to a real DBW
+    )
 
 from   _MOM.import_MOM       import *
 

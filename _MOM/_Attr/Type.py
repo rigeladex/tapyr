@@ -614,6 +614,7 @@ class A_Link_Role (_A_Object_) :
 
     __metaclass__     = MOM.Meta.M_Attr_Type_Link_Role
 
+    auto_cache        = False
     dfc_synthesizer   = None
     kind              = MOM.Attr.Link_Role
     max_links         = 0
@@ -628,14 +629,11 @@ class A_Link_Role_AB (A_Link_Role) :
     """Attribute describing a link-role of an attribute-based link."""
 
     attr_name         = None
-    auto_cache        = True ### XXX do we need this ???
 
 # end class A_Link_Role_AB
 
 class A_Link_Role_EB (A_Link_Role) :
     """Attribute describing a link-role of an entity-based link."""
-
-    auto_cache        = False
 
 # end class A_Link_Role_EB
 
