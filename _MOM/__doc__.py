@@ -586,6 +586,19 @@ Changing objects and links
     >>> print m.as_code ()
     BMT.Mouse ('Mighty_Mouse', color = 'yellow', weight = 42.0)
 
+    >>> print l1.as_code ()
+    BMT.Location (-16.268799, 48.189956, )
+    >>> l1.set (lat =  91.5)
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: Condition `AC_check_lat_0` :  (-90.0 <= lat <= 90.0)
+        lat = 91.5
+    >>> l1.set (lon = 270.0)
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: Condition `AC_check_lon_0` :  (-180.0 <= lon <= 180.0)
+        lon = 270.0
+
     >>> rit = RiT.instance (m, t1)
     >>> print rit.as_code ()
     BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1), )
@@ -650,6 +663,7 @@ class Location (MOM.Object) :
 
             kind     = Attr.Primary
             rank     = 1
+            check    = ("-180.0 <= value <= 180.0", )
 
         # end class lon
 
@@ -658,6 +672,7 @@ class Location (MOM.Object) :
 
             kind     = Attr.Primary
             rank     = 2
+            check    = ("-90.0 <= value <= 90.0", )
 
         # end class lat
 
