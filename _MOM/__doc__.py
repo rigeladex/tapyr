@@ -51,11 +51,6 @@ and the class definition must contain an explicit or inherited
 reference :attr:`Package_NS<_MOM.Entity.Package_NS>` to that package
 namespace.
 
-    Because the example classes are all defined here and not in their
-    own package namespace, we'll fake it:
-
-    >>> BMT._Export ("*")
-
 Normally, each essential class is defined in a module of its own. In
 some cases, a single module might define more than one essential
 class.
@@ -922,5 +917,9 @@ def show (e) :
 import warnings
 warnings.filterwarnings \
     ( "ignore", "in 3.x, __getslice__ has been removed; use __getitem__")
+
+### Because the example classes are all defined here and not in their
+### own package namespace, we'll fake it
+BMT._Export ("*")
 
 ### __END__ MOM.__doc__
