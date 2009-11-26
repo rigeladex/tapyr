@@ -56,6 +56,7 @@
 #    26-Nov-2009 (CT) `_extract_primary` changed to allow `role_name`, too
 #    26-Nov-2009 (CT) `set` and `set_raw` of `Id_Entity` changed to include
 #                     `len (pkas_ckd)` in `result`
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -230,7 +231,7 @@ class Entity (TFL.Meta.Object) :
                     try :
                         cooked_kw [name] = cooked_val = \
                             attr.from_string (val, self)
-                    except (ValueError, MOM.Error.Attribute_Syntax_Error), err:
+                    except ValueError as err:
                         print ("Warning: Error when setting attribute %s "
                                "of %r to %s\nClearing attribute"
                               ) % (attr.name, self, val)
@@ -241,7 +242,7 @@ class Entity (TFL.Meta.Object) :
                         if __debug__ :
                             print err
                         to_do.append ((attr, "", None))
-                    except StandardError, exc :
+                    except StandardError as exc :
                         print exc, \
                           ( "; object %s, attribute %s: %s [%s]"
                           % (self, name, val, type (val))
@@ -647,7 +648,7 @@ class Id_Entity (Entity) :
         self.home_scope.add  (self)
         try :
             self.__super._finish__init__  (* epk, ** kw)
-        except StandardError, exc :
+        except StandardError as exc :
             self.home_scope.remove (self)
             raise
     # end def _finish__init__

@@ -50,6 +50,7 @@
 #                     Link_Role attributes)
 #    24-Nov-2009 (CT) `_A_Object_.cooked` added to check value agains `Class`
 #    25-Nov-2009 (CT) `invariant` removed
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -151,7 +152,7 @@ class A_Attr_Type (object) :
         t = self._from_string_prepare (s, obj)
         try :
             u = self._from_string_eval (t, obj, glob, locl)
-        except StandardError, exc :
+        except StandardError as exc :
             raise MOM.Error.Attribute_Syntax_Error \
                 (obj, self, "%s -> %s" % (s, t), str (exc))
         try :
@@ -159,7 +160,7 @@ class A_Attr_Type (object) :
                 return self.cooked (u)
             else :
                 pass
-        except StandardError, exc :
+        except StandardError as exc :
             raise MOM.Error.Attribute_Syntax_Error \
                 (obj, self, "%s -> %s -> %s" % (s, t, u), str (exc))
     # end def _from_string
@@ -171,7 +172,7 @@ class A_Attr_Type (object) :
     def _from_string_prepare (self, s, obj) :
         try :
             s = s.encode ("ascii")
-        except AttributeError, exc :
+        except AttributeError as exc :
             if __debug__ :
                 print "%s.%s = %s --> %s" % (obj, self, s, exc)
         except UnicodeError :

@@ -31,6 +31,7 @@
 #    21-Oct-2009 (CT) Creation continued
 #    24-Nov-2009 (CT) `No_Such_Object` added
 #    24-Nov-2009 (CT) `Error.__str__` changed
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -420,7 +421,7 @@ class Invariant_Errors (Error) :
         for a in args [0] :
             try :
                 add (str (a))
-            except StandardError, exc :
+            except StandardError as exc :
                 add ("%s --> %s" % (repr (a), exc))
         return result
     # end def str_arg

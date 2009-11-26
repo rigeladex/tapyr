@@ -30,6 +30,7 @@
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #    27-Oct-2009 (CT) `_etm` and `_get_etm` added and used in `__getattr__`
 #                     and `__getitem__`
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -206,7 +207,7 @@ class Scope (TFL.Meta.Object) :
                     ) :
                 try :
                     e.compute_defaults_internal ()
-                except StandardError, exc :
+                except StandardError as exc :
                     print \
                         ( "Exception in compute_defaults_internal for %s:\n    %s"
                         % (e, exc)

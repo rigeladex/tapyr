@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from TOM.Pred.Type)
 #    21-Oct-2009 (CT) `attr_none` added to `Attribute_Check`
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -107,7 +108,7 @@ class _Condition_ (object):
     def _eval_expr (self, expr, obj, glob_dict, val_dict, kind, text = None) :
         try :
             val = eval (expr, glob_dict, val_dict)
-        except StandardError, exc :
+        except StandardError as exc :
             print "Exception `%s` in %s `%s` of %s for invariant %s" \
                 % (exc, kind, text or expr, obj, self)
             return exc, True
@@ -236,7 +237,7 @@ class Condition (_Condition_) :
             else :
                 self._add_entities_to_extra_links (val_dict.itervalues ())
                 self.error = MOM.Error.Invariant_Error (obj, self)
-        except StandardError, exc :
+        except StandardError as exc :
             print "Exception `%s` in evaluation of predicate `%s` for %s" \
                 % (exc, self.name, obj)
             self.error = MOM.Error.Invariant_Error (obj, self)
@@ -302,13 +303,13 @@ class _Quantifier_ (_Condition_) :
         ###-
         try :
             seq = self._q_sequence (obj, gd, val_dict)
-        except StandardError, exc :
+        except StandardError as exc :
             self.val_desc ["*** Exception ***"] = repr (exc)
             self.error = MOM.Error.Quant_Error (obj, self)
         else :
             try :
                 res = self._quantified (seq, obj, gd, val_dict)
-            except StandardError, exc:
+            except StandardError as exc:
                 self.val_desc ["*** Exception ***"] = str (exc)
                 self.error = MOM.Error.Quant_Error (obj, self)
             else :

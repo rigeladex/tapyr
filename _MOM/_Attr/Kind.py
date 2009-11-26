@@ -51,6 +51,7 @@
 #    20-Nov-2009 (CT) `__all__` computed explicitly
 #    23-Nov-2009 (CT) `__cmp__` and `__hash__` removed (breaks hashing of
 #                     Link_Role attributes)
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -147,7 +148,7 @@ class Kind (MOM.Prop.Kind) :
             try :
                 value = self.attr.from_string (raw_value, obj, glob_dict)
                 self.attr.check_invariant     (obj, value)
-            except StandardError, exc :
+            except StandardError as exc :
                 if dont_raise :
                     if __debug__ :
                         print exc
@@ -199,7 +200,7 @@ class Kind (MOM.Prop.Kind) :
         if value is not None :
             try :
                 value = self.attr.cooked (value)
-            except StandardError, exc :
+            except StandardError as exc :
                 ### print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
                 raise
         self._set_cooked_value (obj, value, changed)
@@ -273,7 +274,7 @@ class _Raw_Value_Mixin_ (Kind) :
         if raw_value :
             try :
                 value = self.attr.from_string (raw_value, obj, obj.globals ())
-            except StandardError, exc :
+            except StandardError as exc :
                 if __debug__ :
                     print exc
         self._set_cooked_inner (obj, value)

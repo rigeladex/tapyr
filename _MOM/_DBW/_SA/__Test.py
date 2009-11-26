@@ -26,7 +26,8 @@
 #    «text»···
 #
 # Revision Dates
-#    20-Oct-2009 (NN) Creation
+#    20-Oct-2009 (MG) Creation
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -63,12 +64,12 @@ print dBMT.Mouse.instance ("<baz>"), " ===None"
 try :
     dBMT.Mouse  ("Mighty_Mouse")
     raise ValueError ("No Name_Clash")
-except MOM.Error.Name_Clash, exc :
+except MOM.Error.Name_Clash as exc :
     print "OK", exc
 try :
     ### we test if multi-attr epk's work
     dBMT.Trap ("Mouse_Trap", 1)
     raise ValueError ("No Name_Clash")
-except MOM.Error.Name_Clash, exc :
+except MOM.Error.Name_Clash as exc :
     print "OK", exc
 ### __END__ __Test

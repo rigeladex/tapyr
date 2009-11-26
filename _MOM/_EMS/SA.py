@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Oct-2009 (MG) Creation
 #    25-Oct-2009 (MG) Updated to support inheritance
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,7 @@ class Manager (TFL.Meta.Object) :
         try :
             ses.add   (entity)
             ses.flush ()
-        except SA_Exception.IntegrityError, exc :
+        except SA_Exception.IntegrityError as exc :
             ses.rollback ()
             raise MOM.Error.Name_Clash \
                 (entity, self.instance (entity.__class__, entity.epk))

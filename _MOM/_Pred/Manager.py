@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from TOM.Pred.Manager)
 #    25-Nov-2009 (CT) `attr_map` added and used instead of `attr.invariant`
+#    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -83,7 +84,7 @@ class Manager (TFL.Meta.Object) :
         if callable (attr.check_syntax) :
             try :
                 attr.check_syntax (obj, value)
-            except MOM.Error.Attribute_Syntax_Error, exc :
+            except MOM.Error.Attribute_Syntax_Error as exc :
                 result.append (exc)
         return result
     # end def check_attribute
@@ -115,7 +116,7 @@ class Manager (TFL.Meta.Object) :
                     value = get_attr_val (attr)
                     if value :
                         attr.check_syntax (obj, value)
-                except MOM.Error.Attribute_Syntax_Error, exc :
+                except MOM.Error.Attribute_Syntax_Error as exc :
                     errors.append (exc)
         return MOM.Pred.Err_and_Warn_List (errors, warnings)
     # end def check_kind
