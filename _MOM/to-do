@@ -8,7 +8,7 @@ MOM To-Do
   x Define Alias_Property for `hpk` that maps to `id` derived from objects
     linked
 
-  * Is `Id_Entity.rename` correct for links ?
+  x Is `Id_Entity.rename` correct for links ?
 
   x Implement `epk_to_hpk` to translate from `epk` to `hpk`
 

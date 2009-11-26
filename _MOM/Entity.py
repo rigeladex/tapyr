@@ -53,6 +53,9 @@
 #    23-Nov-2009 (CT) `epk_as_code` added and used in `_repr` and `__str__`
 #    25-Nov-2009 (CT) `set` and `set_raw` of `Id_Entity` corrected
 #    25-Nov-2009 (CT) `as_code`, `attr_as_code` and `errors` added
+#    26-Nov-2009 (CT) `_extract_primary` changed to allow `role_name`, too
+#    26-Nov-2009 (CT) `set` and `set_raw` of `Id_Entity` changed to include
+#                     `len (pkas_ckd)` in `result`
 #    ««revision-date»»···
 #--
 
@@ -564,7 +567,7 @@ class Id_Entity (Entity) :
             if pkas_ckd :
                 self._rename (new_epk, pkas_raw, pkas_ckd)
             result = self.__super.set (on_error, ** kw)
-        return result
+        return result + len (pkas_ckd)
     # end def set
 
     def set_raw (self, on_error = None, ** kw) :
@@ -574,7 +577,7 @@ class Id_Entity (Entity) :
             if pkas_ckd :
                 self._rename (new_epk, pkas_raw, pkas_ckd)
             result = self.__super.set_raw (on_error, ** kw)
-        return result
+        return result + len (pkas_ckd)
     # end def set_raw
 
     def unregister_dependency (self, other) :
@@ -597,9 +600,12 @@ class Id_Entity (Entity) :
     def _extract_primary (self, kw) :
         result = {}
         for pka in self.primary :
-            name = pka.name
+            name      = pka.name
+            role_name = getattr (pka, "role_name", None)
             if name in kw :
                 result [name] = kw.pop (name)
+            elif role_name and role_name in kw :
+                result [name] = kw.pop (role_name)
         return result
     # end def _extract_primary
 

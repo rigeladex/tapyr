@@ -540,7 +540,7 @@ Changing objects and links
     AttributeError: Primary attribute `BMT.Rat.name` cannot be assigned.
     Use `set` or `set_raw` to change it.
     >>> axel.set (name = "betty")
-    0
+    1
     >>> axel
     BMT.Rat ('betty')
     >>> axel.id
@@ -604,6 +604,22 @@ Changing objects and links
         trap = ('X', 1)
         rodent.weight = 42.0
         trap.max_weight = 20.0
+
+    >>> b.all_links ()
+    []
+    >>> rit.set (left = b)
+    1
+    >>> print rit.as_code ()
+    BMT.Rodent_in_Trap (('Toothy_Beaver'), ('X', 1), )
+    >>> b.all_links ()
+    [BMT.Rodent_in_Trap (('Toothy_Beaver'), ('X', 1))]
+    >>> rit.rodent
+    BMT.Beaver ('Toothy_Beaver')
+    >>> rit.set (rodent = m)
+    1
+    >>> print rit.as_code ()
+    BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1), )
+
 
 """
 
