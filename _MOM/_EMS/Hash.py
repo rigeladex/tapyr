@@ -44,6 +44,7 @@
 #    25-Nov-2009 (CT) `rename` (and `add`) changed to preserve `id`
 #    27-Nov-2009 (CT) `add` and `remove` changed to call `register_dependency`
 #                     and `unregister_dependency`, respectively
+#    27-Nov-2009 (CT) `all_links` added
 #    ««revision-date»»···
 #--
 
@@ -134,6 +135,15 @@ class Manager (TFL.Meta.Object) :
             % (Type.type_name, ", ".join (sorted (Type.relevant_roots)))
             )
     # end def instance
+
+    def all_links (self, obj_id) :
+        r_map  = self._r_map
+        result = sorted \
+            ( itertools.chain (* (rm [obj_id] for rm in r_map.itervalues ()))
+            , key = self.scope.MOM.Id_Entity.sort_key ()
+            )
+        return result
+    # end def all_links
 
     def remove (self, entity) :
         count = self._counts

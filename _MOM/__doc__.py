@@ -23,7 +23,7 @@
 #    MOM.__doc__
 #
 # Purpose
-#    Test for MOM meta object model
+#    Documentation and test for MOM meta object model
 #
 # Revision Dates
 #    18-Oct-2009 (CT) Creation
@@ -671,19 +671,25 @@ Changing objects and links
     >>> sorted (d.type_name for d in t1.dependencies)
     ['BMT.Mouse', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
 
+    >>> m_id  = m.id
+    >>> t1_id = t1.id
+    >>> t2_id = t2.id
+    >>> show (scope.ems.all_links (m_id))
+    [(('Mighty_Mouse'), ('X', 1))]
+    >>> show (scope.ems.all_links (t1_id))
+    [(('Luke', 'Lucky'), ('X', 1)), (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), (('Mighty_Mouse'), ('X', 1))]
+
     ### DBW-specific finish
 
     >>> t1.catch
     BMT.Mouse ('Mighty_Mouse')
-    >>> m_epk = m.epk
-    >>> show (RiT.s_right (m_epk))
-    [(('Mighty_Mouse'), ('X', 1))]
     >>> m.destroy ()
-    >>> show (RiT.s_right (m_epk))
-    []
     >>> t1.catch
 
     ### DBW-specific start
+
+    >>> show (scope.ems.all_links (m_id))
+    []
 
     >>> sorted (d.type_name for d in t1.dependencies)
     ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
@@ -693,20 +699,16 @@ Changing objects and links
     >>> scope.MOM.Link.t_extension ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
 
-    >>> t1_epk = t1.epk
-    >>> show (PoT.s_left       (t1_epk))
-    [(('Luke', 'Lucky'), ('X', 1))]
-    >>> show (PTL.s_left_right (t1_epk))
-    [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
-    >>> show (RiT.s_left       (t1_epk))
-    []
     >>> t1.destroy ()
-    >>> show (PoT.s_left       (t1_epk))
+
+    ### DBW-specific start
+
+    >>> show (scope.ems.all_links (t1_id))
     []
-    >>> show (PTL.s_left_right (t1_epk))
-    []
-    >>> show (RiT.s_left       (t1_epk))
-    []
+    >>> show (scope.ems.all_links (t2_id))
+    [(('Luke', 'Lucky'), ('X', 2)), (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), (('betty'), ('X', 2))]
+
+    ### DBW-specific finish
 
     >>> scope.MOM.Link.t_extension ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
@@ -714,6 +716,13 @@ Changing objects and links
     >>> t2.destroy ()
     >>> scope.MOM.Link.t_extension ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
+
+    ### DBW-specific start
+
+    >>> show (scope.ems.all_links (t2_id))
+    []
+
+    ### DBW-specific finish
 
 """
 
