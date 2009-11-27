@@ -32,6 +32,8 @@
 #     7-Oct-2009 (CT) `M_Attr_Type.__init__` changed to add `syntax`
 #     9-Oct-2009 (CT) Handling of `default` and `raw_default` added
 #     4-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to add `default_role_name`
+#    27-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to remove `description`
+#                     for classes without `role_type`
 #    ««revision-date»»···
 #--
 
@@ -86,6 +88,8 @@ class M_Attr_Type_Link_Role (M_Attr_Type) :
             cls.default_role_name = drn = cls.role_type.type_base_name.lower ()
             if dct.get ("role_name") is None :
                 cls.role_name = drn
+        else :
+            cls.description = None
     # end def __init__
 
 # end class M_Attr_Type_Link_Role

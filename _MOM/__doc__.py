@@ -177,19 +177,17 @@ classes:
  Float `weight`, Boolean `x_locked`]
 
     >>> sorted (ET_Trap._Attributes._own_names)
-    ['location', 'max_weight', 'owner', 'serial_no']
+    ['location', 'max_weight', 'owner', 'serial_no', 'setter']
     >>> sorted (ET_Supertrap._Attributes._own_names)
     []
     >>> sorted (ET_Trap._Attributes._names)
-    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'x_locked']
+    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'x_locked']
+    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`,\
- Name `name`, Object `owner`, Int `serial_no`, Boolean `x_locked`]
+    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`,\
- Name `name`, Object `owner`, Int `serial_no`, Boolean `x_locked`]
+    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
@@ -348,23 +346,23 @@ appropriate class:
     >>> PoT (("Tin", "Tin"), t4)
     BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2))
 
-    >>> t1.owner, t1.location
+    >>> t1.setter, t1.location
     (None, None)
     >>> PTL (p, t1, l1)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))
-    >>> t1.owner, t1.location
+    >>> t1.setter, t1.location
     (BMT.Person ('Luke', 'Lucky'), BMT.Location (-16.268799, 48.189956))
-    >>> t2.owner, t2.location
+    >>> t2.setter, t2.location
     (None, None)
     >>> PTL (p, t2, l2)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))
-    >>> t2.owner, t2.location
+    >>> t2.setter, t2.location
     (BMT.Person ('Luke', 'Lucky'), BMT.Location (-16.74077, 48.463313))
-    >>> t3.owner, t3.location
+    >>> t3.setter, t3.location
     (None, None)
     >>> PTL (p, t3, l2)
     BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))
-    >>> t3.owner, t3.location
+    >>> t3.setter, t3.location
     (BMT.Person ('Luke', 'Lucky'), BMT.Location (-16.74077, 48.463313))
 
 Queries
@@ -911,6 +909,7 @@ class Person_sets_Trap_at_Location (MOM.Link3) :
     class _Attributes (MOM.Link2._Attributes) :
 
         class left (MOM.Link2._Attributes.left) :
+            """Person setting a trap."""
 
             role_type     = Person
             auto_cache    = MOM.Role_Cacher \
@@ -928,12 +927,10 @@ class Person_sets_Trap_at_Location (MOM.Link3) :
         # end class middle
 
         class right (MOM.Link2._Attributes.right) :
+            """Location where a trap is set."""
 
             role_type     = Location
-            auto_cache    = MOM.Role_Cacher \
-                ( other_role_name = "middle"
-                )
-
+            auto_cache    = MOM.Role_Cacher (other_role_name = "middle")
 
         # end class right
 

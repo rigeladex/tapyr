@@ -41,6 +41,8 @@
 #    26-Nov-2009 (CT) `_m_setup_etype_auto_props` changed to handle
 #                     `auto_cache`
 #    26-Nov-2009 (CT) `other_role_name` added
+#    27-Nov-2009 (CT) `_m_setup_etype_auto_props` adapted to change of
+#                     `Role_Cacher`
 #    ««revision-date»»···
 #--
 
@@ -68,8 +70,9 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                         rc = MOM.Role_Cacher (rc)
                     rc.setup (cls, a)
                     auto_cache_roles.add (rc)
-                    other_role = own_attr [rc.other_role_name]
+                    other_role = rc.other_role
                     other_type = other_role.role_type
+                    assert other_role.max_links == 1
                     assert rc.attr_name not in other_type._Attributes._names
                     CR = (MOM.Attr.A_Cached_Role, MOM.Attr.A_Cached_Role_DFC) \
                         [bool (other_role.dfc_synthesizer)]
@@ -80,10 +83,8 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                         )
                     desc = getattr (other_role, "description", None)
                     if desc is None :
-                        desc = "%s linked to %s" % \
-                            ( a.role_name.capitalize ()
-                            , other_role.role_name.capitalize ()
-                            )
+                        desc = "`%s` linked to `%s`" % \
+                            (a.role_name.capitalize (), other_role.role_name)
                     kw ["description"] = desc
                     other_type.add_attribute \
                         (type (CR) (rc.attr_name, (CR, ), kw))

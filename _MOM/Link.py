@@ -33,6 +33,8 @@
 #    26-Nov-2009 (CT) `Role_Cacher` added
 #    26-Nov-2009 (CT) `_init_epk` and `destroy` redefined to handle
 #                     `auto_cache_roles`
+#    27-Nov-2009 (CT) `Role_Cacher.setup` changed to store `other_role`
+#                     instead of `other_role_name`
 #    ««revision-date»»···
 #--
 
@@ -139,11 +141,12 @@ class Role_Cacher (TFL.Meta.Object) :
         self.role_name       = None
         self.attr_name       = attr_name
         self.other_role_name = other_role_name
+        self.other_role      = None
     # end def __init__
 
     def __call__ (self, link, no_value = False) :
         assert self.role_name is not None
-        o = getattr (link, self.other_role_name)
+        o = getattr (link, self.other_role.name)
         if o is not None :
             if no_value :
                 value = None
@@ -159,13 +162,10 @@ class Role_Cacher (TFL.Meta.Object) :
         if attr_name is None or attr_name == True :
             self.attr_name = role_name
         assert isinstance (self.attr_name, basestring)
-        if self.other_role_name is None :
-            orn_generic = Link.other_role_name (role.name)
-            other_role  = getattr (Link._Attributes, orn_generic)
-            self.other_role_name = \
-                (  other_role.role_name
-                or other_role.role_type.type_base_name.lower ()
-                )
+        other_role_name = \
+            self.other_role_name or Link.other_role_name (role.name)
+        self.other_role = getattr (Link._Attributes, other_role_name)
+        del self.other_role_name
     # end def setup
 
 # end class Role_Cacher
