@@ -101,7 +101,8 @@ class M_E_Mixin (TFL.Meta.M_Class) :
             cls.m_init_etypes ()
             ### Call `_m_setup_prop_names` again to make sure automatically
             ### created properties are included in subclasses, too
-            for s in cls._S_Extension : s._m_setup_prop_names ()
+            for s in cls._S_Extension :
+                s._m_setup_prop_names ()
         cls._m_create_e_types (app_type, cls._S_Extension)
         for t in reversed (app_type._T_Extension) :
             t._m_setup_relevant_roots ()

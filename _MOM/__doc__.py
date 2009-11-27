@@ -884,7 +884,9 @@ class Person_owns_Trap (MOM.Link2) :
         class left (MOM.Link2._Attributes.left) :
             """Person owning the Trap."""
 
+            role_name     = "owner"
             role_type     = Person
+            auto_cache    = True
 
         # end class left
 
@@ -912,7 +914,7 @@ class Person_sets_Trap_at_Location (MOM.Link3) :
 
             role_type     = Person
             auto_cache    = MOM.Role_Cacher \
-                ( attr_name       = "owner"
+                ( attr_name       = "setter"
                 , other_role_name = "middle"
                 )
 
