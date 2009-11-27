@@ -12,7 +12,7 @@ MOM To-Do
 
   x Implement `epk_to_hpk` to translate from `epk` to `hpk`
 
-  * auto_cacher
+  x auto_cacher
 
   x check_type
 

@@ -32,6 +32,7 @@
 #    23-Nov-2009 (CT) Creation continued..
 #    24-Nov-2009 (CT) Creation continued...
 #    25-Nov-2009 (CT) Creation continued....
+#    27-Nov-2009 (CT) Creation continued.....
 #    ««revision-date»»···
 #--
 
@@ -111,6 +112,7 @@ classes:
     >>> ET_Rat       = apt ["BMT.Rat"]
     >>> ET_Rodent    = apt ["BMT.Rodent"]
     >>> ET_Trap      = apt ["BMT.Trap"]
+    >>> ET_Supertrap = apt ["BMT.Supertrap"]
 
     ### DBW-specific start
 
@@ -174,6 +176,21 @@ classes:
     [String `color`, Boolean `electric`, Int `is_used`, Name `name`,\
  Float `weight`, Boolean `x_locked`]
 
+    >>> sorted (ET_Trap._Attributes._own_names)
+    ['location', 'max_weight', 'owner', 'serial_no']
+    >>> sorted (ET_Supertrap._Attributes._own_names)
+    []
+    >>> sorted (ET_Trap._Attributes._names)
+    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'x_locked']
+    >>> sorted (ET_Supertrap._Attributes._names)
+    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'x_locked']
+    >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
+    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`,\
+ Name `name`, Object `owner`, Int `serial_no`, Boolean `x_locked`]
+    >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
+    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`,\
+ Name `name`, Object `owner`, Int `serial_no`, Boolean `x_locked`]
+
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
  'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap',\
@@ -196,20 +213,9 @@ classes:
     []
 
     >>> sorted (apt.etypes)
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter',\
- 'BMT.Person', 'BMT.Person_owns_Trap',\
- 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent',\
- 'BMT.Rodent_in_Trap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity',\
- 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered',\
- 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object',\
- 'MOM.Sequence_Number']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM.Sequence_Number']
     >>> [t.type_name for t in apt._T_Extension]
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity',\
- 'MOM.Link', 'MOM.Link2', 'MOM.Link3', 'MOM.Link2_Ordered',\
- 'MOM.Object', 'MOM.Named_Object', 'MOM.Sequence_Number',\
- 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat',\
- 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Rodent_in_Trap',\
- 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link3', 'MOM.Link2_Ordered', 'MOM.Object', 'MOM.Named_Object', 'MOM.Sequence_Number', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
 
     >>> sorted (ET_Person.link_map, key = TFL.Getter.type_name)
     [<class 'BMT.Person_owns_Trap' [BMT__Hash__XXX]>,\
@@ -819,6 +825,10 @@ class Trap (MOM.Named_Object) :
     # end class _Attributes
 
 # end class Trap
+
+class Supertrap (Trap) :
+    """An enormously improved Trap."""
+# end class Supertrap
 
 class Rodent_in_Trap (MOM.Link2) :
     """Model a rodent caught in a trap."""

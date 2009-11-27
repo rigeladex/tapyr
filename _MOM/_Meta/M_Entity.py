@@ -51,6 +51,8 @@
 #    26-Nov-2009 (CT) `_m_auto__init__` changed to chain up directly to
 #                     `self._MOM_Entity__init__`
 #    26-Nov-2009 (CT) `M_Entity`: `add_attribute` and `add_predicate` added
+#    27-Nov-2009 (CT) `_m_setup_prop_names` factored and called from
+#                     `m_setup_etypes`, too
 #    ««revision-date»»···
 #--
 
@@ -97,6 +99,9 @@ class M_E_Mixin (TFL.Meta.M_Class) :
         assert not app_type.etypes
         if not cls._BET_map :
             cls.m_init_etypes ()
+            ### Call `_m_setup_prop_names` again to make sure automatically
+            ### created properties are included in subclasses, too
+            for s in cls._S_Extension : s._m_setup_prop_names ()
         cls._m_create_e_types (app_type, cls._S_Extension)
         for t in reversed (app_type._T_Extension) :
             t._m_setup_relevant_roots ()
@@ -167,6 +172,11 @@ class M_E_Mixin (TFL.Meta.M_Class) :
             , ** kw
             )
     # end def _m_new_e_type_dict
+
+    def _m_setup_prop_names (cls) :
+        for P in cls._Attributes, cls._Predicates :
+            P.m_setup_names ()
+    # end def _m_setup_prop_names
 
     def _set_type_names (cls, base_name) :
         cls.type_base_name = base_name
@@ -267,8 +277,7 @@ class M_Entity (M_E_Mixin) :
     # end def _m_setup_auto_props
 
     def _m_setup_etype_auto_props (cls) :
-        for P in cls._Attributes, cls._Predicates :
-            P.m_setup_names ()
+        cls._m_setup_prop_names ()
     # end def _m_setup_etype_auto_props
 
 # end class M_Entity
