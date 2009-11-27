@@ -43,6 +43,7 @@
 #    26-Nov-2009 (CT) `other_role_name` added
 #    27-Nov-2009 (CT) `_m_setup_etype_auto_props` adapted to change of
 #                     `Role_Cacher`
+#    27-Nov-2009 (CT) `destroy_dependency` added
 #    ««revision-date»»···
 #--
 
@@ -126,6 +127,21 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
     """Meta class for essence of MOM.Link."""
 
     Manager = MOM.E_Type_Manager.Link
+
+    ### `Alias_Property` makes `destroy_dependency` usable as class and as
+    ### instance method
+    ### - called as class method it refers to `destroy_links`
+    ### - called as instance method it refers to `destroy_dependency` defined
+    ###   in `Link` (or one of its ancestors)
+    destroy_dependency = TFL.Meta.Alias_Property ("destroy_links")
+
+    def destroy_links (cls, obj) :
+        """Destroy all links where `obj` participates."""
+        scope = obj.home_scope
+        etm   = getattr (scope, cls.type_name)
+        for l in etm.t_links_of_obj (obj) :
+            l.destroy () ### scope.ems.remove (l)
+    # end def destroy_links
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)

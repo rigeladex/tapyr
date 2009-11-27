@@ -58,6 +58,7 @@
 #                     `len (pkas_ckd)` in `result`
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    26-Nov-2009 (CT) s/_finish__init__/_main__init__/
+#    27-Nov-2009 (CT) `update_dependency_names` removed
 #    ««revision-date»»···
 #--
 
@@ -592,11 +593,6 @@ class Id_Entity (Entity) :
         if deps [other] <= 0 :
             del deps [other]
     # end def unregister_dependency
-
-    def update_dependency_names (self, other, old_name) :
-        for attr in self.object_referring_attributes.get (other, []) :
-            attr._update_raw (self, other, old_name)
-    # end def update_dependency_names
 
     def _destroy (self) :
         self.notify_dependencies_destroy ()

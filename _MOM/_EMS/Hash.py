@@ -42,6 +42,8 @@
 #                     filter siblings of `Type` that are derived from the
 #                     same `relevant_root`
 #    25-Nov-2009 (CT) `rename` (and `add`) changed to preserve `id`
+#    27-Nov-2009 (CT) `add` and `remove` changed to call `register_dependency`
+#                     and `unregister_dependency`, respectively
 #    ««revision-date»»···
 #--
 
@@ -93,7 +95,9 @@ class Manager (TFL.Meta.Object) :
         if entity.Roles :
             r_map = self._r_map
             for r in entity.Roles :
-                r_map [r] [r.get_role (entity).id].add (entity)
+                obj = r.get_role (entity)
+                obj.register_dependency (entity.__class__)
+                r_map [r] [obj.id].add (entity)
     # end def add
 
     def exists (self, Type, epk) :
@@ -141,7 +145,9 @@ class Manager (TFL.Meta.Object) :
         if entity.Roles :
             r_map = self._r_map
             for r in entity.Roles :
-                r_map [r] [r.get_role (entity).id].remove (entity)
+                obj = r.get_role (entity)
+                obj.unregister_dependency (entity.__class__)
+                r_map [r] [obj.id].remove (entity)
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :

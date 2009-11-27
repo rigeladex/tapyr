@@ -86,8 +86,8 @@ Before an essential object model can be used, the
 :class:`derived application type<_MOM.App_Type._App_Type_D_>` must be
 defined:
 
-    >>> {import_EMS} as EMS
-    >>> {import_DBW} as DBW
+    >>> %(import_EMS)s as EMS
+    >>> %(import_DBW)s as DBW
     >>> apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
 
 Creating a derived app-type replaces the specification of the
@@ -173,21 +173,20 @@ classes:
     >>> ET_Mouse.optional
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
-    [String `color`, Boolean `electric`, Int `is_used`, Name `name`,\
- Float `weight`, Boolean `x_locked`]
+    [Object `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, Float `weight`, Boolean `x_locked`]
 
     >>> sorted (ET_Trap._Attributes._own_names)
-    ['location', 'max_weight', 'owner', 'serial_no', 'setter']
+    ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter']
     >>> sorted (ET_Supertrap._Attributes._own_names)
     []
     >>> sorted (ET_Trap._Attributes._names)
-    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
+    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
+    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
+    [Object `catch`, Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
+    [Object `catch`, Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
@@ -662,10 +661,63 @@ Changing objects and links
     >>> print rit.as_code ()
     BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1), )
 
+    >>> scope.MOM.Link.t_extension ()
+    [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
+
+    ### DBW-specific start
+
+    >>> m.object_referring_attributes
+    defaultdict(<type 'list'>, {BMT.Trap ('X', 1): [Object `catcher`]})
+    >>> sorted (d.type_name for d in t1.dependencies)
+    ['BMT.Mouse', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
+
+    ### DBW-specific finish
+
+    >>> t1.catch
+    BMT.Mouse ('Mighty_Mouse')
+    >>> m_epk = m.epk
+    >>> show (RiT.s_right (m_epk))
+    [(('Mighty_Mouse'), ('X', 1))]
     >>> m.destroy ()
+    >>> show (RiT.s_right (m_epk))
+    []
+    >>> t1.catch
+
+    ### DBW-specific start
+
+    >>> sorted (d.type_name for d in t1.dependencies)
+    ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+
+    ### DBW-specific finish
+
+    >>> scope.MOM.Link.t_extension ()
+    [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
+
+    >>> t1_epk = t1.epk
+    >>> show (PoT.s_left       (t1_epk))
+    [(('Luke', 'Lucky'), ('X', 1))]
+    >>> show (PTL.s_left_right (t1_epk))
+    [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
+    >>> show (RiT.s_left       (t1_epk))
+    []
+    >>> t1.destroy ()
+    >>> show (PoT.s_left       (t1_epk))
+    []
+    >>> show (PTL.s_left_right (t1_epk))
+    []
+    >>> show (RiT.s_left       (t1_epk))
+    []
+
+    >>> scope.MOM.Link.t_extension ()
+    [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
+
+    >>> t2.destroy ()
+    >>> scope.MOM.Link.t_extension ()
+    [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
+
 """
 
-__doc__ = doctest = dt_form.format \
+__doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW.Session import Session"
     , import_EMS = "from _MOM._EMS.Hash    import Manager"
         ### XXX change to a real DBW
@@ -852,6 +904,7 @@ class Rodent_in_Trap (MOM.Link2) :
 
             role_type     = Rodent
             max_links     = 1
+            auto_cache    = "catch"
 
         # end class left
 
@@ -860,6 +913,7 @@ class Rodent_in_Trap (MOM.Link2) :
 
             role_type     = Trap
             max_links     = 1
+            auto_cache    = "catcher"
 
         # end class right
 

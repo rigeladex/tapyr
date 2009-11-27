@@ -20,9 +20,11 @@ MOM To-Do
 
   x Link2_Ordered
 
+  * Link_AB
+
   * dfc_synthesizer
 
-  * destroy_links / destroy_dependency
+  x destroy_links / destroy_dependency
 
 - M_Entity vs. M_E_Type:
 
@@ -85,11 +87,11 @@ x Attr.Kind:
 
   x remove all dependencies on `obj._attr_man.attr_values [self.attr_dict_name]`
 
-- Scope:
+x Scope:
 
   x Scope just holds (dbw-specific) managers for objects and links
 
-  * change signature of `remove` and `rename`
+  x change signature of `remove` and `rename`
 
   x use `.epk` instead of `.name` to identify objects
 
@@ -101,26 +103,26 @@ x Attr.Kind:
     x This architecture also allows separate hash-tables for different object
       types (using several managers).
 
-- App_Type
+x App_Type
 
   x Dictionary PNS_Set mapping the fully qualified names of essential package
     namespaces to the namespaces in question
 
-  * Use `entity_type` instead of `etype` as method name
+  x Use `entity_type` instead of `etype` as method name
 
-- Dependency management: move to DBW-Mixin for Scope
+? Dependency management: move to DBW-Mixin for Scope
 
-      # referential integrity
+      x referential integrity
 
-        = `_destroy` uses `notify_dependencies_destroy`
+        x `_destroy` uses `notify_dependencies_destroy`
 
-        = `rename` uses `self.dependencies` to call `update_dependency_names`
+        x `rename` uses `self.dependencies` to call `update_dependency_names`
 
-      # `has_substance` uses `self.dependencies`
+      x fixed: `has_substance` uses `self.dependencies`
 
-- count: move to DBW-Mixin for Scope
+x count: move to DBW-Mixin for Scope
 
-- Replace `default_sort_key` (essential attribute) by class attribute
+x Replace `default_sort_key` (essential attribute) by class attribute
   `sorted_by`
 
   x Implement `Sorted_By` to interpret list of attribute names as
