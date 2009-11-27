@@ -37,7 +37,7 @@ from   _TFL                  import TFL
 
 import _MOM._EMS
 import _MOM.Entity
-
+import _MOM._DBW._SA.Sorted_By
 import _TFL._Meta.Object
 
 import _TFL.defaultdict
@@ -81,13 +81,23 @@ class Manager (TFL.Meta.Object) :
     # end def add
 
     def exists (self, Type, epk) :
+        if not isinstance (epk, (tuple, list)) :
+            epk = (epk, )
+        scope     = self.scope
         Type      = getattr (Type, "_etype", Type)
         ses       = self.session
-        filter_by = dict (zip (Type.epk_sig, epk))
-        #if Type._sa_inheritance :
-        #    filter_by ["inheritance_type"] = Type.type_name
-        return [e.type_name for e in ses.query (Type).filter_by (** filter_by)]
-    # end def exists
+        if Type.relevant_root :
+            queries = (Type, )
+        else :
+            queries = Type.relevant_roots.itervalues ()
+        result = []
+        for Type in queries :
+            result.extend \
+                (     getattr (scope, e.type_name)
+                for e in ses.query (Type)
+                            .filter_by (** dict (zip (Type.epk_sig, epk)))
+                )
+        return result
 
     def instance (self, Type, epk) :
         Type = getattr (Type, "_etype", Type)
@@ -130,19 +140,23 @@ class Manager (TFL.Meta.Object) :
         return 0
     # end def s_count
 
-    def s_extension (self, Type, sort_key = None) :
+    def s_extension (self, Type, sort_key = False) :
         root   = Type.relevant_root
         if root :
             query = self.session.query (root)
             if Type._sa_inheritance :
                 query = query.filter_by (inheritance_type = Type.type_name)
+            if sort_key is not None :
+                sorted_by = Type.sort_key (sort_key)
+                import pdb; pdb.set_trace ()
             return query
         return ()
     # end def s_extension
 
     ### XXX don't know how roles will be handled
-    def s_role (self, role, obj) :
-        return self._r_map [role] [obj.id]
+    def s_role (self, role, obj, sort_key = False) :
+        return self.session.query \
+            (role.assoc).filter_by (** {role.name : obj}).all ()
     # end def s_role
 
     def t_count (self, Type, seen = None) :
@@ -164,15 +178,8 @@ class Manager (TFL.Meta.Object) :
     # end def t_extension
 
     ### XXX don't know how roles will be handled
-    def t_role (self, role, obj) :
-        r_map = self._r_map
-        i     = role.role_index
-        return itertools.chain \
-            ( r_map [role] [obj.id]
-            , * ( r_map [c.Roles [i]] [obj.id]
-                for c in role.assoc.children.itervalues ()
-                )
-            )
+    def t_role (self, role, obj, sort_key = False) :
+        return self.s_role (role, obj, sort_key)
     # end def t_role
 
     def __iter__ (self) :

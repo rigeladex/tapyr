@@ -53,7 +53,8 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     metadata = schema.MetaData () ### XXX
 
     def etype_decorator (cls, e_type) :
-        if e_type.relevant_root :
+        ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
+        if getattr (e_type, "relevant_root", None) :
             bases      = \
                 [  b for b in e_type.__bases__
                 if getattr (b, "_Attributes", None)
@@ -119,8 +120,9 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
             )
         e_type._sa_pk_name = pk_name
         for name, attr_kind in attr_dict.iteritems () :
+            attr_kind.attr._sa_col_name = attr_kind._sa_col_name ()
             if attr_kind.is_primary :
-                unique.append (name)
+                unique.append (attr_kind.attr._sa_col_name)
             result.append \
                 ( attr_kind.attr._sa_column
                     (attr_kind, ** attr_kind._sa_column_attrs ())
@@ -137,12 +139,16 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
 
     def _setup_inheritance (cls, e_type, sa_table, bases, col_prop) :
         e_type._sa_inheritance = True
+        e_type.has_children    = False
+        if e_type.type_base_name == "Rodent" :
+            e_type.has_children = True ### XXX
         if e_type is not e_type.relevant_root :
             col_prop ["inherits"]             = bases [0]
             col_prop ["polymorphic_identity"] = e_type.type_name
-        elif e_type.children :
+        elif e_type.has_children :
             col_prop ["polymorphic_on"]       = sa_table.c.inheritance_type
             col_prop ["polymorphic_identity"] = e_type.type_name
+            col_prop ["with_polymorphic"]     = "*"
         else :
             e_type._sa_inheritance            = False
         return col_prop
@@ -154,8 +160,13 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
             ckd           = attr_kind.ckd_name
             ### we need to do this in 2 steps because otherways we hit a
             ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
-            result [name] = orm.synonym (ckd, map_column = False)
-            result [ckd]  = sa_table.c [name]
+            if isinstance (attr_kind, MOM.Attr.Link_Role) :
+                #import pdb; pdb.set_trace ()
+                result [name] = orm.synonym  (ckd, map_column = False)
+                result [ckd]  = orm.relation (attr_kind.role_type)
+            else :
+                result [name] = orm.synonym (ckd, map_column = False)
+                result [ckd]  = sa_table.c [name]
         return result
     # end def _setup_mapper_properties
 
@@ -170,7 +181,8 @@ class _SA_Session_ (MOM.DBW.Session) :
     type_name     = "SA"
 
     ### XXX
-    engine        = engine.create_engine ('sqlite:///test.sqlite', echo = False)
+    ###engine        = engine.create_engine ('sqlite:///test.sqlite', echo = False)
+    engine        = engine.create_engine ('sqlite:///:memory:', echo = False)
     SA_Session    = orm.sessionmaker    (bind = engine)
 
     def __init__ (self, scope) :

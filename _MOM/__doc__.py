@@ -33,6 +33,8 @@
 #    24-Nov-2009 (CT) Creation continued...
 #    25-Nov-2009 (CT) Creation continued....
 #    27-Nov-2009 (CT) Creation continued.....
+#    27-Nov-2009 (MG) Order of test cases changed, use `list` operator in
+#                     some tests
 #    ««revision-date»»···
 #--
 
@@ -320,6 +322,11 @@ appropriate class:
     >>> PoT   = scope.BMT.Person_owns_Trap
     >>> PTL   = scope.BMT.Person_sets_Trap_at_Location
 
+    >>> RiT (p, t4)
+    Traceback (most recent call last):
+      ...
+    ValueError: BMT.Person ('Luke', 'Lucky') not eligible for attribute left,
+        must be instance of BMT.Rodent
     >>> RiT (m, t1)
     BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1))
     >>> RiT (m, t2)
@@ -330,11 +337,6 @@ appropriate class:
     BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))
     >>> RiT (axel, t2)
     BMT.Rodent_in_Trap (('Axel'), ('X', 2))
-    >>> RiT (p, t4)
-    Traceback (most recent call last):
-      ...
-    ValueError: BMT.Person ('Luke', 'Lucky') not eligible for attribute left,
-        must be instance of BMT.Rodent
 
     >>> PoT (p, t1)
     BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1))
@@ -428,46 +430,46 @@ etype:
 
     >>> scope.BMT.Mouse.s_count
     1
-    >>> scope.BMT.Mouse.s_extension ()
+    >>> list (scope.BMT.Mouse.s_extension ())
     [BMT.Mouse ('Mighty_Mouse')]
     >>> scope.BMT.Mouse.t_count
     2
-    >>> scope.BMT.Mouse.t_extension ()
+    >>> list (scope.BMT.Mouse.t_extension ())
     [BMT.Mouse ('Mighty_Mouse'), BMT.Beaver ('Toothy_Beaver')]
 
     >>> scope.BMT.Rat.s_count
     2
-    >>> scope.BMT.Rat.s_extension ()
+    >>> list (scope.BMT.Rat.s_extension ())
     [BMT.Rat ('Axel'), BMT.Rat ('Rutty_Rat')]
     >>> scope.BMT.Rat.t_count
     2
-    >>> scope.BMT.Rat.t_extension ()
+    >>> list (scope.BMT.Rat.t_extension ())
     [BMT.Rat ('Axel'), BMT.Rat ('Rutty_Rat')]
 
     >>> scope.BMT.Rodent.s_count
     0
-    >>> scope.BMT.Rodent.s_extension ()
+    >>> list (scope.BMT.Rodent.s_extension ())
     []
     >>> scope.BMT.Rodent.t_count
     4
-    >>> scope.BMT.Rodent.t_extension ()
+    >>> list (scope.BMT.Rodent.t_extension ())
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
 
     >>> scope.MOM.Named_Object.t_count
     8
-    >>> scope.MOM.Named_Object.t_extension ()
+    >>> list (scope.MOM.Named_Object.t_extension ())
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
     >>> scope.MOM.Object.t_count
     13
-    >>> scope.MOM.Object.t_extension ()
+    >>> list (scope.MOM.Object.t_extension ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
 
-    >>> scope.MOM.Id_Entity.t_extension ()
+    >>> list (scope.MOM.Id_Entity.t_extension ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
     >>> scope.MOM.Id_Entity.t_count
     23
 
-    >>> scope.MOM.Link.t_extension ()
+    >>> list (scope.MOM.Link.t_extension ())
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)

@@ -43,22 +43,35 @@ from sqlalchemy     import types, schema # Table, Column, Integer, String, Boole
 
 @TFL.Add_To_Class ("_sa_column", Attr.A_Boolean)
 def _sa_bool (self, kind, ** kw) :
-    return schema.Column (self.name, types.Boolean, ** kw)
+    return schema.Column (self._sa_col_name, types.Boolean, ** kw)
 # end def _sa_bool
 
 @TFL.Add_To_Class ("_sa_column", Attr.A_String)
 def _sa_string (self, kind, ** kw) :
-    return schema.Column (self.name, types.String (self.max_length), ** kw)
+    return schema.Column \
+        (self._sa_col_name, types.String (self.max_length), ** kw)
 # end def _sa_string
 
 @TFL.Add_To_Class ("_sa_column", Attr.A_Int)
 def _sa_int (self, kind, ** kw) :
-    return schema.Column (self.name, types.Integer, ** kw)
+    return schema.Column (self._sa_col_name, types.Integer, ** kw)
 # end def _sa_int
 
 @TFL.Add_To_Class ("_sa_column", Attr.A_Float)
 def _sa_float (self, kind, ** kw) :
-    return schema.Column (self.name, types.Float, ** kw)
+    return schema.Column (self._sa_col_name, types.Float, ** kw)
 # end def _sa_float
+
+@TFL.Add_To_Class ("_sa_column", Attr.A_Link_Role_EB)
+def _sa_role_eb (self, kind, ** kw) :
+    return schema.Column \
+        ( self._sa_col_name
+        , types.Integer
+        , schema.ForeignKey
+            ( "%s.%s"
+            % (self.role_type._sa_table.name, self.role_type._sa_pk_name)
+            )
+        )
+# end def _sa_role_eb
 
 ### __END__ MOM.DBW.SA.Type

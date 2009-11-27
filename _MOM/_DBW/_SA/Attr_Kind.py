@@ -51,4 +51,14 @@ def _sa_primary (self) :
     return result
 # end def _sa_primary
 
+@TFL.Add_To_Class ("_sa_col_name", MOM.Attr.Kind)
+def _sa_normal_attr(self) :
+    return self.name
+# end def _sa_normal_attr
+
+@TFL.Add_To_Class ("_sa_col_name", MOM.Attr.Link_Role)
+def _sa_object (self) :
+    return "%s_id" % (self.name, )
+# end def _sa_object
+
 ### __END__ MOM.DBW.SA.Attr_Kind
