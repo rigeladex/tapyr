@@ -26,15 +26,8 @@
 #    Meta class for essential entity
 #
 # Revision Dates
-#    23-Sep-2009 (CT) Creation (factored from `MOM.Meta.M_Entity`)
-#    13-Oct-2009 (CT) Creation continued
-#    14-Oct-2009 (CT) Creation continued..
-#    15-Oct-2009 (CT) Creation continued...
-#    16-Oct-2009 (CT) Creation continued....
-#    18-Oct-2009 (CT) Creation continued.....
-#    19-Oct-2009 (CT) Creation continued.....
-#    20-Oct-2009 (CT) Creation continued......
-#    22-Oct-2009 (CT) Creation continued.......
+#    23-Sep-2009 (CT) Creation started (factored from `MOM.Meta.M_Entity`)
+#    22-Oct-2009 (CT) Creation finished
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #    28-Oct-2009 (CT) I18N
 #    18-Nov-2009 (CT) Major surgery (removed generic e-types [i.e., those for
@@ -53,6 +46,7 @@
 #    26-Nov-2009 (CT) `M_Entity`: `add_attribute` and `add_predicate` added
 #    27-Nov-2009 (CT) `_m_setup_prop_names` factored and called from
 #                     `m_setup_etypes`, too
+#    27-Nov-2009 (CT) `M_E_Type_Id.sort_key` fixed by introducing `__sort_key`
 #    ««revision-date»»···
 #--
 
@@ -505,9 +499,27 @@ class M_E_Type_Id (M_E_Type) :
     Manager     = MOM.E_Type_Manager.Id_Entity
 
     def sort_key (cls, sort_key = None) :
+        ###
+        ### Using `cls.sorted_by` here fails in Python 3.x for sorting
+        ### lists with different link types
+        ###
+        ###     Because each link type redefines `sorted_by` differently,
+        ###     `cls.sorted_by` of their common ancestor doesn't do
+        ###     the right thing (TM)
+        ###
+        ### `__sort_key` re-evaluates `sorted_by` for each `entity` to be
+        ### sorted and thus avoids this problem
+        ###
+        ### `epk_sig` needs to be included to support subclasses of a
+        ### specific `relevant_root` to extend `epk`
+        ###
         return TFL.Sorted_By \
-            ("relevant_root.type_name", sort_key or cls.sorted_by)
+            ("relevant_root.type_name", "epk_sig", sort_key or cls.__sort_key)
     # end def sort_key
+
+    def __sort_key (cls, entity) :
+        return entity.sorted_by (entity)
+    # end def __sort_key
 
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)

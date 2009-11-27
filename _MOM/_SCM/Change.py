@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Change)
+#    27-Nov-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -83,12 +84,13 @@ class Entity_Change (Change) :
     def __init__ (self, entity) :
         self.__super.__init__ ()
         self.etype        = entity.Essence.type_name
-        self.name         = entity._names ()
+        self.name         = entity.epk
         self.change_count = 1
     # end def __init__
 
     def entity (self, scope) :
-        return scope.entity (self.etype, self.name)
+        etm = getattr (scope, self.etype)
+        return etm (* self.name)
     # end def entity
 
     def _repr (self) :
@@ -132,14 +134,8 @@ class Entity_Change_Destroy (Entity_Change) :
     # end def __init__
 
     def undo (self, scope) :
-        etype = scope.entity_type (self.etype)
-        ### XXX change to handle obbjects and links identically?
-        if issubclass (etype, MOM.Object) :
-            entity = etype     (* self.name)
-        else :
-            entity = etype.add (* self.name)
-        if entity :
-            entity.set_raw (** self.attr)
+        etm = getattr (scope, self.etype)
+        etm (* self.name, raw = True, ** self.attr)
         self.__super.undo (scope)
     # end def undo
 
@@ -159,7 +155,7 @@ class Entity_Change_Rename (Entity_Change) :
         assert not self.history
         entity = self.entity (scope)
         if entity :
-            entity.rename (self.old_name)
+            entity.set (* self.old_name)
     # end def undo
 
     def _repr (self) :

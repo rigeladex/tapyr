@@ -62,7 +62,7 @@ if 1 :
     PTL (p, t1, l1)
     PTL (p, t2, l2)
     PTL (p, t3, l2)
-if 1 :
+if 0 :
     print scope.BMT.Mouse.t_extension          ()
     print scope.BMT.Rat.t_extension            ()
     print scope.BMT.Trap.t_extension           ()

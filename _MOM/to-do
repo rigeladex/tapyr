@@ -28,27 +28,24 @@ MOM To-Do
 
   x Entity defines the specification of the essential class (`E_Spec`)
 
-  * E_Type is automagically created without inheriting from Entity
+  x E_Type is automagically created without inheriting from Entity
 
-    x The essential E_Type.__dict__ is filled with contents of
-      Entity.__dict__ except for `_Attributes` and `_Predicates`
+    x There is an empty class hierarchy of bare essential E_Types (just
+      containing `Essence` attributes)
 
-      x The essential E_Type gets the meta-processed predicates
-
-      x `Essence` refers to the essential E_Type
-
-      x The essential E_Type replaces the `E_Spec` in the appropriate package
-        namespace and module.
+      x The bare essential E_Type replaces the `E_Spec` in the appropriate
+        package namespace and module.
 
     x For each DBW backend to support, a separate subclass of the essential
       E_Type is automagically derived, which contains the DBW specific
       attribute descriptors
 
+      x The essential E_Type gets the meta-processed predicates
+
+      x `Essence` refers to the bare essential E_Type
+
     + Support for multiple app-types (like in TOM) can be implemented the
       same way:
-
-      # There is an empty class hierarchy of essential E_Types (just
-        containing `Essence` attributes)
 
       # For each app-type, there is a class hierarchy of app-type specific
         E_Types, each defined thus:
@@ -56,7 +53,7 @@ MOM To-Do
         - `__dict__` is Entity.__dict__ updated with ATS.__dict__, except for
           _Attributes and _Predicates
 
-        - derived from the essential E_Type and the app-type specific
+        - derived from the bare essential E_Type and the app-type specific
           ancestor E_Types
 
       # For each DBW backend to support, a separate subclass of the app-type
@@ -90,11 +87,11 @@ x Attr.Kind:
 
 - Scope:
 
-  * Scope just holds (dbw-specific) managers for objects and links
+  x Scope just holds (dbw-specific) managers for objects and links
 
   * change signature of `remove` and `rename`
 
-  * use `.epk` instead of `.name` to identify objects
+  x use `.epk` instead of `.name` to identify objects
 
   x keyed-entities just call `self.home_scope.add (self)`
 
