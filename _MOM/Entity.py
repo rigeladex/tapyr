@@ -59,6 +59,7 @@
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    26-Nov-2009 (CT) s/_finish__init__/_main__init__/
 #    27-Nov-2009 (CT) `update_dependency_names` removed
+#    28-Nov-2009 (CT) `is_partial = True` added to all classes
 #    ««revision-date»»···
 #--
 

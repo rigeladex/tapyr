@@ -26,6 +26,30 @@ MOM To-Do
 
   x destroy_links / destroy_dependency
 
+- Queries:
+
+  * s_extension, etc. should return Q_Result objects
+
+  * Q_Result is
+
+    + instantiated with an iterable
+
+    + iterable, re-iterable
+
+      - if instantiated with something that isn't re-iterable needs to cache
+
+    + can be filtered
+
+      - result of `filter` is another Q_Result
+
+    + can be sorted
+
+      - order_by: specifies `sort_key`, but doesn't do any sorting yet
+
+      - sorted: return query result sorted by `sort_key` defined by `order_by`
+
+    + supports __len__
+
 - M_Entity vs. M_E_Type:
 
   x Entity defines the specification of the essential class (`E_Spec`)

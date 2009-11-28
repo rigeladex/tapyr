@@ -35,6 +35,7 @@
 #                     `auto_cache_roles`
 #    27-Nov-2009 (CT) `Role_Cacher.setup` changed to store `other_role`
 #                     instead of `other_role_name`
+#    28-Nov-2009 (CT) `is_partial = True` added to all classes
 #    ««revision-date»»···
 #--
 
