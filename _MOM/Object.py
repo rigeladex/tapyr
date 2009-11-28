@@ -33,6 +33,7 @@
 #    12-Oct-2009 (CT) Methods moved to `Id_Entity`
 #    13-Oct-2009 (CT) `Named_Object` added
 #    24-Nov-2009 (CT) `all_links` added
+#    28-Nov-2009 (CT) `is_partial = True` added to all classes
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ class _MOM_Object_ (MOM.Id_Entity) :
 
     __metaclass__         = MOM.Meta.M_Object
     _real_name            = "Object"
+    is_partial            = True
     entity_kind           = "object"
 
     def all_links (self) :
@@ -68,6 +70,8 @@ Object = _MOM_Object_ # end class
 
 class Named_Object (Object) :
     """Root class for named object-types of MOM meta object model."""
+
+    is_partial            = True
 
     class _Attributes (Object._Attributes) :
 

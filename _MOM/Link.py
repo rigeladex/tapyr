@@ -55,6 +55,7 @@ class _MOM_Link_ (MOM.Id_Entity) :
     __metaclass__         = MOM.Meta.M_Link
     _real_name            = "Link"
     entity_kind           = "link"
+    is_partial            = True
     is_synthetic          = False
 
     @property
@@ -82,6 +83,7 @@ class Link2 (Link) :
     """
 
     __metaclass__         = MOM.Meta.M_Link2
+    is_partial            = True
 
     class _Attributes (Link._Attributes) :
 
@@ -106,6 +108,8 @@ class Link3 (Link2) :
 
     __metaclass__         = MOM.Meta.M_Link3
 
+    is_partial            = True
+
     class _Attributes (Link2._Attributes) :
 
         class middle (_A_Link_Role_Middle_, A_Link_Role_EB) :
@@ -123,6 +127,8 @@ class Link2_Ordered (Link2) :
     """
 
     __metaclass__         = MOM.Meta.M_Link2_Ordered
+
+    is_partial            = True
 
     class _Attributes (Link2._Attributes) :
 

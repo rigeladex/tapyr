@@ -755,8 +755,6 @@ class Location (MOM.Object) :
 
     Package_NS = BMT
 
-    is_partial = False
-
     class _Attributes (MOM.Object._Attributes) :
 
         class lon (A_Float) :
@@ -786,8 +784,6 @@ class Person (MOM.Object) :
 
     Package_NS = BMT
 
-    is_partial = False
-
     class _Attributes (MOM.Object._Attributes) :
 
         class last_name (A_String) :
@@ -813,7 +809,9 @@ class Person (MOM.Object) :
 class Rodent (MOM.Named_Object) :
     """Model a rodent of the Better Mouse Trap application."""
 
-    Package_NS = BMT
+    Package_NS    = BMT
+
+    is_partial    = True
 
     class _Attributes (MOM.Named_Object._Attributes) :
 
@@ -839,14 +837,10 @@ class Rodent (MOM.Named_Object) :
 class Mouse (Rodent) :
     """Model a mouse of the Better Mouse Trap application."""
 
-    is_partial = False
-
 # end class Mouse
 
 class Rat (Rodent) :
     """Model a rat of the Better Mouse Trap application."""
-
-    is_partial = False
 
 # end class Rat
 
@@ -886,8 +880,6 @@ class Trap (MOM.Named_Object) :
 
     Package_NS = BMT
 
-    is_partial = False
-
     class _Attributes (MOM.Named_Object._Attributes) :
 
         class serial_no (A_Int) :
@@ -917,8 +909,6 @@ class Rodent_in_Trap (MOM.Link2) :
     """Model a rodent caught in a trap."""
 
     Package_NS = BMT
-
-    is_partial = False
 
     class _Attributes (MOM.Link2._Attributes) :
 
@@ -962,8 +952,6 @@ class Person_owns_Trap (MOM.Link2) :
 
     Package_NS = BMT
 
-    is_partial = False
-
     class _Attributes (MOM.Link2._Attributes) :
 
         class left (MOM.Link2._Attributes.left) :
@@ -990,8 +978,6 @@ class Person_owns_Trap (MOM.Link2) :
 class Person_sets_Trap_at_Location (MOM.Link3) :
 
     Package_NS = BMT
-
-    is_partial = False
 
     class _Attributes (MOM.Link2._Attributes) :
 

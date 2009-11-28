@@ -47,6 +47,8 @@
 #    27-Nov-2009 (CT) `_m_setup_prop_names` factored and called from
 #                     `m_setup_etypes`, too
 #    27-Nov-2009 (CT) `M_E_Type_Id.sort_key` fixed by introducing `__sort_key`
+#    28-Nov-2009 (CT) `_m_init_prop_specs` changed to assign `is_partial` to
+#                     `False` unless it is contained in `dct`
 #    ««revision-date»»···
 #--
 
@@ -257,6 +259,8 @@ class M_Entity (M_E_Mixin) :
     # end def _m_create_base_e_types
 
     def _m_init_prop_specs (cls, name, bases, dct) :
+        if "is_partial" not in dct :
+            setattr (cls, "is_partial", False)
         for psn in "_Attributes", "_Predicates" :
             if psn not in dct :
                 prop_bases = tuple (getattr (b, psn) for b in bases)

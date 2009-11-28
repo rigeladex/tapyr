@@ -54,6 +54,7 @@
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    26-Nov-2009 (CT) `_Object_Reference_Mixin_` and `Object_Reference_Mixin`
 #                     added
+#    28-Nov-2009 (CT) `_Object_Reference_Mixin_._update_raw` removed
 #    ««revision-date»»···
 #--
 
@@ -641,11 +642,6 @@ class _Object_Reference_Mixin_ (Kind) :
         except KeyError :
             pass
     # end def _unregister
-
-    def _update_raw (self, obj, ref, old_name) :
-        raw_value = self.attr.as_string (ref)
-        self._set_raw_inner (obj, raw_value, ref, True)
-    # end def _update_raw
 
 # end class _Object_Reference_Mixin_
 

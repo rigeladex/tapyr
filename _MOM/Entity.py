@@ -330,6 +330,8 @@ class An_Entity (Entity) :
 
     __metaclass__         = MOM.Meta.M_An_Entity
 
+    is_partial            = True
+
     def _formatted_user_attr (self) :
         return ", ".join \
             ("%s = %s" % (a.name, a.get_raw (self)) for a in self.user_attr)
@@ -353,6 +355,7 @@ class Id_Entity (Entity) :
     __metaclass__         = MOM.Meta.M_Id_Entity
 
     auto_display          = ()
+    is_partial            = True
     is_relevant           = False
     max_count             = 0
     rank                  = 0
@@ -815,6 +818,10 @@ aspects of the use of an essential class by the framework.
 
   Specifies if objects/links can be created for the essential
   class in question.
+
+  `is_partial` must be explicitly set to `True` for each essential
+  class that doesn't allow the creation of objects or links. If
+  `is_partial` isn't defined for a class, `False` is assumed.
 
 .. attribute:: max_count
 
