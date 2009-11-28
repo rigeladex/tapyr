@@ -100,6 +100,8 @@ class Manager (TFL.Meta.Object) :
         return result
 
     def instance (self, Type, epk) :
+        if isinstance (Type, basestring) :
+            Type = getattr (self.scope, Type)
         Type = getattr (Type, "_etype", Type)
         root = Type.relevant_root
         if root :
@@ -122,12 +124,10 @@ class Manager (TFL.Meta.Object) :
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :
-        old_entity = self.instance (entity.Essence, new_epk)
+        old_entity = self.instance (entity.__class__, new_epk)
         if old_entity :
             raise MOM.Error.Name_Clash (entity, old_entity)
-        self.remove (entity)
         renamer     ()
-        self.add    (entity)
     # end def rename
 
     def s_count (self, Type) :
@@ -147,8 +147,7 @@ class Manager (TFL.Meta.Object) :
             if Type._sa_inheritance :
                 query = query.filter_by (inheritance_type = Type.type_name)
             if sort_key is not None :
-                sorted_by = Type.sort_key (sort_key)
-                import pdb; pdb.set_trace ()
+                return sorted (query,  key = Type.sort_key (sort_key))
             return query
         return ()
     # end def s_extension
@@ -163,18 +162,22 @@ class Manager (TFL.Meta.Object) :
         root = Type.relevant_root
         if root :
             return self.session.query (Type).count ()
-        return 0
+        return sum \
+            (self.t_count (rr) for rr in Type.relevant_roots.itervalues ())
     # end def t_count
 
     def t_extension (self, Type , sort_key = None) :
         root   = Type.relevant_root
         ses    = self.session
         if root :
-            ### XXX sort_key
-            return ses.query (getattr (Type, "_type", Type))
-        ### XXX sort_key
-        return itertools.chain \
-            (ses.query (rr) for rr in Type.relevant_roots)
+            result = ses.query (getattr (Type, "_type", Type))
+        else :
+            result = []
+            for rr in Type.relevant_roots.itervalues () :
+                result.extend (ses.query (rr).all ())
+        if sort_key is not None :
+            result = sorted (result, key = Type.sort_key (sort_key))
+        return result
     # end def t_extension
 
     ### XXX don't know how roles will be handled
@@ -184,8 +187,9 @@ class Manager (TFL.Meta.Object) :
 
     def __iter__ (self) :
         ### XXX how do I know which objects we have?
+        relevant_roots = self.scope.MOM.Id_Entity.relevant_roots.itervalues ()
         return itertools.chain \
-            (* (t.itervalues () for t in self._tables.itervalues ()))
+            (* (self.t_extension (rr).all () for rr in relevant_roots))
     # end def __iter__
 
 # end class Manager

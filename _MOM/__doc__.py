@@ -558,8 +558,7 @@ etype:
 Changing objects and links
 ---------------------------
 
-    >>> axel.id
-    7
+    >>> old_id = axel.id
     >>> axel.all_links ()
     [BMT.Rodent_in_Trap (('Axel'), ('X', 2))]
     >>> axel.name = "betty"
@@ -571,8 +570,8 @@ Changing objects and links
     1
     >>> axel
     BMT.Rat ('betty')
-    >>> axel.id
-    7
+    >>> axel.id == old_id
+    True
     >>> axel.all_links ()
     [BMT.Rodent_in_Trap (('betty'), ('X', 2))]
 

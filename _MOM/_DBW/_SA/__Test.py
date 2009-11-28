@@ -70,5 +70,7 @@ PTL   = scope.BMT.Person_sets_Trap_at_Location
 #RiT (p, t1)
 #print scope.MOM.Named_Object.exists ("Mighty_Mouse")
 #print scope.BMT.Rodent.exists ("Mighty_Mouse")
-print scope.BMT.Rodent.s_extension ()
+#print scope.BMT.Rodent.s_extension ()
+#print list (scope)
+axel.set (name = "betty")
 ### __END__ __Test
