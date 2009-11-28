@@ -117,6 +117,7 @@ class Manager (TFL.Meta.Object) :
 
     def remove (self, entity) :
         self.session.delete (entity)
+        self.session.flush  ()
         ### if entity.Roles :
         ###     r_map = self._r_map
         ###     for r in entity.Roles :
@@ -154,6 +155,8 @@ class Manager (TFL.Meta.Object) :
 
     ### XXX don't know how roles will be handled
     def s_role (self, role, obj, sort_key = False) :
+        if not isinstance (obj, role.role_type.Essence) :
+            return [] ### XXX
         return self.session.query \
             (role.assoc).filter_by (** {role.name : obj}).all ()
     # end def s_role
