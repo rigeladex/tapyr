@@ -49,6 +49,8 @@
 #    27-Nov-2009 (CT) `M_E_Type_Id.sort_key` fixed by introducing `__sort_key`
 #    28-Nov-2009 (CT) `_m_init_prop_specs` changed to assign `is_partial` to
 #                     `False` unless it is contained in `dct`
+#    30-Nov-2009 (CT) `_m_create_e_types` changed to call
+#                     `app_type.DBW.update_etype` after all etypes were created
 #    ««revision-date»»···
 #--
 
@@ -130,10 +132,16 @@ class M_E_Mixin (TFL.Meta.M_Class) :
     # end def _m_init_name_attributes
 
     def _m_create_e_types (cls, app_type, SX) :
-        etypes = app_type.etypes
-        e_deco = app_type.DBW.etype_decorator
+        etypes   = app_type.etypes
+        e_deco   = app_type.DBW.etype_decorator
+        e_update = app_type.DBW.update_etype
         for s in SX :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
+        for t in app_type._T_Extension :
+            ### `DBW.update_etype` can use features like `children` or
+            ### `link_map` that are only available after *all* etypes have
+            ### already been created
+            e_update (t)
     # end def _m_create_e_types
 
     def _m_new_e_type (cls, app_type, etypes) :

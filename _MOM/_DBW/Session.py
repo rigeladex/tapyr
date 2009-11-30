@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Oct-2009 (MG) Creation
+#    30-Nov-2009 (CT) `update_etype` added
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,10 @@ class _M_Session_ (TFL.Meta.Object.__class__) :
     def etype_decorator (cls, e_type) :
         return e_type
     # end def etype_decorator
+
+    def update_etype (cls, e_type) :
+        pass
+    # end def update_etype
 
 # end class _M_Session_
 
