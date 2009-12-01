@@ -213,5 +213,5 @@ class Q_Result (_Q_Result_) :
 # end class Q_Result
 
 if __name__ != "__main__" :
-    TFL._Export ("*")
+    TFL._Export ("*", "_Q_Result_")
 ### __END__ TFL.Q_Result

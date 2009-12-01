@@ -34,6 +34,7 @@
 #     6-May-2008 (CT) Use `all_true` and `any_true` instead of `all` and
 #                     `any` to avoid errors from Python 2.4
 #    17-Oct-2008 (CT) `* args, ** kw` added to filter functions
+#     1-Dec-2009 (MG) `Attr_Query.__mod__` added
 #    ««revision-date»»···
 #--
 
@@ -364,7 +365,10 @@ class Attr_Query (TFL.Meta.Object) :
        False
        >>> Q.fool.in_ ([2,4,8]) (Record (fool = 4))
        True
-
+       >>> (Q.fool % 2) (Record (fool = 20))
+       0
+       >>> ((Q.fool % 2) == 0) (Record (fool = 21))
+       False
     """
 
     def __init__ (self, name = None) :
@@ -425,6 +429,10 @@ class Attr_Query (TFL.Meta.Object) :
     def __lt__ (self, rhs) :
         return Attr_Filter (self.name, operator.__lt__, rhs)
     # end def __lt__
+
+    def __mod__ (self, rhs) :
+        return Attr_Filter (self.name, operator.__mod__, rhs)
+    # end def __mod__
 
     def __ne__ (self, rhs) :
         return Attr_Filter (self.name, operator.__ne__, rhs)
