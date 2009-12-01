@@ -30,6 +30,7 @@
 #     8-May-2008 (CT) `-year` added
 #     8-May-2008 (CT) Set `ImageFile.MAXBLOCK` to avoid IOError during `save`
 #    20-Mar-2009 (CT) `convert_one` factored and `-add_to_dir` added
+#     1-Dec-2009 (CT) Ignore `__getslice__` warnings
 #    ««revision-date»»···
 #--
 
@@ -121,6 +122,10 @@ def main (cmd) :
             convert_one \
                 (src, name, i_size, t_size, holder, year, font, imp, thp)
 # end def main
+
+import warnings
+warnings.filterwarnings \
+    ( "ignore", "in 3.x, __getslice__ has been removed; use __getitem__")
 
 if __name__ == "__main__" :
     main (command_spec ())

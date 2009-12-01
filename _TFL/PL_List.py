@@ -35,6 +35,9 @@
 #    24-Mar-2005 (CT) Moved into package `TFL`
 #    11-May-2007 (MG) `__getslice__` added becasue the implementation of the
 #                     `UserList.__getslice__`does not work
+#    11-Nov-2009 (CT) Signature of `__init__` changed
+#    11-Nov-2009 (CT) `__getitem__` changed to deal with slices
+#     1-Dec-2009 (CT) Calls to `self.__class__` corrected
 #    ««revision-date»»···
 #--
 
@@ -59,6 +62,8 @@ class PL_List (UserList) :
        1
        >>> p
        [1, 2, 3]
+       >>> p [1:]
+       [2, 3]
 
     """
 
@@ -99,14 +104,14 @@ class PL_List (UserList) :
         try :
             result = self.data [item]
             if isinstance (item, slice) :
-                result = self.__class__ (self.undefined, result)
+                result = self.__class__ (result, undefined = self.undefined)
             return result
         except IndexError :
             return deepcopy (self.undefined)
     # end def __getitem__
 
     def __getslice__ (self, i, j) :
-        return self.__class__ (self.undefined, * self.data [i:j])
+        return self.__class__ (self.data [i:j], undefined = self.undefined)
     # end def __getslice__
 
     def __iter__ (self) :
