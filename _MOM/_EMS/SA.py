@@ -136,7 +136,7 @@ class Manager (TFL.Meta.Object) :
         if root :
             query = self.session.query (root)
             if Type._sa_inheritance :
-                query = query.filter_by (inheritance_type = Type.type_name)
+                query = query.filter_by (Type_Name = Type.type_name)
             return query.count ()
         return 0
     # end def s_count
@@ -146,7 +146,7 @@ class Manager (TFL.Meta.Object) :
         if root :
             query = self.session.query (root)
             if Type._sa_inheritance :
-                query = query.filter_by (inheritance_type = Type.type_name)
+                query = query.filter_by (Type_Name = Type.type_name)
             if sort_key is not None :
                 return sorted (query,  key = Type.sort_key (sort_key))
             return query
@@ -189,7 +189,6 @@ class Manager (TFL.Meta.Object) :
     # end def t_role
 
     def __iter__ (self) :
-        ### XXX how do I know which objects we have?
         relevant_roots = self.scope.MOM.Id_Entity.relevant_roots.itervalues ()
         return itertools.chain \
             (* (self.t_extension (rr).all () for rr in relevant_roots))

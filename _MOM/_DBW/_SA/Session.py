@@ -47,12 +47,24 @@ from sqlalchemy import schema
 from sqlalchemy import types
 from sqlalchemy import engine
 
+class Cached_Role_Extension (orm.interfaces.MapperExtension) :
+    """Clear the cached role attributes if a link is delete"""
+
+    def after_delete (self, mapper, connection, link) :
+        for acr in link.auto_cache_roles :
+            obj = getattr (link, acr.other_role.name)
+            setattr       (obj,  acr.attr_name, None)
+        return orm.EXT_CONTINUE
+    # end def after_delete
+
+# end class Cached_Role_Extension
+
 class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
     metadata = schema.MetaData () ### XXX
 
-    def etype_decorator (cls, e_type) :
+    def update_etype (cls, e_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
         if getattr (e_type, "relevant_root", None) :
             bases      = \
@@ -62,7 +74,7 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
             if len (bases) > 1 :
                 raise NotImplementedError \
                     ("Multiple inheritance currently not supported")
-            col_props = dict ()
+            map_props = dict ()
             unique    = []
             attr_dict = cls._attr_dict     (e_type)
             columns   = cls._setup_columns (e_type, attr_dict, bases, unique)
@@ -73,13 +85,14 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
                 , cls.metadata
                 , * columns
                 )
-            col_props  ["properties"] = cls._setup_mapper_properties \
+            map_props  ["properties"] = cls._setup_mapper_properties \
                 (e_type, attr_dict, sa_table, bases)
-            cls._setup_inheritance (e_type, sa_table, bases, col_props)
-            orm.mapper             (e_type, sa_table, ** col_props)
+            if issubclass (e_type, MOM.Link) :
+                map_props ["extension"] = Cached_Role_Extension ()
+            cls._setup_inheritance (e_type, sa_table, bases, map_props)
+            orm.mapper             (e_type, sa_table, ** map_props)
             e_type._sa_table = sa_table
-        return e_type
-    # end def etype_decorator
+    # end def update_etype
 
     def _attr_dict (self, e_type) :
         attr_dict  = e_type._Attributes._attr_dict
@@ -113,11 +126,8 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
                 ( schema.Column
                     (pk_name, types.Integer, primary_key = True)
                 )
-        ### we add the inheritance_type in any case to make EMS.SA easier
-        result.append \
-            ( schema.Column
-                ("inheritance_type", types.String (length = 30))
-            )
+        ### we add the type_name in any case to make EMS.SA easier
+        result.append (schema.Column ("Type_Name", types.String (length = 30)))
         e_type._sa_pk_name = pk_name
         for name, attr_kind in attr_dict.iteritems () :
             attr_kind.attr._sa_col_name = attr_kind._sa_col_name ()
@@ -140,13 +150,11 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     def _setup_inheritance (cls, e_type, sa_table, bases, col_prop) :
         e_type._sa_inheritance = True
         e_type.has_children    = False
-        if e_type.type_base_name == "Rodent" :
-            e_type.has_children = True ### XXX
         if e_type is not e_type.relevant_root :
             col_prop ["inherits"]             = bases [0]
             col_prop ["polymorphic_identity"] = e_type.type_name
-        elif e_type.has_children :
-            col_prop ["polymorphic_on"]       = sa_table.c.inheritance_type
+        elif e_type.children :
+            col_prop ["polymorphic_on"]       = sa_table.c.Type_Name
             col_prop ["polymorphic_identity"] = e_type.type_name
             col_prop ["with_polymorphic"]     = "*"
         else :
@@ -155,18 +163,22 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
     # end def _setup_inheritance
 
     def _setup_mapper_properties (cls, e_type, attr_dict, sa_table, bases) :
-        result = {}
+        result = dict ()
         for name, attr_kind in attr_dict.iteritems () :
             ckd           = attr_kind.ckd_name
-            ### we need to do this in 2 steps because otherways we hit a
-            ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
             if isinstance (attr_kind, MOM.Attr.Link_Role) :
-                #import pdb; pdb.set_trace ()
                 result [name] = orm.synonym  (ckd, map_column = False)
                 result [ckd]  = orm.relation (attr_kind.role_type)
             else :
+                ### we need to do this in 2 steps because otherways we hit a
+                ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
                 result [name] = orm.synonym (ckd, map_column = False)
                 result [ckd]  = sa_table.c [name]
+        for assoc, roles in getattr (e_type, "link_map", {}).iteritems () :
+            for r in roles :
+                attr_name = "__".join (assoc.type_name.split (".") + [r.name])
+                if not hasattr (e_type, attr_name) :
+                    result [attr_name] = orm.dynamic_loader (assoc, cascade = "all")
         return result
     # end def _setup_mapper_properties
 
