@@ -78,7 +78,7 @@
 Traceback (most recent call last):
   ...
 IndexError: Query result contains 2 entries
->>> qu = qt.limit (1)
+>>> qu = qt.filter (no = 0)
 >>> qu.all ()
 [0]
 >>> qu.one ()
@@ -88,12 +88,24 @@ IndexError: Query result contains 2 entries
 [6]
 >>> qv.one ()
 6
+>>> Q = TFL.Attr_Query ()
+>>> qr.filter (Q.no == 2).all ()
+[2]
+>>> qr.filter (Q.no > 2).all ()
+[3, 4, 5, 6, 7, 8, 9]
+>>> qr.filter (Q.no >= 2).all ()
+[2, 3, 4, 5, 6, 7, 8, 9]
+>>> qr.filter (Q.no >= 2, Q.no <= 6).all ()
+[2, 3, 4, 5, 6]
+
 """
 
 from   _TFL                 import TFL
+from   _MOM                 import MOM
 import _TFL._Meta.Object
-#import _TFL.Q_Result
-from   sqlalchemy.orm       import exc as orm_exc
+import _MOM._DBW._SA.Filter
+from    sqlalchemy.orm      import exc as orm_exc
+from    sqlalchemy.sql      import expression
 
 class Q_Result (TFL.Meta.Object) :
     """Q_Result using SA-query funtion for the operations"""
@@ -109,8 +121,18 @@ class Q_Result (TFL.Meta.Object) :
     # end def distinct
 
     def filter (self, * criteria, ** eq_kw) :
+        sa_criteria = []
+        for c in criteria :
+            if isinstance (c, TFL.Attr_Filter) :
+                sa_criteria.append (c._sa_filter (self.e_type))
+            else :
+                sa_criteria.append (c)
+        for attr, value in eq_kw.iteritems () :
+            sa_criteria.append (getattr (self.e_type, attr) == value)
+        if len (sa_criteria) > 1 :
+            sa_criteria = (expression.and_ (* sa_criteria), )
         return self.__class__ \
-            (self.e_type, self.sa_query.filter (* criteria))
+            (self.e_type, self.sa_query.filter (* sa_criteria))
     # end def filter
 
     def limit (self, limit) :
@@ -127,8 +149,6 @@ class Q_Result (TFL.Meta.Object) :
         try :
             return self.sa_query.one ()
         except orm_exc.MultipleResultsFound as exc :
-            import pdb; pdb.set_trace ()
-            print exc
             raise IndexError \
                 ("Query result contains %s entries" % self.sa_query.count ())
     # end def one
@@ -145,7 +165,5 @@ class Q_Result (TFL.Meta.Object) :
 # end class Q_Result
 
 if __name__ == "__main__" :
-    from   _MOM               import MOM
-    import _MOM._DBW._SA
     MOM.DBW.SA._Export ("*")
 ### __END__ MOM:DBW:SA.Q_Result

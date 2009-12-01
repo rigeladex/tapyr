@@ -64,6 +64,21 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
 
     metadata = schema.MetaData () ### XXX
 
+    def create_database (cls, db_uri) :
+        db_uri  = db_uri or "sqlite:///:memory:"
+        engine  = engine.create_engine (db_uri)
+        cls.metadata.create_all        (engine)
+        Session = orm.sessionmaker     (bind = engine)
+        return Session                 ()
+    # end def create_database
+
+    def connect_database (cls, db_uri) :
+        db_uri  = db_uri or "sqlite:///:memory:"
+        engine  = engine.create_engine (db_uri)
+        Session = orm.sessionmaker     (bind = engine)
+        return Session                 ()
+    # end def connect_database
+
     def update_etype (cls, e_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
         if getattr (e_type, "relevant_root", None) :
