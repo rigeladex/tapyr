@@ -164,6 +164,8 @@ from   _TFL.predicate           import first, all_true, any_true
 
 import _TFL._Meta.Object
 
+import operator
+
 class _Filter_ (TFL.Meta.Object) :
     """Base class for filters."""
 
@@ -296,6 +298,139 @@ class Filter_Or (_Filter_Q_) :
     # end def __invert__
 
 # end class Filter_Or
+
+class Attr_Filter (_Filter_S_) :
+    """Return all items of an iterable which satisfy a predicate for an
+       attribute.
+    """
+
+    def __init__ (self, name, operation, * args, ** kw) :
+        self.attr_name  = name
+        self.operation  = operation
+        self.attr_args  = args
+        self.attr_kw    = kw
+    # end def __init__
+
+    def predicate (self, item) :
+        try :
+            key = getattr (item, self.attr_name)
+        except AttributeError :
+            return False
+        return self.operation (key, * self.attr_args, ** self.attr_kw)
+    # end def predicate
+
+# end class Attr_Filter
+
+class Attr_Query (TFL.Meta.Object) :
+    """Syntactic sugar for creating Attr_Filter objects.
+
+       >>> from _TFL.Record import *
+       >>> Q = Attr_Query ()
+       >>> Q.fool.startswith ("bar") (Record (fool = "barfly"))
+       True
+       >>> Q.fool.startswith ("fly") (Record (fool = "barfly"))
+       False
+       >>> Q.fool.endswith ("fly") (Record (fool = "barfly"))
+       True
+       >>> Q.fool.endswith ("bar") (Record (fool = "barfly"))
+       False
+       >>> Q.fool.between (2, 8) (Record (fool = 1))
+       False
+       >>> Q.fool.between (2, 8) (Record (fool = 2))
+       True
+       >>> Q.fool.between (2, 8) (Record (fool = 3))
+       True
+       >>> Q.fool.between (2, 8) (Record (fool = 8))
+       True
+       >>> Q.fool.between (2, 8) (Record (fool = 9))
+       False
+       >>> (Q.fool == "barfly") (Record (fool = "barfly"))
+       True
+       >>> (Q.fool != "barfly") (Record (fool = "barfly"))
+       False
+       >>> (Q.fool != "barflyz") (Record (fool = "barfly"))
+       True
+       >>> (Q.fool <= "barflyz") (Record (fool = "barfly"))
+       True
+       >>> (Q.fool >= "barflyz") (Record (fool = "barfly"))
+       False
+       >>> Q.fool.contains ("barf") (Record (fool = "a barfly "))
+       True
+       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 1))
+       False
+       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 2))
+       True
+       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 3))
+       False
+       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 4))
+       True
+
+    """
+
+    def __init__ (self, name = None) :
+        self.name = name
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        assert self.name is None
+        return self.__class__ (name)
+    # end def __getattr__
+
+    def between (self, lhs, rhs) :
+        def between (val, lhs, rhs) :
+            return lhs <= val <= rhs
+        return Attr_Filter (self.name, between, lhs, rhs)
+    # end def between
+
+    def contains (self, rhs) :
+        return Attr_Filter (self.name, operator.contains, rhs)
+    # end def contains
+
+    def endswith (self, rhs) :
+        return Attr_Filter (self.name, str.endswith, rhs)
+    # end def endswith
+
+    def in_ (self, rhs) :
+        def in_ (val,  rhs) :
+            return val in rhs
+        return Attr_Filter (self.name, in_, rhs)
+    # end def in_
+
+    def startswith (self, rhs) :
+        return Attr_Filter (self.name, str.startswith, rhs)
+    # end def startswith
+
+    def __eq__ (self, rhs) :
+        return Attr_Filter (self.name, operator.__eq__, rhs)
+    # end def __eq__
+
+    def __ge__ (self, rhs) :
+        return Attr_Filter (self.name, operator.__ge__, rhs)
+    # end def __ge__
+
+    def __gt__ (self, rhs) :
+        return Attr_Filter (self.name, operator.__gt__, rhs)
+    # end def __gt__
+
+    def __hash__ (self) :
+        ### Override `__hash__` just to silence DeprecationWarning:
+        ###     Overriding __eq__ blocks inheritance of __hash__ in 3.x
+        raise NotImplementedError
+    # end def __hash__
+
+    def __le__ (self, rhs) :
+        return Attr_Filter (self.name, operator.__le__, rhs)
+    # end def __le__
+
+    def __lt__ (self, rhs) :
+        return Attr_Filter (self.name, operator.__lt__, rhs)
+    # end def __lt__
+
+    def __ne__ (self, rhs) :
+        return Attr_Filter (self.name, operator.__ne__, rhs)
+    # end def __ne__
+
+# end class Attr_Query
 
 if __name__ != "__main__" :
     TFL._Export ("*", "_Filter_", "_Filter_Q_")
