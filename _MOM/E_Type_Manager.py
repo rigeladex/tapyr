@@ -43,6 +43,7 @@
 #    24-Nov-2009 (CT) Support for `No_Such_Object` added to
 #                     `_cooked_epk_iter` and `_role_to_cooked_iter`
 #    25-Nov-2009 (CT) `_role_query` guarded agains `No_Such_Object`
+#     1-Dec-2009 (CT) `role_names` queries changed from `s_` to `t_`
 #    ««revision-date»»···
 #--
 
@@ -144,7 +145,7 @@ class Link (Id_Entity) :
         self.__super.__init__ (etype, scope)
         for r in etype.Roles :
             setattr \
-                (self, r.role_name, getattr (self, "s_" + r.generic_role_name))
+                (self, r.role_name, getattr (self, "t_" + r.generic_role_name))
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
