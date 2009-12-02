@@ -32,8 +32,8 @@
 #--
 
 from   _MOM.__doc__ import *
-import _MOM._DBW._SA.Session
 import _MOM._EMS.SA
+import _MOM._DBW._SA.Session
 
 EMS     = MOM.EMS.SA.Manager
 DBW     = MOM.DBW.SA.Session

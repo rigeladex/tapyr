@@ -52,8 +52,7 @@ class Cached_Role_Extension (orm.interfaces.MapperExtension) :
 
     def after_delete (self, mapper, connection, link) :
         for acr in link.auto_cache_roles :
-            obj = getattr (link, acr.other_role.name)
-            setattr       (obj,  acr.attr_name, None)
+            acr (link, no_value = True)
         return orm.EXT_CONTINUE
     # end def after_delete
 

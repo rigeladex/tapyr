@@ -69,55 +69,11 @@ class Manager (MOM.EMS._Manager_) :
             ses.rollback ()
             raise MOM.Error.Name_Clash \
                 (entity, self.instance (entity.__class__, entity.epk))
-        ### XXX how to handle Roles ???
-        ### if entity.Roles :
-        ###     r_map = self._r_map
-        ###     for r in entity.Roles :
-        ###         r_map [r] [r.get_role (entity).id].add (entity)
     # end def add
-
-#    def exists (self, Type, epk) :
-#        if not isinstance (epk, (tuple, list)) :
-#            epk = (epk, )
-#        scope     = self.scope
-#        Type      = getattr (Type, "_etype", Type)
-#        ses       = self.session
-#        if Type.relevant_root :
-#            queries = (Type, )
-#        else :
-#            queries = Type.relevant_roots.itervalues ()
-#        result = []
-#        for Type in queries :
-#            result.extend \
-#                (     getattr (scope, e.type_name)
-#                for e in ses.query (Type)
-#                            .filter_by (** dict (zip (Type.epk_sig, epk)))
-#                )
-#        return result
-#
-#    def instance (self, Type, epk) :
-#        if isinstance (Type, basestring) :
-#            Type = getattr (self.scope, Type)
-#        Type = getattr (Type, "_etype", Type)
-#        root = Type.relevant_root
-#        if root :
-#            epk_dict = dict (zip (Type.epk_sig, epk))
-#            return self.session.query (Type).filter_by (** epk_dict).first ()
-#        raise TypeError \
-#            ( "Cannot query `instance` of non-root type `%s`."
-#              "\n"
-#              "Use one of the types %s instead."
-#            % (Type.type_name, ", ".join (sorted (Type.relevant_roots)))
-#            )
-#    # end def instance
 
     def remove (self, entity) :
         self.session.delete (entity)
-        self.session.flush  ()
-        ### if entity.Roles :
-        ###     r_map = self._r_map
-        ###     for r in entity.Roles :
-        ###         r_map [r] [r.get_role (entity).id].remove (entity)
+        self.session.flush  () ### needed to update auto cache roles
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :
@@ -127,59 +83,13 @@ class Manager (MOM.EMS._Manager_) :
         renamer     ()
     # end def rename
 
-    def s_count (self, Type) :
-        root = Type.relevant_root
-        if root :
-            query = self.session.query (root)
-            if Type._sa_inheritance :
-                query = query.filter_by (Type_Name = Type.type_name)
-            return query.count ()
-        return 0
-    # end def s_count
-
-    def s_extension (self, Type, sort_key = False) :
-        root   = Type.relevant_root
-        if root :
-            query = self.session.query (root)
-            if Type._sa_inheritance :
-                query = query.filter_by (Type_Name = Type.type_name)
-            if sort_key is not None :
-                return sorted (query,  key = Type.sort_key (sort_key))
-            return query
-        return ()
-    # end def s_extension
-
-    ### XXX don't know how roles will be handled
     def s_role (self, role, obj, sort_key = False) :
         if not isinstance (obj, role.role_type.Essence) :
-            return [] ### XXX
+            return [] ### if the type of the role is worng, return an emty list
         return self.session.query \
             (role.assoc).filter_by (** {role.name : obj}).all ()
     # end def s_role
 
-    def t_count (self, Type, seen = None) :
-        root = Type.relevant_root
-        if root :
-            return self.session.query (Type).count ()
-        return sum \
-            (self.t_count (rr) for rr in Type.relevant_roots.itervalues ())
-    # end def t_count
-
-    def t_extension (self, Type , sort_key = None) :
-        root   = Type.relevant_root
-        ses    = self.session
-        if root :
-            result = ses.query (getattr (Type, "_type", Type))
-        else :
-            result = []
-            for rr in Type.relevant_roots.itervalues () :
-                result.extend (ses.query (rr).all ())
-        if sort_key is not None :
-            result = sorted (result, key = Type.sort_key (sort_key))
-        return result
-    # end def t_extension
-
-    ### XXX don't know how roles will be handled
     def t_role (self, role, obj, sort_key = False) :
         return self.s_role (role, obj, sort_key)
     # end def t_role
@@ -187,24 +97,18 @@ class Manager (MOM.EMS._Manager_) :
     def _query_multi_root (self, Type) :
         QR      = self.Q_Result
         session = self.session
-        return list (QR (session.query (t)) for t in Type.relevant_roots)
+        return list \
+            (QR (session.query (t)) for t in Type.relevant_roots.itervalues ())
     # end def _query_multi_root
 
     def _query_single_root (self, Type, root) :
-        result = self.session.query (root)
-        if Type._sa_inheritance :
-            ### XXX wrong filter condition ???
-            ### cf. EMS.Hash._query_single_root::
-            ### result = itertools.ifilter \
-            ###     (lambda x : isinstance (x, Type), result)
-            result = result.filter_by (Type_Name = Type.type_name)
-        return result
+        return self.session.query (Type)
     # end def _query_single_root
 
     def __iter__ (self) :
         relevant_roots = self.scope.MOM.Id_Entity.relevant_roots.itervalues ()
         return itertools.chain \
-            (* (self.t_extension (rr).all () for rr in relevant_roots))
+            (* (self.query (rr).all () for rr in relevant_roots))
     # end def __iter__
 
 # end class Manager
