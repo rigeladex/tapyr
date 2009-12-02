@@ -45,13 +45,19 @@
 #    27-Nov-2009 (CT) `add` and `remove` changed to call `register_dependency`
 #                     and `unregister_dependency`, respectively
 #    27-Nov-2009 (CT) `all_links` added
+#     2-Dec-2009 (CT) `_Manager_` factored
+#     2-Dec-2009 (CT) Query interface changed
+#                     - added `count`, `query`, `_query_multi_root`, and
+#                       `_query_single_root`
+#                     - removed `s_count`, `s_extension`, and `t_extension`
+#                     - s/t_count/_t_count/
 #    ««revision-date»»···
 #--
 
 from   _MOM                  import MOM
 from   _TFL                  import TFL
 
-import _MOM._EMS
+import _MOM._EMS._Manager_
 import _MOM.Error
 import _MOM.Link
 import _MOM.Object
@@ -65,13 +71,13 @@ from   _TFL.I18N             import _, _T, _Tn
 
 import itertools
 
-class Manager (TFL.Meta.Object) :
+class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
 
     type_name = "Hash"
 
     def __init__ (self, scope) :
-        self.scope   = scope
+        self.__super.__init__ (scope)
         self._counts = TFL.defaultdict (int)
         self._tables = TFL.defaultdict (dict)
         self._r_map  = TFL.defaultdict (lambda : TFL.defaultdict (set))
@@ -100,6 +106,29 @@ class Manager (TFL.Meta.Object) :
                 obj.register_dependency (entity.__class__)
                 r_map [r] [obj.id].add (entity)
     # end def add
+
+    def all_links (self, obj_id) :
+        r_map  = self._r_map
+        result = sorted \
+            ( itertools.chain (* (rm [obj_id] for rm in r_map.itervalues ()))
+            , key = self.scope.MOM.Id_Entity.sort_key ()
+            )
+        return result
+    # end def all_links
+
+    def count (self, Type, * filters, ** kw) :
+        strict = kw.pop ("strict", False)
+        if filters or kw :
+            if strict :
+                kw ["strict"] = strict
+            result = self.__super.count (* filters, ** kw)
+        else :
+            if strict :
+                result = self._counts  [Type.type_name]
+            else :
+                result = self._t_count (Type)
+        return result
+    # end def count
 
     def exists (self, Type, epk) :
         scope  = self.scope
@@ -136,15 +165,6 @@ class Manager (TFL.Meta.Object) :
             )
     # end def instance
 
-    def all_links (self, obj_id) :
-        r_map  = self._r_map
-        result = sorted \
-            ( itertools.chain (* (rm [obj_id] for rm in r_map.itervalues ()))
-            , key = self.scope.MOM.Id_Entity.sort_key ()
-            )
-        return result
-    # end def all_links
-
     def remove (self, entity) :
         count = self._counts
         hpk   = entity.hpk
@@ -171,62 +191,12 @@ class Manager (TFL.Meta.Object) :
         self.add    (entity, entity.id)
     # end def rename
 
-    def s_count (self, Type) :
-        return self._counts [Type.type_name]
-    # end def s_count
-
-    def s_extension (self, Type, sort_key = False) :
-        root   = Type.relevant_root
-        tables = self._tables
-        result = []
-        if root :
-            result = tables [root.type_name].itervalues ()
-            if Type.children :
-                result = itertools.ifilter \
-                    (lambda x : x.Essence is Type.Essence, result)
-            elif root is not Type :
-                ### filter siblings derived from same `relevant_root`
-                result = itertools.ifilter \
-                    (lambda x : isinstance (x, Type.Essence), result)
-        if sort_key is not None :
-            result = sorted (result, key = Type.sort_key (sort_key))
-        return result
-    # end def s_extension
-
     def s_role (self, role, obj, sort_key = False) :
         result = self._r_map [role] [obj.id]
         if sort_key is not None :
             result = sorted (result, key = role.assoc.sort_key (sort_key))
         return result
     # end def s_role
-
-    def t_count (self, Type, seen = None) :
-        if seen is None :
-            seen = set ()
-        result = self._counts [Type.type_name]
-        for n, c in Type.children.iteritems () :
-            if n not in seen :
-                seen.add (n)
-                result += self.t_count (c, seen)
-        return result
-    # end def t_count
-
-    def t_extension (self, Type, sort_key = False) :
-        root   = Type.relevant_root
-        tables = self._tables
-        if root :
-            result = tables [root.type_name].itervalues ()
-            if root is not Type :
-                ### filter siblings derived from same `relevant_root`
-                result = itertools.ifilter \
-                    (lambda x : isinstance (x, Type), result)
-        else :
-            result = itertools.chain \
-                (* (tables [t].itervalues () for t in Type.relevant_roots))
-        if sort_key is not None :
-            result = sorted (result, key = Type.sort_key (sort_key))
-        return result
-    # end def t_extension
 
     def t_role (self, role, obj, sort_key = False) :
         r_map  = self._r_map
@@ -241,6 +211,35 @@ class Manager (TFL.Meta.Object) :
             result = sorted (result, key = role.assoc.sort_key (sort_key))
         return result
     # end def t_role
+
+    def _query_multi_root (self, Type) :
+        tables = self._tables
+        return list \
+            (   self.Q_Result (tables [t].itervalues ())
+            for t in Type.relevant_roots
+            )
+    # end def _query_multi_root
+
+    def _query_single_root (self, Type, root) :
+        tables = self._tables
+        result = tables [root.type_name].itervalues ()
+        if root is not Type :
+            ### filter siblings derived from same `relevant_root`
+            result = itertools.ifilter \
+                (lambda x : isinstance (x, Type), result)
+        return result
+    # end def _query_single_root
+
+    def _t_count (self, Type, seen = None) :
+        if seen is None :
+            seen = set ()
+        result = self._counts [Type.type_name]
+        for n, c in Type.children.iteritems () :
+            if n not in seen :
+                seen.add (n)
+                result += self._t_count (c, seen)
+        return result
+    # end def _t_count
 
     def __iter__ (self) :
         return itertools.chain \

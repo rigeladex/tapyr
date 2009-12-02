@@ -44,6 +44,7 @@
 #                     `_cooked_epk_iter` and `_role_to_cooked_iter`
 #    25-Nov-2009 (CT) `_role_query` guarded agains `No_Such_Object`
 #     1-Dec-2009 (CT) `role_names` queries changed from `s_` to `t_`
+#     2-Dec-2009 (CT) Queries `count` and `query` added
 #    ««revision-date»»···
 #--
 
@@ -66,38 +67,53 @@ class Id_Entity (TFL.Meta.Object) :
         return self._etype (* args, scope = self.home_scope, ** kw)
     # end def __call__
 
+    def count (self, * filters, ** kw) :
+        return self.home_scope.ems.count (self._etype, * filters, ** kw)
+    # end def count
+
     def exists (self, * epk, ** kw) :
         if kw :
             raise TypeError (kw)
-        return self.home_scope.ems.exists      (self._etype, epk)
+        return self.home_scope.ems.exists (self._etype, epk)
     # end def exists
 
     def instance (self, * epk, ** kw) :
         if kw :
             raise TypeError (kw)
-        return self.home_scope.ems.instance    (self._etype, epk)
+        return self.home_scope.ems.instance (self._etype, epk)
     # end def instance
+
+    def query (self, * filters, ** kw) :
+        """Return all entities matching the conditions in `filters` and `kw`."""
+        return self.home_scope.ems.query (self._etype, * filters, ** kw)
+    # end def query
 
     @property
     def s_count (self) :
         """Return the strict count of objects or links."""
-        return self.home_scope.ems.s_count     (self._etype)
+        return self.home_scope.ems.count (self._etype, strict = True)
     # end def s_count
 
     def s_extension (self, sort_key = False) :
         """Return the strict extension of objects or links."""
-        return self.home_scope.ems.s_extension (self._etype, sort_key)
+        result = self.query (strict = True)
+        if sort_key is not None :
+            result = result.order_by (self._etype.sort_key (sort_key))
+        return result
     # end def s_extension
 
     @property
     def t_count (self) :
         """Return the transitive count of objects or links."""
-        return self.home_scope.ems.t_count     (self._etype)
+        return self.home_scope.ems.count (self._etype)
     # end def t_count
 
     def t_extension (self, sort_key = False) :
         """Return the transitive extension of objects or links."""
-        return self.home_scope.ems.t_extension (self._etype, sort_key)
+        result = self.query ()
+        if sort_key is not None :
+            result = result.order_by (self._etype.sort_key (sort_key)).all ()
+        return result
     # end def t_extension
 
     def __getattr__ (self, name) :

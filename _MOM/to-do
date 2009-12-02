@@ -110,25 +110,23 @@ MOM To-Do
 
   * s_extension, etc. should return Q_Result objects
 
-  * Q_Result is
+  x Q_Result is
 
-    + instantiated with an iterable
+    x instantiated with an iterable
 
-    + iterable, re-iterable
+    x iterable, re-iterable
 
-      - if instantiated with something that isn't re-iterable needs to cache
+      x if instantiated with something that isn't re-iterable needs to cache
 
-    + can be filtered
+    x can be filtered
 
-      - result of `filter` is another Q_Result
+      x result of `filter` is another Q_Result
 
-    + can be sorted
+    x can be sorted
 
-      - order_by: specifies `sort_key`, but doesn't do any sorting yet
+      x order_by: specifies `sort_key`, but doesn't do any sorting yet
 
-      - sorted: return query result sorted by `sort_key` defined by `order_by`
-
-    + supports __len__
+      x iter: return query result sorted by `sort_key` defined by `order_by`
 
 - M_Entity vs. M_E_Type:
 
