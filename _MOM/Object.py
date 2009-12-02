@@ -60,10 +60,11 @@ class _MOM_Object_ (MOM.Id_Entity) :
     entity_kind           = "object"
 
     def all_links (self) :
-        result = set ()
-        scope  = self.home_scope
-        for role in itertools.chain (* self.__class__.link_map.itervalues ()) :
-            result.update (scope.ems.role_query (role, self, strict = True))
+        result  = set ()
+        scope   = self.home_scope
+        r_query = scope.ems.r_query
+        for r in itertools.chain (* self.__class__.link_map.itervalues ()) :
+            result.update (r_query (r.assoc, {r.name : self}, strict = True))
         return sorted (result, key = scope.MOM.Id_Entity.sort_key ())
     # end def all_links
 

@@ -95,14 +95,14 @@ class Manager (MOM.EMS._Manager_) :
     # end def t_role
 
     def _query_multi_root (self, Type) :
-        QR      = self.Q_Result
-        session = self.session
-        return list \
-            (QR (session.query (t)) for t in Type.relevant_roots.itervalues ())
+        QR = self.Q_Result
+        S  = self.session
+        return self.Q_Result_Composite \
+            ([QR (S.query (t)) for t in Type.relevant_roots.itervalues ()])
     # end def _query_multi_root
 
     def _query_single_root (self, Type, root) :
-        return self.session.query (Type)
+        return self.Q_Result (self.session.query (Type))
     # end def _query_single_root
 
     def __iter__ (self) :

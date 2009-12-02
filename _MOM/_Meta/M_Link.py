@@ -139,7 +139,7 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
         """Destroy all links where `obj` participates."""
         scope = obj.home_scope
         etm   = getattr (scope, cls.type_name)
-        for l in etm.t_links_of_obj (obj) :
+        for l in etm.links_of (obj) :
             l.destroy () ### scope.ems.remove (l)
     # end def destroy_links
 

@@ -87,7 +87,12 @@ class Id_Entity (TFL.Meta.Object) :
 
     def query (self, * filters, ** kw) :
         """Return all entities matching the conditions in `filters` and `kw`."""
-        return self.home_scope.ems.query (self._etype, * filters, ** kw)
+        sort_key = kw.pop ("sort_key", False)
+        Type     = self._etype
+        result   = self.home_scope.ems.query (Type, * filters, ** kw)
+        if sort_key is not None :
+            result = result.order_by (Type.sort_key (sort_key))
+        return result
     # end def query
 
     @property
@@ -96,27 +101,11 @@ class Id_Entity (TFL.Meta.Object) :
         return self.count (strict = True)
     # end def s_count
 
-    def s_extension (self, sort_key = False) :
-        """Return the strict extension of objects or links."""
-        result = self.query (strict = True)
-        if sort_key is not None :
-            result = result.order_by (self._etype.sort_key (sort_key)).all ()
-        return result
-    # end def s_extension
-
     @property
     def t_count (self) :
         """Return the transitive count of objects or links."""
         return self.count ()
     # end def t_count
-
-    def t_extension (self, sort_key = False) :
-        """Return the transitive extension of objects or links."""
-        result = self.query ()
-        if sort_key is not None :
-            result = result.order_by (self._etype.sort_key (sort_key)).all ()
-        return result
-    # end def t_extension
 
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
@@ -159,13 +148,6 @@ class Object (Id_Entity) :
 class Link (Id_Entity) :
     """Scope-specific manager for essential link-types."""
 
-    def __init__ (self, etype, scope) :
-        self.__super.__init__ (etype, scope)
-        for r in etype.Roles :
-            setattr \
-                (self, r.role_name, getattr (self, "t_" + r.generic_role_name))
-    # end def __init__
-
     def __call__ (self, * args, ** kw) :
         self._check_multiplicity (* args, ** kw)
         if kw.get ("raw", False) :
@@ -199,19 +181,49 @@ class Link (Id_Entity) :
         return self.__super.instance (* epk, ** kw)
     # end def instance
 
-    def s_links_of_obj (self, obj) :
-        """Return all strict links to `obj`
-           (considers `obj` for each of the roles).
-        """
-        return self._links_of_obj (obj, strict = True)
-    # end def s_links_of_obj
+    def r_query (self, * filters, ** kw) :
+        """Return all links matching the conditions in `filters` and `kw`."""
+        sort_key = kw.pop ("sort_key", False)
+        Type     = self._etype
+        map      = getattr (Type, "role_map", None)
+        rkw      = {}
+        if map :
+            for k in list (kw) :
+                if k in map :
+                    role = Type.Roles [map [k]]
+                    try :
+                        rkw [role.name] = self._cooked_role (role, kw.pop (k))
+                    except MOM.Error.No_Such_Object :
+                        return []
+        ems = self.home_scope.ems
+        if rkw :
+            result = ems.r_query (self._etype, rkw, * filters, ** kw)
+        else :
+            result = ems.query   (self._etype, * filters, ** kw)
+        if sort_key is not None :
+            result = result.order_by (Type.sort_key (sort_key))
+        return result
+    # end def r_query
 
-    def t_links_of_obj (self, obj) :
-        """Return all transitive links to `obj`
+    def links_of (self, obj, * filters, ** kw) :
+        """Return all links to `obj`
            (considers `obj` for each of the roles).
         """
-        return self._links_of_obj (obj, strict = False)
-    # end def t_links_of_obj
+        queries  = []
+        r_query  = self.home_scope.ems.r_query
+        sort_key = kw.pop ("sort_key", False)
+        strict   = kw.pop ("strict", False)
+        Type     = self._etype
+        for r in Type.Roles :
+            if isinstance (obj, r.role_type) :
+                pk = self._cooked_role (r, obj)
+                queries.append \
+                    (r_query (r.assoc, {r.name : pk}, strict = strict))
+        result = self.home_scope.ems.Q_Result_Composite (queries)
+        if sort_key is not None :
+            result = result.order_by (Type.sort_key (sort_key))
+        return result
+    # end def links_of
 
     def _check_multiplicity (self, * epk, ** kw) :
         if kw.get ("raw", False) :
@@ -222,15 +234,16 @@ class Link (Id_Entity) :
         if self.__super.exists (* epk) :
             raise MOM.Error.Duplicate_Link \
                 (etype, self.__super.instance (* epk))
-        errors = []
+        errors  = []
+        r_query = self.home_scope.ems.r_query
         for r, pk in zip (etype.Roles, epk) :
             if r.max_links :
-                links = list (self._role_query (r, pk, True, None))
-                nol   = len  (links)
+                links = r_query (r.assoc, {r.name : pk}, strict = True)
+                nol   = links.count ()
                 if nol >= r.max_links :
                     errors.append \
                         ( MOM.Error.Multiplicity_Error \
-                            (pk, r.max_links, epk, links)
+                            (pk, r.max_links, epk, list (links))
                         )
         if errors :
             raise MOM.Error.Multiplicity_Errors (etype.type_name, errors)
@@ -259,34 +272,6 @@ class Link (Id_Entity) :
             result = r.from_string (v, None)
         return result
     # end def _cooked_role
-
-    def _links_of_obj (self, obj, strict) :
-        result = set ()
-        for r in self._etype.Roles :
-            if isinstance (obj, r.role_type) :
-                result.update (self._role_query (r, obj, strict, None))
-        result = self.home_scope.ems.Q_Result \
-            (result).order_by (self._etype.sort_key ()).all ()
-        return result
-    # end def _links_of_obj
-
-    def _query_intersection (self, q1, * qs) :
-        result = set (q1)
-        for q in qs :
-            result.intersection_update (q)
-        return sorted (result, key = self._etype.sort_key ())
-    # end def _query_intersection
-
-    def _role_query (self, role, obj, strict, sort_key = False) :
-        try :
-            result = self.home_scope.ems.role_query \
-                (role, self._cooked_role (role, obj), strict = strict)
-            if sort_key is not None :
-                result = result.order_by (role.assoc.sort_key (sort_key)).all ()
-        except MOM.Error.No_Such_Object :
-            result = []
-        return result
-    # end def _role_query
 
     def _role_to_cooked_iter (self, epk, auto_create = False) :
         for (r, v) in paired (self._etype.Roles, epk) :
@@ -322,184 +307,10 @@ class Link2 (Link) :
 
     ### XXX dfc_synthesizer
 
-    def s_left (self, r) :
-        """Return all strict links related to right `r`."""
-        return self._role_query (self._etype.right, r, strict = True)
-    # end def s_left
-
-    def s_links_of (self, l = None, r = None, ** kw) :
-        """Returns the set of strict links for `l` and `r`.
-           If any of `l` or `r` is None all links for the corresponding role
-           are returned.
-        """
-        return self._links_of \
-            (l, r, self.s_left, self.s_right, self.s_extension, kw)
-    # end def s_links_of
-
-    def s_right (self, l) :
-        """Return all strict links related to left `l`."""
-        return self._role_query (self._etype.left, l, strict = True)
-    # end def s_right
-
-    def t_left (self, r) :
-        """Return all transitive links related to right `r`."""
-        return self._role_query (self._etype.right, r, strict = False)
-    # end def t_left
-
-    def t_links_of (self, l = None, r = None, ** kw) :
-        """Returns the set of transitive links for `l` and `r`.
-           If any of `l` or `r` is None all links for the corresponding role
-           are returned.
-        """
-        return self._links_of \
-            (l, r, self.t_left, self.t_right, self.t_extension, kw)
-    # end def t_links_of
-
-    def t_right (self, l) :
-        """Return all transitive links related to left `l`."""
-        return self._role_query (self._etype.left, l, strict = False)
-    # end def t_right
-
-    def _links_of (self, l, r, l_query, r_query, e_query, kw) :
-        if l :
-            if r :
-                result = self.instance (l, r, ** kw)
-                if result :
-                    return [result]
-                else :
-                    return []
-            else :
-                return r_query (l)
-        elif r :
-            return l_query (r)
-        else :
-            return e_query ()
-    # end def _links_of
-
 # end class Link2
 
 class Link3 (Link) :
     """Scope-specific manager for essential ternary link-types."""
-
-    def s_left (self, m, r) :
-        """Return all strict links related to both middle `m` and right `r`."""
-        return self._query_intersection \
-            (self.s_left_middle (r, None), self.s_left_right (m, None))
-    # end def s_left
-
-    def s_left_middle (self, r, sort_key = False) :
-        """Return all strict links related to right `r`."""
-        return self._role_query (self._etype.right, r, strict = True, sort_key = sort_key)
-    # end def s_left_middle
-
-    def s_left_right (self, m, sort_key = False) :
-        """Return all strict links related to right `m`."""
-        return self._role_query (self._etype.middle, m, strict = True, sort_key = sort_key)
-    # end def s_left_right
-
-    def s_links_of (self, l = None, m = None, r = None, ** kw) :
-        """Returns the set of strict links for `l`, `m`, and `r`.
-           If any of `l`, `m`, or `r` is None all links for the corresponding
-           role are returned.
-        """
-        return self._links_of \
-            ( l, m, r
-            , self.s_left, self.s_middle, self.s_right
-            , self.s_left_middle, self.s_left_right, self.s_middle_right
-            , self.s_extension
-            , kw
-            )
-    # end def s_links_of
-
-    def s_middle (self, l, r) :
-        """Return all strict links related to both left `l` and right `r`."""
-        return self._query_intersection \
-            (self.s_middle_right (l, None), self.s_left_middle (r, None))
-    # end def s_middle
-
-    def s_middle_right (self, l, sort_key = False) :
-        """Return all strict links related to left `l`."""
-        return self._role_query (self._etype.left, l, strict = True, sort_key = sort_key)
-    # end def s_middle_right
-
-    def s_right (self, l, m) :
-        """Return all strict links related to both left `l` and middle `m`."""
-        return self._query_intersection \
-            (self.s_middle_right (l, None), self.s_left_right (m, None))
-    # end def s_right
-
-    def t_left (self, m, r) :
-        """Return all transitive links related to both middle `m` and right `r`."""
-        return self._query_intersection \
-            (self.t_left_middle (r, None), self.t_left_right (m, None))
-    # end def t_left
-
-    def t_left_middle (self, r, sort_key = False) :
-        """Return all transitive links related to right `r`."""
-        return self._role_query (self._etype.right, r, strict = False, sort_key = sort_key)
-    # end def t_left_middle
-
-    def t_left_right (self, m, sort_key = False) :
-        """Return all transitive links related to right `m`."""
-        return self._role_query (self._etype.middle, m, strict = False, sort_key = sort_key)
-    # end def t_left_right
-
-    def t_links_of (self, l = None, m = None, r = None, ** kw) :
-        """Returns the set of transitive links for `l`, `m`, and `r`.
-           If any of `l`, `m`, or `r` is None all links for the corresponding
-           role are returned.
-        """
-        return self._links_of \
-            ( l, m, r
-            , self.t_left, self.t_middle, self.t_right
-            , self.t_left_middle, self.t_left_right, self.t_middle_right
-            , self.t_extension
-            , kw
-            )
-    # end def s_links_of
-
-    def t_middle (self, l, r) :
-        """Return all transitive links related to both left `l` and right `r`."""
-        return self._query_intersection \
-            (self.t_middle_right (l, None), self.t_left_middle (r, None))
-    # end def t_middle
-
-    def t_middle_right (self, l, sort_key = False) :
-        """Return all transitive links related to left `l`."""
-        return self._role_query (self._etype.left, l, strict = False, sort_key = sort_key)
-    # end def t_middle_right
-
-    def t_right (self, l, m) :
-        """Return all transitive links related to both left `l` and middle `m`."""
-        return self._query_intersection \
-            (self.t_middle_right (l, None), self.t_left_right (m, None))
-    # end def t_right
-
-    def _links_of (self, l, m, r, l_query, m_query, r_query, lm_query, lr_query, mr_query, e_query, kw) :
-        if l :
-            if m :
-                if r :
-                    result = self.instance (l, m, r, ** kw)
-                    if result :
-                        return [result]
-                    else :
-                        return []
-                else :
-                    return r_query (l, m)
-            elif r :
-                return m_query  (l, r)
-            else :
-                return mr_query (l)
-        elif m :
-            if r :
-                return l_query  (m, r)
-            else :
-                return lr_query (m)
-        elif r :
-            return lm_query (r)
-        else :
-            return e_query ()
-    # end def _links_of
 
 # end class Link3
 
@@ -507,47 +318,6 @@ class Link2_Ordered (Link2) :
     """Scope-specific manager for essential ordered binary link-types."""
 
     ### XXX check_duplicate
-
-    def s_links_of (self, l = None, r = None, seq_no = None, ** kw) :
-        """Returns the set of strict links for `l`, `r`, and `seq_no`.
-           If any of `l` or `r` is None all links for the corresponding role
-           are returned.
-        """
-        return self._links_of \
-            (l, r, seq_no, self.s_left, self.s_right, self.s_extension, kw)
-    # end def s_links_of
-
-    def t_links_of (self, l = None, r = None, seq_no = None, ** kw) :
-        """Returns the set of transitive links for `l`, `r`, and `seq_no`.
-           If any of `l` or `r` is None all links for the corresponding role
-           are returned.
-        """
-        return self._links_of \
-            (l, r, seq_no, self.t_left, self.t_right, self.t_extension, kw)
-    # end def t_links_of
-
-    def _links_of (self, l, r, seq_no, l_query, r_query, e_query, kw) :
-        if l :
-            if r :
-                if seq_no is not None :
-                    result = self.instance (l, r, seq_no, ** kw)
-                    if result :
-                        return [result]
-                    else :
-                        return []
-                else :
-                    return self._query_intersection \
-                        (l_query (r, None), r_query (l, None))
-            else :
-                result = r_query (l)
-        elif r :
-            result = l_query (r)
-        else :
-            return e_query ()
-        if seq_no is not None :
-            result = [lnk for lnk in result if lnk.seq_no == seq_no]
-        return result
-    # end def _links_of
 
 # end class Link2_Ordered
 

@@ -47,11 +47,11 @@
 #    27-Nov-2009 (CT) `all_links` added
 #     2-Dec-2009 (CT) `_Manager_` factored
 #     2-Dec-2009 (CT) Query interface changed
-#                     - added `count`, `query`, `_query_multi_root`, and
-#                       `_query_single_root`
-#                     - removed `s_count`, `s_extension`, and `t_extension`
+#                     - added `count`, `query`, `r_query`, `_query_multi_root`,
+#                       `_query_single_root`, and `_role_query`
+#                     - removed `s_count`, `s_extension`, `s_role`,
+#                       `t_extension`, and `t_role`
 #                     - s/t_count/_t_count/
-#                     - `s_role` and `t_role` replaced by `role_query`
 #    ««revision-date»»···
 #--
 
@@ -69,6 +69,7 @@ import _TFL.Decorator
 import _TFL.defaultdict
 
 from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.predicate        import intersection_n
 
 import itertools
 
@@ -192,28 +193,29 @@ class Manager (MOM.EMS._Manager_) :
         self.add    (entity, entity.id)
     # end def rename
 
-    def role_query (self, role, obj, * filters, ** kw) :
-        strict = kw.pop ("strict", False)
+    def r_query (self, Type, rkw, * filters, ** kw) :
         r_map  = self._r_map
-        if strict :
-            result = r_map [role] [obj.id]
-        else :
-            i      = role.role_index
-            result = itertools.chain \
-                ( r_map [role] [obj.id]
-                , * ( r_map [c.Roles [i]] [obj.id]
-                    for c in role.assoc.children.itervalues ()
-                    )
-                )
+        strict = kw.pop ("strict", False)
+        q      = [self._r_query_t, self._r_query_s] [strict]
+        result = set ()
+        for (rn, obj) in rkw.iteritems () :
+            try :
+                i    = Type.role_map [rn]
+            except KeyError :
+                print Type, Type.Roles, Type.role_map
+                raise
+            role = Type.Roles    [i]
+            result.update (q (r_map, role, obj))
         result = self.Q_Result (result, * filters, ** kw)
         return result
-    # end def role_query
+    # end def r_query
 
     def _query_multi_root (self, Type) :
         tables = self._tables
-        return list \
-            (   self.Q_Result (tables [t].itervalues ())
-            for t in Type.relevant_roots
+        return self.Q_Result_Composite \
+            ([self.Q_Result (tables [t].itervalues ())
+             for t in Type.relevant_roots
+             ]
             )
     # end def _query_multi_root
 
@@ -224,8 +226,22 @@ class Manager (MOM.EMS._Manager_) :
             ### filter siblings derived from same `relevant_root`
             result = itertools.ifilter \
                 (lambda x : isinstance (x, Type), result)
-        return result
+        return self.Q_Result (result)
     # end def _query_single_root
+
+    def _r_query_s (self, r_map, role, obj) :
+        return r_map [role] [obj.id]
+    # end def _r_query_s
+
+    def _r_query_t (self, r_map, role, obj) :
+        i = role.role_index
+        return itertools.chain \
+            ( r_map [role] [obj.id]
+            , * ( r_map [c.Roles [i]] [obj.id]
+                for c in role.assoc.children.itervalues ()
+                )
+            )
+    # end def _r_query_t
 
     def _t_count (self, Type, seen = None) :
         if seen is None :
