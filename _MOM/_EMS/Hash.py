@@ -51,6 +51,7 @@
 #                       `_query_single_root`
 #                     - removed `s_count`, `s_extension`, and `t_extension`
 #                     - s/t_count/_t_count/
+#                     - `s_role` and `t_role` replaced by `role_query`
 #    ««revision-date»»···
 #--
 
@@ -191,26 +192,22 @@ class Manager (MOM.EMS._Manager_) :
         self.add    (entity, entity.id)
     # end def rename
 
-    def s_role (self, role, obj, sort_key = False) :
-        result = self._r_map [role] [obj.id]
-        if sort_key is not None :
-            result = sorted (result, key = role.assoc.sort_key (sort_key))
-        return result
-    # end def s_role
-
-    def t_role (self, role, obj, sort_key = False) :
+    def role_query (self, role, obj, * filters, ** kw) :
+        strict = kw.pop ("strict", False)
         r_map  = self._r_map
-        i      = role.role_index
-        result = itertools.chain \
-            ( r_map [role] [obj.id]
-            , * ( r_map [c.Roles [i]] [obj.id]
-                for c in role.assoc.children.itervalues ()
+        if strict :
+            result = r_map [role] [obj.id]
+        else :
+            i      = role.role_index
+            result = itertools.chain \
+                ( r_map [role] [obj.id]
+                , * ( r_map [c.Roles [i]] [obj.id]
+                    for c in role.assoc.children.itervalues ()
+                    )
                 )
-            )
-        if sort_key is not None :
-            result = sorted (result, key = role.assoc.sort_key (sort_key))
+        result = self.Q_Result (result, * filters, ** kw)
         return result
-    # end def t_role
+    # end def role_query
 
     def _query_multi_root (self, Type) :
         tables = self._tables

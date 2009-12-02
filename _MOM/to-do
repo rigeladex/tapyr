@@ -108,6 +108,12 @@ MOM To-Do
       role queries          unchanged
       ============          ===================================================
 
+  * EMS
+
+    + all_links : return Q_Result ?
+
+
+
   * s_extension, etc. should return Q_Result objects
 
   x Q_Result is

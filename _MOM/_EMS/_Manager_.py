@@ -102,6 +102,24 @@ class _Manager_ (TFL.Meta.Object) :
         return result
     # end def query
 
+    def role_query (self, role, obj, * filters, ** kw) :
+        if not isinstance (obj, role.role_type.Essence) :
+            result = self.Q_Result ([])
+        else :
+            Type   = role.assoc
+            root   = Type.relevant_root
+            assert root, role
+            result = self.Q_Result \
+                ( self._query_single_root (Type, root)
+                ).filter (** {role.name : obj})
+            strict = kw.pop ("strict", False)
+            if filters or kw:
+                result = result.filter (* filters, ** kw)
+            if strict :
+                result = result.filter (type_name = Type.type_name)
+        return result
+    # end def role_query
+
     def _query_multi_root (self, Type) :
         raise NotImplementedError \
             ("%s needs to define %s" % (self.__class__, "_query_multi_root"))

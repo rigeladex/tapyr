@@ -203,6 +203,12 @@ class _Q_Result_ (TFL.Meta.Object) :
         return iter (self._cache)
     # end def __iter__
 
+    def __nonzero__ (self) :
+        if self._cache is None :
+            self._fill_cache ()
+        return bool (self._cache)
+    # end def __nonzero__
+
 # end class _Q_Result_
 
 @TFL.Add_New_Method (_Q_Result_)
@@ -323,6 +329,10 @@ class Q_Result_Composite (Q_Result) :
     def count (self) :
         return sum (q.count () for q in self.queries)
     # end def count
+
+    def __nonzero__ (self) :
+        return any (self.queries)
+    # end def __nonzero__
 
 # end class Q_Result_Composite
 

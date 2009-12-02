@@ -34,6 +34,7 @@
 #    13-Oct-2009 (CT) `Named_Object` added
 #    24-Nov-2009 (CT) `all_links` added
 #    28-Nov-2009 (CT) `is_partial = True` added to all classes
+#     2-Dec-2009 (CT) `all_links` changed to use `ems.role_query`
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,7 @@ class _MOM_Object_ (MOM.Id_Entity) :
         result = set ()
         scope  = self.home_scope
         for role in itertools.chain (* self.__class__.link_map.itervalues ()) :
-            result.update (scope.ems.s_role (role, self, None))
+            result.update (scope.ems.role_query (role, self, strict = True))
         return sorted (result, key = scope.MOM.Id_Entity.sort_key ())
     # end def all_links
 

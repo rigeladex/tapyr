@@ -542,6 +542,9 @@ etype:
     >>> show (PTL.s_links_of (l = ("Tan", "Tan")))
     []
 
+    >>> show (PTL.s_links_of_obj (p))
+    [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
+
     >>> t1
     BMT.Trap ('X', 1)
     >>> t1.all_links ()

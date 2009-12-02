@@ -166,6 +166,8 @@
 #    13-Nov-2009 (CT)  `tupled` removed (Usage of `map` is not compatible with
 #                      Python 3.x)
 #     2-Dec-2009 (CT)  `uniq_p` added
+#     2-Dec-2009 (CT)  `intersection`, `intersection_n` and `union` modernized
+#     2-Dec-2009 (CT)  `_sorted` removed (only needed for ancient Pythons)
 #    ««revision-date»»···
 #--
 
@@ -506,18 +508,16 @@ def intersection (l, r) :
        >>> intersection (range (4), range (2,5))
        [2, 3]
     """
-    return filter (dict_from_list (l).has_key, r)
+    r_set = set (r)
+    return [x for x in l if x in r_set]
 # end def intersection
 
-def intersection_n (* lists) :
-    """Compute intersection of `lists`."""
-    tab = {}
-    N   = len (lists)
-    for l in lists :
-        for x in l :
-            tab [x] = tab.get (x, 0) + 1
-    result = (x for (x, n) in tab.items () if n == N)
-    return sorted (result)
+def intersection_n (l1, * ls) :
+    """Compute intersection of `l1` and all elements of `ls`."""
+    result = set (l1)
+    for l in ls :
+        result.intersection_update (l)
+    return result
 # end def intersection_n
 
 def intersection_ns (lists) :
@@ -550,6 +550,7 @@ def is_contiguous (seq) :
 def is_ordered (seq, decorator = None) :
     """Returns whether `seq` is ordered (according to `decorator`)
 
+       >>> from _TFL.Accessor import Getter
        >>> is_ordered ([0, 1, 3, 7])
        True
        >>> is_ordered ([0, 1, 4, 3])
@@ -560,9 +561,9 @@ def is_ordered (seq, decorator = None) :
        True
        >>> is_ordered ([])
        True
-       >>> is_ordered ([(2, 0), (1, 1), (3, 2)], lambda (a, b) : a)
+       >>> is_ordered ([(2, 0), (1, 1), (3, 2)], Getter [0])
        False
-       >>> is_ordered ([(2, 0), (1, 1), (3, 2)], lambda (a, b) : b)
+       >>> is_ordered ([(2, 0), (1, 1), (3, 2)], Getter [1])
        True
     """
 
@@ -796,31 +797,8 @@ def second_arg (x, y, * args, ** kw) :
     return y
 # end def second_arg
 
-def _sorted (seq, cmp = None, key = None, reverse = False) :
-    """Returns a sorted copy of `seq'.
-
-       >>> _sorted ([1, 3, 5, 2, 4])
-       [1, 2, 3, 4, 5]
-       >>> _sorted ([1, 3, 5, 2, 4], lambda l, r : cmp (-l, -r))
-       [5, 4, 3, 2, 1]
-       >>> _sorted ([1, 2, 2, 1])
-       [1, 1, 2, 2]
-       >>> _sorted ([])
-       []
-    """
-    if key is not None :
-        return _dusort (seq, key, reverse)
-    result = list (seq)
-    result.sort (cmp)
-    if reverse :
-        result.reverse ()
-    return result
-# end def _sorted
-
-try :
-    sorted = sorted
-except NameError :
-    sorted = _sorted
+### Legacy: allow `sorted` to be passed to `_Export`
+sorted = sorted
 
 def split_by_key (seq, key_cmp, min_result_size = 1) :
     """Returns a list of lists each containing the elements of `seq' with a
@@ -967,13 +945,13 @@ def tupelize (l) :
 def union (* lists) :
     """Compute the union of lists.
 
-       >>> union (range (3), range (42, 45))
+       >>> sorted (union (range (3), range (42, 45)))
        [0, 1, 2, 42, 43, 44]
     """
     result = set ()
     for l in lists :
         result.update (l)
-    return list (result)
+    return result
 # end def union
 
 def uniq (seq) :
