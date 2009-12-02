@@ -147,7 +147,8 @@ class Bound_Nested_Form_Group (DJO.Bound_Field_Group) :
 
     def save_and_assign (self, instance) :
         rel_instances = [nf.save () for nf in self.forms]
-        setattr (instance, self.field_name, [i for i in rel_instances if i.pk])
+        setattr \
+            (instance, self.field_name, [i for i in rel_instances if i.pk])
     # end def save_and_assign
 
     def full_clean (self) :

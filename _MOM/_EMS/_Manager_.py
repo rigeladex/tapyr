@@ -95,7 +95,7 @@ class _Manager_ (TFL.Meta.Object) :
             result = self._query_single_root (Type, root)
         else :
             result = self._query_multi_root (Type)
-        if filters or kw:
+        if filters or kw :
             result = result.filter (* filters, ** kw)
         if strict :
             result = result.filter (type_name = Type.type_name)

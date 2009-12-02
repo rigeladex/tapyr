@@ -83,17 +83,6 @@ class Manager (MOM.EMS._Manager_) :
         renamer     ()
     # end def rename
 
-    def s_role (self, role, obj, sort_key = False) :
-        if not isinstance (obj, role.role_type.Essence) :
-            return [] ### if the type of the role is worng, return an emty list
-        return self.session.query \
-            (role.assoc).filter_by (** {role.name : obj}).all ()
-    # end def s_role
-
-    def t_role (self, role, obj, sort_key = False) :
-        return self.s_role (role, obj, sort_key)
-    # end def t_role
-
     def _query_multi_root (self, Type) :
         QR = self.Q_Result
         S  = self.session
