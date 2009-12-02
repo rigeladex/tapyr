@@ -163,8 +163,9 @@
 #     3-Nov-2009 (CT)  Use `TFL.paired_map` instead of built-in map (which
 #                      will change semantics in 3.x)
 #    11-Nov-2009 (CT)  Legacy `_sorted` changed to 3-compatibility
-#    13-Nov-2009 (CT) `tupled` removed (Usage of `map` is not compatible with
-#                     Python 3.x)
+#    13-Nov-2009 (CT)  `tupled` removed (Usage of `map` is not compatible with
+#                      Python 3.x)
+#     2-Dec-2009 (CT)  `uniq_p` added
 #    ««revision-date»»···
 #--
 
@@ -998,6 +999,23 @@ def uniq (seq) :
             seen.add (e)
             yield e
 # end def uniq
+
+def uniq_p (seq, pred) :
+    """Returns a copy of `seq` where duplicates with regard to `pred` are
+       eliminated while preserving the order of the remaining elements.
+
+       >>> range (1, 60, 5)
+       [1, 6, 11, 16, 21, 26, 31, 36, 41, 46, 51, 56]
+       >>> list (uniq_p (range (1, 60, 5), lambda x : x%6))
+       [1, 6, 11, 16, 21, 26]
+    """
+    seen = set ()
+    for e in seq :
+        p = pred (e)
+        if p not in seen :
+            seen.add (p)
+            yield e
+# end def uniq_p
 
 def un_nested (l) :
     """Returns list `l' in un-nested form (i.e., if it is a one-element list

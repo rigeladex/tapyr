@@ -34,7 +34,10 @@
 #     6-May-2008 (CT) Use `all_true` and `any_true` instead of `all` and
 #                     `any` to avoid errors from Python 2.4
 #    17-Oct-2008 (CT) `* args, ** kw` added to filter functions
+#     1-Dec-2009 (CT) `Attr_Query` and `Attr_Filter` added
 #     1-Dec-2009 (MG) `Attr_Query.__mod__` added
+#     2-Dec-2009 (CT) `_Filter_Q_.__init__` changed to not extract
+#                     `predicate` of `Attr_Filter` instances
 #    ««revision-date»»···
 #--
 
@@ -264,6 +267,8 @@ class _Filter_Q_ (_Filter_) :
         for pof in pred_or_filters :
             if isinstance (pof, self.__class__) :
                 ext (pof.predicates)
+            elif isinstance (pof, Attr_Filter) :
+                add (pof)
             else :
                 add (getattr (pof, "predicate", pof))
     # end def __init__
@@ -367,8 +372,6 @@ class Attr_Query (TFL.Meta.Object) :
        True
        >>> (Q.fool % 2) (Record (fool = 20))
        0
-       >>> ((Q.fool % 2) == 0) (Record (fool = 21))
-       False
     """
 
     def __init__ (self, name = None) :
