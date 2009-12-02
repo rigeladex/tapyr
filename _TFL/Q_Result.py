@@ -80,6 +80,30 @@ IndexError: Query result contains 2 entries
 [6]
 >>> qv.one ()
 6
+
+>>> qr = Q_Result (list (range (1, 100, 10)))
+>>> qs = Q_Result (list (range (10, 200, 20)))
+>>> qt = Q_Result (list (x*x for x in range (10)))
+>>> qc = Q_Result_Composite ((qr, qs, qt))
+>>> qr.count ()
+10
+>>> qs.count ()
+10
+>>> qt.count ()
+10
+>>> qc.count ()
+30
+>>> qc.all ()
+[1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+>>> qc.distinct ().count ()
+28
+>>> qc.distinct ().all ()
+[1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 4, 9, 16, 25, 36, 49, 64]
+>>> qc.distinct ().order_by (lambda x : x % 10).all ()
+[10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 4, 64, 25, 16, 36, 9, 49]
+>>> qc.distinct ().distinct (lambda x : x % 10).all ()
+[1, 10, 4, 9, 16, 25]
+
 """
 
 from   _TFL                     import TFL
@@ -90,6 +114,7 @@ import _TFL.Filter
 
 from   _TFL.predicate           import first, uniq, uniq_p
 
+import itertools
 import operator
 
 class _Q_Result_ (TFL.Meta.Object) :
@@ -113,7 +138,7 @@ class _Q_Result_ (TFL.Meta.Object) :
         criterion = None
         if len (criteria) == 1 :
             criterion = first (criteria)
-        else :
+        elif criteria :
             criterion = TFL.Filter_And  (* criteria)
         return self._Q_Result_Distinct_ (self, criterion)
     # end def distinct
@@ -287,6 +312,19 @@ class Q_Result (_Q_Result_) :
     # end def _fill_cache
 
 # end class Q_Result
+
+class Q_Result_Composite (Q_Result) :
+
+    def __init__ (self, queries) :
+        self.queries = queries
+        self.__super.__init__ (itertools.chain (* queries))
+    # end def __init__
+
+    def count (self) :
+        return sum (q.count () for q in self.queries)
+    # end def count
+
+# end class Q_Result_Composite
 
 if __name__ != "__main__" :
     TFL._Export ("*", "_Q_Result_")
