@@ -327,12 +327,26 @@ class Q_Result_Composite (_Q_Result_) :
     @TFL.Decorator
     def super_ordered (q) :
         def _ (self, * args, ** kw) :
-            result = getattr (self.__super, q.__name__) (* args, ** kw)
+            name = q.__name__
+            result = getattr (self.__super, name) (* args, ** kw)
             if self._order_by :
                 result = result.order_by (self._order_by)
             return result
         return _
     # end def super_ordered
+
+    @TFL.Decorator
+    def super_ordered_delegate (q) :
+        def _ (self, * args, ** kw) :
+            name   = q.__name__
+            result = self.__class__ \
+                ([getattr (sq, name) (* args, ** kw) for sq in self.queries])
+            result = getattr (result.__super, name) (* args, ** kw)
+            if self._order_by :
+                result = result.order_by (self._order_by)
+            return result
+        return _
+    # end def super_ordered_delegate
 
     def __init__ (self, queries, order_by = None) :
         self.queries   = queries
@@ -340,19 +354,19 @@ class Q_Result_Composite (_Q_Result_) :
         self.__super.__init__ (itertools.chain (* queries))
     # end def __init__
 
-    @super_ordered
+    @super_ordered_delegate
     def distinct (self, * criteria) :
         pass
     # end def distinct
 
     def filter (self, * criteria, ** kw) :
         return self.__class__ \
-            ( [q.filter (* criteria ** kw) for q in self.queries]
+            ( [q.filter (* criteria, ** kw) for q in self.queries]
             , self._order_by
             )
     # end def filter
 
-    @super_ordered
+    @super_ordered_delegate
     def limit (self, limit) :
         pass
     # end def limit
