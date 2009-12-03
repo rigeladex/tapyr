@@ -51,6 +51,7 @@
 #                     `False` unless it is contained in `dct`
 #    30-Nov-2009 (CT) `_m_create_e_types` changed to call
 #                     `app_type.DBW.update_etype` after all etypes were created
+#     3-Dec-2009 (CT) `_m_setup_sorted_by` added and called
 #    ««revision-date»»···
 #--
 
@@ -138,6 +139,7 @@ class M_E_Mixin (TFL.Meta.M_Class) :
         for s in SX :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
         for t in app_type._T_Extension :
+            t._m_setup_sorted_by ()
             ### `DBW.update_etype` can use features like `children` or
             ### `link_map` that are only available after *all* etypes have
             ### already been created
@@ -497,6 +499,10 @@ class M_E_Type (M_E_Mixin) :
         pass
     # end def _m_setup_relevant_roots
 
+    def _m_setup_sorted_by (cls) :
+        pass
+    # end def _m_setup_sorted_by
+
     def __getattr__ (cls, name) :
         ### just to ease up-chaining in descendents
         raise AttributeError ("%s.%s" % (cls.type_name, name))
@@ -548,6 +554,22 @@ class M_E_Type_Id (M_E_Type) :
         else :
             cls.relevant_roots = {}
     # end def _m_setup_children
+
+    def _m_setup_sorted_by (cls) :
+        if cls.epk_sig :
+            sbs = []
+            for pka in cls.primary :
+                et = getattr (pka, "Class", None)
+                if et :
+                    sbs.extend \
+                        ("%s.%s" % (pka.name, x) for x in et.sorted_by_epk)
+                else :
+                    sbs.append (pka.name)
+            sb = TFL.Sorted_By (* sbs)
+        else :
+            sb = TFL.Sorted_By (cls.sort_key)
+        cls.sorted_by_epk = sb
+    # end def _m_setup_sorted_by
 
     def _m_setup_relevant_roots (cls) :
         if not cls.relevant_root :

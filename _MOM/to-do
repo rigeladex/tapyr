@@ -94,27 +94,23 @@ MOM To-Do
 
   x destroy_links / destroy_dependency
 
-- Queries:
+x Queries:
 
-  * E_Type_Manager query methods::
+  x E_Type_Manager query methods::
 
       Method                Remarks
       ============          ===================================================
       query                 replaces `s_extension`, `t_extension`
+      r_query               replaces role queries
       count                 replaces `s_count, `t_count`, `accepts filter
                             criteria
       instance              unchanged
       exists                unchanged
-      role queries          unchanged
       ============          ===================================================
 
-  * EMS
+  x EMS
 
-    + all_links : return Q_Result ?
-
-
-
-  * s_extension, etc. should return Q_Result objects
+    x all_links : return Q_Result ? NO
 
   x Q_Result is
 

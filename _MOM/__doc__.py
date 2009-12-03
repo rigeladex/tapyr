@@ -215,6 +215,70 @@ classes:
     ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM.Sequence_Number']
     >>> [t.type_name for t in apt._T_Extension]
     ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link3', 'MOM.Link2_Ordered', 'MOM.Object', 'MOM.Named_Object', 'MOM.Sequence_Number', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    >>> for t in apt._T_Extension [2:] :
+    ...     print "%%-35s %%s" %% (t.type_name, t.epk_sig)
+    MOM.Id_Entity                       ()
+    MOM.Link                            ()
+    MOM.Link2                           ('left', 'right')
+    MOM.Link3                           ('left', 'middle', 'right')
+    MOM.Link2_Ordered                   ('left', 'right', 'seq_no')
+    MOM.Object                          ()
+    MOM.Named_Object                    ('name',)
+    MOM.Sequence_Number                 ('seq_nr',)
+    BMT.Location                        ('lon', 'lat')
+    BMT.Person                          ('last_name', 'first_name')
+    BMT.Rodent                          ('name',)
+    BMT.Mouse                           ('name',)
+    BMT.Rat                             ('name',)
+    BMT.Beaver                          ('name',)
+    BMT.Otter                           ('name',)
+    BMT.Trap                            ('name', 'serial_no')
+    BMT.Supertrap                       ('name', 'serial_no')
+    BMT.Rodent_in_Trap                  ('left', 'right')
+    BMT.Person_owns_Trap                ('left', 'right')
+    BMT.Person_sets_Trap_at_Location    ('left', 'middle', 'right')
+    >>> for t in apt._T_Extension [2:] :
+    ...     print "%%s%%s    %%s" %% (t.type_name, NL, t.sorted_by.criteria)
+    MOM.Id_Entity
+        (<bound method M_E_Type_Id.sort_key of <class 'MOM.Id_Entity' [BMT__Hash__XXX]>>,)
+    MOM.Link
+        (<bound method M_E_Type_Link.sort_key of <class 'MOM.Link' [BMT__Hash__XXX]>>,)
+    MOM.Link2
+        ('left', 'right')
+    MOM.Link3
+        ('left', 'middle', 'right')
+    MOM.Link2_Ordered
+        ('left', 'right', 'seq_no')
+    MOM.Object
+        (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__XXX]>>,)
+    MOM.Named_Object
+        ('name',)
+    MOM.Sequence_Number
+        ('seq_nr',)
+    BMT.Location
+        ('lon', 'lat')
+    BMT.Person
+        ('last_name', 'first_name')
+    BMT.Rodent
+        ('name',)
+    BMT.Mouse
+        ('name',)
+    BMT.Rat
+        ('name',)
+    BMT.Beaver
+        ('name',)
+    BMT.Otter
+        ('name',)
+    BMT.Trap
+        ('name', 'serial_no')
+    BMT.Supertrap
+        ('name', 'serial_no')
+    BMT.Rodent_in_Trap
+        ('left.name', 'right.name', 'right.serial_no')
+    BMT.Person_owns_Trap
+        ('left.last_name', 'left.first_name', 'right.name', 'right.serial_no')
+    BMT.Person_sets_Trap_at_Location
+        ('left.last_name', 'left.first_name', 'middle.name', 'middle.serial_no', 'right.lon', 'right.lat')
 
     >>> sorted (ET_Person.link_map, key = TFL.Getter.type_name)
     [<class 'BMT.Person_owns_Trap' [BMT__Hash__XXX]>,\
@@ -1052,5 +1116,7 @@ if 0 :
 ### Because the example classes are all defined here and not in their
 ### own package namespace, we'll fake it
 BMT._Export ("*")
+
+NL = chr (10)
 
 ### __END__ MOM.__doc__

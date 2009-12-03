@@ -29,6 +29,7 @@
 # Revision Dates
 #     1-Oct-2009 (CT) Creation (factored from `TOM.Sequence_Number`)
 #    28-Nov-2009 (CT) `is_partial = False` removed
+#     3-Dec-2009 (CT) `sorted_by` added
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,8 @@ _Ancestor_Essence = MOM.Entity
 
 class Sequence_Number (_Ancestor_Essence) :
     """Model sequence number of link in ordered association."""
+
+    sorted_by = TFL.Sorted_By ("seq_nr")
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

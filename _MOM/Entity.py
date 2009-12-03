@@ -63,6 +63,8 @@
 #     3-Dec-2009 (CT) `set_raw` changed to use `on_error`
 #     3-Dec-2009 (CT) `on_error` changed to use `scope._attr_errors` and print
 #                     warning
+#     3-Dec-2009 (CT) `sorted_by` changed to be `Alias_Property` for
+#                     `sorted_by_epk`
 #    ««revision-date»»···
 #--
 
@@ -367,7 +369,7 @@ class Id_Entity (Entity) :
     refuse_links          = set ()
     relevant_root         = None   ### Set by meta machinery
     save_to_db            = True
-    sorted_by             = TFL.Sorted_By ("epk")
+    sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
     tutorial              = None
 
     _app_globals          = {}

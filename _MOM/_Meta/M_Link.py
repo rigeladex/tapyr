@@ -44,6 +44,7 @@
 #    27-Nov-2009 (CT) `_m_setup_etype_auto_props` adapted to change of
 #                     `Role_Cacher`
 #    27-Nov-2009 (CT) `destroy_dependency` added
+#     3-Dec-2009 (CT) `sorted_by` hack removed from `_m_setup_roles`
 #    ««revision-date»»···
 #--
 
@@ -186,14 +187,6 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                          , r.role_type.type_name, r.role_type.type_base_name
                         )) :
                     role_map [key] = r.role_index
-            if cls.sorted_by is MOM.Id_Entity.E_Spec.sorted_by :
-                criteria = itertools.chain \
-                    ( (R.sort_key for R in Roles)
-                    , (TFL.Sorted_By (a.name) for a in cls.primary [nor:])
-                    )
-                cls.sorted_by = TFL.Sorted_By (* criteria)
-            else :
-                pass ### XXX what to do here ???
     # end def _m_setup_roles
 
 # end class M_E_Type_Link

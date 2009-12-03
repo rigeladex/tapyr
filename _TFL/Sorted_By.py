@@ -37,6 +37,7 @@
 #                     `Descending.__eq__` removed again
 #    14-Oct-2009 (CT) Signature of `Sorted_By` changed from `criteria`
 #                     to `* criteria`
+#     3-Dec-2009 (CT) `__iter__` added
 #    ««revision-date»»···
 #--
 
@@ -204,6 +205,10 @@ class Sorted_By (TFL.Meta.Object) :
             result.append (key)
         return result
     # end def keys
+
+    def __iter__ (self) :
+        return iter (self.criteria)
+    # end def __iter__
 
     def __repr__ (self) :
        return "<%s: %s>" % \
