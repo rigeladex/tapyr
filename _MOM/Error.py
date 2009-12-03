@@ -32,6 +32,7 @@
 #    24-Nov-2009 (CT) `No_Such_Object` added
 #    24-Nov-2009 (CT) `Error.__str__` changed
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#     3-Dec-2009 (CT) Optional argument `exc` added to `Invalid_Attribute`
 #    ««revision-date»»···
 #--
 
@@ -430,13 +431,14 @@ class Invariant_Errors (Error) :
 
 class Invalid_Attribute (Error, AttributeError) :
 
-    def __init__ (self, entity, name, val, kind = "unknown") :
-        self.args = \
-            ( ( "Can't set %s attribute <%s>.%s to `%s`"
-              % (kind, entity, name, val)
-              )
-            ,
+    def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
+        msg = \
+            ( "Can't set %s attribute <%s>.%s to `%s`"
+            % (kind, entity, name, val)
             )
+        if exc :
+            msg = "%s\n    %s" % (msg, exc)
+        self.args      = (msg, )
         self.entity    = entity
         self.kind      = kind
         self.attribute = name

@@ -141,6 +141,7 @@ class Scope (TFL.Meta.Object) :
             self.historian           = MOM.SCM.Tracker (self)
             self.ems                 = app_type.EMS    (self)
             self.dbw                 = app_type.DBW    (self)
+            self._attr_errors        = []
             self._setup_pkg_ns         (app_type)
             if name :
                 self._setup_root       (app_type, name)

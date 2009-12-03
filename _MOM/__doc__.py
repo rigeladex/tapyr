@@ -596,7 +596,7 @@ Changing objects and links
     Traceback (most recent call last):
       ...
     Invariant_Error: Condition `AC_check_weight_0` :  (weight > 0)
-        weight = 0
+        weight = 0.0
     >>> m.set (weight = -5.0)
     Traceback (most recent call last):
       ...
@@ -613,6 +613,14 @@ Changing objects and links
     Traceback (most recent call last):
       ...
     ValueError: invalid literal for float(): one ton
+    >>> m.set_raw (weight = "one ton")
+    Traceback (most recent call last):
+      ...
+    Invalid_Attribute: Can't set required attribute <'Mighty_Mouse'>.weight to `one ton`
+        `unexpected EOF while parsing (<string>, line 1)` for : `weight'
+         expected type  : `Float'
+         got      value : `one ton -> one ton'
+         of       type  : `<type 'str'>`
     >>> m.set_raw (color = "yellow", weight = "42")
     3
     >>> m.color, m.weight

@@ -29,6 +29,10 @@
 #     1-Oct-2009 (CT) Creation (factored from TOM.Pred.Type)
 #    21-Oct-2009 (CT) `attr_none` added to `Attribute_Check`
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#     3-Dec-2009 (CT) `set_s_attr_value` changed to apply `attr.cooked` to
+#                     values taken from `attr_dict`
+#                     * 3-compatibility: passing a `str` for an attribute of
+#                       type `float` breaks checks like `value > 0`
 #    ««revision-date»»···
 #--
 
@@ -137,20 +141,23 @@ class _Condition_ (object):
             return self.set_s_attr_value (obj, dict, attr, val_dict)
     # end def set_attr_value
 
-    def set_s_attr_value (self, obj, dict, attr, val_dict) :
+    def set_s_attr_value (self, obj, dict, name, val_dict) :
         result = None
-        if attr in dict :
-            result = dict [attr]
-        elif hasattr (obj, attr) or (attr in self.attr_none) :
-            result = self.kind.get_attr_value (obj, attr)
+        if name in dict :
+            attr   = getattr (obj.__class__, name, None)
+            result = dict [name]
+            if attr is not None :
+                result = attr.cooked (result)
+        elif hasattr (obj, name) or (name in self.attr_none) :
+            result = self.kind.get_attr_value (obj, name)
         else :
             raise AttributeError \
                 ( "Invalid invariant `%s` references undefined attribute `%s`"
                   "\n    %s:"
                   "\n    %s"
-                % (self.name, attr, obj, self.assertion)
+                % (self.name, name, obj, self.assertion)
                 )
-        val_dict [attr] = result
+        val_dict [name] = result
         return result
     # end def set_s_attr_value
 

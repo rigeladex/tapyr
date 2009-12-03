@@ -60,6 +60,9 @@
 #    26-Nov-2009 (CT) s/_finish__init__/_main__init__/
 #    27-Nov-2009 (CT) `update_dependency_names` removed
 #    28-Nov-2009 (CT) `is_partial = True` added to all classes
+#     3-Dec-2009 (CT) `set_raw` changed to use `on_error`
+#     3-Dec-2009 (CT) `on_error` changed to use `scope._attr_errors` and print
+#                     warning
 #    ««revision-date»»···
 #--
 
@@ -232,18 +235,17 @@ class Entity (TFL.Meta.Object) :
         if kw :
             cooked_kw = {}
             to_do     = []
+            if on_error is None :
+                on_error = self._raise_attr_error
             for name, val, attr in self.set_attr_iter (kw, on_error) :
                 if val :
                     try :
                         cooked_kw [name] = cooked_val = \
                             attr.from_string (val, self)
                     except ValueError as err:
-                        print ("Warning: Error when setting attribute %s "
-                               "of %r to %s\nClearing attribute"
-                              ) % (attr.name, self, val)
-                        self.home_scope._db_errors.append \
+                        on_error \
                             ( MOM.Error.Invalid_Attribute
-                                (self, name, val, attr.kind)
+                                (self, name, val, attr.kind, err)
                             )
                         if __debug__ :
                             print err
@@ -312,7 +314,8 @@ class Entity (TFL.Meta.Object) :
     # end def _set_record
 
     def _store_attr_error (self, exc) :
-        self.home_scope._db_errors.append (exc)
+        print ("Warning: Setting attribute failked with exception %s" % (exc, ))
+        self.home_scope._attr_errors.append (exc)
     # end def _store_attr_error
 
     def __getattr__ (self, name) :
