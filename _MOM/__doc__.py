@@ -244,11 +244,11 @@ classes:
     MOM.Link
         (<bound method M_E_Type_Link.sort_key of <class 'MOM.Link' [BMT__Hash__XXX]>>,)
     MOM.Link2
-        ('left', 'right')
+        (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2' [BMT__Hash__XXX]>>,)
     MOM.Link3
-        ('left', 'middle', 'right')
+        (<bound method M_E_Type_Link3.sort_key of <class 'MOM.Link3' [BMT__Hash__XXX]>>,)
     MOM.Link2_Ordered
-        ('left', 'right', 'seq_no')
+        (<bound method M_E_Type_Link2_Ordered.sort_key of <class 'MOM.Link2_Ordered' [BMT__Hash__XXX]>>,)
     MOM.Object
         (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__XXX]>>,)
     MOM.Named_Object

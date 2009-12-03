@@ -38,6 +38,7 @@
 #    14-Oct-2009 (CT) Signature of `Sorted_By` changed from `criteria`
 #                     to `* criteria`
 #     3-Dec-2009 (CT) `__iter__` added
+#     3-Dec-2009 (CT) `keys` changed to allow `-` following `.`, too
 #    ««revision-date»»···
 #--
 
@@ -198,8 +199,8 @@ class Sorted_By (TFL.Meta.Object) :
         for c in self.criteria :
             if hasattr (c, "__call__") :
                 key = c
-            elif c.startswith ("-") :
-                key = Desc_Getter (getattr (TFL.Getter, c [1:]))
+            elif c.startswith ("-") or ".-" in c :
+                key = Desc_Getter (getattr (TFL.Getter, c.replace ("-", "")))
             else :
                 key = getattr (TFL.Getter, c)
             result.append (key)

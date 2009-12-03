@@ -556,18 +556,21 @@ class M_E_Type_Id (M_E_Type) :
     # end def _m_setup_children
 
     def _m_setup_sorted_by (cls) :
+        sbs = []
         if cls.epk_sig :
-            sbs = []
             for pka in cls.primary :
-                et = getattr (pka, "Class", None)
-                if et :
-                    sbs.extend \
-                        ("%s.%s" % (pka.name, x) for x in et.sorted_by_epk)
+                if isinstance (pka.attr, MOM.Attr._A_Object_) :
+                    et = pka.Class
+                    if et :
+                        sbs.extend \
+                            ("%s.%s" % (pka.name, x) for x in et.sorted_by_epk)
+                    else :
+                        ### Class is to abstract: need to use `cls.sort_key`
+                        sbs = [cls.sort_key]
+                        break
                 else :
                     sbs.append (pka.name)
-            sb = TFL.Sorted_By (* sbs)
-        else :
-            sb = TFL.Sorted_By (cls.sort_key)
+        sb = TFL.Sorted_By (* (sbs or [cls.sort_key]))
         cls.sorted_by_epk = sb
     # end def _m_setup_sorted_by
 
