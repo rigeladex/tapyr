@@ -1037,6 +1037,9 @@ def show (e) :
 import warnings
 warnings.filterwarnings \
     ( "ignore", "in 3.x, __getslice__ has been removed; use __getitem__")
+if 0 :
+    warnings.filterwarnings \
+        ( "error",  "comparing unequal types not supported in 3.x")
 
 ### Because the example classes are all defined here and not in their
 ### own package namespace, we'll fake it

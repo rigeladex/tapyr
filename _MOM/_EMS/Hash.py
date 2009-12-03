@@ -52,6 +52,7 @@
 #                     - removed `s_count`, `s_extension`, `s_role`,
 #                       `t_extension`, and `t_role`
 #                     - s/t_count/_t_count/
+#     3-Dec-2009 (CT) `r_query` corrected
 #    ««revision-date»»···
 #--
 
@@ -121,8 +122,7 @@ class Manager (MOM.EMS._Manager_) :
     def count (self, Type, * filters, ** kw) :
         strict = kw.pop ("strict", False)
         if filters or kw :
-            if strict :
-                kw ["strict"] = strict
+            kw ["strict"] = strict ### put it back
             result = self.__super.count (* filters, ** kw)
         else :
             if strict :
@@ -194,10 +194,10 @@ class Manager (MOM.EMS._Manager_) :
     # end def rename
 
     def r_query (self, Type, rkw, * filters, ** kw) :
-        r_map  = self._r_map
-        strict = kw.pop ("strict", False)
-        q      = [self._r_query_t, self._r_query_s] [strict]
-        result = set ()
+        r_map   = self._r_map
+        strict  = kw.pop ("strict", False)
+        q       = [self._r_query_t, self._r_query_s] [strict]
+        queries = []
         for (rn, obj) in rkw.iteritems () :
             try :
                 i    = Type.role_map [rn]
@@ -205,8 +205,8 @@ class Manager (MOM.EMS._Manager_) :
                 print Type, Type.Roles, Type.role_map
                 raise
             role = Type.Roles    [i]
-            result.update (q (r_map, role, obj))
-        result = self.Q_Result (result, * filters, ** kw)
+            queries.append (q (r_map, role, obj))
+        result = self.Q_Result (intersection_n (* queries), * filters, ** kw)
         return result
     # end def r_query
 
