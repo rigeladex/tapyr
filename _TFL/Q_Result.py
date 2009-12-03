@@ -102,10 +102,16 @@ IndexError: Query result contains 2 entries
 [1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 4, 9, 16, 25, 36, 49, 64]
 >>> qc.distinct ().order_by (lambda x : x % 10).all ()
 [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 4, 64, 25, 16, 36, 9, 49]
->>> qc.distinct ().distinct (lambda x : x % 10).all ()
+>>> qc.distinct (lambda x : x % 10).all ()
 [1, 10, 4, 9, 16, 25]
 >>> qc [5:15].all ()
 [51, 61, 71, 81, 91, 10, 30, 50, 70, 90]
+>>> qc.limit (5).all ()
+[1, 11, 21, 31, 41]
+>>> qc.distinct (lambda x : x % 10).limit (3).all ()
+[1, 10, 4]
+>>> qc.limit (15).distinct (lambda x : x % 10).all ()
+[1, 10]
 
 """
 
