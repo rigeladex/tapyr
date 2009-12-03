@@ -108,13 +108,24 @@ class Id_Entity (TFL.Meta.Object) :
            All other filters reduce the number of instances returned to those
            that satisfy the filter conditions.
         """
-        sort_key = kw.pop ("sort_key", False)
+        sort_key = kw.pop ("sort_key", None)
         Type     = self._etype
         result   = self.home_scope.ems.query (Type, * filters, ** kw)
         if sort_key is not None :
-            result = result.order_by (Type.sort_key (sort_key))
+            result = result.order_by (sort_key)
         return result
     # end def query
+
+    def query_s (self, * filters, ** kw) :
+        """Return `self.query (* filters, ** kw)`
+           sorted by `Type.sort_key (kw.get ("sort_key"))`.
+        """
+        sort_key = kw.pop ("sort_key", None)
+        result   = self.query (* filters, ** kw)
+        result   = TFL.Q_Result_Composite \
+            ([result], self._etype.sort_key (sort_key))
+        return result
+    # end def query_s
 
     def __getattr__ (self, name) :
         return getattr (self._etype, name)
@@ -206,7 +217,7 @@ class Link (Id_Entity) :
 
            - some backends optimize link queries triggered via `r_query`.
         """
-        sort_key = kw.pop ("sort_key", False)
+        sort_key = kw.pop ("sort_key", None)
         Type     = self._etype
         map      = getattr (Type, "role_map", None)
         rkw      = {}
@@ -224,9 +235,20 @@ class Link (Id_Entity) :
         else :
             result = ems.query   (self._etype, * filters, ** kw)
         if sort_key is not None :
-            result = result.order_by (Type.sort_key (sort_key))
+            result = result.order_by (sort_key)
         return result
     # end def r_query
+
+    def r_query_s (self, * filters, ** kw) :
+        """Return `self.r_query (* filters, ** kw)`
+           sorted by `Type.sort_key (kw.get ("sort_key"))`.
+        """
+        sort_key = kw.pop ("sort_key", None)
+        result   = self.r_query (* filters, ** kw)
+        result   = TFL.Q_Result_Composite \
+            ([result], self._etype.sort_key (sort_key))
+        return result
+    # end def r_query_s
 
     def links_of (self, obj, * filters, ** kw) :
         """Return all links to `obj`

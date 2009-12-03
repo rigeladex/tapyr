@@ -507,130 +507,130 @@ etype:
 
     >>> scope.BMT.Mouse.count
     1
-    >>> list (scope.BMT.Mouse.query (strict = True))
+    >>> list (scope.BMT.Mouse.query_s (strict = True))
     [BMT.Mouse ('Mighty_Mouse')]
     >>> scope.BMT.Mouse.count_transitive
     2
-    >>> list (scope.BMT.Mouse.query ())
+    >>> list (scope.BMT.Mouse.query_s ())
     [BMT.Mouse ('Mighty_Mouse'), BMT.Beaver ('Toothy_Beaver')]
 
     >>> scope.BMT.Rat.count
     2
-    >>> list (scope.BMT.Rat.query (strict = True))
+    >>> list (scope.BMT.Rat.query_s (strict = True))
     [BMT.Rat ('Axel'), BMT.Rat ('Rutty_Rat')]
     >>> scope.BMT.Rat.count_transitive
     2
-    >>> list (scope.BMT.Rat.query ())
+    >>> list (scope.BMT.Rat.query_s ())
     [BMT.Rat ('Axel'), BMT.Rat ('Rutty_Rat')]
 
     >>> scope.BMT.Rodent.count
     0
-    >>> list (scope.BMT.Rodent.query (strict = True))
+    >>> list (scope.BMT.Rodent.query_s (strict = True))
     []
     >>> scope.BMT.Rodent.count_transitive
     4
-    >>> list (scope.BMT.Rodent.query ())
+    >>> list (scope.BMT.Rodent.query_s ())
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
 
     >>> scope.MOM.Named_Object.count_transitive
     8
-    >>> list (scope.MOM.Named_Object.query ())
+    >>> list (scope.MOM.Named_Object.query_s ())
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
     >>> scope.MOM.Object.count_transitive
     13
-    >>> list (scope.MOM.Object.query ())
+    >>> list (scope.MOM.Object.query_s ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
 
-    >>> list (scope.MOM.Id_Entity.query ())
+    >>> list (scope.MOM.Id_Entity.query_s ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
     >>> scope.MOM.Id_Entity.count_transitive
     23
 
     >>> scope.MOM.Link.count_transitive
     10
-    >>> list (scope.MOM.Link.query ())
+    >>> list (scope.MOM.Link.query_s ())
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
     >>> scope.MOM.Link2.count_transitive
     7
-    >>> list (scope.MOM.Link2.query ())
+    >>> list (scope.MOM.Link2.query_s ())
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
     >>> scope.MOM.Link3.count_transitive
     3
-    >>> list (scope.MOM.Link3.query ())
+    >>> list (scope.MOM.Link3.query_s ())
     [BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)
     >>> RiT.count_transitive
     3
-    >>> show (RiT.query ())
+    >>> show (RiT.query_s ())
     [(('Axel'), ('X', 2)), (('Mighty_Mouse'), ('X', 1)), (('Rutty_Rat'), ('Y', 1))]
-    >>> show (RiT.query (sort_key = sk_right_left))
+    >>> show (RiT.query_s (sort_key = sk_right_left))
     [(('Mighty_Mouse'), ('X', 1)), (('Axel'), ('X', 2)), (('Rutty_Rat'), ('Y', 1))]
 
-    >>> show (RiT.r_query (right = t1, strict = True))
+    >>> show (RiT.r_query_s (right = t1, strict = True))
     [(('Mighty_Mouse'), ('X', 1))]
-    >>> show (RiT.r_query (trap = ("X", 2)))
+    >>> show (RiT.r_query_s (trap = ("X", 2)))
     [(('Axel'), ('X', 2))]
-    >>> show (RiT.r_query (trap = ("Y", "1"), strict = True))
+    >>> show (RiT.r_query_s (trap = ("Y", "1"), strict = True))
     [(('Rutty_Rat'), ('Y', 1))]
-    >>> show (RiT.r_query (right = m))
+    >>> show (RiT.r_query_s (right = m))
     []
-    >>> show (RiT.r_query (left = "Foxy_Fox", strict = True))
+    >>> show (RiT.r_query_s (left = "Foxy_Fox", strict = True))
     []
 
-    >>> show (RiT.r_query (left = m))
+    >>> show (RiT.r_query_s (left = m))
     [(('Mighty_Mouse'), ('X', 1))]
-    >>> show (RiT.r_query (rodent = "Rutty_Rat"))
+    >>> show (RiT.r_query_s (rodent = "Rutty_Rat"))
     [(('Rutty_Rat'), ('Y', 1))]
-    >>> show (RiT.r_query (left = ("Axel", ), strict = True))
+    >>> show (RiT.r_query_s (left = ("Axel", ), strict = True))
     [(('Axel'), ('X', 2))]
-    >>> show (RiT.r_query (left = "Jimmy", strict = True))
+    >>> show (RiT.r_query_s (left = "Jimmy", strict = True))
     []
 
     >>> PoT.count_transitive
     4
-    >>> show (PoT.r_query (left = p))
+    >>> show (PoT.r_query_s (left = p))
     [(('Luke', 'Lucky'), ('X', 1)), (('Luke', 'Lucky'), ('X', 2))]
-    >>> show (PoT.r_query (person = ("Dog",  "Snoopy")))
+    >>> show (PoT.r_query_s (person = ("Dog",  "Snoopy")))
     [(('Dog', 'Snoopy'), ('Y', 1))]
 
     >>> PTL.count_transitive
     3
-    >>> show (PTL.r_query (left = p, trap = t1))
+    >>> show (PTL.r_query_s (left = p, trap = t1))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
-    >>> show (PTL.r_query (person = p, middle = ("X", 2)))
+    >>> show (PTL.r_query_s (person = p, middle = ("X", 2)))
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (person = ("Luke", "Lucky"), trap = t3, strict = True))
+    >>> show (PTL.r_query_s (person = ("Luke", "Lucky"), trap = t3, strict = True))
     [(('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (left = q, middle = t1))
+    >>> show (PTL.r_query_s (left = q, middle = t1))
     []
 
-    >>> show (PTL.r_query (left = p))
+    >>> show (PTL.r_query_s (left = p))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (location = (-16.74077, 48.463313)))
+    >>> show (PTL.r_query_s (location = (-16.74077, 48.463313)))
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (trap = ("Y", "1")))
+    >>> show (PTL.r_query_s (trap = ("Y", "1")))
     [(('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (person = ("Tan", "Tan")))
+    >>> show (PTL.r_query_s (person = ("Tan", "Tan")))
     []
 
-    >>> show (PTL.r_query (left = p))
+    >>> show (PTL.r_query_s (left = p))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (middle = ('X', 2)))
+    >>> show (PTL.r_query_s (middle = ('X', 2)))
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (right = l1))
+    >>> show (PTL.r_query_s (right = l1))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
-    >>> show (PTL.r_query (trap = t2, location = l2))
+    >>> show (PTL.r_query_s (trap = t2, location = l2))
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (middle = ('Y', 1), right = l1))
+    >>> show (PTL.r_query_s (middle = ('Y', 1), right = l1))
     []
-    >>> show (PTL.r_query (left = p, middle = ('X', 2), right = l2))
+    >>> show (PTL.r_query_s (left = p, middle = ('X', 2), right = l2))
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
-    >>> show (PTL.r_query (person = p, trap = ('X', 2), location = l1))
+    >>> show (PTL.r_query_s (person = p, trap = ('X', 2), location = l1))
     []
-    >>> show (PTL.r_query (person = p, trap = ('X', 1), location = l1))
+    >>> show (PTL.r_query_s (person = p, trap = ('X', 1), location = l1))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
-    >>> show (PTL.r_query (left = ("Tan", "Tan")))
+    >>> show (PTL.r_query_s (left = ("Tan", "Tan")))
     []
 
     >>> show (PTL.links_of (p))
@@ -775,7 +775,7 @@ Changing objects and links
     >>> print rit.as_code ()
     BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1), )
 
-    >>> scope.MOM.Link.query ().all ()
+    >>> scope.MOM.Link.query_s ().all ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
 
     .. ### DBW-specific start
@@ -810,9 +810,9 @@ Changing objects and links
 
     .. ### DBW-specific finish
 
-    >>> scope.MOM.Link.query ().count ()
+    >>> scope.MOM.Link.query_s ().count ()
     9
-    >>> scope.MOM.Link.r_query ().all ()
+    >>> scope.MOM.Link.r_query_s ().all ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
 
     >>> t1.destroy ()
@@ -826,11 +826,11 @@ Changing objects and links
 
     .. ### DBW-specific finish
 
-    >>> scope.MOM.Link.query ().all ()
+    >>> scope.MOM.Link.query_s ().all ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
 
     >>> t2.destroy ()
-    >>> scope.MOM.Link.query ().all ()
+    >>> scope.MOM.Link.query_s ().all ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
 
     .. ### DBW-specific start

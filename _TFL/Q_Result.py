@@ -28,6 +28,7 @@
 # Revision Dates
 #     1-Dec-2009 (CT) Creation
 #     2-Dec-2009 (CT) Creation continued
+#     3-Dec-2009 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -103,6 +104,8 @@ IndexError: Query result contains 2 entries
 [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 0, 1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 4, 64, 25, 16, 36, 9, 49]
 >>> qc.distinct ().distinct (lambda x : x % 10).all ()
 [1, 10, 4, 9, 16, 25]
+>>> qc [5:15].all ()
+[51, 61, 71, 81, 91, 10, 30, 50, 70, 90]
 
 """
 
@@ -185,16 +188,20 @@ class _Q_Result_ (TFL.Meta.Object) :
         return self._Q_Result_Sliced_ (self, start, stop)
     # end def slice
 
+    def _fill_cache (self) :
+        self._cache = list (self.iterable)
+    # end def _fill_cache
+
     def __getitem__ (self, key) :
         if isinstance (key, slice) :
-            return self._Q_Result_Sliced_ (self, key.start, key.stop)
+            return self.slice (key.start, key.stop)
         if self._cache is None :
             self._fill_cache ()
         return self._cache [key]
     # end def __getitem__
 
     def __getslice__ (self, start, stop) :
-        return self._Q_Result_Sliced_ (self, start, stop)
+        return self.slice (start, stop)
     # end def __getslice__
 
     def __iter__ (self) :
@@ -313,22 +320,64 @@ class Q_Result (_Q_Result_) :
             self._cache = iterable
     # end def __init__
 
-    def _fill_cache (self) :
-        self._cache = list (self.iterable)
-    # end def _fill_cache
-
 # end class Q_Result
 
-class Q_Result_Composite (Q_Result) :
+class Q_Result_Composite (_Q_Result_) :
 
-    def __init__ (self, queries) :
-        self.queries = queries
+    @TFL.Decorator
+    def super_ordered (q) :
+        def _ (self, * args, ** kw) :
+            result = getattr (self.__super, q.__name__) (* args, ** kw)
+            if self._order_by :
+                result = result.order_by (self._order_by)
+            return result
+        return _
+    # end def super_ordered
+
+    def __init__ (self, queries, order_by = None) :
+        self.queries   = queries
+        self._order_by = order_by
         self.__super.__init__ (itertools.chain (* queries))
     # end def __init__
 
-    def count (self) :
-        return sum (q.count () for q in self.queries)
-    # end def count
+    @super_ordered
+    def distinct (self, * criteria) :
+        pass
+    # end def distinct
+
+    def filter (self, * criteria, ** kw) :
+        return self.__class__ \
+            ( [q.filter (* criteria ** kw) for q in self.queries]
+            , self._order_by
+            )
+    # end def filter
+
+    @super_ordered
+    def limit (self, limit) :
+        pass
+    # end def limit
+
+    @super_ordered
+    def offset (self, offset) :
+        pass
+    # end def offset
+
+    def order_by (self, criterion) :
+        self._order_by = criterion
+        return self
+    # end def order_by
+
+    @super_ordered
+    def slice (self, start, stop = None) :
+        pass
+    # end def slice
+
+    def _fill_cache (self) :
+        if self._order_by :
+            self._cache = sorted (self.iterable, key = self._order_by)
+        else :
+            self.__super._fill_cache ()
+    # end def _fill_cache
 
     def __nonzero__ (self) :
         return any (self.queries)
