@@ -120,7 +120,7 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def all_links
 
-    def count (self, Type, strict = True) :
+    def count (self, Type, strict) :
         if strict :
             result = self._counts  [Type.type_name]
         else :

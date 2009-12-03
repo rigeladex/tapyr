@@ -95,7 +95,19 @@ class Id_Entity (TFL.Meta.Object) :
     # end def instance
 
     def query (self, * filters, ** kw) :
-        """Return all entities matching the conditions in `filters` and `kw`."""
+        """Return all entities matching the conditions in `filters` and `kw`.
+
+           When no `filters` or `kw` are specified, `query` returns the
+           transitive extension of the type in question, i.e., all instances
+           of the type and all its subclasses.
+
+           When `strict = True` is specified as the only argument, `query`
+           returns the strict extension, i.e., all instances of the type in
+           question, but none of its subclasses.
+
+           All other filters reduce the number of instances returned to those
+           that satisfy the filter conditions.
+        """
         sort_key = kw.pop ("sort_key", False)
         Type     = self._etype
         result   = self.home_scope.ems.query (Type, * filters, ** kw)
@@ -179,7 +191,21 @@ class Link (Id_Entity) :
     # end def instance
 
     def r_query (self, * filters, ** kw) :
-        """Return all links matching the conditions in `filters` and `kw`."""
+        """Return all links matching the conditions in `filters` and `kw`.
+
+           `r_query` behaves similar to `query` but provides the additional
+           features:
+
+           - if `kw` contains role names,
+
+             * the values passed can be `epk` in cooked or raw form (for
+               `query`, objects must be passed)
+
+             * the returned links are restricted to those linking the
+               specified objects
+
+           - some backends optimize link queries triggered via `r_query`.
+        """
         sort_key = kw.pop ("sort_key", False)
         Type     = self._etype
         map      = getattr (Type, "role_map", None)
@@ -342,24 +368,16 @@ Module `MOM.E_Type_Manager`
   The transitive extension of mice, i.e., the extension of `BMT.Mouse` and
   all classes derived from it, is computed by the query::
 
-      s.BMT.Mouse.t_extension ()
+      s.BMT.Mouse.query ()
 
 
 
 .. autoclass:: Object()
     :members:
     :inherited-members:
-.. autoclass:: Link2()
+.. autoclass:: Link()
     :members:
     :inherited-members:
-.. autoclass:: Link3()
-    :members:
-    :inherited-members:
-.. autoclass:: Link2_Ordered()
-    :members:
-    :inherited-members:
-
-
 
 """
 

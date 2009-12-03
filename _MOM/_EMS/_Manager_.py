@@ -55,7 +55,7 @@ class _Manager_ (TFL.Meta.Object) :
         self.scope = scope
     # end def __init__
 
-    def count (self, Type, strict = True) :
+    def count (self, Type, strict) :
         return self.query (Type, strict = strict).count ()
     # end def count
 
