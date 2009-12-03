@@ -173,6 +173,8 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
             col_prop ["with_polymorphic"]     = "*"
         else :
             e_type._sa_inheritance            = False
+            col_prop ["polymorphic_on"]       = sa_table.c.Type_Name
+            col_prop ["polymorphic_identity"] = e_type.type_name
         return col_prop
     # end def _setup_inheritance
 

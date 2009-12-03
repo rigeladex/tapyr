@@ -48,6 +48,7 @@
 #     2-Dec-2009 (CT) Use `ems.role_query` instead of `s_role` and `t_role`
 #     3-Dec-2009 (CT) `count` changed to be a property,
 #                     `t_count` renamed to `count_transitive`
+#     3-Dec-2009 (MG) `r_query` type check of role objects added
 #    ««revision-date»»···
 #--
 
@@ -226,7 +227,10 @@ class Link (Id_Entity) :
                 if k in map :
                     role = Type.Roles [map [k]]
                     try :
-                        rkw [role.name] = self._cooked_role (role, kw.pop (k))
+                        obj             = self._cooked_role (role, kw.pop (k))
+                        if not isinstance (obj, role.Class) :
+                            return []
+                        rkw [role.name] = obj
                     except MOM.Error.No_Such_Object :
                         return []
         ems = self.home_scope.ems

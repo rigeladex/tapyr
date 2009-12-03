@@ -30,6 +30,8 @@
 #    20-Sep-2009 (MG) Creation
 #    14-Oct-2009 (CT) Signature of `Sorted_By` changed from `criteria`
 #                     to `* criteria`
+#    03-Dec-2009 (MG) `_sa_order_by` changed to support possibly needed joins
+#                     as well (`_sa_resolve_attribute` added)
 #    ««revision-date»»···
 #--
 
@@ -74,8 +76,9 @@
 ...
 >>> session.commit ()
 >>> def _show (table, sorted_by) :
-...     print "\\n".join (str (s) for s in session.query (table).order_by \\
-...         (* sorted_by._sa_order_by (table)))
+...     joins, order_clause = sorted_by._sa_order_by (table)
+...     query               = session.query (table).join (* joins)
+...     print "\\n".join (str (s) for s in query.order_by (* order_clause))
 ... # end def _show
 >>> Sorted_By = TFL.Sorted_By
 >>> _show (Table, Sorted_By ( "a", "b"))
@@ -154,20 +157,42 @@ from   _TFL                 import TFL
 import _TFL.Decorator
 import _TFL.Sorted_By
 
+TFL.Sorted_By._sa_cache = {}
+
 @TFL.Add_Method (TFL.Sorted_By)
-def _sa_order_by (self, table) :
-    result = []
-    for c in self.criteria :
-        if hasattr (c, "_sa_order_by") :
-            result.extend (c._sa_order_by (table))
-        elif hasattr (c, "__call__") :
-            raise NotImplementedError \
-                ("Please implement _sa_order_by for custom sorted by objects")
-        elif c.startswith ("-") :
-            result.append (getattr (table, c [1:]).desc ())
-        else :
-            result.append (getattr (table, c))
-    return result
+def _sa_order_by (self, table, joins = None, order_clause = None) :
+    if self not in self._sa_cache :
+        if joins        is None :
+            joins        = set ()
+        if order_clause is None :
+            order_clause = []
+        for c in self.criteria :
+            if hasattr (c, "_sa_order_by") :
+                c._sa_order_by (table, joins, order_clause)
+            elif hasattr (c, "__call__") :
+                raise NotImplementedError \
+                    ( "Please implement _sa_order_by for custom "
+                      "sorted by objects"
+                    )
+            assert c.count (".") < 2, "Check if we can support more levels"
+            self._sa_resolve_attribute (table, c, joins, order_clause)
+        self._sa_cache [self] = joins, order_clause
+    return self._sa_cache [self]
 # end def _sa_order_by
+
+@TFL.Add_Method (TFL.Sorted_By)
+def _sa_resolve_attribute (self, table, c, joins, order_clause) :
+    parts     = c.split (".", 1)
+    attr_name = parts [0]
+    if len (parts) > 1 :
+        e_type = getattr           (table, attr_name).Class
+        joins.add                  (e_type)
+        self._sa_resolve_attribute (e_type, parts [1], joins, order_clause)
+    else :
+        if attr_name.startswith ("-") :
+            order_clause.append (getattr (table, attr_name [1:]).desc ())
+        else :
+            order_clause.append (getattr (table, attr_name))
+# end def _sa_resolve_attribute
 
 ### __END__ MOM.DBW.SA.Sorted_By

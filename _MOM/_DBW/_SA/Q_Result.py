@@ -104,6 +104,7 @@ from   _TFL                 import TFL
 from   _MOM                 import MOM
 import _TFL._Meta.Object
 import _MOM._DBW._SA.Filter
+import _MOM._DBW._SA.Sorted_By
 from    sqlalchemy.orm      import exc as orm_exc
 from    sqlalchemy.sql      import expression
 
@@ -128,6 +129,8 @@ class Q_Result (TFL.Meta.Object) :
             else :
                 sa_criteria.append (c)
         for attr, value in eq_kw.iteritems () :
+            if attr == "type_name" :
+                attr = "Type_Name"
             sa_criteria.append (getattr (self.e_type, attr) == value)
         if len (sa_criteria) > 1 :
             sa_criteria = (expression.and_ (* sa_criteria), )
@@ -148,22 +151,28 @@ class Q_Result (TFL.Meta.Object) :
     def one (self) :
         try :
             return self.sa_query.one ()
-        except orm_exc.MultipleResultsFound as exc :
+        except (orm_exc.MultipleResultsFound, orm_exc.NoResultFound) as exc :
             raise IndexError \
                 ("Query result contains %s entries" % self.sa_query.count ())
     # end def one
 
     def order_by (self, criterion) :
-        return self.__class__ \
-            (self.e_type, self.sa_query.order_by (criterion))
+        import pdb; pdb.set_trace ()
+        joins, order_clause = criterion._sa_order_by (self.e_type)
+        sa_query = self.sa_query.join (* joins).order_by (* order_clause)
+        return self.__class__ (self.e_type, sa_query)
     # end def order_by
 
     def __getattr__ (self, name) :
         return getattr (self.sa_query, name)
     # end def __getattr__
 
+    def __iter__ (self) :
+        return iter (self.sa_query)
+    # end def __iter__
+
 # end class Q_Result
 
-if __name__ == "__main__" :
+if __name__ != "__main__" :
     MOM.DBW.SA._Export ("*")
 ### __END__ MOM:DBW:SA.Q_Result

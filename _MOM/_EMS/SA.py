@@ -29,6 +29,7 @@
 #    16-Oct-2009 (MG) Creation
 #    25-Oct-2009 (MG) Updated to support inheritance
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#    03-Dec-2009 (MG) Use `MOM.DBW.SA.Q_Result`
 #    ««revision-date»»···
 #--
 
@@ -37,7 +38,7 @@ from   _TFL                  import TFL
 
 import _MOM._EMS._Manager_
 import _MOM.Entity
-import _MOM._DBW._SA.Sorted_By
+import _MOM._DBW._SA.Q_Result
 import _TFL._Meta.Object
 
 import _TFL.defaultdict
@@ -50,6 +51,8 @@ class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
 
     type_name = "SA"
+
+    Q_Result  = MOM.DBW.SA.Q_Result
 
     @TFL.Meta.Once_Property
     def session (self) :
@@ -87,11 +90,11 @@ class Manager (MOM.EMS._Manager_) :
         QR = self.Q_Result
         S  = self.session
         return self.Q_Result_Composite \
-            ([QR (S.query (t)) for t in Type.relevant_roots.itervalues ()])
+            ([QR (t, S.query (t)) for t in Type.relevant_roots.itervalues ()])
     # end def _query_multi_root
 
     def _query_single_root (self, Type, root) :
-        return self.Q_Result (self.session.query (Type))
+        return self.Q_Result (Type, self.session.query (Type))
     # end def _query_single_root
 
     def __iter__ (self) :
