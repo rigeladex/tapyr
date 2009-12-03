@@ -46,6 +46,8 @@
 #     1-Dec-2009 (CT) `role_names` queries changed from `s_` to `t_`
 #     2-Dec-2009 (CT) Queries `count` and `query` added
 #     2-Dec-2009 (CT) Use `ems.role_query` instead of `s_role` and `t_role`
+#     3-Dec-2009 (CT) `count` changed to be a property,
+#                     `t_count` renamed to `count_transitive`
 #    ««revision-date»»···
 #--
 
@@ -68,10 +70,17 @@ class Id_Entity (TFL.Meta.Object) :
         return self._etype (* args, scope = self.home_scope, ** kw)
     # end def __call__
 
-    def count (self, * filters, ** kw) :
-        """Return the count of objects or links matching `filters` and `kw`."""
-        return self.home_scope.ems.count (self._etype, * filters, ** kw)
+    @property
+    def count (self) :
+        """Return the strict count of objects or links."""
+        return self.home_scope.ems.count (self._etype, strict = True)
     # end def count
+
+    @property
+    def count_transitive (self) :
+        """Return the transitive count of objects or links."""
+        return self.home_scope.ems.count (self._etype, strict = False)
+    # end def count_transitive
 
     def exists (self, * epk, ** kw) :
         if kw :
@@ -94,18 +103,6 @@ class Id_Entity (TFL.Meta.Object) :
             result = result.order_by (Type.sort_key (sort_key))
         return result
     # end def query
-
-    @property
-    def s_count (self) :
-        """Return the strict count of objects or links."""
-        return self.count (strict = True)
-    # end def s_count
-
-    @property
-    def t_count (self) :
-        """Return the transitive count of objects or links."""
-        return self.count ()
-    # end def t_count
 
     def __getattr__ (self, name) :
         return getattr (self._etype, name)

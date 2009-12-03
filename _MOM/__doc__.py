@@ -485,63 +485,69 @@ with the specified `epk` exists:
     >>> PoT.exists (("Man", "Tin"), t4)
     []
 
-The queries :meth:`~_MOM.E_Type_Manager.E_Type_Manager.s_count`,
-:meth:`~_MOM.E_Type_Manager.E_Type_Manager.t_count`,
+The queries :attr:`~_MOM.E_Type_Manager.E_Type_Manager.count`,
+:attr:`~_MOM.E_Type_Manager.E_Type_Manager.count_transitive`,
 :meth:`~_MOM.E_Type_Manager.E_Type_Manager.query`, and
 :meth:`~_MOM.E_Type_Manager.E_Type_Manager.r_query` return the
 number, or list, of instances of the specified
 etype:
 
-    >>> scope.BMT.Mouse.s_count
+    >>> scope.BMT.Mouse.count
     1
     >>> list (scope.BMT.Mouse.query (strict = True))
     [BMT.Mouse ('Mighty_Mouse')]
-    >>> scope.BMT.Mouse.t_count
+    >>> scope.BMT.Mouse.count_transitive
     2
     >>> list (scope.BMT.Mouse.query ())
     [BMT.Mouse ('Mighty_Mouse'), BMT.Beaver ('Toothy_Beaver')]
 
-    >>> scope.BMT.Rat.s_count
+    >>> scope.BMT.Rat.count
     2
     >>> list (scope.BMT.Rat.query (strict = True))
     [BMT.Rat ('Axel'), BMT.Rat ('Rutty_Rat')]
-    >>> scope.BMT.Rat.t_count
+    >>> scope.BMT.Rat.count_transitive
     2
     >>> list (scope.BMT.Rat.query ())
     [BMT.Rat ('Axel'), BMT.Rat ('Rutty_Rat')]
 
-    >>> scope.BMT.Rodent.s_count
+    >>> scope.BMT.Rodent.count
     0
     >>> list (scope.BMT.Rodent.query (strict = True))
     []
-    >>> scope.BMT.Rodent.t_count
+    >>> scope.BMT.Rodent.count_transitive
     4
     >>> list (scope.BMT.Rodent.query ())
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
 
-    >>> scope.MOM.Named_Object.t_count
+    >>> scope.MOM.Named_Object.count_transitive
     8
     >>> list (scope.MOM.Named_Object.query ())
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
-    >>> scope.MOM.Object.t_count
+    >>> scope.MOM.Object.count_transitive
     13
     >>> list (scope.MOM.Object.query ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
 
     >>> list (scope.MOM.Id_Entity.query ())
     [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
-    >>> scope.MOM.Id_Entity.t_count
+    >>> scope.MOM.Id_Entity.count_transitive
     23
 
+    >>> scope.MOM.Link.count_transitive
+    10
     >>> list (scope.MOM.Link.query ())
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
+    >>> scope.MOM.Link2.count_transitive
+    7
     >>> list (scope.MOM.Link2.query ())
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
+    >>> scope.MOM.Link3.count_transitive
+    3
     >>> list (scope.MOM.Link3.query ())
     [BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)
-    >>> RiT.t_count
+    >>> RiT.count_transitive
     3
     >>> show (RiT.query ())
     [(('Axel'), ('X', 2)), (('Mighty_Mouse'), ('X', 1)), (('Rutty_Rat'), ('Y', 1))]
@@ -568,11 +574,15 @@ etype:
     >>> show (RiT.r_query (left = "Jimmy", strict = True))
     []
 
+    >>> PoT.count_transitive
+    4
     >>> show (PoT.r_query (left = p))
     [(('Luke', 'Lucky'), ('X', 1)), (('Luke', 'Lucky'), ('X', 2))]
     >>> show (PoT.r_query (person = ("Dog",  "Snoopy")))
     [(('Dog', 'Snoopy'), ('Y', 1))]
 
+    >>> PTL.count_transitive
+    3
     >>> show (PTL.r_query (left = p, trap = t1))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
     >>> show (PTL.r_query (person = p, middle = ("X", 2)))
@@ -597,7 +607,7 @@ etype:
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
     >>> show (PTL.r_query (right = l1))
     [(('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956))]
-    >>> show (PTL.r_query (trap = ('X', 2), location = l2))
+    >>> show (PTL.r_query (trap = t2, location = l2))
     [(('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
     >>> show (PTL.r_query (middle = ('Y', 1), right = l1))
     []
@@ -623,8 +633,8 @@ etype:
 
     ### DBW-specific start
 
-    >>> list (scope)
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('X', 1), BMT.Trap ('Y', 2), BMT.Beaver ('Toothy_Beaver'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Rat ('Axel'), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
+    >>> sorted (scope)
+    [BMT.Beaver ('Toothy_Beaver'), BMT.Location (-16.268799, 48.189956), BMT.Location (-16.74077, 48.463313), BMT.Mouse ('Mighty_Mouse'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Tin', 'Tin'), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rat ('Rutty_Rat'), BMT.Rat ('Axel'), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
 
     ### DBW-specific finish
 
@@ -829,12 +839,14 @@ from   _MOM.import_MOM       import *
 
 BMT = TFL.Package_Namespace ("_BMT")
 
-class Location (MOM.Object) :
+_Ancestor_Essence = MOM.Object
+
+class Location (_Ancestor_Essence) :
     """Model a location of the Better Mouse Trap application."""
 
     Package_NS = BMT
 
-    class _Attributes (MOM.Object._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class lon (A_Float) :
             """Longitude """
@@ -858,12 +870,14 @@ class Location (MOM.Object) :
 
 # end class Location
 
-class Person (MOM.Object) :
+_Ancestor_Essence = MOM.Object
+
+class Person (_Ancestor_Essence) :
     """Model a person of the Better Mouse Trap application."""
 
     Package_NS = BMT
 
-    class _Attributes (MOM.Object._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class last_name (A_String) :
             """Last name of person"""
@@ -885,14 +899,16 @@ class Person (MOM.Object) :
 
 # end class Person
 
-class Rodent (MOM.Named_Object) :
+_Ancestor_Essence = MOM.Named_Object
+
+class Rodent (_Ancestor_Essence) :
     """Model a rodent of the Better Mouse Trap application."""
 
     Package_NS    = BMT
 
     is_partial    = True
 
-    class _Attributes (MOM.Named_Object._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class color (A_String) :
             """Color of the rodent"""
@@ -913,20 +929,26 @@ class Rodent (MOM.Named_Object) :
 
 # end class Rodent
 
-class Mouse (Rodent) :
+_Ancestor_Essence = Rodent
+
+class Mouse (_Ancestor_Essence) :
     """Model a mouse of the Better Mouse Trap application."""
 
 # end class Mouse
 
-class Rat (Rodent) :
+_Ancestor_Essence = Rodent
+
+class Rat (_Ancestor_Essence) :
     """Model a rat of the Better Mouse Trap application."""
 
 # end class Rat
 
-class Beaver (Mouse) :
+_Ancestor_Essence = Mouse
+
+class Beaver (_Ancestor_Essence) :
     """Model a beaver of the Better Mouse Trap application."""
 
-    class _Attributes (Mouse._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class region (A_String) :
             """In wich are lives the beaver"""
@@ -939,9 +961,11 @@ class Beaver (Mouse) :
 
 # end class Beaver
 
-class Otter (Beaver) :
+_Ancestor_Essence = Beaver
 
-    class _Attributes (Beaver._Attributes) :
+class Otter (_Ancestor_Essence) :
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class river (A_String) :
 
@@ -954,12 +978,14 @@ class Otter (Beaver) :
 
 # end class Otter
 
-class Trap (MOM.Named_Object) :
+_Ancestor_Essence = MOM.Named_Object
+
+class Trap (_Ancestor_Essence) :
     """Model a trap of the Better Mouse Trap application."""
 
     Package_NS = BMT
 
-    class _Attributes (MOM.Named_Object._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class serial_no (A_Int) :
             """Serial number of the trap"""
@@ -980,18 +1006,24 @@ class Trap (MOM.Named_Object) :
 
 # end class Trap
 
-class Supertrap (Trap) :
+_Ancestor_Essence = Trap
+
+class Supertrap (_Ancestor_Essence) :
     """An enormously improved Trap."""
 # end class Supertrap
 
-class Rodent_in_Trap (MOM.Link2) :
+_Ancestor_Essence = MOM.Link2
+
+class Rodent_in_Trap (_Ancestor_Essence) :
     """Model a rodent caught in a trap."""
 
     Package_NS = BMT
 
-    class _Attributes (MOM.Link2._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class left (MOM.Link2._Attributes.left) :
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
             """Rodent caught in Trap."""
 
             role_type     = Rodent
@@ -1000,7 +1032,7 @@ class Rodent_in_Trap (MOM.Link2) :
 
         # end class left
 
-        class right (MOM.Link2._Attributes.right) :
+        class right (_Ancestor.right) :
             """Trap that caught a rodent."""
 
             role_type     = Trap
@@ -1011,7 +1043,7 @@ class Rodent_in_Trap (MOM.Link2) :
 
     # end class _Attributes
 
-    class _Predicates (MOM.Link2._Predicates) :
+    class _Predicates (_Ancestor_Essence._Predicates) :
 
         class valid_weight (Pred.Condition) :
             """Weight of `rodent` must not exceed `max_weight` of `trap`."""
@@ -1027,13 +1059,17 @@ class Rodent_in_Trap (MOM.Link2) :
 
 # end class Rodent_in_Trap
 
-class Person_owns_Trap (MOM.Link2) :
+_Ancestor_Essence = MOM.Link2
+
+class Person_owns_Trap (_Ancestor_Essence) :
 
     Package_NS = BMT
 
-    class _Attributes (MOM.Link2._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class left (MOM.Link2._Attributes.left) :
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
             """Person owning the Trap."""
 
             role_name     = "owner"
@@ -1042,7 +1078,7 @@ class Person_owns_Trap (MOM.Link2) :
 
         # end class left
 
-        class right (MOM.Link2._Attributes.right) :
+        class right (_Ancestor.right) :
             """Trap owned by person."""
 
             role_type     = Trap
@@ -1054,13 +1090,17 @@ class Person_owns_Trap (MOM.Link2) :
 
 # end class Person_owns_Trap
 
-class Person_sets_Trap_at_Location (MOM.Link3) :
+_Ancestor_Essence = MOM.Link3
+
+class Person_sets_Trap_at_Location (_Ancestor_Essence) :
 
     Package_NS = BMT
 
-    class _Attributes (MOM.Link3._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class left (MOM.Link3._Attributes.left) :
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
             """Person setting a trap."""
 
             role_type     = Person
@@ -1071,14 +1111,14 @@ class Person_sets_Trap_at_Location (MOM.Link3) :
 
         # end class left
 
-        class middle (MOM.Link3._Attributes.middle) :
+        class middle (_Ancestor.middle) :
 
             role_type     = Trap
             max_links     = 1
 
         # end class middle
 
-        class right (MOM.Link3._Attributes.right) :
+        class right (_Ancestor.right) :
             """Location where a trap is set."""
 
             role_type     = Location

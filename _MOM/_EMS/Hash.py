@@ -53,6 +53,7 @@
 #                       `t_extension`, and `t_role`
 #                     - s/t_count/_t_count/
 #     3-Dec-2009 (CT) `r_query` corrected
+#     3-Dec-2009 (CT) `count` simplified
 #    ««revision-date»»···
 #--
 
@@ -119,16 +120,11 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def all_links
 
-    def count (self, Type, * filters, ** kw) :
-        strict = kw.pop ("strict", False)
-        if filters or kw :
-            kw ["strict"] = strict ### put it back
-            result = self.__super.count (* filters, ** kw)
+    def count (self, Type, strict = True) :
+        if strict :
+            result = self._counts  [Type.type_name]
         else :
-            if strict :
-                result = self._counts  [Type.type_name]
-            else :
-                result = self._t_count (Type)
+            result = self._t_count (Type)
         return result
     # end def count
 

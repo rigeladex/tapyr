@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     2-Dec-2009 (CT) Creation
+#     3-Dec-2009 (CT) `count` simplified
 #    ««revision-date»»···
 #--
 
@@ -54,8 +55,8 @@ class _Manager_ (TFL.Meta.Object) :
         self.scope = scope
     # end def __init__
 
-    def count (self, Type, * filters, ** kw) :
-        return self.query (Type, * filters, ** kw).count ()
+    def count (self, Type, strict = True) :
+        return self.query (Type, strict = strict).count ()
     # end def count
 
     def exists (self, Type, epk) :
