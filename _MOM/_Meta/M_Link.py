@@ -45,6 +45,8 @@
 #                     `Role_Cacher`
 #    27-Nov-2009 (CT) `destroy_dependency` added
 #     3-Dec-2009 (CT) `sorted_by` hack removed from `_m_setup_roles`
+#     3-Dec-2009 (CT) `M_Link3` and `M_Link2_Ordered` derived from `M_Link`
+#                     instead of from `M_Link2`
 #    ««revision-date»»···
 #--
 
@@ -58,6 +60,10 @@ import itertools
 
 class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
+
+    def other_role_name (cls, role_name) :
+        return cls._orn [role_name]
+    # end def other_role_name
 
     def _m_setup_etype_auto_props (cls) :
         cls.__m_super._m_setup_etype_auto_props ()
@@ -100,13 +106,9 @@ class M_Link2 (M_Link) :
 
     _orn = dict (left = "right", right = "left")
 
-    def other_role_name (cls, role_name) :
-        return cls._orn [role_name]
-    # end def other_role_name
-
 # end class M_Link2
 
-class M_Link3 (M_Link2) :
+class M_Link3 (M_Link) :
     """Meta class of ternary link-types of MOM meta object model."""
 
     def other_role_name (cls, role_name) :
@@ -118,7 +120,7 @@ class M_Link3 (M_Link2) :
 
 # end class M_Link3
 
-class M_Link2_Ordered (M_Link2) :
+class M_Link2_Ordered (M_Link) :
     """Meta class of binary ordered link-types of MOM meta object model."""
 
 # end class M_Link2_Ordered

@@ -124,15 +124,15 @@ classes:
     ...     print "***", et.type_name, "***", et.__init__.i_bases
     ...     print et.__init__.source_code
     ...
-    *** MOM.Link2 *** (<class 'MOM.Link' [BMT__Hash__XXX]>,)
+    *** MOM.Link *** (<class 'MOM.Id_Entity' [BMT__Hash__XXX]>,)
     def __init__ (self, left, right, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, right, * args, ** kw)
     <BLANKLINE>
-    *** MOM.Link3 *** (<class 'MOM.Link2' [BMT__Hash__XXX]>,)
+    *** MOM.Link3 *** (<class 'MOM.Link' [BMT__Hash__XXX]>,)
     def __init__ (self, left, middle, right, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, middle, right, * args, ** kw)
     <BLANKLINE>
-    *** MOM.Link2_Ordered *** (<class 'MOM.Link2' [BMT__Hash__XXX]>,)
+    *** MOM.Link2_Ordered *** (<class 'MOM.Link' [BMT__Hash__XXX]>,)
     def __init__ (self, left, right, seq_no, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, right, seq_no, * args, ** kw)
     <BLANKLINE>
@@ -218,7 +218,7 @@ classes:
     >>> for t in apt._T_Extension [2:] :
     ...     print "%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
-    MOM.Link                            ()
+    MOM.Link                            ('left', 'right')
     MOM.Link2                           ('left', 'right')
     MOM.Link3                           ('left', 'middle', 'right')
     MOM.Link2_Ordered                   ('left', 'right', 'seq_no')
@@ -535,6 +535,10 @@ etype:
 
     >>> list (scope.MOM.Link.query ())
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
+    >>> list (scope.MOM.Link2.query ())
+    [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1))]
+    >>> list (scope.MOM.Link3.query ())
+    [BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313))]
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)
     >>> RiT.t_count

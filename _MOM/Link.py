@@ -36,6 +36,9 @@
 #    27-Nov-2009 (CT) `Role_Cacher.setup` changed to store `other_role`
 #                     instead of `other_role_name`
 #    28-Nov-2009 (CT) `is_partial = True` added to all classes
+#     3-Dec-2009 (CT) `Link3` and `Link2_Ordered` derived from `Link` instead
+#                     of from `Link2` (and `_Attributes` moved from `Link2`
+#                     to `Link`)
 #    ««revision-date»»···
 #--
 
@@ -58,6 +61,20 @@ class _MOM_Link_ (MOM.Id_Entity) :
     entity_kind           = "link"
     is_partial            = True
     is_synthetic          = False
+
+    class _Attributes (MOM.Id_Entity._Attributes) :
+
+        class left (_A_Link_Role_Left_, A_Link_Role_EB) :
+            """Left role of association. Override to define `role_type`, ..."""
+
+        # end class left
+
+        class right (_A_Link_Role_Right_, A_Link_Role_EB) :
+            """Right role of association. Override to define `role_type`, ..."""
+
+        # end class right
+
+    # end class _Attributes
 
     @property
     def roles (self) :
@@ -86,32 +103,17 @@ class Link2 (Link) :
     __metaclass__         = MOM.Meta.M_Link2
     is_partial            = True
 
-    class _Attributes (Link._Attributes) :
-
-        class left (_A_Link_Role_Left_, A_Link_Role_EB) :
-            """Left role of association. Override to define `role_type`, ..."""
-
-        # end class left
-
-        class right (_A_Link_Role_Right_, A_Link_Role_EB) :
-            """Right role of association. Override to define `role_type`, ..."""
-
-        # end class right
-
-    # end class _Attributes
-
 # end class Link2
 
-class Link3 (Link2) :
+class Link3 (Link) :
     """Model a link of a ternary essential association of the MOM meta
        object model.
     """
 
     __metaclass__         = MOM.Meta.M_Link3
-
     is_partial            = True
 
-    class _Attributes (Link2._Attributes) :
+    class _Attributes (Link._Attributes) :
 
         class middle (_A_Link_Role_Middle_, A_Link_Role_EB) :
             """Middle role of association. Override to define `role_type`, ..."""
@@ -122,7 +124,7 @@ class Link3 (Link2) :
 
 # end class Link3
 
-class Link2_Ordered (Link2) :
+class Link2_Ordered (Link) :
     """Model a link of a binary ordered essential association of the MOM meta
        object model.
     """
@@ -131,7 +133,7 @@ class Link2_Ordered (Link2) :
 
     is_partial            = True
 
-    class _Attributes (Link2._Attributes) :
+    class _Attributes (Link._Attributes) :
 
         class seq_no (_A_Link_Role_Seq_No_, A_Link_Role_EB) :
             """Sequence-number role of association. Override to define `role_type`, ..."""
