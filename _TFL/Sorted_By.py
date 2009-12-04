@@ -39,6 +39,11 @@
 #                     to `* criteria`
 #     3-Dec-2009 (CT) `__iter__` added
 #     3-Dec-2009 (CT) `keys` changed to allow `-` following `.`, too
+#     4-Dec-2009 (CT) `Sorted_By.__call__` changed to tolerate `LookupError`
+#                     and `AttributeError` exceptions raised by `key`
+#     4-Dec-2009 (CT) `Sorted_By_Strict` added
+#     4-Dec-2009 (CT) `Sorted_By.__call__` and `Desc_Getter.__call__` changed
+#                     to allow comparison of unequal types in Python 3.x
 #    ««revision-date»»···
 #--
 
@@ -70,7 +75,9 @@ class Desc_Getter (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, x) :
-        return self.Descending (self.getter (x))
+        v = self.getter (x)
+        t = type (v).__name__
+        return self.Descending ((Sorted_By.type_name_map.get (t, t), v))
     # end def __call__
 
     def __repr__ (self) :
@@ -183,14 +190,70 @@ class Sorted_By (TFL.Meta.Object) :
        1
        2.4
        42
+       >>> show ([3, "1", 0, "42", 2.4], Sorted_By (lambda x : x))
+       0
+       2.4
+       3
+       1
+       42
+
+       >>> import warnings; warnings.filterwarnings ( "error",  "comparing unequal types not supported in 3.x")
+       >>> l = [ R (a = 1, b = 1, c = "abcd", d = "foo")
+       ...     , R (a = 1, b = 2, c = "ABCD", d = "bar")
+       ...     , R (a = 1, b = 2, c = "efg",  d = 42)
+       ...     , R (a = 2, b = 1, c = "xyz",  d = 137)
+       ...     , R (a = 2, b = 1, c = " xyzz")
+       ...     , R (a = 2, b = 1, c = "  xyzzz")
+       ...     ]
+       >>> show (l, Sorted_By ("d"))
+       (a = 2, b = 1, c =  xyzz)
+       (a = 2, b = 1, c =   xyzzz)
+       (a = 1, b = 2, c = efg, d = 42)
+       (a = 2, b = 1, c = xyz, d = 137)
+       (a = 1, b = 2, c = ABCD, d = bar)
+       (a = 1, b = 1, c = abcd, d = foo)
+       >>> show (l, Sorted_By ("-d"))
+       (a = 1, b = 1, c = abcd, d = foo)
+       (a = 1, b = 2, c = ABCD, d = bar)
+       (a = 2, b = 1, c = xyz, d = 137)
+       (a = 1, b = 2, c = efg, d = 42)
+       (a = 2, b = 1, c =  xyzz)
+       (a = 2, b = 1, c =   xyzzz)
+       >>> show (l, Sorted_By_Strict ("d"))
+       Traceback (most recent call last):
+         ...
+       AttributeError: d
+       >>> show (l, Sorted_By_Strict ("-d"))
+       Traceback (most recent call last):
+         ...
+       AttributeError: d
+
     """
+
+    Ignore_Exception = (LookupError, AttributeError)
+
+    type_name_map = dict \
+        ( bool    = "number"
+        , Decimal = "number"
+        , float   = "number"
+        , int     = "number"
+        )
 
     def __init__ (self, * criteria) :
         self.criteria = criteria
     # end def __init__
 
     def __call__ (self, x) :
-        return tuple (key (x) for key in self.keys)
+        def gen (x, keys, type_map) :
+            Ignore = self.Ignore_Exception
+            for key in keys :
+                try :
+                    v = key (x)
+                except Ignore :
+                    v = None
+                t = type (v).__name__
+                yield (type_map.get (t, t), v)
+        return tuple (gen (x, self.keys, self.type_name_map))
     # end def __call__
 
     @Once_Property
@@ -217,6 +280,15 @@ class Sorted_By (TFL.Meta.Object) :
     # end def __repr__
 
 # end class Sorted_By
+
+class Sorted_By_Strict (Sorted_By) :
+    """Strict `Sorted_By` that raises any exception triggered by a sort
+       criterion.
+    """
+
+    class Ignore_Exception (StandardError) : pass
+
+# end class Sorted_By_Strict
 
 if __name__ != "__main__" :
     TFL._Export ("*")
