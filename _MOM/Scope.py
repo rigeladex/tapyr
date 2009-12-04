@@ -129,8 +129,8 @@ class Scope (TFL.Meta.Object) :
     # end class Pkg_NS
 
     def __init__ ( self, app_type, db_uri
-                 , guid      = None
                  , root_epk  = ()
+                 , guid      = None
                  , user      = None
                  , create_db = False
                  ) :
@@ -308,16 +308,6 @@ class Scope (TFL.Meta.Object) :
         return False
     # end def has_changed
 
-    @classmethod
-    def new (cls, app_type, db_uri, root_epk = (), user = None) :
-        return cls \
-            ( app_type, db_uri
-            , root_epk  = root_epk
-            , user      = user
-            , create_db = True
-            )
-    # end def new
-
     @TFL.Meta.Lazy_Method_RLV
     def i_incorrect (self, gauge = Gauge_Logger ()) :
         """Returns all objects which are object-wise incorrect (i.e., violating
@@ -341,6 +331,16 @@ class Scope (TFL.Meta.Object) :
         with self.historian.nested_recorder (Change, * args, ** kw) :
             yield
     # end def nested_change_recorder
+
+    @classmethod
+    def new (cls, app_type, db_uri, root_epk = (), user = None) :
+        return cls \
+            ( app_type, db_uri
+            , root_epk  = root_epk
+            , user      = user
+            , create_db = True
+            )
+    # end def new
 
     def record_change (self, Change, * args, ** kw) :
         return self.historian.record (Change, * args, ** kw)
