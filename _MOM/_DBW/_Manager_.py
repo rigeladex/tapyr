@@ -20,14 +20,15 @@
 #
 #++
 # Name
-#    MOM.DBW.Session
+#    MOM.DBW._Manager_
 #
 # Purpose
-#    Base class for database backend specific session classes
+#    Base class for database backend specific _Manager_ classes
 #
 # Revision Dates
 #    19-Oct-2009 (MG) Creation
 #    30-Nov-2009 (CT) `update_etype` added
+#     4-Dec-2009 (MG) Renamed from `Session` to `_Manager_`
 #    ««revision-date»»···
 #--
 
@@ -36,8 +37,8 @@ from   _MOM       import MOM
 import _MOM._DBW
 import _TFL._Meta.Object
 
-class _M_Session_ (TFL.Meta.Object.__class__) :
-    """Base meta class for all session"""
+class _M_Manager_ (TFL.Meta.Object.__class__) :
+    """Backend independent _Manager_, describes the common interface."""
 
     def etype_decorator (cls, e_type) :
         return e_type
@@ -47,18 +48,25 @@ class _M_Session_ (TFL.Meta.Object.__class__) :
         pass
     # end def update_etype
 
-# end class _M_Session_
+    def create_database (cls, db_uri) :
+        raise NotImplementedError
+    # end def create_database
 
-class _DBW_Session_ (TFL.Meta.Object) :
-    """Base class for database backend specific session classes"""
+    def connect_database (cls, db_uri) :
+        raise NotImplementedError
+    # end def connect_database
 
-    __metaclass__ = _M_Session_
-    _real_name    = "Session"
+# end class _M__Manager_e_
 
-    type_name     = "XXX"
+class _Manager_ (TFL.Meta.Object) :
+    """Base class for database backend specific _Manager_ classes"""
 
-Session = _DBW_Session_ # end class Session
+    __metaclass__ = _M_Manager_
+
+    type_name     = "Bare"
+
+# end class _Manager_
 
 if __name__ != '__main__':
-    MOM.DBW._Export ("*")
-### __END__ MOM.DBW.Session
+    MOM.DBW._Export ("_Manager_")
+### __END__ MOM.DBW._Manager_

@@ -31,6 +31,7 @@
 #    27-Oct-2009 (CT) `_etm` and `_get_etm` added and used in `__getattr__`
 #                     and `__getitem__`
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#     4-Dec-2009 (MG) `Scope.new` added, `name` chnaged to `root_epk`
 #    ««revision-date»»···
 #--
 
@@ -126,12 +127,17 @@ class Scope (TFL.Meta.Object) :
 
     # end class Pkg_NS
 
-    def __init__ (self, app_type, guid = None, name = "") :
+    def __init__ ( self, app_type, db_uri
+                 , guid      = None
+                 , root_epk  = ""
+                 , user      = None
+                 , create_db = False
+                 ) :
         with self._self_active () :
             if isinstance (app_type, (str, unicode)) :
                 app_type             = MOM.App_Type.instance (app_type)
             self.app_type            = app_type
-            self.bname               = name
+            self.bname               = root_epk ### XXX
             self.guid                = self._new_guid (guid)
             self._etm                = {}
             self._pkg_ns             = {}
@@ -139,12 +145,12 @@ class Scope (TFL.Meta.Object) :
             self.root                = None
             self.snapshot_count      = 0
             self.historian           = MOM.SCM.Tracker (self)
-            self.ems                 = app_type.EMS    (self)
-            self.dbw                 = app_type.DBW    (self)
+            self.user                = user
+            self.ems                 = app_type.EMS    (self, db_uri, create_db)
             self._attr_errors        = []
             self._setup_pkg_ns         (app_type)
-            if name :
-                self._setup_root       (app_type, name)
+            if root_epk :
+                self._setup_root       (app_type, root_epk)
             self._run_init_callbacks   ()
         ### copy `kill_callback` from class into instance to allow appending
         ### of instance specific callbacks by clients
@@ -301,6 +307,16 @@ class Scope (TFL.Meta.Object) :
         return False
     # end def has_changed
 
+    @classmethod
+    def new (cls, app_type, db_uri, root_epk = None, user = None) :
+        return cls \
+            ( app_type, db_uri
+            , root_epk  = root_epk
+            , user      = user
+            , create_db = True
+            )
+    # end def new
+
     @TFL.Meta.Lazy_Method_RLV
     def i_incorrect (self, gauge = Gauge_Logger ()) :
         """Returns all objects which are object-wise incorrect (i.e., violating
@@ -430,15 +446,15 @@ class Scope (TFL.Meta.Object) :
                 _pkg_ns [name] = self.Pkg_NS (self, pns, name)
     # end def _setup_pkg_ns
 
-    def _setup_root (self, app_type, name) :
+    def _setup_root (self, app_type, root_epk) :
         if app_type.Root_Type :
             ### use `__new__` here to allow setting of `self.root` and
             ### `self._roots` before `__init__` of the root object is
             ### executed and might refer to `self.root`
             Root_Type = self.entity_type (app_type.Root_Type)
-            self.root = root = Root_Type.__new__ (name, scope = self)
+            self.root = root = Root_Type.__new__ (root_epk, scope = self)
             self._roots [root.Essence.type_base_name] = root
-            root.__init__ (name)
+            root.__init__           (root_epk)
             root_cls.after_creation (root)
     # end def _setup_root
 

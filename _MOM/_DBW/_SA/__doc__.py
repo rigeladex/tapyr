@@ -39,12 +39,9 @@ filter_dbw_pat = re.compile \
     )
 
 doc__ = ( filter_dbw_pat.sub ("", dt_form)
-        % dict ( import_DBW = "from _MOM._DBW._SA.Session import Session"
+        % dict ( import_DBW = "from _MOM._DBW._SA.Manager import Manager"
                , import_EMS = "from _MOM._EMS.SA          import Manager"
                )
-        ).replace ("__Hash", "__SA").replace ("__XXX", "__SA")
-__doc__ = doc__.replace \
-    ( "MOM.Scope (apt)"
-    , "MOM.Scope (apt)\n    >>> DBW.metadata.create_all   (DBW.engine)"
-    )
+        ).replace ("__Hash", "__SA")
+__doc__ = doc__
 ### __END__ MOM.DBW.SA.__doc__

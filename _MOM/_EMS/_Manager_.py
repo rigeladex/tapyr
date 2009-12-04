@@ -28,6 +28,8 @@
 # Revision Dates
 #     2-Dec-2009 (CT) Creation
 #     3-Dec-2009 (CT) `count` simplified
+#     4-Dec-2009 (MG) `__init__` changed to support database related
+#                     parameter and to create the `session`
 #    ««revision-date»»···
 #--
 
@@ -51,8 +53,13 @@ class _Manager_ (TFL.Meta.Object) :
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
 
-    def __init__ (self, scope) :
-        self.scope = scope
+    def __init__ (self, scope, db_uri, create_db = False) :
+        self.scope       = scope
+        if create_db :
+            fct = self.scope.app_type.DBW.create_database
+        else :
+            fct = self.scope.app_type.DBW.connect_database
+        self.session = fct (db_uri)
     # end def __init__
 
     def count (self, Type, strict) :

@@ -81,6 +81,7 @@ IndexError: Query result contains 2 entries
 >>> qu = qt.filter (no = 0)
 >>> qu.all ()
 [0]
+>>> qu = qt.filter (Table.no == 0)
 >>> qu.one ()
 0
 >>> qv = qt.offset (1)

@@ -27,35 +27,48 @@
 #
 # Revision Dates
 #     3-Dec-2009 (CT) Creation
+#     4-Dec-2009 (MG) Renamed from `Session` to `Manager`
 #    ««revision-date»»···
 #--
 
 from   _MOM       import MOM
 from   _TFL       import TFL
 
-import _MOM._DBW.Session
+import _MOM._DBW._Manager_
 
-class _M_Hash_Session_ (MOM.DBW.Session.__class__) :
+class _M_Hash_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class for MOM.DBW.Hash"""
 
     def create_database (cls, db_uri) :
-        return Hash ()
+        assert db_uri is None
+        ### maybe we need to return an instance of a Session (depends on the
+        ### database implementation)
+        return cls ()
     # end def create_database
 
     def connect_database (cls, db_uri) :
-        return Hash ()
+        assert db_uri is None
+        ### maybe we need to return an instance of a Session (depends on the
+        ### database implementation)
+        return cls ()
     # end def connect_database
 
-# end class _M_Hash_Session_
+# end class _M_Hash_Manager_
 
-class Hash (MOM.DBW.Session) :
+class Manager (MOM.DBW._Manager_) :
     """Database wrapper for hash-based entity management."""
 
-    __metaclass__ = _M_Hash_Session_
+    __metaclass__ = _M_Hash_Manager_
 
     type_name     = "Hash"
 
-# end class Hash
+    ### right now we use the Hash class as a session as well -> therefore we
+    ### need to provide the commit interface
+    def commit (self) :
+        pass ### XXX
+    # end def commit
+
+# end class Manager
 
 if __name__ != '__main__':
     MOM.DBW._Export ("*")

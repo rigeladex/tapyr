@@ -20,24 +20,26 @@
 #
 #++
 # Name
-#    MOM.DBW.SA.Session
+#    MOM.DBW.SA.Manager
 #
 # Purpose
-#    SQAlchemy specific session
+#    SQAlchemy specific manager backend
 #
 # Revision Dates
 #    19-Oct-2009 (MG) Creation
 #    24-Oct-2009 (MG) Creation continued
 #    27-Oct-2009 (MG) Create `UniqueConstraint` for essential primary key
 #                     columns
-#    19-Nov-2009 (CT) `_M_SA_Session_._attr_dict` simplified
+#    19-Nov-2009 (CT) `_M_SA_Manager_._attr_dict` simplified
 #    19-Nov-2009 (CT) s/Mapper/etype_decorator/
+#     4-Dec-2009 (MG) Renamed from `Session` to `Manager`
+#     4-Dec-2009 (MG) Once property `session` removed
 #    ««revision-date»»···
 #--
 
 from   _MOM       import MOM
 import _MOM._DBW
-import _MOM._DBW.Session
+import _MOM._DBW._Manager_
 import _MOM._DBW._SA
 import _MOM._DBW._SA.Attr_Type
 import _MOM._DBW._SA.Attr_Kind
@@ -45,9 +47,9 @@ import _MOM._DBW._SA.Attr_Kind
 from sqlalchemy import orm
 from sqlalchemy import schema
 from sqlalchemy import types
-from sqlalchemy import engine
+from sqlalchemy import engine as SA_Engine
 
-class Cached_Role_Extension (orm.interfaces.MapperExtension) :
+class Cached_Role_Clearing (orm.interfaces.MapperExtension) :
     """Clear the cached role attributes if a link is delete"""
 
     def after_delete (self, mapper, connection, link) :
@@ -56,26 +58,26 @@ class Cached_Role_Extension (orm.interfaces.MapperExtension) :
         return orm.EXT_CONTINUE
     # end def after_delete
 
-# end class Cached_Role_Extension
+# end class Cached_Role_Clearing
 
-class _M_SA_Session_ (MOM.DBW.Session.__class__) :
+class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
     metadata = schema.MetaData () ### XXX
 
     def create_database (cls, db_uri) :
         db_uri  = db_uri or "sqlite:///:memory:"
-        engine  = engine.create_engine (db_uri)
-        cls.metadata.create_all        (engine)
-        Session = orm.sessionmaker     (bind = engine)
-        return Session                 ()
+        engine  = SA_Engine.create_engine (db_uri)
+        cls.metadata.create_all           (engine)
+        Session = orm.sessionmaker        (bind = engine)
+        return Session                    ()
     # end def create_database
 
     def connect_database (cls, db_uri) :
         db_uri  = db_uri or "sqlite:///:memory:"
-        engine  = engine.create_engine (db_uri)
-        Session = orm.sessionmaker     (bind = engine)
-        return Session                 ()
+        engine  = SA_Engine.create_engine (db_uri)
+        Session = orm.sessionmaker        (bind = engine)
+        return Session                    ()
     # end def connect_database
 
     def update_etype (cls, e_type) :
@@ -102,7 +104,7 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
             map_props  ["properties"] = cls._setup_mapper_properties \
                 (e_type, attr_dict, sa_table, bases)
             if issubclass (e_type, MOM.Link) :
-                map_props ["extension"] = Cached_Role_Extension ()
+                map_props ["extension"] = Cached_Role_Clearing ()
             cls._setup_inheritance (e_type, sa_table, bases, map_props)
             orm.mapper             (e_type, sa_table, ** map_props)
             e_type._sa_table = sa_table
@@ -198,28 +200,16 @@ class _M_SA_Session_ (MOM.DBW.Session.__class__) :
         return result
     # end def _setup_mapper_properties
 
-# end class _M_SA_Session_
+# end class _M_SA_Manager_
 
-class _SA_Session_ (MOM.DBW.Session) :
-    """SQLAlchemy specific session class"""
+class Manager (MOM.DBW._Manager_) :
+    """SQLAlchemy specific Manager class"""
 
-    _real_name    = "Session"
-    __metaclass__ = _M_SA_Session_
-
+    __metaclass__ = _M_SA_Manager_
     type_name     = "SA"
 
-    ### XXX
-    ###engine        = engine.create_engine ('sqlite:///test.sqlite', echo = False)
-    engine        = engine.create_engine ('sqlite:///:memory:', echo = False)
-    SA_Session    = orm.sessionmaker    (bind = engine)
-
-    def __init__ (self, scope) :
-        self.scope   = scope
-        self.session = self.SA_Session ()
-    # end def __init__
-
-Session = _SA_Session_ # end class _SA_Session_
+# end class Manager
 
 if __name__ != '__main__':
     MOM.DBW.SA._Export ("*")
-### __END__ MOM.DBW.Session
+### __END__ MOM.DBW.Manager

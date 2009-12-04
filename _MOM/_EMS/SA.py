@@ -54,11 +54,6 @@ class Manager (MOM.EMS._Manager_) :
 
     Q_Result  = MOM.DBW.SA.Q_Result
 
-    @TFL.Meta.Once_Property
-    def session (self) :
-        return self.scope.dbw.session
-    # end def session
-
     def add (self, entity) :
         ses = self.session
         ses.flush () ### add all pending operations to the database transaction
