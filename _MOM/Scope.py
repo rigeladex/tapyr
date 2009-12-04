@@ -31,7 +31,8 @@
 #    27-Oct-2009 (CT) `_etm` and `_get_etm` added and used in `__getattr__`
 #                     and `__getitem__`
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
-#     4-Dec-2009 (MG) `Scope.new` added, `name` chnaged to `root_epk`
+#     4-Dec-2009 (MG) `Scope.new` added, `name` changed to `root_epk`
+#     4-Dec-2009 (CT) Handling of `root_epk` corrected (needs to be a tuple)
 #    ««revision-date»»···
 #--
 
@@ -129,7 +130,7 @@ class Scope (TFL.Meta.Object) :
 
     def __init__ ( self, app_type, db_uri
                  , guid      = None
-                 , root_epk  = ""
+                 , root_epk  = ()
                  , user      = None
                  , create_db = False
                  ) :
@@ -137,7 +138,7 @@ class Scope (TFL.Meta.Object) :
             if isinstance (app_type, (str, unicode)) :
                 app_type             = MOM.App_Type.instance (app_type)
             self.app_type            = app_type
-            self.bname               = root_epk ### XXX
+            self.bname               = "__".join (str (e) for e in root_epk)
             self.guid                = self._new_guid (guid)
             self._etm                = {}
             self._pkg_ns             = {}
@@ -308,7 +309,7 @@ class Scope (TFL.Meta.Object) :
     # end def has_changed
 
     @classmethod
-    def new (cls, app_type, db_uri, root_epk = None, user = None) :
+    def new (cls, app_type, db_uri, root_epk = (), user = None) :
         return cls \
             ( app_type, db_uri
             , root_epk  = root_epk
@@ -452,9 +453,9 @@ class Scope (TFL.Meta.Object) :
             ### `self._roots` before `__init__` of the root object is
             ### executed and might refer to `self.root`
             Root_Type = self.entity_type (app_type.Root_Type)
-            self.root = root = Root_Type.__new__ (root_epk, scope = self)
+            self.root = root = Root_Type.__new__ (* root_epk, scope = self)
             self._roots [root.Essence.type_base_name] = root
-            root.__init__           (root_epk)
+            root.__init__           (* root_epk)
             root_cls.after_creation (root)
     # end def _setup_root
 
