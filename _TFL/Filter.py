@@ -38,6 +38,8 @@
 #     1-Dec-2009 (MG) `Attr_Query.__mod__` added
 #     2-Dec-2009 (CT) `_Filter_Q_.__init__` changed to not extract
 #                     `predicate` of `Attr_Filter` instances
+#     4-Dec-2009 (CT) `Attr_Query` based on `TFL.Q_Exp.Base` instead of
+#                     home-grown code; `Attr_Filter` removed
 #    ««revision-date»»···
 #--
 
@@ -167,6 +169,7 @@ from   _TFL                     import TFL
 from   _TFL.predicate           import first, all_true, any_true
 
 import _TFL._Meta.Object
+import _TFL.Q_Exp
 
 import operator
 
@@ -267,7 +270,7 @@ class _Filter_Q_ (_Filter_) :
         for pof in pred_or_filters :
             if isinstance (pof, self.__class__) :
                 ext (pof.predicates)
-            elif isinstance (pof, Attr_Filter) :
+            elif getattr (pof, "predicate_precious_p", False) :
                 add (pof)
             else :
                 add (getattr (pof, "predicate", pof))
@@ -305,141 +308,76 @@ class Filter_Or (_Filter_Q_) :
 
 # end class Filter_Or
 
-class Attr_Filter (_Filter_S_) :
-    """Return all items of an iterable which satisfy a predicate for an
-       attribute.
-    """
+class Attr_Query (TFL.Q_Exp.Base) :
+    """Syntactic sugar for creating Filter objects based on attribute queries.
 
-    def __init__ (self, name, operation, * args, ** kw) :
-        self.attr_name  = name
-        self.operation  = operation
-        self.attr_args  = args
-        self.attr_kw    = kw
-    # end def __init__
+       >>> from _TFL.Record import Record as R
+       >>> Q  = Attr_Query ()
+       >>> r1 = R (foo = 42, bar = 137, baz = 11)
+       >>> q0 = Q.foo
+       >>> q0
+       Q.foo
+       >>> q0.name
+       'foo'
+       >>> q0.predicate (r1)
+       42
 
-    def predicate (self, item) :
-        try :
-            key = getattr (item, self.attr_name)
-        except AttributeError :
-            return False
-        return self.operation (key, * self.attr_args, ** self.attr_kw)
-    # end def predicate
-
-# end class Attr_Filter
-
-class Attr_Query (TFL.Meta.Object) :
-    """Syntactic sugar for creating Attr_Filter objects.
-
-       >>> from _TFL.Record import *
-       >>> Q = Attr_Query ()
-       >>> Q.fool.startswith ("bar") (Record (fool = "barfly"))
+       >>> Q.fool.startswith ("bar") (R (fool = "barfly"))
        True
-       >>> Q.fool.startswith ("fly") (Record (fool = "barfly"))
+       >>> Q.fool.startswith ("fly") (R (fool = "barfly"))
        False
-       >>> Q.fool.endswith ("fly") (Record (fool = "barfly"))
+       >>> Q.fool.endswith ("fly") (R (fool = "barfly"))
        True
-       >>> Q.fool.endswith ("bar") (Record (fool = "barfly"))
+       >>> Q.fool.endswith ("bar") (R (fool = "barfly"))
        False
-       >>> Q.fool.between (2, 8) (Record (fool = 1))
+       >>> Q.fool.between (2, 8) (R (fool = 1))
        False
-       >>> Q.fool.between (2, 8) (Record (fool = 2))
+       >>> Q.fool.between (2, 8) (R (fool = 2))
        True
-       >>> Q.fool.between (2, 8) (Record (fool = 3))
+       >>> Q.fool.between (2, 8) (R (fool = 3))
        True
-       >>> Q.fool.between (2, 8) (Record (fool = 8))
+       >>> Q.fool.between (2, 8) (R (fool = 8))
        True
-       >>> Q.fool.between (2, 8) (Record (fool = 9))
+       >>> Q.fool.between (2, 8) (R (fool = 9))
        False
-       >>> (Q.fool == "barfly") (Record (fool = "barfly"))
+       >>> (Q.fool == "barfly") (R (fool = "barfly"))
        True
-       >>> (Q.fool != "barfly") (Record (fool = "barfly"))
+       >>> (Q.fool != "barfly") (R (fool = "barfly"))
        False
-       >>> (Q.fool != "barflyz") (Record (fool = "barfly"))
+       >>> (Q.fool != "barflyz") (R (fool = "barfly"))
        True
-       >>> (Q.fool <= "barflyz") (Record (fool = "barfly"))
+       >>> (Q.fool <= "barflyz") (R (fool = "barfly"))
        True
-       >>> (Q.fool >= "barflyz") (Record (fool = "barfly"))
+       >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
        False
-       >>> Q.fool.contains ("barf") (Record (fool = "a barfly "))
+       >>> Q.fool.contains ("barf") (R (fool = "a barfly "))
        True
-       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 1))
+       >>> Q.fool.in_ ([2,4,8]) (R (fool = 1))
        False
-       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 2))
+       >>> Q.fool.in_ ([2,4,8]) (R (fool = 2))
        True
-       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 3))
+       >>> Q.fool.in_ ([2,4,8]) (R (fool = 3))
        False
-       >>> Q.fool.in_ ([2,4,8]) (Record (fool = 4))
+       >>> Q.fool.in_ ([2,4,8]) (R (fool = 4))
        True
-       >>> (Q.fool % 2) (Record (fool = 20))
+       >>> (Q.fool % 2) (R (fool = 20))
        0
+
     """
 
-    def __init__ (self, name = None) :
-        self.name = name
-    # end def __init__
+    Ignore_Exception = AttributeError
 
-    def __getattr__ (self, name) :
-        assert self.name is None
-        return self.__class__ (name)
-    # end def __getattr__
+    class Bin_Bool (_Filter_S_, TFL.Q_Exp.Bin_Bool) :
+        pass
+    # end class Bin_Bool
 
-    def between (self, lhs, rhs) :
-        def between (val, lhs, rhs) :
-            return lhs <= val <= rhs
-        return Attr_Filter (self.name, between, lhs, rhs)
-    # end def between
+    class Bin_Expr (_Filter_S_, TFL.Q_Exp.Bin_Expr) :
+        pass
+    # end class Bin_Expr
 
-    def contains (self, rhs) :
-        return Attr_Filter (self.name, operator.contains, rhs)
-    # end def contains
-
-    def endswith (self, rhs) :
-        return Attr_Filter (self.name, str.endswith, rhs)
-    # end def endswith
-
-    def in_ (self, rhs) :
-        def in_ (val,  rhs) :
-            return val in rhs
-        return Attr_Filter (self.name, in_, rhs)
-    # end def in_
-
-    def startswith (self, rhs) :
-        return Attr_Filter (self.name, str.startswith, rhs)
-    # end def startswith
-
-    def __eq__ (self, rhs) :
-        return Attr_Filter (self.name, operator.__eq__, rhs)
-    # end def __eq__
-
-    def __ge__ (self, rhs) :
-        return Attr_Filter (self.name, operator.__ge__, rhs)
-    # end def __ge__
-
-    def __gt__ (self, rhs) :
-        return Attr_Filter (self.name, operator.__gt__, rhs)
-    # end def __gt__
-
-    def __hash__ (self) :
-        ### Override `__hash__` just to silence DeprecationWarning:
-        ###     Overriding __eq__ blocks inheritance of __hash__ in 3.x
-        raise NotImplementedError
-    # end def __hash__
-
-    def __le__ (self, rhs) :
-        return Attr_Filter (self.name, operator.__le__, rhs)
-    # end def __le__
-
-    def __lt__ (self, rhs) :
-        return Attr_Filter (self.name, operator.__lt__, rhs)
-    # end def __lt__
-
-    def __mod__ (self, rhs) :
-        return Attr_Filter (self.name, operator.__mod__, rhs)
-    # end def __mod__
-
-    def __ne__ (self, rhs) :
-        return Attr_Filter (self.name, operator.__ne__, rhs)
-    # end def __ne__
+    class Call (_Filter_S_, TFL.Q_Exp.Call) :
+        pass
+    # end class Call
 
 # end class Attr_Query
 
