@@ -42,17 +42,16 @@ This module implements a query expression language:
 42
 
 >>> q1 = Q.foo == Q.bar
->>> q1
-Q.foo == Q.bar
+>>> q1, q1.lhs, q1.rhs, q1.op.__name__
+(Q.foo == Q.bar, Q.foo, Q.bar, '__eq__')
 >>> q1.lhs.name, q1.rhs.name
 ('foo', 'bar')
->>> q1 = Q.foo == Q.bar
 >>> q1.predicate (r1)
 False
 
 >>> q2 = Q.foo + Q.bar
->>> q2, q2.lhs, q2.rhs
-(Q.foo + Q.bar, Q.foo, Q.bar)
+>>> q2, q2.lhs, q2.rhs, q2.op.__name__
+(Q.foo + Q.bar, Q.foo, Q.bar, '__add__')
 >>> q2.predicate (r1)
 179
 
@@ -157,6 +156,10 @@ class Bin (TFL.Meta.Object) :
             return self.op (l, r)
     # end def predicate
 
+    def __call__ (self, obj) :
+        return self.predicate (obj)
+    # end def __call__
+
     def __repr__ (self) :
         op = self.op.__name__
         return "%s %s %s" % (self.lhs, self.op_map.get (op, op), self.rhs)
@@ -182,6 +185,10 @@ class Call (TFL.Meta.Object) :
         l = self.lhs.predicate (obj)
         return self.op (l, * self.attr_args, ** self.attr_kw)
     # end def predicate
+
+    def __call__ (self, obj) :
+        return self.predicate (obj)
+    # end def __call__
 
 # end class Call
 
