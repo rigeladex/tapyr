@@ -70,6 +70,7 @@
 #                     of `id (self)`
 #     4-Jan-2008 (CT) `_sanitized_year` changed to add `2000` for `values < 40`
 #    24-Sep-2009 (CT) Use `in` operator instead of `has_key` method
+#     6-Dec-2009 (CT) 3-compatibility
 #    ««revision-date»»···
 #--
 
@@ -148,7 +149,7 @@ class Time_Tuple :
             body [i] = self._sanitized (self.rindex [i], args [i])
         for k in kw.keys () :
             if kw [k] is not None :
-                if not self.index.has_key (k) :
+                if k not in self.index :
                     raise NameError, k
                 body [self.index [k]] = self._sanitized (k, kw [k])
         self.body = tuple (body)
@@ -170,7 +171,7 @@ class Time_Tuple :
     def _sanitized_month (self, value) :
         if isinstance (value, str) :
             v = value.lower ()
-            if self.months.has_key (v) :
+            if v in self.months :
                 return self.months [v]
             else :
                 return self._sanitized_field (value)
@@ -296,7 +297,7 @@ def day_to_time_tuple (day_string) :
     for pat in _day_patterns :
         match = pat.match (day_string)
         if match :
-            return apply (Time_Tuple, (), match.groupdict ())
+            return Time_Tuple (** match.groupdict ())
     raise ValueError, day_string
 # end def time_tuple
 

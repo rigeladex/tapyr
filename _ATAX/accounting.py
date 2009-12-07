@@ -150,6 +150,7 @@
 #    28-Apr-2009 (CT)  `vorsteuer_gut` added and used
 #     4-May-2009 (CT)  s/vorsteuer_gut/ust_gut/
 #    17-Sep-2009 (RSC) Fix Doc-String on "z" category after email-discussion
+#     6-Dec-2009 (CT)  3-compatibility
 #    ««revision-date»»···
 #--
 
@@ -162,6 +163,7 @@ from   _TFL.predicate    import *
 from   _TFL.Regexp       import *
 
 import _TFL._Meta.Object
+import _TFL.Accessor
 
 from   _TGL              import TGL
 import _TGL.load_config_file
@@ -306,11 +308,6 @@ class Account_Entry (_Entry_) :
         self.cati = " "
     # end def __init__
 
-    def time_cmp (self, other) :
-        """Return result of `cmp' of self and other's time"""
-        return cmp (self.time, other.time)
-    # end def time_cmp
-
     def __getattr__ (self, name) :
         return getattr (self.dtuple, name)
     # end def __getattr__
@@ -437,7 +434,7 @@ class Account :
                     (line, self.source_currency, self.vst_korrektur)
                 if (categ_interest.search (entry.cat) and entry.is_change) :
                     entries.append (entry)
-        entries.sort (Account_Entry.time_cmp)
+        entries.sort (key = TFL.Getter.time)
         self.entries.extend (entries)
         for entry in entries :
             self.add (entry)
@@ -454,7 +451,7 @@ class Account :
             ### `tmp' must be passed to the local-dict argument because
             ### Python adds some junk to the global-dict argument of `exec'
             exec line in {}, tmp
-            if tmp.has_key ("source_currency") :
+            if "source_currency" in tmp :
                 self.source_currency = EUC.Table [tmp ["source_currency"]]
                 del tmp ["source_currency"]
             self.privat.update (tmp ["privat"])
