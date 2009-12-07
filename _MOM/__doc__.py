@@ -395,6 +395,7 @@ appropriate class:
     >>> t2    = scope.BMT.Trap       ("X", 2)
     >>> t3    = scope.BMT.Trap       ("Y", 1)
     >>> t4    = scope.BMT.Trap       ("Y", 2)
+    >>> t5    = scope.BMT.Trap       ("Z", 3)
 
     >>> RiT   = scope.BMT.Rodent_in_Trap
     >>> PoT   = scope.BMT.Person_owns_Trap
@@ -535,18 +536,18 @@ etype:
     [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver')]
 
     >>> scope.MOM.Named_Object.count_transitive
-    8
+    9
     >>> list (scope.MOM.Named_Object.query_s ())
-    [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
+    [BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2), BMT.Trap ('Z', 3)]
     >>> scope.MOM.Object.count_transitive
-    13
+    14
     >>> list (scope.MOM.Object.query_s ())
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
+    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2), BMT.Trap ('Z', 3)]
 
     >>> list (scope.MOM.Id_Entity.query_s ())
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2)]
+    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rat ('Axel'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Trap ('X', 1), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Y', 2), BMT.Trap ('Z', 3)]
     >>> scope.MOM.Id_Entity.count_transitive
-    23
+    24
 
     >>> scope.MOM.Link.count_transitive
     10
@@ -646,15 +647,16 @@ etype:
  (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)),\
  BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1))]
 
+
     .. ### DBW-specific start
 
     >>> list (scope)
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('X', 1), BMT.Trap ('Y', 2), BMT.Beaver ('Toothy_Beaver'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Rat ('Axel'), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
+    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('Axel'), ('X', 2)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Person ('Dog', 'Snoopy'), BMT.Person ('Luke', 'Lucky'), BMT.Person ('Tin', 'Tin'), BMT.Trap ('X', 2), BMT.Trap ('Y', 1), BMT.Trap ('Z', 3), BMT.Trap ('X', 1), BMT.Trap ('Y', 2), BMT.Beaver ('Toothy_Beaver'), BMT.Mouse ('Mighty_Mouse'), BMT.Rat ('Rutty_Rat'), BMT.Rat ('Axel'), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313))]
 
     .. ### DBW-specific finish
 
     >>> len (list (scope))
-    23
+    24
 
 Changing objects and links
 ---------------------------
@@ -754,6 +756,29 @@ Changing objects and links
         rodent.weight = 42.0
         trap.max_weight = 20.0
 
+Attribute queries
+------------------
+
+    >>> scope.BMT.Person.query_s (Q.last_name == Q.first_name).all ()
+    [BMT.Person ('Tin', 'Tin')]
+    >>> scope.BMT.Rodent.query_s (Q.weight != None).all ()
+    [BMT.Mouse ('Mighty_Mouse')]
+    >>> scope.BMT.Rodent.query_s (Q.weight == None).all ()
+    [BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Rat ('betty')]
+    >>> scope.BMT.Rodent.query_s (Q.weight > 0).all ()
+    [BMT.Mouse ('Mighty_Mouse')]
+    >>> scope.BMT.Trap.query_s (Q.serial_no > 1).all ()
+    [BMT.Trap ('X', 2), BMT.Trap ('Y', 2), BMT.Trap ('Z', 3)]
+    >>> scope.BMT.Trap.query_s (Q.serial_no < 2).all ()
+    [BMT.Trap ('X', 1), BMT.Trap ('Y', 1)]
+    >>> scope.BMT.Trap.query_s (Q.serial_no %% 2).all ()
+    [BMT.Trap ('X', 1), BMT.Trap ('Y', 1), BMT.Trap ('Z', 3)]
+    >>> scope.BMT.Trap.query_s (Q.serial_no %% 2 == 0).all ()
+    [BMT.Trap ('X', 2), BMT.Trap ('Y', 2)]
+
+Renaming objects and links
+--------------------------
+
     >>> b.all_links ()
     []
     >>> rit.set (left = b)
@@ -776,6 +801,9 @@ Changing objects and links
     1
     >>> print rit.as_code ()
     BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1), )
+
+Deleting objects and links
+--------------------------
 
     >>> scope.MOM.Link.query_s ().all ()
     [BMT.Person_owns_Trap (('Dog', 'Snoopy'), ('Y', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 1)), BMT.Person_owns_Trap (('Luke', 'Lucky'), ('X', 2)), BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location (('Luke', 'Lucky'), ('Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap (('Mighty_Mouse'), ('X', 1)), BMT.Rodent_in_Trap (('Rutty_Rat'), ('Y', 1)), BMT.Rodent_in_Trap (('betty'), ('X', 2))]
@@ -841,6 +869,7 @@ Changing objects and links
     []
 
     .. ### DBW-specific finish
+
 
 """
 

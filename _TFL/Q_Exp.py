@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     4-Dec-2009 (CT) Creation
+#     7-Dec-2009 (CT) `Base.undef` and `Bin.undefs` added and used
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,8 @@ class Base (TFL.Meta.Object) :
 
     class Ignore_Exception (StandardError) : pass
 
+    undef = object ()
+
     def __init__ (self, Ignore_Exception = None) :
         if Ignore_Exception is not None :
             self.Ignore_Exception = Ignore_Exception
@@ -116,6 +119,8 @@ class Base (TFL.Meta.Object) :
     # end def __getitem__
 
 # end class Base
+
+Q = Base ()
 
 @TFL.Add_New_Method (Base)
 class Bin (TFL.Meta.Object) :
@@ -137,11 +142,12 @@ class Bin (TFL.Meta.Object) :
 
     predicate_precious_p = True
 
-    def __init__ (self, lhs, op, rhs) :
-        self.Q    = lhs.Q
-        self.lhs  = lhs
-        self.op   = op
-        self.rhs  = rhs
+    def __init__ (self, lhs, op, rhs, undefs) :
+        self.Q      = lhs.Q
+        self.lhs    = lhs
+        self.op     = op
+        self.rhs    = rhs
+        self.undefs = undefs
     # end def __init__
 
     def predicate (self, obj) :
@@ -152,7 +158,8 @@ class Bin (TFL.Meta.Object) :
             r = self.rhs
         else :
             r = pred (obj)
-        if l is not None and r is not None :
+        if not any ((v is u) for v in (l, r) for u in self.undefs) :
+            ### Call `op` only if neither `l` nor `v` is an undefined value
             return self.op (l, r)
     # end def predicate
 
@@ -183,7 +190,8 @@ class Call (TFL.Meta.Object) :
 
     def predicate (self, obj) :
         l = self.lhs.predicate (obj)
-        return self.op (l, * self.attr_args, ** self.attr_kw)
+        if l is not self.Q.undef :
+            return self.op (l, * self.attr_args, ** self.attr_kw)
     # end def predicate
 
     def __call__ (self, obj) :
@@ -194,9 +202,15 @@ class Call (TFL.Meta.Object) :
 
 def __binary (op, Class) :
     name = op.__name__
-    op   = getattr (operator, op.__name__)
+    op   = getattr (operator, name)
+    if name in ("__eq__", "__ne__") :
+        ### Allow `x == None` and `x != None`
+        undefs = (Q.undef, )
+    else :
+        ### Ignore `None` for all other operators
+        undefs = (None, Q.undef)
     def _ (self, rhs) :
-        return getattr (self.Q, Class) (self, op, rhs)
+        return getattr (self.Q, Class) (self, op, rhs, undefs)
     _.__doc__    = op.__doc__
     _.__name__   = name
     _.__module__ = op.__module__
@@ -317,10 +331,11 @@ class Get (Exp) :
     # end def __init__
 
     def predicate (self, obj) :
+        Q = self.Q
         try :
             return self.getter (obj)
-        except self.Q.Ignore_Exception :
-            pass
+        except Q.Ignore_Exception :
+            return Q.undef
     # end def predicate
 
     def __call__ (self, obj) :
@@ -348,8 +363,6 @@ class _Q_Exp_Bin_Expr_ (Bin, Exp) :
     _real_name = "Bin_Expr"
 
 Bin_Expr = _Q_Exp_Bin_Expr_ # end class
-
-Q = Base ()
 
 if __name__ != "__main__" :
     TFL._Export ("Q")

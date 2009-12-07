@@ -29,6 +29,7 @@
 #     1-Dec-2009 (CT) Creation
 #     2-Dec-2009 (CT) Creation continued
 #     3-Dec-2009 (CT) Creation continued..
+#     7-Dec-2009 (CT) Usage of `TFL.Attr_Filter` replaced by `TFL.Attr_Query`
 #    ««revision-date»»···
 #--
 
@@ -155,8 +156,9 @@ class _Q_Result_ (TFL.Meta.Object) :
     def filter (self, * criteria, ** kw) :
         if kw :
             criteria = list (criteria)
+            Q = TFL.Attr_Query ()
             for k, v in kw.iteritems () :
-                criteria.append (TFL.Attr_Filter (k, operator.__eq__, v))
+                criteria.append (getattr (Q, k) == v)
             criteria = tuple (criteria)
         assert criteria
         if len (criteria) == 1 :
