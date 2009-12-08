@@ -1,0 +1,97 @@
+{# Django template: djo-base.html #}
+{% comment %}
+  ## Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+  ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+  ##
+  ##
+  ##++
+  ## Name
+  ##    djo-base-5
+  ##
+  ## Purpose
+  ##    Base html5 template for applications based on the DJO package namespace
+  ##
+  ##
+  ## Revision Dates
+  ##     8-Dec-2009 (CT) Creation started (based on djo-base.html)
+  ##    ««revision-date»»···
+  ##--
+{% endcomment %}
+{% load TGL %}
+<!DOCTYPE html>
+<html lang="{{ page.language|default:"en" }}">
+{% if not page %}{% var page=NAV %}{% endif %}
+  <head>
+    {% block head-elements %}
+      <meta http-equiv="Content-Type"
+        content="text/html; charset={{ page.encoding|default:"iso-8859-15" }}"
+      />
+      {% block head-base-element %}{% endblock head-base-element %}
+      {% spaceless %}
+        {% block title %}
+          <title>{% firstof page.h_title page.title page.h_ref %}</title>
+        {% endblock title %}
+      {% endspaceless %}
+      {% block styles %}
+        {% for cssl in page.Media.css_links %}
+          {% if cssl.condition %}
+            <!--[if {{ cssl.condition }}]>
+          {% endif %}
+            <link rel="stylesheet" title="Default"
+              media="{{ cssl.media_type }}" href="{{ cssl.href }}"
+            />
+          {% if cssl.condition %}
+            <![endif]-->
+          {% endif %}
+        {% endfor %}
+      {% endblock styles %}
+      {% block scripts %}
+        <!--[if IE]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        {% for jsl in page.Media.scripts %}
+          <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+        {% endfor %}
+        {% if page.Media.js_on_ready %}
+          <script type="text/javascript">
+            $(function ()
+              {
+                {% for jsor in page.Media.js_on_ready %}{{ jsor|safe }}{% endfor %}
+              }
+             );
+          </script>
+        {% endif %}
+      {% endblock scripts %}
+      {% block related-links %}
+        {% for rl in page.Media.rel_links %}
+          <link {{ rl.attrs|safe }} />
+        {% endfor %}
+      {% endblock related-links %}
+      {% block meta-elements %}
+        {% if page.description %}
+        <meta name="description" content="{{ page.description }}" />
+        {% endif %}
+        <meta name="copyright" content="{{ page.copyright.year }} {{ page.copyright.holder }}" />
+        <meta name="Content-URL" content="{{ page.href }}" />
+        <meta name="generator" content="Django" />
+      {% endblock meta-elements %}
+      {{ page.add_headers|safe }}
+    {% endblock head-elements %}
+  </head>
+  <body {{ page.body_attr|safe }} {% block body-attrs %}{% endblock %}>
+    <div id="header">{% block body-header %}{% endblock body-header %}</div>
+    <div id="main" class="main">
+      <nav id="navigate">
+        {% block navigate %}{% include "navigate.html" %}{% endblock %}
+      </nav>
+      <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
+        {% block body-headline %}
+          {% if page.headline %}<h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.headline|safe }}</h1>{% endif %}
+        {% endblock body-headline %}
+        {% block document %}{% endblock %}
+      </div>
+    </div>
+    <footer id="footer">{% block body-footer %}{% endblock body-footer %}</footer>
+  </body>
+</html>
+{# __END__ Django template: djo-base.html #}

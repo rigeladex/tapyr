@@ -426,6 +426,9 @@ appropriate class:
     >>> PoT (("Tin", "Tin"), t4)
     BMT.Person_owns_Trap (('Tin', 'Tin'), ('Y', 2))
 
+Creating a link will automatically set `auto_cached` attributes of the objects
+participating of the link, like `Trap.setter` and `Trap.location`::
+
     >>> t1.setter, t1.location
     (None, None)
     >>> PTL (p, t1, l1)
@@ -449,14 +452,13 @@ Queries
 -------
 
 One queries the object model by calling query methods of the
-appropriate etype manager. Strict queries they return only instances
+appropriate etype manager. Strict queries return only instances
 of the essential class in question,
 but not instances of derived classes. Non-strict queries are
 transitive, i.e., they return instances of the essential class in
 question and all its descendents. For partial types, strict queries
 return nothing. By default, queries are non-strict (transitive).
 Passing `strict = True` to a query makes it strict.
-
 
 The query :meth:`instance<_MOM.E_Type_Manager.E_Type_Manager.instance>` can
 only be applied to `E_Type_Managers` for essential types that are, or
