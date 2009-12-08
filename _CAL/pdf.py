@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -45,6 +45,7 @@
 #                     (instead of ancient one named pdfgen)
 #    12-Feb-2008 (CT) Refactored, `PDF_Plan_Month` started
 #    13-Feb-2008 (CT) `PDF_Plan_Month` finished
+#     8-Dec-2009 (CT) 3-compatibility (tuple parameter unpacking)
 #    ««revision-date»»···
 #--
 
@@ -221,7 +222,8 @@ class PDF_Plan_Month (PDF_Plan) :
             self.draw_text (c, xo + 0.8 * cm, yo, d.is_holiday, self.blue)
     # end def one_day
 
-    def one_unit (self, Y, n, ((x, xl), (y, yl), ds)) :
+    def one_unit (self, Y, n, spec) :
+        ((x, xl), (y, yl), ds) = spec
         m    = Y.months [n - 1]
         c    = self.canvas
         cm   = self.cm
@@ -280,7 +282,8 @@ class PDF_Plan_Week (PDF_Plan) :
             self.draw_text (c, xo, yo, txt, self.gray)
     # end def one_day
 
-    def one_unit (self, Y, n, ((x, xl), (y, yl), ds)) :
+    def one_unit (self, Y, n, spec) :
+        ((x, xl), (y, yl), ds) = spec
         w    = Y.weeks [n]
         c    = self.canvas
         cm   = self.cm
