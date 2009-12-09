@@ -215,7 +215,7 @@ class Object_Scope (Scope) :
        >>> s.a
        42
        >>> print s.b
-       (a = 137, b = foo, c = (x = 1))
+       (a = 137, b = 'foo', c = Record (x = 1))
        >>> print s.b.c
        (x = 1)
        >>> "s.a = %(a)s, s.b.a = %(b.a)s, s.b.c.x = %(b.c.x)s" % s

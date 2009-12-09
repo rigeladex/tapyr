@@ -70,8 +70,9 @@ True
 42
 
 >>> QQ = Q.__class__ (Ignore_Exception = AttributeError)
->>> QQ.qux.predicate (r1)
->>> Q.qux.predicate (r1)
+>>> QQ.qux.predicate (r1) is QQ.undef
+True
+>>> Q.qux.predicate (r1) is Q.undef
 Traceback (most recent call last):
   ...
 AttributeError: qux

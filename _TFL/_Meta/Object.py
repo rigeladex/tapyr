@@ -33,11 +33,14 @@
 #                     (http://bugs.python.org/issue1683368)
 #     2-Feb-2009 (CT) Documentation improved
 #    17-Jul-2009 (CT) `_check_MRO` and doctest added to `_TFL_Meta_Object_Root_`
+#     9-Dec-2009 (CT) Context manager `LET` added
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
+
 import _TFL._Meta.M_Class
+import _TFL.Decorator
 
 class _TFL_Meta_Object_Root_ (object) :
     """Root class to fix `__init__` and `__new__`.
@@ -45,7 +48,7 @@ class _TFL_Meta_Object_Root_ (object) :
        As of Python 2.6, `object.__init__` doesn't accept parameters
        (http://bugs.python.org/issue1683368).
 
-       Don't inherit from _TFL_Meta_Object_Root_ directly(unless you really
+       Don't inherit from _TFL_Meta_Object_Root_ directly (unless you really
        know what you're doing).
 
        >>> class A (object) :
@@ -101,7 +104,7 @@ class _TFL_Meta_Object_Root_ (object) :
     @classmethod
     def _check_MRO (cls, args, kw) :
         if (args or kw) :
-            ### Make sure that there is not class intervening between
+            ### Make sure that there is no class intervening between
             ### `_TFL_Meta_Object_Root_` and `object` in `cls.__mro__`
             ###
             ### due to http://bugs.python.org/issue1683368, cooperative
@@ -179,6 +182,42 @@ class _TFL_Meta_Object_ (_TFL_Meta_Object_Root_) :
         ### delegate to `__super` to accomodate multiple inheritance
         self.__super.__init__ (* args, ** kw)
     # end def __init__
+
+    @TFL.Contextmanager
+    def LET (self, ** kw) :
+        """Provide context with attributes of `self` temporary bound to
+           values in `kw`.
+
+           >>> from _TFL.Record import Record as R
+           >>> x = R (foo = 1, bar = 24, baz = 42)
+           >>> x
+           Record (bar = 24, baz = 42, foo = 1)
+           >>> with x.LET (bar = 137, qux = "really?") :
+           ...     x
+           ...     x.bar = 0
+           ...     x
+           ...
+           Record (bar = 137, baz = 42, foo = 1, qux = 'really?')
+           Record (bar = 0, baz = 42, foo = 1, qux = 'really?')
+           >>> x
+           Record (bar = 24, baz = 42, foo = 1)
+
+        """
+        store = {}
+        undef = object ()
+        for k, v in kw.iteritems () :
+            store [k] = getattr (self, k, undef)
+        try :
+            for k, v in kw.iteritems () :
+                setattr (self, k, v)
+            yield
+        finally :
+            for k, v in store.iteritems () :
+                if v is undef :
+                    delattr (self, k)
+                else :
+                    setattr (self, k, v)
+    # end def LET
 
 Object = _TFL_Meta_Object_ # end class
 

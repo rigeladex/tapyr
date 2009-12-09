@@ -40,6 +40,9 @@
 #    23-Jan-2008 (CT)  `Record_S` added
 #     1-Feb-2008 (MG)  `__nonzero__` added
 #    27-Feb-2009 (CT)  `__setitem__` added
+#     9-Dec-2009 (CT)  `__delattr__` added
+#     9-Dec-2009 (CT) `__repr__` and `_formatted_kw` changed (use `%r`
+#                     instead of explicitly quoted `%s`)
 #    ««revision-date»»···
 #--
 
@@ -71,15 +74,17 @@ class Record (TFL.Meta.Object) :
         return result
     # end def copy
 
-    def _formatted_kw (self, key_quote = "", value_quote = "") :
-        kq = key_quote
-        vq = value_quote
+    def _formatted_kw (self) :
         return ", ".join \
-            ( (   "%s%s%s = %s%s%s" % (kq, k, kq, vq, v, vq)
+            ( (   "%s = %r" % (k, v)
               for (k, v) in sorted (self._kw.iteritems ())
               )
             )
     # end def _formatted_kw
+
+    def __delattr__ (self, name) :
+        del self._kw [name]
+    # end def __delattr__
 
     def __getattr__ (self, name) :
         try :
@@ -102,7 +107,7 @@ class Record (TFL.Meta.Object) :
 
     def __repr__ (self) :
         return "%s (%s)" % \
-            (self.__class__.__name__, self._formatted_kw ('', '"""'))
+            (self.__class__.__name__, self._formatted_kw ())
     # end def __repr__
 
     def __setattr__ (self, name, value) :
