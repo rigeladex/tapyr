@@ -30,7 +30,7 @@
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__ import dt_form, MOM, BMT, show
+from _MOM.__doc__ import dt_form, MOM, BMT, show, NL
 import re
 
 filter_dbw_pat = re.compile \
@@ -44,4 +44,5 @@ doc__ = ( filter_dbw_pat.sub ("", dt_form)
                )
         ).replace ("__Hash", "__SA")
 __doc__ = doc__
+
 ### __END__ MOM.DBW.SA.__doc__
