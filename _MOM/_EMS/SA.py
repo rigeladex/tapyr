@@ -30,6 +30,8 @@
 #    25-Oct-2009 (MG) Updated to support inheritance
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    03-Dec-2009 (MG) Use `MOM.DBW.SA.Q_Result`
+#    10-Dec-2009 (MG) `pid` added, `load_scope` and `register_scope`
+#                     implemented
 #    ««revision-date»»···
 #--
 
@@ -63,11 +65,21 @@ class Manager (MOM.EMS._Manager_) :
         try :
             ses.add   (entity)
             ses.flush ()
+            entity.pid = (entity.relevant_root.type_name, entity.id)
         except SA_Exception.IntegrityError as exc :
             ses.rollback ()
             raise MOM.Error.Name_Clash \
                 (entity, self.instance (entity.__class__, entity.epk))
     # end def add
+
+    def load_scope (self) :
+        self.DBW.load           (self.session, self.scope)
+    # end def load_scope
+
+    def register_scope (self) :
+        """Redefine to store `guid` and `root`-info of scope in database."""
+        self.DBW.register_scope (self.session, self.scope)
+    # end def register_scope
 
     def remove (self, entity) :
         self.session.delete (entity)

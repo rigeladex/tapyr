@@ -34,6 +34,7 @@
 #    19-Nov-2009 (CT) s/Mapper/etype_decorator/
 #     4-Dec-2009 (MG) Renamed from `Session` to `Manager`
 #     4-Dec-2009 (MG) Once property `session` removed
+#    10-Dec-2009 (MG) `load_scope` and `register_scope` added
 #    ««revision-date»»···
 #--
 
@@ -63,11 +64,13 @@ class Cached_Role_Clearing (orm.interfaces.MapperExtension) :
 class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
-    metadata = schema.MetaData () ### XXX
+    metadata         = schema.MetaData () ### XXX
+    type_name_length = 30
 
     def create_database (cls, db_uri) :
         db_uri  = db_uri or "sqlite:///:memory:"
         engine  = SA_Engine.create_engine (db_uri)
+        cls._create_scope_table           (cls.metadata)
         cls.metadata.create_all           (engine)
         Session = orm.sessionmaker        (bind = engine)
         return Session                    ()
@@ -79,6 +82,18 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         Session = orm.sessionmaker        (bind = engine)
         return Session                    ()
     # end def connect_database
+
+    def _create_scope_table (cls, metadata) :
+        cls.sa_scope = schema.Table \
+            ( "scope_metadata", metadata
+            , schema.Column
+                ("root_id",        types.Integer, primary_key = True)
+            , schema.Column
+                ("scope_guid",     types.String (length = 64))
+            , schema.Column
+                ("root_type_name", types.String (length = cls.type_name_length))
+            )
+    # end def _create_scope_table
 
     def update_etype (cls, e_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
@@ -124,6 +139,22 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         return result
     # end def _attr_dict
 
+    def load_scope (cls, session,  scope) :
+        si         = session.query (cls.sa_scope).one ()
+        scope.guid = si.scope_guid
+        if si.root_type_name :
+            scope.root = getattr \
+                (scope, si.root_type_name).query (id = si.root_it).one ()
+    # end def load_scope
+
+    def register_scope (cls, session,  scope) :
+        kw = dict (scope_guid = scope.guid)
+        if scope.root :
+            kw ["root_id"]        = scope.root.id
+            kw ["root_type_name"] = scope.root.type_name
+        session.execute (cls.sa_scope.insert ().values (** kw))
+    # end def register_scope
+
     def _setup_columns (cls, e_type, attr_dict, bases, unique) :
         result = []
         if e_type is not e_type.relevant_root :
@@ -143,7 +174,10 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                     (pk_name, types.Integer, primary_key = True)
                 )
         ### we add the type_name in any case to make EMS.SA easier
-        result.append (schema.Column ("Type_Name", types.String (length = 30)))
+        result.append \
+            ( schema.Column
+                ("Type_Name", types.String (length = cls.type_name_length))
+            )
         e_type._sa_pk_name = pk_name
         for name, attr_kind in attr_dict.iteritems () :
             attr_kind.attr._sa_col_name = attr_kind._sa_col_name ()

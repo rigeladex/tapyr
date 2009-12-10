@@ -28,23 +28,23 @@
 # Revision Dates
 #    20-Oct-2009 (MG) Creation
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#    10-Dec-2009 (MG) Test works again
 #    ««revision-date»»···
 #--
 
 from   _MOM.__doc__ import *
 import _MOM._EMS.SA
-import _MOM._DBW._SA.Session
+import _MOM._DBW._SA.Manager
 
 EMS     = MOM.EMS.SA.Manager
-DBW     = MOM.DBW.SA.Session
+DBW     = MOM.DBW.SA.Manager
 
 apt     = MOM.App_Type    ("BMT", BMT).Derived     (EMS, DBW)
 
 
-scope   = MOM.Scope       (apt)
-DBW.metadata.create_all   (DBW.engine)
+scope   = MOM.Scope.new   (apt, None)
 
-session           = scope.dbw.session
+session           = scope.ems.session
 session.bind.echo = False
 dBMT              = scope.BMT
 session.bind.echo = True * 0
