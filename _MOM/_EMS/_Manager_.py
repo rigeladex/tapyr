@@ -111,7 +111,7 @@ class _Manager_ (TFL.Meta.Object) :
     # end def instance
 
     def load_scope (self) :
-        """Redefine to load `guid` and `root` of scope from database."""
+        """Redefine to load `guid`, `pid`, and `root` of scope from database."""
         pass
     # end def load_scope
 

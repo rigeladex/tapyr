@@ -5,11 +5,11 @@ x TFL.Meta.Object
 
   x context manager `let` for temporarily setting attribute values
 
-* Id_Entity: `pid` (persistent id)
+x Id_Entity: `pid` (persistent id)
 
-  + set by EMS/DBW
+  x set by EMS/DBW
 
-  + globally unique per database (not reused!, survives save/load cycle)
+  x globally unique per database (not reused!, survives save/load cycle)
 
 * SCM
 
@@ -54,13 +54,13 @@ x TFL.Meta.Object
 
           self.ems = app_type.EMS.new (self, db_uri)
 
-  * `app_type.DBW.create_database` -> session
+  x `app_type.DBW.create_database` -> session
 
-  * `app_type.DBW.connect_database` -> session
+  x `app_type.DBW.connect_database` -> session
 
   * `scope.ems.commit`
 
-  * provide Id_Entity.pid
+  x provide Id_Entity.pid
 
   * store SCM.Change objects
 

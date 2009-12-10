@@ -37,6 +37,8 @@
 #                     home-grown code
 #    10-Dec-2009 (CT) `compute_defaults_internal` and `check_inv` corrected
 #    10-Dec-2009 (CT) Scope initialization revamped
+#    10-Dec-2009 (CT) `id` added
+#    10-Dec-2009 (CT) Allow instance-specific `init_callbacks`
 #    ««revision-date»»···
 #--
 
@@ -90,6 +92,7 @@ class Scope (TFL.Meta.Object) :
     _deprecated_type_names = {}
     _locked                = False
     _pkg_ns                = None
+    __id                   = 0
 
     root                   = None
     _roots                 = None
@@ -167,7 +170,9 @@ class Scope (TFL.Meta.Object) :
         self.db_uri         = db_uri
         self.user           = user
         self.bname          = ""
-        self.kill_callback  = self.kill_callback [:] ### copy from cls to self
+        self.id             = self._new_id ()
+        self.init_callback  = self.init_callback [:] ### copy from cls to self
+        self.kill_callback  = self.kill_callback [:] ###
         self.root           = None
         self.snapshot_count = 0
         self.historian      = MOM.SCM.Tracker (self)
@@ -209,14 +214,14 @@ class Scope (TFL.Meta.Object) :
         self.record_change (MOM.SCM.Entity_Change_Create, entity)
     # end def add
 
-    @classmethod
-    def add_init_callback (cls, * callbacks) :
+    @TFL.Meta.Class_and_Instance_Method
+    def add_init_callback (soc, * callbacks) :
         """Add all `callbacks` to `init_callback`. These
            callbacks are executed whenever a scope is
            created (the new scope is passed as the single argument to each
            callback).
         """
-        cls.init_callback.extend (callbacks)
+        soc.init_callback.extend (callbacks)
     # end def add_init_callback
 
     @TFL.Meta.Class_and_Instance_Method
@@ -454,6 +459,12 @@ class Scope (TFL.Meta.Object) :
     def _new_guid (self) :
         return uuid.uuid4 ().bytes
     # end def _new_guid
+
+    def _new_id (self) :
+        result = Scope.__id
+        Scope.__id += 1
+        return result
+    # end def _new_id
 
     def _run_init_callbacks (self) :
         for c in self.init_callback :

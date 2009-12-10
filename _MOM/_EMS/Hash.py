@@ -55,6 +55,8 @@
 #     3-Dec-2009 (CT) `r_query` corrected
 #     3-Dec-2009 (CT) `count` simplified
 #     4-Dec-2009 (MG) `__init__`  changed to take `db_uri`
+#    10-Dec-2009 (CT) s/id/pid/
+#    10-Dec-2009 (CT) Stubs for `load_scope` and `_load_objects` added
 #    ««revision-date»»···
 #--
 
@@ -101,7 +103,7 @@ class Manager (MOM.EMS._Manager_) :
         if id is None :
             id = self.__id
             self.__id += 1
-        entity.id                 = id
+        entity.pid                = id
         count [entity.type_name] += 1
         table [hpk]               = entity
         if entity.Roles :
@@ -109,7 +111,7 @@ class Manager (MOM.EMS._Manager_) :
             for r in entity.Roles :
                 obj = r.get_role (entity)
                 obj.register_dependency (entity.__class__)
-                r_map [r] [obj.id].add (entity)
+                r_map [r] [obj.pid].add (entity)
     # end def add
 
     def all_links (self, obj_id) :
@@ -164,6 +166,12 @@ class Manager (MOM.EMS._Manager_) :
             )
     # end def instance
 
+    def load_scope (self) :
+        ### XXX load `self.__id` from database
+        ### XXX load `scope.guid` and `scope.root` from database
+        self.scope.add_init_callback (self._load_objects)
+    # end def load_scope
+
     def remove (self, entity) :
         count = self._counts
         hpk   = entity.hpk
@@ -176,7 +184,7 @@ class Manager (MOM.EMS._Manager_) :
             for r in entity.Roles :
                 obj = r.get_role (entity)
                 obj.unregister_dependency (entity.__class__)
-                r_map [r] [obj.id].remove (entity)
+                r_map [r] [obj.pid].remove (entity)
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :
@@ -187,7 +195,7 @@ class Manager (MOM.EMS._Manager_) :
             raise MOM.Error.Name_Clash (entity, table [new_hpk])
         self.remove (entity)
         renamer     ()
-        self.add    (entity, entity.id)
+        self.add    (entity, entity.pid)
     # end def rename
 
     def r_query (self, Type, rkw, * filters, ** kw) :
@@ -206,6 +214,10 @@ class Manager (MOM.EMS._Manager_) :
         result = self.Q_Result (intersection_n (* queries), * filters, ** kw)
         return result
     # end def r_query
+
+    def _load_objects (self) :
+        pass ### XXX load objects from database
+    # end def _load_objects
 
     def _query_multi_root (self, Type) :
         tables = self._tables
@@ -227,14 +239,14 @@ class Manager (MOM.EMS._Manager_) :
     # end def _query_single_root
 
     def _r_query_s (self, r_map, role, obj) :
-        return r_map [role] [obj.id]
+        return r_map [role] [obj.pid]
     # end def _r_query_s
 
     def _r_query_t (self, r_map, role, obj) :
         i = role.role_index
         return itertools.chain \
-            ( r_map [role] [obj.id]
-            , * ( r_map [c.Roles [i]] [obj.id]
+            ( r_map [role] [obj.pid]
+            , * ( r_map [c.Roles [i]] [obj.pid]
                 for c in role.assoc.children.itervalues ()
                 )
             )
@@ -264,7 +276,7 @@ def epk_to_hpk (cls, * epk) :
     def gen (epk) :
         for r, pka in TFL.paired (cls.Roles, epk) :
             if pka is not None :
-                pka = pka.id
+                pka = pka.pid
             yield pka
     return tuple (gen (epk))
 # end def epk_to_hpk

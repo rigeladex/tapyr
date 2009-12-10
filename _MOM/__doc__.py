@@ -664,7 +664,7 @@ etype:
 Changing objects and links
 ---------------------------
 
-    >>> old_id = axel.id
+    >>> old_id = axel.pid
     >>> axel.all_links ()
     [BMT.Rodent_in_Trap (('Axel'), ('X', 2))]
     >>> axel.name = "betty"
@@ -676,7 +676,7 @@ Changing objects and links
     1
     >>> axel
     BMT.Rat ('betty')
-    >>> axel.id == old_id
+    >>> axel.pid == old_id
     True
     >>> axel.all_links ()
     [BMT.Rodent_in_Trap (('betty'), ('X', 2))]
@@ -820,9 +820,9 @@ Deleting objects and links
     >>> sorted (d.type_name for d in t1.dependencies)
     ['BMT.Mouse', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
 
-    >>> m_id  = m.id
-    >>> t1_id = t1.id
-    >>> t2_id = t2.id
+    >>> m_id  = m.pid
+    >>> t1_id = t1.pid
+    >>> t2_id = t2.pid
     >>> show (scope.ems.all_links (m_id))
     [(('Mighty_Mouse'), ('X', 1))]
     >>> show (scope.ems.all_links (t1_id))
