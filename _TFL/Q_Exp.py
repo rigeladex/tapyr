@@ -40,6 +40,7 @@ This module implements a query expression language::
 
     >>> from _TFL.Record import Record as R
     >>> r1 = R (foo = 42, bar = 137, baz = 11)
+    >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef")
     >>> q0 = Q.foo
     >>> q0.name
     'foo'
@@ -73,6 +74,20 @@ This module implements a query expression language::
     >>> q3.lhs.predicate (r1)
     42
 
+    >>> q5 = Q.foo.BETWEEN (10, 100)
+    >>> q5, q5.lhs, q5.args, q5.op.__name__
+    (Q.foo.between (10, 100), Q.foo, (10, 100), 'between')
+    >>> q5.predicate (r1)
+    True
+    >>> q5.predicate (r2)
+    False
+
+    >>> q6 = Q.foo.IN ((1, 3, 9, 27))
+    >>> q6.predicate (r1)
+    False
+    >>> q6.predicate (r2)
+    True
+
     >>> QQ = Q.__class__ (Ignore_Exception = AttributeError)
     >>> QQ.qux.predicate (r1) is QQ.undef
     True
@@ -80,6 +95,23 @@ This module implements a query expression language::
     Traceback (most recent call last):
       ...
     AttributeError: qux
+
+    >>> q7 = QQ.qux.CONTAINS ("bc")
+    >>> q7.predicate (r1)
+    >>> q7.predicate (r2)
+    True
+    >>> q8 = QQ.qux.ENDSWITH ("fg")
+    >>> q8.predicate (r1)
+    >>> q8.predicate (r2)
+    False
+    >>> q9 = QQ.qux.ENDSWITH ("ef")
+    >>> q9.predicate (r1)
+    >>> q9.predicate (r2)
+    True
+    >>> qa = QQ.qux.STARTSWITH ("abc")
+    >>> qa.predicate (r1)
+    >>> qa.predicate (r2)
+    True
 
     >>> Q [0] ((2,4))
     2
@@ -232,22 +264,27 @@ class Call (TFL.Meta.Object) :
     predicate_precious_p = True
 
     def __init__ (self, lhs, op, * args, ** kw) :
-        self.Q           = lhs.Q
-        self.lhs         = lhs
-        self.op          = op
-        self.attr_args   = args
-        self.attr_kw     = kw
+        self.Q      = lhs.Q
+        self.lhs    = lhs
+        self.op     = op
+        self.args   = args
+        self.kw     = kw
     # end def __init__
 
     def predicate (self, obj) :
         l = self.lhs.predicate (obj)
         if l is not self.Q.undef :
-            return self.op (l, * self.attr_args, ** self.attr_kw)
+            return self.op (l, * self.args, ** self.kw)
     # end def predicate
 
     def __call__ (self, obj) :
         return self.predicate (obj)
     # end def __call__
+
+    def __repr__ (self) :
+        op = self.op.__name__
+        return "%s.%s %r" % (self.lhs, op, self.args)
+    # end def __repr__
 
 # end class Call
 
@@ -356,35 +393,35 @@ class Exp (_Exp_) :
 
     ### Method calls
     @_method
-    def between () :
+    def BETWEEN () :
         def between (val, lhs, rhs) :
             """between(val, lhs, rhs) -- Returns result of `lhs <= val <= rhs`"""
             return lhs <= val <= rhs
         return between
-    # end def between
+    # end def BETWEEN
 
     @_method
-    def contains () :
+    def CONTAINS () :
         return operator.contains
-    # end def contains
+    # end def CONTAINS
 
     @_method
-    def endswith () :
+    def ENDSWITH () :
         return str.endswith
-    # end def endswith
+    # end def ENDSWITH
 
     @_method
-    def in_ () :
+    def IN () :
         def in_ (val,  rhs) :
             """in_(val, lhs) -- Returns result of `val in rhs`"""
             return val in rhs
         return in_
-    # end def in_
+    # end def IN
 
     @_method
-    def startswith () :
+    def STARTSWITH () :
         return str.startswith
-    # end def startswith
+    # end def STARTSWITH
 
 # end class Exp
 
