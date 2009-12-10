@@ -875,6 +875,18 @@ Deleting objects and links
 
     .. ### DBW-specific finish
 
+Scope queries
+--------------
+
+    >>> for e in scope.i_incorrect () :
+    ...     print list (e.errors)
+
+    >>> for e in scope.g_incorrect () :
+    ...     print list (str (x).replace (NL, " ") for x in e.errors)
+    ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
+    ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
+    ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
+
 """
 
 __doc__ = doctest = dt_form % dict \
