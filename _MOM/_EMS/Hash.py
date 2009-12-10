@@ -54,8 +54,7 @@
 #                     - s/t_count/_t_count/
 #     3-Dec-2009 (CT) `r_query` corrected
 #     3-Dec-2009 (CT) `count` simplified
-#     4-Dec-2009 (MG) `__init__`  changed to support database
-#                     creation/connection
+#     4-Dec-2009 (MG) `__init__`  changed to take `db_uri`
 #    ««revision-date»»···
 #--
 
@@ -82,8 +81,8 @@ class Manager (MOM.EMS._Manager_) :
 
     type_name = "Hash"
 
-    def __init__ (self, scope, db_uri, create_db = False) :
-        self.__super.__init__ (scope, db_uri, create_db)
+    def __init__ (self, scope, db_uri) :
+        self.__super.__init__ (scope, db_uri)
         self._counts = TFL.defaultdict (int)
         self._tables = TFL.defaultdict (dict)
         self._r_map  = TFL.defaultdict (lambda : TFL.defaultdict (set))

@@ -36,6 +36,7 @@
 #    10-Dec-2009 (CT) `as_active` changed to use `Scope.LET` instead of
 #                     home-grown code
 #    10-Dec-2009 (CT) `compute_defaults_internal` and `check_inv` corrected
+#    10-Dec-2009 (CT) Scope initialization revamped
 #    ««revision-date»»···
 #--
 
@@ -131,35 +132,75 @@ class Scope (TFL.Meta.Object) :
 
     # end class Pkg_NS
 
-    def __init__ ( self, app_type, db_uri
-                 , root_epk  = ()
-                 , guid      = None
-                 , user      = None
-                 , create_db = False
-                 ) :
-        with self._self_active () :
-            if isinstance (app_type, (str, unicode)) :
-                app_type             = MOM.App_Type.instance (app_type)
-            self.app_type            = app_type
-            self.bname               = "__".join (str (e) for e in root_epk)
-            self.guid                = self._new_guid (guid)
-            self._etm                = {}
-            self._pkg_ns             = {}
-            self._roots              = {}
-            self.root                = None
-            self.snapshot_count      = 0
-            self.historian           = MOM.SCM.Tracker (self)
-            self.user                = user
-            self.ems                 = app_type.EMS    (self, db_uri, create_db)
-            self._attr_errors        = []
-            self._setup_pkg_ns         (app_type)
-            if root_epk :
-                self._setup_root       (app_type, root_epk)
-            self._run_init_callbacks   ()
-        ### copy `kill_callback` from class into instance to allow appending
-        ### of instance specific callbacks by clients
-        self.kill_callback = self.kill_callback [:]
+    ### Scope creation methods
+
+    @classmethod
+    def load (cls, app_type, db_uri, user = None) :
+        with cls._init_context (app_type, db_uri, user) as self :
+            app_type  = self.app_type
+            self.ems  = ems = self.app_type.EMS.connect (self, db_uri)
+            with self._init_root_context () :
+                ems.load_scope ()
+        return self
+    # end def load
+
+    @classmethod
+    def new (cls, app_type, db_uri, root_epk = (), user = None) :
+        with cls._init_context (app_type, db_uri, user) as self :
+            app_type  = self.app_type
+            self.ems  = ems = app_type.EMS.new (self, db_uri)
+            self.guid = self._new_guid ()
+            with self._init_root_context (root_epk) :
+                if root_epk and app_type.Root_Type :
+                    root = self._setup_root (app_type, root_epk)
+                ems.register_scope ()
+        return self
+    # end def new
+
+    @classmethod
+    @TFL.Contextmanager
+    def _init_context (cls, app_type, db_uri, user) :
+        if isinstance (app_type, (str, unicode)) :
+            app_type        = MOM.App_Type.instance (app_type)
+        self                = cls.__new__ (cls)
+        self.app_type       = app_type
+        self.db_uri         = db_uri
+        self.user           = user
+        self.bname          = ""
+        self.kill_callback  = self.kill_callback [:] ### copy from cls to self
+        self.root           = None
+        self.snapshot_count = 0
+        self.historian      = MOM.SCM.Tracker (self)
+        self._attr_errors   = []
+        self._etm           = {}
+        self._pkg_ns        = {}
+        self._roots         = {}
+        self._setup_pkg_ns  (app_type)
+        old_active = Scope.active
+        try :
+            Scope.active = self
+            yield self
+            self._run_init_callbacks ()
+        except :
+            Scope.active = old_active
+            raise
+    # end def _init_context
+
+    @TFL.Contextmanager
+    def _init_root_context (self, root_epk = ()) :
+        self.bname = "__".join (str (e) for e in root_epk)
+        yield
+        self._run_init_callbacks ()
+    # end def _init_root_context
+
+    def __init__ (self) :
+        raise TypeError \
+            ( "Use {name}.new or {name}.load to create new scopes".format
+                (name = self.__class__.__name__)
+            )
     # end def __init__
+
+    ### Scope methods
 
     @_with_lock_check
     def add (self, entity) :
@@ -333,16 +374,6 @@ class Scope (TFL.Meta.Object) :
             yield
     # end def nested_change_recorder
 
-    @classmethod
-    def new (cls, app_type, db_uri, root_epk = (), user = None) :
-        return cls \
-            ( app_type, db_uri
-            , root_epk  = root_epk
-            , user      = user
-            , create_db = True
-            )
-    # end def new
-
     def record_change (self, Change, * args, ** kw) :
         return self.historian.record (Change, * args, ** kw)
     # end def record_change
@@ -420,10 +451,8 @@ class Scope (TFL.Meta.Object) :
         return result
     # end def _get_etm
 
-    def _new_guid (self, guid) :
-        if not guid :
-            guid = uuid.uuid4 ().bytes
-        return guid
+    def _new_guid (self) :
+        return uuid.uuid4 ().bytes
     # end def _new_guid
 
     def _run_init_callbacks (self) :
@@ -431,17 +460,6 @@ class Scope (TFL.Meta.Object) :
             c (self)
         self.app_type.run_init_callbacks (self)
     # end def _run_init_callbacks
-
-    @TFL.Contextmanager
-    def _self_active (self) :
-        old_active = Scope.active
-        try :
-            Scope.active = self
-            yield
-        except :
-            Scope.active = old_active
-            raise
-    # end def _self_active
 
     def _setup_pkg_ns (self, app_type) :
         _pkg_ns = self._pkg_ns
@@ -451,15 +469,10 @@ class Scope (TFL.Meta.Object) :
     # end def _setup_pkg_ns
 
     def _setup_root (self, app_type, root_epk) :
-        if app_type.Root_Type :
-            ### use `__new__` here to allow setting of `self.root` and
-            ### `self._roots` before `__init__` of the root object is
-            ### executed and might refer to `self.root`
-            Root_Type = self.entity_type (app_type.Root_Type)
-            self.root = root = Root_Type.__new__ (* root_epk, scope = self)
-            self._roots [root.Essence.type_base_name] = root
-            root.__init__           (* root_epk)
-            root_cls.after_creation (root)
+        Root_Type = self [app_type.Root_Type.type_name]
+        self.root = root = Root_Type (* root_epk)
+        self._roots [root.Essence.type_base_name] = root
+        return root
     # end def _setup_root
 
     def __getattr__ (self, name) :

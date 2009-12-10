@@ -1,9 +1,9 @@
 MOM To-Do
 =========
 
-- TFL.Meta.Object
+x TFL.Meta.Object
 
-  + context manager `let` for temporarily setting attribute values
+  x context manager `let` for temporarily setting attribute values
 
 * Id_Entity: `pid` (persistent id)
 
@@ -32,25 +32,27 @@ MOM To-Do
 
 - EMS/DBW
 
-  * EMS manages DBW
+  x EMS manages DBW
 
-    + Scope only has EMS attribute
+    x Scope only has EMS attribute
 
-      - remove `.dbw`
+      x remove `.dbw`
 
-    + App_Type still has EMS and DBW
+    x App_Type still has EMS and DBW
 
-    + Scope creation::
+    x Scope creation::
 
         ### Create scope by loading from existing database
-        Scope (app_type, db_uri, user = None)
+        Scope.load (app_type, db_uri, user = None)
 
         ### Create new scope with new database
         Scope.new (app_type, db_uri, root_epk = None, user = None)
 
-    + Scope passes `db_uri` to `EMS`::
+    x Scope passes `db_uri` to `EMS`::
 
-          self.ems = app_type.EMS (self, db_uri)
+          self.ems = app_type.EMS.connect (self, db_uri)
+
+          self.ems = app_type.EMS.new (self, db_uri)
 
   * `app_type.DBW.create_database` -> session
 

@@ -30,6 +30,9 @@
 #     3-Dec-2009 (CT) `count` simplified
 #     4-Dec-2009 (MG) `__init__` changed to support database related
 #                     parameter and to create the `session`
+#    10-Dec-2009 (CT) Class methods `connect` and `new` added,
+#                     `__init__` revamped
+#    10-Dec-2009 (CT) Empty methods `load_scope` and `register_scope` added
 #    ««revision-date»»···
 #--
 
@@ -53,13 +56,24 @@ class _Manager_ (TFL.Meta.Object) :
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
 
-    def __init__ (self, scope, db_uri, create_db = False) :
-        self.scope       = scope
-        if create_db :
-            fct = self.scope.app_type.DBW.create_database
-        else :
-            fct = self.scope.app_type.DBW.connect_database
-        self.session = fct (db_uri)
+    @classmethod
+    def connect (cls, scope, db_uri) :
+        self         = cls (scope, db_uri)
+        self.session = self.DBW.connect_database (db_uri)
+        return self
+    # end def connect
+
+    @classmethod
+    def new (cls, scope, db_uri) :
+        self         = cls (scope, db_uri)
+        self.session = self.DBW.create_database (db_uri)
+        return self
+    # end def new
+
+    def __init__ (self, scope, db_uri) :
+        self.scope   = scope
+        self.db_uri  = db_uri
+        self.DBW     = scope.app_type.DBW
     # end def __init__
 
     def count (self, Type, strict) :
@@ -96,6 +110,11 @@ class _Manager_ (TFL.Meta.Object) :
             )
     # end def instance
 
+    def load_scope (self) :
+        """Redefine to load `guid` and `root` of scope from database."""
+        pass
+    # end def load_scope
+
     def query (self, Type, * filters, ** kw) :
         root   = Type.relevant_root
         strict = kw.pop ("strict", False)
@@ -113,6 +132,11 @@ class _Manager_ (TFL.Meta.Object) :
     def r_query (self, Type, rkw, * filters, ** kw) :
         return self.query (Type, * filters, ** dict (rkw, ** kw))
     # end def r_query
+
+    def register_scope (self) :
+        """Redefine to store `guid` and `root`-info of scope in database."""
+        pass
+    # end def register_scope
 
     def _query_multi_root (self, Type) :
         raise NotImplementedError \
