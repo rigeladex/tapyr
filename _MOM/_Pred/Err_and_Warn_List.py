@@ -57,10 +57,6 @@ class Err_and_Warn_List (TFL.Meta.Object) :
         return bool (self.errors)
     # end def __nonzero__
 
-    def __getitem__ (self, index) :
-        return self.errors [index]
-    # end def __getitem__
-
     def __iter__ (self) :
         return iter (self.errors)
     # end def __iter__

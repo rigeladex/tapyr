@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #    28-Aug-2008 (CT)  `_logfile_name` added
 #     9-Sep-2008 (PGO) `root` moved here from TOM.UI.Application
 #    22-Oct-2008 (CED) `if_name_map` defined
+#    10-Dec-2009 (CT)  Adapted to change of `TFL.Context.attr_let`
 #    ««revision-date»»···
 #--
 
@@ -448,7 +449,7 @@ class _TFL_UI_Application_ (TFL.UI.Mixin) :
     # end def _quit_after_tkt
 
     def _run_command (self, * args, ** kw) :
-        with TFL.Context.attr_let (sys, "stdout", self.stdout) :
+        with TFL.Context.attr_let (sys, stdout = self.stdout) :
             self.cmd_mgr.run (* args, ** kw)
     # end def _run_command
 

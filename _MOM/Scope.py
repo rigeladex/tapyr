@@ -33,6 +33,9 @@
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #     4-Dec-2009 (MG) `Scope.new` added, `name` changed to `root_epk`
 #     4-Dec-2009 (CT) Handling of `root_epk` corrected (needs to be a tuple)
+#    10-Dec-2009 (CT) `as_active` changed to use `Scope.LET` instead of
+#                     home-grown code
+#    10-Dec-2009 (CT) `compute_defaults_internal` and `check_inv` corrected
 #    ««revision-date»»···
 #--
 
@@ -188,12 +191,8 @@ class Scope (TFL.Meta.Object) :
     @TFL.Contextmanager
     def as_active (self) :
         """Provide context with `self` as active scope."""
-        old_active = Scope.active
-        try :
-            Scope.active = self
+        with Scope.LET (active = self) :
             yield
-        finally :
-            Scope.active = old_active
     # end def as_active
 
     @TFL.Meta.Lazy_Method_RLV
@@ -202,12 +201,14 @@ class Scope (TFL.Meta.Object) :
         with self.as_active () :
             sk = TFL.Sorted_By ("rank", "id")
             gauge.reset ("Compute default internal attributes")
-            for et in sorted (self.etypes, key = TFL.Getter.rank) :
+            for et in sorted (self.etypes.itervalues (), key = TFL.Getter.rank) :
                 et.compute_type_defaults_internal ()
-            for e in self.entity_iter_gauge (gauge) :
-                e.reset_syncable (label = "Reset syncable attributes")
-            for e in self.entity_iter_gauge (gauge, sort_key = sk) :
-                e.sync_attributes (label = "Sync attributes")
+            for e in self.entity_iter_gauge \
+                    (gauge, label = "Reset syncable attributes") :
+                e.reset_syncable ()
+            for e in self.entity_iter_gauge \
+                    (gauge, sort_key = sk, label = "Sync attributes") :
+                e.sync_attributes ()
             for e in self.entity_iter_gauge \
                     ( gauge
                     , sort_key = sk
@@ -260,7 +261,7 @@ class Scope (TFL.Meta.Object) :
         """
         gauge.reset \
             ( g_delta = 100
-            , g_range = self.ems.t_count (MOM.Id_Entity)
+            , g_range = self.ems.count (self.MOM.Id_Entity, strict = False)
             , label   = label
             )
         entities = iter (self.ems)
@@ -387,8 +388,9 @@ class Scope (TFL.Meta.Object) :
     def _check_inv (self, gauge, kind) :
         err_result = []
         wrn_result = []
+        sk         = self.MOM.Id_Entity.sort_key
         for e in self.entity_iter_gauge \
-            (gauge, sort_key = sk, label = "Checking %s invariants" % kind) :
+            (gauge, label = "Checking %s invariants" % kind) :
             try :
                 ews = e._pred_man.check_kind (kind, e)
                 if ews.errors :
@@ -399,7 +401,8 @@ class Scope (TFL.Meta.Object) :
                 print "Error during evaluation of invariant for ", e
                 traceback.print_exc ()
                 err_result.append (e)
-        return MOM.Pred.Err_and_Warn_List (err_result, wrn_result)
+        return MOM.Pred.Err_and_Warn_List \
+            (sorted (err_result, key = sk), sorted (wrn_result, key = sk))
     # end def _check_inv
 
     def _get_etm (self, name) :

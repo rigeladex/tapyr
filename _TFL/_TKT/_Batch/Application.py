@@ -29,6 +29,7 @@
 #    14-Aug-2008 (CT) Creation (factored from TTA.TKT.Batch.Application)
 #    11-Feb-2009 (CT) `interact` changed to include `model.globals ()` and
 #                     `model.script_locals` in context of interpreter
+#    10-Dec-2009 (CT) Adapted to change of `TFL.Context.attr_let`
 #    ««revision-date»»···
 #--
 
@@ -203,7 +204,7 @@ class _TFL_TKT_Batch_Application_ (TFL.TKT.Application) :
             readline.parse_and_bind ("tab: complete")
         ### XXX readline checks if sys.stdout is what is used to be,
         ### XXX otherwise it won't do tab-completion
-        with TFL.Context.attr_let (sys, "stdout", sys.__stdout__) :
+        with TFL.Context.attr_let (sys, stdout = sys.__stdout__) :
             sys.ps1 = "%s => " % (model.Tool_Supplier)
             code.interact \
                 ( "%s - %s python interpreter"

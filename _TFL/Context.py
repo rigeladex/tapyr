@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    14-Apr-2008 (CT) Creation
+#    10-Dec-2009 (CT) `attr_let` changed to accept `** kw` instead of a
+#                     single name and value
 #    ««revision-date»»···
 #--
 
@@ -36,17 +38,24 @@ import _TFL.Decorator
 from contextlib import closing, nested
 
 @TFL.Contextmanager
-def attr_let (obj, attr_name, value) :
-    """Context manager for temporarily changing obj's attribute `attr_name` to
-       `value`.
+def attr_let (obj, ** kw) :
+    """Provide context with attributes of `obj` temporary bound to
+       values in `kw`.
     """
-    old = getattr (obj, attr_name)
-    setattr (obj, attr_name, value)
+    store = {}
+    undef = object ()
+    for k, v in kw.iteritems () :
+        store [k] = getattr (obj, k, undef)
     try :
-        yield obj
+        for k, v in kw.iteritems () :
+            setattr (obj, k, v)
+        yield
     finally :
-        assert getattr (obj, attr_name) is value
-        setattr (obj, attr_name, old)
+        for k, v in store.iteritems () :
+            if v is undef :
+                delattr (obj, k)
+            else :
+                setattr (obj, k, v)
 # end def attr_let
 
 @TFL.Contextmanager

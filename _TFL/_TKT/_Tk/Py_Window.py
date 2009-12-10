@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Aug-2008 (CT) Creation (factored from lib/python/Py_Window)
+#    10-Dec-2009 (CT) Adapted to change of `TFL.Context.attr_let`
 #    ««revision-date»»···
 #--
 
@@ -220,7 +221,7 @@ class Py_Window (CTK.C_Frame) :
                   "print _last_shell_output" % cmd
                 )
         code = TFL.Pycode_Compiler (cmd)
-        with TFL.Context.attr_let (sys, "stdout", self.output) :
+        with TFL.Context.attr_let (sys, stdout = self.output) :
             self.output.put (echo_cmd + "\n", "command")
             try :
                 code (self.globals, self.locals)

@@ -34,12 +34,16 @@
 #     2-Feb-2009 (CT) Documentation improved
 #    17-Jul-2009 (CT) `_check_MRO` and doctest added to `_TFL_Meta_Object_Root_`
 #     9-Dec-2009 (CT) Context manager `LET` added
+#    10-Dec-2009 (CT) `LET` defined as alias for `TFL.Context.attr_let`
 #    ««revision-date»»···
 #--
 
 from   _TFL import TFL
 
 import _TFL._Meta.M_Class
+import _TFL._Meta.Property
+
+import _TFL.Context
 import _TFL.Decorator
 
 class _TFL_Meta_Object_Root_ (object) :
@@ -183,41 +187,7 @@ class _TFL_Meta_Object_ (_TFL_Meta_Object_Root_) :
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
-    @TFL.Contextmanager
-    def LET (self, ** kw) :
-        """Provide context with attributes of `self` temporary bound to
-           values in `kw`.
-
-           >>> from _TFL.Record import Record as R
-           >>> x = R (foo = 1, bar = 24, baz = 42)
-           >>> x
-           Record (bar = 24, baz = 42, foo = 1)
-           >>> with x.LET (bar = 137, qux = "really?") :
-           ...     x
-           ...     x.bar = 0
-           ...     x
-           ...
-           Record (bar = 137, baz = 42, foo = 1, qux = 'really?')
-           Record (bar = 0, baz = 42, foo = 1, qux = 'really?')
-           >>> x
-           Record (bar = 24, baz = 42, foo = 1)
-
-        """
-        store = {}
-        undef = object ()
-        for k, v in kw.iteritems () :
-            store [k] = getattr (self, k, undef)
-        try :
-            for k, v in kw.iteritems () :
-                setattr (self, k, v)
-            yield
-        finally :
-            for k, v in store.iteritems () :
-                if v is undef :
-                    delattr (self, k)
-                else :
-                    setattr (self, k, v)
-    # end def LET
+    LET = TFL.Meta.Class_and_Instance_Method (TFL.Context.attr_let)
 
 Object = _TFL_Meta_Object_ # end class
 

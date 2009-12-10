@@ -308,7 +308,8 @@ Scope
 A :class:`scope<_MOM.Scope.Scope>` manages the instances of essential
 object and link types.
 
-Specifying `None` as `db_uri` will create an in memory database
+Specifying `None` as `db_uri` will create an in memory database::
+
     >>> scope = MOM.Scope.new (apt, None)
 
 For each :attr:`~_MOM.Entity.Package_NS` defining essential
@@ -737,6 +738,8 @@ Changing objects and links
       ...
     Invariant_Errors: Condition `AC_check_lon_0` :  (-180.0 <= lon <= 180.0)
         lon = 270.0
+    >>> print l1.as_code ()
+    BMT.Location (-16.268799, 48.189956, )
 
     >>> rit = RiT.instance (m, t1)
     >>> print rit.as_code ()
@@ -871,7 +874,6 @@ Deleting objects and links
     []
 
     .. ### DBW-specific finish
-
 
 """
 

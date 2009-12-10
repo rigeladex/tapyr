@@ -111,6 +111,7 @@ class Entity (TFL.Meta.Object) :
     home_scope            = None
     is_partial            = True
     is_used               = True
+    rank                  = 0
     show_package_prefix   = False
     x_locked              = False
 
@@ -166,6 +167,16 @@ class Entity (TFL.Meta.Object) :
         if attr :
             return attr.get_value (self)
     # end def attr_value_maybe
+
+    def compute_defaults_internal (self) :
+        """Compute default values for optional/internal/cached parameters."""
+        pass
+    # end def compute_defaults_internal
+
+    @classmethod
+    def compute_type_defaults_internal (cls) :
+        pass
+    # end def compute_type_defaults_internal
 
     def globals (self) :
         return self.__class__._app_globals or object_globals (self)
@@ -364,7 +375,6 @@ class Id_Entity (Entity) :
     is_partial            = True
     is_relevant           = False
     max_count             = 0
-    rank                  = 0
     record_changes        = True
     refuse_links          = set ()
     relevant_root         = None   ### Set by meta machinery
@@ -491,16 +501,6 @@ class Id_Entity (Entity) :
         """Checks all predicates"""
         return self._pred_man.check_all (self)
     # end def check_all
-
-    def compute_defaults_internal (self) :
-        """Compute default values for optional/internal/cached parameters."""
-        pass
-    # end def compute_defaults_internal
-
-    @classmethod
-    def compute_type_defaults_internal (cls) :
-        pass
-    # end def compute_type_defaults_internal
 
     def copy (self, * new_epk, ** kw) :
         """Make copy with primary key `new_epk`."""
