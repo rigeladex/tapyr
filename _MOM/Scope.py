@@ -457,7 +457,7 @@ class Scope (TFL.Meta.Object) :
     # end def _get_etm
 
     def _new_guid (self) :
-        return uuid.uuid4 ().bytes
+        return str (uuid.uuid4 ())
     # end def _new_guid
 
     def _new_id (self) :
