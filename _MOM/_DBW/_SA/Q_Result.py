@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #     1-Dec-2009 (MG) Creation
+#    10-Dec-2009 (MG) Adopted to new `TFL.Q_Exp`
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@
 >>> metadata   = MetaData      ()
 >>> Session    = sessionmaker  (bind=engine)
 >>> session    = Session       ()
->>> sa_table = Table \\
+>>> sa_table   = Table \\
 ...    ( "table", metadata
 ...    , Column ("id", Integer, primary_key = True)
 ...    , Column ("no", Integer)
@@ -54,6 +55,7 @@
 >>> _ = mapper (Table, sa_table)
 >>> session.add_all (Table (x) for x in xrange (10))
 >>> session.commit ()
+>>> Q        = TFL.Attr_Query ()
 >>> sa_query = session.query (Table)
 >>> qr = Q_Result (Table, sa_query)
 >>> qr.all ()
@@ -89,7 +91,6 @@ IndexError: Query result contains 2 entries
 [6]
 >>> qv.one ()
 6
->>> Q = TFL.Attr_Query ()
 >>> qr.filter (Q.no == 2).all ()
 [2]
 >>> qr.filter (Q.no > 2).all ()
@@ -98,6 +99,12 @@ IndexError: Query result contains 2 entries
 [2, 3, 4, 5, 6, 7, 8, 9]
 >>> qr.filter (Q.no >= 2, Q.no <= 6).all ()
 [2, 3, 4, 5, 6]
+>>> qr.filter ((Q.no % 2) == 1).all ()
+[1, 3, 5, 7, 9]
+>>> qr.filter (((Q.no % 2) == 0) & ((Q.no % 4) == 0)).all ()
+[0, 4, 8]
+>>> qr.filter (((Q.no % 2) == 0) | ((Q.no % 3) == 0)).all ()
+[0, 2, 3, 4, 6, 8, 9]
 
 """
 
@@ -125,7 +132,7 @@ class Q_Result (TFL.Meta.Object) :
     def filter (self, * criteria, ** eq_kw) :
         sa_criteria = []
         for c in criteria :
-            if isinstance (c, TFL.Attr_Filter) :
+            if not isinstance (c, expression.Operators) :
                 sa_criteria.append (c._sa_filter (self.e_type))
             else :
                 sa_criteria.append (c)
@@ -158,8 +165,11 @@ class Q_Result (TFL.Meta.Object) :
     # end def one
 
     def order_by (self, criterion) :
-        import pdb; pdb.set_trace ()
-        joins, order_clause = criterion._sa_order_by (self.e_type)
+        if not isinstance (criterion, expression.Operators) :
+            joins, order_clause = criterion._sa_order_by (self.e_type)
+        else :
+            joins               = ()
+            order_clause        = (criterion, )
         sa_query = self.sa_query.join (* joins).order_by (* order_clause)
         return self.__class__ (self.e_type, sa_query)
     # end def order_by
