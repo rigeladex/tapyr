@@ -28,63 +28,108 @@
 # Revision Dates
 #     4-Dec-2009 (CT) Creation
 #     7-Dec-2009 (CT) `Base.undef` and `Bin.undefs` added and used
+#    10-Dec-2009 (CT) `Bin.__nonzero__` defined to raise a `TypeError` to
+#                     avoid `Q.a < Q.b < Q.c` silently discarding `Q.a <`
+#    10-Dec-2009 (CT) `Exp_B` added (and `_Exp_` factored),
+#                     and used as base for `Bin_Bool`
 #    ««revision-date»»···
 #--
 
 """
-This module implements a query expression language:
+This module implements a query expression language::
 
->>> from _TFL.Record import Record as R
->>> r1 = R (foo = 42, bar = 137, baz = 11)
->>> q0 = Q.foo
->>> q0.name
-'foo'
->>> q0.predicate (r1)
-42
+    >>> from _TFL.Record import Record as R
+    >>> r1 = R (foo = 42, bar = 137, baz = 11)
+    >>> q0 = Q.foo
+    >>> q0.name
+    'foo'
+    >>> q0.predicate (r1)
+    42
 
->>> q1 = Q.foo == Q.bar
->>> q1, q1.lhs, q1.rhs, q1.op.__name__
-(Q.foo == Q.bar, Q.foo, Q.bar, '__eq__')
->>> q1.lhs.name, q1.rhs.name
-('foo', 'bar')
->>> q1.predicate (r1)
-False
+    >>> q1 = Q.foo == Q.bar
+    >>> q1, q1.lhs, q1.rhs, q1.op.__name__
+    (Q.foo == Q.bar, Q.foo, Q.bar, '__eq__')
+    >>> q1.lhs.name, q1.rhs.name
+    ('foo', 'bar')
+    >>> q1.predicate (r1)
+    False
 
->>> q2 = Q.foo + Q.bar
->>> q2, q2.lhs, q2.rhs, q2.op.__name__
-(Q.foo + Q.bar, Q.foo, Q.bar, '__add__')
->>> q2.predicate (r1)
-179
+    >>> q2 = Q.foo + Q.bar
+    >>> q2, q2.lhs, q2.rhs, q2.op.__name__
+    (Q.foo + Q.bar, Q.foo, Q.bar, '__add__')
+    >>> q2.predicate (r1)
+    179
 
->>> q3 = Q.foo % Q.bar == Q.baz
->>> q3, q3.lhs, q3.rhs
-(Q.foo % Q.bar == Q.baz, Q.foo % Q.bar, Q.baz)
->>> q3.predicate (r1)
-False
->>> q4 = Q.bar % Q.foo
->>> q4.predicate (r1), Q.baz.predicate (r1)
-(11, 11)
->>> (q4 == Q.baz).predicate (r1)
-True
->>> q3.lhs.predicate (r1)
-42
+    >>> q3 = Q.foo % Q.bar == Q.baz
+    >>> q3, q3.lhs, q3.rhs
+    (Q.foo % Q.bar == Q.baz, Q.foo % Q.bar, Q.baz)
+    >>> q3.predicate (r1)
+    False
+    >>> q4 = Q.bar % Q.foo
+    >>> q4.predicate (r1), Q.baz.predicate (r1)
+    (11, 11)
+    >>> (q4 == Q.baz).predicate (r1)
+    True
+    >>> q3.lhs.predicate (r1)
+    42
 
->>> QQ = Q.__class__ (Ignore_Exception = AttributeError)
->>> QQ.qux.predicate (r1) is QQ.undef
-True
->>> Q.qux.predicate (r1) is Q.undef
-Traceback (most recent call last):
-  ...
-AttributeError: qux
+    >>> QQ = Q.__class__ (Ignore_Exception = AttributeError)
+    >>> QQ.qux.predicate (r1) is QQ.undef
+    True
+    >>> Q.qux.predicate (r1) is Q.undef
+    Traceback (most recent call last):
+      ...
+    AttributeError: qux
 
->>> Q [0] ((2,4))
-2
->>> Q [1] ((2,4))
-4
->>> Q [-1] ((2,4))
-4
->>> Q [-2] ((2,4))
-2
+    >>> Q [0] ((2,4))
+    2
+    >>> Q [1] ((2,4))
+    4
+    >>> Q [-1] ((2,4))
+    4
+    >>> Q [-2] ((2,4))
+    2
+
+Python handles `a < b < c` as `(a < b) and (b < c)`. Unfortunately, there is
+no way to simulate this by defining operator methods. Therefore,
+`Bin.__nonzero__` raises a TypeError to signal that an expression like
+`Q.a < Q.b < Q.c` isn't possible::
+
+    >>> Q.a < Q.b < Q.c
+    Traceback (most recent call last):
+      ...
+    TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
+
+Query operators with boolean results, i.e., equality and ordering operators,
+cannot be used with any operators except `==` and `!=`::
+
+    >>> (Q.a < Q.b) < Q.c
+    Traceback (most recent call last):
+      ...
+    TypeError: Operator `<` not applicable to boolean result of `Q.a < Q.b`, rhs: `Q.c`
+
+    >>> Q.a < Q.b + Q.c
+    Q.a < Q.b + Q.c
+    >>> Q.z + Q.a < Q.b + Q.c
+    Q.z + Q.a < Q.b + Q.c
+    >>> (Q.a < Q.b) == (Q.a % 2)
+    Q.a < Q.b == Q.a % 2
+    >>> (Q.a < Q.b) == (Q.a > 2)
+    Q.a < Q.b == Q.a > 2
+    >>> q = (Q.a < Q.b) == (Q.a % 2)
+    >>> q.lhs
+    Q.a < Q.b
+    >>> q.rhs
+    Q.a % 2
+    >>> q.op
+    <built-in function __eq__>
+
+But explicit parenthesis are necessary in some cases::
+
+    >>> Q.a < Q.b == Q.a % 2
+    Traceback (most recent call last):
+      ...
+    TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
 
 """
 
@@ -168,6 +213,11 @@ class Bin (TFL.Meta.Object) :
         return self.predicate (obj)
     # end def __call__
 
+    def __nonzero__ (self) :
+        return TypeError \
+            ("Result of `%s` cannot be used in a boolean context" % (self, ))
+    # end def __nonzero__
+
     def __repr__ (self) :
         op = self.op.__name__
         return "%s %s %s" % (self.lhs, self.op_map.get (op, op), self.rhs)
@@ -237,14 +287,42 @@ def _method (meth) :
     return _
 # end def _method
 
-@TFL.Add_New_Method (Base)
-class Exp (TFL.Meta.Object) :
-    """Query expression"""
+def _type_error (op) :
+    name = op.__name__
+    def _ (self, rhs) :
+        raise TypeError \
+            ( "Operator `%s` not applicable to boolean result of `%s`"
+              ", rhs: `%s`"
+            % (Bin.op_map.get (name, name), self, rhs)
+            )
+    _.__doc__    = op.__doc__
+    _.__name__   = name
+    _.__module__ = op.__module__
+    return _
+# end def _type_error
 
-    ### Boolean queries
+
+class _Exp_ (TFL.Meta.Object) :
+
+    ### Equality queries
     @_boolean
     def __eq__ (self, rhs) : pass
 
+    @_boolean
+    def __ne__ (self, rhs) : pass
+
+    def __hash__ (self) :
+        ### Override `__hash__` just to silence DeprecationWarning:
+        ###     Overriding __eq__ blocks inheritance of __hash__ in 3.x
+        raise NotImplementedError
+    # end def __hash__
+
+# end class _Exp_
+
+class Exp (_Exp_) :
+    """Query expression"""
+
+    ### Order queries
     @_boolean
     def __ge__ (self, rhs) : pass
 
@@ -256,15 +334,6 @@ class Exp (TFL.Meta.Object) :
 
     @_boolean
     def __lt__ (self, rhs) : pass
-
-    @_boolean
-    def __ne__ (self, rhs) : pass
-
-    def __hash__ (self) :
-        ### Override `__hash__` just to silence DeprecationWarning:
-        ###     Overriding __eq__ blocks inheritance of __hash__ in 3.x
-        raise NotImplementedError
-    # end def __hash__
 
     ### Binary non-boolean queries
     @_binary
@@ -319,6 +388,43 @@ class Exp (TFL.Meta.Object) :
 
 # end class Exp
 
+class Exp_B (_Exp_) :
+    """Query expression for query result of type Boolean"""
+
+    ### Order queries
+    @_type_error
+    def __ge__ (self, rhs) : pass
+
+    @_type_error
+    def __gt__ (self, rhs) : pass
+
+    @_type_error
+    def __le__ (self, rhs) : pass
+
+    @_type_error
+    def __lt__ (self, rhs) : pass
+
+    ### Binary non-boolean queries
+    @_type_error
+    def __add__ (self, rhs) : pass
+
+    @_type_error
+    def __div__ (self, rhs) : pass
+
+    @_type_error
+    def __mod__ (self, rhs) : pass
+
+    @_type_error
+    def __mul__ (self, rhs) : pass
+
+    @_type_error
+    def __pow__ (self, rhs) : pass
+
+    @_type_error
+    def __sub__ (self, rhs) : pass
+
+# end class Exp_B
+
 @TFL.Add_New_Method (Base)
 class Get (Exp) :
     """Query getter"""
@@ -350,7 +456,7 @@ class Get (Exp) :
 # end class Get
 
 @TFL.Add_New_Method (Base)
-class _Q_Exp_Bin_Bool_ (Bin) :
+class _Q_Exp_Bin_Bool_ (Bin, Exp_B) :
     """Binary query expression evaluating to boolean"""
 
     _real_name = "Bin_Bool"
