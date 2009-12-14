@@ -204,7 +204,7 @@ class Scope (TFL.Meta.Object) :
     def add (self, entity) :
         """Adds `entity` to scope `self`."""
         self.ems.add       (entity)
-        self.record_change (MOM.SCM.Entity_Change_Create, entity)
+        self.record_change (MOM.SCM.Change.Create, entity)
     # end def add
 
     @TFL.Meta.Class_and_Instance_Method
@@ -394,7 +394,7 @@ class Scope (TFL.Meta.Object) :
     def remove (self, entity) :
         """Remove `entity` from scope `self`"""
         assert (entity != self.root)
-        Change = MOM.SCM.Entity_Change_Destroy
+        Change = MOM.SCM.Change.Destroy
         with self.historian.nested_recorder (Change, entity) :
             self.ems.remove (entity)
             entity._destroy ()
@@ -402,9 +402,7 @@ class Scope (TFL.Meta.Object) :
 
     @_with_lock_check
     def rename (self, entity, new_epk, renamer) :
-        old_epk = entity.epk
-        self.ems.rename    (entity, new_epk, renamer)
-        self.record_change (MOM.SCM.Entity_Change_Rename, entity, old_epk)
+        self.ems.rename (entity, new_epk, renamer)
     # end def rename
 
     def start_change_recorder (self) :

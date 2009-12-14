@@ -106,7 +106,7 @@ class Kind (MOM.Prop.Kind) :
         self.attr.check_invariant (obj, value)
         if self.record_changes and self.get_value (obj) != value :
             obj.home_scope.record_change \
-                ( MOM.SCM.Entity_Change_Attr
+                ( MOM.SCM.Change.Attr
                 , obj, {self.name : self.get_raw (obj)}
                 )
         self._set_cooked (obj, value)

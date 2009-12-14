@@ -28,6 +28,7 @@
 # Revision Dates
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Change)
 #    27-Nov-2009 (CT) Creation continued
+#    14-Dec-2009 (CT) Major surgery
 #    ««revision-date»»···
 #--
 
@@ -37,20 +38,11 @@ from   _TFL               import TFL
 import _MOM._SCM.History_Mixin
 import _MOM._SCM.Recorder
 
-class Change (MOM.SCM.History_Mixin) :
+class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
 
-    Preferred_Recorder = MOM.SCM.Appender
     kind               = "Composite change"
     verbose            = False
-    undoable           = True
-
-    def undo (self, scope) :
-        if self.verbose :
-            print "Undoing <%-70.70s>" % (self._repr (), )
-        for c in reversed (self.history) :
-            c.undo (scope)
-    # end def undo
 
     def __repr__ (self) :
         return "\n  ".join (self._repr_lines ())
@@ -67,9 +59,24 @@ class Change (MOM.SCM.History_Mixin) :
         return result
     # end def _repr_lines
 
+# end class _Change_
+
+class Undoable (_Change_) :
+    """Model an undoable change of a MOM Scope"""
+
+    Preferred_Recorder = MOM.SCM.Appender
+    undoable           = True
+
+    def undo (self, scope) :
+        if self.verbose :
+            print "Undoing <%-70.70s>" % (self._repr (), )
+        for c in reversed (self.history) :
+            c.undo (scope)
+    # end def undo
+
 # end class Change
 
-class Non_Undoable_Change (Change) :
+class Non_Undoable_Change (_Change_) :
     """Model a change that cannot be undone"""
 
     Preferred_Recorder = MOM.SCM.Counter
@@ -78,29 +85,29 @@ class Non_Undoable_Change (Change) :
 
 # end class Non_Undoable_Change
 
-class Entity_Change (Change) :
-    """Model an entity change of a MOM Scope"""
+class _Entity_ (Undoable) :
+    """Model a change of an MOM entity"""
 
     def __init__ (self, entity) :
         self.__super.__init__ ()
         self.etype        = entity.Essence.type_name
-        self.name         = entity.epk
+        self.epk          = entity.epk
         self.change_count = 1
     # end def __init__
 
     def entity (self, scope) :
-        etm = getattr (scope, self.etype)
-        return etm (* self.name)
+        etm = scope [self.etype]
+        return etm.instance (* self.epk)
     # end def entity
 
     def _repr (self) :
-        return "%s %s %s" % (self.kind, self.etype, self.name)
+        return "%s %s %s" % (self.kind, self.etype, self.epk)
     # end def _repr
 
-# end class Entity_Change
+# end class _Entity_
 
-class Entity_Change_Create (Entity_Change) :
-    """Entity_Change: create a new object"""
+class Create (_Entity_) :
+    """Model a change that creates a new entity (object or link)"""
 
     kind = "Create"
 
@@ -111,63 +118,33 @@ class Entity_Change_Create (Entity_Change) :
             entity.destroy ()
     # end def undo
 
-# end class Entity_Change_Create
+# end class
 
-class Entity_Change_Copy (Entity_Change_Create) :
-    """Entity_Change: copy an object"""
-
-    kind = "Copy"
-
-# end class Entity_Change_Copy
-
-class Entity_Change_Destroy (Entity_Change) :
-    """Entity_Change: destroy a object"""
+class Destroy (_Entity_) :
+    """Model a change that destroys an entity"""
 
     kind = "Destroy"
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.attr = attr = {}
-        for a in entity._attr_man.attr_dict.itervalues () :
-            if a.save_to_db :
-                attr [a.name] = a.get_raw (entity)
+        self.attr = attr = dict \
+            ( (a.name, a.get_raw (entity))
+            for a in entity.user_attr if a.to_save (entity)
+            )
     # end def __init__
 
     def undo (self, scope) :
-        etm = getattr (scope, self.etype)
-        etm (* self.name, raw = True, ** self.attr)
+        etm = scope [self.etype]
+        etm (* self.epk, raw = True, ** self.attr)
         self.__super.undo (scope)
     # end def undo
 
-# end class Entity_Change_Destroy
+# end class Destroy
 
-class Entity_Change_Rename (Entity_Change) :
-    """Entity_Change: rename an object"""
+class Attr (_Entity_) :
+    """Model a change that modifies attributes of an entity"""
 
-    kind = "Rename"
-
-    def __init__ (self, entity, old_name) :
-        self.__super.__init__ (entity)
-        self.old_name = old_name
-    # end def __init__
-
-    def undo (self, scope) :
-        assert not self.history
-        entity = self.entity (scope)
-        if entity :
-            entity.set (* self.old_name)
-    # end def undo
-
-    def _repr (self) :
-        return "%s %s" % (self.__super._repr (), self.old_name)
-    # end def _repr
-
-# end class Entity_Change_Rename
-
-class Entity_Change_Attr (Entity_Change) :
-    """Entity_Change: change attributes"""
-
-    kind = "Change attributes of"
+    kind = "Modify"
 
     def __init__ (self, entity, old_attr) :
         self.__super.__init__ (entity)
@@ -185,8 +162,8 @@ class Entity_Change_Attr (Entity_Change) :
         return "%s, old values = %s" % (self.__super._repr (), self.old_attr)
     # end def _repr
 
-# end class Entity_Change_Attr
+# end class Attr
 
 if __name__ != "__main__" :
-    MOM.SCM._Export ("*")
+    MOM.SCM._Export_Module ()
 ### __END__ MOM.SCM.Change

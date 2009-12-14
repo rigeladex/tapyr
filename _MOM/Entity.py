@@ -588,7 +588,7 @@ class Id_Entity (Entity) :
 
     def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
-        with self.home_scope.historian.nested_recorder (MOM.SCM.Change) :
+        with self.home_scope.nested_change_recorder (MOM.SCM.Change.Undoable) :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
             if pkas_ckd :
                 self._rename (new_epk, pkas_raw, pkas_ckd)
@@ -598,7 +598,7 @@ class Id_Entity (Entity) :
 
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
-        with self.home_scope.historian.nested_recorder (MOM.SCM.Change) :
+        with self.home_scope.nested_change_recorder (MOM.SCM.Change.Undoable) :
             new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
             if pkas_ckd :
                 self._rename (new_epk, pkas_raw, pkas_ckd)
@@ -713,7 +713,7 @@ class Id_Entity (Entity) :
         rvr = self._attr_man.raw_values_record (self, kw)
         if rvr :
             self.home_scope.record_change \
-                (MOM.SCM.Entity_Change_Attr, self, rvr)
+                (MOM.SCM.Change.Attr, self, rvr)
     # end def _set_record
 
     def __str__ (self) :
