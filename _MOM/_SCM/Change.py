@@ -42,7 +42,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
 
     kind               = "Composite change"
-    verbose            = False
+    epk = pid          = None
 
     def __repr__ (self) :
         return "\n  ".join (self._repr_lines ())
@@ -68,40 +68,38 @@ class Undoable (_Change_) :
     undoable           = True
 
     def undo (self, scope) :
-        if self.verbose :
-            print "Undoing <%-70.70s>" % (self._repr (), )
         for c in reversed (self.history) :
             c.undo (scope)
     # end def undo
 
 # end class Change
 
-class Non_Undoable_Change (_Change_) :
+class Non_Undoable (_Change_) :
     """Model a change that cannot be undone"""
 
     Preferred_Recorder = MOM.SCM.Counter
-    kind               = "Change that isn't undoable"
     undoable           = False
 
-# end class Non_Undoable_Change
+# end class Non_Undoable
 
 class _Entity_ (Undoable) :
     """Model a change of an MOM entity"""
 
     def __init__ (self, entity) :
         self.__super.__init__ ()
-        self.etype        = entity.Essence.type_name
         self.epk          = entity.epk
+        self.pid          = entity.pid
+        self.type_name    = entity.Essence.type_name
         self.change_count = 1
     # end def __init__
 
     def entity (self, scope) :
-        etm = scope [self.etype]
+        etm = scope [self.type_name]
         return etm.instance (* self.epk)
     # end def entity
 
     def _repr (self) :
-        return "%s %s %s" % (self.kind, self.etype, self.epk)
+        return "%s %s %s" % (self.kind, self.type_name, self.epk)
     # end def _repr
 
 # end class _Entity_
@@ -134,7 +132,7 @@ class Destroy (_Entity_) :
     # end def __init__
 
     def undo (self, scope) :
-        etm = scope [self.etype]
+        etm = scope [self.type_name]
         etm (* self.epk, raw = True, ** self.attr)
         self.__super.undo (scope)
     # end def undo
