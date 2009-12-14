@@ -65,6 +65,7 @@
 #                     warning
 #     3-Dec-2009 (CT) `sorted_by` changed to be `Alias_Property` for
 #                     `sorted_by_epk`
+#    14-Dec-2009 (CT) `user_attr_iter` factored
 #    ««revision-date»»···
 #--
 
@@ -156,9 +157,9 @@ class Entity (TFL.Meta.Object) :
 
     def attr_as_code (self) :
         return ", ".join \
-            ( "%s = %s" % (a.name, a.as_code (a.get_value (self)))
-            for a in sorted (self.user_attr, key = TFL.Getter.name)
-            if  a.to_save (self)
+            ( "%s = %s" % (a.name, a.as_code (v))
+            for (a, v) in sorted
+                (self.user_attr_iter (), key = TFL.Getter [0].name)
             )
     # end def attr_as_code
 
@@ -287,6 +288,11 @@ class Entity (TFL.Meta.Object) :
         """
         self._attr_man.sync_attributes (self)
     # end def sync_attributes
+
+    def user_attr_iter (self) :
+        user_attr = self.user_attr
+        return ((a, a.get_value (self)) for a in user_attr if a.to_save (self))
+    # end def user_attr_iter
 
     def _init_attributes (self) :
         self._attr_man.reset_attributes (self)

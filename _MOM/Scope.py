@@ -39,6 +39,8 @@
 #    10-Dec-2009 (CT) Scope initialization revamped
 #    10-Dec-2009 (CT) `id` added
 #    10-Dec-2009 (CT) Allow instance-specific `init_callbacks`
+#    14-Dec-2009 (CT) `copy` added
+#    14-Dec-2009 (CT) `unlocked` made method
 #    ««revision-date»»···
 #--
 
@@ -61,16 +63,6 @@ import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
 
 import uuid
-
-@TFL.Contextmanager
-def unlocked (scope) :
-    old_locked    = scope._locked
-    scope._locked = False
-    try :
-        yield scope
-    finally :
-        scope._locked = old_locked
-# end def unlocked
 
 @TFL.Decorator
 def _with_lock_check (f) :
@@ -193,7 +185,8 @@ class Scope (TFL.Meta.Object) :
 
     @TFL.Contextmanager
     def _init_root_context (self, root_epk = ()) :
-        self.bname = "__".join (str (e) for e in root_epk)
+        self.root_epk = root_epk
+        self.bname    = "__".join (str (e) for e in root_epk)
         yield
         self._run_init_callbacks ()
     # end def _init_root_context
@@ -270,6 +263,22 @@ class Scope (TFL.Meta.Object) :
                     if __debug__ :
                         traceback.print_exc ()
     # end def compute_defaults_internal
+
+    def copy (self, app_type, db_uri) :
+        """Return a new scope for `app_type` and `db_uri` with copies of all
+           entities in `self`.
+        """
+        assert self.app_type.parent is app_type.parent
+        assert self.db_uri          != db_uri
+        result = self.__class__.new \
+            (app_type, db_uri, self.root.epk, user = self.user)
+        for e in self :
+            etm = getattr (result, e.type_name)
+            etm ( *  e.epk
+                , ** dict ((a.name, v) for (a, v) in e.user_attr_iter ())
+                )
+        return result
+    # end def copy
 
     def count_change (self) :
         self.historian.count_change ()
@@ -410,6 +419,12 @@ class Scope (TFL.Meta.Object) :
         if self.historian._rec_stack :
             self.historian.pop_recorder ()
     # end def stop_change_recorder
+
+    @TFL.Contextmanager
+    def unlocked (self) :
+        with self.LET (_locked = False) :
+            yield self
+    # end def unlocked
 
     def _add_to_scopes (self) :
         for n in (self.qname, ) :

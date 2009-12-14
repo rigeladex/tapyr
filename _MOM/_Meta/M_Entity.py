@@ -52,6 +52,7 @@
 #    30-Nov-2009 (CT) `_m_create_e_types` changed to call
 #                     `app_type.DBW.update_etype` after all etypes were created
 #     3-Dec-2009 (CT) `_m_setup_sorted_by` added and called
+#    14-Dec-2009 (CT) `g_rank`, `i_rank`, and `m_sorted_by` added
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,8 @@ class M_E_Mixin (TFL.Meta.M_Class) :
 
     _S_Extension   = []     ### List of E_Spec
     _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
+
+    m_sorted_by    = TFL.Sorted_By ("g_rank", "rank", "i_rank")
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__      (name, bases, dict)
@@ -209,6 +212,9 @@ class M_Entity (M_E_Mixin) :
         cls.__m_super.__init__  (name, bases, dict)
         cls._m_init_prop_specs  (name, bases, dict)
         cls._S_Extension.append (cls)
+        cls.i_rank = len (cls._S_Extension) - 1
+        cls.g_rank = 1 + max \
+            ([getattr (b, "g_rank", -1) for b in bases] + [-1])
     # end def __init__
 
     def add_attribute (cls, attr, verbose = True, override = False) :
