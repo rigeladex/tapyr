@@ -13,6 +13,15 @@ x Id_Entity: `pid` (persistent id)
 
 * SCM
 
+  + Change Entity.set and Entity.set_raw
+
+    * separate change handling and setting the attributes
+
+    * __init__ must call an internal function that doesn't create a Change
+      object
+
+    * Move creation of MOM.SCM.Change.Create to E-Type-Manager
+
   + add `cid` (change id)
 
     - set by EMS/DBW
