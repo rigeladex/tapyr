@@ -270,10 +270,11 @@ class Scope (TFL.Meta.Object) :
         """
         assert self.app_type.parent is app_type.parent
         assert self.db_uri          != db_uri
-        result = self.__class__.new \
-            (app_type, db_uri, self.root.epk, user = self.user)
-        for e in self :
-            e.copy (* e.epk, scope = result)
+        with self.as_active () :
+            result = self.__class__.new \
+                (app_type, db_uri, self.root.epk, user = self.user)
+            for e in self :
+                e.copy (* e.epk, scope = result)
         return result
     # end def copy
 

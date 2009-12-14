@@ -17,9 +17,17 @@ x Id_Entity: `pid` (persistent id)
 
     - set by EMS/DBW
 
-    - same semantics as `Id_Entity.pid`
+    - simple number
 
-    - independent namespace as `Id_Entity.pid`
+    - later change <-> higher number
+
+  + Queries: always consult database about outstanding changes
+
+    - `entity.changes (filter)` returns all changes of `entity` restricted to
+      `filter`
+
+    - `scope.changes (filter) returns` all changes of (database connected to)
+      `scope` restricted to `filter`
 
   + reuse for tracking changes over database lifecycle
 
