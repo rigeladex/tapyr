@@ -57,7 +57,7 @@
 #     4-Dec-2009 (MG) `__init__`  changed to take `db_uri`
 #    10-Dec-2009 (CT) s/id/pid/
 #    10-Dec-2009 (CT) Stubs for `load_scope` and `_load_objects` added
-#    14-Dec-2009 (CT) `__iter__` changed to sort by `m_sort_by`
+#    14-Dec-2009 (CT) `__iter__` factored to `MOM.EMS._Manager_`
 #    ««revision-date»»···
 #--
 
@@ -263,17 +263,6 @@ class Manager (MOM.EMS._Manager_) :
                 result += self._t_count (c, seen)
         return result
     # end def _t_count
-
-    def __iter__ (self) :
-        etypes = self.scope.app_type.etypes
-        tables = \
-            ( t for (k, t) in sorted
-                ( ((etypes [k], t) for k, t in self._tables.iteritems ())
-                , key = lambda x : x [0].m_sorted_by
-                )
-            )
-        return itertools.chain (* (t.itervalues () for t in tables))
-    # end def __iter__
 
 # end class Manager
 

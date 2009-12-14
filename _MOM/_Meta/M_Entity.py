@@ -80,7 +80,7 @@ class M_E_Mixin (TFL.Meta.M_Class) :
     _S_Extension   = []     ### List of E_Spec
     _BET_map       = {}     ### Dict of bare essential types (type_name -> BET)
 
-    m_sorted_by    = TFL.Sorted_By ("g_rank", "rank", "i_rank")
+    m_sorted_by    = TFL.Sorted_By ("rank", "i_rank")
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__      (name, bases, dict)
@@ -371,8 +371,7 @@ class M_E_Type (M_E_Mixin) :
     # end def __init__
 
     def __call__ (cls, * args, ** kw) :
-        scope = kw.get ("scope", None)
-        if not scope :
+        if "scope" not in kw :
             raise MOM.Error.No_Scope
         return cls._m_call (* args, ** kw)
     # end def __call__

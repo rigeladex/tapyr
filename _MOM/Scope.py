@@ -273,10 +273,7 @@ class Scope (TFL.Meta.Object) :
         result = self.__class__.new \
             (app_type, db_uri, self.root.epk, user = self.user)
         for e in self :
-            etm = getattr (result, e.type_name)
-            etm ( *  e.epk
-                , ** dict ((a.name, v) for (a, v) in e.user_attr_iter ())
-                )
+            e.copy (* e.epk, scope = result)
         return result
     # end def copy
 

@@ -66,6 +66,8 @@
 #     3-Dec-2009 (CT) `sorted_by` changed to be `Alias_Property` for
 #                     `sorted_by_epk`
 #    14-Dec-2009 (CT) `user_attr_iter` factored
+#    14-Dec-2009 (CT) `copy` changed to handle `scope`
+#    14-Dec-2009 (CT) `Id_Entity._main__init__` changed to not call `scope.add`
 #    ««revision-date»»···
 #--
 
@@ -141,7 +143,8 @@ class Entity (TFL.Meta.Object) :
     def __init__ (self, * args, ** kw) :
         self.dependencies = TFL.defaultdict  (int)
         self._init_attributes ()
-        self._main__init__  (* args, ** kw)
+        kw.pop                ("scope", None)
+        self._main__init__    (* args, ** kw)
     # end def __init__
 
     ### provide read-only access to this class' __init__
@@ -510,7 +513,9 @@ class Id_Entity (Entity) :
 
     def copy (self, * new_epk, ** kw) :
         """Make copy with primary key `new_epk`."""
-        new_obj = self.__class__ (* new_epk, ** kw)
+        scope   = kw.pop ("scope", self.home_scope)
+        etm     = scope  [self.type_name]
+        new_obj = etm    (* new_epk, ** kw)
         raw_kw  = dict \
             (  (a.name, a.get_raw (self))
             for a in self.user_attr if a.name not in kw
@@ -675,15 +680,9 @@ class Id_Entity (Entity) :
         ### Need to use `__super.` methods here because it's not a `rename`
         setter = (self.__super.set, self.__super.set_raw) \
             [bool (kw.get ("raw", False))]
-        self._init_epk       (setter, * epk)
-        kw.pop               ("scope", None)
-        self.home_scope.add  (self)
-        try :
-            self.__super._main__init__  (* epk, ** kw)
-            self._finish__init__        (* epk, ** kw)
-        except StandardError as exc :
-            self.home_scope.remove (self)
-            raise
+        self._init_epk              (setter, * epk)
+        self.__super._main__init__  (* epk, ** kw)
+        self._finish__init__        (* epk, ** kw)
     # end def _main__init__
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :

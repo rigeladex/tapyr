@@ -33,6 +33,7 @@
 #    10-Dec-2009 (CT) Class methods `connect` and `new` added,
 #                     `__init__` revamped
 #    10-Dec-2009 (CT) Empty methods `load_scope` and `register_scope` added
+#    14-Dec-2009 (CT) `__iter__` (and relevant_roots) added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,13 @@ class _Manager_ (TFL.Meta.Object) :
 
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
+
+    @TFL.Meta.Once_Property
+    def relevant_roots (self) :
+        Top = self.scope.MOM.Id_Entity._etype
+        return sorted \
+            (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
+    # end def relevant_roots
 
     @classmethod
     def connect (cls, scope, db_uri) :
@@ -147,6 +155,15 @@ class _Manager_ (TFL.Meta.Object) :
         raise NotImplementedError \
             ("%s needs to define %s" % (self.__class__, "_query_single_root"))
     # end def _query_single_root
+
+    def __iter__ (self) :
+        sk = TFL.Sorted_By ("pid")
+        return itertools.chain \
+            (* (   self._query_single_root (r, r).order_by (sk)
+               for r in self.relevant_roots
+               )
+            )
+    # end def __iter__
 
 # end class _Manager_
 

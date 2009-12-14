@@ -49,6 +49,7 @@
 #     3-Dec-2009 (CT) `count` changed to be a property,
 #                     `t_count` renamed to `count_transitive`
 #     3-Dec-2009 (MG) `r_query` type check of role objects added
+#    14-Dec-2009 (CT) `__call__` changed to call `scope.add`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,10 @@ class Id_Entity (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        return self._etype (* args, scope = self.home_scope, ** kw)
+        scope  = self.home_scope
+        result = self._etype (* args, scope = scope, ** kw)
+        scope.add (result)
+        return result
     # end def __call__
 
     @property
