@@ -32,6 +32,8 @@
 #    03-Dec-2009 (MG) Use `MOM.DBW.SA.Q_Result`
 #    10-Dec-2009 (MG) `pid` added, `load_scope` and `register_scope`
 #                     implemented
+#    15-Dec-2009 (MG) `__iter__` removed (has been implemented in
+#                     `EMS._Manager_`)
 #    ««revision-date»»···
 #--
 
@@ -103,12 +105,6 @@ class Manager (MOM.EMS._Manager_) :
     def _query_single_root (self, Type, root) :
         return self.Q_Result (Type, self.session.query (Type))
     # end def _query_single_root
-
-    def __iter__ (self) :
-        relevant_roots = self.scope.MOM.Id_Entity.relevant_roots.itervalues ()
-        return itertools.chain \
-            (* (self.query (rr).all () for rr in relevant_roots))
-    # end def __iter__
 
 # end class Manager
 

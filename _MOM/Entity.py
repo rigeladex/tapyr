@@ -68,6 +68,8 @@
 #    14-Dec-2009 (CT) `user_attr_iter` factored
 #    14-Dec-2009 (CT) `copy` changed to handle `scope`
 #    14-Dec-2009 (CT) `Id_Entity._main__init__` changed to not call `scope.add`
+#    15-Dec-2009 (MG) `_reset_epk`: guard added to make sure `epk` is only
+#                     deleted if it is present in the instance dict
 #    ««revision-date»»···
 #--
 
@@ -704,7 +706,8 @@ class Id_Entity (Entity) :
     # end def _repr
 
     def _reset_epk (self) :
-        del self.epk
+        if "epk" in self.__dict__ :
+            del self.epk
         if "epk_as_dict" in self.__dict__ :
             del self.epk_as_dict
     # end def _reset_epk

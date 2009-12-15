@@ -32,6 +32,9 @@
 #                     to `* criteria`
 #    03-Dec-2009 (MG) `_sa_order_by` changed to support possibly needed joins
 #                     as well (`_sa_resolve_attribute` added)
+#    15-Dec-2009 (MG) `Attr_Map` added, added `table` to key for sort
+#                     expression caching (to avoid reuse of the worng sorting
+#                     cache)
 #    ««revision-date»»···
 #--
 
@@ -161,6 +164,7 @@ TFL.Sorted_By._sa_cache = {}
 
 @TFL.Add_Method (TFL.Sorted_By)
 def _sa_order_by (self, table, joins = None, order_clause = None) :
+    key = (self, table)
     if self not in self._sa_cache :
         if joins        is None :
             joins        = set ()
@@ -176,9 +180,11 @@ def _sa_order_by (self, table, joins = None, order_clause = None) :
                     )
             assert c.count (".") < 2, "Check if we can support more levels"
             self._sa_resolve_attribute (table, c, joins, order_clause)
-        self._sa_cache [self] = joins, order_clause
-    return self._sa_cache [self]
+        self._sa_cache [key] = joins, order_clause
+    return self._sa_cache [key]
 # end def _sa_order_by
+
+Attr_Map = { "pid" : "id", "-pid" : "-id"}
 
 @TFL.Add_Method (TFL.Sorted_By)
 def _sa_resolve_attribute (self, table, c, joins, order_clause) :
@@ -189,6 +195,7 @@ def _sa_resolve_attribute (self, table, c, joins, order_clause) :
         joins.add                  (e_type)
         self._sa_resolve_attribute (e_type, parts [1], joins, order_clause)
     else :
+        attr_name = Attr_Map.get (attr_name, attr_name)
         if attr_name.startswith ("-") :
             order_clause.append (getattr (table, attr_name [1:]).desc ())
         else :
