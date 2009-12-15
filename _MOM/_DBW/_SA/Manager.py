@@ -36,6 +36,7 @@
 #     4-Dec-2009 (MG) Once property `session` removed
 #    10-Dec-2009 (MG) `load_scope` and `register_scope` added
 #    15-Dec-2009 (MG) `Instance_Recreation` mapper extension added
+#    15-Dec-2009 (MG) `populate_instance` added
 #    ««revision-date»»···
 #--
 
@@ -57,9 +58,17 @@ class Instance_Recreation (orm.interfaces.MapperExtension) :
        loaded/queried from the database).
     """
 
+    def populate_instance (self, mapper, selectcontext, row, instance, **flags) :
+        if getattr (instance, "_sa_pending_reset_attributes", False) :
+            instance._init_attributes ()
+            del instance._sa_pending_reset_attributes
+        return orm.EXT_CONTINUE
+    # end def populate_instance
+
     def create_instance (self, mapper, select_context, row, etype) :
         instance = etype.__new__ \
-            (etype, home_scope = selectcontext.session.scope)
+            (etype, home_scope = select_context.session.scope)
+        instance._sa_pending_reset_attributes = True
         return instance
     # end def create_instance
 
