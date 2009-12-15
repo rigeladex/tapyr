@@ -30,6 +30,8 @@ x Id_Entity: `pid` (persistent id)
 
     - later change <-> higher number
 
+    - `last_cid`: max (self.cid, (max (c.last_cid for c in self.history)))
+
   + Queries: always consult database about outstanding changes
 
     - `entity.changes (filter)` returns all changes of `entity` restricted to
@@ -45,7 +47,11 @@ x Id_Entity: `pid` (persistent id)
   + store `Id_Entity.pid` instead of `epk` (formally `names`) to refer to
     entity changed
 
-  + `Id_Entity` gets attribute `last_change` (value `cid`)
+  + Scope and database get an attribute remembering the last change
+
+    * scope.db_cid is set to db.last_cid when loading from the database
+
+    * ems manages a list of uncommitted changes
 
 - EMS/DBW
 
