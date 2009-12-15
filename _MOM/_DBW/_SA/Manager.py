@@ -35,6 +35,7 @@
 #     4-Dec-2009 (MG) Renamed from `Session` to `Manager`
 #     4-Dec-2009 (MG) Once property `session` removed
 #    10-Dec-2009 (MG) `load_scope` and `register_scope` added
+#    15-Dec-2009 (MG) `Instance_Recreation` mapper extension added
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,21 @@ from sqlalchemy import schema
 from sqlalchemy import types
 from sqlalchemy import engine as SA_Engine
 
-class Cached_Role_Clearing (orm.interfaces.MapperExtension) :
+class Instance_Recreation (orm.interfaces.MapperExtension) :
+    """Ensure that the MOM instances `loaded` from the database are created
+       the correct way (e.g.: SA does not call `__init__` if the object is
+       loaded/queried from the database).
+    """
+
+    def create_instance (self, mapper, select_context, row, etype) :
+        instance = etype.__new__ \
+            (etype, home_scope = selectcontext.session.scope)
+        return instance
+    # end def create_instance
+
+# end class Instance_Recreation
+
+class Cached_Role_Clearing () :
     """Clear the cached role attributes if a link is delete"""
 
     def after_delete (self, mapper, connection, link) :
@@ -120,6 +135,8 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                 (e_type, attr_dict, sa_table, bases)
             if issubclass (e_type, MOM.Link) :
                 map_props ["extension"] = Cached_Role_Clearing ()
+            else :
+                map_props ["extension"] = Instance_Recreation  ()
             cls._setup_inheritance (e_type, sa_table, bases, map_props)
             orm.mapper             (e_type, sa_table, ** map_props)
             e_type._sa_table = sa_table
@@ -139,15 +156,17 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         return result
     # end def _attr_dict
 
-    def load_scope (cls, session,  scope) :
-        si         = session.query (cls.sa_scope).one ()
-        scope.guid = si.scope_guid
+    def load_scope (cls, session, scope) :
+        session.scope = scope
+        si            = session.query (cls.sa_scope).one ()
+        scope.guid    = si.scope_guid
         if si.root_type_name :
             scope.root = getattr \
                 (scope, si.root_type_name).query (id = si.root_it).one ()
     # end def load_scope
 
     def register_scope (cls, session,  scope) :
+        session.scope         = scope
         kw = dict (scope_guid = scope.guid)
         if scope.root :
             kw ["root_id"]        = scope.root.id
