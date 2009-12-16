@@ -29,6 +29,7 @@
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Change)
 #    27-Nov-2009 (CT) Creation continued
 #    14-Dec-2009 (CT) Major surgery
+#    16-Dec-2009 (CT) Use `pid_query` to get `entity`
 #    ««revision-date»»···
 #--
 
@@ -95,7 +96,7 @@ class _Entity_ (Undoable) :
 
     def entity (self, scope) :
         etm = scope [self.type_name]
-        return etm.instance (* self.epk)
+        return scope.ems.pid_query (self.pid, etm._etype)
     # end def entity
 
     def _repr (self) :

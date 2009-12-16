@@ -36,6 +36,7 @@
 #    14-Dec-2009 (CT) `__iter__` (and relevant_roots) added
 #    16-Dec-2009 (MG) Add `scope` parameter to `DWB.create_database` and
 #                     `DBW.connect_database`
+#    16-Dec-2009 (CT) `pid_query` added
 #    ««revision-date»»···
 #--
 
@@ -124,6 +125,11 @@ class _Manager_ (TFL.Meta.Object) :
         """Redefine to load `guid`, `pid`, and `root` of scope from database."""
         pass
     # end def load_scope
+
+    def pid_query (self, pid, Type) :
+        """Redefine if optimization is possible for a specific EMS/DBW."""
+        return self.query (Type, pid = pid)
+    # end def pid_query
 
     def query (self, Type, * filters, ** kw) :
         root   = Type.relevant_root
