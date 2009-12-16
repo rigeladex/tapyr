@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Tracker)
+#    16-Dec-2009 (CT) `nested_recorder` changed to yield change object, if any
 #    ««revision-date»»···
 #--
 
@@ -88,11 +89,11 @@ class Tracker (MOM.SCM.History_Mixin) :
                 preferred_recorder = self._recorder.__class__
             self.push_recorder (preferred_recorder (change))
             try :
-                yield
+                yield change
             finally :
                 self.pop_recorder ()
         else :
-            yield
+            yield None
     # end def nested_recorder
 
     def push_recorder (self, recorder) :

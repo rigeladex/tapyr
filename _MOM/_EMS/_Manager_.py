@@ -37,6 +37,8 @@
 #    16-Dec-2009 (MG) Add `scope` parameter to `DWB.create_database` and
 #                     `DBW.connect_database`
 #    16-Dec-2009 (CT) `pid_query` added
+#    16-Dec-2009 (CT) `commit`, `register_change`, and `uncommitted_changes`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -82,10 +84,16 @@ class _Manager_ (TFL.Meta.Object) :
     # end def new
 
     def __init__ (self, scope, db_uri) :
-        self.scope   = scope
-        self.db_uri  = db_uri
-        self.DBW     = scope.app_type.DBW
+        self.scope               = scope
+        self.db_uri              = db_uri
+        self.DBW                 = scope.app_type.DBW
+        self.uncommitted_changes = []
     # end def __init__
+
+    def commit (self) :
+        self.session.commit ()
+        self.uncommitted_changes = []
+    # end def commit
 
     def count (self, Type, strict) :
         return self.query (Type, strict = strict).count ()
@@ -148,6 +156,10 @@ class _Manager_ (TFL.Meta.Object) :
     def r_query (self, Type, rkw, * filters, ** kw) :
         return self.query (Type, * filters, ** dict (rkw, ** kw))
     # end def r_query
+
+    def register_change (self, change) :
+        self.uncommitted_changes.append (change)
+    # end def register_change
 
     def register_scope (self) :
         """Redefine to store `guid` and `root`-info of scope in database."""

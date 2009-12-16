@@ -41,6 +41,9 @@
 #    10-Dec-2009 (CT) Allow instance-specific `init_callbacks`
 #    14-Dec-2009 (CT) `copy` added
 #    14-Dec-2009 (CT) `unlocked` made method
+#    16-Dec-2009 (CT) `commit` added
+#    16-Dec-2009 (CT) Calls to `ems.register_change` added to `record_change`
+#                     and `nested_change_recorder`
 #    ««revision-date»»···
 #--
 
@@ -234,6 +237,10 @@ class Scope (TFL.Meta.Object) :
             yield
     # end def as_active
 
+    def commit (self) :
+        self.ems.commit ()
+    # end def commit
+
     @TFL.Meta.Lazy_Method_RLV
     def compute_defaults_internal (self, gauge = Gauge_Logger ()) :
         """Lazily call `compute_defaults_internal` for all entities."""
@@ -382,12 +389,17 @@ class Scope (TFL.Meta.Object) :
 
     @TFL.Contextmanager
     def nested_change_recorder (self, Change, * args, ** kw) :
-        with self.historian.nested_recorder (Change, * args, ** kw) :
+        with self.historian.nested_recorder (Change, * args, ** kw) as c :
+            if c :
+                self.ems.register_change (c)
             yield
     # end def nested_change_recorder
 
     def record_change (self, Change, * args, ** kw) :
-        return self.historian.record (Change, * args, ** kw)
+        result = self.historian.record (Change, * args, ** kw)
+        if result :
+            self.ems.register_change (result)
+        return result
     # end def record_change
 
     @_with_lock_check
