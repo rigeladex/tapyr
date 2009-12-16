@@ -390,14 +390,14 @@ class Scope (TFL.Meta.Object) :
     @TFL.Contextmanager
     def nested_change_recorder (self, Change, * args, ** kw) :
         with self.historian.nested_recorder (Change, * args, ** kw) as c :
-            if c :
+            yield c
+            if c is not None :
                 self.ems.register_change (c)
-            yield
     # end def nested_change_recorder
 
     def record_change (self, Change, * args, ** kw) :
         result = self.historian.record (Change, * args, ** kw)
-        if result :
+        if result is not None :
             self.ems.register_change (result)
         return result
     # end def record_change

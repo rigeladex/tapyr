@@ -99,7 +99,7 @@ class _Entity_ (Undoable) :
     def __init__ (self, entity) :
         self.__super.__init__ ()
         self.epk          = entity.epk
-        self.pid          = entity.pid
+        self.pid          = getattr (entity, "pid", None)
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
         self.change_count = 1
@@ -111,7 +111,12 @@ class _Entity_ (Undoable) :
     # end def entity
 
     def _repr (self) :
-        return "%s %s %s" % (self.kind, self.type_name, self.epk)
+        result = ["%s %s %s" % (self.kind, self.type_name, self.epk)]
+        if self.old_attr :
+            result.append ("old-values = %s" % (self.old_attr))
+        if self.new_attr :
+            result.append ("new-values = %s" % (self.new_attr))
+        return ", ".join (result)
     # end def _repr
 
 # end class _Entity_
@@ -184,10 +189,6 @@ class Attr (_Entity_) :
         if entity and old_attr :
             entity.set_raw (** old_attr)
     # end def undo
-
-    def _repr (self) :
-        return "%s, old values = %s" % (self.__super._repr (), self.old_attr)
-    # end def _repr
 
 # end class Attr
 

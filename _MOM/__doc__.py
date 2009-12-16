@@ -311,6 +311,7 @@ object and link types.
 Specifying `None` as `db_uri` will create an in memory database::
 
     >>> scope = MOM.Scope.new (apt, None)
+    >>> scope.start_change_recorder ()
 
 For each :attr:`~_MOM.Entity.Package_NS` defining essential
 classes, the `scope` provides an object holding
@@ -722,6 +723,8 @@ Changing objects and links
     >>> print m.as_code ()
     BMT.Mouse ('Mighty_Mouse', color = 'yellow', weight = 42.0)
 
+    >>> mm = m.copy ("Magic_Mouse")
+
     >>> print l1.as_code ()
     BMT.Location (-16.268799, 48.189956, )
     >>> l1.set (lat =  91.5)
@@ -763,11 +766,11 @@ Attribute queries
     >>> scope.BMT.Person.query_s (Q.last_name == Q.first_name).all ()
     [BMT.Person ('Tin', 'Tin')]
     >>> scope.BMT.Rodent.query_s (Q.weight != None).all ()
-    [BMT.Mouse ('Mighty_Mouse')]
+    [BMT.Mouse ('Magic_Mouse'), BMT.Mouse ('Mighty_Mouse')]
     >>> scope.BMT.Rodent.query_s (Q.weight == None).all ()
     [BMT.Rat ('Rutty_Rat'), BMT.Beaver ('Toothy_Beaver'), BMT.Rat ('betty')]
     >>> scope.BMT.Rodent.query_s (Q.weight > 0).all ()
-    [BMT.Mouse ('Mighty_Mouse')]
+    [BMT.Mouse ('Magic_Mouse'), BMT.Mouse ('Mighty_Mouse')]
     >>> scope.BMT.Trap.query_s (Q.serial_no > 1).all ()
     [BMT.Trap ('X', 2), BMT.Trap ('Y', 2), BMT.Trap ('Z', 3)]
     >>> scope.BMT.Trap.query_s (Q.serial_no < 2).all ()
@@ -882,6 +885,12 @@ Scope queries
     ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
     ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
     ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
+
+    >>> len (scope.ems.uncommitted_changes)
+    29
+    >>> scope.commit ()
+    >>> len (scope.ems.uncommitted_changes)
+    0
 
 """
 

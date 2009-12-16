@@ -58,6 +58,7 @@
 #    10-Dec-2009 (CT) s/id/pid/
 #    10-Dec-2009 (CT) Stubs for `load_scope` and `_load_objects` added
 #    14-Dec-2009 (CT) `__iter__` factored to `MOM.EMS._Manager_`
+#    16-Dec-2009 (CT) `register_change` added, s/__id/__pid/, `__cid` added
 #    ««revision-date»»···
 #--
 
@@ -86,10 +87,12 @@ class Manager (MOM.EMS._Manager_) :
 
     def __init__ (self, scope, db_uri) :
         self.__super.__init__ (scope, db_uri)
-        self._counts = TFL.defaultdict (int)
-        self._tables = TFL.defaultdict (dict)
-        self._r_map  = TFL.defaultdict (lambda : TFL.defaultdict (set))
-        self.__id    = 0
+        self._changes = {}
+        self._counts  = TFL.defaultdict (int)
+        self._tables  = TFL.defaultdict (dict)
+        self._r_map   = TFL.defaultdict (lambda : TFL.defaultdict (set))
+        self.__cid    = 0
+        self.__pid    = 0
     # end def __init__
 
     def add (self, entity, id = None) :
@@ -102,8 +105,8 @@ class Manager (MOM.EMS._Manager_) :
         if entity.max_count and entity.max_count <= count [entity.type_name] :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         if id is None :
-            id = self.__id
-            self.__id += 1
+            self.__pid += 1
+            id = self.__pid
         entity.pid                = id
         count [entity.type_name] += 1
         table [hpk]               = entity
@@ -168,10 +171,17 @@ class Manager (MOM.EMS._Manager_) :
     # end def instance
 
     def load_scope (self) :
-        ### XXX load `self.__id` from database
+        ### XXX load `self.__cid` abd `self.__pid` from database
         ### XXX load `scope.guid` and `scope.root` from database
         self.scope.add_init_callback (self._load_objects)
     # end def load_scope
+
+    def register_change (self, change) :
+        self.__super.register_change (change)
+        self.__cid += 1
+        change.cid  =  cid  = self.__cid
+        self._changes [cid] = change
+    # end def register_change
 
     def remove (self, entity) :
         count = self._counts

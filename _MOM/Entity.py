@@ -524,9 +524,10 @@ class Id_Entity (Entity) :
         scope   = kw.pop ("scope", self.home_scope)
         new_obj = self.__class__ (* new_epk, scope = scope, ** kw)
         with self.home_scope.nested_change_recorder \
-                 (MOM.SCM.Change.Copy, new_obj) :
-            scope.add (new_obj)
-            raw_kw  = dict \
+                 (MOM.SCM.Change.Copy, new_obj) as change :
+            scope.add  (new_obj)
+            change.pid = new_obj.pid
+            raw_kw     = dict \
                 (  (a.name, a.get_raw (self))
                 for a in self.user_attr if a.name not in kw
                 )
