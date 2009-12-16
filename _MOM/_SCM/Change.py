@@ -48,6 +48,8 @@ class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
 
     kind               = "Composite change"
+
+    cid                = None
     epk = pid          = None
     children           = TFL.Meta.Alias_Property ("history")
 
