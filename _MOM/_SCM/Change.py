@@ -44,14 +44,23 @@ import _MOM._SCM.Recorder
 
 import _TFL._Meta.Property
 
+import datetime
+
 class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
 
     kind               = "Composite change"
 
-    cid                = None
-    epk = pid          = None
     children           = TFL.Meta.Alias_Property ("history")
+    cid                = None
+    epk                = None
+    pid                = None
+    user               = None
+
+    def __init__ (self, entity) :
+        self.__super.__init__ ()
+        self.time = datetime.datetime.now ()
+    # end def __init__
 
     def __repr__ (self) :
         return "\n  ".join (self._repr_lines ())

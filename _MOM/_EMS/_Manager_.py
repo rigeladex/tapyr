@@ -159,6 +159,8 @@ class _Manager_ (TFL.Meta.Object) :
 
     def register_change (self, change) :
         self.uncommitted_changes.append (change)
+        if change.user is None :
+            change.user = self.scope.user
     # end def register_change
 
     def register_scope (self) :

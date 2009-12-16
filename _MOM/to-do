@@ -24,13 +24,13 @@ x Id_Entity: `pid` (persistent id)
 
   + add `cid` (change id)
 
-    - set by EMS/DBW
+    x set by EMS/DBW
 
-    - simple number
+    x simple number
 
-    - later change <-> higher number
+    x later change <-> higher number
 
-    - `last_cid`: max (self.cid, (max (c.last_cid for c in self.history)))
+    x composite changes: children have lower `cid` than the parent
 
   + Queries: always consult database about outstanding changes
 
@@ -40,18 +40,18 @@ x Id_Entity: `pid` (persistent id)
     - `scope.changes (filter) returns` all changes of (database connected to)
       `scope` restricted to `filter`
 
-  + reuse for tracking changes over database lifecycle
+  x reuse for tracking changes over database lifecycle
 
-    - Attributes: cid, time, user, delta, pid
+    x Attributes: cid, time, user, pid
 
-  + store `Id_Entity.pid` instead of `epk` (formally `names`) to refer to
+  x store `Id_Entity.pid` instead of `epk` (formally `names`) to refer to
     entity changed
 
-  + Scope and database get an attribute remembering the last change
+  x Scope and database get an attribute remembering the last change
 
-    * scope.db_cid is set to db.last_cid when loading from the database
+    x scope.db_cid is set to db.last_cid when loading from the database
 
-    * ems manages a list of uncommitted changes
+    x ems manages a list of uncommitted changes
 
 - EMS/DBW
 

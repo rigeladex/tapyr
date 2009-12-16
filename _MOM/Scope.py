@@ -169,6 +169,7 @@ class Scope (TFL.Meta.Object) :
         self.init_callback  = self.init_callback [:] ### copy from cls to self
         self.kill_callback  = self.kill_callback [:] ###
         self.root           = None
+        self.db_cid         = 0
         self.snapshot_count = 0
         self.historian      = MOM.SCM.Tracker (self)
         self._attr_errors   = []

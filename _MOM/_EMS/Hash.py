@@ -59,6 +59,7 @@
 #    10-Dec-2009 (CT) Stubs for `load_scope` and `_load_objects` added
 #    14-Dec-2009 (CT) `__iter__` factored to `MOM.EMS._Manager_`
 #    16-Dec-2009 (CT) `register_change` added, s/__id/__pid/, `__cid` added
+#    16-Dec-2009 (CT) `commit` added
 #    ««revision-date»»···
 #--
 
@@ -127,6 +128,12 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def all_links
 
+    def commit (self) :
+        ### XXX
+        self.scope.cid = self.__cid
+        self.__super.commit ()
+    # end def commit
+
     def count (self, Type, strict) :
         if strict :
             result = self._counts  [Type.type_name]
@@ -174,6 +181,7 @@ class Manager (MOM.EMS._Manager_) :
         ### XXX load `self.__cid` abd `self.__pid` from database
         ### XXX load `scope.guid` and `scope.root` from database
         self.scope.add_init_callback (self._load_objects)
+        self.scope.db_cid = self.__cid
     # end def load_scope
 
     def register_change (self, change) :
