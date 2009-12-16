@@ -57,7 +57,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     pid                = None
     user               = None
 
-    def __init__ (self, entity) :
+    def __init__ (self) :
         self.__super.__init__ ()
         self.time = datetime.datetime.now ()
     # end def __init__
