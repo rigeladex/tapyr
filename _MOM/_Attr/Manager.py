@@ -27,6 +27,9 @@
 #
 # Revision Dates
 #    29-Sep-2009 (CT) Creation (factored from TOM.Attr.Manager)
+#    16-Dec-2009 (CT) `snapshot` changed to use `save_to_db` instead of
+#                     `record_changes` to filter attributes
+#    16-Dec-2009 (CT) `raw_values_record` removed
 #    ««revision-date»»···
 #--
 
@@ -66,19 +69,6 @@ class Manager (TFL.Meta.Object) :
         self.last_snapshot = self.snapshot (obj)
     # end def make_snapshot
 
-    def raw_values_record (self, obj, kw) :
-        """Return raw values of attributes of `kw` that satisfy
-           `record_changes` and which values differ from those in `kw`.
-        """
-        result    = {}
-        attr_dict = self.attr_dict
-        for k, v in kw.iteritems () :
-            attr = attr_dict.get (k)
-            if attr and attr.record_changes and attr.get_value (obj) != v :
-                result [k] = attr.get_raw (obj)
-        return result
-    # end def raw_values_record
-
     def reset_attributes (self, obj) :
         self.reset_pending ()
         for a in sorted (self.attr_dict.itervalues (), key = TFL.Getter.rank) :
@@ -101,7 +91,7 @@ class Manager (TFL.Meta.Object) :
         result = {}
         attr_dict = self.attr_dict
         for name, attr in attr_dict.iteritems () :
-            if attr.record_changes :
+            if attr.save_to_db :
                 value = attr.get_raw (obj)
                 if value not in (attr.default, "") :
                     result [name] = value

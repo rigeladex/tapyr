@@ -55,6 +55,9 @@
 #    26-Nov-2009 (CT) `_Object_Reference_Mixin_` and `Object_Reference_Mixin`
 #                     added
 #    28-Nov-2009 (CT) `_Object_Reference_Mixin_._update_raw` removed
+#    16-Dec-2009 (CT) `record_changes` set to False for all kinds but `_User_`
+#    16-Dec-2009 (CT) Defaults for `electric`, `record_changes`, and
+#                     `save_to_db` moved to `Kind`
 #    ««revision-date»»···
 #--
 
@@ -77,10 +80,13 @@ class Kind (MOM.Prop.Kind) :
     __metaclass__         = MOM.Meta.M_Attr_Kind
 
     attr                  = None
+    electric              = True
     is_primary            = False
     is_settable           = True
     needs_raw_value       = False
     prop                  = TFL.Meta.Alias_Property ("attr")
+    record_changes        = False
+    save_to_db            = False
     sync                  = None
     Table                 = dict ()
 
@@ -104,12 +110,12 @@ class Kind (MOM.Prop.Kind) :
 
     def __set__ (self, obj, value) :
         self.attr.check_invariant (obj, value)
+        self._set_cooked          (obj, value)
         if self.record_changes and self.get_value (obj) != value :
             obj.home_scope.record_change \
                 ( MOM.SCM.Change.Attr
                 , obj, {self.name : self.get_raw (obj)}
                 )
-        self._set_cooked (obj, value)
     # end def __set__
 
     def get_raw (self, obj) :
@@ -133,13 +139,13 @@ class Kind (MOM.Prop.Kind) :
 
     def reset (self, obj) :
         if self.attr._symbolic_default :
-            self.set_raw \
+            return self.set_raw \
                 (obj, self.attr.raw_default, dont_raise = True, changed = True)
         else :
             if self.attr.raw_default and self.attr.default is None :
                 self.attr.default = self.attr.from_string \
                     (self.attr.raw_default, obj, obj.globals ())
-            self._set_raw \
+            return self._set_raw \
                 (obj, self.attr.raw_default, self.attr.default, changed = True)
     # end def reset
 
@@ -157,7 +163,7 @@ class Kind (MOM.Prop.Kind) :
                         print exc
                 else :
                     raise
-        self._set_raw (obj, raw_value, value, changed)
+        return self._set_raw (obj, raw_value, value, changed)
     # end def set_raw
 
     def sync_cooked (self, obj, raw_value) :
@@ -196,7 +202,7 @@ class Kind (MOM.Prop.Kind) :
     # end def _inc_changes
 
     def _set_cooked (self, obj, value, changed = 42) :
-        self._set_cooked_inner (obj, value, changed)
+        return self._set_cooked_inner (obj, value, changed)
     # end def _set_cooked
 
     def _set_cooked_inner (self, obj, value, changed = 42) :
@@ -206,7 +212,7 @@ class Kind (MOM.Prop.Kind) :
             except StandardError as exc :
                 ### print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
                 raise
-        self._set_cooked_value (obj, value, changed)
+        return self._set_cooked_value (obj, value, changed)
     # end def _set_cooked_inner
 
     def _set_cooked_value (self, obj, value, changed = 42) :
@@ -217,10 +223,11 @@ class Kind (MOM.Prop.Kind) :
         if changed :
             setattr          (obj, attr.ckd_name, value)
             self.inc_changes (obj._attr_man, obj, value)
+            return True
     # end def _set_cooked_value
 
     def _set_raw (self, obj, raw_value, value, changed = 42) :
-        self._set_cooked_inner (obj, value, changed)
+        return self._set_cooked_inner (obj, value, changed)
     # end def _set_raw
 
     def _set_raw_inner (self, obj, raw_value, value, changed = 42) :
@@ -290,7 +297,6 @@ class _DB_Attr_ (Kind) :
     """Attributes stored in DB."""
 
     save_to_db     = True
-    record_changes = True
 
     def to_save (self, obj) :
         raw_val = self.get_raw (obj)
@@ -306,6 +312,7 @@ class _User_ (_DB_Attr_, Kind) :
     """Attributes set by user."""
 
     electric       = False
+    record_changes = True
 
     def has_substance (self, obj) :
         return self.get_value (obj) not in (None, self.default)
@@ -316,8 +323,6 @@ class _User_ (_DB_Attr_, Kind) :
 class _System_ (Kind) :
     """Attributes set by system."""
 
-    electric       = True
-
 # end class _System_
 
 class _DB_System_ (_DB_Attr_, _System_) :
@@ -326,9 +331,6 @@ class _DB_System_ (_DB_Attr_, _System_) :
 
 class _Volatile_ (Kind) :
     """Attributes not stored in DB."""
-
-    save_to_db     = False
-    record_changes = False
 
     def to_save (self, obj) :
         return False

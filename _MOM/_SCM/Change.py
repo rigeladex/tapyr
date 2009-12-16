@@ -30,6 +30,9 @@
 #    27-Nov-2009 (CT) Creation continued
 #    14-Dec-2009 (CT) Major surgery
 #    16-Dec-2009 (CT) Use `pid_query` to get `entity`
+#    16-Dec-2009 (CT) Alias_Property `children` added and used
+#    16-Dec-2009 (CT) `new_attr` added to `Create` and `Attr`
+#    16-Dec-2009 (CT) `Copy` added
 #    ««revision-date»»···
 #--
 
@@ -39,11 +42,14 @@ from   _TFL               import TFL
 import _MOM._SCM.History_Mixin
 import _MOM._SCM.Recorder
 
+import _TFL._Meta.Property
+
 class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
 
     kind               = "Composite change"
     epk = pid          = None
+    children           = TFL.Meta.Alias_Property ("history")
 
     def __repr__ (self) :
         return "\n  ".join (self._repr_lines ())
@@ -55,7 +61,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
 
     def _repr_lines (self, level = 0) :
         result = ["%s<%s>" % ("  " * level, self._repr ())]
-        for c in self.history :
+        for c in self.children :
             result.extend (c._repr_lines (level + 1))
         return result
     # end def _repr_lines
@@ -69,7 +75,7 @@ class Undoable (_Change_) :
     undoable           = True
 
     def undo (self, scope) :
-        for c in reversed (self.history) :
+        for c in reversed (self.children) :
             c.undo (scope)
     # end def undo
 
@@ -86,11 +92,14 @@ class Non_Undoable (_Change_) :
 class _Entity_ (Undoable) :
     """Model a change of an MOM entity"""
 
+    new_attr = old_attr = {}
+
     def __init__ (self, entity) :
         self.__super.__init__ ()
         self.epk          = entity.epk
         self.pid          = entity.pid
         self.type_name    = entity.Essence.type_name
+        self.user         = entity.home_scope.user
         self.change_count = 1
     # end def __init__
 
@@ -105,10 +114,22 @@ class _Entity_ (Undoable) :
 
 # end class _Entity_
 
+class Copy (_Entity_) :
+    """Model a change that copies an existing entity."""
+# end class Copy
+
 class Create (_Entity_) :
     """Model a change that creates a new entity (object or link)"""
 
     kind = "Create"
+
+    def __init__ (self, entity) :
+        self.__super.__init__ (entity)
+        self.new_attr = dict \
+            ( (a.name, a.get_raw (entity))
+            for a in entity.user_attr if a.to_save (entity)
+            )
+    # end def __init__
 
     def undo (self, scope) :
         self.__super.undo (scope)
@@ -126,7 +147,7 @@ class Destroy (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.attr = attr = dict \
+        self.old_attr = dict \
             ( (a.name, a.get_raw (entity))
             for a in entity.user_attr if a.to_save (entity)
             )
@@ -134,7 +155,7 @@ class Destroy (_Entity_) :
 
     def undo (self, scope) :
         etm = scope [self.type_name]
-        etm (* self.epk, raw = True, ** self.attr)
+        etm (* self.epk, raw = True, ** self.old_attr)
         self.__super.undo (scope)
     # end def undo
 
@@ -147,14 +168,19 @@ class Attr (_Entity_) :
 
     def __init__ (self, entity, old_attr) :
         self.__super.__init__ (entity)
+        self.new_attr = dict \
+            ( (a.name, a.get_raw (entity))
+            for a in (entity.user_attr + entity.primary) if a.name in old_attr
+            )
         self.old_attr = old_attr
     # end def __init__
 
     def undo (self, scope) :
         self.__super.undo (scope)
-        entity = self.entity (scope)
-        if entity :
-            entity.set_raw (** self.old_attr)
+        entity   = self.entity (scope)
+        old_attr = self.old_attr
+        if entity and old_attr :
+            entity.set_raw (** old_attr)
     # end def undo
 
     def _repr (self) :

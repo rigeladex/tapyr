@@ -71,6 +71,8 @@
 #    15-Dec-2009 (MG) `_reset_epk`: guard added to make sure `epk` is only
 #                     deleted if it is present in the instance dict
 #    16-Dec-2009 (CT) `_reset_epk` un-DRY-ed
+#    16-Dec-2009 (CT) `_set_ckd` and `_set_raw` factored and used
+#    16-Dec-2009 (CT) `copy` rewritten to use `nested_change_recorder`
 #    ««revision-date»»···
 #--
 
@@ -218,14 +220,7 @@ class Entity (TFL.Meta.Object) :
 
     def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
-        if not kw :
-            return 0
-        self._kw_satisfies_i_invariants (kw, on_error)
-        self._set_record (kw)
-        tc = self._attr_man.total_changes
-        for name, val, attr in self.set_attr_iter (kw, on_error) :
-            attr._set_cooked (self, val)
-        return self._attr_man.total_changes - tc
+        return self._set_ckd (on_error, ** kw)
     # end def set
 
     def set_attr_iter (self, attr_dict, on_error = None) :
@@ -249,43 +244,7 @@ class Entity (TFL.Meta.Object) :
 
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
-        if not kw :
-            return 0
-        tc = self._attr_man.total_changes
-        if kw :
-            cooked_kw = {}
-            to_do     = []
-            if on_error is None :
-                on_error = self._raise_attr_error
-            for name, val, attr in self.set_attr_iter (kw, on_error) :
-                if val :
-                    try :
-                        cooked_kw [name] = cooked_val = \
-                            attr.from_string (val, self)
-                    except ValueError as err:
-                        on_error \
-                            ( MOM.Error.Invalid_Attribute
-                                (self, name, val, attr.kind, err)
-                            )
-                        if __debug__ :
-                            print err
-                        to_do.append ((attr, "", None))
-                    except StandardError as exc :
-                        print exc, \
-                          ( "; object %s, attribute %s: %s [%s]"
-                          % (self, name, val, type (val))
-                          )
-                        traceback.print_exc ()
-                    else :
-                        to_do.append ((attr, val, cooked_val))
-                else :
-                    to_do.append ((attr, "", None))
-            self._kw_satisfies_i_invariants (cooked_kw, on_error)
-            self._set_record (cooked_kw)
-            self._attr_man.reset_pending ()
-            for attr, raw_val, val in to_do :
-                attr._set_raw (self, raw_val, val)
-        return self._attr_man.total_changes - tc
+        return self._set_raw (on_error, ** kw)
     # end def set_raw
 
     def sync_attributes (self) :
@@ -322,7 +281,8 @@ class Entity (TFL.Meta.Object) :
     def _main__init__ (self, * args, ** kw) :
         self.implicit = kw.pop ("implicit", False)
         if kw :
-            set = (self.set, self.set_raw) [bool (kw.pop ("raw", False))]
+            raw = bool (kw.pop ("raw", False))
+            set = (self._set_ckd, self._set_raw) [raw]
             set (** kw)
     # end def _main__init__
 
@@ -334,9 +294,54 @@ class Entity (TFL.Meta.Object) :
         raise exc
     # end def _raise_attr_error
 
-    def _set_record (self, kw) :
-        pass
-    # end def _set_record
+    def _set_ckd (self, on_error = None, ** kw) :
+        if not kw :
+            return 0
+        self._kw_satisfies_i_invariants (kw, on_error)
+        tc = self._attr_man.total_changes
+        for name, val, attr in self.set_attr_iter (kw, on_error) :
+            attr._set_cooked (self, val)
+        return self._attr_man.total_changes - tc
+    # end def _set_ckd
+
+    def _set_raw (self, on_error = None, ** kw) :
+        if not kw :
+            return 0
+        tc = self._attr_man.total_changes
+        if kw :
+            cooked_kw = {}
+            to_do     = []
+            if on_error is None :
+                on_error = self._raise_attr_error
+            for name, val, attr in self.set_attr_iter (kw, on_error) :
+                if val :
+                    try :
+                        cooked_kw [name] = cooked_val = \
+                            attr.from_string (val, self)
+                    except ValueError as err:
+                        on_error \
+                            ( MOM.Error.Invalid_Attribute
+                                (self, name, val, attr.kind, err)
+                            )
+                        if __debug__ :
+                            print err
+                        to_do.append ((attr, "", None))
+                    except StandardError as exc :
+                        print exc, \
+                          ( "; object %s, attribute %s: %s [%s]"
+                          % (self, name, val, type (val))
+                          )
+                        traceback.print_exc ()
+                    else :
+                        to_do.append ((attr, val, cooked_val))
+                else :
+                    to_do.append ((attr, "", None))
+            self._kw_satisfies_i_invariants (cooked_kw, on_error)
+            self._attr_man.reset_pending ()
+            for attr, raw_val, val in to_do :
+                attr._set_raw (self, raw_val, val)
+        return self._attr_man.total_changes - tc
+    # end def _set_raw
 
     def _store_attr_error (self, exc) :
         print ("Warning: Setting attribute failked with exception %s" % (exc, ))
@@ -517,14 +522,16 @@ class Id_Entity (Entity) :
     def copy (self, * new_epk, ** kw) :
         """Make copy with primary key `new_epk`."""
         scope   = kw.pop ("scope", self.home_scope)
-        etm     = scope  [self.type_name]
-        new_obj = etm    (* new_epk, ** kw)
-        raw_kw  = dict \
-            (  (a.name, a.get_raw (self))
-            for a in self.user_attr if a.name not in kw
-            )
-        if raw_kw :
-            new_obj.set_raw (** raw_kw)
+        new_obj = self.__class__ (* new_epk, scope = scope, ** kw)
+        with self.home_scope.nested_change_recorder \
+                 (MOM.SCM.Change.Copy, new_obj) :
+            scope.add (new_obj)
+            raw_kw  = dict \
+                (  (a.name, a.get_raw (self))
+                for a in self.user_attr if a.name not in kw
+                )
+            if raw_kw :
+                new_obj.set_raw (** raw_kw)
         return new_obj
     # end def copy
 
@@ -591,22 +598,28 @@ class Id_Entity (Entity) :
 
     def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
-        with self.home_scope.nested_change_recorder (MOM.SCM.Change.Undoable) :
-            new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
-            if pkas_ckd :
-                self._rename (new_epk, pkas_raw, pkas_ckd)
-            result = self.__super.set (on_error, ** kw)
-        return result + len (pkas_ckd)
+        rvr    = dict \
+            (   (name, attr.get_raw (self))
+            for attr, name, value in self._record_iter (kw)
+            if  attr.get_value (self) != value
+            )
+        result = self._set_ckd (on_error, ** kw)
+        if rvr :
+            self.home_scope.record_change (MOM.SCM.Change.Attr, self, rvr)
+        return result
     # end def set
 
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
-        with self.home_scope.nested_change_recorder (MOM.SCM.Change.Undoable) :
-            new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
-            if pkas_ckd :
-                self._rename (new_epk, pkas_raw, pkas_ckd)
-            result = self.__super.set_raw (on_error, ** kw)
-        return result + len (pkas_ckd)
+        rvr    = dict \
+            (   (name, raw)
+            for attr, name, value, raw in self._record_iter_raw (kw)
+            if  raw != value
+            )
+        result = self._set_raw (on_error, ** kw)
+        if rvr :
+            self.home_scope.record_change (MOM.SCM.Change.Attr, self, rvr)
+        return result
     # end def set_raw
 
     def unregister_dependency (self, other) :
@@ -681,12 +694,24 @@ class Id_Entity (Entity) :
 
     def _main__init__ (self, * epk, ** kw) :
         ### Need to use `__super.` methods here because it's not a `rename`
-        setter = (self.__super.set, self.__super.set_raw) \
+        setter = (self.__super._set_ckd, self.__super._set_raw) \
             [bool (kw.get ("raw", False))]
         self._init_epk              (setter, * epk)
         self.__super._main__init__  (* epk, ** kw)
         self._finish__init__        (* epk, ** kw)
     # end def _main__init__
+
+    def _record_iter (self, kw) :
+        for attr in self.user_attr :
+            name = attr.name
+            if name in kw :
+                yield attr, name, kw [name]
+    # end def _record_iter
+
+    def _record_iter_raw (self, kw) :
+        for attr, name, value in self._record_iter (kw) :
+            yield attr, name, value, attr.get_raw (self)
+    # end def _record_iter_raw
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
         def _renamer () :
@@ -697,7 +722,6 @@ class Id_Entity (Entity) :
                 attr._set_raw_inner    (self, pkas_raw [k], v)
             self._reset_epk ()
         self._kw_satisfies_i_invariants (pkas_ckd, None)
-        self._set_record                (pkas_ckd)
         self.home_scope.rename          (self, tuple (new_epk), _renamer)
     # end def _rename
 
@@ -713,12 +737,26 @@ class Id_Entity (Entity) :
                 delattr (self, a)
     # end def _reset_epk
 
-    def _set_record (self, kw) :
-        rvr = self._attr_man.raw_values_record (self, kw)
-        if rvr :
-            self.home_scope.record_change \
-                (MOM.SCM.Change.Attr, self, rvr)
-    # end def _set_record
+    def _set_ckd (self, on_error = None, ** kw) :
+        if not kw :
+            return 0
+        new_epk, pkas_raw, pkas_ckd = self._extract_primary_ckd (kw)
+        if pkas_ckd :
+            self._rename (new_epk, pkas_raw, pkas_ckd)
+        result = self.__super._set_ckd (on_error, ** kw)
+        return result + len (pkas_ckd)
+    # end def _set_ckd
+
+    def _set_raw (self, on_error = None, ** kw) :
+        """Set attributes specified in `kw` from raw values"""
+        if not kw :
+            return 0
+        new_epk, pkas_raw, pkas_ckd = self._extract_primary_raw (kw)
+        if pkas_ckd :
+            self._rename (new_epk, pkas_raw, pkas_ckd)
+        result = self.__super._set_raw (on_error, ** kw)
+        return result + len (pkas_ckd)
+    # end def _set_raw
 
     def __str__ (self) :
         epk = self.epk

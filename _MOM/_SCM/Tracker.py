@@ -115,16 +115,6 @@ class Tracker (MOM.SCM.History_Mixin) :
         return result
     # end def record
 
-    def record_encapsulated (self, enc_fct, Change, * args, ** kw) :
-        """Record change of type `Change`, calling `enc_fct` encapsulated
-           in that change (i.e., all changes recorded by `enc_fct` will be
-           recorded nested inside).
-        """
-        with self.nested_recorder (Change, * args, ** kw) :
-            result = enc_fct ()
-        return result
-    # end def record_encapsulated
-
     def remove_dependency (self, scope) :
         del self.dependents [scope.id]
     # end def remove_dependency
