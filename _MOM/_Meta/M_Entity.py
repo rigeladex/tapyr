@@ -53,6 +53,8 @@
 #                     `app_type.DBW.update_etype` after all etypes were created
 #     3-Dec-2009 (CT) `_m_setup_sorted_by` added and called
 #    14-Dec-2009 (CT) `g_rank`, `i_rank`, and `m_sorted_by` added
+#    16-Dec-2009 (MG) `_m_create_e_types` call `DBW.prepare` before the
+#                     e-types will be created
 #    ««revision-date»»···
 #--
 
@@ -139,6 +141,7 @@ class M_E_Mixin (TFL.Meta.M_Class) :
         etypes   = app_type.etypes
         e_deco   = app_type.DBW.etype_decorator
         e_update = app_type.DBW.update_etype
+        app_type.DBW.prepare ()
         for s in SX :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
         for t in app_type._T_Extension :

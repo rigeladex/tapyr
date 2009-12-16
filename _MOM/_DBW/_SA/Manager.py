@@ -37,6 +37,10 @@
 #    10-Dec-2009 (MG) `load_scope` and `register_scope` added
 #    15-Dec-2009 (MG) `Instance_Recreation` mapper extension added
 #    15-Dec-2009 (MG) `populate_instance` and `reconstruct_instance` added
+#    16-Dec-2009 (MG) `_create_engine` and `_create_session` factored,
+#                     assigning of `scope` to `session` moved into
+#                     `_create_session`
+#                     `prepare` added
 #    ««revision-date»»···
 #--
 
@@ -78,7 +82,7 @@ class Instance_Recreation (orm.interfaces.MapperExtension) :
 
 # end class Instance_Recreation
 
-class Cached_Role_Clearing () :
+class Cached_Role_Clearing (Instance_Recreation) :
     """Clear the cached role attributes if a link is delete"""
 
     def after_delete (self, mapper, connection, link) :
@@ -95,21 +99,26 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     metadata         = schema.MetaData () ### XXX
     type_name_length = 30
 
-    def create_database (cls, db_uri) :
-        db_uri  = db_uri or "sqlite:///:memory:"
-        engine  = SA_Engine.create_engine (db_uri)
-        cls._create_scope_table           (cls.metadata)
-        cls.metadata.create_all           (engine)
-        Session = orm.sessionmaker        (bind = engine)
-        return Session                    ()
+    def create_database (cls, db_uri, scope) :
+        engine  = cls._create_engine (db_uri)
+        cls.metadata.create_all      (engine)
+        return cls._create_session   (engine, scope)
     # end def create_database
 
-    def connect_database (cls, db_uri) :
-        db_uri  = db_uri or "sqlite:///:memory:"
-        engine  = SA_Engine.create_engine (db_uri)
-        Session = orm.sessionmaker        (bind = engine)
-        return Session                    ()
+    def connect_database (cls, db_uri, scope) :
+        return cls._create_session (cls._create_engine (db_uri), scope)
     # end def connect_database
+
+    def _create_engine (cls, db_uri) :
+        return SA_Engine.create_engine (db_uri or "sqlite:///:memory:")
+    # end def _create_engine
+
+    def _create_session (self, engine, scope) :
+        Session       = orm.sessionmaker (bind = engine)
+        session       = Session          ()
+        session.scope = scope
+        return session
+    # end def _create_session
 
     def _create_scope_table (cls, metadata) :
         cls.sa_scope = schema.Table \
@@ -122,6 +131,10 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                 ("root_type_name", types.String (length = cls.type_name_length))
             )
     # end def _create_scope_table
+
+    def prepare (cls) :
+        cls._create_scope_table           (cls.metadata)
+    # end def prepare
 
     def update_etype (cls, e_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
@@ -170,7 +183,6 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _attr_dict
 
     def load_scope (cls, session, scope) :
-        session.scope = scope
         si            = session.query (cls.sa_scope).one ()
         scope.guid    = si.scope_guid
         if si.root_type_name :
@@ -179,7 +191,6 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def load_scope
 
     def register_scope (cls, session,  scope) :
-        session.scope         = scope
         kw = dict (scope_guid = scope.guid)
         if scope.root :
             kw ["root_id"]        = scope.root.id

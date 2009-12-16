@@ -29,6 +29,7 @@
 #    19-Oct-2009 (MG) Creation
 #    30-Nov-2009 (CT) `update_etype` added
 #     4-Dec-2009 (MG) Renamed from `Session` to `_Manager_`
+#    16-Dec-2009 (MG) `_Manager_.prepare` added
 #    ««revision-date»»···
 #--
 
@@ -40,21 +41,25 @@ import _TFL._Meta.Object
 class _M_Manager_ (TFL.Meta.Object.__class__) :
     """Backend independent _Manager_, describes the common interface."""
 
+    def create_database (cls, db_uri, scope) :
+        raise NotImplementedError
+    # end def create_database
+
+    def connect_database (cls, db_uri, scope) :
+        raise NotImplementedError
+    # end def connect_database
+
     def etype_decorator (cls, e_type) :
         return e_type
     # end def etype_decorator
 
+    def prepare (self) :
+        pass
+    # end def prepare
+
     def update_etype (cls, e_type) :
         pass
     # end def update_etype
-
-    def create_database (cls, db_uri) :
-        raise NotImplementedError
-    # end def create_database
-
-    def connect_database (cls, db_uri) :
-        raise NotImplementedError
-    # end def connect_database
 
 # end class _M__Manager_e_
 

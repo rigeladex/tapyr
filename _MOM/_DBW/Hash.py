@@ -28,6 +28,8 @@
 # Revision Dates
 #     3-Dec-2009 (CT) Creation
 #     4-Dec-2009 (MG) Renamed from `Session` to `Manager`
+#    16-Dec-2009 (MG) Add `scope` parameter to `DWB.create_database` and
+#                     `DBW.connect_database`
 #    ««revision-date»»···
 #--
 
@@ -39,14 +41,14 @@ import _MOM._DBW._Manager_
 class _M_Hash_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class for MOM.DBW.Hash"""
 
-    def create_database (cls, db_uri) :
+    def create_database (cls, db_uri, scope) :
         assert db_uri is None
         ### maybe we need to return an instance of a Session (depends on the
         ### database implementation)
         return cls ()
     # end def create_database
 
-    def connect_database (cls, db_uri) :
+    def connect_database (cls, db_uri, scope) :
         assert db_uri is None
         ### maybe we need to return an instance of a Session (depends on the
         ### database implementation)

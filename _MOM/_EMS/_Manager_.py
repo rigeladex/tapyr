@@ -34,6 +34,8 @@
 #                     `__init__` revamped
 #    10-Dec-2009 (CT) Empty methods `load_scope` and `register_scope` added
 #    14-Dec-2009 (CT) `__iter__` (and relevant_roots) added
+#    16-Dec-2009 (MG) Add `scope` parameter to `DWB.create_database` and
+#                     `DBW.connect_database`
 #    ««revision-date»»···
 #--
 
@@ -67,14 +69,14 @@ class _Manager_ (TFL.Meta.Object) :
     @classmethod
     def connect (cls, scope, db_uri) :
         self         = cls (scope, db_uri)
-        self.session = self.DBW.connect_database (db_uri)
+        self.session = self.DBW.connect_database (db_uri, scope)
         return self
     # end def connect
 
     @classmethod
     def new (cls, scope, db_uri) :
         self         = cls (scope, db_uri)
-        self.session = self.DBW.create_database (db_uri)
+        self.session = self.DBW.create_database (db_uri, scope)
         return self
     # end def new
 
