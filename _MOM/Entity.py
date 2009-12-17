@@ -76,7 +76,7 @@
 #    17-Dec-2009 (CT) `_record_context` factored from `set` and `set_raw` and
 #                     guard for `electric` added
 #    17-Dec-2009 (CT) `epk_raw` added
-#    17-Dec-2009 (CT) `changes` added
+#    17-Dec-2009 (CT) `changes` and `async_changes` added
 #    ««revision-date»»···
 #--
 
@@ -519,6 +519,13 @@ class Id_Entity (Entity) :
     def has_warnings (self) :
         return self._pred_man.has_warnings
     # end def has_warnings
+
+    def ascync_changes (self, * filter, ** kw) :
+        result = self.home_scope.async_changes (pid = self.pid)
+        if filters or kw :
+            result = result.filter (* filters, ** kw)
+        return result
+    # end def ascync_changes
 
     def attr_as_code (self) :
         return ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))

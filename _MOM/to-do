@@ -49,7 +49,7 @@ x SCM
 
     x ems manages a list of uncommitted changes
 
-- EMS/DBW
+x EMS/DBW
 
   x EMS manages DBW
 
@@ -81,12 +81,12 @@ x SCM
 
   x provide Id_Entity.pid
 
-  * store SCM.Change objects
+  x store SCM.Change objects
 
-  * provide interface to check if the DB has asynchronous changes of an
+  x provide interface to check if the DB has asynchronous changes of an
     entity
 
-    + `async_changes (entity)` returns a list of changes between the state of
+    x `async_changes (entity)` returns a list of changes between the state of
       the object as read from the database and the state as current in the
       database
 
