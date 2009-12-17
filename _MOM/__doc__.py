@@ -921,6 +921,15 @@ Scope queries
     <Destroy BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'yellow', 'weight' : '42'}>;    <Destroy BMT.Rodent_in_Trap ("('Mighty_Mouse',)", "('X', '1')")>
     <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>
     <Destroy BMT.Trap ('X', '2')>;    <Destroy BMT.Rodent_in_Trap ("('betty',)", "('X', '2')")>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '2')", "('-16.74077', '48.463313')")>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '2')")>
+    >>> c = scope.ems.uncommitted_changes [-2]
+    >>> pckl = c.as_pickle (True)
+    >>> cc = c.from_pickle (pckl)
+    >>> print str (cc).replace (NL, ";")
+    <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>
+    >>> cc.children
+    [<Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>, <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>]
+    >>> cc.children [0].parent is cc
+    True
     >>> scope.commit ()
     >>> len (scope.ems.uncommitted_changes)
     0
