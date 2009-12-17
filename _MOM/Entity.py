@@ -73,6 +73,8 @@
 #    16-Dec-2009 (CT) `_reset_epk` un-DRY-ed
 #    16-Dec-2009 (CT) `_set_ckd` and `_set_raw` factored and used
 #    16-Dec-2009 (CT) `copy` rewritten to use `nested_change_recorder`
+#    17-Dec-2009 (CT) `_record_context` factored from `set` and `set_raw` and
+#                     guard for `electric` added
 #    ««revision-date»»···
 #--
 
@@ -599,28 +601,24 @@ class Id_Entity (Entity) :
 
     def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
-        rvr    = dict \
+        gen = \
             (   (name, attr.get_raw (self))
             for attr, name, value in self._record_iter (kw)
             if  attr.get_value (self) != value
             )
-        result = self._set_ckd (on_error, ** kw)
-        if rvr :
-            self.home_scope.record_change (MOM.SCM.Change.Attr, self, rvr)
-        return result
+        with self._record_context (gen, MOM.SCM.Change.Attr) :
+            return self._set_ckd (on_error, ** kw)
     # end def set
 
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
-        rvr    = dict \
+        gen = \
             (   (name, raw)
             for attr, name, value, raw in self._record_iter_raw (kw)
             if  raw != value
             )
-        result = self._set_raw (on_error, ** kw)
-        if rvr :
-            self.home_scope.record_change (MOM.SCM.Change.Attr, self, rvr)
-        return result
+        with self._record_context (gen, MOM.SCM.Change.Attr) :
+            return self._set_raw (on_error, ** kw)
     # end def set_raw
 
     def unregister_dependency (self, other) :
@@ -702,8 +700,19 @@ class Id_Entity (Entity) :
         self._finish__init__        (* epk, ** kw)
     # end def _main__init__
 
+    @TFL.Contextmanager
+    def _record_context (self, gen, Change) :
+        if self.electric :
+            yield
+        else :
+            rvr = dict (gen)
+            yield
+            if rvr :
+                self.home_scope.record_change (Change, self, rvr)
+    # end def _record_context
+
     def _record_iter (self, kw) :
-        for attr in self.user_attr :
+        for attr in self.primary + self.user_attr :
             name = attr.name
             if name in kw :
                 yield attr, name, kw [name]

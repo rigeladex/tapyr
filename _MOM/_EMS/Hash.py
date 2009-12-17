@@ -185,10 +185,11 @@ class Manager (MOM.EMS._Manager_) :
     # end def load_scope
 
     def register_change (self, change) :
-        self.__super.register_change (change)
         self.__cid += 1
         change.cid  =  cid  = self.__cid
-        self._changes [cid] = change
+        if change.parent is None :
+            self._changes [cid] = change
+        self.__super.register_change (change)
     # end def register_change
 
     def remove (self, entity) :

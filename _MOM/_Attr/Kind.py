@@ -58,6 +58,7 @@
 #    16-Dec-2009 (CT) `record_changes` set to False for all kinds but `_User_`
 #    16-Dec-2009 (CT) Defaults for `electric`, `record_changes`, and
 #                     `save_to_db` moved to `Kind`
+#    17-Dec-2009 (CT) Don't `record_changes` for electric objects
 #    ««revision-date»»···
 #--
 
@@ -111,11 +112,11 @@ class Kind (MOM.Prop.Kind) :
     def __set__ (self, obj, value) :
         self.attr.check_invariant (obj, value)
         self._set_cooked          (obj, value)
-        if self.record_changes and self.get_value (obj) != value :
+        if  ( self.record_changes and (not obj.electric)
+            and self.get_value (obj) != value
+            ) :
             obj.home_scope.record_change \
-                ( MOM.SCM.Change.Attr
-                , obj, {self.name : self.get_raw (obj)}
-                )
+                (MOM.SCM.Change.Attr, obj, {self.name : self.get_raw (obj)})
     # end def __set__
 
     def get_raw (self, obj) :

@@ -44,6 +44,9 @@
 #    16-Dec-2009 (CT) `commit` added
 #    16-Dec-2009 (CT) Calls to `ems.register_change` added to `record_change`
 #                     and `nested_change_recorder`
+#    17-Dec-2009 (CT) `_init_context` changed to call `start_change_recorder`
+#    17-Dec-2009 (CT) Don't record `add` and `remove` of electric objects
+#    17-Dec-2009 (CT) Don't `register_change` for empty composite changes
 #    ««revision-date»»···
 #--
 
@@ -181,7 +184,8 @@ class Scope (TFL.Meta.Object) :
         try :
             Scope.active = self
             yield self
-            self._run_init_callbacks ()
+            self._run_init_callbacks   ()
+            self.start_change_recorder ()
         except :
             Scope.active = old_active
             raise
@@ -207,8 +211,9 @@ class Scope (TFL.Meta.Object) :
     @_with_lock_check
     def add (self, entity) :
         """Adds `entity` to scope `self`."""
-        self.ems.add       (entity)
-        self.record_change (MOM.SCM.Change.Create, entity)
+        self.ems.add (entity)
+        if not entity.electric :
+            self.record_change (MOM.SCM.Change.Create, entity)
     # end def add
 
     @TFL.Meta.Class_and_Instance_Method
@@ -392,7 +397,7 @@ class Scope (TFL.Meta.Object) :
     def nested_change_recorder (self, Change, * args, ** kw) :
         with self.historian.nested_recorder (Change, * args, ** kw) as c :
             yield c
-            if c is not None :
+            if c :
                 self.ems.register_change (c)
     # end def nested_change_recorder
 
@@ -407,10 +412,15 @@ class Scope (TFL.Meta.Object) :
     def remove (self, entity) :
         """Remove `entity` from scope `self`"""
         assert (entity != self.root)
-        Change = MOM.SCM.Change.Destroy
-        with self.historian.nested_recorder (Change, entity) :
+        def remove () :
             self.ems.remove (entity)
             entity._destroy ()
+        if entity.electric :
+            remove ()
+        else :
+            Change = MOM.SCM.Change.Destroy
+            with self.historian.nested_recorder (Change, entity) :
+                remove ()
     # end def remove
 
     @_with_lock_check

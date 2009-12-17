@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Recorder)
+#    17-Dec-2009 (CT) Use `tracker.add_change` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -86,9 +87,9 @@ class Appender (Counter) :
     weight = 10
 
     def __call__ (self, Change, * args, ** kw) :
-        self.__super.__call__       (Change, * args, ** kw)
-        change = Change             (* args, ** kw)
-        self.tracker.history.append (change)
+        self.__super.__call__   (Change, * args, ** kw)
+        change = Change         (* args, ** kw)
+        self.tracker.add_change (change)
         return change
     # end def __call__
 

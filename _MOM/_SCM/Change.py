@@ -33,6 +33,10 @@
 #    16-Dec-2009 (CT) Alias_Property `children` added and used
 #    16-Dec-2009 (CT) `new_attr` added to `Create` and `Attr`
 #    16-Dec-2009 (CT) `Copy` added
+#    17-Dec-2009 (CT) `add_change`, `parent`, and `redo` added;
+#                     `_create`, `_destroy`, and `_modify` factored;
+#                     store raw values of `epk`;
+#                     `_Entity_._repr` changed to sort
 #    ««revision-date»»···
 #--
 
@@ -54,6 +58,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     children           = TFL.Meta.Alias_Property ("history")
     cid                = None
     epk                = None
+    parent             = None
     pid                = None
     user               = None
 
@@ -61,6 +66,17 @@ class _Change_ (MOM.SCM.History_Mixin) :
         self.__super.__init__ ()
         self.time = datetime.datetime.now ()
     # end def __init__
+
+    def add_change (self, child) :
+        assert child.parent is None
+        child.parent = self
+        self.__super.add_change (child)
+    # end def add_change
+
+    def redo (self, scope) :
+        for c in self.children :
+            c.redo (scope)
+    # end def undo
 
     def __repr__ (self) :
         return "\n  ".join (self._repr_lines ())
@@ -107,7 +123,7 @@ class _Entity_ (Undoable) :
 
     def __init__ (self, entity) :
         self.__super.__init__ ()
-        self.epk          = entity.epk
+        self.epk          = tuple (a.get_raw (entity) for a in entity.primary)
         self.pid          = getattr (entity, "pid", None)
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
@@ -119,12 +135,32 @@ class _Entity_ (Undoable) :
         return scope.ems.pid_query (self.pid, etm._etype)
     # end def entity
 
+    def _create (self, scope, attr) :
+        etm = scope [self.type_name]
+        etm (* self.epk, raw = True, ** attr)
+    # end def _create
+
+    def _destroy (self, scope) :
+        entity = self.entity (scope)
+        if entity :
+            entity.destroy ()
+    # end def _destroy
+
+    def _modify (self, scope, attr) :
+        entity = self.entity (scope)
+        if entity and attr :
+            entity.set_raw (** attr)
+    # end def _modify
+
     def _repr (self) :
         result = ["%s %s %s" % (self.kind, self.type_name, self.epk)]
+        def format (d) :
+            return ", ".join \
+                (sorted ("%r : %r" % (k, v) for (k, v) in d.iteritems ()))
         if self.old_attr :
-            result.append ("old-values = %s" % (self.old_attr))
+            result.append ("old-values = {%s}" % format (self.old_attr))
         if self.new_attr :
-            result.append ("new-values = %s" % (self.new_attr))
+            result.append ("new-values = {%s}" % format (self.new_attr))
         return ", ".join (result)
     # end def _repr
 
@@ -132,6 +168,9 @@ class _Entity_ (Undoable) :
 
 class Copy (_Entity_) :
     """Model a change that copies an existing entity."""
+
+    kind = "Copy"
+
 # end class Copy
 
 class Create (_Entity_) :
@@ -147,11 +186,14 @@ class Create (_Entity_) :
             )
     # end def __init__
 
+    def redo (self, scope) :
+        self._create      (scope, self.new_attr)
+        self.__super.redo (scope)
+    # end def undo
+
     def undo (self, scope) :
         self.__super.undo (scope)
-        entity = self.entity (scope)
-        if entity :
-            entity.destroy ()
+        self._destroy     (scope)
     # end def undo
 
 # end class
@@ -169,9 +211,13 @@ class Destroy (_Entity_) :
             )
     # end def __init__
 
+    def redo (self, scope) :
+        self.__super.redo (scope)
+        self._destroy     (scope)
+    # end def undo
+
     def undo (self, scope) :
-        etm = scope [self.type_name]
-        etm (* self.epk, raw = True, ** self.old_attr)
+        self._create      (scope, self.old_attr)
         self.__super.undo (scope)
     # end def undo
 
@@ -191,12 +237,14 @@ class Attr (_Entity_) :
         self.old_attr = old_attr
     # end def __init__
 
+    def redo (self, scope) :
+        self._modify      (scope, self.new_attr)
+        self.__super.redo (scope)
+    # end def redo
+
     def undo (self, scope) :
         self.__super.undo (scope)
-        entity   = self.entity (scope)
-        old_attr = self.old_attr
-        if entity and old_attr :
-            entity.set_raw (** old_attr)
+        self._modify      (scope, self.old_attr)
     # end def undo
 
 # end class Attr

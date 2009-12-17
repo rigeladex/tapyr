@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.History_Mixin)
+#    17-Dec-2009 (CT) `add_change` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,10 @@ class History_Mixin (TFL.Meta.Object) :
         self.change_count = 0
         self.history      = []
     # end def __init__
+
+    def add_change (self, change) :
+        self.history.append (change)
+    # end def add_change
 
     def __nonzero__ (self) :
         return bool (self.change_count or self.history)

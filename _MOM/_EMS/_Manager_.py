@@ -158,7 +158,8 @@ class _Manager_ (TFL.Meta.Object) :
     # end def r_query
 
     def register_change (self, change) :
-        self.uncommitted_changes.append (change)
+        if change.parent is None :
+            self.uncommitted_changes.append (change)
         if change.user is None :
             change.user = self.scope.user
     # end def register_change

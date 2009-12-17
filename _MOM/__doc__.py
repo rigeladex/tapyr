@@ -311,7 +311,6 @@ object and link types.
 Specifying `None` as `db_uri` will create an in memory database::
 
     >>> scope = MOM.Scope.new (apt, None)
-    >>> scope.start_change_recorder ()
 
 For each :attr:`~_MOM.Entity.Package_NS` defining essential
 classes, the `scope` provides an object holding
@@ -888,6 +887,39 @@ Scope queries
 
     >>> len (scope.ems.uncommitted_changes)
     29
+    >>> for c in scope.ems.uncommitted_changes :
+    ...     print c
+    <Create BMT.Person ('Luke', 'Lucky')>
+    <Create BMT.Person ('Dog', 'Snoopy')>
+    <Create BMT.Location ('-16.268799', '48.189956')>
+    <Create BMT.Location ('-16.74077', '48.463313')>
+    <Create BMT.Mouse ('Mighty_Mouse',)>
+    <Create BMT.Beaver ('Toothy_Beaver',)>
+    <Create BMT.Rat ('Rutty_Rat',)>
+    <Create BMT.Rat ('Axel',)>
+    <Create BMT.Trap ('X', '1')>
+    <Create BMT.Trap ('X', '2')>
+    <Create BMT.Trap ('Y', '1')>
+    <Create BMT.Trap ('Y', '2')>
+    <Create BMT.Trap ('Z', '3')>
+    <Create BMT.Rodent_in_Trap ("('Mighty_Mouse',)", "('X', '1')")>
+    <Create BMT.Rodent_in_Trap ("('Rutty_Rat',)", "('Y', '1')")>
+    <Create BMT.Rodent_in_Trap ("('Axel',)", "('X', '2')")>
+    <Create BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>
+    <Create BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '2')")>
+    <Create BMT.Person_owns_Trap ("('Dog', 'Snoopy')", "('Y', '1')")>
+    <Create BMT.Person ('Tin', 'Tin')>
+    <Create BMT.Person_owns_Trap ("('Tin', 'Tin')", "('Y', '2')")>
+    <Create BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>
+    <Create BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '2')", "('-16.74077', '48.463313')")>
+    <Create BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('Y', '1')", "('-16.74077', '48.463313')")>
+    <Modify BMT.Rat ('betty',), old-values = {'name' : 'Axel'}, new-values = {'name' : 'betty'}>
+    <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'white', 'weight' : '10'}, new-values = {'color' : 'black', 'weight' : '25.0'}>
+    <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'black', 'weight' : '25.0'}, new-values = {'color' : 'yellow', 'weight' : '42'}>
+    <Copy BMT.Mouse ('Magic_Mouse',)>
+        <Create BMT.Mouse ('Magic_Mouse',)>
+        <Modify BMT.Mouse ('Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : 'yellow', 'weight' : '42'}>
+    <Modify BMT.Rodent_in_Trap ("('Toothy_Beaver',)", "('X', '1')"), old-values = {'left' : "('Mighty_Mouse',)"}, new-values = {'left' : "('Toothy_Beaver',)"}>
     >>> scope.commit ()
     >>> len (scope.ems.uncommitted_changes)
     0
