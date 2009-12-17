@@ -38,6 +38,7 @@
 #                     store raw values of `epk`;
 #                     `_Entity_._repr` changed to sort;
 #                     `as_pickle` and `from_pickle` added
+#    17-Dec-2009 (CT) `Destroy.children` redefined to sort `history`
 #    ««revision-date»»···
 #--
 
@@ -246,6 +247,16 @@ class Destroy (_Entity_) :
     """Model a change that destroys an entity"""
 
     kind = "Destroy"
+
+    @property
+    def children (self) :
+        return sorted (self.history, key = TFL.Sorted_By ("pid", "cid"))
+    # end def children
+
+    @children.setter
+    def children (self, value) :
+        self.history = value
+    # end def children
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)

@@ -76,8 +76,6 @@
 #    17-Dec-2009 (CT) `_record_context` factored from `set` and `set_raw` and
 #                     guard for `electric` added
 #    17-Dec-2009 (CT) `epk_raw` added
-#    17-Dec-2009 (CT) `notify_dependencies_destroy` changed to sort to make
-#                     sequence of changes deterministic
 #    ««revision-date»»···
 #--
 
@@ -596,10 +594,10 @@ class Id_Entity (Entity) :
         """Notify all entities registered in `self.dependencies` and
            `self.object_referring_attributes` about the destruction of `self`.
         """
-        sk = TFL.Sorted_By ("type_name", "pid")
-        for d in sorted (self.dependencies, key = sk) :
+        ### Use `list` because dictionaries are changed inside loop
+        for d in list (self.dependencies) :
             d.destroy_dependency (self)
-        for o in sorted (self.object_referring_attributes, key = sk) :
+        for o in list (self.object_referring_attributes) :
             o.destroy_dependency (self)
     # end def notify_dependencies_destroy
 

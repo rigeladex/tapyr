@@ -47,6 +47,7 @@
 #    17-Dec-2009 (CT) `_init_context` changed to call `start_change_recorder`
 #    17-Dec-2009 (CT) Don't record `add` and `remove` of electric objects
 #    17-Dec-2009 (CT) Don't `register_change` for empty composite changes
+#    17-Dec-2009 (CT) `async_changes` and `query_changes` added
 #    ««revision-date»»···
 #--
 
@@ -243,8 +244,13 @@ class Scope (TFL.Meta.Object) :
             yield
     # end def as_active
 
+    def ascync_changes (self, * filter, ** kw) :
+        return self.ems.async_changes (* filter, ** kw)
+    # end def ascync_changes
+
     def commit (self) :
-        self.ems.commit ()
+        self.ems.commit    ()
+        self.make_snapshot ()
     # end def commit
 
     @TFL.Meta.Lazy_Method_RLV
@@ -400,6 +406,10 @@ class Scope (TFL.Meta.Object) :
             if c :
                 self.ems.register_change (c)
     # end def nested_change_recorder
+
+    def query_changes (self, * filter, ** kw) :
+        return self.ems.changes (* filter, ** kw)
+    # end def query_changes
 
     def record_change (self, Change, * args, ** kw) :
         result = self.historian.record (Change, * args, ** kw)

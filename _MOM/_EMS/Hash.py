@@ -60,6 +60,7 @@
 #    14-Dec-2009 (CT) `__iter__` factored to `MOM.EMS._Manager_`
 #    16-Dec-2009 (CT) `register_change` added, s/__id/__pid/, `__cid` added
 #    16-Dec-2009 (CT) `commit` added
+#    17-Dec-2009 (CT) `changes` and `async_changes` added
 #    ««revision-date»»···
 #--
 
@@ -128,9 +129,17 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def all_links
 
+    def async_changes (self, * filters, ** kw) :
+        raise NotImplementedError
+    # end def changes
+
+    def changes (self, * filters, ** kw) :
+        return self.Q_Result (self._changes.itervalues (), * filters, ** kw)
+    # end def changes
+
     def commit (self) :
         ### XXX
-        self.scope.cid = self.__cid
+        self.scope.db_cid = self.__cid
         self.__super.commit ()
     # end def commit
 

@@ -39,6 +39,7 @@
 #    16-Dec-2009 (CT) `pid_query` added
 #    16-Dec-2009 (CT) `commit`, `register_change`, and `uncommitted_changes`
 #                     added
+#    17-Dec-2009 (CT) `async_changes` added
 #    ««revision-date»»···
 #--
 
@@ -89,6 +90,14 @@ class _Manager_ (TFL.Meta.Object) :
         self.DBW                 = scope.app_type.DBW
         self.uncommitted_changes = []
     # end def __init__
+
+    def async_changes (self, * filters, ** kw) :
+        from _MOM.import_MOM import Q
+        result = self.changes (Q.cid > self.scope.db_cid)
+        if filters or kw :
+            result = result.filter (* filters, ** kw)
+        return result
+    # end def changes
 
     def commit (self) :
         self.session.commit ()
