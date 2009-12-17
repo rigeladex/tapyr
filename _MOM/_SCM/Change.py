@@ -81,7 +81,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
         cargo    = \
             ( self.__class__
             , self._pickle_attrs ()
-            , [c.as_pickle () for c in children]
+            , [c.as_pickle (include_children) for c in children]
             )
         return pickle.dumps (cargo, pickle.HIGHEST_PROTOCOL)
     # end def as_pickle
