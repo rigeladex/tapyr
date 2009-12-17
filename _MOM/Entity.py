@@ -77,6 +77,7 @@
 #                     guard for `electric` added
 #    17-Dec-2009 (CT) `epk_raw` added
 #    17-Dec-2009 (CT) `changes` and `async_changes` added
+#    17-Dec-2009 (CT) `user_diff` and `user_equal` added
 #    ««revision-date»»···
 #--
 
@@ -651,6 +652,37 @@ class Id_Entity (Entity) :
         if deps [other] <= 0 :
             del deps [other]
     # end def unregister_dependency
+
+    def user_diff (self, other) :
+        """Return differences in user attributes between `self` and `other`."""
+        result = {}
+        undef  = object ()
+        if self.type_name != other.type_name :
+            result ["type_name"] = (self.type_name, other.type_name)
+        if self.epk_raw != other.epk_raw :
+            for i, (p, q) in enumerate (TFL.paired (self.epk, other.epk)) :
+                if p != q :
+                    result [self.epk_sig [i]] = (p, q)
+        for attr in self.user_attr :
+            p = attr.get_value (self)
+            q = getattr (other, attr.name, undef)
+            if p != q :
+                result [attr.name] = (p, q if q is not undef else "<Missing>")
+        return result
+    # end def user_diff
+
+    def user_equal (self, other) :
+        """Compare `self` and `other` concerning user attributes."""
+        if self.type_name == other.type_name :
+            if self.epk_raw == other.epk_raw :
+                _ = object ()
+                for attr in self.user_attr :
+                    if attr.get_value (self) != getattr (other, attr.name, _) :
+                        break
+                else :
+                    return True
+        return False
+    # end def user_equal
 
     def _destroy (self) :
         self.notify_dependencies_destroy ()

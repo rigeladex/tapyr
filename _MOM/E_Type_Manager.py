@@ -162,9 +162,12 @@ class Object (Id_Entity) :
 
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :
-            try :
-                yield pka.from_string (v, None)
-            except MOM.Error.No_Such_Object :
+            if v :
+                try :
+                    yield pka.from_string (v, None)
+                except MOM.Error.No_Such_Object :
+                    yield None
+            else :
                 yield None
     # end def _cooked_epk
 
@@ -309,7 +312,7 @@ class Link (Id_Entity) :
                     ### Allow role attributes to be passed as objects even if
                     ### `raw` is specified
                     v = self._cooked_role (pka, v)
-                else :
+                elif v :
                     v = pka.from_string   (v, None)
             except MOM.Error.No_Such_Object :
                 v = None

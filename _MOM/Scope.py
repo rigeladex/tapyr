@@ -48,6 +48,7 @@
 #    17-Dec-2009 (CT) Don't record `add` and `remove` of electric objects
 #    17-Dec-2009 (CT) Don't `register_change` for empty composite changes
 #    17-Dec-2009 (CT) `async_changes` and `query_changes` added
+#    17-Dec-2009 (CT) `user_diff` and `user_equal` added
 #    ««revision-date»»···
 #--
 
@@ -454,6 +455,34 @@ class Scope (TFL.Meta.Object) :
         with self.LET (_locked = False) :
             yield self
     # end def unlocked
+
+    def user_diff (self, other) :
+        """Return differences of entities `self` and `other` concerning user attributes."""
+        result = {}
+        for e in self :
+            o = other [e.type_name].instance (* e.epk_raw, raw = True)
+            if o is None :
+                diff = "Missing in other scope"
+            else :
+                diff = e.user_diff (o)
+            if diff :
+                result [e.epk_raw] = diff
+        return result
+    # end def user_diff
+
+    def user_equal (self, other) :
+        """Compare entities of `self` and `other` regarding user attributes."""
+        s_count = self.ems.count  (self.MOM.Id_Entity._etype,  strict = False)
+        o_count = other.ems.count (other.MOM.Id_Entity._etype, strict = False)
+        if s_count == o_count :
+            for e in self :
+                o = other [e.type_name].instance (* e.epk_raw, raw = True)
+                if not (o and e.user_equal (o)) :
+                    break
+            else :
+                return True
+        return False
+    # end def user_equal
 
     def _add_to_scopes (self) :
         for n in (self.qname, ) :

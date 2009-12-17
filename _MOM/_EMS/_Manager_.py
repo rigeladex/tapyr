@@ -40,6 +40,7 @@
 #    16-Dec-2009 (CT) `commit`, `register_change`, and `uncommitted_changes`
 #                     added
 #    17-Dec-2009 (CT) `async_changes` added
+#    17-Dec-2009 (CT) `pid_query` fixed (needs to call `one`)
 #    ««revision-date»»···
 #--
 
@@ -145,7 +146,7 @@ class _Manager_ (TFL.Meta.Object) :
 
     def pid_query (self, pid, Type) :
         """Redefine if optimization is possible for a specific EMS/DBW."""
-        return self.query (Type, pid = pid)
+        return self.query (Type, pid = pid).one ()
     # end def pid_query
 
     def query (self, Type, * filters, ** kw) :

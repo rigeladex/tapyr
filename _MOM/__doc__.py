@@ -956,6 +956,38 @@ Scope queries
     >>> len (scope.ems.uncommitted_changes)
     0
 
+Replaying changes
+-----------------
+
+    >>> scop2 = MOM.Scope.new (apt, None)
+    >>> scope.MOM.Id_Entity.count_transitive, scop2.MOM.Id_Entity.count_transitive
+    (16, 0)
+    >>> for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
+    ...     c.redo (scop2)
+    >>> scope.MOM.Id_Entity.count_transitive, scop2.MOM.Id_Entity.count_transitive
+    (16, 16)
+    >>> sorted (scope.user_diff (scop2).iteritems ())
+    []
+    >>> scope.user_equal (scop2)
+    True
+
+    >>> t3.max_weight = 25
+    >>> sorted (scope.user_diff (scop2).iteritems ())
+    [(('Y', '1'), {'max_weight': (25.0, None)})]
+    >>> scop2.BMT.Trap.instance (* t3.epk_raw, raw = True).set (max_weight = 42)
+    1
+    >>> sorted (scope.user_diff (scop2).iteritems ())
+    [(('Y', '1'), {'max_weight': (25.0, 42.0)})]
+    >>> t3.destroy ()
+    >>> for diff in sorted (scop2.user_diff (scope).iteritems ()) :
+    ...     print diff
+    (("('Dog', 'Snoopy')", "('Y', '1')"), 'Missing in other scope')
+    (("('Luke', 'Lucky')", "('Y', '1')", "('-16.74077', '48.463313')"), 'Missing in other scope')
+    (("('Rutty_Rat',)", "('Y', '1')"), 'Missing in other scope')
+    (('Y', '1'), 'Missing in other scope')
+    >>> scope.user_equal (scop2)
+    False
+
 """
 
 __doc__ = doctest = dt_form % dict \
@@ -963,9 +995,10 @@ __doc__ = doctest = dt_form % dict \
     , import_EMS = "from _MOM._EMS.Hash    import Manager"
     )
 
-from   _MOM.import_MOM       import *
+from   _MOM.import_MOM        import *
+from   _TFL.Package_Namespace import Derived_Package_Namespace
 
-BMT = TFL.Package_Namespace ("_BMT")
+BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
 
 _Ancestor_Essence = MOM.Object
 
