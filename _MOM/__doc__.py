@@ -930,6 +930,9 @@ Scope queries
     [<Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>, <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>]
     >>> cc.children [0].parent is cc
     True
+    >>> pckl = c.as_pickle ()
+    >>> cc = c.from_pickle (pckl)
+    >>> print str (cc).replace (NL, ";")
     >>> scope.commit ()
     >>> len (scope.ems.uncommitted_changes)
     0
