@@ -888,7 +888,7 @@ Scope queries
     >>> len (scope.ems.uncommitted_changes)
     32
     >>> for c in scope.ems.uncommitted_changes :
-    ...     print c
+    ...     print str (c).replace (NL, ";")
     <Create BMT.Person ('Luke', 'Lucky')>
     <Create BMT.Person ('Dog', 'Snoopy')>
     <Create BMT.Location ('-16.268799', '48.189956')>
@@ -916,19 +916,11 @@ Scope queries
     <Modify BMT.Rat ('betty',), old-values = {'name' : 'Axel'}, new-values = {'name' : 'betty'}>
     <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'white', 'weight' : '10'}, new-values = {'color' : 'black', 'weight' : '25.0'}>
     <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'black', 'weight' : '25.0'}, new-values = {'color' : 'yellow', 'weight' : '42'}>
-    <Copy BMT.Mouse ('Magic_Mouse',)>
-        <Create BMT.Mouse ('Magic_Mouse',)>
-        <Modify BMT.Mouse ('Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : 'yellow', 'weight' : '42'}>
+    <Copy BMT.Mouse ('Magic_Mouse',)>;    <Create BMT.Mouse ('Magic_Mouse',)>;    <Modify BMT.Mouse ('Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : 'yellow', 'weight' : '42'}>
     <Modify BMT.Rodent_in_Trap ("('Toothy_Beaver',)", "('X', '1')"), old-values = {'left' : "('Mighty_Mouse',)"}, new-values = {'left' : "('Toothy_Beaver',)"}>
-    <Destroy BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'yellow', 'weight' : '42'}>
-        <Destroy BMT.Rodent_in_Trap ("('Mighty_Mouse',)", "('X', '1')")>
-    <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>
-        <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>
-        <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>
-    <Destroy BMT.Trap ('X', '2')>
-        <Destroy BMT.Rodent_in_Trap ("('betty',)", "('X', '2')")>
-        <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '2')")>
-        <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '2')", "('-16.74077', '48.463313')")>
+    <Destroy BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'yellow', 'weight' : '42'}>;    <Destroy BMT.Rodent_in_Trap ("('Mighty_Mouse',)", "('X', '1')")>
+    <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>
+    <Destroy BMT.Trap ('X', '2')>;    <Destroy BMT.Rodent_in_Trap ("('betty',)", "('X', '2')")>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '2')", "('-16.74077', '48.463313')")>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '2')")>
     >>> scope.commit ()
     >>> len (scope.ems.uncommitted_changes)
     0
