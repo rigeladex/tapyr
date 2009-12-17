@@ -34,6 +34,8 @@
 #                     implemented
 #    15-Dec-2009 (MG) `__iter__` removed (has been implemented in
 #                     `EMS._Manager_`)
+#    16-Dec-2009 (MG) `pid_query` and `register_change` added
+#    16-Dec-2009 (MG) `load_scope` update of `db_cid` added
 #    ««revision-date»»···
 #--
 
@@ -48,6 +50,7 @@ import _TFL._Meta.Object
 import _TFL.defaultdict
 
 import itertools
+import cPickle
 
 from   sqlalchemy import exc as SA_Exception
 
@@ -75,8 +78,32 @@ class Manager (MOM.EMS._Manager_) :
     # end def add
 
     def load_scope (self) :
-        self.DBW.load           (self.session, self.scope)
+        self.DBW.load (self.session, self.scope)
+        self.scope.db_cid = self.session.execute \
+            ( MOM.SCM.Change._Change_._sa_table.select ()
+              .order_by ("-cid").limit (1)
+            ).fetchone ().cid
     # end def load_scope
+
+    def pid_query (self, pid, Type) :
+        """Simplified query for SA."""
+        return self.query (Type, id = pid [-1])
+    # end def pid_query
+
+    def register_change (self, change) :
+        result = self.__super.register_change (change)
+        Table  = change._sa_table
+        kw     = dict (data = cPickle.dumps (change, cPickle.HIGHEST_PROTOCOL))
+        kw ["Type_Name"], kw ["id"] = getattr (change, "pid", (None, None))
+        insert                      = Table.insert ().values (** kw)
+        change.cid = self.session.execute (insert).inserted_primary_key [0]
+        if change.children :
+            update = Table.update ().where \
+                ( Table.c.cid.in_ (c.cid for c in change.children)
+                ).values (parent_cid = change.cid)
+            self.session.execute (update)
+        return result
+    # end def register_change
 
     def register_scope (self) :
         """Redefine to store `guid` and `root`-info of scope in database."""
@@ -103,6 +130,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def _query_multi_root
 
     def _query_single_root (self, Type, root) :
+        Type = getattr (Type, "_etype", Type)
         return self.Q_Result (Type, self.session.query (Type))
     # end def _query_single_root
 

@@ -42,7 +42,8 @@ DBW     = MOM.DBW.SA.Manager
 apt     = MOM.App_Type    ("BMT", BMT).Derived     (EMS, DBW)
 
 
-scope   = MOM.Scope.new   (apt, None)
+scope   = MOM.Scope.new     (apt, None)
+scope.start_change_recorder ()
 
 session           = scope.ems.session
 session.bind.echo = False
@@ -65,7 +66,7 @@ if 1 :
     RiT   = scope.BMT.Rodent_in_Trap
     PoT   = scope.BMT.Person_owns_Trap
     PTL   = scope.BMT.Person_sets_Trap_at_Location
-
+    b1    = b.copy ("Toothless_Beaver", region = "Lower Austria")
 RiT (m, t1)
 #RiT (r, t3)
 #RiT (p, t1)

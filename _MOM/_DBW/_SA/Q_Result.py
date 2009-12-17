@@ -29,6 +29,7 @@
 # Revision Dates
 #     1-Dec-2009 (MG) Creation
 #    10-Dec-2009 (MG) Adopted to new `TFL.Q_Exp`
+#    16-Dec-2009 (MG) Support for queries against `pid` added
 #    ««revision-date»»···
 #--
 
@@ -137,7 +138,10 @@ class Q_Result (TFL.Meta.Object) :
             else :
                 sa_criteria.append (c)
         for attr, value in eq_kw.iteritems () :
-            if attr == "type_name" :
+            if attr == "pid" :
+                attr  = "id"
+                value = value [-1]
+            elif   attr == "type_name" :
                 attr = "Type_Name"
             sa_criteria.append (getattr (self.e_type, attr) == value)
         if len (sa_criteria) > 1 :

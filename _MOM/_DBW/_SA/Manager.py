@@ -41,6 +41,7 @@
 #                     assigning of `scope` to `session` moved into
 #                     `_create_session`
 #                     `prepare` added
+#    16-Dec-2009 (MG) Change management added
 #    ««revision-date»»···
 #--
 
@@ -50,11 +51,14 @@ import _MOM._DBW._Manager_
 import _MOM._DBW._SA
 import _MOM._DBW._SA.Attr_Type
 import _MOM._DBW._SA.Attr_Kind
+import _MOM._SCM.Change
 
 from sqlalchemy import orm
 from sqlalchemy import schema
 from sqlalchemy import types
 from sqlalchemy import engine as SA_Engine
+
+Type_Name_Type = types.String (length = 30)
 
 class Instance_Recreation (orm.interfaces.MapperExtension) :
     """Ensure that the MOM instances `loaded` from the database are created
@@ -97,7 +101,6 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
     metadata         = schema.MetaData () ### XXX
-    type_name_length = 30
 
     def create_database (cls, db_uri, scope) :
         engine  = cls._create_engine (db_uri)
@@ -128,12 +131,28 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
             , schema.Column
                 ("scope_guid",     types.String (length = 64))
             , schema.Column
-                ("root_type_name", types.String (length = cls.type_name_length))
+                ("root_type_name", Type_Name_Type)
             )
     # end def _create_scope_table
 
+    def _create_SCM_table (cls, metadata) :
+        MOM.SCM.Change._Change_._sa_table = schema.Table \
+            ( "change_history", metadata
+            , schema.Column ("cid",       types.Integer,  primary_key = True)
+            , schema.Column ("Type_Name", Type_Name_Type, nullable    = True)
+            , schema.Column ("id",        types.Integer,  nullable    = True)
+            , schema.Column ("data",      types.Binary,   nullable    = True)
+            , schema.Column
+                  ( "parent_cid"
+                  , types.Integer
+                  , schema.ForeignKey ("change_history.cid")
+                  )
+            )
+    # end def _create_SCM_table
+
     def prepare (cls) :
         cls._create_scope_table           (cls.metadata)
+        cls._create_SCM_table             (cls.metadata)
     # end def prepare
 
     def update_etype (cls, e_type) :
@@ -217,10 +236,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                     (pk_name, types.Integer, primary_key = True)
                 )
         ### we add the type_name in any case to make EMS.SA easier
-        result.append \
-            ( schema.Column
-                ("Type_Name", types.String (length = cls.type_name_length))
-            )
+        result.append (schema.Column ("Type_Name", Type_Name_Type))
         e_type._sa_pk_name = pk_name
         for name, attr_kind in attr_dict.iteritems () :
             attr_kind.attr._sa_col_name = attr_kind._sa_col_name ()
