@@ -106,7 +106,7 @@ class Undoable (_Change_) :
             c.undo (scope)
     # end def undo
 
-# end class Change
+# end class Undoable
 
 class Non_Undoable (_Change_) :
     """Model a change that cannot be undone"""

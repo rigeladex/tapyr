@@ -42,6 +42,7 @@
 #                     `_create_session`
 #                     `prepare` added
 #    16-Dec-2009 (MG) Change management added
+#    17-Dec-2009 (MG) Set `pid` for instances loaded from the database
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,7 @@ class Instance_Recreation (orm.interfaces.MapperExtension) :
 
     def reconstruct_instance (self, mapper, instance) :
         instance._finish__init__ ()
+        instance.pid = (instance.relevant_root.type_name, instance.id)
     # end def reconstruct_instance
 
 # end class Instance_Recreation

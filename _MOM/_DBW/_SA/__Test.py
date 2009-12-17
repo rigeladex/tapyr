@@ -43,7 +43,6 @@ apt     = MOM.App_Type    ("BMT", BMT).Derived     (EMS, DBW)
 
 
 scope   = MOM.Scope.new     (apt, None)
-scope.start_change_recorder ()
 
 session           = scope.ems.session
 session.bind.echo = False
