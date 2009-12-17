@@ -419,7 +419,7 @@ class Scope (TFL.Meta.Object) :
             remove ()
         else :
             Change = MOM.SCM.Change.Destroy
-            with self.historian.nested_recorder (Change, entity) :
+            with self.nested_change_recorder (Change, entity) :
                 remove ()
     # end def remove
 

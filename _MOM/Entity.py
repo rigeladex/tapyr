@@ -75,6 +75,7 @@
 #    16-Dec-2009 (CT) `copy` rewritten to use `nested_change_recorder`
 #    17-Dec-2009 (CT) `_record_context` factored from `set` and `set_raw` and
 #                     guard for `electric` added
+#    17-Dec-2009 (CT) `epk_raw` added
 #    ««revision-date»»···
 #--
 
@@ -495,6 +496,12 @@ class Id_Entity (Entity) :
     def epk_as_dict (self) :
         return dict (zip (self.epk_sig, self.epk))
     # end def epk_as_dict
+
+    @property
+    def epk_raw (self) :
+        """Essential primary key as raw values"""
+        return tuple (a.get_raw (self) for a in self.primary)
+    # end def epk_raw
 
     @property
     def errors (self) :

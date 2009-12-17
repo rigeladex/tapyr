@@ -36,7 +36,8 @@
 #    17-Dec-2009 (CT) `add_change`, `parent`, and `redo` added;
 #                     `_create`, `_destroy`, and `_modify` factored;
 #                     store raw values of `epk`;
-#                     `_Entity_._repr` changed to sort
+#                     `_Entity_._repr` changed to sort;
+#                     `as_pickle` and `from_pickle` added
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,7 @@ import _MOM._SCM.Recorder
 import _TFL._Meta.Property
 
 import datetime
+import pickle
 
 class _Change_ (MOM.SCM.History_Mixin) :
     """Model a change of a MOM Scope"""
@@ -60,6 +62,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
     epk                = None
     parent             = None
     pid                = None
+    time               = None
     user               = None
 
     def __init__ (self) :
@@ -73,14 +76,40 @@ class _Change_ (MOM.SCM.History_Mixin) :
         self.__super.add_change (child)
     # end def add_change
 
+    def as_pickle (self, include_children = False) :
+        children = self.children if include_children else ()
+        cargo    = \
+            ( self.__class__
+            , self._pickle_attrs ()
+            , [c.as_pickle () for c in children]
+            )
+        return pickle.dumps (cargo, pickle.HIGHEST_PROTOCOL)
+    # end def as_pickle
+
+    @classmethod
+    def from_pickle (cls, string, parent = None) :
+        Class, attrs, children = pickle.loads (string)
+        result                 = MOM.SCM.History_Mixin ()
+        result.__class__       = Class
+        result.parent          = parent
+        result.children        = [cls.from_pickle (c, result) for c in children]
+        result.__dict__.update (attrs)
+        return result
+    # end def from_pickle
+
     def redo (self, scope) :
         for c in self.children :
             c.redo (scope)
     # end def undo
 
-    def __repr__ (self) :
-        return "\n  ".join (self._repr_lines ())
-    # end def __repr__
+    def _pickle_attrs (self) :
+        return dict \
+            ( change_count = self.change_count
+            , cid          = self.cid
+            , time         = self.time
+            , user         = self.user
+            )
+    # end def _pickle_attrs
 
     def _repr (self) :
         return self.kind
@@ -92,6 +121,10 @@ class _Change_ (MOM.SCM.History_Mixin) :
             result.extend (c._repr_lines (level + 1))
         return result
     # end def _repr_lines
+
+    def __repr__ (self) :
+        return "\n  ".join (self._repr_lines ())
+    # end def __repr__
 
 # end class _Change_
 
@@ -123,7 +156,7 @@ class _Entity_ (Undoable) :
 
     def __init__ (self, entity) :
         self.__super.__init__ ()
-        self.epk          = tuple (a.get_raw (entity) for a in entity.primary)
+        self.epk          = entity.epk_raw
         self.pid          = getattr (entity, "pid", None)
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
@@ -151,6 +184,17 @@ class _Entity_ (Undoable) :
         if entity and attr :
             entity.set_raw (** attr)
     # end def _modify
+
+    def _pickle_attrs (self) :
+        return dict \
+            ( self.__super._pickle_attrs ()
+            , epk         = self.epk
+            , new_attr    = self.new_attr
+            , old_attr    = self.old_attr
+            , pid         = self.pid
+            , type_name   = self.type_name
+            )
+    # end def _pickle_attrs
 
     def _repr (self) :
         result = ["%s %s %s" % (self.kind, self.type_name, self.epk)]

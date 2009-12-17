@@ -417,7 +417,7 @@ class _A_Object_ (A_Attr_Type) :
 
     def as_pickle (self, value) :
         if value is not None :
-            return value.epk
+            return value.epk_raw
     # end def as_pickle
 
     @TFL.Meta.Class_and_Instance_Method
