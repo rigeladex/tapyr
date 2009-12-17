@@ -33,7 +33,6 @@
 #    16-Dec-2009 (CT) Alias_Property `children` added and used
 #    16-Dec-2009 (CT) `new_attr` added to `Create` and `Attr`
 #    16-Dec-2009 (CT) `Copy` added
-#    16-Dec-2009 (MG) `epk` removed, `raw_epk` used instead in `Destroy`
 #    ««revision-date»»···
 #--
 
@@ -54,8 +53,9 @@ class _Change_ (MOM.SCM.History_Mixin) :
 
     children           = TFL.Meta.Alias_Property ("history")
     cid                = None
+    epk                = None
     pid                = None
-    children           = TFL.Meta.Alias_Property ("history")
+    user               = None
 
     def __init__ (self) :
         self.__super.__init__ ()
@@ -107,6 +107,7 @@ class _Entity_ (Undoable) :
 
     def __init__ (self, entity) :
         self.__super.__init__ ()
+        self.epk          = entity.epk
         self.pid          = getattr (entity, "pid", None)
         self.type_name    = entity.Essence.type_name
         self.user         = entity.home_scope.user
@@ -119,7 +120,7 @@ class _Entity_ (Undoable) :
     # end def entity
 
     def _repr (self) :
-        result = ["%s %s %s" % (self.kind, self.type_name, self.pid)]
+        result = ["%s %s %s" % (self.kind, self.type_name, self.epk)]
         if self.old_attr :
             result.append ("old-values = %s" % (self.old_attr))
         if self.new_attr :
@@ -162,7 +163,6 @@ class Destroy (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.raw_epk  = entity.epk_as_code
         self.old_attr = dict \
             ( (a.name, a.get_raw (entity))
             for a in entity.user_attr if a.to_save (entity)
@@ -171,7 +171,7 @@ class Destroy (_Entity_) :
 
     def undo (self, scope) :
         etm = scope [self.type_name]
-        etm (* self.raw_epk, raw = True, ** self.old_attr)
+        etm (* self.epk, raw = True, ** self.old_attr)
         self.__super.undo (scope)
     # end def undo
 
