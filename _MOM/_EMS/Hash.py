@@ -134,7 +134,10 @@ class Manager (MOM.EMS._Manager_) :
     # end def changes
 
     def changes (self, * filters, ** kw) :
-        return self.Q_Result (self._changes.itervalues (), * filters, ** kw)
+        result = self.Q_Result (itertools.chain (* self._changes.itervalues ()))
+        if filters or kw :
+            result = result.filter (* filters, ** kw)
+        return result
     # end def changes
 
     def commit (self) :

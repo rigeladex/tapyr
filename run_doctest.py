@@ -38,6 +38,8 @@
 #     2-Oct-2006 (CT) `replacer` added
 #    11-Nov-2009 (CT) Support for directories added
 #    19-Nov-2009 (CT) `has_doctest` added and used
+#    17-Dec-2009 (CT) Pass `optionflags` to `doctest.testmod`:
+#                       `doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF`
 #    ««revision-date»»···
 #--
 
@@ -98,7 +100,12 @@ def _main (cmd) :
             sys.path [0:0] = ["./"]
         try :
             module = __import__      (m)
-            f, t   = doctest.testmod (module, verbose=0)
+            f, t   = doctest.testmod \
+                ( module
+                , verbose     = 0
+                , optionflags =
+                    doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
+                )
         except KeyboardInterrupt :
             raise
         except StandardError, exc :

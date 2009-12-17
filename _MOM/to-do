@@ -11,7 +11,7 @@ x Id_Entity: `pid` (persistent id)
 
   x globally unique per database (not reused!, survives save/load cycle)
 
-* SCM
+x SCM
 
   x Change Entity.set and Entity.set_raw
 
@@ -28,15 +28,13 @@ x Id_Entity: `pid` (persistent id)
 
     x later change <-> higher number
 
-    x composite changes: children have lower `cid` than the parent
+  x Queries: always consult database about outstanding changes
 
-  + Queries: always consult database about outstanding changes
-
-    - `entity.changes (filter)` returns all changes of `entity` restricted to
+    x `entity.changes (filter)` returns all changes of `entity` restricted to
       `filter`
 
-    - `scope.changes (filter) returns` all changes of (database connected to)
-      `scope` restricted to `filter`
+    x `scope.query_changes (filter) returns` all changes of (database
+       connected to) `scope` restricted to `filter`
 
   x reuse for tracking changes over database lifecycle
 
@@ -45,9 +43,9 @@ x Id_Entity: `pid` (persistent id)
   x store `Id_Entity.pid` instead of `epk` (formally `names`) to refer to
     entity changed
 
-  x Scope and database get an attribute remembering the last change
+  x Scope gets an attribute remembering the last change
 
-    x scope.db_cid is set to db.last_cid when loading from the database
+    x scope.db_cid is set to max (db.cid) when loading from the database
 
     x ems manages a list of uncommitted changes
 

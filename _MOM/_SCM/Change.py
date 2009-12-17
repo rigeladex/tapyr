@@ -39,6 +39,7 @@
 #                     `_Entity_._repr` changed to sort;
 #                     `as_pickle` and `from_pickle` added
 #    17-Dec-2009 (CT) `Destroy.children` redefined to sort `history`
+#    17-Dec-2009 (CT) `__iter__` added
 #    ««revision-date»»···
 #--
 
@@ -122,6 +123,12 @@ class _Change_ (MOM.SCM.History_Mixin) :
             result.extend (c._repr_lines (level + 1))
         return result
     # end def _repr_lines
+
+    def __iter__ (self) :
+        yield self
+        for c in self.children :
+            yield c
+    # end def __iter__
 
     def __repr__ (self) :
         return "\n  ".join (self._repr_lines ())
@@ -250,7 +257,8 @@ class Destroy (_Entity_) :
 
     @property
     def children (self) :
-        return sorted (self.history, key = TFL.Sorted_By ("pid", "cid"))
+        return sorted \
+            (self.history, key = TFL.Sorted_By ("type_name", "pid", "cid"))
     # end def children
 
     @children.setter

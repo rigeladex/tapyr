@@ -76,6 +76,7 @@
 #    17-Dec-2009 (CT) `_record_context` factored from `set` and `set_raw` and
 #                     guard for `electric` added
 #    17-Dec-2009 (CT) `epk_raw` added
+#    17-Dec-2009 (CT) `changes` added
 #    ««revision-date»»···
 #--
 
@@ -522,6 +523,14 @@ class Id_Entity (Entity) :
     def attr_as_code (self) :
         return ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))
     # end def attr_as_code
+
+    def changes (self, * filters, ** kw) :
+        """Return change objects related to `self`."""
+        result = self.home_scope.query_changes (pid = self.pid)
+        if filters or kw :
+            result = result.filter (* filters, ** kw)
+        return result
+    # end def changes
 
     def check_all (self) :
         """Checks all predicates"""

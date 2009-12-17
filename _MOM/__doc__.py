@@ -310,7 +310,7 @@ object and link types.
 
 Specifying `None` as `db_uri` will create an in memory database::
 
-    >>> scope = MOM.Scope.new (apt, None)
+    >>> scope = MOM.Scope.new (apt, None) # doctest: +REPORT_ONLY_FIRST_FAILURE
 
 For each :attr:`~_MOM.Entity.Package_NS` defining essential
 classes, the `scope` provides an object holding
@@ -721,8 +721,14 @@ Changing objects and links
     ('yellow', 42.0)
     >>> print m.as_code ()
     BMT.Mouse ('Mighty_Mouse', color = 'yellow', weight = 42.0)
+    >>> m.changes ().all ()
+    [<Create BMT.Mouse ('Mighty_Mouse',)>, <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'white', 'weight' : '10'}, new-values = {'color' : 'black', 'weight' : '25.0'}>, <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'black', 'weight' : '25.0'}, new-values = {'color' : 'yellow', 'weight' : '42'}>]
 
     >>> mm = m.copy ("Magic_Mouse")
+    >>> mm.changes ().all ()
+    [<Copy BMT.Mouse ('Magic_Mouse',)>
+        <Create BMT.Mouse ('Magic_Mouse',)>
+        <Modify BMT.Mouse ('Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : 'yellow', 'weight' : '42'}>, <Create BMT.Mouse ('Magic_Mouse',)>, <Modify BMT.Mouse ('Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : 'yellow', 'weight' : '42'}>]
 
     >>> print l1.as_code ()
     BMT.Location (-16.268799, 48.189956, )
@@ -888,7 +894,7 @@ Scope queries
     >>> len (scope.ems.uncommitted_changes)
     32
     >>> for c in scope.ems.uncommitted_changes :
-    ...     print str (c).replace (NL, ";")
+    ...     print c
     <Create BMT.Person ('Luke', 'Lucky')>
     <Create BMT.Person ('Dog', 'Snoopy')>
     <Create BMT.Location ('-16.268799', '48.189956')>
@@ -916,23 +922,33 @@ Scope queries
     <Modify BMT.Rat ('betty',), old-values = {'name' : 'Axel'}, new-values = {'name' : 'betty'}>
     <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'white', 'weight' : '10'}, new-values = {'color' : 'black', 'weight' : '25.0'}>
     <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'black', 'weight' : '25.0'}, new-values = {'color' : 'yellow', 'weight' : '42'}>
-    <Copy BMT.Mouse ('Magic_Mouse',)>;    <Create BMT.Mouse ('Magic_Mouse',)>;    <Modify BMT.Mouse ('Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : 'yellow', 'weight' : '42'}>
+    <Copy BMT.Mouse ('Magic_Mouse',)>
+        <Create BMT.Mouse ('Magic_Mouse',)>
+        <Modify BMT.Mouse ('Magic_Mouse',), old-values = {'color' : '', 'weight' : ''}, new-values = {'color' : 'yellow', 'weight' : '42'}>
     <Modify BMT.Rodent_in_Trap ("('Toothy_Beaver',)", "('X', '1')"), old-values = {'left' : "('Mighty_Mouse',)"}, new-values = {'left' : "('Toothy_Beaver',)"}>
-    <Destroy BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'yellow', 'weight' : '42'}>;    <Destroy BMT.Rodent_in_Trap ("('Mighty_Mouse',)", "('X', '1')")>
-    <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>
-    <Destroy BMT.Trap ('X', '2')>;    <Destroy BMT.Rodent_in_Trap ("('betty',)", "('X', '2')")>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '2')")>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '2')", "('-16.74077', '48.463313')")>
+    <Destroy BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'yellow', 'weight' : '42'}>
+        <Destroy BMT.Rodent_in_Trap ("('Mighty_Mouse',)", "('X', '1')")>
+    <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>
+        <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>
+        <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>
+    <Destroy BMT.Trap ('X', '2')>
+        <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '2')")>
+        <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '2')", "('-16.74077', '48.463313')")>
+        <Destroy BMT.Rodent_in_Trap ("('betty',)", "('X', '2')")>
     >>> c = scope.ems.uncommitted_changes [-2]
     >>> pckl = c.as_pickle (True)
     >>> cc = c.from_pickle (pckl)
-    >>> print str (cc).replace (NL, ";")
-    <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>;    <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>;    <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>
+    >>> cc
+    <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>
+        <Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>
+        <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>
     >>> cc.children
     [<Destroy BMT.Person_owns_Trap ("('Luke', 'Lucky')", "('X', '1')")>, <Destroy BMT.Person_sets_Trap_at_Location ("('Luke', 'Lucky')", "('X', '1')", "('-16.268799', '48.189956')")>]
     >>> cc.children [0].parent is cc
     True
     >>> pckl = c.as_pickle ()
     >>> cc = c.from_pickle (pckl)
-    >>> print str (cc).replace (NL, ";")
+    >>> cc
     <Destroy BMT.Trap ('X', '1'), old-values = {'max_weight' : '20'}>
     >>> cc.children
     []
