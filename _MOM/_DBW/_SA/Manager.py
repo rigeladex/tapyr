@@ -43,6 +43,8 @@
 #                     `prepare` added
 #    16-Dec-2009 (MG) Change management added
 #    17-Dec-2009 (MG) Set `pid` for instances loaded from the database
+#    17-Dec-2009 (MG) `Instance_Recreation.after_delete` added to update the
+#                     change management
 #    ««revision-date»»···
 #--
 
@@ -83,8 +85,14 @@ class Instance_Recreation (orm.interfaces.MapperExtension) :
 
     def reconstruct_instance (self, mapper, instance) :
         instance._finish__init__ ()
-        instance.pid = (instance.relevant_root.type_name, instance.id)
+        instance.pid = MOM.EMS.SA.PID \
+            (instance.relevant_root.type_name, instance.id)
     # end def reconstruct_instance
+
+    def after_delete (self, mapper, connection, entity) :
+        if entity.pid :
+            entity.home_scope.record_change (MOM.SCM.Change.Destroy, entity)
+    # end def after_delete
 
 # end class Instance_Recreation
 
@@ -92,12 +100,58 @@ class Cached_Role_Clearing (Instance_Recreation) :
     """Clear the cached role attributes if a link is delete"""
 
     def after_delete (self, mapper, connection, link) :
+        super (Cached_Role_Clearing, self).after_delete \
+            (mapper, connection, link)
         for acr in link.auto_cache_roles :
             acr (link, no_value = True)
         return orm.EXT_CONTINUE
     # end def after_delete
 
 # end class Cached_Role_Clearing
+
+class SA_Change (object) :
+    """The python object representing a OMO change object"""
+
+    _change = None
+
+    def __init__ (self, change) :
+        self._type_name = change.pid.Type_Name
+        self._obj_id    = change.pid.id
+        self._data      = change.as_pickle ()
+        self._change    = change
+    # end def __init__
+
+    @orm.reconstructor
+    def _from_database (self) :
+        self._change     = MOM.SCM.Change._Change_.from_pickle (self._data)
+        self._change.cid = self._id
+    # end def _from_database
+
+    def __getattr__ (self, name) :
+        return getattr (self._change, name)
+    # end def __getattr__
+
+    def __repr__ (self) :
+        return repr (self._change)
+    # end def __repr__
+
+    def __str__ (self) :
+        return str (self._change)
+    # end def __str__
+
+    def __nonzero__ (self) :
+        return bool (self._change)
+    # end def __nonzero__
+
+# end class SA_Change
+
+class SA_Change_Mapper (orm.interfaces.MapperExtension) :
+
+    def after_insert (self, mapper, connection, instance) :
+        instance._change.cid = instance._id
+    # end def after_insert
+
+# end class SA_Change_Mapper
 
 class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
@@ -119,9 +173,10 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_engine
 
     def _create_session (self, engine, scope) :
-        Session       = orm.sessionmaker (bind = engine)
-        session       = Session          ()
-        session.scope = scope
+        Session                = orm.sessionmaker (bind = engine)
+        session                = Session          ()
+        session.change_session = Session          ()
+        session.scope          = scope
         return session
     # end def _create_session
 
@@ -138,17 +193,28 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_scope_table
 
     def _create_SCM_table (cls, metadata) :
-        MOM.SCM.Change._Change_._sa_table = schema.Table \
+        SA_Change._sa_table = Table = schema.Table \
             ( "change_history", metadata
-            , schema.Column ("cid",       types.Integer,  primary_key = True)
-            , schema.Column ("Type_Name", Type_Name_Type, nullable    = True)
-            , schema.Column ("id",        types.Integer,  nullable    = True)
-            , schema.Column ("data",      types.Binary,   nullable    = True)
+            , schema.Column ("_id",        types.Integer,  primary_key = True)
+            , schema.Column ("_type_name", Type_Name_Type, nullable    = True)
+            , schema.Column ("_obj_id",    types.Integer,  nullable    = True)
+            , schema.Column ("_data",      types.Binary,   nullable    = True)
             , schema.Column
-                  ( "parent_cid"
+                  ( "_parent_id"
                   , types.Integer
-                  , schema.ForeignKey ("change_history.cid")
+                  , schema.ForeignKey ("change_history._id")
                   )
+            )
+        orm.mapper \
+            ( SA_Change, Table
+            , extension = (SA_Change_Mapper ())
+            , properties = dict
+                ( children = orm.relation
+                    ( SA_Change
+                    , backref = orm.backref
+                        ("parent", remote_side = [Table.c._id])
+                    )
+                )
             )
     # end def _create_SCM_table
 

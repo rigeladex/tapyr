@@ -893,7 +893,7 @@ Scope queries
 
     >>> len (scope.ems.uncommitted_changes)
     32
-    >>> for c in scope.ems.uncommitted_changes :
+    >>> for c in scope.ems.uncommitted_changes :#1doctest: +REPORT_UDIFF
     ...     print c
     <Create BMT.Person ('Luke', 'Lucky')>
     <Create BMT.Person ('Dog', 'Snoopy')>

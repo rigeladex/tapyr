@@ -50,6 +50,7 @@ from   _TFL                  import TFL
 import _MOM._EMS
 
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 import _TFL.Q_Result
 
 from   _TFL.I18N             import _, _T, _Tn

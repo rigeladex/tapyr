@@ -42,36 +42,38 @@ DBW     = MOM.DBW.SA.Manager
 apt     = MOM.App_Type    ("BMT", BMT).Derived     (EMS, DBW)
 
 
-scope   = MOM.Scope.new     (apt, None)
+if 0 :
+    ### scope   = MOM.Scope.new     (apt, None)
+    scope   = MOM.Scope.new     (apt, "sqlite:///test.sqlite")
 
-session           = scope.ems.session
-session.bind.echo = False
-dBMT              = scope.BMT
-session.bind.echo = True * 0
-if 1 :
-    p     = scope.BMT.Person     ("Luke", "Lucky")
-    q     = scope.BMT.Person     ("Dog",  "Snoopy")
-    l1    = scope.BMT.Location   (-16.268799, 48.189956)
-    l2    = scope.BMT.Location   (-16.740770, 48.463313)
-    m     = scope.BMT.Mouse      ("Mighty_Mouse")
-    b     = scope.BMT.Beaver     ("Toothy_Beaver")
-    r     = scope.BMT.Rat        ("Rutty_Rat")
-    axel  = scope.BMT.Rat        ("Axel")
-    t1    = scope.BMT.Trap       ("X", 1)
-    t2    = scope.BMT.Trap       ("X", 2)
-    t3    = scope.BMT.Trap       ("Y", 1)
-    t4    = scope.BMT.Trap       ("Y", 2)
+    session           = scope.ems.session
+    session.bind.echo = False
+    dBMT              = scope.BMT
+    session.bind.echo = True * 0
+    if 1 :
+        p     = scope.BMT.Person     ("Luke", "Lucky")
+        q     = scope.BMT.Person     ("Dog",  "Snoopy")
+        l1    = scope.BMT.Location   (-16.268799, 48.189956)
+        l2    = scope.BMT.Location   (-16.740770, 48.463313)
+        m     = scope.BMT.Mouse      ("Mighty_Mouse")
+        b     = scope.BMT.Beaver     ("Toothy_Beaver")
+        r     = scope.BMT.Rat        ("Rutty_Rat")
+        axel  = scope.BMT.Rat        ("Axel")
+        t1    = scope.BMT.Trap       ("X", 1)
+        t2    = scope.BMT.Trap       ("X", 2)
+        t3    = scope.BMT.Trap       ("Y", 1)
+        t4    = scope.BMT.Trap       ("Y", 2)
 
-    RiT   = scope.BMT.Rodent_in_Trap
-    PoT   = scope.BMT.Person_owns_Trap
-    PTL   = scope.BMT.Person_sets_Trap_at_Location
-    b1    = b.copy ("Toothless_Beaver", region = "Lower Austria")
-RiT (m, t1)
-#RiT (r, t3)
-#RiT (p, t1)
-#print scope.MOM.Named_Object.exists ("Mighty_Mouse")
-#print scope.BMT.Rodent.exists ("Mighty_Mouse")
-#print scope.BMT.Rodent.s_extension ()
-#print list (scope)
-#RiT.s_left (m)
+        RiT   = scope.BMT.Rodent_in_Trap
+        PoT   = scope.BMT.Person_owns_Trap
+        PTL   = scope.BMT.Person_sets_Trap_at_Location
+        b1    = b.copy ("Toothless_Beaver", region = "Lower Austria")
+    RiT (m, t1)
+    #RiT (r, t3)
+    #RiT (p, t1)
+    #print scope.MOM.Named_Object.exists ("Mighty_Mouse")
+    #print scope.BMT.Rodent.exists ("Mighty_Mouse")
+    #print scope.BMT.Rodent.s_extension ()
+    #print list (scope)
+    #RiT.s_left (m)
 ### __END__ __Test

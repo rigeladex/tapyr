@@ -37,6 +37,7 @@
 #    16-Dec-2009 (MG) `pid_query` and `register_change` added
 #    16-Dec-2009 (MG) `load_scope` update of `db_cid` added
 #    17-Dec-2009 (CT) Use `change.as_pickle` instead of home-grown code
+#    17-Dec-2009 (MG) Set `pid` to None during `remove`
 #    ««revision-date»»···
 #--
 
@@ -52,7 +53,27 @@ import _TFL.defaultdict
 
 import itertools
 
-from   sqlalchemy import exc as SA_Exception
+from   sqlalchemy  import exc        as SA_Exception
+
+class PID (object) :
+    """PID of an entity."""
+
+    _Attrs             = "Type_Name", "id"
+
+    def __init__ (self, Type_Name, id) :
+        self.Type_Name = Type_Name
+        self.id        = id
+    # end def __init__
+
+    def __composite_values__ (self) :
+        return (self.Type_Name, self.id)
+    # end def __composite_values__
+
+    def __getitem__ (self, key) :
+        return getattr (self, self._Attrs [key])
+    # end def __getitem__
+
+# end class PID
 
 class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
@@ -70,37 +91,46 @@ class Manager (MOM.EMS._Manager_) :
         try :
             ses.add   (entity)
             ses.flush ()
-            entity.pid = (entity.relevant_root.type_name, entity.id)
+            entity.pid = PID (entity.relevant_root.type_name, entity.id)
         except SA_Exception.IntegrityError as exc :
             ses.rollback ()
             raise MOM.Error.Name_Clash \
                 (entity, self.instance (entity.__class__, entity.epk))
     # end def add
 
+    def changes (self, * filter, ** eq_kw) :
+        SA_Change = MOM.DBW.SA.SA_Change
+        pid       = eq_kw.pop ("pid", None)
+        if pid is not None :
+            eq_kw ["_type_name"] = pid.Type_Name
+            eq_kw ["_obj_id"]    = pid.id
+        query     = self._query_single_root (SA_Change, SA_Change).filter \
+            (* filter, ** eq_kw)
+        return query
+    # end def changes
+
     def load_scope (self) :
-        self.DBW.load (self.session, self.scope)
-        self.scope.db_cid = self.session.execute \
-            ( MOM.SCM.Change._Change_._sa_table.select ()
-              .order_by ("-cid").limit (1)
-            ).fetchone ().cid
+        self.DBW.load_scope                    (self.session, self.scope)
+        self.scope.db_cid = self.session.query (MOM.DBW.SA.SA_Change).order_by \
+            ("-_id").limit (1).first ().cid
     # end def load_scope
 
     def pid_query (self, pid, Type) :
         """Simplified query for SA."""
-        return self.query (Type, id = pid [-1])
+        return self.query (Type, id = pid.id).one ()
     # end def pid_query
 
     def register_change (self, change) :
-        result = self.__super.register_change (change)
-        Table  = change._sa_table
-        kw     = dict (data = change.as_pickle ())
-        kw ["Type_Name"], kw ["id"] = getattr (change, "pid", (None, None))
-        insert                      = Table.insert ().values (** kw)
-        change.cid = self.session.execute (insert).inserted_primary_key [0]
+        result     = self.__super.register_change (change)
+        sa_change  = MOM.DBW.SA.SA_Change  (change)
+        self.session.change_session.add    (sa_change)
+        self.session.change_session.commit ()
+        change.cid = sa_change._id
         if change.children :
+            Table = sa_change._sa_table
             update = Table.update ().where \
-                ( Table.c.cid.in_ (c.cid for c in change.children)
-                ).values (parent_cid = change.cid)
+                ( Table.c._id.in_ (c.cid for c in change.children)
+                ).values (_parent_id = change.cid)
             self.session.execute (update)
         return result
     # end def register_change
@@ -111,6 +141,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def register_scope
 
     def remove (self, entity) :
+        entity.pid = None
         self.session.delete (entity)
         self.session.flush  () ### needed to update auto cache roles
     # end def remove
