@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This program is free software; you can redistribute it and/or modify
@@ -46,6 +46,7 @@
 #                          The 'bin' argument to Pickler() is deprecated
 #    20-May-2005 (CT)  Moved to TFL
 #    19-Aug-2008 (CT)  `product_name` added as optional paramter to `__init__`
+#    17-Dec-2009 (CT)  Use `pickle` instead of `cPickle` (3-compatibility)
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ from   _TFL              import sos
 import _TFL._Meta.Object
 import _TFL.Environment
 
-import cPickle as pickle
+import pickle
 import sys
 import traceback
 

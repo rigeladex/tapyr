@@ -36,6 +36,7 @@
 #                     `EMS._Manager_`)
 #    16-Dec-2009 (MG) `pid_query` and `register_change` added
 #    16-Dec-2009 (MG) `load_scope` update of `db_cid` added
+#    17-Dec-2009 (CT) Use `change.as_pickle` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,6 @@ import _TFL._Meta.Object
 import _TFL.defaultdict
 
 import itertools
-import cPickle
 
 from   sqlalchemy import exc as SA_Exception
 
@@ -93,7 +93,7 @@ class Manager (MOM.EMS._Manager_) :
     def register_change (self, change) :
         result = self.__super.register_change (change)
         Table  = change._sa_table
-        kw     = dict (data = cPickle.dumps (change, cPickle.HIGHEST_PROTOCOL))
+        kw     = dict (data = change.as_pickle ())
         kw ["Type_Name"], kw ["id"] = getattr (change, "pid", (None, None))
         insert                      = Table.insert ().values (** kw)
         change.cid = self.session.execute (insert).inserted_primary_key [0]
