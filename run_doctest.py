@@ -40,6 +40,7 @@
 #    19-Nov-2009 (CT) `has_doctest` added and used
 #    17-Dec-2009 (CT) Pass `optionflags` to `doctest.testmod`:
 #                       `doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF`
+#    18-Dec-2009 (CT) `-nodiff` added to disable `doctest.REPORT_NDIFF`
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,7 @@ def _command_spec (arg_array = None) :
         , option_spec =
             ( "format:S="
                  """%(module.__file__)s fails %(f)s of %(t)s doc-tests"""
+            , "nodiff:B?Don't specify doctest.REPORT_NDIFF flag"
             , "path:S,?Path to add to sys.path"
             , "transitive:B"
                 "?Include all subdirectories of directories specified "
@@ -89,7 +91,7 @@ def _main (cmd) :
     format   = cmd.format
     cmd_path = list (cmd.path)
     replacer = Re_Replacer (r"\.py[co]", ".py")
-    a = cmd.argv [0]
+    a        = cmd.argv [0]
     if len (cmd.argv) == 1 and not sos.path.isdir (a) :
         f = Filename (a)
         m = f.base
@@ -98,13 +100,16 @@ def _main (cmd) :
             sys.path [0:0] = [f.directory]
         elif not cmd_path :
             sys.path [0:0] = ["./"]
+        if cmd.nodiff :
+            flags = doctest.NORMALIZE_WHITESPACE
+        else :
+            flags = doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
         try :
             module = __import__      (m)
             f, t   = doctest.testmod \
                 ( module
                 , verbose     = 0
-                , optionflags =
-                    doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF
+                , optionflags = flags
                 )
         except KeyboardInterrupt :
             raise
@@ -114,15 +119,18 @@ def _main (cmd) :
         else :
             print replacer (format % TFL.Caller.Scope ())
     else :
-        path = ""
+        path = nodiff = ""
+        if cmd.nodiff :
+            nodiff = "-nodiff"
         if cmd_path :
             path = " -path %r" % (",".join (cmd_path), )
-        head = "%s %s -format %r%s" % \
+        head = "%s %s -format %r%s%s" % \
             ( sys.executable
             , sos.path.join
                   (Environment.script_path (), Environment.script_name ())
             , format
             , path
+            , nodiff
             )
         def run (a) :
             run_command ("%s %s" % (head, a))
