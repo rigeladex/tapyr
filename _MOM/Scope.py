@@ -466,7 +466,7 @@ class Scope (TFL.Meta.Object) :
             else :
                 diff = e.user_diff (o)
             if diff :
-                result [e.epk_raw] = diff
+                result [e.epk] = diff
         return result
     # end def user_diff
 
