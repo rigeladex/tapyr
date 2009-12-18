@@ -40,6 +40,7 @@
 #                     `as_pickle` and `from_pickle` added
 #    17-Dec-2009 (CT) `Destroy.children` redefined to sort `history`
 #    17-Dec-2009 (CT) `__iter__` added
+#    18-Dec-2009 (CT) `as_pickle_cargo` and `from_pickle_cargo` factored
 #    ««revision-date»»···
 #--
 
@@ -78,23 +79,34 @@ class _Change_ (MOM.SCM.History_Mixin) :
         self.__super.add_change (child)
     # end def add_change
 
-    def as_pickle (self, include_children = False) :
-        children = self.children if include_children else ()
-        cargo    = \
+    def as_pickle (self, transitive = False) :
+        return pickle.dumps \
+            (self.as_pickle_cargo (transitive), pickle.HIGHEST_PROTOCOL)
+    # end def as_pickle
+
+    def as_pickle_cargo (self, transitive = False) :
+        children = self.children if transitive else ()
+        result   = \
             ( self.__class__
             , self._pickle_attrs ()
-            , [c.as_pickle (include_children) for c in children]
+            , [c.as_pickle_cargo (transitive) for c in children]
             )
-        return pickle.dumps (cargo, pickle.HIGHEST_PROTOCOL)
+        return result
     # end def as_pickle
 
     @classmethod
     def from_pickle (cls, string, parent = None) :
-        Class, attrs, children = pickle.loads (string)
+        return cls.from_pickle_cargo (pickle.loads (string), parent)
+    # end def from_pickle
+
+    @classmethod
+    def from_pickle_cargo (cls, cargo, parent = None) :
+        Class, attrs, children = cargo
         result                 = MOM.SCM.History_Mixin ()
         result.__class__       = Class
         result.parent          = parent
-        result.children        = [cls.from_pickle (c, result) for c in children]
+        result.children        = \
+            [cls.from_pickle_cargo (c, result) for c in children]
         result.__dict__.update (attrs)
         return result
     # end def from_pickle

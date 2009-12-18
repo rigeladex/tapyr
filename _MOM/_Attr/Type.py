@@ -53,6 +53,8 @@
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    26-Nov-2009 (CT) `A_Object`, `A_Cached_Role`, and `A_Cached_Role_DFC` added
 #    26-Nov-2009 (CT) `_A_Object_.etype_manager` factored and used
+#    18-Dec-2009 (CT) s/as_pickle/as_pickle_cargo/,
+#                     s/from_pickle/from_pickle_cargo/
 #    ««revision-date»»···
 #--
 
@@ -108,9 +110,9 @@ class A_Attr_Type (object) :
         return self.code_format % (value, )
     # end def as_code
 
-    def as_pickle (self, value) :
+    def as_pickle_cargo (self, value) :
         return value
-    # end def as_pickle
+    # end def as_pickle_cargo
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
@@ -138,9 +140,9 @@ class A_Attr_Type (object) :
         return self._to_cooked (s, self._call_eval, obj, glob, locl)
     # end def from_code
 
-    def from_pickle (self, s, obj = None, glob = {}, locl = {}) :
+    def from_pickle_cargo (self, s, obj = None, glob = {}, locl = {}) :
         return p
-    # end def from_pickle
+    # end def from_pickle_cargo
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         return self._to_cooked (s, self._from_string_resolve, obj, glob, locl)
@@ -272,9 +274,9 @@ class _A_Named_Value_ (A_Attr_Type) :
         return self.code_format % (self.__class__.Elbat [value], )
     # end def as_code
 
-    def as_pickle (self, value) :
+    def as_pickle_cargo (self, value) :
         return self.__class__.Elbat [value]
-    # end def as_pickle
+    # end def as_pickle_cargo
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
@@ -292,12 +294,12 @@ class _A_Named_Value_ (A_Attr_Type) :
         return self._from_string_eval (self._call_eval (s, glob, locl))
     # end def from_code
 
-    def from_pickle (self, s, obj = None, glob = None, locl = None) :
+    def from_pickle_cargo (self, s, obj = None, glob = None, locl = None) :
         try :
             return self.__class__.Table [s]
         except KeyError :
             pass
-    # end def from_pickle
+    # end def from_pickle_cargo
 
     def _from_string_eval (self, s, obj, glob, locl) :
         try :
@@ -415,10 +417,10 @@ class _A_Object_ (A_Attr_Type) :
         return tuple (a.as_code (a.get_value (value)) for a in value.primary)
     # end def as_code
 
-    def as_pickle (self, value) :
+    def as_pickle_cargo (self, value) :
         if value is not None :
             return value.epk_raw
-    # end def as_pickle
+    # end def as_pickle_cargo
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -450,10 +452,10 @@ class _A_Object_ (A_Attr_Type) :
             return getattr (soc._get_scope (obj), soc.Class.type_name, None)
     # end def etype_manager
 
-    def from_pickle (self, p, obj = None, glob = None, locl = None) :
+    def from_pickle_cargo (self, p, obj = None, glob = None, locl = None) :
         if p is not None :
             return self._to_cooked (p, None, obj, glob, locl)
-    # end def from_pickle
+    # end def from_pickle_cargo
 
     def from_string (self, s, obj = None, glob = None, locl = None) :
         if s :
