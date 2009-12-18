@@ -1,6 +1,31 @@
 MOM To-Do
 =========
 
+- MOM.DBW.HPS: Hash-Pickle-Store
+
+  * info: information about the scope stored in the HPS
+
+    + db_version
+
+    + max_cid, max_pid
+
+    + guid
+
+    + root_epk
+
+    + date, user, tool (of db-creation)
+
+    + date, user, tool (of last save)
+
+    + pending: list of `cid` of `commit`s that aren't stored in Hash-Pickle yet
+
+  * %d.commit:
+
+    + per commit, one file named by the `cid` of the commit containing the
+      changes that are part of that commit
+
+  * store: contains pickle with the entities of the scope
+
 x TFL.Meta.Object
 
   x context manager `let` for temporarily setting attribute values
