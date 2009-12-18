@@ -30,6 +30,7 @@
 #     1-Dec-2009 (MG) Creation
 #    10-Dec-2009 (MG) Adopted to new `TFL.Q_Exp`
 #    16-Dec-2009 (MG) Support for queries against `pid` added
+#    18-Dec-2009 (MG) `Q_Result_Changes` added
 #    ««revision-date»»···
 #--
 
@@ -187,6 +188,19 @@ class Q_Result (TFL.Meta.Object) :
     # end def __iter__
 
 # end class Q_Result
+
+class Q_Result_Changes (Q_Result) :
+    """Special handling of attribute translation for changes"""
+
+    def filter (self, * filter, ** kw) :
+        pid = kw.pop ("pid", None)
+        if pid is not None :
+            kw ["_type_name"] = pid.Type_Name
+            kw ["_obj_id"]    = pid.id
+        return self.__super.filter (* filter, ** kw)
+    # end def filter
+
+# end class Q_Result_Changes
 
 if __name__ != "__main__" :
     MOM.DBW.SA._Export ("*")

@@ -35,6 +35,7 @@
 #    15-Dec-2009 (MG) `Attr_Map` added, added `table` to key for sort
 #                     expression caching (to avoid reuse of the worng sorting
 #                     cache)
+#    18-Dec-2009 (MG) `_sa_order_by` for `TFL.Q_Exp.*` added
 #    ««revision-date»»···
 #--
 
@@ -159,6 +160,7 @@
 from   _TFL                 import TFL
 import _TFL.Decorator
 import _TFL.Sorted_By
+import _TFL.Q_Exp
 
 TFL.Sorted_By._sa_cache = {}
 
@@ -176,10 +178,11 @@ def _sa_order_by (self, table, joins = None, order_clause = None) :
             elif hasattr (c, "__call__") :
                 raise NotImplementedError \
                     ( "Please implement _sa_order_by for custom "
-                      "sorted by objects"
+                      "sorted by objects %s: %r" % (c.__class__, c)
                     )
-            assert c.count (".") < 2, "Check if we can support more levels"
-            self._sa_resolve_attribute (table, c, joins, order_clause)
+            else :
+                assert c.count (".") < 2, "Check if we can support more levels"
+                self._sa_resolve_attribute (table, c, joins, order_clause)
         self._sa_cache [key] = joins, order_clause
     return self._sa_cache [key]
 # end def _sa_order_by
@@ -201,5 +204,14 @@ def _sa_resolve_attribute (self, table, c, joins, order_clause) :
         else :
             order_clause.append (getattr (table, attr_name))
 # end def _sa_resolve_attribute
+
+@TFL.Add_To_Class ( "_sa_order_by"
+                  , TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr, TFL.Q_Exp.Get
+                  )
+def _sa_order_by (self, table, joins = None, order_clause = None) :
+    if order_clause is None :
+        return (), (self._sa_filter (table), )
+    order_clause.append (self._sa_filter (table))
+# end def _sa_order_by
 
 ### __END__ MOM.DBW.SA.Sorted_By

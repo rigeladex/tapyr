@@ -39,8 +39,8 @@ import _TFL.Filter
 from    sqlalchemy.sql   import expression
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
-def _sa_filter (self, e_type, Attr_Map = {}) :
-    return getattr (e_type, self.name)
+def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
+    return getattr (e_type, Attr_Map.get (self.name, self.name))
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)

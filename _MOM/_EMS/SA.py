@@ -38,6 +38,7 @@
 #    16-Dec-2009 (MG) `load_scope` update of `db_cid` added
 #    17-Dec-2009 (CT) Use `change.as_pickle` instead of home-grown code
 #    17-Dec-2009 (MG) Set `pid` to None during `remove`
+#    18-Dec-2009 (MG) Use `Q_Result_Changes`
 #    ««revision-date»»···
 #--
 
@@ -100,12 +101,9 @@ class Manager (MOM.EMS._Manager_) :
 
     def changes (self, * filter, ** eq_kw) :
         SA_Change = MOM.DBW.SA.SA_Change
-        pid       = eq_kw.pop ("pid", None)
-        if pid is not None :
-            eq_kw ["_type_name"] = pid.Type_Name
-            eq_kw ["_obj_id"]    = pid.id
-        query     = self._query_single_root (SA_Change, SA_Change).filter \
-            (* filter, ** eq_kw)
+        query     = MOM.DBW.SA.Q_Result_Changes \
+            (SA_Change, self.session.query (SA_Change)
+            ).filter (* filter, ** eq_kw)
         return query
     # end def changes
 

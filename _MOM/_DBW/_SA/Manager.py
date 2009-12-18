@@ -45,6 +45,8 @@
 #    17-Dec-2009 (MG) Set `pid` for instances loaded from the database
 #    17-Dec-2009 (MG) `Instance_Recreation.after_delete` added to update the
 #                     change management
+#    18-Dec-2009 (MG) Set `children` of change to children of wrapper during
+#                     change reconstruction from database
 #    ««revision-date»»···
 #--
 
@@ -123,8 +125,10 @@ class SA_Change (object) :
 
     @orm.reconstructor
     def _from_database (self) :
-        self._change     = MOM.SCM.Change._Change_.from_pickle (self._data)
-        self._change.cid = self._id
+        self._change          = MOM.SCM.Change._Change_.from_pickle (self._data)
+        self._change.cid      = self._id
+        self._change.children = self.children
+        self._change.parent   = self.parent
     # end def _from_database
 
     def __getattr__ (self, name) :

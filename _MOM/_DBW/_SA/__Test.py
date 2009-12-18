@@ -42,9 +42,9 @@ DBW     = MOM.DBW.SA.Manager
 apt     = MOM.App_Type    ("BMT", BMT).Derived     (EMS, DBW)
 
 
-if 0 :
-    ### scope   = MOM.Scope.new     (apt, None)
-    scope   = MOM.Scope.new     (apt, "sqlite:///test.sqlite")
+if 1 :
+    scope   = MOM.Scope.new     (apt, None)
+    ### scope   = MOM.Scope.new     (apt, "sqlite:///test.sqlite")
 
     session           = scope.ems.session
     session.bind.echo = False
@@ -69,6 +69,10 @@ if 0 :
         PTL   = scope.BMT.Person_sets_Trap_at_Location
         b1    = b.copy ("Toothless_Beaver", region = "Lower Austria")
     RiT (m, t1)
+    scope.commit ()
+    scop2 = MOM.Scope.new (apt, None)
+    for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
+        c.redo (scop2)
     #RiT (r, t3)
     #RiT (p, t1)
     #print scope.MOM.Named_Object.exists ("Mighty_Mouse")
