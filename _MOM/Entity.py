@@ -78,6 +78,8 @@
 #    17-Dec-2009 (CT) `epk_raw` added
 #    17-Dec-2009 (CT) `changes` and `async_changes` added
 #    17-Dec-2009 (CT) `user_diff` and `user_equal` added
+#    18-Dec-2009 (CT) Initialization of `dependencies` moved to
+#                     `_init_meta_attrs`
 #    ««revision-date»»···
 #--
 
@@ -151,7 +153,6 @@ class Entity (TFL.Meta.Object) :
     # end def __new__
 
     def __init__ (self, * args, ** kw) :
-        self.dependencies = TFL.defaultdict  (int)
         self._init_attributes ()
         kw.pop                ("scope", None)
         self._main__init__    (* args, ** kw)
@@ -743,6 +744,7 @@ class Id_Entity (Entity) :
 
     def _init_meta_attrs (self) :
         self.__super._init_meta_attrs ()
+        self.dependencies                = TFL.defaultdict (int)
         self.object_referring_attributes = TFL.defaultdict (list)
     # end def _init_meta_attrs
 
