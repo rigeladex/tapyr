@@ -385,6 +385,7 @@ appropriate class:
     >>> p     = scope.BMT.Person     ("Luke", "Lucky")
     >>> p
     BMT.Person (u'Luke', u'Lucky')
+    >>> pd    = p.copy               ("Glück", "Martin")
     >>> q     = scope.BMT.Person     (u"Dog",  u"Snoopy")
     >>> l1    = scope.BMT.Location   (-16.268799, 48.189956)
     >>> l2    = scope.BMT.Location   (-16.740770, 48.463313)
