@@ -59,6 +59,7 @@
 #    16-Dec-2009 (CT) Defaults for `electric`, `record_changes`, and
 #                     `save_to_db` moved to `Kind`
 #    17-Dec-2009 (CT) Don't `record_changes` for electric objects
+#    18-Dec-2009 (CT) Use `unicode` instead of `str`
 #    ««revision-date»»···
 #--
 
@@ -179,13 +180,13 @@ class Kind (MOM.Prop.Kind) :
         if __debug__ :
             default = getattr (attr_type, "raw_default", None)
             if (   default is not None
-               and not isinstance (default, (str, unicode))
+               and not isinstance (default, basestring)
                ) :
                 d = attr_type.as_string (default)
                 if d == "" and default is not None :
                     d = "%s" % default
                 raise ValueError \
-                    ( """>>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
+                    ( u""">>> %s.%s: got `%s` instead of "%s" as `raw_default`"""
                     % (attr_type, self.name, default, d)
                     )
     # end def _check_sanity
@@ -658,7 +659,7 @@ class Object_Reference_Mixin (_Object_Reference_Mixin_) :
             if old_value :
                 self._unregister (obj, old_value)
             self.__super._set_cooked_value (obj, value, changed)
-            if value and not isinstance (value, str) :
+            if value and not isinstance (value, basestring) :
                 self._register (obj, value)
     # end def _set_cooked_value
 

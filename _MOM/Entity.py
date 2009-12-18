@@ -828,9 +828,9 @@ class Id_Entity (Entity) :
     def __str__ (self) :
         epk = self.epk
         if len (epk) == 1 :
-            format = "%s"
+            format = u"%s"
         else :
-            format = "(%s)"
+            format = u"(%s)"
         return format % (", ".join (self.epk_as_code))
     # end def __str__
 

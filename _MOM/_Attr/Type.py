@@ -55,6 +55,7 @@
 #    26-Nov-2009 (CT) `_A_Object_.etype_manager` factored and used
 #    18-Dec-2009 (CT) s/as_pickle/as_pickle_cargo/,
 #                     s/from_pickle/from_pickle_cargo/
+#    18-Dec-2009 (CT) Use `unicode` instead of `str`
 #    ««revision-date»»···
 #--
 
@@ -80,19 +81,19 @@ class A_Attr_Type (object) :
 
     check             = ()
     check_syntax      = None
-    code_format       = "%r"
+    code_format       = u"%r"
     computed          = None
     default           = None
-    description       = ""
-    explanation       = ""
-    format            = "%s"
-    group             = ""
+    description       = u""
+    explanation       = u""
+    format            = u"%s"
+    group             = u""
     hidden            = False
     kind              = None
     Kind_Mixins       = ()
     needs_raw_value   = True
     rank              = 0
-    raw_default       = ""
+    raw_default       = u""
     record_changes    = True
     simple_cooked     = None
     store_default     = False
@@ -118,7 +119,7 @@ class A_Attr_Type (object) :
     def as_string (soc, value) :
         if value is not None :
             return soc.format % (value, )
-        return ""
+        return u""
     # end def as_string
 
     def check_invariant (self, obj, value) :
@@ -175,18 +176,14 @@ class A_Attr_Type (object) :
 
     def _from_string_prepare (self, s, obj) :
         try :
-            s = s.encode ("ascii")
-        except AttributeError as exc :
-            if __debug__ :
-                print "%s.%s = %s --> %s" % (obj, self, s, exc)
+            s = unicode (s)
         except UnicodeError :
             raise MOM.Error.Attribute_Syntax_Error \
                 ( obj, self, s
-                , _T ("Non-ascii values are currently not supported")
+                , _T ("Non-ascii values in 8-bit strings are not supported")
                 )
         return s
     # end def _from_string_prepare
-    check_ascii          = _from_string_prepare ### XXX
 
     def _from_string_resolve (self, s, obj, glob, locl) :
         if obj is not None and not glob :
@@ -240,7 +237,7 @@ class _A_Date_ (A_Attr_Type) :
     def as_string (soc, value) :
         if value is not None :
             return value.strftime (self.output_format)
-        return ""
+        return u""
     # end def as_string
 
     def from_code (self, s, obj = None, glob = None, locl = None) :
@@ -305,7 +302,8 @@ class _A_Named_Value_ (A_Attr_Type) :
         try :
             return self.__class__.Table [s]
         except KeyError :
-            raise ValueError ("%s not in %s" % (s, self.eligible_raw_values ()))
+            raise ValueError \
+                (u"%s not in %s" % (s, self.eligible_raw_values ()))
     # end def _from_string_eval
 
 # end class _A_Named_Value_
@@ -428,11 +426,11 @@ class _A_Object_ (A_Attr_Type) :
         if et and not isinstance (value, et) :
             raise ValueError \
                 ( _T
-                    ( "%s %s not eligible for attribute %s,"
-                      "\n"
-                      "    must be instance of %s"
+                    ( u"%s %s not eligible for attribute %s,"
+                      u"\n"
+                      u"    must be instance of %s"
                     )
-                % (value.type_name, str (value), soc, soc.Class.type_name)
+                % (value.type_name, unicode (value), soc, soc.Class.type_name)
                 )
         return value
     # end def cooked
@@ -491,12 +489,12 @@ class _A_Object_ (A_Attr_Type) :
                 return self.cooked  (result)
             else :
                 raise ValueError \
-                    ( _T ("object %s %s not eligible, specify one of: %s")
+                    ( _T (u"object %s %s not eligible, specify one of: %s")
                     % (self.Class.type_name, t, self.eligible_raw_values (obj))
                     )
         else :
             raise MOM.Error.No_Such_Object, \
-                ( _T ("No object %s %s in scope %s")
+                ( _T (u"No object %s %s in scope %s")
                 % (self.Class.type_name, t, scope.name)
                 )
     # end def _to_cooked
@@ -512,7 +510,7 @@ class _A_Unit_ (A_Attr_Type) :
     _default_unit = None ### set by meta class
     _unit_dict    = {}
     _unit_pattern = Regexp \
-        ( r"[])a-zA-Z_0-9] \s+ (?P<unit> [a-zA-Z]+ (?: / [a-zA-Z]+)?) \s*$"
+        ( ur"[])a-zA-Z_0-9] \s+ (?P<unit> [a-zA-Z]+ (?: / [a-zA-Z]+)?) \s*$"
         , re.VERBOSE
         )
 
@@ -541,7 +539,7 @@ class _A_Unit_ (A_Attr_Type) :
                 factor = self._unit_dict [unit]
             except KeyError :
                 raise ValueError \
-                      ( _T ("Invalid unit %s, specify one of %s")
+                      ( _T (u"Invalid unit %s, specify one of %s")
                       % (unit, self.eligible_raw_values ())
                       )
         return self.__super._from_string_eval (obj, s, glob, locl) * factor
@@ -679,15 +677,11 @@ class A_String (A_Attr_Type) :
 
     max_length        = 64
     needs_raw_value   = False
+    simple_cooked     = unicode
 
     def _from_string_eval (self, s, obj, glob, locl) :
-        return s
+        return unicode (s)
     # end def _from_string
-
-    def check_syntax (self, obj, value) :
-        if value :
-            self.check_ascii (value, obj)
-    # end def check_syntax
 
 # end class A_String
 
@@ -697,15 +691,17 @@ class A_Name (A_String) :
     typ                = "Name"
 
     max_length         = 32
-    identifier_pattern = Regexp ("^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
+    identifier_pattern = Regexp (u"^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
     syntax             = _T \
-        ( "A name must start with a letter or underscore and continue with "
-          "letters, digits, and underscores."
+        ( u"A name must start with a letter or underscore and continue with "
+          u"letters, digits, and underscores."
         )
 
     def check_syntax (self, obj, value) :
         if value :
-            self.__super.check_syntax (obj, value)
+            super = self.__super.check_syntax
+            if super is not None :
+                super (obj, value)
             v = value.strip ()
             if not self.identifier_pattern.match (v) :
                 raise MOM.Error.Attribute_Syntax_Error (obj, self, value)
