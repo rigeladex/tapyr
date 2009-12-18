@@ -74,6 +74,7 @@ import _MOM.Object
 
 import _TFL._Meta.Object
 
+import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.defaultdict
 
@@ -86,6 +87,9 @@ class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
 
     type_name = "Hash"
+
+    max_cid   = property (TFL.Getter.__cid)
+    max_pid   = property (TFL.Getter.__pid)
 
     def __init__ (self, scope, db_uri) :
         self.__super.__init__ (scope, db_uri)
@@ -142,7 +146,7 @@ class Manager (MOM.EMS._Manager_) :
 
     def commit (self) :
         ### XXX
-        self.scope.db_cid = self.__cid
+        self.scope.db_cid = self.max_cid
         self.__super.commit ()
     # end def commit
 

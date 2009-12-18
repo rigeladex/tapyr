@@ -20,58 +20,62 @@
 #
 #++
 # Name
-#    MOM.DBW.Hash
+#    MOM.DBW.HPS.Manager
 #
 # Purpose
-#    Database wrapper for hash-based entity management
+#    Database wrapper for Hash-Pickle-Store
 #
 # Revision Dates
-#     3-Dec-2009 (CT) Creation
-#     4-Dec-2009 (MG) Renamed from `Session` to `Manager`
-#    16-Dec-2009 (MG) Add `scope` parameter to `DWB.create_database` and
-#                     `DBW.connect_database`
+#    18-Dec-2009 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _MOM       import MOM
 from   _TFL       import TFL
 
+import _MOM._DBW._HPS.Store
 import _MOM._DBW._Manager_
 
-class _M_Hash_Manager_ (MOM.DBW._Manager_.__class__) :
-    """Meta class for MOM.DBW.Hash"""
+class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
+    """Meta class for MOM.DBW.HPS.Manager"""
 
     def create_database (cls, db_uri, scope) :
-        assert db_uri is None
-        ### maybe we need to return an instance of a Session (depends on the
-        ### database implementation)
-        return cls ()
+        store = None
+        if db_uri is not None :
+            store = MOM.DBW.HPS.Store (db_uri, scope)
+            store.create ()
+        return cls (store, scope)
     # end def create_database
 
     def connect_database (cls, db_uri, scope) :
-        assert db_uri is None
-        ### maybe we need to return an instance of a Session (depends on the
-        ### database implementation)
-        return cls ()
+        store = None
+        if db_uri is not None :
+            store = MOM.DBW.HPS.Store (db_uri, scope)
+            store.load_info ()
+        return cls (store, scope)
     # end def connect_database
 
-# end class _M_Hash_Manager_
+# end class _M_HPS_Manager_
 
 class Manager (MOM.DBW._Manager_) :
-    """Database wrapper for hash-based entity management."""
+    """Database wrapper for Hash-Pickle-Store."""
 
-    __metaclass__ = _M_Hash_Manager_
+    __metaclass__ = _M_HPS_Manager_
 
-    type_name     = "Hash"
+    type_name     = "HPS"
 
-    ### right now we use the Hash class as a session as well -> therefore we
-    ### need to provide the commit interface
+    def __init__ (self, store, scope) :
+        self.store = store
+        self.scope = scope
+    # end def __init__
+
     def commit (self) :
-        pass ### XXX
+        if self.store :
+            self.store.commit ()
     # end def commit
 
 # end class Manager
 
 if __name__ != '__main__':
-    MOM.DBW._Export ("*")
-### __END__ MOM.DBW.Hash
+    MOM.DBW.HPS._Export ("*")
+### __END__ MOM.DBW.HPS.Manager

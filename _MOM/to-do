@@ -5,19 +5,19 @@ MOM To-Do
 
   * info: information about the scope stored in the HPS
 
-    + db_version
+    x db_version
 
-    + max_cid, max_pid
+    x max_cid, max_pid
 
-    + guid
+    x guid
 
-    + root_epk
+    x root_epk
 
-    + date, user, tool (of db-creation)
+    x date, user, tool (of db-creation)
 
-    + date, user, tool (of last save)
+    x date, user, tool (of last save)
 
-    + pending: list of `cid` of `commit`s that aren't stored in Hash-Pickle yet
+    x pending: list of `cid` of `commit`s that aren't stored in Hash-Pickle yet
 
   * %d.commit:
 

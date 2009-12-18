@@ -32,11 +32,12 @@
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__      import *
-from _MOM._EMS.Hash    import Manager as EMS
-from _MOM._DBW.Hash    import Manager as DBW
+from _MOM.__doc__           import *
+from _MOM._EMS.Hash         import Manager as EMS
+from _MOM._DBW._HPS.Manager import Manager as DBW
+
 apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
-scope = MOM.Scope.new (apt, None)
+scope = MOM.Scope.new (apt, "/tmp/bmt_test.bdb")
 RiT   = scope.BMT.Rodent_in_Trap
 PoT   = scope.BMT.Person_owns_Trap
 PTL   = scope.BMT.Person_sets_Trap_at_Location

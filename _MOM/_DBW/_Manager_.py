@@ -61,7 +61,7 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
         pass
     # end def update_etype
 
-# end class _M__Manager_e_
+# end class _M_Manager_
 
 class _Manager_ (TFL.Meta.Object) :
     """Base class for database backend specific _Manager_ classes"""

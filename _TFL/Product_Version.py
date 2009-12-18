@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -55,6 +55,7 @@
 #     9-Aug-2006 (CT) `__hash__` changed to return `hash (id (self))`
 #                     instead of `id self`
 #    24-Aug-2008 (CT) Factored from `TOM.Product_Version`
+#    18-Dec-2009 (CT) `author`, `copyright_start`, and `tuple` added
 #    ««revision-date»»···
 #--
 
@@ -64,9 +65,9 @@ import _TFL._Meta.Object
 import _TFL.import_module
 
 from   _TFL.IV_Number       import *
-from   _TFL.predicate       import *
 
 import sys
+import time
 
 class Lic_Comp (TFL.Meta.Object) :
     """Model a licensed software component used."""
@@ -92,53 +93,12 @@ class Lic_Comp (TFL.Meta.Object) :
 # end class Lic_Comp
 
 class _TFL_Product_Version_ (TFL.Meta.Object) :
-    """Models the version of a software product.
-
-       A `Product_Version` is characterized by these attributes
-       (r ... required, o ... optional, c ... computed):
-
-       r productid       The short name of the product.
-                         Used for referring to other tools and for checking
-                         compatibility (see IV_Numbers).
-       c productname     The full, official name of the product.
-       r productnick     The nickname of the product (normally, a 3-letter
-                           abbreviation).
-       r productdesc     A short description (one-liner) of the product,
-                           for display on the splash screen, the front page
-                           of the manual, etc.
-       r date            The release date of the product, i.e., when the last
-                           change has been made to this product.
-       r major           The major version of the product. This attribute
-                           changes when the product`s functionality
-                           substantially increases, i.e. between major
-                           releases (see our release plan).
-       r minor           The minor version of the product. This attribute
-                           changes between maintenance releases (see our
-                           release plan). It also distinguishes between
-                           development version and "to-be-released" versions.
-       r patchlevel      The patchlevel of the product. This attribute
-                           is increased with every single change of the
-                           product.
-       c version         A string, combining `major`, `minor` and
-                           `patchlevel`. Latter is omitted if zero.
-       c message         A string containing `version` and `date`.
-       o lic_comps       A list of 3rd party components that are necessary
-                           to build the product and which have a license
-                           text or license agreement that must be presented
-                           to the user. Automatically extended by searching
-                           for `Lic_Comps.py` in the `productnick` package.
-       c ivn             A dictionary with any number of instances of
-                           `IV_Number`. This attribute describes the versions
-                           of the interfaces the products supplies and is
-                           computed from `**kw`.
-       c plugins         A list with instances of `Product_Version` that
-                           describe the versions of all plugins currently
-                           loaded. This attribute is set at run-time.
-    """
+    """Models the version of a software product."""
 
     def __init__ ( self
                  , productid, productnick, productdesc
                  , date, major, minor, patchlevel
+                 , author, copyright_start
                  , lic_comps       = ()
                  , ** kw
                  ) :
@@ -155,50 +115,22 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         else :
             self.patchlevel  = 0
             self.version     = release
+        self.author          = author = author.strip ()
+        self.copyright_start = copyright_start
+        self.copyright       = self._copyright (author, copyright_start)
         self.message         = "Version %s, %s" % (self.version, self.date)
+        self.tuple           = (self.major, self.minor, self.patchlevel)
         self.lic_comps       = list (lic_comps)
         self.plugins         = []
         self._setup_lic_comps  ()
         self._setup_ivn        (kw)
-        maxl         = max (map (lambda k : len (k), kw.keys ()) + [20])
+        maxl         = max ([len (k) for k in kw] + [20])
         self._format = "%%-%ds : %%s" % (maxl, )
         self._post_init (kw)
         ### this must be the last statement of `self.__init__`
         ### (`__setattr__` relies on it!!!)
         self.ivn = kw
     # end def __init__
-
-    def _post_init (self, kw) :
-        self.productname = self.productid
-    # end def _post_init
-
-    def _setup_ivn (self, kw) :
-        for k, v in kw.items () :
-            if not isinstance (v, IV_Number) :
-                del kw [k]
-            setattr (self, k, v)
-    # end def _setup_ivn
-
-    def _setup_lic_comps (self) :
-        pns_name = self.productnick
-        pkg_name = "_%s" % pns_name
-        pkg      = sys.modules.get (pkg_name)
-        if pkg :
-            pns  = getattr (pkg, pns_name)
-            try :
-                lp_module = TFL.import_module ("%s.Lic_Comps" % pkg_name)
-            except ImportError :
-                pass
-            else :
-                self.lic_comps.extend (getattr (lp_module, "list"))
-    # end def _setup_lic_comps
-
-    def _toolname (self, name = None) :
-        """Returns the name of the "toolname" macro for usage in
-           `_c_macros` and `_startup_macros`.
-        """
-        return "TOOL_NAME"
-    # end def _toolname
 
     def add_plugin (self, p) :
         self.plugins.append (p)
@@ -208,6 +140,29 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         """Return c-macros for definition of product version and date."""
         return "\n".join (self._c_macros ())
     # end def as_c_macros
+
+    def as_tex_macros (self) :
+        """Return TeX-macros for definition of product version and date."""
+        return "\n".join (self._tex_macros ())
+    # end def as_tex_macros
+
+    def product_info (self) :
+        """Return complete information about product version."""
+        info = self._product_info ()
+        return "\n".join          (info)
+    # end def product_info
+
+    def print_infos (self, cmd) :
+        """Provide information requested by `cmd' (which must be an object
+           returned by `command_spec').
+        """
+        if cmd.all or cmd.c_macro :
+            print self.as_c_macros   ()
+        if cmd.all or cmd.product_info :
+            print self.product_info  ()
+        if cmd.all or cmd.tex_macro :
+            print self.as_tex_macros ()
+    # end def print_infos
 
     def _c_macros (self) :
         result = []
@@ -227,32 +182,19 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         return result
     # end def _c_macros
 
-    def as_tex_macros (self) :
-        """Return TeX-macros for definition of product version and date."""
-        return "\n".join (self._tex_macros ())
-    # end def as_tex_macros
+    def _copyright (self, author, copyright_start) :
+        year  = time.strftime ("%Y", time.localtime (time.time ()))
+        range = year
+        if copyright_start :
+            start = str (copyright_start).strip ()
+            if year != start :
+                range = "%s-%s" % (start, year)
+        return "Copyright (C) %s %s. All rights reserved." % (range, author)
+    # end def _copyright
 
-    def _tex_macros (self) :
-        result  = []
-        variant = self.variant
-        if variant :
-            variant = "-" + variant
-        add = result.append
-        add (r"""\def\Toolname/{%s}"""     % self.productname)
-        add (r"""\def\Tooldate/{%s}"""     % self.date)
-        add (r"""\def\Toolversion/{%s}"""  % self.version)
-        for k in sorted (self.ivn.keys ()) :
-            v = self.ivn [k]
-            k = k.replace ("_", "").upper ()
-            add (r"""\def\Tool%s/{%s}""" % (k, v.program_version))
-        return result
-    # end def _tex_macros
-
-    def product_info (self) :
-        """Return complete information about product version."""
-        info = self._product_info ()
-        return "\n".join          (info)
-    # end def product_info
+    def _post_init (self, kw) :
+        self.productname = self.productid
+    # end def _post_init
 
     def _product_info (self) :
         result = []
@@ -261,7 +203,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         add (format % ("Product", self.productname))
         add (format % ("Date",    self.date))
         add (format % ("Release", self.version))
-        for k in sorted (self.ivn.keys ()) :
+        for k in sorted (self.ivn) :
             v = self.ivn [k]
             add ( (format + " (produced by %s)")
                 % (k, "%3d" % v.program_version, ", ".join (v.producer))
@@ -274,9 +216,7 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
                         r = "version %s" % (v.comp_max, )
                     else :
                         r = "versions %s to %s" % (v.comp_min, v.comp_max)
-                    add ( " " * l + " (%s accepts %s)"
-                        % (self.productname, r)
-                        )
+                    add (" " * l + " (%s accepts %s)" % (self.productname, r))
         if self.lic_comps :
             lc = self.lic_comps [0]
             add (format % ("Licensed Components", lc))
@@ -286,24 +226,49 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
         return result
     # end def _product_info
 
-    def print_infos (self, cmd) :
-        """Provide information requested by `cmd' (which must be an object
-           returned by `command_spec').
-        """
-        if cmd.all or cmd.c_macro :
-            print self.as_c_macros   ()
-        if cmd.all or cmd.product_info :
-            print self.product_info  ()
-        if cmd.all or cmd.tex_macro :
-            print self.as_tex_macros ()
-    # end def print_infos
+    def _setup_ivn (self, kw) :
+        for k, v in list (kw.iteritems ()) :
+            if not isinstance (v, IV_Number) :
+                del kw [k]
+            setattr (self, k, v)
+    # end def _setup_ivn
 
-    def __cmp__ (self, other) :
-        return cmp \
-            ( (self.major,  self.minor,  self.patchlevel)
-            , (other.major, other.minor, other.patchlevel)
-            )
-    # end def __cmp__
+    def _setup_lic_comps (self) :
+        pns_name = self.productnick
+        pkg_name = "_%s" % pns_name
+        pkg      = sys.modules.get (pkg_name)
+        if pkg :
+            pns  = getattr (pkg, pns_name)
+            try :
+                lp_module = TFL.import_module ("%s.Lic_Comps" % pkg_name)
+            except ImportError :
+                pass
+            else :
+                self.lic_comps.extend (getattr (lp_module, "list"))
+    # end def _setup_lic_comps
+
+    def _tex_macros (self) :
+        result  = []
+        variant = self.variant
+        if variant :
+            variant = "-" + variant
+        add = result.append
+        add (r"""\def\Toolname/{%s}"""     % self.productname)
+        add (r"""\def\Tooldate/{%s}"""     % self.date)
+        add (r"""\def\Toolversion/{%s}"""  % self.version)
+        for k in sorted (self.ivn) :
+            v = self.ivn [k]
+            k = k.replace ("_", "").upper ()
+            add (r"""\def\Tool%s/{%s}""" % (k, v.program_version))
+        return result
+    # end def _tex_macros
+
+    def _toolname (self, name = None) :
+        """Returns the name of the "toolname" macro for usage in
+           `_c_macros` and `_startup_macros`.
+        """
+        return "TOOL_NAME"
+    # end def _toolname
 
     def __hash__ (self) :
         return hash (id (self))
@@ -311,9 +276,9 @@ class _TFL_Product_Version_ (TFL.Meta.Object) :
 
     def __repr__ (self) :
         return """%s ("%s", "%s", %s, %s, %s)""" % \
-               ( self.__class__.__name__, self.productid, self.date
-               , self.major, self.minor, self.patchlevel
-               )
+            ( self.__class__.__name__, self.productid, self.date
+            , self.major, self.minor, self.patchlevel
+            )
     # end def __repr__
 
     def __setattr__ (self, name, value) :

@@ -149,10 +149,10 @@ class Scope (TFL.Meta.Object) :
 
     @classmethod
     def new (cls, app_type, db_uri, root_epk = (), user = None) :
-        with cls._init_context (app_type, db_uri, user) as self :
+        with cls._init_context (app_type, db_uri, user, root_epk) as self :
             app_type  = self.app_type
-            self.ems  = ems = app_type.EMS.new (self, db_uri)
             self.guid = self._new_guid ()
+            self.ems  = ems = app_type.EMS.new (self, db_uri)
             with self._init_root_context (root_epk) :
                 if root_epk and app_type.Root_Type :
                     root = self._setup_root (app_type, root_epk)
@@ -162,14 +162,15 @@ class Scope (TFL.Meta.Object) :
 
     @classmethod
     @TFL.Contextmanager
-    def _init_context (cls, app_type, db_uri, user) :
+    def _init_context (cls, app_type, db_uri, user, root_epk = ()) :
         if isinstance (app_type, (str, unicode)) :
             app_type        = MOM.App_Type.instance (app_type)
         self                = cls.__new__ (cls)
         self.app_type       = app_type
         self.db_uri         = db_uri
         self.user           = user
-        self.bname          = ""
+        self.root_epk       = root_epk
+        self.bname          = "__".join (str (e) for e in root_epk)
         self.id             = self._new_id ()
         self.init_callback  = self.init_callback [:] ### copy from cls to self
         self.kill_callback  = self.kill_callback [:] ###
@@ -195,10 +196,9 @@ class Scope (TFL.Meta.Object) :
 
     @TFL.Contextmanager
     def _init_root_context (self, root_epk = ()) :
-        self.root_epk = root_epk
-        self.bname    = "__".join (str (e) for e in root_epk)
         yield
-        self._run_init_callbacks ()
+        if self.root and not self.root_epk :
+            self.root_epk = self.root.epk
     # end def _init_root_context
 
     def __init__ (self) :

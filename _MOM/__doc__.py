@@ -131,31 +131,31 @@ required parameters are passed for the
     ...     print u"***", et.type_name, u"***", et.__init__.i_bases
     ...     print et.__init__.source_code
     ...
-    *** MOM.Link *** (<class 'MOM.Id_Entity' [BMT__Hash__Hash]>,)
+    *** MOM.Link *** (<class 'MOM.Id_Entity' [BMT__Hash__HPS]>,)
     def __init__ (self, left, right, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, right, * args, ** kw)
     <BLANKLINE>
-    *** MOM.Link3 *** (<class 'MOM.Link' [BMT__Hash__Hash]>,)
+    *** MOM.Link3 *** (<class 'MOM.Link' [BMT__Hash__HPS]>,)
     def __init__ (self, left, middle, right, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, middle, right, * args, ** kw)
     <BLANKLINE>
-    *** MOM.Link2_Ordered *** (<class 'MOM.Link' [BMT__Hash__Hash]>,)
+    *** MOM.Link2_Ordered *** (<class 'MOM.Link' [BMT__Hash__HPS]>,)
     def __init__ (self, left, right, seq_no, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, right, seq_no, * args, ** kw)
     <BLANKLINE>
-    *** MOM.Named_Object *** (<class 'MOM.Object' [BMT__Hash__Hash]>,)
+    *** MOM.Named_Object *** (<class 'MOM.Object' [BMT__Hash__HPS]>,)
     def __init__ (self, name, * args, ** kw) :
         return self._MOM_Entity__init__ (self, name, * args, ** kw)
     <BLANKLINE>
-    *** BMT.Location *** (<class 'MOM.Object' [BMT__Hash__Hash]>,)
+    *** BMT.Location *** (<class 'MOM.Object' [BMT__Hash__HPS]>,)
     def __init__ (self, lon, lat, * args, ** kw) :
         return self._MOM_Entity__init__ (self, lon, lat, * args, ** kw)
     <BLANKLINE>
-    *** BMT.Person *** (<class 'MOM.Object' [BMT__Hash__Hash]>,)
+    *** BMT.Person *** (<class 'MOM.Object' [BMT__Hash__HPS]>,)
     def __init__ (self, last_name, first_name, * args, ** kw) :
         return self._MOM_Entity__init__ (self, last_name, first_name, * args, ** kw)
     <BLANKLINE>
-    *** BMT.Trap *** (<class 'MOM.Named_Object' [BMT__Hash__Hash]>,)
+    *** BMT.Trap *** (<class 'MOM.Named_Object' [BMT__Hash__HPS]>,)
     def __init__ (self, name, serial_no, * args, ** kw) :
         return self._MOM_Entity__init__ (self, name, serial_no, * args, ** kw)
     <BLANKLINE>
@@ -165,7 +165,7 @@ The app-type specific entity-types are ready to be used by
 :mod:`etype managers<_MOM.E_Type_Manager>`:
 
     >>> ET_Person
-    <class 'BMT.Person' [BMT__Hash__Hash]>
+    <class 'BMT.Person' [BMT__Hash__HPS]>
     >>> ET_Person.Essence
     <class 'BMT.Person' [Bare Essence]>
     >>> ET_Person.E_Spec
@@ -206,19 +206,19 @@ The app-type specific entity-types are ready to be used by
  'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap',\
  'BMT.Trap']
     >>> ET_Person.relevant_root
-    <class 'BMT.Person' [BMT__Hash__Hash]>
+    <class 'BMT.Person' [BMT__Hash__HPS]>
     >>> ET_Rodent.relevant_root
-    <class 'BMT.Rodent' [BMT__Hash__Hash]>
+    <class 'BMT.Rodent' [BMT__Hash__HPS]>
     >>> ET_Mouse.relevant_root
-    <class 'BMT.Rodent' [BMT__Hash__Hash]>
+    <class 'BMT.Rodent' [BMT__Hash__HPS]>
 
     >>> sorted (ET_Person.children)
     []
     >>> sorted (ET_Rodent.children)
     ['BMT.Mouse', 'BMT.Rat']
     >>> sorted (ET_Rodent.children.itervalues (), key = TFL.Getter.type_name)
-    [<class 'BMT.Mouse' [BMT__Hash__Hash]>,\
- <class 'BMT.Rat' [BMT__Hash__Hash]>]
+    [<class 'BMT.Mouse' [BMT__Hash__HPS]>,\
+ <class 'BMT.Rat' [BMT__Hash__HPS]>]
     >>> sorted (ET_Rat.children)
     []
 
@@ -251,17 +251,17 @@ The app-type specific entity-types are ready to be used by
     >>> for t in apt._T_Extension [2:] :
     ...     print u"%%s%%s    %%s" %% (t.type_name, NL, t.sorted_by.criteria)
     MOM.Id_Entity
-        (<bound method M_E_Type_Id.sort_key of <class 'MOM.Id_Entity' [BMT__Hash__Hash]>>,)
+        (<bound method M_E_Type_Id.sort_key of <class 'MOM.Id_Entity' [BMT__Hash__HPS]>>,)
     MOM.Link
-        (<bound method M_E_Type_Link.sort_key of <class 'MOM.Link' [BMT__Hash__Hash]>>,)
+        (<bound method M_E_Type_Link.sort_key of <class 'MOM.Link' [BMT__Hash__HPS]>>,)
     MOM.Link2
-        (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2' [BMT__Hash__Hash]>>,)
+        (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2' [BMT__Hash__HPS]>>,)
     MOM.Link3
-        (<bound method M_E_Type_Link3.sort_key of <class 'MOM.Link3' [BMT__Hash__Hash]>>,)
+        (<bound method M_E_Type_Link3.sort_key of <class 'MOM.Link3' [BMT__Hash__HPS]>>,)
     MOM.Link2_Ordered
-        (<bound method M_E_Type_Link2_Ordered.sort_key of <class 'MOM.Link2_Ordered' [BMT__Hash__Hash]>>,)
+        (<bound method M_E_Type_Link2_Ordered.sort_key of <class 'MOM.Link2_Ordered' [BMT__Hash__HPS]>>,)
     MOM.Object
-        (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__Hash]>>,)
+        (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__HPS]>>,)
     MOM.Named_Object
         ('name',)
     MOM.Sequence_Number
@@ -292,12 +292,12 @@ The app-type specific entity-types are ready to be used by
         ('left.last_name', 'left.first_name', 'middle.name', 'middle.serial_no', 'right.lon', 'right.lat')
 
     >>> sorted (ET_Person.link_map, key = TFL.Getter.type_name)
-    [<class 'BMT.Person_owns_Trap' [BMT__Hash__Hash]>,\
- <class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__Hash]>]
+    [<class 'BMT.Person_owns_Trap' [BMT__Hash__HPS]>,\
+ <class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__HPS]>]
     >>> sorted (ET_Trap.link_map.iteritems (), key = TFL.Getter [0].type_name)
-    [(<class 'BMT.Person_owns_Trap' [BMT__Hash__Hash]>, set([Trap `right`])),\
- (<class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__Hash]>,\
- set([Trap `middle`])), (<class 'BMT.Rodent_in_Trap' [BMT__Hash__Hash]>,\
+    [(<class 'BMT.Person_owns_Trap' [BMT__Hash__HPS]>, set([Trap `right`])),\
+ (<class 'BMT.Person_sets_Trap_at_Location' [BMT__Hash__HPS]>,\
+ set([Trap `middle`])), (<class 'BMT.Rodent_in_Trap' [BMT__Hash__HPS]>,\
  set([Trap `right`]))]
 
     .. ### DBW-specific finish
@@ -310,7 +310,7 @@ object and link types.
 
 Specifying `None` as `db_uri` will create an in memory database::
 
-    >>> scope = MOM.Scope.new (apt, None) # doctest: +REPORT_ONLY_FIRST_FAILURE
+    >>> scope = MOM.Scope.new (apt, None)
 
 For each :attr:`~_MOM.Entity.Package_NS` defining essential
 classes, the `scope` provides an object holding
@@ -321,11 +321,11 @@ that support instance creation and queries:
     .. ### DBW-specific start
 
     >>> scope.MOM.Id_Entity
-    <E_Type_Manager for MOM.Id_Entity of scope BMT__Hash__Hash>
+    <E_Type_Manager for MOM.Id_Entity of scope BMT__Hash__HPS>
     >>> scope.BMT.Person
-    <E_Type_Manager for BMT.Person of scope BMT__Hash__Hash>
+    <E_Type_Manager for BMT.Person of scope BMT__Hash__HPS>
     >>> scope.BMT.Person_owns_Trap
-    <E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__Hash>
+    <E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__HPS>
 
     .. ### DBW-specific finish
 
@@ -493,14 +493,14 @@ returns a list of all `E_Type_Managers` for which an object or link
 with the specified `epk` exists:
 
     >>> scope.MOM.Named_Object.exists (u"Mighty_Mouse")
-    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__Hash>]
+    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.BMT.Mouse.exists ("Mighty_Mouse")
-    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__Hash>]
+    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.BMT.Rat.exists (u"Mighty_Mouse")
     []
 
     >>> PoT.exists ((u'Dog', u'Snoopy'), (u'Y', 1))
-    [<E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__Hash>]
+    [<E_Type_Manager for BMT.Person_owns_Trap of scope BMT__Hash__HPS>]
     >>> PoT.exists (("Man", u"Tin"), t4)
     []
 
@@ -996,14 +996,35 @@ Replaying changes
 """
 
 __doc__ = doctest = dt_form % dict \
-    ( import_DBW = "from _MOM._DBW.Hash    import Manager"
-    , import_EMS = "from _MOM._EMS.Hash    import Manager"
+    ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"
+    , import_EMS = "from _MOM._EMS.Hash         import Manager"
     )
 
 from   _MOM.import_MOM        import *
+from   _MOM.Product_Version   import Product_Version, IV_Number
 from   _TFL.Package_Namespace import Derived_Package_Namespace
 
 BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
+
+Version = Product_Version \
+    ( productid        = u"Better Mouse Trap"
+    , productnick      = u"BMT"
+    , productdesc      = u"Example application for MOM meta object model"
+    , date             = "18-Dec-2009"
+    , major            = 0
+    , minor            = 5
+    , patchlevel       = 42
+    , author           = u"Christian Tanzer, Martin Glück"
+    , copyright_start  = 2009
+    , db_version       = 1
+    , script_api_version = IV_Number
+        ( "script_api_version"
+        , ("Better Mouse Trap", )
+        , ("Example Client 1", "Example Client 2")
+        , program_version = 1
+        , comp_min        = 0
+        )
+    )
 
 _Ancestor_Essence = MOM.Object
 
@@ -1325,7 +1346,7 @@ if 0 :
 
 ### Because the example classes are all defined here and not in their
 ### own package namespace, we'll fake it
-BMT._Export ("*")
+BMT._Export ("*", "Version")
 
 NL = chr (10)
 

@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
 # This library is free software; you can redistribute it and/or
@@ -20,29 +20,20 @@
 #
 #++
 # Name
-#    MOM.DBW.SA.__doc__
+#    MOM.Product_Version
 #
 # Purpose
-#    Test for MOM meta object model using SQLAlchemy as database backend
+#    Model product version of form `major.minor.patchlevel'
 #
 # Revision Dates
-#    26-Nov-2009 (MG) Creation
+#    18-Dec-2009 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__ import dt_form, MOM, BMT, show, NL
-import re
+from _MOM import MOM
 
-filter_dbw_pat = re.compile \
-    (  "\#\#\#\sDBW-specific\sstart.+?\#\#\#\sDBW-specific\sfinish"
-    , re.DOTALL | re.X | re.MULTILINE
-    )
+from _TFL.Product_Version import *
 
-doc__ = ( filter_dbw_pat.sub ("", dt_form)
-        % dict ( import_DBW = "from _MOM._DBW._SA.Manager import Manager"
-               , import_EMS = "from _MOM._EMS.SA          import Manager"
-               )
-        ).replace ("__Hash", "__SA").replace ("__HPS", "__SA")
-__doc__ = doc__
-
-### __END__ MOM.DBW.SA.__doc__
+if __name__ == "__main__" :
+    MOM._Export ("Product_Version")
+### __END__ MOM.Product_Version
