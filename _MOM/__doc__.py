@@ -981,18 +981,18 @@ Replaying changes
 
     >>> t3.max_weight = 25
     >>> sorted (scope.user_diff (scop2).iteritems ())
-    [(('Y', 1), {'max_weight': (25.0, None)})]
+    [(('Y', '1'), {'max_weight': (25.0, None)})]
     >>> scop2.BMT.Trap.instance (* t3.epk_raw, raw = True).set (max_weight = 42)
     1
     >>> sorted (scope.user_diff (scop2).iteritems ())
-    [(('Y', 1), {'max_weight': (25.0, 42.0)})]
+    [(('Y', '1'), {'max_weight': (25.0, 42.0)})]
     >>> t3.destroy ()
-    >>> for diff in sorted ((str (k), v) for (k, v) in scop2.user_diff (scope).iteritems ()) :
+    >>> for diff in sorted (scop2.user_diff (scope).iteritems ()) :
     ...     print diff
-    ("('Y', 1)", 'Missing in other scope')
-    ("(BMT.Person ('Dog', 'Snoopy'), BMT.Trap ('Y', 1))", 'Missing in other scope')
-    ("(BMT.Person ('Luke', 'Lucky'), BMT.Trap ('Y', 1), BMT.Location (-16.74077, 48.463313))", 'Missing in other scope')
-    ("(BMT.Rat ('Rutty_Rat'), BMT.Trap ('Y', 1))", 'Missing in other scope')
+    (("('Dog', 'Snoopy')", "('Y', '1')"), 'Missing in other scope')
+    (("('Luke', 'Lucky')", "('Y', '1')", "('-16.74077', '48.463313')"), 'Missing in other scope')
+    (("('Rutty_Rat',)", "('Y', '1')"), 'Missing in other scope')
+    (('Y', '1'), 'Missing in other scope')
     >>> scope.user_equal (scop2)
     False
 
