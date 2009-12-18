@@ -721,14 +721,16 @@ Changing objects and links
     ('yellow', 42.0)
     >>> print m.as_code ()
     BMT.Mouse ('Mighty_Mouse', color = 'yellow', weight = 42.0)
-    >>> for c in m.changes ().all () :
+
+    >>> csk = TFL.Sorted_By (Q.parent != None, Q.cid)
+    >>> for c in m.changes ().order_by (csk).all () :
     ...     print c
     <Create BMT.Mouse ('Mighty_Mouse',)>
     <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'white', 'weight' : '10'}, new-values = {'color' : 'black', 'weight' : '25.0'}>
     <Modify BMT.Mouse ('Mighty_Mouse',), old-values = {'color' : 'black', 'weight' : '25.0'}, new-values = {'color' : 'yellow', 'weight' : '42'}>
 
     >>> mm = m.copy ("Magic_Mouse")
-    >>> for c in mm.changes ().all () :
+    >>> for c in mm.changes ().order_by (csk).all () :
     ...     print c
     <Copy BMT.Mouse ('Magic_Mouse',)>
         <Create BMT.Mouse ('Magic_Mouse',)>
