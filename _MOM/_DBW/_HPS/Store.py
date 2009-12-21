@@ -90,7 +90,7 @@ class Info (TFL.Record) :
 class Store (TFL.Meta.Object) :
     """Implement on-disk store for Hash-Pickle-Store."""
 
-    ZF = TZF
+    ZF = ZF
 
     try :
         import zlib
@@ -239,12 +239,13 @@ class Store (TFL.Meta.Object) :
         return result
     # end def _load_info
 
-    def _load_pending (self, cid, name) :
+    def _load_pending (self, name) :
         with open (name, "rb") as file :
             changes = pickle.load (file)
             scope   = self.scope
-            for c in changes :
-                r.redo (scope)
+            for cargo in changes :
+                c = MOM.SCM.Change._Change_.from_pickle_cargo (cargo)
+                c.redo (scope)
     # end def _load_pending
 
     def _load_store (self, s) :
@@ -271,6 +272,12 @@ class Store (TFL.Meta.Object) :
     # end def _save_context
 
 # end class Store
+
+class Store_TZF (Store) :
+
+    ZF = TZF
+
+# end class Store_TZF
 
 if __name__ != '__main__':
     MOM.DBW.HPS._Export ("*")
