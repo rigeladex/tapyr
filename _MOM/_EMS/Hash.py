@@ -202,7 +202,7 @@ class Manager (MOM.EMS._Manager_) :
 
     def register_change (self, change) :
         self.__cid += 1
-        change.cid  =  cid  = self.__cid
+        change.cid  = cid = self.__cid
         if change.parent is None :
             self._changes [cid] = change
         self.__super.register_change (change)
