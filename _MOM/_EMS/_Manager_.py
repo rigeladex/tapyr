@@ -41,6 +41,9 @@
 #                     added
 #    17-Dec-2009 (CT) `async_changes` added
 #    17-Dec-2009 (CT) `pid_query` fixed (needs to call `one`)
+#    21-Dec-2009 (CT) s/load_scope/load_root/
+#    21-Dec-2009 (CT) `relevant_roots` factored to `MOM.Scope`
+#    21-Dec-2009 (CT) `commit` changed to update `scope.db_cid`
 #    ««revision-date»»···
 #--
 
@@ -64,13 +67,6 @@ class _Manager_ (TFL.Meta.Object) :
 
     Q_Result           = TFL.Q_Result
     Q_Result_Composite = TFL.Q_Result_Composite
-
-    @TFL.Meta.Once_Property
-    def relevant_roots (self) :
-        Top = self.scope.MOM.Id_Entity._etype
-        return sorted \
-            (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
-    # end def relevant_roots
 
     @classmethod
     def connect (cls, scope, db_uri) :
@@ -102,6 +98,7 @@ class _Manager_ (TFL.Meta.Object) :
     # end def changes
 
     def commit (self) :
+        self.scope.db_cid = self.max_cid
         self.session.commit ()
         self.uncommitted_changes = []
     # end def commit
@@ -140,10 +137,10 @@ class _Manager_ (TFL.Meta.Object) :
             )
     # end def instance
 
-    def load_scope (self) :
+    def load_root (self) :
         """Redefine to load `guid`, `pid`, and `root` of scope from database."""
-        pass
-    # end def load_scope
+        raise NotImplementedError
+    # end def load_root
 
     def pid_query (self, pid, Type) :
         """Redefine if optimization is possible for a specific EMS/DBW."""
@@ -194,7 +191,7 @@ class _Manager_ (TFL.Meta.Object) :
         sk = TFL.Sorted_By ("pid")
         return itertools.chain \
             (* (   self._query_single_root (r, r).order_by (sk)
-               for r in self.relevant_roots
+               for r in self.scope.relevant_roots
                )
             )
     # end def __iter__

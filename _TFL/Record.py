@@ -43,6 +43,7 @@
 #     9-Dec-2009 (CT)  `__delattr__` added
 #     9-Dec-2009 (CT) `__repr__` and `_formatted_kw` changed (use `%r`
 #                     instead of explicitly quoted `%s`)
+#    21-Dec-2009 (CT) `__getstate__` and `__setstate__` added
 #    ««revision-date»»···
 #--
 
@@ -97,12 +98,20 @@ class Record (TFL.Meta.Object) :
         return self._kw [key]
     # end def __getitem__
 
+    def __getstate__ (self) :
+        return self._kw
+    # end def __getstate__
+
     def __iter__ (self) :
         return iter (self._kw)
     # end def __iter__
 
+    def __len__ (self) :
+        return len(self._kw)
+    # end def __len__
+
     def __nonzero__ (self) :
-        return len (self._kw)
+        return bool (self._kw)
     # end def __nonzero__
 
     def __repr__ (self) :
@@ -117,6 +126,10 @@ class Record (TFL.Meta.Object) :
     def __setitem__ (self, name, value) :
         self._kw [name] = value
     # end def __setitem__
+
+    def __setstate__ (self, state) :
+        self.__dict__ ["_kw"] = state
+    # end def __setstate__
 
     def __str__ (self) :
         return "(%s)" % (self._formatted_kw (), )

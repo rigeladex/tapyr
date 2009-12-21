@@ -70,6 +70,10 @@ class _Manager_ (TFL.Meta.Object) :
 
     type_name     = "Bare"
 
+    def commit (self) :
+        raise NotImplementedError
+    # end def commit
+
 # end class _Manager_
 
 if __name__ != '__main__':

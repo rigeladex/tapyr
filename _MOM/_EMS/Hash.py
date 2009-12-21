@@ -61,6 +61,8 @@
 #    16-Dec-2009 (CT) `register_change` added, s/__id/__pid/, `__cid` added
 #    16-Dec-2009 (CT) `commit` added
 #    17-Dec-2009 (CT) `changes` and `async_changes` added
+#    21-Dec-2009 (CT) s/load_scope/load_root/;
+#                     `commit` factored to `EMS.Manager`
 #    ««revision-date»»···
 #--
 
@@ -144,12 +146,6 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def changes
 
-    def commit (self) :
-        ### XXX
-        self.scope.db_cid = self.max_cid
-        self.__super.commit ()
-    # end def commit
-
     def count (self, Type, strict) :
         if strict :
             result = self._counts  [Type.type_name]
@@ -193,12 +189,16 @@ class Manager (MOM.EMS._Manager_) :
             )
     # end def instance
 
-    def load_scope (self) :
-        ### XXX load `self.__cid` abd `self.__pid` from database
-        ### XXX load `scope.guid` and `scope.root` from database
-        self.scope.add_init_callback (self._load_objects)
-        self.scope.db_cid = self.__cid
-    # end def load_scope
+    def load_root (self) :
+        scope        = self.scope
+        info         = self.session.info
+        self.__cid   = info.max_cid
+        self.__pid   = info.max_pid
+        scope.db_cid = info.max_cid
+        scope.guid   = info.guid
+        scope._setup_root       (scope.app_type, info.root_epk)
+        scope.add_init_callback (self._load_objects)
+    # end def load_root
 
     def register_change (self, change) :
         self.__cid += 1
@@ -252,7 +252,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def r_query
 
     def _load_objects (self) :
-        pass ### XXX load objects from database
+        self.session.load_objects ()
     # end def _load_objects
 
     def _query_multi_root (self, Type) :

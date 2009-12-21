@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Dec-2009 (CT) Creation
+#    21-Dec-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -73,6 +74,17 @@ class Manager (MOM.DBW._Manager_) :
         if self.store :
             self.store.commit ()
     # end def commit
+
+    @property
+    def info (self) :
+        if self.store :
+            return self.store.info
+    # end def info
+
+    def load_objects (self) :
+        if self.store :
+            self.store.load_objects ()
+    # end def load_objects
 
 # end class Manager
 

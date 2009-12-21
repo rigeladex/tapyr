@@ -39,6 +39,8 @@
 #    17-Dec-2009 (CT) Use `change.as_pickle` instead of home-grown code
 #    17-Dec-2009 (MG) Set `pid` to None during `remove`
 #    18-Dec-2009 (MG) Use `Q_Result_Changes`
+#    21-Dec-2009 (CT) s/load_scope/load_root/
+#    21-Dec-2009 (CT) `max_cid` factored
 #    ««revision-date»»···
 #--
 
@@ -107,11 +109,17 @@ class Manager (MOM.EMS._Manager_) :
         return query
     # end def changes
 
-    def load_scope (self) :
-        self.DBW.load_scope                    (self.session, self.scope)
-        self.scope.db_cid = self.session.query (MOM.DBW.SA.SA_Change).order_by \
+    def load_root (self) :
+        result = self.DBW.load_root (self.session, self.scope)
+        self.scope.db_cid = self.max_cid
+        return result
+    # end def load_root
+
+    @property
+    def max_cid (self) :
+        return self.session.query (MOM.DBW.SA.SA_Change).order_by \
             ("-_id").limit (1).first ().cid
-    # end def load_scope
+    # end def max_cid
 
     def pid_query (self, pid, Type) :
         """Simplified query for SA."""

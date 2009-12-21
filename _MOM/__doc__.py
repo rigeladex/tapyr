@@ -1007,17 +1007,24 @@ from   _TFL.Package_Namespace import Derived_Package_Namespace
 BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
 
 Version = Product_Version \
-    ( productid        = u"Better Mouse Trap"
-    , productnick      = u"BMT"
-    , productdesc      = u"Example application for MOM meta object model"
-    , date             = "18-Dec-2009"
-    , major            = 0
-    , minor            = 5
-    , patchlevel       = 42
-    , author           = u"Christian Tanzer, Martin Glück"
-    , copyright_start  = 2009
-    , db_version       = 1
-    , script_api_version = IV_Number
+    ( productid           = u"Better Mouse Trap"
+    , productnick         = u"BMT"
+    , productdesc         = u"Example application for MOM meta object model"
+    , date                = "18-Dec-2009"
+    , major               = 0
+    , minor               = 5
+    , patchlevel          = 42
+    , author              = u"Christian Tanzer, Martin Glück"
+    , copyright_start     = 2009
+    , db_version          = IV_Number
+        ( "db_version"
+        , ("Better Mouse Trap", )
+        , ("Better Mouse Trap", )
+        , program_version = 1
+        , comp_min        = 0
+        , db_extension    = ".bmt"
+        )
+    , script_api_version  = IV_Number
         ( "script_api_version"
         , ("Better Mouse Trap", )
         , ("Example Client 1", "Example Client 2")

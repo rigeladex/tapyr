@@ -3,7 +3,7 @@ MOM To-Do
 
 - MOM.DBW.HPS: Hash-Pickle-Store
 
-  * info: information about the scope stored in the HPS
+  x info: information about the scope stored in the HPS
 
     x db_version
 
@@ -19,9 +19,9 @@ MOM To-Do
 
     x pending: list of `cid` of `commit`s that aren't stored in Hash-Pickle yet
 
-  * %d.commit:
+  x %d.commit:
 
-    + per commit, one file named by the `cid` of the commit containing the
+    x per commit, one file named by the `cid` of the commit containing the
       changes that are part of that commit
 
   * store: contains pickle with the entities of the scope

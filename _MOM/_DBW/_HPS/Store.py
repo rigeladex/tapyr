@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Dec-2009 (CT) Creation
+#    21-Dec-2009 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -37,9 +38,11 @@ import _MOM._DBW._HPS
 
 import _TFL._Meta.Object
 import _TFL.Environment
+import _TFL.Error
 import _TFL.Filename
 import _TFL.module_copy
 import _TFL.open_w_lock
+import _TFL.Record
 
 from   _TFL       import sos
 
@@ -54,11 +57,24 @@ TZF = TFL.module_copy \
     , stringEndArchive = "MOM\006\005"
     )
 
+class Info (TFL.Record) :
+    """Implement info object for Hash-Pickle-Store."""
+
+    def __init__ (self, commits = None, pending = None, stores = None, ** kw) :
+        return self.__super.__init__ \
+            ( commits = commits if commits is not None else []
+            , pending = pending if pending is not None else []
+            , stores  = stores  if stores  is not None else []
+            , ** kw
+            )
+    # end def __init__
+
+# end class Info
+
 class Store (TFL.Meta.Object) :
     """Implement on-disk store for Hash-Pickle-Store."""
 
-    ZF       = TZF
-    zip_file = None
+    ZF = TZF
 
     try :
         import zlib
@@ -69,8 +85,9 @@ class Store (TFL.Meta.Object) :
         del zlib
 
     def __init__ (self, db_uri, scope) :
-        self.db_uri   = TFL.Filename (db_uri)
-        self.x_uri    = TFL.Dirname  (db_uri + ".X")
+        self.Version  = Version = scope.app_type.ANS.Version
+        self.db_uri   = TFL.Filename (db_uri, Version.db_version.db_extension)
+        self.x_uri    = TFL.Dirname  (self.db_uri.name + ".X")
         self.info_uri = TFL.Filename ("info", self.x_uri)
         self.scope    = scope
     # end def __init__
@@ -85,23 +102,26 @@ class Store (TFL.Meta.Object) :
     # end def create
 
     def commit (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
         scope = self.scope
         ucc   = scope.ems.uncommitted_changes
         if ucc :
-            cargo   = [c.as_pickle_cargo (transitive = True) for c in ucc]
             info    = self.info
+            cargo   = [c.as_pickle_cargo (transitive = True) for c in ucc]
             max_cid = scope.ems.max_cid
             x_name  = self.x_uri.name
-            c_name  = TFL.Filename ("%d.commit" % max_cid, self.x_uri).name
             Version = scope.app_type.ANS.Version
             with TFL.lock_file (x_name) :
+                db_info = self._load_info ()
+                if info ["max_cid"] != db_info ["max_cid"] :
+                    self.db_info = db_info
+                    raise TFL.Sync_Conflict (self)
+                c_name = TFL.Filename ("%d.commit" % max_cid, self.x_uri).name
                 with open (c_name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
-                info.update \
-                    ( last_changer  = self._creator (scope, Version)
-                    , max_cid       = max_cid
-                    )
-                info ["pending"].append (max_cid)
+                info.last_changer = self._creator (scope, Version)
+                info.max_cid      = max_cid
+                info.pending.append ((max_cid, c_name))
                 with open (self.info_uri.name, "wb") as file :
                     pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def commit
@@ -115,41 +135,66 @@ class Store (TFL.Meta.Object) :
             with contextlib.closing \
                      (self.ZF.ZipFile (self.db_uri.name, "r")) as zf :
                 zf.extractall (x_name)
-            with open (self.info_uri.name, "rb") as file :
-                self.info = pickle.load (file)
-        ### XXX check version compatibility
+            self.info = info = self._load_info ()
+            ### Assignment to `Version.db_version` checks version compatibility
+            Version.db_version = info.db_version
     # end def load_info
+
+    def load_objects (self) :
+        assert sos.path.exists (self.x_uri.name), self.x_uri.name
+        x_name = self.x_uri.name
+        with TFL.lock_file (x_name) :
+            for s in info ["stores"] :
+                self._load_store (s)
+            for (cid, name) in info ["pending"] :
+                self._load_pending (p)
+    # end def load_objects
 
     def _create_info (self) :
         uri     = self.info_uri.name
         assert not sos.path.exists (uri)
         scope   = self.scope
         ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
-        Version = scope.app_type.ANS.Version
-        info    = self.info = dict \
+        Version = self.Version
+        info    = self.info = Info \
             ( creator       = self._creator (scope, Version)
-            , db_version    = Version.db_version
+            , db_version    = Version.db_version.program_version
             , guid          = scope.guid
             , last_changer  = self._creator (scope, Version)
             , max_cid       = ems.max_cid
             , max_pid       = ems.max_pid
-            , pending       = []
             , root_epk      = scope.root_epk
-            , stores        = []
             )
         with open (uri, "wb") as file :
             pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def _create_info
 
     def _creator (self, scope, Version) :
-        return dict \
-            ( date         = datetime.datetime.now ()
-            , tool         = Version.productid
-            , tool_version = Version.tuple
-            , user         = scope.user or TFL.Environment.username
+        return TFL.Record \
+            ( date          = datetime.datetime.now ()
+            , tool          = Version.productid
+            , tool_version  = Version.tuple
+            , user          = scope.user or TFL.Environment.username
             )
     # end def _creator
 
+    def _load_info (self) :
+        with open (self.info_uri.name, "rb") as file :
+            result = pickle.load (file)
+        return result
+    # end def _load_info
+
+    def _load_pending (self, cid, name) :
+        with open (name, "rb") as file :
+            changes = pickle.load (file)
+            scope   = self.scope
+            for c in changes :
+                r.redo (scope)
+    # end def _load_pending
+
+    def _load_store (self, s) :
+        pass ### XXX
+    # end def _load_store
 
 # end class Store
 

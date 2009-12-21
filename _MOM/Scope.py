@@ -143,7 +143,7 @@ class Scope (TFL.Meta.Object) :
             app_type  = self.app_type
             self.ems  = ems = self.app_type.EMS.connect (self, db_uri)
             with self._init_root_context () :
-                ems.load_scope ()
+                self._register_root (ems.load_root ())
         return self
     # end def load
 
@@ -154,8 +154,7 @@ class Scope (TFL.Meta.Object) :
             self.guid = self._new_guid ()
             self.ems  = ems = app_type.EMS.new (self, db_uri)
             with self._init_root_context (root_epk) :
-                if root_epk and app_type.Root_Type :
-                    root = self._setup_root (app_type, root_epk)
+                self._setup_root   (app_type, root_epk)
                 ems.register_scope ()
         return self
     # end def new
@@ -197,8 +196,6 @@ class Scope (TFL.Meta.Object) :
     @TFL.Contextmanager
     def _init_root_context (self, root_epk = ()) :
         yield
-        if self.root and not self.root_epk :
-            self.root_epk = self.root.epk
     # end def _init_root_context
 
     def __init__ (self) :
@@ -419,6 +416,13 @@ class Scope (TFL.Meta.Object) :
         return result
     # end def record_change
 
+    @TFL.Meta.Once_Property
+    def relevant_roots (self) :
+        Top = self.MOM.Id_Entity._etype
+        return sorted \
+            (Top.relevant_roots.itervalues (), key = Top.m_sorted_by)
+    # end def relevant_roots
+
     @_with_lock_check
     def remove (self, entity) :
         """Remove `entity` from scope `self`"""
@@ -539,6 +543,14 @@ class Scope (TFL.Meta.Object) :
         return result
     # end def _new_id
 
+    def _register_root (self, root) :
+        if root is not None :
+            self.root = root
+            self._roots [root.Essence.type_base_name] = root
+            if not self.root_epk :
+                self.root_epk = root.epk
+    # end def _register_root
+
     def _run_init_callbacks (self) :
         for c in self.init_callback :
             c (self)
@@ -553,10 +565,9 @@ class Scope (TFL.Meta.Object) :
     # end def _setup_pkg_ns
 
     def _setup_root (self, app_type, root_epk) :
-        Root_Type = self [app_type.Root_Type.type_name]
-        self.root = root = Root_Type (* root_epk)
-        self._roots [root.Essence.type_base_name] = root
-        return root
+        if root_epk and app_type.Root_Type :
+            Root_Type = self [app_type.Root_Type.type_name]
+            self._register_root (Root_Type (* root_epk))
     # end def _setup_root
 
     def __getattr__ (self, name) :

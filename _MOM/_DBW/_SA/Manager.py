@@ -47,6 +47,7 @@
 #                     change management
 #    18-Dec-2009 (MG) Set `children` of change to children of wrapper during
 #                     change reconstruction from database
+#    21-Dec-2009 (CT) s/load_scope/load_root/
 #    ««revision-date»»···
 #--
 
@@ -273,13 +274,13 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         return result
     # end def _attr_dict
 
-    def load_scope (cls, session, scope) :
-        si            = session.query (cls.sa_scope).one ()
-        scope.guid    = si.scope_guid
+    def load_root (cls, session, scope) :
+        si         = session.query (cls.sa_scope).one ()
+        scope.guid = si.scope_guid
         if si.root_type_name :
-            scope.root = getattr \
+            return getattr \
                 (scope, si.root_type_name).query (id = si.root_it).one ()
-    # end def load_scope
+    # end def load_root
 
     def register_scope (cls, session,  scope) :
         kw = dict (scope_guid = scope.guid)
