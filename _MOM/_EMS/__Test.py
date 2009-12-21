@@ -32,37 +32,44 @@
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__           import *
-from _MOM._EMS.Hash         import Manager as EMS
-from _MOM._DBW._HPS.Manager import Manager as DBW
+from   _MOM.__doc__           import *
+from   _MOM._EMS.Hash         import Manager as EMS
+from   _MOM._DBW._HPS.Manager import Manager as DBW
+
+from   _TFL                   import sos
+
+db_uri = "/tmp/bmt_test.bmt"
 
 apt = MOM.App_Type ("BMT", BMT).Derived (EMS, DBW)
-scope = MOM.Scope.new (apt, "/tmp/bmt_test")
-RiT   = scope.BMT.Rodent_in_Trap
-PoT   = scope.BMT.Person_owns_Trap
-PTL   = scope.BMT.Person_sets_Trap_at_Location
-ET_Mouse = apt ["BMT.Mouse"]
-if 1 :
-    m     = scope.BMT.Mouse      ("Mighty_Mouse")
-    p     = scope.BMT.Person     ("Luke", "Lucky")
-    q     = scope.BMT.Person     ("Dog",  "Snoopy")
-    l1    = scope.BMT.Location   (-16.268799, 48.189956)
-    l2    = scope.BMT.Location   (-16.740770, 48.463313)
-    b     = scope.BMT.Beaver     ("Toothy_Beaver")
-    r     = scope.BMT.Rat        ("Rutty_Rat")
-    axel  = scope.BMT.Rat        ("Axel")
-    t1    = scope.BMT.Trap       ("X", 1)
-    t2    = scope.BMT.Trap       ("X", 2)
-    t3    = scope.BMT.Trap       ("Y", 1)
-    mit   = RiT                  (m,    t1)
-    rit   = RiT                  (r,    t3)
-    xit   = RiT                  (axel, t2)
-    PoT (p, t1)
-    PoT (p, t2)
-    PoT (q, t3)
-    PTL (p, t1, l1)
-    PTL (p, t2, l2)
-    PTL (p, t3, l2)
+if sos.path.exists (db_uri) :
+    scope = MOM.Scope.load (apt, db_uri)
+else :
+    scope = MOM.Scope.new  (apt, db_uri)
+    RiT   = scope.BMT.Rodent_in_Trap
+    PoT   = scope.BMT.Person_owns_Trap
+    PTL   = scope.BMT.Person_sets_Trap_at_Location
+    ET_Mouse = apt ["BMT.Mouse"]
+    if 1 :
+        m     = scope.BMT.Mouse      ("Mighty_Mouse")
+        p     = scope.BMT.Person     ("Luke", "Lucky")
+        q     = scope.BMT.Person     ("Dog",  "Snoopy")
+        l1    = scope.BMT.Location   (-16.268799, 48.189956)
+        l2    = scope.BMT.Location   (-16.740770, 48.463313)
+        b     = scope.BMT.Beaver     ("Toothy_Beaver")
+        r     = scope.BMT.Rat        ("Rutty_Rat")
+        axel  = scope.BMT.Rat        ("Axel")
+        t1    = scope.BMT.Trap       ("X", 1)
+        t2    = scope.BMT.Trap       ("X", 2)
+        t3    = scope.BMT.Trap       ("Y", 1)
+        mit   = RiT                  (m,    t1)
+        rit   = RiT                  (r,    t3)
+        xit   = RiT                  (axel, t2)
+        PoT (p, t1)
+        PoT (p, t2)
+        PoT (q, t3)
+        PTL (p, t1, l1)
+        PTL (p, t2, l2)
+        PTL (p, t3, l2)
 if 0 :
     print scope.BMT.Mouse.t_extension          ()
     print scope.BMT.Rat.t_extension            ()

@@ -251,7 +251,7 @@ class Manager (MOM.EMS._Manager_) :
         return result
     # end def r_query
 
-    def _load_objects (self) :
+    def _load_objects (self, scope = None) :
         self.session.load_objects ()
     # end def _load_objects
 

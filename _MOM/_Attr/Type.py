@@ -53,9 +53,8 @@
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    26-Nov-2009 (CT) `A_Object`, `A_Cached_Role`, and `A_Cached_Role_DFC` added
 #    26-Nov-2009 (CT) `_A_Object_.etype_manager` factored and used
-#    18-Dec-2009 (CT) s/as_pickle/as_pickle_cargo/,
-#                     s/from_pickle/from_pickle_cargo/
 #    18-Dec-2009 (CT) Use `unicode` instead of `str`
+#    21-Dec-2009 (CT) `_A_Object_._get_object` factored
 #    ««revision-date»»···
 #--
 
@@ -77,31 +76,31 @@ import time
 class A_Attr_Type (object) :
     """Root class for attribute types for the MOM meta object model."""
 
-    __metaclass__     = MOM.Meta.M_Attr_Type
+    __metaclass__       = MOM.Meta.M_Attr_Type
 
-    check             = ()
-    check_syntax      = None
-    code_format       = u"%r"
-    computed          = None
-    default           = None
-    description       = u""
-    explanation       = u""
-    format            = u"%s"
-    group             = u""
-    hidden            = False
-    kind              = None
-    Kind_Mixins       = ()
-    needs_raw_value   = True
-    rank              = 0
-    raw_default       = u""
-    record_changes    = True
-    simple_cooked     = None
-    store_default     = False
-    symbolic_ref_pat  = Regexp (r"^\s*\$\(.*\)\s*$", re.MULTILINE)
-    typ               = None
+    check               = ()
+    check_syntax        = None
+    code_format         = u"%r"
+    computed            = None
+    default             = None
+    description         = u""
+    explanation         = u""
+    format              = u"%s"
+    group               = u""
+    hidden              = False
+    kind                = None
+    Kind_Mixins         = ()
+    needs_raw_value     = True
+    rank                = 0
+    raw_default         = u""
+    record_changes      = True
+    simple_cooked       = None
+    store_default       = False
+    symbolic_ref_pat    = Regexp (r"^\s*\$\(.*\)\s*$", re.MULTILINE)
+    typ                 = None
 
-    _symbolic_default = False
-    _t_rank           = 0
+    _symbolic_default   = False
+    _t_rank             = 0
 
     def __init__ (self, kind) :
         self.kind = kind
@@ -110,10 +109,6 @@ class A_Attr_Type (object) :
     def as_code (self, value) :
         return self.code_format % (value, )
     # end def as_code
-
-    def as_pickle_cargo (self, value) :
-        return value
-    # end def as_pickle_cargo
 
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
@@ -140,10 +135,6 @@ class A_Attr_Type (object) :
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
         return self._to_cooked (s, self._call_eval, obj, glob, locl)
     # end def from_code
-
-    def from_pickle_cargo (self, s, obj = None, glob = {}, locl = {}) :
-        return p
-    # end def from_pickle_cargo
 
     def from_string (self, s, obj = None, glob = {}, locl = {}) :
         return self._to_cooked (s, self._from_string_resolve, obj, glob, locl)
@@ -271,10 +262,6 @@ class _A_Named_Value_ (A_Attr_Type) :
         return self.code_format % (self.__class__.Elbat [value], )
     # end def as_code
 
-    def as_pickle_cargo (self, value) :
-        return self.__class__.Elbat [value]
-    # end def as_pickle_cargo
-
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         Elbat = getattr (soc, "Elbat", None)
@@ -290,13 +277,6 @@ class _A_Named_Value_ (A_Attr_Type) :
     def from_code (self, s, obj = None, glob = None, locl = None) :
         return self._from_string_eval (self._call_eval (s, glob, locl))
     # end def from_code
-
-    def from_pickle_cargo (self, s, obj = None, glob = None, locl = None) :
-        try :
-            return self.__class__.Table [s]
-        except KeyError :
-            pass
-    # end def from_pickle_cargo
 
     def _from_string_eval (self, s, obj, glob, locl) :
         try :
@@ -415,11 +395,6 @@ class _A_Object_ (A_Attr_Type) :
         return tuple (a.as_code (a.get_value (value)) for a in value.primary)
     # end def as_code
 
-    def as_pickle_cargo (self, value) :
-        if value is not None :
-            return value.epk_raw
-    # end def as_pickle_cargo
-
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
         et = soc.etype_manager ()
@@ -450,11 +425,6 @@ class _A_Object_ (A_Attr_Type) :
             return getattr (soc._get_scope (obj), soc.Class.type_name, None)
     # end def etype_manager
 
-    def from_pickle_cargo (self, p, obj = None, glob = None, locl = None) :
-        if p is not None :
-            return self._to_cooked (p, None, obj, glob, locl)
-    # end def from_pickle_cargo
-
     def from_string (self, s, obj = None, glob = None, locl = None) :
         if s :
             return self._to_cooked (s, None, obj, glob, locl)
@@ -470,6 +440,24 @@ class _A_Object_ (A_Attr_Type) :
         return True
     # end def _accept_object
 
+    def _get_object (self, obj, epk, raw = False) :
+        scope  = self._get_scope    (obj)
+        et     = self.etype_manager (obj)
+        result = et.instance        (* epk, raw = raw)
+        tn     = self.Class.type_name
+        if result is not None :
+            if self._accept_object  (obj, result) :
+                return self.cooked  (result)
+            else :
+                raise ValueError \
+                    ( _T (u"object %s %s not eligible, specify one of: %s")
+                    % (tn, epk, self.eligible_raw_values (obj))
+                    )
+        else :
+            raise MOM.Error.No_Such_Object, \
+                (_T (u"No object %s %s in scope %s") % (tn, epk, scope.name))
+    # end def _get_object
+
     @TFL.Meta.Class_and_Instance_Method
     def _get_scope (soc, obj) :
         return obj.home_scope if obj else MOM.Scope.active
@@ -480,23 +468,8 @@ class _A_Object_ (A_Attr_Type) :
         if isinstance (s, tuple) :
             t  = s
         else :
-            t  = self._call_eval    (s, {}, {})
-        scope  = self._get_scope    (obj)
-        et     = self.etype_manager (obj)
-        result = et.instance        (* t, raw = True)
-        if result is not None :
-            if self._accept_object  (obj, result) :
-                return self.cooked  (result)
-            else :
-                raise ValueError \
-                    ( _T (u"object %s %s not eligible, specify one of: %s")
-                    % (self.Class.type_name, t, self.eligible_raw_values (obj))
-                    )
-        else :
-            raise MOM.Error.No_Such_Object, \
-                ( _T (u"No object %s %s in scope %s")
-                % (self.Class.type_name, t, scope.name)
-                )
+            t  = self._call_eval (s, {}, {})
+        return self._get_object  (obj, t, raw = True)
     # end def _to_cooked
 
 # end class _A_Object_

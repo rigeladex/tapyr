@@ -80,6 +80,8 @@
 #    17-Dec-2009 (CT) `user_diff` and `user_equal` added
 #    18-Dec-2009 (CT) Initialization of `dependencies` moved to
 #                     `_init_meta_attrs`
+#    21-Dec-2009 (CT) `as_pickle_cargo` and `from_pickle_cargo` added
+#    21-Dec-2009 (CT) Signature of `_finish__init__` changed to `(self)`
 #    ««revision-date»»···
 #--
 
@@ -158,6 +160,19 @@ class Entity (TFL.Meta.Object) :
         self._main__init__    (* args, ** kw)
     # end def __init__
 
+    @classmethod
+    def from_pickle_cargo (cls, scope, cargo) :
+        result = cls.__new__    (cls, scope = scope)
+        result._init_attributes ()
+        for k, v in cargo.iteritems () :
+            attr = result.attributes.get (k)
+            ### XXX Add legacy lifting
+            if attr :
+                attr.set_pickle_cargo  (result, v)
+        result._finish__init__  ()
+        return result
+    # end def from_pickle_cargo
+
     ### provide read-only access to this class' __init__
     _MOM_Entity__init__ = property (lambda self, __init__ = __init__ : __init__)
 
@@ -168,6 +183,13 @@ class Entity (TFL.Meta.Object) :
     def as_code (self) :
         return "%s (%s)" % (self.type_name, self.attr_as_code ())
     # end def as_code
+
+    def as_pickle_cargo (self) :
+        return dict \
+            (   (a.name, a.get_pickle_cargo  (self))
+            for a in self.attributes.itervalues () if a.to_save (self)
+            )
+    # end def as_pickle_cargo
 
     def attr_as_code (self) :
         return ", ".join \
@@ -264,6 +286,10 @@ class Entity (TFL.Meta.Object) :
         user_attr = self.user_attr
         return ((a, a.get_value (self)) for a in user_attr if a.to_save (self))
     # end def user_attr_iter
+
+    def _finish__init__ (self) :
+        """Redefine this to perform additional initialization."""
+    # end def _finish__init__
 
     def _init_attributes (self) :
         self._attr_man.reset_attributes (self)
@@ -522,12 +548,12 @@ class Id_Entity (Entity) :
         return self._pred_man.has_warnings
     # end def has_warnings
 
-    def ascync_changes (self, * filter, ** kw) :
+    def async_changes (self, * filter, ** kw) :
         result = self.home_scope.async_changes (pid = self.pid)
         if filters or kw :
             result = result.filter (* filters, ** kw)
         return result
-    # end def ascync_changes
+    # end def async_changes
 
     def attr_as_code (self) :
         return ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))
@@ -730,10 +756,6 @@ class Id_Entity (Entity) :
         return new_epk, pkas_raw, pkas_ckd
     # end def _extract_primary_raw
 
-    def _finish__init__ (self, * epk, ** kw) :
-        """Redefine this to perform additional initialization."""
-    # end def _finish__init__
-
     def _init_epk (self, setter, * epk) :
         assert len (epk) == len (self.primary)
         pkas = {}
@@ -754,7 +776,7 @@ class Id_Entity (Entity) :
             [bool (kw.get ("raw", False))]
         self._init_epk              (setter, * epk)
         self.__super._main__init__  (* epk, ** kw)
-        self._finish__init__        (* epk, ** kw)
+        self._finish__init__        ()
     # end def _main__init__
 
     @TFL.Contextmanager

@@ -37,6 +37,7 @@ from   _TFL                import sos
 
 import _TFL.Decorator
 
+import errno
 import tempfile
 
 @TFL.Contextmanager

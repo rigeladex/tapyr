@@ -60,6 +60,8 @@
 #                     `save_to_db` moved to `Kind`
 #    17-Dec-2009 (CT) Don't `record_changes` for electric objects
 #    18-Dec-2009 (CT) Use `unicode` instead of `str`
+#    21-Dec-2009 (CT) `get_pickle_cargo` and `set_pickle_cargo` (and
+#                     `_EPK_Mixin_`) added
 #    ««revision-date»»···
 #--
 
@@ -120,6 +122,10 @@ class Kind (MOM.Prop.Kind) :
                 (MOM.SCM.Change.Attr, obj, {self.name : self.get_raw (obj)})
     # end def __set__
 
+    def get_pickle_cargo (self, obj) :
+        return (self.get_value (obj), )
+    # end def get_pickle_cargo
+
     def get_raw (self, obj) :
         val = self.get_value (obj)
         if val is not None :
@@ -151,6 +157,10 @@ class Kind (MOM.Prop.Kind) :
                 (obj, self.attr.raw_default, self.attr.default, changed = True)
     # end def reset
 
+    def set_pickle_cargo (self, obj, cargo) :
+        self._set_cooked_value (obj, cargo [0], changed = True)
+    # end def set_pickle_cargo
+
     def set_raw (self, obj, raw_value, glob_dict = None, dont_raise = False, changed = 42) :
         if glob_dict is None :
             glob_dict = obj.globals ()
@@ -175,6 +185,10 @@ class Kind (MOM.Prop.Kind) :
                 ) % (self.name, obj.name, raw_value)
         self.set_raw (obj, raw_value)
     # end def sync_cooked
+
+    def to_save (self, obj) :
+        return False
+    # end def to_save
 
     def _check_sanity (self, attr_type) :
         if __debug__ :
@@ -242,10 +256,30 @@ class Kind (MOM.Prop.Kind) :
 
 # end class Kind
 
+class _EPK_Mixin_ (Kind) :
+    """Mixin for attributes referring to entities with `epk`."""
+
+    def get_pickle_cargo (self, obj) :
+        ref = self.get_value (obj)
+        if ref is not None :
+            return (ref.epk, )
+    # end def get_pickle_cargo
+
+    def set_pickle_cargo (self, obj, cargo) :
+        ref = self.attr._get_object (obj, cargo [0], raw = False)
+        self._set_cooked_value (obj, ref, changed = True)
+    # end def set_pickle_cargo
+
+# end class _EPK_Mixin_
+
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""
 
     needs_raw_value = True
+
+    def get_pickle_cargo (self, obj) :
+        return self.get_value (obj), self.get_raw (obj)
+    # end def get_pickle_cargo
 
     def get_raw (self, obj) :
         return getattr (obj, self.attr.raw_name, "")
@@ -260,6 +294,16 @@ class _Raw_Value_Mixin_ (Kind) :
     def has_substance (self, obj) :
         return self.get_raw (obj) not in ("", self.raw_default)
     # end def has_substance
+
+    def set_pickle_cargo (self, obj, cargo) :
+        ckd = cargo [0]
+        if len (cargo) > 1 :
+            raw = cargo [1]
+            self._set_cooked_value (obj,      ckd, changed = True)
+            self._set_raw_inner    (obj, raw, ckd, changed = True)
+        else :
+            self._set_cooked       (obj,      ckd, changed = True)
+    # end def set_pickle_cargo
 
     def _set_cooked (self, obj, value, changed = 42) :
         self._set_cooked_inner (obj, value, changed)
@@ -334,10 +378,6 @@ class _DB_System_ (_DB_Attr_, _System_) :
 class _Volatile_ (Kind) :
     """Attributes not stored in DB."""
 
-    def to_save (self, obj) :
-        return False
-    # end def to_save
-
 # end class _Volatile_
 
 class _Cached_ (_Volatile_, _System_) :
@@ -383,7 +423,7 @@ class Primary (_User_) :
 
 # end class Primary
 
-class Link_Role (Primary) :
+class Link_Role (_EPK_Mixin_, Primary) :
     """Link-role attribute must be defined at all times, used for (essential)
        primary key.
     """
@@ -624,7 +664,7 @@ class Sticky_Mixin (Kind) :
 
 # end class Sticky_Mixin
 
-class _Object_Reference_Mixin_ (Kind) :
+class _Object_Reference_Mixin_ (_EPK_Mixin_) :
 
     def __delete__ (self, obj) :
         ### We need to manually set the value to None first in order to
