@@ -114,6 +114,8 @@ class Store (TFL.Meta.Object) :
         bak    = TFL.Filename (".bak", db_uri).name
         info   = self.info
         x_name = self.x_uri.name
+        if info.pending :
+            self.save_objects ()
         with TFL.lock_file (x_name) :
             self._check_sync (info)
             with TFL.open_to_replace \

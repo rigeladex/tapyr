@@ -44,6 +44,7 @@
 #    21-Dec-2009 (CT) s/load_scope/load_root/
 #    21-Dec-2009 (CT) `relevant_roots` factored to `MOM.Scope`
 #    21-Dec-2009 (CT) `commit` changed to update `scope.db_cid`
+#    21-Dec-2009 (CT) `close` added
 #    ««revision-date»»···
 #--
 
@@ -96,6 +97,12 @@ class _Manager_ (TFL.Meta.Object) :
             result = result.filter (* filters, ** kw)
         return result
     # end def changes
+
+    def close (self) :
+        if self.uncommitted_changes :
+            self.commit ()
+        self.session.close ()
+    # end def close
 
     def commit (self) :
         self.scope.db_cid = self.max_cid

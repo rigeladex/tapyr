@@ -70,6 +70,11 @@ class Manager (MOM.DBW._Manager_) :
         self.scope = scope
     # end def __init__
 
+    def close (self) :
+        if self.store :
+            self.store.close ()
+    # end def close
+
     def commit (self) :
         if self.store :
             self.store.commit ()

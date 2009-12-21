@@ -50,6 +50,7 @@
 #    17-Dec-2009 (CT) `async_changes` and `query_changes` added
 #    17-Dec-2009 (CT) `user_diff` and `user_equal` added
 #    21-Dec-2009 (CT) `relevant_roots` added, `_register_root` factored
+#    21-Dec-2009 (CT) `destroy` changed to call `ems.close`
 #    ««revision-date»»···
 #--
 
@@ -171,6 +172,7 @@ class Scope (TFL.Meta.Object) :
         self.user           = user
         self.root_epk       = root_epk
         self.bname          = "__".join (str (e) for e in root_epk)
+        self.qname          = self.bname or app_type.name
         self.id             = self._new_id ()
         self.init_callback  = self.init_callback [:] ### copy from cls to self
         self.kill_callback  = self.kill_callback [:] ###
@@ -301,6 +303,7 @@ class Scope (TFL.Meta.Object) :
     # end def count_change
 
     def destroy (self) :
+        self.ems.close ()
         if self.qname in Scope.Table :
             del Scope.Table [self.qname]
         self._locked = False
