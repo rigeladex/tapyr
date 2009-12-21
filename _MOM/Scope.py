@@ -49,6 +49,7 @@
 #    17-Dec-2009 (CT) Don't `register_change` for empty composite changes
 #    17-Dec-2009 (CT) `async_changes` and `query_changes` added
 #    17-Dec-2009 (CT) `user_diff` and `user_equal` added
+#    21-Dec-2009 (CT) `relevant_roots` added, `_register_root` factored
 #    ««revision-date»»···
 #--
 
