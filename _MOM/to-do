@@ -1,7 +1,7 @@
 MOM To-Do
 =========
 
-- MOM.DBW.HPS: Hash-Pickle-Store
+x MOM.DBW.HPS: Hash-Pickle-Store
 
   x info: information about the scope stored in the HPS
 
@@ -24,7 +24,7 @@ MOM To-Do
     x per commit, one file named by the `cid` of the commit containing the
       changes that are part of that commit
 
-  * store: contains pickle with the entities of the scope
+  x store: contains pickle with the entities of the scope
 
 x TFL.Meta.Object
 
@@ -260,7 +260,7 @@ x App_Type
 
   x Use `entity_type` instead of `etype` as method name
 
-? Dependency management: move to DBW-Mixin for Scope
+x Dependency management:
 
       x referential integrity
 
@@ -299,10 +299,10 @@ x Simplify attribute handling ?
 
   * change doc-strings to describe the error
 
-- Rewrite pickling
+x Rewrite pickling
 
-  * Inject after_init_db into Entity
+  ? Inject after_init_db into Entity
 
-  * Implement pickling/unpickling of entities
+  x Implement pickling/unpickling of entities
 
 ### __END__ to-do
