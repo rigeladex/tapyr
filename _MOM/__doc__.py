@@ -993,6 +993,9 @@ Replaying changes
     >>> scope.user_equal (scop2)
     False
 
+Saving and re-loading changes from a database
+----------------------------------------------
+
     >>> db_path   = %(db_path)s
     >>> db_uri    = %(db_uri)s
     >>> db_path_x = db_path + ".X"
