@@ -234,7 +234,7 @@ class Link (Id_Entity) :
                 if k in map :
                     role = Type.Roles [map [k]]
                     try :
-                        obj             = self._cooked_role (role, kw.pop (k))
+                        obj = self._cooked_role (role, kw.pop (k))
                         if not isinstance (obj, role.Class) :
                             return []
                         rkw [role.name] = obj

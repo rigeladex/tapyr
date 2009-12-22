@@ -292,7 +292,7 @@ class Scope (TFL.Meta.Object) :
         assert self.db_uri          != db_uri
         with self.as_active () :
             result = self.__class__.new \
-                (app_type, db_uri, self.root.epk, user = self.user)
+                (app_type, db_uri, self.root_epk, user = self.user)
             for e in self :
                 e.copy (* e.epk, scope = result)
         return result
@@ -467,14 +467,22 @@ class Scope (TFL.Meta.Object) :
     def user_diff (self, other) :
         """Return differences of entities `self` and `other` concerning user attributes."""
         result = {}
-        for e in self :
-            o = other [e.type_name].instance (* e.epk_raw, raw = True)
-            if o is None :
-                diff = "Missing in other scope"
-            else :
-                diff = e.user_diff (o)
-            if diff :
-                result [e.epk_raw] = diff
+        seen   = set ()
+        def diff (lhs, rhs) :
+            for e in lhs :
+                k = e.epk_raw
+                t = e.type_name
+                if k not in seen :
+                    seen.add (k)
+                    o = rhs [t].instance (* k, raw = True)
+                    if o is None :
+                        diff = "Present in %s, missing in %s" % (lhs, rhs)
+                    else :
+                        diff = e.user_diff (o)
+                    if diff :
+                        result [(t, k)] = diff
+        diff (self,  other)
+        diff (other, self)
         return result
     # end def user_diff
 
@@ -604,7 +612,8 @@ class Scope (TFL.Meta.Object) :
     # end def __iter__
 
     def __str__ (self) :
-        return "%s `%s`" % (self.__class__.__name__, self.bname)
+        return "%s %s<%s>" % \
+            (self.__class__.__name__, self.bname, self.db_uri)
     # end def __str__
 
 # end class Scope

@@ -965,11 +965,11 @@ Replaying changes
 -----------------
 
     >>> scop2 = MOM.Scope.new (apt, None)
-    >>> scope.MOM.Id_Entity.count_transitive, scop2.MOM.Id_Entity.count_transitive
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
     (16, 0)
     >>> for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
     ...     c.redo (scop2)
-    >>> scope.MOM.Id_Entity.count_transitive, scop2.MOM.Id_Entity.count_transitive
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop2))
     (16, 16)
     >>> sorted (scope.user_diff (scop2).iteritems ())
     []
@@ -978,31 +978,63 @@ Replaying changes
 
     >>> t3.max_weight = 25
     >>> sorted (scope.user_diff (scop2).iteritems ())
-    [((u'Y', u'1'), {'max_weight': (25.0, None)})]
+    [(('BMT.Trap', (u'Y', u'1')), {'max_weight': (25.0, None)})]
     >>> scop2.BMT.Trap.instance (* t3.epk_raw, raw = True).set (max_weight = 42)
     1
     >>> sorted (scope.user_diff (scop2).iteritems ())
-    [((u'Y', u'1'), {'max_weight': (25.0, 42.0)})]
+    [(('BMT.Trap', (u'Y', u'1')), {'max_weight': (25.0, 42.0)})]
     >>> t3.destroy ()
     >>> for diff in sorted (scop2.user_diff (scope).iteritems ()) :
     ...     print diff
-    ((u"(u'Dog', u'Snoopy')", u"(u'Y', u'1')"), 'Missing in other scope')
-    ((u"(u'Luke', u'Lucky')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')"), 'Missing in other scope')
-    ((u"(u'Rutty_Rat',)", u"(u'Y', u'1')"), 'Missing in other scope')
-    ((u'Y', u'1'), 'Missing in other scope')
+    (('BMT.Person_owns_Trap', (u"(u'Dog', u'Snoopy')", u"(u'Y', u'1')")), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Person_sets_Trap_at_Location', (u"(u'Luke', u'Lucky')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Rodent_in_Trap', (u"(u'Rutty_Rat',)", u"(u'Y', u'1')")), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Trap', (u'Y', u'1')), 'Present in Scope <None>, missing in Scope <None>')
     >>> scope.user_equal (scop2)
     False
 
+    >>> db_path   = %(db_path)s
+    >>> db_uri    = %(db_uri)s
+    >>> db_path_x = db_path + ".X"
+    >>> if sos.path.exists (db_path) :
+    ...     sos.remove (db_path)
+    >>> if sos.path.exists (db_path_x) :
+    ...     sos.rmdir (db_path_x, deletefiles = True)
+
+    >>> scope.MOM.Id_Entity.count_transitive
+    12
+    >>> scop3 = scope.copy (apt, db_uri)
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop3))
+    (12, 12)
+    >>> sorted (scop3.user_diff (scope).iteritems ())
+    []
+    >>> scop3.destroy ()
+
+    >>> scop4 = MOM.Scope.load (apt, db_uri)
+    >>> tuple (s.MOM.Id_Entity.count_transitive for s in (scope, scop4))
+    (12, 12)
+    >>> sorted (scope.user_diff (scop4).iteritems ())
+    []
+    >>> scop4.destroy ()
+
+    >>> if sos.path.exists (db_path) :
+    ...     sos.remove (db_path)
+
 """
+
+db_uri = "'/tmp/bmt_test.bmt'"
 
 __doc__ = doctest = dt_form % dict \
     ( import_DBW = "from _MOM._DBW._HPS.Manager import Manager"
     , import_EMS = "from _MOM._EMS.Hash         import Manager"
+    , db_path    = db_uri
+    , db_uri     = db_uri
     )
 
 from   _MOM.import_MOM        import *
 from   _MOM.Product_Version   import Product_Version, IV_Number
 from   _TFL.Package_Namespace import Derived_Package_Namespace
+from   _TFL                   import sos
 
 BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
 
