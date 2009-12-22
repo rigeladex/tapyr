@@ -55,6 +55,7 @@
 #    14-Dec-2009 (CT) `g_rank`, `i_rank`, and `m_sorted_by` added
 #    16-Dec-2009 (MG) `_m_create_e_types` call `DBW.prepare` before the
 #                     e-types will be created
+#    22-Dec-2009 (CT) `_m_new_e_type_dict` changed to include `epk_sig`
 #    ««revision-date»»···
 #--
 
@@ -174,6 +175,8 @@ class M_E_Mixin (TFL.Meta.M_Class) :
     # end def _m_new_e_type_bases_iter
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
+        if "epk_sig" not in kw :
+            kw ["epk_sig"] = ()
         return dict  \
             ( cls.__dict__
             , app_type      = app_type
@@ -336,21 +339,23 @@ class M_Id_Entity (M_Entity) :
     # end def _m_auto__init__
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
-        result = cls.__m_super._m_new_e_type_dict \
-            ( app_type, etypes, bases
-            , is_relevant = cls.is_relevant or (not cls.is_partial)
-            , ** kw
-            )
-        pkas   = tuple \
+        pkas    = tuple \
             (  a for a in cls._Attributes._names.itervalues ()
             if a.kind.is_primary
             )
+        epk_sig = tuple \
+            ( a.name
+            for a in sorted
+                (pkas, key = TFL.Sorted_By ("_t_rank", "rank", "name"))
+            )
+        result  = cls.__m_super._m_new_e_type_dict \
+            ( app_type, etypes, bases
+            , epk_sig     = epk_sig
+            , is_relevant = cls.is_relevant or (not cls.is_partial)
+            , ** kw
+            )
         if pkas and "__init__" not in result :
             M_E_Type_Id = MOM.Meta.M_E_Type_Id
-            epk_sig = tuple \
-                ( a.name
-                for a in sorted (pkas, key = TFL.Sorted_By ("rank", "name"))
-                )
             i_bases = tuple (b for b in bases if isinstance (b, M_E_Type_Id))
             if not (i_bases and i_bases [0].epk_sig == epk_sig) :
                 result ["__init__"] = cls._m_auto__init__ (epk_sig, i_bases)

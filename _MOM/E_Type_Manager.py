@@ -50,6 +50,7 @@
 #                     `t_count` renamed to `count_transitive`
 #     3-Dec-2009 (MG) `r_query` type check of role objects added
 #    14-Dec-2009 (CT) `__call__` changed to call `scope.add`
+#    22-Dec-2009 (CT) `Link2_Ordered` removed
 #    ««revision-date»»···
 #--
 
@@ -369,13 +370,6 @@ class Link3 (Link) :
     """Scope-specific manager for essential ternary link-types."""
 
 # end class Link3
-
-class Link2_Ordered (Link2) :
-    """Scope-specific manager for essential ordered binary link-types."""
-
-    ### XXX check_duplicate
-
-# end class Link2_Ordered
 
 __doc__ = """
 Module `MOM.E_Type_Manager`

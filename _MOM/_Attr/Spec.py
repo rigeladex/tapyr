@@ -38,6 +38,7 @@
 #                     `_Raw_Value_Mixin_` if necessary
 #    22-Oct-2009 (CT) `_effective_prop_kind_mixins` changed to ignore
 #                     electric kinds and to put `_Raw_Value_Mixin_` at end
+#    22-Dec-2009 (CT) `__init__` changed to not set `epk_sig`
 #    ««revision-date»»···
 #--
 
@@ -86,7 +87,6 @@ class Spec (MOM.Prop.Spec) :
         self.__super.__init__ (e_type)
         e_type.attributes = self._prop_dict
         e_type.user_attr  = self._user_attr
-        e_type.epk_sig    = tuple (a.name for a in e_type.primary)
         e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
     # end def __init__
 

@@ -55,6 +55,7 @@
 #    26-Nov-2009 (CT) `_A_Object_.etype_manager` factored and used
 #    18-Dec-2009 (CT) Use `unicode` instead of `str`
 #    21-Dec-2009 (CT) `_A_Object_._get_object` factored
+#    22-Dec-2009 (CT) `_A_Link_Role_Seq_No_` removed
 #    ««revision-date»»···
 #--
 
@@ -362,16 +363,6 @@ class _A_Link_Role_Right_ (A_Attr_Type) :
     typ               = "Right"
 
 # end class _A_Link_Role_Right_
-
-class _A_Link_Role_Seq_No_ (A_Attr_Type) :
-    """Attribute modelling the sequence number role of an ordered link."""
-
-    generic_role_name = "seq_no"
-    rank              = 5
-    role_abbreviation = "n"
-    typ               = "Seq_No"
-
-# end class _A_Link_Role_Seq_No_
 
 class _A_Object_ (A_Attr_Type) :
     """Models an attribute referring to an object."""

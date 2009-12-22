@@ -135,13 +135,13 @@ required parameters are passed for the
     def __init__ (self, left, right, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, right, * args, ** kw)
     <BLANKLINE>
+    *** MOM.Link2_Ordered *** (<class 'MOM.Link2' [BMT__Hash__HPS]>,)
+    def __init__ (self, left, right, seq_no, * args, ** kw) :
+        return self._MOM_Entity__init__ (self, left, right, seq_no, * args, ** kw)
+    <BLANKLINE>
     *** MOM.Link3 *** (<class 'MOM.Link' [BMT__Hash__HPS]>,)
     def __init__ (self, left, middle, right, * args, ** kw) :
         return self._MOM_Entity__init__ (self, left, middle, right, * args, ** kw)
-    <BLANKLINE>
-    *** MOM.Link2_Ordered *** (<class 'MOM.Link' [BMT__Hash__HPS]>,)
-    def __init__ (self, left, right, seq_no, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, left, right, seq_no, * args, ** kw)
     <BLANKLINE>
     *** MOM.Named_Object *** (<class 'MOM.Object' [BMT__Hash__HPS]>,)
     def __init__ (self, name, * args, ** kw) :
@@ -223,19 +223,18 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> sorted (apt.etypes)
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM.Sequence_Number']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object']
     >>> [t.type_name for t in apt._T_Extension]
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link3', 'MOM.Link2_Ordered', 'MOM.Object', 'MOM.Named_Object', 'MOM.Sequence_Number', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
     ...     print u"%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
     MOM.Link                            ('left', 'right')
     MOM.Link2                           ('left', 'right')
-    MOM.Link3                           ('left', 'middle', 'right')
     MOM.Link2_Ordered                   ('left', 'right', 'seq_no')
+    MOM.Link3                           ('left', 'middle', 'right')
     MOM.Object                          ()
     MOM.Named_Object                    ('name',)
-    MOM.Sequence_Number                 ('seq_nr',)
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name')
     BMT.Rodent                          ('name',)
@@ -256,16 +255,14 @@ The app-type specific entity-types are ready to be used by
         (<bound method M_E_Type_Link.sort_key of <class 'MOM.Link' [BMT__Hash__HPS]>>,)
     MOM.Link2
         (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2' [BMT__Hash__HPS]>>,)
+    MOM.Link2_Ordered
+        (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2_Ordered' [BMT__Hash__HPS]>>,)
     MOM.Link3
         (<bound method M_E_Type_Link3.sort_key of <class 'MOM.Link3' [BMT__Hash__HPS]>>,)
-    MOM.Link2_Ordered
-        (<bound method M_E_Type_Link2_Ordered.sort_key of <class 'MOM.Link2_Ordered' [BMT__Hash__HPS]>>,)
     MOM.Object
         (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__HPS]>>,)
     MOM.Named_Object
         ('name',)
-    MOM.Sequence_Number
-        ('seq_nr',)
     BMT.Location
         ('lon', 'lat')
     BMT.Person

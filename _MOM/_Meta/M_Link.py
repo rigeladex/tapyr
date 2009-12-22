@@ -47,6 +47,7 @@
 #     3-Dec-2009 (CT) `sorted_by` hack removed from `_m_setup_roles`
 #     3-Dec-2009 (CT) `M_Link3` and `M_Link2_Ordered` derived from `M_Link`
 #                     instead of from `M_Link2`
+#    22-Dec-2009 (CT) `M_Link2_Ordered` and `Sequence_Number` removed
 #    ««revision-date»»···
 #--
 
@@ -120,11 +121,6 @@ class M_Link3 (M_Link) :
 
 # end class M_Link3
 
-class M_Link2_Ordered (M_Link) :
-    """Meta class of binary ordered link-types of MOM meta object model."""
-
-# end class M_Link2_Ordered
-
 @TFL.Add_To_Class ("M_E_Type", M_Link)
 class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
     """Meta class for essence of MOM.Link."""
@@ -156,10 +152,8 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             (p for p in cls.primary if isinstance (p, MOM.Attr.Link_Role))
         role_types = tuple \
             (r.role_type for r in Roles if r.role_type is not None)
-        if role_types and role_types [0] is not MOM.Sequence_Number :
+        if role_types :
             type_base_names = [rt.type_base_name for rt in role_types]
-            if type_base_names [-1] == "Sequence_Number" :
-                type_base_names = type_base_names [:-1]
             rltn_pat = TFL.Regexp (r"_(.*?)_".join (type_base_names))
             if rltn_pat.match (cls.type_base_name) :
                 cls.rltn_names = rltn_pat.groups ()
@@ -209,14 +203,6 @@ class M_E_Type_Link3 (M_E_Type_Link2) :
 
 # end class M_E_Type_Link3
 
-@TFL.Add_To_Class ("M_E_Type", M_Link2_Ordered)
-class M_E_Type_Link2_Ordered (M_E_Type_Link2) :
-    """Meta class for essence of MOM.Link2_Ordered."""
-
-    Manager = MOM.E_Type_Manager.Link2_Ordered
-
-# end class M_E_Type_Link2_Ordered
-
 __doc__ = """
 Class `MOM.Meta.M_Link`
 =========================
@@ -240,11 +226,6 @@ Class `MOM.Meta.M_Link`
 
     `TOM.Meta.M_Link2` provides the meta machinery for
     :class:`binary links<_TOM.Link2.Link2>`.
-
-.. class:: M_Link2_Ordered
-
-    `TOM.Meta.M_Link2_Ordered` provides the meta machinery for
-    :class:`binary ordered links<_TOM.Link2_Ordered.Link2_Ordered>`.
 
 .. class:: M_Link3
 

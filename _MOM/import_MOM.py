@@ -32,6 +32,7 @@
 # Revision Dates
 #    22-Oct-2009 (CT) Creation
 #     7-Dec-2009 (CT) `Q` added
+#    22-Dec-2009 (CT) `Sequence_Number` removed
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,6 @@ import _MOM.Error
 import _MOM.Link
 import _MOM.Object
 import _MOM.Scope
-import _MOM.Sequence_Number
 
 from   _MOM._Attr.Type import *
 from   _MOM._Attr      import Attr

@@ -39,6 +39,8 @@
 #     3-Dec-2009 (CT) `Link3` and `Link2_Ordered` derived from `Link` instead
 #                     of from `Link2` (and `_Attributes` moved from `Link2`
 #                     to `Link`)
+#    22-Dec-2009 (CT) `Link2_Ordered` changed to use `A_Int` for `seq_no` and
+#                     directly derived from `Link2`
 #    ««revision-date»»···
 #--
 
@@ -105,6 +107,26 @@ class Link2 (Link) :
 
 # end class Link2
 
+class Link2_Ordered (Link2) :
+    """Model a link of a binary ordered essential association of the MOM meta
+       object model.
+    """
+
+    is_partial            = True
+
+    class _Attributes (Link2._Attributes) :
+
+        class seq_no (A_Int) :
+            """Sequence number of a link in an ordered association."""
+
+            kind       = Attr.Primary
+
+        # end class seq_no
+
+    # end class _Attributes
+
+# end class Link2_Ordered
+
 class Link3 (Link) :
     """Model a link of a ternary essential association of the MOM meta
        object model.
@@ -123,26 +145,6 @@ class Link3 (Link) :
     # end class _Attributes
 
 # end class Link3
-
-class Link2_Ordered (Link) :
-    """Model a link of a binary ordered essential association of the MOM meta
-       object model.
-    """
-
-    __metaclass__         = MOM.Meta.M_Link2_Ordered
-
-    is_partial            = True
-
-    class _Attributes (Link._Attributes) :
-
-        class seq_no (_A_Link_Role_Seq_No_, A_Link_Role_EB) :
-            """Sequence-number role of association. Override to define `role_type`, ..."""
-
-        # end class seq_no
-
-    # end class _Attributes
-
-# end class Link2_Ordered
 
 class Role_Cacher (TFL.Meta.Object) :
 
@@ -231,8 +233,8 @@ association relates triples of objects to each other, and so on.
 
 For each arity, a separate subclass exists, e.g.,
 :class:`Link2`, :class:`Link3`, etc. Each arity-specific subclass has
-its own arity-specific metaclass, e.g., :class:`M_Link2_Ordered` defines the
-behavior of :class:`Link2_Ordered`.
+its own arity-specific metaclass, e.g., :class:`M_Link3` defines the
+behavior of :class:`Link3`.
 
 An essential association is modelled by a class that inherits from the
 proper arity-specific descendent of :class:`Link_EB` or
