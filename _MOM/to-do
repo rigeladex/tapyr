@@ -1,6 +1,20 @@
 MOM To-Do
 =========
 
+- Composite attributes
+
+  * MOM.Attr.Type: A_Composite
+
+  * Predicate handling for composites
+
+  * set/set_raw
+
+- Link, M_Link, Role:
+
+  * Link_AB
+
+  * dfc_synthesizer
+
 x MOM.DBW.HPS: Hash-Pickle-Store
 
   x info: information about the scope stored in the HPS
@@ -115,7 +129,7 @@ x EMS/DBW
       the object as read from the database and the state as current in the
       database
 
-- Link, M_Link, Role:
+x Link, M_Link, Role:
 
   x Set `is_relevant` of all roles to True
 
@@ -133,10 +147,6 @@ x EMS/DBW
   x Link3
 
   x Link2_Ordered
-
-  * Link_AB
-
-  * dfc_synthesizer
 
   x destroy_links / destroy_dependency
 
