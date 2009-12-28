@@ -1352,6 +1352,11 @@ class Person_sets_Trap_at_Location (_Ancestor_Essence) :
 
         # end class right
 
+        class price (A_Float) :
+            kind          = Attr.Optional
+            default       = 42.0
+        # end class price
+
     # end class _Attributes
 
 # end class Person_sets_Trap_at_Location

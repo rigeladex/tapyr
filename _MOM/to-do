@@ -1,6 +1,10 @@
 MOM To-Do
 =========
 
+- MOM.Attr.Kind:
+
+  * get_value (None) --> default
+
 - Composite attributes
 
   * MOM.Attr.Type: A_Composite

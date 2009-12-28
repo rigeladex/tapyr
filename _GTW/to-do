@@ -1,0 +1,38 @@
+GTW To-Do
+=========
+
+- Apps
+
+  * Person
+
+  * Regatta
+
+- Nav
+
+- Forms
+
+  * `widget` : (template, macro) or "template.macro"
+
+  * `fields`: list of fields/field_groups
+
+    + for a Etype-Form, each field is a attribute (property)
+
+    + each field has a `widget`
+
+  * `action`: uri for submit
+
+  * `instance`: None or a life instance of some object model
+
+  * `request_data`: dictionary with GET- or POST-data
+
+  * get_value (field) :
+
+    + get value from `request_data` or `field.get_value (instance)`
+
+  * get_errors () : errors of form
+
+  * get_errors (field) : field-specific errors
+
+  * each error has a `widget`
+
+### __END__ to-do

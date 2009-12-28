@@ -1,0 +1,29 @@
+JNJ To-Do
+=========
+
+- global function for retrieving a macro from a template:
+
+  * def get_macro (macro_name, template_name = None):
+      if `template_name` is None :
+          template_name, macro_name = macro_name.split (".", 1)
+      ...
+
+- Onion
+
+- Media
+
+- Environment.HTML: wrapper for jinja2.Environment
+
+  * `kw` map into `globals` of newly created Environment
+
+  * `Media`
+
+  * `html_version`
+
+- Template subdirectory `html`:
+
+  * macro-templates for html5 (`5.jnj`) and xhtml (`x.jnj`)
+
+- Macro-template `form.jnj`: for rendering forms, fields, field-groups, ...
+
+### __END__ to-do
