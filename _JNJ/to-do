@@ -24,6 +24,20 @@ JNJ To-Do
 
   * macro-templates for html5 (`5.jnj`) and xhtml (`x.jnj`)
 
+  * HTML Macros to implement:
+
+    + section
+    + nav
+    + article
+    + aside
+    + hgroup
+    + header
+    + footer
+    + time
+    + mark
+
+    + input_XXX
+
 - Macro-template `form.jnj`: for rendering forms, fields, field-groups, ...
 
 ### __END__ to-do
