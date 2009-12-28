@@ -574,19 +574,19 @@ class Id_Entity (Entity) :
 
     def copy (self, * new_epk, ** kw) :
         """Make copy with primary key `new_epk`."""
-        scope   = kw.pop ("scope", self.home_scope)
-        new_obj = self.__class__ (* new_epk, scope = scope, ** kw)
-        with self.home_scope.nested_change_recorder \
-                 (MOM.SCM.Change.Copy, new_obj) as change :
-            scope.add  (new_obj)
-            change.pid = new_obj.pid
+        scope  = kw.pop ("scope", self.home_scope)
+        result = self.__class__ (* new_epk, scope = scope, ** kw)
+        with result.home_scope.nested_change_recorder \
+                 (MOM.SCM.Change.Copy, result) as change :
+            scope.add (result)
+            change.pid = result.pid
             raw_kw     = dict \
                 (  (a.name, a.get_raw (self))
                 for a in self.user_attr if a.name not in kw
                 )
             if raw_kw :
-                new_obj.set_raw (** raw_kw)
-        return new_obj
+                result.set_raw (** raw_kw)
+        return result
     # end def copy
 
     def correct_unknown_attr (self, error) :
