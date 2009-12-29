@@ -73,19 +73,19 @@ def HTML (version = "html/5.jnj", load_path = (), loader = None, globals = {}, t
 
 __doc__ = """
 `HTML` creates an environment suitable for generating HTML from jinja
-templates. Per default, `HTML` sets `html_version` to a macro template for
-HTML5.
+templates. Per default, `HTML` sets `html_version` to a macro template
+for HTML5.
 
-    >>> env5     = HTML ()
+    >>> env5 = HTML ()
 
 Passing `version = "html/x.jnj"` to `HTML` sets up an environment with
 `html_version` referring to a macro template for XHTML.
 
-    >>> envx     = HTML (version = "html/x.jnj")
+    >>> envx = HTML (version = "html/x.jnj")
 
-By import `html_version` as `x` and calling macros defined by `X`, a template
-can generate either HTML5 or XHTML output, depending on how the environment
-was set up::
+By importing `html_version` as `x` and calling macros defined by `X`,
+a single template can generate either HTML5 or XHTML output, depending
+on how the environment was set up::
 
     >>> template = '''
     ... {%- import html_version as X -%}
@@ -105,6 +105,7 @@ was set up::
     ...   {{ GTW.firstof ("default first of") }}
     ... {%- endcall -%}
     ... '''
+
     >>> t5 = env5.from_string (template)
     >>> tx = envx.from_string (template)
     >>> print t5.render ()

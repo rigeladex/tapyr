@@ -36,7 +36,7 @@ from   jinja2     import nodes
 from   jinja2.ext import Extension
 
 class Onion (Extension) :
-    """Provide `onion` tag.
+    """Jinja extension providing a `onion` tag.
 
        >>> from _JNJ.Environment import HTML
 
