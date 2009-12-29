@@ -33,12 +33,12 @@ x Onion
   * HTML Macros to implement:
 
     x section
-    + nav
+    x nav
     + article
     + aside
     + hgroup
-    + header
-    + footer
+    x header
+    x footer
     + time
     + mark
 

@@ -15,7 +15,7 @@
 ##    ««revision-date»»···
 ##--
 #}
-{%- macro entry (link, level = 0) -%}
+{%- macro entry (link, level) -%}
   {%- if NAV.permissive or link.allow_user (request.user) %}
     {% if nav_page.prefix.starts_with (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
