@@ -28,11 +28,11 @@ x Onion
 
 - Template subdirectory `html`:
 
-  * macro-templates for html5 (`5.jnj`) and xhtml (`x.jnj`)
+  x macro-templates for html5 (`5.jnj`) and xhtml (`x.jnj`)
 
   * HTML Macros to implement:
 
-    + section
+    x section
     + nav
     + article
     + aside

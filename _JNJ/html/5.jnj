@@ -1,0 +1,37 @@
+{# jinja template: html/5.jnj #}
+{#
+## Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+##
+##++
+## Name
+##    html/5.jnj
+##
+## Purpose
+##    Provide macros for rendering Html5
+##
+## Revision Dates
+##    29-Dec-2009 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- macro html (lang) -%}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+  {{ caller () }}
+</html>
+{% endmacro -%}
+
+{%- macro link_stylesheet (uri) %}
+<link href="{{ uri }}" rel="stylesheet" {{ kwargs|xmlattr }}/>
+{% endmacro -%}
+
+{%- macro section () %}
+<section {{ kwargs|xmlattr }}>
+  {{ caller () }}
+</section>
+{% endmacro -%}
+
+{# __END__ jinja template: html/5.jnj #}
+
+

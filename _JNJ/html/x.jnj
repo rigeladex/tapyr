@@ -1,0 +1,36 @@
+{# jinja template: html/x.jnj #}
+{#
+## Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+##
+##++
+## Name
+##    html/x.jnj
+##
+## Purpose
+##    Provide macros for rendering XHtml
+##
+## Revision Dates
+##    29-Dec-2009 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- macro html (lang) -%}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ lang }}" lang="{{ lang }}" >
+  {{ caller () }}
+</html>
+{% endmacro -%}
+
+{%- macro link_stylesheet (uri) %}
+<link href="{{ uri }}" rel="stylesheet" type="text/css" {{ kwargs|xmlattr }}/>
+{% endmacro -%}
+
+{%- macro section () %}
+<div class="section {{ kwargs.pop ('class', '') }}" {{ kwargs|xmlattr }}>
+  {{ caller () }}
+</div>
+{% endmacro -%}
+{# __END__ jinja template: html/x.jnj #}
