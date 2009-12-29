@@ -1,4 +1,4 @@
-{# jinja template: html/x.jnj #}
+{#- jinja template: html/x.jnj -#}
 {#
 ## Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -59,4 +59,4 @@
 </div>
 {%- endmacro -%}
 
-{# __END__ jinja template: html/x.jnj #}
+{#- __END__ jinja template: html/x.jnj -#}

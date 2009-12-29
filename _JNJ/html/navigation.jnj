@@ -1,0 +1,69 @@
+{#- jinja template: html/navigation.jnj -#}
+{#
+## Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+##
+##++
+## Name
+##    html/navigation.jnj
+##
+## Purpose
+##    Template and macros for navigation.html
+##
+## Revision Dates
+##    29-Dec-2009 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- macro entry (link, level = 0) -%}
+  {%- if NAV.permissive or link.allow_user (request.user) %}
+    {% if nav_page.prefix.starts_with (link.prefix) and link.has_children %}
+      <li class="current-section level-{{ level }}">
+        <a href="{{ link.site_prefix }}{{ link.href }}"
+               {%- if link.desc %}title="{{ link.desc }}"{% endif %}
+               class="current-section"
+            >{{ link.title|safe }}</a>
+        {{ entries (link.own_links, level + 1) }}
+      </li>
+    {% else %}
+      {% if link.href == nav_page.href %}
+        <li class="current-link level-{{ level }}">{{ link.title|safe }}</li>
+      {% else %}
+        {% if link.href %}
+          <li class="nav-link level-{{ level }}">
+            <a href="{{ link.site_prefix }}{{ link.href }}"
+               {% if link.desc %}title="{{ link.desc }}"{% endif %}
+            >{{ link.title|safe }}</a>
+          </li>
+        {% else %}
+          <li class="no-link">{{ link.title|safe }}</li>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {%- else %}
+    <li>{{ link.title|safe }}</li>
+  {%- endif %}
+{%- endmacro -%} {# entry #}
+
+{%- macro entries (link_list, level = 0) -%}
+  {%- if link_list %}
+  <ul>
+    {%- for link in link_list %}
+      {{ entry (link, level) }}
+    {% endfor -%}
+  </ul>
+  {%- endif -%}
+{%- endmacro -%} {# entries #}
+
+{%- macro section (link_list, id, name) -%}
+  {%- if link_list %}
+  <div class="nav-section" id="{{ id }}">
+    <h1>{{ name }}</h1>
+    {{ entries (link_list, 0) }}
+  </div>
+  {%- endif -%}
+{%- endmacro -%} {# section #}
+
+{{- section (page.top.own_links, "ownlinks", "Navigation") -}}
+
+{#- __END__ jinja template: html/navigation.jnj -#}

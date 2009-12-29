@@ -1,4 +1,4 @@
-{# jinja template: html/base.jnj #}
+{#- jinja template: html/base.jnj -#}
 {#
 ## Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -38,7 +38,7 @@
             />
             {% tail %}
             <![endif]-->
-          {% endonion -%} {# cssl.condition #}
+          {% endonion -%} {#- cssl.condition -#}
         {% endfor -%}
       {%- endblock styles %}
         {%- block scripts %}
@@ -70,15 +70,15 @@
       {%- endblock meta_elements -%}
       {{ page.add_headers|safe }}
     {%- endblock head_elements %}
-  {%- endcall -%} {# X.head #}
+  {%- endcall %} {# X.head #}
   <body {{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
-    {%- call X.header (id = "header") -%}
+    {% call X.header (id = "header") -%}
       {%- block body_header %}{% endblock body_header -%}
     {%- endcall -%} {# X.header #}
     <div id="main" class="main">
       {% call X.nav (id = "navigate") -%}
         {%- block navigate -%}
-          {% include "navigate.html" ignore missing %}
+          {%- include "html/navigation.jnj" ignore missing -%}
         {%- endblock -%}
       {%- endcall -%} {# X.nav #}
       <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
@@ -94,8 +94,8 @@
       {%- block body_footer %}{% endblock body_footer -%}
     {%- endcall -%} {# X.footer #}
   </body>
-{%- endcall -%} {# X.html #}
-{# __END__ jinja template: html/base.jnj #}
+{%- endcall -%} {#- X.html -#}
+{#- __END__ jinja template: html/base.jnj -#}
 
 
 {#-
@@ -106,11 +106,12 @@ from _TFL.Record import *
 
 env5 = HTML ()
 envx = HTML (version = "html/x.jnj")
+page = Record (copyright = None, Media = None, NAV = None, top = None)
 
 t5 = env5.get_template ("html/base.jnj")
-print t5.render (page = Record (Media = None, copyright = None))
+print t5.render (page = page)
 
 tx = envx.get_template ("html/base.jnj")
-print tx.render (page = Record (Media = None, copyright = None))
+print tx.render (page = page)
 
 -#}
