@@ -1,24 +1,30 @@
 JNJ To-Do
 =========
 
-- global function for retrieving a macro from a template:
+x global function for retrieving a macro from a template:
 
-  * def get_macro (macro_name, template_name = None):
+  x def get_macro (macro_name, template_name = None):
       if `template_name` is None :
           template_name, macro_name = macro_name.split (".", 1)
       ...
 
-- Onion
+x Onion
+
+- Filters
+
+  ? starts_with
+
+  * tel_uri
 
 - Media
 
 - Environment.HTML: wrapper for jinja2.Environment
 
-  * `kw` map into `globals` of newly created Environment
+  x `kw` map into `globals` of newly created Environment
 
   * `Media`
 
-  * `html_version`
+  x `html_version`
 
 - Template subdirectory `html`:
 
