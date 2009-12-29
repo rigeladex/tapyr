@@ -1,0 +1,116 @@
+{# jinja template: html/base.jnj #}
+{#
+## Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+##
+##++
+## Name
+##    html/base.jnj
+##
+## Purpose
+##    Base template for HTML pages
+##
+## Revision Dates
+##    29-Dec-2009 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- import html_version as X -%}
+{%- call X.html (lang = page.language|default ("en")) -%}
+{%- if not page -%}{%- set page = NAV -%}{%- endif -%}
+  {%- call X.head () -%}
+    {%- block head_elements -%}
+      <meta http-equiv="Content-Type"
+        content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}"
+      />
+      {%- block head_base_element %}{% endblock head_base_element -%}
+        {%- block title %}
+          <title>{{ GTW.firstof (page.h_title, page.title, page.h_ref) }}</title>
+        {% endblock title -%}
+      {%- block styles %}
+        {%- for cssl in page.Media.css_links %}
+          {%- onion cssl.condition %}
+            {% head %}
+            <!--[if {{ cssl.condition }}]>
+            {% body %}
+            <link rel="stylesheet" type="text/css" title="Default"
+              media="{{ cssl.media_type }}" href="{{ cssl.href }}"
+            />
+            {% tail %}
+            <![endif]-->
+          {% endonion -%} {# cssl.condition #}
+        {% endfor -%}
+      {%- endblock styles %}
+        {%- block scripts %}
+          {%- for jsl in page.Media.scripts %}
+            <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+          {% endfor -%}
+          {%- if page.Media.js_on_ready %}
+            <script type="text/javascript">
+              $(function ()
+                {
+                  {% for jsor in page.Media.js_on_ready %}{{ jsor|safe }}{% endfor %}
+                }
+               );
+            </script>
+          {% endif -%}
+        {%- endblock scripts %}
+      {%- block related_links %}
+        {%- for rl in page.Media.rel_links %}
+          <link {{ rl.attrs|safe }} />
+        {% endfor -%}
+      {%- endblock related_links %}
+      {%- block meta_elements %}
+        {%- if page.description %}
+        <meta name="description" content="{{ page.description }}" />
+        {%- endif %}
+        <meta name="copyright" content="{{ page.copyright.year }} {{ page.copyright.holder }}" />
+        <meta name="generator" content="Jinja2" />
+        {{ X.meta_content_url (page.href) }}
+      {%- endblock meta_elements -%}
+      {{ page.add_headers|safe }}
+    {%- endblock head_elements %}
+  {%- endcall -%} {# X.head #}
+  <body {{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
+    {%- call X.header (id = "header") -%}
+      {%- block body_header %}{% endblock body_header -%}
+    {%- endcall -%} {# X.header #}
+    <div id="main" class="main">
+      {% call X.nav (id = "navigate") -%}
+        {%- block navigate -%}
+          {% include "navigate.html" ignore missing %}
+        {%- endblock -%}
+      {%- endcall -%} {# X.nav #}
+      <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
+        {%- block body_headline %}
+          {%- if page.headline %}
+            <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.headline|safe }}</h1>
+          {% endif -%}
+        {%- endblock body_headline %}
+        {%- block document %}{% endblock -%}
+      </div>
+    </div>
+    {% call X.footer (id = "footer") -%}
+      {%- block body_footer %}{% endblock body_footer -%}
+    {%- endcall -%} {# X.footer #}
+  </body>
+{%- endcall -%} {# X.html #}
+{# __END__ jinja template: html/base.jnj #}
+
+
+{#-
+## How to test:
+
+from _JNJ.Environment import HTML
+from _TFL.Record import *
+
+env5 = HTML ()
+envx = HTML (version = "html/x.jnj")
+
+t5 = env5.get_template ("html/base.jnj")
+print t5.render (page = Record (Media = None, copyright = None))
+
+tx = envx.get_template ("html/base.jnj")
+print tx.render (page = Record (Media = None, copyright = None))
+
+-#}

@@ -20,18 +20,44 @@
 <html lang="{{ lang }}">
   {{ caller () }}
 </html>
-{% endmacro -%}
+{%- endmacro -%}
 
-{%- macro link_stylesheet (uri) %}
-<link href="{{ uri }}" rel="stylesheet" {{ kwargs|xmlattr }}/>
-{% endmacro -%}
+{%- macro footer () -%}
+<footer{{ kwargs|xmlattr }}>{{ caller () }}</footer>
+{%- endmacro -%}
 
-{%- macro section () %}
-<section {{ kwargs|xmlattr }}>
+{%- macro head () -%}
+<head>
+  <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  {{ caller () }}
+</head>
+{%- endmacro -%}
+
+{%- macro header () -%}
+<header{{ kwargs|xmlattr }}>{{ caller () }}</header>
+{%- endmacro -%}
+
+{%- macro link_stylesheet (uri) -%}
+<link href="{{ uri }}" rel="stylesheet"{{ kwargs|xmlattr }}/>
+{%- endmacro -%}
+
+{%- macro meta_content_url (url) -%}
+  {%- do kwargs.pop("caller", "") -%}
+  <meta name="Content-URL" content="{{ url }}"{{ kwargs|xmlattr }}/>
+{%- endmacro -%}
+
+{%- macro nav () -%}
+<nav{{ kwargs|xmlattr }}>
+  {{ caller () }}
+</nav>
+{%- endmacro -%}
+
+{%- macro section () -%}
+<section{{ kwargs|xmlattr }}>
   {{ caller () }}
 </section>
-{% endmacro -%}
+{%- endmacro -%}
 
 {# __END__ jinja template: html/5.jnj #}
-
-

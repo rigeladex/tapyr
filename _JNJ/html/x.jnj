@@ -22,15 +22,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ lang }}" lang="{{ lang }}" >
   {{ caller () }}
 </html>
-{% endmacro -%}
+{%- endmacro -%}
 
-{%- macro link_stylesheet (uri) %}
-<link href="{{ uri }}" rel="stylesheet" type="text/css" {{ kwargs|xmlattr }}/>
-{% endmacro -%}
+{%- macro footer () -%}
+<div class="footer{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>{{ caller () }}</div>
+{%- endmacro -%}
 
-{%- macro section () %}
-<div class="section {{ kwargs.pop ('class', '') }}" {{ kwargs|xmlattr }}>
+{%- macro head () -%}
+<head>
+  {{ caller () }}
+</head>
+{%- endmacro -%}
+
+{%- macro header () -%}
+<div class="header{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>{{ caller () }}</div>
+{%- endmacro -%}
+
+{%- macro link_stylesheet (uri) -%}
+<link href="{{ uri }}" rel="stylesheet" type="text/css"{{ kwargs|xmlattr }}/>
+{%- endmacro -%}
+
+{%- macro meta_content_url (url) -%}
+  {%- do kwargs.pop("caller", "") -%}
+  <meta http-equiv="Content-URL" content="{{ url }}"{{ kwargs|xmlattr }}/>
+{%- endmacro -%}
+
+{%- macro nav () -%}
+<div class="nav{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
   {{ caller () }}
 </div>
-{% endmacro -%}
+{%- endmacro -%}
+
+{%- macro section () -%}
+<div class="section{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
+  {{ caller () }}
+</div>
+{%- endmacro -%}
+
 {# __END__ jinja template: html/x.jnj #}
