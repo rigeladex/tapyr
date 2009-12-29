@@ -55,15 +55,15 @@
   {%- endif -%}
 {%- endmacro -%} {# entries #}
 
-{%- macro section (link_list, id, name) -%}
+{%- macro section (link_list, name = None) -%}
   {%- if link_list %}
-  <div class="nav-section" id="{{ id }}">
-    <h1>{{ name }}</h1>
+  <div class="nav-section{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
+    {%- if name -%}<h1>{{ name }}</h1>{%- endif -%}
     {{ entries (link_list, 0) }}
   </div>
   {%- endif -%}
 {%- endmacro -%} {# section #}
 
-{{- section (page.top.own_links, "ownlinks", "Navigation") -}}
+{{- section (page.top.own_links, "Navigation") -}}
 
 {#- __END__ jinja template: html/navigation.jnj -#}
