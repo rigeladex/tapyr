@@ -62,6 +62,8 @@
 #    18-Dec-2009 (CT) Use `unicode` instead of `str`
 #    21-Dec-2009 (CT) `get_pickle_cargo` and `set_pickle_cargo` (and
 #                     `_EPK_Mixin_`) added
+#    29-Dec-2009 (CT) `get_raw` and `get_value` changed to allow `None` for
+#                     `obj`
 #    ««revision-date»»···
 #--
 
@@ -127,15 +129,21 @@ class Kind (MOM.Prop.Kind) :
     # end def get_pickle_cargo
 
     def get_raw (self, obj) :
-        val = self.get_value (obj)
-        if val is not None :
-            return self.attr.as_string (val) or ""
+        if obj is not None :
+            val = self.get_value (obj)
+            if val is not None :
+                return self.attr.as_string (val) or ""
+            else :
+                return ""
         else :
-            return ""
+            return self.attr.raw_default
     # end def get_raw
 
     def get_value (self, obj) :
-        return getattr (obj, self.attr.ckd_name, None)
+        if obj is not None :
+            return getattr (obj, self.attr.ckd_name, None)
+        else :
+            return self.attr.default or self.attr.raw_default
     # end def get_value
 
     def inc_changes (self, man, obj, value) :
@@ -282,11 +290,14 @@ class _Raw_Value_Mixin_ (Kind) :
     # end def get_pickle_cargo
 
     def get_raw (self, obj) :
-        return getattr (obj, self.attr.raw_name, "")
+        if obj is not None :
+            return getattr (obj, self.attr.raw_name, "")
+        else :
+            return self.attr.raw_default
     # end def get_raw
 
     def get_value (self, obj) :
-        if obj._attr_man.needs_sync.get (self.name) :
+        if obj is not None and obj._attr_man.needs_sync.get (self.name) :
             self._sync (obj)
         return self.__super.get_value (obj)
     # end def get_value
@@ -496,13 +507,13 @@ class Sync_Cached (_Cached_) :
     # end def sync
 
     def get_raw (self, obj) :
-        if obj._attr_man.needs_sync [self.name] :
+        if obj is not None and obj._attr_man.needs_sync [self.name] :
             self.sync (obj)
         return self.__super.get_raw (obj)
     # end def get_raw
 
     def get_value (self, obj) :
-        if obj._attr_man.needs_sync [self.name] :
+        if obj is not None and obj._attr_man.needs_sync [self.name] :
             self.sync (obj)
         return self.__super.get_value (obj)
     # end def get_value
@@ -524,15 +535,16 @@ class Auto_Cached (_Cached_) :
     """
 
     def get_value (self, obj) :
-        man = obj._attr_man
-        if (  (man.total_changes != man.update_at_changes.get (self.name, -1))
-           or self.attr.ckd_name not in obj.__dict__
-           ) :
-            val = self._get_computed (obj)
-            if val is None :
-                return
-            self._set_cooked (obj, val)
-            man.update_at_changes [self.name] = man.total_changes
+        if obj is not None :
+            man = obj._attr_man
+            if ((man.total_changes != man.update_at_changes.get (self.name, -1))
+               or self.attr.ckd_name not in obj.__dict__
+               ) :
+                val = self._get_computed (obj)
+                if val is None :
+                    return
+                self._set_cooked (obj, val)
+                man.update_at_changes [self.name] = man.total_changes
         return self.__super.get_value (obj)
     # end def get_value
 
@@ -574,7 +586,7 @@ class Cached_Role_DFC (Cached_Role) :
 
     def get_value (self, obj) :
         result = self.__super.get_value (obj)
-        if result is None :
+        if obj is not None and result is None :
             ### XXX
             assoc = getattr (obj.home_scope, self.attr.assoc)
             links = getattr (assoc, self.attr.name) (obj)
@@ -618,7 +630,7 @@ class Computed_Mixin (Kind) :
 
     def get_value (self, obj) :
         result = self.__super.get_value (obj)
-        if result is None :
+        if obj is not None and result is None :
             result = self._get_computed (obj)
         return result
     # end def get_value
