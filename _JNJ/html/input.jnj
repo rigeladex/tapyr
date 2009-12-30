@@ -1,0 +1,103 @@
+
+{#- jinja template:  html/input.jnj -#}
+{#
+## Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+##
+##++
+## Name
+##    html/input.jnj
+##
+## Purpose
+##    Provide amcros for rendering input tags
+##
+## Revision Dates
+##    30-Dec-2009 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro _input (typ, cls, kw) -%}
+  {%- do kw.pop("caller", "") -%}
+  <input type="{{ typ }}" class="{{ cls }}{{ kw.pop ('class', '') }}"{{ kw|xmlattr }}{{ kwargs|xmlattr }}/>
+{%- endmacro -%} {#- text -#}
+
+{%- macro color () -%}
+  {{ _input ("text", "color", kwargs) }}
+{%- endmacro -%}
+
+{%- macro date () -%}
+  {{ _input ("text", "date", kwargs) }}
+{%- endmacro -%}
+
+{%- macro datetime () -%}
+  {{ _input ("text", "datetime", kwargs) }}
+{%- endmacro -%}
+
+{%- macro datetime_local () -%}
+  {{ _input ("text", "datetime-local", kwargs) }}
+{%- endmacro -%}
+
+{%- macro email () -%}
+  {{ _input ("text", "email", kwargs) }}
+{%- endmacro -%}
+
+{%- macro hidden () -%}
+  {{ _input ("hidden", "text", kwargs) }}
+{%- endmacro -%}
+
+{%- macro month () -%}
+  {{ _input ("text", "month", kwargs) }}
+{%- endmacro -%}
+
+{%- macro number () -%}
+  {{ _input ("text", "number", kwargs) }}
+{%- endmacro -%}
+
+{%- macro password () -%}
+  {{ _input ("password", "password", kwargs) }}
+{%- endmacro -%}
+
+{%- macro range () -%}
+  {{ _input ("text", "range", kwargs) }}
+{%- endmacro -%}
+
+{%- macro reset () -%}
+  {{ _input ("reset", "reset", kwargs) }}
+{%- endmacro -%}
+
+{%- macro search () -%}
+  {{ _input ("text", "search", kwargs) }}
+{%- endmacro -%}
+
+{%- macro submit () -%}
+  {{ _input ("submit", "submit", kwargs) }}
+{%- endmacro -%}
+
+{%- macro tel () -%}
+  {{ _input ("text", "tel", kwargs) }}
+{%- endmacro -%}
+
+{%- macro text () -%}
+  {{ _input ("text", "text", kwargs) }}
+{%- endmacro -%}
+
+{%- macro textarea (cols, rows) -%}
+  <textarea cols="{{ cols }}" rows="{{ rows }}"{{ kwargs|xmlattr }}>
+    {{ caller () }}
+  </textarea>
+{%- endmacro -%}
+
+{%- macro time () -%}
+  {{ _input ("text", "time", kwargs) }}
+{%- endmacro -%}
+
+{%- macro url () -%}
+  {{ _input ("text", "url", kwargs) }}
+{%- endmacro -%}
+
+{%- macro week () -%}
+  {{ _input ("text", "week", kwargs) }}
+{%- endmacro -%}
+
+{#- __END__ jinja template: html/input.jnj -#}

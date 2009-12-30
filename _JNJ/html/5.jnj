@@ -15,6 +15,9 @@
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- import "html/input.jnj" as _input -%}{%- set input = _input -%}
+
 {%- macro html (lang) -%}
 <!DOCTYPE html>
 <html lang="{{ lang }}">
