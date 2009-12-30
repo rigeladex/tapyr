@@ -5,6 +5,18 @@ x MOM.Attr.Kind:
 
   x get_value (None) --> default
 
+- MOM.Attr.Type:
+
+  * A_Decimal
+
+    + `max_digits`
+
+    + `decimal_places`
+
+  * _A_Number_:
+
+    + add check for `min_value` and `max_value`
+
 - Composite attributes
 
   * MOM.Attr.Type: A_Composite
@@ -14,6 +26,8 @@ x MOM.Attr.Kind:
   * set/set_raw
 
 - Link, M_Link, Role:
+
+  * auto_cache for multiple links
 
   * Link_AB
 
