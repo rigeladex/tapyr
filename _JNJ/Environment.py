@@ -50,7 +50,7 @@ def HTML (version = "html/5.jnj", load_path = (), loader = None, globals = {}, t
     if loader is None :
         loader   = jnj_loader
     else :
-        loader   = ChoiceLoader (loader, jnj_loader)
+        loader   = ChoiceLoader ((loader, jnj_loader))
     extensions   = uniq \
         ( kw.pop ("extensions", [])
         + ["jinja2.ext.loopcontrols", "jinja2.ext.i18n", "jinja2.ext.do"]
