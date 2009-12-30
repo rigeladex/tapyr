@@ -7,11 +7,11 @@ x MOM.Attr.Kind:
 
 - MOM.Attr.Type:
 
-  * A_Decimal
+  x A_Decimal
 
-    + `max_digits`
+    x `max_digits`
 
-    + `decimal_places`
+    x `decimal_places`
 
   * _A_Number_:
 
