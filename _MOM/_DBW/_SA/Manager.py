@@ -48,6 +48,7 @@
 #    18-Dec-2009 (MG) Set `children` of change to children of wrapper during
 #                     change reconstruction from database
 #    21-Dec-2009 (CT) s/load_scope/load_root/
+#    30-Dec-2009 (MG) `create_instance` fixed
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ class Instance_Recreation (orm.interfaces.MapperExtension) :
 
     def create_instance (self, mapper, select_context, row, etype) :
         instance = etype.__new__ \
-            (etype, home_scope = select_context.session.scope)
+            (etype, scope = select_context.session.scope)
         instance._sa_pending_reset_attributes = True
         return instance
     # end def create_instance

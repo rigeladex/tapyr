@@ -30,7 +30,7 @@
 #    ««revision-date»»···
 #--
 
-from _MOM.__doc__ import dt_form, MOM, BMT, show, NL
+from _MOM.__doc__ import dt_form, MOM, BMT, show, NL, sos
 import re
 
 filter_dbw_pat = re.compile \
@@ -41,6 +41,8 @@ filter_dbw_pat = re.compile \
 doc__ = ( filter_dbw_pat.sub ("", dt_form)
         % dict ( import_DBW = "from _MOM._DBW._SA.Manager import Manager"
                , import_EMS = "from _MOM._EMS.SA          import Manager"
+               , db_path    = "'test.sqlite'"
+               , db_uri     = "'sqlite:///test.sqlite'"
                )
         ).replace ("__Hash", "__SA").replace ("__HPS", "__SA")
 __doc__ = doc__

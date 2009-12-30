@@ -70,9 +70,7 @@ if 1 :
         b1    = b.copy ("Toothless_Beaver", region = "Lower Austria")
     RiT (m, t1)
     scope.commit ()
-    scop2 = MOM.Scope.new (apt, None)
-    for c in scope.query_changes (Q.parent == None).order_by (Q.cid) :
-        c.redo (scop2)
+    scop3 = scope.copy (apt, "sqlite:///test.sqlite")
     #RiT (r, t3)
     #RiT (p, t1)
     #print scope.MOM.Named_Object.exists ("Mighty_Mouse")
