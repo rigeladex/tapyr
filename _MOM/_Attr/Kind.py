@@ -64,6 +64,8 @@
 #                     `_EPK_Mixin_`) added
 #    29-Dec-2009 (CT) `get_raw` and `get_value` changed to allow `None` for
 #                     `obj`
+#    30-Dec-2009 (CT) `_EPK_Mixin_._set_cooked_inner` to guard for differing
+#                     `home_scope`
 #    ««revision-date»»···
 #--
 
@@ -277,6 +279,19 @@ class _EPK_Mixin_ (Kind) :
         ref = self.attr._get_object (obj, cargo [0], raw = False)
         self._set_cooked_value (obj, ref, changed = True)
     # end def set_pickle_cargo
+
+    def _set_cooked_inner (self, obj, value, changed = 42) :
+        scope = obj.home_scope
+        if value is not None and scope != value.home_scope :
+            etm = scope [value.type_name]
+            val = etm.instance (* value.epk_raw, raw = True)
+            if val is None :
+                raise MOM.Error.Link_Scope_Mix_Error \
+                    (scope, value.home_scope, scope)
+            else :
+                value = val
+        return self._set_cooked_value (obj, value, changed)
+    # end def _set_cooked_inner
 
 # end class _EPK_Mixin_
 
