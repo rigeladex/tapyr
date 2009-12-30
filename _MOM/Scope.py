@@ -51,6 +51,7 @@
 #    17-Dec-2009 (CT) `user_diff` and `user_equal` added
 #    21-Dec-2009 (CT) `relevant_roots` added, `_register_root` factored
 #    21-Dec-2009 (CT) `destroy` changed to call `ems.close`
+#    30-Dec-2009 (MG) `Scope.copy` use `epk_raw` instead of `epk`
 #    ««revision-date»»···
 #--
 
@@ -294,7 +295,7 @@ class Scope (TFL.Meta.Object) :
             result = self.__class__.new \
                 (app_type, db_uri, self.root_epk, user = self.user)
             for e in self :
-                e.copy (* e.epk, scope = result)
+                e.copy (* e.epk_raw, scope = result, raw = True)
         return result
     # end def copy
 
