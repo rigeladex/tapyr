@@ -52,7 +52,7 @@ the descendents of :class:`MOM.Link<_MOM.Link.Link>`.
 Each essential class must be defined inside a
 :class:`TFL.Package_Namespace<_TFL.Package_Namespace.Package_Namespace>`
 and the class definition must contain an explicit or inherited
-reference :attr:`Package_NS<_MOM.Entity.Package_NS>` to that package
+reference :attr:`PNS<_MOM.Entity.PNS>` to that package
 namespace.
 
 Normally, each essential class is defined in a module of its own. In
@@ -309,7 +309,7 @@ Specifying `None` as `db_uri` will create an in memory database::
 
     >>> scope = MOM.Scope.new (apt, None)
 
-For each :attr:`~_MOM.Entity.Package_NS` defining essential
+For each :attr:`~_MOM.Entity.PNS` defining essential
 classes, the `scope` provides an object holding
 :class:`object managers<_MOM.E_Type_Manager.Object>` and
 :class:`link managers<_MOM.E_Type_Manager.Link>`
@@ -1070,7 +1070,7 @@ _Ancestor_Essence = MOM.Object
 class Location (_Ancestor_Essence) :
     """Model a location of the Better Mouse Trap application."""
 
-    Package_NS = BMT
+    PNS = BMT
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -1101,7 +1101,7 @@ _Ancestor_Essence = MOM.Object
 class Person (_Ancestor_Essence) :
     """Model a person of the Better Mouse Trap application."""
 
-    Package_NS = BMT
+    PNS = BMT
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -1130,7 +1130,7 @@ _Ancestor_Essence = MOM.Named_Object
 class Rodent (_Ancestor_Essence) :
     """Model a rodent of the Better Mouse Trap application."""
 
-    Package_NS    = BMT
+    PNS    = BMT
 
     is_partial    = True
 
@@ -1209,7 +1209,7 @@ _Ancestor_Essence = MOM.Named_Object
 class Trap (_Ancestor_Essence) :
     """Model a trap of the Better Mouse Trap application."""
 
-    Package_NS = BMT
+    PNS = BMT
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -1243,7 +1243,7 @@ _Ancestor_Essence = MOM.Link2
 class Rodent_in_Trap (_Ancestor_Essence) :
     """Model a rodent caught in a trap."""
 
-    Package_NS = BMT
+    PNS = BMT
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -1289,7 +1289,7 @@ _Ancestor_Essence = MOM.Link2
 
 class Person_owns_Trap (_Ancestor_Essence) :
 
-    Package_NS = BMT
+    PNS = BMT
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -1320,7 +1320,7 @@ _Ancestor_Essence = MOM.Link3
 
 class Person_sets_Trap_at_Location (_Ancestor_Essence) :
 
-    Package_NS = BMT
+    PNS = BMT
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 

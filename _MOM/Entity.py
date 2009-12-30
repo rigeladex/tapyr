@@ -82,6 +82,7 @@
 #                     `_init_meta_attrs`
 #    21-Dec-2009 (CT) `as_pickle_cargo` and `from_pickle_cargo` added
 #    21-Dec-2009 (CT) Signature of `_finish__init__` changed to `(self)`
+#    30-Dec-2009 (CT) s/Package_NS/PNS/
 #    ««revision-date»»···
 #--
 
@@ -120,7 +121,7 @@ class Entity (TFL.Meta.Object) :
 
     __metaclass__         = MOM.Meta.M_Entity
 
-    Package_NS            = MOM
+    PNS                   = MOM
 
     deprecated_attr_names = {}
     electric              = False
@@ -969,19 +970,19 @@ aspects of the use of an essential class by the framework.
 
   Restricts the number of instances that can be created.
 
-.. attribute:: Package_NS
+.. attribute:: PNS
 
   The package namespace in which this class is defined.
 
   Ideally, each package namespace defining essential classes defines a
   common root for these, e.g., `SPN.Entity`, that defines
-  `Package_NS`, e.g., ::
+  `PNS`, e.g., ::
 
       class _SPN_Entity_ (MOM.Id_Entity) :
 
           _real_name = "Entity"
 
-          Package_NS = SPN
+          PNS = SPN
           ...
 
 .. attribute:: rank

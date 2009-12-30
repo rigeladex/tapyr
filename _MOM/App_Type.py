@@ -31,6 +31,7 @@
 #    18-Nov-2009 (CT) `_App_Type_` and `_App_Type_D_` factored
 #    23-Nov-2009 (CT) `finalized` added and used to guard `add_type`
 #    23-Nov-2009 (CT) Documentation added
+#    30-Dec-2009 (CT) s/Package_NS/PNS/
 #    ««revision-date»»···
 #--
 
@@ -125,7 +126,7 @@ class _App_Type_D_ (_App_Type_) :
 
     def add_type (self, etype) :
         assert not self.finalized
-        pns = etype.Package_NS
+        pns = etype.PNS
         qn  = pns._Package_Namespace__qname
         self.PNS_Map [qn]                      = pns
         self.etypes  [etype.Essence.type_name] = etype
