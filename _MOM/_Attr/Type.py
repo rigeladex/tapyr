@@ -56,6 +56,7 @@
 #    18-Dec-2009 (CT) Use `unicode` instead of `str`
 #    21-Dec-2009 (CT) `_A_Object_._get_object` factored
 #    22-Dec-2009 (CT) `_A_Link_Role_Seq_No_` removed
+#    30-Dec-2009 (CT) `A_Decimal` added
 #    ««revision-date»»···
 #--
 
@@ -71,6 +72,7 @@ from   _TFL.Regexp           import *
 import _TFL._Meta.Property
 
 import datetime
+import decimal
 import itertools
 import time
 
@@ -550,6 +552,29 @@ class A_Date_Time (_A_Date_) :
 
 # end class A_Date_Time
 
+class A_Decimal (_A_Number_) :
+    """Models a decimal-number valued attribute of an object."""
+
+    __metaclass__   = MOM.Meta.M_Attr_Type_Decimal
+    typ             = "Decimal"
+    code_format     = "%s"
+
+    decimal_places  = 2
+    max_digits      = 12
+    rounding        = decimal.ROUND_HALF_UP
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        D = decimal.Decimal
+        if not isinstance (value, D) :
+            if isinstance (value, float) :
+                value = str (value)
+            value = D (value, soc.D_Context)
+        return value.quantize (soc.D_Quant)
+    # end def cooked
+
+# end class A_Decimal
+
 class A_Float (_A_Float_) :
     code_format   = "%s"
     simple_cooked = float
@@ -825,7 +850,7 @@ Class `MOM.Attr.A_Attr_Type`
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()
     if isinstance (v, MOM.Meta.M_Attr_Type)
-    )
+    ) + ("decimal", )
 
 if __name__ != "__main__" :
     MOM.Attr._Export (* __all__)

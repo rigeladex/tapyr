@@ -62,14 +62,13 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class area_code
 
-        class subscriber_number (A_Int) : ### XXX A_Decimal
+        class subscriber_number (A_Decimal) :
             """Phone number proper (without country code, area code, extension)"""
 
             kind           = Attr.Primary
             rank           = 3
             min_value      = 100
 
-            ### XXX
             max_digits     = 14
             decimal_places = 0
 

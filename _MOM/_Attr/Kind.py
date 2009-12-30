@@ -66,6 +66,7 @@
 #                     `obj`
 #    30-Dec-2009 (CT) `_EPK_Mixin_._set_cooked_inner` to guard for differing
 #                     `home_scope`
+#    30-Dec-2009 (CT) `__set__` changed to really record changes
 #    ««revision-date»»···
 #--
 
@@ -117,13 +118,15 @@ class Kind (MOM.Prop.Kind) :
     # end def __get__
 
     def __set__ (self, obj, value) :
-        self.attr.check_invariant (obj, value)
-        self._set_cooked          (obj, value)
+        old_value = self.get_value (obj)
+        old_raw   = self.get_raw   (obj)
+        self.attr.check_invariant  (obj, value)
+        self._set_cooked           (obj, value)
         if  ( self.record_changes and (not obj.electric)
-            and self.get_value (obj) != value
+            and old_value != value
             ) :
             obj.home_scope.record_change \
-                (MOM.SCM.Change.Attr, obj, {self.name : self.get_raw (obj)})
+                (MOM.SCM.Change.Attr, obj, {self.name : old_raw})
     # end def __set__
 
     def get_pickle_cargo (self, obj) :

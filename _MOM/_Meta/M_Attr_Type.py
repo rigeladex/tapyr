@@ -34,6 +34,7 @@
 #     4-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to add `default_role_name`
 #    27-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to remove `description`
 #                     for classes without `role_type`
+#    30-Dec-2009 (CT) `M_Attr_Type_Decimal` added
 #    ««revision-date»»···
 #--
 
@@ -78,6 +79,21 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
     # end def __init__
 
 # end class M_Attr_Type
+
+class M_Attr_Type_Decimal (M_Attr_Type) :
+    """Meta class for MOM.Attr.A_Decimal classes."""
+
+    def __init__ (cls, name, bases, dict) :
+        cls.__m_super.__init__ (name, bases, dict)
+        import decimal
+        if "max_digits" in dict or "rounding" in dict :
+            cls.D_Context = decimal.Context \
+                (prec = cls.max_digits, rounding = cls.rounding)
+        if "decimal_places" in dict :
+            cls.D_Quant   = decimal.Decimal (10) ** -cls.decimal_places
+    # end def __init__
+
+# end class M_Attr_Type_Decimal
 
 class M_Attr_Type_Link_Role (M_Attr_Type) :
     """Meta class for MOM.Attr.A_Link_Role classes."""

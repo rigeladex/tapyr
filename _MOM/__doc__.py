@@ -720,6 +720,8 @@ Changing objects and links
     >>> for c in m.changes ().order_by (csk).all () :
     ...     print c
     <Create BMT.Mouse (u'Mighty_Mouse',)>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : u''}, new-values = {'weight' : u'10'}>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : '42'}>
 
@@ -766,6 +768,11 @@ Changing objects and links
         trap = (u'X', 1)
         rodent.weight = 42.0
         trap.max_weight = 20.0
+
+    >>> pot = PoT.instance (p, t1)
+    >>> pot.price = decimal.Decimal ("1.20")
+    >>> print pot.as_code ()
+    BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1), price = 1.20)
 
 Attribute queries
 ------------------
@@ -894,7 +901,7 @@ Scope queries
     ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
 
     >>> len (scope.ems.uncommitted_changes)
-    32
+    36
     >>> for c in scope.ems.uncommitted_changes :
     ...     print c
     <Create BMT.Person (u'Luke', u'Lucky')>
@@ -922,16 +929,20 @@ Scope queries
     <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")>
     <Modify BMT.Rat (u'betty',), old-values = {'name' : u'Axel'}, new-values = {'name' : u'betty'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
+    <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : u''}, new-values = {'weight' : u'10'}>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'white', 'weight' : u'10'}, new-values = {'color' : u'black', 'weight' : u'25.0'}>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'black', 'weight' : u'25.0'}, new-values = {'color' : u'yellow', 'weight' : '42'}>
     <Copy BMT.Mouse (u'Magic_Mouse',)>
         <Create BMT.Mouse (u'Magic_Mouse',)>
         <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : '42'}>
+    <Modify BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u''}, new-values = {'max_weight' : u'20'}>
+    <Modify BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'42.0'}, new-values = {'price' : u'1.20'}>
     <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
     <Destroy BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'yellow', 'weight' : '42'}>
         <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
     <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')")>
+        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
         <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     <Destroy BMT.Trap (u'X', u'2')>
         <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'2')")>
@@ -942,10 +953,10 @@ Scope queries
     >>> cc = c.from_pickle (pckl)
     >>> cc
     <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')")>
+        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
         <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     >>> cc.children
-    [<Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')")>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>]
+    [<Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>]
     >>> cc.children [0].parent is cc
     True
     >>> pckl = c.as_pickle ()
@@ -1312,6 +1323,11 @@ class Person_owns_Trap (_Ancestor_Essence) :
 
         # end class right
 
+        class price (A_Decimal) :
+            kind          = Attr.Optional
+            default       = 42.0
+        # end class price
+
     # end class _Attributes
 
 # end class Person_owns_Trap
@@ -1351,11 +1367,6 @@ class Person_sets_Trap_at_Location (_Ancestor_Essence) :
             auto_cache    = MOM.Role_Cacher (other_role_name = "middle")
 
         # end class right
-
-        class price (A_Float) :
-            kind          = Attr.Optional
-            default       = 42.0
-        # end class price
 
     # end class _Attributes
 
