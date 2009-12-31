@@ -28,6 +28,7 @@
 # Revision Dates
 #     2009-Oct-19 (MG) Creation
 #     4-Nov-2009 (MG) Use `TFL.Add_To_Class`
+#    31-Dec-2009 (MG) `_sa_numeric` added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,15 @@ def _sa_string (self, kind, ** kw) :
 def _sa_int (self, kind, ** kw) :
     return schema.Column (self._sa_col_name, types.Integer, ** kw)
 # end def _sa_int
+
+@TFL.Add_To_Class ("_sa_column", Attr.A_Decimal)
+def _sa_numeric (self, kind, ** kw) :
+    return schema.Column \
+        ( self._sa_col_name
+        , types.Numeric (self.max_digits, self.decimal_places)
+        , ** kw
+        )
+# end def _sa_numeric
 
 @TFL.Add_To_Class ("_sa_column", Attr.A_Float)
 def _sa_float (self, kind, ** kw) :

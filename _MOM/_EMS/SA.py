@@ -41,6 +41,7 @@
 #    18-Dec-2009 (MG) Use `Q_Result_Changes`
 #    21-Dec-2009 (CT) s/load_scope/load_root/
 #    21-Dec-2009 (CT) `max_cid` factored
+#    31-Dec-2009 (MG) `__lt__` and `__eq__` aded
 #    ««revision-date»»···
 #--
 
@@ -75,6 +76,22 @@ class PID (object) :
     def __getitem__ (self, key) :
         return getattr (self, self._Attrs [key])
     # end def __getitem__
+
+    def __lt__ (self, rhs) :
+        return (self.Type_Name, self.id)  < (rhs.Type_Name, rhs.id)
+    # end def __lt__
+
+    def __eq__ (self, rhs) :
+        try :
+            rhs = (rhs.Type_Name, rhs.id)
+        except AttributeError :
+            pass
+        return (self.Type_Name, self.id) == rhs
+    # end def __eq__
+
+    def __str__ (self) :
+        return "(%s, %s)" % (self.Type_Name, self.id)
+    # end def __str__
 
 # end class PID
 
