@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glück. All rights reserved
+# Copyright (C) 2009-2010 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -42,6 +42,7 @@
 #    21-Dec-2009 (CT) s/load_scope/load_root/
 #    21-Dec-2009 (CT) `max_cid` factored
 #    31-Dec-2009 (MG) `__lt__` and `__eq__` aded
+#     1-Jan-2010 (CT) `PID.__hash__` added
 #    ««revision-date»»···
 #--
 
@@ -76,6 +77,10 @@ class PID (object) :
     def __getitem__ (self, key) :
         return getattr (self, self._Attrs [key])
     # end def __getitem__
+
+    def __hash__ (self) :
+        return hash ((self.Type_Name, self.id))
+    # end def __hash__
 
     def __lt__ (self, rhs) :
         return (self.Type_Name, self.id)  < (rhs.Type_Name, rhs.id)
