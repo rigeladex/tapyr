@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -168,6 +168,7 @@
 #     2-Dec-2009 (CT)  `uniq_p` added
 #     2-Dec-2009 (CT)  `intersection`, `intersection_n` and `union` modernized
 #     2-Dec-2009 (CT)  `_sorted` removed (only needed for ancient Pythons)
+#     1-Jan-2010 (CT)  `first_diff` added
 #    ««revision-date»»···
 #--
 
@@ -452,6 +453,33 @@ def first_arg (x, * args, ** kw) :
     """Returns the first argument unchanged"""
     return x
 # end def first_arg
+
+def first_diff (a, b) :
+    """Return index of first difference in iterables `a` and `b`.
+
+       >>> first_diff ("a", "b")
+       0
+       >>> first_diff ("a", "a")
+       1
+       >>> first_diff ("a", "ab")
+       1
+       >>> first_diff ("ac", "ab")
+       1
+       >>> first_diff ("abc", "ab")
+       2
+       >>> first_diff ("abcdef", "ab")
+       2
+       >>> first_diff ("abcdefgh", "abcDefgh")
+       3
+       >>> "abcdefgh"[3], "abcDefgh"[3]
+       ('d', 'D')
+    """
+    i = -1
+    for i, (l, r) in enumerate (paired (a, b)) :
+        if l != r :
+            return i
+    return i + 1
+# end def first_diff
 
 def flatten (* lists) :
     """Returns a list containing all the elements in `lists'.
