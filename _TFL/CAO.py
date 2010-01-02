@@ -36,6 +36,8 @@
 #
 # Revision Dates
 #    31-Dec-2009 (CT) Creation (based on TFL.Command_Line)
+#     1-Jan-2010 (CT) Creation continued
+#     2-Jan-2010 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
@@ -119,27 +121,26 @@ class Cmd (TFL.Meta.Object) :
 
     def __init__ \
             ( self, handler
-            , opts             = ()
-            , args             = ()
-            , min_args         = 0
-            , max_args         = -1
-            , desc             = ""
-            , name             = ""
-            , process_keywords = False
+            , opts        = ()
+            , args        = ()
+            , min_args    = 0
+            , max_args    = -1
+            , desc        = ""
+            , name        = ""
+            , do_keywords = False
             ) :
         assert max_args == -1 or max_args >= min_args
         assert max_args == -1 or max_args >= len (args)
         assert TFL.callable (handler)
-        self._handler          = handler
-        self._opt_spec         = opts
-        self._arg_spec         = args
-        self._min_args         = min_args
-        self._max_args         = max_args
-        self._desc             = desc
-        self._name             = \
-            name or TFL.Caller.globals () ["__name__"] ### XXX ???
-        self._process_keywords = process_keywords
-        self._parent           = None
+        self._handler     = handler
+        self._opt_spec    = opts
+        self._arg_spec    = args
+        self._min_args    = min_args
+        self._max_args    = max_args
+        self._desc        = desc
+        self._name        = name or TFL.Caller.globals () ["__name__"] ### XXX ???
+        self._do_keywords = do_keywords
+        self._parent      = None
         self._setup_opts (opts)
         self._setup_args (args)
     # end def __init__
@@ -156,7 +157,7 @@ class Cmd (TFL.Meta.Object) :
     # end def __call__
 
     def parse (self, argv) :
-        result  = CAO (self)
+        result  = CAO  (self)
         argv_it = iter (argv)
         for arg in argv_it :
             if arg == "--" :
@@ -199,7 +200,7 @@ class Cmd (TFL.Meta.Object) :
     def _handle_arg (self, arg, argv_it, result) :
         al = result._arg_list
         if not al :
-            spec = Arg.String ()
+            spec = Arg.Str ()
         else :
             spec = al [min (len (result.argv), len (al) - 1)]
         result._set_arg (spec, arg)
@@ -229,9 +230,11 @@ class Cmd (TFL.Meta.Object) :
         self._arg_list = al = []
         self._arg_dict = ad = {}
         self._sub_cmd  = None
+        od             = self._opt_dict
         for i, a in enumerate (args) :
             if isinstance (a, basestring) :
                 a = Arg.from_string (a)
+            assert a.name not in od
             a.index = i
             al.append (a)
             ad [a.name] = a
@@ -289,26 +292,45 @@ class CAO (TFL.Meta.Object) :
     def __init__ (self, cmd) :
         self._cmd         = cmd
         self._arg_dict    = dict (cmd._arg_dict)
+        self._arg_list    = dict (cmd._arg_list)
         self._opt_dict    = dict (cmd._opt_dict)
         self._opt_abbr    = dict (cmd._opt_abbr)
-        self._do_keywords = cmd._process_keywords
+        self._do_keywords = cmd._do_keywords
         self._do_help     = ()
         self.argv         = []
-        self.option       = TFL.defaultdict (list)
-        self.keyword      = dict ()
+        self._map         = TFL.defaultdict (list)
+        self._key_values  = dict ()
+        self._explicit_n  = 0
     # end def __init__
 
     def __call__ (self) :
         call_handler = True
         cmd          = self._cmd
         if self._do_help :
-            ### XXX
-            call_handler = cmd._parent or self.argv or self._opt_values
+            call_handler = cmd._explicit_n
+            ### XXX display help
         if call_handler :
             return cmd._handler (self)
     # end def __call__
 
+    def _attribute_value (self, name) :
+        if name in self._opt_dict :
+            ao   = self._opt_dict   [name]
+        elif name in self._arg_dict :
+            ao   = self._arg_dict   [name]
+        elif name in self._key_values :
+            return self._key_values [name]
+        else :
+            raise AttributeError (name)
+        result = self._map [name]
+        if ao.max_number == 1:
+            result = result [0]
+        return result
+    # end def _attribute_value
+
     def _check (self) :
+        self._explicit_n = len (self._map) + len (self.argv)
+        self._finish_setup ()
         min_args = self.cmd.min_args
         max_args = self.cmd.max_args
         argn     = len (self.argv)
@@ -320,6 +342,15 @@ class CAO (TFL.Meta.Object) :
                 ("Maximum number of arguments is %d, got %d" % (max_args, argn))
     # end def _check
 
+    def _finish_setup (self) :
+        map = self._map
+        for spec in itertools.chain \
+                (self._arg_dict.itervalues (), self._opt_dict.itervalues ()) :
+            name = spec.name
+            if name not in map :
+                map [name].extend (spec._get_default ())
+    # end def _finish_setup
+
     def _set_arg (self, spec, value) :
         kp = self._key_pat
         if isinstance (spec, Cmd_Choice) :
@@ -328,12 +359,16 @@ class CAO (TFL.Meta.Object) :
                     ("Sub-command `%s` needs to be first argument" % value)
             self._sub_cmd = sc = spec [value]
             self._arg_dict.update (sc._arg_dict)
+            self._arg_list.extend (sc._arg_list)
             self._opt_dict.update (sc._opt_dict)
             sc._setup_arg_abbr    (self._opt_dict, self._opt_abbr)
         elif self._do_keywords and kp.match (value) :
-            self.keyword [kp.name] = kp.value
+            self._key_values [kp.name] = kp.value
         else :
-            self.argv.extend (spec.cooked (value))
+            cv = spec.cooked (value)
+            self.argv.extend (cv)
+            if spec.name :
+                self._map [spec.name].extend (cv)
     # end def _set_arg
 
     def _set_help (self, k, v) :
@@ -341,13 +376,31 @@ class CAO (TFL.Meta.Object) :
     # end def _set_help
 
     def _set_opt (self, spec, value) :
-        self.option [spec.name].extend (spec.cooked (value))
+        self._map [spec.name].extend (spec.cooked (value))
     # end def _set_opt
 
     def _set_keys (self, kw) :
         for k, v in kw :
-            self.keyword [k] = v
+            self._key_values [k] = v
     # end def _set_keys
+
+    def __getattr__ (self, name) :
+        return self._attribute_value (name)
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        if isinstance (key, basestring) :
+            try :
+                return self._attribute_value (key)
+            except AttributeError :
+                raise KeyError (key)
+        else :
+            return self.argv [key]
+    # end def __getitem__
+
+    def __iter__ (self) :
+        return iter (self.argv)
+    # end def __iter__
 
 # end class CAO
 
