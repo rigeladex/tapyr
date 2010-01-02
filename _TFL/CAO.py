@@ -88,13 +88,17 @@ from   _TFL.Regexp        import Regexp, re
 
 import _TFL.Abbr_Key_Dict
 import _TFL.Caller
+import _TFL.defaultdict
 import _TFL._Meta.Object
+import _TFL._Meta.M_Class
 import _TFL.predicate
 import _TFL.sos
 
+import decimal
+import itertools
 import sys
 
-class Error (StandardError) :
+class Err (StandardError) :
 
     def __init__ (self, * args) :
         self.args = args
@@ -106,7 +110,274 @@ class Error (StandardError) :
 
     __repr__ = __str__
 
-# end class Error
+# end class Err
+
+class Arg (TFL.Meta.M_Class) :
+    """Meta class for argument types."""
+
+    Table      = {}
+
+    _spec_pat  = None
+    _spec_form = \
+        ( """ (?P<name> [^:=# ?]+) """
+          """ (?:  : (?P<type>        [%s]    (?P<auto_split> [, :]?) )? )? """
+          """ (?:  = (?P<default>     [^\#?]* ))? """
+          """ (?: \# (?P<max_number>  \d+     ))? """
+          """ (?: \? (?P<description> .+      ))? """
+          """ $ """
+        )
+
+    def __init__ (cls, name, bases, dict) :
+        cls.__m_super.__init__ (name, bases, dict)
+        if not name.startswith ("_") :
+            setattr (cls.__class__, name, cls)
+            if "type_abbr" in dict :
+                assert not cls.type_abbr in cls.Table, cls
+                cls.Table [cls.type_abbr] = cls
+    # end def __init__
+
+    @classmethod
+    def from_string (cls, string) :
+        pat = cls._spec_pat
+        if pat is None :
+            pat = cls._spec_pat = Regexp \
+                ( cls._spec_form % ("".join (sorted (cls.Table)), )
+                , re.VERBOSE | re.DOTALL
+                )
+        if pat.match (string) :
+            Spec = cls.Table [pat.type or "B"]
+            kw   = pat.last_match.groupdict ()
+            kw.pop ("type", None)
+            result = Spec (** kw)
+        else :
+            raise Err ("Invalid argument or option specification `%s`" % string)
+        return result
+    # end def from_string
+
+# end class Arg
+
+class Opt (Arg) :
+    """Meta class for option types."""
+
+# end class Opt
+
+class _Spec_ (TFL.Meta.Object) :
+    """Base class for argument and option types"""
+
+    __metaclass__ = Arg
+
+    auto_split    = None
+    needs_value   = True
+
+    range_pat     = Regexp \
+        ( r"""^\s*"""
+          r"""(?P<head> (?: 0[xX])? \d+)"""
+          r"""\s*"""
+          r"""\.\."""
+          r"""\s*"""
+          r"""(?P<tail> (?: 0[xX])? \d+)"""
+          r"""\s*"""
+          r"""(?: : (?P<delta> \d+))?"""
+          r"""\s*$"""
+        , re.VERBOSE
+        )
+
+    def __init__ \
+            ( self
+            , name          = ""
+            , default       = ""
+            , description   = ""
+            , explanation   = ""
+            , auto_split    = None
+            , max_number    = None
+            , hide          = False
+            , range_delta   = 1
+            , cook          = None
+            ) :
+        self.name           = name
+        self.description    = description
+        self.explanation    = explanation
+        if auto_split is None :
+            auto_split      = self.auto_split
+        else :
+            self.auto_split = auto_split
+        if max_number is None :
+            max_number      = 1 if auto_split is None else 0
+        self.max_number     = max_number
+        self.hide           = hide or name [:2] == "__"
+        self.range_delta    = range_delta
+        if cook is not None :
+            self.cook       = cook
+        self._setup_default (default)
+    # end def __init__
+
+    def cook (self, value) :
+        return value
+    # end def cook
+
+    def cooked (self, value) :
+        auto_split = self.auto_split
+        cook       = self.cook
+        if auto_split and auto_split in value :
+            values = value.split (auto_split)
+        else :
+            values = (value, )
+        if auto_split :
+            values = self._resolve_range (values)
+        return [cook (v) for v in values]
+    # end def cooked
+
+    def _resolve_range (self, values) :
+        pat = self.range_pat
+        for value in values :
+            if pat.match (value) :
+                for v in _resolve_range_1 (value, pat) :
+                    yield v
+            else :
+                yield value
+    # end def _resolve_range
+
+    def _resolve_range_1 (self, value, pat) :
+        yield value
+    # end def _resolve_range_1
+
+    def _safe_eval (self, value) :
+        return eval (value, {}, {})
+    # end def _safe_eval
+
+    def _setup_default (self, default) :
+        if isinstance (default, basestring) :
+            default  = self.cooked (default)
+        elif default is None :
+            default  = ()
+        elif not isinstance (default, (list, tuple)) :
+            default  = (default, )
+        self.default = default
+    # end def _setup_default
+
+# end class _Spec_
+
+class _Spec_O_ (_Spec_) :
+    """Base class for option types"""
+
+    __metaclass__ = Opt
+
+# end class _Spec_O_
+
+class _Number_ (_Spec_) :
+    """Base class for numeric argument and option types"""
+
+    auto_split    = ","
+
+    def cook (self, value) :
+        return self._cook (self._safe_eval (value))
+    # end def cook
+
+    def _resolve_range_1 (self, value, pat) :
+        cook  = self.cook
+        head  = cook (pat.head)
+        tail  = cook (pat.tail) + 1
+        delta = cook (pat.delta or self.range_delta)
+        for v in range (head, tail, delta) :
+            yield v
+    # end def _resolve_range_1
+
+# end class _Number_
+
+class Bool (_Spec_O_) :
+    """Option with a boolean value"""
+
+    needs_value   = False
+    type_abbr     = "B"
+
+    def cook (self, value) :
+        if not isinstance (value, basestring) :
+            return bool (value)
+        if value.lower () in ("no", "0", "false") : ### XXX I18N
+            return False
+        return True
+    # end def cook
+
+    def _setup_default (self, default) :
+        if default is None :
+            default = True
+        return self.__super._setup_default (default)
+    # end def _setup_default
+
+# end class Bool
+
+class Decimal (_Number_) :
+    """Argument or option with a decimal value"""
+
+    type_abbr     = "D"
+
+    def _cook (self, value) :
+        if isinstance (value, float) :
+            value = str (value)
+        return decimal.Decimal (float)
+    # end def _cook
+
+# end class Decimal
+
+class Float (_Number_) :
+    """Argument or option with a floating point value"""
+
+    type_abbr     = "F"
+
+    _cook         = float
+
+# end class Float
+
+class Int (_Number_) :
+    """Argument or option with a integer value"""
+
+    type_abbr     = "I"
+
+    _cook         = int
+
+# end class Int
+
+class Int_X (_Number_) :
+    """Argument or option with a integer value, allowing base specification"""
+
+    type_abbr     = "X"
+
+    def _cook (self, value) :
+        if isinstance (value, basestring) :
+            return int (value, 0)
+        return int (value)
+    # end def _cook
+
+# end class Int_X
+
+class Str (_Spec_) :
+    """Argument or option with a string value"""
+
+    type_abbr     = "S"
+
+# end class Str
+
+class Str_AS (_Spec_) :
+    """Argument or option with a string value, auto-splitting"""
+
+    auto_split    = ","
+    type_abbr     = "T"
+
+# end class Str
+
+class Path (_Spec_) :
+    """Argument or option with a filename or directory name as value"""
+
+    auto_split    = ":"
+    type_abbr     = "P"
+
+    def _resolve_range (self, values) :
+        for value in values :
+            for v in TFL.sos.expanded_path (value) :
+                yield v
+    # end def _resolve_range
+
+# end class Path
 
 class Cmd (TFL.Meta.Object) :
     """Model a command with options, arguments, and a handler."""
@@ -140,7 +411,7 @@ class Cmd (TFL.Meta.Object) :
         self._desc        = desc
         self._name        = name or TFL.Caller.globals () ["__name__"] ### XXX ???
         self._do_keywords = do_keywords
-        self._parent      = None
+        self._super_cmd   = None
         self._setup_opts (opts)
         self._setup_args (args)
     # end def __init__
@@ -189,13 +460,21 @@ class Cmd (TFL.Meta.Object) :
             elif k == "__kw__" :
                 result._set_keys  (v)
             else :
-                raise Error ("Unknown option `%s` [%s]" % (k, v))
+                raise Err ("Unknown option `%s` [%s]" % (k, v))
         argv_it = iter (rest)
         for arg in argv_it :
             self._handle_arg (arg, argv_it, result)
         result._check ()
         return result
     # end def use
+
+    def _attribute_spec (self, name) :
+        if name in self._opt_dict :
+            return self._opt_dict [name]
+        if name in self._arg_dict :
+            return self._arg_dict [name]
+        raise AttributeError (name)
+    # end def _attribute_spec
 
     def _handle_arg (self, arg, argv_it, result) :
         al = result._arg_list
@@ -218,12 +497,12 @@ class Cmd (TFL.Meta.Object) :
                     try :
                         v = argv_it.next ()
                     except StopIteration :
-                        raise Error ("Option `%s` needs a value" % k)
+                        raise Err ("Option `%s` needs a value" % k)
                 result._set_opt  (spec, v)
             elif self._help_pat.match (k) :
                 result._set_help (k, v)
             else :
-                raise Error ("Unknown or ambiguous option `%s`" % (arg, ))
+                raise Err ("Unknown or ambiguous option `%s`" % (arg, ))
     # end def _handle_opt
 
     def _setup_args (self, args) :
@@ -236,20 +515,21 @@ class Cmd (TFL.Meta.Object) :
                 a = Arg.from_string (a)
             assert a.name not in od
             a.index = i
+            a.kind  = "argument"
             al.append (a)
             ad [a.name] = a
             if isinstance (a, Cmd) :
                 if self._sub_cmd is None :
                     self._sub_cmd = a
-                    if a._parent is None :
-                        a._parent = self
+                    if a._super_cmd is None :
+                        a._super_cmd = self
                     else :
-                        raise Error \
-                            ( "Sub-command already has a parent `%s`"
-                            % a._parent
+                        raise Err \
+                            ( "Sub-command already has a super command `%s`"
+                            % a._super_cmd
                             )
                 else :
-                    raise Error \
+                    raise Err \
                         ( "Only one sub-command is possible, "
                           "two are specified: `%s`, `%s`"
                         % (self._sub_cmd.name, a.name)
@@ -261,8 +541,9 @@ class Cmd (TFL.Meta.Object) :
         self._opt_abbr = oa = {}
         for o in opts :
             if isinstance (o, basestring) :
-                o = Arg.from_string (o)
+                o = Arg.from_string (o.lstrip ("-"))
             od [o.name] = o
+            o.kind = "option"
         self._setup_opt_abbr (od, oa)
     # end def _setup_opts
 
@@ -275,6 +556,17 @@ class Cmd (TFL.Meta.Object) :
                 result [l [:k + 1]] = o
         return result
     # end def _setup_opt_abbr
+
+    def __getattr__ (self, name) :
+        return self._attribute_spec (name)
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        try :
+            return self._attribute_spec (key)
+        except AttributeError :
+            raise KeyError (key)
+    # end def __getitem__
 
 # end class Cmd
 
@@ -292,7 +584,7 @@ class CAO (TFL.Meta.Object) :
     def __init__ (self, cmd) :
         self._cmd         = cmd
         self._arg_dict    = dict (cmd._arg_dict)
-        self._arg_list    = dict (cmd._arg_list)
+        self._arg_list    = list (cmd._arg_list)
         self._opt_dict    = dict (cmd._opt_dict)
         self._opt_abbr    = dict (cmd._opt_abbr)
         self._do_keywords = cmd._do_keywords
@@ -331,14 +623,14 @@ class CAO (TFL.Meta.Object) :
     def _check (self) :
         self._explicit_n = len (self._map) + len (self.argv)
         self._finish_setup ()
-        min_args = self.cmd.min_args
-        max_args = self.cmd.max_args
+        min_args = self._cmd._min_args
+        max_args = self._cmd._max_args
         argn     = len (self.argv)
         if argn < min_args :
-            raise Error \
+            raise Err \
                 ("Need at least %d arguments, got %d" % (min_args, argn))
         if 0 <= max_args <= argn :
-            raise Error \
+            raise Err \
                 ("Maximum number of arguments is %d, got %d" % (max_args, argn))
     # end def _check
 
@@ -348,14 +640,14 @@ class CAO (TFL.Meta.Object) :
                 (self._arg_dict.itervalues (), self._opt_dict.itervalues ()) :
             name = spec.name
             if name not in map :
-                map [name].extend (spec._get_default ())
+                map [name].extend (spec.default)
     # end def _finish_setup
 
     def _set_arg (self, spec, value) :
         kp = self._key_pat
         if isinstance (spec, Cmd_Choice) :
             if self.argv :
-                raise Error \
+                raise Err \
                     ("Sub-command `%s` needs to be first argument" % value)
             self._sub_cmd = sc = spec [value]
             self._arg_dict.update (sc._arg_dict)
