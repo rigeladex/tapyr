@@ -70,7 +70,8 @@ from   _TFL              import TFL
 
 from   _TFL.Currency     import *
 from   _TFL.Currency     import Currency, _Currency_
-from   _TFL.Command_Line import Opt_L
+
+import _TFL.CAO
 
 class _EU_Currency_ (_Currency_) :
 
@@ -377,52 +378,6 @@ EU_Currency.extension.sort (key = lambda c : c.name)
 def currency (name) :
     return EU_Currency.Table [name]
 # end def currency
-
-class EUC_Opt (Opt_L) :
-    """EU_Currency option class for use with TFL.Command_Line."""
-
-    default_value = "EUR"
-
-    def __init__ (self, ** kw) :
-        self.__super.__init__ \
-            ( selection = sorted (EUC.Table.iterkeys ())
-            , cook      = self._cooked_currency
-            , ** kw
-            )
-        self._cooked_currency (self.default)
-    # end def __init__
-
-    def _cooked_currency (self, value) :
-        if not isinstance (value, EUC) :
-            value = currency (value)
-        return value
-    # end def _cooked_currency
-
-# end class EUC_Opt
-
-class EUC_Opt_SC (EUC_Opt) :
-    """EU_Currency source_currency option class for use with Command_Line."""
-
-    default_name = "source_currency"
-    default_desc = "Source currency"
-
-# end class EUC_Opt_TC
-
-class EUC_Opt_TC (EUC_Opt) :
-    """EU_Currency target_currency option class for use with Command_Line."""
-
-    default_name = "target_currency"
-    default_desc = "Target currency"
-
-    def _cooked_currency (self, value) :
-        result = self.__super._cooked_currency (value)
-        EUC.set_target_currency (result)
-        return result
-    # end def _cooked_currency
-
-# end class EUC_Opt_TC
-
-import _TFL.CAO
 
 class EUC_Source (TFL.CAO.Key) :
     """Argument or option for source currency"""

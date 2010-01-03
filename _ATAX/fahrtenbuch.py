@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -31,6 +31,7 @@
 #     9-Jul-2009 (MG) Support for `km_geld` added
 #     5-Aug-2009 (CT) `km_business`, `km_private`, and `private_percent`
 #                     factored (in class `Fahrtenbuch`)
+#     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,7 @@ from   _TFL._Meta.Once_Property import Once_Property
 
 import _CAL.Date_Time
 import _TFL._Meta.Object
+import _TFL.CAO
 import _TFL.Environment
 
 class FB_Entry (TFL.Meta.Object) :
@@ -238,34 +240,29 @@ class Fahrtenbuch (TFL.Meta.Object) :
 
 # end class Fahrtenbuch
 
-def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( option_spec =
-            ( "Config:P,?Config file(s)"
-            , "user:S=%s" % TFL.Environment.username.capitalize ()
-            , "km_geld:B?Print the factoring for the KM Geld"
-            )
-        , arg_spec    =
-            ( "fahrtenbuch:P?File defining fahrtenbuch"
-            )
-        , min_args    = 1
-        , max_args    = 1
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
-    ATAX.Main.load_config (cmd)
+def _main (cmd) :
+    ATAX.Command.load_config (cmd)
     fb = Fahrtenbuch.from_file (cmd.user, cmd.fahrtenbuch)
     if not cmd.km_geld :
         print fb.tex ()
     else :
         print fb.km_geld ()
-# end def main
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        = ("fahrtenbuch:P?File defining fahrtenbuch", )
+    , min_args    = 1
+    , max_args    = 1
+    , opts        =
+        ( "Config:P,?Config file(s)"
+        , "user:S=%s" % TFL.Environment.username.capitalize ()
+        , "km_geld:B?Print the factoring for the KM Geld"
+        )
+    )
 
 if __name__ != "__main__" :
     ATAX._Export ("*")
 else :
-    main (command_spec ())
+    _Command ()
 ### __END__ ATAX.fahrtenbuch
