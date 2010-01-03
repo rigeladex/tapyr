@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -33,6 +33,7 @@
 #    17-Sep-2007 (CT) Modernized
 #    17-Sep-2007 (CT) Use `Account.add_file`
 #    17-Sep-2007 (CT) `main` refactored
+#     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -55,7 +56,7 @@ def kassabuch (account, file) :
             print "Income entries not yet implemented", e
 # end def kassabuch
 
-class main (Main) :
+class Command (Command) :
 
     def _create_account (self, cmd, categories, source_currency, vst_korrektur) :
         return V_Account (vst_korrektur = vst_korrektur)
@@ -69,13 +70,12 @@ class main (Main) :
         kassabuch (account, file)
     # end def _output
 
-    @classmethod
-    def _opt_spec (cls) :
-        return super (main, cls)._opt_spec () + ("-output:S", )
+    def _opt_spec (self) :
+        return self.__super._opt_spec () + ("-output:S", )
     # end def _opt_spec
 
-# end class main
+# end class Command
 
 if __name__ == "__main__":
-    main (main.command_spec ())
+    Command ()
 ### __END__ ATAX.kassabuch

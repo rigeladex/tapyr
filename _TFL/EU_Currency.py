@@ -455,20 +455,6 @@ class EUC_Target (TFL.CAO.Key) :
 
 # end class EUC_Target
 
-def _command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    from   _TFL.predicate    import sorted
-    return Command_Line \
-        ( option_spec =
-            ( EUC_Opt_SC (name = "source", default = "ATS")
-            , EUC_Opt_TC (name = "target")
-            )
-        , arg_spec    = ("amount:S?Amount to convert", )
-        , description = "Convert between two Euro currencies"
-        , arg_array   = arg_array
-        )
-# end def _command_spec
-
 def _main (cmd) :
     source = cmd.source
     s      = source (0)
@@ -493,13 +479,13 @@ def _main (cmd) :
 # end def _main
 
 _Command = TFL.CAO.Cmd \
-    ( handler   = _main
-    , args      = ("amount:S?Amount to convert", )
-    , opts      =
+    ( handler     = _main
+    , args        = ("amount:S?Amount to convert", )
+    , opts        =
         ( EUC_Source (name = "source", default = "ATS")
-        , EUC_Target ()
+        , EUC_Target (name = "target")
         )
-    , desc      = "Convert between two Euro currencies"
+    , description = "Convert between two Euro currencies"
     )
 
 __doc__ = """

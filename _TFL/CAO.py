@@ -38,237 +38,16 @@
 #    31-Dec-2009 (CT) Creation (based on TFL.Command_Line)
 #     1-Jan-2010 (CT) Creation continued
 #     2-Jan-2010 (CT) Creation continued..
+#     3-Jan-2010 (CT) Creation continued...
 #    ««revision-date»»···
 #--
-
-### To-do
-### - Dict_Choice
-### - List_Choice
-### - ??? other argument types ???
-
-"""
-This module provides classes for defining and processing commands,
-arguments, and options. The values for arguments and options can be
-parsed from `sys.argv` or supplied by a client via keyword arguments.
-
-A command is defined by creating an instance of the :class:`Command`
-with the arguments
-
-- a callback function `handler` that performs the command,
-
-- a tuple of :class:`Arg` instances that defines the possible arguments,
-
-- the minimum number of arguments required `min_args',
-
-- the maximum number of arguments allowed  `max_args'
-  (the default -1 means an unlimited number is allowed),
-
-- a tuple of :class:`Arg` or :class:`Opt` that instances defines the
-  possible  options,
-
-- a description of the command to be included in the `help',
-
-- a `name` for the command (by default, the name of the module defining
-  the `Command` is used).
-
-For `Arg` and `Opt`, a shortcut string notation can be used:
-
-    `<name>:<type-spec><auto-split-spec>=<default>#<max-number>?<help>`
-
-Calling a :class:`Command` instance with an argument array, e.g.,
-`sys.argv`, parses the arguments and options in the array, stores
-their values in the instance, and calls the `handler`.
-
-Calling a :class:`Command` instance with keyword arguments initializes
-the argument and option values from those values and calls the
-`handler`.
-
-Alternatively, the methods `parse`, `use`, and `handle` can be
-called by a client, if explicit flow control is required.
-
-    >>> cmd = Cmd (show, name = "Test", args = ("adam:P=/tmp/test?First arg", "bert:I=42"), opts = ("-verbose:B", "-year:I,=2010"))
-    >>> cmd._arg_list
-    ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?None']
-    >>> sorted (str (o) for o in cmd._opt_dict.itervalues ())
-    ["'-verbose:B=False#1?None'", "'year:I,=2010#0?None'"]
-
-    >>> cmd (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
-    Test
-        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
-        Arguments  : ['adam', 'bert']
-        -verbose   : False
-        -year      : [2000, 1999]
-        adam       : /tmp/tmp
-        bert       : 42
-        argv       : ['/tmp/tmp']
-
-    >>> cao = cmd.parse (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
-    >>> cao.year
-    [2000, 1999]
-    >>> cao.verbose
-    False
-    >>> cao.adam
-    '/tmp/tmp'
-    >>> cao.bert
-    42
-    >>> cao.argv
-    ['/tmp/tmp']
-
-    >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
-    Test
-        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
-        Arguments  : ['adam', 'bert']
-        -verbose   : True
-        -year      : [2000, 1999]
-        adam       : /tmp/tmp
-        bert       : 137
-        argv       : ['/tmp/tmp', 137]
-    >>> cap = cmd.parse (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
-    >>> cap.verbose
-    True
-    >>> cap.argv
-    ['/tmp/tmp', 137]
-
-    >>> coc = Cmd (show,
-    ...     name = "Comp", args = (Cmd_Choice ("sub",
-    ...       Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
-    ...       Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
-    ...       ), ), opts = ("verbose:B", "strict:B")
-    ...     )
-    >>> coc ([])
-    Comp
-        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
-        Arguments  : ['sub']
-        -strict    : False
-        -verbose   : False
-        sub        : None
-        argv       : []
-    >>> coc (["one"])
-    Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
-        Arguments  : ['aaa', 'bbb']
-        -Z         : False
-        -strict    : False
-        -verbose   : False
-        -y         : None
-        aaa        : None
-        bbb        : None
-        argv       : []
-    >>> coc (["two"])
-    Comp two
-        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
-        Arguments  : ['ccc', 'ddd']
-        -strict    : False
-        -struct    : False
-        -verbose   : False
-        ccc        : 3
-        ddd        : D
-        argv       : []
-    >>> coc (["-s"])
-    Comp
-        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
-        Arguments  : ['sub']
-        -strict    : True
-        -verbose   : False
-        sub        : None
-        argv       : []
-    >>> coc (["-s", "one"])
-    Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
-        Arguments  : ['aaa', 'bbb']
-        -Z         : False
-        -strict    : True
-        -verbose   : False
-        -y         : None
-        aaa        : None
-        bbb        : None
-        argv       : []
-    >>> coc (["-s", "two"])
-    Comp two
-        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
-        Arguments  : ['ccc', 'ddd']
-        -strict    : True
-        -struct    : False
-        -verbose   : False
-        ccc        : 3
-        ddd        : D
-        argv       : []
-    >>> coc (["two", "-s"])
-    Traceback (most recent call last):
-      ...
-    Err: Command/argument/option error: Ambiguous option `-s`, matches any of ['strict', 'struct']
-    >>> coc (["two", "-t"])
-    Traceback (most recent call last):
-      ...
-    Err: Command/argument/option error: Unknown option `-t`
-    >>> coc (["two", "one"])
-    Traceback (most recent call last):
-      ...
-    Err: Command/argument/option error: Invalid value `one` for 'ccc:I=3#1?None'
-    >>> coc (["one", "two"])
-    Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
-        Arguments  : ['aaa', 'bbb']
-        -Z         : False
-        -strict    : False
-        -verbose   : False
-        -y         : None
-        aaa        : two
-        bbb        : None
-        argv       : ['two']
-    >>> coc (["one", "-v", "two", "-Z"])
-    Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
-        Arguments  : ['aaa', 'bbb']
-        -Z         : True
-        -strict    : False
-        -verbose   : True
-        -y         : None
-        aaa        : two
-        bbb        : None
-        argv       : ['two']
-    >>> coc (["one", "-v", "two", "-Z", "three", "four"])
-    Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
-        Arguments  : ['aaa', 'bbb']
-        -Z         : True
-        -strict    : False
-        -verbose   : True
-        -y         : None
-        aaa        : two
-        bbb        : three
-        argv       : ['two', 'three', 'four']
-
-    >>> ko  = Arg.Key (name = "foo", dict = {"1": "frodo", "a": 42})
-    >>> cmd = Cmd (show, name = "dict-test", opts = (ko, ))
-    >>> cmd (["-foo", "a"])
-    dict-test
-        Options    : ['f', 'fo', 'foo']
-        Arguments  : []
-        -foo       : 42
-        argv       : []
-    >>> cmd (["-foo=1"])
-    dict-test
-        Options    : ['f', 'fo', 'foo']
-        Arguments  : []
-        -foo       : frodo
-        argv       : []
-
-
-
-coc = Cmd (show,
-    name = "Comp", args = (Cmd_Choice ("sub",
-      Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
-      Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
-      ), ), opts = ("verbose:B", "strict:B"))
-"""
 
 from   _TFL               import TFL
 
 from   _TFL.Regexp        import Regexp, re
 
-import _TFL.Caller
 import _TFL.defaultdict
+import _TFL.Environment
 import _TFL._Meta.Object
 import _TFL._Meta.M_Class
 import _TFL.predicate
@@ -544,7 +323,7 @@ class Decimal (_Number_) :
     def _cook (self, value) :
         if isinstance (value, float) :
             value = str (value)
-        return decimal.Decimal (float)
+        return decimal.Decimal (value)
     # end def _cook
 
 # end class Decimal
@@ -626,7 +405,7 @@ class Path (_Spec_) :
 
     def _resolve_range (self, values) :
         for value in values :
-            for v in TFL.sos.expanded_path (value) :
+            for v in TFL.sos.expanded_globs (value) :
                 yield v
     # end def _resolve_range
 
@@ -635,6 +414,7 @@ class Path (_Spec_) :
 class Cmd (TFL.Meta.Object) :
     """Model a command with options, arguments, and a handler."""
 
+    _handler      = None
     _help_pat     = Regexp ("""^(h(e(lp?)?)?|\?)$""")
     _opt_pat      = Regexp \
         ( """ -{1,2} (?P<name> [^:= ]+) """
@@ -644,25 +424,27 @@ class Cmd (TFL.Meta.Object) :
         )
 
     def __init__ \
-            ( self, handler
+            ( self
+            , handler     = None
             , args        = ()
             , min_args    = 0
             , max_args    = -1
             , opts        = ()
-            , desc        = ""
+            , description = ""
             , name        = ""
             , do_keywords = False
             ) :
         assert max_args == -1 or max_args >= min_args
         assert max_args == -1 or max_args >= len (args)
-        assert TFL.callable (handler)
-        self._handler     = handler
+        if handler is not None :
+            assert TFL.callable (handler)
+            self._handler = handler
         self._opt_spec    = opts
         self._arg_spec    = args
         self._min_args    = min_args
         self._max_args    = max_args
-        self._desc        = desc
-        self._name        = name or TFL.Caller.globals () ["__name__"] ### XXX ???
+        self._description = description
+        self._name        = name or TFL.Environment.script_name ()
         self._do_keywords = do_keywords
         self._setup_opts (opts)
         self._setup_args (args)
@@ -671,11 +453,21 @@ class Cmd (TFL.Meta.Object) :
     def __call__ (self, _argv = None, ** _kw) :
         if _kw :
             assert not _argv, "Cannot specify both `_argv` and `_kw`"
-            cao = self.use   (** _kw)
+            cao = self.use (** _kw)
         else :
+            help_on_err = False
             if _argv is None :
+                help_on_err = True
                 _argv = sys.argv [1:]
-            cao = self.parse (_argv)
+            try :
+                cao = self.parse (_argv)
+            except Exception, exc :
+                if help_on_err :
+                    print exc
+                    ### XXX display help
+                    return
+                else :
+                    raise
         return cao ()
     # end def __call__
 
@@ -860,21 +652,25 @@ class CAO (TFL.Meta.Object) :
         self._do_help     = ()
         self.argv         = []
         self._map         = TFL.defaultdict (list)
+        self._raw         = TFL.defaultdict (list)
         self._key_values  = dict ()
         self._explicit_n  = 0
     # end def __init__
 
     def __call__ (self) :
         call_handler = True
-        cmd          = self._cmd
+        handler      = self._cmd._handler
         if self._do_help :
-            call_handler = cmd._explicit_n
-            ### XXX display help
-        if call_handler :
-            return cmd._handler (self)
+            call_handler = self._explicit_n
+            show (self) ### XXX display proper help
+        if call_handler and handler :
+            return handler (self)
+        return self
     # end def __call__
 
-    def _attribute_value (self, name) :
+    def _attribute_value (self, name, map = None) :
+        if map is None :
+            map = self._map
         if name in self._opt_dict :
             ao   = self._opt_dict   [name]
         elif name in self._arg_dict :
@@ -883,7 +679,7 @@ class CAO (TFL.Meta.Object) :
             return self._key_values [name]
         else :
             raise AttributeError (name)
-        result = self._map [name]
+        result = map [name]
         if ao.max_number == 1:
             if result :
                 result = result [0]
@@ -898,12 +694,15 @@ class CAO (TFL.Meta.Object) :
         min_args = self._cmd._min_args
         max_args = self._cmd._max_args
         argn     = len (self.argv)
-        if argn < min_args :
-            raise Err \
-                ("Need at least %d arguments, got %d" % (min_args, argn))
-        if 0 <= max_args <= argn :
-            raise Err \
-                ("Maximum number of arguments is %d, got %d" % (max_args, argn))
+        if not self._do_help :
+            if argn < min_args :
+                raise Err \
+                    ("Need at least %d arguments, got %d" % (min_args, argn))
+            if 0 <= max_args < argn :
+                raise Err \
+                    ( "Maximum number of arguments is %d, got %d"
+                    % (max_args, argn)
+                    )
     # end def _check
 
     def _finish_setup (self) :
@@ -943,6 +742,7 @@ class CAO (TFL.Meta.Object) :
             self.argv.extend (cv)
             if spec.name :
                 self._map [spec.name].extend (cv)
+                self._raw [spec.name].append (value)
     # end def _set_arg
 
     def _set_help (self, k, v) :
@@ -951,6 +751,8 @@ class CAO (TFL.Meta.Object) :
 
     def _set_opt (self, spec, value) :
         self._map [spec.name].extend (spec.cooked (value))
+        if value is not None :
+            self._raw [spec.name].append (value)
     # end def _set_opt
 
     def _set_keys (self, kw) :
@@ -959,13 +761,23 @@ class CAO (TFL.Meta.Object) :
     # end def _set_keys
 
     def __getattr__ (self, name) :
-        return self._attribute_value (name)
+        try :
+            return self._attribute_value (name)
+        except AttributeError :
+            if name == "argn" :
+                return len (self.argv)
+            else :
+                raise
     # end def __getattr__
 
     def __getitem__ (self, key) :
         if isinstance (key, basestring) :
+            map = self._map
+            key, _, raw = TFL.split_hst (key, ":")
+            if raw == "raw" :
+                map = self._raw
             try :
-                return self._attribute_value (key)
+                return self._attribute_value (key, map)
             except AttributeError :
                 raise KeyError (key)
         else :
@@ -988,6 +800,225 @@ def show (cao) :
         print "    %-10s : %s" % (a.name, getattr (cao, a.name))
     print "    argv       : %s" % (cao.argv, )
 # end def show
+
+__doc__ = """
+This module provides classes for defining and processing commands,
+arguments, and options. The values for arguments and options can be
+parsed from `sys.argv` or supplied by a client via keyword arguments.
+
+A command is defined by creating an instance of the :class:`Command`
+with the arguments
+
+- a callback function `handler` that performs the command,
+
+- a tuple of :class:`Arg` instances that defines the possible arguments,
+
+- the minimum number of arguments required `min_args',
+
+- the maximum number of arguments allowed  `max_args'
+  (the default -1 means an unlimited number is allowed),
+
+- a tuple of :class:`Arg` or :class:`Opt` that instances defines the
+  possible  options,
+
+- a description of the command to be included in the `help',
+
+- a `name` for the command (by default, the name of the module defining
+  the `Command` is used).
+
+For `Arg` and `Opt`, a shortcut string notation can be used:
+
+    `<name>:<type-spec><auto-split-spec>=<default>#<max-number>?<help>`
+
+Calling a :class:`Command` instance with an argument array, e.g.,
+`sys.argv`, parses the arguments and options in the array, stores
+their values in the instance, and calls the `handler`.
+
+Calling a :class:`Command` instance with keyword arguments initializes
+the argument and option values from those values and calls the
+`handler`.
+
+Alternatively, the methods `parse`, `use`, and `handle` can be
+called by a client, if explicit flow control is required.
+
+    >>> cmd = Cmd (show, name = "Test", args = ("adam:P=/tmp/test?First arg", "bert:I=42"), opts = ("-verbose:B", "-year:I,=2010"))
+    >>> cmd._arg_list
+    ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?None']
+    >>> sorted (str (o) for o in cmd._opt_dict.itervalues ())
+    ["'-verbose:B=False#1?None'", "'year:I,=2010#0?None'"]
+
+    >>> cmd (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
+    Test
+        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
+        Arguments  : ['adam', 'bert']
+        -verbose   : False
+        -year      : [2000, 1999]
+        adam       : /tmp/tmp
+        bert       : 42
+        argv       : ['/tmp/tmp']
+
+    >>> cao = cmd.parse (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
+    >>> cao.year
+    [2000, 1999]
+    >>> cao.verbose
+    False
+    >>> cao.adam
+    '/tmp/tmp'
+    >>> cao.bert
+    42
+    >>> cao.argv
+    ['/tmp/tmp']
+
+    >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
+    Test
+        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
+        Arguments  : ['adam', 'bert']
+        -verbose   : True
+        -year      : [2000, 1999]
+        adam       : /tmp/tmp
+        bert       : 137
+        argv       : ['/tmp/tmp', 137]
+    >>> cap = cmd.parse (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
+    >>> cap.verbose
+    True
+    >>> cap.argv
+    ['/tmp/tmp', 137]
+
+    >>> coc = Cmd (show,
+    ...     name = "Comp", args = (Cmd_Choice ("sub",
+    ...       Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
+    ...       Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
+    ...       ), ), opts = ("verbose:B", "strict:B")
+    ...     )
+    >>> coc ([])
+    Comp
+        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['sub']
+        -strict    : False
+        -verbose   : False
+        sub        : None
+        argv       : []
+    >>> coc (["one"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : False
+        -strict    : False
+        -verbose   : False
+        -y         : None
+        aaa        : None
+        bbb        : None
+        argv       : []
+    >>> coc (["two"])
+    Comp two
+        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['ccc', 'ddd']
+        -strict    : False
+        -struct    : False
+        -verbose   : False
+        ccc        : 3
+        ddd        : D
+        argv       : []
+    >>> coc (["-s"])
+    Comp
+        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['sub']
+        -strict    : True
+        -verbose   : False
+        sub        : None
+        argv       : []
+    >>> coc (["-s", "one"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : False
+        -strict    : True
+        -verbose   : False
+        -y         : None
+        aaa        : None
+        bbb        : None
+        argv       : []
+    >>> coc (["-s", "two"])
+    Comp two
+        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['ccc', 'ddd']
+        -strict    : True
+        -struct    : False
+        -verbose   : False
+        ccc        : 3
+        ddd        : D
+        argv       : []
+    >>> coc (["two", "-s"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Ambiguous option `-s`, matches any of ['strict', 'struct']
+    >>> coc (["two", "-t"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Unknown option `-t`
+    >>> coc (["two", "one"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Invalid value `one` for 'ccc:I=3#1?None'
+    >>> coc (["one", "two"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : False
+        -strict    : False
+        -verbose   : False
+        -y         : None
+        aaa        : two
+        bbb        : None
+        argv       : ['two']
+    >>> coc (["one", "-v", "two", "-Z"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : True
+        -strict    : False
+        -verbose   : True
+        -y         : None
+        aaa        : two
+        bbb        : None
+        argv       : ['two']
+    >>> coc (["one", "-v", "two", "-Z", "three", "four"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : True
+        -strict    : False
+        -verbose   : True
+        -y         : None
+        aaa        : two
+        bbb        : three
+        argv       : ['two', 'three', 'four']
+
+    >>> ko  = Arg.Key (name = "foo", dict = {"1": "frodo", "a": 42})
+    >>> cmd = Cmd (show, name = "dict-test", opts = (ko, ))
+    >>> cmd (["-foo", "a"])
+    dict-test
+        Options    : ['f', 'fo', 'foo']
+        Arguments  : []
+        -foo       : 42
+        argv       : []
+    >>> cmd (["-foo=1"])
+    dict-test
+        Options    : ['f', 'fo', 'foo']
+        Arguments  : []
+        -foo       : frodo
+        argv       : []
+
+
+
+coc = Cmd (show,
+    name = "Comp", args = (Cmd_Choice ("sub",
+      Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
+      Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
+      ), ), opts = ("verbose:B", "strict:B"))
+"""
+
+
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

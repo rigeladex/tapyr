@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -43,6 +43,7 @@
 #    17-Sep-2007 (CT) Modernized
 #    17-Sep-2007 (CT) Use `Account.add_file`
 #    17-Sep-2007 (CT) `main` refactored
+#     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,7 @@ from _ATAX.accounting import *
 
 sep_1000 = { "." : ",", "," : "."}
 
-class main (Main) :
+class Command (Command) :
 
     def _add_files (self, cmd, account, categories, source_currency) :
         self.__super._add_files (cmd, account, categories, source_currency)
@@ -78,18 +79,17 @@ class main (Main) :
             account.print_summary ()
     # end def _output
 
-    @classmethod
-    def _opt_spec (cls) :
-        return Main._opt_spec () + \
+    def _opt_spec (self) :
+        return self.__super._opt_spec () + \
             ( "-decimal_sign:S=."
             , "-online_format:B?Format for cope/paste into online form"
-            , "-reverse"
-            , "-summary"
+            , "-reverse:B"
+            , "-summary:B"
             )
     # end def _opt_spec
 
-# end class main
+# end class Command
 
 if __name__ == "__main__":
-    main (main.command_spec ())
+    Command ()
 ### __END__ ATAX.umsatzsteuer

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -36,11 +36,14 @@
 #     9-Jan-2009 (CT) `2009` added, display `year`
 #    16-Mar-2009 (CT) `main` changed to work with `Euro` using `Decimal`
 #    16-Mar-2009 (CT) `tax_brackets` for `2009` changed to final version of law
+#     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
+
+import _TFL.CAO
 
 year = Date ().year
 
@@ -103,24 +106,7 @@ def tax (amount, year = year) :
     return result, tax_chunks
 # end def tax
 
-def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( option_spec =
-            ( "-verbose:B?Show chunks, too"
-            , "-year:I=%s?Year of interest" % (year, )
-            , EUC_Opt_SC ()
-            , EUC_Opt_TC ()
-            )
-        , arg_spec    = ("amount:F?Amount of taxable income", )
-        , min_args    = 1
-        , max_args    = 1
-        , description = "Calculate income tax for `year`"
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     source_currency        = cmd.source_currency
     year                   = cmd.year
     amount                 = source_currency (cmd.amount)
@@ -133,12 +119,26 @@ def main (cmd) :
           "    you pay a tax of %s (%5.2f%%) and get %s\n"
         )
     print f % \
-        ( year, amount, cmd.arg_dict ["amount"].raw_value, tax_amount
+        ( year, amount, cmd ["amount:raw"], tax_amount
         , (tax_amount / (amount / 100.0)).amount
         , amount - tax_amount
         )
-# end def main
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        = ("amount:F?Amount of taxable income", )
+    , min_args    = 1
+    , max_args    = 1
+    , opts        =
+        ( "-verbose:B?Show chunks, too"
+        , "-year:I=%s?Year of interest" % (year, )
+        , EUC_Source ()
+        , EUC_Target ()
+        )
+    , description = "Calculate income tax for `year`"
+    )
 
 if __name__ == "__main__" :
-    main (command_spec ())
+    _Command ()
 ### __END__ ATAX.income_tax_at

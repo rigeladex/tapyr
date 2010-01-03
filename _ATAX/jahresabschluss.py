@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -40,19 +40,20 @@
 #    17-Sep-2007 (CT) Modernized
 #    17-Sep-2007 (CT) Use `Account.add_file`
 #    17-Sep-2007 (CT) `main` refactored
+#     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
 from _ATAX.accounting import *
 
-class main (Main) :
+class Command (Command) :
 
     default_categories  = "e"
     min_args            = 2
 
     def _create_account (self, cmd, categories, source_currency, vst_korrektur) :
-        year       = cmd.argv.shift ()
-        konto_desc = Konto_Desc     (cmd.argv.shift ())
+        year       = cmd.argv.pop (0)
+        konto_desc = Konto_Desc   (cmd.argv.pop (0))
         return T_Account \
             ( year          = year
             , konto_desc    = konto_desc
@@ -80,22 +81,20 @@ class main (Main) :
                 )
     # end def _output
 
-    @classmethod
-    def _arg_spec (cls) :
-        return ("year", "kontenplan:P", "account_file")
+    def _arg_spec (self) :
+        return ("year:S", "kontenplan:P", "account_file:S")
     # end def _arg_spec
 
-    @classmethod
-    def _opt_spec (cls) :
-        return super (main, cls)._opt_spec () + \
+    def _opt_spec (self) :
+        return self.__super._opt_spec () + \
             ( "-gewerbeanteil:P?File to write gewerbe-anteil into"
             , "-plain:B?Don't underline"
-            , "-summary"
+            , "-summary:B"
             )
     # end def _opt_spec
 
-# end class main
+# end class Command
 
 if __name__ == "__main__":
-    main (main.command_spec ())
+    Command ()
 ### __END__ ATAX.jahresabschluss

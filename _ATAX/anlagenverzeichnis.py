@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2002-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2002-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 # This python module is part of Christian Tanzer's public python library
@@ -50,12 +50,14 @@
 #                     `base_rate == 0`)
 #    27-Mar-2009 (CT) `account_format` and `_update_account_entry` changed to
 #                     allow line-specific date (for `Abgang`)
+#     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
-from _ATAX.accounting import *
-from _ATAX.accounting import _Entry_
-from _TFL.Regexp      import *
+from   _ATAX.accounting import *
+from   _ATAX.accounting import _Entry_
+from   _TFL.Regexp      import *
+import _TFL.CAO
 
 class _Base_ (TFL.Meta.Object) :
 
@@ -466,28 +468,7 @@ class Anlagenverzeichnis (_Base_) :
 
 # end class Anlagenverzeichnis
 
-def command_spec (arg_array = None) :
-    from   _TFL.Command_Line import Command_Line
-    return Command_Line \
-        ( option_spec =
-            ( "-account_file:P?Name of account file to update"
-            , "-Start_year:S=1988?Skip all entries before `Start_year`"
-            , "-update_accounts:B?Add depreciation entries to account file"
-            , EUC_Opt_SC ()
-            , EUC_Opt_TC ()
-            )
-        , arg_spec    =
-            ( "year:S?Year of interest"
-            , "anlagenverzeichnis:P?File defining depreciation data"
-            )
-        , min_args    = 2
-        , max_args    = 2
-        , description = "Calculate depreciations for `year`"
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     source_currency     = cmd.source_currency
     year                = cmd.year
     start               = cmd.Start_year
@@ -500,12 +481,30 @@ def main (cmd) :
     if cmd.update_accounts :
         anlagenverzeichnis.update_accounts ()
     return anlagenverzeichnis
-# end def main
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        =
+        ( "year:S?Year of interest"
+        , "anlagenverzeichnis:P?File defining depreciation data"
+        )
+    , min_args    = 2
+    , max_args    = 2
+    , opts        =
+        ( "-account_file:P?Name of account file to update"
+        , "-Start_year:S=1988?Skip all entries before `Start_year`"
+        , "-update_accounts:B?Add depreciation entries to account file"
+        , TFL.CAO.Arg.EUC_Source ()
+        , TFL.CAO.Arg.EUC_Target ()
+        )
+    , description = "Calculate depreciations for `year`"
+    )
 
 """
 year=2007 ; \
   python /swing/python/anlagenverzeichnis.py $year ~/EAR/anlagen_gewerbe.dat
 """
 if __name__ == "__main__":
-    main (command_spec ())
+    _Command ()
 ### __END__ ATAX.anlagenverzeichnis

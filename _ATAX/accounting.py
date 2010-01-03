@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -151,11 +151,11 @@
 #     4-May-2009 (CT)  s/vorsteuer_gut/ust_gut/
 #    17-Sep-2009 (RSC) Fix Doc-String on "z" category after email-discussion
 #     6-Dec-2009 (CT)  3-compatibility
+#     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
 from   _ATAX             import ATAX
-from   _TFL.Command_Line import Command_Line
 from   _TFL.Date_Time    import *
 from   _TFL.EU_Currency  import *
 from   _TFL.defaultdict  import defaultdict
@@ -164,6 +164,7 @@ from   _TFL.Regexp       import *
 
 import _TFL._Meta.Object
 import _TFL.Accessor
+import _TFL.CAO
 
 from   _TGL              import TGL
 import _TGL.load_config_file
@@ -1333,14 +1334,16 @@ class Konto_Desc (UserDict) :
 
 # end class Konto_Desc
 
-class Main (TFL.Meta.Object) :
+class _ATAX_Command_ (TFL.Meta.Object) :
     """Main class for accounting scripts"""
 
+    _real_name          = "Command"
     default_categories  = "u"
-    max_args            = None
-    min_args            = None
+    max_args            = -1
+    min_args            = 0
 
-    def __init__ (self, cmd) :
+    def __init__ (self) :
+        cmd = self._command ()
         self.load_config (cmd)
         if cmd.all :
             categories  = "."
@@ -1355,18 +1358,16 @@ class Main (TFL.Meta.Object) :
         self._output    (cmd, account, categories, source_currency)
     # end def __init__
 
-    @classmethod
-    def command_spec (cls, arg_array = None) :
-        return Command_Line \
-            ( option_spec = cls._opt_spec ()
-            , arg_spec    = cls._arg_spec ()
-            , description = cls.__doc__ or ""
-            , min_args    = cls.min_args
-            , max_args    = cls.max_args
-            , help_on_err = 1
-            , arg_array   = arg_array
+    def _command (self) :
+        cmd = TFL.CAO.Cmd \
+            ( args        = self._arg_spec ()
+            , opts        = self._opt_spec ()
+            , min_args    = self.min_args
+            , max_args    = self.max_args
+            , description = self.__doc__ or ""
             )
-    # end def command_spec
+        return cmd ()
+    # end def _command
 
     @classmethod
     def load_config (cls, cmd) :
@@ -1378,30 +1379,28 @@ class Main (TFL.Meta.Object) :
 
     def _add_files (self, cmd, account, categories, source_currency) :
         if cmd.argn > 0 :
-            for file_name in cmd.argv.body :
+            for file_name in cmd.argv :
                 account.add_file (file_name, categories, source_currency)
         else :
             account.add_lines    (sys.stdin, categories, source_currency)
     # end def _add_files
 
-    @classmethod
-    def _arg_spec (cls) :
+    def _arg_spec (self) :
         return ()
     # end def _arg_spec
 
-    @classmethod
-    def _opt_spec (cls) :
+    def _opt_spec (self) :
         return \
-            ( "-all"
-            , "-categories:S,=%s" % cls.default_categories
+            ( "-all:B"
+            , "-categories:S,=%s" % self.default_categories
             , "-Config:P,?Config file(s)"
             , "-vst_korrektur:F=1.0"
-            , EUC_Opt_SC ()
-            , EUC_Opt_TC ()
+            , TFL.CAO.Arg.EUC_Source ()
+            , TFL.CAO.Arg.EUC_Target ()
             )
     # end def _opt_spec
 
-# end class Main
+Command = _ATAX_Command_ # end class
 
 if __name__ != "__main__" :
     ATAX._Export ("*")
