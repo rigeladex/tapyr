@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -61,6 +61,8 @@
 #    11-Mar-2009 (CT) Refactored to derive from `TFL.Currency`
 #    11-Mar-2009 (CT) `Euro` (based on decimal.Decimal but compatible to
 #                     float-based `EU_Currency`) added
+#     3-Jan-2010 (CT) `EUC_Source`, `EUC_Target`, and `_Command` added
+#                     (all based on `TFL.CAO`)
 #    ««revision-date»»···
 #--
 
@@ -420,6 +422,39 @@ class EUC_Opt_TC (EUC_Opt) :
 
 # end class EUC_Opt_TC
 
+import _TFL.CAO
+
+class EUC_Source (TFL.CAO.Key) :
+    """Argument or option for source currency"""
+
+    def __init__ (self, ** kw) :
+        kw.setdefault ("name",        "source_currency")
+        kw.setdefault ("default",     "EUR")
+        kw.setdefault ("description", "Source currency")
+        self.__super.__init__ (dict = EUC.Table, ** kw)
+    # end def __init__
+
+# end class EUC_Source
+
+class EUC_Target (TFL.CAO.Key) :
+    """Argument or option for target currency"""
+
+    def __init__ (self, ** kw) :
+        kw.setdefault ("name",        "target_currency")
+        kw.setdefault ("default",     "EUR")
+        kw.setdefault ("description", "Target currency")
+        self.__super.__init__ (dict = EUC.Table, ** kw)
+    # end def __init__
+
+    def cook (self, value) :
+        result = self.__super.cook (value)
+        if result :
+            EUC.set_target_currency (result)
+        return result
+    # end def cook
+
+# end class EUC_Target
+
 def _command_spec (arg_array = None) :
     from   _TFL.Command_Line import Command_Line
     from   _TFL.predicate    import sorted
@@ -437,7 +472,7 @@ def _command_spec (arg_array = None) :
 def _main (cmd) :
     source = cmd.source
     s      = source (0)
-    for a in cmd.argv.body :
+    for a in cmd.argv :
         a = a.strip ()
         if not a :
             continue
@@ -453,9 +488,19 @@ def _main (cmd) :
             b = ""
         print "%s%s %s = %s" % (a, b, source.sloppy_name, c)
         s = s + c
-    if s != 0 and len (cmd.argv.body) > 1 :
+    if s != 0 and len (cmd.argv) > 1 :
         print "Total : %s" % s
 # end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler   = _main
+    , args      = ("amount:S?Amount to convert", )
+    , opts      =
+        ( EUC_Source (name = "source", default = "ATS")
+        , EUC_Target ()
+        )
+    , desc      = "Convert between two Euro currencies"
+    )
 
 __doc__ = """
 Provide classes for management of European Currencies compatible to
@@ -526,5 +571,5 @@ True
 """
 
 if __name__ == "__main__":
-    _main (_command_spec ())
+    _Command ()
 ### __END__ TFL.EU_Currency

@@ -41,26 +41,32 @@
 #    ««revision-date»»···
 #--
 
+### To-do
+### - Dict_Choice
+### - List_Choice
+### - ??? other argument types ???
+
 """
 This module provides classes for defining and processing commands,
 arguments, and options. The values for arguments and options can be
 parsed from `sys.argv` or supplied by a client via keyword arguments.
 
 A command is defined by creating an instance of the :class:`Command`
-with arguments
+with the arguments
 
-- a tuple of :class:`Arg` instances defines the possible arguments,
+- a callback function `handler` that performs the command,
 
-- a tuple of :class:`Opt` instances defines the possible options,
+- a tuple of :class:`Arg` instances that defines the possible arguments,
 
 - the minimum number of arguments required `min_args',
 
 - the maximum number of arguments allowed  `max_args'
   (the default -1 means an unlimited number is allowed),
 
-- a description of the command to be included in the `help',
+- a tuple of :class:`Arg` or :class:`Opt` that instances defines the
+  possible  options,
 
-- a callback function `handler` that performs the command,
+- a description of the command to be included in the `help',
 
 - a `name` for the command (by default, the name of the module defining
   the `Command` is used).
@@ -80,13 +86,187 @@ the argument and option values from those values and calls the
 Alternatively, the methods `parse`, `use`, and `handle` can be
 called by a client, if explicit flow control is required.
 
+    >>> cmd = Cmd (show, name = "Test", args = ("adam:P=/tmp/test?First arg", "bert:I=42"), opts = ("-verbose:B", "-year:I,=2010"))
+    >>> cmd._arg_list
+    ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?None']
+    >>> sorted (str (o) for o in cmd._opt_dict.itervalues ())
+    ["'-verbose:B=False#1?None'", "'year:I,=2010#0?None'"]
+
+    >>> cmd (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
+    Test
+        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
+        Arguments  : ['adam', 'bert']
+        -verbose   : False
+        -year      : [2000, 1999]
+        adam       : /tmp/tmp
+        bert       : 42
+        argv       : ['/tmp/tmp']
+
+    >>> cao = cmd.parse (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
+    >>> cao.year
+    [2000, 1999]
+    >>> cao.verbose
+    False
+    >>> cao.adam
+    '/tmp/tmp'
+    >>> cao.bert
+    42
+    >>> cao.argv
+    ['/tmp/tmp']
+
+    >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
+    Test
+        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
+        Arguments  : ['adam', 'bert']
+        -verbose   : True
+        -year      : [2000, 1999]
+        adam       : /tmp/tmp
+        bert       : 137
+        argv       : ['/tmp/tmp', 137]
+    >>> cap = cmd.parse (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
+    >>> cap.verbose
+    True
+    >>> cap.argv
+    ['/tmp/tmp', 137]
+
+    >>> coc = Cmd (show,
+    ...     name = "Comp", args = (Cmd_Choice ("sub",
+    ...       Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
+    ...       Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
+    ...       ), ), opts = ("verbose:B", "strict:B")
+    ...     )
+    >>> coc ([])
+    Comp
+        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['sub']
+        -strict    : False
+        -verbose   : False
+        sub        : None
+        argv       : []
+    >>> coc (["one"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : False
+        -strict    : False
+        -verbose   : False
+        -y         : None
+        aaa        : None
+        bbb        : None
+        argv       : []
+    >>> coc (["two"])
+    Comp two
+        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['ccc', 'ddd']
+        -strict    : False
+        -struct    : False
+        -verbose   : False
+        ccc        : 3
+        ddd        : D
+        argv       : []
+    >>> coc (["-s"])
+    Comp
+        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['sub']
+        -strict    : True
+        -verbose   : False
+        sub        : None
+        argv       : []
+    >>> coc (["-s", "one"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : False
+        -strict    : True
+        -verbose   : False
+        -y         : None
+        aaa        : None
+        bbb        : None
+        argv       : []
+    >>> coc (["-s", "two"])
+    Comp two
+        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Arguments  : ['ccc', 'ddd']
+        -strict    : True
+        -struct    : False
+        -verbose   : False
+        ccc        : 3
+        ddd        : D
+        argv       : []
+    >>> coc (["two", "-s"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Ambiguous option `-s`, matches any of ['strict', 'struct']
+    >>> coc (["two", "-t"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Unknown option `-t`
+    >>> coc (["two", "one"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Invalid value `one` for 'ccc:I=3#1?None'
+    >>> coc (["one", "two"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : False
+        -strict    : False
+        -verbose   : False
+        -y         : None
+        aaa        : two
+        bbb        : None
+        argv       : ['two']
+    >>> coc (["one", "-v", "two", "-Z"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : True
+        -strict    : False
+        -verbose   : True
+        -y         : None
+        aaa        : two
+        bbb        : None
+        argv       : ['two']
+    >>> coc (["one", "-v", "two", "-Z", "three", "four"])
+    Comp one
+        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Arguments  : ['aaa', 'bbb']
+        -Z         : True
+        -strict    : False
+        -verbose   : True
+        -y         : None
+        aaa        : two
+        bbb        : three
+        argv       : ['two', 'three', 'four']
+
+    >>> ko  = Arg.Key (name = "foo", dict = {"1": "frodo", "a": 42})
+    >>> cmd = Cmd (show, name = "dict-test", opts = (ko, ))
+    >>> cmd (["-foo", "a"])
+    dict-test
+        Options    : ['f', 'fo', 'foo']
+        Arguments  : []
+        -foo       : 42
+        argv       : []
+    >>> cmd (["-foo=1"])
+    dict-test
+        Options    : ['f', 'fo', 'foo']
+        Arguments  : []
+        -foo       : frodo
+        argv       : []
+
+
+
+coc = Cmd (show,
+    name = "Comp", args = (Cmd_Choice ("sub",
+      Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
+      Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
+      ), ), opts = ("verbose:B", "strict:B"))
 """
 
 from   _TFL               import TFL
 
 from   _TFL.Regexp        import Regexp, re
 
-import _TFL.Abbr_Key_Dict
 import _TFL.Caller
 import _TFL.defaultdict
 import _TFL._Meta.Object
@@ -120,7 +300,7 @@ class Arg (TFL.Meta.M_Class) :
     _spec_pat  = None
     _spec_form = \
         ( """ (?P<name> [^:=# ?]+) """
-          """ (?:  : (?P<type>        [%s]    (?P<auto_split> [, :]?) )? )? """
+          """ (?:  : (?P<type>        [%s]    )? (?P<auto_split> [, :]?))? """
           """ (?:  = (?P<default>     [^\#?]* ))? """
           """ (?: \# (?P<max_number>  \d+     ))? """
           """ (?: \? (?P<description> .+      ))? """
@@ -157,7 +337,9 @@ class Arg (TFL.Meta.M_Class) :
 # end class Arg
 
 class Opt (Arg) :
-    """Meta class for option types."""
+    """Meta class for pure option types (i.e., these are noit usable for
+       arguments).
+    """
 
 # end class Opt
 
@@ -168,6 +350,8 @@ class _Spec_ (TFL.Meta.Object) :
 
     auto_split    = None
     needs_value   = True
+
+    prefix        = ""
 
     range_pat     = Regexp \
         ( r"""^\s*"""
@@ -187,7 +371,6 @@ class _Spec_ (TFL.Meta.Object) :
             , name          = ""
             , default       = ""
             , description   = ""
-            , explanation   = ""
             , auto_split    = None
             , max_number    = None
             , hide          = False
@@ -196,13 +379,12 @@ class _Spec_ (TFL.Meta.Object) :
             ) :
         self.name           = name
         self.description    = description
-        self.explanation    = explanation
         if auto_split is None :
             auto_split      = self.auto_split
         else :
             self.auto_split = auto_split
         if max_number is None :
-            max_number      = 1 if auto_split is None else 0
+            max_number      = self._auto_max_number (self.auto_split)
         self.max_number     = max_number
         self.hide           = hide or name [:2] == "__"
         self.range_delta    = range_delta
@@ -227,6 +409,10 @@ class _Spec_ (TFL.Meta.Object) :
         return [cook (v) for v in values]
     # end def cooked
 
+    def _auto_max_number (self, auto_split) :
+        return 0 if auto_split else 1
+    # end def _auto_max_number
+
     def _resolve_range (self, values) :
         pat = self.range_pat
         for value in values :
@@ -242,7 +428,10 @@ class _Spec_ (TFL.Meta.Object) :
     # end def _resolve_range_1
 
     def _safe_eval (self, value) :
-        return eval (value, {}, {})
+        try :
+            return eval (value, {}, {})
+        except NameError :
+            raise Err ("Invalid value `%s` for %s" % (value, self))
     # end def _safe_eval
 
     def _setup_default (self, default) :
@@ -255,6 +444,18 @@ class _Spec_ (TFL.Meta.Object) :
         self.default = default
     # end def _setup_default
 
+    def __repr__ (self) :
+        return "'%s%s:%s%s=%s#%s?%s'" % \
+            ( self.prefix
+            , self.name
+            , getattr (self, "type_abbr", self.__class__.__name__)
+            , self.auto_split or ""
+            , (self.auto_split or "").join (str (d) for d in self.default)
+            , self.max_number
+            , self.description
+            )
+    # end def __repr__
+
 # end class _Spec_
 
 class _Spec_O_ (_Spec_) :
@@ -262,12 +463,12 @@ class _Spec_O_ (_Spec_) :
 
     __metaclass__ = Opt
 
+    prefix        = "-"
+
 # end class _Spec_O_
 
 class _Number_ (_Spec_) :
     """Base class for numeric argument and option types"""
-
-    auto_split    = ","
 
     def cook (self, value) :
         return self._cook (self._safe_eval (value))
@@ -291,6 +492,8 @@ class Bool (_Spec_O_) :
     type_abbr     = "B"
 
     def cook (self, value) :
+        if value is None :
+            return True
         if not isinstance (value, basestring) :
             return bool (value)
         if value.lower () in ("no", "0", "false") : ### XXX I18N
@@ -298,13 +501,40 @@ class Bool (_Spec_O_) :
         return True
     # end def cook
 
+    def _auto_max_number (self, auto_split) :
+        return 1
+    # end def _auto_max_number
+
     def _setup_default (self, default) :
         if default is None :
-            default = True
+            default = False
         return self.__super._setup_default (default)
     # end def _setup_default
 
 # end class Bool
+
+class Cmd_Choice (TFL.Meta.Object) :
+    """Argument that selects a sub-command"""
+
+    __metaclass__ = Arg
+
+    auto_split    = None
+    default       = None
+    max_number    = 1
+    needs_value   = False
+
+    def __init__ (self, name, * cmds, ** kw) :
+        self.name        = name
+        self.sub_cmds    = dict ((c._name, c) for c in cmds)
+        self.description = kw.pop ("description", "")
+        assert not kw
+    # end def __init__
+
+    def __getitem__ (self, key) :
+        return self.sub_cmds [key]
+    # end def __getitem__
+
+# end class Cmd_Choice
 
 class Decimal (_Number_) :
     """Argument or option with a decimal value"""
@@ -350,6 +580,29 @@ class Int_X (_Number_) :
 
 # end class Int_X
 
+class Key (_Spec_) :
+    """Argument or option that specifies a key of a dictionary"""
+
+    def __init__ (self, dict, ** kw) :
+        assert all (isinstance (k, basestring) for k in dict)
+        self._dict = dict
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    def cook (self, value) :
+        if value :
+            try :
+                return self._dict [value]
+            except KeyError :
+                raise Err \
+                    ( "Unkown key `%s` for %s\n    Specify one of: %s"
+                    % (value, self, sorted (self._dict))
+                    )
+        return value
+    # end def cook
+
+# end class Key
+
 class Str (_Spec_) :
     """Argument or option with a string value"""
 
@@ -392,10 +645,10 @@ class Cmd (TFL.Meta.Object) :
 
     def __init__ \
             ( self, handler
-            , opts        = ()
             , args        = ()
             , min_args    = 0
             , max_args    = -1
+            , opts        = ()
             , desc        = ""
             , name        = ""
             , do_keywords = False
@@ -411,7 +664,6 @@ class Cmd (TFL.Meta.Object) :
         self._desc        = desc
         self._name        = name or TFL.Caller.globals () ["__name__"] ### XXX ???
         self._do_keywords = do_keywords
-        self._super_cmd   = None
         self._setup_opts (opts)
         self._setup_args (args)
     # end def __init__
@@ -447,7 +699,7 @@ class Cmd (TFL.Meta.Object) :
         ad     = result._arg_dict
         oa     = result._opt_abbr
         rest   = []
-        sc     = self._sub_cmd
+        sc     = self._sub_cmd_choice
         if sc and sc.name in _kw :
             result._set_arg (sc, _kw.pop (sc.name))
         for k, v in _kw :
@@ -502,37 +754,41 @@ class Cmd (TFL.Meta.Object) :
             elif self._help_pat.match (k) :
                 result._set_help (k, v)
             else :
-                raise Err ("Unknown or ambiguous option `%s`" % (arg, ))
+                matches = \
+                    [o for o in sorted (result._opt_dict) if o.startswith (k)]
+                if matches :
+                    raise Err \
+                        ( "Ambiguous option `%s`, matches any of %s"
+                        % (arg, matches)
+                        )
+                else :
+                    raise Err ("Unknown option `%s`" % (arg, ))
     # end def _handle_opt
 
     def _setup_args (self, args) :
-        self._arg_list = al = []
-        self._arg_dict = ad = {}
-        self._sub_cmd  = None
-        od             = self._opt_dict
+        self._arg_list = al  = []
+        self._arg_dict = ad  = {}
+        self._sub_cmd_choice = None
+        od = self._opt_dict
         for i, a in enumerate (args) :
             if isinstance (a, basestring) :
                 a = Arg.from_string (a)
+            if isinstance (a.__class__, Opt) :
+                raise Err \
+                    ("Option type `%s` cannot be used for argument" % a)
             assert a.name not in od
             a.index = i
             a.kind  = "argument"
             al.append (a)
             ad [a.name] = a
-            if isinstance (a, Cmd) :
-                if self._sub_cmd is None :
-                    self._sub_cmd = a
-                    if a._super_cmd is None :
-                        a._super_cmd = self
-                    else :
-                        raise Err \
-                            ( "Sub-command already has a super command `%s`"
-                            % a._super_cmd
-                            )
+            if isinstance (a, Cmd_Choice) :
+                if self._sub_cmd_choice is None :
+                    self._sub_cmd_choice = a
                 else :
                     raise Err \
-                        ( "Only one sub-command is possible, "
+                        ( "Only one sub-command choice is possible, "
                           "two are specified: `%s`, `%s`"
-                        % (self._sub_cmd.name, a.name)
+                        % (self._sub_cmd_choice.name, a.name)
                         )
     # end def _setup_args
 
@@ -542,6 +798,8 @@ class Cmd (TFL.Meta.Object) :
         for o in opts :
             if isinstance (o, basestring) :
                 o = Arg.from_string (o.lstrip ("-"))
+            elif not isinstance (o.__class__, Arg) :
+                raise Err ("Not a valid option `%s`" % o)
             od [o.name] = o
             o.kind = "option"
         self._setup_opt_abbr (od, oa)
@@ -549,11 +807,21 @@ class Cmd (TFL.Meta.Object) :
 
     def _setup_opt_abbr (self, od, result) :
         result.clear ()
-        for l, r in TFL.pairwise (sorted (od)) :
-            i = TFL.first_diff (l, r)
-            o = od [l]
-            for k in range (i, len (l)) :
-                result [l [:k + 1]] = o
+        if od :
+            def abbrs (i, key) :
+                o = od [key]
+                for j in range (i, len (key)) :
+                    result [key [:j + 1]] = o
+            keys = sorted (od)
+            ### Just in case `od` has only one entry
+            i, k2 = 0, keys [-1]
+            last  = 0
+            for k1, k2 in TFL.pairwise (keys) :
+                i = TFL.first_diff (k1, k2)
+                abbrs (max (i, last), k1)
+                last = i ### Remembers index of first_diff of last pair
+            ### Handle last entry
+            abbrs (i, k2)
         return result
     # end def _setup_opt_abbr
 
@@ -573,7 +841,7 @@ class Cmd (TFL.Meta.Object) :
 class CAO (TFL.Meta.Object) :
     """Command with options and arguments supplied."""
 
-    key_pat = Regexp \
+    _key_pat = Regexp \
         ( """\s*"""
           """(?P<name> [^= ]+)"""
           """\s* [=] \s* """
@@ -583,6 +851,7 @@ class CAO (TFL.Meta.Object) :
 
     def __init__ (self, cmd) :
         self._cmd         = cmd
+        self._name        = cmd._name
         self._arg_dict    = dict (cmd._arg_dict)
         self._arg_list    = list (cmd._arg_list)
         self._opt_dict    = dict (cmd._opt_dict)
@@ -616,7 +885,10 @@ class CAO (TFL.Meta.Object) :
             raise AttributeError (name)
         result = self._map [name]
         if ao.max_number == 1:
-            result = result [0]
+            if result :
+                result = result [0]
+            else :
+                result = None
         return result
     # end def _attribute_value
 
@@ -640,7 +912,9 @@ class CAO (TFL.Meta.Object) :
                 (self._arg_dict.itervalues (), self._opt_dict.itervalues ()) :
             name = spec.name
             if name not in map :
-                map [name].extend (spec.default)
+                d = spec.default
+                if d is not None :
+                    map [name].extend (d)
     # end def _finish_setup
 
     def _set_arg (self, spec, value) :
@@ -649,11 +923,19 @@ class CAO (TFL.Meta.Object) :
             if self.argv :
                 raise Err \
                     ("Sub-command `%s` needs to be first argument" % value)
-            self._sub_cmd = sc = spec [value]
+            try :
+                self._cmd = sc = spec [value]
+            except KeyError :
+                raise Err \
+                    ( "Unkown sub-command `%s`, specify one of: (%s)"
+                    % (value, ", ".join (sorted (spec.sub_cmds)))
+                    )
+            self._name = " ".join ([self._name, sc._name])
+            self._arg_list [:] = sc._arg_list
+            self._arg_dict.clear  ()
             self._arg_dict.update (sc._arg_dict)
-            self._arg_list.extend (sc._arg_list)
             self._opt_dict.update (sc._opt_dict)
-            sc._setup_arg_abbr    (self._opt_dict, self._opt_abbr)
+            sc._setup_opt_abbr    (self._opt_dict, self._opt_abbr)
         elif self._do_keywords and kp.match (value) :
             self._key_values [kp.name] = kp.value
         else :
@@ -695,6 +977,17 @@ class CAO (TFL.Meta.Object) :
     # end def __iter__
 
 # end class CAO
+
+def show (cao) :
+    print cao._name
+    print "    Options    : %s" % (sorted (cao._opt_abbr), )
+    print "    Arguments  : %s" % (sorted (a.name for a in cao._arg_list), )
+    for o in sorted (cao._opt_dict) :
+        print "    -%-9s : %s" % (o, getattr (cao, o))
+    for a in cao._arg_list :
+        print "    %-10s : %s" % (a.name, getattr (cao, a.name))
+    print "    argv       : %s" % (cao.argv, )
+# end def show
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

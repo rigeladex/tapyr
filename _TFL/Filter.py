@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -322,23 +322,23 @@ class Attr_Query (TFL.Q_Exp.Base) :
        >>> q0.predicate (r1)
        42
 
-       >>> Q.fool.startswith ("bar") (R (fool = "barfly"))
+       >>> Q.fool.STARTSWITH ("bar") (R (fool = "barfly"))
        True
-       >>> Q.fool.startswith ("fly") (R (fool = "barfly"))
+       >>> Q.fool.STARTSWITH ("fly") (R (fool = "barfly"))
        False
-       >>> Q.fool.endswith ("fly") (R (fool = "barfly"))
+       >>> Q.fool.ENDSWITH ("fly") (R (fool = "barfly"))
        True
-       >>> Q.fool.endswith ("bar") (R (fool = "barfly"))
+       >>> Q.fool.ENDSWITH ("bar") (R (fool = "barfly"))
        False
-       >>> Q.fool.between (2, 8) (R (fool = 1))
+       >>> Q.fool.BETWEEN (2, 8) (R (fool = 1))
        False
-       >>> Q.fool.between (2, 8) (R (fool = 2))
+       >>> Q.fool.BETWEEN (2, 8) (R (fool = 2))
        True
-       >>> Q.fool.between (2, 8) (R (fool = 3))
+       >>> Q.fool.BETWEEN (2, 8) (R (fool = 3))
        True
-       >>> Q.fool.between (2, 8) (R (fool = 8))
+       >>> Q.fool.BETWEEN (2, 8) (R (fool = 8))
        True
-       >>> Q.fool.between (2, 8) (R (fool = 9))
+       >>> Q.fool.BETWEEN (2, 8) (R (fool = 9))
        False
        >>> (Q.fool == "barfly") (R (fool = "barfly"))
        True
@@ -350,15 +350,15 @@ class Attr_Query (TFL.Q_Exp.Base) :
        True
        >>> (Q.fool >= "barflyz") (R (fool = "barfly"))
        False
-       >>> Q.fool.contains ("barf") (R (fool = "a barfly "))
+       >>> Q.fool.CONTAINS ("barf") (R (fool = "a barfly "))
        True
-       >>> Q.fool.in_ ([2,4,8]) (R (fool = 1))
+       >>> Q.fool.IN ([2,4,8]) (R (fool = 1))
        False
-       >>> Q.fool.in_ ([2,4,8]) (R (fool = 2))
+       >>> Q.fool.IN ([2,4,8]) (R (fool = 2))
        True
-       >>> Q.fool.in_ ([2,4,8]) (R (fool = 3))
+       >>> Q.fool.IN ([2,4,8]) (R (fool = 3))
        False
-       >>> Q.fool.in_ ([2,4,8]) (R (fool = 4))
+       >>> Q.fool.IN ([2,4,8]) (R (fool = 4))
        True
        >>> (Q.fool % 2) (R (fool = 20))
        0
