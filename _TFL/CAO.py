@@ -309,6 +309,7 @@ class Cmd_Choice (TFL.Meta.Object) :
 
     auto_split    = None
     default       = None
+    hide          = False
     max_number    = 1
     needs_value   = False
 
@@ -381,15 +382,19 @@ class Help (_Spec_O_) :
                 self._help_summary (cao, indent)
                 if cao._cmd._description :
                     print
-            if (all_p or "args" in vals) and cao._arg_list :
+            arg_p = any (a for a in cao._arg_list if not a.hide)
+            if (all_p or "args" in vals) and arg_p :
                 self._help_args (cao, indent, heading = not all_p)
                 print
-            if (all_p or "opts" in vals) and cao._opt_dict :
+            opt_p = any (o for o in cao._opt_dict.itervalues () if not o.hide)
+            if (all_p or "opts" in vals) and opt_p :
                 self._help_opts (cao, indent, heading = not all_p)
         return "break" not in vals
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
+        if ao.hide :
+            return
         name = ao.name
         v    = getattr (cao, name, "")
         print "%s%s%-*s  : %s = %s <default: %s>" % \
@@ -437,10 +442,11 @@ class Help (_Spec_O_) :
         max_args = cmd._max_args
         if cmd._arg_list :
             for i, arg in enumerate (cmd._arg_list) :
-                if i < min_args :
-                    yield arg.name
-                else :
-                    yield "[%s]" % arg.name
+                if not arg.hide :
+                    if i < min_args :
+                        yield arg.name
+                    else :
+                        yield "[%s]" % arg.name
         if max_args < 0 or max_args > len (cmd._arg_list) :
             yield "..."
     # end def _help_summary_args
@@ -508,6 +514,25 @@ class Key (_Spec_) :
     # end def cook
 
 # end class Key
+
+class Set (_Spec_) :
+    """Argument or option that specifies one element of a set of choices"""
+
+    def __init__ (self, choices, ** kw) :
+        self.choices = set (choices)
+        self.__super.__init__ (** kw)
+    # end def __init__
+
+    def cook (self, value) :
+        if value and value not in self.choices :
+            raise Err \
+                ( "Unkown value `%s` for %s\n    Specify one of: %s"
+                % (value, self, sorted (self.choices))
+                )
+        return value
+    # end def cook
+
+# end class Set
 
 class Str (_Spec_) :
     """Argument or option with a string value"""
