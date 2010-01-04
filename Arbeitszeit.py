@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #    11-Feb-2008 (CT) `-year` added
 #    21-Feb-2008 (CT) `-year` processing changed to consider `after` and
 #                     `before` (and display the [corrected] `vacation`)
+#     4-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ from   _TFL.predicate           import *
 
 import _TFL._Meta.Object
 import _TFL.Accessor
+import _TFL.CAO
 import _TFL.Environment
 
 import _CAL.Date
@@ -193,30 +195,7 @@ class Period (TFL.Meta.Object) :
 
 # end class Period
 
-def command_spec (arg_array = None) :
-    from   Command_Line import Command_Line
-    from   _CAL.Date    import Date_Opt
-    return Command_Line \
-        ( arg_spec    = ("zeiterfassung:P?File specifying work time")
-        , option_spec =
-            ( Date_Opt ("after", "Only display entries after specified date")
-            , Date_Opt ("before", "Only display entries before specified date")
-            , "-Config:P,?Config file(s)"
-            , "-hpd:F=8?Hours per day"
-            , "-ptf:F=1.0?Part time factor"
-            , "-quiet:B?Show total only"
-            , "-vacation:I=25?Days of vacation per year"
-            , "-Weekly:B?Show weekly summary (default: monthly)"
-            , "-year:I?Show work time for year"
-            )
-        , description = "Show work time specified by `zeiterfassung`."
-        , max_args    = 1
-        , min_args    = 0
-        , arg_array   = arg_array
-        )
-# end def command_spec
-
-def main (cmd) :
+def _main (cmd) :
     from _TGL.load_config_file import load_config_file
     globs = globals ()
     for cf in cmd.Config :
@@ -288,7 +267,35 @@ def main (cmd) :
                 print d
             print "=" * len (tot)
         print tot
-# end def main
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        =
+        ( "zeiterfassung:P?File specifying work time"
+        ,
+        )
+    , min_args    = 0
+    , max_args    = 1
+    , opts        =
+        ( TFL.CAO.Opt.Date
+            ( name        = "after"
+            , description = "Only display entries after specified date"
+            )
+        , TFL.CAO.Opt.Date
+            ( name        = "before"
+            , description = "Only display entries before specified date"
+            )
+        , "-Config:P,?Config file(s)"
+        , "-hpd:F=8?Hours per day"
+        , "-ptf:F=1.0?Part time factor"
+        , "-quiet:B?Show total only"
+        , "-vacation:I=25?Days of vacation per year"
+        , "-Weekly:B?Show weekly summary (default: monthly)"
+        , "-year:I=%s?Show work time for year" % (CAL.Date ().year, )
+        )
+    , description = "Show work time specified by `zeiterfassung`."
+    )
 
 """
 $ for y in $(range 2001 2008)
@@ -300,5 +307,5 @@ y=2003; python /swing/python/Arbeitszeit.py -ptf 0.60 -hpd 5 -y $y \
 """
 
 if __name__ == "__main__":
-    main (command_spec ())
+    _Command ()
 ### __END__ Arbeitszeit

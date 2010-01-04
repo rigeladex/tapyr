@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.cluster
 # ****************************************************************************
 #
@@ -63,15 +63,19 @@
 #    10-Feb-2008 (CT) `Date_Opt` added (and used for option `delta_to`)
 #    15-Feb-2008 (CT) `Date_Opt` corrected (up-call to `__init__`)
 #     8-May-2008 (CT) `Date_Opt` changed to use `__super`
+#     4-Jan-2010 (CT) `_Date_Arg_` based on `TFL.CAO` added, `Date_Opt` removed
 #    ««revision-date»»···
 #--
 
 from   _CAL                     import CAL
 from   _TFL                     import TFL
+
 import _CAL._DTW_
-from   _TFL._Meta.Once_Property import Once_Property
+
 import _TFL.Accessor
-from   _TFL.Command_Line        import Command_Line, Opt
+import _TFL.CAO
+
+from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Math_Func           import horner
 from   _TFL.Regexp              import *
 
@@ -478,45 +482,22 @@ class Date_M (CAL._Mutable_DTW_) :
 
 # end class Date_M
 
-class Date_Opt (Opt) :
-    """Date option class for use with TFL.Command_Line."""
+class _Date_Arg_ (TFL.CAO.Str) :
+    """Argument or option with a (calendary) date value"""
 
-    default_type = "S"
+    _real_name = "Date"
 
-    def __init__ (self, name, description = "", ** kw) :
-        if "cook" not in kw :
-            kw ["cook"] = self._cooked_
-        self.__super.__init__ (name, description = description, ** kw)
-    # end def __init__
-
-    def _cooked_ (self, v) :
-        if v == "now" :
+    def cook (self, value) :
+        if value == "now" :
             return Date ()
-        elif v :
-            return Date.from_string (v)
-    # end def _cooked_
+        if value :
+            return Date.from_string (value)
+    # end def cook
 
-# end class Date_Opt
+# end class _Date_Arg_
 
-if __name__ != "__main__" :
-    CAL._Export ("*")
-else :
-    from   _TFL.Caller       import Scope
-    cmd = Command_Line \
-        ( arg_spec    =
-              ( "base_date:S=%s" % Date ()
-              ,
-              )
-        , option_spec =
-              ( Date_Opt ("delta_to", "Print `base_date - delta`")
-              , "-format:S=%Y%m%d?Format for date (not used for -delta_to)"
-              , "-offset:I=0?delta to `base_date` in days"
-              , "-regexp:S?Use regexp to extract date from `base_date`"
-              , "-xformat:S=%(date)s"
-                  "?Format used to format output (not used for -delta_to)"
-              )
-        , max_args    = 1
-        )
+def _main (cmd) :
+    from _TFL.Caller import Scope
     ### Usage example for `-regexp` and `-xformat`::
     ### for f in *.tex; do
     ###   VCMove $f $(python /swing/python/Date.py -regexp '(?P<prefix> .*)_(?P<date> \d{2}-[A-Za-z][a-z]{2}-\d{4}|\d{8})\.?(?P<ext> .*)' -xformat '%(date)s_%(prefix)s.%(ext)s' $f)
@@ -524,8 +505,8 @@ else :
     if cmd.regexp :
         regexp = Regexp (cmd.regexp, re.VERBOSE)
         if regexp.search (cmd.base_date) :
-            base_date   = regexp.date
-            match_dicht = regexp.groupdict ()
+            base_date  = regexp.date
+            match_dict = regexp.groupdict ()
         else :
             import sys
             print >> sys.stderr, "`%s` doesn't match for `%s`" % \
@@ -533,7 +514,7 @@ else :
             sys.exit (9)
     else :
         base_date   = cmd.base_date
-        match_dicht = {}
+        match_dict = {}
     base_date = Date.from_string (base_date)
     if cmd.offset :
         base_date += cmd.offset
@@ -541,5 +522,29 @@ else :
         print (base_date - cmd.delta_to).days
     else :
         date = base_date.formatted (cmd.format)
-        print cmd.xformat % Scope (globs = match_dicht, locls = vars ())
+        print cmd.xformat % Scope (globs = match_dict, locls = vars ())
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        =
+        ( "base_date:S=%s" % Date (),)
+    , opts        =
+        ( TFL.CAO.Opt.Date
+            ( name        = "delta_to"
+            , description = "Print `base_date - delta`"
+            )
+        , "-format:S=%Y%m%d?Format for date (not used for -delta_to)"
+        , "-offset:I=0?delta to `base_date` in days"
+        , "-regexp:S?Use regexp to extract date from `base_date`"
+        , "-xformat:S=%(date)s"
+            "?Format used to format output (not used for -delta_to)"
+        )
+    , max_args    = 1
+    )
+
+if __name__ != "__main__" :
+    CAL._Export ("*")
+else :
+    _Command ()
 ### __END__ CAL.Date

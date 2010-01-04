@@ -435,7 +435,8 @@ def _main (cmd) :
 
 _Command = TFL.CAO.Cmd \
     ( handler     = _main
-    , args        = ("amount:S?Amount to convert", )
+    , args        =
+        ("amount:S?Amount to convert", )
     , opts        =
         ( EUC_Source (name = "source", default = "ATS")
         , EUC_Target (name = "target")

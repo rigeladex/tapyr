@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,11 +30,13 @@
 #    29-Aug-2008 (CT) s/super(...)/__super/
 #    15-Mar-2009 (CT) `Re_Filter_OA_Opt` changed to accept `attr` spec in
 #                     `__init__`
+#     4-Jan-2010 (CT) Option classes based on TFL.CAO instead of
+#                     TFL.Command_Line
 #    ««revision-date»»···
 #--
 
 from    _TFL.Regexp import *
-import  _TFL.Command_Line
+import  _TFL.CAO
 import  _TFL.Filter
 
 class Re_Filter (TFL.Filter) :
@@ -82,52 +84,57 @@ class Re_Filter_OA (Re_Filter) :
 
 # end class Re_Filter_OA
 
-class Re_Filter_Opt (TFL.Opt) :
-    """Re_Filter option class for use with TFL.Command_Line."""
+class _Re_Filter_Arg_ (TFL.CAO.Str_AS) :
+    """Argument or option defining a filter using a Re_Filter"""
 
-    default_type = "T"
-    _cooked_     = Re_Filter
+    _real_name = "Re_Filter"
 
-    def __init__ (self, name, description = "", ** kw) :
-        kw.setdefault ("auto_split", """\n""")
-        self.__super.__init__ (name, description = description, ** kw)
+    def __init__ (self, ** kw) :
+        kw.setdefault         ("auto_split", """\n""")
+        self.__super.__init__ (** kw)
     # end def __init__
 
-    def value_1 (self) :
-        result = self.__super.value_1 ()
-        if result :
-            return self._cooked_ (result)
-    # end def value_1
+    def combine (self, values) :
+        if len (values) > 1 :
+            return TFL.Filter_And (* values)
+        elif values :
+            return values [0]
+    # end def combine
 
-    def values (self) :
-        result = self.__super.values ()
-        if result :
-            cooked = self._cooked_
-            return TFL.Filter_And (* (cooked (r) for r in result))
-    # end def values
+    def cook (self, value) :
+        if value :
+            return Re_Filter (value)
+    # end def cook
 
-# end class Re_Filter_Opt
+# end class _Re_Filter_Arg_
 
-class Re_Filter_OA_Opt (Re_Filter_Opt) :
-    """Re_Filter_OA option class for use with TFL.Command_Line."""
+class _Re_Filter_Arg_OA_ (_Re_Filter_Arg_) :
+    """Argument or option defining a filter using Re_Filter_OA"""
 
-    def __init__ (self, * args, ** kw) :
+    _real_name = "Re_Filter_OA"
+
+    def __init__ (self, ** kw) :
         self.attr_to_match = kw.pop ("attr", None)
-        self.__super.__init__ (* args, ** kw)
+        self.__super.__init__ (** kw)
     # end def __init__
 
-    def _cooked_ (self, v) :
-        if ":" in v :
-            attr, pattern = v.split (":", 1)
-        elif self.attr_to_match :
-            attr    = self.attr_to_match
-            pattern = v
-        else :
-            raise ValueError, v
-        return Re_Filter_OA (attr, pattern)
-    # end def _cooked_
+    def cook (self, value) :
+        if value :
+            if ":" in value :
+                attr, pattern = value.split (":", 1)
+            elif self.attr_to_match :
+                attr    = self.attr_to_match
+                pattern = value
+            else :
+                raise TFL.CAO.Err \
+                    ( "Specify object attribute to which filter "
+                      "`%s` should apply"
+                    % value
+                    )
+            return Re_Filter_OA (attr, pattern)
+    # end def cook
 
-# end class Re_Filter_OA_Opt
+# end class _Re_Filter_Arg_OA_
 
 if __name__ != "__main__" :
     TFL._Export ("*")

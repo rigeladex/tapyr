@@ -39,6 +39,7 @@
 #     1-Jan-2010 (CT) Creation continued
 #     2-Jan-2010 (CT) Creation continued..
 #     3-Jan-2010 (CT) Creation continued...
+#     4-Jan-2010 (CT) Creation continued....
 #    ««revision-date»»···
 #--
 
@@ -88,8 +89,9 @@ class Arg (TFL.Meta.M_Class) :
 
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__ (name, bases, dict)
-        if not name.startswith ("_") :
-            setattr (cls.__class__, name, cls)
+        r_name = cls.__name__
+        if not r_name.startswith ("_") :
+            setattr (cls.__class__, r_name, cls)
             if "type_abbr" in dict :
                 assert not cls.type_abbr in cls.Table, cls
                 cls.Table [cls.type_abbr] = cls
@@ -174,6 +176,10 @@ class _Spec_ (TFL.Meta.Object) :
         self._setup_default (default)
     # end def __init__
 
+    def combine (self, values) :
+        return values
+    # end def combine
+
     def cook (self, value) :
         return value
     # end def cook
@@ -198,7 +204,7 @@ class _Spec_ (TFL.Meta.Object) :
         pat = self.range_pat
         for value in values :
             if value and pat.match (value) :
-                for v in _resolve_range_1 (value, pat) :
+                for v in self._resolve_range_1 (value, pat) :
                     yield v
             else :
                 yield value
@@ -211,7 +217,7 @@ class _Spec_ (TFL.Meta.Object) :
     def _safe_eval (self, value) :
         try :
             return eval (value, {}, {})
-        except NameError :
+        except Exception :
             raise Err ("Invalid value `%s` for %s" % (value, self))
     # end def _safe_eval
 
@@ -252,7 +258,9 @@ class _Number_ (_Spec_) :
     """Base class for numeric argument and option types"""
 
     def cook (self, value) :
-        return self._cook (self._safe_eval (value))
+        if isinstance (value, basestring) :
+            value = self._safe_eval (value)
+        return self._cook (value)
     # end def cook
 
     def _resolve_range_1 (self, value, pat) :
@@ -521,6 +529,12 @@ class Path (_Spec_) :
 
     auto_split    = ":"
     type_abbr     = "P"
+
+    def cook (self, value) :
+        if value :
+            value = TFL.sos.expanded_path (value)
+        return value
+    # end def cook
 
     def _resolve_range (self, values) :
         for value in values :
@@ -818,6 +832,8 @@ class CAO (TFL.Meta.Object) :
                 result = result [0]
             else :
                 result = None
+        elif result and map is not self._raw :
+            result = ao.combine (result)
         return result
     # end def _attribute_value
 
