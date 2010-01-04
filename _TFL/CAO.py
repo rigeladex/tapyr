@@ -127,6 +127,7 @@ class _Spec_ (TFL.Meta.Object) :
 
     __metaclass__ = Arg
 
+    alias         = None
     auto_split    = None
     needs_value   = True
 
@@ -179,7 +180,7 @@ class _Spec_ (TFL.Meta.Object) :
     def cooked (self, value) :
         auto_split = self.auto_split
         cook       = self.cook
-        if auto_split and auto_split in value :
+        if auto_split and value and auto_split in value :
             values = value.split (auto_split)
         else :
             values = (value, )
@@ -195,7 +196,7 @@ class _Spec_ (TFL.Meta.Object) :
     def _resolve_range (self, values) :
         pat = self.range_pat
         for value in values :
-            if pat.match (value) :
+            if value and pat.match (value) :
                 for v in _resolve_range_1 (value, pat) :
                     yield v
             else :
@@ -231,7 +232,7 @@ class _Spec_ (TFL.Meta.Object) :
             , self.auto_split or ""
             , (self.auto_split or "").join (str (d) for d in self.default)
             , self.max_number
-            , self.description
+            , self.description or ""
             )
     # end def __repr__
 
@@ -337,6 +338,106 @@ class Float (_Number_) :
 
 # end class Float
 
+class Help (_Spec_O_) :
+    """Option asking for help"""
+
+    alias         = "?"
+    auto_split    = ","
+    needs_value   = False
+
+    def __init__ (self) :
+        self.__super.__init__ \
+            ( name          = "help"
+            , description   = "Display help about command"
+            )
+    # end def __init__
+
+    def __call__ (self, cao, indent = 0) :
+        return self._handler (cao, indent)
+    # end def __call__
+
+    def _handler (self, cao, indent = 0) :
+        if cao._cmd._helper :
+            cmd._helper (cao)
+        else :
+            keys  = set (["args", "opts", "summary"])
+            vals  = set (v for v in getattr (cao, self.name) if v)
+            all_p = (not vals.intersection (keys)) or vals == set (["break"])
+            if (all_p or "summary" in vals) :
+                self._help_summary (cao, indent)
+                print
+            if (all_p or "args" in vals) and cao._arg_list :
+                self._help_args (cao, indent, heading = not all_p)
+                print
+            if (all_p or "opts" in vals) and cao._opt_dict :
+                self._help_opts (cao, indent, heading = not all_p)
+        return "break" not in vals
+    # end def _handler
+
+    def _help_args (self, cao, indent = 0, heading = False) :
+        if heading :
+            print "%sArguments of %s" % (" " * indent, cao._name)
+        indent += 4
+        head    = " " * indent
+        max_l   = max (len (k) for k in cao._map)
+        for arg in cao._arg_list :
+            name = arg.name
+            v    = getattr (cao, name, "")
+            print "%s%-*s  : %s = %s <default: %s>" % \
+                (head, max_l, name, arg.__class__.__name__, v, arg.default)
+        if cao.argv :
+            print
+            print "%s%-*s  : %s" % (head, max_l, "argv", cao.argv)
+    # end def _help_args
+
+    def _help_opts (self, cao, indent = 0, heading = False) :
+        if heading :
+            print "%sOptions   of %s" % (" " * indent, cao._name)
+        indent += 4
+        head    = " " * indent
+        max_l   = max (len (k) for k in cao._map)
+        for name, opt in sorted (cao._opt_dict.iteritems ()) :
+            v = getattr (cao, name, "")
+            print "%s-%-*s : %s = %s <default: %s>" % \
+                (head, max_l, name, opt.__class__.__name__, v, opt.default)
+            print "%s    %s" % (head, opt.description)
+    # end def _help_opts
+
+    def _help_summary (self, cao, indent) :
+        head = " " * indent
+        print "%s%s %s"  % \
+            (head, cao._name, " ".join (self._help_summary_args (cao)))
+        print "%s    %s" % (head, cao._cmd._description)
+    # end def _help_summary
+
+    def _help_summary_args (self, cao) :
+        cmd      = cao._cmd
+        min_args = cmd._min_args
+        max_args = cmd._max_args
+        if cmd._arg_list :
+            for i, arg in enumerate (cmd._arg_list) :
+                if i < min_args :
+                    yield arg.name
+                else :
+                    yield "[%s]" % arg.name
+        if max_args < 0 or max_args > len (cmd._arg_list) :
+            yield "..."
+    # end def _help_summary_args
+
+    def _setup_default (self, default) :
+        self.default = ()
+    # end def _setup_default
+
+    def __repr__ (self) :
+        return "'%s%s %s'" % \
+            ( self.prefix
+            , self.name
+            , self.description
+            )
+    # end def __repr__
+
+# end class Help
+
 class Int (_Number_) :
     """Argument or option with a integer value"""
 
@@ -415,7 +516,7 @@ class Cmd (TFL.Meta.Object) :
     """Model a command with options, arguments, and a handler."""
 
     _handler      = None
-    _help_pat     = Regexp ("""^(h(e(lp?)?)?|\?)$""")
+    _helper       = None
     _opt_pat      = Regexp \
         ( """ -{1,2} (?P<name> [^:= ]+) """
           """ (?: = (?P<quote> [\"\']?) (?P<value> .*) (?P=quote)? )? """
@@ -433,6 +534,7 @@ class Cmd (TFL.Meta.Object) :
             , description = ""
             , name        = ""
             , do_keywords = False
+            , helper      = None
             ) :
         assert max_args == -1 or max_args >= min_args
         assert max_args == -1 or max_args >= len (args)
@@ -446,6 +548,8 @@ class Cmd (TFL.Meta.Object) :
         self._description = description
         self._name        = name or TFL.Environment.script_name ()
         self._do_keywords = do_keywords
+        if helper is not None :
+            self._helper  = helper
         self._setup_opts (opts)
         self._setup_args (args)
     # end def __init__
@@ -455,16 +559,17 @@ class Cmd (TFL.Meta.Object) :
             assert not _argv, "Cannot specify both `_argv` and `_kw`"
             cao = self.use (** _kw)
         else :
-            help_on_err = False
+            help = False
             if _argv is None :
-                help_on_err = True
+                help  = True
                 _argv = sys.argv [1:]
             try :
                 cao = self.parse (_argv)
             except Exception, exc :
-                if help_on_err :
-                    print exc
-                    ### XXX display help
+                if help :
+                    print exc, "\n\nUsage :"
+                    cao = CAO (self)
+                    self.help (cao, indent = 4)
                     return
                 else :
                     raise
@@ -531,10 +636,12 @@ class Cmd (TFL.Meta.Object) :
 
     def _handle_opt (self, arg, argv_it, result) :
         oa  = result._opt_abbr
+        al  = result._opt_alias
         pat = self._opt_pat
         if pat.match (arg) :
             k = pat.group ("name")
             v = pat.group ("value")
+            k = al.get    (k, k)
             if k in oa :
                 spec = oa [k]
                 if spec.needs_value and v is None :
@@ -543,8 +650,6 @@ class Cmd (TFL.Meta.Object) :
                     except StopIteration :
                         raise Err ("Option `%s` needs a value" % k)
                 result._set_opt  (spec, v)
-            elif self._help_pat.match (k) :
-                result._set_help (k, v)
             else :
                 matches = \
                     [o for o in sorted (result._opt_dict) if o.startswith (k)]
@@ -584,16 +689,25 @@ class Cmd (TFL.Meta.Object) :
                         )
     # end def _setup_args
 
+    def _setup_opt  (self, opt, od, al) :
+        od [opt.name] = opt
+        opt.kind = "option"
+        if opt.alias :
+            al [opt.alias] = opt.name
+    # end def _setup_opt
+
     def _setup_opts (self, opts) :
-        self._opt_dict = od = {}
-        self._opt_abbr = oa = {}
+        self._opt_dict  = od = {}
+        self._opt_abbr  = oa = {}
+        self._opt_alias = al = {}
         for o in opts :
             if isinstance (o, basestring) :
                 o = Arg.from_string (o.lstrip ("-"))
             elif not isinstance (o.__class__, Arg) :
                 raise Err ("Not a valid option `%s`" % o)
-            od [o.name] = o
-            o.kind = "option"
+            self._setup_opt (o, od, al)
+        if not "help" in od :
+            self._setup_opt (Opt.Help (), od, al)
         self._setup_opt_abbr (od, oa)
     # end def _setup_opts
 
@@ -648,8 +762,8 @@ class CAO (TFL.Meta.Object) :
         self._arg_list    = list (cmd._arg_list)
         self._opt_dict    = dict (cmd._opt_dict)
         self._opt_abbr    = dict (cmd._opt_abbr)
+        self._opt_alias   = dict (cmd._opt_alias)
         self._do_keywords = cmd._do_keywords
-        self._do_help     = ()
         self.argv         = []
         self._map         = TFL.defaultdict (list)
         self._raw         = TFL.defaultdict (list)
@@ -660,9 +774,10 @@ class CAO (TFL.Meta.Object) :
     def __call__ (self) :
         call_handler = True
         handler      = self._cmd._handler
-        if self._do_help :
+        if self.help :
             call_handler = self._explicit_n
-            show (self) ### XXX display proper help
+            if not self._cmd.help (self) :
+                call_handler = False
         if call_handler and handler :
             return handler (self)
         return self
@@ -689,12 +804,11 @@ class CAO (TFL.Meta.Object) :
     # end def _attribute_value
 
     def _check (self) :
-        self._explicit_n = len (self._map) + len (self.argv)
         self._finish_setup ()
         min_args = self._cmd._min_args
         max_args = self._cmd._max_args
         argn     = len (self.argv)
-        if not self._do_help :
+        if not self.help :
             if argn < min_args :
                 raise Err \
                     ("Need at least %d arguments, got %d" % (min_args, argn))
@@ -718,6 +832,7 @@ class CAO (TFL.Meta.Object) :
 
     def _set_arg (self, spec, value) :
         kp = self._key_pat
+        self._explicit_n += 1
         if isinstance (spec, Cmd_Choice) :
             if self.argv :
                 raise Err \
@@ -731,10 +846,11 @@ class CAO (TFL.Meta.Object) :
                     )
             self._name = " ".join ([self._name, sc._name])
             self._arg_list [:] = sc._arg_list
-            self._arg_dict.clear  ()
-            self._arg_dict.update (sc._arg_dict)
-            self._opt_dict.update (sc._opt_dict)
-            sc._setup_opt_abbr    (self._opt_dict, self._opt_abbr)
+            self._arg_dict.clear   ()
+            self._arg_dict.update  (sc._arg_dict)
+            self._opt_dict.update  (sc._opt_dict)
+            self._opt_alias.update (sc._opt_alias)
+            sc._setup_opt_abbr     (self._opt_dict, self._opt_abbr)
         elif self._do_keywords and kp.match (value) :
             self._key_values [kp.name] = kp.value
         else :
@@ -745,11 +861,8 @@ class CAO (TFL.Meta.Object) :
                 self._raw [spec.name].append (value)
     # end def _set_arg
 
-    def _set_help (self, k, v) :
-        self._do_help = (k, v)
-    # end def _set_help
-
     def _set_opt (self, spec, value) :
+        self._explicit_n += spec.name != "help"
         self._map [spec.name].extend (spec.cooked (value))
         if value is not None :
             self._raw [spec.name].append (value)
@@ -843,14 +956,15 @@ called by a client, if explicit flow control is required.
 
     >>> cmd = Cmd (show, name = "Test", args = ("adam:P=/tmp/test?First arg", "bert:I=42"), opts = ("-verbose:B", "-year:I,=2010"))
     >>> cmd._arg_list
-    ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?None']
+    ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?']
     >>> sorted (str (o) for o in cmd._opt_dict.itervalues ())
-    ["'-verbose:B=False#1?None'", "'year:I,=2010#0?None'"]
+    ["'-help Display help about command'", "'-verbose:B=False#1?'", "'year:I,=2010#0?'"]
 
     >>> cmd (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
     Test
-        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
+        Options    : ['h', 'he', 'hel', 'help', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
         Arguments  : ['adam', 'bert']
+        -help      : []
         -verbose   : False
         -year      : [2000, 1999]
         adam       : /tmp/tmp
@@ -871,8 +985,9 @@ called by a client, if explicit flow control is required.
 
     >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
     Test
-        Options    : ['v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
+        Options    : ['h', 'he', 'hel', 'help', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
         Arguments  : ['adam', 'bert']
+        -help      : []
         -verbose   : True
         -year      : [2000, 1999]
         adam       : /tmp/tmp
@@ -892,17 +1007,19 @@ called by a client, if explicit flow control is required.
     ...     )
     >>> coc ([])
     Comp
-        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['sub']
+        -help      : []
         -strict    : False
         -verbose   : False
         sub        : None
         argv       : []
     >>> coc (["one"])
     Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : False
+        -help      : []
         -strict    : False
         -verbose   : False
         -y         : None
@@ -911,8 +1028,9 @@ called by a client, if explicit flow control is required.
         argv       : []
     >>> coc (["two"])
     Comp two
-        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Options    : ['h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['ccc', 'ddd']
+        -help      : []
         -strict    : False
         -struct    : False
         -verbose   : False
@@ -921,17 +1039,19 @@ called by a client, if explicit flow control is required.
         argv       : []
     >>> coc (["-s"])
     Comp
-        Options    : ['s', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['sub']
+        -help      : []
         -strict    : True
         -verbose   : False
         sub        : None
         argv       : []
     >>> coc (["-s", "one"])
     Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : False
+        -help      : []
         -strict    : True
         -verbose   : False
         -y         : None
@@ -940,8 +1060,9 @@ called by a client, if explicit flow control is required.
         argv       : []
     >>> coc (["-s", "two"])
     Comp two
-        Options    : ['stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
+        Options    : ['h', 'he', 'hel', 'help', 'stri', 'stric', 'strict', 'stru', 'struc', 'struct', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
         Arguments  : ['ccc', 'ddd']
+        -help      : []
         -strict    : True
         -struct    : False
         -verbose   : False
@@ -959,12 +1080,13 @@ called by a client, if explicit flow control is required.
     >>> coc (["two", "one"])
     Traceback (most recent call last):
       ...
-    Err: Command/argument/option error: Invalid value `one` for 'ccc:I=3#1?None'
+    Err: Command/argument/option error: Invalid value `one` for 'ccc:I=3#1?'
     >>> coc (["one", "two"])
     Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : False
+        -help      : []
         -strict    : False
         -verbose   : False
         -y         : None
@@ -973,9 +1095,10 @@ called by a client, if explicit flow control is required.
         argv       : ['two']
     >>> coc (["one", "-v", "two", "-Z"])
     Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : True
+        -help      : []
         -strict    : False
         -verbose   : True
         -y         : None
@@ -984,9 +1107,10 @@ called by a client, if explicit flow control is required.
         argv       : ['two']
     >>> coc (["one", "-v", "two", "-Z", "three", "four"])
     Comp one
-        Options    : ['Z', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
+        Options    : ['Z', 'h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y']
         Arguments  : ['aaa', 'bbb']
         -Z         : True
+        -help      : []
         -strict    : False
         -verbose   : True
         -y         : None
@@ -998,24 +1122,19 @@ called by a client, if explicit flow control is required.
     >>> cmd = Cmd (show, name = "dict-test", opts = (ko, ))
     >>> cmd (["-foo", "a"])
     dict-test
-        Options    : ['f', 'fo', 'foo']
+        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
         Arguments  : []
         -foo       : 42
+        -help      : []
         argv       : []
     >>> cmd (["-foo=1"])
     dict-test
-        Options    : ['f', 'fo', 'foo']
+        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
         Arguments  : []
         -foo       : frodo
+        -help      : []
         argv       : []
 
-
-
-coc = Cmd (show,
-    name = "Comp", args = (Cmd_Choice ("sub",
-      Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
-      Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
-      ), ), opts = ("verbose:B", "strict:B"))
 """
 
 
