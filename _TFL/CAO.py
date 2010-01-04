@@ -215,10 +215,11 @@ class _Spec_ (TFL.Meta.Object) :
     # end def _resolve_range_1
 
     def _safe_eval (self, value) :
-        try :
-            return eval (value, {}, {})
-        except Exception :
-            raise Err ("Invalid value `%s` for %s" % (value, self))
+        if value :
+            try :
+                return eval (value, {}, {})
+            except Exception :
+                raise Err ("Invalid value `%s` for %s" % (value, self))
     # end def _safe_eval
 
     def _setup_default (self, default) :
@@ -339,7 +340,8 @@ class Decimal (_Number_) :
     def _cook (self, value) :
         if isinstance (value, float) :
             value = str (value)
-        return decimal.Decimal (value)
+        if value is not None :
+            return decimal.Decimal (value)
     # end def _cook
 
 # end class Decimal
@@ -514,6 +516,35 @@ class Key (_Spec_) :
     # end def cook
 
 # end class Key
+
+class Money (Decimal) :
+    """Argument or option with a decimal value denoting a monetary amount"""
+
+    auto_split     = None
+    type_abbr      = "$"
+    comma_dec_pat  = Regexp \
+        ( r"([0-9.]+) , (\d{2})$"
+        , re.VERBOSE
+        )
+    period_dec_pat = Regexp \
+        ( r"([0-9,]+) \. (\d{2})$"
+        , re.VERBOSE
+        )
+
+    def _safe_eval (self, value) :
+        cdp = self.comma_dec_pat
+        pdp = self.period_dec_pat
+        if isinstance (value, basestring) :
+            if cdp.match (value) :
+                orig  = value
+                value = cdp.sub \
+                    (r"\g<1>.\g<2>", value.replace (".", ""))
+            elif pdp.match (value) :
+                value = value.replace (",", "")
+        return self.__super._safe_eval (value)
+    # end def _safe_eval
+
+# end class Money
 
 class Set (_Spec_) :
     """Argument or option that specifies one element of a set of choices"""

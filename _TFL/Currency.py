@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-15 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -47,8 +47,6 @@ import re
 
 ### see Fri97, p.229, p.292
 sep_1000_pat   = re.compile ("(\d{1,3}) (?= (?: \d\d\d)+ (?! \d) )", re.X)
-comma_dec_pat  = re.compile ("([0-9.]+) , (\d{2})$",                 re.X)
-period_dec_pat = re.compile ("([0-9,]+) \. (\d{2})$",                re.X)
 
 @TFL.Decorator
 def _binary_operator (f) :
@@ -88,7 +86,17 @@ def _binary_operator_inplace (f) :
     return _
 # end def _binary_operator
 
+class _M_Currency_ (TFL.Meta.Object.__class__) :
+
+    def __repr__ (cls) :
+        return cls.name
+    # end def __repr__
+
+# end class _M_Currency_
+
 class _Currency_ (TFL.Meta.Object) :
+
+    __metaclass__   = _M_Currency_
 
     name            = "EUR"
     sloppy_name     = "EUR"

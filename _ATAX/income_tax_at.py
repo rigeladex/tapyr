@@ -127,14 +127,17 @@ def _main (cmd) :
 
 _Command = TFL.CAO.Cmd \
     ( handler     = _main
-    , args        = ("amount:F?Amount of taxable income", )
+    , args        =
+        ( "amount:$?Amount of taxable income"
+        ,
+        )
     , min_args    = 1
     , max_args    = 1
     , opts        =
         ( "-verbose:B?Show chunks, too"
         , "-year:I=%s?Year of interest" % (year, )
-        , EUC_Source ()
-        , EUC_Target ()
+        , TFL.CAO.Opt.EUC_Source ()
+        , TFL.CAO.Opt.EUC_Target ()
         )
     , description = "Calculate income tax for `year`"
     )

@@ -178,7 +178,7 @@ class EU_Currency (_EU_Currency_) :
 
     def to_euro (self, amount) :
         """Converts `amount' into Euro."""
-        return amount / self.to_euro_factor
+        return float (amount) / self.to_euro_factor
     # end def to_euro
 
     def as_source_s (self, round = False) :
@@ -379,8 +379,10 @@ def currency (name) :
     return EU_Currency.Table [name]
 # end def currency
 
-class EUC_Source (TFL.CAO.Key) :
+class _EUC_Source_Arg_ (TFL.CAO.Arg.Key) :
     """Argument or option for source currency"""
+
+    _real_name      = "EUC_Source"
 
     def __init__ (self, ** kw) :
         kw.setdefault ("name",        "source_currency")
@@ -389,10 +391,12 @@ class EUC_Source (TFL.CAO.Key) :
         self.__super.__init__ (dict = EUC.Table, ** kw)
     # end def __init__
 
-# end class EUC_Source
+# end class _EUC_Source_Arg_
 
-class EUC_Target (TFL.CAO.Key) :
+class _EUC_Target_Arg_ (TFL.CAO.Arg.Key) :
     """Argument or option for target currency"""
+
+    _real_name = "EUC_Target"
 
     def __init__ (self, ** kw) :
         kw.setdefault ("name",        "target_currency")
@@ -408,26 +412,14 @@ class EUC_Target (TFL.CAO.Key) :
         return result
     # end def cook
 
-# end class EUC_Target
+# end class _EUC_Target_Arg_
 
 def _main (cmd) :
     source = cmd.source
     s      = source (0)
     for a in cmd.argv :
-        a = a.strip ()
-        if not a :
-            continue
-        if comma_dec_pat.match (a) :
-            a = comma_dec_pat.sub (r"\g<1>.\g<2>", a.replace (".", ""))
-        elif period_dec_pat.match (a) :
-            a = a.replace (",", "")
-        b = eval   (a, {}, {})
-        c = source (b)
-        if str (b) != a :
-            b = " [%s]" % b
-        else :
-            b = ""
-        print "%s%s %s = %s" % (a, b, source.sloppy_name, c)
+        c = source (a)
+        print "%s %s = %s" % (a, source.sloppy_name, c)
         s = s + c
     if s != 0 and len (cmd.argv) > 1 :
         print "Total : %s" % s
@@ -436,10 +428,12 @@ def _main (cmd) :
 _Command = TFL.CAO.Cmd \
     ( handler     = _main
     , args        =
-        ("amount:S?Amount to convert", )
+        ( "amount:$?Amount to convert"
+        ,
+        )
     , opts        =
-        ( EUC_Source (name = "source", default = "ATS")
-        , EUC_Target (name = "target")
+        ( TFL.CAO.Opt.EUC_Source (name = "source", default = "ATS")
+        , TFL.CAO.Opt.EUC_Target (name = "target")
         )
     , description = "Convert between two Euro currencies"
     )
