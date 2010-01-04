@@ -129,6 +129,7 @@ class _Spec_ (TFL.Meta.Object) :
 
     alias         = None
     auto_split    = None
+    choices       = None
     needs_value   = True
 
     prefix        = ""
@@ -305,10 +306,15 @@ class Cmd_Choice (TFL.Meta.Object) :
 
     def __init__ (self, name, * cmds, ** kw) :
         self.name        = name
-        self.sub_cmds    = dict ((c._name, c) for c in cmds)
+        self.sub_cmds    = dict   ((c._name, c) for c in cmds)
         self.description = kw.pop ("description", "")
         assert not kw
     # end def __init__
+
+    @property
+    def choices (self) :
+        return self.sub_cmds
+    # end def choices
 
     def __getitem__ (self, key) :
         return self.sub_cmds [key]
@@ -365,7 +371,8 @@ class Help (_Spec_O_) :
             all_p = (not vals.intersection (keys)) or vals == set (["break"])
             if (all_p or "summary" in vals) :
                 self._help_summary (cao, indent)
-                print
+                if cao._cmd._description :
+                    print
             if (all_p or "args" in vals) and cao._arg_list :
                 self._help_args (cao, indent, heading = not all_p)
                 print
@@ -374,17 +381,26 @@ class Help (_Spec_O_) :
         return "break" not in vals
     # end def _handler
 
+    def _help_ao (self, ao, cao, head, max_l, prefix = "") :
+        name = ao.name
+        v    = getattr (cao, name, "")
+        print "%s%s%-*s  : %s = %s <default: %s>" % \
+            (head, prefix, max_l, name, ao.__class__.__name__, v, ao.default)
+        if ao.description :
+            print "%s    %s" % (head, ao.description)
+        if ao.choices :
+            choices = "Possible values: %s" % (", ".join (sorted (ao.choices)))
+            print "%s    %s" % (head, choices)
+    # end def _help_ao
+
     def _help_args (self, cao, indent = 0, heading = False) :
         if heading :
             print "%sArguments of %s" % (" " * indent, cao._name)
         indent += 4
         head    = " " * indent
-        max_l   = max (len (k) for k in cao._map)
+        max_l   = max (len (k) for k in cao._map) + 1
         for arg in cao._arg_list :
-            name = arg.name
-            v    = getattr (cao, name, "")
-            print "%s%-*s  : %s = %s <default: %s>" % \
-                (head, max_l, name, arg.__class__.__name__, v, arg.default)
+            self._help_ao (arg, cao, head, max_l)
         if cao.argv :
             print
             print "%s%-*s  : %s" % (head, max_l, "argv", cao.argv)
@@ -397,10 +413,7 @@ class Help (_Spec_O_) :
         head    = " " * indent
         max_l   = max (len (k) for k in cao._map)
         for name, opt in sorted (cao._opt_dict.iteritems ()) :
-            v = getattr (cao, name, "")
-            print "%s-%-*s : %s = %s <default: %s>" % \
-                (head, max_l, name, opt.__class__.__name__, v, opt.default)
-            print "%s    %s" % (head, opt.description)
+            self._help_ao (opt, cao, head, max_l, "-")
     # end def _help_opts
 
     def _help_summary (self, cao, indent) :
@@ -468,6 +481,11 @@ class Key (_Spec_) :
         self._dict = dict
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @property
+    def choices (self) :
+        return self._dict
+    # end def choices
 
     def cook (self, value) :
         if value :
@@ -1135,9 +1153,41 @@ called by a client, if explicit flow control is required.
         -help      : []
         argv       : []
 
+    >>> _ = coc (["-help=break"])
+    Comp [sub] ...
+    <BLANKLINE>
+        sub       : Cmd_Choice = None <default: None>
+            Possible values: one, two
+    <BLANKLINE>
+        -help     : Help = ['break'] <default: ()>
+            Display help about command
+        -strict   : Bool = False <default: (False,)>
+        -verbose  : Bool = False <default: (False,)>
+    >>> _ = coc (["-help=break", "one"])
+    Comp one [aaa] [bbb] ...
+    <BLANKLINE>
+        aaa       : Str = None <default: ()>
+        bbb       : Str = None <default: ()>
+    <BLANKLINE>
+        -Z        : Bool = False <default: (False,)>
+        -help     : Help = ['break'] <default: ()>
+            Display help about command
+        -strict   : Bool = False <default: (False,)>
+        -verbose  : Bool = False <default: (False,)>
+        -y        : Int = None <default: ()>
+    >>> _ = coc (["-help=break", "two"])
+    Comp two [ccc] [ddd] ...
+    <BLANKLINE>
+        ccc       : Int = 3 <default: [3]>
+        ddd       : Str_AS = D <default: ['D']>
+    <BLANKLINE>
+        -help     : Help = ['break'] <default: ()>
+            Display help about command
+        -strict   : Bool = False <default: (False,)>
+        -struct   : Bool = False <default: (False,)>
+        -verbose  : Bool = False <default: (False,)>
+
 """
-
-
 
 if __name__ != "__main__" :
     TFL._Export_Module ()

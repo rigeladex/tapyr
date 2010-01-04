@@ -251,7 +251,8 @@ def _main (cmd) :
 
 _Command = TFL.CAO.Cmd \
     ( handler     = _main
-    , args        = ("fahrtenbuch:P?File defining fahrtenbuch", )
+    , args        =
+        ("fahrtenbuch:P?File defining fahrtenbuch", )
     , min_args    = 1
     , max_args    = 1
     , opts        =
