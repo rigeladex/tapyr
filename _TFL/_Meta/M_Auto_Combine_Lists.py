@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -23,60 +23,58 @@
 #    TFL.Meta.M_Auto_Combine_Lists
 #
 # Purpose
-#    Metaclass autocombining lists of newly defined class with those of its
-#    ancestors
+#    Meta class for auto-combining the list-valued attributes mentioned in
+#    `_lists_to_combine` between a class and it's ancestors.
 #
 # Revision Dates
-#    23-Jul-2004 (CT)  Creation (factored from TOM.Meta.M_Auto_Combine)
-#    13-Jul-2005 (CED) Use sets instead of dicts
-#     2-Jul-2006 (MG)  Unnecessary imports removed
-#    14-Dec-2007 (MG)  Import changed
-#    29-Aug-2008 (CT)  s/super(...)/__m_super/
+#    23-Jul-2004 (CT) Creation (factored from TOM.Meta.M_Auto_Combine)
+#     2-Jul-2006 (MG) Unnecessary imports removed
+#    14-Dec-2007 (MG) Import changed
+#    29-Aug-2008 (CT) s/super(...)/__m_super/
 #     2-Feb-2009 (CT) s/_M_Type_/M_Base/
 #     3-Feb-2009 (CT) Documentation improved
+#     5-Jan-2010 (CT) Use `uniq` instead of `set` and `sorted`
 #    ««revision-date»»···
 #--
 
-"""Meta class for auto-combining the list-attributes mentioned in
+"""
+Meta class for auto-combining the list-valued attributes mentioned in
 `_lists_to_combine` between a class and it's ancestors.
 
 ::
 
     >>> class A (object) :
     ...     __metaclass__     = M_Auto_Combine_Lists
-    ...     _lists_to_combine = ("foo", "bar")
+    ...     _lists_to_combine = ("foo", "bar", "qux")
     ...     bar               = [1, 3]
+    ...     qux               = [(0, ), (1, )]
     ...
     >>> class B (A) :
     ...     _lists_to_combine = A._lists_to_combine + ("baz", )
     ...     foo               = [0]
     ...     bar               = [-1, 1, 2, 42]
+    ...     qux               = [(2, ), (0, )]
     ...
-    >>> A.foo
-    []
-    >>> B.foo
-    [0]
-    >>> A.bar
-    [1, 3]
-    >>> B.bar
-    [-1, 1, 2, 3, 42]
-    >>> B.baz
-    []
+    >>> A.foo, A.bar, A.qux
+    ([], [1, 3], [(0,), (1,)])
+    >>> B.foo, B.bar, B.qux, B.baz
+    ([0], [1, 3, -1, 2, 42], [(0,), (1,), (2,)], [])
+    >>> id (B.qux [0]) == id (A.qux [0])
+    True
 """
 
 from   _TFL                import TFL
 import _TFL._Meta.M_Class
-from   _TFL.predicate      import sorted
+from   _TFL.predicate      import uniq
+
+import itertools
 
 class M_Auto_Combine_Lists (TFL.Meta.M_Base) :
-    """Meta class for auto-combining the list-attributes mentioned in
+    """Meta class for auto-combining the list-valued attributes mentioned in
        `_lists_to_combine` between a class and it's ancestors.
 
        Beware:
-
-       - the sequence of elements in the _lists_to_combine is not kept!
-       - Multiple occurrences of the same element are skipped.
-       - The elements of the _lists_to_combine must be hashable.
+       - The elements of the `_lists_to_combine` must be hashable.
     """
 
     _lists_to_combine = ()
@@ -87,19 +85,19 @@ class M_Auto_Combine_Lists (TFL.Meta.M_Base) :
     # end def __init__
 
     def _m_combine_lists (cls, bases, dict) :
-        for ltc in cls._lists_to_combine :
-            n   = "__%s" % ltc
-            s   = set ()
-            for b in bases :
-                ltc_set = getattr (b, n, getattr (b, ltc, []))
-                s.update (ltc_set)
-            try :
-                s.update (dict.get (ltc, []))
-            except TypeError :
-                print cls, [(x, type (x)) for x in dict.get (ltc, [])]
-                raise
-            setattr (cls, n,   s)
-            setattr (cls, ltc, sorted (s))
+        for name in cls._lists_to_combine :
+            setattr \
+                ( cls, name
+                , list
+                    ( uniq
+                        ( itertools.chain
+                            ( * (   getattr (c, name, [])
+                                for c in reversed ((cls, ) + bases)
+                                )
+                            )
+                        )
+                    )
+                )
     # end def _m_combine_lists
 
 # end class M_Auto_Combine_Lists
