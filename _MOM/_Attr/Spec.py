@@ -1,7 +1,8 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
+# This module is part of the package _MOM.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Affero General Public

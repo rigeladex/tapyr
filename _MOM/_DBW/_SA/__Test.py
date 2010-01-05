@@ -2,6 +2,7 @@
 # Copyright (C) 2009 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
+# This module is part of the package _MOM.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Affero General Public
