@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,6 +57,7 @@
 #    21-Dec-2009 (CT) `_A_Object_._get_object` factored
 #    22-Dec-2009 (CT) `_A_Link_Role_Seq_No_` removed
 #    30-Dec-2009 (CT) `A_Decimal` added
+#     5-Jan-2010 (CT) `_Number_.min_value` and `_Number_.max_value` added
 #    ««revision-date»»···
 #--
 
@@ -293,6 +294,9 @@ class _A_Named_Value_ (A_Attr_Type) :
 
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""
+
+    min_value         = None
+    max_value         = None
 
 # end class _A_Number_
 

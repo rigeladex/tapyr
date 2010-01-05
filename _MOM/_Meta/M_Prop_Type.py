@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Sep-2009 (CT) Creation  (factored from TOM.Meta.M_Prop_Type)
+#     5-Jan-2010 (CT) Use `TFL._Meta.M_Auto_Combine` as base class
 #    ««revision-date»»···
 #--
 
@@ -34,10 +35,10 @@ from   _MOM                import MOM
 from   _TFL                import TFL
 
 import _MOM._Meta
-import _TFL._Meta.M_Class
+import _TFL._Meta.M_Auto_Combine
 import _TFL.normalized_indent
 
-class M_Prop_Type (TFL.Meta.M_Class_SW) :
+class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
     """Root of metaclasses for MOM.Attr.Type and MOM.Pred.Type"""
 
     def __new__ (meta, name, bases, dct) :

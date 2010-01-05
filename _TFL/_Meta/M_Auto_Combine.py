@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -89,7 +89,6 @@ Module `M_Auto_Combine_Sets`
    :members:
 
 """
-
 
 if __name__ != "__main__" :
     TFL.Meta._Export ("*")

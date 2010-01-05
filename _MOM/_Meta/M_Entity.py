@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -57,13 +57,14 @@
 #                     e-types will be created
 #    22-Dec-2009 (CT) `_m_new_e_type_dict` changed to include `epk_sig`
 #    30-Dec-2009 (CT) s/Package_NS/PNS/, `PNS_s` added
+#     5-Jan-2010 (CT) Use `TFL._Meta.M_Auto_Combine` as base class
 #    ««revision-date»»···
 #--
 
 from   _MOM import MOM
 from   _TFL import TFL
 
-import _TFL._Meta.M_Class
+import _TFL._Meta.M_Auto_Combine
 import _TFL.Decorator
 import _TFL.Sorted_By
 
@@ -76,7 +77,7 @@ import _MOM.E_Type_Manager
 
 import sys
 
-class M_E_Mixin (TFL.Meta.M_Class) :
+class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     """Meta mixin for M_Entity and M_E_Type."""
 
     _Class_Kind    = "Bare Essence"
