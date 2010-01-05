@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -67,6 +67,7 @@
 #    30-Dec-2009 (CT) `_EPK_Mixin_._set_cooked_inner` to guard for differing
 #                     `home_scope`
 #    30-Dec-2009 (CT) `__set__` changed to really record changes
+#     5-Jan-2010 (CT) `_checkers` added to `Kind` and `Primary`
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,11 @@ class Kind (MOM.Prop.Kind) :
     def to_save (self, obj) :
         return False
     # end def to_save
+
+    def _checkers (self) :
+        for c in self.attr._checkers () :
+            yield c
+    # end def _checkers
 
     def _check_sanity (self, attr_type) :
         if __debug__ :
@@ -439,16 +445,22 @@ class Primary (_User_) :
             )
     # end def __set__
 
-    def to_save (self, obj) :
-        return True
-    # end def to_save
-
     def __delete__ (self, obj, value) :
         raise AttributeError \
             ( _T ("Primary attribute `%s.%s` cannot be deleted")
             % (obj.type_name, self.name)
             )
     # end def __delete__
+
+    def to_save (self, obj) :
+        return True
+    # end def to_save
+
+    def _checkers (self) :
+        yield "value is not None and value != ''", (self.name, )
+        for c in self.__super._checkers () :
+            yield c
+    # end def _checkers
 
 # end class Primary
 

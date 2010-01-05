@@ -58,6 +58,7 @@
 #    22-Dec-2009 (CT) `_A_Link_Role_Seq_No_` removed
 #    30-Dec-2009 (CT) `A_Decimal` added
 #     5-Jan-2010 (CT) `_Number_.min_value` and `_Number_.max_value` added
+#     5-Jan-2010 (CT) `_checkers` added to `A_Attr_Type` and `_Number_`
 #    ««revision-date»»···
 #--
 
@@ -81,8 +82,9 @@ class A_Attr_Type (object) :
     """Root class for attribute types for the MOM meta object model."""
 
     __metaclass__       = MOM.Meta.M_Attr_Type
+    _sets_to_combine    = ("check", )
 
-    check               = ()
+    check               = set ()
     check_syntax        = None
     code_format         = u"%r"
     computed            = None
@@ -147,6 +149,11 @@ class A_Attr_Type (object) :
     def _call_eval (self, s, glob, locl) :
         return eval (s, glob, locl.copy ())
     # end def _call_eval
+
+    def _checkers (self) :
+        for c in self.check :
+            yield c, ()
+    # end def _checkers
 
     def _from_string (self, s, obj, glob, locl) :
         t = self._from_string_prepare (s, obj)
@@ -297,6 +304,18 @@ class _A_Number_ (A_Attr_Type) :
 
     min_value         = None
     max_value         = None
+
+    def _checkers (self) :
+        if self.min_value is not None :
+            if self.max_value is not None :
+                yield "%s <= value <= %s" % (self.min_value, self.max_value), ()
+            else :
+                yield "%s <= value" % (self.min_value, ), ()
+        elif self.max_value :
+            yield "value <= %s" % (self.max_value, ), ()
+        for c in self.__super._checkers () :
+            yield c
+    # end def _checkers
 
 # end class _A_Number_
 

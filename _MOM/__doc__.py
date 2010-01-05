@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -739,12 +739,12 @@ Changing objects and links
     >>> l1.set (lat =  91.5)
     Traceback (most recent call last):
       ...
-    Invariant_Errors: Condition `AC_check_lat_0` :  (-90.0 <= lat <= 90.0)
+    Invariant_Errors: Condition `AC_check_lat_1` :  (-90.0 <= lat <= 90.0)
         lat = 91.5
     >>> l1.set (lon = 270.0)
     Traceback (most recent call last):
       ...
-    Invariant_Errors: Condition `AC_check_lon_0` :  (-180.0 <= lon <= 180.0)
+    Invariant_Errors: Condition `AC_check_lon_1` :  (-180.0 <= lon <= 180.0)
         lon = 270.0
     >>> print l1.as_code ()
     BMT.Location (-16.268799, 48.189956, )
@@ -1088,18 +1088,20 @@ class Location (_Ancestor_Essence) :
         class lon (A_Float) :
             """Longitude """
 
-            kind     = Attr.Primary
-            rank     = 1
-            check    = ("-180.0 <= value <= 180.0", )
+            kind       = Attr.Primary
+            rank       = 1
+            min_value  = -180.0
+            max_value  = +180.0
 
         # end class lon
 
         class lat (A_Float) :
             """Latitude"""
 
-            kind     = Attr.Primary
-            rank     = 2
-            check    = ("-90.0 <= value <= 90.0", )
+            kind       = Attr.Primary
+            rank       = 2
+            min_value  = -90.0
+            max_value  = +90.0
 
         # end class lat
 
