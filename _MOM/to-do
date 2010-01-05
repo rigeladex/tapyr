@@ -5,7 +5,7 @@ x MOM.Attr.Kind:
 
   x get_value (None) --> default
 
-- MOM.Attr.Type:
+x MOM.Attr.Type:
 
   x A_Decimal
 
@@ -13,9 +13,9 @@ x MOM.Attr.Kind:
 
     x `decimal_places`
 
-  * _A_Number_:
+  x _A_Number_:
 
-    + add check for `min_value` and `max_value`
+    x add check for `min_value` and `max_value`
 
 - Composite attributes
 
