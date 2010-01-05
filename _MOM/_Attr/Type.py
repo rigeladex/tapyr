@@ -151,7 +151,7 @@ class A_Attr_Type (object) :
     # end def _call_eval
 
     def _checkers (self) :
-        for c in self.check :
+        for c in sorted (self.check) :
             yield c, ()
     # end def _checkers
 
