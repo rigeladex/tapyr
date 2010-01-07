@@ -37,6 +37,7 @@
 #    16-Mar-2009 (CT) `main` changed to work with `Euro` using `Decimal`
 #    16-Mar-2009 (CT) `tax_brackets` for `2009` changed to final version of law
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#     7-Jan-2010 (CT) Use `TFL.CAO.Arg.EUC` instead of `TFL.CAO.Arg.Money`
 #    ««revision-date»»···
 #--
 
@@ -109,7 +110,7 @@ def tax (amount, year = year) :
 def _main (cmd) :
     source_currency        = cmd.source_currency
     year                   = cmd.year
-    amount                 = source_currency (cmd.amount)
+    amount                 = cmd.amount
     tax_amount, tax_chunks = tax (amount, year)
     if cmd.verbose :
         for c, r, t in tax_chunks :
@@ -128,7 +129,10 @@ def _main (cmd) :
 _Command = TFL.CAO.Cmd \
     ( handler     = _main
     , args        =
-        ( "amount:$?Amount of taxable income"
+        ( TFL.CAO.Arg.EUC
+            ( name        = "amount"
+            , description = "Amount of taxable income"
+            )
         ,
         )
     , min_args    = 1

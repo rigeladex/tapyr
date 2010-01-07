@@ -101,7 +101,7 @@ class _Re_Filter_Arg_ (TFL.CAO.Str_AS) :
             return values [0]
     # end def combine
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if value :
             return Re_Filter (value)
     # end def cook
@@ -118,7 +118,7 @@ class _Re_Filter_Arg_OA_ (_Re_Filter_Arg_) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if value :
             if ":" in value :
                 attr, pattern = value.split (":", 1)

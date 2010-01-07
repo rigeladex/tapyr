@@ -40,7 +40,9 @@ x Onion
     + time
     + mark
 
-    x input_XXX
+    + input_XXX
+
+      o for html5, implement all the fancy `type=XXX` variants
 
 - Macro-template `form.jnj`: for rendering forms, fields, field-groups, ...
 

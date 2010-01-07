@@ -487,7 +487,7 @@ class _Date_Arg_ (TFL.CAO.Str) :
 
     _real_name = "Date"
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if value == "now" :
             return Date ()
         if value :

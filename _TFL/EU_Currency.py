@@ -63,6 +63,7 @@
 #                     float-based `EU_Currency`) added
 #     3-Jan-2010 (CT) `EUC_Source`, `EUC_Target`, and `_Command` added
 #                     (all based on `TFL.CAO`)
+#     7-Jan-2010 (CT) `_EUC_Currency_Arg_` added
 #    ««revision-date»»···
 #--
 
@@ -379,6 +380,33 @@ def currency (name) :
     return EU_Currency.Table [name]
 # end def currency
 
+class _EUC_Currency_Arg_ (TFL.CAO.Arg.Money) :
+    """Argument or option with a currency value (epxressed in the currency
+       specified by the option `-source_currency`).
+    """
+
+    _real_name = "EUC"
+
+    def __init__ (self, ** kw) :
+        self.sc_option_name = kw.pop ("sc_option_name", "source_currency")
+        self.__super.__init__        (** kw)
+    # end def __init__
+
+    def cook (self, value, cao = None) :
+        result = self.__super.cook (value)
+        if result :
+            SC = EUR
+            if cao is not None :
+                try :
+                    SC = cao [self.sc_option_name]
+                except KeyError :
+                    pass
+            result = SC (result)
+        return result
+    # end def cook
+
+# end class _EUC_Currency_Arg_
+
 class _EUC_Source_Arg_ (TFL.CAO.Arg.Key) :
     """Argument or option for source currency"""
 
@@ -405,7 +433,7 @@ class _EUC_Target_Arg_ (TFL.CAO.Arg.Key) :
         self.__super.__init__ (dict = EUC.Table, ** kw)
     # end def __init__
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         result = self.__super.cook (value)
         if result :
             EUC.set_target_currency (result)
@@ -415,25 +443,29 @@ class _EUC_Target_Arg_ (TFL.CAO.Arg.Key) :
 # end class _EUC_Target_Arg_
 
 def _main (cmd) :
-    source = cmd.source
-    s      = source (0)
+    source = cmd.source_currency
+    total  = source (0)
     for a in cmd.argv :
         c = source (a)
         print "%s %s = %s" % (a, source.sloppy_name, c)
-        s = s + c
-    if s != 0 and len (cmd.argv) > 1 :
-        print "Total : %s" % s
+        total += c
+    if total != 0 and len (cmd.argv) > 1 :
+        print "Total : %s" % total
 # end def _main
 
 _Command = TFL.CAO.Cmd \
     ( handler     = _main
     , args        =
-        ( "amount:$?Amount to convert"
+        ( TFL.CAO.Arg.Money
+            ( name        = "amount"
+            , description = "Amount to convert"
+            , auto_split  = ";"
+            )
         ,
         )
     , opts        =
-        ( TFL.CAO.Opt.EUC_Source (name = "source", default = "ATS")
-        , TFL.CAO.Opt.EUC_Target (name = "target")
+        ( TFL.CAO.Opt.EUC_Source (default = "ATS")
+        , TFL.CAO.Opt.EUC_Target ()
         )
     , description = "Convert between two Euro currencies"
     )
@@ -444,65 +476,97 @@ the Euro. The conversion factors are the ones published by the
 European Union for the currencies that participated in the initial
 introduction of the Euro.
 
->>> for C in EU_Currency.extension :
-...   print "100 %s = %10s" % (C.name, C (100))
-...
-100 ATS =   7.27 EUR
-100 BEF =   2.48 EUR
-100 DEM =  51.13 EUR
-100 ESP =   0.60 EUR
-100 EUR = 100.00 EUR
-100 FIM =  16.82 EUR
-100 FRF =  15.24 EUR
-100 IEP = 126.97 EUR
-100 ITL =   0.05 EUR
-100 LUF =   2.48 EUR
-100 NLG =  45.38 EUR
-100 PTE =   0.50 EUR
+    >>> for C in EU_Currency.extension :
+    ...   print "100 %s = %10s" % (C.name, C (100))
+    ...
+    100 ATS =   7.27 EUR
+    100 BEF =   2.48 EUR
+    100 DEM =  51.13 EUR
+    100 ESP =   0.60 EUR
+    100 EUR = 100.00 EUR
+    100 FIM =  16.82 EUR
+    100 FRF =  15.24 EUR
+    100 IEP = 126.97 EUR
+    100 ITL =   0.05 EUR
+    100 LUF =   2.48 EUR
+    100 NLG =  45.38 EUR
+    100 PTE =   0.50 EUR
 
->>> EU_Currency.set_target_currency (ATS)
->>> for C in EU_Currency.extension :
-...   print "100 %s = %10s" % (C.name, C (100))
-...
-100 ATS =  100,00 öS
-100 BEF =   34,11 öS
-100 DEM =  703,55 öS
-100 ESP =    8,27 öS
-100 EUR = 1376,03 öS
-100 FIM =  231,43 öS
-100 FRF =  209,77 öS
-100 IEP = 1747,20 öS
-100 ITL =    0,71 öS
-100 LUF =   34,11 öS
-100 NLG =  624,42 öS
-100 PTE =    6,86 öS
+    >>> EU_Currency.set_target_currency (ATS)
+    >>> for C in EU_Currency.extension :
+    ...   print "100 %s = %10s" % (C.name, C (100))
+    ...
+    100 ATS =  100,00 öS
+    100 BEF =   34,11 öS
+    100 DEM =  703,55 öS
+    100 ESP =    8,27 öS
+    100 EUR = 1376,03 öS
+    100 FIM =  231,43 öS
+    100 FRF =  209,77 öS
+    100 IEP = 1747,20 öS
+    100 ITL =    0,71 öS
+    100 LUF =   34,11 öS
+    100 NLG =  624,42 öS
+    100 PTE =    6,86 öS
 
->>> EU_Currency.set_target_currency (EU_Currency)
->>> for C in EU_Currency.extension :
-...   print "100 %s + 100 ATS = %10s" % (C.name, C (100) + ATS (100))
-...
-100 ATS + 100 ATS =  14.53 EUR
-100 BEF + 100 ATS =   9.75 EUR
-100 DEM + 100 ATS =  58.40 EUR
-100 ESP + 100 ATS =   7.87 EUR
-100 EUR + 100 ATS = 107.27 EUR
-100 FIM + 100 ATS =  24.09 EUR
-100 FRF + 100 ATS =  22.51 EUR
-100 IEP + 100 ATS = 134.24 EUR
-100 ITL + 100 ATS =   7.32 EUR
-100 LUF + 100 ATS =   9.75 EUR
-100 NLG + 100 ATS =  52.65 EUR
-100 PTE + 100 ATS =   7.77 EUR
+    >>> EU_Currency.set_target_currency (EU_Currency)
+    >>> for C in EU_Currency.extension :
+    ...   print "100 %s + 100 ATS = %10s" % (C.name, C (100) + ATS (100))
+    ...
+    100 ATS + 100 ATS =  14.53 EUR
+    100 BEF + 100 ATS =   9.75 EUR
+    100 DEM + 100 ATS =  58.40 EUR
+    100 ESP + 100 ATS =   7.87 EUR
+    100 EUR + 100 ATS = 107.27 EUR
+    100 FIM + 100 ATS =  24.09 EUR
+    100 FRF + 100 ATS =  22.51 EUR
+    100 IEP + 100 ATS = 134.24 EUR
+    100 ITL + 100 ATS =   7.32 EUR
+    100 LUF + 100 ATS =   9.75 EUR
+    100 NLG + 100 ATS =  52.65 EUR
+    100 PTE + 100 ATS =   7.77 EUR
 
->>> print EUR (100) * 1.20
-120.00 EUR
+    >>> print EUR (100) * 1.20
+    120.00 EUR
 
->>> EUR (100) == 100.00
-True
->>> ATS (100) == 7.27
-False
->>> ATS (100) == 7.267283416785971
-True
+    >>> EUR (100) == 100.00
+    True
+    >>> ATS (100) == 7.27
+    False
+    >>> ATS (100) == 7.267283416785971
+    True
+
+This module extends TFL.CAO with three argument types:
+
+- TFL.CAO.Arg.EUC_Source: argument or option to specify the source currency
+
+- TFL.CAO.Arg.EUC_Target: argument or option to specify the target currency
+
+- TFL.CAO.Arg.EUC: argument or option to specify a currency amount (using the
+  source currency specified by the option `source_currency`).
+
+These can be used like this:
+
+    >>> cmd = TFL.CAO.Cmd (name = "Test", args = (TFL.CAO.Arg.EUC (name = "amount"), ), opts = (TFL.CAO.Opt.EUC_Source (), TFL.CAO.Opt.EUC_Target ()))
+    >>> cao = cmd (["-help=args"])
+    Arguments of Test
+        amount            : EUC = None <default: ()>
+    <BLANKLINE>
+    >>> cao = cmd (["-help=args", "100"])
+    Arguments of Test
+        amount            : EUC = 100.00 EUR <default: ()>
+    <BLANKLINE>
+        argv              : [Euro ("100.00")]
+    <BLANKLINE>
+    >>> cao = cmd (["-help=args", "-source=ATS", "100.00"])
+    Arguments of Test
+        amount            : EUC = 7.27 EUR <default: ()>
+    <BLANKLINE>
+        argv              : [EU_Currency ("7.26728341679")]
+    <BLANKLINE>
+    >>> print cao.amount
+    7.27 EUR
+
 
 """
 

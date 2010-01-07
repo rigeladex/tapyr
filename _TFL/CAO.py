@@ -40,6 +40,7 @@
 #     2-Jan-2010 (CT) Creation continued..
 #     3-Jan-2010 (CT) Creation continued...
 #     4-Jan-2010 (CT) Creation continued....
+#     7-Jan-2010 (CT) Creation continued.....
 #    ««revision-date»»···
 #--
 
@@ -54,8 +55,9 @@ import _TFL._Meta.M_Class
 import _TFL.predicate
 import _TFL.sos
 
+from   itertools          import chain as ichain
+
 import decimal
-import itertools
 import sys
 
 class Err (StandardError) :
@@ -152,7 +154,7 @@ class _Spec_ (TFL.Meta.Object) :
     def __init__ \
             ( self
             , name          = ""
-            , default       = ""
+            , default       = None
             , description   = ""
             , auto_split    = None
             , max_number    = None
@@ -180,11 +182,11 @@ class _Spec_ (TFL.Meta.Object) :
         return values
     # end def combine
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         return value
     # end def cook
 
-    def cooked (self, value) :
+    def cooked (self, value, cao = None) :
         auto_split = self.auto_split
         cook       = self.cook
         if auto_split and value and auto_split in value :
@@ -192,25 +194,25 @@ class _Spec_ (TFL.Meta.Object) :
         else :
             values = (value, )
         if auto_split :
-            values = self._resolve_range (values)
-        return [cook (v) for v in values]
+            values = self._resolve_range (values, cao)
+        return [cook (v, cao) for v in values]
     # end def cooked
 
     def _auto_max_number (self, auto_split) :
         return 0 if auto_split else 1
     # end def _auto_max_number
 
-    def _resolve_range (self, values) :
+    def _resolve_range (self, values, cao) :
         pat = self.range_pat
         for value in values :
             if value and pat.match (value) :
-                for v in self._resolve_range_1 (value, pat) :
+                for v in self._resolve_range_1 (value, pat, cao) :
                     yield v
             else :
                 yield value
     # end def _resolve_range
 
-    def _resolve_range_1 (self, value, pat) :
+    def _resolve_range_1 (self, value, pat, cao) :
         yield value
     # end def _resolve_range_1
 
@@ -258,17 +260,17 @@ class _Spec_O_ (_Spec_) :
 class _Number_ (_Spec_) :
     """Base class for numeric argument and option types"""
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if isinstance (value, basestring) :
             value = self._safe_eval (value)
         return self._cook (value)
     # end def cook
 
-    def _resolve_range_1 (self, value, pat) :
+    def _resolve_range_1 (self, value, pat, cao) :
         cook  = self.cook
-        head  = cook (pat.head)
-        tail  = cook (pat.tail) + 1
-        delta = cook (pat.delta or self.range_delta)
+        head  = cook (pat.head, cao)
+        tail  = cook (pat.tail, cao) + 1
+        delta = cook (pat.delta or self.range_delta, cao)
         for v in range (head, tail, delta) :
             yield v
     # end def _resolve_range_1
@@ -281,7 +283,7 @@ class Bool (_Spec_O_) :
     needs_value   = False
     type_abbr     = "B"
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if value is None :
             return True
         if not isinstance (value, basestring) :
@@ -373,6 +375,12 @@ class Help (_Spec_O_) :
         return self._handler (cao, indent)
     # end def __call__
 
+    def cook (self, value, cao = None) :
+        if value is None :
+            return True
+        return self.__super.cook (value, cao)
+    # end def cook
+
     def _handler (self, cao, indent = 0) :
         if cao._cmd._helper :
             cmd._helper (cao)
@@ -412,7 +420,8 @@ class Help (_Spec_O_) :
             print "%sArguments of %s" % (" " * indent, cao._name)
         indent += 4
         head    = " " * indent
-        max_l   = max (len (k) for k in cao._map) + 1
+        max_l   = max \
+            (len (k) for k in ichain (cao._arg_dict, cao._opt_dict)) + 1
         for arg in cao._arg_list :
             self._help_ao (arg, cao, head, max_l)
         if cao.argv :
@@ -425,7 +434,8 @@ class Help (_Spec_O_) :
             print "%sOptions   of %s" % (" " * indent, cao._name)
         indent += 4
         head    = " " * indent
-        max_l   = max (len (k) for k in cao._map)
+        max_l   = max \
+            (len (k) for k in ichain (cao._arg_dict, cao._opt_dict))
         for name, opt in sorted (cao._opt_dict.iteritems ()) :
             self._help_ao (opt, cao, head, max_l, "-")
     # end def _help_opts
@@ -502,7 +512,7 @@ class Key (_Spec_) :
         return self._dict
     # end def choices
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if value :
             try :
                 return self._dict [value]
@@ -553,7 +563,7 @@ class Set (_Spec_) :
         self.__super.__init__ (** kw)
     # end def __init__
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if value and value not in self.choices :
             raise Err \
                 ( "Unkown value `%s` for %s\n    Specify one of: %s"
@@ -585,7 +595,7 @@ class Path (_Spec_) :
     auto_split    = ":"
     type_abbr     = "P"
 
-    def cook (self, value) :
+    def cook (self, value, cao = None) :
         if value :
             value = TFL.sos.expanded_path (value)
         return value
@@ -715,9 +725,9 @@ class Cmd (TFL.Meta.Object) :
     def _handle_arg (self, arg, argv_it, result) :
         al = result._arg_list
         if not al :
-            spec = Arg.Str ()
+            spec = Arg.Str ("argv")
         else :
-            spec = al [min (len (result.argv), len (al) - 1)]
+            spec = al [min (len (result.argv_raw), len (al) - 1)]
         result._set_arg (spec, arg)
     # end def _handle_arg
 
@@ -842,6 +852,8 @@ class CAO (TFL.Meta.Object) :
         , re.VERBOSE
         )
 
+    _pending = object ()
+
     def __init__ (self, cmd) :
         self._cmd         = cmd
         self._name        = cmd._name
@@ -852,10 +864,10 @@ class CAO (TFL.Meta.Object) :
         self._opt_alias   = dict (cmd._opt_alias)
         self._do_keywords = cmd._do_keywords
         self.argv         = []
-        self._map         = TFL.defaultdict (list)
+        self.argv_raw     = []
+        self._map         = TFL.defaultdict (lambda : self._pending)
         self._raw         = TFL.defaultdict (list)
         self._key_values  = dict ()
-        self._explicit_n  = 0
     # end def __init__
 
     def __call__ (self) :
@@ -878,7 +890,9 @@ class CAO (TFL.Meta.Object) :
             return self._key_values [name]
         else :
             raise AttributeError (name)
-        result = map [name]
+        result  = map [name]
+        if result is self._pending :
+            result = self._cooked (ao)
         if ao.max_number == 1:
             if result :
                 result = result [0]
@@ -905,22 +919,28 @@ class CAO (TFL.Meta.Object) :
                     )
     # end def _check
 
+    def _cooked (self, spec) :
+        raw = self._raw.get (spec.name, None)
+        if raw is None :
+            result = spec.default or []
+        else :
+            result = list (ichain (* (spec.cooked (r, self) for r in raw)))
+        self._map [spec.name] = result
+        return result
+    # end def _cooked
+
     def _finish_setup (self) :
-        map = self._map
-        for spec in itertools.chain \
-                (self._arg_dict.itervalues (), self._opt_dict.itervalues ()) :
-            name = spec.name
-            if name not in map :
-                d = spec.default
-                if d is not None :
-                    map [name].extend (d)
+        argv = self.argv
+        for spec in self._arg_list :
+            ckd = self._cooked (spec)
+            if ckd is not None :
+                argv.extend (ckd)
     # end def _finish_setup
 
     def _set_arg (self, spec, value) :
         kp = self._key_pat
-        self._explicit_n += 1
         if isinstance (spec, Cmd_Choice) :
-            if self.argv :
+            if self.argv_raw :
                 raise Err \
                     ("Sub-command `%s` needs to be first argument" % value)
             try :
@@ -938,20 +958,20 @@ class CAO (TFL.Meta.Object) :
             self._opt_alias.update (sc._opt_alias)
             sc._setup_opt_abbr     (self._opt_dict, self._opt_abbr)
         elif self._do_keywords and kp.match (value) :
-            self._key_values [kp.name] = kp.value
+            self._set_keys ({kp.name : kp.value})
         else :
-            cv = spec.cooked (value)
-            self.argv.extend (cv)
+            self.argv_raw.append (value)
             if spec.name :
-                self._map [spec.name].extend (cv)
+                self._map [spec.name] = self._pending
                 self._raw [spec.name].append (value)
     # end def _set_arg
 
     def _set_opt (self, spec, value) :
-        self._explicit_n += spec.name != "help"
-        self._map [spec.name].extend (spec.cooked (value))
         if value is not None :
             self._raw [spec.name].append (value)
+            self._map [spec.name] = self._pending
+        else :
+            self._map [spec.name] = spec.cooked (value, self)
     # end def _set_opt
 
     def _set_keys (self, kw) :
@@ -1055,7 +1075,7 @@ called by a client, if explicit flow control is required.
         -year      : [2000, 1999]
         adam       : /tmp/tmp
         bert       : 42
-        argv       : ['/tmp/tmp']
+        argv       : ['/tmp/tmp', 42]
 
     >>> cao = cmd.parse (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
     >>> cao.year
@@ -1067,7 +1087,7 @@ called by a client, if explicit flow control is required.
     >>> cao.bert
     42
     >>> cao.argv
-    ['/tmp/tmp']
+    ['/tmp/tmp', 42]
 
     >>> cmd (["-year=2000", "-year", "1999", "-verb", "/tmp/tmp", "137"])
     Test
@@ -1122,7 +1142,7 @@ called by a client, if explicit flow control is required.
         -verbose   : False
         ccc        : 3
         ddd        : D
-        argv       : []
+        argv       : [3, 'D']
     >>> coc (["-s"])
     Comp
         Options    : ['h', 'he', 'hel', 'help', 's', 'st', 'str', 'stri', 'stric', 'strict', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose']
@@ -1154,7 +1174,7 @@ called by a client, if explicit flow control is required.
         -verbose   : False
         ccc        : 3
         ddd        : D
-        argv       : []
+        argv       : [3, 'D']
     >>> coc (["two", "-s"])
     Traceback (most recent call last):
       ...
@@ -1221,39 +1241,48 @@ called by a client, if explicit flow control is required.
         -help      : []
         argv       : []
 
-    >>> _ = coc (["-help=break"])
+    >>> _ = coc (["-help"])
     Comp [sub] ...
     <BLANKLINE>
         sub       : Cmd_Choice = None <default: None>
             Possible values: one, two
     <BLANKLINE>
-        -help     : Help = ['break'] <default: ()>
+        -help     : Help = [True] <default: ()>
             Display help about command
         -strict   : Bool = False <default: (False,)>
         -verbose  : Bool = False <default: (False,)>
-    >>> _ = coc (["-help=break", "one"])
+    >>> _ = coc (["-help", "one"])
     Comp one [aaa] [bbb] ...
     <BLANKLINE>
         aaa       : Str = None <default: ()>
         bbb       : Str = None <default: ()>
     <BLANKLINE>
         -Z        : Bool = False <default: (False,)>
-        -help     : Help = ['break'] <default: ()>
+        -help     : Help = [True] <default: ()>
             Display help about command
         -strict   : Bool = False <default: (False,)>
         -verbose  : Bool = False <default: (False,)>
         -y        : Int = None <default: ()>
-    >>> _ = coc (["-help=break", "two"])
+    >>> _ = coc (["-help", "two"])
     Comp two [ccc] [ddd] ...
     <BLANKLINE>
         ccc       : Int = 3 <default: [3]>
         ddd       : Str_AS = D <default: ['D']>
     <BLANKLINE>
-        -help     : Help = ['break'] <default: ()>
+        argv      : [3, 'D']
+    <BLANKLINE>
+        -help     : Help = [True] <default: ()>
             Display help about command
         -strict   : Bool = False <default: (False,)>
         -struct   : Bool = False <default: (False,)>
         -verbose  : Bool = False <default: (False,)>
+
+coc = Cmd (show,
+    name = "Comp", args = (Cmd_Choice ("sub",
+      Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
+      Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
+      ), ), opts = ("verbose:B", "strict:B")
+    )
 
 """
 

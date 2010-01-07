@@ -34,6 +34,7 @@
 #     3-Nov-2009 (CT) `__hash__` added to avoid::
 #                         DeprecationWarning: Overriding __eq__
 #                         blocks inheritance of __hash__ in 3.x
+#     7-Jan-2010 (CT) `__str__` moved from `Currency` o `_Currency_`
 #    ««revision-date»»···
 #--
 
@@ -263,6 +264,10 @@ class _Currency_ (TFL.Meta.Object) :
         return """%s ("%s")""" % (self.C_Type.__name__, self.amount)
     # end def __repr__
 
+    def __str__ (self) :
+        return "%s %s" % (self.as_string (), self.symbol or self.name)
+    # end def __str__
+
 # end class _Currency_
 
 class Currency (_Currency_) :
@@ -348,10 +353,6 @@ class Currency (_Currency_) :
             rhs = self.D (str (rhs))
         return rhs
     # end def _massage_rhs_float
-
-    def __str__ (self) :
-        return "%s %s" % (self.as_string (), self.symbol)
-    # end def __str__
 
 # end class Currency
 
