@@ -379,7 +379,7 @@ class Help (_Spec_O_) :
         else :
             keys  = set (["args", "opts", "summary"])
             vals  = set (v for v in getattr (cao, self.name) if v)
-            all_p = (not vals.intersection (keys)) or vals == set (["break"])
+            all_p = (not vals.intersection (keys))
             if (all_p or "summary" in vals) :
                 self._help_summary (cao, indent)
                 if cao._cmd._description :
@@ -391,7 +391,6 @@ class Help (_Spec_O_) :
             opt_p = any (o for o in cao._opt_dict.itervalues () if not o.hide)
             if (all_p or "opts" in vals) and opt_p :
                 self._help_opts (cao, indent, heading = not all_p)
-        return "break" not in vals
     # end def _handler
 
     def _help_ao (self, ao, cao, head, max_l, prefix = "") :
@@ -860,13 +859,10 @@ class CAO (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self) :
-        call_handler = True
-        handler      = self._cmd._handler
+        handler = self._cmd._handler
         if self.help :
-            call_handler = self._explicit_n
-            if not self._cmd.help (self) :
-                call_handler = False
-        if call_handler and handler :
+            self._cmd.help (self)
+        elif handler :
             return handler (self)
         return self
     # end def __call__
