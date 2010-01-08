@@ -48,6 +48,7 @@ from   _TFL               import TFL
 
 from   _TFL.Regexp        import Regexp, re
 
+import _TFL.Accessor
 import _TFL.defaultdict
 import _TFL.Environment
 import _TFL._Meta.Object
@@ -382,22 +383,30 @@ class Help (_Spec_O_) :
     # end def cook
 
     def _handler (self, cao, indent = 0) :
-        if cao._cmd._helper :
+        cmd = cao._cmd
+        if cmd._helper :
             cmd._helper (cao)
         else :
-            keys  = set (["args", "opts", "summary"])
+            nl    = self._nl_gen ()
+            keys  = set (["args", "cmds", "opts", "summary"])
             vals  = set (v for v in getattr (cao, self.name) if v)
-            all_p = (not vals.intersection (keys))
+            all_p = (not vals.intersection (keys)) or vals == set ([True])
             if (all_p or "summary" in vals) :
+                nl.next ()
                 self._help_summary (cao, indent)
-                if cao._cmd._description :
-                    print
             arg_p = any (a for a in cao._arg_list if not a.hide)
             if (all_p or "args" in vals) and arg_p :
+                nl.next ()
                 self._help_args (cao, indent, heading = not all_p)
-                print
+                if "cmds" in vals :
+                    nl.next ()
+                    self._help_cmds (cao, indent + 4)
+            elif "cmds" in vals :
+                nl.next ()
+                self._help_cmds (cao, indent)
             opt_p = any (o for o in cao._opt_dict.itervalues () if not o.hide)
             if (all_p or "opts" in vals) and opt_p :
+                nl.next ()
                 self._help_opts (cao, indent, heading = not all_p)
     # end def _handler
 
@@ -429,6 +438,23 @@ class Help (_Spec_O_) :
             print "%s%-*s  : %s" % (head, max_l, "argv", cao.argv)
     # end def _help_args
 
+    def _help_cmds (self, cao, indent = 0) :
+        cmd = cao._cmd
+        if cmd._sub_cmd_choice :
+            print "%sSub commands of %s" % (" " * indent, cao._name)
+            indent += 4
+            head    = " " * indent
+            max_l   = max (len (k) for k in cmd._sub_cmd_choice.sub_cmds)
+            scs     = sorted \
+                ( cmd._sub_cmd_choice.sub_cmds.iteritems ()
+                , key = TFL.Getter [0]
+                )
+            for name, sc in scs :
+                print "%s%-*s : %s" % (head, max_l, name, sc._description)
+        else :
+            print "%s%s doesn't have sub commands" % (" " * indent, cao._name)
+    # end def _help_cmds
+
     def _help_opts (self, cao, indent = 0, heading = False) :
         if heading :
             print "%sOptions   of %s" % (" " * indent, cao._name)
@@ -442,9 +468,11 @@ class Help (_Spec_O_) :
 
     def _help_summary (self, cao, indent) :
         head = " " * indent
+        desc = cao._cmd._description
         print "%s%s %s"  % \
             (head, cao._name, " ".join (self._help_summary_args (cao)))
-        print "%s    %s" % (head, cao._cmd._description)
+        if desc :
+            print "%s    %s" % (head, desc)
     # end def _help_summary
 
     def _help_summary_args (self, cao) :
@@ -461,6 +489,12 @@ class Help (_Spec_O_) :
         if max_args < 0 or max_args > len (cmd._arg_list) :
             yield "..."
     # end def _help_summary_args
+
+    def _nl_gen (self) :
+        while True :
+            yield
+            print
+    # end def _nl_gen
 
     def _setup_default (self, default) :
         self.default = ()
@@ -1276,13 +1310,10 @@ called by a client, if explicit flow control is required.
         -strict   : Bool = False <default: (False,)>
         -struct   : Bool = False <default: (False,)>
         -verbose  : Bool = False <default: (False,)>
-
-coc = Cmd (show,
-    name = "Comp", args = (Cmd_Choice ("sub",
-      Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
-      Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
-      ), ), opts = ("verbose:B", "strict:B")
-    )
+    >>> _ = coc (["-help=cmds"])
+    Sub commands of Comp
+        one :
+        two :
 
 """
 
