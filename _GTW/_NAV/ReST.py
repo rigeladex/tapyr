@@ -1,26 +1,26 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
+# This module is part of the package GTW.NAV.
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
 # Name
-#    DJO.NAV
+#    GTW.NAV
 #
 # Purpose
 #    Model navigation for web site
@@ -158,14 +158,15 @@
 #                     for `Changer`
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
+#     8-Jan-2010 (CT) Moved from DJO to GTW
 #    ««revision-date»»···
 #--
 
 from   __future__               import with_statement
 
-from   _DJO                     import DJO
+from   _GTW                     import GTW
 from   _TFL                     import TFL
-import _DJO._NAV.Base
+import _GTW._NAV.Base
 
 from   _TFL.Filename            import *
 from   _TFL.Regexp              import *
@@ -176,7 +177,7 @@ from   posixpath import join as pjoin, normpath as pnorm
 
 import textwrap
 
-class Page_ReST (DJO.NAV.Page) :
+class Page_ReST (GTW.NAV.Page) :
     """Model one page generated from re-structured text."""
 
     date = ""
@@ -186,12 +187,29 @@ class Page_ReST (DJO.NAV.Page) :
         return self.markup_to_html (unicode (self.src_contents))
     # end def contents
 
-    @Once_Property
-    def markup_to_html (self) :
-        from django.contrib.markup.templatetags.markup \
-            import restructuredtext
-        return restructuredtext
+    def markup_to_html (self, text) :
+        """Convert `text` from re-structured text markup to HTML."""
+        settings = dict \
+            ( base_section                  = "0"
+            , input_encoding                = "unicode"
+            , output_encoding               = self.encoding
+            , output_encoding_error_handler = "xmlcharrefreplace"
+            , language_code                 = getattr (self, "language", "en")
+            )
+
+        parts    = self._publish_parts \
+            ( source             = value
+            , writer_name        = "html4css1"
+            , settings_overrides = settings
+            )
+        return parts ["fragment"]
     # end def markup_to_html
+
+    @Once_Property
+    def _publish_parts (self) :
+        from docutils.core import publish_parts
+        return publish_parts
+    # end def _publish_parts
 
 # end class Page_ReST
 
@@ -214,7 +232,7 @@ class Page_ReST_F (Page_ReST) :
 
 # end class Page_ReST_F
 
-class Dyn_Slice_ReST_Dir (DJO.NAV._Site_Entity_) :
+class Dyn_Slice_ReST_Dir (GTW.NAV._Site_Entity_) :
     """Dynamic slice based on the re-structured files in a directory."""
 
     href          = None
@@ -273,5 +291,5 @@ class Dyn_Slice_ReST_Dir (DJO.NAV._Site_Entity_) :
 # end class Dyn_Slice_ReST_Dir
 
 if __name__ != "__main__":
-    DJO.NAV._Export ("*")
-### __END__ DJO.NAV.ReST
+    GTW.NAV._Export ("*")
+### __END__ GTW.NAV.ReST
