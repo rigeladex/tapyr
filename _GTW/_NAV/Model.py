@@ -1,26 +1,26 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
+# This module is part of the package GTW.NAV.
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
 # Name
-#    DJO.NAV.Model
+#    GTW.NAV.Model
 #
 # Purpose
 #    Navigation for django model instances
@@ -70,23 +70,21 @@
 #    20-Aug-2009 (CT) `Admin.Completer` added
 #    20-Aug-2009 (CT) `Admin.Completed` added
 #    21-Aug-2009 (MG) `Complete*` changed to used unbound nested form group
+#     8-Jan-2010 (CT) Moved from DJO to GTW
 #    ««revision-date»»···
 #--
 
 from   __future__               import with_statement
 
-from   _DJO                     import DJO
+from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-import _DJO.QF
-
-import _DJO._NAV.Base
+import _GTW._NAV.Base
 import _TFL._Meta.Object
 
 from   _TFL._Meta.Once_Property import Once_Property
+from   _TFL.I18N                import _T
 from   _TFL.predicate           import filtered_join
-
-from   django.utils.translation import gettext as _
 
 from   posixpath import join as pjoin, normpath as pnorm
 import itertools
@@ -111,7 +109,7 @@ class Field (TFL.Meta.Object) :
                 f = lambda x : x
             elif isinstance (self.value, str) :
                 f = lambda x : unicode \
-                        (x, DJO.NAV.Root.top.input_encoding, "replace")
+                        (x, GTW.NAV.Root.top.input_encoding, "replace")
             else :
                 f = str
         value = self.value
@@ -146,22 +144,22 @@ class _Model_Mixin_ (TFL.Meta.Object) :
     def Group (self) :
         name = getattr (self.Model, "NAV_admin_args", {}).get ("Group_Name")
         if name :
-            from django.contrib.auth.models import Group
+            ### XXX from django.contrib.auth.models import Group
             return Group.objects.get (name = name)
     # end def Group
 
 # end class _Model_Mixin_
 
-class Admin (_Model_Mixin_, DJO.NAV.Page) :
-    """Model an admin page for a specific Django model."""
+class Admin (_Model_Mixin_, GTW.NAV.Page) :
+    """Model an admin page for a specific etype."""
 
     Field           = Field
     has_children    = True
     kind_name       = None
     template        = "model_admin_list.html"
 
-    class Changer (DJO.NAV._Site_Entity_) :
-        """Model an admin page for creating or changing a specific instance of a Django model."""
+    class Changer (GTW.NAV._Site_Entity_) :
+        """Model an admin page for creating or changing a specific instance of a etype."""
 
         implicit     = True
         Media        = None ### cancel inherited property defined
@@ -179,7 +177,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
         # end def process_post
 
         def rendered (self, context, nav_page = None) :
-            from django.http import HttpResponseRedirect
+            ### XXX from django.http import HttpResponseRedirect
             request  = context ["request"]
             obj      = context ["instance"] = None
             obj_id   = self.obj_id
@@ -210,7 +208,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
     # end class Changer
 
-    class Completer (DJO.NAV._Site_Entity_) :
+    class Completer (GTW.NAV._Site_Entity_) :
         """Deliver completion information for a AJAX request."""
 
         implicit     = True
@@ -222,6 +220,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
             if request.method == "GET" :
                 bnfg = self.Form.unbound_form_map.get (self.field_name)
                 if bnfg is not None :
+                    ### XXX
                     relm = bnfg.related_model
                     qfs  = tuple \
                         (   DJO.QF (** {"%s__startswith" % str (k) : str (v)})
@@ -232,22 +231,22 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
                     result = self.__super.rendered \
                         (context, nav_page, template = bnfg.completer.template)
             if result is None :
-                from django.http import Http404
+                ### XXX from django.http import Http404
                 raise Http404 (request.path)
             return result
         # end def rendered
 
     # end class Completer
 
-    class Completed (DJO.NAV._Site_Entity_) :
+    class Completed (GTW.NAV._Site_Entity_) :
         """Deliver fields for a model instance selected by completion."""
 
         implicit     = True
         Media        = None ### cancel inherited property defined
 
         def rendered (self, context, nav_page = None) :
-            from django.http  import Http404, HttpResponse
-            from django.utils import simplejson
+            ### XXX from django.http  import Http404, HttpResponse
+            ### XXX from django.utils import simplejson
             request = context ["request"]
             result  = None
             if request.method == "GET" :
@@ -281,15 +280,15 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
     # end class Completed
 
-    class Deleter (DJO.NAV._Site_Entity_) :
-        """Model an admin page for deleting a specific instance of a Django model."""
+    class Deleter (GTW.NAV._Site_Entity_) :
+        """Model an admin page for deleting a specific instance of a etype."""
 
         implicit    = True
         name        = "delete"
         template    = "model_admin_delete.html"
 
         def _view (self, request) :
-            from django.http import HttpResponseRedirect
+            ### XXX from django.http import HttpResponseRedirect
             obj_id = self.obj_id
             try :
                 obj  = self.Model.objects.get (id = obj_id)
@@ -309,7 +308,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
     class Instance (TFL.Meta.Object) :
         """Model a specific instance in the context of an admin page for one
-           Django model, e.g., displayed as one line of a table.
+           etype, e.g., displayed as one line of a table.
         """
 
         def __init__ (self, admin, obj) :
@@ -368,8 +367,8 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     def additional_context (self, ** kw) :
         M = self.Model
         if self.model_man :
-            name   = _(self.model_man.name)
-            name_s = _(self.model_man.title)
+            name   = _T (self.model_man.name)
+            name_s = _T (self.model_man.title)
         else :
             name   = M._meta.verbose_name
             name_s = M._meta.verbose_name_plural
@@ -426,7 +425,7 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
     # end def _auto_list_display
 
     def _auto_form (self, Model, kw) :
-        import _DJO.Model_Form
+        ### XXX import _DJO.Model_Form
         Form_Type            = kw.get ("Form", DJO.Model_Form)
         Form_Mixins          = kw.get ("Form_Mixins", ())
         form_dict            = dict (head_mixins = Form_Mixins)
@@ -456,8 +455,8 @@ class Admin (_Model_Mixin_, DJO.NAV.Page) :
 
 # end class Admin
 
-class Instance (DJO.NAV.Page) :
-    """Model a page showing a specific instance of a Django model."""
+class Instance (GTW.NAV.Page) :
+    """Model a page showing a specific instance of a etype."""
 
     def __init__ (self, obj, manager) :
         for f in "name", "slug" :
@@ -517,8 +516,8 @@ class Instance (DJO.NAV.Page) :
 
 # end class Instance
 
-class Manager (_Model_Mixin_, DJO.NAV.Dir) :
-    """Model a directory showing (the instances of) one Django model."""
+class Manager (_Model_Mixin_, GTW.NAV.Dir) :
+    """Model a directory showing (the instances of) one etype."""
 
     Page            = Instance
     _admin          = None
@@ -586,7 +585,7 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
     @Once_Property
     def kind_filter (self) :
         if self.kind_name :
-            import _DJO.QF
+            ### XXX import _DJO.QF
             cind = self._F.kind.choice_to_code (self.kind_name)
             return DJO.QF (kind__exact = cind)
     # end def kind_filter
@@ -610,5 +609,5 @@ class Manager (_Model_Mixin_, DJO.NAV.Dir) :
 # end class Manager
 
 if __name__ != "__main__" :
-    DJO.NAV._Export_Module ()
-### __END__ DJO.NAV.Model
+    GTW.NAV._Export_Module ()
+### __END__ GTW.NAV.Model

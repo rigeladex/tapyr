@@ -1,26 +1,26 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
+# This module is part of the package GTW.NAV.
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
 # Name
-#    DJO.NAV
+#    GTW.NAV
 #
 # Purpose
 #    Model navigation for web site
@@ -170,24 +170,25 @@
 #    27-Feb-2009 (CT)  `_model_entries` changed to add `_Field` to (non-DJO)
 #                      models
 #    28-May-2009 (CT) s/_Field/_F/g
+#     8-Jan-2010 (CT) Moved from DJO to GTW
 #    ««revision-date»»···
 #--
 
-from   _DJO                     import DJO
+from   _GTW                     import GTW
 from   _TFL                     import TFL
 
-import _DJO._NAV.Base
-import _DJO._NAV.Model
-import _DJO.Models
+import _GTW._NAV.Base
+import _GTW._NAV.Model
+### XXX import _DJO.Models
 
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   itertools import chain as ichain, repeat as irepeat
 
-class Site_Admin (DJO.NAV.Dir) :
-    """Model an admin page for a Django site."""
+class Site_Admin (GTW.NAV.Dir) :
+    """Model an admin page for a GTW site."""
 
-    Page            = DJO.NAV.Model.Admin
+    Page            = GTW.NAV.Model.Admin
     template        = "site_admin.html"
 
     def __init__ (self, src_dir, parent, ** kw) :
@@ -206,7 +207,7 @@ class Site_Admin (DJO.NAV.Dir) :
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
             Type  = m_kw.pop ("Admin_Type", self.Page)
             if not hasattr (m, "_F") :
-                DJO.M_Model.assimilate (m)
+                pass ### XXX DJO.M_Model.assimilate (m)
             d = dict \
                 ( name      = name
                 , title     = title
@@ -243,11 +244,11 @@ class Site_Admin (DJO.NAV.Dir) :
         ### just the page of the first child [a Model_Admin]), we'll
         ### need to bypass `_Dir_.rendered`
         def rendered (self, context = None, nav_page = None) :
-            return DJO.NAV._Site_Entity_.rendered (self, context, nav_page)
+            return GTW.NAV._Site_Entity_.rendered (self, context, nav_page)
         # end def rendered
 
 # end class Site_Admin
 
 if __name__ != "__main__":
-    DJO.NAV._Export ("*")
-### __END__ DJO.NAV.Admin
+    GTW.NAV._Export ("*")
+### __END__ GTW.NAV.Admin

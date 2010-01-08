@@ -1,26 +1,26 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
+# This module is part of the package GTW.NAV.
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
 # Name
-#    DJO.NAV.Base
+#    GTW.NAV.Base
 #
 # Purpose
 #    Model navigation for web site
@@ -174,14 +174,15 @@
 #    13-Jul-2009 (CT) `Media` added
 #    14-Jul-2009 (CT) `_get_media` factored
 #    16-Jul-2009 (CT) `nick` added and used in `h_title`
+#     8-Jan-2010 (CT) Moved from DJO to GTW
 #    ««revision-date»»···
 #--
 
-from   _DJO                     import DJO
+from   _GTW                     import GTW
 from   _TFL                     import TFL
-import _DJO.Media
-import _DJO._NAV
-import _DJO._NAV.Url_Pattern
+import _GTW.Media
+import _GTW._NAV
+import _GTW._NAV.Url_Pattern
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -197,6 +198,7 @@ from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 import time
 
 def _load_view (name) :
+    ### XXX
     from django.core.exceptions   import ViewDoesNotExist
     from django.core.urlresolvers import get_mod_func
     mod_name, func_name = get_mod_func (name)
@@ -234,7 +236,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     _dump_type      = "dict"
 
-    _Media          = DJO.Media ()
+    _Media          = GTW.Media ()
 
     def __init__ (self, parent = None, ** kw) :
         self._kw    = kw
@@ -373,13 +375,13 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     @Once_Property
     def render_to_string (self) :
-        from _DJO.Render import to_string
+        from _GTW.Render import to_string
         return to_string
     # end def render_to_string
 
     def rendered (self, context = None, nav_page = None, template = None) :
         if context is None :
-            from django.template import Context
+            ### XXX from django.template import Context
             context = Context ({})
         context ["page"]     = self
         context ["nav_page"] = nav_page or self
@@ -421,11 +423,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if parent and parent.Media is not _Site_Entity_._Media :
             medias.append (parent.Media)
         if medias :
-            return DJO.Media (children = medias)
+            return GTW.Media (children = medias)
         return self._Media
     # end def _get_media
 
     def _view (self, request) :
+        ### XXX
         from django.http     import HttpResponse, Http404
         from django.template import RequestContext
         context = RequestContext (request, dict ())
@@ -554,7 +557,7 @@ class _Dir_ (_Site_Entity_) :
         context = {}
         nl      = pjoin (src_dir, "navigation.list")
         result  = cls   (src_dir, parent = parent, ** kw)
-        execfile        (nl, DJO.NAV.__dict__, context)
+        execfile        (nl, GTW.NAV.__dict__, context)
         result.add_entries \
             (context ["own_links"], Dir_Type = Dir.from_nav_list_file)
         return result
@@ -706,9 +709,9 @@ class Root (_Dir_) :
     copyright_start         = None
     empty_template          = None
     handlers                = \
-        { 403               : "_DJO.views.handler_403"
-        , 404               : "_DJO.views.handler_404"
-        , 500               : "_DJO.views.handler_500"
+        { 403               : "_DJO.views.handler_403" ### XXX
+        , 404               : "_DJO.views.handler_404" ### XXX
+        , 500               : "_DJO.views.handler_500" ### XXX
         }
     name                    = "/"
     owner                   = None
@@ -716,7 +719,7 @@ class Root (_Dir_) :
     translator              = None
     url_patterns            = []
 
-    _dump_type              = "DJO.NAV.Root.from_dict_list \\"
+    _dump_type              = "GTW.NAV.Root.from_dict_list \\"
     _login_required         = False
     _permission             = None
 
@@ -727,9 +730,9 @@ class Root (_Dir_) :
         self.Table        = {}
         self.Models       = {}
         self.level        = -1
-        DJO.models_loaded_signal.send (self)
+        ### XXX DJO.models_loaded_signal.send (self)
         self.__super.__init__         (src_dir = src_dir, ** kw)
-        DJO.NAV.Bypass_URL_Resolver   ()
+        GTW.NAV.Bypass_URL_Resolver   ()
     # end def __init__
 
     @classmethod
@@ -775,6 +778,7 @@ class Root (_Dir_) :
         return result
     # end def page_from_href
 
+    ### XXX
     ### methods needed to be able to use the root object as a Django URLResolver
     @classmethod
     def resolve (cls, path) :
@@ -801,8 +805,9 @@ class Root (_Dir_) :
         href = request.path [1:]
         ### import pdb; pdb.set_trace ()
         page = cls.page_from_href (href, request)
+        return  ### XXX
         if page :
-            import _DJO.views
+            ### XXX import _DJO.views
             user = request.user
             if page.login_required :
                 if not user.is_authenticated () :
@@ -823,6 +828,7 @@ class Root (_Dir_) :
 
     @classmethod
     def _resolve_special (cls, view_type):
+        ### XXX
         from django.core.exceptions import ViewDoesNotExist
         try :
             callback = cls.top.handlers [view_type]
@@ -838,9 +844,9 @@ class Root (_Dir_) :
 # end class Root
 
 if __name__ != "__main__":
-    DJO.NAV._Export \
+    GTW.NAV._Export \
         ( "*"
         , "_load_view", "_Meta_", "_Site_Entity_", "_Dir_"
         , "Dict_Replacer", "Record"
         )
-### __END__ DJO.NAV.Base
+### __END__ GTW.NAV.Base
