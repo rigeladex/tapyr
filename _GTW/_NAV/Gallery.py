@@ -1,26 +1,26 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
+# This module is part of the package GTW.NAV.
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
 # Name
-#    DJO.NAV.Gallery
+#    GTW.NAV.Gallery
 #
 # Purpose
 #    Model navigation for web photo gallery
@@ -158,12 +158,13 @@
 #                     for `Changer`
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
+#     8-Jan-2010 (CT) Moved from DJO to GTW
 #    ««revision-date»»···
 #--
 
-from   _DJO                     import DJO
+from   _GTW                     import GTW
 from   _TFL                     import TFL
-import _DJO._NAV.Base
+import _GTW._NAV.Base
 
 from   _TFL.Filename            import *
 from   _TFL.predicate           import pairwise
@@ -172,7 +173,7 @@ from   _TFL                     import sos
 
 from   posixpath import join as pjoin, normpath as pnorm
 
-class Gallery (DJO.NAV.Page) :
+class Gallery (GTW.NAV.Page) :
     """Model a photo gallery that's part of a web site."""
 
     template = "gallery.html"
@@ -259,7 +260,7 @@ class Gallery (DJO.NAV.Page) :
 
 # end class Gallery
 
-class _Photo_ (DJO.NAV.Page) :
+class _Photo_ (GTW.NAV.Page) :
 
     _size           = None
     implicit        = True
@@ -317,5 +318,5 @@ class Thumbnail (_Photo_) :
 # end class Thumbnail
 
 if __name__ != "__main__":
-    DJO.NAV._Export ("*")
-### __END__ DJO.NAV.Gallery
+    GTW.NAV._Export ("*")
+### __END__ GTW.NAV.Gallery
