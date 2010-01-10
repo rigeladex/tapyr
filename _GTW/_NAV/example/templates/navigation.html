@@ -1,0 +1,48 @@
+{% macro nav_section_entry(user, nav_page, link) -%}
+{# {% if NAV.permissive or link.allow_user(user) %} #}
+{% if link.allow_user (user) %}
+  {% set level = "level-0" %}
+  {% if nav_page.prefix.startswith (link.prefix) and link.has_children %}
+    <li class="current-section {{ level }}">
+      <a href="{{ link.site_prefix }}{{ link.href }}"
+             {% if link.desc %}title="{{ link.desc }}"{% endif %}
+             class="current-section"
+          >{{ link.title }}</a>
+      {{ nav_section_level(link_list=link.own_links) }}
+    </li>
+  {% else %}
+    {% if link.href == nav_page.href %}
+      <li class="current-link {{ level }}">{{ link.title }}</li>
+    {% else %}
+      {% if link.href %}
+        <li class="nav-link {{ level }}">
+          <a href="{{ link.site_prefix }}{{ link.href }}"
+             {% if link.desc %}title="{{ link.desc }}"{% endif %}
+          >{{ link.title }}</a>
+        </li>
+      {% else %}
+        <li class="no-link">{{ link.title|safe }}</li>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+{% else %}
+  <li>{{ link.title|safe }}</li>
+{% endif %}
+{%- endmacro %}
+
+{% macro nav_section_level(user, nav_page, link_list) -%}
+<ul>
+  {% for link in link_list -%}
+    {{ nav_section_entry(user, nav_page, link) }}
+  {%- endfor %}
+</ul>
+{%- endmacro %}
+
+{% macro nav_section(user, nav_page, link_list, nav_section_id, nav_section_name) -%}
+{% if link_list -%}
+  <div class="nav-section" id="{{ nav_section_id }}">
+    <h1>{{ nav_section_name }} </h1>
+    {{ nav_section_level(user, nav_page, link_list) }}
+  </div>
+{%- endif %}
+{%- endmacro %}

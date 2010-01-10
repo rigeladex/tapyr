@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ page.language|default("en") }}" lang="{{ page.language|default("en") }}" >
+{% if not page %}{% set page = NAV %}{% endif %}
+  <head>
+    {% block head_elements %}
+      <meta http-equiv="Content-Type"
+        content="text/html; charset={{ page.encoding|default("iso-8859-15") }}"
+      />
+      {% block head_base_element %}{% endblock head_base_element %}
+        {% block title %}
+          <title>{{ (page.h_title, page.title, page.h_ref)|first }}</title>
+        {% endblock title %}
+      {% block styles %}
+        {% for cssl in page.Media.css_links %}
+          {% if cssl.condition %}
+            <!--[if {{ cssl.condition }}]>
+          {% endif %}
+            <link rel="stylesheet" type="text/css" title="Default"
+              media="{{ cssl.media_type }}" href="{{ cssl.href }}"
+            />
+          {% if cssl.condition %}
+            <![endif]-->
+          {% endif %}
+        {% endfor %}
+      {% endblock styles %}
+        {% block scripts %}
+          {% for jsl in page.Media.scripts %}
+            <script {% if jsl.src %}src="{{ jsl.src }}"{% endif %} type="{{ jsl.script_type }}">{{ jsl.body|safe }}</script>
+          {% endfor %}
+          {% if page.Media.js_on_ready %}
+            <script type="text/javascript">
+              $(function ()
+                {
+                  {% for jsor in page.Media.js_on_ready %}{{ jsor|safe }}{% endfor %}
+                }
+               );
+            </script>
+          {% endif %}
+        {% endblock scripts %}
+      {% block related_links %}
+        {% for rl in page.Media.rel_links %}
+          <link {{ rl.attrs|safe }} />
+        {% endfor %}
+      {% endblock related_links %}
+      {% block meta_elements %}
+        {% if page.language %}
+        <meta http-equiv="Content-Language" content="{{ page.language }}" />
+        {% endif %}
+        {% if page.description %}
+        <meta name="description" content="{{ page.description }}" />
+        {% endif %}
+        <meta name="copyright" content="{{ page.copyright.year }} {{ page.copyright.holder }}" />
+        <meta http-equiv="Content-URL" content="{{ page.href }}" />
+        <meta name="generator" content="Django" />
+      {% endblock meta_elements %}
+      {{ page.add_headers|safe }}
+    {% endblock head_elements %}
+  </head>
+  <body {{ page.body_attr|safe }} {% block body_attrs %}{% endblock %}>
+    <div id="header">{% block body_header %}{% endblock body_header %}</div>
+    <div id="main" class="main">
+      <div id="navigate">
+        {% block navigate %}{% include "navigate.html" %}{% endblock %}
+      </div>
+      <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
+        {% block body_headline %}
+          {% if page.headline %}<h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.headline|safe }}</h1>{% endif %}
+        {% endblock body_headline %}
+        {% block document %}{% endblock %}
+      </div>
+    </div>
+    <div id="footer">{% block body_footer %}{% endblock body_footer %}</div>
+  </body>
+</html>

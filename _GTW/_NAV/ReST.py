@@ -198,7 +198,7 @@ class Page_ReST (GTW.NAV.Page) :
             )
 
         parts    = self._publish_parts \
-            ( source             = value
+            ( source             = text
             , writer_name        = "html4css1"
             , settings_overrides = settings
             )

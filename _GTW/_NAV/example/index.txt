@@ -1,0 +1,14 @@
+======================
+Title of the Home Page
+======================
+
+Headering 1
+-----------
+
+For bar:
+
+- XFY
+- Foo
+- Bar
+
+*Hey Ho*

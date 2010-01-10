@@ -182,7 +182,6 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 import _GTW.Media
 import _GTW._NAV
-import _GTW._NAV.Url_Pattern
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -427,19 +426,17 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return self._Media
     # end def _get_media
 
-    def _view (self, request) :
-        ### XXX
-        from django.http     import HttpResponse, Http404
-        from django.template import RequestContext
-        context = RequestContext (request, dict ())
+    def _view (self, handler) :
+        request = handler.request
+        from tornado.web import HTTPError
+        context = dict (request = handler.request)
+        handler.request.user = handler.current_user
         result  = self.rendered  (context)
         if result is None :
-            raise Http404 (request.path [1:])
+            raise HTTPError (404, request.uri [1:])
         if isinstance (result, str) :
             result = unicode (result, self.encoding)
-        if not isinstance (result, HttpResponse) :
-            result = HttpResponse (result)
-        return result
+        handler.write (result)
     # end def _view
 
     def __getattr__ (self, name) :
@@ -708,16 +705,10 @@ class Root (_Dir_) :
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
     empty_template          = None
-    handlers                = \
-        { 403               : "_DJO.views.handler_403" ### XXX
-        , 404               : "_DJO.views.handler_404" ### XXX
-        , 500               : "_DJO.views.handler_500" ### XXX
-        }
     name                    = "/"
     owner                   = None
     src_root                = ""
     translator              = None
-    url_patterns            = []
 
     _dump_type              = "GTW.NAV.Root.from_dict_list \\"
     _login_required         = False
@@ -730,9 +721,7 @@ class Root (_Dir_) :
         self.Table        = {}
         self.Models       = {}
         self.level        = -1
-        ### XXX DJO.models_loaded_signal.send (self)
         self.__super.__init__         (src_dir = src_dir, ** kw)
-        GTW.NAV.Bypass_URL_Resolver   ()
     # end def __init__
 
     @classmethod
@@ -752,7 +741,7 @@ class Root (_Dir_) :
     # end def h_title
 
     @classmethod
-    def page_from_href (cls, href, request = None) :
+    def page_from_href (cls, href, user = None) :
         result = None
         href   = href.lstrip (u"/")
         href_s = pjoin (href, u"")
@@ -774,72 +763,30 @@ class Root (_Dir_) :
                         result = d._get_child (* reversed (tail))
                 if result :
                     break
-        ### XXX check permission of request.user vs. result.???
+        ### XXX check permission of user vs. result.???
         return result
     # end def page_from_href
 
-    ### XXX
-    ### methods needed to be able to use the root object as a Django URLResolver
     @classmethod
-    def resolve (cls, path) :
-        return cls.universal_view, (), {}
-    # end def resolve
-
-    @classmethod
-    def resolve403 (cls) :
-        return cls._resolve_special (403)
-    # end def resolve404
-
-    @classmethod
-    def resolve404 (cls) :
-        return cls._resolve_special (404)
-    # end def resolve404
-
-    @classmethod
-    def resolve500 (cls) :
-        return cls._resolve_special (500)
-    # end def resolve500
-
-    @classmethod
-    def universal_view (cls, request) :
-        href = request.path [1:]
+    def universal_view (cls, handler) :
+        href = handler.request.uri [1:]
         ### import pdb; pdb.set_trace ()
-        page = cls.page_from_href (href, request)
-        return  ### XXX
+        user = handler.current_user
+        page = cls.page_from_href (href, user)
         if page :
-            ### XXX import _DJO.views
-            user = request.user
+            ### XXX import _TGW.views
             if page.login_required :
-                if not user.is_authenticated () :
-                    return DJO.views.handler_403 \
-                        (request, template_name = "403_login.html")
+                if user and not user.is_authenticated () :
+                    return TGW.views.handler_403 \
+                        (handler, template_name = "403_login.html")
             if page.allow_user (user) :
-                return page._view (request)
+                return page._view (handler)
             else :
-                return DJO.views.handler_403 \
-                    (request, template_name = "403_permission.html")
-        for pattern in cls.top.url_patterns :
-            response = pattern.resolve (request)
-            if response :
-                return response
-        from django.http import Http404
-        raise Http404 (href)
+                return TGW.views.handler_403 \
+                    (handler, template_name = "403_permission.html")
+        from tornado.web import HTTPError
+        raise HTTPError (404, href)
     # end def universal_view
-
-    @classmethod
-    def _resolve_special (cls, view_type):
-        ### XXX
-        from django.core.exceptions import ViewDoesNotExist
-        try :
-            callback = cls.top.handlers [view_type]
-            if isinstance (callback, basestring) :
-                callback = _load_view (callback)
-            if not callable (callback) :
-                raise TypeError ("Handler for %s not callable" % (view_type, ))
-        except (KeyError, TypeError), e:
-            raise ViewDoesNotExist ("Tried %s. Error was: %s" % (view_type, e))
-        return callback, {}
-    # end def _resolve_special
 
 # end class Root
 
