@@ -32,6 +32,7 @@
 #--
 
 from   _GTW                    import GTW
+import _GTW._NAV
 import _GTW._Tornado
 import _GTW._Tornado.Request_Handler
 
@@ -51,8 +52,8 @@ class M_Request_Handler (GTW.Tornado.Request_Handler.__class__) :
 class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
     """Base class request handlers interacting with GTW.NAV"""
 
-    _real_name    = "Request_Handler"
-    __metaclass__ = M_Request_Handler
+    _real_name      = "Request_Handler"
+    __metaclass__   = M_Request_Handler
 
     DEFAULT_HANDLER = "_handle_request"
 
@@ -60,9 +61,8 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
         GTW.NAV.Root.universal_view (self)
     # end def _handle_request
 
-Request_Handler = _NAV_Request_Handler_ # end class _NAV_Request_Handler_
+Request_Handler = _NAV_Request_Handler_ # end class
 
 if __name__ != "__main__" :
-    import _GTW._NAV
     GTW.NAV._Export ("*")
 ### __END__ GTW.NAV.Request_Handler

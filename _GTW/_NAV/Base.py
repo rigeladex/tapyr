@@ -380,8 +380,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     def rendered (self, context = None, nav_page = None, template = None) :
         if context is None :
-            ### XXX from django.template import Context
-            context = Context ({})
+            context = {}
         context ["page"]     = self
         context ["nav_page"] = nav_page or self
         context ["NAV"]      = self.top
@@ -427,12 +426,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def _get_media
 
     def _view (self, handler) :
-        request = handler.request
-        from tornado.web import HTTPError
-        context = dict (request = handler.request)
-        handler.request.user = handler.current_user
-        result  = self.rendered  (context)
+        request      = handler.request
+        request.user = handler.current_user
+        result       = self.rendered (dict (request = request))
         if result is None :
+            from tornado.web import HTTPError
             raise HTTPError (404, request.uri [1:])
         if isinstance (result, str) :
             result = unicode (result, self.encoding)
@@ -774,7 +772,7 @@ class Root (_Dir_) :
         user = handler.current_user
         page = cls.page_from_href (href, user)
         if page :
-            ### XXX import _TGW.views
+            ### XXX import _GTW.views
             if page.login_required :
                 if user and not user.is_authenticated () :
                     return TGW.views.handler_403 \

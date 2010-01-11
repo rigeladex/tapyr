@@ -2,7 +2,7 @@
 # Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.NAV.
+# This module is part of the package GTW.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -30,6 +30,7 @@
 #     8-Jul-2008 (CT) `to_response` added
 #    25-May-2009 (CT) `add_replacer` added
 #    10-Jan-2010 (MG) Moved into `GTW` package
+#    11-Jan-2010 (CT) `to_response` removed
 #    ««revision-date»»···
 #--
 
@@ -57,19 +58,15 @@ def add_replacer (* replacers) :
     _replacers.extend (replacers)
 # end def add_replacer
 
-def to_response (template, context, encoding = None) :
-    return HttpResponse (to_string (template, context, encoding))
-# end def to_response
-
 def to_string (template, context, encoding = None, env = None) :
     if env is None :
-        from _GTW._NAV.Base import _Site_Entity_
-        env = _Site_Entity_.top.template_env
+        from _GTW._NAV.Base import Root
+        env = Root.top.template_env
     result = env.get_template (template).render (context)
     if encoding is not None :
         result = result.encode (encoding, "replace")
-    #for rep in _replacers :
-    #    result = rep (result)
+    for rep in _replacers :
+        result = rep (result)
     return result
 # end def to_string
 
