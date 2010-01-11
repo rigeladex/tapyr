@@ -23,30 +23,17 @@
 #    TFL.Logger
 #
 # Purpose
-#    A small hellper which allows easy lagger creation
+#    A small helper simplifying logger creation
 #
 # Revision Dates
 #    13-Sep-2009 (MG) Creation
+#    11-Jan-2010 (CT) Esthetics
 #    ««revision-date»»···
 #--
 
-import logging
+from   _TFL import TFL
 
-def Create ( name
-           , format   = "%(message)s"
-           , date_fmt = None
-           , level    = logging.DEBUG
-           ) :
-    logger  = logging.getLogger     (name)
-    handler = logging.StreamHandler ()
-    logger. setLevel                (level)
-    handler.setLevel                (level)
-    # create formatter
-    formatter = logging.Formatter   (format, date_fmt)
-    handler.setFormatter            (formatter)
-    logger.addHandler               (handler)
-    return logger
-# end def Create
+import logging
 
 CRITICAL = logging.CRITICAL
 FATAL    = logging.FATAL
@@ -57,7 +44,22 @@ INFO     = logging.INFO
 DEBUG    = logging.DEBUG
 NOTSET   = logging.NOTSET
 
+def Create \
+        ( name
+        , format   = "%(message)s"
+        , date_fmt = None
+        , level    = DEBUG
+        ) :
+    formatter = logging.Formatter     (format, date_fmt)
+    handler   = logging.StreamHandler ()
+    logger    = logging.getLogger     (name)
+    logger.setLevel      (level)
+    handler.setLevel     (level)
+    handler.setFormatter (formatter)
+    logger.addHandler    (handler)
+    return logger
+# end def Create
+
 if __name__ != "__main__" :
-    from _TFL import TFL
     TFL._Export_Module ()
 ### __END__ TFL.Logger
