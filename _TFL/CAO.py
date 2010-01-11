@@ -41,6 +41,7 @@
 #     3-Jan-2010 (CT) Creation continued...
 #     4-Jan-2010 (CT) Creation continued....
 #     7-Jan-2010 (CT) Creation continued.....
+#    11-Jan-2010 (CT) Some more documentation added
 #    ««revision-date»»···
 #--
 
@@ -533,11 +534,11 @@ class Int_X (_Number_) :
 # end class Int_X
 
 class Key (_Spec_) :
-    """Argument or option that specifies a key of a dictionary"""
+    """Argument or option that specifies a key of a dictionary `dct`."""
 
-    def __init__ (self, dict, ** kw) :
-        assert all (isinstance (k, basestring) for k in dict)
-        self._dict = dict
+    def __init__ (self, dct, ** kw) :
+        assert all (isinstance (k, basestring) for k in dct)
+        self._dict = dct
         self.__super.__init__ (** kw)
     # end def __init__
 
@@ -644,7 +645,15 @@ class Path (_Spec_) :
 # end class Path
 
 class Cmd (TFL.Meta.Object) :
-    """Model a command with options, arguments, and a handler."""
+    """Model a command with options, arguments, and a handler.
+
+       :meth:`Cmd.parse` and :meth:`Cmd.use` return an instance of
+       :class:`CAO`.
+
+       Calling an instance of `Cmd` uses :meth:`parse` (if argument `_argv` is
+       specified or no argument at all is given) or :meth:`use` (if `** _kw`
+       are specified) and calls the resulting instance of :class:`CAO`.
+    """
 
     _handler      = None
     _helper       = None
@@ -686,6 +695,9 @@ class Cmd (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, _argv = None, ** _kw) :
+        """Setup and call an instance of :class:`CAO` by calling `use` (if
+           `_kw` is given) or `parse` (with `_argv or sys.argv [1:]`).
+        """
         if _kw :
             assert not _argv, "Cannot specify both `_argv` and `_kw`"
             cao = self.use (** _kw)
@@ -708,6 +720,10 @@ class Cmd (TFL.Meta.Object) :
     # end def __call__
 
     def parse (self, argv) :
+        """Parse arguments, options, and sub-commands specified in `argv`
+           (which must not contain the command name, like `sys.argv` would)
+           and return an instance of :class:`CAO`.
+        """
         result  = CAO  (self)
         argv_it = iter (argv)
         for arg in argv_it :
@@ -723,6 +739,10 @@ class Cmd (TFL.Meta.Object) :
     # end def parse
 
     def use (self, ** _kw) :
+        """Return an instance of :class:`CAO` initialized with the arguments,
+           options, and sub-commands specified by the keyword arguments in
+           `_kw`.
+        """
         result = CAO (self)
         ad     = result._arg_dict
         oa     = result._opt_abbr
@@ -876,7 +896,11 @@ class Cmd (TFL.Meta.Object) :
 # end class Cmd
 
 class CAO (TFL.Meta.Object) :
-    """Command with options and arguments supplied."""
+    """Command with options and arguments supplied.
+
+       Calling an instance of `CAO` calls the `handler` of the associated
+       :class:`Cmd` instance, passing `self` to the `handler`.
+    """
 
     _key_pat = Regexp \
         ( """\s*"""
@@ -1055,50 +1079,73 @@ def show (cao) :
 # end def show
 
 __doc__ = """
+Module `CAO`
+=============
+
 This module provides classes for defining and processing commands,
 arguments, and options. The values for arguments and options can be
 parsed from `sys.argv` or supplied by a client via keyword arguments.
 
-A command is defined by creating an instance of the :class:`Command`
+A command is defined by creating an instance of the :class:`Cmd`
 with the arguments
 
 - a callback function `handler` that performs the command,
 
 - a tuple of :class:`Arg` instances that defines the possible arguments,
 
-- the minimum number of arguments required `min_args',
+- the minimum number of arguments required `min_args`,
 
-- the maximum number of arguments allowed  `max_args'
+- the maximum number of arguments allowed  `max_args`
   (the default -1 means an unlimited number is allowed),
 
 - a tuple of :class:`Arg` or :class:`Opt` that instances defines the
   possible  options,
 
-- a description of the command to be included in the `help',
+- a description of the command to be included in the `help`,
 
 - a `name` for the command (by default, the name of the module defining
   the `Command` is used).
 
-For `Arg` and `Opt`, a shortcut string notation can be used:
+For `Arg` and `Opt` arguments, a shortcut string notation can be used:
 
     `<name>:<type-spec><auto-split-spec>=<default>#<max-number>?<help>`
 
-Calling a :class:`Command` instance with an argument array, e.g.,
-`sys.argv`, parses the arguments and options in the array, stores
+Calling a :class:`Cmd` instance with an argument array, e.g.,
+`sys.argv[1:]`, parses the arguments and options in the array, stores
 their values in the instance, and calls the `handler`.
 
-Calling a :class:`Command` instance with keyword arguments initializes
+Calling a :class:`Cmd` instance with keyword arguments initializes
 the argument and option values from those values and calls the
 `handler`.
 
-Alternatively, the methods `parse`, `use`, and `handle` can be
+Alternatively, the methods :meth:`~Cmd.parse` and :meth:`~Cmd.use` can be
 called by a client, if explicit flow control is required.
+
+.. autoclass:: Arg
+   :members:
+.. autoclass:: Opt
+   :members:
+.. autoclass:: Cmd
+   :members: __call__, parse, use
+.. autoclass:: CAO
+
+Usage examples
+----------------
+
+Many of the following tests/examples pass a simple `show` function as
+`handler`. `show` just displays some information about the command and the
+values passed to it.
 
     >>> cmd = Cmd (show, name = "Test", args = ("adam:P=/tmp/test?First arg", "bert:I=42"), opts = ("-verbose:B", "-year:I,=2010"))
     >>> cmd._arg_list
     ['adam:P=/tmp/test#1?First arg', 'bert:I=42#1?']
     >>> sorted (str (o) for o in cmd._opt_dict.itervalues ())
     ["'-help Display help about command'", "'-verbose:B=False#1?'", "'year:I,=2010#0?'"]
+
+    >>> cmd.adam, cmd.verbose
+    ('adam:P=/tmp/test#1?First arg', '-verbose:B=False#1?')
+    >>> cmd.adam.__class__
+    <class 'CAO.Path'>
 
     >>> cmd (["-year=2000", "-year", "1999", "-v=no", "/tmp/tmp"])
     Test
@@ -1138,9 +1185,12 @@ called by a client, if explicit flow control is required.
     True
     >>> cap.argv
     ['/tmp/tmp', 137]
+    >>> caq = cmd.parse (["/tmp/tmp", "137"])
+    >>> caq.verbose
+    False
 
     >>> coc = Cmd (show,
-    ...     name = "Comp", args = (Cmd_Choice ("sub",
+    ...     name = "Comp", args = (Arg.Cmd_Choice ("sub",
     ...       Cmd (show, name = "one", args = ("aaa:S", "bbb:S"), opts = ("y:I", "Z:B")),
     ...       Cmd (show, name = "two", args = ("ccc:I=3", "ddd:T=D"), opts = ("struct:B", ))
     ...       ), ), opts = ("verbose:B", "strict:B")
@@ -1258,7 +1308,7 @@ called by a client, if explicit flow control is required.
         bbb        : three
         argv       : ['two', 'three', 'four']
 
-    >>> ko  = Arg.Key (name = "foo", dict = {"1": "frodo", "a": 42})
+    >>> ko  = Arg.Key (name = "foo", dct = {"1": "frodo", "a": 42})
     >>> cmd = Cmd (show, name = "dict-test", opts = (ko, ))
     >>> cmd (["-foo", "a"])
     dict-test
