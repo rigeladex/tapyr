@@ -57,7 +57,7 @@
 {%- macro login (un_tag = "Username", pw_tag = "Password", action = "/login/") -%}
   {% call form (action = action, ** kwargs) -%}
     <ul>
-      <li><label for="F_username">Username</label></li>
+      <li><label for="F_username">{{ I18N._T (un_tag) }}</label></li>
       <li>
         {{ input.text
              ( id            = "F_username"
@@ -66,7 +66,7 @@
              )
          }}
       </li>
-      <li><label for="F_password">Password</label></li>
+      <li><label for="F_password">{{ I18N._T (pw_tag) }}</label></li>
       <li>
         {{ input.password
              ( id            = "F_password"
