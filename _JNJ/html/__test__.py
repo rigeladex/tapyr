@@ -1,21 +1,21 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
+# This module is part of the package JNJ.
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
@@ -32,8 +32,9 @@
 """
 
     >>> page = Record (copyright = None, Media = None, NAV = None, top = None)
-    >>> env5 = HTML (globals = dict (page = page))
-    >>> envx = HTML (version = "html/x.jnj", globals = dict (page = page))
+    >>> glbs = dict (page = page, I18N = TFL.I18N, next = "/logout/")
+    >>> env5 = HTML (globals = glbs)
+    >>> envx = HTML (version = "html/x.jnj", globals = glbs)
     >>> t5 = env5.from_string (template)
     >>> tx = envx.from_string (template)
 
@@ -60,12 +61,29 @@
     <BLANKLINE>
     </nav>
           <div id="document" class="body">
-      <input type="text" class="text" id="user_name" maxlength="30"/>
-      <input type="password" class="password" id="pass_word" maxlength="40"/>
-      <input type="hidden" class="text" readonly="1" id="email"/>
+      <input type="text" placeholder="Please enter your user-name" id="user_name" maxlength="30"/>
+      <input type="password" id="pass_word" maxlength="40"/>
+      <input type="email" readonly="1" id="email"/>
+      <input type="number" max="8" min="2"/>
       <textarea cols="40" rows="4" id="Area">
         A sample text in a sample textarea.
       </textarea>
+      <form action="/login/" method="post">
+        <ul>
+          <li><label for="F_username">Username</label></li>
+          <li>
+            <input type="text" placeholder="Please enter your user-name" id="F_username" maxlength="30"/>
+          </li>
+          <li><label for="F_password">Password</label></li>
+          <li>
+            <input type="password" placeholder="Please enter your password" id="F_password"/>
+          </li>
+          <li>
+            <input type="submit" value="Login"/>
+            <input type="hidden" name="next" value="/logout/"/>
+          </li>
+        </ul>
+      </form>
     </div>
         </div>
         <footer id="footer"></footer>
@@ -87,39 +105,59 @@
             <meta http-equiv="Content-URL" content=""/>
     </head>
       <body >
-        <div class="header" id="header"></div>
+        <div class="header " id="header"></div>
         <div id="main" class="main">
-          <div class="nav" id="navigate">
+          <div class="nav " id="navigate">
     <BLANKLINE>
     </div>
           <div id="document" class="body">
       <input type="text" class="text" id="user_name" maxlength="30"/>
       <input type="password" class="password" id="pass_word" maxlength="40"/>
-      <input type="hidden" class="text" readonly="1" id="email"/>
+      <input type="text" class="email" readonly="1" id="email"/>
+      <input type="text" class="number"/>
       <textarea cols="40" rows="4" id="Area">
         A sample text in a sample textarea.
       </textarea>
+      <form action="/login/" method="post">
+        <ul>
+          <li><label for="F_username">Username</label></li>
+          <li>
+            <input type="text" class="text" id="F_username" maxlength="30"/>
+          </li>
+          <li><label for="F_password">Password</label></li>
+          <li>
+            <input type="password" class="password" id="F_password"/>
+          </li>
+          <li>
+            <input type="submit" class="submit" value="Login"/>
+            <input type="hidden" class="text" name="next" value="/logout/"/>
+          </li>
+        </ul>
+      </form>
     </div>
         </div>
-        <div class="footer" id="footer"></div>
+        <div class="footer " id="footer"></div>
       </body>
     </html>
 
 """
 
-from _JNJ.Environment import HTML
-from _TFL.Record import *
+from   _JNJ.Environment import HTML
+from   _TFL.Record import *
+import _TFL.I18N
 
 template = """\
 {%- extends "html/base.jnj" %}
 {%- import html_version as X -%}
 {%- block document scoped %}
-  {{ X.input.text (id="user_name", maxlength="30") }}
+  {{ X.input.text (id="user_name", maxlength="30", placeholder="Please enter your user-name") }}
   {{ X.input.password (id="pass_word", maxlength="40") }}
-  {% call X.input.hidden (id="email", readonly="1") -%}{%- endcall %}
+  {% call X.input.email (id="email", readonly="1") -%}{%- endcall %}
+  {{ X.input.number (min = 2, max = 8) }}
   {% call X.input.textarea (id="Area", rows=4, cols=40) -%}
     A sample text in a sample textarea.
-  {%- endcall %}
+  {% endcall %}
+  {{ X.form.login () }}
 {% endblock document %}
 """
 ### __END__ __test__

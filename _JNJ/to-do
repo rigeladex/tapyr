@@ -42,7 +42,9 @@ x Onion
 
     + input_XXX
 
-      o for html5, implement all the fancy `type=XXX` variants
+      x for html5, implement all the fancy `type=XXX` variants
+
+      o select
 
 - Macro-template `form.jnj`: for rendering forms, fields, field-groups, ...
 

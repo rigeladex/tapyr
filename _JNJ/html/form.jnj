@@ -1,0 +1,85 @@
+{#- jinja template: form.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/form.jnj
+##
+## Purpose
+##    Provide macros for rendering html forms
+##
+## Revision Dates
+##    12-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro form
+        ( action        = ""
+        , method        = "post"
+        , next_form_kw  = {}
+        , reset_kw      = {}
+        , submit_kw     = {}
+        )
+-%}
+  <form action="{{ action }}" method="{{ method }}"{{ kwargs|xmlattr }}>
+    {{ caller () }}
+    {%- if next_form_kw %}
+      {{ input.hidden (** next_form_kw) }}
+    {% endif -%}
+    {%- if reset_kw %}
+      {{ input.reset  (** reset_kw) }}
+    {% endif -%}
+    {%- if submit_kw %}
+      {{ input.submit (** submit_kw) }}
+    {% endif -%}
+  </form>
+{%- endmacro -%} {#- form -#}
+
+{%- macro login (un_tag = "Username", pw_tag = "Password", action = "/login/") -%}
+  {% call form (action = action, ** kwargs) -%}
+    <ul>
+      <li><label for="F_username">Username</label></li>
+      <li>
+        {{ input.text
+             ( id            = "F_username"
+             , maxlength     = "30"
+             , placeholder   = "Please enter your user-name"
+             )
+         }}
+      </li>
+      <li><label for="F_password">Password</label></li>
+      <li>
+        {{ input.password
+             ( id            = "F_password"
+             , placeholder   = "Please enter your password"
+             )
+        }}
+      </li>
+      <li>
+        {{ input.submit (value = I18N._T ('Login')) }}
+        {{ input.hidden (name  = "next", value = next) }}
+      </li>
+    </ul>
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- login -#}
+
+{#- __END__ jinja template: form.jnj -#}
