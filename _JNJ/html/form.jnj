@@ -34,8 +34,69 @@
 
 {%- import html_version as X -%}
 
+{%- macro fg_div_seq (fo, fg) -%}
+  {%- for f in fg.visible_fields %}
+    <div class="Field Field-{{ f.name }}" title="{{ f.help_text }}"
+    >
+      <span class="Field-Help">{{ f.help_text|safe }}</span>
+      {%- if loop.first %}
+        {%- for h in fg.hidden_fields %}
+          {{ GTW.call_macro (h.widget, fo, h) }}
+        {% endfor -%}
+      {% endif %}
+      {{ GTW.call_macro (f.widget, fo, f) }}
+    </div>
+  {% endfor -%}
+{%- endmacro -%} {#- fg_div_seq -#}
+
+{%- macro fg_tr (fo, fg) -%}
+  <table class="field_group-Horizontal">
+    <thead>
+      {{ fg_tr_head (fo, fg) }}
+    </thead>
+    <tbody>
+      {{ fg_tr_body (fo, fg) }}
+    </tbody>
+  </table>
+  <div class="field_group-Horizontal-Help">
+    {%- for f in fg.visible_fields %}
+      {%- if f.help_text %}
+        <p class="Field-Help Field-Help-{{ f.name }}">
+          {{ f.help_text|safe }}
+        </p>
+      {% endif -%}
+    {% endfor -%}
+  </div>
+{%- endmacro -%} {#- fg_tr -#}
+
+{%- macro fg_tr_body (fo, fg) -%}
+    <tr class="field_group {{ fg.css_class }}"
+      {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
+    >
+      {%- for f in fg.visible_fields %}
+        <td class="Field Field-{{ f.name }}" title="{{ f.help_text|safe }}">
+          {%- if loop.first %}
+            {%- for h in fg.hidden_fields %}
+              {{ GTW.call_macro (h.widget.inline, fo, h) }}
+            {% endfor -%}
+          {% endif %}
+          {{ GTW.call_macro (f.widget.inline, fo, f) }}
+        </td>
+      {% endfor -%}
+    </tr>
+{%- endmacro -%} {#- fg_tr_body -#}
+
+{%- macro fg_tr_head (fo, fg) -%}
+    <tr>
+      {%- for f in f.visible_fields %}
+        <th title="{{ f.help_text|safe }}">{{ f.label }}</th>
+      {% endfor -%}
+    </tr>
+{%- endmacro -%} {#- fg_tr_head -#}
+
 {%- macro form
         ( action        = ""
+        , cancel_kw     = {}
         , method        = "post"
         , next_form_kw  = {}
         , reset_kw      = {}
@@ -47,11 +108,19 @@
     {%- if next_form_kw %}
       {{ X.input.hidden (** next_form_kw) }}
     {% endif -%}
+    {%- if submit_kw %}
+      {{ X.input.submit (** submit_kw) }}
+    {% endif -%}
     {%- if reset_kw %}
       {{ X.input.reset  (** reset_kw) }}
     {% endif -%}
-    {%- if submit_kw %}
-      {{ X.input.submit (** submit_kw) }}
+    {%- if cancel_kw %}
+      {%- set ckw = cancel_kw %}
+      <a href="{{ ckw.href }}"
+         title="{{ GTW._T (ckw.title or 'Discard all changes and leave form') }}"
+         class="button">
+        {{ GTW._T (ckw.name or "Cancel") }}
+      </a>
     {% endif -%}
   </form>
 {%- endmacro -%} {#- form -#}
@@ -85,5 +154,32 @@
     </ul>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- login -#}
+
+{%- macro object (fo) -%}
+  {#- Create a form for a form-object `fo` -#}
+  {%- set object_caller = kwargs.pop ("caller", None) -%}
+  {% call form
+      ( action    = fo.action
+      , cancel_kw = dict
+          ( href  = fo.cancel_href
+          , title = GTW._T ("Discard all changes and leave form")
+          )
+      , reset_kw  = dict
+          ( title = GTW._T ("Discard all changes")
+          , value = GTW._T ("Reset")
+          )
+      , submit_kw = dict (value = GTW._T ("Submit"))
+      , ** kwargs
+      )
+ -%}
+    {%- for fg in fo.field_groups %}
+      <div class="Formset {{ fg.css_class }}"
+       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
+      >
+        {{ GTW.call_macro (fg.widget, fo, fg) }}
+      </div>
+    {% endfor -%}
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- object -#}
 
 {#- __END__ jinja template: form.jnj -#}
