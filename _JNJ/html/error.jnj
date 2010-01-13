@@ -1,0 +1,4 @@
+{% extends "base.jnj" %}
+{% block document %}
+  Error {{ exception.status_code }}
+{% endblock %}

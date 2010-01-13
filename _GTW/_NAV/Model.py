@@ -71,6 +71,8 @@
 #    20-Aug-2009 (CT) `Admin.Completed` added
 #    21-Aug-2009 (MG) `Complete*` changed to used unbound nested form group
 #     8-Jan-2010 (CT) Moved from DJO to GTW
+#    13-Jan-2010 (MG) Use `top.HTTP.Error` instead of tornado/django specific
+#                     exceptions/functions
 #    ««revision-date»»···
 #--
 
@@ -177,7 +179,6 @@ class Admin (_Model_Mixin_, GTW.NAV.Page) :
         # end def process_post
 
         def rendered (self, context, nav_page = None) :
-            ### XXX from django.http import HttpResponseRedirect
             request  = context ["request"]
             obj      = context ["instance"] = None
             obj_id   = self.obj_id
@@ -185,19 +186,18 @@ class Admin (_Model_Mixin_, GTW.NAV.Page) :
                 try :
                     obj  = self.Model.objects.get (id = obj_id)
                 except self.Model.DoesNotExist, exc :
-                    from django.http import Http404
                     request.Error = \
                         ( "%s `%s` existiert nicht!"
                         % (self.Model._meta.verbose_name, obj_id)
                         )
-                    raise Http404 (request.path)
+                    raise self.top.HTTP.Error_404 (request.path, request.Error)
             if request.method == "POST" :
                 result, form = self.process_post (request, obj)
                 if result :
                     man = self.top.Models.get ((self.Model, self.kind_name))
                     if man :
                         man._old_count = -1
-                    return HttpResponseRedirect \
+                    raise self.top.HTTP.Redirect_302 \
                         ("%s#pk-%s" % (self.parent.abs_href, result.id))
             else :
                 form = self.Form (instance = obj)
@@ -231,8 +231,7 @@ class Admin (_Model_Mixin_, GTW.NAV.Page) :
                     result = self.__super.rendered \
                         (context, nav_page, template = bnfg.completer.template)
             if result is None :
-                ### XXX from django.http import Http404
-                raise Http404 (request.path)
+                raise self.top.HTTP.Error_404 (request.path)
             return result
         # end def rendered
 
@@ -245,8 +244,7 @@ class Admin (_Model_Mixin_, GTW.NAV.Page) :
         Media        = None ### cancel inherited property defined
 
         def rendered (self, context, nav_page = None) :
-            ### XXX from django.http  import Http404, HttpResponse
-            ### XXX from django.utils import simplejson
+            import json ### part of python2.6+
             request = context ["request"]
             result  = None
             if request.method == "GET" :
@@ -262,19 +260,17 @@ class Admin (_Model_Mixin_, GTW.NAV.Page) :
                             ( "%s `%s` existiert nicht!"
                             % (relm._meta.verbose_name, id)
                             )
-                        raise Http404 (request.path)
+                        raise self.top.HTTP.Error_404 \
+                            (request.path, request.Error)
                     form_class = bnfg.form_class \
                         ( request         = None
                         , instance        = obj
                         , prefix          = "%s-M%s" % (bnfg.Name, no)
                         )
-                    fields = dict ((f.name, str (f)) for f in form_class)
-                    result = HttpResponse \
-                        ( simplejson.dumps (fields)
-                        , mimetype = "application/javascript"
-                        )
+                    ### this works well for the tornado backed
+                    return dict ((f.name, str (f)) for f in form_class)
             if result is None :
-                raise Http404 (request.path)
+                raise self.top.HTTP.Error_404 (request.path)
             return result
         # end def rendered
 
@@ -288,20 +284,18 @@ class Admin (_Model_Mixin_, GTW.NAV.Page) :
         template    = "model_admin_delete.html"
 
         def _view (self, request) :
-            ### XXX from django.http import HttpResponseRedirect
             obj_id = self.obj_id
             try :
                 obj  = self.Model.objects.get (id = obj_id)
             except self.Model.DoesNotExist, exc :
-                from django.http import Http404
                 request.Error = \
                     ( "%s `%s` doesn't exist!"
                     % (self.Model._meta.verbose_name, obj_id)
                     )
-                raise Http404 (request.path)
+                raise self.top.HTTP.Error_404 (request.path, request.Error)
             obj.delete ()
             ### XXX ??? Feedback ???
-            return HttpResponseRedirect (self.parent.abs_href)
+            raise self.top.HTTP.Redirect_302 (self.parent.abs_href)
         # end def _view
 
     # end class Deleter

@@ -61,6 +61,14 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
         GTW.NAV.Root.universal_view (self)
     # end def _handle_request
 
+    def _handle_request_exception (self, exc) :
+        top = GTW.NAV.Root.top
+        if isinstance (exc, top.HTTP.HTTP_Status) :
+            if exc (self, top) :
+                return
+        self.__super._handle_request_exception (exc)
+    # end def _handle_request_exception
+
 Request_Handler = _NAV_Request_Handler_ # end class
 
 if __name__ != "__main__" :

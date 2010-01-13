@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    Tornado.Application
+#    GTW.Tornado.Application
 #
 # Purpose
-#    «text»···
+#    Provide a base class for tornado applications
 #
 # Revision Dates
 #    12-Sep-2009 (MG) Creation
@@ -33,7 +33,7 @@
 from   _TFL                import TFL
 import _TFL._Meta.Object
 from   _GTW                import GTW
-import _GTW._Tornado
+import _GTW._Tornado.Error
 
 from    tornado            import web
 #from    tornado.web        import logger as server_logger
@@ -82,4 +82,4 @@ else :
     # end class Handle_All
 
     auto_reload_start (Application ( ((r"/", Handle_All), )))
-### __END__ Tornado.Application
+### __END__ GTW.Tornado.Application

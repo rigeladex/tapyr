@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    Tornado.Request_Handler
+#    GTW.Tornado.Request_Handler
 #
 # Purpose
-#    «text»···
+#    Provide a base class for request handlers
 #
 # Revision Dates
 #    12-Sep-2009 (MG) Creation
@@ -35,11 +35,13 @@ import _TFL._Meta.Object
 
 from    tornado            import web
 
-class Request_Handler (web.RequestHandler) :
+class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
     """Base class for a request handler"""
+
 # end class Request_Handler
 
 if __name__ != "__main__" :
-    from _GTW._Tornado import Tornado
-    Tornado._Export ("*")
-### __END__ Tornado.Request_Handler
+    from   _GTW            import GTW
+    import _GTW._Tornado
+    GTW.Tornado._Export ("*")
+### __END__ GTW.Tornado.Request_Handler

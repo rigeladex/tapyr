@@ -175,6 +175,11 @@
 #    14-Jul-2009 (CT) `_get_media` factored
 #    16-Jul-2009 (CT) `nick` added and used in `h_title`
 #     8-Jan-2010 (CT) Moved from DJO to GTW
+#    13-Jan-2010 (MG) Use `self.Templeteer.Context` to create a template
+#                     language specific context object
+#    13-Jan-2010 (MG) Use `top.HTTP.Error` instead of tornado/django specific
+#                     exceptions/functions
+#    13-Jan-2010 (MG) `_load_view` function removed
 #    ««revision-date»»···
 #--
 
@@ -195,17 +200,6 @@ import _TFL._Meta.Object
 from   posixpath import join as pjoin, normpath as pnorm, commonprefix
 
 import time
-
-def _load_view (name) :
-    ### XXX
-    from django.core.exceptions   import ViewDoesNotExist
-    from django.core.urlresolvers import get_mod_func
-    mod_name, func_name = get_mod_func (name)
-    try:
-        return getattr (__import__(mod_name, {}, {}, ['']), func_name)
-    except (ImportError, AttributeError), e:
-        raise ViewDoesNotExist ("Tried %s. Error was: %s" % (name, e))
-# end def _load_view
 
 class _Meta_ (TFL.Meta.M_Class) :
 
@@ -380,7 +374,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     def rendered (self, context = None, nav_page = None, template = None) :
         if context is None :
-            context = {}
+            context = self.Templeteer.Context ()
         context ["page"]     = self
         context ["nav_page"] = nav_page or self
         context ["NAV"]      = self.top
@@ -430,8 +424,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         request.user = handler.current_user
         result       = self.rendered (dict (request = request))
         if result is None :
-            from tornado.web import HTTPError
-            raise HTTPError (404, request.uri [1:])
+            raise self.top.HTTP.Error_404 (request.uri [1:])
         if isinstance (result, str) :
             result = unicode (result, self.encoding)
         handler.write (result)
@@ -780,10 +773,8 @@ class Root (_Dir_) :
             if page.allow_user (user) :
                 return page._view (handler)
             else :
-                return TGW.views.handler_403 \
-                    (handler, template_name = "403_permission.html")
-        from tornado.web import HTTPError
-        raise HTTPError (404, href)
+                raise cls.top.HTTP.Error_403 ()
+        raise cls.top.HTTP.Error_404 (href)
     # end def universal_view
 
 # end class Root
@@ -791,7 +782,7 @@ class Root (_Dir_) :
 if __name__ != "__main__":
     GTW.NAV._Export \
         ( "*"
-        , "_load_view", "_Meta_", "_Site_Entity_", "_Dir_"
+        , "_Meta_", "_Site_Entity_", "_Dir_"
         , "Dict_Replacer", "Record"
         )
 ### __END__ GTW.NAV.Base

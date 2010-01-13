@@ -30,28 +30,33 @@
 #    ««revision-date»»···
 #--
 
+from Redirect import Redirect
+
 from   _GTW                      import GTW
 import _GTW._NAV.Request_Handler
 import  os
 
 import _GTW._NAV.Base
 import _GTW._NAV.ReST
-from    jinja2 import Environment, FileSystemLoader
+from   _JNJ.Templeteer import Templeteer
+import _JNJ
 
-ROOT_DIR      = os.path.dirname (__file__)
-template_dirs = [os.path.join (ROOT_DIR, "templates")]
-NAV           = GTW.NAV.Root \
+base_template_dir = os.path.dirname (_JNJ.__file__)
+ROOT_DIR          = os.path.dirname (__file__)
+template_dirs     = [os.path.join (ROOT_DIR, "templates"), base_template_dir]
+NAV               = GTW.NAV.Root \
     ( src_dir           = "."
     , copyright_start   = 2008
     , encoding          = "iso-8859-15"
     , input_encoding    = "iso-8859-15"
     , site_prefix       = "/"
     , site_url          = "http://localhost:8000"
-    , template          = "static.html"
-    , template_env      = Environment
-          ( loader      = FileSystemLoader
-              (template_dirs, encoding = "iso-8859-15")
+    , template          = "static.jnj"
+    , HTTP              = GTW.Tornado
+    , Templeteer        = Templeteer
+          ( load_path   = template_dirs
           , trim_blocks = True
+          , encoding    = "iso-8859-15"
           )
     )
 NAV.add_entries \
@@ -63,18 +68,33 @@ NAV.add_entries \
              , title          = u"Test"
              , Type           = GTW.NAV.Page_ReST_F
              )
+      , dict ( name           = "redirect_301.html"
+             , title          = u"Redirect 301 (index)"
+             , Type           = Redirect
+             , redirect_to    = "index.html"
+             , code           = 301
+             )
+      , dict ( name           = "redirect_302.html"
+             , title          = u"Redirect 302 (test)"
+             , Type           = Redirect
+             , redirect_to    = "test.html"
+             , code           = 302
+             )
       )
     , Dir_Type = GTW.NAV.Dir
     )
 
 if __name__ == "__main__" :
     import _GTW._Tornado.Application
+    import  sys
 
-    #Tornado.auto_reload_start \
-    #    ( GTW.Tornado.Application (( ((r".*", GTW.NAV.Request_Handler), ))))
-    app = GTW.Tornado.Application \
-        ( ((".*$", GTW.NAV.Request_Handler), )
-        , debug = True
-        )
-    GTW.Tornado.start_server (app, 8080)
+    if len (sys.argv) == 1 :
+        GTW.Tornado.auto_reload_start \
+            ( GTW.Tornado.Application (( ((r".*", GTW.NAV.Request_Handler), ))))
+    else :
+        app = GTW.Tornado.Application \
+            ( ((".*$", GTW.NAV.Request_Handler), )
+            , debug = sys.argv [1].upper () == "D"
+            )
+        GTW.Tornado.start_server (app, 8080)
 ### __END__ GTW.NAV.example.hello_world

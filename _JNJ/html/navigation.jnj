@@ -33,7 +33,7 @@
 #}
 {%- macro entry (link, level) -%}
   {%- if NAV.permissive or link.allow_user (request.user) %}
-    {% if nav_page.prefix.starts_with (link.prefix) and link.has_children %}
+    {% if nav_page.prefix.startswith (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
         <a href="{{ link.site_prefix }}{{ link.href }}"
                {%- if link.desc %}title="{{ link.desc }}"{% endif %}

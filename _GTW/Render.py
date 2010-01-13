@@ -31,6 +31,7 @@
 #    25-May-2009 (CT) `add_replacer` added
 #    10-Jan-2010 (MG) Moved into `GTW` package
 #    11-Jan-2010 (CT) `to_response` removed
+#    13-Jan-2010 (MG) `s/template_env/Templeteer/g`
 #    ««revision-date»»···
 #--
 
@@ -61,7 +62,7 @@ def add_replacer (* replacers) :
 def to_string (template, context, encoding = None, env = None) :
     if env is None :
         from _GTW._NAV.Base import Root
-        env = Root.top.template_env
+        env = Root.top.Templeteer
     result = env.get_template (template).render (context)
     if encoding is not None :
         result = result.encode (encoding, "replace")

@@ -1,4 +1,4 @@
-{% extends "gtw-base.html" %}
+{% extends "base.jnj" %}
 {% block document %}
   Test Page
 {% endblock %}
