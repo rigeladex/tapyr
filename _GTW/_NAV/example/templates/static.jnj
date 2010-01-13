@@ -1,4 +1,4 @@
-{% extends "base.jnj" %}
+{% extends site_base %}
 {% block document %}
   {{ page.contents|safe }}
 {% endblock %}

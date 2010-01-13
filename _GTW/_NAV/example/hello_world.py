@@ -57,6 +57,7 @@ NAV               = GTW.NAV.Root \
           ( load_path   = template_dirs
           , trim_blocks = True
           , encoding    = "iso-8859-15"
+          , globals     = dict (site_base = "base.jnj")
           )
     )
 NAV.add_entries \

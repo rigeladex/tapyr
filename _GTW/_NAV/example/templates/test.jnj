@@ -1,4 +1,4 @@
-{% extends "base.jnj" %}
+{% extends site_base %}
 {% block document %}
   Test Page
 {% endblock %}

@@ -1,0 +1,6 @@
+{% extends "html/base.jnj" %}
+{%- block navigate -%}
+  <h1>H1 BN</h1>
+  {{ super () }}
+  <h1>H1 AN</h1>
+{%- endblock -%}

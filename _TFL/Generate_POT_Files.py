@@ -49,6 +49,7 @@ class Test :
 
     def _test (self) :
         """This is a method doc string"""
+        print _T (ckw.title or "Baz")
         print _T ("Foo")
         foo = _("Markup %d")
         print _T(foo) % 42
