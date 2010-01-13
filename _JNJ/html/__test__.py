@@ -32,7 +32,7 @@
 """
 
     >>> page = Record (copyright = None, Media = None, NAV = None, top = None)
-    >>> glbs = dict (page = page, I18N = TFL.I18N, next = "/logout/")
+    >>> glbs = dict (page = page, next = "/logout/")
     >>> env5 = HTML (globals = glbs)
     >>> envx = HTML (version = "html/x.jnj", globals = glbs)
     >>> t5 = env5.from_string (template)
@@ -67,8 +67,30 @@
       <input type="number" max="8" min="2"/>
       <textarea cols="40" rows="4" id="Area">
         A sample text in a sample textarea.
+    <BLANKLINE>
       </textarea>
+    <BLANKLINE>
       <form action="/login/" method="post">
+        <ul>
+          <li><label for="F_username">Username</label></li>
+          <li>
+            <input type="text" placeholder="Please enter your user-name" id="F_username" maxlength="30"/>
+          </li>
+          <li><label for="F_password">Password</label></li>
+          <li>
+            <input type="password" placeholder="Please enter your password" id="F_password"/>
+          </li>
+          <li>
+            <input type="submit" value="Login"/>
+            <input type="hidden" name="next" value="/logout/"/>
+          </li>
+        </ul>
+      </form>
+    <BLANKLINE>
+      <form action="/login/" method="post">
+    <BLANKLINE>
+          Using `call` of `GTW.get_macro`
+    <BLANKLINE>
         <ul>
           <li><label for="F_username">Username</label></li>
           <li>
@@ -117,8 +139,30 @@
       <input type="text" class="number"/>
       <textarea cols="40" rows="4" id="Area">
         A sample text in a sample textarea.
+    <BLANKLINE>
       </textarea>
+    <BLANKLINE>
       <form action="/login/" method="post">
+        <ul>
+          <li><label for="F_username">Username</label></li>
+          <li>
+            <input type="text" class="text" id="F_username" maxlength="30"/>
+          </li>
+          <li><label for="F_password">Password</label></li>
+          <li>
+            <input type="password" class="password" id="F_password"/>
+          </li>
+          <li>
+            <input type="submit" class="submit" value="Login"/>
+            <input type="hidden" class="text" name="next" value="/logout/"/>
+          </li>
+        </ul>
+      </form>
+    <BLANKLINE>
+      <form action="/login/" method="post">
+    <BLANKLINE>
+          Using `call` of `GTW.get_macro`
+    <BLANKLINE>
         <ul>
           <li><label for="F_username">Username</label></li>
           <li>
@@ -149,6 +193,8 @@ import _TFL.I18N
 template = """\
 {%- extends "html/base.jnj" %}
 {%- import html_version as X -%}
+{%- import "html/form.jnj" as form -%}
+
 {%- block document scoped %}
   {{ X.input.text (id="user_name", maxlength="30", placeholder="Please enter your user-name") }}
   {{ X.input.password (id="pass_word", maxlength="40") }}
@@ -157,7 +203,10 @@ template = """\
   {% call X.input.textarea (id="Area", rows=4, cols=40) -%}
     A sample text in a sample textarea.
   {% endcall %}
-  {{ X.form.login () }}
+  {{ GTW.call_macro ("html/form.jnj, login") }}
+  {% call GTW.get_macro ("html/form.jnj, login") () -%}
+    Using `call` of `GTW.get_macro`
+  {% endcall %} {# GTW.get_macro #}
 {% endblock document %}
 """
 ### __END__ __test__

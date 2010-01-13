@@ -33,8 +33,7 @@
 #}
 
 {%- import "html/input_5.jnj" as _input -%}{%- set input = _input -%}
-{%- import "html/form.jnj"    as _form with context -%}
-  {%- set form = _form -%}
+
 {%- macro html (lang) -%}
 <!DOCTYPE html>
 <html lang="{{ lang }}">

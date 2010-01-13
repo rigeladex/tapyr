@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    29-Dec-2009 (CT) Creation
+#    13-Jan-2010 (CT) Converted to class; `call_macro` added;
+#                     `_T` and `_Tn` added to class `GTW`
 #    ««revision-date»»···
 #--
 
@@ -35,25 +37,46 @@ from   _TFL import TFL
 
 import _JNJ.Environment
 
-from   jinja2.runtime import Undefined
+import _TFL._Meta.Object
+import _TFL.I18N
 
-def firstof (* args) :
-    if len (args) == 1 and isinstance (args [0], (tuple, list)) :
-        args = args [0]
-    for a in args :
-        if not (a is None or isinstance (a, Undefined)) :
-            return a
-# end def firstof
+class GTW (TFL.Meta.Object) :
+    """Provide additional global functions for Jinja templates."""
 
-def get_macro (macro_name, templ_name = None) :
-    """Return macro `macro_name` from template `templ_name`."""
-    if templ_name is None :
-        templ_name, macro_name = (p.strip () for p in macro_name.split (",", 1))
-    env      = JNJ.Environment.active
-    template = env.get_template (templ_name)
-    return getattr (template.module, macro_name)
-# end def get_macro
+    from jinja2.runtime import Undefined
+
+    def __init__ (self, env) :
+        self.env = env
+    # end def __init__
+
+    def firstof (self, * args) :
+        if len (args) == 1 and isinstance (args [0], (tuple, list)) :
+            args = args [0]
+        for a in args :
+            if not (a is None or isinstance (a, self.Undefined)) :
+                return a
+    # end def firstof
+
+    def get_macro (self, macro_name, templ_name = None) :
+        """Return macro `macro_name` from template `templ_name`."""
+        if templ_name is None :
+            templ_name, macro_name = (p.strip () for p in macro_name.split (",", 1))
+        template = self.env.get_template (templ_name)
+        return getattr (template.module, macro_name)
+    # end def get_macro
+
+    def call_macro (self, macro_name, * _args, ** _kw) :
+        """Call macro named by `macro_name` passing `* _args, ** _kw`."""
+        templ_name = _kw.pop   ("templ_name", None)
+        macro      = self.get_macro (macro_name, templ_name)
+        return macro (* _args, ** _kw)
+    # end def call_macro
+
+    _T  = staticmethod (TFL.I18N._T)
+    _Tn = staticmethod (TFL.I18N._Tn)
+
+# end class GTW
 
 if __name__ != "__main__" :
-    JNJ._Export_Module ()
+    JNJ._Export ("GTW")
 ### __END__ JNJ.GTW

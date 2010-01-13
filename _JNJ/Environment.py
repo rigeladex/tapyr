@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    29-Dec-2009 (CT) Creation
+#    13-Jan-2010 (CT) `GTW` converted from module to class instance
 #    ««revision-date»»···
 #--
 
@@ -51,19 +52,18 @@ def HTML (version = "html/5.jnj", load_path = (), loader = None, globals = {}, t
         loader   = jnj_loader
     else :
         loader   = ChoiceLoader ((loader, jnj_loader))
-    extensions   = uniq \
-        ( kw.pop ("extensions", [])
-        + ["jinja2.ext.loopcontrols", "jinja2.ext.i18n", "jinja2.ext.do"]
-        + [JNJ.Onion]
-        )
-    result = JNJ.Environment.active = Environment \
-        ( extensions   = extensions
+    result       = Environment \
+        ( extensions   = uniq
+            ( kw.pop ("extensions", [])
+            + ["jinja2.ext.loopcontrols", "jinja2.ext.i18n", "jinja2.ext.do"]
+            + [JNJ.Onion]
+            )
         , loader       = loader
         , ** kw
         )
     result.globals.update \
         ( globals
-        , GTW          = JNJ.GTW
+        , GTW          = JNJ.GTW (result)
         , html_version = version
         )
     if translations is not None :
