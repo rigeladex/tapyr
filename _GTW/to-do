@@ -9,6 +9,14 @@ GTW To-Do
 
 - Nav
 
+  * Etype
+
+  * Admin
+
+  * Permission
+
+  * Error templates
+
 - Forms
 
   * `widget` : (template, macro) or "template.macro"

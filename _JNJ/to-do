@@ -18,6 +18,8 @@ x Onion
 
 - Environment.HTML: wrapper for jinja2.Environment
 
+  - Map standard templates into `std/<name>.jnj`, too
+
   x `kw` map into `globals` of newly created Environment
 
   * `Media`
