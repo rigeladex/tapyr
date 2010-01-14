@@ -43,7 +43,7 @@ class Templateer (TFL.Meta.Object) :
     Context = dict
 
     def __init__ (self, * args, ** kw) :
-        self.env = JNJ.HTML (* args, ** kw)
+        self.env = JNJ.Environment.HTML (* args, ** kw)
     # end def __init__
 
     def get_template (self, name) :
@@ -60,5 +60,5 @@ class Templateer (TFL.Meta.Object) :
 # end class Templateer
 
 if __name__ != "__main__" :
-    JNJ._Export ()
+    JNJ._Export ("*")
 ### __END__ JNJ.Templateer
