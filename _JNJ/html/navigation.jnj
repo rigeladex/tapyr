@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
+##    14-Jan-2010 (CT) Guard `if not link.hidden` added to loop in `entries`
 ##    ««revision-date»»···
 ##--
 #}
@@ -64,7 +65,7 @@
 {%- macro entries (link_list, level = 0) -%}
   {%- if link_list %}
   <ul>
-    {%- for link in link_list %}
+    {%- for link in link_list if not link.hidden %}
       {{ entry (link, level) }}
     {% endfor -%}
   </ul>

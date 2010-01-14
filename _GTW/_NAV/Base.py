@@ -221,6 +221,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     __metaclass__   = _Meta_
 
     desc            = ""
+    hidden          = False
     href            = ""
     input_encoding  = "iso-8859-15"
     nick            = ""
