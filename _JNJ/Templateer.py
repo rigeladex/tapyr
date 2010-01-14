@@ -54,7 +54,7 @@ class Templateer (TFL.Meta.Object) :
         template = template_or_name
         if isinstance (template_or_name, basestring) :
             template = self.get_template (template_or_name)
-        result = template.render (context)
+        return template.render (context)
     # end def render
 
 # end class Templateer
