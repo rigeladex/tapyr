@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Sep-2009 (MG) Creation
+#    14-Jan-2010 (MG) Use `TFL.CAO`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,18 @@ import _GTW._NAV.Base
 import _GTW._NAV.ReST
 from   _JNJ.Templateer import Templateer
 import _JNJ
+
+from   _MOM            import MOM
+import _GTW._OMP._Auth.Account
+
+from   _MOM._EMS.Hash         import Manager as EMS
+from   _MOM._DBW._HPS.Manager import Manager as DBW
+
+apt    = MOM.App_Type (u"HWO", GTW).Derived (EMS, DBW)
+scope  = MOM.Scope.new (apt, None)
+
+#scope.GTW.OMP.Auth.Password_Account ("user1", "passwd1")
+#scope.GTW.OMP.Auth.Password_Account ("user2", "passwd2")
 
 base_template_dir = os.path.dirname (_JNJ.__file__)
 ROOT_DIR          = os.path.dirname (__file__)
@@ -68,6 +81,7 @@ NAV.add_entries \
       , dict ( name           = "test.html"
              , title          = u"Test"
              , Type           = GTW.NAV.Page_ReST_F
+             , login_required = True
              )
       , dict ( name           = "redirect_301.html"
              , title          = u"Redirect 301 (index)"
@@ -86,16 +100,30 @@ NAV.add_entries \
     )
 
 if __name__ == "__main__" :
+    from   _TFL                        import TFL
     import _GTW._Tornado.Application
+    import _TFL.CAO
     import  sys
-
-    if len (sys.argv) == 1 :
+    cmd = TFL.CAO.Cmd \
+        ( opts = ( "port:I=8080?Server port"
+                 , "tornado_reload:B?Use the tornado reload feature"
+                 , "GTW_reload:B?Use the GTW reload feature"
+                 )
+        ) (sys.argv [1:])
+    print "Start server on port %d" % (cmd.port, )
+    if cmd.GTW_reload :
+        print "Use GTW autorelaod feature"
         GTW.Tornado.auto_reload_start \
-            ( GTW.Tornado.Application (( ((r".*", GTW.NAV.Request_Handler), ))))
+            ( GTW.Tornado.Application (( ((r".*", GTW.NAV.Request_Handler), )))
+            , port = cmd.port
+            )
     else :
+        if cmd.tornado_reload :
+            print "Use Tornado buildin autorelaod feature"
         app = GTW.Tornado.Application \
             ( ((".*$", GTW.NAV.Request_Handler), )
-            , debug = sys.argv [1].upper () == "D"
+            , cookie_secret = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476W§+@"
+            , debug = cmd.tornado_reload
             )
-        GTW.Tornado.start_server (app, 8080)
+        GTW.Tornado.start_server (app, cmd.port)
 ### __END__ GTW.NAV.example.hello_world
