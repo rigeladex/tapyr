@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-Sep-2009 (MG) Creation
 #    14-Jan-2010 (MG) Use `TFL.CAO`
+#    14-Jan-2010 (CT) `PNS_Aliases` added and `Account_P` creation enabled
 #    ««revision-date»»···
 #--
 
@@ -48,11 +49,12 @@ import _GTW._OMP._Auth.Account
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
 
-apt    = MOM.App_Type (u"HWO", GTW).Derived (EMS, DBW)
+apt    = MOM.App_Type \
+    (u"HWO", GTW, PNS_Aliases = dict (Auth = GTW.OMP.Auth)).Derived (EMS, DBW)
 scope  = MOM.Scope.new (apt, None)
 
-#scope.GTW.OMP.Auth.Password_Account ("user1", "passwd1")
-#scope.GTW.OMP.Auth.Password_Account ("user2", "passwd2")
+scope.Auth.Account_P ("user1", password = "passwd1")
+scope.Auth.Account_P ("user2", password = "passwd2")
 
 base_template_dir = os.path.dirname (_JNJ.__file__)
 ROOT_DIR          = os.path.dirname (__file__)

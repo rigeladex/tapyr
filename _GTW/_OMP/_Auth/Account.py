@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    13-Jan-2010 (MG) Creation
+#    14-Jan-2010 (CT) `password` defined as `Required` instead of `Primary`
+#    14-Jan-2010 (CT) s/Password_Account/Account_P/g
 #    ««revision-date»»···
 #--
 
@@ -51,6 +53,8 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
             kind       = Attr.Primary
             max_length = 50
             rank       = 1
+            ui_name    = "Account name"
+
         # end class user_name
 
     # end class _Attributes
@@ -59,21 +63,22 @@ Account = _Auth_Account_ # end class _Auth_Account_
 
 _Ancestor_Essence = Account
 
-class Password_Account (_Ancestor_Essence) :
-    """An acount which simply has a password."""
+class Account_P (_Ancestor_Essence) :
+    """An acount which uses passwords for authorization."""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         class password (A_String) :
             """Password for this account"""
-            kind       = Attr.Primary
+
+            kind       = Attr.Required
             max_length = 50
-            rank       = 2
+
         # end class password
 
     # end class _Attributes
 
-# end class Password_Account
+# end class Account_P
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

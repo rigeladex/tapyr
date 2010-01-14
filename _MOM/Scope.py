@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -52,8 +52,8 @@
 #    21-Dec-2009 (CT) `relevant_roots` added, `_register_root` factored
 #    21-Dec-2009 (CT) `destroy` changed to call `ems.close`
 #    30-Dec-2009 (MG) `Scope.copy` use `epk_raw` instead of `epk`
-#    31-Dec-2009 (MG) After changes to `Attr.Kind._EPK_Mixin_` `Scope.copy`
-#                     can now use `epk` again
+#    14-Jan-2010 (CT) `_setup_pkg_ns` changed to handle `_Outer` and
+#                     `PNS_Aliases`
 #    ««revision-date»»···
 #--
 
@@ -66,7 +66,7 @@ import _MOM._Pred.Err_and_Warn_List
 import _MOM._SCM.Tracker
 
 from   _TFL.Gauge_Logger      import Gauge_Logger
-from   _TFL.predicate         import split_hst
+from   _TFL.predicate         import split_hst, rsplit_hst
 
 import _TFL.Accessor
 import _TFL.Context
@@ -297,7 +297,7 @@ class Scope (TFL.Meta.Object) :
             result = self.__class__.new \
                 (app_type, db_uri, self.root_epk, user = self.user)
             for e in self :
-                e.copy (* e.epk, scope = result)
+                e.copy (* e.epk_raw, raw = True, scope = result)
         return result
     # end def copy
 
@@ -574,9 +574,20 @@ class Scope (TFL.Meta.Object) :
 
     def _setup_pkg_ns (self, app_type) :
         _pkg_ns = self._pkg_ns
-        for name, pns in sorted (app_type.PNS_Map.iteritems (), key = len) :
+        for name, pns in sorted \
+                (app_type.PNS_Map.iteritems (), key = TFL.Getter [0]) :
             if name not in _pkg_ns :
-                _pkg_ns [name] = self.Pkg_NS (self, pns, name)
+                _pkg_ns [name]  = self.Pkg_NS (self, pns, name)
+                outer, _, name = rsplit_hst (name, ".")
+                while outer :
+                    if outer in _pkg_ns :
+                        break
+                    pns = pns._Outer
+                    _pkg_ns [outer] = self.Pkg_NS (self, pns, outer)
+                    outer, _, name  = rsplit_hst (outer, ".")
+        for alias, pns in app_type.PNS_Aliases.iteritems () :
+            assert not alias in _pkg_ns
+            _pkg_ns [alias] = _pkg_ns [pns._Package_Namespace__qname]
     # end def _setup_pkg_ns
 
     def _setup_root (self, app_type, root_epk) :

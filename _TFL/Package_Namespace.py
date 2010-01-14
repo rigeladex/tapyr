@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -130,6 +130,7 @@
 #     6-Feb-2009 (CT)  Documentation improved
 #    11-Nov-2009 (CT)  Use `print` as function, not statement (3-compatibility)
 #    23-Nov-2009 (CT) `Package_Namespace.__init__`: order of arguments changed
+#    14-Jan-2010 (CT) `_Outer` added (and methods sorted alphabetically)
 #    ««revision-date»»···
 #--
 
@@ -288,44 +289,8 @@ class Package_Namespace (object) :
         self.__modules      = {}
         self.__seen         = {}
         self.__reload       = 0
+        self._Outer         = None
     # end def __init__
-
-    def _import_names (self, mod, names, result, check_clashes) :
-        for name in names :
-            if isinstance (name, str) :
-                name, as_name = name, name
-            else :
-                name, as_name = name
-            try :
-                p = getattr (mod, name)
-                self._import_1 (mod, name, as_name, p, result, check_clashes)
-            except AttributeError :
-                raise ImportError \
-                    ("cannot import name %s from %s" % (name, mod.__name__))
-    # end def _import_names
-
-    def _import_1 (self, mod, name, as_name, object, result, check_clashes) :
-        if __debug__ :
-            old = self.__dict__.get (name, object)
-            if check_clashes and old is not object :
-                raise ImportError \
-                    ( "ambiguous name %s refers to %s and %s"
-                    % (name, object, old)
-                    )
-        result [as_name] = object
-    # end def _import_1
-
-    def __repr__ (self) :
-        return "<%s %s>" % (self.__class__.__name__, self.__name)
-    # end def __repr__
-
-    def _Cache_Module (self, module_name, mod) :
-        if not module_name in self.__modules :
-            p = len (self.__modules)
-        else :
-            m, p = self.__modules [module_name]
-        self.__modules [module_name] = (mod, p)
-    # end def _Cache_Module
 
     def _Add (self, ** kw) :
         """Add elements of `kw` to Package_Namespace `self`."""
@@ -335,6 +300,14 @@ class Package_Namespace (object) :
         for s, p in kw.items () :
             self._import_1 (mod, s, s, p, self.__dict__, check_clashes)
     # end def _Add
+
+    def _Cache_Module (self, module_name, mod) :
+        if not module_name in self.__modules :
+            p = len (self.__modules)
+        else :
+            m, p = self.__modules [module_name]
+        self.__modules [module_name] = (mod, p)
+    # end def _Cache_Module
 
     def _Export (self, * symbols, ** kw) :
         """To be called by modules of `Package_Namespace` to inject their
@@ -387,6 +360,40 @@ class Package_Namespace (object) :
         self._Cache_Module (module_name, mod)
     # end def _Export_Module
 
+    def _Import_Module (self, module) :
+        import _TFL.import_module ### avoid circular imports !!!
+        return _TFL.import_module.import_module \
+            (".".join ((self.__pname, module)))
+    # end def _Import_Module
+
+    def _import_names (self, mod, names, result, check_clashes) :
+        for name in names :
+            if isinstance (name, str) :
+                name, as_name = name, name
+            else :
+                name, as_name = name
+            try :
+                obj = getattr (mod, name)
+            except AttributeError :
+                raise ImportError \
+                    ("Cannot import name %s from %s" % (name, mod.__name__))
+            else :
+                self._import_1 (mod, name, as_name, obj, result, check_clashes)
+    # end def _import_names
+
+    def _import_1 (self, mod, name, as_name, obj, result, check_clashes) :
+        if __debug__ :
+            old = self.__dict__.get (name, obj)
+            if check_clashes and old is not obj :
+                raise ImportError \
+                    ( "ambiguous name %s refers to %s and %s"
+                    % (name, obj, old)
+                    )
+        result [as_name] = obj
+        if isinstance (obj, Package_Namespace) :
+            obj._Outer = self
+    # end def _import_1
+
     def _Load_Module (self, caller_globals) :
         q_name = caller_globals ["__name__"]
         b_name = q_name.split   (".") [-1]
@@ -416,11 +423,9 @@ class Package_Namespace (object) :
         linecache.clearcache ()
     # end def _Reload
 
-    def _Import_Module (self, module) :
-        import _TFL.import_module ### avoid circular imports !!!
-        return _TFL.import_module.import_module \
-            (".".join ((self.__pname, module)))
-    # end def _Import_Module
+    def __repr__ (self) :
+        return "<%s %s>" % (self.__class__.__name__, self.__name)
+    # end def __repr__
 
 # end class Package_Namespace
 
@@ -469,13 +474,6 @@ class Derived_Package_Namespace (Package_Namespace) :
         DPN_Importer.register (mod, pname, parent)
     # end def __init__
 
-    def __getattr__ (self, name) :
-        result  = getattr (self._parent, name)
-        self.__cached [name] = result
-        setattr (self, name, result)
-        return  result
-    # end def __getattr__
-
     def _Reload (self, * modules) :
         for c in self.__cached.iterkeys () :
             delattr (self, c)
@@ -483,6 +481,13 @@ class Derived_Package_Namespace (Package_Namespace) :
         self._parent._Reload ()
         Package_Namespace._Reload (self, * modules)
     # end def _Reload
+
+    def __getattr__ (self, name) :
+        result  = getattr (self._parent, name)
+        self.__cached [name] = result
+        setattr (self, name, result)
+        return  result
+    # end def __getattr__
 
 # end class Derived_Package_Namespace
 

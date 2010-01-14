@@ -32,7 +32,7 @@
 #    23-Nov-2009 (CT) `finalized` added and used to guard `add_type`
 #    23-Nov-2009 (CT) Documentation added
 #    30-Dec-2009 (CT) s/Package_NS/PNS/
-#    14-Jan-2010 (CT) Use `PNS_s` instead of `PNS`
+#    14-Jan-2010 (CT) `PNS_Aliases` added
 #    ««revision-date»»···
 #--
 
@@ -119,6 +119,7 @@ class _App_Type_D_ (_App_Type_) :
         self.init_callback    = TFL.Ordered_Set ()
         self.kill_callback    = TFL.Ordered_Set ()
         self.PNS_Map          = parent.PNS_Map
+        self.PNS_Aliases      = parent.PNS_Aliases
         self.finalized        = False
         import _MOM.Entity
         MOM.Entity.m_setup_etypes (self)
@@ -127,7 +128,7 @@ class _App_Type_D_ (_App_Type_) :
 
     def add_type (self, etype) :
         assert not self.finalized
-        pns = etype.PNS_s
+        pns = etype.PNS
         qn  = pns._Package_Namespace__qname
         self.PNS_Map [qn]                      = pns
         self.etypes  [etype.Essence.type_name] = etype
@@ -169,17 +170,18 @@ class App_Type (_App_Type_) :
     _T_Extension     = None
     parent           = None
 
-    def __init__ (self, name, ANS, Root_Type_Name = None) :
+    def __init__ (self, name, ANS, Root_Type_Name = None, PNS_Aliases = None) :
         assert bool (name)
         assert name not in self.Table
-        self.Table [name]      = self
-        self.name              = name
-        self.ANS               = ANS
-        self.Root_Type_Name    = Root_Type_Name
-        self.derived           = {}
-        self.init_callback     = TFL.Ordered_Set ()
-        self.kill_callback     = TFL.Ordered_Set ()
-        self.PNS_Map           = {}
+        self.Table [name]   = self
+        self.name           = name
+        self.ANS            = ANS
+        self.Root_Type_Name = Root_Type_Name
+        self.derived        = {}
+        self.init_callback  = TFL.Ordered_Set ()
+        self.kill_callback  = TFL.Ordered_Set ()
+        self.PNS_Map        = {}
+        self.PNS_Aliases    = PNS_Aliases if PNS_Aliases is not None else {}
     # end def __init__
 
     def Derived (self, EMS, DBW) :

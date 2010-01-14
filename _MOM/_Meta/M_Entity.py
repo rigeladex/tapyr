@@ -58,6 +58,7 @@
 #    22-Dec-2009 (CT) `_m_new_e_type_dict` changed to include `epk_sig`
 #    30-Dec-2009 (CT) s/Package_NS/PNS/, `PNS_s` added
 #     5-Jan-2010 (CT) Use `TFL._Meta.M_Auto_Combine` as base class
+#    14-Jan-2010 (CT) `PNS_s` removed
 #    ««revision-date»»···
 #--
 
@@ -216,13 +217,6 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
 class M_Entity (M_E_Mixin) :
     """Meta class for essential entity of MOM meta object model."""
 
-    def __new__ (meta, name, bases, dict) :
-        if "PNS" in dict and "PNS_s" not in dict :
-            dict ["PNS_s"] = dict ["PNS"]
-        result = super (M_Entity, meta).__new__ (meta, name, bases, dict)
-        return result
-    # end def __new__
-
     def __init__ (cls, name, bases, dict) :
         cls.__m_super.__init__  (name, bases, dict)
         cls._m_init_prop_specs  (name, bases, dict)
@@ -277,7 +271,6 @@ class M_Entity (M_E_Mixin) :
                     , E_Spec              = s
                     , is_partial          = s.is_partial
                     , PNS                 = s.PNS
-                    , PNS_s               = s.PNS_s
                     , show_package_prefix = s.show_package_prefix
                     , _real_name          = tbn
                     , __module__          = s.__module__
@@ -287,7 +280,6 @@ class M_Entity (M_E_Mixin) :
             setattr   (bet,                        "__BET", bet)
             setattr   (s,                          "__BET", bet)
             setattr   (s.PNS,                      tbn,     bet)
-            setattr   (s.PNS_s,                    tbn,     bet)
             setattr   (sys.modules [s.__module__], tbn,     bet)
     # end def _m_create_base_e_types
 

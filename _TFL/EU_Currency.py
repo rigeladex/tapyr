@@ -416,7 +416,7 @@ class _EUC_Source_Arg_ (TFL.CAO.Arg.Key) :
         kw.setdefault ("name",        "source_currency")
         kw.setdefault ("default",     "EUR")
         kw.setdefault ("description", "Source currency")
-        self.__super.__init__ (dict = EUC.Table, ** kw)
+        self.__super.__init__ (dct = EUC.Table, ** kw)
     # end def __init__
 
 # end class _EUC_Source_Arg_
@@ -430,7 +430,7 @@ class _EUC_Target_Arg_ (TFL.CAO.Arg.Key) :
         kw.setdefault ("name",        "target_currency")
         kw.setdefault ("default",     "EUR")
         kw.setdefault ("description", "Target currency")
-        self.__super.__init__ (dict = EUC.Table, ** kw)
+        self.__super.__init__ (dct = EUC.Table, ** kw)
     # end def __init__
 
     def cook (self, value, cao = None) :
