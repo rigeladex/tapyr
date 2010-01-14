@@ -28,6 +28,8 @@
 ##
 ## Revision Dates
 ##    12-Jan-2010 (CT) Creation
+##    13-Jan-2010 (CT) Creation continued
+##    14-Jan-2010 (CT) Creation continued..
 ##    ««revision-date»»···
 ##--
 #}
@@ -35,16 +37,17 @@
 {%- import html_version as X -%}
 
 {%- macro fg_div_seq (fo, fg) -%}
-  {%- for f in fg.visible_fields %}
-    <div class="Field Field-{{ f.name }}" title="{{ f.help_text }}"
+  {%- for fi in fg.visible_fields %}
+    <div class="Field Field-{{ fi.name }}" title="{{ fi.help_text }}"
     >
-      <span class="Field-Help">{{ f.help_text|safe }}</span>
       {%- if loop.first %}
         {%- for h in fg.hidden_fields %}
           {{ GTW.call_macro (h.widget, fo, h) }}
         {% endfor -%}
       {% endif %}
-      {{ GTW.call_macro (f.widget, fo, f) }}
+      <span class="Field-Help">{{ fi.help_text|safe }}</span>
+      {{ _field_label (fo, fi) }}
+      {{ GTW.call_macro (fi.widget, fo, fi) }}
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- fg_div_seq -#}
@@ -59,10 +62,10 @@
     </tbody>
   </table>
   <div class="field_group-Horizontal-Help">
-    {%- for f in fg.visible_fields %}
-      {%- if f.help_text %}
-        <p class="Field-Help Field-Help-{{ f.name }}">
-          {{ f.help_text|safe }}
+    {%- for fi in fg.visible_fields %}
+      {%- if fi.help_text %}
+        <p class="Field-Help Field-Help-{{ fi.name }}">
+          {{ fi.help_text|safe }}
         </p>
       {% endif -%}
     {% endfor -%}
@@ -73,14 +76,14 @@
     <tr class="field_group {{ fg.css_class }}"
       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
     >
-      {%- for f in fg.visible_fields %}
-        <td class="Field Field-{{ f.name }}" title="{{ f.help_text|safe }}">
+      {%- for fi in fg.visible_fields %}
+        <td class="Field Field-{{ fi.name }}" title="{{ fi.help_text|safe }}">
           {%- if loop.first %}
             {%- for h in fg.hidden_fields %}
               {{ GTW.call_macro (h.widget.inline, fo, h) }}
             {% endfor -%}
           {% endif %}
-          {{ GTW.call_macro (f.widget.inline, fo, f) }}
+          {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
         </td>
       {% endfor -%}
     </tr>
@@ -88,8 +91,10 @@
 
 {%- macro fg_tr_head (fo, fg) -%}
     <tr>
-      {%- for f in f.visible_fields %}
-        <th title="{{ f.help_text|safe }}">{{ f.label }}</th>
+      {%- for fi in fg.visible_fields %}
+        <th title="{{ fi.help_text|safe }}">
+          {{ _field_label (fo, fi) }}
+        </th>
       {% endfor -%}
     </tr>
 {%- endmacro -%} {#- fg_tr_head -#}
@@ -133,18 +138,18 @@
       <li><label for="F_username">{{ GTW._T (un_tag) }}</label></li>
       <li>
         {{ X.input.text
-             ( id            = "F_username"
-             , maxlength     = "30"
-             , placeholder   = "Please enter your user-name"
-             )
-         }}
+            ( id            = "F_username"
+            , maxlength     = "30"
+            , placeholder   = "Please enter your user-name"
+            )
+        }}
       </li>
       <li><label for="F_password">{{ GTW._T (pw_tag) }}</label></li>
       <li>
         {{ X.input.password
-             ( id            = "F_password"
-             , placeholder   = "Please enter your password"
-             )
+            ( id            = "F_password"
+            , placeholder   = "Please enter your password"
+            )
         }}
       </li>
       <li>
@@ -154,6 +159,39 @@
     </ul>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- login -#}
+
+{%- macro nested_div (fo, fg) -%}
+  <fieldset class="{{ fg.css_class|default ('nested-many-2-many')}} {{ fg.Name }}">
+    {% if fg.legend %}<legend>{{ fg.legend }}</legend>{% endif %}
+    {# XXX MGL:: {{ fg.object_count }} #}
+    <div class="One-Link">
+      <div class="m2m-prototype m2m-nested-form">
+        {% for fs in fg.prototype.field_groups %}
+          <div class="field_group {{ fg.css_class }}"
+             {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
+          >
+            {{ GTW.call_macro (fs.widget, fg, fs) }}
+          </div>
+        {% endfor %}
+      </div>
+      {% for form in fg.forms %}
+        <div class="m2m-nested-form">
+        {% for fs in form.field_groups %}
+          <div class="field_group {{ fg.css_class }}"
+             {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
+          >
+            {{ GTW.call_macro (fs.widget, fg, fs) }}
+          </div>
+        {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+  </fieldset>
+{%- endmacro -%} {#- nested_div -#}
+
+{%- macro nested_table (fo, fg) -%}
+  {#- XXX port nested_model_form_table.html from _DJO/_Apps/Base/templates/ -#}
+{%- endmacro -%} {#- nested_table -#}
 
 {%- macro object (fo) -%}
   {#- Create a form for a form-object `fo` -#}
@@ -181,5 +219,9 @@
     {% endfor -%}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
+
+{%- macro _field_label (fo, fi) -%}
+  <label for="F_{{ fo.get_id (fi) }}">{{ GTW._T (fi.ui_name) }}</label>
+{%- endmacro -%} {#- _field_label -#}
 
 {#- __END__ jinja template: form.jnj -#}

@@ -115,8 +115,14 @@
 {%- endmacro -%}
 
 {%- macro textarea (cols, rows) -%}
+  {%- set value  = kwargs.pop ("value",  None) -%}
+  {%- set caller = kwargs.pop ("caller", None) -%}
   <textarea cols="{{ cols }}" rows="{{ rows }}"{{ kwargs|xmlattr }}>
-    {{ caller () }}
+    {%- if value %}
+      {{ value }}
+    {%- else %}
+      {{ caller () }}
+    {% endif -%}
   </textarea>
 {%- endmacro -%}
 

@@ -1,0 +1,79 @@
+{#- jinja template: field.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/field.jnj
+##
+## Purpose
+##    Provide macros for rendering fields of a html form
+##
+## Revision Dates
+##    14-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import html_version as X -%}
+
+{%- macro email (fo, fi) -%}
+  {{ _field (X.input.email, fo, fi) }}
+{%- endmacro -%} {#- email -#}
+
+{%- macro number (fo, fi) -%}
+  {{ _field
+      ( X.input.number, fo, fi
+      , max           = fi.max_value
+      , min           = fi.min_value
+      )
+  }}
+{%- endmacro -%} {#- number -#}
+
+{%- macro string (fo, fi) -%}
+  {{ _field
+      ( X.input.text, fo, fi
+      , max_length    = fi.max_length
+      )
+  }}
+{%- endmacro -%} {#- string -#}
+
+{%- macro text (fo, fi) -%}
+  {{ _field
+      ( X.input.textarea, fo, fi
+      , cols          = fi.cols or 80
+      , max_length    = fi.max_length
+      , rows          = fi.rows or 5
+      )
+  }}
+{%- endmacro -%} {#- text -#}
+
+{%- macro _field (typ, fo, fi) -%}
+  {%- set id = fo.get_id (fi) %}
+  {{ typ
+      ( id            = "F_{{ id }}"
+      , name          = id
+      , value         = fo.get_raw (fi)
+      , ** kwargs
+      )
+  }}
+{%- endmacro -%} {#- _field -#}
+
+{#- __END__ jinja template: field.jnj -#}

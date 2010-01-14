@@ -195,8 +195,12 @@ template = """\
 {%- import html_version as X -%}
 {%- import "html/form.jnj" as form -%}
 
+{%- macro _render (typ) -%}
+  {{- typ (** kwargs) -}}
+{%- endmacro -%} {#- _render -#}
+
 {%- block document scoped %}
-  {{ X.input.text (id="user_name", maxlength="30", placeholder="Please enter your user-name") }}
+  {{ _render (typ = X.input.text, id="user_name", maxlength="30", placeholder="Please enter your user-name") }}
   {{ X.input.password (id="pass_word", maxlength="40") }}
   {% call X.input.email (id="email", readonly="1") -%}{%- endcall %}
   {{ X.input.number (min = 2, max = 8) }}
