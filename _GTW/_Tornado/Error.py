@@ -29,11 +29,14 @@
 #    13-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
+
 from   _GTW              import GTW
-import _GTW._Tornado
-from    tornado.web      import HTTPError
 from   _TFL              import TFL
+
+import _GTW._Tornado
 import _TFL._Meta.Object
+
+from    tornado.web      import HTTPError
 
 class HTTP_Status (HTTPError, TFL.Meta.Object) :
     """Base class for HTTP status exceptions"""
