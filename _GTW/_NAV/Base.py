@@ -762,8 +762,8 @@ class Root (_Dir_) :
         href = handler.request.uri [1:]
         user = handler.current_user
         page = cls.page_from_href (href)
+        HTTP = cls.top.HTTP
         if page :
-            HTTP = cls.top.HTTP
             if page.login_required :
                 if user and not user.is_authenticated () :
                     return HTTP.Error_403 (template = "403_login.html")
