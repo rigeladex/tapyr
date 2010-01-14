@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
+#    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 10
             rank           = 3
+            ui_name        = _("Zip code")
 
         # end class zip
 
@@ -92,22 +94,25 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Optional
             max_length     = 20
+            ui_name        = _("Description")
 
         # end class desc
 
         class lon (A_Float) :
             """Longitude"""
 
-            kind     = Attr.Optional
-            check    = ("-180.0 <= value <= 180.0", )
+            kind           = Attr.Optional
+            check          = ("-180.0 <= value <= 180.0", )
+            ui_name        = _("Longitude")
 
         # end class lon
 
         class lat (A_Float) :
             """Latitude"""
 
-            kind     = Attr.Optional
-            check    = ("-90.0 <= value <= 90.0", )
+            kind           = Attr.Optional
+            check          = ("-90.0 <= value <= 90.0", )
+            ui_name        = _("Latitude")
 
         # end class lat
 

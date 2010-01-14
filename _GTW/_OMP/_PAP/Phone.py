@@ -48,6 +48,8 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             rank           = 1
+            ui_name        = _("Country code")
+
             min_value      = 1
             max_value      = 999
 
@@ -58,6 +60,8 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             rank           = 2
+            ui_name        = _("Area code")
+
             min_value      = 1
 
         # end class area_code
@@ -67,8 +71,9 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             rank           = 3
-            min_value      = 100
+            ui_name        = _("Number")
 
+            min_value      = 100
             max_digits     = 14
             decimal_places = 0
 
@@ -88,6 +93,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Optional
             max_length     = 20
+            ui_name        = _("Description")
 
         # end class desc
 

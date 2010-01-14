@@ -46,6 +46,6 @@ x Onion
 
       o select
 
-- Macro-template `form.jnj`: for rendering forms, fields, field-groups, ...
+x Macro-template `form.jnj`: for rendering forms, fields, field-groups, ...
 
 ### __END__ to-do

@@ -59,6 +59,7 @@
 #    30-Dec-2009 (CT) `A_Decimal` added
 #     5-Jan-2010 (CT) `_Number_.min_value` and `_Number_.max_value` added
 #     5-Jan-2010 (CT) `_checkers` added to `A_Attr_Type` and `_Number_`
+#    14-Jan-2010 (CT) `ui_name` added
 #    ««revision-date»»···
 #--
 
@@ -104,6 +105,7 @@ class A_Attr_Type (object) :
     store_default       = False
     symbolic_ref_pat    = Regexp (r"^\s*\$\(.*\)\s*$", re.MULTILINE)
     typ                 = None
+    ui_name             = property (lambda s : s.name)
 
     _symbolic_default   = False
     _t_rank             = 0

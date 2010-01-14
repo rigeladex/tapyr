@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
+#    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ class _PAP_Email_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 80
             rank           = 1
+            ui_name        = _("Email address")
 
         # end class address
 
@@ -58,6 +60,7 @@ class _PAP_Email_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Optional
             max_length     = 20
+            ui_name        = _("Description")
 
         # end class desc
 

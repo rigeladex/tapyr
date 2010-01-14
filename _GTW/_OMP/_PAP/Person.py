@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
+#    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 48
             rank           = 1
+            ui_name        = _("Last name")
 
         # end class last_name
 
@@ -59,6 +61,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 32
             rank           = 2
+            ui_name        = _("First name")
 
         # end class first_name
 
@@ -67,6 +70,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Optional
             max_length     = 20
+            ui_name        = _("Academic title")
 
         # end class title
 
@@ -74,6 +78,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """Date of birth"""
 
             kind           = Attr.Optional
+            ui_name        = _("Date of birth")
 
         # end class birth_date
 

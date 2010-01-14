@@ -36,6 +36,7 @@
 #    27-Nov-2009 (MG) Order of test cases changed, use `list` operator in
 #                     some tests
 #     4-Dec-2009 (MG) Tests adopted to use real database back end
+#    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    ««revision-date»»···
 #--
 
@@ -187,6 +188,11 @@ The app-type specific entity-types are ready to be used by
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
     [Object `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, Float `weight`, Boolean `x_locked`]
+
+    >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
+    ('last_name', 'Last name')
+    >>> ET_Mouse.color.name, ET_Mouse.color.ui_name
+    ('color', 'color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
     ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter']
@@ -1092,6 +1098,7 @@ class Location (_Ancestor_Essence) :
             rank       = 1
             min_value  = -180.0
             max_value  = +180.0
+            ui_name    = "Longitude"
 
         # end class lon
 
@@ -1102,6 +1109,7 @@ class Location (_Ancestor_Essence) :
             rank       = 2
             min_value  = -90.0
             max_value  = +90.0
+            ui_name    = "Latitude"
 
         # end class lat
 
@@ -1123,6 +1131,7 @@ class Person (_Ancestor_Essence) :
 
             kind     = Attr.Primary
             rank     = 1
+            ui_name  = "Last name"
 
         # end class last_name
 
@@ -1131,6 +1140,7 @@ class Person (_Ancestor_Essence) :
 
             kind     = Attr.Primary
             rank     = 2
+            ui_name  = "First name"
 
         # end class first_name
 
@@ -1230,6 +1240,7 @@ class Trap (_Ancestor_Essence) :
             """Serial number of the trap"""
 
             kind     = Attr.Primary
+            ui_name  = "Serial number"
 
         # end class serial_no
 
@@ -1238,6 +1249,7 @@ class Trap (_Ancestor_Essence) :
 
             kind     = Attr.Optional
             check    = ("value > 0", )
+            ui_name  = "Maximum weight"
 
         # end class max_weight
 
