@@ -30,6 +30,7 @@
 ## Revision Dates
 ##    30-Dec-2009 (CT) Creation
 ##    12-Jan-2010 (CT) Creation continued
+##    14-Jan-2010 (CT) `textarea` changed to allow `value`
 ##    ««revision-date»»···
 ##--
 #}
