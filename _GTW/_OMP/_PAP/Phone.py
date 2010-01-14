@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
+#    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    ««revision-date»»···
 #--
 from   _MOM.import_MOM        import *

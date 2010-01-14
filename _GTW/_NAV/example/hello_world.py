@@ -38,7 +38,7 @@ import  os
 
 import _GTW._NAV.Base
 import _GTW._NAV.ReST
-from   _JNJ.Templeteer import Templeteer
+from   _JNJ.Templateer import Templateer
 import _JNJ
 
 base_template_dir = os.path.dirname (_JNJ.__file__)
@@ -53,7 +53,7 @@ NAV               = GTW.NAV.Root \
     , site_url          = "http://localhost:8000"
     , template          = "static.jnj"
     , HTTP              = GTW.Tornado
-    , Templeteer        = Templeteer
+    , Templateer        = Templateer
           ( load_path   = template_dirs
           , trim_blocks = True
           , encoding    = "iso-8859-15"

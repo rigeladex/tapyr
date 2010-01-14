@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jan-2010 (MG) Creation
+#    14-Jan-2010 (CT) s/Templeteer/Templateer/g
 #    ««revision-date»»···
 #--
 
@@ -91,8 +92,8 @@ class _Error_ (HTTP_Status) :
 
     def __call__ (self, handler, nav_root = None) :
         if nav_root :
-            template = nav_root.Templeteer.get_template (self.template)
-            context  = nav_root.Templeteer.Context \
+            template = nav_root.Templateer.get_template (self.template)
+            context  = nav_root.Templateer.Context \
                 ( exception = self
                 , page      = nav_root
                 , nav_page  = nav_root

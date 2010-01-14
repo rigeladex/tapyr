@@ -180,6 +180,9 @@
 #    13-Jan-2010 (MG) Use `top.HTTP.Error` instead of tornado/django specific
 #                     exceptions/functions
 #    13-Jan-2010 (MG) `_load_view` function removed
+#    14-Jan-2010 (CT) s/Templeteer/Templateer/g
+#    14-Jan-2010 (CT) Use `Templateer.render` instead of (removed) `GTW.Render`
+#    14-Jan-2010 (CT) `page_from_href` simplified (`user` removed)
 #    ««revision-date»»···
 #--
 
@@ -366,20 +369,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return href.replace (common_prefix, u"")
     # end def relative_to
 
-    @Once_Property
-    def render_to_string (self) :
-        from _GTW.Render import to_string
-        return to_string
-    # end def render_to_string
-
     def rendered (self, context = None, nav_page = None, template = None) :
+        Templateer = self.top.Templateer
         if context is None :
-            context = self.Templeteer.Context ()
+            context = Templateer.Context ()
         context ["page"]     = self
         context ["nav_page"] = nav_page or self
         context ["NAV"]      = self.top
-        result = self.render_to_string \
-            (template or self.template, context, self.encoding)
+        result = Templateer.render (template or self.template, context)
         if self.translator :
             result = self.translator (result)
         return result
@@ -425,8 +422,6 @@ class _Site_Entity_ (TFL.Meta.Object) :
         result       = self.rendered (dict (request = request))
         if result is None :
             raise self.top.HTTP.Error_404 (request.uri [1:])
-        if isinstance (result, str) :
-            result = unicode (result, self.encoding)
         handler.write (result)
     # end def _view
 
@@ -705,14 +700,19 @@ class Root (_Dir_) :
     _login_required         = False
     _permission             = None
 
-    def __init__ (self, src_dir, ** kw) :
+    def __init__ (self, src_dir, HTTP, Templateer, ** kw) :
         _Site_Entity_.top = self
         self.parents      = []
         self.prefix       = ""
         self.Table        = {}
         self.Models       = {}
         self.level        = -1
-        self.__super.__init__         (src_dir = src_dir, ** kw)
+        self.__super.__init__ \
+            ( src_dir    = src_dir
+            , HTTP       = HTTP
+            , Templateer = Templateer
+            , ** kw
+            )
     # end def __init__
 
     @classmethod
@@ -732,7 +732,7 @@ class Root (_Dir_) :
     # end def h_title
 
     @classmethod
-    def page_from_href (cls, href, user = None) :
+    def page_from_href (cls, href) :
         result = None
         href   = href.lstrip (u"/")
         href_s = pjoin (href, u"")
@@ -754,27 +754,24 @@ class Root (_Dir_) :
                         result = d._get_child (* reversed (tail))
                 if result :
                     break
-        ### XXX check permission of user vs. result.???
         return result
     # end def page_from_href
 
     @classmethod
     def universal_view (cls, handler) :
         href = handler.request.uri [1:]
-        ### import pdb; pdb.set_trace ()
         user = handler.current_user
-        page = cls.page_from_href (href, user)
+        page = cls.page_from_href (href)
         if page :
-            ### XXX import _GTW.views
+            HTTP = cls.top.HTTP
             if page.login_required :
                 if user and not user.is_authenticated () :
-                    return TGW.views.handler_403 \
-                        (handler, template_name = "403_login.html")
+                    return HTTP.Error_403 (template = "403_login.html")
             if page.allow_user (user) :
                 return page._view (handler)
             else :
-                raise cls.top.HTTP.Error_403 ()
-        raise cls.top.HTTP.Error_404 (href)
+                raise HTTP.Error_403 (template = "403_permission.html")
+        raise HTTP.Error_404 (href)
     # end def universal_view
 
 # end class Root
