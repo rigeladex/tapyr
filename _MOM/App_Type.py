@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -32,6 +32,7 @@
 #    23-Nov-2009 (CT) `finalized` added and used to guard `add_type`
 #    23-Nov-2009 (CT) Documentation added
 #    30-Dec-2009 (CT) s/Package_NS/PNS/
+#    14-Jan-2010 (CT) Use `PNS_s` instead of `PNS`
 #    ««revision-date»»···
 #--
 
@@ -126,7 +127,7 @@ class _App_Type_D_ (_App_Type_) :
 
     def add_type (self, etype) :
         assert not self.finalized
-        pns = etype.PNS
+        pns = etype.PNS_s
         qn  = pns._Package_Namespace__qname
         self.PNS_Map [qn]                      = pns
         self.etypes  [etype.Essence.type_name] = etype
