@@ -32,8 +32,6 @@
 #    ««revision-date»»···
 #--
 
-from Redirect import Redirect
-
 from   _GTW                      import GTW
 import _GTW._NAV.Request_Handler
 import  os
@@ -48,6 +46,8 @@ import _GTW._OMP._Auth.Account
 
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
+
+from Redirect import Redirect, Error
 
 apt    = MOM.App_Type \
     (u"HWO", GTW, PNS_Aliases = dict (Auth = GTW.OMP.Auth)).Derived (EMS, DBW)
@@ -76,31 +76,45 @@ NAV               = GTW.NAV.Root \
           )
     )
 NAV.add_entries \
-    ( ( dict ( name           = "index.html"
-             , title          = u"Home"
-             , Type           = GTW.NAV.Page_ReST_F
-             )
-      , dict ( name           = "test.html"
-             , title          = u"Test"
-             , Type           = GTW.NAV.Page_ReST_F
-             , login_required = True
-             )
-      , dict ( name           = "redirect_301.html"
-             , title          = u"Redirect 301 (index)"
-             , Type           = Redirect
-             , redirect_to    = "index.html"
-             , code           = 301
-             )
-      , dict ( name           = "redirect_302.html"
-             , title          = u"Redirect 302 (test)"
-             , Type           = Redirect
-             , redirect_to    = "test.html"
-             , code           = 302
-             )
+    ( ( dict
+          ( name           = "index.html"
+          , title          = u"Home"
+          , Type           = GTW.NAV.Page_ReST_F
+          )
+      , dict
+          ( name           = "test.html"
+          , title          = u"Test"
+          , Type           = GTW.NAV.Page_ReST_F
+          , login_required = True
+          )
+      , dict
+          ( name           = "redirect_301.html"
+          , title          = u"Redirect 301 (index)"
+          , Type           = Redirect
+          , redirect_to    = "index.html"
+          , code           = 301
+          )
+      , dict
+          ( name           = "redirect_302.html"
+          , title          = u"Redirect 302 (test)"
+          , Type           = Redirect
+          , redirect_to    = "test.html"
+          , code           = 302
+          )
       )
     , Dir_Type = GTW.NAV.Dir
     )
-
+NAV.add_entries \
+    ( ( dict
+          ( name           = "error_%s.html" % c
+          , title          = u"Display a HTTP error %s" % c
+          , Type           = Error
+          , code           = c
+          )
+        for c in (401, 403, 404, 500)
+      )
+    , Dir_Type = GTW.NAV.Dir
+    )
 if __name__ == "__main__" :
     from   _TFL                        import TFL
     import _GTW._Tornado.Application

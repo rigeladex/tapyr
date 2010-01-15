@@ -63,7 +63,7 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
 
     def _handle_request_exception (self, exc) :
         top = GTW.NAV.Root.top
-        if isinstance (exc, top.HTTP.HTTP_Status) :
+        if isinstance (exc, top.HTTP.Status) :
             if exc (self, top) :
                 return
         self.__super._handle_request_exception (exc)

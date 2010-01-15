@@ -130,7 +130,7 @@
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro login (un_tag = "Username", pw_tag = "Password", action = "/login/") -%}
+{%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login/") -%}
   {%- set login_caller = kwargs.pop ("caller", None) -%}
   {% call form (action = action, ** kwargs) -%}
     {%- if login_caller -%}{{- login_caller () -}}{%- endif -%}
@@ -158,7 +158,7 @@
       </li>
     </ul>
   {% endcall %} {# form #}
-{%- endmacro -%} {#- login -#}
+{%- endmacro -%} {#- login_inline -#}
 
 {%- macro nested_div (fo, fg) -%}
   <fieldset class="{{ fg.css_class|default ('nested-many-2-many')}} {{ fg.Name }}">

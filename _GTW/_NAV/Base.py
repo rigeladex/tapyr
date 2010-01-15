@@ -767,11 +767,11 @@ class Root (_Dir_) :
         if page :
             if page.login_required :
                 if user and not user.is_authenticated () :
-                    return HTTP.Error_403 (template = "403_login.html")
+                    return HTTP.Error_401 ()
             if page.allow_user (user) :
                 return page._view (handler)
             else :
-                raise HTTP.Error_403 (template = "403_permission.html")
+                raise HTTP.Error_403 ()
         raise HTTP.Error_404 (href)
     # end def universal_view
 

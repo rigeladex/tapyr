@@ -1,0 +1,54 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: 401.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    401
+##
+## Purpose
+##    Error template for HTTP error 401 (Unauthorized)
+##
+## Revision Dates
+##    15-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- from "html/form.jnj" import login_inline -%}
+
+{%- block title %}<title>{{ GTW._T ("Login required") }}</title>{% endblock -%}
+
+{%- block document %}
+  {% if request.Error %}
+    <p class="Error-Message">
+      {{ GTW._T (request.Error) }}
+    </p>
+  {% else %}
+    <h1 class="Error-Message">
+      {{ GTW._T ("You need to be logged in to access the page ") }}
+      {{ request.path }}
+    </h1>
+  {% endif %}
+  {{ login_inline (next=request.path) }}
+{% endblock document -%}
+
+{#- __END__ jinja template: 401.jnj -#}

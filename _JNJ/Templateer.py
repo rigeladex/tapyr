@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    14-Jan-2010 (CT) Creation
+#    15-Jan-2010 (CT) `Error_Templates` added
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,14 @@ import _TFL._Meta.Object
 class Templateer (TFL.Meta.Object) :
     """Encapsulate Jinja template handling"""
 
-    Context = dict
+    Context         = dict
+    Error_Templates = \
+        { 401       : "html/401.jnj"
+        , 403       : "html/403.jnj"
+        , 404       : "html/404.jnj"
+        , 500       : "html/500.jnj"
+        , "default" : "html/error.jnj"
+        }
 
     def __init__ (self, * args, ** kw) :
         self.env = JNJ.Environment.HTML (* args, ** kw)

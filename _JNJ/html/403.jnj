@@ -1,0 +1,53 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: 403.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/403.jnj
+##
+## Purpose
+##    Error template for HTTP error 403 (Forbidden)
+##
+## Revision Dates
+##    15-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- block title %}
+  <title>{{ GTW._T ("You are not authorized to access this page") }}</title>
+{% endblock -%}
+
+{%- block document %}
+  {% if request.Error %}
+    <p class="Error-Message">
+      {{ GTW._T (request.Error) }}
+    </p>
+  {% else %}
+    <h1 class="Error-Message">
+      {{ GTW._T ("You are not authorized to access the page ") }}
+      {{ request.path }}
+    </h1>
+  {% endif %}
+{% endblock document -%}
+
+{#- __END__ jinja template: 403.jnj -#}

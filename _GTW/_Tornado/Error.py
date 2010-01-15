@@ -28,6 +28,8 @@
 # Revision Dates
 #    13-Jan-2010 (MG) Creation
 #    14-Jan-2010 (CT) s/Templeteer/Templateer/g
+#    15-Jan-2010 (CT) s/HTTP_Status/Status/
+#    15-Jan-2010 (CT) `M_Status` added
 #    ««revision-date»»···
 #--
 
@@ -39,18 +41,33 @@ import _TFL._Meta.Object
 
 from    tornado.web      import HTTPError
 
-class HTTP_Status (HTTPError, TFL.Meta.Object) :
-    """Base class for HTTP status exceptions"""
+class M_Status (TFL.Meta.Object.__class__) :
+    """Meta class for Status"""
 
-    status_code = None
+    Table         = {}
 
-    def __init__ (self, * args, ** kw) :
-        self.__super.__init__  (self.status_code, * args, ** kw)
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if cls.status_code is not None :
+            cls.Table [cls.status_code] = cls
     # end def __init__
 
-# end class HTTP_Status
+# end class M_Status
 
-class _Redirect_ (HTTP_Status) :
+class Status (HTTPError, TFL.Meta.Object) :
+    """Base class for HTTP status exceptions"""
+
+    __metaclass__ = M_Status
+
+    status_code   = None
+
+    def __init__ (self, * args, ** kw) :
+        self.__super.__init__ (self.status_code, * args, ** kw)
+    # end def __init__
+
+# end class Status
+
+class _Redirect_ (Status) :
     """Base class for all redirect's"""
 
     def __init__ (self, url, * args, ** kw) :
@@ -80,20 +97,16 @@ class Redirect_304 (_Redirect_) :
     status_code = 304
 # end class Redirect_304
 
-class _Error_ (HTTP_Status) :
+class _Error_ (Status) :
     """Base class for all error responses."""
-
-    template = "html/error.jnj"
-
-    def __init__ (self, * args, ** kw) :
-        self.template = kw.pop ("template", self.template)
-        self.__super.__init__  (* args, ** kw)
-    # end def __init__
 
     def __call__ (self, handler, nav_root = None) :
         if nav_root :
-            template = nav_root.Templateer.get_template (self.template)
-            context  = nav_root.Templateer.Context \
+            Templateer = nav_root.Templateer
+            templ_name = Templateer.Error_Templates.get \
+                (self.status_code, Templateer.Error_Templates ["default"])
+            template   = Templateer.get_template (templ_name)
+            context    = Templateer.Context \
                 ( exception = self
                 , page      = nav_root
                 , nav_page  = nav_root
