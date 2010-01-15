@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-Sep-2009 (MG) Creation
 #    10-Jan-2010 (MG) Moved into package `GTW.NAV`
+#    15-Jan-2010 (MG) Authentication added
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,18 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
                 return
         self.__super._handle_request_exception (exc)
     # end def _handle_request_exception
+
+    def get_current_user (self) :
+        top      = GTW.NAV.Root.top
+        username = self.get_secure_cookie ("username")
+        user     = top.anonymous
+        if username :
+            try :
+                user = top.account_manager.query (username = username).one ()
+            except IndexError :
+                user = self.anonymous_user
+        return user
+    # end def get_current_user
 
 Request_Handler = _NAV_Request_Handler_ # end class
 

@@ -28,6 +28,9 @@
 ##
 ## Revision Dates
 ##    14-Jan-2010 (CT) Creation
+##    15-Jan-2010 (MG) `password` added
+##    15-Jan-2010 (MG) Macro `object`: redering of errors not bound to a
+##                     field added
 ##    ««revision-date»»···
 ##--
 #}
@@ -46,6 +49,10 @@
       )
   }}
 {%- endmacro -%} {#- number -#}
+
+{%- macro password (fo, fi) -%}
+  {{ _field (X.input.password, fo, fi) }}
+{%- endmacro -%} {#- password -#}
 
 {%- macro string (fo, fi) -%}
   {{ _field
@@ -70,7 +77,7 @@
   {{ typ
       ( id            = "F_{{ id }}"
       , name          = id
-      , value         = fo.get_raw (fi)
+      , value         = fo.get_raw (fi) [0]
       , ** kwargs
       )
   }}

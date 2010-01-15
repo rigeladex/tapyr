@@ -47,7 +47,25 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class user_name (A_String) :
+        class active (A_Boolean) :
+            """This account is currently active."""
+
+            kind       = Attr.Optional
+            default    = False
+            ui_name    = "User active"
+
+        # end class active
+
+        class superuser (A_Boolean) :
+            """This account has super-user permissions."""
+
+            kind       = Attr.Optional
+            default    = False
+            ui_name    = "Spuperuser"
+
+        # end class superuser
+
+        class username (A_String) :
             """User name associated with this account"""
 
             kind       = Attr.Primary
@@ -55,11 +73,42 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
             rank       = 1
             ui_name    = "Account name"
 
-        # end class user_name
+        # end class username
 
     # end class _Attributes
 
+    authenticated = True
+
 Account = _Auth_Account_ # end class _Auth_Account_
+
+_Ancestor_Essence = Account
+
+class Account_Anonymous (_Ancestor_Essence) :
+    """Default account for users which are not logging in."""
+
+    max_count = 1
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        class active (_Ancestor_Essence._Attributes.active) :
+
+            kind       = Attr.Const
+            default    = True
+
+        # end class active
+
+        class superuser (_Ancestor_Essence._Attributes.superuser) :
+
+            kind       = Attr.Const
+            default    = False
+
+        # end class superuser
+
+    # end class _Attributes
+
+    authenticated = False
+
+# end class Account_Anonymous
 
 _Ancestor_Essence = Account
 
@@ -70,13 +119,19 @@ class Account_P (_Ancestor_Essence) :
 
         class password (A_String) :
             """Password for this account"""
-
+            ### XXX only store the hash of the password and not the password
+            ### in plain text
             kind       = Attr.Required
             max_length = 50
 
         # end class password
 
     # end class _Attributes
+
+    def verify_password (self, password) :
+        ### use hases
+        return self.password == password
+    # end def verify_password
 
 # end class Account_P
 

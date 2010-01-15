@@ -116,8 +116,8 @@ class Instance (GTW.Form.Plain) :
 
     def __call__ (self, request_data) :
         self.request_data = request_data
-        errors    = []
-        raw_attrs = {}
+        errors            = []
+        raw_attrs         = {}
         for fg in self.field_groups :
             raw_attrs.update (fg._collect_changes (request_data))
         if self.instance :
@@ -135,6 +135,7 @@ class Instance (GTW.Form.Plain) :
             for error_list in self.instance._pred_man.errors.itervalues () :
                 for e in error_list :
                     self._add_error (e)
+        return len (self.errors) + len (self.field_errors)
     # end def __call__
 
     def _add_error (self, raw_attrs, error) :

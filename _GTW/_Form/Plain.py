@@ -30,6 +30,7 @@
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
+import _TFL.I18N
 import _TFL._Meta.Once_Property
 
 from   _GTW               import GTW
@@ -41,7 +42,6 @@ class Plain (GTW.Form._Field_Group_) :
 
     method       = "POST"
     parent       = None
-    request_data = {}
     postfix      = None
 
     def __init__ ( self, action, instance
@@ -49,6 +49,7 @@ class Plain (GTW.Form._Field_Group_) :
                  , ** kw
                  ) :
         self.__super.__init__ ()
+        self.request_data = {}
         self.action       = action
         self.instance     = instance
         self.__dict__.update (kw)
@@ -68,6 +69,30 @@ class Plain (GTW.Form._Field_Group_) :
             return "_".join ((field.name, self.postfix))
         return field.name
     # end def get_id
+
+    def __call__ (self, request_data, errors = (), field_errors = {}) :
+        self.request_data.update (request_data)
+        self.errors.add          (errors)
+        for k, v in field_errors.iteritems () :
+            self.field_errors [k].add (v)
+        return len (self.errors) + len (self.field_errors)
+    # end def __call__
+
+    def get_field ( self, field_name
+                  , field_errors = None
+                  , error_text   = None
+                  , as_list      = False
+                  ) :
+        value = self.request_data.get (field_name, None)
+        if not value and field_errors is not None :
+            error_text = error_text or TFL.I18N._T \
+                    (u"Field `%(field)s` is required")
+            field_errors [field_name].append \
+                (error_text % dict (field = field_name))
+        if value and not as_list :
+            return value [0]
+        return value
+    # end def get_field
 
 # end class Plain
 

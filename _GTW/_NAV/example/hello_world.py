@@ -45,6 +45,8 @@ import _JNJ
 from   _MOM            import MOM
 import _GTW._OMP._Auth.Account
 
+import _GTW._Auth.NAV
+
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
 
@@ -65,8 +67,10 @@ apt    = MOM.App_Type \
     (u"HWO", GTW, PNS_Aliases = dict (Auth = GTW.OMP.Auth)).Derived (EMS, DBW)
 scope  = MOM.Scope.new (apt, None)
 
-scope.Auth.Account_P ("user1", password = "passwd1")
-scope.Auth.Account_P ("user2", password = "passwd2")
+anonymous = scope.Auth.Account_Anonymous ("anonymous")
+scope.Auth.Account_P ("user1", password = "passwd1", active = True)
+scope.Auth.Account_P \
+    ("user2", password = "passwd2", active = True, superuser = True)
 
 base_template_dir = os.path.dirname (_JNJ.__file__)
 ROOT_DIR          = os.path.dirname (__file__)
@@ -80,6 +84,8 @@ NAV               = GTW.NAV.Root \
     , site_prefix       = "/"
     , site_url          = "http://localhost:%d" % (cmd.port, )
     , template          = "static.jnj"
+    , account_manager   = scope.Auth.Account
+    , anonymous         = anonymous
     , HTTP              = GTW.Tornado
     , Templateer        = Templateer
           ( load_path   = template_dirs
@@ -99,6 +105,19 @@ NAV.add_entries \
           , title          = u"Test"
           , Type           = GTW.NAV.Page_ReST_F
           , login_required = True
+          )
+      , dict
+          ( name            = "login"
+          , template        = "login.jnj"
+          , title           = u"Login"
+          , Type            = GTW.Auth.NAV.Login
+          #, hidden          = True
+          )
+      , dict
+          ( name            = "logout.html"
+          , title           = u"Logout"
+          , Type            = GTW.Auth.NAV.Logout
+          , hidden          = False
           )
       , dict
           ( name           = "redirect_301.html"

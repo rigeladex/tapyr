@@ -1,9 +1,10 @@
-{#- jinja template: field_error.jnj -#}
+{%- extends site_base %}
+{#- jinja template: login.jnj -#}
 {#
 ## Copyright (C) 2010 Martin Glueck All rights reserved
 ## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 ## ****************************************************************************
-## This template is part of the package JNJ.
+## This template is part of the package GTW:NAV.
 ##
 ## This template is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as published by
@@ -21,31 +22,25 @@
 ##
 ##++
 ## Name
-##    html/field_error.jnj
+##    login
 ##
 ## Purpose
-##    Provide macros for field error rendering
+##    login page of the example
 ##
 ## Revision Dates
 ##    15-Jan-2010 (MG) Creation
 ##    ««revision-date»»···
 ##--
 #}
-{%- macro error_list (error_list) -%}
-  {%- if error_list %}
-  <ul>
-    {%- for e in error_list %}
-      <li>
-        {{ GTW.call_macro (e.widget|default("html/field_error.jnj, error"), e)}}
-      </li>
-    {% endfor -%}
-  </ul>
-  {% endif -%}
-{%- endmacro -%} {#- error_list -#}
-
-{%- macro error (error) -%}
-  {{ "%s"|format(error)|escape }}
-{%- endmacro -%} {#- error -#}
-{#- __END__ jinja template: field_error.jnj -#}
+{%- import "html/form.jnj" as Form %}
+{%- block document -%}
+  Welcome to the login page {{ page.href }}
+  {{ Form.object
+      ( login_form
+      , next_form_kw = dict(name = "next", value = page.abs_href)
+      )
+  }}
+{%- endblock document -%}
+{#- __END__ jinja template: login.jnj -#}
 
 

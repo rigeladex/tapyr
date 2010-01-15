@@ -59,7 +59,8 @@ loader      = DictLoader (dict (base = """\
 env = HTML (loader = loader)
 
 ### print env.get_template("base").render(dict (form = form_rod))
-form_rod( dict (weight = "a", next = "/foo/"))
+errors = form_rod( dict (weight = "a", next = "/foo/"))
 
 print env.get_template("base").render(dict (form = form_rod))
+print errors
 ### __END__ GTW.Form.MOM.__Test

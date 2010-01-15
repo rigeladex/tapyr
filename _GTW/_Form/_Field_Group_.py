@@ -47,9 +47,9 @@ class _Field_Group_ (TFL.Meta.Object) :
     # end def __init__
 
     def get_errors (self, field = None) :
-        if not isinstance (field, basestring) :
-            field = field.name
         if field :
+            if not isinstance (field, basestring) :
+                field = field.name
             return self.field_errors [field]
         ### return all errors which not related to a special field
         return self.errors

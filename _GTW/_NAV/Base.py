@@ -183,6 +183,7 @@
 #    14-Jan-2010 (CT) s/Templeteer/Templateer/g
 #    14-Jan-2010 (CT) Use `Templateer.render` instead of (removed) `GTW.Render`
 #    14-Jan-2010 (CT) `page_from_href` simplified (`user` removed)
+#    15-Jan-2010 (MG) Authentication support changed
 #    ««revision-date»»···
 #--
 
@@ -271,11 +272,11 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     def allow_user (self, user) :
         if user and self.login_required :
-            if not user.is_authenticated () :
+            if not user.authenticated :
                 return False
-            if not user.is_active :
+            if not user.active :
                 return False
-            if not user.is_superuser and self._permission :
+            if not user.superuser and self._permission :
                 return self._permission (user, self)
         return True
     # end def allow_user
@@ -766,8 +767,8 @@ class Root (_Dir_) :
         HTTP = cls.top.HTTP
         if page :
             if page.login_required :
-                if user and not user.is_authenticated () :
-                    return HTTP.Error_401 ()
+                if user and not user.authenticated :
+                    raise HTTP.Error_401 ()
             if page.allow_user (user) :
                 return page._view (handler)
             else :

@@ -1,6 +1,12 @@
 {% extends "html/base.jnj" %}
+{%- import "html/form.jnj" as Form %}
 {%- block navigate -%}
   <h1>H1 BN</h1>
   {{ super () }}
-  <h1>H1 AN</h1>
+  {{ page.abs_href }}
+  {%- if request.user.authenticated %}
+    <a href="/logout.html">{{ request.user.username }}, logout</a>
+  {%- else %}
+    {{ Form.login_inline (action = "/login/", next = page.abs_href) }}
+  {% endif -%}
 {%- endblock -%}

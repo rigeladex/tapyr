@@ -102,11 +102,12 @@ class _Error_ (Status) :
 
     def __call__ (self, handler, nav_root = None) :
         if nav_root :
-            Templateer = nav_root.Templateer
-            templ_name = Templateer.Error_Templates.get \
+            handler.request.user = handler.current_user
+            Templateer           = nav_root.Templateer
+            templ_name           = Templateer.Error_Templates.get \
                 (self.status_code, Templateer.Error_Templates ["default"])
-            template   = Templateer.get_template (templ_name)
-            context    = Templateer.Context \
+            template             = Templateer.get_template (templ_name)
+            context              = Templateer.Context \
                 ( exception = self
                 , page      = nav_root
                 , nav_page  = nav_root

@@ -37,6 +37,9 @@ import _GTW._Form
 class Field (TFL.Meta.Object) :
     """A free field which should be part of a HTML form"""
 
+    widget = "html/field.jnj, string"
+    hidden = False
+
     def __init__ (self, name, default = "", ** kw) :
         self.name    = name
         self.default = default

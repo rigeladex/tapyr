@@ -41,6 +41,14 @@ class Error_List (list, TFL.Meta.Object) :
 
     widget = "html/field_error.jnj, error_list"
 
+    def add (self, error) :
+        if isinstance (error, (list, tuple, self.__class__)) :
+            self.extend (error)
+        else :
+            self.append (error)
+        return error
+    # end def add
+
 # end class Error_List
 
 if __name__ != "__main__" :

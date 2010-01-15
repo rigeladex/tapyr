@@ -30,6 +30,7 @@
 ##    12-Jan-2010 (CT) Creation
 ##    13-Jan-2010 (CT) Creation continued
 ##    14-Jan-2010 (CT) Creation continued..
+##    15-Jan-2010 (MG) `login_inline`: `name` attributes added to fields
 ##    ««revision-date»»···
 ##--
 #}
@@ -131,8 +132,9 @@
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login/") -%}
+{%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login") -%}
   {%- set login_caller = kwargs.pop ("caller", None) -%}
+  {%- set next         = kwargs.pop ("next",   "") -%}
   {% call form (action = action, ** kwargs) -%}
     {%- if login_caller -%}{{- login_caller () -}}{%- endif -%}
     <ul>
@@ -140,6 +142,7 @@
       <li>
         {{ X.input.text
             ( id            = "F_username"
+            , name          = "username"
             , maxlength     = "30"
             , placeholder   = "Please enter your user-name"
             )
@@ -149,6 +152,7 @@
       <li>
         {{ X.input.password
             ( id            = "F_password"
+            , name          = "password"
             , placeholder   = "Please enter your password"
             )
         }}
@@ -212,6 +216,9 @@
       )
  -%}
     {%- for fg in fo.field_groups %}
+      {%- if fo.get_errors () %}
+        {{ _field_error (fo, None) }}
+      {% endif -%}
       <div class="Formset {{ fg.css_class }}"
        {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
       >
