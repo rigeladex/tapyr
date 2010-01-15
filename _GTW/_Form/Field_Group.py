@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Field_Group
+#    GTW.Form.Field_Group
 #
 # Purpose
 #    A group of field which are part of a form
@@ -30,21 +30,28 @@
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
-import _TFL._Meta.Object
 import _TFL.NO_List
-from   _GTW               import GTW
-import _GTW.Field
-import _GTW._Field_Group_
+import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 
-class Field_Group (GTW._Field_Group_) :
+from   _GTW               import GTW
+import _GTW._Form.Field
+import _GTW._Form._Field_Group_
+
+class Field_Group (GTW.Form._Field_Group_) :
     """A group of field's which are part of a form."""
 
-    widget = "form.jnj, field_group_div_seq"
+    widget = "html/form.jnj, fg_div_seq"
 
     def __init__ (self, parent, * fields, ** kw) :
         self.parent       = parent
         self.fields       = TFL.NO_List (fields)
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def visible_fields (self) :
+        return [f for f in self if not f.hidden]
+    # end def visible_fields
 
     def __iter__ (self) :
         return iter (self.fields)
@@ -59,5 +66,5 @@ class Field_Group (GTW._Field_Group_) :
 
 
 if __name__ != "__main__" :
-    GTW._Export ("*")
-### __END__ GTW.Field_Group
+    GTW.Form._Export ("*")
+### __END__ GTW.Form.Field_Group

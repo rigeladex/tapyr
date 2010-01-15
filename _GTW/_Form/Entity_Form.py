@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Entity_Form
+#    GTW.Form.Entity_Form
 #
 # Purpose
 #    A form which creates/changes a MOM entity
@@ -34,9 +34,9 @@ import _MOM.Entity
 import _MOM._Attr.Type
 
 from   _GTW               import GTW
-import _GTW.Form
+import _GTW._Form.Form
 
-class Entity_Form (GTW.Form) :
+class Entity_Form (GTW.Form.Form) :
     """A form to create/edit MOM entities."""
 
     def __init__ ( self, action, e_type_or_instance
@@ -52,7 +52,7 @@ class Entity_Form (GTW.Form) :
         self.e_type   = e_type
         if not field_group_descriptions :
             field_group_descriptions = \
-                (GTW.E_Type_Field_Group_Description (e_type), )
+                (GTW.Form.E_Type_Field_Group_Description (e_type), )
         self.__super.__init__ \
             (action, instance, * field_group_descriptions, ** kw)
     # end def __init__
@@ -63,8 +63,8 @@ class Entity_Form (GTW.Form) :
 
 # end class Entity_Form
 
-MOM.Attr.A_Attr_Type.widget = "form.jnj, input"
+MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
 
 if __name__ != "__main__" :
-    GTW._Export ("*")
-### __END__ GTW.Entity_Form
+    GTW.Form._Export ("*")
+### __END__ GTW.Form.Entity_Form

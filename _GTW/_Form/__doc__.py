@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -31,8 +31,8 @@
 #--
 """
 >>> from   _GTW                   import GTW
->>> import _GTW.Form
->>> import _GTW.Field_Group_Description
+>>> import _GTW._Form.Form
+>>> import _GTW._Form.Field_Group_Description
 >>> from   _MOM.__doc__           import MOM, BMT ### define a test object model
 >>> from   _MOM._EMS.Hash         import Manager as EMS
 >>> from   _MOM._DBW._HPS.Manager import Manager as DBW
@@ -45,7 +45,7 @@
 >>> ET_Trap      = apt [u"BMT.Trap"]
 >>> ET_Supertrap = apt [u"BMT.Supertrap"]
 >>>
->>> ET_FGD   = GTW.E_Type_Field_Group_Description
+>>> ET_FGD   = GTW.Form.E_Type_Field_Group_Description
 
 If any enpty E_Type_Field_Group_Description is used, all user editable
 attributes of the E-Type will be placed in two field groups:
@@ -53,18 +53,18 @@ attributes of the E-Type will be placed in two field groups:
  - all `epk` attributes will go into one field group
  - all `user_attr` wil go into the second field group
 
->>> form_rod = GTW.Form ("/post/", None, ET_FGD (ET_Rodent))
+>>> form_rod = GTW.Form.Form ("/post/", None, ET_FGD (ET_Rodent))
 >>> [fg.fields for fg in form_rod ]
 [[Name `name`], [String `color`, Float `weight`]]
 
 One can also use the `+` wildcard to place all attributes which have been
 explicitly named in the form group at the location of wildcard:
 
->>> form_mou = GTW.Form ("/post/", None, ET_FGD (ET_Mouse, "weight", "*"))
+>>> form_mou = GTW.Form.Form ("/post/", None, ET_FGD (ET_Mouse, "weight", "*"))
 >>> [f for f in form_mou]
 [Float `weight`, Name `name`, String `color`]
 
->>> form_ott = GTW.Form ("/post/", None, ET_FGD (ET_Otter, "weight", "*", "name"))
+>>> form_ott = GTW.Form.Form ("/post/", None, ET_FGD (ET_Otter, "weight", "*", "name"))
 >>> [f for f in form_ott]
 [Float `weight`, String `color`, String `region`, String `river`, Name `name`]
 

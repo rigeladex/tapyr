@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Field_Group_Description
+#    GTW.Form.Field_Group_Description
 #
 # Purpose
 #    Abstract definition of a field group
@@ -32,6 +32,7 @@
 from   _TFL               import TFL
 import _TFL._Meta.Object
 from   _GTW               import GTW
+import _GTW._Form
 import  itertools
 
 class Field_Group_Description (TFL.Meta.Object) :
@@ -83,7 +84,7 @@ class E_Type_Field_Group_Description (TFL.Meta.Object) :
         else :
                 added_fields.update (self.fields)
         return \
-            ( GTW.Field_Group
+            ( GTW.Form.Field_Group
                 ( parent
                 , * [getattr (e_type, an) for an in self.fields]
                 , ** kw
@@ -95,5 +96,5 @@ class E_Type_Field_Group_Description (TFL.Meta.Object) :
 # end class E_Type_Field_Group_Description
 
 if __name__ != "__main__" :
-    GTW._Export ("*")
-### __END__ GTW.Field_Group_Description
+    GTW.Form._Export ("*")
+### __END__ GTW.Form.Field_Group_Description

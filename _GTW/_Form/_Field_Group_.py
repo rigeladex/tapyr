@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    GTW.Field
+#    GTW.Form._Field_Group_
 #
 # Purpose
-#    A field of a form
+#    Base class for field groups and forms
 #
 # Revision Dates
 #    30-Dec-2009 (MG) Creation
@@ -31,23 +31,39 @@
 #--
 from   _TFL               import TFL
 import _TFL._Meta.Object
+import _TFL.NO_List
 from   _GTW               import GTW
+import _GTW._Form.Field
 
-class Field (TFL.Meta.Object) :
-    """A free field which should be part of a HTML form"""
+class _Field_Group_ (TFL.Meta.Object) :
+    """A group of field's which are part of a form."""
 
-    def __init__ (self, name, default = "", ** kw) :
-        self.name    = name
-        self.default = default
-        self.__dict__.update (kw)
-    # end def __init__
+    def get_errors (self, field = None) :
+        if isinstance (field, basestring) :
+            field = self.fields [field]
+        if field :
+            ### return all errors for this field
+            return ["Errors for %s" % (field.name, )]
+        ### return all errors which not related to a special field
+        return []
+    # end def get_errors
 
-    def get_raw (self, obj) :
-        return getattr (obj, self.name, self.default)
+    def get_raw (self, field) :
+        if isinstance (field, basestring) :
+            field = self.fields [field]
+        return self.request_data.get (field.name, field.get_raw (self.instance))
     # end def get_raw
 
-# end class Field
+    @TFL.Meta.Once_Property
+    def request_data (self) :
+        if self.parent :
+            return self.parent.request_data
+        self.request_data
+    # end def request_data
+
+# end class _Field_Group_
+
 
 if __name__ != "__main__" :
-    GTW._Export ("*")
-### __END__ GTW.Field
+    GTW.Form._Export ("*")
+### __END__ GTW.Form._Field_Group_

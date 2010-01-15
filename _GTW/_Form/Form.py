@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Form
+#    GTW.Form.Form
 #
 # Purpose
 #    Handling of HTMl forms
@@ -30,16 +30,17 @@
 #    ««revision-date»»···
 #--
 from   _GTW               import GTW
-import _GTW._Field_Group_
-import _GTW.Field_Group
+import _GTW._Form._Field_Group_
+import _GTW._Form.Field_Group
 import  itertools
 
-class Form (GTW._Field_Group_) :
+class Form (GTW.Form._Field_Group_) :
     """Handling of HTML forms"""
 
     method       = "POST"
     parent       = None
     request_data = {}
+    postfix      = None
 
     def __init__ ( self, action, instance
                  , *  field_group_descriptions
@@ -59,8 +60,14 @@ class Form (GTW._Field_Group_) :
         return iter (self.field_groups)
     # end def __iter__
 
+    def get_id (self, field) :
+        if self.postfix :
+            return "_".join ((field.name, self.postfix))
+        return field.name
+    # end def get_id
+
 # end class Form
 
 if __name__ != "__main__" :
-    GTW._Export ("*")
-### __END__ GTW.Form
+    GTW.Form._Export ("*")
+### __END__ GTW.Form.Form

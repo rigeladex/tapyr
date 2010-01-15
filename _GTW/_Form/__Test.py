@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 #
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.__Test
+#    GTW.Form.__Test
 #
 # Purpose
 #    Simple test
@@ -31,8 +31,8 @@
 #--
 
 from   _GTW                   import GTW
-import _GTW.Entity_Form
-import _GTW.Field_Group_Description
+import _GTW._Form.Entity_Form
+import _GTW._Form.Field_Group_Description
 from   _MOM.__doc__           import MOM, BMT ### define a test object model
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
@@ -49,17 +49,17 @@ ET_Supertrap = apt [u"BMT.Supertrap"]
 
 scope        = MOM.Scope.new (apt, None)
 m            = scope.BMT.Mouse ("Mouse_1")
-form_rod     = GTW.Entity_Form ("/post", m)
+form_rod     = GTW.Form.Entity_Form ("/post", m)
 
 loader      = DictLoader (dict (base = """\
-{% import "form.jnj" as Form %}
-{{ Form.form (form) }}
+{% import "html/form.jnj" as Form %}
+{{ Form.object (form) }}
 """))
 
 env = HTML (loader = loader)
 
 print env.get_template("base").render(dict (form = form_rod))
 
-### __END__ GTW.__Test
+### __END__ GTW.Form.__Test
 
 
