@@ -32,6 +32,7 @@
 #    ««revision-date»»···
 #--
 
+from   _TFL                      import TFL
 from   _GTW                      import GTW
 import _GTW._NAV.Request_Handler
 import  os
@@ -49,6 +50,17 @@ from   _MOM._DBW._HPS.Manager import Manager as DBW
 
 from Redirect import Redirect, Error
 
+### define the command lind and parse it to get the `port` from the command
+### line needed for the `site_url`
+import _TFL.CAO
+import  sys
+cmd = TFL.CAO.Cmd \
+    ( opts = ( "port:I=8080?Server port"
+             , "tornado_reload:B?Use the tornado reload feature"
+             , "GTW_reload:B?Use the GTW reload feature"
+             )
+    ) (sys.argv [1:])
+
 apt    = MOM.App_Type \
     (u"HWO", GTW, PNS_Aliases = dict (Auth = GTW.OMP.Auth)).Derived (EMS, DBW)
 scope  = MOM.Scope.new (apt, None)
@@ -59,13 +71,14 @@ scope.Auth.Account_P ("user2", password = "passwd2")
 base_template_dir = os.path.dirname (_JNJ.__file__)
 ROOT_DIR          = os.path.dirname (__file__)
 template_dirs     = [os.path.join (ROOT_DIR, "templates"), base_template_dir]
+
 NAV               = GTW.NAV.Root \
     ( src_dir           = "."
     , copyright_start   = 2008
     , encoding          = "iso-8859-15"
     , input_encoding    = "iso-8859-15"
     , site_prefix       = "/"
-    , site_url          = "http://localhost:8000"
+    , site_url          = "http://localhost:%d" % (cmd.port, )
     , template          = "static.jnj"
     , HTTP              = GTW.Tornado
     , Templateer        = Templateer
@@ -116,16 +129,7 @@ NAV.add_entries \
     , Dir_Type = GTW.NAV.Dir
     )
 if __name__ == "__main__" :
-    from   _TFL                        import TFL
     import _GTW._Tornado.Application
-    import _TFL.CAO
-    import  sys
-    cmd = TFL.CAO.Cmd \
-        ( opts = ( "port:I=8080?Server port"
-                 , "tornado_reload:B?Use the tornado reload feature"
-                 , "GTW_reload:B?Use the GTW reload feature"
-                 )
-        ) (sys.argv [1:])
     print "Start server on port %d" % (cmd.port, )
     if cmd.GTW_reload :
         print "Use GTW autorelaod feature"

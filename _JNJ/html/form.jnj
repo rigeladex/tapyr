@@ -48,6 +48,7 @@
       <span class="Field-Help">{{ fi.help_text|safe }}</span>
       {{ _field_label (fo, fi) }}
       {{ GTW.call_macro (fi.widget, fo, fi) }}
+      {{ _field_error (fo, fi) }}
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- fg_div_seq -#}
@@ -223,5 +224,10 @@
 {%- macro _field_label (fo, fi) -%}
   <label for="F_{{ fo.get_id (fi) }}">{{ GTW._T (fi.ui_name) }}</label>
 {%- endmacro -%} {#- _field_label -#}
+
+{%- macro _field_error (fo, fi) -%}
+  {%- set fe = fo.get_errors (fi) -%}
+  {{ GTW.call_macro (fe.widget, fe) }}
+{%- endmacro -%} {#- _field_error -#}
 
 {#- __END__ jinja template: form.jnj -#}

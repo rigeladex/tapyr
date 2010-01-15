@@ -44,9 +44,24 @@ class Field_Group (GTW.Form._Field_Group_) :
     widget = "html/form.jnj, fg_div_seq"
 
     def __init__ (self, parent, * fields, ** kw) :
+        self.__super.__init__ ()
         self.parent       = parent
         self.fields       = TFL.NO_List (fields)
     # end def __init__
+
+    def _collect_changes (self, request_data) :
+        result = {}
+        for f in self.fields :
+            name = self.parent.get_id (f)
+            if name in request_data :
+                result [f.name] = request_data [name]
+        return result
+    # end def _collect_changes
+
+    @property
+    def instance (self) :
+        return self.parent.instance
+    # end def instance
 
     @TFL.Meta.Once_Property
     def visible_fields (self) :
@@ -56,11 +71,6 @@ class Field_Group (GTW.Form._Field_Group_) :
     def __iter__ (self) :
         return iter (self.fields)
     # end def __iter__
-
-    @property
-    def instance (self) :
-        return self.parent.instance
-    # end def instance
 
 # end class Field_Group
 

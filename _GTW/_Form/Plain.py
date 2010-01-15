@@ -29,10 +29,12 @@
 #    30-Dec-2009 (MG) Creation
 #    ««revision-date»»···
 #--
+from   _TFL               import TFL
+import _TFL._Meta.Once_Property
+
 from   _GTW               import GTW
 import _GTW._Form._Field_Group_
 import _GTW._Form.Field_Group
-import  itertools
 
 class Plain (GTW.Form._Field_Group_) :
     """Handling of plain HTML forms with user constricted field groups."""
@@ -46,6 +48,7 @@ class Plain (GTW.Form._Field_Group_) :
                  , *  field_group_descriptions
                  , ** kw
                  ) :
+        self.__super.__init__ ()
         self.action       = action
         self.instance     = instance
         self.__dict__.update (kw)

@@ -48,7 +48,7 @@ ET_Trap      = apt [u"BMT.Trap"]
 ET_Supertrap = apt [u"BMT.Supertrap"]
 
 scope        = MOM.Scope.new (apt, None)
-m            = scope.BMT.Mouse ("Mouse_1")
+m            = scope.BMT.Mouse ("Mouse")
 form_rod     = GTW.Form.MOM.Instance ("/post", m)
 
 loader      = DictLoader (dict (base = """\
@@ -58,6 +58,8 @@ loader      = DictLoader (dict (base = """\
 
 env = HTML (loader = loader)
 
-print env.get_template("base").render(dict (form = form_rod))
+### print env.get_template("base").render(dict (form = form_rod))
+form_rod( dict (weight = "a", next = "/foo/"))
 
+print env.get_template("base").render(dict (form = form_rod))
 ### __END__ GTW.Form.MOM.__Test

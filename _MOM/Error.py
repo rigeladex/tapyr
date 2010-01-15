@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2008-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2008-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,7 @@
 #    24-Nov-2009 (CT) `Error.__str__` changed
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #     3-Dec-2009 (CT) Optional argument `exc` added to `Invalid_Attribute`
+#    15-Jan-2010 (MG) `Attribute_Syntax_Error.__unicode__` added
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ class Exception_Handled (Exception) :
 class Error (StandardError) :
     """Root class of MOM exceptions"""
 
-    arg_sep = ", "
+    arg_sep = u", "
 
     def __str__ (self) :
         return self.arg_sep.join (self.str_arg (self.args))
@@ -387,9 +388,9 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
 
     def __str__ (self) :
         result = \
-            ( ("`%s` for : `%s'"
-               "\n     expected type  : `%s'"
-               "\n     got      value : `%s'"
+            ( ("`%s` for : `%s`"
+               "\n     expected type  : `%s`"
+               "\n     got      value : `%s`"
                "\n     of       type  : `%s`"
               )
             % ( self.exc_str or "Syntax error"
@@ -400,6 +401,22 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
             result = "\n".join ((result, self.attr.syntax))
         return result
     # end def __str__
+
+    def __unicode__ (self) :
+        result = \
+            ( (u"`%s` for : `%s`"
+               u"\n     expected type  : `%s`"
+               u"\n     got      value : `%s`"
+               u"\n     of       type  : `%s`"
+              )
+            % ( self.exc_str or u"Syntax error"
+              , self.attr, self.attr.typ, self.val, type (self.val)
+              )
+            )
+        if self.attr.syntax :
+            result = u"\n".join ((result, self.attr.syntax))
+        return result
+    # end def __unicode__
 
     def assertion (self) :
         result = ( "Syntax error: \n  expected type `%s'\n  got value `%s'"

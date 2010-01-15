@@ -42,6 +42,13 @@ class Field_Group_Description (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
+    def field_groups (self, parent, added_fields = None, ** kw) :
+        if added_fields is None :
+            added_fields = set ()
+        added_fields.update (self.fields)
+        return (GTW.Form.Field_Group (parent, * self.fields, ** kw), )
+    # end def field_groups
+
 # end class Field_Group_Description
 
 if __name__ != "__main__" :

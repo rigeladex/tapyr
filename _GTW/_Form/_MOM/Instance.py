@@ -102,7 +102,8 @@ class Instance (GTW.Form.Plain) :
         e_type   = e_type_or_instance
         instance = e_type_or_instance
         if isinstance (e_type_or_instance, MOM.Entity) :
-            e_type   = instance.__class__
+            scope    = instance.home_scope
+            e_type   = getattr (scope, instance.type_name)
         else :
             instance = None
         self.e_type  = e_type
@@ -115,7 +116,41 @@ class Instance (GTW.Form.Plain) :
 
     def __call__ (self, request_data) :
         self.request_data = request_data
+        errors    = []
+        raw_attrs = {}
+        for fg in self.field_groups :
+            raw_attrs.update (fg._collect_changes (request_data))
+        if self.instance :
+            self.instance.set_raw (on_error = errors.append, ** raw_attrs)
+        else :
+            try :
+                self.instance = self.e_type \
+                    (on_error = errors.append, ** raw_attrs)
+            except MOM.Error.Error, exc:
+                errors.append (exc)
+        for e in errors :
+            self._add_error (raw_attrs, e)
+        if self.instance :
+            ### collect all errors from the instance
+            for error_list in self.instance._pred_man.errors.itervalues () :
+                for e in error_list :
+                    self._add_error (e)
     # end def __call__
+
+    def _add_error (self, raw_attrs, error) :
+        attr  = getattr          (error, "attribute",  None)
+        attrs = list    (getattr (error, "attributes", ()))
+        if attr :
+            attrs.append (attr)
+        added = False
+        if attrs :
+            for a in attrs :
+                if a in raw_attrs :
+                    self.field_errors [a].append (error)
+                    added = True
+        if not added :
+            self.errors.append (errors)
+    # end def _add_error
 
 # end class Instance
 

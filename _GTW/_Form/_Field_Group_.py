@@ -32,20 +32,27 @@
 from   _TFL               import TFL
 import _TFL._Meta.Object
 import _TFL.NO_List
+import _TFL.defaultdict
+
 from   _GTW               import GTW
 import _GTW._Form.Field
+import _GTW._Form.Field_Error
 
 class _Field_Group_ (TFL.Meta.Object) :
     """A group of field's which are part of a form."""
 
+    def __init__ ( self) :
+        self.field_errors = TFL.defaultdict     (GTW.Form.Error_List)
+        self.errors       = GTW.Form.Error_List ()
+    # end def __init__
+
     def get_errors (self, field = None) :
-        if isinstance (field, basestring) :
-            field = self.fields [field]
+        if not isinstance (field, basestring) :
+            field = field.name
         if field :
-            ### return all errors for this field
-            return ["Errors for %s" % (field.name, )]
+            return self.field_errors [field]
         ### return all errors which not related to a special field
-        return []
+        return self.errors
     # end def get_errors
 
     def get_raw (self, field) :
