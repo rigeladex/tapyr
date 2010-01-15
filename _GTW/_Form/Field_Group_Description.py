@@ -33,7 +33,6 @@ from   _TFL               import TFL
 import _TFL._Meta.Object
 from   _GTW               import GTW
 import _GTW._Form
-import  itertools
 
 class Field_Group_Description (TFL.Meta.Object) :
     """Abstract definition of a field group."""
@@ -44,56 +43,6 @@ class Field_Group_Description (TFL.Meta.Object) :
     # end def __init__
 
 # end class Field_Group_Description
-
-class E_Type_Field_Group_Description (TFL.Meta.Object) :
-    """A field group which derives it's fields from an MOM.Entity"""
-
-    def __init__ (self, e_type, * fields) :
-        self.e_type             = e_type
-        self.fields             = list (fields or ("*", ))
-        self._contains_wildcard = "*" in self.fields
-    # end def __init__
-
-    def field_groups (self, parent, added_fields = None, ** kw) :
-        if added_fields is None :
-            added_fields = set ()
-        e_type           = self.e_type
-        if self._contains_wildcard :
-            if len (self.fields) == 1 :
-                return itertools.chain \
-                    (* (   self.__class__
-                             (e_type, * (ak.name for ak in attrs)
-                             ).field_groups (parent, added_fields, ** kw)
-                       for attrs in (e_type.primary, e_type.user_attr)
-                       )
-                    )
-            else :
-                self._contains_wildcard = False
-                wildcard_pos            = self.fields.index ("*")
-                field_names             = set (self.fields)
-                missing_fields          = \
-                    [   ak.name
-                    for ak in sorted
-                       ( itertools.chain (e_type.primary, e_type.user_attr)
-                       , key = lambda ak : ak.rank
-                       )
-                        if ak.name not in field_names
-                    ]
-                self.fields [wildcard_pos : wildcard_pos + 1] = missing_fields
-                added_fields.update (self.fields)
-        else :
-                added_fields.update (self.fields)
-        return \
-            ( GTW.Form.Field_Group
-                ( parent
-                , * [getattr (e_type, an) for an in self.fields]
-                , ** kw
-                )
-            ,
-            )
-    # end def field_groups
-
-# end class E_Type_Field_Group_Description
 
 if __name__ != "__main__" :
     GTW.Form._Export ("*")

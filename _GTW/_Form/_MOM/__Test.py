@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Form.__Test
+#    GTW.Form.MOM.__Test
 #
 # Purpose
 #    Simple test
@@ -31,7 +31,7 @@
 #--
 
 from   _GTW                   import GTW
-import _GTW._Form.Entity_Form
+import _GTW._Form._MOM.Instance
 import _GTW._Form.Field_Group_Description
 from   _MOM.__doc__           import MOM, BMT ### define a test object model
 from   _MOM._EMS.Hash         import Manager as EMS
@@ -49,7 +49,7 @@ ET_Supertrap = apt [u"BMT.Supertrap"]
 
 scope        = MOM.Scope.new (apt, None)
 m            = scope.BMT.Mouse ("Mouse_1")
-form_rod     = GTW.Form.Entity_Form ("/post", m)
+form_rod     = GTW.Form.MOM.Instance ("/post", m)
 
 loader      = DictLoader (dict (base = """\
 {% import "html/form.jnj" as Form %}
@@ -60,6 +60,4 @@ env = HTML (loader = loader)
 
 print env.get_template("base").render(dict (form = form_rod))
 
-### __END__ GTW.Form.__Test
-
-
+### __END__ GTW.Form.MOM.__Test

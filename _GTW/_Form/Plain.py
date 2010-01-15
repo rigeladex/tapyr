@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Form.Form
+#    GTW.Form.Plain
 #
 # Purpose
 #    Handling of HTMl forms
@@ -34,8 +34,8 @@ import _GTW._Form._Field_Group_
 import _GTW._Form.Field_Group
 import  itertools
 
-class Form (GTW.Form._Field_Group_) :
-    """Handling of HTML forms"""
+class Plain (GTW.Form._Field_Group_) :
+    """Handling of plain HTML forms with user constricted field groups."""
 
     method       = "POST"
     parent       = None
@@ -66,8 +66,8 @@ class Form (GTW.Form._Field_Group_) :
         return field.name
     # end def get_id
 
-# end class Form
+# end class Plain
 
 if __name__ != "__main__" :
     GTW.Form._Export ("*")
-### __END__ GTW.Form.Form
+### __END__ GTW.Form.Plain
