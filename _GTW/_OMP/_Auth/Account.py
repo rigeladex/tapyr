@@ -38,6 +38,8 @@ from   _GTW                   import GTW
 from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
+from   _TFL.I18N              import _, _T, _Tn
+
 _Ancestor_Essence = MOM.Object
 
 class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
@@ -52,7 +54,7 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
 
             kind       = Attr.Optional
             default    = False
-            ui_name    = "User active"
+            ui_name    = _T ("User active")
 
         # end class active
 
@@ -61,7 +63,7 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
 
             kind       = Attr.Optional
             default    = False
-            ui_name    = "Spuperuser"
+            ui_name    = _T ("Superuser")
 
         # end class superuser
 
@@ -71,7 +73,7 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
             kind       = Attr.Primary
             max_length = 50
             rank       = 1
-            ui_name    = "Account name"
+            ui_name    = _T ("Account name")
 
         # end class username
 
@@ -119,6 +121,7 @@ class Account_P (_Ancestor_Essence) :
 
         class password (A_String) :
             """Password for this account"""
+
             ### XXX only store the hash of the password and not the password
             ### in plain text
             kind       = Attr.Required
@@ -129,7 +132,7 @@ class Account_P (_Ancestor_Essence) :
     # end class _Attributes
 
     def verify_password (self, password) :
-        ### use hases
+        ### use hashes
         return self.password == password
     # end def verify_password
 
