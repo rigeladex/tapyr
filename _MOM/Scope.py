@@ -54,6 +54,7 @@
 #    30-Dec-2009 (MG) `Scope.copy` use `epk_raw` instead of `epk`
 #    14-Jan-2010 (CT) `_setup_pkg_ns` changed to handle `_Outer` and
 #                     `PNS_Aliases`
+#    16-Jan-2010 (CT) `_outer_pgk_ns` factored
 #    ««revision-date»»···
 #--
 
@@ -558,6 +559,15 @@ class Scope (TFL.Meta.Object) :
         return result
     # end def _new_id
 
+    def _outer_pgk_ns (self, outer, pns, _pkg_ns) :
+        while True :
+            outer, _, name = rsplit_hst (outer, ".")
+            if (not outer) or outer in _pkg_ns :
+                break
+            pns = pns._Outer
+            yield outer, pns
+    # end def _outer_pgk_ns
+
     def _register_root (self, root) :
         if root is not None :
             self.root = root
@@ -574,17 +584,13 @@ class Scope (TFL.Meta.Object) :
 
     def _setup_pkg_ns (self, app_type) :
         _pkg_ns = self._pkg_ns
+        Pkg_NS  = self.Pkg_NS
         for name, pns in sorted \
                 (app_type.PNS_Map.iteritems (), key = TFL.Getter [0]) :
             if name not in _pkg_ns :
-                _pkg_ns [name]  = self.Pkg_NS (self, pns, name)
-                outer, _, name = rsplit_hst (name, ".")
-                while outer :
-                    if outer in _pkg_ns :
-                        break
-                    pns = pns._Outer
-                    _pkg_ns [outer] = self.Pkg_NS (self, pns, outer)
-                    outer, _, name  = rsplit_hst (outer, ".")
+                _pkg_ns [name]  = Pkg_NS (self, pns, name)
+                for outer, pns in self._outer_pgk_ns (name, pns, _pkg_ns):
+                    _pkg_ns [outer] = Pkg_NS (self, pns, outer)
         for alias, pns in app_type.PNS_Aliases.iteritems () :
             assert not alias in _pkg_ns
             _pkg_ns [alias] = _pkg_ns [pns._Package_Namespace__qname]
