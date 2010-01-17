@@ -1,11 +1,17 @@
 MOM To-Do
 =========
 
-x MOM.Attr.Kind:
+- MOM.Attr.Kind:
+
+  * Link_Set_Mixin, Link_Mixin
 
   x get_value (None) --> default
 
-x MOM.Attr.Type:
+- MOM.Attr.Type:
+
+  * A_Link, A_Link_Set
+
+  * A_Cached_Role_Set: automagically query association
 
   x A_Decimal
 
@@ -26,8 +32,6 @@ x MOM.Attr.Type:
   * set/set_raw
 
 - Link, M_Link, Role:
-
-  * auto_cache for multiple links
 
   * Link_AB
 

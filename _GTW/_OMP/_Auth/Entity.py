@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jan-2010 (MG) Creation
+#    16-Jan-2010 (CT) `Object` added
 #    ««revision-date»»···
 #--
 
@@ -39,9 +40,21 @@ class _Auth_Entity_ (MOM.Entity) :
     """Common base class for essential classes of GTW.OMP.Auth"""
 
     _real_name = "Entity"
+
     PNS        = GTW.OMP.Auth
 
 Entity = _Auth_Entity_ # end class
+
+class _Auth_Object_ (Entity, MOM.Named_Object) :
+    """Common base class for essential objects of GTW.OMP.Auth"""
+
+    _real_name  = "Object"
+
+    class _Attributes (MOM.Named_Object._Attributes) :
+        pass
+    # end class _Attributes
+
+Object = _Auth_Object_ # end class
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

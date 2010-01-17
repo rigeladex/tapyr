@@ -29,6 +29,7 @@
 #    13-Jan-2010 (MG) Creation
 #    14-Jan-2010 (CT) `password` defined as `Required` instead of `Primary`
 #    14-Jan-2010 (CT) s/Password_Account/Account_P/g
+#    16-Jan-2010 (CT) Derive from `Auth.Object` (thus s/usernamer/name/)
 #    ««revision-date»»···
 #--
 
@@ -40,14 +41,16 @@ import _GTW._OMP._Auth.Entity
 
 from   _TFL.I18N              import _, _T, _Tn
 
-_Ancestor_Essence = MOM.Object
+_Ancestor_Essence = Auth.Object
 
-class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
+class _Auth_Account_ (_Ancestor_Essence) :
     """Model an user account."""
 
     _real_name = "Account"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
 
         class active (A_Boolean) :
             """This account is currently active."""
@@ -58,6 +61,13 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
 
         # end class active
 
+        class name (_Ancestor.name) :
+            """User name associated with this account"""
+
+            ui_name    = _T ("Account name")
+
+        # end class name
+
         class superuser (A_Boolean) :
             """This account has super-user permissions."""
 
@@ -66,16 +76,6 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
             ui_name    = _T ("Superuser")
 
         # end class superuser
-
-        class username (A_String) :
-            """User name associated with this account"""
-
-            kind       = Attr.Primary
-            max_length = 50
-            rank       = 1
-            ui_name    = _T ("Account name")
-
-        # end class username
 
     # end class _Attributes
 
@@ -88,7 +88,8 @@ _Ancestor_Essence = Account
 class Account_Anonymous (_Ancestor_Essence) :
     """Default account for users which are not logging in."""
 
-    max_count = 1
+    max_count    = 1
+    refuse_links = set (("GTW.OMP.Auth.Account_in_Group", ))
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
