@@ -20,13 +20,14 @@
 #
 #++
 # Name
-#    GTW.Auth.NAV
+#    GTW.NAV.Auth
 #
 # Purpose
 #    Navigation classes for authorization (login, logout, change password, ...)
 #
 # Revision Dates
 #    15-Jan-2010 (MG) Creation
+#    17-Jan-2010 (MG) Moved into package `GTW.NAV`
 #    ««revision-date»»···
 #--
 
@@ -34,7 +35,7 @@ from   _TFL               import TFL
 import _TFL.I18N
 
 from   _GTW             import GTW
-import _GTW._Auth.Forms
+import _GTW._Form.Auth
 import _GTW._NAV.Base
 
 class Login (GTW.NAV.Page) :
@@ -57,7 +58,7 @@ class Login (GTW.NAV.Page) :
 
     def rendered (self, context) :
         request = context ["request"]
-        lf      = GTW.Auth.Forms.Login \
+        lf      = GTW.Form.Auth.Login \
             ( self.account_manager
             , self.name
             , self.username_field
@@ -78,7 +79,6 @@ class Logout (GTW.NAV.Page) :
 
     def _view (self, handler) :
         handler.clear_cookie ("username")
-        print "Redirect to ", handler.request.headers.get ("Referer", "/")
         raise self.top.HTTP.Redirect_302 \
             (handler.request.headers.get ("Referer", "/"))
     # end def _view
@@ -86,5 +86,5 @@ class Logout (GTW.NAV.Page) :
 # end class Logout
 
 if __name__ != "__main__" :
-    GTW.Auth._Export_Module ()
-### __END__ GTW.Auth.NAV
+    GTW.NAV._Export_Module ()
+### __END__ GTW.NAV.Auth

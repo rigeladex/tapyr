@@ -83,7 +83,7 @@
 {%- endmacro -%} {# section #}
 
 {%- macro sitemap (links = None) -%}
-  {%- if links is None -%}
+  {%- if not links -%}
     {%- set links = page.top.own_links -%}
   {%- endif -%}
   {{ sitemap_level (links) }}
@@ -116,7 +116,7 @@
           {% endif %}
         </div>
       {% endif %}
-      {% sitemap_level (link.own_links) %}
+      {{ sitemap_level (link.own_links) }}
     </li>
   {% endif %}
 {%- endmacro -%} {#- sitemap_entry -#}

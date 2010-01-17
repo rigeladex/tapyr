@@ -45,7 +45,7 @@ import _JNJ
 from   _MOM            import MOM
 import _GTW._OMP._Auth.Account
 
-import _GTW._Auth.NAV
+import _GTW._NAV.Auth
 
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
@@ -107,17 +107,17 @@ NAV.add_entries \
           , login_required = True
           )
       , dict
-          ( name            = "login"
+          ( name            = "login.html"
           , template        = "login.jnj"
           , title           = u"Login"
-          , Type            = GTW.Auth.NAV.Login
-          #, hidden          = True
+          , Type            = GTW.NAV.Auth.Login
+          , hidden          = True
           )
       , dict
           ( name            = "logout.html"
           , title           = u"Logout"
-          , Type            = GTW.Auth.NAV.Logout
-          , hidden          = False
+          , Type            = GTW.NAV.Auth.Logout
+          , hidden          = True
           )
       , dict
           ( name           = "redirect_301.html"

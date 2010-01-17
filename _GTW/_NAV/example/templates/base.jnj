@@ -3,10 +3,10 @@
 {%- block navigate -%}
   <h1>H1 BN</h1>
   {{ super () }}
-  {{ page.abs_href }}
+  <p>Current page [{{ page.abs_href }}]</p>
   {%- if request.user.authenticated %}
     <a href="/logout.html">{{ request.user.name }}, logout</a>
   {%- else %}
-    {{ Form.login_inline (action = "/login/", next = page.abs_href) }}
+    {{ Form.login_inline (action = "/login.html", next = page.abs_href) }}
   {% endif -%}
 {%- endblock -%}

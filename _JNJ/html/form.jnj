@@ -31,6 +31,7 @@
 ##    13-Jan-2010 (CT) Creation continued
 ##    14-Jan-2010 (CT) Creation continued..
 ##    15-Jan-2010 (MG) `login_inline`: `name` attributes added to fields
+##    17-Jan-2010 (MG) Login default url changed to `login.html`
 ##    ««revision-date»»···
 ##--
 #}
@@ -132,7 +133,7 @@
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login") -%}
+{%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login.html") -%}
   {%- set login_caller = kwargs.pop ("caller", None) -%}
   {%- set next         = kwargs.pop ("next",   "") -%}
   {% call form (action = action, ** kwargs) -%}

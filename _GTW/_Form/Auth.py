@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    GTW.Auth.Forms
+#    GTW.Form.Auth
 #
 # Purpose
 #    Forms for authorization (login, change password, forgot password, ...)
@@ -28,6 +28,9 @@
 # Revision Dates
 #    15-Jan-2010 (MG) Creation
 #    17-Jan-2010 (CT) Adapted to change of Auth.Account (s/name/username/)
+#    17-Jan-2010 (MG) Clear `request_data` if the login vailed to prevent
+#                     population of defaults
+#    17-Jan-2010 (MG) Moved into package `GTW.Form`
 #    ««revision-date»»···
 #--
 
@@ -35,7 +38,6 @@ from   _TFL               import TFL
 import _TFL.I18N
 
 from   _GTW             import GTW
-import _GTW._Auth
 import _GTW._Form.Plain
 import _GTW._Form.Field
 import _GTW._Form.Field_Group_Description
@@ -80,7 +82,8 @@ class Login (GTW.Form.Plain) :
             )
         if not field_errors and not self._authenticate (username, password) :
             self.errors.append (_T (u"Username or password incorrect"))
-        return self.__super.__call__ (request_data, errors, field_errors)
+        self.request_data = {}
+        return self.__super.__call__ ({}, errors, field_errors)
     # end def __call__
 
     def _authenticate (self, username, password) :
@@ -95,5 +98,5 @@ class Login (GTW.Form.Plain) :
 # end class Login
 
 if __name__ != "__main__" :
-    GTW.Auth._Export_Module ()
-### __END__ GTW.Auth.Forms
+    GTW.Form._Export_Module ()
+### __END__ GTW.Form.Auth
