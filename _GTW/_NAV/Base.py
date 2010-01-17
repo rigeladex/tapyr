@@ -736,7 +736,7 @@ class Root (_Dir_) :
     @classmethod
     def page_from_href (cls, href) :
         result = None
-        href   = href.lstrip (u"/")
+        href   = href.strip (u"/")
         href_s = pjoin (href, u"")
         if href in cls.top.Table :
             result = cls.top.Table [href]
