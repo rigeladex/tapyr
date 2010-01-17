@@ -29,6 +29,7 @@
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
 ##    14-Jan-2010 (CT) Guard `if not link.hidden` added to loop in `entries`
+##    17-Jan-2010 (CT) `sitemap` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -80,6 +81,55 @@
   </div>
   {%- endif -%}
 {%- endmacro -%} {# section #}
+
+{%- macro sitemap (links = None) -%}
+  {%- if links is None -%}
+    {%- set links = page.top.own_links -%}
+  {%- endif -%}
+  {{ sitemap_level (links) }}
+{%- endmacro -%} {#- sitemap -#}
+
+{%- macro sitemap_entry (link) -%}
+  {% if NAV.permissive or link.allow_user (request.user) %}
+    <li class="nav-link level-{{link.level|default('0')}}">
+      <a href="{{ link.site_prefix }}{{ link.href }}"
+         {% if link.desc %}title="{{ link.desc }}"{% endif %}
+      >{{ link.title }}</a>
+      {% if TEST and request.user.authenticated %}
+        <div class="nav-link-details">
+          {% if link.author %}<p>Author: {{ link.author }}</p>{% endif %}
+          {% if link.date %}<p>Date: {{ link.date }}</p>{% endif %}
+          <p>Url: {{ link.href }}</p>
+          <p>Prefix: {{ link.prefix }}</p>
+          <p>Title: {{ link.title }}</p>
+          <p>Desc: {{ link.desc }}</p>
+          <p>Template: {{ link.template }}</p>
+          <p>Type: {{ link.Type }}</p>
+          <p>Target: {{ link.target.href }}</p>
+          {% if link.photos %}
+            <ul >
+              {{ sitemap_entry (link.photos [0]) }}
+            </ul>
+          {% endif %}
+          {% if link.manager %}
+            <p>Format: {{ link.obj.format }}
+          {% endif %}
+        </div>
+      {% endif %}
+      {% sitemap_level (link.own_links) %}
+    </li>
+  {% endif %}
+{%- endmacro -%} {#- sitemap_entry -#}
+
+{%- macro sitemap_level (links) -%}
+  {%- if links %}
+    <ul>
+      {%- for link in links  %}
+        {{ sitemap_entry (link) }}
+      {% endfor -%}
+    </ul>
+  {% endif -%}
+{%- endmacro -%} {#- sitemap_level -#}
 
 {{- section (page.top.own_links, "Navigation") -}}
 

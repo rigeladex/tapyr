@@ -526,7 +526,7 @@ class Cached (_Cached_) :
 
 class Sync_Cached (_Cached_) :
     """Cached attribute computed automatically when syncing. This kind can be
-       used for attributes dependending on attributes of different objects,
+       used for attributes depending on attributes of different objects,
        as long those don't change significantly between syncing --- use
        :class:`Computed` otherwise.
     """
