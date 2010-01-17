@@ -5,7 +5,7 @@
   {{ super () }}
   {{ page.abs_href }}
   {%- if request.user.authenticated %}
-    <a href="/logout.html">{{ request.user.username }}, logout</a>
+    <a href="/logout.html">{{ request.user.name }}, logout</a>
   {%- else %}
     {{ Form.login_inline (action = "/login/", next = page.abs_href) }}
   {% endif -%}
