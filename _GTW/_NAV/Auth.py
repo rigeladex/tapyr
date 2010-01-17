@@ -28,6 +28,8 @@
 # Revision Dates
 #    15-Jan-2010 (MG) Creation
 #    17-Jan-2010 (MG) Moved into package `GTW.NAV`
+#    17-Jan-2010 (MG) `Logout`: Redirect the `/` if the new page after logout
+#                     requires a login
 #    ««revision-date»»···
 #--
 
@@ -37,6 +39,8 @@ import _TFL.I18N
 from   _GTW             import GTW
 import _GTW._Form.Auth
 import _GTW._NAV.Base
+
+import  urlparse
 
 class Login (GTW.NAV.Page) :
     """The login handling page in the navigation"""
@@ -67,7 +71,7 @@ class Login (GTW.NAV.Page) :
         context ["login_form"] = lf
         if request.method == "POST" :
             if not lf (request.arguments) :
-                next = request.arguments.get ("next") [0]
+                next      = request.arguments.get ("next") [0]
                 raise self.top.HTTP.Redirect_302 (next)
         return self.__super.rendered (context)
     # end def rendered
@@ -79,8 +83,12 @@ class Logout (GTW.NAV.Page) :
 
     def _view (self, handler) :
         handler.clear_cookie ("username")
-        raise self.top.HTTP.Redirect_302 \
-            (handler.request.headers.get ("Referer", "/"))
+        top       = self.top
+        next      = handler.request.headers.get ("Referer", "/")
+        next_page = top.page_from_href          (urlparse.urlsplit (next).path)
+        if getattr (next_page, "login_required", False) :
+            next = "/"
+        raise top.HTTP.Redirect_302 (next)
     # end def _view
 
 # end class Logout
