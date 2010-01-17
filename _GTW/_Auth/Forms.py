@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Jan-2010 (MG) Creation
+#    17-Jan-2010 (CT) Adapted to change of Auth.Account (s/name/username/)
 #    ««revision-date»»···
 #--
 
@@ -45,15 +46,16 @@ class Login (GTW.Form.Plain) :
     username_field = "username"
     password_field = "password"
 
-    def __init__ ( self, account_manager
-                 , action         = "/login/"
-                 , username_field = None
-                 , password_field = None
-                 ) :
+    def __init__ \
+            ( self, account_manager
+            , action         = "/login/"
+            , username_field = None
+            , password_field = None
+            ) :
         self.account_manager = account_manager
         self.username_field  = username_field or self.username_field
         self.password_field  = password_field or self.password_field
-        F                    = GTW.Form.Field
+        F   = GTW.Form.Field
         fgd = GTW.Form.Field_Group_Description \
             ( F (self.username_field)
             , F (self.password_field, widget = "html/field.jnj, password")
@@ -62,8 +64,8 @@ class Login (GTW.Form.Plain) :
     # end def __init__
 
     def __call__ (self, request_data) :
-        _T           = TFL.I18N._T
         self.request_data.update (request_data)
+        _T           = TFL.I18N._T
         errors       = []
         field_errors = TFL.defaultdict (list)
         username     = self.get_field \
@@ -83,7 +85,7 @@ class Login (GTW.Form.Plain) :
 
     def _authenticate (self, username, password) :
         try :
-            account = self.account_manager.query (username = username).one ()
+            account = self.account_manager.query (name = username).one ()
         except IndexError :
             ### look's like no account with this username exists
             return False

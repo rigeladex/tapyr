@@ -27,8 +27,10 @@
 #
 # Revision Dates
 #    30-Dec-2009 (MG) Creation
+#    17-Jan-2010 (CT) Style
 #    ««revision-date»»···
 #--
+
 from   _TFL               import TFL
 import _TFL.I18N
 import _TFL._Meta.Once_Property
@@ -44,17 +46,18 @@ class Plain (GTW.Form._Field_Group_) :
     parent       = None
     postfix      = None
 
-    def __init__ ( self, action, instance
-                 , *  field_group_descriptions
-                 , ** kw
-                 ) :
+    def __init__ \
+            ( self, action, instance
+            , *  field_group_descriptions
+            , ** kw
+            ) :
         self.__super.__init__ ()
-        self.request_data = {}
         self.action       = action
         self.instance     = instance
-        self.__dict__.update (kw)
         self.field_groups = []
+        self.request_data = {}
         added_fields      = set ()
+        self.__dict__.update (kw)
         for fgd in field_group_descriptions :
             fgs = fgd.field_groups (self, added_fields)
             self.field_groups.extend (fgs)
@@ -78,15 +81,16 @@ class Plain (GTW.Form._Field_Group_) :
         return len (self.errors) + len (self.field_errors)
     # end def __call__
 
-    def get_field ( self, field_name
-                  , field_errors = None
-                  , error_text   = None
-                  , as_list      = False
-                  ) :
+    def get_field \
+            ( self, field_name
+            , field_errors = None
+            , error_text   = None
+            , as_list      = False
+            ) :
         value = self.request_data.get (field_name, None)
         if not value and field_errors is not None :
             error_text = error_text or TFL.I18N._T \
-                    (u"Field `%(field)s` is required")
+                (u"Field `%(field)s` is required")
             field_errors [field_name].append \
                 (error_text % dict (field = field_name))
         if value and not as_list :

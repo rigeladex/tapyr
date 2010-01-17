@@ -29,6 +29,7 @@
 #    13-Sep-2009 (MG) Creation
 #    10-Jan-2010 (MG) Moved into package `GTW.NAV`
 #    15-Jan-2010 (MG) Authentication added
+#    17-Jan-2010 (CT) Adapted to change of Auth.Account (s/name/username/)
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
         user     = top.anonymous
         if username :
             try :
-                user = top.account_manager.query (username = username).one ()
+                user = top.account_manager.query (name = username).one ()
             except IndexError :
                 user = self.anonymous_user
         return user
