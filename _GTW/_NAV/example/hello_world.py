@@ -107,6 +107,13 @@ NAV.add_entries \
           , login_required = True
           )
       , dict
+          ( name           = "sitemap.html"
+          , template       = "sitemap.jnj"
+          , title          = u"Sitemap"
+          , Type           = GTW.NAV.Page
+          , login_required = True
+          )
+      , dict
           ( name            = "login.html"
           , template        = "login.jnj"
           , title           = u"Login"

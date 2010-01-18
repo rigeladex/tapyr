@@ -1,0 +1,41 @@
+{%- extends site_base %}
+{#- jinja template: sitemap.jnj -#}
+{#
+## Copyright (C) 2010 Martin Glueck All rights reserved
+## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+## ****************************************************************************
+## This template is part of the package GTW:NAV.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    sitemap
+##
+## Purpose
+##    Demonstrate the use of the sitemap macro
+##
+## Revision Dates
+##    18-Jan-2010 (MG) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- import "html/navigation.jnj" as NAV with context %}
+{%- block documentation -%}
+  {{ NAV.sitemap (NAV.own_links) }}
+{%- endblock documentation -%}
+{#- __END__ jinja template: sitemap.jnj -#}
+
+
