@@ -1,8 +1,8 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.OMP.PAP.
+# This module is part of the package GTW.OMP.Auth.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,51 +20,24 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.Person_has_Address
+#    GTW.OMP.Auth.import_Auth
 #
 # Purpose
-#    Model the link between a person and an address
+#    Import Auth object model
 #
 # Revision Dates
-#    30-Dec-2009 (CT) Creation
+#    18-Jan-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
+from   _GTW._OMP._Auth        import Auth
 
-import _GTW._OMP._PAP.Entity
-from   _GTW._OMP._PAP.Person  import Person
-from   _GTW._OMP._PAP.Address import Address
+import _GTW._OMP._Auth.Account
+import _GTW._OMP._Auth.Entity
+import _GTW._OMP._Auth.Group
 
-_Ancestor_Essence = MOM.Link2
+import _GTW._OMP._Auth.Account_in_Group
 
-class Person_has_Address (PAP.Entity, _Ancestor_Essence) :
-    """Model the link between a person and an address"""
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class left (_Ancestor.left) :
-
-            role_type     = Person
-
-        # end class left
-
-        class right (_Ancestor.right) :
-
-            role_type     = Address
-
-        # end class right
-
-    # end class _Attributes
-
-# end class Person_has_Address
-
-if __name__ != "__main__" :
-    GTW.OMP.PAP._Export ("*")
-### __END__ GTW.OMP.PAP.Person_has_Address
-
-
-
+### __END__ GTW.OMP.Auth.import_Auth

@@ -43,7 +43,7 @@ from   _JNJ.Templateer import Templateer
 import _JNJ
 
 from   _MOM            import MOM
-import _GTW._OMP._Auth.Account
+import _GTW._OMP._Auth.import_Auth
 
 import _GTW._NAV.Auth
 

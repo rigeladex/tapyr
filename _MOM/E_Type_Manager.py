@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -51,6 +51,7 @@
 #     3-Dec-2009 (MG) `r_query` type check of role objects added
 #    14-Dec-2009 (CT) `__call__` changed to call `scope.add`
 #    22-Dec-2009 (CT) `Link2_Ordered` removed
+#    18-Jan-2010 (CT) s/_check_multiplicity/_checked_roles/
 #    ««revision-date»»···
 #--
 
@@ -178,7 +179,7 @@ class Link (Id_Entity) :
     """Scope-specific manager for essential link-types."""
 
     def __call__ (self, * args, ** kw) :
-        self._check_multiplicity (* args, ** kw)
+        self._checked_roles (* args, ** kw)
         if kw.get ("raw", False) :
             args = tuple (self._role_to_raw_iter    (args))
         else :
@@ -282,7 +283,7 @@ class Link (Id_Entity) :
         return result
     # end def links_of
 
-    def _check_multiplicity (self, * epk, ** kw) :
+    def _checked_roles (self, * epk, ** kw) :
         if kw.get ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         else :
@@ -304,7 +305,7 @@ class Link (Id_Entity) :
                         )
         if errors :
             raise MOM.Error.Multiplicity_Errors (etype.type_name, errors)
-    # end def _check_multiplicity
+    # end def _checked_roles
 
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :

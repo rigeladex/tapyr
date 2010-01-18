@@ -63,6 +63,9 @@
 #    18-Jan-2010 (CT) `_A_Typed_Collection_`, `_A_Typed_List_`,
 #                     `_A_Typed_Set_`, and `_A_Object_Set_` added
 #    18-Jan-2010 (CT) `A_Cached_Role_Set` added
+#    18-Jan-2010 (CT) `_A_Object_._check_type` factored
+#    18-Jan-2010 (CT) `A_Link_Role`: redefined `cooked` (performance) and
+#                     `_check_type` (to check `refuse_links`)
 #    ««revision-date»»···
 #--
 
@@ -418,16 +421,9 @@ class _A_Object_ (A_Attr_Type) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        et = soc.etype_manager ()
-        if et and not isinstance (value, et) :
-            raise ValueError \
-                ( _T
-                    ( u"%s %s not eligible for attribute %s,"
-                      u"\n"
-                      u"    must be instance of %s"
-                    )
-                % (value.type_name, unicode (value), soc, soc.Class.type_name)
-                )
+        etm = soc.etype_manager ()
+        if etm :
+            soc._check_type (etm._etype, value)
         return value
     # end def cooked
 
@@ -460,6 +456,19 @@ class _A_Object_ (A_Attr_Type) :
                 return result in eo
         return True
     # end def _accept_object
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _check_type (soc, etype, value) :
+        if not isinstance (value, etype) :
+            raise ValueError \
+                ( _T
+                    ( u"%s %s not eligible for attribute %s,"
+                      u"\n"
+                      u"    must be instance of %s"
+                    )
+                % (value.type_name, unicode (value), soc, soc.Class.type_name)
+                )
+    # end def _check_type
 
     def _get_object (self, obj, epk, raw = False) :
         scope  = self._get_scope    (obj)
@@ -751,6 +760,26 @@ class A_Link_Role (_A_Object_) :
     role_type         = None
 
     _t_rank           = -100
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        soc._check_type (soc.role_type, value)
+        return value
+    # end def cooked
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _check_type (soc, etype, value) :
+        soc.__super._check_type (etype, value)
+        tn = soc.assoc.type_name
+        if tn in value.refuse_links :
+            raise MOM.Error.Link_Type_Error \
+                ( tn
+                , soc.role_type
+                , soc.role_type.type_name
+                , value
+                , type (value)
+                )
+    # end def _check_type
 
 # end class A_Link_Role
 

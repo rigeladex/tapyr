@@ -178,7 +178,7 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                 r.role_index = i
                 if r.role_type :
                     ### Replace by app-type specific e-type
-                    r.assoc          = cls
+                    r.attr.assoc     = r.assoc      = cls
                     r.attr.role_type = r.attr.Class = rt = \
                         cls.app_type.entity_type (r.role_type)
                     r.attr.typ       = rt.type_base_name
