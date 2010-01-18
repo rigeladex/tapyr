@@ -60,6 +60,9 @@
 #     5-Jan-2010 (CT) `_Number_.min_value` and `_Number_.max_value` added
 #     5-Jan-2010 (CT) `_checkers` added to `A_Attr_Type` and `_Number_`
 #    14-Jan-2010 (CT) `ui_name` added
+#    18-Jan-2010 (CT) `_A_Typed_Collection_`, `_A_Typed_List_`,
+#                     `_A_Typed_Set_`, and `_A_Object_Set_` added
+#    18-Jan-2010 (CT) `A_Cached_Role_Set` added
 #    ««revision-date»»···
 #--
 
