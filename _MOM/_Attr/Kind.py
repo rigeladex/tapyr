@@ -68,6 +68,7 @@
 #                     `home_scope`
 #    30-Dec-2009 (CT) `__set__` changed to really record changes
 #     5-Jan-2010 (CT) `_checkers` added to `Kind` and `Primary`
+#    18-Jan-2010 (CT) `Cached_Role_Set` added
 #    ««revision-date»»···
 #--
 
@@ -601,7 +602,7 @@ class Once_Cached (_Cached_) :
 # end class Once_Cached
 
 class Cached_Role (_Cached_) :
-    """Cached attribute automagically updated by association."""
+    """Cached attribute automagically updated by association (max_links == 1)."""
 
     def reset (self, obj) :
         pass
@@ -627,6 +628,15 @@ class Cached_Role_DFC (Cached_Role) :
     # end def get_value
 
 # end class Cached_Role_DFC
+
+class Cached_Role_Set (_Cached_) :
+    """Cached attribute automagically updated by association (max_links > 1)."""
+
+    def reset (self, obj) :
+        self._set_cooked_value (obj, set (), changed = True)
+    # end def reset
+
+# end class Cached_Role
 
 class Computed (_Cached_) :
     """Computed attribute: the value is computed for each and every attribute

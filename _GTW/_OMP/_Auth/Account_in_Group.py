@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Jan-2010 (CT) Creation
+#    18-Jan-2010 (CT) `auto_cache` added
 #    ««revision-date»»···
 #--
 
@@ -52,12 +53,14 @@ class Account_in_Group (Auth.Entity, _Ancestor_Essence) :
         class left (_Ancestor.left) :
 
             role_type     = Auth.Account
+            auto_cache    = True
 
         # end class left
 
         class right (_Ancestor.right) :
 
             role_type     = Auth.Group
+            auto_cache    = True
 
         # end class right
 

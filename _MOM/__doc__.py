@@ -187,10 +187,12 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Mouse.optional
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
-    [Object `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, Float `weight`, Boolean `x_locked`]
+    [Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, Float `weight`, Boolean `x_locked`]
 
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
     ('last_name', 'Last name')
+    >>> sorted (ET_Person._Attributes._own_names)
+    ['first_name', 'last_name', 'traps']
     >>> ET_Mouse.color.name, ET_Mouse.color.ui_name
     ('color', 'color')
 
@@ -203,9 +205,9 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Supertrap._Attributes._names)
     ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Object `catch`, Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
+    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Object `catch`, Boolean `electric`, Int `is_used`, Object `location`, Float `max_weight`, Name `name`, Object `owner`, Int `serial_no`, Object `setter`, Boolean `x_locked`]
+    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
@@ -714,7 +716,10 @@ Changing objects and links
     Traceback (most recent call last):
       ...
     Invalid_Attribute: Can't set required attribute <u'Mighty_Mouse'>.weight to `one ton`
-        (BMT.Mouse (u'Mighty_Mouse'), Float `weight', 'one ton -> one ton', 'unexpected EOF while parsing (<string>, line 1)')
+        `unexpected EOF while parsing (<string>, line 1)` for : `weight`
+         expected type  : `Float`
+         got      value : `one ton -> one ton`
+         of       type  : `<type 'str'>`
     >>> m.set_raw (color = "yellow", weight = "42")
     3
     >>> m.color, m.weight
@@ -835,9 +840,11 @@ Deleting objects and links
     .. ### DBW-specific start
 
     >>> m.object_referring_attributes
-    defaultdict(<type 'list'>, {BMT.Trap (u'X', 1): [Object `catcher`]})
+    defaultdict(<type 'list'>, {})
+    >>> sorted (d.type_name for d in m.dependencies)
+    ['BMT.Rodent_in_Trap']
     >>> sorted (d.type_name for d in t1.dependencies)
-    ['BMT.Mouse', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
+    ['BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent_in_Trap']
 
     >>> m_id  = m.pid
     >>> t1_id = t1.pid
@@ -1334,6 +1341,7 @@ class Person_owns_Trap (_Ancestor_Essence) :
 
             role_type     = Trap
             max_links     = 1
+            auto_cache    = True
 
         # end class right
 

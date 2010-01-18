@@ -492,6 +492,112 @@ class _A_Object_ (A_Attr_Type) :
 
 # end class _A_Object_
 
+class _A_Typed_Collection_ (A_Attr_Type) :
+    """Base class for attributes that hold a collection of strictly typed
+       values.
+    """
+
+    C_Type         = None ### Type of entities held by collection
+    C_sep          = ","
+    R_Type         = None ### Type of collection
+
+    def __init__ (self, kind) :
+        self.__super.__init__     (kind)
+        self.C_Type = self.C_Type (kind)
+    # end def __init__
+
+    def as_code (self, value) :
+        if value is not None :
+            return self.__super.as_code \
+              (self.C_sep.join (self._C_as_code (value)))
+        return u""
+    # end def as_code
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        ### when called for the class, `soc.__super` doesn't
+        ### work while `super (_A_Typed_Collection_, soc)` does
+        if value is not None :
+            return super (_A_Typed_Collection_, soc).as_string \
+                (soc.C_sep.join (soc._C_as_string (value)))
+        return u""
+    # end def as_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, val) :
+        return soc.R_Type (soc.C_Type.cooked (v) for v in val)
+    # end def cooked
+
+    def from_code (self, s, obj = None, glob = {}, locl = {}) :
+        comps = self._C_split (s)
+        return self.R_Type (self._C_from_code (obj, comps, glob, locl))
+    # end def from_code_string
+
+    def _C_as_code (self, value) :
+        return (self.C_Type.as_code (v) for v in value)
+    # end def _C_as_code
+
+    @TFL.Meta.Class_and_Instance_Method
+    def _C_as_string (soc, value) :
+        return (soc.C_Type.as_string (v) for v in value)
+    # end def _C_as_string
+
+    def _C_from_code (self, obj, comps, glob, locl) :
+        return (self.C_Type.from_code (obj, c, glob, locl) for c in comps)
+    # end def _C_from_code
+
+    def _C_split (self, s) :
+        if s in ("[]", "") :
+            return []
+        return list (r.strip () for r in s.split (self.C_sep))
+    # end def _C_split
+
+    def _from_string_eval (self, obj, s, glob, locl) :
+        comps = self._C_split (s)
+        C_fse = self.C_Type._from_string_eval
+        return self.Result_Type (C_fse (obj, c, glob, locl) for c in comps)
+    # end def _from_string
+
+    def _from_symbolic_ref (self, s, obj, glob, locl) :
+        raise TypeError \
+            ( "Symbolic cross references not supported for attributes "
+              "of type %s: `%s`"
+            % (self.typ, s)
+            )
+    # end def _from_symbolic_ref
+
+# end class _A_Typed_Collection_
+
+class _A_Typed_List_ (_A_Typed_Collection_) :
+    """Base class for list-valued attributes with strict type."""
+
+    R_Type         = list
+
+# end class _A_Typed_List_
+
+class _A_Typed_Set_ (_A_Typed_Collection_) :
+    """Base class for set-valued attributes with strict type."""
+
+    R_Type         = set
+
+# end class _A_Typed_Set_
+
+class _A_Object_Set_ (_A_Typed_Set_) :
+
+    C_Type         = _A_Object_
+
+    def _C_as_code (self, value) :
+        sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
+        return self.__super._C_as_code (sorted (value, key = sk))
+    # end def _C_as_code
+
+    def _C_as_string (self, value) :
+        sk = MOM.Scope.active.MOM.Id_Entity.sort_key ()
+        return self.__super._C_as_string (sorted (value, key = sk))
+    # end def _C_as_string
+
+# end class _A_Object_Set_
+
 class _A_Unit_ (A_Attr_Type) :
     """Mixin for attributes describing physical quantities with optional
        units.
@@ -665,12 +771,13 @@ class A_Object (_A_Object_) :
 
 # end class A_Object
 
-class A_Cached_Role (A_Object) :
+class A_Cached_Role (_A_Object_) :
     """Models an attribute referring to an object linked via an
        association.
     """
 
     kind         = MOM.Attr.Cached_Role
+    typ          = "Cached_Role"
     hidden       = True
 
 # end class A_Cached_Role
@@ -683,6 +790,17 @@ class A_Cached_Role_DFC (A_Cached_Role) :
     kind         = MOM.Attr.Cached_Role_DFC
 
 # end class A_Cached_Role_DFC
+
+class A_Cached_Role_Set (_A_Object_Set_) :
+    """Models an attribute referring to a set of objects linked via an
+       association.
+    """
+
+    kind         = MOM.Attr.Cached_Role_Set
+    typ          = "Cached_Role_Set"
+    hidden       = True
+
+# end class A_Cached_Role_Set
 
 class A_String (A_Attr_Type) :
     """Models a string-valued attribute of an object."""

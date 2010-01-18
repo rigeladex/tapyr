@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -48,6 +48,8 @@
 #     3-Dec-2009 (CT) `M_Link3` and `M_Link2_Ordered` derived from `M_Link`
 #                     instead of from `M_Link2`
 #    22-Dec-2009 (CT) `M_Link2_Ordered` and `Sequence_Number` removed
+#    18-Jan-2010 (CT) `M_Link2._m_setup_etype_auto_props` changed to handle
+#                     `auto_cache` for `max_links != 1`, too
 #    ««revision-date»»···
 #--
 
@@ -81,10 +83,18 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                     auto_cache_roles.add (rc)
                     other_role = rc.other_role
                     other_type = other_role.role_type
-                    assert other_role.max_links == 1
                     assert rc.attr_name not in other_type._Attributes._names
-                    CR = (MOM.Attr.A_Cached_Role, MOM.Attr.A_Cached_Role_DFC) \
-                        [bool (other_role.dfc_synthesizer)]
+                    if other_role.max_links == 1 :
+                        CR = ( MOM.Attr.A_Cached_Role
+                             , MOM.Attr.A_Cached_Role_DFC
+                             ) [bool (other_role.dfc_synthesizer)]
+                    else :
+                        if other_role.dfc_synthesizer :
+                            raise NotImplementedError \
+                                ( "Autocache for DFC and max_links > 1: %s.%s"
+                                % (cls, a.role_name)
+                                )
+                        CR = MOM.Attr.A_Cached_Role_Set
                     kw =  dict \
                         ( assoc        = cls.type_name
                         , Class        = a.role_type

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -41,6 +41,7 @@
 #                     to `Link`)
 #    22-Dec-2009 (CT) `Link2_Ordered` changed to use `A_Int` for `seq_no` and
 #                     directly derived from `Link2`
+#    18-Jan-2010 (CT) `Role_Cacher_1` factored, `Role_Cacher_n` added
 #    ««revision-date»»···
 #--
 
@@ -155,6 +156,30 @@ class Role_Cacher (TFL.Meta.Object) :
         self.other_role      = None
     # end def __init__
 
+    def setup (self, Link, role) :
+        assert self.role_name is None
+        self.role_name  = role_name = role.role_name
+        other_role_name = \
+            self.other_role_name or Link.other_role_name (role.name)
+        self.other_role = other_role = getattr \
+            (Link._Attributes, other_role_name)
+        del self.other_role_name
+        if other_role.max_links == 1 :
+            self.__class__ = Role_Cacher_1
+        else :
+            self.__class__ = Role_Cacher_n
+        attr_name = self.attr_name
+        if attr_name is None or attr_name == True :
+            self.attr_name = role_name
+            if other_role.max_links != 1 :
+                self.attr_name += "s"
+        assert isinstance (self.attr_name, basestring)
+    # end def setup
+
+# end class Role_Cacher
+
+class Role_Cacher_1 (Role_Cacher) :
+
     def __call__ (self, link, no_value = False) :
         assert self.role_name is not None
         o = getattr (link, self.other_role.name)
@@ -166,20 +191,23 @@ class Role_Cacher (TFL.Meta.Object) :
             setattr (o, self.attr_name, value)
     # end def __call__
 
-    def setup (self, Link, role) :
-        assert self.role_name is None
-        self.role_name = role_name = role.role_name
-        attr_name      = self.attr_name
-        if attr_name is None or attr_name == True :
-            self.attr_name = role_name
-        assert isinstance (self.attr_name, basestring)
-        other_role_name = \
-            self.other_role_name or Link.other_role_name (role.name)
-        self.other_role = getattr (Link._Attributes, other_role_name)
-        del self.other_role_name
-    # end def setup
+# end class Role_Cacher_1
 
-# end class Role_Cacher
+class Role_Cacher_n (Role_Cacher) :
+
+    def __call__ (self, link, no_value = False) :
+        assert self.role_name is not None
+        o = getattr (link, self.other_role.name)
+        if o is not None :
+            cache = getattr (o,    self.attr_name)
+            value = getattr (link, self.role_name)
+            if no_value :
+                cache.remove (value)
+            else :
+                cache.add    (value)
+    # end def __call__
+
+# end class Role_Cacher_n
 
 __doc__ = """
 Class `MOM.Link`
