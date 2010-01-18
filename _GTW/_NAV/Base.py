@@ -186,6 +186,8 @@
 #    15-Jan-2010 (MG) Authentication support changed
 #    18-Jan-2010 (CT) Support for `pid` added
 #    18-Jan-2010 (CT) `_permissions` added and `allow_user` changed to use it
+#    18-Jan-2010 (CT) `_Dir_.__init__` changed to allow `entries`
+#    18-Jan-2010 (CT) `Root.__init__`: s/Models/E_Types/
 #    ««revision-date»»···
 #--
 
@@ -548,8 +550,11 @@ class _Dir_ (_Site_Entity_) :
     sub_dir         = ""
 
     def __init__ (self, parent = None, ** kw) :
+        entries = kw.pop ("entries", [])
         self.__super.__init__ (parent, ** kw)
         self._entries = []
+        if entries :
+            self.add_entries (entries)
     # end def __init__
 
     @classmethod
@@ -726,7 +731,7 @@ class Root (_Dir_) :
         self.prefix       = ""
         self.Table        = {}
         self._pid_map     = {}
-        self.Models       = {}
+        self.E_Types      = {}
         self.level        = -1
         self.__super.__init__ \
             ( src_dir    = src_dir

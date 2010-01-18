@@ -30,6 +30,8 @@
 #    14-Jan-2010 (CT) s/Templeteer/Templateer/g
 #    15-Jan-2010 (CT) s/HTTP_Status/Status/
 #    15-Jan-2010 (CT) `M_Status` added
+#    18-Jan-2010 (CT) Use `Templateer.get_std_template` instead of homegrown
+#                     code
 #    ««revision-date»»···
 #--
 
@@ -104,9 +106,8 @@ class _Error_ (Status) :
         if nav_root :
             handler.request.user = handler.current_user
             Templateer           = nav_root.Templateer
-            templ_name           = Templateer.Error_Templates.get \
-                (self.status_code, Templateer.Error_Templates ["default"])
-            template             = Templateer.get_template (templ_name)
+            template             = Templateer.get_std_template \
+                (self.status_code)
             context              = Templateer.Context \
                 ( exception = self
                 , page      = nav_root

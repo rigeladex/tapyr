@@ -28,6 +28,7 @@
 # Revision Dates
 #    14-Jan-2010 (CT) Creation
 #    15-Jan-2010 (CT) `Error_Templates` added
+#    18-Jan-2010 (CT) `get_std_template` added; s/Error_Templates/Template_Map/
 #    ««revision-date»»···
 #--
 
@@ -42,17 +43,28 @@ class Templateer (TFL.Meta.Object) :
     """Encapsulate Jinja template handling"""
 
     Context         = dict
-    Error_Templates = \
-        { 401       : "html/401.jnj"
-        , 403       : "html/403.jnj"
-        , 404       : "html/404.jnj"
-        , 500       : "html/500.jnj"
-        , "default" : "html/error.jnj"
-        }
+    Template_Map    = dict \
+        ( { 401       : "html/401.jnj"
+          , 403       : "html/403.jnj"
+          , 404       : "html/404.jnj"
+          , 500       : "html/500.jnj"
+          , 500       : "html/500.jnj"
+          }
+        , default     = "html/error.jnj"
+        , site_admin  = "html/site_admin.jnj"
+        )
 
     def __init__ (self, * args, ** kw) :
         self.env = JNJ.Environment.HTML (* args, ** kw)
     # end def __init__
+
+    def get_std_template (self, name) :
+        if name in self.Template_Map :
+            name = self.Template_Map [name]
+        else :
+            name = self.Template_Map ["default"]
+        return self.env.get_template (name)
+    # end def get_std_template
 
     def get_template (self, name) :
         return self.env.get_template (name)

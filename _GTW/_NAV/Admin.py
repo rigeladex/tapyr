@@ -171,6 +171,7 @@
 #                      models
 #    28-May-2009 (CT) s/_Field/_F/g
 #     8-Jan-2010 (CT) Moved from DJO to GTW
+#    18-Jan-2010 (CT) Surgery
 #    ««revision-date»»···
 #--
 
@@ -178,8 +179,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._NAV.Base
-import _GTW._NAV.Model
-### XXX import _DJO.Models
+import _GTW._NAV.E_Type
 
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -188,60 +188,47 @@ from   itertools import chain as ichain, repeat as irepeat
 class Site_Admin (GTW.NAV.Dir) :
     """Model an admin page for a GTW site."""
 
-    Page            = GTW.NAV.Model.Admin
-    template        = "site_admin.html"
+    Page            = GTW.NAV.E_Type.Admin
+    std_template    = "site_admin"
 
     def __init__ (self, src_dir, parent, ** kw) :
-        models = kw.pop ("models", [])
+        self._template = kw.pop ("template", None)
+        etypes = kw.pop ("etypes", [])
         self.__super.__init__ (src_dir, parent, ** kw)
-        self.add_entries (self._model_man_entries ())
-        self.add_entries (self._model_entries (models))
+        self.add_entries (self._etype_man_entries ())
+        self.add_entries (etypes)
         self.top.Admin = self
     # end def __init__
 
-    def _model_entries (self, models) :
-        for m in models :
-            m_kw  = getattr  (m, "NAV_admin_args", {})
-            name  = unicode  (m._meta.verbose_name)
-            title = m_kw.pop ("title", m._meta.verbose_name_plural)
-            desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
-            Type  = m_kw.pop ("Admin_Type", self.Page)
-            if not hasattr (m, "_F") :
-                pass ### XXX DJO.M_Model.assimilate (m)
-            d = dict \
-                ( name      = name
-                , title     = title
-                , desc      = desc
-                , Model     = m
-                , kind_name = None
-                , Type      = Type
-                , ** m_kw
-                )
-            yield d
-    # end def _model_entries
+    @Once_Property
+    def template (self) :
+        if self._template :
+            return self._template
+        else :
+            return self.top.Templeteer.Template_Map [self.std_template]
+    # end def template
 
-    def _model_man_entries (self) :
-        for (model, kind), man in self.top.Models.iteritems () :
-            m_kw  = getattr  (model, "NAV_admin_args", {})
-            name  = unicode  (man.name)
+    def _etype_man_entries (self) :
+        for (etype, kind), man in self.top.E_Types.iteritems () :
+            m_kw  = man.NAV_admin_args
             title = m_kw.pop ("title", man.title)
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
             Type  = m_kw.pop ("Admin_Type", self.Page)
             d = dict \
-                ( name      = name
+                ( name      = man.name
                 , title     = title
                 , desc      = desc
-                , Model     = model
+                , E_Type    = etype
                 , kind_name = kind
                 , Type      = Type
                 , ** m_kw
                 )
             yield d
-    # end def _model_man_entries
+    # end def _etype_man_entries
 
     if 1 :
         ### if we want to display a site-admin specific page (and not
-        ### just the page of the first child [a Model_Admin]), we'll
+        ### just the page of the first child [a E_Type_Admin]), we'll
         ### need to bypass `_Dir_.rendered`
         def rendered (self, context = None, nav_page = None) :
             return GTW.NAV._Site_Entity_.rendered (self, context, nav_page)
