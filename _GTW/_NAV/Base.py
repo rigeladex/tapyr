@@ -184,6 +184,7 @@
 #    14-Jan-2010 (CT) Use `Templateer.render` instead of (removed) `GTW.Render`
 #    14-Jan-2010 (CT) `page_from_href` simplified (`user` removed)
 #    15-Jan-2010 (MG) Authentication support changed
+#    18-Jan-2010 (CT) Support for `pid` added
 #    ««revision-date»»···
 #--
 
@@ -209,8 +210,14 @@ class _Meta_ (TFL.Meta.M_Class) :
 
     def __call__ (cls, * args, ** kw) :
         result = cls.__m_super.__call__ (* args, ** kw)
-        if result.href is not None and not result.implicit :
-            result.top.Table [result.href] = result
+        if not result.implicit :
+            href = result.href
+            pid  = result.pid
+            top  = result.top
+            if href is not None :
+                top.Table [href] = result
+            if pid is not None :
+                top._pid_map [pid] = result
         return result
     # end def __call__
 
@@ -226,6 +233,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     href            = ""
     input_encoding  = "iso-8859-15"
     nick            = ""
+    pid             = None
     title           = ""
     top             = None
 
@@ -707,6 +715,7 @@ class Root (_Dir_) :
         self.parents      = []
         self.prefix       = ""
         self.Table        = {}
+        self._pid_map     = {}
         self.Models       = {}
         self.level        = -1
         self.__super.__init__ \
@@ -758,6 +767,15 @@ class Root (_Dir_) :
                     break
         return result
     # end def page_from_href
+
+    @classmethod
+    def page_from_pid (cls, pid) :
+        result = None
+        top    = cls.top
+        if top is not None :
+            result = top._pid_map.get (pid)
+        return result
+    # end def page_from_pid
 
     @classmethod
     def universal_view (cls, handler) :
