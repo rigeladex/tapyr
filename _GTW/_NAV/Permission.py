@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Jan-2010 (CT) Creation
+#    18-Jan-2010 (CT) `In_Page_Group` removed
 #    ««revision-date»»···
 #--
 
@@ -64,14 +65,6 @@ class In_Group (_Permission_) :
     # end def predicate
 
 # end class In_Group
-
-class In_Page_Group (_Permission_) :
-
-    def predicate (self, user, page, * args, ** kw) :
-        return page.Group in user.groups
-    # end def predicate
-
-# end class In_Page_Group
 
 class Is_Creator (_Permission_) :
 

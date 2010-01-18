@@ -142,14 +142,6 @@ class _Model_Mixin_ (TFL.Meta.Object) :
         return self.query_fct ().count ()
     # end def count
 
-    @Once_Property
-    def Group (self) :
-        name = getattr (self.Model, "NAV_admin_args", {}).get ("Group_Name")
-        if name :
-            ### XXX from django.contrib.auth.models import Group
-            return Group.objects.get (name = name)
-    # end def Group
-
 # end class _Model_Mixin_
 
 class Admin (_Model_Mixin_, GTW.NAV.Page) :

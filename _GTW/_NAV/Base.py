@@ -185,6 +185,7 @@
 #    14-Jan-2010 (CT) `page_from_href` simplified (`user` removed)
 #    15-Jan-2010 (MG) Authentication support changed
 #    18-Jan-2010 (CT) Support for `pid` added
+#    18-Jan-2010 (CT) `_permissions` added and `allow_user` changed to use it
 #    ««revision-date»»···
 #--
 
@@ -254,6 +255,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         if "Media" in kw :
             self._Media = kw.pop ("Media")
         self._login_required = kw.pop ("login_required", False)
+        self._permission     = kw.pop ("permission",     None)
         for k, v in kw.iteritems () :
             if isinstance (v, str) :
                 v = unicode (v, encoding, "replace")
@@ -280,12 +282,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     def allow_user (self, user) :
         if user and self.login_required :
-            if not user.authenticated :
+            if not (user.authenticated and user.active) :
                 return False
-            if not user.active :
-                return False
-            if not user.superuser and self._permission :
-                return self._permission (user, self)
+            if not user.superuser :
+                for p in self._permissions () :
+                    if not p (user, self) :
+                        return False
         return True
     # end def allow_user
 
@@ -425,6 +427,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
             return GTW.Media (children = medias)
         return self._Media
     # end def _get_media
+
+    def _permissions (self) :
+        p = self
+        while p :
+            if p._permission :
+                yield p._permission
+            p = p.parent
+    # end def _permissions
 
     def _view (self, handler) :
         request      = handler.request
