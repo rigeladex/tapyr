@@ -260,7 +260,7 @@ class Manager (MOM.EMS._Manager_) :
             except KeyError :
                 print Type, Type.Roles, Type.role_map
                 raise
-            role = Type.Roles    [i]
+            role = Type.Roles [i]
             queries.append (q (r_map, role, obj))
         result = self.Q_Result (intersection_n (* queries), * filters, ** kw)
         return result
