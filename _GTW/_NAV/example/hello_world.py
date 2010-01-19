@@ -44,13 +44,17 @@ import _JNJ
 
 from   _MOM            import MOM
 import _GTW._OMP._Auth.import_Auth
+import _GTW._OMP._PAP. import_PAP
 
 import _GTW._NAV.Auth
+import _GTW._Form._MOM.Instance
+import _GTW._Form._MOM.Inline_Description
+import _GTW._Form._MOM.Field_Group_Description
 
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
 
-from Redirect import Redirect, Error
+from Nav_Pages import Redirect, Error, E_Type_Form
 
 ### define the command lind and parse it to get the `port` from the command
 ### line needed for the `site_url`
@@ -64,7 +68,9 @@ cmd = TFL.CAO.Cmd \
     ) (sys.argv [1:])
 
 apt    = MOM.App_Type \
-    (u"HWO", GTW, PNS_Aliases = dict (Auth = GTW.OMP.Auth)).Derived (EMS, DBW)
+    ( u"HWO", GTW
+    , PNS_Aliases = dict (Auth = GTW.OMP.Auth, PAP = GTW.OMP.PAP)
+    ).Derived (EMS, DBW)
 scope  = MOM.Scope.new (apt, None)
 
 anonymous = scope.Auth.Account_Anonymous ("anonymous")
@@ -125,6 +131,26 @@ NAV.add_entries \
           , title           = u"Logout"
           , Type            = GTW.NAV.Auth.Logout
           , hidden          = True
+          )
+      , dict
+          ( name           = "e-type.form.html"
+          , title          = u"E-Type-Form"
+          , template       = "e_type_form.jnj"
+          , Type           = E_Type_Form
+          , form           = GTW.Form.MOM.Instance.New
+                ( scope.PAP.Person
+                , GTW.Form.MOM.Field_Group_Description ()
+                , GTW.Form.MOM.Inline_Description
+                    ( "PAP.Person_has_Address", "person"
+                    , GTW.Form.MOM.Field_Group_Description
+                          ( GTW.Form.MOM.Field_Prefixer
+                              ( "address"
+                              , "street", "zip", "city", "country", "desc"
+                              )
+                          )
+                    , min_empty = 1
+                    )
+                )
           )
       , dict
           ( name           = "redirect_301.html"
