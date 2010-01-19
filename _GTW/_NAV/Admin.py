@@ -179,7 +179,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._NAV.Base
-import _GTW._NAV.E_Type
+import _GTW._NAV._E_Type.Admin
 
 from   _TFL._Meta.Once_Property import Once_Property
 
@@ -209,17 +209,18 @@ class Site_Admin (GTW.NAV.Dir) :
     # end def template
 
     def _etype_man_entries (self) :
-        for (etype, kind), man in self.top.E_Types.iteritems () :
-            m_kw  = man.NAV_admin_args
+        for man in self.top.E_Types.itervalues () :
+            m_kw  = man.admin_args
             title = m_kw.pop ("title", man.title)
             desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
             Type  = m_kw.pop ("Admin_Type", self.Page)
-            d = dict \
+            d     = dict \
                 ( name      = man.name
                 , title     = title
                 , desc      = desc
-                , E_Type    = etype
-                , kind_name = kind
+                , ETM       = man.ETM
+                , E_Type    = man.E_Type
+                , kind_name = man.kind_name
                 , Type      = Type
                 , ** m_kw
                 )

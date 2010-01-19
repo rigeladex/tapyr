@@ -66,6 +66,8 @@
 #    18-Jan-2010 (CT) `_A_Object_._check_type` factored
 #    18-Jan-2010 (CT) `A_Link_Role`: redefined `cooked` (performance) and
 #                     `_check_type` (to check `refuse_links`)
+#    19-Jan-2010 (CT) `_A_String_` factored
+#    19-Jan-2010 (CT) `A_Char` added
 #    ««revision-date»»···
 #--
 
@@ -274,6 +276,8 @@ class _A_Named_Value_ (A_Attr_Type) :
     """Common base class for attributes holding named values."""
 
     __metaclass__     = MOM.Meta.M_Attr_Type_Named_Value
+
+    C_Type            = None ### Type of cooked values
 
     needs_raw_value   = False
 
@@ -610,15 +614,27 @@ class _A_Object_Set_ (_A_Typed_Set_) :
 
 # end class _A_Object_Set_
 
+class _A_String_ (A_Attr_Type) :
+    """Base class for string-valued attributes of an object."""
+
+    needs_raw_value   = False
+    simple_cooked     = unicode
+
+    def _from_string_eval (self, s, obj, glob, locl) :
+        return unicode (s)
+    # end def _from_string
+
+# end class _A_String_
+
 class _A_Unit_ (A_Attr_Type) :
     """Mixin for attributes describing physical quantities with optional
        units.
     """
 
-    __metaclass__ = MOM.Meta.M_Attr_Type_Unit
-    _default_unit = None ### set by meta class
-    _unit_dict    = {}
-    _unit_pattern = Regexp \
+    __metaclass__  = MOM.Meta.M_Attr_Type_Unit
+    _default_unit  = None ### set by meta class
+    _unit_dict     = {}
+    _unit_pattern  = Regexp \
         ( ur"[])a-zA-Z_0-9] \s+ (?P<unit> [a-zA-Z]+ (?: / [a-zA-Z]+)?) \s*$"
         , re.VERBOSE
         )
@@ -668,6 +684,45 @@ class A_Boolean (_A_Named_Value_) :
 
 # end class A_Boolean
 
+class A_Cached_Role (_A_Object_) :
+    """Models an attribute referring to an object linked via an
+       association.
+    """
+
+    kind           = MOM.Attr.Cached_Role
+    typ            = "Cached_Role"
+    hidden         = True
+
+# end class A_Cached_Role
+
+class A_Cached_Role_DFC (A_Cached_Role) :
+    """Models an attribute to an object linked via an association or derived
+       from a container.
+    """
+
+    kind           = MOM.Attr.Cached_Role_DFC
+
+# end class A_Cached_Role_DFC
+
+class A_Cached_Role_Set (_A_Object_Set_) :
+    """Models an attribute referring to a set of objects linked via an
+       association.
+    """
+
+    kind           = MOM.Attr.Cached_Role_Set
+    typ            = "Cached_Role_Set"
+    hidden         = True
+
+# end class A_Cached_Role_Set
+
+class A_Char (_A_String_) :
+    """Models an attribute holding a single character."""
+
+    typ            = "Character"
+    max_length     = 1
+
+# end class A_Char
+
 class A_Date (_A_Date_) :
     """Models a date-valued attribute of an object."""
 
@@ -698,13 +753,13 @@ class A_Date_Time (_A_Date_) :
 class A_Decimal (_A_Number_) :
     """Models a decimal-number valued attribute of an object."""
 
-    __metaclass__   = MOM.Meta.M_Attr_Type_Decimal
-    typ             = "Decimal"
-    code_format     = "%s"
+    __metaclass__  = MOM.Meta.M_Attr_Type_Decimal
+    typ            = "Decimal"
+    code_format    = "%s"
 
-    decimal_places  = 2
-    max_digits      = 12
-    rounding        = decimal.ROUND_HALF_UP
+    decimal_places = 2
+    max_digits     = 12
+    rounding       = decimal.ROUND_HALF_UP
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -719,30 +774,30 @@ class A_Decimal (_A_Number_) :
 # end class A_Decimal
 
 class A_Float (_A_Float_) :
-    code_format   = "%s"
-    simple_cooked = float
+    code_format    = "%s"
+    simple_cooked  = float
 # end class A_Float
 
 class A_Int (_A_Int_) :
-    simple_cooked = int
+    simple_cooked  = int
 # end class A_Int
 
 class A_Length (_A_Unit_, _A_Float_) :
     """Models a length attribute with unit information."""
 
-    typ           = "Length"
-    _unit_dict    = dict \
-        ( { "in"    : 0.0254 }
-        , cm        = 1.e-2
-        , ft        = 0.3048000
-        , km        = 1.e3
-        , m         = 1.0
-        , mi        = 1609.344
-        , mm        = 1.e-3
-        , Nm        = 1852.0
-        , nm        = 1.e-9
-        , um        = 1.e-6
-        , yd        = 0.9144000
+    typ            = "Length"
+    _unit_dict     = dict \
+        ( { "in"   : 0.0254 }
+        , cm       = 1.e-2
+        , ft       = 0.3048000
+        , km       = 1.e3
+        , m        = 1.0
+        , mi       = 1609.344
+        , mm       = 1.e-3
+        , Nm       = 1852.0
+        , nm       = 1.e-9
+        , um       = 1.e-6
+        , yd       = 0.9144000
         )
 
 # end class A_Length
@@ -795,65 +850,10 @@ class A_Link_Role_EB (A_Link_Role) :
 
 # end class A_Link_Role_EB
 
-class A_Object (_A_Object_) :
-    """Models an attribute referring to an object."""
-
-    typ         = "Object"
-    Kind_Mixins = (MOM.Attr.Object_Reference_Mixin, )
-
-# end class A_Object
-
-class A_Cached_Role (_A_Object_) :
-    """Models an attribute referring to an object linked via an
-       association.
-    """
-
-    kind         = MOM.Attr.Cached_Role
-    typ          = "Cached_Role"
-    hidden       = True
-
-# end class A_Cached_Role
-
-class A_Cached_Role_DFC (A_Cached_Role) :
-    """Models an attribute to an object linked via an association or derived
-       from a container.
-    """
-
-    kind         = MOM.Attr.Cached_Role_DFC
-
-# end class A_Cached_Role_DFC
-
-class A_Cached_Role_Set (_A_Object_Set_) :
-    """Models an attribute referring to a set of objects linked via an
-       association.
-    """
-
-    kind         = MOM.Attr.Cached_Role_Set
-    typ          = "Cached_Role_Set"
-    hidden       = True
-
-# end class A_Cached_Role_Set
-
-class A_String (A_Attr_Type) :
-    """Models a string-valued attribute of an object."""
-
-    typ               = "String"
-
-    max_length        = 64
-    needs_raw_value   = False
-    simple_cooked     = unicode
-
-    def _from_string_eval (self, s, obj, glob, locl) :
-        return unicode (s)
-    # end def _from_string
-
-# end class A_String
-
-class A_Name (A_String) :
+class A_Name (_A_String_) :
     """Models a name-valued attribute of an object."""
 
     typ                = "Name"
-
     max_length         = 32
     identifier_pattern = Regexp (u"^ [a-zA-Z_] [a-zA-Z0-9_]* $", re.X)
     syntax             = _T \
@@ -873,13 +873,29 @@ class A_Name (A_String) :
 
 # end class A_Name
 
-class A_Text (A_String) :
+class A_Object (_A_Object_) :
+    """Models an attribute referring to an object."""
+
+    typ            = "Object"
+    Kind_Mixins    = (MOM.Attr.Object_Reference_Mixin, )
+
+# end class A_Object
+
+class A_String (_A_String_) :
+    """Models a string-valued attribute of an object."""
+
+    typ            = "String"
+    max_length     = 64
+
+# end class A_String
+
+class A_Text (_A_String_) :
     """Models a string-valued attribute of an object which allows text of
        arbitrary length.
     """
-    typ         = "Text"
 
-    max_length  = None
+    typ            = "Text"
+    max_length     = None
 
 # end class A_Text
 

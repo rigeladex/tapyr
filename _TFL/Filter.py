@@ -40,6 +40,7 @@
 #                     `predicate` of `Attr_Filter` instances
 #     4-Dec-2009 (CT) `Attr_Query` based on `TFL.Q_Exp.Base` instead of
 #                     home-grown code; `Attr_Filter` removed
+#    19-Jan-2010 (CT) `Attr_Query.And` and `Attr_Query.Or` added
 #    ««revision-date»»···
 #--
 
@@ -366,6 +367,9 @@ class Attr_Query (TFL.Q_Exp.Base) :
     """
 
     Ignore_Exception = AttributeError
+
+    And              = Filter_And
+    Or               = Filter_Or
 
     class Bin_Bool (_Filter_S_, TFL.Q_Exp.Bin_Bool) :
         pass

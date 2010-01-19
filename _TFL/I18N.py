@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Oct-2009 (CT) Creation
+#    19-Jan-2010 (CT) `_Tn` changed to make `plural` and `n` optional
 #    ««revision-date»»···
 #--
 
@@ -42,10 +43,12 @@ def _T (text) :
     return text ### XXX
 # end def _T
 
-def _Tn (singular, plural, n) :
+def _Tn (singular, plural = None, n = 99) :
     """Return the localized translation of `text` for the plural form
        appropriate for `n` (as unicode).
     """
+    if plural is None :
+        plural = singular + "s"
     return singular ### XXX
 # end def _Tn
 
