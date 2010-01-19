@@ -35,56 +35,35 @@
 #--
 
 from   _TFL               import TFL
+import _TFL._Meta.Object
 import _TFL.I18N
 
-from   _GTW             import GTW
+from   _GTW               import GTW
 import _GTW._Form.Plain
 import _GTW._Form.Field
 import _GTW._Form.Field_Group_Description
 
-class Login (GTW.Form.Plain) :
-    """The login form."""
+class _Login_Mixin_ (TFL.Meta.Object) :
+    """Handles the login form processing."""
 
-    username_field = "username"
-    password_field = "password"
-
-    def __init__ \
-            ( self, account_manager
-            , action         = "/login/"
-            , username_field = None
-            , password_field = None
-            ) :
+    def __init__ (self, account_manager, * args, ** kw) :
         self.account_manager = account_manager
-        self.username_field  = username_field or self.username_field
-        self.password_field  = password_field or self.password_field
-        F   = GTW.Form.Field
-        fgd = GTW.Form.Field_Group_Description \
-            ( F (self.username_field)
-            , F (self.password_field, widget = "html/field.jnj, password")
-            )
-        self.__super.__init__ (action, None, fgd)
+        self.__super.__init__ (* args, ** kw)
     # end def __init__
 
-    def __call__ (self, request_data) :
-        self.request_data.update (request_data)
+    def _validate (self) :
         _T           = TFL.I18N._T
-        errors       = []
-        field_errors = TFL.defaultdict (list)
-        username     = self.get_field \
-            ( self.username_field
-            , field_errors
-            , _T (u"A user name is required to login.")
-            )
-        password     = self.get_field \
-            ( self.password_field
-            , field_errors
-            , _T (u"The password is required.")
-            )
-        if not field_errors and not self._authenticate (username, password) :
+        username     = self.get_required \
+            ("username", _T (u"A user name is required to login."))
+        password     = self.get_required \
+            ("password", _T (u"The password is required."))
+        if (    not self.field_errors
+           and not self._authenticate (username, password)
+           ) :
             self.errors.append (_T (u"Username or password incorrect"))
         self.request_data = {}
-        return self.__super.__call__ ({}, errors, field_errors)
-    # end def __call__
+        return len (self.field_errors) + len (self.errors)
+    # end def _validate
 
     def _authenticate (self, username, password) :
         try :
@@ -95,7 +74,36 @@ class Login (GTW.Form.Plain) :
         return account.verify_password (password)
     # end def _authenticate
 
-# end class Login
+# end class _Login_Mixin_
+
+Login = GTW.Form.Plain.New \
+    ( "Login"
+    , GTW.Form.Field_Group_Description
+        ( GTW.Form.Field ("username")
+        , GTW.Form.Field ("password", widget = "html/field.jnj, password")
+        )
+    , head_mixins = (_Login_Mixin_, )
+    )
+
+if 0 :
+    class Login1 (GTW.Form.Plain) :
+        """The login form."""
+
+        def __call__ (self, request_data) :
+            self.request_data.update (request_data)
+            return self.__super.__call__ ({}, errors, field_errors)
+        # end def __call__
+
+        def _authenticate (self, username, password) :
+            try :
+                account = self.account_manager.query (name = username).one ()
+            except IndexError :
+                ### look's like no account with this username exists
+                return False
+            return account.verify_password (password)
+        # end def _authenticate
+
+    # end class Login
 
 if __name__ != "__main__" :
     GTW.Form._Export_Module ()

@@ -1,41 +1,41 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer. All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2010 Martin Glueck All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This package is part of the package GTW.
+# This module is part of the package GTW.Form.
 #
-# This package is free software: you can redistribute it and/or modify
+# This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# This package is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with this package. If not, see <http://www.gnu.org/licenses/>.
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
 # Name
-#    GTW.Form.__init__
+#    GTW.Form.__Test
 #
 # Purpose
-#    Support for web forms
+#    Simple test for plain forms
 #
 # Revision Dates
-#    18-Jan-2010 (CT) Creation
+#    19-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
 
-from   _TFL.Package_Namespace import Package_Namespace
-from   _GTW                   import GTW
+from   _GTW._Form                         import Form
+import _GTW._Form.Auth
 
-Form = Package_Namespace ()
-GTW._Export ("Form")
+form = Form.Auth.Login (None, "/login.html")
+#import pdb; pdb.set_trace ()
+print form (dict (username = "user1", password = "passwd1"))
+### __END__ GTW.Form.__Test
 
-del Package_Namespace
 
-### __END__ GTW.Form.__init__

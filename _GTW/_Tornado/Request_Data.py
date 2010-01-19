@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package GTW.Form.MOM.
+# This module is part of the package GTW.Tornado.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,44 +20,45 @@
 #
 #++
 # Name
-#    GTW.Form.MOM.Instance
+#    GTW.Tornado.Request_Data
 #
 # Purpose
-#    A form which creates or changes a MOM object
+#    «text»···
 #
 # Revision Dates
-#    18-Jan-2010 (MG) Creation
+#    19-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
-
-from   _MOM               import MOM
-import _MOM._Attr.Type
-
-from   _TFL                                 import TFL
+from   _TFL              import TFL
 import _TFL._Meta.Object
-import _TFL.defaultdict
-import _GTW._Form.Field_Error
 
-from   _GTW                                 import GTW
-import _GTW._Form._MOM
-import _GTW._Form._MOM._Instance_
+from   _GTW              import GTW
 
-MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
+class Request_Data (TFL.Meta.Object) :
+    """Wraps the request data from a tornado request to handle fact that
+       tornado suplies all values as lists
+    """
 
-class Instance (GTW.Form.MOM._Instance_) :
-    """A form which creates or changes a MOM object."""
-
-    widget        = "html/form.jnj, object"
-
-    def __init__ (self, action, instance = None, ** kw) :
-        self.action = action
-        self.__super.__init__ (instance)
+    def __init__ (self, data) :
+        self.data = data
     # end def __init__
 
-# end class Instance
+    def __getitem__ (self, key) :
+        return self.data [key] [0]
+    # end def __getitem__
+
+    def get (self, key, default = None) :
+        return self.data.get (key, (default, )) [0]
+    # end def get
+
+    def __contains__ (self, item) :
+        return item in self.data
+    # end def __contains__
+
+# end class Request_Data
 
 if __name__ != "__main__" :
-    GTW.Form.MOM._Export ("*")
-### __END__ GTW.Form.MOM.Instance
+    GTW.Tornado._Export ("*")
+### __END__ GTW.Tornado.Request_Data
 
 

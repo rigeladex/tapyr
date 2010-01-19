@@ -102,6 +102,19 @@
     </tr>
 {%- endmacro -%} {#- fg_tr_head -#}
 
+{%- macro field_groups (fo) -%}
+    {%- for fg in fo.field_groups %}
+      {%- if fo.get_errors () %}
+        {{ _field_error (fo, None) }}
+      {% endif -%}
+      <div class="Formset {{ fg.css_class }}"
+       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
+      >
+        {{ GTW.call_macro (fg.widget, fo, fg) }}
+      </div>
+    {% endfor -%}
+{%- endmacro -%} {#- field_groups -#}
+
 {%- macro form
         ( action        = ""
         , cancel_kw     = {}
@@ -132,6 +145,12 @@
     {% endif -%}
   </form>
 {%- endmacro -%} {#- form -#}
+
+{%- macro inline (form, inline) -%}
+  {%- for iform in inline.inline_forms %}
+    {{ GTW.call_macro (iform.widget, iform)}}
+  {% endfor -%}
+{%- endmacro -%} {#- inline -#}
 
 {%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login.html") -%}
   {%- set login_caller = kwargs.pop ("caller", None) -%}
@@ -216,16 +235,7 @@
       , ** kwargs
       )
  -%}
-    {%- for fg in fo.field_groups %}
-      {%- if fo.get_errors () %}
-        {{ _field_error (fo, None) }}
-      {% endif -%}
-      <div class="Formset {{ fg.css_class }}"
-       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
-      >
-        {{ GTW.call_macro (fg.widget, fo, fg) }}
-      </div>
-    {% endfor -%}
+   {{ field_groups (fo) }}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 

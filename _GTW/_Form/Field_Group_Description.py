@@ -26,30 +26,29 @@
 #    Abstract definition of a field group
 #
 # Revision Dates
-#    30-Dec-2009 (MG) Creation
+#    18-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
 import _TFL._Meta.Object
 from   _GTW               import GTW
-import _GTW._Form
+import _GTW._Form.Field_Group
 
-class Field_Group_Description (TFL.Meta.Object) :
+class _Form_Field_Group_Description_ (TFL.Meta.Object) :
     """Abstract definition of a field group."""
+
+    _real_name = "Field_Group_Description"
 
     def __init__ (self, * fields, ** kw) :
         self.fields = fields
         self.__dict__.update (kw)
     # end def __init__
 
-    def field_groups (self, parent, added_fields = None, ** kw) :
-        if added_fields is None :
-            added_fields = set ()
-        added_fields.update (self.fields)
-        return (GTW.Form.Field_Group (parent, * self.fields, ** kw), )
-    # end def field_groups
+    def __call__ (self) :
+        return (GTW.Form.Field_Group (self.fields), )
+    # end def __call__
 
-# end class Field_Group_Description
+Field_Group_Description = _Form_Field_Group_Description_ # end class Field_Group_Description
 
 if __name__ != "__main__" :
     GTW.Form._Export ("*")

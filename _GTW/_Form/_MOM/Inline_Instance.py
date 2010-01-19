@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 # Copyright (C) 2010 Martin Glueck All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# Langstrasse 4, A--2244 Spannberg. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package GTW.Form.MOM.
 #
@@ -20,44 +20,28 @@
 #
 #++
 # Name
-#    GTW.Form.MOM.Instance
+#    Inline_Instance
 #
 # Purpose
-#    A form which creates or changes a MOM object
+#    «text»···
 #
 # Revision Dates
-#    18-Jan-2010 (MG) Creation
+#    19-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
-
-from   _MOM               import MOM
-import _MOM._Attr.Type
-
-from   _TFL                                 import TFL
-import _TFL._Meta.Object
-import _TFL.defaultdict
-import _GTW._Form.Field_Error
 
 from   _GTW                                 import GTW
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
-MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
+class Inline_Instance (GTW.Form.MOM._Instance_) :
+    """A form which is embedded in a `Instance` form."""
 
-class Instance (GTW.Form.MOM._Instance_) :
-    """A form which creates or changes a MOM object."""
+    widget        = "html/form.jnj, field_groups"
 
-    widget        = "html/form.jnj, object"
-
-    def __init__ (self, action, instance = None, ** kw) :
-        self.action = action
-        self.__super.__init__ (instance)
-    # end def __init__
-
-# end class Instance
+# end class Inline_Instance
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")
-### __END__ GTW.Form.MOM.Instance
 
-
+### __END__ GTW.Form.MOM.Inline_Instance

@@ -41,8 +41,9 @@ class Field (TFL.Meta.Object) :
     hidden = False
 
     def __init__ (self, name, default = "", ** kw) :
-        self.name    = name
-        self.default = default
+        self.name      = name
+        self.html_name = name
+        self.default   = default
         self.__dict__.update (kw)
     # end def __init__
 

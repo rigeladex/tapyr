@@ -1,21 +1,21 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Martin Glueck All rights reserved
+# Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
+# This module is part of the package GTW.Form.
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-# This library is distributed in the hope that it will be useful,
+# This module is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the Free
-# Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
 # ****************************************************************************
 #
 #++
@@ -23,83 +23,93 @@
 #    GTW.Form.Plain
 #
 # Purpose
-#    Handling of HTMl forms
+#    «text»···
 #
 # Revision Dates
-#    30-Dec-2009 (MG) Creation
-#    17-Jan-2010 (CT) Style
+#    19-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 import _TFL.I18N
-import _TFL._Meta.Once_Property
+import _TFL._Meta.Object
+import _TFL.defaultdict
 
 from   _GTW               import GTW
-import _GTW._Form._Field_Group_
-import _GTW._Form.Field_Group
+import _GTW._Form._Form_
 
-class Plain (GTW.Form._Field_Group_) :
-    """Handling of plain HTML forms with user constricted field groups."""
+class M_Plain (TFL.Meta.Object.__class__) :
+    """Meta class for plain forms"""
 
-    method       = "POST"
-    parent       = None
-    postfix      = None
-
-    def __init__ \
-            ( self, action, instance
-            , *  field_group_descriptions
+    def New ( cls
+            , name_or_creator
+            , * field_group_descriptions
             , ** kw
             ) :
-        self.__super.__init__ ()
-        self.action       = action
-        self.instance     = instance
-        self.field_groups = []
-        self.request_data = {}
-        added_fields      = set ()
-        self.__dict__.update (kw)
+        name         = name_or_creator
+        creator      = None
+        if callable (name_or_creator) :
+            name     = name_or_creator.__name__
+            creator  = name_or_creator
+        field_groups = []
         for fgd in field_group_descriptions :
-            fgs = fgd.field_groups (self, added_fields)
-            self.field_groups.extend (fgs)
+            field_groups.extend (fgd ())
+        return cls.__m_super.New \
+            ( name
+            , field_groups = field_groups
+            , creator      = creator
+            , ** kw
+            )
+    # end def New
+
+# end class M_Plain
+
+class Plain (GTW.Form._Form_) :
+    """A plain form with no object in the background"""
+
+    __metaclass__ = M_Plain
+
+    def __init__ (self, action, instance = None) :
+        self.__super.__init__ (instance)
+        self.action       = action
     # end def __init__
 
-    def __iter__ (self) :
-        return iter (self.field_groups)
-    # end def __iter__
-
-    def get_id (self, field) :
-        if self.postfix :
-            return "_".join ((field.name, self.postfix))
-        return field.name
-    # end def get_id
-
-    def __call__ (self, request_data, errors = (), field_errors = {}) :
-        self.request_data.update (request_data)
-        self.errors.add          (errors)
-        for k, v in field_errors.iteritems () :
-            self.field_errors [k].add (v)
-        return len (self.errors) + len (self.field_errors)
-    # end def __call__
-
-    def get_field \
-            ( self, field_name
-            , field_errors = None
-            , error_text   = None
-            , as_list      = False
-            ) :
-        value = self.request_data.get (field_name, None)
-        if not value and field_errors is not None :
-            error_text = error_text or TFL.I18N._T \
+    def get_required (self, field, error = None) :
+        if isinstance (field, basestring) :
+            field = self.fields [field]
+        value     = self.get_raw (field)
+        if not value :
+            error = error or TFL.I18N._T \
                 (u"Field `%(field)s` is required")
-            field_errors [field_name].append \
-                (error_text % dict (field = field_name))
-        if value and not as_list :
-            return value [0]
+            self.field_errors [field.name].append \
+                (error % dict (field = field.name))
         return value
-    # end def get_field
+    # end def get_required
+
+    def _get_raw (self, field) :
+        return field.get_raw (self.instance)
+    # end def _get_raw
+
+    def _validate (self) :
+        return 0
+    # end def _validate
+
+    def __call__ (self, request_data) :
+        self.request_data = request_data
+        error_count       = self._validate ()
+        if not error_count and self.creator :
+            if not self.instance :
+                self.instance = self.creator (** self.request_data)
+            else :
+                for name, value in self.request_data.iteritems () :
+                    setattr (self.instance, name, value)
+        return error_count
+    # end def __call__
 
 # end class Plain
 
 if __name__ != "__main__" :
     GTW.Form._Export ("*")
 ### __END__ GTW.Form.Plain
+
+

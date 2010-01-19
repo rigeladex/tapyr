@@ -77,7 +77,7 @@
   {{ typ
       ( id            = "F_{{ id }}"
       , name          = id
-      , value         = fo.get_raw (fi) [0]
+      , value         = fo.get_raw (fi)
       , ** kwargs
       )
   }}

@@ -39,6 +39,7 @@ import _TFL.I18N
 from   _GTW             import GTW
 import _GTW._Form.Auth
 import _GTW._NAV.Base
+import _GTW._Tornado.Request_Data
 
 import  urlparse
 
@@ -46,8 +47,6 @@ class Login (GTW.NAV.Page) :
     """The login handling page in the navigation"""
 
     hidden         = False
-    username_field = "username"
-    password_field = "password"
 
     def _view (self, handler) :
         try :
@@ -56,22 +55,17 @@ class Login (GTW.NAV.Page) :
             ### Authentication was successful, let's set the username as a
             ### cookie
             handler.set_secure_cookie \
-                ("username", handler.get_argument (self.username_field))
+                ("username", handler.get_argument ("username"))
             raise
     # end def _view
 
     def rendered (self, context) :
         request = context ["request"]
-        lf      = GTW.Form.Auth.Login \
-            ( self.account_manager
-            , self.name
-            , self.username_field
-            , self.password_field
-            )
+        lf      = GTW.Form.Auth.Login (self.account_manager, self.name)
         context ["login_form"] = lf
         if request.method == "POST" :
-            if not lf (request.arguments) :
-                next      = request.arguments.get ("next") [0]
+            if not lf (GTW.Tornado.Request_Data (request.arguments)) :
+                next = request.arguments.get ("next") [0]
                 raise self.top.HTTP.Redirect_302 (next)
         return self.__super.rendered (context)
     # end def rendered
