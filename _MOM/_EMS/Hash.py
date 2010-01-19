@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -63,6 +63,7 @@
 #    17-Dec-2009 (CT) `changes` and `async_changes` added
 #    21-Dec-2009 (CT) s/load_scope/load_root/;
 #                     `commit` factored to `EMS.Manager`
+#    19-Jan-2010 (CT) `rollback` added
 #    ««revision-date»»···
 #--
 
@@ -192,9 +193,8 @@ class Manager (MOM.EMS._Manager_) :
     def load_root (self) :
         scope        = self.scope
         info         = self.session.info
-        self.__cid   = info.max_cid
+        self.__cid   = scope.db_cid = info.max_cid
         self.__pid   = info.max_pid
-        scope.db_cid = info.max_cid
         scope.guid   = info.guid
         scope._setup_root       (scope.app_type, info.root_epk)
         scope.add_init_callback (self._load_objects)
@@ -233,6 +233,21 @@ class Manager (MOM.EMS._Manager_) :
         renamer     ()
         self.add    (entity, entity.pid)
     # end def rename
+
+    def rollback (self) :
+        if self.uncommitted_changes :
+            scope    = self.scope
+            info     = self.session.info
+            _changes = self._changes
+            for c in reversed (self.uncommitted_changes) :
+                if c.undoable :
+                    c.undo (scope)
+            for cid in range (info.max_cid + 1, self.__cid + 1) :
+                _changes.pop (cid, None)
+            self.__cid = info.max_cid
+            self.__pid = info.max_pid
+            self.__super.rollback ()
+    # end def rollback
 
     def r_query (self, Type, rkw, * filters, ** kw) :
         r_map   = self._r_map

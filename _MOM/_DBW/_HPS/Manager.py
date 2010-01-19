@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Dec-2009 (CT) Creation
 #    21-Dec-2009 (CT) Creation continued
+#    19-Jan-2010 (CT) `rollback` added
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,10 @@ class Manager (MOM.DBW._Manager_) :
         if self.store :
             self.store.load_objects ()
     # end def load_objects
+
+    def rollback (self) :
+        pass ### Nothing needs to be done here
+    # end def rollback
 
 # end class Manager
 

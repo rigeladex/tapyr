@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -45,6 +45,7 @@
 #    21-Dec-2009 (CT) `relevant_roots` factored to `MOM.Scope`
 #    21-Dec-2009 (CT) `commit` changed to update `scope.db_cid`
 #    21-Dec-2009 (CT) `close` added
+#    19-Jan-2010 (CT) `rollback` added
 #    ««revision-date»»···
 #--
 
@@ -183,6 +184,11 @@ class _Manager_ (TFL.Meta.Object) :
         """Redefine to store `guid` and `root`-info of scope in database."""
         pass
     # end def register_scope
+
+    def rollback (self) :
+        self.session.rollback ()
+        self.uncommitted_changes = []
+    # end def rollback
 
     def _query_multi_root (self, Type) :
         raise NotImplementedError \

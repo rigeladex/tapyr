@@ -55,6 +55,7 @@
 #    14-Jan-2010 (CT) `_setup_pkg_ns` changed to handle `_Outer` and
 #                     `PNS_Aliases`
 #    16-Jan-2010 (CT) `_outer_pgk_ns` factored
+#    19-Jan-2010 (CT) `rollback` added
 #    ««revision-date»»···
 #--
 
@@ -450,6 +451,11 @@ class Scope (TFL.Meta.Object) :
     def rename (self, entity, new_epk, renamer) :
         self.ems.rename (entity, new_epk, renamer)
     # end def rename
+
+    def rollback (self) :
+        self.ems.rollback  ()
+        self.make_snapshot ()
+    # end def rollback
 
     def start_change_recorder (self) :
         if not self.historian._rec_stack :

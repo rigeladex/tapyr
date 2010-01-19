@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Dec-2009 (CT) Creation
 #    21-Dec-2009 (CT) Creation continued
+#    19-Jan-2010 (CT) `_save_context` changed to save `max_pid`, too
 #    ««revision-date»»···
 #--
 
@@ -143,8 +144,9 @@ class Store (TFL.Meta.Object) :
             cargo   = [c.as_pickle_cargo (transitive = True) for c in ucc]
             info    = self.info
             max_cid = scope.ems.max_cid
+            max_pid = scope.ems.max_pid
             x_name  = self.x_uri.name
-            with self._save_context (x_name, scope, info, max_cid) :
+            with self._save_context (x_name, scope, info, max_cid, max_pid) :
                 c_name = TFL.Filename ("%d.commit" % max_cid, self.x_uri)
                 with open (c_name.name, "wb") as file :
                     pickle.dump (cargo, file, pickle.HIGHEST_PROTOCOL)
@@ -180,8 +182,10 @@ class Store (TFL.Meta.Object) :
         info    = self.info
         stores  = info.stores = []
         x_name  = self.x_uri.name
+        max_cid = scope.ems.max_cid
+        max_pid = scope.ems.max_pid
         scope.ems.commit ()
-        with self._save_context (x_name, scope, info, scope.ems.max_cid) :
+        with self._save_context (x_name, scope, info, max_cid, max_pid) :
             sk = TFL.Sorted_By ("pid")
             for rr in scope.relevant_roots :
                 tn     = rr.type_name
@@ -262,13 +266,14 @@ class Store (TFL.Meta.Object) :
     # end def _load_store
 
     @TFL.Contextmanager
-    def _save_context (self, x_name, scope, info, max_cid) :
+    def _save_context (self, x_name, scope, info, max_cid, max_pid) :
         Version = scope.app_type.ANS.Version
         with TFL.lock_file (x_name) :
             self._check_sync (info)
             yield
             info.last_changer = self._creator (scope, Version)
             info.max_cid      = max_cid
+            info.max_pid      = max_pid
             with open (self.info_uri.name, "wb") as file :
                 pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def _save_context
