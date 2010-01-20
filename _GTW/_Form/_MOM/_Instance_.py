@@ -38,7 +38,7 @@ import _TFL._Meta.Object
 
 from   _GTW                                 import GTW
 import _GTW._Form._Form_
-import _GTW._Form._MOM
+import _GTW._Form._MOM.Field_Group_Description
 
 MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
 
@@ -70,6 +70,9 @@ class M_Instance (TFL.Meta.Object.__class__) :
         if "suffix" in kw :
             suffix    = "__".join ((kw.pop ("suffix"), suffix))
         added_fields  = set ()
+        if not field_group_descriptions :
+            field_group_descriptions = \
+                (GTW.Form.MOM.Field_Group_Description (), )
         for fgd in field_group_descriptions :
             field_groups.extend (fgd (et_man, added_fields))
         return cls.__m_super.New \
