@@ -37,7 +37,7 @@ from   _TFL                                 import TFL
 import _TFL._Meta.Object
 
 from   _GTW                                 import GTW
-import _GTW._Form._Field_
+import _GTW._Form._Form_
 import _GTW._Form._MOM
 
 MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
