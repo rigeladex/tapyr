@@ -92,7 +92,7 @@ class Id_Entity (TFL.Meta.Object) :
 
     @property
     def ems (self) :
-        self.home_scope.ems
+        return self.home_scope.ems
     # end def ems
 
     def exists (self, * epk, ** kw) :
