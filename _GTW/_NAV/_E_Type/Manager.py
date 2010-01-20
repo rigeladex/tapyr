@@ -37,6 +37,8 @@ import _GTW._NAV.Base
 import _GTW._NAV._E_Type.Instance
 
 import _TFL.Filter
+
+from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import filtered_join
 

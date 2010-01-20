@@ -27,12 +27,14 @@
 #
 # Revision Dates
 #    19-Jan-2010 (CT) Creation
+#    20-Jan-2010 (CT) `FO` factored to GTW
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
+import _GTW.FO
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type
 
@@ -43,21 +45,6 @@ from   _TFL.I18N                import _, _T, _Tn
 
 class Instance (GTW.NAV.Page) :
     """Navigation page modelling a single instance of a E_Type."""
-
-    class FO (TFL.Meta.Object) :
-
-        def __init__ (self, obj, enc) :
-            self.__obj = obj
-            self.__enc = enc
-        # end def __init__
-
-        def __getattr__ (self, name) :
-            result = unicode (obj.raw_attr (name), self.__enc, "replace")
-            setattr (self, name, result)
-            return result
-        # end def __getattr__
-
-    # end class FO
 
     def __init__ (self, obj, manager) :
         name = getattr (obj, "name", str (obj)) ### XXX ???
@@ -106,7 +93,7 @@ class Instance (GTW.NAV.Page) :
     # end def href
 
     def rendered (self, context = None, nav_page = None) :
-        with self.LET (FO = self.FO (self.obj, self.top.encoding)) :
+        with self.LET (FO = GTW.FO (self.obj, self.top.encoding)) :
             return self.__super.rendered (context, nav_page)
     # end def rendered
 

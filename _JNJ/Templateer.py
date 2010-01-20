@@ -50,8 +50,9 @@ class Templateer (TFL.Meta.Object) :
           , 500       : "html/500.jnj"
           , 500       : "html/500.jnj"
           }
-        , default     = "html/error.jnj"
-        , site_admin  = "html/site_admin.jnj"
+        , default       = "html/error.jnj"
+        , e_type_admin  = "html/e_type_admin.jnj"
+        , site_admin    = "html/site_admin.jnj"
         )
 
     def __init__ (self, * args, ** kw) :
