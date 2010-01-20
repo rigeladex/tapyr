@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -47,7 +47,7 @@ def _sa_bool (self, kind, ** kw) :
     return schema.Column (self._sa_col_name, types.Boolean, ** kw)
 # end def _sa_bool
 
-@TFL.Add_To_Class ("_sa_column", Attr.A_String)
+@TFL.Add_To_Class ("_sa_column", Attr._A_String_)
 def _sa_string (self, kind, ** kw) :
     return schema.Column \
         (self._sa_col_name, types.String (self.max_length), ** kw)
