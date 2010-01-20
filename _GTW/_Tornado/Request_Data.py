@@ -29,7 +29,7 @@
 #    19-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) Check's added to make sure te values in the original
 #                     data dict contains exactly one element
-#    20-Jan-2010 (CT) `__getitem__` fixed
+#    20-Jan-2010 (MG) Support dict's which don't have lists as value's
 #    ««revision-date»»···
 #--
 
@@ -48,15 +48,19 @@ class Request_Data (TFL.Meta.Object) :
     # end def __init__
 
     def __getitem__ (self, key) :
-        result = self.data [key]
-        assert len (result) == 1
-        return result [0]
+        value = self.data [key]
+        if isinstance (value, list) :
+            assert len (key) == 1
+            return value [0]
+        return value
     # end def __getitem__
 
     def get (self, key, default = None) :
-        result = self.data.get (key, (default, ))
-        assert len (result) == 1
-        return result [0]
+        value = self.data.get (key, (default, ))
+        if isinstance (value, list) :
+            assert len (value) == 1, value
+            return value [0]
+        return value
     # end def get
 
     def __contains__ (self, item) :

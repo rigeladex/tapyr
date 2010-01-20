@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
+#    20-Jan-2010 (MG) `get_id` allow string as parameter as well
 #    ««revision-date»»···
 #--
 
@@ -59,6 +60,8 @@ class _Form_ (TFL.Meta.Object) :
     # end def get_errors
 
     def get_id (self, field) :
+        if isinstance (field, basestring) :
+            field = self.fields [field]
         if self.prefix :
             return "-".join ((self.prefix, field.html_name))
         return field.html_name

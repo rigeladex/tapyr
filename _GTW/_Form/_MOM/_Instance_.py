@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
+#    20-Jan-2010 (MG) Error handling added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,8 @@ import _TFL._Meta.Object
 from   _GTW                                 import GTW
 import _GTW._Form._Form_
 import _GTW._Form._MOM.Field_Group_Description
+
+import _GTW._Tornado.Request_Data
 
 MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
 
@@ -117,22 +120,22 @@ class _Instance_ (GTW.Form._Form_) :
         if not isinstance (request_data, GTW.Tornado.Request_Data) :
             request_data  = GTW.Tornado.Request_Data (request_data)
         self.request_data = request_data
-        errors            = []
         roles             = []
         for role_name, et_man in self.Roles :
             if self.parent and et_man is self.parent.et_man :
                 instance  = self.parent.instance
             else :
-                instance  = self._create_or_update (et_man, None, errors)
+                instance  = self._create_or_update (et_man, None)
             roles.append (instance and instance.epk_raw)
-        self.instance     = self._create_or_update (self.et_man, roles, errors)
+        if not self.errors and not self.field_errors :
+            self.instance = self._create_or_update (self.et_man, roles)
         error_count       = 0 ### XXX
         for ig in self.inline_groups :
             error_count  += ig (request_data)
         return error_count
     # end def __call__
 
-    def _create_or_update (self, et_man, roles, errors) :
+    def _create_or_update (self, et_man, roles) :
         roles         = roles or ()
         has_substance = len (roles)
         raw_attrs     = {}
@@ -143,6 +146,7 @@ class _Instance_ (GTW.Form._Form_) :
             has_substance     += bool \
                 (self.get_id (f) in self.request_data and value)
         if has_substance :
+            errors = []
             ### at least on attribute is filled out
             try :
                 raw_attrs ["on_error"] = errors.append
@@ -155,8 +159,26 @@ class _Instance_ (GTW.Form._Form_) :
                     instance = et_man (raw = True, * roles, ** raw_attrs)
             except Exception, exc:
                 errors.append (exc)
+            self._handle_errors (errors)
         return instance
     # end def _create_or_update
+
+    def _handle_errors (self, error_list) :
+        for error_or_list in error_list :
+            error_list = (error_or_list, )
+            if isinstance (error_or_list, MOM.Error.Invariant_Errors) :
+                error_list = error_or_list.args [0]
+            for error in error_list :
+                attributes = list (getattr (error, "attributes", ()))
+                attr       = getattr       (error, "attribute", None)
+                if attr :
+                    attributes.append (attr)
+                for attr in attributes :
+                    name = self.fields [attr].html_name
+                    self.field_errors [name].append (error)
+                if not attributes :
+                    self.errors.append (error)
+    # end def _handle_errors
 
 # end class _Instance_
 

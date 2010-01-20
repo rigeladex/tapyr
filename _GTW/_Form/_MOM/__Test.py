@@ -53,9 +53,10 @@ loader      = DictLoader (dict (base = """\
 {{ GTW.call_macro (form.widget, form) }}
 """))
 
-ct       = scope.PAP.Person ("Tanzer", "Christian")
-ct_a     = scope.PAP.Address ("Glasauergasse 32", "Wien", "1030", "Austria")
-ct_h_a   = scope.PAP.Person_has_Address (ct, ct_a)
+if 0 :
+    ct       = scope.PAP.Person ("Tanzer", "Christian")
+    ct_a     = scope.PAP.Address ("Glasauergasse 32", "Wien", "1030", "Austria")
+    ct_h_a   = scope.PAP.Person_has_Address (ct, ct_a)
 form_cls = GTW.Form.MOM.Instance.New \
     ( scope.PAP.Person
     , GTW.Form.MOM.Field_Group_Description ()
@@ -65,25 +66,48 @@ form_cls = GTW.Form.MOM.Instance.New \
               ( GTW.Form.MOM.Field_Prefixer
                   ("address", "street", "zip", "city", "country", "desc")
               )
-        , min_empty = 1
+        , min_empty    = 1
+        , min_required = 1
         )
     )
 
 env = HTML (loader = loader)
 
+def dump_errors (form) :
+    for e in form.errors, form.field_errors.values () :
+        if e :
+            print e
+    if form.inline_groups :
+        for ig in form.inline_groups :
+            if ig.errors :
+                print "Inline-Errors"
+                print ig.errors
+                for ifo in ig.inline_forms :
+                    dump_errors (ifo)
+# end def dump_errors
+
 #print env.get_template ("base").render (form = form_cls ("/None"))
-print env.get_template ("base").render (form = form_cls ("/CT", ct))
-if 0 :
+#print env.get_template ("base").render (form = form_cls ("/CT", ct))
+if 1 :
     form = form_cls ("/Foo")
-    form ( { "first_name"                            : "Martin"
-           , "last_name"                             : "Glueck"
-           , "Person_has_Address-M0-address.street"  : "Langstrasse 4/1"
-           , "Person_has_Address-M0-address.zip"     : "2244"
-           , "Person_has_Address-M0-address.city"    : "Spannberg"
-           , "Person_has_Address-M0-address.country" : "Austria"
-           }
-         )
-print scope.PAP.Person            .query ().all ()
-print scope.PAP.Address           .query ().all ()
-print scope.PAP.Person_has_Address.query ().all ()
+    #import pdb; pdb.set_trace ()
+    ec = form ( { "first_name"                            : "Martin"
+                , "last_name"                             : "Glueck"
+                , "Person_has_Address-M0-address.street"  : ""
+                , "Person_has_Address-M0-address.zip"     : ""
+                , "Person_has_Address-M0-address.city"    : ""
+                , "Person_has_Address-M0-address.country" : ""
+                , "Person_has_Address-M0-address.desc"    : "Description"
+                }
+              )
+
+    print ec, scope.PAP.Person.query ().count (),
+    print scope.PAP.Address.query ().count (),
+    print scope.PAP.Person_has_Address.query ().count ()
+    if ec :
+        #scope.rollback ()
+        print scope.PAP.Person.query ().count (),
+        print scope.PAP.Address.query ().count (),
+        print scope.PAP.Person_has_Address.query ().count ()
+    dump_errors (form)
 ### __END__ GTW.Form.MOM.__Test

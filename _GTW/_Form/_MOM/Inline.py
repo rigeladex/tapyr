@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
+#    20-Jan-2010 (MG) Error handling added (includig checking of
+#                     `min_required` and `max_count`)
 #    ««revision-date»»···
 #--
 
@@ -35,6 +37,7 @@ import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
 from   _GTW                                 import GTW
+import _GTW._Form.Field_Error
 import _GTW._Form._MOM
 
 class Inline (TFL.Meta.Object) :
@@ -44,12 +47,17 @@ class Inline (TFL.Meta.Object) :
         self.inline_description = inline_description
         self.inline_form_cls    = inline_form_cls
         self.parent             = parent
+        self.errors             = GTW.Form.Error_List ()
     # end def __init__
 
     def clone (self, parent) :
         return self.__class__ \
             (self.inline_description, self.inline_form_cls, parent)
     # end def clone
+
+    def get_errors (self) :
+        return self.errors
+    # end def get_errors
 
     @TFL.Meta.Once_Property
     def inline_forms (self) :
@@ -88,7 +96,25 @@ class Inline (TFL.Meta.Object) :
     # end def inline_forms
 
     def __call__ (self, request_data) :
-        return sum (ifo (request_data) for ifo in self.inline_forms)
+        error_count   = 0
+        correct_forms = 0
+        for ifo in self.inline_forms :
+            ifo_errors   = ifo (request_data)
+            error_count += ifo_errors
+            if not ifo_errors and ifo.instance :
+                correct_forms += 1
+        if correct_forms < self.min_required :
+            self.errors.append \
+                (u"At least %(min)d inline instances are required"
+                  "(%(current)d)"
+                % dict (current = correct_forms, min = self.min_required)
+                )
+        if correct_forms > self.max_count :
+            self.errors.append \
+                ( u"More that %(max)d instance specified (%(current)d)"
+                % dict (current = correct_forms, min = self.max_count)
+                )
+        return error_count + len (self.errors)
     # end def __call__
 
     def __getattr__ (self, name) :
