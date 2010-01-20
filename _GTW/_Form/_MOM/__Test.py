@@ -40,13 +40,34 @@ from   _JNJ.Environment       import HTML
 from    jinja2.loaders        import DictLoader
 
 from   _MOM                      import MOM
+from   _MOM.Product_Version      import Product_Version, IV_Number
+
+GTW.Version = Product_Version \
+    ( productid           = u"GTW Test"
+    , productnick         = u"GTW"
+    , productdesc         = u"Example web application "
+    , date                = "20-Jan-2010"
+    , major               = 0
+    , minor               = 5
+    , patchlevel          = 42
+    , author              = u"Christian Tanzer, Martin Glück"
+    , copyright_start     = 2010
+    , db_version          = IV_Number
+        ( "db_version"
+        , ("Hello World", )
+        , ("Hello World", )
+        , program_version = 1
+        , comp_min        = 0
+        , db_extension    = ".how"
+        )
+    )
 import _GTW._OMP._PAP.import_PAP
 
 apt = MOM.App_Type \
     (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP)
     ).Derived (EMS, DBW)
 
-scope        = MOM.Scope.new (apt, None)
+scope        = MOM.Scope.new (apt, "test")
 
 loader      = DictLoader (dict (base = """\
 {% import "html/form.jnj" as Form %}
@@ -105,7 +126,7 @@ if 1 :
     print scope.PAP.Address.query ().count (),
     print scope.PAP.Person_has_Address.query ().count ()
     if ec :
-        #scope.rollback ()
+        scope.rollback ()
         print scope.PAP.Person.query ().count (),
         print scope.PAP.Address.query ().count (),
         print scope.PAP.Person_has_Address.query ().count ()
