@@ -52,6 +52,7 @@
 #    14-Dec-2009 (CT) `__call__` changed to call `scope.add`
 #    22-Dec-2009 (CT) `Link2_Ordered` removed
 #    18-Jan-2010 (CT) s/_check_multiplicity/_checked_roles/
+#    20-Jan-2010 (CT) `pid_query`, `pid_as_lid`, and `pid_from_lid` added
 #    ««revision-date»»···
 #--
 
@@ -80,26 +81,44 @@ class Id_Entity (TFL.Meta.Object) :
     @property
     def count (self) :
         """Return the strict count of objects or links."""
-        return self.home_scope.ems.count (self._etype, strict = True)
+        return self.ems.count (self._etype, strict = True)
     # end def count
 
     @property
     def count_transitive (self) :
         """Return the transitive count of objects or links."""
-        return self.home_scope.ems.count (self._etype, strict = False)
+        return self.ems.count (self._etype, strict = False)
     # end def count_transitive
+
+    @property
+    def ems (self) :
+        self.home_scope.ems
+    # end def ems
 
     def exists (self, * epk, ** kw) :
         if kw :
             raise TypeError (kw)
-        return self.home_scope.ems.exists (self._etype, epk)
+        return self.ems.exists (self._etype, epk)
     # end def exists
 
     def instance (self, * epk, ** kw) :
         if kw :
             raise TypeError (kw)
-        return self.home_scope.ems.instance (self._etype, epk)
+        return self.ems.instance (self._etype, epk)
     # end def instance
+
+    def pid_as_lid (self, obj) :
+        return self.ems.pid_as_lid (obj, self._etype)
+    # end def pid_as_lid
+
+    def pid_from_lid (self, lid) :
+        return self.ems.pid_from_lid (lid, self._etype)
+    # end def pid_from_lid
+
+    def pid_query (self, pid) :
+        """Return entity with persistent id `pid`."""
+        return self.ems.pid_query (pid, self._etype)
+    # end def pid_query
 
     def query (self, * filters, ** kw) :
         """Return all entities matching the conditions in `filters` and `kw`.
@@ -117,7 +136,7 @@ class Id_Entity (TFL.Meta.Object) :
         """
         sort_key = kw.pop ("sort_key", None)
         Type     = self._etype
-        result   = self.home_scope.ems.query (Type, * filters, ** kw)
+        result   = self.ems.query (Type, * filters, ** kw)
         if sort_key is not None :
             result = result.order_by (sort_key)
         return result
@@ -242,7 +261,7 @@ class Link (Id_Entity) :
                         rkw [role.name] = obj
                     except MOM.Error.No_Such_Object :
                         return []
-        ems = self.home_scope.ems
+        ems = self.ems
         if rkw :
             result = ems.r_query (self._etype, rkw, * filters, ** kw)
         else :
@@ -268,7 +287,7 @@ class Link (Id_Entity) :
            (considers `obj` for each of the roles).
         """
         queries  = []
-        r_query  = self.home_scope.ems.r_query
+        r_query  = self.ems.r_query
         sort_key = kw.pop ("sort_key", False)
         strict   = kw.pop ("strict", False)
         Type     = self._etype
@@ -277,7 +296,7 @@ class Link (Id_Entity) :
                 pk = self._cooked_role (r, obj)
                 queries.append \
                     (r_query (r.assoc, {r.name : pk}, strict = strict))
-        result = self.home_scope.ems.Q_Result_Composite (queries)
+        result = self.ems.Q_Result_Composite (queries)
         if sort_key is not None :
             result = result.order_by (Type.sort_key (sort_key))
         return result
@@ -293,7 +312,7 @@ class Link (Id_Entity) :
             raise MOM.Error.Duplicate_Link \
                 (etype, self.__super.instance (* epk))
         errors  = []
-        r_query = self.home_scope.ems.r_query
+        r_query = self.ems.r_query
         for r, pk in zip (etype.Roles, epk) :
             if r.max_links :
                 links = r_query (r.assoc, {r.name : pk}, strict = True)

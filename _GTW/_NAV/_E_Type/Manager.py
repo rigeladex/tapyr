@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Jan-2010 (CT) Creation (ported from DJO.NAV.Model.Manager)
+#    20-Jan-2010 (CT) `_Mgr_Base_` factored
 #    ««revision-date»»···
 #--
 
@@ -34,66 +35,34 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._NAV.Base
+import _GTW._NAV._E_Type._Mgr_Base_
 import _GTW._NAV._E_Type.Instance
-
-import _TFL.Filter
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.predicate           import filtered_join
 
-Q = TFL.Attr_Query ()
-
-class Manager (GTW.NAV.Dir) :
+class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     """Navigation directory listing the instances of one E_Type."""
 
     Page            = GTW.NAV.E_Type.Instance
 
     admin_args      = {}
-    sort_key        = None
 
-    _admin          = None
-
-    def __init__ (self, src_dir, parent, ** kw) :
-        ETM    = kw.pop ("ETM")
-        E_Type = ETM._etype
-        etn    = E_Type.type_name
-        kn     = unicode (kw.get ("kind_name"))
-        top    = self.top
-        desc   = kw.pop ("desc", E_Type.__doc__)
-        name   = filtered_join \
-            (u"-", (unicode (kw.pop ("name", E_Type.ui_name)), kn))
-        title  = kw.pop  ("title", filtered_join ("-", (_Tn (name), kn)))
+    def __init__ (self, ETM, ** kw) :
+        self.__super.__init__ (ETM = ETM, ** kw)
+        etn = self.E_Type.type_name
+        kn  = self.kind_name
+        top = self.top
         assert (etn, kn) not in top.E_Types
         top.E_Types [etn, kn] = self
-        self.__super.__init__ \
-            ( src_dir, parent
-            , ETM          = ETM
-            , E_Type       = E_Type
-            , desc         = desc
-            , name         = name
-            , title        = title
-            , ** kw
-            )
-        self._old_count = -1
     # end def __init__
 
-    @property
+    @Once_Property
     def admin (self) :
-        if self._admin is None :
-            Admin = self.top.Admin
-            if Admin :
-                self._admin = Admin._get_child (self.name)
-        return self._admin
+        Admin = self.top.Admin
+        if Admin :
+            return Admin._get_child (self.name)
     # end def admin
-
-    @property
-    def count (self) :
-        if self.query_filters :
-            return self.query ().count_transitive ()
-        else :
-            return self.ETM.count_transitive ()
-    # end def count
 
     @property
     def href_create (self) :
@@ -101,17 +70,6 @@ class Manager (GTW.NAV.Dir) :
         if admin :
             return admin.href_create ()
     # end def href_change
-
-    @Once_Property
-    def kind_filter (self) :
-        if self.kind_name :
-            return Q.kind == self.E_Type.kind.from_string (self.kind_name)
-    # end def kind_filter
-
-    def query (self) :
-        return self.ETM.query_s \
-            (* self.query_filters, sort_key = self.sort_key)
-    # end def query
 
     @Once_Property
     def query_filters (self) :
@@ -122,22 +80,6 @@ class Manager (GTW.NAV.Dir) :
             result.append (self.disp_filter)
         return tuple (result)
     # end def query_filters
-
-    def _get_entries (self) :
-        count = self.count
-        if self._old_count != count :
-            ### XXX Doesn't catch changes to fields of objects
-            self._objects   = self._get_objects ()
-            self._old_count = count
-        return self._objects
-    # end def _get_entries
-
-    _entries = property (_get_entries, lambda s, v : True)
-
-    def _get_objects (self) :
-        T = self.Page
-        return [T (o, self) for o in self.query ()]
-    # end def _get_objects
 
 # end class Manager
 

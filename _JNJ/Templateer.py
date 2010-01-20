@@ -52,6 +52,7 @@ class Templateer (TFL.Meta.Object) :
           }
         , default       = "html/error.jnj"
         , e_type_admin  = "html/e_type_admin.jnj"
+        , e_type_change = "html/e_type_change.jnj"
         , site_admin    = "html/site_admin.jnj"
         )
 

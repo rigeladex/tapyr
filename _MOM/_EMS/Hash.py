@@ -64,6 +64,7 @@
 #    21-Dec-2009 (CT) s/load_scope/load_root/;
 #                     `commit` factored to `EMS.Manager`
 #    19-Jan-2010 (CT) `rollback` added
+#    20-Jan-2010 (CT) `pid_as_lid` and `pid_from_lid` added
 #    ««revision-date»»···
 #--
 
@@ -199,6 +200,14 @@ class Manager (MOM.EMS._Manager_) :
         scope._setup_root       (scope.app_type, info.root_epk)
         scope.add_init_callback (self._load_objects)
     # end def load_root
+
+    def pid_as_lid (self, obj, Type) :
+        return str (obj.pid)
+    # end def pid_as_lid
+
+    def pid_from_lid (self, lid, Type) :
+        return int (lid)
+    # end def pid_from_lid
 
     def register_change (self, change) :
         self.__cid += 1

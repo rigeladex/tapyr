@@ -794,7 +794,7 @@ class Root (_Dir_) :
 
     @classmethod
     def universal_view (cls, handler) :
-        href = handler.request.uri [1:]
+        href = handler.request.path [1:]
         user = handler.current_user
         page = cls.page_from_href (href)
         HTTP = cls.top.HTTP

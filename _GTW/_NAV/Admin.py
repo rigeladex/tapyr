@@ -193,11 +193,11 @@ class Site_Admin (GTW.NAV.Dir) :
 
     def __init__ (self, src_dir, parent, ** kw) :
         self._template = kw.pop ("template", None)
-        etypes = kw.pop ("etypes", [])
+        etypes         = kw.pop ("etypes", [])
+        self.top.Admin = self
         self.__super.__init__ (src_dir, parent, ** kw)
         self.add_entries (self._etype_man_entries ())
         self.add_entries (etypes)
-        self.top.Admin = self
     # end def __init__
 
     @Once_Property
@@ -219,7 +219,6 @@ class Site_Admin (GTW.NAV.Dir) :
                 , title     = title
                 , desc      = desc
                 , ETM       = man.ETM
-                , E_Type    = man.E_Type
                 , kind_name = man.kind_name
                 , Type      = Type
                 , ** m_kw

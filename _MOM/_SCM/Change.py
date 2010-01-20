@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -41,6 +41,7 @@
 #    17-Dec-2009 (CT) `Destroy.children` redefined to sort `history`
 #    17-Dec-2009 (CT) `__iter__` added
 #    18-Dec-2009 (CT) `as_pickle_cargo` and `from_pickle_cargo` factored
+#    20-Jan-2010 (CT) Use `pid_query` of `E_Type_Manager` instead that of `EMS`
 #    ««revision-date»»···
 #--
 
@@ -185,7 +186,7 @@ class _Entity_ (Undoable) :
 
     def entity (self, scope) :
         etm = scope [self.type_name]
-        return scope.ems.pid_query (self.pid, etm._etype)
+        return etm.pid_query (self.pid)
     # end def entity
 
     def _create (self, scope, attr) :
