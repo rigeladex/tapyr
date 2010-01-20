@@ -110,6 +110,9 @@ class _Instance_ (GTW.Form._Form_) :
     # end def _get_raw
 
     def __call__ (self, request_data) :
+        ### XXX does not feel to be the correct place to make this conversion
+        if not isinstance (request_data, GTW.Tornado.Request_Data) :
+            request_data  = GTW.Tornado.Request_Data (request_data)
         self.request_data = request_data
         errors            = []
         roles             = []

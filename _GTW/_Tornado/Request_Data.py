@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
+#    20-Jan-2010 (MG) Check's added to make sure te values in the original
+#                     data dict contains exactly one element
 #    ««revision-date»»···
 #--
 from   _TFL              import TFL
@@ -44,11 +46,15 @@ class Request_Data (TFL.Meta.Object) :
     # end def __init__
 
     def __getitem__ (self, key) :
-        return self.data [key] [0]
+        value = self.data [key]
+        assert len (key) == 1
+        return  key [0]
     # end def __getitem__
 
     def get (self, key, default = None) :
-        return self.data.get (key, (default, )) [0]
+        value = self.data.get (key, (default, ))
+        assert len (value) == 1
+        return value [0]
     # end def get
 
     def __contains__ (self, item) :
