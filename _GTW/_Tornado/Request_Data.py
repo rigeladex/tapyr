@@ -23,14 +23,16 @@
 #    GTW.Tornado.Request_Data
 #
 # Purpose
-#    «text»···
+#    Wrapper around Tornado's request_data to enforce a single value per key
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) Check's added to make sure te values in the original
 #                     data dict contains exactly one element
+#    20-Jan-2010 (CT) `__getitem__` fixed
 #    ««revision-date»»···
 #--
+
 from   _TFL              import TFL
 import _TFL._Meta.Object
 
@@ -46,15 +48,15 @@ class Request_Data (TFL.Meta.Object) :
     # end def __init__
 
     def __getitem__ (self, key) :
-        value = self.data [key]
-        assert len (key) == 1
-        return  key [0]
+        result = self.data [key]
+        assert len (result) == 1
+        return result [0]
     # end def __getitem__
 
     def get (self, key, default = None) :
-        value = self.data.get (key, (default, ))
-        assert len (value) == 1
-        return value [0]
+        result = self.data.get (key, (default, ))
+        assert len (result) == 1
+        return result [0]
     # end def get
 
     def __contains__ (self, item) :
@@ -66,5 +68,3 @@ class Request_Data (TFL.Meta.Object) :
 if __name__ != "__main__" :
     GTW.Tornado._Export ("*")
 ### __END__ GTW.Tornado.Request_Data
-
-
