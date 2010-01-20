@@ -265,6 +265,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
                 setattr (self, k, v)
             except AttributeError, exc :
                 print self.href or "Navigation.Root", k, v, "\n   ", exc
+        if self.implicit :
+            self.hidden = True
     # end def __init__
 
     @Once_Property
@@ -514,10 +516,10 @@ class Alias (Page) :
         return (not self.target) or self.target.login_required
     # end def login_required
 
-    def rendered (self, context = None, nav_page = None) :
+    def rendered (self, context = None, nav_page = None, template = None) :
         target = self.target
         if target :
-            return target.rendered (context, nav_page or self)
+            return target.rendered (context, nav_page or self, template)
     # end def rendered
 
     @property
@@ -669,14 +671,14 @@ class _Dir_ (_Site_Entity_) :
         return result
     # end def new_sub_dir
 
-    def rendered (self, context = None, nav_page = None) :
+    def rendered (self, context = None, nav_page = None, template = None) :
         try :
             page = first (self.own_links)
         except IndexError :
             if self.empty_template :
                 return self.__super.rendered (template = self.empty_template)
         else :
-            return page.rendered (context, nav_page)
+            return page.rendered (context, nav_page, template)
     # end def rendered
 
     def _get_child (self, child, * grandchildren) :

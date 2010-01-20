@@ -33,9 +33,12 @@
 from   _GTW                     import GTW
 from   _TFL                     import TFL
 
+import _GTW._Form._MOM.Instance
+
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type._Mgr_Base_
-import _GTW._Form._MOM.Instance
+
+import _GTW._Tornado.Request_Data
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -43,12 +46,188 @@ from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 
 from   itertools                import chain as ichain
-from   posixpath                import join as pjoin, normpath as pnorm
+from   posixpath                import join  as pjoin
 
 class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
     std_template    = "e_type_admin"
+
+    class Changer (GTW.NAV._Site_Entity_) :
+        """Model an admin page for creating or changing a specific instance
+           of a etype.
+        """
+
+        implicit     = True
+        Media        = None ### cancel inherited property defined
+        name         = "create"
+        lid          = None
+        std_template = "e_type_change"
+
+        def rendered (self, context, nav_page = None, template = None) :
+            ETM      = self.ETM
+            E_Type   = self.E_Type
+            HTTP     = self.top.HTTP
+            obj      = context ["instance"] = None
+            request  = context ["request"]
+            req_data = GTW.Tornado.Request_Data (request.arguments)
+            lid      = req_data.get ("lid") or self.lid
+            if lid :
+                pid  = ETM.pid_from_lid (lid)
+                try :
+                    obj = ETM.pid_query (pid)
+                except LookupError :
+                    request.Error = \
+                        ( _T ("%s `%s` doesn't exist!")
+                        % (_T (E_Type.ui_name), lid)
+                        )
+                    raise HTTP.Error_404 (request.path, request.Error)
+            form = self.Form (self.abs_href, obj)
+            if request.method == "POST" :
+                err_count = form (req_data)
+                if err_count == 0 :
+                    man = self.parent.manager
+                    if man :
+                        man._old_cid = -1
+                    raise HTTP.Redirect_302 \
+                        ("%s#pk-%s" % (self.parent.abs_href, result.lid))
+            self.Media = self._get_media (head = getattr (form, "Media", None))
+            context.update (form = form)
+            return self.__super.rendered (context, nav_page, template)
+        # end def rendered
+
+    # end class Changer
+
+    class Completer (GTW.NAV._Site_Entity_) :
+        """Deliver completion information for a AJAX request."""
+
+        implicit     = True
+        Media        = None ### cancel inherited property defined
+
+        def rendered (self, context, nav_page = None) :
+            request = context ["request"]
+            result  = None
+            if request.method == "GET" :
+                ### XXX
+                bnfg = self.Form.unbound_form_map.get (self.field_name)
+                if bnfg is not None :
+                    relm = bnfg.related_model
+                    qfs  = tuple \
+                        (   DJO.QF (** {"%s__startswith" % str (k) : str (v)})
+                        for (k, v) in request.GET.iteritems ()
+                        )
+                    completions = context ["completions"] = \
+                        sorted (relm.objects.filter (* qfs).distinct ())
+                    result = self.__super.rendered \
+                        (context, nav_page, template = bnfg.completer.template)
+            if result is None :
+                raise self.top.HTTP.Error_404 (request.path)
+            return result
+        # end def rendered
+
+    # end class Completer
+
+    class Completed (GTW.NAV._Site_Entity_) :
+        """Deliver fields for a model instance selected by completion."""
+
+        implicit     = True
+        Media        = None ### cancel inherited property defined
+
+        def rendered (self, context, nav_page = None) :
+            import json ### part of python2.6+
+            request = context ["request"]
+            result  = None
+            if request.method == "GET" :
+                ### XXX
+                bnfg = self.Form.unbound_form_map.get (self.field_name)
+                id   = request.GET.get   ("id")
+                no   = request.GET.get   ("no")
+                if not any (x is None for x in (bnfg, id, no)) :
+                    relm = bnfg.related_model
+                    try :
+                        obj  = relm.objects.get (id = id)
+                    except relm.DoesNotExist, exc :
+                        request.Error = \
+                            ( "%s `%s` existiert nicht!"
+                            % (relm._meta.verbose_name, id)
+                            )
+                        raise self.top.HTTP.Error_404 \
+                            (request.path, request.Error)
+                    form_class = bnfg.form_class \
+                        ( request         = None
+                        , instance        = obj
+                        , prefix          = "%s-M%s" % (bnfg.Name, no)
+                        )
+                    ### this works well for the tornado backed
+                    return dict ((f.name, str (f)) for f in form_class)
+            if result is None :
+                raise self.top.HTTP.Error_404 (request.path)
+            return result
+        # end def rendered
+
+    # end class Completed
+
+    class Deleter (GTW.NAV._Site_Entity_) :
+        """Model an admin page for deleting a specific instance of a etype."""
+
+        implicit     = True
+        name         = "delete"
+        std_template = "e_type_delete"
+
+        def _view (self, request) :
+            HTTP = self.top.HTTP
+            lid  = self.lid
+            pid  = ETM.pid_from_lid (lid)
+            try :
+                obj = self.ETM.pid_query (pid)
+            except LookupError :
+                request.Error = \
+                    (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), lid))
+                raise HTTP.Error_404 (request.path, request.Error)
+            obj.destroy ()
+            ### XXX ??? Feedback ???
+            raise HTTP.Redirect_302 (self.parent.abs_href)
+        # end def _view
+
+    # end class Deleter
+
+    class Instance (TFL.Meta.Object) :
+        """Model a specific instance in the context of an admin page for one
+           E_Type, e.g., displayed as one line of a table.
+        """
+
+        def __init__ (self, admin, obj) :
+            self.admin = admin
+            self.obj   = obj
+            self.FO    = GTW.FO (obj, self.top.encoding)
+        # end def __init__
+
+        @Once_Property
+        def fields (self) :
+            admin = self.admin
+            FO    = self.FO
+            return [getattr (FO, f.name) for f in admin.list_display]
+        # end def fields
+
+        @Once_Property
+        def href_change (self) :
+            return self.admin.href_change (self.obj)
+        # end def href_change
+
+        @Once_Property
+        def href_delete (self) :
+            return self.admin.href_delete (self.obj)
+        # end def href
+
+        def __getattr__ (self, name) :
+            return getattr (self.obj, name)
+        # end def __getattr__
+
+        def __iter__ (self) :
+            return iter (self.fields)
+        # end def __iter__
+
+    # end class Instance
 
     def __init__ (self, ETM, ** kw) :
         if "Form" not in kw :
@@ -74,26 +253,32 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def href_create
 
     def href_change (self, obj) :
-        return pjoin (self.abs_href, "change", str (obj.id))
+        return pjoin (self.abs_href, "change", obj.lid)
     # end def href_change
 
     def href_delete (self, obj) :
-        return pjoin (self.abs_href, "delete", str (obj.id))
+        return pjoin (self.abs_href, "delete", obj.lid)
     # end def href_delete
+
+    def href_display (self, obj) :
+        man = self.manager
+        if man :
+            return man.href_display (obj)
+    # end def href_display
 
     @property
     def h_title (self) :
         return u"::".join ((self.name, self.parent.h_title))
     # end def h_title
 
-    def rendered (self, context = None, nav_page = None) :
+    def rendered (self, context = None, nav_page = None, template = None) :
         if context is None :
             context = dict (page = self)
         context.update \
             ( fields  = self.list_display
             , objects = self._entries
             )
-        return self.__super.rendered (context, nav_page)
+        return self.__super.rendered (context, nav_page, template)
     # end def rendered
 
     def _auto_list_display (self, E_Type, kw) :
@@ -101,7 +286,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def _auto_list_display
 
     _child_name_map = dict \
-        ( change    = (Changer,   "pid")
+        ( change    = (Changer,   "lid")
         , complete  = (Completer, "field_name")
         , completed = (Completed, "field_name")
         )
@@ -117,71 +302,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if child == "create" and not grandchildren :
             return self.Changer (parent = self)
         if child == "delete" and len (grandchildren) == 1 :
-            return self.Deleter (parent = self, pid = grandchildren [0])
+            return self.Deleter (parent = self, lid = grandchildren [0])
     # end def _get_child
 
 # end class Admin
-
-"""
-   1.    Erzeugen der E-Type spezifischen Form-Klasse:
-
-der einfachst Weg:
-form_cls =  GTW.Form.MOM.Instance.New (scope.PAP.Person)
-erzeugt 2 Field-Groups: eine mit den primary Attributen, die andere mit
-den User Attributen
-
-oder User-Controlled:
-
-form_cls =  GTW.Form.MOM.Instance.New \
-    ( scope.PAP.Person
-    , GTW.Form.MOM.Field_Group_Description ()
-    , GTW.Form.MOM.Inline_Description
-        ( "PAP.Person_has_Address", "person"
-        , GTW.Form.MOM.Field_Group_Description
-              ( GTW.Form.MOM.Field_Prefixer
-                  ("address", "street", "zip", "city", "country", "desc")
-              )
-        , min_empty = 1
-        )
-    )
-
-wobei es bei den "Fields" folgende Möglichkeiten gibt:
-
-GTW.Form.MOM.Wildcard_Field (* kinds, ** kw)
-
-    * kinds gibt an aus welchen kinds die Felder genommen werden sollen:
-      Default: primary, user_attr
-    * in den KW kann ein prefix sein
-
-Damit ist folgendes möglich (vorallen für die Inlines interessant):
-
-GTW.Form.MOM.Wildcard_Field ("primary") -> alle primary attribute
-GTW.Form.MOM.Wildcard_Field ("primary", prefix = "address") -> alle
-primary der Rolle "address"
-GTW.Form.MOM.Wildcard_Field (prefix = "address") -> alle primary und
-user_attr der Rolle "address"
-
-Wobei "alle" immer für "alle die nicht vorher explizit angeführt wurden"
-steht...
-
-und dann gibt es noch den Field_Prefixer... ich denke da ist klar was
-der macht (1. Parameter is der prefix, 2...n Namen der Felder...)
-
-Die Inline_Desciption kann folgende "Parameter":
-
-    * min_required (default 0)
-    * min_empty (default 1)
-    * max_count (default 100)
-    * widget (default "html/form.jnj, inline")
-
-Soweit zur Form Klassen-Erzeugung. Im rendered gehts dann so:
-
-form = form_cls (action_url, [instance]) (default für instance its None)
-
-und im POST Fall danach:
-error_count = form (request_data)
-
-"""
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")

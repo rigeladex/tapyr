@@ -29,6 +29,7 @@
 #    18-Dec-2009 (CT) Creation
 #    21-Dec-2009 (CT) Creation continued
 #    19-Jan-2010 (CT) `_save_context` changed to save `max_pid`, too
+#    20-Jan-2010 (CT) `Info.NEW` factored from `Store._create_info`
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,15 @@ TZF = TFL.module_copy \
     , stringEndArchive = "MM\006\005"
     )
 
+def _creator_info (scope, Version) :
+    return TFL.Record \
+        ( date          = datetime.datetime.now ()
+        , tool          = Version.productid
+        , tool_version  = Version.tuple
+        , user          = scope.user or TFL.Environment.username
+        )
+# end def _creator_info
+
 class Info (TFL.Record) :
     """Implement info object for Hash-Pickle-Store."""
 
@@ -85,6 +95,22 @@ class Info (TFL.Record) :
         for cid, c in self.commits :
             yield _ (c)
     # end def FILES
+
+    @classmethod
+    def NEW (cls, scope) :
+        Version = scope.app_type.ANS.Version
+        ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
+        result  = cls \
+            ( creator       = _creator_info (scope, Version)
+            , db_version    = Version.db_version.program_version
+            , guid          = scope.guid
+            , last_changer  = _creator_info (scope, Version)
+            , max_cid       = ems.max_cid
+            , max_pid       = ems.max_pid
+            , root_epk      = scope.root_epk
+            )
+        return result
+    # end def NEW
 
 # end class Info
 
@@ -210,32 +236,12 @@ class Store (TFL.Meta.Object) :
     # end def _check_sync
 
     def _create_info (self) :
-        uri     = self.info_uri.name
+        uri  = self.info_uri.name
         assert not sos.path.exists (uri)
-        scope   = self.scope
-        ems     = getattr (scope, "ems", TFL.Record (max_cid = 0, max_pid = 0))
-        Version = self.Version
-        info    = self.info = Info \
-            ( creator       = self._creator (scope, Version)
-            , db_version    = Version.db_version.program_version
-            , guid          = scope.guid
-            , last_changer  = self._creator (scope, Version)
-            , max_cid       = ems.max_cid
-            , max_pid       = ems.max_pid
-            , root_epk      = scope.root_epk
-            )
+        info = self.info = Info.NEW (self.scope)
         with open (uri, "wb") as file :
             pickle.dump (info, file, pickle.HIGHEST_PROTOCOL)
     # end def _create_info
-
-    def _creator (self, scope, Version) :
-        return TFL.Record \
-            ( date          = datetime.datetime.now ()
-            , tool          = Version.productid
-            , tool_version  = Version.tuple
-            , user          = scope.user or TFL.Environment.username
-            )
-    # end def _creator
 
     def _load_info (self) :
         with open (self.info_uri.name, "rb") as file :
@@ -271,7 +277,7 @@ class Store (TFL.Meta.Object) :
         with TFL.lock_file (x_name) :
             self._check_sync (info)
             yield
-            info.last_changer = self._creator (scope, Version)
+            info.last_changer = _creator_info (scope, Version)
             info.max_cid      = max_cid
             info.max_pid      = max_pid
             with open (self.info_uri.name, "wb") as file :

@@ -230,8 +230,9 @@ class Site_Admin (GTW.NAV.Dir) :
         ### if we want to display a site-admin specific page (and not
         ### just the page of the first child [a E_Type_Admin]), we'll
         ### need to bypass `_Dir_.rendered`
-        def rendered (self, context = None, nav_page = None) :
-            return GTW.NAV._Site_Entity_.rendered (self, context, nav_page)
+        def rendered (self, context = None, nav_page = None, template = None) :
+            return GTW.NAV._Site_Entity_.rendered \
+                (self, context, nav_page, template)
         # end def rendered
 
 # end class Site_Admin

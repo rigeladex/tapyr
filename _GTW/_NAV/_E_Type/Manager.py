@@ -41,6 +41,8 @@ import _GTW._NAV._E_Type.Instance
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 
+from   posixpath                import join  as pjoin
+
 class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     """Navigation directory listing the instances of one E_Type."""
 
@@ -70,6 +72,10 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
         if admin :
             return admin.href_create ()
     # end def href_change
+
+    def href_display (self, obj) :
+        return pjoin (self.abs_href, obj.lid)
+    # end def href_display
 
     @Once_Property
     def query_filters (self) :

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1999-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1999-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -83,6 +83,7 @@
 #    21-Dec-2009 (CT) `as_pickle_cargo` and `from_pickle_cargo` added
 #    21-Dec-2009 (CT) Signature of `_finish__init__` changed to `(self)`
 #    30-Dec-2009 (CT) s/Package_NS/PNS/
+#    20-Jan-2010 (CT) `ETM` and `lid` added to `Id_Entity`
 #    ««revision-date»»···
 #--
 
@@ -506,6 +507,11 @@ class Id_Entity (Entity) :
     # end class _Predicates
 
     @TFL.Meta.Once_Property
+    def ETM (self) :
+        return self.home_scope [self.type_name]
+    # end def ETM
+
+    @TFL.Meta.Once_Property
     def epk (self) :
         """Essential primary key"""
         return tuple (a.get_value (self) for a in self.primary)
@@ -548,6 +554,11 @@ class Id_Entity (Entity) :
     def has_warnings (self) :
         return self._pred_man.has_warnings
     # end def has_warnings
+
+    @TFL.Meta.Once_Property
+    def lid (self) :
+        return self.ETM.pid_as_lid (self)
+    # end def lid
 
     def async_changes (self, * filter, ** kw) :
         result = self.home_scope.async_changes (pid = self.pid)

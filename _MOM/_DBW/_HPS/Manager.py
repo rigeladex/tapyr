@@ -29,6 +29,7 @@
 #    18-Dec-2009 (CT) Creation
 #    21-Dec-2009 (CT) Creation continued
 #    19-Jan-2010 (CT) `rollback` added
+#    20-Jan-2010 (CT) Provide `info` even if there is no `store`
 #    ««revision-date»»···
 #--
 
@@ -69,26 +70,30 @@ class Manager (MOM.DBW._Manager_) :
     def __init__ (self, store, scope) :
         self.store = store
         self.scope = scope
+        if store is None :
+            self._info = MOM.DBW.HPS.Info.NEW (scope)
     # end def __init__
 
     def close (self) :
-        if self.store :
+        if self.store is not None :
             self.store.close ()
     # end def close
 
     def commit (self) :
-        if self.store :
+        if self.store is not None :
             self.store.commit ()
     # end def commit
 
     @property
     def info (self) :
-        if self.store :
+        if self.store is not None :
             return self.store.info
+        else :
+            return self._info
     # end def info
 
     def load_objects (self) :
-        if self.store :
+        if self.store is not None :
             self.store.load_objects ()
     # end def load_objects
 
