@@ -1,0 +1,239 @@
+# Translations template for PROJECT.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-01-20 21:08+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: ../../../_GTW/FO.py:39
+msgid "Formatter for attributes of Objects."
+msgstr ""
+
+#: ../../../_GTW/Media.py:53
+msgid "Model a CSS link object."
+msgstr ""
+
+#: ../../../_GTW/Media.py:84
+msgid "Model a `rel` link object."
+msgstr ""
+
+#: ../../../_GTW/Media.py:101
+msgid "Model a script element"
+msgstr ""
+
+#: ../../../_GTW/Media.py:136
+msgid "A javascript code which should be executed once the document is loaded"
+msgstr ""
+
+#: ../../../_GTW/Media.py:150
+msgid "Model a list of media objects"
+msgstr ""
+
+#: ../../../_GTW/Media.py:205
+msgid "Model a list of unique media objects (filters duplicates)."
+msgstr ""
+
+#: ../../../_GTW/Media.py:214
+msgid "Model a list of media objects with href"
+msgstr ""
+
+#: ../../../_GTW/Media.py:237
+msgid "Model a list of CSS_Link objects"
+msgstr ""
+
+#: ../../../_GTW/Media.py:245
+msgid "Model a list of javascript on-ready objects"
+msgstr ""
+
+#: ../../../_GTW/Media.py:268
+msgid "Model a list of script objects"
+msgstr ""
+
+#: ../../../_GTW/Media.py:276
+msgid ""
+">>> class Media (Media) :\n"
+"       ...     url = \"/test/\"\n"
+"       ...\n"
+"       >>> NL = chr (10)\n"
+"\n"
+"       >>> m = Media (css_links = (\"a.css\", \"/b/c.css\"),\n"
+"       ...       scripts = (\"foo.js\", \"bar.js\", \"http://baz.js\"))\n"
+"       >>> print NL.join (repr (l) for l in m.css_links)\n"
+"       all: /test/styles/a.css\n"
+"       all: /b/c.css\n"
+"       >>> tuple (str (l) for l in m.scripts)\n"
+"       ('/test/js/foo.js', '/test/js/bar.js', 'http://baz.js')\n"
+"       >>> n = Media ((\"/test/styles/a.css\", CSS_Link (\"c.css\", "
+"\"screen\")))\n"
+"       >>> print NL.join (repr (l) for l in n.css_links)\n"
+"       all: /test/styles/a.css\n"
+"       screen: /test/styles/c.css\n"
+"       >>> tuple (str (l) for l in n.scripts)\n"
+"       ()\n"
+"       >>> q = Media (scripts = (\"qux.js\", ), children = (m, n))\n"
+"       >>> print NL.join (repr (l) for l in q.css_links)\n"
+"       all: /test/styles/a.css\n"
+"       all: /b/c.css\n"
+"       screen: /test/styles/c.css\n"
+"       >>> \"; \".join (str (l) for l in q.scripts)\n"
+"       '/test/js/qux.js; /test/js/foo.js; /test/js/bar.js; http://baz.js'"
+msgstr ""
+
+#: ../../../_GTW/_Form/Auth.py:47
+msgid "Handles the login form processing."
+msgstr ""
+
+#: ../../../_GTW/_Form/Auth.py:90
+msgid "The login form."
+msgstr ""
+
+#: ../../../_GTW/_Form/Field.py:38
+msgid "A free field which should be part of a HTML form"
+msgstr ""
+
+#: ../../../_GTW/_Form/Field_Error.py:40
+msgid "A list of errors."
+msgstr ""
+
+#: ../../../_GTW/_Form/Field_Group.py:43
+msgid "A group of form field."
+msgstr ""
+
+#: ../../../_GTW/_Form/Field_Group_Description.py:38
+msgid "Abstract definition of a field group."
+msgstr ""
+
+#: ../../../_GTW/_Form/Plain.py:42
+msgid "Meta class for plain forms"
+msgstr ""
+
+#: ../../../_GTW/_Form/Plain.py:68
+msgid "A plain form with no object in the background"
+msgstr ""
+
+#: ../../../_GTW/_Form/Widget_Spec.py:40
+msgid ""
+"Specification of a widget to be used to render a form, field-group, or\n"
+"       field."
+msgstr ""
+
+#: ../../../_GTW/_Form/_Form_.py:44
+msgid "Base class for forms"
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Field_Group_Description.py:46
+msgid ""
+"A place holder in the field group description which will expand to\n"
+"       all attributes of the given kinds which have not been added before"
+" the\n"
+"       wildcard."
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Field_Group_Description.py:74
+msgid "Add a common prefix to all fields."
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Field_Group_Description.py:89
+msgid "A wrapper around the attribute of the MOM object used in field groups"
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Field_Group_Description.py:112
+msgid "A field group description for an MOM object"
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Inline.py:44
+msgid "A Inline `form` inside a real form."
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Inline_Description.py:41
+msgid "A Inline_Description `form` inside a real form."
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Inline_Instance.py:38
+msgid "A form which is embedded in a `Instance` form."
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/Instance.py:48
+msgid "A form which creates or changes a MOM object."
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/_Instance_.py:49
+msgid "Meta class for MOM object forms"
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/_Instance_.py:92
+msgid "Base class for the real form and the `nested` from."
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/__Test.py:115
+msgid "Martin"
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/__Test.py:116
+msgid "Glueck"
+msgstr ""
+
+#: ../../../_GTW/_Form/_MOM/__Test.py:121
+msgid "Description"
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account.py:47
+msgid "Model an user account."
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account.py:56
+msgid "This account is currently active."
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account.py:65
+msgid "User name associated with this account"
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account.py:72
+msgid "This account has super-user permissions."
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account.py:89
+msgid "Default account for users which are not logging in."
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account.py:119
+msgid "An acount which uses passwords for authorization."
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account.py:124
+msgid "Password for this account"
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Account_in_Group.py:47
+msgid "Model association Account_in_Group"
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Entity.py:40
+msgid "Common base class for essential classes of GTW.OMP.Auth"
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Entity.py:49
+msgid "Common base class for essential objects of GTW.OMP.Auth"
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Group.py:44
+msgid "Model a group of accounts."
+msgstr ""
+
+#: ../../../_GTW/_OMP/_Auth/Group.py:53
+msgid "Name of group"
+msgstr ""
+

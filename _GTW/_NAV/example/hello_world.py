@@ -43,18 +43,38 @@ from   _JNJ.Templateer import Templateer
 import _JNJ
 
 from   _MOM            import MOM
-import _GTW._OMP._Auth.import_Auth
-import _GTW._OMP._PAP. import_PAP
+from    app_import     import app_type as apt
 
-import _GTW._NAV.Auth
 import _GTW._Form._MOM.Instance
 import _GTW._Form._MOM.Inline_Description
 import _GTW._Form._MOM.Field_Group_Description
 
-from   _MOM._EMS.Hash         import Manager as EMS
-from   _MOM._DBW._HPS.Manager import Manager as DBW
+import _GTW._NAV.Auth
 
 from Nav_Pages import Redirect, Error, E_Type_Form
+
+from   _MOM                      import MOM
+from   _MOM.Product_Version      import Product_Version, IV_Number
+
+GTW.Version = Product_Version \
+    ( productid           = u"GTW Test"
+    , productnick         = u"GTW"
+    , productdesc         = u"Example web application "
+    , date                = "20-Jan-2010"
+    , major               = 0
+    , minor               = 5
+    , patchlevel          = 42
+    , author              = u"Christian Tanzer, Martin Glück"
+    , copyright_start     = 2010
+    , db_version          = IV_Number
+        ( "db_version"
+        , ("Hello World", )
+        , ("Hello World", )
+        , program_version = 1
+        , comp_min        = 0
+        , db_extension    = ".how"
+        )
+    )
 
 ### define the command lind and parse it to get the `port` from the command
 ### line needed for the `site_url`
@@ -67,10 +87,6 @@ cmd = TFL.CAO.Cmd \
              )
     ) (sys.argv [1:])
 
-apt    = MOM.App_Type \
-    ( u"HWO", GTW
-    , PNS_Aliases = dict (Auth = GTW.OMP.Auth, PAP = GTW.OMP.PAP)
-    ).Derived (EMS, DBW)
 scope  = MOM.Scope.new (apt, None)
 
 anonymous = scope.Auth.Account_Anonymous ("anonymous")

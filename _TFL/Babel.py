@@ -44,6 +44,20 @@ class Translations (babel.support.Translations) :
         return message in trans._catalog
     # end def exists
 
+    @classmethod
+    def load_files (cls, option, encoding) :
+        result         = None
+        other_mo_files = save_unquote (option, encoding, False)
+        if other_mo_files :
+            if not isinstance (other_mo_files, (list, tuple)) :
+                other_mo_files = (other_mo_files, )
+            if other_mo_files :
+                result = cls.load (* other_mo_files [0])
+                for mo in other_mo_files [1:] :
+                    result.merge (cls.load (* mo))
+        return result
+    # end def load_files
+
 # end class Translations
 
 def extract_python (fobj, keywords, comment_tags, options) :
@@ -63,14 +77,8 @@ def extract_python (fobj, keywords, comment_tags, options) :
     doc_string_ignore_tok              = set ((NL, NEWLINE, INDENT, STRING))
     encoding = parse_encoding (fobj) or options.get ("encoding", "iso-8859-1")
     tokens   = generate_tokens (fobj.readline)
-    other_mo_files = save_unquote \
-        (options.get ("message_catalogs"), encoding, False)
-    if not isinstance (other_mo_files, (list, tuple)) :
-        other_mo_files = (other_mo_files, )
-    if other_mo_files :
-        transl = Translations.load (* other_mo_files [0])
-        for mo in other_mo_files [1:] :
-            transl.merge (babel.support.Translation.load (* mo))
+    transl   = Translations.load_files \
+        (options.get ("message_catalogs"), encoding)
     for tok, value, (lineno, _), _, _ in tokens :
         if wait_for_doc_string and tok not in doc_string_ignore_tok :
             wait_for_doc_string = False

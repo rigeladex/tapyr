@@ -1,0 +1,1154 @@
+# Translations template for PROJECT.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-01-20 21:04+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: ../../../_MOM/App_Type.py:46 ../../../_MOM/App_Type.py:163
+msgid "Encapsulate information about a specific application type."
+msgstr ""
+
+#: ../../../_MOM/App_Type.py:49
+msgid ""
+"Add all `callbacks` to `init_callback`. These\n"
+"           callbacks are executed whenever a :class:`~_MOM.Scope.Scope` "
+"is\n"
+"           created (the new scope is passed as the single argument to "
+"each\n"
+"           callback)."
+msgstr ""
+
+#: ../../../_MOM/App_Type.py:58
+msgid ""
+"Add all `callbacks` to `kill_callback`. These\n"
+"           callbacks` are executed whenever a :class:`~_MOM.Scope.Scope` "
+"is\n"
+"           destroyed (the scope to be destroyed is passed as the single\n"
+"           argument to each callback)."
+msgstr ""
+
+#: ../../../_MOM/App_Type.py:99
+msgid "App_Type derived for a specific combination of `EMS` and `DBW`"
+msgstr ""
+
+#: ../../../_MOM/App_Type.py:139
+msgid "Returns app-type specific type of `entity`."
+msgstr ""
+
+#: ../../../_MOM/App_Type.py:188
+msgid ""
+"Return an :class:`_App_Type_D_` derived for a specific\n"
+"           combination of `EMS` and `DBW`."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:67
+msgid "Scope-specific manager for a specific essential object- or link-type."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:83
+msgid "Return the strict count of objects or links."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:89
+msgid "Return the transitive count of objects or links."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:119
+msgid "Return entity with persistent id `pid`."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:124
+msgid ""
+"Return all entities matching the conditions in `filters` and `kw`.\n"
+"\n"
+"           When no `filters` or `kw` are specified, `query` returns the\n"
+"           transitive extension of the type in question, i.e., all "
+"instances\n"
+"           of the type and all its subclasses.\n"
+"\n"
+"           When `strict = True` is specified as the only argument, "
+"`query`\n"
+"           returns the strict extension, i.e., all instances of the type "
+"in\n"
+"           question, but none of its subclasses.\n"
+"\n"
+"           All other filters reduce the number of instances returned to "
+"those\n"
+"           that satisfy the filter conditions."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:146
+msgid ""
+"Return `self.query (* filters, ** kw)`\n"
+"           sorted by `Type.sort_key (kw.get (\"sort_key\"))`."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:168
+msgid "Scope-specific manager for essential object-types."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:171
+msgid "Return true if an object with primary key `epk` exists."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:178
+msgid "Return the object with primary key `epk` or None."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:198
+msgid "Scope-specific manager for essential link-types."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:210
+msgid "Returns all `objects` not refusing to be linked by `self._etype`."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:216
+msgid "Return true if a link with primary key `epk` exists."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:225
+msgid "Return the link with primary key `epk` or None."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:234
+msgid ""
+"Return all links matching the conditions in `filters` and `kw`.\n"
+"\n"
+"           `r_query` behaves similar to `query` but provides the "
+"additional\n"
+"           features:\n"
+"\n"
+"           - if `kw` contains role names,\n"
+"\n"
+"             * the values passed can be `epk` in cooked or raw form (for\n"
+"               `query`, objects must be passed)\n"
+"\n"
+"             * the returned links are restricted to those linking the\n"
+"               specified objects\n"
+"\n"
+"           - some backends optimize link queries triggered via `r_query`."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:275
+msgid ""
+"Return `self.r_query (* filters, ** kw)`\n"
+"           sorted by `Type.sort_key (kw.get (\"sort_key\"))`."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:286
+msgid ""
+"Return all links to `obj`\n"
+"           (considers `obj` for each of the roles)."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:383
+msgid "Scope-specific manager for essential binary link-types."
+msgstr ""
+
+#: ../../../_MOM/E_Type_Manager.py:390
+msgid "Scope-specific manager for essential ternary link-types."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:121
+msgid "Internal root class for MOM entities with and without identity."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:211
+msgid "Compute default values for optional/internal/cached parameters."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:229
+msgid "TRUE if there is at least one attribute with a non-default value."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:239
+msgid ""
+"Returns the raw value of attribute `name`, i.e., the value entered\n"
+"           by the user into the object editor."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:252 ../../../_MOM/Entity.py:666
+msgid "Set attributes specified in `kw` from cooked values"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:276 ../../../_MOM/Entity.py:677
+#: ../../../_MOM/Entity.py:852
+msgid "Set attributes specified in `kw` from raw values"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:281
+msgid ""
+"Synchronizes all user attributes with the values from\n"
+"           _raw_attr and all sync-cached attributes."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:293
+msgid "Redefine this to perform additional initialization."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:397
+msgid "Root class for anonymous entities without identity."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:419
+msgid ""
+"Internal root class for MOM entities with identity, i.e.,\n"
+"       objects and links."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:443
+msgid "Indicates if object/link was created automatically or not."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:452
+msgid "Specifies if object can be changed by user"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:461
+msgid "Specifies whether entity is used by another entity."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:473
+msgid "All required attributes must be defined."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:492
+msgid "All object invariants must be satisfied."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:516
+msgid "Essential primary key"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:538
+msgid "Essential primary key as raw values"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:575
+msgid "Return change objects related to `self`."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:583
+msgid "Checks all predicates"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:588
+msgid "Make copy with primary key `new_epk`."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:605
+msgid "Try to correct an unknown attribute error."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:610
+msgid "Remove entity from `home_scope`."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:650
+msgid ""
+"Notify all entities registered in `self.dependencies` and\n"
+"           `self.object_referring_attributes` about the destruction of "
+"`self`."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:661
+msgid "Register that `other` depends on `self`"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:688
+msgid "Unregister dependency of `other` on `self`"
+msgstr ""
+
+#: ../../../_MOM/Entity.py:696
+msgid "Return differences in user attributes between `self` and `other`."
+msgstr ""
+
+#: ../../../_MOM/Entity.py:714
+msgid "Compare `self` and `other` concerning user attributes."
+msgstr ""
+
+#: ../../../_MOM/Error.py:49
+msgid ""
+"Raised after an exception was already handled to bail out from an\n"
+"       arbitrary position in a call-tree. Should be ignored further up."
+msgstr ""
+
+#: ../../../_MOM/Error.py:55
+msgid "Root class of MOM exceptions"
+msgstr ""
+
+#: ../../../_MOM/Error.py:78
+msgid ""
+"Raised when a cross-referenced object/link is undefined or the\n"
+"       cross-referenced attribute of that entity is undefined."
+msgstr ""
+
+#: ../../../_MOM/Error.py:84
+msgid "Raised when a cross-referenced link refers to an unknown association."
+msgstr ""
+
+#: ../../../_MOM/Error.py:88
+msgid "Raised when one name is used for more than one object."
+msgstr ""
+
+#: ../../../_MOM/Error.py:99
+msgid "Raised when an invalid name is given for an object to be created."
+msgstr ""
+
+#: ../../../_MOM/Error.py:103
+msgid ""
+"Raised when an invalid primary key is given for an identified entity to "
+"be created."
+msgstr ""
+
+#: ../../../_MOM/Error.py:107
+msgid ""
+"Raised when an invalid sequence number is given for an ordered link to be"
+" created."
+msgstr ""
+
+#: ../../../_MOM/Error.py:111
+msgid "Raised when creation of an object of a partial type is tried."
+msgstr ""
+
+#: ../../../_MOM/Error.py:115
+msgid "Raised for a file specification containing a non-existent directory."
+msgstr ""
+
+#: ../../../_MOM/Error.py:119
+msgid "Raised for a file specification of a non-existing file."
+msgstr ""
+
+#: ../../../_MOM/Error.py:123
+msgid "Raised if names/objects are passed to association which aren't linked."
+msgstr ""
+
+#: ../../../_MOM/Error.py:127
+msgid "Raised if an unknown epk is passed for an object or link-role."
+msgstr ""
+
+#: ../../../_MOM/Error.py:131
+msgid "Raised when too many objects are created."
+msgstr ""
+
+#: ../../../_MOM/Error.py:143
+msgid "Raised when a link is added to an association more than once."
+msgstr ""
+
+#: ../../../_MOM/Error.py:147
+msgid ""
+"Raised when a sequence number is added to an ordered association more "
+"than once."
+msgstr ""
+
+#: ../../../_MOM/Error.py:151
+msgid "Raised when a link of wrong type is added to an association."
+msgstr ""
+
+#: ../../../_MOM/Error.py:155
+msgid "Raised when an empty link is added to an association."
+msgstr ""
+
+#: ../../../_MOM/Error.py:159
+msgid "Raised when a link is created with wrong object types."
+msgstr ""
+
+#: ../../../_MOM/Error.py:163
+msgid "Raised when objects with different home scopes are put into a link."
+msgstr ""
+
+#: ../../../_MOM/Error.py:167
+msgid ""
+"Raised when a link is added to an association which results directly or "
+"indirectly in a circular link."
+msgstr ""
+
+#: ../../../_MOM/Error.py:171
+msgid "Raised when an association without link type is defined."
+msgstr ""
+
+#: ../../../_MOM/Error.py:175
+msgid "Raised when the maximum multiplicity for an association is violated."
+msgstr ""
+
+#: ../../../_MOM/Error.py:313
+msgid "Raised when a quantifier invariant of a MOM object/link is violated."
+msgstr ""
+
+#: ../../../_MOM/Error.py:369
+msgid "Raised for syntax errors in attributes of MOM objects/links."
+msgstr ""
+
+#: ../../../_MOM/Error.py:474
+msgid "Try to correct this error."
+msgstr ""
+
+#: ../../../_MOM/Link.py:60
+msgid "Root class for link-types of MOM meta object model."
+msgstr ""
+
+#: ../../../_MOM/Link.py:71
+msgid "Left role of association. Override to define `role_type`, ..."
+msgstr ""
+
+#: ../../../_MOM/Link.py:76
+msgid "Right role of association. Override to define `role_type`, ..."
+msgstr ""
+
+#: ../../../_MOM/Link.py:102
+msgid ""
+"Model an entity-based link of a binary association of the MOM meta\n"
+"       object model."
+msgstr ""
+
+#: ../../../_MOM/Link.py:112
+msgid ""
+"Model a link of a binary ordered essential association of the MOM meta\n"
+"       object model."
+msgstr ""
+
+#: ../../../_MOM/Link.py:121
+msgid "Sequence number of a link in an ordered association."
+msgstr ""
+
+#: ../../../_MOM/Link.py:132
+msgid ""
+"Model a link of a ternary essential association of the MOM meta\n"
+"       object model."
+msgstr ""
+
+#: ../../../_MOM/Link.py:142
+msgid "Middle role of association. Override to define `role_type`, ..."
+msgstr ""
+
+#: ../../../_MOM/Object.py:55
+msgid "Root class for object-types of MOM meta object model."
+msgstr ""
+
+#: ../../../_MOM/Object.py:74
+msgid "Root class for named object-types of MOM meta object model."
+msgstr ""
+
+#: ../../../_MOM/Object.py:81
+msgid "Unique name of the object."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:115
+msgid ""
+"Just a container for the scope-specific etype-proxies for the\n"
+"           essential classes of a package-namespace (delegates everything"
+"\n"
+"           else to the original package namespace)."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:220
+msgid "Adds `entity` to scope `self`."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:228
+msgid ""
+"Add all `callbacks` to `init_callback`. These\n"
+"           callbacks are executed whenever a scope is\n"
+"           created (the new scope is passed as the single argument to "
+"each\n"
+"           callback)."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:238
+msgid ""
+"Add all `callbacks` to `kill_callback` of the scope class\n"
+"           or instance. These callbacks` are executed whenever the\n"
+"           scope is destroyed (the scope to be destroyed is passed as\n"
+"           the single argument to each callback)."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:248
+msgid "Provide context with `self` as active scope."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:264
+msgid "Lazily call `compute_defaults_internal` for all entities."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:293
+msgid ""
+"Return a new scope for `app_type` and `db_uri` with copies of all\n"
+"           entities in `self`."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:331
+msgid ""
+"Yields all objects and links alive in `self` in unspecified\n"
+"           order."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:338
+msgid ""
+"Yields all entities alive in `self` in the\n"
+"           order specified by `sort_key`."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:368
+msgid ""
+"Returns all objects which are globally incorrect (i.e., violating\n"
+"           the object's `system` predicates)."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:380
+msgid "Indicates whether something saveworthy has changed"
+msgstr ""
+
+#: ../../../_MOM/Scope.py:393
+msgid ""
+"Returns all objects which are object-wise incorrect (i.e., violating\n"
+"           the object's `object` predicates)."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:437
+msgid "Remove `entity` from scope `self`"
+msgstr ""
+
+#: ../../../_MOM/Scope.py:478
+msgid ""
+"Return differences of entities `self` and `other` concerning user "
+"attributes."
+msgstr ""
+
+#: ../../../_MOM/Scope.py:500
+msgid "Compare entities of `self` and `other` regarding user attributes."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1112
+msgid "Model a location of the Better Mouse Trap application."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1119
+msgid "Longitude"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1130
+msgid "Latitude"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1147
+msgid "Model a person of the Better Mouse Trap application."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1154
+msgid "Last name of person"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1163
+msgid "First name of person"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1178
+msgid "Model a rodent of the Better Mouse Trap application."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1187
+msgid "Color of the rodent"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1194
+msgid "Weight of the rodent"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1208
+msgid "Model a mouse of the Better Mouse Trap application."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1215
+msgid "Model a rat of the Better Mouse Trap application."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1222
+msgid "Model a beaver of the Better Mouse Trap application."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1227
+msgid "In which are lives the beaver"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1257
+msgid "Model a trap of the Better Mouse Trap application."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1264
+msgid "Serial number of the trap"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1272
+msgid "Maximum weight of rodent the trap can hold"
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1287
+msgid "An enormously improved Trap."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1293
+msgid "Model a rodent caught in a trap."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1302
+msgid "Rodent caught in Trap."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1311
+msgid "Trap that caught a rodent."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1324
+msgid "Weight of `rodent` must not exceed `max_weight` of `trap`."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1348
+msgid "Person owning the Trap."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1357
+msgid "Trap owned by person."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1385
+msgid "Person setting a trap."
+msgstr ""
+
+#: ../../../_MOM/__doc__.py:1403
+msgid "Location where a trap is set."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:87
+msgid ""
+"Root class of attribute kinds to be used as properties for essential\n"
+"       attributes of the MOM meta object model."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:280
+msgid "Mixin for attributes referring to entities with `epk`."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:309
+msgid "Mixin for keeping raw values of user-specified attributes."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:379
+msgid "Attributes stored in DB."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:394
+msgid "Attributes set by user."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:406
+msgid "Attributes set by system."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:415
+msgid "Attributes not stored in DB."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:431
+msgid ""
+"Primary attribute: must be defined at all times, used as part of the\n"
+"       `essential primary key`."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:469
+msgid ""
+"Link-role attribute must be defined at all times, used for (essential)\n"
+"       primary key."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:483
+msgid "Required attribute: must be defined by the tool user."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:494
+msgid "Optional attribute: if undefined, the `default` value is used, if any."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:501
+msgid "Internal attribute: value is defined by some component of the tool."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:508
+msgid "Constant attribute (has static default value that cannot be changed)."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:522
+msgid ""
+"Cached attribute: value is defined by some component of the tool, but\n"
+"       not saved to DB."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:529
+msgid ""
+"Cached attribute computed automatically when syncing. This kind can be\n"
+"       used for attributes depending on attributes of different objects,\n"
+"       as long those don't change significantly between syncing --- use\n"
+"       :class:`Computed` otherwise."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:560
+msgid ""
+"Cached attribute that is recomputed whenever it is accessed after one\n"
+"       or more of the other attributes changed since the last "
+"recomputation.\n"
+"\n"
+"       This kind must **not** be used if the value of the attribute "
+"depends\n"
+"       on other objects (use :class:`Sync_Cached` or :class:`Computed` if"
+"\n"
+"       that's the case)."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:589
+msgid ""
+"Cached attribute computed just once (a.k.a. computed constant).\n"
+"       This kind can be used if the `constant` value that is computed "
+"depends\n"
+"       on attributes of different objects, as longs as those don't change"
+"\n"
+"       during the lifetime of this attribute's object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:605
+msgid "Cached attribute automagically updated by association (max_links == 1)."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:614
+msgid ""
+"Cached attribute normally updated by association but asking\n"
+"       association for DFC_Link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:633
+msgid "Cached attribute automagically updated by association (max_links > 1)."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:642
+msgid ""
+"Computed attribute: the value is computed for each and every attribute\n"
+"       access. This is quite inefficient and should only be used if\n"
+"       :class:`Auto_Cached` or :class:`Sync_Cached` don't work."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:667
+msgid ""
+"Mixin to compute attribute value if empty, i.e., if no value was\n"
+"       specified by the tool user."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:692
+msgid ""
+"Mixin to reset the attribute to the default value whenever the tool\n"
+"       user enters an empty value."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Kind.py:745
+msgid "Kind mixin for handling object references correctly."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Manager.py:45
+msgid "Attribute manager for instances of MOM entities (objects and links)."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Spec.py:60
+msgid ""
+"Attribute specification for MOM entities (objects and links).\n"
+"\n"
+"       A :class:`~_MOM.Entity.Entity` class contains a descendent of "
+"`Spec`\n"
+"       with declarations for all attributes (which are descendents of\n"
+"       :class:`~_MOM._Attr.Type.A_Attr_Type`) provided by that class.\n"
+"\n"
+"       :class:`MOM.Meta.M_E_Type<_MOM._Meta.M_Entity.M_E_Type>` "
+"instantiates\n"
+"       the `Spec`: this results in the assignment of all attribute\n"
+"       properties, i.e., for all attributes `attr` defined in the `Spec` "
+"a\n"
+"       property named by `attr.name` and instantiated as ::\n"
+"\n"
+"           attr.kind (attr)\n"
+"\n"
+"       is added to the `E_Type`."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:91
+msgid "Root class for attribute types for the MOM meta object model."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:235
+msgid "Common base class for date-valued attributes of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:276
+msgid "Common base class for attributes holding named values."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:315
+msgid "Common base class for number-valued attributes of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:335
+msgid "Models a floating-point attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:347
+msgid "Models an integer attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:355
+msgid "Attribute modelling the left role of a link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:365
+msgid "Attribute modelling the left-middle role of a link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:375
+msgid "Attribute modelling the middle role of a link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:385
+msgid "Attribute modelling the right-middle role of a link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:395
+msgid "Attribute modelling the right role of a link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:405 ../../../_MOM/_Attr/Type.py:877
+msgid "Models an attribute referring to an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:512
+msgid ""
+"Base class for attributes that hold a collection of strictly typed\n"
+"       values."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:588
+msgid "Base class for list-valued attributes with strict type."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:595
+msgid "Base class for set-valued attributes with strict type."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:618
+msgid "Base class for string-valued attributes of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:630
+msgid ""
+"Mixin for attributes describing physical quantities with optional\n"
+"       units."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:676
+msgid "Models a Boolean attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:688
+msgid ""
+"Models an attribute referring to an object linked via an\n"
+"       association."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:699
+msgid ""
+"Models an attribute to an object linked via an association or derived\n"
+"       from a container."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:708
+msgid ""
+"Models an attribute referring to a set of objects linked via an\n"
+"       association."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:719
+msgid "Models an attribute holding a single character."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:727
+msgid "Models a date-valued attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:738
+msgid "Models a date-time-valued attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:754
+msgid "Models a decimal-number valued attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:786
+msgid "Models a length attribute with unit information."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:806
+msgid "Attribute describing a link-role."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:842
+msgid "Attribute describing a link-role of an attribute-based link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:849
+msgid "Attribute describing a link-role of an entity-based link."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:854
+msgid "Models a name-valued attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:885
+msgid "Models a string-valued attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:893
+msgid ""
+"Models a string-valued attribute of an object which allows text of\n"
+"       arbitrary length."
+msgstr ""
+
+#: ../../../_MOM/_Attr/Type.py:903
+msgid "Models a time-valued attribute of an object."
+msgstr ""
+
+#: ../../../_MOM/_EMS/Hash.py:91 ../../../_MOM/_EMS/SA.py:104
+msgid "Entity manager using hash tables to hold entities."
+msgstr ""
+
+#: ../../../_MOM/_EMS/SA.py:64
+msgid "PID of an entity."
+msgstr ""
+
+#: ../../../_MOM/_EMS/SA.py:147
+msgid "Simplified query for SA."
+msgstr ""
+
+#: ../../../_MOM/_EMS/SA.py:167 ../../../_MOM/_EMS/_Manager_.py:184
+msgid "Redefine to store `guid` and `root`-info of scope in database."
+msgstr ""
+
+#: ../../../_MOM/_EMS/_Manager_.py:66
+msgid "Base class for entity managers."
+msgstr ""
+
+#: ../../../_MOM/_EMS/_Manager_.py:149
+msgid "Redefine to load `guid`, `pid`, and `root` of scope from database."
+msgstr ""
+
+#: ../../../_MOM/_EMS/_Manager_.py:154
+msgid "Redefine if optimization is possible for a specific EMS/DBW."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Kind.py:42
+msgid ""
+"Root class of predicate kinds to used as properties for essential\n"
+"       predicates of the MOM meta object model."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Kind.py:71
+msgid ""
+"Predicate kind for object-local invariant.\n"
+"\n"
+"       Object predicates must be satisfied at all times. They can only "
+"refer\n"
+"       to attributes of a single instance of the essential class or\n"
+"       association for which the predicate is defined.\n"
+"\n"
+"       Object predicates are checked whenever the value of one or more\n"
+"       essential attributes is set or changed."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Kind.py:105
+msgid ""
+"Predicate kind for system-wide invariant.\n"
+"\n"
+"       System predicates can refer to other objects and their predicates "
+"and\n"
+"       must *not* be satisfied at all times.\n"
+"\n"
+"       Many applications require that all system predicates are satisfied"
+"\n"
+"       before some commands can be performed."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Manager.py:46
+msgid "Predicate manager for instances of MOM entities (objects and links)."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Spec.py:48
+msgid ""
+"Predicate specification for MOM entities (objects and links).\n"
+"\n"
+"       A :class:`~_MOM.Entity.Entity` class contains a descendent of "
+"`Spec`\n"
+"       with declarations for all predicates (which are descendents of\n"
+"       MOM.Pred._Condition_) provided by that class.\n"
+"\n"
+"       :class:`MOM.Meta.M_E_Type<_MOM._Meta.M_Entity.M_E_Type>` "
+"instantiates\n"
+"       the `Spec`: this results in the assignment of all predicate "
+"properties\n"
+"       to the `E_Type`."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:83
+msgid ""
+"Checks if `obj' satisfies the invariant.\n"
+"           `attr_dict' can provide values for `self.attributes'.\n"
+"\n"
+"           If there is a `self.guard' the invariant is checked only if\n"
+"           `self.guard' evaluates to true."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:213
+msgid ""
+"Additional information about the object violating the predicate.\n"
+"\n"
+"           Override when necessary."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:226
+msgid "Additional links to be displayed."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:233
+msgid "A predicate defined by a simple assertion."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:238
+msgid ""
+"Checks if `obj' satisfies the invariant.\n"
+"           `attr_dict' can provide values for `self.attributes'."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:255
+msgid ""
+"Do **not** override this function directly!\n"
+"\n"
+"           If you really need a function to compute the predicate,\n"
+"           define `assert_function` (see\n"
+"           `eval_condition_assert_code_as_function`)."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:265
+msgid ""
+"Use `eval_condition = eval_condition_assert_code_as_function` in\n"
+"           descendent classes which want to define a function "
+"`assert_function`\n"
+"           to evaluate the predicate.\n"
+"\n"
+"           Think thrice before specifying `assert_function` instead of\n"
+"           `assertion` -- whenever `assertion` does the job, it should\n"
+"           be used (it's far simpler, it's useful as documentation, it\n"
+"           provides more information about the error).\n"
+"\n"
+"           Such an `assert_function` is called in a non-standard way to\n"
+"           pass in the right parameters. The object to be checked is\n"
+"           available as `this`, the predicate itself as `self` and the\n"
+"           `attributes`, `attr_none`, and `parameters` as specified in "
+"the\n"
+"           predicate definition."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:382
+msgid ""
+"A predicate defined by an existential quantifier over a set of\n"
+"       values or objects."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:397
+msgid ""
+"A predicate defined by a numeric quantifier over a set of\n"
+"       values or objects."
+msgstr ""
+
+#: ../../../_MOM/_Pred/Type.py:420
+msgid ""
+"A predicate defined by an universal quantifier over a set of\n"
+"       values or objects."
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:60
+msgid "Model a change of a MOM Scope"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:153
+msgid "Model an undoable change of a MOM Scope"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:166
+msgid "Model a change that cannot be undone"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:174
+msgid "Model a change of an MOM entity"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:235
+msgid "Model a change that copies an existing entity."
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:242
+msgid "Model a change that creates a new entity (object or link)"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:267
+msgid "Model a change that destroys an entity"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Change.py:303
+msgid "Model a change that modifies attributes of an entity"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Recorder.py:44
+msgid "Recorder of changes in a MOM scope"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Recorder.py:63
+msgid "Ignores all changes in a MOM scope"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Recorder.py:67
+msgid "Counter of changes in a MOM scope"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Recorder.py:85
+msgid "Appends changes in a MOM scope to a history list and counts them"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Tracker.py:46
+msgid "Track changes of a MOM Scope"
+msgstr ""
+
+#: ../../../_MOM/_SCM/Tracker.py:81
+msgid ""
+"Context manager for recording a set of changes nested inside\n"
+"           `Change`."
+msgstr ""
+
+#: ../../../_MOM/_SCM/Tracker.py:111
+msgid "Record change of type `Change`."
+msgstr ""
+

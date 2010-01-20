@@ -50,7 +50,7 @@ class Request_Data (TFL.Meta.Object) :
     def __getitem__ (self, key) :
         value = self.data [key]
         if isinstance (value, list) :
-            assert len (key) == 1
+            assert len (value) == 1
             return value [0]
         return value
     # end def __getitem__
