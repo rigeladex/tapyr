@@ -403,6 +403,14 @@ appropriate class:
     >>> t4    = scope.BMT.Trap       (u"Y", 2)
     >>> t5    = scope.BMT.Trap       (u"Z", 3)
 
+    >>> t6 = scope.BMT.Trap ("", "7", raw = True)
+    Traceback (most recent call last):
+    ...
+    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name  != '')
+    name =
+
+    >>> t6.destroy () ### remove me once the above raises an exception
+
     >>> RiT   = scope.BMT.Rodent_in_Trap
     >>> PoT   = scope.BMT.Person_owns_Trap
     >>> PTL   = scope.BMT.Person_sets_Trap_at_Location
