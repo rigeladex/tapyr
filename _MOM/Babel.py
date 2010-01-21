@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    20-Jan-2010 (MG) Creation
+#    21-Jan-2010 (MG) No need to add doc strings because they are found by
+#                     the extended python extractor
 #    ««revision-date»»···
 #--
 from   _TFL.Babel     import Translations
@@ -49,9 +51,6 @@ def extract_mom (fobj, keywords, comment_tags, options) :
             msg = et.ui_name
             if not (trans and trans.exists (msg)) :
                 yield 0, None, msg, []
-            msg = et.__doc__.strip ()
-            if not (trans and trans.exists (msg)) :
-                yield 0, None, msg, []
             for spec, dn in ( (et._Attributes, "_attr_dict")
                             , (et._Predicates, "_pred_dict")
                             ) :
@@ -60,9 +59,6 @@ def extract_mom (fobj, keywords, comment_tags, options) :
                     prop = d [pn]
                     msg  = getattr (prop, "ui_name", prop.name)
                     if not (trans and trans.exists (msg)) :
-                        yield 0, None, msg, []
-                    msg = (prop.__doc__ or "").strip ()
-                    if msg and not (trans and trans.exists (msg)) :
                         yield 0, None, msg, []
             ### XXX add special role names like address, phone, person, ...
 # end def extract_mom
