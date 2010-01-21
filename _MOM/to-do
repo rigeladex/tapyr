@@ -11,7 +11,7 @@ MOM To-Do
 
   * A_Link, A_Link_Set
 
-  * A_Cached_Role_Set: automagically query association
+  x A_Cached_Role_Set
 
   x A_Decimal
 

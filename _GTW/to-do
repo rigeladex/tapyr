@@ -9,13 +9,17 @@ GTW To-Do
 
 - Nav
 
-  * Etype
+  x Etype
 
-  * Admin
+    + templates
 
-  * Permission
+  x Admin
 
-  * Error templates
+    + templates
+
+  x Permission
+
+  x Error templates
 
   * CAO
 
