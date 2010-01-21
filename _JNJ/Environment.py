@@ -29,7 +29,7 @@
 #    29-Dec-2009 (CT) Creation
 #    13-Jan-2010 (CT) `GTW` converted from module to class instance
 #    21-Jan-2010 (MG) `I18N` support added
-#    21-Jan-2010 (CT) Bug fixed
+#    21-Jan-2010 (CT) Bugs fixed
 #    ««revision-date»»···
 #--
 
@@ -75,7 +75,7 @@ def HTML \
         , GTW          = JNJ.GTW (result)
         , html_version = version
         )
-    if translation :
+    if i18n :
         env.install_gettext_translations (TFL.I18N)
     return result
 # end def HTML

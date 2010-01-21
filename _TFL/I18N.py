@@ -30,6 +30,7 @@
 #    19-Jan-2010 (CT) `_Tn` changed to make `plural` and `n` optional
 #    21-Jan-2010 (MG) Real translation added
 #    21-Jan-2010 (CT) Module-level aliases added, `I18N.ungettext` corrected
+#    21-Jan-2010 (CT) `load_languages` and `use_language` added
 #    ««revision-date»»···
 #--
 
@@ -43,7 +44,18 @@ class I18N (object) :
        a jinja environment to allow dynamic language switching.
     """
 
-    translations = gettext.NullTranslations ()
+    all_translations = None
+    translations     = gettext.NullTranslations ()
+
+    @classmethod
+    def load_languages (cls, * args, ** kw) :
+        import _TFL.Babel
+        use =kw.pop ("use", None)
+        cls.all_translations = all = TFL.Babel.Translations.load_languages \
+            (* args, ** kw)
+        if use :
+            cls.translations = all.language (use)
+    # end def load_languages
 
     @staticmethod
     def mark (text):
@@ -66,6 +78,17 @@ class I18N (object) :
             plural = singular + "s"
         return (trans or cls.translation).ungettext (singular, plural, n)
     # end def ungettext
+
+    @classmethod
+    def use_language (cls, lang) :
+        if isinstance (lang, basestring) :
+            if cls.all_translations :
+                lang = cls.all_translations.language (lang)
+            else :
+                raise TypeError \
+                    ("No languages loaded, cannot use %s" % (lang, ))
+        cls.translations = lang
+    # end def use_language
 
 # end class I18N
 
