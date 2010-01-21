@@ -32,6 +32,7 @@
 
 from   _TFL          import TFL
 from   _TFL.Record   import Record
+import _TFL.Context
 import _TFL.Decorator
 import _TFL.I18N
 
@@ -69,12 +70,9 @@ def change_language (translations, language) :
     L2: Text 1
     L2: Text 2
     """
-    old_trans = TFL.I18N.translations
-    TFL.I18N.translations = translations.language (language)
-    try :
+    with TFL.Context.attr_let \
+             (TFL.I18N, translations = translations.language (language)) :
         yield
-    finally :
-        TFL.I18N.translations = old_trans
 # end def change_language
 
 class Translations (babel.support.Translations) :
