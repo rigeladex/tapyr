@@ -30,6 +30,8 @@
 #    21-Jan-2010 (MG) Option to ignore files added
 #    21-Jan-2010 (MG) Doc strings are only added specified in the options.
 #                     Indent of doc strings is normalized
+#    21-Jan-2010 (MG) Command interface added
+#    21-Jan-2010 (MG) `Translations` replaced by `Existing_Translations`
 #    ««revision-date»»···
 #--
 
