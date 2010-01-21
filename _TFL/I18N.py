@@ -28,19 +28,23 @@
 # Revision Dates
 #    28-Oct-2009 (CT) Creation
 #    19-Jan-2010 (CT) `_Tn` changed to make `plural` and `n` optional
+#    21-Jan-2010 (MG) Real translation added
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
+import  gettext
+
+translations = gettext.NullTranslations ()
 
 def _ (text):
     """Mark `text` for translation."""
     return unicode (text)
 # end def _
 
-def _T (text) :
+def _T (text, trans = None) :
     """Return the localized translation of `text` (as unicode)."""
-    return text ### XXX
+    return (trans or translations).ugettext (text)
 # end def _T
 
 def _Tn (singular, plural = None, n = 99) :
@@ -49,7 +53,7 @@ def _Tn (singular, plural = None, n = 99) :
     """
     if plural is None :
         plural = singular + "s"
-    return singular ### XXX
+    return (trans or translation).ugettextn (singular, plural, n)
 # end def _Tn
 
 if __name__ != "__main__" :

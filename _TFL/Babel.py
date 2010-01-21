@@ -29,11 +29,55 @@
 #    20-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
-from  _TFL        import TFL
-from   tokenize   import generate_tokens, COMMENT, NAME, OP, STRING
-from   tokenize   import NL, NEWLINE, INDENT
-from   babel.util import parse_encoding
-import babel.support
+from   _TFL          import TFL
+from   _TFL.Record   import Record
+import _TFL.Decorator
+import _TFL.I18N
+from    tokenize     import generate_tokens, COMMENT, NAME, OP, STRING
+from    tokenize     import NL, NEWLINE, INDENT
+from    babel.util   import parse_encoding
+import  babel.support
+
+@TFL.Contextmanager
+def change_language (translations, language) :
+    """Temporaly change the translation language
+    >>> l1 = TFL.Babel.Translations ()
+    >>> l2 = TFL.Babel.Translations ()
+    >>> class T (object) :
+    ...     languages = dict (l1 = l1,  l2 = l2)
+    ...     def language (self, l) : return self.languages [l]
+    >>> l1._catalog = dict ( text1 = "L1: Text 1"
+    ...                    , text2 = "L1: Text 2"
+    ...                    )
+    >>> l2._catalog = dict ( text1 = "L2: Text 1"
+    ...                    , text2 = "L2: Text 2"
+    ...                    )
+    >>> translations = Record (l1 = l1, l2 = l2)
+    >>> l1.ugettext ("text1")
+    'L1: Text 1'
+    >>> l2.ugettext ("text1")
+    'L2: Text 1'
+    >>> TFL.I18N._T ("text1")
+    u'text1'
+    >>> t = T ()
+    >>> with change_language (t, "l1") :
+    ...     print TFL.I18N._T ("text1")
+    ...     print TFL.I18N._T ("text2")
+    L1: Text 1
+    L1: Text 2
+    >>> with change_language (t, "l2") :
+    ...     print TFL.I18N._T ("text1")
+    ...     print TFL.I18N._T ("text2")
+    L2: Text 1
+    L2: Text 2
+    """
+    old_trans = TFL.I18N.translations
+    TFL.I18N.translations = translations.language (language)
+    try :
+        yield
+    finally :
+        TFL.I18N.translations = old_trans
+# end def change_language
 
 class Translations (babel.support.Translations) :
     """Add some usefule functions."""
@@ -43,6 +87,36 @@ class Translations (babel.support.Translations) :
         trans  = self._domains.get (domain, self)
         return message in trans._catalog
     # end def exists
+
+    def language (self, lang) :
+        return self.languages.get (lang, self.default)
+    # end def language
+
+    @classmethod
+    def load_languages (cls, * languages, ** kw) :
+        domains              = kw.pop ("domains",    (cls.DEFAULT_DOMAIN, ))
+        locale_dir           = kw.pop ("locale_dir", "locale")
+        result               = kw.pop ("base", None)
+        if not isinstance (domains, (list, tuple)) :
+            domains          = (domains, )
+        first_dom            = domains [0]
+        domains              = domains [1:]
+        if not result :
+            result           = cls ()
+            result.languages = {}
+        first                = True
+        for lang in languages :
+            domain_t = cls.load (locale_dir, lang, first_dom)
+            if not isinstance (domain_t, cls) :
+                print "*** Warning, language %s for domain %s" % \
+                      (lang, first_dom)
+            for d in domains :
+                domain_t.merge (cls.load (locale_dir, lang, d))
+            if not result.languages :
+                result.default      = domain_t
+            result.languages [lang] = domain_t
+        return result
+    # end def load_languages
 
     @classmethod
     def load_files (cls, option, encoding) :
@@ -185,5 +259,5 @@ def save_unquote (value, encoding, strip = True) :
 # end def save_unquote
 
 if __name__ != "__main__" :
-    TFL._Export ("*")
+    TFL._Export_Module ()
 ### __END__ TFL.Babel
