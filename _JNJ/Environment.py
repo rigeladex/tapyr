@@ -29,6 +29,7 @@
 #    29-Dec-2009 (CT) Creation
 #    13-Jan-2010 (CT) `GTW` converted from module to class instance
 #    21-Jan-2010 (MG) `I18N` support added
+#    21-Jan-2010 (CT) Bug fixed
 #    ««revision-date»»···
 #--
 
@@ -44,13 +45,14 @@ import _TFL.I18N
 
 from   jinja2             import Environment, FileSystemLoader, ChoiceLoader
 
-def HTML ( version   = "html/5.jnj"
-         , load_path = ()
-         , loader    = None
-         , globals   = {}
-         , i18n      = False
-         , ** kw
-         ) :
+def HTML \
+        ( version   = "html/5.jnj"
+        , load_path = ()
+        , loader    = None
+        , globals   = {}
+        , i18n      = False
+        , ** kw
+        ) :
     if load_path :
         assert loader is None
         encoding = kw.pop ("encoding", "iso-8859-1")
@@ -60,13 +62,14 @@ def HTML ( version   = "html/5.jnj"
         loader   = jnj_loader
     else :
         loader   = ChoiceLoader ((loader, jnj_loader))
-    extension    = uniq \
+    extensions   = \
         ( kw.pop ("extensions", [])
         + ["jinja2.ext.loopcontrols", "jinja2.ext.do", JNJ.Onion]
         )
     if i18n :
         extensions.append ("jinja2.ext.i18n")
-    result       = Environment (extensions = extensions, loader = loader, ** kw)
+    result = Environment  \
+        ( extensions = uniq (extensions), loader = loader, ** kw)
     result.globals.update \
         ( globals
         , GTW          = JNJ.GTW (result)

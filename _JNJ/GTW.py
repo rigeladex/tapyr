@@ -74,8 +74,8 @@ class GTW (TFL.Meta.Object) :
         return macro (* _args, ** _kw)
     # end def call_macro
 
-    _T  = staticmethod (TFL.I18N._T)
-    _Tn = staticmethod (TFL.I18N._Tn)
+    _T  = TFL._T
+    _Tn = TFL._Tn
 
 # end class GTW
 

@@ -29,6 +29,7 @@
 #    28-Oct-2009 (CT) Creation
 #    19-Jan-2010 (CT) `_Tn` changed to make `plural` and `n` optional
 #    21-Jan-2010 (MG) Real translation added
+#    21-Jan-2010 (CT) Module-level aliases added, `I18N.ungettext` corrected
 #    ««revision-date»»···
 #--
 
@@ -36,39 +37,42 @@ from   _TFL         import TFL
 import  gettext
 
 class I18N (object) :
-    """Encapsolate all translation function.
-       This calls can also be `installed` as a global translation object for
+    """Encapsulate all translation functions.
+
+       This class can also be `installed` as a global translation object for
        a jinja environment to allow dynamic language switching.
     """
 
     translations = gettext.NullTranslations ()
 
     @staticmethod
-    def _ (text):
+    def mark (text):
         """Mark `text` for translation."""
         return unicode (text)
-    # end def _
+    # end def mark
 
     @classmethod
-    def _T (cls, text, trans = None) :
+    def ugettext (cls, text, trans = None) :
         """Return the localized translation of `text` (as unicode)."""
         return (trans or cls.translations).ugettext (text)
-    # end def _T
-    ugettext = _T
+    # end def ugettext
 
     @classmethod
-    def _Tn (cls, singular, plural = None, n = 99) :
+    def ungettext (cls, singular, plural = None, n = 99, trans = None) :
         """Return the localized translation of `text` for the plural form
            appropriate for `n` (as unicode).
         """
         if plural is None :
             plural = singular + "s"
         return (trans or cls.translation).ungettext (singular, plural, n)
-    # end def _Tn
-    ungettext = _Tn
+    # end def ungettext
 
 # end class I18N
 
+_   = I18N.mark
+_T  = I18N.ugettext
+_Tn = I18N.ungettext
+
 if __name__ != "__main__" :
-    TFL._Export ("*")
+    TFL._Export ("*", "_T", "_Tn")
 ### __END__ TFL.I18N

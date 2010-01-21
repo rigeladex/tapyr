@@ -29,10 +29,12 @@
 #    20-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
+
 from   _TFL          import TFL
 from   _TFL.Record   import Record
 import _TFL.Decorator
 import _TFL.I18N
+
 from    tokenize     import generate_tokens, COMMENT, NAME, OP, STRING
 from    tokenize     import NL, NEWLINE, INDENT
 from    babel.util   import parse_encoding
@@ -44,30 +46,26 @@ def change_language (translations, language) :
     >>> l1 = TFL.Babel.Translations ()
     >>> l2 = TFL.Babel.Translations ()
     >>> class T (object) :
-    ...     languages = dict (l1 = l1,  l2 = l2)
+    ...     languages = dict (l1 = l1, l2 = l2)
     ...     def language (self, l) : return self.languages [l]
-    >>> l1._catalog = dict ( text1 = "L1: Text 1"
-    ...                    , text2 = "L1: Text 2"
-    ...                    )
-    >>> l2._catalog = dict ( text1 = "L2: Text 1"
-    ...                    , text2 = "L2: Text 2"
-    ...                    )
+    >>> l1._catalog = dict ( text1 = "L1: Text 1", text2 = "L1: Text 2")
+    >>> l2._catalog = dict ( text1 = "L2: Text 1", text2 = "L2: Text 2")
     >>> translations = Record (l1 = l1, l2 = l2)
     >>> l1.ugettext ("text1")
     'L1: Text 1'
     >>> l2.ugettext ("text1")
     'L2: Text 1'
-    >>> TFL.I18N._T ("text1")
+    >>> TFL._T ("text1")
     u'text1'
     >>> t = T ()
     >>> with change_language (t, "l1") :
-    ...     print TFL.I18N._T ("text1")
-    ...     print TFL.I18N._T ("text2")
+    ...     print TFL._T ("text1")
+    ...     print TFL._T ("text2")
     L1: Text 1
     L1: Text 2
     >>> with change_language (t, "l2") :
-    ...     print TFL.I18N._T ("text1")
-    ...     print TFL.I18N._T ("text2")
+    ...     print TFL._T ("text1")
+    ...     print TFL._T ("text2")
     L2: Text 1
     L2: Text 2
     """
@@ -249,10 +247,11 @@ def extract_python (fobj, keywords, comment_tags, options) :
 # end def extract_python_ext
 
 def save_unquote (value, encoding, strip = True) :
-    result = eval ( "# coding=%s\n%s" % (encoding, value)
-                , dict (__builtins__ = {})
-                , {}
-                )
+    result = eval \
+        ( "# coding=%s\n%s" % (encoding, value)
+        , dict (__builtins__ = {})
+        , {}
+        )
     if strip :
         return result.strip ()
     return result
