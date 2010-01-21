@@ -56,6 +56,14 @@ from Nav_Pages import Redirect, Error, E_Type_Form
 from   _MOM                      import MOM
 from   _MOM.Product_Version      import Product_Version, IV_Number
 
+try :
+    import  babel
+    import _TFL.Babel
+    translator = TFL.Babel.load_languages \
+        ("de_AT", "en_US", domains = ("mom", "gtw"))
+except ImportError :
+    translator = None
+
 GTW.Version = Product_Version \
     ( productid           = u"GTW Test"
     , productnick         = u"GTW"
@@ -66,6 +74,7 @@ GTW.Version = Product_Version \
     , patchlevel          = 42
     , author              = u"Christian Tanzer, Martin Glück"
     , copyright_start     = 2010
+    , translator          = translator
     , db_version          = IV_Number
         ( "db_version"
         , ("Hello World", )

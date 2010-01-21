@@ -3,14 +3,13 @@
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-01-20 20:56+0100\n"
-"PO-Revision-Date: 2010-01-20 20:57+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-01-20 23:16+0100\n"
+"Last-Translator: Martin Glueck <martin@mangari.org>\n"
 "Language-Team: de_AT <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
@@ -76,8 +75,7 @@ msgid ""
 "       all: /b/c.css\n"
 "       >>> tuple (str (l) for l in m.scripts)\n"
 "       ('/test/js/foo.js', '/test/js/bar.js', 'http://baz.js')\n"
-"       >>> n = Media ((\"/test/styles/a.css\", CSS_Link (\"c.css\", "
-"\"screen\")))\n"
+"       >>> n = Media ((\"/test/styles/a.css\", CSS_Link (\"c.css\", \"screen\")))\n"
 "       >>> print NL.join (repr (l) for l in n.css_links)\n"
 "       all: /test/styles/a.css\n"
 "       screen: /test/styles/c.css\n"
@@ -137,8 +135,7 @@ msgstr ""
 #: ../../../_GTW/_Form/_MOM/Field_Group_Description.py:46
 msgid ""
 "A place holder in the field group description which will expand to\n"
-"       all attributes of the given kinds which have not been added before"
-" the\n"
+"       all attributes of the given kinds which have not been added before the\n"
 "       wildcard."
 msgstr ""
 
@@ -180,15 +177,15 @@ msgstr ""
 
 #: ../../../_GTW/_Form/_MOM/__Test.py:115
 msgid "Martin"
-msgstr ""
+msgstr "Martin"
 
 #: ../../../_GTW/_Form/_MOM/__Test.py:116
 msgid "Glueck"
-msgstr ""
+msgstr "Glück"
 
 #: ../../../_GTW/_Form/_MOM/__Test.py:121
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: ../../../_GTW/_OMP/_Auth/Account.py:47
 msgid "Model an user account."
@@ -196,7 +193,7 @@ msgstr ""
 
 #: ../../../_GTW/_OMP/_Auth/Account.py:56
 msgid "This account is currently active."
-msgstr ""
+msgstr "Dieser Account ist derzeit aktiv."
 
 #: ../../../_GTW/_OMP/_Auth/Account.py:65
 msgid "User name associated with this account"
