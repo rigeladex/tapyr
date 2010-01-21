@@ -32,17 +32,17 @@
 #    21-Jan-2010 (MG) Use new `TFL.Babel.Existing_Translations`
 #    ««revision-date»»···
 #--
-from   _MOM           import MOM
+from   _MOM                import MOM
 
-from   _TFL           import TFL
-from   _TFL.Babel     import Existing_Translations
+from   _TFL                import TFL
+from   _TFL._Babel.Extract import Existing_Translations
 
-from    babel.util    import parse_encoding
-from    babel.support import Translations
+from    babel.util         import parse_encoding
+from    babel.support      import Translations
 import  os
 
-def Add_Translations (encoding, options, app_type) :
-    trans        = Existing_Translations (options.get ("ignore_packages"))
+def Add_Translations (encoding, config, app_type) :
+    trans        = Existing_Translations (config.get ("ignore_packages"))
     translations = []
     for et in app_type.etypes.itervalues () :
         msg = et.ui_name
@@ -57,12 +57,13 @@ def Add_Translations (encoding, options, app_type) :
     return translations
 # end def Add_Translations
 
-def extract_mom (fobj, keywords, comment_tags, options) :
+def Extract (fobj, keywords, comment_tags, config) :
     d        = {}
-    encoding = parse_encoding (fobj) or options.get ("encoding", "iso-8859-1")
+    encoding = parse_encoding (fobj) or config.get \
+        ("encoding", default = "iso-8859-1")
     execfile (fobj.name, globals (), d)
-    return d ["main"] (encoding, options)
-# end def extract_mom
+    return d ["main"] (encoding, config)
+# end def Extract
 
 if __name__ != "__main__" :
     MOM._Export_Module ()

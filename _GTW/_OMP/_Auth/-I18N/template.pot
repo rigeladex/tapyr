@@ -1,14 +1,14 @@
-# Translations template for PROJECT.
-# Copyright (C) 2010 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
+# Translations template for Project.
+# Copyright (C) 2010 Company
+# This file is distributed under the same license as the Project project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2010-01-21 16:47+0100\n"
+"Project-Id-Version: Project 1.0\n"
+"Report-Msgid-Bugs-To: bugs@domain.com\n"
+"POT-Creation-Date: 2010-01-21 21:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,4 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
+
+#: /data/swing/python/_GTW/_OMP/_Auth/Account.py:60
+msgid "User active"
+msgstr ""
+
+#: /data/swing/python/_GTW/_OMP/_Auth/Account.py:67
+msgid "Account name"
+msgstr ""
+
+#: /data/swing/python/_GTW/_OMP/_Auth/Account.py:76
+msgid "Superuser"
+msgstr ""
+
+#: /data/swing/python/_GTW/_OMP/_Auth/Group.py:55
+msgid "Group name"
+msgstr ""
 
