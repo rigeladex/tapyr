@@ -197,4 +197,30 @@ def extract_python (fobj, keywords, comment_tags, options) :
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
+else :
+    import _TFL.CAO
+
+    cmd = TFL.CAO.Cmd \
+        ( name = "TFL.Babel"
+        , args =
+            ( TFL.CAO.Cmd_Choice
+                ( TFL.CAO.Cmd
+                    ( name = "extract"
+                    , args = ( TFL.CAO.Path
+                                 ("directories:P?"
+                                    "Base directory for the extraction"
+                                 )
+                             ,
+                             )
+                    )
+                , TFL.CAO.Cmd
+                    ( name = "language"
+                    )
+                , TFL.CAO.Cmd
+                    ( name = "compile"
+                    )
+                )
+            ,
+            )
+        )
 ### __END__ TFL.Babel
