@@ -59,6 +59,8 @@
 #    30-Dec-2009 (CT) s/Package_NS/PNS/, `PNS_s` added
 #     5-Jan-2010 (CT) Use `TFL._Meta.M_Auto_Combine` as base class
 #    14-Jan-2010 (CT) `PNS_s` removed
+#    21-Jan-2010 (CT) `M_Id_Entity` changed to auto-generate `epkified_ckd`
+#                     and `epkified_raw` instead of `__init__`
 #    ««revision-date»»···
 #--
 
@@ -314,10 +316,8 @@ class M_An_Entity (M_Entity) :
 class M_Id_Entity (M_Entity) :
     """Meta class for MOM.Id_Entity"""
 
-    ### `_init_form` needs `* args` to allow additional primary keys in
-    ### descendent classes to properly percolate up
-    _init_form = """def __init__ (self, %(epk)s, * args, ** kw) :
-    return self._MOM_Entity__init__ (self, %(epk)s, * args, ** kw)
+    _epkified_form = """def epkified_%(suffix)s (cls, %(args)s) :
+    return (%(epk)s), kw
 """
 
     def __init__ (cls, name, bases, dict) :
@@ -326,42 +326,40 @@ class M_Id_Entity (M_Entity) :
         cls.__m_super.__init__  (name, bases, dict)
     # end def __init__
 
-    def _m_auto__init__ (cls, epk_sig, i_bases) :
+    def _m_auto_epkified (cls, epk_sig, args, suffix) :
         globals = class_globals (cls)
         scope   = dict          ()
-        code    = cls._init_form % dict \
-            ( epk  = ", ".join (epk_sig)
-            , type = cls.type_base_name
+        code    = cls._epkified_form % dict \
+            ( epk    = ", ".join (epk_sig) + ("," if len (epk_sig) == 1 else "")
+            , args   = ", ".join (x for x in (args, "** kw") if x)
+            , suffix = suffix
             )
         exec code in globals, scope
-        result             = scope ["__init__"]
+        result             = scope ["epkified_%s" % suffix]
         result.epk_sig     = epk_sig
-        result.i_bases     = i_bases
+        result.args        = args
         result.source_code = code
-        return result
-    # end def _m_auto__init__
+        return classmethod (result)
+    # end def _m_auto_epkified
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
-        pkas    = tuple \
-            (  a for a in cls._Attributes._names.itervalues ()
-            if a.kind.is_primary
+        pkas    = sorted \
+            ( (  a for a in cls._Attributes._names.itervalues ()
+              if a.kind.is_primary
+              )
+            , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "name")
             )
-        epk_sig = tuple \
-            ( a.name
-            for a in sorted
-                (pkas, key = TFL.Sorted_By ("_t_rank", "rank", "name"))
-            )
+        epk_sig = tuple (a.name for a in pkas)
+        a_ckd   = ", ".join (a.as_arg_ckd () for a in pkas)
+        a_raw   = ", ".join (a.as_arg_raw () for a in pkas)
         result  = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
-            , epk_sig     = epk_sig
-            , is_relevant = cls.is_relevant or (not cls.is_partial)
+            , epk_sig      = epk_sig
+            , epkified_ckd = cls._m_auto_epkified (epk_sig, a_ckd, "ckd")
+            , epkified_raw = cls._m_auto_epkified (epk_sig, a_raw, "raw")
+            , is_relevant  = cls.is_relevant or (not cls.is_partial)
             , ** kw
             )
-        if pkas and "__init__" not in result :
-            M_E_Type_Id = MOM.Meta.M_E_Type_Id
-            i_bases = tuple (b for b in bases if isinstance (b, M_E_Type_Id))
-            if not (i_bases and i_bases [0].epk_sig == epk_sig) :
-                result ["__init__"] = cls._m_auto__init__ (epk_sig, i_bases)
         return result
     # end def _m_new_e_type_dict
 

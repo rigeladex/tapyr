@@ -68,6 +68,8 @@
 #                     `_check_type` (to check `refuse_links`)
 #    19-Jan-2010 (CT) `_A_String_` factored
 #    19-Jan-2010 (CT) `A_Char` added
+#    21-Jan-2010 (CT) `as_arg_ckd` and `as_arg_raw` added
+#    21-Jan-2010 (CT) `cooked` and `_to_cooked` redefined for `_A_String_`
 #    ««revision-date»»···
 #--
 
@@ -121,6 +123,18 @@ class A_Attr_Type (object) :
     def __init__ (self, kind) :
         self.kind = kind
     # end def __init__
+
+    @classmethod
+    def as_arg_ckd (cls) :
+        if cls.kind :
+            return cls.kind.as_arg_ckd (cls)
+    # end def as_arg_ckd
+
+    @classmethod
+    def as_arg_raw (cls) :
+        if cls.kind :
+            return cls.kind.as_arg_raw (cls)
+    # end def as_arg_raw
 
     def as_code (self, value) :
         return self.code_format % (value, )
@@ -475,10 +489,10 @@ class _A_Object_ (A_Attr_Type) :
     # end def _check_type
 
     def _get_object (self, obj, epk, raw = False) :
-        scope  = self._get_scope    (obj)
-        et     = self.etype_manager (obj)
-        result = et.instance        (* epk, raw = raw)
+        scope  = self._get_scope (obj)
         tn     = self.Class.type_name
+        etm    = scope [tn]
+        result = etm.instance (* epk, raw = raw)
         if result is not None :
             if self._accept_object  (obj, result) :
                 return self.cooked  (result)
@@ -620,9 +634,22 @@ class _A_String_ (A_Attr_Type) :
     needs_raw_value   = False
     simple_cooked     = unicode
 
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if value is not None :
+            return unicode (value)
+        return value
+    # end def cooked
+
     def _from_string_eval (self, s, obj, glob, locl) :
         return unicode (s)
     # end def _from_string
+
+    def _to_cooked (self, s, cooker, obj, glob, locl) :
+        if s is not None :
+            return unicode (s)
+        return s
+    # end def _to_cooked
 
 # end class _A_String_
 

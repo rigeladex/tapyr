@@ -69,6 +69,11 @@
 #    30-Dec-2009 (CT) `__set__` changed to really record changes
 #     5-Jan-2010 (CT) `_checkers` added to `Kind` and `Primary`
 #    18-Jan-2010 (CT) `Cached_Role_Set` added
+#    21-Jan-2010 (CT) `sort_key` moved from `Link_Role` to `_EPK_Mixin_`
+#    21-Jan-2010 (CT) `_Sticky_Mixin_` factored (and calls to `reset` replaced)
+#    21-Jan-2010 (CT) `_Primary_` factored and `Primary_Optional` added
+#    21-Jan-2010 (CT) `as_arg_ckd` and `as_arg_raw` added to `Primary` and
+#                     `Primary_Optional`
 #    ««revision-date»»···
 #--
 
@@ -101,11 +106,13 @@ class Kind (MOM.Prop.Kind) :
     sync                  = None
     Table                 = dict ()
 
+    _k_rank               = 0
+
     def __init__ (self, Attr_Type) :
         attr = Attr_Type      (self)
         self.__super.__init__ (attr)
         self._check_sanity    (attr)
-        self.rank           = (attr._t_rank, attr.rank)
+        self.rank           = (self._k_rank, attr._t_rank, attr.rank)
         self.record_changes = attr.record_changes and self.record_changes
     # end def __init__
 
@@ -290,6 +297,11 @@ class _EPK_Mixin_ (Kind) :
         self._set_cooked_value (obj, ref, changed = True)
     # end def set_pickle_cargo
 
+    def sort_key (self, obj) :
+        v = self.get_value (obj)
+        return v.__class__.sort_key () (v)
+    # end def sort_key
+
     def _set_cooked_inner (self, obj, value, changed = 42) :
         scope = obj.home_scope
         if value is not None and scope != value.home_scope :
@@ -375,6 +387,25 @@ class _Raw_Value_Mixin_ (Kind) :
 
 # end class _Raw_Value_Mixin_
 
+class _Sticky_Mixin_ (Kind) :
+
+    def _set_cooked (self, obj, value, changed = 42) :
+        if value is None :
+            value = self.attr.default
+        self.__super._set_cooked (obj, value, changed)
+    # end def _set_cooked
+
+    def _set_raw (self, obj, raw_value, value, changed = 42) :
+        if raw_value in ("", None) :
+            raw_value = self.attr.raw_default
+            value     = self.attr.default
+        if raw_value == "None" :
+            print obj, self, raw_value, value
+        self.__super._set_raw (obj, raw_value, value, changed)
+    # end def _set_raw
+
+# end class _Sticky_Mixin_
+
 class _DB_Attr_ (Kind) :
     """Attributes stored in DB."""
 
@@ -427,7 +458,7 @@ class _Cached_ (_Volatile_, _System_) :
 
 # end class _Cached_
 
-class Primary (_User_) :
+class _Primary_ (_User_) :
     """Primary attribute: must be defined at all times, used as part of the
        `essential primary key`.
     """
@@ -457,6 +488,22 @@ class Primary (_User_) :
         return True
     # end def to_save
 
+# end class _Primary_
+
+class Primary (_Primary_) :
+    """Primary attribute: must be defined at all times, used as part of the
+       `essential primary key`.
+    """
+
+    _k_rank     = -20
+
+    @classmethod
+    def as_arg_ckd (cls, attr) :
+        return attr.name
+    # end def as_arg_ckd
+
+    as_arg_raw = as_arg_ckd
+
     def _checkers (self) :
         yield "value is not None and value != ''", (self.name, )
         for c in self.__super._checkers () :
@@ -465,17 +512,31 @@ class Primary (_User_) :
 
 # end class Primary
 
+class Primary_Optional (_Sticky_Mixin_, _Primary_) :
+    """Primary optional attribute: has a default value, used as part
+       of the `essential primary key`.
+    """
+
+    _k_rank     = -10
+
+    @classmethod
+    def as_arg_ckd (cls, attr) :
+        return "%s = %r" % (attr.name, attr.default)
+    # end def as_arg_ckd
+
+    @classmethod
+    def as_arg_raw (cls, attr) :
+        return "%s = %r" % (attr.name, attr.raw_default)
+    # end def as_arg_raw
+
+# end class Primary_Optional
+
 class Link_Role (_EPK_Mixin_, Primary) :
     """Link-role attribute must be defined at all times, used for (essential)
        primary key.
     """
 
     get_role               = TFL.Meta.Alias_Property ("get_value")
-
-    def sort_key (self, l) :
-        r = self.get_role (l)
-        return r.__class__.sort_key () (r)
-    # end def sort_key
 
 # end class Link_Role
 
@@ -688,7 +749,7 @@ class Computed_Mixin (Kind) :
 
 # end class Computed_Mixin
 
-class Sticky_Mixin (Kind) :
+class Sticky_Mixin (_Sticky_Mixin_) :
     """Mixin to reset the attribute to the default value whenever the tool
        user enters an empty value.
     """
@@ -699,20 +760,6 @@ class Sticky_Mixin (Kind) :
             raise TypeError \
                 ("%s is sticky but lacks `default`" % (attr_type, ))
     # end def _check_sanity
-
-    def _set_cooked (self, obj, value, changed = 42) :
-        if value is None :
-            self.reset (obj)
-        else :
-            self.__super._set_cooked (obj, value, changed)
-    # end def _set_cooked
-
-    def _set_raw (self, obj, raw_value, value, changed = 42) :
-        if raw_value in ("", None) :
-            self.reset (obj)
-        else :
-            self.__super._set_raw (obj, raw_value, value, changed)
-    # end def _set_raw
 
 # end class Sticky_Mixin
 

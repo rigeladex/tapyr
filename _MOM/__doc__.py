@@ -39,6 +39,7 @@
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    18-Jan-2010 (MG) Tests fixed (`Invalid_Attribute` now has a different
 #                     error message)
+#    21-Jan-2010 (CT) `Primary_Optional` added
 #    ««revision-date»»···
 #--
 
@@ -121,47 +122,102 @@ classes:
     >>> ET_Supertrap = apt [u"BMT.Supertrap"]
 
 For each `entity_type` with a unique :attr:`epk_sig`, the meta
-machinery automatically creates a `__init__` method matching the
-`epk_sig`. These auto-generated `__init__` methods ensure that the
-required parameters are passed for the
-:ref:`essential primary keys<essential-primary-keys>`.
-
-    .. ### DBW-specific start
+machinery automatically creates methods `epkified_ckd` and
+`epkified_raw` matching the `epk_sig`. These auto-generated methods
+are used by `__init__` to ensure that the required parameters are
+passed for the :ref:`essential primary keys<essential-primary-keys>`.
 
     >>> for et in apt._T_Extension :
-    ...   if (et.epk_sig and u"__init__" in et.__dict__ and
-    ...       hasattr (et.__init__, u"source_code")) :
-    ...     print u"***", et.type_name, u"***", et.__init__.i_bases
-    ...     print et.__init__.source_code
+    ...   if et.epk_sig and u"epkified_ckd" in et.__dict__ :
+    ...     print u"***", et.type_name, u"***", et.epk_sig
+    ...     print et.epkified_ckd.source_code.rstrip ()
+    ...     print et.epkified_raw.source_code.rstrip ()
     ...
-    *** MOM.Link *** (<class 'MOM.Id_Entity' [BMT__Hash__HPS]>,)
-    def __init__ (self, left, right, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, left, right, * args, ** kw)
-    <BLANKLINE>
-    *** MOM.Link2_Ordered *** (<class 'MOM.Link2' [BMT__Hash__HPS]>,)
-    def __init__ (self, left, right, seq_no, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, left, right, seq_no, * args, ** kw)
-    <BLANKLINE>
-    *** MOM.Link3 *** (<class 'MOM.Link' [BMT__Hash__HPS]>,)
-    def __init__ (self, left, middle, right, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, left, middle, right, * args, ** kw)
-    <BLANKLINE>
-    *** MOM.Named_Object *** (<class 'MOM.Object' [BMT__Hash__HPS]>,)
-    def __init__ (self, name, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, name, * args, ** kw)
-    <BLANKLINE>
-    *** BMT.Location *** (<class 'MOM.Object' [BMT__Hash__HPS]>,)
-    def __init__ (self, lon, lat, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, lon, lat, * args, ** kw)
-    <BLANKLINE>
-    *** BMT.Person *** (<class 'MOM.Object' [BMT__Hash__HPS]>,)
-    def __init__ (self, last_name, first_name, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, last_name, first_name, * args, ** kw)
-    <BLANKLINE>
-    *** BMT.Trap *** (<class 'MOM.Named_Object' [BMT__Hash__HPS]>,)
-    def __init__ (self, name, serial_no, * args, ** kw) :
-        return self._MOM_Entity__init__ (self, name, serial_no, * args, ** kw)
-    <BLANKLINE>
+    *** MOM.Link *** ('left', 'right')
+    def epkified_ckd (cls, left, right, ** kw) :
+        return (left, right), kw
+    def epkified_raw (cls, left, right, ** kw) :
+        return (left, right), kw
+    *** MOM.Link2 *** ('left', 'right')
+    def epkified_ckd (cls, left, right, ** kw) :
+        return (left, right), kw
+    def epkified_raw (cls, left, right, ** kw) :
+        return (left, right), kw
+    *** MOM.Link2_Ordered *** ('left', 'right', 'seq_no')
+    def epkified_ckd (cls, left, right, seq_no, ** kw) :
+        return (left, right, seq_no), kw
+    def epkified_raw (cls, left, right, seq_no, ** kw) :
+        return (left, right, seq_no), kw
+    *** MOM.Link3 *** ('left', 'middle', 'right')
+    def epkified_ckd (cls, left, middle, right, ** kw) :
+        return (left, middle, right), kw
+    def epkified_raw (cls, left, middle, right, ** kw) :
+        return (left, middle, right), kw
+    *** MOM.Named_Object *** ('name',)
+    def epkified_ckd (cls, name, ** kw) :
+        return (name,), kw
+    def epkified_raw (cls, name, ** kw) :
+        return (name,), kw
+    *** BMT.Location *** ('lon', 'lat')
+    def epkified_ckd (cls, lon, lat, ** kw) :
+        return (lon, lat), kw
+    def epkified_raw (cls, lon, lat, ** kw) :
+        return (lon, lat), kw
+    *** BMT.Person *** ('last_name', 'first_name', 'middle_name')
+    def epkified_ckd (cls, last_name, first_name, middle_name = '', ** kw) :
+        return (last_name, first_name, middle_name), kw
+    def epkified_raw (cls, last_name, first_name, middle_name = u'', ** kw) :
+        return (last_name, first_name, middle_name), kw
+    *** BMT.Rodent *** ('name',)
+    def epkified_ckd (cls, name, ** kw) :
+        return (name,), kw
+    def epkified_raw (cls, name, ** kw) :
+        return (name,), kw
+    *** BMT.Mouse *** ('name',)
+    def epkified_ckd (cls, name, ** kw) :
+        return (name,), kw
+    def epkified_raw (cls, name, ** kw) :
+        return (name,), kw
+    *** BMT.Rat *** ('name',)
+    def epkified_ckd (cls, name, ** kw) :
+        return (name,), kw
+    def epkified_raw (cls, name, ** kw) :
+        return (name,), kw
+    *** BMT.Beaver *** ('name',)
+    def epkified_ckd (cls, name, ** kw) :
+        return (name,), kw
+    def epkified_raw (cls, name, ** kw) :
+        return (name,), kw
+    *** BMT.Otter *** ('name',)
+    def epkified_ckd (cls, name, ** kw) :
+        return (name,), kw
+    def epkified_raw (cls, name, ** kw) :
+        return (name,), kw
+    *** BMT.Trap *** ('name', 'serial_no')
+    def epkified_ckd (cls, name, serial_no, ** kw) :
+        return (name, serial_no), kw
+    def epkified_raw (cls, name, serial_no, ** kw) :
+        return (name, serial_no), kw
+    *** BMT.Supertrap *** ('name', 'serial_no')
+    def epkified_ckd (cls, name, serial_no, ** kw) :
+        return (name, serial_no), kw
+    def epkified_raw (cls, name, serial_no, ** kw) :
+        return (name, serial_no), kw
+    *** BMT.Rodent_in_Trap *** ('left', 'right')
+    def epkified_ckd (cls, left, right, ** kw) :
+        return (left, right), kw
+    def epkified_raw (cls, left, right, ** kw) :
+        return (left, right), kw
+    *** BMT.Person_owns_Trap *** ('left', 'right')
+    def epkified_ckd (cls, left, right, ** kw) :
+        return (left, right), kw
+    def epkified_raw (cls, left, right, ** kw) :
+        return (left, right), kw
+    *** BMT.Person_sets_Trap_at_Location *** ('left', 'middle', 'right')
+    def epkified_ckd (cls, left, middle, right, ** kw) :
+        return (left, middle, right), kw
+    def epkified_raw (cls, left, middle, right, ** kw) :
+        return (left, middle, right), kw
 
 The app-type specific entity-types are ready to be used by
 :class:`scopes<_MOM.Scope.Scope>` and their
@@ -174,9 +230,9 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Person.E_Spec
     <class 'BMT.Person' [Spec Essence]>
     >>> ET_Person.primary
-    [String `last_name`, String `first_name`]
-    >>> [attr.__class__ for attr in ET_Person.primary]
-    [<class '_MOM._Attr.Kind.Primary'>, <class '_MOM._Attr.Kind.Primary'>]
+    [String `last_name`, String `first_name`, String `middle_name`]
+    >>> [attr.__class__.__name__ for attr in ET_Person.primary]
+    ['Primary', 'Primary', 'Primary_Optional']
     >>> ET_Person.required
     []
     >>> ET_Person.optional
@@ -194,7 +250,7 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
     ('last_name', 'Last name')
     >>> sorted (ET_Person._Attributes._own_names)
-    ['first_name', 'last_name', 'traps']
+    ['first_name', 'last_name', 'middle_name', 'traps']
     >>> ET_Mouse.color.name, ET_Mouse.color.ui_name
     ('color', 'color')
 
@@ -246,7 +302,7 @@ The app-type specific entity-types are ready to be used by
     MOM.Object                          ()
     MOM.Named_Object                    ('name',)
     BMT.Location                        ('lon', 'lat')
-    BMT.Person                          ('last_name', 'first_name')
+    BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
     BMT.Mouse                           ('name',)
     BMT.Rat                             ('name',)
@@ -276,7 +332,7 @@ The app-type specific entity-types are ready to be used by
     BMT.Location
         ('lon', 'lat')
     BMT.Person
-        ('last_name', 'first_name')
+        ('last_name', 'first_name', 'middle_name')
     BMT.Rodent
         ('name',)
     BMT.Mouse
@@ -294,9 +350,9 @@ The app-type specific entity-types are ready to be used by
     BMT.Rodent_in_Trap
         ('left.name', 'right.name', 'right.serial_no')
     BMT.Person_owns_Trap
-        ('left.last_name', 'left.first_name', 'right.name', 'right.serial_no')
+        ('left.last_name', 'left.first_name', 'left.middle_name', 'right.name', 'right.serial_no')
     BMT.Person_sets_Trap_at_Location
-        ('left.last_name', 'left.first_name', 'middle.name', 'middle.serial_no', 'right.lon', 'right.lat')
+        ('left.last_name', 'left.first_name', 'left.middle_name', 'middle.name', 'middle.serial_no', 'right.lon', 'right.lat')
 
     >>> sorted (ET_Person.link_map, key = TFL.Getter.type_name)
     [<class 'BMT.Person_owns_Trap' [BMT__Hash__HPS]>,\
@@ -391,7 +447,7 @@ appropriate class:
 
     >>> p     = scope.BMT.Person     ("Luke", "Lucky")
     >>> p
-    BMT.Person (u'Luke', u'Lucky')
+    BMT.Person (u'Luke', u'Lucky', u'')
     >>> q     = scope.BMT.Person     (u"Dog",  u"Snoopy")
     >>> l1    = scope.BMT.Location   (-16.268799, 48.189956)
     >>> l2    = scope.BMT.Location   (-16.740770, 48.463313)
@@ -412,7 +468,7 @@ appropriate class:
     >>> RiT (p, t4)
     Traceback (most recent call last):
       ...
-    ValueError: BMT.Person (u'Luke', u'Lucky') not eligible for attribute left,
+    ValueError: BMT.Person (u'Luke', u'Lucky', u'') not eligible for attribute left,
         must be instance of BMT.Rodent
     >>> RiT (m, t1)
     BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1))
@@ -426,13 +482,13 @@ appropriate class:
     BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2))
 
     >>> PoT (p, t1)
-    BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1))
+    BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1))
     >>> PoT (p, t2)
-    BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2))
+    BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2))
     >>> PoT (q, t3)
-    BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1))
+    BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1))
     >>> PoT ((u"Tin", "Tin"), t4)
-    BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2))
+    BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2))
 
 Creating a link will automatically set `auto_cached` attributes of the objects
 participating of the link, like `Trap.setter` and `Trap.location`::
@@ -440,21 +496,21 @@ participating of the link, like `Trap.setter` and `Trap.location`::
     >>> t1.setter, t1.location
     (None, None)
     >>> PTL (p, t1, l1)
-    BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956))
+    BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956))
     >>> t1.setter, t1.location
-    (BMT.Person (u'Luke', u'Lucky'), BMT.Location (-16.268799, 48.189956))
+    (BMT.Person (u'Luke', u'Lucky', u''), BMT.Location (-16.268799, 48.189956))
     >>> t2.setter, t2.location
     (None, None)
     >>> PTL (p, t2, l2)
-    BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313))
+    BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313))
     >>> t2.setter, t2.location
-    (BMT.Person (u'Luke', u'Lucky'), BMT.Location (-16.74077, 48.463313))
+    (BMT.Person (u'Luke', u'Lucky', u''), BMT.Location (-16.74077, 48.463313))
     >>> t3.setter, t3.location
     (None, None)
     >>> PTL (p, t3, l2)
-    BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))
+    BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))
     >>> t3.setter, t3.location
-    (BMT.Person (u'Luke', u'Lucky'), BMT.Location (-16.74077, 48.463313))
+    (BMT.Person (u'Luke', u'Lucky', u''), BMT.Location (-16.74077, 48.463313))
 
 Queries
 -------
@@ -475,9 +531,7 @@ inherit, a `relevant_root`:
     >>> scope.MOM.Object.instance (u"Mighty_Mouse")
     Traceback (most recent call last):
       ...
-    TypeError: Cannot query `instance` of non-root type `MOM.Object`.
-    Use one of the types BMT.Location, BMT.Person, BMT.Rodent, BMT.Trap instead.
-
+    TypeError: epkified_ckd() takes exactly 1 argument (2 given)
     >>> scope.MOM.Named_Object.instance ("Mighty_Mouse")
     Traceback (most recent call last):
       ...
@@ -489,9 +543,11 @@ inherit, a `relevant_root`:
     >>> print scope.BMT.Rat.instance ("Mighty_Mouse")
     None
 
+    >>> PoT.query_s ().all ()
+    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2))]
     >>> PoT.instance ((u'Dog', u'Snoopy'), (u'Y', 1))
-    BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1))
-    >>> PoT.instance ((u'Dog', u'Snoopy'), (u'X', 2))
+    BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1))
+    >>> PoT.instance ((u'Dog', u'Snoopy', u''), (u'X', 2))
     >>> print PoT.instance (("Man", u"Tin"), t4)
     None
 
@@ -552,25 +608,25 @@ etype:
     >>> scope.MOM.Object.count_transitive
     14
     >>> list (scope.MOM.Object.query_s ())
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person (u'Dog', u'Snoopy'), BMT.Person (u'Luke', u'Lucky'), BMT.Person (u'Tin', u'Tin'), BMT.Rat (u'Axel'), BMT.Mouse (u'Mighty_Mouse'), BMT.Rat (u'Rutty_Rat'), BMT.Beaver (u'Toothy_Beaver'), BMT.Trap (u'X', 1), BMT.Trap (u'X', 2), BMT.Trap (u'Y', 1), BMT.Trap (u'Y', 2), BMT.Trap (u'Z', 3)]
+    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person (u'Dog', u'Snoopy', u''), BMT.Person (u'Luke', u'Lucky', u''), BMT.Person (u'Tin', u'Tin', u''), BMT.Rat (u'Axel'), BMT.Mouse (u'Mighty_Mouse'), BMT.Rat (u'Rutty_Rat'), BMT.Beaver (u'Toothy_Beaver'), BMT.Trap (u'X', 1), BMT.Trap (u'X', 2), BMT.Trap (u'Y', 1), BMT.Trap (u'Y', 2), BMT.Trap (u'Z', 3)]
 
     >>> list (scope.MOM.Id_Entity.query_s ())
-    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person (u'Dog', u'Snoopy'), BMT.Person (u'Luke', u'Lucky'), BMT.Person (u'Tin', u'Tin'), BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rat (u'Axel'), BMT.Mouse (u'Mighty_Mouse'), BMT.Rat (u'Rutty_Rat'), BMT.Beaver (u'Toothy_Beaver'), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Trap (u'X', 1), BMT.Trap (u'X', 2), BMT.Trap (u'Y', 1), BMT.Trap (u'Y', 2), BMT.Trap (u'Z', 3)]
+    [BMT.Location (-16.74077, 48.463313), BMT.Location (-16.268799, 48.189956), BMT.Person (u'Dog', u'Snoopy', u''), BMT.Person (u'Luke', u'Lucky', u''), BMT.Person (u'Tin', u'Tin', u''), BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rat (u'Axel'), BMT.Mouse (u'Mighty_Mouse'), BMT.Rat (u'Rutty_Rat'), BMT.Beaver (u'Toothy_Beaver'), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Trap (u'X', 1), BMT.Trap (u'X', 2), BMT.Trap (u'Y', 1), BMT.Trap (u'Y', 2), BMT.Trap (u'Z', 3)]
     >>> scope.MOM.Id_Entity.count_transitive
     24
 
     >>> scope.MOM.Link.count_transitive
     10
     >>> list (scope.MOM.Link.query_s ())
-    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1))]
+    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1))]
     >>> scope.MOM.Link2.count_transitive
     7
     >>> list (scope.MOM.Link2.query_s ())
-    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1))]
+    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1))]
     >>> scope.MOM.Link3.count_transitive
     3
     >>> list (scope.MOM.Link3.query_s ())
-    [BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
 
     >>> sk_right_left = TFL.Sorted_By (RiT.right.sort_key, RiT.left.sort_key)
     >>> RiT.count_transitive
@@ -603,63 +659,59 @@ etype:
     >>> PoT.count_transitive
     4
     >>> show (PoT.r_query_s (left = p))
-    [((u'Luke', u'Lucky'), (u'X', 1)), ((u'Luke', u'Lucky'), (u'X', 2))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1)), ((u'Luke', u'Lucky', u''), (u'X', 2))]
     >>> show (PoT.r_query_s (person = (u"Dog",  u"Snoopy")))
-    [((u'Dog', u'Snoopy'), (u'Y', 1))]
+    [((u'Dog', u'Snoopy', u''), (u'Y', 1))]
 
     >>> PTL.count_transitive
     3
     >>> show (PTL.r_query_s (left = p, trap = t1))
-    [((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956))]
     >>> show (PTL.r_query_s (person = p, middle = (u"X", 2)))
-    [((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (person = ("Luke", u"Lucky"), trap = t3, strict = True))
-    [((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (left = q, middle = t1))
     []
 
     >>> show (PTL.r_query_s (left = p))
-    [((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (location = (-16.74077, 48.463313)))
-    [((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (trap = (u"Y", "1")))
-    [((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (person = ("Tan", "Tan")))
     []
 
     >>> show (PTL.r_query_s (left = p))
-    [((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (middle = (u'X', 2)))
-    [((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (right = l1))
-    [((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956))]
     >>> show (PTL.r_query_s (trap = t2, location = l2))
-    [((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (middle = (u'Y', 1), right = l1))
     []
     >>> show (PTL.r_query_s (left = p, middle = (u'X', 2), right = l2))
-    [((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313))]
     >>> show (PTL.r_query_s (person = p, trap = (u'X', 2), location = l1))
     []
     >>> show (PTL.r_query_s (person = p, trap = ('X', 1), location = l1))
-    [((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956))]
     >>> show (PTL.r_query_s (left = ("Tan", "Tan")))
     []
 
     >>> show (PTL.links_of (p))
-    [((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
 
     >>> t1
     BMT.Trap (u'X', 1)
     >>> t1.all_links ()
-    [BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1)),\
- BMT.Person_sets_Trap_at_Location\
- ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)),\
- BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1))]
-
+    [BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1))]
 
     >>> list (scope)
-    [BMT.Location (-16.268799, 48.189956), BMT.Location (-16.74077, 48.463313), BMT.Person (u'Luke', u'Lucky'), BMT.Person (u'Dog', u'Snoopy'), BMT.Person (u'Tin', u'Tin'), BMT.Mouse (u'Mighty_Mouse'), BMT.Beaver (u'Toothy_Beaver'), BMT.Rat (u'Rutty_Rat'), BMT.Rat (u'Axel'), BMT.Trap (u'X', 1), BMT.Trap (u'X', 2), BMT.Trap (u'Y', 1), BMT.Trap (u'Y', 2), BMT.Trap (u'Z', 3), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2)), BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313))]
+    [BMT.Location (-16.268799, 48.189956), BMT.Location (-16.74077, 48.463313), BMT.Person (u'Luke', u'Lucky', u''), BMT.Person (u'Dog', u'Snoopy', u''), BMT.Person (u'Tin', u'Tin', u''), BMT.Mouse (u'Mighty_Mouse'), BMT.Beaver (u'Toothy_Beaver'), BMT.Rat (u'Rutty_Rat'), BMT.Rat (u'Axel'), BMT.Trap (u'X', 1), BMT.Trap (u'X', 2), BMT.Trap (u'Y', 1), BMT.Trap (u'Y', 2), BMT.Trap (u'Z', 3), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'Axel'), (u'X', 2)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313))]
 
     >>> len (list (scope))
     24
@@ -785,13 +837,13 @@ Changing objects and links
     >>> pot = PoT.instance (p, t1)
     >>> pot.price = decimal.Decimal ("1.20")
     >>> print pot.as_code ()
-    BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1), price = 1.20)
+    BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1), price = 1.20)
 
 Attribute queries
 ------------------
 
     >>> scope.BMT.Person.query_s (Q.last_name == Q.first_name).all ()
-    [BMT.Person (u'Tin', u'Tin')]
+    [BMT.Person (u'Tin', u'Tin', u'')]
     >>> scope.BMT.Rodent.query_s (Q.weight != None).all ()
     [BMT.Mouse (u'Magic_Mouse'), BMT.Mouse (u'Mighty_Mouse')]
     >>> scope.BMT.Rodent.query_s (Q.weight == None).all ()
@@ -837,7 +889,7 @@ Deleting objects and links
 --------------------------
 
     >>> scope.MOM.Link.query_s ().all ()
-    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'betty'), (u'X', 2))]
+    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Mighty_Mouse'), (u'X', 1)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'betty'), (u'X', 2))]
 
     .. ### DBW-specific start
 
@@ -854,7 +906,7 @@ Deleting objects and links
     >>> show (scope.ems.all_links (m_id))
     [((u'Mighty_Mouse'), (u'X', 1))]
     >>> show (scope.ems.all_links (t1_id))
-    [((u'Luke', u'Lucky'), (u'X', 1)), ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), ((u'Mighty_Mouse'), (u'X', 1))]
+    [((u'Luke', u'Lucky', u''), (u'X', 1)), ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), ((u'Mighty_Mouse'), (u'X', 1))]
 
     .. ### DBW-specific finish
 
@@ -876,7 +928,7 @@ Deleting objects and links
     >>> scope.MOM.Link.query_s ().count ()
     9
     >>> scope.MOM.Link.r_query_s ().all ()
-    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'betty'), (u'X', 2))]
+    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 1), (-16.268799, 48.189956)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'betty'), (u'X', 2))]
 
     >>> t1.destroy ()
 
@@ -885,16 +937,16 @@ Deleting objects and links
     >>> show (scope.ems.all_links (t1_id))
     []
     >>> show (scope.ems.all_links (t2_id))
-    [((u'Luke', u'Lucky'), (u'X', 2)), ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), ((u'betty'), (u'X', 2))]
+    [((u'Luke', u'Lucky', u''), (u'X', 2)), ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), ((u'betty'), (u'X', 2))]
 
     .. ### DBW-specific finish
 
     >>> scope.MOM.Link.query_s ().all ()
-    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky'), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'betty'), (u'X', 2))]
+    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Luke', u'Lucky', u''), (u'X', 2)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'X', 2), (-16.74077, 48.463313)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1)), BMT.Rodent_in_Trap ((u'betty'), (u'X', 2))]
 
     >>> t2.destroy ()
     >>> scope.MOM.Link.query_s ().all ()
-    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy'), (u'Y', 1)), BMT.Person_owns_Trap ((u'Tin', u'Tin'), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky'), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1))]
+    [BMT.Person_owns_Trap ((u'Dog', u'Snoopy', u''), (u'Y', 1)), BMT.Person_owns_Trap ((u'Tin', u'Tin', u''), (u'Y', 2)), BMT.Person_sets_Trap_at_Location ((u'Luke', u'Lucky', u''), (u'Y', 1), (-16.74077, 48.463313)), BMT.Rodent_in_Trap ((u'Rutty_Rat'), (u'Y', 1))]
 
     .. ### DBW-specific start
 
@@ -919,8 +971,8 @@ Scope queries
     36
     >>> for c in scope.ems.uncommitted_changes :
     ...     print c
-    <Create BMT.Person (u'Luke', u'Lucky')>
-    <Create BMT.Person (u'Dog', u'Snoopy')>
+    <Create BMT.Person (u'Luke', u'Lucky', '')>
+    <Create BMT.Person (u'Dog', u'Snoopy', '')>
     <Create BMT.Location (u'-16.268799', u'48.189956')>
     <Create BMT.Location (u'-16.74077', u'48.463313')>
     <Create BMT.Mouse (u'Mighty_Mouse',)>
@@ -935,14 +987,14 @@ Scope queries
     <Create BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
     <Create BMT.Rodent_in_Trap (u"(u'Rutty_Rat',)", u"(u'Y', u'1')")>
     <Create BMT.Rodent_in_Trap (u"(u'Axel',)", u"(u'X', u'2')")>
-    <Create BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')")>
-    <Create BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'2')")>
-    <Create BMT.Person_owns_Trap (u"(u'Dog', u'Snoopy')", u"(u'Y', u'1')")>
-    <Create BMT.Person (u'Tin', u'Tin')>
-    <Create BMT.Person_owns_Trap (u"(u'Tin', u'Tin')", u"(u'Y', u'2')")>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
-    <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")>
+    <Create BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')")>
+    <Create BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'2')")>
+    <Create BMT.Person_owns_Trap (u"(u'Dog', u'Snoopy', u'')", u"(u'Y', u'1')")>
+    <Create BMT.Person (u'Tin', u'Tin', '')>
+    <Create BMT.Person_owns_Trap (u"(u'Tin', u'Tin', u'')", u"(u'Y', u'2')")>
+    <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
+    <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
+    <Create BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")>
     <Modify BMT.Rat (u'betty',), old-values = {'name' : u'Axel'}, new-values = {'name' : u'betty'}>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : ''}, new-values = {'color' : u'white'}>
     <Modify BMT.Mouse (u'Mighty_Mouse',), old-values = {'weight' : u''}, new-values = {'weight' : u'10'}>
@@ -952,26 +1004,26 @@ Scope queries
         <Create BMT.Mouse (u'Magic_Mouse',)>
         <Modify BMT.Mouse (u'Magic_Mouse',), old-values = {'color' : '', 'weight' : u''}, new-values = {'color' : u'yellow', 'weight' : '42'}>
     <Modify BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u''}, new-values = {'max_weight' : u'20'}>
-    <Modify BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'42.0'}, new-values = {'price' : u'1.20'}>
+    <Modify BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'42.0'}, new-values = {'price' : u'1.20'}>
     <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
     <Destroy BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'yellow', 'weight' : '42'}>
         <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
     <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
+        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     <Destroy BMT.Trap (u'X', u'2')>
-        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'2')")>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
+        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'2')")>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>
         <Destroy BMT.Rodent_in_Trap (u"(u'betty',)", u"(u'X', u'2')")>
     >>> c = scope.ems.uncommitted_changes [-2]
     >>> pckl = c.as_pickle (True)
     >>> cc = c.from_pickle (pckl)
     >>> cc
     <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
-        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
-        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
+        <Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>
+        <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     >>> cc.children
-    [<Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>]
+    [<Destroy BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'1.20'}>, <Destroy BMT.Person_sets_Trap_at_Location (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>]
     >>> cc.children [0].parent is cc
     True
     >>> pckl = c.as_pickle ()
@@ -1009,8 +1061,8 @@ Replaying changes
     >>> t3.destroy ()
     >>> for diff in sorted (scop2.user_diff (scope).iteritems ()) :
     ...     print diff
-    (('BMT.Person_owns_Trap', (u"(u'Dog', u'Snoopy')", u"(u'Y', u'1')")), 'Present in Scope <None>, missing in Scope <None>')
-    (('BMT.Person_sets_Trap_at_Location', (u"(u'Luke', u'Lucky')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Person_owns_Trap', (u"(u'Dog', u'Snoopy', u'')", u"(u'Y', u'1')")), 'Present in Scope <None>, missing in Scope <None>')
+    (('BMT.Person_sets_Trap_at_Location', (u"(u'Luke', u'Lucky', u'')", u"(u'Y', u'1')", u"(u'-16.74077', u'48.463313')")), 'Present in Scope <None>, missing in Scope <None>')
     (('BMT.Rodent_in_Trap', (u"(u'Rutty_Rat',)", u"(u'Y', u'1')")), 'Present in Scope <None>, missing in Scope <None>')
     (('BMT.Trap', (u'Y', u'1')), 'Present in Scope <None>, missing in Scope <None>')
     >>> scope.user_equal (scop2)
@@ -1049,18 +1101,37 @@ Saving and re-loading changes from a database
 Primary key attributes
 -----------------------
 
+    >>> scope.BMT.Trap ("", None)
+    Traceback (most recent call last):
+    ...
+    Invariant_Errors: Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
+        serial_no = None, Condition `AC_check_name_0` :  (name is not None and name != '')
+        name =
     >>> scope.BMT.Trap ("ha", None)
+    Traceback (most recent call last):
+    ...
+    Invariant_Errors: Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
+        serial_no = None
+    >>> scope.BMT.Trap ("", 0)
+    Traceback (most recent call last):
+    ...
+    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
+        name =
     >>> scope.BMT.Trap (None, 0)
+    Traceback (most recent call last):
+    ...
+    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
+        name = None
     >>> scope.BMT.Trap ("ha", "", raw = True)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_name_0` :  (serial_no is not None and serial_no != '')
-    serial_no =
+    Invariant_Errors: Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
+        serial_no = None
     >>> scope.BMT.Trap ("", "7", raw = True)
     Traceback (most recent call last):
     ...
-    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name  != '')
-    name =
+    Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
+        name =
 
 
 """
@@ -1169,6 +1240,16 @@ class Person (_Ancestor_Essence) :
             ui_name  = "First name"
 
         # end class first_name
+
+        class middle_name (A_String) :
+            """Middle name of person"""
+
+            kind     = Attr.Primary_Optional
+            default  = ""
+            rank     = 1
+            ui_name  = "Middle name"
+
+        # end class middle_name
 
     # end class _Attributes
 

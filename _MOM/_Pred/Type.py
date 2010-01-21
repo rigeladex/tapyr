@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -33,6 +33,7 @@
 #                     values taken from `attr_dict`
 #                     * 3-compatibility: passing a `str` for an attribute of
 #                       type `float` breaks checks like `value > 0`
+#    21-Jan-2010 (CT) `set_s_attr_value` changed to not call `cooked` for `None`
 #    ««revision-date»»···
 #--
 
@@ -146,7 +147,7 @@ class _Condition_ (object):
         if name in dict :
             attr   = getattr (obj.__class__, name, None)
             result = dict [name]
-            if attr is not None :
+            if attr is not None and result is not None :
                 result = attr.cooked (result)
         elif hasattr (obj, name) or (name in self.attr_none) :
             result = self.kind.get_attr_value (obj, name)

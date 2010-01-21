@@ -53,6 +53,9 @@
 #    22-Dec-2009 (CT) `Link2_Ordered` removed
 #    18-Jan-2010 (CT) s/_check_multiplicity/_checked_roles/
 #    20-Jan-2010 (CT) `pid_query`, `pid_as_lid`, and `pid_from_lid` added
+#    21-Jan-2010 (CT) `epkified_ckd` and `epkified_raw` used
+#    21-Jan-2010 (CT) `_cooked_epk_iter` changed to check
+#                     `if v is not None` instead of `if v`
 #    ««revision-date»»···
 #--
 
@@ -169,6 +172,7 @@ class Object (Id_Entity) :
 
     def exists (self, * epk, ** kw) :
         """Return true if an object with primary key `epk` exists."""
+        epk, kw = self._etype.epkified (* epk, ** kw)
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         return self.__super.exists   (* epk, ** kw)
@@ -176,6 +180,7 @@ class Object (Id_Entity) :
 
     def instance (self, * epk, ** kw) :
         """Return the object with primary key `epk` or None."""
+        epk, kw = self._etype.epkified (* epk, ** kw)
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         return self.__super.instance (* epk, ** kw)
@@ -183,7 +188,7 @@ class Object (Id_Entity) :
 
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :
-            if v :
+            if v is not None :
                 try :
                     yield pka.from_string (v, None)
                 except MOM.Error.No_Such_Object :
@@ -214,6 +219,7 @@ class Link (Id_Entity) :
 
     def exists (self, * epk, ** kw) :
         """Return true if a link with primary key `epk` exists."""
+        epk, kw = self._etype.epkified (* epk, ** kw)
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         else :
@@ -223,6 +229,7 @@ class Link (Id_Entity) :
 
     def instance (self, * epk, ** kw) :
         """Return the link with primary key `epk` or None."""
+        epk, kw = self._etype.epkified (* epk, ** kw)
         if kw.pop ("raw", False) :
             epk = tuple (self._cooked_epk_iter (epk))
         else :
@@ -333,7 +340,7 @@ class Link (Id_Entity) :
                     ### Allow role attributes to be passed as objects even if
                     ### `raw` is specified
                     v = self._cooked_role (pka, v)
-                elif v :
+                elif v is not None :
                     v = pka.from_string   (v, None)
             except MOM.Error.No_Such_Object :
                 v = None

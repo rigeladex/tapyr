@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -35,6 +35,7 @@
 #    27-Nov-2009 (CT) `M_Attr_Type_Link_Role` changed to remove `description`
 #                     for classes without `role_type`
 #    30-Dec-2009 (CT) `M_Attr_Type_Decimal` added
+#    21-Jan-2010 (CT) `__init__` changed to take `default` from `dct`
 #    ««revision-date»»···
 #--
 
@@ -64,18 +65,19 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
                 ### class attribute)
                 cls.syntax = ""
         raw_default = dct.get ("raw_default")
+        default     = dct.get ("default")
         if raw_default :
-            assert not cls.default, \
+            assert default is None, \
                 ( "Can't specify both raw default and %s "
                   "and cooked default %s for %s"
-                % (raw_default, cls.default, cls)
+                % (raw_default, default, cls)
                 )
             if cls.symbolic_ref_pat.match (raw_default) :
                 cls._symbolic_default = True
             ### Can't precompute `default` from `raw_default`
-        if cls.default is not None and not cls.raw_default :
+        elif default is not None :
             ### Precompute `raw_default` from `default`
-            cls.raw_default = cls.as_string (cls.default)
+            cls.raw_default = cls.as_string (default)
     # end def __init__
 
 # end class M_Attr_Type

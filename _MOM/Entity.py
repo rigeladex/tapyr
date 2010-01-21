@@ -84,6 +84,8 @@
 #    21-Dec-2009 (CT) Signature of `_finish__init__` changed to `(self)`
 #    30-Dec-2009 (CT) s/Package_NS/PNS/
 #    20-Jan-2010 (CT) `ETM` and `lid` added to `Id_Entity`
+#    21-Jan-2010 (CT) `copy` changed to only copy attributes `to_save`
+#    21-Jan-2010 (CT) `epkified` added, `epkified_ckd` and `epkified_raw` used
 #    ««revision-date»»···
 #--
 
@@ -348,7 +350,7 @@ class Entity (TFL.Meta.Object) :
             if on_error is None :
                 on_error = self._raise_attr_error
             for name, val, attr in self.set_attr_iter (kw, on_error) :
-                if val :
+                if val is not None :
                     try :
                         cooked_kw [name] = cooked_val = \
                             attr.from_string (val, self)
@@ -594,7 +596,7 @@ class Id_Entity (Entity) :
             change.pid = result.pid
             raw_kw     = dict \
                 (  (a.name, a.get_raw (self))
-                for a in self.user_attr if a.name not in kw
+                for a in self.user_attr if a.name not in kw and a.to_save (self)
                 )
             if raw_kw :
                 result.set_raw (** raw_kw)
@@ -621,6 +623,14 @@ class Id_Entity (Entity) :
         if other in self.dependencies :
             del self.dependencies [other]
     # end def destroy_dependency
+
+    @classmethod
+    def epkified (cls, * epk, ** kw) :
+        ### `epkified_ckd` and `epkified_raw` auto-created by meta machinery
+        raw      = bool (kw.get ("raw", False))
+        epkifier = (cls.epkified_ckd, cls.epkified_raw) [raw]
+        return epkifier (* epk, ** kw)
+    # end def epkified
 
     def is_defined (self)  :
         return \
@@ -769,7 +779,7 @@ class Id_Entity (Entity) :
     # end def _extract_primary_raw
 
     def _init_epk (self, setter, * epk) :
-        assert len (epk) == len (self.primary)
+        assert len (epk) == len (self.primary), "%s: %s" % (self.epk_sig, epk)
         pkas = {}
         for a, pka in zip (self.primary, epk) :
             pkas [a.name] = pka
@@ -784,8 +794,10 @@ class Id_Entity (Entity) :
 
     def _main__init__ (self, * epk, ** kw) :
         ### Need to use `__super.` methods here because it's not a `rename`
-        setter = (self.__super._set_ckd, self.__super._set_raw) \
-            [bool (kw.get ("raw", False))]
+        raw      = bool (kw.get ("raw", False))
+        epkifier = (self.epkified_ckd,     self.epkified_raw)     [raw]
+        setter   = (self.__super._set_ckd, self.__super._set_raw) [raw]
+        epk, kw  = epkifier         (* epk, ** kw)
         self._init_epk              (setter, * epk)
         self.__super._main__init__  (* epk, ** kw)
         self._finish__init__        ()
