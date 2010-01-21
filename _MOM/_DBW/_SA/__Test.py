@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glück. All rights reserved
+# Copyright (C) 2009-2010 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -70,7 +70,7 @@ if 1 :
         b1    = b.copy ("Toothless_Beaver", region = "Lower Austria")
     RiT (m, t1)
     scope.commit ()
-    scop3 = scope.copy (apt, "sqlite:///test.sqlite")
+    #scop3 = scope.copy (apt, "sqlite:///test.sqlite")
     #RiT (r, t3)
     #RiT (p, t1)
     #print scope.MOM.Named_Object.exists ("Mighty_Mouse")

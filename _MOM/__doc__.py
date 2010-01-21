@@ -37,6 +37,8 @@
 #                     some tests
 #     4-Dec-2009 (MG) Tests adopted to use real database back end
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
+#    18-Jan-2010 (MG) Tests fixed (`Invalid_Attribute` now has a different
+#                     error message)
 #    ««revision-date»»···
 #--
 

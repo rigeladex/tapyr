@@ -31,6 +31,7 @@
 #                     the extended python extractor
 #    ««revision-date»»···
 #--
+from   _TFL           import TFL
 from   _TFL.Babel     import Translations
 from   _MOM           import MOM
 import _MOM.App_Type
@@ -38,31 +39,30 @@ import _MOM.App_Type
 from    babel.util    import parse_encoding
 import  os
 
+def Add_Translations (encoding, options, app_type) :
+    trans = Translations.load_files \
+        (TFL.I18N.save_eval (options.get ("message_catalogs"), encoding))
+    translations = []
+    for et in app_type.etypes.itervalues () :
+        msg = et.ui_name
+        if not (trans and trans.exists (msg)) :
+            translations.append ((0, None, msg, []))
+        for prop_spec in et._Attributes, et._Predicates:
+            for pn in prop_spec._own_names :
+                prop = prop_spec._prop_dict [pn]
+                msg  = getattr (prop, "ui_name", prop.name)
+                if not (trans and trans.exists (msg)) :
+                    translations.append ((0, None, msg, []))
+    return translations
+# end def Add_Translations
+
 def extract_mom (fobj, keywords, comment_tags, options) :
-    d = {}
+    d        = {}
+    encoding = parse_encoding (fobj) or options.get ("encoding", "iso-8859-1")
     execfile (fobj.name, globals (), d)
-    app_type = d.get ("app_type")
-    if app_type :
-        encoding = \
-            parse_encoding (fobj) or options.get ("encoding", "iso-8859-1")
-        trans = Translations.load_files \
-            (options.get ("message_catalogs"), encoding)
-        for et in app_type.etypes.itervalues () :
-            msg = et.ui_name
-            if not (trans and trans.exists (msg)) :
-                yield 0, None, msg, []
-            for spec, dn in ( (et._Attributes, "_attr_dict")
-                            , (et._Predicates, "_pred_dict")
-                            ) :
-                d = getattr (spec, dn)
-                for pn in spec._own_names :
-                    prop = d [pn]
-                    msg  = getattr (prop, "ui_name", prop.name)
-                    if not (trans and trans.exists (msg)) :
-                        yield 0, None, msg, []
-            ### XXX add special role names like address, phone, person, ...
+    return d ["main"] (encoding, options)
 # end def extract_mom
 
 if __name__ != "__main__" :
-    MOM._Export ("*")
+    MOM._Export_Module ()
 ### __END__ MOM.Babel

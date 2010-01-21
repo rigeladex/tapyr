@@ -31,71 +31,131 @@
 #    21-Jan-2010 (MG) Real translation added
 #    21-Jan-2010 (CT) Module-level aliases added, `I18N.ungettext` corrected
 #    21-Jan-2010 (CT) `load_languages` and `use_language` added
+#    21-Jan-2010 (MG) Reworked
+#    21-Jan-2010 (MG) `save_eval` added
 #    ««revision-date»»···
 #--
 
 from   _TFL         import TFL
+from   _TFL.Record  import Record
 import  gettext
+import  babel.support
 
-class I18N (object) :
-    """Encapsulate all translation functions.
+Config = Record \
+   ( Languages  = {None : gettext.NullTranslations ()}
+   , locale_dir = "locale"
+   , domains    = ("messages", )
+   )
+Config.current = Config.Null = Config.Languages [None]
 
-       This class can also be `installed` as a global translation object for
-       a jinja environment to allow dynamic language switching.
+def add (self, * languages, ** kw) :
+    locale_dir = kw.pop ("locale_dir", Config.locale_dir)
+    domains    = kw.pop ("domains",    Config.domains)
+    use_lang   = kw.pop ("use", None)
+    _load_languages (locale_dir, languages, domains)
+    if use_lang :
+        ise (use_lang)
+# end def add
+
+def load (* languages, ** kw) :
+    locale_dir        = kw.pop ("locale_dir", Config.locale_dir)
+    domains           = kw.pop ("domains",    Config.domains)
+    uset_lang         = kw.pop ("use", None)
+    Config.domains    = domains
+    Config.locale_dir = locale_dir
+    _load_languages (locale_dir, languages, domains)
+    if use_lang:
+        use (use_lang)
+# end def load
+
+def _load_languages (locale_dir, languages, domains) :
+    if not isinstance (domains, (list, tuple)) :
+        domains = (domains, )
+    first_dom   = domains [0]
+    domains     = domains [1:]
+    Trans_Cls   = babel.support.Translations
+    for lang in languages :
+        Config.Languages [lang] = lang_trans = Trans_Cls.load \
+            (locale_dir, lang, first_dom)
+        if not isinstance (lang_trans, Trans_Cls) :
+            print "*** Warning, language %s for domain %s not found!" % \
+                  (lang, first_dom)
+        for d in domains :
+            new_domain = Trans_Cls.load (locale_dir, lang, d)
+            if not isinstance (new_domain, Trans_Cls) :
+                print "*** Warning, language %s for domain %s not found!" % \
+                      (lang, d)
+            lang_trans.merge (new_domain)
+# end def _load_languages
+
+def mark (text):
+    """Mark `text` for translation."""
+    return unicode (text)
+# end def mark
+
+def save_eval (value, encoding = None) :
+    # Found in babel....
+    # Unwrap quotes in a safe manner, maintaining the string's encoding
+    # https://sourceforge.net/tracker/?func=detail&atid=355470&aid=617979&group_id=5470
+    if encoding :
+        value = "# coding=%s\n%s" % (encoding, value)
+    result = eval (value, dict (__builtins__ = {}), {})
+    if isinstance (result, basestring) :
+        return result.strip ()
+    return result
+# end def save_eval
+
+def ugettext (text, trans = None) :
+    """Return the localized translation of `text` (as unicode)."""
+    return (trans or Config.current).ugettext (text)
+# end def ugettext
+
+def ungettext (singular, plural = None, n = 99, trans = None) :
+    """Return the localized translation of `text` for the plural form
+       appropriate for `n` (as unicode).
     """
+    if plural is None :
+        plural = singular + "s"
+    return (trans or Config.current).ungettext (singular, plural, n)
+# end def ungettext
 
-    all_translations = None
-    translations     = gettext.NullTranslations ()
+def use (lang) :
+    Config.current = Config.Languages.get (lang, Config.Null)
+# end def use_language
 
-    @classmethod
-    def load_languages (cls, * args, ** kw) :
-        import _TFL.Babel
-        use =kw.pop ("use", None)
-        cls.all_translations = all = TFL.Babel.Translations.load_languages \
-            (* args, ** kw)
-        if use :
-            cls.translations = all.language (use)
-    # end def load_languages
+@TFL.Contextmanager
+def context (lang) :
+    """Temporaly change the translation language
+    ### Let's fake some Translations
+    >>> Config.Languages ["l1"] = l1 = babel.support.Translations ()
+    >>> Config.Languages ["l2"] = l2 = babel.support.Translations ()
+    >>> l1._catalog = dict (text1 = u"L1: Text 1", text2 = u"L1: Text 2")
+    >>> l2._catalog = dict (text1 = u"L2: Text 1", text2 = u"L2: Text 2")
+    >>> _T ("text1")
+    u'text1'
+    >>> with context ("l1") :
+    ...     TFL._T ("text1")
+    ...     TFL._T ("text2")
+    u'L1: Text 1'
+    u'L1: Text 2'
+    >>> with context ("l2") :
+    ...     TFL._T ("text1")
+    ...     TFL._T ("text2")
+    u'L2: Text 1'
+    u'L2: Text 2'
+    """
+    old = Config.current
+    try :
+       use (lang)
+       yield
+    finally :
+        Config.current = old
+# end def context
 
-    @staticmethod
-    def mark (text):
-        """Mark `text` for translation."""
-        return unicode (text)
-    # end def mark
-
-    @classmethod
-    def ugettext (cls, text, trans = None) :
-        """Return the localized translation of `text` (as unicode)."""
-        return (trans or cls.translations).ugettext (text)
-    # end def ugettext
-
-    @classmethod
-    def ungettext (cls, singular, plural = None, n = 99, trans = None) :
-        """Return the localized translation of `text` for the plural form
-           appropriate for `n` (as unicode).
-        """
-        if plural is None :
-            plural = singular + "s"
-        return (trans or cls.translation).ungettext (singular, plural, n)
-    # end def ungettext
-
-    @classmethod
-    def use_language (cls, lang) :
-        if isinstance (lang, basestring) :
-            if cls.all_translations :
-                lang = cls.all_translations.language (lang)
-            else :
-                raise TypeError \
-                    ("No languages loaded, cannot use %s" % (lang, ))
-        cls.translations = lang
-    # end def use_language
-
-# end class I18N
-
-_   = I18N.mark
-_T  = I18N.ugettext
-_Tn = I18N.ungettext
+_   = mark
+_T  = ugettext
+_Tn = ungettext
 
 if __name__ != "__main__" :
-    TFL._Export ("*", "_T", "_Tn")
+    TFL._Export_Module ()
 ### __END__ TFL.I18N

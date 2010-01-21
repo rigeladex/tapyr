@@ -27,53 +27,21 @@
 #
 # Revision Dates
 #    20-Jan-2010 (MG) Creation
+#    21-Jan-2010 (MG) Option to ignore files added
+#    21-Jan-2010 (MG) Doc strings are only added specified in the options.
+#                     Indent of doc strings is normalized
 #    ««revision-date»»···
 #--
 
 from   _TFL          import TFL
 from   _TFL.Record   import Record
-import _TFL.Context
-import _TFL.Decorator
 import _TFL.I18N
+import _TFL.normalized_indent
 
 from    tokenize     import generate_tokens, COMMENT, NAME, OP, STRING
 from    tokenize     import NL, NEWLINE, INDENT
-from    babel.util   import parse_encoding
+from    babel.util   import parse_encoding, pathmatch
 import  babel.support
-
-@TFL.Contextmanager
-def change_language (translations, language) :
-    """Temporaly change the translation language
-    >>> l1 = TFL.Babel.Translations ()
-    >>> l2 = TFL.Babel.Translations ()
-    >>> class T (object) :
-    ...     languages = dict (l1 = l1, l2 = l2)
-    ...     def language (self, l) : return self.languages [l]
-    >>> l1._catalog = dict ( text1 = "L1: Text 1", text2 = "L1: Text 2")
-    >>> l2._catalog = dict ( text1 = "L2: Text 1", text2 = "L2: Text 2")
-    >>> translations = Record (l1 = l1, l2 = l2)
-    >>> l1.ugettext ("text1")
-    'L1: Text 1'
-    >>> l2.ugettext ("text1")
-    'L2: Text 1'
-    >>> TFL._T ("text1")
-    u'text1'
-    >>> t = T ()
-    >>> with change_language (t, "l1") :
-    ...     print TFL._T ("text1")
-    ...     print TFL._T ("text2")
-    L1: Text 1
-    L1: Text 2
-    >>> with change_language (t, "l2") :
-    ...     print TFL._T ("text1")
-    ...     print TFL._T ("text2")
-    L2: Text 1
-    L2: Text 2
-    """
-    with TFL.Context.attr_let \
-             (TFL.I18N, translations = translations.language (language)) :
-        yield
-# end def change_language
 
 class Translations (babel.support.Translations) :
     """Add some usefule functions."""
@@ -84,40 +52,9 @@ class Translations (babel.support.Translations) :
         return message in trans._catalog
     # end def exists
 
-    def language (self, lang) :
-        return self.languages.get (lang, self.default)
-    # end def language
-
     @classmethod
-    def load_languages (cls, * languages, ** kw) :
-        domains              = kw.pop ("domains",    (cls.DEFAULT_DOMAIN, ))
-        locale_dir           = kw.pop ("locale_dir", "locale")
-        result               = kw.pop ("base", None)
-        if not isinstance (domains, (list, tuple)) :
-            domains          = (domains, )
-        first_dom            = domains [0]
-        domains              = domains [1:]
-        if not result :
-            result           = cls ()
-            result.languages = {}
-        first                = True
-        for lang in languages :
-            domain_t = cls.load (locale_dir, lang, first_dom)
-            if not isinstance (domain_t, cls) :
-                print "*** Warning, language %s for domain %s" % \
-                      (lang, first_dom)
-            for d in domains :
-                domain_t.merge (cls.load (locale_dir, lang, d))
-            if not result.languages :
-                result.default      = domain_t
-            result.languages [lang] = domain_t
-        return result
-    # end def load_languages
-
-    @classmethod
-    def load_files (cls, option, encoding) :
+    def load_files (cls, other_mo_files) :
         result         = None
-        other_mo_files = save_unquote (option, encoding, False)
         if other_mo_files :
             if not isinstance (other_mo_files, (list, tuple)) :
                 other_mo_files = (other_mo_files, )
@@ -136,6 +73,23 @@ def extract_python (fobj, keywords, comment_tags, options) :
        * it is possible to specify a list existing message catalog's so that
          only new translation keys will be added to the new catalog.
     """
+    encoding = parse_encoding (fobj) or options.get ("encoding", "iso-8859-1")
+    add_doc_strings = options.get ("add_doc_strings", "") == "True"
+
+    ### before we start let's check if we sould ignore this file completly
+    ignore_patterns = options.get ("ignore_patterns", "").split (",")
+    if not isinstance (ignore_patterns, (list, tuple)) :
+        ignore_patterns = (ignore_patterns, )
+    file_name           = fobj.name
+    for pattern in ignore_patterns :
+        if pathmatch (pattern, file_name) :
+            print "   Ignore file due to pattern `%s`" % (pattern, )
+            return
+
+    ### now that we know that we have to parse this file, lets start
+    transl   = Translations.load_files \
+        (TFL.I18N.save_eval (options.get ("message_catalogs"), encoding))
+    tokens   = generate_tokens (fobj.readline)
     in_def   = in_translator_comments  = False
     wait_for_doc_string                = False
     funcname = lineno = message_lineno = None
@@ -145,10 +99,7 @@ def extract_python (fobj, keywords, comment_tags, options) :
     translator_comments                = []
     comment_tag                        = None
     doc_string_ignore_tok              = set ((NL, NEWLINE, INDENT, STRING))
-    encoding = parse_encoding (fobj) or options.get ("encoding", "iso-8859-1")
-    tokens   = generate_tokens (fobj.readline)
-    transl   = Translations.load_files \
-        (options.get ("message_catalogs"), encoding)
+
     for tok, value, (lineno, _), _, _ in tokens :
         if wait_for_doc_string and tok not in doc_string_ignore_tok :
             wait_for_doc_string = False
@@ -159,7 +110,7 @@ def extract_python (fobj, keywords, comment_tags, options) :
                 call_stack    += 1
         elif tok == OP and value == ":" :
             in_def              = False
-            wait_for_doc_string = True ### next string is the doc string
+            wait_for_doc_string = add_doc_strings
             continue
         elif call_stack == -1 and tok == COMMENT :
             # Strip the comment token from the line
@@ -179,7 +130,7 @@ def extract_python (fobj, keywords, comment_tags, options) :
                     break
         elif wait_for_doc_string and tok == STRING :
             ### found a doc_string
-            msg = save_unquote (value, encoding)
+            msg = TFL.normalized_indent (TFL.I18N.save_eval (value, encoding))
             if not (transl and transl.exists (msg)) :
                     yield (lineno, funcname, msg, [])
             wait_for_doc_string = False
@@ -219,7 +170,7 @@ def extract_python (fobj, keywords, comment_tags, options) :
                 # encoding
                 # https://sourceforge.net/tracker/?func=detail&atid=355470&
                 # aid=617979&group_id=5470
-                value = save_unquote (value, encoding)
+                value = TFL.I18N.save_eval (value, encoding)
                 if isinstance (value, str) :
                     value = value.decode (encoding)
                 buf.append (value)
@@ -243,17 +194,6 @@ def extract_python (fobj, keywords, comment_tags, options) :
         elif tok == NAME and value in keywords :
             funcname = value
 # end def extract_python_ext
-
-def save_unquote (value, encoding, strip = True) :
-    result = eval \
-        ( "# coding=%s\n%s" % (encoding, value)
-        , dict (__builtins__ = {})
-        , {}
-        )
-    if strip :
-        return result.strip ()
-    return result
-# end def save_unquote
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
