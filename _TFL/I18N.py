@@ -35,27 +35,40 @@
 from   _TFL         import TFL
 import  gettext
 
-translations = gettext.NullTranslations ()
-
-def _ (text):
-    """Mark `text` for translation."""
-    return unicode (text)
-# end def _
-
-def _T (text, trans = None) :
-    """Return the localized translation of `text` (as unicode)."""
-    return (trans or translations).ugettext (text)
-# end def _T
-
-def _Tn (singular, plural = None, n = 99) :
-    """Return the localized translation of `text` for the plural form
-       appropriate for `n` (as unicode).
+class I18N (object) :
+    """Encapsolate all translation function.
+       This calls can also be `installed` as a global translation object for
+       a jinja environment to allow dynamic language switching.
     """
-    if plural is None :
-        plural = singular + "s"
-    return (trans or translation).ugettextn (singular, plural, n)
-# end def _Tn
+
+    translations = gettext.NullTranslations ()
+
+    @staticmethod
+    def _ (text):
+        """Mark `text` for translation."""
+        return unicode (text)
+    # end def _
+
+    @classmethod
+    def _T (cls, text, trans = None) :
+        """Return the localized translation of `text` (as unicode)."""
+        return (trans or cls.translations).ugettext (text)
+    # end def _T
+    ugettext = _T
+
+    @classmethod
+    def _Tn (cls, singular, plural = None, n = 99) :
+        """Return the localized translation of `text` for the plural form
+           appropriate for `n` (as unicode).
+        """
+        if plural is None :
+            plural = singular + "s"
+        return (trans or cls.translation).ungettext (singular, plural, n)
+    # end def _Tn
+    ungettext = _Tn
+
+# end class I18N
 
 if __name__ != "__main__" :
-    TFL._Export_Module ()
+    TFL._Export ("*")
 ### __END__ TFL.I18N

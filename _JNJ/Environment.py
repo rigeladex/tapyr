@@ -28,6 +28,7 @@
 # Revision Dates
 #    29-Dec-2009 (CT) Creation
 #    13-Jan-2010 (CT) `GTW` converted from module to class instance
+#    21-Jan-2010 (MG) `I18N` support added
 #    ««revision-date»»···
 #--
 
@@ -39,10 +40,17 @@ import _JNJ.GTW
 
 from   _TFL               import sos
 from   _TFL.predicate     import uniq
+import _TFL.I18N
 
 from   jinja2             import Environment, FileSystemLoader, ChoiceLoader
 
-def HTML (version = "html/5.jnj", load_path = (), loader = None, globals = {}, translations = None, ** kw) :
+def HTML ( version   = "html/5.jnj"
+         , load_path = ()
+         , loader    = None
+         , globals   = {}
+         , i18n      = False
+         , ** kw
+         ) :
     if load_path :
         assert loader is None
         encoding = kw.pop ("encoding", "iso-8859-1")
@@ -52,22 +60,20 @@ def HTML (version = "html/5.jnj", load_path = (), loader = None, globals = {}, t
         loader   = jnj_loader
     else :
         loader   = ChoiceLoader ((loader, jnj_loader))
-    result       = Environment \
-        ( extensions   = uniq
-            ( kw.pop ("extensions", [])
-            + ["jinja2.ext.loopcontrols", "jinja2.ext.i18n", "jinja2.ext.do"]
-            + [JNJ.Onion]
-            )
-        , loader       = loader
-        , ** kw
+    extension    = uniq \
+        ( kw.pop ("extensions", [])
+        + ["jinja2.ext.loopcontrols", "jinja2.ext.do", JNJ.Onion]
         )
+    if i18n :
+        extensions.append ("jinja2.ext.i18n")
+    result       = Environment (extensions = extensions, loader = loader, ** kw)
     result.globals.update \
         ( globals
         , GTW          = JNJ.GTW (result)
         , html_version = version
         )
-    if translations is not None :
-        env.install_gettext_translations (translations)
+    if translation :
+        env.install_gettext_translations (TFL.I18N)
     return result
 # end def HTML
 
