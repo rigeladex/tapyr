@@ -29,29 +29,30 @@
 #    20-Jan-2010 (MG) Creation
 #    21-Jan-2010 (MG) No need to add doc strings because they are found by
 #                     the extended python extractor
+#    21-Jan-2010 (MG) Use new `TFL.Babel.Existing_Translations`
 #    ««revision-date»»···
 #--
-from   _TFL           import TFL
-from   _TFL.Babel     import Translations
 from   _MOM           import MOM
-import _MOM.App_Type
+
+from   _TFL           import TFL
+from   _TFL.Babel     import Existing_Translations
 
 from    babel.util    import parse_encoding
+from    babel.support import Translations
 import  os
 
 def Add_Translations (encoding, options, app_type) :
-    trans = Translations.load_files \
-        (TFL.I18N.save_eval (options.get ("message_catalogs"), encoding))
+    trans        = Existing_Translations (options.get ("ignore_packages"))
     translations = []
     for et in app_type.etypes.itervalues () :
         msg = et.ui_name
-        if not (trans and trans.exists (msg)) :
+        if msg not in trans :
             translations.append ((0, None, msg, []))
         for prop_spec in et._Attributes, et._Predicates:
             for pn in prop_spec._own_names :
                 prop = prop_spec._prop_dict [pn]
                 msg  = getattr (prop, "ui_name", prop.name)
-                if not (trans and trans.exists (msg)) :
+                if msg not in trans :
                     translations.append ((0, None, msg, []))
     return translations
 # end def Add_Translations

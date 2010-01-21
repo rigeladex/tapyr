@@ -33,39 +33,41 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL          import TFL
-from   _TFL.Record   import Record
+from   _TFL           import TFL
+from   _TFL.Record    import Record
+from   _TFL.predicate import any_true
 import _TFL.I18N
 import _TFL.normalized_indent
+import _TFL.CAO
+import  os
 
 from    tokenize     import generate_tokens, COMMENT, NAME, OP, STRING
 from    tokenize     import NL, NEWLINE, INDENT
 from    babel.util   import parse_encoding, pathmatch
 import  babel.support
+from    babel.messages.frontend import CommandLineInterface
+from    babel.messages.pofile   import read_po
 
-class Translations (babel.support.Translations) :
-    """Add some usefule functions."""
+class Existing_Translations (object) :
+    """Read multiple POT files and checks whether a certain message is
+       already part of another template
+    """
 
-    def exists (self, message, ** kw) :
-        domain = kw.pop ("domain", self.DEFAULT_DOMAIN)
-        trans  = self._domains.get (domain, self)
-        return message in trans._catalog
-    # end def exists
+    def __init__ (self, packages) :
+        self.pot_files = []
+        if packages :
+            for pkg in (p.strip () for p in packages.split (",")) :
+                module   = __import__ (pkg)
+                base_dir = os.path.dirname (module.__file__)
+                pot_file = os.path.join (base_dir, "-I18N", "template.pot")
+                self.pot_files.append (read_po (open (pot_file)))
+    # end def __init__
 
-    @classmethod
-    def load_files (cls, other_mo_files) :
-        result         = None
-        if other_mo_files :
-            if not isinstance (other_mo_files, (list, tuple)) :
-                other_mo_files = (other_mo_files, )
-            if other_mo_files :
-                result = cls.load (* other_mo_files [0])
-                for mo in other_mo_files [1:] :
-                    result.merge (cls.load (* mo))
-        return result
-    # end def load_files
+    def __contains__ (self, message) :
+        return any_true (message in pot for pot in self.pot_files)
+    # end def __contains__
 
-# end class Translations
+# end class Existing_Translations
 
 def extract_python (fobj, keywords, comment_tags, options) :
     """Code taken from babel directly but extended:
@@ -77,7 +79,8 @@ def extract_python (fobj, keywords, comment_tags, options) :
     add_doc_strings = options.get ("add_doc_strings", "") == "True"
 
     ### before we start let's check if we sould ignore this file completly
-    ignore_patterns = options.get ("ignore_patterns", "").split (",")
+    ignore_patterns = \
+        [p.strip () for p in options.get ("ignore_patterns", "").split (",")]
     if not isinstance (ignore_patterns, (list, tuple)) :
         ignore_patterns = (ignore_patterns, )
     file_name           = fobj.name
@@ -87,8 +90,7 @@ def extract_python (fobj, keywords, comment_tags, options) :
             return
 
     ### now that we know that we have to parse this file, lets start
-    transl   = Translations.load_files \
-        (TFL.I18N.save_eval (options.get ("message_catalogs"), encoding))
+    trans    = Existing_Translations (options.get ("ignore_packages"))
     tokens   = generate_tokens (fobj.readline)
     in_def   = in_translator_comments  = False
     wait_for_doc_string                = False
@@ -131,7 +133,7 @@ def extract_python (fobj, keywords, comment_tags, options) :
         elif wait_for_doc_string and tok == STRING :
             ### found a doc_string
             msg = TFL.normalized_indent (TFL.I18N.save_eval (value, encoding))
-            if not (transl and transl.exists (msg)) :
+            if msg not in trans :
                     yield (lineno, funcname, msg, [])
             wait_for_doc_string = False
         elif funcname and call_stack == 0 :
@@ -153,7 +155,7 @@ def extract_python (fobj, keywords, comment_tags, options) :
                    ) :
                     translator_comments = []
 
-                if not (transl and transl.exists (messages)) :
+                if messages not in trans :
                     yield \
                         ( message_lineno
                         , funcname
@@ -195,32 +197,124 @@ def extract_python (fobj, keywords, comment_tags, options) :
             funcname = value
 # end def extract_python_ext
 
+def _add_option (cmd_line, * options) :
+    cmd_line.extend (options)
+# end def _add_option
+
+def _prefix_path (filename, * prefix) :
+    if not os.path.isabs (filename) :
+        prefix   = prefix + (filename, )
+        filename = os.path.abspath (os.path.join (* prefix))
+    return filename
+# end def _prefix_path
+
+def extract (cmd) :
+    """Create the template pot file."""
+    babel         = CommandLineInterface ()
+    for base_dir in cmd.argv :
+        cfg_file      = _prefix_path (cmd.extraction_config, base_dir)
+        template_file = _prefix_path (cmd.template_file,     base_dir, "-I18N")
+        keywords      = ["_T", "_Tn"]
+        keywords.extend (cmd.keywords)
+        babel_cmd     = [__file__, "extract"]
+        for k in keywords :
+            _add_option      (babel_cmd, "-k", k)
+        _add_option          (babel_cmd, "-F", cfg_file)
+        if cmd.sort :
+            babel_cmd.append ("--sort-output")
+        _add_option          (babel_cmd, "-o", template_file)
+        babel_cmd.extend     (cmd.argv)
+        if cmd.dry_run :
+            print " ".join (babel_cmd)
+        else :
+            babel.run        (babel_cmd)
+            ### need to clear the handlers to prevent multiple outputs
+            babel.log.handlers = []
+# end def extract
+
+def language (cmd) :
+    """Create or update the messahe catalog for a language."""
+    babel         = CommandLineInterface ()
+    language      = cmd.argv.pop (0)
+    for base_dir in cmd.argv :
+        output_dir = _prefix_path (cmd.output_directory,  base_dir)
+        pot_file   = _prefix_path (cmd.template_file,     base_dir, "-I18N")
+        po_file    = os.path.join (output_dir, "%s.po" % (language, ))
+        if os.path.exists (po_file) :
+            babel_cmd     = [__file__, "update"]
+            for opt, option in ( (cmd.previous,        "--previous")
+                               , (cmd.ignore_obsolete, "--ignore-obsolete")
+                               , (cmd.no_fuzzy,         "--no-fuzzy-matching")
+                               ) :
+                if opt :
+                    babel_cmd.append (option)
+        else :
+            babel_cmd     = [__file__, "init"]
+        _add_option (babel_cmd, "-l", language)
+        _add_option (babel_cmd, "-i", pot_file, "-o", po_file)
+        if cmd.dry_run :
+            print " ".join (babel_cmd)
+        else :
+            babel.run        (babel_cmd)
+            ### need to clear the handlers to prevent multiple outputs
+            babel.log.handlers = []
+# end def language
+
+_Cmd = TFL.CAO.Cmd \
+    ( name = "TFL.Babel"
+    , args =
+        ( TFL.CAO.Cmd_Choice
+            ( "command"
+            , TFL.CAO.Cmd
+                ( extract
+                , name = "extract"
+                , args =
+                    ( "directories:P"
+                        "?Directories where the extraction should start"
+                    ,
+                    )
+                , opts =
+                    ( "extraction_config:S=babel.cfg?"
+                        "Name of the extraction config fileconfig"
+                    , "keywords:S,?Additional extraction keyowrds"
+                    , "sort:B?Generated template should be alphabetical sorted"
+                    , "template_file:P=template.pot?Name of the template file"
+                    )
+                , min_args = 1
+                )
+            , TFL.CAO.Cmd
+                ( language
+                , name = "language"
+                , args =
+                    ( "language:S?Which language should be processed"
+                    , "directories:P"
+                        "?Directories where the extraction should start"
+                    ,
+                    )
+                , opts =
+                    ( "template_file:P=template.pot?Name of the template file"
+                    , "ignore_obsolete:B?"
+                        "Do not include obsolete messages in the output"
+                    , "no_fuzzy:B?Do not use fuzzy matching (default False)"
+                    , "output_directory:P=-I18N?Output directory"
+                    , "previous:B?Keep previous msgids of translated messages"
+                    )
+                , min_args = 2
+                )
+            , TFL.CAO.Cmd
+                ( None
+                , name = "compile"
+                )
+            )
+        ,
+        )
+    , opts = ( "dry_run:B?Show the babel command line instead of "
+                 "running the command"
+             ,
+             )
+    )
 if __name__ != "__main__" :
     TFL._Export_Module ()
 else :
-    import _TFL.CAO
-
-    cmd = TFL.CAO.Cmd \
-        ( name = "TFL.Babel"
-        , args =
-            ( TFL.CAO.Cmd_Choice
-                ( TFL.CAO.Cmd
-                    ( name = "extract"
-                    , args = ( TFL.CAO.Path
-                                 ("directories:P?"
-                                    "Base directory for the extraction"
-                                 )
-                             ,
-                             )
-                    )
-                , TFL.CAO.Cmd
-                    ( name = "language"
-                    )
-                , TFL.CAO.Cmd
-                    ( name = "compile"
-                    )
-                )
-            ,
-            )
-        )
+    _Cmd ()
 ### __END__ TFL.Babel

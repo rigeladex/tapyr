@@ -1,0 +1,171 @@
+# English (United States) translations for PROJECT.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-01-21 15:30+0100\n"
+"PO-Revision-Date: 2010-01-21 16:47+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: en_US <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: _MOM/__babel__.py:0
+msgid "Link2_Ordered"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "seq_no"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Named_Object"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "name"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Link2"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Link3"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "middle"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Entity"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "An_Entity"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Link"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "right"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "left"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Object"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Id_Entity"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "x_locked"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "electric"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "is_used"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "object_correct"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "completely_defined"
+msgstr ""
+
+#: _MOM/_Attr/Kind.py:199
+#, python-format
+msgid "Trying to sync pending attribute %s of %s to `%s`"
+msgstr ""
+
+#: _MOM/_Attr/Kind.py:441
+#, python-format
+msgid "Primary attribute `%s.%s` cannot be assigned."
+msgstr ""
+
+#: _MOM/_Attr/Kind.py:442
+msgid "Use `set` or `set_raw` to change it."
+msgstr ""
+
+#: _MOM/_Attr/Kind.py:451
+#, python-format
+msgid "Primary attribute `%s.%s` cannot be deleted"
+msgstr ""
+
+#: _MOM/_Attr/Kind.py:514
+#, python-format
+msgid "Constant attribute `%s.%s` cannot be changed"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:195
+msgid "Non-ascii values in 8-bit strings are not supported"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:487
+#, python-format
+msgid "object %s %s not eligible, specify one of: %s"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:492
+#, python-format
+msgid "No object %s %s in scope %s"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:667
+#, python-format
+msgid "Invalid unit %s, specify one of %s"
+msgstr ""
+
+#: _MOM/_Attr/Type.py:860
+msgid ""
+"A name must start with a letter or underscore and continue withletters, "
+"digits, and underscores."
+msgstr ""
+
+#: _MOM/_EMS/Hash.py:186 _MOM/_EMS/_Manager_.py:140
+#, python-format
+msgid "Cannot query `instance` of non-root type `%s`."
+msgstr ""
+
+#: _MOM/_EMS/Hash.py:187 _MOM/_EMS/_Manager_.py:141
+#, python-format
+msgid "Use one of the types %s instead."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/Account.py:60
+msgid "User active"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/Account.py:67
+msgid "Account name"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/Account.py:76
+msgid "Superuser"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/Group.py:55
+msgid "Group name"
+msgstr ""
+
