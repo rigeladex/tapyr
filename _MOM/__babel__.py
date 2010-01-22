@@ -34,12 +34,12 @@
 from   _MOM.import_MOM import *
 import _MOM.Babel
 
-def main (encoding, options) :
+def main (encoding, config, method) :
     from   _MOM._EMS.Hash         import Manager as EMS
     from   _MOM._DBW._HPS.Manager import Manager as DBW
 
     return MOM.Babel.Add_Translations \
-        (encoding, options, MOM.App_Type ("MOM", MOM).Derived (EMS, DBW))
+        (encoding, config, method, MOM.App_Type ("MOM", MOM).Derived (EMS, DBW))
 # end def main
 
 ### __END__ MOM.__babel__

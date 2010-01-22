@@ -60,6 +60,8 @@ class Config_File (TFL.Meta.Object) :
        ['MOM', 'python']
     """
 
+    load_translation_key = "load_translations"
+
     def __init__ (self, filename) :
         self.__super.__init__ ()
         config = ConfigParser.RawConfigParser (dict_type = odict)
@@ -80,8 +82,21 @@ class Config_File (TFL.Meta.Object) :
                 extractor, pattern               = section.split (":")
                 extractor                        = extractor.lower ()
                 self.patterns [extractor]        = pattern.strip ()
-                self._method_options [extractor] =  dict (config.items (section))
+                self._method_options [extractor] =  dict (config.items
+                                                          (section))
+        self.defaults ["loaded_translations"] = self._load_pkg_translations \
+           (self.defaults.get (self.load_translation_key))
+        for mo in self._method_options.values () :
+           self._method_options ["loaded_translations"] = \
+               self._load_pkg_translations (mo.get (self.load_translation_key))
     # end def __init__
+
+    def _load_pkg_translations (self, pkg) :
+        if pkg :
+            return TFL.Babel.PO_File.combine_package_translations \
+                (pkg.split (","))
+        return dict ()
+    # end def _load_pkg_translations
 
     def get (self, option, method = None, default = None) :
         mo = self._method_options.get (method, {})

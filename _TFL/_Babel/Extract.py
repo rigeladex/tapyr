@@ -29,16 +29,13 @@
 #    21-Jan-2010 (MG) Creation
 #    ««revision-date»»···
 #--
-from   _TFL           import TFL
-from   _TFL.predicate import any_true
-import _TFL._Babel
+from   _TFL                import TFL
+from   _TFL.predicate      import any_true
+import _TFL._Babel.PO_File
 import  os
 import  sys
 
 from    babel.util             import pathmatch, relpath
-from    babel.messages.pofile  import read_po
-from    babel.messages.catalog import Catalog
-from    babel.messages.pofile  import write_po
 
 class Existing_Translations (object) :
     """Read multiple POT files and checks whether a certain message is
@@ -46,7 +43,7 @@ class Existing_Translations (object) :
     """
 
     def __init__ (self, packages) :
-        self.pot_files = []
+        self.pot_file
         if packages :
             for pkg in (p.strip () for p in packages.split (",")) :
                 module   = __import__ (pkg)
@@ -76,12 +73,16 @@ Default_Keywords = dict \
 
 def Extract (dirname, template_file, config, cmd) :
     absname = os.path.abspath (dirname)
-    catalog = Catalog \
+    po_file = TFL.Babel.PO_File \
         ( project            = cmd.project
         , version            = cmd.version
-        , msgid_bugs_address = cmd.bugs_address
+        , bugs_address       = cmd.bugs_address
         , copyright_holder   = cmd.copyright_holder
         , charset            = cmd.charset
+        , width              = cmd.width
+        , no_location        = cmd.no_location
+        , omit_header        = cmd.omit_header
+        , sort               = cmd.sort
         )
     keywords = Default_Keywords.copy ()
     keywords.update (dict (k, None) for k in cmd.keywords)
@@ -101,13 +102,13 @@ def Extract (dirname, template_file, config, cmd) :
                         print "Method `%-10s`: `%s" % (method_name, filename)
                         for lineno, message, comments in \
                               _extract_from_file    \
-                                  ( config.extractors [method_name]
+                                  ( method_name
                                   , filepath
                                   , config
                                   , cmd
                                   , keywords
                                   ) :
-                            catalog.add \
+                            po_file.add \
                                 ( message
                                 , None
                                 , [(filepath, lineno)]
@@ -117,20 +118,18 @@ def Extract (dirname, template_file, config, cmd) :
             except Skip :
                 print "Ignore             : `%s" % (filename, )
     print >> sys.stderr, "Create template file", template_file
-    write_po \
-        ( open (template_file, "w"), catalog
-        , width        = cmd.width
-        , no_location  = cmd.no_location
-        , omit_header  = cmd.omit_header
-        , sort_output  = cmd.sort
-        )
-
+    po_file.save (template_file)
 # end def Extract
 
-def _extract_from_file (method, file_name, config, cmd, keywords) :
-    file = open (file_name, "U")
+def _extract_from_file (method_name, file_name, config, cmd, keywords) :
+    method = config.extractors [method_name]
+    file   = open (file_name, "U")
     for lineno, funcname, messages, comments in method \
-        (file, keywords, comment_tags = (), config = config) :
+        ( file, keywords
+        , comment_tags = ()
+        , config       = config
+        , method       = method_name
+        ) :
         if funcname :
             spec = keywords [funcname] or (1,)
         else:

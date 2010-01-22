@@ -35,14 +35,13 @@
 from   _MOM                import MOM
 
 from   _TFL                import TFL
-from   _TFL._Babel.Extract import Existing_Translations
 
 from    babel.util         import parse_encoding
 from    babel.support      import Translations
 import  os
 
-def Add_Translations (encoding, config, app_type) :
-    trans        = Existing_Translations (config.get ("ignore_packages"))
+def Add_Translations (encoding, config, method, app_type) :
+    trans    = config.get ("loaded_translations", method)
     translations = []
     for et in app_type.etypes.itervalues () :
         msg = et.ui_name
@@ -57,12 +56,12 @@ def Add_Translations (encoding, config, app_type) :
     return translations
 # end def Add_Translations
 
-def Extract (fobj, keywords, comment_tags, config) :
+def Extract (fobj, keywords, comment_tags, config, method) :
     d        = {}
     encoding = parse_encoding (fobj) or config.get \
         ("encoding", default = "iso-8859-1")
     execfile (fobj.name, globals (), d)
-    return d ["main"] (encoding, config)
+    return d ["main"] (encoding, config, method)
 # end def Extract
 
 if __name__ != "__main__" :

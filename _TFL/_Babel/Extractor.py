@@ -30,23 +30,23 @@
 #    ««revision-date»»···
 #--
 from   _TFL                    import TFL
-from   _TFL._Babel.Extract     import Existing_Translations
+import _TFL.I18N
 from    babel.util             import parse_encoding
 from    tokenize               import generate_tokens, COMMENT, NAME, OP, STRING
 from    tokenize               import NL, NEWLINE, INDENT
 
-def Python (fobj, keywords, comment_tags, config) :
+def Python (fobj, keywords, comment_tags, config, method) :
     """Code taken from babel directly but extended:
        * collect doc strings of functions and classes as well
        * it is possible to specify a list existing message catalog's so that
          only new translation keys will be added to the new catalog.
     """
     encoding = parse_encoding (fobj) or config.get \
-        ("encoding", default = "iso-8859-1")
-    add_doc_strings = config.get ("add_doc_strings", "") == "True"
+        ("encoding", method, default = "iso-8859-1")
+    add_doc_strings = config.get ("add_doc_strings", method, "") == "True"
 
     ### now that we know that we have to parse this file, lets start
-    trans    = Existing_Translations (config.get ("load_translations"))
+    trans    = config.get ("loaded_translations", "python")
     tokens   = generate_tokens (fobj.readline)
     in_def   = in_translator_comments  = False
     wait_for_doc_string                = False
