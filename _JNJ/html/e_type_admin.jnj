@@ -82,6 +82,8 @@
   </table>
 {%- endmacro -%} {#- e_type_admin -#}
 
-{{- e_type_admin (page, page.E_Type, fields, objects) -}}
+{%- block document %}
+  {{- e_type_admin (page, page.E_Type, fields, objects) -}}
+{% endblock -%}
 
 {#- __END__ jinja template: e_type_admin.jnj -#}

@@ -47,6 +47,8 @@
   </table>
 {%- endmacro -%} {#- site_admin -#}
 
-{{- site_admin (page) -}}
+{%- block document %}
+  {{- site_admin (page) -}}
+{% endblock -%}
 
 {#- __END__ jinja template: site_admin.jnj -#}

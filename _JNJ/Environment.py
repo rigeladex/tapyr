@@ -30,6 +30,8 @@
 #    13-Jan-2010 (CT) `GTW` converted from module to class instance
 #    21-Jan-2010 (MG) `I18N` support added
 #    21-Jan-2010 (CT) Bugs fixed
+#    22-Jan-2010 (CT) PrefixLoader for `STD::` added to allow access
+#                     to shadowed templates of JNJ itself
 #    ««revision-date»»···
 #--
 
@@ -43,7 +45,7 @@ from   _TFL               import sos
 from   _TFL.predicate     import uniq
 import _TFL.I18N
 
-from   jinja2             import Environment, FileSystemLoader, ChoiceLoader
+from jinja2 import Environment, FileSystemLoader, ChoiceLoader, PrefixLoader
 
 def HTML \
         ( version   = "html/5.jnj"
@@ -53,16 +55,18 @@ def HTML \
         , i18n      = False
         , ** kw
         ) :
+    jnj_loader = FileSystemLoader (sos.path.dirname (__file__), "iso-8859-1")
+    loaders    = []
+    if loader :
+        loaders.append (loader)
     if load_path :
         assert loader is None
         encoding = kw.pop ("encoding", "iso-8859-1")
-        loader   = FileSystemLoader (load_path, encoding)
-    jnj_loader   = FileSystemLoader (sos.path.dirname (__file__), "iso-8859-1")
-    if loader is None :
-        loader   = jnj_loader
-    else :
-        loader   = ChoiceLoader ((loader, jnj_loader))
-    extensions   = \
+        loaders.append (FileSystemLoader (load_path, encoding))
+    loaders.append (jnj_loader)
+    loaders.append (PrefixLoader (dict (STD = jnj_loader), delimiter='::'))
+    loader     = ChoiceLoader (loaders)
+    extensions = \
         ( kw.pop ("extensions", [])
         + ["jinja2.ext.loopcontrols", "jinja2.ext.do", JNJ.Onion]
         )
@@ -76,7 +80,7 @@ def HTML \
         , html_version = version
         )
     if i18n :
-        env.install_gettext_translations (TFL.I18N)
+        result.install_gettext_translations (TFL.I18N)
     return result
 # end def HTML
 
