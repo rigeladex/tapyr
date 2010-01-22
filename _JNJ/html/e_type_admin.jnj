@@ -1,0 +1,87 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: e_type_admin.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/e_type_admin.jnj
+##
+## Purpose
+##    Template for the admin page for a single E_Type
+##
+## Revision Dates
+##    22-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- macro _button (page, E_Type, tag, href, name, desc, icon) -%}
+  <{{ tag }} class="{{ E_Type.ui_name }}-cmd-change" scope="col">
+    <a href="{{ href }}" title="{{ GTW._T (desc) }} {{ name }}"><img
+      src="{{ page.site_prefix }}media/images/{{ icon }}.gif"
+      alt="{{ GTW._T (desc) }}" height="10" width="10"
+    /></a>
+  </{{ tag }}>
+{%- endmacro -%} {#- _button -#}
+
+{%- macro e_type_admin (page, E_Type, fields, objects) -%}
+  <table class="Object-List">
+    <caption>
+      {{ GTW._T (page.name) }}
+    </caption>
+    <colgroup>
+      <col class="{{ E_Type.ui_name }}-cmd-change" />
+      {% for f in fields %}
+        <col class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}" />
+      {% endfor %}
+    </colgroup>
+    <thead>
+      <tr>
+        {{ _button (page, E_Type, "th", page.href_create, GTW._T (E_Type.ui_name), "Create new object", "icon_add") }}
+        {% for f in fields %}
+          <th class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}"
+              scope="col" title="{{ GTW._T (f.description) }}">
+            {{ GTW._T (f.ui_name) }}
+          </th>
+        {% endfor %}
+        {{ _button (page, E_Type, "th", page.href_create, GTW._T (E_Type.ui_name), "Create new object", "icon_add") }}
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in objects %}
+        <tr class="{% cycle 'row1' 'row2' %}" id="pk-{{ o.id }}">
+          {{ _button (page, E_Type, "td", o.href_change, o.id, "Change object", "icon_edit") }}
+          {% for f, v in o %}
+            <td class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}">
+              <a href="{{ o.href_change }}" title="{{ GTW._T ("Change object") }} {{ o.id }}">
+                {{ v }}
+              </a>
+            </td>
+          {% endfor %}
+          {{ _button (page, E_Type, "td", o.href_delete, o.id, "Delete object", "icon_delete") }}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{%- endmacro -%} {#- e_type_admin -#}
+
+{{- e_type_admin (page, page.E_Type, fields, objects) -}}
+
+{#- __END__ jinja template: e_type_admin.jnj -#}

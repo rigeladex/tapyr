@@ -206,7 +206,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def fields (self) :
             admin = self.admin
             FO    = self.FO
-            return [getattr (FO, f.name) for f in admin.list_display]
+            return [(f, getattr (FO, f.name)) for f in admin.list_display]
         # end def fields
 
         @Once_Property
