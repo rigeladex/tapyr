@@ -40,6 +40,8 @@ import _TFL._Babel.Extract
 import _TFL._Babel.Config_File
 import _TFL.CAO
 import  os
+import  tempfile
+import  shutil
 
 def _add_option (cmd_line, * options) :
     cmd_line.extend (options)
@@ -98,25 +100,39 @@ def language (cmd) :
     for base_dir in cmd.argv :
         output_dir = _prefix_path (cmd.output_directory,  base_dir)
         pot_file   = _prefix_path (cmd.template_file,     base_dir, "-I18N")
-        po_file    = os.path.join (output_dir, "%s.po" % (language, ))
-        if os.path.exists (po_file) :
-            babel_cmd     = [__file__, "update"]
-            for opt, option in ( (cmd.previous,        "--previous")
-                               , (cmd.ignore_obsolete, "--ignore-obsolete")
-                               , (cmd.no_fuzzy,         "--no-fuzzy-matching")
-                               ) :
-                if opt :
-                    babel_cmd.append (option)
+        po_file_n  = os.path.join (output_dir, "%s.po" % (language, ))
+        templ      = TFL.Babel.PO_File.load (pot_file, locale = language)
+        if os.path.exists (po_file_n) :
+            print "Update catalog %r based on %r" % (po_file_n, pot_file)
+            po_file = TFL.Babel.PO_File.load (po_file_n, locale = language)
+            po_file.update                   (templ, cmd.no_fuzzy)
+            tmpname = os.path.join\
+                ( output_dir
+                , "%s%s.po" % (tempfile.gettempprefix (), language)
+                )
+            try :
+                po_file.save \
+                    ( tmpname
+                    , ignore_obsolete  = cmd.ignore_obsolete
+                    , include_previous = cmd.previous
+                    )
+            except :
+                #os.remove (tmpname)
+                raise
+            try :
+                os.rename (tmpname, po_file_n)
+            except OSError:
+                # We're probably on Windows, which doesn't support atomic
+                # renames, at least not through Python
+                # If the error is in fact due to a permissions problem, that
+                # same error is going to be raised from one of the following
+                # operations
+                os.remove   (po_file_n)
+                shutil.copy (tmpname, po_file_n)
+                os.remove   (tmpname)
         else :
-            babel_cmd     = [__file__, "init"]
-        _add_option (babel_cmd, "-l", language)
-        _add_option (babel_cmd, "-i", pot_file, "-o", po_file)
-        if cmd.dry_run :
-            print " ".join (babel_cmd)
-        else :
-            babel.run        (babel_cmd)
-            ### need to clear the handlers to prevent multiple outputs
-            babel.log.handlers = []
+            print "Creating catalog %r based on %r" % (po_file_n, pot_file)
+            templ.save      (po_file_n, fuzzy = False)
 # end def language
 
 Language = TFL.CAO.Cmd \
