@@ -94,8 +94,6 @@ Extract = TFL.CAO.Cmd \
 
 def language (cmd) :
     """Create or update the messahe catalog for a language."""
-    from babel.messages.frontend import CommandLineInterface
-    babel         = CommandLineInterface ()
     language      = cmd.argv.pop (0)
     for base_dir in cmd.argv :
         output_dir = _prefix_path (cmd.output_directory,  base_dir)
@@ -154,9 +152,38 @@ Language = TFL.CAO.Cmd \
         )
     , min_args = 2
     )
+
+def compile (cmd) :
+    language      = cmd.argv.pop (0)
+    for base_dir in cmd.argv :
+        output_dir = _prefix_path (cmd.output_directory,  base_dir)
+        po_file_n  = os.path.join (output_dir, "%s.po" % (language, ))
+        mo_file_n  = os.path.join (output_dir, "%s.mo" % (language, ))
+        po_file    = TFL.Babel.PO_File.load (po_file_n)
+        if po_file.fuzzy and not cmd.use_fuzzy :
+            print "Catalog %r is marked as fuzzy, skipping" % (po_file_n, )
+            continue
+        for message, errors in po_file.catalog.check ():
+            for error in errors :
+                print >> sys.stderr, \
+                    "Error: %s:%d: %s", (po_file_n, message.lineno, error)
+        print "compiling catalog %r to %r" % (po_file_n, mo_file_n)
+        po_file.generate_mo (mo_file_n)
+# end def compile
+
 Compile = TFL.CAO.Cmd \
-    ( None
+    ( compile
     , name = "compile"
+    , args =
+        ( "language:S?Which language should be processed"
+        , "directories:P?Directories XXX"
+        ,
+        )
+    , opts =
+        ( "use_fuzzy:B?Compile fuzzy files as well (default False)"
+        , "output_directory:P=-I18N?Output directory"
+        )
+    , min_args = 2
     )
 
 _Cmd = TFL.CAO.Cmd \
