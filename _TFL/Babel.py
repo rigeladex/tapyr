@@ -36,16 +36,117 @@
 #--
 
 from   _TFL           import TFL
+import _TFL.defaultdict
 import _TFL._Babel.Extract
 import _TFL._Babel.Config_File
 import _TFL.CAO
 import  os
+import  glob
 import  tempfile
 import  shutil
 
-def _add_option (cmd_line, * options) :
-    cmd_line.extend (options)
-# end def _add_option
+class Language_File_Collection (object) :
+    """Collect messsage catalog files."""
+
+    def __init__ (self, directories, lang = None) :
+        self.languages          = set ()
+        self.directories        = set ()
+        self.files_per_language = TFL.defaultdict (list)
+        for d in directories :
+            self._add_languages (d, set (lang))
+    # end def __init__
+
+    def _add_languages (self, directory, restrict_langs) :
+        i18n_dir = os.path.abspath (os.path.join (directory, "-I18N"))
+        if restrict_langs :
+            self.languages.update (restrict_langs)
+            for lang in restrict_langs :
+                self.files_per_language [lang].append \
+                    (os.path.join (i18n_dir, "%s.po" % (lang, )))
+        else :
+            for f in glob.glob (os.path.join (i18n_dir, "*.po")) :
+                lang = os.path.splitext               (os.path.basename (f)) [0]
+                if restrict_langs and lang not in restrict_langs :
+                    continue
+                self.files_per_language [lang].append (f)
+                self.languages.add                    (lang)
+                self.directories.add (os.path.dirname (f))
+    # end def _add_languages
+
+    def init_or_update (self, cmd) :
+        for lang, files in self.files_per_language.iteritems () :
+            for f in files :
+                output_dir = os.path.dirname (f)
+                pot_file   = os.path.join    (output_dir, cmd.template_file)
+                templ      = TFL.Babel.PO_File.load (pot_file, locale = lang)
+                if os.path.exists (f) :
+                    self._update  (lang, f, cmd, templ, pot_file)
+                else :
+                  print "Creating catalog %r based on %r" % (f, pot_file)
+                  templ.save (f, fuzzy = False)
+    # end def init_or_update
+
+    def _update (self, lang, po_file_n, cmd, pot_file, pot_file_n) :
+        print "Update catalog `%s` based on `%s`" % (po_file_n, pot_file_n)
+        po_file = TFL.Babel.PO_File.load (po_file_n, locale = lang)
+        po_file.update                   (pot_file, cmd.no_fuzzy)
+        tmpname = os.path.join\
+            ( os.path.dirname (po_file_n)
+            , "%s%s.po" % (tempfile.gettempprefix (), lang)
+            )
+        try :
+            po_file.save \
+                ( tmpname
+                , ignore_obsolete  = cmd.ignore_obsolete
+                , include_previous = cmd.previous
+                )
+        except :
+            os.remove (tmpname)
+            raise
+        try :
+            os.rename (tmpname, po_file_n)
+        except OSError:
+            # We're probably on Windows, which doesn't support atomic
+            # renames, at least not through Python
+            # If the error is in fact due to a permissions problem, that
+            # same error is going to be raised from one of the following
+            # operations
+            os.remove   (po_file_n)
+            shutil.copy (tmpname, po_file_n)
+            os.remove   (tmpname)
+    # end def _update
+
+    def compile (self, cmd) :
+        for lang, files in self.files_per_language.iteritems () :
+            for po_file_n in files :
+                output_dir = os.path.dirname (po_file_n)
+                mo_file_n  = os.path.join (output_dir, "%s.mo" % (lang, ))
+                po_file    = TFL.Babel.PO_File.load (po_file_n)
+                if po_file.fuzzy and not cmd.use_fuzzy :
+                    print "Catalog %r is marked as fuzzy, skipping" % (po_file_n, )
+                    continue
+                for message, errors in po_file.catalog.check ():
+                    for error in errors :
+                        print >> sys.stderr, \
+                            "Error: %s:%d: %s", (po_file_n, message.lineno, error)
+                print "compiling catalog %r to %r" % (po_file_n, mo_file_n)
+                po_file.generate_mo (mo_file_n)
+    # end def compile
+
+    def compile_combined (self, cmd, mo_file_n) :
+        for lang, files in self.files_per_language.iteritems () :
+            po_file   = TFL.Babel.PO_File.combined (* files)
+            if po_file.fuzzy and not cmd.use_fuzzy :
+                print "Catalog %r is marked as fuzzy, skipping" % (files [0], )
+                continue
+            for message, errors in po_file.catalog.check ():
+                for error in errors :
+                    print >> sys.stderr, "Error: %s", (error)
+            print "compiling combined catalog %r to %r" % (files, mo_file_n)
+            po_file.generate_mo (mo_file_n)
+    # end def compile_combined
+
+# end class Language_File_Collection
 
 def _prefix_path (filename, * prefix) :
     if not os.path.isabs (filename) :
@@ -57,12 +158,13 @@ def _prefix_path (filename, * prefix) :
 def extract (cmd) :
     for base_dir in cmd.argv :
         config        = TFL.Babel.Config_File \
-            (_prefix_path (cmd.extraction_config, base_dir))
+            ( _prefix_path (cmd.extraction_config, base_dir)
+            , parent = cmd.global_config
+            )
         template_file = _prefix_path (cmd.template_file,     base_dir, "-I18N")
         keywords      = cmd.keywords
         TFL.Babel.Extract (base_dir, template_file, config, cmd)
 # end def extract
-
 
 Extract = TFL.CAO.Cmd \
     ( extract
@@ -94,94 +196,50 @@ Extract = TFL.CAO.Cmd \
 
 def language (cmd) :
     """Create or update the messahe catalog for a language."""
-    language      = cmd.argv.pop (0)
-    for base_dir in cmd.argv :
-        output_dir = _prefix_path (cmd.output_directory,  base_dir)
-        pot_file   = _prefix_path (cmd.template_file,     base_dir, "-I18N")
-        po_file_n  = os.path.join (output_dir, "%s.po" % (language, ))
-        templ      = TFL.Babel.PO_File.load (pot_file, locale = language)
-        if os.path.exists (po_file_n) :
-            print "Update catalog %r based on %r" % (po_file_n, pot_file)
-            po_file = TFL.Babel.PO_File.load (po_file_n, locale = language)
-            po_file.update                   (templ, cmd.no_fuzzy)
-            tmpname = os.path.join\
-                ( output_dir
-                , "%s%s.po" % (tempfile.gettempprefix (), language)
-                )
-            try :
-                po_file.save \
-                    ( tmpname
-                    , ignore_obsolete  = cmd.ignore_obsolete
-                    , include_previous = cmd.previous
-                    )
-            except :
-                #os.remove (tmpname)
-                raise
-            try :
-                os.rename (tmpname, po_file_n)
-            except OSError:
-                # We're probably on Windows, which doesn't support atomic
-                # renames, at least not through Python
-                # If the error is in fact due to a permissions problem, that
-                # same error is going to be raised from one of the following
-                # operations
-                os.remove   (po_file_n)
-                shutil.copy (tmpname, po_file_n)
-                os.remove   (tmpname)
-        else :
-            print "Creating catalog %r based on %r" % (po_file_n, pot_file)
-            templ.save      (po_file_n, fuzzy = False)
+    lang_files = Language_File_Collection (cmd.argv, cmd.languages)
+    lang_files.init_or_update (cmd)
 # end def language
 
 Language = TFL.CAO.Cmd \
     ( language
     , name = "language"
     , args =
-        ( "language:S?Which language should be processed"
-        , "directories:P"
+        ( "directories:P"
             "?Directories where the extraction should start"
         ,
         )
     , opts =
-        ( "template_file:P=template.pot?Name of the template file"
+        ( "languages:S,?Which language should be processed"
         , "ignore_obsolete:B?"
             "Do not include obsolete messages in the output"
         , "no_fuzzy:B?Do not use fuzzy matching (default False)"
         , "output_directory:P=-I18N?Output directory"
         , "previous:B?Keep previous msgids of translated messages"
+        , "template_file:P=template.pot?Name of the template file"
         )
-    , min_args = 2
+    , min_args = 1
     )
 
 def compile (cmd) :
-    language      = cmd.argv.pop (0)
-    for base_dir in cmd.argv :
-        output_dir = _prefix_path (cmd.output_directory,  base_dir)
-        po_file_n  = os.path.join (output_dir, "%s.po" % (language, ))
-        mo_file_n  = os.path.join (output_dir, "%s.mo" % (language, ))
-        po_file    = TFL.Babel.PO_File.load (po_file_n)
-        if po_file.fuzzy and not cmd.use_fuzzy :
-            print "Catalog %r is marked as fuzzy, skipping" % (po_file_n, )
-            continue
-        for message, errors in po_file.catalog.check ():
-            for error in errors :
-                print >> sys.stderr, \
-                    "Error: %s:%d: %s", (po_file_n, message.lineno, error)
-        print "compiling catalog %r to %r" % (po_file_n, mo_file_n)
-        po_file.generate_mo (mo_file_n)
+    lang_coll = Language_File_Collection (cmd.argv, cmd.languages)
+    if cmd.combined_name :
+        lang_coll.compile_combined (cmd, cmd.combined_name)
+    else :
+        lang_coll.compile          (cmd)
 # end def compile
 
 Compile = TFL.CAO.Cmd \
     ( compile
     , name = "compile"
     , args =
-        ( "language:S?Which language should be processed"
-        , "directories:P?Directories XXX"
+        ( "directories:P?Directories XXX"
         ,
         )
     , opts =
-        ( "use_fuzzy:B?Compile fuzzy files as well (default False)"
+        ( "combined_name:P?Combine all files for a langage into one mo file"
+        , "languages:S,?Which language should be processed"
         , "output_directory:P=-I18N?Output directory"
+        , "use_fuzzy:B?Compile fuzzy files as well (default False)"
         )
     , min_args = 2
     )
@@ -189,11 +247,11 @@ Compile = TFL.CAO.Cmd \
 _Cmd = TFL.CAO.Cmd \
     ( name = "TFL.Babel"
     , args = (TFL.CAO.Cmd_Choice ("command", Extract, Language, Compile), )
-    , opts = ( "dry_run:B?Show the babel command line instead of "
-                 "running the command"
+    , opts = ( "global_config:P?A global config file"
              ,
              )
     )
+
 if __name__ == "__main__" :
     _Cmd ()
 ### __END__ TFL.Babel

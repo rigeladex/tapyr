@@ -23,7 +23,7 @@
 #    TFL.Babel.Config_File
 #
 # Purpose
-#    «text»···
+#    Parse the config file for the translations extraction
 #
 # Revision Dates
 #    21-Jan-2010 (MG) Creation
@@ -62,16 +62,21 @@ class Config_File (TFL.Meta.Object) :
 
     load_translation_key = "load_translations"
 
-    def __init__ (self, filename) :
+    def __init__ (self, filename, parent = None) :
         self.__super.__init__ ()
-        config = ConfigParser.RawConfigParser (dict_type = odict)
-        if not hasattr (filename, "read") :
-            filename         = open  ((filename))
-        config.readfp                (filename)
+        config = self._as_config_parser (filename)
+        parent = self._as_config_parser (parent)
+        print parent
         self.patterns        = odict ()
         self.extractors      = dict (python = TFL.Babel.Extractor.Python)
         self.defaults        = dict  ()
         self._method_options = dict  ()
+        for cfg in parent, config :
+            if cfg :
+                self._add_config (cfg)
+    # end def __init__
+
+    def _add_config (self, config) :
         for section in config.sections () :
             if section == "extractors" :
                 for name, module_spec in config.items (section) :
@@ -89,7 +94,17 @@ class Config_File (TFL.Meta.Object) :
         for mo in self._method_options.values () :
            self._method_options ["loaded_translations"] = \
                self._load_pkg_translations (mo.get (self.load_translation_key))
-    # end def __init__
+    # end def _add_config
+
+    def _as_config_parser (self, filename) :
+        config = None
+        if filename :
+            config = ConfigParser.RawConfigParser (dict_type = odict)
+            if not hasattr (filename, "read") :
+                filename         = open  ((filename))
+            config.readfp                (filename)
+        return config
+    # end def _as_config_parser
 
     def _load_pkg_translations (self, pkg) :
         if pkg :

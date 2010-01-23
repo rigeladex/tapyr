@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project 1.0\n"
 "Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-22 16:28+0100\n"
+"POT-Creation-Date: 2010-01-23 15:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,53 +17,113 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Address.py:73
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:73
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Zip code"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Address.py:98
-#: /data/swing/python/_GTW/_OMP/_PAP/Email.py:65
-#: /data/swing/python/_GTW/_OMP/_PAP/Phone.py:100
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:98
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Email.py:65
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:100
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Description"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Address.py:107
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:107
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Longitude"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Address.py:116
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:116
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Latitude"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Email.py:56
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Email.py:56
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email address"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Person.py:56
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:56
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Last name"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Person.py:66
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:66
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "First name"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Person.py:75
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:75
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Academic title"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Person.py:83
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:83
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Date of birth"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Phone.py:55
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:55
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Country code"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Phone.py:67
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:67
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Area code"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_PAP/Phone.py:78
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:78
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
 msgid "Number"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person_has_Email"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "Phone"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "extension"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "Email"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "Address"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "city"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "country"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "region"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "street"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person_has_Phone"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person_has_Address"
 msgstr ""
 
