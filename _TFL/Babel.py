@@ -34,13 +34,13 @@
 #    21-Jan-2010 (MG) `Translations` replaced by `Existing_Translations`
 #    ««revision-date»»···
 #--
-
 from   _TFL           import TFL
 import _TFL.defaultdict
 import _TFL._Babel.Extract
 import _TFL._Babel.Config_File
 import _TFL.CAO
 import  os
+import  sys
 import  glob
 import  tempfile
 import  shutil
@@ -55,6 +55,20 @@ class Language_File_Collection (object) :
         for d in directories :
             self._add_languages (d, set (lang))
     # end def __init__
+
+    @classmethod
+    def from_sys_modules (cls, lang = None) :
+        directories = set ()
+        i18n_dirs   = set ()
+        for mod in sys.modules.values () :
+            if isinstance (getattr (mod, "__file__", None), basestring) :
+                directories.add (os.path.dirname (mod.__file__))
+        for directory in directories :
+            i18n = os.path.join (directory, "-I18N")
+            if os.path.isdir (i18n) :
+                i18n_dirs.add (directory)
+        return cls (i18n_dirs, lang)
+    # end def from_sys_modules
 
     def _add_languages (self, directory, restrict_langs) :
         i18n_dir = os.path.abspath (os.path.join (directory, "-I18N"))
@@ -221,7 +235,11 @@ Language = TFL.CAO.Cmd \
     )
 
 def compile (cmd) :
-    lang_coll = Language_File_Collection (cmd.argv, cmd.languages)
+    if cmd.import_file :
+        execfile (cmd.import_file)
+        lang_coll = Language_File_Collection.from_sys_modules (cmd.languages)
+    else :
+        lang_coll = Language_File_Collection (cmd.argv, cmd.languages)
     if cmd.combined_name :
         lang_coll.compile_combined (cmd, cmd.combined_name)
     else :
@@ -237,11 +255,13 @@ Compile = TFL.CAO.Cmd \
         )
     , opts =
         ( "combined_name:P?Combine all files for a langage into one mo file"
+        , "import_file:P?Determine directories from imported modules after "
+            "importing this files"
         , "languages:S,?Which language should be processed"
         , "output_directory:P=-I18N?Output directory"
         , "use_fuzzy:B?Compile fuzzy files as well (default False)"
         )
-    , min_args = 2
+    , min_args = 0
     )
 
 _Cmd = TFL.CAO.Cmd \
