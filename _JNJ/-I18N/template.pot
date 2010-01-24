@@ -1,0 +1,91 @@
+# Translations template for Project.
+# Copyright (C) 2010 Company
+# This file is distributed under the same license as the Project project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Project 1.0\n"
+"Report-Msgid-Bugs-To: bugs@domain.com\n"
+"POT-Creation-Date: 2010-01-24 13:23+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/401.jnj:38
+msgid "Login required"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/401.jnj:47
+msgid "You need to be logged in to access the page "
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/403.jnj:37
+msgid "You are not authorized to access this page"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/403.jnj:47
+msgid "You are not authorized to access the page "
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/404.jnj:37
+msgid "Page doesn't exist"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/404.jnj:47
+msgid "You requested a page that doesn't exist: "
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/404.jnj:53
+#, python-format
+msgid "If a link under %s refers to %s, please contact the webmaster."
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/500.jnj:37
+msgid "Server error"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/500.jnj:42
+msgid "Processing the request triggered a server error. "
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/500.jnj:47
+msgid "The error was reported to the webmaster. "
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/500.jnj:52
+msgid ""
+"We apologize for the inconvenience and hope to fix the problem as soon as"
+" possible. "
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/form.jnj:141
+#: /Users/glueck/Development/python/swing/_JNJ/html/form.jnj:228
+msgid "Discard all changes and leave form"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/form.jnj:143
+msgid "Cancel"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/form.jnj:181
+msgid "Login"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/form.jnj:231
+msgid "Discard all changes"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/form.jnj:232
+msgid "Reset"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_JNJ/html/form.jnj:234
+msgid "Submit"
+msgstr ""
+

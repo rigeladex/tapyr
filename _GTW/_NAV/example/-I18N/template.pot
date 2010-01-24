@@ -1,0 +1,99 @@
+# Translations template for Project.
+# Copyright (C) 2010 Company
+# This file is distributed under the same license as the Project project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Project 1.0\n"
+"Report-Msgid-Bugs-To: bugs@domain.com\n"
+"POT-Creation-Date: 2010-01-23 15:39+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Person_has_Address"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Account_in_Group"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Person"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Group"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "accounts"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Person_has_Email"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Account"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "groups"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Email"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Address"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "city"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "country"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "region"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "street"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Account_P"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "password"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Account_Anonymous"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Phone"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "extension"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
+msgid "Person_has_Phone"
+msgstr ""
+

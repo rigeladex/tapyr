@@ -66,7 +66,6 @@ class Config_File (TFL.Meta.Object) :
         self.__super.__init__ ()
         config = self._as_config_parser (filename)
         parent = self._as_config_parser (parent)
-        print parent
         self.patterns        = odict ()
         self.extractors      = dict (python = TFL.Babel.Extractor.Python)
         self.defaults        = dict  ()
@@ -133,6 +132,12 @@ class Config_File (TFL.Meta.Object) :
             module = getattr (module, p)
         return getattr (module, fct_name)
     # end def _load_function
+
+    def options (self, method) :
+        result = self.defaults.copy ()
+        result.update (self._method_options [method])
+        return result
+    # end def options
 
 # end class Config_File
 
