@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-01-21 16:47+0100\n"
-"PO-Revision-Date: 2010-01-21 21:16+0100\n"
+"PO-Revision-Date: 2010-01-24 13:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de_AT <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,19 +18,55 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: /data/swing/python/_GTW/_OMP/_Auth/Account.py:60
-msgid "User active"
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_Auth/Account.py:67
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Account.py:67
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account name"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_Auth/Account.py:76
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_Anonymous"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_P"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_in_Group"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "Group"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Group.py:55
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "Group name"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Account.py:76
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
 msgid "Superuser"
 msgstr ""
 
-#: /data/swing/python/_GTW/_OMP/_Auth/Group.py:55
-msgid "Group name"
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Account.py:60
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "User active"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "accounts"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "groups"
+msgstr ""
+
+#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/__babel__.py:0
+msgid "password"
 msgstr ""
 

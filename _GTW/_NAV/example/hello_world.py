@@ -51,15 +51,15 @@ import _GTW._Form._MOM.Field_Group_Description
 
 import _GTW._NAV.Auth
 
-from Nav_Pages import Redirect, Error, E_Type_Form
+from Nav_Pages import Redirect, Error, E_Type_Form, I18N_Test
 
 from   _MOM                      import MOM
 from   _MOM.Product_Version      import Product_Version, IV_Number
 
 try :
     import _TFL.I18N
-    translations = TFL.I18N.load_languages \
-        ("de_AT", "en_US", domains = ("mom", "gtw"), use = "de_AT")
+    translations = TFL.I18N.load \
+        ("de_AT", "en_US", domains = ("messages"), use = "en_US")
 except ImportError :
     translations = None
 
@@ -73,7 +73,6 @@ GTW.Version = Product_Version \
     , patchlevel          = 42
     , author              = u"Christian Tanzer, Martin Glück"
     , copyright_start     = 2010
-    , translations        = translations
     , db_version          = IV_Number
         ( "db_version"
         , ("Hello World", )
@@ -117,9 +116,11 @@ NAV               = GTW.NAV.Root \
     , account_manager   = scope.Auth.Account
     , anonymous         = anonymous
     , HTTP              = GTW.Tornado
+    , translations      = translations
     , Templateer        = Templateer
           ( load_path   = template_dirs
           , trim_blocks = True
+          , i18n        = True
           , encoding    = "iso-8859-15"
           , globals     = dict (site_base = "base.jnj")
           )
@@ -155,6 +156,12 @@ NAV.add_entries \
           , title           = u"Logout"
           , Type            = GTW.NAV.Auth.Logout
           , hidden          = True
+          )
+      , dict
+          ( name            = "I18N.html"
+          , title           = "I18N Test"
+          , template        = "i18n.jnj"
+          , Type            = I18N_Test
           )
       , dict
           ( name           = "e-type.form.html"

@@ -1,0 +1,7 @@
+{%- extends site_base %}
+
+{%- block document -%}
+  We are at language {{ lang }}.
+{%- endblock document -%}
+
+

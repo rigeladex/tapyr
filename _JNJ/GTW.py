@@ -29,6 +29,7 @@
 #    29-Dec-2009 (CT) Creation
 #    13-Jan-2010 (CT) Converted to class; `call_macro` added;
 #                     `_T` and `_Tn` added to class `GTW`
+#    25-Jan-2010 (MG) `_T` and `_Tn` need to be static methods
 #    ««revision-date»»···
 #--
 
@@ -74,8 +75,8 @@ class GTW (TFL.Meta.Object) :
         return macro (* _args, ** _kw)
     # end def call_macro
 
-    _T  = TFL.I18N._T
-    _Tn = TFL.I18N._Tn
+    _T  = staticmethod (TFL.I18N._T)
+    _Tn = staticmethod (TFL.I18N._Tn)
 
 # end class GTW
 

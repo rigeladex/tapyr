@@ -60,7 +60,7 @@ def add (self, * languages, ** kw) :
 def load (* languages, ** kw) :
     locale_dir        = kw.pop ("locale_dir", Config.locale_dir)
     domains           = kw.pop ("domains",    Config.domains)
-    uset_lang         = kw.pop ("use", None)
+    use_lang          = kw.pop ("use", None)
     Config.domains    = domains
     Config.locale_dir = locale_dir
     _load_languages (locale_dir, languages, domains)

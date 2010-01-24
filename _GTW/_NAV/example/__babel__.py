@@ -34,6 +34,7 @@
 from   _MOM.import_MOM import *
 import _MOM.Babel
 import _GTW._NAV.example.app_import
+import _JNJ
 
 def main (encoding, config, method) :
     from   _MOM._EMS.Hash         import Manager as EMS
