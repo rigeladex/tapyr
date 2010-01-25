@@ -172,6 +172,7 @@
 #    28-May-2009 (CT) s/_Field/_F/g
 #     8-Jan-2010 (CT) Moved from DJO to GTW
 #    18-Jan-2010 (CT) Surgery
+#    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #    ««revision-date»»···
 #--
 
@@ -230,9 +231,8 @@ class Site_Admin (GTW.NAV.Dir) :
         ### if we want to display a site-admin specific page (and not
         ### just the page of the first child [a E_Type_Admin]), we'll
         ### need to bypass `_Dir_.rendered`
-        def rendered (self, context = None, nav_page = None, template = None) :
-            return GTW.NAV._Site_Entity_.rendered \
-                (self, context, nav_page, template)
+        def rendered (self, handler, template = None) :
+            return GTW.NAV._Site_Entity_.rendered (self, handler, template)
         # end def rendered
 
 # end class Site_Admin

@@ -27,10 +27,11 @@ class Error (GTW.NAV.Page) :
 
 class E_Type_Form (GTW.NAV.Page) :
 
-    def rendered (self, context) :
+    def rendered (self, handler, template = None) :
         et_man  = self.form.et_man
+        context = handler.context
+        request = handler.request
         context ["objects"] = et_man.query ().limit (10).all ()
-        request = context ["request"]
         pid     = request.arguments.get ("obj")
         form    = None
         if pid :
@@ -41,20 +42,21 @@ class E_Type_Form (GTW.NAV.Page) :
             if request.arguments.get ("new") :
                 form = self.form (self.abs_href)
         context ["form"] = form
-        return self.__super.rendered (context)
+        return self.__super.rendered (handler, template)
     # end def rendered
 
 # end class E_Type_Form
 
 class I18N_Test (GTW.NAV.Page) :
 
-    def rendered (self, context) :
-        request = context ["request"]
+    def rendered (self, handler, template = None) :
+        context = handler.context
+        request = handler.request
         lang    = request.arguments.get ("lang", ("en_US", )) [0]
         #import pdb; pdb.set_trace ()
         with TFL.I18N.context (lang) :
             context ["lang"] = lang
-            return self.__super.rendered (context)
+            return self.__super.rendered (handler, template)
     # end def rendered
 
 # end class I18N_Test

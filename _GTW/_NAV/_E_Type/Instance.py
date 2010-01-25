@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jan-2010 (CT) Creation
 #    20-Jan-2010 (CT) `FO` factored to GTW
+#    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #    ««revision-date»»···
 #--
 
@@ -92,9 +93,9 @@ class Instance (GTW.NAV.Page) :
             return admin.href_delete (self.obj)
     # end def href
 
-    def rendered (self, context = None, nav_page = None) :
+    def rendered (self, handler, template = None) :
         with self.LET (FO = GTW.FO (self.obj, self.top.encoding)) :
-            return self.__super.rendered (context, nav_page)
+            return self.__super.rendered (handler, template)
     # end def rendered
 
 # end class Instance

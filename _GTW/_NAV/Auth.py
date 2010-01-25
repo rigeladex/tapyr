@@ -48,26 +48,19 @@ class Login (GTW.NAV.Page) :
 
     hidden         = False
 
-    def _view (self, handler) :
-        try :
-            return self.__super._view (handler)
-        except self.top.HTTP.Redirect_302 :
-            ### Authentication was successful, let's set the username as a
-            ### cookie
-            handler.set_secure_cookie \
-                ("username", handler.get_argument ("username"))
-            raise
-    # end def _view
-
-    def rendered (self, context) :
-        request = context ["request"]
-        lf      = GTW.Form.Auth.Login (self.account_manager, self.name)
-        context ["login_form"] = lf
+    def rendered (self, handler, template = None) :
+        context   = handler.context
+        request   = handler.request
+        req_data  = GTW.Tornado.Request_Data (request.arguments)
+        form      = GTW.Form.Auth.Login (self.account_manager, self.name)
+        context ["login_form"] = form
         if request.method == "POST" :
-            if not lf (GTW.Tornado.Request_Data (request.arguments)) :
-                next = request.arguments.get ("next") [0]
+            errors = form (req_data)
+            if not errors :
+                next = req_data.get ("next")
+                handler.set_secure_cookie ("username", req_data  ["username"])
                 raise self.top.HTTP.Redirect_302 (next)
-        return self.__super.rendered (context)
+        return self.__super.rendered (handler, template)
     # end def rendered
 
 # end class Login

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Jan-2010 (CT) Creation
+#    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #    ««revision-date»»···
 #--
 
@@ -64,12 +65,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         lid          = None
         std_template = "e_type_change"
 
-        def rendered (self, context, nav_page = None, template = None) :
+        def rendered (self, handler, template = None) :
             ETM      = self.ETM
             E_Type   = self.E_Type
             HTTP     = self.top.HTTP
+            context  = handler.context
             obj      = context ["instance"] = None
-            request  = context ["request"]
+            request  = handler.request
             req_data = GTW.Tornado.Request_Data (request.arguments)
             lid      = req_data.get ("lid") or self.lid
             if lid :
@@ -93,7 +95,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         ("%s#pk-%s" % (self.parent.abs_href, result.lid))
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
-            return self.__super.rendered (context, nav_page, template)
+            return self.__super.rendered (handler, template)
         # end def rendered
 
     # end class Changer
@@ -104,8 +106,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         implicit     = True
         Media        = None ### cancel inherited property defined
 
-        def rendered (self, context, nav_page = None) :
-            request = context ["request"]
+        def rendered (self, handler, template = None) :
+            context = handler.context
+            request = handler.request
             result  = None
             if request.method == "GET" :
                 ### XXX
@@ -116,10 +119,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         (   DJO.QF (** {"%s__startswith" % str (k) : str (v)})
                         for (k, v) in request.GET.iteritems ()
                         )
-                    completions = context ["completions"] = \
+                    context ["completions"] = \
                         sorted (relm.objects.filter (* qfs).distinct ())
                     result = self.__super.rendered \
-                        (context, nav_page, template = bnfg.completer.template)
+                        (handler, bnfg.completer.template)
             if result is None :
                 raise self.top.HTTP.Error_404 (request.path)
             return result
@@ -133,9 +136,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         implicit     = True
         Media        = None ### cancel inherited property defined
 
-        def rendered (self, context, nav_page = None) :
+        def rendered (self, handler, template = None) :
             import json ### part of python2.6+
-            request = context ["request"]
+            request = handler.request
             result  = None
             if request.method == "GET" :
                 ### XXX
@@ -154,9 +157,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         raise self.top.HTTP.Error_404 \
                             (request.path, request.Error)
                     form_class = bnfg.form_class \
-                        ( request         = None
-                        , instance        = obj
-                        , prefix          = "%s-M%s" % (bnfg.Name, no)
+                        ( request  = None
+                        , instance = obj
+                        , prefix   = "%s-M%s" % (bnfg.Name, no)
                         )
                     ### this works well for the tornado backed
                     return dict ((f.name, str (f)) for f in form_class)
@@ -271,14 +274,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         return u"::".join ((self.name, self.parent.h_title))
     # end def h_title
 
-    def rendered (self, context = None, nav_page = None, template = None) :
-        if context is None :
-            context = dict (page = self)
-        context.update \
+    def rendered (self, handler, template = None) :
+        handler.context.update \
             ( fields  = self.list_display
             , objects = self._entries
             )
-        return self.__super.rendered (context, nav_page, template)
+        return self.__super.rendered (handler, template)
     # end def rendered
 
     def _auto_list_display (self, E_Type, kw) :

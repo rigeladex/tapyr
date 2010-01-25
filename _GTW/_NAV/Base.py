@@ -188,6 +188,8 @@
 #    18-Jan-2010 (CT) `_permissions` added and `allow_user` changed to use it
 #    18-Jan-2010 (CT) `_Dir_.__init__` changed to allow `entries`
 #    18-Jan-2010 (CT) `Root.__init__`: s/Models/E_Types/
+#    25-Jan-2010 (CT) `render_context` factored
+#    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #    ««revision-date»»···
 #--
 
@@ -385,14 +387,18 @@ class _Site_Entity_ (TFL.Meta.Object) :
         return href.replace (common_prefix, u"")
     # end def relative_to
 
-    def rendered (self, context = None, nav_page = None, template = None) :
-        Templateer = self.top.Templateer
-        if context is None :
-            context = Templateer.Context ()
-        context ["page"]     = self
-        context ["nav_page"] = nav_page or self
-        context ["NAV"]      = self.top
-        result = Templateer.render (template or self.template, context)
+    def render_context (self, nav_page = None, ** kw) :
+        return self.top.Templateer.Context \
+            ( NAV       = self.top
+            , nav_page  = nav_page or self
+            , page      = self
+            , ** kw
+            )
+    # end def render_context
+
+    def rendered (self, handler, template = None) :
+        result = self.top.Templateer.render \
+            (template or self.template, handler.context)
         if self.translator :
             result = self.translator (result)
         return result
@@ -441,9 +447,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def _permissions
 
     def _view (self, handler) :
-        request      = handler.request
-        request.user = handler.current_user
-        result       = self.rendered (dict (request = request))
+        request         = handler.request
+        request.user    = handler.current_user
+        handler.context = self.render_context (request = request)
+        result          = self.rendered (handler)
         if result is None :
             raise self.top.HTTP.Error_404 (request.uri [1:])
         handler.write (result)
@@ -516,10 +523,10 @@ class Alias (Page) :
         return (not self.target) or self.target.login_required
     # end def login_required
 
-    def rendered (self, context = None, nav_page = None, template = None) :
+    def rendered (self, handler, template = None) :
         target = self.target
         if target :
-            return target.rendered (context, nav_page or self, template)
+            return target.rendered (handler, template)
     # end def rendered
 
     @property
@@ -671,14 +678,14 @@ class _Dir_ (_Site_Entity_) :
         return result
     # end def new_sub_dir
 
-    def rendered (self, context = None, nav_page = None, template = None) :
+    def rendered (self, handler, template = None) :
         try :
             page = first (self.own_links)
         except IndexError :
             if self.empty_template :
-                return self.__super.rendered (template = self.empty_template)
+                return self.__super.rendered (handler, self.empty_template)
         else :
-            return page.rendered (context, nav_page, template)
+            return page.rendered (handler, template)
     # end def rendered
 
     def _get_child (self, child, * grandchildren) :
