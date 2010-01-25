@@ -1,7 +1,9 @@
 {%- extends site_base %}
 
 {%- block document -%}
-  We are at language {{ lang }}.
+  {%- trans %}
+    We are at language {{ lang }}.
+  {% endtrans -%}
 {%- endblock document -%}
 
 

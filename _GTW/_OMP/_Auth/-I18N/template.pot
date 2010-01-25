@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project 1.0\n"
 "Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-25 11:56+0100\n"
+"POT-Creation-Date: 2010-01-25 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,4 +16,72 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_Anonymous"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_P"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_in_Group"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Group"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Name of group"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Password for this account"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "The locale preference for this user"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "This account has super-user permissions."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "This account is currently active."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "User name associated with this account"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "`Account` linked to `group`"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "`Group` linked to `account`"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "accounts"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "groups"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "locale"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "password"
+msgstr ""
 

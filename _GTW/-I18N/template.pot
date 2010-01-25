@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project 1.0\n"
 "Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-25 13:30+0100\n"
+"POT-Creation-Date: 2010-01-25 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,21 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_Form/Auth.py:57
-msgid "A user name is required to login."
-msgstr ""
-
-#: _GTW/_Form/Auth.py:59
-msgid "The password is required."
-msgstr ""
-
-#: _GTW/_Form/Auth.py:63
-msgid "Username or password incorrect"
-msgstr ""
-
-#: _GTW/_Form/Plain.py:83
+#: _GTW/_NAV/example/templates/i18n.jnj:4
 #, python-format
-msgid "Field `%(field)s` is required"
+msgid ""
+"\n"
+"    We are at language %(lang)s.\n"
+"  "
 msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:83 _GTW/_NAV/_E_Type/Admin.py:188
@@ -39,24 +30,28 @@ msgstr ""
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/Account.py:60
-msgid "User active"
+#: _GTW/_Form/Auth.py:57
+msgid "A user name is required to login."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person.py:75
+msgid "Academic title"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/Account.py:67
 msgid "Account name"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/Account.py:76
-msgid "Superuser"
+#: _GTW/_OMP/_PAP/Phone.py:67
+msgid "Area code"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/Group.py:55
-msgid "Group name"
+#: _GTW/_OMP/_PAP/Phone.py:55
+msgid "Country code"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Address.py:73
-msgid "Zip code"
+#: _GTW/_OMP/_PAP/Person.py:83
+msgid "Date of birth"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Address.py:98 _GTW/_OMP/_PAP/Email.py:65
@@ -64,43 +59,56 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Address.py:107
-msgid "Longitude"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:116
-msgid "Latitude"
-msgstr ""
-
 #: _GTW/_OMP/_PAP/Email.py:56
 msgid "Email address"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:56
-msgid "Last name"
+#: _GTW/_Form/Plain.py:83
+#, python-format
+msgid "Field `%(field)s` is required"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Person.py:66
 msgid "First name"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:75
-msgid "Academic title"
+#: _GTW/_OMP/_Auth/Group.py:55
+msgid "Group name"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:83
-msgid "Date of birth"
+#: _GTW/_OMP/_PAP/Person.py:56
+msgid "Last name"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:55
-msgid "Country code"
+#: _GTW/_OMP/_PAP/Address.py:116
+msgid "Latitude"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Phone.py:67
-msgid "Area code"
+#: _GTW/_OMP/_PAP/Address.py:107
+msgid "Longitude"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Phone.py:78
 msgid "Number"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/Account.py:76
+msgid "Superuser"
+msgstr ""
+
+#: _GTW/_Form/Auth.py:59
+msgid "The password is required."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/Account.py:60
+msgid "User active"
+msgstr ""
+
+#: _GTW/_Form/Auth.py:63
+msgid "Username or password incorrect"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:73
+msgid "Zip code"
 msgstr ""
 

@@ -30,29 +30,36 @@
 #    21-Jan-2010 (MG) No need to add doc strings because they are found by
 #                     the extended python extractor
 #    21-Jan-2010 (MG) Use new `TFL.Babel.Existing_Translations`
+#    25-Jan-2010 (MG) Add doctrings to translations
 #    ««revision-date»»···
 #--
 from   _MOM                import MOM
 
 from   _TFL                import TFL
-
+import _TFL.normalized_indent
 from    babel.util         import parse_encoding
 from    babel.support      import Translations
 import  os
 
 def Add_Translations (encoding, config, method, app_type) :
-    trans    = config.get ("loaded_translations", method)
+    trans        = config.get ("loaded_translations", method)
     translations = []
-    for et in app_type.etypes.itervalues () :
-        msg = et.ui_name
+
+    def _add_object (obj, default_name, add_doc_string) :
+        msg = getattr (obj, "ui_name", default_name)
         if msg not in trans :
             translations.append ((0, None, msg, []))
+        doc_string = TFL.normalized_indent (obj.__doc__ or "")
+        if add_doc_string and doc_string and doc_string not in trans :
+            translations.append ((0, None, doc_string, []))
+    # end def _add_object
+
+    for et in app_type.etypes.itervalues () :
+        _add_object (et, et.ui_name, False)
         for prop_spec in et._Attributes, et._Predicates:
             for pn in prop_spec._own_names :
                 prop = prop_spec._prop_dict [pn]
-                msg  = getattr (prop, "ui_name", prop.name)
-                if msg not in trans :
-                    translations.append ((0, None, msg, []))
+                _add_object (prop, prop.name, True)
     return translations
 # end def Add_Translations
 

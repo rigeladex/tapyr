@@ -38,6 +38,7 @@ import  os
 import  sys
 
 from    babel.util             import pathmatch, relpath
+from    babel.messages.extract import empty_msgid_warning
 
 class Existing_Translations (object) :
     """Read multiple POT files and checks whether a certain message is
@@ -159,10 +160,7 @@ def _extract_from_file (method_name, file_name, config, cmd, keywords) :
         first_msg_index = spec [0] - 1
         if not messages [first_msg_index]:
             # An empty string msgid isn't valid, emit a warning
-            where = '%s:%i' % \
-                (   hasattr(fileobj, 'name') and fileobj.name or '(unknown)'
-                , lineno
-                )
+            where = '%s:%i' % (file_name, lineno)
             print >> sys.stderr, empty_msgid_warning % where
             continue
         messages = tuple (msgs)

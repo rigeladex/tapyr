@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project 1.0\n"
 "Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-25 11:56+0100\n"
+"POT-Creation-Date: 2010-01-25 15:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,4 +16,116 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Academic title."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Address"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "City, town, or village"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Email"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Email address (including domain)"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Extension number used in PBX"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "First name of person"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "International country code of phone number (without prefix)"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Last name of person"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Models a string-valued attribute of an object."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "National area code of phone number (without prefix)"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person_has_Address"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person_has_Email"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Person_has_Phone"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Phone"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Phone number proper (without country code, area code, extension)"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Short description of the address"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Short description of the email address"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Short description of the phone number"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "State or province or region"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Street (or place) and house number"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Zip code of address"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "city"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "country"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "extension"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "region"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "street"
+msgstr ""
 

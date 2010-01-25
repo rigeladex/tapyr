@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Jan-2010 (MG) Creation
+#    25-Jan-2010 (MG) `combine_package_translations` fixed
 #    ««revision-date»»···
 #--
 
@@ -37,6 +38,7 @@ from    babel.messages.pofile  import write_po, read_po
 from    babel.messages.mofile  import write_mo
 from    babel.messages.catalog import Catalog
 import  os
+import  sys
 
 class PO_File (TFL.Meta.Object) :
     """A object to handle PO/POT files."""
@@ -83,9 +85,9 @@ class PO_File (TFL.Meta.Object) :
     @classmethod
     def combine_package_translations (cls, packages) :
         files = []
-        for pkg in packages :
-            module   = __import__ (pkg.strip ())
-            base_dir = os.path.dirname (module.__file__)
+        for pkg in (p.strip () for p in packages) :
+            __import__ (pkg)
+            base_dir = os.path.dirname (sys.modules [pkg].__file__)
             pot_file = os.path.join (base_dir, "-I18N", "template.pot")
             if os.path.isfile (pot_file) :
                 files.append (pot_file)
@@ -157,6 +159,10 @@ class PO_File (TFL.Meta.Object) :
     def __iter__ (self) :
         return iter (self.catalog)
     # end def __iter__
+
+    def __len__ (self) :
+        return len (self.catalog)
+    # end def __len__
 
 # end class PO_File
 

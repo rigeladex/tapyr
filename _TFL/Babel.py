@@ -32,6 +32,7 @@
 #                     Indent of doc strings is normalized
 #    21-Jan-2010 (MG) Command interface added
 #    21-Jan-2010 (MG) `Translations` replaced by `Existing_Translations`
+#    25-Jan-2010 (MG) Multiprocess support added
 #    ««revision-date»»···
 #--
 from   _TFL           import TFL
@@ -44,6 +45,11 @@ import  sys
 import  glob
 import  tempfile
 import  shutil
+
+try :
+    from multiprocessing import Process, JoinableQueue
+except ImportError :
+    Process = None
 
 class Language_File_Collection (object) :
     """Collect messsage catalog files."""
@@ -169,15 +175,42 @@ def _prefix_path (filename, * prefix) :
     return filename
 # end def _prefix_path
 
+def _extract_one_directory (base_dir, cmd = None) :
+    config        = TFL.Babel.Config_File \
+        ( _prefix_path (cmd.extraction_config, base_dir)
+        , parent = cmd.global_config
+        )
+    template_file = _prefix_path (cmd.template_file, base_dir, "-I18N")
+    keywords      = cmd.keywords
+    TFL.Babel.Extract (base_dir, template_file, config, cmd)
+# end def _extract_one_directory
+
 def extract (cmd) :
-    for base_dir in cmd.argv :
-        config        = TFL.Babel.Config_File \
-            ( _prefix_path (cmd.extraction_config, base_dir)
-            , parent = cmd.global_config
-            )
-        template_file = _prefix_path (cmd.template_file, base_dir, "-I18N")
-        keywords      = cmd.keywords
-        TFL.Babel.Extract (base_dir, template_file, config, cmd)
+    if Process and cmd.process_count :
+        ### we cannot use a Pool here because we need to start a ne wprocess
+        ### for each extraction to ensure that the MOM Meta Machinery has not
+        ### been executed already
+        pool = []
+        dirs = cmd.argv [:]
+        while dirs or pool :
+            while dirs and (len (pool) < cmd.process_count) :
+                p = Process \
+                    ( target = _extract_one_directory
+                    , args   = (dirs.pop (0), cmd)
+                    )
+                pool.append (p)
+                p.start     ()
+            i = 0
+            while i < len (pool) :
+                p = pool [i]
+                if not p.is_alive () :
+                    pool.pop (i)
+                    i -= 1
+                i += 1
+
+    else :
+        for base_dir in cmd.argv :
+            _extract_one_directory (base_dir, cmd)
 # end def extract
 
 Extract = TFL.CAO.Cmd \
@@ -195,8 +228,10 @@ Extract = TFL.CAO.Cmd \
         , "copyright_holder:S=Company?Copyright holder"
         , "extraction_config:S=babel.cfg?"
             "Name of the extraction config fileconfig"
+        , "global_config:P?A global config file"
         , "keywords:S,?Additional extraction keyowrds"
         , "no_location:B?Suppress the location information"
+        , "process_count:I=4?Size of the process pool."
         , "omit_header:B?Omit the header in the POT file"
         , "sort:B?Generated template should be alphabetical sorted"
         , "strip_comment_tags:B?Strip the comment tags"
@@ -267,10 +302,6 @@ Compile = TFL.CAO.Cmd \
 _Command = TFL.CAO.Cmd \
     ( name = "TFL.Babel"
     , args = (TFL.CAO.Cmd_Choice ("command", Extract, Language, Compile), )
-    , opts =
-        ( "global_config:P?A global config file"
-        ,
-        )
     )
 
 if __name__ == "__main__" :
