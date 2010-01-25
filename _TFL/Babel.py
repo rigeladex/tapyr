@@ -264,14 +264,15 @@ Compile = TFL.CAO.Cmd \
     , min_args = 0
     )
 
-_Cmd = TFL.CAO.Cmd \
+_Command = TFL.CAO.Cmd \
     ( name = "TFL.Babel"
     , args = (TFL.CAO.Cmd_Choice ("command", Extract, Language, Compile), )
-    , opts = ( "global_config:P?A global config file"
-             ,
-             )
+    , opts =
+        ( "global_config:P?A global config file"
+        ,
+        )
     )
 
 if __name__ == "__main__" :
-    _Cmd ()
+    _Command ()
 ### __END__ TFL.Babel

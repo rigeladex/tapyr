@@ -636,7 +636,7 @@ class Path (_Spec_) :
         return value
     # end def cook
 
-    def _resolve_range (self, values) :
+    def _resolve_range (self, values, cao) :
         for value in values :
             for v in TFL.sos.expanded_globs (value) :
                 yield v
@@ -982,7 +982,8 @@ class CAO (TFL.Meta.Object) :
         if raw is None :
             result = spec.default or []
         else :
-            result = list (ichain (* (spec.cooked (r, self) for r in raw)))
+            result = list \
+                (ichain (* tuple (spec.cooked (r, self) for r in raw)))
         self._map [spec.name] = result
         return result
     # end def _cooked

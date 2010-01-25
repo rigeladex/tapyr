@@ -35,6 +35,7 @@ from   _TFL import TFL
 from   _TFL import sos
 
 import _TFL._Meta.Object
+import _TFL.CAO
 
 import sys
 
@@ -78,8 +79,31 @@ def relative_to_search_path (search_path, abs_path) :
     return Relative_To_Search_Path (search_path) (abs_path)
 # end def relative_to_search_path
 
-relative_to_python_path = Relative_To_Search_Path (sys.path)
+relative_to_python_path = Relative_To_Search_Path \
+    (sos.environ.get ("PYTHONPATH", sys.path))
+
+def _main (cmd) :
+    rtsp = Relative_To_Search_Path (cmd.search_path)
+    print cmd.Sep.join (rtsp (p) for p in cmd.argv)
+# end def _main
+
+_Command = TFL.CAO.Cmd \
+    ( handler     = _main
+    , args        =
+        ( "path:P?Path(es) to convert to relative to `search_path`"
+        ,
+        )
+    , opts        =
+        ( "-search_path:P:?Search path"
+        , "-Sep:S=\n?Separator between pathes printed to stdout"
+        )
+    , description =
+        "Convert absolute pathes to pathes relative to one of the "
+        "elements of a search path, if possible"
+    )
 
 if __name__ != "__main__" :
     TFL._Export ("*")
+else :
+    _Command ()
 ### __END__ TFL.relative_to_search_path
