@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project 1.0\n"
 "Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-23 15:39+0100\n"
-"PO-Revision-Date: 2010-01-24 13:54+0100\n"
+"POT-Creation-Date: 2010-01-25 20:53+0100\n"
+"PO-Revision-Date: 2010-01-25 20:54+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de_AT <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -16,84 +16,21 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
+"X-Language: de_AT\n"
 
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Account"
+#: _GTW/_NAV/example/templates/i18n.jnj:4
+#, python-format
+msgid ""
+"    We are at language %(lang)s.\n"
+"  "
 msgstr ""
+"    Aktuelle Sprache %(lang)s.\n"
+"  "
 
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Account_Anonymous"
-msgstr ""
+#: _GTW/_NAV/example/templates/i18n.jnj:8
+msgid "English"
+msgstr "Englisch"
 
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Account_P"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Account_in_Group"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Address"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Email"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Group"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Person"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Person_has_Address"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Person_has_Email"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Person_has_Phone"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "Phone"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "accounts"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "city"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "country"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "extension"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "groups"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "password"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "region"
-msgstr ""
-
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/example/__babel__.py:0
-msgid "street"
-msgstr ""
-
+#: _GTW/_NAV/example/templates/i18n.jnj:7
+msgid "German"
+msgstr "Deutsch"

@@ -30,9 +30,10 @@
 #    10-Jan-2010 (MG) Moved into package `GTW.NAV`
 #    15-Jan-2010 (MG) Authentication added
 #    17-Jan-2010 (CT) Adapted to change of Auth.Account (s/name/username/)
+#    25-Jan-2010 (MG) Session and locale-code handling added
 #    ««revision-date»»···
 #--
-
+from   _TFL                    import I18N
 from   _GTW                    import GTW
 import _GTW._NAV
 import _GTW._Tornado
@@ -60,7 +61,10 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
     DEFAULT_HANDLER = "_handle_request"
 
     def _handle_request (self, * args, ** kw) :
+        if self.application.settings.get ("i18n", False) :
+            I18N.use (* self.locale_codes)
         GTW.NAV.Root.universal_view (self)
+        self.session.save           ()
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :

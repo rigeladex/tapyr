@@ -143,7 +143,7 @@ class PO_File (TFL.Meta.Object) :
             , width        = self.width
             , no_location  = self.no_location
             , omit_header  = self.omit_header
-            , sort_output  = self.sort
+            , sort_output  = kw.pop ("sort", self.sort)
             , ** kw
             )
     # end def save

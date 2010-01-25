@@ -35,6 +35,8 @@
 from   _TFL                      import TFL
 from   _GTW                      import GTW
 import _GTW._NAV.Request_Handler
+import _GTW._Tornado.Application
+import _GTW._Tornado.File_Session
 import  os
 
 import _GTW._NAV.Base
@@ -56,12 +58,8 @@ from Nav_Pages import Redirect, Error, E_Type_Form, I18N_Test
 from   _MOM                      import MOM
 from   _MOM.Product_Version      import Product_Version, IV_Number
 
-try :
-    import _TFL.I18N
-    translations = TFL.I18N.load \
-        ("de_AT", "en_US", domains = ("messages", ), use = "en_US")
-except ImportError :
-    translations = None
+import _TFL.I18N
+TFL.I18N.load ("de_AT", "en_US", domains = ("messages", ), use = "en_US")
 
 GTW.Version = Product_Version \
     ( productid           = u"GTW Test"
@@ -90,7 +88,6 @@ import  sys
 cmd = TFL.CAO.Cmd \
     ( opts = ( "port:I=8080?Server port"
              , "tornado_reload:B?Use the tornado reload feature"
-             , "GTW_reload:B?Use the GTW reload feature"
              )
     ) (sys.argv [1:])
 
@@ -116,7 +113,6 @@ NAV               = GTW.NAV.Root \
     , account_manager   = scope.Auth.Account
     , anonymous         = anonymous
     , HTTP              = GTW.Tornado
-    , translations      = translations
     , Templateer        = Templateer
           ( load_path   = template_dirs
           , trim_blocks = True
@@ -212,21 +208,16 @@ NAV.add_entries \
     , Dir_Type = GTW.NAV.Dir
     )
 if __name__ == "__main__" :
-    import _GTW._Tornado.Application
     print "Start server on port %d" % (cmd.port, )
-    if cmd.GTW_reload :
-        print "Use GTW autorelaod feature"
-        GTW.Tornado.auto_reload_start \
-            ( GTW.Tornado.Application (( ((r".*", GTW.NAV.Request_Handler), )))
-            , port = cmd.port
-            )
-    else :
-        if cmd.tornado_reload :
-            print "Use Tornado buildin autorelaod feature"
-        app = GTW.Tornado.Application \
-            ( ((".*$", GTW.NAV.Request_Handler), )
-            , cookie_secret = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476W§+@"
-            , debug = cmd.tornado_reload
-            )
-        GTW.Tornado.start_server (app, cmd.port)
+    if cmd.tornado_reload :
+        print "Use Tornado buildin autorelaod feature"
+    app = GTW.Tornado.Application \
+        ( ((".*$", GTW.NAV.Request_Handler), )
+        , cookie_secret = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476W§+@"
+        , debug         = cmd.tornado_reload
+        , Session_Class = GTW.Tornado.File_Session
+        , session_id    = "SESSION_ID"
+        , i18n          = True
+        )
+    GTW.Tornado.start_server (app, cmd.port)
 ### __END__ GTW.NAV.example.hello_world

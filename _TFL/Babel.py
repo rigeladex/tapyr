@@ -119,6 +119,7 @@ class Language_File_Collection (object) :
                 ( tmpname
                 , ignore_obsolete  = cmd.ignore_obsolete
                 , include_previous = cmd.previous
+                , sort             = cmd.sort
                 )
         except :
             os.remove (tmpname)
@@ -136,11 +137,22 @@ class Language_File_Collection (object) :
             os.remove   (tmpname)
     # end def _update
 
+    def _mo_file_name (self, cmd, lang, po_file_n = None) :
+        if cmd.output_file :
+            return cmd.output_file
+        if not cmd.combine :
+            return os.path.join \
+                (os.path.dirname (po_file_n), "%s.mo" % (lang, ))
+        return os.path.join \
+            ( cmd.output_directory, lang, "LC_MESSAGES"
+            , "%s.mo" % (cmd.domain, )
+            )
+    # end def _mo_file_name
+
     def compile (self, cmd) :
         for lang, files in self.files_per_language.iteritems () :
             for po_file_n in files :
-                output_dir = os.path.dirname (po_file_n)
-                mo_file_n  = os.path.join (output_dir, "%s.mo" % (lang, ))
+                mo_file_n  = self._mo_file_name (cmd, lang, po_file_n)
                 po_file    = TFL.Babel.PO_File.load (po_file_n)
                 if po_file.fuzzy and not cmd.use_fuzzy :
                     print "Catalog %r is marked as fuzzy, skipping" % (po_file_n, )
@@ -153,9 +165,10 @@ class Language_File_Collection (object) :
                 po_file.generate_mo (mo_file_n)
     # end def compile
 
-    def compile_combined (self, cmd, mo_file_n) :
+    def compile_combined (self, cmd) :
         for lang, files in self.files_per_language.iteritems () :
             po_file   = TFL.Babel.PO_File.combined (* files)
+            mo_file_n = self._mo_file_name         (cmd, lang)
             if po_file.fuzzy and not cmd.use_fuzzy :
                 print "Catalog %r is marked as fuzzy, skipping" % (files [0], )
                 continue
@@ -264,6 +277,7 @@ Language = TFL.CAO.Cmd \
         , "no_fuzzy:B?Do not use fuzzy matching (default False)"
         , "output_directory:P=-I18N?Output directory"
         , "previous:B?Keep previous msgids of translated messages"
+        , "sort:B?Generated po should be alphabetical sorted"
         , "template_file:P=template.pot?Name of the template file"
         )
     , min_args = 1
@@ -275,8 +289,8 @@ def compile (cmd) :
         lang_coll = Language_File_Collection.from_sys_modules (cmd.languages)
     else :
         lang_coll = Language_File_Collection (cmd.argv, cmd.languages)
-    if cmd.combined_name :
-        lang_coll.compile_combined (cmd, cmd.combined_name)
+    if cmd.combine :
+        lang_coll.compile_combined (cmd)
     else :
         lang_coll.compile          (cmd)
 # end def compile
@@ -289,11 +303,13 @@ Compile = TFL.CAO.Cmd \
         ,
         )
     , opts =
-        ( "combined_name:P?Combine all files for a langage into one mo file"
+        ( "combine:B?Combine all files for a langage into one mo file"
+        , "domain:S=messages?Domain for the meesage catalog"
         , "import_file:P?Determine directories from imported modules after "
             "importing this files"
         , "languages:S,?Which language should be processed"
-        , "output_directory:P=-I18N?Output directory"
+        , "output_directory:P=locale?Output directory"
+        , "output_file:P?Explicit name of the MO file"
         , "use_fuzzy:B?Compile fuzzy files as well (default False)"
         )
     , min_args = 0

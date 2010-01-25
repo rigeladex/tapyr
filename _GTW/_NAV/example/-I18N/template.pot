@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project 1.0\n"
 "Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-25 15:07+0100\n"
+"POT-Creation-Date: 2010-01-25 20:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,15 @@ msgstr ""
 #: _GTW/_NAV/example/templates/i18n.jnj:4
 #, python-format
 msgid ""
-"\n"
 "    We are at language %(lang)s.\n"
 "  "
+msgstr ""
+
+#: _GTW/_NAV/example/templates/i18n.jnj:7
+msgid "German"
+msgstr ""
+
+#: _GTW/_NAV/example/templates/i18n.jnj:8
+msgid "English"
 msgstr ""
 

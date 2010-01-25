@@ -50,13 +50,14 @@ class E_Type_Form (GTW.NAV.Page) :
 class I18N_Test (GTW.NAV.Page) :
 
     def rendered (self, handler, template = None) :
-        context = handler.context
-        request = handler.request
-        lang    = request.arguments.get ("lang", ("en_US", )) [0]
-        #import pdb; pdb.set_trace ()
-        with TFL.I18N.context (lang) :
-            context ["lang"] = lang
-            return self.__super.rendered (handler, template)
+        context  = handler.context
+        request  = handler.request
+        lang     = request.arguments.get ("lang")
+        if lang :
+            handler.session ["language"] = lang
+            TFL.I18N.use (* lang)
+        context ["lang"] = handler.session.language
+        return self.__super.rendered (handler, template)
     # end def rendered
 
 # end class I18N_Test

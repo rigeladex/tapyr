@@ -30,13 +30,64 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                import TFL
+from   _TFL                       import TFL
+from   _TFL._Meta.Once_Property   import Once_Property
 import _TFL._Meta.Object
+
+import  locale
 
 from    tornado            import web
 
 class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
     """Base class for a request handler"""
+
+    @Once_Property
+    def session (self) :
+        settings   = self.application.settings
+        SID_Cookie = settings.get ("session_id", "SESSION_ID")
+        sid        = self.get_secure_cookie (SID_Cookie)
+        session    = settings ["Session_Class"] \
+            (sid, settings.get ("cookie_secret", ""))
+        if not sid :
+            self.set_secure_cookie (SID_Cookie, session.sid)
+        return session
+    # end def session
+
+    @Once_Property
+    def locale_codes (self) :
+        """The locale-code for the current session."""
+        codes = self.get_user_locale_codes ()
+        if not codes :
+            codes = self.get_browser_locale_codes ()
+        assert codes
+        return codes
+    # end def locale_codes
+
+    def get_browser_locale_codes (self) :
+        """Determines the user's locale from Accept-Language header."""
+        if "Accept-Language" in self.request.headers :
+            languages = self.request.headers ["Accept-Language"].split (",")
+            locales   = []
+            for language in languages :
+                parts = language.strip ().split (";")
+                if len (parts) > 1 and parts [1].startswith ("q="):
+                    try :
+                        score = float (parts [1][2:])
+                    except (ValueError, TypeError):
+                        score = 0.0
+                else:
+                    score = 1.0
+                locales.append ((parts [0], score))
+            if locales :
+                locales.sort (key=lambda (l, s): s, reverse = True)
+                return [l [0] for l in locales]
+        return \
+            (self.application.settings.get ("defailt_locale_code", "en_US"), )
+    # end def get_browser_locale_codes
+
+    def get_user_locale_codes (self) :
+        return self.session.get ("language")
+    # end def get_user_locale_codes
 
 # end class Request_Handler
 

@@ -28,6 +28,8 @@
 #
 # Revision Dates
 #    24-Jan-2010 (MG) Creation
+#    25-Jan-2010 (MG) Looks like we need to strip the first new line in order
+#                     to have the right key for the lookup
 #    ««revision-date»»···
 #--
 
@@ -63,7 +65,7 @@ def extract_from_ast ( node
             if (   isinstance (arg,       ext.nodes.Const)
                and isinstance (arg.value, basestring)
                ) :
-                strings.append (arg.value)
+                strings.append (arg.value.lstrip ("\n"))
             else:
                 strings.append (None)
 
@@ -83,6 +85,7 @@ def extract_from_ast ( node
                 strings = strings [0]
             else:
                 strings = tuple (strings)
+
         if isinstance (node.node, ext.nodes.Name) :
             yield node.lineno, node.node.name, strings
         else :

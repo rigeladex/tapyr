@@ -85,9 +85,9 @@ class File_Session (GTW.Tornado.Session) :
             return {}
     # end def _load
 
-    def _save (self) :
+    def save (self) :
         cPickle.dump (self._data, open (self._file_name, "wb"))
-    # end def _save
+    # end def save
 
     def remove (self) :
         os.unlink (self._file_name)

@@ -33,11 +33,13 @@
 #    21-Jan-2010 (CT) `load_languages` and `use_language` added
 #    21-Jan-2010 (MG) Reworked
 #    21-Jan-2010 (MG) `save_eval` added
+#    25-Jan-2010 (MG) Support list of languages in `use` and `context`
 #    ««revision-date»»···
 #--
 
-from   _TFL         import TFL
-from   _TFL.Record  import Record
+from   _TFL            import TFL
+from   _TFL.Record     import Record
+from   _TFL.predicate  import first
 import  gettext
 import  babel.support
 
@@ -119,12 +121,14 @@ def ungettext (singular, plural = None, n = 99, trans = None) :
     return (trans or Config.current).ungettext (singular, plural, n)
 # end def ungettext
 
-def use (lang) :
-    Config.current = Config.Languages.get (lang, Config.Null)
-# end def use_language
+def use (* lang) :
+    Langs  = Config.Languages
+    loaded = first ((l for l in lang + (None, ) if l in Langs))
+    Config.current = Config.Languages [loaded]
+# end def use
 
 @TFL.Contextmanager
-def context (lang) :
+def context (* lang) :
     """Temporaly change the translation language
     ### Let's fake some Translations
     >>> Config.Languages ["l1"] = l1 = babel.support.Translations ()
@@ -146,7 +150,7 @@ def context (lang) :
     """
     old = Config.current
     try :
-       use (lang)
+       use (* lang)
        yield
     finally :
         Config.current = old

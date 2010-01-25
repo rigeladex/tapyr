@@ -4,6 +4,8 @@
   {%- trans %}
     We are at language {{ lang }}.
   {% endtrans -%}
+  <a href="?lang=de_AT">{{ GTW._T ("German")  }}</a>
+  <a href="?lang=en_US">{{ GTW._T ("English") }}</a>
 {%- endblock document -%}
 
 
