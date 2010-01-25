@@ -59,7 +59,7 @@ from   _MOM.Product_Version      import Product_Version, IV_Number
 try :
     import _TFL.I18N
     translations = TFL.I18N.load \
-        ("de_AT", "en_US", domains = ("messages"), use = "en_US")
+        ("de_AT", "en_US", domains = ("messages", ), use = "en_US")
 except ImportError :
     translations = None
 
@@ -83,7 +83,7 @@ GTW.Version = Product_Version \
         )
     )
 
-### define the command lind and parse it to get the `port` from the command
+### define the command line and parse it to get the `port` from the command
 ### line needed for the `site_url`
 import _TFL.CAO
 import  sys
