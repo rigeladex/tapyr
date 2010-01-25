@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project 1.0\n"
 "Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-23 15:38+0100\n"
+"POT-Creation-Date: 2010-01-25 12:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,92 +17,90 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: /Users/glueck/Development/python/swing/_GTW/_Form/Auth.py:57
+#: _GTW/_Form/Auth.py:57
 msgid "A user name is required to login."
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_Form/Auth.py:59
+#: _GTW/_Form/Auth.py:59
 msgid "The password is required."
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_Form/Auth.py:63
+#: _GTW/_Form/Auth.py:63
 msgid "Username or password incorrect"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_Form/Plain.py:83
+#: _GTW/_Form/Plain.py:83
 #, python-format
 msgid "Field `%(field)s` is required"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/_E_Type/Admin.py:81
-#: /Users/glueck/Development/python/swing/_GTW/_NAV/_E_Type/Admin.py:185
+#: _GTW/_NAV/_E_Type/Admin.py:83 _GTW/_NAV/_E_Type/Admin.py:188
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Account.py:60
+#: _GTW/_OMP/_Auth/Account.py:60
 msgid "User active"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Account.py:67
+#: _GTW/_OMP/_Auth/Account.py:67
 msgid "Account name"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Account.py:76
+#: _GTW/_OMP/_Auth/Account.py:76
 msgid "Superuser"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_Auth/Group.py:55
+#: _GTW/_OMP/_Auth/Group.py:55
 msgid "Group name"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:73
+#: _GTW/_OMP/_PAP/Address.py:73
 msgid "Zip code"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:98
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Email.py:65
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:100
+#: _GTW/_OMP/_PAP/Address.py:98 _GTW/_OMP/_PAP/Email.py:65
+#: _GTW/_OMP/_PAP/Phone.py:100
 msgid "Description"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:107
+#: _GTW/_OMP/_PAP/Address.py:107
 msgid "Longitude"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Address.py:116
+#: _GTW/_OMP/_PAP/Address.py:116
 msgid "Latitude"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Email.py:56
+#: _GTW/_OMP/_PAP/Email.py:56
 msgid "Email address"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:56
+#: _GTW/_OMP/_PAP/Person.py:56
 msgid "Last name"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:66
+#: _GTW/_OMP/_PAP/Person.py:66
 msgid "First name"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:75
+#: _GTW/_OMP/_PAP/Person.py:75
 msgid "Academic title"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Person.py:83
+#: _GTW/_OMP/_PAP/Person.py:83
 msgid "Date of birth"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:55
+#: _GTW/_OMP/_PAP/Phone.py:55
 msgid "Country code"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:67
+#: _GTW/_OMP/_PAP/Phone.py:67
 msgid "Area code"
 msgstr ""
 
-#: /Users/glueck/Development/python/swing/_GTW/_OMP/_PAP/Phone.py:78
+#: _GTW/_OMP/_PAP/Phone.py:78
 msgid "Number"
 msgstr ""
 

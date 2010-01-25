@@ -120,6 +120,15 @@ class Account_P (_Ancestor_Essence) :
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
+        class locale (A_String) :
+            """The locale preference for this user"""
+
+            default    = "en_US"
+            kind       = Attr.Optional
+            max_length = 10
+
+        # end class locale
+
         class password (A_String) :
             """Password for this account"""
 

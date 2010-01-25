@@ -27,10 +27,12 @@
 #
 # Revision Dates
 #    21-Jan-2010 (MG) Creation
+#    25-Jan-2010 (MG) Convert absolute path to relative path
 #    ««revision-date»»···
 #--
-from   _TFL                import TFL
-from   _TFL.predicate      import any_true
+from   _TFL                          import TFL
+from   _TFL.predicate                import any_true
+import _TFL.relative_to_search_path
 import _TFL._Babel.PO_File
 import  os
 import  sys
@@ -111,7 +113,10 @@ def Extract (dirname, template_file, config, cmd) :
                             po_file.add \
                                 ( message
                                 , None
-                                , [(filepath, lineno)]
+                                , [ ( TFL.relative_to_python_path (filepath)
+                                    , lineno
+                                    )
+                                  ]
                                 , auto_comments = comments
                                 )
                         break
