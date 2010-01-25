@@ -101,22 +101,18 @@ def Extract (dirname, template_file, config, cmd) :
                             if pathmatch (pattern, filename) :
                                 raise Skip
                         filepath = os.path.join (absname, filename)
+                        rfp      = TFL.relative_to_python_path (filepath)
                         print "Method `%-10s`: `%s" % (method_name, filename)
                         for lineno, message, comments in \
-                              _extract_from_file    \
-                                  ( method_name
-                                  , filepath
-                                  , config
-                                  , cmd
-                                  , keywords
-                                  ) :
+                                _extract_from_file    \
+                                    ( method_name
+                                    , filepath
+                                    , config
+                                    , cmd
+                                    , keywords
+                                    ) :
                             po_file.add \
-                                ( message
-                                , None
-                                , [ ( TFL.relative_to_python_path (filepath)
-                                    , lineno
-                                    )
-                                  ]
+                                ( message, None, [( rfp, lineno)]
                                 , auto_comments = comments
                                 )
                         break

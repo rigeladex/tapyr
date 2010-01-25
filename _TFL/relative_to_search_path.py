@@ -50,7 +50,8 @@ class Relative_To_Search_Path (TFL.Meta.Object) :
         seps = (sos.path.sep, )
 
     def __init__ (self, search_path) :
-        self.search_path = [self._normalized (p) for p in search_path]
+        self.search_path = list \
+            (p for p in (self._normalized (p) for p in search_path) if p)
     # end def __init__
 
     def __call__ (self, abs_path) :
@@ -80,7 +81,7 @@ def relative_to_search_path (search_path, abs_path) :
 # end def relative_to_search_path
 
 relative_to_python_path = Relative_To_Search_Path \
-    (sos.environ.get ("PYTHONPATH", sys.path))
+    (sos.environ.get ("PYTHONPATH").split (sos.path.pathsep) or sys.path)
 
 def _main (cmd) :
     rtsp = Relative_To_Search_Path (cmd.search_path)

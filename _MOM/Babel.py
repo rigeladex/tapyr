@@ -60,7 +60,7 @@ def Extract (fobj, keywords, comment_tags, config, method) :
     d        = {}
     encoding = parse_encoding (fobj) or config.get \
         ("encoding", default = "iso-8859-1")
-    execfile (fobj.name, globals (), d)
+    exec (fobj.read (), globals (), d)
     return d ["main"] (encoding, config, method)
 # end def Extract
 
