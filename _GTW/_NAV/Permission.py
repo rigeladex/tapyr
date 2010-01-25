@@ -34,7 +34,7 @@
 from   _TFL                     import TFL
 from   _GTW                     import GTW
 
-import _GTW.NAV
+import _GTW._NAV
 
 from   _TFL._Meta.Once_Property import Once_Property
 

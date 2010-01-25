@@ -159,6 +159,7 @@
 #    17-Oct-2008 (CT) `login_required` added
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
 #     8-Jan-2010 (CT) Moved from DJO to GTW
+#    25-Jan-2010 (CT) `GTW.ReST.to_html` factored
 #    ««revision-date»»···
 #--
 
@@ -166,7 +167,9 @@ from   __future__               import with_statement
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+
 import _GTW._NAV.Base
+import _GTW.ReST
 
 from   _TFL.Filename            import *
 from   _TFL.Regexp              import *
@@ -184,32 +187,12 @@ class Page_ReST (GTW.NAV.Page) :
 
     @Once_Property
     def contents (self) :
-        return self.markup_to_html (unicode (self.src_contents))
+        return GTW.to_html \
+            ( self.src_contents
+            , encoding = self.encoding
+            , language = getattr (self, "language", "en")
+            )
     # end def contents
-
-    def markup_to_html (self, text) :
-        """Convert `text` from re-structured text markup to HTML."""
-        settings = dict \
-            ( base_section                  = "0"
-            , input_encoding                = "unicode"
-            , output_encoding               = self.encoding
-            , output_encoding_error_handler = "xmlcharrefreplace"
-            , language_code                 = getattr (self, "language", "en")
-            )
-
-        parts    = self._publish_parts \
-            ( source             = text
-            , writer_name        = "html4css1"
-            , settings_overrides = settings
-            )
-        return parts ["fragment"]
-    # end def markup_to_html
-
-    @Once_Property
-    def _publish_parts (self) :
-        from docutils.core import publish_parts
-        return publish_parts
-    # end def _publish_parts
 
 # end class Page_ReST
 

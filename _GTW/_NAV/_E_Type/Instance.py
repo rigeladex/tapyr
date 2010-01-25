@@ -48,7 +48,7 @@ class Instance (GTW.NAV.Page) :
     """Navigation page modelling a single instance of a E_Type."""
 
     def __init__ (self, obj, manager) :
-        name = getattr (obj, "name", str (obj)) ### XXX ???
+        name = getattr (obj, "name", str (obj.lid))
         self.__super.__init__ \
             ( obj      = obj
             , manager  = manager
@@ -71,7 +71,7 @@ class Instance (GTW.NAV.Page) :
     def changer (self) :
         admin = self.admin
         if admin :
-            return admin._get_child ("change", self.obj.pid)
+            return admin._get_child ("change", self.obj.lid)
     # end def changer
 
     @property
