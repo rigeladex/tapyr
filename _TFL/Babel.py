@@ -175,7 +175,7 @@ def extract (cmd) :
             ( _prefix_path (cmd.extraction_config, base_dir)
             , parent = cmd.global_config
             )
-        template_file = _prefix_path (cmd.template_file,     base_dir, "-I18N")
+        template_file = _prefix_path (cmd.template_file, base_dir, "-I18N")
         keywords      = cmd.keywords
         TFL.Babel.Extract (base_dir, template_file, config, cmd)
 # end def extract
@@ -192,7 +192,7 @@ Extract = TFL.CAO.Cmd \
         ( "bugs_address:S=bugs@domain.com?"
             "Email address to report translation bugs"
         , "charset:S=utf-8?Encoding for the pot file"
-        , "copyright_holder:S=Company?Copyright holer"
+        , "copyright_holder:S=Company?Copyright holder"
         , "extraction_config:S=babel.cfg?"
             "Name of the extraction config fileconfig"
         , "keywords:S,?Additional extraction keyowrds"
@@ -203,13 +203,13 @@ Extract = TFL.CAO.Cmd \
         , "project:S=Project?Name of the project/application"
         , "template_file:P=template.pot?Name of the template file"
         , "version:S=1.0?Product version"
-        , "width:I=76?Output with in the POT file"
+        , "width:I=76?Output width in the POT file"
         )
     , min_args = 1
     )
 
 def language (cmd) :
-    """Create or update the messahe catalog for a language."""
+    """Create or update the message catalog for a language."""
     lang_files = Language_File_Collection (cmd.argv, cmd.languages)
     lang_files.init_or_update (cmd)
 # end def language
