@@ -1133,7 +1133,25 @@ Primary key attributes
     Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
         name =
 
-
+Rollback of uncommited changes
+------------------------------
+    >>> scope.changes, scope.changes_to_save
+    (49, 2)
+    >>> scope.commit ()
+    >>> scope.changes, scope.changes_to_save
+    (49, 0)
+    >>> rbm = scope.BMT.Mouse ("Rollback_Mouse_1")
+    >>> rbt = scope.BMT.Trap  ("Rollback_Trap_1", 1)
+    >>> rbl = scope.BMT.Rodent_in_Trap (rbm, rbt)
+    >>> scope.changes, scope.changes_to_save
+    (52, 3)
+    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
+    [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
+    >>> scope.rollback ()
+    >>> scope.changes_to_save
+    0
+    >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
+    []
 """
 
 db_uri = "'/tmp/bmt_test.bmt'"

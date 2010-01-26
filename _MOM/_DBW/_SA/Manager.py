@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -49,6 +49,7 @@
 #                     change reconstruction from database
 #    21-Dec-2009 (CT) s/load_scope/load_root/
 #    30-Dec-2009 (MG) `create_instance` fixed
+#    26-Jan-2010 (MG) `commit` added
 #    ««revision-date»»···
 #--
 
@@ -106,6 +107,7 @@ class Cached_Role_Clearing (Instance_Recreation) :
     def after_delete (self, mapper, connection, link) :
         super (Cached_Role_Clearing, self).after_delete \
             (mapper, connection, link)
+        return orm.EXT_CONTINUE
         for acr in link.auto_cache_roles :
             acr (link, no_value = True)
         return orm.EXT_CONTINUE
@@ -274,6 +276,11 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                 result [name] = attr_kind
         return result
     # end def _attr_dict
+
+    def commit (self) :
+        self.session.change_session.commit ()
+        return sell.__super.commit         ()
+    # end def commit
 
     def load_root (cls, session, scope) :
         si         = session.query (cls.sa_scope).one ()

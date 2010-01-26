@@ -43,6 +43,7 @@
 #    21-Dec-2009 (CT) `max_cid` factored
 #    31-Dec-2009 (MG) `__lt__` and `__eq__` aded
 #     1-Jan-2010 (CT) `PID.__hash__` added
+#    26-Jan-2010 (MG) Don't commit the change session on `register_change`
 #    ««revision-date»»···
 #--
 
@@ -139,8 +140,8 @@ class Manager (MOM.EMS._Manager_) :
 
     @property
     def max_cid (self) :
-        return self.session.query (MOM.DBW.SA.SA_Change).order_by \
-            ("-_id").limit (1).first ().cid
+        query = self.session.change_session.query (MOM.DBW.SA.SA_Change)
+        return query.order_by ("-_id").limit (1).first ().cid
     # end def max_cid
 
     def pid_query (self, pid, Type) :
@@ -152,7 +153,7 @@ class Manager (MOM.EMS._Manager_) :
         result     = self.__super.register_change (change)
         sa_change  = MOM.DBW.SA.SA_Change  (change)
         self.session.change_session.add    (sa_change)
-        self.session.change_session.commit ()
+        self.session.change_session.flush  ()
         change.cid = sa_change._id
         if change.children :
             Table = sa_change._sa_table
