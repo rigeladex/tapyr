@@ -69,7 +69,12 @@ if 1 :
         PTL   = scope.BMT.Person_sets_Trap_at_Location
         b1    = b.copy ("Toothless_Beaver", region = "Lower Austria")
     RiT (m, t1)
-    scope.commit ()
+    PoT (p, t1)
+    PoT (p, t2)
+    m.catcher
+    #PTL (p, t1, l1)
+    #PTL (p, t2, l2)
+    #scope.commit ()
     #scop3 = scope.copy (apt, "sqlite:///test.sqlite")
     #RiT (r, t3)
     #RiT (p, t1)

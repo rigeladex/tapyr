@@ -50,10 +50,19 @@
 #    21-Dec-2009 (CT) s/load_scope/load_root/
 #    30-Dec-2009 (MG) `create_instance` fixed
 #    26-Jan-2010 (MG) `commit` added
+#    27-Jan-2010 (MG) Db Table generation moved into `etype_decorator`
+#                     (needed because when the many to many relations are
+#                     setup we need the DB table for the `secondary` argument)
+#    27-Jan-2010 (MG) Bug in `_attr_dict` fixed (wrong base class was used to
+#                     determin which attribues need to be in the DB)
+#                     `_attr_dict` renamed to `_attr_dicts` and changed to
+#                     collect the cached role attributes as well
+#    27-Jan-2010 (MG) Support for cached roles added
 #    ««revision-date»»···
 #--
-
-from   _MOM       import MOM
+from   _TFL                      import TFL
+import _TFL.defaultdict
+from   _MOM                      import MOM
 import _MOM._DBW
 import _MOM._DBW._Manager_
 import _MOM._DBW._SA
@@ -61,10 +70,11 @@ import _MOM._DBW._SA.Attr_Type
 import _MOM._DBW._SA.Attr_Kind
 import _MOM._SCM.Change
 
-from sqlalchemy import orm
-from sqlalchemy import schema
-from sqlalchemy import types
-from sqlalchemy import engine as SA_Engine
+from   sqlalchemy import orm
+from   sqlalchemy import schema
+from   sqlalchemy import types
+from   sqlalchemy import engine as SA_Engine
+import sqlalchemy.orm.collections
 
 Type_Name_Type = types.String (length = 30)
 
@@ -100,20 +110,6 @@ class Instance_Recreation (orm.interfaces.MapperExtension) :
     # end def after_delete
 
 # end class Instance_Recreation
-
-class Cached_Role_Clearing (Instance_Recreation) :
-    """Clear the cached role attributes if a link is delete"""
-
-    def after_delete (self, mapper, connection, link) :
-        super (Cached_Role_Clearing, self).after_delete \
-            (mapper, connection, link)
-        return orm.EXT_CONTINUE
-        for acr in link.auto_cache_roles :
-            acr (link, no_value = True)
-        return orm.EXT_CONTINUE
-    # end def after_delete
-
-# end class Cached_Role_Clearing
 
 class SA_Change (object) :
     """The python object representing a OMO change object"""
@@ -229,10 +225,10 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     def prepare (cls) :
         cls._create_scope_table           (cls.metadata)
         cls._create_SCM_table             (cls.metadata)
+        cls.role_cacher = TFL.defaultdict (set)
     # end def prepare
 
-    def update_etype (cls, e_type) :
-        ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
+    def etype_decorator (cls, e_type) :
         if getattr (e_type, "relevant_root", None) :
             bases      = \
                 [  b for b in e_type.__bases__
@@ -241,41 +237,66 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
             if len (bases) > 1 :
                 raise NotImplementedError \
                     ("Multiple inheritance currently not supported")
-            map_props = dict ()
-            unique    = []
-            attr_dict = cls._attr_dict     (e_type)
-            columns   = cls._setup_columns (e_type, attr_dict, bases, unique)
+            unique               = []
+            db_attrs, role_attrs = cls._attr_dicts (e_type, bases)
+            columns   = cls._setup_columns (e_type, db_attrs, bases, unique)
             if unique :
                 columns.append (schema.UniqueConstraint (* unique))
-            sa_table  = schema.Table \
-                ( e_type.type_name.replace (".", "__")
-                , cls.metadata
-                , * columns
-                )
-            map_props  ["properties"] = cls._setup_mapper_properties \
-                (e_type, attr_dict, sa_table, bases)
+            e_type._sa_table = schema.Table \
+                (e_type.type_name.replace (".", "__"), cls.metadata, * columns)
+            ### save the gathered attribute dict and bases for the
+            ### update_etype run
+            e_type._sa_save_attrs = bases, db_attrs, role_attrs
             if issubclass (e_type, MOM.Link) :
-                map_props ["extension"] = Cached_Role_Clearing ()
-            else :
-                map_props ["extension"] = Instance_Recreation  ()
+                for cr in e_type.auto_cache_roles :
+                    cls.role_cacher [cr.other_role.role_type.type_name].add \
+                        ((cr, e_type))
+                e_type.auto_cache_roles = ()
+            attr_spec = e_type._Attributes
+            for name, attr_kind in role_attrs.iteritems () :
+                attr_cls             = attr_spec._own_names [name]
+                attr_cls.kind        = MOM.Attr.Cached
+                attr_cls.Kind_Mixins = (MOM.Attr.Computed_Mixin, )
+                attr_spec._add_prop (e_type, name, attr_cls)
+        return e_type
+    # end def etype_decorator
+
+    def update_etype (cls, e_type, app_type) :
+        ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
+        if getattr (e_type, "relevant_root", None) :
+            sa_table                    = e_type._sa_table
+            bases, db_attrs, role_attrs = e_type._sa_save_attrs
+            ### remove the attributes saved during the `etype_decorator` run
+            del e_type._sa_save_attrs
+            map_props                 = dict ()
+            map_props  ["properties"] = cls._setup_mapper_properties \
+                (app_type, e_type, db_attrs, role_attrs, sa_table, bases)
+            map_props ["extension"]   = Instance_Recreation  ()
             cls._setup_inheritance (e_type, sa_table, bases, map_props)
             orm.mapper             (e_type, sa_table, ** map_props)
-            e_type._sa_table = sa_table
     # end def update_etype
 
-    def _attr_dict (self, e_type) :
+    def _attr_dicts (self, e_type, bases) :
         attr_dict  = e_type._Attributes._attr_dict
-        result     = {}
-        root       = e_type.relevant_root
-        if e_type is root :
+        db_attrs   = {}
+        role_attrs = {}
+        root       = bases and bases [0]
+        if e_type is e_type.relevant_root :
             inherited_attrs = {}
         else :
             inherited_attrs = root._Attributes._attr_dict
         for name, attr_kind in attr_dict.iteritems () :
-            if attr_kind.save_to_db and name not in inherited_attrs :
-                result [name] = attr_kind
-        return result
-    # end def _attr_dict
+            if name not in inherited_attrs :
+                if attr_kind.save_to_db :
+                    db_attrs [name] = attr_kind
+                elif isinstance ( attr_kind
+                                , ( MOM.Attr.Cached_Role
+                                  , MOM.Attr.Cached_Role_Set
+                                  )
+                                ) :
+                    role_attrs [name] = attr_kind
+        return db_attrs, role_attrs
+    # end def _attr_dicts
 
     def commit (self) :
         self.session.change_session.commit ()
@@ -298,7 +319,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         session.execute (cls.sa_scope.insert ().values (** kw))
     # end def register_scope
 
-    def _setup_columns (cls, e_type, attr_dict, bases, unique) :
+    def _setup_columns (cls, e_type, db_attrs, bases, unique) :
         result = []
         if e_type is not e_type.relevant_root :
             base    = bases [0]
@@ -319,7 +340,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         ### we add the type_name in any case to make EMS.SA easier
         result.append (schema.Column ("Type_Name", Type_Name_Type))
         e_type._sa_pk_name = pk_name
-        for name, attr_kind in attr_dict.iteritems () :
+        for name, attr_kind in db_attrs.iteritems () :
             attr_kind.attr._sa_col_name = attr_kind._sa_col_name ()
             if attr_kind.is_primary :
                 unique.append (attr_kind.attr._sa_col_name)
@@ -354,9 +375,16 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         return col_prop
     # end def _setup_inheritance
 
-    def _setup_mapper_properties (cls, e_type, attr_dict, sa_table, bases) :
+    def _setup_mapper_properties ( cls
+                                 , app_type
+                                 , e_type
+                                 , db_attrs
+                                 , role_attrs
+                                 , sa_table
+                                 , bases
+                                 ) :
         result = dict ()
-        for name, attr_kind in attr_dict.iteritems () :
+        for name, attr_kind in db_attrs.iteritems () :
             ckd           = attr_kind.ckd_name
             if isinstance (attr_kind, MOM.Attr.Link_Role) :
                 result [name] = orm.synonym  (ckd, map_column = False)
@@ -366,6 +394,10 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                 ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
                 result [name] = orm.synonym (ckd, map_column = False)
                 result [ckd]  = sa_table.c [name]
+        for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
+            cls._cached_role \
+                (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
+        ### we need this attributes to trigger the cascading
         for assoc, roles in getattr (e_type, "link_map", {}).iteritems () :
             for r in roles :
                 attr_name = "__".join (assoc.type_name.split (".") + [r.name])
@@ -373,6 +405,27 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                     result [attr_name] = orm.dynamic_loader (assoc, cascade = "all")
         return result
     # end def _setup_mapper_properties
+
+    def _cached_role (cls, app_type, attr_kind, cr, assoc_et) :
+        assoc_sa    = assoc_et._sa_table
+        q_attr      = assoc_sa.c \
+            [getattr (assoc_et, cr.role_name      ).attr._sa_col_name]
+        f_attr      = assoc_sa.c \
+            [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
+        singleton   = isinstance (cr, MOM.Role_Cacher_1)
+        result_et   = app_type [attr_kind.Class.type_name]
+        def computed_crn (self) :
+            session = self.home_scope.ems.session
+            pk      = getattr (self, self._sa_pk_name)
+            links   = session.query (q_attr).filter (f_attr == pk)
+            query   = session.query (result_et).filter \
+                (getattr (result_et, result_et._sa_pk_name).in_ (links))
+            if singleton :
+                return query.first ()
+            return query
+        # end def computed_crn
+        attr_kind.attr.computed = computed_crn
+    # end def _cached_role
 
 # end class _M_SA_Manager_
 

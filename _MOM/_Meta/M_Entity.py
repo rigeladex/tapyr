@@ -61,6 +61,7 @@
 #    14-Jan-2010 (CT) `PNS_s` removed
 #    21-Jan-2010 (CT) `M_Id_Entity` changed to auto-generate `epkified_ckd`
 #                     and `epkified_raw` instead of `__init__`
+#    27-Jan-2010 (MG) Add `app_type` parameter when calling `update_etype`
 #    ««revision-date»»···
 #--
 
@@ -155,7 +156,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
             ### `DBW.update_etype` can use features like `children` or
             ### `link_map` that are only available after *all* etypes have
             ### already been created
-            e_update (t)
+            e_update (t, app_type)
     # end def _m_create_e_types
 
     def _m_new_e_type (cls, app_type, etypes) :

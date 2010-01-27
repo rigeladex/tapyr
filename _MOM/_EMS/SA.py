@@ -44,6 +44,7 @@
 #    31-Dec-2009 (MG) `__lt__` and `__eq__` aded
 #     1-Jan-2010 (CT) `PID.__hash__` added
 #    26-Jan-2010 (MG) Don't commit the change session on `register_change`
+#    27-Jan-2010 (MG) `Manager.add` print SA exception in `__debug__` mode
 #    ««revision-date»»···
 #--
 
@@ -120,6 +121,8 @@ class Manager (MOM.EMS._Manager_) :
             entity.pid = PID (entity.relevant_root.type_name, entity.id)
         except SA_Exception.IntegrityError as exc :
             ses.rollback ()
+            if __debug__ :
+                print exc
             raise MOM.Error.Name_Clash \
                 (entity, self.instance (entity.__class__, entity.epk))
     # end def add

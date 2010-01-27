@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck. All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck. All rights reserved
 # Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -30,6 +30,7 @@
 #    30-Nov-2009 (CT) `update_etype` added
 #     4-Dec-2009 (MG) Renamed from `Session` to `_Manager_`
 #    16-Dec-2009 (MG) `_Manager_.prepare` added
+#    27-Jan-2010 (MG) `update_etype` parameter `app_type` added
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,7 @@ class _M_Manager_ (TFL.Meta.Object.__class__) :
         pass
     # end def prepare
 
-    def update_etype (cls, e_type) :
+    def update_etype (cls, e_type, app_type) :
         pass
     # end def update_etype
 
