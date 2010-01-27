@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,6 +31,7 @@
 #    10-Dec-2009 (MG) Adopted to new `TFL.Q_Exp`
 #    16-Dec-2009 (MG) Support for queries against `pid` added
 #    18-Dec-2009 (MG) `Q_Result_Changes` added
+#    27-Jan-2010 (MG) `order_by` fixed to work with older versions of SA
 #    ««revision-date»»···
 #--
 
@@ -175,8 +176,10 @@ class Q_Result (TFL.Meta.Object) :
         else :
             joins               = ()
             order_clause        = (criterion, )
-        sa_query = self.sa_query.join (* joins).order_by (* order_clause)
-        return self.__class__ (self.e_type, sa_query)
+        sa_query = self.sa_query
+        if joins :
+            sa_query.joins (* joins)
+        return self.__class__ (self.e_type, sa_query.order_by (* order_clause))
     # end def order_by
 
     def __getattr__ (self, name) :
