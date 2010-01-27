@@ -60,7 +60,6 @@ def HTML \
     if loader :
         loaders.append (loader)
     if load_path :
-        assert loader is None
         encoding = kw.pop ("encoding", "iso-8859-1")
         loaders.append (FileSystemLoader (load_path, encoding))
     loaders.append (jnj_loader)

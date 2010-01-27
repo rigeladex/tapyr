@@ -187,7 +187,7 @@ class Page_ReST (GTW.NAV.Page) :
 
     @Once_Property
     def contents (self) :
-        return GTW.to_html \
+        return GTW.ReST.to_html \
             ( self.src_contents
             , encoding = self.encoding
             , language = getattr (self, "language", "en")

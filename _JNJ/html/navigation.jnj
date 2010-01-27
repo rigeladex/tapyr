@@ -82,14 +82,14 @@
   {%- endif -%}
 {%- endmacro -%} {# section #}
 
-{%- macro sitemap (links = None) -%}
+{%- macro sitemap (links = None, TEST = False) -%}
   {%- if not links -%}
     {%- set links = page.top.own_links -%}
   {%- endif -%}
-  {{ sitemap_level (links) }}
+  {{ sitemap_level (links, TEST) }}
 {%- endmacro -%} {#- sitemap -#}
 
-{%- macro sitemap_entry (link) -%}
+{%- macro sitemap_entry (link, TEST = False) -%}
   {% if NAV.permissive or link.allow_user (request.user) %}
     <li class="nav-link level-{{link.level|default('0')}}">
       <a href="{{ link.site_prefix }}{{ link.href }}"
@@ -108,7 +108,7 @@
           <p>Target: {{ link.target.href }}</p>
           {% if link.photos %}
             <ul >
-              {{ sitemap_entry (link.photos [0]) }}
+              {{ sitemap_entry (link.photos [0], TEST) }}
             </ul>
           {% endif %}
           {% if link.manager %}
@@ -116,16 +116,16 @@
           {% endif %}
         </div>
       {% endif %}
-      {{ sitemap_level (link.own_links) }}
+      {{ sitemap_level (link.own_links, TEST) }}
     </li>
   {% endif %}
 {%- endmacro -%} {#- sitemap_entry -#}
 
-{%- macro sitemap_level (links) -%}
+{%- macro sitemap_level (links, TEST = False) -%}
   {%- if links %}
     <ul>
       {%- for link in links  %}
-        {{ sitemap_entry (link) }}
+        {{ sitemap_entry (link, TEST) }}
       {% endfor -%}
     </ul>
   {% endif -%}

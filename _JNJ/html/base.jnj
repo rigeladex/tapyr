@@ -81,7 +81,7 @@
         <meta name="description" content="{{ page.description }}" />
         {%- endif %}
         <meta name="copyright" content="{{ page.copyright.year }} {{ page.copyright.holder }}" />
-        <meta name="generator" content="Jinja2" />
+        <meta name="generator" content="GTW, JNJ, Jinja2" />
         {{ X.meta_content_url (page.href) }}
       {%- endblock meta_elements -%}
       {{ page.add_headers|safe }}

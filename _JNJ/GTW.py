@@ -30,6 +30,7 @@
 #    13-Jan-2010 (CT) Converted to class; `call_macro` added;
 #                     `_T` and `_Tn` added to class `GTW`
 #    25-Jan-2010 (MG) `_T` and `_Tn` need to be static methods
+#    27-Jan-2010 (CT) `now` added
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,13 @@ class GTW (TFL.Meta.Object) :
         self.env = env
     # end def __init__
 
+    def call_macro (self, macro_name, * _args, ** _kw) :
+        """Call macro named by `macro_name` passing `* _args, ** _kw`."""
+        templ_name = _kw.pop   ("templ_name", None)
+        macro      = self.get_macro (macro_name, templ_name)
+        return macro (* _args, ** _kw)
+    # end def call_macro
+
     def firstof (self, * args) :
         if len (args) == 1 and isinstance (args [0], (tuple, list)) :
             args = args [0]
@@ -68,12 +76,11 @@ class GTW (TFL.Meta.Object) :
         return getattr (template.module, macro_name)
     # end def get_macro
 
-    def call_macro (self, macro_name, * _args, ** _kw) :
-        """Call macro named by `macro_name` passing `* _args, ** _kw`."""
-        templ_name = _kw.pop   ("templ_name", None)
-        macro      = self.get_macro (macro_name, templ_name)
-        return macro (* _args, ** _kw)
-    # end def call_macro
+    def now (self, format = "%Y/%m/%d") :
+        from datetime import datetime
+        result = datetime.now ()
+        return result.strftime (format)
+    # end def now
 
     _T  = staticmethod (TFL.I18N._T)
     _Tn = staticmethod (TFL.I18N._Tn)

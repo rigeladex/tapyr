@@ -1,10 +1,10 @@
-{%- extends site_base %}
-{#- jinja template: sitemap.jnj -#}
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: video.jnj -#}
 {#
-## Copyright (C) 2010 Martin Glueck All rights reserved
-## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 ## ****************************************************************************
-## This template is part of the package GTW:NAV.
+## This template is part of the package JNJ.
 ##
 ## This template is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU Affero General Public License as published by
@@ -22,20 +22,24 @@
 ##
 ##++
 ## Name
-##    sitemap
+##    html/video.jnj
 ##
 ## Purpose
-##    Demonstrate the use of the sitemap macro
+##    Template for a page with embedded video
 ##
 ## Revision Dates
-##    18-Jan-2010 (MG) Creation
+##    27-Jan-2010 (CT) Creation
 ##    ««revision-date»»···
 ##--
 #}
-{%- import "html/navigation.jnj" as NT with context %}
+
 {%- block document -%}
-  {{ NT.sitemap (NAV.own_links, TEST = True) }}
+  <div class="video">
+    <h1>{{ GTW.firstof (page.desc, page.title, page.href) }}</h1>
+
+    {{ page.embed_stanza|safe }}
+
+  </div>
 {%- endblock document -%}
-{#- __END__ jinja template: sitemap.jnj -#}
 
-
+{#- __END__ jinja template: video.jnj -#}

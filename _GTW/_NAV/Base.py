@@ -728,6 +728,7 @@ class Root (_Dir_) :
     name                    = "/"
     owner                   = None
     src_root                = ""
+    target                  = None
     translator              = None
 
     _dump_type              = "GTW.NAV.Root.from_dict_list \\"

@@ -1,0 +1,59 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: news.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/news.jnj
+##
+## Purpose
+##    Template and macros for news
+##
+## Revision Dates
+##    27-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro entry (e) -%}
+  <div class="news-entry">
+    <div class="news-meta">
+      <span class="news-author">{{ e.author }}</span>
+      <span class="news-date">{{ e.date }}</span>
+      <div  class="news-title">{{ GTW.firstof (e.desc, e.title) }}</div>
+    </div>
+    {{ e.contents|safe }}
+    {%- if e.changer and e.changer.allow_user (request.user) %}
+      <a href="{{ e.changer.abs_href }}"
+         title="{{ GTW._T ('Edit this entry') }}"
+         class="button"
+      >
+        {{ GTW._T ("Change") }}
+      </a>
+    {% endif -%}
+  </div>
+{%- endmacro -%} {#- entry -#}
+
+{%- block document -%}
+  {{- entry (page) -}}
+{%- endblock document -%}
+
+{#- __END__ jinja template: news.jnj -#}
