@@ -152,6 +152,7 @@
 #    17-Sep-2009 (RSC) Fix Doc-String on "z" category after email-discussion
 #     6-Dec-2009 (CT)  3-compatibility
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
+#    27-Jan-2010 (CT) Option `-stdin` added
 #    ««revision-date»»···
 #--
 
@@ -1379,9 +1380,10 @@ class _ATAX_Command_ (TFL.Meta.Object) :
 
     def _add_files (self, cmd, account, categories, source_currency) :
         if cmd.argn > 0 :
+            assert not cmd.stdin
             for file_name in cmd.argv :
                 account.add_file (file_name, categories, source_currency)
-        else :
+        elif cmd.stdin :
             account.add_lines    (sys.stdin, categories, source_currency)
     # end def _add_files
 
@@ -1394,6 +1396,7 @@ class _ATAX_Command_ (TFL.Meta.Object) :
             ( "-all:B"
             , "-categories:S,=%s" % self.default_categories
             , "-Config:P,?Config file(s)"
+            , "-stdin:B?Read data from standard input"
             , "-vst_korrektur:F=1.0"
             , TFL.CAO.Arg.EUC_Source ()
             , TFL.CAO.Arg.EUC_Target ()
