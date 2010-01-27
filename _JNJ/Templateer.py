@@ -44,11 +44,10 @@ class Templateer (TFL.Meta.Object) :
 
     Context         = dict
     Template_Map    = dict \
-        ( { 401       : "html/401.jnj"
-          , 403       : "html/403.jnj"
-          , 404       : "html/404.jnj"
-          , 500       : "html/500.jnj"
-          , 500       : "html/500.jnj"
+        ( { 401       : "html/error_401.jnj"
+          , 403       : "html/error_403.jnj"
+          , 404       : "html/error_404.jnj"
+          , 500       : "html/error_500.jnj"
           }
         , default       = "html/error.jnj"
         , e_type_admin  = "html/e_type_admin.jnj"
