@@ -56,6 +56,7 @@
 #                     `PNS_Aliases`
 #    16-Jan-2010 (CT) `_outer_pgk_ns` factored
 #    19-Jan-2010 (CT) `rollback` added
+#    27-Jan-2010 (CT) `rollback` changed to call `count_change`
 #    ««revision-date»»···
 #--
 
@@ -454,6 +455,7 @@ class Scope (TFL.Meta.Object) :
 
     def rollback (self) :
         self.ems.rollback  ()
+        self.count_change  ()
         self.make_snapshot ()
     # end def rollback
 
