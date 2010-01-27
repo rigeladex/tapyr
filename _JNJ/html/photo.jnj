@@ -1,0 +1,65 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: photo.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/base.jnj
+##
+## Purpose
+##    Template and macros for displaying a photo of a gallery
+##
+## Revision Dates
+##    27-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import "STD::html/navigation.jnj" as NT with context %}
+
+{%- macro buttons (page) -%}
+  {%- set gallery_title = "{{ GTW._T ('Gallerie') }} {{ page.parent.title }}" %}
+  {{ NT.neighbor (page.prev, GTW._T ("Previous picture"), "arrow_left") }}
+  <a href="{{ page.site_prefix }}{{ page.parent.href }}">
+    <img alt="{{ gallery_title }}" title="{{ gallery_title }}"
+         src="{{ page.site_prefix }}media/images/arrow_up.png"
+    />
+  </a>
+  {{ NT.neighbor (page.next, GTW._T ("Next picture"), "arrow_right") }}
+{%- endmacro -%} {#- buttons -#}
+
+{%- macro photo (page) -%}
+  <div class="photo">
+    {{ buttons (page) }}
+    <img alt="{{ GTW.firstof (page.alt, page.desc, page.title, page.href) }}"
+         title="{{ GTW.firstof (page.desc, page.title, page.href) }}"
+         src="{{ page.site_prefix }}{{ page.src }}"
+         height="{{ page.height }}" width="{{ page.width }}"
+    />
+    {{ buttons (page) }}
+  </div>
+{%- endmacro -%} {#- photo -#}
+
+{%- block document -%}
+  {{- photo (page) -}}
+{%- endblock document -%}
+
+{#- __END__ jinja template: photo.jnj -#}

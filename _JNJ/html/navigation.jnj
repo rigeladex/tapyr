@@ -30,12 +30,14 @@
 ##    29-Dec-2009 (CT) Creation
 ##    14-Jan-2010 (CT) Guard `if not link.hidden` added to loop in `entries`
 ##    17-Jan-2010 (CT) `sitemap` added
+##    27-Jan-2010 (CT) `neighbor` added
 ##    ««revision-date»»···
 ##--
 #}
+
 {%- macro entry (link, level) -%}
   {%- if NAV.permissive or link.allow_user (request.user) %}
-    {% if nav_page.prefix.startswith (link.prefix) and link.has_children %}
+    {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
         <a href="{{ link.site_prefix }}{{ link.href }}"
                {%- if link.desc %}title="{{ link.desc }}"{% endif %}
@@ -43,21 +45,21 @@
             >{{ link.title|safe }}</a>
         {{ entries (link.own_links, level + 1) }}
       </li>
-    {% else %}
-      {% if link.href == nav_page.href %}
+    {%- else -%}
+      {% if link.href == nav_page.href -%}
         <li class="current-link level-{{ level }}">{{ link.title|safe }}</li>
-      {% else %}
-        {% if link.href %}
+      {%- else -%}
+        {%- if link.href -%}
           <li class="nav-link level-{{ level }}">
             <a href="{{ link.site_prefix }}{{ link.href }}"
                {% if link.desc %}title="{{ link.desc }}"{% endif %}
             >{{ link.title|safe }}</a>
           </li>
-        {% else %}
+        {%- else -%}
           <li class="no-link">{{ link.title|safe }}</li>
-        {% endif %}
-      {% endif %}
-    {% endif %}
+        {%- endif %}
+      {%- endif %}
+    {%- endif %}
   {%- else %}
     <li>{{ link.title|safe }}</li>
   {%- endif %}
@@ -72,6 +74,23 @@
   </ul>
   {%- endif -%}
 {%- endmacro -%} {# entries #}
+
+{%- macro neighbor (neighbor, alt, symbol) -%}
+  {%- onion neighbor %}
+    {%- head %}
+      <a href="{{ neighbor.site_prefix }}{{ neighbor.href }}">
+      {%- set suffix = "" %}
+    {%- else %}
+      {%- set suffix = "_gray" %}
+    {%- body %}
+        <img alt="{{ alt }}"
+          src="{{ page.site_prefix }}media/images/{{ symbol }}{{ suffix }}.png"
+          title="{{ GTW.firstof (neighbor.title, alt) }}"
+        />
+    {%- tail %}
+      </a>
+  {%- endonion %}
+{%- endmacro -%} {#- neighbor -#}
 
 {%- macro section (link_list, name = None) -%}
   {%- if link_list %}

@@ -1,0 +1,85 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: login.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/login.jnj
+##
+## Purpose
+##    Template for login page
+##
+## Revision Dates
+##    27-Jan-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- import html_version as X -%}
+{%- import "STD::html/form.jnj" as Form %}
+
+{%- set title = "GTW._T ('Login for') }} {{ page.site_url }}" %}
+
+{%- block title -%}
+  <title>{{ title }}</title>
+{%- endblock -%}
+
+{%- block document -%}
+  <h1>{{ title }}</h1>
+  {% if form.errors %}
+    <p>
+      {{- GTW._T
+          ("Your username and password didn't match. Please try again.")
+      -}}
+    </p>
+  {% endif %}
+
+  {% call Form.form (action = "/login/", next = page.abs_href) -%}
+    <p>
+      <label for="F_username">{{ GTW._T ("Username") }}</label>
+      {{ X.input.text
+          ( id            = "F_username"
+          , name          = "username"
+          , maxlength     = "30"
+          , placeholder   = GTW._T ("Please enter your user-name")
+          )
+      }}
+    </p>
+
+    <p>
+      <label for="F_password">{{ GTW._T ("Password") }}</label>
+      {{ X.input.password
+          ( id            = "F_password"
+          , name          = "password"
+          , placeholder   = GTW._T ("Please enter your password")
+          )
+      }}
+    </p>
+
+    <p>
+      {{ X.input.submit (value = GTW._T ("Login")) }}
+      {{ X.input.hidden (name  = "next", value = next) }}
+    </p>
+  {%- endcall -%} {# Form.form #}
+
+{%- endblock document -%}
+
+{#- __END__ jinja template: login.jnj -#}

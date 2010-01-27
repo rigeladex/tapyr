@@ -37,5 +37,3 @@
   {{ NT.sitemap (NAV.own_links, TEST = True) }}
 {%- endblock document -%}
 {#- __END__ jinja template: sitemap.jnj -#}
-
-

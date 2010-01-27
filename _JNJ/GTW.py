@@ -30,7 +30,7 @@
 #    13-Jan-2010 (CT) Converted to class; `call_macro` added;
 #                     `_T` and `_Tn` added to class `GTW`
 #    25-Jan-2010 (MG) `_T` and `_Tn` need to be static methods
-#    27-Jan-2010 (CT) `now` added
+#    27-Jan-2010 (CT) `Getter`, `now`, and `sorted` added
 #    ««revision-date»»···
 #--
 
@@ -40,6 +40,7 @@ from   _TFL import TFL
 import _JNJ.Environment
 
 import _TFL._Meta.Object
+import _TFL.Accessor
 import _TFL.I18N
 
 class GTW (TFL.Meta.Object) :
@@ -76,11 +77,15 @@ class GTW (TFL.Meta.Object) :
         return getattr (template.module, macro_name)
     # end def get_macro
 
+    Getter = TFL.Getter
+
     def now (self, format = "%Y/%m/%d") :
         from datetime import datetime
         result = datetime.now ()
         return result.strftime (format)
     # end def now
+
+    sorted = staticmethod (sorted)
 
     _T  = staticmethod (TFL.I18N._T)
     _Tn = staticmethod (TFL.I18N._Tn)
