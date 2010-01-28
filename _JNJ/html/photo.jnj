@@ -35,18 +35,20 @@
 
 {%- import "STD::html/navigation.jnj" as NT with context %}
 
-{%- macro buttons (page) -%}
+{%- macro buttons (page) %}
   {%- set gallery_title = "{{ GTW._T ('Gallerie') }} {{ page.parent.title }}" %}
-  {{ NT.neighbor (page.prev, GTW._T ("Previous picture"), "arrow_left") }}
-  <a href="{{ page.site_prefix }}{{ page.parent.href }}">
-    <img alt="{{ gallery_title }}" title="{{ gallery_title }}"
-         src="{{ page.site_prefix }}media/images/arrow_up.png"
-    />
-  </a>
-  {{ NT.neighbor (page.next, GTW._T ("Next picture"), "arrow_right") }}
-{%- endmacro -%} {#- buttons -#}
+  <p class="photo-nav">
+    {{ NT.neighbor (page.prev, GTW._T ("Previous picture"), "arrow_left") }}
+    <a href="{{ page.site_prefix }}{{ page.parent.href }}">
+      <img alt="{{ gallery_title }}" title="{{ gallery_title }}"
+           src="{{ page.site_prefix }}media/images/arrow_up.png"
+      />
+    </a>
+    {{ NT.neighbor (page.next, GTW._T ("Next picture"), "arrow_right") }}
+  </p>
+{%- endmacro %} {#- buttons -#}
 
-{%- macro photo (page) -%}
+{%- macro photo (page) %}
   <div class="photo">
     {{ buttons (page) }}
     <img alt="{{ GTW.firstof (page.alt, page.desc, page.title, page.href) }}"
@@ -56,10 +58,10 @@
     />
     {{ buttons (page) }}
   </div>
-{%- endmacro -%} {#- photo -#}
+{%- endmacro %} {#- photo -#}
 
 {%- block document -%}
-  {{- photo (page) -}}
+  {{ photo (page) }}
 {%- endblock document -%}
 
 {#- __END__ jinja template: photo.jnj -#}

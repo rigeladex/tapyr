@@ -36,11 +36,9 @@
 {%- if not page -%}{%- set page = NAV -%}{%- endif -%}
   {%- call X.head () -%}
     {%- block head_elements -%}
-      <meta http-equiv="Content-Type"
-        content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}"
-      />
-      {%- block head_base_element %}{% endblock head_base_element -%}
-        {%- block title %}
+      <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
+      {% block head_base_element %}{% endblock head_base_element %}
+        {% block title %}
           <title>{{ GTW.firstof (page.h_title, page.title, page.h_ref) }}</title>
         {% endblock title -%}
       {%- block styles %}
@@ -49,9 +47,7 @@
             {% head %}
             <!--[if {{ cssl.condition }}]>
             {% body %}
-            <link rel="stylesheet" type="text/css" title="Default"
-              media="{{ cssl.media_type }}" href="{{ cssl.href }}"
-            />
+            <link rel="stylesheet" type="text/css" title="Default" media="{{ cssl.media_type }}" href="{{ cssl.href }}" />
             {% tail %}
             <![endif]-->
           {% endonion -%} {#- cssl.condition -#}
@@ -70,13 +66,13 @@
                );
             </script>
           {% endif -%}
-        {%- endblock scripts %}
-      {%- block related_links %}
+        {%- endblock scripts -%}
+      {%- block related_links -%}
         {%- for rl in page.Media.rel_links %}
-          <link {{ rl.attrs|safe }} />
+          <link {{ rl.attrs ()|safe }} />
         {% endfor -%}
-      {%- endblock related_links %}
-      {%- block meta_elements %}
+      {%- endblock related_links -%}
+      {%- block meta_elements -%}
         {%- if page.description %}
         <meta name="description" content="{{ page.description }}" />
         {%- endif %}
@@ -90,20 +86,20 @@
   <body {{ page.body_attr|safe }} {%- block body_attrs %}{% endblock %}>
     {% call X.header (id = "header") -%}
       {%- block body_header %}{% endblock body_header -%}
-    {%- endcall -%} {# X.header #}
+    {% endcall %} {# X.header #}
     <div id="main" class="main">
       {% call X.nav (id = "navigate") -%}
         {%- block navigate -%}
           {%- include "html/navigation.jnj" ignore missing -%}
         {%- endblock -%}
-      {%- endcall -%} {# X.nav #}
+      {%- endcall %} {# X.nav #}
       <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
         {%- block body_headline %}
           {%- if page.headline %}
             <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.headline|safe }}</h1>
           {% endif -%}
         {%- endblock body_headline %}
-        {%- block document %}{% endblock -%}
+        {% block document %}{% endblock -%}
       </div>
     </div>
     {% call X.footer (id = "footer") -%}

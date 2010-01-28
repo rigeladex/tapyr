@@ -36,49 +36,20 @@
 {%- import html_version as X -%}
 {%- import "STD::html/form.jnj" as Form %}
 
-{%- set title = "GTW._T ('Login for') }} {{ page.site_url }}" %}
+{%- set title = GTW._T ("Login for") + " " + page.site_url %}
 
 {%- block title -%}
-  <title>{{ title }}</title>
+  <title>{{ title|safe }}</title>
 {%- endblock -%}
 
 {%- block document -%}
-  <h1>{{ title }}</h1>
-  {% if form.errors %}
-    <p>
-      {{- GTW._T
-          ("Your username and password didn't match. Please try again.")
-      -}}
-    </p>
-  {% endif %}
+  <h1>{{ title|safe }}</h1>
 
-  {% call Form.form (action = "/login/", next = page.abs_href) -%}
-    <p>
-      <label for="F_username">{{ GTW._T ("Username") }}</label>
-      {{ X.input.text
-          ( id            = "F_username"
-          , name          = "username"
-          , maxlength     = "30"
-          , placeholder   = GTW._T ("Please enter your user-name")
-          )
-      }}
-    </p>
-
-    <p>
-      <label for="F_password">{{ GTW._T ("Password") }}</label>
-      {{ X.input.password
-          ( id            = "F_password"
-          , name          = "password"
-          , placeholder   = GTW._T ("Please enter your password")
-          )
-      }}
-    </p>
-
-    <p>
-      {{ X.input.submit (value = GTW._T ("Login")) }}
-      {{ X.input.hidden (name  = "next", value = next) }}
-    </p>
-  {%- endcall -%} {# Form.form #}
+  {{ Form.object
+      ( login_form
+      , next_form_kw = dict(name = "next", value = page.abs_href)
+      )
+  }}
 
 {%- endblock document -%}
 

@@ -190,6 +190,7 @@
 #    18-Jan-2010 (CT) `Root.__init__`: s/Models/E_Types/
 #    25-Jan-2010 (CT) `render_context` factored
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
+#    28-Jan-2010 (CT) `Root.allow` added
 #    ««revision-date»»···
 #--
 
@@ -750,6 +751,16 @@ class Root (_Dir_) :
             , ** kw
             )
     # end def __init__
+
+    @classmethod
+    def allow (cls, link, user) :
+        try :
+            allow_user = link.allow_user
+        except AttributeError :
+            return True
+        else :
+            return allow_user (user)
+    # end def allow
 
     @classmethod
     def from_dict_list (cls, ** kw) :

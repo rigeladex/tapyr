@@ -36,7 +36,7 @@
 #}
 
 {%- macro entry (link, level) -%}
-  {%- if NAV.permissive or link.allow_user (request.user) %}
+  {% if NAV.permissive or NAV.allow (link, request.user) %}
     {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
         <a href="{{ link.site_prefix }}{{ link.href }}"
@@ -52,7 +52,7 @@
         {%- if link.href -%}
           <li class="nav-link level-{{ level }}">
             <a href="{{ link.site_prefix }}{{ link.href }}"
-               {% if link.desc %}title="{{ link.desc }}"{% endif %}
+               {%- if link.desc %} title="{{ link.desc }}"{% endif -%}
             >{{ link.title|safe }}</a>
           </li>
         {%- else -%}
@@ -66,13 +66,13 @@
 {%- endmacro -%} {# entry #}
 
 {%- macro entries (link_list, level = 0) -%}
-  {%- if link_list %}
+  {% if link_list -%}
   <ul>
     {%- for link in link_list if not link.hidden %}
       {{ entry (link, level) }}
     {% endfor -%}
   </ul>
-  {%- endif -%}
+  {%- endif %}
 {%- endmacro -%} {# entries #}
 
 {%- macro neighbor (neighbor, alt, symbol) -%}
@@ -95,10 +95,10 @@
 {%- macro section (link_list, name = None) -%}
   {%- if link_list %}
   <div class="nav-section{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
-    {%- if name -%}<h1>{{ name }}</h1>{%- endif -%}
+    {% if name -%}<h1>{{ name }}</h1>{% endif %}
     {{ entries (link_list, 0) }}
   </div>
-  {%- endif -%}
+  {%- endif %}
 {%- endmacro -%} {# section #}
 
 {%- macro sitemap (links = None, TEST = False) -%}
@@ -109,7 +109,7 @@
 {%- endmacro -%} {#- sitemap -#}
 
 {%- macro sitemap_entry (link, TEST = False) -%}
-  {% if NAV.permissive or link.allow_user (request.user) %}
+  {% if NAV.permissive or NAV.allow (link, request.user) %}
     <li class="nav-link level-{{link.level|default('0')}}">
       <a href="{{ link.site_prefix }}{{ link.href }}"
          {% if link.desc %}title="{{ link.desc }}"{% endif %}
