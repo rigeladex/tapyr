@@ -31,7 +31,6 @@
 #    14-Jan-2010 (CT) `PNS_Aliases` added and `Account_P` creation enabled
 #    ««revision-date»»···
 #--
-
 from   _TFL                      import TFL
 from   _GTW                      import GTW
 import _GTW._NAV.Request_Handler
@@ -107,8 +106,6 @@ NAV               = GTW.NAV.Root \
     , copyright_start   = 2008
     , encoding          = "iso-8859-15"
     , input_encoding    = "iso-8859-15"
-    , site_prefix       = "/"
-    , site_url          = "http://localhost:%d" % (cmd.port, )
     , template          = "static.jnj"
     , account_manager   = scope.Auth.Account
     , anonymous         = anonymous
