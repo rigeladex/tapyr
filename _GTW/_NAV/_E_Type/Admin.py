@@ -28,6 +28,9 @@
 # Revision Dates
 #    20-Jan-2010 (CT) Creation
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
+#    29-Jan-2010 (CT) Call to `rollback` added to `Changer.rendered`
+#    29-Jan-2010 (CT) Support for `Form_args` and `Form_kw` added to
+#                     `Admin.__init__`
 #    ««revision-date»»···
 #--
 
@@ -94,6 +97,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     tail = "#pk-%s" % (obj.lid) if obj else ""
                     raise HTTP.Redirect_302 \
                         ("%s%s" % (self.parent.abs_href, tail))
+                else :
+                    self.top.scope.rollback ()
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
             return self.__super.rendered (handler, template)
@@ -235,8 +240,11 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     def __init__ (self, parent, ** kw) :
         ETM = kw ["ETM"]
+        if isinstance (ETM, basestring) :
+            ETM = kw ["ETM"] = parent.scope [ETM]
         if "Form" not in kw :
-            kw ["Form"] = GTW.Form.MOM.Instance.New (ETM)
+            kw ["Form"] = GTW.Form.MOM.Instance.New \
+                (ETM, * kw.pop ("Form_args", ()), ** kw.pop ("Form_kw", {}))
         if "list_display" not in kw :
             kw ["list_display"] = self._auto_list_display (ETM, kw)
         self.__super.__init__ (parent, ** kw)

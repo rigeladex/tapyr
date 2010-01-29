@@ -59,5 +59,3 @@ class Instance (GTW.Form.MOM._Instance_) :
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")
 ### __END__ GTW.Form.MOM.Instance
-
-

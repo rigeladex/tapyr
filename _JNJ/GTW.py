@@ -72,7 +72,8 @@ class GTW (TFL.Meta.Object) :
         if not isinstance (macro_name, basestring) :
             macro_name = str (macro_name)
         if templ_name is None :
-            templ_name, macro_name = (p.strip () for p in macro_name.split (",", 1))
+            templ_name, macro_name = \
+                (p.strip () for p in macro_name.split (",", 1))
         template = self.env.get_template (templ_name)
         return getattr (template.module, macro_name)
     # end def get_macro

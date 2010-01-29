@@ -89,6 +89,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             kind            = Attr.Primary
             rank            = 4
             min_value       = 0
+            ui_name         = _("Extension")
 
         # end class extension
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
+#    29-Jan-2010 (CT) `middle_name` added
 #    ««revision-date»»···
 #--
 
@@ -67,11 +68,22 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class first_name
 
+        class middle_name (A_String) :
+            """Middle name of person"""
+
+            kind           = Attr.Primary_Optional
+            default        = ""
+            rank           = 1
+            ui_name        = _("Middle name")
+
+        # end class middle_name
+
         class title (A_String) :
             """Academic title."""
 
-            kind           = Attr.Optional
+            kind           = Attr.Primary_Optional
             max_length     = 20
+            rank           = 2
             ui_name        = _("Academic title")
 
         # end class title

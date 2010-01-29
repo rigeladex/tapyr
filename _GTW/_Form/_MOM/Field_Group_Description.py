@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
+#    29-Jan-2010 (CT) `kw` added to `Field_Group_Description.__init__`
 #    ««revision-date»»···
 #--
 
@@ -113,8 +114,8 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
 
     _real_name = "Field_Group_Description"
 
-    def __init__ (self, * fields) :
-        self.__super.__init__ (* fields)
+    def __init__ (self, * fields, ** kw) :
+        self.__super.__init__ (* fields, ** kw)
     # end def __init__
 
     def __call__ (self, et_man, added_fields = None, ** kw) :

@@ -52,6 +52,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 80
             rank           = 1
+            ui_name        = _("Street")
 
         # end class street
 
@@ -61,6 +62,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 30
             rank           = 2
+            ui_name        = _("City")
 
         # end class city
 
@@ -79,6 +81,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 40
             rank           = 4
+            ui_name        = _("Country")
 
         # end class country
 
@@ -87,6 +90,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Optional
             max_length     = 40
+            ui_name        = _("Region")
 
         # end class region
 
