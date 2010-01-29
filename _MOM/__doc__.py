@@ -40,6 +40,8 @@
 #    18-Jan-2010 (MG) Tests fixed (`Invalid_Attribute` now has a different
 #                     error message)
 #    21-Jan-2010 (CT) `Primary_Optional` added
+#    29-Jan-2010 (MG) Tests for scope rollback added/enhanced
+#    29-Jan-2010 (MG) Tests for pid_from_lid/pid_as_lid/obj.lid/ added
 #    ««revision-date»»···
 #--
 
@@ -1135,23 +1137,31 @@ Primary key attributes
 
 Rollback of uncommited changes
 ------------------------------
-    >>> scope.changes, scope.changes_to_save
-    (49, 2)
+    >>> scope.changes_to_save
+    2
     >>> scope.commit ()
-    >>> scope.changes, scope.changes_to_save
-    (49, 0)
+    >>> scope.changes_to_save, scope.ems.max_cid
+    (0, 49)
     >>> rbm = scope.BMT.Mouse ("Rollback_Mouse_1")
     >>> rbt = scope.BMT.Trap  ("Rollback_Trap_1", 1)
     >>> rbl = scope.BMT.Rodent_in_Trap (rbm, rbt)
-    >>> scope.changes, scope.changes_to_save
-    (52, 3)
+    >>> scope.changes_to_save, scope.ems.max_cid
+    (3, 52)
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.rollback ()
-    >>> scope.changes_to_save
-    0
+    >>> scope.changes_to_save, scope.ems.max_cid
+    (0, 49)
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     []
+
+For each object a database wide unique string id is avaiable (called `lid`)::
+    >>> obj_lid = r.lid
+    >>> etm_lid = scope.BMT.Rat.pid_as_lid (r)
+    >>> obj_lid == etm_lid
+    True
+    >>> scope.BMT.Rat.pid_from_lid (obj_lid) == r.pid
+    True
 """
 
 db_uri = "'/tmp/bmt_test.bmt'"

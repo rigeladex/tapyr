@@ -45,6 +45,7 @@
 #     1-Jan-2010 (CT) `PID.__hash__` added
 #    26-Jan-2010 (MG) Don't commit the change session on `register_change`
 #    27-Jan-2010 (MG) `Manager.add` print SA exception in `__debug__` mode
+#    29-Jan-2010 (MG) `pid_from_lid`,  `pid_as_lid` added
 #    ««revision-date»»···
 #--
 
@@ -116,8 +117,8 @@ class Manager (MOM.EMS._Manager_) :
         if max_c and max_c <= self.s_count (entity.Essence) :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         try :
-            ses.add   (entity)
-            ses.flush ()
+            ses.add          (entity)
+            ses.flush        ()
             entity.pid = PID (entity.relevant_root.type_name, entity.id)
         except SA_Exception.IntegrityError as exc :
             ses.rollback ()
@@ -146,6 +147,21 @@ class Manager (MOM.EMS._Manager_) :
         query = self.session.change_session.query (MOM.DBW.SA.SA_Change)
         return query.order_by ("-_id").limit (1).first ().cid
     # end def max_cid
+
+    def pid_as_lid (self, obj, e_type) :
+        pid = obj.pid
+        if e_type.relevant_root :
+            return pid.id
+        return "%s__%s" % (pid.Type_Name, pid.id)
+    # end def pid_as_lid
+
+    def pid_from_lid (self, lid, e_type) :
+        if e_type.relevant_root :
+            Type_Name = e_type.relevant_root.type_name
+        else :
+            Type_Name, lid = lid.split ("__", 1)
+        return PID (Type_Name, int (lid))
+    # end def pid_from_lid
 
     def pid_query (self, pid, Type) :
         """Simplified query for SA."""
