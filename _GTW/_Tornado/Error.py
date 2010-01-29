@@ -154,5 +154,5 @@ class Error_500 (_Error_) :
 # end class Error_500
 
 if __name__ != "__main__" :
-    GTW.Tornado._Export ("*")
+    GTW.Tornado._Export ("*", "_Redirect_")
 ### __END__ GTW.Tornado.Error

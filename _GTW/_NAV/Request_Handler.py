@@ -75,7 +75,10 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
         top   = GTW.NAV.Root.top
         scope = getattr (top, "scope", None)
         if scope :
-            scope.rollback ()
+            if isinstance (exc, top.HTTP._Redirect_) :
+                scope.commit   ()
+            else :
+                scope.rollback ()
         if isinstance (exc, top.HTTP.Status) :
             if exc (self, top) :
                 return
