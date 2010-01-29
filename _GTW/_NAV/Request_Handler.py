@@ -31,6 +31,7 @@
 #    15-Jan-2010 (MG) Authentication added
 #    17-Jan-2010 (CT) Adapted to change of Auth.Account (s/name/username/)
 #    25-Jan-2010 (MG) Session and locale-code handling added
+#    29-Jan-2010 (MG) Auto `commit` and `rollback` added
 #    ««revision-date»»···
 #--
 from   _TFL                    import I18N
@@ -65,10 +66,16 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
             I18N.use (* self.locale_codes)
         GTW.NAV.Root.universal_view (self)
         self.session.save           ()
+        scope = getattr (GTW.NAV.Root.top, "scope", None)
+        if scope :
+            scope.commit ()
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :
-        top = GTW.NAV.Root.top
+        top   = GTW.NAV.Root.top
+        scope = getattr (top, "scope", None)
+        if scope :
+            scope.rollback ()
         if isinstance (exc, top.HTTP.Status) :
             if exc (self, top) :
                 return

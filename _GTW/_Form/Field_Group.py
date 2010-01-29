@@ -28,6 +28,9 @@
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
+#    29-Jan-2010 (MG) Reference to `field_group_description` added and
+#                     `__getattr__` added to take undefined attrs from the
+#                     `field_group_description`
 #    ««revision-date»»···
 #--
 
@@ -42,10 +45,9 @@ import _GTW._Form._MOM
 class Field_Group (TFL.Meta.Object) :
     """A group of form field."""
 
-    widget = "html/form.jnj, fg_div_seq"
-
-    def __init__ (self, fields, ** kw) :
-        self.fields       = TFL.NO_List         (fields)
+    def __init__ (self, fields, field_group_description) :
+        self.fields                  = TFL.NO_List         (fields)
+        self.field_group_description = field_group_description
     # end def __init__
 
     @TFL.Meta.Once_Property
@@ -57,6 +59,12 @@ class Field_Group (TFL.Meta.Object) :
     def visible_fields (self) :
         return [f for f in self.fields if not f.hidden]
     # end def visible_fields
+
+    def __getattr__ (self, name) :
+        result = getattr (self.field_group_description, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
 
 # end class Field_Group
 

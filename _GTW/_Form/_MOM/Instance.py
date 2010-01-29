@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
+#    29-Jan-2010 (MG) Use `Widget_Spec` instead of plain text
 #    ««revision-date»»···
 #--
 
@@ -39,10 +40,11 @@ import _TFL.defaultdict
 import _GTW._Form.Field_Error
 
 from   _GTW                                 import GTW
+import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
-MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
+MOM.Attr.A_Attr_Type.widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
 
 class Instance (GTW.Form.MOM._Instance_) :
     """A form which creates or changes a MOM object."""

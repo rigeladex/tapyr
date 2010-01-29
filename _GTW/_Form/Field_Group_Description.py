@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
+#    29-Jan-2010 (MG) Pass `field_group_description` to `field_group`
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -39,13 +40,15 @@ class _Form_Field_Group_Description_ (TFL.Meta.Object) :
 
     _real_name = "Field_Group_Description"
 
+    widget     = "html/form.jnj, fg_div_seq"
+
     def __init__ (self, * fields, ** kw) :
         self.fields = fields
         self.__dict__.update (kw)
     # end def __init__
 
     def __call__ (self) :
-        return (GTW.Form.Field_Group (self.fields), )
+        return (GTW.Form.Field_Group (self.fields, self), )
     # end def __call__
 
 Field_Group_Description = _Form_Field_Group_Description_ # end class Field_Group_Description

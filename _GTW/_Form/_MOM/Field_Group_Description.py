@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
 #    29-Jan-2010 (CT) `kw` added to `Field_Group_Description.__init__`
+#    29-Jan-2010 (MG) Pass `field_group_description` to `field_group`
 #    ««revision-date»»···
 #--
 
@@ -142,7 +143,7 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
             added_fields.update  (new_fields)
         return \
             ( GTW.Form.Field_Group
-                ([Field (et_man, name) for name in fields], ** kw)
+                ([Field (et_man, name) for name in fields], self)
             ,
             )
     # end def __call__

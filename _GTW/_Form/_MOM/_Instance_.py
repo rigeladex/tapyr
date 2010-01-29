@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) Error handling added
+#    29-Jan-2010 (MG) Bug fixing
 #    ««revision-date»»···
 #--
 
@@ -128,14 +129,14 @@ class _Instance_ (GTW.Form._Form_) :
                 instance  = self._create_or_update (et_man, None)
             roles.append (instance and instance.epk_raw)
         if not self.errors and not self.field_errors :
-            self.instance = self._create_or_update (self.et_man, roles)
-        error_count       = 0 ### XXX
+            self.instance = self._create_or_update (self.et_man, roles, True)
+        error_count       = len (self.errors) + len (self.field_errors)
         for ig in self.inline_groups :
             error_count  += ig (request_data)
         return error_count
     # end def __call__
 
-    def _create_or_update (self, et_man, roles) :
+    def _create_or_update (self, et_man, roles, required = False) :
         roles         = roles or ()
         has_substance = len (roles)
         raw_attrs     = {}
@@ -145,15 +146,16 @@ class _Instance_ (GTW.Form._Form_) :
             raw_attrs [f.name] = value
             has_substance     += bool \
                 (self.get_id (f) in self.request_data and value)
-        if has_substance :
+        if has_substance or required :
             errors = []
             ### at least on attribute is filled out
             try :
                 raw_attrs ["on_error"] = errors.append
                 if instance :
-                    roles = dict \
-                        ((ak.name, t) for (ak, r) in zip (et_man.Roles, roles))
-                    instance.set     (on_error = errors.append, ** roles)
+                    if et_man.Roles :
+                        roles = dict \
+                          ((ak.name, t) for (ak, r) in zip (et_man.Roles, roles))
+                        instance.set     (on_error = errors.append, ** roles)
                     instance.set_raw (** raw_attrs)
                 else :
                     instance = et_man (raw = True, * roles, ** raw_attrs)
