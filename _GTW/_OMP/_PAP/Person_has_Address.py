@@ -51,12 +51,16 @@ class Person_has_Address (PAP.Entity, _Ancestor_Essence) :
         class left (_Ancestor.left) :
 
             role_type     = Person
+            ui_name       = _("Person")
+            auto_cache    = True
 
         # end class left
 
         class right (_Ancestor.right) :
 
             role_type     = Address
+            ui_name       = _("Address")
+            auto_cache    = True
 
         # end class right
 
@@ -67,6 +71,3 @@ class Person_has_Address (PAP.Entity, _Ancestor_Essence) :
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")
 ### __END__ GTW.OMP.PAP.Person_has_Address
-
-
-
