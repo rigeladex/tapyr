@@ -50,7 +50,8 @@ class _Mgr_Base_ (TFL.Meta.Object) :
     sort_key        = None
     std_template    = None
 
-    def __init__ (self, ETM, ** kw) :
+    def __init__ (self, parent, ** kw) :
+        ETM    = kw ["ETM"]
         E_Type = ETM._etype
         kn     = unicode (kw.get ("kind_name"))
         top    = self.top
@@ -60,7 +61,7 @@ class _Mgr_Base_ (TFL.Meta.Object) :
         title  = kw.pop  ("title", filtered_join ("-", (_Tn (name), kn)))
         self._template = kw.pop ("template", None)
         self.__super.__init__ \
-            ( ETM          = ETM
+            ( parent       = parent
             , E_Type       = E_Type
             , desc         = desc
             , name         = name

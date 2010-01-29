@@ -232,12 +232,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Instance
 
-    def __init__ (self, ETM, ** kw) :
+    def __init__ (self, parent, ** kw) :
+        ETM = kw ["ETM"]
         if "Form" not in kw :
-            kw ["Form"] = GTW.Form.MOM.Instance.New (ETM._etype)
+            kw ["Form"] = GTW.Form.MOM.Instance.New (ETM)
         if "list_display" not in kw :
             kw ["list_display"] = self._auto_list_display (ETM, kw)
-        self.__super.__init__ (ETM = ETM, ** kw)
+        self.__super.__init__ (parent, ** kw)
         self.prefix = pjoin (self.parent.prefix, self.name)
     # end def __init__
 

@@ -41,7 +41,7 @@
       <div  class="news-title">{{ GTW.firstof (e.desc, e.title) }}</div>
     </div>
     {{ e.contents|safe }}
-    {%- if NAV.allow (e.changer, request.user) %}
+    {%- if e.changer and NAV.allow (e.changer, request.user) %}
       <a href="{{ e.changer.abs_href }}"
          title="{{ GTW._T ('Edit this entry') }}"
          class="button"

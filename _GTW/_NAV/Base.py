@@ -756,7 +756,7 @@ class Root (_Dir_) :
     def allow (cls, link, user) :
         try :
             allow_user = link.allow_user
-        except AttributeError :
+        except Exception :
             return True
         else :
             return allow_user (user)
