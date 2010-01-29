@@ -46,20 +46,21 @@ from   _TFL.predicate           import filtered_join
 class _Mgr_Base_ (TFL.Meta.Object) :
     """Common base class for Admin and Manager of GTW.NAV.E_Type."""
 
+    kind_name       = None
     Q               = TFL.Attr_Query ()
     sort_key        = None
-    std_template    = None
 
     def __init__ (self, parent, ** kw) :
         ETM    = kw ["ETM"]
         E_Type = ETM._etype
-        kn     = unicode (kw.get ("kind_name"))
+        kn     = kw.get ("kind_name")
+        if kn is not None :
+            kn = unicode (kn)
         top    = self.top
         desc   = kw.pop ("desc", E_Type.__doc__)
         name   = filtered_join \
             (u"-", (unicode (kw.pop ("name", E_Type.ui_name)), kn))
         title  = kw.pop  ("title", filtered_join ("-", (_Tn (name), kn)))
-        self._template = kw.pop ("template", None)
         self.__super.__init__ \
             ( parent       = parent
             , E_Type       = E_Type
@@ -74,9 +75,10 @@ class _Mgr_Base_ (TFL.Meta.Object) :
     @property
     def count (self) :
         if self.query_filters :
-            return self.query ().count_transitive ()
+            result = self.query ().count_transitive ()
         else :
-            return self.ETM.count_transitive ()
+            result = self.ETM.count_transitive
+        return result
     # end def count
 
     @Once_Property
@@ -97,14 +99,6 @@ class _Mgr_Base_ (TFL.Meta.Object) :
             result.append (self.kind_filter)
         return tuple (result)
     # end def query_filters
-
-    @Once_Property
-    def template (self) :
-        if self._template :
-            return self._template
-        elif self.std_template :
-            return self.top.Templeteer.Template_Map [self.std_template]
-    # end def template
 
     def _get_entries (self) :
         scope = self.top.scope

@@ -29,6 +29,7 @@
 #    14-Jan-2010 (CT) Creation
 #    15-Jan-2010 (CT) `Error_Templates` added
 #    18-Jan-2010 (CT) `get_std_template` added; s/Error_Templates/Template_Map/
+#    29-Jan-2010 (CT) `get_template` changed to use `Template_Map`
 #    ««revision-date»»···
 #--
 
@@ -68,7 +69,7 @@ class Templateer (TFL.Meta.Object) :
     # end def get_std_template
 
     def get_template (self, name) :
-        return self.env.get_template (name)
+        return self.env.get_template (self.Template_Map.get (name, name))
     # end def get_template
 
     def render (self, template_or_name, context) :

@@ -190,24 +190,15 @@ class Site_Admin (GTW.NAV.Dir) :
     """Model an admin page for a GTW site."""
 
     Page            = GTW.NAV.E_Type.Admin
-    std_template    = "site_admin"
+    template        = "site_admin"
 
     def __init__ (self, src_dir, parent, ** kw) :
-        self._template = kw.pop ("template", None)
         etypes         = kw.pop ("etypes", [])
         self.top.Admin = self
         self.__super.__init__ (src_dir, parent, ** kw)
         self.add_entries (self._etype_man_entries ())
         self.add_entries (etypes)
     # end def __init__
-
-    @Once_Property
-    def template (self) :
-        if self._template :
-            return self._template
-        else :
-            return self.top.Templeteer.Template_Map [self.std_template]
-    # end def template
 
     def _etype_man_entries (self) :
         for man in self.top.E_Types.itervalues () :

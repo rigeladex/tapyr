@@ -251,9 +251,9 @@ class Scope (TFL.Meta.Object) :
             yield
     # end def as_active
 
-    def ascync_changes (self, * filter, ** kw) :
+    def async_changes (self, * filter, ** kw) :
         return self.ems.async_changes (* filter, ** kw)
-    # end def ascync_changes
+    # end def async_changes
 
     def commit (self) :
         self.ems.commit    ()

@@ -41,7 +41,7 @@
              {% if link.desc %}title="{{ link.desc }}"{% endif -%}
           >{{ link.title }}</a>
         </td>
-        <td>{{link.count }}</td>
+        <td>{{ link.count }}</td>
       </tr>
     {% endfor -%}
   </table>

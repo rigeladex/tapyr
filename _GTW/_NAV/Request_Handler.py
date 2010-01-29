@@ -78,13 +78,13 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
     def get_current_user (self) :
         top      = GTW.NAV.Root.top
         username = self.get_secure_cookie ("username")
-        user     = top.anonymous
+        result   = top.anonymous
         if username :
             try :
-                user = top.account_manager.query (name = username).one ()
+                result = top.account_manager.query (name = username).one ()
             except IndexError :
-                user = self.anonymous_user
-        return user
+                pass
+        return result
     # end def get_current_user
 
 Request_Handler = _NAV_Request_Handler_ # end class

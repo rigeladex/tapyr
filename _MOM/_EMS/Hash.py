@@ -138,6 +138,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def all_links
 
     def async_changes (self, * filters, ** kw) :
+        return False
         raise NotImplementedError
     # end def changes
 
@@ -206,7 +207,11 @@ class Manager (MOM.EMS._Manager_) :
     # end def pid_as_lid
 
     def pid_from_lid (self, lid, Type) :
-        return int (lid)
+        try :
+            return int (lid)
+        except TypeError :
+            print Type, lid
+            raise
     # end def pid_from_lid
 
     def register_change (self, change) :

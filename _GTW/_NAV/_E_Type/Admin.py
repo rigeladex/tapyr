@@ -52,7 +52,7 @@ from   posixpath                import join  as pjoin
 class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     """Navigation page for managing the instances of a specific E_Type."""
 
-    std_template    = "e_type_admin"
+    template    = "e_type_admin"
 
     class Changer (GTW.NAV._Site_Entity_) :
         """Model an admin page for creating or changing a specific instance
@@ -63,7 +63,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         Media        = None ### cancel inherited property defined
         name         = "create"
         lid          = None
-        std_template = "e_type_change"
+        template     = "e_type_change"
 
         def rendered (self, handler, template = None) :
             ETM      = self.ETM
@@ -74,7 +74,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request  = handler.request
             req_data = GTW.Tornado.Request_Data (request.arguments)
             lid      = req_data.get ("lid") or self.lid
-            if lid :
+            if lid is not None :
                 pid  = ETM.pid_from_lid (lid)
                 try :
                     obj = ETM.pid_query (pid)
@@ -175,7 +175,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         implicit     = True
         name         = "delete"
-        std_template = "e_type_delete"
+        template     = "e_type_delete"
 
         def _view (self, request) :
             HTTP = self.top.HTTP
@@ -276,9 +276,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def h_title
 
     def rendered (self, handler, template = None) :
+        objects = self._get_entries ()
         handler.context.update \
             ( fields  = self.list_display
-            , objects = self._entries
+            , objects = objects
             )
         return self.__super.rendered (handler, template)
     # end def rendered
