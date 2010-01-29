@@ -79,14 +79,12 @@ class Instance (GTW.NAV.Page) :
         return u"::".join ((self.name, self.parent.h_title))
     # end def h_title
 
-    @property
     def href_change (self) :
         admin = self.admin
         if admin :
             return admin.href_change (self.obj)
     # end def href_change
 
-    @property
     def href_delete (self) :
         admin = self.admin
         if admin :

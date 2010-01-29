@@ -113,7 +113,7 @@ class _Mgr_Base_ (TFL.Meta.Object) :
 
     def _get_objects (self) :
         T = self.Page
-        return [T (o, self) for o in self.query ()]
+        return [T (self, o) for o in self.query ()]
     # end def _get_objects
 
 # end class _Mgr_Base_

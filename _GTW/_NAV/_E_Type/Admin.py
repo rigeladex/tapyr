@@ -91,8 +91,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     man = self.parent.manager
                     if man :
                         man._old_cid = -1
+                    tail = "#pk-%s" % (obj.lid) if obj else ""
                     raise HTTP.Redirect_302 \
-                        ("%s#pk-%s" % (self.parent.abs_href, result.lid))
+                        ("%s%s" % (self.parent.abs_href, tail))
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
             return self.__super.rendered (handler, template)
@@ -202,7 +203,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def __init__ (self, admin, obj) :
             self.admin = admin
             self.obj   = obj
-            self.FO    = GTW.FO (obj, self.top.encoding)
+            self.FO    = GTW.FO (obj, admin.top.encoding)
         # end def __init__
 
         @Once_Property
@@ -212,12 +213,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             return [(f, getattr (FO, f.name)) for f in admin.list_display]
         # end def fields
 
-        @Once_Property
         def href_change (self) :
             return self.admin.href_change (self.obj)
         # end def href_change
 
-        @Once_Property
         def href_delete (self) :
             return self.admin.href_delete (self.obj)
         # end def href
@@ -231,6 +230,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         # end def __iter__
 
     # end class Instance
+
+    Page = Instance
 
     def __init__ (self, parent, ** kw) :
         ETM = kw ["ETM"]

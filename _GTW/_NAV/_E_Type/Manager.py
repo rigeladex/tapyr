@@ -66,7 +66,6 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
             return Admin._get_child (self.name)
     # end def admin
 
-    @property
     def href_create (self) :
         admin = self.admin
         if admin :

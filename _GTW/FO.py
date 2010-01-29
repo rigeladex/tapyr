@@ -42,7 +42,7 @@ class FO (TFL.Meta.Object) :
         self.__obj    = obj
         self.__enc    = enc
         if isinstance (getter, basestring):
-            self.__getter = getattr (obj, getter_name)
+            self.__getter = getattr (obj, getter)
         else :
             self.__getter = lambda name : getter (obj, name)
     # end def __init__

@@ -70,7 +70,7 @@
           {{ _button (page, E_Type, "td", o.href_change (), o.id, "Change object", "icon_edit") }}
           {% for f, v in o %}
             <td class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}">
-              <a href="{{ o.href_change }}" title="{{ GTW._T ("Change object") }} {{ o.id }}">
+              <a href="{{ o.href_change () }}" title="{{ GTW._T ("Change object") }} {{ o.id }}">
                 {{ v }}
               </a>
             </td>
