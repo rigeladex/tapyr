@@ -66,7 +66,7 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
             I18N.use (* self.locale_codes)
         GTW.NAV.Root.universal_view (self)
         self.session.save           ()
-        scope = getattr (GTW.NAV.Root.top, "scope", None)
+        scope = getattr  (GTW.NAV.Root.top, "scope", None)
         if scope :
             scope.commit ()
     # end def _handle_request

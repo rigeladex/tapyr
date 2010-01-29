@@ -112,6 +112,11 @@ class _Instance_ (GTW.Form._Form_) :
         self.parent              = parent
     # end def __init__
 
+    def make_snapshot (self) :
+        ### copy all values of the fields which will be displayed from the
+        ### instance to a dict which will be part of the form as a hidden field
+    # end def make_snapshot
+
     def _get_raw (self, field) :
         return field.get_raw (self.instance_for_et_man [field.et_man])
     # end def _get_raw
