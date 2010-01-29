@@ -52,15 +52,14 @@ class Admin (object) :
         , Form_args =
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
             , FGD ()
-# ### XXX following doesn't work
-#            , FGD
-#                ( "PAP.Person_has_Address", "person"
-#                , FGD
-#                    ( FP ("addresss", "street", "zip", "city", "country", "desc")
-#                    )
-#                , min_empty = 1
-#                )
-            )
+            , ID
+                ( "PAP.Person_has_Address", "person"
+                , FGD
+                    ( FP ("address", "street", "zip", "city", "country", "desc")
+                    )
+                , min_empty = 1
+                )
+             )
         )
 
 # end class Admin
