@@ -29,8 +29,8 @@
 ## Revision Dates
 ##    14-Jan-2010 (CT) Creation
 ##    15-Jan-2010 (MG) `password` added
-##    15-Jan-2010 (MG) Macro `object`: redering of errors not bound to a
-##                     field added
+##    30-Jan-2010 (MG) `hidden` added
+##    30-Jan-2010 (MG) `_field` id corrected
 ##    ««revision-date»»···
 ##--
 #}
@@ -40,6 +40,10 @@
 {%- macro email (fo, fi) -%}
   {{ _field (X.input.email, fo, fi) }}
 {%- endmacro -%} {#- email -#}
+
+{%- macro hidden (fo, fi) -%}
+  {{ _field (X.input.hidden, fo, fi)}}
+{%- endmacro -%} {#- hidden -#}
 
 {%- macro number (fo, fi) -%}
   {{ _field
@@ -75,7 +79,7 @@
 {%- macro _field (typ, fo, fi) -%}
   {%- set id = fo.get_id (fi) %}
   {{ typ
-      ( id            = "F_{{ id }}"
+      ( id            = "F_%s"|format (id)
       , name          = id
       , value         = fo.get_raw (fi)
       , ** kwargs

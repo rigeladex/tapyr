@@ -43,7 +43,8 @@ import _GTW._Form.Field_Error
 class _Form_ (TFL.Meta.Object) :
     """Base class for forms"""
 
-    prefix = None
+    prefix        = None
+    hidden_fields = ()
 
     def __init__ (self, instance = None) :
         self.instance = instance

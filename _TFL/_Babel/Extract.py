@@ -28,6 +28,7 @@
 # Revision Dates
 #    21-Jan-2010 (MG) Creation
 #    25-Jan-2010 (MG) Convert absolute path to relative path
+#    30-Jan-2010 (MG) `ignore_patterns` combine with defaults
 #    ««revision-date»»···
 #--
 from   _TFL                          import TFL
@@ -98,7 +99,7 @@ def Extract (dirname, template_file, config, cmd) :
                 for method_name, pattern in config.patterns.items () :
                     if pathmatch (pattern, filename) :
                         for pattern in config.get_list \
-                            ("ignore_patterns", method_name) :
+                            ("ignore_patterns", method_name, set (), True) :
                             if pathmatch (pattern, filename) :
                                 raise Skip
                         filepath = os.path.join (absname, filename)

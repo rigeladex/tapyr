@@ -31,7 +31,10 @@
 ##    13-Jan-2010 (CT) Creation continued
 ##    14-Jan-2010 (CT) Creation continued..
 ##    15-Jan-2010 (MG) `login_inline`: `name` attributes added to fields
+##    15-Jan-2010 (MG) Macro `object`: redering of errors not bound to a
+##                     field added
 ##    17-Jan-2010 (MG) Login default url changed to `login.html`
+##    30-Jan-2010 (MG) `field_groups`;  added rendering of form fields
 ##    ««revision-date»»···
 ##--
 #}
@@ -103,6 +106,9 @@
 {%- endmacro -%} {#- fg_tr_head -#}
 
 {%- macro field_groups (fo) -%}
+    {%- for fi in fo.hidden_fields %}
+      {{ GTW.call_macro (fi.widget, fo, fi) }}
+    {% endfor -%}
     {%- for fg in fo.field_groups %}
       {%- if fo.get_errors () %}
         {{ _field_error (fo, None) }}

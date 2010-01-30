@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-01-30 15:30+0100\n"
+"POT-Creation-Date: 2010-01-30 20:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
-
-#: _GTW/_NAV/example/templates/i18n.jnj:4
-#, python-format
-msgid ""
-"    We are at language %(lang)s.\n"
-"  "
-msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:86 _GTW/_NAV/_E_Type/Admin.py:194
 #, python-format
@@ -34,121 +27,16 @@ msgstr ""
 msgid "A user name is required to login."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:87
-msgid "Academic title"
-msgstr ""
-
-#: _GTW/_OMP/_Auth/Account.py:67
-msgid "Account name"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Person_has_Address.py:62
-msgid "Address"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Phone.py:67
-msgid "Area code"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:65
-msgid "City"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:84
-msgid "Country"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Phone.py:55
-msgid "Country code"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Person.py:95
-msgid "Date of birth"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:102 _GTW/_OMP/_PAP/Email.py:65
-#: _GTW/_OMP/_PAP/Phone.py:101
-msgid "Description"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Email.py:56
-msgid "Email address"
-msgstr ""
-
-#: _GTW/_NAV/example/templates/i18n.jnj:8
-msgid "English"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Phone.py:92
-msgid "Extension"
-msgstr ""
-
 #: _GTW/_Form/Plain.py:83
 #, python-format
 msgid "Field `%(field)s` is required"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Person.py:67
-msgid "First name"
-msgstr ""
-
-#: _GTW/_NAV/example/templates/i18n.jnj:7
-msgid "German"
-msgstr ""
-
-#: _GTW/_OMP/_Auth/Group.py:55
-msgid "Group name"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Person.py:57
-msgid "Last name"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:120
-msgid "Latitude"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:111
-msgid "Longitude"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Person.py:77
-msgid "Middle name"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Phone.py:78
-msgid "Number"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Person_has_Address.py:54
-msgid "Person"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:93
-msgid "Region"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:55
-msgid "Street"
-msgstr ""
-
-#: _GTW/_OMP/_Auth/Account.py:76
-msgid "Superuser"
 msgstr ""
 
 #: _GTW/_Form/Auth.py:59
 msgid "The password is required."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/Account.py:60
-msgid "User active"
-msgstr ""
-
 #: _GTW/_Form/Auth.py:63
 msgid "Username or password incorrect"
-msgstr ""
-
-#: _GTW/_OMP/_PAP/Address.py:75
-msgid "Zip code"
 msgstr ""
 

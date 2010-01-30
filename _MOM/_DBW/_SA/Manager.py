@@ -58,6 +58,7 @@
 #                     `_attr_dict` renamed to `_attr_dicts` and changed to
 #                     collect the cached role attributes as well
 #    27-Jan-2010 (MG) Support for cached roles added
+#    30-Jan-2010 (MG) Detection of multiple inheritance changed
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -235,8 +236,16 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                 if getattr (b, "_Attributes", None)
                 ]
             if len (bases) > 1 :
-                raise NotImplementedError \
-                    ("Multiple inheritance currently not supported")
+                ### we have more than one base which has an _Attribute class
+                ### let's see how many bases `add` _Attributes (have
+                ### `_own_names`)
+                bases = [b for b in bases if b._Attributes._own_names]
+                if len (bases) > 1 :
+                    raise NotImplementedError \
+                        ( "Multiple inheritance currently not supported\n"
+                          "%s, %s"
+                        % (e_type.type_name, bases)
+                        )
             unique               = []
             db_attrs, role_attrs = cls._attr_dicts (e_type, bases)
             columns   = cls._setup_columns (e_type, db_attrs, bases, unique)

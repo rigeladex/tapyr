@@ -29,6 +29,7 @@
 #    18-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) Error handling added
 #    29-Jan-2010 (MG) Bug fixing
+#    30-Jan-2010 (MG) Instance state added, bug fixing continued
 #    ««revision-date»»···
 #--
 
@@ -40,11 +41,32 @@ import _TFL._Meta.Object
 
 from   _GTW                                 import GTW
 import _GTW._Form._Form_
+import _GTW._Form.Field
 import _GTW._Form._MOM.Field_Group_Description
 
 import _GTW._Tornado.Request_Data
 
+import  base64
+import  cPickle
+
 MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
+
+class Instance_State_Field (GTW.Form.Field) :
+    """Saves the state of the object to edit before the user made changes"""
+
+    hidden = True
+
+    widget = "html/field.jnj, hidden"
+
+    def get_raw (self, instance) :
+        state = {}
+        form  = self.form
+        for n, f in form.fields.iteritems () :
+            state [n] = form.get_raw (f)
+        return base64.b64encode (cPickle.dumps (state))
+    # end def get_raw
+
+# end class  Instance_State_Field
 
 class M_Instance (TFL.Meta.Object.__class__) :
     """Meta class for MOM object forms"""
@@ -112,14 +134,26 @@ class _Instance_ (GTW.Form._Form_) :
         self.parent              = parent
     # end def __init__
 
-    def make_snapshot (self) :
-        ### copy all values of the fields which will be displayed from the
-        ### instance to a dict which will be part of the form as a hidden field
-    # end def make_snapshot
+    def add_changed_raw (self, dict, field) :
+        if isinstance (field, basestring) :
+            field = self.fields [field]
+        raw       = self.get_raw            (field)
+        old       = self.instance_state.get (field.name, u"")
+        if raw != old :
+            dict [field.name] = raw
+    # end def add_changed_raw
 
     def _get_raw (self, field) :
-        return field.get_raw (self.instance_for_et_man [field.et_man])
+        return field.get_raw (self.instance_for_et_man.get (field.et_man))
     # end def _get_raw
+
+    @TFL.Meta.Once_Property
+    def instance_state (self) :
+        encoded = self.request_data.get ("instance_state")
+        if encoded :
+            return cPickle.loads (base64.b64decode (encoded))
+        return {}
+    # end def instance_state
 
     def __call__ (self, request_data) :
         ### XXX does not feel to be the correct place to make this conversion
@@ -127,12 +161,14 @@ class _Instance_ (GTW.Form._Form_) :
             request_data  = GTW.Tornado.Request_Data (request_data)
         self.request_data = request_data
         roles             = []
+        import pdb; pdb.set_trace ()
         for role_name, et_man in self.Roles :
             if self.parent and et_man is self.parent.et_man :
                 instance  = self.parent.instance
             else :
                 instance  = self._create_or_update (et_man, None)
-            roles.append (instance and instance.epk_raw)
+            if instance :
+                roles.append (instance and instance.epk_raw)
         if not self.errors and not self.field_errors :
             self.instance = self._create_or_update (self.et_man, roles, True)
         error_count       = len (self.errors) + len (self.field_errors)
@@ -147,11 +183,10 @@ class _Instance_ (GTW.Form._Form_) :
         raw_attrs     = {}
         instance      = self.instance_for_et_man [et_man]
         for f in self.fields_for_et_man [et_man] :
-            value              = self.get_raw (f)
-            raw_attrs [f.name] = value
-            has_substance     += bool \
-                (self.get_id (f) in self.request_data and value)
-        if has_substance or required :
+            value           = self.add_changed_raw (raw_attrs, f)
+            #has_substance  += bool \
+            #    (value and self.get_id (f) in self.request_data)
+        if raw_attrs or roles and (len (roles) == len (self.Roles)) :
             errors = []
             ### at least on attribute is filled out
             try :
@@ -186,6 +221,17 @@ class _Instance_ (GTW.Form._Form_) :
                 if not attributes :
                     self.errors.append (error)
     # end def _handle_errors
+
+    @TFL.Meta.Once_Property
+    def hidden_fields (self) :
+        instance_data_field = Instance_State_Field \
+            ( "instance_state"
+            , et_man = self.et_man
+            , form   = self
+            )
+        result   = [instance_data_field]
+        return result
+    # end def hidden_fields
 
 # end class _Instance_
 

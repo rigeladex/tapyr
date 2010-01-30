@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Jan-2010 (MG) Creation
+#    30-Jan-2010 (MG) `get_list`: `combine_default` added
 #    ««revision-date»»···
 #--
 
@@ -118,10 +119,18 @@ class Config_File (TFL.Meta.Object) :
         return mo.get (option, de.get (option, default))
     # end def get
 
-    def get_list (self, option, method = None, default = ()) :
+    def get_list ( self, option
+                 , method          = None
+                 , default         = ()
+                 , combine_default = False
+                 ) :
         value = self.get (option, method, default)
         if isinstance (value, basestring) :
-            return [p.strip () for p in value.split (",")]
+            value = set (p.strip () for p in value.split (","))
+        if combine_default :
+            default_value = self.get (option, "defaults", None)
+            if default_value :
+                value.update (p.strip () for p in default_value.split (","))
         return value
     # end def get_list
 

@@ -29,6 +29,7 @@
 #     2009-Oct-19 (MG) Creation
 #     4-Nov-2009 (MG) Use `TFL.Add_To_Class`
 #    31-Dec-2009 (MG) `_sa_numeric` added
+#    30-Jan-2010 (MG) `_sa_date` added
 #    ««revision-date»»···
 #--
 
@@ -47,11 +48,15 @@ def _sa_bool (self, kind, ** kw) :
     return schema.Column (self._sa_col_name, types.Boolean, ** kw)
 # end def _sa_bool
 
-@TFL.Add_To_Class ("_sa_column", Attr._A_String_)
-def _sa_string (self, kind, ** kw) :
-    return schema.Column \
-        (self._sa_col_name, types.String (self.max_length), ** kw)
-# end def _sa_string
+@TFL.Add_To_Class ("_sa_column", Attr.A_Date)
+def _sa_date (self, kind, ** kw) :
+    return schema.Column (self._sa_col_name, types.Date, ** kw)
+# end def _sa_date
+
+@TFL.Add_To_Class ("_sa_column", Attr.A_Float)
+def _sa_float (self, kind, ** kw) :
+    return schema.Column (self._sa_col_name, types.Float, ** kw)
+# end def _sa_float
 
 @TFL.Add_To_Class ("_sa_column", Attr.A_Int)
 def _sa_int (self, kind, ** kw) :
@@ -67,10 +72,11 @@ def _sa_numeric (self, kind, ** kw) :
         )
 # end def _sa_numeric
 
-@TFL.Add_To_Class ("_sa_column", Attr.A_Float)
-def _sa_float (self, kind, ** kw) :
-    return schema.Column (self._sa_col_name, types.Float, ** kw)
-# end def _sa_float
+@TFL.Add_To_Class ("_sa_column", Attr._A_String_)
+def _sa_string (self, kind, ** kw) :
+    return schema.Column \
+        (self._sa_col_name, types.String (self.max_length), ** kw)
+# end def _sa_string
 
 @TFL.Add_To_Class ("_sa_column", Attr.A_Link_Role_EB)
 def _sa_role_eb (self, kind, ** kw) :

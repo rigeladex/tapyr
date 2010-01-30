@@ -82,6 +82,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """Academic title."""
 
             kind           = Attr.Primary_Optional
+            default        = ""
             max_length     = 20
             rank           = 2
             ui_name        = _("Academic title")

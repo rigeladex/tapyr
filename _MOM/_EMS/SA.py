@@ -46,6 +46,8 @@
 #    26-Jan-2010 (MG) Don't commit the change session on `register_change`
 #    27-Jan-2010 (MG) `Manager.add` print SA exception in `__debug__` mode
 #    29-Jan-2010 (MG) `pid_from_lid`,  `pid_as_lid` added
+#    30-Jan-2010 (MG)  `add`: `s_count` no longer eist's...
+#                      `pid_as_lid` fixed to always return a string
 #    ««revision-date»»···
 #--
 
@@ -114,7 +116,7 @@ class Manager (MOM.EMS._Manager_) :
         ses = self.session
         ses.flush () ### add all pending operations to the database transaction
         max_c = entity.max_count
-        if max_c and max_c <= self.s_count (entity.Essence) :
+        if max_c and max_c <= self.query (entity.__class__).count () :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         try :
             ses.add          (entity)
@@ -151,7 +153,7 @@ class Manager (MOM.EMS._Manager_) :
     def pid_as_lid (self, obj, e_type) :
         pid = obj.pid
         if e_type.relevant_root :
-            return pid.id
+            return str (pid.id)
         return "%s__%s" % (pid.Type_Name, pid.id)
     # end def pid_as_lid
 
