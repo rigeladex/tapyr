@@ -1,36 +1,82 @@
-# Translations template for Project.
-# Copyright (C) 2010 Company
-# This file is distributed under the same license as the Project project.
+# Translations template for MOM/GTW/JNJ.
+# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Project 1.0\n"
-"Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-25 15:07+0100\n"
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2010-01-30 15:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
+
+#: _GTW/_OMP/_PAP/Person.py:87 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Academic title"
+msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Academic title."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Person_has_Address.py:62 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Address"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "All object invariants must be satisfied."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "All required attributes must be defined."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "An_Entity"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Phone.py:67 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Area code"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:65 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "City"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "City, town, or village"
 msgstr ""
 
+#: _GTW/_OMP/_PAP/Address.py:84 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Country"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Phone.py:55 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Country code"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person.py:95 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Date of birth"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:102 _GTW/_OMP/_PAP/Email.py:65
+#: _GTW/_OMP/_PAP/Phone.py:101 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Description"
+msgstr ""
+
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Email.py:56 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Email address"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
@@ -38,7 +84,19 @@ msgid "Email address (including domain)"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Entity"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Phone.py:92 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Extension"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Extension number used in PBX"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person.py:67 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "First name"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
@@ -46,11 +104,55 @@ msgid "First name of person"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Id_Entity"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Indicates if object/link was created automatically or not."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "International country code of phone number (without prefix)"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person.py:57 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Last name"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Last name of person"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:120 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Latitude"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Link"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Link2"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Link2_Ordered"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Link3"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:111 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Longitude"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person.py:77 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Middle name"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Middle name of person"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
@@ -58,10 +160,22 @@ msgid "Models a string-valued attribute of an object."
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid "National area code of phone number (without prefix)"
+msgid "Named_Object"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "National area code of phone number (without prefix)"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Phone.py:78 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Number"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Object"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person_has_Address.py:54 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Person"
 msgstr ""
 
@@ -85,6 +199,14 @@ msgstr ""
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr ""
 
+#: _GTW/_OMP/_PAP/Address.py:93 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Region"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Sequence number of a link in an ordered association."
+msgstr ""
+
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Short description of the address"
 msgstr ""
@@ -98,7 +220,19 @@ msgid "Short description of the phone number"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Specifies if object can be changed by user"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Specifies whether entity is used by another entity."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "State or province or region"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:55 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Street"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
@@ -106,26 +240,70 @@ msgid "Street (or place) and house number"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Unique name of the object."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:75 _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Zip code"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Zip code of address"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid "city"
+msgid "`Address` linked to `person`"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid "country"
+msgid "`Person` linked to `address`"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid "extension"
+msgid "addresss"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid "region"
+msgid "completely_defined"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid "street"
+msgid "electric"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "is_used"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "left"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "middle"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "name"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "object_correct"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "persons"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "right"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "seq_no"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "x_locked"
 msgstr ""
 

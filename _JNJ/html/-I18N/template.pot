@@ -1,0 +1,123 @@
+# Translations template for MOM/GTW/JNJ.
+# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2010-01-30 15:30+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: _JNJ/html/form.jnj:143
+msgid "Cancel"
+msgstr ""
+
+#: _JNJ/html/news.jnj:49
+msgid "Change"
+msgstr ""
+
+#: _JNJ/html/e_type_admin.jnj:73
+msgid "Change object"
+msgstr ""
+
+#: _JNJ/html/form.jnj:231
+msgid "Discard all changes"
+msgstr ""
+
+#: _JNJ/html/form.jnj:141 _JNJ/html/form.jnj:228
+msgid "Discard all changes and leave form"
+msgstr ""
+
+#: _JNJ/html/news.jnj:46
+msgid "Edit this entry"
+msgstr ""
+
+#: _JNJ/html/error_404.jnj:53
+#, python-format
+msgid "If a link under %s refers to %s, please contact the webmaster."
+msgstr ""
+
+#: _JNJ/html/form.jnj:181
+msgid "Login"
+msgstr ""
+
+#: _JNJ/html/login.jnj:39
+msgid "Login for"
+msgstr ""
+
+#: _JNJ/html/error_401.jnj:38
+msgid "Login required"
+msgstr ""
+
+#: _JNJ/html/photo.jnj:47
+msgid "Next picture"
+msgstr ""
+
+#: _JNJ/html/error_404.jnj:37
+msgid "Page doesn't exist"
+msgstr ""
+
+#: _JNJ/html/form.jnj:176
+msgid "Please enter your password"
+msgstr ""
+
+#: _JNJ/html/form.jnj:167
+msgid "Please enter your user-name"
+msgstr ""
+
+#: _JNJ/html/photo.jnj:41
+msgid "Previous picture"
+msgstr ""
+
+#: _JNJ/html/error_500.jnj:42
+msgid "Processing the request triggered a server error. "
+msgstr ""
+
+#: _JNJ/html/form.jnj:232
+msgid "Reset"
+msgstr ""
+
+#: _JNJ/html/error_500.jnj:37
+msgid "Server error"
+msgstr ""
+
+#: _JNJ/html/form.jnj:234
+msgid "Submit"
+msgstr ""
+
+#: _JNJ/html/error_500.jnj:47
+msgid "The error was reported to the webmaster. "
+msgstr ""
+
+#: _JNJ/html/error_500.jnj:52
+msgid ""
+"We apologize for the inconvenience and hope to fix the problem as soon as"
+" possible. "
+msgstr ""
+
+#: _JNJ/html/error_403.jnj:47
+msgid "You are not authorized to access the page "
+msgstr ""
+
+#: _JNJ/html/error_403.jnj:37
+msgid "You are not authorized to access this page"
+msgstr ""
+
+#: _JNJ/html/error_401.jnj:47
+msgid "You need to be logged in to access the page "
+msgstr ""
+
+#: _JNJ/html/error_404.jnj:47
+msgid "You requested a page that doesn't exist: "
+msgstr ""
+

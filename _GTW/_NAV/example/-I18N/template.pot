@@ -1,19 +1,20 @@
-# Translations template for Project.
-# Copyright (C) 2010 Company
-# This file is distributed under the same license as the Project project.
+# Translations template for MOM/GTW/JNJ.
+# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Project 1.0\n"
-"Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-25 20:53+0100\n"
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2010-01-30 15:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
@@ -24,11 +25,11 @@ msgid ""
 "  "
 msgstr ""
 
-#: _GTW/_NAV/example/templates/i18n.jnj:7
-msgid "German"
-msgstr ""
-
 #: _GTW/_NAV/example/templates/i18n.jnj:8
 msgid "English"
+msgstr ""
+
+#: _GTW/_NAV/example/templates/i18n.jnj:7
+msgid "German"
 msgstr ""
 

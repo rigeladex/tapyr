@@ -1,31 +1,31 @@
-# Translations template for Project.
-# Copyright (C) 2010 Company
-# This file is distributed under the same license as the Project project.
+# Translations template for MOM/GTW/JNJ.
+# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Project 1.0\n"
-"Report-Msgid-Bugs-To: bugs@domain.com\n"
-"POT-Creation-Date: 2010-01-25 15:07+0100\n"
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2010-01-30 15:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: _GTW/_NAV/example/templates/i18n.jnj:4
 #, python-format
 msgid ""
-"\n"
 "    We are at language %(lang)s.\n"
 "  "
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:83 _GTW/_NAV/_E_Type/Admin.py:188
+#: _GTW/_NAV/_E_Type/Admin.py:86 _GTW/_NAV/_E_Type/Admin.py:194
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
@@ -34,7 +34,7 @@ msgstr ""
 msgid "A user name is required to login."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:75
+#: _GTW/_OMP/_PAP/Person.py:87
 msgid "Academic title"
 msgstr ""
 
@@ -42,20 +42,32 @@ msgstr ""
 msgid "Account name"
 msgstr ""
 
+#: _GTW/_OMP/_PAP/Person_has_Address.py:62
+msgid "Address"
+msgstr ""
+
 #: _GTW/_OMP/_PAP/Phone.py:67
 msgid "Area code"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:65
+msgid "City"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:84
+msgid "Country"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Phone.py:55
 msgid "Country code"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:83
+#: _GTW/_OMP/_PAP/Person.py:95
 msgid "Date of birth"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Address.py:98 _GTW/_OMP/_PAP/Email.py:65
-#: _GTW/_OMP/_PAP/Phone.py:100
+#: _GTW/_OMP/_PAP/Address.py:102 _GTW/_OMP/_PAP/Email.py:65
+#: _GTW/_OMP/_PAP/Phone.py:101
 msgid "Description"
 msgstr ""
 
@@ -63,33 +75,61 @@ msgstr ""
 msgid "Email address"
 msgstr ""
 
+#: _GTW/_NAV/example/templates/i18n.jnj:8
+msgid "English"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Phone.py:92
+msgid "Extension"
+msgstr ""
+
 #: _GTW/_Form/Plain.py:83
 #, python-format
 msgid "Field `%(field)s` is required"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:66
+#: _GTW/_OMP/_PAP/Person.py:67
 msgid "First name"
+msgstr ""
+
+#: _GTW/_NAV/example/templates/i18n.jnj:7
+msgid "German"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/Group.py:55
 msgid "Group name"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Person.py:56
+#: _GTW/_OMP/_PAP/Person.py:57
 msgid "Last name"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Address.py:116
+#: _GTW/_OMP/_PAP/Address.py:120
 msgid "Latitude"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Address.py:107
+#: _GTW/_OMP/_PAP/Address.py:111
 msgid "Longitude"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person.py:77
+msgid "Middle name"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Phone.py:78
 msgid "Number"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Person_has_Address.py:54
+msgid "Person"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:93
+msgid "Region"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/Address.py:55
+msgid "Street"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/Account.py:76
@@ -108,7 +148,7 @@ msgstr ""
 msgid "Username or password incorrect"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Address.py:73
+#: _GTW/_OMP/_PAP/Address.py:75
 msgid "Zip code"
 msgstr ""
 
