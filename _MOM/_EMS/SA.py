@@ -48,6 +48,7 @@
 #    29-Jan-2010 (MG) `pid_from_lid`,  `pid_as_lid` added
 #    30-Jan-2010 (MG)  `add`: `s_count` no longer eist's...
 #                      `pid_as_lid` fixed to always return a string
+#    30-Jan-2010 (MG) Update of `scope.db_cid` added
 #    ««revision-date»»···
 #--
 
@@ -182,6 +183,7 @@ class Manager (MOM.EMS._Manager_) :
                 ( Table.c._id.in_ (c.cid for c in change.children)
                 ).values (_parent_id = change.cid)
             self.session.execute (update)
+        self.scope.db_cid = change.cid
         return result
     # end def register_change
 

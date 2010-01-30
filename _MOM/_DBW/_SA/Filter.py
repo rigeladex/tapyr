@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glueck All rights reserved
+# Copyright (C) 2009-2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -29,6 +29,7 @@
 # Revision Dates
 #     1-Dec-2009 (MG) Creation
 #    10-Dec-2009 (MG) Adopted to new `Q_Exp`, support for `Filter_*` added
+#    30-Jan-2010 (MG) `Attr_Map` corrected
 #    ««revision-date»»···
 #--
 
@@ -44,7 +45,7 @@ def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)
-def _sa_filter (self, e_type, Attr_Map = {}) :
+def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
     args = []
     for arg in self.lhs, self.rhs :
         if hasattr (arg, "_sa_filter") :

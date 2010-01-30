@@ -97,7 +97,7 @@ class _Manager_ (TFL.Meta.Object) :
         if filters or kw :
             result = result.filter (* filters, ** kw)
         return result
-    # end def changes
+    # end def async_changes
 
     def close (self) :
         if self.uncommitted_changes :

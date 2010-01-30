@@ -23,13 +23,15 @@
 #    GTW.Form.MOM._Instance_
 #
 # Purpose
-#    «text»···
+#    Base class for form's which handle instances
 #
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) Error handling added
 #    29-Jan-2010 (MG) Bug fixing
 #    30-Jan-2010 (MG) Instance state added, bug fixing continued
+#    30-Jan-2010 (MG) Instance state corrected, update roles only if they
+#                     have been changed
 #    ««revision-date»»···
 #--
 
@@ -148,8 +150,18 @@ class _Instance_ (GTW.Form._Form_) :
     # end def _get_raw
 
     @TFL.Meta.Once_Property
+    def instance_state_field (self) :
+        return Instance_State_Field \
+            ( "instance_state"
+            , et_man = self.et_man
+            , form   = self
+            )
+    # end def instance_state_field
+
+    @TFL.Meta.Once_Property
     def instance_state (self) :
-        encoded = self.request_data.get ("instance_state")
+        encoded = self.request_data.get \
+            (self.get_id (self.instance_state_field))
         if encoded :
             return cPickle.loads (base64.b64decode (encoded))
         return {}
@@ -161,7 +173,6 @@ class _Instance_ (GTW.Form._Form_) :
             request_data  = GTW.Tornado.Request_Data (request_data)
         self.request_data = request_data
         roles             = []
-        import pdb; pdb.set_trace ()
         for role_name, et_man in self.Roles :
             if self.parent and et_man is self.parent.et_man :
                 instance  = self.parent.instance
@@ -194,9 +205,16 @@ class _Instance_ (GTW.Form._Form_) :
                 if instance :
                     if et_man.Roles :
                         roles = dict \
-                          ((ak.name, t) for (ak, r) in zip (et_man.Roles, roles))
-                        instance.set     (on_error = errors.append, ** roles)
-                    instance.set_raw (** raw_attrs)
+                            (   (ak.name, r)
+                            for (ak, r) in zip (et_man.Roles, roles)
+                            )
+                        curr = dict \
+                            ((r, getattr (instance, r).epk_raw) for r in roles)
+                        if curr != roles :
+                            instance.set_raw \
+                                (on_error = errors.append, ** roles)
+                    if len (raw_attrs) > 1 :
+                        instance.set_raw (** raw_attrs)
                 else :
                     instance = et_man (raw = True, * roles, ** raw_attrs)
             except Exception, exc:
@@ -224,13 +242,7 @@ class _Instance_ (GTW.Form._Form_) :
 
     @TFL.Meta.Once_Property
     def hidden_fields (self) :
-        instance_data_field = Instance_State_Field \
-            ( "instance_state"
-            , et_man = self.et_man
-            , form   = self
-            )
-        result   = [instance_data_field]
-        return result
+        return [self.instance_state_field]
     # end def hidden_fields
 
 # end class _Instance_
