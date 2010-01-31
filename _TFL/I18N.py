@@ -34,6 +34,7 @@
 #    21-Jan-2010 (MG) Reworked
 #    21-Jan-2010 (MG) `save_eval` added
 #    25-Jan-2010 (MG) Support list of languages in `use` and `context`
+#    31-Jan-2010 (CT) `import  babel.support` moved inside functions
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,6 @@ from   _TFL            import TFL
 from   _TFL.Record     import Record
 from   _TFL.predicate  import first
 import  gettext
-import  babel.support
 
 Config = Record \
    ( Languages  = {None : gettext.NullTranslations ()}
@@ -71,6 +71,7 @@ def load (* languages, ** kw) :
 # end def load
 
 def _load_languages (locale_dir, languages, domains) :
+    import babel.support
     if not isinstance (domains, (list, tuple)) :
         domains = (domains, )
     first_dom   = domains [0]
@@ -131,6 +132,7 @@ def use (* lang) :
 def context (* lang) :
     """Temporaly change the translation language
     ### Let's fake some Translations
+    >>> import  babel.support
     >>> Config.Languages ["l1"] = l1 = babel.support.Translations ()
     >>> Config.Languages ["l2"] = l2 = babel.support.Translations ()
     >>> l1._catalog = dict (text1 = u"L1: Text 1", text2 = u"L1: Text 2")

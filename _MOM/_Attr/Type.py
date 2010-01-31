@@ -70,6 +70,8 @@
 #    19-Jan-2010 (CT) `A_Char` added
 #    21-Jan-2010 (CT) `as_arg_ckd` and `as_arg_raw` added
 #    21-Jan-2010 (CT) `cooked` and `_to_cooked` redefined for `_A_String_`
+#    31-Jan-2010 (CT) `computed_default` added
+#    31-Jan-2010 (CT) `A_Date_Slug` added
 #    ««revision-date»»···
 #--
 
@@ -99,6 +101,7 @@ class A_Attr_Type (object) :
     check_syntax        = None
     code_format         = u"%r"
     computed            = None
+    computed_default    = None
     default             = None
     description         = u""
     explanation         = u""
@@ -760,6 +763,25 @@ class A_Date (_A_Date_) :
     _DT_Type       = datetime.date
 
 # end class A_Date
+
+class A_Date_Slug (_A_String_) :
+    """Models an atribute that stores a unique value based on the date/time
+       of entity creation.
+    """
+
+    typ            = "Date-Slug"
+
+    def computed_default (self) :
+        now = datetime.datetime.now ()
+        result = "%s_%06d_%s" % \
+            ( now.strftime ("%Y%m%d_%H%M%S")
+            , now.microsecond
+            , sos.getpid ()
+            )
+        return result
+    # end def computed_default
+
+# end class A_Date_Slug
 
 class A_Date_Time (_A_Date_) :
     """Models a date-time-valued attribute of an object."""

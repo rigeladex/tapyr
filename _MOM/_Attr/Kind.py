@@ -74,6 +74,9 @@
 #    21-Jan-2010 (CT) `_Primary_` factored and `Primary_Optional` added
 #    21-Jan-2010 (CT) `as_arg_ckd` and `as_arg_raw` added to `Primary` and
 #                     `Primary_Optional`
+#    31-Jan-2010 (CT) Properties `default` and `raw_default` added and used
+#                     to handle `computed_default`
+#    31-Jan-2010 (CT) `Mandatory_Mixin` factored
 #    ««revision-date»»···
 #--
 
@@ -138,6 +141,16 @@ class Kind (MOM.Prop.Kind) :
                 (MOM.SCM.Change.Attr, obj, {self.name : old_raw})
     # end def __set__
 
+    @property
+    def default (self) :
+        attr = self.attr
+        if TFL.callable (attr.computed_default) :
+            result = attr.computed_default ()
+        else :
+            result = attr.default
+        return result
+    # end def default
+
     def get_pickle_cargo (self, obj) :
         return (self.get_value (obj), )
     # end def get_pickle_cargo
@@ -150,14 +163,14 @@ class Kind (MOM.Prop.Kind) :
             else :
                 return ""
         else :
-            return self.attr.raw_default
+            return self.raw_default
     # end def get_raw
 
     def get_value (self, obj) :
         if obj is not None :
             return getattr (obj, self.attr.ckd_name, None)
         else :
-            return self.attr.default or self.attr.raw_default
+            return self.default
     # end def get_value
 
     def inc_changes (self, man, obj, value) :
@@ -167,16 +180,27 @@ class Kind (MOM.Prop.Kind) :
         return self._inc_changes (man, obj, value)
     # end def inc_changes
 
-    def reset (self, obj) :
-        if self.attr._symbolic_default :
-            return self.set_raw \
-                (obj, self.attr.raw_default, dont_raise = True, changed = True)
+    @property
+    def raw_default (self) :
+        attr = self.attr
+        if TFL.callable (attr.computed_default) :
+            result = attr.as_string (attr.computed_default ())
         else :
-            if self.attr.raw_default and self.attr.default is None :
-                self.attr.default = self.attr.from_string \
-                    (self.attr.raw_default, obj, obj.globals ())
+            result = attr.raw_default
+        return result
+    # end def default
+
+    def reset (self, obj) :
+        attr = self.attr
+        if attr._symbolic_default :
+            return self.set_raw \
+                (obj, attr.raw_default, dont_raise = True, changed = True)
+        else :
+            if attr.raw_default and attr.default is None :
+                attr.default = attr.from_string \
+                    (attr.raw_default, obj, obj.globals ())
             return self._set_raw \
-                (obj, self.attr.raw_default, self.attr.default, changed = True)
+                (obj, attr.raw_default, attr.default, changed = True)
     # end def reset
 
     def set_pickle_cargo (self, obj, cargo) :
@@ -317,6 +341,17 @@ class _EPK_Mixin_ (Kind) :
 
 # end class _EPK_Mixin_
 
+class Mandatory_Mixin (Kind) :
+    """Mixin for enforcing that an attribute always has a value"""
+
+    def _checkers (self) :
+        yield "value is not None and value != ''", (self.name, )
+        for c in self.__super._checkers () :
+            yield c
+    # end def _checkers
+
+# end class Mandatory_Mixin
+
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""
 
@@ -330,7 +365,7 @@ class _Raw_Value_Mixin_ (Kind) :
         if obj is not None :
             return getattr (obj, self.attr.raw_name, "")
         else :
-            return self.attr.raw_default
+            return self.raw_default
     # end def get_raw
 
     def get_value (self, obj) :
@@ -340,7 +375,7 @@ class _Raw_Value_Mixin_ (Kind) :
     # end def get_value
 
     def has_substance (self, obj) :
-        return self.get_raw (obj) not in ("", self.raw_default)
+        return self.get_raw (obj) not in ("", self.attr.raw_default)
     # end def has_substance
 
     def set_pickle_cargo (self, obj, cargo) :
@@ -391,14 +426,14 @@ class _Sticky_Mixin_ (Kind) :
 
     def _set_cooked (self, obj, value, changed = 42) :
         if value is None :
-            value = self.attr.default
+            value = self.default
         self.__super._set_cooked (obj, value, changed)
     # end def _set_cooked
 
     def _set_raw (self, obj, raw_value, value, changed = 42) :
         if raw_value in ("", None) :
-            raw_value = self.attr.raw_default
-            value     = self.attr.default
+            raw_value = self.raw_default
+            value     = self.default
         if raw_value == "None" :
             print obj, self, raw_value, value
         self.__super._set_raw (obj, raw_value, value, changed)
@@ -415,7 +450,7 @@ class _DB_Attr_ (Kind) :
         raw_val = self.get_raw (obj)
         result  = bool (raw_val)
         if result and not self.store_default :
-            result = raw_val != self.raw_default
+            result = raw_val != self.attr.raw_default
         return result
     # end def to_save
 
@@ -428,7 +463,7 @@ class _User_ (_DB_Attr_, Kind) :
     record_changes = True
 
     def has_substance (self, obj) :
-        return self.get_value (obj) not in (None, self.default)
+        return self.get_value (obj) not in (None, self.attr.default)
     # end def has_substance
 
 # end class _User_
@@ -490,7 +525,7 @@ class _Primary_ (_User_) :
 
 # end class _Primary_
 
-class Primary (_Primary_) :
+class Primary (Mandatory_Mixin, _Primary_) :
     """Primary attribute: must be defined at all times, used as part of the
        `essential primary key`.
     """
@@ -503,12 +538,6 @@ class Primary (_Primary_) :
     # end def as_arg_ckd
 
     as_arg_raw = as_arg_ckd
-
-    def _checkers (self) :
-        yield "value is not None and value != ''", (self.name, )
-        for c in self.__super._checkers () :
-            yield c
-    # end def _checkers
 
 # end class Primary
 
@@ -713,7 +742,7 @@ class Computed (_Cached_) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        default = self.attr.raw_default
+        default = self.raw_default
         if default :
             raise TypeError \
                 ( "%s is computed but has default %r "
@@ -738,7 +767,7 @@ class Computed_Mixin (Kind) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        default = self.attr.raw_default
+        default = self.raw_default
         if default :
             raise TypeError \
                 ( "%s is _Computed_ but has default %r "
@@ -756,7 +785,7 @@ class Sticky_Mixin (_Sticky_Mixin_) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        if not self.attr.raw_default :
+        if not self.raw_default :
             raise TypeError \
                 ("%s is sticky but lacks `default`" % (attr_type, ))
     # end def _check_sanity
