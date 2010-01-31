@@ -34,8 +34,7 @@ from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 
 import _GTW._OMP._SWP.Entity
-import _GTW._OMP._SWP.Format
-
+from   _GTW._OMP._SWP.Format  import A_Format
 
 from   _TFL.I18N              import _, _T, _Tn
 

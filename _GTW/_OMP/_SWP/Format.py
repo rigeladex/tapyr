@@ -30,17 +30,72 @@
 #    ««revision-date»»···
 #--
 
+### To-do:
+- markdown
+
 from   _GTW                   import GTW
 from   _TFL                   import TFL
+
+from   _MOM.import_MOM        import *
 
 import _GTW._OMP._SWP
 import _GTW.ReST
 
-### To-do:
-- ReST
-- HTML
-- ? other formats ?
-- A_Format
+import _TFL._Meta.Object
+
+class M_Format (TFL.Meta.Object.__class__) :
+    """Meta class for formatter classes"""
+
+    Table = {}
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        format = cls ()
+        Table  = cls.Table
+        n = cls.nick,
+        assert n not in Table, "Name clash: `%s` <-> `%s`" % \
+            (n, Table [n].__class__)
+        Table [n] = format
+    # end def __init__
+
+# end class M_Format
+
+class _HTML_ (TFL.Meta.Object) :
+    """Formatter for text in HTML markup"""
+
+    forbidden = "applet frame frameset head html iframe input object script"
+    nick      = "H"
+
+    def __call__ (self, text) :
+        ### XXX remove tags listed in `forbidden`
+        return text
+    # end def __call__
+
+# end class _HTML_
+
+class _ReST_ (TFL.Meta.Object) :
+    """Formatter for re-structured text"""
+
+    nick = "R"
+
+    def __call__ (self, text) :
+        return GTW.ReST.to_html (text, encoding = "utf8")
+    # end def __call__
+
+# end class _ReST_
+
+class A_Format (MOM.Attr._A_Named_Value_) :
+    """Format to use for text of a page"""
+
+    typ         = "Format"
+    Table       = M_Format.Table
+
+    ### XXX DB should contain the raw value
+
+# end class A_Format
+
+HTML = M_Format.Table [_HTML_.nick]
+ReST = M_Format.Table [_ReST_.nick]
 
 if __name__ != "__main__" :
     GTW.OMP.SWP._Export_Module ()

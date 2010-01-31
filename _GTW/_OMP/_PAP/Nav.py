@@ -56,6 +56,7 @@ class Admin (object) :
                 ( "PAP.Person_has_Address", "person"
                 , FGD
                     ( FP ("address", "street", "zip", "city", "country", "desc")
+                    , widget = "html/form.jnj, fg_tr"
                     )
                 , min_empty = 1
                 )
