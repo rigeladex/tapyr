@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-01-30 20:35+0100\n"
+"POT-Creation-Date: 2010-01-31 15:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _JNJ/html/form.jnj:148
+#: _JNJ/html/form.jnj:149
 msgid "Cancel"
 msgstr ""
 
@@ -30,11 +30,11 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:236
+#: _JNJ/html/form.jnj:237
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:146 _JNJ/html/form.jnj:233
+#: _JNJ/html/form.jnj:147 _JNJ/html/form.jnj:234
 msgid "Discard all changes and leave form"
 msgstr ""
 
@@ -47,7 +47,7 @@ msgstr ""
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
-#: _JNJ/html/form.jnj:186
+#: _JNJ/html/form.jnj:187
 msgid "Login"
 msgstr ""
 
@@ -67,11 +67,11 @@ msgstr ""
 msgid "Page doesn't exist"
 msgstr ""
 
-#: _JNJ/html/form.jnj:181
+#: _JNJ/html/form.jnj:182
 msgid "Please enter your password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:172
+#: _JNJ/html/form.jnj:173
 msgid "Please enter your user-name"
 msgstr ""
 
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Processing the request triggered a server error. "
 msgstr ""
 
-#: _JNJ/html/form.jnj:237
+#: _JNJ/html/form.jnj:238
 msgid "Reset"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgstr ""
 msgid "Server error"
 msgstr ""
 
-#: _JNJ/html/form.jnj:239
+#: _JNJ/html/form.jnj:240
 msgid "Submit"
 msgstr ""
 
