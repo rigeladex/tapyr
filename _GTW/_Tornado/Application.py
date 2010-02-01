@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    12-Sep-2009 (MG) Creation
+#     1-Feb-2010 (MG) `__init__` added to support `media_path`
 #    ««revision-date»»···
 #--
 
@@ -36,7 +37,6 @@ from   _GTW                import GTW
 import _GTW._Tornado.Error
 
 from    tornado            import web
-#from    tornado.web        import logger as server_logger
 import  tornado.httpserver
 import  tornado.ioloop
 
@@ -47,6 +47,15 @@ reload_logger = TFL.Logger.Create ("reload")
 
 class _Tornado_Application_ (web.Application, TFL.Meta.Object) :
     """Base class for Web Applications"""
+
+    def __init__ (self, handlers = None, * args, ** kw) :
+        media = kw.pop ("media_path", None)
+        if media :
+            handlers = (handlers and list (handlers)) or []
+            handlers.insert \
+                (0, ("/media/(.*)", web.StaticFileHandler, dict (path = media)))
+        self.__super.__init__ (handlers, * args, ** kw)
+    # end def __init__
 
     _real_name = "Application"
 
