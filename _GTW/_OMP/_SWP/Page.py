@@ -53,7 +53,9 @@ class Page (_Ancestor_Essence) :
             """Contents of web page in html format"""
 
             kind               = Attr.Internal
-            ### XXX Kind_Mixins        = (Attr.Auto_Update, )
+            ### XXX
+            ### Kind_Mixins        = (Attr.Auto_Update, )
+            ### auto_update_attrs  = ("format", "text")
 
             def computed (self, obj) :
                 return self.format (self.text)

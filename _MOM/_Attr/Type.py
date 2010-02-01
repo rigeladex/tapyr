@@ -772,7 +772,7 @@ class A_Date_Slug (_A_String_) :
     typ            = "Date-Slug"
 
     def computed_default (self) :
-        now = datetime.datetime.now ()
+        now    = datetime.datetime.now ()
         result = "%s_%06d_%s" % \
             ( now.strftime ("%Y%m%d_%H%M%S")
             , now.microsecond
