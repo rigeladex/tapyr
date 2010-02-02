@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    31-Jan-2010 (CT) Creation
+#     2-Feb-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -82,7 +83,7 @@ class Page (_Ancestor_Essence) :
                 """
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Sticky_Mixin, )
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
 
             def computed_default (self) :
                 return datetime.datetime.now ()
@@ -103,8 +104,9 @@ class Page (_Ancestor_Essence) :
             """Markup format used for `text` of web page"""
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Sticky_Mixin, )
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
             default            = GTW.OMP.SWP.Format.ReST
+
 
         # end class format
 
@@ -120,7 +122,7 @@ class Page (_Ancestor_Essence) :
             """Text for web page in markup specified by `format`."""
 
             kind               = Attr.Required
-            Kind_Mixins        = (Mandatory_Mixin, )
+            Kind_Mixins        = (Attr.Mandatory_Mixin, )
 
         # end class text
 

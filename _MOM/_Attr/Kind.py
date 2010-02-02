@@ -154,10 +154,11 @@ class Kind (MOM.Prop.Kind) :
 
     def get_pickle_cargo (self, obj) :
         Pickler = self.attr.Pickler
+        value   = self.get_value (obj)
         if Pickler :
-            return Pickler.as_cargo (self, obj)
+            return Pickler.as_cargo (self.attr, value)
         else :
-            return (self.get_value (obj), )
+            return (value, )
     # end def get_pickle_cargo
 
     def get_raw (self, obj) :
@@ -211,7 +212,7 @@ class Kind (MOM.Prop.Kind) :
     def set_pickle_cargo (self, obj, cargo) :
         Pickler = self.attr.Pickler
         if Pickler :
-            cargo = (Pickler.from_cargo (self, obj, cargo), )
+            cargo = (Pickler.from_cargo (self.attr, cargo), )
         self._set_cooked_value (obj, cargo [0], changed = True)
     # end def set_pickle_cargo
 

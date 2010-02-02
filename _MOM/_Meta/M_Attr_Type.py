@@ -36,6 +36,7 @@
 #                     for classes without `role_type`
 #    30-Dec-2009 (CT) `M_Attr_Type_Decimal` added
 #    21-Jan-2010 (CT) `__init__` changed to take `default` from `dct`
+#     2-Feb-2010 (CT) `M_Attr_Type_Named_Object` added
 #    ««revision-date»»···
 #--
 
@@ -113,7 +114,7 @@ class M_Attr_Type_Link_Role (M_Attr_Type) :
 # end class M_Attr_Type_Link_Role
 
 class M_Attr_Type_Named_Value (M_Attr_Type) :
-    """Meta class for MOM.Attr.A_Named_Value classes.
+    """Meta class for MOM.Attr._A_Named_Value_ classes.
 
        `M_Attr_Type_Named_Value` adds Once_Property for `Elbat` (reverse
        mapping) for `Table` and for `syntax`, if these aren't defined by the
@@ -151,6 +152,22 @@ class M_Attr_Type_Named_Value (M_Attr_Type) :
 
 # end class M_Attr_Type_Named_Value
 
+class M_Attr_Type_Named_Object (M_Attr_Type_Named_Value) :
+    """Meta class for MOM.Attr._A_Named_Object_ classes.
+
+       `M_Attr_Type_Named_Object` adds `Type` to `cls.Pickler`, if any.
+    """
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        Table = getattr (cls, "Table", None)
+        if Table and cls.Pickler :
+            max_length = max (len (k) for k in Table)
+            cls.Pickler.Type = MOM.Attr._A_String_.New (max_length = max_length)
+    # end def __init__
+
+# end class M_Attr_Type_Named_Object
+
 class M_Attr_Type_Unit (M_Attr_Type) :
     """Meta class for MOM.Attr._A_Unit_ classes.
 
@@ -172,7 +189,7 @@ class M_Attr_Type_Unit (M_Attr_Type) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if name != "_A_Unit_" :
-            ud = getattr (cls, "_unit_dict",    None)
+            ud = getattr (cls, "_unit_dict", None)
             if ud :
                 for n, v in ud.iteritems () :
                     if v == 1.0 :

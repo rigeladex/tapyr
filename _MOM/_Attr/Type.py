@@ -73,6 +73,7 @@
 #    31-Jan-2010 (CT) `computed_default` added
 #    31-Jan-2010 (CT) `A_Date_Slug` added
 #     2-Feb-2010 (CT) `Pickler = None` added to `_A_Attr_Type_`
+#     2-Feb-2010 (CT) `_A_Named_Object_` added
 #    ««revision-date»»···
 #--
 
@@ -329,6 +330,33 @@ class _A_Named_Value_ (A_Attr_Type) :
     # end def _from_string_eval
 
 # end class _A_Named_Value_
+
+class _A_Named_Object_ (_A_Named_Value_) :
+    """Common base class for attributes holding named objects (that can't be
+       directly put into a database).
+    """
+
+    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Object
+
+    class Pickler (TFL.Meta.Object) :
+
+        @classmethod
+        def as_cargo (cls, attr, value) :
+            return attr.__class__.Elbat [value]
+        # end def as_cargo
+
+        @classmethod
+        def from_cargo (cls, attr, cargo) :
+            Table = attr.__class__.Table
+            try :
+                return Table [cargo]
+            except KeyError :
+                raise ValueError (u"%s not in %s" % (cargo, sorted (Table)))
+        # end def from_cargo
+
+    # end class Pickler
+
+# end class _A_Named_Object_
 
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""

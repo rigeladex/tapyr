@@ -27,11 +27,12 @@
 #
 # Revision Dates
 #    31-Jan-2010 (CT) Creation
+#     2-Feb-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
 ### To-do:
-- markdown
+# - markdown
 
 from   _GTW                   import GTW
 from   _TFL                   import TFL
@@ -51,8 +52,9 @@ class M_Format (TFL.Meta.Object.__class__) :
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        cls._m_add (name,     cls.Table)
-        cls._m_add (cls.nick, cls.Abbrs)
+        if name != "_Format_" :
+            cls._m_add (name,     cls.Table)
+            cls._m_add (cls.nick, cls.Abbrs)
     # end def __init__
 
     def _m_add (cls, name, Table) :
@@ -63,7 +65,14 @@ class M_Format (TFL.Meta.Object.__class__) :
 
 # end class M_Format
 
-class HTML (TFL.Meta.Object) :
+class _Format_ (TFL.Meta.Object) :
+
+    __metaclass__ = M_Format
+    nick          = None
+
+# end class _Format_
+
+class HTML (_Format_) :
     """Formatter for text in HTML markup"""
 
     forbidden = "applet frame frameset head html iframe input object script"
@@ -77,7 +86,7 @@ class HTML (TFL.Meta.Object) :
 
 # end class HTML
 
-class ReST (TFL.Meta.Object) :
+class ReST (_Format_) :
     """Formatter for re-structured text"""
 
     nick = "R"
@@ -89,13 +98,11 @@ class ReST (TFL.Meta.Object) :
 
 # end class ReST
 
-class A_Format (MOM.Attr._A_Named_Value_) :
+class A_Format (MOM.Attr._A_Named_Object_) :
     """Format to use for text of a page"""
 
     typ         = "Format"
     Table       = M_Format.Table
-
-    ### XXX DB should contain the raw value
 
 # end class A_Format
 
