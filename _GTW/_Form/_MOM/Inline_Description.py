@@ -29,6 +29,7 @@
 #    19-Jan-2010 (MG) Creation
 #     2-Feb-2010 (MG) Default widget media definition added
 #                     Once property `Media` added
+#    02-Feb-2010 (MG) Location of JS and CSS files changed
 #    ««revision-date»»···
 #--
 
@@ -48,15 +49,15 @@ class Inline_Description (TFL.Meta.Object) :
         ( "html/form.jnj, inline"
         , Media = GTW.Media
               ( css_links   =
-                  ( GTW.CSS_Link ("/media/css/GTW/jquery-ui-1.7.2.custom.css")
-                  , GTW.CSS_Link ("/media/css/GTW/m2m.css")
+                  ( GTW.CSS_Link ("/media/styles/GTW/jquery-ui-1.7.2.custom.css")
+                  , GTW.CSS_Link ("/media/styles/GTW/m2m.css")
                   )
               , scripts     =
                   ( GTW.Script (src  = "http://www.google.com/jsapi")
                   , GTW.Script (body = 'google.load ("jquery", "1");')
           ##        , GTW.Script (body = 'google.load ("jquery", "1", {uncompressed:true});')
                   , GTW.Script (body = 'google.load ("jqueryui", "1");')
-                  , GTW.Script (src  = "model_edit_ui.js") ## XXX
+                  , GTW.Script (src  = "GTW/model_edit_ui.js") ## XXX
                   )
               , js_on_ready =
                   ( GTW.JS_On_Ready

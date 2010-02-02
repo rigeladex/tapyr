@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2009 Martin Glück All rights reserved
+** Copyright (C) 2009-2010 Martin Glück All rights reserved
 ** Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 ** ****************************************************************************
 **
@@ -32,6 +32,7 @@
 **    20-Aug-2009 (MG) Completer added and completion functions added to
 **                     Many2Many
 **    21-Aug-2009 (MG) Keyboard shortcuts added
+**     2-Feb-2010 (MG) Started port to GTW
 **    ««revision-date»»···
 **--
 */
@@ -63,7 +64,7 @@
               + '" title="Add ' + $legend.attr ("title")
               + '">Add</a> '
               );
-          var $forms = this.element.find (".m2m-nested-form");
+          var $forms = this.element.find (".Formset");
           for (var i = 0; i < $forms.length; i++)
           {
               this._add_delete_button ($forms.eq (i));
