@@ -72,6 +72,7 @@
 #    21-Jan-2010 (CT) `cooked` and `_to_cooked` redefined for `_A_String_`
 #    31-Jan-2010 (CT) `computed_default` added
 #    31-Jan-2010 (CT) `A_Date_Slug` added
+#     2-Feb-2010 (CT) `Pickler = None` added to `_A_Attr_Type_`
 #    ««revision-date»»···
 #--
 
@@ -111,6 +112,7 @@ class A_Attr_Type (object) :
     kind                = None
     Kind_Mixins         = ()
     needs_raw_value     = True
+    Pickler             = None
     rank                = 0
     raw_default         = u""
     record_changes      = True

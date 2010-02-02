@@ -77,6 +77,7 @@
 #    31-Jan-2010 (CT) Properties `default` and `raw_default` added and used
 #                     to handle `computed_default`
 #    31-Jan-2010 (CT) `Mandatory_Mixin` factored
+#     2-Feb-2010 (CT) Support for `Type.Pickler` added
 #    ««revision-date»»···
 #--
 
@@ -152,7 +153,11 @@ class Kind (MOM.Prop.Kind) :
     # end def default
 
     def get_pickle_cargo (self, obj) :
-        return (self.get_value (obj), )
+        Pickler = self.attr.Pickler
+        if Pickler :
+            return Pickler.as_cargo (self, obj)
+        else :
+            return (self.get_value (obj), )
     # end def get_pickle_cargo
 
     def get_raw (self, obj) :
@@ -204,6 +209,9 @@ class Kind (MOM.Prop.Kind) :
     # end def reset
 
     def set_pickle_cargo (self, obj, cargo) :
+        Pickler = self.attr.Pickler
+        if Pickler :
+            cargo = (Pickler.from_cargo (self, obj, cargo), )
         self._set_cooked_value (obj, cargo [0], changed = True)
     # end def set_pickle_cargo
 

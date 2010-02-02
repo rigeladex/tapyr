@@ -58,7 +58,7 @@ class Page (_Ancestor_Essence) :
             ### auto_update_attrs  = ("format", "text")
 
             def computed (self, obj) :
-                return self.format (self.text)
+                return obj.format.convert (obj.text)
             # end def computed
 
         # end class contents
