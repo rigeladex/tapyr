@@ -29,6 +29,7 @@
 #    18-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) Error handling added (includig checking of
 #                     `min_required` and `max_count`)
+#     2-Feb-2010 (MG) `form_count` added
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,11 @@ class Inline (TFL.Meta.Object) :
     def get_errors (self) :
         return self.errors
     # end def get_errors
+
+    @TFL.Meta.Once_Property
+    def form_count (self) :
+        return len (self.inline_forms)
+    # end def form_count
 
     @TFL.Meta.Once_Property
     def inline_forms (self) :

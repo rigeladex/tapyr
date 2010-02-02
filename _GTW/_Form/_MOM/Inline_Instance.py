@@ -30,6 +30,9 @@
 #    ««revision-date»»···
 #--
 
+from   _TFL                                 import TFL
+import _TFL._Meta.Once_Property
+
 from   _GTW                                 import GTW
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_

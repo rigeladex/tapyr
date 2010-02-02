@@ -27,9 +27,10 @@
 #
 # Revision Dates
 #    29-Jan-2010 (CT) Creation
+#     2-Feb-2010 (MG) `legend` and `title` added
 #    ««revision-date»»···
 #--
-
+from   _TFL.I18N                import _
 from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
@@ -59,6 +60,8 @@ class Admin (object) :
                     , widget = "html/form.jnj, fg_tr"
                     )
                 , min_empty = 1
+                , legend    = _("Person's addresses")
+                , title     = _("Addresses")
                 )
              )
         )

@@ -36,6 +36,7 @@
 #    21-Aug-2009 (MG) `JS_On_Ready` added and used to support sorting in
 #                     `Media_List_JSOR`
 #    10-Jan-2010 (MG) Moved into Package `GTW`
+#     2-Feb-2010 (MG) `Media_List.add` added
 #    ««revision-date»»···
 #--
 
@@ -152,8 +153,12 @@ class Media_List (TFL.Meta.Object) :
     def __init__ (self, name, media, mobs) :
         self.name  = name
         self.media = media
-        self.mobs  = mobs
+        self.mobs  = list (mobs)
     # end def __init__
+
+    def add (self, * mob) :
+        self.mobs.extend (self._sanitized (mob))
+    # end def add
 
     @Once_Property
     def values (self) :
