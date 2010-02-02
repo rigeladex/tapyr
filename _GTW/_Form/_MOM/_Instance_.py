@@ -32,6 +32,8 @@
 #    30-Jan-2010 (MG) Instance state added, bug fixing continued
 #    30-Jan-2010 (MG) Instance state corrected, update roles only if they
 #                     have been changed
+#     2-Feb-2010 (MG) Collect all `Media`s from the field_group_descriptions
+#                     and add the combined Media to the form class
 #    ««revision-date»»···
 #--
 
@@ -95,6 +97,7 @@ class M_Instance (TFL.Meta.Object.__class__) :
     def New (cls, et_man, * field_group_descriptions, ** kw) :
         field_groups  = []
         suffix        = et_man.type_base_name
+        medias        = []
         if "suffix" in kw :
             suffix    = "__".join ((kw.pop ("suffix"), suffix))
         added_fields  = set ()
@@ -103,10 +106,18 @@ class M_Instance (TFL.Meta.Object.__class__) :
                 (GTW.Form.MOM.Field_Group_Description (), )
         for fgd in field_group_descriptions :
             field_groups.extend (fgd (et_man, added_fields))
+            media = fgd.Media
+            if media :
+                medias.append (media)
+        if len (medias) == 1 :
+            Media = medias [0]
+        else :
+            Media = (medias and GTW.Media (children = medias)) or None
         return cls.__m_super.New \
             ( suffix
             , field_groups = field_groups
             , et_man       = et_man
+            , Media        = Media
             , ** kw
             )
     # end def New

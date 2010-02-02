@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
+#     2-Feb-2010 (MG) Default widget media definition added
+#                     Once property `Media` added
 #    ««revision-date»»···
 #--
 
@@ -34,14 +36,38 @@ from   _TFL                                 import TFL
 import _TFL._Meta.Object
 
 from   _GTW                                 import GTW
+import _GTW.Media
+import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM.Inline
 import _GTW._Form._MOM.Inline_Instance
 
 class Inline_Description (TFL.Meta.Object) :
     """A Inline_Description `form` inside a real form."""
 
-    widget    = "html/form.jnj, inline"
-    css_class = "inline-object"
+    widget = GTW.Form.Widget_Spec \
+        ( "html/form.jnj, inline"
+        , Media = GTW.Media
+              ( css_links   =
+                  ( GTW.CSS_Link ("/media/css/GTW/jquery-ui-1.7.2.custom.css")
+                  , GTW.CSS_Link ("/media/css/GTW/m2m.css")
+                  )
+              , scripts     =
+                  ( GTW.Script (src  = "http://www.google.com/jsapi")
+                  , GTW.Script (body = 'google.load ("jquery", "1");')
+          ##        , GTW.Script (body = 'google.load ("jquery", "1", {uncompressed:true});')
+                  , GTW.Script (body = 'google.load ("jqueryui", "1");')
+                  , GTW.Script (src  = "model_edit_ui.js") ## XXX
+                  )
+              , js_on_ready =
+                  ( GTW.JS_On_Ready
+                        ( '$(".inline-object").many2many ();'
+                        , 100
+                        )
+                  ,
+                  )
+            )
+        )
+    css_class    = "inline-object"
 
     completer    = None
     max_count    = 256 ### seems to be more than enough for a web-app
@@ -59,6 +85,19 @@ class Inline_Description (TFL.Meta.Object) :
         self.own_role_name            = own_role_name
         self.field_group_descriptions = field_group_descriptions
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def Media (self) :
+        result = []
+        media  = getattr (self.widget, "Media", None)
+        if media :
+            result.append (media)
+        result.extend \
+            (fgd.Media for fgd in self.field_group_descriptions if fgd.Media)
+        if len (result) == 1 :
+            result = result [0]
+        return result or None
+    # end def Media
 
     def __call__ (self, et_man, added_fields, ** kw) :
         scope             = et_man.home_scope

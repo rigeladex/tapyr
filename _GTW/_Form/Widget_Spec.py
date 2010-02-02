@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    13-Jan-2010 (CT) Creation
+#     2-Feb-2010 (MG) `Media` added
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,7 @@ class Widget_Spec (TFL.Meta.Object) :
     def __init__ (self, default, ** kw) :
         assert default and isinstance (default, basestring)
         self.default = default
+        self.Media   = kw.pop ("Media", None)
         self.__dict__.update (kw)
     # end def __init__
 

@@ -28,11 +28,17 @@
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
 #    29-Jan-2010 (MG) Pass `field_group_description` to `field_group`
+#     2-Feb-2010 (MG) Use `GTW.Form.Widget_Spec`
+#     2-Feb-2010 (MG) Once property `Media` added
 #    ««revision-date»»···
 #--
+
 from   _TFL               import TFL
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
+
 from   _GTW               import GTW
+import _GTW._Form.Widget_Spec
 import _GTW._Form.Field_Group
 
 class _Form_Field_Group_Description_ (TFL.Meta.Object) :
@@ -40,12 +46,17 @@ class _Form_Field_Group_Description_ (TFL.Meta.Object) :
 
     _real_name = "Field_Group_Description"
 
-    widget     = "html/form.jnj, fg_div_seq"
+    widget     = GTW.Form.Widget_Spec ("html/form.jnj, fg_div_seq")
 
     def __init__ (self, * fields, ** kw) :
         self.fields = fields
         self.__dict__.update (kw)
     # end def __init__
+
+    @TFL.Meta.Once_Property
+    def Media (self) :
+        return getattr (self.widget, "Media", None)
+    # end def Media
 
     def __call__ (self) :
         return (GTW.Form.Field_Group (self.fields, self), )
