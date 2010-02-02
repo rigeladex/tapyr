@@ -34,6 +34,11 @@
 #                     have been changed
 #     2-Feb-2010 (MG) Collect all `Media`s from the field_group_descriptions
 #                     and add the combined Media to the form class
+#    02-Feb-2010 (MG) `_get_raw`: pass form to `field.get_raw`
+#    02-Feb-2010 (MG) Instance state handling changed (field is now added to
+#                     the first field group)
+#                     `_create_or_update`: filter hidden field
+#                     `hidden_fields` removed
 #    ««revision-date»»···
 #--
 
@@ -46,6 +51,7 @@ import _TFL._Meta.Object
 from   _GTW                                 import GTW
 import _GTW._Form._Form_
 import _GTW._Form.Field
+import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM.Field_Group_Description
 
 import _GTW._Tornado.Request_Data
@@ -60,15 +66,21 @@ class Instance_State_Field (GTW.Form.Field) :
 
     hidden = True
 
-    widget = "html/field.jnj, hidden"
+    widget = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
 
-    def get_raw (self, instance) :
+    def get_raw (self, form, instance) :
         state = {}
-        form  = self.form
         for n, f in form.fields.iteritems () :
-            state [n] = form.get_raw (f)
+            if not f.hidden :
+                state [n] = form.get_raw (f)
         return base64.b64encode (cPickle.dumps (state))
     # end def get_raw
+
+    def decode (self, data) :
+        if data :
+            return cPickle.loads (base64.b64decode (data))
+        return {}
+    # end def decode
 
 # end class  Instance_State_Field
 
@@ -86,13 +98,19 @@ class M_Instance (TFL.Meta.Object.__class__) :
                     for f in fg.fields :
                         cls.fields_for_et_man [f.et_man].append (f)
             if issubclass (et_man._etype, MOM.Link) :
-                ### handle the link role's before the link itself
                 scope             = et_man.home_scope
                 cls.Roles         = \
                     [   (r.name, getattr (scope, r.role_type.type_name))
                     for r in et_man.Roles
                     ]
     # end def __init__
+
+    def add_internal_fields (cls, et_man, field_groups) :
+        fg = field_groups [0]
+        cls.instance_state_field = Instance_State_Field \
+            ("instance_state", et_man = et_man)
+        fg.fields.append (cls.instance_state_field)
+    # end def add_internal_fields
 
     def New (cls, et_man, * field_group_descriptions, ** kw) :
         field_groups  = []
@@ -113,6 +131,7 @@ class M_Instance (TFL.Meta.Object.__class__) :
             Media = medias [0]
         else :
             Media = (medias and GTW.Media (children = medias)) or None
+        cls.add_internal_fields (et_man, field_groups)
         return cls.__m_super.New \
             ( suffix
             , field_groups = field_groups
@@ -157,25 +176,13 @@ class _Instance_ (GTW.Form._Form_) :
     # end def add_changed_raw
 
     def _get_raw (self, field) :
-        return field.get_raw (self.instance_for_et_man.get (field.et_man))
+        return field.get_raw (self, self.instance_for_et_man.get (field.et_man))
     # end def _get_raw
 
     @TFL.Meta.Once_Property
-    def instance_state_field (self) :
-        return Instance_State_Field \
-            ( "instance_state"
-            , et_man = self.et_man
-            , form   = self
-            )
-    # end def instance_state_field
-
-    @TFL.Meta.Once_Property
     def instance_state (self) :
-        encoded = self.request_data.get \
-            (self.get_id (self.instance_state_field))
-        if encoded :
-            return cPickle.loads (base64.b64decode (encoded))
-        return {}
+        return self.instance_state_field.decode \
+            (self.request_data.get (self.get_id (self.instance_state_field)))
     # end def instance_state
 
     def __call__ (self, request_data) :
@@ -201,13 +208,10 @@ class _Instance_ (GTW.Form._Form_) :
 
     def _create_or_update (self, et_man, roles, required = False) :
         roles         = roles or ()
-        has_substance = len (roles)
         raw_attrs     = {}
         instance      = self.instance_for_et_man [et_man]
-        for f in self.fields_for_et_man [et_man] :
+        for f in (f for f in self.fields_for_et_man [et_man] if not f.hidden) :
             value           = self.add_changed_raw (raw_attrs, f)
-            #has_substance  += bool \
-            #    (value and self.get_id (f) in self.request_data)
         if raw_attrs or roles and (len (roles) == len (self.Roles)) :
             errors = []
             ### at least on attribute is filled out
@@ -250,11 +254,6 @@ class _Instance_ (GTW.Form._Form_) :
                 if not attributes :
                     self.errors.append (error)
     # end def _handle_errors
-
-    @TFL.Meta.Once_Property
-    def hidden_fields (self) :
-        return [self.instance_state_field]
-    # end def hidden_fields
 
 # end class _Instance_
 

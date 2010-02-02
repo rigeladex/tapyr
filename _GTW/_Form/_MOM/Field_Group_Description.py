@@ -104,6 +104,11 @@ class Field (TFL.Meta.Object) :
         self.attr_kind      = getattr (et_man, attr_name)
     # end def __init__
 
+    def get_raw (self, form, instance) :
+        #import pdb; pdb.set_trace ()
+        return self.attr_kind.get_raw (instance)
+    # end def get_raw
+
     def __getattr__ (self, name) :
         return getattr (self.attr_kind, name)
     # end def __getattr__

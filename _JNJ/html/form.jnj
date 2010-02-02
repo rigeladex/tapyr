@@ -36,6 +36,9 @@
 ##    17-Jan-2010 (MG) Login default url changed to `login.html`
 ##    30-Jan-2010 (MG) `field_groups`;  added rendering of form fields
 ##     2-Feb-2010 (MG) `inline` macro changed to prepare for the JS code
+##    02-Feb-2010 (MG) `field_groups`: rendering of form-hidden fields
+##                     removed again
+##    02-Feb-2010 (MG) `inline_table` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -80,7 +83,7 @@
 {%- endmacro -%} {#- fg_tr -#}
 
 {%- macro fg_tr_body (fo, fg) -%}
-    <tr class="field_group {{ fg.css_class }}"
+    <tr class="field_group {{ fg.css_class }} {{ kwargs.pop ("class", "") }}"
       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
     >
       {%- for fi in fg.visible_fields %}
@@ -114,12 +117,7 @@
       <div class="Formset {{ fg.css_class }}"
        {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
       >
-      {%- if loop.first %}
-        {%- for fi in fo.hidden_fields %}
-          {{ GTW.call_macro (fi.widget, fo, fi) }}
-        {% endfor -%}
-      {% endif -%}
-        {{ GTW.call_macro (fg.widget, fo, fg) }}
+     {{ GTW.call_macro (fg.widget, fo, fg) }}
       </div>
     {% endfor -%}
 {%- endmacro -%} {#- field_groups -#}
@@ -167,11 +165,43 @@
                                                  )
                      )
     -}}
+    <div class="m2m-prototype">
+      {{ GTW.call_macro (inline.prototype_form.widget, inline.prototype_form) }}
+    </div>
     {%- for iform in inline.inline_forms %}
       {{ GTW.call_macro (iform.widget, iform)}}
     {% endfor -%}
   </fieldset>
 {%- endmacro -%} {#- inline -#}
+
+{%- macro inline_table (form, inline) -%}
+{%- set proto = inline.prototype_form -%}
+  <fieldset class="m2m-inline-form-table">
+    {%- if inline.legend %}
+      <legend title="{{ inline.name|capitalize }}">{{ inline.legend }}</legend>
+    {% endif -%}
+    {{- X.input.text ( class = " many-2-many-range"
+                     , value = "%s:%s:%s"|format ( inline.min_required
+                                                 , inline.form_count
+                                                 , inline.max_count
+                                                 )
+                     )
+    -}}
+  <table class="field_group-Horizontal">
+    <thead>
+      {{ fg_tr_head (proto, proto.field_groups.0) }}
+    </thead>
+    <tbody>
+      {{ fg_tr_body ( proto, proto.field_groups.0
+                    , class = "m2m-inline-instance m2m-prototype"
+                    ) }}
+      {%- for iform in inline.inline_forms %}
+        {{ fg_tr_body (iform, iform.field_groups.0, class="m2m-inline-instance") }}
+      {% endfor -%}
+    </tbody>
+  </table>
+  </fieldset>
+{%- endmacro -%} {#- inline_table -#}
 
 {%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login.html") -%}
   {%- set login_caller = kwargs.pop ("caller", None) -%}

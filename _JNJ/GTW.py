@@ -55,7 +55,11 @@ class GTW (TFL.Meta.Object) :
     def call_macro (self, macro_name, * _args, ** _kw) :
         """Call macro named by `macro_name` passing `* _args, ** _kw`."""
         templ_name = _kw.pop   ("templ_name", None)
-        macro      = self.get_macro (macro_name, templ_name)
+        try :
+            macro  = self.get_macro (macro_name, templ_name)
+        except ValueError :
+            print repr ((macro_name, templ_name, _args, _kw))
+            raise
         return macro (* _args, ** _kw)
     # end def call_macro
 

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (MG) Creation
+#    02-Feb-2010 (MG) `get_raw` paremeter form added
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -47,7 +48,7 @@ class Field (TFL.Meta.Object) :
         self.__dict__.update (kw)
     # end def __init__
 
-    def get_raw (self, obj) :
+    def get_raw (self, form, obj) :
         return getattr (obj, self.name, self.default)
     # end def get_raw
 

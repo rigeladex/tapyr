@@ -30,6 +30,7 @@
 #    20-Jan-2010 (MG) Error handling added (includig checking of
 #                     `min_required` and `max_count`)
 #     2-Feb-2010 (MG) `form_count` added
+#    02-Feb-2010 (MG) `prototype_form` added
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,16 @@ class Inline (TFL.Meta.Object) :
         return result
     # end def inline_forms
 
+    @TFL.Meta.Once_Property
+    def prototype_form (self) :
+        iform_cls     = self.inline_form_cls
+        et_man        = iform_cls.et_man
+        parent        = self.parent
+        prefix        = "%s-MP" % (et_man.type_base_name, )
+        return iform_cls \
+            (None, prefix = prefix, parent = parent, prototype = True)
+    # end def prototype_form
+
     def __call__ (self, request_data) :
         error_count   = 0
         correct_forms = 0
@@ -124,7 +135,9 @@ class Inline (TFL.Meta.Object) :
     # end def __call__
 
     def __getattr__ (self, name) :
-        return getattr (self.inline_description, name)
+        result = getattr (self.inline_description, name)
+        setattr (self, name, result)
+        return result
     # end def __getattr__
 
 # end class Inline

@@ -32,14 +32,13 @@
 **    20-Aug-2009 (MG) Completer added and completion functions added to
 **                     Many2Many
 **    21-Aug-2009 (MG) Keyboard shortcuts added
-**     2-Feb-2010 (MG) Started port to GTW
+**     2-Feb-2010 (MG) Adopted to GTW framework
 **    ««revision-date»»···
 **--
 */
 
 (function ($)
 {
-  var field_name_pat = /-M[\dP]+-/;
   var field_no_pat   = /-M([\dP]+)-/;
 
   var Many2Many =
@@ -64,25 +63,32 @@
               + '" title="Add ' + $legend.attr ("title")
               + '">Add</a> '
               );
-          var $forms = this.element.find (".Formset");
+          /* extract all real forms */
+          var $forms = this.element.find (".m2m-inline-instance");
           for (var i = 0; i < $forms.length; i++)
           {
               this._add_delete_button ($forms.eq (i));
           }
           this.element.parents       ("form").many2manysubmit ();
           this._update_button_states ();
-          this.element.find (":input[name$=-id][value]").each (function ()
+          this.element.find (":input[name$=-_lid_a_state_]").each (function ()
           {
-              $(this).parents (".m2m-nested-form")
-                     .find    (":input:not([type=hidden])")
-                     .attr    ("disabled", "disabled");
-          });
-          this.element.find    (":input[name$=-id]")
-                      .each    (function ()
-          {
-              var no = field_no_pat.exec (this.name) [1];
-              if ((no != "P") && !this.value)
-                  self._setup_auto_complete (no);
+              var $this      = $(this);
+              var  lid_state = $this.attr   ("value").split (":");
+              var  lid       = lid_state [0];
+              var  state     = lid_state [1];
+              if (state != "P")
+              {
+                  if (lid)
+                      $(this).parents (".m2m-inline-instance")
+                             .find    (":input:not([type=hidden])")
+                             .attr    ("disabled", "disabled");
+                  else
+                  {
+                      var no = field_no_pat.exec (this.name) [1];
+                      self._setup_auto_complete  (no);
+                  }
+              }
           });
       }
     , _add_delete_button : function ($form)
@@ -98,8 +104,6 @@
                   $element = $("<td></td>").append ($link);
               $form.append ($element);
           }
-          /* we can only bind callback's once the element is part of the DOM */
-          $link.bind ("click", this, this._delete_form);
       }
     , _add_new_form : function (evt)
       {
@@ -135,12 +139,12 @@
           self._add_delete_button    ($new);
           $prototype.parent          ().append ($new);
           self._update_button_states ();
-          self._setup_auto_complete (cur_number);
-          $new.find          ("input[name$=-_state_]").attr ("value", "3");
+          self._setup_auto_complete  (cur_number);
+          $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":3");
           evt.preventDefault ();
       }
     , _setup_auto_complete  : function (no)
-      {
+      {   return; // XXX
           var $prototype = this._getData    ("$prototype");
           var  comp_opt  = $prototype.data  ("completion");
           if (comp_opt != undefined)
@@ -215,7 +219,7 @@
             return false
         }
         var comp_opt = evt.data.comp_opt;
-        var trigger  = evt.currentTarget.name.split (field_name_pat) [1];
+        var trigger  = evt.currentTarget.name.split (field_no_pat) [1];
         trigger      = comp_opt.triggers [trigger];
         var fields   = trigger ["fields"];
         var value    = evt.currentTarget.value;
@@ -302,9 +306,9 @@
           var min_count   = this._getData ("min_count");
           var max_count   = this._getData ("max_count");
           var $undeletes  = this.element.find
-              (".m2m-nested-form a[href=#delete].ui-icon-circle-close");
+              ("a[href=#delete].ui-icon-circle-close");
           var $deletes    = this.element.find
-              (".m2m-nested-form a[href=#delete].ui-icon-closethick");
+              ("a[href=#delete].ui-icon-closethick");
           if (cur_count < max_count)
           {
               $add_button.bind        ("click", this, this._add_new_form)
@@ -350,22 +354,24 @@
       }
     , _delete_form : function (evt)
       {
-          var self       = evt.data;
-          var $prototype = self._getData         ("$prototype");
-          var $form      = $(evt.target).parents (".m2m-nested-form");
-          var $state     = $form.find            ("input[name$=-_state_]");
-          if (self._forms_equal ($form, $prototype))
+          var self   = evt.data;
+          var $proto = self._getData         ("$prototype");
+          var $form  = $(evt.target).parents (".m2m-inline-instance");
+          if (self._forms_equal ($form, $proto))
           {
               $form.remove ();
               self._setData ("cur_count", self._getData ("cur_count") - 1);
           }
           else
           {
-              var $link     = $form.find ("a[href=#delete]");
-              var $elements = $form.find (":input:not([type=hidden])");
+              var $link      = $form.find  ("a[href=#delete]");
+              var $elements  = $form.find  (":input:not([type=hidden])");
+              var $l_a_s     = $form.find  ("input[name$=-_lid_a_state_]");
+              var  lid       = $l_a_s.attr ("value").split (":") [0];
+              var  new_state = "0";
               if ($link.hasClass ("ui-icon-closethick"))
               {
-                  $state.attr           ("value", "1")
+                  new_state = "1";
                   $elements.attr        ("disabled","disabled")
                            .addClass    ("ui-state-disabled");
                   $link.removeClass     ("ui-icon-closethick ui-icon-delete")
@@ -374,13 +380,13 @@
               }
               else
               {
-                  if ($form.find ("input:[name$=-id]").attr ("value"))
+                  if (lid)
                   {
-                      $state.attr           ("value", "0");
+                      new_state = "0";
                   }
                   else
                   {
-                      $state.attr           ("value", "3");
+                      new_state = "3";
                       $elements.removeAttr  ("disabled")
                   }
                   $elements.removeClass ("ui-state-disabled");
@@ -388,6 +394,7 @@
                        .addClass        ("ui-icon-closethick ui-icon-delete");
                   self._setData ("cur_count", self._getData ("cur_count") + 1);
               }
+              $l_a_s.attr ("value", [lid, new_state].join (":"));
           }
           self._update_button_states ();
           evt.preventDefault         ();
@@ -396,7 +403,7 @@
   $.widget ("ui.many2many", Many2Many);
   $.extend
     ( $.ui.many2many
-    , { version                          : "0.1"
+    , { version                          : "0.2.ui-icon-circle-close"
       , defaults                         :
         { add_class                      : "m2m-add"
         }
@@ -440,13 +447,11 @@
           var self       = this;
           this.element.bind ("submit", function (evt)
           {
-              /* first, let's renumerate the forms */
-              self.element.find
-                  (".nested-many-2-many, .nested-many-2-many-table")
-                          .each ( function ()
+              /* first, let's renumerate the inline-instance's */
+              self.element.find (".m2m-inline-form-table").each ( function ()
                   {
                       var no = -1; /* the first is the prototype */
-                      $(this).find (".m2m-nested-form").each (function ()
+                      $(this).find (".m2m-inline-instance").each (function ()
                       {
                           var $elements      = $(this).find (":input");
                           var  edit_mod_list = ["id", "name"];
@@ -459,7 +464,8 @@
                                   var n = edit_mod_list [j];
                                   $e.attr
                                     ( n
-                                    , $e.attr (n).replace (pattern, new_no));
+                                    , $e.attr (n).replace (pattern, new_no)
+                                    );
                               }
                           }
                           no = no + 1;

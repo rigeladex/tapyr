@@ -23,10 +23,11 @@
 #    GTW.Form.Plain
 #
 # Purpose
-#    «text»···
+#    Simple form's not bound to a MOM instance
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
+#    02-Feb-2010 (MG) `_get_raw`: pass form to `field.get_raw`
 #    ««revision-date»»···
 #--
 
@@ -87,7 +88,7 @@ class Plain (GTW.Form._Form_) :
     # end def get_required
 
     def _get_raw (self, field) :
-        return field.get_raw (self.instance)
+        return field.get_raw (self, self.instance)
     # end def _get_raw
 
     def _validate (self) :

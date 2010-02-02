@@ -46,7 +46,7 @@ class Inline_Description (TFL.Meta.Object) :
     """A Inline_Description `form` inside a real form."""
 
     widget = GTW.Form.Widget_Spec \
-        ( "html/form.jnj, inline"
+        ( "html/form.jnj, inline_table"
         , Media = GTW.Media
               ( css_links   =
                   ( GTW.CSS_Link ("/media/styles/GTW/jquery-ui-1.7.2.custom.css")
@@ -61,7 +61,7 @@ class Inline_Description (TFL.Meta.Object) :
                   )
               , js_on_ready =
                   ( GTW.JS_On_Ready
-                        ( '$(".inline-object").many2many ();'
+                        ( '$(".m2m-inline-form-table").many2many ();'
                         , 100
                         )
                   ,

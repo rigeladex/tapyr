@@ -44,7 +44,6 @@ class _Form_ (TFL.Meta.Object) :
     """Base class for forms"""
 
     prefix        = None
-    hidden_fields = ()
 
     def __init__ (self, instance = None) :
         self.instance = instance
