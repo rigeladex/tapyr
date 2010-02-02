@@ -257,17 +257,17 @@ The app-type specific entity-types are ready to be used by
     ('color', 'color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
-    ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter']
+    ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'up_ex']
     >>> sorted (ET_Supertrap._Attributes._own_names)
     []
     >>> sorted (ET_Trap._Attributes._names)
-    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
+    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'up_ex', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'x_locked']
+    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'up_ex', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Boolean `x_locked`]
+    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Float `up_ex`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Boolean `x_locked`]
+    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Float `up_ex`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
@@ -1137,6 +1137,7 @@ Primary key attributes
 
 Rollback of uncommited changes
 ------------------------------
+
     >>> scope.changes_to_save
     2
     >>> scope.commit ()
@@ -1155,13 +1156,35 @@ Rollback of uncommited changes
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     []
 
-For each object a database wide unique string id is avaiable (called `lid`)::
+For each object, a database wide unique string id is avaiable
+(called `lid`)::
+
     >>> obj_lid = r.lid
     >>> etm_lid = scope.BMT.Rat.pid_as_lid (r)
     >>> obj_lid == etm_lid
     True
     >>> scope.BMT.Rat.pid_from_lid (obj_lid) == r.pid
     True
+
+Auto-updating attributes
+-------------------------
+
+An attribute can be updated automatically whenever the value of
+another attribute changes. To define an auto-updating attribute,
+specify the (names of the) attributes it depends on in
+`auto_up_depends`.
+
+    >>> t1.max_weight
+    20.0
+    >>> t1.up_ex
+    20.0
+    >>> t1.max_weight = 5
+    >>> t1.up_ex
+    5.0
+    >>> del t1.max_weight
+    >>> t1.up_ex
+
+
 """
 
 db_uri = "'/tmp/bmt_test.bmt'"
@@ -1371,14 +1394,6 @@ class Trap (_Ancestor_Essence) :
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class serial_no (A_Int) :
-            """Serial number of the trap"""
-
-            kind     = Attr.Primary
-            ui_name  = "Serial number"
-
-        # end class serial_no
-
         class max_weight (A_Float) :
             """Maximum weight of rodent the trap can hold"""
 
@@ -1387,6 +1402,30 @@ class Trap (_Ancestor_Essence) :
             ui_name  = "Maximum weight"
 
         # end class max_weight
+
+        class serial_no (A_Int) :
+            """Serial number of the trap"""
+
+            kind     = Attr.Primary
+            ui_name  = "Serial number"
+
+        # end class serial_no
+
+        class up_ex (A_Float) :
+            """Example for an attribute that depends on other
+               attributes and is automatically changed whenever one of
+               those changes.
+            """
+
+            kind               = Attr.Cached
+            auto_up_depends    = ("max_weight", "serial_no")
+
+            def computed (self, obj) :
+                if obj.max_weight :
+                    return obj.max_weight * obj.serial_no
+            # end def computed
+
+        # end class up_ex
 
     # end class _Attributes
 

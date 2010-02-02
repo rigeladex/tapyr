@@ -78,6 +78,7 @@
 #                     to handle `computed_default`
 #    31-Jan-2010 (CT) `Mandatory_Mixin` factored
 #     2-Feb-2010 (CT) Support for `Type.Pickler` added
+#     2-Feb-2010 (CT) `dependent_attrs` and `_Auto_Update_Mixin_` added
 #    ««revision-date»»···
 #--
 
@@ -116,12 +117,17 @@ class Kind (MOM.Prop.Kind) :
         attr = Attr_Type      (self)
         self.__super.__init__ (attr)
         self._check_sanity    (attr)
-        self.rank           = (self._k_rank, attr._t_rank, attr.rank)
-        self.record_changes = attr.record_changes and self.record_changes
+        self.dependent_attrs = set ()
+        self.rank            = (self._k_rank, attr._t_rank, attr.rank)
+        self.record_changes  = attr.record_changes and self.record_changes
     # end def __init__
 
     def __delete__ (self, obj) :
         self.reset (obj)
+        if self.dependent_attrs :
+            man = obj._attr_man
+            man.updates_pending = list (self.dependent_attrs)
+            man.do_updates_pending (obj)
     # end def __delete__
 
     def __get__ (self, obj, cls) :
@@ -135,11 +141,14 @@ class Kind (MOM.Prop.Kind) :
         old_raw   = self.get_raw   (obj)
         self.attr.check_invariant  (obj, value)
         self._set_cooked           (obj, value)
-        if  ( self.record_changes and (not obj.electric)
-            and old_value != value
-            ) :
-            obj.home_scope.record_change \
-                (MOM.SCM.Change.Attr, obj, {self.name : old_raw})
+        if old_value != value :
+            if self.dependent_attrs :
+                man = obj._attr_man
+                man.updates_pending = list (self.dependent_attrs)
+                man.do_updates_pending (obj)
+            if self.record_changes and (not obj.electric) :
+                obj.home_scope.record_change \
+                    (MOM.SCM.Change.Attr, obj, {self.name : old_raw})
     # end def __set__
 
     @property
@@ -299,6 +308,8 @@ class Kind (MOM.Prop.Kind) :
         if changed :
             setattr          (obj, attr.ckd_name, value)
             self.inc_changes (obj._attr_man, obj, value)
+            if self.dependent_attrs :
+                obj._attr_man.updates_pending.extend (self.dependent_attrs)
             return True
     # end def _set_cooked_value
 
@@ -360,6 +371,28 @@ class Mandatory_Mixin (Kind) :
     # end def _checkers
 
 # end class Mandatory_Mixin
+
+class _Auto_Update_Mixin_ (Kind) :
+    """Mixin to auto-update an attribute after changes of any other attribute
+       it depends on, as specified by `auto_up_depends`.
+    """
+
+    def update (self, obj) :
+        self._set_cooked (obj, self._get_computed (obj))
+    # end def update
+
+    def _check_sanity (self, attr_type) :
+        self.__super._check_sanity (attr_type)
+        if __debug__ :
+            if not attr_type.auto_up_depends :
+                raise ValueError \
+                    ( "%s is defined as `Auto_Update_Mixin` but has no "
+                      "`auto_up_depends` specified"
+                    % (attr_type, )
+                    )
+    # end def _check_sanity
+
+# end class _Auto_Update_Mixin_
 
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""

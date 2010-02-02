@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -30,6 +30,7 @@
 #    16-Dec-2009 (CT) `snapshot` changed to use `save_to_db` instead of
 #                     `record_changes` to filter attributes
 #    16-Dec-2009 (CT) `raw_values_record` removed
+#     2-Feb-2010 (CT) `updates_pending` added
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ import _MOM._Attr
 
 import _TFL._Meta.Object
 import _TFL.Accessor
+import _TFL.predicate
 
 class Manager (TFL.Meta.Object) :
     """Attribute manager for instances of MOM entities (objects and links)."""
@@ -53,9 +55,17 @@ class Manager (TFL.Meta.Object) :
         self._syncable           = set (attr_spec._syncable)
         self.total_changes       = 0
         self.update_at_changes   = {}
-        self.reset_pending  ()
-        self.reset_syncable ()
+        self.reset_pending         ()
+        self.reset_syncable        ()
+        self.reset_updates_pending ()
     # end def __init__
+
+    def do_updates_pending (self, obj) :
+        if self.updates_pending :
+            for a in TFL.uniq (self.updates_pending) :
+                a.update (obj)
+            self.reset_updates_pending ()
+    # end def do_updates_pending
 
     def has_changed (self, obj) :
         return self.last_snapshot != self.snapshot (obj)
@@ -86,6 +96,10 @@ class Manager (TFL.Meta.Object) :
         for attr in self._syncable :
              needs_sync [attr.name] = True
     # end def reset_syncable
+
+    def reset_updates_pending (self) :
+        self.updates_pending = []
+    # end def reset_updates_pending
 
     def snapshot (self, obj) :
         result = {}

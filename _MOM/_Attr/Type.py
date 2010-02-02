@@ -74,6 +74,7 @@
 #    31-Jan-2010 (CT) `A_Date_Slug` added
 #     2-Feb-2010 (CT) `Pickler = None` added to `_A_Attr_Type_`
 #     2-Feb-2010 (CT) `_A_Named_Object_` added
+#     2-Feb-2010 (CT) `auto_up_depends` added
 #    ««revision-date»»···
 #--
 
@@ -99,6 +100,7 @@ class A_Attr_Type (object) :
     __metaclass__       = MOM.Meta.M_Attr_Type
     _sets_to_combine    = ("check", )
 
+    auto_up_depends     = ()
     check               = set ()
     check_syntax        = None
     code_format         = u"%r"

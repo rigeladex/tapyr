@@ -86,6 +86,7 @@
 #    20-Jan-2010 (CT) `ETM` and `lid` added to `Id_Entity`
 #    21-Jan-2010 (CT) `copy` changed to only copy attributes `to_save`
 #    21-Jan-2010 (CT) `epkified` added, `epkified_ckd` and `epkified_raw` used
+#     2-Feb-2010 (CT) Support for `updates_pending` of attributes added
 #    ««revision-date»»···
 #--
 
@@ -331,19 +332,20 @@ class Entity (TFL.Meta.Object) :
     # end def _raise_attr_error
 
     def _set_ckd (self, on_error = None, ** kw) :
-        if not kw :
-            return 0
-        self._kw_satisfies_i_invariants (kw, on_error)
-        tc = self._attr_man.total_changes
-        for name, val, attr in self.set_attr_iter (kw, on_error) :
-            attr._set_cooked (self, val)
-        return self._attr_man.total_changes - tc
+        man = self._attr_man
+        tc  = man.total_changes
+        if kw :
+            self._kw_satisfies_i_invariants (kw, on_error)
+            for name, val, attr in self.set_attr_iter (kw, on_error) :
+                attr._set_cooked (self, val)
+        if man.updates_pending :
+            man.do_updates_pending (self)
+        return man.total_changes - tc
     # end def _set_ckd
 
     def _set_raw (self, on_error = None, ** kw) :
-        if not kw :
-            return 0
-        tc = self._attr_man.total_changes
+        man = self._attr_man
+        tc  = man.total_changes
         if kw :
             cooked_kw = {}
             to_do     = []
@@ -373,10 +375,12 @@ class Entity (TFL.Meta.Object) :
                 else :
                     to_do.append ((attr, "", None))
             self._kw_satisfies_i_invariants (cooked_kw, on_error)
-            self._attr_man.reset_pending ()
+            man.reset_pending ()
             for attr, raw_val, val in to_do :
                 attr._set_raw (self, raw_val, val)
-        return self._attr_man.total_changes - tc
+        if man.updates_pending :
+            man.do_updates_pending (self)
+        return man.total_changes - tc
     # end def _set_raw
 
     def _store_attr_error (self, exc) :

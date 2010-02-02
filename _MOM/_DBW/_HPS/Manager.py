@@ -30,6 +30,8 @@
 #    21-Dec-2009 (CT) Creation continued
 #    19-Jan-2010 (CT) `rollback` added
 #    20-Jan-2010 (CT) Provide `info` even if there is no `store`
+#     2-Feb-2010 (CT) `commit` changed to update `info.max_cid`  even if
+#                     there is no `store`
 #    ««revision-date»»···
 #--
 
@@ -82,6 +84,11 @@ class Manager (MOM.DBW._Manager_) :
     def commit (self) :
         if self.store is not None :
             self.store.commit ()
+        else :
+            info         = self._info
+            ems          = self.scope.ems
+            info.max_cid = ems.max_cid
+            info.max_pid = ems.max_pid
     # end def commit
 
     @property

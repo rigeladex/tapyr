@@ -54,7 +54,7 @@ import _TFL._Meta.Property
 import _TFL.Alias_Dict
 import _TFL.Sorted_By
 
-from   _TFL.predicate        import callable
+from   _TFL.predicate        import callable, uniq
 
 class Spec (MOM.Prop.Spec) :
     """Attribute specification for MOM entities (objects and links).
@@ -88,6 +88,7 @@ class Spec (MOM.Prop.Spec) :
         e_type.attributes = self._prop_dict
         e_type.user_attr  = self._user_attr
         e_type.user_attr.sort (key = TFL.Sorted_By ("rank", "name"))
+        self._setup_dependent_attrs ()
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :
@@ -101,14 +102,23 @@ class Spec (MOM.Prop.Spec) :
         result = self.__super._effective_prop_kind_mixins \
             (name, kind, prop_type)
         if prop_type.needs_raw_value and not kind.electric :
-            result = result + (MOM.Attr._Raw_Value_Mixin_, )
-        return result
+            result += (MOM.Attr._Raw_Value_Mixin_, )
+        if prop_type.auto_up_depends :
+            result += (MOM.Attr.Auto_Update_Mixin, )
+        return tuple (uniq (result))
     # end def _effective_prop_kind_mixins
 
     def _setup_alias (self, e_type, alias_name, real_name) :
         setattr (e_type, alias_name, TFL.Meta.Alias_Property (real_name))
         self._prop_dict.add_alias (alias_name, real_name)
     # end def _setup_alias
+
+    def _setup_dependent_attrs (self) :
+        attr_dict = self._attr_dict
+        for a in attr_dict.itervalues () :
+            for d in a.attr.auto_up_depends :
+                attr_dict [d].dependent_attrs.add (a)
+    # end def _setup_dependent_attrs
 
     def _setup_prop (self, e_type, name, kind, prop) :
         self.__super._setup_prop (e_type, prop.name, kind, prop)
