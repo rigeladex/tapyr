@@ -175,7 +175,7 @@
 {%- endmacro -%} {#- inline -#}
 
 {%- macro inline_table (form, inline) -%}
-{%- set proto = inline.prototype_form -%}
+  {%- set proto = inline.prototype_form -%}
   <fieldset class="m2m-inline-form-table">
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ inline.legend }}</legend>
@@ -275,6 +275,7 @@
   {%- set object_caller = kwargs.pop ("caller", None) -%}
   {% call form
       ( action    = fo.action
+      , class     = fo.css_class
       , cancel_kw = dict
           ( href  = fo.cancel_href
           , title = GTW._T ("Discard all changes and leave form")

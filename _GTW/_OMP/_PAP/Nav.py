@@ -79,7 +79,7 @@ class Admin (object) :
                  , FGD
                      ("desc", FP ("address", "street", "zip", "city", "country"))
                  , min_empty = 1
-                 , legend    = _("Person's addresses")
+                 , legend    = _("Addresses")
                  , title     = _("Addresses")
                  , completer = GTW.Form.MOM.Completer
                      ( fields    = ("street", "city", "zip", "country")
@@ -91,6 +91,8 @@ class Admin (object) :
              , ID
                  ( "PAP.Person_has_Phone", "phone"
                  , FGD ("desc", FP ("phone", "country_code", "area_code", "subscriber_number"))
+                 , legend    = _("Phone numbers")
+                 , title     = _("Phone numbers")
                  )
              )
         )
