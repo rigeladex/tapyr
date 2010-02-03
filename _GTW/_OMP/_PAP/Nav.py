@@ -28,12 +28,14 @@
 # Revision Dates
 #    29-Jan-2010 (CT) Creation
 #     2-Feb-2010 (MG) `legend` and `title` added
+#     3-Feb-2010 (MG) Completer added
 #    ««revision-date»»···
 #--
 from   _TFL.I18N                import _
 from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
+import _GTW._Form._MOM.Completer
 
 from   _GTW._Form._MOM.Inline_Description import Inline_Description as ID
 from   _GTW._Form._MOM.Field_Group_Description import \
@@ -56,12 +58,16 @@ class Admin (object) :
             , ID
                 ( "PAP.Person_has_Address", "person"
                 , FGD
-                    ( FP ("address", "street", "zip", "city", "country", "desc")
-                    , widget = "html/form.jnj, fg_tr"
-                    )
+                    (FP ("address", "street", "zip", "city", "country", "desc"))
                 , min_empty = 1
                 , legend    = _("Person's addresses")
                 , title     = _("Addresses")
+                , completer = GTW.Form.MOM.Completer
+                    ( fields    = ("street", "city", "zip", "country")
+                    , triggers  = dict (street = dict (min_chars = 3))
+                    , complete  = "address"
+                    , name      = "Personal_Contact_Info"
+                    )
                 )
              )
         )

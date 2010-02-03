@@ -62,12 +62,13 @@ GTW.Version = Product_Version \
         )
     )
 import _GTW._OMP._PAP.import_PAP
+import _GTW._OMP._PAP.Nav
 
 apt = MOM.App_Type \
     (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP)
     ).Derived (EMS, DBW)
 
-scope        = MOM.Scope.new (apt, "test")
+scope        = MOM.Scope.new (apt, None)
 
 loader      = DictLoader (dict (base = """\
 {% import "html/form.jnj" as Form %}
@@ -78,18 +79,10 @@ if 0 :
     ct       = scope.PAP.Person ("Tanzer", "Christian")
     ct_a     = scope.PAP.Address ("Glasauergasse 32", "Wien", "1030", "Austria")
     ct_h_a   = scope.PAP.Person_has_Address (ct, ct_a)
+import pdb; pdb.set_trace ()
 form_cls = GTW.Form.MOM.Instance.New \
     ( scope.PAP.Person
-    , GTW.Form.MOM.Field_Group_Description ()
-    , GTW.Form.MOM.Inline_Description
-        ( "PAP.Person_has_Address", "person"
-        , GTW.Form.MOM.Field_Group_Description
-              ( GTW.Form.MOM.Field_Prefixer
-                  ("address", "street", "zip", "city", "country", "desc")
-              )
-        , min_empty    = 1
-        , min_required = 1
-        )
+    , * GTW.OMP.PAP.Nav.Admin.Person ["Form_args"]
     )
 
 env = HTML (loader = loader)
@@ -109,7 +102,7 @@ def dump_errors (form) :
 
 #print env.get_template ("base").render (form = form_cls ("/None"))
 #print env.get_template ("base").render (form = form_cls ("/CT", ct))
-if 1 :
+if 0 :
     form = form_cls ("/Foo")
     #import pdb; pdb.set_trace ()
     ec = form ( { "first_name"                            : "Martin"

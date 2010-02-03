@@ -29,6 +29,7 @@
 #    18-Jan-2010 (MG) Creation
 #    29-Jan-2010 (CT) `kw` added to `Field_Group_Description.__init__`
 #    29-Jan-2010 (MG) Pass `field_group_description` to `field_group`
+#     3-Feb-2010 (MG) Return `None` if no field are left for this a group
 #    ««revision-date»»···
 #--
 
@@ -146,11 +147,13 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                 new_fields =     (str (f), )
                 fields.append    (f)
             added_fields.update  (new_fields)
-        return \
-            ( GTW.Form.Field_Group
-                ([Field (et_man, name) for name in fields], self)
-            ,
-            )
+        if fields :
+            return \
+                ( GTW.Form.Field_Group
+                    ([Field (et_man, name) for name in fields], self)
+                ,
+                )
+        return (None, )
     # end def __call__
 
 Field_Group_Description = _MOM_Field_Group_Description_ # end class _MOM_Field_Group_Description_

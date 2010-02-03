@@ -39,6 +39,7 @@
 #                     the first field group)
 #                     `_create_or_update`: filter hidden field
 #                     `hidden_fields` removed
+#     3-Feb-2010 (MG) `New`: filter empty field groups
 #    ««revision-date»»···
 #--
 
@@ -123,7 +124,7 @@ class M_Instance (TFL.Meta.Object.__class__) :
             field_group_descriptions = \
                 (GTW.Form.MOM.Field_Group_Description (), )
         for fgd in field_group_descriptions :
-            field_groups.extend (fgd (et_man, added_fields))
+            field_groups.extend (fg for fg in fgd (et_man, added_fields) if fg)
             media = fgd.Media
             if media :
                 medias.append (media)

@@ -30,7 +30,7 @@
 #    20-Jan-2010 (MG) Error handling added (includig checking of
 #                     `min_required` and `max_count`)
 #     2-Feb-2010 (MG) `form_count` added
-#    02-Feb-2010 (MG) `prototype_form` added
+#     2-Feb-2010 (MG) `prototype_form` added
 #    ««revision-date»»···
 #--
 
