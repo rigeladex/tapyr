@@ -31,11 +31,13 @@
 #    29-Jan-2010 (CT) Call to `rollback` added to `Changer.rendered`
 #    29-Jan-2010 (CT) Support for `Form_args` and `Form_kw` added to
 #                     `Admin.__init__`
+#     3-Feb-2010 (MG) `Completer` fixed
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 from   _TFL                     import TFL
+from   _MOM.import_MOM          import Q
 
 import _GTW._Form._MOM.Instance
 
@@ -117,18 +119,21 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request = handler.request
             result  = None
             if request.method == "GET" :
-                ### XXX
-                bnfg = self.Form.unbound_form_map.get (self.field_name)
-                if bnfg is not None :
-                    relm = bnfg.related_model
-                    qfs  = tuple \
-                        (   DJO.QF (** {"%s__startswith" % str (k) : str (v)})
-                        for (k, v) in request.GET.iteritems ()
+                inline, completer = self.Form.completions.get \
+                    (self.field_name, (None, None))
+                if inline is not None :
+                    args     = GTW.Tornado.Request_Data (request.arguments)
+                    et_man   = inline.inline_form_cls.et_man
+                    role     = getattr (et_man, self.field_name).role_type
+                    comp_etm = getattr (et_man.home_scope, role.type_name)
+                    filter   = tuple \
+                        (    getattr (Q, k.rsplit (".", 1) [-1]).STARTSWITH (v)
+                        for (k, v) in args.iteritems ()
                         )
-                    context ["completions"] = \
-                        sorted (relm.objects.filter (* qfs).distinct ())
+                    context ["completions"] = comp_etm.query \
+                        ().filter (* filter).distinct ()
                     result = self.__super.rendered \
-                        (handler, bnfg.completer.template)
+                        (handler, completer.template)
             if result is None :
                 raise self.top.HTTP.Error_404 (request.path)
             return result

@@ -30,6 +30,7 @@
 #     1-Dec-2009 (MG) Creation
 #    10-Dec-2009 (MG) Adopted to new `Q_Exp`, support for `Filter_*` added
 #    30-Jan-2010 (MG) `Attr_Map` corrected
+#     3-Feb-2010 (MG) Mapper for `TFL.Attr_Query.Call` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,13 @@ def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
             arg = arg._sa_filter (e_type, Attr_Map)
         args.append (arg)
     return getattr (args [0], self.op.__name__) (args [1])
+# end def _sa_filter
+
+@TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query.Call)
+def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
+    lhs = self.lhs._sa_filter (e_type, Attr_Map)
+    op  = self.op.__name__.lower ()
+    return getattr (lhs, op) (* self.args)
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Filter_And, TFL.Filter_Or, TFL.Filter_Not)

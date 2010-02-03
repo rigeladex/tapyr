@@ -1,0 +1,40 @@
+{#- jinja template: model_completion_list.jnj -#}
+{#
+## Copyright (C) 2010 Martin Glueck All rights reserved
+## Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/model_completion_list
+##
+## Purpose
+##    Define the HTML which should be sent as a response to the auto complete
+##    list
+##
+## Revision Dates
+##     3-Feb-2010 (MG) Creation (ported from Django)
+##    ««revision-date»»···
+##--
+#}
+<div class="completion-list">
+  {%- for o in completions %}
+    <p><span class="completion-id">{{ o.lid }}</span>{{ o }}</p>
+  {% endfor -%}
+</div>
+{#- __END__ jinja template: model_completion_list.jnj -#}

@@ -55,10 +55,10 @@ class Completer (TFL.Meta.Object) :
 
     jsor_form = "\n".join \
         ( ("""$(".%(mname)s").completer"""
-          , """  ({ "list_url" : "%(list_url)s" """
-          , """   , "obj_url"  : "%(obj_url)s" """
-          , """   , "prefix"   : "%(mname)s" """
-          , """   , "triggers" :  %(triggers)s """
+          , """  ({ "list_url"     : "%(list_url)s" """
+          , """   , "obj_url"      : "%(obj_url)s" """
+          , """   , "prefix"       : "%(mname)s" """
+          , """   , "triggers"     :  %(triggers)s """
           , """  }); """
           , ""
           )
@@ -67,10 +67,10 @@ class Completer (TFL.Meta.Object) :
     completes       = ""
     ### Can be overriden by `__init__` arguments
     options   = dict \
-        ( fields    = ()
-        , min_chars = 3
-        , prefix    = "/Admin"
-        , template  = "model_completion_list.html"
+        ( fields       = ()
+        , min_chars    = 3
+        , prefix       = "/Admin"
+        , template     = "html/model_completion_list.jnj"
         )
     _ignore_options = set (["name", "prefix", "template"])
 
@@ -79,11 +79,17 @@ class Completer (TFL.Meta.Object) :
         self.options   = dict (self.options, ** kw)
     # end def __init__
 
-    def clone (self, completes) :
-        opts             = self.options.copy ()
+    def clone (self, completes, prefix = None) :
+        opts                  = self.options.copy ()
         opts.pop ("name", None)
-        result           = self.__class__ (self._triggers, ** opts)
-        result.completes = completes
+        triggers              = self._triggers
+        if prefix :
+            fmt      = "%s.%%s" % (prefix, )
+            triggers = dict \
+                ((fmt % k, v) for k, v in triggers.iteritems ())
+            opts ["fields"]   = [fmt % f for f in opts ["fields"]]
+        result                = self.__class__ (triggers, ** opts)
+        result.completes      = completes
         return result
     # end def clone
 

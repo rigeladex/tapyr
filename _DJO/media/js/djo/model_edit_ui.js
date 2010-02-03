@@ -146,7 +146,7 @@
           evt.preventDefault ();
       }
     , _setup_auto_complete  : function (no)
-      {   return; // XXX
+      {
           var $prototype = this._getData    ("$prototype");
           var  comp_opt  = $prototype.data  ("completion");
           if (comp_opt != undefined)
@@ -221,7 +221,7 @@
             return false
         }
         var comp_opt = evt.data.comp_opt;
-        var trigger  = evt.currentTarget.name.split (field_no_pat) [1];
+        var trigger  = evt.currentTarget.name.split (field_no_pat) [2];
         trigger      = comp_opt.triggers [trigger];
         var fields   = trigger ["fields"];
         var value    = evt.currentTarget.value;
@@ -439,6 +439,7 @@
         , list_url                       : ""
         , obj_url                        : "" // id -> pk, no ->number
         , prefix                         : ""
+        , field_prefix                   : ""
         }
       }
     );

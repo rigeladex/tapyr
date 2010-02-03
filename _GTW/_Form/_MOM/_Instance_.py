@@ -140,7 +140,7 @@ class M_Instance (TFL.Meta.Object.__class__) :
                     for ifg in fg.inline_form_cls.field_groups :
                         comp = ifg.completer
                         if comp :
-                            completions [comp.completes] = ifg
+                            completions [comp.completes] = (fg, comp)
                             comp_jsor.extend (comp.js_on_ready (fg))
         if len (medias) == 1 :
             Media = medias [0]

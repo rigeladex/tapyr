@@ -189,7 +189,7 @@ class Role_Description (Field_Group_Description) :
             fields.append (f)
         self.fields = fields
         if self.completer :
-            self.completer = self.completer.clone (role_name)
+            self.completer = self.completer.clone (role_name, role_name)
     # end def __init__
 
 # end class Role_Description

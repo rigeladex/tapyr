@@ -31,6 +31,7 @@
 #                     data dict contains exactly one element
 #    20-Jan-2010 (MG) Support dict's which don't have lists as value's
 #    29-Jan-2010 (MG) `__getitem__` and `get` fixed
+#     3-Feb-2010 (MG) `iteritems` added
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,11 @@ class Request_Data (TFL.Meta.Object) :
             return value [0]
         return value
     # end def get
+
+    def iteritems (self) :
+        for n in self.data.iterkeys () :
+            yield n, self [n]
+    # end def iteritems
 
     def __contains__ (self, item) :
         return item in self.data
