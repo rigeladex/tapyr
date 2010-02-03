@@ -49,16 +49,35 @@ _prim = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    Person = dict \
-        ( ETM     = "GTW.OMP.PAP.Person"
-        , Type    = GTW.NAV.E_Type.Admin
+    Address         = dict \
+        ( ETM       = "GTW.OMP.PAP.Address"
+        , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( FGD (WF ("primary"))
+            , FGD ()
+            , FGD ("lon", "lat", widget = "html/form.jnj, fg_tr")
+            )
+        )
+
+    Email           = dict \
+        ( ETM       = "GTW.OMP.PAP.Email"
+        , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( FGD (WF ("primary"))
+            , FGD ()
+            )
+        )
+
+    Person          = dict \
+        ( ETM       = "GTW.OMP.PAP.Person"
+        , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
             , FGD ()
             , ID
                 ( "PAP.Person_has_Address", "person"
                 , FGD
-                    (FP ("address", "street", "zip", "city", "country", "desc"))
+                    ("desc", FP ("address", "street", "zip", "city", "country"))
                 , min_empty = 1
                 , legend    = _("Person's addresses")
                 , title     = _("Addresses")
@@ -71,6 +90,15 @@ class Admin (object) :
                 )
              )
         )
+
+    Phone           = dict \
+      ( ETM         = "GTW.OMP.PAP.Phone"
+        , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( FGD (WF ("primary"))
+            , FGD ()
+            )
+      )
 
 # end class Admin
 

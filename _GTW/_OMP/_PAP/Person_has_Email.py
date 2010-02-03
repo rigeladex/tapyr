@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
+#     3-Feb-2010 (CT) `_Person_has_Property_` factored
 #    ««revision-date»»···
 #--
 
@@ -36,27 +37,23 @@ from   _GTW._OMP._PAP         import PAP
 from   _TFL.I18N              import _
 
 import _GTW._OMP._PAP.Entity
-from   _GTW._OMP._PAP.Person  import Person
-from   _GTW._OMP._PAP.Email   import Email
+from   _GTW._OMP._PAP._Person_has_Property_  import _Person_has_Property_
+from   _GTW._OMP._PAP.Email                  import Email
 
-_Ancestor_Essence = MOM.Link2
+_Ancestor_Essence = _Person_has_Property_
 
-class Person_has_Email (PAP.Entity, _Ancestor_Essence) :
+class Person_has_Email (_Ancestor_Essence) :
     """Model the link between a person and an email address"""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class left (_Ancestor.left) :
-
-            role_type     = Person
-
-        # end class left
-
         class right (_Ancestor.right) :
 
             role_type     = Email
+            ui_name       = _("Email")
+            auto_cache    = True
 
         # end class right
 

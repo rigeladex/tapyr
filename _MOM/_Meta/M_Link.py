@@ -83,6 +83,8 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                     auto_cache_roles.add (rc)
                     other_role = rc.other_role
                     other_type = other_role.role_type
+                    if other_type is None :
+                        continue
                     assert rc.attr_name not in other_type._Attributes._names
                     if other_role.max_links == 1 :
                         CR = ( MOM.Attr.A_Cached_Role
@@ -162,7 +164,7 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             (p for p in cls.primary if isinstance (p, MOM.Attr.Link_Role))
         role_types = tuple \
             (r.role_type for r in Roles if r.role_type is not None)
-        if role_types :
+        if len (role_types) == len (Roles) :
             type_base_names = [rt.type_base_name for rt in role_types]
             rltn_pat = TFL.Regexp (r"_(.*?)_".join (type_base_names))
             if rltn_pat.match (cls.type_base_name) :

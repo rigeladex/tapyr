@@ -104,7 +104,7 @@ class Spec (MOM.Prop.Spec) :
         if prop_type.needs_raw_value and not kind.electric :
             result += (MOM.Attr._Raw_Value_Mixin_, )
         if prop_type.auto_up_depends :
-            result += (MOM.Attr.Auto_Update_Mixin, )
+            result += (MOM.Attr._Auto_Update_Mixin_, )
         return tuple (uniq (result))
     # end def _effective_prop_kind_mixins
 

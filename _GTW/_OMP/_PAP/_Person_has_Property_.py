@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.OMP.PAP.
@@ -20,14 +20,13 @@
 #
 #++
 # Name
-#    GTW.OMP.PAP.Person_has_Address
+#    GTW.OMP.PAP._Person_has_Property_
 #
 # Purpose
-#    Model the link between a person and an address
+#    Base class for link between Person and some other object
 #
 # Revision Dates
-#    30-Dec-2009 (CT) Creation
-#     3-Feb-2010 (CT) `_Person_has_Property_` factored
+#     3-Feb-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
@@ -37,30 +36,38 @@ from   _GTW._OMP._PAP         import PAP
 from   _TFL.I18N              import _
 
 import _GTW._OMP._PAP.Entity
-from   _GTW._OMP._PAP._Person_has_Property_  import _Person_has_Property_
-from   _GTW._OMP._PAP.Address                import Address
+from   _GTW._OMP._PAP.Person  import Person
 
-_Ancestor_Essence = _Person_has_Property_
+_Ancestor_Essence = MOM.Link2
 
-class Person_has_Address (_Ancestor_Essence) :
-    """Model the link between a person and an address"""
+class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
+    """Base class for link between Person and some other object"""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class right (_Ancestor.right) :
+        class left (_Ancestor.left) :
 
-            role_type     = Address
-            ui_name       = _("Address")
+            role_type     = Person
+            ui_name       = _("Person")
             auto_cache    = True
 
-        # end class right
+        # end class left
+
+        class desc (A_String) :
+            """Short description of the link"""
+
+            kind          = Attr.Optional
+            max_length     = 20
+            ui_name        = _("Description")
+
+        # end class desc
 
     # end class _Attributes
 
-# end class Person_has_Address
+# end class _Person_has_Property_
 
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")
-### __END__ GTW.OMP.PAP.Person_has_Address
+### __END__ GTW.OMP.PAP._Person_has_Property_
