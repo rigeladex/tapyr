@@ -87,7 +87,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
         class extension (A_Int) : ### Move into Link!
             """Extension number used in PBX"""
 
-            kind            = Attr.Primary
+            kind            = Attr.Primary_Optional
             rank            = 4
             min_value       = 0
             max_value       = 99999

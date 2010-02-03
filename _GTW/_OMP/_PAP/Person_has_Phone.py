@@ -57,6 +57,16 @@ class Person_has_Phone (_Ancestor_Essence) :
 
         # end class right
 
+        class extension (A_Int) :
+            """Extension number used in PBX"""
+
+            kind            = Attr.Optional
+            min_value       = 0
+            max_value       = 99999
+            ui_name         = _("Extension")
+
+        # end class extension
+
     # end class _Attributes
 
 # end class Person_has_Phone

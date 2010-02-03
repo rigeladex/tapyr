@@ -94,8 +94,7 @@ class Admin (object) :
                      ( "desc"
                      , FP
                          ( "phone"
-                         , "country_code", "area_code"
-                         , "subscriber_number", "extension"
+                         , "country_code", "area_code", "subscriber_number"
                          )
                      )
                  , legend    = _("Phone numbers")
