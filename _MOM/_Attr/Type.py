@@ -75,6 +75,7 @@
 #     2-Feb-2010 (CT) `Pickler = None` added to `_A_Attr_Type_`
 #     2-Feb-2010 (CT) `_A_Named_Object_` added
 #     2-Feb-2010 (CT) `auto_up_depends` added
+#     3-Feb-2010 (CT) `A_Email` added
 #    ««revision-date»»···
 #--
 
@@ -853,6 +854,16 @@ class A_Decimal (_A_Number_) :
     # end def cooked
 
 # end class A_Decimal
+
+class A_Email (_A_String_) :
+    """An email address"""
+
+    typ                = "Email"
+    max_length         = 80
+
+    ### XXX check_syntax
+
+# end class A_Email
 
 class A_Float (_A_Float_) :
     code_format    = "%s"

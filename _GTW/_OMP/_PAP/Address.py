@@ -56,25 +56,25 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class street
 
+        class zip (A_String) :
+            """Zip code of address"""
+
+            kind           = Attr.Primary
+            max_length     = 6
+            rank           = 2
+            ui_name        = _("Zip code")
+
+        # end class zip
+
         class city (A_String) :
             """City, town, or village"""
 
             kind           = Attr.Primary
             max_length     = 30
-            rank           = 2
+            rank           = 3
             ui_name        = _("City")
 
         # end class city
-
-        class zip (A_String) :
-            """Zip code of address"""
-
-            kind           = Attr.Primary
-            max_length     = 10
-            rank           = 3
-            ui_name        = _("Zip code")
-
-        # end class zip
 
         class country (A_String) :
 
@@ -90,6 +90,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary_Optional
             max_length     = 40
+            rank           = 5
             ui_name        = _("Region")
 
         # end class region
@@ -103,15 +104,6 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class desc
 
-        class lon (A_Float) :
-            """Longitude"""
-
-            kind           = Attr.Optional
-            check          = ("-180.0 <= value <= 180.0", )
-            ui_name        = _("Longitude")
-
-        # end class lon
-
         class lat (A_Float) :
             """Latitude"""
 
@@ -120,6 +112,15 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             ui_name        = _("Latitude")
 
         # end class lat
+
+        class lon (A_Float) :
+            """Longitude"""
+
+            kind           = Attr.Optional
+            check          = ("-180.0 <= value <= 180.0", )
+            ui_name        = _("Longitude")
+
+        # end class lon
 
     # end class _Attributes
 

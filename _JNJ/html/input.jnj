@@ -40,7 +40,7 @@
 {%- macro _input (typ, cls, kw) -%}
   {%- do kw.pop ("caller", "") -%}
   {%- for a5 in attr5 %}{%- do kw.pop (a5, "") -%}{% endfor -%}
-  <input type="{{ typ }}" class="{{ cls }}{{ kw.pop ('class', '') }}"{{ kw|xmlattr }}{{ kwargs|xmlattr }}/>
+  <input type="{{ typ }}" class="{{ cls }} {{ kw.pop ('class', '') }}"{{ kw|xmlattr }}{{ kwargs|xmlattr }}/>
 {%- endmacro -%} {#- text -#}
 
 {%- macro checkbox () -%}

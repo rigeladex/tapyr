@@ -45,10 +45,16 @@ import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
 MOM.Attr.A_Attr_Type.widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
+MOM.Attr._A_Number_.widget  = GTW.Form.Widget_Spec ("html/field.jnj, number")
+MOM.Attr.A_Date.widget      = GTW.Form.Widget_Spec ("html/field.jnj, date")
+MOM.Attr.A_Date_Time.widget = GTW.Form.Widget_Spec ("html/field.jnj, datetime")
+MOM.Attr.A_Email.widget     = GTW.Form.Widget_Spec ("html/field.jnj, email")
+MOM.Attr.A_Text.widget      = GTW.Form.Widget_Spec ("html/field.jnj, text")
 
 class Instance (GTW.Form.MOM._Instance_) :
     """A form which creates or changes a MOM object."""
 
+    css_class     = "Object-Editor"
     widget        = "html/form.jnj, object"
 
     def __init__ (self, action, instance = None, ** kw) :

@@ -43,6 +43,8 @@ _Ancestor_Essence = MOM.Link2
 class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
     """Base class for link between Person and some other object"""
 
+    is_partial = True
+
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes

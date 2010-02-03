@@ -72,6 +72,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """Middle name of person"""
 
             kind           = Attr.Primary_Optional
+            max_length     = 32
             default        = ""
             rank           = 1
             ui_name        = _("Middle name")

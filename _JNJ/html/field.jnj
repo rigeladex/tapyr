@@ -37,6 +37,14 @@
 
 {%- import html_version as X -%}
 
+{%- macro date (fo, fi) -%}
+  {{ _field (X.input.date, fo, fi) }}
+{%- endmacro -%} {#- date -#}
+
+{%- macro datetime (fo, fi) -%}
+  {{ _field (X.input.datetime, fo, fi) }}
+{%- endmacro -%} {#- datetime -#}
+
 {%- macro email (fo, fi) -%}
   {{ _field (X.input.email, fo, fi) }}
 {%- endmacro -%} {#- email -#}
@@ -46,8 +54,10 @@
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro number (fo, fi) -%}
+  {%- set css_class = "Short-Number" if fi.max_value <= 99999 else "" %}
   {{ _field
       ( X.input.number, fo, fi
+      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
       , max           = fi.max_value
       , min           = fi.min_value
       )
@@ -67,14 +77,20 @@
 {%- endmacro -%} {#- string -#}
 
 {%- macro text (fo, fi) -%}
+  {%- set css_class = "Short-Number" if fi.max_length <= 6 else "" %}
   {{ _field
       ( X.input.textarea, fo, fi
+      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
       , cols          = fi.cols or 80
       , max_length    = fi.max_length
       , rows          = fi.rows or 5
       )
   }}
 {%- endmacro -%} {#- text -#}
+
+{%- macro time (fo, fi) -%}
+  {{ _field (X.input.time, fo, fi) }}
+{%- endmacro -%} {#- time -#}
 
 {%- macro _field (typ, fo, fi) -%}
   {%- set id = fo.get_id (fi) %}
