@@ -75,19 +75,23 @@ class Admin (object) :
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
             , FGD ()
             , ID
-                ( "PAP.Person_has_Address", "person"
-                , FGD
-                    ("desc", FP ("address", "street", "zip", "city", "country"))
-                , min_empty = 1
-                , legend    = _("Person's addresses")
-                , title     = _("Addresses")
-                , completer = GTW.Form.MOM.Completer
-                    ( fields    = ("street", "city", "zip", "country")
-                    , triggers  = dict (street = dict (min_chars = 3))
-                    , complete  = "address"
-                    , name      = "Personal_Contact_Info"
-                    )
-                )
+                 ( "PAP.Person_has_Address", "person"
+                 , FGD
+                     ("desc", FP ("address", "street", "zip", "city", "country"))
+                 , min_empty = 1
+                 , legend    = _("Person's addresses")
+                 , title     = _("Addresses")
+                 , completer = GTW.Form.MOM.Completer
+                     ( fields    = ("street", "city", "zip", "country")
+                     , triggers  = dict (street = dict (min_chars = 3))
+                     , complete  = "address"
+                     , name      = "Personal_Contact_Info"
+                     )
+                 )
+             , ID
+                 ( "PAP.Person_has_Phone", "phone"
+                 , FGD ("desc", FP ("phone", "country_code", "area_code", "subscriber_number"))
+                 )
              )
         )
 

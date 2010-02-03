@@ -31,6 +31,9 @@
 ##    15-Jan-2010 (MG) `password` added
 ##    30-Jan-2010 (MG) `hidden` added
 ##    30-Jan-2010 (MG) `_field` id corrected
+##     3-Feb-2010 (CT) `date` and other types added
+##     3-Feb-2010 (CT) `number` and `string` changed to set `css_class`
+##                     dependent on `max_value` and `max_length`, respectively
 ##    ««revision-date»»···
 ##--
 #}
@@ -69,18 +72,18 @@
 {%- endmacro -%} {#- password -#}
 
 {%- macro string (fo, fi) -%}
+  {%- set css_class = "Short-Number" if fi.max_length <= 6 else "" %}
   {{ _field
       ( X.input.text, fo, fi
+      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
       , max_length    = fi.max_length
       )
   }}
 {%- endmacro -%} {#- string -#}
 
 {%- macro text (fo, fi) -%}
-  {%- set css_class = "Short-Number" if fi.max_length <= 6 else "" %}
   {{ _field
       ( X.input.textarea, fo, fi
-      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
       , cols          = fi.cols or 80
       , max_length    = fi.max_length
       , rows          = fi.rows or 5

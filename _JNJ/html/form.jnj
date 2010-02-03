@@ -39,6 +39,7 @@
 ##    02-Feb-2010 (MG) `field_groups`: rendering of form-hidden fields
 ##                     removed again
 ##    02-Feb-2010 (MG) `inline_table` added
+##     3-Feb-2010 (CT) `many-2-many-range` made `hidden`
 ##    ««revision-date»»···
 ##--
 #}
@@ -158,12 +159,11 @@
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ inline.legend }}</legend>
     {% endif -%}
-    {{- X.input.text ( class = " many-2-many-range"
-                     , value = "%s:%s:%s"|format ( inline.min_required
-                                                 , inline.form_count
-                                                 , inline.max_count
-                                                 )
-                     )
+    {{- X.input.hidden
+        ( class = " many-2-many-range"
+        , value = "%s:%s:%s"|format
+            (inline.min_required, inline.form_count, inline.max_count)
+        )
     -}}
     <div class="m2m-prototype">
       {{ GTW.call_macro (inline.prototype_form.widget, inline.prototype_form) }}
@@ -180,21 +180,22 @@
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ inline.legend }}</legend>
     {% endif -%}
-    {{- X.input.text ( class = " many-2-many-range"
-                     , value = "%s:%s:%s"|format ( inline.min_required
-                                                 , inline.form_count
-                                                 , inline.max_count
-                                                 )
-                     )
+    {{- X.input.hidden
+        ( class = " many-2-many-range"
+        , value = "%s:%s:%s"|format
+            (inline.min_required, inline.form_count, inline.max_count)
+        )
     -}}
   <table class="field_group-Horizontal">
     <thead>
       {{ fg_tr_head (proto, proto.field_groups.0) }}
     </thead>
     <tbody>
-      {{ fg_tr_body ( proto, proto.field_groups.0
-                    , class = "m2m-inline-instance m2m-prototype"
-                    ) }}
+      {{ fg_tr_body
+          ( proto, proto.field_groups.0
+          , class = "m2m-inline-instance m2m-prototype"
+          )
+      }}
       {%- for iform in inline.inline_forms %}
         {{ fg_tr_body (iform, iform.field_groups.0, class="m2m-inline-instance") }}
       {% endfor -%}
