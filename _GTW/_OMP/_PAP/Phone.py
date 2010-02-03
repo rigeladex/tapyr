@@ -67,6 +67,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             ui_name        = _("Area code")
 
             min_value      = 1
+            max_value      = 99999
 
         # end class area_code
 
@@ -89,6 +90,7 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             kind            = Attr.Primary
             rank            = 4
             min_value       = 0
+            max_value       = 99999
             ui_name         = _("Extension")
 
         # end class extension

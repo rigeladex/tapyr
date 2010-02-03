@@ -90,7 +90,14 @@ class Admin (object) :
                  )
              , ID
                  ( "PAP.Person_has_Phone", "phone"
-                 , FGD ("desc", FP ("phone", "country_code", "area_code", "subscriber_number"))
+                 , FGD
+                     ( "desc"
+                     , FP
+                         ( "phone"
+                         , "country_code", "area_code"
+                         , "subscriber_number", "extension"
+                         )
+                     )
                  , legend    = _("Phone numbers")
                  , title     = _("Phone numbers")
                  )

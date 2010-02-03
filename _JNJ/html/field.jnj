@@ -57,7 +57,7 @@
 {%- endmacro -%} {#- hidden -#}
 
 {%- macro number (fo, fi) -%}
-  {%- set css_class = "Short-Number" if fi.max_value <= 99999 else "" %}
+  {%- set css_class = "Short-Number" if (fi.max_value or 2**31) <= 99999 else "" %}
   {{ _field
       ( X.input.number, fo, fi
       , class         = " ".join ((fi.css_class or "", css_class)).strip ()

@@ -48,14 +48,14 @@
 
 {%- macro fg_div_seq (fo, fg) -%}
   {%- for fi in fg.visible_fields %}
-    <div class="Field Field-{{ fi.name }}" title="{{ fi.help_text }}"
+    <div class="Field Field-{{ fi.name }}" title="{{ fi.description|safe }}"
     >
       {%- if loop.first %}
         {%- for h in fg.hidden_fields %}
           {{ GTW.call_macro (h.widget, fo, h) }}
         {% endfor -%}
       {% endif %}
-      <span class="Field-Help">{{ fi.help_text|safe }}</span>
+      <span class="Field-Help">{{ fi.description|safe }}</span>
       {{ _field_label (fo, fi) }}
       {{ GTW.call_macro (fi.widget, fo, fi) }}
       {{ _field_error (fo, fi) }}
@@ -74,9 +74,9 @@
   </table>
   <div class="field_group-Horizontal-Help">
     {%- for fi in fg.visible_fields %}
-      {%- if fi.help_text %}
+      {%- if fi.description %}
         <p class="Field-Help Field-Help-{{ fi.name }}">
-          {{ fi.help_text|safe }}
+          {{ fi.description|safe }}
         </p>
       {% endif -%}
     {% endfor -%}
@@ -88,7 +88,7 @@
       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
     >
       {%- for fi in fg.visible_fields %}
-        <td class="Field Field-{{ fi.name }}" title="{{ fi.help_text|safe }}">
+        <td class="Field Field-{{ fi.name }}" title="{{ fi.description|safe }}">
           {%- if loop.first %}
             {%- for h in fg.hidden_fields %}
               {{ GTW.call_macro (h.widget.inline, fo, h) }}
@@ -103,7 +103,7 @@
 {%- macro fg_tr_head (fo, fg) -%}
     <tr>
       {%- for fi in fg.visible_fields %}
-        <th title="{{ fi.help_text|safe }}">
+        <th title="{{ fi.description|safe }}">
           {{ _field_label (fo, fi) }}
         </th>
       {% endfor -%}
