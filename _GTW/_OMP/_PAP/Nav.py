@@ -97,8 +97,6 @@ class Admin (object) :
                  , FGD ("extension")
                  , legend    = _("Phone numbers")
                  , title     = _("Phone numbers")
-                 , max_count = 3
-                 , min_required = 1
                  )
              )
         )
