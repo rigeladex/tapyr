@@ -30,6 +30,7 @@
 #    17-Jan-2010 (MG) Moved into package `GTW.NAV`
 #    17-Jan-2010 (MG) `Logout`: Redirect the `/` if the new page after logout
 #                     requires a login
+#     3-Feb-2010 (MG) Clear cookie one a failed login try
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,8 @@ class Login (GTW.NAV.Page) :
                 next = req_data.get ("next")
                 handler.set_secure_cookie ("username", req_data  ["username"])
                 raise self.top.HTTP.Redirect_302 (next)
+            ### one a faild login try, clear the current username
+            handler.clear_cookie ("username")
         return self.__super.rendered (handler, template)
     # end def rendered
 

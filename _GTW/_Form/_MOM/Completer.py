@@ -74,16 +74,19 @@ class Completer (TFL.Meta.Object) :
 
     def __init__ (self, triggers, ** kw) :
         self._triggers = triggers
+        self.role      = kw.pop ("role", None)
         self.options   = dict (self.options, ** kw)
     # end def __init__
 
-    def js_on_ready (self, inline_form) :
-        etm      = inline_form.et_man
-        fname    = nested_form_group.field_name
-        mname    = inline_form.et_man.type_base_name
-        tb_name  = etm.type_base_name
-        list_url = "%s/%s/complete/%s"  % (self.prefix, tb_name, fname)
-        obj_url  = "%s/%s/completed/%s" % (self.prefix, tb_name, fname)
+    def js_on_ready (self, inline) :
+        base_et  = et = inline.inline_form_cls.et_man._etype
+        if self.role :
+            et = getattr (et, self.role).role_type
+        fname    = self.role or "XXX"
+        mname    = et.type_base_name
+        base_tbn = base_et.type_base_name
+        list_url = "%s/%s/complete/%s"  % (self.prefix, base_tbn, fname)
+        obj_url  = "%s/%s/completed/%s" % (self.prefix, base_tbn, fname)
         triggers = json.dumps (self.triggers)
         result   = self.jsor_form % TFL.Caller.Object_Scope (self)
         return (result, )

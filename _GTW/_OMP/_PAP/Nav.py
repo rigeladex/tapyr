@@ -29,6 +29,7 @@
 #    29-Jan-2010 (CT) Creation
 #     2-Feb-2010 (MG) `legend` and `title` added
 #     3-Feb-2010 (MG) Completer added
+#     3-Feb-2010 (MG) Use new `Role_Description`
 #    ««revision-date»»···
 #--
 from   _TFL.I18N                import _
@@ -41,6 +42,7 @@ from   _GTW._Form._MOM.Inline_Description import Inline_Description as ID
 from   _GTW._Form._MOM.Field_Group_Description import \
     ( Field_Group_Description as FGD
     , Field_Prefixer          as FP
+    , Role_Description        as RD
     , Wildcard_Field          as WF
     )
 
@@ -75,30 +77,28 @@ class Admin (object) :
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
             , FGD ()
             , ID
-                 ( "PAP.Person_has_Address", "person"
-                 , FGD
-                     ("desc", FP ("address", "street", "zip", "city", "country"))
-                 , min_empty = 1
+                 ( "PAP.Person_has_Address"
+                 , FGD ("desc")
+                 , RD  ( "address", WF ("primary")
+                       , completer = GTW.Form.MOM.Completer
+                           ( fields    = ("street", "city", "zip", "country")
+                           , triggers  = dict (street = dict (min_chars = 3))
+                           , complete  = "address"
+                           , name      = "Personal_Contact_Info"
+                           )
+                       )
                  , legend    = _("Addresses")
                  , title     = _("Addresses")
-                 , completer = GTW.Form.MOM.Completer
-                     ( fields    = ("street", "city", "zip", "country")
-                     , triggers  = dict (street = dict (min_chars = 3))
-                     , complete  = "address"
-                     , name      = "Personal_Contact_Info"
-                     )
                  )
              , ID
-                 ( "PAP.Person_has_Phone", "phone"
-                 , FGD
-                     ( "desc"
-                     , FP
-                         ( "phone"
-                         , "country_code", "area_code", "subscriber_number"
-                         )
-                     )
+                 ( "PAP.Person_has_Phone"
+                 , FGD ("desc")
+                 , RD  ("phone", WF ("primary"))
+                 , FGD ("extension")
                  , legend    = _("Phone numbers")
                  , title     = _("Phone numbers")
+                 , max_count = 3
+                 , min_required = 1
                  )
              )
         )

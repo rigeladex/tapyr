@@ -30,6 +30,8 @@
 #    29-Jan-2010 (CT) `kw` added to `Field_Group_Description.__init__`
 #    29-Jan-2010 (MG) Pass `field_group_description` to `field_group`
 #     3-Feb-2010 (MG) Return `None` if no field are left for this a group
+#     3-Feb-2010 (MG) Allow callables in field list fo `Field_Prefixer`, `
+#                     Role_Description` added
 #    ««revision-date»»···
 #--
 
@@ -54,6 +56,7 @@ class Wildcard_Field (TFL.Meta.Object) :
     def __init__ (self, * kinds , ** kw) :
         self.kinds  = kinds or ("primary", "user_attr")
         self.prefix = kw.pop ("prefix", None)
+        assert not kw, kw.keys ()
     # end def __init__
 
     def __call__ (self, et_man, added_fields) :
@@ -83,7 +86,17 @@ class Field_Prefixer (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, et_man, added_fields) :
-        return [self.joiner.join ((self.prefix, f)) for f in self.fields]
+        result = []
+        join   = self.joiner.join
+        for field in self.fields :
+            if callable (field) :
+                result.extend \
+                    (   join ((self.prefix, f))
+                    for f in field (et_man, added_fields)
+                    )
+            else :
+                result.append (self.joiner.join ((self.prefix, field)))
+        return result
     # end def __call__
 
 # end class Field_Prefixer
@@ -121,10 +134,6 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
 
     _real_name = "Field_Group_Description"
 
-    def __init__ (self, * fields, ** kw) :
-        self.__super.__init__ (* fields, ** kw)
-    # end def __init__
-
     def __call__ (self, et_man, added_fields = None, ** kw) :
         if not self.fields :
             return itertools.chain \
@@ -157,6 +166,30 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     # end def __call__
 
 Field_Group_Description = _MOM_Field_Group_Description_ # end class _MOM_Field_Group_Description_
+
+class Role_Description (Field_Group_Description) :
+    """A special kind of field group which actually handles the attributes of
+       a role of a link
+    """
+
+    def __init__ (self, role_name, * fields, ** kw) :
+        self.__super.__init__ (* fields, ** kw)
+        self.role_name = role_name
+        fields         = []
+        joiner         = kw.pop ("joiner", ".")
+        for f in self.fields :
+            if callable (f) :
+                if f.prefix :
+                    f.prefix = "%s%s%s" % (role_name, joiner, f.prefix)
+                else :
+                    f.prefix = role_name
+            else :
+                f = "%s%s%s" % (role_name, joiner, f)
+            fields.append (f)
+        self.fields = fields
+    # end def __init__
+
+# end class Role_Description
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")

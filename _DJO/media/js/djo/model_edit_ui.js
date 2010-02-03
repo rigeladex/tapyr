@@ -33,7 +33,9 @@
 **                     Many2Many
 **    21-Aug-2009 (MG) Keyboard shortcuts added
 **     2-Feb-2010 (MG) Adopted to GTW framework
-**    Â«Â«revision-dateÂ»Â»Â·Â·Â·
+**     3-Feb-2010 (MG) Swiched form states from int's to char's
+**     3-Feb-2010 (MG) Correct form count on submit
+**    ««revision-date»»···
 **--
 */
 
@@ -140,7 +142,7 @@
           $prototype.parent          ().append ($new);
           self._update_button_states ();
           self._setup_auto_complete  (cur_number);
-          $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":3");
+          $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":N");
           evt.preventDefault ();
       }
     , _setup_auto_complete  : function (no)
@@ -368,10 +370,10 @@
               var $elements  = $form.find  (":input:not([type=hidden])");
               var $l_a_s     = $form.find  ("input[name$=-_lid_a_state_]");
               var  lid       = $l_a_s.attr ("value").split (":") [0];
-              var  new_state = "0";
+              var  new_state = "L";
               if ($link.hasClass ("ui-icon-closethick"))
               {
-                  new_state = "1";
+                  new_state = "U";
                   $elements.attr        ("disabled","disabled")
                            .addClass    ("ui-state-disabled");
                   $link.removeClass     ("ui-icon-closethick ui-icon-delete")
@@ -382,11 +384,11 @@
               {
                   if (lid)
                   {
-                      new_state = "0";
+                      new_state = "L";
                   }
                   else
                   {
-                      new_state = "3";
+                      new_state = "N";
                       $elements.removeAttr  ("disabled")
                   }
                   $elements.removeClass ("ui-state-disabled");
@@ -450,8 +452,9 @@
               /* first, let's renumerate the inline-instance's */
               self.element.find (".m2m-inline-form-table").each ( function ()
                   {
-                      var no = -1; /* the first is the prototype */
-                      $(this).find (".m2m-inline-instance").each (function ()
+                      var $this  = $(this);
+                      var  no    = -1; /* the first is the prototype */
+                      $this.find (".m2m-inline-instance").each (function ()
                       {
                           var $elements      = $(this).find (":input");
                           var  edit_mod_list = ["id", "name"];
@@ -470,6 +473,10 @@
                           }
                           no = no + 1;
                       });
+                      var $m2m_range = $this.find (".many-2-many-range:first");
+                      var  m2m_range = $m2m_range.attr ("value").split (":");
+                      m2m_range [1]  = no;
+                      $m2m_range.attr ("value", m2m_range.join (":"));
                   });
               /* now, let's re-enable all input's so that they are set to the
               ** server

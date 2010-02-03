@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
+#     3-Feb-2010 (MG) `is_partial` added
 #    ««revision-date»»···
 #--
 
@@ -39,6 +40,7 @@ class _PAP_Entity_ (MOM.Entity) :
     """Common base class for essential classes of GTW.OMP.PAP"""
 
     _real_name = "Entity"
+    is_partial = True
     PNS        = GTW.OMP.PAP
 
 Entity = _PAP_Entity_ # end class

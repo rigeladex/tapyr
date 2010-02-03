@@ -30,6 +30,8 @@
 #     2-Feb-2010 (MG) Default widget media definition added
 #                     Once property `Media` added
 #    02-Feb-2010 (MG) Location of JS and CSS files changed
+#     3-Feb-2010 (MG) `Media` property moved into `Inline`
+#     3-Feb-2010 (MG) Made `own_role_name`  optional
 #    ««revision-date»»···
 #--
 
@@ -77,33 +79,23 @@ class Inline_Description (TFL.Meta.Object) :
     min_empty    = 0
     min_required = 0
 
-    def __init__ ( self, et_man, own_role_name
-                 , * field_group_descriptions
-                 , ** kw
-                 ) :
-        self.__dict__.update (kw)
+    def __init__ (self, et_man, * field_group_descriptions, ** kw) :
         self.e_type_name              = getattr (et_man, "type_name", et_man)
-        self.own_role_name            = own_role_name
+        self.own_role_name            = kw.pop ("own_role_name", None)
         self.field_group_descriptions = field_group_descriptions
+        self.__dict__.update (kw)
     # end def __init__
-
-    @TFL.Meta.Once_Property
-    def Media (self) :
-        result = []
-        media  = getattr (self.widget, "Media", None)
-        if media :
-            result.append (media)
-        result.extend \
-            (fgd.Media for fgd in self.field_group_descriptions if fgd.Media)
-        if len (result) == 1 :
-            result = result [0]
-        return result or None
-    # end def Media
 
     def __call__ (self, et_man, added_fields, ** kw) :
         scope             = et_man.home_scope
+        link_et_man       = getattr (scope, self.e_type_name)
+        if not self.own_role_name :
+            roles = tuple (et_man.link_map [link_et_man._etype])
+            if len (roles) > 1 :
+                raise TypeError ("More thanb one role to chhose from ?")
+            self.own_role_name = roles [0].role_name
         inline_form       = GTW.Form.MOM.Inline_Instance.New \
-            ( getattr (scope, self.e_type_name)
+            ( link_et_man
             , * self.field_group_descriptions
             , suffix      = et_man.type_base_name
             )

@@ -34,12 +34,15 @@
 #                     have been changed
 #     2-Feb-2010 (MG) Collect all `Media`s from the field_group_descriptions
 #                     and add the combined Media to the form class
-#    02-Feb-2010 (MG) `_get_raw`: pass form to `field.get_raw`
-#    02-Feb-2010 (MG) Instance state handling changed (field is now added to
+#     2-Feb-2010 (MG) `_get_raw`: pass form to `field.get_raw`
+#     2-Feb-2010 (MG) Instance state handling changed (field is now added to
 #                     the first field group)
 #                     `_create_or_update`: filter hidden field
 #                     `hidden_fields` removed
 #     3-Feb-2010 (MG) `New`: filter empty field groups
+#     3-Feb-2010 (MG) Collect `Media`s of field groups instead of field group
+#                     descriptions
+#     3-Feb-2010 (MG) `_prepare_form` added
 #    ««revision-date»»···
 #--
 
@@ -52,15 +55,12 @@ import _TFL._Meta.Object
 from   _GTW                                 import GTW
 import _GTW._Form._Form_
 import _GTW._Form.Field
-import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM.Field_Group_Description
 
 import _GTW._Tornado.Request_Data
 
 import  base64
 import  cPickle
-
-MOM.Attr.A_Attr_Type.widget = "html/field.jnj, string"
 
 class Instance_State_Field (GTW.Form.Field) :
     """Saves the state of the object to edit before the user made changes"""
@@ -124,10 +124,12 @@ class M_Instance (TFL.Meta.Object.__class__) :
             field_group_descriptions = \
                 (GTW.Form.MOM.Field_Group_Description (), )
         for fgd in field_group_descriptions :
-            field_groups.extend (fg for fg in fgd (et_man, added_fields) if fg)
-            media = fgd.Media
-            if media :
-                medias.append (media)
+            fgs = [fg for fg in fgd (et_man, added_fields) if fg]
+            field_groups.extend (fgs)
+            for fg in fgs :
+                media = fg.Media
+                if media :
+                    medias.append (media)
         if len (medias) == 1 :
             Media = medias [0]
         else :
@@ -176,37 +178,6 @@ class _Instance_ (GTW.Form._Form_) :
             dict [field.name] = raw
     # end def add_changed_raw
 
-    def _get_raw (self, field) :
-        return field.get_raw (self, self.instance_for_et_man.get (field.et_man))
-    # end def _get_raw
-
-    @TFL.Meta.Once_Property
-    def instance_state (self) :
-        return self.instance_state_field.decode \
-            (self.request_data.get (self.get_id (self.instance_state_field)))
-    # end def instance_state
-
-    def __call__ (self, request_data) :
-        ### XXX does not feel to be the correct place to make this conversion
-        if not isinstance (request_data, GTW.Tornado.Request_Data) :
-            request_data  = GTW.Tornado.Request_Data (request_data)
-        self.request_data = request_data
-        roles             = []
-        for role_name, et_man in self.Roles :
-            if self.parent and et_man is self.parent.et_man :
-                instance  = self.parent.instance
-            else :
-                instance  = self._create_or_update (et_man, None)
-            if instance :
-                roles.append (instance and instance.epk_raw)
-        if not self.errors and not self.field_errors :
-            self.instance = self._create_or_update (self.et_man, roles, True)
-        error_count       = len (self.errors) + len (self.field_errors)
-        for ig in self.inline_groups :
-            error_count  += ig (request_data)
-        return error_count
-    # end def __call__
-
     def _create_or_update (self, et_man, roles, required = False) :
         roles         = roles or ()
         raw_attrs     = {}
@@ -234,10 +205,17 @@ class _Instance_ (GTW.Form._Form_) :
                 else :
                     instance = et_man (raw = True, * roles, ** raw_attrs)
             except Exception, exc:
+                if __debug__ :
+                    import traceback
+                    traceback.print_exc ()
                 errors.append (exc)
             self._handle_errors (errors)
         return instance
     # end def _create_or_update
+
+    def _get_raw (self, field) :
+        return field.get_raw (self, self.instance_for_et_man.get (field.et_man))
+    # end def _get_raw
 
     def _handle_errors (self, error_list) :
         for error_or_list in error_list :
@@ -255,6 +233,40 @@ class _Instance_ (GTW.Form._Form_) :
                 if not attributes :
                     self.errors.append (error)
     # end def _handle_errors
+
+    @TFL.Meta.Once_Property
+    def instance_state (self) :
+        return self.instance_state_field.decode \
+            (self.request_data.get (self.get_id (self.instance_state_field)))
+    # end def instance_state
+
+    def _prepare_form (self) :
+        return True
+    # end def _prepare_form
+
+    def __call__ (self, request_data) :
+        ### XXX does not feel to be the correct place to make this conversion
+        if not isinstance (request_data, GTW.Tornado.Request_Data) :
+            request_data  = GTW.Tornado.Request_Data (request_data)
+        self.request_data = request_data
+        roles             = []
+        if not self._prepare_form () :
+            ### this form does not need any further processing
+            return 0
+        for role_name, et_man in self.Roles :
+            if self.parent and et_man is self.parent.et_man :
+                instance  = self.parent.instance
+            else :
+                instance  = self._create_or_update (et_man, None)
+            if instance :
+                roles.append (instance and instance.epk_raw)
+        if not self.errors and not self.field_errors :
+            self.instance = self._create_or_update (self.et_man, roles, True)
+        error_count       = len (self.errors) + len (self.field_errors)
+        for ig in self.inline_groups :
+            error_count  += ig (request_data)
+        return error_count
+    # end def __call__
 
 # end class _Instance_
 

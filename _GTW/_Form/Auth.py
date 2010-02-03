@@ -31,6 +31,7 @@
 #    17-Jan-2010 (MG) Clear `request_data` if the login vailed to prevent
 #                     population of defaults
 #    17-Jan-2010 (MG) Moved into package `GTW.Form`
+#     3-Feb-2010 (MG) Pass salt to `verify_password`
 #    ««revision-date»»···
 #--
 
@@ -45,6 +46,8 @@ import _GTW._Form.Field_Group_Description
 
 class _Login_Mixin_ (TFL.Meta.Object) :
     """Handles the login form processing."""
+
+    salt = None
 
     def __init__ (self, account_manager, * args, ** kw) :
         self.account_manager = account_manager
@@ -71,7 +74,7 @@ class _Login_Mixin_ (TFL.Meta.Object) :
         except IndexError :
             ### look's like no account with this username exists
             return False
-        return account.verify_password (password)
+        return account.verify_password (password, self.salt)
     # end def _authenticate
 
 # end class _Login_Mixin_
@@ -84,26 +87,6 @@ Login = GTW.Form.Plain.New \
         )
     , head_mixins = (_Login_Mixin_, )
     )
-
-if 0 :
-    class Login1 (GTW.Form.Plain) :
-        """The login form."""
-
-        def __call__ (self, request_data) :
-            self.request_data.update (request_data)
-            return self.__super.__call__ ({}, errors, field_errors)
-        # end def __call__
-
-        def _authenticate (self, username, password) :
-            try :
-                account = self.account_manager.query (name = username).one ()
-            except IndexError :
-                ### look's like no account with this username exists
-                return False
-            return account.verify_password (password)
-        # end def _authenticate
-
-    # end class Login
 
 if __name__ != "__main__" :
     GTW.Form._Export_Module ()

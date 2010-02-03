@@ -49,6 +49,7 @@
 #    30-Jan-2010 (MG)  `add`: `s_count` no longer eist's...
 #                      `pid_as_lid` fixed to always return a string
 #    30-Jan-2010 (MG) Update of `scope.db_cid` added
+#     3-Feb-2010 (MG) `max_cid` guard aginst no existing change
 #    ««revision-date»»···
 #--
 
@@ -148,7 +149,8 @@ class Manager (MOM.EMS._Manager_) :
     @property
     def max_cid (self) :
         query = self.session.change_session.query (MOM.DBW.SA.SA_Change)
-        return query.order_by ("-_id").limit (1).first ().cid
+        last  = query.order_by ("-_id").limit (1).first ()
+        return (last and last.cid) or 0
     # end def max_cid
 
     def pid_as_lid (self, obj, e_type) :

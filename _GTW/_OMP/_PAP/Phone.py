@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
+#     3-Feb-2010 (MG) `extension`  removed
 #    ««revision-date»»···
 #--
 
@@ -83,17 +84,6 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
             decimal_places = 0
 
         # end class subscriber_number
-
-        class extension (A_Int) : ### Move into Link!
-            """Extension number used in PBX"""
-
-            kind            = Attr.Primary_Optional
-            rank            = 4
-            min_value       = 0
-            max_value       = 99999
-            ui_name         = _("Extension")
-
-        # end class extension
 
         class desc (A_String) :
             """Short description of the phone number"""

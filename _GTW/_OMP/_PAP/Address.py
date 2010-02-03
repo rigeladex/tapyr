@@ -88,6 +88,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
         class region (A_String) :
             """State or province or region"""
 
+            default        = u""
             kind           = Attr.Primary_Optional
             max_length     = 40
             rank           = 5

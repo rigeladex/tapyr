@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-Jan-2010 (MG) Creation
 #    16-Jan-2010 (CT) `Object` added
+#     3-Feb-2010 (MG) `is_partial` added
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ class _Auth_Entity_ (MOM.Entity) :
 
     _real_name = "Entity"
 
+    is_partial = True
     PNS        = GTW.OMP.Auth
 
 Entity = _Auth_Entity_ # end class
@@ -48,7 +50,8 @@ Entity = _Auth_Entity_ # end class
 class _Auth_Object_ (Entity, MOM.Named_Object) :
     """Common base class for essential objects of GTW.OMP.Auth"""
 
-    _real_name  = "Object"
+    is_partial = True
+    _real_name = "Object"
 
     class _Attributes (MOM.Named_Object._Attributes) :
         pass

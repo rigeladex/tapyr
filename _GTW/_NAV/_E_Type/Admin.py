@@ -186,9 +186,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         def _view (self, request) :
             HTTP = self.top.HTTP
             lid  = self.lid
+            ETM  = self.ETM
             pid  = ETM.pid_from_lid (lid)
             try :
-                obj = self.ETM.pid_query (pid)
+                obj = ETM.pid_query (pid)
             except LookupError :
                 request.Error = \
                     (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), lid))

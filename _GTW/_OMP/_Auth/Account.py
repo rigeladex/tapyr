@@ -30,6 +30,7 @@
 #    14-Jan-2010 (CT) `password` defined as `Required` instead of `Primary`
 #    14-Jan-2010 (CT) s/Password_Account/Account_P/g
 #    16-Jan-2010 (CT) Derive from `Auth.Object` (thus s/usernamer/name/)
+#     3-Feb-2010 (MG) Password hashing added
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
 from   _TFL.I18N              import _, _T, _Tn
+import  hashlib
 
 _Ancestor_Essence = Auth.Object
 
@@ -118,22 +120,13 @@ _Ancestor_Essence = Account
 class Account_P (_Ancestor_Essence) :
     """An acount which uses passwords for authorization."""
 
+    Hash_Method = "sha224"
+
     class _Attributes (_Ancestor_Essence._Attributes) :
-
-        class locale (A_String) :
-            """The locale preference for this user"""
-
-            default    = "en_US"
-            kind       = Attr.Optional
-            max_length = 10
-
-        # end class locale
 
         class password (A_String) :
             """Password for this account"""
 
-            ### XXX only store the hash of the password and not the password
-            ### in plain text
             kind       = Attr.Required
             max_length = 50
 
@@ -141,9 +134,17 @@ class Account_P (_Ancestor_Essence) :
 
     # end class _Attributes
 
-    def verify_password (self, password) :
-        ### use hashes
-        return self.password == password
+    @classmethod
+    def password_hash (cls, password, salt = None) :
+        hash = hashlib.new (cls.Hash_Method)
+        if salt :
+            hash.update (salt)
+        hash.update     (password)
+        return hash.hexdigest ()
+    # end def password_hash
+
+    def verify_password (self, password, salt = None) :
+        return self.password == self.password_hash (password, salt)
     # end def verify_password
 
 # end class Account_P

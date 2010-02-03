@@ -31,6 +31,9 @@
 #                     `min_required` and `max_count`)
 #     2-Feb-2010 (MG) `form_count` added
 #     2-Feb-2010 (MG) `prototype_form` added
+#     3-Feb-2010 (MG) `Media` property moved in here
+#     3-Feb-2010 (MG) `range_field_name` added and used to check how many
+#                     forms have be sent by the browser
 #    ««revision-date»»···
 #--
 
@@ -68,18 +71,19 @@ class Inline (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def inline_forms (self) :
-        iform_cls     = self.inline_form_cls
-        et_man        = iform_cls.et_man
-        parent        = self.parent
+        iform_cls       = self.inline_form_cls
+        et_man          = iform_cls.et_man
+        parent          = self.parent
         if parent.instance :
             instances = et_man.query \
                 (** {self.own_role_name : parent.instance}).all ()
         else :
             instances = ()
-        count = 0
+        count         = 0
         try :
-            count = int (parent.get_field ().split (":") [1])
-        except :
+            value     = parent.request_data [self.range_field_name]
+            count     = int (value.split (":") [1])
+        except KeyError :
             pass
         form_count  = min \
             ( self.max_count
@@ -90,8 +94,8 @@ class Inline (TFL.Meta.Object) :
                 , count
                 )
             )
-        result      = []
-        prefix_fmt  = "%s-M%%s" % (et_man.type_base_name, )
+        result     = []
+        prefix_fmt = "%s-M%%s" % (et_man.type_base_name, )
         for no in xrange (form_count) :
             prefix   = prefix_fmt % no
             instance = None
@@ -103,6 +107,21 @@ class Inline (TFL.Meta.Object) :
     # end def inline_forms
 
     @TFL.Meta.Once_Property
+    def Media (self) :
+        result = []
+        media  = getattr (self.widget, "Media", None)
+        if media :
+            result.append (media)
+        fg_descriptions = self.inline_description.field_group_descriptions
+        result.extend (fgd.Media for fgd in fg_descriptions if fgd.Media)
+        if len (result) == 1 :
+            result = result [0]
+        else :
+            result = GTW.Media (children = result)
+        return result or None
+    # end def Media
+
+    @TFL.Meta.Once_Property
     def prototype_form (self) :
         iform_cls     = self.inline_form_cls
         et_man        = iform_cls.et_man
@@ -111,6 +130,11 @@ class Inline (TFL.Meta.Object) :
         return iform_cls \
             (None, prefix = prefix, parent = parent, prototype = True)
     # end def prototype_form
+
+    @TFL.Meta.Once_Property
+    def range_field_name (self) :
+        return "%s-m2m-range" % (self.inline_form_cls.et_man.type_base_name, )
+    # end def range_field_name
 
     def __call__ (self, request_data) :
         error_count   = 0
@@ -126,12 +150,13 @@ class Inline (TFL.Meta.Object) :
                   "(%(current)d)"
                 % dict (current = correct_forms, min = self.min_required)
                 )
+            error_count += 1
         if correct_forms > self.max_count :
             self.errors.append \
                 ( u"More that %(max)d instance specified (%(current)d)"
                 % dict (current = correct_forms, min = self.max_count)
                 )
-        return error_count + len (self.errors)
+        return error_count
     # end def __call__
 
     def __getattr__ (self, name) :

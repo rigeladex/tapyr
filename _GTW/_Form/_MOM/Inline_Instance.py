@@ -23,11 +23,14 @@
 #    Inline_Instance
 #
 # Purpose
-#    «text»···
+#    Edit or create an MOM instance inside a form for a related MOM instance
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
-#    02-Feb-2010 (MG) `Lid_and_State_Field` added
+#     2-Feb-2010 (MG) `Lid_and_State_Field` added
+#     3-Feb-2010 (MG) `widget` change to allow multiple field groups in one
+#                     table row
+#     3-Feb-2010 (MG) Unlinking of inline instances added
 #    ««revision-date»»···
 #--
 
@@ -46,11 +49,10 @@ class Lid_and_State_Field (GTW.Form.Field) :
     hidden = True
 
     widget = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
-    ##widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
 
     def get_raw (self, form, instance) :
         lid   = ""
-        state = "0"
+        state = "L"
         if instance :
             lid = instance.lid
         elif form.prototype :
@@ -77,11 +79,35 @@ class Inline_Instance (GTW.Form.MOM._Instance_) :
     """A form which is embedded in a `Instance` form."""
 
     __metaclass__ = M_Inline_Instance
-    widget        = "html/form.jnj, field_groups"
+    widget        = GTW.Form.Widget_Spec \
+        ( "html/form.jnj, field_groups"
+        , tr_head = "html/form.jnj, fgs_tr_head"
+        , tr_body = "html/form.jnj, fgs_tr_body"
+        )
 
     def __init__ ( self, * args, ** kw) :
         self.prototype = kw.pop ("prototype", False)
         self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def _prepare_form (self) :
+        lid, state = self.get_raw (self.lid_and_state_field).split (":")
+        if state == "U" :
+            ### this from handles an instance which should be unlinked
+            if not lid :
+                ### since this instance was never saved to the database no
+                ### further processing is required
+                return False
+            ### we need to destroy the instance in the database
+            self.instance.destroy ()
+            ### and mark that this form does not have a valid instance
+            ### (needed for the min/max count check's)
+            self.instance = None
+            ### XXX handle deleting of links object's
+            return False
+        return True
+    # end def _prepare_form
+
 # end class Inline_Instance
 
 if __name__ != "__main__" :

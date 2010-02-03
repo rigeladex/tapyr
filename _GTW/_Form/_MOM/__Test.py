@@ -79,7 +79,6 @@ if 0 :
     ct       = scope.PAP.Person ("Tanzer", "Christian")
     ct_a     = scope.PAP.Address ("Glasauergasse 32", "Wien", "1030", "Austria")
     ct_h_a   = scope.PAP.Person_has_Address (ct, ct_a)
-import pdb; pdb.set_trace ()
 form_cls = GTW.Form.MOM.Instance.New \
     ( scope.PAP.Person
     , * GTW.OMP.PAP.Nav.Admin.Person ["Form_args"]

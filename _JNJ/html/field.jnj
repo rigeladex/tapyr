@@ -72,7 +72,7 @@
 {%- endmacro -%} {#- password -#}
 
 {%- macro string (fo, fi) -%}
-  {%- set css_class = "Short-Number" if fi.max_length <= 6 else "" %}
+  {%- set css_class = "Short-Number" if (fi.max_length or 2**31) <= 6 else "" %}
   {{ _field
       ( X.input.text, fo, fi
       , class         = " ".join ((fi.css_class or "", css_class)).strip ()

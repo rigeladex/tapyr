@@ -40,6 +40,7 @@
 ##                     removed again
 ##    02-Feb-2010 (MG) `inline_table` added
 ##     3-Feb-2010 (CT) `many-2-many-range` made `hidden`
+##     3-Feb-2010 (MG) `fgs_tr_*` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -110,6 +111,40 @@
     </tr>
 {%- endmacro -%} {#- fg_tr_head -#}
 
+{%- macro fgs_tr_body (fo, fgs) -%}
+    <tr class="field_group {{ fo.css_class }} {{ kwargs.pop ("class", "") }}"
+      {% if fo.legend %}title="{{ fo.legend }}"{% endif -%}
+    >
+    {%- for fg in fgs %}
+      {%- for fi in fg.visible_fields %}
+        <td class="Field Field-{{ fi.name }}" title="{{ fi.help_text|safe }}">
+          {%- if loop.first %}
+            {%- for h in fg.hidden_fields %}
+              {{ GTW.call_macro (h.widget.inline, fo, h) }}
+            {% endfor -%}
+          {% endif %}
+          {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
+        </td>
+      {% endfor -%}
+    {% endfor -%}
+    {%- if fo.get_errors () %}
+      <td>{{ _field_error (fo, None) }}</td>
+    {% endif -%}
+    </tr>
+{%- endmacro -%} {#- fg_tr_body -#}
+
+{%- macro fgs_tr_head (fo, fgs) -%}
+    <tr>
+    {%- for fg in fgs %}
+      {%- for fi in fg.visible_fields %}
+        <th title="{{ fi.help_text|safe }}">
+          {{ _field_label (fo, fi) }}
+        </th>
+      {% endfor -%}
+    {% endfor -%}
+    </tr>
+{%- endmacro -%} {#- fg_tr_head -#}
+
 {%- macro field_groups (fo) -%}
     {%- for fg in fo.field_groups %}
       {%- if fo.get_errors () %}
@@ -163,6 +198,8 @@
         ( class = " many-2-many-range"
         , value = "%s:%s:%s"|format
             (inline.min_required, inline.form_count, inline.max_count)
+        , name  = "%s"|format(inline.range_field_name)
+        , id    = "F_%s"|format (inline.range_field_name)
         )
     -}}
     <div class="m2m-prototype">
@@ -184,20 +221,28 @@
         ( class = " many-2-many-range"
         , value = "%s:%s:%s"|format
             (inline.min_required, inline.form_count, inline.max_count)
+        , name  = "%s"|format(inline.range_field_name)
+        , id    = "F_%s"|format (inline.range_field_name)
         )
     -}}
   <table class="field_group-Horizontal">
     <thead>
-      {{ fg_tr_head (proto, proto.field_groups.0) }}
+      {{ GTW.call_macro (proto.widget.tr_head, proto, proto.field_groups) }}
     </thead>
     <tbody>
-      {{ fg_tr_body
-          ( proto, proto.field_groups.0
+      {{ GTW.call_macro
+          ( proto.widget.tr_body
+          , proto, proto.field_groups
           , class = "m2m-inline-instance m2m-prototype"
           )
       }}
       {%- for iform in inline.inline_forms %}
-        {{ fg_tr_body (iform, iform.field_groups.0, class="m2m-inline-instance") }}
+        {{ GTW.call_macro
+          ( iform.widget.tr_body
+          , iform
+          , iform.field_groups
+          , class="m2m-inline-instance"
+          ) }}
       {% endfor -%}
     </tbody>
   </table>
@@ -236,39 +281,6 @@
     </ul>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- login_inline -#}
-
-{%- macro nested_div (fo, fg) -%}
-  <fieldset class="{{ fg.css_class|default ('nested-many-2-many')}} {{ fg.Name }}">
-    {% if fg.legend %}<legend>{{ fg.legend }}</legend>{% endif %}
-    {# XXX MGL:: {{ fg.object_count }} #}
-    <div class="One-Link">
-      <div class="m2m-prototype m2m-nested-form">
-        {% for fs in fg.prototype.field_groups %}
-          <div class="field_group {{ fg.css_class }}"
-             {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
-          >
-            {{ GTW.call_macro (fs.widget, fg, fs) }}
-          </div>
-        {% endfor %}
-      </div>
-      {% for form in fg.forms %}
-        <div class="m2m-nested-form">
-        {% for fs in form.field_groups %}
-          <div class="field_group {{ fg.css_class }}"
-             {% if fs.legend %}title="{{ fs.legend }}"{% endif %}
-          >
-            {{ GTW.call_macro (fs.widget, fg, fs) }}
-          </div>
-        {% endfor %}
-        </div>
-      {% endfor %}
-    </div>
-  </fieldset>
-{%- endmacro -%} {#- nested_div -#}
-
-{%- macro nested_table (fo, fg) -%}
-  {#- XXX port nested_model_form_table.html from _DJO/_Apps/Base/templates/ -#}
-{%- endmacro -%} {#- nested_table -#}
 
 {%- macro object (fo) -%}
   {#- Create a form for a form-object `fo` -#}
