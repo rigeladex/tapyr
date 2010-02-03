@@ -32,6 +32,7 @@
 #    02-Feb-2010 (MG) Location of JS and CSS files changed
 #     3-Feb-2010 (MG) `Media` property moved into `Inline`
 #     3-Feb-2010 (MG) Made `own_role_name`  optional
+#     3-Feb-2010 (MG) Set `parent_et_man` in inline form classes
 #    ««revision-date»»···
 #--
 
@@ -97,7 +98,8 @@ class Inline_Description (TFL.Meta.Object) :
         inline_form       = GTW.Form.MOM.Inline_Instance.New \
             ( link_et_man
             , * self.field_group_descriptions
-            , suffix      = et_man.type_base_name
+            , suffix        = et_man.type_base_name
+            , parent_et_man = et_man
             )
         return (GTW.Form.MOM.Inline (self, inline_form), )
     # end def __call__

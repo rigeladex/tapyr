@@ -34,6 +34,7 @@
 #     3-Feb-2010 (MG) `Media` property moved in here
 #     3-Feb-2010 (MG) `range_field_name` added and used to check how many
 #                     forms have be sent by the browser
+#     3-Feb-2010 (MG) `name` added
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,7 @@ class Inline (TFL.Meta.Object) :
         self.inline_form_cls    = inline_form_cls
         self.parent             = parent
         self.errors             = GTW.Form.Error_List ()
+        self.name               = inline_form_cls.et_man.type_base_name
     # end def __init__
 
     def clone (self, parent) :

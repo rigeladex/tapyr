@@ -43,6 +43,8 @@
 #     3-Feb-2010 (MG) Collect `Media`s of field groups instead of field group
 #                     descriptions
 #     3-Feb-2010 (MG) `_prepare_form` added
+#     3-Feb-2010 (MG) Collect all completers and add the `js_on_ready` to the
+#                     Media
 #    ««revision-date»»···
 #--
 
@@ -61,6 +63,7 @@ import _GTW._Tornado.Request_Data
 
 import  base64
 import  cPickle
+import  itertools
 
 class Instance_State_Field (GTW.Form.Field) :
     """Saves the state of the object to edit before the user made changes"""
@@ -123,6 +126,9 @@ class M_Instance (TFL.Meta.Object.__class__) :
         if not field_group_descriptions :
             field_group_descriptions = \
                 (GTW.Form.MOM.Field_Group_Description (), )
+        completions = {}
+        comp_jsor   = []
+        Inline    = GTW.Form.MOM.Inline
         for fgd in field_group_descriptions :
             fgs = [fg for fg in fgd (et_man, added_fields) if fg]
             field_groups.extend (fgs)
@@ -130,16 +136,24 @@ class M_Instance (TFL.Meta.Object.__class__) :
                 media = fg.Media
                 if media :
                     medias.append (media)
+                if isinstance (fg, Inline) :
+                    for ifg in fg.inline_form_cls.field_groups :
+                        comp = ifg.completer
+                        if comp :
+                            completions [comp.completes] = ifg
+                            comp_jsor.extend (comp.js_on_ready (fg))
         if len (medias) == 1 :
             Media = medias [0]
         else :
-            Media = (medias and GTW.Media (children = medias)) or None
+            Media = GTW.Media (children = medias)
+        Media.js_on_ready.add (* comp_jsor)
         cls.add_internal_fields (et_man, field_groups)
         return cls.__m_super.New \
             ( suffix
             , field_groups = field_groups
             , et_man       = et_man
             , Media        = Media
+            , completions  = completions
             , ** kw
             )
     # end def New

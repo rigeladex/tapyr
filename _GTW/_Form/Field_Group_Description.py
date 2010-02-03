@@ -45,7 +45,7 @@ class _Form_Field_Group_Description_ (TFL.Meta.Object) :
     """Abstract definition of a field group."""
 
     _real_name = "Field_Group_Description"
-
+    completer  = None
     widget     = GTW.Form.Widget_Spec ("html/form.jnj, fg_div_seq")
 
     def __init__ (self, * fields, ** kw) :

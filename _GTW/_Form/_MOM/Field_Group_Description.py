@@ -32,6 +32,7 @@
 #     3-Feb-2010 (MG) Return `None` if no field are left for this a group
 #     3-Feb-2010 (MG) Allow callables in field list fo `Field_Prefixer`, `
 #                     Role_Description` added
+#     3-Feb-2010 (MG) Set the `completes` attribute on completer objects
 #    ««revision-date»»···
 #--
 
@@ -187,6 +188,8 @@ class Role_Description (Field_Group_Description) :
                 f = "%s%s%s" % (role_name, joiner, f)
             fields.append (f)
         self.fields = fields
+        if self.completer :
+            self.completer = self.completer.clone (role_name)
     # end def __init__
 
 # end class Role_Description

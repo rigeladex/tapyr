@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2009-2010 Martin GlÃ¼ck All rights reserved
+** Copyright (C) 2009-2010 Martin Glück All rights reserved
 ** Langstrasse 4, 2244 Spannberg, Austria. martin@mangari.org
 ** ****************************************************************************
 **

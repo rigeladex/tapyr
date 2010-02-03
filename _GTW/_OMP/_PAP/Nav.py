@@ -83,7 +83,6 @@ class Admin (object) :
                        , completer = GTW.Form.MOM.Completer
                            ( fields    = ("street", "city", "zip", "country")
                            , triggers  = dict (street = dict (min_chars = 3))
-                           , complete  = "address"
                            , name      = "Personal_Contact_Info"
                            )
                        )

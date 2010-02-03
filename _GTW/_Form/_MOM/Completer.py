@@ -34,6 +34,7 @@
 #    21-Aug-2009 (CT) Use meta class `M_Unique_If_Named`
 #    21-Aug-2009 (CT) `_ignore_options` added and used
 #     2-Feb-2010 (MG) Moved into `GTW.Form.MOM` packages
+#     3-Feb-2010 (MG) Adapted to new framework
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,7 @@ class Completer (TFL.Meta.Object) :
           )
         )
 
+    completes       = ""
     ### Can be overriden by `__init__` arguments
     options   = dict \
         ( fields    = ()
@@ -74,19 +76,23 @@ class Completer (TFL.Meta.Object) :
 
     def __init__ (self, triggers, ** kw) :
         self._triggers = triggers
-        self.role      = kw.pop ("role", None)
         self.options   = dict (self.options, ** kw)
     # end def __init__
 
+    def clone (self, completes) :
+        opts             = self.options.copy ()
+        opts.pop ("name", None)
+        result           = self.__class__ (self._triggers, ** opts)
+        result.completes = completes
+        return result
+    # end def clone
+
     def js_on_ready (self, inline) :
-        base_et  = et = inline.inline_form_cls.et_man._etype
-        if self.role :
-            et = getattr (et, self.role).role_type
-        fname    = self.role or "XXX"
-        mname    = et.type_base_name
-        base_tbn = base_et.type_base_name
-        list_url = "%s/%s/complete/%s"  % (self.prefix, base_tbn, fname)
-        obj_url  = "%s/%s/completed/%s" % (self.prefix, base_tbn, fname)
+        bname    = inline.inline_form_cls.parent_et_man.type_base_name
+        fname    = self.completes
+        mname    = inline.name
+        list_url = "%s/%s/complete/%s"  % (self.prefix, bname, fname)
+        obj_url  = "%s/%s/completed/%s" % (self.prefix, bname, fname)
         triggers = json.dumps (self.triggers)
         result   = self.jsor_form % TFL.Caller.Object_Scope (self)
         return (result, )

@@ -123,4 +123,6 @@ if 0 :
         print scope.PAP.Address.query ().count (),
         print scope.PAP.Person_has_Address.query ().count ()
     dump_errors (form)
+if 1 :
+    form = form_cls ("/")
 ### __END__ GTW.Form.MOM.__Test

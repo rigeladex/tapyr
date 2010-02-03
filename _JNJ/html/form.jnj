@@ -41,6 +41,8 @@
 ##    02-Feb-2010 (MG) `inline_table` added
 ##     3-Feb-2010 (CT) `many-2-many-range` made `hidden`
 ##     3-Feb-2010 (MG) `fgs_tr_*` added
+##     3-Feb-2010 (MG) `inline_table` add the name of the inline as css-class
+##                     (needed to setup the completion)
 ##    ««revision-date»»···
 ##--
 #}
@@ -213,7 +215,7 @@
 
 {%- macro inline_table (form, inline) -%}
   {%- set proto = inline.prototype_form -%}
-  <fieldset class="m2m-inline-form-table">
+  <fieldset class="m2m-inline-form-table {{ inline.name }}">
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ inline.legend }}</legend>
     {% endif -%}
