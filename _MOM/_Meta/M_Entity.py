@@ -62,6 +62,7 @@
 #    21-Jan-2010 (CT) `M_Id_Entity` changed to auto-generate `epkified_ckd`
 #                     and `epkified_raw` instead of `__init__`
 #    27-Jan-2010 (MG) Add `app_type` parameter when calling `update_etype`
+#     4-Feb-2010 (CT) `M_E_Type_An` added
 #    ««revision-date»»···
 #--
 
@@ -524,6 +525,14 @@ class M_E_Type (M_E_Mixin) :
     # end def __getattr__
 
 # end class M_E_Type
+
+@TFL.Add_To_Class ("M_E_Type", M_An_Entity)
+class M_E_Type_An (M_E_Type) :
+    """Meta class for essence of MOM.An_Entity."""
+
+    Manager     = MOM.E_Type_Manager.An_Entity
+
+# end class M_E_Type_An
 
 @TFL.Add_To_Class ("M_E_Type", M_Id_Entity)
 class M_E_Type_Id (M_E_Type) :

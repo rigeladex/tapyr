@@ -57,6 +57,7 @@
 #    21-Jan-2010 (CT) `_cooked_epk_iter` changed to check
 #                     `if v is not None` instead of `if v`
 #     4-Feb-2010 (CT) `Link.__call__` changed to use `epkified`, too
+#     4-Feb-2010 (CT) `Entity` factored, `An_Entity` added
 #    ««revision-date»»···
 #--
 
@@ -67,8 +68,8 @@ import _TFL._Meta.Object
 
 from   _TFL.predicate import paired
 
-class Id_Entity (TFL.Meta.Object) :
-    """Scope-specific manager for a specific essential object- or link-type."""
+class Entity (TFL.Meta.Object) :
+    """Base class for scope-specific E_Type managers."""
 
     def __init__ (self, etype, scope) :
         self._etype     = etype
@@ -76,9 +77,22 @@ class Id_Entity (TFL.Meta.Object) :
     # end def __init__
 
     def __call__ (self, * args, ** kw) :
-        scope  = self.home_scope
-        result = self._etype (* args, scope = scope, ** kw)
-        scope.add (result)
+        return self._etype (* args, scope = self.home_scope, ** kw)
+    # end def __call__
+
+# end class Entity
+
+class An_Entity (Entity) :
+    """Scope-specific manager for a specific type of anonymous entities."""
+
+# end class An_Entity
+
+class Id_Entity (Entity) :
+    """Scope-specific manager for a specific essential object- or link-type."""
+
+    def __call__ (self, * args, ** kw) :
+        result = self.__super.__call__ (* args, ** kw)
+        self.home_scope.add (result)
         return result
     # end def __call__
 

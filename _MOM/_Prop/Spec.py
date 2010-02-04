@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -35,6 +35,7 @@
 #                     checker for primary attributes not being empty
 #    22-Oct-2009 (CT) `_effective_prop_kind_mixins` factored
 #    22-Oct-2009 (CT) Use `kind_name`
+#     4-Feb-2010 (CT) Argument `e_type` added to `_effective_prop_kind_mixins`
 #    ««revision-date»»···
 #--
 
@@ -62,7 +63,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
     # end def __init__
 
     def _add_prop (self, e_type, name, prop_type) :
-        kind = self._effective_prop_kind (name, prop_type)
+        kind = self._effective_prop_kind (name, prop_type, e_type)
         prop = None
         if kind is not None :
             prop = self._new_prop (name, kind, prop_type, e_type)
@@ -92,10 +93,10 @@ class _Prop_Spec_ (TFL.Meta.Object) :
             pk.sort (key = TFL.Sorted_By ("rank", "name"))
     # end def _create_properties
 
-    def _effective_prop_kind (self, name, prop_type) :
+    def _effective_prop_kind (self, name, prop_type, e_type) :
         kind = result = getattr (prop_type, "kind", None)
         kind_mixins   = self._effective_prop_kind_mixins \
-            (name, kind, prop_type)
+            (name, kind, prop_type, e_type)
         if kind is not None and kind_mixins :
             kinds = tuple (kind_mixins) + (kind, )
             try :
@@ -109,7 +110,7 @@ class _Prop_Spec_ (TFL.Meta.Object) :
         return result
     # end def _effective_prop_kind
 
-    def _effective_prop_kind_mixins (self, name, kind, prop_type) :
+    def _effective_prop_kind_mixins (self, name, kind, prop_type, e_type) :
         return tuple (getattr (prop_type, "Kind_Mixins", ()))
     # end def _effective_prop_kind_mixins
 

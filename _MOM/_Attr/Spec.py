@@ -39,6 +39,9 @@
 #    22-Oct-2009 (CT) `_effective_prop_kind_mixins` changed to ignore
 #                     electric kinds and to put `_Raw_Value_Mixin_` at end
 #    22-Dec-2009 (CT) `__init__` changed to not set `epk_sig`
+#     4-Feb-2010 (CT) Argument `e_type` added to `_effective_prop_kind_mixins`
+#     4-Feb-2010 (CT) `_effective_prop_kind_mixins` changed to add
+#                     `_Nested_Mixin_` to attributes of `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -98,13 +101,15 @@ class Spec (MOM.Prop.Spec) :
         return prop
     # end def _add_prop
 
-    def _effective_prop_kind_mixins (self, name, kind, prop_type) :
+    def _effective_prop_kind_mixins (self, name, kind, prop_type, e_type) :
         result = self.__super._effective_prop_kind_mixins \
-            (name, kind, prop_type)
+            (name, kind, prop_type, e_type)
         if prop_type.needs_raw_value and not kind.electric :
             result += (MOM.Attr._Raw_Value_Mixin_, )
         if prop_type.auto_up_depends :
             result += (MOM.Attr._Auto_Update_Mixin_, )
+        if issubclass (e_type, MOM.An_Entity) :
+            result = (MOM.Attr._Nested_Mixin_, ) + result
         return tuple (uniq (result))
     # end def _effective_prop_kind_mixins
 

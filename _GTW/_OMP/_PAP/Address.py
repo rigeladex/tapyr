@@ -28,14 +28,18 @@
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
+#     4-Feb-2010 (CT) Composite `position` instead of `lat` and `lon`
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
+from   _MOM._Attr.Position    import *
+
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
-from   _TFL.I18N              import _
 import _GTW._OMP._PAP.Entity
+
+from   _TFL.I18N              import _
 
 _Ancestor_Essence = MOM.Object
 
@@ -104,23 +108,12 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class desc
 
-        class lat (A_Float) :
-            """Latitude"""
+        class position (A_Position) :
+            """Geographical position"""
 
             kind           = Attr.Optional
-            check          = ("-90.0 <= value <= 90.0", )
-            ui_name        = _("Latitude")
 
-        # end class lat
-
-        class lon (A_Float) :
-            """Longitude"""
-
-            kind           = Attr.Optional
-            check          = ("-180.0 <= value <= 180.0", )
-            ui_name        = _("Longitude")
-
-        # end class lon
+        # end class position
 
     # end class _Attributes
 

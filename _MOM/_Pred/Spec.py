@@ -30,6 +30,7 @@
 #    25-Nov-2009 (CT) `_attr_map` added
 #     5-Jan-2010 (CT) `_setup_attr_checker` and `__init__` refactored to use
 #                     `attr._checkers` instead of home-grown code
+#     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
 #    ««revision-date»»···
 #--
 
@@ -78,13 +79,19 @@ class Spec (MOM.Prop.Spec) :
     def _setup_attr_checker (self, e_type, attr) :
         kind = (MOM.Pred.Object, MOM.Pred.System) [attr.electric]
         stem = "AC_check_%s" % (attr.name, )
-        for i, (check, attr_none) in enumerate (attr._checkers ()) :
-            name = "%s_%d" % (stem, i)
+        for i, (check, attr_none) in enumerate (attr._checkers (e_type)) :
+            if isinstance (check, basestring) :
+                name      = "%s_%d" % (stem, i)
+                prop_type = MOM.Pred.Attribute_Check \
+                    (name, attr.name, check, attr_none)
+            else :
+                prop_type = check
+                kind      = check.kind
+                name      = check.name
             checker = self._new_prop \
                 ( name      = name
                 , kind      = kind
-                , prop_type = MOM.Pred.Attribute_Check
-                    (name, attr.name, check, attr_none)
+                , prop_type = prop_type
                 , e_type    = e_type
                 )
             self._setup_prop (e_type, name, kind.kind, checker)

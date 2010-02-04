@@ -1,0 +1,99 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package MOM.Attr.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    MOM.Attr.Position
+#
+# Purpose
+#    Composite attribute type for geographical position
+#
+# Revision Dates
+#     4-Feb-2010 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from   _TFL                  import TFL
+from   _MOM                  import MOM
+
+from   _MOM._Attr            import Attr
+import _MOM._Attr.Kind
+from   _MOM._Attr.Type       import *
+
+import _MOM.Entity
+
+from   _TFL.I18N             import _, _T, _Tn
+
+_Ancestor_Essence = MOM.An_Entity
+
+class Position (_Ancestor_Essence) :
+    """Model a geographical position."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class lat (A_Float) :
+            """Latitude"""
+
+            kind           = Attr.Required
+            check          = ("-90.0 <= value <= 90.0", )
+            ui_name        = _("Latitude")
+
+        # end class lat
+
+        class lon (A_Float) :
+            """Longitude"""
+
+            kind           = Attr.Required
+            check          = ("-180.0 <= value <= 180.0", )
+            ui_name        = _("Longitude")
+
+        # end class lon
+
+        class height (A_Float) :
+            """Height above mean sea level"""
+
+            kind               = Attr.Optional
+            ui_name            = _("Height")
+
+        # end class height
+
+    # end class _Attributes
+
+# end class Position
+
+class A_Position (_A_Composite_) :
+    """Models an attribute holding a geographical position."""
+
+    C_Type         = Position
+    typ            = "Position"
+    ui_name        = _("Position")
+
+# end class A_Position
+
+__all__ = tuple \
+    (  k for (k, v) in globals ().iteritems ()
+    if isinstance (v, MOM.Meta.M_Attr_Type)
+    )
+
+if __name__ != "__main__" :
+    MOM.Attr._Export (* __all__)
+### __END__ MOM.Attr.Position

@@ -78,6 +78,8 @@
 #     3-Feb-2010 (CT) `A_Email` added
 #     4-Feb-2010 (CT) `_A_String_.default` added (`""`)
 #     4-Feb-2010 (CT) `_A_Composite_` added
+#     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
+#                     `_A_Composite_._checkers` added
 #    ««revision-date»»···
 #--
 
@@ -102,6 +104,7 @@ class A_Attr_Type (object) :
 
     __metaclass__       = MOM.Meta.M_Attr_Type
     _sets_to_combine    = ("check", )
+    _lists_to_combine   = ("Kind_Mixins", )
 
     auto_up_depends     = ()
     check               = set ()
@@ -185,7 +188,7 @@ class A_Attr_Type (object) :
         return eval (s, glob, locl.copy ())
     # end def _call_eval
 
-    def _checkers (self) :
+    def _checkers (self, e_type) :
         for c in sorted (self.check) :
             yield c, ()
     # end def _checkers
@@ -262,6 +265,7 @@ class _A_Composite_ (A_Attr_Type) :
     ### Type of composite attribute (derived from MOM.An_Entity)
     C_Type            = None
 
+    Kind_Mixins       = (MOM.Attr._Composite_Mixin_, )
     needs_raw_value   = False
 
     def as_code (self, value) :
@@ -269,7 +273,7 @@ class _A_Composite_ (A_Attr_Type) :
             return "dict (%s)" % \
                 ( ", ".join
                     (   "%s = %s" % (a.name, a.as_code (a.get_value (value)))
-                    for a in value.user_attr
+                    for a in value.user_attr if a.has_substance (value)
                     )
                 ,
                 )
@@ -284,12 +288,10 @@ class _A_Composite_ (A_Attr_Type) :
     # end def as_string
 
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        assert self.C_Type, "%s needs to define `C_Type`" % self
         return self.C_Type (** self.__super.from_code (s, obj, glob, locl))
     # end def from_code_string
 
     def from_string (self, s, obj = None, glob = None, locl = None) :
-        assert self.C_Type, "%s needs to define `C_Type`" % self
         t = s or {}
         if isinstance (s, basestring) :
             t = self._call_eval (s, {}, {})
@@ -297,6 +299,33 @@ class _A_Composite_ (A_Attr_Type) :
             t = dict (t)
         return self.C_Type (** t)
     # end def from_string
+
+    def _checkers (self, e_type) :
+        for c in self.__super._checkers (e_type) :
+            yield c
+        C_Type = self.C_Type
+        assert C_Type, "%s needs to define `C_Type`" % self
+        if not hasattr (C_Type, "app_type") :
+            if not isinstance (C_Type, basestring) :
+                C_Type = C_Type.type_name
+            self.C_Type = C_Type = e_type.app_type.etypes [C_Type]
+        name = self.name
+        for k, ps in C_Type._Predicates._pred_kind.iteritems () :
+            if ps :
+                p_name = "AC_check_%s_%s" % (name, k)
+                check  = MOM.Pred.Condition.__class__ \
+                    ( p_name, (MOM.Pred.Condition, )
+                    , dict
+                        ( assertion  = "%s.is_correct (kind = %r)" % (name, k)
+                        , attributes = (name, )
+                        , kind       = MOM.Pred.Kind.Table [k]
+                        , name       = p_name
+                        , __doc__    = " "
+                          ### Space necessary to avoid inheritance of `__doc__`
+                        )
+                    )
+                yield check, ()
+    # end def _checkers
 
 # end class _A_Composite_
 
@@ -413,7 +442,7 @@ class _A_Number_ (A_Attr_Type) :
     min_value         = None
     max_value         = None
 
-    def _checkers (self) :
+    def _checkers (self, e_type) :
         if self.min_value is not None :
             if self.max_value is not None :
                 yield "%s <= value <= %s" % (self.min_value, self.max_value), ()
@@ -421,7 +450,7 @@ class _A_Number_ (A_Attr_Type) :
                 yield "%s <= value" % (self.min_value, ), ()
         elif self.max_value :
             yield "value <= %s" % (self.max_value, ), ()
-        for c in self.__super._checkers () :
+        for c in self.__super._checkers (e_type) :
             yield c
     # end def _checkers
 

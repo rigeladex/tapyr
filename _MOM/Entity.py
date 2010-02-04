@@ -88,6 +88,8 @@
 #    21-Jan-2010 (CT) `epkified` added, `epkified_ckd` and `epkified_raw` used
 #     2-Feb-2010 (CT) Support for `updates_pending` of attributes added
 #     4-Feb-2010 (CT) `An_Entity.as_string` added
+#     4-Feb-2010 (CT) Optional argument `kind` added to `is_correct`
+#     4-Feb-2010 (CT) `An_Entity.copy` added and `._init_attributes` redefined
 #    ««revision-date»»···
 #--
 
@@ -138,6 +140,7 @@ class Entity (TFL.Meta.Object) :
     show_package_prefix   = False
     x_locked              = False
 
+    _app_globals          = {}
     _dicts_to_combine     = ("deprecated_attr_names", )
 
     _Class_Kind           = "Spec Essence"
@@ -234,8 +237,8 @@ class Entity (TFL.Meta.Object) :
         return any (a.has_substance (self) for a in self.user_attr)
     # end def has_substance
 
-    def is_correct (self, attr_dict = {})  :
-        ews = self._pred_man.check_kind ("object", self, attr_dict)
+    def is_correct (self, attr_dict = {}, kind = "object")  :
+        ews = self._pred_man.check_kind (kind, self, attr_dict)
         return not ews
     # end def is_correct
 
@@ -408,13 +411,37 @@ class An_Entity (Entity) :
     is_partial            = True
 
     def as_string (self) :
-        return tuple ((a.name, a.get_raw (self)) for a in self.user_attr)
+        return tuple \
+            ( (a.name, a.get_raw (self))
+            for a in sorted (self.user_attr, key = TFL.Getter.name)
+            if  a.has_substance (self)
+            )
     # end def as_string
+
+    def copy (self, ** kw) :
+        scope  = kw.pop ("scope", self.home_scope)
+        result = self.__class__ (scope = scope, ** kw)
+        raw_kw = dict \
+            (  (a.name, a.get_raw (self))
+            for a in self.user_attr if a.name not in kw and a.to_save (self)
+            )
+        if raw_kw :
+            result.set_raw (** raw_kw)
+        return result
+    # end def copy
 
     def _formatted_user_attr (self) :
         return ", ".join \
-            ("%s = %s" % (a.name, a.get_raw (self)) for a in self.user_attr)
+            ( "%s = %s" % (a.name, a.get_raw (self))
+            for a in sorted (self.user_attr, key = TFL.Getter.name)
+            if  a.has_substance (self)
+            )
     # end def _formatted_user_attr
+
+    def _init_attributes (self) :
+        self.owner = None
+        self.__super._init_attributes ()
+    # end def _init_attributes_
 
     def _repr (self, type_name) :
         return "%s (%s)" % (type_name, self._formatted_user_attr ())
@@ -444,7 +471,6 @@ class Id_Entity (Entity) :
     sorted_by             = TFL.Meta.Alias_Property ("sorted_by_epk")
     tutorial              = None
 
-    _app_globals          = {}
     _lists_to_combine     = ("auto_display", )
     _sets_to_combine      = ("refuse_links", )
 

@@ -439,12 +439,12 @@ def Attribute_Check (name, attr, assertion, attr_none = ()) :
     result = MOM.Meta.M_Pred_Type_Condition \
         ( name, (Condition, )
         , dict
-             ( attributes = attributes
-             , attr_none  = attr_none
-             , assertion  = assertion.replace ("value", attr)
-             , __doc__    = " "
-                 ### Space necessary to avoid inheritance of `Condition.__doc__`
-             )
+            ( assertion  = assertion.replace ("value", attr)
+            , attributes = attributes
+            , attr_none  = attr_none
+            , __doc__    = " "
+                ### Space necessary to avoid inheritance of `Condition.__doc__`
+            )
         )
     return result
 # end def Attribute_Check

@@ -79,6 +79,9 @@
 #    31-Jan-2010 (CT) `Mandatory_Mixin` factored
 #     2-Feb-2010 (CT) Support for `Type.Pickler` added
 #     2-Feb-2010 (CT) `dependent_attrs` and `_Auto_Update_Mixin_` added
+#     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
+#     4-Feb-2010 (CT) `_record_change` factored
+#     4-Feb-2010 (CT) `_Composite_Mixin_` and `_Nested_Mixin_` added
 #    ««revision-date»»···
 #--
 
@@ -147,8 +150,7 @@ class Kind (MOM.Prop.Kind) :
                 man.updates_pending = list (self.dependent_attrs)
                 man.do_updates_pending (obj)
             if self.record_changes and (not obj.electric) :
-                obj.home_scope.record_change \
-                    (MOM.SCM.Change.Attr, obj, {self.name : old_raw})
+                self._record_change (obj, value, self.name, old_raw)
     # end def __set__
 
     @property
@@ -254,8 +256,8 @@ class Kind (MOM.Prop.Kind) :
         return False
     # end def to_save
 
-    def _checkers (self) :
-        for c in self.attr._checkers () :
+    def _checkers (self, e_type) :
+        for c in self.attr._checkers (e_type) :
             yield c
     # end def _checkers
 
@@ -285,6 +287,11 @@ class Kind (MOM.Prop.Kind) :
     def _inc_changes (self, man, obj, value) :
         man.inc_changes ()
     # end def _inc_changes
+
+    def _record_change (self, obj, value, name, old_raw) :
+        obj.home_scope.record_change \
+            (MOM.SCM.Change.Attr, obj, {name : old_raw})
+    # end def _record_change
 
     def _set_cooked (self, obj, value, changed = 42) :
         return self._set_cooked_inner (obj, value, changed)
@@ -364,9 +371,9 @@ class _EPK_Mixin_ (Kind) :
 class Mandatory_Mixin (Kind) :
     """Mixin for enforcing that an attribute always has a value"""
 
-    def _checkers (self) :
+    def _checkers (self, e_type) :
         yield "value is not None and value != ''", (self.name, )
-        for c in self.__super._checkers () :
+        for c in self.__super._checkers (e_type) :
             yield c
     # end def _checkers
 
@@ -393,6 +400,30 @@ class _Auto_Update_Mixin_ (Kind) :
     # end def _check_sanity
 
 # end class _Auto_Update_Mixin_
+
+class _Composite_Mixin_ (Kind) :
+    """Mixin for composite attributes."""
+
+    def _set_cooked_value (self, obj, value, changed = 42) :
+        if value is not None :
+            if value.owner is not None and value.owner is not obj :
+                value = value.copy ()
+            value.owner = obj
+            value.attr_name = self.name
+        return self.__super._set_cooked_value (obj, value, changed)
+    # end def _set_cooked_value
+
+# end class _Composite_Mixin_
+
+class _Nested_Mixin_ (Kind) :
+    """Mixin for attributes nested inside composite attributes."""
+
+    def _record_change (self, obj, value, name, old_raw) :
+        self.__super._record_change \
+            (obj.owner, value, ".".join ([obj.attr_name, name]), old_raw)
+    # end def _record_change
+
+# end class _Nested_Mixin_
 
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""
