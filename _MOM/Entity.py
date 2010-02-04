@@ -87,6 +87,7 @@
 #    21-Jan-2010 (CT) `copy` changed to only copy attributes `to_save`
 #    21-Jan-2010 (CT) `epkified` added, `epkified_ckd` and `epkified_raw` used
 #     2-Feb-2010 (CT) Support for `updates_pending` of attributes added
+#     4-Feb-2010 (CT) `An_Entity.as_string` added
 #    ««revision-date»»···
 #--
 
@@ -405,6 +406,10 @@ class An_Entity (Entity) :
     __metaclass__         = MOM.Meta.M_An_Entity
 
     is_partial            = True
+
+    def as_string (self) :
+        return tuple ((a.name, a.get_raw (self)) for a in self.user_attr)
+    # end def as_string
 
     def _formatted_user_attr (self) :
         return ", ".join \

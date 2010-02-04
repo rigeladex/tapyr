@@ -76,6 +76,8 @@
 #     2-Feb-2010 (CT) `_A_Named_Object_` added
 #     2-Feb-2010 (CT) `auto_up_depends` added
 #     3-Feb-2010 (CT) `A_Email` added
+#     4-Feb-2010 (CT) `_A_String_.default` added (`""`)
+#     4-Feb-2010 (CT) `_A_Composite_` added
 #    ««revision-date»»···
 #--
 
@@ -253,6 +255,50 @@ class A_Attr_Type (object) :
     # end def __str__
 
 # end class A_Attr_Type
+
+class _A_Composite_ (A_Attr_Type) :
+    """Common base class for composite attributes of an object."""
+
+    ### Type of composite attribute (derived from MOM.An_Entity)
+    C_Type            = None
+
+    needs_raw_value   = False
+
+    def as_code (self, value) :
+        if value is not None :
+            return "dict (%s)" % \
+                ( ", ".join
+                    (   "%s = %s" % (a.name, a.as_code (a.get_value (value)))
+                    for a in value.user_attr
+                    )
+                ,
+                )
+        return u""
+    # end def as_code
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        if value is not None :
+            value.as_string ()
+        return u""
+    # end def as_string
+
+    def from_code (self, s, obj = None, glob = {}, locl = {}) :
+        assert self.C_Type, "%s needs to define `C_Type`" % self
+        return self.C_Type (** self.__super.from_code (s, obj, glob, locl))
+    # end def from_code_string
+
+    def from_string (self, s, obj = None, glob = None, locl = None) :
+        assert self.C_Type, "%s needs to define `C_Type`" % self
+        t = s or {}
+        if isinstance (s, basestring) :
+            t = self._call_eval (s, {}, {})
+        if isinstance (t, tuple) :
+            t = dict (t)
+        return self.C_Type (** t)
+    # end def from_string
+
+# end class _A_Composite_
 
 class _A_Date_ (A_Attr_Type) :
     """Common base class for date-valued attributes of an object."""
@@ -458,6 +504,10 @@ class _A_Object_ (A_Attr_Type) :
 
     needs_raw_value   = False
 
+    def as_code (self, value) :
+        return tuple (a.as_code (a.get_value (value)) for a in value.primary)
+    # end def as_code
+
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
@@ -468,10 +518,6 @@ class _A_Object_ (A_Attr_Type) :
                 )
         return ""
     # end def as_string
-
-    def as_code (self, value) :
-        return tuple (a.as_code (a.get_value (value)) for a in value.primary)
-    # end def as_code
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -667,6 +713,7 @@ class _A_Object_Set_ (_A_Typed_Set_) :
 class _A_String_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
 
+    default           = ""
     needs_raw_value   = False
     simple_cooked     = unicode
 

@@ -79,7 +79,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
         class country (A_String) :
 
             kind           = Attr.Primary
-            max_length     = 40
+            max_length     = 20
             rank           = 4
             ui_name        = _("Country")
 
@@ -88,9 +88,8 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
         class region (A_String) :
             """State or province or region"""
 
-            default        = u""
             kind           = Attr.Primary_Optional
-            max_length     = 40
+            max_length     = 20
             rank           = 5
             ui_name        = _("Region")
 

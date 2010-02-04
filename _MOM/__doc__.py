@@ -741,7 +741,7 @@ Changing objects and links
     >>> m
     BMT.Mouse (u'Mighty_Mouse')
     >>> m.color, m.weight
-    (None, None)
+    (u'', None)
     >>> print m.as_code ()
     BMT.Mouse (u'Mighty_Mouse', )
     >>> m.color = "white"
