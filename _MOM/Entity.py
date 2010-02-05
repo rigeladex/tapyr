@@ -90,6 +90,10 @@
 #     4-Feb-2010 (CT) `An_Entity.as_string` added
 #     4-Feb-2010 (CT) Optional argument `kind` added to `is_correct`
 #     4-Feb-2010 (CT) `An_Entity.copy` added and `._init_attributes` redefined
+#     5-Feb-2010 (CT) Change management for `set` and `set_raw` moved from
+#                     `Id_Entity` to `Entity`
+#     5-Feb-2010 (CT) Exception handler added `epkified` to improve error
+#                     message
 #    ««revision-date»»···
 #--
 
@@ -118,6 +122,7 @@ import _TFL._Meta.Once_Property
 import _TFL.defaultdict
 import _TFL.Sorted_By
 
+from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.object_globals   import object_globals
 
 import itertools
@@ -257,7 +262,13 @@ class Entity (TFL.Meta.Object) :
 
     def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
-        return self._set_ckd (on_error, ** kw)
+        gen = \
+            (   (name, attr.get_raw (self))
+            for attr, name, value in self._record_iter (kw)
+            if  attr.get_value (self) != value
+            )
+        with self._record_context (gen, self.SCM_Change_Attr) :
+            return self._set_ckd (on_error, ** kw)
     # end def set
 
     def set_attr_iter (self, attr_dict, on_error = None) :
@@ -281,7 +292,13 @@ class Entity (TFL.Meta.Object) :
 
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
-        return self._set_raw (on_error, ** kw)
+        gen = \
+            (   (name, raw)
+            for attr, name, value, raw in self._record_iter_raw (kw)
+            if  raw != value
+            )
+        with self._record_context (gen, self.SCM_Change_Attr) :
+            return self._set_raw (on_error, ** kw)
     # end def set_raw
 
     def sync_attributes (self) :
@@ -334,6 +351,29 @@ class Entity (TFL.Meta.Object) :
     def _raise_attr_error (self, exc) :
         raise exc
     # end def _raise_attr_error
+
+    @TFL.Contextmanager
+    def _record_context (self, gen, Change) :
+        if self.electric :
+            yield
+        else :
+            rvr = dict (gen)
+            yield
+            if rvr :
+                self.home_scope.record_change (Change, self, rvr)
+    # end def _record_context
+
+    def _record_iter (self, kw) :
+        for attr in self._record_iter_attrs () :
+            name = attr.name
+            if name in kw :
+                yield attr, name, kw [name]
+    # end def _record_iter
+
+    def _record_iter_raw (self, kw) :
+        for attr, name, value in self._record_iter (kw) :
+            yield attr, name, value, attr.get_raw (self)
+    # end def _record_iter_raw
 
     def _set_ckd (self, on_error = None, ** kw) :
         man = self._attr_man
@@ -410,6 +450,11 @@ class An_Entity (Entity) :
 
     is_partial            = True
 
+    @property
+    def SCM_Change_Attr (self) :
+        return MOM.SCM.Change.Attr_Composite
+    # end def SCM_Change_Attr
+
     def as_string (self) :
         return tuple \
             ( (a.name, a.get_raw (self))
@@ -442,6 +487,10 @@ class An_Entity (Entity) :
         self.owner = None
         self.__super._init_attributes ()
     # end def _init_attributes_
+
+    def _record_iter_attrs (self) :
+        return self.user_attr
+    # end def _record_iter_attrs
 
     def _repr (self, type_name) :
         return "%s (%s)" % (type_name, self._formatted_user_attr ())
@@ -597,6 +646,11 @@ class Id_Entity (Entity) :
         return self.ETM.pid_as_lid (self)
     # end def lid
 
+    @property
+    def SCM_Change_Attr (self) :
+        return MOM.SCM.Change.Attr
+    # end def SCM_Change_Attr
+
     def async_changes (self, * filter, ** kw) :
         result = self.home_scope.async_changes (pid = self.pid)
         if filters or kw :
@@ -664,7 +718,23 @@ class Id_Entity (Entity) :
         ### `epkified_ckd` and `epkified_raw` auto-created by meta machinery
         raw      = bool (kw.get ("raw", False))
         epkifier = (cls.epkified_ckd, cls.epkified_raw) [raw]
-        return epkifier (* epk, ** kw)
+        try :
+            return epkifier (* epk, ** kw)
+        except TypeError, exc :
+            raise TypeError \
+                ( _T  ( "%s\n    %s needs the arguments: (%s)"
+                          "\n    Instead it got: (%s)"
+                      )
+                % ( exc, cls.type_name
+                  , ", ".join (x for x in (epkifier.args, "** kw") if x)
+                  , ", ".join
+                      ( itertools.chain
+                          ( (repr (x) for x in epk)
+                          , ("%s = %r" % (k, v) for k, v in kw.iteritems ())
+                          )
+                      )
+                  )
+                )
     # end def epkified
 
     def is_defined (self)  :
@@ -706,28 +776,6 @@ class Id_Entity (Entity) :
         """Register that `other` depends on `self`"""
         self.dependencies [other] += 1
     # end def register_dependency
-
-    def set (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from cooked values"""
-        gen = \
-            (   (name, attr.get_raw (self))
-            for attr, name, value in self._record_iter (kw)
-            if  attr.get_value (self) != value
-            )
-        with self._record_context (gen, MOM.SCM.Change.Attr) :
-            return self._set_ckd (on_error, ** kw)
-    # end def set
-
-    def set_raw (self, on_error = None, ** kw) :
-        """Set attributes specified in `kw` from raw values"""
-        gen = \
-            (   (name, raw)
-            for attr, name, value, raw in self._record_iter_raw (kw)
-            if  raw != value
-            )
-        with self._record_context (gen, MOM.SCM.Change.Attr) :
-            return self._set_raw (on_error, ** kw)
-    # end def set_raw
 
     def unregister_dependency (self, other) :
         """Unregister dependency of `other` on `self`"""
@@ -830,36 +878,16 @@ class Id_Entity (Entity) :
     def _main__init__ (self, * epk, ** kw) :
         ### Need to use `__super.` methods here because it's not a `rename`
         raw      = bool (kw.get ("raw", False))
-        epkifier = (self.epkified_ckd,     self.epkified_raw)     [raw]
         setter   = (self.__super._set_ckd, self.__super._set_raw) [raw]
-        epk, kw  = epkifier         (* epk, ** kw)
+        epk, kw  = self.epkified    (* epk, ** kw)
         self._init_epk              (setter, * epk)
         self.__super._main__init__  (* epk, ** kw)
         self._finish__init__        ()
     # end def _main__init__
 
-    @TFL.Contextmanager
-    def _record_context (self, gen, Change) :
-        if self.electric :
-            yield
-        else :
-            rvr = dict (gen)
-            yield
-            if rvr :
-                self.home_scope.record_change (Change, self, rvr)
-    # end def _record_context
-
-    def _record_iter (self, kw) :
-        for attr in self.primary + self.user_attr :
-            name = attr.name
-            if name in kw :
-                yield attr, name, kw [name]
-    # end def _record_iter
-
-    def _record_iter_raw (self, kw) :
-        for attr, name, value in self._record_iter (kw) :
-            yield attr, name, value, attr.get_raw (self)
-    # end def _record_iter_raw
+    def _record_iter_attrs (self) :
+        return self.primary + self.user_attr
+    # end def _record_iter_attrs
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
         def _renamer () :

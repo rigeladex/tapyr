@@ -80,6 +80,7 @@
 #     4-Feb-2010 (CT) `_A_Composite_` added
 #     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
 #                     `_A_Composite_._checkers` added
+#     5-Feb-2010 (CT) `_A_Composite_.cooked` added
 #    ««revision-date»»···
 #--
 
@@ -283,9 +284,21 @@ class _A_Composite_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            value.as_string ()
+            return value.as_string ()
         return u""
     # end def as_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, tuple) :
+            value = dict (value)
+        if isinstance (value, dict) :
+            value = soc.C_Type (** value)
+        if value is not None and not isinstance (value, soc.C_Type) :
+            raise ValueError \
+                (_T ("Value `%r` is not of type %s") % (value, soc))
+        return value
+    # end def cooked
 
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
         return self.C_Type (** self.__super.from_code (s, obj, glob, locl))

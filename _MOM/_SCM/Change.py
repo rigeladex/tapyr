@@ -42,6 +42,7 @@
 #    17-Dec-2009 (CT) `__iter__` added
 #    18-Dec-2009 (CT) `as_pickle_cargo` and `from_pickle_cargo` factored
 #    20-Jan-2010 (CT) Use `pid_query` of `E_Type_Manager` instead that of `EMS`
+#     5-Feb-2010 (CT) `_Attr_` factored and `Attr_Composite` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ import _MOM._SCM.History_Mixin
 import _MOM._SCM.Recorder
 
 import _TFL._Meta.Property
+import _TFL._Meta.Once_Property
 
 import datetime
 import pickle
@@ -189,6 +191,11 @@ class _Entity_ (Undoable) :
         return etm.pid_query (self.pid)
     # end def entity
 
+    @TFL.Meta.Once_Property
+    def type_repr (self) :
+        return self.type_name
+    # end def type_repr
+
     def _create (self, scope, attr) :
         etm = scope [self.type_name]
         etm (* self.epk, raw = True, ** attr)
@@ -201,9 +208,10 @@ class _Entity_ (Undoable) :
     # end def _destroy
 
     def _modify (self, scope, attr) :
-        entity = self.entity (scope)
-        if entity and attr :
-            entity.set_raw (** attr)
+        if attr :
+            entity = self.entity (scope)
+            if entity :
+                entity.set_raw (** attr)
     # end def _modify
 
     def _pickle_attrs (self) :
@@ -218,7 +226,7 @@ class _Entity_ (Undoable) :
     # end def _pickle_attrs
 
     def _repr (self) :
-        result = ["%s %s %s" % (self.kind, self.type_name, self.epk)]
+        result = ["%s %s %s" % (self.kind, self.type_repr, self.epk)]
         def format (d) :
             return ", ".join \
                 (sorted ("%r : %r" % (k, v) for (k, v) in d.iteritems ()))
@@ -261,7 +269,7 @@ class Create (_Entity_) :
         self._destroy     (scope)
     # end def undo
 
-# end class
+# end class Create
 
 class Destroy (_Entity_) :
     """Model a change that destroys an entity"""
@@ -299,17 +307,13 @@ class Destroy (_Entity_) :
 
 # end class Destroy
 
-class Attr (_Entity_) :
-    """Model a change that modifies attributes of an entity"""
+class _Attr_ (_Entity_) :
+    """Base class for changes that modify attributes of an entity"""
 
     kind = "Modify"
 
     def __init__ (self, entity, old_attr) :
         self.__super.__init__ (entity)
-        self.new_attr = dict \
-            ( (a.name, a.get_raw (entity))
-            for a in (entity.user_attr + entity.primary) if a.name in old_attr
-            )
         self.old_attr = old_attr
     # end def __init__
 
@@ -323,7 +327,56 @@ class Attr (_Entity_) :
         self._modify      (scope, self.old_attr)
     # end def undo
 
+# end class _Attr_
+
+class Attr (_Attr_) :
+    """Model a change that modifies attributes of an entity"""
+
+    kind = "Modify"
+
+    def __init__ (self, entity, old_attr) :
+        self.__super.__init__ (entity, old_attr)
+        self.new_attr = dict \
+            ( (a.name, a.get_raw (entity))
+            for a in (entity.user_attr + entity.primary) if a.name in old_attr
+            )
+    # end def __init__
+
 # end class Attr
+
+class Attr_Composite (_Attr_) :
+    """Model a change that modifies attributes of a composite attribute of an
+       entity
+    """
+
+    def __init__ (self, composite, old_attr) :
+        self.__super.__init__ (composite.owner, old_attr)
+        self.attr_name = composite.attr_name
+        self.new_attr  = dict \
+            ( (a.name, a.get_raw (composite))
+            for a in composite.user_attr if a.name in old_attr
+            )
+    # end def __init__
+
+    def entity (self, scope) :
+        entity = self.__super.entity (scope)
+        if entity is not None :
+            return getattr (entity, self.attr_name)
+    # end def entity
+
+    @TFL.Meta.Once_Property
+    def type_repr (self) :
+        return ".".join ((self.type_name, self.attr_name))
+    # end def type_repr
+
+    def _pickle_attrs (self) :
+        return dict \
+            ( self.__super._pickle_attrs ()
+            , attr_name   = self.attr_name
+            )
+    # end def _pickle_attrs
+
+# end class Attr_Composite
 
 if __name__ != "__main__" :
     MOM.SCM._Export_Module ()

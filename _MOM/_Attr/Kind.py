@@ -82,6 +82,7 @@
 #     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
 #     4-Feb-2010 (CT) `_record_change` factored
 #     4-Feb-2010 (CT) `_Composite_Mixin_` and `_Nested_Mixin_` added
+#     5-Feb-2010 (CT) `_Composite_Mixin_` and `_Nested_Mixin_` continued
 #    ««revision-date»»···
 #--
 
@@ -404,6 +405,17 @@ class _Auto_Update_Mixin_ (Kind) :
 class _Composite_Mixin_ (Kind) :
     """Mixin for composite attributes."""
 
+    def get_pickle_cargo (self, obj) :
+        value = self.get_value (obj)
+        if value is not None :
+            return value.as_pickle_cargo ()
+    # end def get_pickle_cargo
+
+    def set_pickle_cargo (self, obj, cargo) :
+        self._set_cooked_value \
+            (obj, self.attr.C_Type (** cargo), changed = True)
+    # end def set_pickle_cargo
+
     def _set_cooked_value (self, obj, value, changed = 42) :
         if value is not None :
             if value.owner is not None and value.owner is not obj :
@@ -418,9 +430,15 @@ class _Composite_Mixin_ (Kind) :
 class _Nested_Mixin_ (Kind) :
     """Mixin for attributes nested inside composite attributes."""
 
+    def _inc_changes (self, man, obj, value) :
+        if obj.owner is not None :
+            obj.owner._attr_man.inc_changes ()
+    # end def _inc_changes
+
     def _record_change (self, obj, value, name, old_raw) :
-        self.__super._record_change \
-            (obj.owner, value, ".".join ([obj.attr_name, name]), old_raw)
+        if obj.owner is not None :
+            obj.home_scope.record_change \
+                (MOM.SCM.Change.Attr_Composite, obj, {name : old_raw})
     # end def _record_change
 
 # end class _Nested_Mixin_
