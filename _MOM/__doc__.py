@@ -42,6 +42,8 @@
 #    21-Jan-2010 (CT) `Primary_Optional` added
 #    29-Jan-2010 (MG) Tests for scope rollback added/enhanced
 #    29-Jan-2010 (MG) Tests for pid_from_lid/pid_as_lid/obj.lid/ added
+#     6-Feb-2010 (MG) Use `t4` for new `auto_up_depends` test instance of
+#                     `t1` (because all other traps are are already destroyed)
 #    ««revision-date»»···
 #--
 
@@ -1175,16 +1177,16 @@ An attribute can be updated automatically whenever the value of
 another attribute changes. To define an auto-updating attribute,
 specify the (names of the) attributes it depends on in
 `auto_up_depends`.
-
-    >>> t1.max_weight
+    >>> t4.max_weight = 10
+    >>> t4.max_weight
+    10.0
+    >>> t4.up_ex
+    40.0
+    >>> t4.max_weight = 5
+    >>> t4.up_ex
     20.0
-    >>> t1.up_ex
-    20.0
-    >>> t1.max_weight = 5
-    >>> t1.up_ex
-    5.0
-    >>> del t1.max_weight
-    >>> t1.up_ex
+    >>> del t4.max_weight
+    >>> t4.up_ex
 
 
 """
