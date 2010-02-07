@@ -20,117 +20,117 @@ msgstr ""
 
 #: _GTW/_OMP/_PAP/Person.py:89 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Academic title"
-msgstr ""
+msgstr "Titel"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Academic title."
-msgstr ""
+msgstr "Titel."
 
 #: _GTW/_OMP/_PAP/Person_has_Address.py:55 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Address"
-msgstr ""
+msgstr "Adresse"
 
 #: _GTW/_OMP/_PAP/Nav.py:89 _GTW/_OMP/_PAP/Nav.py:90
 msgid "Addresses"
-msgstr ""
+msgstr "Adressen"
 
 #: _GTW/_OMP/_PAP/Phone.py:68 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Area code"
-msgstr ""
+msgstr "Vorwahl"
 
 #: _GTW/_OMP/_PAP/Address.py:79 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "City"
-msgstr ""
+msgstr "Stadt"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "City, town, or village"
-msgstr ""
+msgstr "Stadt, Gemeinde, Dorf"
 
 #: _GTW/_OMP/_PAP/Address.py:88 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
 #: _GTW/_OMP/_PAP/Phone.py:56 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Country code"
-msgstr ""
+msgstr "Ländervorwahl"
 
 #: _GTW/_OMP/_PAP/Person.py:97 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Date of birth"
-msgstr ""
+msgstr "Geburtstag"
 
 #: _GTW/_OMP/_PAP/Address.py:107 _GTW/_OMP/_PAP/Email.py:65
 #: _GTW/_OMP/_PAP/Phone.py:93 _GTW/_OMP/_PAP/_Person_has_Property_.py:65
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
 #: _GTW/_OMP/_PAP/Person_has_Email.py:55 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: _GTW/_OMP/_PAP/Email.py:56 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email address"
-msgstr ""
+msgstr "Emailadresse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email address (including domain)"
-msgstr ""
+msgstr "Emailadresse (inkl. Domain)"
 
 #: _GTW/_OMP/_PAP/Person_has_Phone.py:66 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Extension"
-msgstr ""
+msgstr "Durchwahl"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Extension number used in PBX"
-msgstr ""
+msgstr "Durchwahl"
 
 #: _GTW/_OMP/_PAP/Person.py:67 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "First name"
-msgstr ""
+msgstr "Vorname"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "First name of person"
-msgstr ""
+msgstr "Vorname"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Geographical position"
-msgstr ""
+msgstr "Koordinaten"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Height"
-msgstr ""
+msgstr "Höhe"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Height above mean sea level"
-msgstr ""
+msgstr "Höhe über dem Meererspiegel"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "International country code of phone number (without prefix)"
-msgstr ""
+msgstr "Internationale Landesvorwahl (ohne landespezifische Startziffern)"
 
 #: _GTW/_OMP/_PAP/Person.py:57 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Last name"
-msgstr ""
+msgstr "Nachname"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Last name of person"
-msgstr ""
+msgstr "Nachname"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Latitude"
-msgstr ""
+msgstr "Geogr. Breite"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Longitude"
-msgstr ""
+msgstr "Geogr. Länge"
 
 #: _GTW/_OMP/_PAP/Person.py:78 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Middle name"
-msgstr ""
+msgstr "Mittelname"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Middle name of person"
-msgstr ""
+msgstr "Mittelname"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Models a string-valued attribute of an object."
@@ -138,83 +138,83 @@ msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "National area code of phone number (without prefix)"
-msgstr ""
+msgstr "Vorwahl"
 
 #: _GTW/_OMP/_PAP/Phone.py:80 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Number"
-msgstr ""
+msgstr "Nummer"
 
 #: _GTW/_OMP/_PAP/_Person_has_Property_.py:55 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Person"
-msgstr ""
+msgstr "Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Person_has_Address"
-msgstr ""
+msgstr "Person hat Adresse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Person_has_Email"
-msgstr ""
+msgstr "Person hat Email"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Person_has_Phone"
-msgstr ""
+msgstr "Person hat Telefon"
 
 #: _GTW/_OMP/_PAP/Person_has_Phone.py:55 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Phone number proper (without country code, area code, extension)"
-msgstr ""
+msgstr "Telefonnummer (ohne Vorwahl oder Durchwahl)"
 
 #: _GTW/_OMP/_PAP/Nav.py:97 _GTW/_OMP/_PAP/Nav.py:98
 msgid "Phone numbers"
-msgstr ""
+msgstr "Telefonnummern"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Position"
-msgstr ""
+msgstr "Position"
 
 #: _GTW/_OMP/_PAP/Address.py:98 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Region"
-msgstr ""
+msgstr "Region"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Short description of the address"
-msgstr ""
+msgstr "Kurze Beschreibung der Adresse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Short description of the email address"
-msgstr ""
+msgstr "Kurze Beschreibung der Emailadresse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Short description of the link"
-msgstr ""
+msgstr "Kurze Beschreibung der Verknüpfung"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Short description of the phone number"
-msgstr ""
+msgstr "Kurze Beschreibung der Telefonnummer"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "State or province or region"
-msgstr ""
+msgstr "Bundesland"
 
 #: _GTW/_OMP/_PAP/Address.py:59 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Street"
-msgstr ""
+msgstr "Strasse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Street (or place) and house number"
-msgstr ""
+msgstr "Strasse (oder Platz) und Hausnummer"
 
 #: _GTW/_OMP/_PAP/Address.py:69 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Zip code"
-msgstr ""
+msgstr "Postleitzahl"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Zip code of address"
-msgstr ""
+msgstr "Postleitzahl der Adresse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "_Person_has_Property_"
@@ -222,25 +222,25 @@ msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "`Address` linked to `person`"
-msgstr ""
+msgstr "Adresse einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "`Email` linked to `person`"
-msgstr ""
+msgstr "Emailadresse einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "`Phone` linked to `person`"
-msgstr ""
+msgstr "Telefonnummer einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "addresss"
-msgstr ""
+msgstr "Adresse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "emails"
-msgstr ""
+msgstr "Emailadressen"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "phones"
-msgstr ""
+msgstr "Telefonnummern"
 

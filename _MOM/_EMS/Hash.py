@@ -228,6 +228,7 @@ class Manager (MOM.EMS._Manager_) :
         root  = entity.relevant_root
         table = self._tables [root.type_name]
         del table [hpk]
+        ### XXX ??? entity.pid                = None
         count [entity.type_name] -= 1
         if entity.Roles :
             r_map = self._r_map

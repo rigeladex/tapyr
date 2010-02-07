@@ -20,11 +20,11 @@ msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account"
-msgstr ""
+msgstr "Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/Account.py:69 _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account name"
-msgstr ""
+msgstr "Benutzername"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_Anonymous"
@@ -36,61 +36,61 @@ msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_in_Group"
-msgstr ""
+msgstr "Benutzerkonto in Gruppe"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Group"
-msgstr ""
+msgstr "Gruppe"
 
 #: _GTW/_OMP/_Auth/Group.py:55 _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Group name"
-msgstr ""
+msgstr "Gruppenname"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Name of group"
-msgstr ""
+msgstr "Name der Gruppe"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Password for this account"
-msgstr ""
+msgstr "Kennwort für dieses Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/Account.py:78 _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Superuser"
-msgstr ""
+msgstr "Wunderwuzzi"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "This account has super-user permissions."
-msgstr ""
+msgstr "Dieses Benutzerkonto hat alle Berechtigungen."
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "This account is currently active."
-msgstr ""
+msgstr "Dieses Benutzerkonto ist gegenwärtig freigeschaltet."
 
 #: _GTW/_OMP/_Auth/Account.py:62 _GTW/_OMP/_Auth/__babel__.py:0
 msgid "User active"
-msgstr ""
+msgstr "Benutzer freigeschaltet"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "User name associated with this account"
-msgstr ""
+msgstr "Benutzername des Benutzerkontos"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "`Account` linked to `group`"
-msgstr ""
+msgstr "Benutzerkonto verknüpft mit Gruppe"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "`Group` linked to `account`"
-msgstr ""
+msgstr "Gruppe verknüpft mit Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "accounts"
-msgstr ""
+msgstr "Benutzerkonten"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "groups"
-msgstr ""
+msgstr "Gruppen"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "password"
-msgstr ""
+msgstr "Kennwort"
 

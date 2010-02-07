@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-01-31 15:18+0100\n"
+"POT-Creation-Date: 2010-02-07 13:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,47 @@ msgstr ""
 msgid "English"
 msgstr ""
 
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "Geographical position"
+msgstr ""
+
 #: _GTW/_NAV/example/templates/i18n.jnj:7
 msgid "German"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "Height"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "Height above mean sea level"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "Position"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "Short description of the link"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "_Person_has_Property_"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "`Email` linked to `person`"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "`Phone` linked to `person`"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "emails"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "phones"
 msgstr ""
 

@@ -21,22 +21,22 @@ msgstr ""
 #: _GTW/_NAV/_E_Type/Admin.py:88 _GTW/_NAV/_E_Type/Admin.py:200
 #, python-format
 msgid "%s `%s` doesn't exist!"
-msgstr ""
+msgstr "%s `%s` existiert nicht"
 
 #: _GTW/_Form/Auth.py:60
 msgid "A user name is required to login."
-msgstr ""
+msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
 #: _GTW/_Form/Plain.py:84
 #, python-format
 msgid "Field `%(field)s` is required"
-msgstr ""
+msgstr "Feld `%(field)s` muss ausgefüllt werden"
 
 #: _GTW/_Form/Auth.py:62
 msgid "The password is required."
-msgstr ""
+msgstr "Das Kennwort muss ausgefüllt werden."
 
 #: _GTW/_Form/Auth.py:66
 msgid "Username or password incorrect"
-msgstr ""
+msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
