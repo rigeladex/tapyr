@@ -1379,16 +1379,16 @@ class _ATAX_Command_ (TFL.Meta.Object) :
     # end def load_config
 
     def _add_files (self, cmd, account, categories, source_currency) :
-        if cmd.argn > 0 :
-            assert not cmd.stdin
+        if cmd.stdin :
+            assert cmd.argn == 0
+            account.add_lines    (sys.stdin, categories, source_currency)
+        else :
             for file_name in cmd.argv :
                 account.add_file (file_name, categories, source_currency)
-        elif cmd.stdin :
-            account.add_lines    (sys.stdin, categories, source_currency)
     # end def _add_files
 
     def _arg_spec (self) :
-        return ()
+        return ("file:P", )
     # end def _arg_spec
 
     def _opt_spec (self) :
