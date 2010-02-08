@@ -58,6 +58,8 @@
 #                     `if v is not None` instead of `if v`
 #     4-Feb-2010 (CT) `Link.__call__` changed to use `epkified`, too
 #     4-Feb-2010 (CT) `Entity` factored, `An_Entity` added
+#     8-Feb-2010 (CT) `__getattr__` and `__repr__` moved from `Id_Entity` to
+#                     `Entity`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +81,15 @@ class Entity (TFL.Meta.Object) :
     def __call__ (self, * args, ** kw) :
         return self._etype (* args, scope = self.home_scope, ** kw)
     # end def __call__
+
+    def __getattr__ (self, name) :
+        return getattr (self._etype, name)
+    # end def __getattr__
+
+    def __repr__ (self) :
+        return "<E_Type_Manager for %s of scope %s>" % \
+            (self._etype.type_name, self.home_scope.name)
+    # end def __repr__
 
 # end class Entity
 
@@ -170,15 +181,6 @@ class Id_Entity (Entity) :
             ([result], self._etype.sort_key (sort_key))
         return result
     # end def query_s
-
-    def __getattr__ (self, name) :
-        return getattr (self._etype, name)
-    # end def __getattr__
-
-    def __repr__ (self) :
-        return "<E_Type_Manager for %s of scope %s>" % \
-            (self._etype.type_name, self.home_scope.name)
-    # end def __repr__
 
 # end class Id_Entity
 
