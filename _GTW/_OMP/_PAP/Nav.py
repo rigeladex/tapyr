@@ -64,11 +64,13 @@ class Admin (object) :
         , Form_args =
             ( FGD (WF ("primary"))
             , FGD ("desc")
-            , AID ( "position"
-                  , FGD ( "lon", "lat", "height"
-                        , widget = "html/form.jnj, fg_tr"
-                        )
-                  )
+            , AID
+                ( "position"
+                , FGD
+                    ( "lon", "lat", "height"
+                    , widget = "html/form.jnj, fg_tr"
+                    )
+                )
             )
         )
 

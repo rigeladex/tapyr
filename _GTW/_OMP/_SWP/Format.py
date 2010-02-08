@@ -48,13 +48,11 @@ class M_Format (TFL.Meta.Object.__class__) :
     """Meta class for formatter classes"""
 
     Table = {}
-    Abbrs = {}
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if name != "_Format_" :
             cls._m_add (name,     cls.Table)
-            cls._m_add (cls.nick, cls.Abbrs)
     # end def __init__
 
     def _m_add (cls, name, Table) :
@@ -68,7 +66,6 @@ class M_Format (TFL.Meta.Object.__class__) :
 class _Format_ (TFL.Meta.Object) :
 
     __metaclass__ = M_Format
-    nick          = None
 
 # end class _Format_
 
@@ -76,7 +73,6 @@ class HTML (_Format_) :
     """Formatter for text in HTML markup"""
 
     forbidden = "applet frame frameset head html iframe input object script"
-    nick      = "H"
 
     @classmethod
     def convert (cls, text) :
@@ -89,8 +85,6 @@ class HTML (_Format_) :
 class ReST (_Format_) :
     """Formatter for re-structured text"""
 
-    nick = "R"
-
     @classmethod
     def convert (cls, text) :
         return GTW.ReST.to_html (text, encoding = "utf8")
@@ -98,19 +92,26 @@ class ReST (_Format_) :
 
 # end class ReST
 
+class Markdown (_Format_) :
+    """Formatter for text in `Markdown` markup"""
+
+    MD = None
+
+    @classmethod
+    def convert (cls, text) :
+        if cls.MD is None :
+            import markdown
+            cls.MD = markdown.Markdown ()
+        return cls.MD.convert (text)
+    # end def convert
+
+# end class Markdown
+
 class A_Format (MOM.Attr._A_Named_Object_) :
     """Format to use for text of a page"""
 
     typ         = "Format"
     Table       = M_Format.Table
-
-    class Pickler (MOM.Attr._A_Named_Object_.Pickler) :
-
-        class Type (MOM.Attr.A_String) :
-            max_length = 5
-        # end class Type
-
-    # end class Pickler
 
 # end class A_Format
 

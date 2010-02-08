@@ -23,13 +23,13 @@ MOM To-Do
 
     x add check for `min_value` and `max_value`
 
-- Composite attributes
+x Composite attributes
 
-  * MOM.Attr.Type: A_Composite
+  x MOM.Attr.Type: A_Composite
 
-  * Predicate handling for composites
+  x Predicate handling for composites
 
-  * set/set_raw
+  x set/set_raw
 
 - Link, M_Link, Role:
 

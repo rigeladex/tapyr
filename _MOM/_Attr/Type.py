@@ -91,9 +91,9 @@ from   _TFL                  import TFL
 import _MOM._Attr.Kind
 import _MOM._Meta.M_Attr_Type
 
-import _TFL.sos              as     sos
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.Regexp           import *
+from   _TFL                  import sos
 
 import _TFL._Meta.Property
 
