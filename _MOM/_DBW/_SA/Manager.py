@@ -69,6 +69,7 @@
 #     8-Feb-2010 (MG) `_setup_composite` changed: don't pass the real e_type
 #                     to SA but instance use a function which mappes the
 #                     attributes from the database to the attributes of the entity
+#     8-Feb-2010 (MG) Database creation for postgres added
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -174,10 +175,33 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     metadata         = schema.MetaData () ### XXX
 
     def create_database (cls, db_uri, scope) :
+        if not db_uri.startswith ("sqlite://") :
+            ### we need to issue a create database command
+            create_db_uri, db_name = db_uri.rsplit ("/", 1)
+            if db_uri.startswith ("postgresql://") :
+                cls._create_postgres_db (create_db_uri, db_name)
+            elif not db_uri.startswith ("sqlite://") :
+                engine  = cls._create_engine (create_db_uri)
+                engine.execute ("CREATE DATABASE %s")
         engine  = cls._create_engine (db_uri)
         cls.metadata.create_all      (engine)
         return cls._create_session   (engine, scope)
     # end def create_database
+
+    def _create_postgres_db ( cls, db_uri, db_name
+                            , encoding = "utf8"
+                            , template = "template0"
+                            ) :
+        import psycopg2.extensions as PE
+        engine = cls._create_engine (db_uri + "/postgres")
+        conn   = engine.connect ()
+        conn.connection.connection.set_isolation_level \
+            (PE.ISOLATION_LEVEL_AUTOCOMMIT)
+        conn.execute \
+            ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
+            % (db_name, encoding, template)
+            )
+    # end def _create_postgres_db
 
     def connect_database (cls, db_uri, scope) :
         return cls._create_session (cls._create_engine (db_uri), scope)
