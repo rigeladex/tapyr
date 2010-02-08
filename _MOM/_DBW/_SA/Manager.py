@@ -68,10 +68,15 @@
 #                     `_setup_composite` added and used
 #     8-Feb-2010 (MG) `_setup_composite` changed: don't pass the real e_type
 #                     to SA but instance use a function which mappes the
-#                     attributes from the database to the attributes of the entity
+#                     attributes from the database to the attributes of the
+#                     entity
 #     8-Feb-2010 (MG) Database creation for postgres added
 #     8-Feb-2010 (MG) `_setup_composite._create`: changed to use
 #                     `from_pickle_cargo` instance of creating the instance
+#     8-Feb-2010 (MG) Generator of mapper properties moced into attr kind
+#     8-Feb-2010 (MG) `_attr_dicts`: collect `Query` attributes as well
+#                     `_setup_columns`: only add columsn which need to be
+#                     save to the database to the table
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -332,7 +337,9 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
             inherited_attrs = root._Attributes._attr_dict
         for name, attr_kind in attr_dict.iteritems () :
             if name not in inherited_attrs :
-                if attr_kind.save_to_db :
+                if (  attr_kind.save_to_db
+                   or isinstance (attr_kind, MOM.Attr.Query)
+                   ) :
                     db_attrs [name] = attr_kind
                 elif isinstance ( attr_kind
                                 , ( MOM.Attr.Cached_Role
@@ -388,7 +395,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
             ### we add the type_name in any case to make EMS.SA easier
             result.append (schema.Column ("Type_Name", Type_Name_Type))
             e_type._sa_pk_name = pk_name
-        for name, kind in db_attrs.iteritems () :
+        for name, kind in ((n, k) for (n, k) in db_attrs.iteritems () if k.save_to_db):
             attr               = kind.attr
             col_name           = kind._sa_col_name ()
             if prefix :
@@ -406,47 +413,6 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                     (schema.Column (raw_name, types.String (length = 60)))
         return result
     # end def _setup_columns
-
-    def _setup_composite (cls, name, attr_kind, base_e_type, properties) :
-        e_type            = attr_kind.attr.C_Type
-        db_attrs, columns = e_type._sa_save_attrs
-        prefix_len        = len ("__%s_" % (name, ))
-        attr_names        = [c.name [prefix_len:] for c in columns]
-        raw_or_coocked    = {}
-        for attr_name in attr_names :
-            if attr_name.startswith ("__raw_") :
-                cdk_attr                   = attr_name [6:]
-                raw_or_coocked [cdk_attr ] = (cdk_attr, attr_name)
-            else :
-                raw_or_coocked [attr_name] = attr_name
-        del e_type._sa_save_attrs
-        def _create (* args, ** kw) :
-            attr_dict = dict (zip (attr_names, args))
-            for attr_name, arg_names in raw_or_coocked.iteritems () :
-                if isinstance (arg_names, tuple) :
-                    kw [attr_name] = tuple (attr_dict [n] for n in arg_names)
-                else :
-                    kw [attr_name] = attr_dict [arg_name]
-            return e_type.from_pickle_cargo (None, kw)
-        # end def _create
-        properties [name] = orm.composite (_create, * columns)
-        def __composite_values__ (self) :
-            return [getattr (self, attr) for attr in attr_names]
-        # end def __composite_values__
-        def __set_composite_values__ (self, * args) :
-            for v, an in zip (args, attr_names) :
-                setattr (self, an, v)
-        # end def __set_composite_values__
-        init_code = """def __init__ (self, %s, * args, ** kw) :
-            import pdb; pdb.set_trace ()
-            self.__super.__init__ (* args, ** kw)
-""" % (", ".join (attr_names))
-        init = {}
-        eval (compile (init_code, "string",  "exec"), globals (), init)
-        #e_type.__init__                 = init ["__init__"]
-        e_type.__composite_values__     = __composite_values__
-        e_type.__set_composite_values__ = __set_composite_values__
-    # end def _setup_composite
 
     def _setup_inheritance (cls, e_type, sa_table, bases, col_prop) :
         e_type._sa_inheritance = True
@@ -476,16 +442,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         result = dict ()
         for name, attr_kind in db_attrs.iteritems () :
             ckd           = attr_kind.ckd_name
-            if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
-                cls._setup_composite (name, attr_kind, e_type, result)
-            elif isinstance (attr_kind, MOM.Attr.Link_Role) :
-                result [name] = orm.synonym  (ckd, map_column = False)
-                result [ckd]  = orm.relation (attr_kind.role_type)
-            else :
-                ### we need to do this in 2 steps because otherways we hit a
-                ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
-                result [name] = orm.synonym (ckd, map_column = False)
-                result [ckd]  = sa_table.c [name]
+            attr_kind._sa_mapper_prop (name, ckd, e_type, result)
         for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
             cls._cached_role \
                 (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)

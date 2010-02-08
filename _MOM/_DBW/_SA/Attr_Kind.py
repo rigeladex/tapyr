@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glück. All rights reserved
+# Copyright (C) 2009-2010 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,6 +31,8 @@
 #    27-Oct-2009 (MG) Removed `unique` constraint because we actually need a
 #                     unique-together which is not possible at a column level
 #     4-Nov-2009 (MG) Use `TFL.Add_To_Class`
+#     8-Feb-2010 (MG) Generation of mapper properties moved in here
+#     8-Feb-2010 (MG) `_sa_query_prop` added
 #    ««revision-date»»···
 #--
 
@@ -38,6 +40,8 @@ from   _MOM             import MOM
 import _MOM._Attr.Type
 from   _TFL             import TFL
 import _TFL.Decorator
+
+from    sqlalchemy      import orm
 
 @TFL.Add_To_Class ("_sa_column_attrs", MOM.Attr.Kind)
 def _sa_kind (self) :
@@ -60,5 +64,62 @@ def _sa_normal_attr(self) :
 def _sa_object (self) :
     return "%s_id" % (self.name, )
 # end def _sa_object
+
+### Mapper property functions
+@TFL.Add_To_Class ("_sa_mapper_prop", MOM.Attr.Kind)
+def _sa_kind_prop (self, name, ckd, e_type, properties) :
+    ### we need to do this in 2 steps because otherways we hit a
+    ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
+    properties [name] = orm.synonym (ckd, map_column = False)
+    properties [ckd]  = e_type._sa_table.c [name]
+# end def _sa_kind_prop
+
+@TFL.Add_To_Class ("_sa_mapper_prop", MOM.Attr.Link_Role)
+def _sa_link_prop (self, name, ckd, e_type, properties) :
+    properties [name] = orm.synonym  (ckd, map_column = False)
+    properties [ckd]  = orm.relation (self.role_type)
+# end def _sa_link_prop
+
+@TFL.Add_To_Class ("_sa_mapper_prop", MOM.Attr._Composite_Mixin_)
+def _sa_composite_prop (self, name, ckd, base_e_type, properties) :
+    e_type            = self.attr.C_Type
+    db_attrs, columns = e_type._sa_save_attrs
+    prefix_len        = len ("__%s_" % (name, ))
+    attr_names        = [c.name [prefix_len:] for c in columns]
+    raw_or_coocked    = {}
+    for attr_name in attr_names :
+        if attr_name.startswith ("__raw_") :
+            cdk_attr                   = attr_name [6:]
+            raw_or_coocked [cdk_attr ] = (cdk_attr, attr_name)
+        else :
+            raw_or_coocked [attr_name] = attr_name
+    del e_type._sa_save_attrs
+    def _create (* args, ** kw) :
+        attr_dict = dict (zip (attr_names, args))
+        for attr_name, arg_names in raw_or_coocked.iteritems () :
+            if isinstance (arg_names, tuple) :
+                kw [attr_name] = tuple (attr_dict [n] for n in arg_names)
+            else :
+                kw [attr_name] = attr_dict [arg_name]
+        return e_type.from_pickle_cargo (None, kw)
+    # end def _create
+    properties [name] = orm.composite (_create, * columns)
+    def __composite_values__ (self) :
+        return [getattr (self, attr) for attr in attr_names]
+    # end def __composite_values__
+    def __set_composite_values__ (self, * args) :
+        for v, an in zip (args, attr_names) :
+            setattr (self, an, v)
+    # end def __set_composite_values__
+    e_type.__composite_values__     = __composite_values__
+    e_type.__set_composite_values__ = __set_composite_values__
+# end def _sa_composite_prop
+
+@TFL.Add_To_Class ("_sa_mapper_prop", MOM.Attr.Query)
+def _sa_query_prop (self, name, ckd, base_e_type, properties) :
+    properties [name] = orm.synonym  (ckd, map_column = False)
+    properties [ckd]  = orm.column_property \
+        (self.attr.query (base_e_type._sa_table.c))
+# end def _sa_query_prop
 
 ### __END__ MOM.DBW.SA.Attr_Kind
