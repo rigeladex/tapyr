@@ -95,7 +95,7 @@
 #     5-Feb-2010 (CT) Exception handler added `epkified` to improve error
 #                     message
 #     8-Feb-2010 (CT) `An_Entity.__init__` added to disable `* args`
-#     8-Feb-2010 (CT) `snapshot` removed
+#     8-Feb-2010 (CT) `snapshot` and `has_changed` removed
 #    ««revision-date»»···
 #--
 
@@ -234,10 +234,6 @@ class Entity (TFL.Meta.Object) :
     def globals (self) :
         return self.__class__._app_globals or object_globals (self)
     # end def globals
-
-    def has_changed (self) :
-        return self._attr_man.has_changed (self)
-    # end def has_changed
 
     def has_substance (self) :
         """TRUE if there is at least one attribute with a non-default value."""
