@@ -94,6 +94,7 @@
 #                     `Id_Entity` to `Entity`
 #     5-Feb-2010 (CT) Exception handler added `epkified` to improve error
 #                     message
+#     8-Feb-2010 (CT) `An_Entity.__init__` added to disable `* args`
 #    ««revision-date»»···
 #--
 
@@ -449,6 +450,10 @@ class An_Entity (Entity) :
     __metaclass__         = MOM.Meta.M_An_Entity
 
     is_partial            = True
+
+    def __init__ (self, ** kw) :
+        self.__super.__init__ (** kw)
+    # end def __init__
 
     @property
     def SCM_Change_Attr (self) :
