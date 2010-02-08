@@ -65,6 +65,7 @@
 #                     `commit` factored to `EMS.Manager`
 #    19-Jan-2010 (CT) `rollback` added
 #    20-Jan-2010 (CT) `pid_as_lid` and `pid_from_lid` added
+#     8-Feb-2010 (CT) `_remove` factored; `remove` changed to set `pid` to None
 #    ««revision-date»»···
 #--
 
@@ -223,19 +224,8 @@ class Manager (MOM.EMS._Manager_) :
     # end def register_change
 
     def remove (self, entity) :
-        count = self._counts
-        hpk   = entity.hpk
-        root  = entity.relevant_root
-        table = self._tables [root.type_name]
-        del table [hpk]
-        ### XXX ??? entity.pid                = None
-        count [entity.type_name] -= 1
-        if entity.Roles :
-            r_map = self._r_map
-            for r in entity.Roles :
-                obj = r.get_role (entity)
-                obj.unregister_dependency (entity.__class__)
-                r_map [r] [obj.pid].remove (entity)
+        self._remove (entity)
+        entity.pid = None
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :
@@ -244,9 +234,9 @@ class Manager (MOM.EMS._Manager_) :
         table   = self._tables [root.type_name]
         if new_hpk in table :
             raise MOM.Error.Name_Clash (entity, table [new_hpk])
-        self.remove (entity)
-        renamer     ()
-        self.add    (entity, entity.pid)
+        self._remove (entity)
+        renamer      ()
+        self.add     (entity, entity.pid)
     # end def rename
 
     def rollback (self) :
@@ -317,6 +307,21 @@ class Manager (MOM.EMS._Manager_) :
                 )
             )
     # end def _r_query_t
+
+    def _remove (self, entity) :
+        count = self._counts
+        hpk   = entity.hpk
+        root  = entity.relevant_root
+        table = self._tables [root.type_name]
+        del table [hpk]
+        count [entity.type_name] -= 1
+        if entity.Roles :
+            r_map = self._r_map
+            for r in entity.Roles :
+                obj = r.get_role (entity)
+                obj.unregister_dependency (entity.__class__)
+                r_map [r] [obj.pid].remove (entity)
+    # end def _remove
 
     def _t_count (self, Type, seen = None) :
         if seen is None :

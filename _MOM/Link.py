@@ -42,6 +42,7 @@
 #    22-Dec-2009 (CT) `Link2_Ordered` changed to use `A_Int` for `seq_no` and
 #                     directly derived from `Link2`
 #    18-Jan-2010 (CT) `Role_Cacher_1` factored, `Role_Cacher_n` added
+#     8-Feb-2010 (CT) `Link` changed to redefine `_destroy`, not `destroy`
 #    ««revision-date»»···
 #--
 
@@ -90,11 +91,11 @@ class _MOM_Link_ (MOM.Id_Entity) :
             role_cacher (self, no_value = False)
     # end def
 
-    def destroy (self) :
+    def _destroy (self) :
         for role_cacher in self.auto_cache_roles :
             role_cacher (self, no_value = True)
-        self.__super.destroy ()
-    # end def destroy
+        self.__super._destroy ()
+    # end def _destroy
 
 Link = _MOM_Link_ # end class
 

@@ -57,6 +57,8 @@
 #    16-Jan-2010 (CT) `_outer_pgk_ns` factored
 #    19-Jan-2010 (CT) `rollback` added
 #    27-Jan-2010 (CT) `rollback` changed to call `count_change`
+#     8-Feb-2010 (CT) `remove` changed to call `entity._destroy` before
+#                     `ems.remove`
 #    ««revision-date»»···
 #--
 
@@ -438,8 +440,8 @@ class Scope (TFL.Meta.Object) :
         """Remove `entity` from scope `self`"""
         assert (entity != self.root)
         def remove () :
-            self.ems.remove (entity)
             entity._destroy ()
+            self.ems.remove (entity)
         if entity.electric :
             remove ()
         else :
