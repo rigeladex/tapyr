@@ -33,6 +33,9 @@
 #     3-Feb-2010 (MG) Allow callables in field list fo `Field_Prefixer`, `
 #                     Role_Description` added
 #     3-Feb-2010 (MG) Set the `completes` attribute on completer objects
+#     4-Feb-2010 (MG) `Role_Description` removed again
+#     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
+#                     etype managers work differently)
 #    ««revision-date»»···
 #--
 
@@ -65,10 +68,11 @@ class Wildcard_Field (TFL.Meta.Object) :
         if self.prefix :
             et_man = getattr (et_man, self.prefix).role_type
             prefix = self.prefix + "."
+        etype = et_man._etype
         return \
             [   "%s%s" % (prefix, ak.name)
             for ak in sorted
-               ( itertools.chain (* (getattr (et_man, k) for k in self.kinds))
+               ( itertools.chain (* (getattr (etype, k) for k in self.kinds))
                , key = lambda ak : ak.rank
                )
                 if ak.name not in added_fields
@@ -116,11 +120,10 @@ class Field (TFL.Meta.Object) :
                 (scope, getattr (et_man, role).role_type.type_name)
         self.et_man         = et_man
         self.name           = attr_name
-        self.attr_kind      = getattr (et_man, attr_name)
+        self.attr_kind      = getattr (et_man._etype, attr_name)
     # end def __init__
 
     def get_raw (self, form, instance) :
-        #import pdb; pdb.set_trace ()
         return self.attr_kind.get_raw (instance)
     # end def get_raw
 
@@ -134,11 +137,15 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     """A field group description for an MOM object"""
 
     _real_name = "Field_Group_Description"
-
-    def __call__ (self, et_man, added_fields = None, ** kw) :
+    widget     = GTW.Form.Widget_Spec \
+        ( GTW.Form.Field_Group_Description.widget
+        , inline_table_th   = "html/form.jnj, inline_table_th"
+        , inline_table_td   = "html/form.jnj, inline_table_td"
+        )
+    def __call__ (self, et_man, added_fields = None, * args, ** kw) :
         if not self.fields :
             return itertools.chain \
-                ( * (  fgd (et_man, added_fields, ** kw)
+                ( * (  fgd (et_man, added_fields, * args, ** kw)
                     for fgd in
                        ( self.__class__ (Wildcard_Field ("primary"  ))
                        , self.__class__ (Wildcard_Field ("user_attr"))
@@ -167,32 +174,6 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     # end def __call__
 
 Field_Group_Description = _MOM_Field_Group_Description_ # end class _MOM_Field_Group_Description_
-
-class Role_Description (Field_Group_Description) :
-    """A special kind of field group which actually handles the attributes of
-       a role of a link
-    """
-
-    def __init__ (self, role_name, * fields, ** kw) :
-        self.__super.__init__ (* fields, ** kw)
-        self.role_name = role_name
-        fields         = []
-        joiner         = kw.pop ("joiner", ".")
-        for f in self.fields :
-            if callable (f) :
-                if f.prefix :
-                    f.prefix = "%s%s%s" % (role_name, joiner, f.prefix)
-                else :
-                    f.prefix = role_name
-            else :
-                f = "%s%s%s" % (role_name, joiner, f)
-            fields.append (f)
-        self.fields = fields
-        if self.completer :
-            self.completer = self.completer.clone (role_name, role_name)
-    # end def __init__
-
-# end class Role_Description
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")

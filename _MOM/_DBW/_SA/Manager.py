@@ -59,6 +59,16 @@
 #                     collect the cached role attributes as well
 #    27-Jan-2010 (MG) Support for cached roles added
 #    30-Jan-2010 (MG) Detection of multiple inheritance changed
+#     6-Feb-2010 (MG) `_sa_column` requires attribute instances as parameter
+#                     as well
+#     6-Feb-2010 (MG) An MOM Attribute can now define multiple columns
+#     7-Feb-2010 (MG) Guard against non exitsing `relevant_root` added
+#                     (needed for `An_Entity)
+#                     `_setup_columns`: parameter `prefix` added
+#                     `_setup_composite` added and used
+#     8-Feb-2010 (MG) `_setup_composite` changed: don't pass the real e_type
+#                     to SA but instance use a function which mappes the
+#                     attributes from the database to the attributes of the entity
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -290,7 +300,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         db_attrs   = {}
         role_attrs = {}
         root       = bases and bases [0]
-        if e_type is e_type.relevant_root :
+        if e_type is getattr (e_type, "relevant_root", e_type):
             inherited_attrs = {}
         else :
             inherited_attrs = root._Attributes._attr_dict
@@ -328,44 +338,86 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         session.execute (cls.sa_scope.insert ().values (** kw))
     # end def register_scope
 
-    def _setup_columns (cls, e_type, db_attrs, bases, unique) :
+    def _setup_columns (cls, e_type, db_attrs, bases, unique, prefix = None) :
         result = []
-        if e_type is not e_type.relevant_root :
-            base    = bases [0]
-            pk_name = "%s_id" % (base._sa_table.name)
-            result.append \
-                ( schema.Column
-                    ( pk_name, types.Integer
-                    , schema.ForeignKey (base._sa_table.c [base._sa_pk_name])
-                    , primary_key = True
-                    )
-                )
-        else :
-            pk_name = "id"
-            result.append \
-                ( schema.Column
-                    (pk_name, types.Integer, primary_key = True)
-                )
-        ### we add the type_name in any case to make EMS.SA easier
-        result.append (schema.Column ("Type_Name", Type_Name_Type))
-        e_type._sa_pk_name = pk_name
-        for name, attr_kind in db_attrs.iteritems () :
-            attr_kind.attr._sa_col_name = attr_kind._sa_col_name ()
-            if attr_kind.is_primary :
-                unique.append (attr_kind.attr._sa_col_name)
-            result.append \
-                ( attr_kind.attr._sa_column
-                    (attr_kind, ** attr_kind._sa_column_attrs ())
-                )
-            if attr_kind.needs_raw_value :
+        if getattr (e_type, "relevant_root", None) :
+            ### if the e_type has no relevant root it is an `An_Entity` which
+            ### does not need a primary key
+            if e_type is not e_type.relevant_root :
+                base    = bases [0]
+                pk_name = "%s_id" % (base._sa_table.name)
                 result.append \
                     ( schema.Column
-                        ( attr_kind.attr.raw_name
-                        , types.String (length = 60)
+                        ( pk_name, types.Integer
+                        , schema.ForeignKey (base._sa_table.c[base._sa_pk_name])
+                        , primary_key = True
                         )
                     )
+            else :
+                pk_name = "id"
+                result.append \
+                    ( schema.Column
+                        (pk_name, types.Integer, primary_key = True)
+                    )
+            ### we add the type_name in any case to make EMS.SA easier
+            result.append (schema.Column ("Type_Name", Type_Name_Type))
+            e_type._sa_pk_name = pk_name
+        for name, kind in db_attrs.iteritems () :
+            attr               = kind.attr
+            col_name           = kind._sa_col_name ()
+            if prefix :
+                col_name       = "__%s_%s" % (prefix, col_name)
+            attr._sa_col_name  = col_name
+            if kind.is_primary :
+                unique.append (attr._sa_col_name)
+            result.extend \
+                (attr._sa_columns (attr, kind, ** kind._sa_column_attrs ()))
+            if kind.needs_raw_value :
+                raw_name     = attr.raw_name
+                if prefix :
+                    raw_name = "__%s_%s" % (prefix, raw_name)
+                result.append \
+                    (schema.Column (raw_name, types.String (length = 60)))
         return result
     # end def _setup_columns
+
+    def _setup_composite (cls, name, attr_kind, base_e_type, properties) :
+        e_type            = attr_kind.attr.C_Type
+        db_attrs, columns = e_type._sa_save_attrs
+        prefix_len        = len ("__%s_" % (name, ))
+        attr_names        = [c.name [prefix_len:] for c in columns]
+        raw_or_coocked    = {}
+        for attr_name in attr_names :
+            cdk_attr = attr_names
+            if attr_name.startswith ("__raw_") :
+                cdk_attr                   = attr_name [6:]
+                del raw_or_coocked [cdk_attr]
+            raw_or_coocked [attr_name] = cdk_attr
+        del e_type._sa_save_attrs
+        def _create (* args, ** kw) :
+            attr_dict = dict (zip (attr_names, args))
+            for arg_name, attr_name in raw_or_coocked.iteritems () :
+                kw [attr_name] = attr_dict [arg_name]
+            return e_type (** kw)
+        # end def _create
+        properties [name] = orm.composite (_create, * columns)
+        def __composite_values__ (self) :
+            return [getattr (self, attr) for attr in attr_names]
+        # end def __composite_values__
+        def __set_composite_values__ (self, * args) :
+            for v, an in zip (args, attr_names) :
+                setattr (self, an, v)
+        # end def __set_composite_values__
+        init_code = """def __init__ (self, %s, * args, ** kw) :
+            import pdb; pdb.set_trace ()
+            self.__super.__init__ (* args, ** kw)
+""" % (", ".join (attr_names))
+        init = {}
+        eval (compile (init_code, "string",  "exec"), globals (), init)
+        #e_type.__init__                 = init ["__init__"]
+        e_type.__composite_values__     = __composite_values__
+        e_type.__set_composite_values__ = __set_composite_values__
+    # end def _setup_composite
 
     def _setup_inheritance (cls, e_type, sa_table, bases, col_prop) :
         e_type._sa_inheritance = True
@@ -395,7 +447,9 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         result = dict ()
         for name, attr_kind in db_attrs.iteritems () :
             ckd           = attr_kind.ckd_name
-            if isinstance (attr_kind, MOM.Attr.Link_Role) :
+            if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
+                cls._setup_composite (name, attr_kind, e_type, result)
+            elif isinstance (attr_kind, MOM.Attr.Link_Role) :
                 result [name] = orm.synonym  (ckd, map_column = False)
                 result [ckd]  = orm.relation (attr_kind.role_type)
             else :

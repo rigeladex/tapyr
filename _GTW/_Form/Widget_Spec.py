@@ -28,6 +28,7 @@
 # Revision Dates
 #    13-Jan-2010 (CT) Creation
 #     2-Feb-2010 (MG) `Media` added
+#     5-Feb-2010 (MG) Allow a `Widget_Spec` instance as `default`
 #    ««revision-date»»···
 #--
 
@@ -45,8 +46,11 @@ class Widget_Spec (TFL.Meta.Object) :
     default = None
 
     def __init__ (self, default, ** kw) :
-        assert default and isinstance (default, basestring)
-        self.default = default
+        if isinstance (default, self.__class__) :
+            self.__dict__.update (default.__dict__)
+        else :
+            assert default and isinstance (default, basestring)
+            self.default = default
         self.Media   = kw.pop ("Media", None)
         self.__dict__.update (kw)
     # end def __init__

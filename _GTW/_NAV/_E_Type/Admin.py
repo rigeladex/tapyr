@@ -32,6 +32,11 @@
 #    29-Jan-2010 (CT) Support for `Form_args` and `Form_kw` added to
 #                     `Admin.__init__`
 #     3-Feb-2010 (MG) `Completer` fixed
+#     5-Feb-2010 (MG) `Completer` changed again, `_get_child` change to
+#                     handle multiple sub levels
+#     6-Feb-2010 (MG) Use `HTTP.Request_Data` instead of
+#                     `GTW.Tornado.Request_Data`
+#     6-Feb-2010 (MG) Made `Completed` working again
 #    ««revision-date»»···
 #--
 
@@ -43,8 +48,6 @@ import _GTW._Form._MOM.Instance
 
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type._Mgr_Base_
-
-import _GTW._Tornado.Request_Data
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -77,7 +80,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             context  = handler.context
             obj      = context ["instance"] = None
             request  = handler.request
-            req_data = GTW.Tornado.Request_Data (request.arguments)
+            req_data = self.top.HTTP.Request_Data (request.arguments)
             lid      = req_data.get ("lid") or self.lid
             if lid is not None :
                 pid  = ETM.pid_from_lid (lid)
@@ -119,21 +122,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request = handler.request
             result  = None
             if request.method == "GET" :
-                inline, completer = self.Form.completions.get \
-                    (self.field_name, (None, None))
-                if inline is not None :
-                    args     = GTW.Tornado.Request_Data (request.arguments)
-                    et_man   = inline.inline_form_cls.et_man
-                    role     = getattr (et_man, self.field_name).role_type
-                    comp_etm = getattr (et_man.home_scope, role.type_name)
+                form_cls = self.Form
+                for sf in self.forms :
+                    form_cls = getattr (form_cls, "sub_forms", {}).get (sf)
+                if form_cls is not None :
+                    args     = self.top.HTTP.Request_Data (request.arguments)
+                    et_man   = form_cls.et_man
                     filter   = tuple \
-                        (    getattr (Q, k.rsplit (".", 1) [-1]).STARTSWITH (v)
+                        (    getattr (Q, k).STARTSWITH (v)
                         for (k, v) in args.iteritems ()
                         )
-                    context ["completions"] = comp_etm.query \
+                    context ["completions"] = et_man.query \
                         ().filter (* filter).distinct ()
                     result = self.__super.rendered \
-                        (handler, completer.template)
+                        (handler, form_cls.completer.template)
             if result is None :
                 raise self.top.HTTP.Error_404 (request.path)
             return result
@@ -148,32 +150,33 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         Media        = None ### cancel inherited property defined
 
         def rendered (self, handler, template = None) :
-            import json ### part of python2.6+
             request = handler.request
             result  = None
             if request.method == "GET" :
-                ### XXX
-                bnfg = self.Form.unbound_form_map.get (self.field_name)
-                id   = request.GET.get   ("id")
-                no   = request.GET.get   ("no")
-                if not any (x is None for x in (bnfg, id, no)) :
-                    relm = bnfg.related_model
+                HTTP     = self.top.HTTP
+                form_cls = self.Form
+                for sf in self.forms :
+                    form_cls = getattr (form_cls, "sub_forms", {}).get (sf)
+                args = HTTP.Request_Data (request.arguments)
+                lid  = args.get   ("lid")
+                no   = args.get   ("no")
+                if not any (x is None for x in (form_cls, lid, no)) :
+                    et_man   = form_cls.et_man
                     try :
-                        obj  = relm.objects.get (id = id)
-                    except relm.DoesNotExist, exc :
-                        request.Error = \
-                            ( "%s `%s` existiert nicht!"
-                            % (relm._meta.verbose_name, id)
+                        obj  = et_man.pid_query (et_man.pid_from_lid (lid))
+                    except IndexError, exc :
+                        error = \
+                            ( _T("%s `%s` existiert nicht!")
+                            % (_T(comp_etm.ui_name), id)
                             )
-                        raise self.top.HTTP.Error_404 \
-                            (request.path, request.Error)
-                    form_class = bnfg.form_class \
-                        ( request  = None
-                        , instance = obj
-                        , prefix   = "%s-M%s" % (bnfg.Name, no)
+                        raise self.top.HTTP.Error_404 (request.path, error)
+                    form = form_cls (obj)
+                    return HTTP.as_json \
+                        (    (f, form.get_raw (f))
+                        for f in ichain ( form_cls.completer.fields
+                                        , ("_lid_a_state_", "instance_state")
+                                        )
                         )
-                    ### this works well for the tornado backed
-                    return dict ((f.name, str (f)) for f in form_class)
             if result is None :
                 raise self.top.HTTP.Error_404 (request.path)
             return result
@@ -305,17 +308,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     _child_name_map = dict \
         ( change    = (Changer,   "lid")
-        , complete  = (Completer, "field_name")
-        , completed = (Completed, "field_name")
+        , complete  = (Completer, "forms")
+        , completed = (Completed, "forms")
         )
 
     def _get_child (self, child, * grandchildren) :
         if child in self._child_name_map :
             T, attr = self._child_name_map [child]
+            name    = pjoin (* grandchildren)
+            if len (grandchildren) == 1 :
+                grandchildren = grandchildren [0]
             return T \
                 ( parent = self
-                , name   = "%s/%s" % (child, grandchildren [0])
-                , ** {attr : grandchildren [0]}
+                , name   = "%s/%s" % (child, name)
+                , ** {attr : grandchildren}
                 )
         if child == "create" and not grandchildren :
             return self.Changer (parent = self)

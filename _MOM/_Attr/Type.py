@@ -81,6 +81,7 @@
 #     4-Feb-2010 (CT) Argument `e_type` added to `_checkers`
 #                     `_A_Composite_._checkers` added
 #     5-Feb-2010 (CT) `_A_Composite_.cooked` added
+#     6-Feb-2010 (MG) `_A_Date_.as_string` typo fixed
 #    ««revision-date»»···
 #--
 
@@ -90,6 +91,7 @@ from   _TFL                  import TFL
 import _MOM._Attr.Kind
 import _MOM._Meta.M_Attr_Type
 
+import _TFL.sos              as     sos
 from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.Regexp           import *
 
@@ -359,7 +361,7 @@ class _A_Date_ (A_Attr_Type) :
     @TFL.Meta.Class_and_Instance_Method
     def as_string (soc, value) :
         if value is not None :
-            return value.strftime (self.output_format)
+            return value.strftime (soc.output_format)
         return u""
     # end def as_string
 

@@ -30,6 +30,10 @@
 #     2-Feb-2010 (MG) `legend` and `title` added
 #     3-Feb-2010 (MG) Completer added
 #     3-Feb-2010 (MG) Use new `Role_Description`
+#     5-Feb-2010 (MG) Adapted to new form handling
+#     5-Feb-2010 (MG) First completer added
+#     8-Feb-2010 (MG) Fixed `Person` form spec: `position` now is a
+#                     composite attribute
 #    ««revision-date»»···
 #--
 from   _TFL.I18N                import _
@@ -38,13 +42,16 @@ from   _GTW                     import GTW
 import _GTW._NAV._E_Type.Admin
 import _GTW._Form._MOM.Completer
 
-from   _GTW._Form._MOM.Inline_Description import Inline_Description as ID
+from   _GTW._Form._MOM.Inline_Description      import \
+    ( Link_Inline_Description      as LID
+    , Attribute_Inline_Description as AID
+    )
 from   _GTW._Form._MOM.Field_Group_Description import \
     ( Field_Group_Description as FGD
     , Field_Prefixer          as FP
-    , Role_Description        as RD
     , Wildcard_Field          as WF
     )
+from  _GTW._Form.Widget_Spec  import Widget_Spec as WS
 
 _prim = WF ("primary")
 
@@ -56,8 +63,12 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (WF ("primary"))
-            , FGD ()
-            , FGD ("lon", "lat", widget = "html/form.jnj, fg_tr")
+            , FGD ("desc")
+            , AID ( "position"
+                  , FGD ( "lon", "lat", "height"
+                        , widget = "html/form.jnj, fg_tr"
+                        )
+                  )
             )
         )
 
@@ -76,11 +87,12 @@ class Admin (object) :
         , Form_args =
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
             , FGD ()
-            , ID
+            , LID
                  ( "PAP.Person_has_Address"
-                 , FGD ("desc")
-                 , RD  ( "address", WF ("primary")
-                       , completer = GTW.Form.MOM.Completer
+                 , FGD ( "desc")
+                 , AID ( "address"
+                       , FGD (WF ("primary"))
+                       , completer     = GTW.Form.MOM.Completer
                            ( fields    = ("street", "city", "zip", "country")
                            , triggers  = dict (street = dict (min_chars = 3))
                            , name      = "Personal_Contact_Info"
@@ -89,11 +101,12 @@ class Admin (object) :
                  , legend    = _("Addresses")
                  , title     = _("Addresses")
                  )
-             , ID
+             , LID
                  ( "PAP.Person_has_Phone"
-                 , FGD ("desc")
-                 , RD  ("phone", WF ("primary"))
-                 , FGD ("extension")
+                 , FGD ( "desc")
+                 , AID ( "phone", FGD (WF ("primary"))
+                       )
+                 , FGD ( "extension")
                  , legend    = _("Phone numbers")
                  , title     = _("Phone numbers")
                  )

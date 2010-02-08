@@ -77,8 +77,9 @@ def auto_reload_start (* args, ** kw) :
     GTW.autoreload.main (_run, * args, ** kw)
 # end def auto_reload_start
 
+as_json = dict
 if __name__ != "__main__" :
-    GTW.Tornado._Export ("*")
+    GTW.Tornado._Export ("*", "as_json")
 else :
     import _GTW._Tornado.Request_Handler
 

@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
 #    02-Feb-2010 (MG) `_get_raw`: pass form to `field.get_raw`
+#     4-Feb-2010 (MG) `_get_raw` removed
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@ import _TFL.defaultdict
 from   _GTW               import GTW
 import _GTW._Form._Form_
 
-class M_Plain (TFL.Meta.Object.__class__) :
+class M_Plain (GTW.Form._Form_.__class__) :
     """Meta class for plain forms"""
 
     def New ( cls
@@ -87,9 +88,6 @@ class Plain (GTW.Form._Form_) :
         return value
     # end def get_required
 
-    def _get_raw (self, field) :
-        return field.get_raw (self, self.instance)
-    # end def _get_raw
 
     def _validate (self) :
         return 0

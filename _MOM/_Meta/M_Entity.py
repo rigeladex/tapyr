@@ -63,6 +63,8 @@
 #                     and `epkified_raw` instead of `__init__`
 #    27-Jan-2010 (MG) Add `app_type` parameter when calling `update_etype`
 #     4-Feb-2010 (CT) `M_E_Type_An` added
+#     7-Feb-2010 (MG) `M_E_Type_An.__call__` added to support creation of
+#                     scopeless `An_Entity's`
 #    ««revision-date»»···
 #--
 
@@ -531,6 +533,12 @@ class M_E_Type_An (M_E_Type) :
     """Meta class for essence of MOM.An_Entity."""
 
     Manager     = MOM.E_Type_Manager.An_Entity
+
+    def __call__ (cls, * args, ** kw) :
+        if "scope" not in kw :
+            kw ["scope"] = None
+        return cls._m_call (* args, ** kw)
+    # end def __call__
 
 # end class M_E_Type_An
 

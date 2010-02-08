@@ -35,6 +35,8 @@
 **     2-Feb-2010 (MG) Adopted to GTW framework
 **     3-Feb-2010 (MG) Swiched form states from int's to char's
 **     3-Feb-2010 (MG) Correct form count on submit
+++     5-Feb-2010 (MG) `suffix` option added to auto completion
+**     6-Feb-2010 (MG) Completion finished
 **    ««revision-date»»···
 **--
 */
@@ -151,7 +153,7 @@
           var  comp_opt  = $prototype.data  ("completion");
           if (comp_opt != undefined)
           {
-              var  pf        = comp_opt.prefix + "-M" + no + "-";
+              var  pf    = comp_opt.prefix + "-M" + no + "-" + comp_opt.suffix;
               for (var field_name in comp_opt.triggers)
               {
                   var real_field_name = pf + field_name;
@@ -222,7 +224,7 @@
         }
         var comp_opt = evt.data.comp_opt;
         var trigger  = evt.currentTarget.name.split (field_no_pat) [2];
-        trigger      = comp_opt.triggers [trigger];
+        trigger      = comp_opt.triggers[trigger.replace (comp_opt.suffix, "")];
         var fields   = trigger ["fields"];
         var value    = evt.currentTarget.value;
         var id       = comp_opt.prefix + "-comp-list"
@@ -233,10 +235,11 @@
         {
             var no = field_no_pat.exec (evt.currentTarget.name) [1];
             var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
+            var sf = comp_opt.suffix;
             for (var i = 0;  i < trigger.fields.length; i++)
             {
                 var mfn   = trigger.fields [i];
-                var value =  $("[name=" + pf + mfn + "]").attr ("value");
+                var value =  $("[name=" + pf + sf + mfn + "]").attr ("value");
                 if (value) data [mfn] = value;
             }
             jQuery.get
@@ -282,10 +285,10 @@
         var id = comp_opt.prefix + "-comp-list";
         var pk = $selected.find    (".completion-id").text ();
         var no = field_no_pat.exec (evt.currentTarget.name) [1];
-        var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
+        var pf = comp_opt.prefix + "-M" + parseInt (no) + "-" + comp_opt.suffix;
         jQuery.getJSON
           ( comp_opt.obj_url
-          , { "id" : pk, "no" : no}
+          , { "lid" : pk, "no" : no}
           , function (data, textStatus)
             {
                 $("#" + id).remove ();
@@ -293,9 +296,13 @@
                 {
                     for (var key in data)
                     {
-                        $("[name=" + pf + key + "]").replaceWith (data [key]);
-                        $("[name=" + pf + key + "]").attr
-                            ("disabled", "disabled");
+                        var $field = $("[name=" + pf + key + "]");
+                        var tag_name = $field [0].nodeName.toLowerCase ();
+                        if (tag_name == "input")
+                        {
+                            $field.attr ("value", data [key]);
+                        }
+                        $field.attr ("disabled", "disabled");
                     }
                 }
             }
@@ -439,6 +446,7 @@
         , list_url                       : ""
         , obj_url                        : "" // id -> pk, no ->number
         , prefix                         : ""
+        , suffix                         : ""
         , field_prefix                   : ""
         }
       }

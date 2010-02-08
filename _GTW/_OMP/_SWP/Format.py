@@ -104,6 +104,14 @@ class A_Format (MOM.Attr._A_Named_Object_) :
     typ         = "Format"
     Table       = M_Format.Table
 
+    class Pickler (MOM.Attr._A_Named_Object_.Pickler) :
+
+        class Type (MOM.Attr.A_String) :
+            max_length = 5
+        # end class Type
+
+    # end class Pickler
+
 # end class A_Format
 
 if __name__ != "__main__" :

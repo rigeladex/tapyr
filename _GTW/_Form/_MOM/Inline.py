@@ -35,10 +35,15 @@
 #     3-Feb-2010 (MG) `range_field_name` added and used to check how many
 #                     forms have be sent by the browser
 #     3-Feb-2010 (MG) `name` added
+#     5-Feb-2010 (MG) `Attribute_Inline` and `Link_Inline` factored
+#     5-Feb-2010 (MG) `_Inline_.Media` handle media for completers
+#     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
+#                     etype managers work differently)
 #    ««revision-date»»···
 #--
 
 from   _TFL                                 import TFL
+from   _TFL.predicate                       import paired
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
@@ -46,20 +51,34 @@ from   _GTW                                 import GTW
 import _GTW._Form.Field_Error
 import _GTW._Form._MOM
 
-class Inline (TFL.Meta.Object) :
+class Instances (object) :
+
+    def __init__ (self, instances) :
+        self.instances = iter (instances)
+    # end def __init__
+
+    def next (self) :
+        try :
+            return self.instances.next ()
+        except StopIteration :
+            return None
+    # end def next
+
+# end class Instances
+
+class _Inline_ (TFL.Meta.Object) :
     """A Inline `form` inside a real form."""
 
-    def __init__ ( self, inline_description, inline_form_cls, parent = None) :
+    def __init__ ( self, inline_description, form_cls, parent = None) :
         self.inline_description = inline_description
-        self.inline_form_cls    = inline_form_cls
+        self.form_cls           = form_cls
         self.parent             = parent
         self.errors             = GTW.Form.Error_List ()
-        self.name               = inline_form_cls.et_man.type_base_name
+        self.name               = form_cls.et_man._etype.type_base_name
     # end def __init__
 
     def clone (self, parent) :
-        return self.__class__ \
-            (self.inline_description, self.inline_form_cls, parent)
+        return self.__class__ (self.inline_description, self.form_cls, parent)
     # end def clone
 
     def get_errors (self) :
@@ -72,15 +91,117 @@ class Inline (TFL.Meta.Object) :
     # end def form_count
 
     @TFL.Meta.Once_Property
-    def inline_forms (self) :
-        iform_cls       = self.inline_form_cls
-        et_man          = iform_cls.et_man
-        parent          = self.parent
+    def forms (self) :
+        form_cls = self.form_cls
+        pfm      = self.prefix_fmt
+        return \
+            [   form_cls ( prefix    = pfm % dict (no = no)
+                         , parent    = self
+                         , prototype = self.parent.prototype
+                         )
+            for no in xrange (self.form_count)
+            ]
+    # end def forms
+
+    @TFL.Meta.Once_Property
+    def Media (self) :
+        jsor = ()
+        if self.completer :
+            jsor = self.completer.js_on_ready (self)
+        return GTW.Media.from_list\
+            ( [m for m in (self.widget.Media, self.form_cls.Media) if m]
+            , js_on_ready = jsor
+            )
+    # end def Media
+
+    @TFL.Meta.Once_Property
+    def prototype_form (self) :
+        iform_cls     = self.form_cls
+        et_man        = iform_cls.et_man
+        parent        = self.parent
+        prefix        = "%s-MP" % (et_man._etype.type_base_name, )
+        return iform_cls \
+            (None, prefix = prefix, parent = parent, prototype = True)
+    # end def prototype_form
+
+    def __call__ (self, request_data) :
+        return sum (ifo (request_data) for ifo in self.forms)
+    # end def __call__
+
+    def __getattr__ (self, name) :
+        result = getattr (self.inline_description, name)
+        setattr (self, name, result)
+        return result
+    # end def __getattr__
+
+# end class _Inline_
+
+class Attribute_Inline (_Inline_) :
+    """An inline group handling an attribute which refers to a MOM.Entity"""
+
+    form_count = 1
+
+    @TFL.Meta.Once_Property
+    def error_count (self) :
+        return self.forms [0].error_count
+    # end def error_count
+
+    @TFL.Meta.Once_Property
+    def instances (self) :
+        return (0, getattr (self.parent.instance, self.link_name, None)),
+    # end def instances
+
+    @TFL.Meta.Once_Property
+    def instance (self) :
+        return self.forms [0].instance
+    # end def instance
+
+    @TFL.Meta.Once_Property
+    def prefix_fmt (self) :
+        result = self.form_cls.et_man._etype.type_base_name
+        if self.parent.prefix :
+            result = "%s-%s" % (self.parent.prefix, result)
+        return result
+    # end def prefix_fmt
+
+    @TFL.Meta.Once_Property
+    def Instances (self) :
+        return Instances \
+            ((getattr (self.parent.instance, self.link_name, None), ))
+    # end def Instances
+
+# end class Attribute_Inline
+
+class Link_Inline (_Inline_) :
+    """An inline group handling a MOM.Link"""
+
+    @TFL.Meta.Once_Property
+    def prefix_fmt (self) :
+        result = "%s-M%%(no)s" % (self.form_cls.et_man._etype.type_base_name, )
+        if self.parent.prefix :
+            result = "%s-%s" % (self.parent.prefix, result)
+        return result
+    # end def prefix_fmt
+
+    @TFL.Meta.Once_Property
+    def range_field_name (self) :
+        return "%s-m2m-range" % (self.form_cls.et_man._etype.type_base_name, )
+    # end def range_field_name
+
+    @TFL.Meta.Once_Property
+    def Instances (self) :
+        parent = self.parent
         if parent.instance :
-            instances = et_man.query \
-                (** {self.own_role_name : parent.instance}).all ()
+            instances = self.form_cls.et_man.query \
+                (** {self.own_role_name : parent.instance})
         else :
             instances = ()
+        return Instances (instances)
+    # end def Instances
+
+    @TFL.Meta.Once_Property
+    def instances (self) :
+        parent = self.parent
         count         = 0
         try :
             value     = parent.request_data [self.range_field_name]
@@ -96,79 +217,51 @@ class Inline (TFL.Meta.Object) :
                 , count
                 )
             )
-        result     = []
-        prefix_fmt = "%s-M%%s" % (et_man.type_base_name, )
-        for no in xrange (form_count) :
-            prefix   = prefix_fmt % no
-            instance = None
-            if no < len (instances) :
-                instance = instances [no]
-            result.append \
-                (iform_cls (instance, prefix = prefix, parent = parent))
-        return result
-    # end def inline_forms
+        return paired (xrange (form_count), instances)
+    # end def instances
 
     @TFL.Meta.Once_Property
-    def Media (self) :
-        result = []
-        media  = getattr (self.widget, "Media", None)
-        if media :
-            result.append (media)
-        fg_descriptions = self.inline_description.field_group_descriptions
-        result.extend (fgd.Media for fgd in fg_descriptions if fgd.Media)
-        if len (result) == 1 :
-            result = result [0]
-        else :
-            result = GTW.Media (children = result)
-        return result or None
-    # end def Media
-
-    @TFL.Meta.Once_Property
-    def prototype_form (self) :
-        iform_cls     = self.inline_form_cls
-        et_man        = iform_cls.et_man
+    def form_count (self) :
+        count         = 0
         parent        = self.parent
-        prefix        = "%s-MP" % (et_man.type_base_name, )
-        return iform_cls \
-            (None, prefix = prefix, parent = parent, prototype = True)
-    # end def prototype_form
-
-    @TFL.Meta.Once_Property
-    def range_field_name (self) :
-        return "%s-m2m-range" % (self.inline_form_cls.et_man.type_base_name, )
-    # end def range_field_name
+        try :
+            value     = parent.request_data [self.range_field_name]
+            count     = int (value.split (":") [1])
+        except KeyError :
+            if parent.instance :
+                count = self.min_empty + self.form_cls.et_man.query \
+                    (** {self.own_role_name : parent.instance}).count ()
+        return min \
+            (self.max_count, max (self.min_count, self.min_required, count))
+    # end def form_count
 
     def __call__ (self, request_data) :
-        error_count   = 0
-        correct_forms = 0
-        for ifo in self.inline_forms :
-            ifo_errors   = ifo (request_data)
-            error_count += ifo_errors
-            if not ifo_errors and ifo.instance :
-                correct_forms += 1
-        if correct_forms < self.min_required :
+        error_count   = self.__super.__call__ (request_data)
+        correct_forms = []
+        if not error_count :
+            correct_forms = \
+                [ ifo for ifo in self.forms
+                    if ifo.instance and not ifo.error_count
+                ]
+        correct_forms_count = len (correct_forms)
+        if correct_forms_count < self.min_required :
             self.errors.append \
                 (u"At least %(min)d inline instances are required"
                   "(%(current)d)"
-                % dict (current = correct_forms, min = self.min_required)
+                % dict (current = correct_forms_count, min = self.min_required)
                 )
             error_count += 1
-        if correct_forms > self.max_count :
+        if correct_forms_count > self.max_count :
             self.errors.append \
                 ( u"More that %(max)d instance specified (%(current)d)"
-                % dict (current = correct_forms, min = self.max_count)
+                % dict (current = correct_forms_count, max = self.max_count)
                 )
+            error_count += 1
         return error_count
     # end def __call__
 
-    def __getattr__ (self, name) :
-        result = getattr (self.inline_description, name)
-        setattr (self, name, result)
-        return result
-    # end def __getattr__
-
-# end class Inline
+# end class Link_Inline
 
 if __name__ != "__main__" :
-    GTW.Form.MOM._Export ("*")
+    GTW.Form.MOM._Export ("*", "_Inline_")
 ### __END__ GTW.Form.MOM.Inline

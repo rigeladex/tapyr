@@ -35,6 +35,7 @@
 #    21-Aug-2009 (CT) `_ignore_options` added and used
 #     2-Feb-2010 (MG) Moved into `GTW.Form.MOM` packages
 #     3-Feb-2010 (MG) Adapted to new framework
+#     5-Feb-2010 (MG) `suffix` added, `form_path` used, `clone` removed
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,7 @@ class Completer (TFL.Meta.Object) :
           , """  ({ "list_url"     : "%(list_url)s" """
           , """   , "obj_url"      : "%(obj_url)s" """
           , """   , "prefix"       : "%(mname)s" """
+          , """   , "suffix"       : "%(suffix)s" """
           , """   , "triggers"     :  %(triggers)s """
           , """  }); """
           , ""
@@ -79,28 +81,17 @@ class Completer (TFL.Meta.Object) :
         self.options   = dict (self.options, ** kw)
     # end def __init__
 
-    def clone (self, completes, prefix = None) :
-        opts                  = self.options.copy ()
-        opts.pop ("name", None)
-        triggers              = self._triggers
-        if prefix :
-            fmt      = "%s.%%s" % (prefix, )
-            triggers = dict \
-                ((fmt % k, v) for k, v in triggers.iteritems ())
-            opts ["fields"]   = [fmt % f for f in opts ["fields"]]
-        result                = self.__class__ (triggers, ** opts)
-        result.completes      = completes
-        return result
-    # end def clone
-
     def js_on_ready (self, inline) :
-        bname    = inline.inline_form_cls.parent_et_man.type_base_name
-        fname    = self.completes
-        mname    = inline.name
-        list_url = "%s/%s/complete/%s"  % (self.prefix, bname, fname)
-        obj_url  = "%s/%s/completed/%s" % (self.prefix, bname, fname)
-        triggers = json.dumps (self.triggers)
-        result   = self.jsor_form % TFL.Caller.Object_Scope (self)
+        suffix       = ""
+        bname, fname = inline.form_cls.form_path.split ("/", 1)
+        forms        = fname.split ("/")
+        mname        = forms.pop (0)
+        if forms :
+            suffix   = "-".join (forms) + "-"
+        list_url     = "%s/%s/complete/%s"  % (self.prefix, bname, fname)
+        obj_url      = "%s/%s/completed/%s" % (self.prefix, bname, fname)
+        triggers     = json.dumps (self.triggers)
+        result       = self.jsor_form % TFL.Caller.Object_Scope (self)
         return (result, )
     # end def js_on_ready
 

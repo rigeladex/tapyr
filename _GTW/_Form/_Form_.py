@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) `get_id` allow string as parameter as well
+#     5-Feb-2010 (MG) `M_Form` added
 #    ««revision-date»»···
 #--
 
@@ -40,13 +41,30 @@ import _TFL.defaultdict
 from   _GTW              import GTW
 import _GTW._Form.Field_Error
 
+class M_Form (TFL.Meta.Object.__class__) :
+    """Meta class for forms."""
+
+    def _setup_fields (cls, field_groups) :
+        result = TFL.NO_List ()
+        for fg in (  fg for fg in field_groups
+                  if isinstance (fg, GTW.Form.Field_Group)
+                  ) :
+            result.update (fg.fields)
+        return result
+    # end def _setup_fields
+
+# end class M_Form
+
 class _Form_ (TFL.Meta.Object) :
     """Base class for forms"""
 
     prefix        = None
+    __metaclass__ = M_Form
+    instance      = None
 
     def __init__ (self, instance = None) :
-        self.instance = instance
+        if instance != None :
+            self.instance        = instance
         self.errors              = GTW.Form.Error_List ()
         self.field_errors        = TFL.defaultdict     (GTW.Form.Error_List)
         self.request_data        = {}
@@ -74,18 +92,8 @@ class _Form_ (TFL.Meta.Object) :
         if html_name in self.request_data :
             value = self.request_data [html_name]
             return value
-        return self._get_raw (field)
+        return field.get_raw (self, self.instance)
     # end def get_raw
-
-    @TFL.Meta.Once_Property
-    def fields (self) :
-        result = {}
-        for fg in (  fg for fg in self.field_groups
-                  if isinstance (fg, GTW.Form.Field_Group)
-                  ) :
-            result.update (fg.fields)
-        return result
-    # end def fields
 
 # end class _Form_
 

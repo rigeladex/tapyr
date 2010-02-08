@@ -37,6 +37,7 @@
 #                     `Media_List_JSOR`
 #    10-Jan-2010 (MG) Moved into Package `GTW`
 #     2-Feb-2010 (MG) `Media_List.add` added
+#     4-Feb-2010 (MG) `Media.from_list` added
 #    ««revision-date»»···
 #--
 
@@ -316,6 +317,19 @@ class Media (TFL.Meta.Object) :
         self.rel_links   = Media_List_Rell   ("rel_links",   self, rel_links)
         self.children    = list              (children)
     # end def __init__
+
+    @classmethod
+    def from_list (cls, medias, ** kw) :
+        to_add = dict ((n, v) for n, v in kw.iteritems () if v)
+        if len (medias) == 1 and not to_add :
+            result = medias [0]
+        else :
+            result = \
+                GTW.Media (children = medias) if (medias or to_add) else None
+        for n, v in to_add.iteritems () :
+            getattr (result, n).add (* v)
+        return result
+    # end def from_list
 
 # end class Media
 

@@ -31,9 +31,16 @@
 #--
 
 from   _GTW                   import GTW
-import _GTW._Form._MOM.Field_Group_Description
 import _GTW._Form._MOM.Instance
-import _GTW._Form._MOM.Inline_Description
+from   _GTW._Form._MOM.Inline_Description import \
+    ( Link_Inline_Description      as LID
+    , Attribute_Inline_Description as AID
+    )
+from   _GTW._Form._MOM.Field_Group_Description import \
+    ( Field_Group_Description as FGD
+    , Field_Prefixer          as FP
+    , Wildcard_Field          as WF
+    )
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
 from   _JNJ.Environment       import HTML
@@ -75,54 +82,42 @@ loader      = DictLoader (dict (base = """\
 {{ GTW.call_macro (form.widget, form) }}
 """))
 
-if 0 :
-    ct       = scope.PAP.Person ("Tanzer", "Christian")
-    ct_a     = scope.PAP.Address ("Glasauergasse 32", "Wien", "1030", "Austria")
-    ct_h_a   = scope.PAP.Person_has_Address (ct, ct_a)
-form_cls = GTW.Form.MOM.Instance.New \
-    ( scope.PAP.Person
-    , * GTW.OMP.PAP.Nav.Admin.Person ["Form_args"]
-    )
-
 env = HTML (loader = loader)
 
-def dump_errors (form) :
-    for e in form.errors, form.field_errors.values () :
-        if e :
-            print e
-    if form.inline_groups :
-        for ig in form.inline_groups :
-            if ig.errors :
-                print "Inline-Errors"
-                print ig.errors
-                for ifo in ig.inline_forms :
-                    dump_errors (ifo)
-# end def dump_errors
+def display_values (form, indent = "") :
+    print "%s%s" % (indent, form.prefix or "Toplevel")
+    for f in form.fields :
+        print "  %s%-20s :%r" % (indent, f.name, form.get_raw (f))
+    for ig in form.inline_groups :
+        for ifo in ig.forms :
+            display_values (ifo, indent + "  ")
+# end def display_values
 
-#print env.get_template ("base").render (form = form_cls ("/None"))
-#print env.get_template ("base").render (form = form_cls ("/CT", ct))
-if 0 :
-    form = form_cls ("/Foo")
-    #import pdb; pdb.set_trace ()
-    ec = form ( { "first_name"                            : "Martin"
-                , "last_name"                             : "Glueck"
-                , "Person_has_Address-M0-address.street"  : ""
-                , "Person_has_Address-M0-address.zip"     : ""
-                , "Person_has_Address-M0-address.city"    : ""
-                , "Person_has_Address-M0-address.country" : ""
-                , "Person_has_Address-M0-address.desc"    : "Description"
-                }
-              )
 
-    print ec, scope.PAP.Person.query ().count (),
-    print scope.PAP.Address.query ().count (),
-    print scope.PAP.Person_has_Address.query ().count ()
-    if ec :
-        scope.rollback ()
-        print scope.PAP.Person.query ().count (),
-        print scope.PAP.Address.query ().count (),
-        print scope.PAP.Person_has_Address.query ().count ()
-    dump_errors (form)
-if 1 :
-    form = form_cls ("/")
+add = True
+per = False
+
+if per :
+    form_cls = GTW.Form.MOM.Instance.New \
+        ( scope.PAP.Person
+        , * GTW.OMP.PAP.Nav.Admin.Person ["Form_args"]
+        )
+if add :
+    form_cls = GTW.Form.MOM.Instance.New \
+        ( scope.PAP.Address
+        , * GTW.OMP.PAP.Nav.Admin.Address ["Form_args"]
+        )
+if per :
+    p = scope.PAP.Person  ("Glueck", "Martin")
+    a = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Asutria")
+    scope.PAP.Person_has_Address (p, a, desc = "home")
+    form = form_cls ("/post/", p)
+
+    #display_values (form)
+    #print env.get_template ("base").render (form = form)
+if add :
+    form = form_cls ("/post/")
+    #print env.get_template ("base").render (form = form)
+    #display_values (form)
+    print form.inline_groups [0].forms [0]
 ### __END__ GTW.Form.MOM.__Test

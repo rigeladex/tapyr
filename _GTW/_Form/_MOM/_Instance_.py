@@ -45,6 +45,14 @@
 #     3-Feb-2010 (MG) `_prepare_form` added
 #     3-Feb-2010 (MG) Collect all completers and add the `js_on_ready` to the
 #                     Media
+#     5-Feb-2010 (MG) Handling of inline forms changed, handling of link
+#                     creation changed
+#     5-Feb-2010 (MG) Form class setup moved from `New` to `__new__`,
+#                     `form_path` added
+#     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
+#                     etype managers work differently)
+#                     `__call__?: if `Attribute_Inline` set the
+#                     created/modified instance to the main instance
 #    ««revision-date»»···
 #--
 
@@ -88,72 +96,69 @@ class Instance_State_Field (GTW.Form.Field) :
 
 # end class  Instance_State_Field
 
-class M_Instance (TFL.Meta.Object.__class__) :
+class M_Instance (GTW.Form._Form_.__class__) :
     """Meta class for MOM object forms"""
 
-    def __init__ (cls, name, bases, dct) :
-        cls.__m_super.__init__ (name, bases, dct)
-        if cls.et_man :
-            et_man                = cls.et_man
-            cls.fields_for_et_man = TFL.defaultdict (list)
-            cls.Roles             = []
-            for fg in cls.field_groups :
-                if isinstance (fg, GTW.Form.Field_Group) :
-                    for f in fg.fields :
-                        cls.fields_for_et_man [f.et_man].append (f)
-            if issubclass (et_man._etype, MOM.Link) :
-                scope             = et_man.home_scope
-                cls.Roles         = \
-                    [   (r.name, getattr (scope, r.role_type.type_name))
-                    for r in et_man.Roles
-                    ]
-    # end def __init__
+    parent_form  = None
+
+    def __new__ (mcls, name, bases, dct) :
+        et_man                   = dct.get ("et_man", None)
+        field_group_descriptions = dct.pop ("field_group_descriptions", ())
+        result = super (M_Instance, mcls).__new__ (mcls, name, bases, dct)
+        if et_man :
+            result.sub_forms = sub_forms = {}
+            field_groups     = []
+            medias           = []
+            added            = set ()
+            if not field_group_descriptions :
+                ### XXX try to get the default field group descriptions for this
+                ### et-man from somewhere
+                field_group_descriptions = \
+                    (GTW.Form.MOM.Field_Group_Description (), )
+            for fgd in field_group_descriptions :
+                fgs = [   fg
+                      for fg in fgd (et_man, added, parent_form = result) if fg
+                      ]
+                field_groups.extend (fgs)
+                for fg in fgs :
+                    media = fg.Media
+                    if media :
+                        medias.append (media)
+                    sub_form = getattr (fg, "form_cls", None)
+                    if sub_form :
+                        tbn = sub_form.et_man._etype.type_base_name
+                        sub_forms [tbn] = sub_form
+            result.add_internal_fields    (et_man, field_groups)
+            result.Media        = GTW.Media.from_list (medias)
+            result.field_groups = field_groups
+            result.fields       = result._setup_fields (field_groups)
+        return result
+    # end def __new__
 
     def add_internal_fields (cls, et_man, field_groups) :
+        ### we add the instance state field
         fg = field_groups [0]
         cls.instance_state_field = Instance_State_Field \
             ("instance_state", et_man = et_man)
         fg.fields.append (cls.instance_state_field)
     # end def add_internal_fields
 
+    @TFL.Meta.Once_Property
+    def form_path (cls) :
+        tbn = cls.et_man._etype.type_base_name
+        if cls.parent_form :
+            return "%s/%s" % (cls.parent_form.form_path, tbn)
+        return tbn
+    # end def form_path
+
     def New (cls, et_man, * field_group_descriptions, ** kw) :
-        field_groups  = []
-        suffix        = et_man.type_base_name
-        medias        = []
+        suffix        = et_man._etype.type_base_name
         if "suffix" in kw :
             suffix    = "__".join ((kw.pop ("suffix"), suffix))
-        added_fields  = set ()
-        if not field_group_descriptions :
-            field_group_descriptions = \
-                (GTW.Form.MOM.Field_Group_Description (), )
-        completions = {}
-        comp_jsor   = []
-        Inline    = GTW.Form.MOM.Inline
-        for fgd in field_group_descriptions :
-            fgs = [fg for fg in fgd (et_man, added_fields) if fg]
-            field_groups.extend (fgs)
-            for fg in fgs :
-                media = fg.Media
-                if media :
-                    medias.append (media)
-                if isinstance (fg, Inline) :
-                    for ifg in fg.inline_form_cls.field_groups :
-                        comp = ifg.completer
-                        if comp :
-                            completions [comp.completes] = (fg, comp)
-                            comp_jsor.extend (comp.js_on_ready (fg))
-        if len (medias) == 1 :
-            Media = medias [0]
-        else :
-            Media = GTW.Media (children = medias)
-        Media.js_on_ready.add (* comp_jsor)
-        cls.add_internal_fields (et_man, field_groups)
         return cls.__m_super.New \
             ( suffix
-            , field_groups = field_groups
-            , et_man       = et_man
-            , Media        = Media
-            , completions  = completions
+            , field_group_descriptions = field_group_descriptions
+            , et_man                   = et_man
             , ** kw
             )
     # end def New
@@ -161,26 +166,24 @@ class M_Instance (TFL.Meta.Object.__class__) :
 # end class M_Instance
 
 class _Instance_ (GTW.Form._Form_) :
-    """Base class for the real form and the `nested` from."""
+    """Base class for the form's handling any kind of MOM instances."""
 
     __metaclass__ = M_Instance
     et_man        = None
+    error_count   = 0
+    prototype     = False
 
     def __init__ (self, instance = None, prefix = None, parent = None) :
         self.__super.__init__ (instance)
-        self.instance_for_et_man = {self.et_man : instance}
         scope                    = self.et_man.home_scope
-        for role_name, et_man in self.Roles :
-            self.instance_for_et_man [et_man] = getattr \
-                (instance, role_name, None)
         self.prefix              = prefix
+        self.parent              = parent
         ### make copies of the inline groups to allow caching of inline forms
         self.inline_groups       = []
         for i, fg in enumerate (self.field_groups) :
-            if isinstance (fg, GTW.Form.MOM.Inline) :
+            if isinstance (fg, GTW.Form.MOM._Inline_) :
                 self.field_groups [i] = new_fg = fg.clone (self)
                 self.inline_groups.append (new_fg)
-        self.parent              = parent
     # end def __init__
 
     def add_changed_raw (self, dict, field) :
@@ -192,44 +195,28 @@ class _Instance_ (GTW.Form._Form_) :
             dict [field.name] = raw
     # end def add_changed_raw
 
-    def _create_or_update (self, et_man, roles, required = False) :
-        roles         = roles or ()
-        raw_attrs     = {}
-        instance      = self.instance_for_et_man [et_man]
-        for f in (f for f in self.fields_for_et_man [et_man] if not f.hidden) :
-            value           = self.add_changed_raw (raw_attrs, f)
-        if raw_attrs or roles and (len (roles) == len (self.Roles)) :
+    def _create_or_update (self, add_attrs = {}) :
+        raw_attrs     = dict (add_attrs)
+        instance      = self.instance
+        for f in (f for f in self.fields if not f.hidden) :
+            value     = self.add_changed_raw (raw_attrs, f)
+        if raw_attrs :
             errors = []
             ### at least on attribute is filled out
             try :
                 raw_attrs ["on_error"] = errors.append
                 if instance :
-                    if et_man.Roles :
-                        roles = dict \
-                            (   (ak.name, r)
-                            for (ak, r) in zip (et_man.Roles, roles)
-                            )
-                        curr = dict \
-                            ((r, getattr (instance, r).epk_raw) for r in roles)
-                        if curr != roles :
-                            instance.set_raw \
-                                (on_error = errors.append, ** roles)
-                    if len (raw_attrs) > 1 :
-                        instance.set_raw (** raw_attrs)
+                    instance.set_raw (** raw_attrs)
                 else :
-                    instance = et_man (raw = True, * roles, ** raw_attrs)
+                    instance = self.et_man (raw = True, ** raw_attrs)
             except Exception, exc:
                 if __debug__ :
                     import traceback
-                    traceback.print_exc ()
+                    ## traceback.print_exc ()
                 errors.append (exc)
             self._handle_errors (errors)
         return instance
     # end def _create_or_update
-
-    def _get_raw (self, field) :
-        return field.get_raw (self, self.instance_for_et_man.get (field.et_man))
-    # end def _get_raw
 
     def _handle_errors (self, error_list) :
         for error_or_list in error_list :
@@ -259,26 +246,22 @@ class _Instance_ (GTW.Form._Form_) :
     # end def _prepare_form
 
     def __call__ (self, request_data) :
-        ### XXX does not feel to be the correct place to make this conversion
-        if not isinstance (request_data, GTW.Tornado.Request_Data) :
-            request_data  = GTW.Tornado.Request_Data (request_data)
+        #if getattr (self, "_break", False) :
+        #    import pdb; pdb.set_trace ()
         self.request_data = request_data
-        roles             = []
         if not self._prepare_form () :
             ### this form does not need any further processing
             return 0
-        for role_name, et_man in self.Roles :
-            if self.parent and et_man is self.parent.et_man :
-                instance  = self.parent.instance
-            else :
-                instance  = self._create_or_update (et_man, None)
-            if instance :
-                roles.append (instance and instance.epk_raw)
-        if not self.errors and not self.field_errors :
-            self.instance = self._create_or_update (self.et_man, roles, True)
-        error_count       = len (self.errors) + len (self.field_errors)
-        for ig in self.inline_groups :
-            error_count  += ig (request_data)
+        self.instance = self._create_or_update  ()
+        error_count   = len (self.errors) + len (self.field_errors)
+        if not error_count :
+            for ig in self.inline_groups :
+                error_count  += ig (request_data)
+                if (   not error_count
+                   and isinstance (ig, GTW.Form.MOM.Attribute_Inline)
+                   ) :
+                    setattr (self.instance, ig.link_name, ig.instance)
+        self.error_count      = error_count
         return error_count
     # end def __call__
 

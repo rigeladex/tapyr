@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    31-Jan-2010 (CT) Creation
+#     6-Feb-2010 (MG) Missing `is_partial` added
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ class _SWP_Entity_ (MOM.Entity) :
     _real_name = "Entity"
 
     PNS        = GTW.OMP.SWP
+    is_partial = True
 
 Entity = _SWP_Entity_ # end class
 
@@ -48,6 +50,7 @@ class _SWP_Object_ (Entity, MOM.Object) :
     """Common base class for essential objects of GTW.OMP.SWP"""
 
     _real_name  = "Object"
+    is_partial = True
 
 # end class _SWP_Object_
 

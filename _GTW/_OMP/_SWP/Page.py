@@ -46,6 +46,14 @@ _Ancestor_Essence = GTW.OMP.SWP.Object
 class Page (_Ancestor_Essence) :
     """Model a static web page."""
 
+    PNS = GTW.OMP.SWP ### MGL: I have no idea why this is needed, but without
+                      ###      it I cannot create a Page instance from the
+                      ###      scope:
+                      ###      scope.SWP.Page
+                      ### <class 'MOM.Page' [Spec Essence]>
+
+
+
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
