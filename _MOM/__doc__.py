@@ -260,17 +260,17 @@ The app-type specific entity-types are ready to be used by
     ('color', 'color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
-    ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q', 'up_ex_q_au']
+    ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q']
     >>> sorted (ET_Supertrap._Attributes._own_names)
     []
     >>> sorted (ET_Trap._Attributes._names)
-    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q', 'up_ex_q_au', 'x_locked']
+    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q', 'up_ex_q_au', 'x_locked']
+    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Float `up_ex`, Float `up_ex_q`, Float `up_ex_q_au`, Boolean `x_locked`]
+    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Float `up_ex`, Float `up_ex_q`, Float `up_ex_q_au`, Boolean `x_locked`]
+    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
@@ -1182,14 +1182,14 @@ specify the (names of the) attributes it depends on in
     >>> t4.max_weight = 10
     >>> t4.max_weight, t4.serial_no
     (10.0, 2)
-    >>> t4.up_ex, t4.up_ex_q, t4.up_ex_q_au
-    (20.0, 20.0, 20.0)
+    >>> t4.up_ex, t4.up_ex_q
+    (20.0, 20.0)
     >>> t4.max_weight = 5
     >>> t4.up_ex
     10.0
     >>> del t4.max_weight
-    >>> t4.up_ex, t4.up_ex_q, t4.up_ex_q_au
-    (None, None, None)
+    >>> t4.up_ex, t4.up_ex_q
+    (None, None)
 
 
 """
@@ -1435,21 +1435,16 @@ class Trap (_Ancestor_Essence) :
         # end class up_ex
 
         class up_ex_q (A_Float) :
-            """Example for a query attribute."""
-
-            kind               = Attr.Query
-            query              = Q.max_weight * Q.serial_no
-
-        # end class up_ex_q
-
-        class up_ex_q_au (up_ex_q) :
             """Example for a query attribute that is recomputed
                whenever one of the attributes it depends on changes.
             """
 
+            kind               = Attr.Query
+            query              = Q.max_weight * Q.serial_no
+
             auto_up_depends    = ("max_weight", "serial_no")
 
-        # end class up_ex_q_au
+        # end class up_ex_q
 
     # end class _Attributes
 

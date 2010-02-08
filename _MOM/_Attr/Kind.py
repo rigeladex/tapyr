@@ -886,12 +886,19 @@ class Query (_Cached_, _Computed_Mixin_) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        query = getattr (attr_type, "query", None)
-        if not TFL.callable (query) :
-            raise TypeError \
-                ( "%s has kind Query but but doesn't define a callable `query`"
-                % (attr_type, )
-                )
+        if __debug__ :
+            if not attr_type.auto_up_depends :
+                raise TypeError \
+                    ( "%s of kind Query needs `auto_up_depends` specified"
+                    % (attr_type, )
+                    )
+            query = getattr (attr_type, "query", None)
+            if not TFL.callable (query) :
+                raise TypeError \
+                    ( "%s has kind Query but but doesn't define a "
+                      "callable `query`"
+                    % (attr_type, )
+                    )
     # end def _check_sanity
 
 # end class Query
