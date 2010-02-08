@@ -37,7 +37,7 @@
 #                     `Link_Inline_Description` factored
 #     5-Feb-2010 (MG) Pass `parent_form` ot sub form creation, set the
 #                     completer as attribute of the sub form class
-#     8-Feb-2010 (MG) Defaukt widget for `Attribute_Inline_Description` fixed
+#     8-Feb-2010 (MG) Default widget for `Attribute_Inline_Description` fixed
 #     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
 #                     etype managers work differently)
 #    ««revision-date»»···

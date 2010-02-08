@@ -69,12 +69,14 @@ apt = MOM.App_Type \
     (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP)
     ).Derived (EMS, DBW)
 
-scope = MOM.Scope.load(apt, "sqlite:///test.sqlite")
-if 0:
+if 1:
     scope        = MOM.Scope.new (apt, None)
     address      = scope.PAP.Address \
         ("Langstrasse 4", "2244", "Spannberg", "Austria")
     pos          = scope.MOM.Position (lat = 1, lon = 2, height = 3)
-#address.position = pos
-#scope.commit ()
+else :
+    #scope = MOM.Scope.load (apt, "sqlite:///test.sqlite")
+    scope = MOM.Scope.load (apt, None)
+    address.position = pos
+    scope.commit ()
 ### __END__ GTW.OMP.PAP.__test__

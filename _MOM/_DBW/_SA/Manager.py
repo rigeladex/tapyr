@@ -70,6 +70,8 @@
 #                     to SA but instance use a function which mappes the
 #                     attributes from the database to the attributes of the entity
 #     8-Feb-2010 (MG) Database creation for postgres added
+#     8-Feb-2010 (MG) `_setup_composite._create`: changed to use
+#                     `from_pickle_cargo` instance of creating the instance
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -175,7 +177,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
     metadata         = schema.MetaData () ### XXX
 
     def create_database (cls, db_uri, scope) :
-        if not db_uri.startswith ("sqlite://") :
+        if db_uri and not db_uri.startswith ("sqlite://") :
             ### we need to issue a create database command
             create_db_uri, db_name = db_uri.rsplit ("/", 1)
             if db_uri.startswith ("postgresql://") :
@@ -412,17 +414,20 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         attr_names        = [c.name [prefix_len:] for c in columns]
         raw_or_coocked    = {}
         for attr_name in attr_names :
-            cdk_attr = attr_names
             if attr_name.startswith ("__raw_") :
                 cdk_attr                   = attr_name [6:]
-                del raw_or_coocked [cdk_attr]
-            raw_or_coocked [attr_name] = cdk_attr
+                raw_or_coocked [cdk_attr ] = (cdk_attr, attr_name)
+            else :
+                raw_or_coocked [attr_name] = attr_name
         del e_type._sa_save_attrs
         def _create (* args, ** kw) :
             attr_dict = dict (zip (attr_names, args))
-            for arg_name, attr_name in raw_or_coocked.iteritems () :
-                kw [attr_name] = attr_dict [arg_name]
-            return e_type (** kw)
+            for attr_name, arg_names in raw_or_coocked.iteritems () :
+                if isinstance (arg_names, tuple) :
+                    kw [attr_name] = tuple (attr_dict [n] for n in arg_names)
+                else :
+                    kw [attr_name] = attr_dict [arg_name]
+            return e_type.from_pickle_cargo (None, kw)
         # end def _create
         properties [name] = orm.composite (_create, * columns)
         def __composite_values__ (self) :
