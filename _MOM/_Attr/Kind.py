@@ -83,6 +83,12 @@
 #     4-Feb-2010 (CT) `_record_change` factored
 #     4-Feb-2010 (CT) `_Composite_Mixin_` and `_Nested_Mixin_` added
 #     5-Feb-2010 (CT) `_Composite_Mixin_` and `_Nested_Mixin_` continued
+#     8-Feb-2010 (CT) `_Auto_Update_Mixin_.update` changed to pass
+#                     `changed = True` to `_set_cooked`
+#     8-Feb-2010 (CT) `_Composite_Mixin_._set_cooked_value` changed to set
+#                     `home_scope`, if necessary
+#     8-Feb-2010 (CT) `_Computed_Mixin_` factored
+#     8-Feb-2010 (CT) `Query` added
 #    ««revision-date»»···
 #--
 
@@ -278,11 +284,12 @@ class Kind (MOM.Prop.Kind) :
     # end def _check_sanity
 
     def _get_computed (self, obj) :
-        computed = self.attr.computed
+        attr     = self.attr
+        computed = attr.computed
         if TFL.callable (computed) :
             val = computed (obj)
             if val is not None :
-                return self.attr.cooked (val)
+                return attr.cooked (val)
     # end def _get_computed
 
     def _inc_changes (self, man, obj, value) :
@@ -386,7 +393,7 @@ class _Auto_Update_Mixin_ (Kind) :
     """
 
     def update (self, obj) :
-        self._set_cooked (obj, self._get_computed (obj))
+        self._set_cooked (obj, self._get_computed (obj), True)
     # end def update
 
     def _check_sanity (self, attr_type) :
@@ -422,10 +429,38 @@ class _Composite_Mixin_ (Kind) :
                 value = value.copy ()
             value.owner = obj
             value.attr_name = self.name
+            if value.home_scope is None :
+                value.home_scope = obj.home_scope
         return self.__super._set_cooked_value (obj, value, changed)
     # end def _set_cooked_value
 
 # end class _Composite_Mixin_
+
+class _Computed_Mixin_ (Kind) :
+    """Mixin to compute attribute value."""
+
+    def get_value (self, obj) :
+        result = self.__super.get_value (obj)
+        if obj is not None and result is None :
+            result = self._get_computed (obj)
+        return result
+    # end def get_value
+
+    def _check_sanity (self, attr_type) :
+        self.__super._check_sanity (attr_type)
+        default = self.raw_default
+        if default :
+            kind = self.kind
+            if kind != "computed" :
+                kind += "/Computed"
+            raise TypeError \
+                ( "%s is %s but has default %r "
+                  "(i.e., `computed` will never be called)"
+                % (attr_type, kind, default)
+                )
+    # end def _check_sanity
+
+# end class _Computed_Mixin_
 
 class _Nested_Mixin_ (Kind) :
     """Mixin for attributes nested inside composite attributes."""
@@ -525,8 +560,6 @@ class _Sticky_Mixin_ (Kind) :
         if raw_value in ("", None) :
             raw_value = self.raw_default
             value     = self.default
-        if raw_value == "None" :
-            print obj, self, raw_value, value
         self.__super._set_raw (obj, raw_value, value, changed)
     # end def _set_raw
 
@@ -819,7 +852,7 @@ class Cached_Role_Set (_Cached_) :
 
 # end class Cached_Role
 
-class Computed (_Cached_) :
+class Computed (_Cached_, _Computed_Mixin_) :
     """Computed attribute: the value is computed for each and every attribute
        access. This is quite inefficient and should only be used if
        :class:`Auto_Cached` or :class:`Sync_Cached` don't work.
@@ -827,45 +860,46 @@ class Computed (_Cached_) :
 
     kind        = "computed"
 
+    def get_value (self, obj) :
+        return self._get_computed (obj)
+    # end def get_value
+
     def reset (self, obj) :
         pass
     # end def reset
 
+# end class Computed
+
+class Query (_Cached_, _Computed_Mixin_) :
+    """Attribute calculated from a `query` (must be defined for the attribute
+       type).
+    """
+
+    kind        = "query"
+
+    def _get_computed (self, obj) :
+        attr   = self.attr
+        result = attr.query (obj)
+        if result is not None :
+            return attr.cooked (result)
+    # end def _get_computed
+
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        default = self.raw_default
-        if default :
+        query = getattr (attr_type, "query", None)
+        if not TFL.callable (query) :
             raise TypeError \
-                ( "%s is computed but has default %r "
-                  "(i.e., `computed` will never be called)"
-                % (attr_type, default)
+                ( "%s has kind Query but but doesn't define a callable `query`"
+                % (attr_type, )
                 )
     # end def _check_sanity
 
-# end class Computed
+# end class Query
 
-class Computed_Mixin (Kind) :
+class Computed_Mixin (_Computed_Mixin_) :
     """Mixin to compute attribute value if empty, i.e., if no value was
        specified by the tool user.
     """
-
-    def get_value (self, obj) :
-        result = self.__super.get_value (obj)
-        if obj is not None and result is None :
-            result = self._get_computed (obj)
-        return result
-    # end def get_value
-
-    def _check_sanity (self, attr_type) :
-        self.__super._check_sanity (attr_type)
-        default = self.raw_default
-        if default :
-            raise TypeError \
-                ( "%s is _Computed_ but has default %r "
-                  "(i.e., `computed` will never be called)"
-                % (attr_type, default)
-                )
-    # end def _check_sanity
 
 # end class Computed_Mixin
 
@@ -954,12 +988,14 @@ Class `MOM.Attr.Kind`
     attributes.
 
 .. autoclass:: Primary
+.. autoclass:: Primary_Optional
 .. autoclass:: Required
 .. autoclass:: Optional
 
 .. autoclass:: Internal
 .. autoclass:: Cached
 .. autoclass:: Computed
+.. autoclass:: Query
 .. autoclass:: Auto_Cached
 .. autoclass:: Sync_Cached
 .. autoclass:: Once_Cached
