@@ -59,6 +59,7 @@
 #    27-Jan-2010 (CT) `rollback` changed to call `count_change`
 #     8-Feb-2010 (CT) `remove` changed to call `entity._destroy` before
 #                     `ems.remove`
+#     8-Feb-2010 (CT) `snapshot` removed
 #    ««revision-date»»···
 #--
 
@@ -108,7 +109,8 @@ class Scope (TFL.Meta.Object) :
     _roots                 = None
 
     changes                = property (TFL.Getter.historian.total_changes)
-    changes_to_save        = property (TFL.Getter.historian.since_snapshot)
+    changes_to_save        = property \
+        (lambda s : len (s.ems.uncommitted_changes))
     etypes                 = property (TFL.Getter.app_type.etypes)
     name                   = property (lambda s : s.qname or s.bname)
 
@@ -186,7 +188,6 @@ class Scope (TFL.Meta.Object) :
         self.kill_callback  = self.kill_callback [:] ###
         self.root           = None
         self.db_cid         = 0
-        self.snapshot_count = 0
         self.historian      = MOM.SCM.Tracker (self)
         self._attr_errors   = []
         self._etm           = {}
@@ -258,8 +259,7 @@ class Scope (TFL.Meta.Object) :
     # end def async_changes
 
     def commit (self) :
-        self.ems.commit    ()
-        self.make_snapshot ()
+        self.ems.commit ()
     # end def commit
 
     @TFL.Meta.Lazy_Method_RLV
@@ -381,14 +381,7 @@ class Scope (TFL.Meta.Object) :
 
     def has_changed (self) :
         """Indicates whether something saveworthy has changed"""
-        if self.historian.has_changed () :
-            i = 0
-            for entity in self.ems :
-                if entity.has_changed () :
-                    return True
-                i += 1
-            return self.snapshot_count != i
-        return False
+        return bool (self.ems.uncommitted_changes)
     # end def has_changed
 
     @TFL.Meta.Lazy_Method_RLV
@@ -399,15 +392,6 @@ class Scope (TFL.Meta.Object) :
         with self.as_active () :
             return self._check_inv (gauge, "object")
     # end def i_incorrect
-
-    def make_snapshot (self) :
-        self.historian.make_snapshot ()
-        i = 0
-        for o in self.entity_iter () :
-            o.make_snapshot ()
-            i += 1
-        self.snapshot_count = i
-    # end def make_snapshot
 
     @TFL.Contextmanager
     def nested_change_recorder (self, Change, * args, ** kw) :
@@ -456,15 +440,13 @@ class Scope (TFL.Meta.Object) :
     # end def rename
 
     def rollback (self) :
-        self.ems.rollback  ()
-        self.count_change  ()
-        self.make_snapshot ()
+        self.ems.rollback ()
+        self.count_change ()
     # end def rollback
 
     def start_change_recorder (self) :
         if not self.historian._rec_stack :
             self.historian.push_recorder (MOM.SCM.Tracker.Preferred_Recorder)
-            self.make_snapshot ()
     # end def start_change_recorder
 
     def stop_change_recorder (self) :

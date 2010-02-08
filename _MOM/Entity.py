@@ -95,6 +95,7 @@
 #     5-Feb-2010 (CT) Exception handler added `epkified` to improve error
 #                     message
 #     8-Feb-2010 (CT) `An_Entity.__init__` added to disable `* args`
+#     8-Feb-2010 (CT) `snapshot` removed
 #    ««revision-date»»···
 #--
 
@@ -761,10 +762,6 @@ class Id_Entity (Entity) :
         else :
             return soc.x_locked.default or soc.electric.default
     # end def is_locked
-
-    def make_snapshot (self) :
-        self._attr_man.make_snapshot (self)
-    # end def make_snapshot
 
     def notify_dependencies_destroy (self) :
         """Notify all entities registered in `self.dependencies` and

@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -28,6 +28,7 @@
 # Revision Dates
 #     7-Oct-2009 (CT) Creation (factored from TOM.SCM.Tracker)
 #    16-Dec-2009 (CT) `nested_recorder` changed to yield change object, if any
+#     8-Feb-2010 (CT) `snapshot` removed
 #    ««revision-date»»···
 #--
 
@@ -47,8 +48,6 @@ class Tracker (MOM.SCM.History_Mixin) :
 
     Preferred_Recorder = MOM.SCM.Appender
 
-    since_snapshot     = property (lambda s : s.change_count - s.snapsh_count)
-
     def __init__ (self, scope) :
         self.__super.__init__ ()
         self.total_changes = 0
@@ -57,7 +56,6 @@ class Tracker (MOM.SCM.History_Mixin) :
         self._recorder     = MOM.SCM.Ignorer (self)
         self._rec_stack    = []
         self.dependents    = {}
-        self.make_snapshot ()
     # end def __init__
 
     def add_dependency (self, scope) :
@@ -67,14 +65,6 @@ class Tracker (MOM.SCM.History_Mixin) :
     def count_change (self) :
         self.total_changes += 1
     # end def count_change
-
-    def has_changed (self) :
-        return self.change_count != self.snapsh_count
-    # end def has_changed
-
-    def make_snapshot (self) :
-        self.snapsh_count = self.change_count
-    # end def make_snapshot
 
     @TFL.Contextmanager
     def nested_recorder (self, Change, * args, ** kw) :

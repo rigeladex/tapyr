@@ -31,6 +31,7 @@
 #                     `record_changes` to filter attributes
 #    16-Dec-2009 (CT) `raw_values_record` removed
 #     2-Feb-2010 (CT) `updates_pending` added
+#     8-Feb-2010 (CT) `snapshot` removed
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,6 @@ class Manager (TFL.Meta.Object) :
     def __init__ (self, attr_spec) :
         self.attr_dict           = attr_spec._attr_dict
         self.attr_spec           = attr_spec
-        self.last_snapshot       = None
         self.locked_attr         = set ()
         self.needs_sync          = {}
         self._syncable           = set (attr_spec._syncable)
@@ -67,17 +67,9 @@ class Manager (TFL.Meta.Object) :
             self.reset_updates_pending ()
     # end def do_updates_pending
 
-    def has_changed (self, obj) :
-        return self.last_snapshot != self.snapshot (obj)
-    # end def has_changed
-
     def inc_changes (self, inc = 1) :
         self.total_changes += inc
     # end def inc_changes
-
-    def make_snapshot (self, obj) :
-        self.last_snapshot = self.snapshot (obj)
-    # end def make_snapshot
 
     def reset_attributes (self, obj) :
         self.reset_pending ()
@@ -100,17 +92,6 @@ class Manager (TFL.Meta.Object) :
     def reset_updates_pending (self) :
         self.updates_pending = []
     # end def reset_updates_pending
-
-    def snapshot (self, obj) :
-        result = {}
-        attr_dict = self.attr_dict
-        for name, attr in attr_dict.iteritems () :
-            if attr.save_to_db :
-                value = attr.get_raw (obj)
-                if value not in (attr.default, "") :
-                    result [name] = value
-        return result
-    # end def snapshot
 
     def sync_attributes (self, obj) :
         self.sync_pending   (obj)
@@ -147,9 +128,6 @@ Class `MOM.Attr.Manager`
   - Manages syncing for attributes that are syncable.
 
   - Manages pending cross references.
-
-  - Manages snapshots as needed by :mod:`MOM.SCM<_MOM._SCM>` (scope
-    change manager).
 
 """
 
