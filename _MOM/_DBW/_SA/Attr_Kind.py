@@ -33,6 +33,7 @@
 #     4-Nov-2009 (MG) Use `TFL.Add_To_Class`
 #     8-Feb-2010 (MG) Generation of mapper properties moved in here
 #     8-Feb-2010 (MG) `_sa_query_prop` added
+#     8-Feb-2010 (MG) `_sa_composite_comperator_class` and friends added
 #    ««revision-date»»···
 #--
 
@@ -103,7 +104,6 @@ def _sa_composite_prop (self, name, ckd, base_e_type, properties) :
                 kw [attr_name] = attr_dict [arg_name]
         return e_type.from_pickle_cargo (None, kw)
     # end def _create
-    properties [name] = orm.composite (_create, * columns)
     def __composite_values__ (self) :
         return [getattr (self, attr) for attr in attr_names]
     # end def __composite_values__
@@ -113,7 +113,48 @@ def _sa_composite_prop (self, name, ckd, base_e_type, properties) :
     # end def __set_composite_values__
     e_type.__composite_values__     = __composite_values__
     e_type.__set_composite_values__ = __set_composite_values__
+    properties [name] = orm.composite \
+        (_create
+        , comparator_factory = _sa_composite_comperator_class
+           (e_type, attr_names, db_attrs)
+        , * columns
+        )
 # end def _sa_composite_prop
+
+def _sa_composite_comperator_class (e_type, attr_names, db_attrs) :
+    base       = orm.properties.CompositeProperty.Comparator
+    properties = dict ()
+    for idx, name in \
+        (  (i, an) for (i, an) in enumerate (attr_names)
+        if not an.startswith ("__raw_")
+        )  :
+        properties [name] = property \
+            (_sa_composite_comperator_attr_prop (name, idx, db_attrs [name]))
+    for name, kind in db_attrs.iteritems () :
+        if isinstance (kind, MOM.Attr.Query) :
+            properties [name] = property \
+                (_sa_composite_comperator_query_prop (name, kind))
+    return base.__class__ \
+        ( "%s_SA_Comperator" % (e_type.type_base_name)
+        , (base, )
+        , properties
+        )
+# end def _sa_composite_comperator_class
+
+def _sa_composite_comperator_attr_prop (name, idx, kind) :
+    def _ (self) :
+        return self.__clause_element__ ().clauses [idx]
+    # end def _
+    return _
+# end def _sa_composite_comperator_attr_prop
+
+def _sa_composite_comperator_query_prop (name, kind) :
+    query = kind.attr.query
+    def _ (self) :
+        return query._sa_filter (self)
+    # end def _
+    return _
+# end def _sa_composite_comperator_query_prop
 
 @TFL.Add_To_Class ("_sa_mapper_prop", MOM.Attr.Query)
 def _sa_query_prop (self, name, ckd, base_e_type, properties) :
