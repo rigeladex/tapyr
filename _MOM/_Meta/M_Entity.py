@@ -538,7 +538,7 @@ class M_E_Type_An (M_E_Type) :
 
     def __call__ (cls, * args, ** kw) :
         if "scope" not in kw :
-            kw ["scope"] = None
+            kw ["scope"] = MOM.Scope.active
         return cls._m_call (* args, ** kw)
     # end def __call__
 

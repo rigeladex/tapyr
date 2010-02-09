@@ -37,6 +37,7 @@
 #    30-Dec-2009 (CT) `M_Attr_Type_Decimal` added
 #    21-Jan-2010 (CT) `__init__` changed to take `default` from `dct`
 #     2-Feb-2010 (CT) `M_Attr_Type_Named_Object` added
+#     9-Feb-2010 (CT) `M_Attr_Type.__init__` changed to add `query`
 #    ««revision-date»»···
 #--
 
@@ -79,6 +80,14 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
         elif default is not None :
             ### Precompute `raw_default` from `default`
             cls.raw_default = cls.as_string (default)
+        query_fct = dct.get ("query_fct")
+        query     = dct.get ("query")
+        if query_fct :
+            assert query is None, \
+                ( "Can't specify both a `query_fct` and `query %s` for %s"
+                % (query, cls)
+                )
+            cls.query = property (lambda s : s.query_fct ())
     # end def __init__
 
 # end class M_Attr_Type

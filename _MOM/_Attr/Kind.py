@@ -453,8 +453,7 @@ class _Composite_Mixin_ (Kind) :
             value.owner      = obj
             value.attr_name  = self.name
             value.is_primary = self.is_primary
-            if value.home_scope is None :
-                value.home_scope = obj.home_scope
+            value.home_scope = obj.home_scope
         return self.__super._set_cooked_value (obj, value, changed)
     # end def _set_cooked_value
 
@@ -941,7 +940,7 @@ class Sticky_Mixin (_Sticky_Mixin_) :
 
     def _check_sanity (self, attr_type) :
         self.__super._check_sanity (attr_type)
-        if not self.raw_default :
+        if not (TFL.callable (self.computed_default) or self.raw_default) :
             raise TypeError \
                 ("%s is sticky but lacks `default`" % (attr_type, ))
     # end def _check_sanity

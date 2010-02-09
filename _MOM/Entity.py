@@ -479,7 +479,7 @@ class An_Entity (Entity) :
         result = self.__class__ (scope = scope, ** kw)
         raw_kw = dict \
             (  (a.name, a.get_raw (self))
-            for a in self.user_attr if a.name not in kw and a.to_save (self)
+            for a in self.user_attr if a.name not in kw
             )
         if raw_kw :
             result.set_raw (** raw_kw)

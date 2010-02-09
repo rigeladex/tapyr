@@ -28,10 +28,13 @@
 # Revision Dates
 #    31-Jan-2010 (CT) Creation
 #     2-Feb-2010 (CT) Creation continued
+#     9-Feb-2010 (CT) Creation continued..
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
+from   _MOM._Attr.Lifetime    import *
+
 from   _GTW                   import GTW
 
 import _GTW._OMP._SWP.Entity
@@ -70,32 +73,30 @@ class Page (_Ancestor_Essence) :
 
         # end class contents
 
-        class date_exp (A_Date_Time) :
-            """Expiration date for page"""
-
-            kind               = Attr.Optional
-            explanation        = """
-              After the expiration date, the page won't be displayed (except
-              possibly in an archive).
-              """
-
-        # end class date_exp
-
-        class date_pub (A_Date_Time) :
-            """Publication date for page"""
-
-            explanation        = """
-                The page won't be visible before the publication date.
-                """
+        class date (A_Lifetime) :
+            """Publication (`birth`) and expiration date (`death`) for the
+               web page
+            """
 
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )
 
+            explanation        = """
+              The page won't be visible before the publication date.
+
+              After the expiration date, the page won't be displayed (except
+              possibly in an archive).
+              """
+
             def computed_default (self) :
-                return datetime.datetime.now ()
+                scope = MOM.Scope.active
+                if scope is not None :
+                    etm    = scope [self.C_Type.type_name]
+                    result = etm ()
+                    return result
             # end def computed
 
-        # end class date_pub
+        # end class date
 
         class desc (A_String) :
             """Description of the page"""
