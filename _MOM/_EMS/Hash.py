@@ -66,6 +66,7 @@
 #    19-Jan-2010 (CT) `rollback` added
 #    20-Jan-2010 (CT) `pid_as_lid` and `pid_from_lid` added
 #     8-Feb-2010 (CT) `_remove` factored; `remove` changed to set `pid` to None
+#     9-Feb-2010 (CT) `epk_to_hpk` changed to use `get_hash`
 #    ««revision-date»»···
 #--
 
@@ -336,29 +337,16 @@ class Manager (MOM.EMS._Manager_) :
 
 # end class Manager
 
-@TFL.Add_Method (MOM.Link)
-@TFL.Meta.Class_Method
-def epk_to_hpk (cls, * epk) :
-    def gen (epk) :
-        for r, pka in TFL.paired (cls.Roles, epk) :
-            if r is not None and pka is not None :
-                pka = pka.pid
-            yield pka
-    return tuple (gen (epk))
-# end def epk_to_hpk
-
-@TFL.Add_Method (MOM.Link, decorator = property)
-def hpk (self) :
-    return self.epk_to_hpk (* self.epk)
-# end def hpk
-
 @TFL.Add_Method (MOM.Id_Entity)
 @TFL.Meta.Class_Method
 def epk_to_hpk (cls, * epk) :
-    return epk
+    return tuple (a.get_hash (None, k) for a, k in zip (cls.primary, epk))
 # end def epk_to_hpk
 
-MOM.Id_Entity.hpk = TFL.Meta.Alias_Property ("epk")
+@TFL.Add_Method (MOM.Id_Entity, decorator = property)
+def hpk (self) :
+    return self.epk_to_hpk (* self.epk)
+# end def hpk
 
 if __name__ != "__main__" :
     MOM.EMS._Export_Module ()
