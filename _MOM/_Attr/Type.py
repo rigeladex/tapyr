@@ -82,6 +82,7 @@
 #                     `_A_Composite_._checkers` added
 #     5-Feb-2010 (CT) `_A_Composite_.cooked` added
 #     6-Feb-2010 (MG) `_A_Date_.as_string` typo fixed
+#     9-Feb-2010 (CT) `now` added to `A_Date`, `A_Date_Time`, and `A_Time`
 #    ««revision-date»»···
 #--
 
@@ -886,6 +887,11 @@ class A_Date (_A_Date_) :
     _tuple_len     = 3
     _DT_Type       = datetime.date
 
+    @classmethod
+    def now (cls) :
+        return datetime.datetime.now ().date ()
+    # end def now
+
 # end class A_Date
 
 class A_Date_Slug (_A_String_) :
@@ -920,6 +926,11 @@ class A_Date_Time (_A_Date_) :
         )
     _tuple_len     = 6
     _DT_Type       = datetime.datetime
+
+    @classmethod
+    def now (cls) :
+        return datetime.datetime.now ()
+    # end def now
 
 # end class A_Date_Time
 
@@ -1090,6 +1101,11 @@ class A_Time (_A_Date_) :
     _tuple_len     = 6
     _tuple_off     = 3
     _DT_Type       = datetime.time
+
+    @classmethod
+    def now (cls) :
+        return datetime.datetime.now ().time ()
+    # end def now
 
 # end class A_Time
 

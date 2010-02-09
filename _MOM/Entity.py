@@ -97,6 +97,7 @@
 #     8-Feb-2010 (CT) `An_Entity.__init__` added to disable `* args`
 #     8-Feb-2010 (CT) `snapshot` and `has_changed` removed
 #     9-Feb-2010 (CT) `epk_hash` added
+#     9-Feb-2010 (CT) `An_Entity.set` and `.set_raw` redefined
 #    ««revision-date»»···
 #--
 
@@ -448,10 +449,17 @@ class An_Entity (Entity) :
     __metaclass__         = MOM.Meta.M_An_Entity
 
     is_partial            = True
+    is_primary            = False
+    owner                 = None
 
     def __init__ (self, ** kw) :
         self.__super.__init__ (** kw)
     # end def __init__
+
+    @property
+    def hash_key (self) :
+        return tuple (a.get_hash (self) for a in self.hash_sig)
+    # end def hash_key
 
     @property
     def SCM_Change_Attr (self) :
@@ -478,6 +486,24 @@ class An_Entity (Entity) :
         return result
     # end def copy
 
+    def set (self, on_error = None, ** kw) :
+        if self.owner and self.is_primary :
+            if self._set_ckd  (on_error, ** kw) :
+                ### Change in primary attribute might be a `rename`
+                self.owner.set (** {self.attr_name : self})
+        else :
+            self.__super.set (on_error, ** kw)
+    # end def set
+
+    def set_raw (self, on_error = None, ** kw) :
+        if self.owner and self.is_primary :
+            if self._set_raw  (on_error, ** kw) :
+                ### Change in primary attribute might be a `rename`
+                self.owner.set (** {self.attr_name : self})
+        else :
+            self.__super.set_raw (on_error, ** kw)
+    # end def set_raw
+
     def _formatted_user_attr (self) :
         return ", ".join \
             ( "%s = %s" % (a.name, a.get_raw (self))
@@ -498,6 +524,15 @@ class An_Entity (Entity) :
     def _repr (self, type_name) :
         return "%s (%s)" % (type_name, self._formatted_user_attr ())
     # end def _repr
+
+    def __eq__ (self, rhs) :
+        rhs = getattr (rhs, "hash_key", rhs)
+        return self.hash_key == rhs
+    # end def __eq__
+
+    def __hash__ (self) :
+        return hash (self.hash_key)
+    # end def __hash__
 
     def __str__ (self) :
         return "(%s)" % (self._formatted_user_attr ())

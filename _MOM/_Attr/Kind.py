@@ -90,6 +90,8 @@
 #     8-Feb-2010 (CT) `_Computed_Mixin_` factored
 #     8-Feb-2010 (CT) `Query` added
 #     9-Feb-2010 (CT) `get_hash` added
+#     9-Feb-2010 (CT) `_Composite_Mixin_._set_cooked_value` changed to set
+#                     `is_primary`
 #    ««revision-date»»···
 #--
 
@@ -428,7 +430,7 @@ class _Composite_Mixin_ (Kind) :
             value = self.get_value (obj)
         if value is not None :
             if value.hash_sig :
-                return tuple (a.get_hash (value) for a in value.hash_sig)
+                return value.hash_key
             else :
                 return id (value)
     # end def get_hash
@@ -448,8 +450,9 @@ class _Composite_Mixin_ (Kind) :
         if value is not None :
             if value.owner is not None and value.owner is not obj :
                 value = value.copy ()
-            value.owner = obj
-            value.attr_name = self.name
+            value.owner      = obj
+            value.attr_name  = self.name
+            value.is_primary = self.is_primary
             if value.home_scope is None :
                 value.home_scope = obj.home_scope
         return self.__super._set_cooked_value (obj, value, changed)
