@@ -89,6 +89,7 @@
 #                     `home_scope`, if necessary
 #     8-Feb-2010 (CT) `_Computed_Mixin_` factored
 #     8-Feb-2010 (CT) `Query` added
+#     9-Feb-2010 (CT) `get_hash` added
 #    ««revision-date»»···
 #--
 
@@ -169,6 +170,10 @@ class Kind (MOM.Prop.Kind) :
             result = attr.default
         return result
     # end def default
+
+    def get_hash (self, obj, value = None) :
+        return value if (value is not None) else self.get_value (obj)
+    # end def get_hash
 
     def get_pickle_cargo (self, obj) :
         Pickler = self.attr.Pickler
@@ -345,6 +350,12 @@ class Kind (MOM.Prop.Kind) :
 class _EPK_Mixin_ (Kind) :
     """Mixin for attributes referring to entities with `epk`."""
 
+    def get_hash (self, obj, value = None) :
+        ref = value if (value is not None) else self.get_value (obj)
+        if ref is not None :
+            return ref.pid
+    # end def get_hash
+
     def get_pickle_cargo (self, obj) :
         ref = self.get_value (obj)
         if ref is not None :
@@ -411,6 +422,16 @@ class _Auto_Update_Mixin_ (Kind) :
 
 class _Composite_Mixin_ (Kind) :
     """Mixin for composite attributes."""
+
+    def get_hash (self, obj, value = None) :
+        if value is None :
+            value = self.get_value (obj)
+        if value is not None :
+            if value.hash_sig :
+                return tuple (a.get_hash (value) for a in value.hash_sig)
+            else :
+                return id (value)
+    # end def get_hash
 
     def get_pickle_cargo (self, obj) :
         value = self.get_value (obj)

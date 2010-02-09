@@ -65,6 +65,8 @@
 #     4-Feb-2010 (CT) `M_E_Type_An` added
 #     7-Feb-2010 (MG) `M_E_Type_An.__call__` added to support creation of
 #                     scopeless `An_Entity's`
+#     9-Feb-2010 (CT) `M_E_Type_An._m_setup_attributes` redefined to set
+#                     `hash_sig`
 #    ««revision-date»»···
 #--
 
@@ -539,6 +541,11 @@ class M_E_Type_An (M_E_Type) :
             kw ["scope"] = None
         return cls._m_call (* args, ** kw)
     # end def __call__
+
+    def _m_setup_attributes (cls, bases, dct) :
+        cls.__m_super._m_setup_attributes (bases, dct)
+        cls.hash_sig = cls.required
+    # end def _m_setup_attributes
 
 # end class M_E_Type_An
 

@@ -96,6 +96,7 @@
 #                     message
 #     8-Feb-2010 (CT) `An_Entity.__init__` added to disable `* args`
 #     8-Feb-2010 (CT) `snapshot` and `has_changed` removed
+#     9-Feb-2010 (CT) `epk_hash` added
 #    ««revision-date»»···
 #--
 
@@ -621,6 +622,12 @@ class Id_Entity (Entity) :
         return dict (zip (self.epk_sig, self.epk))
     # end def epk_as_dict
 
+    @TFL.Meta.Once_Property
+    def epk_hash (self) :
+        """Hash value of essential primary key"""
+        return tuple (a.get_hash (self) for a in self.primary)
+    # end def epk
+
     @property
     def epk_raw (self) :
         """Essential primary key as raw values"""
@@ -906,7 +913,7 @@ class Id_Entity (Entity) :
 
     def _reset_epk (self) :
         sd = self.__dict__
-        for a in ("epk", "epk_as_dict") :
+        for a in ("epk", "epk_as_dict", "epk_hash") :
             if a in sd :
                 delattr (self, a)
     # end def _reset_epk

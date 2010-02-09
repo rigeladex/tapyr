@@ -341,7 +341,7 @@ class Manager (MOM.EMS._Manager_) :
 def epk_to_hpk (cls, * epk) :
     def gen (epk) :
         for r, pka in TFL.paired (cls.Roles, epk) :
-            if pka is not None :
+            if r is not None and pka is not None :
                 pka = pka.pid
             yield pka
     return tuple (gen (epk))
