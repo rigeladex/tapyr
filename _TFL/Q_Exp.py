@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #                     avoid `Q.a < Q.b < Q.c` silently discarding `Q.a <`
 #    10-Dec-2009 (CT) `Exp_B` added (and `_Exp_` factored),
 #                     and used as base for `Bin_Bool`
+#     9-Feb-2010 (CT) Support for queries of nested attributes added
 #    ««revision-date»»···
 #--
 
@@ -39,7 +40,7 @@
 This module implements a query expression language::
 
     >>> from _TFL.Record import Record as R
-    >>> r1 = R (foo = 42, bar = 137, baz = 11)
+    >>> r1 = R (foo = 42, bar = 137, baz = 11, quux = R (a = 1, b = 200))
     >>> r2 = R (foo = 3,  bar = 9,   qux = "abcdef")
     >>> q0 = Q.foo
     >>> q0.name
@@ -163,11 +164,27 @@ But explicit parenthesis are necessary in some cases::
       ...
     TypeError: __nonzero__ should return bool or int, returned exceptions.TypeError
 
+Queries for nested attributes are also possible::
+
+    >>> qn = Q.quux.a
+    >>> qn.name
+    'quux.a'
+    >>> qn.predicate (r1)
+    1
+    >>> qm = Q.quux.b
+    >>> qm.predicate (r1)
+    200
+    >>> (qn > Q.foo) (r1)
+    False
+    >>> (qm > Q.foo) (r1)
+    True
+
 """
 
 from   _TFL                     import TFL
 
 import _TFL._Meta.Object
+import _TFL.Accessor
 import _TFL.Decorator
 
 from   _TFL.predicate           import callable
@@ -187,8 +204,11 @@ class Base (TFL.Meta.Object) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        assert "." not in name, name
-        return self.Get (self, name, operator.attrgetter (name))
+        if "." in name :
+            getter = getattr (TFL.Getter, name)
+        else :
+            getter = operator.attrgetter (name)
+        return self.Get (self, name, getter)
     # end def __getattr__
 
     def __getitem__ (self, item) :
@@ -338,7 +358,6 @@ def _type_error (op) :
     return _
 # end def _type_error
 
-
 class _Exp_ (TFL.Meta.Object) :
 
     ### Equality queries
@@ -486,8 +505,14 @@ class Get (Exp) :
         return self.predicate (obj)
     # end def __call__
 
+    def __getattr__ (self, name) :
+        full_name = ".".join ((self.name, name))
+        getter    = getattr (TFL.Getter, full_name)
+        return self.__class__ (self.Q, full_name, getter)
+    # end def __getattr__
+
     def __repr__ (self) :
-        return "Q.%s" % self.name
+        return "Q.%s" % (self.name, )
     # end def __repr__
 
 # end class Get
