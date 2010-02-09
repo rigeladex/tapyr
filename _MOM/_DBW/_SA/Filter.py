@@ -31,39 +31,48 @@
 #    10-Dec-2009 (MG) Adopted to new `Q_Exp`, support for `Filter_*` added
 #    30-Jan-2010 (MG) `Attr_Map` corrected
 #     3-Feb-2010 (MG) Mapper for `TFL.Attr_Query.Call` added
+#     9-Feb-2010 (MG) `Attr_Map` defined as module global,
+#                     `TFL.Q_Exp.Get._sa_filter`: use `self.getter` instead
+#                     of `getattr`
 #    ««revision-date»»···
 #--
 
 from   _TFL              import TFL
-import _TFL.Q_Exp
+import _TFL.Accessor
 import _TFL.Decorator
 import _TFL.Filter
+import _TFL.Q_Exp
 from    sqlalchemy.sql   import expression
 
+SA_Attr_Map = dict \
+    ( cid       = TFL.Getter._id
+    , type_name = TFL.Getter.Type_Name
+    )
+
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
-def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
-    return getattr (e_type, Attr_Map.get (self.name, self.name))
+def _sa_filter (self, e_type) :
+    return SA_Attr_Map.get (self.name, self.getter) (e_type)
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)
-def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
+def _sa_filter (self, e_type) :
     args = []
     for arg in self.lhs, self.rhs :
         if hasattr (arg, "_sa_filter") :
-            arg = arg._sa_filter (e_type, Attr_Map)
+            arg = arg._sa_filter (e_type)
         args.append (arg)
     return getattr (args [0], self.op.__name__) (args [1])
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query.Call)
-def _sa_filter (self, e_type, Attr_Map = {"cid" : "_id"}) :
-    lhs = self.lhs._sa_filter (e_type, Attr_Map)
+def _sa_filter (self, e_type) :
+    lhs = self.lhs._sa_filter (e_type)
     op  = self.op.__name__.lower ()
     return getattr (lhs, op) (* self.args)
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Filter_And, TFL.Filter_Or, TFL.Filter_Not)
-def _sa_filter (self, e_type, Attr_Map = {}) :
+def _sa_filter (self, e_type) :
     sa_exp = getattr \
         ( expression
         , "%s_" % (self.__class__.__name__.rsplit ("_",1) [-1].lower (), )
