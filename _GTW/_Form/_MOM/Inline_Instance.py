@@ -37,6 +37,7 @@
 #                     in any case
 #     8-Feb-2010 (MG) `Lid_and_State_Field`: guard against entities which
 #                     have no `lid` (An_Entity's)
+#     9-Feb-2010 (MG) `Lid_and_State_Field.get_raw` fixed
 #    ««revision-date»»···
 #--
 
@@ -57,9 +58,8 @@ class Lid_and_State_Field (GTW.Form.Field) :
     widget = GTW.Form.Widget_Spec ("html/field.jnj, hidden")
 
     def get_raw (self, form, instance) :
-        lid   = ""
         state = "N"
-        lid   = getattr (instance, lid, "")
+        lid   = getattr (instance, "lid", "")
         if lid :
             state = "L"
         elif form.prototype :
