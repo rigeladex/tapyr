@@ -83,6 +83,7 @@
 #     5-Feb-2010 (CT) `_A_Composite_.cooked` added
 #     6-Feb-2010 (MG) `_A_Date_.as_string` typo fixed
 #     9-Feb-2010 (CT) `now` added to `A_Date`, `A_Date_Time`, and `A_Time`
+#    10-Feb-2010 (CT) `_A_Date_.needs_raw_value = False` added
 #    ««revision-date»»···
 #--
 
@@ -351,7 +352,8 @@ class _A_Composite_ (A_Attr_Type) :
 class _A_Date_ (A_Attr_Type) :
     """Common base class for date-valued attributes of an object."""
 
-    _tuple_off     = 0
+    needs_raw_value    = False
+    _tuple_off         = 0
 
     @property
     def output_format (self) :
