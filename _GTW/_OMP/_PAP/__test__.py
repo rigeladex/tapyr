@@ -75,7 +75,7 @@ if 1:
     p            = scope.PAP.Person ("Glueck", "Martin")
     #a            = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Austria")
     date         = scope.MOM.Lifetime (birth ="1976-03-16", raw = True)
-    #p.date       = date
+    p.date       = date
     #q_fn         = Q.first_name.STARTSWITH ("Ma")
     #q_sb         = Q.first_name
     #print q_fn (p.__class__._SAQ)

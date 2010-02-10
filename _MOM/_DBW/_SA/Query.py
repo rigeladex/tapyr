@@ -31,6 +31,7 @@
 # Revision Dates
 #    10-Feb-2010 (MG) Creation
 #    10-Feb-2010 (MG) Collect `_COMPOSITES` as well
+#    10-Feb-2010 (MG) `MOM_Composite_Query` added
 #    ««revision-date»»···
 #--
 
@@ -62,22 +63,25 @@ class MOM_Query (TFL.Meta.Object) :
         e_type._SAQ      = self
         self._E_TYPE     = e_type, bases
         columns          = sa_table.columns
-        self._ATTRIBUTES = []
-        self._COMPOSITES = []
         self.Type_Name   = columns.Type_Name
         self.id          = columns [e_type._sa_pk_name]
+        self._ATTRIBUTES = []
+        self._COMPOSITES = []
         for name, kind in db_attrs.iteritems () :
-            #if name == "position" :
-            #    TFL.BREAK ()
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
+                attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
-            elif not isinstance (kind, MOM.Attr.Query) :
+                self._ATTRIBUTES.append (name)
+                setattr (self, name, getattr (kind.C_Type, attr_name))
+                delattr (kind.C_Type, attr_name)
+            elif isinstance (kind, MOM.Attr.Query) :
+                TFL.BREAK ()
+            else :
                 col = columns [kind.attr._sa_col_name]
                 setattr (self, name, col)
                 if isinstance (kind, MOM.Attr.Link_Role) :
                     setattr (self, kind.role_name, col)
                 self._ATTRIBUTES.append (name)
-
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
             self._COMPOSITES.extend (b_saq._COMPOSITES)
             for name in b_saq._ATTRIBUTES :
@@ -95,6 +99,33 @@ class MOM_Query (TFL.Meta.Object) :
     # end def __getitem__
 
 # end class MOM_Query
+
+class MOM_Composite_Query (TFL.Meta.Object) :
+    """Query attributes of an composite attribite"""
+
+    def __init__ (self, e_type, attr_name, attr_names, db_attrs, columns) :
+        setattr (e_type, "_SAQ_%s" % (attr_name, ), self)
+        for idx, name in \
+            (  (i, an) for (i, an) in enumerate (attr_names)
+            if not an.startswith ("__raw_")
+            )  :
+            setattr (self, name, columns [idx])
+        self._query_fct = {}
+        for name, kind in db_attrs.iteritems () :
+            if isinstance (kind, MOM.Attr.Query) :
+                query_fct = getattr (kind.attr, "query_fct")
+                if query_fct :
+                    self._query_fct [name] = kind.attr
+                else :
+                    setattr (self, name, kind.attr.query._sa_filter (self))
+    # end def __init__
+
+    def __getattr__ (self, name) :
+        if name in self._query_fct :
+            return self._query_fct [name].query._sa_filter (self)
+    # end def __getattr__
+
+# end class MOM_Composite_Query
 
 
 if __name__ != "__main__" :

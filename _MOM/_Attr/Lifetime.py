@@ -28,6 +28,7 @@
 # Revision Dates
 #     9-Feb-2010 (CT) Creation
 #    10-Feb-2010 (CT) `A_Lifetime_N` added
+#    10-Feb-2010 (MG) `query_fct` corrected
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ class Lifetime (_Ancestor_Essence) :
                 now = A_Date.now ()
                 return \
                     ( (Q.birth <= now)
-                    & ((not Q.death) or (now <= Q.death))
+                    & ((Q.death == None) | (now <= Q.death))
                     )
             # end def query_fct
 

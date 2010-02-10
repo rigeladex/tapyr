@@ -35,6 +35,7 @@
 #                     `TFL.Q_Exp.Get._sa_filter`: use `self.getter` instead
 #                     of `getattr`
 #    10-Feb-2010 (MG) Rename `e_type` to `SAQ`
+#    10-Feb-2010 (MG) Set `predicate_precious_p` for `_Filter_Q_`
 #    ««revision-date»»···
 #--
 
@@ -72,6 +73,7 @@ def _sa_filter (self, SAQ) :
     return getattr (lhs, op) (* self.args)
 # end def _sa_filter
 
+TFL._Filter_Q_.predicate_precious_p = True
 @TFL.Add_To_Class ("_sa_filter", TFL.Filter_And, TFL.Filter_Or, TFL.Filter_Not)
 def _sa_filter (self, SAQ) :
     sa_exp = getattr \
