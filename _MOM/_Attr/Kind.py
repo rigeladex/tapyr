@@ -92,6 +92,9 @@
 #     9-Feb-2010 (CT) `get_hash` added
 #     9-Feb-2010 (CT) `_Composite_Mixin_._set_cooked_value` changed to set
 #                     `is_primary`
+#    10-Feb-2010 (CT) `_Composite_Mixin_.reset` and `._check_sanity` added to
+#                     automatically create attribute value and disallow
+#                     definition of `default` (in all guises)
 #    ««revision-date»»···
 #--
 
@@ -445,6 +448,27 @@ class _Composite_Mixin_ (Kind) :
         self._set_cooked_value \
             (obj, self.attr.C_Type (** cargo), changed = True)
     # end def set_pickle_cargo
+
+    def reset (self, obj) :
+        scope = obj.home_scope
+        etm   = scope [self.attr.C_Type.type_name]
+        return self._set_cooked_value (obj, etm (), changed = True)
+    # end def reset
+
+    def _check_sanity (self, attr_type) :
+        if __debug__ :
+            if not attr_type.C_Type :
+                raise TypeError \
+                    ("%s needs to define `C_Type`" % attr_type)
+            for name in ("computed_default", "default", "raw_default") :
+                d = getattr (attr_type, name)
+                if d :
+                    raise TypeError \
+                        ( "Attribute `%s` of kind %s cannot have %s %r"
+                        % (attr_type, self.kind, name, d)
+                        )
+        self.__super._check_sanity (attr_type)
+    # end def _check_sanity
 
     def _set_cooked_value (self, obj, value, changed = 42) :
         if value is not None :
@@ -912,14 +936,15 @@ class Query (_Cached_, _Computed_Mixin_) :
         if __debug__ :
             if not attr_type.auto_up_depends :
                 raise TypeError \
-                    ( "%s of kind Query needs `auto_up_depends` specified"
+                    ( "Attribute `%s` of kind Query needs "
+                      "`auto_up_depends` specified"
                     % (attr_type, )
                     )
             query = getattr (attr_type, "query", None)
             if not TFL.callable (query) :
                 raise TypeError \
-                    ( "%s has kind Query but but doesn't define a "
-                      "callable `query`"
+                    ( "Attribute `%s` of kind Query needs to define a "
+                      "`query` expression or `query_fct` method"
                     % (attr_type, )
                     )
     # end def _check_sanity

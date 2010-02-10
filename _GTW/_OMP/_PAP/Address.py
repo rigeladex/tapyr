@@ -50,6 +50,8 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
+        ### Primary attributes
+
         class street (A_String) :
             """Street (or place) and house number"""
 
@@ -98,6 +100,8 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             ui_name        = _("Region")
 
         # end class region
+
+        ### Non-primary attributes
 
         class desc (A_String) :
             """Short description of the address"""

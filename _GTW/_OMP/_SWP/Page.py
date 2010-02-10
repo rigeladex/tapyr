@@ -83,7 +83,6 @@ class Page (_Ancestor_Essence) :
             """
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Sticky_Mixin, )
 
             explanation        = """
               The page won't be visible before the publication date.
@@ -91,14 +90,6 @@ class Page (_Ancestor_Essence) :
               After the expiration date, the page won't be displayed (except
               possibly in an archive).
               """
-
-            def computed_default (self) :
-                scope = MOM.Scope.active
-                if scope is not None :
-                    etm    = scope [self.C_Type.type_name]
-                    result = etm ()
-                    return result
-            # end def computed
 
         # end class date
 

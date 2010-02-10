@@ -126,6 +126,8 @@ class A_Attr_Type (object) :
     Kind_Mixins         = ()
     needs_raw_value     = True
     Pickler             = None
+    query               = None
+    query_fct           = None
     rank                = 0
     raw_default         = u""
     record_changes      = True
@@ -320,7 +322,6 @@ class _A_Composite_ (A_Attr_Type) :
         for c in self.__super._checkers (e_type) :
             yield c
         C_Type = self.C_Type
-        assert C_Type, "%s needs to define `C_Type`" % self
         if not hasattr (C_Type, "app_type") :
             if not isinstance (C_Type, basestring) :
                 C_Type = C_Type.type_name
