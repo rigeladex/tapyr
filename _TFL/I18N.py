@@ -140,13 +140,13 @@ def context (* lang) :
     >>> _T ("text1")
     u'text1'
     >>> with context ("l1") :
-    ...     TFL._T ("text1")
-    ...     TFL._T ("text2")
+    ...     _T ("text1")
+    ...     _T ("text2")
     u'L1: Text 1'
     u'L1: Text 2'
     >>> with context ("l2") :
-    ...     TFL._T ("text1")
-    ...     TFL._T ("text2")
+    ...     _T ("text1")
+    ...     _T ("text2")
     u'L2: Text 1'
     u'L2: Text 2'
     """
