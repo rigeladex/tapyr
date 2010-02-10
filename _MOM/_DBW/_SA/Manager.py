@@ -81,6 +81,8 @@
 #                     object to all `e_type`s
 #    10-Feb-2010 (MG) `append_result` added to set `owner` and `attr_name` if
 #                     composite
+#    10-Feb-2010 (MG) `_setup_columns`: `unique_attrs` added (needed for
+#                     composite attributes)
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -385,7 +387,10 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         session.execute (cls.sa_scope.insert ().values (** kw))
     # end def register_scope
 
-    def _setup_columns (cls, e_type, db_attrs, bases, unique, prefix = None) :
+    def _setup_columns ( cls, e_type, db_attrs, bases, unique
+                       , prefix       = None
+                       , unique_attrs = set ()
+                       ) :
         result = []
         if getattr (e_type, "relevant_root", None) :
             ### if the e_type has no relevant root it is an `An_Entity` which
@@ -415,10 +420,12 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
             if prefix :
                 col_name       = "__%s_%s" % (prefix, col_name)
             attr._sa_col_name  = col_name
-            if kind.is_primary :
+            if kind.is_primary or name in unique_attrs :
                 unique.append (attr._sa_col_name)
             result.extend \
-                (attr._sa_columns (attr, kind, ** kind._sa_column_attrs ()))
+                ( attr._sa_columns
+                    (attr, kind, unique, ** kind._sa_column_attrs ())
+                )
             if kind.needs_raw_value :
                 raw_name     = attr.raw_name
                 if prefix :

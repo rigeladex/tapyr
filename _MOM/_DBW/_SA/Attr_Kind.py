@@ -101,7 +101,7 @@ def _sa_composite_prop (self, name, ckd, base_e_type, properties) :
             if isinstance (arg_names, tuple) :
                 kw [attr_name] = tuple (attr_dict [n] for n in arg_names)
             else :
-                kw [attr_name] = attr_dict [arg_name]
+                kw [attr_name] = attr_dict [arg_names]
         #print args, kw
         #import pdb; pdb.set_trace ()
         return e_type.from_pickle_cargo (MOM.Scope.active, kw)

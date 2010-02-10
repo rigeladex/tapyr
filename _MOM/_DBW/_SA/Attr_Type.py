@@ -35,6 +35,9 @@
 #                     attr instance is passed as parameter
 #     6-Feb-2010 (MG) Column generation and type definition splitted
 #     7-Feb-2010 (MG) `_sa_columns_composite` added
+#    10-Feb-2010 (MG) `unique` parameter added to `_sa_columns` functions
+#    10-Feb-2010 (MG) `_sa_columns_composite` pass list of unique attrs to
+#                     `_setup_columns`
 #    ««revision-date»»···
 #--
 
@@ -59,36 +62,15 @@ def Add_Classmedthod  (name, * classes) :
 # end def Add_Classmedthod
 
 @Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)
-def _sa_columns_simple (cls, attr, kind, ** kw) :
+def _sa_columns_simple (cls, attr, kind, unique, ** kw) :
     return \
         ( schema.Column (attr._sa_col_name, attr._sa_type (attr, kind), ** kw)
         ,
         )
 # end def _sa_columns_simple
 
-@Add_Classmedthod ("_sa_type", Attr.A_Boolean)
-def _sa_bool (cls, attr, kind, ** kw)      : return types.Boolean   ()
-@Add_Classmedthod ("_sa_type", Attr.A_Date)
-def _sa_date (cls, attr, kind, ** kw)      : return types.Date      ()
-@Add_Classmedthod ("_sa_type", Attr.A_Date_Time)
-def _sa_date_time (cls, attr, kind, ** kw) : return types.DateTime  ()
-@Add_Classmedthod ("_sa_type", Attr.A_Float)
-def _sa_float (cls, attr, kind, ** kw) :     return types.Float     ()
-@Add_Classmedthod ("_sa_type", Attr.A_Int)
-def _sa_int (cls, attr, kind, ** kw) :       return types.Integer   ()
-
-@Add_Classmedthod ("_sa_type", Attr.A_Decimal)
-def _sa_numeric (cls, attr, kind, ** kw) :
-    return types.Numeric (attr.max_digits, attr.decimal_places)
-# end def _sa_numeric
-
-@Add_Classmedthod ("_sa_type", Attr._A_String_)
-def _sa_string (cls, attr, kind, ** kw) :
-    return types.String (getattr (attr, "max_length", None))
-# end def _sa_string
-
 @Add_Classmedthod ("_sa_columns", Attr.A_Link_Role_EB)
-def _sa_columns_role_eb (cls, attr, kind, ** kw) :
+def _sa_columns_role_eb (cls, attr, kind, unique, ** kw) :
     return ( schema.Column
                ( attr._sa_col_name
                , types.Integer ()
@@ -104,8 +86,7 @@ def _sa_columns_role_eb (cls, attr, kind, ** kw) :
 Type_Decorator_Cache = {}
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Named_Object_)
-def _sa_columns_named_object (cls, attr, kind, ** kw) :
-    ### XXX this needs to be fixed
+def _sa_columns_named_object (cls, attr, kind, unique, ** kw) :
     key = attr.__class__.__bases__
     if key not in Type_Decorator_Cache :
         Pickler  = attr.Pickler
@@ -133,15 +114,39 @@ def _sa_columns_named_object (cls, attr, kind, ** kw) :
 # end def _sa_columns_named_object
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Composite_)
-def _sa_columns_composite (cls, attr, kind, ** kw) :
+def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
     e_type                = kind.C_Type
     bases                 = e_type.__bases__
     Manager               = MOM.DBW.SA.Manager
     db_attrs, role_attrs  = Manager._attr_dicts    (kind.C_Type, bases)
     assert not role_attrs
-    columns = Manager._setup_columns (e_type, db_attrs, bases, [], attr.name)
+    columns  = Manager._setup_columns \
+        ( e_type, db_attrs, bases, unique, attr.name
+        , set (k.attr.name for k in e_type.hash_sig)
+        )
     e_type._sa_save_attrs = db_attrs, columns
     return columns
 # end def _sa_columns_composite
+
+@Add_Classmedthod ("_sa_type", Attr.A_Boolean)
+def _sa_bool (cls, attr, kind, ** kw)      : return types.Boolean   ()
+@Add_Classmedthod ("_sa_type", Attr.A_Date)
+def _sa_date (cls, attr, kind, ** kw)      : return types.Date      ()
+@Add_Classmedthod ("_sa_type", Attr.A_Date_Time)
+def _sa_date_time (cls, attr, kind, ** kw) : return types.DateTime  ()
+@Add_Classmedthod ("_sa_type", Attr.A_Float)
+def _sa_float (cls, attr, kind, ** kw) :     return types.Float     ()
+@Add_Classmedthod ("_sa_type", Attr.A_Int)
+def _sa_int (cls, attr, kind, ** kw) :       return types.Integer   ()
+
+@Add_Classmedthod ("_sa_type", Attr.A_Decimal)
+def _sa_numeric (cls, attr, kind, ** kw) :
+    return types.Numeric (attr.max_digits, attr.decimal_places)
+# end def _sa_numeric
+
+@Add_Classmedthod ("_sa_type", Attr._A_String_)
+def _sa_string (cls, attr, kind, ** kw) :
+    return types.String (getattr (attr, "max_length", None))
+# end def _sa_string
 
 ### __END__ MOM.DBW.SA.Type

@@ -46,6 +46,7 @@
 ##     5-Feb-2010 (MG) `inline_table*` macros added, `fgs_*` macros renamed
 ##     8-Feb-2010 (MG) `aid_div_seq` added
 ##    10-Feb-2010 (MG) Display of `aig` no field errors added
+##    10-Feb-2010 (MG) `aid_div_seq` fixed
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,7 +56,7 @@
 {%- macro aid_div_seq (pfo, aid) -%}
     {%- set fo = aid.forms [0] -%}
     {%- for fg in fo.field_groups %}
-      {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg)}}
+      {{ GTW.call_macro (fg.widget, fo, fg)}}
     {% endfor -%}
 {%- endmacro -%} {#- aid_div_seq -#}
 
