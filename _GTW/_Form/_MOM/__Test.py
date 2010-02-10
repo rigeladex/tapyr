@@ -87,15 +87,15 @@ env = HTML (loader = loader)
 def display_values (form, indent = "") :
     print "%s%s" % (indent, form.prefix or "Toplevel")
     for f in form.fields :
-        print "  %s%-20s :%r" % (indent, f.name, form.get_raw (f))
+        print "  %s%-20s :%r" % (indent, form.get_id (f), form.get_raw (f))
     for ig in form.inline_groups :
         for ifo in ig.forms :
             display_values (ifo, indent + "  ")
 # end def display_values
 
 
-add = True
-per = False
+add = False
+per = True #False
 
 if per :
     form_cls = GTW.Form.MOM.Instance.New \
@@ -109,8 +109,10 @@ if add :
         )
 if per :
     p = scope.PAP.Person  ("Glueck", "Martin")
-    a = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Asutria")
-    scope.PAP.Person_has_Address (p, a, desc = "home")
+    a1 = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Asutria")
+    a2 = scope.PAP.Address ("Oberzellergasse 14", "1030", "Wien", "Asutria")
+    scope.PAP.Person_has_Address (p, a1, desc = "home")
+    scope.PAP.Person_has_Address (p, a2, desc = "home")
     form = form_cls ("/post/", p)
 
     #display_values (form)

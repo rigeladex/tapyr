@@ -58,8 +58,7 @@ class Completer (TFL.Meta.Object) :
         ( ("""$(".%(mname)s").completer"""
           , """  ({ "list_url"     : "%(list_url)s" """
           , """   , "obj_url"      : "%(obj_url)s" """
-          , """   , "prefix"       : "%(mname)s" """
-          , """   , "suffix"       : "%(suffix)s" """
+          , """   , "prefix"       : "%(field_prefix)s" """
           , """   , "triggers"     :  %(triggers)s """
           , """  }); """
           , ""
@@ -82,12 +81,10 @@ class Completer (TFL.Meta.Object) :
     # end def __init__
 
     def js_on_ready (self, inline) :
-        suffix       = ""
         bname, fname = inline.form_cls.form_path.split ("/", 1)
         forms        = fname.split ("/")
         mname        = forms.pop (0)
-        if forms :
-            suffix   = "-".join (forms) + "-"
+        field_prefix = inline.form_cls.prefix
         list_url     = "%s/%s/complete/%s"  % (self.prefix, bname, fname)
         obj_url      = "%s/%s/completed/%s" % (self.prefix, bname, fname)
         triggers     = json.dumps (self.triggers)

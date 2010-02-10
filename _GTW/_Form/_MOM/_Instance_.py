@@ -53,6 +53,8 @@
 #                     etype managers work differently)
 #                     `__call__?: if `Attribute_Inline` set the
 #                     created/modified instance to the main instance
+#     9-Feb-2010 (MG) `prefix` added
+#    10-Feb-2010 (MG) `form_path` moved from property to `__new__`
 #    ««revision-date»»···
 #--
 
@@ -106,10 +108,15 @@ class M_Instance (GTW.Form._Form_.__class__) :
         field_group_descriptions = dct.pop ("field_group_descriptions", ())
         result = super (M_Instance, mcls).__new__ (mcls, name, bases, dct)
         if et_man :
-            result.sub_forms = sub_forms = {}
-            field_groups     = []
-            medias           = []
-            added            = set ()
+            result.sub_forms     = sub_forms = {}
+            parent_form          = result.parent_form
+            result.form_path     = tbn = et_man._etype.type_base_name
+            if parent_form :
+                result.form_path = "%s/%s" % (parent_form.form_path, tbn)
+            result.prefix        = result.form_path.replace ("/", "__")
+            field_groups         = []
+            medias               = []
+            added                = set ()
             if not field_group_descriptions :
                 ### XXX try to get the default field group descriptions for this
                 ### et-man from somewhere
@@ -143,14 +150,6 @@ class M_Instance (GTW.Form._Form_.__class__) :
         fg.fields.append (cls.instance_state_field)
     # end def add_internal_fields
 
-    @TFL.Meta.Once_Property
-    def form_path (cls) :
-        tbn = cls.et_man._etype.type_base_name
-        if cls.parent_form :
-            return "%s/%s" % (cls.parent_form.form_path, tbn)
-        return tbn
-    # end def form_path
-
     def New (cls, et_man, * field_group_descriptions, ** kw) :
         suffix        = et_man._etype.type_base_name
         if "suffix" in kw :
@@ -172,18 +171,21 @@ class _Instance_ (GTW.Form._Form_) :
     et_man        = None
     error_count   = 0
     prototype     = False
+    state         = "N"
 
-    def __init__ (self, instance = None, prefix = None, parent = None) :
-        self.__super.__init__ (instance)
+    def __init__ (self, instance = None, parent = None, ** kw) :
+        self.__super.__init__ (instance, ** kw)
         scope                    = self.et_man.home_scope
-        self.prefix              = prefix
         self.parent              = parent
         ### make copies of the inline groups to allow caching of inline forms
         self.inline_groups       = []
-        for i, fg in enumerate (self.field_groups) :
+        field_groups             = self.field_groups
+        self.field_groups        = []
+        for fg in field_groups :
             if isinstance (fg, GTW.Form.MOM._Inline_) :
-                self.field_groups [i] = new_fg = fg.clone (self)
-                self.inline_groups.append (new_fg)
+                fg = fg.clone             (self)
+                self.inline_groups.append (fg)
+            self.field_groups.append      (fg)
     # end def __init__
 
     def add_changed_raw (self, dict, field) :
@@ -198,16 +200,25 @@ class _Instance_ (GTW.Form._Form_) :
     def _create_or_update (self, add_attrs = {}) :
         raw_attrs     = dict (add_attrs)
         instance      = self.instance
+        state         = self.state
         for f in (f for f in self.fields if not f.hidden) :
-            value     = self.add_changed_raw (raw_attrs, f)
+            self.add_changed_raw (raw_attrs, f)
         if raw_attrs :
             errors = []
             ### at least on attribute is filled out
             try :
                 raw_attrs ["on_error"] = errors.append
-                if instance :
+                if instance and state != "r" :
                     instance.set_raw (** raw_attrs)
                 else :
+                    if instance and state == "r" :
+                        ### a new instance should be created staring from a
+                        ### rename -> we have to fill in at least all
+                        ### primaries
+                        for attr_kind in instance.primary :
+                            n             = attr_kind.attr.name
+                            raw_attrs [n] = raw_attrs.get \
+                                (n, attr_kind.get_raw (instance))
                     instance = self.et_man (raw = True, ** raw_attrs)
             except Exception, exc:
                 if __debug__ :

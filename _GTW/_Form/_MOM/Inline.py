@@ -44,6 +44,7 @@
 
 from   _TFL                                 import TFL
 from   _TFL.predicate                       import paired
+import _TFL.Caller
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 
@@ -86,28 +87,17 @@ class _Inline_ (TFL.Meta.Object) :
     # end def get_errors
 
     @TFL.Meta.Once_Property
-    def form_count (self) :
-        return len (self.inline_forms)
-    # end def form_count
-
-    @TFL.Meta.Once_Property
-    def forms (self) :
-        form_cls = self.form_cls
-        pfm      = self.prefix_fmt
-        return \
-            [   form_cls ( prefix    = pfm % dict (no = no)
-                         , parent    = self
-                         , prototype = self.parent.prototype
-                         )
-            for no in xrange (self.form_count)
-            ]
-    # end def forms
-
-    @TFL.Meta.Once_Property
     def Media (self) :
-        jsor = ()
+        jsor  = []
+        scope = TFL.Caller.Object_Scope (self)
         if self.completer :
-            jsor = self.completer.js_on_ready (self)
+            jsor.extend (self.completer.js_on_ready (self))
+        for js_on_ready in self.js_on_ready :
+            if isinstance (js_on_ready, (tuple, list)) :
+                code, sort_key = js_on_ready
+                jsor.append (GTW.JS_On_Ready (code % scope, sort_key))
+            else :
+                jsor.extend (js_on_ready (self))
         return GTW.Media.from_list\
             ( [m for m in (self.widget.Media, self.form_cls.Media) if m]
             , js_on_ready = jsor
@@ -119,9 +109,8 @@ class _Inline_ (TFL.Meta.Object) :
         iform_cls     = self.form_cls
         et_man        = iform_cls.et_man
         parent        = self.parent
-        prefix        = "%s-MP" % (et_man._etype.type_base_name, )
         return iform_cls \
-            (None, prefix = prefix, parent = parent, prototype = True)
+            (None, prefix_sub = "-MP", parent = parent, prototype = True)
     # end def prototype_form
 
     def __call__ (self, request_data) :
@@ -147,22 +136,20 @@ class Attribute_Inline (_Inline_) :
     # end def error_count
 
     @TFL.Meta.Once_Property
-    def instances (self) :
-        return (0, getattr (self.parent.instance, self.link_name, None)),
-    # end def instances
+    def forms (self) :
+        return \
+            [ self.form_cls
+                ( prefix_sub = self.parent.prefix_sub
+                , parent     = self
+                , prototype  = self.parent.prototype
+                )
+            ]
+    # end def forms
 
     @TFL.Meta.Once_Property
     def instance (self) :
         return self.forms [0].instance
     # end def instance
-
-    @TFL.Meta.Once_Property
-    def prefix_fmt (self) :
-        result = self.form_cls.et_man._etype.type_base_name
-        if self.parent.prefix :
-            result = "%s-%s" % (self.parent.prefix, result)
-        return result
-    # end def prefix_fmt
 
     @TFL.Meta.Once_Property
     def Instances (self) :
@@ -174,14 +161,6 @@ class Attribute_Inline (_Inline_) :
 
 class Link_Inline (_Inline_) :
     """An inline group handling a MOM.Link"""
-
-    @TFL.Meta.Once_Property
-    def prefix_fmt (self) :
-        result = "%s-M%%(no)s" % (self.form_cls.et_man._etype.type_base_name, )
-        if self.parent.prefix :
-            result = "%s-%s" % (self.parent.prefix, result)
-        return result
-    # end def prefix_fmt
 
     @TFL.Meta.Once_Property
     def range_field_name (self) :
@@ -200,27 +179,6 @@ class Link_Inline (_Inline_) :
     # end def Instances
 
     @TFL.Meta.Once_Property
-    def instances (self) :
-        parent = self.parent
-        count         = 0
-        try :
-            value     = parent.request_data [self.range_field_name]
-            count     = int (value.split (":") [1])
-        except KeyError :
-            pass
-        form_count  = min \
-            ( self.max_count
-            , max
-                ( self.min_count
-                , len (instances) + self.min_empty
-                , self.min_required
-                , count
-                )
-            )
-        return paired (xrange (form_count), instances)
-    # end def instances
-
-    @TFL.Meta.Once_Property
     def form_count (self) :
         count         = 0
         parent        = self.parent
@@ -234,6 +192,20 @@ class Link_Inline (_Inline_) :
         return min \
             (self.max_count, max (self.min_count, self.min_required, count))
     # end def form_count
+
+    @TFL.Meta.Once_Property
+    def forms (self) :
+        form_cls  = self.form_cls
+        prototype = self.parent.prototype
+        return \
+            [   form_cls
+                  ( prefix_sub = "-M%s" % (no if not prototype else "P", )
+                  , parent     = self
+                  , prototype  = prototype
+                  )
+            for no in xrange (self.form_count)
+            ]
+    # end def forms
 
     def __call__ (self, request_data) :
         error_count   = self.__super.__call__ (request_data)

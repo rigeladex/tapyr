@@ -29,6 +29,7 @@
 #    19-Jan-2010 (MG) Creation
 #    20-Jan-2010 (MG) `get_id` allow string as parameter as well
 #     5-Feb-2010 (MG) `M_Form` added
+#    10-Feb-2010 (MG) `prefix_sub` added
 #    ««revision-date»»···
 #--
 
@@ -58,15 +59,18 @@ class M_Form (TFL.Meta.Object.__class__) :
 class _Form_ (TFL.Meta.Object) :
     """Base class for forms"""
 
-    prefix        = None
+    prefix        = ""
     __metaclass__ = M_Form
     instance      = None
 
-    def __init__ (self, instance = None) :
+    def __init__ (self, instance = None, prefix_sub = None) :
         if instance != None :
             self.instance        = instance
         self.errors              = GTW.Form.Error_List ()
         self.field_errors        = TFL.defaultdict     (GTW.Form.Error_List)
+        self.prefix_sub          = prefix_sub
+        if prefix_sub :
+            self.prefix          = "%s%s" % (self.prefix , prefix_sub)
         self.request_data        = {}
     # end def __init__
 

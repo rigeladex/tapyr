@@ -40,6 +40,9 @@
 #     8-Feb-2010 (MG) Default widget for `Attribute_Inline_Description` fixed
 #     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
 #                     etype managers work differently)
+#    10-Feb-2010 (MG) Link javascript setup moved form `Media` to
+#                     `Link_Inline_Description.js_on_ready` to be able to
+#                     create link specific code
 #    ««revision-date»»···
 #--
 
@@ -58,6 +61,7 @@ class _Inline_Description_ (TFL.Meta.Object) :
     """Base class for all inline editing descriptions (links/attributes/...)."""
 
     completer    = None
+    js_on_ready  = ()
     css_class    = "inline-editing"
 
     def __init__ (self, link_name, * field_group_descriptions, ** kw) :
@@ -118,14 +122,14 @@ class Link_Inline_Description (_Inline_Description_) :
                   , GTW.Script (body = 'google.load ("jqueryui", "1");')
                   , GTW.Script (src  = "GTW/model_edit_ui.js") ## XXX
                   )
-              , js_on_ready =
-                  ( GTW.JS_On_Ready
-                        ( '$(".m2m-inline-form-table").many2many ();'
-                        , 100
-                        )
-                  ,
-                  )
             )
+        )
+    js_on_ready  = \
+        ( ( '$(".m2m-inline-form-table").many2many '
+              '({link_prefix : "%(form_cls.prefix)s"});\n'
+          , 100
+          )
+        ,
         )
     css_class    = "inline-link"
 

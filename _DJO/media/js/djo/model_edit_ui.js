@@ -37,14 +37,64 @@
 **     3-Feb-2010 (MG) Correct form count on submit
 ++     5-Feb-2010 (MG) `suffix` option added to auto completion
 **     6-Feb-2010 (MG) Completion finished
+**     9-Feb-2010 (MG) Alphabetically sorted
+**     9-Feb-2010 (MG) Copy/rename functions added, button handling changed
 **    ««revision-date»»···
 **--
 */
 
 (function ($)
 {
-  var field_no_pat   = /-M([\dP]+)-/;
-
+  var field_no_pat = /-M([\dP]+)-/;
+  var form_buttons = [ { name           : "Delete-Recover"
+                       , add_to_inline  : "true"
+                       , href           : "#delete-recover"
+                       , default_state  : 0
+                       , states         :
+                           [ { name     : "delete"
+                             , enabled  : "cur_count > min_count"
+                             , icon     : "ui-icon-trash"
+                             , callback : "_delete_inline"
+                             }
+                           , { name     : "recover"
+                             , enabled  : "cur_count < max_count"
+                             , icon     : "ui-icon-plus"
+                             , callback : "_undelete_inline"
+                             }
+                           ]
+                       }
+                     , { name           : "Rename"
+                       , href           : "#rename"
+                       , add_to_inline  : "lid"
+                       , default_state  : 0
+                       , states         :
+                           [ { name     : "unlock"
+                             , enabled  : "true"
+                             , icon     : "ui-icon-unlocked"
+                             , callback : "_unlock_inline"
+                             }
+                           , { name     : "lock"
+                             , enabled  : "true"
+                             , icon     : "ui-icon-arrowreturnthick-1-w"
+                             , callback : "_revert_inline"
+                             }
+                           ]
+                       }
+                     , { name           : "Copy"
+                       , add_to_inline  : "lid"
+                       , href           : "#copy"
+                       , enabled        : "cur_count < max_count"
+                       , icon           : "ui-icon-copy"
+                       , callback       : "_copy_inline"
+                       }
+                     , { name           : "Add new form"
+                       , add_to_inline  : "false"
+                       , href           : "#add"
+                       , enabled        : "cur_count < max_count"
+                       , icon           : "ui-icon-plusthick"
+                       , callback       : "_add_new_inline"
+                       }
+                     ]
   var Many2Many =
     { _init : function ()
       {
@@ -62,16 +112,19 @@
           this._setData ("cur_number", cur_count);
           this._setData ("max_count",  max_count);
           $legend.prepend
-              ( '<a href="#add" class="ui-icon-add ui-icon-plusthick '
-              + add_class
-              + '" title="Add ' + $legend.attr ("title")
-              + '">Add</a> '
+              ( '<a href="#add" class="icon-link">'
+              +   '<span class="ui-icon ui-icon-plusthick'
+              +     '" title="Add ' + $legend.attr ("title") + '">'
+              +     'Add'
+              +   '</span>'
+              + '</a>'
               );
           /* extract all real forms */
-          var $forms = this.element.find (".m2m-inline-instance");
+          var $forms = this.element.find
+              (".m2m-inline-instance:not(.m2m-prototype)");
           for (var i = 0; i < $forms.length; i++)
           {
-              this._add_delete_button ($forms.eq (i));
+              this._add_buttons ($forms.eq (i));
           }
           this.element.parents       ("form").many2manysubmit ();
           this._update_button_states ();
@@ -95,80 +148,109 @@
               }
           });
       }
-    , _add_delete_button : function ($form)
+    , _add_buttons : function ($form)
       {
-          var $link = $form.find ("a[href=#delete]");
-          if (! $link.length)
+          var $element   = $form;
+          var  first_tag = $form.get (0).tagName.toLowerCase ();
+          var $l_a_s     = $form.find  ("input[name$=-_lid_a_state_]");
+          var  lid       = $l_a_s.attr ("value").split (":") [0];
+          if (first_tag == "tr")
           {
-              var  first_tag = $form.get (0).tagName.toLowerCase ();
-              $link          =
-                  $('<a href="#delete" class="ui-icon-delete ui-icon-closethick">Delete</a>');
-              var $element = $link;
-              if (first_tag == "tr")
-                  $element = $("<td></td>").append ($link);
-              $form.append ($element);
+              $temp  = $('<td><span class="width-3-icons"></span></td>');
+              $form.append ($temp);
+              $element = $temp.find ("span");
           }
-      }
-    , _add_new_form : function (evt)
-      {
-          var self       = evt.data;
-          var $prototype = self._getData    ("$prototype");
-          var $new       = $prototype.clone ().removeClass ("m2m-prototype");
-          /* now that we have cloned the block, let's change the
-          ** name/id/for attributes
-          */
-          self._setData ("cur_count", self._getData ("cur_count") + 1);
-          var cur_number = self._getData ("cur_number");
-          self._setData ("cur_number", cur_number + 1);
-          var pattern    = /MP-/;
-          var new_no     = "M" + cur_number + "-";
-          var $labels    = $new.find     ("label")
-          for (var i = 0; i < $labels.length; i++)
+          for (var i = 0; i < form_buttons.length; i++)
           {
-              var $l = $labels.eq (i);
-              $l.attr ("for", $l.attr ("for").replace (pattern, new_no));
-          }
-          var $edit_elements = $new.find (":input");
-          var  edit_mod_list = ["id", "name"];
-          for (var i = 0; i < $edit_elements.length; i++)
-          {
-              var $e = $edit_elements.eq (i);
-              for (var j = 0; j < edit_mod_list.length; j++)
+              var button = form_buttons [i];
+              if (eval (button.add_to_inline))
               {
-                  var n = edit_mod_list [j];
-                  $e.attr (n, $e.attr (n).replace (pattern, new_no));
-              }
-          }
-          /* we are ready to add the new block at the end */
-          self._add_delete_button    ($new);
-          $prototype.parent          ().append ($new);
-          self._update_button_states ();
-          self._setup_auto_complete  (cur_number);
-          $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":N");
-          evt.preventDefault ();
-      }
-    , _setup_auto_complete  : function (no)
-      {
-          var $prototype = this._getData    ("$prototype");
-          var  comp_opt  = $prototype.data  ("completion");
-          if (comp_opt != undefined)
-          {
-              var  pf    = comp_opt.prefix + "-M" + no + "-" + comp_opt.suffix;
-              for (var field_name in comp_opt.triggers)
-              {
-                  var real_field_name = pf + field_name;
-                  $("[name=" + real_field_name + "]").bind
-                      ( "keyup"
-                      , {comp_opt : comp_opt, self : this}
-                      , this._auto_complete
-                      ).bind
-                      ( "keypress"
-                      , {comp_opt : comp_opt, self : this}
-                      , this._auto_complete_navigation
-                      );;
+                  var icon   = button.icon;
+                  if (button.states)
+                      icon = button.states [button.default_state].icon
+                  $element.append
+                      ( '<a href="' + button.href + '" class="icon-link">'
+                      +   '<span class="ui-icon ' + icon + '">'
+                      +      button.name
+                      +   '</span>'
+                      + '</a>'
+                      );
               }
           }
       }
+    , _add_new_inline : function (evt)
+      {
+          evt.data._copy_form ();
+          evt.preventDefault  ();
+      }
+    , _auto_complete        : function (evt)
+    {
+        var data     = {};
+        var self     = evt.data.self;
+        if (self._getData ("key_handled"))
+        {
+            evt.preventDefault  ();
+            evt.stopPropagation ();
+            self._setData      ("key_handled", false);
+            return false
+        }
+        var comp_opt = evt.data.comp_opt;
+        var trigger  = evt.currentTarget.name.split (field_no_pat) [2];
+        trigger      = comp_opt.triggers [trigger];
+        var fields   = trigger ["fields"];
+        var value    = evt.currentTarget.value;
+        var id       = comp_opt.prefix + "-comp-list"
+        $("#" + id).remove (); /* remove old display */
+        if (  (trigger.min_chars != undefined)
+           && (value.length      >= trigger.min_chars)
+           )
+        {
+            var no = field_no_pat.exec (evt.currentTarget.name) [1];
+            var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
+            for (var i = 0;  i < trigger.fields.length; i++)
+            {
+                var mfn   = trigger.fields [i];
+                var value =  $("[name=" + pf + mfn + "]").attr ("value");
+                if (value) data [mfn] = value;
+            }
+            jQuery.get
+              ( comp_opt.list_url
+              , data
+              , function (data, textStatus)
+                {
+                    if (textStatus == "success")
+                    {
+                        var comp_data = { comp_data : comp_data
+                                        , input     : evt.currentTarget
+                                        };
+                        var $auto_complete = $(data).attr ("id", id);
+                        if ($auto_complete.find (".completion-id").length)
+                        {
+                            var $input = $(evt.currentTarget);
+                            var  pos   = $input.position ();
+                            pos.left += $input.width  ();
+                            $("#" + id).remove (); /* remove old display */
+                            $input.parent ().append ($auto_complete);
+                            $auto_complete.css      (pos)
+                                          .children ()
+                                          .bind ( "click", function (e)
+                              {
+                                  self._replace_form
+                                    (evt, $(e.currentTarget), comp_opt);
+                              })
+                                          .hover (function (e)
+                              {
+                                  $(this).addClass ("ui-state-hover");
+                              }, function (e)
+                              {
+                                  $(this).removeClass ("ui-state-hover");
+                              });
+                        }
+                    }
+                }
+              )
+        }
+    }
     , _auto_complete_navigation : function (evt)
     {
         var  self      = evt.data.self;
@@ -211,81 +293,105 @@
             }
         }
     }
-    , _auto_complete        : function (evt)
-    {
-        var data     = {};
-        var self     = evt.data.self;
-        if (self._getData ("key_handled"))
-        {
-            evt.preventDefault  ();
-            evt.stopPropagation ();
-            self._setData      ("key_handled", false);
-            return false
-        }
-        var comp_opt = evt.data.comp_opt;
-        var trigger  = evt.currentTarget.name.split (field_no_pat) [2];
-        trigger      = comp_opt.triggers[trigger.replace (comp_opt.suffix, "")];
-        var fields   = trigger ["fields"];
-        var value    = evt.currentTarget.value;
-        var id       = comp_opt.prefix + "-comp-list"
-        $("#" + id).remove (); /* remove old display */
-        if (  (trigger.min_chars != undefined)
-           && (value.length      >= trigger.min_chars)
-           )
-        {
-            var no = field_no_pat.exec (evt.currentTarget.name) [1];
-            var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
-            var sf = comp_opt.suffix;
-            for (var i = 0;  i < trigger.fields.length; i++)
-            {
-                var mfn   = trigger.fields [i];
-                var value =  $("[name=" + pf + sf + mfn + "]").attr ("value");
-                if (value) data [mfn] = value;
-            }
-            jQuery.get
-              ( comp_opt.list_url
-              , data
-              , function (data, textStatus)
-                {
-                    if (textStatus == "success")
-                    {
-                        var comp_data = { comp_data : comp_data
-                                        , input     : evt.currentTarget
-                                        };
-                        var $auto_complete = $(data).attr ("id", id);
-                        if ($auto_complete.find (".completion-id").length)
-                        {
-                            var $input = $(evt.currentTarget);
-                            var  pos   = $input.position ();
-                            pos.left += $input.width  ();
-                            $("#" + id).remove (); /* remove old display */
-                            $input.parent ().append ($auto_complete);
-                            $auto_complete.css      (pos)
-                                          .children ()
-                                          .bind ( "click", function (e)
-                              {
-                                  self._replace_form
-                                    (evt, $(e.currentTarget), comp_opt);
-                              })
-                                          .hover (function (e)
-                              {
-                                  $(this).addClass ("ui-state-hover");
-                              }, function (e)
-                              {
-                                  $(this).removeClass ("ui-state-hover");
-                              });
-                        }
-                    }
-                }
-              )
-        }
-    }
+    , _copy_inline   : function (evt)
+      {
+          var  self   = evt.data;
+          var $source = $(evt.target).parents (".m2m-inline-instance");
+          var  $new   = self._copy_form ();
+          self._restore_form_state ($new, self._save_form_state ($source));
+          $new.find  ("input[name$=-_lid_a_state_]").attr ("value", ":N");
+          $new.find  ("input[name$=-instance_state]").attr ("value", "");
+          evt.preventDefault  ();
+          evt.stopPropagation ();
+      }
+    , _copy_form     : function ()
+      {
+          var state = {};
+          var $prototype = this._getData    ("$prototype");
+          var $new       = $prototype.clone ().removeClass ("m2m-prototype");
+          /* now that we have cloned the block, let's change the
+          ** name/id/for attributes
+          */
+          this._setData ("cur_count", this._getData ("cur_count") + 1);
+          var cur_number = this._getData ("cur_number");
+          this._setData ("cur_number", cur_number + 1);
+          var pattern    = /-MP-/;
+          var new_no     = "-M" + cur_number + "-";
+          var $labels    = $new.find     ("label")
+          for (var i = 0; i < $labels.length; i++)
+          {
+              var $l = $labels.eq (i);
+              $l.attr ("for", $l.attr ("for").replace (pattern, new_no));
+          }
+          var $edit_elements = $new.find (":input");
+          var  edit_mod_list = ["id", "name"];
+          for (var i = 0; i < $edit_elements.length; i++)
+          {
+              var $e = $edit_elements.eq (i);
+              for (var j = 0; j < edit_mod_list.length; j++)
+              {
+                  var n = edit_mod_list [j];
+                  $e.attr (n, $e.attr (n).replace (pattern, new_no));
+              }
+          }
+          /* we are ready to add the new block at the end */
+          this._add_buttons          ($new);
+          $prototype.parent          ().append ($new);
+          this._update_button_states ();
+          this._setup_auto_complete  (cur_number);
+          $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":N");
+          return $new;
+      }
+    , _delete_inline : function (evt)
+      {
+          var self   = evt.data;
+          var $proto = self._getData         ("$prototype");
+          var $form  = $(evt.target).parents (".m2m-inline-instance");
+          if (self._forms_equal ($form, $proto))
+          {
+              $form.remove ();
+          }
+          else
+          {
+              var  button        = form_buttons [0];
+              var $link          = $form.find  ("a[href=" + button.href + "]");
+              var $button        = $link.find  ("span");
+              var $elements      = $form.find  (":input:not([type=hidden])");
+              var $l_a_s         = $form.find  ("input[name$=-_lid_a_state_]");
+              var  lid           = $l_a_s.attr ("value").split (":") [0];
+              $elements.attr        ("disabled","disabled")
+                       .addClass    ("ui-state-disabled");
+              $button.removeClass   (button.states [0].icon)
+                     .addClass      (button.states [1].icon);
+              $l_a_s.attr ("value", [lid, "U"].join (":"));
+          }
+          self._setData ("cur_count", self._getData ("cur_count") - 1);
+          self._update_button_states ();
+          evt.preventDefault         ();
+          evt.stopPropagation        ();
+      }
+    , _forms_equal : function ($l, $r)
+      {
+          /* Returns whether the values of the two forms are equal */
+          var $l_value_elements = $l.find ("[value]:not([type=hidden])");
+          var $r_value_elements = $r.find ("[value]:not([type=hidden])");
+          if ($l_value_elements.length != $r_value_elements.length)
+              return false;
+          for (var i = 0; i < $l_value_elements.length; i++)
+          {
+              if (  $l_value_elements.eq (i).attr ("value")
+                 != $r_value_elements.eq (i).attr ("value")
+                 )
+                  return false;
+          }
+          return true;
+      }
     , _replace_form : function (evt, $selected, comp_opt)
     {
         var id = comp_opt.prefix + "-comp-list";
         var pk = $selected.find    (".completion-id").text ();
         var no = field_no_pat.exec (evt.currentTarget.name) [1];
-        var pf = comp_opt.prefix + "-M" + parseInt (no) + "-" + comp_opt.suffix;
+        var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
         jQuery.getJSON
           ( comp_opt.obj_url
           , { "lid" : pk, "no" : no}
@@ -308,105 +414,171 @@
             }
           );
     }
+    , _restore_form_state : function ($form, state)
+      {
+          var $elements = $form.find  (":input");
+          var  form_no  = state ["_form_no_"];
+          for (var i = 0; i < $elements.length; i++)
+          {
+              var $e  = $elements.eq (i);
+              var key = $e.attr ("name").replace (field_no_pat, form_no);
+              $e.attr ("value", state [key]);
+          }
+      }
+    , _revert_inline   : function (evt)
+      {
+          var self           = evt.data;
+          var $form          = $(evt.target).parents (".m2m-inline-instance");
+          var  button        = form_buttons [1];
+          var $link          = $form.find  ("a[href=" + button.href + "]");
+          var $button        = $link.find  ("span");
+          var $elements      = $form.find  (":input");
+          var $l_a_s         = $form.find  ("input[name$=-_lid_a_state_]");
+          var  lid           = $l_a_s.attr ("value").split (":") [0];
+          self._restore_form_state   ($form, $form.data ("_state"));
+          $elements.attr             ("disabled", "disabled");
+          $button.removeClass        (button.states [1].icon)
+                 .addClass           (button.states [0].icon);
+          self._update_button_states ();
+          evt.preventDefault         ();
+          evt.stopPropagation        ();
+      }
+    , _save_form_state      : function ($form)
+      {
+          var $elements = $form.find (":input");
+          var  state    =
+            {_form_no_ : field_no_pat.exec ($elements.attr ("name")) [0]};
+          for (var i = 0; i < $elements.length; i++)
+          {
+              var $e = $elements.eq (i);
+              state [$e.attr ("name")] = $e.attr ("value");
+          }
+          return state;
+      }
+    , _setup_auto_complete  : function (no)
+      {
+          var $prototype = this._getData    ("$prototype");
+          var  comp_opt  = $prototype.data  ("completion");
+          if (comp_opt != undefined)
+          {
+              var  pf    = comp_opt.prefix + "-M" + no + "-";
+              for (var field_name in comp_opt.triggers)
+              {
+                  var real_field_name = pf + field_name;
+                  $("[name=" + real_field_name + "]").bind
+                      ( "keyup"
+                      , {comp_opt : comp_opt, self : this}
+                      , this._auto_complete
+                      ).bind
+                      ( "keypress"
+                      , {comp_opt : comp_opt, self : this}
+                      , this._auto_complete_navigation
+                      );;
+              }
+          }
+      }
+    , _undelete_inline : function (evt)
+      {
+          var self           = evt.data;
+          var $proto         = self._getData         ("$prototype");
+          var $form          = $(evt.target).parents (".m2m-inline-instance");
+          var  button        = form_buttons [0];
+          var $link          = $form.find  ("a[href=" + button.href + "]");
+          var $button        = $link.find  ("span");
+          var $elements      = $form.find  (":input:not([type=hidden])");
+          var $l_a_s         = $form.find  ("input[name$=-_lid_a_state_]");
+          var  lid           = $l_a_s.attr ("value").split (":") [0];
+          var  new_state     = "L";
+          if (! lid)
+          {
+              new_state      = "N";
+              $elements.removeAttr ("disabled")
+          }
+          $elements.removeClass ("ui-state-disabled");
+          self._setData ("cur_count", self._getData ("cur_count") + 1);
+          $l_a_s.attr ("value", [lid, new_state].join (":"));
+          $button.removeClass  (button.states [1].icon)
+                 .addClass     (button.states [0].icon);
+          self._update_button_states ();
+          evt.preventDefault         ();
+          evt.stopPropagation        ();
+      }
+    , _unlock_inline   : function (evt)
+      {
+          var self            = evt.data;
+          var $form           = $(evt.target).parents (".m2m-inline-instance");
+          var  button         = form_buttons [1];
+          var $link           = $form.find    ("a[href=" + button.href + "]");
+          var $button         = $link.find    ("span");
+          var $elements       = $form.find    (":input");
+          var  link_prefix    = self._getData ("link_prefix");
+          $form.find  ("input[name$=-_lid_a_state_]").each ( function () {
+            var $this         = $(this);
+            var lid           = $this.attr ("value").split (":") [0];
+            var name          = $this.attr ("name");
+            var new_state     = "r"
+            if (name.split (field_no_pat) [0] == link_prefix)
+            {
+                /* this is the state field of the link */
+                new_state     = "R";
+            }
+            $this.attr ("value", [lid, new_state].join (":"));
+          });
+          $form.data                 ("_state", self._save_form_state ($form));
+          $elements.removeAttr       ("disabled")
+          $button.removeClass        (button.states [0].icon)
+                 .addClass           (button.states [1].icon);
+          self._update_button_states ();
+          evt.preventDefault         ();
+          evt.stopPropagation        ();
+      }
+    , _update_button_state  : function ( $this
+                                       , cur_count, min_count, max_count
+                                       , button, state
+                                       )
+    {
+        var  href    = state.href || button.href;
+        var $buttons = $this.find
+            ('a[href=' + href + '] .' + state.icon.split (" ") [0])
+        /* remove old handlers */
+        $buttons.unbind ("click")
+        if (eval (state.enabled))
+        {
+            $buttons.bind   ("click", this, this [state.callback])
+                    .parent ().removeClass ("ui-state-disabled");
+        }
+        else
+        {
+            $buttons.parent ().addClass ("ui-state-disabled");
+        }
+    }
     , _update_button_states : function ()
       {
-          var $add_button = this.element.find ("legend a[href=#add]");
+          var $this       = this.element;
           var cur_count   = this._getData ("cur_count");
           var min_count   = this._getData ("min_count");
           var max_count   = this._getData ("max_count");
-          var $undeletes  = this.element.find
-              ("a[href=#delete].ui-icon-circle-close");
-          var $deletes    = this.element.find
-              ("a[href=#delete].ui-icon-closethick");
-          if (cur_count < max_count)
+          for (var i = 0; i < form_buttons.length; i++)
           {
-              $add_button.bind        ("click", this, this._add_new_form)
-                         .removeClass ("ui-state-disabled");
-              $undeletes .bind        ("click", this, this._delete_form)
-                         .removeClass ("ui-state-disabled");
-          }
-          else
-          {
-              $add_button.unbind   ("click", this._add_new_form)
-                         .addClass ("ui-state-disabled");
-              $undeletes. unbind   ("click", this._delete_form)
-                         .addClass ("ui-state-disabled");
-          }
-          if (cur_count == min_count)
-          {
-              $deletes.addClass    ("ui-state-disabled")
-                      .unbind      ("click", this._delete_form);
-          }
-          else
-          {
-              $deletes.removeClass ("ui-state-disabled")
-                      .bind        ("click", this, this._delete_form);
-          }
-          this._getData ("$m2m_range").attr
-              ("value", [min_count, cur_count, max_count].join (":"));
-      }
-    , _forms_equal : function ($l, $r)
-      {
-          /* Returns whether the values of the two forms are equal */
-          var $l_value_elements = $l.find ("[value]:not([type=hidden])");
-          var $r_value_elements = $r.find ("[value]:not([type=hidden])");
-          if ($l_value_elements.length != $r_value_elements.length)
-              return false;
-          for (var i = 0; i < $l_value_elements.length; i++)
-          {
-              if (  $l_value_elements.eq (i).attr ("value")
-                 != $r_value_elements.eq (i).attr ("value")
-                 )
-                  return false;
-          }
-          return true;
-      }
-    , _delete_form : function (evt)
-      {
-          var self   = evt.data;
-          var $proto = self._getData         ("$prototype");
-          var $form  = $(evt.target).parents (".m2m-inline-instance");
-          if (self._forms_equal ($form, $proto))
-          {
-              $form.remove ();
-              self._setData ("cur_count", self._getData ("cur_count") - 1);
-          }
-          else
-          {
-              var $link      = $form.find  ("a[href=#delete]");
-              var $elements  = $form.find  (":input:not([type=hidden])");
-              var $l_a_s     = $form.find  ("input[name$=-_lid_a_state_]");
-              var  lid       = $l_a_s.attr ("value").split (":") [0];
-              var  new_state = "L";
-              if ($link.hasClass ("ui-icon-closethick"))
+              var button        = form_buttons [i];
+              if (button.states)
               {
-                  new_state = "U";
-                  $elements.attr        ("disabled","disabled")
-                           .addClass    ("ui-state-disabled");
-                  $link.removeClass     ("ui-icon-closethick ui-icon-delete")
-                       .addClass        ("ui-icon-circle-close ui-icon-add");
-                  self._setData ("cur_count", self._getData ("cur_count") - 1);
+                  for (var si = 0; si < button.states.length; si++)
+                  {
+                      this._update_button_state
+                          ( $this, cur_count, min_count, max_count
+                          , button, button.states [si]
+                          );
+                  }
               }
               else
               {
-                  if (lid)
-                  {
-                      new_state = "L";
-                  }
-                  else
-                  {
-                      new_state = "N";
-                      $elements.removeAttr  ("disabled")
-                  }
-                  $elements.removeClass ("ui-state-disabled");
-                  $link.removeClass     ("ui-icon-circle-close ui-icon-add")
-                       .addClass        ("ui-icon-closethick ui-icon-delete");
-                  self._setData ("cur_count", self._getData ("cur_count") + 1);
+                  this._update_button_state
+                      ($this, cur_count, min_count, max_count, button, button);
               }
-              $l_a_s.attr ("value", [lid, new_state].join (":"));
           }
-          self._update_button_states ();
-          evt.preventDefault         ();
+          this._getData ("$m2m_range").attr
+              ("value", [min_count, cur_count, max_count].join (":"));
       }
     }
   $.widget ("ui.many2many", Many2Many);
@@ -446,8 +618,6 @@
         , list_url                       : ""
         , obj_url                        : "" // id -> pk, no ->number
         , prefix                         : ""
-        , suffix                         : ""
-        , field_prefix                   : ""
         }
       }
     );

@@ -122,7 +122,7 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
     # end def lid
 
     def _prepare_form (self) :
-        lid, state = self.get_raw (self.lid_and_state_field).split (":")
+        lid, state = self.lid, self.state
         if state == "U" :
             ### this from handles an instance which should be unlinked
             if not lid :
@@ -155,6 +155,8 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
 class Attribute_Inline_Instance (_Inline_Instance_) :
     """A form which handles an attribute of an entity as a seperate form"""
+
+    pass
 
 # end class Attribute_Inline_Instance
 

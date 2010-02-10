@@ -45,6 +45,7 @@
 ##                     (needed to setup the completion)
 ##     5-Feb-2010 (MG) `inline_table*` macros added, `fgs_*` macros renamed
 ##     8-Feb-2010 (MG) `aid_div_seq` added
+##    10-Feb-2010 (MG) Display of `aig` no field errors added
 ##    ««revision-date»»···
 ##--
 #}
@@ -126,6 +127,9 @@
 {%- set ifo =  fg.forms [0] -%}
 {%- for fg in ifo.field_groups %}
   {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg)}}
+  {%- if ifo.get_errors () %}
+    <td>{{ _field_error (ifo, None) }}</td>
+  {% endif -%}
 {% endfor  %}
 {%- endmacro -%} {#- inline_table_aid_td -#}
 
