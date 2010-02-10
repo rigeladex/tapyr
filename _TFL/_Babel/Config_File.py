@@ -57,7 +57,7 @@ class Config_File (TFL.Meta.Object) :
        >>> file = cStringIO.StringIO (source)
        >>> cfg = Config_File (file)
        >>> cfg.defaults
-       {'loaded_translations': PO_File MOM/GTW/JNJ, 'load_translations': '_MOM, _GTW'}
+       {'loaded_translations': <PO_File MOM/GTW/JNJ>, 'load_translations': '_MOM, _GTW'}
        >>> sorted (cfg.extractors.iteritems ())# doctest:+ELLIPSIS
        [('mom', ...), ('python', <function Python at ...>)]
        >>> cfg.patterns.keys ()
