@@ -32,6 +32,7 @@
 #    20-Jan-2010 (MG) Support dict's which don't have lists as value's
 #    29-Jan-2010 (MG) `__getitem__` and `get` fixed
 #     3-Feb-2010 (MG) `iteritems` added
+#    10-Feb-2010 (MG) Convert the data into unicode
 #    ««revision-date»»···
 #--
 
@@ -53,7 +54,7 @@ class Request_Data (TFL.Meta.Object) :
         value = self.data [key]
         if isinstance (value, (list, tuple)) :
             assert len (value) == 1
-            return value [0]
+            return unicode (value [0], "utf8", "replace")
         return value
     # end def __getitem__
 
@@ -61,7 +62,7 @@ class Request_Data (TFL.Meta.Object) :
         value = self.data.get (key, default)
         if isinstance (value, (list, tuple)) :
             assert len (value) == 1, value
-            return value [0]
+            return unicode (value [0], "utf8", "replace")
         return value
     # end def get
 

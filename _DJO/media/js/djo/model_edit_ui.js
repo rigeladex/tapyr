@@ -71,7 +71,7 @@
                        , states         :
                            [ { name     : "unlock"
                              , enabled  : "true"
-                             , icon     : "ui-icon-unlocked"
+                             , icon     : "ui-icon-pencil"
                              , callback : "_unlock_inline"
                              }
                            , { name     : "lock"
