@@ -39,6 +39,10 @@
 #     5-Feb-2010 (MG) `_Inline_.Media` handle media for completers
 #     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
 #                     etype managers work differently)
+#    10-Feb-2010 (MG) Property `instances` removed (legacy)
+#                     `froms` and `form_count` moved into subclasses
+#                     Support for inline level JS on ready code added
+#                     Form field prefix handling changed
 #    ««revision-date»»···
 #--
 

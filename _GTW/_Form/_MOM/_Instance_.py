@@ -55,6 +55,8 @@
 #                     created/modified instance to the main instance
 #     9-Feb-2010 (MG) `prefix` added
 #    10-Feb-2010 (MG) `form_path` moved from property to `__new__`
+#                     `_Instance_.__init__` make a copy of `field_groups`
+#                     Support for renaming of instances added
 #    ««revision-date»»···
 #--
 
