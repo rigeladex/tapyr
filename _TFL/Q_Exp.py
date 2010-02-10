@@ -33,6 +33,8 @@
 #    10-Dec-2009 (CT) `Exp_B` added (and `_Exp_` factored),
 #                     and used as base for `Bin_Bool`
 #     9-Feb-2010 (CT) Support for queries of nested attributes added
+#    10-Feb-2010 (CT) `ENDSWITH` and `STARTSWITH` changed to *not* use
+#                     unbound methods of `str` (fail for unicode values, duh)
 #    ««revision-date»»···
 #--
 

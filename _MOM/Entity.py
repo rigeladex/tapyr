@@ -98,6 +98,7 @@
 #     8-Feb-2010 (CT) `snapshot` and `has_changed` removed
 #     9-Feb-2010 (CT) `epk_hash` added
 #     9-Feb-2010 (CT) `An_Entity.set` and `.set_raw` redefined
+#    10-Feb-2010 (CT) `FO` and `ui_display` added
 #    ««revision-date»»···
 #--
 
@@ -147,6 +148,7 @@ class Entity (TFL.Meta.Object) :
     is_used               = True
     rank                  = 0
     show_package_prefix   = False
+    ui_display_sep        = ", "
     x_locked              = False
 
     _app_globals          = {}
@@ -155,12 +157,56 @@ class Entity (TFL.Meta.Object) :
     _Class_Kind           = "Spec Essence"
 
     class _Attributes (MOM.Attr.Spec) :
-        pass
+
+        class ui_display (A_String) :
+            """Display in user interface"""
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                return obj.ui_display_format % obj.FO (obj)
+            # end def computed
+
+        # end class ui_display
+
     # end class _Attributes
 
     class _Predicates (MOM.Pred.Spec) :
         pass
     # end class _Predicates
+
+    class FO (TFL.Meta.Object) :
+        """Formatter for attributes of object."""
+
+        def __init__ (self, obj) :
+            self.__obj = obj
+        # end def __init__
+
+        def __getattr__ (self, name) :
+            obj = self.__obj
+            try :
+                att = getattr (TFL.Getter, name) (obj.__class__)
+            except AttributeError :
+                result = getattr (obj, name)
+            else :
+                ckd = att.get_value (obj)
+                uid = getattr (ckd, "ui_display", None)
+                if uid :
+                    result = uid
+                else :
+                    result = att.get_raw (obj)
+            setattr (self, name, result)
+            return result
+        # end def __getattr__
+
+        def __getitem__ (self, key) :
+            try :
+                return self.__getattr__ (key)
+            except AttributeError :
+                raise KeyError (key)
+        # end def __getitem__
+
+    # end class FO
 
     def __new__ (cls, * args, ** kw) :
         if cls.is_partial :
@@ -452,6 +498,14 @@ class An_Entity (Entity) :
     is_primary            = False
     owner                 = None
 
+    @property
+    def ui_display_format (self) :
+        return self.ui_display_sep.join \
+            ( "%%(%s)s" % a.name for a in self.user_attr
+            if a.has_substance (self)
+            )
+    # end def ui_display_format
+
     def __init__ (self, ** kw) :
         self.__super.__init__ (** kw)
     # end def __init__
@@ -572,6 +626,14 @@ class Id_Entity (Entity) :
 
         # end class electric
 
+        class is_used (A_Int) :
+            """Specifies whether entity is used by another entity."""
+
+            kind          = Attr.Cached
+            default       = 1
+
+        # end class is_used
+
         class x_locked (A_Boolean) :
             """Specifies if object can be changed by user"""
 
@@ -580,14 +642,6 @@ class Id_Entity (Entity) :
             hidden        = True
 
         # end class x_locked
-
-        class is_used (A_Int) :
-            """Specifies whether entity is used by another entity."""
-
-            kind          = Attr.Cached
-            default       = 1
-
-        # end class is_used
 
     # end class _Attributes
 
@@ -694,6 +748,14 @@ class Id_Entity (Entity) :
     def SCM_Change_Attr (self) :
         return MOM.SCM.Change.Attr
     # end def SCM_Change_Attr
+
+    @property
+    def ui_display_format (self) :
+        return self.ui_display_sep.join \
+            ( "%%(%s)s" % k for (k, v) in zip (self.epk_sig, self.epk)
+              if v not in (None, "")
+            )
+    # end def ui_display_format
 
     def async_changes (self, * filter, ** kw) :
         result = self.home_scope.async_changes (pid = self.pid)

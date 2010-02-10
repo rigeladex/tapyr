@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    20-Jan-2010 (CT) Creation
-#    10-Feb-2010 (CT) `__getattr__` changed to use `ui_display`, if any
+#    10-Feb-2010 (CT) `MOM.Entity.FO` factored
 #    ««revision-date»»···
 #--
 
@@ -39,26 +39,14 @@ import _TFL._Meta.Object
 class FO (TFL.Meta.Object) :
     """Formatter for attributes of Objects."""
 
-    def __init__ (self, obj, enc = None, getter = "raw_attr") :
+    def __init__ (self, obj, enc = None) :
         self.__obj    = obj
+        self.__fo     = obj.FO (obj)
         self.__enc    = enc
-        if isinstance (getter, basestring):
-            self.__getter = getattr (obj, getter)
-        else :
-            self.__getter = lambda name : getter (obj, name)
     # end def __init__
 
     def __getattr__ (self, name) :
-        result = None
-        obj    = self.__obj
-        attr   = getattr (obj.__class__, name, None)
-        if attr is not None :
-            ckd = getattr (obj, name, None)
-            uid = getattr (ckd, "ui_display", None)
-            if uid :
-                result = uid
-        if result is None :
-            result = self.__getter (name)
+        result = getattr (self.__fo, name)
         if self.__enc and isinstance (result, str) :
             result = unicode (result, self.__enc, "replace")
         setattr (self, name, result)

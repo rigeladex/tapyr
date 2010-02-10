@@ -41,6 +41,8 @@ _Ancestor_Essence = MOM.An_Entity
 class Lifetime (_Ancestor_Essence) :
     """Model a lifetime (birth-date, death-date)."""
 
+    ui_display_sep = " - "
+
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
@@ -78,20 +80,6 @@ class Lifetime (_Ancestor_Essence) :
             ui_name            = "Death date"
 
         # end class death
-
-        class ui_display (A_String) :
-            """Display in user interface"""
-
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                result = [obj.raw_attr ("birth")]
-                if obj.death :
-                    result.append (obj.raw_attr ("death"))
-                return u"-".join (result)
-            # end def computed
-
-        # end class ui_display
 
     # end class _Attributes
 
