@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Feb-2010 (CT) Creation
+#    10-Feb-2010 (CT) `A_Lifetime_N` added
 #    ««revision-date»»···
 #--
 
@@ -66,12 +67,7 @@ class Lifetime (_Ancestor_Essence) :
             """Date of birth of an person, entity, or link"""
 
             kind               = Attr.Required
-            Kind_Mixins        = (Attr.Sticky_Mixin, )
             ui_name            = "Birth date"
-
-            def computed_default (self) :
-                return self.now ()
-            # end def computed_default
 
         # end class birth
 
@@ -82,6 +78,20 @@ class Lifetime (_Ancestor_Essence) :
             ui_name            = "Death date"
 
         # end class death
+
+        class ui_display (A_String) :
+            """Display in user interface"""
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                result = [obj.raw_attr ("birth")]
+                if obj.death :
+                    result.append (obj.raw_attr ("death"))
+                return u"-".join (result)
+            # end def computed
+
+        # end class ui_display
 
     # end class _Attributes
 
@@ -102,14 +112,42 @@ class Lifetime (_Ancestor_Essence) :
 
 # end class Lifetime
 
+_Ancestor_Essence = Lifetime
+
+class Lifetime_N (_Ancestor_Essence) :
+    """Model a lifetime (birth-date [default: now], death-date)."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class birth (_Ancestor.birth) :
+
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
+
+            def computed_default (self) :
+                return self.now ()
+            # end def computed_default
+
+        # end class birth
+
+    # end class _Attributes
+
+# end class Lifetime_N
+
 class A_Lifetime (_A_Composite_) :
     """Models an attribute holding a (birth-date, death-date)"""
 
     C_Type         = Lifetime
     typ            = "Lifetime"
-    ui_name        = _("Lifetime")
 
 # end class A_Lifetime
+
+class A_Lifetime_N (A_Lifetime) :
+
+    C_Type         = Lifetime_N
+
+# end class A_Lifetime_N
 
 __all__ = tuple \
     (  k for (k, v) in globals ().iteritems ()

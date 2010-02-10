@@ -52,7 +52,6 @@ class Person_has_Phone (_Ancestor_Essence) :
         class right (_Ancestor.right) :
 
             role_type     = Phone
-            ui_name       = _("Phone")
             auto_cache    = True
 
         # end class right
@@ -63,7 +62,6 @@ class Person_has_Phone (_Ancestor_Essence) :
             kind            = Attr.Primary_Optional
             min_value       = 0
             max_value       = 99999
-            ui_name         = _("Extension")
 
         # end class extension
 

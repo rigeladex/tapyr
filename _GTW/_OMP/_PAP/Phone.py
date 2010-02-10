@@ -35,7 +35,6 @@
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
-from   _TFL.I18N              import _
 
 import _GTW._OMP._PAP.Entity
 
@@ -53,7 +52,6 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             rank           = 1
-            ui_name        = _("Country code")
 
             min_value      = 1
             max_value      = 999
@@ -65,32 +63,30 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             rank           = 2
-            ui_name        = _("Area code")
 
             min_value      = 1
             max_value      = 99999
 
         # end class area_code
 
-        class subscriber_number (A_Decimal) :
+        class number (A_Decimal) :
             """Phone number proper (without country code, area code, extension)"""
 
             kind           = Attr.Primary
             rank           = 3
-            ui_name        = _("Number")
 
             min_value      = 100
             max_digits     = 14
             decimal_places = 0
 
-        # end class subscriber_number
+        # end class number
 
         class desc (A_String) :
             """Short description of the phone number"""
 
             kind           = Attr.Optional
             max_length     = 20
-            ui_name        = _("Description")
+            ui_name        = "Description"
 
         # end class desc
 

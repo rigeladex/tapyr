@@ -36,8 +36,6 @@ from   _GTW                   import GTW
 from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
-from   _TFL.I18N              import _, _T, _Tn
-
 _Ancestor_Essence = Auth.Object
 
 class _Auth_Group_ (_Ancestor_Essence) :
@@ -51,8 +49,6 @@ class _Auth_Group_ (_Ancestor_Essence) :
 
         class name (_Ancestor.name) :
             """Name of group"""
-
-            ui_name    = _T ("Group name")
 
         # end class name
 

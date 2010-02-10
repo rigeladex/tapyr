@@ -36,6 +36,7 @@
 #                     composite attribute
 #    ««revision-date»»···
 #--
+
 from   _TFL.I18N                import _
 from   _GTW                     import GTW
 
@@ -88,7 +89,7 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
-            , FGD ()
+            , AID ("date", FGD ())
             , LID
                  ( "PAP.Person_has_Address"
                  , FGD ( "desc")
@@ -116,13 +117,18 @@ class Admin (object) :
         )
 
     Phone           = dict \
-      ( ETM         = "GTW.OMP.PAP.Phone"
+        ( ETM         = "GTW.OMP.PAP.Phone"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (WF ("primary"))
             , FGD ()
             )
-      )
+        )
+
+    Person_has_Phone = dict \
+        ( ETM         = "GTW.OMP.PAP.Person_has_Phone"
+        , Type      = GTW.NAV.E_Type.Admin
+        )
 
 # end class Admin
 

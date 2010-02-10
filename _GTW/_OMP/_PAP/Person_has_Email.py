@@ -34,7 +34,6 @@
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
-from   _TFL.I18N              import _
 
 import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP._Person_has_Property_  import _Person_has_Property_
@@ -52,7 +51,6 @@ class Person_has_Email (_Ancestor_Essence) :
         class right (_Ancestor.right) :
 
             role_type     = Email
-            ui_name       = _("Email")
             auto_cache    = True
 
         # end class right
@@ -64,5 +62,3 @@ class Person_has_Email (_Ancestor_Essence) :
 if __name__ != "__main__" :
     GTW.OMP.PAP._Export ("*")
 ### __END__ GTW.OMP.PAP.Person_has_Email
-
-

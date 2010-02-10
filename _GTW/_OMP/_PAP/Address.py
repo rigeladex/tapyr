@@ -39,8 +39,6 @@ from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 import _GTW._OMP._PAP.Entity
 
-from   _TFL.I18N              import _
-
 _Ancestor_Essence = MOM.Object
 
 class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
@@ -58,7 +56,6 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 80
             rank           = 1
-            ui_name        = _("Street")
 
         # end class street
 
@@ -68,7 +65,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 6
             rank           = 2
-            ui_name        = _("Zip code")
+            ui_name        = "Zip code"
 
         # end class zip
 
@@ -78,7 +75,6 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 30
             rank           = 3
-            ui_name        = _("City")
 
         # end class city
 
@@ -87,7 +83,6 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 20
             rank           = 4
-            ui_name        = _("Country")
 
         # end class country
 
@@ -97,7 +92,6 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary_Optional
             max_length     = 20
             rank           = 5
-            ui_name        = _("Region")
 
         # end class region
 
@@ -108,7 +102,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Optional
             max_length     = 20
-            ui_name        = _("Description")
+            ui_name        = "Description"
 
         # end class desc
 

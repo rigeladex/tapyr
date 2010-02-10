@@ -40,7 +40,6 @@ from   _GTW                   import GTW
 from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
-from   _TFL.I18N              import _, _T, _Tn
 import  hashlib
 
 _Ancestor_Essence = Auth.Object
@@ -59,14 +58,11 @@ class _Auth_Account_ (_Ancestor_Essence) :
 
             kind       = Attr.Optional
             default    = False
-            ui_name    = _T ("User active")
 
         # end class active
 
         class name (_Ancestor.name) :
             """User name associated with this account"""
-
-            ui_name    = _T ("Account name")
 
         # end class name
 
@@ -75,7 +71,6 @@ class _Auth_Account_ (_Ancestor_Essence) :
 
             kind       = Attr.Optional
             default    = False
-            ui_name    = _T ("Superuser")
 
         # end class superuser
 

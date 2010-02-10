@@ -96,6 +96,7 @@ from   _TFL.I18N             import _, _T, _Tn
 from   _TFL.Regexp           import *
 from   _TFL                  import sos
 
+import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 
 import datetime
@@ -135,7 +136,8 @@ class A_Attr_Type (object) :
     store_default       = False
     symbolic_ref_pat    = Regexp (r"^\s*\$\(.*\)\s*$", re.MULTILINE)
     typ                 = None
-    ui_name             = property (lambda s : s.name)
+    ui_name             = TFL.Meta.Once_Property \
+        (lambda s : s.name.capitalize ().replace ("_", " "))
 
     _symbolic_default   = False
     _t_rank             = 0
@@ -1008,6 +1010,8 @@ class A_Link_Role (_A_Object_) :
     max_links         = 0
     role_name         = None
     role_type         = None
+    ui_name           = TFL.Meta.Once_Property \
+        (lambda s : s.role_name.capitalize ().replace ("_", " "))
 
     _t_rank           = -100
 

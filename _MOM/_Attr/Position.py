@@ -53,18 +53,20 @@ class Position (_Ancestor_Essence) :
         class lat (A_Float) :
             """Latitude"""
 
-            kind           = Attr.Required
-            check          = ("-90.0 <= value <= 90.0", )
-            ui_name        = _("Latitude")
+            kind               = Attr.Required
+            min_value          = -90.0
+            max_value          = +90.0
+            ui_name            = "Latitude"
 
         # end class lat
 
         class lon (A_Float) :
             """Longitude"""
 
-            kind           = Attr.Required
-            check          = ("-180.0 <= value <= 180.0", )
-            ui_name        = _("Longitude")
+            kind               = Attr.Required
+            min_value          = -180.0
+            max_value          = +180.0
+            ui_name            = "Longitude"
 
         # end class lon
 
@@ -72,7 +74,6 @@ class Position (_Ancestor_Essence) :
             """Height above mean sea level"""
 
             kind               = Attr.Optional
-            ui_name            = _("Height")
 
         # end class height
 
@@ -85,7 +86,6 @@ class A_Position (_A_Composite_) :
 
     C_Type         = Position
     typ            = "Position"
-    ui_name        = _("Position")
 
 # end class A_Position
 

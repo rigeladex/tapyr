@@ -33,7 +33,6 @@
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
-from   _TFL.I18N              import _
 
 import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP.Person  import Person
@@ -51,18 +50,17 @@ class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
 
         class left (_Ancestor.left) :
 
-            role_type     = Person
-            ui_name       = _("Person")
-            auto_cache    = True
+            role_type      = Person
+            auto_cache     = True
 
         # end class left
 
         class desc (A_String) :
             """Short description of the link"""
 
-            kind          = Attr.Optional
+            kind           = Attr.Optional
             max_length     = 20
-            ui_name        = _("Description")
+            ui_name        = "Description"
 
         # end class desc
 

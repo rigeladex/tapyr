@@ -257,7 +257,7 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Person._Attributes._own_names)
     ['first_name', 'last_name', 'middle_name', 'traps']
     >>> ET_Mouse.color.name, ET_Mouse.color.ui_name
-    ('color', 'color')
+    ('color', 'Color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
     ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q']
@@ -1286,7 +1286,6 @@ class Person (_Ancestor_Essence) :
 
             kind     = Attr.Primary
             rank     = 1
-            ui_name  = "Last name"
 
         # end class last_name
 

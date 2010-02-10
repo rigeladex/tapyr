@@ -59,7 +59,7 @@ class Page (_Ancestor_Essence) :
             """Name used for perma-link."""
 
             kind               = Attr.Primary
-            ui_name            = _("Perma name")
+            ui_name            = "Name"
 
         # end class perma_name
 
@@ -77,7 +77,7 @@ class Page (_Ancestor_Essence) :
 
         # end class contents
 
-        class date (A_Lifetime) :
+        class date (A_Lifetime_N) :
             """Publication (`birth`) and expiration date (`death`) for the
                web page
             """
@@ -125,7 +125,6 @@ class Page (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             max_length         = 80
-            ui_name            = _("Title")
 
         # end class title
 

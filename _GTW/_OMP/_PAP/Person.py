@@ -29,10 +29,13 @@
 #    30-Dec-2009 (CT) Creation
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    29-Jan-2010 (CT) `middle_name` added
+#    10-Feb-2010 (CT) `birth_date (A_Date)` replaced by `date (A_Lifetime)`
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
+from   _MOM._Attr.Lifetime    import *
+
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
 from   _TFL.I18N              import _
@@ -54,7 +57,6 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 48
             rank           = 1
-            ui_name        = _("Last name")
 
         # end class last_name
 
@@ -64,7 +66,6 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             kind           = Attr.Primary
             max_length     = 32
             rank           = 2
-            ui_name        = _("First name")
 
         # end class first_name
 
@@ -75,7 +76,6 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             max_length     = 32
             default        = ""
             rank           = 1
-            ui_name        = _("Middle name")
 
         # end class middle_name
 
@@ -90,13 +90,12 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class title
 
-        class birth_date (A_Date) :
-            """Date of birth"""
+        class date (A_Lifetime) :
+            """Date of birth (and death)"""
 
             kind           = Attr.Optional
-            ui_name        = _("Date of birth")
 
-        # end class birth_date
+        # end class date
 
         ### class sex (A_Sex) : ...
 

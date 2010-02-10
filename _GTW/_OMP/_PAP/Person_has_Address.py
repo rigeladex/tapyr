@@ -34,7 +34,6 @@
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
-from   _TFL.I18N              import _
 
 import _GTW._OMP._PAP.Entity
 from   _GTW._OMP._PAP._Person_has_Property_  import _Person_has_Property_
@@ -52,7 +51,6 @@ class Person_has_Address (_Ancestor_Essence) :
         class right (_Ancestor.right) :
 
             role_type     = Address
-            ui_name       = _("Address")
             auto_cache    = True
 
         # end class right
