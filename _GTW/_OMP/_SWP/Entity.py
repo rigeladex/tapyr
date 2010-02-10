@@ -28,6 +28,7 @@
 # Revision Dates
 #    31-Jan-2010 (CT) Creation
 #     6-Feb-2010 (MG) Missing `is_partial` added
+#    10-Feb-2010 (CT) Bug fix (`Object = _SWP_Object_` added)
 #    ««revision-date»»···
 #--
 
@@ -50,9 +51,10 @@ class _SWP_Object_ (Entity, MOM.Object) :
     """Common base class for essential objects of GTW.OMP.SWP"""
 
     _real_name  = "Object"
-    is_partial = True
 
-# end class _SWP_Object_
+    is_partial  = True
+
+Object = _SWP_Object_ # end class
 
 if __name__ != "__main__" :
     GTW.OMP.SWP._Export ("*")
