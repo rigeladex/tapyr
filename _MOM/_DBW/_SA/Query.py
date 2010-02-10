@@ -30,6 +30,7 @@
 #
 # Revision Dates
 #    10-Feb-2010 (MG) Creation
+#    10-Feb-2010 (MG) Collect `_COMPOSITES` as well
 #    ««revision-date»»···
 #--
 
@@ -62,20 +63,25 @@ class MOM_Query (TFL.Meta.Object) :
         self._E_TYPE     = e_type, bases
         columns          = sa_table.columns
         self._ATTRIBUTES = []
+        self._COMPOSITES = []
         self.Type_Name   = columns.Type_Name
         self.id          = columns [e_type._sa_pk_name]
         for name, kind in db_attrs.iteritems () :
             #if name == "position" :
             #    TFL.BREAK ()
-            if not isinstance (kind, (MOM.Attr._Composite_Mixin_, MOM.Attr.Query)) :
+            if isinstance (kind, MOM.Attr._Composite_Mixin_) :
+                self._COMPOSITES.append (name)
+            elif not isinstance (kind, MOM.Attr.Query) :
                 col = columns [kind.attr._sa_col_name]
                 setattr (self, name, col)
                 if isinstance (kind, MOM.Attr.Link_Role) :
                     setattr (self, kind.role_name, col)
                 self._ATTRIBUTES.append (name)
+
         for b_saq in (b._SAQ for b in bases if getattr (b, "_SAQ", None)) :
+            self._COMPOSITES.extend (b_saq._COMPOSITES)
             for name in b_saq._ATTRIBUTES :
-                setattr (self, name, b_saq [name])
+                setattr                 (self, name, b_saq [name])
                 self._ATTRIBUTES.append (name)
     # end def __init__
 

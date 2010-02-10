@@ -73,8 +73,8 @@ apt = MOM.App_Type \
 if 1:
     scope        = MOM.Scope.new (apt, None)
     p            = scope.PAP.Person ("Glueck", "Martin")
-    a            = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Austria")
-    #date         = scope.MOM.Lifetime (birth ="1976-03-16", raw = True)
+    #a            = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Austria")
+    date         = scope.MOM.Lifetime (birth ="1976-03-16", raw = True)
     #p.date       = date
     #q_fn         = Q.first_name.STARTSWITH ("Ma")
     #q_sb         = Q.first_name

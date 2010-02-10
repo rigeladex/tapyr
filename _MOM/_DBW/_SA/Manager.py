@@ -79,6 +79,8 @@
 #                     save to the database to the table
 #    10-Feb-2010 (MG) Don't use `orm.synonym` but instead attach a `SA.Query`
 #                     object to all `e_type`s
+#    10-Feb-2010 (MG) `append_result` added to set `owner` and `attr_name` if
+#                     composite
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -112,6 +114,14 @@ class Instance_Recreation (orm.interfaces.MapperExtension) :
         instance._sa_pending_reset_attributes = True
         return instance
     # end def create_instance
+
+    def append_result (self, mapper, selectcontext, row, instance, result, **flags) :
+        for cname in instance._SAQ._COMPOSITES :
+            comp           = getattr (instance, cname)
+            comp.owner     = instance
+            comp.attr_name = cname
+        return orm.EXT_CONTINUE
+    # end def append_result
 
     def populate_instance (self, mapper, selectcontext, row, instance, **flags) :
         if getattr (instance, "_sa_pending_reset_attributes", False) :

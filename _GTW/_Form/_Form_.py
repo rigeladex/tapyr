@@ -30,6 +30,9 @@
 #    20-Jan-2010 (MG) `get_id` allow string as parameter as well
 #     5-Feb-2010 (MG) `M_Form` added
 #    10-Feb-2010 (MG) `prefix_sub` added
+#    10-Feb-2010 (MG) `get_raw`: As soon as we have `request_data` use the
+#                     values from there or empty string (empty strings are
+#                     not part of the request data!)
 #    ««revision-date»»···
 #--
 
@@ -93,9 +96,8 @@ class _Form_ (TFL.Meta.Object) :
         if isinstance (field, basestring) :
             field = self.fields [field]
         html_name = self.get_id (field)
-        if html_name in self.request_data :
-            value = self.request_data [html_name]
-            return value
+        if self.request_data :
+            return self.request_data.get (html_name, u"")
         return field.get_raw (self, self.instance)
     # end def get_raw
 

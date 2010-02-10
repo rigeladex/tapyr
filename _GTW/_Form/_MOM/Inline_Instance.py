@@ -101,6 +101,7 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     @TFL.Meta.Once_Property
     def instance (self) :
+        ### import pdb; pdb.set_trace ()
         if self.prototype :
             return None
         lid, state  = self.lid, self.state

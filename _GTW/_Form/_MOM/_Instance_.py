@@ -225,7 +225,7 @@ class _Instance_ (GTW.Form._Form_) :
             except Exception, exc:
                 if __debug__ :
                     import traceback
-                    ## traceback.print_exc ()
+                    traceback.print_exc ()
                 errors.append (exc)
             self._handle_errors (errors)
         return instance
