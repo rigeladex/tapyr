@@ -39,6 +39,7 @@
 **     6-Feb-2010 (MG) Completion finished
 **     9-Feb-2010 (MG) Alphabetically sorted
 **     9-Feb-2010 (MG) Copy/rename functions added, button handling changed
+**    10-Feb-2010 (MG) Setup auto completion on inline unlocking
 **    ««revision-date»»···
 **--
 */
@@ -512,7 +513,7 @@
           var $button         = $link.find    ("span");
           var $elements       = $form.find    (":input");
           var  link_prefix    = self._getData ("link_prefix");
-          $form.find  ("input[name$=-_lid_a_state_]").each ( function () {
+          var name = $form.find  ("input[name$=-_lid_a_state_]").each ( function () {
             var $this         = $(this);
             var lid           = $this.attr ("value").split (":") [0];
             var name          = $this.attr ("name");
@@ -523,11 +524,12 @@
                 new_state     = "R";
             }
             $this.attr ("value", [lid, new_state].join (":"));
-          });
+          }).attr ("name");
           $form.data                 ("_state", self._save_form_state ($form));
           $elements.removeAttr       ("disabled")
           $button.removeClass        (button.states [0].icon)
                  .addClass           (button.states [1].icon);
+          self._setup_auto_complete  (field_no_pat.exec (name) [1]);
           self._update_button_states ();
           evt.preventDefault         ();
           evt.stopPropagation        ();
