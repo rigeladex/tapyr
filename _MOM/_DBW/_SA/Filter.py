@@ -34,6 +34,7 @@
 #     9-Feb-2010 (MG) `Attr_Map` defined as module global,
 #                     `TFL.Q_Exp.Get._sa_filter`: use `self.getter` instead
 #                     of `getattr`
+#    10-Feb-2010 (MG) Rename `e_type` to `SAQ`
 #    ««revision-date»»···
 #--
 
@@ -47,37 +48,37 @@ from    sqlalchemy.sql   import expression
 SA_Attr_Map = dict \
     ( cid       = TFL.Getter._id
     , type_name = TFL.Getter.Type_Name
-    )
+     )
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Get)
-def _sa_filter (self, e_type) :
-    return SA_Attr_Map.get (self.name, self.getter) (e_type)
+def _sa_filter (self, SAQ) :
+    return SA_Attr_Map.get (self.name, self.getter) (SAQ)
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Q_Exp.Bin_Bool, TFL.Q_Exp.Bin_Expr)
-def _sa_filter (self, e_type) :
+def _sa_filter (self, SAQ) :
     args = []
     for arg in self.lhs, self.rhs :
         if hasattr (arg, "_sa_filter") :
-            arg = arg._sa_filter (e_type)
+            arg = arg._sa_filter (SAQ)
         args.append (arg)
     return getattr (args [0], self.op.__name__) (args [1])
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Attr_Query.Call)
-def _sa_filter (self, e_type) :
-    lhs = self.lhs._sa_filter (e_type)
+def _sa_filter (self, SAQ) :
+    lhs = self.lhs._sa_filter (SAQ)
     op  = self.op.__name__.lower ()
     return getattr (lhs, op) (* self.args)
 # end def _sa_filter
 
 @TFL.Add_To_Class ("_sa_filter", TFL.Filter_And, TFL.Filter_Or, TFL.Filter_Not)
-def _sa_filter (self, e_type) :
+def _sa_filter (self, SAQ) :
     sa_exp = getattr \
         ( expression
         , "%s_" % (self.__class__.__name__.rsplit ("_",1) [-1].lower (), )
         )
-    return sa_exp (* (p._sa_filter (e_type) for p in self.predicates))
+    return sa_exp (* (p._sa_filter (SAQ) for p in self.predicates))
 # end def _sa_filter
 
 ### __END__ MOM.DBW.SA.Filter

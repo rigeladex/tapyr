@@ -32,6 +32,7 @@
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
+from   _MOM.import_MOM        import Q
 import _GTW._OMP._Auth.import_Auth
 import _GTW._OMP._PAP .import_PAP
 
@@ -71,9 +72,14 @@ apt = MOM.App_Type \
 
 if 1:
     scope        = MOM.Scope.new (apt, None)
-    address      = scope.PAP.Address \
-        ("Langstrasse 4", "2244", "Spannberg", "Austria")
-    pos          = scope.MOM.Position (lat = 1, lon = 2, height = 3)
+    p            = scope.PAP.Person ("Glueck", "Martin")
+    a            = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Austria")
+    #date         = scope.MOM.Lifetime (birth ="1976-03-16", raw = True)
+    #p.date       = date
+    #q_fn         = Q.first_name.STARTSWITH ("Ma")
+    #q_sb         = Q.first_name
+    #print q_fn (p.__class__._SAQ)
+
 else :
     #scope = MOM.Scope.load (apt, "sqlite:///test.sqlite")
     scope = MOM.Scope.load (apt, None)

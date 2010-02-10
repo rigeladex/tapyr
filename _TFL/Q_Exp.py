@@ -35,6 +35,9 @@
 #     9-Feb-2010 (CT) Support for queries of nested attributes added
 #    10-Feb-2010 (CT) `ENDSWITH` and `STARTSWITH` changed to *not* use
 #                     unbound methods of `str` (fail for unicode values, duh)
+#    10-Feb-2010 (MG) Converted `lambda` in `startswith` and `endswith` to
+#                     functions which have aproper `__name__` which is needed
+#                     by the SA instrumentation
 #    ««revision-date»»···
 #--
 
@@ -428,7 +431,10 @@ class Exp (_Exp_) :
 
     @_method
     def ENDSWITH () :
-        return lambda a, b : a.endswith (b)
+        def endswith (l, r) :
+            return l.endswith (r)
+        # end def endswith
+        return endswith
     # end def ENDSWITH
 
     @_method
@@ -441,7 +447,10 @@ class Exp (_Exp_) :
 
     @_method
     def STARTSWITH () :
-        return lambda a, b : a.startswith (b)
+        def startswith (l, r) :
+            return l.startswith (r)
+        # end def startswith
+        return startswith
     # end def STARTSWITH
 
 # end class Exp

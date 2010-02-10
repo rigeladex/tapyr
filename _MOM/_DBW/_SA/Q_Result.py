@@ -32,6 +32,7 @@
 #    16-Dec-2009 (MG) Support for queries against `pid` added
 #    18-Dec-2009 (MG) `Q_Result_Changes` added
 #    27-Jan-2010 (MG) `order_by` fixed to work with older versions of SA
+#    10-Feb-2010 (MG) Use new `_SAQ`
 #    ««revision-date»»···
 #--
 
@@ -136,7 +137,7 @@ class Q_Result (TFL.Meta.Object) :
         sa_criteria = []
         for c in criteria :
             if not isinstance (c, expression.Operators) :
-                sa_criteria.append (c._sa_filter (self.e_type))
+                sa_criteria.append (c._sa_filter (self.e_type._SAQ))
             else :
                 sa_criteria.append (c)
         for attr, value in eq_kw.iteritems () :
@@ -145,8 +146,11 @@ class Q_Result (TFL.Meta.Object) :
                 value = value [-1]
             elif   attr == "type_name" :
                 attr = "Type_Name"
-            sa_criteria.append (getattr (self.e_type, attr) == value)
-        if len (sa_criteria) > 1 :
+            sa_criteria.append \
+                (  getattr (self.e_type._SAQ, attr)
+                == getattr (value, "id", value)
+                )
+        if 1 or len (sa_criteria) > 1 :
             sa_criteria = (expression.and_ (* sa_criteria), )
         return self.__class__ \
             (self.e_type, self.sa_query.filter (* sa_criteria))
@@ -172,7 +176,7 @@ class Q_Result (TFL.Meta.Object) :
 
     def order_by (self, criterion) :
         if not isinstance (criterion, expression.Operators) :
-            joins, order_clause = criterion._sa_order_by (self.e_type)
+            joins, order_clause = criterion._sa_order_by (self.e_type._SAQ)
         else :
             joins               = ()
             order_clause        = (criterion, )

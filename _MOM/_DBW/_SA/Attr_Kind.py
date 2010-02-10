@@ -34,6 +34,8 @@
 #     8-Feb-2010 (MG) Generation of mapper properties moved in here
 #     8-Feb-2010 (MG) `_sa_query_prop` added
 #     8-Feb-2010 (MG) `_sa_composite_comperator_class` and friends added
+#    10-Feb-2010 (MG) Don't use `orm.synonym` but instead attach a `SA.Query`
+#                     object to all `e_type`s
 #    ««revision-date»»···
 #--
 
@@ -71,13 +73,11 @@ def _sa_object (self) :
 def _sa_kind_prop (self, name, ckd, e_type, properties) :
     ### we need to do this in 2 steps because otherways we hit a
     ### but in sqlalchemy (see: http://groups.google.com/group/sqlalchemy-devel/browse_thread/thread/0cbae608999f87f0?pli=1)
-    properties [name] = orm.synonym (ckd, map_column = False)
     properties [ckd]  = e_type._sa_table.c [name]
 # end def _sa_kind_prop
 
 @TFL.Add_To_Class ("_sa_mapper_prop", MOM.Attr.Link_Role)
 def _sa_link_prop (self, name, ckd, e_type, properties) :
-    properties [name] = orm.synonym  (ckd, map_column = False)
     properties [ckd]  = orm.relation (self.role_type)
 # end def _sa_link_prop
 
@@ -102,7 +102,8 @@ def _sa_composite_prop (self, name, ckd, base_e_type, properties) :
                 kw [attr_name] = tuple (attr_dict [n] for n in arg_names)
             else :
                 kw [attr_name] = attr_dict [arg_name]
-        return e_type.from_pickle_cargo (None, kw)
+        print kw
+        return e_type.from_pickle_cargo (MOM.Scope.active, kw)
     # end def _create
     def __composite_values__ (self) :
         return [getattr (self, attr) for attr in attr_names]
@@ -113,7 +114,7 @@ def _sa_composite_prop (self, name, ckd, base_e_type, properties) :
     # end def __set_composite_values__
     e_type.__composite_values__     = __composite_values__
     e_type.__set_composite_values__ = __set_composite_values__
-    properties [name] = orm.composite \
+    properties [ckd]  = orm.composite \
         (_create
         , comparator_factory = _sa_composite_comperator_class
            (e_type, attr_names, db_attrs)
@@ -158,7 +159,6 @@ def _sa_composite_comperator_query_prop (name, kind) :
 
 @TFL.Add_To_Class ("_sa_mapper_prop", MOM.Attr.Query)
 def _sa_query_prop (self, name, ckd, base_e_type, properties) :
-    properties [name] = orm.synonym  (ckd, map_column = False)
     properties [ckd]  = orm.column_property \
         (self.attr.query (base_e_type._sa_table.c))
 # end def _sa_query_prop

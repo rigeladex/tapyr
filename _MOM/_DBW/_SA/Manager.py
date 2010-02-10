@@ -77,6 +77,8 @@
 #     8-Feb-2010 (MG) `_attr_dicts`: collect `Query` attributes as well
 #                     `_setup_columns`: only add columsn which need to be
 #                     save to the database to the table
+#    10-Feb-2010 (MG) Don't use `orm.synonym` but instead attach a `SA.Query`
+#                     object to all `e_type`s
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -87,6 +89,7 @@ import _MOM._DBW._Manager_
 import _MOM._DBW._SA
 import _MOM._DBW._SA.Attr_Type
 import _MOM._DBW._SA.Attr_Kind
+import _MOM._DBW._SA.Query
 import _MOM._SCM.Change
 
 from   sqlalchemy import orm
@@ -262,6 +265,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
                     )
                 )
             )
+        MOM.DBW.SA.Query (SA_Change, Table)
     # end def _create_SCM_table
 
     def prepare (cls) :
@@ -443,6 +447,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
         for name, attr_kind in db_attrs.iteritems () :
             ckd           = attr_kind.ckd_name
             attr_kind._sa_mapper_prop (name, ckd, e_type, result)
+        MOM.DBW.SA.MOM_Query (e_type, sa_table, db_attrs, bases)
         for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
             cls._cached_role \
                 (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)

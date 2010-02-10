@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2001-2008 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2001-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -32,6 +32,7 @@
 #    27-Feb-2002 (CT) `TFL.Package_Namespace` assigned instead of using
 #                     `_Export` (which leads to circular import again)
 #    24-Jun-2002 (CT) Import `Package_Namespace` absolutely (i.e., from `_TFL`)
+#    10-Feb-2010 (MG) `BREAK` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,10 @@ TFL = Package_Namespace ()
 ### Package_Namespace
 TFL.Package_Namespace = Package_Namespace
 
+if __debug__ :
+    import pdb;
+    TFL.BREAK = pdb.set_trace
+    del pdb
 del Package_Namespace
 
 ### __END__ TFL/__init__

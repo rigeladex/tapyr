@@ -103,11 +103,20 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     raise HTTP.Redirect_302 \
                         ("%s%s" % (self.parent.abs_href, tail))
                 else :
+                    self._display_errors (form)
                     self.top.scope.rollback ()
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
             return self.__super.rendered (handler, template)
         # end def rendered
+
+        def _display_errors (self, form) :
+            print form.prefix
+            print form.errors, form.field_errors.items ()
+            for ig in form.inline_groups :
+                for f in ig.forms :
+                    self._display_errors (f)
+        # end def _display_errors
 
     # end class Changer
 

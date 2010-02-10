@@ -38,6 +38,8 @@
 #     8-Feb-2010 (MG) `Lid_and_State_Field`: guard against entities which
 #                     have no `lid` (An_Entity's)
 #     9-Feb-2010 (MG) `Lid_and_State_Field.get_raw` fixed
+#    10-Feb-2010 (MG) `_Inline_Instance_.instance` fixed to get correct
+#                     instance for `An_Entity`
 #    ««revision-date»»···
 #--
 
@@ -103,8 +105,12 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
             return None
         lid, state  = self.lid, self.state
         db_instance = self.parent.Instances.next ()
-        if not lid :
-            if state == "X" :
+        epk_sig     = self.et_man._etype.epk_sig
+        if not (epk_sig and lid) :
+            ### if the entity has no epk_sig it cannot have a lid -> not
+            ### possible to restore the instance from the lid post data ->
+            ### always return the instance from the database
+            if state == "X" or not epk_sig :
                 ### no post data -> try to get the instance from the
                 ### database
                 return db_instance
