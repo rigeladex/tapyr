@@ -426,7 +426,7 @@ class Exp (_Exp_) :
 
     @_method
     def ENDSWITH () :
-        return str.endswith
+        return lambda a, b : a.endswith (b)
     # end def ENDSWITH
 
     @_method
@@ -439,7 +439,7 @@ class Exp (_Exp_) :
 
     @_method
     def STARTSWITH () :
-        return str.startswith
+        return lambda a, b : a.startswith (b)
     # end def STARTSWITH
 
 # end class Exp
