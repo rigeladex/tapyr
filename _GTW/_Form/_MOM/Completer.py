@@ -36,6 +36,7 @@
 #     2-Feb-2010 (MG) Moved into `GTW.Form.MOM` packages
 #     3-Feb-2010 (MG) Adapted to new framework
 #     5-Feb-2010 (MG) `suffix` added, `form_path` used, `clone` removed
+#    10-Feb-2010 (MG) `suffix` removed, `prefix` changed
 #    ««revision-date»»···
 #--
 
