@@ -164,6 +164,10 @@ class PO_File (TFL.Meta.Object) :
         return len (self.catalog)
     # end def __len__
 
+    def __repr__ (self) :
+        return "%s %s" % (self.__class__.__name__, self.catalog.project)
+    # end def __repr__
+
 # end class PO_File
 
 if __name__ != "__main__" :

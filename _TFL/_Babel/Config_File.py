@@ -32,8 +32,11 @@
 #--
 
 from   _TFL                    import TFL
+
 import _TFL._Meta.Object
 import _TFL._Babel.Extractor
+import _TFL._Babel.PO_File
+
 import  ConfigParser
 from    babel.util             import odict
 
@@ -54,11 +57,11 @@ class Config_File (TFL.Meta.Object) :
        >>> file = cStringIO.StringIO (source)
        >>> cfg = Config_File (file)
        >>> cfg.defaults
-       {'load_translations': '_MOM, _GTW'}
+       {'loaded_translations': PO_File MOM/GTW/JNJ, 'load_translations': '_MOM, _GTW'}
        >>> sorted (cfg.extractors.iteritems ())# doctest:+ELLIPSIS
        [('mom', ...), ('python', <function Python at ...>)]
        >>> cfg.patterns.keys ()
-       ['MOM', 'python']
+       ['mom', 'python']
     """
 
     load_translation_key = "load_translations"
