@@ -84,8 +84,6 @@
 #     6-Feb-2010 (MG) `_A_Date_.as_string` typo fixed
 #     9-Feb-2010 (CT) `now` added to `A_Date`, `A_Date_Time`, and `A_Time`
 #    10-Feb-2010 (CT) `_A_Date_.needs_raw_value = False` added
-#    10-Feb-2010 (MG) `_A_Date_.needs_raw_value = True` readded otherwise SA
-#                     backend dies
 #    ««revision-date»»···
 #--
 

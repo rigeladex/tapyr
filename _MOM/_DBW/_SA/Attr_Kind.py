@@ -38,6 +38,8 @@
 #                     object to all `e_type`s
 #    10-Feb-2010 (MG) Create a `MOM_Composite_Query` instead of
 #                     `comparator_class`
+#    11-Feb-2010 (MG) `_sa_composite_prop` fixed to pass cooked only values
+#                     as tuple to `from_pickle_cargo`
 #    ««revision-date»»···
 #--
 

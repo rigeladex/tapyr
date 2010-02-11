@@ -83,6 +83,7 @@
 #                     composite
 #    10-Feb-2010 (MG) `_setup_columns`: `unique_attrs` added (needed for
 #                     composite attributes)
+#    11-Feb-2010 (MG) Commit added to `register_scope`
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
