@@ -74,7 +74,7 @@ if 1 :
     PTL (p, t1, l1)
     PTL (p, t2, l2)
     scope.commit ()
-    scop3 = scope.copy (apt, None)
+    #scop3 = scope.copy (apt, None)
     #scope.user_diff (scop3)
     #RiT (r, t3)
     #RiT (p, t1)

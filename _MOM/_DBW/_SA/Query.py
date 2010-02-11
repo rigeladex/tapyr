@@ -69,6 +69,7 @@ class MOM_Query (TFL.Meta.Object) :
         self._ATTRIBUTES = []
         self._COMPOSITES = []
         self._query_fct  = {}
+        delayed          = []
         for name, kind in db_attrs.iteritems () :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 attr_name = "_SAQ_%s" % (name, )
@@ -77,11 +78,7 @@ class MOM_Query (TFL.Meta.Object) :
                 setattr (self, name, getattr (kind.C_Type, attr_name))
                 delattr (kind.C_Type, attr_name)
             elif isinstance (kind, MOM.Attr.Query) :
-                query_fct = getattr (kind.attr, "query_fct")
-                if query_fct :
-                    self._query_fct [name] = kind.attr
-                else :
-                    setattr (self, name, kind.attr.query._sa_filter (self))
+                delayed.append ((name, kind))
             else :
                 col = columns [kind.attr._sa_col_name]
                 setattr (self, name, col)
@@ -93,6 +90,12 @@ class MOM_Query (TFL.Meta.Object) :
             for name in b_saq._ATTRIBUTES :
                 setattr                 (self, name, b_saq [name])
                 self._ATTRIBUTES.append (name)
+        for name, kind in delayed :
+            query_fct = getattr (kind.attr, "query_fct")
+            if query_fct :
+                self._query_fct [name] = kind.attr
+            else :
+                setattr (self, name, kind.attr.query._sa_filter (self))
     # end def __init__
 
     def __getattr__ (self, name) :
