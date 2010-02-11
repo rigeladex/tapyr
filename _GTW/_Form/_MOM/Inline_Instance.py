@@ -40,6 +40,9 @@
 #     9-Feb-2010 (MG) `Lid_and_State_Field.get_raw` fixed
 #    10-Feb-2010 (MG) `_Inline_Instance_.instance` fixed to get correct
 #                     instance for `An_Entity`
+#    11-Feb-2010 (MG) Changed handling of instance to form assignment (to
+#                     make sure that each posted form gets assing the correct
+#                     instance)
 #    ««revision-date»»···
 #--
 
@@ -101,23 +104,9 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     @TFL.Meta.Once_Property
     def instance (self) :
-        ### import pdb; pdb.set_trace ()
         if self.prototype :
             return None
-        lid, state  = self.lid, self.state
-        db_instance = self.parent.Instances.next ()
-        epk_sig     = self.et_man._etype.epk_sig
-        if not (epk_sig and lid) :
-            ### if the entity has no epk_sig it cannot have a lid -> not
-            ### possible to restore the instance from the lid post data ->
-            ### always return the instance from the database
-            if state == "X" or not epk_sig :
-                ### no post data -> try to get the instance from the
-                ### database
-                return db_instance
-            return None
-        pid = self.et_man.pid_from_lid (lid)
-        return self.et_man.pid_query   (pid)
+        return self.parent.Instances.instance_for_lid (self.lid)
     # end def instance
 
     @TFL.Meta.Once_Property

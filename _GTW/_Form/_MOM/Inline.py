@@ -43,6 +43,10 @@
 #                     `froms` and `form_count` moved into subclasses
 #                     Support for inline level JS on ready code added
 #                     Form field prefix handling changed
+#    11-Feb-2010 (MG) class `Instances` renamed to `Instance_Collection`,
+#                     Changed handling of instance to form assignment (to
+#                     make sure that each posted form gets assing the correct
+#                     instance)
 #    ««revision-date»»···
 #--
 
@@ -56,20 +60,36 @@ from   _GTW                                 import GTW
 import _GTW._Form.Field_Error
 import _GTW._Form._MOM
 
-class Instances (object) :
+class Instance_Collection (object) :
 
-    def __init__ (self, instances) :
-        self.instances = iter (instances)
+    def __init__ (self, et_man, instances, lids_used = set ()) :
+        self.et_man     = et_man
+        self.instances  = tuple (i for i in instances if i is not None)
+        self._by_lid    = dict \
+            ((getattr (i, "lid", ""), i) for i in self.instances)
+        self._unused    = \
+            [i for (lid, i) in self._by_lid.iteritems ()
+               if lid not in lids_used
+            ]
     # end def __init__
 
-    def next (self) :
-        try :
-            return self.instances.next ()
-        except StopIteration :
-            return None
-    # end def next
+    def instance_for_lid (self, lid = "") :
+        instance = self._by_lid.get (lid)
+        if not instance :
+            if lid :
+                et_man             = self.et_man
+                pid                = et_man.pid_from_lid         (lid)
+                self._by_lid [lid] = instance = et_man.pid_query (pid)
+                assert instance not in self._unused
+            else :
+                try :
+                    instance = self._unused.pop (0)
+                except IndexError :
+                    instance = None
+        return instance
+    # end def instance_for_lid
 
-# end class Instances
+# end class Instance_Collection
 
 class _Inline_ (TFL.Meta.Object) :
     """A Inline `form` inside a real form."""
@@ -157,8 +177,10 @@ class Attribute_Inline (_Inline_) :
 
     @TFL.Meta.Once_Property
     def Instances (self) :
-        return Instances \
-            ((getattr (self.parent.instance, self.link_name, None), ))
+        return Instance_Collection \
+            ( self.form_cls.et_man
+            , (getattr (self.parent.instance, self.link_name, None), )
+            )
     # end def Instances
 
 # end class Attribute_Inline
@@ -174,12 +196,13 @@ class Link_Inline (_Inline_) :
     @TFL.Meta.Once_Property
     def Instances (self) :
         parent = self.parent
+        et_man = self.form_cls.et_man
         if parent.instance :
-            instances = self.form_cls.et_man.query \
-                (** {self.own_role_name : parent.instance})
+            instances = et_man.query (** {self.own_role_name : parent.instance})
         else :
             instances = ()
-        return Instances (instances)
+        return Instance_Collection \
+            (et_man, instances, set (f.lid for f in self.forms))
     # end def Instances
 
     @TFL.Meta.Once_Property
