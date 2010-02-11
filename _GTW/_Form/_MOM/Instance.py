@@ -44,12 +44,17 @@ import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
 
-MOM.Attr.A_Attr_Type.widget = GTW.Form.Widget_Spec ("html/field.jnj, string")
-MOM.Attr._A_Number_.widget  = GTW.Form.Widget_Spec ("html/field.jnj, number")
-MOM.Attr.A_Date.widget      = GTW.Form.Widget_Spec ("html/field.jnj, date")
-MOM.Attr.A_Date_Time.widget = GTW.Form.Widget_Spec ("html/field.jnj, datetime")
-MOM.Attr.A_Email.widget     = GTW.Form.Widget_Spec ("html/field.jnj, email")
-MOM.Attr.A_Text.widget      = GTW.Form.Widget_Spec ("html/field.jnj, text")
+WS                           = GTW.Form.Widget_Spec
+MAT                          = MOM.Attr
+MAT.A_Attr_Type.widget       = WS ("html/field.jnj, string")
+MAT._A_Number_.widget        = WS ("html/field.jnj, number")
+MAT.A_Date.widget            = WS ("html/field.jnj, date")
+MAT.A_Date_Time.widget       = WS ("html/field.jnj, datetime")
+MAT.A_Email.widget           = WS ("html/field.jnj, email")
+MAT.A_Text.widget            = WS ("html/field.jnj, text")
+
+MER                          = MOM.Error
+MER.Invalid_Attribute.widget = WS ("html/mom_errors.jnj, invalide_attribute")
 
 class Instance (GTW.Form.MOM._Instance_) :
     """A form which creates or changes a MOM object."""

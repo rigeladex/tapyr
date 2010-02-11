@@ -32,6 +32,7 @@
 #    10-Feb-2010 (MG) Creation
 #    10-Feb-2010 (MG) Collect `_COMPOSITES` as well
 #    10-Feb-2010 (MG) `MOM_Composite_Query` added
+#    11-Feb-2010 (MG) `MOM_Query`: support for `Query` attributes added
 #    ««revision-date»»···
 #--
 
@@ -67,6 +68,7 @@ class MOM_Query (TFL.Meta.Object) :
         self.id          = columns [e_type._sa_pk_name]
         self._ATTRIBUTES = []
         self._COMPOSITES = []
+        self._query_fct  = {}
         for name, kind in db_attrs.iteritems () :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 attr_name = "_SAQ_%s" % (name, )
@@ -75,7 +77,11 @@ class MOM_Query (TFL.Meta.Object) :
                 setattr (self, name, getattr (kind.C_Type, attr_name))
                 delattr (kind.C_Type, attr_name)
             elif isinstance (kind, MOM.Attr.Query) :
-                TFL.BREAK ()
+                query_fct = getattr (kind.attr, "query_fct")
+                if query_fct :
+                    self._query_fct [name] = kind.attr
+                else :
+                    setattr (self, name, kind.attr.query._sa_filter (self))
             else :
                 col = columns [kind.attr._sa_col_name]
                 setattr (self, name, col)
@@ -90,7 +96,8 @@ class MOM_Query (TFL.Meta.Object) :
     # end def __init__
 
     def __getattr__ (self, name) :
-        print "AE, SAQ", self._E_TYPE, name
+        if name in self._query_fct :
+            return self._query_fct [name].query._sa_filter (self)
         raise AttributeError (name)
     # end def __getattr__
 
@@ -123,6 +130,7 @@ class MOM_Composite_Query (TFL.Meta.Object) :
     def __getattr__ (self, name) :
         if name in self._query_fct :
             return self._query_fct [name].query._sa_filter (self)
+        raise AttributeError (name)
     # end def __getattr__
 
 # end class MOM_Composite_Query
