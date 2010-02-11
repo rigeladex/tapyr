@@ -354,7 +354,7 @@ class _A_Composite_ (A_Attr_Type) :
 class _A_Date_ (A_Attr_Type) :
     """Common base class for date-valued attributes of an object."""
 
-    needs_raw_value    = True
+    needs_raw_value    = False
     _tuple_off         = 0
 
     @property

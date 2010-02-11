@@ -385,6 +385,7 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
             kw ["root_id"]        = scope.root.id
             kw ["root_type_name"] = scope.root.type_name
         session.execute (cls.sa_scope.insert ().values (** kw))
+        session.commit  ()
     # end def register_scope
 
     def _setup_columns ( cls, e_type, db_attrs, bases, unique
