@@ -255,14 +255,14 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
     ('last_name', 'Last name')
     >>> sorted (ET_Person._Attributes._own_names)
-    ['first_name', 'last_name', 'middle_name', 'traps']
+    ['first_name', 'last_name', 'middle_name', 'traps', 'ui_display']
     >>> ET_Mouse.color.name, ET_Mouse.color.ui_name
     ('color', 'Color')
 
     >>> sorted (ET_Trap._Attributes._own_names)
-    ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'up_ex', 'up_ex_q']
+    ['catch', 'location', 'max_weight', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q']
     >>> sorted (ET_Supertrap._Attributes._own_names)
-    []
+    ['ui_display']
     >>> sorted (ET_Trap._Attributes._names)
     ['FO', 'catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
