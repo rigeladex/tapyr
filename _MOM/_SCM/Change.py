@@ -239,13 +239,6 @@ class _Entity_ (Undoable) :
 
 # end class _Entity_
 
-class Copy (_Entity_) :
-    """Model a change that copies an existing entity."""
-
-    kind = "Copy"
-
-# end class Copy
-
 class Create (_Entity_) :
     """Model a change that creates a new entity (object or link)"""
 
@@ -270,6 +263,13 @@ class Create (_Entity_) :
     # end def undo
 
 # end class Create
+
+class Copy (Create) :
+    """Model a change that copies an existing entity."""
+
+    kind = "Copy"
+
+# end class Copy
 
 class Destroy (_Entity_) :
     """Model a change that destroys an entity"""
