@@ -82,6 +82,7 @@ class Admin (object) :
             ( FGD (WF ("primary"))
             , FGD ()
             )
+        , list_display = ("ui_display", "desc")
         )
 
     Person          = dict \
@@ -114,6 +115,7 @@ class Admin (object) :
                  , title     = _("Phone numbers")
                  )
              )
+        , list_display = ("ui_display", "date")
         )
 
     Phone           = dict \
@@ -123,6 +125,7 @@ class Admin (object) :
             ( FGD (WF ("primary"))
             , FGD ()
             )
+        , list_display = ("ui_display", "desc")
         )
 
     Person_has_Phone = dict \

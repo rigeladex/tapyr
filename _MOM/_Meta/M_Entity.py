@@ -67,6 +67,9 @@
 #                     scopeless `An_Entity's`
 #     9-Feb-2010 (CT) `M_E_Type_An._m_setup_attributes` redefined to set
 #                     `hash_sig`
+#    12-Feb-2010 (CT) `M_Entity._m_init_prop_specs` changed to create a new
+#                     `ui_display` attribute for each class (with the proper
+#                     `ui_name`)
 #    ««revision-date»»···
 #--
 
@@ -301,6 +304,10 @@ class M_Entity (M_E_Mixin) :
                 ### `TFL.Meta.M_M_Class` will choose the right meta class
                 ### (i.e., `M_Attr_Spec` or `M_Pred_Spec`)
                 setattr (cls, psn, MOM.Meta.M_Prop_Spec (psn, prop_bases, d))
+        if "ui_display" not in cls._Attributes.__dict__ :
+            base = cls._Attributes.ui_display
+            cls._Attributes.ui_display = base.__class__ \
+                ("ui_display", (base, ), dict (ui_name = cls.ui_name))
     # end def _m_init_prop_specs
 
     def _m_setup_auto_props (cls, SX) :

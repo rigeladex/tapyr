@@ -99,6 +99,7 @@
 #     9-Feb-2010 (CT) `epk_hash` added
 #     9-Feb-2010 (CT) `An_Entity.set` and `.set_raw` redefined
 #    10-Feb-2010 (CT) `FO` and `ui_display` added
+#    12-Feb-2010 (CT) `FO` turned into a Auto_Cached attribute
 #    ««revision-date»»···
 #--
 
@@ -158,13 +159,26 @@ class Entity (TFL.Meta.Object) :
 
     class _Attributes (MOM.Attr.Spec) :
 
+        class FO (A_Blob) :
+            """`FO.foo` fives the `ui_display` of attribute `foo`, if defined,
+               or the raw value of `foo`, otherwise.
+            """
+
+            kind               = Attr.Auto_Cached
+
+            def computed (self, obj) :
+                return obj._FO_ (obj)
+            # end def computed
+
+        # end class FO
+
         class ui_display (A_String) :
             """Display in user interface"""
 
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                return obj.ui_display_format % obj.FO (obj)
+                return obj.ui_display_format % obj.FO
             # end def computed
 
         # end class ui_display
@@ -175,7 +189,7 @@ class Entity (TFL.Meta.Object) :
         pass
     # end class _Predicates
 
-    class FO (TFL.Meta.Object) :
+    class _FO_ (TFL.Meta.Object) :
         """Formatter for attributes of object."""
 
         def __init__ (self, obj) :
@@ -206,7 +220,15 @@ class Entity (TFL.Meta.Object) :
                 raise KeyError (key)
         # end def __getitem__
 
-    # end class FO
+        def __str__ (self) :
+            return self.__obj.ui_display
+        # end def __str__
+
+        def __unicode__ (self) :
+            return self.__obj.ui_display
+        # end def __unicode__
+
+    # end class _FO_
 
     def __new__ (cls, * args, ** kw) :
         if cls.is_partial :

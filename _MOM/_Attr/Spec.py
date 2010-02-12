@@ -126,7 +126,7 @@ class Spec (MOM.Prop.Spec) :
     # end def _setup_dependent_attrs
 
     def _setup_prop (self, e_type, name, kind, prop) :
-        self.__super._setup_prop (e_type, prop.name, kind, prop)
+        self.__super._setup_prop (e_type, name, kind, prop)
         if not (prop.electric or prop.is_primary) :
             self._user_attr.append (prop)
         if callable (prop.sync) :

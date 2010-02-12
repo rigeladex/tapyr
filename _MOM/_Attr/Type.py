@@ -84,6 +84,7 @@
 #     6-Feb-2010 (MG) `_A_Date_.as_string` typo fixed
 #     9-Feb-2010 (CT) `now` added to `A_Date`, `A_Date_Time`, and `A_Time`
 #    10-Feb-2010 (CT) `_A_Date_.needs_raw_value = False` added
+#    12-Feb-2010 (CT) `A_Blob` added
 #    ««revision-date»»···
 #--
 
@@ -831,6 +832,15 @@ class _A_Unit_ (A_Attr_Type) :
     # end def _from_string_eval
 
 # end class _A_Unit_
+
+class A_Blob (A_Attr_Type) :
+    """Generic type for binary attributes that aren't set by the user."""
+
+    typ                 = "Blob"
+    kind                = MOM.Attr._Cached_
+    hidden              = True
+
+# end class A_Blob
 
 class A_Boolean (_A_Named_Value_) :
     """Models a Boolean attribute of an object."""

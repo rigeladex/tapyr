@@ -95,6 +95,8 @@
 #    10-Feb-2010 (CT) `_Composite_Mixin_.reset` and `._check_sanity` added to
 #                     automatically create attribute value and disallow
 #                     definition of `default` (in all guises)
+#    12-Feb-2010 (CT) `Auto_Cached.get_value` changed to pass
+#                     `changed = True` to `_set_cooked`
 #    ««revision-date»»···
 #--
 
@@ -835,7 +837,7 @@ class Auto_Cached (_Cached_) :
                 val = self._get_computed (obj)
                 if val is None :
                     return
-                self._set_cooked (obj, val)
+                self._set_cooked (obj, val, True)
                 man.update_at_changes [self.name] = man.total_changes
         return self.__super.get_value (obj)
     # end def get_value

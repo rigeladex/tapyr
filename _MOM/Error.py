@@ -34,6 +34,9 @@
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #     3-Dec-2009 (CT) Optional argument `exc` added to `Invalid_Attribute`
 #    15-Jan-2010 (MG) `Attribute_Syntax_Error.__unicode__` added
+#    12-Feb-2010 (CT) `Invariant_Error._attribute_values` changed to use `%r`
+#                     instead of `%s` for val
+#    12-Feb-2010 (CT) `Invariant_Errors.__init__` redefined to sort `errors`
 #    ««revision-date»»···
 #--
 
@@ -257,7 +260,7 @@ class Invariant_Error (_Invariant_Error_) :
         tail = head or []
         for attr, val in dict.items () :
             if attr != "this" :
-                tail.append ("%s = %s" % (attr, val))
+                tail.append ("%s = %r" % (attr, val))
         return tail
     # end def _attribute_values
 
@@ -432,6 +435,13 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
 # end class Attribute_Syntax_Error
 
 class Invariant_Errors (Error) :
+
+    arg_sep = u"\n  "
+
+    def __init__ (self, errors) :
+        sort_key = lambda e : e.inv.name
+        Error.__init__ (self, sorted (errors, key = sort_key))
+    # end def __init__
 
     def str_arg (self, args) :
         result = []

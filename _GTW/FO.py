@@ -41,7 +41,7 @@ class FO (TFL.Meta.Object) :
 
     def __init__ (self, obj, enc = None) :
         self.__obj    = obj
-        self.__fo     = obj.FO (obj)
+        self.__fo     = obj.FO
         self.__enc    = enc
     # end def __init__
 

@@ -250,7 +250,7 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Mouse.optional
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
-    [Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, String `ui_display`, Float `weight`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, String `ui_display`, Float `weight`, Boolean `x_locked`]
 
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
     ('last_name', 'Last name')
@@ -264,13 +264,13 @@ The app-type specific entity-types are ready to be used by
     >>> sorted (ET_Supertrap._Attributes._own_names)
     []
     >>> sorted (ET_Trap._Attributes._names)
-    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Supertrap._Attributes._names)
-    ['catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
+    ['FO', 'catch', 'electric', 'is_used', 'location', 'max_weight', 'name', 'owner', 'serial_no', 'setter', 'ui_display', 'up_ex', 'up_ex_q', 'x_locked']
     >>> sorted (ET_Trap.attributes.itervalues (), key = TFL.Getter.name)
-    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
     >>> sorted (ET_Supertrap.attributes.itervalues (), key = TFL.Getter.name)
-    [Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
     ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
@@ -836,8 +836,8 @@ Changing objects and links
     >>> for err in rit.errors :
     ...     print err
     Condition `valid_weight` : Weight of `rodent` must not exceed `max_weight` of `trap`. (rodent.weight <= trap.max_weight)
-        rodent = u'Mighty_Mouse'
-        trap = (u'X', 1)
+        rodent = BMT.Mouse (u'Mighty_Mouse')
+        trap = BMT.Trap (u'X', 1)
         rodent.weight = 42.0
         trap.max_weight = 20.0
 
@@ -1112,7 +1112,8 @@ Primary key attributes
     Traceback (most recent call last):
     ...
     Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
-        name = , Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
+        name = u''
+      Condition `AC_check_serial_no_0` :  (serial_no is not None and serial_no != '')
         serial_no = None
     >>> scope.BMT.Trap ("ha", None)
     Traceback (most recent call last):
@@ -1123,7 +1124,7 @@ Primary key attributes
     Traceback (most recent call last):
     ...
     Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
-        name =
+        name = u''
     >>> scope.BMT.Trap (None, 0)
     Traceback (most recent call last):
     ...
@@ -1138,7 +1139,7 @@ Primary key attributes
     Traceback (most recent call last):
     ...
     Invariant_Errors: Condition `AC_check_name_0` :  (name is not None and name != '')
-        name =
+        name = u''
 
 Rollback of uncommited changes
 ------------------------------

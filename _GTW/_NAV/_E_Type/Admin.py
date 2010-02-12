@@ -37,6 +37,8 @@
 #     6-Feb-2010 (MG) Use `HTTP.Request_Data` instead of
 #                     `GTW.Tornado.Request_Data`
 #     6-Feb-2010 (MG) Made `Completed` working again
+#    12-Feb-2010 (CT) `Admin.__init__` changed to convert strings in
+#                     `list_display` to attributes
 #    ««revision-date»»···
 #--
 
@@ -265,6 +267,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 (ETM, * kw.pop ("Form_args", ()), ** kw.pop ("Form_kw", {}))
         if "list_display" not in kw :
             kw ["list_display"] = self._auto_list_display (ETM, kw)
+        else :
+            kw ["list_display"] = tuple \
+                (getattr (ETM._etype, a, a) for a in kw ["list_display"])
         self.__super.__init__ (parent, ** kw)
         self.prefix = pjoin (self.parent.prefix, self.name)
     # end def __init__

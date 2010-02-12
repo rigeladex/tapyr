@@ -43,7 +43,9 @@ _Ancestor_Essence = MOM.Object
 class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
     """Model a phone number"""
 
-    _real_name = "Phone"
+    _real_name     = "Phone"
+
+    ui_display_sep = "/"
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
