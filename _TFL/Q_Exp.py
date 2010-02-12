@@ -38,6 +38,7 @@
 #    10-Feb-2010 (MG) Converted `lambda` in `startswith` and `endswith` to
 #                     functions which have aproper `__name__` which is needed
 #                     by the SA instrumentation
+#    12-Feb-2010 (CT) `__nonzero__` added to `Base`, `Call`, and `_Exp_`
 #    ««revision-date»»···
 #--
 
@@ -221,6 +222,11 @@ class Base (TFL.Meta.Object) :
         return self.Get (self, item, operator.itemgetter (item))
     # end def __getitem__
 
+    def __nonzero__ (self) :
+        return TypeError \
+            ("Result of `%s` cannot be used in a boolean context" % (self, ))
+    # end def __nonzero__
+
 # end class Base
 
 Q = Base ()
@@ -306,6 +312,11 @@ class Call (TFL.Meta.Object) :
         return self.predicate (obj)
     # end def __call__
 
+    def __nonzero__ (self) :
+        return TypeError \
+            ("Result of `%s` cannot be used in a boolean context" % (self, ))
+    # end def __nonzero__
+
     def __repr__ (self) :
         op = self.op.__name__
         return "%s.%s %r" % (self.lhs, op, self.args)
@@ -377,6 +388,11 @@ class _Exp_ (TFL.Meta.Object) :
         ###     Overriding __eq__ blocks inheritance of __hash__ in 3.x
         raise NotImplementedError
     # end def __hash__
+
+    def __nonzero__ (self) :
+        return TypeError \
+            ("Result of `%s` cannot be used in a boolean context" % (self, ))
+    # end def __nonzero__
 
 # end class _Exp_
 

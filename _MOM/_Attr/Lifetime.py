@@ -59,7 +59,7 @@ class Lifetime (_Ancestor_Essence) :
             def query_fct (self) :
                 now = A_Date.now ()
                 return \
-                    ( (Q.birth <= now)
+                    (  (Q.birth <= now)
                     & ((Q.death == None) | (now <= Q.death))
                     )
             # end def query_fct
