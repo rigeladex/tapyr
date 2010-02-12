@@ -50,13 +50,14 @@ t1   = scope.BMT.Trap     ("X", 1)
 
 scope.BMT.Rodent_in_Trap (m, t1)
 scope.BMT.Rodent_in_Trap (r, ("X", 2))
-c1 = MOM.SCM.Change.Attr (m, dict (color = "gray"))
-c2 = MOM.SCM.Change.Attr (m, dict (weight = "20"))
-c1.add_change (c2)
-scope.ems.register_change (c2)
-scope.ems.register_change (c1)
+if 0 :
+    c1 = MOM.SCM.Change.Attr (m, dict (color = "gray"))
+    c2 = MOM.SCM.Change.Attr (m, dict (weight = "20"))
+    c1.add_change (c2)
+    scope.ems.register_change (c2)
+    scope.ems.register_change (c1)
 
-#print scope.BMT.Rodent_in_Trap.query ().all ()
-csk = TFL.Sorted_By (Q.parent != None, Q.cid)
-for c in m.changes ().order_by (csk) : print c
+    #print scope.BMT.Rodent_in_Trap.query ().all ()
+    csk = TFL.Sorted_By (Q.parent != None, Q.cid)
+    for c in m.changes ().order_by (csk) : print c
 ### __END__ MOM.DWB.SQL__Test

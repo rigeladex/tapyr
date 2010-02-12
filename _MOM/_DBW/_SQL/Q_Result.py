@@ -95,6 +95,13 @@ class Q_Result (TFL.Meta.Object) :
             (self.e_type, self.session, self.sa_query.where (* sa_criteria))
     # end def filter
 
+    def first (self) :
+        try :
+            return tuple (self.limit (1)) [0]
+        except IndexError :
+            return None
+    # end def first
+
     def _from_row (self, row) :
         return self.session.instance_from_row (self.e_type, row)
     # end def _from_row

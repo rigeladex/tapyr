@@ -178,6 +178,9 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
             del e_type._sa_save_attrs
             MOM.DBW.SQL.MOM_Query     (e_type, sa_table, db_attrs, bases)
             e_type._SQL.setup_selects ()
+            for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
+                cls._cached_role \
+                    (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
         if 0:
             map_props                 = dict ()
             map_props  ["properties"] = cls._setup_mapper_properties \
@@ -210,11 +213,6 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
                     role_attrs [name] = attr_kind
         return db_attrs, role_attrs
     # end def _attr_dicts
-
-    def commit (self) :
-        self.session.change_session.commit ()
-        return sell.__super.commit         ()
-    # end def commit
 
     def load_root (cls, session, scope) :
         result     = session.connection.execute \
@@ -286,23 +284,6 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
         return result
     # end def _setup_columns
 
-    def _setup_inheritance (cls, e_type, sa_table, bases, col_prop) :
-        e_type._sa_inheritance = True
-        e_type.has_children    = False
-        if e_type is not e_type.relevant_root :
-            col_prop ["inherits"]             = bases [0]
-            col_prop ["polymorphic_identity"] = e_type.type_name
-        elif e_type.children :
-            col_prop ["polymorphic_on"]       = sa_table.c.Type_Name
-            col_prop ["polymorphic_identity"] = e_type.type_name
-            col_prop ["with_polymorphic"]     = "*"
-        else :
-            e_type._sa_inheritance            = False
-            col_prop ["polymorphic_on"]       = sa_table.c.Type_Name
-            col_prop ["polymorphic_identity"] = e_type.type_name
-        return col_prop
-    # end def _setup_inheritance
-
     def _setup_mapper_properties ( cls
                                  , app_type
                                  , e_type
@@ -311,14 +292,6 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
                                  , sa_table
                                  , bases
                                  ) :
-        result = dict ()
-        for name, attr_kind in db_attrs.iteritems () :
-            ckd           = attr_kind.ckd_name
-            attr_kind._sa_mapper_prop (name, ckd, e_type, result)
-        MOM.DBW.SQL.MOM_Query (e_type, sa_table, db_attrs, bases)
-        for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
-            cls._cached_role \
-                (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
         ### we need this attributes to trigger the cascading
         for assoc, roles in getattr (e_type, "link_map", {}).iteritems () :
             for r in roles :
@@ -338,10 +311,11 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
         result_et   = app_type [attr_kind.Class.type_name]
         def computed_crn (self) :
             session = self.home_scope.ems.session
-            pk      = getattr (self, self._sa_pk_name)
-            links   = session.query (q_attr).filter (f_attr == pk)
-            query   = session.query (result_et).filter \
-                (getattr (result_et, result_et._sa_pk_name).in_ (links))
+            links   = sql.select ((q_attr,)).where (f_attr == self.id)
+            query   = MOM.DBW.SQL.Q_Result \
+                ( result_et, session
+                , result_et._SQL.select.where (result_et._SAQ.id.in_(links))
+                )
             if singleton :
                 return query.first ()
             return query
