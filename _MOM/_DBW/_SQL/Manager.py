@@ -93,7 +93,7 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_session
 
     def _create_scope_table (cls, metadata) :
-        cls.sa_scope = schema.Table \
+        cls.sa_scope = Table = schema.Table \
             ( "scope_metadata", metadata
             , schema.Column
                 ("root_id",        types.Integer, primary_key = True)
@@ -102,6 +102,7 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
             , schema.Column
                 ("root_type_name", Type_Name_Type)
             )
+        MOM.DBW.SQL.Query (Table, Table)
     # end def _create_scope_table
 
     def _create_SCM_table (cls, metadata) :
@@ -216,12 +217,14 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def commit
 
     def load_root (cls, session, scope) :
-        si         = session.query (cls.sa_scope).one ()
+        result     = session.connection.execute \
+            (cls.sa_scope.select ().limit (1))
+        si        = result.fetchone ()
+        result.close ()
         scope.guid = si.scope_guid
         if si.root_type_name :
             return getattr \
-
-        (scope, si.root_type_name).query (id = si.root_it).one ()
+                (scope, si.root_type_name).query (id = si.root_it).one ()
     # end def load_root
 
     def register_scope (cls, session,  scope) :

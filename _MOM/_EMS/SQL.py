@@ -170,7 +170,6 @@ class Manager (MOM.EMS._Manager_) :
     # end def register_scope
 
     def remove (self, entity) :
-        entity.pid = None
         self.session.delete (entity)
         self.session.flush  () ### needed to update auto cache roles
     # end def remove

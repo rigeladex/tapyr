@@ -55,6 +55,7 @@ class SQL_Interface (TFL.Meta.Object) :
         self.columns        = columns
         self.table          = e_type._sa_table
         self.bases          = bases
+        self.pk             = self.table.c [e_type._sa_pk_name]
         self.all_columns    = self._gather_columns (e_type, bases)
         self.kind_getter    = kind_getter = TFL.defaultdict (list)
         for c in self.all_columns :
@@ -75,6 +76,13 @@ class SQL_Interface (TFL.Meta.Object) :
                 (kind.attr.raw_name if raw else kind.attr.ckd_name)
         self.kind_getter [kind].append ((column, getter))
     # end def _add_attribute
+
+    def delete (self, session, entity) :
+        for b in self.bases :
+            b._SQL.delete (session, entity)
+        session.connection.execute \
+            (self.table.delete ().where (self.pk == entity.id))
+    # end def delete
 
     def _gather_columns (self, e_type, bases) :
         result   = []
@@ -206,14 +214,24 @@ class Session (TFL.Meta.Object) :
         self.connection.close   ()
         self.transaction = None
         del self.connection
+        del self._saved
     # end def commit
 
     @TFL.Meta.Once_Property
     def connection (self) :
         result           = self.engine.connect ()
         self.transaction = result.begin        ()
+        self._saved = dict \
+            ( id_map  = self._id_map. copy ()
+            , cid_map = self._cid_map.copy ()
+            )
         return result
     # end def connection
+
+    def delete (self, entity) :
+        self._deleted.append (entity.pid)
+        entity.pid = None
+    # end def delete
 
     def execute (self, * args, ** kw) :
         return self.connection.execute (* args, ** kw)
@@ -223,17 +241,17 @@ class Session (TFL.Meta.Object) :
         self._id_map   = {}
         ### only used during loading of changes from the database
         self._cid_map  = {}
-        self._added    = []
         self._deleted  = []
         self._modified = []
     # end def expunge
 
     def flush (self) :
-        #self.engine.echo = True
-        for id in self._added :
-            entity    = self._id_map [id]
-            entity.id = entity.__class__._SQL.insert (self, entity)
-        self._added   = []
+        self.engine.echo = True
+        #TFL.BREAK ()
+        for pid in self._deleted :
+            entity       = self._id_map.pop (pid)
+            entity.id    = entity.__class__._SQL.delete (self, entity)
+        self._deleted    = []
         self.engine.echo = False
     # end def flush
 
@@ -252,7 +270,7 @@ class Session (TFL.Meta.Object) :
     # end def instance_from_row
 
     def query (self, Type) :
-        return Type._SQL.select
+        return Type.select ()
     # end def query
 
     def recreate_change (self, row) :
@@ -274,6 +292,8 @@ class Session (TFL.Meta.Object) :
         self.transaction.rollback ()
         self.connection.close     ()
         self.transaction = None
+        self._id_map     = self._saved ["id_map"]
+        self._cid_map    = self._saved ["cid_map"]
         del self.connection
     # end def rollback
 
