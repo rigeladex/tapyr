@@ -60,4 +60,6 @@ if 0 :
     #print scope.BMT.Rodent_in_Trap.query ().all ()
     csk = TFL.Sorted_By (Q.parent != None, Q.cid)
     for c in m.changes ().order_by (csk) : print c
+m.weight = 20.1
+scope.ems.session.flush ()
 ### __END__ MOM.DWB.SQL__Test

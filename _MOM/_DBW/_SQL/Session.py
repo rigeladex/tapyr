@@ -176,6 +176,17 @@ class SQL_Interface (TFL.Meta.Object) :
         return result
     # end def value_dict
 
+    def update (self, session, entity, values = None) :
+        TFL.BREAK ()
+        if values is None :
+            values = self.value_dict (entity)
+        for b in self.bases :
+            b._SQL.update (session, entity, values)
+        update = self.table.update ().values (values)
+        return session.connection.execute \
+            (update.where (self.pk == entity.id))
+    # end def update
+
 # end class SQL_Interface
 
 class Session (TFL.Meta.Object) :
@@ -247,11 +258,18 @@ class Session (TFL.Meta.Object) :
 
     def flush (self) :
         self.engine.echo = True
-        #TFL.BREAK ()
         for pid in self._deleted :
             entity       = self._id_map.pop (pid)
             entity.id    = entity.__class__._SQL.delete (self, entity)
         self._deleted    = []
+        for c in ( c for c in self.scope.ems.uncommitted_changes
+                     if isinstance (c, MOM.SCM.Change._Attr_)
+                 ):
+            ### XXX make context manager
+            self._no_flush = True
+            entity = c.entity (self.scope)
+            self._no_flush = False
+            entity.__class__._SQL.update (self, entity)
         self.engine.echo = False
     # end def flush
 

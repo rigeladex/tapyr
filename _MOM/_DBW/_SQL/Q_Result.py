@@ -118,11 +118,11 @@ class Q_Result (TFL.Meta.Object) :
 
     def one (self) :
         execute = self.session.connection.execute
-        result  = execute (self.sa_query.limit (2)).fetchall ()
+        result  = self.limit (2).all ()
         count   = len (result)
         if count != 1 :
             raise IndexError ("Query result contains %s entries" % (count, ))
-        return self._from_row (result [0])
+        return result [0]
     # end def one
 
     def order_by (self, criterion) :
@@ -143,6 +143,9 @@ class Q_Result (TFL.Meta.Object) :
     # end def __getattr__
 
     def __iter__ (self) :
+        if not getattr (self.session, "_no_flush", False) :
+            ### before we make the query, let's flush the session
+            self.session.flush ()
         result = self.session.connection.execute (self.sa_query)
         for row in result :
             yield self._from_row (row)
