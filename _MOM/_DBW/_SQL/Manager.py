@@ -177,7 +177,7 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
             ### remove the attributes saved during the `etype_decorator` run
             del e_type._sa_save_attrs
             MOM.DBW.SQL.MOM_Query     (e_type, sa_table, db_attrs, bases)
-            e_type._SQL.setup_selects ()
+            e_type._SQL.finish        ()
             for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
                 cls._cached_role \
                     (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)

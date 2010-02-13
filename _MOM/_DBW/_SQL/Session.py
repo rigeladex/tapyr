@@ -41,8 +41,8 @@ import  operator
 import  itertools
 from    sqlalchemy           import sql
 
-default_dict_list = lambda : TFL.defaultdict (list)
-attrgetter        = operator.attrgetter
+ddict_list = lambda : TFL.defaultdict (list)
+attrgetter = operator.attrgetter
 
 class SQL_Interface (TFL.Meta.Object) :
     """Helper object to store the information how to get all/some values
@@ -57,13 +57,20 @@ class SQL_Interface (TFL.Meta.Object) :
         self.bases          = bases
         self.pk             = self.table.c [e_type._sa_pk_name]
         self.all_columns    = self._gather_columns (e_type, bases)
-        self.kind_getter    = kind_getter = TFL.defaultdict (list)
+        self.e_type_getters = e_type_getters = TFL.defaultdict (ddict_list)
         for c in self.all_columns :
+            e_type = None
             kind   = getattr (c, "mom_kind", None)
+            getter = None
             if c.name == "Type_Name" :
-                kind_getter [kind].append ((c, attrgetter ("type_name")))
+                getter = attrgetter ("type_name")
+                e_type = self.e_type.relevant_root
             elif kind :
-                self._add_attribute (c, kind)
+                getter = self._add_attribute (c, kind)
+                e_type = c.mom_e_type
+            if getter :
+                e_type_getters [e_type] [kind].append ((c, getter))
+                e_type_getters [None]   [kind].append ((c, getter))
     # end def __init__
 
     def _add_attribute (self, column, kind) :
@@ -74,7 +81,7 @@ class SQL_Interface (TFL.Meta.Object) :
         else :
             getter = attrgetter \
                 (kind.attr.raw_name if raw else kind.attr.ckd_name)
-        self.kind_getter [kind].append ((column, getter))
+        return getter
     # end def _add_attribute
 
     def delete (self, session, entity) :
@@ -88,14 +95,16 @@ class SQL_Interface (TFL.Meta.Object) :
         result   = []
         seen     = set ()
         for c in self.columns :
-            kind = getattr (c, "mom_kind", None)
-            if not kind or kind not in seen :
+            key = (getattr (c, "mom_kind", None), getattr (c, "mom_raw", False))
+            if not key [0] or key not in seen :
                 c.mom_e_type = self.e_type
                 result.append (c)
-            seen.add (kind)
+            seen.add (key)
         for et in bases :
             for c in et._SQL.all_columns :
                 kind = getattr (c, "mom_kind", None)
+                if kind :
+                    kind = (kind, getattr (kind, "mom_raw", False))
                 if not kind or kind not in seen :
                     result.append (c)
                 seen.add (kind)
@@ -108,7 +117,9 @@ class SQL_Interface (TFL.Meta.Object) :
         for b in self.bases :
             base_pks [pk_map [b.type_name]] = b._SQL.insert (session, entity)
         result = session.connection.execute \
-            (self.table.insert ().values (self.value_dict (entity, base_pks)))
+            ( self.table.insert ().values
+                (self.value_dict (entity, self.e_type, base_pks))
+            )
         return result.inserted_primary_key [0]
     # end def insert
 
@@ -120,7 +131,7 @@ class SQL_Interface (TFL.Meta.Object) :
     def reconstruct (self, session, row) :
         scope        = session.scope
         pickle_cargo = TFL.defaultdict (list)
-        for kind, getters in self.kind_getter.iteritems () :
+        for kind, getters in self.e_type_getters [None].iteritems () :
             if kind :
                 for column, _ in getters :
                     if isinstance (kind.attr, MOM.Attr._A_Object_) :
@@ -135,7 +146,8 @@ class SQL_Interface (TFL.Meta.Object) :
         return entity
     # end def reconstruct
 
-    def setup_selects (self) :
+    def finish (self) :
+        ### setup the select statement for this class with all the joins
         tables = [self.table]
         joins  = self.table
         for b in self.transitive_bases :
@@ -144,10 +156,9 @@ class SQL_Interface (TFL.Meta.Object) :
         for c in self.transitive_children :
             joins = joins.outerjoin (c._sa_table)
             tables.append           (c._sa_table)
-        self.select = sql.select    (tables, from_obj = (joins, ),
-                                     use_labels = True
-                                    )
-    # end def setup_selects
+        self.select = sql.select \
+            (tables, from_obj = (joins, ), use_labels = True)
+    # end def finish
 
     @TFL.Meta.Once_Property
     def transitive_bases (self) :
@@ -167,24 +178,27 @@ class SQL_Interface (TFL.Meta.Object) :
         return result
     # end def transitive_children
 
-    def value_dict (self, entity, addition_attrs = {}, attrs = None) :
-        result = addition_attrs.copy ()
-        for kind, getters in self.kind_getter.iteritems () :
+    def value_dict ( self, entity
+                   , e_type   = None
+                   , defaults = {}
+                   , attrs    = None
+                   ) :
+        result = defaults.copy ()
+        for kind, getters in self.e_type_getters [e_type].iteritems () :
             if not attrs or kind.attr.name in attr :
                 for column, get in getters :
                     result [column.name] = get (entity)
         return result
     # end def value_dict
 
-    def update (self, session, entity, values = None) :
-        TFL.BREAK ()
-        if values is None :
-            values = self.value_dict (entity)
+    def update (self, session, entity) :
         for b in self.bases :
-            b._SQL.update (session, entity, values)
-        update = self.table.update ().values (values)
-        return session.connection.execute \
-            (update.where (self.pk == entity.id))
+            b._SQL.update (session, entity)
+        values     = self.value_dict (entity, e_type = self.e_type)
+        if values :
+            update = self.table.update ().values (values)
+            return session.connection.execute \
+                (update.where (self.pk == entity.id))
     # end def update
 
 # end class SQL_Interface
@@ -220,10 +234,11 @@ class Session (TFL.Meta.Object) :
     # end def add_change
 
     def commit (self) :
-        self.flush              ()
-        self.transaction.commit ()
-        self.connection.close   ()
-        self.transaction = None
+        self.flush                  ()
+        self.transaction.commit     ()
+        self.connection.close       ()
+        self._flushed_changes = set ()
+        self.transaction      = None
         del self.connection
         del self._saved
     # end def commit
@@ -249,27 +264,26 @@ class Session (TFL.Meta.Object) :
     # end def execute
 
     def expunge (self) :
-        self._id_map   = {}
+        self._id_map          = {}
         ### only used during loading of changes from the database
-        self._cid_map  = {}
-        self._deleted  = []
-        self._modified = []
+        self._cid_map         = {}
+        self._deleted         = []
+        self._modified        = []
+        self._flushed_changes = set ()
     # end def expunge
 
     def flush (self) :
-        self.engine.echo = True
+        #self.engine.echo = True
+        self._deleted    = []
+        for c in self._update_changes (self.scope.ems.uncommitted_changes) :
+            ### XXX make context manager
+            self._no_flush = True
+            entity = c.entity            (self.scope)
+            self._no_flush = False
+            entity.__class__._SQL.update (self, entity)
         for pid in self._deleted :
             entity       = self._id_map.pop (pid)
             entity.id    = entity.__class__._SQL.delete (self, entity)
-        self._deleted    = []
-        for c in ( c for c in self.scope.ems.uncommitted_changes
-                     if isinstance (c, MOM.SCM.Change._Attr_)
-                 ):
-            ### XXX make context manager
-            self._no_flush = True
-            entity = c.entity (self.scope)
-            self._no_flush = False
-            entity.__class__._SQL.update (self, entity)
         self.engine.echo = False
     # end def flush
 
@@ -314,6 +328,15 @@ class Session (TFL.Meta.Object) :
         self._cid_map    = self._saved ["cid_map"]
         del self.connection
     # end def rollback
+
+    def _update_changes (self, change_list) :
+        for c in change_list :
+            if c not in self._flushed_changes :
+                if isinstance (c, MOM.SCM.Change._Attr_) :
+                    yield c
+                for cc in self._update_changes (c.children) :
+                    yield cc
+    # end def _update_changes
 
 # end class Session
 

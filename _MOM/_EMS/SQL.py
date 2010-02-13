@@ -56,10 +56,6 @@ class PID (object) :
         self.id        = id
     # end def __init__
 
-    def __composite_values__ (self) :
-        return (self.Type_Name, self.id)
-    # end def __composite_values__
-
     def __getitem__ (self, key) :
         return getattr (self, self._Attrs [key])
     # end def __getitem__

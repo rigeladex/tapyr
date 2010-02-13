@@ -32,10 +32,6 @@
 
 from _MOM.__doc__ import *
 
-### Because the example classes are all defined here and not in their
-### own package namespace, we'll fake it
-BMT._Export ("*", "Version")
-
 from _MOM._EMS.SQL          import Manager as EMS
 from _MOM._DBW._SQL.Manager import Manager     as DBW
 
@@ -61,5 +57,6 @@ if 0 :
     csk = TFL.Sorted_By (Q.parent != None, Q.cid)
     for c in m.changes ().order_by (csk) : print c
 m.weight = 20.1
-scope.ems.session.flush ()
+mm = m.copy ("copy_mouse")
+print scope.BMT.Rodent.query_s (Q.weight != None).all ()
 ### __END__ MOM.DWB.SQL__Test
