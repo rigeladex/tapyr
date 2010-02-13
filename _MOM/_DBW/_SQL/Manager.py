@@ -181,13 +181,6 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
             for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
                 cls._cached_role \
                     (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
-        if 0:
-            map_props                 = dict ()
-            map_props  ["properties"] = cls._setup_mapper_properties \
-                (app_type, e_type, db_attrs, role_attrs, sa_table, bases)
-            map_props ["extension"]   = Instance_Recreation  ()
-            cls._setup_inheritance (e_type, sa_table, bases, map_props)
-            orm.mapper             (e_type, sa_table, ** map_props)
     # end def update_etype
 
     def _attr_dicts (self, e_type, bases) :
@@ -283,23 +276,6 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
                 result.append (col)
         return result
     # end def _setup_columns
-
-    def _setup_mapper_properties ( cls
-                                 , app_type
-                                 , e_type
-                                 , db_attrs
-                                 , role_attrs
-                                 , sa_table
-                                 , bases
-                                 ) :
-        ### we need this attributes to trigger the cascading
-        for assoc, roles in getattr (e_type, "link_map", {}).iteritems () :
-            for r in roles :
-                attr_name = "__".join (assoc.type_name.split (".") + [r.name])
-                if not hasattr (e_type, attr_name) :
-                    result [attr_name] = orm.dynamic_loader (assoc, cascade = "all")
-        return result
-    # end def _setup_mapper_properties
 
     def _cached_role (cls, app_type, attr_kind, cr, assoc_et) :
         assoc_sa    = assoc_et._sa_table
