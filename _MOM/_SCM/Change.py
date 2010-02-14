@@ -244,6 +244,8 @@ class _Entity_ (Undoable) :
 class Copy (_Entity_) :
     """Model a change that copies an existing entity."""
 
+    ### This is a container for a `Create` and a `Attr`  change-object.
+
     kind = "Copy"
 
 # end class Copy
