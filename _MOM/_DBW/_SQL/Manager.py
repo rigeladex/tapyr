@@ -254,11 +254,12 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
                     )
                 result.append (schema.Column ("Type_Name", Type_Name_Type))
             e_type._sa_pk_name = pk_name
-        for name, kind in ((n, k) for (n, k) in db_attrs.iteritems () if k.save_to_db):
+        for name, kind in \
+                ((n, k) for (n, k) in db_attrs.iteritems () if k.save_to_db) :
             attr               = kind.attr
             col_name           = kind._sa_col_name ()
             if prefix :
-                col_name       = "__%s_%s" % (prefix, col_name)
+                col_name       = "%s%s" % (prefix, col_name)
             attr._sa_col_name  = col_name
             if kind.is_primary or name in unique_attrs :
                 unique.append (attr._sa_col_name)
@@ -267,13 +268,11 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
                     (attr, kind, unique, ** kind._sa_column_attrs ())
                 )
             if kind.needs_raw_value :
-                raw_name     = attr.raw_name
+                raw_name       = attr.raw_name
                 if prefix :
-                    raw_name = "__%s_%s" % (prefix, raw_name)
+                    raw_name   = "%s%s" % (prefix, raw_name)
                 col = schema.Column (raw_name, types.String (length = 60))
-                col.mom_kind = kind
-                col.mom_raw  = True
-                result.append (col)
+                result.append       (col)
         return result
     # end def _setup_columns
 

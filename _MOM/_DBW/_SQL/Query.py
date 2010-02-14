@@ -25,24 +25,20 @@
 # Purpose
 #    A wrapper which provides access to the SQL column objects trough the
 #    attribute names of Entities.
-#    We use this instead of the `orm.synonym` aproch becasue the synonym does
-#    not work correct for composite attributes
 #
 # Revision Dates
-#    10-Feb-2010 (MG) Creation
-#    10-Feb-2010 (MG) Collect `_COMPOSITES` as well
-#    10-Feb-2010 (MG) `MOM_Composite_Query` added
-#    11-Feb-2010 (MG) `MOM_Query`: support for `Query` attributes added
+#    12-Feb-2010  (MG) Creation (based on SA.Query)
 #    ««revision-date»»···
 #--
 
 from   _TFL                  import TFL
 import _TFL._Meta.Object
+
 from   _MOM                  import MOM
 import _MOM._DBW._SQL
 
 class Query (TFL.Meta.Object) :
-    """A query object for a normally mapped class"""
+    """A query object for non MOM objects"""
 
     def __init__ (self, cls, sa_table, ** attr_map) :
         cls._SAQ    = self
@@ -80,8 +76,8 @@ class MOM_Query (TFL.Meta.Object) :
                 attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
                 self._ATTRIBUTES.append (name)
+                comp_query = MOM_Composite_Query (kind.C_Type, name)
                 setattr (self, name, getattr (kind.C_Type, attr_name))
-                delattr (kind.C_Type, attr_name)
             elif isinstance (kind, MOM.Attr.Query) :
                 delayed.append ((name, kind))
             else :
@@ -118,8 +114,11 @@ class MOM_Query (TFL.Meta.Object) :
 class MOM_Composite_Query (TFL.Meta.Object) :
     """Query attributes of an composite attribite"""
 
-    def __init__ (self, e_type, attr_name, attr_names, db_attrs, columns) :
+    def __init__ (self, e_type, attr_name) :
         setattr (e_type, "_SAQ_%s" % (attr_name, ), self)
+        db_attrs, columns, prefix = e_type._sa_save_attrs
+        prefix_len                = len (prefix)
+        attr_names                = [c.name [prefix_len:] for c in columns]
         for idx, name in \
             (  (i, an) for (i, an) in enumerate (attr_names)
             if not an.startswith ("__raw_")

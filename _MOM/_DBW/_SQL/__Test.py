@@ -57,5 +57,5 @@ if 0 :
     csk = TFL.Sorted_By (Q.parent != None, Q.cid)
     for c in m.changes ().order_by (csk) : print c
 scope.commit ()
-m.destroy    ()
+#m.destroy    ()
 ### __END__ MOM.DWB.SQL__Test

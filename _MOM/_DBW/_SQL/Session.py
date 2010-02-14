@@ -57,33 +57,34 @@ class SQL_Interface (TFL.Meta.Object) :
         self.table          = e_type._sa_table
         self.bases          = bases
         self.pk             = self.table.c [e_type._sa_pk_name]
-        self.all_columns    = self._gather_columns (e_type, bases)
+        self.column_map     = cm = self._gather_columns (e_type, bases)
         self.e_type_getters = e_type_getters = TFL.defaultdict (ddict_list)
-        for c in self.all_columns :
-            e_type = None
-            kind   = getattr (c, "mom_kind", None)
-            getter = None
-            if c.name == "Type_Name" :
-                getter = attrgetter ("type_name")
-                e_type = self.e_type.relevant_root
-            elif kind :
-                getter = self._add_attribute (c, kind)
-                e_type = c.mom_e_type
-            if getter :
-                e_type_getters [e_type] [kind].append ((c, getter))
-                e_type_getters [None]   [kind].append ((c, getter))
+        getters = []
+        if e_type is e_type.relevant_root :
+            getters.append ((cm ["Type_Name"], attrgetter ("type_name")))
+        e_type_getters [self.e_type] [None] = getters
+        e_type_getters [None       ] [None] = getters
+        for kind in e_type.primary + e_type.user_attr :
+            if isinstance (kind, MOM.Attr._Composite_Mixin_) :
+                pass
+            else :
+                attr        = kind.attr
+                raw_get     = []
+                ckd_get     = getattr (TFL.Getter, attr.ckd_name)
+                if isinstance (attr, MOM.Attr._A_Object_) :
+                    col     = cm.get ("%s_id" % (kind.attr.name, ), None)
+                    ckd_get = ckd_get.id
+                else :
+                    col     = cm.get (kind.attr.name, None)
+                    if kind.needs_raw_value :
+                        col_raw = cm [kind.attr.raw_name]
+                        raw_get = [(col_raw, attrgetter (attr.raw_name))]
+                et              = col.mom_e_type
+                getters         = [(col, ckd_get)]
+                getters.extend (raw_get)
+                e_type_getters [et]   [kind] = getters
+                e_type_getters [None] [kind] = getters
     # end def __init__
-
-    def _add_attribute (self, column, kind) :
-        name   = column.name
-        raw    = getattr (column, "mom_raw",  None)
-        if isinstance (kind.attr, MOM.Attr._A_Object_) :
-            getter = getattr (TFL.Getter, kind.attr.ckd_name).id
-        else :
-            getter = attrgetter \
-                (kind.attr.raw_name if raw else kind.attr.ckd_name)
-        return getter
-    # end def _add_attribute
 
     def delete (self, session, entity) :
         for b in self.bases :
@@ -93,26 +94,17 @@ class SQL_Interface (TFL.Meta.Object) :
     # end def delete
 
     def _gather_columns (self, e_type, bases) :
-        result   = []
-        seen     = set ()
+        result   = {}
+        for et in reversed (bases) :
+            result.update (et._SQL.column_map)
         for c in self.columns :
-            key = (getattr (c, "mom_kind", None), getattr (c, "mom_raw", False))
-            if not key [0] or key not in seen :
-                c.mom_e_type = self.e_type
-                result.append (c)
-            seen.add (key)
-        for et in bases :
-            for c in et._SQL.all_columns :
-                kind = getattr (c, "mom_kind", None)
-                if kind :
-                    kind = (kind, getattr (kind, "mom_raw", False))
-                if not kind or kind not in seen :
-                    result.append (c)
-                seen.add (kind)
+            c.mom_e_type = self.e_type
+            result [c.name] = c
         return result
     # end def _gather_columns
 
     def insert (self, session, entity) :
+        ### TFL.BREAK ()
         base_pks = dict ()
         pk_map   = self.e_type._sa_pk_base
         for b in self.bases :
@@ -193,6 +185,7 @@ class SQL_Interface (TFL.Meta.Object) :
     # end def value_dict
 
     def update (self, session, entity) :
+        ### TFL.BREAK ()
         for b in self.bases :
             b._SQL.update (session, entity)
         values     = self.value_dict (entity, e_type = self.e_type)

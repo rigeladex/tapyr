@@ -39,9 +39,12 @@ import _GTW._OMP._PAP .import_PAP
 if 0 :
     from   _MOM._EMS.Hash         import Manager as EMS
     from   _MOM._DBW._HPS.Manager import Manager as DBW
+elif 0 :
+    from   _MOM._EMS.SA           import Manager as EMS
+    from   _MOM._DBW._SA.Manager  import Manager as DBW
 else :
-    from   _MOM._EMS.SA          import Manager as EMS
-    from   _MOM._DBW._SA.Manager import Manager as DBW
+    from   _MOM._EMS.SQL          import Manager as EMS
+    from   _MOM._DBW._SQL.Manager import Manager as DBW
 
 from   _MOM                      import MOM
 from   _MOM.Product_Version      import Product_Version, IV_Number

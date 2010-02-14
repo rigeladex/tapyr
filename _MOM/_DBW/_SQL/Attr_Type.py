@@ -108,12 +108,13 @@ def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
     bases                 = e_type.__bases__
     Manager               = MOM.DBW.SQL.Manager
     db_attrs, role_attrs  = Manager._attr_dicts    (kind.C_Type, bases)
+    prefix                = "__%s_" % (attr.name, )
     assert not role_attrs
     columns  = Manager._setup_columns \
-        ( e_type, db_attrs, bases, unique, attr.name
+        ( e_type, db_attrs, bases, unique, prefix
         , set (k.attr.name for k in e_type.hash_sig)
         )
-    e_type._sa_save_attrs = db_attrs, columns
+    e_type._sa_save_attrs = db_attrs, columns, prefix
     return columns
 # end def _sa_columns_composite
 
