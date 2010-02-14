@@ -45,6 +45,8 @@
 #     6-Feb-2010 (MG) Use `t4` for new `auto_up_depends` test instance of
 #                     `t1` (because all other traps are are already destroyed)
 #     8-Feb-2010 (CT) Doctest for `t4.up_ex` corrected
+#    14-Feb-2010 (MG) Fixed doctest after fixing `Entity._record_iter` (which
+#                     introducted a new change object)
 #    ««revision-date»»···
 #--
 
@@ -975,7 +977,7 @@ Scope queries
     ['Condition `completely_defined` : All required attributes must be defined.      Required attribute Float `weight` is not defined']
 
     >>> len (scope.ems.uncommitted_changes)
-    36
+    37
     >>> for c in scope.ems.uncommitted_changes :
     ...     print c
     <Create BMT.Person (u'Luke', u'Lucky', '')>
@@ -1013,6 +1015,7 @@ Scope queries
     <Modify BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u''}, new-values = {'max_weight' : u'20'}>
     <Modify BMT.Person_owns_Trap (u"(u'Luke', u'Lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'42.0'}, new-values = {'price' : u'1.20'}>
     <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
+    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')"), old-values = {'rodent' : u"(u'Toothy_Beaver',)"}>
     <Destroy BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'yellow', 'weight' : '42'}>
         <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
     <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>
@@ -1148,17 +1151,17 @@ Rollback of uncommited changes
     2
     >>> scope.commit ()
     >>> scope.changes_to_save, scope.ems.max_cid
-    (0, 49)
+    (0, 50)
     >>> rbm = scope.BMT.Mouse ("Rollback_Mouse_1")
     >>> rbt = scope.BMT.Trap  ("Rollback_Trap_1", 1)
     >>> rbl = scope.BMT.Rodent_in_Trap (rbm, rbt)
     >>> scope.changes_to_save, scope.ems.max_cid
-    (3, 52)
+    (3, 53)
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     [<E_Type_Manager for BMT.Mouse of scope BMT__Hash__HPS>]
     >>> scope.rollback ()
     >>> scope.changes_to_save, scope.ems.max_cid
-    (0, 49)
+    (0, 50)
     >>> scope.BMT.Rodent.exists ("Rollback_Mouse_1")
     []
 

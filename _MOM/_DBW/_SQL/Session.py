@@ -36,6 +36,7 @@ import _TFL.Accessor
 
 from   _MOM                  import MOM
 import _MOM._DBW._SQL
+from   _MOM._EMS.SQL         import PID
 
 import  operator
 import  itertools
@@ -206,6 +207,8 @@ class SQL_Interface (TFL.Meta.Object) :
 class Session (TFL.Meta.Object) :
     """A database session"""
 
+    transaction = None
+
     def __init__ (self, scope, engine) :
         self.scope  = scope
         self.engine = engine
@@ -254,9 +257,25 @@ class Session (TFL.Meta.Object) :
         return result
     # end def connection
 
+    def close (self) :
+        self.rollback ()
+    # end def close
+
     def delete (self, entity) :
-        self._deleted.append (entity.pid)
+        self.flush                   ()
+        self._id_map.pop             (entity.pid)
+        entity.__class__._SQL.delete (self, entity)
+        execute = self.connection.execute
+        link_map = getattr (entity.__class__, "link_map", {})
+        for assoc, roles in link_map.iteritems () :
+            role = tuple (roles) [0]
+            for row in execute \
+                    ( assoc._SQL.select.where
+                        (getattr (assoc._SAQ, role.attr.name) == entity.id)
+                    ) :
+                self.instance_from_row (assoc, row).destroy ()
         entity.pid = None
+        entity.id  = None
     # end def delete
 
     def execute (self, * args, ** kw) :
@@ -267,34 +286,28 @@ class Session (TFL.Meta.Object) :
         self._id_map          = {}
         ### only used during loading of changes from the database
         self._cid_map         = {}
-        self._deleted         = []
-        self._modified        = []
         self._flushed_changes = set ()
     # end def expunge
 
     def flush (self) :
         #self.engine.echo = True
-        self._deleted    = []
-        for c in self._update_changes (self.scope.ems.uncommitted_changes) :
+        for c in self._modify_change_iter (self.scope.ems.uncommitted_changes) :
             ### XXX make context manager
             self._no_flush = True
-            entity = c.entity            (self.scope)
+            entity         = c.entity (self.scope)
             self._no_flush = False
             entity.__class__._SQL.update (self, entity)
-        for pid in self._deleted :
-            entity       = self._id_map.pop (pid)
-            entity.id    = entity.__class__._SQL.delete (self, entity)
         self.engine.echo = False
     # end def flush
 
     def _instance_from_map (self, type_name, epk) :
-        return self._id_map.get ((type_name, epk))
+        return self._id_map.get (PID (type_name, epk))
     # end def instance_from_map
 
     def instance_from_row (self, e_type, row) :
         ### get the real etype for this entity from the database
         e_type = getattr (self.scope, row [e_type._SAQ.Type_Name])
-        id     = e_type.relevant_root.type_name, row [e_type._SAQ.id]
+        id     = PID (e_type.relevant_root.type_name, row [e_type._SAQ.id])
         if id not in self._id_map :
             entity            = e_type._SQL.reconstruct (self, row)
             self._id_map [id] = entity
@@ -321,22 +334,24 @@ class Session (TFL.Meta.Object) :
     # end def recreate_change
 
     def rollback (self) :
-        self.transaction.rollback ()
-        self.connection.close     ()
-        self.transaction = None
-        self._id_map     = self._saved ["id_map"]
-        self._cid_map    = self._saved ["cid_map"]
-        del self.connection
+        if self.transaction :
+            self.transaction.rollback ()
+            self.connection.close     ()
+            self.transaction = None
+            self._id_map     = self._saved ["id_map"]
+            self._cid_map    = self._saved ["cid_map"]
+            del self.connection
     # end def rollback
 
-    def _update_changes (self, change_list) :
+    def _modify_change_iter (self, change_list) :
         for c in change_list :
             if c not in self._flushed_changes :
+                self._flushed_changes.add (c)
                 if isinstance (c, MOM.SCM.Change._Attr_) :
                     yield c
-                for cc in self._update_changes (c.children) :
+                for cc in self._modify_change_iter (c.children) :
                     yield cc
-    # end def _update_changes
+    # end def _modify_change_iter
 
 # end class Session
 

@@ -167,7 +167,6 @@ class Manager (MOM.EMS._Manager_) :
 
     def remove (self, entity) :
         self.session.delete (entity)
-        self.session.flush  () ### needed to update auto cache roles
     # end def remove
 
     def rename (self, entity, new_epk, renamer) :

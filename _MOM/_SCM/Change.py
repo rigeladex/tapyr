@@ -43,6 +43,8 @@
 #    18-Dec-2009 (CT) `as_pickle_cargo` and `from_pickle_cargo` factored
 #    20-Jan-2010 (CT) Use `pid_query` of `E_Type_Manager` instead that of `EMS`
 #     5-Feb-2010 (CT) `_Attr_` factored and `Attr_Composite` added
+#    14-Feb-2010 (MG) Change inheritance of `Copy` back to `_Entity_`
+#                     (otherwise the source entity would be created as well)
 #    ««revision-date»»···
 #--
 
@@ -239,6 +241,13 @@ class _Entity_ (Undoable) :
 
 # end class _Entity_
 
+class Copy (_Entity_) :
+    """Model a change that copies an existing entity."""
+
+    kind = "Copy"
+
+# end class Copy
+
 class Create (_Entity_) :
     """Model a change that creates a new entity (object or link)"""
 
@@ -263,13 +272,6 @@ class Create (_Entity_) :
     # end def undo
 
 # end class Create
-
-class Copy (Create) :
-    """Model a change that copies an existing entity."""
-
-    kind = "Copy"
-
-# end class Copy
 
 class Destroy (_Entity_) :
     """Model a change that destroys an entity"""

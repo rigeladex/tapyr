@@ -100,6 +100,8 @@
 #     9-Feb-2010 (CT) `An_Entity.set` and `.set_raw` redefined
 #    10-Feb-2010 (CT) `FO` and `ui_display` added
 #    12-Feb-2010 (CT) `FO` turned into a Auto_Cached attribute
+#    13-Feb-2010 (MG) `_record_iter` changed to allow recognition of specific
+#                     role names (e.g.: rodent, trap, person, ...)
 #    ««revision-date»»···
 #--
 
@@ -432,10 +434,12 @@ class Entity (TFL.Meta.Object) :
     # end def _record_context
 
     def _record_iter (self, kw) :
-        for attr in self._record_iter_attrs () :
-            name = attr.name
-            if name in kw :
-                yield attr, name, kw [name]
+        record_kinds = set (self._record_iter_attrs ())
+        e_type       = self.__class__
+        for name, value in kw.iteritems () :
+            kind = getattr (e_type, name, None)
+            if kind in record_kinds :
+                yield kind, name, value
     # end def _record_iter
 
     def _record_iter_raw (self, kw) :
