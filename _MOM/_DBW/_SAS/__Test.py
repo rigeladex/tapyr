@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package MOM.DWB.SQL.
+# This module is part of the package MOM.DWB.SAS.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.DWB.SQL__Test
+#    MOM.DWB.SAS__Test
 #
 # Purpose
 #    Base test during development
@@ -32,8 +32,8 @@
 
 from _MOM.__doc__ import *
 
-from _MOM._EMS.SQL          import Manager as EMS
-from _MOM._DBW._SQL.Manager import Manager     as DBW
+from _MOM._EMS.SAS          import Manager as EMS
+from _MOM._DBW._SAS.Manager import Manager     as DBW
 
 apt = MOM.App_Type (u"BMT", BMT).Derived (EMS, DBW)
 
@@ -58,4 +58,4 @@ if 0 :
     for c in m.changes ().order_by (csk) : print c
 scope.commit ()
 #m.destroy    ()
-### __END__ MOM.DWB.SQL__Test
+### __END__ MOM.DWB.SAS__Test

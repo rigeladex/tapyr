@@ -20,23 +20,23 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.__init__
+#    MOM.DBW.SAS.__init__
 #
 # Purpose
 #    Package for the database wrapper using the SQL layer of sqlalchemy
 #    (www.sqlalchemy.org)
 #
 # Revision Dates
-#    11-Feb-2010 (MG) Creation (based on the full blown SQL backend)
+#    11-Feb-2010 (MG) Creation (based on the full blown SAS backend)
 #    ««revision-date»»···
 #--
 
 from   _MOM._DBW              import DBW
 from   _TFL.Package_Namespace import Package_Namespace
 
-SQL = Package_Namespace ()
-DBW._Export ("SQL")
+SAS = Package_Namespace ()
+DBW._Export ("SAS")
 
 del Package_Namespace
 
-### __END__ MOM.DBW.SQL.__init__
+### __END__ MOM.DBW.SAS.__init__

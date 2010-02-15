@@ -20,11 +20,11 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.Q_Result
+#    MOM.DBW.SAS.Q_Result
 #
 # Purpose
 #    Provide the Q_Result interface using filter/order/... functions of
-#    the sql layer of SQLAlchemy
+#    the sql layer of SASAlchemy
 #
 # Revision Dates
 #    11-Feb-2010 (MG) Creation (based on SA.Q_Result)
@@ -34,8 +34,8 @@
 from   _TFL                 import TFL
 from   _MOM                 import MOM
 import _TFL._Meta.Object
-import _MOM._DBW._SQL.Filter
-import _MOM._DBW._SQL.Sorted_By
+import _MOM._DBW._SAS.Filter
+import _MOM._DBW._SAS.Sorted_By
 from    sqlalchemy          import sql
 
 class Q_Result (TFL.Meta.Object) :
@@ -45,7 +45,7 @@ class Q_Result (TFL.Meta.Object) :
         self.e_type   = e_type
         self.session  = session
         if sa_query is None :
-            sa_query  = e_type._SQL.select
+            sa_query  = e_type._SAS.select
         self.sa_query = sa_query
     # end def __init__
 
@@ -183,5 +183,5 @@ class Q_Result_Changes (Q_Result) :
 # end class Q_Result_Changes
 
 if __name__ != "__main__" :
-    MOM.DBW.SQL._Export ("*")
-### __END__ MOM.DBW.SQL.Q_Result
+    MOM.DBW.SAS._Export ("*")
+### __END__ MOM.DBW.SAS.Q_Result

@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.Sorted_By
+#    MOM.DBW.SAS.Sorted_By
 #
 # Purpose
 #    Monkey patch TFL.Sorted_By to add support for creating the
@@ -214,4 +214,4 @@ def _sa_order_by (self, table, joins = None, order_clause = None) :
     order_clause.append (self._sa_filter (table))
 # end def _sa_order_by
 
-### __END__ MOM.DBW.SQL.Sorted_By
+### __END__ MOM.DBW.SAS.Sorted_By

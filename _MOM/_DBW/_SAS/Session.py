@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package MOM.DBW.SQL.
+# This module is part of the package MOM.DBW.SAS.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.Session
+#    MOM.DBW.SAS.Session
 #
 # Purpose
 #    A database session
@@ -35,8 +35,8 @@ import _TFL._Meta.Object
 import _TFL.Accessor
 
 from   _MOM                  import MOM
-import _MOM._DBW._SQL
-from   _MOM._EMS.SQL         import PID
+import _MOM._DBW._SAS
+from   _MOM._EMS.SAS         import PID
 
 import  operator
 import  itertools
@@ -45,13 +45,13 @@ from    sqlalchemy           import sql
 ddict_list = lambda : TFL.defaultdict (list)
 attrgetter = operator.attrgetter
 
-class SQL_Interface (TFL.Meta.Object) :
+class SAS_Interface (TFL.Meta.Object) :
     """Helper object to store the information how to get all/some values
        needed for the database insert/update from the entity
     """
 
     def __init__ (self, e_type, columns, bases) :
-        e_type._SQL         = self
+        e_type._SAS         = self
         self.e_type         = e_type
         self.columns        = columns
         self.table          = e_type._sa_table
@@ -69,7 +69,7 @@ class SQL_Interface (TFL.Meta.Object) :
 
     def delete (self, session, entity) :
         for b in self.bases :
-            b._SQL.delete (session, entity)
+            b._SAS.delete (session, entity)
         session.connection.execute \
             (self.table.delete ().where (self.pk == entity.id))
     # end def delete
@@ -77,7 +77,7 @@ class SQL_Interface (TFL.Meta.Object) :
     def _gather_columns (self, e_type, bases) :
         result   = {}
         for et in reversed (bases) :
-            result.update (et._SQL.column_map)
+            result.update (et._SAS.column_map)
         for c in self.columns :
             c.mom_e_type = self.e_type
             result [c.name] = c
@@ -89,7 +89,7 @@ class SQL_Interface (TFL.Meta.Object) :
         base_pks = dict ()
         pk_map   = self.e_type._sa_pk_base
         for b in self.bases :
-            base_pks [pk_map [b.type_name]] = b._SQL.insert (session, entity)
+            base_pks [pk_map [b.type_name]] = b._SAS.insert (session, entity)
         result = session.connection.execute \
             ( self.table.insert ().values
                 (self.value_dict (entity, self.e_type, base_pks))
@@ -98,21 +98,21 @@ class SQL_Interface (TFL.Meta.Object) :
     # end def insert
 
     def _query_object (self, session, kind, id) :
-        obj = MOM.DBW.SQL.Q_Result (kind.Class, session).filter (id = id).one ()
+        obj = MOM.DBW.SAS.Q_Result (kind.Class, session).filter (id = id).one ()
         return obj.epk
     # end def _query_object
 
     def reconstruct (self, session, row) :
         scope        = session.scope
         pickle_cargo = TFL.defaultdict (list)
-        self._reconstruct (self.e_type_getters, pickle_cargo, row)
+        self._reconstruct (session, self.e_type_getters, pickle_cargo, row)
         entity     = self.e_type.from_pickle_cargo (scope, pickle_cargo)
         entity.id  = row [self.e_type._SAQ.id]
-        entity.pid = MOM.EMS.SQL.PID (entity.type_name, entity.id)
+        entity.pid = MOM.EMS.SAS.PID (entity.type_name, entity.id)
         return entity
     # end def reconstruct
 
-    def _reconstruct (self, e_type_getters, pickle_cargo, row) :
+    def _reconstruct (self, session, e_type_getters, pickle_cargo, row) :
         for kind, getters in e_type_getters [None].iteritems () :
             if kind :
                 if isinstance (kind, MOM.Attr._Composite_Mixin_) :
@@ -177,7 +177,7 @@ class SQL_Interface (TFL.Meta.Object) :
         result = []
         for b in self.bases :
             result.append (b)
-            result.extend (b._SQL.transitive_bases)
+            result.extend (b._SAS.transitive_bases)
         return result
     # end def transitive_bases
 
@@ -186,7 +186,7 @@ class SQL_Interface (TFL.Meta.Object) :
         result = []
         for c in self.e_type.children.itervalues () :
             result.append (c)
-            result.extend (c._SQL.transitive_children)
+            result.extend (c._SAS.transitive_children)
         return result
     # end def transitive_children
 
@@ -218,7 +218,7 @@ class SQL_Interface (TFL.Meta.Object) :
     def update (self, session, entity) :
         ### TFL.BREAK ()
         for b in self.bases :
-            b._SQL.update (session, entity)
+            b._SAS.update (session, entity)
         values     = self.value_dict (entity, e_type = self.e_type)
         if values :
             update = self.table.update ().values (values)
@@ -226,7 +226,7 @@ class SQL_Interface (TFL.Meta.Object) :
                 (update.where (self.pk == entity.id))
     # end def update
 
-# end class SQL_Interface
+# end class SAS_Interface
 
 class Session (TFL.Meta.Object) :
     """A database session"""
@@ -240,8 +240,8 @@ class Session (TFL.Meta.Object) :
     # end def __init__
 
     def add (self, entity) :
-        entity.id  = entity.__class__._SQL.insert (self, entity)
-        entity.pid = MOM.EMS.SQL.PID (entity.relevant_root.type_name, entity.id)
+        entity.id  = entity.__class__._SAS.insert (self, entity)
+        entity.pid = MOM.EMS.SAS.PID (entity.relevant_root.type_name, entity.id)
         self._id_map  [entity.pid] = entity
     # end def add
 
@@ -288,13 +288,13 @@ class Session (TFL.Meta.Object) :
     def delete (self, entity) :
         self.flush                   ()
         self._id_map.pop             (entity.pid)
-        entity.__class__._SQL.delete (self, entity)
+        entity.__class__._SAS.delete (self, entity)
         execute = self.connection.execute
         link_map = getattr (entity.__class__, "link_map", {})
         for assoc, roles in link_map.iteritems () :
             role = tuple (roles) [0]
             for row in execute \
-                    ( assoc._SQL.select.where
+                    ( assoc._SAS.select.where
                         (getattr (assoc._SAQ, role.attr.name) == entity.id)
                     ) :
                 self.instance_from_row (assoc, row).destroy ()
@@ -320,7 +320,7 @@ class Session (TFL.Meta.Object) :
             self._no_flush = True
             entity         = c.entity (self.scope)
             self._no_flush = False
-            entity.__class__._SQL.update (self, entity)
+            entity.__class__._SAS.update (self, entity)
         self.engine.echo = False
     # end def flush
 
@@ -333,7 +333,7 @@ class Session (TFL.Meta.Object) :
         e_type = getattr (self.scope, row [e_type._SAQ.Type_Name])
         id     = PID (e_type.relevant_root.type_name, row [e_type._SAQ.id])
         if id not in self._id_map :
-            entity            = e_type._SQL.reconstruct (self, row)
+            entity            = e_type._SAS.reconstruct (self, row)
             self._id_map [id] = entity
         return self._id_map [id]
     # end def instance_from_row
@@ -380,7 +380,7 @@ class Session (TFL.Meta.Object) :
 # end class Session
 
 if __name__ != "__main__" :
-    MOM.DBW.SQL._Export ("*")
-### __END__ MOM.DBW.SQL.Session
+    MOM.DBW.SAS._Export ("*")
+### __END__ MOM.DBW.SAS.Session
 
 

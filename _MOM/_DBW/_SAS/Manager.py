@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.Manager
+#    MOM.DBW.SAS.Manager
 #
 # Purpose
 #    Manager using the SQL layer of SQAlchemy.
@@ -34,11 +34,11 @@ import _TFL.defaultdict
 from   _MOM                      import MOM
 import _MOM._DBW
 import _MOM._DBW._Manager_
-import _MOM._DBW._SQL
-import _MOM._DBW._SQL.Attr_Type
-import _MOM._DBW._SQL.Attr_Kind
-import _MOM._DBW._SQL.Query
-import _MOM._DBW._SQL.Session
+import _MOM._DBW._SAS
+import _MOM._DBW._SAS.Attr_Type
+import _MOM._DBW._SAS.Attr_Kind
+import _MOM._DBW._SAS.Query
+import _MOM._DBW._SAS.Session
 import _MOM._SCM.Change
 
 from   sqlalchemy import schema, types, sql
@@ -46,7 +46,7 @@ from   sqlalchemy import engine as SQL_Engine
 
 Type_Name_Type = types.String (length = 30)
 
-class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
+class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
     metadata         = schema.MetaData () ### XXX
@@ -89,7 +89,7 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _create_engine
 
     def _create_session (self, engine, scope) :
-        return MOM.DBW.SQL.Session (scope, engine)
+        return MOM.DBW.SAS.Session (scope, engine)
     # end def _create_session
 
     def _create_scope_table (cls, metadata) :
@@ -102,7 +102,7 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
             , schema.Column
                 ("root_type_name", Type_Name_Type)
             )
-        MOM.DBW.SQL.Query (Table, Table)
+        MOM.DBW.SAS.Query (Table, Table)
     # end def _create_scope_table
 
     def _create_SCM_table (cls, metadata) :
@@ -118,7 +118,7 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
                   , schema.ForeignKey ("change_history.cid")
                   )
             )
-        MOM.DBW.SQL.Query \
+        MOM.DBW.SAS.Query \
             (MOM.SCM.Change._Change_, Table, parent = "parent_cid")
     # end def _create_SCM_table
 
@@ -165,7 +165,7 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
                 attr_cls.kind        = MOM.Attr.Cached
                 attr_cls.Kind_Mixins = (MOM.Attr.Computed_Mixin, )
                 attr_spec._add_prop    (e_type, name, attr_cls)
-            MOM.DBW.SQL.SQL_Interface (e_type, columns, bases)
+            MOM.DBW.SAS.SAS_Interface (e_type, columns, bases)
         return e_type
     # end def etype_decorator
 
@@ -176,8 +176,8 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
             bases, db_attrs, role_attrs = e_type._sa_save_attrs
             ### remove the attributes saved during the `etype_decorator` run
             del e_type._sa_save_attrs
-            MOM.DBW.SQL.MOM_Query     (e_type, sa_table, db_attrs, bases)
-            e_type._SQL.finish        ()
+            MOM.DBW.SAS.MOM_Query     (e_type, sa_table, db_attrs, bases)
+            e_type._SAS.finish        ()
             for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
                 cls._cached_role \
                     (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
@@ -287,9 +287,9 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
         def computed_crn (self) :
             session = self.home_scope.ems.session
             links   = sql.select ((q_attr,)).where (f_attr == self.id)
-            query   = MOM.DBW.SQL.Q_Result \
+            query   = MOM.DBW.SAS.Q_Result \
                 ( result_et, session
-                , result_et._SQL.select.where (result_et._SAQ.id.in_(links))
+                , result_et._SAS.select.where (result_et._SAQ.id.in_(links))
                 )
             if singleton :
                 return query.first ()
@@ -298,16 +298,16 @@ class _M_SQL_Manager_ (MOM.DBW._Manager_.__class__) :
         attr_kind.attr.computed = computed_crn
     # end def _cached_role
 
-# end class _M_SQL_Manager_
+# end class _M_SAS_Manager_
 
 class Manager (MOM.DBW._Manager_) :
-    """SQLAlchemy specific Manager class"""
+    """SASAlchemy specific Manager class"""
 
-    __metaclass__ = _M_SQL_Manager_
-    type_name     = "SQL"
+    __metaclass__ = _M_SAS_Manager_
+    type_name     = "SAS"
 
 # end class Manager
 
 if __name__ != '__main__':
-    MOM.DBW.SQL._Export ("*")
+    MOM.DBW.SAS._Export ("*")
 ### __END__ MOM.DBW.Manager

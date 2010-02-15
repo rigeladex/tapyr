@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package MOM.DBW.SQL.
+# This module is part of the package MOM.DBW.SAS.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.Query
+#    MOM.DBW.SAS.Query
 #
 # Purpose
 #    A wrapper which provides access to the SQL column objects trough the
@@ -35,7 +35,7 @@ from   _TFL                  import TFL
 import _TFL._Meta.Object
 
 from   _MOM                  import MOM
-import _MOM._DBW._SQL
+import _MOM._DBW._SAS
 
 class Query (TFL.Meta.Object) :
     """A query object for non MOM objects"""
@@ -144,5 +144,5 @@ class MOM_Composite_Query (TFL.Meta.Object) :
 
 
 if __name__ != "__main__" :
-    MOM.DBW.SQL._Export ("*")
-### __END__ MOM.DBW.SQL.Query
+    MOM.DBW.SAS._Export ("*")
+### __END__ MOM.DBW.SAS.Query

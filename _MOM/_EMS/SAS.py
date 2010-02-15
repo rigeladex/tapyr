@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.EMS.SQL
+#    MOM.EMS.SAS
 #
 # Purpose
 #    Entity manager strategy using SQL layer from SQLAlchemy
@@ -36,14 +36,14 @@ from   _TFL.I18N             import _, _T, _Tn
 
 import _MOM._EMS._Manager_
 import _MOM.Entity
-import _MOM._DBW._SQL.Q_Result
+import _MOM._DBW._SAS.Q_Result
 import _TFL._Meta.Object
 
 import _TFL.defaultdict
 
 import itertools
 
-from   sqlalchemy  import exc        as SQL_Exception
+from   sqlalchemy  import exc        as SAS_Exception
 from   sqlalchemy  import sql
 
 class PID (object) :
@@ -85,9 +85,9 @@ class PID (object) :
 class Manager (MOM.EMS._Manager_) :
     """Entity manager using hash tables to hold entities."""
 
-    type_name = "SQL"
+    type_name = "SAS"
 
-    Q_Result  = MOM.DBW.SQL.Q_Result
+    Q_Result  = MOM.DBW.SAS.Q_Result
 
     def add (self, entity) :
         ses = self.session
@@ -97,7 +97,7 @@ class Manager (MOM.EMS._Manager_) :
             raise MOM.Error.Too_Many_Objects (entity, entity.max_count)
         try :
             ses.add   (entity)
-        except SQL_Exception.IntegrityError as exc :
+        except SAS_Exception.IntegrityError as exc :
             ses.rollback ()
             if __debug__ :
                 print exc
@@ -106,7 +106,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def add
 
     def changes (self, * filter, ** eq_kw) :
-        query = MOM.DBW.SQL.Q_Result_Changes \
+        query = MOM.DBW.SAS.Q_Result_Changes \
             (MOM.SCM.Change._Change_, self.session).filter (* filter, ** eq_kw)
         return query
     # end def changes
@@ -142,7 +142,7 @@ class Manager (MOM.EMS._Manager_) :
     # end def pid_from_lid
 
     def pid_query (self, pid, Type) :
-        """Simplified query for SQL."""
+        """Simplified query for SAS."""
         return self.query (Type, id = pid.id).one ()
     # end def pid_query
 

@@ -20,7 +20,7 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.__doc__
+#    MOM.DBW.SAS.__doc__
 #
 # Purpose
 #    Test for MOM meta object model using SQLAlchemy as database backend
@@ -39,12 +39,12 @@ filter_dbw_pat = re.compile \
     )
 
 doc__ = ( filter_dbw_pat.sub ("", dt_form)
-        % dict ( import_DBW = "from _MOM._DBW._SQL.Manager import Manager"
-               , import_EMS = "from _MOM._EMS.SQL          import Manager"
+        % dict ( import_DBW = "from _MOM._DBW._SAS.Manager import Manager"
+               , import_EMS = "from _MOM._EMS.SAS          import Manager"
                , db_path    = "'test.sqlite'"
                , db_uri     = "'sqlite:///test.sqlite'"
                )
-        ).replace ("__Hash", "__SQL").replace ("__HPS", "__SQL")
+        ).replace ("__Hash", "__SAS").replace ("__HPS", "__SAS")
 __doc__ = doc__
 
-### __END__ MOM.DBW.SQL.__doc__
+### __END__ MOM.DBW.SAS.__doc__

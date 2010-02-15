@@ -20,10 +20,10 @@
 #
 #++
 # Name
-#    MOM.DBW.SQL.Attr_Type
+#    MOM.DBW.SAS.Attr_Type
 #
 # Purpose
-#    Attribute type extension for the SQL backend
+#    Attribute type extension for the SAS backend
 #
 # Revision Dates
 #     11-Feb-2010 (MG) Creation (based on SA.Attr_Type)
@@ -80,10 +80,10 @@ def _sa_columns_named_object (cls, attr, kind, unique, ** kw) :
     if key not in Type_Decorator_Cache :
         Pickler  = attr.Pickler
         Type     = Pickler.Type
-        SQL_TD    = types.TypeDecorator
-        sa_type  = SQL_TD.__class__ \
+        SAS_TD    = types.TypeDecorator
+        sa_type  = SAS_TD.__class__ \
             ( "%s_S_TD" % (key [0].__name__)
-            , (SQL_TD, )
+            , (SAS_TD, )
             , dict
                 ( impl                 = Type._sa_type (Type, kind).__class__
                 , process_bind_param   =
@@ -106,7 +106,7 @@ def _sa_columns_named_object (cls, attr, kind, unique, ** kw) :
 def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
     e_type                = kind.C_Type
     bases                 = e_type.__bases__
-    Manager               = MOM.DBW.SQL.Manager
+    Manager               = MOM.DBW.SAS.Manager
     db_attrs, role_attrs  = Manager._attr_dicts    (kind.C_Type, bases)
     prefix                = "__%s_" % (attr.name, )
     assert not role_attrs
@@ -139,4 +139,4 @@ def _sa_string (cls, attr, kind, ** kw) :
     return types.String (getattr (attr, "max_length", None))
 # end def _sa_string
 
-### __END__ MOM.DBW.SQL.Type
+### __END__ MOM.DBW.SAS.Type
