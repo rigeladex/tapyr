@@ -36,12 +36,14 @@ from   _TFL               import TFL
 def to_html (text, encoding = "utf8", language = "en") :
     """Convert `text` from re-structured text markup to HTML."""
     from docutils.core import publish_parts
+    import _ReST.Roles
     settings = dict \
         ( base_section                  = "0"
         , input_encoding                = "unicode"
         , output_encoding               = encoding
         , output_encoding_error_handler = "xmlcharrefreplace"
         , language_code                 = language
+        , cloak_email_addresses         = True
         )
 
     parts    = publish_parts \
