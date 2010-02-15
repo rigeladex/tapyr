@@ -79,6 +79,9 @@ if 1:
     #a            = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Austria")
     date         = scope.MOM.Lifetime (birth ="1976-03-16", raw = True)
     p.date       = date
+    scope.commit ()
+    scope.ems.session.expunge ()
+    scope.PAP.Person.query ().all ()
     #q_fn         = Q.first_name.STARTSWITH ("Ma")
     #q_sb         = Q.first_name
     #print q_fn (p.__class__._SAQ)

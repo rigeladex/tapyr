@@ -59,31 +59,12 @@ class SQL_Interface (TFL.Meta.Object) :
         self.pk             = self.table.c [e_type._sa_pk_name]
         self.column_map     = cm = self._gather_columns (e_type, bases)
         self.e_type_getters = e_type_getters = TFL.defaultdict (ddict_list)
-        getters = []
         if e_type is e_type.relevant_root :
+            getters = []
             getters.append ((cm ["Type_Name"], attrgetter ("type_name")))
-        e_type_getters [self.e_type] [None] = getters
-        e_type_getters [None       ] [None] = getters
-        for kind in e_type.primary + e_type.user_attr :
-            if isinstance (kind, MOM.Attr._Composite_Mixin_) :
-                pass
-            else :
-                attr        = kind.attr
-                raw_get     = []
-                ckd_get     = getattr (TFL.Getter, attr.ckd_name)
-                if isinstance (attr, MOM.Attr._A_Object_) :
-                    col     = cm.get ("%s_id" % (kind.attr.name, ), None)
-                    ckd_get = ckd_get.id
-                else :
-                    col     = cm.get (kind.attr.name, None)
-                    if kind.needs_raw_value :
-                        col_raw = cm [kind.attr.raw_name]
-                        raw_get = [(col_raw, attrgetter (attr.raw_name))]
-                et              = col.mom_e_type
-                getters         = [(col, ckd_get)]
-                getters.extend (raw_get)
-                e_type_getters [et]   [kind] = getters
-                e_type_getters [None] [kind] = getters
+            e_type_getters [self.e_type] [None] = getters
+            e_type_getters [None       ] [None] = getters
+        self._setup_getters (e_type, e_type_getters)
     # end def __init__
 
     def delete (self, session, entity) :
@@ -124,20 +105,58 @@ class SQL_Interface (TFL.Meta.Object) :
     def reconstruct (self, session, row) :
         scope        = session.scope
         pickle_cargo = TFL.defaultdict (list)
-        for kind, getters in self.e_type_getters [None].iteritems () :
-            if kind :
-                for column, _ in getters :
-                    if isinstance (kind.attr, MOM.Attr._A_Object_) :
-                        cargo = self._query_object \
-                            (session, kind, row [column])
-                    else :
-                        cargo = row [column]
-                    pickle_cargo [kind.attr.name].append (cargo)
+        self._reconstruct (self.e_type_getters, pickle_cargo, row)
         entity     = self.e_type.from_pickle_cargo (scope, pickle_cargo)
         entity.id  = row [self.e_type._SAQ.id]
         entity.pid = MOM.EMS.SQL.PID (entity.type_name, entity.id)
         return entity
     # end def reconstruct
+
+    def _reconstruct (self, e_type_getters, pickle_cargo, row) :
+        for kind, getters in e_type_getters [None].iteritems () :
+            if kind :
+                if isinstance (kind, MOM.Attr._Composite_Mixin_) :
+                    comp_cargo = TFL.defaultdict (list)
+                    self._reconstruct (getters, comp_cargo, row)
+                    pickle_cargo [kind.attr.name] = comp_cargo
+                else :
+                    for column, _ in getters :
+                        if isinstance (kind.attr, MOM.Attr._A_Object_) :
+                            cargo = self._query_object \
+                                (session, kind, row [column])
+                        else :
+                            cargo = row [column]
+                        pickle_cargo [kind.attr.name].append (cargo)
+    # end def _reconstruct
+
+    def _setup_getters (self, e_type, e_type_getters, prefix = "") :
+        cm             = self.column_map
+        for kind in e_type.primary + e_type.user_attr :
+            if isinstance (kind, MOM.Attr._Composite_Mixin_) :
+                prefix  = kind.C_Type._sa_save_attrs [-1]
+                getters = TFL.defaultdict (ddict_list)
+                self._setup_getters (kind.C_Type, getters, prefix)
+                e_type_getters [et]   [kind] = getters
+                e_type_getters [None] [kind] = getters
+            else :
+                attr        = kind.attr
+                raw_get     = []
+                ckd_get     = getattr (TFL.Getter, attr.ckd_name)
+                if isinstance (attr, MOM.Attr._A_Object_) :
+                    col     = cm.get \
+                        ("%s%s_id" % (prefix, kind.attr.name, ), None)
+                    ckd_get = ckd_get.id
+                else :
+                    col     = cm.get ("%s%s" % (prefix, kind.attr.name), None)
+                    if kind.needs_raw_value :
+                        col_raw = cm ["%s%s" % (prefix, kind.attr.raw_name)]
+                        raw_get = [(col_raw, attrgetter (attr.raw_name))]
+                et              = col.mom_e_type
+                getters         = [(col, ckd_get)]
+                getters.extend (raw_get)
+                e_type_getters [et]   [kind] = getters
+                e_type_getters [None] [kind] = getters
+    # end def _setup_getters
 
     def finish (self) :
         ### setup the select statement for this class with all the joins
@@ -172,13 +191,25 @@ class SQL_Interface (TFL.Meta.Object) :
     # end def transitive_children
 
     def value_dict ( self, entity
-                   , e_type   = None
-                   , defaults = {}
-                   , attrs    = None
+                   , e_type         = None
+                   , defaults       = {}
+                   , attrs          = None
+                   , e_type_getters = None
                    ) :
+        if e_type_getters is None :
+            e_type_getters = self.e_type_getters
         result = defaults.copy ()
-        for kind, getters in self.e_type_getters [e_type].iteritems () :
-            if not attrs or kind.attr.name in attr :
+        for kind, getters in e_type_getters [e_type].iteritems () :
+            if isinstance (kind, MOM.Attr._Composite_Mixin_) :
+                result.update \
+                    ( self.value_dict
+                        ( getattr (entity, kind.attr.name)
+                        , e_type
+                        , attrs          = attrs
+                        , e_type_getters = getters
+                        )
+                    )
+            elif not attrs or kind.attr.name in attr :
                 for column, get in getters :
                     result [column.name] = get (entity)
         return result
