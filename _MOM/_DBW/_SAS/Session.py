@@ -200,26 +200,34 @@ class SAS_Interface (TFL.Meta.Object) :
             e_type_getters = self.e_type_getters
         result = defaults.copy ()
         for kind, getters in e_type_getters [e_type].iteritems () :
+            attr = kind and kind.attr
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 result.update \
                     ( self.value_dict
-                        ( getattr (entity, kind.attr.name)
+                        ( getattr (entity, attr.name)
                         , e_type
                         , attrs          = attrs
                         , e_type_getters = getters
                         )
                     )
-            elif not attrs or kind.attr.name in attr :
+            elif (   not attrs
+                 or (   attr
+                    and (  (attr.name                              in attrs)
+                        or (getattr (attr, "role_name", attr.name) in attrs)
+                        )
+                    )
+                 ) :
                 for column, get in getters :
                     result [column.name] = get (entity)
         return result
     # end def value_dict
 
-    def update (self, session, entity) :
+    def update (self, session, entity, attrs = set ()) :
         ### TFL.BREAK ()
         for b in self.bases :
-            b._SAS.update (session, entity)
-        values     = self.value_dict (entity, e_type = self.e_type)
+            b._SAS.update (session, entity, attrs)
+        values     = self.value_dict \
+            (entity, e_type = self.e_type, attrs = attrs)
         if values :
             update = self.table.update ().values (values)
             return session.connection.execute \
@@ -315,12 +323,10 @@ class Session (TFL.Meta.Object) :
 
     def flush (self) :
         #self.engine.echo = True
-        for c in self._modify_change_iter (self.scope.ems.uncommitted_changes) :
-            ### XXX make context manager
-            self._no_flush = True
-            entity         = c.entity (self.scope)
-            self._no_flush = False
-            entity.__class__._SAS.update (self, entity)
+        for pid, attrs in self.scope.attr_changes.iteritems () :
+            entity  = self._id_map [pid]
+            entity.__class__._SAS.update (self, entity, attrs)
+        self.scope.attr_changes.clear   ()
         self.engine.echo = False
     # end def flush
 
