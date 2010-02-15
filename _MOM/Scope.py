@@ -60,6 +60,7 @@
 #     8-Feb-2010 (CT) `remove` changed to call `entity._destroy` before
 #                     `ems.remove`
 #     8-Feb-2010 (CT) `snapshot` removed
+#    15-Feb-2010 (CT) `attr_changes` added
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,7 @@ from   _TFL.predicate         import split_hst, rsplit_hst
 import _TFL.Accessor
 import _TFL.Context
 import _TFL.Decorator
+import _TFL.multimap
 import _TFL.Ordered_Set
 import _TFL._Meta.Lazy_Method
 import _TFL._Meta.Object
@@ -189,6 +191,7 @@ class Scope (TFL.Meta.Object) :
         self.root           = None
         self.db_cid         = 0
         self.historian      = MOM.SCM.Tracker (self)
+        self.attr_changes   = TFL.mm_set ()
         self._attr_errors   = []
         self._etm           = {}
         self._pkg_ns        = {}
@@ -260,6 +263,7 @@ class Scope (TFL.Meta.Object) :
 
     def commit (self) :
         self.ems.commit ()
+        self.attr_changes.clear ()
     # end def commit
 
     @TFL.Meta.Lazy_Method_RLV
@@ -447,11 +451,13 @@ class Scope (TFL.Meta.Object) :
     def start_change_recorder (self) :
         if not self.historian._rec_stack :
             self.historian.push_recorder (MOM.SCM.Tracker.Preferred_Recorder)
+        self.attr_changes.clear ()
     # end def start_change_recorder
 
     def stop_change_recorder (self) :
         if self.historian._rec_stack :
             self.historian.pop_recorder ()
+        self.attr_changes.clear ()
     # end def stop_change_recorder
 
     @TFL.Contextmanager
