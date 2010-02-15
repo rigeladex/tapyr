@@ -97,6 +97,8 @@
 #                     definition of `default` (in all guises)
 #    12-Feb-2010 (CT) `Auto_Cached.get_value` changed to pass
 #                     `changed = True` to `_set_cooked`
+#    15-Feb-2010 (CT) `_Composite_Mixin_.set_pickle_cargo` changed to use
+#                     `from_pickle_cargo` (doh)
 #    ««revision-date»»···
 #--
 
@@ -447,8 +449,8 @@ class _Composite_Mixin_ (Kind) :
     # end def get_pickle_cargo
 
     def set_pickle_cargo (self, obj, cargo) :
-        self._set_cooked_value \
-            (obj, self.attr.C_Type (** cargo), changed = True)
+        value = self.attr.C_Type.from_pickle_cargo (obj.home_scope, cargo)
+        self._set_cooked_value (obj, value, changed = True)
     # end def set_pickle_cargo
 
     def reset (self, obj) :
