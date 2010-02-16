@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     11-Feb-2010 (MG) Creation (based on SA.Attr_Type)
+#    16-Feb-2010 (MG) `_sa_columns_named_object` fixed
 #    ««revision-date»»···
 #--
 
@@ -75,29 +76,10 @@ Type_Decorator_Cache = {}
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Named_Object_)
 def _sa_columns_named_object (cls, attr, kind, unique, ** kw) :
-    raise NotImplementedError
-    key = attr.__class__.__bases__
-    if key not in Type_Decorator_Cache :
-        Pickler  = attr.Pickler
-        Type     = Pickler.Type
-        SAS_TD    = types.TypeDecorator
-        sa_type  = SAS_TD.__class__ \
-            ( "%s_S_TD" % (key [0].__name__)
-            , (SAS_TD, )
-            , dict
-                ( impl                 = Type._sa_type (Type, kind).__class__
-                , process_bind_param   =
-                    lambda S, value, dict : Pickler.as_cargo   (attr, value)
-                , process_result_value =
-                    lambda S, value, dict : Pickler.from_cargo (attr, value)
-                )
-            )
-        Type_Decorator_Cache [key] = sa_type
-    return ( schema.Column \
-               ( attr._sa_col_name
-               , Type_Decorator_Cache [key] (getattr (attr, "max_length", None))
-               , ** kw
-               )
+    Pickler  = attr.Pickler
+    Type     = Pickler.Type
+    return ( schema.Column
+               (attr._sa_col_name, Type._sa_type (Type, kind), ** kw)
            ,
            )
 # end def _sa_columns_named_object

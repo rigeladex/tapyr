@@ -46,6 +46,21 @@ from   sqlalchemy import engine as SQL_Engine
 
 Type_Name_Type = types.String (length = 30)
 
+class SAS_A_Object_Kind_Mixin (object) :
+    """A mixin for special handling of A_Object attributes for this backend."""
+
+    def set_pickle_cargo (self, obj, cargo) :
+        query = MOM.DBW.SAS.Q_Result \
+            (self.role_type, obj.home_scope.ems.session).filter (id = cargo [0])
+        self._set_cooked_value (obj, query.one (), changed = True)
+    # end def set_pickle_cargo
+
+    def get_pickle_cargo (self, obj) :
+        return (self.get_value (obj).id, )
+    # end def get_pickle_cargo
+
+# end class SAS_A_Object_Kind_Mixin
+
 class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
@@ -183,7 +198,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                     (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
     # end def update_etype
 
-    def _attr_dicts (self, e_type, bases) :
+    def _attr_dicts (cls, e_type, bases) :
         attr_dict  = e_type._Attributes._attr_dict
         db_attrs   = {}
         role_attrs = {}
@@ -194,6 +209,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             inherited_attrs = root._Attributes._attr_dict
         for name, attr_kind in attr_dict.iteritems () :
             if name not in inherited_attrs :
+                if isinstance (attr_kind.attr, MOM.Attr._A_Object_) :
+                    ### the default way of `pickling` object references would be
+                    ### storing the epk which is not perfect for a database.
+                    ### Therefore we replace the `set/get_pickle_cargo`
+                    ### functions
+                    cls._replace_a_object_pickle_functions (attr_kind)
                 if (  attr_kind.save_to_db
                    or isinstance (attr_kind, MOM.Attr.Query)
                    ) :
@@ -226,6 +247,16 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         session.execute (cls.sa_scope.insert ().values (** kw))
         session.commit  ()
     # end def register_scope
+
+    def _replace_a_object_pickle_functions (cls, kind) :
+        old_cls = kind.__class__
+        new_cls = old_cls.__class__ \
+            ( "%s_SAS_Object" % (old_cls.__name__)
+            , (SAS_A_Object_Kind_Mixin, old_cls)
+            , {}
+            )
+        kind.__class__ = new_cls
+    # end def _replace_a_object_pickle_functions
 
     def _setup_columns ( cls, e_type, db_attrs, bases, unique
                        , prefix       = None

@@ -33,13 +33,18 @@ from   _MOM            import MOM
 from   _GTW            import GTW
 import _GTW._OMP._Auth.import_Auth
 import _GTW._OMP._PAP. import_PAP
+import _GTW._OMP._SWP.Page
 
 from   _MOM._EMS.Hash         import Manager as EMS
 from   _MOM._DBW._HPS.Manager import Manager as DBW
 
 app_type = MOM.App_Type \
     ( u"HWO", GTW
-    , PNS_Aliases = dict (Auth = GTW.OMP.Auth, PAP = GTW.OMP.PAP)
+    , PNS_Aliases = dict
+        ( Auth = GTW.OMP.Auth
+        , PAP  = GTW.OMP.PAP
+        , SWP  = GTW.OMP.SWP
+        )
     ).Derived (EMS, DBW)
 
 ### __END__ app_import

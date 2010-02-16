@@ -99,6 +99,8 @@
 #                     `changed = True` to `_set_cooked`
 #    15-Feb-2010 (CT) `_Composite_Mixin_.set_pickle_cargo` changed to use
 #                     `from_pickle_cargo` (doh)
+#    16-Feb-2010 (MG) `Kind.get_pickle_cargo` and `Kind.set_pickle_cargo`
+#                     fixed
 #    ««revision-date»»···
 #--
 
@@ -188,7 +190,7 @@ class Kind (MOM.Prop.Kind) :
         Pickler = self.attr.Pickler
         value   = self.get_value (obj)
         if Pickler :
-            return Pickler.as_cargo (self.attr, value)
+            return (Pickler.as_cargo (self.attr, value), )
         else :
             return (value, )
     # end def get_pickle_cargo
@@ -244,7 +246,7 @@ class Kind (MOM.Prop.Kind) :
     def set_pickle_cargo (self, obj, cargo) :
         Pickler = self.attr.Pickler
         if Pickler :
-            cargo = (Pickler.from_cargo (self.attr, cargo), )
+            cargo = (Pickler.from_cargo (self.attr, cargo [0]), )
         self._set_cooked_value (obj, cargo [0], changed = True)
     # end def set_pickle_cargo
 

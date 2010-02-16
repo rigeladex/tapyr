@@ -32,19 +32,19 @@
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
-import _GTW._OMP._Auth.import_Auth
-import _GTW._OMP._PAP .import_PAP
+#import _GTW._OMP._Auth.import_Auth
+#import _GTW._OMP._PAP .import_PAP
 import _GTW._OMP._SWP.Page
 
-if 1 :
+if 0 :
     from   _MOM._EMS.Hash         import Manager as EMS
     from   _MOM._DBW._HPS.Manager import Manager as DBW
 else :
-    from   _MOM._EMS.SA          import Manager as EMS
-    from   _MOM._DBW._SA.Manager import Manager as DBW
+    from   _MOM._EMS.SAS          import Manager as EMS
+    from   _MOM._DBW._SAS.Manager import Manager as DBW
 
-from   _MOM                      import MOM
-from   _MOM.Product_Version      import Product_Version, IV_Number
+from   _MOM                       import MOM
+from   _MOM.Product_Version       import Product_Version, IV_Number
 
 GTW.Version = Product_Version \
     ( productid           = u"GTW Test"
@@ -67,7 +67,7 @@ GTW.Version = Product_Version \
     )
 
 apt = MOM.App_Type \
-    (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP, SWP = GTW.OMP.SWP)
+    (u"HWO", GTW, PNS_Aliases = dict (SWP = GTW.OMP.SWP)
     ).Derived (EMS, DBW)
 
 scope        = MOM.Scope.new (apt, None)

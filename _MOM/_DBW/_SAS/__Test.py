@@ -33,16 +33,20 @@
 from _MOM.__doc__ import *
 
 from _MOM._EMS.SAS          import Manager as EMS
-from _MOM._DBW._SAS.Manager import Manager     as DBW
+from _MOM._DBW._SAS.Manager import Manager as DBW
 
-apt = MOM.App_Type (u"BMT", BMT).Derived (EMS, DBW)
+from _MOM._EMS.Hash         import Manager as HEMS
+from _MOM._DBW._HPS.Manager import Manager as HDBW
+
+apt  = MOM.App_Type (u"BMT",  BMT).Derived (EMS,   DBW)
+#hapt = MOM.App_Type (u"HBMT", BMT).Derived (HEMS, HDBW)
 
 scope = MOM.Scope.new (apt, "sqlite:///:memory:")
 #scope = MOM.Scope.new (apt, "sqlite:///test.sqlite")
 m     = scope.BMT.Mouse   ("mouse")
 r     = scope.BMT.Rat     ("rat")
 t1   = scope.BMT.Trap     ("X", 1)
-#t2   = scope.BMT.Trap     ("X", 2)
+t2   = scope.BMT.Trap     ("X", 2)
 
 rit = scope.BMT.Rodent_in_Trap (m, t1)
 #scope.BMT.Rodent_in_Trap (r, ("X", 2))
@@ -56,6 +60,6 @@ if 0 :
     #print scope.BMT.Rodent_in_Trap.query ().all ()
     csk = TFL.Sorted_By (Q.parent != None, Q.cid)
     for c in m.changes ().order_by (csk) : print c
-scope.commit ()
+#scope.commit ()
 #m.destroy    ()
 ### __END__ MOM.DWB.SAS__Test

@@ -40,6 +40,10 @@ import  os
 
 import _GTW._NAV.Base
 import _GTW._NAV.ReST
+import _GTW._NAV._E_Type.Admin
+import _GTW._NAV.Admin
+import _GTW._OMP._PAP.Nav
+import _GTW._OMP._SWP.Nav
 from   _JNJ.Templateer import Templateer
 import _JNJ
 
@@ -109,6 +113,7 @@ NAV               = GTW.NAV.Root \
     , template          = "static.jnj"
     , account_manager   = scope.Auth.Account
     , anonymous         = anonymous
+    , scope             = scope
     , HTTP              = GTW.Tornado
     , Templateer        = Templateer
           ( load_path   = template_dirs
@@ -116,6 +121,7 @@ NAV               = GTW.NAV.Root \
           , i18n        = True
           , encoding    = "iso-8859-15"
           , globals     = dict (site_base = "base.jnj")
+          , version     = "html/x.jnj"
           )
     )
 NAV.add_entries \
@@ -157,26 +163,6 @@ NAV.add_entries \
           , Type            = I18N_Test
           )
       , dict
-          ( name           = "e-type.form.html"
-          , title          = u"E-Type-Form"
-          , template       = "e_type_form.jnj"
-          , Type           = E_Type_Form
-          , form           = GTW.Form.MOM.Instance.New
-                ( scope.PAP.Person
-                , GTW.Form.MOM.Field_Group_Description ()
-                , GTW.Form.MOM.Inline_Description
-                    ( "PAP.Person_has_Address", "person"
-                    , GTW.Form.MOM.Field_Group_Description
-                          ( GTW.Form.MOM.Field_Prefixer
-                              ( "address"
-                              , "street", "zip", "city", "country", "desc"
-                              )
-                          )
-                    , min_empty = 1
-                    )
-                )
-          )
-      , dict
           ( name           = "redirect_301.html"
           , title          = u"Redirect 301 (index)"
           , Type           = Redirect
@@ -189,6 +175,18 @@ NAV.add_entries \
           , Type           = Redirect
           , redirect_to    = "test.html"
           , code           = 302
+          )
+      , dict
+          ( sub_dir         = "Admin"
+          , title           = "Admin"
+          , desc            = u"Verwaltung der Homepage"
+          , headline        = u"Administration der Homepage"
+          , login_required  = False # True
+          , etypes          =
+              [ GTW.OMP.PAP.Nav.Admin.Person
+              , GTW.OMP.SWP.Nav.Admin.Page
+              ]
+          , Type            = GTW.NAV.Site_Admin
           )
       )
     , Dir_Type = GTW.NAV.Dir
