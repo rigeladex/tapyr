@@ -102,6 +102,8 @@
 #    12-Feb-2010 (CT) `FO` turned into a Auto_Cached attribute
 #    13-Feb-2010 (MG) `_record_iter` changed to allow recognition of specific
 #                     role names (e.g.: rodent, trap, person, ...)
+#    16-Feb-2010 (MG) `copy` fixed (use the correct etypes from the passed
+#                     scope argument)
 #    ««revision-date»»···
 #--
 
@@ -555,8 +557,9 @@ class An_Entity (Entity) :
     # end def as_string
 
     def copy (self, ** kw) :
-        scope  = kw.pop ("scope", self.home_scope)
-        result = self.__class__ (scope = scope, ** kw)
+        scope  = kw.pop  ("scope", self.home_scope)
+        cls    = getattr (scope, self.type_name)._etype
+        result = cls     (scope = scope, ** kw)
         raw_kw = dict \
             (  (a.name, a.get_raw (self))
             for a in self.user_attr if a.name not in kw
@@ -809,8 +812,9 @@ class Id_Entity (Entity) :
 
     def copy (self, * new_epk, ** kw) :
         """Make copy with primary key `new_epk`."""
-        scope  = kw.pop ("scope", self.home_scope)
-        result = self.__class__ (* new_epk, scope = scope, ** kw)
+        scope  = kw.pop  ("scope", self.home_scope)
+        cls    = getattr (scope, self.type_name)._etype
+        result = cls     (* new_epk, scope = scope, ** kw)
         with result.home_scope.nested_change_recorder \
                  (MOM.SCM.Change.Copy, result) as change :
             scope.add (result)

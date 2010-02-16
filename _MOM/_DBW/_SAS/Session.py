@@ -31,6 +31,8 @@
 #    16-Feb-2010 (MG) `Type_Name` added
 #                     `attr_kind.get_pickle_cargo` is now used to get the
 #                     values of the cooked and raw attribute values
+#    16-Feb-2010 (MG) `delete` enhanced: dispose the connection pool of the
+#                     engine to make sure all connection will be closed
 #    ««revision-date»»···
 #--
 
@@ -293,7 +295,10 @@ class Session (TFL.Meta.Object) :
     # end def connection
 
     def close (self) :
-        self.rollback ()
+        self.rollback            ()
+        ### close all connections inside the pool
+        self.engine.pool.dispose ()
+        self.engine = None
     # end def close
 
     def delete (self, entity) :

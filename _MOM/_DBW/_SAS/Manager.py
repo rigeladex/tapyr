@@ -28,6 +28,7 @@
 # Revision Dates
 #    11-Feb-2010 (MG) Creation (based on SA.Manager)
 #    16-Feb-2010 (MG) `SAS_A_Object_Kind_Mixin` added and used
+#    16-Feb-2010 (MG) `Reset_Metadata` added
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -66,6 +67,36 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class used to create the mapper classes for SQLAlchemy"""
 
     metadata         = schema.MetaData () ### XXX
+
+    def _attr_dicts (cls, e_type, bases) :
+        attr_dict  = e_type._Attributes._attr_dict
+        db_attrs   = {}
+        role_attrs = {}
+        root       = bases and bases [0]
+        if e_type is getattr (e_type, "relevant_root", e_type):
+            inherited_attrs = {}
+        else :
+            inherited_attrs = root._Attributes._attr_dict
+        for name, attr_kind in attr_dict.iteritems () :
+            if name not in inherited_attrs :
+                if isinstance (attr_kind.attr, MOM.Attr._A_Object_) :
+                    ### the default way of `pickling` object references would be
+                    ### storing the epk which is not perfect for a database.
+                    ### Therefore we replace the `set/get_pickle_cargo`
+                    ### functions
+                    cls._replace_a_object_pickle_functions (attr_kind)
+                if (  attr_kind.save_to_db
+                   or isinstance (attr_kind, MOM.Attr.Query)
+                   ) :
+                    db_attrs [name] = attr_kind
+                elif isinstance ( attr_kind
+                                , ( MOM.Attr.Cached_Role
+                                  , MOM.Attr.Cached_Role_Set
+                                  )
+                                ) :
+                    role_attrs [name] = attr_kind
+        return db_attrs, role_attrs
+    # end def _attr_dicts
 
     def create_database (cls, db_uri, scope) :
         if db_uri and not db_uri.startswith ("sqlite://") :
@@ -138,12 +169,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             (MOM.SCM.Change._Change_, Table, parent = "parent_cid")
     # end def _create_SCM_table
 
-    def prepare (cls) :
-        cls._create_scope_table           (cls.metadata)
-        cls._create_SCM_table             (cls.metadata)
-        cls.role_cacher = TFL.defaultdict (set)
-    # end def prepare
-
     def etype_decorator (cls, e_type) :
         if getattr (e_type, "relevant_root", None) :
             bases      = \
@@ -185,6 +210,12 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         return e_type
     # end def etype_decorator
 
+    def prepare (cls) :
+        cls._create_scope_table           (cls.metadata)
+        cls._create_SCM_table             (cls.metadata)
+        cls.role_cacher = TFL.defaultdict (set)
+    # end def prepare
+
     def update_etype (cls, e_type, app_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
         if getattr (e_type, "relevant_root", None) :
@@ -198,36 +229,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 cls._cached_role \
                     (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
     # end def update_etype
-
-    def _attr_dicts (cls, e_type, bases) :
-        attr_dict  = e_type._Attributes._attr_dict
-        db_attrs   = {}
-        role_attrs = {}
-        root       = bases and bases [0]
-        if e_type is getattr (e_type, "relevant_root", e_type):
-            inherited_attrs = {}
-        else :
-            inherited_attrs = root._Attributes._attr_dict
-        for name, attr_kind in attr_dict.iteritems () :
-            if name not in inherited_attrs :
-                if isinstance (attr_kind.attr, MOM.Attr._A_Object_) :
-                    ### the default way of `pickling` object references would be
-                    ### storing the epk which is not perfect for a database.
-                    ### Therefore we replace the `set/get_pickle_cargo`
-                    ### functions
-                    cls._replace_a_object_pickle_functions (attr_kind)
-                if (  attr_kind.save_to_db
-                   or isinstance (attr_kind, MOM.Attr.Query)
-                   ) :
-                    db_attrs [name] = attr_kind
-                elif isinstance ( attr_kind
-                                , ( MOM.Attr.Cached_Role
-                                  , MOM.Attr.Cached_Role_Set
-                                  )
-                                ) :
-                    role_attrs [name] = attr_kind
-        return db_attrs, role_attrs
-    # end def _attr_dicts
 
     def load_root (cls, session, scope) :
         result     = session.connection.execute \
@@ -248,6 +249,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         session.execute (cls.sa_scope.insert ().values (** kw))
         session.commit  ()
     # end def register_scope
+
+    def Reset_Metadata (cls) :
+        cls.__class__.metadata = schema.MetaData ()
+    # end def Reset_Metadata
 
     def _replace_a_object_pickle_functions (cls, kind) :
         old_cls = kind.__class__
