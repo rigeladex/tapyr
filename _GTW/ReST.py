@@ -37,6 +37,7 @@ def to_html (text, encoding = "utf8", language = "en") :
     """Convert `text` from re-structured text markup to HTML."""
     from docutils.core import publish_parts
     import _ReST.Roles
+    from   _ReST.HTML_Writer import HTML_Writer
     settings = dict \
         ( base_section                  = "0"
         , input_encoding                = "unicode"
@@ -47,8 +48,8 @@ def to_html (text, encoding = "utf8", language = "en") :
         )
 
     parts    = publish_parts \
-        ( source             = unicode (text)
-        , writer_name        = "html4css1"
+        ( source             = unicode     (text)
+        , writer             = HTML_Writer ()
         , settings_overrides = settings
         )
     return parts ["fragment"]
