@@ -1,5 +1,4 @@
-
-{#- jinja template:  html/input.jnj -#}
+{#- jinja template:  html/input_x.jnj -#}
 {#
 ## Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 ## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
@@ -22,10 +21,10 @@
 ##
 ##++
 ## Name
-##    html/input.jnj
+##    html/input_x.jnj
 ##
 ## Purpose
-##    Provide amcros for rendering input tags
+##    Provide amcros for rendering XHTML input tags
 ##
 ## Revision Dates
 ##    30-Dec-2009 (CT) Creation
@@ -140,4 +139,4 @@
   {{ _input ("text", "week", kwargs) }}
 {%- endmacro -%}
 
-{#- __END__ jinja template: html/input.jnj -#}
+{#- __END__ jinja template: html/input_x.jnj -#}

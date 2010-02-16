@@ -33,7 +33,7 @@
 ##--
 #}
 
-{%- import "html/input.jnj" as _input -%}{%- set input = _input -%}
+{%- import "html/input_x.jnj" as _input -%}{%- set input = _input -%}
 
 {%- macro html (lang) -%}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
