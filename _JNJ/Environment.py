@@ -116,7 +116,9 @@ on how the environment was set up::
     ...   {{ GTW.firstof (d, "default first of") }}
     ...   {{ GTW.firstof ("default first of") }}
     ...
-    ...   {{ X.input.textarea (80, 5, value = "Wing is king") }}
+    ...   {{ X.input.textarea (80, 5, value = "Wing is king", class = "fast") }}
+    ...
+    ...   {{ X.input.select ("Choice", ["red", "green"], class = "side") }}
     ... {%- endcall -%}
     ... '''
 
@@ -137,7 +139,12 @@ on how the environment was set up::
       default first of
       default first of
     <BLANKLINE>
-      <textarea cols="80" rows="5">Wing is king</textarea>
+      <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
+    <BLANKLINE>
+      <select name="Choice" class="side">
+            <option >red</option>
+            <option >green</option>
+      </select>
     </html>
     <BLANKLINE>
     >>> print tx.render ()
@@ -157,7 +164,12 @@ on how the environment was set up::
       default first of
       default first of
     <BLANKLINE>
-      <textarea cols="80" rows="5">Wing is king</textarea>
+      <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
+    <BLANKLINE>
+      <select name="Choice" class="side">
+            <option >red</option>
+            <option >green</option>
+      </select>
     </html>
     <BLANKLINE>
     >>> print t5.render (d = "qux")
@@ -175,7 +187,12 @@ on how the environment was set up::
       qux
       default first of
     <BLANKLINE>
-      <textarea cols="80" rows="5">Wing is king</textarea>
+      <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
+    <BLANKLINE>
+      <select name="Choice" class="side">
+            <option >red</option>
+            <option >green</option>
+      </select>
     </html>
     <BLANKLINE>
     >>> print tx.render (d = "qux")
@@ -195,9 +212,13 @@ on how the environment was set up::
       qux
       default first of
     <BLANKLINE>
-      <textarea cols="80" rows="5">Wing is king</textarea>
-    </html>
+      <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
+      <select name="Choice" class="side">
+            <option >red</option>
+            <option >green</option>
+      </select>
+    </html>
 
 """
 

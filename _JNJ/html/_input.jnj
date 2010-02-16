@@ -32,6 +32,19 @@
 ##--
 #}
 
+{%- macro select (name, choices = (), selected = None) -%}
+  {%- set caller = kwargs.pop ("caller", None) -%}
+  <select name="{{ name }}"{{ kwargs|xmlattr }}>
+    {%- if choices -%}
+      {%- for c in choices %}
+        <option {{ 'selected="selected"' if c == selected }}>{{ c }}</option>
+      {%- endfor -%}
+    {%- elif caller -%}
+      {{ caller () }}
+    {%- endif %}
+  </select>
+{%- endmacro -%} {#- select -#}
+
 {%- macro textarea (cols, rows) -%}
   {%- set value  = kwargs.pop ("value",  None) -%}
   {%- set caller = kwargs.pop ("caller", None) -%}
