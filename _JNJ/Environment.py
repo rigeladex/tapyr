@@ -115,6 +115,8 @@ on how the environment was set up::
     ...   {{ GTW.firstof (c, d, "default first of") }}
     ...   {{ GTW.firstof (d, "default first of") }}
     ...   {{ GTW.firstof ("default first of") }}
+    ...
+    ...   {{ X.input.textarea (80, 5, value = "Wing is king") }}
     ... {%- endcall -%}
     ... '''
 
@@ -134,6 +136,8 @@ on how the environment was set up::
       cccc
       default first of
       default first of
+    <BLANKLINE>
+      <textarea cols="80" rows="5">Wing is king</textarea>
     </html>
     <BLANKLINE>
     >>> print tx.render ()
@@ -152,6 +156,8 @@ on how the environment was set up::
       cccc
       default first of
       default first of
+    <BLANKLINE>
+      <textarea cols="80" rows="5">Wing is king</textarea>
     </html>
     <BLANKLINE>
     >>> print t5.render (d = "qux")
@@ -168,6 +174,8 @@ on how the environment was set up::
       cccc
       qux
       default first of
+    <BLANKLINE>
+      <textarea cols="80" rows="5">Wing is king</textarea>
     </html>
     <BLANKLINE>
     >>> print tx.render (d = "qux")
@@ -186,6 +194,8 @@ on how the environment was set up::
       cccc
       qux
       default first of
+    <BLANKLINE>
+      <textarea cols="80" rows="5">Wing is king</textarea>
     </html>
     <BLANKLINE>
 

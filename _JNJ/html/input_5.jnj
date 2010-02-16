@@ -30,9 +30,13 @@
 ##    12-Jan-2010 (CT) Creation
 ##    14-Jan-2010 (CT) `textarea` changed to allow `value`
 ##    16-Feb-2010 (CT) Guard for `caller` added to `textarea`
+##    16-Feb-2010 (CT) `textarea` factored to `html/_input.jnj`
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- import "html/_input.jnj" as _input %}
+{%- set textarea = _input.textarea %}
 
 {%- macro _input (typ, kw) -%}
   {%- do kw.pop("caller", "") -%}
@@ -109,18 +113,6 @@
 
 {%- macro text () -%}
   {{ _input ("text", kwargs) }}
-{%- endmacro -%}
-
-{%- macro textarea (cols, rows) -%}
-  {%- set value  = kwargs.pop ("value",  None) -%}
-  {%- set caller = kwargs.pop ("caller", None) -%}
-  <textarea cols="{{ cols }}" rows="{{ rows }}"{{ kwargs|xmlattr }}>
-    {%- if value -%}
-      {{ value }}
-    {%- elif caller -%}
-      {{ caller () }}
-    {%- endif -%}
-  </textarea>
 {%- endmacro -%}
 
 {%- macro time () -%}
