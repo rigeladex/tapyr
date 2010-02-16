@@ -42,6 +42,8 @@
 #     4-Jan-2010 (CT) Creation continued....
 #     7-Jan-2010 (CT) Creation continued.....
 #    11-Jan-2010 (CT) Some more documentation added
+#    16-Feb-2010 (CT) `Cmd._handle_arg` and `Cmd._setup_args` changed to
+#                     empty `args` spec properly
 #    ««revision-date»»···
 #--
 
@@ -777,11 +779,8 @@ class Cmd (TFL.Meta.Object) :
     # end def _attribute_spec
 
     def _handle_arg (self, arg, argv_it, result) :
-        al = result._arg_list
-        if not al :
-            spec = Arg.Str ("argv")
-        else :
-            spec = al [min (len (result.argv_raw), len (al) - 1)]
+        al   = result._arg_list
+        spec = al [min (len (result.argv_raw), len (al) - 1)]
         result._set_arg (spec, arg)
     # end def _handle_arg
 
@@ -818,6 +817,10 @@ class Cmd (TFL.Meta.Object) :
         self._arg_dict = ad  = {}
         self._sub_cmd_choice = None
         od = self._opt_dict
+        if not args :
+            max_args = self._max_args
+            if max_args == -1 or max_args > 0 :
+                args = (Arg.Str ("__argv"), )
         for i, a in enumerate (args) :
             if isinstance (a, basestring) :
                 a = Arg.from_string (a)
@@ -1153,7 +1156,7 @@ values passed to it.
         Options    : ['h', 'he', 'hel', 'help', 'v', 've', 'ver', 'verb', 'verbo', 'verbos', 'verbose', 'y', 'ye', 'yea', 'year']
         Arguments  : ['adam', 'bert']
         -help      : []
-        -verbose   : False
+       -verbose   : False
         -year      : [2000, 1999]
         adam       : /tmp/tmp
         bert       : 42
@@ -1314,17 +1317,43 @@ values passed to it.
     >>> cmd (["-foo", "a"])
     dict-test
         Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
-        Arguments  : []
+        Arguments  : ['__argv']
         -foo       : 42
         -help      : []
+        __argv     : None
         argv       : []
     >>> cmd (["-foo=1"])
     dict-test
         Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
-        Arguments  : []
+        Arguments  : ['__argv']
         -foo       : frodo
         -help      : []
+        __argv     : None
         argv       : []
+    >>> cmd (["a", "b", "c", "d"])
+    dict-test
+        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
+        Arguments  : ['__argv']
+        -foo       : None
+        -help      : []
+        __argv     : a
+        argv       : ['a', 'b', 'c', 'd']
+    >>> cmd (["-foo", "a", "b", "c", "d"])
+    dict-test
+        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
+        Arguments  : ['__argv']
+        -foo       : 42
+        -help      : []
+        __argv     : b
+        argv       : ['b', 'c', 'd']
+    >>> cmd (["-foo=1", "a", "b", "c", "d"])
+    dict-test
+        Options    : ['f', 'fo', 'foo', 'h', 'he', 'hel', 'help']
+        Arguments  : ['__argv']
+        -foo       : frodo
+        -help      : []
+        __argv     : a
+        argv       : ['a', 'b', 'c', 'd']
 
     >>> _ = coc (["-help"])
     Comp [sub] ...
@@ -1365,6 +1394,40 @@ values passed to it.
     Sub commands of Comp
         one :
         two :
+
+    >>> cmd = Cmd (show, name = "Varargs test", max_args = 3)
+    >>> cmd ([])
+    Varargs test
+        Options    : ['h', 'he', 'hel', 'help']
+        Arguments  : ['__argv']
+        -help      : []
+        __argv     : None
+        argv       : []
+    >>> cmd (["a"])
+    Varargs test
+        Options    : ['h', 'he', 'hel', 'help']
+        Arguments  : ['__argv']
+        -help      : []
+        __argv     : a
+        argv       : ['a']
+    >>> cmd (["a", "b"])
+    Varargs test
+        Options    : ['h', 'he', 'hel', 'help']
+        Arguments  : ['__argv']
+        -help      : []
+        __argv     : a
+        argv       : ['a', 'b']
+    >>> cmd (["a", "b", "c"])
+    Varargs test
+        Options    : ['h', 'he', 'hel', 'help']
+        Arguments  : ['__argv']
+        -help      : []
+        __argv     : a
+        argv       : ['a', 'b', 'c']
+    >>> cmd (["a", "b", "c", "d"])
+    Traceback (most recent call last):
+      ...
+    Err: Command/argument/option error: Maximum number of arguments is 3, got 4
 
 """
 
