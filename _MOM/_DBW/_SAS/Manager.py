@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Feb-2010 (MG) Creation (based on SA.Manager)
+#    16-Feb-2010 (MG) `SAS_A_Object_Kind_Mixin` added and used
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
