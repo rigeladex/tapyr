@@ -104,6 +104,8 @@
 #                     role names (e.g.: rodent, trap, person, ...)
 #    16-Feb-2010 (MG) `copy` fixed (use the correct etypes from the passed
 #                     scope argument)
+#    16-Feb-2010 (CT) `copy` changed to use `scope.entity_type` instead of
+#                     home-grown code
 #    ««revision-date»»···
 #--
 
@@ -813,8 +815,8 @@ class Id_Entity (Entity) :
     def copy (self, * new_epk, ** kw) :
         """Make copy with primary key `new_epk`."""
         scope  = kw.pop  ("scope", self.home_scope)
-        cls    = getattr (scope, self.type_name)._etype
-        result = cls     (* new_epk, scope = scope, ** kw)
+        etype  = scope.entity_type (self.type_name)
+        result = etype (* new_epk, scope = scope, ** kw)
         with result.home_scope.nested_change_recorder \
                  (MOM.SCM.Change.Copy, result) as change :
             scope.add (result)
