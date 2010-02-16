@@ -31,6 +31,7 @@
 ##    30-Dec-2009 (CT) Creation
 ##    12-Jan-2010 (CT) Creation continued
 ##    14-Jan-2010 (CT) `textarea` changed to allow `value`
+##    16-Feb-2010 (MG) `textarea` fixed
 ##    ««revision-date»»···
 ##--
 #}
@@ -119,11 +120,11 @@
   {%- set value  = kwargs.pop ("value",  None) -%}
   {%- set caller = kwargs.pop ("caller", None) -%}
   <textarea cols="{{ cols }}" rows="{{ rows }}"{{ kwargs|xmlattr }}>
-    {%- if value %}
+    {%- if value -%}
       {{ value }}
-    {%- else %}
+    {%- elif caller -%}
       {{ caller () }}
-    {% endif -%}
+    {%- endif -%}
   </textarea>
 {%- endmacro -%}
 

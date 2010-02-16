@@ -57,6 +57,7 @@
 #    10-Feb-2010 (MG) `form_path` moved from property to `__new__`
 #                     `_Instance_.__init__` make a copy of `field_groups`
 #                     Support for renaming of instances added
+#    16-Feb-2010 (MG) Make `instance_state` empty if instance is None
 #    ««revision-date»»···
 #--
 
@@ -86,9 +87,10 @@ class Instance_State_Field (GTW.Form.Field) :
 
     def get_raw (self, form, instance) :
         state = {}
-        for n, f in form.fields.iteritems () :
-            if not f.hidden :
-                state [n] = form.get_raw (f)
+        if instance is not None :
+            for n, f in form.fields.iteritems () :
+                if not f.hidden :
+                    state [n] = form.get_raw (f)
         return base64.b64encode (cPickle.dumps (state))
     # end def get_raw
 
