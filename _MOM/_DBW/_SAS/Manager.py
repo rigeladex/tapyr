@@ -29,6 +29,8 @@
 #    11-Feb-2010 (MG) Creation (based on SA.Manager)
 #    16-Feb-2010 (MG) `SAS_A_Object_Kind_Mixin` added and used
 #    16-Feb-2010 (MG) `Reset_Metadata` added
+#    16-Feb-2010 (MG) Introduce `inserted_primary_key` for SQLAlchemy before
+#                     version 0.6
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -45,6 +47,15 @@ import _MOM._SCM.Change
 
 from   sqlalchemy import schema, types, sql
 from   sqlalchemy import engine as SQL_Engine
+import sqlalchemy
+
+if sqlalchemy.__version__.split (".") [1] < "6" :
+    from sqlalchemy.engine.base import ResultProxy
+    @property
+    def inserted_primary_key (self) :
+        return self.last_inserted_ids ()
+    # end def inserted_primary_key
+    ResultProxy.inserted_primary_key = inserted_primary_key
 
 Type_Name_Type = types.String (length = 30)
 
