@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# Christian Tanzer <tanzer@swing.co.at>, 2010.
 #
 #, fuzzy
 msgid ""
@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-17 15:59+0100\n"
+"PO-Revision-Date: 2010-02-17 17:27+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -42,7 +42,7 @@ msgstr "Adresse"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Alive"
-msgstr ""
+msgstr "Aktiv"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Area code"
@@ -71,7 +71,7 @@ msgstr "Ländervorwahl"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 #, fuzzy
@@ -80,15 +80,15 @@ msgstr "Geburtstag"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Date of birth of an person, entity, or link"
-msgstr ""
+msgstr "Geburtstag einer Person, Entität oder Verknüpfung"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Date of death of an person, entity, or link"
-msgstr ""
+msgstr "Sterbetag einer Person, Entität oder Verknüpfung"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Death date"
-msgstr ""
+msgstr "Sterbetag"
 
 #: _GTW/_OMP/_PAP/Email.py:65 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Description"
@@ -133,7 +133,7 @@ msgstr "Koordinaten"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Height"
-msgstr ""
+msgstr "Höhe"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Height above mean sea level"
@@ -153,19 +153,19 @@ msgstr "Nachname"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Latitude"
-msgstr ""
+msgstr "Breite"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Lifetime"
-msgstr ""
+msgstr "Lebenszeit"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Lifetime_N"
-msgstr ""
+msgstr "Lebenszeit"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Longitude"
-msgstr ""
+msgstr "Länge"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Middle name"
@@ -247,7 +247,7 @@ msgstr "Kurze Beschreibung der Telefonnummer"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Specifies whether person, entity, or links ia currently alive"
-msgstr ""
+msgstr "Gibt an, ob Person, Entität oder Verknüpfung gegenwärtig am Leben ist"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "State or province or region"
@@ -263,7 +263,7 @@ msgstr "Strasse (oder Platz) und Hausnummer"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "The date of death must be later than the date of birth"
-msgstr ""
+msgstr "Der Sterbetag muss später als der Geburtstag sein"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Zip code"
@@ -286,39 +286,16 @@ msgid "`Email` linked to `person`"
 msgstr "Emailadresse einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+msgid ""
+"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
+"or the raw value of `foo`, otherwise."
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "`Phone` linked to `person`"
 msgstr "Telefonnummer einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "death_after_birth"
 msgstr ""
-
-#~ msgid "Display in user interface"
-#~ msgstr ""
-
-#~ msgid "Electric"
-#~ msgstr ""
-
-#~ msgid "Fo"
-#~ msgstr ""
-
-#~ msgid "Is used"
-#~ msgstr ""
-
-#~ msgid "Name"
-#~ msgstr "Nachname"
-
-#~ msgid "Seq no"
-#~ msgstr ""
-
-#~ msgid "Ui display"
-#~ msgstr ""
-
-#~ msgid "X locked"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "`FO.foo` fives the `ui_display` of attribute `foo`, if defined,\n"
-#~ "or the raw value of `foo`, otherwise."
-#~ msgstr ""
 

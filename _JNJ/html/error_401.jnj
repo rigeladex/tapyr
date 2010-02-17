@@ -44,8 +44,9 @@
     </p>
   {% else %}
     <h1 class="Error-Message">
-      {{ GTW._T ("You need to be logged in to access the page ") }}
-      {{ request.path }}
+      {{ GTW._T ("You need to be logged in to access the page %s")
+        % (request.path, )
+      }}
     </h1>
   {% endif %}
   {{ login_inline (next=request.path) }}

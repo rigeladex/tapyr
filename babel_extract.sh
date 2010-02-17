@@ -32,7 +32,7 @@
 
 cmd=${1:?"Specify a command: extract | language"}; shift
 
-dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_NAV/example _JNJ _JNJ/html"
+dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_NAV/example _JNJ"
 
 case "$cmd" in
     "extract" )

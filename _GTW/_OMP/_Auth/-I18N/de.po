@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# Christian Tanzer <tanzer@swing.co.at>, 2010.
 #
 #, fuzzy
 msgid ""
@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-17 15:59+0100\n"
+"PO-Revision-Date: 2010-02-17 17:27+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -25,11 +25,11 @@ msgstr "Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_Anonymous"
-msgstr ""
+msgstr "Anonymes Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_P"
-msgstr ""
+msgstr "Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_in_Group"
@@ -88,35 +88,12 @@ msgid "`Account` linked to `group`"
 msgstr "Benutzerkonto verknüpft mit Gruppe"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+msgid ""
+"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
+"or the raw value of `foo`, otherwise."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "`Group` linked to `account`"
 msgstr "Gruppe verknüpft mit Benutzerkonto"
-
-#~ msgid "Display in user interface"
-#~ msgstr ""
-
-#~ msgid "Electric"
-#~ msgstr ""
-
-#~ msgid "Fo"
-#~ msgstr ""
-
-#~ msgid "Is used"
-#~ msgstr ""
-
-#~ msgid "Name"
-#~ msgstr ""
-
-#~ msgid "Seq no"
-#~ msgstr ""
-
-#~ msgid "Ui display"
-#~ msgstr ""
-
-#~ msgid "X locked"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "`FO.foo` fives the `ui_display` of attribute `foo`, if defined,\n"
-#~ "or the raw value of `foo`, otherwise."
-#~ msgstr ""
 

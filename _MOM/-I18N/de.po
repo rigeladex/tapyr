@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# Christian Tanzer <tanzer@swing.co.at>, 2010.
 #
 #, fuzzy
 msgid ""
@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-02-17 15:59+0100\n"
+"PO-Revision-Date: 2010-02-17 17:27+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
-msgstr ""
+msgstr "    %s benötigt die Argument: (%s). Stattdessen erhalten: (%s)"
 
 #: _MOM/_Attr/Type.py:1071
 msgid ""
@@ -67,7 +67,7 @@ msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
 
 #: _MOM/__babel__.py:0
 msgid "Display in user interface"
-msgstr ""
+msgstr "Darstellung in der Benutzeroberfläche"
 
 #: _MOM/__babel__.py:0
 #, fuzzy
@@ -150,11 +150,11 @@ msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
 
 #: _MOM/__babel__.py:0
 msgid "Seq no"
-msgstr ""
+msgstr "Laufende Nummer"
 
 #: _MOM/__babel__.py:0
 msgid "Sequence number of a link in an ordered association."
-msgstr "Ordnungszahl einer Verknüpfung in einer geordneten Assoziation."
+msgstr "Laufende Nummer einer Verknüpfung in einer geordneten Assoziation."
 
 #: _MOM/__babel__.py:0
 msgid "Specifies if object can be changed by user"
@@ -171,7 +171,7 @@ msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
 
 #: _MOM/__babel__.py:0
 msgid "Ui display"
-msgstr ""
+msgstr "Ui Darstellung"
 
 #: _MOM/__babel__.py:0
 msgid "Unique name of the object."
@@ -189,16 +189,15 @@ msgstr "Verwende einen der Typen %s."
 #: _MOM/_Attr/Type.py:308
 #, python-format
 msgid "Value `%r` is not of type %s"
-msgstr ""
+msgstr "Wert `%r` hat nicht den Typ %s"
 
 #: _MOM/__babel__.py:0
-#, fuzzy
 msgid "X locked"
 msgstr "gesperrt"
 
 #: _MOM/__babel__.py:0
 msgid ""
-"`FO.foo` fives the `ui_display` of attribute `foo`, if defined,\n"
+"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
 "or the raw value of `foo`, otherwise."
 msgstr ""
 

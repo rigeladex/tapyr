@@ -166,7 +166,7 @@ class Entity (TFL.Meta.Object) :
     class _Attributes (MOM.Attr.Spec) :
 
         class FO (A_Blob) :
-            """`FO.foo` fives the `ui_display` of attribute `foo`, if defined,
+            """`FO.foo` gives the `ui_display` of attribute `foo`, if defined,
                or the raw value of `foo`, otherwise.
             """
 

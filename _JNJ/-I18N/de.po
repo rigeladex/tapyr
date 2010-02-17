@@ -2,14 +2,14 @@
 # Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+# Christian Tanzer <tanzer@swing.co.at>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-17 15:59+0100\n"
+"PO-Revision-Date: 2010-02-17 17:27+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -20,104 +20,109 @@ msgstr ""
 
 #: _JNJ/html/form.jnj:222
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
 #: _JNJ/html/news.jnj:49
 msgid "Change"
-msgstr ""
+msgstr "Ändern"
 
 #: _JNJ/html/e_type_admin.jnj:73
 msgid "Change object"
-msgstr ""
+msgstr "Ändere Objekt"
 
 #: _JNJ/html/form.jnj:313
 msgid "Discard all changes"
-msgstr ""
+msgstr "Verwerfen aller Änderungen"
 
 #: _JNJ/html/form.jnj:220 _JNJ/html/form.jnj:310
 msgid "Discard all changes and leave form"
-msgstr ""
+msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 
 #: _JNJ/html/news.jnj:46
 msgid "Edit this entry"
-msgstr ""
+msgstr "Ändere dieses Ding"
 
 #: _JNJ/html/error_404.jnj:53
 #, python-format
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
+"Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
+"Webmaster."
 
 #: _JNJ/html/form.jnj:295
 msgid "Login"
-msgstr ""
+msgstr "Anmelden"
 
 #: _JNJ/html/login.jnj:39
 msgid "Login for"
-msgstr ""
+msgstr "Angemeldet als"
 
 #: _JNJ/html/error_401.jnj:38
 msgid "Login required"
-msgstr ""
+msgstr "Anmeldung erforderlich"
 
 #: _JNJ/html/photo.jnj:47
 msgid "Next picture"
-msgstr ""
+msgstr "Nächstes Bild"
 
 #: _JNJ/html/error_404.jnj:37
 msgid "Page doesn't exist"
-msgstr ""
+msgstr "Seite existiert nicht"
 
 #: _JNJ/html/form.jnj:290
 msgid "Please enter your password"
-msgstr ""
+msgstr "Bitte um Eingabe des Kennworts"
 
 #: _JNJ/html/form.jnj:281
 msgid "Please enter your user-name"
-msgstr ""
+msgstr "Bitte um Eingabe des Benutzernamens"
 
 #: _JNJ/html/photo.jnj:41
 msgid "Previous picture"
-msgstr ""
+msgstr "Voriges Bild"
 
 #: _JNJ/html/error_500.jnj:42
 msgid "Processing the request triggered a server error. "
-msgstr ""
+msgstr "Die Verarbeitung der Anfrage löste einen Fehler des Webservers aus."
 
 #: _JNJ/html/form.jnj:314
 msgid "Reset"
-msgstr ""
+msgstr "Zurücksetzen"
 
 #: _JNJ/html/error_500.jnj:37
 msgid "Server error"
-msgstr ""
+msgstr "Fehler im Webserver"
 
 #: _JNJ/html/form.jnj:316
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: _JNJ/html/error_500.jnj:47
 msgid "The error was reported to the webmaster. "
-msgstr ""
+msgstr "Der Fehler wurde an den Webmaster gemeldet."
 
 #: _JNJ/html/error_500.jnj:52
 msgid ""
 "We apologize for the inconvenience and hope to fix the problem as soon as"
 " possible. "
 msgstr ""
+"Wir entschuldigen uns für die Unannehmlichkeit und hoffen, das\"\n"
+"\" Problem ehebaldigst zu beheben. "
 
 #: _JNJ/html/error_403.jnj:47
 msgid "You are not authorized to access the page "
-msgstr ""
+msgstr "Keine Berechtigung zum Zugriff auf die Seite "
 
 #: _JNJ/html/error_403.jnj:37
 msgid "You are not authorized to access this page"
-msgstr ""
+msgstr "Keine Berechtigung zum Zugriff auf diese Seite"
 
 #: _JNJ/html/error_401.jnj:47
-msgid "You need to be logged in to access the page "
-msgstr ""
+#, python-format
+msgid "You need to be logged in to access the page %s"
+msgstr "Ein Zugriff auf die Seite %s ist nur nach Anmeldung möglich"
 
 #: _JNJ/html/error_404.jnj:47
 msgid "You requested a page that doesn't exist: "
-msgstr ""
+msgstr "Sie versuchten auf eine nicht existierende Seite zuzugreifen: "
 

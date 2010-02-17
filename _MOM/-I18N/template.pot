@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-17 15:56+0100\n"
+"POT-Creation-Date: 2010-02-17 17:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,7 +187,7 @@ msgstr ""
 
 #: _MOM/__babel__.py:0
 msgid ""
-"`FO.foo` fives the `ui_display` of attribute `foo`, if defined,\n"
+"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
 "or the raw value of `foo`, otherwise."
 msgstr ""
 
