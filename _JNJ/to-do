@@ -10,15 +10,15 @@ x global function for retrieving a macro from a template:
 
 x Onion
 
-- Filters
+x Functions available for templates
 
-  * tel_uri
+  x tel_uri
 
-  * email_uri
+  x email_uri
 
-  * obfuscated_email_uri
+  x obfuscated_email_uri [implemented as `email_uri (..., obfuscated = True)`]
 
-- Media
+x Media
 
 - Environment.HTML: wrapper for jinja2.Environment
 
@@ -26,7 +26,7 @@ x Onion
 
   x `kw` map into `globals` of newly created Environment
 
-  * `Media`
+  x `Media`
 
   x `html_version`
 
@@ -46,11 +46,11 @@ x Onion
     + time
     + mark
 
-    + input_XXX
+    x input_XXX
 
       x for html5, implement all the fancy `type=XXX` variants
 
-      o select
+      x select
 
 x Macro-template `form.jnj`: for rendering forms, fields, field-groups, ...
 

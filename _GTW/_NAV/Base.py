@@ -727,6 +727,7 @@ class Root (_Dir_) :
     copyright_start         = None
     empty_template          = None
     name                    = "/"
+    obfuscate_emails        = False
     owner                   = None
     src_root                = ""
     target                  = None

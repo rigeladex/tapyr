@@ -172,6 +172,7 @@ import _GTW._NAV.Base
 import _GTW.ReST
 
 from   _TFL.Filename            import *
+from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
@@ -187,12 +188,21 @@ class Page_ReST (GTW.NAV.Page) :
 
     @Once_Property
     def contents (self) :
-        return GTW.ReST.to_html \
+        result = GTW.ReST.to_html \
             ( self.src_contents
             , encoding = self.encoding
             , language = getattr (self, "language", "en")
             )
+        if self.obfuscate_emails :
+            result = self.email_obfuscator (result)
+        return result
     # end def contents
+
+    @Once_Property
+    def email_obfuscator (self) :
+        from _GTW.HTML import obfuscator
+        return obfuscator ("mailto")
+    # end def email_obfuscator
 
 # end class Page_ReST
 

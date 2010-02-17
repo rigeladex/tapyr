@@ -31,17 +31,20 @@
 #                     `_T` and `_Tn` added to class `GTW`
 #    25-Jan-2010 (MG) `_T` and `_Tn` need to be static methods
 #    27-Jan-2010 (CT) `Getter`, `now`, and `sorted` added
+#    17-Feb-2010 (CT) `email_uri`, `obfuscated`, `tel_uri`, and `uri` added
 #    ««revision-date»»···
 #--
 
-from   _JNJ import JNJ
-from   _TFL import TFL
+from   _JNJ               import JNJ
+from   _TFL               import TFL
+
+from   _GTW               import HTML
 
 import _JNJ.Environment
 
 import _TFL._Meta.Object
 import _TFL.Accessor
-import _TFL.I18N
+from   _TFL.I18N          import _, _T, _Tn
 
 class GTW (TFL.Meta.Object) :
     """Provide additional global functions for Jinja templates."""
@@ -63,6 +66,14 @@ class GTW (TFL.Meta.Object) :
         return macro (* _args, ** _kw)
     # end def call_macro
 
+    def email_uri (self, email, text = None, ** kw) :
+        """Returns a telephone URI for `phone_number`.
+
+           http://tools.ietf.org/html/rfc3966
+        """
+        return self.uri (scheme = "mailto", uri = email, text = text, ** kw)
+    # end def email_uri
+
     def firstof (self, * args) :
         if len (args) == 1 and isinstance (args [0], (tuple, list)) :
             args = args [0]
@@ -82,7 +93,7 @@ class GTW (TFL.Meta.Object) :
         return getattr (template.module, macro_name)
     # end def get_macro
 
-    Getter = TFL.Getter
+    Getter     = TFL.Getter
 
     def now (self, format = "%Y/%m/%d") :
         from datetime import datetime
@@ -90,10 +101,39 @@ class GTW (TFL.Meta.Object) :
         return result.strftime (format)
     # end def now
 
-    sorted = staticmethod (sorted)
+    obfuscated = staticmethod (HTML.obfuscated)
 
-    _T  = staticmethod (TFL.I18N._T)
-    _Tn = staticmethod (TFL.I18N._Tn)
+    sorted     = staticmethod (sorted)
+
+    def tel_uri (self, phone_number, text = None, ** kw) :
+        """Returns a telephone URI for `phone_number`.
+
+           http://tools.ietf.org/html/rfc3966
+        """
+        return self.uri (scheme = "tel", uri = phone_number, text = text, ** kw)
+    # end def tel_uri
+
+    def uri (self, scheme, uri, text = None, ** kw) :
+        obfuscate = kw.pop ("obfuscate", False)
+        if text is None :
+            text = uri
+        attrs = ['href="%s:%s"' % (scheme, uri)]
+        for k, v in kw.iteritems () :
+            attrs.append ('%s="%s"' % (k, v))
+        attrs = " ".join (sorted (attrs))
+        result = u"""<a %(attrs)s>%(text)s</a>""" % locals ()
+        if obfuscate :
+            scheme_desc = _Tn (HTML.scheme_map.get (scheme, scheme))
+            result = "".join \
+                (( self.obfuscated (result)
+                 , HTML._obfuscation_format_ns
+                   % (_T ("Need Javascript for displaying"), scheme_desc, text)
+                ))
+        return result
+    # end def uri
+
+    _T  = staticmethod (_T)
+    _Tn = staticmethod (_Tn)
 
 # end class GTW
 

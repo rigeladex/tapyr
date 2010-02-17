@@ -11,11 +11,11 @@ GTW To-Do
 
   x Etype
 
-    + templates
+    x templates
 
   x Admin
 
-    + templates
+    x templates
 
   x Permission
 
@@ -25,21 +25,21 @@ GTW To-Do
 
 - Forms
 
-  * `widget` : (template, macro) or "template.macro"
+  x `widget` : (template, macro) or "template.macro"
 
-  * `fields`: list of fields/field_groups
+  x `fields`: list of fields/field_groups
 
     + for a Etype-Form, each field is a attribute (property)
 
     + each field has a `widget`
 
-  * `action`: uri for submit
+  x `action`: uri for submit
 
-  * `instance`: None or a life instance of some object model
+  x `instance`: None or a life instance of some object model
 
-  * `request_data`: dictionary with GET- or POST-data
+  x `request_data`: dictionary with GET- or POST-data
 
-  * get_value (field) :
+  x get_value (field) :
 
     + get value from `request_data` or `field.get_value (instance)`
 
