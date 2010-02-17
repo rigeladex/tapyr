@@ -33,6 +33,8 @@
 #    21-Jan-2010 (MG) Command interface added
 #    21-Jan-2010 (MG) `Translations` replaced by `Existing_Translations`
 #    25-Jan-2010 (MG) Multiprocess support added
+#    17-Feb-2010 (CT) `compile` changed to use `__import__` instead of
+#                     `execfile`
 #    ««revision-date»»···
 #--
 from   _TFL           import TFL
@@ -40,6 +42,7 @@ import _TFL.defaultdict
 import _TFL._Babel.Extract
 import _TFL._Babel.Config_File
 import _TFL.CAO
+
 import  os
 import  sys
 import  glob
@@ -285,7 +288,10 @@ Language = TFL.CAO.Cmd \
 
 def compile (cmd) :
     if cmd.import_file :
-        execfile (cmd.import_file)
+        d, p = os.path.split    (cmd.import_file)
+        f, e = os.path.splitext (p)
+        with TFL.Context.list_push (sys.path, d) :
+            __import__ (f)
         lang_coll = Language_File_Collection.from_sys_modules (cmd.languages)
     else :
         lang_coll = Language_File_Collection (cmd.argv, cmd.languages)

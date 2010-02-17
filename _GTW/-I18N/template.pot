@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-07 13:28+0100\n"
+"POT-Creation-Date: 2010-02-17 15:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,18 +18,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:88 _GTW/_NAV/_E_Type/Admin.py:200
+#: _GTW/_NAV/_E_Type/Admin.py:94 _GTW/_NAV/_E_Type/Admin.py:215
 #, python-format
 msgid "%s `%s` doesn't exist!"
+msgstr ""
+
+#: _GTW/_NAV/_E_Type/Admin.py:181
+#, python-format
+msgid "%s `%s` existiert nicht!"
 msgstr ""
 
 #: _GTW/_Form/Auth.py:60
 msgid "A user name is required to login."
 msgstr ""
 
-#: _GTW/_Form/Plain.py:84
+#: _GTW/_Form/Plain.py:85
 #, python-format
 msgid "Field `%(field)s` is required"
+msgstr ""
+
+#: _GTW/HTML.py:67
+msgid "Need Javascript for displaying"
 msgstr ""
 
 #: _GTW/_Form/Auth.py:62
@@ -38,5 +47,13 @@ msgstr ""
 
 #: _GTW/_Form/Auth.py:66
 msgid "Username or password incorrect"
+msgstr ""
+
+#: _GTW/HTML.py:53
+msgid "email address"
+msgstr ""
+
+#: _GTW/HTML.py:54
+msgid "phone number"
 msgstr ""
 

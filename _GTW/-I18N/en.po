@@ -1,18 +1,17 @@
-# German translations for MOM/GTW/JNJ.
+# English translations for MOM/GTW/JNJ.
 # Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-17 15:59+0100\n"
+"POT-Creation-Date: 2010-02-17 15:56+0100\n"
+"PO-Revision-Date: 2010-02-17 16:36+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: de <LL@li.org>\n"
+"Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -22,21 +21,21 @@ msgstr ""
 #: _GTW/_NAV/_E_Type/Admin.py:94 _GTW/_NAV/_E_Type/Admin.py:215
 #, python-format
 msgid "%s `%s` doesn't exist!"
-msgstr "%s `%s` existiert nicht"
+msgstr ""
 
 #: _GTW/_NAV/_E_Type/Admin.py:181
-#, fuzzy, python-format
+#, python-format
 msgid "%s `%s` existiert nicht!"
-msgstr "%s `%s` existiert nicht"
+msgstr ""
 
 #: _GTW/_Form/Auth.py:60
 msgid "A user name is required to login."
-msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
+msgstr ""
 
 #: _GTW/_Form/Plain.py:85
 #, python-format
 msgid "Field `%(field)s` is required"
-msgstr "Feld `%(field)s` muss ausgefüllt werden"
+msgstr ""
 
 #: _GTW/HTML.py:67
 msgid "Need Javascript for displaying"
@@ -44,11 +43,11 @@ msgstr ""
 
 #: _GTW/_Form/Auth.py:62
 msgid "The password is required."
-msgstr "Das Kennwort muss ausgefüllt werden."
+msgstr ""
 
 #: _GTW/_Form/Auth.py:66
 msgid "Username or password incorrect"
-msgstr "Benutzername oder Kennwort sind nicht korrekt"
+msgstr ""
 
 #: _GTW/HTML.py:53
 msgid "email address"

@@ -20,7 +20,7 @@ x Functions available for templates
 
 x Media
 
-- Environment.HTML: wrapper for jinja2.Environment
+x Environment.HTML: wrapper for jinja2.Environment
 
   x Map standard templates into `std/<name>.jnj`, too
 

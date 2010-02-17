@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-07 13:28+0100\n"
+"POT-Creation-Date: 2010-02-17 15:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:725
+#: _MOM/Entity.py:863
 #, python-format
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1041
+#: _MOM/_Attr/Type.py:1071
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -43,27 +43,35 @@ msgstr ""
 msgid "An_Entity"
 msgstr ""
 
-#: _MOM/_Meta/M_Entity.py:102
+#: _MOM/_Meta/M_Entity.py:109
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:187 _MOM/_EMS/_Manager_.py:140
+#: _MOM/_EMS/Hash.py:189 _MOM/_EMS/_Manager_.py:140
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:695
+#: _MOM/_Attr/Kind.py:781
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Display in user interface"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Electric"
 msgstr ""
 
 #: _MOM/__babel__.py:0
 msgid "Entity"
 msgstr ""
 
-#: _MOM/_Attr/Position.py:75
-msgid "Height"
+#: _MOM/__babel__.py:0
+msgid "Fo"
 msgstr ""
 
 #: _MOM/__babel__.py:0
@@ -74,13 +82,13 @@ msgstr ""
 msgid "Indicates if object/link was created automatically or not."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:819
+#: _MOM/_Attr/Type.py:828
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
 
-#: _MOM/_Attr/Position.py:58
-msgid "Latitude"
+#: _MOM/__babel__.py:0
+msgid "Is used"
 msgstr ""
 
 #: _MOM/__babel__.py:0
@@ -99,20 +107,20 @@ msgstr ""
 msgid "Link3"
 msgstr ""
 
-#: _MOM/_Attr/Position.py:67
-msgid "Longitude"
+#: _MOM/__babel__.py:0
+msgid "Name"
 msgstr ""
 
 #: _MOM/__babel__.py:0
 msgid "Named_Object"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:630
+#: _MOM/_Attr/Type.py:639
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:224
+#: _MOM/_Attr/Type.py:233
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr ""
 
@@ -120,18 +128,18 @@ msgstr ""
 msgid "Object"
 msgstr ""
 
-#: _MOM/_Attr/Position.py:88
-msgid "Position"
-msgstr ""
-
-#: _MOM/_Attr/Kind.py:598
+#: _MOM/_Attr/Kind.py:684
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:608
+#: _MOM/_Attr/Kind.py:694
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Seq no"
 msgstr ""
 
 #: _MOM/__babel__.py:0
@@ -146,39 +154,45 @@ msgstr ""
 msgid "Specifies whether entity is used by another entity."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:251
+#: _MOM/_Attr/Kind.py:273
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "Ui display"
 msgstr ""
 
 #: _MOM/__babel__.py:0
 msgid "Unique name of the object."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:599
+#: _MOM/_Attr/Kind.py:685
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:188 _MOM/_EMS/_Manager_.py:141
+#: _MOM/_EMS/Hash.py:190 _MOM/_EMS/_Manager_.py:141
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:299
+#: _MOM/_Attr/Type.py:308
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
 
 #: _MOM/__babel__.py:0
+msgid "X locked"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid ""
+"`FO.foo` fives the `ui_display` of attribute `foo`, if defined,\n"
+"or the raw value of `foo`, otherwise."
+msgstr ""
+
+#: _MOM/__babel__.py:0
 msgid "completely_defined"
-msgstr ""
-
-#: _MOM/__babel__.py:0
-msgid "electric"
-msgstr ""
-
-#: _MOM/__babel__.py:0
-msgid "is_used"
 msgstr ""
 
 #: _MOM/__babel__.py:0
@@ -189,11 +203,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/__babel__.py:0
-msgid "name"
-msgstr ""
-
-#: _MOM/_Attr/Type.py:625
+#: _MOM/_Attr/Type.py:634
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""
@@ -204,13 +214,5 @@ msgstr ""
 
 #: _MOM/__babel__.py:0
 msgid "right"
-msgstr ""
-
-#: _MOM/__babel__.py:0
-msgid "seq_no"
-msgstr ""
-
-#: _MOM/__babel__.py:0
-msgid "x_locked"
 msgstr ""
 

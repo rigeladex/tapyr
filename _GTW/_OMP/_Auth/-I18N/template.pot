@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-07 13:28+0100\n"
+"POT-Creation-Date: 2010-02-17 15:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,10 +20,6 @@ msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account"
-msgstr ""
-
-#: _GTW/_OMP/_Auth/Account.py:69 _GTW/_OMP/_Auth/__babel__.py:0
-msgid "Account name"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
@@ -39,11 +35,19 @@ msgid "Account_in_Group"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Accounts"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Active"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Group"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/Group.py:55 _GTW/_OMP/_Auth/__babel__.py:0
-msgid "Group name"
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Groups"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
@@ -51,10 +55,14 @@ msgid "Name of group"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Password"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Password for this account"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/Account.py:78 _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Superuser"
 msgstr ""
 
@@ -64,10 +72,6 @@ msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "This account is currently active."
-msgstr ""
-
-#: _GTW/_OMP/_Auth/Account.py:62 _GTW/_OMP/_Auth/__babel__.py:0
-msgid "User active"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
@@ -80,17 +84,5 @@ msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "`Group` linked to `account`"
-msgstr ""
-
-#: _GTW/_OMP/_Auth/__babel__.py:0
-msgid "accounts"
-msgstr ""
-
-#: _GTW/_OMP/_Auth/__babel__.py:0
-msgid "groups"
-msgstr ""
-
-#: _GTW/_OMP/_Auth/__babel__.py:0
-msgid "password"
 msgstr ""
 

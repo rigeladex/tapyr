@@ -30,15 +30,30 @@
 #    ««revision-date»»···
 #--
 
-/usr/bin/python _TFL/Babel.py extract                            \
-    -bugs_address        "tanzer@swing.co.at,martin@mangari.org" \
-    -charset             iso-8859-1                              \
-    -copyright_holder    "Mag. Christian Tanzer, Martin Glueck"  \
-    -global_config       _MOM/base_babel.cfg                     \
-    -project             "MOM/GTW/JNJ"                           \
-    -sort                                                        \
-        _MOM                                                     \
-        _GTW _GTW/_OMP/_Auth/ _GTW/_OMP/_PAP/ _GTW/_NAV/example/ \
-        _JNJ/html/
+cmd=${1:?"Specify a command: extract | language"}; shift
+
+dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_NAV/example _JNJ _JNJ/html"
+
+case "$cmd" in
+    "extract" )
+        /usr/bin/python _TFL/Babel.py extract                            \
+            -bugs_address        "tanzer@swing.co.at,martin@mangari.org" \
+            -charset             iso-8859-1                              \
+            -copyright_holder    "Mag. Christian Tanzer, Martin Glueck"  \
+            -global_config       _MOM/base_babel.cfg                     \
+            -project             "MOM/GTW/JNJ"                           \
+            -sort                                                        \
+                _MOM                                                     \
+                _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_NAV/example    \
+                _JNJ _JNJ/html
+        ;;
+    "language" )
+        lang=${1:-"de"}
+        /usr/bin/python _TFL/Babel.py language -languages "$lang" -sort $dirs
+        ;;
+    * )
+        echo "Unknown command $cmd"
+        ;;
+esac
 
 ### __END__ babel_extract
