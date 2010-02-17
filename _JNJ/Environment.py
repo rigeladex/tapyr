@@ -119,6 +119,7 @@ on how the environment was set up::
     ...   {{ X.input.textarea (80, 5, value = "Wing is king", class = "fast") }}
     ...
     ...   {{ X.input.select ("Choice", ["red", "green"], class = "side") }}
+    ...   {{ X.input.select_v ("CV", [(0, "red"), (1, "green")], 1, class = "side") }}
     ... {%- endcall -%}
     ... '''
 
@@ -142,8 +143,12 @@ on how the environment was set up::
       <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
       <select name="Choice" class="side">
-            <option >red</option>
-            <option >green</option>
+            <option>red</option>
+            <option>green</option>
+      </select>
+      <select name="CV" class="side">
+          <option value="0">red</option>
+          <option value="1" selected="selected">green</option>
       </select>
     </html>
     <BLANKLINE>
@@ -167,8 +172,12 @@ on how the environment was set up::
       <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
       <select name="Choice" class="side">
-            <option >red</option>
-            <option >green</option>
+            <option>red</option>
+            <option>green</option>
+      </select>
+      <select name="CV" class="side">
+          <option value="0">red</option>
+          <option value="1" selected="selected">green</option>
       </select>
     </html>
     <BLANKLINE>
@@ -190,8 +199,12 @@ on how the environment was set up::
       <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
       <select name="Choice" class="side">
-            <option >red</option>
-            <option >green</option>
+            <option>red</option>
+            <option>green</option>
+      </select>
+      <select name="CV" class="side">
+          <option value="0">red</option>
+          <option value="1" selected="selected">green</option>
       </select>
     </html>
     <BLANKLINE>
@@ -215,8 +228,12 @@ on how the environment was set up::
       <textarea cols="80" rows="5" class="fast">Wing is king</textarea>
     <BLANKLINE>
       <select name="Choice" class="side">
-            <option >red</option>
-            <option >green</option>
+            <option>red</option>
+            <option>green</option>
+      </select>
+      <select name="CV" class="side">
+          <option value="0">red</option>
+          <option value="1" selected="selected">green</option>
       </select>
     </html>
 

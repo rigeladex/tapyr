@@ -33,12 +33,14 @@
 ##    16-Feb-2010 (MG) `textarea` fixed
 ##    16-Feb-2010 (CT) `textarea` factored to `html/_input.jnj`
 ##    16-Feb-2010 (CT) `select` added
+##    16-Feb-2010 (CT) `select_v` added
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import "html/_input.jnj" as _common %}
 {%- set select   = _common.select       %}
+{%- set select_v = _common.select_v     %}
 {%- set textarea = _common.textarea     %}
 
 {%- set attr5 = ("autofocus", "placeholder", "min", "max", "step") %}

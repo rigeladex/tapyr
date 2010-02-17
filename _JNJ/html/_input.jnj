@@ -28,22 +28,39 @@
 ##
 ## Revision Dates
 ##    16-Feb-2010 (CT) Creation
+##    17-Feb-2010 (CT) `select_v` added, `option` factored
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- macro option (content, value = None, selected = None) -%}
+  {%- set sa = ' selected="selected"'
+        if (value or content) == selected else ""
+  -%}
+  {%- set va = (' value="%s"' % (value, )) if value != None else "" -%}
+  <option{{ va }}{{ sa }}{{ kwargs|xmlattr }}>{{ content }}</option>
+{%- endmacro -%} {#- option -#}
 
 {%- macro select (name, choices = (), selected = None) -%}
   {%- set caller = kwargs.pop ("caller", None) -%}
   <select name="{{ name }}"{{ kwargs|xmlattr }}>
     {%- if choices -%}
       {%- for c in choices %}
-        <option {{ 'selected="selected"' if c == selected }}>{{ c }}</option>
+        {{ option (c, None, selected) }}
       {%- endfor -%}
     {%- elif caller -%}
       {{ caller () }}
     {%- endif %}
   </select>
 {%- endmacro -%} {#- select -#}
+
+{%- macro select_v (name, choices, selected = None) -%}
+  {% call select (name, selected = selected, ** kwargs) -%}
+    {%- for v, c in choices %}
+      {{ option (c, v, selected) }}
+    {%- endfor -%}
+  {% endcall %} {# select #}
+{%- endmacro -%} {#- select_v -#}
 
 {%- macro textarea (cols, rows) -%}
   {%- set value  = kwargs.pop ("value",  None) -%}
