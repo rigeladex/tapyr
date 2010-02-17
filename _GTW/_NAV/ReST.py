@@ -160,6 +160,7 @@
 #    18-Oct-2008 (CT) Factored from monolithic `DJO.Navigation`
 #     8-Jan-2010 (CT) Moved from DJO to GTW
 #    25-Jan-2010 (CT) `GTW.ReST.to_html` factored
+#    17-Feb-2010 (CT) `email_obfuscator` added
 #    ««revision-date»»···
 #--
 
