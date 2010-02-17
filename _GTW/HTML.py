@@ -54,6 +54,15 @@ scheme_map = dict \
     , tel    = _("phone number")
     )
 
+def obfuscated (text) :
+    """Return `text` as (slightly) obfuscated Javascript."""
+    js_args = ",".join \
+        ( "%s%+d" % (s, c - s)
+        for (c, s) in ((ord (c), randrange (1, 256)) for c in text)
+        )
+    return _obfuscation_format_js % (js_args, )
+# end def obfuscated
+
 def obfuscator (scheme = "mailto") :
     need = _T ("Need Javascript for displaying")
     desc = _T (scheme_map.get (scheme, scheme))
@@ -73,15 +82,6 @@ def obfuscator (scheme = "mailto") :
         , _rep, re.MULTILINE
         )
 # end def obfuscator
-
-def obfuscated (text) :
-    """Return `text` as (slightly) obfuscated Javascript."""
-    js_args = ",".join \
-        ( "%s%+d" % (s, c - s)
-        for (c, s) in ((ord (c), randrange (1, 256)) for c in text)
-        )
-    return _obfuscation_format_js % (js_args, )
-# end def obfuscated
 
 if __name__ != "__main__" :
     GTW._Export_Module ()
