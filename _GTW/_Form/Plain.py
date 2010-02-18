@@ -29,6 +29,7 @@
 #    19-Jan-2010 (MG) Creation
 #    02-Feb-2010 (MG) `_get_raw`: pass form to `field.get_raw`
 #     4-Feb-2010 (MG) `_get_raw` removed
+#    18-Feb-2010 (MG) `M_Plain.New`: setup of `fields` added
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,7 @@ class M_Plain (GTW.Form._Form_.__class__) :
             field_groups.extend (fgd ())
         return cls.__m_super.New \
             ( name
+            , fields       = cls._setup_fields (field_groups)
             , field_groups = field_groups
             , creator      = creator
             , ** kw

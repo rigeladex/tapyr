@@ -32,6 +32,7 @@
 #                     population of defaults
 #    17-Jan-2010 (MG) Moved into package `GTW.Form`
 #     3-Feb-2010 (MG) Pass salt to `verify_password`
+#    18-Feb-2010 (MG) `salt` moved into `Account_P` e_type
 #    ««revision-date»»···
 #--
 
@@ -46,8 +47,6 @@ import _GTW._Form.Field_Group_Description
 
 class _Login_Mixin_ (TFL.Meta.Object) :
     """Handles the login form processing."""
-
-    salt = None
 
     def __init__ (self, account_manager, * args, ** kw) :
         self.account_manager = account_manager
@@ -74,7 +73,7 @@ class _Login_Mixin_ (TFL.Meta.Object) :
         except IndexError :
             ### look's like no account with this username exists
             return False
-        return account.verify_password (password, self.salt)
+        return account.verify_password (password)
     # end def _authenticate
 
 # end class _Login_Mixin_

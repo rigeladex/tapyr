@@ -31,6 +31,7 @@
 #    14-Jan-2010 (CT) s/Password_Account/Account_P/g
 #    16-Jan-2010 (CT) Derive from `Auth.Object` (thus s/usernamer/name/)
 #     3-Feb-2010 (MG) Password hashing added
+#    18-Feb-2010 (MG) `Account_P`: `salt` added as class attribute
 #    ««revision-date»»···
 #--
 
@@ -116,6 +117,7 @@ class Account_P (_Ancestor_Essence) :
     """An acount which uses passwords for authorization."""
 
     Hash_Method = "sha224"
+    salt        = ""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -130,16 +132,14 @@ class Account_P (_Ancestor_Essence) :
     # end class _Attributes
 
     @classmethod
-    def password_hash (cls, password, salt = None) :
-        hash = hashlib.new (cls.Hash_Method)
-        if salt :
-            hash.update (salt)
-        hash.update     (password)
+    def password_hash (cls, password) :
+        hash = hashlib.new    (cls.Hash_Method, cls.salt)
+        hash.update           (password)
         return hash.hexdigest ()
     # end def password_hash
 
-    def verify_password (self, password, salt = None) :
-        return self.password == self.password_hash (password, salt)
+    def verify_password (self, password) :
+        return self.password == self.password_hash (password)
     # end def verify_password
 
 # end class Account_P
