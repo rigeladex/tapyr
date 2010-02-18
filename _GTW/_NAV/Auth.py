@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package GTW.Auth.
 #
@@ -23,66 +23,189 @@
 #    GTW.NAV.Auth
 #
 # Purpose
-#    Navigation classes for authorization (login, logout, change password, ...)
+#    Navigation directory for handling authorization (of a single user)
 #
 # Revision Dates
-#    15-Jan-2010 (MG) Creation
-#    17-Jan-2010 (MG) Moved into package `GTW.NAV`
-#    17-Jan-2010 (MG) `Logout`: Redirect the `/` if the new page after logout
-#                     requires a login
-#     3-Feb-2010 (MG) Clear cookie one a failed login try
+#    18-Feb-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   _TFL               import TFL
-import _TFL.I18N
+from   _GTW                     import GTW
+from   _TFL                     import TFL
+from   _MOM.import_MOM          import Q
 
-from   _GTW             import GTW
-import _GTW._Form.Auth
 import _GTW._NAV.Base
+import _GTW._Form.Auth
 import _GTW._Tornado.Request_Data
 
-import  urlparse
+import _TFL._Meta.Object
+from   _TFL._Meta.Once_Property import Once_Property
 
-class Login (GTW.NAV.Page) :
-    """The login handling page in the navigation"""
+from   _TFL.I18N                import _, _T, _Tn
 
-    hidden         = False
+from   posixpath                import join  as pjoin
+
+import urlparse
+
+class Auth (GTW.NAV.Dir) :
+    """Navigation directory for handling authorization (of a single user)."""
+
+    T = TFL.I18N.Name
+
+    class _Cmd_ (GTW.NAV._Site_Entity_) :
+
+        implicit     = True
+
+    # end class _Cmd_
+
+    class Action (_Cmd_) :
+
+#       template     = "???"
+
+        def rendered (self, handler, template = None) :
+            pass
+        # end def rendered
+
+    # end class Action
+
+    class Change_Email (_Cmd_) :
+
+#       template     = "???"
+
+        def rendered (self, handler, template = None) :
+            pass
+        # end def rendered
+
+    # end class Change_Email
+
+    class Change_Password (_Cmd_) :
+
+#       template     = "???"
+
+        def rendered (self, handler, template = None) :
+            pass
+        # end def rendered
+
+    # end class Change_Password
+
+    class Login (_Cmd_) :
+
+        def rendered (self, handler, template = None) :
+            context   = handler.context
+            request   = handler.request
+            req_data  = GTW.Tornado.Request_Data (request.arguments)
+            form      = GTW.Form.Auth.Login (self.account_manager, self.name)
+            context ["login_form"] = form
+            if request.method == "POST" :
+                errors = form (req_data)
+                if not errors :
+                    next = req_data.get ("next")
+                    handler.set_secure_cookie \
+                        ("username", req_data  ["username"])
+                    raise self.top.HTTP.Redirect_302 (next)
+                ### after a failed login, clear the current username
+                handler.clear_cookie ("username")
+            return self.__super.rendered (handler, template)
+        # end def rendered
+
+    # end class Login
+
+    class Logout (_Cmd_) :
+
+        def _view (self, handler) :
+            handler.clear_cookie ("username")
+            top       = self.top
+            next      = handler.request.headers.get ("Referer", "/")
+            next_page = top.page_from_href (urlparse.urlsplit (next).path)
+            if getattr (next_page, "login_required", False) :
+                next = "/"
+            raise top.HTTP.Redirect_302 (next)
+        # end def _view
+
+    # end class Logout
+
+    class Register (_Cmd_) :
+
+#       template     = "???"
+
+        def rendered (self, handler, template = None) :
+            pass
+        # end def rendered
+
+    # end class Register
+
+    class Reset_Password (_Cmd_) :
+
+#       template     = "???"
+
+        def rendered (self, handler, template = None) :
+            pass
+        # end def rendered
+
+    # end class Reset_Password
+
+    @Once_Property
+    def href (self) :
+        return pjoin (self.prefix, u"")
+    # end def href
+
+    def href_account (self, obj) :
+        return pjoin (self.abs_href, self.T.account, obj.lid)
+    # end def href_account
+
+    def href_action (self, obj, token) :
+        return pjoin (self.abs_href, self.T.action, obj.lid, token)
+    # end def href_action
+
+    def href_change_email (self, obj) :
+        return pjoin (self.href_account (obj), self.T.change_email)
+    # end def href_change_email
+
+    def href_change_pass (self, obj) :
+        return pjoin (self.href_account (obj), self.T.change_password)
+    # end def href_change_pass
+
+    def href_login (self) :
+        return pjoin (self.abs_href, self.T.login)
+    # end def href_login
+
+    def href_logout (self) :
+        return pjoin (self.abs_href, self.T.login)
+    # end def href_logout
+
+    def href_register (self) :
+        return pjoin (self.abs_href, self.T.register)
+    # end def href_register
+
+    def href_reset_pass (self, obj) :
+        return pjoin (self.href_account (obj), self.T.reset_password)
+    # end def href_reset_pass
 
     def rendered (self, handler, template = None) :
-        context   = handler.context
-        request   = handler.request
-        req_data  = GTW.Tornado.Request_Data (request.arguments)
-        form      = GTW.Form.Auth.Login (self.account_manager, self.name)
-        context ["login_form"] = form
-        if request.method == "POST" :
-            errors = form (req_data)
-            if not errors :
-                next = req_data.get ("next")
-                handler.set_secure_cookie ("username", req_data  ["username"])
-                raise self.top.HTTP.Redirect_302 (next)
-            ### one a faild login try, clear the current username
-            handler.clear_cookie ("username")
-        return self.__super.rendered (handler, template)
+        page = self._get_child (self.T.login)
+        return page.rendered (handler, template)
     # end def rendered
 
-# end class Login
+    _child_name_map = dict \
+        ( action          = (Action,              2)
+        , change_email    = (Change_Email,        2)
+        , change_password = (Change_Password,     2)
+        , login           = (Login,               0)
+        , logout          = (Logout,              0)
+        , register        = (Register,            0)
+        , reset_password  = (Reset_Password,      2)
+        )
 
-class Logout (GTW.NAV.Page) :
-    """Handle the logout process for a user."""
+    def _get_child (self, child, * grandchildren) :
+        if child in self._child_name_map : ### XXX L10N kills this
+            T, n = self._child_name_map [child]
+            if len (grandchildren) == n :
+                name = pjoin (child, * grandchildren)
+                return T (parent = self, name = name, args = grandchildren)
+    # end def _get_child
 
-    def _view (self, handler) :
-        handler.clear_cookie ("username")
-        top       = self.top
-        next      = handler.request.headers.get ("Referer", "/")
-        next_page = top.page_from_href          (urlparse.urlsplit (next).path)
-        if getattr (next_page, "login_required", False) :
-            next = "/"
-        raise top.HTTP.Redirect_302 (next)
-    # end def _view
-
-# end class Logout
+# end class Auth
 
 if __name__ != "__main__" :
-    GTW.NAV._Export_Module ()
+    GTW.NAV._Export ("*")
 ### __END__ GTW.NAV.Auth

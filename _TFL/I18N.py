@@ -35,6 +35,7 @@
 #    21-Jan-2010 (MG) `save_eval` added
 #    25-Jan-2010 (MG) Support list of languages in `use` and `context`
 #    31-Jan-2010 (CT) `import  babel.support` moved inside functions
+#    18-Feb-2010 (CT) `Name` added
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,19 @@ Config = Record \
    )
 Config.current = Config.Null = Config.Languages [None]
 
+class _Name_ (TFL.Meta.Object) :
+    """Translator for names"""
+
+    def __getattr__ (self, name) :
+        return _T (name)
+    # end def __getattr__
+
+    def __getitem__ (self, key) :
+        return _T (key)
+    # end def __getitem__
+
+# end class _Name_
+
 def add (self, * languages, ** kw) :
     locale_dir = kw.pop ("locale_dir", Config.locale_dir)
     domains    = kw.pop ("domains",    Config.domains)
@@ -58,6 +72,36 @@ def add (self, * languages, ** kw) :
     if use_lang :
         ise (use_lang)
 # end def add
+
+@TFL.Contextmanager
+def context (* lang) :
+    """Temporaly change the translation language
+    ### Let's fake some Translations
+    >>> import  babel.support
+    >>> Config.Languages ["l1"] = l1 = babel.support.Translations ()
+    >>> Config.Languages ["l2"] = l2 = babel.support.Translations ()
+    >>> l1._catalog = dict (text1 = u"L1: Text 1", text2 = u"L1: Text 2")
+    >>> l2._catalog = dict (text1 = u"L2: Text 1", text2 = u"L2: Text 2")
+    >>> _T ("text1")
+    u'text1'
+    >>> with context ("l1") :
+    ...     _T ("text1")
+    ...     _T ("text2")
+    u'L1: Text 1'
+    u'L1: Text 2'
+    >>> with context ("l2") :
+    ...     _T ("text1")
+    ...     _T ("text2")
+    u'L2: Text 1'
+    u'L2: Text 2'
+    """
+    old = Config.current
+    try :
+       use (* lang)
+       yield
+    finally :
+        Config.current = old
+# end def context
 
 def load (* languages, ** kw) :
     locale_dir        = kw.pop ("locale_dir", Config.locale_dir)
@@ -128,39 +172,11 @@ def use (* lang) :
     Config.current = Config.Languages [loaded]
 # end def use
 
-@TFL.Contextmanager
-def context (* lang) :
-    """Temporaly change the translation language
-    ### Let's fake some Translations
-    >>> import  babel.support
-    >>> Config.Languages ["l1"] = l1 = babel.support.Translations ()
-    >>> Config.Languages ["l2"] = l2 = babel.support.Translations ()
-    >>> l1._catalog = dict (text1 = u"L1: Text 1", text2 = u"L1: Text 2")
-    >>> l2._catalog = dict (text1 = u"L2: Text 1", text2 = u"L2: Text 2")
-    >>> _T ("text1")
-    u'text1'
-    >>> with context ("l1") :
-    ...     _T ("text1")
-    ...     _T ("text2")
-    u'L1: Text 1'
-    u'L1: Text 2'
-    >>> with context ("l2") :
-    ...     _T ("text1")
-    ...     _T ("text2")
-    u'L2: Text 1'
-    u'L2: Text 2'
-    """
-    old = Config.current
-    try :
-       use (* lang)
-       yield
-    finally :
-        Config.current = old
-# end def context
+_    = mark
+_T   = ugettext
+_Tn  = ungettext
 
-_   = mark
-_T  = ugettext
-_Tn = ungettext
+Name = _Name_ ()
 
 if __name__ != "__main__" :
     TFL._Export_Module ()
