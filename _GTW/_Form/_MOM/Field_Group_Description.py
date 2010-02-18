@@ -36,6 +36,7 @@
 #     4-Feb-2010 (MG) `Role_Description` removed again
 #     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
 #                     etype managers work differently)
+#    18-Feb-2010 (MG) `Field.choices` added
 #    ««revision-date»»···
 #--
 
@@ -122,6 +123,14 @@ class Field (TFL.Meta.Object) :
         self.name           = attr_name
         self.attr_kind      = getattr (et_man._etype, attr_name)
     # end def __init__
+
+    @property
+    def choices (self) :
+        attr = self.attr_kind.attr
+        if isinstance (attr, MOM.Attr._A_Named_Object_) :
+            return sorted (attr.Table)
+        return ()
+    # end def choices
 
     def get_raw (self, form, instance) :
         return self.attr_kind.get_raw (instance)

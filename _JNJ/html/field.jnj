@@ -34,6 +34,7 @@
 ##     3-Feb-2010 (CT) `date` and other types added
 ##     3-Feb-2010 (CT) `number` and `string` changed to set `css_class`
 ##                     dependent on `max_value` and `max_length`, respectively
+##    18-Feb-2010 (MG) `named_object` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -55,6 +56,17 @@
 {%- macro hidden (fo, fi) -%}
   {{ _field (X.input.hidden, fo, fi)}}
 {%- endmacro -%} {#- hidden -#}
+
+{%- macro named_object (fo, fi) -%}
+  {%- set id = fo.get_id (fi) %}
+  {{ X.input.select
+      ( name     = id
+      , id       = "F_%s"|format (id)
+      , choices  = fi.choices
+      , selected = fo.get_raw (fi)
+      )
+  }}
+{%- endmacro -%} {#- named_object -#}
 
 {%- macro number (fo, fi) -%}
   {%- set css_class = "Short" if (fi.max_value or 2**31) <= 99999 else "" %}

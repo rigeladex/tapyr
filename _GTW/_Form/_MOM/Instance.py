@@ -52,6 +52,7 @@ MAT.A_Date.widget            = WS ("html/field.jnj, date")
 MAT.A_Date_Time.widget       = WS ("html/field.jnj, datetime")
 MAT.A_Email.widget           = WS ("html/field.jnj, email")
 MAT.A_Text.widget            = WS ("html/field.jnj, text")
+MAT._A_Named_Object_.widget  = WS ("html/field.jnj, named_object")
 
 MER                          = MOM.Error
 MER.Invalid_Attribute.widget = WS ("html/mom_errors.jnj, invalide_attribute")

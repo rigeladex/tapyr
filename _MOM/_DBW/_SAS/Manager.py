@@ -266,13 +266,16 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def Reset_Metadata
 
     def _replace_a_object_pickle_functions (cls, kind) :
-        old_cls = kind.__class__
-        new_cls = old_cls.__class__ \
-            ( "%s_SAS_Object" % (old_cls.__name__)
-            , (SAS_A_Object_Kind_Mixin, old_cls)
-            , {}
-            )
-        kind.__class__ = new_cls
+        ### if kind is inherited it is possible that we already replaced the
+        ### class
+        if not issubclass (kind.__class__, SAS_A_Object_Kind_Mixin) :
+            old_cls = kind.__class__
+            new_cls = old_cls.__class__ \
+                ( "%s_SAS_Object" % (old_cls.__name__)
+                , (SAS_A_Object_Kind_Mixin, old_cls)
+                , {}
+                )
+            kind.__class__ = new_cls
     # end def _replace_a_object_pickle_functions
 
     def _setup_columns ( cls, e_type, db_attrs, bases, unique
