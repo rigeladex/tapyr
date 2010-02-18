@@ -47,6 +47,7 @@
 #     8-Feb-2010 (CT) Doctest for `t4.up_ex` corrected
 #    14-Feb-2010 (MG) Fixed doctest after fixing `Entity._record_iter` (which
 #                     introducted a new change object)
+#    18-Feb-2010 (CT) `Rodent_is_sick` added to test unary links
 #    ««revision-date»»···
 #--
 
@@ -140,7 +141,17 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
     ...     print et.epkified_ckd.source_code.rstrip ()
     ...     print et.epkified_raw.source_code.rstrip ()
     ...
-    *** MOM.Link *** ('left', 'right')
+    *** MOM.Link *** ('left',)
+    def epkified_ckd (cls, left, ** kw) :
+        return (left,), kw
+    def epkified_raw (cls, left, ** kw) :
+        return (left,), kw
+    *** MOM.Link1 *** ('left',)
+    def epkified_ckd (cls, left, ** kw) :
+        return (left,), kw
+    def epkified_raw (cls, left, ** kw) :
+        return (left,), kw
+    *** MOM._MOM_Link_n_ *** ('left', 'right')
     def epkified_ckd (cls, left, right, ** kw) :
         return (left, right), kw
     def epkified_raw (cls, left, right, ** kw) :
@@ -210,6 +221,11 @@ passed for the :ref:`essential primary keys<essential-primary-keys>`.
         return (name, serial_no), kw
     def epkified_raw (cls, name, serial_no, ** kw) :
         return (name, serial_no), kw
+    *** BMT.Rodent_is_sick *** ('left', 'sick_leave')
+    def epkified_ckd (cls, left, sick_leave, ** kw) :
+        return (left, sick_leave), kw
+    def epkified_raw (cls, left, sick_leave, ** kw) :
+        return (left, sick_leave), kw
     *** BMT.Rodent_in_Trap *** ('left', 'right')
     def epkified_ckd (cls, left, right, ** kw) :
         return (left, right), kw
@@ -275,9 +291,7 @@ The app-type specific entity-types are ready to be used by
     [Blob `FO`, Cached_Role `catch`, Boolean `electric`, Int `is_used`, Cached_Role `location`, Float `max_weight`, Name `name`, Cached_Role `owner`, Int `serial_no`, Cached_Role `setter`, String `ui_display`, Float `up_ex`, Float `up_ex_q`, Boolean `x_locked`]
 
     >>> sorted (ET_Id_Entity.relevant_roots)
-    ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap',\
- 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap',\
- 'BMT.Trap']
+    ['BMT.Location', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Trap']
     >>> ET_Person.relevant_root
     <class 'BMT.Person' [BMT__Hash__HPS]>
     >>> ET_Rodent.relevant_root
@@ -296,18 +310,22 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> sorted (apt.etypes)
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Lifetime', 'MOM.Lifetime_N', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._MOM_Link_n_']
     >>> [t.type_name for t in apt._T_Extension]
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Lifetime', 'MOM.Lifetime_N', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
     ...     print u"%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
-    MOM.Link                            ('left', 'right')
+    MOM.Link                            ('left',)
+    MOM.Link1                           ('left',)
+    MOM._MOM_Link_n_                    ('left', 'right')
     MOM.Link2                           ('left', 'right')
     MOM.Link2_Ordered                   ('left', 'right', 'seq_no')
     MOM.Link3                           ('left', 'middle', 'right')
     MOM.Object                          ()
     MOM.Named_Object                    ('name',)
+    MOM.Lifetime                        ()
+    MOM.Lifetime_N                      ()
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
@@ -317,6 +335,7 @@ The app-type specific entity-types are ready to be used by
     BMT.Otter                           ('name',)
     BMT.Trap                            ('name', 'serial_no')
     BMT.Supertrap                       ('name', 'serial_no')
+    BMT.Rodent_is_sick                  ('left', 'sick_leave')
     BMT.Rodent_in_Trap                  ('left', 'right')
     BMT.Person_owns_Trap                ('left', 'right')
     BMT.Person_sets_Trap_at_Location    ('left', 'middle', 'right')
@@ -326,6 +345,10 @@ The app-type specific entity-types are ready to be used by
         (<bound method M_E_Type_Id.sort_key of <class 'MOM.Id_Entity' [BMT__Hash__HPS]>>,)
     MOM.Link
         (<bound method M_E_Type_Link.sort_key of <class 'MOM.Link' [BMT__Hash__HPS]>>,)
+    MOM.Link1
+        (<bound method M_E_Type_Link1.sort_key of <class 'MOM.Link1' [BMT__Hash__HPS]>>,)
+    MOM._MOM_Link_n_
+        (<bound method M_E_Type_Link.sort_key of <class 'MOM._MOM_Link_n_' [BMT__Hash__HPS]>>,)
     MOM.Link2
         (<bound method M_E_Type_Link2.sort_key of <class 'MOM.Link2' [BMT__Hash__HPS]>>,)
     MOM.Link2_Ordered
@@ -336,6 +359,10 @@ The app-type specific entity-types are ready to be used by
         (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__HPS]>>,)
     MOM.Named_Object
         ('name',)
+    MOM.Lifetime
+        ('birth',)
+    MOM.Lifetime_N
+        ('birth',)
     BMT.Location
         ('lon', 'lat')
     BMT.Person
@@ -354,6 +381,8 @@ The app-type specific entity-types are ready to be used by
         ('name', 'serial_no')
     BMT.Supertrap
         ('name', 'serial_no')
+    BMT.Rodent_is_sick
+        ('left.name', 'sick_leave')
     BMT.Rodent_in_Trap
         ('left.name', 'right.name', 'right.serial_no')
     BMT.Person_owns_Trap
@@ -468,6 +497,7 @@ appropriate class:
     >>> t4    = scope.BMT.Trap       (u"Y", 2)
     >>> t5    = scope.BMT.Trap       (u"Z", 3)
 
+    >>> Ris   = scope.BMT.Rodent_is_sick
     >>> RiT   = scope.BMT.Rodent_in_Trap
     >>> PoT   = scope.BMT.Person_owns_Trap
     >>> PTL   = scope.BMT.Person_sets_Trap_at_Location
@@ -1195,6 +1225,16 @@ specify the (names of the) attributes it depends on in
     >>> t4.up_ex, t4.up_ex_q
     (None, None)
 
+Unary links
+-----------
+
+    >>> osm = Ris (m, scope.MOM.Lifetime (birth = "20100218", raw = True))
+    >>> osm.as_code ()
+    u"BMT.Rodent_is_sick ((u'Mighty_Mouse'), dict (birth = '2010/02/18'), )"
+    >>> osm.fever = 42
+    >>> osm.as_code ()
+    u"BMT.Rodent_is_sick ((u'Mighty_Mouse'), dict (birth = '2010/02/18'), fever = 42.0)"
+
 
 """
 
@@ -1208,6 +1248,7 @@ __doc__ = doctest = dt_form % dict \
     )
 
 from   _MOM.import_MOM        import *
+from   _MOM._Attr.Lifetime    import *
 from   _MOM.Product_Version   import Product_Version, IV_Number
 from   _TFL.Package_Namespace import Derived_Package_Namespace
 from   _TFL                   import sos
@@ -1458,6 +1499,41 @@ _Ancestor_Essence = Trap
 class Supertrap (_Ancestor_Essence) :
     """An enormously improved Trap."""
 # end class Supertrap
+
+_Ancestor_Essence = MOM.Link1
+
+class Rodent_is_sick (_Ancestor_Essence) :
+    """Model the sickness of a rodent."""
+
+    PNS = BMT
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+            """Rodent that is sick"""
+
+            role_type     = Rodent
+
+        # end class left
+
+        class sick_leave (A_Lifetime) :
+            """Duration of sick leave"""
+
+            kind               = Attr.Primary
+
+        # end class sick_leave
+
+        class fever (A_Float) :
+            """Highest temperature during the sickness"""
+
+            kind               = Attr.Optional
+
+        # end class fever
+    # end class _Attributes
+
+# end class Rodent_is_sick
 
 _Ancestor_Essence = MOM.Link2
 

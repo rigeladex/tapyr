@@ -43,6 +43,7 @@
 #                     directly derived from `Link2`
 #    18-Jan-2010 (CT) `Role_Cacher_1` factored, `Role_Cacher_n` added
 #     8-Feb-2010 (CT) `Link` changed to redefine `_destroy`, not `destroy`
+#    18-Feb-2010 (CT) `Link1` added, `_MOM_Link_n_` factored
 #    ««revision-date»»···
 #--
 
@@ -57,7 +58,9 @@ import  _MOM._Meta.M_Link
 
 import _MOM.Entity
 
-class _MOM_Link_ (MOM.Id_Entity) :
+_Ancestor_Essence = MOM.Id_Entity
+
+class _MOM_Link_ (_Ancestor_Essence) :
     """Root class for link-types of MOM meta object model."""
 
     __metaclass__         = MOM.Meta.M_Link
@@ -66,17 +69,12 @@ class _MOM_Link_ (MOM.Id_Entity) :
     is_partial            = True
     is_synthetic          = False
 
-    class _Attributes (MOM.Id_Entity._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class left (_A_Link_Role_Left_, A_Link_Role_EB) :
             """Left role of association. Override to define `role_type`, ..."""
 
         # end class left
-
-        class right (_A_Link_Role_Right_, A_Link_Role_EB) :
-            """Right role of association. Override to define `role_type`, ..."""
-
-        # end class right
 
     # end class _Attributes
 
@@ -99,7 +97,40 @@ class _MOM_Link_ (MOM.Id_Entity) :
 
 Link = _MOM_Link_ # end class
 
-class Link2 (Link) :
+_Ancestor_Essence = Link
+
+class Link1 (_Ancestor_Essence) :
+    """Model an entity-based link of a unary association of the MOM meta
+       object model.
+    """
+
+    __metaclass__         = MOM.Meta.M_Link1
+    is_partial            = True
+
+# end class Link1
+
+_Ancestor_Essence = Link
+
+class _MOM_Link_n_ (_Ancestor_Essence) :
+    """Root class for link-types of MOM meta object model with more than 1 role."""
+
+    __metaclass__         = MOM.Meta.M_Link_n
+    is_partial            = True
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        class right (_A_Link_Role_Right_, A_Link_Role_EB) :
+            """Right role of association. Override to define `role_type`, ..."""
+
+        # end class right
+
+    # end class _Attributes
+
+# end class _MOM_Link_n_
+
+_Ancestor_Essence = _MOM_Link_n_
+
+class Link2 (_Ancestor_Essence) :
     """Model an entity-based link of a binary association of the MOM meta
        object model.
     """
@@ -109,14 +140,16 @@ class Link2 (Link) :
 
 # end class Link2
 
-class Link2_Ordered (Link2) :
+_Ancestor_Essence = Link2
+
+class Link2_Ordered (_Ancestor_Essence) :
     """Model a link of a binary ordered essential association of the MOM meta
        object model.
     """
 
     is_partial            = True
 
-    class _Attributes (Link2._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class seq_no (A_Int) :
             """Sequence number of a link in an ordered association."""
@@ -129,7 +162,9 @@ class Link2_Ordered (Link2) :
 
 # end class Link2_Ordered
 
-class Link3 (Link) :
+_Ancestor_Essence = _MOM_Link_n_
+
+class Link3 (_Ancestor_Essence) :
     """Model a link of a ternary essential association of the MOM meta
        object model.
     """
@@ -137,7 +172,7 @@ class Link3 (Link) :
     __metaclass__         = MOM.Meta.M_Link3
     is_partial            = True
 
-    class _Attributes (Link._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         class middle (_A_Link_Role_Middle_, A_Link_Role_EB) :
             """Middle role of association. Override to define `role_type`, ..."""

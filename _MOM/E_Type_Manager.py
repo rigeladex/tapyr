@@ -60,6 +60,7 @@
 #     4-Feb-2010 (CT) `Entity` factored, `An_Entity` added
 #     8-Feb-2010 (CT) `__getattr__` and `__repr__` moved from `Id_Entity` to
 #                     `Entity`
+#    18-Feb-2010 (CT) `Link1` added
 #    ««revision-date»»···
 #--
 
@@ -403,6 +404,11 @@ class Link (Id_Entity) :
     # end def _role_to_raw_iter
 
 # end class Link
+
+class Link1 (Link) :
+    """Scope-specific manager for essential unary link-types."""
+
+# end class Link1
 
 class Link2 (Link) :
     """Scope-specific manager for essential binary link-types."""

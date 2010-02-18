@@ -50,6 +50,7 @@
 #    22-Dec-2009 (CT) `M_Link2_Ordered` and `Sequence_Number` removed
 #    18-Jan-2010 (CT) `M_Link2._m_setup_etype_auto_props` changed to handle
 #                     `auto_cache` for `max_links != 1`, too
+#    18-Feb-2010 (CT) `M_Link1` and `M_E_Type_Link1` added (`M_Link_n` factored)
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,10 @@ class M_Link (MOM.Meta.M_Id_Entity) :
     """Meta class of link-types of MOM meta object model."""
 
     def other_role_name (cls, role_name) :
-        return cls._orn [role_name]
+        raise TypeError \
+            ( "%s.%s.other_role_name needs to be explicitly defined"
+            % (cls.type_name, role_name)
+            )
     # end def other_role_name
 
     def _m_setup_etype_auto_props (cls) :
@@ -77,59 +81,84 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 a.role_type.is_relevant = True
                 rc = a.auto_cache
                 if rc :
-                    if not isinstance (rc, MOM.Role_Cacher) :
-                        rc = MOM.Role_Cacher (rc)
-                    rc.setup (cls, a)
-                    auto_cache_roles.add (rc)
-                    other_role = rc.other_role
-                    other_type = other_role.role_type
-                    if other_type is None :
-                        continue
-                    assert rc.attr_name not in other_type._Attributes._names
-                    if other_role.max_links == 1 :
-                        CR = ( MOM.Attr.A_Cached_Role
-                             , MOM.Attr.A_Cached_Role_DFC
-                             ) [bool (other_role.dfc_synthesizer)]
-                    else :
-                        if other_role.dfc_synthesizer :
-                            raise NotImplementedError \
-                                ( "Autocache for DFC and max_links > 1: %s.%s"
-                                % (cls, a.role_name)
-                                )
-                        CR = MOM.Attr.A_Cached_Role_Set
-                    kw =  dict \
-                        ( assoc        = cls.type_name
-                        , Class        = a.role_type
-                        , __module__   = other_type.__module__
-                        )
-                    desc = getattr (other_role, "description", None)
-                    if desc is None :
-                        desc = "`%s` linked to `%s`" % \
-                            (a.role_name.capitalize (), other_role.role_name)
-                    kw ["description"] = desc
-                    other_type.add_attribute \
-                        (type (CR) (rc.attr_name, (CR, ), kw))
+                    cls._m_setup_auto_cache_role (a, rc, auto_cache_roles)
         cls.auto_cache_roles = tuple (auto_cache_roles)
     # end def _m_setup_etype_auto_props
 
 # end class M_Link
 
-class M_Link2 (M_Link) :
+class M_Link1 (M_Link) :
+    """Meta class of unary link-types of MOM meta object model."""
+
+    def other_role_name (cls, role_name) :
+        raise TypeError \
+            ( "%s: There is no other role than %s"
+            % (cls.type_name, role_name)
+            )
+    # end def other_role_name
+
+    def _m_setup_auto_cache_role (cls, a, rc, auto_cache_roles) :
+        raise NotImplementedError \
+            ( "Auto-aching not implemented for unary link-types: %s.%s"
+            % (cls.type_name, a.role_name)
+            )
+    # end def _m_setup_auto_cache_role
+
+# end class M_Link1
+
+class M_Link_n (M_Link) :
+    """Meta class of link-types with more than 1 role."""
+
+    def _m_setup_auto_cache_role (cls, a, rc, auto_cache_roles) :
+        if not isinstance (rc, MOM.Role_Cacher) :
+            rc = MOM.Role_Cacher (rc)
+        rc.setup (cls, a)
+        auto_cache_roles.add (rc)
+        other_role = rc.other_role
+        other_type = other_role.role_type
+        if other_type is None :
+            return
+        assert rc.attr_name not in other_type._Attributes._names
+        if other_role.max_links == 1 :
+            CR = ( MOM.Attr.A_Cached_Role
+                 , MOM.Attr.A_Cached_Role_DFC
+                 ) [bool (other_role.dfc_synthesizer)]
+        else :
+            if other_role.dfc_synthesizer :
+                raise NotImplementedError \
+                    ( "Autocache for DFC and max_links > 1: %s.%s"
+                    % (cls, a.role_name)
+                    )
+            CR = MOM.Attr.A_Cached_Role_Set
+        kw =  dict \
+            ( assoc        = cls.type_name
+            , Class        = a.role_type
+            , __module__   = other_type.__module__
+            )
+        desc = getattr (other_role, "description", None)
+        if desc is None :
+            desc = "`%s` linked to `%s`" % \
+                (a.role_name.capitalize (), other_role.role_name)
+        kw ["description"] = desc
+        other_type.add_attribute \
+            (type (CR) (rc.attr_name, (CR, ), kw))
+    # end def _m_setup_auto_cache_role
+
+# end class M_Link_n
+
+class M_Link2 (M_Link_n) :
     """Meta class of binary entity-based link-types of MOM meta object model."""
 
     _orn = dict (left = "right", right = "left")
 
+    def other_role_name (cls, role_name) :
+        return cls._orn [role_name]
+    # end def other_role_name
+
 # end class M_Link2
 
-class M_Link3 (M_Link) :
+class M_Link3 (M_Link_n) :
     """Meta class of ternary link-types of MOM meta object model."""
-
-    def other_role_name (cls, role_name) :
-        raise TypeError \
-            ( "%s.%s.other_role_name needs to be explicitly defined"
-            % (cls.type_name, role_name)
-            )
-    # end def other_role_name
 
 # end class M_Link3
 
@@ -166,14 +195,6 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
             (r.role_type for r in Roles if r.role_type is not None)
         if len (role_types) == len (Roles) :
             type_base_names = [rt.type_base_name for rt in role_types]
-            rltn_pat = TFL.Regexp (r"_(.*?)_".join (type_base_names))
-            if rltn_pat.match (cls.type_base_name) :
-                cls.rltn_names = rltn_pat.groups ()
-            else :
-                cls.rltn_names = None
-                if __debug__ :
-                    print "No match for relation names", \
-                        cls.name, type_base_names, rltn_pat.pattern
             cls.number_of_roles = nor      = len (Roles)
             cls.role_map        = role_map = {}
             for i, r in enumerate (Roles) :
@@ -198,6 +219,14 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
     # end def _m_setup_roles
 
 # end class M_E_Type_Link
+
+@TFL.Add_To_Class ("M_E_Type", M_Link1)
+class M_E_Type_Link1 (M_E_Type_Link) :
+    """Meta class for essence of MOM.Link1."""
+
+    Manager = MOM.E_Type_Manager.Link1
+
+# end class M_E_Type_Link1
 
 @TFL.Add_To_Class ("M_E_Type", M_Link2)
 class M_E_Type_Link2 (M_E_Type_Link) :
@@ -234,15 +263,20 @@ Class `MOM.Meta.M_Link`
       The tuple of role objects (contains as many role objects as the arity
       of the association specifies).
 
+.. class:: M_Link1
+
+    `MOM.Meta.M_Link1` provides the meta machinery for
+    :class:`unary links<_MOM.Link.Link1>`.
+
 .. class:: M_Link2
 
-    `TOM.Meta.M_Link2` provides the meta machinery for
-    :class:`binary links<_TOM.Link2.Link2>`.
+    `MOM.Meta.M_Link2` provides the meta machinery for
+    :class:`binary links<_MOM.Link.Link2>`.
 
 .. class:: M_Link3
 
-    `TOM.Meta.M_Link3` provides the meta machinery for
-    :class:`ternary links<_TOM.Link3.Link3>`.
+    `MOM.Meta.M_Link3` provides the meta machinery for
+    :class:`ternary links<_MOM.Link.Link3>`.
 
 """
 

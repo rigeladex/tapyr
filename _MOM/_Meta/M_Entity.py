@@ -70,6 +70,7 @@
 #    12-Feb-2010 (CT) `M_Entity._m_init_prop_specs` changed to create a new
 #                     `ui_display` attribute for each class (with the proper
 #                     `ui_name`)
+#    18-Feb-2010 (CT) `M_E_Type_An._m_setup_sorted_by` redefined
 #    ««revision-date»»···
 #--
 
@@ -553,6 +554,10 @@ class M_E_Type_An (M_E_Type) :
         cls.__m_super._m_setup_attributes (bases, dct)
         cls.hash_sig = cls.required
     # end def _m_setup_attributes
+
+    def _m_setup_sorted_by (cls) :
+        cls.sorted_by = TFL.Sorted_By (* tuple (a.name for a in cls.hash_sig))
+    # end def _m_setup_sorted_by
 
 # end class M_E_Type_An
 
