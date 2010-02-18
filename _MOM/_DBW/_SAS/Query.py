@@ -28,6 +28,7 @@
 #
 # Revision Dates
 #    12-Feb-2010  (MG) Creation (based on SA.Query)
+#    18-Feb-2010 (MG) `MOM_Composite_Query`: comperison operators added
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,8 @@ import _TFL._Meta.Object
 
 from   _MOM                  import MOM
 import _MOM._DBW._SAS
+
+from    sqlalchemy           import sql
 
 class Query (TFL.Meta.Object) :
     """A query object for non MOM objects"""
@@ -119,6 +122,7 @@ class MOM_Composite_Query (TFL.Meta.Object) :
         db_attrs, columns, prefix = e_type._sa_save_attrs
         prefix_len                = len (prefix)
         attr_names                = [c.name [prefix_len:] for c in columns]
+        self._ATTRIBUTES          = attr_names
         for idx, name in \
             (  (i, an) for (i, an) in enumerate (attr_names)
             if not an.startswith ("__raw_")
@@ -139,6 +143,33 @@ class MOM_Composite_Query (TFL.Meta.Object) :
             return self._query_fct [name].query._sa_filter (self)
         raise AttributeError (name)
     # end def __getattr__
+
+    def __eq__ (self, rhs) :
+        result = []
+        for an in self._ATTRIBUTES :
+            result.append (getattr (self, an) == getattr (rhs, an))
+        return sql.and_ (* result)
+    # end def __eq__
+
+    def __ne__ (self, rhs) :
+        return not self == rhs
+    # end def __ne__
+
+    def __le__ (self, rhs) :
+        raise TypeError ("`<` is not supported for composits")
+    # end def __lt__
+
+    def __le__ (self, rhs) :
+        raise TypeError ("`<=` is not supported for composits")
+    # end def __lt__
+
+    def __gt__ (self, rhs) :
+        raise TypeError ("`>` is not supported for composits")
+    # end def __gt__
+
+    def __ge__ (self, rhs) :
+        raise TypeError ("`>=` is not supported for composits")
+    # end def __ge__
 
 # end class MOM_Composite_Query
 

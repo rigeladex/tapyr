@@ -1228,12 +1228,13 @@ specify the (names of the) attributes it depends on in
 Unary links
 -----------
 
-    >>> osm = Ris (m, scope.MOM.Lifetime (birth = "20100218", raw = True))
+    >>> sr = scope.BMT.Mouse ("Sick_Rodent")
+    >>> osm = Ris (sr, scope.MOM.Lifetime (birth = "20100218", raw = True))
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Mighty_Mouse'), dict (birth = '2010/02/18'), )"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (birth = '2010/02/18'), )"
     >>> osm.fever = 42
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Mighty_Mouse'), dict (birth = '2010/02/18'), fever = 42.0)"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (birth = '2010/02/18'), fever = 42.0)"
 
 
 """

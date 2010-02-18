@@ -31,6 +31,8 @@
 #    16-Feb-2010 (MG) `Reset_Metadata` added
 #    16-Feb-2010 (MG) Introduce `inserted_primary_key` for SQLAlchemy before
 #                     version 0.6
+#    18-Feb-2010 (MG) Don't add primray Composite attributes directly to the
+#                     unique constraint (only the sub attributes will be added)
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -312,7 +314,11 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if prefix :
                 col_name       = "%s%s" % (prefix, col_name)
             attr._sa_col_name  = col_name
-            if kind.is_primary or name in unique_attrs :
+            if ( (   kind.is_primary
+                 and not isinstance (kind, MOM.Attr._Composite_Mixin_)
+                 )
+               or name in unique_attrs
+               ) :
                 unique.append (attr._sa_col_name)
             result.extend \
                 ( attr._sa_columns

@@ -48,7 +48,12 @@ r     = scope.BMT.Rat     ("rat")
 t1   = scope.BMT.Trap     ("X", 1)
 t2   = scope.BMT.Trap     ("X", 2)
 
-rit = scope.BMT.Rodent_in_Trap (m, t1)
+#rit = scope.BMT.Rodent_in_Trap (m, t1)
+ris = scope.BMT.Rodent_is_sick \
+    (m, scope.MOM.Lifetime (birth = "20100218", raw = True))
+scope.commit ()
+print scope.BMT.Rodent_is_sick.query \
+    (sick_leave = scope.MOM.Lifetime (birth = "20100218", raw = True)).all ()
 #scope.BMT.Rodent_in_Trap (r, ("X", 2))
 if 0 :
     c1 = MOM.SCM.Change.Attr (m, dict (color = "gray"))

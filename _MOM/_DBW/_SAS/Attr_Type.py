@@ -26,8 +26,10 @@
 #    Attribute type extension for the SAS backend
 #
 # Revision Dates
-#     11-Feb-2010 (MG) Creation (based on SA.Attr_Type)
+#    11-Feb-2010 (MG) Creation (based on SA.Attr_Type)
 #    16-Feb-2010 (MG) `_sa_columns_named_object` fixed
+#    18-Feb-2010 (MG) `_sa_columns_composite`: only add `hash_sig` attributes
+#                     of primay composites to the `unique` list
 #    ««revision-date»»···
 #--
 
@@ -92,10 +94,11 @@ def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
     db_attrs, role_attrs  = Manager._attr_dicts    (kind.C_Type, bases)
     prefix                = "__%s_" % (attr.name, )
     assert not role_attrs
+    unique_attrs          = set ()
+    if kind.is_primary :
+        unique_attrs      = set (k.attr.name for k in e_type.hash_sig)
     columns  = Manager._setup_columns \
-        ( e_type, db_attrs, bases, unique, prefix
-        , set (k.attr.name for k in e_type.hash_sig)
-        )
+        (e_type, db_attrs, bases, unique, prefix, unique_attrs)
     e_type._sa_save_attrs = db_attrs, columns, prefix
     return columns
 # end def _sa_columns_composite
