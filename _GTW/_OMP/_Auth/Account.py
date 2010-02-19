@@ -38,6 +38,7 @@
 #    19-Feb-2010 (MG) Change password handling added
 #    19-Feb-2010 (MG) `Account`: new attributes `enabled` and `suspended`
 #                     added, kind `active` changed to `Attr.Query`
+#    19-Feb-2010 (MG) `reset_password` implemented
 #    ««revision-date»»···
 #--
 
@@ -73,7 +74,7 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
 
             kind            = Attr.Query
             auto_up_depends = ("suspended", "enabled")
-            query           = (Q.suspended == True) & (Q.enabled == True)
+            query           = (Q.suspended != True) & (Q.enabled == True)
 
         # end class active
 
@@ -142,29 +143,48 @@ _Ancestor_Essence = Account
 class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     """E-Type manager for password accounts"""
 
-    def __call__ (self, name, password) :
+    @classmethod
+    def random_password (cls, length = 16) :
+        from   random import choice
+        import string
+        chars = string.letters + string.digits
+        return "".join \
+            ( [choice (chars) for i in xrange (length)])
+    # end def random_password
+
+    def __call__ (self, name, password, ** kw) :
         etype    = self._etype
         salt     = uuid.uuid4().hex
         password = etype.password_hash (password, salt)
-        return self.__super.__call__   (name, password = password, salt = salt)
+        return self.__super.__call__   \
+            (name, password = password, salt = salt, ** kw)
     # end def __call__
 
     def force_password_change (self, account) :
         Auth          = self.home_scope.GTW.OMP.Auth
         if isinstance (account, basestring) :
             account   = self.query (name = account).one ()
-        pw_change_for = Auth.Account_Password_Change_Required.query \
-            (account  = account).first ()
-        if not pw_change_for :
-            pw_change_for = Auth.Account_Password_Change_Required (account)
+        if not Auth.Account_Password_Change_Required.query \
+            (account  = account).count () :
+            Auth.Account_Password_Change_Required (account)
     # end def force_password_change
 
     def reset_password (self, account) :
-        Auth        = self.home_scope.GTW.OMP.Auth
+        Auth         = self.home_scope.GTW.OMP.Auth
         if isinstance (account, basestring) :
-            account = self.query (name = account).one ()
-        self.force_password_change (account)
-
+            account  = self.query           (name = account).one ()
+        if not account.enabled :
+            raise TypeError (u"Account has been disabled")
+        ### first we set the password to someting random nobody knows
+        account.change_password             (self.random_password (32))
+        ### than we create the password change request action
+        self.force_password_change          (account)
+        ### now create a reset password action which contains the new password
+        new_password = self.random_password (16)
+        Auth.Account_Pasword_Reset          (account, password = new_password)
+        ### and temporaty suspend the account
+        account.set                         (suspended = True)
+        return new_password
     # end def reset_password
 
 # end class Account_P_Manager
@@ -195,11 +215,12 @@ class Account_P (_Ancestor_Essence) :
 
     # end class _Attributes
 
-    def change_password (self, new_password) :
+    def change_password (self, new_password, remove_request = True) :
         self.set (password = self.password_hash (new_password, self.salt))
-        pwdr = self.password_change_required
-        if pwdr :
-            pwdr.destroy ()
+        if remove_request :
+            pwdr = self.password_change_required
+            if pwdr :
+                pwdr.destroy ()
     # end def change_password
 
     @classmethod
@@ -208,6 +229,11 @@ class Account_P (_Ancestor_Essence) :
         hash.update           (password)
         return hash.hexdigest ()
     # end def password_hash
+
+    def reset_password_action (self, token) :
+        return self.home_scope.GTW.OMP.Auth.Account_Pasword_Reset.query \
+            (account = self, token = token).first ()
+    # end def reset_password_action
 
     def verify_password (self, password) :
         return self.password == self.password_hash (password, self.salt)

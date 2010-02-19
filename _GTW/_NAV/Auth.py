@@ -29,6 +29,8 @@
 #    18-Feb-2010 (CT) Creation
 #    19-Feb-2010 (MG) `Login` fixed
 #    19-Feb-2010 (MG) `Change_Password` implemented
+#    19-Feb-2010 (MG) `Reset_Password` implemented
+#    19-Feb-2010 (MG) `Request_Reset_Password` added
 #    ««revision-date»»···
 #--
 
@@ -98,9 +100,11 @@ class Auth (GTW.NAV.Dir) :
                 req_data  = HTTP.Request_Data (request.arguments)
                 errors    = form (req_data)
                 if not errors :
-                    next  = req_data.get ("next", "/")
+                    next  = req_data.get      ("next", "/")
                     handler.set_secure_cookie ("username", account.name)
-                    raise HTTP.Redirect_302 (next)
+                    account.set               (suspended = False)
+                    ### XXX Add confirmation message
+                    raise HTTP.Redirect_302   (next)
             return self.__super.rendered (handler, template)
         # end def rendered
 
@@ -146,6 +150,7 @@ class Auth (GTW.NAV.Dir) :
             next_page = top.page_from_href (urlparse.urlsplit (next).path)
             if getattr (next_page, "login_required", False) :
                 next = "/"
+            ### XXX Add confirmation message
             raise top.HTTP.Redirect_302 (next)
         # end def _view
 
@@ -163,13 +168,52 @@ class Auth (GTW.NAV.Dir) :
 
     class Reset_Password (_Cmd_) :
 
-#       template     = "???"
-
         def rendered (self, handler, template = None) :
-            pass
+            top       = self.top
+            HTTP      = top.HTTP
+            ETM       = top.account_manager
+            account   = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            action    = account.reset_password_action (self.args [1])
+            if action :
+                account.change_password (action.password, False)
+                for l in top.scope.GTW.OMP.Auth.Account_Pasword_Reset.query \
+                             (account = account) :
+                    l.destroy ()
+                raise HTTP.Redirect_302 (self.href_change_pass (account))
+            raise HTTP.Error_404 ()
         # end def rendered
 
     # end class Reset_Password
+
+    class Request_Reset_Password (_Cmd_) :
+        """Initiate the reset password procedure."""
+
+        template = "reset_password.jnj"
+
+        def rendered (self, handler, template = None) :
+            context   = handler.context
+            request   = handler.request
+            top       = self.top
+            form      = GTW.Form.Auth.Reset_Password \
+                (top.account_manager, self.name)
+            context ["login_form"] = form
+            if request.method == "POST" :
+                HTTP      = top.HTTP
+                req_data  = HTTP.Request_Data (request.arguments)
+                errors    = form (req_data)
+                if form.account :
+                    passwd = top.scope.GTW.OMP.Auth.Account_P.reset_password \
+                        (form.account)
+                    next      = handler.request.headers.get ("Referer", "/")
+                    next_page = top.page_from_href \
+                        (urlparse.urlsplit (next).path)
+                    ### XXX Add confirmation message
+                    ### XXX send email
+                    raise HTTP.Redirect_302 (next)
+            return self.__super.rendered    (handler, template)
+        # end def rendered
+
+    # end class Request_Reset_Password
 
     @Once_Property
     def href (self) :
@@ -204,8 +248,8 @@ class Auth (GTW.NAV.Dir) :
         return pjoin (self.abs_href, self.T.register)
     # end def href_register
 
-    def href_reset_pass (self, obj) :
-        return pjoin (self.href_account (obj), self.T.reset_password)
+    def href_reset_pass (self, obj, token) :
+        return pjoin (self.abs_href, self.T.change_password, obj.lid, token)
     # end def href_reset_pass
 
     def rendered (self, handler, template = None) :
@@ -214,13 +258,14 @@ class Auth (GTW.NAV.Dir) :
     # end def rendered
 
     _child_name_map = dict \
-        ( action          = (Action,              2)
-        , change_email    = (Change_Email,        2)
-        , change_password = (Change_Password,     1)
-        , login           = (Login,               0)
-        , logout          = (Logout,              0)
-        , register        = (Register,            0)
-        , reset_password  = (Reset_Password,      2)
+        ( action                  = (Action,                 2)
+        , change_email            = (Change_Email,           2)
+        , change_password         = (Change_Password,        1)
+        , login                   = (Login,                  0)
+        , logout                  = (Logout,                 0)
+        , register                = (Register,               0)
+        , reset_password          = (Reset_Password,         2)
+        , request_reset_password  = (Request_Reset_Password, 0)
         )
 
     def _get_child (self, child, * grandchildren) :

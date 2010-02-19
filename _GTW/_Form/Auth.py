@@ -34,6 +34,7 @@
 #     3-Feb-2010 (MG) Pass salt to `verify_password`
 #    18-Feb-2010 (MG) `salt` moved into `Account_P` e_type
 #    19-Feb-2010 (MG) `Change_Password` form added
+#    19-Feb-2010 (MG) `Reset_Password` form added
 #    ««revision-date»»···
 #--
 
@@ -108,6 +109,29 @@ class _Change_Password_Mixin_ (TFL.Meta.Object) :
 
 # end class _Change_Password_Mixin_
 
+class _Reset_Password_Mixin_ (TFL.Meta.Object) :
+    """Convert the user name into an account."""
+
+    def __init__ (self, account_manager, * args, ** kw) :
+        self.account         = None
+        self.account_manager = account_manager
+        self.__super.__init__       (* args, ** kw)
+    # end def __init__
+
+    def _validate (self) :
+        _T           = TFL.I18N._T
+        self.account = username = self.get_required \
+            ("username", _T (u"A user name is required to login."))
+        if not self.field_errors and self.account_manager :
+            self.account = self.account_manager.query (name = username).first ()
+            if not self.account :
+                self.field_errors ["username"].append \
+                    (_T ("This username is not registered"))
+        self.request_data = {}
+    # end def _validate
+
+# end class _Reset_Password_Mixin_
+
 PWD_WS = GTW.Form.Widget_Spec ("html/field.jnj, password")
 
 Login  = GTW.Form.Plain.New \
@@ -126,6 +150,13 @@ Change_Password = GTW.Form.Plain.New \
         , GTW.Form.Field ( "npassword2", widget = PWD_WS)
         )
     , head_mixins = (_Change_Password_Mixin_, )
+    )
+Reset_Password = GTW.Form.Plain.New \
+    ( "Reset"
+    , GTW.Form.Field_Group_Description
+        ( GTW.Form.Field ("username")
+        )
+    , head_mixins = (_Reset_Password_Mixin_, )
     )
 
 if __name__ != "__main__" :

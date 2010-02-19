@@ -69,12 +69,12 @@ _Ancestor_Essence = _Account_Action_
 class Account_Token_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     """E-Type manager for token based account actions"""
 
-    def __call__ (self, account, expires = None) :
+    def __call__ (self, account, expires = None, ** kw) :
         token = uuid.uuid4 ().hex
         if not expires :
             etype   = self._etype
             expires = datetime.datetime.now ()+ etype.expire_duration_default
-        return self.__super.__call__ (account, token = token)
+        return self.__super.__call__ (account, token = token, ** kw)
     # end def __call__
 
 # end class Account_Token_Manager
@@ -143,6 +143,19 @@ _Ancestor_Essence = _Account_Token_Action_
 class Account_Pasword_Reset (_Ancestor_Essence) :
     """A password reset is pending for the linked account."""
 
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class password (A_Email) :
+            """The temporaty password."""
+
+            kind               = Attr.Required
+
+        # end class password
+
+    # end class _Attributes
+
 # end class Account_Pasword_Reset
 
 _Ancestor_Essence = _Account_Action_
@@ -164,6 +177,7 @@ class Account_Password_Change_Required (_Ancestor_Essence) :
         # end class left
 
     # end class _Attributes
+
 # end class Account_Password_Change_Required
 
 if __name__ != "__main__" :

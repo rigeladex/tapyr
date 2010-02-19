@@ -37,8 +37,10 @@ Test if we can set a e-type specific manager class
 <class '_GTW._OMP._Auth.Account_Handling.Account_Token_Manager'>
 
 let's create some accounts
->>> acc1 = scope.Auth.Account_P ("user1@example.com", password = "passwd1")
->>> acc2 = scope.Auth.Account_P ("user2@example.com", password = "passwd1")
+>>> acc1 = scope.Auth.Account_P \\
+...     ("user1@example.com", password = "passwd1", enabled = True)
+>>> acc2 = scope.Auth.Account_P \\
+...     ("user2@example.com", password = "passwd1", enabled = True)
 >>> acc1.name, acc2.name
 (u'user1@example.com', u'user2@example.com')
 
@@ -134,6 +136,62 @@ Redirect_302: /
 True
 >>> scope.Auth.Account_Password_Change_Required.query (account = acc1).count ()
 0
+
+Next, we test the reset password functions
+>>> acc2.active
+True
+>>> handler = GET ("/account/request_reset_password")
+>>> handler = POST ("/account/request_reset_password", username = acc2.name)
+Traceback (most recent call last):
+    ....
+Redirect_302: /
+>>> acc2.active
+False
+>>> handler = POST ("/account/request_reset_password", username = acc2.name)
+Traceback (most recent call last):
+    ....
+Redirect_302: /
+>>> reset_pwd  = scope.Auth.Account_Pasword_Reset.query (account = acc2).all ()
+>>> new_password_1 = reset_pwd [0].password
+>>> new_password_2 = reset_pwd [1].password
+>>> len (reset_pwd)
+2
+>>> scope.Auth.Account_Password_Change_Required.query (account = acc2).count ()
+1
+
+Try to verify the `new` passwords
+>> acc2.verify_password (new_password_1), acc2.verify_password (new_password_2)
+False, False
+
+>>> url = "/account/reset_password/%s/%s" % (acc1.lid, reset_pwd [0].token)
+>>> handler = GET (url)
+Traceback (most recent call last):
+    ....
+Error_404
+>>> scope.Auth.Account_Pasword_Reset.query (account = acc2).count ()
+2
+>>> scope.Auth.Account_Password_Change_Required.query (account = acc2).count ()
+1
+>>> reset_link = reset_pwd [0]
+>>> url        = "/account/reset_password/%s/%s" % (acc2.lid, reset_link.token)
+>>> handler    = GET (url)
+Traceback (most recent call last):
+    ....
+Redirect_302: /account/change_password/3
+>>> acc2.verify_password (reset_link.password)
+True
+>>> scope.Auth.Account_Pasword_Reset.query (account = acc2).count ()
+0
+>>> scope.Auth.Account_Password_Change_Required.query (account = acc2).count ()
+1
+>>> acc1.set (enabled = False)
+1
+>>> new_password_1 = scope.Auth.Account_P.reset_password (acc1)
+Traceback (most recent call last):
+    ....
+TypeError: Account has been disabled
+>>> acc1.set (enabled = True)
+1
 """
 from   _MOM.__test__                 import *
 from   _GTW                          import GTW
