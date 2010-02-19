@@ -68,11 +68,12 @@ GTW.Version = Product_Version \
         , db_extension    = ".how"
         )
     )
-import _GTW._OMP._PAP.import_PAP
+import _GTW._OMP._Auth.import_Auth
+import _GTW._OMP._PAP .import_PAP
 import _GTW._OMP._PAP.Nav
 
 apt = MOM.App_Type \
-    (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP)
+    (u"HWO", GTW, PNS_Aliases = dict (PAP = GTW.OMP.PAP, Auth = GTW.OMP.Auth)
     ).Derived (EMS, DBW)
 
 scope        = MOM.Scope.new (apt, None)
@@ -122,4 +123,8 @@ if add :
     #print env.get_template ("base").render (form = form)
     #display_values (form)
     print form.inline_groups [0].forms [0]
+
+a = scope.Auth.Account_P ("user1", password = "pw1")
+scope.Auth.Account_Password_Change_Required (a)
+
 ### __END__ GTW.Form.MOM.__Test

@@ -210,12 +210,11 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             ### update_etype run
             e_type._sa_save_attrs = bases, db_attrs, role_attrs
             if issubclass (e_type, MOM.Link) :
-                if issubclass (e_type, MOM.Link1) :
-                    for cr in e_type.auto_cache_roles :
+                for cr in e_type.auto_cache_roles :
+                    if isinstance (cr, MOM.Link_Cacher) :
                         cr_et = getattr (e_type, cr.role_name).role_type
                         cls.role_cacher [cr_et.type_name].add ((cr, e_type))
-                else :
-                    for cr in e_type.auto_cache_roles :
+                    else :
                         cls.role_cacher \
                             [cr.other_role.role_type.type_name].add \
                             ((cr, e_type))

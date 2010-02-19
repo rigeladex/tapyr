@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     3-Feb-2010 (CT) Creation
+#    19-Feb-2010 (MG) `left.auto_cache` removed
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,6 @@ class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
         class left (_Ancestor.left) :
 
             role_type      = Person
-            auto_cache     = True
 
         # end class left
 

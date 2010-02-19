@@ -62,7 +62,8 @@ class Auth (GTW.NAV.Dir) :
 
     # end class _Cmd_
 
-    class Action (_Cmd_) :
+    class Activate (_Cmd_) :
+        """Account activation"""
 
 #       template     = "???"
 
@@ -70,7 +71,7 @@ class Auth (GTW.NAV.Dir) :
             pass
         # end def rendered
 
-    # end class Action
+    # end class Activate
 
     class Change_Email (_Cmd_) :
 
@@ -224,10 +225,6 @@ class Auth (GTW.NAV.Dir) :
         return pjoin (self.abs_href, self.T.account, obj.lid)
     # end def href_account
 
-    def href_action (self, obj, token) :
-        return pjoin (self.abs_href, self.T.action, obj.lid, token)
-    # end def href_action
-
     def href_change_email (self, obj) :
         return pjoin (self.href_account (obj), self.T.change_email)
     # end def href_change_email
@@ -258,12 +255,12 @@ class Auth (GTW.NAV.Dir) :
     # end def rendered
 
     _child_name_map = dict \
-        ( action                  = (Action,                 2)
-        , change_email            = (Change_Email,           2)
+        (  activate                = (Activate,               0)
+        ,  change_email            = (Change_Email,           2)
         , change_password         = (Change_Password,        1)
         , login                   = (Login,                  0)
         , logout                  = (Logout,                 0)
-        , register                = (Register,               0)
+        ,  register                = (Register,               0)
         , reset_password          = (Reset_Password,         2)
         , request_reset_password  = (Request_Reset_Password, 0)
         )

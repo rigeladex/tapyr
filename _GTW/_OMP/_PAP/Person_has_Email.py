@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
 #     3-Feb-2010 (CT) `_Person_has_Property_` factored
+#    19-Feb-2010 (MG) `left.auto_cache` added
 #    ««revision-date»»···
 #--
 
@@ -47,6 +48,12 @@ class Person_has_Email (_Ancestor_Essence) :
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+
+            auto_cache    = True
+
+        # end class left
 
         class right (_Ancestor.right) :
 

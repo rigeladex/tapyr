@@ -239,13 +239,6 @@ class Account_P (_Ancestor_Essence) :
         return self.password == self.password_hash (password, self.salt)
     # end def verify_password
 
-    ### XXX remove me once cached roles are supported for Link1
-    @property
-    def password_change_required (self) :
-        return self.home_scope.Auth.Account_Password_Change_Required.query \
-            (account = self).first ()
-    # end def password_change_required
-
 # end class Account_P
 
 if __name__ != "__main__" :

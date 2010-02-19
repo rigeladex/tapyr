@@ -106,6 +106,7 @@
 #                     scope argument)
 #    16-Feb-2010 (CT) `copy` changed to use `scope.entity_type` instead of
 #                     home-grown code
+#    19-Feb-2010 (MG) `Entity.__repr__` changed
 #    ««revision-date»»···
 #--
 
@@ -514,7 +515,10 @@ class Entity (TFL.Meta.Object) :
     # end def __getattr__
 
     def __repr__ (self) :
-        return self._repr (self.type_name)
+        try :
+            return self._repr (self.type_name)
+        except AttributeError :
+            return "<%s Incomplete>" % (self.type_name, )
     # end def __repr__
 
 # end class Entity
@@ -560,8 +564,8 @@ class An_Entity (Entity) :
 
     def copy (self, ** kw) :
         scope  = kw.pop  ("scope", self.home_scope)
-        cls    = getattr (scope, self.type_name)._etype
-        result = cls     (scope = scope, ** kw)
+        etype  = scope.entity_type (self.type_name)
+        result = etype             (scope = scope, ** kw)
         raw_kw = dict \
             (  (a.name, a.get_raw (self))
             for a in self.user_attr if a.name not in kw

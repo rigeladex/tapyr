@@ -172,7 +172,8 @@ class Account_Password_Change_Required (_Ancestor_Essence) :
         class left (_Ancestor.left) :
             """Account which this action is bound to."""
 
-            #auto_cache = "password_change_required"
+            auto_cache = "password_change_required"
+            max_links  = 1
 
         # end class left
 
