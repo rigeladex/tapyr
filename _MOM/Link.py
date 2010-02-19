@@ -44,6 +44,10 @@
 #    18-Jan-2010 (CT) `Role_Cacher_1` factored, `Role_Cacher_n` added
 #     8-Feb-2010 (CT) `Link` changed to redefine `_destroy`, not `destroy`
 #    18-Feb-2010 (CT) `Link1` added, `_MOM_Link_n_` factored
+#    19-Feb-2010 (CT) `Link_Cacher` added, `_Cacher_` factored
+#    19-Feb-2010 (CT) `Role_Cacher.setup` changed to create `A_Cached_Role`
+#                     for `other_type` (factored in here from
+#                     `M_Link_n._m_setup_auto_cache_role`)
 #    ««revision-date»»···
 #--
 
@@ -183,38 +187,145 @@ class Link3 (_Ancestor_Essence) :
 
 # end class Link3
 
-class Role_Cacher (TFL.Meta.Object) :
+class _Cacher_ (TFL.Meta.Object) :
+
+    def __init__ (self, attr_name = None) :
+        self.role_name = None
+        self.attr_name = attr_name
+    # end def __init__
+
+    def setup (self, Link, role) :
+        assert self.role_name is None
+        self.role_name = role_name = role.role_name
+        attr_name = self.attr_name
+        if attr_name is None or attr_name == True :
+            self.attr_name = self._auto_attr_name (Link, role) + self._suffix
+        assert isinstance (self.attr_name, basestring)
+    # end def setup
+
+    def _setup_attr (self, CR, Link, role, role_type, desc) :
+        assert self.attr_name not in role_type._Attributes._names
+        kw =  dict \
+            ( assoc        = Link.type_name
+            , Class        = role.role_type
+            , description  = desc
+            , __module__   = role_type.__module__
+            )
+        role_type.add_attribute (type (CR) (self.attr_name, (CR, ), kw))
+    # end def _setup_attr
+
+# end class _Cacher_
+
+@TFL.Add_To_Class ("Cacher", MOM.Meta.M_Link1)
+class Link_Cacher (_Cacher_) :
+
+    def setup (self, Link, role) :
+        self.max_links = max_links = role.max_links
+        if max_links == 1 :
+            self.__class__ = Link_Cacher_1
+            CR             = MOM.Attr.A_Cached_Role
+        else :
+            self.__class__ = Link_Cacher_n
+            CR             = MOM.Attr.A_Cached_Role_Set
+        desc = getattr (role, "description", None)
+        if desc is None :
+            desc = "`%s` link%s" % (Link.type_base_name, self._suffix)
+        self.__super.setup (Link, role)
+        self._setup_attr   (CR, Link, role, role.role_type, desc)
+    # end def setup
+
+    def _auto_attr_name (self, Link, role) :
+        return Link.type_base_name
+    # end def _auto_attr_name
+
+# end class Link_Cacher
+
+class Link_Cacher_1 (Link_Cacher) :
+
+    _suffix = ""
+
+    def __call__ (self, link, no_value = False) :
+        assert self.role_name is not None
+        o = getattr (link, self.role_name)
+        if o is not None :
+            if no_value :
+                value = None
+            else :
+                value = link
+            setattr (o, self.attr_name, value)
+    # end def __call__
+
+# end class Link_Cacher_1
+
+class Link_Cacher_n (Link_Cacher) :
+
+    _suffix = "s"
+
+    def __call__ (self, link, no_value = False) :
+        assert self.role_name is not None
+        o = getattr (link, self.role_name)
+        if o is not None :
+            cache = getattr (o, self.attr_name)
+            value = link
+            if no_value :
+                cache.remove (value)
+            else :
+                cache.add    (value)
+    # end def __call__
+
+# end class Link_Cacher_n
+
+@TFL.Add_To_Class ("Cacher", MOM.Meta.M_Link_n)
+class Role_Cacher (_Cacher_) :
 
     def __init__ (self, attr_name = None, other_role_name = None) :
-        self.role_name       = None
-        self.attr_name       = attr_name
+        self.__super.__init__ (attr_name)
         self.other_role_name = other_role_name
         self.other_role      = None
     # end def __init__
 
     def setup (self, Link, role) :
-        assert self.role_name is None
-        self.role_name  = role_name = role.role_name
         other_role_name = \
             self.other_role_name or Link.other_role_name (role.name)
         self.other_role = other_role = getattr \
             (Link._Attributes, other_role_name)
         del self.other_role_name
-        if other_role.max_links == 1 :
+        self.max_links = max_links = other_role.max_links
+        if max_links == 1 :
             self.__class__ = Role_Cacher_1
+            CR = ( MOM.Attr.A_Cached_Role
+                 , MOM.Attr.A_Cached_Role_DFC
+                 ) [bool (other_role.dfc_synthesizer)]
         else :
             self.__class__ = Role_Cacher_n
-        attr_name = self.attr_name
-        if attr_name is None or attr_name == True :
-            self.attr_name = role_name
-            if other_role.max_links != 1 :
-                self.attr_name += "s"
-        assert isinstance (self.attr_name, basestring)
+            if other_role.dfc_synthesizer :
+                raise NotImplementedError \
+                    ( "Autocache for DFC and max_links > 1: %s.%s"
+                    % (Link, self.role_name)
+                    )
+            CR = MOM.Attr.A_Cached_Role_Set
+        self.__super.setup (Link, role)
+        other_type = other_role.role_type
+        if other_type is None :
+            print "XXX Can't create attribute for auto_cache of role: %s.%s" \
+                % (Link, self.role_name)
+            return
+        desc = getattr (other_role, "description", None)
+        if desc is None :
+            desc = "`%s` linked to `%s`" % \
+                (self.role_name.capitalize (), other_role.role_name)
+        self._setup_attr (CR, Link, role, other_type, desc)
     # end def setup
+
+    def _auto_attr_name (self, Link, role) :
+        return role.role_name
+    # end def _auto_attr_name
 
 # end class Role_Cacher
 
 class Role_Cacher_1 (Role_Cacher) :
+
+    _suffix = ""
 
     def __call__ (self, link, no_value = False) :
         assert self.role_name is not None
@@ -230,6 +341,8 @@ class Role_Cacher_1 (Role_Cacher) :
 # end class Role_Cacher_1
 
 class Role_Cacher_n (Role_Cacher) :
+
+    _suffix = "s"
 
     def __call__ (self, link, no_value = False) :
         assert self.role_name is not None

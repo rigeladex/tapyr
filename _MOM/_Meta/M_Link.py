@@ -51,6 +51,8 @@
 #    18-Jan-2010 (CT) `M_Link2._m_setup_etype_auto_props` changed to handle
 #                     `auto_cache` for `max_links != 1`, too
 #    18-Feb-2010 (CT) `M_Link1` and `M_E_Type_Link1` added (`M_Link_n` factored)
+#    19-Feb-2010 (CT) `M_Link_n._m_setup_auto_cache_role` changed to not
+#                     create `A_Cached_Role` (done by `Role_Cacher`, now)
 #    ««revision-date»»···
 #--
 
@@ -81,7 +83,10 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 a.role_type.is_relevant = True
                 rc = a.auto_cache
                 if rc :
-                    cls._m_setup_auto_cache_role (a, rc, auto_cache_roles)
+                    if not isinstance (rc, MOM._.Link._Cacher_) :
+                        rc = cls.Cacher  (rc)
+                    rc.setup             (cls, a)
+                    auto_cache_roles.add (rc)
         cls.auto_cache_roles = tuple (auto_cache_roles)
     # end def _m_setup_etype_auto_props
 
@@ -97,52 +102,10 @@ class M_Link1 (M_Link) :
             )
     # end def other_role_name
 
-    def _m_setup_auto_cache_role (cls, a, rc, auto_cache_roles) :
-        raise NotImplementedError \
-            ( "Auto-aching not implemented for unary link-types: %s.%s"
-            % (cls.type_name, a.role_name)
-            )
-    # end def _m_setup_auto_cache_role
-
 # end class M_Link1
 
 class M_Link_n (M_Link) :
     """Meta class of link-types with more than 1 role."""
-
-    def _m_setup_auto_cache_role (cls, a, rc, auto_cache_roles) :
-        if not isinstance (rc, MOM.Role_Cacher) :
-            rc = MOM.Role_Cacher (rc)
-        rc.setup (cls, a)
-        auto_cache_roles.add (rc)
-        other_role = rc.other_role
-        other_type = other_role.role_type
-        if other_type is None :
-            return
-        assert rc.attr_name not in other_type._Attributes._names
-        if other_role.max_links == 1 :
-            CR = ( MOM.Attr.A_Cached_Role
-                 , MOM.Attr.A_Cached_Role_DFC
-                 ) [bool (other_role.dfc_synthesizer)]
-        else :
-            if other_role.dfc_synthesizer :
-                raise NotImplementedError \
-                    ( "Autocache for DFC and max_links > 1: %s.%s"
-                    % (cls, a.role_name)
-                    )
-            CR = MOM.Attr.A_Cached_Role_Set
-        kw =  dict \
-            ( assoc        = cls.type_name
-            , Class        = a.role_type
-            , __module__   = other_type.__module__
-            )
-        desc = getattr (other_role, "description", None)
-        if desc is None :
-            desc = "`%s` linked to `%s`" % \
-                (a.role_name.capitalize (), other_role.role_name)
-        kw ["description"] = desc
-        other_type.add_attribute \
-            (type (CR) (rc.attr_name, (CR, ), kw))
-    # end def _m_setup_auto_cache_role
 
 # end class M_Link_n
 
