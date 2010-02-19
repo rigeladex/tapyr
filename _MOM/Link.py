@@ -308,9 +308,10 @@ class Role_Cacher (_Cacher_) :
         self.__super.setup (Link, role)
         other_type = other_role.role_type
         if other_type is None :
-            print "XXX Can't create attribute for auto_cache of role: %s.%s" \
+            raise TypeError \
+                ( "XXX Can't create attribute for auto_cache of role: %s.%s"
                 % (Link, self.role_name)
-            return
+                )
         desc = getattr (other_role, "description", None)
         if desc is None :
             desc = "`%s` linked to `%s`" % \
