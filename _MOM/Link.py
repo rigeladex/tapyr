@@ -48,6 +48,7 @@
 #    19-Feb-2010 (CT) `Role_Cacher.setup` changed to create `A_Cached_Role`
 #                     for `other_type` (factored in here from
 #                     `M_Link_n._m_setup_auto_cache_role`)
+#    19-Feb-2010 (CT) Argument `attr_class` added to `_setup_attr`
 #    ««revision-date»»···
 #--
 
@@ -203,11 +204,11 @@ class _Cacher_ (TFL.Meta.Object) :
         assert isinstance (self.attr_name, basestring)
     # end def setup
 
-    def _setup_attr (self, CR, Link, role, role_type, desc) :
+    def _setup_attr (self, CR, Link, role, role_type, attr_class, desc) :
         assert self.attr_name not in role_type._Attributes._names
         kw =  dict \
             ( assoc        = Link.type_name
-            , Class        = role.role_type
+            , Class        = attr_class
             , description  = desc
             , __module__   = role_type.__module__
             )
@@ -231,7 +232,7 @@ class Link_Cacher (_Cacher_) :
         if desc is None :
             desc = "`%s` link%s" % (Link.type_base_name, self._suffix)
         self.__super.setup (Link, role)
-        self._setup_attr   (CR, Link, role, role.role_type, desc)
+        self._setup_attr   (CR, Link, role, role.role_type, Link, desc)
     # end def setup
 
     def _auto_attr_name (self, Link, role) :
@@ -314,7 +315,7 @@ class Role_Cacher (_Cacher_) :
         if desc is None :
             desc = "`%s` linked to `%s`" % \
                 (self.role_name.capitalize (), other_role.role_name)
-        self._setup_attr (CR, Link, role, other_type, desc)
+        self._setup_attr (CR, Link, role, other_type, role.role_type, desc)
     # end def setup
 
     def _auto_attr_name (self, Link, role) :
