@@ -79,7 +79,7 @@ class _Login_Mixin_ (TFL.Meta.Object) :
 
 # end class _Login_Mixin_
 
-class _Change_Password_Mixin_ (_Change_Password_Forced_Mixin_) :
+class _Change_Password_Mixin_ (TFL.Meta.Object) :
     """The suer wnat's to change his/her password"""
 
     def __init__ (self, account, * args, ** kw) :

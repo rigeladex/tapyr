@@ -36,6 +36,8 @@
 #                     `Named_Object` due to restrictions of the name (could
 #                     not be an email address)
 #    19-Feb-2010 (MG) Change password handling added
+#    19-Feb-2010 (MG) `Account`: new attributes `enabled` and `suspended`
+#                     added, kind `active` changed to `Attr.Query`
 #    ««revision-date»»···
 #--
 
@@ -69,10 +71,19 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
         class active (A_Boolean) :
             """This account is currently active."""
 
+            kind            = Attr.Query
+            auto_up_depends = ("suspended", "enabled")
+            query           = (Q.suspended == True) & (Q.enabled == True)
+
+        # end class active
+
+        class enabled (A_Boolean) :
+            """This account is currently enabled (the suer can login)."""
+
             kind       = Attr.Optional
             default    = False
 
-        # end class active
+        # end class enabled
 
         class superuser (A_Boolean) :
             """This account has super-user permissions."""
@@ -81,6 +92,14 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
             default    = False
 
         # end class superuser
+
+        class suspended (A_Boolean) :
+            """This account is currently suspended (due to a pending action)."""
+
+            kind       = Attr.Optional
+            default    = False
+
+        # end class suspended
 
     # end class _Attributes
 
@@ -139,6 +158,14 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         if not pw_change_for :
             pw_change_for = Auth.Account_Password_Change_Required (account)
     # end def force_password_change
+
+    def reset_password (self, account) :
+        Auth        = self.home_scope.GTW.OMP.Auth
+        if isinstance (account, basestring) :
+            account = self.query (name = account).one ()
+        self.force_password_change (account)
+
+    # end def reset_password
 
 # end class Account_P_Manager
 
