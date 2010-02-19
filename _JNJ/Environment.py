@@ -237,6 +237,22 @@ on how the environment was set up::
       </select>
     </html>
 
+    >>> et = env5.get_template ("email.jnj")
+    >>> print et.render (email_from = "tanzer@swing.co.at", email_to = "martin@mangari.com", email_body = "Nih!", NAV = None)
+    From:    tanzer@swing.co.at
+    To:      martin@mangari.com
+    Content-type: text/plain; charset=utf-8
+    <BLANKLINE>
+    <BLANKLINE>
+    Nih!
+    >>> print et.render (email_from = "tanzer@swing.co.at", email_to = "martin@mangari.com", email_body = "Nih!", NAV = None)
+    From:    tanzer@swing.co.at
+    To:      martin@mangari.com
+    Content-type: text/plain; charset=utf-8
+    <BLANKLINE>
+    <BLANKLINE>
+    Nih!
+
 """
 
 if __name__ != "__main__" :

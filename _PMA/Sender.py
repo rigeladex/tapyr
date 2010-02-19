@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    28-Jul-2005 (CT) Creation (factored from Composer.py)
+#    19-Feb-2010 (CT) `TFL.SMTP` factored
 #    ««revision-date»»···
 #--
 
@@ -34,37 +35,21 @@ from   _TFL                    import TFL
 from   _PMA                    import PMA
 
 import _TFL._Meta.Object
-
-from   smtplib                 import SMTP
+import _TFL.SMTP
 
 class Sender (TFL.Meta.Object) :
     """Send emails via SMTP"""
 
-    mail_host = "localhost"
-
     def __init__ (self, mail_host = None) :
-        if mail_host is not None :
-            self.mail_host = mail_host
+        self.smtp = TFL.SMTP ()
     # end def __init__
 
     def __call__ (self, email, envelope = None) :
-        if envelope is None :
-            envelope = email
-        to = set (t.strip () for t in envelope ["To"].split (","))
-        for k in "cc", "bcc", "dcc" :
-            for h in envelope.get_all (k, []) :
-                if h :
-                    to.update (t.strip () for t in h.split (","))
-            if k != "cc" :
-                del email [k]
-        self.send (envelope ["From"], list (to), email.as_string ())
+        self.smtp.send_message (email, envelope)
     # end def __call__
 
     def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
-        server = SMTP   (self.mail_host)
-        server.helo     ()
-        server.sendmail (from_addr, to_addrs, msg, mail_opts, rcpt_opts)
-        server.quit     ()
+        self.smtp.send (from_addr, to_addrs, msg, mail_opts, rcpt_opts)
     # end def send
 
 # end class Sender

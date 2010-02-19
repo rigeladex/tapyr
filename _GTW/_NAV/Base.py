@@ -193,6 +193,7 @@
 #    28-Jan-2010 (CT) `Root.allow` added
 #    19-Feb-2010 (MG) `send_email` added
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
+#    19-Feb-2010 (CT) Property `webmaster` added
 #    ««revision-date»»···
 #--
 
@@ -418,6 +419,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def Type (self) :
         return self.__class__.__name__
     # end def Type
+
+    @property
+    def webmaster (self) :
+        if self.top.domain :
+            return "webmaster@%s" % self.top.domain
+    # end def webmaster
 
     def _formatted_attr (self, name) :
         v = getattr (self, name)
