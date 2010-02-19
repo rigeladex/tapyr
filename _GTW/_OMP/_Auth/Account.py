@@ -35,6 +35,7 @@
 #    19-Feb-2010 (MG) `Account_P_Manager` added, `Account` is no longer a
 #                     `Named_Object` due to restrictions of the name (could
 #                     not be an email address)
+#    19-Feb-2010 (MG) Change password handling added
 #    ««revision-date»»···
 #--
 
@@ -129,6 +130,16 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         return self.__super.__call__   (name, password = password, salt = salt)
     # end def __call__
 
+    def force_password_change (self, account) :
+        Auth          = self.home_scope.GTW.OMP.Auth
+        if isinstance (account, basestring) :
+            account   = self.query (name = account).one ()
+        pw_change_for = Auth.Account_Password_Change_Required.query \
+            (account  = account).first ()
+        if not pw_change_for :
+            pw_change_for = Auth.Account_Password_Change_Required (account)
+    # end def force_password_change
+
 # end class Account_P_Manager
 
 class Account_P (_Ancestor_Essence) :
@@ -157,6 +168,13 @@ class Account_P (_Ancestor_Essence) :
 
     # end class _Attributes
 
+    def change_password (self, new_password) :
+        self.set (password = self.password_hash (new_password, self.salt))
+        pwdr = self.password_change_required
+        if pwdr :
+            pwdr.destroy ()
+    # end def change_password
+
     @classmethod
     def password_hash (cls, password, salt) :
         hash = hashlib.new    (cls.Hash_Method, salt)
@@ -167,6 +185,13 @@ class Account_P (_Ancestor_Essence) :
     def verify_password (self, password) :
         return self.password == self.password_hash (password, self.salt)
     # end def verify_password
+
+    ### XXX remove me once cached roles are supported for Link1
+    @property
+    def password_change_required (self) :
+        return self.home_scope.Auth.Account_Password_Change_Required.query \
+            (account = self).first ()
+    # end def password_change_required
 
 # end class Account_P
 

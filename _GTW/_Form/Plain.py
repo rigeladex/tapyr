@@ -30,6 +30,7 @@
 #    02-Feb-2010 (MG) `_get_raw`: pass form to `field.get_raw`
 #     4-Feb-2010 (MG) `_get_raw` removed
 #    18-Feb-2010 (MG) `M_Plain.New`: setup of `fields` added
+#    19-Feb-2010 (MG) `__call__` change to calculate the error count
 #    ««revision-date»»···
 #--
 
@@ -97,7 +98,8 @@ class Plain (GTW.Form._Form_) :
 
     def __call__ (self, request_data) :
         self.request_data = request_data
-        error_count       = self._validate ()
+        self._validate ()
+        error_count = len (self.field_errors) + len (self.errors)
         if not error_count and self.creator :
             if not self.instance :
                 self.instance = self.creator (** self.request_data)

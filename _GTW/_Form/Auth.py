@@ -33,6 +33,7 @@
 #    17-Jan-2010 (MG) Moved into package `GTW.Form`
 #     3-Feb-2010 (MG) Pass salt to `verify_password`
 #    18-Feb-2010 (MG) `salt` moved into `Account_P` e_type
+#    19-Feb-2010 (MG) `Change_Password` form added
 #    ««revision-date»»···
 #--
 
@@ -49,7 +50,8 @@ class _Login_Mixin_ (TFL.Meta.Object) :
     """Handles the login form processing."""
 
     def __init__ (self, account_manager, * args, ** kw) :
-        self.account_manager = account_manager
+        self.account_manager          = account_manager
+        self.account                  = None
         self.__super.__init__ (* args, ** kw)
     # end def __init__
 
@@ -64,27 +66,66 @@ class _Login_Mixin_ (TFL.Meta.Object) :
            ) :
             self.errors.append (_T (u"Username or password incorrect"))
         self.request_data = {}
-        return len (self.field_errors) + len (self.errors)
     # end def _validate
 
     def _authenticate (self, username, password) :
         try :
-            account = self.account_manager.query (name = username).one ()
+            self.account = self.account_manager.query (name = username).one ()
         except IndexError :
             ### look's like no account with this username exists
             return False
-        return account.verify_password (password)
+        return self.account.verify_password (password)
     # end def _authenticate
 
 # end class _Login_Mixin_
 
-Login = GTW.Form.Plain.New \
+class _Change_Password_Mixin_ (_Change_Password_Forced_Mixin_) :
+    """The suer wnat's to change his/her password"""
+
+    def __init__ (self, account, * args, ** kw) :
+        self.account = account
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def _validate (self) :
+        _T           = TFL.I18N._T
+        old_pwd      = self.get_required \
+            ("opassword", _T (u"The old password is required."))
+        pwd_1        = self.get_required \
+            ("npassword1", _T (u"The new password is required."))
+        pwd_2        = self.get_required \
+            ("npassword2", _T (u"Please repeat the new password."))
+        if not self.field_errors :
+            if not self.account.verify_password (old_pwd) :
+                self.field_errors ["opassword"].append \
+                    (_T ("The old password is incorrect"))
+            elif (pwd_1 != pwd_2) :
+                self.errors.append (_T (u"Passwords don't match."))
+            else :
+                self.account.change_password (pwd_1)
+        self.__super._validate ()
+    # end def _validate
+
+# end class _Change_Password_Mixin_
+
+PWD_WS = GTW.Form.Widget_Spec ("html/field.jnj, password")
+
+Login  = GTW.Form.Plain.New \
     ( "Login"
     , GTW.Form.Field_Group_Description
         ( GTW.Form.Field ("username")
-        , GTW.Form.Field ("password", widget = "html/field.jnj, password")
+        , GTW.Form.Field ("password", widget = PWD_WS)
         )
     , head_mixins = (_Login_Mixin_, )
+    )
+Change_Password = GTW.Form.Plain.New \
+    ( "Change_Password"
+    , GTW.Form.Field_Group_Description
+        ( GTW.Form.Field ( "opassword",  widget = PWD_WS)
+        , GTW.Form.Field ( "npassword1", widget = PWD_WS)
+        , GTW.Form.Field ( "npassword2", widget = PWD_WS)
+        )
+    , head_mixins = (_Change_Password_Mixin_, )
     )
 
 if __name__ != "__main__" :

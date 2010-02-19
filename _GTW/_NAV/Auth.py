@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Feb-2010 (CT) Creation
 #    19-Feb-2010 (MG) `Login` fixed
+#    19-Feb-2010 (MG) `Change_Password` implemented
 #    ««revision-date»»···
 #--
 
@@ -81,10 +82,26 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Password (_Cmd_) :
 
-#       template     = "???"
+        template     = "change_password.jnj"
 
         def rendered (self, handler, template = None) :
-            pass
+            top              = self.top
+            ETM              = top.account_manager
+            account          = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            form_cls         = GTW.Form.Auth.Change_Password
+            form             = form_cls (account, self.name)
+            context          = handler.context
+            request          = handler.request
+            context ["form"] = form
+            if request.method == "POST" :
+                HTTP      = top.HTTP
+                req_data  = HTTP.Request_Data (request.arguments)
+                errors    = form (req_data)
+                if not errors :
+                    next  = req_data.get ("next", "/")
+                    handler.set_secure_cookie ("username", account.name)
+                    raise HTTP.Redirect_302 (next)
+            return self.__super.rendered (handler, template)
         # end def rendered
 
     # end class Change_Password
@@ -96,16 +113,22 @@ class Auth (GTW.NAV.Dir) :
         def rendered (self, handler, template = None) :
             context   = handler.context
             request   = handler.request
-            form      = GTW.Form.Auth.Login (self.account_manager, self.name)
+            top       = self.top
+            form      = GTW.Form.Auth.Login (top.account_manager, self.name)
             context ["login_form"] = form
             if request.method == "POST" :
-                HTTP      = self.top.HTTP
+                HTTP      = top.HTTP
                 req_data  = HTTP.Request_Data (request.arguments)
                 errors    = form (req_data)
                 if not errors :
-                    next = req_data.get ("next")
-                    handler.set_secure_cookie \
-                        ("username", req_data  ["username"])
+                    next = req_data.get ("next", "/")
+                    if form.account.password_change_required :
+                        ### a password change is required -> redirect to that
+                        ### page
+                        next = self.href_change_pass (form.account)
+                    else :
+                        handler.set_secure_cookie \
+                            ("username", req_data  ["username"])
                     raise HTTP.Redirect_302 (next)
                 ### after a failed login, clear the current username
                 handler.clear_cookie ("username")
@@ -166,7 +189,7 @@ class Auth (GTW.NAV.Dir) :
     # end def href_change_email
 
     def href_change_pass (self, obj) :
-        return pjoin (self.href_account (obj), self.T.change_password)
+        return pjoin (self.abs_href, self.T.change_password, obj.lid)
     # end def href_change_pass
 
     def href_login (self) :
@@ -193,7 +216,7 @@ class Auth (GTW.NAV.Dir) :
     _child_name_map = dict \
         ( action          = (Action,              2)
         , change_email    = (Change_Email,        2)
-        , change_password = (Change_Password,     2)
+        , change_password = (Change_Password,     1)
         , login           = (Login,               0)
         , logout          = (Logout,              0)
         , register        = (Register,            0)

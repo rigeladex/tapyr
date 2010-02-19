@@ -152,6 +152,18 @@ class Account_Password_Change_Required (_Ancestor_Essence) :
        login.
     """
 
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+            """Account which this action is bound to."""
+
+            #auto_cache = "password_change_required"
+
+        # end class left
+
+    # end class _Attributes
 # end class Account_Password_Change_Required
 
 if __name__ != "__main__" :

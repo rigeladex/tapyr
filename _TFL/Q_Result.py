@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -30,6 +30,7 @@
 #     2-Dec-2009 (CT) Creation continued
 #     3-Dec-2009 (CT) Creation continued..
 #     7-Dec-2009 (CT) Usage of `TFL.Attr_Filter` replaced by `TFL.Attr_Query`
+#    19-Feb-2010 (MG) `first` fixed
 #    ««revision-date»»···
 #--
 
@@ -169,7 +170,10 @@ class _Q_Result_ (TFL.Meta.Object) :
     # end def filter
 
     def first (self) :
-        return first (self)
+        try :
+            return first (self)
+        except IndexError :
+            return None
     # end def first
 
     def limit (self, limit) :

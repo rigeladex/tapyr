@@ -52,9 +52,7 @@ class Handler (TFL.Meta.Object) :
     # end def __init__
 
     def write (self, args, ** kw) :
-        cls                         = self.__class__
         self.template, self.context = args
-        cls.template,  cls.context  = args
     # end def write
 
     def clear_cookie (self, name) :
@@ -67,12 +65,12 @@ class Handler (TFL.Meta.Object) :
 
 # end class Handler
 
-
 class Request (TFL.Meta.Object) :
     """A faked HHTP request used for testing purposes."""
 
     def __init__ (self, path, method, headers, ** arguments) :
         self.path         = path
+        self.uri          = path
         self.method       = method
         self.headers      = headers
         self.arguments    = arguments
@@ -99,5 +97,3 @@ class Error_500        (_HTTP_Error_)     : pass
 if __name__ != "__main__" :
     GTW.NAV.Test._Export ("*")
 ### __END__ GTW.NAV.Test.HTTP
-
-

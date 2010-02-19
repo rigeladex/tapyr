@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package GTW.Tornado.
+# This module is part of the package GTW.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,18 +20,18 @@
 #
 #++
 # Name
-#    GTW.Tornado.Session
+#    GTW.Session
 #
 # Purpose
 #    Base class for sessions.
 #
 # Revision Dates
 #    25-Jan-2010 (MG) Creation
+#    19-Feb-2010 (MG) Moved from `GTW.Tornado` into `GTW`
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
-import _GTW._Tornado
 
 from   _TFL                     import TFL
 import _TFL._Meta.Object
@@ -55,7 +55,7 @@ else:
 class Session (TFL.Meta.Object) :
     """Base class for sessions
 
-       >>> from _GTW._Tornado.Session import *
+       >>> from _GTW.Session import *
        >>> session  = Session( None, "salt")
        >>> session2 = Session( None, "salt")
        >>> session.sid != session2.sid
@@ -64,7 +64,7 @@ class Session (TFL.Meta.Object) :
 
     _data_dict = None
 
-    def __init__ (self, sid = None, salt = "_GTW._Tornado") :
+    def __init__ (self, sid = None, salt = "_GTW.Session") :
         if not sid :
             self._data = {}
             sid        = self._new_sid (salt or "")
@@ -132,5 +132,5 @@ class Session (TFL.Meta.Object) :
 # end class Session
 
 if __name__ != "__main__" :
-    GTW.Tornado._Export ("*")
-### __END__ GTW.Tornado.Session
+    GTW._Export ("*")
+### __END__ GTW.Session

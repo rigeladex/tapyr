@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package GTW.Tornado.
+# This module is part of the package GTW.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,22 +20,23 @@
 #
 #++
 # Name
-#    GTW.Tornado.File_Session
+#    GTW.File_Session
 #
 # Purpose
 #    Session backend which stores the information in a file on the disk
 #
 # Revision Dates
 #    25-Jan-2010 (MG) Creation
+#    19-Feb-2010 (MG) Moved from `GTW.Tornado` into `GTW`
 #    ««revision-date»»···
 #--
 from   _TFL._Meta.Once_Property import Once_Property
 from   _GTW                     import GTW
-import _GTW._Tornado.Session
+import _GTW.Session
 import  cPickle
 import  os
 
-class File_Session (GTW.Tornado.Session) :
+class File_Session (GTW.Session) :
     """Stores the session data in a file on disk.
 
     >>> session = File_Session ()
@@ -96,7 +97,7 @@ class File_Session (GTW.Tornado.Session) :
 # end class File_Session
 
 if __name__ != "__main__" :
-    GTW.Tornado._Export ("*")
-### __END__ GTW.Tornado.File_Session
+    GTW._Export ("*")
+### __END__ GTW.File_Session
 
 

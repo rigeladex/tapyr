@@ -35,7 +35,7 @@ from   _TFL                      import TFL
 from   _GTW                      import GTW
 import _GTW._NAV.Request_Handler
 import _GTW._Tornado.Application
-import _GTW._Tornado.File_Session
+import _GTW.File_Session
 import  os
 
 import _GTW._NAV.Base
@@ -210,7 +210,7 @@ if __name__ == "__main__" :
         ( ((".*$", GTW.NAV.Request_Handler), )
         , cookie_secret = "sdf756!764/785'H7858&)=8766/&%$rw2?g56476W§+@"
         , debug         = cmd.tornado_reload
-        , Session_Class = GTW.Tornado.File_Session
+        , Session_Class = GTW.File_Session
         , session_id    = "SESSION_ID"
         , i18n          = True
         )
