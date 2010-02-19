@@ -192,6 +192,7 @@
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #    28-Jan-2010 (CT) `Root.allow` added
 #    19-Feb-2010 (MG) `send_email` added
+#    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    ««revision-date»»···
 #--
 
@@ -250,6 +251,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
     _dump_type      = "dict"
 
     _Media          = GTW.Media ()
+
+    ### ("GET", "HEAD", "POST", "DELETE", "PUT")
+    SUPPORTED_METHODS = set (("GET", ))
 
     def __init__ (self, parent = None, ** kw) :
         self._kw    = kw
@@ -826,6 +830,8 @@ class Root (_Dir_) :
         page = cls.page_from_href (href)
         HTTP = cls.top.HTTP
         if page :
+            if handler.request.method not in page.SUPPORTED_METHODS :
+                raise HTTP.Error_405 ()
             if page.login_required :
                 if user and not user.authenticated :
                     raise HTTP.Error_401 ()

@@ -28,9 +28,9 @@
 # Revision Dates
 #    18-Feb-2010 (CT) Creation
 #    19-Feb-2010 (MG) `Login` fixed
-#    19-Feb-2010 (MG) `Change_Password` implemented
-#    19-Feb-2010 (MG) `Reset_Password` implemented
-#    19-Feb-2010 (MG) `Request_Reset_Password` added
+#    19-Feb-2010 (MG) `Change_Password`, `Reset_Password`, and
+#                     `Request_Reset_Password` implemented
+#    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    ««revision-date»»···
 #--
 
@@ -58,7 +58,8 @@ class Auth (GTW.NAV.Dir) :
 
     class _Cmd_ (GTW.NAV._Site_Entity_) :
 
-        implicit     = True
+        implicit          = True
+        SUPPORTED_METHODS = set (("GET", "POST"))
 
     # end class _Cmd_
 

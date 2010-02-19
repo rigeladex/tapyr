@@ -30,6 +30,7 @@
 #    15-Jan-2010 (CT) `Error_Templates` added
 #    18-Jan-2010 (CT) `get_std_template` added; s/Error_Templates/Template_Map/
 #    29-Jan-2010 (CT) `get_template` changed to use `Template_Map`
+#    19-Feb-2010 (CT) `error_405` added
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ class Templateer (TFL.Meta.Object) :
         ( { 401       : "html/error_401.jnj"
           , 403       : "html/error_403.jnj"
           , 404       : "html/error_404.jnj"
+          , 405       : "html/error_405.jnj"
           , 500       : "html/error_500.jnj"
           }
         , default       = "html/error.jnj"

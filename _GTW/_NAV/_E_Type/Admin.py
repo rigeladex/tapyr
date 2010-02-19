@@ -65,12 +65,18 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     template    = "e_type_admin"
 
-    class Changer (GTW.NAV._Site_Entity_) :
+    class _Cmd_ (GTW.NAV._Site_Entity_) :
+
+        implicit          = True
+        SUPPORTED_METHODS = set (("GET", "POST"))
+
+    # end class _Cmd_
+
+    class Changer (_Cmd_) :
         """Model an admin page for creating or changing a specific instance
            of a etype.
         """
 
-        implicit     = True
         Media        = None ### cancel inherited property defined
         name         = "create"
         lid          = None
@@ -123,10 +129,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Changer
 
-    class Completer (GTW.NAV._Site_Entity_) :
+    class Completer (_Cmd_) :
         """Deliver completion information for a AJAX request."""
 
-        implicit     = True
         Media        = None ### cancel inherited property defined
 
         def rendered (self, handler, template = None) :
@@ -155,10 +160,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Completer
 
-    class Completed (GTW.NAV._Site_Entity_) :
+    class Completed (_Cmd_) :
         """Deliver fields for a model instance selected by completion."""
 
-        implicit     = True
         Media        = None ### cancel inherited property defined
 
         def rendered (self, handler, template = None) :
@@ -196,10 +200,9 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     # end class Completed
 
-    class Deleter (GTW.NAV._Site_Entity_) :
+    class Deleter (_Cmd_) :
         """Model an admin page for deleting a specific instance of a etype."""
 
-        implicit     = True
         name         = "delete"
         template     = "e_type_delete"
 
