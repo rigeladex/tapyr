@@ -35,6 +35,7 @@
 #    18-Feb-2010 (MG) `salt` moved into `Account_P` e_type
 #    19-Feb-2010 (MG) `Change_Password` form added
 #    19-Feb-2010 (MG) `Reset_Password` form added
+#    19-Feb-2010 (MG) Reorganized, Account activation added
 #    ««revision-date»»···
 #--
 
@@ -47,8 +48,15 @@ import _GTW._Form.Plain
 import _GTW._Form.Field
 import _GTW._Form.Field_Group_Description
 
+PWD_WS = GTW.Form.Widget_Spec ("html/field.jnj, password")
+
 class _Login_Mixin_ (TFL.Meta.Object) :
     """Handles the login form processing."""
+
+    fields = \
+        ( GTW.Form.Field ("username")
+        , GTW.Form.Field ("password", widget = PWD_WS)
+        )
 
     def __init__ (self, account_manager, * args, ** kw) :
         self.account_manager          = account_manager
@@ -66,6 +74,7 @@ class _Login_Mixin_ (TFL.Meta.Object) :
            and not self._authenticate (username, password)
            ) :
             self.errors.append (_T (u"Username or password incorrect"))
+        self.__super._validate ()
         self.request_data = {}
     # end def _validate
 
@@ -80,8 +89,44 @@ class _Login_Mixin_ (TFL.Meta.Object) :
 
 # end class _Login_Mixin_
 
-class _Change_Password_Mixin_ (TFL.Meta.Object) :
-    """The suer wnat's to change his/her password"""
+class _New_Password_ (TFL.Meta.Object) :
+    """Verifies two password entries"""
+
+    fields = \
+        ( GTW.Form.Field ("npassword1", widget = PWD_WS)
+        , GTW.Form.Field ("npassword2", widget = PWD_WS)
+        )
+
+    def _validate (self) :
+        _T                = TFL.I18N._T
+        self.new_password = None
+        pwd_1             = self.get_required \
+            ("npassword1", _T (u"The new password is required."))
+        pwd_2             = self.get_required \
+            ("npassword2", _T (u"Please repeat the new password."))
+        if not self.field_errors and (pwd_1 != pwd_2) :
+            self.errors.append (_T (u"Passwords don't match."))
+        else :
+            self.new_password = pwd_1
+        self.__super._validate ()
+    # end def _validate
+
+# end class _New_Password_
+
+class _Activate_Account_Mixin_ (_Login_Mixin_, _New_Password_) :
+    """Form to activate a user account after initail creation"""
+
+    fields = _Login_Mixin_.fields + _New_Password_.fields
+
+# end class _Activate_Account_Mixin_
+
+class _Change_Password_Mixin_ (_New_Password_) :
+    """Change password form."""
+
+    fields = \
+        ( GTW.Form.Field ("password",  widget = PWD_WS)
+        ,
+        ) + _New_Password_.fields
 
     def __init__ (self, account, * args, ** kw) :
         self.account = account
@@ -89,28 +134,24 @@ class _Change_Password_Mixin_ (TFL.Meta.Object) :
     # end def __init__
 
     def _validate (self) :
+        self.__super._validate ()
         _T           = TFL.I18N._T
         old_pwd      = self.get_required \
-            ("opassword", _T (u"The old password is required."))
-        pwd_1        = self.get_required \
-            ("npassword1", _T (u"The new password is required."))
-        pwd_2        = self.get_required \
-            ("npassword2", _T (u"Please repeat the new password."))
-        if not self.field_errors :
-            if not self.account.verify_password (old_pwd) :
-                self.field_errors ["opassword"].append \
-                    (_T ("The old password is incorrect"))
-            elif (pwd_1 != pwd_2) :
-                self.errors.append (_T (u"Passwords don't match."))
-            else :
-                self.account.change_password (pwd_1)
-        self.__super._validate ()
+            ("password", _T (u"The old password is required."))
+        if (   not (self.field_errors or self.errors)
+           and not self.account.verify_password (old_pwd)
+           ) :
+            self.errors.append \
+                (_T ("One of the passwords is incorrect"))
+        self.request_data = {}
     # end def _validate
 
 # end class _Change_Password_Mixin_
 
 class _Reset_Password_Mixin_ (TFL.Meta.Object) :
     """Convert the user name into an account."""
+
+    fields = (GTW.Form.Field ("username"), )
 
     def __init__ (self, account_manager, * args, ** kw) :
         self.account         = None
@@ -132,32 +173,19 @@ class _Reset_Password_Mixin_ (TFL.Meta.Object) :
 
 # end class _Reset_Password_Mixin_
 
-PWD_WS = GTW.Form.Widget_Spec ("html/field.jnj, password")
+def Define_Form (name, mixin) :
+    return GTW.Form.Plain.New \
+        ( name
+        , GTW.Form.Field_Group_Description (* mixin.fields)
+        , head_mixins = (mixin, )
+        )
+# end def Define_Form
 
-Login  = GTW.Form.Plain.New \
-    ( "Login"
-    , GTW.Form.Field_Group_Description
-        ( GTW.Form.Field ("username")
-        , GTW.Form.Field ("password", widget = PWD_WS)
-        )
-    , head_mixins = (_Login_Mixin_, )
-    )
-Change_Password = GTW.Form.Plain.New \
-    ( "Change_Password"
-    , GTW.Form.Field_Group_Description
-        ( GTW.Form.Field ( "opassword",  widget = PWD_WS)
-        , GTW.Form.Field ( "npassword1", widget = PWD_WS)
-        , GTW.Form.Field ( "npassword2", widget = PWD_WS)
-        )
-    , head_mixins = (_Change_Password_Mixin_, )
-    )
-Reset_Password = GTW.Form.Plain.New \
-    ( "Reset"
-    , GTW.Form.Field_Group_Description
-        ( GTW.Form.Field ("username")
-        )
-    , head_mixins = (_Reset_Password_Mixin_, )
-    )
+
+Login           = Define_Form ("Login",           _Login_Mixin_)
+Change_Password = Define_Form ("Change_Password", _Change_Password_Mixin_)
+Reset_Password  = Define_Form ("Reset",           _Reset_Password_Mixin_)
+Activate        = Define_Form ("Activate",        _Activate_Account_Mixin_)
 
 if __name__ != "__main__" :
     GTW.Form._Export_Module ()

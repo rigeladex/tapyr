@@ -39,6 +39,7 @@
 #    19-Feb-2010 (MG) `Account`: new attributes `enabled` and `suspended`
 #                     added, kind `active` changed to `Attr.Query`
 #    19-Feb-2010 (MG) `reset_password` implemented
+#    19-Feb-2010 (MG) Account activation added
 #    ««revision-date»»···
 #--
 
@@ -143,16 +144,7 @@ _Ancestor_Essence = Account
 class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
     """E-Type manager for password accounts"""
 
-    @classmethod
-    def random_password (cls, length = 16) :
-        from   random import choice
-        import string
-        chars = string.letters + string.digits
-        return "".join \
-            ( [choice (chars) for i in xrange (length)])
-    # end def random_password
-
-    def __call__ (self, name, password, ** kw) :
+    def __call__ (self, name, password = "", ** kw) :
         etype    = self._etype
         salt     = uuid.uuid4().hex
         password = etype.password_hash (password, salt)
@@ -176,11 +168,11 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         if not account.enabled :
             raise TypeError (u"Account has been disabled")
         ### first we set the password to someting random nobody knows
-        account.change_password             (self.random_password (32))
+        account.change_password             (self._etype.random_password (32))
         ### than we create the password change request action
         self.force_password_change          (account)
         ### now create a reset password action which contains the new password
-        new_password = self.random_password (16)
+        new_password = self._etype.random_password (16)
         Auth.Account_Pasword_Reset          (account, password = new_password)
         ### and temporaty suspend the account
         account.set                         (suspended = True)
@@ -215,12 +207,16 @@ class Account_P (_Ancestor_Essence) :
 
     # end class _Attributes
 
-    def change_password (self, new_password, remove_request = True) :
-        self.set (password = self.password_hash (new_password, self.salt))
-        if remove_request :
-            pwdr = self.password_change_required
-            if pwdr :
-                pwdr.destroy ()
+    def change_password (self, new_password, remove_actions = True, ** kw) :
+        self.set \
+            (password = self.password_hash (new_password, self.salt), ** kw)
+        if remove_actions :
+            Auth = self.home_scope.GTW.OMP.Auth
+            for et in ( Auth.Account_Activation
+                      , Auth.Account_Password_Change_Required
+                      ) :
+                for l in et.query (account = self) :
+                    l.destroy ()
     # end def change_password
 
     @classmethod
@@ -229,6 +225,25 @@ class Account_P (_Ancestor_Essence) :
         hash.update           (password)
         return hash.hexdigest ()
     # end def password_hash
+
+    def prepare_activation (self) :
+        password = self.random_password (16)
+        self.set \
+            ( password  = self.password_hash (password, self.salt)
+            , suspended = True
+            )
+        self.home_scope.GTW.OMP.Auth.Account_Activation (self)
+        return password
+    # end def prepare_activation
+
+    @classmethod
+    def random_password (cls, length = 16) :
+        from   random import choice
+        import string
+        chars = string.letters + string.digits
+        return "".join \
+            ( [choice (chars) for i in xrange (length)])
+    # end def random_password
 
     def reset_password_action (self, token) :
         return self.home_scope.GTW.OMP.Auth.Account_Pasword_Reset.query \

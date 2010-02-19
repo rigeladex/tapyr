@@ -33,7 +33,7 @@
 Test if we can set a e-type specific manager class
 >>> scope.Auth.Account_P.__class__
 <class '_GTW._OMP._Auth.Account.Account_P_Manager'>
->>> scope.Auth.Account_Activation.__class__
+>>> scope.Auth.Account_EMail_Verification.__class__
 <class '_GTW._OMP._Auth.Account_Handling.Account_Token_Manager'>
 
 let's create some accounts
@@ -116,19 +116,19 @@ Test the password change
 >>> cpwd_url = "/account/change_password/2"
 >>> handler  = GET (cpwd_url)
 >>> [f.name for f in handler.context ["form"].fields]
-['opassword', 'npassword1', 'npassword2']
+['password', 'npassword1', 'npassword2']
 >>> handler = POST (cpwd_url)
 >>> sorted (handler.context ["form"].field_errors.iteritems ())
-[('npassword1', [u'The new password is required.']), ('npassword2', [u'Please repeat the new password.']), ('opassword', [u'The old password is required.'])]
->>> handler = POST (cpwd_url, opassword = "?", npassword1 = "new-passwd", npassword2 = "new-passwd")
+[('npassword1', [u'The new password is required.']), ('npassword2', [u'Please repeat the new password.']), ('password', [u'The old password is required.'])]
+>>> handler = POST (cpwd_url, password = "?", npassword1 = "new-passwd", npassword2 = "new-passwd")
 >>> form = handler.context ["form"]
 >>> form.errors, sorted (form.field_errors.iteritems ())
-([], [('opassword', [u'The old password is incorrect'])])
->>> handler = POST (cpwd_url, opassword = "passwd1", npassword1 = "passwd1", npassword2 = "passwd2")
+([u'One of the passwords is incorrect'], [])
+>>> handler = POST (cpwd_url, password = "passwd1", npassword1 = "passwd1", npassword2 = "passwd2")
 >>> form = handler.context ["form"]
 >>> form.errors, sorted (form.field_errors.iteritems ())
 ([u"Passwords don't match."], [])
->>> handler = POST (cpwd_url, opassword = "passwd1", npassword1 = "passwdn", npassword2 = "passwdn")
+>>> handler = POST (cpwd_url, password = "passwd1", npassword1 = "passwdn", npassword2 = "passwdn")
 Traceback (most recent call last):
     ....
 Redirect_302: /
@@ -192,6 +192,37 @@ Traceback (most recent call last):
 TypeError: Account has been disabled
 >>> acc1.set (enabled = True)
 1
+
+Account activation
+>>> acc3        = scope.Auth.Account_P    ("user3@example.com")
+>>> acc3.activation
+>>> temp_passwd = acc3.prepare_activation ()
+>>> acc3.activation
+GTW.OMP.Auth.Account_Activation ((u'user3@example.com'))
+>>> handler = GET ("/account/activate")
+>>> handler = POST ("/account/activate")
+>>> form = handler.context ["form"]
+>>> form.errors, sorted (form.field_errors.iteritems ())
+([], [('npassword1', [u'The new password is required.']), ('npassword2', [u'Please repeat the new password.']), ('password', [u'The password is required.']), ('username', [u'A user name is required to login.'])])
+>>> handler = POST \\
+...   ( "/account/activate", username = acc3.name, password = "?"
+...   , npassword1 = "passwd3"
+...   , npassword2 = "passwd3"
+...   )
+>>> form = handler.context ["form"]
+>>> form.errors, sorted (form.field_errors.iteritems ())
+([u'Username or password incorrect'], [])
+>>> handler = POST \\
+...   ( "/account/activate", username = acc3.name, password = temp_passwd
+...   , npassword1 = "passwd3"
+...   , npassword2 = "passwd3"
+...   )
+Traceback (most recent call last):
+   ...
+Redirect_302: /
+>>> acc3.verify_password ("passwd3")
+True
+>>> acc3.activation
 """
 from   _MOM.__test__                 import *
 from   _GTW                          import GTW

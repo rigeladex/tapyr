@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Feb-2010 (MG) Creation
 #    19-Feb-2010 (MG) `Account_Token_Manager` added
+#    19-Feb-2010 (MG) Reorganized
 #    ««revision-date»»···
 #--
 
@@ -63,6 +64,50 @@ class _Account_Action_ (Auth.Entity, _Ancestor_Essence) :
     # end class _Attributes
 
 # end class _Account_Action_
+
+_Ancestor_Essence = _Account_Action_
+
+class Account_Activation (_Ancestor_Essence) :
+    """Activation of the account"""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+            """Account which this action is bound to."""
+
+            auto_cache = "activation"
+            max_links  = 1
+
+        # end class left
+
+    # end class _Attributes
+
+# end class Account_Activation
+
+_Ancestor_Essence = _Account_Action_
+
+class Account_Password_Change_Required (_Ancestor_Essence) :
+    """The password of the linked account must be changed after the next
+       login.
+    """
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class left (_Ancestor.left) :
+            """Account which this action is bound to."""
+
+            auto_cache = "password_change_required"
+            max_links  = 1
+
+        # end class left
+
+    # end class _Attributes
+
+# end class Account_Password_Change_Required
 
 _Ancestor_Essence = _Account_Action_
 
@@ -113,15 +158,8 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
 
 _Ancestor_Essence = _Account_Token_Action_
 
-class Account_Activation (_Ancestor_Essence) :
-    """Pending account activation"""
-
-# end class Account_Activation
-
-_Ancestor_Essence = _Account_Token_Action_
-
-class Account_Rename (_Ancestor_Essence) :
-    """Pending renaming of an account."""
+class Account_EMail_Verification (_Ancestor_Essence) :
+    """Pending email verification."""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -130,9 +168,9 @@ class Account_Rename (_Ancestor_Essence) :
         class new_email (A_Email) :
             """The new email address for the linked account."""
 
-            kind               = Attr.Required
+            kind               = Attr.Optional
 
-        # end class old_email
+        # end class new_email
 
     # end class _Attributes
 
@@ -157,29 +195,6 @@ class Account_Pasword_Reset (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Account_Pasword_Reset
-
-_Ancestor_Essence = _Account_Action_
-
-class Account_Password_Change_Required (_Ancestor_Essence) :
-    """The password of the linked account must be changed after the next
-       login.
-    """
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class left (_Ancestor.left) :
-            """Account which this action is bound to."""
-
-            auto_cache = "password_change_required"
-            max_links  = 1
-
-        # end class left
-
-    # end class _Attributes
-
-# end class Account_Password_Change_Required
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")

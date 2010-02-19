@@ -31,6 +31,7 @@
 #    19-Feb-2010 (MG) `Change_Password`, `Reset_Password`, and
 #                     `Request_Reset_Password` implemented
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
+#    19-Feb-2010 (MG) `Activate` added
 #    ««revision-date»»···
 #--
 
@@ -66,10 +67,28 @@ class Auth (GTW.NAV.Dir) :
     class Activate (_Cmd_) :
         """Account activation"""
 
-#       template     = "???"
+        template     = "activate.jnj"
 
         def rendered (self, handler, template = None) :
-            pass
+            top     = self.top
+            ETM     = top.account_manager
+            form    = GTW.Form.Auth.Activate (ETM, self.name)
+            context = handler.context
+            request = handler.request
+            context ["form"] = form
+            if request.method == "POST" :
+                HTTP      = top.HTTP
+                req_data  = HTTP.Request_Data (request.arguments)
+                errors    = form (req_data)
+                if not errors :
+                    account = form.account
+                    next    = req_data.get      ("next", "/")
+                    account.change_password \
+                        (form.new_password, suspended = False)
+                    handler.set_secure_cookie ("username", account.name)
+                    ### XXX Add confirmation message
+                    raise HTTP.Redirect_302   (next)
+            return self.__super.rendered (handler, template)
         # end def rendered
 
     # end class Activate
@@ -89,22 +108,22 @@ class Auth (GTW.NAV.Dir) :
         template     = "change_password.jnj"
 
         def rendered (self, handler, template = None) :
-            top              = self.top
-            ETM              = top.account_manager
-            account          = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
-            form_cls         = GTW.Form.Auth.Change_Password
-            form             = form_cls (account, self.name)
-            context          = handler.context
-            request          = handler.request
+            top     = self.top
+            ETM     = top.account_manager
+            account = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            form    = GTW.Form.Auth.Change_Password (account, self.name)
+            context = handler.context
+            request = handler.request
             context ["form"] = form
             if request.method == "POST" :
-                HTTP      = top.HTTP
-                req_data  = HTTP.Request_Data (request.arguments)
-                errors    = form (req_data)
+                HTTP     = top.HTTP
+                req_data = HTTP.Request_Data (request.arguments)
+                errors   = form (req_data)
                 if not errors :
                     next  = req_data.get      ("next", "/")
                     handler.set_secure_cookie ("username", account.name)
-                    account.set               (suspended = False)
+                    account.change_password \
+                        (form.new_password, suspended = False)
                     ### XXX Add confirmation message
                     raise HTTP.Redirect_302   (next)
             return self.__super.rendered (handler, template)
@@ -256,7 +275,7 @@ class Auth (GTW.NAV.Dir) :
     # end def rendered
 
     _child_name_map = dict \
-        (  activate                = (Activate,               0)
+        ( activate                = (Activate,               0)
         ,  change_email            = (Change_Email,           2)
         , change_password         = (Change_Password,        1)
         , login                   = (Login,                  0)
