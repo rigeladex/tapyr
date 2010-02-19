@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Feb-2010 (CT) Creation
+#    19-Feb-2010 (MG) `Login` fixed
 #    ««revision-date»»···
 #--
 
@@ -90,19 +91,22 @@ class Auth (GTW.NAV.Dir) :
 
     class Login (_Cmd_) :
 
+        template = "login.jnj"
+
         def rendered (self, handler, template = None) :
             context   = handler.context
             request   = handler.request
-            req_data  = GTW.Tornado.Request_Data (request.arguments)
             form      = GTW.Form.Auth.Login (self.account_manager, self.name)
             context ["login_form"] = form
             if request.method == "POST" :
-                errors = form (req_data)
+                HTTP      = self.top.HTTP
+                req_data  = HTTP.Request_Data (request.arguments)
+                errors    = form (req_data)
                 if not errors :
                     next = req_data.get ("next")
                     handler.set_secure_cookie \
                         ("username", req_data  ["username"])
-                    raise self.top.HTTP.Redirect_302 (next)
+                    raise HTTP.Redirect_302 (next)
                 ### after a failed login, clear the current username
                 handler.clear_cookie ("username")
             return self.__super.rendered (handler, template)

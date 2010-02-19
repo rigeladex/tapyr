@@ -32,6 +32,9 @@
 #    16-Jan-2010 (CT) Derive from `Auth.Object` (thus s/usernamer/name/)
 #     3-Feb-2010 (MG) Password hashing added
 #    18-Feb-2010 (MG) `Account_P`: `salt` added as class attribute
+#    19-Feb-2010 (MG) `Account_P_Manager` added, `Account` is no longer a
+#                     `Named_Object` due to restrictions of the name (could
+#                     not be an email address)
 #    ««revision-date»»···
 #--
 
@@ -42,10 +45,11 @@ from   _GTW._OMP._Auth        import Auth
 import _GTW._OMP._Auth.Entity
 
 import  hashlib
+import  uuid
 
-_Ancestor_Essence = Auth.Object
+_Ancestor_Essence = MOM.Object
 
-class _Auth_Account_ (_Ancestor_Essence) :
+class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
     """Model an user account."""
 
     _real_name = "Account"
@@ -54,6 +58,13 @@ class _Auth_Account_ (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
+        class name (A_Email) :
+            """User name associated with this account"""
+
+            kind       = Attr.Primary
+
+        # end class name
+
         class active (A_Boolean) :
             """This account is currently active."""
 
@@ -61,11 +72,6 @@ class _Auth_Account_ (_Ancestor_Essence) :
             default    = False
 
         # end class active
-
-        class name (_Ancestor.name) :
-            """User name associated with this account"""
-
-        # end class name
 
         class superuser (A_Boolean) :
             """This account has super-user permissions."""
@@ -113,11 +119,23 @@ class Account_Anonymous (_Ancestor_Essence) :
 
 _Ancestor_Essence = Account
 
+class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
+    """E-Type manager for password accounts"""
+
+    def __call__ (self, name, password) :
+        etype    = self._etype
+        salt     = uuid.uuid4().hex
+        password = etype.password_hash (password, salt)
+        return self.__super.__call__   (name, password = password, salt = salt)
+    # end def __call__
+
+# end class Account_P_Manager
+
 class Account_P (_Ancestor_Essence) :
     """An acount which uses passwords for authorization."""
 
     Hash_Method = "sha224"
-    salt        = ""
+    Manager     = Account_P_Manager
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -129,17 +147,25 @@ class Account_P (_Ancestor_Essence) :
 
         # end class password
 
+        class salt (A_String) :
+            """The salt used for the password hash."""
+
+            kind               = Attr.Required
+            max_length         = 50
+
+        # end class salt
+
     # end class _Attributes
 
     @classmethod
-    def password_hash (cls, password) :
-        hash = hashlib.new    (cls.Hash_Method, cls.salt)
+    def password_hash (cls, password, salt) :
+        hash = hashlib.new    (cls.Hash_Method, salt)
         hash.update           (password)
         return hash.hexdigest ()
     # end def password_hash
 
     def verify_password (self, password) :
-        return self.password == self.password_hash (password)
+        return self.password == self.password_hash (password, self.salt)
     # end def verify_password
 
 # end class Account_P

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    18-Feb-2010 (MG) Creation
+#    19-Feb-2010 (MG) `Account_Token_Manager` added
 #    ««revision-date»»···
 #--
 
@@ -38,10 +39,12 @@ import _GTW._OMP._Auth.Entity
 import _GTW._OMP._Auth.Account
 
 from   _TFL.I18N              import _, _T, _Tn
+import  uuid
+import  datetime
 
-_Ancestor_Essence = MOM.Link1
+_Ancestor_Essence = Auth.Link1
 
-class _Account_Action_ (_Ancestor_Essence) :
+class _Account_Action_ (Auth.Entity, _Ancestor_Essence) :
     """Base class for different actions for a account."""
 
     is_partial = True
@@ -57,12 +60,38 @@ class _Account_Action_ (_Ancestor_Essence) :
 
         # end class left
 
-        class expires (A_Date_Time) :
-            """Exipre time of this action"""
+    # end class _Attributes
 
-            kind         = Attr.Required
+# end class _Account_Action_
 
-        # end class expires
+_Ancestor_Essence = _Account_Action_
+
+class Account_Token_Manager (_Ancestor_Essence.M_E_Type.Manager) :
+    """E-Type manager for token based account actions"""
+
+    def __call__ (self, account, expires = None) :
+        token = uuid.uuid4 ().hex
+        if not expires :
+            etype   = self._etype
+            expires = datetime.datetime.now ()+ etype.expire_duration_default
+        return self.__super.__call__ (account, token = token)
+    # end def __call__
+
+# end class Account_Token_Manager
+
+class _Account_Token_Action_ (_Ancestor_Essence) :
+    """Base class for account actions which have an token to identify the
+       action without the account.
+    """
+
+    is_partial              = True
+    Manager                 = Account_Token_Manager
+
+    expire_duration_default = datetime.timedelta (hours = 1)
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
 
         class token (A_String) :
             """Unique token which identifies this action."""
@@ -71,18 +100,25 @@ class _Account_Action_ (_Ancestor_Essence) :
 
         # end class token
 
+        class expires (A_Date_Time) :
+            """Exipre time of this action"""
+
+            kind         = Attr.Required
+
+        # end class expires
+
     # end class _Attributes
 
-# end class _Account_Action_
+# end class _Account_Token_Action_
 
-_Ancestor_Essence = _Account_Action_
+_Ancestor_Essence = _Account_Token_Action_
 
 class Account_Activation (_Ancestor_Essence) :
     """Pending account activation"""
 
 # end class Account_Activation
 
-_Ancestor_Essence = _Account_Action_
+_Ancestor_Essence = _Account_Token_Action_
 
 class Account_Rename (_Ancestor_Essence) :
     """Pending renaming of an account."""
@@ -102,7 +138,7 @@ class Account_Rename (_Ancestor_Essence) :
 
 # end class Account_Rename
 
-_Ancestor_Essence = _Account_Action_
+_Ancestor_Essence = _Account_Token_Action_
 
 class Account_Pasword_Reset (_Ancestor_Essence) :
     """A password reset is pending for the linked account."""
@@ -111,12 +147,12 @@ class Account_Pasword_Reset (_Ancestor_Essence) :
 
 _Ancestor_Essence = _Account_Action_
 
-class Account_Oassword_Change_Required (_Ancestor_Essence) :
+class Account_Password_Change_Required (_Ancestor_Essence) :
     """The password of the linked account must be changed after the next
        login.
     """
 
-# end class Account_Oassword_Change_Required
+# end class Account_Password_Change_Required
 
 if __name__ != "__main__" :
     GTW.OMP.Auth._Export ("*")
