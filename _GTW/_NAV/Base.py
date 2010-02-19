@@ -191,9 +191,9 @@
 #    25-Jan-2010 (CT) `render_context` factored
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #    28-Jan-2010 (CT) `Root.allow` added
-#    19-Feb-2010 (MG) `send_email` added
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    19-Feb-2010 (CT) Property `webmaster` added
+#    19-Feb-2010 (CT) `send_email` and `smtp` added
 #    ««revision-date»»···
 #--
 
@@ -412,7 +412,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def rendered
 
     def send_email (self, template, ** context) :
-        pass
+        if self.smtp :
+            text = self.top.Templateer.render (templatr, context)
+            self.smtp (text)
     # end def send_email
 
     @property
@@ -746,6 +748,7 @@ class Root (_Dir_) :
     obfuscate_emails        = False
     owner                   = None
     src_root                = ""
+    smtp                    = None
     target                  = None
     translator              = None
 
