@@ -191,6 +191,7 @@
 #    25-Jan-2010 (CT) `render_context` factored
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #    28-Jan-2010 (CT) `Root.allow` added
+#    19-Feb-2010 (MG) `send_email` added
 #    ««revision-date»»···
 #--
 
@@ -404,6 +405,10 @@ class _Site_Entity_ (TFL.Meta.Object) :
             result = self.translator (result)
         return result
     # end def rendered
+
+    def send_email (self, template, ** context) :
+        pass
+    # end def send_email
 
     @property
     def Type (self) :
