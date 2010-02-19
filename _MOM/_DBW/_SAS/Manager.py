@@ -33,6 +33,7 @@
 #                     version 0.6
 #    18-Feb-2010 (MG) Don't add primray Composite attributes directly to the
 #                     unique constraint (only the sub attributes will be added)
+#    19-Feb-2010 (MG) Support for auto cached links added
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -209,9 +210,15 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             ### update_etype run
             e_type._sa_save_attrs = bases, db_attrs, role_attrs
             if issubclass (e_type, MOM.Link) :
-                for cr in e_type.auto_cache_roles :
-                    cls.role_cacher [cr.other_role.role_type.type_name].add \
-                        ((cr, e_type))
+                if issubclass (e_type, MOM.Link1) :
+                    for cr in e_type.auto_cache_roles :
+                        cr_et = getattr (e_type, cr.role_name).role_type
+                        cls.role_cacher [cr_et.type_name].add ((cr, e_type))
+                else :
+                    for cr in e_type.auto_cache_roles :
+                        cls.role_cacher \
+                            [cr.other_role.role_type.type_name].add \
+                            ((cr, e_type))
                 e_type.auto_cache_roles = ()
             attr_spec = e_type._Attributes
             for name, attr_kind in role_attrs.iteritems () :
@@ -334,24 +341,39 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def _setup_columns
 
     def _cached_role (cls, app_type, attr_kind, cr, assoc_et) :
-        assoc_sa    = assoc_et._sa_table
-        q_attr      = assoc_sa.c \
-            [getattr (assoc_et, cr.role_name      ).attr._sa_col_name]
-        f_attr      = assoc_sa.c \
-            [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
-        singleton   = isinstance (cr, MOM.Role_Cacher_1)
-        result_et   = app_type [attr_kind.Class.type_name]
-        def computed_crn (self) :
-            session = self.home_scope.ems.session
-            links   = sql.select ((q_attr,)).where (f_attr == self.id)
-            query   = MOM.DBW.SAS.Q_Result \
-                ( result_et, session
-                , result_et._SAS.select.where (result_et._SAQ.id.in_(links))
-                )
-            if singleton :
-                return query.first ()
-            return query
-        # end def computed_crn
+        if isinstance (cr, MOM.Link_Cacher) :
+            singleton = isinstance (cr, MOM.Link_Cacher_1)
+            r_attr    = assoc_et._sa_table.c \
+                [getattr (assoc_et, cr.role_name).attr._sa_col_name]
+            def computed_crn (self) :
+                session = self.home_scope.ems.session
+                query   = MOM.DBW.SAS.Q_Result \
+                    ( assoc_et, session
+                    , assoc_et._SAS.select.where (r_attr == self.id)
+                    )
+                if singleton :
+                    return query.first ()
+                return query
+            # end def computed_crn
+        else :
+            assoc_sa    = assoc_et._sa_table
+            q_attr      = assoc_sa.c \
+                [getattr (assoc_et, cr.role_name      ).attr._sa_col_name]
+            f_attr      = assoc_sa.c \
+                [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
+            singleton   = isinstance (cr, MOM.Role_Cacher_1)
+            result_et   = app_type [attr_kind.Class.type_name]
+            def computed_crn (self) :
+                session = self.home_scope.ems.session
+                links   = sql.select ((q_attr,)).where (f_attr == self.id)
+                query   = MOM.DBW.SAS.Q_Result \
+                    ( result_et, session
+                    , result_et._SAS.select.where (result_et._SAQ.id.in_(links))
+                    )
+                if singleton :
+                    return query.first ()
+                return query
+            # end def computed_crn
         attr_kind.attr.computed = computed_crn
     # end def _cached_role
 

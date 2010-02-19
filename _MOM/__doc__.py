@@ -48,6 +48,7 @@
 #    14-Feb-2010 (MG) Fixed doctest after fixing `Entity._record_iter` (which
 #                     introducted a new change object)
 #    18-Feb-2010 (CT) `Rodent_is_sick` added to test unary links
+#    19-Feb-2010 (MG) Test for auto cached links added
 #    ««revision-date»»···
 #--
 
@@ -268,7 +269,7 @@ The app-type specific entity-types are ready to be used by
     >>> ET_Mouse.optional
     [String `color`]
     >>> sorted (ET_Mouse.attributes.itervalues (), key = TFL.Getter.name)
-    [Blob `FO`, Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, String `ui_display`, Float `weight`, Boolean `x_locked`]
+    [Blob `FO`, Cached_Role `catcher`, String `color`, Boolean `electric`, Int `is_used`, Name `name`, Cached_Role_Set `sickness`, String `ui_display`, Float `weight`, Boolean `x_locked`]
 
     >>> ET_Person.last_name.name, ET_Person.last_name.ui_name
     ('last_name', 'Last name')
@@ -1235,8 +1236,8 @@ Unary links
     >>> osm.fever = 42
     >>> osm.as_code ()
     u"BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (birth = '2010/02/18'), fever = 42.0)"
-
-
+    >>> sr.sickness
+    set([BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (birth = '2010/02/18'))])
 """
 
 db_uri = "'/tmp/bmt_test.bmt'"
@@ -1516,6 +1517,7 @@ class Rodent_is_sick (_Ancestor_Essence) :
             """Rodent that is sick"""
 
             role_type     = Rodent
+            auto_cache    = "sickness"
 
         # end class left
 
