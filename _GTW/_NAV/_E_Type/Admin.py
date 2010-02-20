@@ -39,6 +39,7 @@
 #     6-Feb-2010 (MG) Made `Completed` working again
 #    12-Feb-2010 (CT) `Admin.__init__` changed to convert strings in
 #                     `list_display` to attributes
+#    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    ««revision-date»»···
 #--
 

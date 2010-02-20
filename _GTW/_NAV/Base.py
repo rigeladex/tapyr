@@ -194,6 +194,8 @@
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    19-Feb-2010 (CT) Property `webmaster` added
 #    19-Feb-2010 (CT) `send_email` and `smtp` added
+#    20-Feb-2010 (CT) Use `SC` instead of `_pid_map`
+#    20-Feb-2010 (CT) Property `login_page` added
 #    ««revision-date»»···
 #--
 
@@ -226,7 +228,7 @@ class _Meta_ (TFL.Meta.M_Class) :
             if href is not None :
                 top.Table [href] = result
             if pid is not None :
-                top._pid_map [pid] = result
+                setattr (top.SC, pid, result)
         return result
     # end def __call__
 
@@ -254,7 +256,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     _Media          = GTW.Media ()
 
     ### ("GET", "HEAD", "POST", "DELETE", "PUT")
-    SUPPORTED_METHODS = set (("GET", ))
+    SUPPORTED_METHODS = set (("GET", "POST"))
 
     def __init__ (self, parent = None, ** kw) :
         self._kw    = kw
@@ -761,7 +763,7 @@ class Root (_Dir_) :
         self.parents      = []
         self.prefix       = ""
         self.Table        = {}
-        self._pid_map     = {}
+        self.SC           = Record ()
         self.E_Types      = {}
         self.level        = -1
         self.__super.__init__ \
@@ -798,6 +800,12 @@ class Root (_Dir_) :
         return unicode (self.nick or self.owner or self.name)
     # end def h_title
 
+    @Once_Property
+    def login_page (self) :
+        if "Auth" in self.SC :
+            return self.SC.Auth.href_login
+    # end def login_page
+
     @classmethod
     def page_from_href (cls, href) :
         result = None
@@ -823,15 +831,6 @@ class Root (_Dir_) :
                     break
         return result
     # end def page_from_href
-
-    @classmethod
-    def page_from_pid (cls, pid) :
-        result = None
-        top    = cls.top
-        if top is not None :
-            result = top._pid_map.get (pid)
-        return result
-    # end def page_from_pid
 
     @classmethod
     def universal_view (cls, handler) :

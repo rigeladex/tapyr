@@ -75,6 +75,31 @@
   {%- endif %}
 {%- endmacro -%} {# entries #}
 
+{%- macro login_section (page, request) -%}
+  <div class="nav-section login">
+    <h1>{{ GTW._T ("Login") }}</h1>
+    {%- if request.user.authenticated %}
+      <form method="post" action="{{ page.SC.Auth.href_logout }}">
+        <ul>
+          <li>
+            <input type="submit"
+                   value="{{ GTW._T ("Logout") }} {{ request.user.name }}"
+                   title="{{ GTW._T ("Logout") }} {{ request.user.name }}"
+                   class="submit"
+            />
+            <input type="hidden" name="next" value="{{ request.path }}" />
+          </li>
+          {#- XXX <li> Account administration </li> -#}
+        </ul>
+      </form>
+    {%- else -%}
+      {%- import "STD::html/form.jnj" as Form %}
+      {{ Form.login_inline (action = page.SC.Auth.href_login, next = request.path) }}
+      {#- XXX <li> Password reset </li> -#}
+    {% endif -%}
+  </div>
+{%- endmacro -%} {#- login_section -#}
+
 {%- macro neighbor (neighbor, alt, symbol) -%}
   {%- onion neighbor %}
     {%- head %}

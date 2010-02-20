@@ -1,6 +1,10 @@
 MOM To-Do
 =========
 
+- MOM.SCM:
+
+  * etype-specific and change-type-specific callbacks
+
 - MOM.Attr.Kind:
 
   * Link_Set_Mixin, Link_Mixin

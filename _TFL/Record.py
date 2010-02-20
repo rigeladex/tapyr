@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2000-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2000-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -44,6 +44,7 @@
 #     9-Dec-2009 (CT) `__repr__` and `_formatted_kw` changed (use `%r`
 #                     instead of explicitly quoted `%s`)
 #    21-Dec-2009 (CT) `__getstate__` and `__setstate__` added
+#    20-Feb-2010 (CT) `__contains__` added
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,10 @@ class Record (TFL.Meta.Object) :
               )
             )
     # end def _formatted_kw
+
+    def __contains__ (self, item) :
+        return item in self._kw
+    # end def __contains__
 
     def __delattr__ (self, name) :
         del self._kw [name]

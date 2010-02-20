@@ -35,6 +35,7 @@
 #    20-Feb-2010 (MG) Missing functions added
 #    20-Feb-2010 (MG) Action expiration handling added
 #    20-Feb-2010 (MG) Notification added
+#    20-Feb-2010 (CT) Use symbolic names for templates
 #    ««revision-date»»···
 #--
 
@@ -95,7 +96,7 @@ class Auth (GTW.NAV.Dir) :
     class Activate (_Cmd_) :
         """Account activation"""
 
-        template     = "html/activate.jnj"
+        template     = "account_activate"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -124,7 +125,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Email (_Cmd_) :
 
-        template     = "html/change_email.jnj"
+        template     = "account_change_email"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -158,7 +159,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Password (_Cmd_) :
 
-        template     = "change_password.jnj"
+        template     = "account_change_password"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -189,7 +190,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Login (_Cmd_) :
 
-        template = "html/login.jnj"
+        template = "login"
 
         def rendered (self, handler, template = None) :
             context   = handler.context
@@ -236,7 +237,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Register (_Cmd_) :
 
-        template     = "???"
+        template     = "account_register"
 
         def rendered (self, handler, template = None) :
             context   = handler.context
@@ -263,7 +264,7 @@ class Auth (GTW.NAV.Dir) :
     class Request_Reset_Password (_Cmd_) :
         """Initiate the reset password procedure."""
 
-        template = "reset_password.jnj"
+        template = "account_reset_password"
 
         def rendered (self, handler, template = None) :
             context   = handler.context
@@ -313,14 +314,17 @@ class Auth (GTW.NAV.Dir) :
         return pjoin (self.abs_href, self.T.change_password, obj.lid)
     # end def href_change_pass
 
+    @property
     def href_login (self) :
         return pjoin (self.abs_href, self.T.login)
     # end def href_login
 
+    @property
     def href_logout (self) :
-        return pjoin (self.abs_href, self.T.login)
+        return pjoin (self.abs_href, self.T.logout)
     # end def href_logout
 
+    @property
     def href_register (self) :
         return pjoin (self.abs_href, self.T.register)
     # end def href_register

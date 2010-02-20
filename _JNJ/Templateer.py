@@ -52,10 +52,16 @@ class Templateer (TFL.Meta.Object) :
           , 405       : "html/error_405.jnj"
           , 500       : "html/error_500.jnj"
           }
-        , default       = "html/error.jnj"
-        , e_type_admin  = "html/e_type_admin.jnj"
-        , e_type_change = "html/e_type_change.jnj"
-        , site_admin    = "html/site_admin.jnj"
+        , account_activate             = "html/activate.jnj"
+        , account_change_email         = "html/change_email.jnj"
+        , account_change_password      = "html/change_password.jnj"
+        , account_register             = "html/register.jnj"
+        , account_reset_password       = "html/reset_password.jnj"
+        , default                      = "html/error.jnj"
+        , e_type_admin                 = "html/e_type_admin.jnj"
+        , e_type_change                = "html/e_type_change.jnj"
+        , login                        = "html/login.jnj"
+        , site_admin                   = "html/site_admin.jnj"
         )
 
     def __init__ (self, * args, ** kw) :
