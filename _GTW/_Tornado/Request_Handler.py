@@ -54,7 +54,7 @@ class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
             (sid, settings.get ("cookie_secret", ""))
         if not sid :
             self.set_secure_cookie      (SID_Cookie, session.sid)
-            GTW.Notification_Collection (session)
+        GTW.Notification_Collection     (session)
         return session
     # end def session
 

@@ -33,6 +33,7 @@
 #                     values of the cooked and raw attribute values
 #    16-Feb-2010 (MG) `delete` enhanced: dispose the connection pool of the
 #                     engine to make sure all connection will be closed
+#    20-Feb-2010 (MG) `SAS_Interface.reconstruct` fixed PID creation
 #    ««revision-date»»···
 #--
 
@@ -123,7 +124,7 @@ class SAS_Interface (TFL.Meta.Object) :
         self._reconstruct (session, self.e_type_columns, pickle_cargo, row)
         entity     = self.e_type.from_pickle_cargo (scope, pickle_cargo)
         entity.id  = row [self.e_type._SAQ.id]
-        entity.pid = MOM.EMS.SAS.PID (entity.type_name, entity.id)
+        entity.pid = MOM.EMS.SAS.PID (entity.relevant_root.type_name, entity.id)
         return entity
     # end def reconstruct
 
@@ -326,17 +327,15 @@ class Session (TFL.Meta.Object) :
         self._id_map          = {}
         ### only used during loading of changes from the database
         self._cid_map         = {}
-        self._flushed_changes = set ()
     # end def expunge
 
     def flush (self) :
         #self.engine.echo = True
         for pid, attrs in self.scope.attr_changes.iteritems () :
-            entity  = self._id_map.get (pid, None)
-            if entity :
-                entity.__class__._SAS.update (self, entity, attrs)
-        self.scope.attr_changes.clear   ()
-        self.engine.echo = False
+            entity  = self._id_map.get   (pid, None)
+            entity.__class__._SAS.update (self, entity, attrs)
+        self.scope.attr_changes.clear    ()
+        #self.engine.echo = False
     # end def flush
 
     def _instance_from_map (self, type_name, epk) :
