@@ -41,6 +41,7 @@ let's create some accounts
     ...     ("user1@example.com", password = "passwd1", enabled = True)
     >>> acc2 = scope.Auth.Account_P \\
     ...     ("user2@example.com", password = "passwd1", enabled = True)
+    >>> acc1.suspended = acc2.suspended = False
     >>> acc1.name, acc2.name
     (u'user1@example.com', u'user2@example.com')
 
@@ -194,7 +195,9 @@ Try to verify the `new` passwords
     1
 
 Account activation
-    >>> acc3        = scope.Auth.Account_P    ("user3@example.com")
+    >>> acc3 = scope.Auth.Account_P ("user3@example.com", enabled = True)
+    >>> acc3.active, acc3.suspended
+    (False, True)
     >>> acc3.activation
     >>> temp_passwd = acc3.prepare_activation ()
     >>> acc3.activation
@@ -221,6 +224,8 @@ Account activation
        ...
     Redirect_302: /
     >>> acc3.verify_password ("passwd3")
+    True
+    >>> acc3.active
     True
     >>> acc3.activation
 

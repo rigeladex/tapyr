@@ -28,6 +28,7 @@
 # Revision Dates
 #    25-Jan-2010 (MG) Creation
 #    19-Feb-2010 (MG) Moved from `GTW.Tornado` into `GTW`
+#    20-Feb-2010 (MG) `__contains__` added
 #    ««revision-date»»···
 #--
 
@@ -45,8 +46,8 @@ import  hashlib
 ### session key generation is based on the version found in Django
 ### (www.djangoproject.com)
 
-# Use the system (hardware-based) random number generator if it exists.
 MAX_SESSION_KEY = 18446744073709551616L     # 2 << 63
+# Use the system (hardware-based) random number generator if it exists.
 if hasattr(random, "SystemRandom") :
     randrange = random.SystemRandom ().randrange
 else:
@@ -108,6 +109,14 @@ class Session (TFL.Meta.Object) :
         return self._data.get (key, default)
     # end def get
 
+    def __contains__ (self, item) :
+        return item in self._data
+    # end def __contains__
+
+    def __delitem__ (self, key) :
+        self._data.pop (key, None)
+    # end def __delitem__
+
     def __getitem__ (self, key) :
         return self._data [key]
     # end def __getitem__
@@ -116,18 +125,14 @@ class Session (TFL.Meta.Object) :
         self._data [key] = value
     # end def __setitem__
 
-    def __delitem__ (self, key) :
-        self._data.pop (key, None)
-    # end def __delitem__
-
     ### allow attribute like access
-    def __getattr__ (self, name) :
-        return self.get (name)
-    # end def __getattr__
-
     def __delattr__ (self, name) :
         del self [name]
     # end def
+
+    def __getattr__ (self, name) :
+        return self.get (name)
+    # end def __getattr__
 
 # end class Session
 

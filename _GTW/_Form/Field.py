@@ -28,12 +28,14 @@
 # Revision Dates
 #    30-Dec-2009 (MG) Creation
 #    02-Feb-2010 (MG) `get_raw` paremeter form added
+#    20-Feb-2010 (MG) Parameter `ui_name` added
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
 import _TFL._Meta.Object
 from   _GTW               import GTW
 import _GTW._Form
+from   _TFL.I18N          import _T
 
 class Field (TFL.Meta.Object) :
     """A free field which should be part of a HTML form"""
@@ -41,12 +43,14 @@ class Field (TFL.Meta.Object) :
     widget = "html/field.jnj, string"
     hidden = False
 
-    def __init__ (self, name, default = "", ** kw) :
+    def __init__ (self, name, default = "", ui_name = None, ** kw) :
         self.name      = name
         self.html_name = name
         self.default   = default
+        self.ui_name   = _T (ui_name or name.capitalize ())
         self.__dict__.update (kw)
     # end def __init__
+
 
     def get_raw (self, form, obj) :
         return getattr (obj, self.name, self.default)

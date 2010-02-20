@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    12-Sep-2009 (MG) Creation
+#    20-Feb-2010 (MG) Add the notification collection to the session
 #    ««revision-date»»···
 #--
 
@@ -34,9 +35,12 @@ from   _TFL                       import TFL
 from   _TFL._Meta.Once_Property   import Once_Property
 import _TFL._Meta.Object
 
-import  locale
+from   _GTW                       import GTW
+import _GTW.Notification
+import _GTW._Tornado
 
-from    tornado            import web
+import  locale
+from    tornado                   import web
 
 class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
     """Base class for a request handler"""
@@ -49,7 +53,8 @@ class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
         session    = settings ["Session_Class"] \
             (sid, settings.get ("cookie_secret", ""))
         if not sid :
-            self.set_secure_cookie (SID_Cookie, session.sid)
+            self.set_secure_cookie      (SID_Cookie, session.sid)
+            GTW.Notification_Collection (session)
         return session
     # end def session
 
@@ -92,7 +97,5 @@ class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
 # end class Request_Handler
 
 if __name__ != "__main__" :
-    from   _GTW            import GTW
-    import _GTW._Tornado
     GTW.Tornado._Export ("*")
 ### __END__ GTW.Tornado.Request_Handler

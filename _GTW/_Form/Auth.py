@@ -37,12 +37,13 @@
 #    19-Feb-2010 (MG) `Reset_Password` form added
 #    19-Feb-2010 (MG) Reorganized, Account activation added
 #    20-Feb-2010 (MG) Remaining forms added
+#    20-Feb-2010 (MG) `ui_name` for fields added
 #    ««revision-date»»···
 #--
 
 from   _TFL               import TFL
 import _TFL._Meta.Object
-import _TFL.I18N
+from   _TFL.I18N          import _T, _
 
 from   _GTW               import GTW
 import _GTW._Form.Plain
@@ -54,9 +55,10 @@ PWD_WS = GTW.Form.Widget_Spec ("html/field.jnj, password")
 class _Login_Mixin_ (TFL.Meta.Object) :
     """Handles the login form processing."""
 
-    fields = \
-        ( GTW.Form.Field ("username")
-        , GTW.Form.Field ("password", widget = PWD_WS)
+    active_account_required = True
+    fields                  = \
+        ( GTW.Form.Field ("username", ui_name = _("Username"))
+        , GTW.Form.Field ("password", ui_name = _("Password"), widget = PWD_WS)
         )
 
     def __init__ (self, account_manager, * args, ** kw) :
@@ -66,15 +68,16 @@ class _Login_Mixin_ (TFL.Meta.Object) :
     # end def __init__
 
     def _validate (self) :
-        _T           = TFL.I18N._T
         username     = self.get_required \
             ("username", _T (u"A user name is required to login."))
         password     = self.get_required \
             ("password", _T (u"The password is required."))
-        if (    not self.field_errors
-           and not self._authenticate (username, password)
-           ) :
-            self.errors.append (_T (u"Username or password incorrect"))
+        if not self.field_errors :
+            if not self._authenticate (username, password) :
+                self.errors.append (_T (u"Username or password incorrect"))
+            elif self.active_account_required and not self.account.active :
+                self.errors.append (_T (u"This account is currently inactive"))
+                self.account = None
         self.__super._validate ()
         self.request_data = {}
     # end def _validate
@@ -94,12 +97,13 @@ class _New_Password_ (TFL.Meta.Object) :
     """Verifies two password entries"""
 
     fields = \
-        ( GTW.Form.Field ("npassword1", widget = PWD_WS)
-        , GTW.Form.Field ("npassword2", widget = PWD_WS)
+        ( GTW.Form.Field
+            ("npassword1", ui_name = _("New password"), widget = PWD_WS)
+        , GTW.Form.Field
+            ("npassword2", ui_name = _("Repeat new password"), widget = PWD_WS)
         )
 
     def _validate (self) :
-        _T                = TFL.I18N._T
         self.new_password = None
         pwd_1             = self.get_required \
             ("npassword1", _T (u"The new password is required."))
@@ -117,7 +121,8 @@ class _New_Password_ (TFL.Meta.Object) :
 class _Activate_Account_Mixin_ (_Login_Mixin_, _New_Password_) :
     """Form to activate a user account after initail creation"""
 
-    fields = _Login_Mixin_.fields + _New_Password_.fields
+    active_account_required = False
+    fields                  = _Login_Mixin_.fields + _New_Password_.fields
 
 # end class _Activate_Account_Mixin_
 
@@ -125,7 +130,7 @@ class _Change_Password_Mixin_ (_New_Password_) :
     """Change password form."""
 
     fields = \
-        ( GTW.Form.Field ("password",  widget = PWD_WS)
+        ( GTW.Form.Field ("password", ui_name = _("Password"), widget = PWD_WS)
         ,
         ) + _New_Password_.fields
 
@@ -136,7 +141,6 @@ class _Change_Password_Mixin_ (_New_Password_) :
 
     def _validate (self) :
         self.__super._validate ()
-        _T           = TFL.I18N._T
         old_pwd      = self.get_required \
             ("password", _T (u"The old password is required."))
         if (   not (self.field_errors or self.errors)
@@ -153,8 +157,13 @@ class _Change_EMail_Mixin_ (TFL.Meta.Object) :
     """Change the e-mail address of account"""
 
     fields = \
-        ( GTW.Form.Field ("new_email", widget = "html/field.jnj, email")
-        , GTW.Form.Field ("password",  widget = PWD_WS)
+        ( GTW.Form.Field
+            ( "new_email"
+            , ui_name = _("New email address")
+            , widget  = "html/field.jnj, email"
+            )
+        , GTW.Form.Field
+            ("password", ui_name = _("Password"), widget = PWD_WS)
         )
 
     def __init__ (self, account, * args, ** kw) :
@@ -163,7 +172,6 @@ class _Change_EMail_Mixin_ (TFL.Meta.Object) :
     # end def __init__
 
     def _validate (self) :
-        _T             = TFL.I18N._T
         old_pwd      = self.get_required \
             ("password", _T (u"The old password is required."))
         self.new_email = self.get_required \
@@ -182,7 +190,7 @@ class _Register_Account_ (_New_Password_) :
     """Register a new account"""
 
     fields = \
-        ( GTW.Form.Field ("username")
+        ( GTW.Form.Field ("username", ui_name = _("Username"))
         ,
         ) + _New_Password_.fields
 
@@ -192,7 +200,6 @@ class _Register_Account_ (_New_Password_) :
     # end def __init__
 
     def _validate (self) :
-        _T            = TFL.I18N._T
         self.username = username = self.get_required \
             ("username", _T (u"A user name is required to login."))
         if not self.field_errors :
@@ -209,7 +216,7 @@ class _Register_Account_ (_New_Password_) :
 class _Reset_Password_Mixin_ (TFL.Meta.Object) :
     """Convert the user name into an account."""
 
-    fields = (GTW.Form.Field ("username"), )
+    fields = (GTW.Form.Field ("username", ui_name = _("Username")), )
 
     def __init__ (self, account_manager, * args, ** kw) :
         self.account         = None
@@ -218,7 +225,6 @@ class _Reset_Password_Mixin_ (TFL.Meta.Object) :
     # end def __init__
 
     def _validate (self) :
-        _T           = TFL.I18N._T
         self.account = username = self.get_required \
             ("username", _T (u"A user name is required to login."))
         if not self.field_errors and self.account_manager :

@@ -34,6 +34,7 @@
 #    19-Feb-2010 (MG) `Activate` added
 #    20-Feb-2010 (MG) Missing functions added
 #    20-Feb-2010 (MG) Action expiration handling added
+#    20-Feb-2010 (MG) Notification started
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 from   _MOM.import_MOM          import Q
 
+import _GTW.Notification
 import _GTW._NAV.Base
 import _GTW._Form.Auth
 import _GTW._Tornado.Request_Data
@@ -57,7 +59,8 @@ import urlparse
 class Auth (GTW.NAV.Dir) :
     """Navigation directory for handling authorization (of a single user)."""
 
-    T = TFL.I18N.Name
+    T        = TFL.I18N.Name
+    pid      = "account-handling"
 
     class _Cmd_ (GTW.NAV._Site_Entity_) :
 
@@ -92,7 +95,7 @@ class Auth (GTW.NAV.Dir) :
     class Activate (_Cmd_) :
         """Account activation"""
 
-        template     = "activate.jnj"
+        template     = "html/activate.jnj"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -120,7 +123,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Email (_Cmd_) :
 
-        template     = "???"
+        template     = "html/change_email.jnj"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -176,7 +179,7 @@ class Auth (GTW.NAV.Dir) :
 
     class Login (_Cmd_) :
 
-        template = "login.jnj"
+        template = "html/login.jnj"
 
         def rendered (self, handler, template = None) :
             context   = handler.context
@@ -207,8 +210,6 @@ class Auth (GTW.NAV.Dir) :
 
     class Logout (_Cmd_) :
 
-        SUPPORTED_METHODS = set (("GET", ))
-
         def _view (self, handler) :
             handler.clear_cookie ("username")
             top       = self.top
@@ -216,7 +217,8 @@ class Auth (GTW.NAV.Dir) :
             next_page = top.page_from_href (urlparse.urlsplit (next).path)
             if getattr (next_page, "login_required", False) :
                 next = "/"
-            ### XXX Add confirmation message
+            handler.session.notifications.append \
+                (GTW.Notification (_T(u"Logout successfull.")))
             raise top.HTTP.Redirect_302 (next)
         # end def _view
 

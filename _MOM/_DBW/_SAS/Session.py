@@ -332,8 +332,9 @@ class Session (TFL.Meta.Object) :
     def flush (self) :
         #self.engine.echo = True
         for pid, attrs in self.scope.attr_changes.iteritems () :
-            entity  = self._id_map [pid]
-            entity.__class__._SAS.update (self, entity, attrs)
+            entity  = self._id_map.get (pid, None)
+            if entity :
+                entity.__class__._SAS.update (self, entity, attrs)
         self.scope.attr_changes.clear   ()
         self.engine.echo = False
     # end def flush

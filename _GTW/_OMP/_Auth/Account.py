@@ -100,7 +100,7 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
             """This account is currently suspended (due to a pending action)."""
 
             kind       = Attr.Optional
-            default    = False
+            default    = True
 
         # end class suspended
 
