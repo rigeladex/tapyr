@@ -35,6 +35,7 @@ from   _TFL                import TFL
 import _TFL._Meta.Object
 from   _GTW                import GTW
 import _GTW._Tornado.Error
+import _GTW._Tornado.Static_File
 
 from    tornado            import web
 import  tornado.httpserver
@@ -49,11 +50,14 @@ class _Tornado_Application_ (web.Application, TFL.Meta.Object) :
     """Base class for Web Applications"""
 
     def __init__ (self, handlers = None, * args, ** kw) :
-        media = kw.pop ("media_path", None)
+        media          = kw.pop ("media_path", None)
+        static_handler = kw.pop ("static_handler", None)
+        handlers       = (handlers and list (handlers)) or []
         if media :
-            handlers = (handlers and list (handlers)) or []
             handlers.insert \
                 (0, ("/media/(.*)", web.StaticFileHandler, dict (path = media)))
+        if static_handler :
+            handlers.insert (0, static_handler)
         self.__super.__init__ (handlers, * args, ** kw)
     # end def __init__
 
@@ -82,7 +86,14 @@ if __name__ != "__main__" :
     GTW.Tornado._Export ("*", "as_json")
 else :
     import _GTW._Tornado.Request_Handler
+    import  sys
+    import  os
 
+    app_dir   = os.path.dirname (sys.argv [0])
+    media_dir = os.path.normpath \
+        (os.path.join (app_dir, "..", "_NAV", "example", "media"))
+    djo_dir   = os.path.normpath \
+        (os.path.join (app_dir, "..", "..", "_DJO", "media"))
     class Handle_All (GTW.Tornado.Request_Handler) :
 
         def get (self) :
@@ -91,5 +102,12 @@ else :
 
     # end class Handle_All
 
-    auto_reload_start (Application ( ((r"/", Handle_All), )))
+    auto_reload_start \
+        (Application ( ((r"/", Handle_All), )
+                     , static_handler = GTW.Tornado.Static_File_Handler
+                         ( "media", media_dir
+                         , GTW.Tornado.Static_Map ("GTW", djo_dir)
+                         )
+                     )
+        )
 ### __END__ GTW.Tornado.Application
