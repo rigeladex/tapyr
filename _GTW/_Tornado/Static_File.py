@@ -38,6 +38,7 @@ import _TFL._Meta.Object
 
 import  os
 import  stat
+import  time
 import  datetime
 import  email
 import  mimetypes
@@ -76,7 +77,8 @@ class Static_Map (TFL.Meta.Object) :
             if_since   = datetime.datetime.fromtimestamp \
                 (time.mktime (date_tuple))
             if if_since >= modified :
-                raise GTW.Tornado.Redirect_304
+                handler.set_status (304)
+                return
 
         handler.set_header ("Last-Modified",  modified)
         handler.set_header ("Content-Length", file_size)

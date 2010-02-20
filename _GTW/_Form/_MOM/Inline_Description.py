@@ -43,6 +43,7 @@
 #    10-Feb-2010 (MG) Link javascript setup moved form `Media` to
 #                     `Link_Inline_Description.js_on_ready` to be able to
 #                     create link specific code
+#    20-Feb-2010 (MG) Locations of javascript and style sheets changed
 #    ««revision-date»»···
 #--
 
@@ -112,15 +113,15 @@ class Link_Inline_Description (_Inline_Description_) :
         ( "html/form.jnj, inline_table"
         , Media = GTW.Media
               ( css_links   =
-                  ( GTW.CSS_Link ("/media/styles/GTW/jquery-ui-1.7.2.custom.css")
-                  , GTW.CSS_Link ("/media/styles/GTW/m2m.css")
+                  ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.7.2.custom.css")
+                  , GTW.CSS_Link ("/media/GTW/css/m2m.css")
                   )
               , scripts     =
                   ( GTW.Script (src  = "http://www.google.com/jsapi")
                   , GTW.Script (body = 'google.load ("jquery", "1");')
           ##        , GTW.Script (body = 'google.load ("jquery", "1", {uncompressed:true});')
                   , GTW.Script (body = 'google.load ("jqueryui", "1");')
-                  , GTW.Script (src  = "GTW/model_edit_ui.js") ## XXX
+                  , GTW.Script (src  = "/media/GTW/js/model_edit_ui.js") ## XXX
                   )
             )
         )

@@ -64,7 +64,13 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
     def _handle_request (self, * args, ** kw) :
         if self.application.settings.get ("i18n", False) :
             I18N.use (* self.locale_codes)
-        GTW.NAV.Root.universal_view (self)
+        top   = GTW.NAV.Root.top
+        try :
+            GTW.NAV.Root.universal_view (self)
+        except top.HTTP._Redirect_ :
+            self.session.save                   ()
+            getattr (top, "scope", None).commit ()
+            raise
         self.session.save           ()
         scope = getattr  (GTW.NAV.Root.top, "scope", None)
         if scope :
@@ -75,10 +81,7 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
         top   = GTW.NAV.Root.top
         scope = getattr (top, "scope", None)
         if scope :
-            if isinstance (exc, top.HTTP._Redirect_) :
-                scope.commit   ()
-            else :
-                scope.rollback ()
+            scope.rollback ()
         if isinstance (exc, top.HTTP.Status) :
             if exc (self, top) :
                 return

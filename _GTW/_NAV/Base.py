@@ -470,7 +470,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def _view (self, handler) :
         request         = handler.request
         request.user    = handler.current_user
-        handler.context = self.render_context (request = request)
+        handler.context = self.render_context \
+            (request = request, notifications = handler.session.notifications)
         result          = self.rendered (handler)
         if result is None :
             raise self.top.HTTP.Error_404 (request.uri [1:])
