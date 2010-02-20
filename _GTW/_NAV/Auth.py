@@ -34,7 +34,7 @@
 #    19-Feb-2010 (MG) `Activate` added
 #    20-Feb-2010 (MG) Missing functions added
 #    20-Feb-2010 (MG) Action expiration handling added
-#    20-Feb-2010 (MG) Notification started
+#    20-Feb-2010 (MG) Notification added
 #    ««revision-date»»···
 #--
 
@@ -114,7 +114,8 @@ class Auth (GTW.NAV.Dir) :
                     account.change_password \
                         (form.new_password, suspended = False)
                     handler.set_secure_cookie ("username", account.name)
-                    ### XXX Add confirmation message
+                    handler.session.notifications.append \
+                        (GTW.Notification (_T(u"Activation successfull.")))
                     raise HTTP.Redirect_302   (next)
             return self.__super.rendered (handler, template)
         # end def rendered
@@ -140,7 +141,13 @@ class Auth (GTW.NAV.Dir) :
                 if not errors :
                     next  = req_data.get         ("next", "/")
                     account.change_email_prepare (form.new_email)
-                    ### XXX Add confirmation message
+                    handler.session.notifications.append \
+                        ( GTW.Notification
+                            (_T(u"A confirmation email has been sent to "
+                                 "the new email address."
+                               )
+                            )
+                        )
                     ### XXX Send email with confirmation link to new email
                     ### XXX Send info email to old email
                     raise HTTP.Redirect_302      (next)
@@ -170,7 +177,10 @@ class Auth (GTW.NAV.Dir) :
                     handler.set_secure_cookie ("username", account.name)
                     account.change_password \
                         (form.new_password, suspended = False)
-                    ### XXX Add confirmation message
+                    handler.session.notifications.append \
+                        ( GTW.Notification
+                            (_T(u"The password has been changed."))
+                        )
                     raise HTTP.Redirect_302   (next)
             return self.__super.rendered (handler, template)
         # end def rendered
@@ -272,7 +282,13 @@ class Auth (GTW.NAV.Dir) :
                     next      = handler.request.headers.get ("Referer", "/")
                     next_page = top.page_from_href \
                         (urlparse.urlsplit (next).path)
-                    ### XXX Add confirmation message
+                    handler.session.notifications.append \
+                        ( GTW.Notification
+                            (_T(u"The reset password instructions have been "
+                                 "sent to your email address."
+                               )
+                            )
+                        )
                     ### XXX send email
                     raise HTTP.Redirect_302 (next)
             return self.__super.rendered    (handler, template)
