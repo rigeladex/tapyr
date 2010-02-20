@@ -228,8 +228,9 @@ class Auth (GTW.NAV.Dir) :
             next_page = top.page_from_href (urlparse.urlsplit (next).path)
             if getattr (next_page, "login_required", False) :
                 next = "/"
-            handler.session.notifications.append \
-                (GTW.Notification (_T(u"Logout successfull.")))
+            if handler.session.notifications is not None:
+                handler.session.notifications.append \
+                    (GTW.Notification (_T(u"Logout successfull.")))
             raise top.HTTP.Redirect_302 (next)
         # end def _view
 
