@@ -33,6 +33,7 @@
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    19-Feb-2010 (MG) `Activate` added
 #    20-Feb-2010 (MG) Missing functions added
+#    20-Feb-2010 (MG) Action expiration handling added
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,12 @@ class Auth (GTW.NAV.Dir) :
             action    = top.scope.GTW.OMP.Auth._Account_Token_Action_.query \
                         (account = account, token = self.args [1]).first ()
             if action :
-                raise HTTP.Redirect_302 (action.handle (self))
+                try :
+                    raise HTTP.Redirect_302 (action.handle (self))
+                except GTW.OMP.Auth.Action_Exipred :
+                    action.destroy       ()
+                    top.scope.commit     ()
+                    raise HTTP.Error_404 ()
             raise HTTP.Error_404 ()
         # end def rendered
 

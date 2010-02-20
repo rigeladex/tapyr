@@ -30,6 +30,7 @@
 #    19-Feb-2010 (MG) `Account_Token_Manager` added
 #    19-Feb-2010 (MG) Reorganized
 #    20-Feb-2010 (MG) Account management functions added
+#    20-Feb-2010 (MG) Expiration of actions added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,8 @@ import _GTW._OMP._Auth.Account
 from   _TFL.I18N              import _, _T, _Tn
 import  uuid
 import  datetime
+
+class Action_Exipred (StandardError) : pass
 
 _Ancestor_Essence = Auth.Link1
 
@@ -120,7 +123,8 @@ class Account_Token_Manager (_Ancestor_Essence.M_E_Type.Manager) :
         if not expires :
             etype   = self._etype
             expires = datetime.datetime.now ()+ etype.expire_duration_default
-        return self.__super.__call__ (account, token = token, ** kw)
+        return self.__super.__call__ \
+            (account, token = token, expires = expires, ** kw)
     # end def __call__
 
 # end class Account_Token_Manager
@@ -155,6 +159,11 @@ class _Account_Token_Action_ (_Ancestor_Essence) :
 
     # end class _Attributes
 
+    def handle (self, nav = None) :
+        if self.expires < datetime.datetime.now () :
+            raise Action_Exipred
+    # end def handle
+
 # end class _Account_Token_Action_
 
 _Ancestor_Essence = _Account_Token_Action_
@@ -176,6 +185,7 @@ class Account_EMail_Verification (_Ancestor_Essence) :
     # end class _Attributes
 
     def handle (self, nav = None) :
+        self.__super.handle ()
         account = self.account
         next    = "/"
         if self.new_email :
@@ -210,6 +220,7 @@ class Account_Pasword_Reset (_Ancestor_Essence) :
     # end class _Attributes
 
     def handle (self, nav = None) :
+        self.__super.handle ()
         account = self.account
         account.change_password (self.password, False)
         for l in self.home_scope.GTW.OMP.Auth.Account_Pasword_Reset.query \

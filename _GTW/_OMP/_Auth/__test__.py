@@ -314,6 +314,15 @@ Register account
     0
     >>> acc5.active, acc5.enabled, acc5.suspended
     (True, True, False)
+
+Test the expiration of action
+    >>> import datetime
+    >>> expires = datetime.datetime.now () - datetime.timedelta (minutes = 1)
+    >>> act = scope.Auth.Account_EMail_Verification (acc5, expires = expires)
+    >>> act.handle ()
+    Traceback (most recent call last):
+        ...
+    Action_Exipred
 """
 from   _MOM.__test__                 import *
 from   _GTW                          import GTW
