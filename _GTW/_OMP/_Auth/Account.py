@@ -40,6 +40,7 @@
 #                     added, kind `active` changed to `Attr.Query`
 #    19-Feb-2010 (MG) `reset_password` implemented
 #    19-Feb-2010 (MG) Account activation added
+#    20-Feb-2010 (MG) Account management functions added
 #    ««revision-date»»···
 #--
 
@@ -152,6 +153,12 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
             (name, password = password, salt = salt, ** kw)
     # end def __call__
 
+    def create_new_account (self, name, password) :
+        account = self (name, password, enabled = True, suspended = True)
+        self.home_scope.GTW.OMP.Auth.Account_EMail_Verification \
+            (account)
+    # end def create_new_account
+
     def force_password_change (self, account) :
         Auth          = self.home_scope.GTW.OMP.Auth
         if isinstance (account, basestring) :
@@ -207,6 +214,11 @@ class Account_P (_Ancestor_Essence) :
 
     # end class _Attributes
 
+    def change_email_prepare (self, new_email) :
+        self.home_scope.GTW.OMP.Auth.Account_EMail_Verification \
+            (self, new_email = new_email)
+    # end def change_email_prepare
+
     def change_password (self, new_password, remove_actions = True, ** kw) :
         self.set \
             (password = self.password_hash (new_password, self.salt), ** kw)
@@ -244,11 +256,6 @@ class Account_P (_Ancestor_Essence) :
         return "".join \
             ( [choice (chars) for i in xrange (length)])
     # end def random_password
-
-    def reset_password_action (self, token) :
-        return self.home_scope.GTW.OMP.Auth.Account_Pasword_Reset.query \
-            (account = self, token = token).first ()
-    # end def reset_password_action
 
     def verify_password (self, password) :
         return self.password == self.password_hash (password, self.salt)

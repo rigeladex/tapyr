@@ -32,6 +32,7 @@
 #                     `Request_Reset_Password` implemented
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    19-Feb-2010 (MG) `Activate` added
+#    20-Feb-2010 (MG) Missing functions added
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,24 @@ class Auth (GTW.NAV.Dir) :
 
     # end class _Cmd_
 
+    class Action (_Cmd_) :
+
+        SUPPORTED_METHODS = set (("GET", ))
+
+        def rendered (self, handler, template = None) :
+            top       = self.top
+            HTTP      = top.HTTP
+            ETM       = top.account_manager
+            account   = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            action    = top.scope.GTW.OMP.Auth._Account_Token_Action_.query \
+                        (account = account, token = self.args [1]).first ()
+            if action :
+                raise HTTP.Redirect_302 (action.handle (self))
+            raise HTTP.Error_404 ()
+        # end def rendered
+
+    # end class Action
+
     class Activate (_Cmd_) :
         """Account activation"""
 
@@ -95,10 +114,28 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Email (_Cmd_) :
 
-#       template     = "???"
+        template     = "???"
 
         def rendered (self, handler, template = None) :
-            pass
+            top     = self.top
+            ETM     = top.account_manager
+            account = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
+            form    = GTW.Form.Auth.Change_Email (account, self.name)
+            context = handler.context
+            request = handler.request
+            context ["form"] = form
+            if request.method == "POST" :
+                HTTP     = top.HTTP
+                req_data = HTTP.Request_Data (request.arguments)
+                errors   = form (req_data)
+                if not errors :
+                    next  = req_data.get         ("next", "/")
+                    account.change_email_prepare (form.new_email)
+                    ### XXX Add confirmation message
+                    ### XXX Send email with confirmation link to new email
+                    ### XXX Send info email to old email
+                    raise HTTP.Redirect_302      (next)
+            return self.__super.rendered         (handler, template)
         # end def rendered
 
     # end class Change_Email
@@ -164,6 +201,8 @@ class Auth (GTW.NAV.Dir) :
 
     class Logout (_Cmd_) :
 
+        SUPPORTED_METHODS = set (("GET", ))
+
         def _view (self, handler) :
             handler.clear_cookie ("username")
             top       = self.top
@@ -179,32 +218,29 @@ class Auth (GTW.NAV.Dir) :
 
     class Register (_Cmd_) :
 
-#       template     = "???"
+        template     = "???"
 
         def rendered (self, handler, template = None) :
-            pass
+            context   = handler.context
+            request   = handler.request
+            top       = self.top
+            form      = GTW.Form.Auth.Register (top.account_manager, self.name)
+            context ["form"] = form
+            if request.method == "POST" :
+                HTTP      = top.HTTP
+                req_data  = HTTP.Request_Data (request.arguments)
+                errors    = form (req_data)
+                if not errors :
+                    next = req_data.get ("next", "/")
+                    top.scope.GTW.OMP.Auth.Account_P.create_new_account \
+                        (form.username, form.new_password)
+                    raise HTTP.Redirect_302 (next)
+                ### after a failed login, clear the current username
+                handler.clear_cookie ("username")
+            return self.__super.rendered (handler, template)
         # end def rendered
 
     # end class Register
-
-    class Reset_Password (_Cmd_) :
-
-        def rendered (self, handler, template = None) :
-            top       = self.top
-            HTTP      = top.HTTP
-            ETM       = top.account_manager
-            account   = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
-            action    = account.reset_password_action (self.args [1])
-            if action :
-                account.change_password (action.password, False)
-                for l in top.scope.GTW.OMP.Auth.Account_Pasword_Reset.query \
-                             (account = account) :
-                    l.destroy ()
-                raise HTTP.Redirect_302 (self.href_change_pass (account))
-            raise HTTP.Error_404 ()
-        # end def rendered
-
-    # end class Reset_Password
 
     class Request_Reset_Password (_Cmd_) :
         """Initiate the reset password procedure."""
@@ -236,17 +272,17 @@ class Auth (GTW.NAV.Dir) :
 
     # end class Request_Reset_Password
 
+    def href_action (self, obj, token) :
+        return pjoin (self.abs_href, self.T.action, obj.lid, token)
+    # end def href_action
+
     @Once_Property
     def href (self) :
         return pjoin (self.prefix, u"")
     # end def href
 
-    def href_account (self, obj) :
-        return pjoin (self.abs_href, self.T.account, obj.lid)
-    # end def href_account
-
     def href_change_email (self, obj) :
-        return pjoin (self.href_account (obj), self.T.change_email)
+        return pjoin (self.abs_href, self.T.change_email, obj.lid)
     # end def href_change_email
 
     def href_change_pass (self, obj) :
@@ -265,23 +301,19 @@ class Auth (GTW.NAV.Dir) :
         return pjoin (self.abs_href, self.T.register)
     # end def href_register
 
-    def href_reset_pass (self, obj, token) :
-        return pjoin (self.abs_href, self.T.change_password, obj.lid, token)
-    # end def href_reset_pass
-
     def rendered (self, handler, template = None) :
         page = self._get_child (self.T.login)
         return page.rendered (handler, template)
     # end def rendered
 
     _child_name_map = dict \
-        ( activate                = (Activate,               0)
-        ,  change_email            = (Change_Email,           2)
+        ( action                  = (Action,                 2)
+        , activate                = (Activate,               0)
+        , change_email            = (Change_Email,           1)
         , change_password         = (Change_Password,        1)
         , login                   = (Login,                  0)
         , logout                  = (Logout,                 0)
-        ,  register                = (Register,               0)
-        , reset_password          = (Reset_Password,         2)
+        , register                = (Register,               0)
         , request_reset_password  = (Request_Reset_Password, 0)
         )
 

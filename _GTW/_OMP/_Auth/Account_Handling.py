@@ -29,6 +29,7 @@
 #    18-Feb-2010 (MG) Creation
 #    19-Feb-2010 (MG) `Account_Token_Manager` added
 #    19-Feb-2010 (MG) Reorganized
+#    20-Feb-2010 (MG) Account management functions added
 #    ««revision-date»»···
 #--
 
@@ -174,7 +175,21 @@ class Account_EMail_Verification (_Ancestor_Essence) :
 
     # end class _Attributes
 
-# end class Account_Rename
+    def handle (self, nav = None) :
+        account = self.account
+        next    = "/"
+        if self.new_email :
+            ### this the verification of a email change request
+            account.set (name = self.new_email, suspended = False)
+        else :
+            account.set (suspended = False)
+        for l in self.home_scope.GTW.OMP.Auth.Account_EMail_Verification.query \
+                     (account = account) :
+            l.destroy ()
+        return next
+    # end def handle
+
+# end class Account_EMail_Verification
 
 _Ancestor_Essence = _Account_Token_Action_
 
@@ -193,6 +208,16 @@ class Account_Pasword_Reset (_Ancestor_Essence) :
         # end class password
 
     # end class _Attributes
+
+    def handle (self, nav = None) :
+        account = self.account
+        account.change_password (self.password, False)
+        for l in self.home_scope.GTW.OMP.Auth.Account_Pasword_Reset.query \
+                     (account = account) :
+            l.destroy ()
+        if nav :
+            return nav.href_change_pass (account)
+    # end def handle
 
 # end class Account_Pasword_Reset
 

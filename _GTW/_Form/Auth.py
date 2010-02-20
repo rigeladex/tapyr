@@ -36,6 +36,7 @@
 #    19-Feb-2010 (MG) `Change_Password` form added
 #    19-Feb-2010 (MG) `Reset_Password` form added
 #    19-Feb-2010 (MG) Reorganized, Account activation added
+#    20-Feb-2010 (MG) Remaining forms added
 #    ««revision-date»»···
 #--
 
@@ -148,6 +149,63 @@ class _Change_Password_Mixin_ (_New_Password_) :
 
 # end class _Change_Password_Mixin_
 
+class _Change_EMail_Mixin_ (TFL.Meta.Object) :
+    """Change the e-mail address of account"""
+
+    fields = \
+        ( GTW.Form.Field ("new_email", widget = "html/field.jnj, email")
+        , GTW.Form.Field ("password",  widget = PWD_WS)
+        )
+
+    def __init__ (self, account, * args, ** kw) :
+        self.account = account
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def _validate (self) :
+        _T             = TFL.I18N._T
+        old_pwd      = self.get_required \
+            ("password", _T (u"The old password is required."))
+        self.new_email = self.get_required \
+            ("new_email", _T (u"The new E-Mail address is required."))
+        if (   not self.field_errors
+           and not self.account.verify_password (old_pwd)
+           ) :
+            self.field_errors ["password"].append \
+                (_T ("The password is incorrect"))
+        self.request_data.pop ("password", None)
+    # end def _validate
+
+# end class _Change_EMail_Mixin_
+
+class _Register_Account_ (_New_Password_) :
+    """Register a new account"""
+
+    fields = \
+        ( GTW.Form.Field ("username")
+        ,
+        ) + _New_Password_.fields
+
+    def __init__ (self, account_manager, * args, ** kw) :
+        self.account_manager = account_manager
+        self.__super.__init__ (* args, ** kw)
+    # end def __init__
+
+    def _validate (self) :
+        _T            = TFL.I18N._T
+        self.username = username = self.get_required \
+            ("username", _T (u"A user name is required to login."))
+        if not self.field_errors :
+            account = self.account_manager.query (name = username).first ()
+            if account :
+                self.field_errors ["username"].append \
+                    (_T ("This username is already in use."))
+        self.__super._validate ()
+        self.request_data = {}
+    # end def _validate
+
+# end class _Register_Account_
+
 class _Reset_Password_Mixin_ (TFL.Meta.Object) :
     """Convert the user name into an account."""
 
@@ -182,10 +240,12 @@ def Define_Form (name, mixin) :
 # end def Define_Form
 
 
-Login           = Define_Form ("Login",           _Login_Mixin_)
-Change_Password = Define_Form ("Change_Password", _Change_Password_Mixin_)
-Reset_Password  = Define_Form ("Reset",           _Reset_Password_Mixin_)
 Activate        = Define_Form ("Activate",        _Activate_Account_Mixin_)
+Change_Email    = Define_Form ("Change_Email",    _Change_EMail_Mixin_)
+Change_Password = Define_Form ("Change_Password", _Change_Password_Mixin_)
+Login           = Define_Form ("Login",           _Login_Mixin_)
+Register        = Define_Form ("Register",        _Register_Account_)
+Reset_Password  = Define_Form ("Reset",           _Reset_Password_Mixin_)
 
 if __name__ != "__main__" :
     GTW.Form._Export_Module ()
