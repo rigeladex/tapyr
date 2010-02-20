@@ -109,6 +109,10 @@ class Session (TFL.Meta.Object) :
         return self._data.get (key, default)
     # end def get
 
+    def pop (self, name, default = None) :
+        return self._data.pop (name, default)
+    # end def pop
+
     def __contains__ (self, item) :
         return item in self._data
     # end def __contains__

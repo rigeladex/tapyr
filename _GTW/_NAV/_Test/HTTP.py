@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    19-Feb-2010 (MG) Creation
+#    20-Feb-2010 (MG) Use `GTW.Memory_Session` and add a notification to the
+#                     session
 #    ««revision-date»»···
 #--
 
@@ -34,12 +36,15 @@ from   _TFL                  import TFL
 import _TFL._Meta.Object
 
 from   _GTW                  import GTW
+import _GTW.Memory_Session
+import _GTW.Notification
 import _GTW._NAV._Test
 
 class Handler (TFL.Meta.Object) :
     """A fake HHTP handler."""
 
-    session = dict ()
+    session = GTW.Memory_Session ()
+    GTW.Notification_Collection  (session)
 
     def __init__ ( self, path
                  , method  = "GET"

@@ -20,31 +20,31 @@
 #
 #++
 # Name
-#    GTW.File_Session
+#    GTW.Memory_Session
 #
 # Purpose
-#    Session backend which stores the information in a file on the disk
+#    Session backend which stores the information only in memory (the session
+#    is lost once the process terminates)
 #
 # Revision Dates
-#    25-Jan-2010 (MG) Creation
-#    19-Feb-2010 (MG) Moved from `GTW.Tornado` into `GTW`
+#    20-Feb-2010 (MG) Creation (based on the File_Session)
 #    ««revision-date»»···
 #--
-from   _TFL._Meta.Once_Property import Once_Property
+
 from   _GTW                     import GTW
 import _GTW.Session
-import  cPickle
-import  os
 
-class File_Session (GTW.Session) :
+_Store_ = dict ()
+
+class Memory_Session (GTW.Session) :
     """Stores the session data in a file on disk.
 
-    >>> session = File_Session ()
+    >>> session = Memory_Session ()
     >>> session.save ()
     >>> session ["name"] = "user1"
     >>> session ["lang"] = "de_AT"
     >>> session.save ()
-    >>> session2 = File_Session (session.sid)
+    >>> session2 = Memory_Session (session.sid)
     >>> session.sid == session2.sid
     True
     >>> session.name
@@ -61,43 +61,33 @@ class File_Session (GTW.Session) :
     >>> session.get ("lang") == session2 ["lang"]
     False
     >>> session.remove ()
-    >>> session3 = File_Session (session.sid)
+    >>> session3 = Memory_Session (session.sid)
     >>> session3.get ("name"), session.name
     (None, 'user1')
     >>> session3.get ("lang"), session.lang
     (None, None)
     """
 
-    base_path = "/tmp"
-
     def exists (self, sid) :
-        return os.path.exists (os.path.join (self.base_path, sid))
+        return sid in _Store_
     # end def exists
 
-    @Once_Property
-    def _file_name (self) :
-        return os.path.join (self.base_path, "%s.sid" % (self.sid, ))
-    # end def _file_name
-
     def _load (self) :
-        try :
-            return cPickle.load (open (self._file_name, "rb"))
-        except :
-            return {}
+        return _Store_.get (self.sid, {}).copy ()
     # end def _load
 
     def save (self) :
-        cPickle.dump (self._data, open (self._file_name, "wb"))
+        _Store_ [self.sid] = self._data
     # end def save
 
     def remove (self) :
-        os.unlink (self._file_name)
+        del _Store_ [self.sid]
     # end def remove
 
-# end class File_Session
+# end class Memory_Session
 
 if __name__ != "__main__" :
     GTW._Export ("*")
-### __END__ GTW.File_Session
+### __END__ GTW.Memory_Session
 
 
