@@ -7,6 +7,6 @@
   {%- if request.user.authenticated %}
     <a href="/logout.html">{{ request.user.name }}, logout</a>
   {%- else %}
-    {{ Form.login_inline (action = "/login.html", next = page.abs_href) }}
+    {{ Form.login_inline (page, request, action = "/login.html") }}
   {% endif -%}
 {%- endblock -%}

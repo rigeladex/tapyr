@@ -47,6 +47,7 @@
 ##     8-Feb-2010 (MG) `aid_div_seq` added
 ##    10-Feb-2010 (MG) Display of `aig` no field errors added
 ##    10-Feb-2010 (MG) `aid_div_seq` fixed
+##    21-Feb-2010 (CT) `logout_inline` added, `login_inline` changed
 ##    ««revision-date»»···
 ##--
 #}
@@ -184,10 +185,12 @@
     -}}
   <table class="field_group-Horizontal">
     <thead>
-      {{ GTW.call_macro ( proto.widget.inline_table_tr_head
-                        , proto
-                        , proto.field_groups
-                        ) }}
+      {{- GTW.call_macro
+          ( proto.widget.inline_table_tr_head
+          , proto
+          , proto.field_groups
+          )
+      -}}
     </thead>
     <tbody>
       {{ GTW.call_macro
@@ -266,9 +269,14 @@
     </tr>
 {%- endmacro -%} {#- inline_table_tr_head -#}
 
-{%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login.html") -%}
-  {%- set login_caller = kwargs.pop ("caller", None) -%}
-  {%- set next         = kwargs.pop ("next",   "") -%}
+{%- macro login_inline (page, request, un_tag = "Username", pw_tag = "Password", allow_register = False) -%}
+  {%- set Auth          = page.SC.Auth %}
+  {%- set login_caller  = kwargs.pop ("caller", None) -%}
+  {%- set action        = kwargs.pop ("action", Auth.href_login) -%}
+  {%- set next          = kwargs.pop ("next",   request.path) -%}
+  {%- if next.endswith (Auth.href_login) -%}
+    {%- set next = page.top.abs_href -%}
+  {%- endif -%}
   {% call form (action = action, ** kwargs) -%}
     {%- if login_caller -%}{{- login_caller () -}}{%- endif -%}
     <ul>
@@ -278,7 +286,7 @@
             ( id            = "F_username"
             , name          = "username"
             , maxlength     = "30"
-            , placeholder   = GTW._T ("Please enter your user-name")
+            , placeholder   = GTW._T ("Please enter your username")
             )
         }}
       </li>
@@ -292,12 +300,57 @@
         }}
       </li>
       <li>
-        {{ X.input.submit (value = GTW._T ('Login')) }}
+        {{ X.input.submit
+            ( title = GTW._T ("Log into website or go to account page")
+            , value = GTW._T ('Login')
+            )
+        }}
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
+      {#- XXX Reset password XXX -#}
+      {%- if allow_register %}
+        <li class="nav-link level-0">
+          <a href="{{ Auth.href_register }}"
+            title="{{ GTW._T ("Register a new account") }}"
+          >{{ GTW._T ("Register") }}</a>
+        </li>
+      {% endif -%}
     </ul>
   {% endcall %} {# form #}
 {%- endmacro -%} {#- login_inline -#}
+
+{%- macro logout_inline (page, request) -%}
+  {%- set Auth          = page.SC.Auth %}
+  {%- set logout_caller = kwargs.pop ("caller", None) -%}
+  {%- set action        = kwargs.pop ("action", Auth.href_logout) -%}
+  {%- set next          = kwargs.pop ("next",   request.path) -%}
+  {%- if next.endswith (Auth.href_logout) -%}
+    {%- set next = page.top.abs_href -%}
+  {%- endif -%}
+  {% call form (action = action, ** kwargs) -%}
+    {%- if logout_caller -%}{{- logout_caller () -}}{%- endif -%}
+    <ul>
+      <li>
+        {{ X.input.submit
+            ( title = "%s %s" % (GTW._T ("Logout"), request.user.name)
+            , value = "%s %s" % (GTW._T ("Logout"), request.user.name)
+            )
+        }}
+        {{ X.input.hidden (name  = "next", value = next) }}
+      </li>
+      <li class="nav-link level-0">
+        <a href="{{ Auth.href_change_email (request.user) }}"
+          title="{{ GTW._T ("Change email of account %s") % request.user.name }}"
+        >{{ GTW._T ("Change email") }}</a>
+      </li>
+      <li class="nav-link level-0">
+        <a href="{{ Auth.href_change_pass (request.user) }}"
+          title="{{ GTW._T ("Change password of account %s") % request.user.name }}"
+        >{{ GTW._T ("Change password") }}</a>
+      </li>
+    </ul>
+  {% endcall %} {# form #}
+{%- endmacro -%} {#- logout_inline -#}
 
 {%- macro object (fo) -%}
   {#- Create a form for a form-object `fo` -#}

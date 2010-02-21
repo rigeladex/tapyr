@@ -49,7 +49,7 @@
       }}
     </h1>
   {% endif %}
-  {{ login_inline (next=request.path) }}
+  {{ login_inline (page, request) }}
 {% endblock document -%}
 
 {#- __END__ jinja template: 401.jnj -#}

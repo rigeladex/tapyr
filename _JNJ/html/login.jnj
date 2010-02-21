@@ -45,11 +45,18 @@
 {%- block document -%}
   <h1>{{ title|safe }}</h1>
 
+  {%- set next = page.abs_href -%}
+  {%- if next.endswith (page.SC.Auth.href_login) -%}
+    {%- set next = page.top.abs_href -%}
+  {%- endif -%}
+
   {{ Form.object
       ( login_form
-      , next_form_kw = dict(name = "next", value = page.abs_href)
+      , next_form_kw = dict (name = "next", value = next)
       )
   }}
+
+  {#- XXX Reset password XXX -#}
 
 {%- endblock document -%}
 

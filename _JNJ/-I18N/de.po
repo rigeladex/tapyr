@@ -74,7 +74,7 @@ msgid "Please enter your password"
 msgstr "Bitte um Eingabe des Kennworts"
 
 #: _JNJ/html/form.jnj:281
-msgid "Please enter your user-name"
+msgid "Please enter your username"
 msgstr "Bitte um Eingabe des Benutzernamens"
 
 #: _JNJ/html/photo.jnj:41

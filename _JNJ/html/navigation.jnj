@@ -31,6 +31,8 @@
 ##    14-Jan-2010 (CT) Guard `if not link.hidden` added to loop in `entries`
 ##    17-Jan-2010 (CT) `sitemap` added
 ##    27-Jan-2010 (CT) `neighbor` added
+##    20-Feb-2010 (CT) `login_section` added
+##    21-Feb-2010 (CT) `logout_inline` factored
 ##    ««revision-date»»···
 ##--
 #}
@@ -75,27 +77,19 @@
   {%- endif %}
 {%- endmacro -%} {# entries #}
 
-{%- macro login_section (page, request) -%}
+{%- macro login_section (page, request, allow_register = False) -%}
   <div class="nav-section login">
-    <h1>{{ GTW._T ("Login") }}</h1>
+    {%- import "STD::html/form.jnj" as Form %}
     {%- if request.user.authenticated %}
-      <form method="post" action="{{ page.SC.Auth.href_logout }}">
-        <ul>
-          <li>
-            <input type="submit"
-                   value="{{ GTW._T ("Logout") }} {{ request.user.name }}"
-                   title="{{ GTW._T ("Logout") }} {{ request.user.name }}"
-                   class="submit"
-            />
-            <input type="hidden" name="next" value="{{ request.path }}" />
-          </li>
-          {#- XXX <li> Account administration </li> -#}
-        </ul>
-      </form>
+      <h1 title="{{ GTW._T ("Logged in as %s") % request.user.name }}">
+        {{- GTW._T ("Logged in") -}}
+      </h1>
+      {{ Form.logout_inline (page, request) }}
     {%- else -%}
-      {%- import "STD::html/form.jnj" as Form %}
-      {{ Form.login_inline (action = page.SC.Auth.href_login, next = request.path) }}
-      {#- XXX <li> Password reset </li> -#}
+      <h1>
+        {{- GTW._T ("Login") -}}
+      </h1>
+      {{ Form.login_inline (page, request, allow_register = allow_register) }}
     {% endif -%}
   </div>
 {%- endmacro -%} {#- login_section -#}
