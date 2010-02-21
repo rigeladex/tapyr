@@ -155,8 +155,9 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
 
     def create_new_account (self, name, password) :
         account = self (name, password, enabled = True, suspended = True)
-        self.home_scope.GTW.OMP.Auth.Account_EMail_Verification \
-            (account)
+        return \
+            account, self.home_scope.GTW.OMP.Auth.Account_EMail_Verification \
+                (account).token
     # end def create_new_account
 
     def force_password_change (self, account) :

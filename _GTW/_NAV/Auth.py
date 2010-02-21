@@ -106,7 +106,7 @@ class Auth (GTW.NAV.Dir) :
         def rendered (self, handler, template = None) :
             top     = self.top
             ETM     = top.account_manager
-            form    = GTW.Form.Auth.Activate (ETM, self.name)
+            form    = GTW.Form.Auth.Activate (ETM, self.abs_href)
             context = handler.context
             request = handler.request
             context ["form"] = form
@@ -187,7 +187,7 @@ class Auth (GTW.NAV.Dir) :
             top     = self.top
             ETM     = top.account_manager
             account = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
-            form    = GTW.Form.Auth.Change_Password (account, self.name)
+            form    = GTW.Form.Auth.Change_Password (account, self.abs_href)
             context = handler.context
             request = handler.request
             context ["form"] = form
@@ -218,7 +218,7 @@ class Auth (GTW.NAV.Dir) :
             context   = handler.context
             request   = handler.request
             top       = self.top
-            form      = GTW.Form.Auth.Login (top.account_manager, self.name)
+            form      = GTW.Form.Auth.Login (top.account_manager, self.abs_href)
             context ["login_form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
@@ -260,22 +260,48 @@ class Auth (GTW.NAV.Dir) :
 
     class Register (_Cmd_) :
 
-        template     = "account_register"
+        template       = "account_register"
+        email_template = "account_verify_email"
 
         def rendered (self, handler, template = None) :
             context   = handler.context
             request   = handler.request
             top       = self.top
-            form      = GTW.Form.Auth.Register (top.account_manager, self.name)
+            form      = GTW.Form.Auth.Register \
+                (top.account_manager, self.abs_href)
             context ["form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
                 req_data  = HTTP.Request_Data (request.arguments)
                 errors    = form (req_data)
                 if not errors :
-                    next = req_data.get ("next", "/")
-                    top.scope.GTW.OMP.Auth.Account_P.create_new_account \
+                    Auth  = top.scope.GTW.OMP.Auth
+                    next  = req_data.get ("next", "/")
+                    account, token = Auth.Account_P.create_new_account \
                         (form.username, form.new_password)
+                    site_url = self.site_url
+                    link     = pjoin \
+                        ( site_url
+                        , self.parent.href_action (account, token) [1:]
+                        )
+                    self.send_email \
+                        ( self.email_template
+                        , email_to      = form.username
+                        , email_subject =
+                            _T("Email confirmation for %s" % (site_url, ))
+                        , email_from    = self.email
+                        , link          = link
+                        , site_url      = site_url
+                        , NAV           = self.top
+                        , page          = self
+                        )
+                    handler.session.notifications.append \
+                        ( GTW.Notification
+                            (_T(u"A confirmation has been sent to your email "
+                                 "address."
+                               )
+                            )
+                        )
                     raise HTTP.Redirect_302 (next)
                 ### after a failed login, clear the current username
                 handler.clear_cookie ("username")
@@ -294,7 +320,7 @@ class Auth (GTW.NAV.Dir) :
             request   = handler.request
             top       = self.top
             form      = GTW.Form.Auth.Reset_Password \
-                (top.account_manager, self.name)
+                (top.account_manager, self.abs_href)
             context ["login_form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
