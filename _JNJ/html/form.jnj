@@ -124,63 +124,6 @@
     </tr>
 {%- endmacro -%} {#- fg_tr_head -#}
 
-{%- macro inline_table_aid_td (fo, fg) -%}
-{%- set ifo =  fg.forms [0] -%}
-{%- for fg in ifo.field_groups %}
-  {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg)}}
-  {%- if ifo.get_errors () %}
-    <td>{{ _field_error (ifo, None) }}</td>
-  {% endif -%}
-{% endfor  %}
-{%- endmacro -%} {#- inline_table_aid_td -#}
-
-{%- macro inline_table_aid_th (fo, fg) -%}
-{%- set ifo =  fg.forms [0] -%}
-{%- for fg in ifo.field_groups %}
-  {{ GTW.call_macro (fg.widget.inline_table_th, ifo, fg)}}
-{% endfor  %}
-{%- endmacro -%} {#- inline_table_aid_th -#}
-
-{%- macro inline_table_td (fo, fg) -%}
-      {%- for fi in fg.visible_fields %}
-        <td class="Field Field-{{ fi.name }}" title="{{ fi.help_text|safe }}">
-          {%- if loop.first %}
-            {%- for h in fg.hidden_fields %}
-              {{ GTW.call_macro (h.widget, fo, h) }}
-            {% endfor -%}
-          {% endif %}
-          {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
-        </td>
-      {% endfor -%}
-{%- endmacro -%} {#- inline_table_td -#}
-
-{%- macro inline_table_th (fo, fg) -%}
-      {%- for fi in fg.visible_fields %}
-        <th title="{{ fi.help_text|safe }}">{{ _field_label (fo, fi) }}</th>
-      {% endfor -%}
-{%- endmacro -%} {#- inline_table_th -#}
-
-{%- macro inline_table_tr_body (fo, fgs) -%}
-    <tr class="field_group {{ fo.css_class }} {{ kwargs.pop ("class", "") }}"
-      {% if fo.legend %}title="{{ fo.legend }}"{% endif -%}
-    >
-    {%- for fg in fgs %}
-        {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg) }}
-    {% endfor -%}
-    {%- if fo.get_errors () %}
-      <td>{{ _field_error (fo, None) }}</td>
-    {% endif -%}
-    </tr>
-{%- endmacro -%} {#- inline_table_tr_body -#}
-
-{%- macro inline_table_tr_head (fo, fgs) -%}
-    <tr>
-    {%- for fg in fgs %}
-      {{ GTW.call_macro (fg.widget.inline_table_th, fo, fg) }}
-    {% endfor -%}
-    </tr>
-{%- endmacro -%} {#- inline_table_tr_head -#}
-
 {%- macro field_groups (fo) -%}
     {%- for fg in fo.field_groups %}
       {%- if fo.get_errors () %}
@@ -265,6 +208,63 @@
   </table>
   </fieldset>
 {%- endmacro -%} {#- inline_table -#}
+
+{%- macro inline_table_aid_td (fo, fg) -%}
+{%- set ifo =  fg.forms [0] -%}
+{%- for fg in ifo.field_groups %}
+  {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg)}}
+  {%- if ifo.get_errors () %}
+    <td>{{ _field_error (ifo, None) }}</td>
+  {% endif -%}
+{% endfor  %}
+{%- endmacro -%} {#- inline_table_aid_td -#}
+
+{%- macro inline_table_aid_th (fo, fg) -%}
+{%- set ifo =  fg.forms [0] -%}
+{%- for fg in ifo.field_groups %}
+  {{ GTW.call_macro (fg.widget.inline_table_th, ifo, fg)}}
+{% endfor  %}
+{%- endmacro -%} {#- inline_table_aid_th -#}
+
+{%- macro inline_table_td (fo, fg) -%}
+      {%- for fi in fg.visible_fields %}
+        <td class="Field Field-{{ fi.name }}" title="{{ fi.help_text|safe }}">
+          {%- if loop.first %}
+            {%- for h in fg.hidden_fields %}
+              {{ GTW.call_macro (h.widget, fo, h) }}
+            {% endfor -%}
+          {% endif %}
+          {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
+        </td>
+      {% endfor -%}
+{%- endmacro -%} {#- inline_table_td -#}
+
+{%- macro inline_table_th (fo, fg) -%}
+      {%- for fi in fg.visible_fields %}
+        <th title="{{ fi.help_text|safe }}">{{ _field_label (fo, fi) }}</th>
+      {% endfor -%}
+{%- endmacro -%} {#- inline_table_th -#}
+
+{%- macro inline_table_tr_body (fo, fgs) -%}
+    <tr class="field_group {{ fo.css_class }} {{ kwargs.pop ("class", "") }}"
+      {% if fo.legend %}title="{{ fo.legend }}"{% endif -%}
+    >
+    {%- for fg in fgs %}
+        {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg) }}
+    {% endfor -%}
+    {%- if fo.get_errors () %}
+      <td>{{ _field_error (fo, None) }}</td>
+    {% endif -%}
+    </tr>
+{%- endmacro -%} {#- inline_table_tr_body -#}
+
+{%- macro inline_table_tr_head (fo, fgs) -%}
+    <tr>
+    {%- for fg in fgs %}
+      {{ GTW.call_macro (fg.widget.inline_table_th, fo, fg) }}
+    {% endfor -%}
+    </tr>
+{%- endmacro -%} {#- inline_table_tr_head -#}
 
 {%- macro login_inline (un_tag = "Username", pw_tag = "Password", action = "/login.html") -%}
   {%- set login_caller = kwargs.pop ("caller", None) -%}

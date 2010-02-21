@@ -60,6 +60,7 @@ import urlparse
 class Auth (GTW.NAV.Dir) :
     """Navigation directory for handling authorization (of a single user)."""
 
+    pid      = "Auth"
     T        = TFL.I18N.Name
 
     class _Cmd_ (GTW.NAV._Site_Entity_) :
