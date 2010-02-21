@@ -256,7 +256,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     _Media          = GTW.Media ()
 
     ### ("GET", "HEAD", "POST", "DELETE", "PUT")
-    SUPPORTED_METHODS = set (("GET", "POST"))
+    SUPPORTED_METHODS = set (("GET", ))
 
     def __init__ (self, parent = None, ** kw) :
         self._kw    = kw

@@ -32,6 +32,7 @@
 #    17-Jan-2010 (CT) Adapted to change of Auth.Account (s/name/username/)
 #    25-Jan-2010 (MG) Session and locale-code handling added
 #    29-Jan-2010 (MG) Auto `commit` and `rollback` added
+#    21-Feb-2010 (CT) `_finish` factored
 #    ««revision-date»»···
 #--
 from   _TFL                    import I18N
@@ -56,25 +57,28 @@ class M_Request_Handler (GTW.Tornado.Request_Handler.__class__) :
 class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
     """Base class request handlers interacting with GTW.NAV"""
 
-    _real_name      = "Request_Handler"
     __metaclass__   = M_Request_Handler
+    _real_name      = "Request_Handler"
 
     DEFAULT_HANDLER = "_handle_request"
+
+    def _finish (self, scope) :
+        self.session.save ()
+        if scope :
+            scope.commit  ()
+    # end def _finish
 
     def _handle_request (self, * args, ** kw) :
         if self.application.settings.get ("i18n", False) :
             I18N.use (* self.locale_codes)
         top   = GTW.NAV.Root.top
+        scope = getattr (top, "scope", None)
         try :
-            GTW.NAV.Root.universal_view (self)
+            top.universal_view (self)
         except top.HTTP._Redirect_ :
-            self.session.save                   ()
-            getattr (top, "scope", None).commit ()
+            self._finish (scope)
             raise
-        self.session.save           ()
-        scope = getattr  (GTW.NAV.Root.top, "scope", None)
-        if scope :
-            scope.commit ()
+        self._finish (scope)
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :
