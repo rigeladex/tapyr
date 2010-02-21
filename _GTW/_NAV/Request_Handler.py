@@ -33,6 +33,7 @@
 #    25-Jan-2010 (MG) Session and locale-code handling added
 #    29-Jan-2010 (MG) Auto `commit` and `rollback` added
 #    21-Feb-2010 (CT) `_finish` factored
+#    21-Feb-2010 (MG) `_handle_request` changed
 #    ««revision-date»»···
 #--
 from   _TFL                    import I18N
@@ -75,10 +76,10 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
         scope = getattr (top, "scope", None)
         try :
             top.universal_view (self)
-        except top.HTTP._Redirect_ :
+        except top.HTTP._Redirect_, redirect :
             self._finish (scope)
-            raise
-        self._finish (scope)
+            redirect     (self, top)
+        self._finish     (scope)
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :
