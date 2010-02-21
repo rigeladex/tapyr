@@ -116,7 +116,7 @@ class Auth (GTW.NAV.Dir) :
                         (form.new_password, suspended = False)
                     handler.set_secure_cookie ("username", account.name)
                     handler.session.notifications.append \
-                        (GTW.Notification (_T(u"Activation successfull.")))
+                        (GTW.Notification (_T(u"Activation successful.")))
                     raise HTTP.Redirect_302   (next)
             return self.__super.rendered (handler, template)
         # end def rendered
@@ -230,7 +230,7 @@ class Auth (GTW.NAV.Dir) :
                 next = "/"
             if handler.session.notifications is not None:
                 handler.session.notifications.append \
-                    (GTW.Notification (_T(u"Logout successfull.")))
+                    (GTW.Notification (_T(u"Logout successful.")))
             raise top.HTTP.Redirect_302 (next)
         # end def _view
 

@@ -94,6 +94,13 @@
         {%- endblock -%}
       {%- endcall %} {# X.nav #}
       <div id="document" class="body{% if page.document_class %} {{ page.document_class }}{% endif %}">
+        {%- block notifications -%}
+          {%- if notifications %}
+            <div class="notifications">
+              {{- notifications.discarge ("<p>", "</p><p>", "</p>") -}}
+            </div>
+          {% endif -%}
+        {%- endblock notifications -%}
         {%- block body_headline %}
           {%- if page.headline %}
             <h1 class="headline{% if page.headline_class %} {{ page.headline_class }}{% endif %}">{{ page.headline|safe }}</h1>
