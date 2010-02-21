@@ -423,7 +423,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
 
     def send_email (self, template, ** context) :
         if self.smtp :
-            text = self.top.Templateer.render (templatr, context)
+            text = self.top.Templateer.render (template, context).encode \
+                (self.encoding, "replace")
             self.smtp (text)
     # end def send_email
 
@@ -556,6 +557,7 @@ class Alias (Page) :
     def rendered (self, handler, template = None) :
         target = self.target
         if target :
+            ### XXX ??? handler.context ["page"] = target
             return target.rendered (handler, template)
     # end def rendered
 
@@ -715,6 +717,7 @@ class _Dir_ (_Site_Entity_) :
             if self.empty_template :
                 return self.__super.rendered (handler, self.empty_template)
         else :
+            handler.context ["page"] = page
             return page.rendered (handler, template)
     # end def rendered
 
