@@ -80,7 +80,7 @@ class Auth (GTW.NAV.Dir) :
             ETM       = top.account_manager
             account   = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
             action    = top.scope.GTW.OMP.Auth._Account_Token_Action_.query \
-                        (account = account, token = self.args [1]).first ()
+                (account = account, token = self.args [1]).first ()
             if action :
                 try :
                     raise HTTP.Redirect_302 (action.handle (self))
@@ -111,7 +111,7 @@ class Auth (GTW.NAV.Dir) :
                 errors    = form (req_data)
                 if not errors :
                     account = form.account
-                    next    = req_data.get      ("next", "/")
+                    next    = req_data.get ("next", "/")
                     account.change_password \
                         (form.new_password, suspended = False)
                     handler.set_secure_cookie ("username", account.name)
@@ -131,7 +131,7 @@ class Auth (GTW.NAV.Dir) :
             top     = self.top
             ETM     = top.account_manager
             account = ETM.pid_query (ETM.pid_from_lid (self.args [0]))
-            form    = GTW.Form.Auth.Change_Email (account, self.name)
+            form    = GTW.Form.Auth.Change_Email (account, self.abs_href)
             context = handler.context
             request = handler.request
             context ["form"] = form
@@ -144,15 +144,15 @@ class Auth (GTW.NAV.Dir) :
                     account.change_email_prepare (form.new_email)
                     handler.session.notifications.append \
                         ( GTW.Notification
-                            (_T(u"A confirmation email has been sent to "
-                                 "the new email address."
-                               )
+                            ( _T( "A confirmation email has been sent to "
+                                  "the new email address."
+                                )
                             )
                         )
                     ### XXX Send email with confirmation link to new email
                     ### XXX Send info email to old email
-                    raise HTTP.Redirect_302      (next)
-            return self.__super.rendered         (handler, template)
+                    raise HTTP.Redirect_302 (next)
+            return self.__super.rendered (handler, template)
         # end def rendered
 
     # end class Change_Email
@@ -230,7 +230,7 @@ class Auth (GTW.NAV.Dir) :
                 next = "/"
             if handler.session.notifications is not None:
                 handler.session.notifications.append \
-                    (GTW.Notification (_T(u"Logout successful.")))
+                    (GTW.Notification (_T (u"Logout successful.")))
             raise top.HTTP.Redirect_302 (next)
         # end def _view
 

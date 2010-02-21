@@ -196,6 +196,7 @@
 #    19-Feb-2010 (CT) `send_email` and `smtp` added
 #    20-Feb-2010 (CT) Use `SC` instead of `_pid_map`
 #    20-Feb-2010 (CT) Property `login_page` added
+#    21-Feb-2010 (CT) `account_manager` added
 #    ««revision-date»»···
 #--
 
@@ -294,6 +295,13 @@ class _Site_Entity_ (TFL.Meta.Object) :
             and ((not self.prefix) or link.prefix.startswith (self.prefix))
             )
     # end def above
+
+    @Once_Property
+    def account_manager (self) :
+        scope = self.top.scope
+        if scope :
+            return scope.GTW.OMP.Auth.Account
+    # end def account_manager
 
     def allow_user (self, user) :
         if user and self.login_required :
@@ -750,8 +758,9 @@ class Root (_Dir_) :
     name                    = "/"
     obfuscate_emails        = False
     owner                   = None
-    src_root                = ""
+    scope                   = None
     smtp                    = None
+    src_root                = ""
     target                  = None
     translator              = None
 
