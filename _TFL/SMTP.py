@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    19-Feb-2010 (CT) Creation (factored from `PMA.Sender`)
+#    21-Feb-2010 (MG) Support for authentication added
 #    ««revision-date»»···
 #--
 
@@ -44,12 +45,14 @@ class SMTP (TFL.Meta.Object) :
 
     mail_host = "localhost"
 
-    def __init__ (self, mail_host = None) :
+    def __init__ (self, mail_host = None, user = None, password = None) :
         if mail_host is not None :
             self.mail_host = mail_host
+        self.user          = user
+        self.password      = password
     # end def __init__
 
-    def __call__ (self, text, mail_opts = None, rcpt_opts = None) :
+    def __call__ (self, text, mail_opts = (), rcpt_opts = None) :
         if isinstance (text, unicode) :
             raise TypeError \
                 ("SMTP () expects a byte string, got unicode: %r" % text)
@@ -57,11 +60,13 @@ class SMTP (TFL.Meta.Object) :
         self.send_message (email, mail_opts = mail_opts, rcpt_opts = rcpt_opts)
     # end def __call__
 
-    def send (self, from_addr, to_addrs, msg, mail_opts = None, rcpt_opts = None) :
+    def send (self, from_addr, to_addrs, msg, mail_opts = (), rcpt_opts = None) :
         server = smtplib.SMTP (self.mail_host)
-        server.helo     ()
-        server.sendmail (from_addr, to_addrs, msg, mail_opts, rcpt_opts)
-        server.quit     ()
+        if self.user :
+            server.login (self.user, self.password)
+        server.helo      ()
+        server.sendmail  (from_addr, to_addrs, msg, mail_opts, rcpt_opts)
+        server.quit      ()
     # end def send
 
     def send_message (self, email, envelope = None, mail_opts = None, rcpt_opts = None) :

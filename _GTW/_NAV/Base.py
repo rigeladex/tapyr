@@ -757,6 +757,7 @@ class Root (_Dir_) :
     Admin                   = None
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
+    email                   = None   ### default from address
     empty_template          = None
     name                    = "/"
     obfuscate_emails        = False

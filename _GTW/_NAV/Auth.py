@@ -83,7 +83,12 @@ class Auth (GTW.NAV.Dir) :
                 (account = account, token = self.args [1]).first ()
             if action :
                 try :
-                    raise HTTP.Redirect_302 (action.handle (self))
+                    next = action.handle (self)
+                    handler.session.notifications.append \
+                        ( GTW.Notification
+                            (_T(u"EMail verification successful."))
+                        )
+                    raise HTTP.Redirect_302 (next)
                 except GTW.OMP.Auth.Action_Exipred :
                     action.destroy       ()
                     top.scope.commit     ()
@@ -125,7 +130,9 @@ class Auth (GTW.NAV.Dir) :
 
     class Change_Email (_Cmd_) :
 
-        template     = "account_change_email"
+        template           = "account_change_email"
+        new_email_template = "account_verify_new_email"
+        old_email_template = "account_change_email_info"
 
         def rendered (self, handler, template = None) :
             top     = self.top
@@ -141,7 +148,23 @@ class Auth (GTW.NAV.Dir) :
                 errors   = form (req_data)
                 if not errors :
                     next  = req_data.get         ("next", "/")
-                    account.change_email_prepare (form.new_email)
+                    token = account.change_email_prepare (form.new_email)
+                    site_url = self.site_url
+                    link     = pjoin \
+                        ( site_url
+                        , self.parent.href_action (account, token) [1:]
+                        )
+                    self.send_email \
+                        ( self.new_email_template
+                        , email_to      = form.new_email
+                        , email_subject =
+                            _T("Email confirmation for %s" % (site_url, ))
+                        , email_from    = self.email
+                        , link          = link
+                        , site_url      = site_url
+                        , NAV           = self.top
+                        , page          = self
+                        )
                     handler.session.notifications.append \
                         ( GTW.Notification
                             ( _T( "A confirmation email has been sent to "
@@ -149,7 +172,6 @@ class Auth (GTW.NAV.Dir) :
                                 )
                             )
                         )
-                    ### XXX Send email with confirmation link to new email
                     ### XXX Send info email to old email
                     raise HTTP.Redirect_302 (next)
             return self.__super.rendered (handler, template)
@@ -306,6 +328,10 @@ class Auth (GTW.NAV.Dir) :
     def href (self) :
         return pjoin (self.prefix, u"")
     # end def href
+
+    def href_action (self, obj, token) :
+        return pjoin (self.abs_href, self.T.action, obj.lid, token)
+    # end def href_action
 
     def href_change_email (self, obj) :
         return pjoin (self.abs_href, self.T.change_email, obj.lid)

@@ -33,6 +33,7 @@
 #    29-Jan-2010 (MG) `__getitem__` and `get` fixed
 #     3-Feb-2010 (MG) `iteritems` added
 #    10-Feb-2010 (MG) Convert the data into unicode
+#    21-Feb-2010 (MG) `pop` added
 #    ««revision-date»»···
 #--
 
@@ -70,6 +71,14 @@ class Request_Data (TFL.Meta.Object) :
         for n in self.data.iterkeys () :
             yield n, self [n]
     # end def iteritems
+
+    def pop (self, key, default = None) :
+        value = self.data.pop (key, default)
+        if isinstance (value, (list, tuple)) :
+            assert len (value) == 1, value
+            return unicode (value [0], "utf8", "replace")
+        return value
+    # end def pop
 
     def __contains__ (self, item) :
         return item in self.data

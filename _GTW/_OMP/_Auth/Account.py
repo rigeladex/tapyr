@@ -215,8 +215,8 @@ class Account_P (_Ancestor_Essence) :
     # end class _Attributes
 
     def change_email_prepare (self, new_email) :
-        self.home_scope.GTW.OMP.Auth.Account_EMail_Verification \
-            (self, new_email = new_email)
+        return self.home_scope.GTW.OMP.Auth.Account_EMail_Verification \
+            (self, new_email = new_email).token
     # end def change_email_prepare
 
     def change_password (self, new_password, remove_actions = True, ** kw) :
