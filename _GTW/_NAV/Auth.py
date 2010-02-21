@@ -321,7 +321,7 @@ class Auth (GTW.NAV.Dir) :
             top       = self.top
             form      = GTW.Form.Auth.Reset_Password \
                 (top.account_manager, self.abs_href)
-            context ["login_form"] = form
+            context ["form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
                 req_data  = HTTP.Request_Data (request.arguments)
