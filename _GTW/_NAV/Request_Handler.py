@@ -77,9 +77,9 @@ class _NAV_Request_Handler_ (GTW.Tornado.Request_Handler) :
         try :
             top.universal_view (self)
         except top.HTTP._Redirect_, redirect :
-            self._finish (scope)
-            redirect     (self, top)
-        self._finish     (scope)
+            self._finish    (scope)
+            return redirect (self, top)
+        self._finish        (scope)
     # end def _handle_request
 
     def _handle_request_exception (self, exc) :
