@@ -27,11 +27,15 @@
 #
 # Revision Dates
 #    20-Feb-2010 (MG) Creation (based on tornado.web.StaticFileHandler)
+#    22-Feb-2010 (MG) `get` moved into `Static_File_Handler`, `get` of
+#                     `Static_Map` simplified and renamed to `exists`
+#    22-Feb-2010 (MG) `Static_Map` moved into `GTW.Static_File_Map`
 #    ««revision-date»»···
 #--
 
 from   _GTW                     import GTW
 import _GTW._Tornado
+import _GTW.Static_File_Map
 
 from   _TFL                     import TFL
 import _TFL._Meta.Object
@@ -44,30 +48,31 @@ import  email
 import  mimetypes
 from    tornado                 import web
 
-class Not_Found (StandardError) : pass
+class _Static_File_Handler_ (web.RequestHandler) :
+    """A static file handler which shpuld only be used during development to
+       server static files directly form the disk.
+    """
 
-class Static_Map (TFL.Meta.Object) :
-    """A mapping of a prefix to a directory on the disk."""
-
-    def __init__ (self, prefix, directory) :
-        if prefix and not prefix.endswith ("/") :
-            prefix    += "/"
-        self.prefix    = prefix
-        self.directory = directory
+    def __init__ (self, application, request, maps) :
+        super (_Static_File_Handler_, self).__init__ (application, request)
+        self.maps = maps
     # end def __init__
 
-    def get (self, handler, path, include_body = True) :
-        request = handler.request
-        if not path.startswith (self.prefix) :
-            raise Not_Found ()
-        abspath = os.path.abspath \
-            (os.path.join (self.directory, path.replace (self.prefix, "")))
-        if not os.path.isfile (abspath) :
-            raise Not_Found ()
+    def head (self, path) :
+        self.get (path, include_body = False)
+    # end def head
 
+    def get (self, path, include_body = True) :
+        for map in self.maps :
+            file_name = map.get (self, path, include_body)
+            if file_name :
+                return self._get (file_name, include_body)
+    # end def get
+
+    def _get (self, file_name, include_body = True) :
         # Check the If-Modified-Since, and don't send the result if the
         # content has not been modified
-        stat_result = os.stat (abspath)
+        stat_result = os.stat (file_name)
         modified    = datetime.datetime.fromtimestamp \
             (stat_result [stat.ST_MTIME])
         file_size   = stat_result [stat.ST_SIZE]
@@ -92,49 +97,25 @@ class Static_Map (TFL.Meta.Object) :
                 ("Cache-Control", "max-age=" + str (86400*365*10))
         else:
             handler.set_header ("Cache-Control", "public")
-        mime_type, encoding = mimetypes.guess_type (abspath)
+        mime_type, encoding = mimetypes.guess_type (file_name)
         if mime_type :
             handler.set_header( "Content-Type", mime_type)
 
         if not include_body :
             return
-        file = open (abspath, "rb")
+        file = open (file_name, "rb")
         try :
             block_size = 1024 * 1024 * 1024
             for x in xrange (1 + file_size / block_size) :
                 handler.write (file.read (block_size))
         finally:
             file.close()
-    # end def get
-
-# end class Static_Map
-
-class _Static_File_Handler_ (web.RequestHandler) :
-    """A static file handler which shpuld only be used during development to
-       server static files directly form the disk.
-    """
-
-    def __init__ (self, application, request, maps) :
-        super (_Static_File_Handler_, self).__init__ (application, request)
-        self.maps = maps
-    # end def __init__
-
-    def head (self, path) :
-        self.get (path, include_body = False)
-    # end def head
-
-    def get (self, path, include_body = True) :
-        for map in self.maps :
-            try :
-                map.get (self, path, include_body)
-            except Not_Found :
-                pass
-    # end def get
+    # end def _get
 
 # end class _Static_File_Handler_
 
 def Static_File_Handler (prefix, app_dir, * static_maps) :
-    maps   = [Static_Map ("", os.path.abspath (app_dir))]
+    maps   = [GTW.Static_File_Map ("", os.path.abspath (app_dir))]
     maps.extend (static_maps)
     return ("/%s/(.*)" % (prefix, ), _Static_File_Handler_, dict (maps = maps))
 # end def Static_File_Handler

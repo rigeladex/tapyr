@@ -59,6 +59,7 @@
 #                     Support for renaming of instances added
 #    16-Feb-2010 (MG) Make `instance_state` empty if instance is None
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
+#    22-Feb-2010 (MG) `_create_instance` factored
 #    ««revision-date»»···
 #--
 
@@ -202,6 +203,18 @@ class _Instance_ (GTW.Form._Form_) :
             dict [field.name] = raw
     # end def add_changed_raw
 
+    def _create_instance (self, instance, state, raw_attrs) :
+        if instance and state == "r" :
+            ### a new instance should be created staring from a
+            ### rename -> we have to fill in at least all
+            ### primaries
+            for attr_kind in instance.primary :
+                n             = attr_kind.attr.name
+                raw_attrs [n] = raw_attrs.get \
+                    (n, attr_kind.get_raw (instance))
+        return self.et_man (raw = True, ** raw_attrs)
+    # end def _create_instance
+
     def _create_or_update (self, add_attrs = {}) :
         raw_attrs     = dict (add_attrs)
         instance      = self.instance
@@ -216,15 +229,8 @@ class _Instance_ (GTW.Form._Form_) :
                 if instance and state != "r" :
                     instance.set_raw (** raw_attrs)
                 else :
-                    if instance and state == "r" :
-                        ### a new instance should be created staring from a
-                        ### rename -> we have to fill in at least all
-                        ### primaries
-                        for attr_kind in instance.primary :
-                            n             = attr_kind.attr.name
-                            raw_attrs [n] = raw_attrs.get \
-                                (n, attr_kind.get_raw (instance))
-                    instance = self.et_man (raw = True, ** raw_attrs)
+                    instance = self._create_instance \
+                        (instance, state, raw_attrs)
             except Exception, exc:
                 if __debug__ :
                     import traceback

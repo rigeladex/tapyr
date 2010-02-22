@@ -316,8 +316,7 @@ class Entity (TFL.Meta.Object) :
         for name, value in kw.iteritems () :
             attr = attributes.get (name)
             if attr :
-                value = attr.cooked (value)
-            result [name] = value
+                result [name] = attr.cooked (value)
         return result
     # end def cooked_attrs
 

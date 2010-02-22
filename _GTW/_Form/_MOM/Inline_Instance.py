@@ -43,6 +43,7 @@
 #    11-Feb-2010 (MG) Changed handling of instance to form assignment (to
 #                     make sure that each posted form gets assing the correct
 #                     instance)
+#    22-Feb-2010 (MG) `_create_instance` added to `Attribute_Inline_Instance`
 #    ««revision-date»»···
 #--
 
@@ -152,7 +153,14 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 class Attribute_Inline_Instance (_Inline_Instance_) :
     """A form which handles an attribute of an entity as a seperate form"""
 
-    pass
+    def _create_instance (self, instance, state, raw_attrs) :
+        if not instance :
+            cooked_attrs = self.et_man._etype.cooked_attrs (raw_attrs)
+            instance     = self.et_man.query (** cooked_attrs).first ()
+            if instance :
+                return instance
+        return self.__super._create_instance (instance, state, raw_attrs)
+    # end def _create_instance
 
 # end class Attribute_Inline_Instance
 
