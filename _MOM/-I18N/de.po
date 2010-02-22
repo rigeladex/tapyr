@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-02-17 17:27+0100\n"
+"PO-Revision-Date: 2010-02-22 14:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -19,12 +19,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:863
+#: _MOM/Entity.py:880
 #, python-format
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
-msgstr "    %s benötigt die Argument: (%s). Stattdessen erhalten: (%s)"
+msgstr ""
+"%s\n"
+"    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
 #: _MOM/_Attr/Type.py:1071
 msgid ""
@@ -46,7 +48,7 @@ msgstr "Alle erforderlichen Attribute müssen definiert sein."
 msgid "An_Entity"
 msgstr "An-Entität"
 
-#: _MOM/_Meta/M_Entity.py:109
+#: _MOM/_Meta/M_Entity.py:110
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -105,6 +107,11 @@ msgid "Link"
 msgstr "Verknüpfung"
 
 #: _MOM/__babel__.py:0
+#, fuzzy
+msgid "Link1"
+msgstr "Verknüpfung"
+
+#: _MOM/__babel__.py:0
 msgid "Link2"
 msgstr "2-Verknüpfung"
 
@@ -125,12 +132,12 @@ msgstr "Name"
 msgid "Named_Object"
 msgstr "Benanntes-Objekt"
 
-#: _MOM/_Attr/Type.py:639
+#: _MOM/_Attr/Type.py:643
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
 
-#: _MOM/_Attr/Type.py:233
+#: _MOM/_Attr/Type.py:237
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
 
@@ -186,7 +193,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Type.py:308
+#: _MOM/_Attr/Type.py:312
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -194,6 +201,10 @@ msgstr "Wert `%r` hat nicht den Typ %s"
 #: _MOM/__babel__.py:0
 msgid "X locked"
 msgstr "gesperrt"
+
+#: _MOM/__babel__.py:0
+msgid "_MOM_Link_n_"
+msgstr ""
 
 #: _MOM/__babel__.py:0
 msgid ""
@@ -213,7 +224,7 @@ msgstr "links"
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:634
+#: _MOM/_Attr/Type.py:638
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"

@@ -335,8 +335,8 @@
     <ul>
       <li>
         {{ X.input.submit
-            ( title = "%s %s" % (GTW._T ("Logout"), request.user.name)
-            , value = "%s %s" % (GTW._T ("Logout"), request.user.name)
+            ( title = (GTW._T ("Logout %s") % (request.user.name, ))
+            , value = (GTW._T ("Logout %s") % (request.user.name, ))
             )
         }}
         {{ X.input.hidden (name  = "next", value = next) }}

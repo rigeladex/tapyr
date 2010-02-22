@@ -174,6 +174,7 @@ import _GTW.ReST
 
 from   _TFL.Filename            import *
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import split_hst
 from   _TFL.Regexp              import *
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL                     import sos
@@ -192,7 +193,7 @@ class Page_ReST (GTW.NAV.Page) :
         result = GTW.ReST.to_html \
             ( self.src_contents
             , encoding = self.encoding
-            , language = getattr (self, "language", "en")
+            , language = split_hst (getattr (self, "language", "en"), "_") [0]
             )
         if self.obfuscate_emails :
             result = self.email_obfuscator (result)

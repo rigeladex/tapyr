@@ -32,6 +32,7 @@
 #    25-Jan-2010 (MG) `_T` and `_Tn` need to be static methods
 #    27-Jan-2010 (CT) `Getter`, `now`, and `sorted` added
 #    17-Feb-2010 (CT) `email_uri`, `obfuscated`, `tel_uri`, and `uri` added
+#    22-Feb-2010 (CT) `langs` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,8 @@ from   _GTW               import HTML
 import _JNJ.Environment
 
 import _TFL._Meta.Object
+from   _TFL._Meta.Once_Property import Once_Property
+
 import _TFL.Accessor
 from   _TFL.I18N          import _, _T, _Tn
 
@@ -95,6 +98,11 @@ class GTW (TFL.Meta.Object) :
 
     Getter     = TFL.Getter
 
+    @Once_Property
+    def langs (self) :
+        return tuple (l for l in TFL.I18N.Config.Languages if l)
+    # end def langs
+
     def now (self, format = "%Y/%m/%d") :
         from datetime import datetime
         result = datetime.now ()
@@ -132,8 +140,8 @@ class GTW (TFL.Meta.Object) :
         return result
     # end def uri
 
-    _T  = staticmethod (_T)
-    _Tn = staticmethod (_Tn)
+    _T   = staticmethod (_T)
+    _Tn  = staticmethod (_Tn)
 
 # end class GTW
 

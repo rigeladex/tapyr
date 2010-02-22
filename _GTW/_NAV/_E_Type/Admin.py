@@ -42,6 +42,7 @@
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    22-Feb-2010 (CT) `Changer.rendered` changed to pass `cancel_href` to `Form`
 #    22-Feb-2010 (CT) `Completer.rendered` changed to use `cooked_attrs`
+#    22-Feb-2010 (CT) Use `request.req_data` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -92,7 +93,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             context  = handler.context
             obj      = context ["instance"] = None
             request  = handler.request
-            req_data = self.top.HTTP.Request_Data (request.arguments)
+            req_data = request.req_data
             lid      = req_data.get ("lid") or self.lid
             if lid is not None :
                 pid  = ETM.pid_from_lid (lid)
@@ -147,7 +148,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 for sf in self.forms :
                     form_cls = getattr (form_cls, "sub_forms", {}).get (sf)
                 if form_cls is not None :
-                    args     = self.top.HTTP.Request_Data (request.arguments)
+                    args     = request.req_data
                     et_man   = form_cls.et_man
                     filter   = tuple \
                         (    getattr (Q, k).STARTSWITH (v)
@@ -177,7 +178,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 form_cls = self.Form
                 for sf in self.forms :
                     form_cls = getattr (form_cls, "sub_forms", {}).get (sf)
-                args = HTTP.Request_Data (request.arguments)
+                args = request.req_data
                 lid  = args.get   ("lid")
                 no   = args.get   ("no")
                 if not any (x is None for x in (form_cls, lid, no)) :

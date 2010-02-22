@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-17 17:27+0100\n"
+"PO-Revision-Date: 2010-02-22 14:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -24,12 +24,32 @@ msgid "Account"
 msgstr "Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account which this action is bound to."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_Activation"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_Anonymous"
 msgstr "Anonymes Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_EMail_Verification"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_P"
 msgstr "Benutzerkonto"
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_Password_Change_Required"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Account_Pasword_Reset"
+msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Account_in_Group"
@@ -41,9 +61,25 @@ msgid "Accounts"
 msgstr "Benutzerkonten"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Activation"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 #, fuzzy
 msgid "Active"
 msgstr "Benutzer freigeschaltet"
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Enabled"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Exipre time of this action"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Expires"
+msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Group"
@@ -59,17 +95,40 @@ msgid "Name of group"
 msgstr "Name der Gruppe"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
-#, fuzzy
-msgid "Password"
-msgstr "Kennwort"
+msgid "New email"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Password change required"
+msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Password for this account"
 msgstr "Kennwort für dieses Benutzerkonto"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Salt"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Superuser"
 msgstr "Wunderwuzzi"
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Suspended"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "The new email address for the linked account."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "The salt used for the password hash."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "The temporaty password."
+msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "This account has super-user permissions."
@@ -80,20 +139,50 @@ msgid "This account is currently active."
 msgstr "Dieses Benutzerkonto ist gegenwärtig freigeschaltet."
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
+#, fuzzy
+msgid "This account is currently enabled (the suer can login)."
+msgstr "Dieses Benutzerkonto ist gegenwärtig freigeschaltet."
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+#, fuzzy
+msgid "This account is currently suspended (due to a pending action)."
+msgstr "Dieses Benutzerkonto ist gegenwärtig freigeschaltet."
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Token"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Unique token which identifies this action."
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "User name associated with this account"
 msgstr "Benutzername des Benutzerkontos"
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+#, fuzzy
+msgid "_Account_Action_"
+msgstr "Benutzerkonto in Gruppe"
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "_Account_Token_Action_"
+msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "`Account` linked to `group`"
 msgstr "Benutzerkonto verknüpft mit Gruppe"
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
-msgid ""
-"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
-"or the raw value of `foo`, otherwise."
-msgstr ""
-
-#: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "`Group` linked to `account`"
 msgstr "Gruppe verknüpft mit Benutzerkonto"
+
+#~ msgid "Link1"
+#~ msgstr ""
+
+#~ msgid "Password"
+#~ msgstr "Kennwort"
+
+#~ msgid "_MOM_Link_n_"
+#~ msgstr ""
 

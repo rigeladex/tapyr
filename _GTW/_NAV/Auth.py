@@ -36,6 +36,7 @@
 #    20-Feb-2010 (MG) Action expiration handling added
 #    20-Feb-2010 (MG) Notification added
 #    20-Feb-2010 (CT) Use symbolic names for templates
+#    22-Feb-2010 (CT) Use `request.req_data` instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -46,7 +47,6 @@ from   _MOM.import_MOM          import Q
 import _GTW.Notification
 import _GTW._NAV.Base
 import _GTW._Form.Auth
-import _GTW._Tornado.Request_Data
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
@@ -112,7 +112,7 @@ class Auth (GTW.NAV.Dir) :
             context ["form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
-                req_data  = HTTP.Request_Data (request.arguments)
+                req_data  = request.req_data
                 errors    = form (req_data)
                 if not errors :
                     account = form.account
@@ -144,7 +144,7 @@ class Auth (GTW.NAV.Dir) :
             context ["form"] = form
             if request.method == "POST" :
                 HTTP     = top.HTTP
-                req_data = HTTP.Request_Data (request.arguments)
+                req_data = request.req_data
                 errors   = form (req_data)
                 if not errors :
                     next  = req_data.get         ("next", "/")
@@ -193,7 +193,7 @@ class Auth (GTW.NAV.Dir) :
             context ["form"] = form
             if request.method == "POST" :
                 HTTP     = top.HTTP
-                req_data = HTTP.Request_Data (request.arguments)
+                req_data = request.req_data
                 errors   = form (req_data)
                 if not errors :
                     next  = req_data.get      ("next", "/")
@@ -222,7 +222,7 @@ class Auth (GTW.NAV.Dir) :
             context ["login_form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
-                req_data  = HTTP.Request_Data (request.arguments)
+                req_data  = request.req_data
                 errors    = form (req_data)
                 if not errors :
                     next = req_data.get ("next", "/")
@@ -272,7 +272,7 @@ class Auth (GTW.NAV.Dir) :
             context ["form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
-                req_data  = HTTP.Request_Data (request.arguments)
+                req_data  = request.req_data
                 errors    = form (req_data)
                 if not errors :
                     Auth  = top.scope.GTW.OMP.Auth
@@ -324,7 +324,7 @@ class Auth (GTW.NAV.Dir) :
             context ["form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
-                req_data  = HTTP.Request_Data (request.arguments)
+                req_data  = request.req_data
                 errors    = form (req_data)
                 if form.account :
                     passwd = top.scope.GTW.OMP.Auth.Account_P.reset_password \

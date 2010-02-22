@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-17 17:27+0100\n"
+"PO-Revision-Date: 2010-02-22 14:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_OMP/_PAP/Person.py:89 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Person.py:92 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Academic title"
 msgstr "Titel"
 
@@ -90,7 +90,7 @@ msgstr "Sterbetag einer Person, Entität oder Verknüpfung"
 msgid "Death date"
 msgstr "Sterbetag"
 
-#: _GTW/_OMP/_PAP/Email.py:65 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:67 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -98,7 +98,7 @@ msgstr "Beschreibung"
 msgid "Email"
 msgstr "Email"
 
-#: _GTW/_OMP/_PAP/Email.py:56 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:58 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email address"
 msgstr "Emailadresse"
 
@@ -204,6 +204,11 @@ msgid "Person_has_Phone"
 msgstr "Person hat Telefon"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+#, fuzzy
+msgid "Persons"
+msgstr "Person"
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Phone"
 msgstr "Telefon"
 
@@ -286,10 +291,19 @@ msgid "`Email` linked to `person`"
 msgstr "Emailadresse einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid ""
-"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
-"or the raw value of `foo`, otherwise."
-msgstr ""
+#, fuzzy
+msgid "`Person` linked to `address`"
+msgstr "Telefonnummer einer Person"
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+#, fuzzy
+msgid "`Person` linked to `email`"
+msgstr "Telefonnummer einer Person"
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+#, fuzzy
+msgid "`Person` linked to `phone`"
+msgstr "Telefonnummer einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "`Phone` linked to `person`"
@@ -298,4 +312,10 @@ msgstr "Telefonnummer einer Person"
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "death_after_birth"
 msgstr ""
+
+#~ msgid "Link1"
+#~ msgstr ""
+
+#~ msgid "_MOM_Link_n_"
+#~ msgstr ""
 

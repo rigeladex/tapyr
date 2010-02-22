@@ -77,6 +77,13 @@
   {%- endif %}
 {%- endmacro -%} {# entries #}
 
+{%- macro language_section (page, request) -%}
+{#-
+    {%- for l in GTW.langs %}<li>{{ l }}</li>{% endfor -%}
+    <li>{{ page.language }}: {{ request.language }}</li>
+-#}
+{%- endmacro -%} {#- language_section -#}
+
 {%- macro login_section (page, request, allow_register = False) -%}
   <div class="nav-section login">
     {%- import "STD::html/form.jnj" as Form %}

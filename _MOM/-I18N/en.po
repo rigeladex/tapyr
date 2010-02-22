@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-17 17:27+0100\n"
+"PO-Revision-Date: 2010-02-22 14:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:863
+#: _MOM/Entity.py:880
 #, python-format
 msgid ""
 "%s\n"
@@ -43,7 +43,7 @@ msgstr ""
 msgid "An_Entity"
 msgstr ""
 
-#: _MOM/_Meta/M_Entity.py:109
+#: _MOM/_Meta/M_Entity.py:110
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -96,6 +96,10 @@ msgid "Link"
 msgstr ""
 
 #: _MOM/__babel__.py:0
+msgid "Link1"
+msgstr ""
+
+#: _MOM/__babel__.py:0
 msgid "Link2"
 msgstr ""
 
@@ -115,12 +119,12 @@ msgstr ""
 msgid "Named_Object"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:639
+#: _MOM/_Attr/Type.py:643
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:233
+#: _MOM/_Attr/Type.py:237
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr ""
 
@@ -176,13 +180,17 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:308
+#: _MOM/_Attr/Type.py:312
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
 
 #: _MOM/__babel__.py:0
 msgid "X locked"
+msgstr ""
+
+#: _MOM/__babel__.py:0
+msgid "_MOM_Link_n_"
 msgstr ""
 
 #: _MOM/__babel__.py:0
@@ -203,7 +211,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:634
+#: _MOM/_Attr/Type.py:638
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""
@@ -215,9 +223,4 @@ msgstr ""
 #: _MOM/__babel__.py:0
 msgid "right"
 msgstr ""
-
-#~ msgid ""
-#~ "`FO.foo` fives the `ui_display` of attribute `foo`, if defined,\n"
-#~ "or the raw value of `foo`, otherwise."
-#~ msgstr ""
 

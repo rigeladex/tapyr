@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-17 17:27+0100\n"
+"PO-Revision-Date: 2010-02-22 14:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _JNJ/html/form.jnj:222
+#: _JNJ/html/activate.jnj:39
+msgid "Activation for"
+msgstr "Aktivierung für"
+
+#: _JNJ/html/form.jnj:169
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -26,15 +30,41 @@ msgstr "Abbrechen"
 msgid "Change"
 msgstr "Ändern"
 
+#: _JNJ/html/change_email.jnj:39
+msgid "Change E-Mail for"
+msgstr "Ändere E-Mail für"
+
+#: _JNJ/html/change_password.jnj:39
+msgid "Change Password for"
+msgstr "Ändere Kennwort für"
+
+#: _JNJ/html/form.jnj:347
+msgid "Change email"
+msgstr "Ändere E-Mail"
+
+#: _JNJ/html/form.jnj:346
+#, python-format
+msgid "Change email of account %s"
+msgstr "Ändere E-Mail für Benutzerkonto %s"
+
 #: _JNJ/html/e_type_admin.jnj:73
 msgid "Change object"
 msgstr "Ändere Objekt"
 
-#: _JNJ/html/form.jnj:313
+#: _JNJ/html/form.jnj:352
+msgid "Change password"
+msgstr "Ändere Kennwort"
+
+#: _JNJ/html/form.jnj:351
+#, python-format
+msgid "Change password of account %s"
+msgstr "Ändere Kennwort für Benutzerkonto %s"
+
+#: _JNJ/html/form.jnj:372
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/form.jnj:220 _JNJ/html/form.jnj:310
+#: _JNJ/html/form.jnj:167 _JNJ/html/form.jnj:364
 msgid "Discard all changes and leave form"
 msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 
@@ -49,7 +79,11 @@ msgstr ""
 "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
 "Webmaster."
 
-#: _JNJ/html/form.jnj:295
+#: _JNJ/html/form.jnj:307
+msgid "Log into website or go to account page"
+msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
+
+#: _JNJ/html/form.jnj:308
 msgid "Login"
 msgstr "Anmelden"
 
@@ -61,6 +95,15 @@ msgstr "Angemeldet als"
 msgid "Login required"
 msgstr "Anmeldung erforderlich"
 
+#: _JNJ/html/form.jnj:338 _JNJ/html/form.jnj:339
+#, python-format
+msgid "Logout %s"
+msgstr "Melde %s ab"
+
+#: _JNJ/html/error_405.jnj:37
+msgid "Method Not Allowed"
+msgstr ""
+
 #: _JNJ/html/photo.jnj:47
 msgid "Next picture"
 msgstr "Nächstes Bild"
@@ -69,11 +112,11 @@ msgstr "Nächstes Bild"
 msgid "Page doesn't exist"
 msgstr "Seite existiert nicht"
 
-#: _JNJ/html/form.jnj:290
+#: _JNJ/html/form.jnj:301
 msgid "Please enter your password"
 msgstr "Bitte um Eingabe des Kennworts"
 
-#: _JNJ/html/form.jnj:281
+#: _JNJ/html/form.jnj:292
 msgid "Please enter your username"
 msgstr "Bitte um Eingabe des Benutzernamens"
 
@@ -85,7 +128,19 @@ msgstr "Voriges Bild"
 msgid "Processing the request triggered a server error. "
 msgstr "Die Verarbeitung der Anfrage löste einen Fehler des Webservers aus."
 
-#: _JNJ/html/form.jnj:314
+#: _JNJ/html/form.jnj:318
+msgid "Register"
+msgstr "Registrieren"
+
+#: _JNJ/html/form.jnj:317
+msgid "Register a new account"
+msgstr "Registrieren eines neuen Benutzerkontos"
+
+#: _JNJ/html/register.jnj:39
+msgid "Register a new account for "
+msgstr "Registrieren eines neuen Benutzerkontos für "
+
+#: _JNJ/html/form.jnj:373
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -93,7 +148,7 @@ msgstr "Zurücksetzen"
 msgid "Server error"
 msgstr "Fehler im Webserver"
 
-#: _JNJ/html/form.jnj:316
+#: _JNJ/html/form.jnj:375
 msgid "Submit"
 msgstr "Absenden"
 
@@ -126,3 +181,11 @@ msgstr "Ein Zugriff auf die Seite %s ist nur nach Anmeldung möglich"
 msgid "You requested a page that doesn't exist: "
 msgstr "Sie versuchten auf eine nicht existierende Seite zuzugreifen: "
 
+#:
+msgid "Logged in"
+msgstr "Angemeldet"
+
+#:
+#, python-format
+msgid "Logged in as %s"
+msgstr "Angemeldet als %s"

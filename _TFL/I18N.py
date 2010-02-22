@@ -36,18 +36,20 @@
 #    25-Jan-2010 (MG) Support list of languages in `use` and `context`
 #    31-Jan-2010 (CT) `import  babel.support` moved inside functions
 #    18-Feb-2010 (CT) `Name` added
+#    22-Feb-2010 (CT) `choose` factored, `Config.choice` added
 #    ««revision-date»»···
 #--
 
 from   _TFL            import TFL
 from   _TFL.Record     import Record
-from   _TFL.predicate  import first
+from   _TFL.predicate  import first, split_hst
 import  gettext
 
 Config = Record \
    ( Languages  = {None : gettext.NullTranslations ()}
    , locale_dir = "locale"
    , domains    = ("messages", )
+   , choice     = None
    )
 Config.current = Config.Null = Config.Languages [None]
 
@@ -70,8 +72,20 @@ def add (self, * languages, ** kw) :
     use_lang   = kw.pop ("use", None)
     _load_languages (locale_dir, languages, domains)
     if use_lang :
-        ise (use_lang)
+        use (use_lang)
 # end def add
+
+def choose (* lang) :
+    def _gen (lang) :
+        for l in lang :
+            yield l, l
+        for l in lang :
+            if l :
+                a, _, b = split_hst (l, "_")
+                yield a, b or a
+        yield None, None
+    return first (l for l in _gen (lang) if l [0] in Config.Languages)
+# end def choose
 
 @TFL.Contextmanager
 def context (* lang) :
@@ -95,12 +109,12 @@ def context (* lang) :
     u'L2: Text 1'
     u'L2: Text 2'
     """
-    old = Config.current
+    old = Config.current, Config.choice
     try :
        use (* lang)
        yield
     finally :
-        Config.current = old
+        Config.current, Config.choice = old
 # end def context
 
 def load (* languages, ** kw) :
@@ -126,12 +140,12 @@ def _load_languages (locale_dir, languages, domains) :
             (locale_dir, lang, first_dom)
         if not isinstance (lang_trans, Trans_Cls) :
             print "*** Warning, language %s for domain %s not found!" % \
-                  (lang, first_dom)
+                (lang, first_dom)
         for d in domains :
             new_domain = Trans_Cls.load (locale_dir, lang, d)
             if not isinstance (new_domain, Trans_Cls) :
                 print "*** Warning, language %s for domain %s not found!" % \
-                      (lang, d)
+                    (lang, d)
             lang_trans.merge (new_domain)
 # end def _load_languages
 
@@ -167,9 +181,8 @@ def ungettext (singular, plural = None, n = 99, trans = None) :
 # end def ungettext
 
 def use (* lang) :
-    Langs  = Config.Languages
-    loaded = first ((l for l in lang + (None, ) if l in Langs))
-    Config.current = Config.Languages [loaded]
+    Config.choice  = (l, v) = choose (* lang)
+    Config.current = Config.Languages [l]
 # end def use
 
 _    = mark

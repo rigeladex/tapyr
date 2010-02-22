@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-17 17:27+0100\n"
+"PO-Revision-Date: 2010-02-22 14:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_OMP/_PAP/Person.py:89 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Person.py:92 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Academic title"
 msgstr ""
 
@@ -86,7 +86,7 @@ msgstr ""
 msgid "Death date"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:65 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:67 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Description"
 msgstr ""
 
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:56 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:58 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email address"
 msgstr ""
 
@@ -199,6 +199,10 @@ msgid "Person_has_Phone"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "Persons"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Phone"
 msgstr ""
 
@@ -279,9 +283,15 @@ msgid "`Email` linked to `person`"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-msgid ""
-"`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
-"or the raw value of `foo`, otherwise."
+msgid "`Person` linked to `address`"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "`Person` linked to `email`"
+msgstr ""
+
+#: _GTW/_OMP/_PAP/__babel__.py:0
+msgid "`Person` linked to `phone`"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
@@ -291,4 +301,10 @@ msgstr ""
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "death_after_birth"
 msgstr ""
+
+#~ msgid "Link1"
+#~ msgstr ""
+
+#~ msgid "_MOM_Link_n_"
+#~ msgstr ""
 
