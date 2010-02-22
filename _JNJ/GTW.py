@@ -32,7 +32,7 @@
 #    25-Jan-2010 (MG) `_T` and `_Tn` need to be static methods
 #    27-Jan-2010 (CT) `Getter`, `now`, and `sorted` added
 #    17-Feb-2010 (CT) `email_uri`, `obfuscated`, `tel_uri`, and `uri` added
-#    22-Feb-2010 (CT) `langs` added
+#    22-Feb-2010 (CT) `langs` and `lang_flag` added
 #    ««revision-date»»···
 #--
 
@@ -53,6 +53,10 @@ class GTW (TFL.Meta.Object) :
     """Provide additional global functions for Jinja templates."""
 
     from jinja2.runtime import Undefined
+
+    _lang_map = dict \
+        ( en  = "us"
+        )
 
     def __init__ (self, env) :
         self.env = env
@@ -97,6 +101,18 @@ class GTW (TFL.Meta.Object) :
     # end def get_macro
 
     Getter     = TFL.Getter
+
+    def lang_flag (self, lang) :
+        if isinstance (lang, basestring) :
+            lang = (lang, )
+        map = self._lang_map
+        for l in lang :
+            k      = map.get (l, l).lower ()
+            flag   = "/media/GTW/icons/flags/%s.png" % (k, )
+            exists = True # XXX # GTW.static_map.exists (flag)
+            if exists :
+                return flag
+    # end def lang_flag
 
     @Once_Property
     def langs (self) :

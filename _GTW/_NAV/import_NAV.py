@@ -34,6 +34,7 @@ import _GTW._NAV.Admin
 import _GTW._NAV.Auth
 import _GTW._NAV.Base
 import _GTW._NAV.Gallery
+import _GTW._NAV.L10N
 import _GTW._NAV.Permission
 import _GTW._NAV.ReST
 import _GTW._NAV.Request_Handler

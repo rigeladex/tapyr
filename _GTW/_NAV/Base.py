@@ -198,7 +198,7 @@
 #    20-Feb-2010 (CT) Property `login_page` added
 #    21-Feb-2010 (CT) `account_manager` added
 #    22-Feb-2010 (CT) `_view` changed to set `request.req_data` and
-#                     to handle `lang`
+#                     `context.lang`
 #    ««revision-date»»···
 #--
 
@@ -484,24 +484,15 @@ class _Site_Entity_ (TFL.Meta.Object) :
         request          = handler.request
         request.user     = handler.current_user
         request.req_data = req_data = HTTP.Request_Data (request.arguments)
-        lang             = request.arguments.get ("lang")
-        if lang :
-            handler.session ["language"] = lang
-        else :
-            lang = handler.session.get ("language")
-        if not lang :
-            lang = (None, )
-        with TFL.I18N.context (* lang) :
-            request.language = TFL.I18N.Config.choice
-            handler.context  = self.render_context \
-                ( lang          = TFL.I18N.Config.current
-                , notifications = handler.session.notifications
-                , request       = request
-                )
-            result = self.rendered (handler)
-            if result is None :
-                raise HTTP.Error_404 (request.uri [1:])
-            handler.write (result)
+        handler.context  = self.render_context \
+            ( lang          = TFL.I18N.Config.current
+            , notifications = handler.session.notifications
+            , request       = request
+            )
+        result = self.rendered (handler)
+        if result is None :
+            raise HTTP.Error_404 (request.uri [1:])
+        handler.write (result)
     # end def _view
 
     def __getattr__ (self, name) :

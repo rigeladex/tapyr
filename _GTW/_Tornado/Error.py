@@ -94,10 +94,20 @@ class Redirect_302 (_Redirect_) :
     status_code = 302
 # end class Redirect_302
 
+class Redirect_303 (_Redirect_) :
+    """See other."""
+    status_code = 303
+# end class Redirect_303
+
 class Redirect_304 (_Redirect_) :
     """Not Modified."""
     status_code = 304
 # end class Redirect_304
+
+class Redirect_307 (_Redirect_) :
+    """Temporary Redirect."""
+    status_code = 307
+# end class Redirect_307
 
 class _Error_ (Status) :
     """Base class for all error responses."""

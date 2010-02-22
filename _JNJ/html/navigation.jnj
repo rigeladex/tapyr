@@ -33,6 +33,7 @@
 ##    27-Jan-2010 (CT) `neighbor` added
 ##    20-Feb-2010 (CT) `login_section` added
 ##    21-Feb-2010 (CT) `logout_inline` factored
+##    22-Feb-2010 (CT) `language_section` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -78,10 +79,31 @@
 {%- endmacro -%} {# entries #}
 
 {%- macro language_section (page, request) -%}
-{#-
-    {%- for l in GTW.langs %}<li>{{ l }}</li>{% endfor -%}
-    <li>{{ page.language }}: {{ request.language }}</li>
--#}
+  {%- set L10N = page.top.SC.L10N %}
+  {%- if L10N %}
+    {%- set langs = GTW.langs %}
+    {%- if langs|length > 1 %}
+      <h1 title="{{ GTW._T ("Languages that can be selected for %s") % page.site_url }}">
+        {{- GTW._T ("Language") -}}
+      </h1>
+      {%- for l in langs %}
+        {%- set img  = GTW.lang_flag (l) %}
+        {%- set desc = GTW._T ("Select language %s") % (l, ) %}
+        {%- set curr = "current-section" if lang == l else "" %}
+        <span class="nav-link level-0 {{ curr -}}" >
+          <a href="{{ "%s/%s" % (L10N.abs_href, l) }}"
+            title="{{ desc }}"
+          >
+            {%- if img %}
+              <img alt="{{ desc }}" src="{{ img }}" title="{{ desc }}" />
+            {%- else %}
+              {{ l }}
+            {% endif -%}
+          </a>
+        </span>
+      {% endfor -%}
+    {% endif -%}
+  {% endif -%}
 {%- endmacro -%} {#- language_section -#}
 
 {%- macro login_section (page, request, allow_register = False) -%}
