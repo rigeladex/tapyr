@@ -40,6 +40,7 @@
 #    12-Feb-2010 (CT) `Admin.__init__` changed to convert strings in
 #                     `list_display` to attributes
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
+#    22-Feb-2010 (CT) `Changer.rendered` changed to pass `cancel_href` to `Form`
 #    ««revision-date»»···
 #--
 
@@ -102,7 +103,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         % (_T (E_Type.ui_name), lid)
                         )
                     raise HTTP.Error_404 (request.path, request.Error)
-            form = self.Form (self.abs_href, obj)
+            form = self.Form \
+                (self.abs_href, obj, cancel_href = self.parent.abs_href)
             if request.method == "POST" :
                 err_count = form (req_data)
                 if err_count == 0 :

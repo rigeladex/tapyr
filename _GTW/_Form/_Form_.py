@@ -33,6 +33,7 @@
 #    10-Feb-2010 (MG) `get_raw`: As soon as we have `request_data` use the
 #                     values from there or empty string (empty strings are
 #                     not part of the request data!)
+#    22-Feb-2010 (CT) `kw` added
 #    ««revision-date»»···
 #--
 
@@ -41,6 +42,7 @@ import _TFL.I18N
 import _TFL._Meta.Object
 import _TFL._Meta.Once_Property
 import _TFL.defaultdict
+import _TFL.Record
 
 from   _GTW              import GTW
 import _GTW._Form.Field_Error
@@ -66,15 +68,16 @@ class _Form_ (TFL.Meta.Object) :
     __metaclass__ = M_Form
     instance      = None
 
-    def __init__ (self, instance = None, prefix_sub = None) :
+    def __init__ (self, instance = None, prefix_sub = None, ** kw) :
         if instance != None :
-            self.instance        = instance
-        self.errors              = GTW.Form.Error_List ()
-        self.field_errors        = TFL.defaultdict     (GTW.Form.Error_List)
-        self.prefix_sub          = prefix_sub
+            self.instance = instance
+        self.errors       = GTW.Form.Error_List ()
+        self.field_errors = TFL.defaultdict (GTW.Form.Error_List)
+        self.prefix_sub   = prefix_sub
         if prefix_sub :
-            self.prefix          = "%s%s" % (self.prefix , prefix_sub)
-        self.request_data        = {}
+            self.prefix   = "%s%s" % (self.prefix , prefix_sub)
+        self.request_data = {}
+        self.kw           = TFL.Record (** kw)
     # end def __init__
 
     def get_errors (self, field = None) :
@@ -106,5 +109,3 @@ class _Form_ (TFL.Meta.Object) :
 if __name__ != "__main__" :
     GTW.Form._Export ("*")
 ### __END__ GTW.Form._Form_
-
-

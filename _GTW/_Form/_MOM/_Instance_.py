@@ -58,6 +58,7 @@
 #                     `_Instance_.__init__` make a copy of `field_groups`
 #                     Support for renaming of instances added
 #    16-Feb-2010 (MG) Make `instance_state` empty if instance is None
+#    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #    ««revision-date»»···
 #--
 

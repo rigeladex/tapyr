@@ -48,6 +48,9 @@
 ##    10-Feb-2010 (MG) Display of `aig` no field errors added
 ##    10-Feb-2010 (MG) `aid_div_seq` fixed
 ##    21-Feb-2010 (CT) `logout_inline` added, `login_inline` changed
+##    22-Feb-2010 (CT) Macro `object` changed to take `cancel_href` from
+##                     `kwargs` or `fo.kw`
+##                     (and use `cancel_kw = {}` for empty `cancel_href`)
 ##    ««revision-date»»···
 ##--
 #}
@@ -355,13 +358,16 @@
 {%- macro object (fo) -%}
   {#- Create a form for a form-object `fo` -#}
   {%- set object_caller = kwargs.pop ("caller", None) -%}
+  {%- set cancel_href   = kwargs.pop ("cancel_href", fo.kw.cancel_href) -%}
+  {%- set cancel_kw     = dict
+        ( href  = cancel_href
+        , title = GTW._T ("Discard all changes and leave form")
+        ) if cancel_href else {}
+  -%}
   {% call form
       ( action    = fo.action
       , class     = fo.css_class
-      , cancel_kw = dict
-          ( href  = fo.cancel_href
-          , title = GTW._T ("Discard all changes and leave form")
-          )
+      , cancel_kw = cancel_kw
       , reset_kw  = dict
           ( title = GTW._T ("Discard all changes")
           , value = GTW._T ("Reset")

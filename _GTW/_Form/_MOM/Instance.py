@@ -28,6 +28,7 @@
 # Revision Dates
 #    18-Jan-2010 (MG) Creation
 #    29-Jan-2010 (MG) Use `Widget_Spec` instead of plain text
+#    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #    ««revision-date»»···
 #--
 
@@ -65,7 +66,7 @@ class Instance (GTW.Form.MOM._Instance_) :
 
     def __init__ (self, action, instance = None, ** kw) :
         self.action = action
-        self.__super.__init__ (instance)
+        self.__super.__init__ (instance, ** kw)
     # end def __init__
 
 # end class Instance
