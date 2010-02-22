@@ -107,6 +107,7 @@
 #    16-Feb-2010 (CT) `copy` changed to use `scope.entity_type` instead of
 #                     home-grown code
 #    19-Feb-2010 (MG) `Entity.__repr__` changed
+#    22-Feb-2010 (CT) `cooked_attrs` added
 #    ««revision-date»»···
 #--
 
@@ -307,6 +308,18 @@ class Entity (TFL.Meta.Object) :
     def compute_type_defaults_internal (cls) :
         pass
     # end def compute_type_defaults_internal
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked_attrs (soc, kw) :
+        attributes = soc.attributes
+        result     = {}
+        for name, value in kw.iteritems () :
+            attr = attributes.get (name)
+            if attr :
+                value = attr.cooked (value)
+            result [name] = value
+        return result
+    # end def cooked_attrs
 
     def globals (self) :
         return self.__class__._app_globals or object_globals (self)

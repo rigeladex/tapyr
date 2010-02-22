@@ -41,6 +41,7 @@
 #                     `list_display` to attributes
 #    19-Feb-2010 (CT) `SUPPORTED_METHODS` added
 #    22-Feb-2010 (CT) `Changer.rendered` changed to pass `cancel_href` to `Form`
+#    22-Feb-2010 (CT) `Completer.rendered` changed to use `cooked_attrs`
 #    ««revision-date»»···
 #--
 
@@ -150,7 +151,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     et_man   = form_cls.et_man
                     filter   = tuple \
                         (    getattr (Q, k).STARTSWITH (v)
-                        for (k, v) in args.iteritems ()
+                        for (k, v) in et_man.cooked_attrs (args).iteritems ()
                         )
                     context ["completions"] = et_man.query \
                         ().filter (* filter).distinct ()
