@@ -28,6 +28,7 @@
 # Revision Dates
 #    30-Dec-2009 (CT) Creation
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
+#    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,7 @@ class _PAP_Email_ (PAP.Entity, _Ancestor_Essence) :
             """Email address (including domain)"""
 
             kind           = Attr.Primary
+            ignore_case    = True
             max_length     = 80
             rank           = 1
             ui_name        = _("Email address")

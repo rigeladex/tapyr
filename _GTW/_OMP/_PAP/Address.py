@@ -29,6 +29,7 @@
 #    30-Dec-2009 (CT) Creation
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
 #     4-Feb-2010 (CT) Composite `position` instead of `lat` and `lon`
+#    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             """Street (or place) and house number"""
 
             kind           = Attr.Primary
+            ignore_case    = True
             max_length     = 80
             rank           = 1
 
@@ -63,6 +65,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             """Zip code of address"""
 
             kind           = Attr.Primary
+            ignore_case    = True
             max_length     = 6
             rank           = 2
             ui_name        = "Zip code"
@@ -73,6 +76,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             """City, town, or village"""
 
             kind           = Attr.Primary
+            ignore_case    = True
             max_length     = 30
             rank           = 3
 
@@ -81,6 +85,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
         class country (A_String) :
 
             kind           = Attr.Primary
+            ignore_case    = True
             max_length     = 20
             rank           = 4
 
@@ -90,6 +95,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
             """State or province or region"""
 
             kind           = Attr.Primary_Optional
+            ignore_case    = True
             max_length     = 20
             rank           = 5
 
@@ -116,10 +122,10 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
     # end class _Attributes
 
     def components (self) :
-        result = [self.street, ", ".join ((self.zip, self.city))]
+        result = [self.FO.street, ", ".join ((self.FO.zip, self.FO.city))]
         if self.region :
-            result.append (self.region)
-        result.append (self.country)
+            result.append (self.FO.region)
+        result.append (self.FO.country)
         return result
     # end def components
 

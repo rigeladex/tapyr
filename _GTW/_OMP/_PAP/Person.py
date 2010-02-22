@@ -30,6 +30,7 @@
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
 #    29-Jan-2010 (CT) `middle_name` added
 #    10-Feb-2010 (CT) `birth_date (A_Date)` replaced by `date (A_Lifetime)`
+#    22-Feb-2010 (CT) `ignore_case` set for primary attributes
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """Last name of person"""
 
             kind           = Attr.Primary
+            ignore_case    = True
             max_length     = 48
             rank           = 1
 
@@ -64,6 +66,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """First name of person"""
 
             kind           = Attr.Primary
+            ignore_case    = True
             max_length     = 32
             rank           = 2
 
@@ -73,8 +76,8 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """Middle name of person"""
 
             kind           = Attr.Primary_Optional
+            ignore_case    = True
             max_length     = 32
-            default        = ""
             rank           = 1
 
         # end class middle_name
@@ -83,7 +86,7 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
             """Academic title."""
 
             kind           = Attr.Primary_Optional
-            default        = ""
+            ignore_case    = True
             max_length     = 20
             rank           = 2
             ui_name        = _("Academic title")
