@@ -85,6 +85,10 @@
 #     9-Feb-2010 (CT) `now` added to `A_Date`, `A_Date_Time`, and `A_Time`
 #    10-Feb-2010 (CT) `_A_Date_.needs_raw_value = False` added
 #    12-Feb-2010 (CT) `A_Blob` added
+#    22-Feb-2010 (CT) `A_Attr_Type.cooked` changed to guard agains `None`
+#    22-Feb-2010 (CT) `_A_String_.cooked` removed, `._from_string_eval` and
+#                     `._to_cooked` changed to call `simple_cooked`
+#    22-Feb-2010 (CT) `_A_String_.__metaclass__` set to `M_Attr_Type_String`
 #    ««revision-date»»···
 #--
 
@@ -181,7 +185,7 @@ class A_Attr_Type (object) :
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
-        if soc.simple_cooked :
+        if value is not None and soc.simple_cooked :
             return soc.simple_cooked (value)
         return value
     # end def cooked
@@ -764,24 +768,20 @@ class _A_Object_Set_ (_A_Typed_Set_) :
 class _A_String_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
 
+    __metaclass__     = MOM.Meta.M_Attr_Type_String
+
     default           = ""
+    ignore_case       = False
     needs_raw_value   = False
     simple_cooked     = unicode
 
-    @TFL.Meta.Class_and_Instance_Method
-    def cooked (soc, value) :
-        if value is not None :
-            return unicode (value)
-        return value
-    # end def cooked
-
     def _from_string_eval (self, s, obj, glob, locl) :
-        return unicode (s)
+        return self.simple_cooked (s)
     # end def _from_string
 
     def _to_cooked (self, s, cooker, obj, glob, locl) :
         if s is not None :
-            return unicode (s)
+            return self.simple_cooked (s)
         return s
     # end def _to_cooked
 

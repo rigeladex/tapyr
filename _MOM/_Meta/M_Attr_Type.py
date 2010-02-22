@@ -38,6 +38,7 @@
 #    21-Jan-2010 (CT) `__init__` changed to take `default` from `dct`
 #     2-Feb-2010 (CT) `M_Attr_Type_Named_Object` added
 #     9-Feb-2010 (CT) `M_Attr_Type.__init__` changed to add `query`
+#    22-Feb-2010 (CT) `M_Attr_Type_String` added (`ignore_case`)
 #    ««revision-date»»···
 #--
 
@@ -176,6 +177,28 @@ class M_Attr_Type_Named_Object (M_Attr_Type_Named_Value) :
     # end def __init__
 
 # end class M_Attr_Type_Named_Object
+
+def _unicode_lower (s) :
+    return unicode (s).lower ()
+# end def _unicode_lower
+
+class M_Attr_Type_String (M_Attr_Type) :
+    """Meta class for MOM.Attr._A_String_ classes.
+
+       `M_Attr_Type_String` interprets `ignore_case` and sets
+       `needs_raw_value` and `simple_cooked` accordingly.
+    """
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        cls.needs_raw_value   = bool (cls.ignore_case)
+        if cls.ignore_case :
+            cls.simple_cooked = staticmethod (_unicode_lower)
+        else :
+            cls.simple_cooked = unicode
+    # end def __init__
+
+# end class M_Attr_Type_String
 
 class M_Attr_Type_Unit (M_Attr_Type) :
     """Meta class for MOM.Attr._A_Unit_ classes.
