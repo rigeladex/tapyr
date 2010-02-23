@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    22-Feb-2010 (CT) Creation
+#    22-Feb-2010 (CT) `languages` and `flag` added
 #    ««revision-date»»···
 #--
 
@@ -36,6 +37,7 @@ from   _TFL                     import TFL
 import _GTW.Notification
 import _GTW._NAV.Base
 
+from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 
 class L10N (GTW.NAV.Dir) :
@@ -43,6 +45,10 @@ class L10N (GTW.NAV.Dir) :
 
     hidden          = True
     pid             = "L10N"
+
+    country_map     = dict\
+        ( en        = "us"
+        )
 
     class _Cmd_ (GTW.NAV._Site_Entity_) :
 
@@ -67,10 +73,51 @@ class L10N (GTW.NAV.Dir) :
 
     # end class _Cmd_
 
+    def __init__ (self, src_dir, parent, ** kw) :
+        self.country_map = dict \
+            (self.country_map, ** kw.pop ("country_map", {}))
+        self.__super.__init__ (parent = parent, ** kw)
+    # end def __init__
+
+    def flag (self, lang) :
+        if isinstance (lang, basestring) :
+            lang = lang.split ("_")
+        map = self.country_map
+        for l in reversed (lang) :
+            k      = (map.get (l) or l).lower ()
+            flag   = "/media/GTW/icons/flags/%s.png" % (k, )
+            exists = True # XXX # GTW.static_map.exists (flag)
+            if exists :
+                return flag
+    # end def flag
+
+    @Once_Property
+    def languages (self) :
+        result = {}
+        for l in TFL.I18N.Config.Languages :
+            if l :
+                result [l] = self._Cmd_ \
+                    (parent = self, language = l, name = l)
+        return result
+    # end def languages
+
+    @property
+    def own_links (self) :
+        return self.languages.itervalues ()
+    # end def own_links
+
     def _get_child (self, child, * grandchildren) :
         if not grandchildren :
-            return self._Cmd_ (parent = self, language = child, name = child)
+            result = self.languages.get (child)
+            if result is None :
+                result = self.languages.get (child.split ("_"))
+            if result is not None :
+                return result
     # end def _get_child
+
+    def __nonzero__ (self) :
+        return bool (self.languages)
+    # end def __nonzero__
 
 # end class L10N
 
