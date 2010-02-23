@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-23 12:02+0100\n"
+"PO-Revision-Date: 2010-02-23 18:20+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Activation for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:169
+#: _JNJ/html/form.jnj:172
 msgid "Cancel"
 msgstr ""
 
@@ -38,11 +38,11 @@ msgstr ""
 msgid "Change Password for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:347
+#: _JNJ/html/form.jnj:361
 msgid "Change email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:346
+#: _JNJ/html/form.jnj:360
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
@@ -51,25 +51,25 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:352
+#: _JNJ/html/form.jnj:366
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:351
+#: _JNJ/html/form.jnj:365
 #, python-format
 msgid "Change password of account %s"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:100
+#: _JNJ/html/navigation.jnj:101
 #, python-format
 msgid "Currently selected language is %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:372
+#: _JNJ/html/form.jnj:387
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:167 _JNJ/html/form.jnj:364
+#: _JNJ/html/form.jnj:170 _JNJ/html/form.jnj:378
 msgid "Discard all changes and leave form"
 msgstr ""
 
@@ -77,34 +77,42 @@ msgstr ""
 msgid "Edit this entry"
 msgstr ""
 
+#: _JNJ/html/form.jnj:321 _JNJ/html/login.jnj:64
+msgid "Get a new password for the username specified"
+msgstr ""
+
 #: _JNJ/html/error_404.jnj:53
 #, python-format
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:97
+#: _JNJ/html/navigation.jnj:98
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:96
+#: _JNJ/html/navigation.jnj:97
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:307
+#: _JNJ/html/form.jnj:312
 msgid "Log into website or go to account page"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:123
+#: _JNJ/html/login.jnj:59
+msgid "Log into website with username and password specified"
+msgstr ""
+
+#: _JNJ/html/navigation.jnj:124
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:122
+#: _JNJ/html/navigation.jnj:123
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:308 _JNJ/html/navigation.jnj:128
+#: _JNJ/html/form.jnj:313 _JNJ/html/login.jnj:60 _JNJ/html/navigation.jnj:129
 msgid "Login"
 msgstr ""
 
@@ -116,13 +124,17 @@ msgstr ""
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:338 _JNJ/html/form.jnj:339
+#: _JNJ/html/form.jnj:352 _JNJ/html/form.jnj:353
 #, python-format
 msgid "Logout %s"
 msgstr ""
 
 #: _JNJ/html/error_405.jnj:37
 msgid "Method Not Allowed"
+msgstr ""
+
+#: _JNJ/html/form.jnj:322 _JNJ/html/login.jnj:65
+msgid "New password"
 msgstr ""
 
 #: _JNJ/html/photo.jnj:47
@@ -133,11 +145,11 @@ msgstr ""
 msgid "Page doesn't exist"
 msgstr ""
 
-#: _JNJ/html/form.jnj:301
+#: _JNJ/html/form.jnj:306
 msgid "Please enter your password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:292
+#: _JNJ/html/form.jnj:297
 msgid "Please enter your username"
 msgstr ""
 
@@ -149,11 +161,11 @@ msgstr ""
 msgid "Processing the request triggered a server error. "
 msgstr ""
 
-#: _JNJ/html/form.jnj:318
+#: _JNJ/html/form.jnj:332
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:317
+#: _JNJ/html/form.jnj:331
 msgid "Register a new account"
 msgstr ""
 
@@ -161,11 +173,16 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:373
+#: _JNJ/html/form.jnj:388
 msgid "Reset"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:105
+#: _JNJ/html/reset_password.jnj:39
+#, python-format
+msgid "Reset password for %s"
+msgstr ""
+
+#: _JNJ/html/navigation.jnj:106
 #, python-format
 msgid "Select language %s"
 msgstr ""
@@ -174,7 +191,7 @@ msgstr ""
 msgid "Server error"
 msgstr ""
 
-#: _JNJ/html/form.jnj:375
+#: _JNJ/html/form.jnj:390
 msgid "Submit"
 msgstr ""
 

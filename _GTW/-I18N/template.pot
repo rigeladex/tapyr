@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-23 12:01+0100\n"
+"POT-Creation-Date: 2010-02-23 18:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,32 +28,32 @@ msgstr ""
 msgid "%s `%s` existiert nicht!"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:170
+#: _GTW/_NAV/Auth.py:172
 msgid "A confirmation email has been sent tothe new email address."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:300
+#: _GTW/_NAV/Auth.py:311
 msgid "A confirmation has been sent to your emailaddress."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:72 _GTW/_Form/Auth.py:204 _GTW/_Form/Auth.py:229
+#: _GTW/_Form/Auth.py:73 _GTW/_Form/Auth.py:223 _GTW/_Form/Auth.py:248
 msgid "A user name is required to login."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:124
+#: _GTW/_NAV/Auth.py:126
 msgid "Activation successful."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:89
+#: _GTW/_NAV/Auth.py:91
 msgid "EMail verification successful."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:161 _GTW/_NAV/Auth.py:291
+#: _GTW/_NAV/Auth.py:163 _GTW/_NAV/Auth.py:302
 #, python-format
 msgid "Email confirmation for %s"
 msgstr ""
 
-#: _GTW/_Form/Plain.py:89
+#: _GTW/_Form/Plain.py:90
 #, python-format
 msgid "Field `%(field)s` is required"
 msgstr ""
@@ -63,7 +63,7 @@ msgstr ""
 msgid "Language %s selected"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:255
+#: _GTW/_NAV/Auth.py:266
 msgid "Logout successful."
 msgstr ""
 
@@ -71,79 +71,83 @@ msgstr ""
 msgid "Need Javascript for displaying"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:162
+#: _GTW/_Form/Auth.py:181
 msgid "New email address"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:101
+#: _GTW/_Form/Auth.py:120
 msgid "New password"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:150
+#: _GTW/_Form/Auth.py:169
 msgid "One of the passwords is incorrect"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:61 _GTW/_Form/Auth.py:133 _GTW/_Form/Auth.py:166
+#: _GTW/_Form/Auth.py:62 _GTW/_Form/Auth.py:152 _GTW/_Form/Auth.py:185
 msgid "Password"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:113
+#: _GTW/_Form/Auth.py:132
 msgid "Passwords don't match."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:111
+#: _GTW/_Form/Auth.py:130
 msgid "Please repeat the new password."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:103
+#: _GTW/_Form/Auth.py:122
 msgid "Repeat new password"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:178
+#: _GTW/_NAV/Auth.py:230
+msgid "Reset password"
+msgstr ""
+
+#: _GTW/_Form/Auth.py:197
 msgid "The new E-Mail address is required."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:109
+#: _GTW/_Form/Auth.py:128
 msgid "The new password is required."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:145 _GTW/_Form/Auth.py:176
+#: _GTW/_Form/Auth.py:164 _GTW/_Form/Auth.py:195
 msgid "The old password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:205
+#: _GTW/_NAV/Auth.py:207
 msgid "The password has been changed."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:183
+#: _GTW/_Form/Auth.py:202
 msgid "The password is incorrect"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:74
+#: _GTW/_Form/Auth.py:75
 msgid "The password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:337
+#: _GTW/_NAV/Auth.py:348
 msgid "The reset password instructions have beensent to your email address."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:79
+#: _GTW/_Form/Auth.py:80
 msgid "This account is currently inactive"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:209
+#: _GTW/_Form/Auth.py:228
 msgid "This username is already in use."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:234
+#: _GTW/_Form/Auth.py:253
 msgid "This username is not registered"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:60 _GTW/_Form/Auth.py:193 _GTW/_Form/Auth.py:219
+#: _GTW/_Form/Auth.py:61 _GTW/_Form/Auth.py:212 _GTW/_Form/Auth.py:238
 msgid "Username"
 msgstr ""
 
-#: _GTW/_Form/Auth.py:77
+#: _GTW/_Form/Auth.py:78
 msgid "Username or password incorrect"
 msgstr ""
 

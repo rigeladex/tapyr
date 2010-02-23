@@ -51,6 +51,7 @@
 ##    22-Feb-2010 (CT) Macro `object` changed to take `cancel_href` from
 ##                     `kwargs` or `fo.kw`
 ##                     (and use `cancel_kw = {}` for empty `cancel_href`)
+##    23-Feb-2010 (CT) `form` changed to accept more than 1 `submit_kw`
 ##    ««revision-date»»···
 ##--
 #}
@@ -147,18 +148,20 @@
         , method        = "post"
         , next_form_kw  = {}
         , reset_kw      = {}
-        , submit_kw     = {}
+        , submit_kws    = []
         )
 -%}
   <form action="{{ action }}" method="{{ method }}"{{ kwargs|xmlattr }}>
     {{ caller () }}
-    <div>
+    <div class="buttons">
       {%- if next_form_kw %}
         {{ X.input.hidden (** next_form_kw) }}
       {% endif -%}
-      {%- if submit_kw %}
-        {{ X.input.submit (** submit_kw) }}
-      {% endif -%}
+      {%- for submit_kw in submit_kws %}
+        {%- if submit_kw %}
+          {{ X.input.submit (** submit_kw) }}
+        {% endif -%}
+      {% endfor -%}
       {%- if reset_kw %}
         {{ X.input.reset  (** reset_kw) }}
       {% endif -%}
@@ -295,15 +298,6 @@
             )
         }}
       </li>
-      <li>
-        {{ X.input.submit
-            ( title = GTW._T ("Reset password for the username specified")
-            , value = GTW._T ('Reset password')
-            , name  = "Submit"
-            , class = "Link"
-            )
-        }}
-      </li>
       <li><label for="F_password">{{ GTW._T (pw_tag) }}</label></li>
       <li>
         {{ X.input.password
@@ -316,13 +310,21 @@
       <li>
         {{ X.input.submit
             ( title = GTW._T ("Log into website or go to account page")
-            , value = GTW._T ('Login')
+            , value = GTW._T ("Login")
             , name  = "Submit"
             )
         }}
         {{ X.input.hidden (name  = "next", value = next) }}
       </li>
-      {#- XXX Reset password XXX -#}
+      <li>
+        {{ X.input.submit
+            ( title = GTW._T ("Get a new password for the username specified")
+            , value = GTW._T ("New password")
+            , name  = "Reset"
+            , class = "Link"
+            )
+        }}
+      </li>
       {%- if allow_register %}
         <li class="nav-link level-0">
           <a href="{{ Auth.href_register }}"
@@ -376,19 +378,23 @@
         , title = GTW._T ("Discard all changes and leave form")
         ) if cancel_href else {}
   -%}
+  {%- set submit_kws    = kwargs.pop ("submit_kws", None) %}
   {% call form
-      ( action    = fo.action
-      , class     = fo.css_class
-      , cancel_kw = cancel_kw
-      , reset_kw  = dict
-          ( title = GTW._T ("Discard all changes")
-          , value = GTW._T ("Reset")
+      ( action     = fo.action
+      , class      = fo.css_class
+      , cancel_kw  = cancel_kw
+      , reset_kw   = dict
+          ( title  = GTW._T ("Discard all changes")
+          , value  = GTW._T ("Reset")
           )
-      , submit_kw = dict (value = GTW._T ("Submit"))
+      , submit_kws = submit_kws or [dict (value = GTW._T ("Submit"))]
       , ** kwargs
       )
  -%}
    {{ field_groups (fo) }}
+   {%- if object_caller %}
+     {{ object_caller () }}
+   {% endif -%}
   {% endcall %} {# form #}
 {%- endmacro -%} {#- object -#}
 

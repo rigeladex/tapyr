@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
+##    23-Feb-2010 (CT) `New password` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -53,11 +54,24 @@
 
   {{ Form.object
       ( login_form
+      , submit_kws =
+          [ dict
+              ( title = GTW._T
+                  ("Log into website with username and password specified")
+              , value = GTW._T ("Login")
+              , name  = "Submit"
+              )
+          , dict
+              ( title = GTW._T ("Get a new password for the username specified")
+              , value = GTW._T ("New password")
+              , name  = "Reset"
+              , class = "Link"
+              )
+          ]
       , next_form_kw = dict (name = "next", value = next)
+      , class        = "login"
       )
   }}
-
-  {#- XXX Reset password XXX -#}
 
 {%- endblock document -%}
 
