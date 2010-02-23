@@ -46,9 +46,6 @@ import _JNJ.Environment
 
 def Extract (fobj, keywords, comment_tags, config, method) :
     keywords = Default_Keywords
-    print fobj.name
-    if fobj.name == r"C:\data\python\swing\_JNJ\html\navigation.jnj" :
-        import pdb; pdb.set_trace ()
     for lineno, funcname, messages, comments in babel_extract \
         (fobj, keywords, comment_tags, config.options (method)) :
         yield lineno, funcname, messages, comments
