@@ -46,12 +46,12 @@ from   _TFL.predicate  import first, split_hst
 import  gettext
 
 Config = Record \
-   ( Languages  = {None : gettext.NullTranslations ()}
+   ( Languages  = {"" : gettext.NullTranslations ()}
    , locale_dir = "locale"
    , domains    = ("messages", )
-   , choice     = None
+   , choice     = ""
    )
-Config.current = Config.Null = Config.Languages [None]
+Config.current = Config.Null = Config.Languages [""]
 
 class _Name_ (TFL.Meta.Object) :
     """Translator for names"""
@@ -69,7 +69,7 @@ class _Name_ (TFL.Meta.Object) :
 def add (self, * languages, ** kw) :
     locale_dir = kw.pop ("locale_dir", Config.locale_dir)
     domains    = kw.pop ("domains",    Config.domains)
-    use_lang   = kw.pop ("use", None)
+    use_lang   = kw.pop ("use", "")
     _load_languages (locale_dir, languages, domains)
     if use_lang :
         use (use_lang)
@@ -83,7 +83,7 @@ def choose (* lang) :
             if l :
                 a, _, b = split_hst (l, "_")
                 yield a, b or a
-        yield None, None
+        yield "", ""
     return first (l for l in _gen (lang) if l [0] in Config.Languages)
 # end def choose
 
@@ -120,7 +120,7 @@ def context (* lang) :
 def load (* languages, ** kw) :
     locale_dir        = kw.pop ("locale_dir", Config.locale_dir)
     domains           = kw.pop ("domains",    Config.domains)
-    use_lang          = kw.pop ("use", None)
+    use_lang          = kw.pop ("use", "")
     Config.domains    = domains
     Config.locale_dir = locale_dir
     _load_languages (locale_dir, languages, domains)
