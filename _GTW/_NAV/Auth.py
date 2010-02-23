@@ -38,6 +38,7 @@
 #    20-Feb-2010 (CT) Use symbolic names for templates
 #    22-Feb-2010 (CT) Use `request.req_data` instead of home-grown code
 #    23-Feb-2010 (MG) `Login.rendered` handling of password reset added
+#    23-Feb-2010 (MG) Pass debug option to login form
 #    ««revision-date»»···
 #--
 
@@ -219,7 +220,8 @@ class Auth (GTW.NAV.Dir) :
             context   = handler.context
             request   = handler.request
             top       = self.top
-            form      = GTW.Form.Auth.Login (top.account_manager, self.abs_href)
+            form      = GTW.Form.Auth.Login \
+                (top.account_manager, self.abs_href, debug = self.DEBUG)
             context ["login_form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP

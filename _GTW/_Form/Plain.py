@@ -32,6 +32,7 @@
 #    18-Feb-2010 (MG) `M_Plain.New`: setup of `fields` added
 #    19-Feb-2010 (MG) `__call__` change to calculate the error count
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
+#    23-Feb-2010 (MG) `__init__` fixed
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ class Plain (GTW.Form._Form_) :
     __metaclass__ = M_Plain
 
     def __init__ (self, action, instance = None, ** kw) :
-        self.__super.__init__ (instance, * kw)
+        self.__super.__init__ (instance, ** kw)
         self.action = action
     # end def __init__
 

@@ -38,6 +38,7 @@
 #    19-Feb-2010 (MG) Reorganized, Account activation added
 #    20-Feb-2010 (MG) Remaining forms added
 #    20-Feb-2010 (MG) `ui_name` for fields added
+#    23-Feb-2010 (MG) Debug errors added to `_Login_Mixin_`
 #    ««revision-date»»···
 #--
 
@@ -78,17 +79,35 @@ class _Login_Mixin_ (TFL.Meta.Object) :
             elif self.active_account_required and not self.account.active :
                 self.errors.append (_T (u"This account is currently inactive"))
                 self.account = None
+        elif getattr (self.kw, "debug", False) :
+            self.errors.append (repr (self.request_data))
         self.__super._validate ()
         self.request_data = {}
     # end def _validate
 
     def _authenticate (self, username, password) :
+        debug = getattr (self.kw, "debug", False)
         try :
             self.account = self.account_manager.query (name = username).one ()
         except IndexError :
+            if debug :
+                self.field_errors ["username"].append \
+                    (u"No account with username `%s` found" % (username, ))
             ### look's like no account with this username exists
             return False
-        return self.account.verify_password (password)
+        result = self.account.verify_password (password)
+        if not result and debug :
+            self.field_errors ["password"].append \
+                    ( u"Password is wrong:\n"
+                       "  %s\n"
+                       "  hash db `%s`\n"
+                       "  hash in `%s`"
+                    % ( password
+                      , self.account.password
+                      , self.account.password_hash (password, self.account.salt)
+                      )
+                    )
+        return result
     # end def _authenticate
 
 # end class _Login_Mixin_

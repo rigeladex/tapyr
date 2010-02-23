@@ -84,6 +84,10 @@ class Request_Data (TFL.Meta.Object) :
         return item in self.data
     # end def __contains__
 
+    def __repr__ (self) :
+        return repr (self.data)
+    # end def __repr__
+
 # end class Request_Data
 
 if __name__ != "__main__" :
