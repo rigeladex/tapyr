@@ -39,6 +39,7 @@
 #    22-Feb-2010 (CT) Use `request.req_data` instead of home-grown code
 #    23-Feb-2010 (MG) `Login.rendered` handling of password reset added
 #    23-Feb-2010 (MG) Pass debug option to login form
+#    23-Feb-2010 (MG) `Login.rendered` password reset handling changed
 #    ««revision-date»»···
 #--
 
@@ -226,9 +227,11 @@ class Auth (GTW.NAV.Dir) :
             if request.method == "POST" :
                 HTTP      = top.HTTP
                 req_data  = request.req_data
-                kind      = req_data.pop ("Submit")
-                pw_reset  = kind == _T("Reset password")
-                if not pw_reset :
+                if req_data.get ("Reset") :
+                    ### Ths user has clicked on the rest password button
+                    return self.parent._get_child \
+                        (self.T.request_reset_password).rendered (handler)
+                else :
                     errors = form (req_data)
                     if not errors :
                         next = req_data.get ("next", "/")
@@ -242,9 +245,6 @@ class Auth (GTW.NAV.Dir) :
                         raise HTTP.Redirect_302 (next)
                     ### after a failed login, clear the current username
                     handler.clear_cookie ("username")
-                else :
-                    return self.parent._get_child \
-                        (self.T.request_reset_password).rendered (handler)
             else :
                 context ["next"] = handler.request.headers.get ("Referer", "/")
             return self.__super.rendered (handler, template)

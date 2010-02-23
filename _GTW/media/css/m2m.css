@@ -32,7 +32,3 @@ a.m2m-add
 .completion-list .completion-id
     { display:          none
     }
-
-input :hover
-    { color : red
-    }

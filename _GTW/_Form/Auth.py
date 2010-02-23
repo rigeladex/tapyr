@@ -245,7 +245,7 @@ class _Reset_Password_Mixin_ (TFL.Meta.Object) :
 
     def _validate (self) :
         self.account = username = self.get_required \
-            ("username", _T (u"A user name is required to login."))
+            ("username", _T (u"A user name is required."))
         if not self.field_errors and self.account_manager :
             self.account = self.account_manager.query (name = username).first ()
             if not self.account :
