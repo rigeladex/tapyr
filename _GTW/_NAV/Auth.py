@@ -227,7 +227,7 @@ class Auth (GTW.NAV.Dir) :
                 kind      = req_data.pop ("Submit")
                 pw_reset  = kind == _T("Reset password")
                 if not pw_reset :
-                    errors    = form (req_data)
+                    errors = form (req_data)
                     if not errors :
                         next = req_data.get ("next", "/")
                         if form.account.password_change_required :
