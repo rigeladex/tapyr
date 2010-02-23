@@ -117,10 +117,9 @@ class Link_Inline_Description (_Inline_Description_) :
                   , GTW.CSS_Link ("/media/GTW/css/m2m.css")
                   )
               , scripts     =
-                  ( GTW.Script (src  = "http://www.google.com/jsapi")
-                  , GTW.Script (body = 'google.load ("jquery", "1");')
-          ##        , GTW.Script (body = 'google.load ("jquery", "1", {uncompressed:true});')
-                  , GTW.Script (body = 'google.load ("jqueryui", "1");')
+                  ( GTW.Script (src  = "/media/GTW/js/jquery-1.4.2.min.js")
+                  , GTW.Script
+                      (src  = "/media/GTW/js/jquery-ui-1.7.2.custom.min.js")
                   , GTW.Script (src  = "/media/GTW/js/model_edit_ui.js") ## XXX
                   )
             )

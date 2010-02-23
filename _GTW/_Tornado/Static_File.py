@@ -32,6 +32,8 @@
 #    22-Feb-2010 (MG) `Static_Map` moved into `GTW.Static_File_Map`
 #    23-Feb-2010 (CT) Call to `map.get` fixed; s/handler/self/ in `_get`
 #    23-Feb-2010 (CT) `block_size` fixed and moved into class scope
+#    23-Feb-2010 (MG) `_get`: call `self.flush` do really send the data over
+#                     the line
 #    ««revision-date»»···
 #--
 
@@ -55,7 +57,7 @@ class _Static_File_Handler_ (web.RequestHandler) :
        server static files directly form the disk.
     """
 
-    block_size = 1024 * 1024
+    block_size = 10 * 1024
 
     def __init__ (self, application, request, maps) :
         super (_Static_File_Handler_, self).__init__ (application, request)
@@ -109,7 +111,8 @@ class _Static_File_Handler_ (web.RequestHandler) :
         if include_body :
             with open (file_name, "rb") as file :
                 for x in xrange (1 + file_size // self.block_size) :
-                    self.write (file.read (block_size))
+                    self.write (file.read (self.block_size))
+                    self.flush ()
     # end def _get
 
 # end class _Static_File_Handler_
