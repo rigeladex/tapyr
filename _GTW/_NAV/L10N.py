@@ -76,7 +76,7 @@ class L10N (GTW.NAV.Dir) :
     def __init__ (self, src_dir, parent, ** kw) :
         self.country_map = dict \
             (self.country_map, ** kw.pop ("country_map", {}))
-        self.__super.__init__ (parent = parent, ** kw)
+        self.__super.__init__ (src_dir = src_dir, parent = parent, ** kw)
     # end def __init__
 
     def flag (self, lang) :

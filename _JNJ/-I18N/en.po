@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-22 14:55+0100\n"
+"PO-Revision-Date: 2010-02-23 12:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -60,6 +60,11 @@ msgstr ""
 msgid "Change password of account %s"
 msgstr ""
 
+#: _JNJ/html/navigation.jnj:100
+#, python-format
+msgid "Currently selected language is %s"
+msgstr ""
+
 #: _JNJ/html/form.jnj:372
 msgid "Discard all changes"
 msgstr ""
@@ -77,11 +82,29 @@ msgstr ""
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
+#: _JNJ/html/navigation.jnj:97
+msgid "Language"
+msgstr ""
+
+#: _JNJ/html/navigation.jnj:96
+#, python-format
+msgid "Languages that can be selected for %s"
+msgstr ""
+
 #: _JNJ/html/form.jnj:307
 msgid "Log into website or go to account page"
 msgstr ""
 
-#: _JNJ/html/form.jnj:308
+#: _JNJ/html/navigation.jnj:123
+msgid "Logged in"
+msgstr ""
+
+#: _JNJ/html/navigation.jnj:122
+#, python-format
+msgid "Logged in as %s"
+msgstr ""
+
+#: _JNJ/html/form.jnj:308 _JNJ/html/navigation.jnj:128
 msgid "Login"
 msgstr ""
 
@@ -142,6 +165,11 @@ msgstr ""
 msgid "Reset"
 msgstr ""
 
+#: _JNJ/html/navigation.jnj:105
+#, python-format
+msgid "Select language %s"
+msgstr ""
+
 #: _JNJ/html/error_500.jnj:37
 msgid "Server error"
 msgstr ""
@@ -176,7 +204,4 @@ msgstr ""
 #: _JNJ/html/error_404.jnj:47
 msgid "You requested a page that doesn't exist: "
 msgstr ""
-
-#~ msgid "Logout"
-#~ msgstr ""
 

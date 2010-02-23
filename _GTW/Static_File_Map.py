@@ -27,8 +27,10 @@
 #
 # Revision Dates
 #    22-Feb-2010 (MG) Creation
+#    23-Feb-2010 (CT) s/exists/get/; Instance `static_file_map` added
 #    ««revision-date»»···
 #--
+
 from   _GTW                     import GTW
 
 from   _TFL                     import TFL
@@ -46,17 +48,19 @@ class Static_File_Map (TFL.Meta.Object) :
         self.directory = directory
     # end def __init__
 
-    def exists (self, path) :
-        request = handler.request
+    def get (self, path) :
         if not path.startswith (self.prefix) :
             return None
         abspath = os.path.abspath \
             (os.path.join (self.directory, path.replace (self.prefix, "")))
         if os.path.isfile (abspath) :
             return abspath
-    # end def exists
+    # end def get
 
 # end class Static_File_Map
+
+static_file_map = Static_File_Map \
+    ("GTW", os.path.join (os.path.dirname (__file__), "media"))
 
 if __name__ != "__main__" :
     GTW._Export ("*")

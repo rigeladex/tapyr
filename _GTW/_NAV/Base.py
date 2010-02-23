@@ -210,6 +210,7 @@ import _GTW._Tornado.Request_Data
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
+from   _TFL.predicate           import uniq
 from   _TFL.Record              import Record
 from   _TFL.Regexp              import Dict_Replacer
 from   _TFL                     import sos
@@ -485,7 +486,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         request.user     = handler.current_user
         request.req_data = req_data = HTTP.Request_Data (request.arguments)
         handler.context  = self.render_context \
-            ( lang          = TFL.I18N.Config.current
+            ( lang          = "_".join (uniq (TFL.I18N.Config.choice))
             , notifications = handler.session.notifications
             , request       = request
             )

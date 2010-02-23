@@ -34,6 +34,7 @@
 ##    20-Feb-2010 (CT) `login_section` added
 ##    21-Feb-2010 (CT) `logout_inline` factored
 ##    22-Feb-2010 (CT) `language_section` added
+##    23-Feb-2010 (CT) `flag_or_text` factored, `language_section` improved
 ##    ««revision-date»»···
 ##--
 #}
@@ -78,6 +79,15 @@
   {%- endif %}
 {%- endmacro -%} {# entries #}
 
+{%- macro flag_or_text (L10N, lang, desc) -%}
+  {%- set img  = L10N.flag (lang) %}
+  {%- if img %}
+    <img alt="{{ desc }}" src="{{ img }}" title="{{ desc }}" />
+  {%- else %}
+    {{ lang }}
+  {% endif -%}
+{%- endmacro -%} {#- flag_or_text -#}
+
 {%- macro language_section (page, request) -%}
   {%- set L10N = page.top.SC.L10N %}
   {%- if L10N %}
@@ -85,21 +95,18 @@
     {%- if langs|length > 1 %}
       <div class="nav-section language-selection">
         <h1 title="{{ GTW._T ("Languages that can be selected for %s") % page.site_url }}">
-          {{- GTW._T ("Language %s") % (lang, ) -}}
+          {{- GTW._T ("Language") -}}
+          {{- flag_or_text
+              ( L10N, lang
+              , GTW._T ("Currently selected language is %s") % (lang, ))
+          -}}
         </h1>
         {%- for l in langs %}
           {%- if l != lang %}
-            {%- set img  = L10N.flag (l) %}
             {%- set desc = GTW._T ("Select language %s") % (l, ) %}
             <span class="nav-link level-0 {{ curr -}}" >
-              <a href="{{ "%s/%s" % (L10N.abs_href, l) }}"
-                title="{{ desc }}"
-              >
-                {%- if img %}
-                  <img alt="{{ desc }}" src="{{ img }}" title="{{ desc }}" />
-                {%- else %}
-                  {{ l }}
-                {% endif -%}
+              <a href="{{ GTW.pjoin (L10N.abs_href, l) }}" title="{{ desc }}">
+                {{ flag_or_text (L10N, l, desc) }}
               </a>
             </span>
           {% endif -%}

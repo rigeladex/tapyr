@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-22 14:55+0100\n"
+"PO-Revision-Date: 2010-02-23 12:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -19,21 +19,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:103 _GTW/_NAV/_E_Type/Admin.py:222
+#: _GTW/_NAV/_E_Type/Admin.py:104 _GTW/_NAV/_E_Type/Admin.py:223
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/_E_Type/Admin.py:189
+#: _GTW/_NAV/_E_Type/Admin.py:190
 #, fuzzy, python-format
 msgid "%s `%s` existiert nicht!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/Auth.py:169
+#: _GTW/_NAV/Auth.py:170
 msgid "A confirmation email has been sent tothe new email address."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:299
+#: _GTW/_NAV/Auth.py:300
 msgid "A confirmation has been sent to your emailaddress."
 msgstr ""
 
@@ -41,15 +41,15 @@ msgstr ""
 msgid "A user name is required to login."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
-#: _GTW/_NAV/Auth.py:123
+#: _GTW/_NAV/Auth.py:124
 msgid "Activation successful."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:88
+#: _GTW/_NAV/Auth.py:89
 msgid "EMail verification successful."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:160 _GTW/_NAV/Auth.py:290
+#: _GTW/_NAV/Auth.py:161 _GTW/_NAV/Auth.py:291
 #, python-format
 msgid "Email confirmation for %s"
 msgstr ""
@@ -59,7 +59,12 @@ msgstr ""
 msgid "Field `%(field)s` is required"
 msgstr "Feld `%(field)s` muss ausgefüllt werden"
 
-#: _GTW/_NAV/Auth.py:254
+#: _GTW/_NAV/L10N.py:67
+#, python-format
+msgid "Language %s selected"
+msgstr ""
+
+#: _GTW/_NAV/Auth.py:255
 msgid "Logout successful."
 msgstr ""
 
@@ -112,7 +117,7 @@ msgstr "Das Kennwort muss ausgefüllt werden."
 msgid "The old password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_NAV/Auth.py:204
+#: _GTW/_NAV/Auth.py:205
 #, fuzzy
 msgid "The password has been changed."
 msgstr "Das Kennwort muss ausgefüllt werden."
@@ -126,7 +131,7 @@ msgstr "Benutzername oder Kennwort sind nicht korrekt"
 msgid "The password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
-#: _GTW/_NAV/Auth.py:336
+#: _GTW/_NAV/Auth.py:337
 msgid "The reset password instructions have beensent to your email address."
 msgstr ""
 

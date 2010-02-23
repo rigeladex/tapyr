@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-22 14:55+0100\n"
+"PO-Revision-Date: 2010-02-23 12:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -301,10 +301,4 @@ msgstr ""
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "death_after_birth"
 msgstr ""
-
-#~ msgid "Link1"
-#~ msgstr ""
-
-#~ msgid "_MOM_Link_n_"
-#~ msgstr ""
 

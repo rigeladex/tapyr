@@ -30,6 +30,8 @@
 #    22-Feb-2010 (MG) `get` moved into `Static_File_Handler`, `get` of
 #                     `Static_Map` simplified and renamed to `exists`
 #    22-Feb-2010 (MG) `Static_Map` moved into `GTW.Static_File_Map`
+#    23-Feb-2010 (CT) Call to `map.get` fixed; s/handler/self/ in `_get`
+#    23-Feb-2010 (CT) `block_size` fixed and moved into class scope
 #    ««revision-date»»···
 #--
 
@@ -53,6 +55,8 @@ class _Static_File_Handler_ (web.RequestHandler) :
        server static files directly form the disk.
     """
 
+    block_size = 1024 * 1024
+
     def __init__ (self, application, request, maps) :
         super (_Static_File_Handler_, self).__init__ (application, request)
         self.maps = maps
@@ -64,7 +68,7 @@ class _Static_File_Handler_ (web.RequestHandler) :
 
     def get (self, path, include_body = True) :
         for map in self.maps :
-            file_name = map.get (self, path, include_body)
+            file_name = map.get (path)
             if file_name :
                 return self._get (file_name, include_body)
     # end def get
@@ -72,6 +76,7 @@ class _Static_File_Handler_ (web.RequestHandler) :
     def _get (self, file_name, include_body = True) :
         # Check the If-Modified-Since, and don't send the result if the
         # content has not been modified
+        request     = self.request
         stat_result = os.stat (file_name)
         modified    = datetime.datetime.fromtimestamp \
             (stat_result [stat.ST_MTIME])
@@ -82,34 +87,29 @@ class _Static_File_Handler_ (web.RequestHandler) :
             if_since   = datetime.datetime.fromtimestamp \
                 (time.mktime (date_tuple))
             if if_since >= modified :
-                handler.set_status (304)
+                self.set_status (304)
                 return
 
-        handler.set_header ("Last-Modified",  modified)
-        handler.set_header ("Content-Length", file_size)
+        self.set_header ("Last-Modified",  modified)
+        self.set_header ("Content-Length", file_size)
         if "v" in request.arguments :
-            handler.set_header \
+            self.set_header \
                 ( "Expires"
                 , datetime.datetime.utcnow ()
                 + datetime.timedelta       (days=365*10)
                 )
-            handler.set_header \
+            self.set_header \
                 ("Cache-Control", "max-age=" + str (86400*365*10))
         else:
-            handler.set_header ("Cache-Control", "public")
+            self.set_header ("Cache-Control", "public")
         mime_type, encoding = mimetypes.guess_type (file_name)
         if mime_type :
-            handler.set_header( "Content-Type", mime_type)
+            self.set_header( "Content-Type", mime_type)
 
-        if not include_body :
-            return
-        file = open (file_name, "rb")
-        try :
-            block_size = 1024 * 1024 * 1024
-            for x in xrange (1 + file_size / block_size) :
-                handler.write (file.read (block_size))
-        finally:
-            file.close()
+        if include_body :
+            with open (file_name, "rb") as file :
+                for x in xrange (1 + file_size // self.block_size) :
+                    self.write (file.read (block_size))
     # end def _get
 
 # end class _Static_File_Handler_

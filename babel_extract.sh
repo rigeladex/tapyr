@@ -43,9 +43,7 @@ case "$cmd" in
             -global_config       _MOM/base_babel.cfg                     \
             -project             "MOM/GTW/JNJ"                           \
             -sort                                                        \
-                _MOM                                                     \
-                _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_NAV/example    \
-                _JNJ _JNJ/html
+                $dirs
         ;;
     "language" )
         lang=${1:-"de"}

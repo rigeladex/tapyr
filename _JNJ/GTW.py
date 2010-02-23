@@ -32,7 +32,7 @@
 #    25-Jan-2010 (MG) `_T` and `_Tn` need to be static methods
 #    27-Jan-2010 (CT) `Getter`, `now`, and `sorted` added
 #    17-Feb-2010 (CT) `email_uri`, `obfuscated`, `tel_uri`, and `uri` added
-#    22-Feb-2010 (CT) `langs` and `lang_flag` added
+#    23-Feb-2010 (CT) `pjoin` added
 #    ««revision-date»»···
 #--
 
@@ -44,19 +44,15 @@ from   _GTW               import HTML
 import _JNJ.Environment
 
 import _TFL._Meta.Object
-from   _TFL._Meta.Once_Property import Once_Property
 
 import _TFL.Accessor
+from   _TFL               import sos
 from   _TFL.I18N          import _, _T, _Tn
 
 class GTW (TFL.Meta.Object) :
     """Provide additional global functions for Jinja templates."""
 
     from jinja2.runtime import Undefined
-
-    _lang_map = dict \
-        ( en  = "us"
-        )
 
     def __init__ (self, env) :
         self.env = env
@@ -102,23 +98,6 @@ class GTW (TFL.Meta.Object) :
 
     Getter     = TFL.Getter
 
-    def lang_flag (self, lang) :
-        if isinstance (lang, basestring) :
-            lang = (lang, )
-        map = self._lang_map
-        for l in lang :
-            k      = map.get (l, l).lower ()
-            flag   = "/media/GTW/icons/flags/%s.png" % (k, )
-            exists = True # XXX # GTW.static_map.exists (flag)
-            if exists :
-                return flag
-    # end def lang_flag
-
-    @Once_Property
-    def langs (self) :
-        return tuple (l for l in TFL.I18N.Config.Languages if l)
-    # end def langs
-
     def now (self, format = "%Y/%m/%d") :
         from datetime import datetime
         result = datetime.now ()
@@ -126,7 +105,7 @@ class GTW (TFL.Meta.Object) :
     # end def now
 
     obfuscated = staticmethod (HTML.obfuscated)
-
+    pjoin      = staticmethod (sos.path.join)
     sorted     = staticmethod (sorted)
 
     def tel_uri (self, phone_number, text = None, ** kw) :

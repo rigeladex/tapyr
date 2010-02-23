@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-22 14:55+0100\n"
+"PO-Revision-Date: 2010-02-23 12:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -60,6 +60,11 @@ msgstr "Ändere Kennwort"
 msgid "Change password of account %s"
 msgstr "Ändere Kennwort für Benutzerkonto %s"
 
+#: _JNJ/html/navigation.jnj:100
+#, python-format
+msgid "Currently selected language is %s"
+msgstr "Gegenwärtig ausgewählte Sprache: %s"
+
 #: _JNJ/html/form.jnj:372
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
@@ -79,11 +84,29 @@ msgstr ""
 "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
 "Webmaster."
 
+#: _JNJ/html/navigation.jnj:97
+msgid "Language"
+msgstr "Sprache"
+
+#: _JNJ/html/navigation.jnj:96
+#, python-format
+msgid "Languages that can be selected for %s"
+msgstr "Sprachen, die für %s ausgewählt werden können"
+
 #: _JNJ/html/form.jnj:307
 msgid "Log into website or go to account page"
 msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 
-#: _JNJ/html/form.jnj:308
+#: _JNJ/html/navigation.jnj:123
+msgid "Logged in"
+msgstr "Angemeldet"
+
+#: _JNJ/html/navigation.jnj:122
+#, python-format
+msgid "Logged in as %s"
+msgstr "Angemeldet als %s"
+
+#: _JNJ/html/form.jnj:308 _JNJ/html/navigation.jnj:128
 msgid "Login"
 msgstr "Anmelden"
 
@@ -144,6 +167,11 @@ msgstr "Registrieren eines neuen Benutzerkontos für "
 msgid "Reset"
 msgstr "Zurücksetzen"
 
+#: _JNJ/html/navigation.jnj:105
+#, python-format
+msgid "Select language %s"
+msgstr "Wähle Sprache '%s' aus"
+
 #: _JNJ/html/error_500.jnj:37
 msgid "Server error"
 msgstr "Fehler im Webserver"
@@ -181,11 +209,3 @@ msgstr "Ein Zugriff auf die Seite %s ist nur nach Anmeldung möglich"
 msgid "You requested a page that doesn't exist: "
 msgstr "Sie versuchten auf eine nicht existierende Seite zuzugreifen: "
 
-#:
-msgid "Logged in"
-msgstr "Angemeldet"
-
-#:
-#, python-format
-msgid "Logged in as %s"
-msgstr "Angemeldet als %s"
