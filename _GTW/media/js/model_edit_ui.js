@@ -106,12 +106,12 @@
           var  m2m_range = $m2m_range.attr   ("value").split (":");
           var  cur_count = parseInt (m2m_range [1]);
           var  max_count = parseInt (m2m_range [2]);
-          this._setOption ("$prototype", this.element.find (".m2m-prototype"));
-          this._setOption ("$m2m_range", $m2m_range);
-          this._setOption ("min_count",  parseInt (m2m_range [0]));
-          this._setOption ("cur_count",  cur_count);
-          this._setOption ("cur_number", cur_count);
-          this._setOption ("max_count",  max_count);
+          this._setData ("$prototype", this.element.find (".m2m-prototype"));
+          this._setData ("$m2m_range", $m2m_range);
+          this._setData ("min_count",  parseInt (m2m_range [0]));
+          this._setData ("cur_count",  cur_count);
+          this._setData ("cur_number", cur_count);
+          this._setData ("max_count",  max_count);
           $legend.prepend
               ( '<a href="#add" class="icon-link">'
               +   '<span class="ui-icon ui-icon-plusthick'
@@ -192,7 +192,7 @@
         {
             evt.preventDefault  ();
             evt.stopPropagation ();
-            self._setOption      ("key_handled", false);
+            self._setData      ("key_handled", false);
             return false
         }
         var comp_opt = evt.data.comp_opt;
@@ -289,7 +289,7 @@
                 $all.eq (curr_idx).addClass     ("ui-state-hover");
                 evt.preventDefault  ();
                 evt.stopPropagation ();
-                self._setOption       ("key_handled", true);
+                self._setData       ("key_handled", true);
                 return false;
             }
         }
@@ -313,9 +313,9 @@
           /* now that we have cloned the block, let's change the
           ** name/id/for attributes
           */
-          this._setOption ("cur_count", this.options.cur_count + 1);
+          this._setData ("cur_count", this.options.cur_count + 1);
           var cur_number = this.options.cur_number;
-          this._setOption ("cur_number", cur_number + 1);
+          this._setData ("cur_number", cur_number + 1);
           var pattern    = /-MP-/;
           var new_no     = "-M" + cur_number + "-";
           var $labels    = $new.find     ("label")
@@ -366,7 +366,7 @@
                      .addClass      (button.states [1].icon);
               $l_a_s.attr ("value", [lid, "U"].join (":"));
           }
-          self._setOption ("cur_count", self.options.cur_count - 1);
+          self._setData ("cur_count", self.options.cur_count - 1);
           self._update_button_states ();
           evt.preventDefault         ();
           evt.stopPropagation        ();
@@ -496,7 +496,7 @@
               $elements.removeAttr ("disabled")
           }
           $elements.removeClass ("ui-state-disabled");
-          self._setOption ("cur_count", self.options.cur_count + 1);
+          self._setData ("cur_count", self.options.cur_count + 1);
           $l_a_s.attr ("value", [lid, new_state].join (":"));
           $button.removeClass  (button.states [1].icon)
                  .addClass     (button.states [0].icon);
