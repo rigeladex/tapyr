@@ -426,10 +426,17 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def rendered
 
     def send_email (self, template, ** context) :
+        email_from = context.get ("email_from")
+        if not email_from :
+            context ["email_from"] = \
+                (self.webmaster or "webmaster@" + self.site_url)
         if self.smtp :
             text = self.top.Templateer.render (template, context).encode \
                 (self.encoding, "replace")
             self.smtp (text)
+        else :
+            print "*** Cannot send email because `smpt` is undefined ***"
+            print text
     # end def send_email
 
     @property
@@ -776,6 +783,7 @@ class Root (_Dir_) :
     src_root                = ""
     target                  = None
     translator              = None
+    webmaster               = None
 
     _dump_type              = "GTW.NAV.Root.from_dict_list \\"
     _login_required         = False
