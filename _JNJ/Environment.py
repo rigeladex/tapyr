@@ -32,6 +32,7 @@
 #    21-Jan-2010 (CT) Bugs fixed
 #    22-Jan-2010 (CT) PrefixLoader for `STD::` added to allow access
 #                     to shadowed templates of JNJ itself
+#    23-Feb-2010 (MG) `Default_Extensions` factored
 #    ««revision-date»»···
 #--
 
@@ -46,6 +47,8 @@ from   _TFL.predicate     import uniq
 import _TFL.I18N
 
 from jinja2 import Environment, FileSystemLoader, ChoiceLoader, PrefixLoader
+
+Default_Extensions = ["jinja2.ext.loopcontrols", "jinja2.ext.do", JNJ.Onion]
 
 def HTML \
         ( version   = "html/5.jnj"
@@ -65,10 +68,7 @@ def HTML \
     loaders.append (jnj_loader)
     loaders.append (PrefixLoader (dict (STD = jnj_loader), delimiter='::'))
     loader     = ChoiceLoader (loaders)
-    extensions = \
-        ( kw.pop ("extensions", [])
-        + ["jinja2.ext.loopcontrols", "jinja2.ext.do", JNJ.Onion]
-        )
+    extensions = (kw.pop ("extensions", []) + Default_Extensions)
     if i18n :
         extensions.append ("jinja2.ext.i18n")
     result = Environment  \
