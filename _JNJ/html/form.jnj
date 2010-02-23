@@ -152,23 +152,25 @@
 -%}
   <form action="{{ action }}" method="{{ method }}"{{ kwargs|xmlattr }}>
     {{ caller () }}
-    {%- if next_form_kw %}
-      {{ X.input.hidden (** next_form_kw) }}
-    {% endif -%}
-    {%- if submit_kw %}
-      {{ X.input.submit (** submit_kw) }}
-    {% endif -%}
-    {%- if reset_kw %}
-      {{ X.input.reset  (** reset_kw) }}
-    {% endif -%}
-    {%- if cancel_kw %}
-      {%- set ckw = cancel_kw %}
-      <a href="{{ ckw.href }}"
-         title="{{ ckw.title or GTW._T ('Discard all changes and leave form') }}"
-         class="button">
-        {{ ckw.name or GTW._T ("Cancel") }}
-      </a>
-    {% endif -%}
+    <div>
+      {%- if next_form_kw %}
+        {{ X.input.hidden (** next_form_kw) }}
+      {% endif -%}
+      {%- if submit_kw %}
+        {{ X.input.submit (** submit_kw) }}
+      {% endif -%}
+      {%- if reset_kw %}
+        {{ X.input.reset  (** reset_kw) }}
+      {% endif -%}
+      {%- if cancel_kw %}
+        {%- set ckw = cancel_kw %}
+        <a href="{{ ckw.href }}"
+           title="{{ ckw.title or GTW._T ('Discard all changes and leave form') }}"
+           class="button">
+          {{ ckw.name or GTW._T ("Cancel") }}
+        </a>
+      {% endif -%}
+    </div>
   </form>
 {%- endmacro -%} {#- form -#}
 
@@ -293,6 +295,15 @@
             )
         }}
       </li>
+      <li>
+        {{ X.input.submit
+            ( title = GTW._T ("Reset password for the username specified")
+            , value = GTW._T ('Reset password')
+            , name  = "Submit"
+            , class = "Link"
+            )
+        }}
+      </li>
       <li><label for="F_password">{{ GTW._T (pw_tag) }}</label></li>
       <li>
         {{ X.input.password
@@ -306,6 +317,7 @@
         {{ X.input.submit
             ( title = GTW._T ("Log into website or go to account page")
             , value = GTW._T ('Login')
+            , name  = "Submit"
             )
         }}
         {{ X.input.hidden (name  = "next", value = next) }}

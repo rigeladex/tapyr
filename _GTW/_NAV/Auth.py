@@ -236,6 +236,8 @@ class Auth (GTW.NAV.Dir) :
                     raise HTTP.Redirect_302 (next)
                 ### after a failed login, clear the current username
                 handler.clear_cookie ("username")
+            else :
+                context ["next"] = handler.request.headers.get ("Referer", "/")
             return self.__super.rendered (handler, template)
         # end def rendered
 

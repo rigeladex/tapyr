@@ -45,8 +45,9 @@
 {%- block document -%}
   <h1>{{ title|safe }}</h1>
 
-  {%- set next = page.abs_href -%}
-  {%- if next.endswith (page.SC.Auth.href_login) -%}
+  {%- if not next %}
+    {%- set next = page.abs_href %}
+  {%- elif next.endswith (page.SC.Auth.href_login) -%}
     {%- set next = page.top.abs_href -%}
   {%- endif -%}
 
