@@ -101,17 +101,17 @@
       {
           var  self      = this;
           var $legend    = this.element.find ("legend");
-          var add_class  = this._getData     ("add_class");
+          var add_class  = this.option.add_class;
           var $m2m_range = this.element.find ("input.many-2-many-range:first");
           var  m2m_range = $m2m_range.attr   ("value").split (":");
           var  cur_count = parseInt (m2m_range [1]);
           var  max_count = parseInt (m2m_range [2]);
-          this._setData ("$prototype", this.element.find (".m2m-prototype"));
-          this._setData ("$m2m_range", $m2m_range);
-          this._setData ("min_count",  parseInt (m2m_range [0]));
-          this._setData ("cur_count",  cur_count);
-          this._setData ("cur_number", cur_count);
-          this._setData ("max_count",  max_count);
+          this._setOption ("$prototype", this.element.find (".m2m-prototype"));
+          this._setOption ("$m2m_range", $m2m_range);
+          this._setOption ("min_count",  parseInt (m2m_range [0]));
+          this._setOption ("cur_count",  cur_count);
+          this._setOption ("cur_number", cur_count);
+          this._setOption ("max_count",  max_count);
           $legend.prepend
               ( '<a href="#add" class="icon-link">'
               +   '<span class="ui-icon ui-icon-plusthick'
@@ -188,11 +188,11 @@
     {
         var data     = {};
         var self     = evt.data.self;
-        if (self._getData ("key_handled"))
+        if (self.options.key_handled)
         {
             evt.preventDefault  ();
             evt.stopPropagation ();
-            self._setData      ("key_handled", false);
+            self._setOption      ("key_handled", false);
             return false
         }
         var comp_opt = evt.data.comp_opt;
@@ -289,7 +289,7 @@
                 $all.eq (curr_idx).addClass     ("ui-state-hover");
                 evt.preventDefault  ();
                 evt.stopPropagation ();
-                self._setData       ("key_handled", true);
+                self._setOption       ("key_handled", true);
                 return false;
             }
         }
@@ -308,14 +308,14 @@
     , _copy_form     : function ()
       {
           var state = {};
-          var $prototype = this._getData    ("$prototype");
+          var $prototype = this.options.$prototype;
           var $new       = $prototype.clone ().removeClass ("m2m-prototype");
           /* now that we have cloned the block, let's change the
           ** name/id/for attributes
           */
-          this._setData ("cur_count", this._getData ("cur_count") + 1);
-          var cur_number = this._getData ("cur_number");
-          this._setData ("cur_number", cur_number + 1);
+          this._setOption ("cur_count", this.options.cur_count + 1);
+          var cur_number = this.options.cur_number;
+          this._setOption ("cur_number", cur_number + 1);
           var pattern    = /-MP-/;
           var new_no     = "-M" + cur_number + "-";
           var $labels    = $new.find     ("label")
@@ -346,7 +346,7 @@
     , _delete_inline : function (evt)
       {
           var self   = evt.data;
-          var $proto = self._getData         ("$prototype");
+          var $proto = self.options.$prototype;
           var $form  = $(evt.target).parents (".m2m-inline-instance");
           if (self._forms_equal ($form, $proto))
           {
@@ -366,7 +366,7 @@
                      .addClass      (button.states [1].icon);
               $l_a_s.attr ("value", [lid, "U"].join (":"));
           }
-          self._setData ("cur_count", self._getData ("cur_count") - 1);
+          self._setOption ("cur_count", self.options.cur_count - 1);
           self._update_button_states ();
           evt.preventDefault         ();
           evt.stopPropagation        ();
@@ -458,7 +458,7 @@
       }
     , _setup_auto_complete  : function (no)
       {
-          var $prototype = this._getData    ("$prototype");
+          var $prototype = this.options.$prototype;
           var  comp_opt  = $prototype.data  ("completion");
           if (comp_opt != undefined)
           {
@@ -481,7 +481,7 @@
     , _undelete_inline : function (evt)
       {
           var self           = evt.data;
-          var $proto         = self._getData         ("$prototype");
+          var $proto         = self.options.$prototype;
           var $form          = $(evt.target).parents (".m2m-inline-instance");
           var  button        = form_buttons [0];
           var $link          = $form.find  ("a[href=" + button.href + "]");
@@ -496,7 +496,7 @@
               $elements.removeAttr ("disabled")
           }
           $elements.removeClass ("ui-state-disabled");
-          self._setData ("cur_count", self._getData ("cur_count") + 1);
+          self._setOption ("cur_count", self.options.cur_count + 1);
           $l_a_s.attr ("value", [lid, new_state].join (":"));
           $button.removeClass  (button.states [1].icon)
                  .addClass     (button.states [0].icon);
@@ -512,7 +512,7 @@
           var $link           = $form.find    ("a[href=" + button.href + "]");
           var $button         = $link.find    ("span");
           var $elements       = $form.find    (":input");
-          var  link_prefix    = self._getData ("link_prefix");
+          var  link_prefix    = self.options.link_prefix;
           var name = $form.find  ("input[name$=-_lid_a_state_]").each ( function () {
             var $this         = $(this);
             var lid           = $this.attr ("value").split (":") [0];
@@ -557,9 +557,9 @@
     , _update_button_states : function ()
       {
           var $this       = this.element;
-          var cur_count   = this._getData ("cur_count");
-          var min_count   = this._getData ("min_count");
-          var max_count   = this._getData ("max_count");
+          var cur_count   = this.options.cur_count;
+          var min_count   = this.options.min_count;
+          var max_count   = this.options.max_count;
           for (var i = 0; i < form_buttons.length; i++)
           {
               var button        = form_buttons [i];
@@ -579,7 +579,7 @@
                       ($this, cur_count, min_count, max_count, button, button);
               }
           }
-          this._getData ("$m2m_range").attr
+          this.options.$m2m_range.attr
               ("value", [min_count, cur_count, max_count].join (":"));
       }
     }
@@ -598,7 +598,7 @@
           var options = {};
           for (var key in $.ui.completer.defaults)
           {
-              options [key] = this._getData (key);
+              options [key] = this.options [key];
           }
           this.element.find (".m2m-prototype").data ("completion", options);
       }

@@ -28,6 +28,7 @@
 # Revision Dates
 #    12-Sep-2009 (MG) Creation
 #    20-Feb-2010 (MG) Add the notification collection to the session
+#    23-Feb-2010 (MG) `json` added
 #    ««revision-date»»···
 #--
 
@@ -40,7 +41,7 @@ import _GTW.Notification
 import _GTW._Tornado
 
 import  locale
-from    tornado                   import web
+from    tornado                   import web, escape
 
 class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
     """Base class for a request handler"""
@@ -93,6 +94,12 @@ class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
     def get_user_locale_codes (self) :
         return self.session.get ("language")
     # end def get_user_locale_codes
+
+    def json (self, data) :
+        self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
+        self.write      (escape.json_encode (data))
+        return True
+    # end def json
 
 # end class Request_Handler
 

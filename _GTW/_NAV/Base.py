@@ -199,6 +199,8 @@
 #    21-Feb-2010 (CT) `account_manager` added
 #    22-Feb-2010 (CT) `_view` changed to set `request.req_data` and
 #                     `context.lang`
+#    23-Feb-2010 (MG) `_Site_Entity_._view` only write the result to the
+#                     handler if result is not `True`
 #    ««revision-date»»···
 #--
 
@@ -500,7 +502,8 @@ class _Site_Entity_ (TFL.Meta.Object) :
         result = self.rendered (handler)
         if result is None :
             raise HTTP.Error_404 (request.uri [1:])
-        handler.write (result)
+        if result != True :
+            handler.write (result)
     # end def _view
 
     def __getattr__ (self, name) :

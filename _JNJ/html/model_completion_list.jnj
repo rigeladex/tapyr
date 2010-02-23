@@ -34,7 +34,7 @@
 #}
 <div class="completion-list">
   {%- for o in completions %}
-    <p><span class="completion-id">{{ o.lid }}</span>{{ o }}</p>
+    <p><span class="completion-id">{{ o.lid }}</span>{{ o.ui_display }}</p>
   {% endfor -%}
 </div>
 {#- __END__ jinja template: model_completion_list.jnj -#}
