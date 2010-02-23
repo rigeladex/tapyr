@@ -37,6 +37,7 @@
 #    20-Feb-2010 (MG) Notification added
 #    20-Feb-2010 (CT) Use symbolic names for templates
 #    22-Feb-2010 (CT) Use `request.req_data` instead of home-grown code
+#    23-Feb-2010 (MG) `Login.rendered` handling of password reset added
 #    ««revision-date»»···
 #--
 
@@ -223,19 +224,25 @@ class Auth (GTW.NAV.Dir) :
             if request.method == "POST" :
                 HTTP      = top.HTTP
                 req_data  = request.req_data
-                errors    = form (req_data)
-                if not errors :
-                    next = req_data.get ("next", "/")
-                    if form.account.password_change_required :
-                        ### a password change is required -> redirect to that
-                        ### page
-                        next = self.href_change_pass (form.account)
-                    else :
-                        handler.set_secure_cookie \
-                            ("username", req_data  ["username"])
-                    raise HTTP.Redirect_302 (next)
-                ### after a failed login, clear the current username
-                handler.clear_cookie ("username")
+                kind      = req_data.pop ("Submit")
+                pw_reset  = kind == _T("Reset password")
+                if not pw_reset :
+                    errors    = form (req_data)
+                    if not errors :
+                        next = req_data.get ("next", "/")
+                        if form.account.password_change_required :
+                            ### a password change is required -> redirect to
+                            ### that page
+                            next = self.href_change_pass (form.account)
+                        else :
+                            handler.set_secure_cookie \
+                                ("username", req_data  ["username"])
+                        raise HTTP.Redirect_302 (next)
+                    ### after a failed login, clear the current username
+                    handler.clear_cookie ("username")
+                else :
+                    return self.parent._get_child \
+                        (self.T.request_reset_password).rendered (handler)
             else :
                 context ["next"] = handler.request.headers.get ("Referer", "/")
             return self.__super.rendered (handler, template)
@@ -341,7 +348,7 @@ class Auth (GTW.NAV.Dir) :
                                )
                             )
                         )
-                    ### XXX send email
+                    print "XXX SEND MAIL MISSING"
                     raise HTTP.Redirect_302 (next)
             return self.__super.rendered    (handler, template)
         # end def rendered
@@ -383,6 +390,11 @@ class Auth (GTW.NAV.Dir) :
     def href_register (self) :
         return pjoin (self.abs_href, self.T.register)
     # end def href_register
+
+    @property
+    def href_reset_password (self) :
+        return pjoin (self.abs_href, self.T.request_reset_password)
+    # end def href_reset_password
 
     def rendered (self, handler, template = None) :
         page = self._get_child (self.T.login)
