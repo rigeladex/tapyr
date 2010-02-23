@@ -90,7 +90,7 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
-            , AID ("date", FGD ())
+            , AID ("date", FGD (widget = "html/form.jnj, fg_tr"))
             , LID
                  ( "PAP.Person_has_Address"
                  , FGD ( "desc")
@@ -119,7 +119,7 @@ class Admin (object) :
         )
 
     Phone           = dict \
-        ( ETM         = "GTW.OMP.PAP.Phone"
+        ( ETM       = "GTW.OMP.PAP.Phone"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (WF ("primary"))
@@ -129,7 +129,7 @@ class Admin (object) :
         )
 
     Person_has_Phone = dict \
-        ( ETM         = "GTW.OMP.PAP.Person_has_Phone"
+        ( ETM       = "GTW.OMP.PAP.Person_has_Phone"
         , Type      = GTW.NAV.E_Type.Admin
         )
 
