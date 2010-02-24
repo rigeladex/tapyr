@@ -88,5 +88,5 @@ msgstr "Titel"
 
 #: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Title of the web page"
-msgstr "Autor der Webseite"
+msgstr "Überschrift der Webseite"
 
