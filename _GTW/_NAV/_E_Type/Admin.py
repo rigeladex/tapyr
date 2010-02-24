@@ -44,6 +44,9 @@
 #    22-Feb-2010 (CT) `Completer.rendered` changed to use `cooked_attrs`
 #    22-Feb-2010 (CT) Use `request.req_data` instead of home-grown code
 #    24-Feb-2010 (CT) `_Cmd_`: s/GTW.NAV._Site_Entity_/GTW.NAV.Page/
+#    24-Feb-2010 (MG) `_get_child` changed to always pass the grandchildren
+#                     as tuple,
+#                     Parameters of childs renamed (lid -> args)
 #    ««revision-date»»···
 #--
 
@@ -84,7 +87,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         Media        = None ### cancel inherited property defined
         name         = "create"
-        lid          = None
+        args         = (None, )
         template     = "e_type_change"
 
         def rendered (self, handler, template = None) :
@@ -95,7 +98,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             obj      = context ["instance"] = None
             request  = handler.request
             req_data = request.req_data
-            lid      = req_data.get ("lid") or self.lid
+            lid      = req_data.get ("lid") or self.args [0]
             if lid is not None :
                 pid  = ETM.pid_from_lid (lid)
                 try :
@@ -181,8 +184,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     form_cls = getattr (form_cls, "sub_forms", {}).get (sf)
                 args = request.req_data
                 lid  = args.get   ("lid")
-                no   = args.get   ("no")
-                if not any (x is None for x in (form_cls, lid, no)) :
+                if not any (x is None for x in (form_cls, lid)) :
                     et_man   = form_cls.et_man
                     try :
                         obj  = et_man.pid_query (et_man.pid_from_lid (lid))
@@ -214,7 +216,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
         def _view (self, request) :
             HTTP = self.top.HTTP
-            lid  = self.lid
+            lid  = self.args [0]
             ETM  = self.ETM
             pid  = ETM.pid_from_lid (lid)
             try :
@@ -331,7 +333,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
     # end def _auto_list_display
 
     _child_name_map = dict \
-        ( change    = (Changer,   "lid")
+        ( change    = (Changer,   "args")
         , complete  = (Completer, "forms")
         , completed = (Completed, "forms")
         )
@@ -340,8 +342,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if child in self._child_name_map :
             T, attr = self._child_name_map [child]
             name    = pjoin (* grandchildren)
-            if len (grandchildren) == 1 :
-                grandchildren = grandchildren [0]
             return T \
                 ( parent = self
                 , name   = "%s/%s" % (child, name)
@@ -350,7 +350,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
         if child == "create" and not grandchildren :
             return self.Changer (parent = self)
         if child == "delete" and len (grandchildren) == 1 :
-            return self.Deleter (parent = self, lid = grandchildren [0])
+            return self.Deleter (parent = self, args = grandchildren)
     # end def _get_child
 
 # end class Admin

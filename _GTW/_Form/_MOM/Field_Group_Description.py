@@ -37,6 +37,9 @@
 #     8-Feb-2010 (MG) Directly access the `_etype` of the `et_man` (An_Entity
 #                     etype managers work differently)
 #    18-Feb-2010 (MG) `Field.choices` added
+#    24-Feb-2010 (MG) `Field_Group_Description.__call__` changed to use an
+#                     `Wildcard_Field` if the user has not supplied a field
+#                     spec
 #    ««revision-date»»···
 #--
 
@@ -69,7 +72,7 @@ class Wildcard_Field (TFL.Meta.Object) :
         if self.prefix :
             et_man = getattr (et_man, self.prefix).role_type
             prefix = self.prefix + "."
-        etype = et_man._etype
+        etype      = et_man._etype
         return \
             [   "%s%s" % (prefix, ak.name)
             for ak in sorted
@@ -153,14 +156,7 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         )
     def __call__ (self, et_man, added_fields = None, * args, ** kw) :
         if not self.fields :
-            return itertools.chain \
-                ( * (  fgd (et_man, added_fields, * args, ** kw)
-                    for fgd in
-                       ( self.__class__ (Wildcard_Field ("primary"  ))
-                       , self.__class__ (Wildcard_Field ("user_attr"))
-                       )
-                    )
-                )
+            self.fields = (Wildcard_Field (), )
         if added_fields is None :
             added_fields = set ()
         fields_spec      = self.fields

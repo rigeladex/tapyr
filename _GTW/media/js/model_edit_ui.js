@@ -394,8 +394,7 @@
         var no = field_no_pat.exec (evt.currentTarget.name) [1];
         var pf = comp_opt.prefix + "-M" + parseInt (no) + "-";
         jQuery.getJSON
-          ( comp_opt.obj_url
-          , { "lid" : pk, "no" : no}
+          ( comp_opt.obj_url, { "lid" : pk}
           , function (data, textStatus)
             {
                 $("#" + id).remove ();
@@ -413,7 +412,7 @@
                     }
                 }
             }
-          );
+          )
     }
     , _restore_form_state : function ($form, state)
       {
@@ -597,10 +596,166 @@
       {
           var options = {};
           for (var key in $.ui.completer.defaults)
-          {
+            {
               options [key] = this.options [key];
-          }
-          this.element.find (".m2m-prototype").data ("completion", options);
+            }
+          if (options.standalone)
+            {
+              var  pf    = options.prefix + "-";
+              for (var field_name in options.triggers)
+              {
+                  var real_field_name = pf + field_name;
+                  $("[name=" + real_field_name + "]").bind
+                      ( "keyup"
+                      , {comp_opt : options, self : this}
+                      , this._auto_complete
+                      ).bind
+                      ( "keypress"
+                      , {comp_opt : options, self : this}
+                      , this._auto_complete_navigation
+                      );
+              }
+              this.element.parents ("form").many2manysubmit ();
+            }
+          else
+            {
+              this.element.find (".m2m-prototype").data ("completion", options);
+            }
+      }
+    , _auto_complete        : function (evt)
+      {
+        var data     = {};
+        var self     = evt.data.self;
+        if (self.options.key_handled)
+        {
+            evt.preventDefault  ();
+            evt.stopPropagation ();
+            self._setData      ("key_handled", false);
+            return false;
+        }
+        var comp_opt = evt.data.comp_opt;
+        var pf       = comp_opt.prefix + "-";
+        var trigger  = evt.currentTarget.name.substr (pf.length);
+        trigger      = comp_opt.triggers [trigger];
+        var fields   = trigger ["fields"];
+        var value    = evt.currentTarget.value;
+        var id       = comp_opt.prefix + "-comp-list"
+        $("#" + id).remove (); /* remove old display */
+        if (  (trigger.min_chars != undefined)
+           && (value.length      >= trigger.min_chars)
+           )
+        {
+            for (var i = 0;  i < trigger.fields.length; i++)
+            {
+                var mfn   = trigger.fields [i];
+                var value =  $("[name=" + pf + mfn + "]").attr ("value");
+                if (value) data [mfn] = value;
+            }
+            jQuery.get
+              ( comp_opt.list_url
+              , data
+              , function (data, textStatus)
+                {
+                    if (textStatus == "success")
+                    {
+                        var comp_data = { comp_data : comp_data
+                                        , input     : evt.currentTarget
+                                        };
+                        var $auto_complete = $(data).attr ("id", id);
+                        if ($auto_complete.find (".completion-id").length)
+                        {
+                            var $input = $(evt.currentTarget);
+                            var  pos   = $input.position ();
+                            pos.left += $input.width  ();
+                            $("#" + id).remove (); /* remove old display */
+                            $input.parent ().append ($auto_complete);
+                            $auto_complete.css      (pos)
+                                          .children ()
+                                          .bind ( "click", function (e)
+                              {
+                                  self._replace_form
+                                    (evt, $(e.currentTarget), comp_opt);
+                              })
+                                          .hover (function (e)
+                              {
+                                  $(this).addClass ("ui-state-hover");
+                              }, function (e)
+                              {
+                                  $(this).removeClass ("ui-state-hover");
+                              });
+                        }
+                    }
+                }
+              )
+        }
+      }
+    , _auto_complete_navigation : function (evt)
+      {
+        var  self      = evt.data.self;
+        var  comp_opt  = evt.data.comp_opt;
+        var $comp_list = $("#" + comp_opt.prefix + "-comp-list");
+        var  handled   = false;
+        if ($comp_list.length)
+        {
+            var $curr_selected = $comp_list.find     (".ui-state-hover");
+            var $all           = $comp_list.children ();
+            var  curr_idx      = $all.index          ($curr_selected);
+            switch (evt.keyCode)
+            {
+                case 40 : curr_idx += 1;
+                          handled = true;
+                          break;
+                case 38 : curr_idx -= 1;
+                          handled = true;
+                          break;
+                case 27 : $comp_list.remove ();
+                          handled = true;
+                          break;
+                case  9 :
+                case 13 : $comp_list.remove ();
+                          $comp_list.remove ();
+                          self._replace_form (evt, $curr_selected, comp_opt);
+                          handled = true;
+                          break;
+            }
+            if (handled)
+            {
+                if (curr_idx <  0          ) curr_idx = $all.length - 1;
+                if (curr_idx >= $all.length) curr_idx = 0;
+                $curr_selected.    removeClass  ("ui-state-hover");
+                $all.eq (curr_idx).addClass     ("ui-state-hover");
+                evt.preventDefault  ();
+                evt.stopPropagation ();
+                self._setData       ("key_handled", true);
+                return false;
+            }
+        }
+      }
+    , _replace_form : function (evt, $selected, comp_opt)
+      {
+        var id = comp_opt.prefix + "-comp-list";
+        var pk = $selected.find    (".completion-id").text ();
+        var pf = comp_opt.prefix + "-";
+        jQuery.getJSON
+          ( comp_opt.obj_url, { "lid" : pk}
+          , function (data, textStatus)
+            {
+                $("#" + id).remove ();
+                if (textStatus == "success")
+                {
+                    for (var key in data)
+                    {
+                        var $field = $("[name=" + pf + key + "]");
+                        var tag_name = $field [0].nodeName.toLowerCase ();
+                        if (tag_name == "input")
+                        {
+                            $field.attr ("value", data [key]);
+                        }
+                        $field.attr ("disabled", "disabled");
+                    }
+                }
+            }
+          );
       }
     }
   $.widget ("ui.completer", Completer);
@@ -620,6 +775,7 @@
         , list_url                       : ""
         , obj_url                        : "" // id -> pk, no ->number
         , prefix                         : ""
+        , standalone                     : true
         }
       }
     );

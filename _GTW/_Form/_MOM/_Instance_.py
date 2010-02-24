@@ -60,6 +60,7 @@
 #    16-Feb-2010 (MG) Make `instance_state` empty if instance is None
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #    22-Feb-2010 (MG) `_create_instance` factored
+#    24-Feb-2010 (MG) `from_name` added and used
 #    ««revision-date»»···
 #--
 
@@ -112,13 +113,15 @@ class M_Instance (GTW.Form._Form_.__class__) :
     def __new__ (mcls, name, bases, dct) :
         et_man                   = dct.get ("et_man", None)
         field_group_descriptions = dct.pop ("field_group_descriptions", ())
+        form_name                = dct.pop \
+            ("form_name", getattr (et_man, "type_base_name", None))
         result = super (M_Instance, mcls).__new__ (mcls, name, bases, dct)
         if et_man :
             result.sub_forms     = sub_forms = {}
             parent_form          = result.parent_form
-            result.form_path     = tbn = et_man._etype.type_base_name
+            result.form_path     = result.form_name = form_name
             if parent_form :
-                result.form_path = "%s/%s" % (parent_form.form_path, tbn)
+                result.form_path = "%s/%s" % (parent_form.form_path, form_name)
             result.prefix        = result.form_path.replace ("/", "__")
             field_groups         = []
             medias               = []
@@ -139,8 +142,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
                         medias.append (media)
                     sub_form = getattr (fg, "form_cls", None)
                     if sub_form :
-                        tbn = sub_form.et_man._etype.type_base_name
-                        sub_forms [tbn] = sub_form
+                        sub_forms [sub_form.form_name] = sub_form
             result.add_internal_fields    (et_man, field_groups)
             result.Media        = GTW.Media.from_list (medias)
             result.field_groups = field_groups

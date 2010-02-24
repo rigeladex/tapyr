@@ -47,6 +47,9 @@
 #    24-Feb-2010 (CT) `Attribute_Inline_Description.__call__` changed to use
 #                     `Class` (works for `A_Object, too`) instead of
 #                     `role_type` (works only for `A_Link_Role`)
+#    24-Feb-2010 (MG) Media definition moved into `_Inline_Description_`
+#    24-Feb-2010 (MG) Parameter `form_name` added to construction of inline
+#                     form classes
 #    ««revision-date»»···
 #--
 
@@ -68,6 +71,19 @@ class _Inline_Description_ (TFL.Meta.Object) :
     js_on_ready  = ()
     css_class    = "inline-editing"
 
+    Media        = GTW.Media \
+      ( css_links   =
+          ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.7.2.custom.css")
+          , GTW.CSS_Link ("/media/GTW/css/m2m.css")
+          )
+      , scripts     =
+          ( GTW.Script (src  = "/media/GTW/js/jquery-1.4.2.min.js")
+          , GTW.Script
+              (src  = "/media/GTW/js/jquery-ui-1.7.2.custom.min.js")
+          , GTW.Script (src  = "/media/GTW/js/model_edit_ui.js") ## XXX
+          )
+     )
+
     def __init__ (self, link_name, * field_group_descriptions, ** kw) :
         self.link_name  = getattr (link_name, "type_name", link_name)
         self.field_group_descriptions = field_group_descriptions
@@ -84,6 +100,7 @@ class Attribute_Inline_Description (_Inline_Description_) :
         ( "html/form.jnj, aid_div_seq"
         , inline_table_th   = "html/form.jnj, inline_table_aid_th"
         , inline_table_td   = "html/form.jnj, inline_table_aid_td"
+        , Media             = _Inline_Description_.Media
         )
 
     def __call__ (self, et_man, added_fields, parent_form, ** kw) :
@@ -100,9 +117,10 @@ class Attribute_Inline_Description (_Inline_Description_) :
         inline_form       = GTW.Form.MOM.Attribute_Inline_Instance.New \
             ( obj_et_man
             , * self.field_group_descriptions
-            , suffix        = et_man.type_base_name
-            , parent_form   = parent_form
             , completer     = self.completer
+            , form_name     = self.link_name
+            , parent_form   = parent_form
+            , suffix        = et_man.type_base_name
             )
         return (GTW.Form.MOM.Attribute_Inline (self, inline_form), )
     # end def __call__
@@ -114,18 +132,7 @@ class Link_Inline_Description (_Inline_Description_) :
 
     widget = GTW.Form.Widget_Spec \
         ( "html/form.jnj, inline_table"
-        , Media = GTW.Media
-              ( css_links   =
-                  ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.7.2.custom.css")
-                  , GTW.CSS_Link ("/media/GTW/css/m2m.css")
-                  )
-              , scripts     =
-                  ( GTW.Script (src  = "/media/GTW/js/jquery-1.4.2.min.js")
-                  , GTW.Script
-                      (src  = "/media/GTW/js/jquery-ui-1.7.2.custom.min.js")
-                  , GTW.Script (src  = "/media/GTW/js/model_edit_ui.js") ## XXX
-                  )
-            )
+        , Media             = _Inline_Description_.Media
         )
     js_on_ready  = \
         ( ( '$(".m2m-inline-form-table").many2many '
@@ -160,9 +167,10 @@ class Link_Inline_Description (_Inline_Description_) :
         inline_form       = GTW.Form.MOM.Link_Inline_Instance.New \
             ( link_et_man
             , * self.field_group_descriptions
-            , suffix        = et_man.type_base_name
-            , parent_form   = parent_form
             , completer     = self.completer
+            , form_name     = link_et_man._etype.type_base_name
+            , parent_form   = parent_form
+            , suffix        = et_man.type_base_name
             )
         return (GTW.Form.MOM.Link_Inline (self, inline_form), )
     # end def __call__

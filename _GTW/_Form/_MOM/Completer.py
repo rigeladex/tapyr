@@ -60,7 +60,8 @@ class Completer (TFL.Meta.Object) :
           , """  ({ "list_url"     : "%(list_url)s" """
           , """   , "obj_url"      : "%(obj_url)s" """
           , """   , "prefix"       : "%(field_prefix)s" """
-          , """   , "triggers"     :  %(triggers)s """
+          , """   , "triggers"     :  %(triggers)s"""
+          , """   , "standalone"   :  %(standalone)s"""
           , """  }); """
           , ""
           )
@@ -88,6 +89,9 @@ class Completer (TFL.Meta.Object) :
         field_prefix = inline.form_cls.prefix
         list_url     = "%s/%s/complete/%s"  % (self.prefix, bname, fname)
         obj_url      = "%s/%s/completed/%s" % (self.prefix, bname, fname)
+        standalone   = not issubclass \
+            (inline.form_cls.parent_form, GTW.Form.MOM.Link_Inline_Instance)
+        standalone   = str (standalone).lower ()
         triggers     = json.dumps (self.triggers)
         result       = self.jsor_form % TFL.Caller.Object_Scope (self)
         return (result, )
