@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-24 13:34+0100\n"
+"PO-Revision-Date: 2010-02-24 14:13+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -25,39 +25,38 @@ msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
 
 #: _GTW/_NAV/_E_Type/Admin.py:191
-#, fuzzy, python-format
+#, python-format
 msgid "%s `%s` existiert nicht!"
 msgstr "%s `%s` existiert nicht"
 
 #: _GTW/_NAV/Auth.py:175
 msgid "A confirmation email has been sent tothe new email address."
-msgstr ""
+msgstr "Eine Bestätigungsemail wurde an die neue Email Adresse versendet."
 
 #: _GTW/_NAV/Auth.py:313
 msgid "A confirmation has been sent to your emailaddress."
-msgstr ""
+msgstr "Eine Bestätigung wurde an die neue Emailadresse versendet."
 
 #: _GTW/_Form/Auth.py:73 _GTW/_Form/Auth.py:223
 msgid "A user name is required to login."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
 #: _GTW/_Form/Auth.py:248
-#, fuzzy
 msgid "A user name is required."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
 #: _GTW/_NAV/Auth.py:129
 msgid "Activation successful."
-msgstr ""
+msgstr "Die Aktivierung war erfolgreich."
 
 #: _GTW/_NAV/Auth.py:94
 msgid "EMail verification successful."
-msgstr ""
+msgstr "Die Bestätigung der Email war erfolgreich."
 
 #: _GTW/_NAV/Auth.py:166 _GTW/_NAV/Auth.py:304
 #, python-format
 msgid "Email confirmation for %s"
-msgstr ""
+msgstr "Email Bestätigung für %s"
 
 #: _GTW/_Form/Plain.py:90
 #, python-format
@@ -67,68 +66,61 @@ msgstr "Feld `%(field)s` muss ausgefüllt werden"
 #: _GTW/_NAV/L10N.py:68
 #, python-format
 msgid "Language %s selected"
-msgstr ""
+msgstr "Sprache %s wurde ausgewählt"
 
 #: _GTW/_NAV/Auth.py:268
 msgid "Logout successful."
-msgstr ""
+msgstr "Abmelden war erfolgreich."
 
 #: _GTW/HTML.py:67
 msgid "Need Javascript for displaying"
 msgstr "Für die Darstellung ist Javascript erforderlich"
 
 #: _GTW/_Form/Auth.py:181
-#, fuzzy
 msgid "New email address"
 msgstr "Emailadresse"
 
 #: _GTW/_Form/Auth.py:120
 msgid "New password"
-msgstr ""
+msgstr "Neues Kennwort"
 
 #: _GTW/_Form/Auth.py:169
-#, fuzzy
 msgid "One of the passwords is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
 #: _GTW/_Form/Auth.py:62 _GTW/_Form/Auth.py:152 _GTW/_Form/Auth.py:185
 msgid "Password"
-msgstr ""
+msgstr "Kennwort"
 
 #: _GTW/_Form/Auth.py:132
 msgid "Passwords don't match."
-msgstr ""
+msgstr "Kennworte stimmen nicht überein."
 
 #: _GTW/_Form/Auth.py:130
 msgid "Please repeat the new password."
-msgstr ""
+msgstr "Bitte neues Kennwort wiederholen."
 
 #: _GTW/_Form/Auth.py:122
 msgid "Repeat new password"
-msgstr ""
+msgstr "Wiederhole neues Kennwort"
 
 #: _GTW/_Form/Auth.py:197
-#, fuzzy
 msgid "The new E-Mail address is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
 #: _GTW/_Form/Auth.py:128
-#, fuzzy
 msgid "The new password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
 #: _GTW/_Form/Auth.py:164 _GTW/_Form/Auth.py:195
-#, fuzzy
 msgid "The old password is required."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
 #: _GTW/_NAV/Auth.py:210
-#, fuzzy
 msgid "The password has been changed."
 msgstr "Das Kennwort muss ausgefüllt werden."
 
 #: _GTW/_Form/Auth.py:202
-#, fuzzy
 msgid "The password is incorrect"
 msgstr "Benutzername oder Kennwort sind nicht korrekt"
 
@@ -139,23 +131,24 @@ msgstr "Das Kennwort muss ausgefüllt werden."
 #: _GTW/_NAV/Auth.py:350
 msgid "The reset password instructions have beensent to your email address."
 msgstr ""
+"Die Information über das neue Kennwort wurden an die Emailadresse "
+"versandt."
 
 #: _GTW/_Form/Auth.py:80
 msgid "This account is currently inactive"
-msgstr ""
+msgstr "Dieses Benutzerkonto ist gegenwärtig nicht verfügbar"
 
 #: _GTW/_Form/Auth.py:228
-#, fuzzy
 msgid "This username is already in use."
 msgstr "Für die Anmeldung ist ein Benutzername erforderlich."
 
 #: _GTW/_Form/Auth.py:253
 msgid "This username is not registered"
-msgstr ""
+msgstr "Dieser Benutzername ist nicht bekannt"
 
 #: _GTW/_Form/Auth.py:61 _GTW/_Form/Auth.py:212 _GTW/_Form/Auth.py:238
 msgid "Username"
-msgstr ""
+msgstr "Benutzername"
 
 #: _GTW/_Form/Auth.py:78
 msgid "Username or password incorrect"
@@ -168,7 +161,4 @@ msgstr "Emailadresse"
 #: _GTW/HTML.py:54
 msgid "phone number"
 msgstr "Telefonnummer"
-
-#~ msgid "Reset password"
-#~ msgstr ""
 

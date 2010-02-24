@@ -58,7 +58,11 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ("perma_name", "title", "format", "text")
-            , AID ("date", FGD (WF (), widget = "html/form.jnj, fg_tr"))
+            , AID
+                ( "date"
+                , FGD (WF (), widget = "html/form.jnj, fg_tr")
+                , legend = _("Publication and expiration date")
+                )
             , AID
                 ( "author"
                 , FGD (_prim, widget = "html/form.jnj, fg_tr")
@@ -71,8 +75,7 @@ class Admin (object) :
                         )
                     , name      = "Personal_Info"
                     )
-                , legend = _("Author")
-                , title  = _("Author")
+                , legend = _("Author of web page")
                 )
             , FGD ("description")
             )

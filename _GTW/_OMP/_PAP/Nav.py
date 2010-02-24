@@ -90,31 +90,36 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
-            , AID ("date", FGD (widget = "html/form.jnj, fg_tr"))
+            , AID
+                ( "date"
+                , FGD (WF (), widget = "html/form.jnj, fg_tr")
+                , legend    = _("Geburtstag")
+                )
             , LID
-                 ( "PAP.Person_has_Address"
-                 , FGD ( "desc")
-                 , AID ( "address"
-                       , FGD (WF ("primary"))
-                       , completer     = GTW.Form.MOM.Completer
-                           ( fields    = ("street", "city", "zip", "country")
-                           , triggers  = dict (street = dict (min_chars = 3))
-                           , name      = "Personal_Contact_Info"
-                           )
-                       )
-                 , legend    = _("Addresses")
-                 , title     = _("Addresses")
-                 )
-             , LID
-                 ( "PAP.Person_has_Phone"
-                 , FGD ( "desc")
-                 , AID ( "phone", FGD (WF ("primary"))
-                       )
-                 , FGD ( "extension")
-                 , legend    = _("Phone numbers")
-                 , title     = _("Phone numbers")
-                 )
-             )
+                ( "PAP.Person_has_Address"
+                , FGD ( "desc")
+                , AID
+                    ( "address"
+                    , FGD (WF ("primary"))
+                    , completer     = GTW.Form.MOM.Completer
+                        ( fields    = ("street", "city", "zip", "country")
+                        , triggers  = dict (street = dict (min_chars = 3))
+                        , name      = "Personal_Contact_Info"
+                        )
+                    )
+                , legend    = _("Addresses")
+                , title     = _("Addresses")
+                )
+            , LID
+                ( "PAP.Person_has_Phone"
+                , FGD ( "desc")
+                , AID ( "phone", FGD (WF ("primary"))
+                      )
+                , FGD ( "extension")
+                , legend    = _("Phone numbers")
+                , title     = _("Phone numbers")
+                )
+            )
         , list_display = ("ui_display", "date")
         )
 
