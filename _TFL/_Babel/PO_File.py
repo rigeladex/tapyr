@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Jan-2010 (MG) Creation
 #    25-Jan-2010 (MG) `combine_package_translations` fixed
+#    24-Feb-2010 (MG) `_make_dir` added and used
 #    ««revision-date»»···
 #--
 
@@ -107,6 +108,7 @@ class PO_File (TFL.Meta.Object) :
     # end def fuzzy
 
     def generate_mo (self, file_name, use_fuzzy = False) :
+        self._make_dir (file_name)
         file = open    (file_name, 'wb')
         try:
             write_mo   (file, self.catalog, use_fuzzy = use_fuzzy)
@@ -122,6 +124,12 @@ class PO_File (TFL.Meta.Object) :
             )
     # end def load
 
+    def _make_dir (self, file_name) :
+        dir_name = os.path.dirname (file_name)
+        if not os.path.exists (dir_name) :
+            os.makedirs (dir_name)
+    # end def _make_dir
+
     def merge (self, filename) :
         other = self.__class__.load (filename)
         for msg in other :
@@ -135,6 +143,7 @@ class PO_File (TFL.Meta.Object) :
     # end def merge
 
     def save (self, file_name, fuzzy = None, ** kw) :
+        self._make_dir (file_name)
         if fuzzy is not None :
             self.catalog.fuzzy = fuzzy
         write_po \
