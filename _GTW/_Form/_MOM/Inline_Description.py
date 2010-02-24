@@ -73,14 +73,15 @@ class _Inline_Description_ (TFL.Meta.Object) :
 
     Media        = GTW.Media \
       ( css_links   =
-          ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.7.2.custom.css")
+          ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css")
           , GTW.CSS_Link ("/media/GTW/css/m2m.css")
           )
       , scripts     =
           ( GTW.Script (src  = "/media/GTW/js/jquery-1.4.2.min.js")
           , GTW.Script
-              (src  = "/media/GTW/js/jquery-ui-1.7.2.custom.min.js")
-          , GTW.Script (src  = "/media/GTW/js/model_edit_ui.js") ## XXX
+              (src  = "/media/GTW/js/jquery-ui-1.8.min.js")
+          , GTW.Script (src  = "/media/GTW/js/model_edit_ui.js")
+          , GTW.Script (src  = "/media/GTW/js/MOM_Auto_Complete.js")
           )
      )
 

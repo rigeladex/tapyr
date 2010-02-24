@@ -56,7 +56,7 @@ class Completer (TFL.Meta.Object) :
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
     jsor_form = "\n".join \
-        ( ("""$(".%(mname)s").completer"""
+        ( ("""$(".%(mname)s").mom_autocomplete"""
           , """  ({ "list_url"     : "%(list_url)s" """
           , """   , "obj_url"      : "%(obj_url)s" """
           , """   , "prefix"       : "%(field_prefix)s" """

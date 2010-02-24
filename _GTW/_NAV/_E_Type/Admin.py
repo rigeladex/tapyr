@@ -154,14 +154,22 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                 if form_cls is not None :
                     args     = request.req_data
                     et_man   = form_cls.et_man
+                    trigger  = getattr \
+                        (et_man._etype, args.pop ("TRIGGER_FIELD"))
                     filter   = tuple \
                         (    getattr (Q, k).STARTSWITH (v)
                         for (k, v) in et_man.cooked_attrs (args).iteritems ()
                         )
-                    context ["completions"] = et_man.query \
-                        ().filter (* filter).distinct ()
-                    result = self.__super.rendered \
-                        (handler, form_cls.completer.template)
+                    print trigger
+                    return handler.json \
+                        ( [   dict
+                                ( lid   = c.lid
+                                , value = trigger.get_raw (c)
+                                , label = c.ui_display
+                                )
+                          for c in et_man.query ().filter (* filter).distinct ()
+                          ]
+                        )
             if result is None :
                 raise self.top.HTTP.Error_404 (request.path)
             return result

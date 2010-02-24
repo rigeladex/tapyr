@@ -64,7 +64,7 @@
   {%- set fo = aid.forms [0] -%}
   {%- onion aid.legend %}
     {%- head %}
-      <fieldset class="inline-form {{ aid.name }}">
+      <fieldset class="inline-form {{ aid.form_cls.form_name }}">
         <legend title="{{ GTW._T (aid.name)|capitalize|safe }}">
           {{ GTW._T (aid.legend)|safe }}
         </legend>
@@ -194,7 +194,7 @@
 
 {%- macro inline_table (form, inline) -%}
   {%- set proto = inline.prototype_form -%}
-  <fieldset class="m2m-inline-form-table {{ inline.name }}">
+  <fieldset class="m2m-inline-form-table {{ inline.form_cls.form_name }}">
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ GTW._T (inline.legend)|safe }}</legend>
     {% endif -%}
