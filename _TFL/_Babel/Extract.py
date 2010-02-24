@@ -29,6 +29,7 @@
 #    21-Jan-2010 (MG) Creation
 #    25-Jan-2010 (MG) Convert absolute path to relative path
 #    30-Jan-2010 (MG) `ignore_patterns` combine with defaults
+#    24-Feb-2010 (MG) Duplicate message check added
 #    ««revision-date»»···
 #--
 from   _TFL                          import TFL
@@ -105,6 +106,7 @@ def Extract (dirname, template_file, config, cmd) :
                         filepath = os.path.join (absname, filename)
                         rfp      = TFL.relative_to_python_path (filepath)
                         print "Method `%-10s`: `%s" % (method_name, filename)
+                        trans = config.get ("loaded_translations", method_name)
                         for lineno, message, comments in \
                                 _extract_from_file    \
                                     ( method_name
@@ -113,10 +115,11 @@ def Extract (dirname, template_file, config, cmd) :
                                     , cmd
                                     , keywords
                                     ) :
-                            po_file.add \
-                                ( message, None, [( rfp, lineno)]
-                                , auto_comments = comments
-                                )
+                            if message not in trans :
+                                po_file.add \
+                                    ( message, None, [( rfp, lineno)]
+                                    , auto_comments = comments
+                                    )
                         break
             except Skip :
                 print "Ignore             : `%s" % (filename, )

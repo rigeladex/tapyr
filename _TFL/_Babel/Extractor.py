@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    21-Jan-2010 (MG) Creation
+#    24-Feb-2010 (MG) Duplicate check moved one level up
 #    ««revision-date»»···
 #--
 from   _TFL                    import TFL
@@ -46,7 +47,6 @@ def Python (fobj, keywords, comment_tags, config, method) :
     add_doc_strings = config.get ("add_doc_strings", method, "") == "True"
 
     ### now that we know that we have to parse this file, lets start
-    trans    = config.get ("loaded_translations", "python")
     tokens   = generate_tokens (fobj.readline)
     in_def   = in_translator_comments  = False
     wait_for_doc_string                = False
@@ -89,8 +89,7 @@ def Python (fobj, keywords, comment_tags, config, method) :
         elif wait_for_doc_string and tok == STRING :
             ### found a doc_string
             msg = TFL.normalized_indent (TFL.I18N.save_eval (value, encoding))
-            if msg not in trans :
-                    yield (lineno, funcname, msg, [])
+            yield (lineno, funcname, msg, [])
             wait_for_doc_string = False
         elif funcname and call_stack == 0 :
             if tok == OP and value == ")" :
@@ -111,13 +110,12 @@ def Python (fobj, keywords, comment_tags, config, method) :
                    ) :
                     translator_comments = []
 
-                if messages not in trans :
-                    yield \
-                        ( message_lineno
-                        , funcname
-                        , messages
-                        , [comment [1] for comment in translator_comments]
-                        )
+                yield \
+                    ( message_lineno
+                    , funcname
+                    , messages
+                    , [comment [1] for comment in translator_comments]
+                    )
                 funcname = lineno = message_lineno = None
                 call_stack                         = -1
                 messages                           = []

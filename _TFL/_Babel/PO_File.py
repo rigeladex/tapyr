@@ -78,8 +78,11 @@ class PO_File (TFL.Meta.Object) :
     @classmethod
     def combined (cls, * file_names, ** kw) :
         result = cls.load (file_names [0], ** kw)
+        print "Combine translations from", file_names [0],
         for file in file_names [1:] :
+            print file
             result.merge (file)
+        print
         return result
     # end def combined
 
