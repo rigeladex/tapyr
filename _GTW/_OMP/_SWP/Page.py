@@ -37,12 +37,15 @@ from   _MOM._Attr.Lifetime    import *
 
 from   _GTW                   import GTW
 
+import _GTW.HTML
 import _GTW._OMP._SWP.Entity
 from   _GTW._OMP._SWP.Format  import A_Format
 
 from   _TFL.I18N              import _, _T, _Tn
 
 import datetime
+
+email_obfuscator = GTW.HTML.obfuscator ("mailto")
 
 _Ancestor_Essence = GTW.OMP.SWP.Object
 
@@ -65,6 +68,14 @@ class Page (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
+        class author (A_Object) :
+            """Author of the web page."""
+
+            kind               = Attr.Optional
+            Class              = "GTW.OMP.PAP.Person"
+
+        # end class author
+
         class contents (A_Text) :
             """Contents of web page in html format"""
 
@@ -72,7 +83,7 @@ class Page (_Ancestor_Essence) :
             auto_up_depends    = ("format", "text")
 
             def computed (self, obj) :
-                return obj.format.convert (obj.text)
+                return email_obfuscator (obj.format.convert (obj.text))
             # end def computed
 
         # end class contents
@@ -93,14 +104,14 @@ class Page (_Ancestor_Essence) :
 
         # end class date
 
-        class desc (A_String) :
+        class description (A_String) :
             """Description of the page"""
 
             kind               = Attr.Optional
             max_length         = 160
             ui_name            = "Description"
 
-        # end class desc
+        # end class description
 
         class format (A_Format) :
             """Markup format used for `text` of web page"""

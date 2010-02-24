@@ -266,7 +266,11 @@ Class `MOM.Meta.M_Attr_Type`
 .. moduleauthor:: Christian Tanzer <tanzer@swing.co.at>
 
 .. autoclass:: M_Attr_Type
+.. autoclass:: M_Attr_Type_Decimal
+.. autoclass:: M_Attr_Type_Link_Role
 .. autoclass:: M_Attr_Type_Named_Value
+.. autoclass:: M_Attr_Type_Named_Object
+.. autoclass:: M_Attr_Type_String
 .. autoclass:: M_Attr_Type_Unit
 
 """

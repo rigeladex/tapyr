@@ -87,7 +87,8 @@ class ReST (_Format_) :
 
     @classmethod
     def convert (cls, text) :
-        return GTW.ReST.to_html (text, encoding = "utf8")
+        result = GTW.ReST.to_html (text, encoding = "utf8")
+        return result
     # end def convert
 
 # end class ReST

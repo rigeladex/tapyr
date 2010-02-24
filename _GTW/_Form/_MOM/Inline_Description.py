@@ -44,6 +44,9 @@
 #                     `Link_Inline_Description.js_on_ready` to be able to
 #                     create link specific code
 #    20-Feb-2010 (MG) Locations of javascript and style sheets changed
+#    24-Feb-2010 (CT) `Attribute_Inline_Description.__call__` changed to use
+#                     `Class` (works for `A_Object, too`) instead of
+#                     `role_type` (works only for `A_Link_Role`)
 #    ««revision-date»»···
 #--
 
@@ -90,7 +93,7 @@ class Attribute_Inline_Description (_Inline_Description_) :
         if isinstance (attr_kind, MOM.Attr._Composite_Mixin_) :
             obj_etype = attr_kind.C_Type
         else :
-            obj_etype = attr_kind.role_type
+            obj_etype = attr_kind.Class
         obj_et_man = getattr (scope, obj_etype.type_name)
         self.generic_name = getattr \
             (attr_kind, "generic_role_name", self.link_name)

@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Feb-2010 (MG) Creation (based on GTW.OMP.PAP.Nav)
+#    24-Feb-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -57,8 +58,25 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ("perma_name", "title", "format", "text")
-            , FGD ("desc")
+            , AID ("date",   FGD (WF (), widget = "html/form.jnj, fg_tr"))
+            , AID
+                ( "author"
+                , FGD (_prim, widget = "html/form.jnj, fg_tr")
+                , completer = GTW.Form.MOM.Completer
+                    ( fields    =
+                        ("last_name", "first_name", "middle_name", "title")
+                    , triggers  = dict
+                        ( last_name  = dict (min_chars = 2)
+                        , first_name = dict (min_chars = 2)
+                        )
+                    , name      = "Personal_Info"
+                    )
+                , legend = _("Author")
+                , title  = _("Author")
+                )
+            , FGD ("description")
             )
+        , list_display = ("ui_display", "date", "author", "format")
         )
 
 # end class Admin
