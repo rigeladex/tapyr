@@ -33,6 +33,7 @@
 #    27-Jan-2010 (CT) `Getter`, `now`, and `sorted` added
 #    17-Feb-2010 (CT) `email_uri`, `obfuscated`, `tel_uri`, and `uri` added
 #    23-Feb-2010 (CT) `pjoin` added
+#    24-Feb-2010 (CT) `log_stdout` added
 #    ««revision-date»»···
 #--
 
@@ -97,6 +98,10 @@ class GTW (TFL.Meta.Object) :
     # end def get_macro
 
     Getter     = TFL.Getter
+
+    def log_stdout (self, text) :
+        print text
+    # end def log_stdout
 
     def now (self, format = "%Y/%m/%d") :
         from datetime import datetime

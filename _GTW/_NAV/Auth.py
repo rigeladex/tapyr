@@ -40,6 +40,8 @@
 #    23-Feb-2010 (MG) `Login.rendered` handling of password reset added
 #    23-Feb-2010 (MG) Pass debug option to login form
 #    23-Feb-2010 (MG) `Login.rendered` password reset handling changed
+#    24-Feb-2010 (CT) `_Cmd_`: s/GTW.NAV._Site_Entity_/GTW.NAV.Page/
+#    24-Feb-2010 (CT) `own_links` redefined
 #    ««revision-date»»···
 #--
 
@@ -66,7 +68,7 @@ class Auth (GTW.NAV.Dir) :
     pid      = "Auth"
     T        = TFL.I18N.Name
 
-    class _Cmd_ (GTW.NAV._Site_Entity_) :
+    class _Cmd_ (GTW.NAV.Page) :
 
         implicit          = True
         SUPPORTED_METHODS = set (("GET", "POST"))
@@ -397,6 +399,11 @@ class Auth (GTW.NAV.Dir) :
     def href_reset_password (self) :
         return pjoin (self.abs_href, self.T.request_reset_password)
     # end def href_reset_password
+
+    @property
+    def own_links (self) :
+        return ()
+    # end def own_links
 
     def rendered (self, handler, template = None) :
         page = self._get_child (self.T.login)

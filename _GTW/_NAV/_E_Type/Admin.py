@@ -43,6 +43,7 @@
 #    22-Feb-2010 (CT) `Changer.rendered` changed to pass `cancel_href` to `Form`
 #    22-Feb-2010 (CT) `Completer.rendered` changed to use `cooked_attrs`
 #    22-Feb-2010 (CT) Use `request.req_data` instead of home-grown code
+#    24-Feb-2010 (CT) `_Cmd_`: s/GTW.NAV._Site_Entity_/GTW.NAV.Page/
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     template    = "e_type_admin"
 
-    class _Cmd_ (GTW.NAV._Site_Entity_) :
+    class _Cmd_ (GTW.NAV.Page) :
 
         implicit          = True
         SUPPORTED_METHODS = set (("GET", "POST"))

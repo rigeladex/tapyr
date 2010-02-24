@@ -28,6 +28,7 @@
 # Revision Dates
 #    22-Feb-2010 (CT) Creation
 #    22-Feb-2010 (CT) `languages` and `flag` added
+#    24-Feb-2010 (CT) `_Cmd_`: s/GTW.NAV._Site_Entity_/GTW.NAV.Page/
 #    ««revision-date»»···
 #--
 
@@ -50,7 +51,7 @@ class L10N (GTW.NAV.Dir) :
         ( en        = "us"
         )
 
-    class _Cmd_ (GTW.NAV._Site_Entity_) :
+    class _Cmd_ (GTW.NAV.Page) :
 
         implicit          = True
         SUPPORTED_METHODS = set (("GET", "POST"))

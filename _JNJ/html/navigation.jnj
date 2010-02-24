@@ -167,7 +167,7 @@
 {%- endmacro -%} {#- sitemap -#}
 
 {%- macro sitemap_entry (link, TEST = False) -%}
-  {% if NAV.permissive or NAV.allow (link, request.user) %}
+  {% if NAV.permissive or NAV.allow (link, request.user) and not link.hidden %}
     <li class="nav-link level-{{link.level|default('0')}}">
       <a href="{{ link.site_prefix }}{{ link.href }}"
          {% if link.desc %}title="{{ link.desc }}"{% endif %}
