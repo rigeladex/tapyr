@@ -52,6 +52,8 @@
 ##                     `kwargs` or `fo.kw`
 ##                     (and use `cancel_kw = {}` for empty `cancel_href`)
 ##    23-Feb-2010 (CT) `form` changed to accept more than 1 `submit_kw`
+##    24-Feb-2010 (CT) Missing calls to `GTW._T` added
+##    24-Feb-2010 (CT) `aid_div_seq` changed to honor `legend`
 ##    ««revision-date»»···
 ##--
 #}
@@ -66,12 +68,16 @@
         <legend title="{{ GTW._T (aid.name)|capitalize|safe }}">
           {{ GTW._T (aid.legend)|safe }}
         </legend>
+    {%- else %}
+      <div class="inline-form {{ aid.name }}">
     {%- body %}
       {%- for fg in fo.field_groups %}
         {{ GTW.call_macro (fg.widget, fo, fg)}}
       {% endfor -%}
     {%- tail %}
       </fieldset>
+    {%- else %}
+      </div>
   {%- endonion %}
 {%- endmacro -%} {#- aid_div_seq -#}
 
