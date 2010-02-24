@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-23 18:20+0100\n"
+"PO-Revision-Date: 2010-02-24 13:34+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,6 +23,14 @@ msgstr ""
 msgid ""
 "    We are at language %(lang)s.\n"
 "  "
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "Author"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
+msgid "Author of the web page."
 msgstr ""
 
 #: _GTW/_NAV/example/__babel__.py:0

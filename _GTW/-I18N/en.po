@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-23 18:20+0100\n"
+"PO-Revision-Date: 2010-02-24 13:34+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,37 +18,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:104 _GTW/_NAV/_E_Type/Admin.py:223
+#: _GTW/_NAV/_E_Type/Admin.py:105 _GTW/_NAV/_E_Type/Admin.py:224
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:190
+#: _GTW/_NAV/_E_Type/Admin.py:191
 #, python-format
 msgid "%s `%s` existiert nicht!"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:172
+#: _GTW/_NAV/Auth.py:175
 msgid "A confirmation email has been sent tothe new email address."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:311
+#: _GTW/_NAV/Auth.py:313
 msgid "A confirmation has been sent to your emailaddress."
 msgstr ""
 
-#: _GTW/_Form/Auth.py:73 _GTW/_Form/Auth.py:223 _GTW/_Form/Auth.py:248
+#: _GTW/_Form/Auth.py:73 _GTW/_Form/Auth.py:223
 msgid "A user name is required to login."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:126
+#: _GTW/_Form/Auth.py:248
+msgid "A user name is required."
+msgstr ""
+
+#: _GTW/_NAV/Auth.py:129
 msgid "Activation successful."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:91
+#: _GTW/_NAV/Auth.py:94
 msgid "EMail verification successful."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:163 _GTW/_NAV/Auth.py:302
+#: _GTW/_NAV/Auth.py:166 _GTW/_NAV/Auth.py:304
 #, python-format
 msgid "Email confirmation for %s"
 msgstr ""
@@ -58,12 +62,12 @@ msgstr ""
 msgid "Field `%(field)s` is required"
 msgstr ""
 
-#: _GTW/_NAV/L10N.py:67
+#: _GTW/_NAV/L10N.py:68
 #, python-format
 msgid "Language %s selected"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:266
+#: _GTW/_NAV/Auth.py:268
 msgid "Logout successful."
 msgstr ""
 
@@ -99,10 +103,6 @@ msgstr ""
 msgid "Repeat new password"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:230
-msgid "Reset password"
-msgstr ""
-
 #: _GTW/_Form/Auth.py:197
 msgid "The new E-Mail address is required."
 msgstr ""
@@ -115,7 +115,7 @@ msgstr ""
 msgid "The old password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:207
+#: _GTW/_NAV/Auth.py:210
 msgid "The password has been changed."
 msgstr ""
 
@@ -127,7 +127,7 @@ msgstr ""
 msgid "The password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:348
+#: _GTW/_NAV/Auth.py:350
 msgid "The reset password instructions have beensent to your email address."
 msgstr ""
 
@@ -158,4 +158,7 @@ msgstr ""
 #: _GTW/HTML.py:54
 msgid "phone number"
 msgstr ""
+
+#~ msgid "Reset password"
+#~ msgstr ""
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-23 18:20+0100\n"
+"POT-Creation-Date: 2010-02-24 13:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Activation for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:172
+#: _JNJ/html/form.jnj:173
 msgid "Cancel"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:170 _JNJ/html/form.jnj:378
+#: _JNJ/html/form.jnj:171 _JNJ/html/form.jnj:378
 msgid "Discard all changes and leave form"
 msgstr ""
 
@@ -77,7 +77,7 @@ msgstr ""
 msgid "Edit this entry"
 msgstr ""
 
-#: _JNJ/html/form.jnj:321 _JNJ/html/login.jnj:64
+#: _JNJ/html/form.jnj:321 _JNJ/html/login.jnj:65
 msgid "Get a new password for the username specified"
 msgstr ""
 
@@ -99,7 +99,7 @@ msgstr ""
 msgid "Log into website or go to account page"
 msgstr ""
 
-#: _JNJ/html/login.jnj:59
+#: _JNJ/html/login.jnj:60
 msgid "Log into website with username and password specified"
 msgstr ""
 
@@ -112,11 +112,11 @@ msgstr ""
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:313 _JNJ/html/login.jnj:60 _JNJ/html/navigation.jnj:129
+#: _JNJ/html/form.jnj:313 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:129
 msgid "Login"
 msgstr ""
 
-#: _JNJ/html/login.jnj:39
+#: _JNJ/html/login.jnj:40
 msgid "Login for"
 msgstr ""
 
@@ -131,10 +131,6 @@ msgstr ""
 
 #: _JNJ/html/error_405.jnj:37
 msgid "Method Not Allowed"
-msgstr ""
-
-#: _JNJ/html/form.jnj:322 _JNJ/html/login.jnj:65
-msgid "New password"
 msgstr ""
 
 #: _JNJ/html/photo.jnj:47

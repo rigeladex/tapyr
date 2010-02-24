@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-23 18:20+0100\n"
+"PO-Revision-Date: 2010-02-24 13:34+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -36,9 +36,8 @@ msgid "Addresses"
 msgstr "Adressen"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Addresss"
-msgstr "Adresse"
+msgstr "Adressen"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Alive"
@@ -49,9 +48,8 @@ msgid "Area code"
 msgstr "Vorwahl"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Birth date"
-msgstr "Vorname"
+msgstr "Geburtstag"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "City"
@@ -74,9 +72,8 @@ msgid "Date"
 msgstr "Datum"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Date of birth (and death)"
-msgstr "Geburtstag"
+msgstr "Geburtstag (und Sterbetag)"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Date of birth of an person, entity, or link"
@@ -107,7 +104,6 @@ msgid "Email address (including domain)"
 msgstr "Emailadresse (inkl. Domain)"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Emails"
 msgstr "Emailadressen"
 
@@ -204,7 +200,6 @@ msgid "Person_has_Phone"
 msgstr "Person hat Telefon"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Persons"
 msgstr "Person"
 
@@ -221,12 +216,10 @@ msgid "Phone numbers"
 msgstr "Telefonnummern"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Phones"
 msgstr "Telefonnummern"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Position"
 msgstr "Beschreibung"
 
@@ -291,17 +284,14 @@ msgid "`Email` linked to `person`"
 msgstr "Emailadresse einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "`Person` linked to `address`"
 msgstr "Telefonnummer einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "`Person` linked to `email`"
 msgstr "Telefonnummer einer Person"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "`Person` linked to `phone`"
 msgstr "Telefonnummer einer Person"
 

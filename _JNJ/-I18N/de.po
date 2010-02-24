@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-23 18:20+0100\n"
+"PO-Revision-Date: 2010-02-24 13:34+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Activation for"
 msgstr "Aktivierung für"
 
-#: _JNJ/html/form.jnj:172
+#: _JNJ/html/form.jnj:173
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -69,7 +69,7 @@ msgstr "Gegenwärtig ausgewählte Sprache: %s"
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/form.jnj:170 _JNJ/html/form.jnj:378
+#: _JNJ/html/form.jnj:171 _JNJ/html/form.jnj:378
 msgid "Discard all changes and leave form"
 msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 
@@ -77,7 +77,7 @@ msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 msgid "Edit this entry"
 msgstr "Ändere dieses Ding"
 
-#: _JNJ/html/form.jnj:321 _JNJ/html/login.jnj:64
+#: _JNJ/html/form.jnj:321 _JNJ/html/login.jnj:65
 msgid "Get a new password for the username specified"
 msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
 
@@ -101,7 +101,7 @@ msgstr "Sprachen, die für %s ausgewählt werden können"
 msgid "Log into website or go to account page"
 msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 
-#: _JNJ/html/login.jnj:59
+#: _JNJ/html/login.jnj:60
 msgid "Log into website with username and password specified"
 msgstr "Melde mit dem angegebenen Benutzernamen und Kennwort bei der Webseite an"
 
@@ -114,11 +114,11 @@ msgstr "Angemeldet"
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:313 _JNJ/html/login.jnj:60 _JNJ/html/navigation.jnj:129
+#: _JNJ/html/form.jnj:313 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:129
 msgid "Login"
 msgstr "Anmelden"
 
-#: _JNJ/html/login.jnj:39
+#: _JNJ/html/login.jnj:40
 msgid "Login for"
 msgstr "Anmeldung für"
 
@@ -134,10 +134,6 @@ msgstr "Melde %s ab"
 #: _JNJ/html/error_405.jnj:37
 msgid "Method Not Allowed"
 msgstr ""
-
-#: _JNJ/html/form.jnj:322 _JNJ/html/login.jnj:65
-msgid "New password"
-msgstr "Neues Kennwort"
 
 #: _JNJ/html/photo.jnj:47
 msgid "Next picture"
@@ -226,10 +222,12 @@ msgstr "Ein Zugriff auf die Seite %s ist nur nach Anmeldung möglich"
 msgid "You requested a page that doesn't exist: "
 msgstr "Sie versuchten auf eine nicht existierende Seite zuzugreifen: "
 
-#: manually put in here
-msgid "Username"
-msgstr "Benutzername"
+#~ msgid "New password"
+#~ msgstr "Neues Kennwort"
 
-#: manually put in here
-msgid "Password"
-msgstr "Kennwort"
+#~ msgid "Username"
+#~ msgstr "Benutzername"
+
+#~ msgid "Password"
+#~ msgstr "Kennwort"
+

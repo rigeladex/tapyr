@@ -58,7 +58,7 @@ class Admin (object) :
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
             ( FGD ("perma_name", "title", "format", "text")
-            , AID ("date",   FGD (WF (), widget = "html/form.jnj, fg_tr"))
+            , AID ("date", FGD (WF (), widget = "html/form.jnj, fg_tr"))
             , AID
                 ( "author"
                 , FGD (_prim, widget = "html/form.jnj, fg_tr")
