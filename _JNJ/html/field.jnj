@@ -35,6 +35,8 @@
 ##     3-Feb-2010 (CT) `number` and `string` changed to set `css_class`
 ##                     dependent on `max_value` and `max_length`, respectively
 ##    18-Feb-2010 (MG) `named_object` added
+##    24-Feb-2010 (CT) `_field` chnged to set `css_class` dependent on
+##                     `ui_length`
 ##    ««revision-date»»···
 ##--
 #}
@@ -69,10 +71,8 @@
 {%- endmacro -%} {#- named_object -#}
 
 {%- macro number (fo, fi) -%}
-  {%- set css_class = "Short" if (fi.max_value or 2**31) <= 99999 else "" %}
   {{ _field
       ( X.input.number, fo, fi
-      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
       , max           = fi.max_value
       , min           = fi.min_value
       )
@@ -84,10 +84,8 @@
 {%- endmacro -%} {#- password -#}
 
 {%- macro string (fo, fi) -%}
-  {%- set css_class = "Short" if (fi.max_length or 2**31) <= 6 else "" %}
   {{ _field
       ( X.input.text, fo, fi
-      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
       , max_length    = fi.max_length
       )
   }}
@@ -108,9 +106,24 @@
 {%- endmacro -%} {#- time -#}
 
 {%- macro _field (typ, fo, fi) -%}
+  {%- set ui_length = fi.ui_length or 50 -%}
+  {%- if ui_length <= 6 %}
+    {%- set css_class = "Short" %}
+  {%- elif ui_length <= 12 %}
+    {%- set css_class = "Moderate-Len" %}
+  {%- elif ui_length <= 20 %}
+    {%- set css_class = "Medium-Len" %}
+  {%- elif ui_length <= 60 %}
+    {%- set css_class = "" %}
+  {%- elif ui_length <= 80 %}
+    {%- set css_class = "Long" %}
+  {%- else %}
+    {%- set css_class = "Very-Long" %}
+  {% endif -%}
   {%- set id = fo.get_id (fi) %}
   {{ typ
       ( id            = "F_%s"|format (id)
+      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
       , name          = id
       , value         = fo.get_raw (fi)
       , ** kwargs

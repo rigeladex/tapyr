@@ -89,6 +89,7 @@
 #    22-Feb-2010 (CT) `_A_String_.cooked` removed, `._from_string_eval` and
 #                     `._to_cooked` changed to call `simple_cooked`
 #    22-Feb-2010 (CT) `_A_String_.__metaclass__` set to `M_Attr_Type_String`
+#    24-Feb-2010 (CT) `ui_length` added
 #    ««revision-date»»···
 #--
 
@@ -144,6 +145,7 @@ class A_Attr_Type (object) :
     typ                 = None
     ui_name             = TFL.Meta.Once_Property \
         (lambda s : s.name.capitalize ().replace ("_", " "))
+    ui_length           = 20
 
     _symbolic_default   = False
     _t_rank             = 0
@@ -468,6 +470,15 @@ class _A_Number_ (A_Attr_Type) :
     min_value         = None
     max_value         = None
 
+    @TFL.Meta.Once_Property
+    def ui_length (self) :
+        if self.max_value :
+            import math
+            return int (math.ceil (math.log10 (self.max_value) + 1))
+        else :
+            return 12
+    # end def ui_length
+
     def _checkers (self, e_type) :
         if self.min_value is not None :
             if self.max_value is not None :
@@ -774,6 +785,8 @@ class _A_String_ (A_Attr_Type) :
     ignore_case       = False
     needs_raw_value   = False
     simple_cooked     = unicode
+    ui_length         = TFL.Meta.Once_Property \
+        (lambda s : s.max_length or 120)
 
     def _from_string_eval (self, s, obj, glob, locl) :
         return self.simple_cooked (s)
@@ -846,6 +859,7 @@ class A_Boolean (_A_Named_Value_) :
     """Models a Boolean attribute of an object."""
 
     typ            = "Boolean"
+    ui_length      = 5
 
     Table          = dict \
         ( no       = False
@@ -897,6 +911,7 @@ class A_Date (_A_Date_) :
     """Models a date-valued attribute of an object."""
 
     typ            = "Date"
+    ui_length      = 12
     input_formats  = \
         ( "%Y/%m/%d", "%Y%m%d", "%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y")
     _tuple_len     = 3
@@ -915,6 +930,7 @@ class A_Date_Slug (_A_String_) :
     """
 
     typ            = "Date-Slug"
+    ui_length      = 22
 
     def computed_default (self) :
         now    = datetime.datetime.now ()
@@ -932,6 +948,7 @@ class A_Date_Time (_A_Date_) :
     """Models a date-time-valued attribute of an object."""
 
     typ            = "Date-Time"
+    ui_length      = 18
     input_formats  = tuple \
         ( itertools.chain
             ( * (  (f + " %H:%M:%S", f + " %H:%M", f)
@@ -959,6 +976,7 @@ class A_Decimal (_A_Number_) :
     decimal_places = 2
     max_digits     = 12
     rounding       = decimal.ROUND_HALF_UP
+    ui_length      = TFL.Meta.Once_Property (lambda s : s.max_digits + 2)
 
     @TFL.Meta.Class_and_Instance_Method
     def cooked (soc, value) :
@@ -1114,6 +1132,7 @@ class A_Time (_A_Date_) :
     """Models a time-valued attribute of an object."""
 
     typ            = "Time"
+    ui_length      = 8
     input_formats  = ("%H:%M:%S", "%H:%M")
     _tuple_len     = 6
     _tuple_off     = 3

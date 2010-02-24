@@ -56,7 +56,7 @@ class _PAP_Address_ (PAP.Entity, _Ancestor_Essence) :
 
             kind           = Attr.Primary
             ignore_case    = True
-            max_length     = 80
+            max_length     = 60
             rank           = 1
 
         # end class street

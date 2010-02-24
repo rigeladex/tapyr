@@ -57,7 +57,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Page"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("perma_name", "title", "format", "text")
+            ( FGD ("perma_name", "title", "head_line", "format", "text")
             , AID
                 ( "date"
                 , FGD (widget = "html/form.jnj, fg_tr")

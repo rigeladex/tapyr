@@ -30,6 +30,7 @@
 #     2-Feb-2010 (CT) Creation continued
 #     9-Feb-2010 (CT) Creation continued..
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
+#    24-Feb-2010 (CT) `head_line` added
 #    ««revision-date»»···
 #--
 
@@ -123,6 +124,14 @@ class Page (_Ancestor_Essence) :
 
 
         # end class format
+
+        class head_line (A_String) :
+            """Head line of the web page"""
+
+            kind               = Attr.Optional
+            max_length         = 120
+
+        # end class head_line
 
         class text (A_Text) :
             """Text for web page in markup specified by `format`."""
