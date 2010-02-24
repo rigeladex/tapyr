@@ -66,7 +66,6 @@
         <legend title="{{ GTW._T (aid.name)|capitalize|safe }}">
           {{ GTW._T (aid.legend)|safe }}
         </legend>
-      </fieldset>
     {%- body %}
       {%- for fg in fo.field_groups %}
         {{ GTW.call_macro (fg.widget, fo, fg)}}
