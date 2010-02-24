@@ -31,11 +31,12 @@
 #    29-Jan-2010 (CT) `middle_name` added
 #    10-Feb-2010 (CT) `birth_date (A_Date)` replaced by `date (A_Lifetime)`
 #    22-Feb-2010 (CT) `ignore_case` set for primary attributes
+#    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
-from   _MOM._Attr.Lifetime    import *
+from   _MOM._Attr.Date_Interval    import *
 
 from   _GTW                   import GTW
 from   _GTW._OMP._PAP         import PAP
@@ -93,12 +94,12 @@ class _PAP_Person_ (PAP.Entity, _Ancestor_Essence) :
 
         # end class title
 
-        class date (A_Lifetime) :
-            """Date of birth (and death)"""
+        class lifetime (A_Date_Interval) :
+            """Date of birth [`start`] (and death [`finish`])"""
 
             kind           = Attr.Optional
 
-        # end class date
+        # end class lifetime
 
         ### class sex (A_Sex) : ...
 

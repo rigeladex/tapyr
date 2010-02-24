@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    11-Feb-2010 (MG) Creation
+#    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    ««revision-date»»···
 #--
 
@@ -50,10 +51,10 @@ t2   = scope.BMT.Trap     ("X", 2)
 
 #rit = scope.BMT.Rodent_in_Trap (m, t1)
 ris = scope.BMT.Rodent_is_sick \
-    (m, scope.MOM.Lifetime (birth = "20100218", raw = True))
+    (m, scope.MOM.Date_Interval (start = "20100218", raw = True))
 scope.commit ()
 print scope.BMT.Rodent_is_sick.query \
-    (sick_leave = scope.MOM.Lifetime (birth = "20100218", raw = True)).all ()
+    (sick_leave = scope.MOM.Date_Interval (start = "20100218", raw = True)).all ()
 #scope.BMT.Rodent_in_Trap (r, ("X", 2))
 if 0 :
     c1 = MOM.SCM.Change.Attr (m, dict (color = "gray"))

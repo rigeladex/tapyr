@@ -29,19 +29,20 @@
 #    31-Jan-2010 (CT) Creation
 #     2-Feb-2010 (CT) Creation continued
 #     9-Feb-2010 (CT) Creation continued..
+#    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM        import *
-from   _MOM._Attr.Lifetime    import *
+from   _MOM.import_MOM          import *
+from   _MOM._Attr.Date_Interval import *
 
-from   _GTW                   import GTW
+from   _GTW                     import GTW
 
 import _GTW.HTML
 import _GTW._OMP._SWP.Entity
-from   _GTW._OMP._SWP.Format  import A_Format
+from   _GTW._OMP._SWP.Format    import A_Format
 
-from   _TFL.I18N              import _, _T, _Tn
+from   _TFL.I18N                import _, _T, _Tn
 
 import datetime
 
@@ -88,17 +89,17 @@ class Page (_Ancestor_Essence) :
 
         # end class contents
 
-        class date (A_Lifetime_N) :
-            """Publication (`birth`) and expiration date (`death`) for the
+        class date (A_Date_Interval_N) :
+            """Publication (`start`) and expiration date (`finish`) for the
                web page
             """
 
             kind               = Attr.Optional
 
             explanation        = """
-              The page won't be visible before the publication date.
+              The page won't be visible before the start date.
 
-              After the expiration date, the page won't be displayed (except
+              After the finish date, the page won't be displayed (except
               possibly in an archive).
               """
 

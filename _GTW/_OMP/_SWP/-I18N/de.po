@@ -1,0 +1,92 @@
+# German translations for MOM/GTW/JNJ.
+# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
+# Christian Tanzer <tanzer@swing.co.at>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2010-02-24 15:55+0100\n"
+"PO-Revision-Date: 2010-02-24 17:31+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Author"
+msgstr "Autor"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Author of the web page."
+msgstr "Autor der Webseite"
+
+#: _GTW/_OMP/_SWP/Nav.py:78
+msgid "Author of web page"
+msgstr "Autor der Webseite"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Contents"
+msgstr "Inhalt"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Contents of web page in html format"
+msgstr "Inhalt der Webseite in HTML (Hypertext) Format"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Date"
+msgstr "Datum"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Description of the page"
+msgstr "Beschreibung der Seite"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Format"
+msgstr "Format"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Markup format used for `text` of web page"
+msgstr "Textauszeichnungsformat, das für den `text` der Webseite verwendet wird"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Name used for perma-link."
+msgstr "Name, der für den Permalink verwendet wird."
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Page"
+msgstr "Seite"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid ""
+"Publication (`start`) and expiration date (`finish`) for the\n"
+"web page"
+msgstr "Publikations- und Verfallsdatum"
+
+#: _GTW/_OMP/_SWP/Nav.py:64
+msgid "Publication and expiration date"
+msgstr "Publikations- und Verfallsdatum"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Text"
+msgstr "Text"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Text for web page in markup specified by `format`."
+msgstr ""
+"Text für die Webseite, im durch `format` angegebenen "
+"Textauszeichnungsformat formatiert."
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Title"
+msgstr "Titel"
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Title of the web page"
+msgstr "Autor der Webseite"
+

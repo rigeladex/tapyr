@@ -91,9 +91,9 @@ class Admin (object) :
         , Form_args =
             ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
             , AID
-                ( "date"
-                , FGD (WF (), widget = "html/form.jnj, fg_tr")
-                , legend    = _("Geburtstag")
+                ( "lifetime"
+                , FGD (widget = "html/form.jnj, fg_tr")
+                , legend    = _("Lifetime")
                 )
             , LID
                 ( "PAP.Person_has_Address"
@@ -120,7 +120,7 @@ class Admin (object) :
                 , title     = _("Phone numbers")
                 )
             )
-        , list_display = ("ui_display", "date")
+        , list_display = ("ui_display", "lifetime")
         )
 
     Phone           = dict \

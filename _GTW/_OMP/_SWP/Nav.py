@@ -60,7 +60,7 @@ class Admin (object) :
             ( FGD ("perma_name", "title", "format", "text")
             , AID
                 ( "date"
-                , FGD (WF (), widget = "html/form.jnj, fg_tr")
+                , FGD (widget = "html/form.jnj, fg_tr")
                 , legend = _("Publication and expiration date")
                 )
             , AID

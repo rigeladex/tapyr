@@ -49,14 +49,15 @@
 #                     introducted a new change object)
 #    18-Feb-2010 (CT) `Rodent_is_sick` added to test unary links
 #    19-Feb-2010 (MG) Test for auto cached links added
+#    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM        import *
-from   _MOM._Attr.Lifetime    import *
-from   _MOM.Product_Version   import Product_Version, IV_Number
-from   _TFL.Package_Namespace import Derived_Package_Namespace
-from   _TFL                   import sos
+from   _MOM.import_MOM          import *
+from   _MOM._Attr.Date_Interval import *
+from   _MOM.Product_Version     import Product_Version, IV_Number
+from   _TFL.Package_Namespace   import Derived_Package_Namespace
+from   _TFL                     import sos
 
 BMT = Derived_Package_Namespace (parent = MOM, name = "_BMT")
 
@@ -326,7 +327,7 @@ class Rodent_is_sick (_Ancestor_Essence) :
 
         # end class left
 
-        class sick_leave (A_Lifetime) :
+        class sick_leave (A_Date_Interval) :
             """Duration of sick leave"""
 
             kind               = Attr.Primary
@@ -759,9 +760,9 @@ The app-type specific entity-types are ready to be used by
     []
 
     >>> sorted (apt.etypes)
-    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Lifetime', 'MOM.Lifetime_N', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._MOM_Link_n_']
+    ['BMT.Beaver', 'BMT.Location', 'BMT.Mouse', 'BMT.Otter', 'BMT.Person', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location', 'BMT.Rat', 'BMT.Rodent', 'BMT.Rodent_in_Trap', 'BMT.Rodent_is_sick', 'BMT.Supertrap', 'BMT.Trap', 'MOM.An_Entity', 'MOM.Date_Interval', 'MOM.Date_Interval_N', 'MOM.Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Named_Object', 'MOM.Object', 'MOM._MOM_Link_n_']
     >>> [t.type_name for t in apt._T_Extension]
-    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Lifetime', 'MOM.Lifetime_N', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
+    ['MOM.Entity', 'MOM.An_Entity', 'MOM.Id_Entity', 'MOM.Link', 'MOM.Link1', 'MOM._MOM_Link_n_', 'MOM.Link2', 'MOM.Link2_Ordered', 'MOM.Link3', 'MOM.Object', 'MOM.Named_Object', 'MOM.Date_Interval', 'MOM.Date_Interval_N', 'BMT.Location', 'BMT.Person', 'BMT.Rodent', 'BMT.Mouse', 'BMT.Rat', 'BMT.Beaver', 'BMT.Otter', 'BMT.Trap', 'BMT.Supertrap', 'BMT.Rodent_is_sick', 'BMT.Rodent_in_Trap', 'BMT.Person_owns_Trap', 'BMT.Person_sets_Trap_at_Location']
     >>> for t in apt._T_Extension [2:] :
     ...     print u"%%-35s %%s" %% (t.type_name, t.epk_sig)
     MOM.Id_Entity                       ()
@@ -773,8 +774,8 @@ The app-type specific entity-types are ready to be used by
     MOM.Link3                           ('left', 'middle', 'right')
     MOM.Object                          ()
     MOM.Named_Object                    ('name',)
-    MOM.Lifetime                        ()
-    MOM.Lifetime_N                      ()
+    MOM.Date_Interval                   ()
+    MOM.Date_Interval_N                 ()
     BMT.Location                        ('lon', 'lat')
     BMT.Person                          ('last_name', 'first_name', 'middle_name')
     BMT.Rodent                          ('name',)
@@ -808,10 +809,10 @@ The app-type specific entity-types are ready to be used by
         (<bound method M_E_Type_Object.sort_key of <class 'MOM.Object' [BMT__Hash__HPS]>>,)
     MOM.Named_Object
         ('name',)
-    MOM.Lifetime
-        ('birth',)
-    MOM.Lifetime_N
-        ('birth',)
+    MOM.Date_Interval
+        ('start',)
+    MOM.Date_Interval_N
+        ('start',)
     BMT.Location
         ('lon', 'lat')
     BMT.Person
@@ -1678,14 +1679,14 @@ Unary links
 -----------
 
     >>> sr = scope.BMT.Mouse ("Sick_Rodent")
-    >>> osm = Ris (sr, scope.MOM.Lifetime (birth = "20100218", raw = True))
+    >>> osm = Ris (sr, scope.MOM.Date_Interval (start = "20100218", raw = True))
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (birth = '2010/02/18'), )"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (start = '2010/02/18'), )"
     >>> osm.fever = 42
     >>> osm.as_code ()
-    u"BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (birth = '2010/02/18'), fever = 42.0)"
+    u"BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (start = '2010/02/18'), fever = 42.0)"
     >>> sr.sickness
-    set([BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (birth = '2010/02/18'))])
+    set([BMT.Rodent_is_sick ((u'Sick_Rodent'), dict (start = '2010/02/18'))])
 """
 
 db_uri = "'/tmp/bmt_test.bmt'"

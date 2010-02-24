@@ -73,7 +73,8 @@ class Date_Interval (_Ancestor_Essence) :
             """Start date of interval"""
 
             kind               = Attr.Required
-            ui_name            = "Birth date"
+            ui_name            = "Start"
+            rank               = 1
 
         # end class start
 
@@ -81,7 +82,8 @@ class Date_Interval (_Ancestor_Essence) :
             """Finish date of interval"""
 
             kind               = Attr.Optional
-            ui_name            = "Death date"
+            ui_name            = "Finish"
+            rank               = 2
 
         # end class finish
 

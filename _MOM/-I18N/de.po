@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-02-24 14:13+0100\n"
+"PO-Revision-Date: 2010-02-24 17:31+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -72,7 +72,6 @@ msgid "Display in user interface"
 msgstr "Darstellung in der Benutzeroberfläche"
 
 #: _MOM/__babel__.py:0
-#, fuzzy
 msgid "Electric"
 msgstr "elektrisch"
 
@@ -98,7 +97,6 @@ msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
 
 #: _MOM/__babel__.py:0
-#, fuzzy
 msgid "Is used"
 msgstr "wird verwendet"
 
@@ -107,7 +105,6 @@ msgid "Link"
 msgstr "Verknüpfung"
 
 #: _MOM/__babel__.py:0
-#, fuzzy
 msgid "Link1"
 msgstr "Verknüpfung"
 
@@ -124,7 +121,6 @@ msgid "Link3"
 msgstr "3-Verknüpfung"
 
 #: _MOM/__babel__.py:0
-#, fuzzy
 msgid "Name"
 msgstr "Name"
 

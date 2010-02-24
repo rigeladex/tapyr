@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     6-Feb-2010 (MG) Creation
+#    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    ««revision-date»»···
 #--
 
@@ -74,7 +75,7 @@ if 1:
     scope        = MOM.Scope.new (apt, None)
     p            = scope.PAP.Person ("Glueck", "Martin")
     #a            = scope.PAP.Address ("Langstrasse 4", "2244", "Spannberg", "Austria")
-    date         = scope.MOM.Lifetime (birth ="1976-03-16", raw = True)
+    date         = scope.MOM.Date_Interval (start ="1976-03-16", raw = True)
     p.date       = date
     scope.commit ()
     scope.ems.session.expunge ()

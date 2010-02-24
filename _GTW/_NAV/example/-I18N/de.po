@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:29+0100\n"
-"PO-Revision-Date: 2010-02-24 14:13+0100\n"
+"PO-Revision-Date: 2010-02-24 17:31+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -42,6 +42,10 @@ msgid "Contents of web page in html format"
 msgstr ""
 
 #: _GTW/_NAV/example/__babel__.py:0
+msgid "Date"
+msgstr ""
+
+#: _GTW/_NAV/example/__babel__.py:0
 msgid "Description of the page"
 msgstr ""
 
@@ -71,7 +75,7 @@ msgstr ""
 
 #: _GTW/_NAV/example/__babel__.py:0
 msgid ""
-"Publication (`birth`) and expiration date (`death`) for the\n"
+"Publication (`start`) and expiration date (`finish`) for the\n"
 "web page"
 msgstr ""
 
@@ -90,4 +94,9 @@ msgstr ""
 #: _GTW/_NAV/example/__babel__.py:0
 msgid "Title of the web page"
 msgstr ""
+
+#~ msgid ""
+#~ "Publication (`birth`) and expiration date (`death`) for the\n"
+#~ "web page"
+#~ msgstr ""
 

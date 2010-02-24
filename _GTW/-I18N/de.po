@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-24 14:13+0100\n"
+"PO-Revision-Date: 2010-02-24 17:31+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -19,12 +19,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:105 _GTW/_NAV/_E_Type/Admin.py:224
+#: _GTW/_NAV/_E_Type/Admin.py:108 _GTW/_NAV/_E_Type/Admin.py:226
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr "%s `%s` existiert nicht"
 
-#: _GTW/_NAV/_E_Type/Admin.py:191
+#: _GTW/_NAV/_E_Type/Admin.py:193
 #, python-format
 msgid "%s `%s` existiert nicht!"
 msgstr "%s `%s` existiert nicht"

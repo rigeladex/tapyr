@@ -1,102 +1,90 @@
-# English translations for MOM/GTW/JNJ.
+# Translations template for MOM/GTW/JNJ.
 # Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
 # This file is distributed under the same license as the MOM/GTW/JNJ
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-24 17:31+0100\n"
+"POT-Creation-Date: 2010-02-24 17:31+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: en <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/example/templates/i18n.jnj:4
-#, python-format
-msgid ""
-"    We are at language %(lang)s.\n"
-"  "
-msgstr ""
-
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Author"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Author of the web page."
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/Nav.py:78
+msgid "Author of web page"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Contents"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Contents of web page in html format"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Date"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Description of the page"
 msgstr ""
 
-#: _GTW/_NAV/example/templates/i18n.jnj:8
-msgid "English"
-msgstr ""
-
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Format"
 msgstr ""
 
-#: _GTW/_NAV/example/templates/i18n.jnj:7
-msgid "German"
-msgstr ""
-
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Markup format used for `text` of web page"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Name used for perma-link."
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Page"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid ""
 "Publication (`start`) and expiration date (`finish`) for the\n"
 "web page"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/Nav.py:64
+msgid "Publication and expiration date"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Text"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Text for web page in markup specified by `format`."
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Title"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Title of the web page"
 msgstr ""
-
-#~ msgid ""
-#~ "Publication (`birth`) and expiration date (`death`) for the\n"
-#~ "web page"
-#~ msgstr ""
 
