@@ -71,7 +71,7 @@ apt = MOM.App_Type \
     ).Derived (EMS, DBW)
 
 scope        = MOM.Scope.new (apt, None)
-p            = scope.PAP.Person ("Test", "Author")
+p            = scope.PAP.Person ("Test", "Author", raw = True)
 page         = scope.SWP.Page ("1", author = p)
 scope.commit ()
 scope.ems.session.expunge( )

@@ -87,7 +87,7 @@ class Notification_Collection (list) :
         result = [head]
         result.append \
             ( joiner.join
-                (str (s) for s in sorted (self, key = lambda n : n.time))
+                (unicode (s) for s in sorted (self, key = lambda n : n.time))
             )
         result.append (tail)
         self [:] = []
@@ -107,6 +107,10 @@ class Notification (TFL.Meta.Object) :
     def __str__ (self) :
         return self.message
     # end def __str__
+
+    def __unicode__ (self) :
+        return self.message
+    # end def __unicode__
 
     def __repr__ (self) :
         return \

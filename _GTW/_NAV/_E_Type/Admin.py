@@ -160,7 +160,6 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                         (    getattr (Q, k).STARTSWITH (v)
                         for (k, v) in et_man.cooked_attrs (args).iteritems ()
                         )
-                    print trigger
                     return handler.json \
                         ( [   dict
                                 ( lid   = c.lid

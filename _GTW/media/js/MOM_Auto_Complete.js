@@ -78,7 +78,6 @@
           var  trigger  =  options.triggers [trigger_field];
           var  match    = field_no_pat.exec ($field [0].name) || [""]
           var  no       = match  [1];
-          console.log (trigger_field);
           $field.autocomplete
               ({ source    : function (request, callback)
                   {
