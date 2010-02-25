@@ -30,6 +30,9 @@
 #    16-Feb-2010 (MG) `_sa_columns_named_object` fixed
 #    18-Feb-2010 (MG) `_sa_columns_composite`: only add `hash_sig` attributes
 #                     of primay composites to the `unique` list
+#    25-Feb-2010 (MG) `_sa_columns_role_eb` change to `_sa_columns_a_object`
+#    25-Feb-2010 (MG) `_sa_col_name` functions moved in here from `Attr_Kind`
+#    25-Feb-2010 (MG) `_sa_columns_named_object` fixed
 #    ««revision-date»»···
 #--
 
@@ -53,6 +56,16 @@ def Add_Classmedthod  (name, * classes) :
     return decorator
 # end def Add_Classmedthod
 
+@TFL.Add_To_Class ("_sa_column_name", Attr.A_Attr_Type)
+def _sa_normal_attr(self) :
+    return self.name
+# end def _sa_normal_attr
+
+@TFL.Add_To_Class ("_sa_column_name", Attr._A_Object_)
+def _sa_object (self) :
+    return "%s_id" % (self.name, )
+# end def _sa_object
+
 @Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)
 def _sa_columns_simple (cls, attr, kind, unique, ** kw) :
     col = schema.Column (attr._sa_col_name, attr._sa_type (attr, kind), ** kw)
@@ -60,30 +73,28 @@ def _sa_columns_simple (cls, attr, kind, unique, ** kw) :
     return (col, )
 # end def _sa_columns_simple
 
-@Add_Classmedthod ("_sa_columns", Attr.A_Link_Role_EB)
-def _sa_columns_role_eb (cls, attr, kind, unique, ** kw) :
+@Add_Classmedthod ("_sa_columns", Attr._A_Object_)
+def _sa_columns_a_object (cls, attr, kind, unique, ** kw) :
     col = schema.Column \
         ( attr._sa_col_name
         , types.Integer ()
         , schema.ForeignKey
             ( "%s.%s"
-            % (attr.role_type._sa_table.name, attr.role_type._sa_pk_name)
+            % (attr.Class._sa_table.name, attr.Class._sa_pk_name)
             )
         )
     col.mom_kind = kind
     return (col, )
-# end def _sa_columns_role_eb
-
-Type_Decorator_Cache = {}
+# end def _sa_columns_a_object
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Named_Object_)
 def _sa_columns_named_object (cls, attr, kind, unique, ** kw) :
     Pickler  = attr.Pickler
     Type     = Pickler.Type
-    return ( schema.Column
-               (attr._sa_col_name, Type._sa_type (Type, kind), ** kw)
-           ,
-           )
+    col      = schema.Column \
+        (attr._sa_col_name, Type._sa_type (Type, kind), ** kw)
+    col.mom_kind = kind
+    return (col, )
 # end def _sa_columns_named_object
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Composite_)

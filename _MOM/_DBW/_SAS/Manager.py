@@ -34,6 +34,8 @@
 #    18-Feb-2010 (MG) Don't add primray Composite attributes directly to the
 #                     unique constraint (only the sub attributes will be added)
 #    19-Feb-2010 (MG) Support for auto cached links added
+#    25-Feb-2010 (MG) `SAS_A_Object_Kind_Mixin` fixed to work with `A_Object`
+#                     attributes and role attributes
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -67,12 +69,12 @@ class SAS_A_Object_Kind_Mixin (object) :
 
     def set_pickle_cargo (self, obj, cargo) :
         query = MOM.DBW.SAS.Q_Result \
-            (self.role_type, obj.home_scope.ems.session).filter (id = cargo [0])
+            (self.Class, obj.home_scope.ems.session).filter (id = cargo [0])
         self._set_cooked_value (obj, query.one (), changed = True)
     # end def set_pickle_cargo
 
     def get_pickle_cargo (self, obj) :
-        return (self.get_value (obj).id, )
+        return (getattr (self.get_value (obj), "id", None), )
     # end def get_pickle_cargo
 
 # end class SAS_A_Object_Kind_Mixin
@@ -316,7 +318,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         for name, kind in \
                 ((n, k) for (n, k) in db_attrs.iteritems () if k.save_to_db) :
             attr               = kind.attr
-            col_name           = kind._sa_col_name ()
+            col_name           = attr._sa_column_name ()
             if prefix :
                 col_name       = "%s%s" % (prefix, col_name)
             attr._sa_col_name  = col_name

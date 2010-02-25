@@ -33,7 +33,7 @@
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 #import _GTW._OMP._Auth.import_Auth
-#import _GTW._OMP._PAP .import_PAP
+import _GTW._OMP._PAP .import_PAP
 import _GTW._OMP._SWP.Page
 
 if 0 :
@@ -67,10 +67,13 @@ GTW.Version = Product_Version \
     )
 
 apt = MOM.App_Type \
-    (u"HWO", GTW, PNS_Aliases = dict (SWP = GTW.OMP.SWP)
+    (u"HWO", GTW, PNS_Aliases = dict (SWP = GTW.OMP.SWP, PAP = GTW.OMP.PAP)
     ).Derived (EMS, DBW)
 
 scope        = MOM.Scope.new (apt, None)
-page         = scope.SWP.Page ("1")
+p            = scope.PAP.Person ("Test", "Author")
+page         = scope.SWP.Page ("1", author = p)
 scope.commit ()
+scope.ems.session.expunge( )
+
 ### __END__ GTW.OMP.SWP.__test__

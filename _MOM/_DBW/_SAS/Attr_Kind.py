@@ -29,6 +29,7 @@
 # Revision Dates
 #    11-Feb-2010 (MG) Creation (based on SA.Attr_Kind)
 #    15-Feb-2010 (MG) Mapper property functions removed
+#    25-Feb-2010 (MG) `_sa_col_name` functions moved into `Attr_Type`
 #    ««revision-date»»···
 #--
 
@@ -50,15 +51,5 @@ def _sa_primary (self) :
     result ["nullable"] = False
     return result
 # end def _sa_primary
-
-@TFL.Add_To_Class ("_sa_col_name", MOM.Attr.Kind)
-def _sa_normal_attr(self) :
-    return self.name
-# end def _sa_normal_attr
-
-@TFL.Add_To_Class ("_sa_col_name", MOM.Attr.Link_Role)
-def _sa_object (self) :
-    return "%s_id" % (self.name, )
-# end def _sa_object
 
 ### __END__ MOM.DBW.SAS.Attr_Kind
