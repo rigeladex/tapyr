@@ -1479,7 +1479,7 @@ Scope queries
     <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')")>
     <Create BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')")>
     <Create BMT.Person_owns_Trap (u"(u'dog', u'snoopy', u'')", u"(u'Y', u'1')")>
-    <Create BMT.Person (u'Tin', u'Tin', u'')>
+    <Create BMT.Person (u'Tin', u'Tin', '')>
     <Create BMT.Person_owns_Trap (u"(u'tin', u'tin', u'')", u"(u'Y', u'2')")>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')", u"(u'-16.268799', u'48.189956')")>
     <Create BMT.Person_sets_Trap_at_Location (u"(u'luke', u'lucky', u'')", u"(u'X', u'2')", u"(u'-16.74077', u'48.463313')")>

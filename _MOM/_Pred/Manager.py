@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -29,6 +29,8 @@
 #     1-Oct-2009 (CT) Creation (factored from TOM.Pred.Manager)
 #    25-Nov-2009 (CT) `attr_map` added and used instead of `attr.invariant`
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
+#    25-Feb-2010 (CT) `check_kind` changed to use `check_pred_p` of predicate
+#                     instead of home-grown code
 #    ««revision-date»»···
 #--
 
@@ -92,16 +94,16 @@ class Manager (TFL.Meta.Object) :
     def check_kind (self, kind, obj, attr_dict = {}) :
         errors   = self.errors   [kind] = []
         warnings = self.warnings [kind] = []
+        attrs    = set (attr_dict)
         if attr_dict :
-            attrs = set (attr_dict)
-            check_pred_p = lambda pred : attrs.intersection (pred.attrs)
+            check_pred_p = lambda pred, attrs : pred.check_pred_p (attrs)
             get_attr_val = lambda attr : attr_dict.get (attr.name)
         else :
-            check_pred_p = lambda pred : True
+            check_pred_p = lambda pred, attrs : True
             get_attr_val = lambda attr : obj.raw_attr (attr.name)
         for rank in dusplit (self.pred_kind [kind], lambda p : p.rank) :
             for p in rank  :
-                if check_pred_p (p) :
+                if check_pred_p (p, attrs) :
                     result = p.check_predicate (obj, attr_dict)
                     if not result :
                         if result.severe :

@@ -71,6 +71,8 @@
 #                     `ui_display` attribute for each class (with the proper
 #                     `ui_name`)
 #    18-Feb-2010 (CT) `M_E_Type_An._m_setup_sorted_by` redefined
+#    25-Feb-2010 (CT) `M_E_Type._m_setup_attributes` changed to handle
+#                     `check_always`
 #    ««revision-date»»···
 #--
 
@@ -510,6 +512,10 @@ class M_E_Type (M_E_Mixin) :
                                   ) % (cls, attr.kind, an, cls.name, pn)
                         else :
                             P._attr_map [attr.attr].append (pn)
+            if pv.check_always :
+                for attr in attr_dict.itervalues () :
+                    if attr.name not in pv.attrs :
+                        P._attr_map [attr.attr].append (pn)
         P._syntax_checks = \
             [  a.attr for a in attr_dict.itervalues ()
             if (not a.electric) and TFL.callable (a.attr.check_syntax)

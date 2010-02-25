@@ -101,6 +101,8 @@
 #                     `from_pickle_cargo` (doh)
 #    16-Feb-2010 (MG) `Kind.get_pickle_cargo` and `Kind.set_pickle_cargo`
 #                     fixed
+#    25-Feb-2010 (CT) `Mandatory` added
+#    25-Feb-2010 (CT) `_k_rank` added to `Mandatory`, `Required`, and `Optional`
 #    ««revision-date»»···
 #--
 
@@ -398,7 +400,7 @@ class _EPK_Mixin_ (Kind) :
 
 # end class _EPK_Mixin_
 
-class Mandatory_Mixin (Kind) :
+class _Mandatory_Mixin_ (Kind) :
     """Mixin for enforcing that an attribute always has a value"""
 
     def _checkers (self, e_type) :
@@ -407,7 +409,7 @@ class Mandatory_Mixin (Kind) :
             yield c
     # end def _checkers
 
-# end class Mandatory_Mixin
+# end class _Mandatory_Mixin_
 
 class _Auto_Update_Mixin_ (Kind) :
     """Mixin to auto-update an attribute after changes of any other attribute
@@ -702,7 +704,7 @@ class _Primary_ (_User_) :
 
 # end class _Primary_
 
-class Primary (Mandatory_Mixin, _Primary_) :
+class Primary (_Mandatory_Mixin_, _Primary_) :
     """Primary attribute: must be defined at all times, used as part of the
        `essential primary key`.
     """
@@ -746,10 +748,27 @@ class Link_Role (_EPK_Mixin_, Primary) :
 
 # end class Link_Role
 
+class Mandatory (_Mandatory_Mixin_, _User_) :
+    """Mandatory attribute: must immediately be defined by the tool user."""
+
+    kind        = "mandatory"
+    _k_rank     = -5
+
+    def has_substance (self, obj) :
+        return self.get_value (obj) not in (None, "")
+    # end def has_substance
+
+    def to_save (self, obj) :
+        return True
+    # end def to_save
+
+# end class Mandatory
+
 class Required (_User_) :
-    """Required attribute: must be defined by the tool user."""
+    """Required attribute: must eventually be defined by the tool user."""
 
     kind        = "required"
+    _k_rank     = -4
 
     def to_save (self, obj) :
         return self.has_substance (obj)
@@ -760,7 +779,8 @@ class Required (_User_) :
 class Optional (_User_) :
     """Optional attribute: if undefined, the `default` value is used, if any."""
 
-    kind = "optional"
+    kind        = "optional"
+    _k_rank     = -4
 
 # end class Optional
 

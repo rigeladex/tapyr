@@ -34,6 +34,7 @@
 #                     * 3-compatibility: passing a `str` for an attribute of
 #                       type `float` breaks checks like `value > 0`
 #    21-Jan-2010 (CT) `set_s_attr_value` changed to not call `cooked` for `None`
+#    25-Feb-2010 (CT) `check_always` added
 #    ««revision-date»»···
 #--
 
@@ -58,6 +59,7 @@ class _Condition_ (object):
     attributes      = ()
     attr_none       = ()
     bindings        = {}
+    check_always    = False
     description     = ""
     explanation     = ""
     _extra_links_s  = ()
@@ -181,7 +183,9 @@ class _Condition_ (object):
     # end def set_c_attr_value
 
     def _val_dict (self, obj, attr_dict = {}) :
-        result = {"this" : obj}
+        result = dict (this = obj)
+        if self.check_always :
+            result.update (attr_dict)
         for a in self.attributes :
             if self.set_attr_value (obj, attr_dict, a, result) is None :
                 return {}

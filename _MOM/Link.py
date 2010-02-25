@@ -49,6 +49,7 @@
 #                     for `other_type` (factored in here from
 #                     `M_Link_n._m_setup_auto_cache_role`)
 #    19-Feb-2010 (CT) Argument `attr_class` added to `_setup_attr`
+#    25-Feb-2010 (CT) Redefine `_finish__init__` instead of `_init_epk`
 #    ««revision-date»»···
 #--
 
@@ -88,8 +89,8 @@ class _MOM_Link_ (_Ancestor_Essence) :
         return self.epk [:self.number_of_roles]
     # end def roles
 
-    def _init_epk (self, setter, * epk) :
-        self.__super._init_epk (setter, * epk)
+    def _finish__init__ (self) :
+        self.__super._finish__init__ ()
         for role_cacher in self.auto_cache_roles :
             role_cacher (self, no_value = False)
     # end def

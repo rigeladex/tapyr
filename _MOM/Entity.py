@@ -108,6 +108,9 @@
 #                     home-grown code
 #    19-Feb-2010 (MG) `Entity.__repr__` changed
 #    22-Feb-2010 (CT) `cooked_attrs` added
+#    25-Feb-2010 (CT) `mandatory_defined` added
+#    25-Feb-2010 (CT) `Id_Entity._main__init__` changed to pass both `epk` and
+#                     `kw` in a single call to `setter`
 #    ««revision-date»»···
 #--
 
@@ -194,7 +197,26 @@ class Entity (TFL.Meta.Object) :
     # end class _Attributes
 
     class _Predicates (MOM.Pred.Spec) :
-        pass
+
+        class mandatory_defined (Pred.Condition) :
+            """All mandatory attributes must be (always) defined."""
+
+            kind          = Pred.Object
+            check_always  = True
+
+            def eval_condition (self, obj, glob_dict, val_dict) :
+                result = []
+                add    = result.append
+                for a in obj.mandatory :
+                    val = val_dict.get (a.name) or a.get_value (obj)
+                    if val is None or val == "" :
+                        add ("Mandatory attribute %s is not defined" % (a, ))
+                self._error_info.extend (result)
+                return not result
+            # end def eval_condition
+
+        # end class mandatory_defined
+
     # end class _Predicates
 
     class _FO_ (TFL.Meta.Object) :
@@ -423,14 +445,6 @@ class Entity (TFL.Meta.Object) :
         return result
     # end def _kw_satisfies_i_invariants
 
-    def _main__init__ (self, * args, ** kw) :
-        self.implicit = kw.pop ("implicit", False)
-        if kw :
-            raw = bool (kw.pop ("raw", False))
-            set = (self._set_ckd, self._set_raw) [raw]
-            set (** kw)
-    # end def _main__init__
-
     def _print_attr_err (self, exc) :
         print self, exc
     # end def _print_attr_err
@@ -617,6 +631,13 @@ class An_Entity (Entity) :
         self.owner = None
         self.__super._init_attributes ()
     # end def _init_attributes_
+
+    def _main__init__ (self, * args, ** kw) :
+        if kw :
+            raw = bool (kw.pop ("raw", False))
+            set = (self._set_ckd, self._set_raw) [raw]
+            set (** kw)
+    # end def _main__init__
 
     def _record_iter_attrs (self) :
         return self.user_attr
@@ -1011,12 +1032,8 @@ class Id_Entity (Entity) :
         return new_epk, pkas_raw, pkas_ckd
     # end def _extract_primary_raw
 
-    def _init_epk (self, setter, * epk) :
-        assert len (epk) == len (self.primary), "%s: %s" % (self.epk_sig, epk)
-        pkas = {}
-        for a, pka in zip (self.primary, epk) :
-            pkas [a.name] = pka
-        setter (** pkas)
+    def _init_epk (self, epk) :
+        return ((a.name, pka) for a, pka in zip (self.primary, epk))
     # end def _init_epk
 
     def _init_meta_attrs (self) :
@@ -1026,13 +1043,14 @@ class Id_Entity (Entity) :
     # end def _init_meta_attrs
 
     def _main__init__ (self, * epk, ** kw) :
+        self.implicit = kw.pop ("implicit", False)
         ### Need to use `__super.` methods here because it's not a `rename`
-        raw      = bool (kw.get ("raw", False))
+        raw      = bool (kw.pop ("raw", False))
         setter   = (self.__super._set_ckd, self.__super._set_raw) [raw]
-        epk, kw  = self.epkified    (* epk, ** kw)
-        self._init_epk              (setter, * epk)
-        self.__super._main__init__  (* epk, ** kw)
-        self._finish__init__        ()
+        epk, kw  = self.epkified (* epk, ** kw)
+        kw.update (self._init_epk (epk))
+        setter    (** kw)
+        self._finish__init__ ()
     # end def _main__init__
 
     def _record_iter_attrs (self) :

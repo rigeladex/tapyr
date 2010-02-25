@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    24-Sep-2009 (CT) Creation (factored from TOM.Pred.Kind)
+#    25-Feb-2010 (CT) `check_pred_p` added (honoring `check_always`)
 #    ««revision-date»»···
 #--
 
@@ -60,6 +61,10 @@ class Kind (MOM.Prop.Kind) :
     def check_predicate (self, obj, attr_dict = {}) :
         return self.pred (self, obj, attr_dict)
     # end def check_predicate
+
+    def check_pred_p (self, attrs) :
+        return self.check_always or attrs.intersection (self.attrs)
+    # end def check_pred_p
 
     _del = None
     _get = check_predicate
