@@ -34,6 +34,8 @@
 #    16-Feb-2010 (MG) `delete` enhanced: dispose the connection pool of the
 #                     engine to make sure all connection will be closed
 #    20-Feb-2010 (MG) `SAS_Interface.reconstruct` fixed PID creation
+#    25-Feb-2010 (MG) Bug on `Session._setup_columns` fixed (raw values where
+#                     not handled correctly)
 #    ««revision-date»»···
 #--
 
@@ -106,7 +108,6 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def _gather_columns
 
     def insert (self, session, entity) :
-        ### TFL.BREAK ()
         base_pks = dict ()
         pk_map   = self.e_type._sa_pk_base
         for b in self.bases :
@@ -151,17 +152,18 @@ class SAS_Interface (TFL.Meta.Object) :
                 e_type_columns [None] [kind] = columns
             else :
                 attr        = kind.attr
-                raw_col     = []
+                raw_col     = None
                 if isinstance (attr, MOM.Attr._A_Object_) :
                     col     = cm.get \
                         ("%s%s_id" % (prefix, kind.attr.name, ), None)
                 else :
                     col     = cm.get ("%s%s" % (prefix, kind.attr.name), None)
                     if kind.needs_raw_value :
-                        col_raw = cm ["%s%s" % (prefix, kind.attr.raw_name)]
+                        raw_col = cm ["%s%s" % (prefix, kind.attr.raw_name)]
                 et              = col.mom_e_type
                 columns         = [col]
-                columns.extend (raw_col)
+                if raw_col is not None :
+                    columns.append (raw_col)
                 e_type_columns [et]   [kind] = columns
                 e_type_columns [None] [kind] = columns
     # end def _setup_columns
@@ -229,7 +231,7 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def value_dict
 
     def update (self, session, entity, attrs = set ()) :
-        ### TFL.BREAK ()
+        ### TFL.25-Feb-2010 BREAK ()
         for b in self.bases :
             b._SAS.update (session, entity, attrs)
         values     = self.value_dict \
