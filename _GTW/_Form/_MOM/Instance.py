@@ -33,7 +33,6 @@
 #--
 
 from   _MOM               import MOM
-import _MOM._Attr.Type
 
 from   _TFL                                 import TFL
 import _TFL._Meta.Object
@@ -41,22 +40,8 @@ import _TFL.defaultdict
 import _GTW._Form.Field_Error
 
 from   _GTW                                 import GTW
-import _GTW._Form.Widget_Spec
 import _GTW._Form._MOM
 import _GTW._Form._MOM._Instance_
-
-WS                           = GTW.Form.Widget_Spec
-MAT                          = MOM.Attr
-MAT.A_Attr_Type.widget       = WS ("html/field.jnj, string")
-MAT._A_Number_.widget        = WS ("html/field.jnj, number")
-MAT.A_Date.widget            = WS ("html/field.jnj, date")
-MAT.A_Date_Time.widget       = WS ("html/field.jnj, datetime")
-MAT.A_Email.widget           = WS ("html/field.jnj, email")
-MAT.A_Text.widget            = WS ("html/field.jnj, text")
-MAT._A_Named_Object_.widget  = WS ("html/field.jnj, named_object")
-
-MER                          = MOM.Error
-MER.Invalid_Attribute.widget = WS ("html/mom_errors.jnj, invalide_attribute")
 
 class Instance (GTW.Form.MOM._Instance_) :
     """A form which creates or changes a MOM object."""

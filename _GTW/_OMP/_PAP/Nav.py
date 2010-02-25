@@ -54,16 +54,27 @@ from   _GTW._Form._MOM.Field_Group_Description import \
     )
 from  _GTW._Form.Widget_Spec  import Widget_Spec as WS
 
-_prim = WF ("primary")
+primary = WF ("primary")
 
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
+
+    address_completer = GTW.Form.MOM.Completer \
+        ( fields    = ("street", "city", "zip", "country")
+        , triggers  = dict (street = dict (min_chars = 3))
+        , name      = "Address_Completer"
+        )
+    phone_completer = GTW.Form.MOM.Completer \
+        ( fields    = ( "country_code", "area_code", "number")
+        , triggers  = dict (number = dict (min_chars = 2))
+        , name      = "Phone_Completer"
+        )
 
     Address         = dict \
         ( ETM       = "GTW.OMP.PAP.Address"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (WF ("primary"))
+            ( FGD (primary)
             , FGD ("desc")
             , AID
                 ( "position"
@@ -79,7 +90,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.PAP.Email"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (WF ("primary"))
+            ( FGD (primary)
             , FGD ()
             )
         , list_display = ("ui_display", "desc")
@@ -89,7 +100,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.PAP.Person"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (WF ("primary"), widget = "html/form.jnj, fg_tr")
+            ( FGD (primary, widget = "html/form.jnj, fg_tr")
             , AID
                 ( "lifetime"
                 , FGD (widget = "html/form.jnj, fg_tr")
@@ -100,12 +111,8 @@ class Admin (object) :
                 , FGD ( "desc")
                 , AID
                     ( "address"
-                    , FGD (WF ("primary"))
-                    , completer     = GTW.Form.MOM.Completer
-                        ( fields    = ("street", "city", "zip", "country")
-                        , triggers  = dict (street = dict (min_chars = 3))
-                        , name      = "Personal_Contact_Info"
-                        )
+                    , FGD (primary)
+                    , completer = address_completer
                     )
                 , legend    = _("Addresses")
                 , title     = _("Addresses")
@@ -113,8 +120,11 @@ class Admin (object) :
             , LID
                 ( "PAP.Person_has_Phone"
                 , FGD ( "desc")
-                , AID ( "phone", FGD (WF ("primary"))
-                      )
+                , AID
+                    ( "phone"
+                    , FGD (primary)
+                    , completer = phone_completer
+                    )
                 , FGD ( "extension")
                 , legend    = _("Phone numbers")
                 , title     = _("Phone numbers")
@@ -127,7 +137,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.PAP.Phone"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (WF ("primary"))
+            ( FGD (primary)
             , FGD ()
             )
         , list_display = ("ui_display", "desc")

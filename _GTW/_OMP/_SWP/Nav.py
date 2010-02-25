@@ -48,7 +48,7 @@ from   _GTW._Form._MOM.Field_Group_Description import \
     )
 from  _GTW._Form.Widget_Spec  import Widget_Spec as WS
 
-_prim = WF ("primary")
+primary = WF ("primary")
 
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
@@ -65,7 +65,7 @@ class Admin (object) :
                 )
             , AID
                 ( "author"
-                , FGD (_prim, widget = "html/form.jnj, fg_tr")
+                , FGD (primary, widget = "html/form.jnj, fg_tr")
                 , completer = GTW.Form.MOM.Completer
                     ( fields    =
                         ("last_name", "first_name", "middle_name", "title")

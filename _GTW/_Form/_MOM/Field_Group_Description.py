@@ -40,6 +40,7 @@
 #    24-Feb-2010 (MG) `Field_Group_Description.__call__` changed to use an
 #                     `Wildcard_Field` if the user has not supplied a field
 #                     spec
+#    25-Feb-2010 (CT) `Field` moved into a module of its own
 #    ««revision-date»»···
 #--
 
@@ -53,6 +54,8 @@ from   _GTW                                 import GTW
 import _GTW._Form.Field_Group
 import _GTW._Form.Field_Group_Description
 import _GTW._Form._MOM
+from   _GTW._Form._MOM.Field                import Field
+
 import  itertools
 
 class Wildcard_Field (TFL.Meta.Object) :
@@ -64,7 +67,7 @@ class Wildcard_Field (TFL.Meta.Object) :
     def __init__ (self, * kinds , ** kw) :
         self.kinds  = kinds or ("primary", "user_attr")
         self.prefix = kw.pop ("prefix", None)
-        assert not kw, kw.keys ()
+        assert not kw, sorted (kw.keys ())
     # end def __init__
 
     def __call__ (self, et_man, added_fields) :
@@ -72,14 +75,14 @@ class Wildcard_Field (TFL.Meta.Object) :
         if self.prefix :
             et_man = getattr (et_man, self.prefix).role_type
             prefix = self.prefix + "."
-        etype      = et_man._etype
+        etype  = et_man._etype
         return \
             [   "%s%s" % (prefix, ak.name)
             for ak in sorted
                ( itertools.chain (* (getattr (etype, k) for k in self.kinds))
                , key = lambda ak : ak.rank
                )
-                if ak.name not in added_fields
+            if ak.name not in added_fields
             ]
     # end def __call__
 
@@ -110,41 +113,6 @@ class Field_Prefixer (TFL.Meta.Object) :
 
 # end class Field_Prefixer
 
-class Field (TFL.Meta.Object) :
-    """A wrapper around the attribute of the MOM object used in field groups"""
-
-    hidden = False
-
-    def __init__ (self, et_man, attr_name) :
-        self.html_name      = attr_name
-        if "." in attr_name :
-            scope           = et_man.home_scope
-            role, attr_name = attr_name.split (".")
-            et_man          = getattr \
-                (scope, getattr (et_man, role).role_type.type_name)
-        self.et_man         = et_man
-        self.name           = attr_name
-        self.attr_kind      = getattr (et_man._etype, attr_name)
-    # end def __init__
-
-    @property
-    def choices (self) :
-        attr = self.attr_kind.attr
-        if isinstance (attr, MOM.Attr._A_Named_Object_) :
-            return sorted (attr.Table)
-        return ()
-    # end def choices
-
-    def get_raw (self, form, instance) :
-        return self.attr_kind.get_raw (instance)
-    # end def get_raw
-
-    def __getattr__ (self, name) :
-        return getattr (self.attr_kind, name)
-    # end def __getattr__
-
-# end class Field
-
 class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     """A field group description for an MOM object"""
 
@@ -154,21 +122,22 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         , inline_table_th   = "html/form.jnj, inline_table_th"
         , inline_table_td   = "html/form.jnj, inline_table_td"
         )
+
     def __call__ (self, et_man, added_fields = None, * args, ** kw) :
         if not self.fields :
             self.fields = (Wildcard_Field (), )
         if added_fields is None :
             added_fields = set ()
-        fields_spec      = self.fields
-        fields           = []
+        fields_spec = self.fields
+        fields      = []
         for f in fields_spec :
             if callable (f) :
-                new_fields = f   (et_man, added_fields)
-                fields.extend    (new_fields)
+                new_fields = f  (et_man, added_fields)
+                fields.extend   (new_fields)
             else :
-                new_fields =     (str (f), )
-                fields.append    (f)
-            added_fields.update  (new_fields)
+                new_fields =    (str (f), )
+                fields.append   (f)
+            added_fields.update (new_fields)
         if fields :
             return \
                 ( GTW.Form.Field_Group
@@ -178,7 +147,7 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         return (None, )
     # end def __call__
 
-Field_Group_Description = _MOM_Field_Group_Description_ # end class _MOM_Field_Group_Description_
+Field_Group_Description = _MOM_Field_Group_Description_ # end class
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export ("*")
