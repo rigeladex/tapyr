@@ -26,7 +26,9 @@
 #    A single field of a MOM form
 #
 # Revision Dates
-#    25-Feb-2010 (CT) Creation
+#    25-Feb-2010 (CT) Factored from GTW.Form.MOM.Instance and
+#                     GTW.Form.MOM.Field_Group_Description
+#    25-Feb-2010 (CT) `css_class` added
 #    ««revision-date»»···
 #--
 
@@ -37,25 +39,48 @@ from   _TFL               import TFL
 import _GTW._Form._MOM
 
 import _GTW._Form.Field
-import _GTW._Form.Widget_Spec
+from   _GTW._Form.Widget_Spec import Widget_Spec as WS
 
+import _MOM._Attr.Kind
 import _MOM._Attr.Type
 import _MOM.Error
 
 import _TFL._Meta.Object
+import _TFL.Decorator
+import _TFL.Ival_Map
 
-WS                           = GTW.Form.Widget_Spec
-MAT                          = MOM.Attr
-MAT.A_Attr_Type.widget       = WS ("html/field.jnj, string")
-MAT._A_Number_.widget        = WS ("html/field.jnj, number")
-MAT.A_Date.widget            = WS ("html/field.jnj, date")
-MAT.A_Date_Time.widget       = WS ("html/field.jnj, datetime")
-MAT.A_Email.widget           = WS ("html/field.jnj, email")
-MAT.A_Text.widget            = WS ("html/field.jnj, text")
-MAT._A_Named_Object_.widget  = WS ("html/field.jnj, named_object")
+MAT                            = MOM.Attr
+MAT.A_Attr_Type.widget         = WS ("html/field.jnj, string")
+MAT._A_Number_.widget          = WS ("html/field.jnj, number")
+MAT.A_Date.widget              = WS ("html/field.jnj, date")
+MAT.A_Date_Time.widget         = WS ("html/field.jnj, datetime")
+MAT.A_Email.widget             = WS ("html/field.jnj, email")
+MAT.A_Text.widget              = WS ("html/field.jnj, text")
+MAT._A_Named_Object_.widget    = WS ("html/field.jnj, named_object")
 
-MER                          = MOM.Error
-MER.Invalid_Attribute.widget = WS ("html/mom_errors.jnj, invalide_attribute")
+MAT.Kind.css_class             = ""
+MAT.Primary.css_class          = "Mandatory"
+MAT.Primary_Optional.css_class = "Optional"
+MAT.Mandatory.css_class        = "Mandatory"
+MAT.Required.css_class         = "Required"
+MAT.Optional.css_class         = "Optional"
+
+MER                            = MOM.Error
+MER.Invalid_Attribute.widget   = WS ("html/mom_errors.jnj, invalide_attribute")
+
+_css_len_classes = TFL.Ival_Map \
+    ( (    7, "Short")
+    , (   13, "Moderate-Len")
+    , (   21, "Medium-Len")
+    , (   61, "")
+    , (   81, "Long")
+    , (2**31, "Very-Long")
+    )
+
+@TFL.Add_Method (MAT.A_Attr_Type, decorator = property)
+def css_class_len (self) :
+    return _css_len_classes [self.ui_length]
+# end def css_class_len
 
 class Field (TFL.Meta.Object) :
     """A wrapper around the attribute of the MOM object used in field groups"""
@@ -81,6 +106,13 @@ class Field (TFL.Meta.Object) :
             return sorted (attr.Table)
         return ()
     # end def choices
+
+    @property
+    def css_class (self) :
+        ak = self.attr_kind
+        result = " ".join (c for c in (ak.css_class, ak.css_class_len) if c)
+        return result
+    # end def css_class
 
     def get_raw (self, form, instance) :
         return self.attr_kind.get_raw (instance)

@@ -106,24 +106,13 @@
 {%- endmacro -%} {#- time -#}
 
 {%- macro _field (typ, fo, fi) -%}
-  {%- set ui_length = fi.ui_length or 50 -%}
-  {%- if ui_length <= 6 %}
-    {%- set css_class = "Short" %}
-  {%- elif ui_length <= 12 %}
-    {%- set css_class = "Moderate-Len" %}
-  {%- elif ui_length <= 20 %}
-    {%- set css_class = "Medium-Len" %}
-  {%- elif ui_length <= 60 %}
-    {%- set css_class = "" %}
-  {%- elif ui_length <= 80 %}
-    {%- set css_class = "Long" %}
-  {%- else %}
-    {%- set css_class = "Very-Long" %}
-  {% endif -%}
-  {%- set id = fo.get_id (fi) %}
+  {%- set id   = fo.get_id (fi) -%}
+  {%- set cssc = " ".join
+      ((kwargs.pop ("class", ""), fi.css_class or "")).strip ()
+  -%}
   {{ typ
       ( id            = "F_%s"|format (id)
-      , class         = " ".join ((fi.css_class or "", css_class)).strip ()
+      , class         = cssc
       , name          = id
       , value         = fo.get_raw (fi)
       , ** kwargs

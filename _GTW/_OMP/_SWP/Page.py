@@ -143,7 +143,7 @@ class Page (_Ancestor_Essence) :
         class title (A_String) :
             """Title of the web page"""
 
-            kind               = Attr.Optional
+            kind               = Attr.Required
             max_length         = 80
 
         # end class title
