@@ -54,6 +54,7 @@
 ##    23-Feb-2010 (CT) `form` changed to accept more than 1 `submit_kw`
 ##    24-Feb-2010 (CT) Missing calls to `GTW._T` added
 ##    24-Feb-2010 (CT) `aid_div_seq` changed to honor `legend`
+##    26-Feb-2010 (MG) Inline forms changed
 ##    ««revision-date»»···
 ##--
 #}
@@ -64,7 +65,7 @@
   {%- set fo = aid.forms [0] -%}
   {%- onion aid.legend %}
     {%- head %}
-      <fieldset class="inline-form {{ aid.form_cls.form_name }}">
+      <fieldset class="inline-form {{ aid.form_cls.form_path_css }}">
         <legend title="{{ GTW._T (aid.name)|capitalize|safe }}">
           {{ GTW._T (aid.legend)|safe }}
         </legend>
@@ -194,7 +195,7 @@
 
 {%- macro inline_table (form, inline) -%}
   {%- set proto = inline.prototype_form -%}
-  <fieldset class="m2m-inline-form-table {{ inline.form_cls.form_name }}">
+  <fieldset class="inline-form-table {{ inline.form_cls.form_path_css }}">
     {%- if inline.legend %}
       <legend title="{{ inline.name|capitalize }}">{{ GTW._T (inline.legend)|safe }}</legend>
     {% endif -%}
@@ -219,7 +220,7 @@
       {{ GTW.call_macro
           ( proto.widget.inline_table_tr_body
           , proto, proto.field_groups
-          , class = "m2m-inline-instance m2m-prototype"
+          , class = "inline-instance inline-prototype"
           )
       }}
       {%- for iform in inline.forms %}
@@ -227,7 +228,7 @@
           ( iform.widget.inline_table_tr_body
           , iform
           , iform.field_groups
-          , class="m2m-inline-instance"
+          , class="inline-instance"
           ) }}
       {% endfor -%}
     </tbody>

@@ -138,7 +138,7 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                 new_fields =    (str (f), )
                 fields.append   (f)
             added_fields.update (new_fields)
-        if fields :
+        if 1 or fields :
             return \
                 ( GTW.Form.Field_Group
                     ([Field (et_man, name) for name in fields], self)

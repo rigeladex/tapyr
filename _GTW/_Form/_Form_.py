@@ -34,6 +34,7 @@
 #                     values from there or empty string (empty strings are
 #                     not part of the request data!)
 #    22-Feb-2010 (CT) `kw` added
+#    26-Feb-2010 (MG) Javascript handling added
 #    ««revision-date»»···
 #--
 
@@ -46,9 +47,12 @@ import _TFL.Record
 
 from   _GTW              import GTW
 import _GTW._Form.Field_Error
+import _GTW._Form.Javascipt
 
 class M_Form (TFL.Meta.Object.__class__) :
     """Meta class for forms."""
+
+    parent_form = None
 
     def _setup_fields (cls, field_groups) :
         result = TFL.NO_List ()
@@ -58,6 +62,42 @@ class M_Form (TFL.Meta.Object.__class__) :
             result.update (fg.fields)
         return result
     # end def _setup_fields
+
+    @TFL.Meta.Once_Property
+    def Form (cls) :
+        return getattr (cls.parent_form, "Form", cls)
+    # end def Form
+
+    def form_and_completer (cls, path) :
+        form_cls  = cls
+        completer = None
+        path      = list (path)
+        while path :
+            sf = path.pop (0)
+            if sf in form_cls.sub_forms :
+                form_cls      = form_cls.sub_forms [sf]
+            else :
+                path.insert (0, sf)
+                break
+        completer = getattr (form_cls, "completer", None)
+        while path :
+            completer = getattr (completer, path.pop (0), None)
+        if completer :
+            return form_cls, completer
+        return None, None
+    # end def form_and_completer
+
+    @TFL.Meta.Once_Property
+    def form_path_css (cls) :
+        return "__".join (getattr (cls, "form_path", "").split ("/"))
+    # end def form_path_css
+
+    @TFL.Meta.Once_Property
+    def javascript (cls) :
+        if not cls.parent_form :
+            return GTW.Form.Javascipt.Form (cls)
+        return cls.parent_form.javascript
+    # end def javascript
 
 # end class M_Form
 

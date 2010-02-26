@@ -67,7 +67,7 @@ class Admin (object) :
             , FGD ()
             , LID
                 ( "GTW.OMP.Auth.Account_in_Group"
-                , FGD ("user_attr")
+                , FGD (WF ("user_attr"))
                 , AID
                     ( "group"
                     , FGD (primary)
@@ -77,7 +77,7 @@ class Admin (object) :
                 , title     = _("Groups")
                 )
             )
-        , permission = Is_Superuser ()
+        #, permission = Is_Superuser ()
         )
 
     Group            = dict \

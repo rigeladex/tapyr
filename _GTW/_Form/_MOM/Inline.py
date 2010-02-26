@@ -47,6 +47,7 @@
 #                     Changed handling of instance to form assignment (to
 #                     make sure that each posted form gets assing the correct
 #                     instance)
+#    26-Feb-2010 (MG) Javascript handling changed
 #    ««revision-date»»···
 #--
 
@@ -112,20 +113,9 @@ class _Inline_ (TFL.Meta.Object) :
 
     @TFL.Meta.Once_Property
     def Media (self) :
-        jsor  = []
-        scope = TFL.Caller.Object_Scope (self)
-        if self.completer :
-            jsor.extend (self.completer.js_on_ready (self))
-        for js_on_ready in self.js_on_ready :
-            if isinstance (js_on_ready, (tuple, list)) :
-                code, sort_key = js_on_ready
-                jsor.append (GTW.JS_On_Ready (code % scope, sort_key))
-            else :
-                jsor.extend (js_on_ready (self))
-        return GTW.Media.from_list\
-            ( [m for m in (self.widget.Media, self.form_cls.Media) if m]
-            , js_on_ready = jsor
-            )
+        self._setup_javascript ()
+        return GTW.Media.from_list \
+            ([m for m in (self.widget.Media, self.form_cls.Media) if m])
     # end def Media
 
     @TFL.Meta.Once_Property
@@ -136,6 +126,10 @@ class _Inline_ (TFL.Meta.Object) :
         return iform_cls \
             (None, prefix_sub = "-MP", parent = parent, prototype = True)
     # end def prototype_form
+
+    def _setup_javascript (self) :
+        pass
+    # end def _setup_javascript
 
     def __call__ (self, request_data) :
         return sum (ifo (request_data) for ifo in self.forms)
@@ -174,6 +168,14 @@ class Attribute_Inline (_Inline_) :
     def instance (self) :
         return self.forms [0].instance
     # end def instance
+
+    def _setup_javascript (self) :
+        if self.completer :
+            self.completer.attach               (self.form_cls)
+            parent_form = self.form_cls.parent_form
+            if issubclass (parent_form, GTW.Form.MOM.Instance) :
+                GTW.Form.Javascipt.Attribute_Inline (self.form_cls, self)
+    # end def _setup_javascript
 
     @TFL.Meta.Once_Property
     def Instances (self) :
@@ -233,6 +235,10 @@ class Link_Inline (_Inline_) :
             for no in xrange (self.form_count)
             ]
     # end def forms
+
+    def _setup_javascript (self) :
+        GTW.Form.Javascipt.Link_Inline (self.form_cls, self)
+    # end def _setup_javascript
 
     def __call__ (self, request_data) :
         error_count   = self.__super.__call__ (request_data)

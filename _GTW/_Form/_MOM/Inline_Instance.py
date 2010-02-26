@@ -92,6 +92,7 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
     """Base class for form which are part of a outer form."""
 
     __metaclass__ = M_Inline_Instance
+    keep_instance = True
     widget        = GTW.Form.Widget_Spec \
         ( "html/form.jnj, field_groups"
         , inline_table_tr_head = "html/form.jnj, inline_table_tr_head"
@@ -122,9 +123,10 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
         lid, state = self.lid, self.state
         if state == "U" :
             ### this from handles an instance which should be unlinked
-            if not lid :
+            if not lid or self.keep_instance :
                 ### since this instance was never saved to the database no
                 ### further processing is required
+                self.instance = None
                 return False
             ### we need to destroy the instance in the database
             self.instance.destroy ()
@@ -166,6 +168,8 @@ class Attribute_Inline_Instance (_Inline_Instance_) :
 
 class Link_Inline_Instance (_Inline_Instance_) :
     """A form which handles an inline link"""
+
+    keep_instance = False
 
     def __call__ (self, request_data) :
         self.request_data = request_data

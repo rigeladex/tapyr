@@ -34,110 +34,86 @@
 (function ($)
 {
   var field_no_pat = /-M([\dP]+)-/;
-  var Autocomplete =
-  {
+  var Auto_Complete =
+    {
       _create : function ()
       {
-          var $fields = this.element.find
-              ("[name^=" + this.options.prefix + "]:visible");
-          for (var trigger_field in this.options.triggers)
-          {
-              var $field = $fields.filter ("[name$=" + trigger_field + "]");
-              this._setup_completion ($field, trigger_field);
-          }
+        var  options  = this.options
+        var  field    = this.options.field
+        var  trigger  = options.triggers [field];
+        var  match    = field_no_pat.exec (this.element [0].name) || [""]
+        var  no       = match  [1];
+        var  self     = this;
+        this.element.autocomplete
+            ({ source    : function (request, callback)
+                {
+                   self._auto_complete_search
+                    (request, trigger, field, self, callback, no);
+                }
+              , minLength : trigger.min_chars
+              , select    : function (evt, ui)
+                  {
+                      self._update_values (ui.item, no);
+                  }
+             });
       }
       , _auto_complete_search : function
           (request, trigger, field_name, self, callback, no)
       {
-          var data     = {TRIGGER_FIELD : field_name};
-          var comp_opt = self.options;
-          var pf       = comp_opt.prefix + "-";
-          if (no) pf   = pf + "M" + no + "-";
-          for (var i = 0;  i < trigger.fields.length; i++)
-          {
-              var mfn   = trigger.fields [i];
-              var value =  $("[name=" + pf + mfn + "]").attr ("value");
-              if (value) data [mfn] = value;
-          }
-          jQuery.getJSON
-            ( comp_opt.list_url
-            , data
-            , function (data, textStatus)
-                {
-                  if (textStatus == "success")
-                    {
-                      callback (data);
-                    }
-                }
-            )
-      }
-      , _setup_completion : function ($field, trigger_field)
-      {
-          var  self     = this;
-          var  options  = this.options
-          var  trigger  =  options.triggers [trigger_field];
-          var  match    = field_no_pat.exec ($field [0].name) || [""]
-          var  no       = match  [1];
-          $field.autocomplete
-              ({ source    : function (request, callback)
+        var data     = {TRIGGER_FIELD : field_name};
+        var comp_opt = self.options;
+        var pf       = comp_opt.field_prefix + "-";
+        if (no) pf   = pf + "M" + no + "-";
+        for (var i = 0;  i < trigger.fields.length; i++)
+        {
+            var mfn   = trigger.fields [i];
+            var value =  $("[name=" + pf + mfn + "]").attr ("value");
+            if (value) data [mfn] = value;
+        }
+        jQuery.getJSON
+          ( comp_opt.suggest_url
+          , data
+          , function (data, textStatus)
+              {
+                if (textStatus == "success")
                   {
-                     self._auto_complete_search
-                      (request, trigger, trigger_field, self, callback, no);
+                    callback (data);
                   }
-                , minLength : trigger.min_chars
-                , select    : function (evt, ui)
-                    {
-                        self._update_values (ui.item, no);
-                    }
-               });
+              }
+          )
       }
       , _update_values : function (item, no)
       {
-          var options = this.options;
-          var id      = options.prefix + "-comp-list";
-          var pf      = options.prefix + "-";
-          if (no) pf  = pf + "M" + no + "-";
-          jQuery.getJSON
-              ( options.obj_url, {"lid" : item.lid}
-              , function (data, textStatus)
-                {
-                    $("#" + id).remove ();
-                    if (textStatus == "success")
-                    {
-                        for (var key in data)
-                        {
-                            var $field = $("[name=" + pf + key + "]");
-                            var tag_name = $field [0].nodeName.toLowerCase ();
-                            if (tag_name == "input")
-                            {
-                                $field.attr ("value", data [key]);
-                            }
-                            $field.attr ("disabled", "disabled");
-                        }
-                    }
-                }
-              );
+        var options = this.options;
+        var id      = options.field_prefix + "-comp-list";
+        var pf      = options.field_prefix + "-";
+        if (no) pf  = pf + "M" + no + "-";
+        jQuery.getJSON
+            ( options.complete_url, {"lid" : item.lid}
+            , function (data, textStatus)
+              {
+                  $("#" + id).remove ();
+                  if (textStatus == "success")
+                  {
+                      for (var key in data)
+                      {
+                          var $field = $("[name=" + pf + key + "]");
+                          var tag_name = $field [0].nodeName.toLowerCase ();
+                          if (tag_name == "input")
+                          {
+                              $field.attr ("value", data [key]);
+                          }
+                          $field.attr ("disabled", "disabled");
+                      }
+                  }
+              }
+            );
       }
   }
-  $.widget ("ui.mom_autocomplete", Autocomplete);
+  $.widget ("ui.MOM_Auto_Complete", Auto_Complete);
   $.extend
-    ( $.ui.mom_autocomplete
+    ( $.ui.MOM_Auto_Complete
     , { version                          : "0.1"
-      , defaults                         :
-        { triggers                       : { "subscriber_number"
-                                           : { "min_chars" : 2
-                                             , "fields"    :
-                                                 [ "country_code"
-                                                 , "area_code"
-                                                 , "subscriber_number"
-                                                 ]
-                                             }
-                                           }
-        , list_url                       : "/Admin/Person/complete/Person_has_Address/address"
-        , obj_url                        : "/Admin/Person/completed/Person_has_Address/address" /* lid -> pk */
-        , prefix                         : "Person__Person_has_Address__address"
-        , standalone                     : true
-        }
       }
     );
 })(jQuery);

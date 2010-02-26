@@ -50,6 +50,7 @@
 #    24-Feb-2010 (MG) Media definition moved into `_Inline_Description_`
 #    24-Feb-2010 (MG) Parameter `form_name` added to construction of inline
 #                     form classes
+#    26-Feb-2010 (MG) `keep_instance` added
 #    ««revision-date»»···
 #--
 
@@ -74,13 +75,12 @@ class _Inline_Description_ (TFL.Meta.Object) :
     Media        = GTW.Media \
       ( css_links   =
           ( GTW.CSS_Link ("/media/GTW/css/jquery-ui-1.8.css")
-          , GTW.CSS_Link ("/media/GTW/css/m2m.css")
+          , GTW.CSS_Link ("/media/GTW/css/inline_forms.css")
           )
       , scripts     =
           ( GTW.Script (src  = "/media/GTW/js/jquery-1.4.2.min.js")
-          , GTW.Script
-              (src  = "/media/GTW/js/jquery-ui-1.8.min.js")
-          , GTW.Script (src  = "/media/GTW/js/model_edit_ui.js")
+          , GTW.Script (src  = "/media/GTW/js/jquery-ui-1.8.min.js")
+          , GTW.Script (src  = "/media/GTW/js/GTW_Form.js")
           , GTW.Script (src  = "/media/GTW/js/MOM_Auto_Complete.js")
           )
      )

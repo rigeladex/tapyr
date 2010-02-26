@@ -61,6 +61,7 @@
 #    22-Feb-2010 (CT) `Instance.__init__` changed to pass `** kw` to `super`
 #    22-Feb-2010 (MG) `_create_instance` factored
 #    24-Feb-2010 (MG) `from_name` added and used
+#    26-Feb-2010 (MG) Javascript handling changed
 #    ««revision-date»»···
 #--
 
@@ -144,7 +145,11 @@ class M_Instance (GTW.Form._Form_.__class__) :
                     if sub_form :
                         sub_forms [sub_form.form_name] = sub_form
             result.add_internal_fields    (et_man, field_groups)
-            result.Media        = GTW.Media.from_list (medias)
+            js_on_ready         = ()
+            if not result.parent_form :
+                js_on_ready = result.javascript.js_on_ready
+            result.Media        = GTW.Media.from_list \
+                (medias, js_on_ready = js_on_ready)
             result.field_groups = field_groups
             result.fields       = result._setup_fields (field_groups)
         return result

@@ -47,6 +47,7 @@
 #    24-Feb-2010 (MG) `_get_child` changed to always pass the grandchildren
 #                     as tuple,
 #                     Parameters of childs renamed (lid -> args)
+#    26-Feb-2010 (MG) Completion handling changed
 #    ««revision-date»»···
 #--
 
@@ -148,30 +149,12 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request = handler.request
             result  = None
             if request.method == "GET" :
-                form_cls = self.Form
-                for sf in self.forms :
-                    form_cls = getattr (form_cls, "sub_forms", {}).get (sf)
+                form_cls, completer = self.Form.form_and_completer (self.forms)
                 if form_cls is not None :
-                    args     = request.req_data
-                    et_man   = form_cls.et_man
-                    trigger  = getattr \
-                        (et_man._etype, args.pop ("TRIGGER_FIELD"))
-                    filter   = tuple \
-                        (    getattr (Q, k).STARTSWITH (v)
-                        for (k, v) in et_man.cooked_attrs (args).iteritems ()
-                        )
-                    return handler.json \
-                        ( [   dict
-                                ( lid   = c.lid
-                                , value = trigger.get_raw (c)
-                                , label = c.ui_display
-                                )
-                          for c in et_man.query ().filter (* filter).distinct ()
-                          ]
-                        )
-            if result is None :
-                raise self.top.HTTP.Error_404 (request.path)
-            return result
+                    if completer.suggestions \
+                           (form_cls, handler, request.req_data) :
+                        return True ### prevent an 404 Error if we return None
+            raise self.top.HTTP.Error_404 (request.path)
         # end def rendered
 
     # end class Completer
@@ -185,32 +168,13 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             request = handler.request
             result  = None
             if request.method == "GET" :
-                HTTP     = self.top.HTTP
-                form_cls = self.Form
-                for sf in self.forms :
-                    form_cls = getattr (form_cls, "sub_forms", {}).get (sf)
-                args = request.req_data
-                lid  = args.get   ("lid")
+                form_cls, completer = self.Form.form_and_completer (self.forms)
+                args                = request.req_data
+                lid                 = args.get   ("lid")
                 if not any (x is None for x in (form_cls, lid)) :
-                    et_man   = form_cls.et_man
-                    try :
-                        obj  = et_man.pid_query (et_man.pid_from_lid (lid))
-                    except IndexError, exc :
-                        error = \
-                            ( _T("%s `%s` existiert nicht!")
-                            % (_T(comp_etm.ui_name), id)
-                            )
-                        raise self.top.HTTP.Error_404 (request.path, error)
-                    form = form_cls (obj)
-                    return HTTP.as_json \
-                        (    (f, form.get_raw (f))
-                        for f in ichain ( form_cls.completer.fields
-                                        , ("_lid_a_state_", "instance_state")
-                                        )
-                        )
-            if result is None :
-                raise self.top.HTTP.Error_404 (request.path)
-            return result
+                    if completer.complete (form_cls, handler, lid) :
+                        return True ### prevent an 404 Error if we return None
+            raise self.top.HTTP.Error_404 (request.path)
         # end def rendered
 
     # end class Completed

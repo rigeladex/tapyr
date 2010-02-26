@@ -35,7 +35,7 @@ from   _TFL.I18N                import _
 from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
-import _GTW._Form._MOM.Completer
+import _GTW._Form._MOM.Javascript
 
 from   _GTW._Form._MOM.Inline_Description      import \
     ( Link_Inline_Description      as LID
@@ -65,8 +65,11 @@ class Admin (object) :
                 )
             , AID
                 ( "author"
-                , FGD (primary, widget = "html/form.jnj, fg_tr")
-                , completer = GTW.Form.MOM.Completer
+                , FGD ( primary
+                      , widget    = "html/form.jnj, fg_tr"
+                      , css_class = "inline-instance"
+                      )
+                , completer = GTW.Form.MOM.Javascript.MOM_Completer
                     ( fields    =
                         ("last_name", "first_name", "middle_name", "title")
                     , triggers  = dict

@@ -36,6 +36,7 @@
 #    20-Feb-2010 (MG) `SAS_Interface.reconstruct` fixed PID creation
 #    25-Feb-2010 (MG) Bug on `Session._setup_columns` fixed (raw values where
 #                     not handled correctly)
+#    26-Feb-2010 (MG) `_setup_columns` fixed
 #    ««revision-date»»···
 #--
 
@@ -143,7 +144,9 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def _setup_columns (self, e_type, e_type_columns, prefix = "") :
         cm             = self.column_map
-        for kind in e_type.primary + e_type.user_attr :
+        for kind in ( k for k in e_type.attributes.itervalues ()
+                      if k.save_to_db
+                    ) :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 s_prefix = kind.C_Type._sa_save_attrs [-1]
                 columns  = TFL.defaultdict (ddict_list)

@@ -36,6 +36,7 @@
 #    19-Feb-2010 (MG) Support for auto cached links added
 #    25-Feb-2010 (MG) `SAS_A_Object_Kind_Mixin` fixed to work with `A_Object`
 #                     attributes and role attributes
+#    26-Feb-2010 (MG) `set_pickle_cargo` fixed
 #    ««revision-date»»···
 #--
 from   _TFL                      import TFL
@@ -68,9 +69,11 @@ class SAS_A_Object_Kind_Mixin (object) :
     """A mixin for special handling of A_Object attributes for this backend."""
 
     def set_pickle_cargo (self, obj, cargo) :
-        query = MOM.DBW.SAS.Q_Result \
-            (self.Class, obj.home_scope.ems.session).filter (id = cargo [0])
-        self._set_cooked_value (obj, query.one (), changed = True)
+        obj_id = cargo [0]
+        if obj_id :
+            query = MOM.DBW.SAS.Q_Result \
+                (self.Class, obj.home_scope.ems.session).filter (id = obj_id)
+            self._set_cooked_value (obj, query.one (), changed = True)
     # end def set_pickle_cargo
 
     def get_pickle_cargo (self, obj) :

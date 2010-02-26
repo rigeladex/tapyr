@@ -42,6 +42,7 @@ from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
 import _GTW._Form._MOM.Completer
+import _GTW._Form._MOM.Javascript
 
 from   _GTW._Form._MOM.Inline_Description      import \
     ( Link_Inline_Description      as LID
@@ -59,16 +60,17 @@ primary = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    address_completer = GTW.Form.MOM.Completer \
+    address_completer = GTW.Form.MOM.Javascript.MOM_Completer \
         ( fields    = ("street", "city", "zip", "country")
         , triggers  = dict (street = dict (min_chars = 3))
         , name      = "Address_Completer"
         )
-    phone_completer = GTW.Form.MOM.Completer \
+    phone_completer = GTW.Form.MOM.Javascript.MOM_Completer \
         ( fields    = ( "country_code", "area_code", "number")
         , triggers  = dict (number = dict (min_chars = 2))
         , name      = "Phone_Completer"
         )
+
 
     Address         = dict \
         ( ETM       = "GTW.OMP.PAP.Address"
@@ -123,7 +125,7 @@ class Admin (object) :
                 , AID
                     ( "phone"
                     , FGD (primary)
-                    , completer = phone_completer
+                    #, completer = phone_completer
                     )
                 , FGD ( "extension")
                 , legend    = _("Phone numbers")
