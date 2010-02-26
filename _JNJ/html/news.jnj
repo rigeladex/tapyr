@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
+##    26-Feb-2010 (CT) Added some `{#--#}` to avoid spurious whitespace
 ##    ««revision-date»»···
 ##--
 #}
@@ -36,17 +37,17 @@
 {%- macro entry (e) -%}
   <div class="news-entry">
     <div class="news-meta">
-      <span class="news-author">{{ e.author }}</span>
-      <span class="news-date">{{ e.date }}</span>
+      <span class="news-author">{{ e.author }}</span>{#--#}
+      <span class="news-date">{{ e.date }}</span>{#--#}
       <div  class="news-title">{{ GTW.firstof (e.desc, e.title) }}</div>
     </div>
     {{ e.contents|safe }}
     {%- if e.changer and NAV.allow (e.changer, request.user) %}
-      <a href="{{ e.changer.abs_href }}"
-         title="{{ GTW._T ('Edit this entry') }}"
-         class="button"
-      >
-        {{ GTW._T ("Change") }}
+      <a href="{{ e.changer.abs_href }}"{#--#}
+         title="{{ GTW._T ('Edit this entry') }}"{#--#}
+         class="button"{#--#}
+      >{#--#}
+        {{ GTW._T ("Change") }}{#--#}
       </a>
     {% endif -%}
   </div>
