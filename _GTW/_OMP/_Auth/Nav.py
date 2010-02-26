@@ -53,8 +53,35 @@ primary = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
+    group_completer  =GTW.Form.MOM.Completer \
+        ( fields    = ("name")
+        , triggers  = dict (name = dict (min_chars = 1))
+        , name      = "Group_Completer"
+        )
+
     Account          = dict \
         ( ETM        = "GTW.OMP.Auth.Account_P"
+        , Type       = GTW.NAV.E_Type.Admin
+        , Form_args  =
+            ( FGD (primary)
+            , FGD ()
+            , LID
+                ( "GTW.OMP.Auth.Account_in_Group"
+                , FGD ("user_attr")
+                , AID
+                    ( "group"
+                    , FGD (primary)
+                    , completer = group_completer
+                    )
+                , legend    = _("Groups")
+                , title     = _("Groups")
+                )
+            )
+        , permission = Is_Superuser ()
+        )
+
+    Group            = dict \
+        ( ETM        = "GTW.OMP.Auth.Group"
         , Type       = GTW.NAV.E_Type.Admin
         , Form_args  =
             ( FGD (primary)
