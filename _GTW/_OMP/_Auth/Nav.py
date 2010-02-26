@@ -77,7 +77,7 @@ class Admin (object) :
                 , title     = _("Groups")
                 )
             )
-        #, permission = Is_Superuser ()
+        , permission = Is_Superuser ()
         )
 
     Group            = dict \
