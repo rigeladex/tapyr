@@ -143,6 +143,16 @@ class Admin (object) :
         , list_display = ("ui_display", "desc")
         )
 
+    Person_has_Address = dict \
+        ( ETM       = "GTW.OMP.PAP.Person_has_Address"
+        , Type      = GTW.NAV.E_Type.Admin
+        )
+
+    Person_has_Email = dict \
+        ( ETM       = "GTW.OMP.PAP.Person_has_Email"
+        , Type      = GTW.NAV.E_Type.Admin
+        )
+
     Person_has_Phone = dict \
         ( ETM       = "GTW.OMP.PAP.Person_has_Phone"
         , Type      = GTW.NAV.E_Type.Admin

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-24 17:31+0100\n"
+"POT-Creation-Date: 2010-02-26 18:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,6 +48,14 @@ msgstr ""
 
 #: _GTW/_OMP/_SWP/__babel__.py:0
 msgid "Format"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Head line"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/__babel__.py:0
+msgid "Head line of the web page"
 msgstr ""
 
 #: _GTW/_OMP/_SWP/__babel__.py:0

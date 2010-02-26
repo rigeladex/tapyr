@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Jan-2010 (CT) Creation
 #    18-Jan-2010 (CT) `In_Page_Group` removed
+#    26-Feb-2010 (CT) `Is_Superuser` added
 #    ««revision-date»»···
 #--
 
@@ -77,6 +78,14 @@ class Is_Creator (_Permission_) :
     # end def predicate
 
 # end class Is_Creator
+
+class Is_Superuser (_Permission_) :
+
+    def predicate (self, user, page, * args, ** kw) :
+        return user.superuser
+    # end def predicate
+
+# end class Is_Superuser
 
 if __name__ != "__main__":
     GTW.NAV._Export ("*")

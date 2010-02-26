@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-02-24 17:31+0100\n"
+"PO-Revision-Date: 2010-02-26 18:07+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:879
+#: _MOM/Entity.py:900
 #, python-format
 msgid ""
 "%s\n"
@@ -28,13 +28,17 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1071
+#: _MOM/_Attr/Type.py:1089
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
 msgstr ""
 "Ein Name beginng mit einem Buchstaben oder Unterstrich, gefolgt\"\n"
 "\"von Buchstaben, Ziffern und Unterstrichen."
+
+#: _MOM/__babel__.py:0
+msgid "All mandatory attributes must be (always) defined."
+msgstr "Alle obligatorischen Attribute müssen (ständig) definiert sein."
 
 #: _MOM/__babel__.py:0
 msgid "All object invariants must be satisfied."
@@ -48,7 +52,7 @@ msgstr "Alle erforderlichen Attribute müssen definiert sein."
 msgid "An_Entity"
 msgstr "An-Entität"
 
-#: _MOM/_Meta/M_Entity.py:110
+#: _MOM/_Meta/M_Entity.py:112
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -62,7 +66,7 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:781
+#: _MOM/_Attr/Kind.py:801
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
@@ -91,7 +95,7 @@ msgstr "Id-Entität"
 msgid "Indicates if object/link was created automatically or not."
 msgstr "Zeigt an, ob das Objekt/der Link automatisch erzeugt wurde."
 
-#: _MOM/_Attr/Type.py:828
+#: _MOM/_Attr/Type.py:841
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
@@ -128,12 +132,12 @@ msgstr "Name"
 msgid "Named_Object"
 msgstr "Benanntes-Objekt"
 
-#: _MOM/_Attr/Type.py:643
+#: _MOM/_Attr/Type.py:654
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
 
-#: _MOM/_Attr/Type.py:237
+#: _MOM/_Attr/Type.py:239
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
 
@@ -141,12 +145,12 @@ msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
 msgid "Object"
 msgstr "Objekt"
 
-#: _MOM/_Attr/Kind.py:684
+#: _MOM/_Attr/Kind.py:686
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:694
+#: _MOM/_Attr/Kind.py:696
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -167,7 +171,7 @@ msgstr "Zeigt an ob das Objekt vom Anwender verändert werden kann"
 msgid "Specifies whether entity is used by another entity."
 msgstr "Zeigt an ob eine Entität von einer anderen Entität verwendet wird."
 
-#: _MOM/_Attr/Kind.py:273
+#: _MOM/_Attr/Kind.py:275
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
@@ -180,7 +184,7 @@ msgstr "Ui Darstellung"
 msgid "Unique name of the object."
 msgstr "Eindeutiger Name des Objekts."
 
-#: _MOM/_Attr/Kind.py:685
+#: _MOM/_Attr/Kind.py:687
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
@@ -189,7 +193,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Type.py:312
+#: _MOM/_Attr/Type.py:314
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -217,10 +221,14 @@ msgid "left"
 msgstr "links"
 
 #: _MOM/__babel__.py:0
+msgid "mandatory_defined"
+msgstr ""
+
+#: _MOM/__babel__.py:0
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:638
+#: _MOM/_Attr/Type.py:649
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"

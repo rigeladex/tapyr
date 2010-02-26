@@ -41,6 +41,9 @@
 #    19-Feb-2010 (MG) `reset_password` implemented
 #    19-Feb-2010 (MG) Account activation added
 #    20-Feb-2010 (MG) Account management functions added
+#    26-Feb-2010 (CT) `authenticated` defined as alias for `active`
+#    26-Feb-2010 (CT) `kind` of `suspended`, `password`, and `salt` changed
+#                     to `Internal` (set by the application, not the user)
 #    ««revision-date»»···
 #--
 
@@ -65,7 +68,7 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Attributes
 
         class name (A_Email) :
-            """User name associated with this account"""
+            """Email that serves as user name for this account"""
 
             kind       = Attr.Primary
 
@@ -81,7 +84,7 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
         # end class active
 
         class enabled (A_Boolean) :
-            """This account is currently enabled (the suer can login)."""
+            """This account is currently enabled (the user can login)."""
 
             kind       = Attr.Optional
             default    = False
@@ -99,14 +102,14 @@ class _Auth_Account_ (Auth.Entity, _Ancestor_Essence) :
         class suspended (A_Boolean) :
             """This account is currently suspended (due to a pending action)."""
 
-            kind       = Attr.Optional
+            kind       = Attr.Internal
             default    = True
 
         # end class suspended
 
     # end class _Attributes
 
-    authenticated = True
+    authenticated = TFL.Meta.Alias_Property ("active")
 
 Account = _Auth_Account_ # end class _Auth_Account_
 
@@ -123,7 +126,7 @@ class Account_Anonymous (_Ancestor_Essence) :
         class active (_Ancestor_Essence._Attributes.active) :
 
             kind       = Attr.Const
-            default    = True
+            default    = False
 
         # end class active
 
@@ -135,8 +138,6 @@ class Account_Anonymous (_Ancestor_Essence) :
         # end class superuser
 
     # end class _Attributes
-
-    authenticated = False
 
 # end class Account_Anonymous
 
@@ -155,35 +156,34 @@ class Account_P_Manager (_Ancestor_Essence.M_E_Type.Manager) :
 
     def create_new_account (self, name, password) :
         account = self (name, password, enabled = True, suspended = True)
-        return \
-            account, self.home_scope.GTW.OMP.Auth.Account_EMail_Verification \
-                (account).token
+        AEV     = self.home_scope.GTW.OMP.Auth.Account_EMail_Verification
+        return account, AEV (account).token
     # end def create_new_account
 
     def force_password_change (self, account) :
-        Auth          = self.home_scope.GTW.OMP.Auth
+        Auth = self.home_scope.GTW.OMP.Auth
         if isinstance (account, basestring) :
-            account   = self.query (name = account).one ()
+            account = self.query (name = account).one ()
         if not Auth.Account_Password_Change_Required.query \
-            (account  = account).count () :
+            (account = account).count () :
             Auth.Account_Password_Change_Required (account)
     # end def force_password_change
 
     def reset_password (self, account) :
-        Auth         = self.home_scope.GTW.OMP.Auth
+        Auth = self.home_scope.GTW.OMP.Auth
         if isinstance (account, basestring) :
-            account  = self.query           (name = account).one ()
+            account = self.query (name = account).one ()
         if not account.enabled :
             raise TypeError (u"Account has been disabled")
         ### first we set the password to someting random nobody knows
-        account.change_password             (self._etype.random_password (32))
+        account.change_password (self._etype.random_password (32))
         ### than we create the password change request action
-        self.force_password_change          (account)
+        self.force_password_change (account)
         ### now create a reset password action which contains the new password
         new_password = self._etype.random_password (16)
-        Auth.Account_Pasword_Reset          (account, password = new_password)
-        ### and temporaty suspend the account
-        account.set                         (suspended = True)
+        Auth.Account_Pasword_Reset (account, password = new_password)
+        ### and temporarily suspend the account
+        account.set (suspended = True)
         return new_password
     # end def reset_password
 
@@ -200,7 +200,7 @@ class Account_P (_Ancestor_Essence) :
         class password (A_String) :
             """Password for this account"""
 
-            kind       = Attr.Required
+            kind       = Attr.Internal
             max_length = 50
 
         # end class password
@@ -208,8 +208,8 @@ class Account_P (_Ancestor_Essence) :
         class salt (A_String) :
             """The salt used for the password hash."""
 
-            kind               = Attr.Required
-            max_length         = 50
+            kind       = Attr.Internal
+            max_length = 50
 
         # end class salt
 

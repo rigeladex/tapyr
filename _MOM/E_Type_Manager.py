@@ -61,6 +61,7 @@
 #     8-Feb-2010 (CT) `__getattr__` and `__repr__` moved from `Id_Entity` to
 #                     `Entity`
 #    18-Feb-2010 (CT) `Link1` added
+#    26-Feb-2010 (CT) `Object.singleton` added
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ from   _TFL import TFL
 
 import _TFL._Meta.Object
 
-from   _TFL.predicate import paired
+from   _TFL.predicate import first, paired
 
 class Entity (TFL.Meta.Object) :
     """Base class for scope-specific E_Type managers."""
@@ -203,6 +204,16 @@ class Object (Id_Entity) :
             epk = tuple (self._cooked_epk_iter (epk))
         return self.__super.instance (* epk, ** kw)
     # end def instance
+
+    @property
+    def singleton (self) :
+        Type = self._etype
+        if Type.max_count == 1 :
+            try :
+                return first (self.query ())
+            except IndexError :
+                pass
+    # end def singleton
 
     def _cooked_epk_iter (self, epk) :
         for (pka, v) in zip (self._etype.primary, epk) :

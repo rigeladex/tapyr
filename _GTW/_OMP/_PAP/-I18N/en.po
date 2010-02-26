@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-24 17:31+0100\n"
+"PO-Revision-Date: 2010-02-26 18:07+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:110 _GTW/_OMP/_PAP/Nav.py:111
+#: _GTW/_OMP/_PAP/Nav.py:117 _GTW/_OMP/_PAP/Nav.py:118
 msgid "Addresses"
 msgstr ""
 
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Date_Interval_N"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:67 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:68 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Description"
 msgstr ""
 
@@ -82,7 +82,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Email.py:58 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:59 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email address"
 msgstr ""
 
@@ -146,7 +146,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:96 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Nav.py:107 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Lifetime"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgstr ""
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:119 _GTW/_OMP/_PAP/Nav.py:120
+#: _GTW/_OMP/_PAP/Nav.py:129 _GTW/_OMP/_PAP/Nav.py:130
 msgid "Phone numbers"
 msgstr ""
 
@@ -304,36 +304,9 @@ msgstr ""
 msgid "finish_after_start"
 msgstr ""
 
-#~ msgid "Birth date"
+#~ msgid "All mandatory attributes must be (always) defined."
 #~ msgstr ""
 
-#~ msgid "Date"
-#~ msgstr ""
-
-#~ msgid "Date of birth (and death)"
-#~ msgstr ""
-
-#~ msgid "Date of birth of an person, entity, or link"
-#~ msgstr ""
-
-#~ msgid "Date of death of an person, entity, or link"
-#~ msgstr ""
-
-#~ msgid "Death date"
-#~ msgstr ""
-
-#~ msgid "Geburtstag"
-#~ msgstr ""
-
-#~ msgid "Lifetime_N"
-#~ msgstr ""
-
-#~ msgid "Specifies whether person, entity, or links ia currently alive"
-#~ msgstr ""
-
-#~ msgid "The date of death must be later than the date of birth"
-#~ msgstr ""
-
-#~ msgid "death_after_birth"
+#~ msgid "mandatory_defined"
 #~ msgstr ""
 

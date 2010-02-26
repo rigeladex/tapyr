@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-24 17:31+0100\n"
+"PO-Revision-Date: 2010-02-26 18:07+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -64,6 +64,10 @@ msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Active"
+msgstr ""
+
+#: _GTW/_OMP/_Auth/__babel__.py:0
+msgid "Email that serves as user name for this account"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
@@ -123,7 +127,7 @@ msgid "The salt used for the password hash."
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
-msgid "The temporaty password."
+msgid "The temporary password."
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
@@ -135,7 +139,7 @@ msgid "This account is currently active."
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
-msgid "This account is currently enabled (the suer can login)."
+msgid "This account is currently enabled (the user can login)."
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
@@ -148,10 +152,6 @@ msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "Unique token which identifies this action."
-msgstr ""
-
-#: _GTW/_OMP/_Auth/__babel__.py:0
-msgid "User name associated with this account"
 msgstr ""
 
 #: _GTW/_OMP/_Auth/__babel__.py:0
@@ -169,4 +169,13 @@ msgstr ""
 #: _GTW/_OMP/_Auth/__babel__.py:0
 msgid "`Group` linked to `account`"
 msgstr ""
+
+#~ msgid "All mandatory attributes must be (always) defined."
+#~ msgstr ""
+
+#~ msgid "The temporaty password."
+#~ msgstr ""
+
+#~ msgid "mandatory_defined"
+#~ msgstr ""
 

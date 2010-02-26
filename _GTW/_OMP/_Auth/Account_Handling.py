@@ -211,7 +211,7 @@ class Account_Pasword_Reset (_Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Attributes
 
         class password (A_Email) :
-            """The temporaty password."""
+            """The temporary password."""
 
             kind               = Attr.Required
 

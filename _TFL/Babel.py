@@ -35,6 +35,7 @@
 #    25-Jan-2010 (MG) Multiprocess support added
 #    17-Feb-2010 (CT) `compile` changed to use `__import__` instead of
 #                     `execfile`
+#    26-Feb-2010 (CT) `process_count` forced to `1`
 #    ««revision-date»»···
 #--
 from   _TFL           import TFL
@@ -202,14 +203,14 @@ def _extract_one_directory (base_dir, cmd = None) :
 # end def _extract_one_directory
 
 def extract (cmd) :
-    if Process and cmd.process_count :
+    if Process :
         ### we cannot use a Pool here because we need to start a ne wprocess
         ### for each extraction to ensure that the MOM Meta Machinery has not
         ### been executed already
         pool = []
         dirs = cmd.argv [:]
         while dirs or pool :
-            while dirs and (len (pool) < cmd.process_count) :
+            while dirs and (len (pool) < 1) :
                 p = Process \
                     ( target = _extract_one_directory
                     , args   = (dirs.pop (0), cmd)
@@ -247,7 +248,6 @@ Extract = TFL.CAO.Cmd \
         , "global_config:P?A global config file"
         , "keywords:S,?Additional extraction keyowrds"
         , "no_location:B?Suppress the location information"
-        , "process_count:I=4?Size of the process pool."
         , "omit_header:B?Omit the header in the POT file"
         , "sort:B?Generated template should be alphabetical sorted"
         , "strip_comment_tags:B?Strip the comment tags"

@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-24 17:31+0100\n"
+"PO-Revision-Date: 2010-02-26 18:07+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -31,7 +31,7 @@ msgstr "Titel."
 msgid "Address"
 msgstr "Adresse"
 
-#: _GTW/_OMP/_PAP/Nav.py:110 _GTW/_OMP/_PAP/Nav.py:111
+#: _GTW/_OMP/_PAP/Nav.py:117 _GTW/_OMP/_PAP/Nav.py:118
 msgid "Addresses"
 msgstr "Adressen"
 
@@ -64,7 +64,6 @@ msgid "Country code"
 msgstr "Ländervorwahl"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr "Geburtstag (und Sterbetag)"
 
@@ -76,7 +75,7 @@ msgstr "Datumsintervall"
 msgid "Date_Interval_N"
 msgstr "Datumsintervall"
 
-#: _GTW/_OMP/_PAP/Email.py:67 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:68 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -84,7 +83,7 @@ msgstr "Beschreibung"
 msgid "Email"
 msgstr "Email"
 
-#: _GTW/_OMP/_PAP/Email.py:58 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:59 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Email address"
 msgstr "Emailadresse"
 
@@ -148,7 +147,7 @@ msgstr "Nachname"
 msgid "Latitude"
 msgstr "Breite"
 
-#: _GTW/_OMP/_PAP/Nav.py:96 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Nav.py:107 _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Lifetime"
 msgstr "Lebenszeit"
 
@@ -204,7 +203,7 @@ msgstr "Telefon"
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr "Telefonnummer (ohne Vorwahl oder Durchwahl)"
 
-#: _GTW/_OMP/_PAP/Nav.py:119 _GTW/_OMP/_PAP/Nav.py:120
+#: _GTW/_OMP/_PAP/Nav.py:129 _GTW/_OMP/_PAP/Nav.py:130
 msgid "Phone numbers"
 msgstr "Telefonnummern"
 
@@ -240,8 +239,10 @@ msgstr "Kurze Beschreibung der Telefonnummer"
 msgid ""
 "Specifies whether entity is currently alive, i.e., the current\n"
 "date lies between `start` and `finish`."
-msgstr "Gibt an, ob das Ding momentan am Leben ist, d.h., ob das heutige\n"
-"Datum zwischen `Beginn` und `Ende` liegt."
+msgstr ""
+"Gibt an, ob das Ding momentan am Leben ist, d.h., ob das heutige\n"
+"\"\n"
+"\"Datum zwischen `Beginn` und `Ende` liegt."
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "Start"
@@ -264,7 +265,6 @@ msgid "Street (or place) and house number"
 msgstr "Strasse (oder Platz) und Hausnummer"
 
 #: _GTW/_OMP/_PAP/__babel__.py:0
-#, fuzzy
 msgid "The finish date must be later than the start date"
 msgstr "Der Sterbetag muss später als der Geburtstag sein"
 
@@ -307,3 +307,4 @@ msgstr "Telefonnummer einer Person"
 #: _GTW/_OMP/_PAP/__babel__.py:0
 msgid "finish_after_start"
 msgstr ""
+
