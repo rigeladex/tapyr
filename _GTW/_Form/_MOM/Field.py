@@ -29,6 +29,7 @@
 #    25-Feb-2010 (CT) Factored from GTW.Form.MOM.Instance and
 #                     GTW.Form.MOM.Field_Group_Description
 #    25-Feb-2010 (CT) `css_class` added
+#    26-Feb-2010 (MG) `get_cooked` added
 #    ««revision-date»»···
 #--
 
@@ -52,6 +53,7 @@ import _TFL.Ival_Map
 MAT                            = MOM.Attr
 MAT.A_Attr_Type.widget         = WS ("html/field.jnj, string")
 MAT._A_Number_.widget          = WS ("html/field.jnj, number")
+MAT.A_Boolean.widget           = WS ("html/field.jnj, boolean")
 MAT.A_Date.widget              = WS ("html/field.jnj, date")
 MAT.A_Date_Time.widget         = WS ("html/field.jnj, datetime")
 MAT.A_Email.widget             = WS ("html/field.jnj, email")
@@ -113,6 +115,10 @@ class Field (TFL.Meta.Object) :
         result = " ".join (c for c in (ak.css_class, ak.css_class_len) if c)
         return result
     # end def css_class
+
+    def get_cooked (self, form, instance) :
+        return getattr (instance, self.attr_kind.ckd_name, None)
+    # end def get_cooked
 
     def get_raw (self, form, instance) :
         return self.attr_kind.get_raw (instance)

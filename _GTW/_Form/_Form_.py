@@ -35,6 +35,7 @@
 #                     not part of the request data!)
 #    22-Feb-2010 (CT) `kw` added
 #    26-Feb-2010 (MG) Javascript handling added
+#    26-Feb-2010 (MG) `is_checked` added
 #    ««revision-date»»···
 #--
 
@@ -143,6 +144,15 @@ class _Form_ (TFL.Meta.Object) :
             return self.request_data.get (html_name, u"")
         return field.get_raw (self, self.instance)
     # end def get_raw
+
+    def is_checked (self, field) :
+        result = dict (value = "yes")
+        if isinstance (field, basestring) :
+            field = self.fields [field]
+        if field.get_cooked (self, self.instance) :
+            result ["checked"] = "checked"
+        return result
+    # end def is_chained
 
 # end class _Form_
 

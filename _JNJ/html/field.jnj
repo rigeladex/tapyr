@@ -37,11 +37,16 @@
 ##    18-Feb-2010 (MG) `named_object` added
 ##    24-Feb-2010 (CT) `_field` chnged to set `css_class` dependent on
 ##                     `ui_length`
+##    26-Feb-2010 (MG) `boolean` added
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import html_version as X -%}
+
+{%- macro boolean (fo, fi) -%}
+  {{ _field (X.input.checkbox, fo, fi, ** fo.is_checked (fi)) }}
+{%- endmacro -%} {#- boolean -#}
 
 {%- macro date (fo, fi) -%}
   {{ _field (X.input.date, fo, fi) }}
@@ -114,7 +119,7 @@
       ( id            = "F_%s"|format (id)
       , class         = cssc
       , name          = id
-      , value         = fo.get_raw (fi)
+      , value         = kwargs.pop ("value", fo.get_raw (fi))
       , ** kwargs
       )
   }}
