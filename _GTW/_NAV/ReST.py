@@ -234,12 +234,12 @@ class Dyn_Slice_ReST_Dir (GTW.NAV._Site_Entity_) :
     nav_info_pat  = Regexp \
         ( r"^\.\. *$"
           "\n"
-          r" +<Nav-Info> *$"
+          r" +<(?P<expired>!?)Nav-Info> *$"
           "\n"
             r"(?P<code>"
               r"(?:^ +\w+ *=.*$" "\n" r")+"
             r")"
-          r" +</Nav-Info> *$"
+          r" +<!?/Nav-Info> *$"
         , re.MULTILINE
         )
     own_links     = ()
@@ -260,6 +260,8 @@ class Dyn_Slice_ReST_Dir (GTW.NAV._Site_Entity_) :
         pat = self.nav_info_pat
         if pat.search (src) :
             exec textwrap.dedent (pat.code) in globals (), result
+            if pat.expired :
+                result ["exp_date"] = "20091231"
             result ["src_contents"] = pat.sub ("", src).strip ()
         return result
     # end def _page_info
@@ -277,8 +279,8 @@ class Dyn_Slice_ReST_Dir (GTW.NAV._Site_Entity_) :
         for f in files :
             info = self._page_info (f)
             if info :
-                name = "%s.html" % (Filename (f).base, )
-                info ["name"] = name
+                info ["perma_name"] = base = Filename (f).base
+                info ["name"]       = name = "%s.html" % (base, )
                 add (Page_Type (parent = parent, ** info))
         entries.sort (key = sort_key, reverse = True)
     # end def _read_entries
