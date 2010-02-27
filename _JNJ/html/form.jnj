@@ -55,6 +55,7 @@
 ##    24-Feb-2010 (CT) Missing calls to `GTW._T` added
 ##    24-Feb-2010 (CT) `aid_div_seq` changed to honor `legend`
 ##    26-Feb-2010 (MG) Inline forms changed
+##    27-Feb-2010 (MG) Handling of hidden fields changed
 ##    ««revision-date»»···
 ##--
 #}
@@ -87,7 +88,7 @@
     {%- set desc = GTW._T (fi.description)|safe %}
     <div class="Field Field-{{ fi.name }}" title="{{ desc }}">
       {%- if loop.first %}
-        {%- for h in fg.hidden_fields %}
+        {%- for h in fo.hidden_fields %}
           {{ GTW.call_macro (h.widget, fo, h) }}
         {% endfor -%}
       {% endif %}
@@ -126,7 +127,7 @@
         {%- set desc = GTW._T (fi.description)|safe %}
         <td class="Field Field-{{ fi.name }}" title="{{ desc }}">
           {%- if loop.first %}
-            {%- for h in fg.hidden_fields %}
+            {%- for h in fo.hidden_fields %}
               {{ GTW.call_macro (h.widget.inline, fo, h) }}
             {% endfor -%}
           {% endif %}
@@ -203,7 +204,7 @@
         ( class = " many-2-many-range"
         , value = "%s:%s:%s"|format
             (inline.min_required, inline.form_count, inline.max_count)
-        , name  = "%s"|format(inline.range_field_name)
+        , name  = inline.range_field_name
         , id    = "F_%s"|format (inline.range_field_name)
         )
     -}}
@@ -236,10 +237,10 @@
   </fieldset>
 {%- endmacro -%} {#- inline_table -#}
 
-{%- macro inline_table_aid_td (fo, fg) -%}
+{%- macro inline_table_aid_td (fo, fg, first = False) -%}
   {%- set ifo =  fg.forms [0] -%}
   {%- for fg in ifo.field_groups %}
-    {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg)}}
+    {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg, loop.first) }}
     {%- if ifo.get_errors () %}
       <td>{{ _field_error (ifo, None) }}</td>
     {% endif -%}
@@ -253,12 +254,12 @@
   {% endfor  %}
 {%- endmacro -%} {#- inline_table_aid_th -#}
 
-{%- macro inline_table_td (fo, fg) -%}
+{%- macro inline_table_td (fo, fg, first = False) -%}
       {%- for fi in fg.visible_fields %}
         {%- set help = GTW._T (fi.help_text)|safe %}
         <td class="Field Field-{{ fi.name }}" title="{{ help }}">
-          {%- if loop.first %}
-            {%- for h in fg.hidden_fields %}
+          {%- if loop.first and first %}
+            {%- for h in fo.hidden_fields %}
               {{ GTW.call_macro (h.widget, fo, h) }}
             {% endfor -%}
           {% endif %}
@@ -279,7 +280,7 @@
       {% if fo.legend %}title="{{ GTW._T (fo.legend)|safe }}"{% endif -%}
     >
     {%- for fg in fgs %}
-        {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg) }}
+        {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg, loop.first) }}
     {% endfor -%}
     {%- if fo.get_errors () %}
       <td>{{ _field_error (fo, None) }}</td>

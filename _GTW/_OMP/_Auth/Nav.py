@@ -67,7 +67,6 @@ class Admin (object) :
             , FGD ()
             , LID
                 ( "GTW.OMP.Auth.Account_in_Group"
-                , FGD (WF ("user_attr"))
                 , AID
                     ( "group"
                     , FGD (primary)

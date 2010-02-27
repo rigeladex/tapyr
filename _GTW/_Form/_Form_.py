@@ -36,6 +36,7 @@
 #    22-Feb-2010 (CT) `kw` added
 #    26-Feb-2010 (MG) Javascript handling added
 #    26-Feb-2010 (MG) `is_checked` added
+#    27-Feb-2010 (MG) `M_Form.__new__` added to introduce `hidden_fields`
 #    ««revision-date»»···
 #--
 
@@ -54,6 +55,12 @@ class M_Form (TFL.Meta.Object.__class__) :
     """Meta class for forms."""
 
     parent_form = None
+
+    def __new__ (mcls, name, bases, dct) :
+        result = super (M_Form, mcls).__new__ (mcls, name, bases, dct)
+        result.hidden_fields = []
+        return result
+    # end def __new__
 
     def _setup_fields (cls, field_groups) :
         result = TFL.NO_List ()

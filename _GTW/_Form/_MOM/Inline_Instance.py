@@ -44,6 +44,7 @@
 #                     make sure that each posted form gets assing the correct
 #                     instance)
 #    22-Feb-2010 (MG) `_create_instance` added to `Attribute_Inline_Instance`
+#    27-Feb-2010 (MG) `add_internal_fields` changed
 #    ««revision-date»»···
 #--
 
@@ -78,12 +79,11 @@ class Lid_and_State_Field (GTW.Form.Field) :
 class M_Inline_Instance (GTW.Form.MOM._Instance_.__class__) :
     """Add additional internal fields"""
 
-    def add_internal_fields (cls, et_man, field_groups) :
-        cls.__m_super.add_internal_fields (et_man, field_groups)
-        fg = field_groups [0]
+    def add_internal_fields (cls, et_man) :
+        cls.__m_super.add_internal_fields (et_man)
         cls.lid_and_state_field = Lid_and_State_Field \
             ("_lid_a_state_", et_man = et_man)
-        fg.fields.append (cls.lid_and_state_field)
+        cls.hidden_fields.append (cls.lid_and_state_field)
     # end def add_internal_fields
 
 # end class M_Inline_Instance

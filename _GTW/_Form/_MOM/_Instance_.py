@@ -62,6 +62,7 @@
 #    22-Feb-2010 (MG) `_create_instance` factored
 #    24-Feb-2010 (MG) `from_name` added and used
 #    26-Feb-2010 (MG) Javascript handling changed
+#    27-Feb-2010 (MG) `add_internal_fields` changed
 #    ««revision-date»»···
 #--
 
@@ -144,7 +145,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
                     sub_form = getattr (fg, "form_cls", None)
                     if sub_form :
                         sub_forms [sub_form.form_name] = sub_form
-            result.add_internal_fields    (et_man, field_groups)
+            result.add_internal_fields    (et_man)
             js_on_ready         = ()
             if not result.parent_form :
                 js_on_ready = result.javascript.js_on_ready
@@ -155,12 +156,11 @@ class M_Instance (GTW.Form._Form_.__class__) :
         return result
     # end def __new__
 
-    def add_internal_fields (cls, et_man, field_groups) :
+    def add_internal_fields (cls, et_man) :
         ### we add the instance state field
-        fg = field_groups [0]
         cls.instance_state_field = Instance_State_Field \
             ("instance_state", et_man = et_man)
-        fg.fields.append (cls.instance_state_field)
+        cls.hidden_fields.append (cls.instance_state_field)
     # end def add_internal_fields
 
     def New (cls, et_man, * field_group_descriptions, ** kw) :
