@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    25-Feb-2010 (MG) Creation
+#    27-Feb-2010 (MG) Cleanup
 #    ««revision-date»»···
 #--
 
@@ -54,11 +55,14 @@ class Form (TFL.Meta.Object) :
         id             = getattr \
             (form, "form_name", str (random.randrange (1, 10000000)))
         form.css_class = " ".join ((getattr (self.form, "css_class", ""), id))
-        result = ["/* setup form `%s` */\n" % (id, )]
+        result     = ["/* setup form `%s` */\n" % (id, )]
+        completers = []
+        for c, f in self.completers :
+            completers.extend (c.js_on_ready (f))
         result.append ('$(".%s").GTW_Form\n' % (id, ))
         init    = dict \
             ( inlines    = [i.js_on_ready ()  for i      in self.inlines]
-            , completers = [c.js_on_ready (f) for (c, f) in self.completers]
+            , completers = completers
             )
         result.append ('  ( %s\n  );\n'% json.dumps (init))
         return result
@@ -106,33 +110,9 @@ class _Completer_ (TFL.Meta.Object) :
 
     __metaclass__ = TFL.Meta.M_Unique_If_Named
 
-    ### Can be overriden by `__init__` arguments
-    options   = dict \
-        ( fields       = ()
-        , min_chars    = 3
-        , prefix       = "/Admin"
-        )
-    _ignore_options = set (("name", "prefix"))
-
-    def __init__ (self, triggers, ** kw) :
-        self._triggers = triggers
-        self.options   = dict (self.options, ** kw)
-    # end def __init__
-
     def attach (self, form) :
         form.Form.javascript.completers.append ((self, form))
     # end def attach
-
-    @property
-    def triggers (self) :
-        result = {}
-        for k, v in self._triggers.iteritems () :
-            result [k] = d = v.copy ()
-            for k, v in self.options.iteritems () :
-                if k not in self._ignore_options :
-                    d.setdefault (k, v)
-        return result
-    # end def triggers
 
 # end class _Completer_
 

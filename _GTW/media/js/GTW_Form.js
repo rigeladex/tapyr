@@ -269,7 +269,7 @@
         var  lid           = $l_a_s.attr ("value").split (":") [0];
         self._restore_form_state   ($form, $form.data ("_state"));
         $elements.attr             ("disabled", "disabled");
-        $link.attr                 ("title", button.states [1].title);
+        $link.attr                 ("title", button.states [0].title);
         $button.removeClass        (button.states [1].icon)
                .addClass           (button.states [0].icon);
         self._update_button_states ($inline);

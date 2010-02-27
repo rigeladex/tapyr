@@ -69,7 +69,6 @@ class _Inline_Description_ (TFL.Meta.Object) :
     """Base class for all inline editing descriptions (links/attributes/...)."""
 
     completer    = None
-    js_on_ready  = ()
     css_class    = "inline-editing"
 
     Media        = GTW.Media \
@@ -134,13 +133,6 @@ class Link_Inline_Description (_Inline_Description_) :
     widget = GTW.Form.Widget_Spec \
         ( "html/form.jnj, inline_table"
         , Media             = _Inline_Description_.Media
-        )
-    js_on_ready  = \
-        ( ( '$(".m2m-inline-form-table").many2many '
-              '({link_prefix : "%(form_cls.prefix)s"});\n'
-          , 100
-          )
-        ,
         )
     css_class    = "inline-link"
 

@@ -34,6 +34,7 @@
 #     5-Feb-2010 (MG) First completer added
 #     8-Feb-2010 (MG) Fixed `Person` form spec: `position` now is a
 #                     composite attribute
+#    27-Feb-2010 (MG) Additional completers added
 #    ««revision-date»»···
 #--
 
@@ -41,7 +42,6 @@ from   _TFL.I18N                import _
 from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
-import _GTW._Form._MOM.Completer
 import _GTW._Form._MOM.Javascript
 
 from   _GTW._Form._MOM.Inline_Description      import \
@@ -60,12 +60,22 @@ primary = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    address_completer = GTW.Form.MOM.Javascript.MOM_Completer \
-        ( fields    = ("street", "city", "zip", "country")
-        , triggers  = dict (street = dict (min_chars = 3))
+    address_completer = GTW.Form.MOM.Javascript.Multi_Completer \
+        ( GTW.Form.MOM.Javascript.Completer
+            ( fields    = ("street", "city", "zip", "country")
+            , triggers  = dict (street = dict (min_chars = 3))
+            )
+        , zip       = GTW.Form.MOM.Javascript.Field_Completer
+            ( "zip", ("zip", "city", "country", "region")
+            , min_chars = 1
+            )
+        , city      = GTW.Form.MOM.Javascript.Field_Completer
+            ( "city", ("zip", "city", "country", "region")
+            , min_chars = 2
+            )
         , name      = "Address_Completer"
         )
-    phone_completer = GTW.Form.MOM.Javascript.MOM_Completer \
+    phone_completer = GTW.Form.MOM.Javascript.Completer \
         ( fields    = ( "country_code", "area_code", "number")
         , triggers  = dict (number = dict (min_chars = 2))
         , name      = "Phone_Completer"

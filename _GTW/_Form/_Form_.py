@@ -48,7 +48,7 @@ import _TFL.Record
 
 from   _GTW              import GTW
 import _GTW._Form.Field_Error
-import _GTW._Form.Javascipt
+import _GTW._Form.Javascript
 
 class M_Form (TFL.Meta.Object.__class__) :
     """Meta class for forms."""
@@ -96,7 +96,7 @@ class M_Form (TFL.Meta.Object.__class__) :
     @TFL.Meta.Once_Property
     def javascript (cls) :
         if not cls.parent_form :
-            return GTW.Form.Javascipt.Form (cls)
+            return GTW.Form.Javascript.Form (cls)
         return cls.parent_form.javascript
     # end def javascript
 

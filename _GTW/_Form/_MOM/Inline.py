@@ -174,7 +174,7 @@ class Attribute_Inline (_Inline_) :
             self.completer.attach               (self.form_cls)
             parent_form = self.form_cls.parent_form
             if issubclass (parent_form, GTW.Form.MOM.Instance) :
-                GTW.Form.Javascipt.Attribute_Inline (self.form_cls, self)
+                GTW.Form.Javascript.Attribute_Inline (self.form_cls, self)
     # end def _setup_javascript
 
     @TFL.Meta.Once_Property
@@ -237,7 +237,7 @@ class Link_Inline (_Inline_) :
     # end def forms
 
     def _setup_javascript (self) :
-        GTW.Form.Javascipt.Link_Inline (self.form_cls, self)
+        GTW.Form.Javascript.Link_Inline (self.form_cls, self)
     # end def _setup_javascript
 
     def __call__ (self, request_data) :

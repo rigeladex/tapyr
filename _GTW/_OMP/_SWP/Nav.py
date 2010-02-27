@@ -69,7 +69,7 @@ class Admin (object) :
                       , widget    = "html/form.jnj, fg_tr"
                       , css_class = "inline-instance"
                       )
-                , completer = GTW.Form.MOM.Javascript.MOM_Completer
+                , completer = GTW.Form.MOM.Javascript.Completer
                     ( fields    =
                         ("last_name", "first_name", "middle_name", "title")
                     , triggers  = dict

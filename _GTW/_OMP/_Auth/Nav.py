@@ -35,7 +35,7 @@ from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
 from   _GTW._NAV.Permission     import Is_Superuser
-import _GTW._Form._MOM.Completer
+import _GTW._Form._MOM.Javascript
 
 from   _GTW._Form._MOM.Inline_Description      import \
     ( Link_Inline_Description      as LID
@@ -53,7 +53,7 @@ primary = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    group_completer  =GTW.Form.MOM.Completer \
+    group_completer  =GTW.Form.MOM.Javascript.Completer \
         ( fields    = ("name")
         , triggers  = dict (name = dict (min_chars = 1))
         , name      = "Group_Completer"
