@@ -27,7 +27,8 @@
 **
 ** Revision Dates
 **    25-Feb-2010 (MG) Creation (based on model_edit_ui.js)
-**    ««revision-date»»···
+**    27-Feb-2010 (MG) `_form_submit` renumeration of forms added
+      ««revision-date»»···
 **--
 */
 
@@ -101,8 +102,8 @@
           {
             this._setup_inline (inlines [i]);
           }
-        this._setup_completers     (this.element);
-        this.element.bind          ("submit", this, this._form_submit);
+        this._setup_completers (this.element);
+        this.element.find (":submit").bind ("click", this, this._form_submit);
       }
     , _add_button : function ($element, button, prepend)
       {
@@ -238,12 +239,47 @@
       }
     , _form_submit : function (evt)
       {
-        var self = evt.data;
+        var  self     = evt.data;
+        var  pattern  = /M\d+-/;
+        var $this     = $(this);
+        /* re-enumerate the forms */
+        /* first, let's renumerate the inline-instance's */
+        self.element.find (".inline-form-table").each ( function ()
+            {
+                var $this  = $(this);
+                var  no    = -1; /* the first is the prototype */
+                $this.find (".inline-instance").each (function ()
+                {
+                    var $elements      = $(this).find (":input");
+                    var  edit_mod_list = ["id", "name"];
+                    var  new_no        = "M" + no + "-";
+                    for (var i = 0; i < $elements.length; i++)
+                    {
+                        var $e = $elements.eq (i);
+                        for (var j = 0; j < edit_mod_list.length; j++)
+                        {
+                            var n = edit_mod_list [j];
+                            $e.attr
+                              ( n
+                              , $e.attr (n).replace (pattern, new_no)
+                              );
+                        }
+                    }
+                    no = no + 1;
+                });
+                var $m2m_range = $this.find (".many-2-many-range:first");
+                var  m2m_range = $m2m_range.attr ("value").split (":");
+                m2m_range [1]  = no;
+                $m2m_range.attr ("value", m2m_range.join (":"));
+            });
         /* re-enable all input elements so that all information is sent to the
-        ** server
         */
-        self.element.find ("input[type=submit]").attr ("disabled", "disabled");
         self.element.find (":input").removeAttr ("disabled");
+        /* prevent multiple submits use a solution found here:
+        ** http://www.norio.be/blog/2008/09/preventing-multiple-form-submissions-revisited
+        */
+        $this.clone ().insertAfter ($this).attr ("disabled","disabled");
+        $this.hide  ();
       }
     , _restore_form_state : function ($form, state)
       {
