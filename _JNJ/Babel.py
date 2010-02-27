@@ -48,7 +48,7 @@ def Extract (fobj, keywords, comment_tags, config, method) :
     keywords = Default_Keywords
     for lineno, funcname, messages, comments in babel_extract \
         (fobj, keywords, comment_tags, config.options (method)) :
-        yield lineno, funcname, messages, comments
+        yield lineno, funcname, messages, comments, None
 # end def Extract
 
 def babel_extract (fileobj, keywords, comment_tags, options) :

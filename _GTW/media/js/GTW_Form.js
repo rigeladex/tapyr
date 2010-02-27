@@ -35,18 +35,21 @@
 (function ($)
 {
   var _T;
+  var _;
+  var _Tn;
 
   if ($.I18N === undefined)
     {
-      _T = function (t) { return t; }
+      _T = _ = _Tn = function (t) { return t; }
     }
   else
     {
-      _T = $.I18N._T;
+      _T = _ = $.I18N._T;
+      _Tn    = $.I18N._Tn;
     }
   var form_buttons =
       [ { name           : "add"
-        , title          : "Add new form"
+        , title          : _("Add new form")
         , css_class      : "inline-form-add"
         , add_to_inline  : "false"
         , href           : "#add"
@@ -60,13 +63,13 @@
         , default_state  : 0
         , states         :
             [ { name     : "delete"
-              , title    : "Delete"
+              , title    : _("Delete")
               , enabled  : "cur_count > min_count"
               , icon     : "ui-icon-trash"
               , callback : "_delete_inline"
               }
             , { name     : "recover"
-              , title    : "Undelete"
+              , title    : _("Undelete")
               , enabled  : "cur_count < max_count"
               , icon     : "ui-icon-plus"
               , callback : "_undelete_inline"
@@ -79,13 +82,13 @@
         , default_state  : 0
         , states         :
             [ { name     : "unlock"
-              , title    : "Rename"
+              , title    : _("Rename")
               , enabled  : "true"
               , icon     : "ui-icon-pencil"
               , callback : "_unlock_inline"
               }
             , { name     : "lock"
-              , title    : "Undo"
+              , title    : _("Undo")
               , enabled  : "true"
               , icon     : "ui-icon-arrowreturnthick-1-w"
               , callback : "_revert_inline"
@@ -93,7 +96,7 @@
             ]
         }
       , { name           : "copy"
-        , title          : "Copy"
+        , title          : _("Copy")
         , add_to_inline  : "lid"
         , href           : "#copy"
         , enabled        : "cur_count < max_count"

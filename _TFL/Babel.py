@@ -58,16 +58,16 @@ except ImportError :
 class Language_File_Collection (object) :
     """Collect messsage catalog files."""
 
-    def __init__ (self, directories, lang = None) :
+    def __init__ (self, directories, lang = None, suffix = "") :
         self.languages          = set ()
         self.directories        = set ()
         self.files_per_language = TFL.defaultdict (list)
         for d in directories :
-            self._add_languages (d, set (lang))
+            self._add_languages (d, set (lang), suffix)
     # end def __init__
 
     @classmethod
-    def from_sys_modules (cls, lang = None) :
+    def from_sys_modules (cls, lang = None, suffix = "") :
         directories = set ()
         i18n_dirs   = set ()
         for mod in sys.modules.values () :
@@ -77,19 +77,20 @@ class Language_File_Collection (object) :
             i18n = os.path.join (directory, "-I18N")
             if os.path.isdir (i18n) :
                 i18n_dirs.add (directory)
-        return cls (i18n_dirs, lang)
+        return cls (i18n_dirs, lang, suffix)
     # end def from_sys_modules
 
-    def _add_languages (self, directory, restrict_langs) :
+    def _add_languages (self, directory, restrict_langs, suffix) :
         i18n_dir = os.path.abspath (os.path.join (directory, "-I18N"))
         if restrict_langs :
             self.languages.update (restrict_langs)
             for lang in restrict_langs :
                 self.files_per_language [lang].append \
-                    (os.path.join (i18n_dir, "%s.po" % (lang, )))
+                    (os.path.join (i18n_dir, "%s%s.po" % (lang, suffix)))
         else :
-            for f in glob.glob (os.path.join (i18n_dir, "*.po")) :
-                lang = os.path.splitext               (os.path.basename (f)) [0]
+            for f in glob.glob (os.path.join (i18n_dir, "*%s.po" % suffix)) :
+                lang = os.path.splitext (os.path.basename (f)) [0].replace \
+                    (suffix, "")
                 if restrict_langs and lang not in restrict_langs :
                     continue
                 self.files_per_language [lang].append (f)
@@ -101,7 +102,8 @@ class Language_File_Collection (object) :
         for lang, files in self.files_per_language.iteritems () :
             for f in files :
                 output_dir = os.path.dirname (f)
-                pot_file   = os.path.join    (output_dir, cmd.template_file)
+                template   = "%s%s" % (cmd.template_file, cmd.file_suffix)
+                pot_file   = os.path.join    (output_dir, "%s.pot" % template)
                 templ      = TFL.Babel.PO_File.load (pot_file, locale = lang)
                 if os.path.exists (f) :
                     self._update  (lang, f, cmd, templ, pot_file)
@@ -141,22 +143,22 @@ class Language_File_Collection (object) :
             os.remove   (tmpname)
     # end def _update
 
-    def _mo_file_name (self, cmd, lang, po_file_n = None) :
+    def _output_file_name (self, cmd, lang, po_file_n = None, suffix = "") :
         if cmd.output_file :
             return cmd.output_file
+        ext = "js" if cmd.javascript else "mo"
         if not cmd.combine :
             return os.path.join \
-                (os.path.dirname (po_file_n), "%s.mo" % (lang, ))
+                (os.path.dirname (po_file_n), "%s%s.%s" % (lang, suffix, ext))
         return os.path.join \
             ( cmd.output_directory, lang, "LC_MESSAGES"
-            , "%s.mo" % (cmd.domain, )
+            , "%s%s.%s" % (cmd.domain, suffix, ext)
             )
-    # end def _mo_file_name
+    # end def _output_file_name
 
     def compile (self, cmd) :
         for lang, files in self.files_per_language.iteritems () :
             for po_file_n in files :
-                mo_file_n  = self._mo_file_name (cmd, lang, po_file_n)
                 po_file    = TFL.Babel.PO_File.load (po_file_n)
                 if po_file.fuzzy and not cmd.use_fuzzy :
                     print "Catalog %r is marked as fuzzy, skipping" % (po_file_n, )
@@ -165,22 +167,35 @@ class Language_File_Collection (object) :
                     for error in errors :
                         print >> sys.stderr, \
                             "Error: %s:%d: %s", (po_file_n, message.lineno, error)
-                print "compiling catalog %r to %r" % (po_file_n, mo_file_n)
-                po_file.generate_mo (mo_file_n)
+                if cmd.javascript :
+                    js_file_n  = self._output_file_name (cmd, lang, po_file_n)
+                    print "compiling catalog %r to %r" % (po_file_n, js_file_n)
+                    po_file.generate_js (lang, js_file_n)
+                else :
+                    mo_file_n  = self._output_file_name \
+                        (cmd, lang, po_file_n, suffix = cmd.file_suffix)
+                    print "compiling catalog %r to %r" % (po_file_n, mo_file_n)
+                    po_file.generate_mo (mo_file_n)
     # end def compile
 
     def compile_combined (self, cmd) :
         for lang, files in self.files_per_language.iteritems () :
             po_file   = TFL.Babel.PO_File.combined (* files)
-            mo_file_n = self._mo_file_name         (cmd, lang)
             if po_file.fuzzy and not cmd.use_fuzzy :
                 print "Catalog %r is marked as fuzzy, skipping" % (files [0], )
                 continue
             for message, errors in po_file.catalog.check ():
                 for error in errors :
                     print >> sys.stderr, "Error: %s", (error)
-            print "compiling combined catalog %r to %r" % (files, mo_file_n)
-            po_file.generate_mo (mo_file_n)
+            if cmd.javascript :
+                js_file_n = self._output_file_name     (cmd, lang)
+                print "compiling combined catalog %r to %r" % (files, js_file_n)
+                po_file.generate_js (lang, js_file_n)
+            else :
+                mo_file_n = self._output_file_name \
+                        (cmd, lang, suffix = cmd.file_suffix)
+                print "compiling combined catalog %r to %r" % (files, mo_file_n)
+                po_file.generate_mo (mo_file_n)
     # end def compile_combined
 
 # end class Language_File_Collection
@@ -261,7 +276,8 @@ Extract = TFL.CAO.Cmd \
 
 def language (cmd) :
     """Create or update the message catalog for a language."""
-    lang_files = Language_File_Collection (cmd.argv, cmd.languages)
+    lang_files = Language_File_Collection \
+        (cmd.argv, cmd.languages, cmd.file_suffix)
     lang_files.init_or_update (cmd)
 # end def language
 
@@ -270,18 +286,19 @@ Language = TFL.CAO.Cmd \
     , name = "language"
     , args =
         ( "directories:P"
-            "?Directories where the extraction should start"
+            "?Directories where the languages will be placed/searched"
         ,
         )
     , opts =
         ( "languages:S,?Which language should be processed"
         , "ignore_obsolete:B?"
             "Do not include obsolete messages in the output"
+        , "file_suffix:S=?Add a suffix to the language file names"
         , "no_fuzzy:B?Do not use fuzzy matching (default False)"
         , "output_directory:P=-I18N?Output directory"
         , "previous:B?Keep previous msgids of translated messages"
         , "sort:B?Generated po should be alphabetical sorted"
-        , "template_file:P=template.pot?Name of the template file"
+        , "template_file:P=template?Name of the template file"
         )
     , min_args = 1
     )
@@ -292,9 +309,11 @@ def compile (cmd) :
         f, e = os.path.splitext (p)
         with TFL.Context.list_push (sys.path, d) :
             __import__ (f)
-        lang_coll = Language_File_Collection.from_sys_modules (cmd.languages)
+        lang_coll = Language_File_Collection.from_sys_modules \
+            (cmd.languages, cmd.file_suffix)
     else :
-        lang_coll = Language_File_Collection (cmd.argv, cmd.languages)
+        lang_coll = Language_File_Collection \
+            (cmd.argv, cmd.languages, cmd.file_suffix)
     if cmd.combine :
         lang_coll.compile_combined (cmd)
     else :
@@ -305,14 +324,17 @@ Compile = TFL.CAO.Cmd \
     ( compile
     , name = "compile"
     , args =
-        ( "directories:P?Directories XXX"
+        ( "directories:P?Directories where the language files should be "
+            "searched"
         ,
         )
     , opts =
         ( "combine:B?Combine all files for a langage into one mo file"
         , "domain:S=messages?Domain for the meesage catalog"
+        , "file_suffix:S=?File suffix which should be added to the language"
         , "import_file:P?Determine directories from imported modules after "
             "importing this files"
+        , "javascript:B?Generate a js file instead of a mo"
         , "languages:S,?Which language should be processed"
         , "output_directory:P=locale?Output directory"
         , "output_file:P?Explicit name of the MO file"

@@ -30,6 +30,8 @@
 #    25-Jan-2010 (MG) Convert absolute path to relative path
 #    30-Jan-2010 (MG) `ignore_patterns` combine with defaults
 #    24-Feb-2010 (MG) Duplicate message check added
+#    27-Feb-2010 (MG) Allow the extraction method to specify in which file
+#                     the translation was found
 #    ««revision-date»»···
 #--
 from   _TFL                          import TFL
@@ -107,7 +109,7 @@ def Extract (dirname, template_file, config, cmd) :
                         rfp      = TFL.relative_to_python_path (filepath)
                         print "Method `%-10s`: `%s" % (method_name, filename)
                         trans = config.get ("loaded_translations", method_name)
-                        for lineno, message, comments in \
+                        for lineno, message, comments, found_in in \
                                 _extract_from_file    \
                                     ( method_name
                                     , filepath
@@ -115,9 +117,12 @@ def Extract (dirname, template_file, config, cmd) :
                                     , cmd
                                     , keywords
                                     ) :
+                            fn = rfp
+                            if found_in :
+                                fn = TFL.relative_to_python_path (found_in)
                             if message not in trans :
                                 po_file.add \
-                                    ( message, None, [( rfp, lineno)]
+                                    ( message, None, [(fn, lineno)]
                                     , auto_comments = comments
                                     )
                         break
@@ -130,7 +135,7 @@ def Extract (dirname, template_file, config, cmd) :
 def _extract_from_file (method_name, file_name, config, cmd, keywords) :
     method = config.extractors [method_name]
     file   = open (file_name, "U")
-    for lineno, funcname, messages, comments in method \
+    for lineno, funcname, messages, comments, found_in in method \
         ( file, keywords
         , comment_tags = ()
         , config       = config
@@ -173,7 +178,7 @@ def _extract_from_file (method_name, file_name, config, cmd, keywords) :
 
         if cmd.strip_comment_tags:
             _strip_comment_tags (comments, comment_tags)
-        yield lineno, messages, comments
+        yield lineno, messages, comments, found_in
 # end def _extract_from_file
 
 def _strip_comment_tags(comments, tags):
@@ -191,6 +196,3 @@ def _strip_comment_tags(comments, tags):
 if __name__ != "__main__" :
     TFL.Babel._Export ("*")
 ### __END__ TFL.Babel.Extract
-
-
-

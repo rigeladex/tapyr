@@ -36,7 +36,7 @@ dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_NAV/example 
 
 case "$cmd" in
     "extract" )
-        /usr/bin/python _TFL/Babel.py extract                            \
+        python _TFL/Babel.py extract                            \
             -bugs_address        "tanzer@swing.co.at,martin@mangari.org" \
             -charset             iso-8859-1                              \
             -copyright_holder    "Mag. Christian Tanzer, Martin Glueck"  \
@@ -47,7 +47,7 @@ case "$cmd" in
         ;;
     "language" )
         lang=${1:-"de"}
-        /usr/bin/python _TFL/Babel.py language -languages "$lang" -sort $dirs
+        python _TFL/Babel.py language -languages "$lang" -sort $dirs
         ;;
     * )
         echo "Unknown command $cmd"

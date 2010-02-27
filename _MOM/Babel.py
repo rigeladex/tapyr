@@ -31,6 +31,7 @@
 #                     the extended python extractor
 #    21-Jan-2010 (MG) Use new `TFL.Babel.Existing_Translations`
 #    25-Jan-2010 (MG) Add doctrings to translations
+#    27-Feb-2010 (MG) Add the filename of the e-type to the translation
 #    ««revision-date»»···
 #--
 from   _MOM                import MOM
@@ -45,21 +46,22 @@ def Add_Translations (encoding, config, method, app_type) :
     trans        = config.get ("loaded_translations", method)
     translations = []
 
-    def _add_object (obj, default_name, add_doc_string) :
+    def _add_object (obj, default_name, add_doc_string, filename) :
         msg = getattr (obj, "ui_name", default_name)
         if msg not in trans :
-            translations.append ((0, None, msg, []))
+            translations.append ((0, None, msg, [], filename))
         doc_string = TFL.normalized_indent (obj.__doc__ or "")
         if add_doc_string and doc_string and doc_string not in trans :
-            translations.append ((0, None, doc_string, []))
+            translations.append ((0, None, doc_string, [], filename))
     # end def _add_object
 
     for et in app_type.etypes.itervalues () :
-        _add_object (et, et.ui_name, False)
+        filename = et.__module__
+        _add_object (et, et.ui_name, False, filename)
         for prop_spec in et._Attributes, et._Predicates:
             for pn in prop_spec._own_names :
                 prop = prop_spec._prop_dict [pn]
-                _add_object (prop, prop.name, True)
+                _add_object (prop, prop.name, True, filename)
     return translations
 # end def Add_Translations
 

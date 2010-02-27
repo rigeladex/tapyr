@@ -40,6 +40,7 @@ from    babel.messages.mofile  import write_mo
 from    babel.messages.catalog import Catalog
 import  os
 import  sys
+import  json
 
 class PO_File (TFL.Meta.Object) :
     """A object to handle PO/POT files."""
@@ -109,6 +110,24 @@ class PO_File (TFL.Meta.Object) :
     def fuzzy (self, value) :
         self.catalog.fuzzy = value
     # end def fuzzy
+
+    def generate_js (self, language, file_name, use_fuzzy = False) :
+        file   = open (file_name, "w")
+        result = []
+        for msg in self.catalog :
+            loc = ", ".join ("%s:%s" % (f, l) for (f, l) in msg.locations)
+            result.append \
+                ( '/* %s */\n      %s : %s'
+                % (loc, json.dumps (msg.id), json.dumps (msg.string))
+                )
+
+        file.write ("/* Automatically generated translations */\n")
+        file.write ("$.I18N.set_catalog\n")
+        file.write ( "  ( %r\n  , { %s\n  });\n"
+                   % (language, "\n    , ".join (result))
+                   )
+        file.close ()
+    # end def generate_js
 
     def generate_mo (self, file_name, use_fuzzy = False) :
         self._make_dir (file_name)
