@@ -34,6 +34,16 @@
 
 (function ($)
 {
+  var _T;
+
+  if ($.I18N === undefined)
+    {
+      _T = function (t) { return t; }
+    }
+  else
+    {
+      _T = $.I18N._T;
+    }
   var form_buttons =
       [ { name           : "add"
         , title          : "Add new form"
@@ -108,13 +118,13 @@
     , _add_button : function ($element, button, prepend)
       {
         var icon      = button.icon;
-        var title     = button.title;
+        var title     = _T (button.title);
         var css_class = button.css_class;
         if (button.states)
           {
-            icon      = button.states [button.default_state].icon;
-            title     = button.states [button.default_state].title;
-            css_class = button.states [button.default_state].css_class;
+            icon      =     button.states [button.default_state].icon;
+            title     = _T (button.states [button.default_state].title);
+            css_class =     button.states [button.default_state].css_class;
           }
         if (css_class)
           {
@@ -211,7 +221,7 @@
             var  lid           = $l_a_s.attr ("value").split (":") [0];
             $elements.attr        ("disabled","disabled")
                      .addClass    ("ui-state-disabled");
-            $link.attr            ("title", button.states [1].title);
+            $link.attr            ("title", _T (button.states [1].title));
             $button.removeClass   (button.states [0].icon)
                    .addClass      (button.states [1].icon);
             $l_a_s.attr ("value", [lid, "U"].join (":"));
@@ -305,7 +315,7 @@
         var  lid           = $l_a_s.attr ("value").split (":") [0];
         self._restore_form_state   ($form, $form.data ("_state"));
         $elements.attr             ("disabled", "disabled");
-        $link.attr                 ("title", button.states [0].title);
+        $link.attr                 ("title", _T (button.states [0].title));
         $button.removeClass        (button.states [1].icon)
                .addClass           (button.states [0].icon);
         self._update_button_states ($inline);
@@ -433,7 +443,7 @@
         $elements.removeClass ("ui-state-disabled");
         $inline.data ("cur_count", $inline.data ("cur_count") + 1);
         $l_a_s.attr ("value", [lid, new_state].join (":"));
-        $link.attr                 ("title", button.states [0].title);
+        $link.attr                 ("title", _T (button.states [0].title));
         $button.removeClass        (button.states [1].icon)
                .addClass           (button.states [0].icon);
         self._update_button_states ($inline);
@@ -465,7 +475,7 @@
           }).attr ("name");
         $form.data                 ("_state", self._save_form_state ($form));
         $elements.removeAttr       ("disabled")
-        $link.attr ("title", button.states [1].title)
+        $link.attr ("title", _T (button.states [1].title))
         $button.removeClass        (button.states [0].icon)
                .addClass           (button.states [1].icon);
         self._update_button_states ($inline);
@@ -484,7 +494,7 @@
         $buttons.unbind ("click")
         if (eval (state.enabled))
         {
-            var cb = this [state.callback] || function () {alert (state.title)};
+            var cb = this [state.callback];
             $buttons.bind   ("click", this, cb)
                     .parent ().removeClass ("ui-state-disabled");
         }

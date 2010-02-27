@@ -38,6 +38,7 @@
 #    10-Jan-2010 (MG) Moved into Package `GTW`
 #     2-Feb-2010 (MG) `Media_List.add` added
 #     4-Feb-2010 (MG) `Media.from_list` added
+#    27-Feb-2010 (MG) `sort_key` added to javascript
 #    ««revision-date»»···
 #--
 
@@ -104,12 +105,18 @@ class Script (TFL.Meta.Object) :
 
     href = Alias_Property ("src")
 
-    def __init__ (self, src = "", body = "", script_type = "text/javascript") :
+    def __init__ ( self
+                 , src         = ""
+                 , body        = ""
+                 , script_type = "text/javascript"
+                 , sort_key    = 0
+                 ) :
         assert src or body
         assert not (src and body)
         self.src         = src
         self.body        = body
         self.script_type = script_type
+        self.sort_key    = sort_key
     # end def __init__
 
     def __eq__ (self, rhs) :
@@ -275,6 +282,12 @@ class Media_List_Script (Media_List_href, Media_List_Unique) :
 
     prefix   = "js"
     Mob_Type = Script
+
+    @Once_Property
+    def values (self) :
+        return tuple \
+            (sorted (self._gen_all (), key = lambda mob : mob.sort_key))
+    # end def values
 
 # end class Media_List_Script
 

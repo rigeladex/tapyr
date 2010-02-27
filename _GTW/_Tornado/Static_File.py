@@ -73,6 +73,7 @@ class _Static_File_Handler_ (web.RequestHandler) :
             file_name = map.get (path)
             if file_name :
                 return self._get (file_name, include_body)
+        raise GTW.Tornado.Error_404 ()
     # end def get
 
     def _get (self, file_name, include_body = True) :

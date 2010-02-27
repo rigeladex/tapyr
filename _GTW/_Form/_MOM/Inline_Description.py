@@ -51,6 +51,7 @@
 #    24-Feb-2010 (MG) Parameter `form_name` added to construction of inline
 #                     form classes
 #    26-Feb-2010 (MG) `keep_instance` added
+#    27-Feb-2010 (MG) `sort_key` added to `jquery` media
 #    ««revision-date»»···
 #--
 
@@ -77,7 +78,10 @@ class _Inline_Description_ (TFL.Meta.Object) :
           , GTW.CSS_Link ("/media/GTW/css/inline_forms.css")
           )
       , scripts     =
-          ( GTW.Script (src  = "/media/GTW/js/jquery-1.4.2.min.js")
+          ( GTW.Script
+              ( src      = "/media/GTW/js/jquery-1.4.2.min.js"
+              , sort_key = -100
+              )
           , GTW.Script (src  = "/media/GTW/js/jquery-ui-1.8.min.js")
           , GTW.Script (src  = "/media/GTW/js/GTW_Form.js")
           , GTW.Script (src  = "/media/GTW/js/MOM_Auto_Complete.js")
