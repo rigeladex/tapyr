@@ -135,7 +135,7 @@ class Admin (object) :
                 , AID
                     ( "phone"
                     , FGD (primary)
-                    #, completer = phone_completer
+                    , completer = phone_completer
                     )
                 , FGD ( "extension")
                 , legend    = _("Phone numbers")

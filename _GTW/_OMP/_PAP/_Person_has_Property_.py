@@ -28,6 +28,7 @@
 # Revision Dates
 #     3-Feb-2010 (CT) Creation
 #    19-Feb-2010 (MG) `left.auto_cache` removed
+#    28-Feb-2010 (CT) `desc` defined with `Computed_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -59,8 +60,13 @@ class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
             """Short description of the link"""
 
             kind           = Attr.Optional
+            Kind_Mixins    = (Attr.Computed_Mixin, )
             max_length     = 20
             ui_name        = "Description"
+
+            def computed (self, obj) :
+                return getattr (obj.right, self.name, "")
+            # end def computed
 
         # end class desc
 

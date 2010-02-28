@@ -89,6 +89,11 @@ class Admin (object) :
         , permission = Is_Superuser ()
         )
 
+    Account_in_Group = dict \
+        ( ETM        = "GTW.OMP.Auth.Account_in_Group"
+        , Type       = GTW.NAV.E_Type.Admin
+        )
+
 # end class Admin
 
 if __name__ != "__main__" :

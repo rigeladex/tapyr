@@ -29,6 +29,8 @@
 #    30-Dec-2009 (CT) Creation
 #    14-Jan-2010 (CT) `ui_name` added to some attributes
 #     3-Feb-2010 (MG) `extension`  removed
+#    28-Feb-2010 (CT) Use `A_Numeric_String` instead of `A_Int` and
+#                     `A_Decimal` for `country_code`, `area_code`, and `number`
 #    ««revision-date»»···
 #--
 
@@ -49,37 +51,33 @@ class _PAP_Phone_ (PAP.Entity, _Ancestor_Essence) :
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
-        class country_code (A_Int) :
+        class country_code (A_Numeric_String) :
             """International country code of phone number (without prefix)"""
 
             kind           = Attr.Primary
+            max_length     = 3
+            check          = ("value != '0'", )
             rank           = 1
-
-            min_value      = 1
-            max_value      = 999
 
         # end class country_code
 
-        class area_code (A_Int) :
+        class area_code (A_Numeric_String) :
             """National area code of phone number (without prefix)"""
 
             kind           = Attr.Primary
+            max_length     = 5
+            check          = ("value != '0'", )
             rank           = 2
-
-            min_value      = 1
-            max_value      = 99999
 
         # end class area_code
 
-        class number (A_Decimal) :
+        class number (A_Numeric_String) :
             """Phone number proper (without country code, area code, extension)"""
 
             kind           = Attr.Primary
+            max_length     = 14
+            check          = ("value != '0'", )
             rank           = 3
-
-            min_value      = 100
-            max_digits     = 14
-            decimal_places = 0
 
         # end class number
 

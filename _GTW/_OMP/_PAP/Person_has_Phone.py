@@ -29,6 +29,7 @@
 #    30-Dec-2009 (CT) Creation
 #     3-Feb-2010 (CT) `_Person_has_Property_` factored
 #    19-Feb-2010 (MG) `left.auto_cache` added
+#    28-Feb-2010 (CT) `extension` is a `A_Numeric_String` (instead of `A_Int`)
 #    ««revision-date»»···
 #--
 
@@ -63,12 +64,11 @@ class Person_has_Phone (_Ancestor_Essence) :
 
         # end class right
 
-        class extension (A_Int) :
+        class extension (A_Numeric_String) :
             """Extension number used in PBX"""
 
             kind            = Attr.Primary_Optional
-            min_value       = 0
-            max_value       = 99999
+            max_length      = 5
 
         # end class extension
 

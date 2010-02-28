@@ -90,6 +90,7 @@
 #                     `._to_cooked` changed to call `simple_cooked`
 #    22-Feb-2010 (CT) `_A_String_.__metaclass__` set to `M_Attr_Type_String`
 #    24-Feb-2010 (CT) `ui_length` added
+#    28-Feb-2010 (CT) `_A_String_Base_` factored, `A_Numeric_String` added
 #    ««revision-date»»···
 #--
 
@@ -776,15 +777,10 @@ class _A_Object_Set_ (_A_Typed_Set_) :
 
 # end class _A_Object_Set_
 
-class _A_String_ (A_Attr_Type) :
+class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
 
-    __metaclass__     = MOM.Meta.M_Attr_Type_String
-
     default           = ""
-    ignore_case       = False
-    needs_raw_value   = False
-    simple_cooked     = unicode
     ui_length         = TFL.Meta.Once_Property \
         (lambda s : s.max_length or 120)
 
@@ -797,6 +793,18 @@ class _A_String_ (A_Attr_Type) :
             return self.simple_cooked (s)
         return s
     # end def _to_cooked
+
+# end class _A_String_Base_
+
+class _A_String_ (_A_String_Base_) :
+    """Base class for string-valued attributes of an object."""
+
+    __metaclass__     = MOM.Meta.M_Attr_Type_String
+
+    default           = ""
+    ignore_case       = False
+    needs_raw_value   = False
+    simple_cooked     = unicode
 
 # end class _A_String_
 
@@ -1101,6 +1109,26 @@ class A_Name (_A_String_) :
     # end def check_syntax
 
 # end class A_Name
+
+class A_Numeric_String (_A_String_Base_) :
+    """Models an string-valued attribute that holds a numeric value (as
+       string).
+    """
+
+    typ               = "Numeric_String"
+
+    as_number         = int
+
+    @TFL.Meta.Class_and_Instance_Method
+    def simple_cooked (soc, value) :
+        if isinstance (value, basestring) :
+            value = value.replace (" ", "").lstrip ("+-")
+        if value :
+            value = soc.as_number (value)
+        return unicode (value)
+    # end def simple_cooked
+
+# end class A_Numeric_String
 
 class A_Object (_A_Object_) :
     """Models an attribute referring to an object."""

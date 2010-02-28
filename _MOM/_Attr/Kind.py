@@ -103,6 +103,8 @@
 #                     fixed
 #    25-Feb-2010 (CT) `Mandatory` added
 #    25-Feb-2010 (CT) `_k_rank` added to `Mandatory`, `Required`, and `Optional`
+#    28-Feb-2010 (CT) `_Computed_Mixin_.get_value` changed to also compute
+#                     for values of `""`
 #    ««revision-date»»···
 #--
 
@@ -496,7 +498,7 @@ class _Computed_Mixin_ (Kind) :
 
     def get_value (self, obj) :
         result = self.__super.get_value (obj)
-        if obj is not None and result is None :
+        if obj is not None and (result is None or result == "") :
             result = self._get_computed (obj)
         return result
     # end def get_value

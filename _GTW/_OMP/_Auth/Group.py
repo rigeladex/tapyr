@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    16-Jan-2010 (CT) Creation
+#    28-Feb-2010 (CT) `desc` added
 #    ««revision-date»»···
 #--
 
@@ -51,6 +52,14 @@ class _Auth_Group_ (_Ancestor_Essence) :
             """Name of group"""
 
         # end class name
+
+        class desc (A_String) :
+            """Description of group"""
+
+            kind               = Attr.Optional
+            max_length         = 20
+
+        # end class desc
 
     # end class _Attributes
 
