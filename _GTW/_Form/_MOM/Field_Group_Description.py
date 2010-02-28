@@ -125,6 +125,27 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
 
     def __call__ (self, et_man, added_fields = None, * args, ** kw) :
         if not self.fields :
+            etype  = et_man._etype
+            if 0 and getattr (etype, "Roles", None) :
+                from _GTW._Form._MOM.Inline_Description \
+                     import Attribute_Inline_Description as AID
+                fgds = []
+                for r in etype.Roles :
+                    rt = r.role_type
+                    fgds.append \
+                        ( AID
+                            ( r.role_name, Wildcard_Field ("primary")
+                            , widget = "html/form.jnj, fg_tr"
+                            )
+                        )
+                fgds.append (Wildcard_Field ())
+                return itertools.chain \
+                    ( * tuple
+                        ( self.__class__ (fgd)
+                            (rt, added_fields, * args, ** kw)
+                        for fgd in fgds
+                        )
+                    )
             self.fields = (Wildcard_Field (), )
         if added_fields is None :
             added_fields = set ()
