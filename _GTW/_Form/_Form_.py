@@ -68,6 +68,7 @@ class M_Form (TFL.Meta.Object.__class__) :
                   if isinstance (fg, GTW.Form.Field_Group)
                   ) :
             result.update (fg.fields)
+        result.extend (cls.hidden_fields)
         return result
     # end def _setup_fields
 

@@ -84,6 +84,8 @@ class Field_Completer (_MOM_Completer_) :
         self.prefix    = prefix
         self.separator = separator
         self.options   = dict (self.options, ** kw)
+        if not isinstance (fields, (tuple, list)) :
+            fields     = (fields, )
         self.fields    = fields
     # end def __init__
 
@@ -167,7 +169,7 @@ class Completer (_MOM_Completer_) :
             )
     # end def js_on_ready
 
-    def _send_suggestions (self, handler, triggers, query) :
+    def _send_suggestions (self, handler, trigger, query) :
         return handler.json \
             ( [ dict
                   ( lid   = c.lid
@@ -193,6 +195,8 @@ class Completer (_MOM_Completer_) :
             for k, v in self.options.iteritems () :
                 if k not in self._ignore_options :
                     d.setdefault (k, v)
+            if not isinstance (d ["fields"], (list, tuple)) :
+                d ["fields"] = (d ["fields"], )
         return result
     # end def triggers
 

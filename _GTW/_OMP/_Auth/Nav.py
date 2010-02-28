@@ -54,7 +54,7 @@ class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
     group_completer  =GTW.Form.MOM.Javascript.Completer \
-        ( fields    = ("name")
+        ( fields    = "name"
         , triggers  = dict (name = dict (min_chars = 1))
         , name      = "Group_Completer"
         )

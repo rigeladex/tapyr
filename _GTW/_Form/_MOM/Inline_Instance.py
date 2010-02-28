@@ -121,6 +121,7 @@ class _Inline_Instance_ (GTW.Form.MOM._Instance_) :
 
     def _prepare_form (self) :
         lid, state = self.lid, self.state
+        TFL.BREAK ()
         if state == "U" :
             ### this from handles an instance which should be unlinked
             if not lid or self.keep_instance :
