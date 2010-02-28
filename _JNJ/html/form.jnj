@@ -57,6 +57,8 @@
 ##    26-Feb-2010 (MG) Inline forms changed
 ##    27-Feb-2010 (MG) Handling of hidden fields changed
 ##    28-Feb-2010 (MG) Handling of hidden fields fixed
+##    28-Feb-2010 (MG) `inline_table_aid_td` changed to write the hidden fields
+##                     of the parent form if this is the first field group
 ##    ««revision-date»»···
 ##--
 #}
@@ -240,6 +242,13 @@
 
 {%- macro inline_table_aid_td (fo, fg, first = False) -%}
   {%- set ifo =  fg.forms [0] -%}
+  {%- if first and fo.hidden_fields %}
+    <td class="ui-helper-hidden">
+      {%- for h in fo.hidden_fields %}
+        {{ GTW.call_macro (h.widget, fo, h) }}
+      {% endfor -%}
+    </td>
+  {% endif -%}
   {%- for fg in ifo.field_groups %}
     {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg, loop.first) }}
     {%- if ifo.get_errors () %}

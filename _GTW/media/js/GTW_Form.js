@@ -160,7 +160,7 @@
         var $source = $(evt.target).parents (".inline-instance");
         var  $new   = self._copy_form ($inline);
         self._restore_form_state ($new, self._save_form_state ($source));
-        $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":N");
+        /* set the state if ALL inlines to empty */
         $new.find ("input[name$=-instance_state]").attr ("value", "");
         self._update_button_states ($inline);
         evt.preventDefault         ();
@@ -197,10 +197,11 @@
             }
         }
         /* we are ready to add the new block at the end */
-        this._setup_buttons        ($new, $inline.data ("buttons"));
+        this._setup_buttons        ($new, $inline.data ("buttons"), $inline);
         $prototype.parent          ().append ($new);
         this._update_button_states ($inline);
         this._setup_completers     ($inline);
+        /* set lid/state of ALL lines to New */
         $new.find ("input[name$=-_lid_a_state_]").attr ("value", ":N");
         return $new;
       }
@@ -220,7 +221,7 @@
             var $link          = $form.find  ("a[href=" + button.href + "]");
             var $button        = $link.find  ("span");
             var $elements      = $form.find  (":input:not([type=hidden])");
-            var $l_a_s         = $form.find  ("input[name$=-_lid_a_state_]");
+            var $l_a_s         = self._lid_for_inline ($inline, $form);
             var  lid           = $l_a_s.attr ("value").split (":") [0];
             $elements.attr        ("disabled","disabled")
                      .addClass    ("ui-state-disabled");
@@ -294,6 +295,13 @@
         $this.clone ().insertAfter ($this).attr ("disabled","disabled");
         $this.hide  ();
       }
+    , _lid_for_inline : function ($inline, $form)
+      {
+        return $form.find
+          ( "[name^=" + $inline.data ("options").prefix + "-]"
+          + "[name$=-_lid_a_state_]"
+          );
+      }
     , _restore_form_state : function ($form, state)
       {
         var $elements = $form.find  (":input");
@@ -314,8 +322,6 @@
         var $link          = $form.find  ("a[href=" + button.href + "]");
         var $button        = $link.find  ("span");
         var $elements      = $form.find  (":input");
-        var $l_a_s         = $form.find  ("input[name$=-_lid_a_state_]");
-        var  lid           = $l_a_s.attr ("value").split (":") [0];
         self._restore_form_state   ($form, $form.data ("_state"));
         $elements.attr             ("disabled", "disabled");
         $link.attr                 ("title", _T (button.states [0].title));
@@ -337,15 +343,15 @@
         }
         return state;
       }
-    , _setup_buttons : function ($inline_instance, buttons)
+    , _setup_buttons : function ($inline_instance, buttons, $inline)
       {
-        var $inline    = $inline_instance.parents (".inline-root");
+        $inline        = $inline || $inline_instance.parents (".inline-root");
         var $element   = $inline_instance;
         var $first_tag = $element.find (".inline-instance");
         if (! $first_tag.length)
             $first_tag = $element;
         var  first_tag = $first_tag.get (0).tagName.toLowerCase ();
-        var $l_a_s     = $element.find ("input[name$=-_lid_a_state_]");
+        var $l_a_s     = this._lid_for_inline ($inline, $inline_instance);
         var  lid       = $l_a_s.attr ("value").split (":") [0];
         if (first_tag == "tr")
           {
@@ -385,6 +391,7 @@
         var $inline    = $("." + inline.prefix);
         var $prototype = $inline.find (".inline-prototype")
         var  buttons   = ["rename", "delete"];
+        $inline.data ("options", inline);
         /* if we have found a prototype we can have the add button */
         if ($prototype.length)
           {
@@ -423,7 +430,6 @@
               }
             );
         this._update_button_states ($inline);
-        $inline.data ("options", inline);
       }
     , _undelete_inline : function (evt)
       {
@@ -435,7 +441,7 @@
         var $link          = $form.find  ("a[href=" + button.href + "]");
         var $button        = $link.find  ("span");
         var $elements      = $form.find  (":input:not([type=hidden])");
-        var $l_a_s         = $form.find  ("input[name$=-_lid_a_state_]");
+        var $l_a_s         = self._lid_for_inline ($inline, $form);
         var  lid           = $l_a_s.attr ("value").split (":") [0];
         var  new_state     = "L";
         if (! lid)
