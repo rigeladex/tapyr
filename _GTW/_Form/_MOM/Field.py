@@ -121,7 +121,11 @@ class Field (TFL.Meta.Object) :
     # end def get_cooked
 
     def get_raw (self, form, instance) :
-        return self.attr_kind.get_raw (instance)
+        try :
+            return self.attr_kind.get_raw (instance)
+        except :
+            import pdb; pdb.set_trace ()
+            return "XXX"
     # end def get_raw
 
     def __getattr__ (self, name) :

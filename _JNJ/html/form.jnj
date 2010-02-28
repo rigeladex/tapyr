@@ -59,6 +59,7 @@
 ##    28-Feb-2010 (MG) Handling of hidden fields fixed
 ##    28-Feb-2010 (MG) `inline_table_aid_td` changed to write the hidden fields
 ##                     of the parent form if this is the first field group
+##    28-Feb-2010 (MG) `aid_div_seq` fixed to handling hidden fields
 ##    ««revision-date»»···
 ##--
 #}
@@ -76,6 +77,16 @@
     {%- else %}
       <div class="inline-form {{ aid.name }}">
     {%- body %}
+      {%- if first and pfo.hidden_fields %}
+        {%- for h in pfo.hidden_fields %}
+          {{ GTW.call_macro (h.widget, pfo, h) }}
+        {% endfor -%}
+      {% endif -%}
+      {%- if fo.hidden_fields %}
+        {%- for h in fo.hidden_fields %}
+          {{ GTW.call_macro (h.widget, fo, h) }}
+        {% endfor -%}
+      {% endif -%}
       {%- for fg in fo.field_groups %}
         {{ GTW.call_macro (fg.widget, fo, fg)}}
       {% endfor -%}

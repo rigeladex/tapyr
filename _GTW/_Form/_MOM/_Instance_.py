@@ -64,6 +64,10 @@
 #    26-Feb-2010 (MG) Javascript handling changed
 #    27-Feb-2010 (MG) `add_internal_fields` changed
 #    28-Feb-2010 (MG) `__call__` fixed
+#    28-Feb-2010 (MG) `__call__` changed to set attribute inline values only
+#                     if the value has not changed (or ortherwise setting a
+#                     role of a link to the same object will raise a
+#                     name clash error)
 #    ««revision-date»»···
 #--
 
@@ -290,7 +294,9 @@ class _Instance_ (GTW.Form._Form_) :
                 if (   not error_count
                    and isinstance (ig, GTW.Form.MOM.Attribute_Inline)
                    ) :
-                    setattr (self.instance, ig.link_name, ig.instance)
+                    old_value = getattr (self.instance, ig.link_name, None)
+                    if old_value != ig.instance :
+                        self.instance.set (** {ig.link_name : ig.instance})
         self.error_count      = error_count
         return error_count
     # end def __call__

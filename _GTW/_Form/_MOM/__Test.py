@@ -98,7 +98,8 @@ def display_values (form, indent = "") :
 
 
 add = False
-per = True #False
+per = False
+php = True
 
 if per :
     form_cls = GTW.Form.MOM.Instance.New \
@@ -109,6 +110,10 @@ if add :
     form_cls = GTW.Form.MOM.Instance.New \
         ( scope.PAP.Address
         , * GTW.OMP.PAP.Nav.Admin.Address ["Form_args"]
+        )
+if php :
+    form_cls = GTW.Form.MOM.Instance.New \
+        ( scope.PAP.Person_has_Phone
         )
 if per :
     p = scope.PAP.Person  ("Glueck", "Martin")
@@ -126,7 +131,5 @@ if add :
     #display_values (form)
     print form.inline_groups [0].forms [0]
 
-a = scope.Auth.Account_P ("user1", password = "pw1")
-scope.Auth.Account_Password_Change_Required (a)
 
 ### __END__ GTW.Form.MOM.__Test

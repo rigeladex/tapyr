@@ -52,6 +52,8 @@
 #                     form classes
 #    26-Feb-2010 (MG) `keep_instance` added
 #    27-Feb-2010 (MG) `sort_key` added to `jquery` media
+#    28-Feb-2010 (MG) `Attribute_Inline_Description.__call__`: add attributes
+#                     to `added_fields`
 #    ««revision-date»»···
 #--
 
@@ -118,6 +120,8 @@ class Attribute_Inline_Description (_Inline_Description_) :
         obj_et_man = getattr (scope, obj_etype.type_name)
         self.generic_name = getattr \
             (attr_kind, "generic_role_name", self.link_name)
+        added_fields.add (self.link_name)
+        added_fields.add (self.generic_name)
         inline_form       = GTW.Form.MOM.Attribute_Inline_Instance.New \
             ( obj_et_man
             , * self.field_group_descriptions

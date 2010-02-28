@@ -41,6 +41,8 @@
 #                     `Wildcard_Field` if the user has not supplied a field
 #                     spec
 #    25-Feb-2010 (CT) `Field` moved into a module of its own
+#    28-Feb-2010 (MG) `Field_Group_Description.__call__` fixed to create
+#                     a nicer default for links
 #    ««revision-date»»···
 #--
 
@@ -124,31 +126,33 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
         )
 
     def __call__ (self, et_man, added_fields = None, * args, ** kw) :
+        if added_fields is None :
+            added_fields = set ()
         if not self.fields :
             etype  = et_man._etype
-            if 0 and getattr (etype, "Roles", None) :
-                from _GTW._Form._MOM.Inline_Description \
-                     import Attribute_Inline_Description as AID
+            if getattr (etype, "Roles", None) :
+                from _GTW._Form._MOM.Inline_Description import \
+                     ( Attribute_Inline_Description as AID
+                     , Link_Inline_Description      as LID
+                     )
+                FGD  = self.__class__
                 fgds = []
                 for r in etype.Roles :
                     rt = r.role_type
                     fgds.append \
                         ( AID
-                            ( r.role_name, Wildcard_Field ("primary")
-                            , widget = "html/form.jnj, fg_tr"
+                            ( r.role_name
+                            , FGD (Wildcard_Field ("primary"))
+                            , legend = r.ui_name
                             )
                         )
-                fgds.append (Wildcard_Field ())
+                fgds.append (self.__class__ (Wildcard_Field ()))
                 return itertools.chain \
-                    ( * tuple
-                        ( self.__class__ (fgd)
-                            (rt, added_fields, * args, ** kw)
+                    ( * (  fgd (et_man, added_fields, * args, ** kw)
                         for fgd in fgds
                         )
                     )
             self.fields = (Wildcard_Field (), )
-        if added_fields is None :
-            added_fields = set ()
         fields_spec = self.fields
         fields      = []
         for f in fields_spec :

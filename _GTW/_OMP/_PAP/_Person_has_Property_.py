@@ -60,7 +60,7 @@ class _Person_has_Property_ (PAP.Entity, _Ancestor_Essence) :
             """Short description of the link"""
 
             kind           = Attr.Optional
-            Kind_Mixins    = (Attr.Computed_Mixin, )
+            #Kind_Mixins    = (Attr.Computed_Mixin, )
             max_length     = 20
             ui_name        = "Description"
 
