@@ -130,6 +130,9 @@ if add :
     #print env.get_template ("base").render (form = form)
     #display_values (form)
     print form.inline_groups [0].forms [0]
-
+if php :
+    pe  = scope.PAP.Person  ("Glueck", "Martin")
+    ph  = scope.PAP.Phone   ("43", "664", "1052345")
+    php = scope.PAP.Person_has_Phone (pe, ph)
 
 ### __END__ GTW.Form.MOM.__Test
