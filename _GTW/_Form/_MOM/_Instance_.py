@@ -63,6 +63,7 @@
 #    24-Feb-2010 (MG) `from_name` added and used
 #    26-Feb-2010 (MG) Javascript handling changed
 #    27-Feb-2010 (MG) `add_internal_fields` changed
+#    28-Feb-2010 (MG) `__call__` fixed
 #    ««revision-date»»···
 #--
 
@@ -283,7 +284,7 @@ class _Instance_ (GTW.Form._Form_) :
             return 0
         self.instance = self._create_or_update  ()
         error_count   = len (self.errors) + len (self.field_errors)
-        if not error_count :
+        if not error_count and self.instance :
             for ig in self.inline_groups :
                 error_count  += ig (request_data)
                 if (   not error_count

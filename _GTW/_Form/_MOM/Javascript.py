@@ -28,10 +28,12 @@
 # Revision Dates
 #    26-Feb-2010 (MG) Creation
 #    27-Feb-2010 (MG) `Field_Completer` added, `_MOM_Completer_` factored
+#    28-Feb-2010 (MG) `_send_suggestions` factored and `uniq_p` used for
+#                     `Field_Completer._send_suggestions`
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
-from   _TFL.predicate     import uniq
+from   _TFL.predicate     import uniq_p
 import _TFL._Meta.Object
 import _TFL._Meta.M_Unique_If_Named
 
@@ -60,15 +62,8 @@ class _MOM_Completer_ (GTW.Form.Javascript._Completer_) :
             (    getattr (Q, k).STARTSWITH (v)
             for (k, v) in et_man.cooked_attrs (args).iteritems ()
             )
-        return handler.json \
-            ( [   dict
-                    ( lid   = c.lid
-                    , value = trigger.get_raw (c)
-                    , label = self.ui_display (c)
-                    )
-              for c in et_man.query ().filter (* filter).distinct ()
-              ]
-            )
+        return self._send_suggestions \
+            (handler, trigger, et_man.query ().filter (* filter).distinct ())
     # end def suggestions
 
 # end class _MOM_Completer_
@@ -98,6 +93,22 @@ class Field_Completer (_MOM_Completer_) :
             ((f, attributes [f].get_raw (obj)) for f in self.fields)
         return handler.json (result)
     # end def _send_result
+
+    def _send_suggestions (self, handler, trigger, query) :
+        result = uniq_p \
+            ( ((self.ui_display (c), c) for c in query)
+            , lambda (d, c) : d
+            )
+        return handler.json \
+            ( [ dict
+                  ( lid   = c.lid
+                  , value = trigger.get_raw (c)
+                  , label = d
+                  )
+                  for d, c in result
+              ]
+            )
+    # end def _send_suggestions
 
     def js_on_ready (self, form) :
         bname, fname = form.form_path.split ("/", 1)
@@ -155,6 +166,18 @@ class Completer (_MOM_Completer_) :
             ,
             )
     # end def js_on_ready
+
+    def _send_suggestions (self, handler, triggers, query) :
+        return handler.json \
+            ( [ dict
+                  ( lid   = c.lid
+                  , value = trigger.get_raw (c)
+                  , label = self.ui_display (c)
+                  )
+                for c in query
+              ]
+            )
+    # end def _send_suggestions
 
     def _send_result (self, form_cls, handler, obj) :
         form = form_cls (obj)

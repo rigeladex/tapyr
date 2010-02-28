@@ -56,13 +56,14 @@
 ##    24-Feb-2010 (CT) `aid_div_seq` changed to honor `legend`
 ##    26-Feb-2010 (MG) Inline forms changed
 ##    27-Feb-2010 (MG) Handling of hidden fields changed
+##    28-Feb-2010 (MG) Handling of hidden fields fixed
 ##    ««revision-date»»···
 ##--
 #}
 
 {%- import html_version as X -%}
 
-{%- macro aid_div_seq (pfo, aid) -%}
+{%- macro aid_div_seq (pfo, aid, first) -%}
   {%- set fo = aid.forms [0] -%}
   {%- onion aid.legend %}
     {%- head %}
@@ -83,11 +84,11 @@
   {%- endonion %}
 {%- endmacro -%} {#- aid_div_seq -#}
 
-{%- macro fg_div_seq (fo, fg) -%}
+{%- macro fg_div_seq (fo, fg, first) -%}
   {%- for fi in fg.visible_fields %}
     {%- set desc = GTW._T (fi.description)|safe %}
     <div class="Field Field-{{ fi.name }}" title="{{ desc }}">
-      {%- if loop.first %}
+      {%- if first and loop.first %}
         {%- for h in fo.hidden_fields %}
           {{ GTW.call_macro (h.widget, fo, h) }}
         {% endfor -%}
@@ -100,13 +101,13 @@
   {% endfor -%}
 {%- endmacro -%} {#- fg_div_seq -#}
 
-{%- macro fg_tr (fo, fg) -%}
+{%- macro fg_tr (fo, fg, first) -%}
   <table class="field_group-Horizontal">
     <thead>
       {{ fg_tr_head (fo, fg) }}
     </thead>
     <tbody>
-      {{ fg_tr_body (fo, fg) }}
+      {{ fg_tr_body (fo, fg, first) }}
     </tbody>
   </table>
   <div class="field_group-Horizontal-Help">
@@ -119,14 +120,14 @@
   </div>
 {%- endmacro -%} {#- fg_tr -#}
 
-{%- macro fg_tr_body (fo, fg) -%}
+{%- macro fg_tr_body (fo, fg, first) -%}
     <tr class="field_group {{ fg.css_class }} {{ kwargs.pop ("class", "") }}"
       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
     >
       {%- for fi in fg.visible_fields %}
         {%- set desc = GTW._T (fi.description)|safe %}
         <td class="Field Field-{{ fi.name }}" title="{{ desc }}">
-          {%- if loop.first %}
+          {%- if first and loop.first %}
             {%- for h in fo.hidden_fields %}
               {{ GTW.call_macro (h.widget.inline, fo, h) }}
             {% endfor -%}
@@ -154,7 +155,7 @@
       <div class="Formset {{ fg.css_class }}"
        {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}
       >
-     {{ GTW.call_macro (fg.widget, fo, fg) }}
+     {{ GTW.call_macro (fg.widget, fo, fg, loop.first) }}
       </div>
     {% endfor -%}
 {%- endmacro -%} {#- field_groups -#}
@@ -194,7 +195,7 @@
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro inline_table (form, inline) -%}
+{%- macro inline_table (form, inline, first) -%}
   {%- set proto = inline.prototype_form -%}
   <fieldset class="inline-form-table {{ inline.form_cls.form_path_css }}">
     {%- if inline.legend %}

@@ -130,7 +130,7 @@ def _sa_numeric (cls, attr, kind, ** kw) :
     return types.Numeric (attr.max_digits, attr.decimal_places)
 # end def _sa_numeric
 
-@Add_Classmedthod ("_sa_type", Attr._A_String_)
+@Add_Classmedthod ("_sa_type", Attr._A_String_Base_)
 def _sa_string (cls, attr, kind, ** kw) :
     return types.String (getattr (attr, "max_length", None))
 # end def _sa_string
