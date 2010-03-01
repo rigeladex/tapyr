@@ -75,12 +75,18 @@ class Admin (object) :
             )
         , name      = "Address_Completer"
         )
+
+    email_completer = GTW.Form.MOM.Javascript.Completer \
+        ( fields    = ( "address")
+        , triggers  = dict (address = dict (min_chars = 2))
+        , name      = "Email_Completer"
+        )
+
     phone_completer = GTW.Form.MOM.Javascript.Completer \
         ( fields    = ( "country_code", "area_code", "number")
         , triggers  = dict (number = dict (min_chars = 2))
         , name      = "Phone_Completer"
         )
-
 
     Address         = dict \
         ( ETM       = "GTW.OMP.PAP.Address"
@@ -119,17 +125,6 @@ class Admin (object) :
                 , legend    = _("Lifetime")
                 )
             , LID
-                ( "PAP.Person_has_Address"
-                , FGD ( "desc")
-                , AID
-                    ( "address"
-                    , FGD (primary)
-                    , completer = address_completer
-                    )
-                , legend    = _("Addresses")
-                , title     = _("Addresses")
-                )
-            , LID
                 ( "PAP.Person_has_Phone"
                 , FGD ( "desc")
                 , AID
@@ -140,6 +135,28 @@ class Admin (object) :
                 , FGD ( "extension")
                 , legend    = _("Phone numbers")
                 , title     = _("Phone numbers")
+                )
+            , LID
+                ( "PAP.Person_has_Email"
+                , FGD ( "desc")
+                , AID
+                    ( "email"
+                    , FGD (primary)
+                    , completer = email_completer
+                    )
+                , legend    = _("Email addresses")
+                , title     = _("Email addresses")
+                )
+            , LID
+                ( "PAP.Person_has_Address"
+                , FGD ( "desc")
+                , AID
+                    ( "address"
+                    , FGD (primary)
+                    , completer = address_completer
+                    )
+                , legend    = _("Addresses")
+                , title     = _("Addresses")
                 )
             )
         , list_display = ("ui_display", "lifetime")
