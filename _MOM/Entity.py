@@ -111,6 +111,8 @@
 #    25-Feb-2010 (CT) `mandatory_defined` added
 #    25-Feb-2010 (CT) `Id_Entity._main__init__` changed to pass both `epk` and
 #                     `kw` in a single call to `setter`
+#     1-Mar-2010 (CT) `set_pickle_cargo` factored from `from_pickle_cargo`
+#     1-Mar-2010 (CT) `_record_iter_attrs` replaced by `recordable_attrs`
 #    ««revision-date»»···
 #--
 
@@ -260,6 +262,11 @@ class Entity (TFL.Meta.Object) :
 
     # end class _FO_
 
+    @property
+    def recordable_attrs (self) :
+        return self.__class__.m_recordable_attrs
+    # end def recordable_attrs
+
     def __new__ (cls, * args, ** kw) :
         if cls.is_partial :
             raise MOM.Error.Partial_Type (cls.type_name)
@@ -280,11 +287,7 @@ class Entity (TFL.Meta.Object) :
     def from_pickle_cargo (cls, scope, cargo) :
         result = cls.__new__    (cls, scope = scope)
         result._init_attributes ()
-        for k, v in cargo.iteritems () :
-            attr = result.attributes.get (k)
-            ### XXX Add legacy lifting
-            if attr :
-                attr.set_pickle_cargo  (result, v)
+        result.set_pickle_cargo (cargo)
         result._finish__init__  ()
         return result
     # end def from_pickle_cargo
@@ -399,6 +402,15 @@ class Entity (TFL.Meta.Object) :
                 on_error (MOM.Error.Unknown_Attribute (self, name, val))
     # end def set_attr_iter
 
+    def set_pickle_cargo (self, cargo) :
+        attr_get = self.attributes.get
+        for k, v in cargo.iteritems () :
+            attr = attr_get (k)
+            ### XXX Add legacy lifting
+            if attr :
+                attr.set_pickle_cargo  (self, v)
+    # end def set_pickle_cargo
+
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
         gen = \
@@ -465,12 +477,12 @@ class Entity (TFL.Meta.Object) :
     # end def _record_context
 
     def _record_iter (self, kw) :
-        record_kinds = set (self._record_iter_attrs ())
-        e_type       = self.__class__
+        e_type     = self.__class__
+        recordable = self.recordable_attrs
         for name, value in kw.iteritems () :
-            kind = getattr (e_type, name, None)
-            if kind in record_kinds :
-                yield kind, name, value
+            attr = getattr (e_type, name, None)
+            if attr in recordable :
+                yield attr, attr.name, value
     # end def _record_iter
 
     def _record_iter_raw (self, kw) :
@@ -638,10 +650,6 @@ class An_Entity (Entity) :
             set = (self._set_ckd, self._set_raw) [raw]
             set (** kw)
     # end def _main__init__
-
-    def _record_iter_attrs (self) :
-        return self.user_attr
-    # end def _record_iter_attrs
 
     def _repr (self, type_name) :
         return "%s (%s)" % (type_name, self._formatted_user_attr ())
@@ -1052,10 +1060,6 @@ class Id_Entity (Entity) :
         setter    (** kw)
         self._finish__init__ ()
     # end def _main__init__
-
-    def _record_iter_attrs (self) :
-        return self.primary + self.user_attr
-    # end def _record_iter_attrs
 
     def _rename (self, new_epk, pkas_raw, pkas_ckd) :
         def _renamer () :

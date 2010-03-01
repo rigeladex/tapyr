@@ -45,6 +45,7 @@
 #     5-Feb-2010 (CT) `_Attr_` factored and `Attr_Composite` added
 #    14-Feb-2010 (MG) Change inheritance of `Copy` back to `_Entity_`
 #                     (otherwise the source entity would be created as well)
+#     1-Mar-2010 (CT) `_Entity_._to_change` and `._to_save` factored
 #    ««revision-date»»···
 #--
 
@@ -239,6 +240,21 @@ class _Entity_ (Undoable) :
         return ", ".join (result)
     # end def _repr
 
+    def _to_change (self, entity, old_attr) :
+        return dict \
+            ( (a.name, a.get_raw (entity))
+            for a in entity.recordable_attrs if a.name in old_attr
+            )
+    # end def _to_change
+
+    def _to_save (self, entity) :
+        return dict \
+            ( (a.name, a.get_raw (entity))
+            for a in entity.recordable_attrs
+              if (not a.is_primary) and a.to_save (entity)
+            )
+    # end def _to_save
+
 # end class _Entity_
 
 class Copy (_Entity_) :
@@ -257,10 +273,7 @@ class Create (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.new_attr = dict \
-            ( (a.name, a.get_raw (entity))
-            for a in entity.user_attr if a.to_save (entity)
-            )
+        self.new_attr = self._to_save (entity)
     # end def __init__
 
     def redo (self, scope) :
@@ -293,10 +306,7 @@ class Destroy (_Entity_) :
 
     def __init__ (self, entity) :
         self.__super.__init__ (entity)
-        self.old_attr = dict \
-            ( (a.name, a.get_raw (entity))
-            for a in entity.user_attr if a.to_save (entity)
-            )
+        self.old_attr = self._to_save (entity)
     # end def __init__
 
     def redo (self, scope) :
@@ -341,10 +351,7 @@ class Attr (_Attr_) :
     def __init__ (self, entity, old_attr) :
         self.__super.__init__ (entity, old_attr)
         entity.home_scope.attr_changes [entity.pid].update (old_attr)
-        self.new_attr = dict \
-            ( (a.name, a.get_raw (entity))
-            for a in (entity.user_attr + entity.primary) if a.name in old_attr
-            )
+        self.new_attr = self._to_change (entity, old_attr)
     # end def __init__
 
 # end class Attr
@@ -359,10 +366,7 @@ class Attr_Composite (_Attr_) :
         entity = composite.owner
         entity.home_scope.attr_changes [entity.pid].add (composite.attr_name)
         self.attr_name = composite.attr_name
-        self.new_attr  = dict \
-            ( (a.name, a.get_raw (composite))
-            for a in composite.user_attr if a.name in old_attr
-            )
+        self.new_attr  = self._to_change (composite, old_attr)
     # end def __init__
 
     def entity (self, scope) :

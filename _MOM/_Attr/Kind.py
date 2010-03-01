@@ -105,6 +105,7 @@
 #    25-Feb-2010 (CT) `_k_rank` added to `Mandatory`, `Required`, and `Optional`
 #    28-Feb-2010 (CT) `_Computed_Mixin_.get_value` changed to also compute
 #                     for values of `""`
+#     1-Mar-2010 (CT) Record electric changes, too
 #    ««revision-date»»···
 #--
 
@@ -172,7 +173,7 @@ class Kind (MOM.Prop.Kind) :
                 man = obj._attr_man
                 man.updates_pending = list (self.dependent_attrs)
                 man.do_updates_pending (obj)
-            if self.record_changes and (not obj.electric) :
+            if self.record_changes :
                 self._record_change (obj, value, self.name, old_raw)
     # end def __set__
 
@@ -625,6 +626,7 @@ class _Sticky_Mixin_ (Kind) :
 class _DB_Attr_ (Kind) :
     """Attributes stored in DB."""
 
+    record_changes = True
     save_to_db     = True
 
     def to_save (self, obj) :
@@ -641,7 +643,6 @@ class _User_ (_DB_Attr_, Kind) :
     """Attributes set by user."""
 
     electric       = False
-    record_changes = True
 
     def has_substance (self, obj) :
         return self.get_value (obj) not in (None, self.attr.default)

@@ -1362,13 +1362,6 @@ Renaming objects and links
     >>> rit.rodent, rit.right
     (BMT.Beaver (u'Toothy_Beaver'), BMT.Trap (u'X', 1))
 
-    .. ### DBW-specific start
-
-    >>> rit.__class__.rodent, rit.__class__.right
-    (Rodent `left`, Trap `right`)
-
-    .. ### DBW-specific finish
-
     >>> rit.set (rodent = m)
     1
     >>> print rit.as_code ()
@@ -1495,7 +1488,7 @@ Scope queries
     <Modify BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u''}, new-values = {'max_weight' : u'20'}>
     <Modify BMT.Person_owns_Trap (u"(u'luke', u'lucky', u'')", u"(u'X', u'1')"), old-values = {'price' : u'42.0'}, new-values = {'price' : u'1.20'}>
     <Modify BMT.Rodent_in_Trap (u"(u'Toothy_Beaver',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Mighty_Mouse',)"}, new-values = {'left' : u"(u'Toothy_Beaver',)"}>
-    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')"), old-values = {'rodent' : u"(u'Toothy_Beaver',)"}>
+    <Modify BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')"), old-values = {'left' : u"(u'Toothy_Beaver',)"}, new-values = {'left' : u"(u'Mighty_Mouse',)"}>
     <Destroy BMT.Mouse (u'Mighty_Mouse',), old-values = {'color' : u'yellow', 'weight' : '42'}>
         <Destroy BMT.Rodent_in_Trap (u"(u'Mighty_Mouse',)", u"(u'X', u'1')")>
     <Destroy BMT.Trap (u'X', u'1'), old-values = {'max_weight' : u'20'}>

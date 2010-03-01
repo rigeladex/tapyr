@@ -73,6 +73,9 @@
 #    18-Feb-2010 (CT) `M_E_Type_An._m_setup_sorted_by` redefined
 #    25-Feb-2010 (CT) `M_E_Type._m_setup_attributes` changed to handle
 #                     `check_always`
+#     1-Mar-2010 (CT) `M_E_Type.m_recordable_attrs` added
+#     1-Mar-2010 (CT) `M_E_Type_An._m_setup_attributes` changed to guard
+#                     against `primary`
 #    ««revision-date»»···
 #--
 
@@ -80,6 +83,7 @@ from   _MOM import MOM
 from   _TFL import TFL
 
 import _TFL._Meta.M_Auto_Combine
+import _TFL._Meta.Once_Property
 import _TFL.Decorator
 import _TFL.Sorted_By
 
@@ -389,6 +393,13 @@ class M_E_Type (M_E_Mixin) :
 
     _Class_Kind = "Essence"
 
+    @TFL.Meta.Once_Property
+    def m_recordable_attrs (cls) :
+        """Set of attributes that need recording by change management and DBW"""
+        return set \
+            (a for a in cls.attributes.itervalues () if a.record_changes)
+    # end def m_recordable_attrs
+
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__  (name, bases, dct)
         cls._m_setup_children   (bases, dct)
@@ -559,6 +570,8 @@ class M_E_Type_An (M_E_Type) :
     def _m_setup_attributes (cls, bases, dct) :
         cls.__m_super._m_setup_attributes (bases, dct)
         cls.hash_sig = cls.required
+        assert not cls.primary, \
+            "An_Entity `%s` cannot have primary attributes" % (cls.type_name, )
     # end def _m_setup_attributes
 
     def _m_setup_sorted_by (cls) :
