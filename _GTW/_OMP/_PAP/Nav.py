@@ -70,7 +70,7 @@ class Admin (object) :
             , min_chars = 1
             )
         , city      = GTW.Form.MOM.Javascript.Field_Completer
-            ( "city", ("zip", "city", "country", "region")
+            ( "city", ("city", "country", "region")
             , min_chars = 2
             )
         , name      = "Address_Completer"
@@ -118,7 +118,14 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.PAP.Person"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD (primary, widget = "html/form.jnj, fg_tr")
+            ( FGD
+                ( primary
+                , completer = GTW.Form.MOM.Javascript.Field_Completer
+                    ( "last_name", ("last_name", )
+                    , min_chars = 2
+                    )
+                , widget    = "html/form.jnj, fg_tr"
+                )
             , AID
                 ( "lifetime"
                 , FGD (widget = "html/form.jnj, fg_tr")

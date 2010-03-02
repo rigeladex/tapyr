@@ -201,6 +201,7 @@
 #                     `context.lang`
 #    23-Feb-2010 (MG) `_Site_Entity_._view` only write the result to the
 #                     handler if result is not `True`
+#     2-Mar-2010 (CT) `rank` added
 #    ««revision-date»»···
 #--
 
@@ -252,6 +253,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
     input_encoding  = "iso-8859-15"
     nick            = ""
     pid             = None
+    rank            = 10
     title           = ""
     top             = None
 

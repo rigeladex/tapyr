@@ -161,6 +161,7 @@
 #     8-Jan-2010 (CT) Moved from DJO to GTW
 #    25-Jan-2010 (CT) `GTW.ReST.to_html` factored
 #    17-Feb-2010 (CT) `email_obfuscator` added
+#     2-Mar-2010 (CT) Use `Sorted_By` and added `rank` to `sort_key`
 #    ««revision-date»»···
 #--
 
@@ -171,6 +172,8 @@ from   _TFL                     import TFL
 
 import _GTW._NAV.Base
 import _GTW.ReST
+
+import _TFL.Sorted_By
 
 from   _TFL.Filename            import *
 from   _TFL.I18N                import _, _T, _Tn
@@ -275,14 +278,15 @@ class Dyn_Slice_ReST_Dir (GTW.NAV._Site_Entity_) :
             )
         parent        = self.parent
         Page_Type     = getattr (self, "Page_Type", Page_ReST)
-        sort_key      = getattr (self, "sort_key", lambda x : (x.date, x.name))
+        sort_key      = getattr \
+            (self, "sort_key", TFL.Sorted_By ("rank", "-date", "name"))
         for f in files :
             info = self._page_info (f)
             if info :
                 info ["perma_name"] = base = Filename (f).base
                 info ["name"]       = name = "%s.html" % (base, )
                 add (Page_Type (parent = parent, ** info))
-        entries.sort (key = sort_key, reverse = True)
+        entries.sort (key = sort_key)
     # end def _read_entries
 
 # end class Dyn_Slice_ReST_Dir
