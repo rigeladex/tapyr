@@ -68,6 +68,7 @@
 #                     if the value has not changed (or ortherwise setting a
 #                     role of a link to the same object will raise a
 #                     name clash error)
+#    02-Mar-2010 (MG) `M_Instance.__new__` handle completers on top level forms
 #    ««revision-date»»···
 #--
 
@@ -130,6 +131,7 @@ class M_Instance (GTW.Form._Form_.__class__) :
             if parent_form :
                 result.form_path = "%s/%s" % (parent_form.form_path, form_name)
             result.prefix        = result.form_path.replace ("/", "__")
+            completers           = []
             field_groups         = []
             medias               = []
             added                = set ()
@@ -144,6 +146,9 @@ class M_Instance (GTW.Form._Form_.__class__) :
                       ]
                 field_groups.extend (fgs)
                 for fg in fgs :
+                    if isinstance (fg, GTW.Form.Field_Group) and fg.completer :
+                        completers.append (fg.completer)
+                        fg.completer.attach (result)
                     media = fg.Media
                     if media :
                         medias.append (media)
@@ -151,13 +156,17 @@ class M_Instance (GTW.Form._Form_.__class__) :
                     if sub_form :
                         sub_forms [sub_form.form_name] = sub_form
             result.add_internal_fields    (et_man)
-            js_on_ready         = ()
+            js_on_ready          = ()
             if not result.parent_form :
-                js_on_ready = result.javascript.js_on_ready
-            result.Media        = GTW.Media.from_list \
+                js_on_ready      = result.javascript.js_on_ready
+            result.Media         = GTW.Media.from_list \
                 (medias, js_on_ready = js_on_ready)
-            result.field_groups = field_groups
-            result.fields       = result._setup_fields (field_groups)
+            result.field_groups  = field_groups
+            result.fields        = result._setup_fields (field_groups)
+            result.completer     = None
+            if completers :
+                result.completer = GTW.Form.Javascript.Multi_Completer \
+                    (** dict ((c.trigger, c) for c in completers))
         return result
     # end def __new__
 

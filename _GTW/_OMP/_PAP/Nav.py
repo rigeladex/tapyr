@@ -60,7 +60,7 @@ primary = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    address_completer = GTW.Form.MOM.Javascript.Multi_Completer \
+    address_completer = GTW.Form.Javascript.Multi_Completer \
         ( GTW.Form.MOM.Javascript.Completer
             ( fields    = ("street", "city", "zip", "country")
             , triggers  = dict (street = dict (min_chars = 3))

@@ -28,6 +28,7 @@
 # Revision Dates
 #    25-Feb-2010 (MG) Creation
 #    27-Feb-2010 (MG) Cleanup
+#    02-Mar-2010 (MG) `Multi_Completer` moved in here
 #    ««revision-date»»···
 #--
 
@@ -115,6 +116,44 @@ class _Completer_ (TFL.Meta.Object) :
     # end def attach
 
 # end class _Completer_
+
+
+class Multi_Completer (_Completer_) :
+    """Multiple completers for one inline form"""
+
+    __metaclass__ = TFL.Meta.M_Unique_If_Named
+
+    def __init__ (self, root = None, ** completers) :
+        self.root = root
+        self.name = completers.pop ("name", None)
+        self._completers = completers
+    # end def __init__
+
+    def complete (self, * args, ** kw) :
+        return self.root.complete (* args, ** kw)
+    # end def complete
+
+    def js_on_ready (self, form) :
+        result = []
+        if self.root :
+            result.extend (self.root.js_on_ready (form))
+        for c in self._completers.itervalues () :
+            result.extend (c.js_on_ready (form))
+        return result
+    # end def js_on_ready
+
+    def suggestions (self, * args, ** kw) :
+        return self.root.suggestions (* args, ** kw)
+    # end def suggestions
+
+    def __getattr__ (self, name) :
+        try :
+            return self._completers [name]
+        except IndexError :
+            raise AttributeError (name)
+    # end def __getattr__
+
+# end class Multi_Completer
 
 if __name__ != "__main__" :
     GTW.Form._Export_Module ()

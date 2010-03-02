@@ -30,6 +30,9 @@
 #    27-Feb-2010 (MG) `Field_Completer` added, `_MOM_Completer_` factored
 #    28-Feb-2010 (MG) `_send_suggestions` factored and `uniq_p` used for
 #                     `Field_Completer._send_suggestions`
+#    02-Mar-2010 (MG) `Field_Completer.js_on_ready` suuport for top level
+#                     field completion added
+#    02-Mar-2010 (MG) `Multi_Completer` moved into `GTW.Form.Javascript`
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -113,8 +116,12 @@ class Field_Completer (_MOM_Completer_) :
     # end def _send_suggestions
 
     def js_on_ready (self, form) :
-        bname, fname = form.form_path.split ("/", 1)
-        url_format   = "%s/%s/%%s/%s/%s" \
+        parts        = form.form_path.split ("/", 1)
+        if len (parts) == 2 :
+            bname, fname = parts [0], "/" + parts [1]
+        else :
+            bname, fname = parts [0], ""
+        url_format   = "%s/%s/%%s%s/%s" \
             % (self.prefix, bname, fname, self.trigger)
         result = \
             ( dict
@@ -205,41 +212,6 @@ class Completer (_MOM_Completer_) :
     # end def ui_display
 
 # end class Completer
-
-class Multi_Completer (GTW.Form.Javascript._Completer_) :
-    """Multiple completers for one inline form"""
-
-    __metaclass__ = TFL.Meta.M_Unique_If_Named
-
-    def __init__ (self, root, ** completers) :
-        self.root = root
-        self.name = completers.pop ("name", None)
-        self._completers = completers
-    # end def __init__
-
-    def complete (self, * args, ** kw) :
-        return self.root.complete (* args, ** kw)
-    # end def complete
-
-    def js_on_ready (self, form) :
-        result = list (self.root.js_on_ready (form))
-        for c in self._completers.itervalues () :
-            result.extend (c.js_on_ready (form))
-        return result
-    # end def js_on_ready
-
-    def suggestions (self, * args, ** kw) :
-        return self.root.suggestions (* args, ** kw)
-    # end def suggestions
-
-    def __getattr__ (self, name) :
-        try :
-            return self._completers [name]
-        except IndexError :
-            raise AttributeError (name)
-    # end def __getattr__
-
-# end class Multi_Completer
 
 if __name__ != "__main__" :
     GTW.Form.MOM._Export_Module ()
