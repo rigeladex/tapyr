@@ -106,6 +106,7 @@
 #    28-Feb-2010 (CT) `_Computed_Mixin_.get_value` changed to also compute
 #                     for values of `""`
 #     1-Mar-2010 (CT) Record electric changes, too
+#     3-Mar-2010 (CT) `_checkers` changed to pass `self` to `attr._checkers`
 #    ««revision-date»»···
 #--
 
@@ -285,7 +286,7 @@ class Kind (MOM.Prop.Kind) :
     # end def to_save
 
     def _checkers (self, e_type) :
-        for c in self.attr._checkers (e_type) :
+        for c in self.attr._checkers (e_type, self) :
             yield c
     # end def _checkers
 

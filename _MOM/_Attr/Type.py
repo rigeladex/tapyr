@@ -91,6 +91,8 @@
 #    22-Feb-2010 (CT) `_A_String_.__metaclass__` set to `M_Attr_Type_String`
 #    24-Feb-2010 (CT) `ui_length` added
 #    28-Feb-2010 (CT) `_A_String_Base_` factored, `A_Numeric_String` added
+#     3-Mar-2010 (CT) `_checkers` changed to take additional argument `kind`
+#     3-Mar-2010 (CT) `_A_Composite_._checkers` changed to honor `kind.electric`
 #    ««revision-date»»···
 #--
 
@@ -205,7 +207,7 @@ class A_Attr_Type (object) :
         return eval (s, glob, locl.copy ())
     # end def _call_eval
 
-    def _checkers (self, e_type) :
+    def _checkers (self, e_type, kind) :
         for c in sorted (self.check) :
             yield c, ()
     # end def _checkers
@@ -329,8 +331,8 @@ class _A_Composite_ (A_Attr_Type) :
         return self.C_Type (** t)
     # end def from_string
 
-    def _checkers (self, e_type) :
-        for c in self.__super._checkers (e_type) :
+    def _checkers (self, e_type, kind) :
+        for c in self.__super._checkers (e_type, kind) :
             yield c
         C_Type = self.C_Type
         if not hasattr (C_Type, "app_type") :
@@ -339,6 +341,11 @@ class _A_Composite_ (A_Attr_Type) :
             self.C_Type = C_Type = e_type.app_type.etypes [C_Type]
         name = self.name
         for k, ps in C_Type._Predicates._pred_kind.iteritems () :
+            if kind.electric :
+                k = kind.kind
+                p_kind = MOM.Pred.System
+            else :
+                p_kind = MOM.Pred.Kind.Table [k]
             if ps :
                 p_name = "AC_check_%s_%s" % (name, k)
                 check  = MOM.Pred.Condition.__class__ \
@@ -346,7 +353,7 @@ class _A_Composite_ (A_Attr_Type) :
                     , dict
                         ( assertion  = "%s.is_correct (kind = %r)" % (name, k)
                         , attributes = (name, )
-                        , kind       = MOM.Pred.Kind.Table [k]
+                        , kind       = p_kind
                         , name       = p_name
                         , __doc__    = " "
                           ### Space necessary to avoid inheritance of `__doc__`
@@ -480,7 +487,7 @@ class _A_Number_ (A_Attr_Type) :
             return 12
     # end def ui_length
 
-    def _checkers (self, e_type) :
+    def _checkers (self, e_type, kind) :
         if self.min_value is not None :
             if self.max_value is not None :
                 yield "%s <= value <= %s" % (self.min_value, self.max_value), ()
@@ -488,7 +495,7 @@ class _A_Number_ (A_Attr_Type) :
                 yield "%s <= value" % (self.min_value, ), ()
         elif self.max_value :
             yield "value <= %s" % (self.max_value, ), ()
-        for c in self.__super._checkers (e_type) :
+        for c in self.__super._checkers (e_type, kind) :
             yield c
     # end def _checkers
 
