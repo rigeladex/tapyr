@@ -63,6 +63,7 @@
 #    18-Feb-2010 (CT) `Link1` added
 #    26-Feb-2010 (CT) `Object.singleton` added
 #     3-Mar-2010 (CT) `instance_or_new` added
+#     3-Mar-2010 (CT) Guard for `kw` removed from `instance`
 #    ««revision-date»»···
 #--
 
@@ -134,8 +135,6 @@ class Id_Entity (Entity) :
     # end def exists
 
     def instance (self, * epk, ** kw) :
-        if kw :
-            raise TypeError (kw)
         return self.ems.instance (self._etype, epk)
     # end def instance
 
