@@ -166,7 +166,8 @@ class Admin (object) :
                 , title     = _("Addresses")
                 )
             )
-        , list_display = ("ui_display", "lifetime")
+        # list_display = ("ui_display", "lifetime")
+        , list_display = ("last_name", "first_name", "middle_name", "title", "lifetime")
         )
 
     Phone           = dict \

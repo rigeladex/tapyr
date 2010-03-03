@@ -67,6 +67,7 @@
 #    20-Jan-2010 (CT) `pid_as_lid` and `pid_from_lid` added
 #     8-Feb-2010 (CT) `_remove` factored; `remove` changed to set `pid` to None
 #     9-Feb-2010 (CT) `epk_to_hpk` changed to use `get_hash`
+#     3-Mar-2010 (CT) `rename` changed to allow rename to same `epk`
 #    ««revision-date»»···
 #--
 
@@ -234,7 +235,11 @@ class Manager (MOM.EMS._Manager_) :
         root    = entity.relevant_root
         table   = self._tables [root.type_name]
         if new_hpk in table :
-            raise MOM.Error.Name_Clash (entity, table [new_hpk])
+            old = table [new_hpk]
+            if entity is old :
+                return
+            else :
+                raise MOM.Error.Name_Clash (entity, old)
         self._remove (entity)
         renamer      ()
         self.add     (entity, entity.pid)
