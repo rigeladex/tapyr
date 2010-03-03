@@ -62,6 +62,7 @@
 #                     `Entity`
 #    18-Feb-2010 (CT) `Link1` added
 #    26-Feb-2010 (CT) `Object.singleton` added
+#     3-Mar-2010 (CT) `instance_or_new` added
 #    ««revision-date»»···
 #--
 
@@ -137,6 +138,13 @@ class Id_Entity (Entity) :
             raise TypeError (kw)
         return self.ems.instance (self._etype, epk)
     # end def instance
+
+    def instance_or_new (self, * epk, ** kw) :
+        result = self.instance (* epk, ** kw)
+        if result is None :
+            result = self (* epk, ** kw)
+        return result
+    # end def instance_or_new
 
     def pid_as_lid (self, obj) :
         return self.ems.pid_as_lid (obj, self._etype)
