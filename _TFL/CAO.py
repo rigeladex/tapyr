@@ -44,6 +44,7 @@
 #    11-Jan-2010 (CT) Some more documentation added
 #    16-Feb-2010 (CT) `Cmd._handle_arg` and `Cmd._setup_args` changed to
 #                     empty `args` spec properly
+#     4-Mar-2010 (CT) `Abs_Path` added
 #    ««revision-date»»···
 #--
 
@@ -100,6 +101,7 @@ class Arg (TFL.Meta.M_Class) :
             setattr (cls.__class__, r_name, cls)
             if "type_abbr" in dict :
                 assert not cls.type_abbr in cls.Table, cls
+                assert len (cls.type_abbr) == 1, cls
                 cls.Table [cls.type_abbr] = cls
     # end def __init__
 
@@ -645,6 +647,25 @@ class Path (_Spec_) :
     # end def _resolve_range
 
 # end class Path
+
+class Abs_Path (Path) :
+    """Path converted to absolute"""
+
+    type_abbr     = "Q"
+
+    def cook (self, value, cao = None) :
+        result = self.__super.cook (value, cao)
+        if result :
+            result = TFL.sos.path.abspath (result)
+        return result
+    # end def cook
+
+    def _resolve_range (self, value, cao) :
+        for v in self.__super._resolve_range (value, cao) :
+            yield TFL.sos.path.abspath (v)
+    # end def _resolve_range
+
+# end class Abs_Path
 
 class Cmd (TFL.Meta.Object) :
     """Model a command with options, arguments, and a handler.

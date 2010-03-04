@@ -77,13 +77,19 @@ class Admin (object) :
         )
 
     email_completer = GTW.Form.MOM.Javascript.Completer \
-        ( fields    = ( "address")
+        ( fields    = ("address", )
         , triggers  = dict (address = dict (min_chars = 2))
         , name      = "Email_Completer"
         )
 
+    person_completer = GTW.Form.MOM.Javascript.Completer \
+        ( fields    = ("last_name", "first_name", "middle_name", "title")
+        , triggers  = dict (last_name = dict (min_chars = 2))
+        , name      = "Person_Completer"
+        )
+
     phone_completer = GTW.Form.MOM.Javascript.Completer \
-        ( fields    = ( "country_code", "area_code", "number")
+        ( fields    = ("country_code", "area_code", "number")
         , triggers  = dict (number = dict (min_chars = 2))
         , name      = "Phone_Completer"
         )
@@ -101,6 +107,17 @@ class Admin (object) :
                     , widget = "html/form.jnj, fg_tr"
                     )
                 )
+            , LID
+                ( "PAP.Person_has_Address"
+                , FGD ( "desc")
+                , AID
+                    ( "person"
+                    , FGD (primary)
+                    , completer = person_completer
+                    )
+                , legend    = _("Persons")
+                , title     = _("Persons")
+                )
             )
         )
 
@@ -110,6 +127,17 @@ class Admin (object) :
         , Form_args =
             ( FGD (primary)
             , FGD ()
+            , LID
+                ( "PAP.Person_has_Email"
+                , FGD ( "desc")
+                , AID
+                    ( "person"
+                    , FGD (primary)
+                    , completer = person_completer
+                    )
+                , legend    = _("Persons")
+                , title     = _("Persons")
+                )
             )
         , list_display = ("ui_display", "desc")
         )
@@ -176,6 +204,18 @@ class Admin (object) :
         , Form_args =
             ( FGD (primary)
             , FGD ()
+            , LID
+                ( "PAP.Person_has_Phone"
+                , FGD ( "desc")
+                , AID
+                    ( "person"
+                    , FGD (primary)
+                    , completer = person_completer
+                    )
+                , FGD ( "extension")
+                , legend    = _("Persons")
+                , title     = _("Persons")
+                )
             )
         , list_display = ("ui_display", "desc")
         )
