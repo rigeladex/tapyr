@@ -203,7 +203,9 @@ class Manager (MOM.EMS._Manager_) :
     def rename (self, entity, new_epk, renamer) :
         old_entity = self.instance (entity.__class__, new_epk)
         if old_entity :
-            raise MOM.Error.Name_Clash (entity, old_entity)
+            if old_entity is not entity :
+                raise MOM.Error.Name_Clash (entity, old_entity)
+            return
         renamer     ()
     # end def rename
 
