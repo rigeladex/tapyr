@@ -38,6 +38,7 @@
 #                     attributes and role attributes
 #    26-Feb-2010 (MG) `set_pickle_cargo` fixed
 #     4-Mar-2010 (CT) Stub for `delete_database` added
+#     4-Mar-2010 (MG) `delete_database` implemented
 #    ««revision-date»»···
 #--
 
@@ -133,19 +134,25 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         return cls._create_session   (engine, scope)
     # end def create_database
 
-    def _create_postgres_db ( cls, db_uri, db_name
-                            , encoding = "utf8"
-                            , template = "template0"
-                            ) :
+    def _create_postgres_connection ( cls, db_uri) :
         import psycopg2.extensions as PE
         engine = cls._create_engine (db_uri + "/postgres")
         conn   = engine.connect ()
         conn.connection.connection.set_isolation_level \
             (PE.ISOLATION_LEVEL_AUTOCOMMIT)
+        return conn, engine
+    # end def _create_postgres_db
+
+    def _create_postgres_db ( cls, db_uri, db_name
+                            , encoding = "utf8"
+                            , template = "template0"
+                            ) :
+        conn, engine = cls._create_postgres_connection (db_uri)
         conn.execute \
             ( "CREATE DATABASE %s ENCODING='%s' TEMPLATE %s"
             % (db_name, encoding, template)
             )
+        conn.close   ()
     # end def _create_postgres_db
 
     def connect_database (cls, db_uri, scope) :
@@ -153,10 +160,17 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     # end def connect_database
 
     def delete_database (cls, db_uri, db_ext) :
-        from _TFL import sos
-        if sos.path.exists (db_uri) :
-            sos.unlink (db_uri)
-        ### XXX ???
+        if db_uri :
+            if db_uri.startswith ("sqlite://") :
+                ### sqlite database are just a file
+                from _TFL import sos
+                if sos.path.exists (db_uri) :
+                    sos.unlink     (db_uri)
+            elif db_uri.startswith ("postgresql://") :
+                db_uri, db_name = db_uri.rsplit                   ("/", 1)
+                conn, engine = cls._create_postgres_connection (db_uri)
+                conn.execute ("DROP DATABASE %s" % (db_name, ))
+                conn.close   ()
     # end def delete_database
 
     def _create_engine (cls, db_uri) :
@@ -375,6 +389,9 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             f_attr      = assoc_sa.c \
                 [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
             singleton   = isinstance (cr, MOM.Role_Cacher_1)
+            print attr_kind, attr_kind.Class
+            if not attr_kind.Class :
+                import pdb; pdb.set_trace ()
             result_et   = app_type [attr_kind.Class.type_name]
             def computed_crn (self) :
                 session = self.home_scope.ems.session
