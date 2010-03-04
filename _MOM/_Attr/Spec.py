@@ -44,6 +44,8 @@
 #                     `_Nested_Mixin_` to attributes of `An_Entity`
 #    24-Feb-2010 (CT) `_add_prop` changed to replace `_A_Object_.Class` with
 #                     app-type specific e-type
+#     4-Mar-2010 (CT) `_add_prop` changed to not change `attr.Class` of
+#                     `_A_Object_` (app_type doesn't have etypes yet)
 #    ««revision-date»»···
 #--
 
@@ -101,9 +103,6 @@ class Spec (MOM.Prop.Spec) :
         if prop and name != prop.name :
             self._setup_alias (e_type, name, prop.name)
         attr = prop.attr
-        if issubclass (prop_type, MOM.Attr._A_Object_) :
-            if attr.Class :
-                attr.Class = e_type.app_type.entity_type (attr.Class)
         return prop
     # end def _add_prop
 
