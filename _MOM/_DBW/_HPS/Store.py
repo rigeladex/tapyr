@@ -30,6 +30,8 @@
 #    21-Dec-2009 (CT) Creation continued
 #    19-Jan-2010 (CT) `_save_context` changed to save `max_pid`, too
 #    20-Jan-2010 (CT) `Info.NEW` factored from `Store._create_info`
+#     4-Mar-2010 (CT) `load_info` changed to allow existence of uncompressed
+#                     database
 #    ««revision-date»»···
 #--
 
@@ -181,13 +183,13 @@ class Store (TFL.Meta.Object) :
 
     def load_info (self) :
         assert sos.path.exists (self.db_uri.name), self.db_uri.name
-        assert not sos.path.exists (self.x_uri.name), self.x_uri.name
         x_name = self.x_uri.name
         with TFL.lock_file (x_name) :
-            sos.mkdir      (x_name)
-            with contextlib.closing \
-                     (self.ZF.ZipFile (self.db_uri.name, "r")) as zf :
-                zf.extractall (x_name)
+            if not sos.path.exists (x_name) :
+                sos.mkdir (x_name)
+                with contextlib.closing \
+                         (self.ZF.ZipFile (self.db_uri.name, "r")) as zf :
+                    zf.extractall (x_name)
             self.info = self._load_info ()
     # end def load_info
 
