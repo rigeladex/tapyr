@@ -37,8 +37,10 @@
 #    25-Feb-2010 (MG) `SAS_A_Object_Kind_Mixin` fixed to work with `A_Object`
 #                     attributes and role attributes
 #    26-Feb-2010 (MG) `set_pickle_cargo` fixed
+#     4-Mar-2010 (CT) Stub for `delete_database` added
 #    ««revision-date»»···
 #--
+
 from   _TFL                      import TFL
 import _TFL.defaultdict
 from   _MOM                      import MOM
@@ -149,6 +151,13 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def connect_database (cls, db_uri, scope) :
         return cls._create_session (cls._create_engine (db_uri), scope)
     # end def connect_database
+
+    def delete_database (cls, db_uri, db_ext) :
+        from _TFL import sos
+        if sos.path.exists (db_uri) :
+            sos.unlink (db_uri)
+        ### XXX ???
+    # end def delete_database
 
     def _create_engine (cls, db_uri) :
         return SQL_Engine.create_engine (db_uri or "sqlite:///:memory:")

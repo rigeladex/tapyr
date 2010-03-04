@@ -33,6 +33,7 @@
 #    23-Nov-2009 (CT) Documentation added
 #    30-Dec-2009 (CT) s/Package_NS/PNS/
 #    14-Jan-2010 (CT) `PNS_Aliases` added
+#     4-Mar-2010 (CT) `delete_database` added
 #    ««revision-date»»···
 #--
 
@@ -134,6 +135,11 @@ class _App_Type_D_ (_App_Type_) :
         self.etypes  [etype.Essence.type_name] = etype
         self._T_Extension.append (etype)
     # end def add_type
+
+    def delete_database (self, db_uri) :
+        self.DBW.delete_database \
+            (db_uri, self.ANS.Version.db_version.db_extension)
+    # end def delete_database
 
     def entity_type (self, entity) :
         """Returns app-type specific type of `entity`."""

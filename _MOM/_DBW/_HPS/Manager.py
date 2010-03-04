@@ -32,6 +32,7 @@
 #    20-Jan-2010 (CT) Provide `info` even if there is no `store`
 #     2-Feb-2010 (CT) `commit` changed to update `info.max_cid`  even if
 #                     there is no `store`
+#     4-Mar-2010 (CT) `_new_manager` factored; `delete_database` added
 #    ««revision-date»»···
 #--
 
@@ -41,24 +42,43 @@ from   _TFL       import TFL
 import _MOM._DBW._HPS.Store
 import _MOM._DBW._Manager_
 
+from   _TFL import sos
+
+import _TFL.Accessor
+import _TFL.Filename
+
 class _M_HPS_Manager_ (MOM.DBW._Manager_.__class__) :
     """Meta class for MOM.DBW.HPS.Manager"""
 
     def create_database (cls, db_uri, scope) :
-        store = None
-        if db_uri is not None :
-            store = MOM.DBW.HPS.Store (db_uri, scope)
-            store.create ()
-        return cls (store, scope)
+        return cls._new_manager (db_uri, scope, TFL.Method.create)
     # end def create_database
 
     def connect_database (cls, db_uri, scope) :
+        return cls._new_manager (db_uri, scope, TFL.Method.load_info)
+    # end def connect_database
+
+    def delete_database (cls, db_uri, db_ext) :
+        uri = cls._db_uri (db_uri, db_ext).name
+        if sos.path.exists (uri) :
+            sos.unlink (uri)
+        x_uri = MOM.DBW.HPS.Store.X_Uri (uri).name
+        if sos.path.exists (x_uri) :
+            sos.rmdir (x_uri, True)
+    # end def delete_database
+
+    def _db_uri (cls, uri, ext) :
+        return TFL.Filename (uri, ext)
+    # end def _db_uri
+
+    def _new_manager (cls, db_uri, scope, store_fct) :
         store = None
         if db_uri is not None :
-            store = MOM.DBW.HPS.Store (db_uri, scope)
-            store.load_info ()
+            ext   = scope.app_type.ANS.Version.db_version.db_extension
+            store = MOM.DBW.HPS.Store (cls._db_uri (db_uri, ext), scope)
+            store_fct (store)
         return cls (store, scope)
-    # end def connect_database
+    # end def _get_store
 
 # end class _M_HPS_Manager_
 

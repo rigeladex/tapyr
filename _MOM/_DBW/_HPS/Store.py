@@ -32,6 +32,7 @@
 #    20-Jan-2010 (CT) `Info.NEW` factored from `Store._create_info`
 #     4-Mar-2010 (CT) `load_info` changed to allow existence of uncompressed
 #                     database
+#     4-Mar-2010 (CT) Classmethod `X_Uri` factored
 #    ««revision-date»»···
 #--
 
@@ -131,8 +132,8 @@ class Store (TFL.Meta.Object) :
 
     def __init__ (self, db_uri, scope) :
         self.Version  = Version = scope.app_type.ANS.Version
-        self.db_uri   = TFL.Filename (db_uri, Version.db_version.db_extension)
-        self.x_uri    = TFL.Dirname  (self.db_uri.name + ".X")
+        self.db_uri   = db_uri
+        self.x_uri    = self.X_Uri (db_uri.name)
         self.info_uri = TFL.Filename ("info", self.x_uri)
         self.scope    = scope
     # end def __init__
@@ -229,6 +230,11 @@ class Store (TFL.Meta.Object) :
             info.commits.extend (info.pending)
             info.pending = []
     # end def save_objects
+
+    @classmethod
+    def X_Uri (cls, name) :
+        return TFL.Dirname (name + ".X")
+    # end def X_Uri
 
     def _check_sync (self, info) :
         db_info = self._load_info ()
