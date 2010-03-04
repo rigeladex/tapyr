@@ -169,7 +169,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             elif db_uri.startswith ("postgresql://") :
                 db_uri, db_name = db_uri.rsplit                   ("/", 1)
                 conn, engine = cls._create_postgres_connection (db_uri)
-                conn.execute ("DROP DATABASE %s" % (db_name, ))
+                try :
+                    conn.execute ("DROP DATABASE %s" % (db_name, ))
+                except sqlalchemy.exc.ProgrammingError :
+                    pass
                 conn.close   ()
     # end def delete_database
 
@@ -389,9 +392,6 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             f_attr      = assoc_sa.c \
                 [getattr (assoc_et, cr.other_role.name).attr._sa_col_name]
             singleton   = isinstance (cr, MOM.Role_Cacher_1)
-            print attr_kind, attr_kind.Class
-            if not attr_kind.Class :
-                import pdb; pdb.set_trace ()
             result_et   = app_type [attr_kind.Class.type_name]
             def computed_crn (self) :
                 session = self.home_scope.ems.session
