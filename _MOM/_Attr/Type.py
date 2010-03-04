@@ -93,6 +93,9 @@
 #    28-Feb-2010 (CT) `_A_String_Base_` factored, `A_Numeric_String` added
 #     3-Mar-2010 (CT) `_checkers` changed to take additional argument `kind`
 #     3-Mar-2010 (CT) `_A_Composite_._checkers` changed to honor `kind.electric`
+#     4-Mar-2010 (CT) `_A_String_Base_._checkers` redefined to add a check
+#                     for `max_length`, if any
+#     4-Mar-2010 (CT) `max_length = 0` added to `_A_String_Base_`
 #    ««revision-date»»···
 #--
 
@@ -788,8 +791,33 @@ class _A_String_Base_ (A_Attr_Type) :
     """Base class for string-valued attributes of an object."""
 
     default           = ""
+    max_length        = 0
     ui_length         = TFL.Meta.Once_Property \
         (lambda s : s.max_length or 120)
+
+    def _checkers (self, e_type, kind) :
+        for c in self.__super._checkers (e_type, kind) :
+            yield c
+        if self.max_length :
+            name   = self.name
+            p_kind = [MOM.Pred.Object, MOM.Pred.System] [kind.electric]
+            p_name = "AC_check_%s_length" % (name, )
+            check = MOM.Pred.Condition.__class__ \
+                ( p_name, (MOM.Pred.Condition, )
+                , dict
+                    ( assertion  = "length <= %s" % (self.max_length, )
+                    , attributes = (name, )
+                    , bindings   = dict
+                        ( length = "len (%s)" % (name, )
+                        )
+                    , kind       = p_kind
+                    , name       = p_name
+                    , __doc__    = "Value for %s must not be longer than %s"
+                      % (name, self.max_length)
+                    )
+                )
+            yield check, ()
+    # end def _checkers
 
     def _from_string_eval (self, s, obj, glob, locl) :
         return self.simple_cooked (s)

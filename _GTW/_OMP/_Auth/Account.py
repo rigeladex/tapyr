@@ -201,7 +201,7 @@ class Account_P (_Ancestor_Essence) :
             """Password for this account"""
 
             kind       = Attr.Internal
-            max_length = 50
+            max_length = 60
 
         # end class password
 

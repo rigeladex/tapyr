@@ -156,6 +156,7 @@ class Person (_Ancestor_Essence) :
 
             kind        = Attr.Primary_Optional
             ignore_case = True
+            max_length  = 5
             rank        = 1
             ui_name     = "Middle name"
 
@@ -1224,6 +1225,16 @@ Changing objects and links
     True
     >>> axel.all_links ()
     [BMT.Rodent_in_Trap ((u'betty'), (u'X', 2))]
+
+    >>> print p.as_code ()
+    BMT.Person (u'luke', u'lucky', u'', )
+    >>> p.set (middle_name = "zacharias")
+    Traceback (most recent call last):
+      ...
+    Invariant_Errors: Condition `AC_check_middle_name_length` : Value for middle_name must not be longer than 5 (length <= 5)
+        length = 9
+        middle_name = u'zacharias'
+        length = 'len (middle_name)'
 
     >>> m
     BMT.Mouse (u'Mighty_Mouse')
