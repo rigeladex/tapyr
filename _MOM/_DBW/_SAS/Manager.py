@@ -39,6 +39,7 @@
 #    26-Feb-2010 (MG) `set_pickle_cargo` fixed
 #     4-Mar-2010 (CT) Stub for `delete_database` added
 #     4-Mar-2010 (MG) `delete_database` implemented
+#     4-Mar-2010 (MG) Support for other database added (tested with MySQL)
 #    ««revision-date»»···
 #--
 
@@ -128,7 +129,7 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 cls._create_postgres_db (create_db_uri, db_name)
             elif not db_uri.startswith ("sqlite://") :
                 engine  = cls._create_engine (create_db_uri)
-                engine.execute ("CREATE DATABASE %s")
+                engine.execute ("CREATE DATABASE %s" % (db_name, ))
         engine  = cls._create_engine (db_uri)
         cls.metadata.create_all      (engine)
         return cls._create_session   (engine, scope)
@@ -161,19 +162,25 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
 
     def delete_database (cls, db_uri, db_ext) :
         if db_uri :
+            db_uri, db_name = db_uri.rsplit ("/", 1)
             if db_uri.startswith ("sqlite://") :
                 ### sqlite database are just a file
                 from _TFL import sos
                 if sos.path.exists (db_uri) :
                     sos.unlink     (db_uri)
             elif db_uri.startswith ("postgresql://") :
-                db_uri, db_name = db_uri.rsplit                   ("/", 1)
                 conn, engine = cls._create_postgres_connection (db_uri)
                 try :
                     conn.execute ("DROP DATABASE %s" % (db_name, ))
                 except sqlalchemy.exc.ProgrammingError :
                     pass
                 conn.close   ()
+            else :
+                try :
+                    engine  = cls._create_engine (db_uri)
+                    engine.execute ("DROP DATABASE %s" % (db_name, ))
+                except sqlalchemy.exc.OperationalError :
+                    pass
     # end def delete_database
 
     def _create_engine (cls, db_uri) :
