@@ -50,6 +50,7 @@
 #                     `M_Link_n._m_setup_auto_cache_role`)
 #    19-Feb-2010 (CT) Argument `attr_class` added to `_setup_attr`
 #    25-Feb-2010 (CT) Redefine `_finish__init__` instead of `_init_epk`
+#     4-Mar-2010 (CT) `_Cacher_.cr_attr` added
 #    ««revision-date»»···
 #--
 
@@ -193,6 +194,7 @@ class _Cacher_ (TFL.Meta.Object) :
 
     def __init__ (self, attr_name = None) :
         self.role_name = None
+        self.cr_attr   = None
         self.attr_name = attr_name
     # end def __init__
 
@@ -213,7 +215,8 @@ class _Cacher_ (TFL.Meta.Object) :
             , description  = desc
             , __module__   = role_type.__module__
             )
-        role_type.add_attribute (type (CR) (self.attr_name, (CR, ), kw))
+        self.cr_attr = cr = type (CR) (self.attr_name, (CR, ), kw)
+        role_type.add_attribute (cr)
     # end def _setup_attr
 
 # end class _Cacher_

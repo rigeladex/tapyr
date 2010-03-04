@@ -53,6 +53,8 @@
 #    18-Feb-2010 (CT) `M_Link1` and `M_E_Type_Link1` added (`M_Link_n` factored)
 #    19-Feb-2010 (CT) `M_Link_n._m_setup_auto_cache_role` changed to not
 #                     create `A_Cached_Role` (done by `Role_Cacher`, now)
+#     4-Mar-2010 (CT) `_m_setup_roles` changed to fix the `Class` of
+#                     cached-role attributes
 #    ««revision-date»»···
 #--
 
@@ -84,7 +86,7 @@ class M_Link (MOM.Meta.M_Id_Entity) :
                 rc = a.auto_cache
                 if rc :
                     if not isinstance (rc, MOM._.Link._Cacher_) :
-                        rc = cls.Cacher  (rc)
+                        rc = a.auto_cache = cls.Cacher (rc)
                     rc.setup             (cls, a)
                     auto_cache_roles.add (rc)
         cls.auto_cache_roles = tuple (auto_cache_roles)
@@ -169,6 +171,9 @@ class M_E_Type_Link (MOM.Meta.M_E_Type_Id) :
                         cls.app_type.entity_type (r.role_type)
                     r.attr.typ       = rt.type_base_name
                     rt._own_link_map [cls].add (r)
+                    cr_attr = r.attr.auto_cache and r.attr.auto_cache.cr_attr
+                    if cr_attr and cr_attr.Class :
+                        cr_attr.Class = cls.app_type.entity_type (cr_attr.Class)
                 if r.role_name != r.generic_role_name :
                     setattr \
                         ( cls, r.role_name
