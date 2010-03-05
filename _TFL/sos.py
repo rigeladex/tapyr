@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 1998-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 1998-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -58,11 +58,15 @@
 #    17-Mar-2009 (CT) Function definitions put into alphabetic sequence
 #    19-Mar-2009 (CT) Deprecation warning added to `tempfile_name`
 #    11-Nov-2009 (CT) Changed exception handler for 3-compatibility
+#     5-Mar-2010 (CT) `changed_dir` added
 #    ««revision-date»»···
 #--
 
-from   _TFL import TFL
-from   os   import *
+from    _TFL import TFL
+
+import _TFL.Decorator
+
+from    os   import *
 
 mkdir_p = makedirs
 
@@ -107,6 +111,17 @@ if (name == "nt") or (name == "win32") :
     # end if not hasattr (path, "samefile")
 
 # end if (name == "nt") or (name == "win32")
+
+@TFL.Contextmanager
+def changed_dir (dir) :
+    """Temporaly change the current directory to `dir`."""
+    cwd = getcwd ()
+    try :
+        chdir (dir)
+        yield
+    finally :
+        chdir (cwd)
+# end def changed_dir
 
 def expanded_glob (pathname) :
     """Return a list of file names matching `expanded_path (pathname)'."""

@@ -173,6 +173,7 @@
 #     8-Jan-2010 (CT) Moved from DJO to GTW
 #    18-Jan-2010 (CT) Surgery
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
+#     5-Mar-2010 (CT) `_etype_man_entries` corrected
 #    ««revision-date»»···
 #--
 
@@ -204,13 +205,14 @@ class Site_Admin (GTW.NAV.Dir) :
         for man in self.top.E_Types.itervalues () :
             m_kw  = man.admin_args
             title = m_kw.pop ("title", man.title)
-            desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, name))
-            Type  = m_kw.pop ("Admin_Type", self.Page)
+            desc  = m_kw.pop ("desc", "%s: %s" % (self.desc, man.name))
+            ETM   = m_kw.pop ("ETM", man.ETM)
+            Type  = m_kw.pop ("Type", self.Page)
             d     = dict \
                 ( name      = man.name
                 , title     = title
                 , desc      = desc
-                , ETM       = man.ETM
+                , ETM       = ETM
                 , kind_name = man.kind_name
                 , Type      = Type
                 , ** m_kw

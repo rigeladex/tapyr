@@ -28,6 +28,7 @@
 # Revision Dates
 #    19-Jan-2010 (CT) Creation (ported from DJO.NAV.Model.Manager)
 #    20-Jan-2010 (CT) `_Mgr_Base_` factored
+#     5-Mar-2010 (CT) `Manager.__init__` corrected
 #    ««revision-date»»···
 #--
 
@@ -50,8 +51,8 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
 
     admin_args      = {}
 
-    def __init__ (self, ETM, ** kw) :
-        self.__super.__init__ (ETM = ETM, ** kw)
+    def __init__ (self, src_dir, ** kw) :
+        self.__super.__init__ (src_dir = src_dir, ** kw)
         etn = self.E_Type.type_name
         kn  = self.kind_name
         top = self.top

@@ -43,6 +43,9 @@
 from   _TFL            import TFL
 from   _TFL.Record     import Record
 from   _TFL.predicate  import first, split_hst
+
+import _TFL.Decorator
+
 import  gettext
 
 Config = Record \

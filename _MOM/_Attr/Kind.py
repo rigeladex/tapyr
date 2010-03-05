@@ -380,8 +380,12 @@ class _EPK_Mixin_ (Kind) :
     # end def get_pickle_cargo
 
     def set_pickle_cargo (self, obj, cargo) :
-        ref = self.attr._get_object (obj, cargo [0], raw = False)
-        self._set_cooked_value (obj, ref, changed = True)
+        try :
+            ref = self.attr._get_object (obj, cargo [0], raw = False)
+        except MOM.Error.No_Such_Object :
+            pass ### XXX
+        else :
+            self._set_cooked_value (obj, ref, changed = True)
     # end def set_pickle_cargo
 
     def sort_key (self, obj) :

@@ -40,6 +40,7 @@
 #     4-Mar-2010 (CT) Stub for `delete_database` added
 #     4-Mar-2010 (MG) `delete_database` implemented
 #     4-Mar-2010 (MG) Support for other database added (tested with MySQL)
+#     5-Mar-2010 (CT) Pass `convert_unicode` to `types.String`
 #    ««revision-date»»···
 #--
 
@@ -372,8 +373,11 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 raw_name       = attr.raw_name
                 if prefix :
                     raw_name   = "%s%s" % (prefix, raw_name)
-                col = schema.Column (raw_name, types.String (length = 60))
-                result.append       (col)
+                col = schema.Column \
+                    ( raw_name
+                    , types.String (length = 60, convert_unicode = True)
+                    )
+                result.append (col)
         return result
     # end def _setup_columns
 

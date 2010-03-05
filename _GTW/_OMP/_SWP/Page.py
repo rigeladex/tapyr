@@ -32,6 +32,7 @@
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    24-Feb-2010 (CT) `head_line` added
 #     5-Mar-2010 (CT) `author.Class` set to class `GTW.OMP.PAP.Person`
+#     5-Mar-2010 (CT) `Page.rank` defined, attribute `prio` added
 #    ««revision-date»»···
 #--
 
@@ -55,6 +56,8 @@ _Ancestor_Essence = GTW.OMP.SWP.Object
 
 class Page (_Ancestor_Essence) :
     """Model a static web page."""
+
+    rank = 10
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -134,6 +137,15 @@ class Page (_Ancestor_Essence) :
             max_length         = 120
 
         # end class head_line
+
+        class prio (A_Int) :
+            """Higher prio sorts before lower prio."""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
+            default            = 0
+
+        # end class prio
 
         class text (A_Text) :
             """Text for web page in markup specified by `format`."""

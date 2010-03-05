@@ -33,6 +33,7 @@
 #    25-Feb-2010 (MG) `_sa_columns_role_eb` change to `_sa_columns_a_object`
 #    25-Feb-2010 (MG) `_sa_col_name` functions moved in here from `Attr_Kind`
 #    25-Feb-2010 (MG) `_sa_columns_named_object` fixed
+#     5-Mar-2010 (CT) Pass `convert_unicode` to `types.String`
 #    ««revision-date»»···
 #--
 
@@ -132,7 +133,10 @@ def _sa_numeric (cls, attr, kind, ** kw) :
 
 @Add_Classmedthod ("_sa_type", Attr._A_String_Base_)
 def _sa_string (cls, attr, kind, ** kw) :
-    return types.String (getattr (attr, "max_length", None))
+    return types.String \
+        ( getattr (attr, "max_length", None)
+        , convert_unicode = True
+        )
 # end def _sa_string
 
 ### __END__ MOM.DBW.SAS.Type

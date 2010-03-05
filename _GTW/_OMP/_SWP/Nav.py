@@ -31,7 +31,7 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL.I18N                import _
+from   _TFL                   import TFL
 from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
@@ -47,6 +47,8 @@ from   _GTW._Form._MOM.Field_Group_Description import \
     , Wildcard_Field          as WF
     )
 from  _GTW._Form.Widget_Spec  import Widget_Spec as WS
+
+from   _TFL.I18N                import _
 
 primary = WF ("primary")
 
@@ -83,6 +85,8 @@ class Admin (object) :
             , FGD ("description")
             )
         , list_display = ("ui_display", "date", "author", "format")
+        , sort_key       = TFL.Sorted_By \
+            ("-prio", "-date.start", "-date.finish", "perma_name")
         )
 
 # end class Admin
