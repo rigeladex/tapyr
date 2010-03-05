@@ -50,6 +50,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     Page            = GTW.NAV.E_Type.Instance
 
     admin_args      = {}
+    disp_filter     = None
 
     def __init__ (self, src_dir, ** kw) :
         self.__super.__init__ (src_dir = src_dir, ** kw)

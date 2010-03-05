@@ -69,6 +69,7 @@ class _Mgr_Base_ (TFL.Meta.Object) :
             , title        = title
             , ** kw
             )
+        self._objects = []
         self._old_cid = -1
     # end def __init__
 

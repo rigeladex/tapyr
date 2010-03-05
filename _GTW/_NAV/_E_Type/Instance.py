@@ -29,6 +29,7 @@
 #    19-Jan-2010 (CT) Creation
 #    20-Jan-2010 (CT) `FO` factored to GTW
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
+#     5-Mar-2010 (CT) `__init__` fixed
 #    ««revision-date»»···
 #--
 
@@ -47,13 +48,20 @@ from   _TFL.I18N                import _, _T, _Tn
 class Instance (GTW.NAV.Page) :
     """Navigation page modelling a single instance of a E_Type."""
 
-    def __init__ (self, obj, manager) :
+    def __init__ (self, manager, obj) :
         name = getattr (obj, "name", str (obj.lid))
+        kw   = dict \
+            ( (a.name, getattr (obj.FO, a.name))
+            for a in obj.user_attr
+            )
+        if manager.page_template :
+            kw ["template"] = manager.page_template
         self.__super.__init__ \
             ( obj      = obj
             , manager  = manager
             , name     = name
             , parent   = manager
+            , ** kw
             )
     # end def __init__
 
