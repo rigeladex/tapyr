@@ -82,7 +82,7 @@ class Admin (object) :
                     )
                 , legend = _("Author of web page")
                 )
-            , FGD ("description")
+            , FGD ()
             )
         , list_display = ("ui_display", "date", "author", "format")
         , sort_key       = TFL.Sorted_By \
