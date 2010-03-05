@@ -30,6 +30,7 @@
 #    20-Jan-2010 (CT) `FO` factored to GTW
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #     5-Mar-2010 (CT) `__init__` fixed
+#     5-Mar-2010 (CT) `attr_mapper` and `__getattr__` using it added
 #    ««revision-date»»···
 #--
 
@@ -48,21 +49,19 @@ from   _TFL.I18N                import _, _T, _Tn
 class Instance (GTW.NAV.Page) :
     """Navigation page modelling a single instance of a E_Type."""
 
-    def __init__ (self, manager, obj) :
+    attr_mapper     = None
+
+    def __init__ (self, manager, obj, ** kw) :
         name = getattr (obj, "name", str (obj.lid))
-        kw   = dict \
-            ( (a.name, getattr (obj.FO, a.name))
-            for a in obj.user_attr
-            )
-        if manager.page_template :
-            kw ["template"] = manager.page_template
         self.__super.__init__ \
             ( obj      = obj
             , manager  = manager
             , name     = name
             , parent   = manager
+            , title    = obj.FO.title
             , ** kw
             )
+        self.desc = self.__getattr__ ("desc")
     # end def __init__
 
     @property
@@ -103,6 +102,15 @@ class Instance (GTW.NAV.Page) :
         with self.LET (FO = GTW.FO (self.obj, self.top.encoding)) :
             return self.__super.rendered (handler, template)
     # end def rendered
+
+    def __getattr__ (self, name) :
+        if self.attr_mapper :
+            try :
+                return self.attr_mapper (self.obj.FO, name)
+            except AttributeError :
+                pass
+        return self.__super.__getattr__  (name)
+    # end def __getattr__
 
 # end class Instance
 

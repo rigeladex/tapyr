@@ -29,6 +29,7 @@
 #    19-Jan-2010 (CT) Creation (ported from DJO.NAV.Model.Manager)
 #    20-Jan-2010 (CT) `_Mgr_Base_` factored
 #     5-Mar-2010 (CT) `Manager.__init__` corrected
+#     5-Mar-2010 (CT) `attr_mapper` and `__getattr__` using it added
 #    ««revision-date»»···
 #--
 
@@ -50,6 +51,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     Page            = GTW.NAV.E_Type.Instance
 
     admin_args      = {}
+    attr_mapper     = None
     disp_filter     = None
 
     def __init__ (self, src_dir, ** kw) :
@@ -87,6 +89,15 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
             result.append (self.disp_filter)
         return tuple (result)
     # end def query_filters
+
+    def __getattr__ (self, name) :
+        if self.attr_mapper :
+            try :
+                return self.attr_mapper (self.obj, name)
+            except AttributeError :
+                pass
+        return self.__super.__getattr__  (name)
+    # end def __getattr__
 
 # end class Manager
 

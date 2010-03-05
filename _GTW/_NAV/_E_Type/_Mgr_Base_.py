@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Jan-2010 (CT) Creation
+#     5-Mar-2010 (CT) `page_args` added
 #    ««revision-date»»···
 #--
 
@@ -48,6 +49,7 @@ class _Mgr_Base_ (TFL.Meta.Object) :
 
     kind_name       = None
     Q               = TFL.Attr_Query ()
+    page_args       = {}
     sort_key        = None
 
     def __init__ (self, parent, ** kw) :
@@ -114,7 +116,8 @@ class _Mgr_Base_ (TFL.Meta.Object) :
 
     def _get_objects (self) :
         T = self.Page
-        return [T (self, o) for o in self.query ()]
+        kw = self.page_args
+        return [T (self, o, ** kw) for o in self.query ()]
     # end def _get_objects
 
 # end class _Mgr_Base_
