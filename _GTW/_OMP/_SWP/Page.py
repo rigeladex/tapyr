@@ -31,6 +31,7 @@
 #     9-Feb-2010 (CT) Creation continued..
 #    24-Feb-2010 (CT) s/Lifetime/Date_Interval/
 #    24-Feb-2010 (CT) `head_line` added
+#     5-Mar-2010 (CT) `author.Class` set to class `GTW.OMP.PAP.Person`
 #    ««revision-date»»···
 #--
 
@@ -40,6 +41,7 @@ from   _MOM._Attr.Date_Interval import *
 from   _GTW                     import GTW
 
 import _GTW.HTML
+import _GTW._OMP._PAP.Person
 import _GTW._OMP._SWP.Entity
 from   _GTW._OMP._SWP.Format    import A_Format
 
@@ -74,7 +76,7 @@ class Page (_Ancestor_Essence) :
             """Author of the web page."""
 
             kind               = Attr.Optional
-            Class              = "GTW.OMP.PAP.Person"
+            Class              = GTW.OMP.PAP.Person
 
         # end class author
 

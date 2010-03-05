@@ -76,6 +76,8 @@
 #     1-Mar-2010 (CT) `M_E_Type.m_recordable_attrs` added
 #     1-Mar-2010 (CT) `M_E_Type_An._m_setup_attributes` changed to guard
 #                     against `primary`
+#     5-Mar-2010 (CT) `_m_setup_attributes` changed to set `.Class` of
+#                     `_A_Object_` attributes to app_type specific e-type
 #    ««revision-date»»···
 #--
 
@@ -510,6 +512,13 @@ class M_E_Type (M_E_Mixin) :
         cls._Attributes = A = cls._Attributes (cls)
         cls._Predicates = P = cls._Predicates (cls)
         attr_dict       = A._attr_dict
+        app_type        = cls.app_type
+        for ak in attr_dict.itervalues () :
+            at = ak.attr
+            if isinstance (at, MOM.Attr._A_Object_) and at.Class :
+                ats = app_type.entity_type (at.Class)
+                if ats :
+                    at.Class = ats
         for pv in P._pred_kind.get ("object", []) :
             pn = pv.name
             for an in pv.attributes + pv.attr_none :
