@@ -100,6 +100,13 @@ class Entity (TFL.Meta.Object) :
 class An_Entity (Entity) :
     """Scope-specific manager for a specific type of anonymous entities."""
 
+    def query (self, * args, ** kw) :
+        ### we need to define this function to hiode the `query` attribute of
+        ### the entities (which is a list of all attributes with the kind
+        ### `Query`)
+        return TFL.Q_Result (())
+    # end def query
+
 # end class An_Entity
 
 class Id_Entity (Entity) :

@@ -52,21 +52,24 @@ class Form (TFL.Meta.Object) :
 
     @property
     def js_on_ready (self) :
-        form           = self.form
-        id             = getattr \
-            (form, "form_name", str (random.randrange (1, 10000000)))
-        form.css_class = " ".join ((getattr (self.form, "css_class", ""), id))
-        result     = ["/* setup form `%s` */\n" % (id, )]
-        completers = []
-        for c, f in self.completers :
-            completers.extend (c.js_on_ready (f))
-        result.append ('$(".%s").GTW_Form\n' % (id, ))
-        init    = dict \
-            ( inlines    = [i.js_on_ready ()  for i      in self.inlines]
-            , completers = completers
-            )
-        result.append ('  ( %s\n  );\n'% json.dumps (init))
-        return result
+        if self.completers or self.inlines :
+            form           = self.form
+            id             = getattr \
+                (form, "form_name", str (random.randrange (1, 10000000)))
+            form.css_class = " ".join \
+                ((getattr (self.form, "css_class", ""), id))
+            result     = ["/* setup form `%s` */\n" % (id, )]
+            completers = []
+            for c, f in self.completers :
+                completers.extend (c.js_on_ready (f))
+            result.append ('$(".%s").GTW_Form\n' % (id, ))
+            init    = dict \
+                ( inlines    = [i.js_on_ready ()  for i      in self.inlines]
+                , completers = completers
+                )
+            result.append ('  ( %s\n  );\n'% json.dumps (init))
+            return result
+        return ()
     # end def js_on_ready
 
 # end class Form´

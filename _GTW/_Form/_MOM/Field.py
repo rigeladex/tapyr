@@ -132,6 +132,14 @@ class Field (TFL.Meta.Object) :
         return getattr (self.attr_kind, name)
     # end def __getattr__
 
+    def __repr__ (self) :
+        return "<%s for %s.%s>" \
+            % ( self.__class__.__name__
+              , self.et_man.type_name
+              , self.attr_kind.name
+              )
+    # end def __repr__
+
 # end class Field
 
 if __name__ != "__main__" :

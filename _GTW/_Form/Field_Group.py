@@ -50,15 +50,9 @@ class Field_Group (TFL.Meta.Object) :
         self.field_group_description = field_group_description
     # end def __init__
 
-    @TFL.Meta.Once_Property
-    def hidden_fields (self) :
-        return [f for f in self.fields if     f.hidden]
-    # end def hidden_fields
-
-    @TFL.Meta.Once_Property
-    def visible_fields (self) :
-        return [f for f in self.fields if not f.hidden]
-    # end def visible_fields
+    def setup_javascript (self, form) :
+        pass ### completer support
+    # end def setup_javascript
 
     def __getattr__ (self, name) :
         result = getattr (self.field_group_description, name)

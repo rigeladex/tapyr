@@ -66,7 +66,7 @@
 
 {%- import html_version as X -%}
 
-{%- macro aid_div_seq (pfo, aid, first) -%}
+{%- macro aid_div_seq (pfo, aid) -%}
   {%- set fo = aid.forms [0] -%}
   {%- onion aid.legend %}
     {%- head %}
@@ -77,16 +77,12 @@
     {%- else %}
       <div class="inline-form {{ aid.name }}">
     {%- body %}
-      {%- if first and pfo.hidden_fields %}
-        {%- for h in pfo.hidden_fields %}
-          {{ GTW.call_macro (h.widget, pfo, h) }}
-        {% endfor -%}
-      {% endif -%}
-      {%- if fo.hidden_fields %}
-        {%- for h in fo.hidden_fields %}
-          {{ GTW.call_macro (h.widget, fo, h) }}
-        {% endfor -%}
-      {% endif -%}
+      {%- for h in pfo.hidden_fields %}
+        {{ GTW.call_macro (h.widget, pfo, h) }}
+      {% endfor -%}
+      {%- for h in fo.hidden_fields %}
+        {{ GTW.call_macro (h.widget, fo, h) }}
+      {% endfor -%}
       {%- for fg in fo.field_groups %}
         {{ GTW.call_macro (fg.widget, fo, fg)}}
       {% endfor -%}
@@ -97,15 +93,13 @@
   {%- endonion %}
 {%- endmacro -%} {#- aid_div_seq -#}
 
-{%- macro fg_div_seq (fo, fg, first) -%}
-  {%- for fi in fg.visible_fields %}
+{%- macro fg_div_seq (fo, fg) -%}
+  {%- for fi in fg.fields %}
     {%- set desc = GTW._T (fi.description)|safe %}
     <div class="Field Field-{{ fi.name }}" title="{{ desc }}">
-      {%- if first and loop.first %}
-        {%- for h in fo.hidden_fields %}
-          {{ GTW.call_macro (h.widget, fo, h) }}
-        {% endfor -%}
-      {% endif %}
+      {%- for h in fo.hidden_fields %}
+        {{ GTW.call_macro (h.widget, fo, h) }}
+      {% endfor -%}
       <span class="Field-Help">{{ desc }}</span>
       {{ _field_label (fo, fi) }}
       {{ GTW.call_macro (fi.widget, fo, fi) }}
@@ -114,17 +108,17 @@
   {% endfor -%}
 {%- endmacro -%} {#- fg_div_seq -#}
 
-{%- macro fg_tr (fo, fg, first) -%}
+{%- macro fg_tr (fo, fg) -%}
   <table class="field_group-Horizontal">
     <thead>
       {{ fg_tr_head (fo, fg) }}
     </thead>
     <tbody>
-      {{ fg_tr_body (fo, fg, first) }}
+      {{ fg_tr_body (fo, fg) }}
     </tbody>
   </table>
   <div class="field_group-Horizontal-Help">
-    {%- for fi in fg.visible_fields %}
+    {%- for fi in fg.fields %}
       {%- set desc = GTW._T (fi.description)|safe %}
       {%- if fi.description %}
         <p class="Field-Help Field-Help-{{ fi.name }}">{{ desc }}</p>
@@ -133,18 +127,16 @@
   </div>
 {%- endmacro -%} {#- fg_tr -#}
 
-{%- macro fg_tr_body (fo, fg, first) -%}
+{%- macro fg_tr_body (fo, fg) -%}
     <tr class="field_group {{ fg.css_class }} {{ kwargs.pop ("class", "") }}"
       {% if fg.legend %}title="{{ fg.legend }}"{% endif -%}
     >
-      {%- for fi in fg.visible_fields %}
+      {%- for fi in fg.fields %}
         {%- set desc = GTW._T (fi.description)|safe %}
         <td class="Field Field-{{ fi.name }}" title="{{ desc }}">
-          {%- if first and loop.first %}
-            {%- for h in fo.hidden_fields %}
-              {{ GTW.call_macro (h.widget.inline, fo, h) }}
-            {% endfor -%}
-          {% endif %}
+          {%- for h in fo.hidden_fields %}
+            {{ GTW.call_macro (h.widget.inline, fo, h) }}
+          {% endfor -%}
           {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
         </td>
       {% endfor -%}
@@ -153,7 +145,7 @@
 
 {%- macro fg_tr_head (fo, fg) -%}
     <tr>
-      {%- for fi in fg.visible_fields %}
+      {%- for fi in fg.fields %}
         {%- set desc = GTW._T (fi.description)|safe %}
         <th title="{{ desc }}">{{ _field_label (fo, fi) }}</th>
       {% endfor -%}
@@ -168,7 +160,7 @@
       <div class="Formset {{ fg.css_class }}"
        {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}
       >
-     {{ GTW.call_macro (fg.widget, fo, fg, loop.first) }}
+     {{ GTW.call_macro (fg.widget, fo, fg) }}
       </div>
     {% endfor -%}
 {%- endmacro -%} {#- field_groups -#}
@@ -208,7 +200,7 @@
   </form>
 {%- endmacro -%} {#- form -#}
 
-{%- macro inline_table (form, inline, first) -%}
+{%- macro inline_table (form, inline) -%}
   {%- set proto = inline.prototype_form -%}
   <fieldset class="inline-form-table {{ inline.form_cls.form_path_css }}">
     {%- if inline.legend %}
@@ -251,9 +243,9 @@
   </fieldset>
 {%- endmacro -%} {#- inline_table -#}
 
-{%- macro inline_table_aid_td (fo, fg, first = False) -%}
+{%- macro inline_table_aid_td (fo, fg) -%}
   {%- set ifo =  fg.forms [0] -%}
-  {%- if first and fo.hidden_fields %}
+  {%- if fo.hidden_fields %}
     <td class="ui-helper-hidden">
       {%- for h in fo.hidden_fields %}
         {{ GTW.call_macro (h.widget, fo, h) }}
@@ -261,7 +253,7 @@
     </td>
   {% endif -%}
   {%- for fg in ifo.field_groups %}
-    {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg, loop.first) }}
+    {{ GTW.call_macro (fg.widget.inline_table_td, ifo, fg) }}
     {%- if ifo.get_errors () %}
       <td>{{ _field_error (ifo, None) }}</td>
     {% endif -%}
@@ -275,22 +267,20 @@
   {% endfor  %}
 {%- endmacro -%} {#- inline_table_aid_th -#}
 
-{%- macro inline_table_td (fo, fg, first = False) -%}
-      {%- for fi in fg.visible_fields %}
+{%- macro inline_table_td (fo, fg) -%}
+      {%- for fi in fg.fields %}
         {%- set help = GTW._T (fi.help_text)|safe %}
         <td class="Field Field-{{ fi.name }}" title="{{ help }}">
-          {%- if loop.first and first %}
-            {%- for h in fo.hidden_fields %}
-              {{ GTW.call_macro (h.widget, fo, h) }}
-            {% endfor -%}
-          {% endif %}
+          {%- for h in fo.hidden_fields %}
+            {{ GTW.call_macro (h.widget, fo, h) }}
+          {% endfor -%}
           {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
         </td>
       {% endfor -%}
 {%- endmacro -%} {#- inline_table_td -#}
 
 {%- macro inline_table_th (fo, fg) -%}
-      {%- for fi in fg.visible_fields %}
+      {%- for fi in fg.fields %}
         {%- set help = GTW._T (fi.help_text)|safe %}
         <th title="{{ help }}">{{ _field_label (fo, fi) }}</th>
       {% endfor -%}
@@ -301,7 +291,7 @@
       {% if fo.legend %}title="{{ GTW._T (fo.legend)|safe }}"{% endif -%}
     >
     {%- for fg in fgs %}
-        {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg, loop.first) }}
+        {{ GTW.call_macro (fg.widget.inline_table_td, fo, fg) }}
     {% endfor -%}
     {%- if fo.get_errors () %}
       <td>{{ _field_error (fo, None) }}</td>

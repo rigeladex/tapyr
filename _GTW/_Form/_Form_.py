@@ -37,6 +37,8 @@
 #    26-Feb-2010 (MG) Javascript handling added
 #    26-Feb-2010 (MG) `is_checked` added
 #    27-Feb-2010 (MG) `M_Form.__new__` added to introduce `hidden_fields`
+#     4-Mar-2010 (MG) `error_code` and `Not_Assigned` added
+#     4-Mar-2010 (MG) `Hidden_Fields_List` added and used
 #    ««revision-date»»···
 #--
 
@@ -50,6 +52,40 @@ import _TFL.Record
 from   _GTW              import GTW
 import _GTW._Form.Field_Error
 import _GTW._Form.Javascript
+
+class Hidden_Fields_List (object) :
+    """A kind of list which handles the hidden fields of a form instance to
+       support exactly one iteration over the fields
+    """
+
+    def __init__ (self, fields) :
+        self.fields = fields
+    # end def __init__
+
+    def __nonzero__ (self) :
+        return bool (self.fields)
+    # end def __nonzero__
+
+    def __iter__ (self) :
+        fields, self.fields = self.fields, []
+        for f in fields :
+            yield f
+    # end def __iter__
+
+# end class Hidden_Fields_List
+
+class Not_Assigned (object) :
+    """Special object which defines `__nonzero__` to support
+          instance = self.instance or None
+       and expect that `instance` is `None` if self.instance is
+       `Not_Assigned`
+    """
+
+    def __nonzero__ (self) :
+        return False
+    # end def __nonzero__
+
+# end class Not_Assigned
 
 class M_Form (TFL.Meta.Object.__class__) :
     """Meta class for forms."""
@@ -113,21 +149,28 @@ class M_Form (TFL.Meta.Object.__class__) :
 class _Form_ (TFL.Meta.Object) :
     """Base class for forms"""
 
+    Not_Assigned  = Not_Assigned ()
     prefix        = ""
     __metaclass__ = M_Form
-    instance      = None
+    instance      = Not_Assigned
 
     def __init__ (self, instance = None, prefix_sub = None, ** kw) :
         if instance != None :
-            self.instance = instance
-        self.errors       = GTW.Form.Error_List ()
-        self.field_errors = TFL.defaultdict (GTW.Form.Error_List)
-        self.prefix_sub   = prefix_sub
+            self.instance  = instance
+        self.errors        = GTW.Form.Error_List ()
+        self.field_errors  = TFL.defaultdict (GTW.Form.Error_List)
+        self.prefix_sub    = prefix_sub
         if prefix_sub :
-            self.prefix   = "%s%s" % (self.prefix , prefix_sub)
-        self.request_data = {}
-        self.kw           = TFL.Record (** kw)
+            self.prefix    = "%s%s" % (self.prefix , prefix_sub)
+        self.request_data  = {}
+        self.hidden_fields = Hidden_Fields_List (self.hidden_fields)
+        self.kw            = TFL.Record (** kw)
     # end def __init__
+
+    @property
+    def error_count (self) :
+        return len (self.errors) + len (self.field_errors)
+    # end def error_count
 
     def get_errors (self, field = None) :
         if field :
