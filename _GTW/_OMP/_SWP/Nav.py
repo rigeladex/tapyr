@@ -76,7 +76,7 @@ class Admin (object) :
                         ( last_name  = dict (min_chars = 2)
                         , first_name = dict (min_chars = 2)
                         )
-                    , name      = "Personal_Info"
+                    , name      = "Author_Info"
                     )
                 , legend = _("Author of web page")
                 )
