@@ -45,6 +45,7 @@
 #                     instance)
 #    22-Feb-2010 (MG) `_create_instance` added to `Attribute_Inline_Instance`
 #    27-Feb-2010 (MG) `add_internal_fields` changed
+#     6-Mar-2010 (MG) Error handling changed
 #    ««revision-date»»···
 #--
 
@@ -177,33 +178,33 @@ class Link_Inline_Instance (_Inline_Instance_) :
             ### this form does not need any further processing
             return 0
         ### for links we need to handle the inline roles first
-        error_count = 0
-        attr_map    = \
-            {self.parent.genric_role : self.parent.parent.instance.epk_raw}
+        attr_map = {}
         for ig in self.inline_groups :
-            error_count  += ig (request_data)
+            self.inline_errors += ig (request_data)
             if ig.instance and not ig.error_count :
                 ### looks like we have a valid inline attribute form
                 ### let's add it to our attribute map
                 attr_map [ig.generic_name] = ig.instance.epk_raw
+        if attr_map :
+            ### look like we need to create/update the link -> let's add the
+            ### parent object as role as well (we use the `force_create` flag
+            ### to make sure that an object creation try will be made to
+            ### generate the correct error message in case the required
+            ### fields for the parent role are not filled out)
+            parent_instance = self.parent.parent._create_or_update \
+                (force_create = True)
+            if parent_instance :
+                attr_map [self.parent.genric_role] = parent_instance.epk_raw
         ### let's check if all roles are in the attr_map
         all_roles_correct = all_true \
             (   r.generic_role_name in attr_map
             for r in self.et_man.Roles
             )
-        if all_roles_correct and not error_count :
+        if all_roles_correct and not self.error_count :
             ### if no errors are found for the roles, let's try to
             ### create/update the link itself
-            ### if the link already exists, filter all identical roles
-            if self.instance :
-                attr_map = dict \
-                    ( (k, v) for k, v in attr_map.iteritems ()
-                          if v != getattr (self.instance, k).epk_raw
-                    )
             self.instance = self._create_or_update  (attr_map)
-            error_count  += len (self.errors) + len (self.field_errors)
-        self.error_count  = error_count
-        return error_count
+        return self.error_count
     # end def __call__
 
 # end class Link_Inline_Instance

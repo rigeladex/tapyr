@@ -69,6 +69,7 @@
 #                     role of a link to the same object will raise a
 #                     name clash error)
 #    02-Mar-2010 (MG) `M_Instance.__new__` handle completers on top level forms
+#     6-Mar-2010 (MG) Form handling changed
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,6 @@ class M_Instance (GTW.Form._Form_.__class__) :
                 (medias, js_on_ready = js_on_ready)
             result.field_groups  = field_groups
             result.fields        = result._setup_fields (field_groups)
-            result.completer     = None
             if completers :
                 result.completer = GTW.Form.Javascript.Multi_Completer \
                     (** dict ((c.trigger, c) for c in completers))
@@ -196,18 +196,18 @@ class _Instance_ (GTW.Form._Form_) :
 
     __metaclass__ = M_Instance
     et_man        = None
-    error_count   = 0
     prototype     = False
     state         = "N"
 
     def __init__ (self, instance = None, parent = None, ** kw) :
         self.__super.__init__ (instance, ** kw)
-        scope                    = self.et_man.home_scope
-        self.parent              = parent
+        scope                        = self.et_man.home_scope
+        self.parent                  = parent
+        self._create_update_executed = False
         ### make copies of the inline groups to allow caching of inline forms
-        self.inline_groups       = []
-        field_groups             = self.field_groups
-        self.field_groups        = []
+        self.inline_groups           = []
+        field_groups                 = self.field_groups
+        self.field_groups            = []
         for fg in field_groups :
             if isinstance (fg, GTW.Form.MOM._Inline_) :
                 fg = fg.clone             (self)
@@ -236,29 +236,33 @@ class _Instance_ (GTW.Form._Form_) :
         return self.et_man (raw = True, ** raw_attrs)
     # end def _create_instance
 
-    def _create_or_update (self, add_attrs = {}) :
-        raw_attrs     = dict (add_attrs)
-        instance      = self.instance
-        state         = self.state
-        for f in (f for f in self.fields if not f.hidden) :
-            self.add_changed_raw (raw_attrs, f)
-        if raw_attrs :
-            errors = []
-            ### at least on attribute is filled out
-            try :
-                raw_attrs ["on_error"] = errors.append
-                if instance and state != "r" :
-                    instance.set_raw (** raw_attrs)
-                else :
-                    instance = self._create_instance \
-                        (instance, state, raw_attrs)
-            except Exception, exc:
-                if __debug__ :
-                    import traceback
-                    traceback.print_exc ()
-                errors.append (exc)
-            self._handle_errors (errors)
-        return instance
+    def _create_or_update (self, add_attrs = {}, force_create = False) :
+        if (   not self._create_update_executed
+           or (not self.instance and force_create and not self.error_count)
+           ) :
+            raw_attrs     = dict (add_attrs)
+            instance      = self.instance
+            state         = self.state
+            for f in (f for f in self.fields if not f.hidden) :
+                self.add_changed_raw (raw_attrs, f)
+            if raw_attrs or force_create :
+                errors = []
+                ### at least on attribute is filled out
+                try :
+                    raw_attrs ["on_error"] = errors.append
+                    if instance and state != "r" :
+                        instance.set_raw (** raw_attrs)
+                    else :
+                        self.instance = self._create_instance \
+                            (instance, state, raw_attrs)
+                except Exception, exc:
+                    if __debug__ :
+                        import traceback
+                        traceback.print_exc ()
+                    errors.append   (exc)
+                self._handle_errors (errors)
+                self._create_update_executed = True
+        return self.instance
     # end def _create_or_update
 
     def _handle_errors (self, error_list) :
@@ -289,25 +293,22 @@ class _Instance_ (GTW.Form._Form_) :
     # end def _prepare_form
 
     def __call__ (self, request_data) :
-        #if getattr (self, "_break", False) :
-        #    import pdb; pdb.set_trace ()
         self.request_data = request_data
         if not self._prepare_form () :
             ### this form does not need any further processing
             return 0
         self.instance = self._create_or_update  ()
-        error_count   = len (self.errors) + len (self.field_errors)
-        if not error_count and self.instance :
-            for ig in self.inline_groups :
-                error_count  += ig (request_data)
-                if (   not error_count
-                   and isinstance (ig, GTW.Form.MOM.Attribute_Inline)
-                   ) :
-                    old_value = getattr (self.instance, ig.link_name, None)
+        for ig in self.inline_groups :
+            self.inline_errors += ig (request_data)
+            if (   isinstance (ig, GTW.Form.MOM.Attribute_Inline)
+               and ig.instance
+               ) :
+                instance  = self._create_or_update (force_create = True)
+                if instance :
+                    old_value = getattr (instance, ig.link_name, None)
                     if old_value != ig.instance :
-                        self.instance.set (** {ig.link_name : ig.instance})
-        self.error_count      = error_count
-        return error_count
+                        instance.set (** {ig.link_name : ig.instance})
+        return self.error_count
     # end def __call__
 
 # end class _Instance_

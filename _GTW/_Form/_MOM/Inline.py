@@ -48,6 +48,7 @@
 #                     make sure that each posted form gets assing the correct
 #                     instance)
 #    26-Feb-2010 (MG) Javascript handling changed
+#     6-Mar-2010 (MG) `Attribute_Inline` streamlined
 #    ««revision-date»»···
 #--
 
@@ -131,10 +132,6 @@ class _Inline_ (TFL.Meta.Object) :
         pass
     # end def _setup_javascript
 
-    def __call__ (self, request_data) :
-        return sum (ifo (request_data) for ifo in self.forms)
-    # end def __call__
-
     def __getattr__ (self, name) :
         result = getattr (self.inline_description, name)
         setattr (self, name, result)
@@ -146,27 +143,29 @@ class _Inline_ (TFL.Meta.Object) :
 class Attribute_Inline (_Inline_) :
     """An inline group handling an attribute which refers to a MOM.Entity"""
 
-    form_count = 1
 
-    @TFL.Meta.Once_Property
+    @property
     def error_count (self) :
-        return self.forms [0].error_count
+        return self.form.error_count
     # end def error_count
 
     @TFL.Meta.Once_Property
+    def form (self) :
+        return self.form_cls \
+            ( prefix_sub = self.parent.prefix_sub
+            , parent     = self
+            , prototype  = self.parent.prototype
+            )
+    # end def form
+
+    @TFL.Meta.Once_Property
     def forms (self) :
-        return \
-            [ self.form_cls
-                ( prefix_sub = self.parent.prefix_sub
-                , parent     = self
-                , prototype  = self.parent.prototype
-                )
-            ]
+        return (self.form, )
     # end def forms
 
     @TFL.Meta.Once_Property
     def instance (self) :
-        return self.forms [0].instance
+        return self.form.instance
     # end def instance
 
     def _setup_javascript (self) :
@@ -184,6 +183,10 @@ class Attribute_Inline (_Inline_) :
             , (getattr (self.parent.instance, self.link_name, None), )
             )
     # end def Instances
+
+    def __call__ (self, request_data) :
+        return self.form (request_data)
+    # end def __call__
 
 # end class Attribute_Inline
 
@@ -241,7 +244,7 @@ class Link_Inline (_Inline_) :
     # end def _setup_javascript
 
     def __call__ (self, request_data) :
-        error_count   = self.__super.__call__ (request_data)
+        error_count   = sum (ifo (request_data) for ifo in self.forms)
         correct_forms = []
         if not error_count :
             correct_forms = \

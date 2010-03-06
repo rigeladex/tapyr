@@ -97,9 +97,9 @@ def display_values (form, indent = "") :
 # end def display_values
 
 
-add = False
-per = False
-php = True
+add = True
+per = True * 0
+php = True * 0
 
 if per :
     form_cls = GTW.Form.MOM.Instance.New \
@@ -129,7 +129,6 @@ if add :
     form = form_cls ("/post/")
     #print env.get_template ("base").render (form = form)
     #display_values (form)
-    print form.inline_groups [0].forms [0]
 if php :
     pe  = scope.PAP.Person  ("Glueck", "Martin")
     ph  = scope.PAP.Phone   ("43", "664", "1052345")

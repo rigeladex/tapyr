@@ -67,7 +67,7 @@
 {%- import html_version as X -%}
 
 {%- macro aid_div_seq (pfo, aid) -%}
-  {%- set fo = aid.forms [0] -%}
+  {%- set fo = aid.form -%}
   {%- onion aid.legend %}
     {%- head %}
       <fieldset class="inline-form {{ aid.form_cls.form_path_css }}">
