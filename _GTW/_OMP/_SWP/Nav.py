@@ -59,7 +59,10 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Page"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("perma_name", "title", "head_line", "format", "text")
+            ( FGD
+                ( "perma_name", "short_title", "title", "head_line"
+                , "format", "text"
+                )
             , AID
                 ( "date"
                 , FGD (widget = "html/form.jnj, fg_tr")
@@ -84,7 +87,8 @@ class Admin (object) :
                 )
             , FGD ()
             )
-        , list_display = ("ui_display", "date", "author", "format")
+        , list_display   =
+            ("ui_display", "short_title", "date", "author", "format")
         , sort_key       = TFL.Sorted_By \
             ("-prio", "-date.start", "-date.finish", "perma_name")
         )

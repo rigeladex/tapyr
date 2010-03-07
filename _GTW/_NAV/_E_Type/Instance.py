@@ -58,10 +58,10 @@ class Instance (GTW.NAV.Page) :
             , manager  = manager
             , name     = name
             , parent   = manager
-            , title    = obj.FO.title
             , ** kw
             )
-        self.desc = self.__getattr__ ("desc")
+        self.desc  = self.__getattr__ ("desc")
+        self.title = self.__getattr__ ("title")
     # end def __init__
 
     @property

@@ -33,6 +33,7 @@
 #    24-Feb-2010 (CT) `head_line` added
 #     5-Mar-2010 (CT) `author.Class` set to class `GTW.OMP.PAP.Person`
 #     5-Mar-2010 (CT) `Page.rank` defined, attribute `prio` added
+#     7-Mar-2010 (CT) s/title/short_title/; s/description/title/
 #    ««revision-date»»···
 #--
 
@@ -111,15 +112,6 @@ class Page (_Ancestor_Essence) :
 
         # end class date
 
-        class description (A_String) :
-            """Description of the page"""
-
-            kind               = Attr.Optional
-            max_length         = 160
-            ui_name            = "Description"
-
-        # end class description
-
         class format (A_Format) :
             """Markup format used for `text` of web page"""
 
@@ -147,6 +139,14 @@ class Page (_Ancestor_Essence) :
 
         # end class prio
 
+        class short_title (A_String) :
+            """Short title of the web page (used in navigation)."""
+
+            kind               = Attr.Required
+            max_length         = 30
+
+        # end class title
+
         class text (A_Text) :
             """Text for web page in markup specified by `format`."""
 
@@ -158,7 +158,7 @@ class Page (_Ancestor_Essence) :
             """Title of the web page"""
 
             kind               = Attr.Required
-            max_length         = 80
+            max_length         = 120
 
         # end class title
 
