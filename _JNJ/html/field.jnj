@@ -101,7 +101,7 @@
       ( X.input.textarea, fo, fi
       , cols          = fi.cols or 80
       , max_length    = fi.max_length
-      , rows          = fi.rows or 5
+      , rows          = fi.rows or 32
       )
   }}
 {%- endmacro -%} {#- text -#}
