@@ -41,7 +41,7 @@ from   _TFL.I18N             import _, _T, _Tn
 _Ancestor_Essence = MOM.An_Entity
 
 class Date_Interval (_Ancestor_Essence) :
-    """Model a date_interval (start, finish)."""
+    """Model a date interval (start, finish)."""
 
     ui_display_sep = " - "
 
@@ -73,7 +73,6 @@ class Date_Interval (_Ancestor_Essence) :
             """Start date of interval"""
 
             kind               = Attr.Required
-            ui_name            = "Start"
             rank               = 1
 
         # end class start
@@ -82,7 +81,6 @@ class Date_Interval (_Ancestor_Essence) :
             """Finish date of interval"""
 
             kind               = Attr.Optional
-            ui_name            = "Finish"
             rank               = 2
 
         # end class finish

@@ -1,0 +1,86 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: calendar.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/calendar.jnj
+##
+## Purpose
+##    Template and macros for displaying a calendar
+##
+## Revision Dates
+##     8-Mar-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+{%- macro calendar (cal) -%}
+  {%- set wdays =
+      ( "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
+      , "Saturday", "Sunday"
+      )
+  -%}
+  <table class="calendar">
+    <colgroup>
+      <col class="week-number" title="{{ GTW._T ('Number of week') }}"/>
+      {%- for d in wdays %}
+        <col class="{{ d.lower () }}" title="{{ GTW._T (d) }}"/>
+      {% endfor -%}
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="week-number" scope="col">#</th>
+        {%- for d in wdays %}
+          <th class="{{ d.lower () }}" scope="col">{{ GTW._T (d) }}</th>
+        {% endfor -%}
+      </tr>
+    </thead>
+    <tbody>
+      {%- for week in cal.weeks %}
+        <tr class="{{ loop.cycle ('row1', 'row2') }}">
+          <th class="week-number" title="{{ GTW._T ('Week %s') % (week.ui_display, ) }}">
+            <a href="{{ week.abs_href }}">{{- week.number -}}</a>
+          </th>
+          {%- for d in week.days %}
+            <td class="{{ d.weekday.lower () }}" title="{{ GTW._T (str (d)) }}">
+              <div class="date" title="{{ d.ui_display }}">
+                <a href="{{ d.abs_href }}">
+                  {{- " ".join (d.day, d.month if d.day == 1 else "") -}}
+                </a>
+              </div>
+              {%- for ev in d.events %}
+                <div class="event" title={{ ev.ui_display }}>
+                  {{ ev.short_title }}
+                </div>
+              {% endfor -%}
+            </td>
+          {% endfor -%}
+        </tr>
+      {% endfor -%}
+    </tbody>
+  </table>
+{%- endmacro -%} {#- calendar -#}
+
+{%- block document -%}
+  {{- calendar (page.calendar) -}}
+{%- endblock document -%}
+
+{#- __END__ jinja template: calendar.jnj -#}
