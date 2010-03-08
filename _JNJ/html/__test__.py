@@ -31,8 +31,10 @@
 #--
 """
 
-    >>> page = Record (copyright = None, Media = None, NAV = None, top = None)
-    >>> glbs = dict (page = page, next = "/logout/")
+    >>> SC = Record (Auth = Record (href_login = "/login"))
+    >>> page = Record (copyright = None, Media = None, NAV = None, SC = SC, top = None)
+    >>> request = Record (path = "")
+    >>> glbs = dict (page = page, next = "/logout/", request = request)
     >>> env5 = HTML (globals = glbs)
     >>> envx = HTML (version = "html/x.jnj", globals = glbs)
     >>> t5 = env5.from_string (template)
@@ -45,13 +47,13 @@
       <!--[if IE]>
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
       <![endif]-->
-      <meta http-equiv="Content-Type"
-            content="text/html; charset=iso-8859-15"
-          />
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+    <BLANKLINE>
+    <BLANKLINE>
               <title>None</title>
     <BLANKLINE>
             <meta name="copyright" content=" " />
-            <meta name="generator" content="Jinja2" />
+            <meta name="generator" content="GTW, JNJ, Jinja2" />
             <meta name="Content-URL" content=""/>
     </head>
       <body >
@@ -61,50 +63,53 @@
     <BLANKLINE>
     </nav>
           <div id="document" class="body">
+    <BLANKLINE>
       <input type="text" placeholder="Please enter your user-name" id="user_name" maxlength="30"/>
       <input type="password" id="pass_word" maxlength="40"/>
       <input type="email" readonly="1" id="email"/>
       <input type="number" max="8" min="2"/>
-      <textarea cols="40" rows="4" id="Area">
-        A sample text in a sample textarea.
-    <BLANKLINE>
+      <textarea cols="40" rows="4" id="Area">A sample text in a sample textarea.
       </textarea>
-    <BLANKLINE>
-      <form action="/login/" method="post">
+      <form action="/login" method="post">
         <ul>
           <li><label for="F_username">Username</label></li>
           <li>
-            <input type="text" placeholder="Please enter your user-name" id="F_username" maxlength="30"/>
+            <input type="text" placeholder="Please enter your username" id="F_username" name="username" maxlength="30"/>
           </li>
           <li><label for="F_password">Password</label></li>
           <li>
-            <input type="password" placeholder="Please enter your password" id="F_password"/>
+            <input type="password" placeholder="Please enter your password" id="F_password" name="password"/>
           </li>
           <li>
-            <input type="submit" value="Login"/>
-            <input type="hidden" name="next" value="/logout/"/>
+            <input type="submit" name="Submit" value="Login" title="Log into website or go to account page"/>
+            <input type="hidden" name="next" value=""/>
           </li>
-        </ul>
+          <li>
+            <input type="submit" name="Reset" class="Link" value="New password" title="Get a new password for the username specified"/>
+          </li></ul>
+    <BLANKLINE>
+        <div class="buttons"></div>
       </form>
-    <BLANKLINE>
-      <form action="/login/" method="post">
-    <BLANKLINE>
-          Using `call` of `GTW.get_macro`
-    <BLANKLINE>
-        <ul>
+      <form action="/login" method="post">
+        Using `call` of `GTW.get_macro`
+      <ul>
           <li><label for="F_username">Username</label></li>
           <li>
-            <input type="text" placeholder="Please enter your user-name" id="F_username" maxlength="30"/>
+            <input type="text" placeholder="Please enter your username" id="F_username" name="username" maxlength="30"/>
           </li>
           <li><label for="F_password">Password</label></li>
           <li>
-            <input type="password" placeholder="Please enter your password" id="F_password"/>
+            <input type="password" placeholder="Please enter your password" id="F_password" name="password"/>
           </li>
           <li>
-            <input type="submit" value="Login"/>
-            <input type="hidden" name="next" value="/logout/"/>
+            <input type="submit" name="Submit" value="Login" title="Log into website or go to account page"/>
+            <input type="hidden" name="next" value=""/>
           </li>
-        </ul>
+          <li>
+            <input type="submit" name="Reset" class="Link" value="New password" title="Get a new password for the username specified"/>
+          </li></ul>
+    <BLANKLINE>
+        <div class="buttons"></div>
       </form>
     </div>
         </div>
@@ -117,13 +122,13 @@
     >
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
       <head>
-      <meta http-equiv="Content-Type"
-            content="text/html; charset=iso-8859-15"
-          />
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+    <BLANKLINE>
+    <BLANKLINE>
               <title>None</title>
     <BLANKLINE>
             <meta name="copyright" content=" " />
-            <meta name="generator" content="Jinja2" />
+            <meta name="generator" content="GTW, JNJ, Jinja2" />
             <meta http-equiv="Content-URL" content=""/>
     </head>
       <body >
@@ -133,50 +138,53 @@
     <BLANKLINE>
     </div>
           <div id="document" class="body">
-      <input type="text" class="text" id="user_name" maxlength="30"/>
-      <input type="password" class="password" id="pass_word" maxlength="40"/>
-      <input type="text" class="email" readonly="1" id="email"/>
-      <input type="text" class="number"/>
-      <textarea cols="40" rows="4" id="Area">
-        A sample text in a sample textarea.
     <BLANKLINE>
+      <input type="text" class="text " id="user_name" maxlength="30"/>
+      <input type="password" class="password " id="pass_word" maxlength="40"/>
+      <input type="text" class="email " readonly="1" id="email"/>
+      <input type="text" class="number "/>
+      <textarea cols="40" rows="4" id="Area">A sample text in a sample textarea.
       </textarea>
-    <BLANKLINE>
-      <form action="/login/" method="post">
+      <form action="/login" method="post">
         <ul>
           <li><label for="F_username">Username</label></li>
           <li>
-            <input type="text" class="text" id="F_username" maxlength="30"/>
+            <input type="text" class="text " id="F_username" name="username" maxlength="30"/>
           </li>
           <li><label for="F_password">Password</label></li>
           <li>
-            <input type="password" class="password" id="F_password"/>
+            <input type="password" class="password " id="F_password" name="password"/>
           </li>
           <li>
-            <input type="submit" class="submit" value="Login"/>
-            <input type="hidden" class="text" name="next" value="/logout/"/>
+            <input type="submit" class="submit " name="Submit" value="Login" title="Log into website or go to account page"/>
+            <input type="hidden" class="text " name="next" value=""/>
           </li>
-        </ul>
+          <li>
+            <input type="submit" class="submit Link" name="Reset" value="New password" title="Get a new password for the username specified"/>
+          </li></ul>
+    <BLANKLINE>
+        <div class="buttons"></div>
       </form>
-    <BLANKLINE>
-      <form action="/login/" method="post">
-    <BLANKLINE>
-          Using `call` of `GTW.get_macro`
-    <BLANKLINE>
-        <ul>
+      <form action="/login" method="post">
+        Using `call` of `GTW.get_macro`
+      <ul>
           <li><label for="F_username">Username</label></li>
           <li>
-            <input type="text" class="text" id="F_username" maxlength="30"/>
+            <input type="text" class="text " id="F_username" name="username" maxlength="30"/>
           </li>
           <li><label for="F_password">Password</label></li>
           <li>
-            <input type="password" class="password" id="F_password"/>
+            <input type="password" class="password " id="F_password" name="password"/>
           </li>
           <li>
-            <input type="submit" class="submit" value="Login"/>
-            <input type="hidden" class="text" name="next" value="/logout/"/>
+            <input type="submit" class="submit " name="Submit" value="Login" title="Log into website or go to account page"/>
+            <input type="hidden" class="text " name="next" value=""/>
           </li>
-        </ul>
+          <li>
+            <input type="submit" class="submit Link" name="Reset" value="New password" title="Get a new password for the username specified"/>
+          </li></ul>
+    <BLANKLINE>
+        <div class="buttons"></div>
       </form>
     </div>
         </div>
@@ -207,8 +215,8 @@ template = """\
   {% call X.input.textarea (id="Area", rows=4, cols=40) -%}
     A sample text in a sample textarea.
   {% endcall %}
-  {{ GTW.call_macro ("html/form.jnj, login") }}
-  {% call GTW.get_macro ("html/form.jnj, login") () -%}
+  {{ GTW.call_macro ("html/form.jnj, login_inline", page, request) }}
+  {% call GTW.get_macro ("html/form.jnj, login_inline") (page, request) -%}
     Using `call` of `GTW.get_macro`
   {% endcall %} {# GTW.get_macro #}
 {% endblock document %}
