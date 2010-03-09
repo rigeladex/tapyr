@@ -1,0 +1,78 @@
+{#- jinja template: wr.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/cal/wr.jnj
+##
+## Purpose
+##    Macros for displaying a week_roller
+##
+## Revision Dates
+##     9-Mar-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro week_roller (cal, W) -%}
+  <table class="calendar">
+    <colgroup>
+      {{ W.cols (cal) }}
+    </colgroup>
+    <thead>
+      <tr>
+        {{ W.head (cal) }}
+      </tr>
+    </thead>
+    <tbody>
+      {%- for week in cal.weeks %}
+        <tr>
+          {{ W.week_number (cal, week) }}
+          {%- for d in week.days %}
+            {%- set td_cls = " ".join
+                (( d.day_name.lower ()
+                 , " holiday" if d.is_holiday   else ""
+                 , " today"   if d == cal.today else ""
+                )).strip ()
+            -%}
+            {%- set div_cls = " ".join (("date", d.month_name)) -%}
+            <td class="{{ td_cls }}" title="{{ "%s, %s" % (GTW._T (d.day_name), d) }}">
+              <div class="{{ div_cls}}">
+                {%- onion d.events %}
+                  {% head -%}
+                    <a href="{{ cal.day_href (d) }}">
+                  {%- body -%}
+                    {{- W.week_day (cal, week, d) -}}
+                  {%- tail -%}
+                    </a>
+                {%- endonion -%}
+              </div>
+              {{ W.week_day_events (cal, week, d) }}
+            </td>
+          {% endfor -%}
+          {{ W.week_month  (cal, week) }}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{%- endmacro -%} {#- week_roller -#}
+
+{#- __END__ jinja template: wr.jnj -#}

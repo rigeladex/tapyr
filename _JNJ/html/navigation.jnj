@@ -35,9 +35,19 @@
 ##    21-Feb-2010 (CT) `logout_inline` factored
 ##    22-Feb-2010 (CT) `language_section` added
 ##    23-Feb-2010 (CT) `flag_or_text` factored, `language_section` improved
+##     9-Mar-2010 (CT) `calendar` added
 ##    ««revision-date»»···
 ##--
 #}
+
+{%- macro calendar (page) -%}
+  {%- import "html/cal/wr_nav.jnj" as W %}
+  {%- import "html/cal/wr.jnj"     as C %}
+  <ul>
+    {{ entry (page, 0) }}
+  </ul>
+  {{- C.week_roller (page, W) -}}
+{%- endmacro -%} {#- calendar -#}
 
 {%- macro entry (link, level) -%}
   {% if NAV.permissive or NAV.allow (link, request.user) %}
@@ -155,6 +165,7 @@
   <div class="nav-section{{ kwargs.pop ('class', '') }}"{{ kwargs|xmlattr }}>
     {% if name -%}<h1>{{ name }}</h1>{% endif %}
     {{ entries (link_list, 0) }}
+    {%- if caller %}{{ caller () }}{% endif -%}
   </div>
   {%- endif %}
 {%- endmacro -%} {# section #}
@@ -188,9 +199,6 @@
               {{ sitemap_entry (link.photos [0], TEST) }}
             </ul>
           {% endif %}
-          {% if link.manager %}
-            <p>Format: {{ link.obj.format }}
-          {% endif %}
         </div>
       {% endif %}
       {{ sitemap_level (link.own_links, TEST) }}
@@ -208,6 +216,12 @@
   {% endif -%}
 {%- endmacro -%} {#- sitemap_level -#}
 
-{{- section (page.top.own_links, "Navigation") -}}
+{# {{- section (page.top.own_links, "Navigation") -}} #}
+{% call section (page.top.own_links, "Navigation") -%}
+  {%- if page.top.SC.Cal %}
+    <div> Harumphhh </div>
+    {{ calendar (page.top.SC.Cal) }}
+  {% endif -%}
+{% endcall %} {# section #}
 
 {#- __END__ jinja template: html/navigation.jnj -#}

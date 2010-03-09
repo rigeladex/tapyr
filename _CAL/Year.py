@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2003-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2003-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -64,6 +64,8 @@
 #    17-Jun-2005 (MG) `Day.is_weekday` fixed
 #    11-Aug-2007 (CT) Imports corrected
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
+#     9-Mar-2010 (CT) `day_abbr`, `day_name`, `month_abbr`, and `month_name`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -84,8 +86,12 @@ class Day (TFL.Meta.Object) :
 
     is_holiday = ""
 
+    day_abbr   = property (lambda s : s.date.formatted ("%a"))
+    day_name   = property (lambda s : s.date.formatted ("%A"))
     id         = property (lambda s : s.date.tuple [:3])
     is_weekday = property (TFL.Getter.date.is_weekday)
+    month_abbr = property (lambda s : s.date.formatted ("%b"))
+    month_name = property (lambda s : s.date.formatted ("%B"))
     number     = property (TFL.Getter.date.day)
 
     def __new__ (cls, cal, date) :
@@ -186,7 +192,7 @@ class Week (TFL.Meta.Object) :
     # end def _init_
 
     def as_cal (self) :
-        line = " ".join ([("%2d" % d.day) for d in self.days])
+        line = " ".join (("%2d" % d.day) for d in self.days)
         return "%2.2d %s" % (self.number, line)
     # end def as_cal
 
@@ -195,7 +201,7 @@ class Week (TFL.Meta.Object) :
             d         = self.mon
             cal       = self.year.cal
             self.days = days = [d]
-            days.extend ([cal.day [d.date + i] for i in range (1, 7)])
+            days.extend (cal.day [d.date + i] for i in range (1, 7))
     # end def populate
 
     def __cmp__ (self, rhs) :
@@ -239,7 +245,9 @@ class Week (TFL.Meta.Object) :
 class Month (TFL.Meta.Object) :
     """Model a single month in a calendar"""
 
+    abbr   = property (lambda s : s.head.formatted ("%b"))
     head   = property (TFL.Getter.days [0])
+    name   = property (lambda s : s.head.formatted ("%B"))
     number = property (TFL.Getter.month)
     tail   = property (TFL.Getter.days [-1])
 
@@ -380,8 +388,7 @@ class Year (TFL.Meta.Object) :
                   =  [d for d in self.weeks  [0].days [self.head.weekday:]]
         for w in self.weeks [1:-1] :
             days.extend (w.days)
-        days.extend \
-            ([d for d in self.weeks [-1].days [:self.tail.weekday + 1]])
+        days.extend (d for d in self.weeks [-1].days [:self.tail.weekday + 1])
         self.dmap = dmap = {}
         for d in days :
             dmap [d.id] = d

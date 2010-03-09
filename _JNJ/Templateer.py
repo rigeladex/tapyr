@@ -59,6 +59,7 @@ class Templateer (TFL.Meta.Object) :
         , account_reset_password       = "html/reset_password.jnj"
         , account_verify_new_email     = "email/verifiy_new_email.jnj"
         , account_verify_email         = "email/verifiy_new_email.jnj"
+        , calendar                     = "html/calendar.jnj"
         , default                      = "html/error.jnj"
         , e_type_admin                 = "html/e_type_admin.jnj"
         , e_type_change                = "html/e_type_change.jnj"

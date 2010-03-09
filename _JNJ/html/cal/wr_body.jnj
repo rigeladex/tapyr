@@ -1,0 +1,72 @@
+{#- jinja template: wr_body.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    html/cal/wr_body.jnj
+##
+## Purpose
+##    Macros for displaying a week_roller in a page body
+##
+## Revision Dates
+##     9-Mar-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro cols (cal) -%}
+  <col class="week-number" title="{{ GTW._T ('Number of week') }}"/>
+  {%- for d in cal.day_names %}
+    <col class="{{ d.lower () }}" title="{{ GTW._T (d) }}"/>
+  {% endfor -%}
+{%- endmacro -%} {#- cols -#}
+
+{%- macro head (cal) -%}
+  <th class="week-number" scope="col">{{ GTW._T ("Wk") }}</th>
+  {%- for d in cal.day_names %}
+    <th class="{{ d.lower () }}" scope="col">{{ GTW._T (d [:3]) }}</th>
+  {% endfor -%}
+{%- endmacro -%} {#- head -#}
+
+{%- macro week_day (cal, week, day) -%}
+  {{- " ".join
+      (("%s" % day.day, GTW._T (day.month_abbr) if day.day == 1 else "")).strip ()
+  -}}
+{%- endmacro -%} {#- week_day -#}
+
+{%- macro week_day_events (cal, week, day) -%}
+  {%- for ev in day.events %}
+    <div class="event" title="{{ ev.ui_display }}">
+      {{ ev.short_title }}
+    </div>
+  {% endfor -%}
+{%- endmacro -%} {#- week_day_events -#}
+
+{%- macro week_month (cal, week) -%}
+{%- endmacro -%} {#- week_month -#}
+
+{%- macro week_number (cal, week) -%}
+  <th class="week-number" scope="row" title="{{ GTW._T ('Week %2.2d/%s') % (week.number, week.year) }}">
+    <a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a>
+  </th>
+{%- endmacro -%} {#- week_number -#}
+
+{#- __END__ jinja template: wr_body.jnj -#}
