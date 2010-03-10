@@ -34,6 +34,7 @@
 #    17-Feb-2010 (CT) `email_uri`, `obfuscated`, `tel_uri`, and `uri` added
 #    23-Feb-2010 (CT) `pjoin` added
 #    24-Feb-2010 (CT) `log_stdout` added
+#    10-Mar-2010 (CT) `zip` added
 #    ««revision-date»»···
 #--
 
@@ -140,6 +141,7 @@ class GTW (TFL.Meta.Object) :
         return result
     # end def uri
 
+    zip  = staticmethod (zip)
     _T   = staticmethod (_T)
     _Tn  = staticmethod (_Tn)
 

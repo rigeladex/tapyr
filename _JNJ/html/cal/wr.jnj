@@ -28,6 +28,8 @@
 ##
 ## Revision Dates
 ##     9-Mar-2010 (CT) Creation
+##    10-Mar-2010 (CT) Optional keyword argument `weeks` added to `week_roller`
+##    10-Mar-2010 (CT) `week_roller_body` and `week_roller_nav` added
 ##    ««revision-date»»···
 ##--
 #}

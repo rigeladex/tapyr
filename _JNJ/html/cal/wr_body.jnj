@@ -42,8 +42,10 @@
 
 {%- macro head (cal) -%}
   <th class="week-number" scope="col">{{ GTW._T ("Wk") }}</th>
-  {%- for d in cal.day_names %}
-    <th class="{{ d.lower () }}" scope="col">{{ GTW._T (d [:3]) }}</th>
+  {%- for a, d in GTW.zip (cal.day_abbrs, cal.day_names) %}
+    <th class="{{ d.lower () }}"  title="{{ GTW._T (d) }}"scope="col">
+      {{- GTW._T (a) -}}
+    </th>
   {% endfor -%}
 {%- endmacro -%} {#- head -#}
 

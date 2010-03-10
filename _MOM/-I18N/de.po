@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-02-26 18:07+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-03-10 10:12+0100\n"
+"Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:900
+#: _MOM/Entity.py:908
 #, python-format
 msgid ""
 "%s\n"
@@ -28,7 +28,7 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1089
+#: _MOM/_Attr/Type.py:1132
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -36,208 +36,208 @@ msgstr ""
 "Ein Name beginng mit einem Buchstaben oder Unterstrich, gefolgt\"\n"
 "\"von Buchstaben, Ziffern und Unterstrichen."
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "All mandatory attributes must be (always) defined."
 msgstr "Alle obligatorischen Attribute müssen (ständig) definiert sein."
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "All object invariants must be satisfied."
 msgstr "Alle Predikate von Objekten müssen erfüllt sein."
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "All required attributes must be defined."
 msgstr "Alle erforderlichen Attribute müssen definiert sein."
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "An_Entity"
 msgstr "An-Entität"
 
-#: _MOM/_Meta/M_Entity.py:112
+#: _MOM/_Meta/M_Entity.py:118
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 "Typ %s kann nicht direkt mit %r erzeugt werden, stattdessen muss\"\n"
 "\"scope.%s %r verwendet werden"
 
-#: _MOM/_EMS/Hash.py:189 _MOM/_EMS/_Manager_.py:140
+#: _MOM/_EMS/Hash.py:190 _MOM/_EMS/_Manager_.py:140
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:801
+#: _MOM/_Attr/Kind.py:809
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0 _MOM.Object:0 _MOM.Entity:0
 msgid "Display in user interface"
 msgstr "Darstellung in der Benutzeroberfläche"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Electric"
 msgstr "elektrisch"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Entity"
 msgstr "Entität"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Fo"
 msgstr ""
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Id_Entity"
 msgstr "Id-Entität"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Indicates if object/link was created automatically or not."
 msgstr "Zeigt an, ob das Objekt/der Link automatisch erzeugt wurde."
 
-#: _MOM/_Attr/Type.py:841
+#: _MOM/_Attr/Type.py:884
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Is used"
 msgstr "wird verwendet"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "Link"
 msgstr "Verknüpfung"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "Link1"
 msgstr "Verknüpfung"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "Link2"
 msgstr "2-Verknüpfung"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "Link2_Ordered"
 msgstr "2-Verknüpfung/geordnet"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "Link3"
 msgstr "3-Verknüpfung"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Object:0
 msgid "Name"
 msgstr "Name"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Object:0
 msgid "Named_Object"
 msgstr "Benanntes-Objekt"
 
-#: _MOM/_Attr/Type.py:654
+#: _MOM/_Attr/Type.py:665
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
 
-#: _MOM/_Attr/Type.py:239
+#: _MOM/_Attr/Type.py:245
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Object:0
 msgid "Object"
 msgstr "Objekt"
 
-#: _MOM/_Attr/Kind.py:686
+#: _MOM/_Attr/Kind.py:694
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:696
+#: _MOM/_Attr/Kind.py:704
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "Seq no"
 msgstr "Laufende Nummer"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "Sequence number of a link in an ordered association."
 msgstr "Laufende Nummer einer Verknüpfung in einer geordneten Assoziation."
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Specifies if object can be changed by user"
 msgstr "Zeigt an ob das Objekt vom Anwender verändert werden kann"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Specifies whether entity is used by another entity."
 msgstr "Zeigt an ob eine Entität von einer anderen Entität verwendet wird."
 
-#: _MOM/_Attr/Kind.py:275
+#: _MOM/_Attr/Kind.py:279
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr "Versuche, das Attribut %s von  %s auf `%s` zu synchronisieren"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "Ui display"
 msgstr "Ui Darstellung"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Object:0
 msgid "Unique name of the object."
 msgstr "Eindeutiger Name des Objekts."
 
-#: _MOM/_Attr/Kind.py:687
+#: _MOM/_Attr/Kind.py:695
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 
-#: _MOM/_EMS/Hash.py:190 _MOM/_EMS/_Manager_.py:141
+#: _MOM/_EMS/Hash.py:191 _MOM/_EMS/_Manager_.py:141
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Type.py:314
+#: _MOM/_Attr/Type.py:320
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "X locked"
 msgstr "gesperrt"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "_MOM_Link_n_"
 msgstr ""
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid ""
 "`FO.foo` gives the `ui_display` of attribute `foo`, if defined,\n"
 "or the raw value of `foo`, otherwise."
 msgstr ""
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "completely_defined"
 msgstr "vollständig definiert"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "left"
 msgstr "links"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "mandatory_defined"
 msgstr ""
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:649
+#: _MOM/_Attr/Type.py:660
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Entity:0
 msgid "object_correct"
 msgstr "Objekt-korrekt"
 
-#: _MOM/__babel__.py:0
+#: _MOM.Link:0
 msgid "right"
 msgstr "rechts"
 

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-26 18:07+0100\n"
+"PO-Revision-Date: 2010-03-10 10:12+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -25,35 +25,31 @@ msgid ""
 "  "
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Author"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Author of the web page."
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Contents"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Contents of web page in html format"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Date"
-msgstr ""
-
-#: _GTW/_NAV/example/__babel__.py:0
-msgid "Description of the page"
 msgstr ""
 
 #: _GTW/_NAV/example/templates/i18n.jnj:8
 msgid "English"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Format"
 msgstr ""
 
@@ -61,45 +57,61 @@ msgstr ""
 msgid "German"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Head line"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Head line of the web page"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
+msgid "Higher prio sorts before lower prio."
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
 msgid "Markup format used for `text` of web page"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Name used for perma-link."
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Page"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
+msgid "Prio"
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
 msgid ""
 "Publication (`start`) and expiration date (`finish`) for the\n"
 "web page"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
+msgid "Short title"
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Short title of the web page (used in navigation)."
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0
 msgid "Text"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Text for web page in markup specified by `format`."
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Title"
 msgstr ""
 
-#: _GTW/_NAV/example/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Title of the web page"
 msgstr ""
 

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-26 18:07+0100\n"
+"PO-Revision-Date: 2010-03-10 10:12+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,164 +18,165 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account_in_Group:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Account"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account:0
 msgid "Account which this action is bound to."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Activation"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Account_Anonymous"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_EMail_Verification"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Account_P"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Password_Change_Required"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Pasword_Reset"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_in_Group:0
 msgid "Account_in_Group"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Group:0
 msgid "Accounts"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Activation"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Active"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Group:0
+msgid "Desc"
+msgstr ""
+
+#: _GTW._OMP._Auth.Group:0
+msgid "Description of group"
+msgstr ""
+
+#: _GTW._OMP._Auth.Account:0
 msgid "Email that serves as user name for this account"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Enabled"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Exipre time of this action"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Expires"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_in_Group:0 _GTW._OMP._Auth.Group:0
 msgid "Group"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW/_OMP/_Auth/Nav.py:75 _GTW/_OMP/_Auth/Nav.py:76
+#: _GTW._OMP._Auth.Account:0
 msgid "Groups"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Group:0
 msgid "Name of group"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "New email"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Password change required"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Password for this account"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Salt"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Superuser"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "Suspended"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "The new email address for the linked account."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "The salt used for the password hash."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "The temporary password."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "This account has super-user permissions."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "This account is currently active."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "This account is currently enabled (the user can login)."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "This account is currently suspended (due to a pending action)."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Token"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "Unique token which identifies this action."
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "_Account_Action_"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account_Handling:0
 msgid "_Account_Token_Action_"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Group:0
 msgid "`Account` linked to `group`"
 msgstr ""
 
-#: _GTW/_OMP/_Auth/__babel__.py:0
+#: _GTW._OMP._Auth.Account:0
 msgid "`Group` linked to `account`"
 msgstr ""
-
-#~ msgid "All mandatory attributes must be (always) defined."
-#~ msgstr ""
-
-#~ msgid "The temporaty password."
-#~ msgstr ""
-
-#~ msgid "mandatory_defined"
-#~ msgstr ""
 

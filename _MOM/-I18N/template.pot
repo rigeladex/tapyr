@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-27 23:06+0100\n"
+"POT-Creation-Date: 2010-03-10 10:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,14 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:900
+#: _MOM/Entity.py:908
 #, python-format
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1089
+#: _MOM/_Attr/Type.py:1132
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -47,17 +47,17 @@ msgstr ""
 msgid "An_Entity"
 msgstr ""
 
-#: _MOM/_Meta/M_Entity.py:112
+#: _MOM/_Meta/M_Entity.py:118
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:189 _MOM/_EMS/_Manager_.py:140
+#: _MOM/_EMS/Hash.py:190 _MOM/_EMS/_Manager_.py:140
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:801
+#: _MOM/_Attr/Kind.py:809
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -86,7 +86,7 @@ msgstr ""
 msgid "Indicates if object/link was created automatically or not."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:841
+#: _MOM/_Attr/Type.py:884
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
@@ -123,12 +123,12 @@ msgstr ""
 msgid "Named_Object"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:654
+#: _MOM/_Attr/Type.py:665
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:239
+#: _MOM/_Attr/Type.py:245
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr ""
 
@@ -136,12 +136,12 @@ msgstr ""
 msgid "Object"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:686
+#: _MOM/_Attr/Kind.py:694
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:696
+#: _MOM/_Attr/Kind.py:704
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -162,7 +162,7 @@ msgstr ""
 msgid "Specifies whether entity is used by another entity."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:275
+#: _MOM/_Attr/Kind.py:279
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -175,16 +175,16 @@ msgstr ""
 msgid "Unique name of the object."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:687
+#: _MOM/_Attr/Kind.py:695
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:190 _MOM/_EMS/_Manager_.py:141
+#: _MOM/_EMS/Hash.py:191 _MOM/_EMS/_Manager_.py:141
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:314
+#: _MOM/_Attr/Type.py:320
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
@@ -219,7 +219,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:649
+#: _MOM/_Attr/Type.py:660
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""

@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-02-26 18:07+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-03-10 10:12+0100\n"
+"Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
@@ -18,83 +18,95 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Author"
 msgstr "Autor"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Author of the web page."
 msgstr "Autor der Webseite"
 
-#: _GTW/_OMP/_SWP/Nav.py:78
+#: _GTW/_OMP/_SWP/Nav.py:86
 msgid "Author of web page"
 msgstr "Autor der Webseite"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Contents"
 msgstr "Inhalt"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Contents of web page in html format"
 msgstr "Inhalt der Webseite in HTML (Hypertext) Format"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Date"
 msgstr "Datum"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
-msgid "Description of the page"
-msgstr "Beschreibung der Seite"
-
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Format"
 msgstr "Format"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Head line"
 msgstr "Kopfzeile"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Head line of the web page"
 msgstr "Überschrift der Webseite"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
+msgid "Higher prio sorts before lower prio."
+msgstr "Höhere Priorität wird vor niederer Priorität gereiht."
+
+#: _GTW._OMP._SWP.Page:0
 msgid "Markup format used for `text` of web page"
 msgstr "Textauszeichnungsformat, das für den `text` der Webseite verwendet wird"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Name used for perma-link."
 msgstr "Name, der für den Permalink verwendet wird."
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Page"
 msgstr "Seite"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
+msgid "Prio"
+msgstr "Priorität"
+
+#: _GTW._OMP._SWP.Page:0
 msgid ""
 "Publication (`start`) and expiration date (`finish`) for the\n"
 "web page"
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/Nav.py:64
+#: _GTW/_OMP/_SWP/Nav.py:69
 msgid "Publication and expiration date"
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
+msgid "Short title"
+msgstr "Kurztitle"
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Short title of the web page (used in navigation)."
+msgstr "Kurztitle der Webseite (wird in Navigation verwendet)."
+
+#: _GTW._OMP._SWP.Page:0
 msgid "Text"
 msgstr "Text"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Text for web page in markup specified by `format`."
 msgstr ""
 "Text für die Webseite, im durch `format` angegebenen "
 "Textauszeichnungsformat formatiert."
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Title"
 msgstr "Titel"
 
-#: _GTW/_OMP/_SWP/__babel__.py:0
+#: _GTW._OMP._SWP.Page:0
 msgid "Title of the web page"
 msgstr "Überschrift der Webseite"
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-02-27 23:06+0100\n"
+"POT-Creation-Date: 2010-03-10 10:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,6 +65,14 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Active"
+msgstr ""
+
+#: _GTW._OMP._Auth.Group:0
+msgid "Desc"
+msgstr ""
+
+#: _GTW._OMP._Auth.Group:0
+msgid "Description of group"
 msgstr ""
 
 #: _GTW._OMP._Auth.Account:0

@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-26 18:07+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-03-10 10:12+0100\n"
+"Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Activation for"
 msgstr "Aktivierung für"
 
-#: _JNJ/html/form.jnj:188
+#: _JNJ/html/form.jnj:196
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -38,38 +38,38 @@ msgstr "Ändere E-Mail für"
 msgid "Change Password for"
 msgstr "Ändere Kennwort für"
 
-#: _JNJ/html/form.jnj:378
+#: _JNJ/html/form.jnj:391
 msgid "Change email"
 msgstr "Ändere E-Mail"
 
-#: _JNJ/html/form.jnj:377
+#: _JNJ/html/form.jnj:390
 #, python-format
 msgid "Change email of account %s"
 msgstr "Ändere E-Mail für Benutzerkonto %s"
 
-#: _JNJ/html/e_type_admin.jnj:73
+#: _JNJ/html/e_type_admin.jnj:74
 msgid "Change object"
 msgstr "Ändere Objekt"
 
-#: _JNJ/html/form.jnj:383
+#: _JNJ/html/form.jnj:396
 msgid "Change password"
 msgstr "Ändere Kennwort"
 
-#: _JNJ/html/form.jnj:382
+#: _JNJ/html/form.jnj:395
 #, python-format
 msgid "Change password of account %s"
 msgstr "Ändere Kennwort für Benutzerkonto %s"
 
-#: _JNJ/html/navigation.jnj:101
+#: _JNJ/html/navigation.jnj:113
 #, python-format
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
 
-#: _JNJ/html/form.jnj:404
+#: _JNJ/html/form.jnj:417
 msgid "Discard all changes"
 msgstr "Verwerfen aller Änderungen"
 
-#: _JNJ/html/form.jnj:186 _JNJ/html/form.jnj:395
+#: _JNJ/html/form.jnj:194 _JNJ/html/form.jnj:408
 msgid "Discard all changes and leave form"
 msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 
@@ -77,7 +77,7 @@ msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 msgid "Edit this entry"
 msgstr "Ändere dieses Ding"
 
-#: _JNJ/html/form.jnj:338 _JNJ/html/login.jnj:65
+#: _JNJ/html/form.jnj:351 _JNJ/html/login.jnj:65
 msgid "Get a new password for the username specified"
 msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
 
@@ -88,16 +88,16 @@ msgstr ""
 "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
 "Webmaster."
 
-#: _JNJ/html/navigation.jnj:98
+#: _JNJ/html/navigation.jnj:110
 msgid "Language"
 msgstr "Sprache"
 
-#: _JNJ/html/navigation.jnj:97
+#: _JNJ/html/navigation.jnj:109
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
 
-#: _JNJ/html/form.jnj:329
+#: _JNJ/html/form.jnj:342
 msgid "Log into website or go to account page"
 msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 
@@ -105,16 +105,16 @@ msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 msgid "Log into website with username and password specified"
 msgstr "Melde mit dem angegebenen Benutzernamen und Kennwort bei der Webseite an"
 
-#: _JNJ/html/navigation.jnj:124
+#: _JNJ/html/navigation.jnj:136
 msgid "Logged in"
 msgstr "Angemeldet"
 
-#: _JNJ/html/navigation.jnj:123
+#: _JNJ/html/navigation.jnj:135
 #, python-format
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:330 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:129
+#: _JNJ/html/form.jnj:343 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:141
 msgid "Login"
 msgstr "Anmelden"
 
@@ -126,28 +126,36 @@ msgstr "Anmeldung für"
 msgid "Login required"
 msgstr "Anmeldung erforderlich"
 
-#: _JNJ/html/form.jnj:369 _JNJ/html/form.jnj:370
+#: _JNJ/html/form.jnj:382 _JNJ/html/form.jnj:383
 #, python-format
 msgid "Logout %s"
 msgstr "Melde %s ab"
 
 #: _JNJ/html/error_405.jnj:37
 msgid "Method Not Allowed"
-msgstr ""
+msgstr "Zugriffsart nicht gestattet"
+
+#: _JNJ/html/cal/wr_nav.jnj:40 _JNJ/html/cal/wr_nav.jnj:54
+msgid "Month (for last day of week)"
+msgstr "Monat (des letzten Tags der Woche)"
 
 #: _JNJ/html/photo.jnj:47
 msgid "Next picture"
 msgstr "Nächstes Bild"
 
+#: _JNJ/html/cal/wr_body.jnj:37 _JNJ/html/cal/wr_nav.jnj:36
+msgid "Number of week"
+msgstr "Kalenderwoche"
+
 #: _JNJ/html/error_404.jnj:37
 msgid "Page doesn't exist"
 msgstr "Seite existiert nicht"
 
-#: _JNJ/html/form.jnj:323
+#: _JNJ/html/form.jnj:336
 msgid "Please enter your password"
 msgstr "Bitte um Eingabe des Kennworts"
 
-#: _JNJ/html/form.jnj:314
+#: _JNJ/html/form.jnj:327
 msgid "Please enter your username"
 msgstr "Bitte um Eingabe des Benutzernamens"
 
@@ -159,11 +167,11 @@ msgstr "Voriges Bild"
 msgid "Processing the request triggered a server error. "
 msgstr "Die Verarbeitung der Anfrage löste einen Fehler des Webservers aus."
 
-#: _JNJ/html/form.jnj:349
+#: _JNJ/html/form.jnj:362
 msgid "Register"
 msgstr "Registrieren"
 
-#: _JNJ/html/form.jnj:348
+#: _JNJ/html/form.jnj:361
 msgid "Register a new account"
 msgstr "Registrieren eines neuen Benutzerkontos"
 
@@ -171,7 +179,7 @@ msgstr "Registrieren eines neuen Benutzerkontos"
 msgid "Register a new account for "
 msgstr "Registrieren eines neuen Benutzerkontos für "
 
-#: _JNJ/html/form.jnj:405
+#: _JNJ/html/form.jnj:418
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -180,7 +188,7 @@ msgstr "Zurücksetzen"
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/navigation.jnj:106
+#: _JNJ/html/navigation.jnj:118
 #, python-format
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
@@ -189,7 +197,7 @@ msgstr "Wähle Sprache '%s' aus"
 msgid "Server error"
 msgstr "Fehler im Webserver"
 
-#: _JNJ/html/form.jnj:407
+#: _JNJ/html/form.jnj:420
 msgid "Submit"
 msgstr "Absenden"
 
@@ -204,6 +212,15 @@ msgid ""
 msgstr ""
 "Wir entschuldigen uns für die Unannehmlichkeit und hoffen, das\"\n"
 "\" Problem ehebaldigst zu beheben. "
+
+#: _JNJ/html/cal/wr_body.jnj:72 _JNJ/html/cal/wr_nav.jnj:60
+#, python-format
+msgid "Week %2.2d/%s"
+msgstr "Woche %2.2d/%s"
+
+#: _JNJ/html/cal/wr_body.jnj:44
+msgid "Wk"
+msgstr "KW"
 
 #: _JNJ/html/error_403.jnj:47
 msgid "You are not authorized to access the page "

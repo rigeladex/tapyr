@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-02-26 18:07+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-03-10 10:12+0100\n"
+"Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
@@ -19,223 +19,233 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_OMP/_PAP/Person.py:93 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Person.py:93 _GTW._OMP._PAP.Person:0
 msgid "Academic title"
 msgstr "Titel"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Academic title."
 msgstr "Titel."
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP.Address:0
 msgid "Address"
 msgstr "Adresse"
 
-#: _GTW/_OMP/_PAP/Nav.py:117 _GTW/_OMP/_PAP/Nav.py:118
+#: _GTW/_OMP/_PAP/Nav.py:193 _GTW/_OMP/_PAP/Nav.py:194
 msgid "Addresses"
 msgstr "Adressen"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Addresss"
 msgstr "Adressen"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "Alive"
 msgstr "Aktiv"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "Area code"
 msgstr "Vorwahl"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "City"
 msgstr "Stadt"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "City, town, or village"
 msgstr "Stadt, Gemeinde, Dorf"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Country"
 msgstr "Land"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "Country code"
 msgstr "Ländervorwahl"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr "Geburtstag (und Sterbetag)"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "Date_Interval"
 msgstr "Datumsintervall"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "Date_Interval_N"
 msgstr "Datumsintervall"
 
-#: _GTW/_OMP/_PAP/Email.py:68 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:68 _GTW._OMP._PAP._Person_has_Property_:0
+#: _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
 msgid "Description"
 msgstr "Beschreibung"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Email:0 _GTW._OMP._PAP.Email:0
 msgid "Email"
 msgstr "Email"
 
-#: _GTW/_OMP/_PAP/Email.py:59 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Email.py:59 _GTW._OMP._PAP.Email:0
 msgid "Email address"
 msgstr "Emailadresse"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Email:0
 msgid "Email address (including domain)"
 msgstr "Emailadresse (inkl. Domain)"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Nav.py:182 _GTW/_OMP/_PAP/Nav.py:183
+msgid "Email addresses"
+msgstr "Emailadressen"
+
+#: _GTW._OMP._PAP.Person:0
 msgid "Emails"
 msgstr "Emailadressen"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension"
 msgstr "Durchwahl"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension number used in PBX"
 msgstr "Durchwahl"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "Finish"
 msgstr "Ende"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "Finish date of interval"
 msgstr "Enddatum des Intervalls"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "First name"
 msgstr "Vorname"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "First name of person"
 msgstr "Vorname"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Geographical position"
 msgstr "Koordinaten"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Position:0
 msgid "Height"
 msgstr "Höhe"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Position:0
 msgid "Height above mean sea level"
 msgstr "Höhe über dem Meererspiegel"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "International country code of phone number (without prefix)"
 msgstr "Internationale Landesvorwahl (ohne landespezifische Startziffern)"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Last name"
 msgstr "Nachname"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Last name of person"
 msgstr "Nachname"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Position:0
 msgid "Latitude"
 msgstr "Breite"
 
-#: _GTW/_OMP/_PAP/Nav.py:107 _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Nav.py:160 _GTW._OMP._PAP.Person:0
 msgid "Lifetime"
 msgstr "Lebenszeit"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Position:0
 msgid "Longitude"
 msgstr "Länge"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Middle name"
 msgstr "Mittelname"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Middle name of person"
 msgstr "Mittelname"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Models a string-valued attribute of an object."
 msgstr ""
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "National area code of phone number (without prefix)"
 msgstr "Vorwahl"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "Number"
 msgstr "Nummer"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Address:0 _GTW._OMP._PAP._Person_has_Property_:0
+#: _GTW._OMP._PAP.Person:0 _GTW._OMP._PAP.Person_has_Email:0
+#: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Person"
 msgstr "Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Address:0
 msgid "Person_has_Address"
 msgstr "Person hat Adresse"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Email:0
 msgid "Person_has_Email"
 msgstr "Person hat Email"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Person_has_Phone"
 msgstr "Person hat Telefon"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW/_OMP/_PAP/Nav.py:118 _GTW/_OMP/_PAP/Nav.py:119
+#: _GTW/_OMP/_PAP/Nav.py:138 _GTW/_OMP/_PAP/Nav.py:139
+#: _GTW/_OMP/_PAP/Nav.py:216 _GTW/_OMP/_PAP/Nav.py:217 _GTW._OMP._PAP.Email:0
+#: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
 msgid "Persons"
 msgstr "Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0 _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Phone"
 msgstr "Telefon"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr "Telefonnummer (ohne Vorwahl oder Durchwahl)"
 
-#: _GTW/_OMP/_PAP/Nav.py:129 _GTW/_OMP/_PAP/Nav.py:130
+#: _GTW/_OMP/_PAP/Nav.py:171 _GTW/_OMP/_PAP/Nav.py:172
 msgid "Phone numbers"
 msgstr "Telefonnummern"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "Phones"
 msgstr "Telefonnummern"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Position:0 _GTW._OMP._PAP.Address:0
 msgid "Position"
 msgstr "Beschreibung"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Region"
 msgstr "Region"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Short description of the address"
 msgstr "Kurze Beschreibung der Adresse"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Email:0
 msgid "Short description of the email address"
 msgstr "Kurze Beschreibung der Emailadresse"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP._Person_has_Property_:0
 msgid "Short description of the link"
 msgstr "Kurze Beschreibung der Verknüpfung"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "Short description of the phone number"
 msgstr "Kurze Beschreibung der Telefonnummer"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid ""
 "Specifies whether entity is currently alive, i.e., the current\n"
 "date lies between `start` and `finish`."
@@ -244,67 +254,67 @@ msgstr ""
 "\"\n"
 "\"Datum zwischen `Beginn` und `Ende` liegt."
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "Start"
 msgstr "Beginn"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "Start date of interval"
 msgstr "Beginndatum des Intervalls"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "State or province or region"
 msgstr "Bundesland"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Street"
 msgstr "Strasse"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Street (or place) and house number"
 msgstr "Strasse (oder Platz) und Hausnummer"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "The finish date must be later than the start date"
 msgstr "Der Sterbetag muss später als der Geburtstag sein"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Zip code"
 msgstr "Postleitzahl"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "Zip code of address"
 msgstr "Postleitzahl der Adresse"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP._Person_has_Property_:0
 msgid "_Person_has_Property_"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "`Address` linked to `person`"
 msgstr "Adresse einer Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "`Email` linked to `person`"
 msgstr "Emailadresse einer Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Address:0
 msgid "`Person` linked to `address`"
 msgstr "Telefonnummer einer Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Email:0
 msgid "`Person` linked to `email`"
 msgstr "Telefonnummer einer Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Phone:0
 msgid "`Person` linked to `phone`"
 msgstr "Telefonnummer einer Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _GTW._OMP._PAP.Person:0
 msgid "`Phone` linked to `person`"
 msgstr "Telefonnummer einer Person"
 
-#: _GTW/_OMP/_PAP/__babel__.py:0
+#: _MOM._Attr.Date_Interval:0
 msgid "finish_after_start"
 msgstr ""
 

@@ -51,7 +51,7 @@
 {%- endmacro -%} {#- week_day_events -#}
 
 {%- macro week_month (cal, week) -%}
-  <td class="month-name">
+  <td class="month-name" title="{{ GTW._T ('Month (for last day of week)') }}">
     {{- GTW._T (week.days [-1].month_abbr) -}}
   </td>
 {%- endmacro -%} {#- week_month -#}

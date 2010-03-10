@@ -37,15 +37,33 @@ from   _TFL                     import TFL
 import _CAL.Calendar
 import _GTW._NAV.Base
 
+from   _TFL.I18N                import _, _T, _Tn
+
 import datetime
 from   posixpath                import join  as pjoin
 
 class Calendar (GTW.NAV.Dir) :
     """Navigation directory for providing a calendar."""
 
+    day_abbrs        = \
+        ( _("Mon"), _("Tue"), _("Wed"), _("Thu")
+        , _("Fri"), _("Sat"), _("Sun")
+        )
     day_names        = \
-        ( "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
-        , "Saturday", "Sunday"
+        ( _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday")
+        , _("Friday"), _("Saturday"), _("Sunday")
+        )
+    month_abbrs      = \
+        ( _("Jan"), _("Feb"), _("Mar")
+        , _("Apr"), _("May"), _("Jun")
+        , _("Jul"), _("Aug"), _("Sep")
+        , _("Oct"), _("Nov"), _("Dec")
+        )
+    month_names      = \
+        ( _("January"), _("February"), _("March")
+        , _("April"),   _("May"),      _("June")
+        , _("July"),    _("August"),   _("September")
+        , _("October"), _("November"), _("December")
         )
     pid              = "Cal"
     template         = "calendar"

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-02-26 18:07+0100\n"
+"PO-Revision-Date: 2010-03-10 10:12+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,12 +18,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:108 _GTW/_NAV/_E_Type/Admin.py:233
+#: _GTW/_NAV/_E_Type/Admin.py:109 _GTW/_NAV/_E_Type/Admin.py:197
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
 
-#: _GTW/_NAV/_E_Type/Admin.py:200
+#: _GTW/_Form/_MOM/Javascript.py:56
 #, python-format
 msgid "%s `%s` existiert nicht!"
 msgstr ""
@@ -48,6 +48,30 @@ msgstr ""
 msgid "Activation successful."
 msgstr ""
 
+#: _GTW/_NAV/Calendar.py:58
+msgid "Apr"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:64
+msgid "April"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:59
+msgid "Aug"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:65
+msgid "August"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:60
+msgid "Dec"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:66
+msgid "December"
+msgstr ""
+
 #: _GTW/_NAV/Auth.py:94
 msgid "EMail verification successful."
 msgstr ""
@@ -57,9 +81,49 @@ msgstr ""
 msgid "Email confirmation for %s"
 msgstr ""
 
+#: _GTW/_NAV/Calendar.py:57
+msgid "Feb"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:63
+msgid "February"
+msgstr ""
+
 #: _GTW/_Form/Plain.py:90
 #, python-format
 msgid "Field `%(field)s` is required"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:50
+msgid "Fri"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:54
+msgid "Friday"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:57
+msgid "Jan"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:63
+msgid "January"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:59
+msgid "Jul"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:65
+msgid "July"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:58
+msgid "Jun"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:64
+msgid "June"
 msgstr ""
 
 #: _GTW/_NAV/L10N.py:68
@@ -69,6 +133,26 @@ msgstr ""
 
 #: _GTW/_NAV/Auth.py:268
 msgid "Logout successful."
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:57
+msgid "Mar"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:63
+msgid "March"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:58 _GTW/_NAV/Calendar.py:64
+msgid "May"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:49
+msgid "Mon"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:53
+msgid "Monday"
 msgstr ""
 
 #: _GTW/HTML.py:67
@@ -81,6 +165,22 @@ msgstr ""
 
 #: _GTW/_Form/Auth.py:120
 msgid "New password"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:60
+msgid "Nov"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:66
+msgid "November"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:60
+msgid "Oct"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:66
+msgid "October"
 msgstr ""
 
 #: _GTW/_Form/Auth.py:169
@@ -101,6 +201,30 @@ msgstr ""
 
 #: _GTW/_Form/Auth.py:122
 msgid "Repeat new password"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:50
+msgid "Sat"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:54
+msgid "Saturday"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:59
+msgid "Sep"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:65
+msgid "September"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:50
+msgid "Sun"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:54
+msgid "Sunday"
 msgstr ""
 
 #: _GTW/_Form/Auth.py:197
@@ -143,12 +267,36 @@ msgstr ""
 msgid "This username is not registered"
 msgstr ""
 
+#: _GTW/_NAV/Calendar.py:49
+msgid "Thu"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:53
+msgid "Thursday"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:49
+msgid "Tue"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:53
+msgid "Tuesday"
+msgstr ""
+
 #: _GTW/_Form/Auth.py:61 _GTW/_Form/Auth.py:212 _GTW/_Form/Auth.py:238
 msgid "Username"
 msgstr ""
 
 #: _GTW/_Form/Auth.py:78
 msgid "Username or password incorrect"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:49
+msgid "Wed"
+msgstr ""
+
+#: _GTW/_NAV/Calendar.py:53
+msgid "Wednesday"
 msgstr ""
 
 #: _GTW/HTML.py:53
