@@ -34,6 +34,8 @@
 #    25-Feb-2010 (MG) `_sa_col_name` functions moved in here from `Attr_Kind`
 #    25-Feb-2010 (MG) `_sa_columns_named_object` fixed
 #     5-Mar-2010 (CT) Pass `convert_unicode` to `types.String`
+#    10-Mar-2010 (MG) `_sa_columns_named_value` created, types for `A_Time`
+#                     added
 #    ««revision-date»»···
 #--
 
@@ -88,15 +90,17 @@ def _sa_columns_a_object (cls, attr, kind, unique, ** kw) :
     return (col, )
 # end def _sa_columns_a_object
 
-@Add_Classmedthod ("_sa_columns", Attr._A_Named_Object_)
-def _sa_columns_named_object (cls, attr, kind, unique, ** kw) :
+@Add_Classmedthod ("_sa_columns", Attr._A_Named_Value_)
+def _sa_columns_named_value (cls, attr, kind, unique, ** kw) :
     Pickler  = attr.Pickler
-    Type     = Pickler.Type
-    col      = schema.Column \
-        (attr._sa_col_name, Type._sa_type (Type, kind), ** kw)
-    col.mom_kind = kind
-    return (col, )
-# end def _sa_columns_named_object
+    Type     = getattr (Pickler, "Type", attr.C_Type)
+    if Type :
+        col      = schema.Column \
+            (attr._sa_col_name, Type._sa_type (Type, kind), ** kw)
+        col.mom_kind = kind
+        return (col, )
+    return _sa_columns_simple (cls, attr, kind, unique, ** kw)
+# end def _sa_columns_named_value
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Composite_)
 def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
@@ -121,10 +125,12 @@ def _sa_bool (cls, attr, kind, ** kw)      : return types.Boolean   ()
 def _sa_date (cls, attr, kind, ** kw)      : return types.Date      ()
 @Add_Classmedthod ("_sa_type", Attr.A_Date_Time)
 def _sa_date_time (cls, attr, kind, ** kw) : return types.DateTime  ()
+@Add_Classmedthod ("_sa_type", Attr.A_Time)
+def _sa_time (cls, attr, kind, ** kw)      : return types.Time      ()
 @Add_Classmedthod ("_sa_type", Attr.A_Float)
-def _sa_float (cls, attr, kind, ** kw) :     return types.Float     ()
+def _sa_float (cls, attr, kind, ** kw)     : return types.Float     ()
 @Add_Classmedthod ("_sa_type", Attr.A_Int)
-def _sa_int (cls, attr, kind, ** kw) :       return types.Integer   ()
+def _sa_int (cls, attr, kind, ** kw)       : return types.Integer   ()
 
 @Add_Classmedthod ("_sa_type", Attr.A_Decimal)
 def _sa_numeric (cls, attr, kind, ** kw) :
@@ -138,5 +144,10 @@ def _sa_string (cls, attr, kind, ** kw) :
         , convert_unicode = True
         )
 # end def _sa_string
+
+@Add_Classmedthod ("_sa_type", Attr.A_Int_List, Attr.A_Date_List)
+def _sa_blob (cls, attr, kind, ** kw) :
+    return types.String ()
+# end def _sa_blob
 
 ### __END__ MOM.DBW.SAS.Type

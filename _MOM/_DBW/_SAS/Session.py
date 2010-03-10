@@ -234,7 +234,7 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def value_dict
 
     def update (self, session, entity, attrs = set ()) :
-        ### TFL.25-Feb-2010 BREAK ()
+        ### TFL.BREAK ()
         for b in self.bases :
             b._SAS.update (session, entity, attrs)
         values     = self.value_dict \

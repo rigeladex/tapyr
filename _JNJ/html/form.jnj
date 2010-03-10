@@ -60,6 +60,7 @@
 ##    28-Feb-2010 (MG) `inline_table_aid_td` changed to write the hidden fields
 ##                     of the parent form if this is the first field group
 ##    28-Feb-2010 (MG) `aid_div_seq` fixed to handling hidden fields
+##    10-Mar-2010 (MG) `aid_div_seq` fixed to handle hidden fields correct
 ##    ««revision-date»»···
 ##--
 #}
@@ -79,9 +80,6 @@
     {%- body %}
       {%- for h in pfo.hidden_fields %}
         {{ GTW.call_macro (h.widget, pfo, h) }}
-      {% endfor -%}
-      {%- for h in fo.hidden_fields %}
-        {{ GTW.call_macro (h.widget, fo, h) }}
       {% endfor -%}
       {%- for fg in fo.field_groups %}
         {{ GTW.call_macro (fg.widget, fo, fg)}}

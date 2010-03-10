@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    10-Mar-2010 (CT) Creation
+#    10-Mar-2010 (MG) `unit.C_Type` added
 #    ««revision-date»»···
 #--
 
@@ -123,6 +124,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
                `frequency`.
             """
 
+            C_Type             = A_Int
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )
             Table              = dict \
