@@ -162,7 +162,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
         class first_day_of_week (A_Int) :
 
             kind               = Attr.Const
-            default            = dateutil.rrule.MO
+            default            = dateutil.rrule.MO.weekday
 
             rrule_name         = "wkst"
 
@@ -198,7 +198,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
     # end def _rrule_attrs
 
     def __nonzero__ (self) :
-        return self.interval is not None
+        return self.period is not None
     # end def __nonzero__
 
 # end class Recurrence_Rule

@@ -30,6 +30,7 @@
 #                     GTW.Form.MOM.Field_Group_Description
 #    25-Feb-2010 (CT) `css_class` added
 #    26-Feb-2010 (MG) `get_cooked` added
+##    10-Mar-2010 (CT) s/named_object/named_value/
 #    ««revision-date»»···
 #--
 
@@ -58,7 +59,7 @@ MAT.A_Date.widget              = WS ("html/field.jnj, date")
 MAT.A_Date_Time.widget         = WS ("html/field.jnj, datetime")
 MAT.A_Email.widget             = WS ("html/field.jnj, email")
 MAT.A_Text.widget              = WS ("html/field.jnj, text")
-MAT._A_Named_Object_.widget    = WS ("html/field.jnj, named_object")
+MAT._A_Named_Value_.widget     = WS ("html/field.jnj, named_value")
 
 MAT.Kind.css_class             = ""
 MAT.Primary.css_class          = "Mandatory"
@@ -104,7 +105,7 @@ class Field (TFL.Meta.Object) :
     @property
     def choices (self) :
         attr = self.attr_kind.attr
-        if isinstance (attr, MOM.Attr._A_Named_Object_) :
+        if isinstance (attr, MOM.Attr._A_Named_Value_) :
             return sorted (attr.Table)
         return ()
     # end def choices

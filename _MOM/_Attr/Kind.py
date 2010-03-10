@@ -332,7 +332,8 @@ class Kind (MOM.Prop.Kind) :
             try :
                 value = self.attr.cooked (value)
             except StandardError as exc :
-                ### print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
+                if __debug__ :
+                    print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
                 raise
         return self._set_cooked_value (obj, value, changed)
     # end def _set_cooked_inner
