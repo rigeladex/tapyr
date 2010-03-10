@@ -70,6 +70,9 @@
 #                     name clash error)
 #    02-Mar-2010 (MG) `M_Instance.__new__` handle completers on top level forms
 #     6-Mar-2010 (MG) Form handling changed
+#    10-Mar-2010 (MG) `Instance_State_Field.get_raw` changed to always return
+#                     a dict filled with default values even if instance is
+#                     `None`
 #    ««revision-date»»···
 #--
 
@@ -99,10 +102,9 @@ class Instance_State_Field (GTW.Form.Field) :
 
     def get_raw (self, form, instance) :
         state = {}
-        if instance is not None :
-            for n, f in form.fields.iteritems () :
-                if not f.hidden :
-                    state [n] = form.get_raw (f)
+        for n, f in form.fields.iteritems () :
+            if not f.hidden :
+                state [n] = form.get_raw (f)
         return base64.b64encode (cPickle.dumps (state))
     # end def get_raw
 
@@ -225,11 +227,10 @@ class _Instance_ (GTW.Form._Form_) :
     # end def add_changed_raw
 
     def _create_instance (self, instance, state, raw_attrs) :
-        if instance and state == "r" :
-            ### a new instance should be created staring from a
-            ### rename -> we have to fill in at least all
-            ### primaries
-            for attr_kind in instance.primary :
+        if not instance or state == "r" :
+            ### a new instance should be created starting scratch or from a
+            ### rename -> we have to fill in at least all primaries
+            for attr_kind in self.et_man._etype.primary :
                 n             = attr_kind.attr.name
                 raw_attrs [n] = raw_attrs.get \
                     (n, attr_kind.get_raw (instance))
