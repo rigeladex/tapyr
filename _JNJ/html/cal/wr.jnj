@@ -33,6 +33,7 @@
 #}
 
 {%- macro week_roller (cal, W) -%}
+  {%- set weeks = kwargs.pop ("weeks", cal.weeks) %}
   <table class="calendar">
     <colgroup>
       {{ W.cols (cal) }}
@@ -43,7 +44,7 @@
       </tr>
     </thead>
     <tbody>
-      {%- for week in cal.weeks %}
+      {%- for week in weeks %}
         <tr>
           {{ W.week_number (cal, week) }}
           {%- for d in week.days %}
@@ -74,5 +75,15 @@
     </tbody>
   </table>
 {%- endmacro -%} {#- week_roller -#}
+
+{%- macro week_roller_body (cal) -%}
+  {%- import "html/cal/wr_body.jnj" as W %}
+  {{ week_roller (cal, W, ** kwargs)}}
+{%- endmacro -%} {#- week_roller_body -#}
+
+{%- macro week_roller_nav (cal) -%}
+  {%- import "html/cal/wr_nav.jnj" as W %}
+  {{ week_roller (cal, W, ** kwargs)}}
+{%- endmacro -%} {#- week_roller_nav -#}
 
 {#- __END__ jinja template: wr.jnj -#}

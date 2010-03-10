@@ -66,15 +66,19 @@
 #     7-Nov-2007 (CT) Use `Getter` instead of `lambda`
 #     9-Mar-2010 (CT) `day_abbr`, `day_name`, `month_abbr`, and `month_name`
 #                     added
+#    10-Mar-2010 (CT) `Day.is_holiday` turned into property
 #    ««revision-date»»···
 #--
 
 from   _CAL              import CAL
 from   _TFL              import TFL
+
 import _CAL.Appointment
 import _CAL.Date
 import _CAL.Holiday
+
 import _TFL._Meta.Object
+import _TFL._Meta.Once_Property
 import _TFL.Accessor
 import _TFL.d_dict
 
@@ -83,8 +87,6 @@ from   _TFL              import sos
 
 class Day (TFL.Meta.Object) :
     """Model a single day in a calendar"""
-
-    is_holiday = ""
 
     day_abbr   = property (lambda s : s.date.formatted ("%a"))
     day_name   = property (lambda s : s.date.formatted ("%A"))
@@ -104,6 +106,7 @@ class Day (TFL.Meta.Object) :
         if id in Table :
             return Table [id]
         self = Table [id] = TFL.Meta.Object.__new__ (cls)
+        self._cal = cal
         self._init_ (id, date)
         return self
     # end def __new__
@@ -140,9 +143,19 @@ class Day (TFL.Meta.Object) :
             )
     # end def as_plan
 
+    @property
+    def is_holiday (self) :
+        return self.Year.holidays.get (self.ordinal)
+    # end def is_holiday
+
     def sort_appointments (self) :
         self.appointments.sort ()
     # end def sort_appointments
+
+    @TFL.Meta.Once_Property
+    def Year (self) :
+        return self._cal.year [self.year]
+    # end def Year
 
     def __cmp__ (self, rhs) :
         return cmp (self.ordinal, getattr (rhs, "ordinal", rhs))
@@ -392,9 +405,6 @@ class Year (TFL.Meta.Object) :
         self.dmap = dmap = {}
         for d in days :
             dmap [d.id] = d
-        dmap = self.cal._days
-        for ord, name in self.holidays.iteritems () :
-            dmap [ord].is_holiday = name
     # end def populate
 
     def sort_appointments (self) :

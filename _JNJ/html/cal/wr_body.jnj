@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##     9-Mar-2010 (CT) Creation
+##    10-Mar-2010 (CT) `week_day` changed to honor `is_holiday`
 ##    ««revision-date»»···
 ##--
 #}
@@ -47,9 +48,13 @@
 {%- endmacro -%} {#- head -#}
 
 {%- macro week_day (cal, week, day) -%}
+  {%- set holi = day.is_holiday %}
   {{- " ".join
       (("%s" % day.day, GTW._T (day.month_abbr) if day.day == 1 else "")).strip ()
   -}}
+  {%- if holi %}
+    <br/>{{- GTW._T (holi) -}}
+  {% endif -%}
 {%- endmacro -%} {#- week_day -#}
 
 {%- macro week_day_events (cal, week, day) -%}
@@ -65,7 +70,7 @@
 
 {%- macro week_number (cal, week) -%}
   <th class="week-number" scope="row" title="{{ GTW._T ('Week %2.2d/%s') % (week.number, week.year) }}">
-    <a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a>
+    <div class="week-number"><a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a></div>
   </th>
 {%- endmacro -%} {#- week_number -#}
 

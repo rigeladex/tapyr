@@ -41,12 +41,14 @@
 #}
 
 {%- macro calendar (page) -%}
-  {%- import "html/cal/wr_nav.jnj" as W %}
-  {%- import "html/cal/wr.jnj"     as C %}
-  <ul>
-    {{ entry (page, 0) }}
-  </ul>
-  {{- C.week_roller (page, W) -}}
+  {%- set cal = page.top.SC.Cal %}
+  {%- if cal %}
+    {%- import "html/cal/wr.jnj" as C %}
+    <ul>
+      {{ entry (cal, 0) }}
+    </ul>
+    {{- C.week_roller_nav (cal, weeks = cal.weeks [:5]) -}}
+  {% endif -%}
 {%- endmacro -%} {#- calendar -#}
 
 {%- macro entry (link, level) -%}
@@ -216,12 +218,8 @@
   {% endif -%}
 {%- endmacro -%} {#- sitemap_level -#}
 
-{# {{- section (page.top.own_links, "Navigation") -}} #}
 {% call section (page.top.own_links, "Navigation") -%}
-  {%- if page.top.SC.Cal %}
-    <div> Harumphhh </div>
-    {{ calendar (page.top.SC.Cal) }}
-  {% endif -%}
+  {{ calendar (page) }}
 {% endcall %} {# section #}
 
 {#- __END__ jinja template: html/navigation.jnj -#}

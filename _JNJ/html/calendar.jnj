@@ -25,7 +25,7 @@
 ##    html/calendar.jnj
 ##
 ## Purpose
-##    Template and macros for displaying a calendar
+##    Template for displaying a calendar
 ##
 ## Revision Dates
 ##     8-Mar-2010 (CT) Creation
@@ -33,12 +33,10 @@
 ##--
 #}
 
-{%- import "html/cal/wr.jnj" as C %}
-
 {%- block document -%}
-  {%- import "html/cal/wr_body.jnj" as W %}
+  {%- import "html/cal/wr.jnj" as C %}
   <h1>{{ page.desc }}</h1>
-  {{- C.week_roller (page, W) -}}
+  {{- C.week_roller_body (page) -}}
 {%- endblock document -%}
 
 {#- __END__ jinja template: calendar.jnj -#}

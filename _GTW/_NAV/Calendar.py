@@ -90,7 +90,6 @@ class Calendar (GTW.NAV.Dir) :
         result = self._year
         if result is None or result.number != self.today.year :
             result = self._year = self._cal.year [datetime.date.today ().year]
-            result.populate ()
         return result
     # end def year
 
