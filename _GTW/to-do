@@ -1,6 +1,13 @@
 GTW To-Do
 =========
 
+- GTW.NAV.Robots: Answer to url `/robots.txt`
+
+  * Disallow for various directories/pages
+    (NAV.E_Type, NAV.Sitemap, NAV.Auth, ...)
+
+  * http://www.robotstxt.org/robotstxt.html
+
 x Account management
 
   x Change password

@@ -79,6 +79,10 @@ class Time_Interval (_Ancestor_Essence) :
 
     # end class _Predicates
 
+    def __nonzero__ (self) :
+        return self.start is not None
+    # end def __nonzero__
+
 # end class Time_Interval
 
 class A_Time_Interval (_A_Composite_) :

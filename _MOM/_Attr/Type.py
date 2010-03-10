@@ -96,6 +96,7 @@
 #     4-Mar-2010 (CT) `_A_String_Base_._checkers` redefined to add a check
 #                     for `max_length`, if any
 #     4-Mar-2010 (CT) `max_length = 0` added to `_A_String_Base_`
+#    10-Mar-2010 (CT) `A_Int_List` and `A_Date_List` added
 #    ««revision-date»»···
 #--
 
@@ -967,6 +968,14 @@ class A_Date (_A_Date_) :
 
 # end class A_Date
 
+class A_Date_List (_A_Typed_List_) :
+    """Models a list-valued attribute comprising date elements."""
+
+    typ            = "Date_List"
+    C_Type         = A_Date
+
+# end class A_Date_List
+
 class A_Date_Slug (_A_String_) :
     """Models an atribute that stores a unique value based on the date/time
        of entity creation.
@@ -1051,6 +1060,14 @@ class A_Float (_A_Float_) :
 class A_Int (_A_Int_) :
     simple_cooked  = int
 # end class A_Int
+
+class A_Int_List (_A_Typed_List_) :
+    """Models a list-valued attribute comprising integer elements."""
+
+    typ            = "Int_List"
+    C_Type         = A_Int
+
+# end class A_Int_List
 
 class A_Length (_A_Unit_, _A_Float_) :
     """Models a length attribute with unit information."""

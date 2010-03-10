@@ -102,6 +102,10 @@ class Date_Interval (_Ancestor_Essence) :
 
     # end class _Predicates
 
+    def __nonzero__ (self) :
+        return self.start is not None
+    # end def __nonzero__
+
 # end class Date_Interval
 
 _Ancestor_Essence = Date_Interval

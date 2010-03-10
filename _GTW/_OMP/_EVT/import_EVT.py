@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.OMP.SWP.
+# This module is part of the package GTW.OMP.EVT.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,22 +20,21 @@
 #
 #++
 # Name
-#    GTW.OMP.SWP.import_SWP
+#    GTW.OMP.EVT.import_EVT
 #
 # Purpose
-#    Import SWP object model
+#    Import EVT object model
 #
 # Revision Dates
-#    24-Feb-2010 (CT) Creation
+#    10-Mar-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
-#from   _GTW._OMP._SWP         import SWP
 
-import _GTW._OMP._SWP.Entity
-import _GTW._OMP._SWP.Format
-import _GTW._OMP._SWP.Page
+import _GTW._OMP._EVT
+import _GTW._OMP._EVT.Entity
+import _GTW._OMP._EVT.Event
 
-### __END__ GTW.OMP.SWP.import_SWP
+### __END__ GTW.OMP.EVT.import_EVT

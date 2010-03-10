@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package GTW.OMP.SWP.
+# This package is part of the package GTW.OMP.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,22 +20,23 @@
 #
 #++
 # Name
-#    GTW.OMP.SWP.import_SWP
+#    GTW.OMP.EVT.__init__
 #
 # Purpose
-#    Import SWP object model
+#    Package defining a partial object model for calendary events
 #
 # Revision Dates
-#    24-Feb-2010 (CT) Creation
+#    10-Mar-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM        import *
-from   _GTW                   import GTW
-#from   _GTW._OMP._SWP         import SWP
+from   _GTW._OMP              import OMP
+from   _MOM                   import MOM
+from   _TFL.Package_Namespace import Derived_Package_Namespace
 
-import _GTW._OMP._SWP.Entity
-import _GTW._OMP._SWP.Format
-import _GTW._OMP._SWP.Page
+EVT = Derived_Package_Namespace (parent = MOM)
+OMP._Export ("EVT")
 
-### __END__ GTW.OMP.SWP.import_SWP
+del Derived_Package_Namespace
+
+### __END__ GTW.OMP.EVT.__init__
