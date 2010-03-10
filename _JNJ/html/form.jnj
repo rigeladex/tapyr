@@ -61,6 +61,7 @@
 ##                     of the parent form if this is the first field group
 ##    28-Feb-2010 (MG) `aid_div_seq` fixed to handling hidden fields
 ##    10-Mar-2010 (MG) `aid_div_seq` fixed to handle hidden fields correct
+##    10-Mar-2010 (MG) `inline_table_td`: fixed title attribute of td's
 ##    ««revision-date»»···
 ##--
 #}
@@ -267,8 +268,8 @@
 
 {%- macro inline_table_td (fo, fg) -%}
       {%- for fi in fg.fields %}
-        {%- set help = GTW._T (fi.help_text)|safe %}
-        <td class="Field Field-{{ fi.name }}" title="{{ help }}">
+        {%- set desc = GTW._T (fi.description)|safe %}
+        <td class="Field Field-{{ fi.name }}" title="{{ desc }}">
           {%- for h in fo.hidden_fields %}
             {{ GTW.call_macro (h.widget, fo, h) }}
           {% endfor -%}
