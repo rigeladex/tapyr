@@ -64,6 +64,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
             """
 
             kind               = Attr.Optional
+            rank               = 100
 
         # end class easter_offset
 
@@ -73,6 +74,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
             """
 
             kind               = Attr.Optional
+            rank               = -69
 
             rrule_name         = "bymonth"
 
@@ -85,6 +87,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
             """
 
             kind               = Attr.Optional
+            rank               = -70
 
             rrule_name         = "bymonthday"
 

@@ -85,6 +85,17 @@ class Admin (object) :
                     )
                 , legend = _("Author of web page")
                 )
+            , LID
+                ( "GTW.OMP.EVT.Event"
+                , FGD ("date", "time")
+                , AID
+                    ( "recurrence"
+                    , FGD ()
+                    , legend = _("Recurrence rule")
+                    )
+                , legend    = _("Events")
+                , title     = _("Events")
+                )
             , FGD ()
             )
         , list_display   =
