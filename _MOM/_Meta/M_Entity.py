@@ -80,6 +80,7 @@
 #                     `_A_Object_` attributes to app_type specific e-type
 #    11-Mar-2010 (CT) `M_Id_Entity` changed t use `epk_def_set_ckd` and
 #                     `epk_def_set_raw`
+#    11-Mar-2010 (CT) `check_always` removed (was a Bad Idea (tm))
 #    ««revision-date»»···
 #--
 
@@ -540,10 +541,6 @@ class M_E_Type (M_E_Mixin) :
                                   ) % (cls, attr.kind, an, cls.name, pn)
                         else :
                             P._attr_map [attr.attr].append (pn)
-            if pv.check_always :
-                for attr in attr_dict.itervalues () :
-                    if attr.name not in pv.attrs :
-                        P._attr_map [attr.attr].append (pn)
         P._syntax_checks = \
             [  a.attr for a in attr_dict.itervalues ()
             if (not a.electric) and TFL.callable (a.attr.check_syntax)

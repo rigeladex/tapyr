@@ -31,6 +31,7 @@
 #    26-Nov-2009 (CT) Use `except ... as ...` (3-compatibility)
 #    25-Feb-2010 (CT) `check_kind` changed to use `check_pred_p` of predicate
 #                     instead of home-grown code
+#    11-Mar-2010 (CT) `check_kind` change of `25-Feb` revoked
 #    ««revision-date»»···
 #--
 
@@ -96,14 +97,14 @@ class Manager (TFL.Meta.Object) :
         warnings = self.warnings [kind] = []
         attrs    = set (attr_dict)
         if attr_dict :
-            check_pred_p = lambda pred, attrs : pred.check_pred_p (attrs)
+            check_pred_p = lambda pred : attrs.intersection (pred.attrs)
             get_attr_val = lambda attr : attr_dict.get (attr.name)
         else :
-            check_pred_p = lambda pred, attrs : True
+            check_pred_p = lambda pred : True
             get_attr_val = lambda attr : obj.raw_attr (attr.name)
         for rank in dusplit (self.pred_kind [kind], lambda p : p.rank) :
             for p in rank  :
-                if check_pred_p (p, attrs) :
+                if check_pred_p (p) :
                     result = p.check_predicate (obj, attr_dict)
                     if not result :
                         if result.severe :

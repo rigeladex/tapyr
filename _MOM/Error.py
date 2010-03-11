@@ -37,6 +37,7 @@
 #    12-Feb-2010 (CT) `Invariant_Error._attribute_values` changed to use `%r`
 #                     instead of `%s` for val
 #    12-Feb-2010 (CT) `Invariant_Errors.__init__` redefined to sort `errors`
+#    11-Mar-2010 (CT) `Mandatory_Missing` added
 #    ««revision-date»»···
 #--
 
@@ -64,7 +65,7 @@ class Error (StandardError) :
     # end def __str__
 
     def str_arg (self, args) :
-        return map (str, args)
+        return (str (a) for a in args if a)
     # end def str_arg
 
     def __cmp__ (self, other) :
@@ -76,27 +77,6 @@ class Error (StandardError) :
     # end def __hash__
 
 # end class Error
-
-class Undefined_Cross_Ref (Error) :
-    """Raised when a cross-referenced object/link is undefined or the
-       cross-referenced attribute of that entity is undefined.
-    """
-# end class Undefined_Cross_Ref
-
-class Unknown_Assoc (Error) :
-    """Raised when a cross-referenced link refers to an unknown association."""
-# end class Unknown_Assoc
-
-class Name_Clash (Error) :
-    """Raised when one name is used for more than one object."""
-
-    arg_sep = " "
-
-    def __init__ (self, new, old) :
-        self.args = ("new definition of", new, "clashes with existing", old)
-    # end def __init__
-
-# end class Name_Clash
 
 class Invalid_Name (Error) :
     """Raised when an invalid name is given for an object to be created."""
@@ -110,9 +90,36 @@ class Invalid_Seq_Nr (Error) :
     """Raised when an invalid sequence number is given for an ordered link to be created."""
 # end class Invalid_Seq_Nr
 
-class Partial_Type (Error) :
-    """Raised when creation of an object of a partial type is tried."""
-# end class Partial_Type
+class Mandatory_Missing (Error) :
+    """Raised when a mandatory attribute is missing."""
+
+    arg_sep = " "
+
+    def __init__ (self, missing, provided) :
+        self.missing  = missing
+        self.provided = provided
+        self.args     = \
+            ( "Mandatory argument"
+            , "s" if len (missing) > 1 else ""
+            , ", ".join (repr (m) for m in missing)
+            , "are" if len (missing) > 1 else "is"
+            , "missing from provided arguments:"
+            , ", ".join (repr (p) for p in provided)
+            )
+    # end def __init__
+
+# end class Mandatory_Missing
+
+class Name_Clash (Error) :
+    """Raised when one name is used for more than one object."""
+
+    arg_sep = " "
+
+    def __init__ (self, new, old) :
+        self.args = ("new definition of", new, "clashes with existing", old)
+    # end def __init__
+
+# end class Name_Clash
 
 class No_Such_Directory (Error) :
     """Raised for a file specification containing a non-existent directory."""
@@ -130,6 +137,10 @@ class No_Such_Object (Error) :
     """Raised if an unknown epk is passed for an object or link-role."""
 # end class No_Such_Link
 
+class Partial_Type (Error) :
+    """Raised when creation of an object of a partial type is tried."""
+# end class Partial_Type
+
 class Too_Many_Objects (Error) :
     """Raised when too many objects are created."""
 
@@ -141,6 +152,16 @@ class Too_Many_Objects (Error) :
     # end def __init__
 
 # end class Too_Many_Objects
+
+class Undefined_Cross_Ref (Error) :
+    """Raised when a cross-referenced object/link is undefined or the
+       cross-referenced attribute of that entity is undefined.
+    """
+# end class Undefined_Cross_Ref
+
+class Unknown_Assoc (Error) :
+    """Raised when a cross-referenced link refers to an unknown association."""
+# end class Unknown_Assoc
 
 class Duplicate_Link (Error) :
     """Raised when a link is added to an association more than once."""

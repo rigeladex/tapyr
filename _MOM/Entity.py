@@ -113,6 +113,7 @@
 #                     `kw` in a single call to `setter`
 #     1-Mar-2010 (CT) `set_pickle_cargo` factored from `from_pickle_cargo`
 #     1-Mar-2010 (CT) `_record_iter_attrs` replaced by `recordable_attrs`
+#    11-Mar-2010 (CT) `mandatory_defined` removed (was a Bad Idea (tm))
 #    ««revision-date»»···
 #--
 
@@ -199,26 +200,7 @@ class Entity (TFL.Meta.Object) :
     # end class _Attributes
 
     class _Predicates (MOM.Pred.Spec) :
-
-        class mandatory_defined (Pred.Condition) :
-            """All mandatory attributes must be (always) defined."""
-
-            kind          = Pred.Object
-            check_always  = True
-
-            def eval_condition (self, obj, glob_dict, val_dict) :
-                result = []
-                add    = result.append
-                for a in obj.mandatory :
-                    val = val_dict.get (a.name) or a.get_value (obj)
-                    if val is None or val == "" :
-                        add ("Mandatory attribute %s is not defined" % (a, ))
-                self._error_info.extend (result)
-                return not result
-            # end def eval_condition
-
-        # end class mandatory_defined
-
+        pass
     # end class _Predicates
 
     class _FO_ (TFL.Meta.Object) :
@@ -447,15 +429,24 @@ class Entity (TFL.Meta.Object) :
         self._pred_man  = MOM.Pred.Manager (self._Predicates)
     # end def _init_meta_attrs
 
-    def _kw_satisfies_i_invariants (self, attr_dict, on_error) :
-        result = not self.is_correct (attr_dict)
+    def _kw_check_mandatory (self, attr_dict, on_error = None) :
+        missing = list \
+            (k for k in (m.name for m in self.mandatory) if k not in attr_dict)
+        if missing :
+            if on_error is None :
+                on_error = self._raise_attr_error
+            on_error (MOM.Error.Mandatory_Missing (missing, list (attr_dict)))
+    # end def _kw_check_mandatory
+
+    def _kw_check_predicates (self, attr_dict, on_error, kind = "object") :
+        result = not self.is_correct (attr_dict, kind)
         if result :
-            errors = self._pred_man.errors ["object"]
+            errors = self._pred_man.errors [kind]
             if on_error is None :
                 on_error = self._raise_attr_error
             on_error (MOM.Error.Invariant_Errors (errors))
         return result
-    # end def _kw_satisfies_i_invariants
+    # end def _kw_check_predicates
 
     def _print_attr_err (self, exc) :
         print self, exc
@@ -494,7 +485,7 @@ class Entity (TFL.Meta.Object) :
         man = self._attr_man
         tc  = man.total_changes
         if kw :
-            self._kw_satisfies_i_invariants (kw, on_error)
+            self._kw_check_predicates (kw, on_error)
             for name, val, attr in self.set_attr_iter (kw, on_error) :
                 attr._set_cooked (self, val)
         if man.updates_pending :
@@ -533,7 +524,7 @@ class Entity (TFL.Meta.Object) :
                         to_do.append ((attr, val, cooked_val))
                 else :
                     to_do.append ((attr, "", None))
-            self._kw_satisfies_i_invariants (cooked_kw, on_error)
+            self._kw_check_predicates (cooked_kw, on_error)
             man.reset_pending ()
             for attr, raw_val, val in to_do :
                 attr._set_raw (self, raw_val, val)
@@ -645,8 +636,9 @@ class An_Entity (Entity) :
     # end def _init_attributes_
 
     def _main__init__ (self, * args, ** kw) :
+        raw = bool (kw.pop ("raw", False))
+        self._kw_check_mandatory (kw)
         if kw :
-            raw = bool (kw.pop ("raw", False))
             set = (self._set_ckd, self._set_raw) [raw]
             set (** kw)
     # end def _main__init__
@@ -1055,7 +1047,8 @@ class Id_Entity (Entity) :
         ### Need to use `__super.` methods here because it's not a `rename`
         raw      = bool (kw.pop ("raw", False))
         setter   = (self.__super._set_ckd, self.__super._set_raw) [raw]
-        epk, kw  = self.epkified (* epk, ** kw)
+        epk, kw  = self.epkified  (* epk, ** kw)
+        self._kw_check_mandatory  (kw)
         kw.update (self._init_epk (epk))
         setter    (** kw)
         self._finish__init__ ()
@@ -1069,8 +1062,8 @@ class Id_Entity (Entity) :
                 attr._set_cooked_inner (self, v)
                 attr._set_raw_inner    (self, pkas_raw [k], v)
             self._reset_epk ()
-        self._kw_satisfies_i_invariants (pkas_ckd, None)
-        self.home_scope.rename          (self, tuple (new_epk), _renamer)
+        self._kw_check_predicates (pkas_ckd, None)
+        self.home_scope.rename    (self, tuple (new_epk), _renamer)
     # end def _rename
 
     def _repr (self, type_name) :
