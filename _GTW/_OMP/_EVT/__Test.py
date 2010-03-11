@@ -36,7 +36,7 @@ import _GTW._OMP._SWP.import_SWP
 import _GTW._OMP._PAP .import_PAP
 import _GTW._OMP._EVT.Event
 
-if 0 :
+if 1 :
     from   _MOM._EMS.Hash         import Manager as EMS
     from   _MOM._DBW._HPS.Manager import Manager as DBW
 else :
