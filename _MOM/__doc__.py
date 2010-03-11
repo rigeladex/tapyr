@@ -1692,6 +1692,39 @@ Unary links
     u"BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'), fever = 42.0)"
     >>> sr.sickness
     set([BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'))])
+
+Changing a composite primary attribute
+--------------------------------------
+
+    >>> old_epk = osm.epk
+    >>> old_epk
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/02/18))
+    >>> Ris.instance (* old_epk)
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/02/18'))
+
+    .. ### DBW-specific start
+
+    >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
+    [(26, (datetime.date(2010, 2, 18),))]
+
+    .. ### DBW-specific finish
+
+    >>> osm.sick_leave.set_raw (start = "2010/03/01")
+    1
+    >>> Ris.instance (* old_epk)
+    >>> osm.epk
+    (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01))
+    >>> Ris.instance (* osm.epk)
+    BMT.Rodent_is_sick ((u'Sick_Rodent', ), dict (start = '2010/03/01'))
+
+    .. ### DBW-specific start
+
+    >>> sorted (scope.ems._tables [osm.relevant_root.type_name])
+    [(26, (datetime.date(2010, 3, 1),))]
+
+    .. ### DBW-specific finish
+
+
 """
 
 db_uri = "'/tmp/bmt_test.bmt'"

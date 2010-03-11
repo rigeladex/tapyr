@@ -116,6 +116,8 @@
 #    11-Mar-2010 (CT) `mandatory_defined` removed (was a Bad Idea (tm))
 #    11-Mar-2010 (CT) `_kw_check_mandatory` added
 #    11-Mar-2010 (CT) `raw_attr_dict` factored
+#    11-Mar-2010 (CT) `An_Entity.set` and `.set_raw` changed to handle changes
+#                     of primary composite attributes properly (rename!)
 #    ««revision-date»»···
 #--
 
@@ -612,18 +614,17 @@ class An_Entity (Entity) :
 
     def set (self, on_error = None, ** kw) :
         if self.owner and self.is_primary :
-            if self._set_ckd  (on_error, ** kw) :
-                ### Change in primary attribute might be a `rename`
-                self.owner.set (** {self.attr_name : self})
+            ### Change in primary attribute might be a `rename`
+            return self.owner.set (** {self.attr_name : self.copy (** kw)})
         else :
             self.__super.set (on_error, ** kw)
     # end def set
 
     def set_raw (self, on_error = None, ** kw) :
         if self.owner and self.is_primary :
-            if self._set_raw  (on_error, ** kw) :
-                ### Change in primary attribute might be a `rename`
-                self.owner.set (** {self.attr_name : self})
+            ### Change in primary attribute might be a `rename`
+            return self.owner.set \
+                (** {self.attr_name : self.copy (raw = True, ** kw)})
         else :
             self.__super.set_raw (on_error, ** kw)
     # end def set_raw
