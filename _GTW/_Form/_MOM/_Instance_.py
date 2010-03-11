@@ -73,6 +73,7 @@
 #    10-Mar-2010 (MG) `Instance_State_Field.get_raw` changed to always return
 #                     a dict filled with default values even if instance is
 #                     `None`
+#    11-Mar-2010 (MG) `_create_instance` filter empty raw_values
 #    ««revision-date»»···
 #--
 
@@ -232,8 +233,10 @@ class _Instance_ (GTW.Form._Form_) :
             ### rename -> we have to fill in at least all primaries
             for attr_kind in self.et_man._etype.primary :
                 n             = attr_kind.attr.name
-                raw_attrs [n] = raw_attrs.get \
-                    (n, attr_kind.get_raw (instance))
+                if n not in raw_attrs :
+                    raw_value = attr_kind.get_raw (instance)
+                    if raw_value :
+                        raw_attrs [n] = raw_value
         return self.et_man (raw = True, ** raw_attrs)
     # end def _create_instance
 
@@ -301,7 +304,7 @@ class _Instance_ (GTW.Form._Form_) :
         self.instance = self._create_or_update  ()
         for ig in self.inline_groups :
             self.inline_errors += ig (request_data)
-            if (   isinstance (ig, GTW.Form.MOM.Attribute_Inline)
+            if (   isinstance (ig, GTW.Form.MOM._Attribute_Inline_)
                and ig.instance
                ) :
                 instance  = self._create_or_update (force_create = True)

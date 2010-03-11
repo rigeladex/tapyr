@@ -46,6 +46,7 @@
 #    22-Feb-2010 (MG) `_create_instance` added to `Attribute_Inline_Instance`
 #    27-Feb-2010 (MG) `add_internal_fields` changed
 #     6-Mar-2010 (MG) Error handling changed
+#    11-Mar-2010 (MG) Use new `Attribute_Inline.instance_as_raw`
 #    ««revision-date»»···
 #--
 
@@ -184,7 +185,7 @@ class Link_Inline_Instance (_Inline_Instance_) :
             if ig.instance and not ig.error_count :
                 ### looks like we have a valid inline attribute form
                 ### let's add it to our attribute map
-                attr_map [ig.generic_name] = ig.instance.epk_raw
+                attr_map [ig.generic_name] = ig.instance_as_raw
         if attr_map :
             ### look like we need to create/update the link -> let's add the
             ### parent object as role as well (we use the `force_create` flag

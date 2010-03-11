@@ -54,6 +54,7 @@
 #    27-Feb-2010 (MG) `sort_key` added to `jquery` media
 #    28-Feb-2010 (MG) `Attribute_Inline_Description.__call__`: add attributes
 #                     to `added_fields`
+#    11-Mar-2010 (MG) `An_Attribute_Inline/Id_Attribute_Inline` added
 #    ««revision-date»»···
 #--
 
@@ -130,7 +131,9 @@ class Attribute_Inline_Description (_Inline_Description_) :
             , parent_form   = parent_form
             , suffix        = et_man.type_base_name
             )
-        return (GTW.Form.MOM.Attribute_Inline (self, inline_form), )
+        if isinstance (obj_et_man, MOM.E_Type_Manager.An_Entity) :
+            return (GTW.Form.MOM.An_Attribute_Inline (self, inline_form), )
+        return (GTW.Form.MOM.Id_Attribute_Inline (self, inline_form), )
     # end def __call__
 
 # end class Attribute_Inline_Description

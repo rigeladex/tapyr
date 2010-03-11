@@ -49,6 +49,7 @@
 #                     instance)
 #    26-Feb-2010 (MG) Javascript handling changed
 #     6-Mar-2010 (MG) `Attribute_Inline` streamlined
+#    11-Mar-2010 (MG) `An_Attribute_Inline/Id_Attribute_Inline` added
 #    ««revision-date»»···
 #--
 
@@ -140,7 +141,7 @@ class _Inline_ (TFL.Meta.Object) :
 
 # end class _Inline_
 
-class Attribute_Inline (_Inline_) :
+class _Attribute_Inline_ (_Inline_) :
     """An inline group handling an attribute which refers to a MOM.Entity"""
 
 
@@ -188,7 +189,32 @@ class Attribute_Inline (_Inline_) :
         return self.form (request_data)
     # end def __call__
 
-# end class Attribute_Inline
+# end class _Attribute_Inline_
+
+class An_Attribute_Inline (_Attribute_Inline_) :
+    """Handels of An_Entity as attribuites."""
+
+    @property
+    def instance_as_raw (self) :
+        instance = self.instance
+        result   = dict (raw = True)
+        if instance :
+            result.update (instance.raw_attr_dict)
+        return result
+    # end def instance_as_raw
+
+# end class An_Attribute_Inline
+
+class Id_Attribute_Inline (_Attribute_Inline_) :
+    """Handels of ID_Entity as attribuites."""
+
+    @property
+    def instance_as_raw (self) :
+        instance = self.instance
+        return instance and instance.epk_raw
+    # end def instance_as_raw
+
+# end class Id_Attribute_Inline
 
 class Link_Inline (_Inline_) :
     """An inline group handling a MOM.Link"""
@@ -271,5 +297,5 @@ class Link_Inline (_Inline_) :
 # end class Link_Inline
 
 if __name__ != "__main__" :
-    GTW.Form.MOM._Export ("*", "_Inline_")
+    GTW.Form.MOM._Export ("*", "_Inline_", "_Attribute_Inline_")
 ### __END__ GTW.Form.MOM.Inline
