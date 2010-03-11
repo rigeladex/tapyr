@@ -115,6 +115,7 @@
 #     1-Mar-2010 (CT) `_record_iter_attrs` replaced by `recordable_attrs`
 #    11-Mar-2010 (CT) `mandatory_defined` removed (was a Bad Idea (tm))
 #    11-Mar-2010 (CT) `_kw_check_mandatory` added
+#    11-Mar-2010 (CT) `raw_attr_dict` factored
 #    ««revision-date»»···
 #--
 
@@ -244,6 +245,14 @@ class Entity (TFL.Meta.Object) :
         # end def __unicode__
 
     # end class _FO_
+
+    @property
+    def raw_attr_dict (self) :
+        return dict \
+            (  (a.name, a.get_raw (self))
+            for a in self.user_attr if a.has_substance (self)
+            )
+    # end def raw_attr_dict
 
     @property
     def recordable_attrs (self) :
@@ -585,11 +594,7 @@ class An_Entity (Entity) :
     # end def SCM_Change_Attr
 
     def as_string (self) :
-        return tuple \
-            ( (a.name, a.get_raw (self))
-            for a in sorted (self.user_attr, key = TFL.Getter.name)
-            if  a.has_substance (self)
-            )
+        return tuple (sorted (self.raw_attr_dict.iteritems ()))
     # end def as_string
 
     def copy (self, ** kw) :
@@ -625,9 +630,8 @@ class An_Entity (Entity) :
 
     def _formatted_user_attr (self) :
         return ", ".join \
-            ( "%s = %s" % (a.name, a.get_raw (self))
-            for a in sorted (self.user_attr, key = TFL.Getter.name)
-            if  a.has_substance (self)
+            (   "%s = %s" % (name, raw)
+            for (name, raw) in sorted (self.raw_attr_dict.iteritems ())
             )
     # end def _formatted_user_attr
 
@@ -834,7 +838,10 @@ class Id_Entity (Entity) :
     # end def async_changes
 
     def attr_as_code (self) :
-        return ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))
+        result = ", ".join (self.epk_as_code + (self.__super.attr_as_code (), ))
+        if "," not in result :
+            result += ","
+        return result
     # end def attr_as_code
 
     def changes (self, * filters, ** kw) :
