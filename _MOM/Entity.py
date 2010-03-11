@@ -774,6 +774,8 @@ class Id_Entity (Entity) :
             for a in self.primary :
                 r = a.as_code (a.get_value (self))
                 if isinstance (r, tuple) :
+                    if len (r) == 1 :
+                        r += ("", )
                     r = "(%s)" % (", ".join (r))
                 yield r
         return tuple (_gen ())
