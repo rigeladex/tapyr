@@ -114,6 +114,7 @@
 #     1-Mar-2010 (CT) `set_pickle_cargo` factored from `from_pickle_cargo`
 #     1-Mar-2010 (CT) `_record_iter_attrs` replaced by `recordable_attrs`
 #    11-Mar-2010 (CT) `mandatory_defined` removed (was a Bad Idea (tm))
+#    11-Mar-2010 (CT) `_kw_check_mandatory` added
 #    ««revision-date»»···
 #--
 

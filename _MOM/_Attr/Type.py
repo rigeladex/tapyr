@@ -98,6 +98,7 @@
 #     4-Mar-2010 (CT) `max_length = 0` added to `_A_String_Base_`
 #    10-Mar-2010 (CT) `A_Int_List` and `A_Date_List` added
 #    11-Mar-2010 (CT) `epk_def_set_ckd` and `epk_def_set_raw` added
+#    11-Mar-2010 (CT) `_A_Typed_Set_` corrected
 #    ««revision-date»»···
 #--
 
@@ -737,7 +738,7 @@ class _A_Typed_Collection_ (A_Attr_Type) :
     # end def cooked
 
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
-        comps = self._C_split (s)
+        comps = self._C_split (s.strip ())
         return self.R_Type (self._C_from_code (obj, comps, glob, locl))
     # end def from_code_string
 
@@ -757,13 +758,17 @@ class _A_Typed_Collection_ (A_Attr_Type) :
     def _C_split (self, s) :
         if s in ("[]", "") :
             return []
-        return list (r.strip () for r in s.split (self.C_sep))
+        if s.startswith ("[") and s.endswith ("]") :
+            s = s [1:-1]
+        elif s.startswith ("(") and s.endswith (")") :
+            s = s [1:-1]
+        return (x for x in (r.strip () for r in s.split (self.C_sep)) if x)
     # end def _C_split
 
-    def _from_string_eval (self, obj, s, glob, locl) :
-        comps = self._C_split (s)
+    def _from_string_eval (self, s, obj, glob, locl) :
+        comps = self._C_split (s.strip ())
         C_fse = self.C_Type._from_string_eval
-        return self.Result_Type (C_fse (obj, c, glob, locl) for c in comps)
+        return self.R_Type (C_fse (c, obj, glob, locl) for c in comps)
     # end def _from_string
 
     def _from_symbolic_ref (self, s, obj, glob, locl) :
