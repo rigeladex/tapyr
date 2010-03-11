@@ -62,6 +62,7 @@
 ##    28-Feb-2010 (MG) `aid_div_seq` fixed to handling hidden fields
 ##    10-Mar-2010 (MG) `aid_div_seq` fixed to handle hidden fields correct
 ##    10-Mar-2010 (MG) `inline_table_td`: fixed title attribute of td's
+##    11-Mar-2010 (MG) `_sep_th/_sep_td` macros added
 ##    ««revision-date»»···
 ##--
 #}
@@ -266,6 +267,36 @@
   {% endfor  %}
 {%- endmacro -%} {#- inline_table_aid_th -#}
 
+{%- macro inline_table_aid_sep_td (fo, fg) -%}
+  {%- set ifo =  fg.forms [0] -%}
+  <td>
+    {%- for h in fo.hidden_fields %}
+      {{ GTW.call_macro (h.widget, fo, h) }}
+    {% endfor -%}
+  {%- for fg in ifo.field_groups %}
+    {{ GTW.call_macro (fg.widget.inline_table_sep_td, ifo, fg) }}
+    {%- if ifo.get_errors () %}
+      {{ _field_error (ifo, None) }}
+    {% endif -%}
+    {%- if not loop.last %}
+      -
+    {% endif -%}
+  {% endfor  %}
+  </td>
+{%- endmacro -%} {#- inline_table_aid_sep_td -#}
+
+{%- macro inline_table_aid_sep_th (fo, fg) -%}
+  {%- set ifo =  fg.forms [0] -%}
+  <th>
+  {%- for fg in ifo.field_groups %}
+    {{ GTW.call_macro (fg.widget.inline_table_sep_th, ifo, fg)}}
+    {%- if not loop.last %}
+      -
+    {% endif -%}
+  {% endfor  %}
+  </th>
+{%- endmacro -%} {#- inline_table_aid_sep_th -#}
+
 {%- macro inline_table_td (fo, fg) -%}
       {%- for fi in fg.fields %}
         {%- set desc = GTW._T (fi.description)|safe %}
@@ -284,6 +315,31 @@
         <th title="{{ help }}">{{ _field_label (fo, fi) }}</th>
       {% endfor -%}
 {%- endmacro -%} {#- inline_table_th -#}
+
+{%- macro inline_table_sep_th (fo, fg) -%}
+      {%- for fi in fg.fields %}
+        {%- set help = GTW._T (fi.help_text)|safe %}
+        <span title="{{ help }}">{{ _field_label (fo, fi) }}</span>
+        {%- if not loop.last %}
+          -
+        {% endif -%}
+      {% endfor -%}
+{%- endmacro -%} {#- inline_table_sep_th -#}
+
+{%- macro inline_table_sep_td (fo, fg) -%}
+      {%- for fi in fg.fields %}
+        {%- set desc = GTW._T (fi.description)|safe %}
+        <span class="Field Field-{{ fi.name }}" title="{{ desc }}">
+          {%- for h in fo.hidden_fields %}
+            {{ GTW.call_macro (h.widget, fo, h) }}
+          {% endfor -%}
+          {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
+         {%- if not loop.last %}
+           -
+         {% endif -%}
+        </span>
+      {% endfor -%}
+{%- endmacro -%} {#- inline_table_sep_td -#}
 
 {%- macro inline_table_tr_body (fo, fgs) -%}
     <tr class="field_group {{ fo.css_class }} {{ kwargs.pop ("class", "") }}"

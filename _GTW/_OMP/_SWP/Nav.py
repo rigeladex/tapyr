@@ -28,6 +28,7 @@
 # Revision Dates
 #    16-Feb-2010 (MG) Creation (based on GTW.OMP.PAP.Nav)
 #    24-Feb-2010 (CT) Creation continued
+#    11-Mar-2010 (MG) Special widget's used for event date/time
 #    ««revision-date»»···
 #--
 
@@ -87,8 +88,24 @@ class Admin (object) :
                 )
             , LID
                 ( "GTW.OMP.EVT.Event"
-                , AID ("date")
-                , AID ("time")
+                , AID ( "date"
+                      , widget = WS
+                          ( AID.widget
+                          , inline_table_th =
+                              "html/form.jnj, inline_table_aid_sep_th"
+                          , inline_table_td =
+                              "html/form.jnj, inline_table_aid_sep_td"
+                          )
+                      )
+                , AID ( "time"
+                      , widget = WS
+                          ( AID.widget
+                          , inline_table_th =
+                              "html/form.jnj, inline_table_aid_sep_th"
+                          , inline_table_td =
+                              "html/form.jnj, inline_table_aid_sep_td"
+                          )
+                      )
                 , AID
                     ( "recurrence"
                     , FGD ()

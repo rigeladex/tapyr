@@ -43,6 +43,7 @@
 #    25-Feb-2010 (CT) `Field` moved into a module of its own
 #    28-Feb-2010 (MG) `Field_Group_Description.__call__` fixed to create
 #                     a nicer default for links
+#    11-Mar-2010 (MG) Santiy check added
 #    ««revision-date»»···
 #--
 
@@ -121,8 +122,10 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
     _real_name = "Field_Group_Description"
     widget     = GTW.Form.Widget_Spec \
         ( GTW.Form.Field_Group_Description.widget
-        , inline_table_th   = "html/form.jnj, inline_table_th"
-        , inline_table_td   = "html/form.jnj, inline_table_td"
+        , inline_table_th     = "html/form.jnj, inline_table_th"
+        , inline_table_td     = "html/form.jnj, inline_table_td"
+        , inline_table_sep_th = "html/form.jnj, inline_table_sep_th"
+        , inline_table_sep_td = "html/form.jnj, inline_table_sep_td"
         )
 
     def __call__ (self, et_man, added_fields = None, * args, ** kw) :
@@ -163,7 +166,13 @@ class _MOM_Field_Group_Description_ (GTW.Form.Field_Group_Description) :
                 new_fields =    (str (f), )
                 fields.append   (f)
             added_fields.update (new_fields)
-        if 1 or fields :
+        if fields :
+            if __debug__ :
+                aid_fields = \
+                    [  f for f in fields
+                    if isinstance (f, GTW.Form.MOM.Attribute_Inline_Description)
+                    ]
+                assert not aid_fields, aid_fields
             return \
                 ( GTW.Form.Field_Group
                     ([Field (et_man, name) for name in fields], self)
