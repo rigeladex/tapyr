@@ -78,6 +78,8 @@
 #                     against `primary`
 #     5-Mar-2010 (CT) `_m_setup_attributes` changed to set `.Class` of
 #                     `_A_Object_` attributes to app_type specific e-type
+#    11-Mar-2010 (CT) `M_Id_Entity` changed t use `epk_def_set_ckd` and
+#                     `epk_def_set_raw`
 #    ««revision-date»»···
 #--
 
@@ -338,9 +340,9 @@ class M_An_Entity (M_Entity) :
 class M_Id_Entity (M_Entity) :
     """Meta class for MOM.Id_Entity"""
 
-    _epkified_form = """def epkified_%(suffix)s (cls, %(args)s) :
-    return (%(epk)s), kw
-"""
+    _epkified_sep  = "\n    "
+    _epkified_head = """def epkified_%(suffix)s (cls, %(args)s) :"""
+    _epkified_tail = """return (%(epk)s), kw\n"""
 
     def __init__ (cls, name, bases, dict) :
         assert "__init__" not in dict, \
@@ -348,10 +350,12 @@ class M_Id_Entity (M_Entity) :
         cls.__m_super.__init__  (name, bases, dict)
     # end def __init__
 
-    def _m_auto_epkified (cls, epk_sig, args, suffix) :
+    def _m_auto_epkified (cls, epk_sig, args, code, suffix) :
+        form    = cls._epkified_sep.join \
+            (x for x in (cls._epkified_head, code, cls._epkified_tail) if x)
         globals = class_globals (cls)
         scope   = dict          ()
-        code    = cls._epkified_form % dict \
+        code    = form % dict \
             ( epk    = ", ".join (epk_sig) + ("," if len (epk_sig) == 1 else "")
             , args   = ", ".join (x for x in (args, "** kw") if x)
             , suffix = suffix
@@ -374,11 +378,15 @@ class M_Id_Entity (M_Entity) :
         epk_sig = tuple (a.name for a in pkas)
         a_ckd   = ", ".join (a.as_arg_ckd () for a in pkas)
         a_raw   = ", ".join (a.as_arg_raw () for a in pkas)
+        d_ckd   = cls._epkified_sep.join \
+            (x for x in (a.epk_def_set_ckd () for a in pkas) if x)
+        d_raw   = cls._epkified_sep.join \
+            (x for x in (a.epk_def_set_raw () for a in pkas) if x)
         result  = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
             , epk_sig      = epk_sig
-            , epkified_ckd = cls._m_auto_epkified (epk_sig, a_ckd, "ckd")
-            , epkified_raw = cls._m_auto_epkified (epk_sig, a_raw, "raw")
+            , epkified_ckd = cls._m_auto_epkified (epk_sig, a_ckd, d_ckd, "ckd")
+            , epkified_raw = cls._m_auto_epkified (epk_sig, a_raw, d_raw, "raw")
             , is_relevant  = cls.is_relevant or (not cls.is_partial)
             , ** kw
             )

@@ -107,6 +107,7 @@
 #                     for values of `""`
 #     1-Mar-2010 (CT) Record electric changes, too
 #     3-Mar-2010 (CT) `_checkers` changed to pass `self` to `attr._checkers`
+#    11-Mar-2010 (CT) `epk_def_set` added
 #    ««revision-date»»···
 #--
 
@@ -727,6 +728,11 @@ class Primary (_Mandatory_Mixin_, _Primary_) :
 
     as_arg_raw = as_arg_ckd
 
+    @classmethod
+    def epk_def_set (cls, code) :
+        pass
+    # end def epk_def_set
+
 # end class Primary
 
 class Primary_Optional (_Sticky_Mixin_, _Primary_) :
@@ -745,6 +751,11 @@ class Primary_Optional (_Sticky_Mixin_, _Primary_) :
     def as_arg_raw (cls, attr) :
         return "%s = %r" % (attr.name, attr.raw_default)
     # end def as_arg_raw
+
+    @classmethod
+    def epk_def_set (cls, code) :
+        return code
+    # end def epk_def_set
 
 # end class Primary_Optional
 

@@ -97,6 +97,7 @@
 #                     for `max_length`, if any
 #     4-Mar-2010 (CT) `max_length = 0` added to `_A_String_Base_`
 #    10-Mar-2010 (CT) `A_Int_List` and `A_Date_List` added
+#    11-Mar-2010 (CT) `epk_def_set_ckd` and `epk_def_set_raw` added
 #    ««revision-date»»···
 #--
 
@@ -198,6 +199,16 @@ class A_Attr_Type (object) :
             return soc.simple_cooked (value)
         return value
     # end def cooked
+
+    @classmethod
+    def epk_def_set_ckd (cls) :
+        pass
+    # end def epk_def_set_ckd
+
+    @classmethod
+    def epk_def_set_raw (cls) :
+        pass
+    # end def epk_def_set_raw
 
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
         return self._to_cooked (s, self._call_eval, obj, glob, locl)
@@ -321,6 +332,13 @@ class _A_Composite_ (A_Attr_Type) :
                 (_T ("Value `%r` is not of type %s") % (value, soc))
         return value
     # end def cooked
+
+    @classmethod
+    def epk_def_set_ckd (cls) :
+        if cls.kind :
+            form = "if %(name)s is None : %(name)s = cls.%(name)s.C_Type ()"
+            return cls.kind.epk_def_set (form % dict (name = cls.name))
+    # end def epk_def_set_ckd
 
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
         return self.C_Type (** self.__super.from_code (s, obj, glob, locl))
