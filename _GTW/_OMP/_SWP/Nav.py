@@ -87,7 +87,8 @@ class Admin (object) :
                 )
             , LID
                 ( "GTW.OMP.EVT.Event"
-                , FGD ("date", "time")
+                , AID ("date")
+                , AID ("time")
                 , AID
                     ( "recurrence"
                     , FGD ()
