@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -31,6 +31,7 @@
 #    27-Oct-2009 (CT) s/Scope_Proxy/E_Type_Manager/
 #     4-Nov-2009 (CT) s/E_Type_Manager_O/E_Type_Manager.Object/
 #    24-Nov-2009 (CT) `link_map` added
+#    12-Mar-2010 (CT) `link_map` moved to `M_E_Type_Id`
 #    ««revision-date»»···
 #--
 
@@ -49,8 +50,6 @@ class M_Object (MOM.Meta.M_Id_Entity) :
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         result = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
-            , _all_link_map = None
-            , _own_link_map = TFL.defaultdict (set)
             , Roles         = None
             , ** kw
             )
@@ -64,21 +63,6 @@ class M_E_Type_Object (MOM.Meta.M_E_Type_Id) :
     """Meta class for essence of MOM.Object."""
 
     Manager = MOM.E_Type_Manager.Object
-
-    @property
-    def link_map (cls) :
-        result = cls._all_link_map
-        if result is None :
-            result = cls._all_link_map = TFL.defaultdict (set)
-            refuse = cls.refuse_links
-            for b in cls.__bases__ :
-                for k, v in getattr (b, "link_map", {}).iteritems () :
-                    if k not in refuse :
-                        result [k].update (v)
-            for k, v in cls._own_link_map.iteritems () :
-                result [k].update (v)
-        return result
-    # end def link_map
 
 # end class M_E_Type_Object
 

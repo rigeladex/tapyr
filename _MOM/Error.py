@@ -412,7 +412,7 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
 
     def __str__ (self) :
         result = \
-            ( ("`%s` for : `%s`"
+            ( ("`%s` for : `%r`"
                "\n     expected type  : `%s`"
                "\n     got      value : `%s`"
                "\n     of       type  : `%s`"
@@ -428,7 +428,7 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
 
     def __unicode__ (self) :
         result = \
-            ( (u"`%s` for : `%s`"
+            ( (u"`%s` for : `%r`"
                u"\n     expected type  : `%s`"
                u"\n     got      value : `%s`"
                u"\n     of       type  : `%s`"
@@ -443,7 +443,7 @@ class Attribute_Syntax_Error (_Invariant_Error_, ValueError) :
     # end def __unicode__
 
     def assertion (self) :
-        result = ( "Syntax error: \n  expected type `%s'\n  got value `%s'"
+        result = ( "Syntax error: \n  expected type `%s`\n  got value `%s`"
                  % (self.attr.typ, self.val)
                  )
         if self.attr.syntax :
@@ -481,8 +481,8 @@ class Invalid_Attribute (Error, AttributeError) :
 
     def __init__ (self, entity, name, val, kind = "unknown", exc = None) :
         msg = \
-            ( "Can't set %s attribute <%s>.%s to `%s`"
-            % (kind, entity, name, val)
+            ( "Can't set %s attribute %s.%s to `%s`"
+            % (kind, entity.type_base_name, name, val)
             )
         if exc :
             msg = "%s\n    %s" % (msg, exc)

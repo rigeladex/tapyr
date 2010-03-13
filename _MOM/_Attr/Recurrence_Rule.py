@@ -28,15 +28,81 @@
 # Revision Dates
 #    10-Mar-2010 (CT) Creation
 #    10-Mar-2010 (MG) `unit.C_Type` added
+#    12-Mar-2010 (CT) `A_Weekday_RR_List` added and used
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM       import *
-from   _MOM.import_MOM       import _A_Composite_, _A_Named_Value_
+from   _MOM.import_MOM import *
+from   _MOM.import_MOM import _A_Composite_, _A_Named_Value_, _A_Typed_List_
 
-from   _TFL.I18N             import _, _T, _Tn
+from   _TFL.I18N       import _, _T, _Tn
 
 import dateutil.rrule
+
+class A_Weekday_RR (A_Attr_Type) :
+    """Weekday specification in recurrence rule."""
+
+    typ    = "Weekday_RR"
+
+    C_Type = dateutil.rrule.weekday
+    Names  = (_("MO"), _("TU"), _("WE"), _("TH"), _("FR"), _("SA"), _("SU"))
+    Table  = dict ((k, getattr (dateutil.rrule, k)) for k in Names)
+
+    class Pickler (TFL.Meta.Object) :
+
+        class Type (A_String) :
+            max_length = 6
+        # end class Type
+
+        @classmethod
+        def as_cargo (cls, obj, attr_kind, value) :
+            attr = attr_kind.attr
+            return attr.as_string (value)
+        # end def as_cargo
+
+        @classmethod
+        def from_cargo (cls, obj, attr_kind, cargo) :
+            attr = attr_kind.attr
+            return attr.from_string (cargo, obj)
+        # end def from_cargo
+
+    # end class Pickler
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        if value is not None :
+            return repr (value)
+        return u""
+    # end def as_string
+
+    as_code = as_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        if isinstance (value, int) :
+            value = soc.Table [soc.Names [value]]
+        if value is not None and not isinstance (value, soc.C_Type) :
+            raise ValueError \
+                (_T ("Value `%r` is not of type %s") % (value, soc.C_Type))
+        return value
+    # end def cooked
+
+    def from_string (self, s, obj = None, glob = None, locl = None) :
+        if s :
+            return self.cooked (self._call_eval (s, self.Table, {}))
+    # end def from_string
+
+    from_code = from_string
+
+# end class A_Weekday_RR
+
+class A_Weekday_RR_List (_A_Typed_List_) :
+    """A list of weekday specifications in recurrence rule"""
+
+    typ    = "Weekday_RR_List"
+    C_Type = A_Weekday_RR
+
+# end class A_Weekday_RR_List
 
 _Ancestor_Essence = MOM.An_Entity
 
@@ -134,7 +200,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
             default            = Table ["Weekly"]
             rank               = -99
 
-            rrule_name         = "frequency"
+            rrule_name         = "freq"
 
         # end class unit
 
@@ -147,7 +213,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
         # end class week
 
-        class week_day (A_Int_List) :
+        class week_day (A_Weekday_RR_List) :
             """Restrict the recurrences to the days of the week specified.
                (0 means monday, 6 means sunday).
             """
@@ -182,9 +248,10 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
     # end class _Attributes
 
-    def rule (self, start = None, cache = False) :
+    def rule (self, start = None, finish = None, cache = False) :
         return dateutil.rrule.rrule \
             ( dtstart = start
+            , until   = finish
             , cache   = cache
             , ** dict (self._rrule_attrs ())
             )

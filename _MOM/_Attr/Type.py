@@ -99,6 +99,9 @@
 #    10-Mar-2010 (CT) `A_Int_List` and `A_Date_List` added
 #    11-Mar-2010 (CT) `epk_def_set_ckd` and `epk_def_set_raw` added
 #    11-Mar-2010 (CT) `_A_Typed_Set_` corrected
+#    12-Mar-2010 (CT) `_A_Composite_.from_string` corrected
+#                     (s/s/t/ after assignment)
+#    12-Mar-2010 (CT) Interface of `Pickler` changed
 #    ««revision-date»»···
 #--
 
@@ -285,7 +288,7 @@ class A_Attr_Type (object) :
     # end def _to_cooked
 
     def __repr__ (self) :
-       return "%s `%s'" % (self.typ, self.name)
+       return "%s `%s`" % (self.typ, self.name)
     # end def __repr__
 
     def __str__ (self) :
@@ -330,7 +333,7 @@ class _A_Composite_ (A_Attr_Type) :
             value = soc.C_Type (** value)
         if value is not None and not isinstance (value, soc.C_Type) :
             raise ValueError \
-                (_T ("Value `%r` is not of type %s") % (value, soc))
+                (_T ("Value `%r` is not of type %s") % (value, soc.C_Type))
         return value
     # end def cooked
 
@@ -347,8 +350,8 @@ class _A_Composite_ (A_Attr_Type) :
 
     def from_string (self, s, obj = None, glob = None, locl = None) :
         t = s or {}
-        if isinstance (s, basestring) :
-            t = self._call_eval (s, {}, {})
+        if isinstance (t, basestring) :
+            t = self._call_eval (t, {}, {})
         if isinstance (t, tuple) :
             t = dict (t)
         return self.C_Type (** t)
@@ -478,12 +481,14 @@ class _A_Named_Object_ (_A_Named_Value_) :
     class Pickler (TFL.Meta.Object) :
 
         @classmethod
-        def as_cargo (cls, attr, value) :
+        def as_cargo (cls, obj, attr_kind, value) :
+            attr  = attr_kind.attr
             return attr.__class__.Elbat [value]
         # end def as_cargo
 
         @classmethod
-        def from_cargo (cls, attr, cargo) :
+        def from_cargo (cls, obj, attr_kind, cargo) :
+            attr  = attr_kind.attr
             Table = attr.__class__.Table
             try :
                 return Table [cargo]
@@ -663,7 +668,9 @@ class _A_Object_ (A_Attr_Type) :
                       u"\n"
                       u"    must be instance of %s"
                     )
-                % (value.type_name, unicode (value), soc, soc.Class.type_name)
+                % ( value.type_name, unicode (value), soc.name
+                  , soc.Class.type_name
+                  )
                 )
     # end def _check_type
 
@@ -705,6 +712,8 @@ class _A_Typed_Collection_ (A_Attr_Type) :
     """Base class for attributes that hold a collection of strictly typed
        values.
     """
+
+    __metaclass__  = MOM.Meta.M_Attr_Type_Typed_Collection
 
     C_Type         = None ### Type of entities held by collection
     C_sep          = ","

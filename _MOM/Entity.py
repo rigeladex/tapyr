@@ -771,13 +771,20 @@ class Id_Entity (Entity) :
 
     @property
     def epk_as_code (self) :
+        def _conv (tup) :
+            if len (tup) == 1 :
+                tup += ("", )
+            for t in tup :
+                if isinstance (t, tuple) :
+                    if len (t) == 1 :
+                        t += ("", )
+                    t = "(%s)" % (", ".join (_conv (t)))
+                yield t
         def _gen () :
             for a in self.primary :
                 r = a.as_code (a.get_value (self))
                 if isinstance (r, tuple) :
-                    if len (r) == 1 :
-                        r += ("", )
-                    r = "(%s)" % (", ".join (r))
+                    r = "(%s)" % (", ".join (_conv (r)))
                 yield r
         return tuple (_gen ())
     # end def epk_as_code

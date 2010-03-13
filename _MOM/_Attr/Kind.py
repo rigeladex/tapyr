@@ -108,6 +108,7 @@
 #     1-Mar-2010 (CT) Record electric changes, too
 #     3-Mar-2010 (CT) `_checkers` changed to pass `self` to `attr._checkers`
 #    11-Mar-2010 (CT) `epk_def_set` added
+#    12-Mar-2010 (CT) Interface of `attr.Pickler` changed
 #    ««revision-date»»···
 #--
 
@@ -197,7 +198,7 @@ class Kind (MOM.Prop.Kind) :
         Pickler = self.attr.Pickler
         value   = self.get_value (obj)
         if Pickler :
-            return (Pickler.as_cargo (self.attr, value), )
+            return (Pickler.as_cargo (obj, self, value), )
         else :
             return (value, )
     # end def get_pickle_cargo
@@ -253,7 +254,7 @@ class Kind (MOM.Prop.Kind) :
     def set_pickle_cargo (self, obj, cargo) :
         Pickler = self.attr.Pickler
         if Pickler :
-            cargo = (Pickler.from_cargo (self.attr, cargo [0]), )
+            cargo = (Pickler.from_cargo (obj, self, cargo [0]), )
         self._set_cooked_value (obj, cargo [0], changed = True)
     # end def set_pickle_cargo
 
@@ -334,7 +335,8 @@ class Kind (MOM.Prop.Kind) :
                 value = self.attr.cooked (value)
             except StandardError as exc :
                 if __debug__ :
-                    print "%s: %s.%s, value `%s`" % (exc, obj, self.name, value)
+                    print "%s: %s.%s, value `%s` [%r]" % \
+                        (exc, obj.type_base_name, self.name, value, obj)
                 raise
         return self._set_cooked_value (obj, value, changed)
     # end def _set_cooked_inner
@@ -531,6 +533,7 @@ class _Nested_Mixin_ (Kind) :
     """Mixin for attributes nested inside composite attributes."""
 
     def _inc_changes (self, man, obj, value) :
+        self.__super._inc_changes (man, obj, value)
         if obj.owner is not None :
             obj.owner._attr_man.inc_changes ()
     # end def _inc_changes

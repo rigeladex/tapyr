@@ -46,6 +46,8 @@
 #    14-Feb-2010 (MG) Change inheritance of `Copy` back to `_Entity_`
 #                     (otherwise the source entity would be created as well)
 #     1-Mar-2010 (CT) `_Entity_._to_change` and `._to_save` factored
+#    12-Mar-2010 (CT) `Attr_Composite.__new__` added to guard for
+#                     `composite.owner`
 #    ««revision-date»»···
 #--
 
@@ -360,6 +362,12 @@ class Attr_Composite (_Attr_) :
     """Model a change that modifies attributes of a composite attribute of an
        entity
     """
+
+    def __new__ (cls, composite, old_attr) :
+        if composite.owner :
+            return super (Attr_Composite, cls).__new__ \
+                (cls, composite, old_attr)
+    # end def __new__
 
     def __init__ (self, composite, old_attr) :
         self.__super.__init__ (composite.owner, old_attr)

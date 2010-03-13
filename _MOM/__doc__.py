@@ -1270,8 +1270,8 @@ Changing objects and links
     >>> m.set_raw (weight = "one ton")
     Traceback (most recent call last):
       ...
-    Invalid_Attribute: Can't set required attribute <u'Mighty_Mouse'>.weight to `one ton`
-        `unexpected EOF while parsing (<string>, line 1)` for : `weight`
+    Invalid_Attribute: Can't set required attribute Mouse.weight to `one ton`
+        `unexpected EOF while parsing (<string>, line 1)` for : `Float `weight``
          expected type  : `Float`
          got      value : `one ton -> one ton`
          of       type  : `<type 'str'>`

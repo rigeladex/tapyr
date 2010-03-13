@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Mar-2010 (CT) Creation
+#    12-Mar-2010 (CT) Children `Day`, `Week`, and `Year` added
 #    ««revision-date»»···
 #--
 
@@ -69,14 +70,57 @@ class Calendar (GTW.NAV.Dir) :
     template         = "calendar"
     week_roller_size = 6
 
+    _y               = datetime.date.today ().year
+    year_range       = (_y - 3, _y + 3)
+    del _y
+
+    _cal             = None
+
+    class _Cmd_ (GTW.NAV.Page) :
+
+        implicit          = True
+        SUPPORTED_METHODS = set (("GET", ))
+
+    # end class _Cmd_
+
+    class Day (_Cmd_) :
+
+        # ??? # Media        = None ### cancel inherited property defined
+        name         = "day"
+        template     = "calendar_day"
+
+    # end class Day
+
+    class Week (_Cmd_) :
+
+        # ??? # Media        = None ### cancel inherited property defined
+        name         = "week"
+        template     = "calendar_week"
+
+    # end class Week
+
+    class Year (_Cmd_) :
+
+        # ??? # Media        = None ### cancel inherited property defined
+        name         = "year"
+        template     = "calendar"
+
+        @property
+        def weeks (self) :
+            return self.year.weeks
+        # end def weeks
+
+    # end class Day
+
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
-        self._cal  = CAL.Calendar ()
+        if self._cal is None :
+            self.__class__._cal  = CAL.Calendar ()
         self._year = None
     # end def __init__
 
     def day_href (self, day) :
-        return pjoin (self.abs_href, day.formatted ("%Y%m%d"))
+        return pjoin (self.abs_href, day.formatted ("%Y/%m/%d"))
     # end def day_href
 
     ### if we want to display a site-admin specific page (and not
@@ -92,7 +136,7 @@ class Calendar (GTW.NAV.Dir) :
     # end def today
 
     def week_href (self, week) :
-        return pjoin (self.abs_href, "%s-wk-%s" % (week.year, week.number))
+        return pjoin (self.abs_href, "%s/week/%s" % (week.year, week.number))
     # end def week_href
 
     @property
@@ -110,6 +154,34 @@ class Calendar (GTW.NAV.Dir) :
             result = self._year = self._cal.year [datetime.date.today ().year]
         return result
     # end def year
+
+    def _get_child (self, child, * grandchildren) :
+        try :
+            y = int (child)
+        except ValueError :
+            return
+        if not (self.year_range [0] <= y <= self.year_range [1]) :
+            return
+        year = self._cal.year [y]
+        if not grandchildren :
+            if year == self.year :
+                return self
+            else :
+                return self.Year (parent = self, year = year)
+        elif grandchildren [0] == "week" and len (grandchildren) == 2 :
+            try :
+                week = year.weeks [int (grandchildren [1])]
+            except (ValueError, LookupError) :
+                return
+            return self.Week (parent = self, year = year, week = week)
+        elif len (grandchildren) == 2 :
+            try :
+                m, d = [int (c) for c in grandchildren]
+                day  = year.dmap [y, m, d]
+            except (ValueError, LookupError) :
+                return
+            return self.Day (parent = self, year = year, day = day)
+    # end def _get_child
 
 # end class Calendar
 

@@ -74,7 +74,11 @@ apt = MOM.App_Type \
 scope        = MOM.Scope.new (apt, None)
 per          = scope.PAP.Person ("Test", "Author", raw = True)
 page         = scope.SWP.Page   ("Title", text = "Text")
+
+ev = scope.EVT.Event (page)
+ev.date.set_raw   (start = "20100312", finish = "20100418")
+ev.time.set_raw   (start = "14:00", finish = "16:00")
+ev.recurrence.set (period = 2, week_day = [4])
+#ev.set (date = ev.date, recurrence = ev.recurrence)
+
 ### __END__ GTW.OMP.EVT.__test__
-
-
-

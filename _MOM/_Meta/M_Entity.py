@@ -81,6 +81,7 @@
 #    11-Mar-2010 (CT) `M_Id_Entity` changed t use `epk_def_set_ckd` and
 #                     `epk_def_set_raw`
 #    11-Mar-2010 (CT) `check_always` removed (was a Bad Idea (tm))
+#    12-Mar-2010 (CT) `link_map` moved in here (from `M_Object`)
 #    ««revision-date»»···
 #--
 
@@ -385,10 +386,12 @@ class M_Id_Entity (M_Entity) :
             (x for x in (a.epk_def_set_raw () for a in pkas) if x)
         result  = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
-            , epk_sig      = epk_sig
-            , epkified_ckd = cls._m_auto_epkified (epk_sig, a_ckd, d_ckd, "ckd")
-            , epkified_raw = cls._m_auto_epkified (epk_sig, a_raw, d_raw, "raw")
-            , is_relevant  = cls.is_relevant or (not cls.is_partial)
+            , epk_sig       = epk_sig
+            , epkified_ckd  = cls._m_auto_epkified (epk_sig, a_ckd, d_ckd, "ckd")
+            , epkified_raw  = cls._m_auto_epkified (epk_sig, a_raw, d_raw, "raw")
+            , is_relevant   = cls.is_relevant or (not cls.is_partial)
+            , _all_link_map = None
+            , _own_link_map = TFL.defaultdict (set)
             , ** kw
             )
         return result
@@ -599,6 +602,21 @@ class M_E_Type_Id (M_E_Type) :
     """Meta class for essence of MOM.Id_Entity."""
 
     Manager     = MOM.E_Type_Manager.Id_Entity
+
+    @property
+    def link_map (cls) :
+        result = cls._all_link_map
+        if result is None :
+            result = cls._all_link_map = TFL.defaultdict (set)
+            refuse = cls.refuse_links
+            for b in cls.__bases__ :
+                for k, v in getattr (b, "link_map", {}).iteritems () :
+                    if k not in refuse :
+                        result [k].update (v)
+            for k, v in cls._own_link_map.iteritems () :
+                result [k].update (v)
+        return result
+    # end def link_map
 
     def sort_key (cls, sort_key = None) :
         ###

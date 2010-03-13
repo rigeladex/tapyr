@@ -39,6 +39,7 @@
 #     2-Feb-2010 (CT) `M_Attr_Type_Named_Object` added
 #     9-Feb-2010 (CT) `M_Attr_Type.__init__` changed to add `query`
 #    22-Feb-2010 (CT) `M_Attr_Type_String` added (`ignore_case`)
+#    12-Mar-2010 (CT) `M_Attr_Type_Typed_Collection` added (`Pickler`)
 #    ««revision-date»»···
 #--
 
@@ -199,6 +200,39 @@ class M_Attr_Type_String (M_Attr_Type) :
     # end def __init__
 
 # end class M_Attr_Type_String
+
+class M_Attr_Type_Typed_Collection (M_Attr_Type) :
+    """Meta class for MOM.Attr._A_Typed_Collection_ classes."""
+
+    class _C_Pickler_ (TFL.Meta.Object) :
+
+        @classmethod
+        def as_cargo (cls, obj, attr_kind, value) :
+            attr  = attr_kind.attr
+            P     = attr.C_Type.Pickler
+            cargo = list (P.as_cargo (obj, attr_kind, v) for v in value)
+            return cargo ### XXX encode cargo ???
+        # end def as_cargo
+
+        @classmethod
+        def from_cargo (cls, obj, attr_kind, cargo) :
+            attr  = attr_kind.attr
+            P     = attr.C_Type.Pickler
+            ### XXX decode cargo ???
+            return list (P.from_cargo (obj, attr_kind, c) for c in cargo)
+        # end def from_cargo
+
+    # end class _C_Pickler_
+
+    def __init__ (cls, name, bases, dct) :
+        cls.__m_super.__init__ (name, bases, dct)
+        if cls.C_Type and cls.C_Type.Pickler :
+            if not cls.Pickler :
+                cls._C_Pickler_.Type = MOM.Attr.A_Text ### XXX ???
+                cls.Pickler = cls._C_Pickler_
+    # end def __init__
+
+# end class M_Attr_Type_Typed_Collection
 
 class M_Attr_Type_Unit (M_Attr_Type) :
     """Meta class for MOM.Attr._A_Unit_ classes.

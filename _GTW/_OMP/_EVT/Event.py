@@ -41,9 +41,6 @@ import _GTW._OMP._EVT.Entity
 
 from   _TFL.I18N                  import _, _T, _Tn
 
-import datetime
-import dateutil.rrule
-
 _Ancestor_Essence = GTW.OMP.EVT.Link1
 
 class Event (_Ancestor_Essence) :
@@ -111,18 +108,69 @@ class Event (_Ancestor_Essence) :
 
         class rule (A_Blob) :
 
-            auto_up_depends = ("date", "recurrence")
+            kind      = Attr.Auto_Cached
 
             def computed (self, obj) :
                 if obj.recurrence :
-                    return obj.recurrence.rule (obj.date.start, cache = True)
+                    date = obj.date
+                    return obj.recurrence.rule \
+                        ( start  = date.start
+                        , finish = date.finish
+                        , cache  = True
+                        )
             # end def computed
 
         # end class rule
 
     # end class _Attributes
 
+    def compute_occurrences (self) :
+        scope = self.home_scope
+        ETM   = self.home_scope ["GTW.OMP.EVT.Event_occurs"]
+        for o in self.occurs :
+            o.destroy ()
+        for d in self.dates :
+            ETM (self, date = d, time = self.time)
+    # end def compute_occurrences
+
 # end class Event
+
+_Ancestor_Essence = GTW.OMP.EVT.Link1
+
+class Event_occurs (_Ancestor_Essence) :
+    """Occurrence of a calendary event."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        ### Primary attributes
+
+        class left (_Ancestor.left) :
+            """Event that occurs"""
+
+            role_type          = Event
+            auto_cache         = "occurs"
+
+        # end class left
+
+        class date (A_Date) :
+            """Date of occurence"""
+
+            kind               = Attr.Primary
+
+        # end class date
+
+        class time (A_Time_Interval) :
+            """Time (interval) of occurence"""
+
+            kind               = Attr.Primary_Optional
+
+        # end class time
+
+    # end class _Attributes
+
+# end class Event_occurs
 
 if __name__ != "__main__" :
     GTW.OMP.EVT._Export ("*")
