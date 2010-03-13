@@ -36,6 +36,10 @@
 #     5-Mar-2010 (CT) Pass `convert_unicode` to `types.String`
 #    10-Mar-2010 (MG) `_sa_columns_named_value` created, types for `A_Time`
 #                     added
+#    13-Mar-2010 (CT) `_sa_columns_simple` changed to handle `Pickler`, if any
+#                     (and `Pickler` removed from `_sa_columns_named_value`)
+#    13-Mar-2010 (CT) `Attr.A_Int_List, Attr.A_Date_List` replaced by
+#                     `_A_Binary_String_` (`*_List` got a Pickler)
 #    ««revision-date»»···
 #--
 
@@ -71,7 +75,13 @@ def _sa_object (self) :
 
 @Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)
 def _sa_columns_simple (cls, attr, kind, unique, ** kw) :
-    col = schema.Column (attr._sa_col_name, attr._sa_type (attr, kind), ** kw)
+    Pickler = attr.Pickler
+    Type    = getattr (Pickler, "Type", None)
+    if Type :
+        sa_type = Type._sa_type (Type, kind)
+    else :
+        sa_type = attr._sa_type (attr, kind)
+    col = schema.Column (attr._sa_col_name, sa_type, ** kw)
     col.mom_kind = kind
     return (col, )
 # end def _sa_columns_simple
@@ -92,10 +102,9 @@ def _sa_columns_a_object (cls, attr, kind, unique, ** kw) :
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Named_Value_)
 def _sa_columns_named_value (cls, attr, kind, unique, ** kw) :
-    Pickler  = attr.Pickler
-    Type     = getattr (Pickler, "Type", attr.C_Type)
+    Type = attr.C_Type
     if Type :
-        col      = schema.Column \
+        col = schema.Column \
             (attr._sa_col_name, Type._sa_type (Type, kind), ** kw)
         col.mom_kind = kind
         return (col, )
@@ -107,7 +116,7 @@ def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
     e_type                = kind.C_Type
     bases                 = e_type.__bases__
     Manager               = MOM.DBW.SAS.Manager
-    db_attrs, role_attrs  = Manager._attr_dicts    (kind.C_Type, bases)
+    db_attrs, role_attrs  = Manager._attr_dicts (kind.C_Type, bases)
     prefix                = "__%s_" % (attr.name, )
     assert not role_attrs
     unique_attrs          = set ()
@@ -145,9 +154,9 @@ def _sa_string (cls, attr, kind, ** kw) :
         )
 # end def _sa_string
 
-@Add_Classmedthod ("_sa_type", Attr.A_Int_List, Attr.A_Date_List)
+@Add_Classmedthod ("_sa_type", Attr._A_Binary_String_)
 def _sa_blob (cls, attr, kind, ** kw) :
-    return types.String ()
+    return types.String (getattr (attr, "max_length", None))
 # end def _sa_blob
 
 ### __END__ MOM.DBW.SAS.Type

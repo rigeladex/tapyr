@@ -39,7 +39,8 @@
 #     2-Feb-2010 (CT) `M_Attr_Type_Named_Object` added
 #     9-Feb-2010 (CT) `M_Attr_Type.__init__` changed to add `query`
 #    22-Feb-2010 (CT) `M_Attr_Type_String` added (`ignore_case`)
-#    12-Mar-2010 (CT) `M_Attr_Type_Typed_Collection` added (`Pickler`)
+#    12-Mar-2010 (CT) `M_Attr_Type_Typed_Collection` added
+#    13-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` implemented
 #    ««revision-date»»···
 #--
 
@@ -49,6 +50,8 @@ from   _TFL                import TFL
 import _MOM._Meta.M_Prop_Type
 
 import _TFL._Meta.Once_Property
+
+import pickle
 
 class M_Attr_Type (MOM.Meta.M_Prop_Type) :
     """Meta class for MOM.Attr.Type classes."""
@@ -201,36 +204,79 @@ class M_Attr_Type_String (M_Attr_Type) :
 
 # end class M_Attr_Type_String
 
+class _M_Pickler_ (TFL.Meta.Object.__class__) :
+
+    @TFL.Meta.Once_Property
+    def Type (cls) :
+        return MOM.Attr._A_Binary_String_
+    # end def Type
+
+# end class _M_Pickler_
+
 class M_Attr_Type_Typed_Collection (M_Attr_Type) :
     """Meta class for MOM.Attr._A_Typed_Collection_ classes."""
 
-    class _C_Pickler_ (TFL.Meta.Object) :
+    class _Pickler_ (TFL.Meta.Object) :
+
+        __metaclass__ = _M_Pickler_
 
         @classmethod
         def as_cargo (cls, obj, attr_kind, value) :
-            attr  = attr_kind.attr
-            P     = attr.C_Type.Pickler
-            cargo = list (P.as_cargo (obj, attr_kind, v) for v in value)
-            return cargo ### XXX encode cargo ???
+            cargo = cls._elements_as_cargo (obj, attr_kind, value)
+            return pickle.dumps (cargo)
         # end def as_cargo
 
         @classmethod
         def from_cargo (cls, obj, attr_kind, cargo) :
-            attr  = attr_kind.attr
-            P     = attr.C_Type.Pickler
-            ### XXX decode cargo ???
-            return list (P.from_cargo (obj, attr_kind, c) for c in cargo)
+            cargo = pickle.dumps (cargo)
+            return cls._elements_from_cargo (cargo)
         # end def from_cargo
 
-    # end class _C_Pickler_
+    # end class _Pickler_
 
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
-        if cls.C_Type and cls.C_Type.Pickler :
-            if not cls.Pickler :
-                cls._C_Pickler_.Type = MOM.Attr.A_Text ### XXX ???
-                cls.Pickler = cls._C_Pickler_
+        assert not cls.needs_raw_value, \
+            "Typed collection %s must not set `needs_raw_value`" % (cls, )
+        C_Type = cls.C_Type
+        if C_Type and not \
+               (cls.Pickler or getattr (cls.Pickler, "Type", None) is C_Type) :
+            if cls.C_Type.Pickler :
+                _as_cargo   = cls._elements_as_cargo_p
+                _from_cargo = cls._elements_from_cargo_p
+            else :
+                _as_cargo   = cls._elements_as_cargo_s
+                _from_cargo = cls._elements_from_cargo_s
+            cls.Pickler = cls._Pickler_.New \
+                ( name_postfix = name
+                , _as_cargo    = _as_cargo
+                , _from_cargo  = _from_cargo
+                )
     # end def __init__
+
+    @staticmethod
+    def _elements_as_cargo_p (obj, attr_kind, value) :
+        attr  = attr_kind.attr
+        P     = attr.C_Type.Pickler
+        return list (P.as_cargo (obj, attr_kind, v) for v in value)
+    # end def _elements_as_cargo_p
+
+    @staticmethod
+    def _elements_from_cargo_p (obj, attr_kind, cargo) :
+        attr  = attr_kind.attr
+        P     = attr.C_Type.Pickler
+        return list (P.from_cargo (obj, attr_kind, c) for c in cargo)
+    # end def _elements_from_cargo_p
+
+    @staticmethod
+    def _elements_as_cargo_s (obj, attr_kind, value) :
+        return value
+    # end def _elements_as_cargo_s
+
+    @staticmethod
+    def _elements_from_cargo_s (obj, attr_kind, cargo) :
+        return cargo
+    # end def _elements_from_cargo_s
 
 # end class M_Attr_Type_Typed_Collection
 

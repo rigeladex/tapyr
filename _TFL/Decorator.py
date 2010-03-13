@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2006-2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2006-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -51,6 +51,7 @@
 #    12-Oct-2009 (CT)  `Add_To_Class` added
 #     4-Nov-2009 (CT)  `decorator` keyword argument added to `Add_Method` and
 #                      `Add_New_Method`
+#    13-Mar-2010 (CT)  `decorator` keyword argument added to `Add_To_Class`, too
 #    ««revision-date»»···
 #--
 
@@ -224,10 +225,13 @@ def Add_New_Method (* classes, ** kw) :
     return decorator
 # end def Add_New_Method
 
-def Add_To_Class (name, * classes) :
+def Add_To_Class (name, * classes, ** kw) :
     """Adds decorated function/class to `classes` using `name`.
     """
     def decorator (x) :
+        deco = kw.get ("decorator")
+        if deco :
+            x = deco (x)
         for cls in classes :
             setattr (cls, name, x)
         return x

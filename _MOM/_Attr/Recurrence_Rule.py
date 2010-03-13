@@ -33,7 +33,8 @@
 #--
 
 from   _MOM.import_MOM import *
-from   _MOM.import_MOM import _A_Composite_, _A_Named_Value_, _A_Typed_List_
+from   _MOM.import_MOM import \
+     _A_Binary_String_, _A_Composite_, _A_Named_Value_, _A_Typed_List_
 
 from   _TFL.I18N       import _, _T, _Tn
 
@@ -50,7 +51,7 @@ class A_Weekday_RR (A_Attr_Type) :
 
     class Pickler (TFL.Meta.Object) :
 
-        class Type (A_String) :
+        class Type (_A_Binary_String_) :
             max_length = 6
         # end class Type
 

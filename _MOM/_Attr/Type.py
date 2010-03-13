@@ -102,6 +102,8 @@
 #    12-Mar-2010 (CT) `_A_Composite_.from_string` corrected
 #                     (s/s/t/ after assignment)
 #    12-Mar-2010 (CT) Interface of `Pickler` changed
+#    13-Mar-2010 (CT) `_A_Typed_Collection_.needs_raw_value = False`
+#    13-Mar-2010 (CT) `_A_Binary_String_` added
 #    ««revision-date»»···
 #--
 
@@ -118,6 +120,7 @@ from   _TFL                  import sos
 import _TFL._Meta.Once_Property
 import _TFL._Meta.Property
 
+import binascii
 import datetime
 import decimal
 import itertools
@@ -296,6 +299,43 @@ class A_Attr_Type (object) :
     # end def __str__
 
 # end class A_Attr_Type
+
+class _A_Binary_String_ (A_Attr_Type) :
+    """Base type for attributes written to database as binary string."""
+
+    hidden              = True
+    max_length          = None
+
+    def as_code (self, value) :
+        code = binascii.b2a_base64 (value)
+        return self.__super.as_code_string (code)
+    # end def as_code
+
+    @TFL.Meta.Class_and_Instance_Method
+    def as_string (soc, value) :
+        return value or ""
+    # end def as_string
+
+    @TFL.Meta.Class_and_Instance_Method
+    def cooked (soc, value) :
+        return value or ""
+    # end def cooked
+
+    def from_code (self, s, obj = None, glob = {}, locl = {}) :
+        code = self.__super.from_code (s, obj, glob, locl)
+        try :
+            result = binascii.a2b_base64 (code)
+        except (binascii.Error, TypeError) :
+            result = ""
+        return result
+    # end def from_code
+
+    def from_string (self, s, obj = None, glob = {}, locl = {}) :
+        if s :
+            return s
+    # end def from_string
+
+# end class _A_Binary_String_
 
 class _A_Composite_ (A_Attr_Type) :
     """Common base class for composite attributes of an object."""
@@ -713,11 +753,13 @@ class _A_Typed_Collection_ (A_Attr_Type) :
        values.
     """
 
-    __metaclass__  = MOM.Meta.M_Attr_Type_Typed_Collection
+    __metaclass__   = MOM.Meta.M_Attr_Type_Typed_Collection
 
-    C_Type         = None ### Type of entities held by collection
-    C_sep          = ","
-    R_Type         = None ### Type of collection
+    C_Type          = None ### Type of entities held by collection
+    C_sep           = ","
+    R_Type          = None ### Type of collection
+
+    needs_raw_value = False
 
     def __init__ (self, kind) :
         self.__super.__init__     (kind)
@@ -1374,9 +1416,9 @@ Class `MOM.Attr.A_Attr_Type`
       together. For instance, editors display attributes sorted
       alphabetically by `(group, name)`.
 
-    .. attribute:: rankis
+    .. attribute:: rank
 
-      Used when sorting attributes of `Primary`.
+      Used when sorting attributes.
 
     .. attribute:: store_default
 
