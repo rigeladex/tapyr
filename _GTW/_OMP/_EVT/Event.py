@@ -158,19 +158,20 @@ class Event_occurs (_Ancestor_Essence) :
             """Event that occurs"""
 
             role_type          = Event
+            role_name          = "event"
             auto_cache         = "occurs"
 
         # end class left
 
         class date (A_Date) :
-            """Date of occurence"""
+            """Date of occurrence"""
 
             kind               = Attr.Primary
 
         # end class date
 
         class time (A_Time_Interval) :
-            """Time (interval) of occurence"""
+            """Time (interval) of occurrence"""
 
             kind               = Attr.Primary_Optional
 

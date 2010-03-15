@@ -41,6 +41,7 @@
 #    22-Feb-2010 (CT) `M_Attr_Type_String` added (`ignore_case`)
 #    12-Mar-2010 (CT) `M_Attr_Type_Typed_Collection` added
 #    13-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` implemented
+#    15-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` corrected
 #    ««revision-date»»···
 #--
 
@@ -221,17 +222,17 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
         __metaclass__ = _M_Pickler_
 
         @classmethod
-        def as_cargo (cls, obj, attr_kind, value) :
+        def as_cargo (cls, obj, attr_kind, attr_type, value) :
             if value is not None :
-                cargo = cls._as_cargo (obj, attr_kind, value)
+                cargo = cls._as_cargo (obj, attr_kind, attr_type, value)
                 return pickle.dumps (cargo)
         # end def as_cargo
 
         @classmethod
-        def from_cargo (cls, obj, attr_kind, cargo) :
+        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
             if cargo is not None :
                 cargo = pickle.dumps (cargo)
-                return cls._from_cargo (obj, attr_kind, cargo)
+                return cls._from_cargo (obj, attr_kind, attr_type, cargo)
         # end def from_cargo
 
     # end class _Pickler_
@@ -257,26 +258,26 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
     # end def __init__
 
     @staticmethod
-    def _elements_as_cargo_p (obj, attr_kind, value) :
-        attr  = attr_kind.attr
-        P     = attr.C_Type.Pickler
-        return list (P.as_cargo (obj, attr_kind, v) for v in value)
+    def _elements_as_cargo_p (obj, attr_kind, attr_type, value) :
+        C_Type = attr_type.C_Type
+        P      = C_Type.Pickler
+        return list (P.as_cargo (obj, attr_kind, C_Type, v) for v in value)
     # end def _elements_as_cargo_p
 
     @staticmethod
-    def _elements_from_cargo_p (obj, attr_kind, cargo) :
-        attr  = attr_kind.attr
-        P     = attr.C_Type.Pickler
-        return list (P.from_cargo (obj, attr_kind, c) for c in cargo)
+    def _elements_from_cargo_p (obj, attr_kind, attr_type, cargo) :
+        C_Type = attr_type.C_Type
+        P      = C_Type.Pickler
+        return list (P.from_cargo (obj, attr_kind, C_type, c) for c in cargo)
     # end def _elements_from_cargo_p
 
     @staticmethod
-    def _elements_as_cargo_s (obj, attr_kind, value) :
+    def _elements_as_cargo_s (obj, attr_kind, attr_type, value) :
         return value
     # end def _elements_as_cargo_s
 
     @staticmethod
-    def _elements_from_cargo_s (obj, attr_kind, cargo) :
+    def _elements_from_cargo_s (obj, attr_kind, attr_type, cargo) :
         return cargo
     # end def _elements_from_cargo_s
 

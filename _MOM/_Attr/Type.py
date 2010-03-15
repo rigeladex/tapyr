@@ -104,6 +104,7 @@
 #    12-Mar-2010 (CT) Interface of `Pickler` changed
 #    13-Mar-2010 (CT) `_A_Typed_Collection_.needs_raw_value = False`
 #    13-Mar-2010 (CT) `_A_Binary_String_` added
+#    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
 #    ««revision-date»»···
 #--
 
@@ -521,15 +522,13 @@ class _A_Named_Object_ (_A_Named_Value_) :
     class Pickler (TFL.Meta.Object) :
 
         @classmethod
-        def as_cargo (cls, obj, attr_kind, value) :
-            attr  = attr_kind.attr
-            return attr.__class__.Elbat [value]
+        def as_cargo (cls, obj, attr_kind, attr_type, value) :
+            return attr_type.__class__.Elbat [value]
         # end def as_cargo
 
         @classmethod
-        def from_cargo (cls, obj, attr_kind, cargo) :
-            attr  = attr_kind.attr
-            Table = attr.__class__.Table
+        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
+            Table = attr_type.__class__.Table
             try :
                 return Table [cargo]
             except KeyError :

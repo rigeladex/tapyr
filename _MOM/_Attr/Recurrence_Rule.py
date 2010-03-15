@@ -29,6 +29,8 @@
 #    10-Mar-2010 (CT) Creation
 #    10-Mar-2010 (MG) `unit.C_Type` added
 #    12-Mar-2010 (CT) `A_Weekday_RR_List` added and used
+#    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
+#    15-Mar-2010 (CT) `A_Weekday_RR._from_string_eval` redefined
 #    ««revision-date»»···
 #--
 
@@ -56,15 +58,13 @@ class A_Weekday_RR (A_Attr_Type) :
         # end class Type
 
         @classmethod
-        def as_cargo (cls, obj, attr_kind, value) :
-            attr = attr_kind.attr
-            return attr.as_string (value)
+        def as_cargo (cls, obj, attr_kind, attr_type, value) :
+            return attr_type.as_string (value)
         # end def as_cargo
 
         @classmethod
-        def from_cargo (cls, obj, attr_kind, cargo) :
-            attr = attr_kind.attr
-            return attr.from_string (cargo, obj)
+        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
+            return attr_type.from_string (cargo, obj)
         # end def from_cargo
 
     # end class Pickler
@@ -94,6 +94,10 @@ class A_Weekday_RR (A_Attr_Type) :
     # end def from_string
 
     from_code = from_string
+
+    def _from_string_eval (self, s, obj, glob, locl) :
+        return self._call_eval (s, self.Table, locl)
+    # end def _from_string_eval
 
 # end class A_Weekday_RR
 

@@ -109,6 +109,7 @@
 #     3-Mar-2010 (CT) `_checkers` changed to pass `self` to `attr._checkers`
 #    11-Mar-2010 (CT) `epk_def_set` added
 #    12-Mar-2010 (CT) Interface of `attr.Pickler` changed
+#    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
 #    ««revision-date»»···
 #--
 
@@ -198,7 +199,7 @@ class Kind (MOM.Prop.Kind) :
         Pickler = self.attr.Pickler
         value   = self.get_value (obj)
         if Pickler :
-            return (Pickler.as_cargo (obj, self, value), )
+            return (Pickler.as_cargo (obj, self, self.attr, value), )
         else :
             return (value, )
     # end def get_pickle_cargo
@@ -254,7 +255,7 @@ class Kind (MOM.Prop.Kind) :
     def set_pickle_cargo (self, obj, cargo) :
         Pickler = self.attr.Pickler
         if Pickler :
-            cargo = (Pickler.from_cargo (obj, self, cargo [0]), )
+            cargo = (Pickler.from_cargo (obj, self, self.attr, cargo [0]), )
         self._set_cooked_value (obj, cargo [0], changed = True)
     # end def set_pickle_cargo
 

@@ -225,7 +225,7 @@ class Dyn_Slice_ReST_Dir (DJO.NAV._Site_Entity_) :
           r" +<Nav-Info> *$"
           "\n"
             r"(?P<code>"
-              r"(?:^ +\w+ *=.*$" "\n" r")+"
+              r"(?:^ +(?:\w+ *=|[][(),]).*$" "\n" r")+"
             r")"
           r" +</Nav-Info> *$"
         , re.MULTILINE

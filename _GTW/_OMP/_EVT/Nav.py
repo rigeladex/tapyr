@@ -57,11 +57,42 @@ class Admin (object) :
     Event           =  dict \
         ( ETM       = "GTW.OMP.EVT.Event"
         , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( FGD ("object", "detail")
+            , AID
+                ( "date"
+                , FGD (widget = "html/form.jnj, fg_tr")
+                , legend =
+                    _("Start (and optionally [for recurring events] finish) date")
+                )
+            , AID
+                ( "time"
+                , FGD (widget = "html/form.jnj, fg_tr")
+                , legend = _("Start and finish time")
+                )
+            , AID
+                ( "recurrence"
+                , FGD ()
+                , legend = _("Recurrence rule")
+                )
+            )
         )
 
     Event_occurs    = dict \
         ( ETM       = "GTW.OMP.EVT.Event_occurs"
         , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( AID
+                ( "event"
+                , FGD ("object", "detail", widget = "html/form.jnj, fg_tr")
+                )
+            , FGD ("date")
+            , AID
+                ( "time"
+                , FGD (widget = "html/form.jnj, fg_tr")
+                , legend = _("Start and finish time")
+                )
+            )
         )
 
 # end class Admin

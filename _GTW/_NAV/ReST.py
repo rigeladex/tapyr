@@ -240,7 +240,7 @@ class Dyn_Slice_ReST_Dir (GTW.NAV._Site_Entity_) :
           r" +<(?P<expired>!?)Nav-Info> *$"
           "\n"
             r"(?P<code>"
-              r"(?:^ +(?:\w+ *=|[][,]).*$" "\n" r")+"
+              r"(?:^ +(?:\w+ *=|[][(),]).*$" "\n" r")+"
             r")"
           r" +<!?/Nav-Info> *$"
         , re.MULTILINE
