@@ -130,6 +130,29 @@ class Event (_Ancestor_Essence) :
 
         # end class rule
 
+        class short_title (A_String) :
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Mixin, )
+
+            def computed (self, obj) :
+                if obj :
+                    return obj.detail or obj.object.short_title
+            # end def computed
+
+        # end class short_title
+
+        class title (A_String) :
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                if obj :
+                    return obj.object.title
+            # end def computed
+
+        # end class title
+
     # end class _Attributes
 
     def compute_occurrences (self) :
@@ -176,6 +199,52 @@ class Event_occurs (_Ancestor_Essence) :
             kind               = Attr.Primary_Optional
 
         # end class time
+
+        ### Non-primary attributes
+
+        class detail (A_String) :
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                if obj :
+                    return obj.event.detail
+            # end def computed
+
+        # end class detail
+
+        class href (A_String) :
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                if obj :
+                    return obj.event.object.perma_name
+            # end def computed
+
+        # end class href
+
+        class short_title (A_String) :
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                if obj :
+                    return obj.event.short_title
+            # end def computed
+
+        # end class short_title
+
+        class title (A_String) :
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                if obj :
+                    return obj.event.title
+            # end def computed
+
+        # end class title
 
     # end class _Attributes
 

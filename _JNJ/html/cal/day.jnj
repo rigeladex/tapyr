@@ -39,8 +39,10 @@
     <div class="holiday">{{- GTW._T (holi) -}}</div>
   {% endif -%}
   {%- for ev in day.events %}
-    <div class="event" title="{{ ev.ui_display }}">
-      <h2>{{ ev.title }}</h2>
+    <div class="event" title="{{ ev.FO.time }}: {{ ev.title }}">
+      <h2><a href="{{ ev.href }}">{{ ev.short_title}}: {{ ev.title }}</a></h2>
+      <p>{{ ev.FO.time }}</p>
+      <p>{{ ev.detail }}</p>
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- day -#}

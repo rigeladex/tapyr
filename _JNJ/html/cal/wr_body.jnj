@@ -61,8 +61,10 @@
 
 {%- macro week_day_events (cal, week, day) -%}
   {%- for ev in day.events %}
-    <div class="event" title="{{ ev.ui_display }}">
-      {{ ev.short_title }}
+    <div class="event" title="{{ ev.FO.time }}: {{ ev.title }}">
+      <a href="{{ ev.href }}">
+        {{- ev.short_title -}}
+      </a>
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- week_day_events -#}
