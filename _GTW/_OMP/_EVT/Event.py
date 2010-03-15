@@ -97,6 +97,14 @@ class Event (_Ancestor_Essence) :
 
         # end class dates
 
+        class detail (A_String) :
+            """Information about event."""
+
+            kind               = Attr.Optional
+            max_length         = 160
+
+        # end class detail
+
         class recurrence (A_Recurrence_Rule) :
             """Recurrence rule defining when and how often the event recurs."""
 

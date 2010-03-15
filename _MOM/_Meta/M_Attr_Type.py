@@ -222,14 +222,16 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
 
         @classmethod
         def as_cargo (cls, obj, attr_kind, value) :
-            cargo = cls._elements_as_cargo (obj, attr_kind, value)
-            return pickle.dumps (cargo)
+            if value is not None :
+                cargo = cls._as_cargo (obj, attr_kind, value)
+                return pickle.dumps (cargo)
         # end def as_cargo
 
         @classmethod
         def from_cargo (cls, obj, attr_kind, cargo) :
-            cargo = pickle.dumps (cargo)
-            return cls._elements_from_cargo (cargo)
+            if cargo is not None :
+                cargo = pickle.dumps (cargo)
+                return cls._from_cargo (obj, attr_kind, cargo)
         # end def from_cargo
 
     # end class _Pickler_
@@ -249,8 +251,8 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
                 _from_cargo = cls._elements_from_cargo_s
             cls.Pickler = cls._Pickler_.New \
                 ( name_postfix = name
-                , _as_cargo    = _as_cargo
-                , _from_cargo  = _from_cargo
+                , _as_cargo    = staticmethod (_as_cargo)
+                , _from_cargo  = staticmethod (_from_cargo)
                 )
     # end def __init__
 

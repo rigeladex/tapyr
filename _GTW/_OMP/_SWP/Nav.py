@@ -32,7 +32,7 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL                   import TFL
+from   _TFL                     import TFL
 from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
@@ -47,7 +47,7 @@ from   _GTW._Form._MOM.Field_Group_Description import \
     , Field_Prefixer          as FP
     , Wildcard_Field          as WF
     )
-from  _GTW._Form.Widget_Spec  import Widget_Spec as WS
+from  _GTW._Form.Widget_Spec    import Widget_Spec as WS
 
 from   _TFL.I18N                import _
 

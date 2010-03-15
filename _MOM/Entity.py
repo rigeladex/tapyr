@@ -118,6 +118,7 @@
 #    11-Mar-2010 (CT) `raw_attr_dict` factored
 #    11-Mar-2010 (CT) `An_Entity.set` and `.set_raw` changed to handle changes
 #                     of primary composite attributes properly (rename!)
+#    15-Mar-2010 (CT) Exception handler added to `epk_as_code`
 #    ««revision-date»»···
 #--
 
@@ -786,7 +787,11 @@ class Id_Entity (Entity) :
                 if isinstance (r, tuple) :
                     r = "(%s)" % (", ".join (_conv (r)))
                 yield r
-        return tuple (_gen ())
+        try :
+            result = tuple (_gen ())
+        except Exception :
+            result = "..."
+        return result
     # end def epk_as_code
 
     @TFL.Meta.Once_Property
