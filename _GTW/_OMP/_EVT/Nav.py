@@ -58,7 +58,11 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.EVT.Event"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("object", "detail")
+            ( AID
+                ( "object"
+                , FGD ("primary")
+                , widget = "html/form.jnj, fg_tr"
+                )
             , AID
                 ( "date"
                 , FGD (widget = "html/form.jnj, fg_tr")
@@ -70,6 +74,7 @@ class Admin (object) :
                 , FGD (widget = "html/form.jnj, fg_tr")
                 , legend = _("Start and finish time")
                 )
+            , FGD ("detail")
             , AID
                 ( "recurrence"
                 , FGD ()
@@ -84,7 +89,11 @@ class Admin (object) :
         , Form_args =
             ( AID
                 ( "event"
-                , FGD ("object", "detail", widget = "html/form.jnj, fg_tr")
+                , AID
+                    ( "object"
+                    , FGD ("primary")
+                    , widget = "html/form.jnj, fg_tr"
+                    )
                 )
             , FGD ("date")
             , AID
