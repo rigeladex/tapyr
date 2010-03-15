@@ -268,7 +268,7 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
     def _elements_from_cargo_p (obj, attr_kind, attr_type, cargo) :
         C_Type = attr_type.C_Type
         P      = C_Type.Pickler
-        return list (P.from_cargo (obj, attr_kind, C_type, c) for c in cargo)
+        return list (P.from_cargo (obj, attr_kind, C_Type, c) for c in cargo)
     # end def _elements_from_cargo_p
 
     @staticmethod
