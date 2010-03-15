@@ -231,7 +231,7 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
         @classmethod
         def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
             if cargo is not None :
-                cargo = pickle.dumps (cargo)
+                cargo = pickle.loads (cargo)
                 return cls._from_cargo (obj, attr_kind, attr_type, cargo)
         # end def from_cargo
 
