@@ -174,6 +174,7 @@
 #    18-Jan-2010 (CT) Surgery
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #     5-Mar-2010 (CT) `_etype_man_entries` corrected
+#    15-Mar-2010 (CT) `kind_name` removed
 #    ««revision-date»»···
 #--
 
@@ -213,7 +214,6 @@ class Site_Admin (GTW.NAV.Dir) :
                 , title     = title
                 , desc      = desc
                 , ETM       = ETM
-                , kind_name = man.kind_name
                 , Type      = Type
                 , ** m_kw
                 )

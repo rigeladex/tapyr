@@ -137,7 +137,7 @@ class Event (_Ancestor_Essence) :
 
             def computed (self, obj) :
                 if obj :
-                    return obj.detail or obj.object.short_title
+                    return obj.detail or (obj.object and obj.object.short_title)
             # end def computed
 
         # end class short_title
@@ -207,29 +207,29 @@ class Event_occurs (_Ancestor_Essence) :
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                if obj :
+                if obj and obj.event :
                     return obj.event.detail
             # end def computed
 
         # end class detail
 
-        class href (A_String) :
+        class essence (A_Object) :
 
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                if obj :
-                    return obj.event.object.perma_name
+                if obj and obj.event :
+                    return obj.event.object
             # end def computed
 
-        # end class href
+        # end class essence
 
         class short_title (A_String) :
 
             kind               = Attr.Computed
 
             def computed (self, obj) :
-                if obj :
+                if obj and obj.event :
                     return obj.event.short_title
             # end def computed
 

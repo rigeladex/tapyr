@@ -30,6 +30,7 @@
 #    20-Jan-2010 (CT) `_Mgr_Base_` factored
 #     5-Mar-2010 (CT) `Manager.__init__` corrected
 #     5-Mar-2010 (CT) `attr_mapper` and `__getattr__` using it added
+#    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
 #    ««revision-date»»···
 #--
 
@@ -57,10 +58,9 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     def __init__ (self, src_dir, ** kw) :
         self.__super.__init__ (src_dir = src_dir, ** kw)
         etn = self.E_Type.type_name
-        kn  = self.kind_name
         top = self.top
-        assert (etn, kn) not in top.E_Types
-        top.E_Types [etn, kn] = self
+        assert etn not in top.E_Types
+        top.E_Types [etn] = self
     # end def __init__
 
     @Once_Property
@@ -83,8 +83,6 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     @Once_Property
     def query_filters (self) :
         result = []
-        if self.kind_filter :
-            result.append (self.kind_filter)
         if self.disp_filter :
             result.append (self.disp_filter)
         return tuple (result)

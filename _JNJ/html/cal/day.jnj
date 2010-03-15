@@ -40,7 +40,7 @@
   {% endif -%}
   {%- for ev in day.events %}
     <div class="event" title="{{ ev.FO.time }}: {{ ev.title }}">
-      <h2><a href="{{ ev.href }}">{{ ev.short_title}}: {{ ev.title }}</a></h2>
+      <h2><a href="{{ cal.obj_href (ev.essence) }}">{{ ev.short_title}}: {{ ev.title }}</a></h2>
       <p>{{ ev.FO.time }}</p>
       <p>{{ ev.detail }}</p>
     </div>

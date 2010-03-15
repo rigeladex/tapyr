@@ -50,16 +50,22 @@
         <tr>
           {{ W.week_number (cal, week) }}
           {%- for d in week.days %}
+            {%- set events = d.events -%}
             {%- set td_cls = " ".join
                 (( d.day_name.lower ()
-                 , " holiday" if d.is_holiday   else ""
-                 , " today"   if d == cal.today else ""
+                 , "holiday" if d.is_holiday   else ""
+                 , "today"   if d == cal.today else ""
                 )).strip ()
             -%}
-            {%- set div_cls = " ".join (("date", d.month_name)) -%}
+            {%- set div_cls = " ".join
+                (( "date"
+                 , d.month_name
+                 , "event" if events else ""
+                )).strip ()
+            -%}
             <td class="{{ td_cls }}" title="{{ "%s, %s" % (GTW._T (d.day_name), d) }}">
               <div class="{{ div_cls}}">
-                {%- onion d.events %}
+                {%- onion foo %} {# events #}
                   {% head -%}
                     <a href="{{ cal.day_href (d) }}">
                   {%- body -%}

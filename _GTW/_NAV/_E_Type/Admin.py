@@ -48,6 +48,7 @@
 #                     as tuple,
 #                     Parameters of childs renamed (lid -> args)
 #    26-Feb-2010 (MG) Completion handling changed
+#    15-Mar-2010 (CT) `kind_name` removed
 #    ««revision-date»»···
 #--
 
@@ -259,7 +260,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def manager (self) :
-        return self.top.E_Types.get ((self.E_Type.type_name, self.kind_name))
+        return self.top.E_Types.get (self.E_Type.type_name)
     # end def manager
 
     @Once_Property

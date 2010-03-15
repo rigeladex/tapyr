@@ -62,7 +62,7 @@
 {%- macro week_day_events (cal, week, day) -%}
   {%- for ev in day.events %}
     <div class="event" title="{{ ev.FO.time }}: {{ ev.title }}">
-      <a href="{{ ev.href }}">
+      <a href="{{ cal.obj_href (ev.essence) }}">
         {{- ev.short_title -}}
       </a>
     </div>

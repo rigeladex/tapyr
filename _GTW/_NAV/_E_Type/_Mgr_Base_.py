@@ -28,6 +28,7 @@
 # Revision Dates
 #    20-Jan-2010 (CT) Creation
 #     5-Mar-2010 (CT) `page_args` added
+#    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
 #    ««revision-date»»···
 #--
 
@@ -47,7 +48,6 @@ from   _TFL.predicate           import filtered_join
 class _Mgr_Base_ (TFL.Meta.Object) :
     """Common base class for Admin and Manager of GTW.NAV.E_Type."""
 
-    kind_name       = None
     Q               = TFL.Attr_Query ()
     page_args       = {}
     sort_key        = None
@@ -55,14 +55,10 @@ class _Mgr_Base_ (TFL.Meta.Object) :
     def __init__ (self, parent, ** kw) :
         ETM    = kw ["ETM"]
         E_Type = ETM._etype
-        kn     = kw.get ("kind_name")
-        if kn is not None :
-            kn = unicode (kn)
         top    = self.top
-        desc   = kw.pop ("desc", E_Type.__doc__)
-        name   = filtered_join \
-            (u"-", (unicode (kw.pop ("name", E_Type.ui_name)), kn))
-        title  = kw.pop  ("title", filtered_join ("-", (_Tn (name), kn)))
+        desc   = kw.pop  ("desc", E_Type.__doc__)
+        name   = unicode (kw.pop ("name", E_Type.ui_name))
+        title  = kw.pop  ("title", _Tn (name))
         self.__super.__init__ \
             ( parent       = parent
             , E_Type       = E_Type
@@ -84,12 +80,6 @@ class _Mgr_Base_ (TFL.Meta.Object) :
         return result
     # end def count
 
-    @Once_Property
-    def kind_filter (self) :
-        if self.kind_name :
-            return self.Q.kind == self.E_Type.kind.from_string (self.kind_name)
-    # end def kind_filter
-
     def query (self) :
         return self.ETM.query_s \
             (* self.query_filters, sort_key = self.sort_key)
@@ -97,10 +87,7 @@ class _Mgr_Base_ (TFL.Meta.Object) :
 
     @Once_Property
     def query_filters (self) :
-        result = []
-        if self.kind_filter :
-            result.append (self.kind_filter)
-        return tuple (result)
+        return tuple ()
     # end def query_filters
 
     def _get_entries (self) :

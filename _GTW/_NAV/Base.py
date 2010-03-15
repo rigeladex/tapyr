@@ -202,6 +202,7 @@
 #    23-Feb-2010 (MG) `_Site_Entity_._view` only write the result to the
 #                     handler if result is not `True`
 #     2-Mar-2010 (CT) `rank` added
+#    15-Mar-2010 (CT) `obj_href` added
 #    ««revision-date»»···
 #--
 
@@ -400,6 +401,14 @@ class _Site_Entity_ (TFL.Meta.Object) :
     def nav_links (self) :
         yield self
     # end def nav_links
+
+    def obj_href (self, obj) :
+        etn = getattr (obj, "type_name", None)
+        if etn :
+            man = self.top.E_Types.get (etn)
+            if man :
+                return man.href_display (obj)
+    # end def obj_href
 
     @Once_Property
     def permalink (self) :
