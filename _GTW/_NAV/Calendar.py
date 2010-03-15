@@ -38,7 +38,9 @@ from   _TFL                     import TFL
 import _CAL.Calendar
 import _GTW._NAV.Base
 
+from   _TFL.defaultdict         import defaultdict_kd
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL._Meta.Once_Property import Once_Property
 
 import datetime
 from   posixpath                import join  as pjoin
@@ -46,35 +48,37 @@ from   posixpath                import join  as pjoin
 class Calendar (GTW.NAV.Dir) :
     """Navigation directory for providing a calendar."""
 
-    day_abbrs        = \
+    day_abbrs          = \
         ( _("Mon"), _("Tue"), _("Wed"), _("Thu")
         , _("Fri"), _("Sat"), _("Sun")
         )
-    day_names        = \
+    day_names          = \
         ( _("Monday"), _("Tuesday"), _("Wednesday"), _("Thursday")
         , _("Friday"), _("Saturday"), _("Sunday")
         )
-    month_abbrs      = \
+    month_abbrs        = \
         ( _("Jan"), _("Feb"), _("Mar")
         , _("Apr"), _("May"), _("Jun")
         , _("Jul"), _("Aug"), _("Sep")
         , _("Oct"), _("Nov"), _("Dec")
         )
-    month_names      = \
+    month_names        = \
         ( _("January"), _("February"), _("March")
         , _("April"),   _("May"),      _("June")
         , _("July"),    _("August"),   _("September")
         , _("October"), _("November"), _("December")
         )
-    pid              = "Cal"
-    template         = "calendar"
-    week_roller_size = 6
+    pid                = "Cal"
+    template           = "calendar"
+    week_roller_size   = 6
 
-    _y               = datetime.date.today ().year
-    year_range       = (_y - 3, _y + 3)
+    event_manager_name = "GTW.OMP.EVT.Event_occurs"
+
+    _y                 = datetime.date.today ().year
+    year_range         = (_y - 3, _y + 3)
     del _y
 
-    _cal             = None
+    _cal               = None
 
     class _Cmd_ (GTW.NAV.Page) :
 
@@ -116,12 +120,23 @@ class Calendar (GTW.NAV.Dir) :
         self.__super.__init__ (* args, ** kw)
         if self._cal is None :
             self.__class__._cal  = CAL.Calendar ()
-        self._year = None
+        self.events = defaultdict_kd (self._get_events)
+        self._year  = None
+        def _day_get_events (this) :
+            return self.events [this.date.date]
+        _CAL.Year.Day.events = property (_day_get_events)
     # end def __init__
 
     def day_href (self, day) :
         return pjoin (self.abs_href, day.formatted ("%Y/%m/%d"))
     # end def day_href
+
+    @Once_Property
+    def event_manager (self) :
+        scope = self.top.scope
+        if scope and self.event_manager_name :
+            return scope [self.event_manager_name]
+    # end def event_manager
 
     ### if we want to display a site-admin specific page (and not
     ### just the page of the first child [a E_Type_Admin]), we'll
@@ -182,6 +197,11 @@ class Calendar (GTW.NAV.Dir) :
                 return
             return self.Day (parent = self, year = year, day = day)
     # end def _get_child
+
+    def _get_events (self, date) :
+        evm = self.event_manager
+        return evm.query_s (date = date).all ()
+    # end def _get_events
 
 # end class Calendar
 
