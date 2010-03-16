@@ -61,6 +61,7 @@
 #                     `ems.remove`
 #     8-Feb-2010 (CT) `snapshot` removed
 #    15-Feb-2010 (CT) `attr_changes` added
+#    16-Mar-2010 (CT) `record_change` changed to call `result.callbacks`, if any
 #    ««revision-date»»···
 #--
 
@@ -413,6 +414,8 @@ class Scope (TFL.Meta.Object) :
         result = self.historian.record (Change, * args, ** kw)
         if result is not None :
             self.ems.register_change (result)
+            if result.callbacks :
+                result.do_callbacks (self)
         return result
     # end def record_change
 

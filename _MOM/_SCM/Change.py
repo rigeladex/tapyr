@@ -48,6 +48,7 @@
 #     1-Mar-2010 (CT) `_Entity_._to_change` and `._to_save` factored
 #    12-Mar-2010 (CT) `Attr_Composite.__new__` added to guard for
 #                     `composite.owner`
+#    16-Mar-2010 (CT) `add_callback`, `do_callbacks` and `remove_callback` added
 #    ««revision-date»»···
 #--
 
@@ -68,6 +69,7 @@ class _Change_ (MOM.SCM.History_Mixin) :
 
     kind               = "Composite change"
 
+    callbacks          = None
     children           = TFL.Meta.Alias_Property ("history")
     cid                = None
     epk                = None
@@ -101,6 +103,10 @@ class _Change_ (MOM.SCM.History_Mixin) :
             )
         return result
     # end def as_pickle
+
+    def do_callbacks (self) :
+        pass
+    # end def do_callbacks
 
     @classmethod
     def from_pickle (cls, string, parent = None) :
@@ -191,10 +197,32 @@ class _Entity_ (Undoable) :
         self.change_count = 1
     # end def __init__
 
+    @classmethod
+    def add_callback (cls, etype, callback) :
+        if cls.callbacks is None :
+            cls.callbacks = {}
+        cls.callbacks [etype.type_name] = callback
+    # end def add_callback
+
+    def do_callbacks (self, scope) :
+        callbacks = self.callbacks
+        if callbacks and self.type_name in callbacks :
+            callbacks [self.type_name] (scope, self)
+    # end def do_callbacks
+
     def entity (self, scope) :
         etm = scope [self.type_name]
         return etm.pid_query (self.pid)
     # end def entity
+
+    @classmethod
+    def remove_callback (cls, etype) :
+        if cls.callbacks is not None :
+            try :
+                del cls.callbacks [etype.type_name]
+            except KeyError :
+                pass
+    # end def remove_callback
 
     @TFL.Meta.Once_Property
     def type_repr (self) :

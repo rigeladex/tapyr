@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-03-10 10:12+0100\n"
+"POT-Creation-Date: 2010-03-16 16:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,10 +38,6 @@ msgstr ""
 msgid "Addresss"
 msgstr ""
 
-#: _MOM._Attr.Date_Interval:0
-msgid "Alive"
-msgstr ""
-
 #: _GTW._OMP._PAP.Phone:0
 msgid "Area code"
 msgstr ""
@@ -64,14 +60,6 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
 msgid "Date of birth [`start`] (and death [`finish`])"
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Date_Interval"
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Date_Interval_N"
 msgstr ""
 
 #: _GTW/_OMP/_PAP/Email.py:68 _GTW._OMP._PAP._Person_has_Property_:0
@@ -105,14 +93,6 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension number used in PBX"
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Finish"
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Finish date of interval"
 msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
@@ -244,20 +224,6 @@ msgstr ""
 msgid "Short description of the phone number"
 msgstr ""
 
-#: _MOM._Attr.Date_Interval:0
-msgid ""
-"Specifies whether entity is currently alive, i.e., the current\n"
-"date lies between `start` and `finish`."
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Start"
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Start date of interval"
-msgstr ""
-
 #: _GTW._OMP._PAP.Address:0
 msgid "State or province or region"
 msgstr ""
@@ -268,10 +234,6 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Street (or place) and house number"
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "The finish date must be later than the start date"
 msgstr ""
 
 #: _GTW._OMP._PAP.Address:0
@@ -308,9 +270,5 @@ msgstr ""
 
 #: _GTW._OMP._PAP.Person:0
 msgid "`Phone` linked to `person`"
-msgstr ""
-
-#: _MOM._Attr.Date_Interval:0
-msgid "finish_after_start"
 msgstr ""
 

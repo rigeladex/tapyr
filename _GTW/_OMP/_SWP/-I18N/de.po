@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-03-10 10:12+0100\n"
+"PO-Revision-Date: 2010-03-16 16:12+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -26,7 +26,7 @@ msgstr "Autor"
 msgid "Author of the web page."
 msgstr "Autor der Webseite"
 
-#: _GTW/_OMP/_SWP/Nav.py:86
+#: _GTW/_OMP/_SWP/Nav.py:87
 msgid "Author of web page"
 msgstr "Autor der Webseite"
 
@@ -42,6 +42,22 @@ msgstr "Inhalt der Webseite in HTML (Hypertext) Format"
 msgid "Date"
 msgstr "Datum"
 
+#: _GTW/_OMP/_SWP/Nav.py:100
+msgid "Date interval"
+msgstr "Datumsinterval"
+
+#: _GTW/_OMP/_SWP/Nav.py:99
+msgid "Date interval of event"
+msgstr "Datumsinterval des Ereignisses"
+
+#: _GTW/_OMP/_SWP/Nav.py:119
+msgid "Events"
+msgstr "Ereignisse"
+
+#: _GTW/_OMP/_SWP/Nav.py:118
+msgid "Events associated to page"
+msgstr "Zur Seite gehörende Ereignisse"
+
 #: _GTW._OMP._SWP.Page:0
 msgid "Format"
 msgstr "Format"
@@ -52,7 +68,7 @@ msgstr "Kopfzeile"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Head line of the web page"
-msgstr "Überschrift der Webseite"
+msgstr "Kopfzeile der Webseite"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Higher prio sorts before lower prio."
@@ -80,17 +96,21 @@ msgid ""
 "web page"
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/Nav.py:69
+#: _GTW/_OMP/_SWP/Nav.py:70
 msgid "Publication and expiration date"
 msgstr "Publikations- und Verfallsdatum"
 
+#: _GTW/_OMP/_SWP/Nav.py:116
+msgid "Recurrence rule"
+msgstr "Wiederholungsregel"
+
 #: _GTW._OMP._SWP.Page:0
 msgid "Short title"
-msgstr "Kurztitle"
+msgstr "Kurztitel"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Short title of the web page (used in navigation)."
-msgstr "Kurztitle der Webseite (wird in Navigation verwendet)."
+msgstr "Kurztitel der Webseite (wird in Navigation verwendet)."
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Text"
@@ -102,11 +122,19 @@ msgstr ""
 "Text für die Webseite, im durch `format` angegebenen "
 "Textauszeichnungsformat formatiert."
 
+#: _GTW/_OMP/_SWP/Nav.py:111
+msgid "Time interval"
+msgstr "Zeitraum"
+
+#: _GTW/_OMP/_SWP/Nav.py:110
+msgid "Time interval of event"
+msgstr "Zeitraum des Ereignisses"
+
 #: _GTW._OMP._SWP.Page:0
 msgid "Title"
 msgstr "Titel"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Title of the web page"
-msgstr "Überschrift der Webseite"
+msgstr "Titel der Webseite"
 

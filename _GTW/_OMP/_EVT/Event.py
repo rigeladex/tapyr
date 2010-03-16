@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    10-Mar-2010 (CT) Creation
+#    16-Mar-2010 (CT) `_change_callback` added
 #    ««revision-date»»···
 #--
 
@@ -164,7 +165,17 @@ class Event (_Ancestor_Essence) :
             ETM (self, date = d, time = self.time)
     # end def compute_occurrences
 
+    @classmethod
+    def _change_callback (cls, scope, change) :
+        self = change.entity (scope)
+        self.compute_occurrences ()
+    # end def _change_callback
+
 # end class Event
+
+MOM.SCM.Change.Create.add_callback         (Event, Event._change_callback)
+MOM.SCM.Change.Attr.add_callback           (Event, Event._change_callback)
+MOM.SCM.Change.Attr_Composite.add_callback (Event, Event._change_callback)
 
 _Ancestor_Essence = GTW.OMP.EVT.Link1
 

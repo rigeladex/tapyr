@@ -1,8 +1,8 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Martin Glueck All rights reserved
-# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
+# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
-# This module is part of the package MOM.
+# This module is part of the package GTW.OMP.EVT.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,30 +20,30 @@
 #
 #++
 # Name
-#    MOM.__babel__
+#    GTW.OMP.EVT.__babel__
 #
 # Purpose
 #    This file is the entry point for the Babel translation extraction
 #    process.
 #
 # Revision Dates
-#    21-Jan-2010 (MG) Creation
+#    16-Mar-2010 (CT) Creation
 #    ««revision-date»»···
 #--
 
-from   _MOM.import_MOM            import *
-from   _MOM._Attr.Date_Interval   import *
-from   _MOM._Attr.Time_Interval   import *
-from   _MOM._Attr.Recurrence_Rule import *
-
+from   _MOM.import_MOM import *
 import _MOM.Babel
+import _GTW._OMP._EVT.import_EVT
 
 def main (encoding, config, method) :
     from   _MOM._EMS.Hash         import Manager as EMS
     from   _MOM._DBW._HPS.Manager import Manager as DBW
+    from   _GTW                   import GTW
 
     return MOM.Babel.Add_Translations \
-        (encoding, config, method, MOM.App_Type ("MOM", MOM).Derived (EMS, DBW))
+        ( encoding, config, method
+        , MOM.App_Type ("EVT", GTW).Derived (EMS, DBW)
+        )
 # end def main
 
-### __END__ MOM.__babel__
+### __END__ GTW.OMP.EVT.__babel__

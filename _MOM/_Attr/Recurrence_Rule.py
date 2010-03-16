@@ -197,8 +197,8 @@ class Recurrence_Rule (_Ancestor_Essence) :
         # end class restrict_pos
 
         class unit (_A_Named_Value_) :
-            """Unit of recurrence. `interval` is interpreted in units of
-               `frequency`.
+            """Unit of recurrence. `period` is interpreted in units of
+               `unit`.
             """
 
             C_Type             = A_Int
@@ -237,6 +237,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
         # end class week_day
 
         class first_day_of_week (A_Int) :
+            """First day of week"""
 
             kind               = Attr.Const
             default            = dateutil.rrule.MO.weekday

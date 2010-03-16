@@ -1,0 +1,110 @@
+# German translations for MOM/GTW/JNJ.
+# Copyright (C) 2010 Mag. Christian Tanzer, Martin Glueck
+# This file is distributed under the same license as the MOM/GTW/JNJ
+# project.
+# Christian Tanzer <tanzer@swing.co.at>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: MOM/GTW/JNJ 1.0\n"
+"Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
+"POT-Creation-Date: 2010-03-16 16:10+0100\n"
+"PO-Revision-Date: 2010-03-16 16:12+0100\n"
+"Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
+
+#: _GTW._OMP._EVT.Event:0
+msgid ""
+"Date interval of event (for non-recurring events, only `start`\n"
+"is relevant)"
+msgstr ""
+"Datumsinterval des Ereignisses (für nicht wiederholende Ereignisse ist nur "
+"`Anfang` relevant)"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Date of occurrence"
+msgstr "Datum des Ereignisses"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Dates"
+msgstr "Kalenderdaten"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Detail"
+msgstr "Detail"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Essence"
+msgstr "Essenz"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Event"
+msgstr "Ereignis"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Event that occurs"
+msgstr "Auftretendes Ereignis"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Event_occurs"
+msgstr "Termin"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Generic type for binary attributes that aren't set by the user."
+msgstr ""
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Information about event."
+msgstr "Information zum Ereignis."
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Models an attribute referring to an object."
+msgstr ""
+
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._EVT.Event:0
+msgid "Object which this event is bound to."
+msgstr "Objekt, zu dem das Ereignis gehört."
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Occurs"
+msgstr "Auftreten"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Recurrence"
+msgstr "Wiederholung"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Recurrence rule defining when and how often the event recurs."
+msgstr ""
+"Wiederholungsregel (definiert, wann und wie oft das "
+"Ereignis eintritt)."
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Rule"
+msgstr "Regel"
+
+#: _GTW/_OMP/_EVT/Nav.py:70
+msgid "Start (and optionally [for recurring events] finish) date"
+msgstr "Anfangs- und (für wiederholende Ereignisse) End-Datum"
+
+#: _GTW/_OMP/_EVT/Nav.py:75 _GTW/_OMP/_EVT/Nav.py:102
+msgid "Start and finish time"
+msgstr "Anfangs- und Schluss-Zeit"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Time"
+msgstr "Zeit"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Time (interval) of occurrence"
+msgstr "Zeitraum des Ereignisses"
+
+#: _GTW._OMP._EVT.Event:0
+msgid "Time interval of event (for a full-day event, this is empty)"
+msgstr "Zeitraum des Ereignisses (für ein Ganztagesereignis leer)"
+

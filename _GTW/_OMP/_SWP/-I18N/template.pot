@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-03-10 10:12+0100\n"
+"POT-Creation-Date: 2010-03-16 16:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Author of the web page."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:86
+#: _GTW/_OMP/_SWP/Nav.py:87
 msgid "Author of web page"
 msgstr ""
 
@@ -40,6 +40,22 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Date"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:100
+msgid "Date interval"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:99
+msgid "Date interval of event"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:119
+msgid "Events"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:118
+msgid "Events associated to page"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
@@ -80,8 +96,12 @@ msgid ""
 "web page"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:69
+#: _GTW/_OMP/_SWP/Nav.py:70
 msgid "Publication and expiration date"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:116
+msgid "Recurrence rule"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
@@ -98,6 +118,14 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Text for web page in markup specified by `format`."
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:111
+msgid "Time interval"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:110
+msgid "Time interval of event"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0

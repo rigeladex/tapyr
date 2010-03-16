@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-10 10:12+0100\n"
+"PO-Revision-Date: 2010-03-16 16:12+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -38,11 +38,11 @@ msgstr ""
 msgid "Change Password for"
 msgstr ""
 
-#: _JNJ/html/form.jnj:391
+#: _JNJ/html/form.jnj:448
 msgid "Change email"
 msgstr ""
 
-#: _JNJ/html/form.jnj:390
+#: _JNJ/html/form.jnj:447
 #, python-format
 msgid "Change email of account %s"
 msgstr ""
@@ -51,11 +51,11 @@ msgstr ""
 msgid "Change object"
 msgstr ""
 
-#: _JNJ/html/form.jnj:396
+#: _JNJ/html/form.jnj:453
 msgid "Change password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:395
+#: _JNJ/html/form.jnj:452
 #, python-format
 msgid "Change password of account %s"
 msgstr ""
@@ -65,11 +65,11 @@ msgstr ""
 msgid "Currently selected language is %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:417
+#: _JNJ/html/form.jnj:474
 msgid "Discard all changes"
 msgstr ""
 
-#: _JNJ/html/form.jnj:194 _JNJ/html/form.jnj:408
+#: _JNJ/html/form.jnj:194 _JNJ/html/form.jnj:465
 msgid "Discard all changes and leave form"
 msgstr ""
 
@@ -77,7 +77,7 @@ msgstr ""
 msgid "Edit this entry"
 msgstr ""
 
-#: _JNJ/html/form.jnj:351 _JNJ/html/login.jnj:65
+#: _JNJ/html/form.jnj:408 _JNJ/html/login.jnj:65
 msgid "Get a new password for the username specified"
 msgstr ""
 
@@ -95,7 +95,7 @@ msgstr ""
 msgid "Languages that can be selected for %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:342
+#: _JNJ/html/form.jnj:399
 msgid "Log into website or go to account page"
 msgstr ""
 
@@ -112,7 +112,7 @@ msgstr ""
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:343 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:141
+#: _JNJ/html/form.jnj:400 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:141
 msgid "Login"
 msgstr ""
 
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Login required"
 msgstr ""
 
-#: _JNJ/html/form.jnj:382 _JNJ/html/form.jnj:383
+#: _JNJ/html/form.jnj:439 _JNJ/html/form.jnj:440
 #, python-format
 msgid "Logout %s"
 msgstr ""
@@ -149,11 +149,11 @@ msgstr ""
 msgid "Page doesn't exist"
 msgstr ""
 
-#: _JNJ/html/form.jnj:336
+#: _JNJ/html/form.jnj:393
 msgid "Please enter your password"
 msgstr ""
 
-#: _JNJ/html/form.jnj:327
+#: _JNJ/html/form.jnj:384
 msgid "Please enter your username"
 msgstr ""
 
@@ -165,11 +165,11 @@ msgstr ""
 msgid "Processing the request triggered a server error. "
 msgstr ""
 
-#: _JNJ/html/form.jnj:362
+#: _JNJ/html/form.jnj:419
 msgid "Register"
 msgstr ""
 
-#: _JNJ/html/form.jnj:361
+#: _JNJ/html/form.jnj:418
 msgid "Register a new account"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Register a new account for "
 msgstr ""
 
-#: _JNJ/html/form.jnj:418
+#: _JNJ/html/form.jnj:475
 msgid "Reset"
 msgstr ""
 
@@ -195,7 +195,7 @@ msgstr ""
 msgid "Server error"
 msgstr ""
 
-#: _JNJ/html/form.jnj:420
+#: _JNJ/html/form.jnj:477
 msgid "Submit"
 msgstr ""
 
@@ -209,7 +209,7 @@ msgid ""
 " possible. "
 msgstr ""
 
-#: _JNJ/html/cal/wr_body.jnj:72 _JNJ/html/cal/wr_nav.jnj:60
+#: _JNJ/html/cal/wr_body.jnj:76 _JNJ/html/cal/wr_nav.jnj:60
 #, python-format
 msgid "Week %2.2d/%s"
 msgstr ""

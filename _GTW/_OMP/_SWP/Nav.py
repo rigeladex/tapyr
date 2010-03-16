@@ -110,6 +110,7 @@ class Admin (object) :
                       , legend = _("Time interval of event")
                       , title  = _("Time interval")
                       )
+                , FGD ("detail")
                 , AID
                     ( "recurrence"
                     , FGD ()

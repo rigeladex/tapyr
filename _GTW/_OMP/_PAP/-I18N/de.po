@@ -4,13 +4,12 @@
 # project.
 # Christian Tanzer <tanzer@swing.co.at>, 2010.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-03-10 10:12+0100\n"
+"PO-Revision-Date: 2010-03-16 16:12+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -39,10 +38,6 @@ msgstr "Adressen"
 msgid "Addresss"
 msgstr "Adressen"
 
-#: _MOM._Attr.Date_Interval:0
-msgid "Alive"
-msgstr "Aktiv"
-
 #: _GTW._OMP._PAP.Phone:0
 msgid "Area code"
 msgstr "Vorwahl"
@@ -66,14 +61,6 @@ msgstr "Ländervorwahl"
 #: _GTW._OMP._PAP.Person:0
 msgid "Date of birth [`start`] (and death [`finish`])"
 msgstr "Geburtstag (und Sterbetag)"
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Date_Interval"
-msgstr "Datumsintervall"
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Date_Interval_N"
-msgstr "Datumsintervall"
 
 #: _GTW/_OMP/_PAP/Email.py:68 _GTW._OMP._PAP._Person_has_Property_:0
 #: _GTW._OMP._PAP.Email:0 _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
@@ -107,14 +94,6 @@ msgstr "Durchwahl"
 #: _GTW._OMP._PAP.Person_has_Phone:0
 msgid "Extension number used in PBX"
 msgstr "Durchwahl"
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Finish"
-msgstr "Ende"
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Finish date of interval"
-msgstr "Enddatum des Intervalls"
 
 #: _GTW._OMP._PAP.Person:0
 msgid "First name"
@@ -245,23 +224,6 @@ msgstr "Kurze Beschreibung der Verknüpfung"
 msgid "Short description of the phone number"
 msgstr "Kurze Beschreibung der Telefonnummer"
 
-#: _MOM._Attr.Date_Interval:0
-msgid ""
-"Specifies whether entity is currently alive, i.e., the current\n"
-"date lies between `start` and `finish`."
-msgstr ""
-"Gibt an, ob das Ding momentan am Leben ist, d.h., ob das heutige\n"
-"\"\n"
-"\"Datum zwischen `Beginn` und `Ende` liegt."
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Start"
-msgstr "Beginn"
-
-#: _MOM._Attr.Date_Interval:0
-msgid "Start date of interval"
-msgstr "Beginndatum des Intervalls"
-
 #: _GTW._OMP._PAP.Address:0
 msgid "State or province or region"
 msgstr "Bundesland"
@@ -273,10 +235,6 @@ msgstr "Strasse"
 #: _GTW._OMP._PAP.Address:0
 msgid "Street (or place) and house number"
 msgstr "Strasse (oder Platz) und Hausnummer"
-
-#: _MOM._Attr.Date_Interval:0
-msgid "The finish date must be later than the start date"
-msgstr "Der Sterbetag muss später als der Geburtstag sein"
 
 #: _GTW._OMP._PAP.Address:0
 msgid "Zip code"
@@ -313,8 +271,4 @@ msgstr "Telefonnummer einer Person"
 #: _GTW._OMP._PAP.Person:0
 msgid "`Phone` linked to `person`"
 msgstr "Telefonnummer einer Person"
-
-#: _MOM._Attr.Date_Interval:0
-msgid "finish_after_start"
-msgstr ""
 
