@@ -1,9 +1,9 @@
 MOM To-Do
 =========
 
-- MOM.SCM:
+x MOM.SCM:
 
-  * etype-specific and change-type-specific callbacks
+  x etype-specific and change-type-specific callbacks
 
 - MOM.Attr.Kind:
 
