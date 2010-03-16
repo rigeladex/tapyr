@@ -31,6 +31,8 @@
 #    12-Mar-2010 (CT) `A_Weekday_RR_List` added and used
 #    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
 #    15-Mar-2010 (CT) `A_Weekday_RR._from_string_eval` redefined
+#    16-Mar-2010 (CT) Bugs fixed (`__nonzero__`, `easter_offset.rrule_name`,
+#                     `finish` or `count`, ...)
 #    ««revision-date»»···
 #--
 
@@ -121,10 +123,11 @@ class Recurrence_Rule (_Ancestor_Essence) :
         _Ancestor = _Ancestor_Essence._Attributes
 
         class count (A_Int) :
-            """Number of recurrences."""
+            """Maximum number of recurrences."""
 
             kind               = Attr.Optional
             min_value          = 1
+            rank               = -80
 
             rrule_name         = "count"
 
@@ -137,6 +140,8 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
             kind               = Attr.Optional
             rank               = 100
+
+            rrule_name         = "byeaster"
 
         # end class easter_offset
 
@@ -170,7 +175,8 @@ class Recurrence_Rule (_Ancestor_Essence) :
                successive recurrences of an event.
             """
 
-            kind               = Attr.Required
+            kind               = Attr.Optional
+            default            = 1
             min_value          = 1
             rank               = -100
 
@@ -254,23 +260,24 @@ class Recurrence_Rule (_Ancestor_Essence) :
     # end class _Attributes
 
     def rule (self, start = None, finish = None, cache = False) :
+        kw = dict (self._rrule_attrs ())
+        if finish is None and not self.count :
+            kw ["count"] = 1
         return dateutil.rrule.rrule \
-            ( dtstart = start
-            , until   = finish
-            , cache   = cache
-            , ** dict (self._rrule_attrs ())
-            )
+            (dtstart = start, until = finish, cache = cache, ** kw)
     # end def rule
 
     def _rrule_attrs (self) :
         for a in self.attributes.itervalues () :
             name = getattr (a, "rrule_name", None)
             if name :
-                yield name, a.get_value (self)
+                value = a.get_value (self)
+                if value is not None :
+                    yield name, value
     # end def _rrule_attrs
 
     def __nonzero__ (self) :
-        return self.period is not None
+        return self.has_substance ()
     # end def __nonzero__
 
 # end class Recurrence_Rule

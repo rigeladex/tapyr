@@ -42,6 +42,7 @@
 #    12-Mar-2010 (CT) `M_Attr_Type_Typed_Collection` added
 #    13-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` implemented
 #    15-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` corrected
+#    16-Mar-2010 (CT) `_Pickle_Mixin_` factored
 #    ««revision-date»»···
 #--
 
@@ -51,8 +52,6 @@ from   _TFL                import TFL
 import _MOM._Meta.M_Prop_Type
 
 import _TFL._Meta.Once_Property
-
-import pickle
 
 class M_Attr_Type (MOM.Meta.M_Prop_Type) :
     """Meta class for MOM.Attr.Type classes."""
@@ -208,6 +207,11 @@ class M_Attr_Type_String (M_Attr_Type) :
 class _M_Pickler_ (TFL.Meta.Object.__class__) :
 
     @TFL.Meta.Once_Property
+    def Pickle_Mixin (cls) :
+        return MOM.Attr._Pickle_Mixin_
+    # end def Pickle_Mixin
+
+    @TFL.Meta.Once_Property
     def Type (cls) :
         return MOM.Attr._A_Binary_String_
     # end def Type
@@ -224,14 +228,12 @@ class M_Attr_Type_Typed_Collection (M_Attr_Type) :
         @classmethod
         def as_cargo (cls, obj, attr_kind, attr_type, value) :
             if value is not None :
-                cargo = cls._as_cargo (obj, attr_kind, attr_type, value)
-                return pickle.dumps (cargo)
+                return cls._as_cargo (obj, attr_kind, attr_type, value)
         # end def as_cargo
 
         @classmethod
         def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
             if cargo is not None :
-                cargo = pickle.loads (cargo)
                 return cls._from_cargo (obj, attr_kind, attr_type, cargo)
         # end def from_cargo
 

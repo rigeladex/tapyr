@@ -41,6 +41,8 @@
 #     4-Mar-2010 (MG) `delete_database` implemented
 #     4-Mar-2010 (MG) Support for other database added (tested with MySQL)
 #     5-Mar-2010 (CT) Pass `convert_unicode` to `types.String`
+#    16-Mar-2010 (CT) s/_replace_a_object_pickle_functions/_setup_attr_kind_mixin/
+#    16-Mar-2010 (CT) `_attr_dicts` changed to consider `Pickle_Mixin`
 #    ««revision-date»»···
 #--
 
@@ -103,21 +105,24 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             inherited_attrs = root._Attributes._attr_dict
         for name, attr_kind in attr_dict.iteritems () :
             if name not in inherited_attrs :
-                if isinstance (attr_kind.attr, MOM.Attr._A_Object_) :
+                attr = attr_kind.attr
+                Pickle_Kind = getattr (attr.Pickler, "Pickle_Mixin", None)
+                if isinstance (attr, MOM.Attr._A_Object_) :
                     ### the default way of `pickling` object references would be
                     ### storing the epk which is not perfect for a database.
                     ### Therefore we replace the `set/get_pickle_cargo`
                     ### functions
-                    cls._replace_a_object_pickle_functions (attr_kind)
+                    Pickle_Kind = SAS_A_Object_Kind_Mixin
+                if Pickle_Kind :
+                    cls._setup_attr_kind_mixin (attr_kind, Pickle_Kind)
                 if (  attr_kind.save_to_db
                    or isinstance (attr_kind, MOM.Attr.Query)
                    ) :
                     db_attrs [name] = attr_kind
-                elif isinstance ( attr_kind
-                                , ( MOM.Attr.Cached_Role
-                                  , MOM.Attr.Cached_Role_Set
-                                  )
-                                ) :
+                elif isinstance \
+                         ( attr_kind
+                         , (MOM.Attr.Cached_Role, MOM.Attr.Cached_Role_Set)
+                         ) :
                     role_attrs [name] = attr_kind
         return db_attrs, role_attrs
     # end def _attr_dicts
@@ -312,18 +317,16 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         cls.__class__.metadata = schema.MetaData ()
     # end def Reset_Metadata
 
-    def _replace_a_object_pickle_functions (cls, kind) :
-        ### if kind is inherited it is possible that we already replaced the
-        ### class
-        if not issubclass (kind.__class__, SAS_A_Object_Kind_Mixin) :
-            old_cls = kind.__class__
-            new_cls = old_cls.__class__ \
-                ( "%s_SAS_Object" % (old_cls.__name__)
-                , (SAS_A_Object_Kind_Mixin, old_cls)
-                , {}
+    def _setup_attr_kind_mixin (cls, kind, Mixin) :
+        old_cls = kind.__class__
+        if not issubclass (old_cls, Mixin) :
+            ### Add `Mixin` only once (ancestor might already have done this!)
+            kind.__class__ = old_cls.__class__ \
+                ( "%s_SAS" % (old_cls.__name__, )
+                , (Mixin, old_cls)
+                , dict (__module__ = old_cls.__module__)
                 )
-            kind.__class__ = new_cls
-    # end def _replace_a_object_pickle_functions
+    # end def _setup_attr_kind_mixin
 
     def _setup_columns ( cls, e_type, db_attrs, bases, unique
                        , prefix       = None

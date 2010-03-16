@@ -110,6 +110,7 @@
 #    11-Mar-2010 (CT) `epk_def_set` added
 #    12-Mar-2010 (CT) Interface of `attr.Pickler` changed
 #    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
+#    16-Mar-2010 (CT) `_Pickle_Mixin_` added
 #    ««revision-date»»···
 #--
 
@@ -123,6 +124,8 @@ import _MOM._Meta.M_Attr_Kind
 import _MOM._Prop.Kind
 
 from   _TFL.I18N             import _, _T, _Tn
+
+import pickle
 
 class Kind (MOM.Prop.Kind) :
     """Root class of attribute kinds to be used as properties for essential
@@ -546,6 +549,28 @@ class _Nested_Mixin_ (Kind) :
     # end def _record_change
 
 # end class _Nested_Mixin_
+
+class _Pickle_Mixin_ (Kind) :
+    """Pickle pickle cargo."""
+
+    def get_pickle_cargo (self, obj) :
+        cargo = self.__super.get_pickle_cargo (obj)
+        assert len (cargo) == 1
+        return (pickle.dumps (cargo [0]), )
+    # end def get_pickle_cargo
+
+    def set_pickle_cargo (self, obj, cargo) :
+        try :
+            assert len (cargo) == 1
+            cargo = pickle.loads (cargo [0])
+        except Exception, exc :
+            print exc, self, obj, cargo
+        else :
+            if cargo is not None :
+                return self.__super.set_pickle_cargo (obj, (cargo, ))
+    # end def set_pickle_cargo
+
+# end class _Pickle_Mixin_
 
 class _Raw_Value_Mixin_ (Kind) :
     """Mixin for keeping raw values of user-specified attributes."""
