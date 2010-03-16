@@ -261,7 +261,7 @@ class Recurrence_Rule (_Ancestor_Essence) :
 
     def rule (self, start = None, finish = None, cache = False) :
         kw = dict (self._rrule_attrs ())
-        if finish is None and not self.count :
+        if finish is None and self.count is None :
             kw ["count"] = 1
         return dateutil.rrule.rrule \
             (dtstart = start, until = finish, cache = cache, ** kw)

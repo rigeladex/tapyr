@@ -220,13 +220,15 @@
           ( proto.widget.inline_table_tr_head
           , proto
           , proto.field_groups
+          , class = "inline-instance"
           )
       -}}
     </thead>
     <tbody>
       {{ GTW.call_macro
           ( proto.widget.inline_table_tr_body
-          , proto, proto.field_groups
+          , proto
+          , proto.field_groups
           , class = "inline-instance inline-prototype"
           )
       }}
@@ -235,7 +237,7 @@
           ( iform.widget.inline_table_tr_body
           , iform
           , iform.field_groups
-          , class="inline-instance"
+          , class = "inline-instance"
           ) }}
       {% endfor -%}
     </tbody>
@@ -287,13 +289,15 @@
 
 {%- macro inline_table_aid_sep_th (fo, fg) -%}
   {%- set ifo =  fg.forms [0] -%}
-  <th>
-  {%- for fg in ifo.field_groups %}
-    {{ GTW.call_macro (fg.widget.inline_table_sep_th, ifo, fg)}}
-    {%- if not loop.last %}
-      -
-    {% endif -%}
-  {% endfor  %}
+  <th {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}>
+    {%- if fg.title -%}
+      <label>{{ GTW._T (fg.title)|safe }}</label><br>
+    {%- else %}
+      {%- for fg in ifo.field_groups -%}
+        {{- GTW.call_macro (fg.widget.inline_table_sep_th, ifo, fg) -}}
+        {%- if not loop.last %} - {% endif -%}
+      {%- endfor -%}
+    {%- endif -%}
   </th>
 {%- endmacro -%} {#- inline_table_aid_sep_th -#}
 
@@ -311,34 +315,30 @@
 
 {%- macro inline_table_th (fo, fg) -%}
       {%- for fi in fg.fields %}
-        {%- set help = GTW._T (fi.help_text)|safe %}
-        <th title="{{ help }}">{{ _field_label (fo, fi) }}</th>
+        {%- set help = GTW._T (fi.description)|safe %}
+        <th {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}>{{ _field_label (fo, fi) }}</th>
       {% endfor -%}
 {%- endmacro -%} {#- inline_table_th -#}
 
 {%- macro inline_table_sep_th (fo, fg) -%}
-      {%- for fi in fg.fields %}
-        {%- set help = GTW._T (fi.help_text)|safe %}
-        <span title="{{ help }}">{{ _field_label (fo, fi) }}</span>
-        {%- if not loop.last %}
-          -
-        {% endif -%}
-      {% endfor -%}
+      {%- set help = GTW._T (fg.legend)|safe -%}
+      {%- for fi in fg.fields -%}
+        {{ _field_label (fo, fi) }}
+        {%- if not loop.last %} - {% endif -%}
+      {%- endfor -%}
 {%- endmacro -%} {#- inline_table_sep_th -#}
 
 {%- macro inline_table_sep_td (fo, fg) -%}
-      {%- for fi in fg.fields %}
+      {%- for fi in fg.fields -%}
         {%- set desc = GTW._T (fi.description)|safe %}
         <span class="Field Field-{{ fi.name }}" title="{{ desc }}">
           {%- for h in fo.hidden_fields %}
             {{ GTW.call_macro (h.widget, fo, h) }}
           {% endfor -%}
           {{ GTW.call_macro (fi.widget.inline, fo, fi) }}
-         {%- if not loop.last %}
-           -
-         {% endif -%}
+         {%- if not loop.last %} - {% endif -%}
         </span>
-      {% endfor -%}
+      {%- endfor -%}
 {%- endmacro -%} {#- inline_table_sep_td -#}
 
 {%- macro inline_table_tr_body (fo, fgs) -%}
@@ -355,7 +355,9 @@
 {%- endmacro -%} {#- inline_table_tr_body -#}
 
 {%- macro inline_table_tr_head (fo, fgs) -%}
-    <tr>
+    <tr class="field_group {{ fo.css_class }} {{ kwargs.pop ("class", "") }}"
+      {% if fo.legend %}title="{{ GTW._T (fo.legend)|safe }}"{% endif -%}
+    >
     {%- for fg in fgs %}
       {{ GTW.call_macro (fg.widget.inline_table_th, fo, fg) }}
     {% endfor -%}

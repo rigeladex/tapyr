@@ -96,6 +96,8 @@ class Admin (object) :
                           , inline_table_td =
                               "html/form.jnj, inline_table_aid_sep_td"
                           )
+                      , legend = _("Date interval of event")
+                      , title  = _("Date interval")
                       )
                 , AID ( "time"
                       , widget = WS
@@ -105,13 +107,15 @@ class Admin (object) :
                           , inline_table_td =
                               "html/form.jnj, inline_table_aid_sep_td"
                           )
+                      , legend = _("Time interval of event")
+                      , title  = _("Time interval")
                       )
                 , AID
                     ( "recurrence"
                     , FGD ()
                     , legend = _("Recurrence rule")
                     )
-                , legend    = _("Events")
+                , legend    = _("Events associated to page")
                 , title     = _("Events")
                 )
             , FGD ()
