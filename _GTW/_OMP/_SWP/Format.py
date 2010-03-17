@@ -29,6 +29,7 @@
 #    31-Jan-2010 (CT) Creation
 #     2-Feb-2010 (CT) Creation continued
 #    17-Mar-2010 (CT) Use `ReST.to_html` instead of `GTW.ReST.to_html`
+#    17-Mar-2010 (CT) `Cleaner` added to `HTML`
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,10 @@ from   _TFL                   import TFL
 from   _MOM.import_MOM        import *
 
 import _GTW._OMP._SWP
+import _GTW.HTML
 import _ReST.To_Html
+
+from   _TFL.I18N              import _, _T, _Tn
 
 import _TFL._Meta.Object
 
@@ -74,12 +78,25 @@ class _Format_ (TFL.Meta.Object) :
 class HTML (_Format_) :
     """Formatter for text in HTML markup"""
 
-    forbidden = "applet frame frameset head html iframe input object script"
+    forbidden = \
+        "applet frame frameset head html iframe input object script".split (" ")
 
     @classmethod
     def convert (cls, text) :
-        ### XXX remove tags listed in `forbidden`
-        return text
+        cleaner  = GTW.HTML.Cleaner (text)
+        comments = cleaner.remove_comments ()
+        if comments :
+            raise ValueError \
+                ( _T ("HTML must not contain comments:\n%s")
+                % ("\n    ".join (comments), )
+                )
+        forbidden = cleaner.remove_tags (* cls.forbidden)
+        if forbidden :
+            raise ValueError\
+                ( _T ("HTML must not contain any of the tags:\n%s")
+                % ("    ".join (forbidden), )
+                )
+        return unicode (cleaner)
     # end def convert
 
 # end class HTML
@@ -103,8 +120,8 @@ class Markdown (_Format_) :
     def convert (cls, text) :
         if cls.MD is None :
             import markdown
-            cls.MD = markdown.Markdown ()
-        return cls.MD.convert (text)
+            cls.MD = markdown.Markdown (["headerid", "tables"])
+        return HTML.convert (cls.MD.convert (text))
     # end def convert
 
 # end class Markdown

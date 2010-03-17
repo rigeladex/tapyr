@@ -27,15 +27,20 @@
 #
 # Revision Dates
 #    17-Feb-2010 (CT) Creation
+#    17-Mar-2010 (CT) `Cleaner` added
 #    ««revision-date»»···
 #--
 
-from   _GTW               import GTW
+from   _GTW                     import GTW
+from   _TFL                     import TFL
 
-from   _TFL.I18N          import _, _T, _Tn
-from   _TFL.Regexp        import *
+from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.Regexp              import *
+from   _TFL._Meta.Once_Property import Once_Property
 
-from   random             import randrange
+import _TFL._Meta.Object
+
+from   random                   import randrange
 
 _obfuscation_format_js = """\
 <script type="text/javascript">document.write(String.fromCharCode(%s))</script>\
@@ -82,6 +87,47 @@ def obfuscator (scheme = "mailto") :
         , _rep, re.MULTILINE
         )
 # end def obfuscator
+
+class Cleaner (TFL.Meta.Object) :
+    """Clean up HTML using BeautifulSoup."""
+
+    def __init__ (self, input) :
+        self.input = input
+    # end def __init__
+
+    def remove_comments (self) :
+        from BeautifulSoup import Comment
+        matcher = lambda t : isinstance (t, Comment)
+        return [str (c) for c in self._remove (text = matcher)]
+    # end def remove_comments
+
+    def remove_tags (self, * tags) :
+        return set (t.name for t in self._remove (tags))
+    # end def remove_tags
+
+    @Once_Property
+    def soup (self) :
+        from BeautifulSoup import BeautifulSoup
+        return BeautifulSoup (self.input)
+    # end def soup
+
+    def _remove (self, * args, ** kw) :
+        result = []
+        for c in self.soup.findAll (* args, ** kw) :
+            result.append (c)
+            c.extract ()
+        return result
+    # end def _remove
+
+    def __str__ (self) :
+        return str (self.soup)
+    # end def __str__
+
+    def __unicode__ (self) :
+        return unicode (self.soup)
+    # end def __unicode__
+
+# end class Cleaner
 
 if __name__ != "__main__" :
     GTW._Export_Module ()
