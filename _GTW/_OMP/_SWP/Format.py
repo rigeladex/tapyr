@@ -28,6 +28,7 @@
 # Revision Dates
 #    31-Jan-2010 (CT) Creation
 #     2-Feb-2010 (CT) Creation continued
+#    17-Mar-2010 (CT) Use `ReST.to_html` instead of `GTW.ReST.to_html`
 #    ««revision-date»»···
 #--
 
@@ -35,12 +36,13 @@
 # - markdown
 
 from   _GTW                   import GTW
+from   _ReST                  import ReST as RST
 from   _TFL                   import TFL
 
 from   _MOM.import_MOM        import *
 
 import _GTW._OMP._SWP
-import _GTW.ReST
+import _ReST.To_Html
 
 import _TFL._Meta.Object
 
@@ -87,8 +89,7 @@ class ReST (_Format_) :
 
     @classmethod
     def convert (cls, text) :
-        result = GTW.ReST.to_html (text, encoding = "utf8")
-        return result
+        return RST.to_html (text, encoding = "utf8")
     # end def convert
 
 # end class ReST

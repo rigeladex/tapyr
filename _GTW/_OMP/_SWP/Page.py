@@ -34,6 +34,7 @@
 #     5-Mar-2010 (CT) `author.Class` set to class `GTW.OMP.PAP.Person`
 #     5-Mar-2010 (CT) `Page.rank` defined, attribute `prio` added
 #     7-Mar-2010 (CT) s/title/short_title/; s/description/title/
+#    17-Mar-2010 (CT) `email_obfuscator` removed
 #    ««revision-date»»···
 #--
 
@@ -42,7 +43,6 @@ from   _MOM._Attr.Date_Interval import *
 
 from   _GTW                     import GTW
 
-import _GTW.HTML
 import _GTW._OMP._PAP.Person
 import _GTW._OMP._SWP.Entity
 from   _GTW._OMP._SWP.Format    import A_Format
@@ -50,8 +50,6 @@ from   _GTW._OMP._SWP.Format    import A_Format
 from   _TFL.I18N                import _, _T, _Tn
 
 import datetime
-
-email_obfuscator = GTW.HTML.obfuscator ("mailto")
 
 _Ancestor_Essence = GTW.OMP.SWP.Object
 
@@ -91,7 +89,7 @@ class Page (_Ancestor_Essence) :
             auto_up_depends    = ("format", "text")
 
             def computed (self, obj) :
-                return email_obfuscator (obj.format.convert (obj.text))
+                return obj.format.convert (obj.text)
             # end def computed
 
         # end class contents

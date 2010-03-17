@@ -41,6 +41,8 @@
 {%- endmacro -%} {#- cols -#}
 
 {%- macro head (cal) -%}
+  {#- Empty `tr` element would be invalid HTML, empty `th` is valid -#}
+  <th colspan="9"></th>
 {%- endmacro -%} {#- head -#}
 
 {%- macro week_day (cal, week, day) -%}

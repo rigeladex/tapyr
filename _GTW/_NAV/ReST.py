@@ -162,16 +162,19 @@
 #    25-Jan-2010 (CT) `GTW.ReST.to_html` factored
 #    17-Feb-2010 (CT) `email_obfuscator` added
 #     2-Mar-2010 (CT) Use `Sorted_By` and added `rank` to `sort_key`
+#    17-Mar-2010 (CT) Use `ReST.to_html` instead of `GTW.ReST.to_html`
 #    ««revision-date»»···
 #--
 
 from   __future__               import with_statement
 
 from   _GTW                     import GTW
+from   _ReST                    import ReST
 from   _TFL                     import TFL
 
 import _GTW._NAV.Base
-import _GTW.ReST
+
+import _ReST.To_Html
 
 import _TFL.Sorted_By
 
@@ -193,21 +196,13 @@ class Page_ReST (GTW.NAV.Page) :
 
     @Once_Property
     def contents (self) :
-        result = GTW.ReST.to_html \
+        result = ReST.to_html \
             ( self.src_contents
             , encoding = self.encoding
             , language = split_hst (getattr (self, "language", "en"), "_") [0]
             )
-        if self.obfuscate_emails :
-            result = self.email_obfuscator (result)
         return result
     # end def contents
-
-    @Once_Property
-    def email_obfuscator (self) :
-        from _GTW.HTML import obfuscator
-        return obfuscator ("mailto")
-    # end def email_obfuscator
 
 # end class Page_ReST
 
