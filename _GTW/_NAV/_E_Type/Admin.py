@@ -49,6 +49,7 @@
 #                     Parameters of childs renamed (lid -> args)
 #    26-Feb-2010 (MG) Completion handling changed
 #    15-Mar-2010 (CT) `kind_name` removed
+#    17-Mar-2010 (CT) `GTW.NAV.E_Type.Mixin` factored
 #    ««revision-date»»···
 #--
 
@@ -75,7 +76,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     template    = "e_type_admin"
 
-    class _Cmd_ (GTW.NAV.Page) :
+    class _Cmd_ (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
         implicit          = True
         SUPPORTED_METHODS = set (("GET", "POST"))
@@ -102,9 +103,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             req_data = request.req_data
             lid      = req_data.get ("lid") or self.args [0]
             if lid is not None :
-                pid  = ETM.pid_from_lid (lid)
                 try :
-                    obj = ETM.pid_query (pid)
+                    obj = self.lid_query (ETM, lid)
                 except LookupError :
                     request.Error = \
                         ( _T ("%s `%s` doesn't exist!")
@@ -190,9 +190,8 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
             HTTP = self.top.HTTP
             lid  = self.args [0]
             ETM  = self.ETM
-            pid  = ETM.pid_from_lid (lid)
             try :
-                obj = ETM.pid_query (pid)
+                obj = self.lid_query (ETM, lid)
             except LookupError :
                 request.Error = \
                     (_T ("%s `%s` doesn't exist!") % (_T (E_Type.ui_name), lid))

@@ -28,6 +28,7 @@
 ##
 ## Revision Dates
 ##    29-Dec-2009 (CT) Creation
+##    17-Mar-2010 (CT) `rel="canonical"` for `permalink` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -37,6 +38,9 @@
   {%- call X.head () -%}
     {%- block head_elements -%}
       <meta http-equiv="Content-Type" content="text/html; charset={{ page.encoding|default ("iso-8859-15") }}" />
+      {%- if page.permalink %}
+        <link rel="canonical" href="{{- page.site_url -}}{{- page.permalink -}}"/>
+      {% endif -%}
       {% block head_base_element %}{% endblock head_base_element %}
         {% block title %}
           <title>{{ GTW.firstof (page.h_title, page.title, page.h_ref) }}</title>

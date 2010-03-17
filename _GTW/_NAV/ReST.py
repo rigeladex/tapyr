@@ -163,6 +163,10 @@
 #    17-Feb-2010 (CT) `email_obfuscator` added
 #     2-Mar-2010 (CT) Use `Sorted_By` and added `rank` to `sort_key`
 #    17-Mar-2010 (CT) Use `ReST.to_html` instead of `GTW.ReST.to_html`
+#    17-Mar-2010 (CT) `Dyn_Slice_ReST_Dir._read_entries` changed to take
+#                     `name` from `info` if defined there
+#    17-Mar-2010 (CT) `Page_ReST_F.src_contents` changed to tolerate missing
+#                     source files (HTTP error 404 is way better than 500 :-)
 #    ««revision-date»»···
 #--
 
@@ -196,12 +200,15 @@ class Page_ReST (GTW.NAV.Page) :
 
     @Once_Property
     def contents (self) :
-        result = ReST.to_html \
-            ( self.src_contents
-            , encoding = self.encoding
-            , language = split_hst (getattr (self, "language", "en"), "_") [0]
-            )
-        return result
+        src = self.src_contents
+        if src is not None :
+            result = ReST.to_html \
+                ( src
+                , encoding = self.encoding
+                , language = split_hst
+                    (getattr (self, "language", "en"), "_") [0]
+                )
+            return result
     # end def contents
 
 # end class Page_ReST
@@ -213,14 +220,18 @@ class Page_ReST_F (Page_ReST) :
 
     @Once_Property
     def src_contents (self) :
-        with open (self.src_path, "rb") as f :
-            result = f.read ()
-        return unicode (result.strip (), self.input_encoding, "replace")
+        src_path = self.src_path
+        if sos.path.exists (src_path) :
+            with open (src_path, "rb") as f :
+                result = f.read ()
+            return unicode (result.strip (), self.input_encoding, "replace")
     # end def src_contents
 
     @Once_Property
     def src_path (self) :
-        return pjoin (self.src_root, self.file_stem + self.src_extension)
+        return pjoin (self.src_dir, self.file_stem + self.src_extension)
+        ### XXX 17-Mar-2010 used to be::
+        return pjoin (self.src_path, self.file_stem + self.src_extension)
     # end def src_path
 
 # end class Page_ReST_F
@@ -278,7 +289,8 @@ class Dyn_Slice_ReST_Dir (GTW.NAV._Site_Entity_) :
         for f in files :
             info = self._page_info (f)
             if info :
-                info ["perma_name"] = base = Filename (f).base
+                n = info.get ("name", f)
+                info ["perma_name"] = base = Filename (n).base
                 info ["name"]       = name = "%s.html" % (base, )
                 add (Page_Type (parent = parent, ** info))
         entries.sort (key = sort_key)

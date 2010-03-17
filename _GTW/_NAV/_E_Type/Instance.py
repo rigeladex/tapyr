@@ -31,6 +31,8 @@
 #    25-Jan-2010 (CT) `rendered` changed to take `handler` instead of `context`
 #     5-Mar-2010 (CT) `__init__` fixed
 #     5-Mar-2010 (CT) `attr_mapper` and `__getattr__` using it added
+#    17-Mar-2010 (CT) `permalink` added
+#    17-Mar-2010 (CT) `GTW.NAV.E_Type.Mixin` added as ancestor
 #    ««revision-date»»···
 #--
 
@@ -39,14 +41,16 @@ from   _TFL                     import TFL
 
 import _GTW.FO
 import _GTW._NAV.Base
-import _GTW._NAV._E_Type
+import _GTW._NAV._E_Type.Mixin
 
 import _TFL._Meta.Object
 from   _TFL._Meta.Once_Property import Once_Property
 
 from   _TFL.I18N                import _, _T, _Tn
 
-class Instance (GTW.NAV.Page) :
+from   posixpath                import join  as pjoin
+
+class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     """Navigation page modelling a single instance of a E_Type."""
 
     attr_mapper     = None
@@ -97,6 +101,11 @@ class Instance (GTW.NAV.Page) :
         if admin :
             return admin.href_delete (self.obj)
     # end def href
+
+    @Once_Property
+    def permalink (self) :
+        return pjoin (self.parent.abs_href, self.obj.perma_name)
+    # end def permalink
 
     def rendered (self, handler, template = None) :
         with self.LET (FO = GTW.FO (self.obj, self.top.encoding)) :

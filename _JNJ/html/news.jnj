@@ -30,6 +30,7 @@
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
 ##    26-Feb-2010 (CT) Added some `{#--#}` to avoid spurious whitespace
+##    17-Mar-2010 (CT) `permalink` added
 ##    ««revision-date»»···
 ##--
 #}
@@ -39,7 +40,16 @@
     <div class="news-meta">
       <span class="news-author">{{ e.author }}</span>{#--#}
       <span class="news-date">{{ e.date }}</span>{#--#}
-      <div  class="news-title">{{ GTW.firstof (e.desc, e.title) }}</div>
+      <div  class="news-title">
+        {%- onion e.permalink %}
+          {%- head -%}
+            <a href="{{ e.permalink }}" title="{{ GTW._T ("Permanent link") }}">
+          {%- body -%}
+            {{- GTW.firstof (e.desc, e.title) -}}
+          {%- tail -%}
+            </a>
+          {%- endonion -%}
+      </div>
     </div>
     {{ e.contents|safe }}
     {%- if e.changer and NAV.allow (e.changer, request.user) %}

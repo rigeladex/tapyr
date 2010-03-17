@@ -31,6 +31,7 @@
 #     5-Mar-2010 (CT) `Manager.__init__` corrected
 #     5-Mar-2010 (CT) `attr_mapper` and `__getattr__` using it added
 #    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
+#    17-Mar-2010 (CT) `_get_child` added
 #    ««revision-date»»···
 #--
 
@@ -43,6 +44,7 @@ import _GTW._NAV._E_Type.Instance
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
+from   _TFL.predicate           import first
 
 from   posixpath                import join  as pjoin
 
@@ -87,6 +89,21 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
             result.append (self.disp_filter)
         return tuple (result)
     # end def query_filters
+
+    def _get_child (self, child, * grandchildren) :
+        if not grandchildren :
+            try :
+                obj = self.ETM.query (perma_name = child).one ()
+            except Exception :
+                try :
+                    obj = self.lid_query (ETM, lid)
+                except LookupError :
+                    return
+            try :
+                return first (e for e in self._entries if e.obj == obj)
+            except LookupError :
+                return
+    # end def _get_child
 
     def __getattr__ (self, name) :
         if self.attr_mapper :

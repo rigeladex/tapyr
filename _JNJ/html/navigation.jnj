@@ -53,9 +53,14 @@
 
 {%- macro entry (link, level) -%}
   {% if NAV.permissive or NAV.allow (link, request.user) %}
+    {%- if link.permalink %}
+      {%- set href = "".join ((link.site_url, link.permalink)) %}
+    {%- else %}
+      {%- set href = "".join ((link.site_prefix or "/", link.href)) %}
+    {% endif -%}
     {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
-        <a href="{{ link.site_prefix }}{{ link.href }}"
+        <a href="{{ href }}"
                {%- if link.desc %}title="{{ link.desc }}"{% endif %}
                class="current-section"
             >{{ link.title|safe }}</a>
@@ -67,7 +72,7 @@
       {%- else -%}
         {%- if link.href -%}
           <li class="nav-link level-{{ level }}">
-            <a href="{{ link.site_prefix }}{{ link.href }}"
+            <a href="{{ href }}"
                {%- if link.desc %} title="{{ link.desc }}"{% endif -%}
             >{{ link.title|safe }}</a>
           </li>
@@ -196,6 +201,7 @@
           <p>Template: {{ link.template }}</p>
           <p>Type: {{ link.Type }}</p>
           <p>Target: {{ link.target.href }}</p>
+          <p>Permalink: {{ link.permalink }}</p>
           {% if link.photos %}
             <ul >
               {{ sitemap_entry (link.photos [0], TEST) }}

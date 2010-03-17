@@ -29,6 +29,7 @@
 #    20-Jan-2010 (CT) Creation
 #     5-Mar-2010 (CT) `page_args` added
 #    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
+#    17-Mar-2010 (CT) Derived from `GTW.NAV.E_Type.Mixin`
 #    ««revision-date»»···
 #--
 
@@ -36,19 +37,17 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 
 import _GTW._NAV.Base
-import _GTW._NAV._E_Type
+import _GTW._NAV._E_Type.Mixin
 
-import _TFL._Meta.Object
 import _TFL.Filter
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
 from   _TFL.predicate           import filtered_join
 
-class _Mgr_Base_ (TFL.Meta.Object) :
+class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
     """Common base class for Admin and Manager of GTW.NAV.E_Type."""
 
-    Q               = TFL.Attr_Query ()
     page_args       = {}
     sort_key        = None
 

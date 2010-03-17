@@ -203,6 +203,8 @@
 #                     handler if result is not `True`
 #     2-Mar-2010 (CT) `rank` added
 #    15-Mar-2010 (CT) `obj_href` added
+#    17-Mar-2010 (CT) `from_nav_list_file` changed to accept missing
+#                     `navigation.list` gracefully
 #    ««revision-date»»···
 #--
 
@@ -633,12 +635,14 @@ class _Dir_ (_Site_Entity_) :
         """Return a new `Dir` filled with information read from the file
            `navigation.list` in `src_dir`.
         """
-        context = {}
-        nl      = pjoin (src_dir, "navigation.list")
-        result  = cls   (src_dir, parent = parent, ** kw)
-        execfile        (nl, GTW.NAV.__dict__, context)
-        result.add_entries \
-            (context ["own_links"], Dir_Type = Dir.from_nav_list_file)
+        context       = {}
+        nl            = pjoin  (src_dir, "navigation.list")
+        result        = cls    (src_dir, parent = parent, ** kw)
+        if sos.path.exists (nl) :
+            with open (nl) as f :
+                exec (f, GTW.NAV.__dict__, context)
+            result.add_entries \
+                (context ["own_links"], Dir_Type = Dir.from_nav_list_file)
         return result
     # end def from_nav_list_file
 
@@ -790,7 +794,6 @@ class Root (_Dir_) :
     email                   = None   ### default from address
     empty_template          = None
     name                    = "/"
-    obfuscate_emails        = False
     owner                   = None
     scope                   = None
     smtp                    = None
