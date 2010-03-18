@@ -153,6 +153,12 @@ class Manager_T (Manager) :
         return tuple (result)
     # end def query_filters
 
+    def _get_entries (self) :
+        result = self.__super._get_entries ()
+        ### XXX add chidlren for archive
+        return result
+    # end def _get_entries
+
 # end class Manager_T
 
 if __name__ != "__main__" :

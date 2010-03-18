@@ -99,7 +99,7 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
         return self._objects
     # end def _get_entries
 
-    _entries = property (_get_entries, lambda s, v : True)
+    _entries = property (lambda s : s._get_entries (), lambda s, v : True)
 
     def _get_objects (self) :
         T = self.Page
