@@ -139,8 +139,11 @@ class Manager_T (Manager) :
     query_limit       = 7
 
     def query (self) :
-        result = self.ETM.query (* self.query_filters, sort_key = Q.date.start)
-        return result.order_by.limit (self.query_limit)
+        result = self.ETM.query \
+            ( * self.query_filters
+            , sort_key =  TFL.Sorted_By ("-date.start", "-prio", "perma_name")
+            )
+        return result.limit (self.query_limit)
     # end def query
 
     @Once_Property
