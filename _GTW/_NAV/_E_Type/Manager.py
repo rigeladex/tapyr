@@ -32,6 +32,7 @@
 #     5-Mar-2010 (CT) `attr_mapper` and `__getattr__` using it added
 #    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
 #    17-Mar-2010 (CT) `_get_child` added
+#    18-Mar-2010 (CT) `page_from_obj` added (and used in `_get_child`)
 #    ««revision-date»»···
 #--
 
@@ -82,6 +83,14 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
         return pjoin (self.abs_href, obj.lid)
     # end def href_display
 
+    def page_from_obj (self, obj) :
+        href   = self.href_display  (obj)
+        result = self.top.Table.get (href)
+        if result is None :
+            result = self.Page (self, obj, ** self.page_args)
+        return result
+    # end def page_from_obj
+
     @Once_Property
     def query_filters (self) :
         result = []
@@ -96,13 +105,10 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
                 obj = self.ETM.query (perma_name = child).one ()
             except Exception :
                 try :
-                    obj = self.lid_query (ETM, lid)
+                    obj = self.lid_query (self.ETM, child)
                 except LookupError :
                     return
-            try :
-                return first (e for e in self._entries if e.obj == obj)
-            except LookupError :
-                return
+            return self.page_from_obj (obj)
     # end def _get_child
 
     def __getattr__ (self, name) :

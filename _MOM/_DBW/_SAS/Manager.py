@@ -43,6 +43,8 @@
 #     5-Mar-2010 (CT) Pass `convert_unicode` to `types.String`
 #    16-Mar-2010 (CT) s/_replace_a_object_pickle_functions/_setup_attr_kind_mixin/
 #    16-Mar-2010 (CT) `_attr_dicts` changed to consider `Pickle_Mixin`
+#    18-Mar-2010 (CT) `_attr_dicts` changed to consider `Pickle_Mixin` for
+#                     attributes saved to the database
 #    ««revision-date»»···
 #--
 
@@ -106,18 +108,18 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
         for name, attr_kind in attr_dict.iteritems () :
             if name not in inherited_attrs :
                 attr = attr_kind.attr
-                Pickle_Kind = getattr (attr.Pickler, "Pickle_Mixin", None)
-                if isinstance (attr, MOM.Attr._A_Object_) :
-                    ### the default way of `pickling` object references would be
-                    ### storing the epk which is not perfect for a database.
-                    ### Therefore we replace the `set/get_pickle_cargo`
-                    ### functions
-                    Pickle_Kind = SAS_A_Object_Kind_Mixin
-                if Pickle_Kind :
-                    cls._setup_attr_kind_mixin (attr_kind, Pickle_Kind)
-                if (  attr_kind.save_to_db
-                   or isinstance (attr_kind, MOM.Attr.Query)
-                   ) :
+                db_attr_p = attr_kind.save_to_db
+                if db_attr_p :
+                    Pickle_Kind = getattr (attr.Pickler, "Pickle_Mixin", None)
+                    if isinstance (attr, MOM.Attr._A_Object_) :
+                        ### The default way of `pickling` object references
+                        ### would be storing the epk which is not perfect for
+                        ### a database. Therefore we replace the
+                        ### `set/get_pickle_cargo` functions
+                        Pickle_Kind = SAS_A_Object_Kind_Mixin
+                    if Pickle_Kind :
+                        cls._setup_attr_kind_mixin (attr_kind, Pickle_Kind)
+                if db_attr_p or isinstance (attr_kind, MOM.Attr.Query) :
                     db_attrs [name] = attr_kind
                 elif isinstance \
                          ( attr_kind

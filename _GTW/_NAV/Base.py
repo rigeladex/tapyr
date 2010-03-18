@@ -205,6 +205,8 @@
 #    15-Mar-2010 (CT) `obj_href` added
 #    17-Mar-2010 (CT) `from_nav_list_file` changed to accept missing
 #                     `navigation.list` gracefully
+#    18-Mar-2010 (CT) `_Meta_.__call__` changed to put `permalink` into `Table`
+#    18-Mar-2010 (CT) `etype_manager` factored and `page_from_obj` added
 #    ««revision-date»»···
 #--
 
@@ -238,6 +240,13 @@ class _Meta_ (TFL.Meta.M_Class) :
             top  = result.top
             if href is not None :
                 top.Table [href] = result
+                try :
+                    perma = result.permalink.lstrip ("/")
+                except Exception :
+                    pass
+                else :
+                    if perma != href :
+                        top.Table [perma] = result
             if pid is not None :
                 setattr (top.SC, pid, result)
         return result
@@ -356,6 +365,12 @@ class _Site_Entity_ (TFL.Meta.Object) :
             )
     # end def dump
 
+    def etype_manager (self, obj) :
+        etn = getattr (obj, "type_name", None)
+        if etn :
+            return self.top.E_Types.get (etn)
+    # end def etype
+
     @Once_Property
     def file_stem (self) :
         return pnorm (pjoin (self.prefix, self.base))
@@ -405,12 +420,21 @@ class _Site_Entity_ (TFL.Meta.Object) :
     # end def nav_links
 
     def obj_href (self, obj) :
-        etn = getattr (obj, "type_name", None)
-        if etn :
-            man = self.top.E_Types.get (etn)
-            if man :
-                return man.href_display (obj)
+        man = self.etype_manager (obj)
+        if man :
+            return man.href_display (obj)
     # end def obj_href
+
+    def page_from_obj (self, obj) :
+        href = self.obj_href (obj)
+        if href :
+            top    = self.top
+            result = top.Table.get (href)
+            if result is None :
+                man = self.etype_manager (obj)
+                if man :
+                    return man.page_from_obj (obj)
+    # end def page_from_obj
 
     @Once_Property
     def permalink (self) :

@@ -48,6 +48,7 @@ from   _TFL.predicate           import filtered_join
 class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
     """Common base class for Admin and Manager of GTW.NAV.E_Type."""
 
+    objects         = property (lambda s : s._objects)
     page_args       = {}
     sort_key        = None
 

@@ -259,7 +259,7 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
 
     @Once_Property
     def manager (self) :
-        return self.top.E_Types.get (self.E_Type.type_name)
+        return self.etype_manager (self.E_Type)
     # end def manager
 
     @Once_Property
