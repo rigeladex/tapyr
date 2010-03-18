@@ -37,6 +37,8 @@
 #    25-Feb-2010 (MG) Bug on `Session._setup_columns` fixed (raw values where
 #                     not handled correctly)
 #    26-Feb-2010 (MG) `_setup_columns` fixed
+#    18-Mar-2010 (MG) `Session.delete`: delete link's before the actual object get's
+#                     deleted from the database
 #    ««revision-date»»···
 #--
 
@@ -310,7 +312,6 @@ class Session (TFL.Meta.Object) :
     def delete (self, entity) :
         self.flush                   ()
         self._id_map.pop             (entity.pid)
-        entity.__class__._SAS.delete (self, entity)
         execute = self.connection.execute
         link_map = getattr (entity.__class__, "link_map", {})
         for assoc, roles in link_map.iteritems () :
@@ -320,6 +321,7 @@ class Session (TFL.Meta.Object) :
                         (getattr (assoc._SAQ, role.attr.name) == entity.id)
                     ) :
                 self.instance_from_row (assoc, row).destroy ()
+        entity.__class__._SAS.delete (self, entity)
         entity.pid = None
         entity.id  = None
     # end def delete
