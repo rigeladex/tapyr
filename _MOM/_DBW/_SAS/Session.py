@@ -39,6 +39,8 @@
 #    26-Feb-2010 (MG) `_setup_columns` fixed
 #    18-Mar-2010 (MG) `Session.delete`: delete link's before the actual object get's
 #                     deleted from the database
+#    18-Mar-2010 (MG) `SAS_Interface.delete`: need to delete the entries in the tables
+#                     top-down
 #    ««revision-date»»···
 #--
 
@@ -94,10 +96,10 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def __init__
 
     def delete (self, session, entity) :
-        for b in self.bases :
-            b._SAS.delete (session, entity)
         session.connection.execute \
             (self.table.delete ().where (self.pk == entity.id))
+        for b in self.bases :
+            b._SAS.delete (session, entity)
     # end def delete
 
     def _gather_columns (self, e_type, columns, bases) :
