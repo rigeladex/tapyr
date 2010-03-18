@@ -33,6 +33,8 @@
 #    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
 #    17-Mar-2010 (CT) `_get_child` added
 #    18-Mar-2010 (CT) `page_from_obj` added (and used in `_get_child`)
+#    18-Mar-2010 (CT) `has_children` added
+#    18-Mar-2010 (CT) `Manager_T` begun
 #    ««revision-date»»···
 #--
 
@@ -42,6 +44,8 @@ from   _TFL                     import TFL
 import _GTW._NAV.Base
 import _GTW._NAV._E_Type._Mgr_Base_
 import _GTW._NAV._E_Type.Instance
+
+from   _MOM.import_MOM          import Q
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
@@ -73,6 +77,11 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
             return Admin._get_child (self.name)
     # end def admin
 
+    @property
+    def has_children (self) :
+        return self.count > 0
+    # end def has_children
+
     def href_create (self) :
         admin = self.admin
         if admin :
@@ -93,7 +102,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
 
     @Once_Property
     def query_filters (self) :
-        result = []
+        result = list (self.__super.query_filters)
         if self.disp_filter :
             result.append (self.disp_filter)
         return tuple (result)
@@ -121,6 +130,27 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     # end def __getattr__
 
 # end class Manager
+
+class Manager_T (Manager) :
+    """Navigation directory listing the recent instances of one E_Type, plus
+       an archive.
+    """
+
+    query_limit       = 7
+
+    def query (self) :
+        result = self.ETM.query (* self.query_filters, sort_key = Q.date.start)
+        return result.order_by.limit (self.query_limit)
+    # end def query
+
+    @Once_Property
+    def query_filters (self) :
+        result = list (self.__super.query_filters)
+        #result.append (Q.alive)
+        return tuple (result)
+    # end def query_filters
+
+# end class Manager_T
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")

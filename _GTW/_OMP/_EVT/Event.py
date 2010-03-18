@@ -159,7 +159,7 @@ class Event (_Ancestor_Essence) :
     def compute_occurrences (self) :
         scope = self.home_scope
         ETM   = self.home_scope ["GTW.OMP.EVT.Event_occurs"]
-        for o in self.occurs :
+        for o in list (self.occurs) :
             o.destroy ()
         for d in self.dates :
             ETM (self, date = d, time = self.time)
@@ -175,7 +175,7 @@ class Event (_Ancestor_Essence) :
 
 MOM.SCM.Change.Create.add_callback         (Event, Event._change_callback)
 MOM.SCM.Change.Attr.add_callback           (Event, Event._change_callback)
-MOM.SCM.Change.Attr_Composite.add_callback (Event, Event._change_callback)
+#MOM.SCM.Change.Attr_Composite.add_callback (Event, Event._change_callback)
 
 _Ancestor_Essence = GTW.OMP.EVT.Link1
 

@@ -207,6 +207,9 @@
 #                     `navigation.list` gracefully
 #    18-Mar-2010 (CT) `_Meta_.__call__` changed to put `permalink` into `Table`
 #    18-Mar-2010 (CT) `etype_manager` factored and `page_from_obj` added
+#    18-Mar-2010 (CT) `Alias.rendered` changed to update `handler.context`
+#                     with `nav_page = self` and `page = target`
+#    18-Mar-2010 (CT) `href` legacy handling removed from `_Dir_.new_page`
 #    ««revision-date»»···
 #--
 
@@ -613,7 +616,10 @@ class Alias (Page) :
     def rendered (self, handler, template = None) :
         target = self.target
         if target :
-            ### XXX ??? handler.context ["page"] = target
+            handler.context.update \
+                ( nav_page = self
+                , page     = target
+                )
             return target.rendered (handler, template)
     # end def rendered
 
@@ -748,12 +754,7 @@ class _Dir_ (_Site_Entity_) :
     # end def dump
 
     def new_page (self, ** kw) :
-        Type         = kw.pop ("Type", self.Page)
-        href         = kw.pop ("href", None)
-        if href is not None :
-            ### legacy lifting
-            assert not "name" in kw
-            kw ["name"] = href
+        Type   = kw.pop ("Type", self.Page)
         result = Type (parent = self, ** kw)
         return result
     # end def new_page
@@ -925,7 +926,7 @@ class Root (_Dir_) :
 
 # end class Root
 
-if __name__ != "__main__":
+if __name__ != "__main__" :
     GTW.NAV._Export \
         ( "*"
         , "_Meta_", "_Site_Entity_", "_Dir_"

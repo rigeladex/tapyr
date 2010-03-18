@@ -56,7 +56,7 @@ class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     attr_mapper     = None
 
     def __init__ (self, manager, obj, ** kw) :
-        name = getattr (obj, "name", str (obj.lid))
+        name = getattr (obj, "name", str (obj.perma_name))
         self.__super.__init__ \
             ( obj      = obj
             , manager  = manager
@@ -87,7 +87,8 @@ class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
 
     @property
     def h_title (self) :
-        return u"::".join ((self.name, self.parent.h_title))
+        return u"::".join \
+            ((self.obj.short_title or self.name, self.parent.h_title))
     # end def h_title
 
     def href_change (self) :

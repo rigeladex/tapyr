@@ -56,8 +56,6 @@ _Ancestor_Essence = GTW.OMP.SWP.Object
 class Page (_Ancestor_Essence) :
     """Model a static web page."""
 
-    rank = 10
-
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes

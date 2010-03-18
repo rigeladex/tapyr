@@ -276,7 +276,11 @@ class Store (TFL.Meta.Object) :
                 ### XXX Add legacy lifting
                 Type = scope.entity_type (tn)
                 if Type :
-                    scope.add (Type.from_pickle_cargo (scope, e_cargo))
+                    obj = Type.from_pickle_cargo (scope, e_cargo)
+                    if obj is not None :
+                        scope.add (obj)
+                    else :
+                        print "Couldn't restore %s from %s" % (tn, e_cargo)
     # end def _load_store
 
     @TFL.Contextmanager
