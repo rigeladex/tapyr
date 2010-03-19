@@ -33,6 +33,8 @@
 #     4-Mar-2010 (CT) `load_info` changed to allow existence of uncompressed
 #                     database
 #     4-Mar-2010 (CT) Classmethod `X_Uri` factored
+#    19-Mar-2010 (CT) `save_objects` and `_load_store` changed to
+#                     save/restore `pid`
 #    ««revision-date»»···
 #--
 
@@ -199,6 +201,7 @@ class Store (TFL.Meta.Object) :
         info  = self.info
         x_uri = self.x_uri
         with TFL.lock_file (x_uri.name) :
+            self.scope.db_errors = []
             for s in info.stores :
                 self._load_store   (TFL.Filename (s, x_uri).name)
             for (cid, name) in info.pending :
@@ -221,7 +224,7 @@ class Store (TFL.Meta.Object) :
                 Type   = scope [tn]
                 s_name = TFL.Filename (tn, self.x_uri)
                 cargo  = \
-                    [   (e.type_name, e.as_pickle_cargo ())
+                    [   (e.type_name, e.pid, e.as_pickle_cargo ())
                     for e in Type.query ().order_by (sk)
                     ]
                 with open (s_name.name, "wb") as file :
@@ -272,15 +275,20 @@ class Store (TFL.Meta.Object) :
         with open (s, "rb") as file :
             cargo   = pickle.load (file)
             scope   = self.scope
-            for tn, e_cargo in cargo :
+            for tn, pid, e_cargo in cargo :
                 ### XXX Add legacy lifting
                 Type = scope.entity_type (tn)
                 if Type :
-                    obj = Type.from_pickle_cargo (scope, e_cargo)
+                    try :
+                        obj = Type.from_pickle_cargo (scope, e_cargo)
+                    except Exception, exc :
+                        scope.db_errors.append ((tn, pid, e_cargo))
+                        print exc
+                        print "   ", tn, pid, e_cargo
                     if obj is not None :
-                        scope.add (obj)
+                        scope.ems.add (obj, id = pid)
                     else :
-                        print "Couldn't restore %s from %s" % (tn, e_cargo)
+                        print "Couldn't restore %s from %s" % (tn, pid, e_cargo)
     # end def _load_store
 
     @TFL.Contextmanager

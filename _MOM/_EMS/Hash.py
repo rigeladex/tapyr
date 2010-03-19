@@ -68,6 +68,7 @@
 #     8-Feb-2010 (CT) `_remove` factored; `remove` changed to set `pid` to None
 #     9-Feb-2010 (CT) `epk_to_hpk` changed to use `get_hash`
 #     3-Mar-2010 (CT) `rename` changed to allow rename to same `epk`
+#    19-Mar-2010 (CT) `_pid_map` added and `pid_query` redefined to use it
 #    ««revision-date»»···
 #--
 
@@ -102,8 +103,9 @@ class Manager (MOM.EMS._Manager_) :
         self.__super.__init__ (scope, db_uri)
         self._changes = {}
         self._counts  = TFL.defaultdict (int)
-        self._tables  = TFL.defaultdict (dict)
+        self._pid_map = {}
         self._r_map   = TFL.defaultdict (lambda : TFL.defaultdict (set))
+        self._tables  = TFL.defaultdict (dict)
         self.__cid    = 0
         self.__pid    = 0
     # end def __init__
@@ -120,15 +122,18 @@ class Manager (MOM.EMS._Manager_) :
         if id is None :
             self.__pid += 1
             id = self.__pid
-        entity.pid                = id
+        entity.pid = id
         count [entity.type_name] += 1
-        table [hpk]               = entity
+        table [hpk] = self._pid_map [id] = entity
         if entity.Roles :
             r_map = self._r_map
             for r in entity.Roles :
                 obj = r.get_role (entity)
-                obj.register_dependency (entity.__class__)
-                r_map [r] [obj.pid].add (entity)
+                if obj is None :
+                    print entity.type_name, entity, "role", r, "is_empty"
+                else :
+                    obj.register_dependency (entity.__class__)
+                    r_map [r] [obj.pid].add (entity)
     # end def add
 
     def all_links (self, obj_id) :
@@ -217,6 +222,16 @@ class Manager (MOM.EMS._Manager_) :
             raise
     # end def pid_from_lid
 
+    def pid_query (self, pid, Type) :
+        result = self._pid_map [pid]
+        if not isinstance (result, Type.Essence) :
+            raise LookupError \
+                ( "Pid `%s` is instance of type %s, not of type `%s`"
+                % (pid, result.type_name, Type.type_name)
+                )
+        return result
+    # end def pid_query
+
     def register_change (self, change) :
         self.__cid += 1
         change.cid  = cid = self.__cid
@@ -227,6 +242,7 @@ class Manager (MOM.EMS._Manager_) :
 
     def remove (self, entity) :
         self._remove (entity)
+        del self._pid_map [entity.pid]
         entity.pid = None
     # end def remove
 

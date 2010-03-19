@@ -149,15 +149,16 @@ class Manager_T (Manager) :
     @Once_Property
     def query_filters (self) :
         result = list (self.__super.query_filters)
-        #result.append (Q.alive)
+        ### XXX Doesn't seem this work XXX
+        result.append (Q.alive)
         return tuple (result)
     # end def query_filters
 
-    def _get_entries (self) :
-        result = self.__super._get_entries ()
+    def _get_objects (self) :
+        result = self.__super._get_objects ()
         ### XXX add chidlren for archive
         return result
-    # end def _get_entries
+    # end def _get_objects
 
 # end class Manager_T
 

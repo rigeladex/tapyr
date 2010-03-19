@@ -119,7 +119,6 @@
 #    11-Mar-2010 (CT) `An_Entity.set` and `.set_raw` changed to handle changes
 #                     of primary composite attributes properly (rename!)
 #    15-Mar-2010 (CT) Exception handler added to `epk_as_code`
-#    18-Mar-2010 (CT) `as_pickle_cargo_epk` and `from_pickle_cargo_epk` added
 #    ««revision-date»»···
 #--
 
@@ -848,24 +847,6 @@ class Id_Entity (Entity) :
               if v not in (None, "")
             )
     # end def ui_display_format
-
-    @classmethod
-    def from_pickle_cargo_epk (cls, scope, cargo) :
-        attr_get = cls.attributes.get
-        kw       = {}
-        for k, v in cargo.iteritems () :
-            attr = attr_get (k)
-            ### XXX Add legacy lifting
-            if attr :
-                kw [k] = attr.from_pickle_cargo_epk (scope, v)
-        ETM = scope [cls.type_name]
-        return ETM.instance (** kw)
-    # end def from_pickle_cargo_epk
-
-    def as_pickle_cargo_epk (self) :
-        return dict \
-            ((a.name, a.get_pickle_cargo_epk (self)) for a in self.primary)
-    # end def as_pickle_cargo_epk
 
     def async_changes (self, * filter, ** kw) :
         result = self.home_scope.async_changes (pid = self.pid)
