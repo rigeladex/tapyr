@@ -53,6 +53,8 @@ from   _TFL.predicate           import first
 
 from   posixpath                import join  as pjoin
 
+import datetime
+
 class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     """Navigation directory listing the instances of one E_Type."""
 
@@ -138,6 +140,14 @@ class Manager_T (Manager) :
 
     query_limit       = 7
 
+    class _Cmd_ (GTW.NAV.Dir) :
+        pass
+    # end class _Cmd_
+
+    class Year (_Cmd_) :
+        pass
+    # end class Year
+
     def query (self) :
         result = self.ETM.query \
             ( * self.query_filters
@@ -154,8 +164,25 @@ class Manager_T (Manager) :
     # end def query_filters
 
     def _get_objects (self) :
-        result = self.__super._get_objects ()
-        ### XXX add chidlren for archive
+        T = self.Page
+        kw = self.page_args
+        sk = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
+        qr = self.ETM.query (sort_key = sk)
+        cy = datetime.date.today ().year
+        result = \
+            [   T (self, o, ** kw)
+            for o in qr.filter (Q.date.alive).limit (self.query_limit)
+            ]
+        for y in xrange (cy, cy - 6, -1) :
+            qy = qr.filter \
+                ( (Q.date.start >= datetime.date (y,  1,  1))
+                , (Q.date.start <= datetime.date (y, 12, 31))
+                )
+            if qy.count () :
+                ### XXX lazy
+                Y = self.Year (self, year = y, name = str (year))
+                Y._entries = [T (Y, o, ** kw) for o in qy]
+                result.append (Y)
         return result
     # end def _get_objects
 
