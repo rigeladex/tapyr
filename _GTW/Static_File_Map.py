@@ -28,6 +28,8 @@
 # Revision Dates
 #    22-Feb-2010 (MG) Creation
 #    23-Feb-2010 (CT) s/exists/get/; Instance `static_file_map` added
+#    19-Mar-2010 (CT) `get` changed to use slicing instead of `replace` and
+#                     to support directories
 #    ««revision-date»»···
 #--
 
@@ -49,13 +51,22 @@ class Static_File_Map (TFL.Meta.Object) :
     # end def __init__
 
     def get (self, path) :
-        if not path.startswith (self.prefix) :
-            return None
-        abspath = os.path.abspath \
-            (os.path.join (self.directory, path.replace (self.prefix, "")))
-        if os.path.isfile (abspath) :
-            return abspath
+        prefix = self.prefix
+        if (not prefix) or path.startswith (prefix) :
+            path = path [len (prefix): ]
+            result = os.path.abspath (os.path.join (self.directory, path))
+            if os.path.isfile (result) :
+                return result
+            elif os.path.isdir (result) :
+                result = os.path.join (result, "index.html")
+                if os.path.isfile (result) :
+                    return result
     # end def get
+
+    def __repr__ (self) :
+        return "<%s: %r --> %s>" % \
+            (self.__class__.__name__, self.prefix, self.directory)
+    # end def __repr__
 
 # end class Static_File_Map
 

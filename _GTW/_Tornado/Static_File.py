@@ -34,6 +34,7 @@
 #    23-Feb-2010 (CT) `block_size` fixed and moved into class scope
 #    23-Feb-2010 (MG) `_get`: call `self.flush` do really send the data over
 #                     the line
+#    19-Mar-2010 (CT) `Static_File_Handler` changed to support empty `prefix`
 #    ««revision-date»»···
 #--
 
@@ -121,7 +122,8 @@ class _Static_File_Handler_ (web.RequestHandler) :
 def Static_File_Handler (prefix, app_dir, * static_maps) :
     maps   = [GTW.Static_File_Map ("", os.path.abspath (app_dir))]
     maps.extend (static_maps)
-    return ("/%s/(.*)" % (prefix, ), _Static_File_Handler_, dict (maps = maps))
+    pattern = "/%s/(.*)" % (prefix, ) if prefix else "/(.*)"
+    return (pattern, _Static_File_Handler_, dict (maps = maps))
 # end def Static_File_Handler
 
 if __name__ != "__main__" :
