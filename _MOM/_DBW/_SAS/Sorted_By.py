@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Martin Glück. All rights reserved
+# Copyright (C) 2009-2010 Martin Glück. All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -36,6 +36,7 @@
 #                     expression caching (to avoid reuse of the worng sorting
 #                     cache)
 #    18-Dec-2009 (MG) `_sa_order_by` for `TFL.Q_Exp.*` added
+#    19-Mar-2010 (MG) `_sa_resolve_attribute` fixed
 #    ««revision-date»»···
 #--
 
@@ -194,8 +195,10 @@ def _sa_resolve_attribute (self, table, c, joins, order_clause) :
     parts     = c.split (".", 1)
     attr_name = parts [0]
     if len (parts) > 1 :
-        e_type = getattr           (table, attr_name).Class
-        joins.add                  (e_type)
+        if attr_name [0] == "-" :
+            attr_name = attr_name [1:]
+            parts [1] = "-" + parts [1]
+        e_type = getattr           (table, attr_name)
         self._sa_resolve_attribute (e_type, parts [1], joins, order_clause)
     else :
         attr_name = Attr_Map.get (attr_name, attr_name)

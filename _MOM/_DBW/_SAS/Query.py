@@ -64,6 +64,7 @@ class MOM_Query (TFL.Meta.Object) :
     def __init__ (self, e_type, sa_table, db_attrs, bases) :
         e_type._SAQ        = self
         self._E_TYPE       = e_type, bases
+        self._SA_TABLE     = sa_table
         columns            = sa_table.columns
         self.id            = columns [e_type._sa_pk_name]
         self._ATTRIBUTES   = []
@@ -119,6 +120,7 @@ class MOM_Composite_Query (TFL.Meta.Object) :
 
     def __init__ (self, e_type, attr_name) :
         setattr (e_type, "_SAQ_%s" % (attr_name, ), self)
+        self._E_TYPE              = e_type
         db_attrs, columns, prefix = e_type._sa_save_attrs
         prefix_len                = len (prefix)
         attr_names                = [c.name [prefix_len:] for c in columns]

@@ -1711,7 +1711,8 @@ Changing a composite primary attribute
 
     >>> osm.sick_leave.set_raw (start = "2010/03/01")
     1
-    >>> Ris.instance (* old_epk)
+    >>> print Ris.instance (* old_epk)
+    None
     >>> osm.epk
     (BMT.Mouse (u'Sick_Rodent'), MOM.Date_Interval (start = 2010/03/01))
     >>> Ris.instance (* osm.epk)

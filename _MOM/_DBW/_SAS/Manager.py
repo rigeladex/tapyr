@@ -45,6 +45,7 @@
 #    16-Mar-2010 (CT) `_attr_dicts` changed to consider `Pickle_Mixin`
 #    18-Mar-2010 (CT) `_attr_dicts` changed to consider `Pickle_Mixin` for
 #                     attributes saved to the database
+#    19-Mar-2010 (MG) `delete_database` fixed for sqlite
 #    ««revision-date»»···
 #--
 
@@ -174,8 +175,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             if db_uri.startswith ("sqlite://") :
                 ### sqlite database are just a file
                 from _TFL import sos
-                if sos.path.exists (db_uri) :
-                    sos.unlink     (db_uri)
+                if sos.path.exists (db_name) :
+                    sos.unlink     (db_name)
             elif db_uri.startswith ("postgresql://") :
                 conn, engine = cls._create_postgres_connection (db_uri)
                 try :

@@ -43,29 +43,21 @@ apt  = MOM.App_Type (u"BMT",  BMT).Derived (EMS,   DBW)
 #hapt = MOM.App_Type (u"HBMT", BMT).Derived (HEMS, HDBW)
 
 scope = MOM.Scope.new (apt, "sqlite:///:memory:")
+Ris   = scope.BMT.Rodent_is_sick
 #scope = MOM.Scope.new (apt, "sqlite:///test.sqlite")
-m     = scope.BMT.Mouse   ("mouse")
-r     = scope.BMT.Rat     ("rat")
-t1   = scope.BMT.Trap     ("X", 1)
-t2   = scope.BMT.Trap     ("X", 2)
-
-#rit = scope.BMT.Rodent_in_Trap (m, t1)
-ris = scope.BMT.Rodent_is_sick \
-    (m, scope.MOM.Date_Interval (start = "20100218", raw = True))
-scope.commit ()
-print scope.BMT.Rodent_is_sick.query \
-    (sick_leave = scope.MOM.Date_Interval (start = "20100218", raw = True)).all ()
-#scope.BMT.Rodent_in_Trap (r, ("X", 2))
 if 0 :
-    c1 = MOM.SCM.Change.Attr (m, dict (color = "gray"))
-    c2 = MOM.SCM.Change.Attr (m, dict (weight = "20"))
-    c1.add_change (c2)
-    scope.ems.register_change (c2)
-    scope.ems.register_change (c1)
+    m     = scope.BMT.Mouse   ("mouse")
+    r     = scope.BMT.Rat     ("rat")
+    t1   = scope.BMT.Trap     ("X", 1)
+    t2   = scope.BMT.Trap     ("X", 2)
 
-    #print scope.BMT.Rodent_in_Trap.query ().all ()
-    csk = TFL.Sorted_By (Q.parent != None, Q.cid)
-    for c in m.changes ().order_by (csk) : print c
-#scope.commit ()
-#m.destroy    ()
+sr = scope.BMT.Mouse ("Sick_Rodent")
+osm = Ris (sr, scope.MOM.Date_Interval (start = "20100218", raw = True))
+osm.fever = 42
+
+old_epk = osm.epk
+print Ris.instance (* old_epk)
+osm.sick_leave.set_raw (start = "2010/03/01")
+print Ris.instance (* old_epk)
+
 ### __END__ MOM.DWB.SAS__Test

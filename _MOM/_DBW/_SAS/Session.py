@@ -41,6 +41,7 @@
 #                     deleted from the database
 #    18-Mar-2010 (MG) `SAS_Interface.delete`: need to delete the entries in the tables
 #                     top-down
+#    19-Mar-2010 (MG) Bug in `value_dict` fixed and streamlined
 #    ««revision-date»»···
 #--
 
@@ -140,7 +141,7 @@ class SAS_Interface (TFL.Meta.Object) :
                 if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                     comp_cargo = TFL.defaultdict (list)
                     self._reconstruct (session, columns, comp_cargo, row)
-                    pickle_cargo [kind.attr.name] = comp_cargo
+                    pickle_cargo [kind.attr.name] = (comp_cargo, )
                 else :
                     for column in columns :
                         pickle_cargo [kind.attr.name].append (row [column])
@@ -209,30 +210,26 @@ class SAS_Interface (TFL.Meta.Object) :
 
     def value_dict ( self, entity
                    , e_type         = None
-                   , defaults       = {}
+                   , defaults       = None
                    , attrs          = None
-                   , e_type_columns = None
+                   , columns        = None
                    ) :
-        if e_type_columns is None :
-            e_type_columns = self.e_type_columns
-        result = defaults.copy ()
-        for kind, columns in e_type_columns [e_type].iteritems () :
-            attr = kind.attr
+        if columns is None :
+            columns = self.e_type_columns [e_type]
+        result      = defaults or {}
+        for attr_name in attrs or [kind.attr.name for kind in columns] :
+            kind = getattr (e_type, attr_name, Type_Name)
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 result.update \
                     ( self.value_dict
-                        ( getattr (entity, attr.name)
-                        , e_type
-                        , attrs          = attrs
-                        , e_type_columns = columns
+                        ( getattr (entity, attr_name)
+                        , kind.C_Type
+                        , columns = columns [kind] [e_type]
                         )
                     )
-            elif (   not attrs
-                 or (attr.name                              in attrs)
-                 or (getattr (attr, "role_name", attr.name) in attrs)
-                 ) :
+            else :
                 for column, value in zip \
-                    (columns, kind.get_pickle_cargo (entity)) :
+                    (columns [kind], kind.get_pickle_cargo (entity)) :
                     result [column.name] = value
         return result
     # end def value_dict
