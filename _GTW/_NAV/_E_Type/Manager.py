@@ -35,6 +35,7 @@
 #    18-Mar-2010 (CT) `page_from_obj` added (and used in `_get_child`)
 #    18-Mar-2010 (CT) `has_children` added
 #    18-Mar-2010 (CT) `Manager_T` begun
+#    19-Mar-2010 (CT) `Manager_T_Archive` added
 #    ««revision-date»»···
 #--
 
