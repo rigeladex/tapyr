@@ -94,8 +94,8 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
         scope = self.top.scope
         cid   = scope.ems.max_cid
         if self._old_cid != cid or scope.async_changes () :
-            self._objects = self._get_objects ()
             self._old_cid = cid
+            self._objects = self._get_objects ()
         return self._objects
     # end def _get_entries
 

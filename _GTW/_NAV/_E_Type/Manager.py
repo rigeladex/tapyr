@@ -149,9 +149,8 @@ class Manager_T (Manager) :
     @Once_Property
     def query_filters (self) :
         result = list (self.__super.query_filters)
-        ### XXX Doesn't seem this work XXX
-        result.append (Q.alive)
-        return tuple (result)
+        result.append (Q.date.alive)
+        return tuple  (result)
     # end def query_filters
 
     def _get_objects (self) :
