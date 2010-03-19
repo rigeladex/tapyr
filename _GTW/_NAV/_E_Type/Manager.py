@@ -68,8 +68,8 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
         self.__super.__init__ (src_dir = src_dir, ** kw)
         etn = self.E_Type.type_name
         top = self.top
-        assert etn not in top.E_Types
-        top.E_Types [etn] = self
+        if etn not in top.E_Types :
+            top.E_Types [etn] = self
     # end def __init__
 
     @Once_Property
@@ -140,14 +140,6 @@ class Manager_T (Manager) :
 
     query_limit       = 7
 
-    class _Cmd_ (GTW.NAV.Dir) :
-        pass
-    # end class _Cmd_
-
-    class Year (_Cmd_) :
-        pass
-    # end class Year
-
     def query (self) :
         result = self.ETM.query \
             ( * self.query_filters
@@ -173,20 +165,62 @@ class Manager_T (Manager) :
             [   T (self, o, ** kw)
             for o in qr.filter (Q.date.alive).limit (self.query_limit)
             ]
-        for y in xrange (cy, cy - 6, -1) :
-            qy = qr.filter \
-                ( (Q.date.start >= datetime.date (y,  1,  1))
-                , (Q.date.start <= datetime.date (y, 12, 31))
-                )
-            if qy.count () :
-                ### XXX lazy
-                Y = self.Year (self, year = y, name = str (year))
-                Y._entries = [T (Y, o, ** kw) for o in qy]
-                result.append (Y)
+        name = "Archive"
+        arch = Manager_T_Archive \
+            ( src_dir   = pjoin (self.src_dir, name)
+            , parent    = self
+            , name      = name
+            , sub_dir   = name
+            , title     = name
+            , ETM       = self.ETM
+            , page_args = self.page_args
+            )
+        result.append (arch)
         return result
     # end def _get_objects
 
 # end class Manager_T
+
+class Manager_T_Archive (Manager_T) :
+
+    class _Cmd_ (GTW.NAV.Dir) :
+        pass
+    # end class _Cmd_
+
+    class Year (_Cmd_) :
+        pass
+    # end class Year
+
+    def _get_objects (self) :
+        T  = self.Page
+        kw = self.page_args
+        sk = TFL.Sorted_By  ("-date.start", "-prio", "perma_name")
+        qr = self.ETM.query (sort_key = sk)
+        cy = datetime.date.today ().year
+        result = []
+        for y in xrange (cy, cy - 5, -1) :
+            qy = qr.filter \
+                ( (Q.date.start >= datetime.date (y,  1,  1))
+                , (Q.date.start <= datetime.date (y, 12, 31))
+                )
+            name = str (y)
+            Y = self.Year \
+                ( src_dir = pjoin (self.src_dir, name)
+                , parent  = self
+                , year    = y
+                , name    = name
+                , sub_dir = name
+                , title   = name
+                )
+            _entries = [T (Y, o, ** kw) for o in qy]
+            if _entries :
+                Y._entries = _entries
+                result.append (Y)
+                print y, Y.abs_href, len (_entries)
+        return result
+    # end def _get_objects
+
+# end class Manager_T_Archive
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")

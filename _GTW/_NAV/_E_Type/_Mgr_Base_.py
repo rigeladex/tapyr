@@ -30,6 +30,7 @@
 #     5-Mar-2010 (CT) `page_args` added
 #    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
 #    17-Mar-2010 (CT) Derived from `GTW.NAV.E_Type.Mixin`
+#    19-Mar-2010 (CT) Call to `scope.async_changes` removed from `_get_entries`
 #    ««revision-date»»···
 #--
 
@@ -93,7 +94,7 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
     def _get_entries (self) :
         scope = self.top.scope
         cid   = scope.ems.max_cid
-        if self._old_cid != cid or scope.async_changes () :
+        if self._old_cid != cid :
             self._old_cid = cid
             self._objects = self._get_objects ()
         return self._objects
