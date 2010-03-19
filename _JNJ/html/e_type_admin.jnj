@@ -34,9 +34,9 @@
 #}
 {%- macro _button (page, E_Type, tag, href, name, desc, icon) -%}
   <{{ tag }} class="{{ E_Type.ui_name }}-cmd-change" scope="col">
-    <a href="{{ href }}" title="{{ GTW._T (desc) }} {{ name }}"><img
-      src="{{ page.site_prefix }}media/images/{{ icon }}.gif"
-      alt="{{ GTW._T (desc) }}" height="10" width="10"
+    <a href="{{ href }}" title="{{ desc }} {{ name }}"><img
+      src="/media/images/{{ icon }}.gif"
+      alt="{{ desc }}" height="10" width="10"
     /></a>
   </{{ tag }}>
 {%- endmacro -%} {#- _button -#}
@@ -55,20 +55,20 @@
     </colgroup>
     <thead>
       <tr>
-        {{ _button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), "Create new object", "icon_add") }}
+        {{ _button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "icon_add") }}
         {% for f in fields %}
           <th class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}"
               scope="col" title="{{ GTW._T (f.description) }}">
             {{ GTW._T (f.ui_name) }}
           </th>
         {% endfor %}
-        {{ _button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), "Create new object", "icon_add") }}
+        {{ _button (page, E_Type, "th", page.href_create (), GTW._T (E_Type.ui_name), GTW._T ("Create new object"), "icon_add") }}
       </tr>
     </thead>
     <tbody>
       {% for o in objects %}
         <tr class="{{ loop.cycle ('row1', 'row2') }}" id="pk-{{ o.id }}">
-          {{ _button (page, E_Type, "td", o.href_change (), o.id, "Change object", "icon_edit") }}
+          {{ _button (page, E_Type, "td", o.href_change (), o.id, GTW._T ("Change object"), "icon_edit") }}
           {% for f, v in o %}
             <td class="{{ E_Type.ui_name }}-{{ f.ui_name }} {{ f.ui_name }}">
               <a href="{{ o.href_change () }}" title="{{ GTW._T ("Change object") }} {{ o.id }}">
@@ -76,7 +76,7 @@
               </a>
             </td>
           {% endfor %}
-          {{ _button (page, E_Type, "td", o.href_delete (), o.id, "Delete object", "icon_delete") }}
+          {{ _button (page, E_Type, "td", o.href_delete (), o.id, GTW._T ("Delete object"), "icon_delete") }}
         </tr>
       {% endfor %}
     </tbody>

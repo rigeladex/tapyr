@@ -566,7 +566,8 @@ class _Pickle_Mixin_ (Kind) :
             assert len (cargo) == 1
             cargo = pickle.loads (cargo [0])
         except Exception, exc :
-            print exc, self, obj, cargo
+            print "Unpickling error", \
+                exc.__class__.__name__, exc, self, obj, cargo
         else :
             if cargo is not None :
                 return self.__super.set_pickle_cargo (obj, (cargo, ))

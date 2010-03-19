@@ -38,10 +38,10 @@
     <h1>{{ GTW.firstof (page.desc, page.title, page.href) }}</h1>
     {%- for th in page.thumbnails %}
       <div class="thumbnail">
-        <a href="{{ th.site_prefix }}{{ th.photo.href }}">
+        <a href="{{ th.photo.permalink}}">
          <img alt="{{ GTW.firstof (th.alt, th.desc, th.title, th.photo.href) }}"
               title="{{ GTW.firstof (th.desc, th.title, th.photo.href) }}"
-              src="{{ th.site_prefix }}{{ th.src }}"
+              src="{{ th.src }}" {# XXX does this need a leading "/" ??? #}
               height="{{ th.height }}" width="{{ th.width }}"
          />
         </a>

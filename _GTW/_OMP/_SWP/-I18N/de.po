@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-03-16 16:12+0100\n"
+"PO-Revision-Date: 2010-03-19 14:07+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -50,17 +50,35 @@ msgstr "Datumsinterval"
 msgid "Date interval of event"
 msgstr "Datumsinterval des Ereignisses"
 
-#: _GTW/_OMP/_SWP/Nav.py:119
+#: _GTW/_OMP/_SWP/Nav.py:120
 msgid "Events"
 msgstr "Ereignisse"
 
-#: _GTW/_OMP/_SWP/Nav.py:118
+#: _GTW/_OMP/_SWP/Nav.py:119
 msgid "Events associated to page"
 msgstr "Zur Seite gehörende Ereignisse"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Format"
 msgstr "Format"
+
+#: _GTW/_OMP/_SWP/Format.py:96
+#, python-format
+msgid ""
+"HTML must not contain any of the tags:\n"
+"%s"
+msgstr ""
+"Der Text dark keines der nachfolgend aufgeführten HTML Kommandos enthalten:\n"
+"%s"
+
+#: _GTW/_OMP/_SWP/Format.py:90
+#, python-format
+msgid ""
+"HTML must not contain comments:\n"
+"%s"
+msgstr ""
+"Der Text darf keine Kommentare enthalten:\n"
+"%s"
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Head line"
@@ -100,7 +118,7 @@ msgstr "Publikations- und Verfallsdatum"
 msgid "Publication and expiration date"
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/Nav.py:116
+#: _GTW/_OMP/_SWP/Nav.py:117
 msgid "Recurrence rule"
 msgstr "Wiederholungsregel"
 

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-03-16 16:12+0100\n"
+"POT-Creation-Date: 2010-03-19 14:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:923
+#: _MOM/Entity.py:926
 #, python-format
 msgid ""
 "%s\n"
@@ -52,12 +52,12 @@ msgstr ""
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:190 _MOM/_EMS/_Manager_.py:140
+#: _MOM/_EMS/Hash.py:195 _MOM/_EMS/_Manager_.py:140
 #, python-format
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:850
+#: _MOM/_Attr/Kind.py:852
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -207,12 +207,12 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:725
+#: _MOM/_Attr/Kind.py:727
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:735
+#: _MOM/_Attr/Kind.py:737
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -329,7 +329,7 @@ msgstr ""
 msgid "Time_Interval"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:285
+#: _MOM/_Attr/Kind.py:287
 #, python-format
 msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
@@ -352,11 +352,11 @@ msgid ""
 "`unit`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:726
+#: _MOM/_Attr/Kind.py:728
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 
-#: _MOM/_EMS/Hash.py:191 _MOM/_EMS/_Manager_.py:141
+#: _MOM/_EMS/Hash.py:196 _MOM/_EMS/_Manager_.py:141
 #, python-format
 msgid "Use one of the types %s instead."
 msgstr ""

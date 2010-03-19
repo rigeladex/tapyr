@@ -151,13 +151,13 @@
 {%- macro neighbor (neighbor, alt, symbol) -%}
   {%- onion neighbor %}
     {%- head %}
-      <a href="{{ neighbor.site_prefix }}{{ neighbor.href }}">
+      <a href="{{ neighbor.permalink }}">
       {%- set suffix = "" %}
     {%- else %}
       {%- set suffix = "_gray" %}
     {%- body %}
         <img alt="{{ alt }}"
-          src="{{ page.site_prefix }}media/images/{{ symbol }}{{ suffix }}.png"
+          src="/media/images/{{ symbol }}{{ suffix }}.png"
           title="{{ GTW.firstof (neighbor.title, alt) }}"
         />
     {%- tail %}
@@ -185,7 +185,7 @@
 {%- macro sitemap_entry (link, TEST = False) -%}
   {% if NAV.permissive or NAV.allow (link, request.user) and not link.hidden %}
     <li class="nav-link level-{{link.level|default('0')}}">
-      <a href="{{ link.site_prefix }}{{ link.href }}"
+      <a href="{{ link.permalink}}"
          {% if link.desc %}title="{{ link.desc }}"{% endif %}
       >{{ link.title }}</a>
       {% if TEST and request.user.authenticated %}

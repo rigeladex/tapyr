@@ -39,9 +39,9 @@
   {%- set gallery_title = "{{ GTW._T ('Gallerie') }} {{ page.parent.title }}" %}
   <p class="photo-nav">
     {{ NT.neighbor (page.prev, GTW._T ("Previous picture"), "arrow_left") }}
-    <a href="{{ page.site_prefix }}{{ page.parent.href }}">
+    <a href="{{ page.parent.permalink }}">
       <img alt="{{ gallery_title }}" title="{{ gallery_title }}"
-           src="{{ page.site_prefix }}media/images/arrow_up.png"
+           src="/media/images/arrow_up.png"
       />
     </a>
     {{ NT.neighbor (page.next, GTW._T ("Next picture"), "arrow_right") }}
@@ -53,7 +53,7 @@
     {{ buttons (page) }}
     <img alt="{{ GTW.firstof (page.alt, page.desc, page.title, page.href) }}"
          title="{{ GTW.firstof (page.desc, page.title, page.href) }}"
-         src="{{ page.site_prefix }}{{ page.src }}"
+         src="{{ page.src }}" {# XXX does this need a leading "/" ??? #}
          height="{{ page.height }}" width="{{ page.width }}"
     />
     {{ buttons (page) }}

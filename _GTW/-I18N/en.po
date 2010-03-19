@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-16 16:12+0100\n"
+"PO-Revision-Date: 2010-03-19 14:07+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:110 _GTW/_NAV/_E_Type/Admin.py:198
+#: _GTW/_NAV/_E_Type/Admin.py:110 _GTW/_NAV/_E_Type/Admin.py:197
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
@@ -155,7 +155,7 @@ msgstr ""
 msgid "Monday"
 msgstr ""
 
-#: _GTW/HTML.py:67
+#: _GTW/HTML.py:72
 msgid "Need Javascript for displaying"
 msgstr ""
 
@@ -299,11 +299,11 @@ msgstr ""
 msgid "Wednesday"
 msgstr ""
 
-#: _GTW/HTML.py:53
+#: _GTW/HTML.py:58
 msgid "email address"
 msgstr ""
 
-#: _GTW/HTML.py:54
+#: _GTW/HTML.py:59
 msgid "phone number"
 msgstr ""
 

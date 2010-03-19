@@ -40,6 +40,8 @@
 #                     (and `Pickler` removed from `_sa_columns_named_value`)
 #    13-Mar-2010 (CT) `Attr.A_Int_List, Attr.A_Date_List` replaced by
 #                     `_A_Binary_String_` (`*_List` got a Pickler)
+#    19-Mar-2010 (CT) Use `types.Binary` instead of `types.String` for
+#                     `_A_Binary_String_`
 #    ««revision-date»»···
 #--
 
@@ -156,7 +158,7 @@ def _sa_string (cls, attr, kind, ** kw) :
 
 @Add_Classmedthod ("_sa_type", Attr._A_Binary_String_)
 def _sa_blob (cls, attr, kind, ** kw) :
-    return types.String (getattr (attr, "max_length", None))
+    return types.Binary (getattr (attr, "max_length", None))
 # end def _sa_blob
 
 ### __END__ MOM.DBW.SAS.Type

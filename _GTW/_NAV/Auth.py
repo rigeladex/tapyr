@@ -152,21 +152,16 @@ class Auth (GTW.NAV.Dir) :
                 req_data = request.req_data
                 errors   = form (req_data)
                 if not errors :
-                    next  = req_data.get         ("next", "/")
+                    next  = req_data.get ("next", "/")
                     token = account.change_email_prepare (form.new_email)
-                    site_url = self.site_url
-                    link     = pjoin \
-                        ( site_url
-                        , self.parent.href_action (account, token) [1:]
-                        )
                     self.send_email \
                         ( self.new_email_template
                         , email_to      = form.new_email
                         , email_subject =
                             _T("Email confirmation for %s" % (site_url, ))
                         , email_from    = self.email
-                        , link          = link
-                        , site_url      = site_url
+                        , link          =
+                            self.parent.href_action (account, token)
                         , NAV           = self.top
                         , page          = self
                         )
@@ -224,7 +219,7 @@ class Auth (GTW.NAV.Dir) :
             request   = handler.request
             top       = self.top
             form      = GTW.Form.Auth.Login \
-                (top.account_manager, self.abs_href, debug = self.DEBUG)
+                (top.account_manager, self.abs_href)
             context ["login_form"] = form
             if request.method == "POST" :
                 HTTP      = top.HTTP
@@ -292,19 +287,14 @@ class Auth (GTW.NAV.Dir) :
                     next  = req_data.get ("next", "/")
                     account, token = Auth.Account_P.create_new_account \
                         (form.username, form.new_password)
-                    site_url = self.site_url
-                    link     = pjoin \
-                        ( site_url
-                        , self.parent.href_action (account, token) [1:]
-                        )
                     self.send_email \
                         ( self.email_template
                         , email_to      = form.username
                         , email_subject =
                             _T("Email confirmation for %s" % (site_url, ))
                         , email_from    = self.email
-                        , link          = link
-                        , site_url      = site_url
+                        , link          =
+                            self.parent.href_action (account, token)
                         , NAV           = self.top
                         , page          = self
                         )

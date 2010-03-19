@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-03-16 16:10+0100\n"
-"PO-Revision-Date: 2010-03-16 16:12+0100\n"
+"PO-Revision-Date: 2010-03-19 14:07+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -23,8 +23,8 @@ msgid ""
 "Date interval of event (for non-recurring events, only `start`\n"
 "is relevant)"
 msgstr ""
-"Datumsinterval des Ereignisses (für nicht wiederholende Ereignisse ist nur "
-"`Anfang` relevant)"
+"Datumsinterval des Ereignisses (für nicht wiederholende Ereignisse ist "
+"nur `Anfang` relevant)"
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Date of occurrence"
@@ -80,9 +80,7 @@ msgstr "Wiederholung"
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Recurrence rule defining when and how often the event recurs."
-msgstr ""
-"Wiederholungsregel (definiert, wann und wie oft das "
-"Ereignis eintritt)."
+msgstr "Wiederholungsregel (definiert, wann und wie oft das Ereignis eintritt)."
 
 #: _GTW._OMP._EVT.Event:0
 msgid "Rule"
