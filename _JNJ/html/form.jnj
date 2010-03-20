@@ -220,7 +220,6 @@
           ( proto.widget.inline_table_tr_head
           , proto
           , proto.field_groups
-          , class = "inline-instance"
           )
       -}}
     </thead>

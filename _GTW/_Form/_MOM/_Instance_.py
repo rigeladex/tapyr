@@ -88,8 +88,6 @@ import _GTW._Form._Form_
 import _GTW._Form.Field
 import _GTW._Form._MOM.Field_Group_Description
 
-import _GTW._Tornado.Request_Data
-
 import  base64
 import  cPickle
 import  itertools

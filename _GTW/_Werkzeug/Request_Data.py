@@ -1,8 +1,8 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
-# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# Copyright (C) 2010 Martin Glueck All rights reserved
+# Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package GTW.NAV.
+# This module is part of the package GTW.Werkzeug.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,28 +20,32 @@
 #
 #++
 # Name
-#    GTW.NAV.import_NAV
+#    GTW.Werkzeug.Request_Data
 #
 # Purpose
-#    Import modules of package GTW.NAV.
+#    A dict like object which provides access to the get and post data of a
+#    werkzeug request
 #
 # Revision Dates
-#    25-Jan-2010 (CT) Creation
-#    20-Mar-2010 (MG) Import of `Request_Handler` removed
+#    20-Mar-2010 (MG) Creation
 #    ««revision-date»»···
 #--
 
-import _GTW._NAV.Admin
-import _GTW._NAV.Auth
-import _GTW._NAV.Base
-import _GTW._NAV.Gallery
-import _GTW._NAV.L10N
-import _GTW._NAV.Permission
-import _GTW._NAV.ReST
-import _GTW._NAV.Video
+from   _TFL              import TFL
+import _TFL._Meta.Object
 
-import _GTW._NAV._E_Type.Admin
-import _GTW._NAV._E_Type.Instance
-import _GTW._NAV._E_Type.Manager
+from   _GTW              import GTW
+import _GTW._Werkzeug
+import _GTW.Request_Data
 
-### __END__ GTW.NAV.import_NAV
+class _Werkzeug_Request_Data_ (GTW.Request_Data) :
+
+    def __init__ (self, request) :
+        self.__super.__init__ (dict (request.args, ** request.form))
+    # end def __init__
+
+Request_Data = _Werkzeug_Request_Data_ # end class
+
+if __name__ != "__main__" :
+    GTW.Werkzeug._Export ("*")
+### __END__ GTW.Werkzeug.Request_Data

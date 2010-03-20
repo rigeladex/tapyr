@@ -2,7 +2,7 @@
 # Copyright (C) 2010 Martin Glueck All rights reserved
 # Langstrasse 4, A--2244 Spannberg, Austria. martin@mangari.org
 # ****************************************************************************
-# This module is part of the package GTW.Tornado.
+# This module is part of the package GTW.
 #
 # This module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -20,10 +20,11 @@
 #
 #++
 # Name
-#    GTW.Tornado.Request_Data
+#    GTW.Request_Data
 #
 # Purpose
-#    Wrapper around Tornado's request_data to enforce a single value per key
+#    Wrapper around ddict like data where the values are lists but should not
+#    be lists
 #
 # Revision Dates
 #    19-Jan-2010 (MG) Creation
@@ -34,6 +35,7 @@
 #     3-Feb-2010 (MG) `iteritems` added
 #    10-Feb-2010 (MG) Convert the data into unicode
 #    21-Feb-2010 (MG) `pop` added
+#    20-Mar-2010 (MG) Moved into `GTW` package
 #    ««revision-date»»···
 #--
 
@@ -42,29 +44,30 @@ import _TFL._Meta.Object
 
 from   _GTW              import GTW
 
-class Request_Data (TFL.Meta.Object) :
-    """Wraps the request data from a tornado request to handle fact that
-       tornado suplies all values as lists
-    """
+class _GTW_Request_Data_ (TFL.Meta.Object) :
+    """Convert the list values into no lists during access."""
+
+    _real_name = "Request_Data"
 
     def __init__ (self, data) :
         self.data = data
     # end def __init__
 
-    def __getitem__ (self, key) :
-        value = self.data [key]
+    def _convert_element (self, value) :
         if isinstance (value, (list, tuple)) :
             assert len (value) == 1
-            return unicode (value [0], "utf8", "replace")
+            value = value [0]
+        if value is not None and not isinstance (value, unicode) :
+            return unicode (value, "utf8", "replace")
         return value
+    # end def _convert_element
+
+    def __getitem__ (self, key) :
+        return self._convert_element (self.data [key])
     # end def __getitem__
 
     def get (self, key, default = None) :
-        value = self.data.get (key, default)
-        if isinstance (value, (list, tuple)) :
-            assert len (value) == 1, value
-            return unicode (value [0], "utf8", "replace")
-        return value
+        return self._convert_element (self.data.get (key, default))
     # end def get
 
     def iteritems (self) :
@@ -73,11 +76,7 @@ class Request_Data (TFL.Meta.Object) :
     # end def iteritems
 
     def pop (self, key, default = None) :
-        value = self.data.pop (key, default)
-        if isinstance (value, (list, tuple)) :
-            assert len (value) == 1, value
-            return unicode (value [0], "utf8", "replace")
-        return value
+        return self._convert_element (self.data.pop (key, default))
     # end def pop
 
     def __contains__ (self, item) :
@@ -88,8 +87,8 @@ class Request_Data (TFL.Meta.Object) :
         return repr (self.data)
     # end def __repr__
 
-# end class Request_Data
+Request_Data = _GTW_Request_Data_ # end class
 
 if __name__ != "__main__" :
-    GTW.Tornado._Export ("*")
-### __END__ GTW.Tornado.Request_Data
+    GTW._Export ("*")
+### __END__ GTW.Request_Data

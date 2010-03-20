@@ -29,12 +29,14 @@
 #    12-Sep-2009 (MG) Creation
 #    20-Feb-2010 (MG) Add the notification collection to the session
 #    23-Feb-2010 (MG) `json` added
+#    20-Mar-2010 (MG) `NAV_Request_Handler` moved in here
 #    ««revision-date»»···
 #--
 
 from   _TFL                       import TFL
 from   _TFL._Meta.Once_Property   import Once_Property
 import _TFL._Meta.Object
+from   _TFL                       import I18N
 
 from   _GTW                       import GTW
 import _GTW.Notification
@@ -102,6 +104,70 @@ class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
     # end def json
 
 # end class Request_Handler
+
+class M_Request_Handler (Request_Handler.__class__) :
+    """Metaclass for a request"""
+
+    def __init__ (cls, name, bases, dict) :
+        super (M_Request_Handler, cls).__init__ (name, bases, dict)
+        for m in cls.SUPPORTED_METHODS :
+            m_method_name = m.lower ()
+            if not m_method_name in dict :
+                setattr (cls, m_method_name, getattr (cls, cls.DEFAULT_HANDLER))
+    # end def __init__
+
+# end class M_Request_Handler
+
+class NAV_Request_Handler (Request_Handler) :
+    """Base class request handlers interacting with GTW.NAV"""
+
+    __metaclass__   = M_Request_Handler
+
+    DEFAULT_HANDLER = "_handle_request"
+
+    def _finish (self, scope) :
+        self.session.save ()
+        if scope :
+            scope.commit  ()
+    # end def _finish
+
+    def _handle_request (self, * args, ** kw) :
+        if self.application.settings.get ("i18n", False) :
+            I18N.use (* self.locale_codes)
+        top   = GTW.NAV.Root.top
+        scope = getattr (top, "scope", None)
+        try :
+            top.universal_view (self)
+        except top.HTTP._Redirect_, redirect :
+            self._finish    (scope)
+            return redirect (self, top)
+        self._finish (scope)
+    # end def _handle_request
+
+    def _handle_request_exception (self, exc) :
+        top   = GTW.NAV.Root.top
+        scope = getattr (top, "scope", None)
+        if scope :
+            scope.rollback ()
+        if isinstance (exc, top.HTTP.Status) :
+            if exc (self, top) :
+                return
+        self.__super._handle_request_exception (exc)
+    # end def _handle_request_exception
+
+    def get_current_user (self) :
+        top      = GTW.NAV.Root.top
+        username = self.get_secure_cookie ("username")
+        result   = top.anonymous
+        if username :
+            try :
+                result = top.account_manager.query (name = username).one ()
+            except IndexError :
+                pass
+        return result
+    # end def get_current_user
+
+# end class NAV_Request_Handler
 
 if __name__ != "__main__" :
     GTW.Tornado._Export ("*")

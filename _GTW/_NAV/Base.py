@@ -217,7 +217,6 @@ from   _GTW                     import GTW
 from   _TFL                     import TFL
 import _GTW.Media
 import _GTW._NAV
-import _GTW._Tornado.Request_Data
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.Filename            import *
@@ -533,7 +532,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
         HTTP             = self.top.HTTP
         request          = handler.request
         request.user     = handler.current_user
-        request.req_data = req_data = HTTP.Request_Data (request.arguments)
+        request.req_data = req_data = HTTP.Request_Data (request)
         handler.context  = self.render_context \
             ( lang          = "_".join (uniq (TFL.I18N.Config.choice))
             , notifications = handler.session.notifications
