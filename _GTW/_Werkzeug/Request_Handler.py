@@ -51,6 +51,11 @@ import  hmac
 import  logging
 import  time
 
+try :
+    import json
+except ImportError :
+    import simplejson as json
+
 def _time_independent_equals (l, r) :
     if len (l) != len (r) :
         return False
@@ -141,7 +146,7 @@ class Request_Handler (TFL.Meta.Object) :
 
     def json (self, data) :
         self.set_header ("Content-Type", "text/javascript; charset=UTF-8")
-        self.write      (escape.json_encode (data))
+        self.write      (json.dumps (data))
         return True
     # end def json
 

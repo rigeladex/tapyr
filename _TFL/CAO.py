@@ -773,7 +773,7 @@ class Cmd (TFL.Meta.Object) :
         sc     = self._sub_cmd_choice
         if sc and sc.name in _kw :
             result._set_arg (sc, _kw.pop (sc.name))
-        for k, v in _kw :
+        for k, v in _kw.iteritems () :
             if k in oa :
                 result._set_opt   (oa [k], v)
             elif k in ad :
