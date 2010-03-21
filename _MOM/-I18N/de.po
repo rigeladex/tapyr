@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-03-19 14:07+0100\n"
+"PO-Revision-Date: 2010-03-21 14:43+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -65,7 +65,7 @@ msgstr ""
 "Die Abfrage `instance` kann für den wurzellosen Typ `%s` nicht verwendet "
 "werden."
 
-#: _MOM/_Attr/Kind.py:852
+#: _MOM/_Attr/Kind.py:853
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr "Der Wert des  konstanten Attributs `%s.%s` kann nicht verändert werden"
@@ -217,12 +217,12 @@ msgstr ""
 msgid "Period"
 msgstr "Periode"
 
-#: _MOM/_Attr/Kind.py:727
+#: _MOM/_Attr/Kind.py:728
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr "Primaräres Attribut `%s.%s` kann nicht mit Zuweisung verändert werden."
 
-#: _MOM/_Attr/Kind.py:737
+#: _MOM/_Attr/Kind.py:738
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr "Primaräres Attribut `%s.%s` kann nicht gelöscht werden"
@@ -381,7 +381,7 @@ msgstr ""
 "Einheit der Wiederholung. `Periode` wird als Vielfaches von `Einheit` "
 "interpretiert."
 
-#: _MOM/_Attr/Kind.py:728
+#: _MOM/_Attr/Kind.py:729
 msgid "Use `set` or `set_raw` to change it."
 msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 

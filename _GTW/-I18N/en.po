@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-19 14:07+0100\n"
+"PO-Revision-Date: 2010-03-21 14:43+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -28,11 +28,11 @@ msgstr ""
 msgid "%s `%s` existiert nicht!"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:175
+#: _GTW/_NAV/Auth.py:170
 msgid "A confirmation email has been sent tothe new email address."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:313
+#: _GTW/_NAV/Auth.py:303
 msgid "A confirmation has been sent to your emailaddress."
 msgstr ""
 
@@ -76,7 +76,7 @@ msgstr ""
 msgid "EMail verification successful."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:166 _GTW/_NAV/Auth.py:304
+#: _GTW/_NAV/Auth.py:161 _GTW/_NAV/Auth.py:294
 #, python-format
 msgid "Email confirmation for %s"
 msgstr ""
@@ -131,7 +131,7 @@ msgstr ""
 msgid "Language %s selected"
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:268
+#: _GTW/_NAV/Auth.py:263
 msgid "Logout successful."
 msgstr ""
 
@@ -239,7 +239,7 @@ msgstr ""
 msgid "The old password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:210
+#: _GTW/_NAV/Auth.py:205
 msgid "The password has been changed."
 msgstr ""
 
@@ -251,7 +251,7 @@ msgstr ""
 msgid "The password is required."
 msgstr ""
 
-#: _GTW/_NAV/Auth.py:350
+#: _GTW/_NAV/Auth.py:340
 msgid "The reset password instructions have beensent to your email address."
 msgstr ""
 

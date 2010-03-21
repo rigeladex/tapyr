@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-19 14:07+0100\n"
+"PO-Revision-Date: 2010-03-21 14:43+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -57,7 +57,7 @@ msgstr ""
 msgid "Cannot query `instance` of non-root type `%s`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:852
+#: _MOM/_Attr/Kind.py:853
 #, python-format
 msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
@@ -207,12 +207,12 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:727
+#: _MOM/_Attr/Kind.py:728
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be assigned."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:737
+#: _MOM/_Attr/Kind.py:738
 #, python-format
 msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
@@ -352,7 +352,7 @@ msgid ""
 "`unit`."
 msgstr ""
 
-#: _MOM/_Attr/Kind.py:728
+#: _MOM/_Attr/Kind.py:729
 msgid "Use `set` or `set_raw` to change it."
 msgstr ""
 

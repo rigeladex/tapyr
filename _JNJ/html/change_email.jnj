@@ -36,7 +36,7 @@
 {%- import html_version as X -%}
 {%- import "STD::html/form.jnj" as Form %}
 
-{%- set title = GTW._T ("Change E-Mail for") + " " + form.account.name %}
+{%- set title = GTW._T ("Change email for") + " " + form.account.name %}
 
 {%- block title -%}
   <title>{{ title|safe }}</title>
