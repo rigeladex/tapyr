@@ -122,9 +122,11 @@ class Admin (object) :
             , FGD ()
             )
         , list_display   =
-            ("ui_display", "short_title", "date", "author", "format")
+            ( "ui_display", "short_title", "date", "author", "format"
+            , "last_changed"
+            )
         , sort_key       = TFL.Sorted_By \
-            ("-prio", "-date.start", "-date.finish", "perma_name")
+            ("-date.start", "-prio", "perma_name")
         )
 
 # end class Admin

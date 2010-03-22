@@ -31,6 +31,7 @@
 #    15-Mar-2010 (CT) `kind_filter` and `kind_name` removed
 #    17-Mar-2010 (CT) Derived from `GTW.NAV.E_Type.Mixin`
 #    19-Mar-2010 (CT) Call to `scope.async_changes` removed from `_get_entries`
+#    22-Mar-2010 (CT) Use `_T (name)`, not `_Tn (name)` for `title`
 #    ««revision-date»»···
 #--
 
@@ -59,7 +60,7 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
         top    = self.top
         desc   = kw.pop  ("desc", E_Type.__doc__)
         name   = unicode (kw.pop ("name", E_Type.ui_name))
-        title  = kw.pop  ("title", _Tn (name))
+        title  = kw.pop  ("title", _T (name))
         self.__super.__init__ \
             ( parent       = parent
             , E_Type       = E_Type

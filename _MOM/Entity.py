@@ -119,6 +119,7 @@
 #    11-Mar-2010 (CT) `An_Entity.set` and `.set_raw` changed to handle changes
 #                     of primary composite attributes properly (rename!)
 #    15-Mar-2010 (CT) Exception handler added to `epk_as_code`
+#    22-Mar-2010 (CT) `last_changed` added
 #    ««revision-date»»···
 #--
 
@@ -711,6 +712,21 @@ class Id_Entity (Entity) :
             default       = 1
 
         # end class is_used
+
+        class last_changed (A_Date_Time) :
+            """Date/time of last change."""
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                try :
+                    return obj.changes ().order_by \
+                        (TFL.Sorted_By ("-cid")).first ().time
+                except IndexError :
+                    pass
+            # end def computed
+
+        # end class last_changed
 
         class x_locked (A_Boolean) :
             """Specifies if object can be changed by user"""

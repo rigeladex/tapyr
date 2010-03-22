@@ -162,7 +162,7 @@ class Event (_Ancestor_Essence) :
         for o in list (self.occurs) :
             o.destroy ()
         for d in self.dates :
-            ETM (self, date = d, time = self.time)
+            ETM (self, date = d, time = self.time, electric = True)
     # end def compute_occurrences
 
     @classmethod

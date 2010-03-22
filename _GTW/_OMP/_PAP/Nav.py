@@ -38,7 +38,7 @@
 #    ««revision-date»»···
 #--
 
-from   _TFL.I18N                import _
+from   _TFL                     import TFL
 from   _GTW                     import GTW
 
 import _GTW._NAV._E_Type.Admin
@@ -53,7 +53,9 @@ from   _GTW._Form._MOM.Field_Group_Description import \
     , Field_Prefixer          as FP
     , Wildcard_Field          as WF
     )
-from  _GTW._Form.Widget_Spec  import Widget_Spec as WS
+from  _GTW._Form.Widget_Spec    import Widget_Spec as WS
+
+from   _TFL.I18N                import _
 
 primary = WF ("primary")
 
@@ -119,6 +121,8 @@ class Admin (object) :
                 , title     = _("Persons")
                 )
             )
+        , list_display   = ("zip", "city", "street", "desc")
+        , sort_key       = TFL.Sorted_By ( "zip", "street")
         )
 
     Email           = dict \
