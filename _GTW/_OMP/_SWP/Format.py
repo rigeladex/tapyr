@@ -33,9 +33,6 @@
 #    ««revision-date»»···
 #--
 
-### To-do:
-# - markdown
-
 from   _GTW                   import GTW
 from   _ReST                  import ReST as RST
 from   _TFL                   import TFL

@@ -190,7 +190,7 @@
       >{{ link.title }}</a>
       {% if TEST and request.user.authenticated %}
         <div class="nav-link-details">
-          {% if link.author %}<p>Author: {{ link.author }}</p>{% endif %}
+          {% if link.creator %}<p>Creator: {{ link.creator }}</p>{% endif %}
           {% if link.date %}<p>Date: {{ link.date }}</p>{% endif %}
           <p>Url: {{ link.href }}</p>
           <p>Prefix: {{ link.prefix }}</p>

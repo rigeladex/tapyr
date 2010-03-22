@@ -60,17 +60,14 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Page"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD
-                ( "perma_name", "short_title", "title", "head_line"
-                , "format", "text"
-                )
+            ( FGD ("perma_name", "short_title", "title")
             , AID
                 ( "date"
                 , FGD (widget = "html/form.jnj, fg_tr")
                 , legend = _("Publication and expiration date")
                 )
             , AID
-                ( "author"
+                ( "creator"
                 , FGD ( primary
                       , widget    = "html/form.jnj, fg_tr"
                       , css_class = "inline-instance"
@@ -82,10 +79,11 @@ class Admin (object) :
                         ( last_name  = dict (min_chars = 2)
                         , first_name = dict (min_chars = 2)
                         )
-                    , name      = "Author_Info"
+                    , name      = "Creator_Info"
                     )
-                , legend = _("Author of web page")
+                , legend = _("Creator of the contents of the web page")
                 )
+            , FGD ("head_line", "format", "text")
             , LID
                 ( "GTW.OMP.EVT.Event"
                 , AID ( "date"
@@ -122,7 +120,7 @@ class Admin (object) :
             , FGD ()
             )
         , list_display   =
-            ( "ui_display", "short_title", "date", "author", "format"
+            ( "ui_display", "short_title", "date", "creator", "format"
             , "last_changed"
             )
         , sort_key       = TFL.Sorted_By \

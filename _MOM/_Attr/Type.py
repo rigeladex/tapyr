@@ -105,6 +105,7 @@
 #    13-Mar-2010 (CT) `_A_Typed_Collection_.needs_raw_value = False`
 #    13-Mar-2010 (CT) `_A_Binary_String_` added
 #    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
+#    22-Mar-2010 (CT) `A_Dirname` and `A_Filename` added (+ `_A_Filename_`)
 #    ««revision-date»»···
 #--
 
@@ -747,6 +748,108 @@ class _A_Object_ (A_Attr_Type) :
 
 # end class _A_Object_
 
+class _A_String_Base_ (A_Attr_Type) :
+    """Base class for string-valued attributes of an object."""
+
+    default           = ""
+    max_length        = 0
+    ui_length         = TFL.Meta.Once_Property \
+        (lambda s : s.max_length or 120)
+
+    def _checkers (self, e_type, kind) :
+        for c in self.__super._checkers (e_type, kind) :
+            yield c
+        if self.max_length :
+            name   = self.name
+            p_kind = [MOM.Pred.Object, MOM.Pred.System] [kind.electric]
+            p_name = "AC_check_%s_length" % (name, )
+            check = MOM.Pred.Condition.__class__ \
+                ( p_name, (MOM.Pred.Condition, )
+                , dict
+                    ( assertion  = "length <= %s" % (self.max_length, )
+                    , attributes = (name, )
+                    , bindings   = dict
+                        ( length = "len (%s)" % (name, )
+                        )
+                    , kind       = p_kind
+                    , name       = p_name
+                    , __doc__    = "Value for %s must not be longer than %s"
+                      % (name, self.max_length)
+                    )
+                )
+            yield check, ()
+    # end def _checkers
+
+    def _from_string_eval (self, s, obj, glob, locl) :
+        return self.simple_cooked (s)
+    # end def _from_string
+
+    def _to_cooked (self, s, cooker, obj, glob, locl) :
+        if s is not None :
+            return self.simple_cooked (s)
+        return s
+    # end def _to_cooked
+
+# end class _A_String_Base_
+
+class _A_Filename_ (_A_String_Base_) :
+    """Base class for attributes holding filenames."""
+
+    needs_raw_value   = False
+
+    open_mode         = "w"
+    """`open_mode' defines the mode to use for opening the file specified
+       by the attribute's value.
+       """
+
+    do_check         = True
+    """`do_check' specifies whether the existence of a file as specified by
+       the attribute's value is checked by `from_string'.
+       """
+
+    @TFL.Meta.Class_and_Instance_Method
+    def simple_cooked (soc, s) :
+        if s :
+            return s.encode ("ascii")
+    # end def simple_cooked
+
+    def _check_dir (self, d) :
+        if not sos.path.isdir (d) :
+            raise MOM.Error.No_Such_Directory, d
+    # end def _check_dir
+
+    def _check_read (self, s) :
+        if "r" in self.open_mode and not sos.path.isfile (s):
+            raise MOM.Error.No_Such_File, s
+    # end def _check_read
+
+    def _check_open (self, s, mode) :
+        if "w" in self.open_mode or "a" in self.open_mode :
+            exists = sos.path.isfile (s)
+            file   = open (s, mode)
+            file.close ()
+            if not exists :
+                sos.remove (s)
+    # end def _check_open
+
+    def _check_write (self, s) :
+        if self.do_check :
+            self._check_open (s, self.open_mode)
+    # end def _check_write
+
+# end class _A_Filename_
+
+class _A_String_ (_A_String_Base_) :
+    """Base class for string-valued attributes of an object."""
+
+    __metaclass__     = MOM.Meta.M_Attr_Type_String
+
+    ignore_case       = False
+    needs_raw_value   = False
+    simple_cooked     = unicode
+
+# end class _A_String_
+
 class _A_Typed_Collection_ (A_Attr_Type) :
     """Base class for attributes that hold a collection of strictly typed
        values.
@@ -860,62 +963,6 @@ class _A_Object_Set_ (_A_Typed_Set_) :
     # end def _C_as_string
 
 # end class _A_Object_Set_
-
-class _A_String_Base_ (A_Attr_Type) :
-    """Base class for string-valued attributes of an object."""
-
-    default           = ""
-    max_length        = 0
-    ui_length         = TFL.Meta.Once_Property \
-        (lambda s : s.max_length or 120)
-
-    def _checkers (self, e_type, kind) :
-        for c in self.__super._checkers (e_type, kind) :
-            yield c
-        if self.max_length :
-            name   = self.name
-            p_kind = [MOM.Pred.Object, MOM.Pred.System] [kind.electric]
-            p_name = "AC_check_%s_length" % (name, )
-            check = MOM.Pred.Condition.__class__ \
-                ( p_name, (MOM.Pred.Condition, )
-                , dict
-                    ( assertion  = "length <= %s" % (self.max_length, )
-                    , attributes = (name, )
-                    , bindings   = dict
-                        ( length = "len (%s)" % (name, )
-                        )
-                    , kind       = p_kind
-                    , name       = p_name
-                    , __doc__    = "Value for %s must not be longer than %s"
-                      % (name, self.max_length)
-                    )
-                )
-            yield check, ()
-    # end def _checkers
-
-    def _from_string_eval (self, s, obj, glob, locl) :
-        return self.simple_cooked (s)
-    # end def _from_string
-
-    def _to_cooked (self, s, cooker, obj, glob, locl) :
-        if s is not None :
-            return self.simple_cooked (s)
-        return s
-    # end def _to_cooked
-
-# end class _A_String_Base_
-
-class _A_String_ (_A_String_Base_) :
-    """Base class for string-valued attributes of an object."""
-
-    __metaclass__     = MOM.Meta.M_Attr_Type_String
-
-    default           = ""
-    ignore_case       = False
-    needs_raw_value   = False
-    simple_cooked     = unicode
-
-# end class _A_String_
 
 class _A_Unit_ (A_Attr_Type) :
     """Mixin for attributes describing physical quantities with optional
@@ -1115,6 +1162,26 @@ class A_Decimal (_A_Number_) :
 
 # end class A_Decimal
 
+class A_Dirname (_A_Filename_) :
+    """Models an attribute of an object specifying a directory."""
+
+    typ         = "Directory"
+
+    def _from_string_eval (self, s, obj, glob, locl) :
+        s = self.__super._from_string_eval (s, obj, glob, locl)
+        if s :
+            if sos.altsep :
+                s = s.replace (sos.altsep, sos.sep)
+            if not s.endswith (sos.sep) :
+                s += sos.sep
+            if self.do_check :
+                self._check_dir   (s)
+                self._check_write (s + ".ignore")
+        return sos.path.normpath (s)
+    # end def _from_string
+
+# end class A_Dirname
+
 class A_Email (_A_String_) :
     """An email address"""
 
@@ -1124,6 +1191,22 @@ class A_Email (_A_String_) :
     ### XXX check_syntax
 
 # end class A_Email
+
+class A_Filename (_A_Filename_) :
+    """Models an attribute of an object specifying a filename."""
+
+    typ         = "Filename"
+
+    def _from_string_eval (self, s, obj, glob, locl) :
+        s = self.__super._from_string_eval (s, obj, glob, locl)
+        if s and self.do_check :
+            self._check_dir   (sos.path.dirname (s))
+            self._check_read  (s)
+            self._check_write (s)
+        return sos.path.normpath (s)
+    # end def _from_string
+
+# end class A_Filename
 
 class A_Float (_A_Float_) :
     code_format    = "%s"

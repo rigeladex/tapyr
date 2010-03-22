@@ -35,6 +35,7 @@
 #     5-Mar-2010 (CT) `Page.rank` defined, attribute `prio` added
 #     7-Mar-2010 (CT) s/title/short_title/; s/description/title/
 #    17-Mar-2010 (CT) `email_obfuscator` removed
+#    22-Mar-2010 (CT) `Object_PN` factored
 #    ««revision-date»»···
 #--
 
@@ -51,7 +52,7 @@ from   _TFL.I18N                import _, _T, _Tn
 
 import datetime
 
-_Ancestor_Essence = GTW.OMP.SWP.Object
+_Ancestor_Essence = GTW.OMP.SWP.Object_PN
 
 class Page (_Ancestor_Essence) :
     """Model a static web page."""
@@ -60,25 +61,7 @@ class Page (_Ancestor_Essence) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        ### Primary attributes
-
-        class perma_name (A_Date_Slug) :
-            """Name used for perma-link."""
-
-            kind               = Attr.Primary
-            ui_name            = "Name"
-
-        # end class perma_name
-
         ### Non-primary attributes
-
-        class author (A_Object) :
-            """Author of the web page."""
-
-            kind               = Attr.Optional
-            Class              = GTW.OMP.PAP.Person
-
-        # end class author
 
         class contents (A_Text) :
             """Contents of web page in html format"""
@@ -91,22 +74,6 @@ class Page (_Ancestor_Essence) :
             # end def computed
 
         # end class contents
-
-        class date (A_Date_Interval_N) :
-            """Publication (`start`) and expiration date (`finish`) for the
-               web page
-            """
-
-            kind               = Attr.Optional
-
-            explanation        = """
-              The page won't be visible before the start date.
-
-              After the finish date, the page won't be displayed (except
-              possibly in an archive).
-              """
-
-        # end class date
 
         class format (A_Format) :
             """Markup format used for `text` of web page"""
@@ -135,28 +102,12 @@ class Page (_Ancestor_Essence) :
 
         # end class prio
 
-        class short_title (A_String) :
-            """Short title of the web page (used in navigation)."""
-
-            kind               = Attr.Required
-            max_length         = 30
-
-        # end class title
-
         class text (A_Text) :
             """Text for web page in markup specified by `format`."""
 
             kind               = Attr.Mandatory
 
         # end class text
-
-        class title (A_String) :
-            """Title of the web page"""
-
-            kind               = Attr.Required
-            max_length         = 120
-
-        # end class title
 
     # end class _Attributes
 

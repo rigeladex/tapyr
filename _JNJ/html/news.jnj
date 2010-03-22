@@ -38,7 +38,7 @@
 {%- macro entry (e) -%}
   <div class="news-entry">
     <div class="news-meta">
-      <span class="news-author">{{ e.author }}</span>{#--#}
+      <span class="news-author">{{ e.creator }}</span>{#--#}
       <span class="news-date">{{ e.date }}</span>{#--#}
       <div  class="news-title">
         {%- onion e.permalink %}

@@ -72,7 +72,7 @@ apt = MOM.App_Type \
 
 scope        = MOM.Scope.new (apt, None)
 p            = scope.PAP.Person ("Test", "Author", raw = True)
-page         = scope.SWP.Page ("1", author = p, text = "Is mandatory")
+page         = scope.SWP.Page ("1", creator = p, text = "Is mandatory")
 scope.commit ()
 scope.ems.session.expunge( )
 
