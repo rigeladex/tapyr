@@ -55,6 +55,8 @@
 #                     create `A_Cached_Role` (done by `Role_Cacher`, now)
 #     4-Mar-2010 (CT) `_m_setup_roles` changed to fix the `Class` of
 #                     cached-role attributes
+#    23-Mar-2010 (CT) `_m_setup_etype_auto_props` changed to set
+#                     `role_type.is_relevant` only for non-partial link-types
 #    ««revision-date»»···
 #--
 
@@ -78,11 +80,13 @@ class M_Link (MOM.Meta.M_Id_Entity) :
 
     def _m_setup_etype_auto_props (cls) :
         cls.__m_super._m_setup_etype_auto_props ()
+        if not cls.is_partial :
+            for a in cls._Attributes._names.itervalues () :
+                if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
+                    a.role_type.is_relevant = True
         auto_cache_roles = set ()
-        own_attr = cls._Attributes._own_names
-        for a in own_attr.itervalues () :
+        for a in cls._Attributes._own_names.itervalues () :
             if issubclass (a, MOM.Attr.A_Link_Role) and a.role_type :
-                a.role_type.is_relevant = True
                 rc = a.auto_cache
                 if rc :
                     if not isinstance (rc, MOM._.Link._Cacher_) :
