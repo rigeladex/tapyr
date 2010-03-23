@@ -162,6 +162,7 @@ class Admin (object) :
             ( AID
                 ( "gallery"
                 , FGD (primary, widget = "html/form.jnj, fg_tr")
+                , legend        = _("Gallery")
                 )
             , FGD ("number")
             , AID

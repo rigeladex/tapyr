@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:29+0100\n"
-"PO-Revision-Date: 2010-03-21 14:43+0100\n"
+"PO-Revision-Date: 2010-03-23 13:15+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -26,14 +26,6 @@ msgid ""
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
-msgid "Author"
-msgstr ""
-
-#: _GTW._OMP._SWP.Page:0
-msgid "Author of the web page."
-msgstr ""
-
-#: _GTW._OMP._SWP.Page:0
 msgid "Contents"
 msgstr ""
 
@@ -41,7 +33,15 @@ msgstr ""
 msgid "Contents of web page in html format"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
+msgid "Creator"
+msgstr ""
+
+#: _GTW._OMP._SWP.Entity:0
+msgid "Creator of the contents of the web page."
+msgstr ""
+
+#: _GTW._OMP._SWP.Entity:0
 msgid "Date"
 msgstr ""
 
@@ -73,8 +73,12 @@ msgstr ""
 msgid "Markup format used for `text` of web page"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Name used for perma-link."
+msgstr ""
+
+#: _GTW._OMP._SWP.Entity:0
+msgid "Object_PN"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
@@ -85,17 +89,17 @@ msgstr ""
 msgid "Prio"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid ""
 "Publication (`start`) and expiration date (`finish`) for the\n"
 "web page"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Short title"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Short title of the web page (used in navigation)."
 msgstr ""
 
@@ -107,11 +111,17 @@ msgstr ""
 msgid "Text for web page in markup specified by `format`."
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Title"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Title of the web page"
 msgstr ""
+
+#~ msgid "Author"
+#~ msgstr ""
+
+#~ msgid "Author of the web page."
+#~ msgstr ""
 

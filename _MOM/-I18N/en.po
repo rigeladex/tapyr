@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-21 14:43+0100\n"
+"PO-Revision-Date: 2010-03-23 13:15+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,14 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:926
+#: _MOM/Entity.py:942
 #, python-format
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1222
+#: _MOM/_Attr/Type.py:1305
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -68,6 +68,10 @@ msgstr ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:209
 msgid "Daily"
+msgstr ""
+
+#: _MOM.Entity:0
+msgid "Date/time of last change."
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
@@ -127,13 +131,17 @@ msgstr ""
 msgid "Indicates if object/link was created automatically or not."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:958
+#: _MOM/_Attr/Type.py:1005
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
 
 #: _MOM.Entity:0
 msgid "Is used"
+msgstr ""
+
+#: _MOM.Entity:0
+msgid "Last changed"
 msgstr ""
 
 #: _MOM.Link:0
@@ -184,12 +192,12 @@ msgstr ""
 msgid "Named_Object"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:731
+#: _MOM/_Attr/Type.py:732
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:265
+#: _MOM/_Attr/Type.py:266
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr ""
 
@@ -361,7 +369,7 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:89 _MOM/_Attr/Type.py:377
+#: _MOM/_Attr/Recurrence_Rule.py:89 _MOM/_Attr/Type.py:378
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
@@ -420,7 +428,7 @@ msgstr ""
 msgid "middle"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:726
+#: _MOM/_Attr/Type.py:727
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""

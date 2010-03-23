@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-03-21 14:43+0100\n"
+"POT-Creation-Date: 2010-03-23 13:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:193 _GTW/_OMP/_PAP/Nav.py:194
+#: _GTW/_OMP/_PAP/Nav.py:197 _GTW/_OMP/_PAP/Nav.py:198
 msgid "Addresses"
 msgstr ""
 
@@ -79,7 +79,7 @@ msgstr ""
 msgid "Email address (including domain)"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:182 _GTW/_OMP/_PAP/Nav.py:183
+#: _GTW/_OMP/_PAP/Nav.py:186 _GTW/_OMP/_PAP/Nav.py:187
 msgid "Email addresses"
 msgstr ""
 
@@ -131,7 +131,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:160 _GTW._OMP._PAP.Person:0
+#: _GTW/_OMP/_PAP/Nav.py:164 _GTW._OMP._PAP.Person:0
 msgid "Lifetime"
 msgstr ""
 
@@ -177,9 +177,9 @@ msgstr ""
 msgid "Person_has_Phone"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:118 _GTW/_OMP/_PAP/Nav.py:119
-#: _GTW/_OMP/_PAP/Nav.py:138 _GTW/_OMP/_PAP/Nav.py:139
-#: _GTW/_OMP/_PAP/Nav.py:216 _GTW/_OMP/_PAP/Nav.py:217 _GTW._OMP._PAP.Email:0
+#: _GTW/_OMP/_PAP/Nav.py:120 _GTW/_OMP/_PAP/Nav.py:121
+#: _GTW/_OMP/_PAP/Nav.py:142 _GTW/_OMP/_PAP/Nav.py:143
+#: _GTW/_OMP/_PAP/Nav.py:220 _GTW/_OMP/_PAP/Nav.py:221 _GTW._OMP._PAP.Email:0
 #: _GTW._OMP._PAP.Address:0 _GTW._OMP._PAP.Phone:0
 msgid "Persons"
 msgstr ""
@@ -192,7 +192,7 @@ msgstr ""
 msgid "Phone number proper (without country code, area code, extension)"
 msgstr ""
 
-#: _GTW/_OMP/_PAP/Nav.py:171 _GTW/_OMP/_PAP/Nav.py:172
+#: _GTW/_OMP/_PAP/Nav.py:175 _GTW/_OMP/_PAP/Nav.py:176
 msgid "Phone numbers"
 msgstr ""
 

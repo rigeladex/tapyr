@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-03-21 14:43+0100\n"
+"PO-Revision-Date: 2010-03-23 13:15+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -19,18 +19,6 @@ msgstr ""
 "Generated-By: Babel 0.9.4\n"
 
 #: _GTW._OMP._SWP.Page:0
-msgid "Author"
-msgstr ""
-
-#: _GTW._OMP._SWP.Page:0
-msgid "Author of the web page."
-msgstr ""
-
-#: _GTW/_OMP/_SWP/Nav.py:87
-msgid "Author of web page"
-msgstr ""
-
-#: _GTW._OMP._SWP.Page:0
 msgid "Contents"
 msgstr ""
 
@@ -38,38 +26,90 @@ msgstr ""
 msgid "Contents of web page in html format"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
+msgid "Creator"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:112
+msgid "Creator of the contents of the web page"
+msgstr ""
+
+#: _GTW._OMP._SWP.Entity:0
+msgid "Creator of the contents of the web page."
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "D2_Value_Float"
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "D2_Value_Int"
+msgstr ""
+
+#: _GTW._OMP._SWP.Entity:0
 msgid "Date"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:100
+#: _GTW/_OMP/_SWP/Nav.py:126
 msgid "Date interval"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:99
+#: _GTW/_OMP/_SWP/Nav.py:125
 msgid "Date interval of event"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:120
+#: _GTW._OMP._SWP.Picture:0
+msgid "Dir"
+msgstr ""
+
+#: _GTW._OMP._SWP.Gallery:0
+msgid "Directory"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Directory in gallery holding pictures."
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Directory in gallery holding thumbnails."
+msgstr ""
+
+#: _GTW._OMP._SWP.Gallery:0
+msgid "Directory where pictures of gallery are stored."
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:146
 msgid "Events"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:119
+#: _GTW/_OMP/_SWP/Nav.py:145
 msgid "Events associated to page"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Extension of file holding picture."
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Format"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Format.py:96
+#: _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
+msgid "Gallery"
+msgstr ""
+
+#: _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
+msgid "Gallery to which this picture belongs."
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Format.py:93
 #, python-format
 msgid ""
 "HTML must not contain any of the tags:\n"
 "%s"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Format.py:90
+#: _GTW/_OMP/_SWP/Format.py:87
 #, python-format
 msgid ""
 "HTML must not contain comments:\n"
@@ -84,6 +124,10 @@ msgstr ""
 msgid "Head line of the web page"
 msgstr ""
 
+#: _GTW._OMP._SWP.Picture:0
+msgid "Height of picture."
+msgstr ""
+
 #: _GTW._OMP._SWP.Page:0
 msgid "Higher prio sorts before lower prio."
 msgstr ""
@@ -92,37 +136,73 @@ msgstr ""
 msgid "Markup format used for `text` of web page"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Name used for perma-link."
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Number of picture in gallery."
+msgstr ""
+
+#: _GTW._OMP._SWP.Entity:0
+msgid "Object_PN"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Page"
 msgstr ""
 
+#: _GTW._OMP._SWP.Picture:0
+msgid "Path"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Path of file holding picture."
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:170 _GTW._OMP._SWP.Picture:0
+msgid "Photo"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:88
+msgid "Photographer"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Picture"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Picture."
+msgstr ""
+
+#: _GTW._OMP._SWP.Gallery:0
+msgid "Pictures"
+msgstr ""
+
 #: _GTW._OMP._SWP.Page:0
 msgid "Prio"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid ""
 "Publication (`start`) and expiration date (`finish`) for the\n"
 "web page"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:70
+#: _GTW/_OMP/_SWP/Nav.py:78 _GTW/_OMP/_SWP/Nav.py:103
 msgid "Publication and expiration date"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:117
+#: _GTW/_OMP/_SWP/Nav.py:143
 msgid "Recurrence rule"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Short title"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Short title of the web page (used in navigation)."
 msgstr ""
 
@@ -134,19 +214,72 @@ msgstr ""
 msgid "Text for web page in markup specified by `format`."
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:111
+#: _GTW._OMP._SWP.Picture:0
+msgid "Thumb"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:175 _GTW._OMP._SWP.Picture:0
+msgid "Thumbnail"
+msgstr ""
+
+#: _GTW/_OMP/_SWP/Nav.py:137
 msgid "Time interval"
 msgstr ""
 
-#: _GTW/_OMP/_SWP/Nav.py:110
+#: _GTW/_OMP/_SWP/Nav.py:136
 msgid "Time interval of event"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Title"
 msgstr ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Entity:0
 msgid "Title of the web page"
 msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "Value in x (horizontal) direction."
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "Value in y (vertical) direction."
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Width"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "Width of picture."
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "X"
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "Y"
+msgstr ""
+
+#: _MOM._Attr.A_2D:0
+msgid "_D2_Value_"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "_Pic_"
+msgstr ""
+
+#: _GTW._OMP._SWP.Picture:0
+msgid "_Thumb_"
+msgstr ""
+
+#~ msgid "Author"
+#~ msgstr ""
+
+#~ msgid "Author of the web page."
+#~ msgstr ""
+
+#~ msgid "Author of web page"
+#~ msgstr ""
 

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-01-30 15:30+0100\n"
-"PO-Revision-Date: 2010-03-21 14:43+0100\n"
+"PO-Revision-Date: 2010-03-23 13:15+0100\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:926
+#: _MOM/Entity.py:942
 #, python-format
 msgid ""
 "%s\n"
@@ -27,7 +27,7 @@ msgstr ""
 "%s\n"
 "    %s benötigt die Argumente: (%s). Stattdessen erhalten: (%s)"
 
-#: _MOM/_Attr/Type.py:1222
+#: _MOM/_Attr/Type.py:1305
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
@@ -77,6 +77,10 @@ msgstr "Anzahl"
 #: _MOM/_Attr/Recurrence_Rule.py:209
 msgid "Daily"
 msgstr "Täglich"
+
+#: _MOM.Entity:0
+msgid "Date/time of last change."
+msgstr "Datum und Uhrzeit der letzten Änderung"
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Date_Interval"
@@ -135,7 +139,7 @@ msgstr "Id-Entität"
 msgid "Indicates if object/link was created automatically or not."
 msgstr "Zeigt an, ob das Objekt/der Link automatisch erzeugt wurde."
 
-#: _MOM/_Attr/Type.py:958
+#: _MOM/_Attr/Type.py:1005
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
@@ -143,6 +147,10 @@ msgstr "Ungültige Einheit %s, mögliche Einheiten sind %s"
 #: _MOM.Entity:0
 msgid "Is used"
 msgstr "wird verwendet"
+
+#: _MOM.Entity:0
+msgid "Last changed"
+msgstr "Zuletzt geändert"
 
 #: _MOM.Link:0
 msgid "Link"
@@ -192,12 +200,12 @@ msgstr "Name"
 msgid "Named_Object"
 msgstr "Benanntes-Objekt"
 
-#: _MOM/_Attr/Type.py:731
+#: _MOM/_Attr/Type.py:732
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr "Es gibt kein Objekt %s %s im Namensraum %s"
 
-#: _MOM/_Attr/Type.py:265
+#: _MOM/_Attr/Type.py:266
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr "Nicht-ASCII Werte in 8-bit Zeichenketten werden nicht unterstützt"
 
@@ -390,7 +398,7 @@ msgstr "Verwende `set` oder `set_raw`, um es zu verändern."
 msgid "Use one of the types %s instead."
 msgstr "Verwende einen der Typen %s."
 
-#: _MOM/_Attr/Recurrence_Rule.py:89 _MOM/_Attr/Type.py:377
+#: _MOM/_Attr/Recurrence_Rule.py:89 _MOM/_Attr/Type.py:378
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr "Wert `%r` hat nicht den Typ %s"
@@ -449,7 +457,7 @@ msgstr "links"
 msgid "middle"
 msgstr "mittig"
 
-#: _MOM/_Attr/Type.py:726
+#: _MOM/_Attr/Type.py:727
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr "Objekt %s %s ist nicht verwendbar, mögliche Werte sind: %s"
