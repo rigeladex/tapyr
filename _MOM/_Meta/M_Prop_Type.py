@@ -51,7 +51,7 @@ class M_Prop_Type (TFL.Meta.M_Auto_Combine) :
         for n in "description", "explanation", "syntax":
             if n in dct :
                 dct [n] = TFL.normalized_indent (dct [n])
-        dct ["name"]         = name
+        dct ["name"] = name
         return super (M_Prop_Type, meta).__new__ (meta, name, bases, dct)
     # end def __new__
 

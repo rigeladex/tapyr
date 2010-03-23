@@ -124,7 +124,8 @@ class Field (TFL.Meta.Object) :
     def get_raw (self, form, instance) :
         try :
             return self.attr_kind.get_raw (instance)
-        except :
+        except Exception, exc :
+            print exc
             import pdb; pdb.set_trace ()
             return "XXX"
     # end def get_raw

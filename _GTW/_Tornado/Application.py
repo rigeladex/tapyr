@@ -35,7 +35,7 @@ from   _TFL                import TFL
 import _TFL._Meta.Object
 from   _GTW                import GTW
 import _GTW._Tornado.Error
-import _GTW._Tornado.Static_File
+import _GTW._Tornado.Static_File_Handler
 
 from    tornado            import web
 import  tornado.httpserver

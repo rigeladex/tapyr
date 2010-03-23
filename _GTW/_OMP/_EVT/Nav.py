@@ -60,7 +60,7 @@ class Admin (object) :
         , Form_args =
             ( AID
                 ( "object"
-                , FGD ("primary")
+                , FGD (primary)
                 , widget = "html/form.jnj, fg_tr"
                 )
             , AID
@@ -91,7 +91,7 @@ class Admin (object) :
                 ( "event"
                 , AID
                     ( "object"
-                    , FGD ("primary")
+                    , FGD (primary)
                     , widget = "html/form.jnj, fg_tr"
                     )
                 )

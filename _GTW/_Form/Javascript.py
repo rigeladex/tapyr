@@ -72,7 +72,7 @@ class Form (TFL.Meta.Object) :
         return ()
     # end def js_on_ready
 
-# end class Form´
+# end class Form
 
 class _Inline_ (TFL.Meta.Object) :
     """Base class for the different kind of inline forms"""

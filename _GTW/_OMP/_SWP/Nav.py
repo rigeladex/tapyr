@@ -29,6 +29,7 @@
 #    16-Feb-2010 (MG) Creation (based on GTW.OMP.PAP.Nav)
 #    24-Feb-2010 (CT) Creation continued
 #    11-Mar-2010 (MG) Special widget's used for event date/time
+#    23-Mar-2010 (CT) `Gallery` and `Picture` added
 #    ««revision-date»»···
 #--
 
@@ -56,6 +57,41 @@ primary = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
+    creator_completer = GTW.Form.MOM.Javascript.Completer \
+        ( fields    =
+            ("last_name", "first_name", "middle_name", "title")
+        , triggers  = dict
+            ( last_name  = dict (min_chars = 2)
+            , first_name = dict (min_chars = 2)
+            )
+        , name      = "Creator_Info"
+        )
+
+    Gallery         = dict \
+        ( ETM       = "GTW.OMP.SWP.Gallery"
+        , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( FGD ("perma_name", "short_title", "title", "directory")
+            , AID
+                ( "date"
+                , FGD (widget   = "html/form.jnj, fg_tr")
+                , legend        = _("Publication and expiration date")
+                )
+            , AID
+                ( "creator"
+                , FGD
+                    ( primary
+                    , widget    = "html/form.jnj, fg_tr"
+                    , css_class = "inline-instance"
+                    )
+                , completer     = creator_completer
+                , legend        = _("Photographer")
+                )
+            )
+        , sort_key       = TFL.Sorted_By \
+            ("-date.start", "perma_name")
+        )
+
     Page            = dict \
         ( ETM       = "GTW.OMP.SWP.Page"
         , Type      = GTW.NAV.E_Type.Admin
@@ -72,15 +108,7 @@ class Admin (object) :
                       , widget    = "html/form.jnj, fg_tr"
                       , css_class = "inline-instance"
                       )
-                , completer = GTW.Form.MOM.Javascript.Completer
-                    ( fields    =
-                        ("last_name", "first_name", "middle_name", "title")
-                    , triggers  = dict
-                        ( last_name  = dict (min_chars = 2)
-                        , first_name = dict (min_chars = 2)
-                        )
-                    , name      = "Creator_Info"
-                    )
+                , completer = creator_completer
                 , legend = _("Creator of the contents of the web page")
                 )
             , FGD ("head_line", "format", "text")
@@ -125,6 +153,30 @@ class Admin (object) :
             )
         , sort_key       = TFL.Sorted_By \
             ("-date.start", "-prio", "perma_name")
+        )
+
+    Picture         = dict \
+        ( ETM       = "GTW.OMP.SWP.Picture"
+        , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( AID
+                ( "gallery"
+                , FGD (primary, widget = "html/form.jnj, fg_tr")
+                )
+            , FGD ("number")
+            , AID
+                ( "photo"
+                , FGD (widget   = "html/form.jnj, fg_tr")
+                , legend        = _("Photo")
+                )
+            , AID
+                ( "thumb"
+                , FGD (widget   = "html/form.jnj, fg_tr")
+                , legend        = _("Thumbnail")
+                )
+            )
+        , sort_key       = TFL.Sorted_By \
+            ("-left.date.start", "left.perma_name", "number")
         )
 
 # end class Admin
