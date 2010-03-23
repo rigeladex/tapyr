@@ -157,9 +157,7 @@ class SAS_Interface (TFL.Meta.Object) :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
                 s_prefix = kind.C_Type._sa_save_attrs [-1]
                 columns  = TFL.defaultdict (ddict_list)
-                self._setup_columns (kind.C_Type, columns, s_prefix)
-                e_type_columns [e_type] [kind] = columns
-                e_type_columns [None]   [kind] = columns
+                et       = self._setup_columns (kind.C_Type, columns, s_prefix)
             else :
                 attr    = kind.attr
                 raw_col = None
@@ -173,8 +171,9 @@ class SAS_Interface (TFL.Meta.Object) :
                 columns = [col]
                 if raw_col is not None :
                     columns.append (raw_col)
-                e_type_columns [et]   [kind] = columns
-                e_type_columns [None] [kind] = columns
+            e_type_columns [et]   [kind] = columns
+            e_type_columns [None] [kind] = columns
+        return et
     # end def _setup_columns
 
     def finish (self) :
