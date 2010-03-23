@@ -52,7 +52,7 @@ from  _GTW._Form.Widget_Spec    import Widget_Spec as WS
 
 from   _TFL.I18N                import _
 
-primary = WF ("primary")
+primary  = WF ("primary")
 
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""

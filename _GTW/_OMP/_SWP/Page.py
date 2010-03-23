@@ -44,7 +44,6 @@ from   _MOM._Attr.Date_Interval import *
 
 from   _GTW                     import GTW
 
-import _GTW._OMP._PAP.Person
 import _GTW._OMP._SWP.Entity
 from   _GTW._OMP._SWP.Format    import A_Format
 

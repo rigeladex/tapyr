@@ -46,6 +46,8 @@
 #                     app-type specific e-type
 #     4-Mar-2010 (CT) `_add_prop` changed to not change `attr.Class` of
 #                     `_A_Object_` (app_type doesn't have etypes yet)
+#    23-Mar-2010 (CT) `_add_prop` changed to pass names in `renameds` to
+#                     `_setup_alias`
 #    ««revision-date»»···
 #--
 
@@ -100,9 +102,13 @@ class Spec (MOM.Prop.Spec) :
 
     def _add_prop (self, e_type, name, prop_type) :
         prop = self.__super._add_prop (e_type, name, prop_type)
-        if prop and name != prop.name :
-            self._setup_alias (e_type, name, prop.name)
-        attr = prop.attr
+        if prop :
+            if name != prop.name :
+                self._setup_alias (e_type, name, prop.name)
+            else :
+                attr = prop.attr
+                for alias in attr.renameds :
+                    self._setup_alias (e_type, alias, name)
         return prop
     # end def _add_prop
 

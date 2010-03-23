@@ -44,6 +44,7 @@
 #    15-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` corrected
 #    16-Mar-2010 (CT) `_Pickle_Mixin_` factored
 #    23-Mar-2010 (CT) `assert` added to guard against `check` being a string
+#    23-Mar-2010 (CT) `renameds` added
 #    ««revision-date»»···
 #--
 
@@ -65,6 +66,11 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
         if not name.startswith (("_A_", "A_")) :
             cls.ckd_name = "__%s"     % (cls.name, )
             cls.raw_name = "__raw_%s" % (cls.name, )
+            cls.renameds = set ()
+            for b in bases :
+                bn = getattr (b, "ckd_name", None)
+                if bn and cls.name != b.name :
+                    cls.renameds.add (b.name)
         if not hasattr (cls, "syntax") :
             if not name.startswith (("_A_", "A_Attr_Type")) :
                 ### Adding `syntax` here (instead of as a class attribute in

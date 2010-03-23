@@ -37,6 +37,7 @@ from   _MOM.import_MOM          import *
 from   _MOM._Attr.Date_Interval import *
 from   _GTW                     import GTW
 
+import _GTW._OMP._PAP.Person
 import _GTW._OMP._SWP
 
 class _SWP_Entity_ (MOM.Entity) :

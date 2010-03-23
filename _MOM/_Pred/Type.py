@@ -68,6 +68,7 @@ class _Condition_ (object):
     guard_code      = None
     parameters      = ()
     rank            = 1
+    renameds        = () ### only for compatibility with MOM.Attr.Type
     severe          = True
 
     def __init__ (self, kind, obj, attr_dict = {}) :
