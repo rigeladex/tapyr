@@ -32,6 +32,7 @@
 #    21-Jan-2010 (MG) Use new `TFL.Babel.Existing_Translations`
 #    25-Jan-2010 (MG) Add doctrings to translations
 #    27-Feb-2010 (MG) Add the filename of the e-type to the translation
+#    23-Mar-2010 (MG) Plural added for `ui_name`
 #    ««revision-date»»···
 #--
 from   _MOM                import MOM
@@ -47,12 +48,14 @@ def Add_Translations (encoding, config, method, app_type) :
     translations = []
 
     def _add_object (obj, default_name, add_doc_string, filename) :
-        msg = getattr (obj, "ui_name", default_name)
+        ui_sing = getattr (obj, "ui_name", default_name)
+        ui_plur = "%s%s" % (ui_sing, "s" if ui_sing [-1] != "s" else "es")
+        msg     = (ui_sing, ui_plur)
         if msg not in trans :
-            translations.append ((0, None, msg, [], filename))
+            translations.append ((0, "_Tn", msg, [], filename))
         doc_string = TFL.normalized_indent (obj.__doc__ or "")
         if add_doc_string and doc_string and doc_string not in trans :
-            translations.append ((0, None, doc_string, [], filename))
+            translations.append ((0, "_T", doc_string, [], filename))
     # end def _add_object
 
     for et in app_type.etypes.itervalues () :
@@ -64,6 +67,7 @@ def Add_Translations (encoding, config, method, app_type) :
                 _add_object (prop, prop.name, True, filename)
     return translations
 # end def Add_Translations
+
 
 def Extract (fobj, keywords, comment_tags, config, method) :
     d        = {}
