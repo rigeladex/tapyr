@@ -198,8 +198,8 @@ class Site_Admin (GTW.NAV.Dir) :
         etypes         = kw.pop ("etypes", [])
         self.top.Admin = self
         self.__super.__init__ (src_dir, parent, ** kw)
-        self.add_entries (self._etype_man_entries ())
-        self.add_entries (etypes)
+        self.add_entries      (ichain (self._etype_man_entries (), etypes))
+        self._entries.sort    (key = TFL.Getter.title)
     # end def __init__
 
     def _etype_man_entries (self) :

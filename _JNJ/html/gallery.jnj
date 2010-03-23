@@ -36,17 +36,32 @@
 {%- macro gallery (page) -%}
   <div class="gallery">
     <h1>{{ GTW.firstof (page.desc, page.title, page.href) }}</h1>
-    {%- for th in page.thumbnails %}
-      <div class="thumbnail">
-        <a href="{{ th.photo.permalink}}">
-         <img alt="{{ GTW.firstof (th.alt, th.desc, th.title, th.photo.href) }}"
-              title="{{ GTW.firstof (th.desc, th.title, th.photo.href) }}"
-              src="{{ th.src }}" {# XXX does this need a leading "/" ??? #}
-              height="{{ th.height }}" width="{{ th.width }}"
-         />
-        </a>
-      </div>
-    {%- endfor %}
+    {%- if page.obj %}
+      {%- for pic in GTW.sorted (page.obj.pictures) %}
+        {{ GTW.log_stdout ("%s: %s; %s" % (page.href, pic, pic.thumb.path)) }}
+        <div class="thumbnail">
+          <a href="{{ pic.photo.permalink }}">
+           <img alt="{{ "%s: %s" % (page.title, pic.number) }}"
+                title="{{ "%s: %s" % (page.title, pic.number) }}"
+                src="{{ "/" + pic.thumb.path }}"
+                height="{{ pic.thumb.height }}" width="{{ pic.thumb.width }}"
+           />
+          </a>
+        </div>
+      {% endfor -%}
+    {%- else %}
+      {%- for th in page.thumbnails %}
+        <div class="thumbnail">
+          <a href="{{ th.photo.permalink}}">
+           <img alt="{{ GTW.firstof (th.alt, th.desc, th.title, th.photo.href) }}"
+                title="{{ GTW.firstof (th.desc, th.title, th.photo.href) }}"
+                src="{{ th.src }}" {# XXX does this need a leading "/" ??? #}
+                height="{{ th.height }}" width="{{ th.width }}"
+           />
+          </a>
+        </div>
+      {%- endfor %}
+    {% endif -%}
   </div>
 {%- endmacro -%} {#- gallery -#}
 

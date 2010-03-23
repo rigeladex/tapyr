@@ -88,8 +88,7 @@ class Admin (object) :
                 , legend        = _("Photographer")
                 )
             )
-        , sort_key       = TFL.Sorted_By \
-            ("-date.start", "perma_name")
+        , sort_key       = TFL.Sorted_By ("-date.start", "perma_name")
         )
 
     Page            = dict \
@@ -151,8 +150,7 @@ class Admin (object) :
             ( "ui_display", "short_title", "date", "creator", "format"
             , "last_changed"
             )
-        , sort_key       = TFL.Sorted_By \
-            ("-date.start", "-prio", "perma_name")
+        , sort_key       = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
         )
 
     Picture         = dict \

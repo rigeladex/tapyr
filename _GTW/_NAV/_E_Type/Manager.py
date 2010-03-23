@@ -36,6 +36,7 @@
 #    18-Mar-2010 (CT) `has_children` added
 #    18-Mar-2010 (CT) `Manager_T` begun
 #    19-Mar-2010 (CT) `Manager_T_Archive` added
+#    23-Mar-2010 (CT) Handling of `sort_key` fixed
 #    ««revision-date»»···
 #--
 
@@ -64,9 +65,12 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     admin_args      = {}
     attr_mapper     = None
     disp_filter     = None
+    sort_key        = TFL.Sorted_By ("-date.start", "perma_name")
 
     def __init__ (self, src_dir, ** kw) :
         self.__super.__init__ (src_dir = src_dir, ** kw)
+        if "sort_key" in self.admin_args :
+            self.sort_key = self.admin_args ["sort_key"]
         etn = self.E_Type.type_name
         top = self.top
         if etn not in top.E_Types :
@@ -142,10 +146,7 @@ class Manager_T (Manager) :
     query_limit       = 7
 
     def query (self) :
-        result = self.ETM.query \
-            ( * self.query_filters
-            , sort_key =  TFL.Sorted_By ("-date.start", "-prio", "perma_name")
-            )
+        result = self.ETM.query (* self.query_filters, sort_key = self.sort_key)
         return result.limit (self.query_limit)
     # end def query
 
@@ -159,8 +160,7 @@ class Manager_T (Manager) :
     def _get_objects (self) :
         T = self.Page
         kw = self.page_args
-        sk = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
-        qr = self.ETM.query (sort_key = sk)
+        qr = self.ETM.query (sort_key = self.sort_key)
         cy = datetime.date.today ().year
         result = \
             [   T (self, o, ** kw)
@@ -168,13 +168,15 @@ class Manager_T (Manager) :
             ]
         name = "Archive"
         arch = Manager_T_Archive \
-            ( src_dir   = pjoin (self.src_dir, name)
-            , parent    = self
+            ( ETM       = self.ETM
             , name      = name
+            , Page      = self.Page
+            , page_args = self.page_args
+            , parent    = self
+            , sort_key  = self.sort_key
+            , src_dir   = pjoin (self.src_dir, name)
             , sub_dir   = name
             , title     = name
-            , ETM       = self.ETM
-            , page_args = self.page_args
             )
         result.append (arch)
         return result
@@ -195,8 +197,7 @@ class Manager_T_Archive (Manager_T) :
     def _get_objects (self) :
         T  = self.Page
         kw = self.page_args
-        sk = TFL.Sorted_By  ("-date.start", "-prio", "perma_name")
-        qr = self.ETM.query (sort_key = sk)
+        qr = self.ETM.query (sort_key = self.sort_key)
         cy = datetime.date.today ().year
         result = []
         for y in xrange (cy, cy - 5, -1) :
@@ -217,7 +218,6 @@ class Manager_T_Archive (Manager_T) :
             if _entries :
                 Y._entries = _entries
                 result.append (Y)
-                print y, Y.abs_href, len (_entries)
         return result
     # end def _get_objects
 

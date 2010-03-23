@@ -50,6 +50,7 @@
 #    26-Feb-2010 (MG) Completion handling changed
 #    15-Mar-2010 (CT) `kind_name` removed
 #    17-Mar-2010 (CT) `GTW.NAV.E_Type.Mixin` factored
+#    23-Mar-2010 (CT) Sort `_entries`
 #    ««revision-date»»···
 #--
 

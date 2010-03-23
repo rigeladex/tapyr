@@ -102,6 +102,7 @@ class GTW (TFL.Meta.Object) :
 
     def log_stdout (self, text) :
         print text
+        return ""
     # end def log_stdout
 
     def now (self, format = "%Y/%m/%d") :

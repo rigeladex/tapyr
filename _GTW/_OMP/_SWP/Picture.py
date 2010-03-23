@@ -37,6 +37,7 @@ import _GTW._OMP._SWP.Gallery
 
 from   _MOM._Attr.A_2D          import A_2D_Int, D2_Value_Int
 
+from   _TFL                     import sos
 from   _TFL.I18N                import _, _T, _Tn
 
 _Ancestor_Essence = D2_Value_Int
@@ -75,7 +76,7 @@ class _Pic_ (_Ancestor_Essence) :
         class path (A_String) :
             """Path of file holding picture."""
 
-            kind               = Attr.Once_Cached
+            kind               = Attr.Computed
 
             def computed (self, obj) :
                 owner = obj.owner
