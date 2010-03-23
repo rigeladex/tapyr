@@ -88,13 +88,16 @@ class Spec (MOM.Prop.Spec) :
                 prop_type = check
                 kind      = check.kind
                 name      = check.name
-            checker = self._new_prop \
-                ( name      = name
-                , kind      = kind
-                , prop_type = prop_type
-                , e_type    = e_type
-                )
-            self._setup_prop (e_type, name, kind.kind, checker)
+            if prop_type is not None :
+                checker = self._new_prop \
+                    ( name      = name
+                    , kind      = kind
+                    , prop_type = prop_type
+                    , e_type    = e_type
+                    )
+                self._setup_prop (e_type, name, kind.kind, checker)
+            else :
+                print e_type, attr, check
     # end def _setup_attr_checker
 
 # end class Spec

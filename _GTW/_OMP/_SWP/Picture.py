@@ -35,7 +35,7 @@ from   _GTW                     import GTW
 
 import _GTW._OMP._SWP.Gallery
 
-from   _MOM._Attr.A_2D          import A_2D, D2_Value_Int
+from   _MOM._Attr.A_2D          import A_2D_Int, D2_Value_Int
 
 from   _TFL.I18N                import _, _T, _Tn
 
@@ -60,7 +60,7 @@ class _Pic_ (_Ancestor_Essence) :
             """Extension of file holding picture."""
 
             kind               = Attr.Const
-            default            = ".jpeg"
+            default            = ".jpg"
 
         # end class extension
 
@@ -158,7 +158,7 @@ class Picture (_Ancestor_Essence) :
             """Number of picture in gallery."""
 
             kind               = Attr.Primary
-            check              = ("value >= 0")
+            check              = ("value >= 0", )
 
         # end class name
 
@@ -175,7 +175,7 @@ class Picture (_Ancestor_Essence) :
 
         # end class name
 
-        class phtoto (A_2D) :
+        class photo (A_2D_Int) :
             """Picture."""
 
             kind               = Attr.Required
@@ -184,7 +184,7 @@ class Picture (_Ancestor_Essence) :
 
         # end class photo
 
-        class thumb (A_2D) :
+        class thumb (A_2D_Int) :
             """Thumbnail"""
 
             kind               = Attr.Required

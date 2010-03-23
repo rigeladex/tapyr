@@ -438,17 +438,21 @@ class U_Quant (_Quantifier_) :
 
 def Attribute_Check (name, attr, assertion, attr_none = ()) :
     attributes = () if attr_none else (attr, )
-    result = MOM.Meta.M_Pred_Type_Condition \
-        ( name, (Condition, )
-        , dict
-            ( assertion  = assertion.replace ("value", attr)
-            , attributes = attributes
-            , attr_none  = attr_none
-            , __doc__    = " "
-                ### Space necessary to avoid inheritance of `Condition.__doc__`
+    try :
+        result = MOM.Meta.M_Pred_Type_Condition \
+            ( name, (Condition, )
+            , dict
+                ( assertion  = assertion.replace ("value", attr)
+                , attributes = attributes
+                , attr_none  = attr_none
+                , __doc__    = " "
+                    ### Space necessary to avoid inheritance of `Condition.__doc__`
+                )
             )
-        )
-    return result
+    except Exception :
+        print "%s [%s, %s] : `%s`" % (name, attr, attr_none, assertion)
+    else :
+        return result
 # end def Attribute_Check
 
 __doc__ = """

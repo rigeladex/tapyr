@@ -43,6 +43,7 @@
 #    13-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` implemented
 #    15-Mar-2010 (CT) `M_Attr_Type_Typed_Collection.Pickler` corrected
 #    16-Mar-2010 (CT) `_Pickle_Mixin_` factored
+#    23-Mar-2010 (CT) `assert` added to guard against `check` being a string
 #    ««revision-date»»···
 #--
 
@@ -93,6 +94,12 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
                 % (query, cls)
                 )
             cls.query = property (lambda s : s.query_fct ())
+        check = dct.get ("check")
+        if check is not None :
+            assert not isinstance (check, basestring), \
+                ( "%s.check needs to be a tuple, not a string: %r"
+                % (name, check)
+                )
     # end def __init__
 
 # end class M_Attr_Type

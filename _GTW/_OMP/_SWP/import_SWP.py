@@ -27,15 +27,17 @@
 #
 # Revision Dates
 #    24-Feb-2010 (CT) Creation
+#    23-Mar-2010 (CT) `Gallery` and `Picture` added
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
-#from   _GTW._OMP._SWP         import SWP
 
 import _GTW._OMP._SWP.Entity
 import _GTW._OMP._SWP.Format
+import _GTW._OMP._SWP.Gallery
 import _GTW._OMP._SWP.Page
+import _GTW._OMP._SWP.Picture
 
 ### __END__ GTW.OMP.SWP.import_SWP

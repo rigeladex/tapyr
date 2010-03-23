@@ -91,7 +91,7 @@ _Ancestor_Essence = _D2_Value_
 class D2_Value_Float (_Ancestor_Essence) :
     """Model a two-dimensional float-based value."""
 
-        class _Attributes (_Ancestor_Essence._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
@@ -104,7 +104,7 @@ class D2_Value_Float (_Ancestor_Essence) :
             pass
         # end class y
 
-    # end class _Attribute
+    # end class _Attributes
 
 # end class D2_Value_Float
 

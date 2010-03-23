@@ -42,6 +42,8 @@
 #    18-Mar-2010 (MG) `SAS_Interface.delete`: need to delete the entries in the tables
 #                     top-down
 #    19-Mar-2010 (MG) Bug in `value_dict` fixed and streamlined
+#    23-Mar-2010 (CT) `_setup_columns` fixed ???
+#                     (s/et/e_type/ in if-clause for `_Composite_Mixin_`)
 #    ««revision-date»»···
 #--
 
@@ -91,8 +93,8 @@ class SAS_Interface (TFL.Meta.Object) :
         self.e_type_columns = e_type_columns = TFL.defaultdict (ddict_list)
         if e_type is e_type.relevant_root :
             columns = [cm ["Type_Name"]]
-            e_type_columns [self.e_type] [Type_Name] = columns
-            e_type_columns [None       ] [Type_Name] = columns
+            e_type_columns [e_type] [Type_Name] = columns
+            e_type_columns [None]   [Type_Name] = columns
         self._setup_columns (e_type, e_type_columns)
     # end def __init__
 
@@ -148,7 +150,7 @@ class SAS_Interface (TFL.Meta.Object) :
     # end def _reconstruct
 
     def _setup_columns (self, e_type, e_type_columns, prefix = "") :
-        cm             = self.column_map
+        cm = self.column_map
         for kind in ( k for k in e_type.attributes.itervalues ()
                       if k.save_to_db
                     ) :
@@ -156,20 +158,19 @@ class SAS_Interface (TFL.Meta.Object) :
                 s_prefix = kind.C_Type._sa_save_attrs [-1]
                 columns  = TFL.defaultdict (ddict_list)
                 self._setup_columns (kind.C_Type, columns, s_prefix)
-                e_type_columns [et]   [kind] = columns
-                e_type_columns [None] [kind] = columns
+                e_type_columns [e_type] [kind] = columns
+                e_type_columns [None]   [kind] = columns
             else :
-                attr        = kind.attr
-                raw_col     = None
+                attr    = kind.attr
+                raw_col = None
                 if isinstance (attr, MOM.Attr._A_Object_) :
-                    col     = cm.get \
-                        ("%s%s_id" % (prefix, kind.attr.name, ), None)
+                    col = cm.get ("%s%s_id" % (prefix, kind.attr.name), None)
                 else :
-                    col     = cm.get ("%s%s" % (prefix, kind.attr.name), None)
+                    col = cm.get ("%s%s"    % (prefix, kind.attr.name), None)
                     if kind.needs_raw_value :
                         raw_col = cm ["%s%s" % (prefix, kind.attr.raw_name)]
-                et              = col.mom_e_type
-                columns         = [col]
+                et      = col.mom_e_type
+                columns = [col]
                 if raw_col is not None :
                     columns.append (raw_col)
                 e_type_columns [et]   [kind] = columns
