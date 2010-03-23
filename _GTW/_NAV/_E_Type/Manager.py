@@ -37,6 +37,8 @@
 #    18-Mar-2010 (CT) `Manager_T` begun
 #    19-Mar-2010 (CT) `Manager_T_Archive` added
 #    23-Mar-2010 (CT) Handling of `sort_key` fixed
+#    23-Mar-2010 (CT) `_get_child` rewritten to allow `grandchildren` if
+#                     `Page.allows_children`
 #    ««revision-date»»···
 #--
 
@@ -116,15 +118,24 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     # end def query_filters
 
     def _get_child (self, child, * grandchildren) :
-        if not grandchildren :
+        result = None
+        try :
+            obj = self.ETM.query (perma_name = child).one ()
+        except Exception, exc :
             try :
-                obj = self.ETM.query (perma_name = child).one ()
-            except Exception :
-                try :
-                    obj = self.lid_query (self.ETM, child)
-                except LookupError :
-                    return
-            return self.page_from_obj (obj)
+                obj = self.lid_query (self.ETM, child)
+            except Exception, exc :
+                pass
+            else :
+                result = self.page_from_obj (obj)
+        else :
+            result = self.page_from_obj (obj)
+            if grandchildren :
+                if self.Page.allows_children :
+                    result = result._get_child (* grandchildren)
+                else :
+                    result = None
+        return result
     # end def _get_child
 
     def __getattr__ (self, name) :

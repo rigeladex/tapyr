@@ -29,6 +29,7 @@
 ##
 ## Revision Dates
 ##    27-Jan-2010 (CT) Creation
+##    23-Mar-2010 (CT) Adapted to work with GTW.NAV.E_Type.Gallery
 ##    ««revision-date»»···
 ##--
 #}
@@ -36,7 +37,7 @@
 {%- import "STD::html/navigation.jnj" as NT with context %}
 
 {%- macro buttons (page) %}
-  {%- set gallery_title = "{{ GTW._T ('Gallerie') }} {{ page.parent.title }}" %}
+  {%- set gallery_title = "%s %s" % (GTW._T ('Gallerie'), page.parent.title) %}
   <p class="photo-nav">
     {{ NT.neighbor (page.prev, GTW._T ("Previous picture"), "arrow_left") }}
     <a href="{{ page.parent.permalink }}">
@@ -50,11 +51,11 @@
 
 {%- macro photo (page) %}
   <div class="photo">
+    {%- set tit = page.title %}
+    <h2>{{ page.title }}</h2>
     {{ buttons (page) }}
-    <img alt="{{ GTW.firstof (page.alt, page.desc, page.title, page.href) }}"
-         title="{{ GTW.firstof (page.desc, page.title, page.href) }}"
-         src="{{ page.src }}" {# XXX does this need a leading "/" ??? #}
-         height="{{ page.height }}" width="{{ page.width }}"
+    <img alt="{{ tit }}" title="{{ tit }}" src="{{ "/" + page.photo.path }}"
+         height="{{ page.photo.height }}" width="{{ page.photo.width }}"
     />
     {{ buttons (page) }}
   </div>

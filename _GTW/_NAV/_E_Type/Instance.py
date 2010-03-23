@@ -54,6 +54,7 @@ from   posixpath                import join  as pjoin
 class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     """Navigation page modelling a single instance of a E_Type."""
 
+    allows_children = False
     attr_mapper     = None
 
     def __init__ (self, manager, obj, ** kw) :
