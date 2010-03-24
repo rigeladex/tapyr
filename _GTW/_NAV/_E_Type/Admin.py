@@ -51,6 +51,7 @@
 #    15-Mar-2010 (CT) `kind_name` removed
 #    17-Mar-2010 (CT) `GTW.NAV.E_Type.Mixin` factored
 #    23-Mar-2010 (CT) Sort `_entries`
+#    24-Mar-2010 (CT) `Changer.rendered` changed to add `last_changed`, if any
 #    ««revision-date»»···
 #--
 
@@ -128,6 +129,10 @@ class Admin (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Page) :
                     self.top.scope.rollback ()
             self.Media = self._get_media (head = getattr (form, "Media", None))
             context.update (form = form)
+            try :
+                self.last_changed = obj.FO.last_changed
+            except AttributeError :
+                pass
             return self.__super.rendered (handler, template)
         # end def rendered
 
