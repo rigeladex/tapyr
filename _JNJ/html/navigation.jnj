@@ -38,6 +38,8 @@
 ##     9-Mar-2010 (CT) `calendar` added
 ##    17-Mar-2010 (CT) `permalink` added
 ##    18-Mar-2010 (CT) `entry` changed to use `href = link.abs_href`
+##    24-Mar-2010 (CT) Condition for `current-link` in `entry` changed to
+##                     look at `permalink`, too
 ##    ««revision-date»»···
 ##--
 #}
@@ -65,7 +67,7 @@
         {{ entries (link.own_links, level + 1) }}
       </li>
     {%- else -%}
-      {% if link.href == nav_page.href -%}
+      {% if (link.permalink == nav_page.permalink) or (link.href == nav_page.href) -%}
         <li class="current-link level-{{ level }}">{{ link.title|safe }}</li>
       {%- else -%}
         {%- if link.href -%}
@@ -183,7 +185,7 @@
 {%- endmacro -%} {#- sitemap -#}
 
 {%- macro sitemap_entry (link, TEST = False) -%}
-  {% if NAV.permissive or NAV.allow (link, request.user) and not link.hidden %}
+  {% if NAV.permissive or (NAV.allow (link, request.user) and not link.hidden) %}
     <li class="nav-link level-{{link.level|default('0')}}">
       <a href="{{ link.permalink}}"
          {% if link.desc %}title="{{ link.desc }}"{% endif %}
@@ -200,10 +202,9 @@
           <p>Type: {{ link.Type }}</p>
           <p>Target: {{ link.target.href }}</p>
           <p>Permalink: {{ link.permalink }}</p>
-          {% if link.photos %}
-            <ul >
-              {{ sitemap_entry (link.photos [0], TEST) }}
-            </ul>
+          {% if link.pictures %}
+            <p>Picture Url: {{ link.pictures [0].href }}</p>
+            <p>Picture permalink: {{ link.pictures [0].permalink }}</p>
           {% endif %}
         </div>
       {% endif %}

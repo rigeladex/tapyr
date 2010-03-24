@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    23-Mar-2010 (CT) Creation
+#    24-Mar-2010 (CT) `name` passed to `Picture`
+#    24-Mar-2010 (CT) `Gallery.permalink` and `.prefix` corrected
 #    ««revision-date»»···
 #--
 
@@ -76,7 +78,7 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
         @Once_Property
         def permalink (self) :
-            return self.parent.href_photo (self.obj)
+            return self.parent.href_photo (self)
         # end def permalink
 
         @Once_Property
@@ -98,8 +100,13 @@ class Gallery (GTW.NAV.E_Type.Instance) :
 
     def __init__ (self, * args, ** kw) :
         self.__super.__init__ (* args, ** kw)
+        self.prefix   = self.href
         self.pictures = pics = list \
-            ( self.Picture (parent = self, obj = p)
+            ( self.Picture
+                ( parent = self
+                , obj    = p
+                , name   = "%s.html" % p.name
+                )
             for p in sorted (self.obj.pictures, key = TFL.Getter.number)
             )
         prev = None
@@ -110,12 +117,12 @@ class Gallery (GTW.NAV.E_Type.Instance) :
     # end def __init__
 
     def href_photo (self, pic) :
-        return pjoin (self.abs_href, "%s.html" % pic.name)
+        return pjoin (self.permalink, pic.name)
     # end def href_photo
 
     @Once_Property
     def permalink (self) :
-        return pjoin (self.perma_name, "")
+        return pjoin (self.__super.permalink, "")
     # end def permalink
 
     def _get_child (self, child, * grandchildren) :
