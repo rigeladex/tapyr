@@ -210,6 +210,7 @@
 #    18-Mar-2010 (CT) `Alias.rendered` changed to update `handler.context`
 #                     with `nav_page = self` and `page = target`
 #    18-Mar-2010 (CT) `href` legacy handling removed from `_Dir_.new_page`
+#    24-Mar-2010 (CT) `copyright_url` added
 #    ««revision-date»»···
 #--
 
@@ -346,8 +347,9 @@ class _Site_Entity_ (TFL.Meta.Object) :
         year  = time.localtime ().tm_year
         start = self.copyright_start
         return dict \
-            ( year   = "-".join ("%s" % y for y in (start, year) if y)
-            , holder = self.owner
+            ( holder = self.owner
+            , url    = self.copyright_url or "/"
+            , year   = "-".join ("%s" % y for y in (start, year) if y)
             )
     # end def copyright
 
@@ -815,6 +817,7 @@ class Root (_Dir_) :
     Admin                   = None
     auto_delegate           = False  ### useful if not served by Django
     copyright_start         = None
+    copyright_url           = None
     email                   = None   ### default from address
     empty_template          = None
     name                    = "/"
