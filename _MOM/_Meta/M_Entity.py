@@ -82,6 +82,8 @@
 #                     `epk_def_set_raw`
 #    11-Mar-2010 (CT) `check_always` removed (was a Bad Idea (tm))
 #    12-Mar-2010 (CT) `link_map` moved in here (from `M_Object`)
+#    24-Mar-2010 (CT) `_set_type_names` changed to take `ui_name` from
+#                     `cls.__dict__` if there
 #    ««revision-date»»···
 #--
 
@@ -224,7 +226,7 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
     def _set_type_names (cls, base_name) :
         cls.type_base_name = base_name
         cls.type_name      = cls.pns_qualified (base_name)
-        cls.set_ui_name (base_name)
+        cls.set_ui_name (cls.__dict__.get ("ui_name", base_name))
     # end def _set_type_names
 
     def __repr__ (cls) :
