@@ -36,6 +36,7 @@
 #     7-Mar-2010 (CT) s/title/short_title/; s/description/title/
 #    17-Mar-2010 (CT) `email_obfuscator` removed
 #    22-Mar-2010 (CT) `Object_PN` factored
+#    24-Mar-2010 (CT) `Page_Y` added
 #    ««revision-date»»···
 #--
 
@@ -110,6 +111,54 @@ class Page (_Ancestor_Essence) :
     # end class _Attributes
 
 # end class Page
+
+_Ancestor_Essence = Page
+
+class Page_Y (_Ancestor_Essence) :
+    """Model a year-specific static web page."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class year (A_Int) :
+            """Year to which the web page applies."""
+
+            kind               = Attr.Primary_Optional
+            min_value          = 1986
+
+        # end class year
+
+        class year_max (A_Int) :
+            """Maximum permissible value for `year`."""
+
+            kind               = Attr.Once_Cached
+
+            def computed (self, obj) :
+                now = A_Date.now ()
+                return now.year + 3
+            # end def computed
+
+        # end class year_max
+
+    # end class _Attributes
+
+    class _Predicates (_Ancestor_Essence._Predicates) :
+
+        _Ancestor = _Ancestor_Essence._Predicates
+
+        class valid_year (Pred.Condition) :
+            """The value of `year` must not be larger than `year_max`."""
+
+            kind               = Pred.Object
+            assertion          = "year <= year_max"
+            attributes         = ("year", "year_max")
+
+        # end class valid_year
+
+    # end class _Predicates
+
+# end class Page_Y
 
 if __name__ != "__main__" :
     GTW.OMP.SWP._Export ("*")

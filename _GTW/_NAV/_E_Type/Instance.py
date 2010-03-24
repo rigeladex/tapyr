@@ -34,6 +34,7 @@
 #    17-Mar-2010 (CT) `permalink` added
 #    17-Mar-2010 (CT) `GTW.NAV.E_Type.Mixin` added as ancestor
 #    19-Mar-2010 (CT) `permalink` changed to use the real `E_Type.Manager`
+#    24-Mar-2010 (CT) `Instance_Y` added
 #    ««revision-date»»···
 #--
 
@@ -126,6 +127,16 @@ class Instance (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     # end def __getattr__
 
 # end class Instance
+
+class Instance_Y (Instance) :
+    """Year-specific instance."""
+
+    @Once_Property
+    def permalink (self) :
+        return pjoin (self.parent.permalink, self.obj.perma_name)
+    # end def permalink
+
+# end class Instance_Y
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")
