@@ -27,6 +27,8 @@
 #
 # Revision Dates
 #    20-Mar-2010 (MG) Creation
+#    24-Mar-2010 (CT) `__call__` changed to catch `GTW.Werkzeug.Status`
+#                     instead of `Exception`
 #    ««revision-date»»···
 #--
 from   _TFL               import TFL
@@ -83,7 +85,7 @@ class Application (TFL.Meta.Object) :
                 handler = handler_cls (self, environ, * args)
                 try :
                     return handler (environ, start_response)
-                except Exception, exc :
+                except GTW.Werkzeug.Status, exc :
                     response = handler._handle_request_exception (exc)
                     if response :
                         return response (environ, start_response)

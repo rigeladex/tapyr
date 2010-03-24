@@ -211,6 +211,7 @@
 #                     with `nav_page = self` and `page = target`
 #    18-Mar-2010 (CT) `href` legacy handling removed from `_Dir_.new_page`
 #    24-Mar-2010 (CT) `copyright_url` added
+#    24-Mar-2010 (CT) `redirects` added
 #    ««revision-date»»···
 #--
 
@@ -542,7 +543,7 @@ class _Site_Entity_ (TFL.Meta.Object) :
             )
         result = self.rendered (handler)
         if result is None :
-            raise HTTP.Error_404 (request.uri [1:])
+            raise HTTP.Error_404 (request.url)
         if result != True :
             handler.write (result)
     # end def _view
@@ -822,6 +823,7 @@ class Root (_Dir_) :
     empty_template          = None
     name                    = "/"
     owner                   = None
+    redirects               = {}
     scope                   = None
     smtp                    = None
     src_root                = ""
@@ -883,27 +885,38 @@ class Root (_Dir_) :
 
     @classmethod
     def page_from_href (cls, href) :
-        result = None
-        href   = href.strip (u"/")
-        href_s = pjoin (href, u"")
-        if href in cls.top.Table :
-            result = cls.top.Table [href]
-        elif href_s in cls.top.Table :
-            result = cls.top.Table [href_s]
+        href       = href.strip (u"/")
+        href_s     = pjoin (href, u"")
+        result     = None
+        top        = cls.top
+        Table      = top.Table
+        redirects  = top.redirects
+        if href in Table :
+            result = Table [href]
+        elif href_s in Table :
+            result = Table [href_s]
         else :
+            head = href
             tail = []
-            while href :
-                href, _ = sos.path.split (href)
-                if href :
+            while head :
+                head, _ = sos.path.split (head)
+                if head :
                     tail.append (_)
                     try :
-                        d = cls.top.Table [pjoin (href, u"")]
+                        d = Table [pjoin (head, u"")]
                     except KeyError :
                         pass
                     else :
                         result = d._get_child (* reversed (tail))
                 if result :
                     break
+        if result is None and redirects :
+            for k in href, href_s :
+                if k in redirects :
+                    result = redirects [k]
+                    break
+            if result :
+                raise top.HTTP.Redirect_302 (result)
         return result
     # end def page_from_href
 
