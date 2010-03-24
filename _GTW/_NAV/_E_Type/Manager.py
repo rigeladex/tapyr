@@ -158,7 +158,9 @@ class Manager_T (Manager) :
 
     def query (self) :
         result = self.ETM.query (* self.query_filters, sort_key = self.sort_key)
-        return result.limit (self.query_limit)
+        if self.query_limit :
+            result = result.limit (self.query_limit)
+        return result
     # end def query
 
     @Once_Property
@@ -169,20 +171,15 @@ class Manager_T (Manager) :
     # end def query_filters
 
     def _get_objects (self) :
-        T = self.Page
-        kw = self.page_args
-        qr = self.ETM.query (sort_key = self.sort_key)
-        cy = datetime.date.today ().year
-        result = \
-            [   T (self, o, ** kw)
-            for o in qr.filter (Q.date.alive).limit (self.query_limit)
-            ]
-        name = "Archive"
-        arch = Manager_T_Archive \
+        T      = self.Page
+        kw     = self.page_args
+        name   = "Archive"
+        result = [T (self, o, ** kw) for o in self.query ()]
+        arch   = Manager_T_Archive \
             ( ETM       = self.ETM
             , name      = name
-            , Page      = self.Page
-            , page_args = self.page_args
+            , Page      = T
+            , page_args = kw
             , parent    = self
             , sort_key  = self.sort_key
             , src_dir   = pjoin (self.src_dir, name)
