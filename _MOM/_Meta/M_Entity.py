@@ -540,10 +540,12 @@ class M_E_Type (M_E_Mixin) :
                     attr = attr_dict [an]
                     if attr :
                         if attr.electric :
-                            print ( "%s: %s attribute `%s` of `%s` cannot "
-                                    "be referred to by object "
-                                    "invariant `%s`"
-                                  ) % (cls, attr.kind, an, cls.name, pn)
+                            if not isinstance (attr, MOM.Attr.Once_Cached) :
+                                print \
+                                    ( "%s: %s attribute `%s` of `%s` cannot "
+                                      "be referred to by object "
+                                      "invariant `%s`"
+                                    ) % (cls, attr.kind, an, cls.type_name, pn)
                         else :
                             P._attr_map [attr.attr].append (pn)
         P._syntax_checks = \

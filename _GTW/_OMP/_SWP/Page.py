@@ -81,7 +81,6 @@ class Page (_Ancestor_Essence) :
             Kind_Mixins        = (Attr.Sticky_Mixin, )
             default            = GTW.OMP.SWP.Format.ReST
 
-
         # end class format
 
         class head_line (A_String) :
