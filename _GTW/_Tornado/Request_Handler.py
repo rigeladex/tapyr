@@ -30,6 +30,8 @@
 #    20-Feb-2010 (MG) Add the notification collection to the session
 #    23-Feb-2010 (MG) `json` added
 #    20-Mar-2010 (MG) `NAV_Request_Handler` moved in here
+#    24-Mar-2010 (CT) `tornado.httpserver.HTTPRequest.url` set as alias for
+#                     `uri`
 #    ««revision-date»»···
 #--
 
@@ -44,6 +46,9 @@ import _GTW._Tornado
 
 import  locale
 from    tornado                   import web, escape
+
+import  tornado.httpserver
+tornado.httpserver.HTTPRequest.url = TFL.Meta.Alias_Property ("uri")
 
 class Request_Handler (web.RequestHandler, TFL.Meta.Object) :
     """Base class for a request handler"""
