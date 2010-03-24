@@ -212,6 +212,9 @@
 #    18-Mar-2010 (CT) `href` legacy handling removed from `_Dir_.new_page`
 #    24-Mar-2010 (CT) `copyright_url` added
 #    24-Mar-2010 (CT) `redirects` added
+#    24-Mar-2010 (CT) `_Dir_.rendered` changed to update `nav_page` in
+#                     `handler.context`, too
+#    24-Mar-2010 (CT) `is_current` added
 #    ««revision-date»»···
 #--
 
@@ -402,6 +405,13 @@ class _Site_Entity_ (TFL.Meta.Object) :
               )
             )
     # end def h_title
+
+    def is_current (self, nav_page) :
+        return \
+            (  (self.permalink == nav_page.permalink)
+            or (self.href      == nav_page.href)
+            )
+    # end def is_current
 
     @Once_Property
     def login_required (self) :
@@ -778,7 +788,10 @@ class _Dir_ (_Site_Entity_) :
             if self.empty_template :
                 return self.__super.rendered (handler, self.empty_template)
         else :
-            handler.context ["page"] = page
+            handler.context.update \
+                ( nav_page = page
+                , page     = page
+                )
             return page.rendered (handler, template)
     # end def rendered
 

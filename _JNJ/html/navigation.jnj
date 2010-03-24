@@ -38,8 +38,7 @@
 ##     9-Mar-2010 (CT) `calendar` added
 ##    17-Mar-2010 (CT) `permalink` added
 ##    18-Mar-2010 (CT) `entry` changed to use `href = link.abs_href`
-##    24-Mar-2010 (CT) Condition for `current-link` in `entry` changed to
-##                     look at `permalink`, too
+##    24-Mar-2010 (CT) Use `link.is_current` instead of home-grown code
 ##    ««revision-date»»···
 ##--
 #}
@@ -67,7 +66,7 @@
         {{ entries (link.own_links, level + 1) }}
       </li>
     {%- else -%}
-      {% if (link.permalink == nav_page.permalink) or (link.href == nav_page.href) -%}
+      {% if link.is_current and link.is_current (nav_page) -%}
         <li class="current-link level-{{ level }}">{{ link.title|safe }}</li>
       {%- else -%}
         {%- if link.href -%}

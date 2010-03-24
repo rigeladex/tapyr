@@ -29,6 +29,7 @@
 #    23-Mar-2010 (CT) Creation
 #    24-Mar-2010 (CT) `name` passed to `Picture`
 #    24-Mar-2010 (CT) `Gallery.permalink` and `.prefix` corrected
+#    24-Mar-2010 (CT) `is_current` redefined
 #    ««revision-date»»···
 #--
 
@@ -119,6 +120,13 @@ class Gallery (GTW.NAV.E_Type.Instance) :
     def href_photo (self, pic) :
         return pjoin (self.permalink, pic.name)
     # end def href_photo
+
+    def is_current (self, nav_page) :
+        return \
+            (  self.__super.is_current (nav_page)
+            or nav_page.prefix.startswith (self.prefix)
+            )
+    # end def is_current
 
     @Once_Property
     def permalink (self) :
