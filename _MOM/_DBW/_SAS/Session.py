@@ -44,6 +44,7 @@
 #    19-Mar-2010 (MG) Bug in `value_dict` fixed and streamlined
 #    23-Mar-2010 (CT) `_setup_columns` fixed ???
 #                     (s/et/e_type/ in if-clause for `_Composite_Mixin_`)
+#    24-Mar-2010 (MG) `_setup_columns` use new `_sa_prefix` attribute of kind
 #    ««revision-date»»···
 #--
 
@@ -155,7 +156,7 @@ class SAS_Interface (TFL.Meta.Object) :
                       if k.save_to_db
                     ) :
             if isinstance (kind, MOM.Attr._Composite_Mixin_) :
-                s_prefix = kind.C_Type._sa_save_attrs [-1]
+                s_prefix = kind._sa_prefix
                 columns  = TFL.defaultdict (ddict_list)
                 et       = self._setup_columns (kind.C_Type, columns, s_prefix)
             else :

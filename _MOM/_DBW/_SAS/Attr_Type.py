@@ -42,6 +42,7 @@
 #                     `_A_Binary_String_` (`*_List` got a Pickler)
 #    19-Mar-2010 (CT) Use `types.Binary` instead of `types.String` for
 #                     `_A_Binary_String_`
+#    23-Mar-2010 (MG) `owner_etype` added and used in `_sa_columns_composite`
 #    ««revision-date»»···
 #--
 
@@ -76,7 +77,7 @@ def _sa_object (self) :
 # end def _sa_object
 
 @Add_Classmedthod ("_sa_columns", Attr.A_Attr_Type)
-def _sa_columns_simple (cls, attr, kind, unique, ** kw) :
+def _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw) :
     Pickler = attr.Pickler
     Type    = getattr (Pickler, "Type", None)
     if Type :
@@ -89,7 +90,7 @@ def _sa_columns_simple (cls, attr, kind, unique, ** kw) :
 # end def _sa_columns_simple
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Object_)
-def _sa_columns_a_object (cls, attr, kind, unique, ** kw) :
+def _sa_columns_a_object (cls, attr, kind, unique, owner_etype, ** kw) :
     col = schema.Column \
         ( attr._sa_col_name
         , types.Integer ()
@@ -103,18 +104,18 @@ def _sa_columns_a_object (cls, attr, kind, unique, ** kw) :
 # end def _sa_columns_a_object
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Named_Value_)
-def _sa_columns_named_value (cls, attr, kind, unique, ** kw) :
+def _sa_columns_named_value (cls, attr, kind, unique, owner_etype, ** kw) :
     Type = attr.C_Type
     if Type :
         col = schema.Column \
             (attr._sa_col_name, Type._sa_type (Type, kind), ** kw)
         col.mom_kind = kind
         return (col, )
-    return _sa_columns_simple (cls, attr, kind, unique, ** kw)
+    return _sa_columns_simple (cls, attr, kind, unique, owner_etype, ** kw)
 # end def _sa_columns_named_value
 
 @Add_Classmedthod ("_sa_columns", Attr._A_Composite_)
-def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
+def _sa_columns_composite (cls, attr, kind, unique, owner_etype, ** kw) :
     e_type                = kind.C_Type
     bases                 = e_type.__bases__
     Manager               = MOM.DBW.SAS.Manager
@@ -126,7 +127,11 @@ def _sa_columns_composite (cls, attr, kind, unique, ** kw) :
         unique_attrs      = set (k.attr.name for k in e_type.hash_sig)
     columns  = Manager._setup_columns \
         (e_type, db_attrs, bases, unique, prefix, unique_attrs)
-    e_type._sa_save_attrs = db_attrs, columns, prefix
+    if not hasattr (e_type, "_sa_save_attrs") :
+        e_type._sa_save_attrs = {}
+    e_type._sa_save_attrs [owner_etype.type_name, kind.attr.name] = \
+        db_attrs, columns
+    kind._sa_prefix = prefix
     return columns
 # end def _sa_columns_composite
 

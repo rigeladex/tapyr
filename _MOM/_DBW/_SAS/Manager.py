@@ -46,6 +46,7 @@
 #    18-Mar-2010 (CT) `_attr_dicts` changed to consider `Pickle_Mixin` for
 #                     attributes saved to the database
 #    19-Mar-2010 (MG) `delete_database` fixed for sqlite
+#    24-Mar-2010 (MG) `_setup_columns` pass owner_etype to `_sa_columns`
 #    ««revision-date»»···
 #--
 
@@ -373,7 +374,9 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
                 unique.append (attr._sa_col_name)
             result.extend \
                 ( attr._sa_columns
-                    (attr, kind, unique, ** kind._sa_column_attrs ())
+                    ( attr, kind, unique, owner_etype = e_type
+                    ,** kind._sa_column_attrs ()
+                    )
                 )
             if kind.needs_raw_value :
                 raw_name       = attr.raw_name

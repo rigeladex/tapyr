@@ -27,8 +27,9 @@
 #    attribute names of Entities.
 #
 # Revision Dates
-#    12-Feb-2010  (MG) Creation (based on SA.Query)
+#    12-Feb-2010 (MG) Creation (based on SA.Query)
 #    18-Feb-2010 (MG) `MOM_Composite_Query`: comperison operators added
+#    24-Mar-2010 (MG) Composite handling fixed
 #    ««revision-date»»···
 #--
 
@@ -80,8 +81,8 @@ class MOM_Query (TFL.Meta.Object) :
                 attr_name = "_SAQ_%s" % (name, )
                 self._COMPOSITES.append (name)
                 self._ATTRIBUTES.append (name)
-                comp_query = MOM_Composite_Query (kind.C_Type, name)
-                setattr (self, name, getattr (kind.C_Type, attr_name))
+                comp_query = MOM_Composite_Query (e_type, kind.C_Type, kind)
+                setattr (self, name, comp_query)
             elif isinstance (kind, MOM.Attr.Query) :
                 delayed.append ((name, kind))
             else :
@@ -118,10 +119,11 @@ class MOM_Query (TFL.Meta.Object) :
 class MOM_Composite_Query (TFL.Meta.Object) :
     """Query attributes of an composite attribite"""
 
-    def __init__ (self, e_type, attr_name) :
-        setattr (e_type, "_SAQ_%s" % (attr_name, ), self)
-        self._E_TYPE              = e_type
-        db_attrs, columns, prefix = e_type._sa_save_attrs
+    def __init__ (self, owner_etype, e_type, kind) :
+        self._E_TYPE      = e_type
+        prefix            = kind._sa_prefix
+        db_attrs, columns = e_type._sa_save_attrs.pop \
+            ((owner_etype.type_name, kind.attr.name))
         prefix_len                = len (prefix)
         attr_names                = [c.name [prefix_len:] for c in columns]
         self._ATTRIBUTES          = attr_names
