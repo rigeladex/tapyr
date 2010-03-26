@@ -56,7 +56,7 @@
 
 {%- macro entry (link, level) -%}
   {% if NAV.permissive or NAV.allow (link, request.user) %}
-    {%- set href = link.abs_href %}
+    {%- set href = link.abs_href or link.href %}
     {%- if link.prefix and nav_page.prefix.startswith (link.prefix) and link.has_children %}
       <li class="current-section level-{{ level }}">
         <a href="{{ href }}"
@@ -69,7 +69,7 @@
       {% if link.is_current and link.is_current (nav_page) -%}
         <li class="current-link level-{{ level }}">{{ link.title|safe }}</li>
       {%- else -%}
-        {%- if link.href -%}
+        {%- if href -%}
           <li class="nav-link level-{{ level }}">
             <a href="{{ href }}"
                {%- if link.desc %} title="{{ link.desc }}"{% endif -%}
