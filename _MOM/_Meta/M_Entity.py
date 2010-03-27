@@ -84,6 +84,7 @@
 #    12-Mar-2010 (CT) `link_map` moved in here (from `M_Object`)
 #    24-Mar-2010 (CT) `_set_type_names` changed to take `ui_name` from
 #                     `cls.__dict__` if there
+#    27-Mar-2010 (MG) `polimorphic_epk` added
 #    ««revision-date»»···
 #--
 
@@ -95,6 +96,7 @@ import _TFL._Meta.Once_Property
 import _TFL.Decorator
 import _TFL.Sorted_By
 
+from   _TFL.predicate        import any_true
 from   _TFL.object_globals   import class_globals
 from   _TFL.I18N             import _, _T, _Tn
 
@@ -373,27 +375,37 @@ class M_Id_Entity (M_Entity) :
     # end def _m_auto_epkified
 
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
-        pkas    = sorted \
+        pkas      = sorted \
             ( (  a for a in cls._Attributes._names.itervalues ()
               if a.kind.is_primary
               )
             , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "name")
             )
-        epk_sig = tuple (a.name for a in pkas)
-        a_ckd   = ", ".join (a.as_arg_ckd () for a in pkas)
-        a_raw   = ", ".join (a.as_arg_raw () for a in pkas)
-        d_ckd   = cls._epkified_sep.join \
+        epk_sig   = tuple (a.name for a in pkas)
+        rel_bases = (b for b in bases if getattr (b, "is_relevant", False))
+        pol_epk   = any_true \
+            ( (  getattr (rb, "polimorphic_epk", False)
+              or rb.epk_sig != epk_sig
+              )
+            for rb in rel_bases
+            )
+        a_ckd     = ", ".join (a.as_arg_ckd () for a in pkas)
+        a_raw     = ", ".join (a.as_arg_raw () for a in pkas)
+        d_ckd     = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_ckd () for a in pkas) if x)
-        d_raw   = cls._epkified_sep.join \
+        d_raw     = cls._epkified_sep.join \
             (x for x in (a.epk_def_set_raw () for a in pkas) if x)
-        result  = cls.__m_super._m_new_e_type_dict \
+        result    = cls.__m_super._m_new_e_type_dict \
             ( app_type, etypes, bases
-            , epk_sig       = epk_sig
-            , epkified_ckd  = cls._m_auto_epkified (epk_sig, a_ckd, d_ckd, "ckd")
-            , epkified_raw  = cls._m_auto_epkified (epk_sig, a_raw, d_raw, "raw")
-            , is_relevant   = cls.is_relevant or (not cls.is_partial)
-            , _all_link_map = None
-            , _own_link_map = TFL.defaultdict (set)
+            , epk_sig         = epk_sig
+            , epkified_ckd    = cls._m_auto_epkified
+                (epk_sig, a_ckd, d_ckd, "ckd")
+            , epkified_raw    = cls._m_auto_epkified
+                (epk_sig, a_raw, d_raw, "raw")
+            , is_relevant     = cls.is_relevant or (not cls.is_partial)
+            , polimorphic_epk = pol_epk
+            , _all_link_map   = None
+            , _own_link_map   = TFL.defaultdict (set)
             , ** kw
             )
         return result

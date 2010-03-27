@@ -47,6 +47,7 @@
 #                     attributes saved to the database
 #    19-Mar-2010 (MG) `delete_database` fixed for sqlite
 #    24-Mar-2010 (MG) `_setup_columns` pass owner_etype to `_sa_columns`
+#    27-Mar-2010 (MG) `polimorphic_epk` added
 #    ««revision-date»»···
 #--
 
@@ -250,7 +251,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             columns   = cls._setup_columns (e_type, db_attrs, bases, unique)
             if unique :
                 unique = [schema.UniqueConstraint (* unique)]
-            unique = [] ### XXX fix `unique` or remove it completely
+            if e_type.polimorphic_epk :
+                unique = []
             e_type._sa_table = schema.Table \
                 (e_type.type_name.replace (".", "__"), cls.metadata
                 , * (columns + unique)

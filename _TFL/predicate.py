@@ -203,7 +203,7 @@ def all_true_p (seq, pred) :
             return e
     else :
         return True
-# end def all_true
+# end def all_true_p
 
 def any_true (seq) :
     """Returns first true element of `seq`, otherwise returns False."""
@@ -223,7 +223,7 @@ def any_true_p (seq, pred) :
             return e
     else :
         return False
-# end def any_true
+# end def any_true_p
 
 def bit_alignment (bits) :
     """Returns alignment in powers of two of data with length `bits'

@@ -307,6 +307,8 @@ class _M_SA_Manager_ (MOM.DBW._Manager_.__class__) :
             unique               = []
             db_attrs, role_attrs = cls._attr_dicts (e_type, bases)
             columns   = cls._setup_columns (e_type, db_attrs, bases, unique)
+            if e_type.polimorphic_epk :
+                print e_type
             if unique :
                 columns.append (schema.UniqueConstraint (* unique))
             e_type._sa_table = schema.Table \
