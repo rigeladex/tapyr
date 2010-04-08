@@ -47,7 +47,8 @@
 #                     attributes saved to the database
 #    19-Mar-2010 (MG) `delete_database` fixed for sqlite
 #    24-Mar-2010 (MG) `_setup_columns` pass owner_etype to `_sa_columns`
-#    27-Mar-2010 (MG) `polimorphic_epk` added
+#    27-Mar-2010 (MG) `polymorphic_epk` added
+#    08-Apr-2010 (MG) Handling of `UniqueConstraint` changed
 #    ««revision-date»»···
 #--
 
@@ -250,16 +251,14 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             db_attrs, role_attrs = cls._attr_dicts (e_type, bases)
             columns   = cls._setup_columns (e_type, db_attrs, bases, unique)
             if unique :
-                unique = [schema.UniqueConstraint (* unique)]
-            if e_type.polimorphic_epk :
-                unique = []
+                unique = schema.UniqueConstraint (* unique)
+            else :
+                unique = None
             e_type._sa_table = schema.Table \
-                (e_type.type_name.replace (".", "__"), cls.metadata
-                , * (columns + unique)
-                )
+                (e_type.type_name.replace (".", "__"), cls.metadata, * columns)
             ### save the gathered attribute dict and bases for the
             ### update_etype run
-            e_type._sa_save_attrs = bases, db_attrs, role_attrs
+            e_type._sa_save_attrs = bases, db_attrs, role_attrs, unique
             if issubclass (e_type, MOM.Link) :
                 for cr in e_type.auto_cache_roles :
                     if isinstance (cr, MOM.Link_Cacher) :
@@ -289,8 +288,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def update_etype (cls, e_type, app_type) :
         ### not all e_type's have a relevant_root attribute (e.g.: MOM.Entity)
         if getattr (e_type, "relevant_root", None) :
-            sa_table                    = e_type._sa_table
-            bases, db_attrs, role_attrs = e_type._sa_save_attrs
+            sa_table                            = e_type._sa_table
+            bases, db_attrs, role_attrs, unique = e_type._sa_save_attrs
             ### remove the attributes saved during the `etype_decorator` run
             del e_type._sa_save_attrs
             MOM.DBW.SAS.MOM_Query     (e_type, sa_table, db_attrs, bases)
@@ -298,6 +297,8 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
             for cr, assoc_et in cls.role_cacher.get (e_type.type_name, ()) :
                 cls._cached_role \
                     (app_type, getattr (e_type, cr.attr_name), cr, assoc_et)
+            if unique is not None and not e_type.polymorphic_epk :
+                sa_table.append_constraint (unique)
     # end def update_etype
 
     def load_root (cls, session, scope) :

@@ -84,7 +84,7 @@
 #    12-Mar-2010 (CT) `link_map` moved in here (from `M_Object`)
 #    24-Mar-2010 (CT) `_set_type_names` changed to take `ui_name` from
 #                     `cls.__dict__` if there
-#    27-Mar-2010 (MG) `polimorphic_epk` added
+#    27-Mar-2010 (MG) `polymorphic_epk` added
 #    ««revision-date»»···
 #--
 
@@ -384,7 +384,7 @@ class M_Id_Entity (M_Entity) :
         epk_sig   = tuple (a.name for a in pkas)
         rel_bases = (b for b in bases if getattr (b, "is_relevant", False))
         pol_epk   = any_true \
-            ( (  getattr (rb, "polimorphic_epk", False)
+            ( (  getattr (rb, "polymorphic_epk", False)
               or rb.epk_sig != epk_sig
               )
             for rb in rel_bases
@@ -403,7 +403,7 @@ class M_Id_Entity (M_Entity) :
             , epkified_raw    = cls._m_auto_epkified
                 (epk_sig, a_raw, d_raw, "raw")
             , is_relevant     = cls.is_relevant or (not cls.is_partial)
-            , polimorphic_epk = pol_epk
+            , polymorphic_epk = pol_epk
             , _all_link_map   = None
             , _own_link_map   = TFL.defaultdict (set)
             , ** kw

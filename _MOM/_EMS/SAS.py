@@ -27,7 +27,7 @@
 #
 # Revision Dates
 #    11-Feb-2010 (MG) Creation (based of MOM.EMS.SA)
-#    27-Mar-2010 (MG) `add` support for `polimorphic_epk` added
+#    27-Mar-2010 (MG) `add` support for `polymorphic_epk` added
 #    ««revision-date»»···
 #--
 
@@ -93,8 +93,8 @@ class Manager (MOM.EMS._Manager_) :
     def add (self, entity) :
         ses = self.session
         ses.flush () ### add all pending operations to the database transaction
-        if entity.polimorphic_epk :
-            ### since we have a polimorphic epk the database layer cannot
+        if entity.polymorphic_epk :
+            ### since we have a polymorphic epk the database layer cannot
             ### check the name clash -> therefore we need to make an extra
             ### query for this.
             existing = self.instance (entity.__class__, entity.epk)
