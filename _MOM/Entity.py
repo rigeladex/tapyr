@@ -120,6 +120,8 @@
 #                     of primary composite attributes properly (rename!)
 #    15-Mar-2010 (CT) Exception handler added to `epk_as_code`
 #    22-Mar-2010 (CT) `last_changed` added
+#     8-Apr-2010 (CT) `last_changed.computed` guarded against `first` returning
+#                     `None`
 #    ««revision-date»»···
 #--
 
@@ -720,10 +722,13 @@ class Id_Entity (Entity) :
 
             def computed (self, obj) :
                 try :
-                    return obj.changes ().order_by \
-                        (TFL.Sorted_By ("-cid")).first ().time
+                    lc = obj.changes ().order_by \
+                        (TFL.Sorted_By ("-cid")).first ()
                 except IndexError :
                     pass
+                else :
+                    if lc is not None :
+                        return lc.time
             # end def computed
 
         # end class last_changed
