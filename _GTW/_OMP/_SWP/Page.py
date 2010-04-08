@@ -37,6 +37,7 @@
 #    17-Mar-2010 (CT) `email_obfuscator` removed
 #    22-Mar-2010 (CT) `Object_PN` factored
 #    24-Mar-2010 (CT) `Page_Y` added
+#     8-Apr-2010 (CT) `year_max` removed from `Page_Y` (was a bad idea (TM))
 #    ««revision-date»»···
 #--
 
@@ -129,34 +130,7 @@ class Page_Y (_Ancestor_Essence) :
 
         # end class year
 
-        class year_max (A_Int) :
-            """Maximum permissible value for `year`."""
-
-            kind               = Attr.Once_Cached
-
-            def computed (self, obj) :
-                now = A_Date.now ()
-                return now.year + 3
-            # end def computed
-
-        # end class year_max
-
     # end class _Attributes
-
-    class _Predicates (_Ancestor_Essence._Predicates) :
-
-        _Ancestor = _Ancestor_Essence._Predicates
-
-        class valid_year (Pred.Condition) :
-            """The value of `year` must not be larger than `year_max`."""
-
-            kind               = Pred.Object
-            assertion          = "year <= year_max"
-            attributes         = ("year", "year_max")
-
-        # end class valid_year
-
-    # end class _Predicates
 
 # end class Page_Y
 
