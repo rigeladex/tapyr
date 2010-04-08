@@ -85,6 +85,8 @@
 #    24-Mar-2010 (CT) `_set_type_names` changed to take `ui_name` from
 #                     `cls.__dict__` if there
 #    27-Mar-2010 (MG) `polymorphic_epk` added
+#     8-Apr-2010 (CT) `_m_create_e_types` to percolate `polymorphic_epk` up to
+#                     base classes
 #    ««revision-date»»···
 #--
 
@@ -176,6 +178,11 @@ class M_E_Mixin (TFL.Meta.M_Auto_Combine) :
         app_type.DBW.prepare ()
         for s in SX :
             app_type.add_type (e_deco (s._m_new_e_type (app_type, etypes)))
+        for t in reversed (app_type._T_Extension) :
+            if getattr (t, "polymorphic_epk", None) :
+                for b in t.__bases__ :
+                    if getattr (b, "polymorphic_epk", None) is False :
+                        b.polymorphic_epk = True
         for t in app_type._T_Extension :
             t._m_setup_sorted_by ()
             ### `DBW.update_etype` can use features like `children` or
