@@ -179,6 +179,7 @@ class Admin (object) :
                 , AID
                     ( "clip"
                     , FGD ()
+                    , widget = WS ("html/form.jnj, fg_div_seq")
                     )
                 , legend    = _("News clip for page")
                 , title     = _("Clip")
