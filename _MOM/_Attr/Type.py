@@ -106,6 +106,7 @@
 #    13-Mar-2010 (CT) `_A_Binary_String_` added
 #    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
 #    22-Mar-2010 (CT) `A_Dirname` and `A_Filename` added (+ `_A_Filename_`)
+#     9-Apr-2010 (CT) `A_Url` added
 #    ««revision-date»»···
 #--
 
@@ -1380,6 +1381,15 @@ class A_Time (_A_Date_) :
     # end def now
 
 # end class A_Time
+
+class A_Url (_A_String_) :
+    """Models an url-valued attribute of an object."""
+
+    typ            = "Url"
+    max_length     = 96
+    check          = ("""value.startswith (("/", "http://", "https://"))""", )
+
+# end class A_Url
 
 __doc__ = """
 Class `MOM.Attr.A_Attr_Type`

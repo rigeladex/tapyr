@@ -28,12 +28,14 @@
 # Revision Dates
 #    24-Feb-2010 (CT) Creation
 #    23-Mar-2010 (CT) `Gallery` and `Picture` added
+#     9-Apr-2010 (CT) `Clip` added
 #    ««revision-date»»···
 #--
 
 from   _MOM.import_MOM        import *
 from   _GTW                   import GTW
 
+import _GTW._OMP._SWP.Clip
 import _GTW._OMP._SWP.Entity
 import _GTW._OMP._SWP.Format
 import _GTW._OMP._SWP.Gallery

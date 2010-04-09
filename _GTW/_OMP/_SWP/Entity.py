@@ -59,6 +59,15 @@ class _SWP_Link1_ (Entity, MOM.Link1) :
 
 Link1 = _SWP_Link1_ # end class
 
+class _SWP_Link2_ (Entity, MOM.Link2) :
+    """Common base class for essential binary links of GTW.OMP.SWP"""
+
+    _real_name  = "Link2"
+
+    is_partial  = True
+
+Link2 = _SWP_Link2_ # end class
+
 class _SWP_Object_ (Entity, MOM.Object) :
     """Common base class for essential objects of GTW.OMP.SWP"""
 

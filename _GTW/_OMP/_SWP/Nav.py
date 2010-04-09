@@ -67,6 +67,36 @@ class Admin (object) :
         , name      = "Creator_Info"
         )
 
+    Clip_X          = dict \
+        ( ETM       = "GTW.OMP.SWP.Clip_X"
+        , Type      = GTW.NAV.E_Type.Admin
+        , Form_args =
+            ( FGD ("perma_name", "short_title", "title")
+            , AID
+                ( "date"
+                , FGD (widget = "html/form.jnj, fg_tr")
+                , legend = _("Publication and expiration date")
+                )
+            , AID
+                ( "creator"
+                , FGD
+                    ( primary
+                    , widget    = "html/form.jnj, fg_tr"
+                    , css_class = "inline-instance"
+                    )
+                , completer = creator_completer
+                , legend = _("Creator of the contents of the news clip")
+                )
+            , FGD ("head_line", "format", "text")
+            , FGD ()
+            )
+        , list_display   =
+            ( "ui_display", "short_title", "date", "creator", "format"
+            , "last_changed"
+            )
+        , sort_key       = TFL.Sorted_By ("-date.start", "-prio", "perma_name")
+        )
+
     Gallery         = dict \
         ( ETM       = "GTW.OMP.SWP.Gallery"
         , Type      = GTW.NAV.E_Type.Admin
@@ -143,6 +173,15 @@ class Admin (object) :
                     )
                 , legend    = _("Events associated to page")
                 , title     = _("Events")
+                )
+            , LID
+                ( "GTW.OMP.SWP.Clip_to_Object"
+                , AID
+                    ( "clip"
+                    , FGD ()
+                    )
+                , legend    = _("News clip for page")
+                , title     = _("Clip")
                 )
             , FGD ()
             )
