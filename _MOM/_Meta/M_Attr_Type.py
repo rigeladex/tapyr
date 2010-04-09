@@ -45,6 +45,7 @@
 #    16-Mar-2010 (CT) `_Pickle_Mixin_` factored
 #    23-Mar-2010 (CT) `assert` added to guard against `check` being a string
 #    23-Mar-2010 (CT) `renameds` added
+#     9-Apr-2010 (CT) Don't add attributes starting with `_` to `renameds`
 #    ««revision-date»»···
 #--
 
@@ -69,7 +70,7 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
             cls.renameds = set ()
             for b in bases :
                 bn = getattr (b, "ckd_name", None)
-                if bn and cls.name != b.name :
+                if bn and (not b.name.startswith ("_")) and cls.name != b.name :
                     cls.renameds.add (b.name)
         if not hasattr (cls, "syntax") :
             if not name.startswith (("_A_", "A_Attr_Type")) :

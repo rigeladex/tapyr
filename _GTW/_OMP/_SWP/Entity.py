@@ -103,7 +103,7 @@ class Object_PN (_Ancestor_Essence) :
         ### Non-primary attributes
 
         class creator (A_Object) :
-            """Creator of the contents of the web page."""
+            """Creator of the contents."""
 
             kind               = Attr.Optional
             Class              = GTW.OMP.PAP.Person
@@ -111,9 +111,7 @@ class Object_PN (_Ancestor_Essence) :
         # end class creator
 
         class date (A_Date_Interval_N) :
-            """Publication (`start`) and expiration date (`finish`) for the
-               web page
-            """
+            """Publication (`start`) and expiration date (`finish`)"""
 
             kind               = Attr.Optional
 
@@ -127,7 +125,7 @@ class Object_PN (_Ancestor_Essence) :
         # end class date
 
         class short_title (A_String) :
-            """Short title of the web page (used in navigation)."""
+            """Short title (used in navigation)."""
 
             kind               = Attr.Required
             max_length         = 30

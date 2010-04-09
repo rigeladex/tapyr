@@ -77,7 +77,7 @@ class Page (_Ancestor_Essence) :
         # end class contents
 
         class format (A_Format) :
-            """Markup format used for `text` of web page"""
+            """Markup format used for `text`"""
 
             kind               = Attr.Optional
             Kind_Mixins        = (Attr.Sticky_Mixin, )

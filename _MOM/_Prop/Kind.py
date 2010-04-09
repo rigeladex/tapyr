@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2009 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2009-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 # This module is part of the package _MOM.
@@ -53,7 +53,8 @@ class _Prop_Kind_ (property) :
     def __getattr__ (self, name) :
         if not name.startswith ("_") :
             return getattr (self.prop, name)
-        raise AttributeError, name
+        raise AttributeError \
+            ("%s [%s: %s]" % (name, self, self.__class__.mro ()))
     # end def __getattr__
 
 Kind = _Prop_Kind_ # end class

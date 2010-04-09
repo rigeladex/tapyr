@@ -29,6 +29,7 @@
 #    29-Sep-2009 (CT) Creation (factored from TOM.Meta.M_Prop_Spec)
 #    26-Nov-2009 (CT) `_m_add_prop` added
 #    23-Mar-2010 (CT) Remove names in `renameds` from `_names`
+#     9-Apr-2010 (CT) `m_setup_names` changed to ignore attributes set to `None`
 #    ««revision-date»»···
 #--
 
@@ -55,12 +56,13 @@ class M_Prop_Spec (TFL.Meta.M_Class) :
                 continue
             if v is None or isinstance (v, MOM.Meta.M_Prop_Type) :
                 _names [n] = _own_names [n] = v
-                for bn in v.renameds :
-                    try :
-                        del _names [bn]
-                    except KeyError :
-                        print cls, v, n, bn
-                        raise
+                if v is not None :
+                    for bn in v.renameds :
+                        try :
+                            del _names [bn]
+                        except KeyError :
+                            print cls, v, n, bn
+                            raise
             elif n in _names :
                 raise cls._m_inconsistent_prop (n, v, _names, dict)
     # end def m_setup_names

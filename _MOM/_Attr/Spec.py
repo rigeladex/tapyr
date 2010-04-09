@@ -48,6 +48,8 @@
 #                     `_A_Object_` (app_type doesn't have etypes yet)
 #    23-Mar-2010 (CT) `_add_prop` changed to pass names in `renameds` to
 #                     `_setup_alias`
+#     9-Apr-2010 (CT) `_effective_prop_kind_mixins` changed to filter
+#                     `Sticky_Mixin`, if `Computed_Mixin` is in `result`
 #    ««revision-date»»···
 #--
 
@@ -121,6 +123,8 @@ class Spec (MOM.Prop.Spec) :
             result += (MOM.Attr._Auto_Update_Mixin_, )
         if issubclass (e_type, MOM.An_Entity) :
             result = (MOM.Attr._Nested_Mixin_, ) + result
+        if MOM.Attr.Computed_Mixin in result :
+            result = tuple (r for r in result if r != MOM.Attr.Sticky_Mixin)
         return tuple (uniq (result))
     # end def _effective_prop_kind_mixins
 

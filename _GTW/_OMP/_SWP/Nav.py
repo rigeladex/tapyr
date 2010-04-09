@@ -178,8 +178,7 @@ class Admin (object) :
                 ( "GTW.OMP.SWP.Clip_to_Object"
                 , AID
                     ( "clip"
-                    , FGD ()
-                    , widget = WS ("html/form.jnj, fg_div_seq")
+                    , FGD (widget = "html/form.jnj, fg_div_seq")
                     )
                 , legend    = _("News clip for page")
                 , title     = _("Clip")

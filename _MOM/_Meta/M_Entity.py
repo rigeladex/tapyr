@@ -87,6 +87,8 @@
 #    27-Mar-2010 (MG) `polymorphic_epk` added
 #     8-Apr-2010 (CT) `_m_create_e_types` to percolate `polymorphic_epk` up to
 #                     base classes
+#     9-Apr-2010 (CT) `M_Id_Entity._m_new_e_type_dict` changed to  filter
+#                     attributes set to `None`
 #    ««revision-date»»···
 #--
 
@@ -384,7 +386,7 @@ class M_Id_Entity (M_Entity) :
     def _m_new_e_type_dict (cls, app_type, etypes, bases, ** kw) :
         pkas      = sorted \
             ( (  a for a in cls._Attributes._names.itervalues ()
-              if a.kind.is_primary
+              if a is not None and a.kind.is_primary
               )
             , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "name")
             )

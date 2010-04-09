@@ -34,6 +34,7 @@ from   _GTW                   import GTW
 from   _MOM.import_MOM        import *
 
 import _GTW._OMP._SWP.Page
+from   _GTW._OMP._SWP.Format    import A_Format
 
 from   _TFL.I18N                import _, _T, _Tn
 
@@ -44,6 +45,29 @@ class _Clip_ (_Ancestor_Essence) :
 
     is_partial = True
 
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class head_line (_Ancestor.head_line) :
+            """Head line of the news clip"""
+
+        # end class head_line
+
+        short_title = None
+
+        class text (_Ancestor.text) :
+            """Text for news clip in markup specified by `format`."""
+
+        # end class text
+
+        class title (_Ancestor.title) :
+            """Title of news clip."""
+
+        # end class title
+
+    # end class _Attributes
+
 # end class _Clip_
 
 _Ancestor_Essence = _Clip_
@@ -52,6 +76,46 @@ class Clip_I (_Ancestor_Essence) :
     """News clip for the front page of a website referring to an internal web
        page.
     """
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        class _derived_ (A_Attr_Type) :
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Computed_Mixin, )
+            default            = None
+            raw_default        = ""
+
+            def computed (self, obj) :
+                if obj.object :
+                    return getattr (obj.object, self.name, None)
+            # end def computed
+
+        # end class _derived_
+
+        class creator (_derived_, _Ancestor.creator) :
+            pass
+        # end class creator
+
+        class format (_derived_, A_Format) :
+            pass
+        # end class format
+
+        class head_line (_derived_, _Ancestor.head_line) :
+            pass
+        # end class head_line
+
+        class prio (_derived_, _Ancestor.head_line) :
+            pass
+        # end class prio
+
+        class title (_derived_, _Ancestor.title) :
+            pass
+        # end class title
+
+    # end class _Attributes
 
 # end class Clip_I
 

@@ -528,8 +528,8 @@ class _Computed_Mixin_ (Kind) :
                 kind += "/Computed"
             raise TypeError \
                 ( "%s is %s but has default %r "
-                  "(i.e., `computed` will never be called)"
-                % (attr_type, kind, default)
+                  "(i.e., `computed` will never be called)\n    %s"
+                % (attr_type, kind, default, self.__class__.mro ())
                 )
     # end def _check_sanity
 
