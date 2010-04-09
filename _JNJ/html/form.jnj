@@ -290,7 +290,7 @@
   {%- set ifo =  fg.forms [0] -%}
   <th {% if fg.legend %}title="{{ GTW._T (fg.legend)|safe }}"{% endif -%}>
     {%- if fg.title -%}
-      <label>{{ GTW._T (fg.title)|safe }}</label><br>
+      <label>{{ GTW._T (fg.title)|safe }}</label>
     {%- else %}
       {%- for fg in ifo.field_groups -%}
         {{- GTW.call_macro (fg.widget.inline_table_sep_th, ifo, fg) -}}

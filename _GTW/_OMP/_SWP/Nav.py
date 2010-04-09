@@ -71,7 +71,7 @@ class Admin (object) :
         ( ETM       = "GTW.OMP.SWP.Clip_X"
         , Type      = GTW.NAV.E_Type.Admin
         , Form_args =
-            ( FGD ("perma_name", "short_title", "title")
+            ( FGD ("perma_name", "title")
             , AID
                 ( "date"
                 , FGD (widget = "html/form.jnj, fg_tr")
@@ -87,8 +87,7 @@ class Admin (object) :
                 , completer = creator_completer
                 , legend = _("Creator of the contents of the news clip")
                 )
-            , FGD ("head_line", "format", "text")
-            , FGD ()
+            , FGD ("format", "text", "link_to")
             )
         , list_display   =
             ( "ui_display", "short_title", "date", "creator", "format"
@@ -175,10 +174,22 @@ class Admin (object) :
                 , title     = _("Events")
                 )
             , LID
-                ( "GTW.OMP.SWP.Clip_to_Object"
+                ( "GTW.OMP.SWP.Clip_O"
+                , FGD
+                    ( "abstract"
+                    #, widget = "html/form.jnj, fg_div_seq"
+                    )
                 , AID
-                    ( "clip"
-                    , FGD (widget = "html/form.jnj, fg_div_seq")
+                    ( "date"
+                    , widget = WS
+                          ( AID.widget
+                          , inline_table_th =
+                              "html/form.jnj, inline_table_aid_sep_th"
+                          , inline_table_td =
+                              "html/form.jnj, inline_table_aid_sep_td"
+                          )
+                    , legend = _("Date interval of news clip")
+                    , title  = _("Date interval")
                     )
                 , legend    = _("News clip for page")
                 , title     = _("Clip")

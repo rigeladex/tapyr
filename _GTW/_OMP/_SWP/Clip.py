@@ -30,29 +30,108 @@
 #    ««revision-date»»···
 #--
 
-from   _GTW                   import GTW
-from   _MOM.import_MOM        import *
+from   _GTW                     import GTW
+from   _MOM.import_MOM          import *
+from   _MOM._Attr.Date_Interval import *
 
 import _GTW._OMP._SWP.Page
 from   _GTW._OMP._SWP.Format    import A_Format
 
 from   _TFL.I18N                import _, _T, _Tn
 
-_Ancestor_Essence = GTW.OMP.SWP.Page
+_Ancestor_Essence = GTW.OMP.SWP.Link1
 
-class _Clip_ (_Ancestor_Essence) :
-    """News clip for the front page of a website."""
-
-    is_partial = True
+class Clip_O (_Ancestor_Essence) :
+    """News clip for a object."""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
-        class head_line (_Ancestor.head_line) :
-            """Head line of the news clip"""
+        ### Primary attributes
 
-        # end class head_line
+        class left (_Ancestor.left) :
+            """Object the news clip refers to"""
+
+            role_type          = GTW.OMP.SWP.Object_PN
+            role_name          = "object"
+            auto_cache         = "clips"
+
+        # end class left
+
+        class date_x (A_Date_Interval) :
+            """Publication (`start`) and expiration date (`finish`).
+               Unspecified values will be taken from the web page the clip
+               belongs to.
+            """
+
+            kind               = Attr.Primary_Optional
+            ui_name            = "date"
+
+        # end class date_x
+
+        ### Non-primary attributes
+
+        class abstract (A_Text) :
+            """Text for news clip in markup specified by `format`."""
+
+            kind               = Attr.Mandatory
+
+        # end class abstract
+
+        class contents (A_Text) :
+            """Contents of web page in html format"""
+
+            kind               = Attr.Internal
+            auto_up_depends    = ("abstract", )
+
+            def computed (self, obj) :
+                if obj.left :
+                    return obj.left.format.convert (obj.abstract)
+            # end def computed
+
+        # end class contents
+
+        class date (A_Date_Interval) :
+
+            kind               = Attr.Computed
+
+            def computed (self, obj) :
+                result = obj.date_x
+                if result and obj.left :
+                    if not (result.start and result.finish) :
+                        result = self.C_Type \
+                            ( start  = result.start  or obj.left.date.start
+                            , finish = result.finish or obj.left.date.finish
+                            )
+                return result
+            # end def computed
+
+        # end class date
+
+    # end class _Attributes
+
+# end class Clip_O
+
+_Ancestor_Essence = GTW.OMP.SWP.Page
+
+class Clip_X (_Ancestor_Essence) :
+    """News clip for the front page of a website referring to an external web
+       page.
+    """
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        head_line = None
+
+        class link_to (A_Url) :
+            """Url of external web page providing information about this clip"""
+
+            kind               = Attr.Optional
+
+        # end class link_to
 
         short_title = None
 
@@ -68,110 +147,7 @@ class _Clip_ (_Ancestor_Essence) :
 
     # end class _Attributes
 
-# end class _Clip_
-
-_Ancestor_Essence = _Clip_
-
-class Clip_I (_Ancestor_Essence) :
-    """News clip for the front page of a website referring to an internal web
-       page.
-    """
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class _derived_ (A_Attr_Type) :
-
-            kind               = Attr.Optional
-            Kind_Mixins        = (Attr.Computed_Mixin, )
-            default            = None
-            raw_default        = ""
-
-            def computed (self, obj) :
-                if obj.object :
-                    return getattr (obj.object, self.name, None)
-            # end def computed
-
-        # end class _derived_
-
-        class creator (_derived_, _Ancestor.creator) :
-            pass
-        # end class creator
-
-        class format (_derived_, A_Format) :
-            pass
-        # end class format
-
-        class head_line (_derived_, _Ancestor.head_line) :
-            pass
-        # end class head_line
-
-        class prio (_derived_, _Ancestor.head_line) :
-            pass
-        # end class prio
-
-        class title (_derived_, _Ancestor.title) :
-            pass
-        # end class title
-
-    # end class _Attributes
-
-# end class Clip_I
-
-class Clip_X (_Ancestor_Essence) :
-    """News clip for the front page of a website referring to an external web
-       page.
-    """
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        class link_to (A_Url) :
-            """Url of external web page providing information about this clip"""
-
-            kind               = Attr.Optional
-
-        # end class link_to
-
-    # end class _Attributes
-
 # end class Clip_X
-
-_Ancestor_Essence = GTW.OMP.SWP.Link2
-
-class Clip_to_Object (_Ancestor_Essence) :
-    """News clip for a object."""
-
-    class _Attributes (_Ancestor_Essence._Attributes) :
-
-        _Ancestor = _Ancestor_Essence._Attributes
-
-        ### Primary attributes
-
-        class left (_Ancestor.left) :
-            """News clip"""
-
-            role_type          = Clip_I
-            role_name          = "clip"
-            max_links          = 1
-
-        # end class left
-
-        class right (_Ancestor.right) :
-            """Object the news clip refers to"""
-
-            role_type          = GTW.OMP.SWP.Object_PN
-            role_name          = "object"
-            max_links          = 1
-            auto_cache         = True
-
-        # end class right
-
-    # end class _Attributes
-
-# end class Clip_to_Object
 
 if __name__ != "__main__" :
     GTW.OMP.SWP._Export ("*")

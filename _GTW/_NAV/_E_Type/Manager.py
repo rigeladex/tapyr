@@ -39,6 +39,8 @@
 #    23-Mar-2010 (CT) Handling of `sort_key` fixed
 #    23-Mar-2010 (CT) `_get_child` rewritten to allow `grandchildren` if
 #                     `Page.allows_children`
+#     9-Apr-2010 (CT) `Manager_T_Archive._year_filter` factored
+#     9-Apr-2010 (CT) `Manager_T_Archive_Y` added
 #    ««revision-date»»···
 #--
 
@@ -209,10 +211,7 @@ class Manager_T_Archive (Manager_T) :
         cy = datetime.date.today ().year
         result = []
         for y in xrange (cy, cy - 5, -1) :
-            qy = qr.filter \
-                ( (Q.date.start >= datetime.date (y,  1,  1))
-                , (Q.date.start <= datetime.date (y, 12, 31))
-                )
+            qy   = qr.filter (* self._year_filter (y))
             name = str (y)
             Y = self.Year \
                 ( src_dir = pjoin (self.src_dir, name)
@@ -229,7 +228,20 @@ class Manager_T_Archive (Manager_T) :
         return result
     # end def _get_objects
 
+    def _year_filter (self, y) :
+        return \
+            ( (Q.date.start >= datetime.date (y,  1,  1))
+            , (Q.date.start <= datetime.date (y, 12, 31))
+            )
+    # end def _year_filter
+
 # end class Manager_T_Archive
+
+class Manager_T_Archive_Y (Manager_T_Archive) :
+
+    def _year_filter (self, y) :
+        return (Q.year == y, )
+# end class Manager_T_Archive_Y
 
 if __name__ != "__main__" :
     GTW.NAV.E_Type._Export ("*")
