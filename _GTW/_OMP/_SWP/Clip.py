@@ -59,7 +59,7 @@ class Clip_O (_Ancestor_Essence) :
 
         # end class left
 
-        class date (A_Date_Interval) :
+        class date_x (A_Date_Interval) :
             """Publication (`start`) and expiration date (`finish`).
                Unspecified values will be taken from the web page the clip
                belongs to.
@@ -68,7 +68,7 @@ class Clip_O (_Ancestor_Essence) :
             kind               = Attr.Primary_Optional
             ui_name            = "date"
 
-        # end class date
+        # end class date_x
 
         ### Non-primary attributes
 
@@ -78,39 +78,6 @@ class Clip_O (_Ancestor_Essence) :
             kind               = Attr.Mandatory
 
         # end class abstract
-
-        class alive (A_Boolean) :
-            """Specifies whether entity is currently alive, i.e., the current
-               date lies between `date.start` and `date.finish`.
-            """
-
-            kind               = Attr.Query
-            auto_up_depends    = ("date", "left")
-            ### need to recompute each time `alive` is accessed
-            Kind_Mixins        = (Attr.Computed, )
-
-            def query_fct (self) :
-                return (Q.date.alive == True) ###  | (Q.left.alive == True)
-            # end def query_fct
-
-        # end class alive
-
-        class date_z (A_Date_Interval) :
-
-            kind               = Attr.Computed
-
-            def computed (self, obj) :
-                result = obj.date_x
-                if result and obj.left :
-                    if not (result.start and result.finish) :
-                        result = self.C_Type \
-                            ( start  = result.start  or obj.left.date.start
-                            , finish = result.finish or obj.left.date.finish
-                            )
-                return result
-            # end def computed
-
-        # end class date
 
         class contents (A_Text) :
             """Contents of web page in html format"""
@@ -124,6 +91,25 @@ class Clip_O (_Ancestor_Essence) :
             # end def computed
 
         # end class contents
+
+        class date (A_Date_Interval) :
+
+            kind               = Attr.Internal
+            auto_up_depends    = ("date_x", "left")
+
+            def computed (self, obj) :
+                result = obj.date_x
+                if result is not None and obj.left :
+                    if not (result.start and result.finish) :
+                        result = self.C_Type \
+                            ( start  = result.start  or obj.left.date.start
+                            , finish = result.finish or obj.left.date.finish
+                            )
+                        print "*******", obj, self, result
+                return result
+            # end def computed
+
+        # end class date
 
     # end class _Attributes
 

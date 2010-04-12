@@ -102,22 +102,6 @@ class Object_PN (_Ancestor_Essence) :
 
         ### Non-primary attributes
 
-        class alive (A_Boolean) :
-            """Specifies whether entity is currently alive, i.e., the current
-               date lies between `date.start` and `date.finish`.
-            """
-
-            kind               = Attr.Query
-            auto_up_depends    = ("date", )
-            ### need to recompute each time `alive` is accessed
-            Kind_Mixins        = (Attr.Computed, )
-
-            def query_fct (self) :
-                return Q.date.alive
-            # end def query_fct
-
-        # end class alive
-
         class creator (A_Object) :
             """Creator of the contents."""
 

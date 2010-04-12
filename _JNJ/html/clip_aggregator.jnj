@@ -49,7 +49,6 @@
       {%- head %}
         <a href="{{ link }}">
       {%- body %}
-        <p>{{ o.date_z }}</p>
         {{ o.contents | safe }}
       {%- tail %}
         </a>

@@ -87,7 +87,6 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
     def query (self) :
         result = []
         for ETM in self.ETMS :
-            print ETM
             r = ETM.query \
                 (* self.query_filters, sort_key = self.sort_key)
             if self.query_limit :

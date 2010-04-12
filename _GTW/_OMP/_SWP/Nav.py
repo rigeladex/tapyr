@@ -180,7 +180,7 @@ class Admin (object) :
                     #, widget = "html/form.jnj, fg_div_seq"
                     )
                 , AID
-                    ( "date"
+                    ( "date_x"
                     , widget = WS
                           ( AID.widget
                           , inline_table_th =
