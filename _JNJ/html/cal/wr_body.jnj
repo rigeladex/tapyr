@@ -61,7 +61,8 @@
 
 {%- macro week_day_events (cal, week, day) -%}
   {%- for ev in day.events %}
-    <div class="event" title="{{ ev.FO.time }}: {{ ev.title }}">
+    {%- set thead = ("%s " % (ev.FO.time, )) if ev.FO.time else "" %}
+    <div class="event" title="{{ thead }}{{ GTW.firstof (ev.detail, ev.title) }}">
       <a href="{{ cal.obj_href (ev.essence) }}">
         {{- ev.short_title -}}
       </a>

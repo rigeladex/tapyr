@@ -64,6 +64,7 @@ class Templateer (TFL.Meta.Object) :
         , calendar_week                = "html/cal/week.jnj"
         , default                      = "html/error.jnj"
         , e_type_admin                 = "html/e_type_admin.jnj"
+        , e_type_aggregator            = "html/e_type_aggregator.jnj"
         , e_type_change                = "html/e_type_change.jnj"
         , login                        = "html/login.jnj"
         , site_admin                   = "html/site_admin.jnj"

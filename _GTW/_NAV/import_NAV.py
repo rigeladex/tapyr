@@ -41,6 +41,7 @@ import _GTW._NAV.ReST
 import _GTW._NAV.Video
 
 import _GTW._NAV._E_Type.Admin
+import _GTW._NAV._E_Type.Aggregator
 import _GTW._NAV._E_Type.Instance
 import _GTW._NAV._E_Type.Manager
 

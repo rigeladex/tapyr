@@ -59,7 +59,7 @@ class Clip_O (_Ancestor_Essence) :
 
         # end class left
 
-        class date_x (A_Date_Interval) :
+        class date (A_Date_Interval) :
             """Publication (`start`) and expiration date (`finish`).
                Unspecified values will be taken from the web page the clip
                belongs to.
@@ -68,7 +68,7 @@ class Clip_O (_Ancestor_Essence) :
             kind               = Attr.Primary_Optional
             ui_name            = "date"
 
-        # end class date_x
+        # end class date
 
         ### Non-primary attributes
 
@@ -79,20 +79,23 @@ class Clip_O (_Ancestor_Essence) :
 
         # end class abstract
 
-        class contents (A_Text) :
-            """Contents of web page in html format"""
+        class alive (A_Boolean) :
+            """Specifies whether entity is currently alive, i.e., the current
+               date lies between `date.start` and `date.finish`.
+            """
 
-            kind               = Attr.Internal
-            auto_up_depends    = ("abstract", )
+            kind               = Attr.Query
+            auto_up_depends    = ("date", "left")
+            ### need to recompute each time `alive` is accessed
+            Kind_Mixins        = (Attr.Computed, )
 
-            def computed (self, obj) :
-                if obj.left :
-                    return obj.left.format.convert (obj.abstract)
-            # end def computed
+            def query_fct (self) :
+                return (Q.date.alive == True) ###  | (Q.left.alive == True)
+            # end def query_fct
 
-        # end class contents
+        # end class alive
 
-        class date (A_Date_Interval) :
+        class date_z (A_Date_Interval) :
 
             kind               = Attr.Computed
 
@@ -108,6 +111,19 @@ class Clip_O (_Ancestor_Essence) :
             # end def computed
 
         # end class date
+
+        class contents (A_Text) :
+            """Contents of web page in html format"""
+
+            kind               = Attr.Internal
+            auto_up_depends    = ("abstract", )
+
+            def computed (self, obj) :
+                if obj.left :
+                    return obj.left.format.convert (obj.abstract)
+            # end def computed
+
+        # end class contents
 
     # end class _Attributes
 

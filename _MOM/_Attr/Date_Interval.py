@@ -62,7 +62,7 @@ class Date_Interval (_Ancestor_Essence) :
             def query_fct (self) :
                 now = A_Date.now ()
                 return \
-                    (  (Q.start <= now)
+                    ( ((Q.start  == None) | (Q.start <= now))
                     & ((Q.finish == None) | (now <= Q.finish))
                     )
             # end def query_fct

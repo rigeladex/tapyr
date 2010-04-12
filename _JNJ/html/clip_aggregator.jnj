@@ -1,0 +1,67 @@
+{%- extends site_base or "html/base.jnj" %}
+{#- jinja template: clip_aggregator.jnj -#}
+{#
+## Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+## Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+## ****************************************************************************
+## This template is part of the package JNJ.
+##
+## This template is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Affero General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This template is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Affero General Public License for more details.
+##
+## You should have received a copy of the GNU Affero General Public License
+## along with this template. If not, see <http://www.gnu.org/licenses/>.
+## ****************************************************************************
+##
+##++
+## Name
+##    clip_aggregator
+##
+## Purpose
+##    Template and macros for displaying aggregated news clips
+##
+## Revision Dates
+##    12-Apr-2010 (CT) Creation
+##    ««revision-date»»···
+##--
+#}
+
+{%- macro aggregator (page) -%}
+  {%- if calendar %}
+    {%- import "html/cal/wr.jnj" as C %}
+    {%- set n = 2 if calendar.today.weekday < 4  else 3 %}
+    {{- C.week_roller_body (calendar, weeks = calendar.weeks [1:n]) -}}
+    <hr/>
+  {% endif -%}
+  {%- for o in objects %}
+    {%- set link = o.link_to %}
+    {%- if not link %}
+      {%- set link = page.page_from_obj (o.obj) %}
+    {% endif -%}
+    {%- onion link %}
+      {%- head %}
+        <a href="{{ link }}">
+      {%- body %}
+        <p>{{ o.date_z }}</p>
+        {{ o.contents | safe }}
+      {%- tail %}
+        </a>
+      {%- endonion %}
+    {%- if not loop.last %}<hr />{% endif -%}
+  {% endfor -%}
+{%- endmacro -%} {#- aggregator -#}
+
+{%- block document -%}
+  {{- aggregator (page) -}}
+{%- endblock document -%}
+
+{#- __END__ jinja template: clip_aggregator.jnj -#}
+
+

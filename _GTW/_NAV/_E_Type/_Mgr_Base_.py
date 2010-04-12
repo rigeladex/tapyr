@@ -32,6 +32,7 @@
 #    17-Mar-2010 (CT) Derived from `GTW.NAV.E_Type.Mixin`
 #    19-Mar-2010 (CT) Call to `scope.async_changes` removed from `_get_entries`
 #    22-Mar-2010 (CT) Use `_T (name)`, not `_Tn (name)` for `title`
+#    12-Apr-2010 (CT) `_get_entries` factored to `Mixin`
 #    ««revision-date»»···
 #--
 
@@ -45,14 +46,9 @@ import _TFL.Filter
 
 from   _TFL._Meta.Once_Property import Once_Property
 from   _TFL.I18N                import _, _T, _Tn
-from   _TFL.predicate           import filtered_join
 
 class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
     """Common base class for Admin and Manager of GTW.NAV.E_Type."""
-
-    objects         = property (lambda s : s._objects)
-    page_args       = {}
-    sort_key        = None
 
     def __init__ (self, parent, ** kw) :
         ETM    = kw ["ETM"]
@@ -69,8 +65,6 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
             , title        = title
             , ** kw
             )
-        self._objects = []
-        self._old_cid = -1
     # end def __init__
 
     @property
@@ -86,28 +80,6 @@ class _Mgr_Base_ (GTW.NAV.E_Type.Mixin) :
         return self.ETM.query_s \
             (* self.query_filters, sort_key = self.sort_key)
     # end def query
-
-    @Once_Property
-    def query_filters (self) :
-        return tuple ()
-    # end def query_filters
-
-    def _get_entries (self) :
-        scope = self.top.scope
-        cid   = scope.ems.max_cid
-        if self._old_cid != cid :
-            self._old_cid = cid
-            self._objects = self._get_objects ()
-        return self._objects
-    # end def _get_entries
-
-    _entries = property (lambda s : s._get_entries (), lambda s, v : True)
-
-    def _get_objects (self) :
-        T = self.Page
-        kw = self.page_args
-        return [T (self, o, ** kw) for o in self.query ()]
-    # end def _get_objects
 
 # end class _Mgr_Base_
 
