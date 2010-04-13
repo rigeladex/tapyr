@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:29+0100\n"
-"PO-Revision-Date: 2010-03-23 13:15+0100\n"
+"PO-Revision-Date: 2010-04-13 17:12+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -26,40 +26,55 @@ msgid ""
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
+#, fuzzy
 msgid "Contents"
-msgstr ""
+msgid_plural "Contentses"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Contents of web page in html format"
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
+#, fuzzy
 msgid "Creator"
+msgid_plural "Creators"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Entity:0
+msgid "Creator of the contents."
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
-msgid "Creator of the contents of the web page."
-msgstr ""
-
-#: _GTW._OMP._SWP.Entity:0
+#, fuzzy
 msgid "Date"
-msgstr ""
+msgid_plural "Dates"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW/_NAV/example/templates/i18n.jnj:8
 msgid "English"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
+#, fuzzy
 msgid "Format"
-msgstr ""
+msgid_plural "Formats"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW/_NAV/example/templates/i18n.jnj:7
 msgid "German"
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
+#, fuzzy
 msgid "Head line"
-msgstr ""
+msgid_plural "Head lines"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Head line of the web page"
@@ -70,7 +85,7 @@ msgid "Higher prio sorts before lower prio."
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
-msgid "Markup format used for `text` of web page"
+msgid "Markup format used for `text`"
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
@@ -78,50 +93,90 @@ msgid "Name used for perma-link."
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
+#, fuzzy
 msgid "Object_PN"
-msgstr ""
+msgid_plural "Object_PNs"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Page:0
+#, fuzzy
 msgid "Page"
-msgstr ""
+msgid_plural "Pages"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Page:0
+msgid "Page_Y"
+msgid_plural "Page_Ys"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Page:0
+#, fuzzy
 msgid "Prio"
+msgid_plural "Prios"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Entity:0
+msgid "Publication (`start`) and expiration date (`finish`)"
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
-msgid ""
-"Publication (`start`) and expiration date (`finish`) for the\n"
-"web page"
-msgstr ""
-
-#: _GTW._OMP._SWP.Entity:0
+#, fuzzy
 msgid "Short title"
-msgstr ""
+msgid_plural "Short titles"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Entity:0
-msgid "Short title of the web page (used in navigation)."
+msgid "Short title (used in navigation)."
 msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
+#, fuzzy
 msgid "Text"
-msgstr ""
+msgid_plural "Texts"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Text for web page in markup specified by `format`."
 msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
+#, fuzzy
 msgid "Title"
-msgstr ""
+msgid_plural "Titles"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Entity:0
 msgid "Title of the web page"
 msgstr ""
 
-#~ msgid "Author"
+#: _GTW._OMP._SWP.Page:0
+msgid "Year"
+msgid_plural "Years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Year to which the web page applies."
+msgstr ""
+
+#~ msgid "Creator of the contents of the web page."
 #~ msgstr ""
 
-#~ msgid "Author of the web page."
+#~ msgid "Markup format used for `text` of web page"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publication (`start`) and expiration date (`finish`) for the\n"
+#~ "web page"
+#~ msgstr ""
+
+#~ msgid "Short title of the web page (used in navigation)."
 #~ msgstr ""
 

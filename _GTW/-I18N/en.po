@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-23 13:15+0100\n"
+"PO-Revision-Date: 2010-04-13 17:12+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW/_NAV/_E_Type/Admin.py:110 _GTW/_NAV/_E_Type/Admin.py:197
+#: _GTW/_NAV/_E_Type/Admin.py:112 _GTW/_NAV/_E_Type/Admin.py:203
 #, python-format
 msgid "%s `%s` doesn't exist!"
 msgstr ""
@@ -305,5 +305,9 @@ msgstr ""
 
 #: _GTW/HTML.py:59
 msgid "phone number"
+msgstr ""
+
+#: _GTW/_NAV/_E_Type/Gallery.py:94
+msgid "picture"
 msgstr ""
 

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-23 13:15+0100\n"
+"PO-Revision-Date: 2010-04-13 17:12+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,22 +18,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _MOM/Entity.py:942
+#: _MOM/Entity.py:947
 #, python-format
 msgid ""
 "%s\n"
 "    %s needs the arguments: (%s)Instead it got: (%s)"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1305
+#: _MOM/_Attr/Type.py:1306
 msgid ""
 "A name must start with a letter or underscore and continue withletters, "
 "digits, and underscores."
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
+#, fuzzy
 msgid "Alive"
-msgstr ""
+msgid_plural "Alives"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
 msgid "All object invariants must be satisfied."
@@ -44,10 +47,13 @@ msgid "All required attributes must be defined."
 msgstr ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "An_Entity"
-msgstr ""
+msgid_plural "An_Entitys"
+msgstr[0] ""
+msgstr[1] ""
 
-#: _MOM/_Meta/M_Entity.py:122
+#: _MOM/_Meta/M_Entity.py:130
 #, python-format
 msgid "Can't instantiate %s %r, use <scope>.%s %r instead"
 msgstr ""
@@ -63,8 +69,11 @@ msgid "Constant attribute `%s.%s` cannot be changed"
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Count"
-msgstr ""
+msgid_plural "Counts"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:209
 msgid "Daily"
@@ -75,12 +84,18 @@ msgid "Date/time of last change."
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0
+#, fuzzy
 msgid "Date_Interval"
-msgstr ""
+msgid_plural "Date_Intervals"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Date_Interval:0
+#, fuzzy
 msgid "Date_Interval_N"
-msgstr ""
+msgid_plural "Date_Interval_Ns"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0 _MOM._Attr.Date_Interval:0 _MOM.Object:0
 #: _MOM._Attr.Time_Interval:0 _MOM.Entity:0 _MOM._Attr.Recurrence_Rule:0
@@ -88,24 +103,36 @@ msgid "Display in user interface"
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Easter offset"
-msgstr ""
+msgid_plural "Easter offsets"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "Electric"
-msgstr ""
+msgid_plural "Electrics"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "Entity"
-msgstr ""
+msgid_plural "Entitys"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:53
 msgid "FR"
 msgstr ""
 
 #: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
+#, fuzzy
 msgid "Finish"
-msgstr ""
+msgid_plural "Finishs"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Finish date of interval"
@@ -116,53 +143,83 @@ msgid "Finish time of interval"
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "First day of week"
-msgstr ""
+msgid_plural "First day of weeks"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "Fo"
-msgstr ""
+msgid_plural "Fos"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "Id_Entity"
-msgstr ""
+msgid_plural "Id_Entitys"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
 msgid "Indicates if object/link was created automatically or not."
 msgstr ""
 
-#: _MOM/_Attr/Type.py:1005
+#: _MOM/_Attr/Type.py:1006
 #, python-format
 msgid "Invalid unit %s, specify one of %s"
 msgstr ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "Is used"
-msgstr ""
+msgid_plural "Is useds"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "Last changed"
-msgstr ""
+msgid_plural "Last changeds"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "Link"
-msgstr ""
+msgid_plural "Links"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "Link1"
-msgstr ""
+msgid_plural "Link1s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "Link2"
-msgstr ""
+msgid_plural "Link2s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "Link2_Ordered"
-msgstr ""
+msgid_plural "Link2_Ordereds"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "Link3"
-msgstr ""
+msgid_plural "Link3s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:53
 msgid "MO"
@@ -173,37 +230,52 @@ msgid "Maximum number of recurrences."
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Month"
-msgstr ""
+msgid_plural "Months"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Month day"
-msgstr ""
+msgid_plural "Month days"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:209
 msgid "Monthly"
 msgstr ""
 
 #: _MOM.Object:0
+#, fuzzy
 msgid "Name"
-msgstr ""
+msgid_plural "Names"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Object:0
+#, fuzzy
 msgid "Named_Object"
-msgstr ""
+msgid_plural "Named_Objects"
+msgstr[0] ""
+msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:732
+#: _MOM/_Attr/Type.py:733
 #, python-format
 msgid "No object %s %s in scope %s"
 msgstr ""
 
-#: _MOM/_Attr/Type.py:266
+#: _MOM/_Attr/Type.py:267
 msgid "Non-ascii values in 8-bit strings are not supported"
 msgstr ""
 
 #: _MOM.Object:0
+#, fuzzy
 msgid "Object"
-msgstr ""
+msgid_plural "Objects"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid ""
@@ -212,8 +284,11 @@ msgid ""
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Period"
-msgstr ""
+msgid_plural "Periods"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Kind.py:728
 #, python-format
@@ -226,12 +301,18 @@ msgid "Primary attribute `%s.%s` cannot be deleted"
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Recurrence_Rule"
-msgstr ""
+msgid_plural "Recurrence_Rules"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Restrict pos"
-msgstr ""
+msgid_plural "Restrict poses"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid ""
@@ -278,8 +359,11 @@ msgid "SU"
 msgstr ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "Seq no"
-msgstr ""
+msgid_plural "Seq nos"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
 msgid "Sequence number of a link in an ordered association."
@@ -300,8 +384,11 @@ msgid "Specifies whether entity is used by another entity."
 msgstr ""
 
 #: _MOM._Attr.Date_Interval:0 _MOM._Attr.Time_Interval:0
+#, fuzzy
 msgid "Start"
-msgstr ""
+msgid_plural "Starts"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Date_Interval:0
 msgid "Start date of interval"
@@ -334,8 +421,11 @@ msgid ""
 msgstr ""
 
 #: _MOM._Attr.Time_Interval:0
+#, fuzzy
 msgid "Time_Interval"
-msgstr ""
+msgid_plural "Time_Intervals"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Kind.py:287
 #, python-format
@@ -343,16 +433,22 @@ msgid "Trying to sync pending attribute %s of %s to `%s`"
 msgstr ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "Ui display"
-msgstr ""
+msgid_plural "Ui displays"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Object:0
 msgid "Unique name of the object."
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Unit"
-msgstr ""
+msgid_plural "Units"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
 msgid ""
@@ -369,7 +465,7 @@ msgstr ""
 msgid "Use one of the types %s instead."
 msgstr ""
 
-#: _MOM/_Attr/Recurrence_Rule.py:89 _MOM/_Attr/Type.py:378
+#: _MOM/_Attr/Recurrence_Rule.py:89 _MOM/_Attr/Type.py:379
 #, python-format
 msgid "Value `%r` is not of type %s"
 msgstr ""
@@ -379,32 +475,47 @@ msgid "WE"
 msgstr ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Week"
-msgstr ""
+msgid_plural "Weeks"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Week day"
-msgstr ""
+msgid_plural "Week days"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:209
 msgid "Weekly"
 msgstr ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "X locked"
-msgstr ""
+msgid_plural "X lockeds"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Recurrence_Rule:0
+#, fuzzy
 msgid "Year day"
-msgstr ""
+msgid_plural "Year days"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM/_Attr/Recurrence_Rule.py:209
 msgid "Yearly"
 msgstr ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "_MOM_Link_n_"
-msgstr ""
+msgid_plural "_MOM_Link_n_s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Entity:0
 msgid ""
@@ -413,31 +524,49 @@ msgid ""
 msgstr ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "completely_defined"
-msgstr ""
+msgid_plural "completely_defineds"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.Time_Interval:0 _MOM._Attr.Date_Interval:0
+#, fuzzy
 msgid "finish_after_start"
-msgstr ""
+msgid_plural "finish_after_starts"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "left"
-msgstr ""
+msgid_plural "lefts"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "middle"
-msgstr ""
+msgid_plural "middles"
+msgstr[0] ""
+msgstr[1] ""
 
-#: _MOM/_Attr/Type.py:727
+#: _MOM/_Attr/Type.py:728
 #, python-format
 msgid "object %s %s not eligible, specify one of: %s"
 msgstr ""
 
 #: _MOM.Entity:0
+#, fuzzy
 msgid "object_correct"
-msgstr ""
+msgid_plural "object_corrects"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM.Link:0
+#, fuzzy
 msgid "right"
-msgstr ""
+msgid_plural "rights"
+msgstr[0] ""
+msgstr[1] ""
 

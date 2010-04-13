@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
-"POT-Creation-Date: 2010-03-23 13:15+0100\n"
+"POT-Creation-Date: 2010-04-13 17:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,7 @@ msgstr ""
 msgid "Create new object"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:116
+#: _JNJ/html/navigation.jnj:117
 #, python-format
 msgid "Currently selected language is %s"
 msgstr ""
@@ -85,6 +85,10 @@ msgstr ""
 msgid "Edit this entry"
 msgstr ""
 
+#: _JNJ/html/photo.jnj:40
+msgid "Gallerie"
+msgstr ""
+
 #: _JNJ/html/form.jnj:407 _JNJ/html/login.jnj:65
 msgid "Get a new password for the username specified"
 msgstr ""
@@ -94,11 +98,11 @@ msgstr ""
 msgid "If a link under %s refers to %s, please contact the webmaster."
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:113
+#: _JNJ/html/navigation.jnj:114
 msgid "Language"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:112
+#: _JNJ/html/navigation.jnj:113
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr ""
@@ -111,16 +115,16 @@ msgstr ""
 msgid "Log into website with username and password specified"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:139
+#: _JNJ/html/navigation.jnj:140
 msgid "Logged in"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:138
+#: _JNJ/html/navigation.jnj:139
 #, python-format
 msgid "Logged in as %s"
 msgstr ""
 
-#: _JNJ/html/form.jnj:399 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:144
+#: _JNJ/html/form.jnj:399 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:145
 msgid "Login"
 msgstr ""
 
@@ -145,7 +149,7 @@ msgstr ""
 msgid "Month (for last day of week)"
 msgstr ""
 
-#: _JNJ/html/photo.jnj:47
+#: _JNJ/html/photo.jnj:48
 msgid "Next picture"
 msgstr ""
 
@@ -169,7 +173,7 @@ msgstr ""
 msgid "Please enter your username"
 msgstr ""
 
-#: _JNJ/html/photo.jnj:41
+#: _JNJ/html/photo.jnj:42
 msgid "Previous picture"
 msgstr ""
 
@@ -198,7 +202,7 @@ msgstr ""
 msgid "Reset password for %s"
 msgstr ""
 
-#: _JNJ/html/navigation.jnj:121
+#: _JNJ/html/navigation.jnj:122
 #, python-format
 msgid "Select language %s"
 msgstr ""
@@ -221,7 +225,7 @@ msgid ""
 " possible. "
 msgstr ""
 
-#: _JNJ/html/cal/wr_body.jnj:76 _JNJ/html/cal/wr_nav.jnj:62
+#: _JNJ/html/cal/wr_nav.jnj:62
 #, python-format
 msgid "Week %2.2d/%s"
 msgstr ""

@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-03-23 13:15+0100\n"
+"PO-Revision-Date: 2010-04-13 17:12+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -18,53 +18,103 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.4\n"
 
-#: _GTW._OMP._SWP.Page:0
-msgid "Contents"
-msgstr "Inhalt"
+#: _GTW._OMP._SWP.Clip:0
+msgid "Abstract"
+msgid_plural "Abstracts"
+msgstr[0] ""
+msgstr[1] ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW/_OMP/_SWP/Nav.py:195
+msgid "Clip"
+msgstr "Schnipsel"
+
+#: _GTW._OMP._SWP.Clip:0
+msgid "Clip_O"
+msgid_plural "Clip_Os"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Clip:0
+msgid "Clip_X"
+msgid_plural "Clip_Xs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Entity:0
+msgid "Clips"
+msgid_plural "Clipses"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
+msgid "Contents"
+msgid_plural "Contentses"
+msgstr[0] "Inhalt"
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Contents of web page in html format"
 msgstr "Inhalt der Webseite in HTML (Hypertext) Format"
 
 #: _GTW._OMP._SWP.Entity:0
 msgid "Creator"
-msgstr "Autor"
+msgid_plural "Creators"
+msgstr[0] "Autor"
+msgstr[1] "Autoren"
 
-#: _GTW/_OMP/_SWP/Nav.py:112
+#: _GTW/_OMP/_SWP/Nav.py:88
+msgid "Creator of the contents of the news clip"
+msgstr "Autor des Inhalts des Neuigkeitsschnipsels"
+
+#: _GTW/_OMP/_SWP/Nav.py:140
 msgid "Creator of the contents of the web page"
 msgstr "Autor des Inhalts der Webseite"
 
 #: _GTW._OMP._SWP.Entity:0
-msgid "Creator of the contents of the web page."
-msgstr "Autor des Inhalts der Webseite."
+msgid "Creator of the contents."
+msgstr "Autor des Inhalts."
 
 #: _MOM._Attr.A_2D:0
 msgid "D2_Value_Float"
-msgstr ""
+msgid_plural "D2_Value_Floats"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _MOM._Attr.A_2D:0
 msgid "D2_Value_Int"
-msgstr ""
+msgid_plural "D2_Value_Ints"
+msgstr[0] ""
+msgstr[1] ""
 
-#: _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Date"
-msgstr "Datum"
+msgid_plural "Dates"
+msgstr[0] "Datum"
+msgstr[1] "Daten"
 
-#: _GTW/_OMP/_SWP/Nav.py:126
+#: _GTW/_OMP/_SWP/Nav.py:154 _GTW/_OMP/_SWP/Nav.py:192
 msgid "Date interval"
 msgstr "Datumsinterval"
 
-#: _GTW/_OMP/_SWP/Nav.py:125
+#: _GTW/_OMP/_SWP/Nav.py:153
 msgid "Date interval of event"
 msgstr "Datumsinterval des Ereignisses"
 
+#: _GTW/_OMP/_SWP/Nav.py:191
+msgid "Date interval of news clip"
+msgstr "Datumsinterval des Neuigkeitsschnipsels"
+
 #: _GTW._OMP._SWP.Picture:0
 msgid "Dir"
-msgstr ""
+msgid_plural "Dirs"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Gallery:0
 msgid "Directory"
-msgstr "Verzeichnis"
+msgid_plural "Directorys"
+msgstr[0] "Verzeichnis"
+msgstr[1] "Verzeichnisse"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Directory in gallery holding pictures."
@@ -78,11 +128,11 @@ msgstr "Verzeichnis der Gallerie, das die Miniaturbilder enthält."
 msgid "Directory where pictures of gallery are stored."
 msgstr "Verzeichnis, wo die Bilder der Gallerie gespeichert sind."
 
-#: _GTW/_OMP/_SWP/Nav.py:146
+#: _GTW/_OMP/_SWP/Nav.py:174
 msgid "Events"
 msgstr "Ereignisse"
 
-#: _GTW/_OMP/_SWP/Nav.py:145
+#: _GTW/_OMP/_SWP/Nav.py:173
 msgid "Events associated to page"
 msgstr "Zur Seite gehörende Ereignisse"
 
@@ -92,11 +142,15 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Format"
-msgstr "Format"
+msgid_plural "Formats"
+msgstr[0] "Format"
+msgstr[1] "Formate"
 
-#: _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:213 _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
 msgid "Gallery"
-msgstr "Gallerie"
+msgid_plural "Gallerys"
+msgstr[0] "Gallerie"
+msgstr[1] "Gallerien"
 
 #: _GTW._OMP._SWP.Gallery:0 _GTW._OMP._SWP.Picture:0
 msgid "Gallery to which this picture belongs."
@@ -121,11 +175,13 @@ msgstr ""
 "Der Text darf keine Kommentare enthalten:\n"
 "%s"
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Head line"
-msgstr "Kopfzeile"
+msgid_plural "Head lines"
+msgstr[0] "Kopfzeile"
+msgstr[1] "Kopfzeilen"
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Head line of the web page"
 msgstr "Kopfzeile der Webseite"
 
@@ -133,49 +189,83 @@ msgstr "Kopfzeile der Webseite"
 msgid "Height of picture."
 msgstr "Höhe des Bildes."
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Higher prio sorts before lower prio."
 msgstr "Höhere Priorität wird vor niederer Priorität gereiht."
 
+#: _GTW._OMP._SWP.Clip:0
+msgid "Link to"
+msgid_plural "Link tos"
+msgstr[0] ""
+msgstr[1] ""
+
 #: _GTW._OMP._SWP.Page:0
-msgid "Markup format used for `text` of web page"
-msgstr "Textauszeichnungsformat, das für den `text` der Webseite verwendet wird"
+msgid "Markup format used for `text`"
+msgstr "Textauszeichnungsformat, das für den `text` verwendet wird"
+
+#: _GTW._OMP._SWP.Clip:0
+msgid "Models an attribute holding a date interval (start, finish)"
+msgstr ""
 
 #: _GTW._OMP._SWP.Entity:0
 msgid "Name used for perma-link."
 msgstr "Name, der für den Permalink verwendet wird."
 
+#: _GTW/_OMP/_SWP/Nav.py:194
+msgid "News clip for page"
+msgstr "Neuigkeitsschnipsel für Seite"
+
 #: _GTW._OMP._SWP.Picture:0
 msgid "Number of picture in gallery."
 msgstr "Position des Bildes in der Gallerie."
 
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+msgid "Object the news clip refers to"
+msgstr "Objekt, auf das sich das Neuigkeitsschnipsel bezieht"
+
 #: _GTW._OMP._SWP.Entity:0
 msgid "Object_PN"
-msgstr ""
+msgid_plural "Object_PNs"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Page"
-msgstr "Seite"
+msgid_plural "Pages"
+msgstr[0] "Seite"
+msgstr[1] "Seiten"
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Page_Y"
+msgid_plural "Page_Ys"
+msgstr[0] "Seite/J"
+msgstr[1] "Seiten/J"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Path"
-msgstr "Pfad"
+msgid_plural "Paths"
+msgstr[0] "Pfad"
+msgstr[1] "Pfade"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Path of file holding picture."
 msgstr "Pfad zur Datei, die das Bild enthält."
 
-#: _GTW/_OMP/_SWP/Nav.py:170 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:219 _GTW._OMP._SWP.Picture:0
 msgid "Photo"
-msgstr "Photo"
+msgid_plural "Photos"
+msgstr[0] "Photo"
+msgstr[1] "Photos"
 
-#: _GTW/_OMP/_SWP/Nav.py:88
+#: _GTW/_OMP/_SWP/Nav.py:117
 msgid "Photographer"
 msgstr "Photograph"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Picture"
-msgstr "Bild"
+msgid_plural "Pictures"
+msgstr[0] "Bild"
+msgstr[1] "Bilder"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Picture."
@@ -183,37 +273,56 @@ msgstr "Bild."
 
 #: _GTW._OMP._SWP.Gallery:0
 msgid "Pictures"
-msgstr "Bilder"
+msgid_plural "Pictureses"
+msgstr[0] "Bilder"
+msgstr[1] ""
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Prio"
-msgstr "Priorität"
+msgid_plural "Prios"
+msgstr[0] "Priorität"
+msgstr[1] "Prioritäten"
 
 #: _GTW._OMP._SWP.Entity:0
-msgid ""
-"Publication (`start`) and expiration date (`finish`) for the\n"
-"web page"
+msgid "Publication (`start`) and expiration date (`finish`)"
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/Nav.py:78 _GTW/_OMP/_SWP/Nav.py:103
+#: _GTW._OMP._SWP.Clip:0
+msgid ""
+"Publication (`start`) and expiration date (`finish`).\n"
+"Unspecified values will be taken from the web page the clip\n"
+"belongs to."
+msgstr "Publikations- und Verfallsdatum"
+
+#: _GTW/_OMP/_SWP/Nav.py:78 _GTW/_OMP/_SWP/Nav.py:107 _GTW/_OMP/_SWP/Nav.py:131
 msgid "Publication and expiration date"
 msgstr "Publikations- und Verfallsdatum"
 
-#: _GTW/_OMP/_SWP/Nav.py:143
+#: _GTW/_OMP/_SWP/Nav.py:171
 msgid "Recurrence rule"
 msgstr "Wiederholungsregel"
 
-#: _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Short title"
-msgstr "Kurztitel"
+msgid_plural "Short titles"
+msgstr[0] "Kurztitel"
+msgstr[1] "Kurztiteln"
 
-#: _GTW._OMP._SWP.Entity:0
-msgid "Short title of the web page (used in navigation)."
-msgstr "Kurztitel der Webseite (wird in Navigation verwendet)."
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
+msgid "Short title (used in navigation)."
+msgstr "Kurztitel (wird in Navigation verwendet)."
 
-#: _GTW._OMP._SWP.Page:0
+#: _GTW._OMP._SWP.Page:0 _GTW._OMP._SWP.Clip:0
 msgid "Text"
-msgstr "Text"
+msgid_plural "Texts"
+msgstr[0] "Text"
+msgstr[1] "Texte"
+
+#: _GTW._OMP._SWP.Clip:0
+msgid "Text for news clip in markup specified by `format`."
+msgstr ""
+"Text für das Neuigkeitsschnipsel, im durch `format` angegebenen "
+"Textauszeichnungsformat formatiert."
 
 #: _GTW._OMP._SWP.Page:0
 msgid "Text for web page in markup specified by `format`."
@@ -223,27 +332,39 @@ msgstr ""
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Thumb"
-msgstr "Miniaturbild"
+msgid_plural "Thumbs"
+msgstr[0] "Miniaturbild"
+msgstr[1] "Miniaturbilder"
 
-#: _GTW/_OMP/_SWP/Nav.py:175 _GTW._OMP._SWP.Picture:0
+#: _GTW/_OMP/_SWP/Nav.py:224 _GTW._OMP._SWP.Picture:0
 msgid "Thumbnail"
 msgstr "Miniaturbild"
 
-#: _GTW/_OMP/_SWP/Nav.py:137
+#: _GTW/_OMP/_SWP/Nav.py:165
 msgid "Time interval"
 msgstr "Zeitraum"
 
-#: _GTW/_OMP/_SWP/Nav.py:136
+#: _GTW/_OMP/_SWP/Nav.py:164
 msgid "Time interval of event"
 msgstr "Zeitraum des Ereignisses"
 
-#: _GTW._OMP._SWP.Entity:0
+#: _GTW._OMP._SWP.Clip:0 _GTW._OMP._SWP.Entity:0
 msgid "Title"
-msgstr "Titel"
+msgid_plural "Titles"
+msgstr[0] "Titel"
+msgstr[1] "Titeln"
+
+#: _GTW._OMP._SWP.Clip:0
+msgid "Title of news clip."
+msgstr "Titel des Neuigkeitsschnipsels."
 
 #: _GTW._OMP._SWP.Entity:0
 msgid "Title of the web page"
 msgstr "Titel der Webseite"
+
+#: _GTW._OMP._SWP.Clip:0
+msgid "Url of external web page providing information about this clip"
+msgstr "Adresse der externen Webseite, die Informationen über das Neuigkeitsschnipsel enthält"
 
 #: _MOM._Attr.A_2D:0
 msgid "Value in x (horizontal) direction."
@@ -255,7 +376,9 @@ msgstr "Wert in y-Richtung (vertikal)."
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Width"
-msgstr "Breite"
+msgid_plural "Widths"
+msgstr[0] "Breite"
+msgstr[1] "Breiten"
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "Width of picture."
@@ -263,30 +386,47 @@ msgstr "Breite des Bildes."
 
 #: _MOM._Attr.A_2D:0
 msgid "X"
-msgstr "X"
+msgid_plural "Xs"
+msgstr[0] "X"
+msgstr[1] "Xs"
 
 #: _MOM._Attr.A_2D:0
 msgid "Y"
-msgstr "Y"
+msgid_plural "Ys"
+msgstr[0] "Y"
+msgstr[1] "Ys"
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Year"
+msgid_plural "Years"
+msgstr[0] ""
+msgstr[1] ""
+
+#: _GTW._OMP._SWP.Page:0
+msgid "Year to which the web page applies."
+msgstr "Jahr, auf das sich die Webseite bezieht."
 
 #: _MOM._Attr.A_2D:0
 msgid "_D2_Value_"
-msgstr ""
+msgid_plural "_D2_Value_s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "_Pic_"
-msgstr ""
+msgid_plural "_Pic_s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._SWP.Picture:0
 msgid "_Thumb_"
-msgstr ""
+msgid_plural "_Thumb_s"
+msgstr[0] ""
+msgstr[1] ""
 
-#~ msgid "Author"
-#~ msgstr "Autor"
-
-#~ msgid "Author of the web page."
-#~ msgstr "Autor der Webseite"
-
-#~ msgid "Author of web page"
-#~ msgstr "Autor der Webseite"
+#: _GTW._OMP._SWP.Clip:0
+msgid "date"
+msgid_plural "dates"
+msgstr[0] "Datum"
+msgstr[1] "Daten"
 

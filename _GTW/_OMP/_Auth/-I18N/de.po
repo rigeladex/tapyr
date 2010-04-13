@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-07 13:28+0100\n"
-"PO-Revision-Date: 2010-03-23 13:15+0100\n"
+"PO-Revision-Date: 2010-04-13 17:12+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -21,7 +21,9 @@ msgstr ""
 #: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account_in_Group:0
 #: _GTW._OMP._Auth.Account:0
 msgid "Account"
-msgstr "Benutzerkonto"
+msgid_plural "Accounts"
+msgstr[0] "Benutzerkonto"
+msgstr[1] "Benutzerkonten"
 
 #: _GTW._OMP._Auth.Account_Handling:0 _GTW._OMP._Auth.Account:0
 msgid "Account which this action is bound to."
@@ -29,47 +31,69 @@ msgstr "Von dieser Aktion betroffenes Benutzerkonto."
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Activation"
-msgstr "Aktivierung des Benutzerkontos"
+msgid_plural "Account_Activations"
+msgstr[0] "Aktivierung des Benutzerkontos"
+msgstr[1] "Aktivierung der Benutzerkonten"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Account_Anonymous"
-msgstr "Anonymes Benutzerkonto"
+msgid_plural "Account_Anonymouses"
+msgstr[0] "Anonymes Benutzerkonto"
+msgstr[1] "Anonyme Benutzerkonten"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_EMail_Verification"
-msgstr "Überprüfung von Benutzerkonto und Email"
+msgid_plural "Account_EMail_Verifications"
+msgstr[0] "Überprüfung von Benutzerkonto und Email"
+msgstr[1] "Überprüfungen von Benutzerkonten und Emails"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Account_P"
-msgstr "Benutzerkonto"
+msgid_plural "Account_Ps"
+msgstr[0] "Benutzerkonto"
+msgstr[1] "Benutzerkonten"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Password_Change_Required"
-msgstr ""
+msgid_plural "Account_Password_Change_Requireds"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Account_Pasword_Reset"
-msgstr ""
+msgid_plural "Account_Pasword_Resets"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account_in_Group:0
 msgid "Account_in_Group"
-msgstr "Benutzerkonto in Gruppe"
+msgid_plural "Account_in_Groups"
+msgstr[0] "Benutzerkonto in Gruppe"
+msgstr[1] "Benutzerkonten in Gruppen"
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Accounts"
-msgstr "Benutzerkonten"
+msgid_plural "Accountses"
+msgstr[0] "Benutzerkonten"
+msgstr[1] "Benutzerkonten"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Activation"
-msgstr "Aktivierung"
+msgid_plural "Activations"
+msgstr[0] "Aktivierung"
+msgstr[1] "Aktivierungen"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Active"
-msgstr "Benutzer freigeschaltet"
+msgid_plural "Actives"
+msgstr[0] "Benutzer freigeschaltet"
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Desc"
-msgstr "Beschreibung"
+msgid_plural "Descs"
+msgstr[0] "Beschreibung"
+msgstr[1] "Beschreibungen"
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Description of group"
@@ -82,8 +106,11 @@ msgstr ""
 "wird"
 
 #: _GTW._OMP._Auth.Account:0
+#, fuzzy
 msgid "Enabled"
-msgstr "Freigeschaltet"
+msgid_plural "Enableds"
+msgstr[0] "Freigeschaltet"
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Exipre time of this action"
@@ -91,16 +118,22 @@ msgstr "Verfalldatum für diese Aktion"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Expires"
-msgstr "Verfällt"
+msgid_plural "Expireses"
+msgstr[0] "Verfällt"
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account_in_Group:0 _GTW._OMP._Auth.Group:0
 msgid "Group"
-msgstr "Gruppe"
+msgid_plural "Groups"
+msgstr[0] "Gruppe"
+msgstr[1] "Gruppen"
 
 #: _GTW/_OMP/_Auth/Nav.py:75 _GTW/_OMP/_Auth/Nav.py:76
 #: _GTW._OMP._Auth.Account:0
 msgid "Groups"
-msgstr "Gruppen"
+msgid_plural "Groupses"
+msgstr[0] "Gruppen"
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Group:0
 msgid "Name of group"
@@ -108,11 +141,15 @@ msgstr "Name der Gruppe"
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "New email"
-msgstr "Neue Emailaddresse"
+msgid_plural "New emails"
+msgstr[0] "Neue Emailaddresse"
+msgstr[1] "Neue Emailaddressen"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Password change required"
-msgstr "Kennwort muss geändert werden"
+msgid_plural "Password change requireds"
+msgstr[0] "Kennwort muss geändert werden"
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Password for this account"
@@ -120,15 +157,21 @@ msgstr "Kennwort für dieses Benutzerkonto"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Salt"
-msgstr "Salz"
+msgid_plural "Salts"
+msgstr[0] "Salz"
+msgstr[1] "Salze"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Superuser"
-msgstr "Wunderwuzzi"
+msgid_plural "Superusers"
+msgstr[0] "Wunderwuzzi"
+msgstr[1] "Wunderwuzzis"
 
 #: _GTW._OMP._Auth.Account:0
 msgid "Suspended"
-msgstr "Suspendiert"
+msgid_plural "Suspendeds"
+msgstr[0] "Suspendiert"
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "The new email address for the linked account."
@@ -160,7 +203,9 @@ msgstr "Dieses Benutzerkonto ist gegenwärtig freigeschaltet."
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Token"
-msgstr ""
+msgid_plural "Tokens"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "Unique token which identifies this action."
@@ -168,11 +213,15 @@ msgstr ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "_Account_Action_"
-msgstr "Benutzerkonto in Gruppe"
+msgid_plural "_Account_Action_s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Account_Handling:0
 msgid "_Account_Token_Action_"
-msgstr ""
+msgid_plural "_Account_Token_Action_s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: _GTW._OMP._Auth.Group:0
 msgid "`Account` linked to `group`"

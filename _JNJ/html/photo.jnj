@@ -37,7 +37,7 @@
 {%- import "STD::html/navigation.jnj" as NT with context %}
 
 {%- macro buttons (page) %}
-  {%- set gallery_title = "%s %s" % (GTW._T ('Gallerie'), page.parent.title) %}
+  {%- set gallery_title = "%s %s" % (GTW._T ('Gallery'), page.parent.title) %}
   <p class="photo-nav">
     {{ NT.neighbor (page.prev, GTW._T ("Previous picture"), "arrow_left") }}
     <a href="{{ page.parent.permalink }}">

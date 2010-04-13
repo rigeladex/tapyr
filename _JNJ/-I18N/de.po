@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-03-23 13:15+0100\n"
+"PO-Revision-Date: 2010-04-13 17:12+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -64,7 +64,7 @@ msgstr "Ändere Kennwort für Benutzerkonto %s"
 msgid "Create new object"
 msgstr "Erzeuge neues Objekt"
 
-#: _JNJ/html/navigation.jnj:116
+#: _JNJ/html/navigation.jnj:117
 #, python-format
 msgid "Currently selected language is %s"
 msgstr "Gegenwärtig ausgewählte Sprache: %s"
@@ -85,6 +85,10 @@ msgstr "Verwerfen aller Änderungen und Verlassen der Maske"
 msgid "Edit this entry"
 msgstr "Ändere dieses Ding"
 
+#: _JNJ/html/photo.jnj:40
+msgid "Gallery"
+msgstr "Gallerie"
+
 #: _JNJ/html/form.jnj:407 _JNJ/html/login.jnj:65
 msgid "Get a new password for the username specified"
 msgstr "Setze ein neues Kennwort für das angegebene Benutzerkonto"
@@ -96,11 +100,11 @@ msgstr ""
 "Wenn ein Link unter %s auf %s verweist, melden Sie das bitte dem "
 "Webmaster."
 
-#: _JNJ/html/navigation.jnj:113
+#: _JNJ/html/navigation.jnj:114
 msgid "Language"
 msgstr "Sprache"
 
-#: _JNJ/html/navigation.jnj:112
+#: _JNJ/html/navigation.jnj:113
 #, python-format
 msgid "Languages that can be selected for %s"
 msgstr "Sprachen, die für %s ausgewählt werden können"
@@ -113,16 +117,16 @@ msgstr "Anmelden oder Aufsuchen der Seite für die Verwaltung von Benutzerkonten"
 msgid "Log into website with username and password specified"
 msgstr "Melde mit dem angegebenen Benutzernamen und Kennwort bei der Webseite an"
 
-#: _JNJ/html/navigation.jnj:139
+#: _JNJ/html/navigation.jnj:140
 msgid "Logged in"
 msgstr "Angemeldet"
 
-#: _JNJ/html/navigation.jnj:138
+#: _JNJ/html/navigation.jnj:139
 #, python-format
 msgid "Logged in as %s"
 msgstr "Angemeldet als %s"
 
-#: _JNJ/html/form.jnj:399 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:144
+#: _JNJ/html/form.jnj:399 _JNJ/html/login.jnj:61 _JNJ/html/navigation.jnj:145
 msgid "Login"
 msgstr "Anmelden"
 
@@ -147,7 +151,7 @@ msgstr "Zugriffsart nicht gestattet"
 msgid "Month (for last day of week)"
 msgstr "Monat (des letzten Tags der Woche)"
 
-#: _JNJ/html/photo.jnj:47
+#: _JNJ/html/photo.jnj:48
 msgid "Next picture"
 msgstr "Nächstes Bild"
 
@@ -171,7 +175,7 @@ msgstr "Bitte um Eingabe des Kennworts"
 msgid "Please enter your username"
 msgstr "Bitte um Eingabe des Benutzernamens"
 
-#: _JNJ/html/photo.jnj:41
+#: _JNJ/html/photo.jnj:42
 msgid "Previous picture"
 msgstr "Voriges Bild"
 
@@ -200,7 +204,7 @@ msgstr "Zurücksetzen"
 msgid "Reset password for %s"
 msgstr "Ändere Kennwort für %s"
 
-#: _JNJ/html/navigation.jnj:121
+#: _JNJ/html/navigation.jnj:122
 #, python-format
 msgid "Select language %s"
 msgstr "Wähle Sprache '%s' aus"
@@ -225,7 +229,7 @@ msgstr ""
 "Wir entschuldigen uns für die Unannehmlichkeit und hoffen, das\"\n"
 "\" Problem ehebaldigst zu beheben. "
 
-#: _JNJ/html/cal/wr_body.jnj:76 _JNJ/html/cal/wr_nav.jnj:62
+#: _JNJ/html/cal/wr_nav.jnj:62
 #, python-format
 msgid "Week %2.2d/%s"
 msgstr "Woche %2.2d/%s"
