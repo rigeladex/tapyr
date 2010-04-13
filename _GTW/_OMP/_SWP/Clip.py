@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #     9-Apr-2010 (CT) Creation
+#    12-Apr-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -105,11 +106,19 @@ class Clip_O (_Ancestor_Essence) :
                             ( start  = result.start  or obj.left.date.start
                             , finish = result.finish or obj.left.date.finish
                             )
-                        print "*******", obj, self, result
                 return result
             # end def computed
 
         # end class date
+
+        class prio (A_Int) :
+            """Higher prio sorts before lower prio."""
+
+            kind               = Attr.Optional
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
+            default            = 0
+
+        # end class prio
 
     # end class _Attributes
 

@@ -41,6 +41,7 @@
 #                     `Page.allows_children`
 #     9-Apr-2010 (CT) `Manager_T_Archive._year_filter` factored
 #     9-Apr-2010 (CT) `Manager_T_Archive_Y` added
+#    12-Apr-2010 (CT) `href_display` changed to use`perma_name` instead of `lid`
 #    ««revision-date»»···
 #--
 
@@ -100,7 +101,7 @@ class Manager (GTW.NAV.E_Type._Mgr_Base_, GTW.NAV.Dir) :
     # end def href_change
 
     def href_display (self, obj) :
-        return pjoin (self.abs_href, obj.lid)
+        return pjoin (self.abs_href, obj.perma_name)
     # end def href_display
 
     def page_from_obj (self, obj) :

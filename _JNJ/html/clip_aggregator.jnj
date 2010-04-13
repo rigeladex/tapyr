@@ -38,24 +38,22 @@
     {%- import "html/cal/wr.jnj" as C %}
     {%- set n = 2 if calendar.today.weekday < 4  else 3 %}
     {{- C.week_roller_body (calendar, weeks = calendar.weeks [1:n]) -}}
-    <hr/>
-  {% endif -%}
-  {%- for o in objects %}
-    {%- set link = o.link_to %}
-    {%- if not link %}
-      {%- set link = page.page_from_obj (o.obj) %}
-    {% endif -%}
-    {%- onion link %}
-      {%- head %}
-        <a href="{{ link }}">
-      {%- body %}
-        {{ o.contents | safe }}
-      {%- tail %}
-        </a>
-      {%- endonion %}
-    {%- if not loop.last %}<hr />{% endif -%}
+  {% endif %}
+  {% for c in clips %}
+    {{ clip (page, c) }}
   {% endfor -%}
 {%- endmacro -%} {#- aggregator -#}
+
+{%- macro clip (page, c) -%}
+  {%- set link = c.link_to %}
+  <div class="{{ page.css_class }}-sep">&nbsp;</div>
+  <div class="{{ page.css_class }}">
+    {{ c.contents | safe }}
+    {%- if link %}
+      <a href="{{ link }}" class="{{ page.css_class }}-more">More...</a>
+    {%- endif %}
+  </div>
+{%- endmacro -%} {#- clip -#}
 
 {%- block document -%}
   {{- aggregator (page) -}}

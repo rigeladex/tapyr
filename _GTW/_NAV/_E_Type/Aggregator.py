@@ -51,7 +51,9 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
        E_Types.
     """
 
+    css_class   = "news-clip"
     query_limit = 25
+    sort_key    = TFL.Sorted_By ("-date.start", "-prio")
     template    = "e_type_aggregator"
 
     class Instance (TFL.Meta.Object) :
@@ -66,7 +68,16 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
         # end def __init__
 
         def __getattr__ (self, name) :
-            return getattr (self.obj, name)
+            if name == "link_to" :
+                top = self.admin.top
+                result = getattr (self.obj, name, None)
+                if not result :
+                    left = getattr (self.obj, "left", None)
+                    if left is not None :
+                        result = top.obj_href (left)
+            else :
+                result = getattr (self.obj, name)
+            return result
         # end def __getattr__
 
     # end class Instance
@@ -81,7 +92,6 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
             ETMS.append (ETM)
         kw ["ETMS"] = ETMS
         self.__super.__init__ (parent, ** kw)
-        #self.prefix = pjoin (self.parent.prefix, self.name)
     # end def __init__
 
     def query (self) :
@@ -110,7 +120,7 @@ class Aggregator (GTW.NAV.E_Type.Mixin, GTW.NAV.Page) :
         objects = self._get_entries ()
         handler.context.update \
             ( calendar = getattr (self.top.SC, "Cal", None)
-            , objects  = objects
+            , clips    = objects
             )
         return self.__super.rendered (handler, template)
     # end def rendered

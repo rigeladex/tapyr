@@ -51,9 +51,8 @@
 
 {%- macro week_day (cal, week, day) -%}
   {%- set holi = day.is_holiday %}
-  {{- " ".join
-      (("%s" % day.day, GTW._T (day.month_abbr) if day.day == 1 else "")).strip ()
-  -}}
+  <span class="month {{ day.day }}">{{ GTW._T (day.month_abbr) }}</span>
+  <span class="day">{{ day.day }}</span>
   {%- if holi %}
     <br/>{{- GTW._T (holi) -}}
   {% endif -%}
@@ -74,7 +73,8 @@
 {%- endmacro -%} {#- week_month -#}
 
 {%- macro week_number (cal, week) -%}
-  <th class="week-number" scope="row" title="{{ GTW._T ('Week %2.2d/%s') % (week.number, week.year) }}">
+  <th class="week-number" scope="row"
+    title="{{ "%s %2.2d/%s     [%s&ndash;%s]" % (GTW._T ('Week'), week.number, week.year, week.mon, week.sun) }}">
     <div class="week-number"><a href="{{ cal.week_href (week) }}">{{- "%2.2d" % week.number -}}</a></div>
   </th>
 {%- endmacro -%} {#- week_number -#}
