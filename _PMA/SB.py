@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2005-2006 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2005-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -28,6 +28,8 @@
 # Revision Dates
 #    22-May-2005 (CT) Creation
 #    14-Apr-2006 (CT) Use `Decorator` to define decorators
+#    14-Apr-2010 (CT) Import of `spambayes` modules moved into `try`-clause
+#                     (to avoid `ImportError: No module named lockfile`)
 #    ««revision-date»»···
 #--
 
@@ -39,13 +41,12 @@ import _TFL._Meta.Object
 
 try :
     import spambayes           as     sb
-except ImportError :
-    SB = None
-else :
     import spambayes.hammie
     import spambayes.Options
     import spambayes.storage
-
+except ImportError :
+    SB = None
+else :
     import atexit
 
     class _SB_ (TFL.Meta.Object) :

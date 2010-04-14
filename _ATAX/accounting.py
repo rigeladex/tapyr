@@ -153,6 +153,11 @@
 #     6-Dec-2009 (CT)  3-compatibility
 #     3-Jan-2010 (CT) Use `TFL.CAO` instead of `TFL.Command_Line`
 #    27-Jan-2010 (CT) Option `-stdin` added
+#    14-Apr-2010 (CT) `Account_Entry.__init__` changed to swap `konto` and
+#                     `gegen_konto` if `minderung`
+#    14-Apr-2010 (CT) `T_Account.add` changed not to consider `minderung`,
+#                     i.e., to always call `_add_ausgabe` for `-`,
+#                     `_add_einnahme` for `+`
 #    ««revision-date»»···
 #--
 
@@ -228,6 +233,8 @@ class Account_Entry (_Entry_) :
     erloes_minderung_pat   = Regexp ( r"Legacy: use `~` instead")
     ausgaben_minderung_pat = Regexp ( r"Legacy: use `~` instead")
 
+    minderung              = False
+
     def __init__ (self, line, source_currency, vst_korrektur = 1.0) :
         self.line = line
         try :
@@ -297,14 +304,18 @@ class Account_Entry (_Entry_) :
                 self.konto         = self.haben
                 self.gegen_konto   = self.soll
         elif "+" in self.dir :
+            self.haben_betrag  = self.netto
+            self.soll_betrag   = source_currency (0)
             self.minderung     = \
                 (  self.minderung
                 or self.ausgaben_minderung_pat.match (self.haben)
                 )
-            self.haben_betrag  = self.netto
-            self.soll_betrag   = source_currency (0)
-            self.konto         = self.haben
-            self.gegen_konto   = self.soll
+            if not self.minderung :
+                self.konto         = self.haben
+                self.gegen_konto   = self.soll
+            else :
+                self.konto         = self.soll
+                self.gegen_konto   = self.haben
         else :
             self.is_change     = 0
         self.cati = " "
@@ -328,7 +339,7 @@ class Account_Entry (_Entry_) :
     def kontenzeile (self) :
         ## print self.vat_p, type (self.vat_p) # self.soll_betrag, self.haben_betrag
         try :
-            vat_type = getattr (self, "vat_type", ' ')
+            vat_type = getattr (self, "vat_type", " ")
             return "%02d%02d  %-5s  %-35.35s %2s%1s %12s  %12s" % \
                 ( self.day, self.month
                 , self.gegen_konto
@@ -988,37 +999,18 @@ class T_Account (Account) :
             if  (  (not self.t_konto_ignore_pat.match (entry.konto))
                 or ("u" in entry.cat)
                 ) :
-                betrag = (entry.soll_betrag, 0) \
-                    [(    self.t_konto_ignore_pat.match (entry.konto)
-                      and "u" in entry.cat
-                     ) or entry.konto in self.ignore
-                    ]
                 betrag = self._effective_amount (entry, entry.soll_betrag)
-                if entry.minderung :
-                    ## Erlösminderung instead of Ausgabe
-                    self._add_einnahme (entry, - betrag, - entry.vat)
-                else :
-                    self._add_ausgabe  (entry, + betrag, + entry.vat)
+                self._add_ausgabe  (entry, betrag, entry.vat)
             else :
-                pass
-                #print "%s not added to self.ausgaben" % entry.konto
+                pass #print "%s not added to self.ausgaben" % entry.konto
         elif "+" in entry.dir :
             self.haben_saldo [entry.konto]       += entry.haben_betrag
             self.soll_saldo  [entry.gegen_konto] += entry.haben_betrag
             if  (  (not self.t_konto_ignore_pat.match (entry.konto))
                 or ("u" in entry.cat) ### ???  6-Feb-2000 ??? ###
                 ) :
-                betrag = (entry.haben_betrag, 0) \
-                    [(    self.t_konto_ignore_pat.match (entry.konto)
-                      and "u" in entry.cat
-                     ) or entry.konto in self.ignore
-                    ]
                 betrag = self._effective_amount (entry, entry.haben_betrag)
-                if entry.minderung :
-                    ## Ausgabenminderung instead of Einnahme
-                    self._add_ausgabe  (entry, - betrag, - entry.vat)
-                else :
-                    self._add_einnahme (entry, + betrag, + entry.vat)
+                self._add_einnahme (entry, betrag, entry.vat)
             else :
                 pass #print "%s not added to self.einnahmen" % entry.konto
     # end def add

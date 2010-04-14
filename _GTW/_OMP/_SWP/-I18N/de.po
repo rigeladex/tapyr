@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-24 15:55+0100\n"
-"PO-Revision-Date: 2010-04-13 17:12+0200\n"
+"PO-Revision-Date: 2010-04-14 09:34+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -364,7 +364,9 @@ msgstr "Titel der Webseite"
 
 #: _GTW._OMP._SWP.Clip:0
 msgid "Url of external web page providing information about this clip"
-msgstr "Adresse der externen Webseite, die Informationen über das Neuigkeitsschnipsel enthält"
+msgstr ""
+"Adresse der externen Webseite, die Informationen über das "
+"Neuigkeitsschnipsel enthält"
 
 #: _MOM._Attr.A_2D:0
 msgid "Value in x (horizontal) direction."

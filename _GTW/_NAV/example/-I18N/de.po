@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:29+0100\n"
-"PO-Revision-Date: 2010-04-13 17:12+0200\n"
+"PO-Revision-Date: 2010-04-14 09:34+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -165,18 +165,4 @@ msgstr[1] ""
 #: _GTW._OMP._SWP.Page:0
 msgid "Year to which the web page applies."
 msgstr ""
-
-#~ msgid "Creator of the contents of the web page."
-#~ msgstr ""
-
-#~ msgid "Markup format used for `text` of web page"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Publication (`start`) and expiration date (`finish`) for the\n"
-#~ "web page"
-#~ msgstr ""
-
-#~ msgid "Short title of the web page (used in navigation)."
-#~ msgstr ""
 

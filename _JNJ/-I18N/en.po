@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-04-13 17:12+0200\n"
+"PO-Revision-Date: 2010-04-14 09:34+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: en <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -86,7 +86,7 @@ msgid "Edit this entry"
 msgstr ""
 
 #: _JNJ/html/photo.jnj:40
-msgid "Gallerie"
+msgid "Gallery"
 msgstr ""
 
 #: _JNJ/html/form.jnj:407 _JNJ/html/login.jnj:65
@@ -149,6 +149,10 @@ msgstr ""
 msgid "Month (for last day of week)"
 msgstr ""
 
+#: _JNJ/html/clip_aggregator.jnj:55
+msgid "More"
+msgstr ""
+
 #: _JNJ/html/photo.jnj:48
 msgid "Next picture"
 msgstr ""
@@ -179,6 +183,10 @@ msgstr ""
 
 #: _JNJ/html/error_500.jnj:42
 msgid "Processing the request triggered a server error. "
+msgstr ""
+
+#: _JNJ/html/clip_aggregator.jnj:54
+msgid "Read the full article at"
 msgstr ""
 
 #: _JNJ/html/form.jnj:418
@@ -250,4 +258,7 @@ msgstr ""
 #: _JNJ/html/error_404.jnj:47
 msgid "You requested a page that doesn't exist: "
 msgstr ""
+
+#~ msgid "Gallerie"
+#~ msgstr ""
 

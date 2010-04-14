@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: MOM/GTW/JNJ 1.0\n"
 "Report-Msgid-Bugs-To: tanzer@swing.co.at,martin@mangari.org\n"
 "POT-Creation-Date: 2010-02-17 15:56+0100\n"
-"PO-Revision-Date: 2010-04-13 17:12+0200\n"
+"PO-Revision-Date: 2010-04-14 09:34+0200\n"
 "Last-Translator: Christian Tanzer <tanzer@swing.co.at>\n"
 "Language-Team: de <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -151,6 +151,10 @@ msgstr "Zugriffsart nicht gestattet"
 msgid "Month (for last day of week)"
 msgstr "Monat (des letzten Tags der Woche)"
 
+#: _JNJ/html/clip_aggregator.jnj:55
+msgid "More"
+msgstr "Mehr"
+
 #: _JNJ/html/photo.jnj:48
 msgid "Next picture"
 msgstr "Nächstes Bild"
@@ -182,6 +186,10 @@ msgstr "Voriges Bild"
 #: _JNJ/html/error_500.jnj:42
 msgid "Processing the request triggered a server error. "
 msgstr "Die Verarbeitung der Anfrage löste einen Fehler des Webservers aus."
+
+#: _JNJ/html/clip_aggregator.jnj:54
+msgid "Read the full article at"
+msgstr "Lies den vollständigen Bericht unter"
 
 #: _JNJ/html/form.jnj:418
 msgid "Register"
