@@ -37,6 +37,7 @@
 #    31-Jan-2010 (CT) `import  babel.support` moved inside functions
 #    18-Feb-2010 (CT) `Name` added
 #    22-Feb-2010 (CT) `choose` factored, `Config.choice` added
+#    15-Apr-2010 (MG) `Translations` added and used
 #    ««revision-date»»···
 #--
 
@@ -45,7 +46,9 @@ from   _TFL.Record     import Record
 from   _TFL.predicate  import first, split_hst
 
 import _TFL.Decorator
+import  babel.support
 
+import  struct
 import  gettext
 
 Config = Record \
@@ -68,6 +71,100 @@ class _Name_ (TFL.Meta.Object) :
     # end def __getitem__
 
 # end class _Name_
+
+
+class Translations (babel.support.Translations) :
+    """Add better support for singula/plural"""
+
+    def _parse(self, fp):
+        """Slighly modifiey version of gettext.GNUTranslations._parse."""
+        unpack   = struct.unpack
+        filename = getattr (fp, "name", "")
+        # Parse the .mo file header, which consists of 5 little endian 32
+        # bit words.
+        self._catalog = catalog = {}
+        self.plural   = lambda n: int(n != 1) # germanic plural by default
+        buf           = fp.read ()
+        buflen        = len     (buf)
+        # Are we big endian or little endian?
+        magic = unpack ("<I", buf [:4]) [0]
+        if magic == self.LE_MAGIC :
+            version, msgcount, masteridx, transidx = unpack ("<4I", buf [4:20])
+            ii = "<II"
+        elif magic == self.BE_MAGIC:
+            version, msgcount, masteridx, transidx = unpack (">4I", buf [4:20])
+            ii = ">II"
+        else:
+            raise IOError (0, "Bad magic number", filename)
+        # Now put all messages from the .mo file buffer into the catalog
+        # dictionary.
+        for i in xrange (0, msgcount):
+            mlen, moff = unpack (ii, buf [masteridx : masteridx + 8])
+            tlen, toff = unpack (ii, buf [transidx  : transidx  + 8])
+            mend       = moff + mlen
+            tend       = toff + tlen
+            if mend < buflen and tend < buflen:
+                msg  = buf [moff:mend]
+                tmsg = buf [toff:tend]
+            else:
+                raise IOError (0, "File is corrupt", filename)
+            # See if we're looking at GNU .mo conventions for metadata
+            if not mlen :
+                # Catalog description
+                lastk = k = None
+                for item in tmsg.splitlines ():
+                    item = item.strip ()
+                    if not item:
+                        continue
+                    if ":" in item :
+                        k, v           = item.split (":", 1)
+                        k              = k.strip ().lower()
+                        v              = v.strip ()
+                        self._info [k] = v
+                        lastk          = k
+                    elif lastk :
+                        self._info [lastk] += "\n" + item
+                    if k == "content-type" :
+                        self._charset = v.split ("charset=") [1]
+                    elif k == "plural-forms" :
+                        v           = v.split     (";")
+                        plural      = v [1].split ("plural=") [1]
+                        self.plural = c2py        (plural)
+            # Note: we unconditionally convert both msgids and msgstrs to
+            # Unicode using the character encoding specified in the charset
+            # parameter of the Content-Type header.  The gettext documentation
+            # strongly encourages msgids to be us-ascii, but some appliations
+            # require alternative encodings (e.g. Zope's ZCML and ZPT).  For
+            # traditional gettext applications, the msgid conversion will
+            # cause no problems since us-ascii should always be a subset of
+            # the charset encoding.  We may want to fall back to 8-bit msgids
+            # if the Unicode conversion fails.
+            if "\x00" in msg :
+                # Plural forms
+                msgid1, msgid2 = msg.split  ("\x00")
+                tmsg           = tmsg.split ("\x00")
+                if self._charset:
+                    msgid1 = unicode (msgid1, self._charset)
+                    msgid2 = unicode (msgid2, self._charset)
+                    tmsg   = [unicode (x, self._charset) for x in tmsg]
+                for i, msg in enumerate (tmsg) :
+                    catalog [(msgid1, i)] = msg
+                ### In addtion to the two keys to the catalog as well to be
+                ### able to have access to the singular and the last plural
+                ### translation as well
+                catalog [msgid1] = tmsg [ 0]
+                catalog [msgid2] = tmsg [-1]
+            else:
+                if self._charset :
+                    msg       = unicode (msg,  self._charset)
+                    tmsg      = unicode (tmsg, self._charset)
+                catalog [msg] = tmsg
+            # advance to next entry in the seek tables
+            masteridx += 8
+            transidx  += 8
+    # end def _parse
+
+# end class Translations
 
 def add (self, * languages, ** kw) :
     locale_dir = kw.pop ("locale_dir", Config.locale_dir)
@@ -132,21 +229,19 @@ def load (* languages, ** kw) :
 # end def load
 
 def _load_languages (locale_dir, languages, domains) :
-    import babel.support
     if not isinstance (domains, (list, tuple)) :
         domains = (domains, )
     first_dom   = domains [0]
     domains     = domains [1:]
-    Trans_Cls   = babel.support.Translations
     for lang in languages :
-        Config.Languages [lang] = lang_trans = Trans_Cls.load \
+        Config.Languages [lang] = lang_trans = Translations.load \
             (locale_dir, lang, first_dom)
-        if not isinstance (lang_trans, Trans_Cls) :
+        if not isinstance (lang_trans, Translations) :
             print "*** Warning, language %s for domain %s not found!" % \
                 (lang, first_dom)
         for d in domains :
-            new_domain = Trans_Cls.load (locale_dir, lang, d)
-            if not isinstance (new_domain, Trans_Cls) :
+            new_domain = Translations.load (locale_dir, lang, d)
+            if not isinstance (new_domain, Translations) :
                 print "*** Warning, language %s for domain %s not found!" % \
                     (lang, d)
             lang_trans.merge (new_domain)

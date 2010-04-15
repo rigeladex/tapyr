@@ -1,4 +1,4 @@
-#! /swing/bin/bash
+#! /bin/bash
 # Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
@@ -36,7 +36,7 @@ dirs="_MOM _GTW _GTW/_OMP/_Auth _GTW/_OMP/_PAP _GTW/_OMP/_SWP _GTW/_OMP/_EVT _GT
 
 case "$cmd" in
     "extract" )
-        /usr/bin/python _TFL/Babel.py extract                            \
+        python _TFL/Babel.py extract                            \
             -bugs_address        "tanzer@swing.co.at,martin@mangari.org" \
             -charset             iso-8859-1                              \
             -copyright_holder    "Mag. Christian Tanzer, Martin Glueck"  \

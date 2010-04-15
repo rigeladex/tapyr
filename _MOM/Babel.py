@@ -33,6 +33,9 @@
 #    25-Jan-2010 (MG) Add doctrings to translations
 #    27-Feb-2010 (MG) Add the filename of the e-type to the translation
 #    23-Mar-2010 (MG) Plural added for `ui_name`
+#    15-Apr-2010 (MG) Don't create plurals for attributes, hide non-user
+#                     attributes and names starings with `_` from the
+#                     translation
 #    ««revision-date»»···
 #--
 from   _MOM                import MOM
@@ -47,12 +50,20 @@ def Add_Translations (encoding, config, method, app_type) :
     trans        = config.get ("loaded_translations", method)
     translations = []
 
-    def _add_object (obj, default_name, add_doc_string, filename) :
-        ui_sing = getattr (obj, "ui_name", default_name)
-        ui_plur = "%s%s" % (ui_sing, "s" if ui_sing [-1] != "s" else "es")
-        msg     = (ui_sing, ui_plur)
+    def _add_object ( obj, default_name, add_doc_string, filename
+                    , plural = False
+                    ) :
+        msg  = getattr (obj, "ui_name", default_name)
+        kind = "_T"
+        if msg.startswith ("_") :
+            ### skip keys which start with an underscore
+            return
+        if plural :
+            ui_plur = "%s%s" % (msg, "s" if msg [-1] != "s" else "es")
+            msg     = (msg, ui_plur)
+            kind    = "_Tn"
         if msg not in trans :
-            translations.append ((0, "_Tn", msg, [], filename))
+            translations.append ((0, kind, msg, [], filename))
         doc_string = TFL.normalized_indent (obj.__doc__ or "")
         if add_doc_string and doc_string and doc_string not in trans :
             translations.append ((0, "_T", doc_string, [], filename))
@@ -60,11 +71,14 @@ def Add_Translations (encoding, config, method, app_type) :
 
     for et in app_type.etypes.itervalues () :
         filename = et.__module__
-        _add_object (et, et.ui_name, False, filename)
-        for prop_spec in et._Attributes, et._Predicates:
+        _add_object (et, et.ui_name, False, filename, True)
+        for prop_spec, inst_cls in ( (et._Attributes, MOM.Attr._User_)
+                                   , (et._Predicates, None)
+                                   ) :
             for pn in prop_spec._own_names :
                 prop = prop_spec._prop_dict [pn]
-                _add_object (prop, prop.name, True, filename)
+                if not inst_cls or isinstance (prop, inst_cls) :
+                    _add_object (prop, prop.name, True, filename)
     return translations
 # end def Add_Translations
 
