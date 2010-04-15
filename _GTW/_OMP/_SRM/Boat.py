@@ -1,0 +1,121 @@
+# -*- coding: iso-8859-1 -*-
+# Copyright (C) 2010 Mag. Christian Tanzer All rights reserved
+# Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
+# ****************************************************************************
+# This module is part of the package GTW.OMP.SRM.
+#
+# This module is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This module is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this module. If not, see <http://www.gnu.org/licenses/>.
+# ****************************************************************************
+#
+#++
+# Name
+#    GTW.OMP.SRM.Boat
+#
+# Purpose
+#    Model a sailboat
+#
+# Revision Dates
+#    15-Apr-2010 (CT) Creation
+#    ««revision-date»»···
+#--
+
+from   _GTW                     import GTW
+from   _MOM.import_MOM          import *
+
+import _GTW._OMP._SRM.Attr_Type
+import _GTW._OMP._SRM.Boat_Class
+import _GTW._OMP._SRM.Entity
+
+from   _TFL.I18N                import _, _T, _Tn
+
+_Ancestor_Essence = GTW.OMP.SRM.Link1
+
+class Boat (_Ancestor_Essence) :
+    """Boat of a specific boat-class."""
+
+    class _Attributes (_Ancestor_Essence._Attributes) :
+
+        _Ancestor = _Ancestor_Essence._Attributes
+
+        ### Primary attributes
+
+        class left (_Ancestor.left) :
+            """Boat-class of boat."""
+
+            role_type          = GTW.OMP.SRM.Boat_Class
+            role_name          = "b_class"
+            ui_name            = "Class"»
+
+        # end class left
+
+        class nation (A_Nation) :
+            """Country for which the boat is registered."""
+
+            kind               = Attr.Primary
+
+        # end class nation
+
+        class sail_number (A_Int) :
+            """Sail number of boat"""
+
+            kind               = Attr.Primary_Optional
+            min_value          = 1
+
+        # end class sail_number
+
+        ### Non-primary attributes
+
+        class name (A_String) :
+            """Name of sailboat."""
+
+            kind               = Attr.Optional
+            max_length         = 48
+
+        # end class name
+
+        class vintage (A_Int) :
+            """Year of construction"""
+
+            kind               = Attr.Optional
+            min_value          = 1850
+
+        # end class vintage
+
+    # end class _Attributes
+
+    class _Predicates (_Ancestor_Essence._Predicates) :
+
+        _Ancestor = _Ancestor_Essence._Predicates
+
+        class valid_vintage (Pred.Condition) :
+            """`vintage` must not lie in the future."""
+
+            kind               = Pred.Object
+            assertion          = "vintage <= current_year"
+            attributes         = ("vintage",)
+            bindings           = dict \
+                ( current_year = "datetime.datetime.now ().year"
+                )
+
+        # end class valid_vintage
+
+    # end class _Predicates
+
+# end class Boat
+
+if __name__ != "__main__" :
+    GTW.OMP.SRM._Export ("*")
+### __END__ GTW.OMP.SRM.Boat
+
+

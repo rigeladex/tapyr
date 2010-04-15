@@ -55,7 +55,7 @@ class M_Format (TFL.Meta.Object.__class__) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         if name != "_Format_" :
-            cls._m_add (name,     cls.Table)
+            cls._m_add (name, cls.Table)
     # end def __init__
 
     def _m_add (cls, name, Table) :
