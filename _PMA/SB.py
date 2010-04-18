@@ -29,7 +29,7 @@
 #    22-May-2005 (CT) Creation
 #    14-Apr-2006 (CT) Use `Decorator` to define decorators
 #    14-Apr-2010 (CT) Import of `spambayes` modules moved into `try`-clause
-#                     (to avoid `ImportError: No module named lockfile`)
+#                     (to avoid gentoo-breakage `ImportError: No module named lockfile`)
 #    ««revision-date»»···
 #--
 
