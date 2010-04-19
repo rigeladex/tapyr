@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    15-Apr-2010 (CT) Creation
+#    19-Apr-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -34,11 +35,15 @@ from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
 import _GTW._OMP._SRM.Attr_Type
-import _GTW._OMP._SRM.Boat
+
 import _GTW._OMP._SRM.Boat_Class
+import _GTW._OMP._SRM.Boat
 import _GTW._OMP._SRM.Entity
-import _GTW._OMP._SRM.Regatta
 import _GTW._OMP._SRM.Regatta_Event
+import _GTW._OMP._SRM.Regatta
 import _GTW._OMP._SRM.Sailor
+
+import _GTW._OMP._SRM.Boat_in_Regatta
+import _GTW._OMP._SRM.Crew_Member
 
 ### __END__ GTW.OMP.SRM.import_SRM
