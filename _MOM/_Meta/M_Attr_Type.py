@@ -46,6 +46,7 @@
 #    23-Mar-2010 (CT) `assert` added to guard against `check` being a string
 #    23-Mar-2010 (CT) `renameds` added
 #     9-Apr-2010 (CT) Don't add attributes starting with `_` to `renameds`
+#    19-Apr-2010 (CT) `_d_rank` added (sequence of attribute definition)
 #    ««revision-date»»···
 #--
 
@@ -64,6 +65,7 @@ class M_Attr_Type (MOM.Meta.M_Prop_Type) :
     def __init__ (cls, name, bases, dct) :
         cls.__m_super.__init__ (name, bases, dct)
         M_Attr_Type.count += 1
+        cls._d_rank = M_Attr_Type.count
         if not name.startswith (("_A_", "A_")) :
             cls.ckd_name = "__%s"     % (cls.name, )
             cls.raw_name = "__raw_%s" % (cls.name, )

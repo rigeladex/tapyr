@@ -113,6 +113,7 @@
 #    16-Mar-2010 (CT) `_Pickle_Mixin_` added
 #    19-Mar-2010 (CT) `_EPK_Mixin_.get_pickle_cargo` and `.set_pickle_cargo`
 #                     changed to use `ref.pid` as pickle cargo
+#    19-Apr-2010 (CT) `_d_rank` added (based on sequence of definition)
 #    ««revision-date»»···
 #--
 
@@ -154,7 +155,8 @@ class Kind (MOM.Prop.Kind) :
         self.__super.__init__ (attr)
         self._check_sanity    (attr)
         self.dependent_attrs = set ()
-        self.rank            = (self._k_rank, attr._t_rank, attr.rank)
+        self.rank            = \
+            (self._k_rank, attr._t_rank, attr.rank, attr._d_rank)
         self.record_changes  = attr.record_changes and self.record_changes
     # end def __init__
 

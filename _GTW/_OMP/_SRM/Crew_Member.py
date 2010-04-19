@@ -63,7 +63,7 @@ class Crew_Member (_Ancestor_Essence) :
             """Person which sails as crew member on `boat_in_regatta`"""
 
             Class              = GTW.OMP.PAP.Person
-            kind               = Attr.Mandatory
+            kind               = Attr.Primary
 
         # end class member
 
