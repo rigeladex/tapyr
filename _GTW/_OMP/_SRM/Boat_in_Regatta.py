@@ -76,7 +76,7 @@ class Boat_in_Regatta (_Ancestor_Essence) :
             """Results of the `boat` in the races of the `regatta`."""
 
             typ                = "Race_Results"
-            C_Type             = A_race_result
+            C_Type             = A_Race_Result
             kind               = Attr.Optional
 
         # end class race_results

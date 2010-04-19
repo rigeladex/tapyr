@@ -33,7 +33,7 @@
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
-import _GTW._GTW._PAP.Person
+import _GTW._OMP._PAP.Person
 
 import _GTW._OMP._SRM.Boat_in_Regatta
 import _GTW._OMP._SRM.Entity

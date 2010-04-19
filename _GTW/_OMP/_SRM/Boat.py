@@ -33,7 +33,8 @@
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
-import _GTW._OMP._SRM.Attr_Type
+from   _GTW._OMP._SRM.Attr_Type import *
+
 import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Entity
 
@@ -55,7 +56,7 @@ class Boat (_Ancestor_Essence) :
 
             role_type          = GTW.OMP.SRM.Boat_Class
             role_name          = "b_class"
-            ui_name            = "Class"»
+            ui_name            = "Class"
 
         # end class left
 

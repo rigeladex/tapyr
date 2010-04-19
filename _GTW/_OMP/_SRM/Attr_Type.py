@@ -102,7 +102,7 @@ class Race_Result (_Ancestor_Essence) :
             """The result of this race is discarded."""
 
             kind               = Attr.Optional
-            Kind_Mixins        = (Sticky_Mixin, )
+            Kind_Mixins        = (Attr.Sticky_Mixin, )
             default            = False
 
         # end class discarded

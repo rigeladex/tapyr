@@ -33,6 +33,8 @@
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
 
+from   _GTW._OMP._SRM.Attr_Type import *
+
 import _GTW._OMP._PAP.Person
 
 import _GTW._OMP._SRM.Entity

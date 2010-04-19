@@ -32,6 +32,7 @@
 
 from   _GTW                     import GTW
 from   _MOM.import_MOM          import *
+from   _MOM._Attr.Date_Interval import *
 
 import _GTW._OMP._SRM.Entity
 
@@ -41,6 +42,8 @@ _Ancestor_Essence = GTW.OMP.SRM.Object
 
 class Regatta_Event (_Ancestor_Essence) :
     """Sailing regatta event for one or more classes/handicaps."""
+
+    ui_display_sep        = " "
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -56,11 +59,83 @@ class Regatta_Event (_Ancestor_Essence) :
 
         # end class name
 
+        class date (A_Date_Interval) :
+            """`start`and `finish` date of regatta"""
+
+            kind               = Attr.Primary
+
+        # end class date
+
+        ### Non-primary attributes
+
+        class desc (A_String) :
+            """Short description of the regatta."""
+
+            kind               = Attr.Optional
+            max_length         = 160
+
+        # end class desc
+
+        class short_title (A_String) :
+
+            kind               = Attr.Cached
+            auto_up_depends    = ("name", )
+
+            def computed (self, obj) :
+                return obj.name
+            # end def computed
+
+        # end class title
+
+        class title (A_String) :
+
+            kind               = Attr.Cached
+            auto_up_depends    = ("date", "name", "desc")
+
+            def computed (self, obj) :
+                return " ".join (obj.desc or obj.name, obj.ui_date)
+            # end def computed
+
+        # end class title
+
+        class ui_date (A_String) :
+
+            kind               = Attr.Cached
+            auto_up_depends    = ("date", )
+            date_format        = "%e.%b.%Y"
+
+            def computed (self, obj) :
+                date_format   = self.date_format
+                start, finish = obj.date.start, obj.date.finish
+                result        = []
+                if finish is not None and finish.month == start.month :
+                    result.append \
+                        ( "-".join
+                            ( x.strip () for x in
+                                ( start.strftime  ("%e")
+                                , finish.strftime (date_format)
+                                )
+                            )
+                        )
+                else :
+                    result.append (start.strftime (date_format).strip ())
+                    if finish is not None :
+                        result.append (finish.strftime (date_format).strip ())
+                return "-".join (result)
+            # end def computed
+
+        # end class ui_date
+
         class year (A_Int) :
             """Year in which the regatta happens."""
 
-            kind               = Attr.Primary
-            min_value          = 2010
+            kind               = Attr.Internal
+            auto_up_depends    = ("date", )
+
+            def computed (self, obj) :
+                if obj.date and obj.date.start :
+                    return obj.date.start.year
+            # end def computed
 
         # end class year
 
