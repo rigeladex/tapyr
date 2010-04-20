@@ -107,6 +107,7 @@
 #    15-Mar-2010 (CT) Interface of `attr.Pickler` changed again (`attr_type`)
 #    22-Mar-2010 (CT) `A_Dirname` and `A_Filename` added (+ `_A_Filename_`)
 #     9-Apr-2010 (CT) `A_Url` added
+#    20-Apr-2010 (CT) Default `Type` added to `_A_Named_Object_.Pickler`
 #    ««revision-date»»···
 #--
 
@@ -514,33 +515,6 @@ class _A_Named_Value_ (A_Attr_Type) :
 
 # end class _A_Named_Value_
 
-class _A_Named_Object_ (_A_Named_Value_) :
-    """Common base class for attributes holding named objects (that can't be
-       directly put into a database).
-    """
-
-    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Object
-
-    class Pickler (TFL.Meta.Object) :
-
-        @classmethod
-        def as_cargo (cls, obj, attr_kind, attr_type, value) :
-            return attr_type.__class__.Elbat [value]
-        # end def as_cargo
-
-        @classmethod
-        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
-            Table = attr_type.__class__.Table
-            try :
-                return Table [cargo]
-            except KeyError :
-                raise ValueError (u"%s not in %s" % (cargo, sorted (Table)))
-        # end def from_cargo
-
-    # end class Pickler
-
-# end class _A_Named_Object_
-
 class _A_Number_ (A_Attr_Type) :
     """Common base class for number-valued attributes of an object."""
 
@@ -850,6 +824,35 @@ class _A_String_ (_A_String_Base_) :
     simple_cooked     = unicode
 
 # end class _A_String_
+
+class _A_Named_Object_ (_A_Named_Value_) :
+    """Common base class for attributes holding named objects (that can't be
+       directly put into a database).
+    """
+
+    __metaclass__     = MOM.Meta.M_Attr_Type_Named_Object
+
+    class Pickler (TFL.Meta.Object) :
+
+        Type = _A_String_
+
+        @classmethod
+        def as_cargo (cls, obj, attr_kind, attr_type, value) :
+            return attr_type.__class__.Elbat [value]
+        # end def as_cargo
+
+        @classmethod
+        def from_cargo (cls, obj, attr_kind, attr_type, cargo) :
+            Table = attr_type.__class__.Table
+            try :
+                return Table [cargo]
+            except KeyError :
+                raise ValueError (u"%s not in %s" % (cargo, sorted (Table)))
+        # end def from_cargo
+
+    # end class Pickler
+
+# end class _A_Named_Object_
 
 class _A_Typed_Collection_ (A_Attr_Type) :
     """Base class for attributes that hold a collection of strictly typed

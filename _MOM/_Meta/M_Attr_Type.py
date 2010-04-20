@@ -47,6 +47,8 @@
 #    23-Mar-2010 (CT) `renameds` added
 #     9-Apr-2010 (CT) Don't add attributes starting with `_` to `renameds`
 #    19-Apr-2010 (CT) `_d_rank` added (sequence of attribute definition)
+#    20-Apr-2010 (CT) `M_Attr_Type_Named_Object` changed to create a derived
+#                     `Pickler` to avoid aliasing
 #    ««revision-date»»···
 #--
 
@@ -193,7 +195,9 @@ class M_Attr_Type_Named_Object (M_Attr_Type_Named_Value) :
         Table = getattr (cls, "Table", None)
         if Table and cls.Pickler :
             max_length = max (len (k) for k in Table)
-            cls.Pickler.Type = MOM.Attr._A_String_.New (max_length = max_length)
+            if max_length != cls.Pickler.Type.max_length :
+                cls.Pickler = cls.Pickler.New \
+                    (Type = MOM.Attr._A_String_.New (max_length = max_length))
     # end def __init__
 
 # end class M_Attr_Type_Named_Object
