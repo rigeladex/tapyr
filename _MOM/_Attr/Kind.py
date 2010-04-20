@@ -114,6 +114,7 @@
 #    19-Mar-2010 (CT) `_EPK_Mixin_.get_pickle_cargo` and `.set_pickle_cargo`
 #                     changed to use `ref.pid` as pickle cargo
 #    19-Apr-2010 (CT) `_d_rank` added (based on sequence of definition)
+#    20-Apr-2010 (CT) `Computed_Set_Mixin` added
 #    ««revision-date»»···
 #--
 
@@ -1037,6 +1038,19 @@ class Computed_Mixin (_Computed_Mixin_) :
     """
 
 # end class Computed_Mixin
+
+class Computed_Set_Mixin (Computed_Mixin) :
+    """Mixin to compute attribute and set value if empty."""
+
+    def get_value (self, obj) :
+        attr   = self.attr
+        result = self.__super.get_value (obj)
+        if obj is not None and result != getattr (obj, attr.ckd_name, None) :
+            self._set_cooked (obj, result, True)
+        return result
+    # end def get_value
+
+# end class Computed_Set_Mixin
 
 class Sticky_Mixin (_Sticky_Mixin_) :
     """Mixin to reset the attribute to the default value whenever the tool

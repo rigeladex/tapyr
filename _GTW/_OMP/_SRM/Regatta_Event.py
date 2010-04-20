@@ -51,6 +51,13 @@ class Regatta_Event (_Ancestor_Essence) :
 
         ### Primary attributes
 
+        class date (A_Date_Interval) :
+            """`start`and `finish` date of regatta"""
+
+            kind               = Attr.Primary
+
+        # end class date
+
         class name (A_String) :
             """Name of the regatta event."""
 
@@ -58,13 +65,6 @@ class Regatta_Event (_Ancestor_Essence) :
             max_length         = 64
 
         # end class name
-
-        class date (A_Date_Interval) :
-            """`start`and `finish` date of regatta"""
-
-            kind               = Attr.Primary
-
-        # end class date
 
         ### Non-primary attributes
 
@@ -79,6 +79,7 @@ class Regatta_Event (_Ancestor_Essence) :
         class short_title (A_String) :
 
             kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("name", )
 
             def computed (self, obj) :
@@ -90,10 +91,11 @@ class Regatta_Event (_Ancestor_Essence) :
         class title (A_String) :
 
             kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("date", "name", "desc")
 
             def computed (self, obj) :
-                return " ".join (obj.desc or obj.name, obj.ui_date)
+                return " ".join ((obj.desc or obj.name, obj.ui_date))
             # end def computed
 
         # end class title
@@ -101,27 +103,21 @@ class Regatta_Event (_Ancestor_Essence) :
         class ui_date (A_String) :
 
             kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("date", )
-            date_format        = "%e.%b.%Y"
+            date_format        = "%d.%m.%Y"
 
             def computed (self, obj) :
                 date_format   = self.date_format
                 start, finish = obj.date.start, obj.date.finish
                 result        = []
                 if finish is not None and finish.month == start.month :
-                    result.append \
-                        ( "-".join
-                            ( x.strip () for x in
-                                ( start.strftime  ("%e")
-                                , finish.strftime (date_format)
-                                )
-                            )
-                        )
+                    result.append (start.strftime  ("%d."))
                 else :
-                    result.append (start.strftime (date_format).strip ())
-                    if finish is not None :
-                        result.append (finish.strftime (date_format).strip ())
-                return "-".join (result)
+                    result.append (start.strftime  (date_format))
+                if finish is not None :
+                    result.append (finish.strftime (date_format))
+                return "--".join (result)
             # end def computed
 
         # end class ui_date
@@ -130,6 +126,7 @@ class Regatta_Event (_Ancestor_Essence) :
             """Year in which the regatta happens."""
 
             kind               = Attr.Internal
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
             auto_up_depends    = ("date", )
 
             def computed (self, obj) :
