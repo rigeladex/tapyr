@@ -54,22 +54,58 @@ primary  = WF ("primary")
 class Admin (object) :
     """Provide configuration for GTW.NAV.E_Type.Admin entries"""
 
-    person_completer = GTW.Form.MOM.Javascript.Completer \
+    regatta_completer = GTW.Form.MOM.Javascript.Completer \
         ( fields    =
-            ("last_name", "first_name", "middle_name", "title")
+            ("date", "name")
         , triggers  = dict
-            ( last_name  = dict (min_chars = 2)
-            , first_name = dict (min_chars = 2)
+            ( date = dict (min_chars = 4)
+            , name = dict (min_chars = 1)
             )
-        , name      = "Person_Info"
+        , name      = "Regatta_Event"
         )
 
     ### XXX ...
 
+    Page          = dict \
+        ( ETM       = "GTW.OMP.SRM.Page"
+        , Type      = GTW.NAV.E_Type.Admin
+        , sort_key  = TFL.Sorted_By ("-event.date.start", "perma_name")
+        , Form_args =
+            ( AID
+                ( "event"
+                , FGD
+                    ( primary
+                    , widget    = "html/form.jnj, fg_tr"
+                    , css_class = "inline-instance"
+                    )
+                , completer = regatta_completer
+                )
+            , FGD ("perma_name", "desc")
+            , AID
+                ( "date"
+                , FGD (widget = "html/form.jnj, fg_tr")
+                , legend = _("Publication and expiration date")
+                )
+            , AID
+                ( "creator"
+                , FGD
+                    ( primary
+                    , widget    = "html/form.jnj, fg_tr"
+                    , css_class = "inline-instance"
+                    )
+                # completer =  GTW.Form.MOM.Javascript.Completer ["Creator_Info"]
+                , legend = _("Creator of the contents of the page")
+                )
+            , FGD ("format", "text")
+            )
+        , list_display   =
+            ( "ui_display", "creator", "date", "format", "last_changed")
+        )
+
     Regatta_Event = dict \
         ( ETM       = "GTW.OMP.SRM.Regatta_Event"
         , Type      = GTW.NAV.E_Type.Admin
-        , sort_key  = TFL.Sorted_By ("date.start", "name")
+        , sort_key  = TFL.Sorted_By ("-date.start", "name")
         , Form_args =
             ( FGD ("name", "desc")
             , AID ("date", FGD (widget = "html/form.jnj, fg_tr"))

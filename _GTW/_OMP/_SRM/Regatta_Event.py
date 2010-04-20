@@ -37,6 +37,7 @@ from   _MOM._Attr.Date_Interval import *
 import _GTW._OMP._SRM.Entity
 
 from   _TFL.I18N                import _, _T, _Tn
+import _TFL.Ascii
 
 _Ancestor_Essence = GTW.OMP.SRM.Object
 
@@ -75,6 +76,19 @@ class Regatta_Event (_Ancestor_Essence) :
             max_length         = 160
 
         # end class desc
+
+        class perma_name (A_String) :
+            """Name used for perma-link."""
+
+            kind               = Attr.Cached
+            Kind_Mixins        = (Attr.Computed_Set_Mixin, )
+            auto_up_depends    = ("name", )
+
+            def computed (self, obj) :
+                return TFL.Ascii.sanitized_filename (obj.name.lower ())
+            # end def computed
+
+        # end class perma_name
 
         class short_title (A_String) :
 

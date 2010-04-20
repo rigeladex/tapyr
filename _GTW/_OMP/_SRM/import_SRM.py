@@ -39,6 +39,7 @@ import _GTW._OMP._SRM.Attr_Type
 import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Boat
 import _GTW._OMP._SRM.Entity
+import _GTW._OMP._SRM.Page
 import _GTW._OMP._SRM.Regatta_Event
 import _GTW._OMP._SRM.Regatta
 import _GTW._OMP._SRM.Sailor

@@ -53,10 +53,10 @@ from   _TFL.I18N                import _, _T, _Tn
 
 import datetime
 
-_Ancestor_Essence = GTW.OMP.SWP.Object_PN
+_Ancestor_Essence = GTW.OMP.SWP.Entity
 
-class Page (_Ancestor_Essence) :
-    """Model a static web page."""
+class Page_Mixin (_Ancestor_Essence) :
+    """Mixin with the attributes of `Page`."""
 
     class _Attributes (_Ancestor_Essence._Attributes) :
 
@@ -110,6 +110,13 @@ class Page (_Ancestor_Essence) :
         # end class text
 
     # end class _Attributes
+
+# end class Page_Mixin
+
+_Ancestor_Essence = GTW.OMP.SWP.Object_PN
+
+class Page (_Ancestor_Essence, Page_Mixin) :
+    """Model a static web page."""
 
 # end class Page
 

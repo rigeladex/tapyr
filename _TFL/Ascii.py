@@ -1,5 +1,5 @@
 # -*- coding: iso-8859-1 -*-
-# Copyright (C) 2004-2007 Mag. Christian Tanzer. All rights reserved
+# Copyright (C) 2004-2010 Mag. Christian Tanzer. All rights reserved
 # Glasauergasse 32, A--1130 Wien, Austria. tanzer@swing.co.at
 # ****************************************************************************
 #
@@ -79,7 +79,7 @@ def sanitized_unicode (s, translate_table = None) :
 # end def sanitized_unicode
 
 def sanitized_filename (s, translate_table = None) :
-   """Return `sanitized (s)` with all non-printable and some graphic
+   """Return `sanitized_unicode (s)` with all non-printable and some graphic
       characters removed so that the result is usable as a filename.
 
        >>> sanitized_filename (

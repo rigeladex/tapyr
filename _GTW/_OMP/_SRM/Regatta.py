@@ -36,7 +36,6 @@ from   _MOM.import_MOM          import *
 import _GTW._OMP._SRM.Boat_Class
 import _GTW._OMP._SRM.Regatta_Event
 
-
 from   _TFL.I18N                import _, _T, _Tn
 
 _Ancestor_Essence = GTW.OMP.SRM.Link1
