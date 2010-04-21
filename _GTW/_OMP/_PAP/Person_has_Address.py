@@ -58,7 +58,7 @@ class Person_has_Address (_Ancestor_Essence) :
         class right (_Ancestor.right) :
 
             role_type     = Address
-            auto_cache    = True
+            auto_cache    = "addresses"
 
         # end class right
 

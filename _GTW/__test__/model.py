@@ -71,6 +71,7 @@ def app_type (* ems_dbw) :
                 ( Auth = GTW.OMP.Auth
                 , PAP  = GTW.OMP.PAP
                 , SWP  = GTW.OMP.SWP
+                , EVT  = GTW.OMP.EVT
                 )
             )
     if ems_dbw :

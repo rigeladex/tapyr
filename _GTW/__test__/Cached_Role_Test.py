@@ -37,16 +37,16 @@ _test_code = """
     >>> person   = PAP.Person  (u"Test", u"Person")
     >>> address1 = PAP.Address (u"Street 1", u"Zip", u"City", u"Country")
     >>> address2 = PAP.Address (u"Street 2", u"Zip", u"City", u"Country")
-    >>> sorted (person.addresss)
+    >>> sorted (person.addresses)
     []
     >>> link = PAP.Person_has_Address (person, address1)
-    >>> sorted (person.addresss)
+    >>> sorted (person.addresses)
     [GTW.OMP.PAP.Address (u'street 1', u'zip', u'city', u'country', u'')]
     >>> sorted (PAP.Person_has_Address.query ().all ())
     [GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 1', u'zip', u'city', u'country', u''))]
     >>> link.set (address = address2)
     1
-    >>> sorted (person.addresss)
+    >>> sorted (person.addresses)
     [GTW.OMP.PAP.Address (u'street 2', u'zip', u'city', u'country', u'')]
     >>> link
     GTW.OMP.PAP.Person_has_Address ((u'test', u'person', u'', u''), (u'street 2', u'zip', u'city', u'country', u''))
