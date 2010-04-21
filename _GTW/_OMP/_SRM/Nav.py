@@ -66,6 +66,11 @@ class Admin (object) :
 
     ### XXX ...
 
+    Boat_Class = dict \
+        ( ETM       = "GTW.OMP.SRM.Boat_Class"
+        , Type      = GTW.NAV.E_Type.Admin
+        , sort_key  = TFL.Sorted_By ("name")
+        )
     Page          = dict \
         ( ETM       = "GTW.OMP.SRM.Page"
         , Type      = GTW.NAV.E_Type.Admin
@@ -100,6 +105,42 @@ class Admin (object) :
             )
         , list_display   =
             ( "ui_display", "creator", "date", "format", "last_changed")
+        )
+
+    Regatta_C       = dict \
+        ( ETM       = "GTW.OMP.SRM.Regatta_C"
+        , Type      = GTW.NAV.E_Type.Admin
+        , sort_key  = TFL.Sorted_By ("-event.date.start", "boat_class.name")
+        , Form_args =
+            ( AID
+                ( "event"
+                , FGD
+                    ( primary
+                    , widget    = "html/form.jnj, fg_tr"
+                    , css_class = "inline-instance"
+                    )
+                , completer = regatta_completer
+                )
+            , FGD ()
+            )
+        )
+
+    Regatta_H       = dict \
+        ( ETM       = "GTW.OMP.SRM.Regatta_H"
+        , Type      = GTW.NAV.E_Type.Admin
+        , sort_key  = TFL.Sorted_By ("-event.date.start", "handicap")
+        , Form_args =
+            ( AID
+                ( "event"
+                , FGD
+                    ( primary
+                    , widget    = "html/form.jnj, fg_tr"
+                    , css_class = "inline-instance"
+                    )
+                , completer = regatta_completer
+                )
+            , FGD ()
+            )
         )
 
     Regatta_Event = dict \
