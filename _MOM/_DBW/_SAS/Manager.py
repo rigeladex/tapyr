@@ -49,6 +49,7 @@
 #    24-Mar-2010 (MG) `_setup_columns` pass owner_etype to `_sa_columns`
 #    27-Mar-2010 (MG) `polymorphic_epk` added
 #    08-Apr-2010 (MG) Handling of `UniqueConstraint` changed
+#    21-Apr-2010 (CT) s/types.Binary/types.LargeBinary/
 #    ««revision-date»»···
 #--
 
@@ -219,10 +220,10 @@ class _M_SAS_Manager_ (MOM.DBW._Manager_.__class__) :
     def _create_SCM_table (cls, metadata) :
         MOM.SCM.Change._Change_._sa_table = Table = schema.Table \
             ( "change_history", metadata
-            , schema.Column ("cid",       types.Integer,  primary_key = True)
-            , schema.Column ("Type_Name", Type_Name_Type, nullable    = True)
-            , schema.Column ("obj_id",    types.Integer,  nullable    = True)
-            , schema.Column ("data",      types.Binary,   nullable    = True)
+            , schema.Column ("cid",       types.Integer,     primary_key = True)
+            , schema.Column ("Type_Name", Type_Name_Type,    nullable    = True)
+            , schema.Column ("obj_id",    types.Integer,     nullable    = True)
+            , schema.Column ("data",      types.LargeBinary, nullable    = True)
             , schema.Column
                   ( "parent_cid"
                   , types.Integer

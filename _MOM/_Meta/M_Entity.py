@@ -89,6 +89,7 @@
 #                     base classes
 #     9-Apr-2010 (CT) `M_Id_Entity._m_new_e_type_dict` changed to  filter
 #                     attributes set to `None`
+#    21-Apr-2010 (CT) `M_Id_Entity._m_new_e_type_dict` changed to use `_d_rank`
 #    ««revision-date»»···
 #--
 
@@ -388,7 +389,7 @@ class M_Id_Entity (M_Entity) :
             ( (  a for a in cls._Attributes._names.itervalues ()
               if a is not None and a.kind.is_primary
               )
-            , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "name")
+            , key = TFL.Sorted_By ("kind._k_rank", "_t_rank", "rank", "_d_rank")
             )
         epk_sig   = tuple (a.name for a in pkas)
         rel_bases = (b for b in bases if getattr (b, "is_relevant", False))

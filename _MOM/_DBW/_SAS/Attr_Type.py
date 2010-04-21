@@ -43,6 +43,7 @@
 #    19-Mar-2010 (CT) Use `types.Binary` instead of `types.String` for
 #                     `_A_Binary_String_`
 #    23-Mar-2010 (MG) `owner_etype` added and used in `_sa_columns_composite`
+#    21-Apr-2010 (CT) s/types.Binary/types.LargeBinary/
 #    ««revision-date»»···
 #--
 
@@ -163,7 +164,7 @@ def _sa_string (cls, attr, kind, ** kw) :
 
 @Add_Classmedthod ("_sa_type", Attr._A_Binary_String_)
 def _sa_blob (cls, attr, kind, ** kw) :
-    return types.Binary (getattr (attr, "max_length", None))
+    return types.LargeBinary (getattr (attr, "max_length", None))
 # end def _sa_blob
 
 ### __END__ MOM.DBW.SAS.Type

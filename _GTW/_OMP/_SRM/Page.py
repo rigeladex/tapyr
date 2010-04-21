@@ -27,6 +27,7 @@
 #
 # Revision Dates
 #    20-Apr-2010 (CT) Creation
+#    21-Apr-2010 (CT) Creation continued
 #    ««revision-date»»···
 #--
 
@@ -41,63 +42,29 @@ import _GTW._OMP._SWP.import_SWP
 
 from   _TFL.I18N                import _, _T, _Tn
 
-_Ancestor_Essence = GTW.OMP.SRM.Link1
-_Ancestor_Mixin   = GTW.OMP.SWP.Page_Mixin
+_Ancestor_Essence = GTW.OMP.SWP.Page
 
-class _SRM_Page_ (_Ancestor_Essence, _Ancestor_Mixin) :
+class _SRM_Page_ (GTW.OMP.SRM.Object, _Ancestor_Essence) :
     """Web page with information about a sailing regatta."""
 
     _real_name = "Page"
     ui_name    = "Regatta_Page"
 
-    class _Attributes (_Ancestor_Essence._Attributes, _Ancestor_Mixin._Attributes) :
+    class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes
 
         ### Primary attributes
 
-        class left (_Ancestor.left) :
+        class event (A_Object) :
             """Regatta event to which this page belongs."""
 
-            role_type          = GTW.OMP.SRM.Regatta_Event
-            auto_cache         = True
-            role_name          = "event"
+            kind               = Attr.Primary
+            Class              = GTW.OMP.SRM.Regatta_Event
 
         # end class event
 
-        class perma_name (A_Date_Slug) :
-            """Name used for perma-link."""
-
-            kind               = Attr.Primary
-            ui_name            = "Name"
-
-            check              = ("""" " not in value""", )
-
-        # end class perma_name
-
         ### Non-primary attributes
-
-        class creator (A_Object) :
-            """Creator of the contents."""
-
-            kind               = Attr.Optional
-            Class              = GTW.OMP.PAP.Person
-
-        # end class creator
-
-        class date (A_Date_Interval_N) :
-            """Publication (`start`) and expiration date (`finish`)"""
-
-            kind               = Attr.Optional
-
-            explanation        = """
-              The page won't be visible before the start date.
-
-              After the finish date, the page won't be displayed (except
-              possibly in an archive).
-              """
-
-        # end class date
 
         class desc (A_String) :
             """Description of the purpose of the page."""
@@ -117,11 +84,11 @@ class _SRM_Page_ (_Ancestor_Essence, _Ancestor_Mixin) :
 
             kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("desc", "left")
+            auto_up_depends    = ("desc", "event")
 
             def computed (self, obj) :
                 if obj.desc and obj.event :
-                    return "%s %s" % (obj.desc, obj.event.short_title)
+                    return obj.desc
             # end def computed
 
         # end class title
@@ -131,7 +98,7 @@ class _SRM_Page_ (_Ancestor_Essence, _Ancestor_Mixin) :
 
             kind               = Attr.Cached
             Kind_Mixins        = (Attr.Computed_Set_Mixin, )
-            auto_up_depends    = ("desc", "left")
+            auto_up_depends    = ("desc", "event")
 
             def computed (self, obj) :
                 if obj.desc and obj.event :
