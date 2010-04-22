@@ -51,6 +51,7 @@
 #    19-Feb-2010 (CT) Argument `attr_class` added to `_setup_attr`
 #    25-Feb-2010 (CT) Redefine `_finish__init__` instead of `_init_epk`
 #     4-Mar-2010 (CT) `_Cacher_.cr_attr` added
+#    22-Apr-2010 (CT) `_rename` redefined to honor `auto_cache_roles`
 #    ««revision-date»»···
 #--
 
@@ -101,6 +102,12 @@ class _MOM_Link_ (_Ancestor_Essence) :
             role_cacher (self, no_value = True)
         self.__super._destroy ()
     # end def _destroy
+
+    def _rename (self, new_epk, pkas_raw, pkas_ckd) :
+        self.__super._rename (new_epk, pkas_raw, pkas_ckd)
+        for role_cacher in self.auto_cache_roles :
+            role_cacher (self, no_value = False)
+    # end def _rename
 
 Link = _MOM_Link_ # end class
 

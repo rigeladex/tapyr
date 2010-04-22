@@ -115,6 +115,8 @@
 #                     changed to use `ref.pid` as pickle cargo
 #    19-Apr-2010 (CT) `_d_rank` added (based on sequence of definition)
 #    20-Apr-2010 (CT) `Computed_Set_Mixin` added
+#    22-Apr-2010 (CT) `Link_Role._set_cooked_value` redefined to reset
+#                     `auto_cache`, if any, before chaining up
 #    ««revision-date»»···
 #--
 
@@ -800,6 +802,16 @@ class Link_Role (_EPK_Mixin_, Primary) :
     """
 
     get_role               = TFL.Meta.Alias_Property ("get_value")
+
+    def _set_cooked_value (self, obj, value, changed = 42) :
+        ac = self.auto_cache
+        if ac :
+            old_value = self.get_value (obj)
+            if old_value is not None :
+                ### remove old value from `auto_cache`
+                ac (obj, no_value = True)
+        return self.__super._set_cooked_value (obj, value, changed = changed)
+    # end def _set_cooked_value
 
 # end class Link_Role
 
