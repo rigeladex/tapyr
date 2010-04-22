@@ -117,6 +117,8 @@
 #    20-Apr-2010 (CT) `Computed_Set_Mixin` added
 #    22-Apr-2010 (CT) `Link_Role._set_cooked_value` redefined to reset
 #                     `auto_cache`, if any, before chaining up
+#    22-Apr-2010 (CT) `_Composite_Mixin_._set_cooked_value` changed to call
+#                     `reset` if `value is None`
 #    ««revision-date»»···
 #--
 
@@ -481,6 +483,7 @@ class _Composite_Mixin_ (Kind) :
     # end def set_pickle_cargo
 
     def reset (self, obj) :
+        ### Need an empty composite at all times
         scope = obj.home_scope
         etm   = scope [self.attr.C_Type.type_name]
         return self._set_cooked_value (obj, etm (), changed = True)
@@ -502,14 +505,17 @@ class _Composite_Mixin_ (Kind) :
     # end def _check_sanity
 
     def _set_cooked_value (self, obj, value, changed = 42) :
-        if value is not None :
+        if value is None :
+            ### Need an empty composite at all times
+            return self.reset (obj)
+        else :
             if value.owner is not None and value.owner is not obj :
                 value = value.copy ()
             value.owner      = obj
             value.attr_name  = self.name
             value.is_primary = self.is_primary
             value.home_scope = obj.home_scope
-        return self.__super._set_cooked_value (obj, value, changed)
+            return self.__super._set_cooked_value (obj, value, changed)
     # end def _set_cooked_value
 
 # end class _Composite_Mixin_
