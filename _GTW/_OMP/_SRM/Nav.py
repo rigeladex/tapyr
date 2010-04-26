@@ -66,10 +66,20 @@ class Admin (object) :
 
     ### XXX ...
 
+    Boat = dict \
+        ( ETM       = "GTW.OMP.SRM.Boat"
+        , Type      = GTW.NAV.E_Type.Admin
+        , sort_key  = TFL.Sorted_By ("left.name", "nation", "sail_number")
+        )
     Boat_Class = dict \
         ( ETM       = "GTW.OMP.SRM.Boat_Class"
         , Type      = GTW.NAV.E_Type.Admin
         , sort_key  = TFL.Sorted_By ("name")
+        )
+    Boat_in_Regatta = dict \
+        ( ETM       = "GTW.OMP.SRM.Boat_in_Regatta"
+        , Type      = GTW.NAV.E_Type.Admin
+        , sort_key  = TFL.Sorted_By ("left", "right", "skipper")
         )
     Page          = dict \
         ( ETM       = "GTW.OMP.SRM.Page"

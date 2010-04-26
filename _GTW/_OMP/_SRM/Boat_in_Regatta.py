@@ -81,6 +81,14 @@ class Boat_in_Regatta (_Ancestor_Essence) :
 
         # end class race_results
 
+        class rank (A_Int) :
+            """Rank of boat in this race."""
+
+            kind               = Attr.Optional
+            min_value          = 1
+
+        # end class rank
+
         class registration_date (A_Date) :
             """Date of registration."""
 

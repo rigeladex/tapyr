@@ -85,14 +85,6 @@ class Boat (_Ancestor_Essence) :
 
         # end class name
 
-        class vintage (A_Int) :
-            """Year of construction"""
-
-            kind               = Attr.Optional
-            min_value          = 1850
-
-        # end class vintage
-
     # end class _Attributes
 
     class _Predicates (_Ancestor_Essence._Predicates) :

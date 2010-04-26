@@ -122,6 +122,8 @@
 #    22-Mar-2010 (CT) `last_changed` added
 #     8-Apr-2010 (CT) `last_changed.computed` guarded against `first` returning
 #                     `None`
+#    26-Apr-2010 (CT) Guard against `raw` added to `Entity.set` and
+#                     `Entity.set_raw`
 #    ««revision-date»»···
 #--
 
@@ -372,6 +374,7 @@ class Entity (TFL.Meta.Object) :
 
     def set (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from cooked values"""
+        assert "raw" not in kw
         gen = \
             (   (name, attr.get_raw (self))
             for attr, name, value in self._record_iter (kw)
@@ -411,6 +414,7 @@ class Entity (TFL.Meta.Object) :
 
     def set_raw (self, on_error = None, ** kw) :
         """Set attributes specified in `kw` from raw values"""
+        assert "raw" not in kw
         gen = \
             (   (name, raw)
             for attr, name, value, raw in self._record_iter_raw (kw)

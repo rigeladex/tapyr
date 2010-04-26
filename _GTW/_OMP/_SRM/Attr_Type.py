@@ -94,6 +94,8 @@ _Ancestor_Essence = MOM.An_Entity
 class Race_Result (_Ancestor_Essence) :
     """Model the result of a boat in a single race."""
 
+    PNS = GTW.OMP.SRM
+
     class _Attributes (_Ancestor_Essence._Attributes) :
 
         _Ancestor = _Ancestor_Essence._Attributes

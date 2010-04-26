@@ -108,6 +108,12 @@
 #    22-Mar-2010 (CT) `A_Dirname` and `A_Filename` added (+ `_A_Filename_`)
 #     9-Apr-2010 (CT) `A_Url` added
 #    20-Apr-2010 (CT) Default `Type` added to `_A_Named_Object_.Pickler`
+#    26-Apr-2010 (CT) `_A_Object_._to_cooked` changed to accept a single name
+#                     as plain string instead of as a 1-tuple
+#    26-Apr-2010 (CT) `_A_Typed_Collection_.from_string` redefined
+#    26-Apr-2010 (CT) `_fix_C_Type` added
+#    26-Apr-2010 (CT) `_A_Typed_Collection_._checkers` redefined to call
+#                     `_fix_C_Type`
 #    ««revision-date»»···
 #--
 
@@ -237,6 +243,10 @@ class A_Attr_Type (object) :
         for c in sorted (self.check) :
             yield c, ()
     # end def _checkers
+
+    def _fix_C_Type (self, e_type) :
+        pass
+    # end def _fix_C_Type
 
     def _from_string (self, s, obj, glob, locl) :
         t = self._from_string_prepare (s, obj)
@@ -402,15 +412,11 @@ class _A_Composite_ (A_Attr_Type) :
     # end def from_string
 
     def _checkers (self, e_type, kind) :
+        self._fix_C_Type (e_type)
         for c in self.__super._checkers (e_type, kind) :
             yield c
-        C_Type = self.C_Type
-        if not hasattr (C_Type, "app_type") :
-            if not isinstance (C_Type, basestring) :
-                C_Type = C_Type.type_name
-            self.C_Type = C_Type = e_type.app_type.etypes [C_Type]
         name = self.name
-        for k, ps in C_Type._Predicates._pred_kind.iteritems () :
+        for k, ps in self.C_Type._Predicates._pred_kind.iteritems () :
             if kind.electric :
                 k = kind.kind
                 p_kind = MOM.Pred.System
@@ -431,6 +437,14 @@ class _A_Composite_ (A_Attr_Type) :
                     )
                 yield check, ()
     # end def _checkers
+
+    def _fix_C_Type (self, e_type) :
+        C_Type = self.C_Type
+        if not hasattr (C_Type, "app_type") :
+            if not isinstance (C_Type, basestring) :
+                C_Type = C_Type.type_name
+            self.C_Type = C_Type = e_type.app_type.etypes [C_Type]
+    # end def _fix_C_Type
 
 # end class _A_Composite_
 
@@ -717,7 +731,10 @@ class _A_Object_ (A_Attr_Type) :
         if isinstance (s, tuple) :
             t  = s
         else :
-            t  = self._call_eval (s, {}, {})
+            try :
+                t  = self._call_eval (s, {}, {})
+            except NameError :
+                t = (s, )
         return self._get_object  (obj, t, raw = True)
     # end def _to_cooked
 
@@ -884,8 +901,13 @@ class _A_Typed_Collection_ (A_Attr_Type) :
         ### when called for the class, `soc.__super` doesn't
         ### work while `super (_A_Typed_Collection_, soc)` does
         if value is not None :
-            return super (_A_Typed_Collection_, soc).as_string \
-                (soc.C_sep.join (soc._C_as_string (value)))
+            try :
+                return super (_A_Typed_Collection_, soc).as_string \
+                    (soc.C_sep.join (soc._C_as_string (value)))
+            except TypeError, exc :
+                print ">>>", value
+                print "-->", list (soc._C_as_string (value))
+                raise
         return u""
     # end def as_string
 
@@ -897,7 +919,27 @@ class _A_Typed_Collection_ (A_Attr_Type) :
     def from_code (self, s, obj = None, glob = {}, locl = {}) :
         comps = self._C_split (s.strip ())
         return self.R_Type (self._C_from_code (obj, comps, glob, locl))
-    # end def from_code_string
+    # end def from_code
+
+    def from_string (self, s, obj = None, glob = None, locl = None) :
+        t = s or []
+        if isinstance (t, basestring) :
+            result = self._from_string_eval (s, obj, glob, locl)
+        else :
+            C_fs = self.C_Type.from_string
+            result = self.R_Type (C_fs (c, obj, glob, locl) for c in t)
+        return result
+    # end def from_string
+
+    def _checkers (self, e_type, kind) :
+        C_Type = self.C_Type
+        if C_Type :
+            C_C_Type = getattr (C_Type, "C_Type", None)
+            if C_C_Type :
+                C_Type._fix_C_Type (e_type)
+            ### XXX Predicate checking each component for `C_Type._checkers`
+        return ()
+    # end def _checkers
 
     def _C_as_code (self, value) :
         return (self.C_Type.as_code (v) for v in value)

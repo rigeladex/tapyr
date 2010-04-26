@@ -29,6 +29,7 @@
 ## Revision Dates
 ##     9-Mar-2010 (CT) Creation
 ##    10-Mar-2010 (CT) `week_day` changed to honor `is_holiday`
+##    26-Apr-2010 (CT) `week_day_events` changed to guard against empty `href`
 ##    ««revision-date»»···
 ##--
 #}
@@ -61,10 +62,16 @@
 {%- macro week_day_events (cal, week, day) -%}
   {%- for ev in day.events %}
     {%- set thead = ("%s " % (ev.FO.time, )) if ev.FO.time else "" %}
+    {%- set href = cal.obj_href (ev.essence) %}
     <div class="event" title="{{ thead }}{{ GTW.firstof (ev.detail, ev.title) }}">
-      <a href="{{ cal.obj_href (ev.essence) }}">
-        {{- ev.short_title -}}
-      </a>
+      {%- onion href %}
+        {%- head -%}
+          <a href="{{ href }}">
+        {%- body -%}
+          {{- ev.short_title -}}
+        {%- tail -%}
+          </a>
+        {%- endonion %}
     </div>
   {% endfor -%}
 {%- endmacro -%} {#- week_day_events -#}
