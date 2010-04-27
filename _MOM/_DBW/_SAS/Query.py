@@ -79,8 +79,8 @@ class _MOM_Query_ (TFL.Meta.Object) :
         elif isinstance (cooked, MOM.Id_Entity) :
             db   = cooked.id
         else :
-            kind = getattr (self._E_TYPE [0], attr)
-            if isinstance (kind.attr, MOM.Attr._A_Named_Value_) :
+            kind = getattr (self._E_TYPE [0], attr, None)
+            if kind and isinstance (kind.attr, MOM.Attr._A_Named_Value_) :
                 db = kind.Pickler.as_cargo (None, kind, kind.attr, cooked)
         return getattr (self, attr) == db
     # end def SAS_EQ_Clause
