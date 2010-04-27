@@ -49,6 +49,7 @@ _test_code = """
     >>> scope.SRM.Boat.query_s ().all ()
     [GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)]
     >>> scope.commit ()
+
     >>> SRM.Boat.instance_or_new (u'Optimist', "AUT", "1107", raw = True) ### 2
     GTW.OMP.SRM.Boat ((u'Optimist', ), 'AUT', 1107)
     >>> scope.SRM.Boat.count
